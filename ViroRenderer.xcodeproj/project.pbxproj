@@ -1,0 +1,585 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8F517BBB1BCDA2BD0017C70B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBA1BCDA2BD0017C70B /* main.m */; };
+		8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */; };
+		8F517BC11BCDA2BD0017C70B /* GameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC01BCDA2BD0017C70B /* GameViewController.m */; };
+		8F517BC31BCDA2BD0017C70B /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC21BCDA2BD0017C70B /* Shaders.metal */; };
+		8F517BC71BCDA2BD0017C70B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BC51BCDA2BD0017C70B /* Main.storyboard */; };
+		8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BC81BCDA2BD0017C70B /* Assets.xcassets */; };
+		8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BCA1BCDA2BD0017C70B /* LaunchScreen.storyboard */; };
+		8F517BD71BCDA2BE0017C70B /* ViroRendererTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BD61BCDA2BE0017C70B /* ViroRendererTests.m */; };
+		8F517BE21BCDA2BE0017C70B /* ViroRendererUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BE11BCDA2BE0017C70B /* ViroRendererUITests.m */; };
+		8F517BF21BCDBA8C0017C70B /* VROLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BF01BCDBA8C0017C70B /* VROLayer.cpp */; settings = {ASSET_TAGS = (); }; };
+		8F517BFD1BCDC9170017C70B /* VRORenderContextMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BFB1BCDC9170017C70B /* VRORenderContextMetal.cpp */; settings = {ASSET_TAGS = (); }; };
+		8F517C401BCF1C320017C70B /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517BF41BCDBF140017C70B /* Metal.framework */; };
+		8F517C411BCF1C320017C70B /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517BF51BCDBF140017C70B /* MetalKit.framework */; };
+		8F517C431BCF1CBE0017C70B /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517C421BCF1CBE0017C70B /* ModelIO.framework */; };
+		8F517C471BD0474E0017C70B /* VROMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F517C451BD0474E0017C70B /* VROMath.cpp */; settings = {ASSET_TAGS = (); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8F517BD31BCDA2BD0017C70B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F517BAE1BCDA2BD0017C70B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F517BB51BCDA2BD0017C70B;
+			remoteInfo = ViroRenderer;
+		};
+		8F517BDE1BCDA2BE0017C70B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F517BAE1BCDA2BD0017C70B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F517BB51BCDA2BD0017C70B;
+			remoteInfo = ViroRenderer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		8F517BB61BCDA2BD0017C70B /* ViroRenderer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ViroRenderer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F517BBA1BCDA2BD0017C70B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		8F517BBC1BCDA2BD0017C70B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		8F517BBF1BCDA2BD0017C70B /* GameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameViewController.h; sourceTree = "<group>"; };
+		8F517BC01BCDA2BD0017C70B /* GameViewController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = GameViewController.m; sourceTree = "<group>"; };
+		8F517BC21BCDA2BD0017C70B /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		8F517BC41BCDA2BD0017C70B /* SharedStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedStructures.h; sourceTree = "<group>"; };
+		8F517BC61BCDA2BD0017C70B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		8F517BC81BCDA2BD0017C70B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8F517BCB1BCDA2BD0017C70B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		8F517BCD1BCDA2BD0017C70B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8F517BD21BCDA2BD0017C70B /* ViroRendererTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViroRendererTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F517BD61BCDA2BE0017C70B /* ViroRendererTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViroRendererTests.m; sourceTree = "<group>"; };
+		8F517BD81BCDA2BE0017C70B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8F517BDD1BCDA2BE0017C70B /* ViroRendererUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViroRendererUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F517BE11BCDA2BE0017C70B /* ViroRendererUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViroRendererUITests.m; sourceTree = "<group>"; };
+		8F517BE31BCDA2BE0017C70B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8F517BF01BCDBA8C0017C70B /* VROLayer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLayer.cpp; sourceTree = "<group>"; };
+		8F517BF11BCDBA8C0017C70B /* VROLayer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = VROLayer.h; sourceTree = "<group>"; };
+		8F517BF41BCDBF140017C70B /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		8F517BF51BCDBF140017C70B /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		8F517BF91BCDC8C20017C70B /* VRORenderContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORenderContext.h; sourceTree = "<group>"; };
+		8F517BFB1BCDC9170017C70B /* VRORenderContextMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRORenderContextMetal.cpp; sourceTree = "<group>"; };
+		8F517BFC1BCDC9170017C70B /* VRORenderContextMetal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = VRORenderContextMetal.h; sourceTree = "<group>"; };
+		8F517C421BCF1CBE0017C70B /* ModelIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ModelIO.framework; path = System/Library/Frameworks/ModelIO.framework; sourceTree = SDKROOT; };
+		8F517C451BD0474E0017C70B /* VROMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROMath.cpp; sourceTree = "<group>"; };
+		8F517C461BD0474E0017C70B /* VROMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMath.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8F517BB31BCDA2BD0017C70B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F517C431BCF1CBE0017C70B /* ModelIO.framework in Frameworks */,
+				8F517C401BCF1C320017C70B /* Metal.framework in Frameworks */,
+				8F517C411BCF1C320017C70B /* MetalKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F517BCF1BCDA2BD0017C70B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F517BDA1BCDA2BE0017C70B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8F517BAD1BCDA2BD0017C70B = {
+			isa = PBXGroup;
+			children = (
+				8F517C421BCF1CBE0017C70B /* ModelIO.framework */,
+				8F517BF41BCDBF140017C70B /* Metal.framework */,
+				8F517BF51BCDBF140017C70B /* MetalKit.framework */,
+				8F517BB81BCDA2BD0017C70B /* ViroRenderer */,
+				8F517BD51BCDA2BD0017C70B /* ViroRendererTests */,
+				8F517BE01BCDA2BE0017C70B /* ViroRendererUITests */,
+				8F517BB71BCDA2BD0017C70B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8F517BB71BCDA2BD0017C70B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8F517BB61BCDA2BD0017C70B /* ViroRenderer.app */,
+				8F517BD21BCDA2BD0017C70B /* ViroRendererTests.xctest */,
+				8F517BDD1BCDA2BE0017C70B /* ViroRendererUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8F517BB81BCDA2BD0017C70B /* ViroRenderer */ = {
+			isa = PBXGroup;
+			children = (
+				8F517C441BD0472C0017C70B /* Math */,
+				8F517BF31BCDBBA80017C70B /* Renderer */,
+				8F517BEF1BCDBA570017C70B /* Layer */,
+				8F517BBC1BCDA2BD0017C70B /* AppDelegate.h */,
+				8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */,
+				8F517BBF1BCDA2BD0017C70B /* GameViewController.h */,
+				8F517BC01BCDA2BD0017C70B /* GameViewController.m */,
+				8F517BC21BCDA2BD0017C70B /* Shaders.metal */,
+				8F517BC41BCDA2BD0017C70B /* SharedStructures.h */,
+				8F517BC51BCDA2BD0017C70B /* Main.storyboard */,
+				8F517BC81BCDA2BD0017C70B /* Assets.xcassets */,
+				8F517BCA1BCDA2BD0017C70B /* LaunchScreen.storyboard */,
+				8F517BCD1BCDA2BD0017C70B /* Info.plist */,
+				8F517BB91BCDA2BD0017C70B /* Supporting Files */,
+			);
+			path = ViroRenderer;
+			sourceTree = "<group>";
+		};
+		8F517BB91BCDA2BD0017C70B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8F517BBA1BCDA2BD0017C70B /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8F517BD51BCDA2BD0017C70B /* ViroRendererTests */ = {
+			isa = PBXGroup;
+			children = (
+				8F517BD61BCDA2BE0017C70B /* ViroRendererTests.m */,
+				8F517BD81BCDA2BE0017C70B /* Info.plist */,
+			);
+			path = ViroRendererTests;
+			sourceTree = "<group>";
+		};
+		8F517BE01BCDA2BE0017C70B /* ViroRendererUITests */ = {
+			isa = PBXGroup;
+			children = (
+				8F517BE11BCDA2BE0017C70B /* ViroRendererUITests.m */,
+				8F517BE31BCDA2BE0017C70B /* Info.plist */,
+			);
+			path = ViroRendererUITests;
+			sourceTree = "<group>";
+		};
+		8F517BEF1BCDBA570017C70B /* Layer */ = {
+			isa = PBXGroup;
+			children = (
+				8F517BF11BCDBA8C0017C70B /* VROLayer.h */,
+				8F517BF01BCDBA8C0017C70B /* VROLayer.cpp */,
+				8F517BF91BCDC8C20017C70B /* VRORenderContext.h */,
+				8F517BFC1BCDC9170017C70B /* VRORenderContextMetal.h */,
+				8F517BFB1BCDC9170017C70B /* VRORenderContextMetal.cpp */,
+			);
+			name = Layer;
+			sourceTree = "<group>";
+		};
+		8F517BF31BCDBBA80017C70B /* Renderer */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Renderer;
+			sourceTree = "<group>";
+		};
+		8F517C441BD0472C0017C70B /* Math */ = {
+			isa = PBXGroup;
+			children = (
+				8F517C461BD0474E0017C70B /* VROMath.h */,
+				8F517C451BD0474E0017C70B /* VROMath.cpp */,
+			);
+			name = Math;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8F517BB51BCDA2BD0017C70B /* ViroRenderer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8F517BE61BCDA2BE0017C70B /* Build configuration list for PBXNativeTarget "ViroRenderer" */;
+			buildPhases = (
+				8F517BB21BCDA2BD0017C70B /* Sources */,
+				8F517BB31BCDA2BD0017C70B /* Frameworks */,
+				8F517BB41BCDA2BD0017C70B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ViroRenderer;
+			productName = ViroRenderer;
+			productReference = 8F517BB61BCDA2BD0017C70B /* ViroRenderer.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8F517BD11BCDA2BD0017C70B /* ViroRendererTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8F517BE91BCDA2BE0017C70B /* Build configuration list for PBXNativeTarget "ViroRendererTests" */;
+			buildPhases = (
+				8F517BCE1BCDA2BD0017C70B /* Sources */,
+				8F517BCF1BCDA2BD0017C70B /* Frameworks */,
+				8F517BD01BCDA2BD0017C70B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8F517BD41BCDA2BD0017C70B /* PBXTargetDependency */,
+			);
+			name = ViroRendererTests;
+			productName = ViroRendererTests;
+			productReference = 8F517BD21BCDA2BD0017C70B /* ViroRendererTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		8F517BDC1BCDA2BE0017C70B /* ViroRendererUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8F517BEC1BCDA2BE0017C70B /* Build configuration list for PBXNativeTarget "ViroRendererUITests" */;
+			buildPhases = (
+				8F517BD91BCDA2BE0017C70B /* Sources */,
+				8F517BDA1BCDA2BE0017C70B /* Frameworks */,
+				8F517BDB1BCDA2BE0017C70B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8F517BDF1BCDA2BE0017C70B /* PBXTargetDependency */,
+			);
+			name = ViroRendererUITests;
+			productName = ViroRendererUITests;
+			productReference = 8F517BDD1BCDA2BE0017C70B /* ViroRendererUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8F517BAE1BCDA2BD0017C70B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0700;
+				ORGANIZATIONNAME = "Viro Media";
+				TargetAttributes = {
+					8F517BB51BCDA2BD0017C70B = {
+						CreatedOnToolsVersion = 7.0.1;
+					};
+					8F517BD11BCDA2BD0017C70B = {
+						CreatedOnToolsVersion = 7.0.1;
+						TestTargetID = 8F517BB51BCDA2BD0017C70B;
+					};
+					8F517BDC1BCDA2BE0017C70B = {
+						CreatedOnToolsVersion = 7.0.1;
+						TestTargetID = 8F517BB51BCDA2BD0017C70B;
+					};
+				};
+			};
+			buildConfigurationList = 8F517BB11BCDA2BD0017C70B /* Build configuration list for PBXProject "ViroRenderer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 8F517BAD1BCDA2BD0017C70B;
+			productRefGroup = 8F517BB71BCDA2BD0017C70B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8F517BB51BCDA2BD0017C70B /* ViroRenderer */,
+				8F517BD11BCDA2BD0017C70B /* ViroRendererTests */,
+				8F517BDC1BCDA2BE0017C70B /* ViroRendererUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8F517BB41BCDA2BD0017C70B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */,
+				8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */,
+				8F517BC71BCDA2BD0017C70B /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F517BD01BCDA2BD0017C70B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F517BDB1BCDA2BE0017C70B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8F517BB21BCDA2BD0017C70B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F517BFD1BCDC9170017C70B /* VRORenderContextMetal.cpp in Sources */,
+				8F517BC31BCDA2BD0017C70B /* Shaders.metal in Sources */,
+				8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */,
+				8F517BC11BCDA2BD0017C70B /* GameViewController.m in Sources */,
+				8F517BF21BCDBA8C0017C70B /* VROLayer.cpp in Sources */,
+				8F517BBB1BCDA2BD0017C70B /* main.m in Sources */,
+				8F517C471BD0474E0017C70B /* VROMath.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F517BCE1BCDA2BD0017C70B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F517BD71BCDA2BE0017C70B /* ViroRendererTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F517BD91BCDA2BE0017C70B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F517BE21BCDA2BE0017C70B /* ViroRendererUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8F517BD41BCDA2BD0017C70B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8F517BB51BCDA2BD0017C70B /* ViroRenderer */;
+			targetProxy = 8F517BD31BCDA2BD0017C70B /* PBXContainerItemProxy */;
+		};
+		8F517BDF1BCDA2BE0017C70B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8F517BB51BCDA2BD0017C70B /* ViroRenderer */;
+			targetProxy = 8F517BDE1BCDA2BE0017C70B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		8F517BC51BCDA2BD0017C70B /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8F517BC61BCDA2BD0017C70B /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		8F517BCA1BCDA2BD0017C70B /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8F517BCB1BCDA2BD0017C70B /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		8F517BE41BCDA2BE0017C70B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8F517BE51BCDA2BE0017C70B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8F517BE71BCDA2BE0017C70B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = ViroRenderer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroRenderer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		8F517BE81BCDA2BE0017C70B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = ViroRenderer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroRenderer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		8F517BEA1BCDA2BE0017C70B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				INFOPLIST_FILE = ViroRendererTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroRendererTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ViroRenderer.app/ViroRenderer";
+			};
+			name = Debug;
+		};
+		8F517BEB1BCDA2BE0017C70B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = ViroRendererTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroRendererTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ViroRenderer.app/ViroRenderer";
+			};
+			name = Release;
+		};
+		8F517BED1BCDA2BE0017C70B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				INFOPLIST_FILE = ViroRendererUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroRendererUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = ViroRenderer;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		8F517BEE1BCDA2BE0017C70B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = ViroRendererUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroRendererUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = ViroRenderer;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8F517BB11BCDA2BD0017C70B /* Build configuration list for PBXProject "ViroRenderer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F517BE41BCDA2BE0017C70B /* Debug */,
+				8F517BE51BCDA2BE0017C70B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8F517BE61BCDA2BE0017C70B /* Build configuration list for PBXNativeTarget "ViroRenderer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F517BE71BCDA2BE0017C70B /* Debug */,
+				8F517BE81BCDA2BE0017C70B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		8F517BE91BCDA2BE0017C70B /* Build configuration list for PBXNativeTarget "ViroRendererTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F517BEA1BCDA2BE0017C70B /* Debug */,
+				8F517BEB1BCDA2BE0017C70B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		8F517BEC1BCDA2BE0017C70B /* Build configuration list for PBXNativeTarget "ViroRendererUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F517BED1BCDA2BE0017C70B /* Debug */,
+				8F517BEE1BCDA2BE0017C70B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8F517BAE1BCDA2BD0017C70B /* Project object */;
+}
