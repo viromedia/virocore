@@ -22,6 +22,7 @@
 		8F517C411BCF1C320017C70B /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517BF51BCDBF140017C70B /* MetalKit.framework */; };
 		8F517C431BCF1CBE0017C70B /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517C421BCF1CBE0017C70B /* ModelIO.framework */; };
 		8F517C471BD0474E0017C70B /* VROMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F517C451BD0474E0017C70B /* VROMath.cpp */; settings = {ASSET_TAGS = (); }; };
+		8F5C413B1BD05AD1006D7A77 /* VRORect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C413A1BD05AD1006D7A77 /* VRORect.cpp */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +71,10 @@
 		8F517C421BCF1CBE0017C70B /* ModelIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ModelIO.framework; path = System/Library/Frameworks/ModelIO.framework; sourceTree = SDKROOT; };
 		8F517C451BD0474E0017C70B /* VROMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROMath.cpp; sourceTree = "<group>"; };
 		8F517C461BD0474E0017C70B /* VROMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMath.h; sourceTree = "<group>"; };
+		8F5C41371BD05286006D7A77 /* VROPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPoint.h; sourceTree = "<group>"; };
+		8F5C41391BD052BB006D7A77 /* VROSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROSize.h; sourceTree = "<group>"; };
+		8F5C413A1BD05AD1006D7A77 /* VRORect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VRORect.cpp; sourceTree = "<group>"; };
+		8F7A9EA91BD0517A006CFAFD /* VRORect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORect.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,6 +183,10 @@
 				8F517BF91BCDC8C20017C70B /* VRORenderContext.h */,
 				8F517BFC1BCDC9170017C70B /* VRORenderContextMetal.h */,
 				8F517BFB1BCDC9170017C70B /* VRORenderContextMetal.cpp */,
+				8F7A9EA91BD0517A006CFAFD /* VRORect.h */,
+				8F5C413A1BD05AD1006D7A77 /* VRORect.cpp */,
+				8F5C41371BD05286006D7A77 /* VROPoint.h */,
+				8F5C41391BD052BB006D7A77 /* VROSize.h */,
 			);
 			name = Layer;
 			sourceTree = "<group>";
@@ -329,6 +338,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F517BFD1BCDC9170017C70B /* VRORenderContextMetal.cpp in Sources */,
+				8F5C413B1BD05AD1006D7A77 /* VRORect.cpp in Sources */,
 				8F517BC31BCDA2BD0017C70B /* Shaders.metal in Sources */,
 				8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */,
 				8F517BC11BCDA2BD0017C70B /* GameViewController.m in Sources */,
@@ -562,6 +572,7 @@
 				8F517BE81BCDA2BE0017C70B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8F517BE91BCDA2BE0017C70B /* Build configuration list for PBXNativeTarget "ViroRendererTests" */ = {
 			isa = XCConfigurationList;
@@ -570,6 +581,7 @@
 				8F517BEB1BCDA2BE0017C70B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8F517BEC1BCDA2BE0017C70B /* Build configuration list for PBXNativeTarget "ViroRendererUITests" */ = {
 			isa = XCConfigurationList;
@@ -578,6 +590,7 @@
 				8F517BEE1BCDA2BE0017C70B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

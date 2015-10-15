@@ -14,6 +14,7 @@
 #include <MetalKit/MetalKit.h>
 #include "VRORenderContext.h"
 #include "SharedStructures.h"
+#include "VRORect.h"
 
 class VROLayer {
     
@@ -25,6 +26,14 @@ public:
     void hydrate(const VRORenderContext &context);
     void render(const VRORenderContext &context);
     
+    void setFrame(VRORect frame);
+    void setBounds(VRORect bounds);
+    void setPosition(VROPoint point);
+    
+    VRORect getFrame();
+    VRORect getBounds();
+    VROPoint getPosition();
+    
 private:
     
     id <MTLRenderPipelineState> _pipelineState;
@@ -32,6 +41,8 @@ private:
     
     id <MTLBuffer> _vertexBuffer;
     id <MTLBuffer> _dynamicConstantBuffer;
+    
+    VRORect _frame;
     
     void buildQuad(VROLayerVertexLayout *layout);
     

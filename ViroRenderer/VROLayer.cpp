@@ -13,6 +13,8 @@
 static const size_t kMaxBytesPerFrame = 1024*1024;
 static const size_t kCornersInLayer = 6;
 
+#pragma mark - Initialization
+
 VROLayer::VROLayer() {
 
 }
@@ -22,9 +24,9 @@ VROLayer::~VROLayer() {
 }
 
 void VROLayer::buildQuad(VROLayerVertexLayout *vertexLayout) {
-    float x = 2;
-    float y = 2;
-    float z = 2;
+    const float x = 1;
+    const float y = 1;
+    const float z = 1;
     
     vertexLayout[0].x = 0;
     vertexLayout[0].y = 0;
@@ -80,6 +82,8 @@ void VROLayer::buildQuad(VROLayerVertexLayout *vertexLayout) {
     vertexLayout[5].ny = 0;
     vertexLayout[5].nz = -1;
 }
+
+#pragma mark - Rendering
 
 void VROLayer::hydrate(const VRORenderContext &context) {
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
@@ -141,15 +145,15 @@ void VROLayer::hydrate(const VRORenderContext &context) {
 void VROLayer::render(const VRORenderContext &context) {
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
     
-    matrix_float4x4 base_model = matrix_from_translation(0.0f, 0.0f, 10.0f);
-    matrix_float4x4 base_mv =    matrix_multiply(metal.getViewMatrix(), base_model);
-    matrix_float4x4 modelViewMatrix = base_mv;
+    VROPoint pt = getPosition();
+    matrix_float4x4 model = matrix_from_translation(pt.x, pt.y, 10.0f);
+    matrix_float4x4 mv = matrix_multiply(metal.getViewMatrix(), model);
     
     // Load constant buffer data into appropriate buffer at current index
     uniforms_t *uniforms = &((uniforms_t *)[_dynamicConstantBuffer contents])[metal.getConstantDataBufferIndex()];
     
-    uniforms->normal_matrix = matrix_invert(matrix_transpose(modelViewMatrix));
-    uniforms->modelview_projection_matrix = matrix_multiply(metal.getProjectionMatrix(), modelViewMatrix);
+    uniforms->normal_matrix = matrix_invert(matrix_transpose(mv));
+    uniforms->modelview_projection_matrix = matrix_multiply(metal.getProjectionMatrix(), mv);
     
     id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderEncoder();
     
@@ -165,4 +169,32 @@ void VROLayer::render(const VRORenderContext &context) {
     [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:kCornersInLayer];
     
     [renderEncoder popDebugGroup];
+}
+
+#pragma mark - Spatial Position
+
+void VROLayer::setFrame(VRORect frame) {
+    _frame = frame;
+}
+
+void VROLayer::setBounds(VRORect bounds) {
+    _frame.size = bounds.size;
+}
+
+void VROLayer::setPosition(VROPoint point) {
+    _frame.origin.x = point.x - _frame.size.width  / 2.0f;
+    _frame.origin.y = point.y - _frame.size.height / 2.0f;
+}
+
+VRORect VROLayer::getFrame() {
+    return _frame;
+}
+
+VRORect VROLayer::getBounds() {
+    return {{0, 0}, {_frame.size.width, _frame.size.height}};
+}
+
+VROPoint VROLayer::getPosition() {
+    return {_frame.origin.x + _frame.size.width  / 2.0f,
+            _frame.origin.y + _frame.size.height / 2.0f };
 }

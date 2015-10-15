@@ -56,9 +56,11 @@ static const NSUInteger kMaxInflightBuffers = 3;
 
 - (void)_loadAssets {
     _layerA = new VROLayer();
+    _layerA->setFrame(VRORectMake(0, 0, 0.1, 0.1));
     _layerA->hydrate(*_renderContext);
     
     _layerB = new VROLayer();
+    _layerB->setFrame(VRORectMake(1, 1, .2, .2));
     _layerB->hydrate(*_renderContext);
 }
 
