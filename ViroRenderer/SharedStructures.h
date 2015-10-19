@@ -14,6 +14,7 @@
 typedef struct {
     matrix_float4x4 modelview_projection_matrix;
     matrix_float4x4 normal_matrix;
+    vector_float4   diffuse_color;
 } uniforms_t;
 
 typedef struct {

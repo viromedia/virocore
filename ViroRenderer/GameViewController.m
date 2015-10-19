@@ -10,6 +10,7 @@
 #import "SharedStructures.h"
 
 #import "VRORenderContextMetal.h"
+#import "VROScene.h"
 #import "VROLayer.h"
 #import "VROMath.h"
 
@@ -22,8 +23,7 @@ static const NSUInteger kMaxInflightBuffers = 3;
     MTKView *_view;
     
     VRORenderContextMetal *_renderContext;
-    VROLayer *_layerA;
-    VROLayer *_layerB;
+    VROScene *_scene;
     
     dispatch_semaphore_t _inflight_semaphore;
     uint8_t _constantDataBufferIndex;
@@ -55,13 +55,21 @@ static const NSUInteger kMaxInflightBuffers = 3;
 }
 
 - (void)_loadAssets {
-    _layerA = new VROLayer();
-    _layerA->setFrame(VRORectMake(0, 0, 0.1, 0.1));
-    _layerA->hydrate(*_renderContext);
+    _scene = new VROScene();
     
-    _layerB = new VROLayer();
-    _layerB->setFrame(VRORectMake(1, 1, .2, .2));
-    _layerB->hydrate(*_renderContext);
+    std::shared_ptr<VROLayer> layerA = std::make_shared<VROLayer>();
+    layerA->setFrame(VRORectMake(0, 0, 0.5, 0.5));
+    layerA->setBackgroundColor({ 1.0, 0.0, 0.0, 1.0 });
+    layerA->hydrate(*_renderContext);
+    
+    std::shared_ptr<VROLayer> layerB = std::make_shared<VROLayer>();
+    layerB->setFrame(VRORectMake(0, 0, .2, .2));
+    layerB->setBackgroundColor({ 0.0, 0.0, 1.0, 1.0 });
+    layerB->hydrate(*_renderContext);
+    
+    _scene->addLayer(layerA);
+    layerA->addSublayer(layerB);
+    //_scene->addLayer(layerB);
 }
 
 - (void)_render {
@@ -94,9 +102,8 @@ static const NSUInteger kMaxInflightBuffers = 3;
 
     if(renderPassDescriptor != nil) // If we have a valid drawable, begin the commands to render into it
     {
-        _layerA->render(*_renderContext);
-        _layerB->render(*_renderContext);
-        
+        _scene->render(*_renderContext);
+                
         [renderEncoder endEncoding];
         [commandBuffer presentDrawable:_view.currentDrawable];
     }

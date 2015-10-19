@@ -142,18 +142,20 @@ void VROLayer::hydrate(const VRORenderContext &context) {
     _depthState = [metal.getDevice() newDepthStencilStateWithDescriptor:depthStateDesc];
 }
 
-void VROLayer::render(const VRORenderContext &context) {
+void VROLayer::render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack) {
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
     
     VROPoint pt = getPosition();
     matrix_float4x4 model = matrix_from_translation(pt.x, pt.y, 10.0f);
-    matrix_float4x4 mv = matrix_multiply(metal.getViewMatrix(), model);
+    
+    matrix_float4x4 mvParent = mvStack.top();
+    matrix_float4x4 mv = matrix_multiply(mvParent, model);
     
     // Load constant buffer data into appropriate buffer at current index
     uniforms_t *uniforms = &((uniforms_t *)[_dynamicConstantBuffer contents])[metal.getConstantDataBufferIndex()];
-    
     uniforms->normal_matrix = matrix_invert(matrix_transpose(mv));
     uniforms->modelview_projection_matrix = matrix_multiply(metal.getProjectionMatrix(), mv);
+    uniforms->diffuse_color = _backgroundColor;
     
     id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderEncoder();
     
@@ -169,6 +171,25 @@ void VROLayer::render(const VRORenderContext &context) {
     [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:kCornersInLayer];
     
     [renderEncoder popDebugGroup];
+    
+    /*
+     Now render the children.
+     */
+    mvStack.push(mv);
+    for (std::shared_ptr<VROLayer> childLayer : _sublayers) {
+        childLayer->render(context, mvStack);
+    }
+    mvStack.pop();
+}
+
+#pragma mark - Layer Properties
+
+void VROLayer::setBackgroundColor(vector_float4 backgroundColor) {
+    _backgroundColor = backgroundColor;
+}
+
+vector_float4 VROLayer::getBackgroundColor() const {
+    return _backgroundColor;
 }
 
 #pragma mark - Spatial Position
@@ -186,15 +207,30 @@ void VROLayer::setPosition(VROPoint point) {
     _frame.origin.y = point.y - _frame.size.height / 2.0f;
 }
 
-VRORect VROLayer::getFrame() {
+VRORect VROLayer::getFrame() const {
     return _frame;
 }
 
-VRORect VROLayer::getBounds() {
+VRORect VROLayer::getBounds() const {
     return {{0, 0}, {_frame.size.width, _frame.size.height}};
 }
 
-VROPoint VROLayer::getPosition() {
+VROPoint VROLayer::getPosition() const {
     return {_frame.origin.x + _frame.size.width  / 2.0f,
             _frame.origin.y + _frame.size.height / 2.0f };
+}
+
+#pragma mark - Layer Tree
+
+void VROLayer::addSublayer(std::shared_ptr<VROLayer> &layer) {
+    _sublayers.push_back(layer);
+}
+
+void VROLayer::removeFromSuperlayer() {
+    std::vector<std::shared_ptr<VROLayer>> parentSublayers = _superlayer->_sublayers;
+    parentSublayers.erase(
+                          std::remove_if(parentSublayers.begin(), parentSublayers.end(),
+                                         [this](std::shared_ptr<VROLayer> layer) {
+                                             return layer.get() == this;
+                                         }), parentSublayers.end());
 }

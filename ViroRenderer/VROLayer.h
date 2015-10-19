@@ -12,9 +12,13 @@
 #include <stdio.h>
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
+#include <simd/simd.h>
 #include "VRORenderContext.h"
 #include "SharedStructures.h"
 #include "VRORect.h"
+#include <vector>
+#include <stack>
+#include <memory>
 
 class VROLayer {
     
@@ -24,15 +28,21 @@ public:
     virtual ~VROLayer();
     
     void hydrate(const VRORenderContext &context);
-    void render(const VRORenderContext &context);
+    void render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack);
     
     void setFrame(VRORect frame);
     void setBounds(VRORect bounds);
     void setPosition(VROPoint point);
     
-    VRORect getFrame();
-    VRORect getBounds();
-    VROPoint getPosition();
+    VRORect getFrame() const;
+    VRORect getBounds() const;
+    VROPoint getPosition() const;
+    
+    void setBackgroundColor(vector_float4 backgroundColor);
+    vector_float4 getBackgroundColor() const;
+    
+    void addSublayer(std::shared_ptr<VROLayer> &layer);
+    void removeFromSuperlayer();
     
 private:
     
@@ -43,6 +53,12 @@ private:
     id <MTLBuffer> _dynamicConstantBuffer;
     
     VRORect _frame;
+    
+    vector_float4 _backgroundColor;
+    
+    std::vector<std::shared_ptr<VROLayer>> _sublayers;
+    std::shared_ptr<VROLayer> _superlayer;
+    std::shared_ptr<VROLayer> _presentationLayer;
     
     void buildQuad(VROLayerVertexLayout *layout);
     
