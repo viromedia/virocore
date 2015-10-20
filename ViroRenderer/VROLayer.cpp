@@ -28,8 +28,8 @@ void VROLayer::buildQuad(VROLayerVertexLayout *vertexLayout) {
     const float y = 1;
     const float z = 1;
     
-    vertexLayout[0].x = 0;
-    vertexLayout[0].y = 0;
+    vertexLayout[0].x = -x / 2;
+    vertexLayout[0].y = -y / 2;
     vertexLayout[0].z = z;
     vertexLayout[0].u = 0;
     vertexLayout[0].v = 0;
@@ -37,8 +37,8 @@ void VROLayer::buildQuad(VROLayerVertexLayout *vertexLayout) {
     vertexLayout[0].ny = 0;
     vertexLayout[0].nz = -1;
     
-    vertexLayout[1].x = x;
-    vertexLayout[1].y = 0;
+    vertexLayout[1].x =  x / 2;
+    vertexLayout[1].y = -y / 2;
     vertexLayout[1].z = z;
     vertexLayout[1].u = 1;
     vertexLayout[1].v = 0;
@@ -46,8 +46,8 @@ void VROLayer::buildQuad(VROLayerVertexLayout *vertexLayout) {
     vertexLayout[1].ny = 0;
     vertexLayout[1].nz = -1;
     
-    vertexLayout[2].x = 0;
-    vertexLayout[2].y = y;
+    vertexLayout[2].x = -x / 2;
+    vertexLayout[2].y =  y / 2;
     vertexLayout[2].z = z;
     vertexLayout[2].u = 0;
     vertexLayout[2].v = 1;
@@ -55,8 +55,8 @@ void VROLayer::buildQuad(VROLayerVertexLayout *vertexLayout) {
     vertexLayout[2].ny = 0;
     vertexLayout[2].nz = -1;
     
-    vertexLayout[3].x = x;
-    vertexLayout[3].y = y;
+    vertexLayout[3].x = x / 2;
+    vertexLayout[3].y = y / 2;
     vertexLayout[3].z = z;
     vertexLayout[3].u = 1;
     vertexLayout[3].v = 1;
@@ -64,8 +64,8 @@ void VROLayer::buildQuad(VROLayerVertexLayout *vertexLayout) {
     vertexLayout[3].ny = 0;
     vertexLayout[3].nz = -1;
     
-    vertexLayout[4].x = 0;
-    vertexLayout[4].y = y;
+    vertexLayout[4].x = -x / 2;
+    vertexLayout[4].y =  y / 2;
     vertexLayout[4].z = z;
     vertexLayout[4].u = 0;
     vertexLayout[4].v = 1;
@@ -73,8 +73,8 @@ void VROLayer::buildQuad(VROLayerVertexLayout *vertexLayout) {
     vertexLayout[4].ny = 0;
     vertexLayout[4].nz = -1;
     
-    vertexLayout[5].x = x;
-    vertexLayout[5].y = 0;
+    vertexLayout[5].x =  x / 2;
+    vertexLayout[5].y = -y / 2;
     vertexLayout[5].z = z;
     vertexLayout[5].u = 1;
     vertexLayout[5].v = 0;
@@ -136,8 +136,8 @@ void VROLayer::hydrate(const VRORenderContext &context) {
     }
     
     MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
-    depthStateDesc.depthCompareFunction = MTLCompareFunctionLess;
-    depthStateDesc.depthWriteEnabled = YES;
+    depthStateDesc.depthCompareFunction = MTLCompareFunctionAlways;
+    depthStateDesc.depthWriteEnabled = NO;
     
     _depthState = [metal.getDevice() newDepthStencilStateWithDescriptor:depthStateDesc];
 }
@@ -146,10 +146,18 @@ void VROLayer::render(const VRORenderContext &context, std::stack<matrix_float4x
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
     
     VROPoint pt = getPosition();
-    matrix_float4x4 model = matrix_from_translation(pt.x, pt.y, 10.0f);
+    matrix_float4x4 scaleMtx = matrix_from_scale(_frame.size.width, _frame.size.height, 1.0);
+    
+    /*
+     If the layer is a sublayer, then its coordinate system follows the 2D 
+     convention of origin top-left, Y down.
+     */
+    float y = _superlayer ? -pt.y : pt.y;
+    matrix_float4x4 translationMtx = matrix_from_translation(pt.x, y, pt.z);
+    matrix_float4x4 modelMtx = matrix_multiply(translationMtx, scaleMtx);
     
     matrix_float4x4 mvParent = mvStack.top();
-    matrix_float4x4 mv = matrix_multiply(mvParent, model);
+    matrix_float4x4 mv = matrix_multiply(mvParent, modelMtx);
     
     // Load constant buffer data into appropriate buffer at current index
     uniforms_t *uniforms = &((uniforms_t *)[_dynamicConstantBuffer contents])[metal.getConstantDataBufferIndex()];
@@ -167,15 +175,23 @@ void VROLayer::render(const VRORenderContext &context, std::stack<matrix_float4x
     [renderEncoder setDepthStencilState:_depthState];
     [renderEncoder setRenderPipelineState:_pipelineState];
     [renderEncoder setVertexBuffer:_vertexBuffer offset:0 atIndex:0];
-    [renderEncoder setVertexBuffer:_dynamicConstantBuffer offset:(sizeof(uniforms_t) * metal.getConstantDataBufferIndex()) atIndex:1 ];
-    [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:kCornersInLayer];
+    [renderEncoder setVertexBuffer:_dynamicConstantBuffer
+                            offset:(sizeof(uniforms_t) * metal.getConstantDataBufferIndex())
+                           atIndex:1 ];
+    [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0
+                      vertexCount:kCornersInLayer];
     
     [renderEncoder popDebugGroup];
     
     /*
-     Now render the children.
+     Now render the children. The children are all transformed to the parent's origin (its top
+     left corner).
      */
-    mvStack.push(mv);
+    matrix_float4x4 parentOrigin = matrix_from_translation(_frame.origin.x,
+                                                           _frame.origin.y + _frame.size.height,
+                                                           pt.z);
+    mvStack.push(matrix_multiply(mvParent, parentOrigin));
+    
     for (std::shared_ptr<VROLayer> childLayer : _sublayers) {
         childLayer->render(context, mvStack);
     }
@@ -217,13 +233,15 @@ VRORect VROLayer::getBounds() const {
 
 VROPoint VROLayer::getPosition() const {
     return {_frame.origin.x + _frame.size.width  / 2.0f,
-            _frame.origin.y + _frame.size.height / 2.0f };
+            _frame.origin.y + _frame.size.height / 2.0f,
+            _frame.origin.z };
 }
 
 #pragma mark - Layer Tree
 
 void VROLayer::addSublayer(std::shared_ptr<VROLayer> &layer) {
     _sublayers.push_back(layer);
+    layer->_superlayer = shared_from_this();
 }
 
 void VROLayer::removeFromSuperlayer() {
@@ -233,4 +251,5 @@ void VROLayer::removeFromSuperlayer() {
                                          [this](std::shared_ptr<VROLayer> layer) {
                                              return layer.get() == this;
                                          }), parentSublayers.end());
+    _superlayer.reset();
 }

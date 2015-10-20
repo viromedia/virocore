@@ -30,5 +30,6 @@ public:
 };
 
 VRORect VRORectMake(float x, float y, float width, float height);
+VRORect VRORectMake(float x, float y, float z, float width, float height);
 
 #endif /* VRORect_h */

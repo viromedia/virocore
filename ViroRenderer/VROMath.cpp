@@ -8,9 +8,19 @@
 
 #include "VROMath.h"
 
+matrix_float4x4 matrix_from_scale(float sx, float sy, float sz) {
+    matrix_float4x4 m = matrix_identity_float4x4;
+    m.columns[0][0] = sx;
+    m.columns[1][1] = sy;
+    m.columns[2][2] = sz;
+    
+    return m;
+}
+
 matrix_float4x4 matrix_from_translation(float x, float y, float z) {
     matrix_float4x4 m = matrix_identity_float4x4;
     m.columns[3] = (vector_float4) { x, y, z, 1.0 };
+    
     return m;
 }
 

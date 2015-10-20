@@ -13,14 +13,18 @@ class VROPoint {
     
 public:
     
-    float x, y;
+    float x, y, z;
     
     VROPoint() :
-        x(0), y(0)
+        x(0), y(0), z(0)
     {}
     
     VROPoint(float x, float y) :
-        x(x), y(y)
+        x(x), y(y), z(0)
+    {}
+    
+    VROPoint(float x, float y, float z) :
+        x(x), y(y), z(z)
     {}
     
 };

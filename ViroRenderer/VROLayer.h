@@ -20,7 +20,7 @@
 #include <stack>
 #include <memory>
 
-class VROLayer {
+class VROLayer : public std::enable_shared_from_this<VROLayer> {
     
 public:
     
