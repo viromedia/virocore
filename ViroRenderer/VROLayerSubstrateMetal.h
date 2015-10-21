@@ -26,14 +26,18 @@ public:
     void render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack);
     matrix_float4x4 getChildTransform();
     
+    void setContents(const void *data, const size_t dataLength);
+    
 private:
+    
+    id <MTLDevice> _device;
     
     id <MTLRenderPipelineState> _pipelineState;
     id <MTLDepthStencilState> _depthState;
     
     id <MTLBuffer> _vertexBuffer;
     id <MTLBuffer> _uniformsBuffer;
-    id <MTLBuffer> _textureBuffer;
+    id <MTLTexture> _texture;
     
 };
 

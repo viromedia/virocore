@@ -12,18 +12,31 @@
 #include "VRORect.h"
 #include "VROMath.h"
 
+void VROLayerSubstrateMetal::setContents(const void *data, const size_t dataLength) {
+    int width = 1024;
+    int height = 1024;
+    int bytesPerPixel = 4;
+
+    MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm
+                                                                                          width:width height:height mipmapped:NO];
+    _texture = [_device newTextureWithDescriptor:descriptor];
+    
+    MTLRegion region = MTLRegionMake2D(0, 0, width, height);
+    [_texture replaceRegion:region mipmapLevel:0 withBytes:data bytesPerRow:bytesPerPixel * width];
+}
+
 void VROLayerSubstrateMetal::hydrate(const VRORenderContext &context) {
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
     
-    id <MTLDevice> device = metal.getDevice();
+    _device = metal.getDevice();
     
-    _vertexBuffer = [device newBufferWithLength:sizeof(VROLayerVertexLayout) * kCornersInLayer options:0];
+    _vertexBuffer = [_device newBufferWithLength:sizeof(VROLayerVertexLayout) * kCornersInLayer options:0];
     _vertexBuffer.label = @"VROLayerVertexBuffer";
     
     VROLayerVertexLayout *vertexLayout = (VROLayerVertexLayout *)[_vertexBuffer contents];
     buildQuad(vertexLayout);
     
-    _uniformsBuffer = [device newBufferWithLength:sizeof(uniforms_t) options:0];
+    _uniformsBuffer = [_device newBufferWithLength:sizeof(uniforms_t) options:0];
     _uniformsBuffer.label = @"VROLayerUniformBuffer";
     
     id <MTLFunction> fragmentProgram = [metal.getLibrary() newFunctionWithName:@"lighting_fragment"];
@@ -111,6 +124,10 @@ void VROLayerSubstrateMetal::render(const VRORenderContext &context, std::stack<
     [renderEncoder setRenderPipelineState:_pipelineState];
     [renderEncoder setVertexBuffer:_vertexBuffer offset:0 atIndex:0];
     [renderEncoder setVertexBuffer:_uniformsBuffer offset:0 atIndex:1];
+    
+    //if (_texture) {
+        [renderEncoder setFragmentTexture:_texture atIndex:0];
+    //}
     [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:kCornersInLayer];
     
     [renderEncoder popDebugGroup];

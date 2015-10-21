@@ -13,6 +13,7 @@
 #import "VROScene.h"
 #import "VROLayer.h"
 #import "VROMath.h"
+#import "VROImageUtil.h"
 
 @implementation GameViewController
 {
@@ -52,19 +53,29 @@
     _scene = new VROScene();
     
     std::shared_ptr<VROLayer> layerA = std::make_shared<VROLayer>();
-    layerA->setFrame(VRORectMake(0, 0, 10, 2.0, 2.0));
+    layerA->setFrame(VRORectMake(-1.0, 0, 2, 2.0, 2.0));
     layerA->setBackgroundColor({ 1.0, 0.0, 0.0, 1.0 });
     layerA->hydrate(*_renderContext);
+    
+    size_t dataLength;
+    int width, height;
+    void *data = VROImageLoadTextureDataRGBA8888("boba", &dataLength, &width, &height);
+    
+    layerA->setContents(data, dataLength);
     
     std::shared_ptr<VROLayer> layerB = std::make_shared<VROLayer>();
     layerB->setFrame(VRORectMake(1.0, 1.0, 1.0, 1.0));
     layerB->setBackgroundColor({ 0.0, 0.0, 1.0, 1.0 });
     layerB->hydrate(*_renderContext);
     
+    layerB->setContents(data, dataLength);
+
     std::shared_ptr<VROLayer> layerC = std::make_shared<VROLayer>();
     layerC->setFrame(VRORectMake(0.0, 0.0, 0.5, 0.5));
     layerC->setBackgroundColor({ 0.0, 1.0, 0.0, 1.0 });
     layerC->hydrate(*_renderContext);
+    
+    layerC->setContents(data, dataLength);
     
     _scene->addLayer(layerA);
     layerA->addSublayer(layerB);

@@ -19,6 +19,10 @@ VROPresentationLayer::~VROPresentationLayer() {
     delete (_substrate);
 }
 
+void VROPresentationLayer::setContents(const void *data, const size_t dataLength) {
+    _substrate->setContents(data, dataLength);
+}
+
 void VROPresentationLayer::hydrate(const VRORenderContext &context) {
     // TODO assert not hydrating twice!
     

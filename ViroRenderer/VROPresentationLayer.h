@@ -11,6 +11,7 @@
 
 #include "VROLayer.h"
 #include "VROLayerSubstrate.h"
+#include "VROByteBuffer.h"
 
 class VROPresentationLayer : public VROLayer {
     
@@ -22,6 +23,8 @@ public:
     void hydrate(const VRORenderContext &context);
     void render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack);
     
+    void setContents(const void *data, const size_t dataLength);
+
 private:
     
     /*
@@ -29,6 +32,12 @@ private:
      Responsible for rendering. Only the presentation layer has a substrate.
      */
     VROLayerSubstrate *_substrate;
+    
+    /*
+     The contents of this layer, represented as formatted image data in a 
+     byte buffer.
+     */
+    VROByteBuffer *_contents;
     
 };
 

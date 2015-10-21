@@ -17,6 +17,7 @@
 #include <vector>
 #include <stack>
 #include <memory>
+#include "VROByteBuffer.h"
 
 class VROLayer : public std::enable_shared_from_this<VROLayer> {
     
@@ -36,6 +37,8 @@ public:
     
     virtual void hydrate(const VRORenderContext &context);
     virtual void render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack);
+    
+    virtual void setContents(const void *data, const size_t dataLength);
     
     void setFrame(VRORect frame);
     void setBounds(VRORect bounds);

@@ -16,6 +16,10 @@ using namespace metal;
 constant float3 light_position = float3(0.0, 1.0, -1.0);
 constant float4 ambient_color  = float4(0.18, 0.24, 0.8, 1.0);
 
+constexpr sampler s(coord::normalized,
+                    address::repeat,
+                    filter::linear);
+
 typedef struct
 {
     float3 position [[attribute(0)]];
@@ -25,7 +29,8 @@ typedef struct
 
 typedef struct {
     float4 position [[position]];
-    half4  color;
+    float4  color;
+    float2 uv;
 } ColorInOut;
 
 // Vertex shader function
@@ -36,17 +41,19 @@ vertex ColorInOut lighting_vertex(vertex_t vertex_array [[stage_in]],
     
     float4 in_position = float4(vertex_array.position, 1.0);
     out.position = uniforms.modelview_projection_matrix * in_position;
+    out.uv = vertex_array.uv;
     
     float4 eye_normal = normalize(uniforms.normal_matrix * float4(vertex_array.normal, 0.0));
     float n_dot_l = dot(eye_normal.rgb, normalize(light_position));
     n_dot_l = fmax(0.0, n_dot_l);
     
-    out.color = half4(uniforms.diffuse_color);
+    out.color = uniforms.diffuse_color;
     return out;
 }
 
 // Fragment shader function
-fragment half4 lighting_fragment(ColorInOut in [[stage_in]])
+fragment float4 lighting_fragment(ColorInOut in [[stage_in]],
+                                 texture2d<float> diffuse_texture [[ texture(0)]])
 {
-    return in.color;
+    return in.color * diffuse_texture.sample(s, in.uv);
 }
