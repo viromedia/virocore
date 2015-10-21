@@ -110,9 +110,8 @@ void VROLayerSubstrateMetal::render(const VRORenderContext &context, std::stack<
     [renderEncoder setDepthStencilState:_depthState];
     [renderEncoder setRenderPipelineState:_pipelineState];
     [renderEncoder setVertexBuffer:_vertexBuffer offset:0 atIndex:0];
-    [renderEncoder setVertexBuffer:_uniformsBuffer offset:0 atIndex:1 ];
-    [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0
-                      vertexCount:kCornersInLayer];
+    [renderEncoder setVertexBuffer:_uniformsBuffer offset:0 atIndex:1];
+    [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:kCornersInLayer];
     
     [renderEncoder popDebugGroup];
 }
