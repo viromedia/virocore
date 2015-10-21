@@ -21,22 +21,6 @@ class VROByteBuffer final {
 public:
 
     /*
-     The current position (in bytes) in the data. Incremented as we read.
-     */
-    size_t pos;
-
-    /*
-     The total capacity of the buffer (in bytes).
-     */
-    size_t capacity;
-
-    /*
-     The current limit of the buffer. This is an arbitrary marker we can set to indicate
-     the end of relevant data.
-     */
-    size_t limit;
-
-    /*
      Writing constructor, creating a new byte array of the given length.
      */
     VROByteBuffer(size_t capacity);
@@ -46,7 +30,6 @@ public:
      to copy the bytes into this VROByteBuffer. If false, then the bytes will continue to be
      owned by the caller and will not be deleted when this VROByteBuffer is destroyed.
      */
-    VROByteBuffer(const void *bytes, size_t length);
     VROByteBuffer(const void *bytes, size_t length, bool copy = true);
 
     /*
@@ -111,12 +94,6 @@ public:
     char* pointer();
     char* pointerAtPosition(size_t position);
     void skip(size_t bytes);
-
-    /*
-     Get the number of remaining bytes before hitting the limit.
-     */
-    bool hasAvailable() const;
-    int  remaining() const;
 
     /*
      Create a byte-buffer from a subrange of this byte-buffer, using absolute position and length.
@@ -211,14 +188,24 @@ public:
 private:
     
     /*
+     The current position (in bytes) in the data. Incremented as we read.
+     */
+    size_t _pos;
+    
+    /*
+     The total capacity of the buffer (in bytes).
+     */
+    size_t _capacity;
+    
+    /*
      The inner buffer containing the data.
      */
-    char *buffer;
+    char *_buffer;
 
     /*
      True if the underlying bytes should be freed when this buffer is deallocated.
      */
-    bool freeOnDealloc;
+    bool _freeOnDealloc;
     
 };
 

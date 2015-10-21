@@ -21,32 +21,30 @@
 #endif
 
 // Turn on to add debug messaging (and exit) on overruns
-#define kBufferDebugOverruns 1
+#define k_bufferDebugOverruns 1
 // Also turn on to abort on overruns
-#define kBufferAbortOverruns 1
+#define k_bufferAbortOverruns 1
 
-VROByteBuffer::VROByteBuffer(size_t capacity) :
-    pos(0),
-    capacity(capacity),
-    limit(capacity),
-    buffer((char *) malloc(capacity)),
-    freeOnDealloc(true) {
+VROByteBuffer::VROByteBuffer(size_t _capacity) :
+    _pos(0),
+    _capacity(_capacity),
+    _buffer((char *) malloc(_capacity)),
+    _freeOnDealloc(true) {
 
 }
 
 VROByteBuffer::VROByteBuffer(const void *bytes, size_t length, bool copy) :
-    pos(0),
-    capacity(length),
-    limit(length),
-    buffer(nullptr),
-    freeOnDealloc(copy) {
+    _pos(0),
+    _capacity(length),
+    _buffer(nullptr),
+    _freeOnDealloc(copy) {
         
     if (copy) {
-        buffer = (char *) malloc(capacity);
-        memcpy(buffer, bytes, capacity);
+        _buffer = (char *) malloc(_capacity);
+        memcpy(_buffer, bytes, _capacity);
     }
     else {
-        buffer = (char *)bytes;
+        _buffer = (char *)bytes;
     }
 
     passert(length >= 0);
@@ -54,168 +52,164 @@ VROByteBuffer::VROByteBuffer(const void *bytes, size_t length, bool copy) :
 }
 
 VROByteBuffer::VROByteBuffer(const std::string &byteString) :
-    pos(0),
-    capacity(byteString.length()),
-    limit(byteString.length()),
-    buffer((char *) byteString.c_str()),
-    freeOnDealloc(false) {
+    _pos(0),
+    _capacity(byteString.length()),
+    _buffer((char *) byteString.c_str()),
+    _freeOnDealloc(false) {
 }
 
 VROByteBuffer::VROByteBuffer(VROByteBuffer *toCopy) :
-    pos(0),
-    capacity(toCopy->capacity),
-    limit(toCopy->capacity),
-    buffer((char *) malloc(toCopy->capacity)),
-    freeOnDealloc(true) {
+    _pos(0),
+    _capacity(toCopy->_capacity),
+    _buffer((char *) malloc(toCopy->_capacity)),
+    _freeOnDealloc(true) {
 
-    memcpy(this->buffer, toCopy->buffer, toCopy->capacity);
+    memcpy(this->_buffer, toCopy->_buffer, toCopy->_capacity);
 }
 
 VROByteBuffer::VROByteBuffer(VROByteBuffer&& moveFrom) :
-    pos(0),
-    capacity(moveFrom.capacity),
-    limit(moveFrom.capacity),
-    buffer(moveFrom.buffer),
-    freeOnDealloc(moveFrom.freeOnDealloc) {
+    _pos(0),
+    _capacity(moveFrom._capacity),
+    _buffer(moveFrom._buffer),
+    _freeOnDealloc(moveFrom._freeOnDealloc) {
 
-    moveFrom.capacity = 0;
-    moveFrom.buffer = nullptr;
-    moveFrom.freeOnDealloc = false;
+    moveFrom._capacity = 0;
+    moveFrom._buffer = nullptr;
+    moveFrom._freeOnDealloc = false;
 }
 
 VROByteBuffer&
 VROByteBuffer::operator=(VROByteBuffer&& moveFrom) {
-    pos = moveFrom.pos;
-    capacity = moveFrom.capacity;
-    limit = moveFrom.limit;
-    buffer = moveFrom.buffer;
-    freeOnDealloc = moveFrom.freeOnDealloc;
+    _pos = moveFrom._pos;
+    _capacity = moveFrom._capacity;
+    _buffer = moveFrom._buffer;
+    _freeOnDealloc = moveFrom._freeOnDealloc;
 
-    moveFrom.buffer = nullptr;
-    moveFrom.capacity = 0;
-    moveFrom.freeOnDealloc = false;
+    moveFrom._buffer = nullptr;
+    moveFrom._capacity = 0;
+    moveFrom._freeOnDealloc = false;
 
     return *this;
 }
 
 VROByteBuffer::~VROByteBuffer() {
-    if (freeOnDealloc) {
-        free(buffer);
+    if (_freeOnDealloc) {
+        free(_buffer);
     }
 }
 
-void VROByteBuffer::setPosition(size_t position) {
-    pos = position;
+void VROByteBuffer::setPosition(size_t _position) {
+    _pos = _position;
 
-    passert(pos <= capacity); // it's ok to skip to the EOBuffer; though you wouldn't be able to read here.
+    passert(_pos <= _capacity); // it's ok to skip to the EO_buffer; though you wouldn't be able to read here.
 }
 
 void VROByteBuffer::skip(size_t numBytes) {
-    passert(pos + numBytes <= capacity);
-    pos += numBytes;
+    passert(_pos + numBytes <= _capacity);
+    _pos += numBytes;
 }
 
 bool VROByteBuffer::readBool() {
-    passert(pos + 1 <= capacity);
+    passert(_pos + 1 <= _capacity);
 
     int byte = readByte();
     return byte == 1;
 }
 
 void VROByteBuffer::readStringNullTerm(char *result) {
-    char *current = buffer + pos;
+    char *current = _buffer + _pos;
     size_t len = strlen(current);
 
     strcpy(result, current);
-    pos += (len + 1);
+    _pos += (len + 1);
 }
 
 std::string VROByteBuffer::readStringNullTerm() {
-    char *current = buffer + pos;
+    char *current = _buffer + _pos;
     std::string str(current);
-    pos += (str.size() + 1);
+    _pos += (str.size() + 1);
 
     return str;
 }
 
 float VROByteBuffer::readFloat() {
-    passert(pos + 4 <= capacity);
+    passert(_pos + 4 <= _capacity);
 
     float value[1];
-    memcpy(value, buffer + pos, 4);
-    pos += 4;
+    memcpy(value, _buffer + _pos, 4);
+    _pos += 4;
 
     return *value;
 }
 
 double VROByteBuffer::readDouble() {
-    passert(pos + 8 <= capacity);
+    passert(_pos + 8 <= _capacity);
 
     double value[1];
-    memcpy(value, buffer + pos, 8);
-    pos += 8;
+    memcpy(value, _buffer + _pos, 8);
+    _pos += 8;
 
     return *value;
 }
 
 int VROByteBuffer::readInt() {
-    passert(pos + 4 <= capacity);
+    passert(_pos + 4 <= _capacity);
 
     int value;
-    memcpy(&value, buffer + pos, 4);
+    memcpy(&value, _buffer + _pos, 4);
 
-    pos += 4;
+    _pos += 4;
 
     return value;
 }
 
 short VROByteBuffer::readShort() {
-    passert(pos + 2 <= capacity);
+    passert(_pos + 2 <= _capacity);
 
     short value;
-    memcpy(&value, buffer + pos, 2);
+    memcpy(&value, _buffer + _pos, 2);
 
-    pos += 2;
+    _pos += 2;
 
     return value;
 }
 
 unsigned short VROByteBuffer::readUnsignedShort() {
-    passert(pos + 2 <= capacity);
+    passert(_pos + 2 <= _capacity);
 
     unsigned short value;
-    memcpy(&value, buffer + pos, 2);
+    memcpy(&value, _buffer + _pos, 2);
 
-    pos += 2;
+    _pos += 2;
 
     return value;
 }
 
 signed char VROByteBuffer::readByte() {
-    passert(pos + 1 <= capacity);
+    passert(_pos + 1 <= _capacity);
 
-    signed char c = buffer[pos];
-    ++pos;
+    signed char c = _buffer[_pos];
+    ++_pos;
 
     return c;
 }
 
 unsigned char VROByteBuffer::readUnsignedByte() {
-    passert(pos + 1 <= capacity);
+    passert(_pos + 1 <= _capacity);
 
-    unsigned char c = buffer[pos];
-    ++pos;
+    unsigned char c = _buffer[_pos];
+    ++_pos;
 
     return c;
 }
 
 uint64_t VROByteBuffer::readLong() {
     // TODO -- rename this function:  long in C++ is 4 bytes, not the 8 (which is long long) that this assumes.
-    passert(pos + 8 <= capacity);
+    passert(_pos + 8 <= _capacity);
 
     uint64_t value[1];
-    memcpy(value, buffer + pos, 8);
-    pos += 8;
+    memcpy(value, _buffer + _pos, 8);
+    _pos += 8;
 
     return *value;
 }
@@ -229,9 +223,9 @@ std::string VROByteBuffer::readSTLString() {
 
     std::string s(numChars, '\0');
     for (int i = 0; i < numChars; i++) {
-        s[i] = buffer[pos + i * 2];
+        s[i] = _buffer[_pos + i * 2];
     }
-    pos += numChars * 2;
+    _pos += numChars * 2;
     return s;
 }
 
@@ -242,13 +236,13 @@ std::string VROByteBuffer::readSTLStringUTF8() {
     }
 
     std::string s(pointer(), numBytes);
-    pos += numBytes;
+    _pos += numBytes;
     return s;
 }
 
 std::string VROByteBuffer::readSTLStringUTF8NullTerm() {
     std::string s(pointer());
-    pos += s.size() + 1;
+    _pos += s.size() + 1;
     return s;
 }
 
@@ -262,8 +256,8 @@ std::string VROByteBuffer::readSTLText() {
 
     char characters[numChars + 1];
     for (int i = 0; i < numChars; i++) {
-        characters[i] = (char) *(buffer + pos);
-        pos += 2;
+        characters[i] = (char) *(_buffer + _pos);
+        _pos += 2;
     }
     characters[numChars] = '\0';
 
@@ -282,150 +276,150 @@ std::string VROByteBuffer::readSTLTextUTF8() {
     char characters[numChars + 1];
     memcpy(characters, pointer(), numChars);
     characters[numChars] = '\0';
-    pos += numChars;
+    _pos += numChars;
 
     std::string s = std::string(characters);
     return s;
 }
 
 signed char VROByteBuffer::peekByte() {
-    return buffer[pos];
+    return _buffer[_pos];
 }
 
 int VROByteBuffer::peekInt() {
-    char *__p = buffer + pos;
+    char *__p = _buffer + _pos;
     return (__p[0] | __p[1] << 8 | __p[2] << 16 | __p[3] << 24);
 }
 
 char* VROByteBuffer::pointer() {
-    return buffer + pos;
+    return _buffer + _pos;
 }
 
-char* VROByteBuffer::pointerAtPosition(size_t position) {
-    return buffer + position;
+char* VROByteBuffer::pointerAtPosition(size_t _position) {
+    return _buffer + _position;
 }
 
 void VROByteBuffer::copyBytes(void *dest, int length) {
     passert(length >= 0);
-#if kBufferDebugOverruns
-    const size_t newPos = pos + length;
-    if (newPos > capacity) {
-        perr("Overrun! copyBytes newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + length;
+    if (newPos > _capacity) {
+        perr("Overrun! copyBytes newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(dest, buffer + pos, length);
-    pos += length;
+    memcpy(dest, _buffer + _pos, length);
+    _pos += length;
 }
 
 void VROByteBuffer::copyChars(char *dest, int length) {
     passert(length >= 0);
     length *= sizeof(char);
 
-#if kBufferDebugOverruns
-    const size_t newPos = pos + length;
-    if (newPos > capacity) {
-        perr("Overrun! copyChar newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + length;
+    if (newPos > _capacity) {
+        perr("Overrun! copyChar newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(dest, buffer + pos, length);
-    pos += length;
+    memcpy(dest, _buffer + _pos, length);
+    _pos += length;
 }
 
 void VROByteBuffer::copyFloats(float *dest, int length) {
     passert(length >= 0);
     length *= sizeof(float);
 
-#if kBufferDebugOverruns
-    const size_t newPos = pos + length;
-    if (newPos > capacity) {
-        perr("Overrun! copyFloats newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + length;
+    if (newPos > _capacity) {
+        perr("Overrun! copyFloats newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(dest, buffer + pos, length);
-    pos += length;
+    memcpy(dest, _buffer + _pos, length);
+    _pos += length;
 }
 
 void VROByteBuffer::copyLongs(uint64_t *dest, int length) {
     passert(length >= 0);
     length *= sizeof(uint64_t);
 
-#if kBufferDebugOverruns
-    const size_t newPos = pos + length;
-    if (newPos > capacity) {
-        perr("Overrun! copyLongs newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + length;
+    if (newPos > _capacity) {
+        perr("Overrun! copyLongs newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(dest, buffer + pos, length);
-    pos += length;
+    memcpy(dest, _buffer + _pos, length);
+    _pos += length;
 }
 
 void VROByteBuffer::copyShorts(short *dest, int length) {
     passert(length >= 0);
     length *= sizeof(short);
 
-#if kBufferDebugOverruns
-    const size_t newPos = pos + length;
-    if (newPos > capacity) {
-        perr("Overrun! copyShorts newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + length;
+    if (newPos > _capacity) {
+        perr("Overrun! copyShorts newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(dest, buffer + pos, length);
-    pos += length;
+    memcpy(dest, _buffer + _pos, length);
+    _pos += length;
 }
 
 void VROByteBuffer::copyInts(int *dest, int length) {
     passert(length >= 0);
     length *= sizeof(int);
 
-#if kBufferDebugOverruns
-    const size_t newPos = pos + length;
-    if (newPos > capacity) {
-        perr("Overrun! copyInts newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + length;
+    if (newPos > _capacity) {
+        perr("Overrun! copyInts newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(dest, buffer + pos, length);
-    pos += length;
+    memcpy(dest, _buffer + _pos, length);
+    _pos += length;
 }
 
 signed char *VROByteBuffer::readNumChars(int numChars) {
     passert(numChars >= 0);
-    signed char *dest = (signed char *) (buffer + pos);
-    pos += (numChars * sizeof(signed char));
+    signed char *dest = (signed char *) (_buffer + _pos);
+    _pos += (numChars * sizeof(signed char));
 
-#if kBufferDebugOverruns
-    if (pos > capacity) {
-        perr("Overflow! readNumChars() pos=%zu capacity=%zu", pos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    if (_pos > _capacity) {
+        perr("Overflow! readNumChars() _pos=%zu _capacity=%zu", _pos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
     }
@@ -436,13 +430,13 @@ signed char *VROByteBuffer::readNumChars(int numChars) {
 
 short* VROByteBuffer::readNumShorts(int numShorts) {
     passert(numShorts >= 0);
-    short *dest = (short*) (buffer + pos);
-    pos += (numShorts * sizeof(short));
+    short *dest = (short*) (_buffer + _pos);
+    _pos += (numShorts * sizeof(short));
 
-#if kBufferDebugOverruns
-    if (pos > capacity) {
-        perr("Overflow! readNumShorts() pos=%zu capacity=%zu", pos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    if (_pos > _capacity) {
+        perr("Overflow! readNumShorts() _pos=%zu _capacity=%zu", _pos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
     }
@@ -454,148 +448,146 @@ short* VROByteBuffer::readNumShorts(int numShorts) {
 void VROByteBuffer::grow(size_t additionalBytesRequired) {
     passert(additionalBytesRequired >= 0);
 
-    size_t requiredCapacity = pos + additionalBytesRequired;
-    if (requiredCapacity <= capacity) {
+    size_t required_capacity = _pos + additionalBytesRequired;
+    if (required_capacity <= _capacity) {
         return;
     }
 
-    size_t oldCapacity = capacity;
-    size_t bytesToAdd = std::max(oldCapacity / 2, requiredCapacity - capacity);
+    size_t old_capacity = _capacity;
+    size_t bytesToAdd = std::max(old_capacity / 2, required_capacity - _capacity);
 
-    buffer = (char *) realloc(buffer, oldCapacity + bytesToAdd);
-    passert(buffer != nullptr);
+    _buffer = (char *) realloc(_buffer, old_capacity + bytesToAdd);
+    passert(_buffer != nullptr);
 
-    if (!freeOnDealloc) {
-        perr("Cannot expand a byte-buffer that does not own its underlying data!");
-#if kBufferAbortOverruns
+    if (!_freeOnDealloc) {
+        perr("Cannot expand a byte-_buffer that does not own its underlying data!");
+#if k_bufferAbortOverruns
         pabort();
 #endif
     }
 
-    capacity += bytesToAdd;
-    limit = capacity;
+    _capacity += bytesToAdd;
 }
 
 void VROByteBuffer::shrink(size_t size) {
     passert(size >= 0);
-    if (capacity <= size) {
+    if (_capacity <= size) {
         return;
     }
 
-    size_t __attribute__((__unused__)) bytesSubtracted = capacity - size;
-    buffer = (char *) realloc(buffer, size);
-    passert (buffer != nullptr);
+    size_t __attribute__((__unused__)) bytesSubtracted = _capacity - size;
+    _buffer = (char *) realloc(_buffer, size);
+    passert (_buffer != nullptr);
 
-    capacity = size;
-    limit = size;
-    pos = 0;
+    _capacity = size;
+    _pos = 0;
 }
 
 void VROByteBuffer::writeBytes(const void *bytes, size_t length) {
     passert(length >= 0);
-#if kBufferDebugOverruns
-    const size_t newPos = pos + length;
-    if (newPos > capacity) {
-        perr("Overrun! writeBytes newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + length;
+    if (newPos > _capacity) {
+        perr("Overrun! writeBytes newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(buffer + pos, bytes, length);
-    pos += length;
+    memcpy(_buffer + _pos, bytes, length);
+    _pos += length;
 }
 
 void VROByteBuffer::writeBuffer(VROByteBuffer *src, size_t length) {
     passert(length >= 0);
-#if kBufferDebugOverruns
-    const size_t newPos = pos + length;
-    if (newPos > capacity) {
-        perr("Overrun! writeBuffer newPos=%zu > capacity=%zu",
-                newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + length;
+    if (newPos > _capacity) {
+        perr("Overrun! write_buffer newPos=%zu > _capacity=%zu",
+                newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 
-    const size_t srcNewPos = src->pos + length;
-    if (srcNewPos > src->capacity) {
-        perr("Source overrun! writeBuffer() srcNewPos=%zu > src->capacity=%zu", srcNewPos, src->capacity);
-#if kBufferAbortOverruns
+    const size_t srcNewPos = src->_pos + length;
+    if (srcNewPos > src->_capacity) {
+        perr("Source overrun! write_buffer() srcNewPos=%zu > src->_capacity=%zu", srcNewPos, src->_capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(buffer + pos, src->buffer + src->pos, length);
-    pos += length;
-    src->pos += length;
+    memcpy(_buffer + _pos, src->_buffer + src->_pos, length);
+    _pos += length;
+    src->_pos += length;
 }
 
 void VROByteBuffer::writeChars(const char *value) {
     int length = (int) strlen(value);
 
-#if kBufferDebugOverruns
-    const size_t newPos = pos + length;
-    if (newPos > capacity) {
-        perr("Overrun! writeChars newPos=%zu > capacity=%zu",
-                newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + length;
+    if (newPos > _capacity) {
+        perr("Overrun! writeChars newPos=%zu > _capacity=%zu",
+                newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(buffer + pos, value, length);
-    pos += length;
+    memcpy(_buffer + _pos, value, length);
+    _pos += length;
 }
 
 void VROByteBuffer::fill(unsigned char value, size_t numBytes) {
-#if kBufferDebugOverruns
-    if (pos > capacity) {
+#if k_bufferDebugOverruns
+    if (_pos > _capacity) {
         perr("Overrun! fill [value %d, bytes %zu]!", value, numBytes);
-#if kBufferAbortOverruns
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memset(buffer + pos, value, numBytes);
-    pos += numBytes;
+    memset(_buffer + _pos, value, numBytes);
+    _pos += numBytes;
 }
 
 void VROByteBuffer::writeStringNullTerm(const char *value) {
     int length = (int) strlen(value);
 
-#if kBufferDebugOverruns
-    const size_t newPos = pos + length + 1;
-    if (newPos > capacity) {
-        perr("Overrun! writeStringNullTerm newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + length + 1;
+    if (newPos > _capacity) {
+        perr("Overrun! writeStringNullTerm newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    strcpy(buffer + pos, value);
+    strcpy(_buffer + _pos, value);
 
-    pos += (length + 1);
+    _pos += (length + 1);
 }
 
 void VROByteBuffer::rewind() {
-    pos = 0;
+    _pos = 0;
 }
 
 void VROByteBuffer::clear() {
-    memset(buffer, 0x0, capacity);
-    pos = 0;
+    memset(_buffer, 0x0, _capacity);
+    _pos = 0;
 }
 
 void VROByteBuffer::writeBool(bool value) {
@@ -603,75 +595,75 @@ void VROByteBuffer::writeBool(bool value) {
 }
 
 void VROByteBuffer::writeByte(char value) {
-#if kBufferDebugOverruns
-    const size_t newPos = pos + 1;
-    if (newPos > capacity) {
-        perr("Overrun! writeByte newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + 1;
+    if (newPos > _capacity) {
+        perr("Overrun! writeByte newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    buffer[pos] = value;
-    pos++;
+    _buffer[_pos] = value;
+    _pos++;
 }
 
 void VROByteBuffer::writeShort(short value) {
-#if kBufferDebugOverruns
-    const size_t newPos = pos + 2;
-    if (newPos > capacity) {
-        perr("Overrun! writeShort newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + 2;
+    if (newPos > _capacity) {
+        perr("Overrun! writeShort newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(buffer + pos, &value, 2);
-    pos += 2;
+    memcpy(_buffer + _pos, &value, 2);
+    _pos += 2;
 }
 
 void VROByteBuffer::writeInt(int value) {
-#if kBufferDebugOverruns
-    const size_t newPos = pos + 4;
-    if (newPos > capacity) {
-        perr("Overrun! writeInt newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + 4;
+    if (newPos > _capacity) {
+        perr("Overrun! writeInt newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(buffer + pos, &value, 4);
-    pos += 4;
+    memcpy(_buffer + _pos, &value, 4);
+    _pos += 4;
 }
 
 void VROByteBuffer::writeFloat(float value) {
-#if kBufferDebugOverruns
-    const size_t newPos = pos + 4;
-    if (newPos > capacity) {
-        perr("Overrun! writeFloat newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + 4;
+    if (newPos > _capacity) {
+        perr("Overrun! writeFloat newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(buffer + pos, &value, 4);
-    pos += 4;
+    memcpy(_buffer + _pos, &value, 4);
+    _pos += 4;
 }
 
 void VROByteBuffer::writeFloats(float *pValues, const int numFloats) {
-#if kBufferDebugOverruns
-    const size_t newPos = pos + 4 * numFloats;
-    if (newPos > capacity) {
-        perr("Overrun! writeFloat newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + 4 * numFloats;
+    if (newPos > _capacity) {
+        perr("Overrun! writeFloat newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
@@ -679,117 +671,104 @@ void VROByteBuffer::writeFloats(float *pValues, const int numFloats) {
 #endif
 
     passert(pValues != nullptr);
-    memcpy(buffer + pos, pValues, 4 * numFloats);
-    pos += 4 * numFloats;
+    memcpy(_buffer + _pos, pValues, 4 * numFloats);
+    _pos += 4 * numFloats;
 }
 
 void VROByteBuffer::writeDouble(double value) {
-#if kBufferDebugOverruns
-    const size_t newPos = pos + 8;
-    if (newPos > capacity) {
-        perr("Overrun! writeDouble newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + 8;
+    if (newPos > _capacity) {
+        perr("Overrun! writeDouble newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(buffer + pos, (unsigned char *) &value, 8);
-    pos += 8;
+    memcpy(_buffer + _pos, (unsigned char *) &value, 8);
+    _pos += 8;
 }
 
 void VROByteBuffer::writeLong(uint64_t value) {
-#if kBufferDebugOverruns
-    const size_t newPos = pos + 8;
-    if (newPos > capacity) {
-        perr("Overrun! writeLong newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + 8;
+    if (newPos > _capacity) {
+        perr("Overrun! writeLong newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(buffer + pos, &value, 8);
-    pos += 8;
-}
-
-void VROByteBuffer::flip() {
-    limit = pos;
-    pos = 0;
-}
-
-int VROByteBuffer::remaining() const {
-    return (int) (limit - pos);
-}
-
-bool VROByteBuffer::hasAvailable() const {
-    return pos < limit;
+    memcpy(_buffer + _pos, &value, 8);
+    _pos += 8;
 }
 
 void *VROByteBuffer::readPointer() {
-    passert(pos + (int) sizeof(void *) <= capacity);
+    passert(_pos + (int) sizeof(void *) <= _capacity);
 
     size_t value;
-    memcpy(&value, buffer + pos, sizeof(void *));
+    memcpy(&value, _buffer + _pos, sizeof(void *));
 
-    pos += sizeof(void *);
+    _pos += sizeof(void *);
 
     return (void *) value;
 }
 
 void VROByteBuffer::writePointer(void *pointer) {
-#if kBufferDebugOverruns
-    const size_t newPos = pos + sizeof(void *);
-    if (newPos > capacity) {
-        perr("Overrun! writePointer newPos=%zu > capacity=%zu", newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + sizeof(void *);
+    if (newPos > _capacity) {
+        perr("Overrun! writePointer newPos=%zu > _capacity=%zu", newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(buffer + pos, &pointer, sizeof(pointer));
-    pos += sizeof(void *);
+    memcpy(_buffer + _pos, &pointer, sizeof(pointer));
+    _pos += sizeof(void *);
 }
 
 void VROByteBuffer::writeToBuffer(VROByteBuffer *dest, size_t length) {
     writeToBufferAndRewind(dest, length);
-    pos += length;
+    _pos += length;
 }
 
 void VROByteBuffer::writeToBufferAndRewind(VROByteBuffer *dest, size_t length) const {
     passert(length >= 0);
-#if kBufferDebugOverruns
-    const size_t newPos = pos + length;
-    if (newPos > capacity) {
-        perr("Overrun! writeToBuffer newPos=%zu > capacity=%zu",
-                newPos, capacity);
-#if kBufferAbortOverruns
+#if k_bufferDebugOverruns
+    const size_t newPos = _pos + length;
+    if (newPos > _capacity) {
+        perr("Overrun! writeTo_buffer newPos=%zu > _capacity=%zu",
+                newPos, _capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 
-    const size_t destNewPos = dest->pos + length;
-    if (destNewPos > dest->capacity) {
-        perr("Overrun! writeToBuffer() destNewPos=%zu > dest->capacity=%zu", destNewPos, dest->capacity);
-#if kBufferAbortOverruns
+    const size_t destNewPos = dest->_pos + length;
+    if (destNewPos > dest->_capacity) {
+        perr("Overrun! writeTo_buffer() destNewPos=%zu > dest->_capacity=%zu", destNewPos, dest->_capacity);
+#if k_bufferAbortOverruns
         pabort();
 #endif
         return;
     }
 #endif
 
-    memcpy(dest->buffer + dest->pos, buffer + pos, length);
-    dest->pos += length;
+    memcpy(dest->_buffer + dest->_pos, _buffer + _pos, length);
+    dest->_pos += length;
 }
 
 void VROByteBuffer::writeToFile(const char *path) {
     FILE *fd = fopen(path, "wb");
-    fwrite(buffer, 1, capacity, fd);
+    fwrite(_buffer, 1, _capacity, fd);
     fclose(fd);
 }
 
@@ -800,10 +779,10 @@ VROByteBuffer::writeToFile(const std::string &path) {
 
 void VROByteBuffer::writeToFile(const char *path, size_t offset, size_t length) {
     passert(length >= 0);
-    passert_msg(buffer != nullptr, "buffer is null");
+    passert_msg(_buffer != nullptr, "_buffer is null");
     FILE *fd = fopen(path, "wb");
     passert_msg(fd != nullptr, "fd is null, path is %s", path);
-    fwrite(buffer + offset, 1, length, fd);
+    fwrite(_buffer + offset, 1, length, fd);
     fclose(fd);
 }
 
@@ -814,7 +793,7 @@ void VROByteBuffer::writeToFile(const std::string &path, size_t offset, size_t l
 VROByteBuffer *VROByteBuffer::split(size_t offset, size_t length) {
     passert(length >= 0);
     char *copy = (char *) malloc(length);
-    memcpy(copy, buffer + offset, length);
+    memcpy(copy, _buffer + offset, length);
 
     return new VROByteBuffer(copy, length, true);
 }
