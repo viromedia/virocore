@@ -26,6 +26,7 @@
 		8F5C413E1BD56F98006D7A77 /* VROScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C413C1BD56F98006D7A77 /* VROScene.cpp */; settings = {ASSET_TAGS = (); }; };
 		8F5C41411BD72707006D7A77 /* VROLayerSubstrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C413F1BD72707006D7A77 /* VROLayerSubstrate.cpp */; settings = {ASSET_TAGS = (); }; };
 		8F5C41441BD7277F006D7A77 /* VROLayerSubstrateMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C41421BD7277F006D7A77 /* VROLayerSubstrateMetal.cpp */; settings = {ASSET_TAGS = (); }; };
+		8F5C41471BD800F8006D7A77 /* VROPresentationLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C41451BD800F8006D7A77 /* VROPresentationLayer.cpp */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,6 +84,8 @@
 		8F5C41401BD72707006D7A77 /* VROLayerSubstrate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLayerSubstrate.h; sourceTree = "<group>"; };
 		8F5C41421BD7277F006D7A77 /* VROLayerSubstrateMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLayerSubstrateMetal.cpp; sourceTree = "<group>"; };
 		8F5C41431BD7277F006D7A77 /* VROLayerSubstrateMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLayerSubstrateMetal.h; sourceTree = "<group>"; };
+		8F5C41451BD800F8006D7A77 /* VROPresentationLayer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPresentationLayer.cpp; sourceTree = "<group>"; };
+		8F5C41461BD800F8006D7A77 /* VROPresentationLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPresentationLayer.h; sourceTree = "<group>"; };
 		8F7A9EA91BD0517A006CFAFD /* VRORect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORect.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -189,6 +192,8 @@
 			children = (
 				8F517BF11BCDBA8C0017C70B /* VROLayer.h */,
 				8F517BF01BCDBA8C0017C70B /* VROLayer.cpp */,
+				8F5C41461BD800F8006D7A77 /* VROPresentationLayer.h */,
+				8F5C41451BD800F8006D7A77 /* VROPresentationLayer.cpp */,
 				8F517BF91BCDC8C20017C70B /* VRORenderContext.h */,
 				8F517BFC1BCDC9170017C70B /* VRORenderContextMetal.h */,
 				8F517BFB1BCDC9170017C70B /* VRORenderContextMetal.cpp */,
@@ -353,6 +358,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F517BFD1BCDC9170017C70B /* VRORenderContextMetal.cpp in Sources */,
+				8F5C41471BD800F8006D7A77 /* VROPresentationLayer.cpp in Sources */,
 				8F5C413B1BD05AD1006D7A77 /* VRORect.cpp in Sources */,
 				8F5C413E1BD56F98006D7A77 /* VROScene.cpp in Sources */,
 				8F517BC31BCDA2BD0017C70B /* Shaders.metal in Sources */,

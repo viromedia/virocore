@@ -1,0 +1,35 @@
+//
+//  VROPresentationLayer.h
+//  ViroRenderer
+//
+//  Created by Raj Advani on 10/21/15.
+//  Copyright © 2015 Viro Media. All rights reserved.
+//
+
+#ifndef VROPresentationLayer_h
+#define VROPresentationLayer_h
+
+#include "VROLayer.h"
+#include "VROLayerSubstrate.h"
+
+class VROPresentationLayer : public VROLayer {
+    
+public:
+    
+    VROPresentationLayer(const VROLayer *layer);
+    virtual ~VROPresentationLayer();
+    
+    void hydrate(const VRORenderContext &context);
+    void render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack);
+    
+private:
+    
+    /*
+     The representation of this layer in the underlying graphics technology.
+     Responsible for rendering. Only the presentation layer has a substrate.
+     */
+    VROLayerSubstrate *_substrate;
+    
+};
+
+#endif /* VROPresentationLayer_h */

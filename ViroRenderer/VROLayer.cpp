@@ -7,63 +7,31 @@
 //
 
 #include "VROLayer.h"
+#include "VROPresentationLayer.h"
 #include "VROMath.h"
-
-#include "VROLayerSubstrateMetal.h"
 
 #pragma mark - Initialization
 
-VROLayer::VROLayer() :
-    _presentationLayer(std::make_shared<VROLayer>(true)),
-    _substrate(nullptr) {
-        
+VROLayer::VROLayer() {
+    _presentationLayer = std::make_shared<VROPresentationLayer>(this);
 }
 
-VROLayer::VROLayer(bool presentation) :
-    _presentationLayer(),
-    _substrate(nullptr) {
-        
-    if (!presentation) {
-        _presentationLayer = std::make_shared<VROLayer>(true);
-    }
+VROLayer::VROLayer(VROLayer *layer) {
+    
 }
 
 VROLayer::~VROLayer() {
-    delete (_substrate);
+
 }
 
 #pragma mark - Rendering
 
 void VROLayer::hydrate(const VRORenderContext &context) {
-    if (_presentationLayer) {
-        _presentationLayer->hydrate(context);
-    }
-    else {
-        // TODO assert not hydrating twice!
-        
-        _substrate = new VROLayerSubstrateMetal(shared_from_this());
-        _substrate->hydrate(context);
-    }
+    _presentationLayer->hydrate(context);
 }
 
 void VROLayer::render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack) {
-    if (_presentationLayer) {
-        _presentationLayer->render(context, mvStack);
-    }
-    else {
-        _substrate->render(context, mvStack);
-        
-        /*
-         Now render the children. The children are all transformed to the parent's origin (its top
-         left corner).
-         */
-        mvStack.push(matrix_multiply(mvStack.top(), _substrate->getChildTransform()));
-        
-        for (std::shared_ptr<VROLayer> childLayer : _sublayers) {
-            childLayer->render(context, mvStack);
-        }
-        mvStack.pop();
-    }
+    _presentationLayer->render(context, mvStack);
 }
 
 #pragma mark - Layer Properties
