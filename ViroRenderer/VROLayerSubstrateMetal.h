@@ -32,7 +32,8 @@ private:
     id <MTLDepthStencilState> _depthState;
     
     id <MTLBuffer> _vertexBuffer;
-    id <MTLBuffer> _dynamicConstantBuffer;
+    id <MTLBuffer> _uniformsBuffer;
+    id <MTLBuffer> _textureBuffer;
     
 };
 

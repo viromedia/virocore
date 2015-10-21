@@ -14,9 +14,6 @@
 #import "VROLayer.h"
 #import "VROMath.h"
 
-// The max number of command buffers in flight
-static const NSUInteger kMaxInflightBuffers = 3;
-
 @implementation GameViewController
 {
     // view
@@ -26,14 +23,11 @@ static const NSUInteger kMaxInflightBuffers = 3;
     VROScene *_scene;
     
     dispatch_semaphore_t _inflight_semaphore;
-    uint8_t _constantDataBufferIndex;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    _constantDataBufferIndex = 0;
     _inflight_semaphore = dispatch_semaphore_create(3);
     
     [self _setupMetal];
@@ -103,7 +97,6 @@ static const NSUInteger kMaxInflightBuffers = 3;
     _renderContext->setRenderPass(renderPassDescriptor);
     _renderContext->setCommandBuffer(commandBuffer);
     _renderContext->setRenderEncoder(renderEncoder);
-    _renderContext->setConstantDataBufferIndex(_constantDataBufferIndex);
 
     if(renderPassDescriptor != nil) // If we have a valid drawable, begin the commands to render into it
     {
@@ -112,9 +105,6 @@ static const NSUInteger kMaxInflightBuffers = 3;
         [renderEncoder endEncoding];
         [commandBuffer presentDrawable:_view.currentDrawable];
     }
-
-    // The render assumes it can now increment the buffer index and that the previous index won't be touched until we cycle back around to the same index
-    _constantDataBufferIndex = (_constantDataBufferIndex + 1) % kMaxInflightBuffers;
 
     // Finalize rendering here & push the command buffer to the GPU
     [commandBuffer commit];

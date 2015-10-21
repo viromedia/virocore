@@ -12,8 +12,6 @@
 #include "VRORect.h"
 #include "VROMath.h"
 
-static const size_t kMaxBytesPerFrame = 1024*1024;
-
 void VROLayerSubstrateMetal::hydrate(const VRORenderContext &context) {
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
     
@@ -25,8 +23,8 @@ void VROLayerSubstrateMetal::hydrate(const VRORenderContext &context) {
     VROLayerVertexLayout *vertexLayout = (VROLayerVertexLayout *)[_vertexBuffer contents];
     buildQuad(vertexLayout);
     
-    _dynamicConstantBuffer = [device newBufferWithLength:kMaxBytesPerFrame options:0];
-    _dynamicConstantBuffer.label = @"VROLayerUniformBuffer";
+    _uniformsBuffer = [device newBufferWithLength:sizeof(uniforms_t) options:0];
+    _uniformsBuffer.label = @"VROLayerUniformBuffer";
     
     id <MTLFunction> fragmentProgram = [metal.getLibrary() newFunctionWithName:@"lighting_fragment"];
     id <MTLFunction> vertexProgram   = [metal.getLibrary() newFunctionWithName:@"lighting_vertex"];
@@ -97,7 +95,7 @@ void VROLayerSubstrateMetal::render(const VRORenderContext &context, std::stack<
     matrix_float4x4 mv = matrix_multiply(mvParent, modelMtx);
     
     // Load constant buffer data into appropriate buffer at current index
-    uniforms_t *uniforms = &((uniforms_t *)[_dynamicConstantBuffer contents])[metal.getConstantDataBufferIndex()];
+    uniforms_t *uniforms = (uniforms_t *)[_uniformsBuffer contents];
     uniforms->normal_matrix = matrix_invert(matrix_transpose(mv));
     uniforms->modelview_projection_matrix = matrix_multiply(metal.getProjectionMatrix(), mv);
     uniforms->diffuse_color = layer->getBackgroundColor();
@@ -112,9 +110,7 @@ void VROLayerSubstrateMetal::render(const VRORenderContext &context, std::stack<
     [renderEncoder setDepthStencilState:_depthState];
     [renderEncoder setRenderPipelineState:_pipelineState];
     [renderEncoder setVertexBuffer:_vertexBuffer offset:0 atIndex:0];
-    [renderEncoder setVertexBuffer:_dynamicConstantBuffer
-                            offset:(sizeof(uniforms_t) * metal.getConstantDataBufferIndex())
-                           atIndex:1 ];
+    [renderEncoder setVertexBuffer:_uniformsBuffer offset:0 atIndex:1 ];
     [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0
                       vertexCount:kCornersInLayer];
     

@@ -48,9 +48,6 @@ public:
     void setViewMatrix(matrix_float4x4 viewMatrix) {
         _viewMatrix = viewMatrix;
     }
-    void setConstantDataBufferIndex(uint8_t constantDataBufferIndex) {
-        _constantDataBufferIndex = constantDataBufferIndex;
-    }
     
     id <MTLDevice> getDevice() const {
         return _device;
@@ -89,10 +86,6 @@ public:
         return _viewMatrix;
     }
     
-    uint8_t getConstantDataBufferIndex() const {
-        return _constantDataBufferIndex;
-    }
-    
 private:
     
     id <MTLDevice> _device;
@@ -109,8 +102,6 @@ private:
     
     matrix_float4x4 _projectionMatrix;
     matrix_float4x4 _viewMatrix;
-    
-    uint8_t _constantDataBufferIndex;
     
 };
 
