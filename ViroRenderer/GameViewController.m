@@ -63,13 +63,18 @@ static const NSUInteger kMaxInflightBuffers = 3;
     layerA->hydrate(*_renderContext);
     
     std::shared_ptr<VROLayer> layerB = std::make_shared<VROLayer>();
-    layerB->setFrame(VRORectMake(1.0, 1.0, 1.0, 0.5));
+    layerB->setFrame(VRORectMake(1.0, 1.0, 1.0, 1.0));
     layerB->setBackgroundColor({ 0.0, 0.0, 1.0, 1.0 });
     layerB->hydrate(*_renderContext);
     
+    std::shared_ptr<VROLayer> layerC = std::make_shared<VROLayer>();
+    layerC->setFrame(VRORectMake(0.0, 0.0, 0.5, 0.5));
+    layerC->setBackgroundColor({ 0.0, 1.0, 0.0, 1.0 });
+    layerC->hydrate(*_renderContext);
+    
     _scene->addLayer(layerA);
     layerA->addSublayer(layerB);
-    //_scene->addLayer(layerB);
+    layerB->addSublayer(layerC);
 }
 
 - (void)_render {
