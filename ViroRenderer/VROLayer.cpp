@@ -36,8 +36,8 @@ void VROLayer::render(const VRORenderContext &context, std::stack<matrix_float4x
 
 #pragma mark - Layer Properties
 
-void VROLayer::setContents(const void *data, const size_t dataLength) {
-    _presentationLayer->setContents(data, dataLength);
+void VROLayer::setContents(const void *data, size_t dataLength, int width, int height) {
+    _presentationLayer->setContents(data, dataLength, width, height);
 }
 
 void VROLayer::setBackgroundColor(vector_float4 backgroundColor) {

@@ -12,11 +12,8 @@
 #include "VRORect.h"
 #include "VROMath.h"
 
-void VROLayerSubstrateMetal::setContents(const void *data, const size_t dataLength) {
-    int width = 1024;
-    int height = 1024;
+void VROLayerSubstrateMetal::setContents(const void *data, const size_t dataLength, int width, int height) {
     int bytesPerPixel = 4;
-
     MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm
                                                                                           width:width height:height mipmapped:NO];
     _texture = [_device newTextureWithDescriptor:descriptor];

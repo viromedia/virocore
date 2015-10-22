@@ -36,7 +36,7 @@ public:
     virtual void render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack) = 0;
     virtual matrix_float4x4 getChildTransform() = 0;
     
-    virtual void setContents(const void *data, const size_t dataLength) = 0;
+    virtual void setContents(const void *data, const size_t dataLength, int width, int height) = 0;
 
 protected:
     

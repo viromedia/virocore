@@ -23,7 +23,7 @@ public:
     void hydrate(const VRORenderContext &context);
     void render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack);
     
-    void setContents(const void *data, const size_t dataLength);
+    void setContents(const void *data, size_t dataLength, int width, int height);
 
 private:
     

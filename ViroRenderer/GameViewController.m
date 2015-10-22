@@ -61,21 +61,21 @@
     int width, height;
     void *data = VROImageLoadTextureDataRGBA8888("boba", &dataLength, &width, &height);
     
-    layerA->setContents(data, dataLength);
+    layerA->setContents(data, dataLength, width, height);
     
     std::shared_ptr<VROLayer> layerB = std::make_shared<VROLayer>();
     layerB->setFrame(VRORectMake(1.0, 1.0, 1.0, 1.0));
     layerB->setBackgroundColor({ 0.0, 0.0, 1.0, 1.0 });
     layerB->hydrate(*_renderContext);
     
-    layerB->setContents(data, dataLength);
+    layerB->setContents(data, dataLength, width, height);
 
     std::shared_ptr<VROLayer> layerC = std::make_shared<VROLayer>();
     layerC->setFrame(VRORectMake(0.0, 0.0, 0.5, 0.5));
     layerC->setBackgroundColor({ 0.0, 1.0, 0.0, 1.0 });
     layerC->hydrate(*_renderContext);
     
-    layerC->setContents(data, dataLength);
+    layerC->setContents(data, dataLength, width, height);
     
     _scene->addLayer(layerA);
     layerA->addSublayer(layerB);

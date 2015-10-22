@@ -19,8 +19,8 @@ VROPresentationLayer::~VROPresentationLayer() {
     delete (_substrate);
 }
 
-void VROPresentationLayer::setContents(const void *data, const size_t dataLength) {
-    _substrate->setContents(data, dataLength);
+void VROPresentationLayer::setContents(const void *data, size_t dataLength, int width, int height) {
+    _substrate->setContents(data, dataLength, width, height);
 }
 
 void VROPresentationLayer::hydrate(const VRORenderContext &context) {
