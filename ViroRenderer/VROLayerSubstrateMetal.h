@@ -23,8 +23,7 @@ public:
     virtual ~VROLayerSubstrateMetal() {}
     
     void hydrate(const VRORenderContext &context);
-    void render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack);
-    matrix_float4x4 getChildTransform();
+    void render(const VRORenderContext &context, matrix_float4x4 mv);
     
     void setContents(const void *data, size_t dataLength, int width, int height);
     

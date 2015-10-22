@@ -12,6 +12,8 @@
 #include "VROLayer.h"
 #include "VROLayerSubstrate.h"
 #include "VROByteBuffer.h"
+#include "VROAnimation.h"
+#include <memory>
 
 class VROPresentationLayer : public VROLayer {
     
@@ -24,8 +26,17 @@ public:
     void render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack);
     
     void setContents(const void *data, size_t dataLength, int width, int height);
+    
+    void setFrame(VRORect frame);
+    void setBounds(VRORect bounds);
+    void setPosition(VROPoint point);
 
 private:
+    
+    /*
+     The corresponding model layer.
+     */
+    const VROLayer *_model;
     
     /*
      The representation of this layer in the underlying graphics technology.
@@ -38,6 +49,19 @@ private:
      byte buffer.
      */
     VROByteBuffer *_contents;
+    
+    /*
+     For animations, the start values of each animatable property.
+     */
+    VRORect _animationStartFrame;
+    
+    /*
+     The animation transaction this layer is participating in, if any.
+     */
+    std::shared_ptr<VROAnimation> _animation;
+    
+    void startFrameAnimation();
+    void updateAnimatedFrame();
     
 };
 

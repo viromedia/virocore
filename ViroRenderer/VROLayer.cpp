@@ -73,6 +73,7 @@ void VROLayer::setBounds(VRORect bounds) {
 void VROLayer::setPosition(VROPoint point) {
     _frame.origin.x = point.x - _frame.size.width  / 2.0f;
     _frame.origin.y = point.y - _frame.size.height / 2.0f;
+    _frame.origin.z = point.z;
     
     if (_presentationLayer) {
         _presentationLayer->setPosition(point);

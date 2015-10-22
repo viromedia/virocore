@@ -79,7 +79,7 @@ void VROLayerSubstrateMetal::hydrate(const VRORenderContext &context) {
     _depthState = [metal.getDevice() newDepthStencilStateWithDescriptor:depthStateDesc];
 }
 
-void VROLayerSubstrateMetal::render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack) {
+void VROLayerSubstrateMetal::render(const VRORenderContext &context, matrix_float4x4 mv) {
     std::shared_ptr<VROLayer> layer = _layer.lock();
     if (!layer) {
         return;
@@ -88,23 +88,6 @@ void VROLayerSubstrateMetal::render(const VRORenderContext &context, std::stack<
     std::shared_ptr<VROLayer> superlayer = layer->getSuperlayer();
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
     
-    VROPoint pt = layer->getPosition();
-    VRORect frame = layer->getFrame();
-    
-    matrix_float4x4 scaleMtx = matrix_from_scale(frame.size.width, frame.size.height, 1.0);
-    
-    /*
-     If the layer is a sublayer, then its coordinate system follows the 2D
-     convention of origin top-left, Y down.
-     */
-    float y = superlayer ? -pt.y : pt.y;
-    matrix_float4x4 translationMtx = matrix_from_translation(pt.x, y, pt.z);
-    matrix_float4x4 modelMtx = matrix_multiply(translationMtx, scaleMtx);
-    
-    matrix_float4x4 mvParent = mvStack.top();
-    matrix_float4x4 mv = matrix_multiply(mvParent, modelMtx);
-    
-    // Load constant buffer data into appropriate buffer at current index
     uniforms_t *uniforms = (uniforms_t *)[_uniformsBuffer contents];
     uniforms->normal_matrix = matrix_invert(matrix_transpose(mv));
     uniforms->modelview_projection_matrix = matrix_multiply(metal.getProjectionMatrix(), mv);
@@ -112,33 +95,14 @@ void VROLayerSubstrateMetal::render(const VRORenderContext &context, std::stack<
     
     id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderEncoder();
     
-    /*
-     Set the buffers and render.
-     */
     [renderEncoder pushDebugGroup:@"VROLayer"];
     
     [renderEncoder setDepthStencilState:_depthState];
     [renderEncoder setRenderPipelineState:_pipelineState];
     [renderEncoder setVertexBuffer:_vertexBuffer offset:0 atIndex:0];
     [renderEncoder setVertexBuffer:_uniformsBuffer offset:0 atIndex:1];
+    [renderEncoder setFragmentTexture:_texture atIndex:0];
     
-    //if (_texture) {
-        [renderEncoder setFragmentTexture:_texture atIndex:0];
-    //}
     [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:kCornersInLayer];
-    
     [renderEncoder popDebugGroup];
-}
-
-matrix_float4x4 VROLayerSubstrateMetal::getChildTransform() {
-    std::shared_ptr<VROLayer> layer = _layer.lock();
-    if (!layer) {
-        return matrix_identity_float4x4;
-    }
-    
-    std::shared_ptr<VROLayer> superlayer = layer->getSuperlayer();
-    VRORect frame = layer->getFrame();
-    
-    float parentOriginY = superlayer ? -frame.origin.y : frame.origin.y + frame.size.height;
-    return matrix_from_translation(frame.origin.x, parentOriginY, frame.origin.z);
 }

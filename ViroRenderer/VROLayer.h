@@ -40,9 +40,9 @@ public:
     
     virtual void setContents(const void *data, size_t dataLength, int width, int height);
     
-    void setFrame(VRORect frame);
-    void setBounds(VRORect bounds);
-    void setPosition(VROPoint point);
+    virtual void setFrame(VRORect frame);
+    virtual void setBounds(VRORect bounds);
+    virtual void setPosition(VROPoint point);
     
     VRORect getFrame() const;
     VRORect getBounds() const;

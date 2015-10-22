@@ -8,7 +8,7 @@
 
 #import "GameViewController.h"
 #import "SharedStructures.h"
-
+#import "VROAnimation.h"
 #import "VRORenderContextMetal.h"
 #import "VROScene.h"
 #import "VROLayer.h"
@@ -80,6 +80,25 @@
     _scene->addLayer(layerA);
     layerA->addSublayer(layerB);
     layerB->addSublayer(layerC);
+    
+    free (data);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        layerA->setPosition({0.5, 1.0, 3.0});
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        VROAnimation::begin();
+        VROAnimation::setAnimationDuration(1.0);
+        layerA->setPosition({0.5, -1.0, 4.0});
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        VROAnimation::begin();
+        VROAnimation::setAnimationDuration(2.0);
+        layerA->setPosition({-0.5, -1.0, 3.0});
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        layerA->setPosition({0, 0, 2.0});
+    });
 }
 
 - (void)_render {
@@ -100,6 +119,9 @@
         dispatch_semaphore_signal(block_sema);
     }];
     
+    VROAnimation::beginImplicitAnimation();
+    VROAnimation::updateT();
+    
     // Obtain a renderPassDescriptor generated from the view's drawable textures
     MTLRenderPassDescriptor* renderPassDescriptor = _view.currentRenderPassDescriptor;
     id <MTLRenderCommandEncoder> renderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:_view.currentRenderPassDescriptor];
@@ -119,6 +141,7 @@
 
     // Finalize rendering here & push the command buffer to the GPU
     [commandBuffer commit];
+    VROAnimation::commitAll();
 }
 
 - (void)_reshape {
