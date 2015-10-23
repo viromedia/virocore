@@ -72,3 +72,35 @@ matrix_float4x4 matrix_from_perspective_fov_aspectLH(const float fovY, const flo
     
     return m;
 }
+
+matrix_float4x4 matrix_for_frustum(const float left, const float right,
+                                   const float bottom, const float top,
+                                   const float znear, const float zfar) {
+    const float x_2n = znear + znear;
+    const float x_2nf = 2 * znear * zfar;
+    
+    const float p_fn = zfar + znear;
+    const float m_nf = znear - zfar;
+    
+    const float p_rl = right + left;
+    const float m_rl = right - left;
+    const float p_tb = top + bottom;
+    const float m_tb = top - bottom;
+    
+    matrix_float4x4 m = {
+        .columns[0] = { x_2n / m_rl, 0, 0, 0 },
+        .columns[1] = { 0, x_2n / m_tb, 0, 0 },
+        .columns[2] = { p_rl / m_rl, p_tb / m_tb, p_fn / m_nf, -1 },
+        .columns[3] = { 0, 0, x_2nf / m_nf, 0}
+    };
+
+    return m;
+}
+
+double degrees_to_radians(double degrees) {
+    return degrees * M_PI / 180.0;
+}
+
+double radians_to_degrees(double radians) {
+    return radians * 180.0 / M_PI;
+}
