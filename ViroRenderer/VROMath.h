@@ -24,4 +24,6 @@ matrix_float4x4 matrix_for_frustum(const float left, const float right,
 double degrees_to_radians(double degrees);
 double radians_to_degrees(double radians);
 
+float clamp(float val, float min, float max);
+
 #endif /* VROMath_h */

@@ -15,7 +15,7 @@ typedef NS_ENUM(NSInteger, VROEyeType) {
     VROEyeTypeRight,
 };
 
-@interface VROEyeView : NSObject
+@interface VROEyePerspective : NSObject
 
 @property (nonatomic) VROEyeType type;
 
@@ -31,7 +31,7 @@ typedef NS_ENUM(NSInteger, VROEyeType) {
 - (void)renderViewDidChangeSize:(CGSize)size;
 
 - (void)prepareNewFrameWithHeadViewMatrix:(matrix_float4x4)headViewMatrix;
-- (void)renderEye:(VROEyeView *)eye;
+- (void)renderEye:(VROEyePerspective *)eye;
 - (void)finishFrameWithViewportRect:(CGRect)viewPort;
 
 @optional

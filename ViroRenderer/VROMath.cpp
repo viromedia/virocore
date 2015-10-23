@@ -7,6 +7,7 @@
 //
 
 #include "VROMath.h"
+#include <algorithm>
 
 matrix_float4x4 matrix_from_scale(float sx, float sy, float sz) {
     matrix_float4x4 m = matrix_identity_float4x4;
@@ -103,4 +104,8 @@ double degrees_to_radians(double degrees) {
 
 double radians_to_degrees(double radians) {
     return radians * 180.0 / M_PI;
+}
+
+float clamp(float val, float min, float max) {
+    return std::max(min, std::min(max, val));
 }
