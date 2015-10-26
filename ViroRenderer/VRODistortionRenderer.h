@@ -27,12 +27,12 @@ class GLStateBackup;
 class HeadMountedDisplay;
 class Viewport;
 
-class DistortionRenderer {
+class VRODistortionRenderer {
     
 public:
     
-    DistortionRenderer();
-    ~DistortionRenderer();
+    VRODistortionRenderer();
+    ~VRODistortionRenderer();
     
     void beforeDrawFrame();
     void afterDrawFrame();

@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
+#import "VROViewController.h"
 
-@interface GameViewController : UIViewController<MTKViewDelegate>
+@interface GameViewController : NSObject <VROStereoRendererDelegate>
 
 @end
 

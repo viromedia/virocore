@@ -11,7 +11,7 @@
 #include "VROViewport.h"
 #include "VROScreen.h"
 
-DistortionRenderer::DistortionRenderer() :
+VRODistortionRenderer::VRODistortionRenderer() :
     _textureID(-1),
     _renderbufferID(-1),
     _framebufferID(-1),
@@ -43,7 +43,7 @@ DistortionRenderer::DistortionRenderer() :
     //_glStateBackupAberration = new GLStateBackup();
 }
 
-DistortionRenderer::~DistortionRenderer() {
+VRODistortionRenderer::~VRODistortionRenderer() {
     //if (_glStateBackup != nullptr) { delete _glStateBackup; }
     //if (_glStateBackupAberration != nullptr) { delete _glStateBackupAberration; }
     
@@ -57,7 +57,7 @@ DistortionRenderer::~DistortionRenderer() {
     if (_programHolderAberration != nullptr) { delete _programHolderAberration; }
 }
 
-void DistortionRenderer::setTextureFormat(GLint textureFormat, GLint textureType)
+void VRODistortionRenderer::setTextureFormat(GLint textureFormat, GLint textureType)
 {
     if (_drawingFrame)
     {
@@ -71,7 +71,7 @@ void DistortionRenderer::setTextureFormat(GLint textureFormat, GLint textureType
     }
 }
 
-void DistortionRenderer::beforeDrawFrame()
+void VRODistortionRenderer::beforeDrawFrame()
 {
     _drawingFrame = true;
     
@@ -84,14 +84,14 @@ void DistortionRenderer::beforeDrawFrame()
     glBindFramebuffer(GL_FRAMEBUFFER, _framebufferID);
 }
 
-void DistortionRenderer::afterDrawFrame()
+void VRODistortionRenderer::afterDrawFrame()
 {
     // glBindFramebuffer(GL_FRAMEBUFFER, _originalFramebufferID);
     undistortTexture(_textureID);
     _drawingFrame = false;
 }
 
-void DistortionRenderer::undistortTexture(GLint textureID)
+void VRODistortionRenderer::undistortTexture(GLint textureID)
 {
     if (_restoreGLStateEnabled) {
         if (_chromaticAberrationCorrectionEnabled)
@@ -149,37 +149,37 @@ void DistortionRenderer::undistortTexture(GLint textureID)
     }
 }
 
-void DistortionRenderer::setResolutionScale(float scale) {
+void VRODistortionRenderer::setResolutionScale(float scale) {
     _resolutionScale = scale;
     _viewportsChanged = true;
 }
 
-bool DistortionRenderer::restoreGLStateEnabled() {
+bool VRODistortionRenderer::restoreGLStateEnabled() {
     return _restoreGLStateEnabled;;
 }
 
-void DistortionRenderer::setRestoreGLStateEnabled(bool enabled) {
+void VRODistortionRenderer::setRestoreGLStateEnabled(bool enabled) {
     _restoreGLStateEnabled = enabled;
 }
 
-bool DistortionRenderer::chromaticAberrationEnabled() {
+bool VRODistortionRenderer::chromaticAberrationEnabled() {
     return _chromaticAberrationCorrectionEnabled;
 }
 
-void DistortionRenderer::setChromaticAberrationEnabled(bool enabled) {
+void VRODistortionRenderer::setChromaticAberrationEnabled(bool enabled) {
     _chromaticAberrationCorrectionEnabled = enabled;
 }
 
-bool DistortionRenderer::vignetteEnabled() {
+bool VRODistortionRenderer::vignetteEnabled() {
     return _vignetteEnabled;;
 }
 
-void DistortionRenderer::setVignetteEnabled(bool enabled) {
+void VRODistortionRenderer::setVignetteEnabled(bool enabled) {
     _vignetteEnabled = enabled;
     _fovsChanged = true;
 }
 
-void DistortionRenderer::fovDidChange(VROHeadMountedDisplay *headMountedDisplay,
+void VRODistortionRenderer::fovDidChange(VROHeadMountedDisplay *headMountedDisplay,
                                       VROFieldOfView *leftEyeFov,
                                       VROFieldOfView *rightEyeFov,
                                       float virtualEyeToScreenDistance) {
@@ -204,11 +204,11 @@ void DistortionRenderer::fovDidChange(VROHeadMountedDisplay *headMountedDisplay,
     _viewportsChanged = true;
 }
 
-bool DistortionRenderer::viewportsChanged() {
+bool VRODistortionRenderer::viewportsChanged() {
     return _viewportsChanged;
 }
 
-void DistortionRenderer::updateViewports(VROViewport *leftViewport, VROViewport *rightViewport) {
+void VRODistortionRenderer::updateViewports(VROViewport *leftViewport, VROViewport *rightViewport) {
     leftViewport->setViewport(round(_leftEyeViewport->x * _xPxPerTanAngle * _resolutionScale),
                               round(_leftEyeViewport->y * _yPxPerTanAngle * _resolutionScale),
                               round(_leftEyeViewport->width * _xPxPerTanAngle * _resolutionScale),
@@ -220,7 +220,7 @@ void DistortionRenderer::updateViewports(VROViewport *leftViewport, VROViewport 
     _viewportsChanged = false;
 }
 
-void DistortionRenderer::updateTextureAndDistortionMesh() {
+void VRODistortionRenderer::updateTextureAndDistortionMesh() {
     std::shared_ptr<VROScreen> screen = _headMountedDisplay->getScreen();
     std::shared_ptr<VRODevice> device = _headMountedDisplay->getDevice();
     
@@ -256,7 +256,7 @@ void DistortionRenderer::updateTextureAndDistortionMesh() {
     _fovsChanged = false;
 }
 
-DistortionRenderer::EyeViewport *DistortionRenderer::initViewportForEye(VROFieldOfView *eyeFieldOfView, float xOffset) {
+VRODistortionRenderer::EyeViewport *VRODistortionRenderer::initViewportForEye(VROFieldOfView *eyeFieldOfView, float xOffset) {
     float left = tanf(GLKMathDegreesToRadians(eyeFieldOfView->getLeft()));
     float right = tanf(GLKMathDegreesToRadians(eyeFieldOfView->getRight()));
     float bottom = tanf(GLKMathDegreesToRadians(eyeFieldOfView->getBottom()));
@@ -273,7 +273,7 @@ DistortionRenderer::EyeViewport *DistortionRenderer::initViewportForEye(VROField
     return eyeViewport;
 }
 
-DistortionRenderer::DistortionMesh *DistortionRenderer::createDistortionMesh(EyeViewport *eyeViewport,
+VRODistortionRenderer::DistortionMesh *VRODistortionRenderer::createDistortionMesh(EyeViewport *eyeViewport,
                                                                              float textureWidthTanAngle,
                                                                              float textureHeightTanAngle,
                                                                              float xEyeOffsetTanAngleScreen,
@@ -291,7 +291,7 @@ DistortionRenderer::DistortionMesh *DistortionRenderer::createDistortionMesh(Eye
                               _vignetteEnabled);
 }
 
-void DistortionRenderer::renderDistortionMesh(DistortionMesh *mesh, GLint textureID)
+void VRODistortionRenderer::renderDistortionMesh(DistortionMesh *mesh, GLint textureID)
 {
     ProgramHolder *programHolder = nullptr;
     if (_chromaticAberrationCorrectionEnabled)
@@ -328,11 +328,11 @@ void DistortionRenderer::renderDistortionMesh(DistortionMesh *mesh, GLint textur
     glDrawElements(GL_TRIANGLE_STRIP, mesh->_indices, GL_UNSIGNED_SHORT, 0);
 }
 
-float DistortionRenderer::computeDistortionScale(VRODistortion *distortion, float screenWidthM, float interpupillaryDistanceM) {
+float VRODistortionRenderer::computeDistortionScale(VRODistortion *distortion, float screenWidthM, float interpupillaryDistanceM) {
     return distortion->getDistortionFactor((screenWidthM / 2.0f - interpupillaryDistanceM / 2.0f) / (screenWidthM / 4.0f));
 }
 
-int DistortionRenderer::createTexture(GLint width, GLint height, GLint textureFormat, GLint textureType)
+int VRODistortionRenderer::createTexture(GLint width, GLint height, GLint textureFormat, GLint textureType)
 {
     GLuint textureID = 0;
     glGenTextures(1, &textureID);
@@ -346,7 +346,7 @@ int DistortionRenderer::createTexture(GLint width, GLint height, GLint textureFo
     return textureID;
 }
 
-int DistortionRenderer::setupRenderTextureAndRenderbuffer(int width, int height)
+int VRODistortionRenderer::setupRenderTextureAndRenderbuffer(int width, int height)
 {
     if (_textureID != -1)
     {
@@ -385,7 +385,7 @@ int DistortionRenderer::setupRenderTextureAndRenderbuffer(int width, int height)
     return _framebufferID;
 }
 
-int DistortionRenderer::createProgram(const GLchar *vertexSource, const GLchar *fragmentSource) {
+int VRODistortionRenderer::createProgram(const GLchar *vertexSource, const GLchar *fragmentSource) {
     /*
     GLuint vertexShader = 0;
     GLCompileShader(&vertexShader, GL_VERTEX_SHADER, vertexSource);
@@ -426,7 +426,7 @@ int DistortionRenderer::createProgram(const GLchar *vertexSource, const GLchar *
     return 0;
 }
 
-DistortionRenderer::ProgramHolder *DistortionRenderer::createProgramHolder(bool aberrationCorrected)
+VRODistortionRenderer::ProgramHolder *VRODistortionRenderer::createProgramHolder(bool aberrationCorrected)
 {
     const GLchar *vertexShader =
     "\
@@ -564,7 +564,7 @@ DistortionRenderer::ProgramHolder *DistortionRenderer::createProgramHolder(bool 
 
 // DistortionMesh
 
-DistortionRenderer::DistortionMesh::DistortionMesh(VRODistortion *distortionRed,
+VRODistortionRenderer::DistortionMesh::DistortionMesh(VRODistortion *distortionRed,
                                                    VRODistortion *distortionGreen,
                                                    VRODistortion *distortionBlue,
                                                    float screenWidth, float screenHeight,
@@ -690,7 +690,7 @@ _indices(-1), _arrayBufferID(-1), _elementBufferID(-1) {
 
 // EyeViewport
 
-NSString *DistortionRenderer::EyeViewport::toString()
+NSString *VRODistortionRenderer::EyeViewport::toString()
 {
     return [NSString stringWithFormat:@"{x:%f y:%f width:%f height:%f eyeX:%f, eyeY:%f}",
             x, y, width, height, eyeX, eyeY];

@@ -98,6 +98,17 @@ matrix_float4x4 matrix_for_frustum(const float left, const float right,
     return m;
 }
 
+matrix_float4x4 matrix_float4x4_from_GL(GLKMatrix4 glm) {
+    matrix_float4x4 m = {
+        .columns[0] = { glm.m[0],  glm.m[1],  glm.m[2],  glm.m[3]  },
+        .columns[1] = { glm.m[4],  glm.m[5],  glm.m[6],  glm.m[7]  },
+        .columns[2] = { glm.m[8],  glm.m[9],  glm.m[10], glm.m[11] },
+        .columns[3] = { glm.m[12], glm.m[13], glm.m[14], glm.m[15] }
+    };
+    
+    return m;
+}
+
 double degrees_to_radians(double degrees) {
     return degrees * M_PI / 180.0;
 }

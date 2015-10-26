@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <MetalKit/MetalKit.h>
+#import "VRORenderContext.h"
 
 typedef NS_ENUM(NSInteger, VROEyeType) {
     VROEyeTypeMonocular,
@@ -26,12 +27,12 @@ typedef NS_ENUM(NSInteger, VROEyeType) {
 
 @protocol VROStereoRendererDelegate <NSObject>
 
-- (void)setupRendererWithView:(MTKView *)view;
+- (void)setupRendererWithView:(MTKView *)view context:(VRORenderContext *)context;
 - (void)shutdownRendererWithView:(MTKView *)view;
-- (void)renderViewDidChangeSize:(CGSize)size;
+- (void)renderViewDidChangeSize:(CGSize)size context:(VRORenderContext *)context;
 
 - (void)prepareNewFrameWithHeadViewMatrix:(matrix_float4x4)headViewMatrix;
-- (void)renderEye:(VROEyePerspective *)eye;
+- (void)renderEye:(VROEyePerspective *)eye context:(VRORenderContext *)renderContext;
 - (void)finishFrameWithViewportRect:(CGRect)viewPort;
 
 @optional
@@ -45,14 +46,12 @@ typedef NS_ENUM(NSInteger, VROEyeType) {
 @property (nonatomic) MTKView *view;
 @property (nonatomic, readonly) NSRecursiveLock *glLock;
 
-@property (nonatomic, unsafe_unretained) id <VROStereoRendererDelegate> stereoRendererDelegate;
+@property (nonatomic, unsafe_unretained) IBOutlet id <VROStereoRendererDelegate> stereoRendererDelegate;
 @property (nonatomic) BOOL vrModeEnabled;
 @property (nonatomic) BOOL distortionCorrectionEnabled;
 @property (nonatomic) BOOL vignetteEnabled;
 @property (nonatomic) BOOL chromaticAberrationCorrectionEnabled;
 @property (nonatomic) BOOL restoreGLStateEnabled;
 @property (nonatomic) BOOL neckModelEnabled;
-
-- (void)getFrameParameters:(float *)frameParemeters zNear:(float)zNear zFar:(float)zFar;
 
 @end
