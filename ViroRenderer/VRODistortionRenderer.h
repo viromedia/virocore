@@ -16,16 +16,12 @@
 #include "VROFieldOfView.h"
 #include "VRODistortion.h"
 
-// TODO Delete these imports, convert to Metal, restore glBackup
-#include <GLKit/GLKit.h>
-#import <OpenGLES/ES2/gl.h>
-
 class Distortion;
 class Eye;
 class FieldOfView;
-class GLStateBackup;
 class HeadMountedDisplay;
 class Viewport;
+class VRORenderContextMetal;
 
 class VRODistortionRenderer {
     
@@ -34,21 +30,42 @@ public:
     VRODistortionRenderer();
     ~VRODistortionRenderer();
     
-    void beforeDrawFrame();
-    void afterDrawFrame();
+    /*
+     Binds the eye texture (the texture to which we will render both eyes) as the 
+     render target. Following this call the left and right eye should be rendered.
+     */
+    id <MTLRenderCommandEncoder> bindEyeRenderTarget(const VRORenderContextMetal &metal);
     
-    void setResolutionScale(float scale);
+    /*
+     Binds the screen as the render target, and renders the left half of the eye 
+     texture to the left distortion mesh, and the right half of the eye texture to
+     the right distortion mesh.
+     */
+    void renderEyesToScreen(const VRORenderContextMetal &metal);
     
-    bool restoreGLStateEnabled();
-    void setRestoreGLStateEnabled(bool enabled);
+    void setResolutionScale(float scale) {
+        _resolutionScale = scale;
+        _viewportsChanged = true;
+    }
     
-    bool chromaticAberrationEnabled();
-    void setChromaticAberrationEnabled(bool enabled);
+    bool isChromaticAberrationEnabled() {
+        return _chromaticAberrationCorrectionEnabled;
+    }
+    void setChromaticAberrationEnabled(bool enabled) {
+        _chromaticAberrationCorrectionEnabled = enabled;
+    }
     
-    bool vignetteEnabled();
-    void setVignetteEnabled(bool enabled);
+    bool isVignetteEnabled() {
+        return _vignetteEnabled;
+    }
+    void setVignetteEnabled(bool enabled) {
+        _vignetteEnabled = enabled;
+        _fovsChanged = true;
+    }
     
-    bool viewportsChanged();
+    bool viewportsChanged() {
+        return _viewportsChanged;
+    }
     void updateViewports(VROViewport *leftViewport,
                          VROViewport *rightViewport);
     
@@ -62,9 +79,9 @@ private:
     
     class DistortionMesh {
     public:
-        int _indices;
-        int _arrayBufferID;
-        int _elementBufferID;
+
+        id <MTLBuffer> _vertexBuffer;
+        id <MTLBuffer> _indexBuffer;
         
         DistortionMesh();
         DistortionMesh(VRODistortion *distortionRed,
@@ -77,9 +94,14 @@ private:
                        float viewportXTexture, float viewportYTexture,
                        float viewportWidthTexture,
                        float viewportHeightTexture,
-                       bool vignetteEnabled);
+                       bool vignetteEnabled,
+                       id <MTLDevice> gpu);
     };
     
+    /*
+     Viewport specified in tangents, i.e. the tangent of the eye's 
+     field of view angle in each direction.
+     */
     struct EyeViewport {
     public:
         float x;
@@ -92,79 +114,59 @@ private:
         NSString *toString();
     };
     
-    struct ProgramHolder {
-    public:
-        ProgramHolder() :
-        program(-1),
-        positionLocation(-1),
-        vignetteLocation(-1),
-        redTextureCoordLocation(-1),
-        greenTextureCoordLocation(-1),
-        blueTextureCoordLocation(-1),
-        uTextureCoordScaleLocation(-1),
-        uTextureSamplerLocation(-1) {}
-        
-        GLint program;
-        GLint positionLocation;
-        GLint vignetteLocation;
-        GLint redTextureCoordLocation;
-        GLint greenTextureCoordLocation;
-        GLint blueTextureCoordLocation;
-        GLint uTextureCoordScaleLocation;
-        GLint uTextureSamplerLocation;
-    };
+    id <MTLRenderPipelineState> _pipelineState;
+    id <MTLRenderPipelineState> _aberrationPipelineState;
+    id <MTLDepthStencilState> _depthState;
     
-    GLuint _textureID;
-    GLuint _renderbufferID;
-    GLuint _framebufferID;
-    GLenum _textureFormat;
-    GLenum _textureType;
+    id <MTLBuffer> _uniformsBuffer;
+    
+    /*
+     The texture to which we render both eyes.
+     */
+    id <MTLTexture> _texture;
+    
     float _resolutionScale;
-    bool _restoreGLStateEnabled;
     bool _chromaticAberrationCorrectionEnabled;
     bool _vignetteEnabled;
     DistortionMesh *_leftEyeDistortionMesh;
     DistortionMesh *_rightEyeDistortionMesh;
-    //GLStateBackup *_glStateBackup;
-    //GLStateBackup *_glStateBackupAberration;
+    
     VROHeadMountedDisplay *_headMountedDisplay;
     EyeViewport *_leftEyeViewport;
     EyeViewport *_rightEyeViewport;
+    
     bool _fovsChanged;
     bool _viewportsChanged;
-    bool _textureFormatChanged;
     bool _drawingFrame;
+    
+    /*
+     Measurement parameters.
+     */
     float _xPxPerTanAngle;
     float _yPxPerTanAngle;
     float _metersPerTanAngle;
     
-    ProgramHolder *_programHolder;
-    ProgramHolder *_programHolderAberration;
-    
     EyeViewport *initViewportForEye(VROFieldOfView *eyeFieldOfView, float xOffsetM);
     
-    void setTextureFormat(GLint textureFormat, GLint textureType);
-    void updateTextureAndDistortionMesh();
-    void undistortTexture(GLint textureID);
+    void updateTextureAndDistortionMesh(const VRORenderContextMetal &metal);
+    id <MTLRenderCommandEncoder> createEyeRenderEncoder(const VRORenderContextMetal &metal);
+    void updateDistortionMeshPipeline(const VRORenderContextMetal &metal);
     
     DistortionMesh *createDistortionMesh(EyeViewport *eyeViewport,
                                          float textureWidthTanAngle,
                                          float textureHeightTanAngle,
                                          float xEyeOffsetTanAngleScreen,
-                                         float yEyeOffsetTanAngleScreen);
+                                         float yEyeOffsetTanAngleScreen,
+                                         id <MTLDevice> gpu);
     
-    void renderDistortionMesh(DistortionMesh *mesh, GLint textureID);
+    void renderDistortionMesh(DistortionMesh *mesh, id <MTLTexture> texture, id <MTLRenderCommandEncoder> renderEncoder);
     
     float computeDistortionScale(VRODistortion *distortion,
                                  float screenWidthM,
                                  float interpupillaryDistanceM);
     
-    int createTexture(GLint width, GLint height, GLint textureFormat, GLint textureType);
-    int setupRenderTextureAndRenderbuffer(int width, int height);
-    
-    int createProgram(const GLchar *vertexSource,
-                      const GLchar *fragmentSource);
-    ProgramHolder *createProgramHolder(bool aberrationCorrected);
+    void setupRenderTexture(int width, int height, id <MTLDevice> gpu);
+
 };
 
 #endif /* VRODistortionRenderer_h */

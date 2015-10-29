@@ -20,23 +20,21 @@ constexpr sampler s(coord::normalized,
                     address::repeat,
                     filter::linear);
 
-typedef struct
-{
-    float3 position [[attribute(0)]];
-    float2 uv [[attribute(1)]];
-    float3 normal [[attribute(2)]];
+typedef struct {
+    float3 position [[ attribute(0) ]];
+    float2 uv [[ attribute(1) ]];
+    float3 normal [[ attribute(2) ]];
 } vertex_t;
 
 typedef struct {
-    float4 position [[position]];
-    float4  color;
+    float4 position [[ position ]];
+    float4 color;
     float2 uv;
 } ColorInOut;
 
 // Vertex shader function
-vertex ColorInOut lighting_vertex(vertex_t vertex_array [[stage_in]],
-                                  constant uniforms_t& uniforms [[ buffer(1) ]])
-{
+vertex ColorInOut lighting_vertex(vertex_t vertex_array [[ stage_in ]],
+                                  constant uniforms_t& uniforms [[ buffer(1) ]]) {
     ColorInOut out;
     
     float4 in_position = float4(vertex_array.position, 1.0);
@@ -52,8 +50,72 @@ vertex ColorInOut lighting_vertex(vertex_t vertex_array [[stage_in]],
 }
 
 // Fragment shader function
-fragment float4 lighting_fragment(ColorInOut in [[stage_in]],
-                                 texture2d<float> diffuse_texture [[ texture(0)]])
-{
+fragment float4 lighting_fragment(ColorInOut in [[ stage_in ]],
+                                  texture2d<float> diffuse_texture [[ texture(0) ]]) {
     return in.color * diffuse_texture.sample(s, in.uv);
+}
+
+/* ---------------------------------------
+   DISTORTION SHADERS
+   --------------------------------------- */
+
+typedef struct {
+    float2 position       [[ attribute(0) ]];
+    float  vignette       [[ attribute(1) ]];
+    float2 red_texcoord   [[ attribute(2) ]];
+    float2 green_texcoord [[ attribute(3) ]];
+    float2 blue_texcoord  [[ attribute(4) ]];
+} VRODistortionAttributes;
+
+typedef struct {
+    float4 position [[ position ]];
+    float2 texcoord;
+    float  vignette;
+} VRODistortionVertexOut;
+
+vertex VRODistortionVertexOut distortion_vertex(VRODistortionAttributes attributes [[ stage_in ]],
+                                                constant VRODistortionUniforms &uniforms [[ buffer(1) ]]) {
+    
+    VRODistortionVertexOut out;
+    out.position = float4(attributes.position, 0.0, 1.0);
+    out.texcoord = attributes.blue_texcoord.xy * uniforms.texcoord_scale;
+    out.vignette = attributes.vignette;
+    
+    return out;
+}
+
+fragment float4 distortion_fragment(VRODistortionVertexOut in [[ stage_in ]],
+                                    texture2d<float> texture [[ texture(0) ]]) {
+    
+    return in.vignette * texture.sample(s, in.texcoord);
+}
+
+typedef struct {
+    float4 position [[ position ]];
+    float2 red_texcoord;
+    float2 blue_texcoord;
+    float2 green_texcoord;
+    float  vignette;
+} VRODistortionAberrationVertexOut;
+
+vertex VRODistortionAberrationVertexOut distortion_aberration_vertex(VRODistortionAttributes attributes [[ stage_in ]],
+                                                                     constant VRODistortionUniforms &uniforms [[ buffer(1) ]]) {
+    
+    VRODistortionAberrationVertexOut out;
+    out.position = float4(attributes.position, 0.0, 1.0);
+    out.red_texcoord = attributes.red_texcoord.xy * uniforms.texcoord_scale;
+    out.green_texcoord = attributes.green_texcoord.xy * uniforms.texcoord_scale;
+    out.blue_texcoord = attributes.blue_texcoord.xy * uniforms.texcoord_scale;
+    out.vignette = attributes.vignette;
+    
+    return out;
+}
+
+fragment float4 distortion_aberration_fragment(VRODistortionAberrationVertexOut in [[ stage_in ]],
+                                               texture2d<float> texture [[ texture(0) ]]) {
+    
+    return in.vignette * float4(texture.sample(s, in.red_texcoord).r,
+                                texture.sample(s, in.green_texcoord).g,
+                                texture.sample(s, in.blue_texcoord).b,
+                                1.0);
 }

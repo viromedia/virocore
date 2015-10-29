@@ -219,7 +219,7 @@
 }
 
 - (BOOL)vignetteEnabled {
-    return _distortionRenderer->vignetteEnabled();
+    return _distortionRenderer->isVignetteEnabled();
 }
 
 - (void)setVignetteEnabled:(BOOL)vignetteEnabled {
@@ -227,19 +227,11 @@
 }
 
 - (BOOL)chromaticAberrationCorrectionEnabled {
-    return _distortionRenderer->chromaticAberrationEnabled();
+    return _distortionRenderer->isChromaticAberrationEnabled();
 }
 
 - (void)setChromaticAberrationCorrectionEnabled:(BOOL)chromaticAberrationCorrectionEnabled {
     _distortionRenderer->setChromaticAberrationEnabled(chromaticAberrationCorrectionEnabled);
-}
-
-- (BOOL)restoreGLStateEnabled {
-    return _distortionRenderer->restoreGLStateEnabled();
-}
-
-- (void)setRestoreGLStateEnabled:(BOOL)restoreGLStateEnabled {
-    _distortionRenderer->setRestoreGLStateEnabled(restoreGLStateEnabled);
 }
 
 - (BOOL)neckModelEnabled {
@@ -307,38 +299,46 @@
         
         // Obtain a renderPassDescriptor generated from the view's drawable textures
         MTLRenderPassDescriptor* renderPassDescriptor = view.currentRenderPassDescriptor;
-        id <MTLRenderCommandEncoder> renderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:view.currentRenderPassDescriptor];
-        renderEncoder.label = @"ScreenRenderEncoder";
         
-        _renderContext->setRenderPass(renderPassDescriptor);
+        
         _renderContext->setCommandBuffer(commandBuffer);
-        _renderContext->setRenderEncoder(renderEncoder);
+        //_renderContext->setRenderEncoder(renderEncoder);
         
-        if(renderPassDescriptor != nil) // If we have a valid drawable, begin the commands to render into it
-        {
-            if (NO && self.vrModeEnabled) {
+        if (renderPassDescriptor != nil) {
+            if (self.vrModeEnabled) {
                 if (_distortionCorrectionEnabled) {
-                    _distortionRenderer->beforeDrawFrame();
+                    id <MTLRenderCommandEncoder> eyeRenderEncoder = _distortionRenderer->bindEyeRenderTarget(*_renderContext);
+                    _renderContext->setRenderEncoder(eyeRenderEncoder);
                     
                     [self drawFrameWithHeadTransform:_headTransform
                                              leftEye:_leftEye
-                                            rightEye:_rightEye];
+                                            rightEye:_rightEye
+                                       renderEncoder:eyeRenderEncoder];
+                    [eyeRenderEncoder endEncoding];
                     
-                    _distortionRenderer->afterDrawFrame();
+                    id <MTLRenderCommandEncoder> screenRenderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:view.currentRenderPassDescriptor];
+                    screenRenderEncoder.label = @"ScreenRenderEncoder";
+                    
+                    _renderContext->setRenderEncoder(screenRenderEncoder);
+                    _distortionRenderer->renderEyesToScreen(*_renderContext);
+                    
+                    [screenRenderEncoder endEncoding];
                 }
                 else {
                     [self drawFrameWithHeadTransform:_headTransform
                                              leftEye:_leftEye
-                                            rightEye:_rightEye];
+                                            rightEye:_rightEye
+                                       renderEncoder:nil];
                 }
             }
             else {
                 [self drawFrameWithHeadTransform:_headTransform
-                                         leftEye:_leftEye
-                                        rightEye:_rightEye];
+                                         leftEye:_monocularEye
+                                        rightEye:nullptr
+                                   renderEncoder:nil];
             }
             
-            [renderEncoder endEncoding];
+            //[renderEncoder endEncoding];
             [commandBuffer presentDrawable:view.currentDrawable];
         }
         
@@ -490,10 +490,8 @@
 
 - (void)drawFrameWithHeadTransform:(VROHeadTransform *)headTransform
                            leftEye:(VROEye *)leftEye
-                          rightEye:(VROEye *)rightEye {
-    
-    VRORenderContextMetal *metal = (VRORenderContextMetal *)_renderContext;
-    id <MTLRenderCommandEncoder> renderEncoder = metal->getRenderEncoder();
+                          rightEye:(VROEye *)rightEye
+                     renderEncoder:(id <MTLRenderCommandEncoder>)renderEncoder {
     
     [self.stereoRendererDelegate prepareNewFrameWithHeadViewMatrix:headTransform->getHeadView()];
     
@@ -501,7 +499,7 @@
     leftEyeViewport.originX = leftEye->getViewport()->getX();
     leftEyeViewport.originY = leftEye->getViewport()->getY();
     leftEyeViewport.width   = leftEye->getViewport()->getWidth();
-    leftEyeViewport.height  = 750;//leftEye->getViewport()->getHeight();
+    leftEyeViewport.height  = leftEye->getViewport()->getHeight();
     leftEyeViewport.znear   = 0.0;
     leftEyeViewport.zfar    = 1.0;
     
@@ -509,7 +507,7 @@
     leftEyeScissor.x = leftEye->getViewport()->getX();
     leftEyeScissor.y = leftEye->getViewport()->getY();
     leftEyeScissor.width = leftEye->getViewport()->getWidth();
-    leftEyeScissor.height = 750;//leftEye->getViewport()->getHeight();
+    leftEyeScissor.height = leftEye->getViewport()->getHeight();
 
     [renderEncoder setViewport:leftEyeViewport];
     [renderEncoder setScissorRect:leftEyeScissor];
@@ -523,15 +521,15 @@
     rightEyeViewport.originX = rightEye->getViewport()->getX();
     rightEyeViewport.originY = rightEye->getViewport()->getY();
     rightEyeViewport.width   = rightEye->getViewport()->getWidth();
-    rightEyeViewport.height  = 750;//rightEye->getViewport()->getHeight();
+    rightEyeViewport.height  = rightEye->getViewport()->getHeight();
     rightEyeViewport.znear   = 0.0;
     rightEyeViewport.zfar    = 1.0;
     
     MTLScissorRect rightEyeScissor;
     rightEyeScissor.x = rightEye->getViewport()->getX();
     rightEyeScissor.y = rightEye->getViewport()->getY();
-    rightEyeScissor.width = 562;//rightEye->getViewport()->getWidth();
-    rightEyeScissor.height = 750;//rightEye->getViewport()->getHeight();
+    rightEyeScissor.width = rightEye->getViewport()->getWidth();
+    rightEyeScissor.height = rightEye->getViewport()->getHeight();
     
     [renderEncoder setViewport:rightEyeViewport];
     [renderEncoder setScissorRect:rightEyeScissor];

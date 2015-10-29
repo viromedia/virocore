@@ -26,25 +26,17 @@
 #define CBScreenIsIphone6PlusWidth() (CBScreenIsIphone() && [[UIScreen mainScreen] scale] == 3.0f && [UIScreen mainScreen].sizeFixedToPortrait.width == 414.0)
 #define CBScreenIsIphone6PlusHeight() (CBScreenIsIphone() && [[UIScreen mainScreen] scale] == 3.0f && [UIScreen mainScreen].sizeFixedToPortrait.height == 736.0)
 
-@interface UIScreen (CBDOrientationAware)
+@interface UIScreen (VROOrientationAware)
 
 - (CGSize)orientationAwareSize;
 - (CGSize)sizeFixedToPortrait;
 
 @end
 
-@implementation UIScreen (CBDOrientationAware)
+@implementation UIScreen (VROOrientationAware)
 
 - (CGSize)orientationAwareSize {
-    // Starting on iOS 8 bounds are orientation dependepent
-    CGSize screenSize = self.bounds.size;
-    if ((NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_7_1) &&
-         UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) {
-        
-        return CGSizeMake(screenSize.height, screenSize.width);
-    }
-    
-    return screenSize;
+    return self.bounds.size;
 }
 
 - (CGSize)sizeFixedToPortrait {

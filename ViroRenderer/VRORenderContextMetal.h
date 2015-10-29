@@ -39,9 +39,6 @@ public:
     void setRenderEncoder(id <MTLRenderCommandEncoder> renderEncoder) {
         _renderEncoder = renderEncoder;
     }
-    void setRenderPass(MTLRenderPassDescriptor *renderPass) {
-        _renderPass = renderPass;
-    }
     void setProjectionMatrix(matrix_float4x4 projectionMatrix) {
         _projectionMatrix = projectionMatrix;
     }
@@ -64,9 +61,6 @@ public:
     }
     id <MTLRenderCommandEncoder> getRenderEncoder() const {
         return _renderEncoder;
-    }
-    MTLRenderPassDescriptor *getRenderPass() const {
-        return _renderPass;
     }
     
     MTLPixelFormat getColorPixelFormat() const {
@@ -96,7 +90,6 @@ private:
     MTLPixelFormat _depthStencilPixelFormat;
     NSUInteger _sampleCount;
     
-    MTLRenderPassDescriptor *_renderPass;
     id <MTLCommandBuffer> _commandBuffer;
     id <MTLRenderCommandEncoder> _renderEncoder;
     

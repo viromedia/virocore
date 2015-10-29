@@ -28,5 +28,9 @@ typedef struct {
     float nz;
 } VROLayerVertexLayout;
 
+typedef struct {
+    float texcoord_scale;
+} VRODistortionUniforms;
+
 #endif /* SharedStructures_h */
 

@@ -51,7 +51,6 @@ typedef NS_ENUM(NSInteger, VROEyeType) {
 @property (nonatomic) BOOL distortionCorrectionEnabled;
 @property (nonatomic) BOOL vignetteEnabled;
 @property (nonatomic) BOOL chromaticAberrationCorrectionEnabled;
-@property (nonatomic) BOOL restoreGLStateEnabled;
 @property (nonatomic) BOOL neckModelEnabled;
 
 @end

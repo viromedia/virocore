@@ -88,6 +88,9 @@
 }
 
 - (void)renderEye:(VROEyePerspective *)eye context:(VRORenderContext *)renderContext {
+    VRORenderContextMetal *metal = (VRORenderContextMetal *)renderContext;
+    metal->setViewMatrix([eye eyeViewMatrix]);
+
     _scene->render(*renderContext);
 }
 
