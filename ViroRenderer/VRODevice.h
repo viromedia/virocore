@@ -14,7 +14,9 @@
 #include "VROFieldOfView.h"
 
 /*
- Encapsulates the parameters that define a given VR device.
+ Encapsulates the parameters that define a given physical VR device. These 
+ include the distance between the lenses, the distance from the screen to
+ the lens, etc.
  */
 class VRODevice {
     
@@ -27,8 +29,6 @@ public:
         _verticalDistanceToLensCenter(0.035f),
         _screenToLensDistance(0.042f) {
             
-        _distortion = new VRODistortion();
-        _maximumLeftEyeFOV = new VROFieldOfView();
     }
     
     VRODevice(const VRODevice *device) :
@@ -37,9 +37,6 @@ public:
         _interLensDistance(device->_interLensDistance),
         _verticalDistanceToLensCenter(device->_verticalDistanceToLensCenter),
         _screenToLensDistance(device->_screenToLensDistance) {
-            
-        _distortion = new VRODistortion();
-        _maximumLeftEyeFOV = new VROFieldOfView();
     }
     
     ~VRODevice() {}
@@ -61,10 +58,10 @@ public:
         return _screenToLensDistance;
     }
     
-    VROFieldOfView *getMaximumLeftEyeFOV() const {
+    const VROFieldOfView &getMaximumLeftEyeFOV() const {
         return _maximumLeftEyeFOV;
     }
-    VRODistortion *getDistortion() const {
+    const VRODistortion &getDistortion() const {
         return _distortion;
     }
     
@@ -81,8 +78,8 @@ public:
                (getInterLensDistance() == other->getInterLensDistance()) &&
                (getVerticalDistanceToLensCenter() == other->getVerticalDistanceToLensCenter()) &&
                (getScreenToLensDistance() == other->getScreenToLensDistance()) &&
-               (getMaximumLeftEyeFOV()->equals(other->getMaximumLeftEyeFOV())) &&
-               (getDistortion()->equals(other->getDistortion()));
+               (getMaximumLeftEyeFOV().equals(&other->getMaximumLeftEyeFOV())) &&
+               (getDistortion().equals(&other->getDistortion()));
     }
     
 private:
@@ -95,8 +92,8 @@ private:
     float _verticalDistanceToLensCenter;
     float _screenToLensDistance;
     
-    VROFieldOfView *_maximumLeftEyeFOV;
-    VRODistortion *_distortion;
+    VROFieldOfView _maximumLeftEyeFOV;
+    VRODistortion _distortion;
     
 };
 

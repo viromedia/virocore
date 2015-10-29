@@ -18,32 +18,19 @@ class VROHeadMountedDisplay {
 public:
     
     VROHeadMountedDisplay(UIScreen *screen) :
-        _screen(std::make_shared<VROScreen>(screen)),
-        _device(std::make_shared<VRODevice>()){
+        _screen(screen),
+        _device() {
         
-    }
-    
-    VROHeadMountedDisplay(const VROHeadMountedDisplay *hmd) :
-        _screen(hmd->getScreen()),
-        _device(hmd->getDevice()) {
-            
     }
     
     ~VROHeadMountedDisplay() {
 
     }
     
-    void setScreen(std::shared_ptr<VROScreen> screen) {
-        _screen = screen;
-    }
-    std::shared_ptr<VROScreen> getScreen() const {
+    const VROScreen &getScreen() const {
         return _screen;
     }
-    
-    void setDevice(std::shared_ptr<VRODevice> device) {
-        _device = device;
-    }
-    std::shared_ptr<VRODevice> getDevice() const {
+    const VRODevice &getDevice() const {
         return _device;
     }
     
@@ -55,14 +42,14 @@ public:
             return true;
         }
         
-        return _screen->equals(other->_screen.get()) &&
-               _device->equals(other->_device.get());
+        return _screen.equals(&other->_screen) &&
+               _device.equals(&other->_device);
     }
     
 private:
     
-    std::shared_ptr<VROScreen> _screen;
-    std::shared_ptr<VRODevice> _device;
+    VROScreen _screen;
+    VRODevice _device;
     
 };
 

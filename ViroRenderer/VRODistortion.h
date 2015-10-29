@@ -11,6 +11,9 @@
 
 #include <stdio.h>
 
+/*
+ Parameterizes the barrel distortion to use in the distortion renderer.
+ */
 class VRODistortion {
     
 public:
@@ -18,12 +21,6 @@ public:
     VRODistortion() {
         _coefficients[0] = 0.441f;
         _coefficients[1] = 0.156f;
-    }
-    
-    VRODistortion(const VRODistortion *other) {
-        for (int i = 0; i < s_numberOfCoefficients; i++) {
-            _coefficients[i] = other->_coefficients[i];
-        }
     }
     
     void setCoefficients(const float *coefficients) {

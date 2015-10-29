@@ -61,7 +61,7 @@ public:
     void setTop(float top) {
         _top = top;
     }
-    float getTop() {
+    float getTop() const {
         return _top;
     }
     

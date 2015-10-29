@@ -62,9 +62,9 @@ void VROLayerSubstrateMetal::hydrate(const VRORenderContext &context) {
     pipelineStateDescriptor.vertexFunction = vertexProgram;
     pipelineStateDescriptor.fragmentFunction = fragmentProgram;
     pipelineStateDescriptor.vertexDescriptor = vertexDescriptor;
-    pipelineStateDescriptor.colorAttachments[0].pixelFormat = metal.getColorPixelFormat();
-    pipelineStateDescriptor.depthAttachmentPixelFormat = metal.getDepthStencilPixelFormat();
-    pipelineStateDescriptor.stencilAttachmentPixelFormat = metal.getDepthStencilPixelFormat();
+    pipelineStateDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatRGBA8Unorm;
+    pipelineStateDescriptor.depthAttachmentPixelFormat = MTLPixelFormatInvalid;
+    pipelineStateDescriptor.stencilAttachmentPixelFormat = MTLPixelFormatInvalid;
     
     NSError *error = NULL;
     _pipelineState = [metal.getDevice() newRenderPipelineStateWithDescriptor:pipelineStateDescriptor error:&error];

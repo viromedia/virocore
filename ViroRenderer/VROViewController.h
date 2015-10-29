@@ -33,7 +33,6 @@ typedef NS_ENUM(NSInteger, VROEyeType) {
 
 - (void)prepareNewFrameWithHeadViewMatrix:(matrix_float4x4)headViewMatrix;
 - (void)renderEye:(VROEyePerspective *)eye context:(VRORenderContext *)renderContext;
-- (void)finishFrameWithViewportRect:(CGRect)viewPort;
 
 @optional
 

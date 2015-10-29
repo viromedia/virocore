@@ -342,8 +342,6 @@
             [commandBuffer presentDrawable:view.currentDrawable];
         }
         
-        [self finishFrameWithViewPort:_monocularEye->getViewport()];
-        
         // Finalize rendering here & push the command buffer to the GPU
         [commandBuffer commit];
         VROAnimation::commitAll();
@@ -354,10 +352,10 @@
                                           leftEye:(VROEye *)leftEye
                                          rightEye:(VROEye *)rightEye
                                      monocularEye:(VROEye *)monocularEye {
-    std::shared_ptr<VRODevice> device = _headMountedDisplay->getDevice();
+    const VRODevice &device = _headMountedDisplay->getDevice();
     
     headTransform->setHeadView(_headTracker->getLastHeadView());
-    float halfInterLensDistance = device->getInterLensDistance() * 0.5f;
+    float halfInterLensDistance = device.getInterLensDistance() * 0.5f;
     
     if (self.vrModeEnabled) {
         matrix_float4x4 leftEyeTranslate = matrix_float4x4_from_GL(GLKMatrix4MakeTranslation(halfInterLensDistance, 0, 0));
@@ -371,14 +369,14 @@
     }
     
     if (_projectionChanged) {
-        std::shared_ptr<VROScreen> screenParams = _headMountedDisplay->getScreen();
-        monocularEye->getViewport()->setViewport(0, 0, screenParams->getWidth(), screenParams->getHeight());
+        const VROScreen &screen = _headMountedDisplay->getScreen();
+        monocularEye->setViewport(0, 0, screen.getWidth(), screen.getHeight());
         
         if (!self.vrModeEnabled) {
-            [self updateMonocularFov:monocularEye->getFOV()];
+            [self updateMonocularEye:monocularEye];
         }
         else if (_distortionCorrectionEnabled) {
-            [self updateFovsWithLeftEyeFov:leftEye->getFOV() rightEyeFov:rightEye->getFOV()];
+            [self updateLeftEye:leftEye rightEye:rightEye];
             _distortionRenderer->fovDidChange(_headMountedDisplay, leftEye->getFOV(), rightEye->getFOV(), [self virtualEyeToScreenDistance]);
         }
         else {
@@ -393,83 +391,80 @@
     }
     
     if (self.distortionCorrectionEnabled && _distortionRenderer->viewportsChanged()) {
-        _distortionRenderer->updateViewports(leftEye->getViewport(), rightEye->getViewport());
+        _distortionRenderer->updateViewports(leftEye, rightEye);
     }
 }
 
-- (void)updateMonocularFov:(VROFieldOfView *)monocularFov {
-    std::shared_ptr<VROScreen> screenParams = _headMountedDisplay->getScreen();
+- (void)updateMonocularEye:(VROEye *)monocularEye {
+    const VROScreen &screen = _headMountedDisplay->getScreen();
     const float monocularBottomFov = 22.5f;
     const float monocularLeftFov = GLKMathRadiansToDegrees(
                                                            atanf(
                                                                  tanf(GLKMathDegreesToRadians(monocularBottomFov))
-                                                                 * screenParams->getWidthInMeters()
-                                                                 / screenParams->getHeightInMeters()));
-    monocularFov->setLeft(monocularLeftFov);
-    monocularFov->setRight(monocularLeftFov);
-    monocularFov->setBottom(monocularBottomFov);
-    monocularFov->setTop(monocularBottomFov);
+                                                                 * screen.getWidthInMeters()
+                                                                 / screen.getHeightInMeters()));
+    monocularEye->setFOV(monocularLeftFov, monocularLeftFov, monocularBottomFov, monocularBottomFov);
 }
 
-- (void)updateFovsWithLeftEyeFov:(VROFieldOfView *)leftEyeFov
-                     rightEyeFov:(VROFieldOfView *)rightEyeFov {
-    std::shared_ptr<VRODevice> device = _headMountedDisplay->getDevice();
-    std::shared_ptr<VROScreen> screenParams = _headMountedDisplay->getScreen();
+- (void)updateLeftEye:(VROEye *)leftEye rightEye:(VROEye *)rightEye {
+    const VRODevice &device = _headMountedDisplay->getDevice();
+    const VROScreen &screen = _headMountedDisplay->getScreen();
     
-    VRODistortion *distortion = device->getDistortion();
+    const VRODistortion &distortion = device.getDistortion();
     float eyeToScreenDistance = [self virtualEyeToScreenDistance];
     
-    float outerDistance = (screenParams->getWidthInMeters() - device->getInterLensDistance() ) / 2.0f;
-    float innerDistance = device->getInterLensDistance() / 2.0f;
-    float bottomDistance = device->getVerticalDistanceToLensCenter() - screenParams->getBorderSizeInMeters();
-    float topDistance = screenParams->getHeightInMeters() + screenParams->getBorderSizeInMeters() - device->getVerticalDistanceToLensCenter();
+    float outerDistance = (screen.getWidthInMeters() - device.getInterLensDistance() ) / 2.0f;
+    float innerDistance = device.getInterLensDistance() / 2.0f;
+    float bottomDistance = device.getVerticalDistanceToLensCenter() - screen.getBorderSizeInMeters();
+    float topDistance = screen.getHeightInMeters() + screen.getBorderSizeInMeters() - device.getVerticalDistanceToLensCenter();
     
-    float outerAngle = GLKMathRadiansToDegrees(atanf(distortion->distort(outerDistance / eyeToScreenDistance)));
-    float innerAngle = GLKMathRadiansToDegrees(atanf(distortion->distort(innerDistance / eyeToScreenDistance)));
-    float bottomAngle = GLKMathRadiansToDegrees(atanf(distortion->distort(bottomDistance / eyeToScreenDistance)));
-    float topAngle = GLKMathRadiansToDegrees(atanf(distortion->distort(topDistance / eyeToScreenDistance)));
+    float outerAngle = GLKMathRadiansToDegrees(atanf(distortion.distort(outerDistance / eyeToScreenDistance)));
+    float innerAngle = GLKMathRadiansToDegrees(atanf(distortion.distort(innerDistance / eyeToScreenDistance)));
+    float bottomAngle = GLKMathRadiansToDegrees(atanf(distortion.distort(bottomDistance / eyeToScreenDistance)));
+    float topAngle = GLKMathRadiansToDegrees(atanf(distortion.distort(topDistance / eyeToScreenDistance)));
     
-    leftEyeFov->setLeft(MIN(outerAngle, device->getMaximumLeftEyeFOV()->getLeft()));
-    leftEyeFov->setRight(MIN(innerAngle, device->getMaximumLeftEyeFOV()->getRight()));
-    leftEyeFov->setBottom(MIN(bottomAngle, device->getMaximumLeftEyeFOV()->getBottom()));
-    leftEyeFov->setTop(MIN(topAngle, device->getMaximumLeftEyeFOV()->getTop()));
+    leftEye->setFOV(MIN(outerAngle, device.getMaximumLeftEyeFOV().getLeft()),
+                    MIN(innerAngle, device.getMaximumLeftEyeFOV().getRight()),
+                    MIN(bottomAngle, device.getMaximumLeftEyeFOV().getBottom()),
+                    MIN(topAngle, device.getMaximumLeftEyeFOV().getTop()));
     
-    rightEyeFov->setLeft(leftEyeFov->getRight());
-    rightEyeFov->setRight(leftEyeFov->getLeft());
-    rightEyeFov->setBottom(leftEyeFov->getBottom());
-    rightEyeFov->setTop(leftEyeFov->getTop());
+    const VROFieldOfView &leftEyeFov = leftEye->getFOV();
+    rightEye->setFOV(leftEyeFov.getRight(),
+                     leftEyeFov.getLeft(),
+                     leftEyeFov.getBottom(),
+                     leftEyeFov.getTop());
 }
 
 - (void)updateUndistortedFOVAndViewport {
-    std::shared_ptr<VRODevice> device = _headMountedDisplay->getDevice();
-    std::shared_ptr<VROScreen> screenParams = _headMountedDisplay->getScreen();
+    const VRODevice &device = _headMountedDisplay->getDevice();
+    const VROScreen &screen = _headMountedDisplay->getScreen();
     
-    float halfInterLensDistance = device->getInterLensDistance() * 0.5f;
+    float halfInterLensDistance = device.getInterLensDistance() * 0.5f;
     float eyeToScreenDistance = [self virtualEyeToScreenDistance];
 
-    float left = screenParams->getWidthInMeters() / 2.0f - halfInterLensDistance;
+    float left = screen.getWidthInMeters() / 2.0f - halfInterLensDistance;
     float right = halfInterLensDistance;
-    float bottom = device->getVerticalDistanceToLensCenter() - screenParams->getBorderSizeInMeters();
-    float top = screenParams->getBorderSizeInMeters() + screenParams->getHeightInMeters() - device->getVerticalDistanceToLensCenter();
+    float bottom = device.getVerticalDistanceToLensCenter() - screen.getBorderSizeInMeters();
+    float top = screen.getBorderSizeInMeters() + screen.getHeightInMeters() - device.getVerticalDistanceToLensCenter();
     
-    VROFieldOfView *leftEyeFov = _leftEye->getFOV();
-    leftEyeFov->setLeft(GLKMathRadiansToDegrees(atan2f(left, eyeToScreenDistance)));
-    leftEyeFov->setRight(GLKMathRadiansToDegrees(atan2f(right, eyeToScreenDistance)));
-    leftEyeFov->setBottom(GLKMathRadiansToDegrees(atan2f(bottom, eyeToScreenDistance)));
-    leftEyeFov->setTop(GLKMathRadiansToDegrees(atan2f(top, eyeToScreenDistance)));
     
-    VROFieldOfView *rightEyeFov = _rightEye->getFOV();
-    rightEyeFov->setLeft(leftEyeFov->getRight());
-    rightEyeFov->setRight(leftEyeFov->getLeft());
-    rightEyeFov->setBottom(leftEyeFov->getBottom());
-    rightEyeFov->setTop(leftEyeFov->getTop());
+    _leftEye->setFOV(GLKMathRadiansToDegrees(atan2f(left, eyeToScreenDistance)),
+                     GLKMathRadiansToDegrees(atan2f(right, eyeToScreenDistance)),
+                     GLKMathRadiansToDegrees(atan2f(bottom, eyeToScreenDistance)),
+                    GLKMathRadiansToDegrees(atan2f(top, eyeToScreenDistance)));
     
-    _leftEye->getViewport()->setViewport(0, 0, screenParams->getWidth() / 2, screenParams->getHeight());
-    _rightEye->getViewport()->setViewport(screenParams->getWidth() / 2, 0, screenParams->getWidth() / 2, screenParams->getHeight());
+    const VROFieldOfView &leftEyeFov = _leftEye->getFOV();
+    _rightEye->setFOV(leftEyeFov.getRight(),
+                      leftEyeFov.getLeft(),
+                      leftEyeFov.getBottom(),
+                      leftEyeFov.getTop());
+    
+    _leftEye->setViewport(0, 0, screen.getWidth() / 2, screen.getHeight());
+    _rightEye->setViewport(screen.getWidth() / 2, 0, screen.getWidth() / 2, screen.getHeight());
 }
 
 - (float)virtualEyeToScreenDistance {
-    return _headMountedDisplay->getDevice()->getScreenToLensDistance();
+    return _headMountedDisplay->getDevice().getScreenToLensDistance();
 }
 
 - (void)viewDidLayoutSubviews {
@@ -496,18 +491,18 @@
     [self.stereoRendererDelegate prepareNewFrameWithHeadViewMatrix:headTransform->getHeadView()];
     
     MTLViewport leftEyeViewport;
-    leftEyeViewport.originX = leftEye->getViewport()->getX();
-    leftEyeViewport.originY = leftEye->getViewport()->getY();
-    leftEyeViewport.width   = leftEye->getViewport()->getWidth();
-    leftEyeViewport.height  = leftEye->getViewport()->getHeight();
+    leftEyeViewport.originX = leftEye->getViewport().getX();
+    leftEyeViewport.originY = leftEye->getViewport().getY();
+    leftEyeViewport.width   = leftEye->getViewport().getWidth();
+    leftEyeViewport.height  = leftEye->getViewport().getHeight();
     leftEyeViewport.znear   = 0.0;
     leftEyeViewport.zfar    = 1.0;
     
     MTLScissorRect leftEyeScissor;
-    leftEyeScissor.x = leftEye->getViewport()->getX();
-    leftEyeScissor.y = leftEye->getViewport()->getY();
-    leftEyeScissor.width = leftEye->getViewport()->getWidth();
-    leftEyeScissor.height = leftEye->getViewport()->getHeight();
+    leftEyeScissor.x = leftEye->getViewport().getX();
+    leftEyeScissor.y = leftEye->getViewport().getY();
+    leftEyeScissor.width = leftEye->getViewport().getWidth();
+    leftEyeScissor.height = leftEye->getViewport().getHeight();
 
     [renderEncoder setViewport:leftEyeViewport];
     [renderEncoder setScissorRect:leftEyeScissor];
@@ -518,30 +513,24 @@
     if (rightEye == nullptr) { return; }
     
     MTLViewport rightEyeViewport;
-    rightEyeViewport.originX = rightEye->getViewport()->getX();
-    rightEyeViewport.originY = rightEye->getViewport()->getY();
-    rightEyeViewport.width   = rightEye->getViewport()->getWidth();
-    rightEyeViewport.height  = rightEye->getViewport()->getHeight();
+    rightEyeViewport.originX = rightEye->getViewport().getX();
+    rightEyeViewport.originY = rightEye->getViewport().getY();
+    rightEyeViewport.width   = rightEye->getViewport().getWidth();
+    rightEyeViewport.height  = rightEye->getViewport().getHeight();
     rightEyeViewport.znear   = 0.0;
     rightEyeViewport.zfar    = 1.0;
     
     MTLScissorRect rightEyeScissor;
-    rightEyeScissor.x = rightEye->getViewport()->getX();
-    rightEyeScissor.y = rightEye->getViewport()->getY();
-    rightEyeScissor.width = rightEye->getViewport()->getWidth();
-    rightEyeScissor.height = rightEye->getViewport()->getHeight();
+    rightEyeScissor.x = rightEye->getViewport().getX();
+    rightEyeScissor.y = rightEye->getViewport().getY();
+    rightEyeScissor.width = rightEye->getViewport().getWidth();
+    rightEyeScissor.height = rightEye->getViewport().getHeight();
     
     [renderEncoder setViewport:rightEyeViewport];
     [renderEncoder setScissorRect:rightEyeScissor];
     
     _rightEyeWrapper.eye = rightEye;
     [self.stereoRendererDelegate renderEye:_rightEyeWrapper context:_renderContext];
-}
-
-- (void)finishFrameWithViewPort:(VROViewport *)viewport {
-    //viewport->setGLViewport();
-    //viewport->setGLScissor();
-    //[self.stereoRendererDelegate finishFrameWithViewportRect:viewport->toCGRect()];
 }
 
 @end

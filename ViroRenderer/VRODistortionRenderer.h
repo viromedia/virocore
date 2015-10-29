@@ -11,17 +11,35 @@
 
 #include <stdio.h>
 #include <MetalKit/MetalKit.h>
-#include "VROHeadMountedDisplay.h"
-#include "VROViewport.h"
-#include "VROFieldOfView.h"
-#include "VRODistortion.h"
 
-class Distortion;
-class Eye;
-class FieldOfView;
-class HeadMountedDisplay;
-class Viewport;
+class VRODistortion;
+class VRODistortionMesh;
+class VROFieldOfView;
+class VROHeadMountedDisplay;
+class VROViewport;
 class VRORenderContextMetal;
+class VROEye;
+
+/*
+ Viewport specified in tangents, i.e. the tangent of the eye's
+ field of view angle in each direction.
+ */
+class VROEyeViewport {
+    
+public:
+    float x;
+    float y;
+    float width;
+    float height;
+    float eyeX;
+    float eyeY;
+    
+    VROEyeViewport() :
+        x(0), y(0), width(0), height(0), eyeX(0), eyeY(0)
+    {}
+    VROEyeViewport(const VROFieldOfView &eyeFOV, float xOffset);
+    
+};
 
 class VRODistortionRenderer {
     
@@ -66,53 +84,15 @@ public:
     bool viewportsChanged() {
         return _viewportsChanged;
     }
-    void updateViewports(VROViewport *leftViewport,
-                         VROViewport *rightViewport);
+    void updateViewports(VROEye *leftEye, VROEye *rightEye);
     
     void fovDidChange(VROHeadMountedDisplay *hmd,
-                      VROFieldOfView *leftEyeFov,
-                      VROFieldOfView *rightEyeFov,
+                      const VROFieldOfView &leftEyeFov,
+                      const VROFieldOfView &rightEyeFov,
                       float virtualEyeToScreenDistance);
     
     
 private:
-    
-    class DistortionMesh {
-    public:
-
-        id <MTLBuffer> _vertexBuffer;
-        id <MTLBuffer> _indexBuffer;
-        
-        DistortionMesh();
-        DistortionMesh(VRODistortion *distortionRed,
-                       VRODistortion *distortionGreen,
-                       VRODistortion *distortionBlue,
-                       float screenWidth, float screenHeight,
-                       float xEyeOffsetScreen, float yEyeOffsetScreen,
-                       float textureWidth, float textureHeight,
-                       float xEyeOffsetTexture, float yEyeOffsetTexture,
-                       float viewportXTexture, float viewportYTexture,
-                       float viewportWidthTexture,
-                       float viewportHeightTexture,
-                       bool vignetteEnabled,
-                       id <MTLDevice> gpu);
-    };
-    
-    /*
-     Viewport specified in tangents, i.e. the tangent of the eye's 
-     field of view angle in each direction.
-     */
-    struct EyeViewport {
-    public:
-        float x;
-        float y;
-        float width;
-        float height;
-        float eyeX;
-        float eyeY;
-        
-        NSString *toString();
-    };
     
     id <MTLRenderPipelineState> _pipelineState;
     id <MTLRenderPipelineState> _aberrationPipelineState;
@@ -128,44 +108,47 @@ private:
     float _resolutionScale;
     bool _chromaticAberrationCorrectionEnabled;
     bool _vignetteEnabled;
-    DistortionMesh *_leftEyeDistortionMesh;
-    DistortionMesh *_rightEyeDistortionMesh;
+    
+    /*
+     The meshes used for barrel distortion for the left and right eye.
+     */
+    VRODistortionMesh *_leftEyeDistortionMesh;
+    VRODistortionMesh *_rightEyeDistortionMesh;
     
     VROHeadMountedDisplay *_headMountedDisplay;
-    EyeViewport *_leftEyeViewport;
-    EyeViewport *_rightEyeViewport;
+    VROEyeViewport _leftEyeViewport;
+    VROEyeViewport _rightEyeViewport;
     
     bool _fovsChanged;
     bool _viewportsChanged;
     bool _drawingFrame;
     
     /*
-     Measurement parameters.
+     The number of pixels per tan(), used to convert an EyeViewport into an actual
+     pixel-based viewport.
      */
     float _xPxPerTanAngle;
     float _yPxPerTanAngle;
     float _metersPerTanAngle;
     
-    EyeViewport *initViewportForEye(VROFieldOfView *eyeFieldOfView, float xOffsetM);
-    
     void updateTextureAndDistortionMesh(const VRORenderContextMetal &metal);
     id <MTLRenderCommandEncoder> createEyeRenderEncoder(const VRORenderContextMetal &metal);
     void updateDistortionMeshPipeline(const VRORenderContextMetal &metal);
     
-    DistortionMesh *createDistortionMesh(EyeViewport *eyeViewport,
-                                         float textureWidthTanAngle,
-                                         float textureHeightTanAngle,
-                                         float xEyeOffsetTanAngleScreen,
-                                         float yEyeOffsetTanAngleScreen,
-                                         id <MTLDevice> gpu);
+    VRODistortionMesh *createDistortionMesh(const VROEyeViewport &eyeViewport,
+                                            float textureWidthTanAngle,
+                                            float textureHeightTanAngle,
+                                            float xEyeOffsetTanAngleScreen,
+                                            float yEyeOffsetTanAngleScreen,
+                                            id <MTLDevice> gpu);
     
-    void renderDistortionMesh(DistortionMesh *mesh, id <MTLTexture> texture, id <MTLRenderCommandEncoder> renderEncoder);
+    void renderDistortionMesh(const VRODistortionMesh &mesh,
+                              id <MTLTexture> texture,
+                              id <MTLRenderCommandEncoder> renderEncoder);
     
-    float computeDistortionScale(VRODistortion *distortion,
+    float computeDistortionScale(const VRODistortion &distortion,
                                  float screenWidthM,
                                  float interpupillaryDistanceM);
-    
-    void setupRenderTexture(int width, int height, id <MTLDevice> gpu);
 
 };
 

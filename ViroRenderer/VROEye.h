@@ -32,17 +32,10 @@ public:
         _lastZNear(0),
         _lastZFar(0) {
         
-        _viewport = new VROViewport();
-        _fov = new VROFieldOfView();
     }
     
     ~VROEye() {
-        if (_viewport != nullptr) {
-            delete (_viewport);
-        }
-        if (_fov != nullptr) {
-            delete (_fov);
-        }
+  
     }
     
     Type getType() const {
@@ -62,7 +55,7 @@ public:
             return _perspective;
         }
         
-        _perspective = _fov->toPerspectiveMatrix(zNear, zFar);
+        _perspective = _fov.toPerspectiveMatrix(zNear, zFar);
         _lastZNear = zNear;
         _lastZFar = zFar;
         _projectionChanged = false;
@@ -70,13 +63,26 @@ public:
         return _perspective;
     }
     
-    VROViewport *getViewport() const {
+    void setFOV(float left, float right, float bottom, float top) {
+        _fov.setLeft(left);
+        _fov.setRight(right);
+        _fov.setBottom(bottom);
+        _fov.setTop(top);
+    }
+    
+    const VROFieldOfView &getFOV() const {
+        return _fov;
+    }
+    
+    void setViewport(float x, float y, float width, float height) {
+        _viewport.setViewport(x, y, width, height);
+    }
+    
+    const VROViewport &getViewport() const {
         return _viewport;
     }
     
-    VROFieldOfView *getFOV() const {
-        return _fov;
-    }
+
     
     void setProjectionChanged() {
         _projectionChanged = true;
@@ -86,8 +92,8 @@ private:
     
     Type _type;
     matrix_float4x4 _eyeView;
-    VROViewport *_viewport;
-    VROFieldOfView *_fov;
+    VROViewport _viewport;
+    VROFieldOfView _fov;
     bool _projectionChanged;
     matrix_float4x4 _perspective;
     float _lastZNear;

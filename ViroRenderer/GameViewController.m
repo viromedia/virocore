@@ -94,10 +94,6 @@
     _scene->render(*renderContext);
 }
 
-- (void)finishFrameWithViewportRect:(CGRect)viewPort {
-    
-}
-
 - (void)renderViewDidChangeSize:(CGSize)size context:(VRORenderContext *)context {
     // When reshape is called, update the view and projection matricies since this means the view orientation or size changed
     float aspect = fabs(size.width / size.height);
