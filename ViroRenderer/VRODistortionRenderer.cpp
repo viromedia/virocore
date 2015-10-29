@@ -18,13 +18,13 @@
 
 #pragma mark - Initialization
 
-VRODistortionRenderer::VRODistortionRenderer() :
+VRODistortionRenderer::VRODistortionRenderer(VROHeadMountedDisplay &headMountedDisplay) :
     _resolutionScale(1.0f),
     _chromaticAberrationCorrectionEnabled(false),
     _vignetteEnabled(true),
     _leftEyeDistortionMesh(nullptr),
     _rightEyeDistortionMesh(nullptr),
-    _headMountedDisplay(nullptr),
+    _headMountedDisplay(headMountedDisplay),
     _fovsChanged(false),
     _viewportsChanged(false),
     _drawingFrame(false),
@@ -44,8 +44,7 @@ VRODistortionRenderer::~VRODistortionRenderer() {
 
 #pragma mark - Viewport Computation
 
-void VRODistortionRenderer::fovDidChange(VROHeadMountedDisplay *headMountedDisplay,
-                                         const VROFieldOfView &leftEyeFov,
+void VRODistortionRenderer::fovDidChange(const VROFieldOfView &leftEyeFov,
                                          const VROFieldOfView &rightEyeFov,
                                          float virtualEyeToScreenDistance) {
     if (_drawingFrame) {
@@ -53,13 +52,11 @@ void VRODistortionRenderer::fovDidChange(VROHeadMountedDisplay *headMountedDispl
         return;
     }
     
-    _headMountedDisplay = headMountedDisplay;
-    
     _leftEyeViewport = { leftEyeFov, 0.0f };
     _rightEyeViewport = { rightEyeFov, _leftEyeViewport.width };
     _metersPerTanAngle = virtualEyeToScreenDistance;
     
-    const VROScreen &screen = _headMountedDisplay->getScreen();
+    const VROScreen &screen = _headMountedDisplay.getScreen();
         
     _xPxPerTanAngle = screen.getWidth()  / (screen.getWidthInMeters()  / _metersPerTanAngle);
     _yPxPerTanAngle = screen.getHeight() / (screen.getHeightInMeters() / _metersPerTanAngle);
@@ -96,8 +93,8 @@ void VRODistortionRenderer::updateViewports(VROEye *leftEye, VROEye *rightEye) {
 void VRODistortionRenderer::updateTextureAndDistortionMesh(const VRORenderContextMetal &metal) {
     id <MTLDevice> gpu = metal.getDevice();
     
-    const VROScreen &screen = _headMountedDisplay->getScreen();
-    const VRODevice &device = _headMountedDisplay->getDevice();
+    const VROScreen &screen = _headMountedDisplay.getScreen();
+    const VRODevice &device = _headMountedDisplay.getDevice();
     
     /*
      Compute the size of the required eye render texture (the texture to which we render
@@ -135,7 +132,7 @@ void VRODistortionRenderer::updateTextureAndDistortionMesh(const VRORenderContex
                                                    xEyeOffsetTanAngleScreen, yEyeOffsetTanAngleScreen, gpu);
     
     
-    updateDistortionMeshPipeline(metal);
+    updateDistortionPassPipeline(metal);
     _fovsChanged = false;
 }
 
@@ -163,7 +160,7 @@ id <MTLRenderCommandEncoder> VRODistortionRenderer::createEyeRenderEncoder(const
     return eyeRenderEncoder;
 }
 
-void VRODistortionRenderer::updateDistortionMeshPipeline(const VRORenderContextMetal &metal) {
+void VRODistortionRenderer::updateDistortionPassPipeline(const VRORenderContextMetal &metal) {
     /*
      Set up the pipeline for rendering to the eye texture.
      */
@@ -228,7 +225,7 @@ void VRODistortionRenderer::renderEyesToScreen(const VRORenderContextMetal &meta
         updateTextureAndDistortionMesh(metal);
     }
     
-    const VROScreen &screen = _headMountedDisplay->getScreen();
+    const VROScreen &screen = _headMountedDisplay.getScreen();
     
     id <MTLRenderCommandEncoder> screenEncoder = metal.getRenderEncoder();
     [screenEncoder setDepthStencilState:_depthState];
@@ -263,11 +260,11 @@ VRODistortionMesh *VRODistortionRenderer::createDistortionMesh(const VROEyeViewp
                                                                float xEyeOffsetTanAngleScreen,
                                                                float yEyeOffsetTanAngleScreen,
                                                                id <MTLDevice> gpu) {
-    return new VRODistortionMesh(_headMountedDisplay->getDevice().getDistortion(),
-                                 _headMountedDisplay->getDevice().getDistortion(),
-                                 _headMountedDisplay->getDevice().getDistortion(),
-                                 _headMountedDisplay->getScreen().getWidthInMeters() / _metersPerTanAngle,
-                                 _headMountedDisplay->getScreen().getHeightInMeters() / _metersPerTanAngle,
+    return new VRODistortionMesh(_headMountedDisplay.getDevice().getDistortion(),
+                                 _headMountedDisplay.getDevice().getDistortion(),
+                                 _headMountedDisplay.getDevice().getDistortion(),
+                                 _headMountedDisplay.getScreen().getWidthInMeters() / _metersPerTanAngle,
+                                 _headMountedDisplay.getScreen().getHeightInMeters() / _metersPerTanAngle,
                                  xEyeOffsetTanAngleScreen, yEyeOffsetTanAngleScreen,
                                  textureWidthTanAngle, textureHeightTanAngle,
                                  eyeViewport.eyeX, eyeViewport.eyeY,

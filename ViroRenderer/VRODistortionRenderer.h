@@ -45,7 +45,7 @@ class VRODistortionRenderer {
     
 public:
     
-    VRODistortionRenderer();
+    VRODistortionRenderer(VROHeadMountedDisplay &headMountedDisplay);
     ~VRODistortionRenderer();
     
     /*
@@ -86,11 +86,9 @@ public:
     }
     void updateViewports(VROEye *leftEye, VROEye *rightEye);
     
-    void fovDidChange(VROHeadMountedDisplay *hmd,
-                      const VROFieldOfView &leftEyeFov,
+    void fovDidChange(const VROFieldOfView &leftEyeFov,
                       const VROFieldOfView &rightEyeFov,
                       float virtualEyeToScreenDistance);
-    
     
 private:
     
@@ -98,10 +96,13 @@ private:
     id <MTLRenderPipelineState> _aberrationPipelineState;
     id <MTLDepthStencilState> _depthState;
     
+    /*
+     Buffer containing the uniforms needed for the distortion pass.
+     */
     id <MTLBuffer> _uniformsBuffer;
     
     /*
-     The texture to which we render both eyes.
+     The texture onto which we render both eyes.
      */
     id <MTLTexture> _texture;
     
@@ -115,7 +116,7 @@ private:
     VRODistortionMesh *_leftEyeDistortionMesh;
     VRODistortionMesh *_rightEyeDistortionMesh;
     
-    VROHeadMountedDisplay *_headMountedDisplay;
+    VROHeadMountedDisplay &_headMountedDisplay;
     VROEyeViewport _leftEyeViewport;
     VROEyeViewport _rightEyeViewport;
     
@@ -131,9 +132,21 @@ private:
     float _yPxPerTanAngle;
     float _metersPerTanAngle;
     
-    void updateTextureAndDistortionMesh(const VRORenderContextMetal &metal);
+    /*
+     Create the render encoder used for rendering the eyes to the texture.
+     */
     id <MTLRenderCommandEncoder> createEyeRenderEncoder(const VRORenderContextMetal &metal);
-    void updateDistortionMeshPipeline(const VRORenderContextMetal &metal);
+
+    /*
+     Update the render-texture and the distortion mesh using hte latest FOV and viewport
+     parameters.
+     */
+    void updateTextureAndDistortionMesh(const VRORenderContextMetal &metal);
+    
+    /*
+     Update the pipeline used to render the distortion pass.
+     */
+    void updateDistortionPassPipeline(const VRORenderContextMetal &metal);
     
     VRODistortionMesh *createDistortionMesh(const VROEyeViewport &eyeViewport,
                                             float textureWidthTanAngle,

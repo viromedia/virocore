@@ -129,8 +129,7 @@
     _leftEye = new VROEye(VROEye::TypeLeft);
     _rightEye = new VROEye(VROEye::TypeRight);
     
-    _distortionRenderer = new VRODistortionRenderer();
-    
+    _distortionRenderer = new VRODistortionRenderer(*_headMountedDisplay);
     _distortionCorrectionScale = 1.0f;
     
     _vrModeEnabled = YES;
@@ -140,7 +139,6 @@
     _zFar = 100.0f;
     
     _projectionChanged = YES;
-    
     _frameParamentersReady = NO;
     
     self.leftEyeWrapper = [VROEyePerspective new];
@@ -377,7 +375,7 @@
         }
         else if (_distortionCorrectionEnabled) {
             [self updateLeftEye:leftEye rightEye:rightEye];
-            _distortionRenderer->fovDidChange(_headMountedDisplay, leftEye->getFOV(), rightEye->getFOV(), [self virtualEyeToScreenDistance]);
+            _distortionRenderer->fovDidChange(leftEye->getFOV(), rightEye->getFOV(), [self virtualEyeToScreenDistance]);
         }
         else {
             [self updateUndistortedFOVAndViewport];
