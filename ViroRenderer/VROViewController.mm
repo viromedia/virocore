@@ -22,63 +22,6 @@
 #import "VRORenderContextMetal.h"
 #import "VROAnimation.h"
 
-@interface VROEyePerspective ()
-
-@property (nonatomic) VROEye *eye;
-
-- (instancetype)initWithEye:(VROEye *)eye;
-
-@end
-
-
-@implementation VROEyePerspective
-
-- (instancetype)init {
-    return [self initWithEye:nullptr];
-}
-
-- (instancetype)initWithEye:(VROEye *)eye {
-    self = [super init];
-    if (self) {
-        _eye = eye;
-    }
-    
-    return self;
-}
-
-- (VROEyeType)type {
-    VROEyeType type = VROEyeTypeMonocular;
-    if (_eye->getType() == VROEye::TypeLeft) {
-        type = VROEyeTypeLeft;
-    }
-    else if (_eye->getType() == VROEye::TypeRight) {
-        type = VROEyeTypeRight;
-    }
-    
-    return type;
-}
-
-- (matrix_float4x4)eyeViewMatrix {
-    if (_eye != nullptr) {
-        return _eye->getEyeView();
-    }
-    else {
-        return matrix_identity_float4x4;
-    }
-}
-
-- (matrix_float4x4)perspectiveMatrixWithZNear:(float)zNear
-                                         zFar:(float)zFar {
-    if (_eye != nullptr) {
-        return _eye->perspective(zNear, zFar);
-    }
-    else {
-        return matrix_identity_float4x4;
-    }
-}
-
-@end
-
 @interface VROViewController () {
     VROMagnetSensor *_magnetSensor;
     VROHeadTracker *_headTracker;
@@ -100,14 +43,8 @@
     float _zFar;
     
     BOOL _projectionChanged;
-    
     BOOL _frameParamentersReady;
 }
-
-@property (nonatomic) NSRecursiveLock *glLock;
-
-@property (nonatomic) VROEyePerspective *leftEyeWrapper;
-@property (nonatomic) VROEyePerspective *rightEyeWrapper;
 
 @end
 
@@ -139,9 +76,6 @@
     
     _projectionChanged = YES;
     _frameParamentersReady = NO;
-    
-    self.leftEyeWrapper = [VROEyePerspective new];
-    self.rightEyeWrapper = [VROEyePerspective new];
     
     _headTracker->startTracking([UIApplication sharedApplication].statusBarOrientation);
     _magnetSensor->start();
@@ -474,47 +408,25 @@
     
     id <MTLRenderCommandEncoder> renderEncoder = _renderContext->getRenderTarget()->getRenderEncoder();
     
-    MTLViewport leftEyeViewport;
-    leftEyeViewport.originX = leftEye->getViewport().getX();
-    leftEyeViewport.originY = leftEye->getViewport().getY();
-    leftEyeViewport.width   = leftEye->getViewport().getWidth();
-    leftEyeViewport.height  = leftEye->getViewport().getHeight();
-    leftEyeViewport.znear   = 0.0;
-    leftEyeViewport.zfar    = 1.0;
+    [renderEncoder setViewport:leftEye->getViewport().toMetalViewport()];
+    [renderEncoder setScissorRect:leftEye->getViewport().toMetalScissor()];
     
-    MTLScissorRect leftEyeScissor;
-    leftEyeScissor.x = leftEye->getViewport().getX();
-    leftEyeScissor.y = leftEye->getViewport().getY();
-    leftEyeScissor.width = leftEye->getViewport().getWidth();
-    leftEyeScissor.height = leftEye->getViewport().getHeight();
-
-    [renderEncoder setViewport:leftEyeViewport];
-    [renderEncoder setScissorRect:leftEyeScissor];
+    _renderContext->setViewMatrix(leftEye->getEyeView());
+    _renderContext->setProjectionMatrix(leftEye->perspective(0.1, 100));
     
-    _leftEyeWrapper.eye = leftEye;
-    [self.stereoRendererDelegate renderEye:_leftEyeWrapper context:_renderContext];
+    [self.stereoRendererDelegate renderEye:VROEyeTypeLeft context:_renderContext];
     
-    if (rightEye == nullptr) { return; }
+    if (rightEye == nullptr) {
+        return;
+    }
     
-    MTLViewport rightEyeViewport;
-    rightEyeViewport.originX = rightEye->getViewport().getX();
-    rightEyeViewport.originY = rightEye->getViewport().getY();
-    rightEyeViewport.width   = rightEye->getViewport().getWidth();
-    rightEyeViewport.height  = rightEye->getViewport().getHeight();
-    rightEyeViewport.znear   = 0.0;
-    rightEyeViewport.zfar    = 1.0;
+    [renderEncoder setViewport:rightEye->getViewport().toMetalViewport()];
+    [renderEncoder setScissorRect:rightEye->getViewport().toMetalScissor()];
     
-    MTLScissorRect rightEyeScissor;
-    rightEyeScissor.x = rightEye->getViewport().getX();
-    rightEyeScissor.y = rightEye->getViewport().getY();
-    rightEyeScissor.width = rightEye->getViewport().getWidth();
-    rightEyeScissor.height = rightEye->getViewport().getHeight();
+    _renderContext->setViewMatrix(rightEye->getEyeView());
+    _renderContext->setProjectionMatrix(rightEye->perspective(0.1, 100));
     
-    [renderEncoder setViewport:rightEyeViewport];
-    [renderEncoder setScissorRect:rightEyeScissor];
-    
-    _rightEyeWrapper.eye = rightEye;
-    [self.stereoRendererDelegate renderEye:_rightEyeWrapper context:_renderContext];
+    [self.stereoRendererDelegate renderEye:VROEyeTypeRight context:_renderContext];
 }
 
 @end

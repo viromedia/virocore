@@ -16,15 +16,6 @@ typedef NS_ENUM(NSInteger, VROEyeType) {
     VROEyeTypeRight,
 };
 
-@interface VROEyePerspective : NSObject
-
-@property (nonatomic) VROEyeType type;
-
-- (matrix_float4x4)eyeViewMatrix;
-- (matrix_float4x4)perspectiveMatrixWithZNear:(float)zNear zFar:(float)zFar;
-
-@end
-
 @protocol VROStereoRendererDelegate <NSObject>
 
 - (void)setupRendererWithView:(MTKView *)view context:(VRORenderContext *)context;
@@ -32,7 +23,7 @@ typedef NS_ENUM(NSInteger, VROEyeType) {
 - (void)renderViewDidChangeSize:(CGSize)size context:(VRORenderContext *)context;
 
 - (void)prepareNewFrameWithHeadViewMatrix:(matrix_float4x4)headViewMatrix;
-- (void)renderEye:(VROEyePerspective *)eye context:(VRORenderContext *)renderContext;
+- (void)renderEye:(VROEyeType)eye context:(VRORenderContext *)renderContext;
 
 @optional
 

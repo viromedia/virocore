@@ -175,28 +175,32 @@ bool VROHeadTracker::isReady() {
 }
 
 matrix_float4x4 VROHeadTracker::getLastHeadView() {
-  #if HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_EKF || HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION_EKF
+#if HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_EKF || HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION_EKF
     
     NSTimeInterval currentTimestamp = CACurrentMediaTime();
     double secondsSinceLastGyroEvent = currentTimestamp - _lastGyroEventTimestamp;
+    
     // 1/30 of a second prediction (shoud it be 1/60?)
-    double secondsToPredictForward = secondsSinceLastGyroEvent + 1.0/30;
+    double secondsToPredictForward = secondsSinceLastGyroEvent + 1.0 / 30;
     GLKMatrix4 deviceFromInertialReferenceFrame = _tracker->getPredictedGLMatrix(secondsToPredictForward);
     
-  #elif HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION
+#elif HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION
     
     CMDeviceMotion *motion = _motionManager.deviceMotion;
     CMRotationMatrix rotationMatrix = motion.attitude.rotationMatrix;
     GLKMatrix4 deviceFromInertialReferenceFrame = GLKMatrix4Transpose(GLMatrixFromRotationMatrix(rotationMatrix)); // note the matrix inversion
     
-    if (!motion) { return _lastHeadView; }
+    if (!motion) {
+        return _lastHeadView;
+    }
     
-  #endif
+#endif
   
-    if (!isReady()) { return _lastHeadView; }
+    if (!isReady()) {
+        return _lastHeadView;
+    }
 
-    if (!_headingCorrectionComputed)
-    {
+    if (!_headingCorrectionComputed) {
         // fix the heading by aligning world -z with the projection 
         // of the device -z on the ground plane
         
@@ -206,8 +210,7 @@ matrix_float4x4 VROHeadTracker::getLastHeadView() {
         GLKVector3 deviceForward = GLKVector3Make(0.f, 0.f, -1.f);
         GLKVector3 deviceForwardWorld = GLKMatrix4MultiplyVector3(worldFromDevice, deviceForward);
         
-        if (fabsf(deviceForwardWorld.y) < 0.99f)
-        {
+        if (fabsf(deviceForwardWorld.y) < 0.99f) {
             deviceForwardWorld.y = 0.f;  // project onto ground plane
             
             deviceForwardWorld = GLKVector3Normalize(deviceForwardWorld);
@@ -233,16 +236,15 @@ matrix_float4x4 VROHeadTracker::getLastHeadView() {
                 _inertialReferenceFrameFromWorld,
                 Rt);
         }
+        
         _headingCorrectionComputed = true;
     }
     
-    GLKMatrix4 deviceFromWorld = GLKMatrix4Multiply(
-        deviceFromInertialReferenceFrame,
-        _correctedInertialReferenceFrameFromWorld);
+    GLKMatrix4 deviceFromWorld = GLKMatrix4Multiply(deviceFromInertialReferenceFrame,
+                                                    _correctedInertialReferenceFrameFromWorld);
     GLKMatrix4 displayFromWorld = GLKMatrix4Multiply(_displayFromDevice, deviceFromWorld);
     
-    if (_neckModelEnabled)
-    {
+    if (_neckModelEnabled) {
         displayFromWorld = GLKMatrix4Multiply(_neckModelTranslation, displayFromWorld);
         displayFromWorld = GLKMatrix4Translate(displayFromWorld, 0.0f, _defaultNeckVerticalOffset, 0.0f);
     }

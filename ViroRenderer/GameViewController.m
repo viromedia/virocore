@@ -84,20 +84,12 @@
     
 }
 
-- (void)renderEye:(VROEyePerspective *)eye context:(VRORenderContext *)renderContext {
-    VRORenderContextMetal *metal = (VRORenderContextMetal *)renderContext;
-    metal->setViewMatrix([eye eyeViewMatrix]);
-
+- (void)renderEye:(VROEyeType)eye context:(VRORenderContext *)renderContext {
     _scene->render(*renderContext);
 }
 
 - (void)renderViewDidChangeSize:(CGSize)size context:(VRORenderContext *)context {
-    // When reshape is called, update the view and projection matricies since this means the view orientation or size changed
-    float aspect = fabs(size.width / size.height);
-    
-    VRORenderContextMetal *metal = (VRORenderContextMetal *)context;
-    metal->setProjectionMatrix(matrix_from_perspective_fov_aspectLH(65.0f * (M_PI / 180.0f), aspect, 0.1f, 100.0f));
-    metal->setViewMatrix(matrix_identity_float4x4);
+
 }
 
 @end

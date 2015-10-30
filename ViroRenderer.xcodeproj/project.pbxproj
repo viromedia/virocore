@@ -260,8 +260,6 @@
 				8F517BF01BCDBA8C0017C70B /* VROLayer.cpp */,
 				8F5C41461BD800F8006D7A77 /* VROPresentationLayer.h */,
 				8F5C41451BD800F8006D7A77 /* VROPresentationLayer.cpp */,
-				8F517BF91BCDC8C20017C70B /* VRORenderContext.h */,
-				8F517BFC1BCDC9170017C70B /* VRORenderContextMetal.h */,
 				8F7A9EA91BD0517A006CFAFD /* VRORect.h */,
 				8F5C413A1BD05AD1006D7A77 /* VRORect.cpp */,
 				8F5C41371BD05286006D7A77 /* VROPoint.h */,
@@ -294,6 +292,8 @@
 				8F4C9FFF1BDAE06A00177B8F /* VROScreen.h */,
 				8F4CA0011BDAE10C00177B8F /* VROScreen.cpp */,
 				8FEA6C9C1BE3DC7100C2CD0F /* VRORenderTarget.h */,
+				8F517BF91BCDC8C20017C70B /* VRORenderContext.h */,
+				8F517BFC1BCDC9170017C70B /* VRORenderContextMetal.h */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";

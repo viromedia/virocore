@@ -9,7 +9,7 @@
 #ifndef VROViewport_hpp
 #define VROViewport_hpp
 
-#include <stdio.h>
+#include <MetalKit/MetalKit.h>
 
 class VROViewport {
     
@@ -33,6 +33,28 @@ public:
         _y = y;
         _width = width;
         _height = height;
+    }
+    
+    MTLViewport toMetalViewport() const {
+        MTLViewport viewport;
+        viewport.originX = _x;
+        viewport.originY = _y;
+        viewport.width   = _width;
+        viewport.height  = _height;
+        viewport.znear   = 0.0;
+        viewport.zfar    = 1.0;
+        
+        return viewport;
+    }
+    
+    MTLScissorRect toMetalScissor() const {
+        MTLScissorRect scissor;
+        scissor.x = _x;
+        scissor.y = _y;
+        scissor.width = _width;
+        scissor.height = _height;
+        
+        return scissor;
     }
     
 private:
