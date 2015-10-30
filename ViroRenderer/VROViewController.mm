@@ -130,6 +130,8 @@
     delete (_renderContext);
 }
 
+#pragma mark - Settings
+
 - (BOOL)vignetteEnabled {
     return _distortionRenderer->isVignetteEnabled();
 }
@@ -160,16 +162,11 @@
     }
 }
 
-- (void)glkViewController:(GLKViewController *)controller willPause:(BOOL)pause {
-    if (pause) {
-        _headTracker->stopTracking();
-        _magnetSensor->stop();
-    }
-    else {
-        _headTracker->startTracking([UIApplication sharedApplication].statusBarOrientation);
-        _magnetSensor->start();
-    }
+- (float)virtualEyeToScreenDistance {
+    return _device->getScreenToLensDistance();
 }
+
+#pragma mark - Rendering
 
 // Called whenever view changes orientation or layout is changed
 - (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size {
@@ -273,6 +270,8 @@
     
     [screenTarget->getRenderEncoder() endEncoding];
 }
+
+#pragma mark - View Computation
 
 - (void)calculateFrameParametersWithHeadTransform:(VROHeadTransform *)headTransform
                                           leftEye:(VROEye *)leftEye
@@ -382,16 +381,12 @@
     _rightEye->setViewport(screen.getWidth() / 2, 0, screen.getWidth() / 2, screen.getHeight());
 }
 
-- (float)virtualEyeToScreenDistance {
-    return _device->getScreenToLensDistance();
-}
-
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     [self updateRenderViewSize:self.view.bounds.size];
 }
 
-#pragma mark Stereo renderer methods
+#pragma mark - Stereo renderer methods
 
 - (void)updateRenderViewSize:(CGSize)size {
     if (self.vrModeEnabled) {
@@ -408,11 +403,17 @@
     
     id <MTLRenderCommandEncoder> renderEncoder = _renderContext->getRenderTarget()->getRenderEncoder();
     
+    matrix_float4x4 camera = matrix_float4x4_from_GL(GLKMatrix4MakeLookAt(0, 0, -1.0,
+                                                                          0, 0, 0,
+                                                                          0, 1.0f, 0));
+    const float zNear = 0.1;
+    const float zFar  = 100;
+    
     [renderEncoder setViewport:leftEye->getViewport().toMetalViewport()];
     [renderEncoder setScissorRect:leftEye->getViewport().toMetalScissor()];
     
-    _renderContext->setViewMatrix(leftEye->getEyeView());
-    _renderContext->setProjectionMatrix(leftEye->perspective(0.1, 100));
+    _renderContext->setViewMatrix(matrix_multiply(leftEye->getEyeView(), camera));
+    _renderContext->setProjectionMatrix(leftEye->perspective(zNear, zFar));
     
     [self.stereoRendererDelegate renderEye:VROEyeTypeLeft context:_renderContext];
     
@@ -423,8 +424,8 @@
     [renderEncoder setViewport:rightEye->getViewport().toMetalViewport()];
     [renderEncoder setScissorRect:rightEye->getViewport().toMetalScissor()];
     
-    _renderContext->setViewMatrix(rightEye->getEyeView());
-    _renderContext->setProjectionMatrix(rightEye->perspective(0.1, 100));
+    _renderContext->setViewMatrix(matrix_multiply(rightEye->getEyeView(), camera));
+    _renderContext->setProjectionMatrix(rightEye->perspective(zNear, zFar));
     
     [self.stereoRendererDelegate renderEye:VROEyeTypeRight context:_renderContext];
 }
