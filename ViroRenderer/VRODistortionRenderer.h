@@ -15,7 +15,7 @@
 class VRODistortion;
 class VRODistortionMesh;
 class VROFieldOfView;
-class VROHeadMountedDisplay;
+class VRODevice;
 class VROViewport;
 class VRORenderContextMetal;
 class VROEye;
@@ -45,7 +45,7 @@ class VRODistortionRenderer {
     
 public:
     
-    VRODistortionRenderer(VROHeadMountedDisplay &headMountedDisplay);
+    VRODistortionRenderer(VRODevice &device);
     ~VRODistortionRenderer();
     
     /*
@@ -116,7 +116,7 @@ private:
     VRODistortionMesh *_leftEyeDistortionMesh;
     VRODistortionMesh *_rightEyeDistortionMesh;
     
-    VROHeadMountedDisplay &_headMountedDisplay;
+    VRODevice &_device;
     VROEyeViewport _leftEyeViewport;
     VROEyeViewport _rightEyeViewport;
     

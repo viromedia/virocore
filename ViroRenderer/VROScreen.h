@@ -17,7 +17,6 @@ class VROScreen {
 public:
     
     VROScreen(UIScreen *screen);
-    VROScreen(const VROScreen *screenParams);
     
     int getWidth() const;
     int getHeight() const;
@@ -27,8 +26,6 @@ public:
     
     void setBorderSizeInMeters(float screenBorderSize);
     float getBorderSizeInMeters() const;
-    
-    bool equals(const VROScreen *other) const;
     
 private:
     

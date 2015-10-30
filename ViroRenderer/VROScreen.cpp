@@ -74,14 +74,6 @@ VROScreen::VROScreen(UIScreen *screen) {
 #endif
 }
 
-VROScreen::VROScreen(const VROScreen *screen) :
-    _scale(screen->_scale),
-    _xMetersPerPixel(screen->_xMetersPerPixel),
-    _yMetersPerPixel(screen->_yMetersPerPixel),
-    _borderSizeMeters(screen->_borderSizeMeters) {
-
-}
-
 int VROScreen::getWidth() const {
     return [_screen orientationAwareSize].width * _scale;
 }
@@ -104,21 +96,6 @@ void VROScreen::setBorderSizeInMeters(float screenBorderSize) {
 
 float VROScreen::getBorderSizeInMeters() const {
     return _borderSizeMeters;
-}
-
-bool VROScreen::equals(const VROScreen *other) const {
-    if (other == nullptr) {
-        return false;
-    }
-    else if (other == this) {
-        return true;
-    }
-    
-    return (getWidth() == other->getWidth()) &&
-           (getHeight() == other->getHeight()) &&
-           (getWidthInMeters() == other->getWidthInMeters()) &&
-           (getHeightInMeters() == other->getHeightInMeters()) &&
-           (getBorderSizeInMeters() == other->getBorderSizeInMeters());
 }
 
 float VROScreen::pixelsPerInch(UIScreen *screen) {

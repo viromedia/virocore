@@ -14,6 +14,10 @@
 #include "VROViewport.h"
 #include "VROFieldOfView.h"
 
+/*
+ An eye consists of a view matrix, a projection matrix, a viewport, and a
+ field of view. These completely define the "camera" of an eye.
+ */
 class VROEye {
     
 public:
@@ -27,16 +31,14 @@ public:
     VROEye(const Type eye) :
         _type(eye),
         _eyeView(matrix_identity_float4x4),
-        _projectionChanged(true),
         _perspective(matrix_identity_float4x4),
+        _projectionChanged(true),
         _lastZNear(0),
         _lastZFar(0) {
         
     }
     
-    ~VROEye() {
-  
-    }
+    ~VROEye() {}
     
     Type getType() const {
         return _type;
@@ -68,6 +70,8 @@ public:
         _fov.setRight(right);
         _fov.setBottom(bottom);
         _fov.setTop(top);
+        
+        _projectionChanged = true;
     }
     
     const VROFieldOfView &getFOV() const {
@@ -82,20 +86,17 @@ public:
         return _viewport;
     }
     
-
-    
-    void setProjectionChanged() {
-        _projectionChanged = true;
-    }
-    
 private:
     
     Type _type;
+    
     matrix_float4x4 _eyeView;
+    matrix_float4x4 _perspective;
+
     VROViewport _viewport;
     VROFieldOfView _fov;
+    
     bool _projectionChanged;
-    matrix_float4x4 _perspective;
     float _lastZNear;
     float _lastZFar;
 };

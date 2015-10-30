@@ -12,6 +12,7 @@
 #include <string>
 #include "VRODistortion.h"
 #include "VROFieldOfView.h"
+#include "VROScreen.h"
 
 /*
  Encapsulates the parameters that define a given physical VR device. These 
@@ -22,21 +23,14 @@ class VRODevice {
     
 public:
    
-    VRODevice() :
+    VRODevice(UIScreen *screen) :
         _vendor("com.google"),
         _model("cardboard"),
         _interLensDistance(0.06f),
         _verticalDistanceToLensCenter(0.035f),
-        _screenToLensDistance(0.042f) {
+        _screenToLensDistance(0.042f),
+        _screen(screen) {
             
-    }
-    
-    VRODevice(const VRODevice *device) :
-        _vendor(device->_vendor),
-        _model(device->_model),
-        _interLensDistance(device->_interLensDistance),
-        _verticalDistanceToLensCenter(device->_verticalDistanceToLensCenter),
-        _screenToLensDistance(device->_screenToLensDistance) {
     }
     
     ~VRODevice() {}
@@ -46,6 +40,10 @@ public:
     }
     std::string getModel() const {
         return _model;
+    }
+    
+    const VROScreen &getScreen() const {
+        return _screen;
     }
     
     float getInterLensDistance() const {
@@ -65,23 +63,6 @@ public:
         return _distortion;
     }
     
-    bool equals(const VRODevice *other) const {
-        if (other == nullptr) {
-            return false;
-        }
-        else if (other == this) {
-            return true;
-        }
-        
-        return (getVendor() == other->getVendor()) &&
-               (getModel() == other->getModel()) &&
-               (getInterLensDistance() == other->getInterLensDistance()) &&
-               (getVerticalDistanceToLensCenter() == other->getVerticalDistanceToLensCenter()) &&
-               (getScreenToLensDistance() == other->getScreenToLensDistance()) &&
-               (getMaximumLeftEyeFOV().equals(&other->getMaximumLeftEyeFOV())) &&
-               (getDistortion().equals(&other->getDistortion()));
-    }
-    
 private:
     
     std::string _vendor;
@@ -91,6 +72,8 @@ private:
     float _interLensDistance;
     float _verticalDistanceToLensCenter;
     float _screenToLensDistance;
+    
+    VROScreen _screen;
     
     VROFieldOfView _maximumLeftEyeFOV;
     VRODistortion _distortion;

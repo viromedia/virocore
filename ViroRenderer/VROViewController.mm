@@ -14,7 +14,6 @@
 #import "VROEye.h"
 #import "VROFieldOfView.h"
 #import "VROViewport.h"
-#import "VROHeadMountedDisplay.h"
 #import "VROHeadTransform.h"
 #import "VROScreen.h"
 #import "VROHeadTransform.h"
@@ -84,7 +83,7 @@
     VROMagnetSensor *_magnetSensor;
     VROHeadTracker *_headTracker;
     VROHeadTransform *_headTransform;
-    VROHeadMountedDisplay *_headMountedDisplay;
+    VRODevice *_device;
     
     VROEye *_monocularEye;
     VROEye *_leftEye;
@@ -123,13 +122,13 @@
     _magnetSensor = new VROMagnetSensor();
     _headTracker = new VROHeadTracker();
     _headTransform = new VROHeadTransform();
-    _headMountedDisplay = new VROHeadMountedDisplay([UIScreen mainScreen]);
+    _device = new VRODevice([UIScreen mainScreen]);
     
     _monocularEye = new VROEye(VROEye::TypeMonocular);
     _leftEye = new VROEye(VROEye::TypeLeft);
     _rightEye = new VROEye(VROEye::TypeRight);
     
-    _distortionRenderer = new VRODistortionRenderer(*_headMountedDisplay);
+    _distortionRenderer = new VRODistortionRenderer(*_device);
     _distortionCorrectionScale = 1.0f;
     
     _vrModeEnabled = YES;
@@ -197,8 +196,8 @@
     if (_headTransform != nullptr) {
         delete (_headTransform);
     }
-    if (_headMountedDisplay != nullptr) {
-        delete (_headMountedDisplay);
+    if (_device != nullptr) {
+        delete (_device);
     }
     
     if (_monocularEye != nullptr) {
@@ -350,10 +349,9 @@
                                           leftEye:(VROEye *)leftEye
                                          rightEye:(VROEye *)rightEye
                                      monocularEye:(VROEye *)monocularEye {
-    const VRODevice &device = _headMountedDisplay->getDevice();
     
     headTransform->setHeadView(_headTracker->getLastHeadView());
-    float halfInterLensDistance = device.getInterLensDistance() * 0.5f;
+    float halfInterLensDistance = _device->getInterLensDistance() * 0.5f;
     
     if (self.vrModeEnabled) {
         matrix_float4x4 leftEyeTranslate = matrix_float4x4_from_GL(GLKMatrix4MakeTranslation(halfInterLensDistance, 0, 0));
@@ -367,7 +365,7 @@
     }
     
     if (_projectionChanged) {
-        const VROScreen &screen = _headMountedDisplay->getScreen();
+        const VROScreen &screen = _device->getScreen();
         monocularEye->setViewport(0, 0, screen.getWidth(), screen.getHeight());
         
         if (!self.vrModeEnabled) {
@@ -381,10 +379,6 @@
             [self updateUndistortedFOVAndViewport];
         }
         
-        leftEye->setProjectionChanged();
-        rightEye->setProjectionChanged();
-        monocularEye->setProjectionChanged();
-        
         _projectionChanged = NO;
     }
     
@@ -394,7 +388,7 @@
 }
 
 - (void)updateMonocularEye:(VROEye *)monocularEye {
-    const VROScreen &screen = _headMountedDisplay->getScreen();
+    const VROScreen &screen = _device->getScreen();
     const float monocularBottomFov = 22.5f;
     const float monocularLeftFov = GLKMathRadiansToDegrees(
                                                            atanf(
@@ -405,26 +399,25 @@
 }
 
 - (void)updateLeftEye:(VROEye *)leftEye rightEye:(VROEye *)rightEye {
-    const VRODevice &device = _headMountedDisplay->getDevice();
-    const VROScreen &screen = _headMountedDisplay->getScreen();
+    const VROScreen &screen = _device->getScreen();
     
-    const VRODistortion &distortion = device.getDistortion();
+    const VRODistortion &distortion = _device->getDistortion();
     float eyeToScreenDistance = [self virtualEyeToScreenDistance];
     
-    float outerDistance = (screen.getWidthInMeters() - device.getInterLensDistance() ) / 2.0f;
-    float innerDistance = device.getInterLensDistance() / 2.0f;
-    float bottomDistance = device.getVerticalDistanceToLensCenter() - screen.getBorderSizeInMeters();
-    float topDistance = screen.getHeightInMeters() + screen.getBorderSizeInMeters() - device.getVerticalDistanceToLensCenter();
+    float outerDistance = (screen.getWidthInMeters() - _device->getInterLensDistance() ) / 2.0f;
+    float innerDistance = _device->getInterLensDistance() / 2.0f;
+    float bottomDistance = _device->getVerticalDistanceToLensCenter() - screen.getBorderSizeInMeters();
+    float topDistance = screen.getHeightInMeters() + screen.getBorderSizeInMeters() - _device->getVerticalDistanceToLensCenter();
     
     float outerAngle = GLKMathRadiansToDegrees(atanf(distortion.distort(outerDistance / eyeToScreenDistance)));
     float innerAngle = GLKMathRadiansToDegrees(atanf(distortion.distort(innerDistance / eyeToScreenDistance)));
     float bottomAngle = GLKMathRadiansToDegrees(atanf(distortion.distort(bottomDistance / eyeToScreenDistance)));
     float topAngle = GLKMathRadiansToDegrees(atanf(distortion.distort(topDistance / eyeToScreenDistance)));
     
-    leftEye->setFOV(MIN(outerAngle, device.getMaximumLeftEyeFOV().getLeft()),
-                    MIN(innerAngle, device.getMaximumLeftEyeFOV().getRight()),
-                    MIN(bottomAngle, device.getMaximumLeftEyeFOV().getBottom()),
-                    MIN(topAngle, device.getMaximumLeftEyeFOV().getTop()));
+    leftEye->setFOV(MIN(outerAngle, _device->getMaximumLeftEyeFOV().getLeft()),
+                    MIN(innerAngle, _device->getMaximumLeftEyeFOV().getRight()),
+                    MIN(bottomAngle, _device->getMaximumLeftEyeFOV().getBottom()),
+                    MIN(topAngle, _device->getMaximumLeftEyeFOV().getTop()));
     
     const VROFieldOfView &leftEyeFov = leftEye->getFOV();
     rightEye->setFOV(leftEyeFov.getRight(),
@@ -434,16 +427,15 @@
 }
 
 - (void)updateUndistortedFOVAndViewport {
-    const VRODevice &device = _headMountedDisplay->getDevice();
-    const VROScreen &screen = _headMountedDisplay->getScreen();
+    const VROScreen &screen = _device->getScreen();
     
-    float halfInterLensDistance = device.getInterLensDistance() * 0.5f;
+    float halfInterLensDistance = _device->getInterLensDistance() * 0.5f;
     float eyeToScreenDistance = [self virtualEyeToScreenDistance];
 
     float left = screen.getWidthInMeters() / 2.0f - halfInterLensDistance;
     float right = halfInterLensDistance;
-    float bottom = device.getVerticalDistanceToLensCenter() - screen.getBorderSizeInMeters();
-    float top = screen.getBorderSizeInMeters() + screen.getHeightInMeters() - device.getVerticalDistanceToLensCenter();
+    float bottom = _device->getVerticalDistanceToLensCenter() - screen.getBorderSizeInMeters();
+    float top = screen.getBorderSizeInMeters() + screen.getHeightInMeters() - _device->getVerticalDistanceToLensCenter();
     
     
     _leftEye->setFOV(GLKMathRadiansToDegrees(atan2f(left, eyeToScreenDistance)),
@@ -462,7 +454,7 @@
 }
 
 - (float)virtualEyeToScreenDistance {
-    return _headMountedDisplay->getDevice().getScreenToLensDistance();
+    return _device->getScreenToLensDistance();
 }
 
 - (void)viewDidLayoutSubviews {

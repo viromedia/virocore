@@ -12,6 +12,9 @@
 #include <simd/simd.h>
 #include "VROMath.h"
 
+/*
+ Represents the field of view in each direction, in degrees.
+ */
 class VROFieldOfView {
     
 public:

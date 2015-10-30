@@ -43,12 +43,6 @@ public:
         return (vector_float3) {_headView.columns[0].x, _headView.columns[0].y, _headView.columns[0].z};
     }
     
-    /*
-    GLKQuaternion getQuaternion() const {
-        return nullptr;
-    }
-     */
-    
     vector_float3 getEulerAngles() const {
         float yaw = 0;
         float roll = 0;
