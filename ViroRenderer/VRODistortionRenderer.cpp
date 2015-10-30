@@ -90,9 +90,10 @@ void VRODistortionRenderer::updateViewports(VROEye *leftEye, VROEye *rightEye) {
     _viewportsChanged = false;
 }
 
-void VRODistortionRenderer::updateTextureAndDistortionMesh(const VRORenderContextMetal &metal) {
-    id <MTLDevice> gpu = metal.getDevice();
-    
+void VRODistortionRenderer::updateDistortion(id <MTLDevice> gpu, id <MTLLibrary> library, MTKView *view) {
+    if (!_fovsChanged) {
+        return;
+    }
     const VROScreen &screen = _device.getScreen();
     
     /*
@@ -131,43 +132,35 @@ void VRODistortionRenderer::updateTextureAndDistortionMesh(const VRORenderContex
                                                    xEyeOffsetTanAngleScreen, yEyeOffsetTanAngleScreen, gpu);
     
     
-    updateDistortionPassPipeline(metal);
+    updateDistortionPassPipeline(gpu, library, view);
     _fovsChanged = false;
 }
 
 #pragma mark - Rendering Eye Texture
 
-id <MTLRenderCommandEncoder> VRODistortionRenderer::bindEyeRenderTarget(const VRORenderContextMetal &metal) {
+std::shared_ptr<VRORenderTarget> VRODistortionRenderer::bindEyeRenderTarget(id <MTLCommandBuffer> commandBuffer) {
     _drawingFrame = true;
     
-    if (_fovsChanged) {
-        updateTextureAndDistortionMesh(metal);
-    }
-    
-    return createEyeRenderEncoder(metal);
-}
-
-id <MTLRenderCommandEncoder> VRODistortionRenderer::createEyeRenderEncoder(const VRORenderContextMetal &metal) {
     MTLRenderPassDescriptor *renderPassDesc = [MTLRenderPassDescriptor renderPassDescriptor];
     renderPassDesc.colorAttachments[0].texture = _texture;
     renderPassDesc.colorAttachments[0].loadAction = MTLLoadActionClear;
     renderPassDesc.colorAttachments[0].clearColor = MTLClearColorMake(0.0, 0.0, 0.0, 1.0);
     
-    id <MTLRenderCommandEncoder> eyeRenderEncoder = [metal.getCommandBuffer() renderCommandEncoderWithDescriptor:renderPassDesc];
+    id <MTLRenderCommandEncoder> eyeRenderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:renderPassDesc];
     eyeRenderEncoder.label = @"EyeRenderEncoder";
     
-    return eyeRenderEncoder;
+    return std::make_shared<VRORenderTarget>(eyeRenderEncoder, _texture.pixelFormat, MTLPixelFormatInvalid, _texture.sampleCount);
 }
 
-void VRODistortionRenderer::updateDistortionPassPipeline(const VRORenderContextMetal &metal) {
+void VRODistortionRenderer::updateDistortionPassPipeline(id <MTLDevice> gpu, id <MTLLibrary> library, MTKView *view) {
     /*
      Set up the pipeline for rendering to the eye texture.
      */
-    _uniformsBuffer = [metal.getDevice() newBufferWithLength:sizeof(VRODistortionUniforms) options:0];
+    _uniformsBuffer = [gpu newBufferWithLength:sizeof(VRODistortionUniforms) options:0];
     _uniformsBuffer.label = @"VRODistortionUniformBuffer";
     
-    id <MTLFunction> fragmentProgram = [metal.getLibrary() newFunctionWithName:@"distortion_fragment"];
-    id <MTLFunction> vertexProgram   = [metal.getLibrary() newFunctionWithName:@"distortion_vertex"];
+    id <MTLFunction> fragmentProgram = [library newFunctionWithName:@"distortion_fragment"];
+    id <MTLFunction> vertexProgram   = [library newFunctionWithName:@"distortion_vertex"];
     
     MTLVertexDescriptor *vertexDescriptor = [MTLVertexDescriptor vertexDescriptor];
     vertexDescriptor.attributes[0].format = MTLVertexFormatFloat2;
@@ -196,16 +189,16 @@ void VRODistortionRenderer::updateDistortionPassPipeline(const VRORenderContextM
     
     MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
     pipelineStateDescriptor.label = @"VRODistortionPipeline";
-    pipelineStateDescriptor.sampleCount = metal.getSampleCount();
+    pipelineStateDescriptor.sampleCount = view.sampleCount;
     pipelineStateDescriptor.vertexFunction = vertexProgram;
     pipelineStateDescriptor.fragmentFunction = fragmentProgram;
     pipelineStateDescriptor.vertexDescriptor = vertexDescriptor;
-    pipelineStateDescriptor.colorAttachments[0].pixelFormat = metal.getColorPixelFormat();
-    pipelineStateDescriptor.depthAttachmentPixelFormat = metal.getDepthStencilPixelFormat();
-    pipelineStateDescriptor.stencilAttachmentPixelFormat = metal.getDepthStencilPixelFormat();
+    pipelineStateDescriptor.colorAttachments[0].pixelFormat = view.colorPixelFormat;
+    pipelineStateDescriptor.depthAttachmentPixelFormat = view.depthStencilPixelFormat;
+    pipelineStateDescriptor.stencilAttachmentPixelFormat = view.depthStencilPixelFormat;
     
     NSError *error = NULL;
-    _pipelineState = [metal.getDevice() newRenderPipelineStateWithDescriptor:pipelineStateDescriptor error:&error];
+    _pipelineState = [gpu newRenderPipelineStateWithDescriptor:pipelineStateDescriptor error:&error];
     if (!_pipelineState) {
         NSLog(@"Failed to created pipeline state, error %@", error);
     }
@@ -214,19 +207,14 @@ void VRODistortionRenderer::updateDistortionPassPipeline(const VRORenderContextM
     depthStateDesc.depthCompareFunction = MTLCompareFunctionAlways;
     depthStateDesc.depthWriteEnabled = NO;
     
-    _depthState = [metal.getDevice() newDepthStencilStateWithDescriptor:depthStateDesc];
+    _depthState = [gpu newDepthStencilStateWithDescriptor:depthStateDesc];
 }
 
 #pragma mark - Rendering Eye Texture to Distortion Mesh
 
-void VRODistortionRenderer::renderEyesToScreen(const VRORenderContextMetal &metal) {
-    if (_fovsChanged) {
-        updateTextureAndDistortionMesh(metal);
-    }
-    
+void VRODistortionRenderer::renderEyesToScreen(id <MTLRenderCommandEncoder> screenEncoder) {
     const VROScreen &screen = _device.getScreen();
     
-    id <MTLRenderCommandEncoder> screenEncoder = metal.getRenderEncoder();
     [screenEncoder setDepthStencilState:_depthState];
     [screenEncoder setViewport: { 0, 0,
         (double) screen.getWidth(),

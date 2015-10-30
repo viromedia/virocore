@@ -176,9 +176,7 @@
     view.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
     
     _inflight_semaphore = dispatch_semaphore_create(3);
-    
-#pragma warning Delete this
-    _renderContext = new VRORenderContextMetal(view, device);
+    _renderContext = new VRORenderContextMetal(device);
     
     [self.stereoRendererDelegate setupRendererWithView:self.view context:_renderContext];
 }
@@ -186,33 +184,16 @@
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.stereoRendererDelegate shutdownRendererWithView:self.view];
-    
-    if (_magnetSensor != nullptr) {
-        delete (_magnetSensor);
-    }
-    if (_headTracker != nullptr) {
-        delete (_headTracker);
-    }
-    if (_headTransform != nullptr) {
-        delete (_headTransform);
-    }
-    if (_device != nullptr) {
-        delete (_device);
-    }
-    
-    if (_monocularEye != nullptr) {
-        delete (_monocularEye);
-    }
-    if (_leftEye != nullptr) {
-        delete (_leftEye);
-    }
-    if (_rightEye != nullptr) {
-        delete (_rightEye);
-    }
-    
-    if (_distortionRenderer != nullptr) {
-        delete (_distortionRenderer);
-    }
+
+    delete (_magnetSensor);
+    delete (_headTracker);
+    delete (_headTransform);
+    delete (_device);
+    delete (_monocularEye);
+    delete (_leftEye);
+    delete (_rightEye);
+    delete (_distortionRenderer);
+    delete (_renderContext);
 }
 
 - (BOOL)vignetteEnabled {
@@ -277,7 +258,7 @@
         _frameParamentersReady = YES;
         
         /*
-         A single command buffer collects all render events for frame.
+         A single command buffer collects all render events for a frame.
          */
         id <MTLCommandBuffer> commandBuffer = [_renderContext->getCommandQueue() commandBuffer];
         commandBuffer.label = @"CommandBuffer";
@@ -294,55 +275,69 @@
         VROAnimation::beginImplicitAnimation();
         VROAnimation::updateT();
         
-        // Obtain a renderPassDescriptor generated from the view's drawable textures
-        MTLRenderPassDescriptor* renderPassDescriptor = view.currentRenderPassDescriptor;
-        
-        
-        _renderContext->setCommandBuffer(commandBuffer);
-        //_renderContext->setRenderEncoder(renderEncoder);
-        
-        if (renderPassDescriptor != nil) {
+        if (view.currentRenderPassDescriptor) {
             if (self.vrModeEnabled) {
                 if (_distortionCorrectionEnabled) {
-                    id <MTLRenderCommandEncoder> eyeRenderEncoder = _distortionRenderer->bindEyeRenderTarget(*_renderContext);
-                    _renderContext->setRenderEncoder(eyeRenderEncoder);
-                    
-                    [self drawFrameWithHeadTransform:_headTransform
-                                             leftEye:_leftEye
-                                            rightEye:_rightEye
-                                       renderEncoder:eyeRenderEncoder];
-                    [eyeRenderEncoder endEncoding];
-                    
-                    id <MTLRenderCommandEncoder> screenRenderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:view.currentRenderPassDescriptor];
-                    screenRenderEncoder.label = @"ScreenRenderEncoder";
-                    
-                    _renderContext->setRenderEncoder(screenRenderEncoder);
-                    _distortionRenderer->renderEyesToScreen(*_renderContext);
-                    
-                    [screenRenderEncoder endEncoding];
+                    [self renderVRDistortionInView:view withCommandBuffer:commandBuffer];
                 }
                 else {
-                    [self drawFrameWithHeadTransform:_headTransform
-                                             leftEye:_leftEye
-                                            rightEye:_rightEye
-                                       renderEncoder:nil];
+                    [self renderVRInView:view withCommandBuffer:commandBuffer];
                 }
             }
             else {
-                [self drawFrameWithHeadTransform:_headTransform
-                                         leftEye:_monocularEye
-                                        rightEye:nullptr
-                                   renderEncoder:nil];
+                [self renderMonocularInView:view withCommandBuffer:commandBuffer];
             }
             
-            //[renderEncoder endEncoding];
             [commandBuffer presentDrawable:view.currentDrawable];
         }
         
-        // Finalize rendering here & push the command buffer to the GPU
         [commandBuffer commit];
         VROAnimation::commitAll();
     }
+}
+
+- (void)renderVRDistortionInView:(MTKView *)view withCommandBuffer:(id <MTLCommandBuffer>)commandBuffer {
+    _distortionRenderer->updateDistortion(_renderContext->getDevice(), _renderContext->getLibrary(), view);
+    
+    std::shared_ptr<VRORenderTarget> eyeTarget = _distortionRenderer->bindEyeRenderTarget(commandBuffer);
+    _renderContext->setRenderTarget(eyeTarget);
+
+    id <MTLRenderCommandEncoder> eyeRenderEncoder = eyeTarget->getRenderEncoder();
+    
+    [self drawFrameWithHeadTransform:_headTransform
+                             leftEye:_leftEye
+                            rightEye:_rightEye];
+    [eyeRenderEncoder endEncoding];
+    
+    std::shared_ptr<VRORenderTarget> screenTarget = std::make_shared<VRORenderTarget>(view, commandBuffer);
+    _renderContext->setRenderTarget(screenTarget);
+    
+    id <MTLRenderCommandEncoder> screenRenderEncoder = screenTarget->getRenderEncoder();
+
+    _distortionRenderer->renderEyesToScreen(screenRenderEncoder);
+    [screenRenderEncoder endEncoding];
+}
+
+- (void)renderVRInView:(MTKView *)view withCommandBuffer:(id <MTLCommandBuffer>)commandBuffer {
+    std::shared_ptr<VRORenderTarget> screenTarget = std::make_shared<VRORenderTarget>(view, commandBuffer);
+    _renderContext->setRenderTarget(screenTarget);
+    
+    [self drawFrameWithHeadTransform:_headTransform
+                             leftEye:_leftEye
+                            rightEye:_rightEye];
+    
+    [screenTarget->getRenderEncoder() endEncoding];
+}
+
+- (void)renderMonocularInView:(MTKView *)view withCommandBuffer:(id <MTLCommandBuffer>)commandBuffer {
+    std::shared_ptr<VRORenderTarget> screenTarget = std::make_shared<VRORenderTarget>(view, commandBuffer);
+    _renderContext->setRenderTarget(screenTarget);
+    
+    [self drawFrameWithHeadTransform:_headTransform
+                             leftEye:_monocularEye
+                            rightEye:nullptr];
+    
+    [screenTarget->getRenderEncoder() endEncoding];
 }
 
 - (void)calculateFrameParametersWithHeadTransform:(VROHeadTransform *)headTransform
@@ -357,8 +352,8 @@
         matrix_float4x4 leftEyeTranslate = matrix_float4x4_from_GL(GLKMatrix4MakeTranslation(halfInterLensDistance, 0, 0));
         matrix_float4x4 rightEyeTranslate = matrix_float4x4_from_GL(GLKMatrix4MakeTranslation(-halfInterLensDistance, 0, 0));
         
-        leftEye->setEyeView( matrix_multiply(leftEyeTranslate, headTransform->getHeadView()));
-        rightEye->setEyeView( matrix_multiply(rightEyeTranslate, headTransform->getHeadView()));
+        leftEye->setEyeView(matrix_multiply(leftEyeTranslate, headTransform->getHeadView()));
+        rightEye->setEyeView(matrix_multiply(rightEyeTranslate, headTransform->getHeadView()));
     }
     else {
         monocularEye->setEyeView(headTransform->getHeadView());
@@ -475,10 +470,9 @@
 
 - (void)drawFrameWithHeadTransform:(VROHeadTransform *)headTransform
                            leftEye:(VROEye *)leftEye
-                          rightEye:(VROEye *)rightEye
-                     renderEncoder:(id <MTLRenderCommandEncoder>)renderEncoder {
+                          rightEye:(VROEye *)rightEye {
     
-    [self.stereoRendererDelegate prepareNewFrameWithHeadViewMatrix:headTransform->getHeadView()];
+    id <MTLRenderCommandEncoder> renderEncoder = _renderContext->getRenderTarget()->getRenderEncoder();
     
     MTLViewport leftEyeViewport;
     leftEyeViewport.originX = leftEye->getViewport().getX();

@@ -13,7 +13,7 @@
 #include "VRODistortion.h"
 
 /*
- The meshes onto which we render each eye to perform barrel distortion.
+ The mesh onto which we render each eye to perform barrel distortion.
  */
 class VRODistortionMesh {
     

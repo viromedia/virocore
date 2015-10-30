@@ -17,14 +17,12 @@ class VROLayerSubstrateMetal : public VROLayerSubstrate {
     
 public:
     
-    VROLayerSubstrateMetal(std::shared_ptr<VROLayer> layer) :
-        VROLayerSubstrate(layer)
-    {}
+    VROLayerSubstrateMetal(const VRORenderContext &context);
     virtual ~VROLayerSubstrateMetal() {}
     
-    void hydrate(const VRORenderContext &context);
-    void render(const VRORenderContext &context, matrix_float4x4 mv);
-    
+    void render(const VRORenderContext &context,
+                matrix_float4x4 mv,
+                vector_float4 bgColor);
     void setContents(const void *data, size_t dataLength, int width, int height);
     
 private:
@@ -38,6 +36,7 @@ private:
     id <MTLBuffer> _uniformsBuffer;
     id <MTLTexture> _texture;
     
+    void hydrate(const VRORenderContext &context);
 };
 
 #endif /* VROLayerSubstrateMetal_h */

@@ -11,11 +11,11 @@
 #include "VROLog.h"
 #include "VROMath.h"
 
-VROPresentationLayer::VROPresentationLayer(const VROLayer *layer) :
+VROPresentationLayer::VROPresentationLayer(const VROLayer *layer, const VRORenderContext &context) :
     VROLayer(this),
     _model(layer),
-    _substrate(nullptr) {
-    
+    _substrate(new VROLayerSubstrateMetal(context)) {
+
 }
 
 VROPresentationLayer::~VROPresentationLayer() {
@@ -24,13 +24,6 @@ VROPresentationLayer::~VROPresentationLayer() {
 
 void VROPresentationLayer::setContents(const void *data, size_t dataLength, int width, int height) {
     _substrate->setContents(data, dataLength, width, height);
-}
-
-void VROPresentationLayer::hydrate(const VRORenderContext &context) {
-    // TODO assert not hydrating twice!
-    
-    _substrate = new VROLayerSubstrateMetal(shared_from_this());
-    _substrate->hydrate(context);
 }
 
 void VROPresentationLayer::render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack) {
@@ -55,7 +48,7 @@ void VROPresentationLayer::render(const VRORenderContext &context, std::stack<ma
     matrix_float4x4 mvParent = mvStack.top();
     matrix_float4x4 mv = matrix_multiply(mvParent, modelMtx);
     
-    _substrate->render(context, mv);
+    _substrate->render(context, mv, _backgroundColor);
     
     /*
      Now render the children. The children are all transformed to the parent's origin (its top

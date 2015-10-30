@@ -12,6 +12,13 @@
 #include "VRORect.h"
 #include "VROMath.h"
 
+VROLayerSubstrateMetal::VROLayerSubstrateMetal(const VRORenderContext &context) :
+    VROLayerSubstrate(),
+    _device(((VRORenderContextMetal &) context).getDevice()) {
+
+}
+
+
 void VROLayerSubstrateMetal::setContents(const void *data, const size_t dataLength, int width, int height) {
     int bytesPerPixel = 4;
     MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm
@@ -24,8 +31,6 @@ void VROLayerSubstrateMetal::setContents(const void *data, const size_t dataLeng
 
 void VROLayerSubstrateMetal::hydrate(const VRORenderContext &context) {
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
-    
-    _device = metal.getDevice();
     
     _vertexBuffer = [_device newBufferWithLength:sizeof(VROLayerVertexLayout) * kCornersInLayer options:0];
     _vertexBuffer.label = @"VROLayerVertexBuffer";
@@ -56,15 +61,17 @@ void VROLayerSubstrateMetal::hydrate(const VRORenderContext &context) {
     vertexDescriptor.layouts[0].stride = sizeof(VROLayerVertexLayout);
     vertexDescriptor.layouts[0].stepFunction = MTLVertexStepFunctionPerVertex;
     
+    std::shared_ptr<VRORenderTarget> renderTarget = metal.getRenderTarget();
+    
     MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
     pipelineStateDescriptor.label = @"VROLayerPipeline";
-    pipelineStateDescriptor.sampleCount = metal.getSampleCount();
+    pipelineStateDescriptor.sampleCount = renderTarget->getSampleCount();
     pipelineStateDescriptor.vertexFunction = vertexProgram;
     pipelineStateDescriptor.fragmentFunction = fragmentProgram;
     pipelineStateDescriptor.vertexDescriptor = vertexDescriptor;
-    pipelineStateDescriptor.colorAttachments[0].pixelFormat = MTLPixelFormatRGBA8Unorm;
-    pipelineStateDescriptor.depthAttachmentPixelFormat = MTLPixelFormatInvalid;
-    pipelineStateDescriptor.stencilAttachmentPixelFormat = MTLPixelFormatInvalid;
+    pipelineStateDescriptor.colorAttachments[0].pixelFormat = renderTarget->getColorPixelFormat();
+    pipelineStateDescriptor.depthAttachmentPixelFormat = renderTarget->getDepthStencilPixelFormat();
+    pipelineStateDescriptor.stencilAttachmentPixelFormat = renderTarget->getDepthStencilPixelFormat();
     
     NSError *error = NULL;
     _pipelineState = [metal.getDevice() newRenderPipelineStateWithDescriptor:pipelineStateDescriptor error:&error];
@@ -79,21 +86,22 @@ void VROLayerSubstrateMetal::hydrate(const VRORenderContext &context) {
     _depthState = [metal.getDevice() newDepthStencilStateWithDescriptor:depthStateDesc];
 }
 
-void VROLayerSubstrateMetal::render(const VRORenderContext &context, matrix_float4x4 mv) {
-    std::shared_ptr<VROLayer> layer = _layer.lock();
-    if (!layer) {
-        return;
+void VROLayerSubstrateMetal::render(const VRORenderContext &context,
+                                    matrix_float4x4 mv,
+                                    vector_float4 bgColor) {
+    
+    if (!_pipelineState) {
+        hydrate(context);
     }
     
-    std::shared_ptr<VROLayer> superlayer = layer->getSuperlayer();
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
     
     uniforms_t *uniforms = (uniforms_t *)[_uniformsBuffer contents];
     uniforms->normal_matrix = matrix_invert(matrix_transpose(mv));
     uniforms->modelview_projection_matrix = matrix_multiply(metal.getProjectionMatrix(), mv);
-    uniforms->diffuse_color = layer->getBackgroundColor();
+    uniforms->diffuse_color = bgColor;
     
-    id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderEncoder();
+    id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
     
     [renderEncoder pushDebugGroup:@"VROLayer"];
     

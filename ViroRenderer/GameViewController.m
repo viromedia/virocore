@@ -31,13 +31,12 @@
     
 }
 
-- (void)_loadAssetsWithContext:(VRORenderContext *)renderContext {
+- (void)_loadAssetsWithContext:(VRORenderContext *)context {
     _scene = new VROScene();
     
-    std::shared_ptr<VROLayer> layerA = std::make_shared<VROLayer>();
+    std::shared_ptr<VROLayer> layerA = std::make_shared<VROLayer>(*context);
     layerA->setFrame(VRORectMake(-1.0, 0, 2, 2.0, 2.0));
     layerA->setBackgroundColor({ 1.0, 0.0, 0.0, 1.0 });
-    layerA->hydrate(*renderContext);
     
     size_t dataLength;
     int width, height;
@@ -45,17 +44,15 @@
     
     layerA->setContents(data, dataLength, width, height);
     
-    std::shared_ptr<VROLayer> layerB = std::make_shared<VROLayer>();
+    std::shared_ptr<VROLayer> layerB = std::make_shared<VROLayer>(*context);
     layerB->setFrame(VRORectMake(1.0, 1.0, 1.0, 1.0));
     layerB->setBackgroundColor({ 0.0, 0.0, 1.0, 1.0 });
-    layerB->hydrate(*renderContext);
     
     layerB->setContents(data, dataLength, width, height);
 
-    std::shared_ptr<VROLayer> layerC = std::make_shared<VROLayer>();
+    std::shared_ptr<VROLayer> layerC = std::make_shared<VROLayer>(*context);
     layerC->setFrame(VRORectMake(0.0, 0.0, 0.5, 0.5));
     layerC->setBackgroundColor({ 0.0, 1.0, 0.0, 1.0 });
-    layerC->hydrate(*renderContext);
     
     layerC->setContents(data, dataLength, width, height);
     

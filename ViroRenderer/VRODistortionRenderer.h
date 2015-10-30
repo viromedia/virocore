@@ -11,6 +11,8 @@
 
 #include <stdio.h>
 #include <MetalKit/MetalKit.h>
+#include "VRORenderTarget.h"
+#include <memory>
 
 class VRODistortion;
 class VRODistortionMesh;
@@ -49,17 +51,23 @@ public:
     ~VRODistortionRenderer();
     
     /*
+     Update the render-texture and the distortion mesh using hte latest FOV and viewport
+     parameters.
+     */
+    void updateDistortion(id <MTLDevice> gpu, id <MTLLibrary> library, MTKView *view);
+    
+    /*
      Binds the eye texture (the texture to which we will render both eyes) as the 
      render target. Following this call the left and right eye should be rendered.
      */
-    id <MTLRenderCommandEncoder> bindEyeRenderTarget(const VRORenderContextMetal &metal);
+    std::shared_ptr<VRORenderTarget> bindEyeRenderTarget(id <MTLCommandBuffer> commandBuffer);
     
     /*
-     Binds the screen as the render target, and renders the left half of the eye 
-     texture to the left distortion mesh, and the right half of the eye texture to
-     the right distortion mesh.
+     Renders the left half of the eye texture to the left distortion mesh, and the right
+     half of the eye texture to the right distortion mesh. Renders into the provided 
+     encoder (typically the screen).
      */
-    void renderEyesToScreen(const VRORenderContextMetal &metal);
+    void renderEyesToScreen(id <MTLRenderCommandEncoder> screenEncoder);
     
     void setResolutionScale(float scale) {
         _resolutionScale = scale;
@@ -133,20 +141,9 @@ private:
     float _metersPerTanAngle;
     
     /*
-     Create the render encoder used for rendering the eyes to the texture.
-     */
-    id <MTLRenderCommandEncoder> createEyeRenderEncoder(const VRORenderContextMetal &metal);
-
-    /*
-     Update the render-texture and the distortion mesh using hte latest FOV and viewport
-     parameters.
-     */
-    void updateTextureAndDistortionMesh(const VRORenderContextMetal &metal);
-    
-    /*
      Update the pipeline used to render the distortion pass.
      */
-    void updateDistortionPassPipeline(const VRORenderContextMetal &metal);
+    void updateDistortionPassPipeline(id <MTLDevice> gpu, id <MTLLibrary> library, MTKView *view);
     
     VRODistortionMesh *createDistortionMesh(const VROEyeViewport &eyeViewport,
                                             float textureWidthTanAngle,

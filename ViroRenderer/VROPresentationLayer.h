@@ -19,12 +19,10 @@ class VROPresentationLayer : public VROLayer {
     
 public:
     
-    VROPresentationLayer(const VROLayer *layer);
+    VROPresentationLayer(const VROLayer *layer, const VRORenderContext &context);
     virtual ~VROPresentationLayer();
     
-    void hydrate(const VRORenderContext &context);
     void render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack);
-    
     void setContents(const void *data, size_t dataLength, int width, int height);
     
     void setFrame(VRORect frame);

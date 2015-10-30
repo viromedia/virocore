@@ -26,18 +26,15 @@ public:
     /*
      Designated initializer for layers in the model tree.
      */
-    VROLayer();
+    VROLayer(const VRORenderContext &context);
     
     /*
      Designated initializer for layers in the presentation tree.
      */
     VROLayer(VROLayer *layer);
-    
     virtual ~VROLayer();
     
-    virtual void hydrate(const VRORenderContext &context);
     virtual void render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack);
-    
     virtual void setContents(const void *data, size_t dataLength, int width, int height);
     
     virtual void setFrame(VRORect frame);

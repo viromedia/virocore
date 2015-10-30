@@ -13,6 +13,7 @@
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
 #include "VRORenderContext.h"
+#include "VRORenderTarget.h"
 
 /*
  Render context for Metal.
@@ -21,23 +22,14 @@ class VRORenderContextMetal : public VRORenderContext {
     
 public:
     
-    VRORenderContextMetal(MTKView *view,
-                          id <MTLDevice> device) {
-        
+    VRORenderContextMetal(id <MTLDevice> device) {
         _device = device;
         _commandQueue = [device newCommandQueue];
         _library = [device newDefaultLibrary];
-        
-        _colorPixelFormat = view.colorPixelFormat;
-        _depthStencilPixelFormat = view.depthStencilPixelFormat;
-        _sampleCount = view.sampleCount;
     }
     
-    void setCommandBuffer(id <MTLCommandBuffer> commandBuffer) {
-        _commandBuffer = commandBuffer;
-    }
-    void setRenderEncoder(id <MTLRenderCommandEncoder> renderEncoder) {
-        _renderEncoder = renderEncoder;
+    void setRenderTarget(std::shared_ptr<VRORenderTarget> renderTarget) {
+        _renderTarget = renderTarget;
     }
     void setProjectionMatrix(matrix_float4x4 projectionMatrix) {
         _projectionMatrix = projectionMatrix;
@@ -55,22 +47,8 @@ public:
     id <MTLLibrary> getLibrary() const {
         return _library;
     }
-    
-    id <MTLCommandBuffer> getCommandBuffer() const {
-        return _commandBuffer;
-    }
-    id <MTLRenderCommandEncoder> getRenderEncoder() const {
-        return _renderEncoder;
-    }
-    
-    MTLPixelFormat getColorPixelFormat() const {
-        return _colorPixelFormat;
-    }
-    MTLPixelFormat getDepthStencilPixelFormat() const {
-        return _depthStencilPixelFormat;
-    }
-    NSUInteger getSampleCount() const {
-        return _sampleCount;
+    std::shared_ptr<VRORenderTarget> getRenderTarget() const {
+        return _renderTarget;
     }
     
     matrix_float4x4 getProjectionMatrix() const {
@@ -86,12 +64,7 @@ private:
     id <MTLCommandQueue> _commandQueue;
     id <MTLLibrary> _library;
     
-    MTLPixelFormat _colorPixelFormat;
-    MTLPixelFormat _depthStencilPixelFormat;
-    NSUInteger _sampleCount;
-    
-    id <MTLCommandBuffer> _commandBuffer;
-    id <MTLRenderCommandEncoder> _renderEncoder;
+    std::shared_ptr<VRORenderTarget> _renderTarget;
     
     matrix_float4x4 _projectionMatrix;
     matrix_float4x4 _viewMatrix;

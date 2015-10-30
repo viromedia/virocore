@@ -27,19 +27,15 @@ class VROLayerSubstrate {
     
 public:
     
-    VROLayerSubstrate(std::shared_ptr<VROLayer> layer) :
-        _layer(layer)
-    {}
+    VROLayerSubstrate() {}
     virtual ~VROLayerSubstrate() {}
     
-    virtual void hydrate(const VRORenderContext &context) = 0;
-    virtual void render(const VRORenderContext &context, matrix_float4x4 mv) = 0;
-    
+    virtual void render(const VRORenderContext &context,
+                        matrix_float4x4 mv,
+                        vector_float4 bgColor) = 0;
     virtual void setContents(const void *data, const size_t dataLength, int width, int height) = 0;
 
 protected:
-    
-    std::weak_ptr<VROLayer> _layer;
     
     void buildQuad(VROLayerVertexLayout *layout);
     

@@ -18,7 +18,6 @@
 		8F517BD71BCDA2BE0017C70B /* ViroRendererTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BD61BCDA2BE0017C70B /* ViroRendererTests.m */; };
 		8F517BE21BCDA2BE0017C70B /* ViroRendererUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BE11BCDA2BE0017C70B /* ViroRendererUITests.m */; };
 		8F517BF21BCDBA8C0017C70B /* VROLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BF01BCDBA8C0017C70B /* VROLayer.cpp */; };
-		8F517BFD1BCDC9170017C70B /* VRORenderContextMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BFB1BCDC9170017C70B /* VRORenderContextMetal.cpp */; };
 		8F517C401BCF1C320017C70B /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517BF41BCDBF140017C70B /* Metal.framework */; };
 		8F517C411BCF1C320017C70B /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517BF51BCDBF140017C70B /* MetalKit.framework */; };
 		8F517C431BCF1CBE0017C70B /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517C421BCF1CBE0017C70B /* ModelIO.framework */; };
@@ -91,7 +90,6 @@
 		8F517BF41BCDBF140017C70B /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		8F517BF51BCDBF140017C70B /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		8F517BF91BCDC8C20017C70B /* VRORenderContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORenderContext.h; sourceTree = "<group>"; };
-		8F517BFB1BCDC9170017C70B /* VRORenderContextMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRORenderContextMetal.cpp; sourceTree = "<group>"; };
 		8F517BFC1BCDC9170017C70B /* VRORenderContextMetal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = VRORenderContextMetal.h; sourceTree = "<group>"; };
 		8F517C421BCF1CBE0017C70B /* ModelIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ModelIO.framework; path = System/Library/Frameworks/ModelIO.framework; sourceTree = SDKROOT; };
 		8F517C451BD0474E0017C70B /* VROMath.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROMath.cpp; sourceTree = "<group>"; };
@@ -146,6 +144,7 @@
 		8FDFA8AC1BDEC34C00883EC0 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		8FEA6C981BE2BA7700C2CD0F /* VRODistortionMesh.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODistortionMesh.cpp; sourceTree = "<group>"; };
 		8FEA6C991BE2BA7700C2CD0F /* VRODistortionMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODistortionMesh.h; sourceTree = "<group>"; };
+		8FEA6C9C1BE3DC7100C2CD0F /* VRORenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORenderTarget.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -263,7 +262,6 @@
 				8F5C41451BD800F8006D7A77 /* VROPresentationLayer.cpp */,
 				8F517BF91BCDC8C20017C70B /* VRORenderContext.h */,
 				8F517BFC1BCDC9170017C70B /* VRORenderContextMetal.h */,
-				8F517BFB1BCDC9170017C70B /* VRORenderContextMetal.cpp */,
 				8F7A9EA91BD0517A006CFAFD /* VRORect.h */,
 				8F5C413A1BD05AD1006D7A77 /* VRORect.cpp */,
 				8F5C41371BD05286006D7A77 /* VROPoint.h */,
@@ -295,6 +293,7 @@
 				8F6248311BDAB44B000755E5 /* VRODevice.h */,
 				8F4C9FFF1BDAE06A00177B8F /* VROScreen.h */,
 				8F4CA0011BDAE10C00177B8F /* VROScreen.cpp */,
+				8FEA6C9C1BE3DC7100C2CD0F /* VRORenderTarget.h */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";
@@ -483,7 +482,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8F517BFD1BCDC9170017C70B /* VRORenderContextMetal.cpp in Sources */,
 				8FDFA8A91BDEA7F800883EC0 /* Vector3d.mm in Sources */,
 				8F5C414E1BD825B1006D7A77 /* VROByteBuffer.cpp in Sources */,
 				8F5C41471BD800F8006D7A77 /* VROPresentationLayer.cpp in Sources */,

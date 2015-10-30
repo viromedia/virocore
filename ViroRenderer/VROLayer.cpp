@@ -12,12 +12,12 @@
 
 #pragma mark - Initialization
 
-VROLayer::VROLayer() {
-    _presentationLayer = std::make_shared<VROPresentationLayer>(this);
+VROLayer::VROLayer(const VRORenderContext &context) {
+    _presentationLayer = std::make_shared<VROPresentationLayer>(this, context);
 }
 
 VROLayer::VROLayer(VROLayer *layer) {
-    
+    // Initializer for layers in the presentation tree
 }
 
 VROLayer::~VROLayer() {
@@ -25,10 +25,6 @@ VROLayer::~VROLayer() {
 }
 
 #pragma mark - Rendering
-
-void VROLayer::hydrate(const VRORenderContext &context) {
-    _presentationLayer->hydrate(context);
-}
 
 void VROLayer::render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack) {
     _presentationLayer->render(context, mvStack);
