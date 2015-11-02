@@ -14,9 +14,7 @@
 #import "VROEye.h"
 #import "VROFieldOfView.h"
 #import "VROViewport.h"
-#import "VROHeadTransform.h"
 #import "VROScreen.h"
-#import "VROHeadTransform.h"
 #import "VROHeadTracker.h"
 #import "VROMagnetSensor.h"
 #import "VRORenderContextMetal.h"
@@ -25,7 +23,6 @@
 @interface VROViewController () {
     VROMagnetSensor *_magnetSensor;
     VROHeadTracker *_headTracker;
-    VROHeadTransform *_headTransform;
     VRODevice *_device;
     
     VROEye *_monocularEye;
@@ -58,7 +55,6 @@
     
     _magnetSensor = new VROMagnetSensor();
     _headTracker = new VROHeadTracker();
-    _headTransform = new VROHeadTransform();
     _device = new VRODevice([UIScreen mainScreen]);
     
     _monocularEye = new VROEye(VROEye::TypeMonocular);
@@ -121,7 +117,6 @@
 
     delete (_magnetSensor);
     delete (_headTracker);
-    delete (_headTransform);
     delete (_device);
     delete (_monocularEye);
     delete (_leftEye);
@@ -174,10 +169,9 @@
     dispatch_semaphore_wait(_inflight_semaphore, DISPATCH_TIME_FOREVER);
     
     @autoreleasepool {
-        [self calculateFrameParametersWithHeadTransform:_headTransform
-                                                leftEye:_leftEye
-                                               rightEye:_rightEye
-                                           monocularEye:_monocularEye];
+        [self calculateFrameParametersWithLeftEye:_leftEye
+                                         rightEye:_rightEye
+                                     monocularEye:_monocularEye];
         _frameParamentersReady = YES;
         
         /*
@@ -227,9 +221,7 @@
 
     id <MTLRenderCommandEncoder> eyeRenderEncoder = eyeTarget->getRenderEncoder();
     
-    [self drawFrameWithHeadTransform:_headTransform
-                             leftEye:_leftEye
-                            rightEye:_rightEye];
+    [self drawFrameWithLeftEye:_leftEye rightEye:_rightEye];
     [eyeRenderEncoder endEncoding];
     
     std::shared_ptr<VRORenderTarget> screenTarget = std::make_shared<VRORenderTarget>(view, commandBuffer);
@@ -245,10 +237,7 @@
     std::shared_ptr<VRORenderTarget> screenTarget = std::make_shared<VRORenderTarget>(view, commandBuffer);
     _renderContext->setRenderTarget(screenTarget);
     
-    [self drawFrameWithHeadTransform:_headTransform
-                             leftEye:_leftEye
-                            rightEye:_rightEye];
-    
+    [self drawFrameWithLeftEye:_leftEye rightEye:_rightEye];
     [screenTarget->getRenderEncoder() endEncoding];
 }
 
@@ -256,32 +245,49 @@
     std::shared_ptr<VRORenderTarget> screenTarget = std::make_shared<VRORenderTarget>(view, commandBuffer);
     _renderContext->setRenderTarget(screenTarget);
     
-    [self drawFrameWithHeadTransform:_headTransform
-                             leftEye:_monocularEye
-                            rightEye:nullptr];
-    
+    [self drawFrameWithLeftEye:_monocularEye rightEye:nullptr];
     [screenTarget->getRenderEncoder() endEncoding];
 }
 
 #pragma mark - View Computation
 
-- (void)calculateFrameParametersWithHeadTransform:(VROHeadTransform *)headTransform
-                                          leftEye:(VROEye *)leftEye
-                                         rightEye:(VROEye *)rightEye
-                                     monocularEye:(VROEye *)monocularEye {
+- (void)calculateFrameParametersWithLeftEye:(VROEye *)leftEye
+                                   rightEye:(VROEye *)rightEye
+                               monocularEye:(VROEye *)monocularEye {
     
-    headTransform->setHeadRotation(_headTracker->getHeadRotation());
-    float halfInterLensDistance = _device->getInterLensDistance() * 0.5f;
+    matrix_float4x4 headRotation = _headTracker->getHeadRotation();
+    
+    float halfLensDistance = _device->getInterLensDistance() * 0.5f;
+    matrix_float4x4 yFlip = matrix_from_scale(1.0, -1.0, 1.0);
     
     if (self.vrModeEnabled) {
-        matrix_float4x4 leftEyeTranslate = matrix_float4x4_from_GL(GLKMatrix4MakeTranslation(halfInterLensDistance, 0, 0));
-        matrix_float4x4 rightEyeTranslate = matrix_float4x4_from_GL(GLKMatrix4MakeTranslation(-halfInterLensDistance, 0, 0));
+        /*
+         The full eye transform is as follows:
+         
+         1. Set the camera at the origin, looking in the Z positive direction.
+         2. Flip the Y axis, to account for CoreMotion using a right-handed coordinate system and Metal
+            using a left-handed coordinate system. We need invert by Y *before* the rotation, and then invert
+            by Y again *after* the rotation.
+         3. Rotate the camera by the head rotation, which is derived from the sensors via the head tracker.
+         4. Flip the Y axis back.
+         5. Translate the camera by the interlens distance in each direction to get the two eyes.
+         */
         
-        leftEye->setEyeView(matrix_multiply(leftEyeTranslate, headTransform->getHeadRotation()));
-        rightEye->setEyeView(matrix_multiply(rightEyeTranslate, headTransform->getHeadRotation()));
+        matrix_float4x4 camera = matrix_float4x4_from_GL(GLKMatrix4MakeLookAt(0, 0, 0,
+                                                                              0, 0, 1.0,
+                                                                              0, 1.0, 0));
+        matrix_float4x4 cameraFlipped = matrix_multiply(yFlip, camera);
+        matrix_float4x4 cameraRotatedFlipped = matrix_multiply(headRotation, cameraFlipped);
+        matrix_float4x4 cameraRotated = matrix_multiply(yFlip, cameraRotatedFlipped);
+        
+        matrix_float4x4 leftEyeView  = matrix_multiply(matrix_from_translation( halfLensDistance, 0, 0), cameraRotated);
+        matrix_float4x4 rightEyeView = matrix_multiply(matrix_from_translation(-halfLensDistance, 0, 0), cameraRotated);
+        
+        leftEye->setEyeView(leftEyeView);
+        rightEye->setEyeView(rightEyeView);
     }
     else {
-        monocularEye->setEyeView(headTransform->getHeadRotation());
+        monocularEye->setEyeView(headRotation);
     }
     
     if (_projectionChanged) {
@@ -389,32 +395,18 @@
     }
 }
 
-- (void)drawFrameWithHeadTransform:(VROHeadTransform *)headTransform
-                           leftEye:(VROEye *)leftEye
-                          rightEye:(VROEye *)rightEye {
+- (void)drawFrameWithLeftEye:(VROEye *)leftEye
+                    rightEye:(VROEye *)rightEye {
     
     id <MTLRenderCommandEncoder> renderEncoder = _renderContext->getRenderTarget()->getRenderEncoder();
     
-    /*
-     Set the camera at (0,0,0), looking toward the positive Z direction (into the screen).
-     */
-    matrix_float4x4 camera = matrix_float4x4_from_GL(GLKMatrix4MakeLookAt(0, 0, 0,
-                                                                          0, 0, 1.0,
-                                                                          0, 1.0, 0));
-    
-    /*
-     Because we flip the Y axis when computing the head rotation (which is baked into the 
-     eye view matrix), we have to flip it back again after the eye view transform.
-     */
-    matrix_float4x4 yFlip = matrix_from_scale(1.0, -1.0, 1.0);
-
     const float zNear = 0.1;
     const float zFar  = 100;
     
     [renderEncoder setViewport:leftEye->getViewport().toMetalViewport()];
     [renderEncoder setScissorRect:leftEye->getViewport().toMetalScissor()];
     
-    _renderContext->setViewMatrix(matrix_multiply(yFlip, matrix_multiply(leftEye->getEyeView(), camera)));
+    _renderContext->setViewMatrix(leftEye->getEyeView());
     _renderContext->setProjectionMatrix(leftEye->perspective(zNear, zFar));
     
     [self.stereoRendererDelegate renderEye:VROEyeTypeLeft context:_renderContext];
@@ -426,7 +418,7 @@
     [renderEncoder setViewport:rightEye->getViewport().toMetalViewport()];
     [renderEncoder setScissorRect:rightEye->getViewport().toMetalScissor()];
     
-    _renderContext->setViewMatrix(matrix_multiply(yFlip, matrix_multiply(rightEye->getEyeView(), camera)));
+    _renderContext->setViewMatrix(rightEye->getEyeView());
     _renderContext->setProjectionMatrix(rightEye->perspective(zNear, zFar));
     
     [self.stereoRendererDelegate renderEye:VROEyeTypeRight context:_renderContext];

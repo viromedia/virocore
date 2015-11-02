@@ -220,14 +220,6 @@ matrix_float4x4 VROHeadTracker::getHeadRotation() {
     GLKMatrix4 rotationMatrix_display = GLKMatrix4Multiply(_worldToDeviceMatrix, rotationMatrix_world);
     
     _lastHeadRotation = matrix_float4x4_from_GL(rotationMatrix_display);
-   
-    /*
-     CoreMotion uses a right-handed coordinate system and Metal uses left-handed, so we need
-     to invert by Y *before* the rotation, and then invert by Y again *after* the rotation. The
-     post-inversion happens in VROViewController.
-     */
-    _lastHeadRotation = matrix_multiply(_lastHeadRotation, matrix_from_scale(1.0, -1.0, 1.0));
-    
     return _lastHeadRotation;
 }
 
