@@ -118,8 +118,10 @@ GLKMatrix4 OrientationEKF::getPredictedGLMatrix(double secondsAfterLastGyroEvent
 {
     double dT = secondsAfterLastGyroEvent;
     Vector3d pmu(_lastGyro.x * -dT, _lastGyro.y * -dT, _lastGyro.z * -dT);
+    
     Matrix3x3d so3PredictedMotion;
     SO3Util::so3FromMu(&pmu, &so3PredictedMotion);
+    
     Matrix3x3d so3PredictedState;
     Matrix3x3d::mult(&so3PredictedMotion, &_so3SensorFromWorld, &so3PredictedState);
     return glMatrixFromSo3(&so3PredictedState);
@@ -140,12 +142,13 @@ void OrientationEKF::processGyro(GLKVector3 gyro, double sensorTimeStamp)
         SO3Util::so3FromMu(&_vU, &_so3LastMotion);
         Matrix3x3d::mult(&_so3LastMotion, &_so3SensorFromWorld, &_so3SensorFromWorld);
         updateCovariancesAfterMotion();
+        
         Matrix3x3d temp;
         temp.set(&_mQ);
         temp.scale(dT * dT);
         _mP.plusEquals(&temp);
-        
     }
+    
     _sensorTimeStampGyro = sensorTimeStamp;
     _lastGyro = gyro;
 }

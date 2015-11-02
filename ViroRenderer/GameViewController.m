@@ -60,20 +60,7 @@
     free (data);
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        layerA->setPosition({0.5, 1.0, 3.0});
-    });
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        VROAnimation::begin();
-        VROAnimation::setAnimationDuration(1.0);
-        layerA->setPosition({0.5, -1.0, 4.0});
-    });
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        VROAnimation::begin();
-        VROAnimation::setAnimationDuration(2.0);
-        layerA->setPosition({-0.5, -1.0, 3.0});
-    });
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        layerA->setPosition({0, 0, 2.0});
+        layerA->setPosition({0.0, 0.0, 2.0});
     });
 }
 

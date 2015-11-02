@@ -148,14 +148,6 @@
     _distortionRenderer->setChromaticAberrationEnabled(chromaticAberrationCorrectionEnabled);
 }
 
-- (BOOL)neckModelEnabled {
-    return _headTracker->isNeckModelEnabled();
-}
-
-- (void)setNeckModelEnabled:(BOOL)neckModelEnabled {
-    _headTracker->setNeckModelEnabled(neckModelEnabled);
-}
-
 - (void)magneticTriggerPressed:(NSNotification *)notification {
     if ([self.stereoRendererDelegate respondsToSelector:@selector(magneticTriggerPressed)]) {
         [self.stereoRendererDelegate magneticTriggerPressed];
@@ -278,18 +270,18 @@
                                          rightEye:(VROEye *)rightEye
                                      monocularEye:(VROEye *)monocularEye {
     
-    headTransform->setHeadView(_headTracker->getLastHeadView());
+    headTransform->setHeadRotation(_headTracker->getHeadRotation());
     float halfInterLensDistance = _device->getInterLensDistance() * 0.5f;
     
     if (self.vrModeEnabled) {
         matrix_float4x4 leftEyeTranslate = matrix_float4x4_from_GL(GLKMatrix4MakeTranslation(halfInterLensDistance, 0, 0));
         matrix_float4x4 rightEyeTranslate = matrix_float4x4_from_GL(GLKMatrix4MakeTranslation(-halfInterLensDistance, 0, 0));
         
-        leftEye->setEyeView(matrix_multiply(leftEyeTranslate, headTransform->getHeadView()));
-        rightEye->setEyeView(matrix_multiply(rightEyeTranslate, headTransform->getHeadView()));
+        leftEye->setEyeView(matrix_multiply(leftEyeTranslate, headTransform->getHeadRotation()));
+        rightEye->setEyeView(matrix_multiply(rightEyeTranslate, headTransform->getHeadRotation()));
     }
     else {
-        monocularEye->setEyeView(headTransform->getHeadView());
+        monocularEye->setEyeView(headTransform->getHeadRotation());
     }
     
     if (_projectionChanged) {
@@ -403,16 +395,26 @@
     
     id <MTLRenderCommandEncoder> renderEncoder = _renderContext->getRenderTarget()->getRenderEncoder();
     
-    matrix_float4x4 camera = matrix_float4x4_from_GL(GLKMatrix4MakeLookAt(0, 0, -1.0,
-                                                                          0, 0, 0,
-                                                                          0, 1.0f, 0));
+    /*
+     Set the camera at (0,0,0), looking toward the positive Z direction (into the screen).
+     */
+    matrix_float4x4 camera = matrix_float4x4_from_GL(GLKMatrix4MakeLookAt(0, 0, 0,
+                                                                          0, 0, 1.0,
+                                                                          0, 1.0, 0));
+    
+    /*
+     Because we flip the Y axis when computing the head rotation (which is baked into the 
+     eye view matrix), we have to flip it back again after the eye view transform.
+     */
+    matrix_float4x4 yFlip = matrix_from_scale(1.0, -1.0, 1.0);
+
     const float zNear = 0.1;
     const float zFar  = 100;
     
     [renderEncoder setViewport:leftEye->getViewport().toMetalViewport()];
     [renderEncoder setScissorRect:leftEye->getViewport().toMetalScissor()];
     
-    _renderContext->setViewMatrix(matrix_multiply(leftEye->getEyeView(), camera));
+    _renderContext->setViewMatrix(matrix_multiply(yFlip, matrix_multiply(leftEye->getEyeView(), camera)));
     _renderContext->setProjectionMatrix(leftEye->perspective(zNear, zFar));
     
     [self.stereoRendererDelegate renderEye:VROEyeTypeLeft context:_renderContext];
@@ -424,7 +426,7 @@
     [renderEncoder setViewport:rightEye->getViewport().toMetalViewport()];
     [renderEncoder setScissorRect:rightEye->getViewport().toMetalScissor()];
     
-    _renderContext->setViewMatrix(matrix_multiply(rightEye->getEyeView(), camera));
+    _renderContext->setViewMatrix(matrix_multiply(yFlip, matrix_multiply(rightEye->getEyeView(), camera)));
     _renderContext->setProjectionMatrix(rightEye->perspective(zNear, zFar));
     
     [self.stereoRendererDelegate renderEye:VROEyeTypeRight context:_renderContext];

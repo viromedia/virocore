@@ -9,11 +9,12 @@
 #include "VROHeadTracker.h"
 #include "VROMath.h"
 
-#define HEAD_TRACKER_MODE_EKF 0
 #define HEAD_TRACKER_MODE_CORE_MOTION 1
 #define HEAD_TRACKER_MODE_CORE_MOTION_EKF 2
     
-#define HEAD_TRACKER_MODE HEAD_TRACKER_MODE_CORE_MOTION_EKF
+#define HEAD_TRACKER_MODE HEAD_TRACKER_MODE_CORE_MOTION
+
+#define radiansToDegrees(x) (180/M_PI)*x
 
 static const size_t kInitialSamplesToSkip = 10;
 
@@ -51,7 +52,7 @@ GLKMatrix4 GetRotateEulerMatrix(float x, float y, float z) {
 }
 
 #if HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION
-matrix_float4x4 GLMatrixFromRotationMatrix(CMRotationMatrix rotationMatrix) {
+GLKMatrix4 GLMatrixFromRotationMatrix(CMRotationMatrix rotationMatrix) {
     GLKMatrix4 glRotationMatrix;
     
     glRotationMatrix.m00 = rotationMatrix.m11;
@@ -80,21 +81,17 @@ matrix_float4x4 GLMatrixFromRotationMatrix(CMRotationMatrix rotationMatrix) {
 
 VROHeadTracker::VROHeadTracker() :
     // this assumes the device is landscape with the home button on the right (UIInterfaceOrientationLandscapeRight)
-    _displayFromDevice(GetRotateEulerMatrix(0.f, 0.f, -90.f)),
-    // the inertial reference frame has z up and x forward, while the world has -z forward and x right
-    _inertialReferenceFrameFromWorld(GetRotateEulerMatrix(-90.f, 0.f, 90.f)),
-    _lastGyroEventTimestamp(0),
-    _orientationCorrectionAngle(0),
-    _neckModelEnabled(false) {
+    _worldToDeviceMatrix(GetRotateEulerMatrix(0.f, 0.f, -90.f)),
+
+    // the inertial reference frame has z up and x forward, while the world has +z forward and x right
+    _IRFToWorldMatrix(GetRotateEulerMatrix(90.f, 0.f, 90.f)),
+    _lastGyroEventTimestamp(0) {
         
     _motionManager = [[CMMotionManager alloc] init];
     _tracker = new OrientationEKF();
     
-    _correctedInertialReferenceFrameFromWorld = _inertialReferenceFrameFromWorld;
-    _lastHeadView = matrix_identity_float4x4;
-    _neckModelTranslation = GLKMatrix4Identity;
-    _neckModelTranslation = GLKMatrix4Translate(_neckModelTranslation, 0, -_defaultNeckVerticalOffset,
-                                                _defaultNeckHorizontalOffset);
+    _correctedIRFToWorldMatrix = _IRFToWorldMatrix;
+    _lastHeadRotation = matrix_identity_float4x4;
 }
 
 VROHeadTracker::~VROHeadTracker() {
@@ -109,36 +106,12 @@ void VROHeadTracker::startTracking(UIInterfaceOrientation orientation) {
     _headingCorrectionComputed = false;
     _sampleCount = 0; // used to skip bad data when core motion starts
     
-  #if HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_EKF
-    NSOperationQueue *accelerometerQueue = [[NSOperationQueue alloc] init];
-    NSOperationQueue *gyroQueue = [[NSOperationQueue alloc] init];
-    
-    // Probably capped at less than 100Hz
-    // (http://stackoverflow.com/questions/4790111/what-is-the-official-iphone-4-maximum-gyroscope-data-update-frequency)
-    _motionManager.accelerometerUpdateInterval = 1.0/100.0;
-    [_motionManager startAccelerometerUpdatesToQueue:accelerometerQueue withHandler:^(CMAccelerometerData *accelerometerData, NSError *error)
-    {
-        ++_sampleCount;
-        if (_sampleCount <= kInitialSamplesToSkip) { return; }
-        CMAcceleration acceleration = accelerometerData.acceleration;
-        // note core motion uses units of G while the EKF uses ms^-2
-        const float kG = 9.81f;
-        _tracker->processAcceleration(GLKVector3Make(kG*acceleration.x, kG*acceleration.y, kG*acceleration.z), accelerometerData.timestamp);
-    }];
-    
-    _motionManager.gyroUpdateInterval = 1.0/100.0;
-    [_motionManager startGyroUpdatesToQueue:gyroQueue withHandler:^(CMGyroData *gyroData, NSError *error) {
-        if (_sampleCount <= kInitialSamplesToSkip) { return; }
-        CMRotationRate rotationRate = gyroData.rotationRate;
-        _tracker->processGyro(GLKVector3Make(rotationRate.x, rotationRate.y, rotationRate.z), gyroData.timestamp);
-        _lastGyroEventTimestamp = gyroData.timestamp;
-    }];
-  #elif HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION
-    if (_motionManager.isDeviceMotionAvailable)
-    {
+  #if HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION
+    if (_motionManager.isDeviceMotionAvailable) {
         [_motionManager startDeviceMotionUpdatesUsingReferenceFrame:CMAttitudeReferenceFrameXArbitraryZVertical];
         _sampleCount = kInitialSamplesToSkip + 1;
     }
+    
   #elif HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION_EKF
     NSOperationQueue *deviceMotionQueue = [[NSOperationQueue alloc] init];
     _motionManager.deviceMotionUpdateInterval = 1.0/100.0;
@@ -158,24 +131,19 @@ void VROHeadTracker::startTracking(UIInterfaceOrientation orientation) {
 }
 
 void VROHeadTracker::stopTracking() {
-  #if HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_EKF
-    [_motionManager stopAccelerometerUpdates];
-    [_motionManager stopGyroUpdates];
-  #elif HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION || HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION_EKF
     [_motionManager stopDeviceMotionUpdates];
-  #endif
 }
 
 bool VROHeadTracker::isReady() {
     bool isTrackerReady = (_sampleCount > kInitialSamplesToSkip);
-  #if HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_EKF || HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION_EKF
+  #if HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION_EKF
     isTrackerReady = isTrackerReady && _tracker->isReady();
   #endif
     return isTrackerReady;
 }
 
-matrix_float4x4 VROHeadTracker::getLastHeadView() {
-#if HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_EKF || HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION_EKF
+matrix_float4x4 VROHeadTracker::getHeadRotation() {
+#if HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION_EKF
     
     NSTimeInterval currentTimestamp = CACurrentMediaTime();
     double secondsSinceLastGyroEvent = currentTimestamp - _lastGyroEventTimestamp;
@@ -186,25 +154,31 @@ matrix_float4x4 VROHeadTracker::getLastHeadView() {
     
 #elif HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION
     
+    /*
+     Get the tranpose (inverse) of the CoreMotion rotation matrix. This is what we'll
+     rotate by. The CoreMotion matrix is in the "inertial reference frame" (IRF).
+     */
     CMDeviceMotion *motion = _motionManager.deviceMotion;
-    CMRotationMatrix rotationMatrix = motion.attitude.rotationMatrix;
-    GLKMatrix4 deviceFromInertialReferenceFrame = GLKMatrix4Transpose(GLMatrixFromRotationMatrix(rotationMatrix)); // note the matrix inversion
+    GLKMatrix4 rotationMatrix_IRF = GLKMatrix4Transpose(GLMatrixFromRotationMatrix(motion.attitude.rotationMatrix));
     
     if (!motion) {
-        return _lastHeadView;
+        return _lastHeadRotation;
     }
     
 #endif
   
     if (!isReady()) {
-        return _lastHeadView;
+        return _lastHeadRotation;
     }
 
+    /*
+     I don't understand why this block is necessary.
+     */
     if (!_headingCorrectionComputed) {
-        // fix the heading by aligning world -z with the projection 
+        // fix the heading by aligning world -z with the projection
         // of the device -z on the ground plane
         
-        GLKMatrix4 deviceFromWorld = GLKMatrix4Multiply(deviceFromInertialReferenceFrame, _inertialReferenceFrameFromWorld);
+        GLKMatrix4 deviceFromWorld = GLKMatrix4Multiply(rotationMatrix_IRF, _IRFToWorldMatrix);
         GLKMatrix4 worldFromDevice = GLKMatrix4Transpose(deviceFromWorld);
         
         GLKVector3 deviceForward = GLKVector3Make(0.f, 0.f, -1.f);
@@ -232,33 +206,36 @@ matrix_float4x4 VROHeadTracker::getLastHeadView() {
                   s, 0.f,   c, 0.f,
                 0.f, 0.f, 0.f, 1.f );
             
-            _correctedInertialReferenceFrameFromWorld = GLKMatrix4Multiply(
-                _inertialReferenceFrameFromWorld,
-                Rt);
+            _correctedIRFToWorldMatrix = GLKMatrix4Multiply(_IRFToWorldMatrix, Rt);
         }
         
         _headingCorrectionComputed = true;
     }
     
-    GLKMatrix4 deviceFromWorld = GLKMatrix4Multiply(deviceFromInertialReferenceFrame,
-                                                    _correctedInertialReferenceFrameFromWorld);
-    GLKMatrix4 displayFromWorld = GLKMatrix4Multiply(_displayFromDevice, deviceFromWorld);
+    /*
+     Convert the rotation matrix from the IRF to world coordinates by multiplying
+     by the IRFtoWorld matrix.
+     */
+    GLKMatrix4 rotationMatrix_world = GLKMatrix4Multiply(rotationMatrix_IRF, _correctedIRFToWorldMatrix);
+    GLKMatrix4 rotationMatrix_display = GLKMatrix4Multiply(_worldToDeviceMatrix, rotationMatrix_world);
     
-    if (_neckModelEnabled) {
-        displayFromWorld = GLKMatrix4Multiply(_neckModelTranslation, displayFromWorld);
-        displayFromWorld = GLKMatrix4Translate(displayFromWorld, 0.0f, _defaultNeckVerticalOffset, 0.0f);
-    }
+    _lastHeadRotation = matrix_float4x4_from_GL(rotationMatrix_display);
+   
+    /*
+     CoreMotion uses a right-handed coordinate system and Metal uses left-handed, so we need
+     to invert by Y *before* the rotation, and then invert by Y again *after* the rotation. The
+     post-inversion happens in VROViewController.
+     */
+    _lastHeadRotation = matrix_multiply(_lastHeadRotation, matrix_from_scale(1.0, -1.0, 1.0));
     
-    _lastHeadView = matrix_float4x4_from_GL(displayFromWorld);
-    
-    return _lastHeadView;
+    return _lastHeadRotation;
 }
 
 void VROHeadTracker::updateDeviceOrientation(UIInterfaceOrientation orientation) {
     if (orientation == UIInterfaceOrientationLandscapeLeft) {
-        _displayFromDevice = GetRotateEulerMatrix(0.f, 0.f, 90.f);
+        _worldToDeviceMatrix = GetRotateEulerMatrix(0.f, 0.f, 90.f);
     }
     else if (orientation == UIInterfaceOrientationLandscapeRight) {
-        _displayFromDevice = GetRotateEulerMatrix(0.f, 0.f, -90.f);
+        _worldToDeviceMatrix = GetRotateEulerMatrix(0.f, 0.f, -90.f);
     }
 }

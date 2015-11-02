@@ -17,51 +17,47 @@ class VROHeadTransform {
 public:
     
     VROHeadTransform() :
-        _headView(matrix_identity_float4x4)
+        _headRotation(matrix_identity_float4x4)
     {}
     
-    void setHeadView(matrix_float4x4 headView) {
-        _headView = headView;
+    void setHeadRotation(matrix_float4x4 headRotation) {
+        _headRotation = headRotation;
     }
-    matrix_float4x4 getHeadView() const {
-        return _headView;
-    }
-    
-    vector_float3 getTranslation() const {
-        return (vector_float3) {_headView.columns[3].x, _headView.columns[3].y, _headView.columns[3].z};
+    matrix_float4x4 getHeadRotation() const {
+        return _headRotation;
     }
     
     vector_float3 getForwardVector() const {
-        return (vector_float3) {_headView.columns[2].x, _headView.columns[2].y, _headView.columns[2].z};
+        return (vector_float3) {_headRotation.columns[2].x, _headRotation.columns[2].y, _headRotation.columns[2].z};
     }
     
     vector_float3 getUpVector() const {
-        return (vector_float3) {_headView.columns[1].x, _headView.columns[1].y, _headView.columns[1].z};
+        return (vector_float3) {_headRotation.columns[1].x, _headRotation.columns[1].y, _headRotation.columns[1].z};
     }
     
     vector_float3 getRightVector() const {
-        return (vector_float3) {_headView.columns[0].x, _headView.columns[0].y, _headView.columns[0].z};
+        return (vector_float3) {_headRotation.columns[0].x, _headRotation.columns[0].y, _headRotation.columns[0].z};
     }
     
     vector_float3 getEulerAngles() const {
         float yaw = 0;
         float roll = 0;
-        float pitch = asinf(_headView.columns[1].z);
-        if (sqrtf(1.0f - _headView.columns[1].z * _headView.columns[1].z) >= 0.01f) {
-            yaw  = atan2f(-_headView.columns[0].z, _headView.columns[3].z);
-            roll = atan2f(-_headView.columns[1].x, _headView.columns[1].y);
+        float pitch = asinf(_headRotation.columns[1].z);
+        if (sqrtf(1.0f - _headRotation.columns[1].z * _headRotation.columns[1].z) >= 0.01f) {
+            yaw  = atan2f(-_headRotation.columns[0].z, _headRotation.columns[3].z);
+            roll = atan2f(-_headRotation.columns[1].x, _headRotation.columns[1].y);
         }
         else
         {
             yaw = 0.0f;
-            roll = atan2f(_headView.columns[0].y, _headView.columns[0].x);
+            roll = atan2f(_headRotation.columns[0].y, _headRotation.columns[0].x);
         }
         return (vector_float3) { -pitch, -yaw, -roll };
     }
     
 private:
     
-    matrix_float4x4 _headView;
+    matrix_float4x4 _headRotation;
     
 };
 
