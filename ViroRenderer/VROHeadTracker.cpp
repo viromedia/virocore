@@ -12,7 +12,7 @@
 #define HEAD_TRACKER_MODE_CORE_MOTION 1
 #define HEAD_TRACKER_MODE_CORE_MOTION_EKF 2
     
-#define HEAD_TRACKER_MODE HEAD_TRACKER_MODE_CORE_MOTION
+#define HEAD_TRACKER_MODE HEAD_TRACKER_MODE_CORE_MOTION_EKF
 
 #define radiansToDegrees(x) (180/M_PI)*x
 
@@ -150,7 +150,7 @@ matrix_float4x4 VROHeadTracker::getHeadRotation() {
     
     // 1/30 of a second prediction (shoud it be 1/60?)
     double secondsToPredictForward = secondsSinceLastGyroEvent + 1.0 / 30;
-    GLKMatrix4 deviceFromInertialReferenceFrame = _tracker->getPredictedGLMatrix(secondsToPredictForward);
+    GLKMatrix4 rotationMatrix_IRF = _tracker->getPredictedGLMatrix(secondsToPredictForward);
     
 #elif HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION
     
