@@ -23,7 +23,7 @@ public:
     void render(const VRORenderContext &context,
                 matrix_float4x4 mv,
                 vector_float4 bgColor);
-    void setContents(const void *data, size_t dataLength, int width, int height);
+    void setContents(const void *data, size_t dataLength, size_t width, size_t height);
     
 private:
     

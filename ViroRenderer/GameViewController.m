@@ -14,6 +14,7 @@
 #import "VROLayer.h"
 #import "VROMath.h"
 #import "VROImageUtil.h"
+#import "VROView.h"
 
 @implementation GameViewController
 {
@@ -21,6 +22,7 @@
     MTKView *_view;
     
     VROScene *_scene;
+    VROView *_testView;
 }
 
 - (void)setupRendererWithView:(MTKView *)view context:(VRORenderContext *)renderContext {
@@ -53,9 +55,21 @@
     layerC->setBackgroundColor({ 0.0, 1.0, 0.0, 1.0 });
     layerC->setContents(data, dataLength, width, height);
     
+    _testView = [[VROView alloc] initWithFrame:CGRectMake(0, 0, 20, 20) context:context];
+    [_testView setBackgroundColor:[UIColor purpleColor]];
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
+    [label setText:@"Test"];
+    [label setBackgroundColor:[UIColor redColor]];
+    [label setTextColor:[UIColor whiteColor]];
+    [label setFont:[UIFont systemFontOfSize:6]];
+    
+    [_testView addSubview:label];
+    [_testView update];
+    
     _scene->addLayer(layerA);
     layerA->addSublayer(layerB);
-    layerB->addSublayer(layerC);
+    layerB->addSublayer([_testView vroLayer]);
     
     free (data);
     
@@ -69,6 +83,7 @@
 }
 
 - (void)renderEye:(VROEyeType)eye context:(VRORenderContext *)renderContext {
+    [_testView update];
     _scene->render(*renderContext);
 }
 

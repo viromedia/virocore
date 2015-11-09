@@ -9,7 +9,7 @@
 #include "VROImageUtil.h"
 #include "VROLog.h"
 
-unsigned char *extractRGBAFromImage(UIImage *image, size_t *length) {
+unsigned char *VROExtractRGBA8888FromImage(UIImage *image, size_t *length) {
     CGImageRef imageRef = [image CGImage];
     NSUInteger width = CGImageGetWidth(imageRef);
     NSUInteger height = CGImageGetHeight(imageRef);
@@ -43,5 +43,5 @@ void *VROImageLoadTextureDataRGBA8888(const char *resource, size_t *bitmapLength
     *width = [image size].width;
     *height = [image size].height;
     
-    return extractRGBAFromImage(image, bitmapLength);
+    return VROExtractRGBA8888FromImage(image, bitmapLength);
 }

@@ -32,7 +32,7 @@ void VROLayer::render(const VRORenderContext &context, std::stack<matrix_float4x
 
 #pragma mark - Layer Properties
 
-void VROLayer::setContents(const void *data, size_t dataLength, int width, int height) {
+void VROLayer::setContents(const void *data, size_t dataLength, size_t width, size_t height) {
     _presentationLayer->setContents(data, dataLength, width, height);
 }
 

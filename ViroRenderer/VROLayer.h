@@ -35,7 +35,7 @@ public:
     virtual ~VROLayer();
     
     virtual void render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack);
-    virtual void setContents(const void *data, size_t dataLength, int width, int height);
+    virtual void setContents(const void *data, size_t dataLength, size_t width, size_t height);
     
     virtual void setFrame(VRORect frame);
     virtual void setBounds(VRORect bounds);

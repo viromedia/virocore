@@ -22,7 +22,7 @@ public:
     
     void render(const VRORenderContext &renderContext);
     
-    void addLayer(std::shared_ptr<VROLayer> &layer);
+    void addLayer(std::shared_ptr<VROLayer> layer);
     
 private:
     

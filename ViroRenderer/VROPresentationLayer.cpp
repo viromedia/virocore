@@ -22,7 +22,7 @@ VROPresentationLayer::~VROPresentationLayer() {
     delete (_substrate);
 }
 
-void VROPresentationLayer::setContents(const void *data, size_t dataLength, int width, int height) {
+void VROPresentationLayer::setContents(const void *data, size_t dataLength, size_t width, size_t height) {
     _substrate->setContents(data, dataLength, width, height);
 }
 

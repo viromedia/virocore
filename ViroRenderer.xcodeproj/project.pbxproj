@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F1071D11BE81F10003B3C3F /* VROView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8F1071D01BE81F10003B3C3F /* VROView.mm */; };
 		8F4CA0021BDAE10C00177B8F /* VROScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CA0011BDAE10C00177B8F /* VROScreen.cpp */; };
 		8F517BBB1BCDA2BD0017C70B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBA1BCDA2BD0017C70B /* main.m */; };
 		8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */; };
@@ -65,6 +66,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8F1071CF1BE81F10003B3C3F /* VROView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROView.h; sourceTree = "<group>"; };
+		8F1071D01BE81F10003B3C3F /* VROView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROView.mm; sourceTree = "<group>"; };
 		8F4C9FFF1BDAE06A00177B8F /* VROScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROScreen.h; sourceTree = "<group>"; };
 		8F4CA0011BDAE10C00177B8F /* VROScreen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROScreen.cpp; sourceTree = "<group>"; };
 		8F517BB61BCDA2BD0017C70B /* ViroRenderer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ViroRenderer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -176,6 +179,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8F1071CE1BE81EE8003B3C3F /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				8F1071CF1BE81F10003B3C3F /* VROView.h */,
+				8F1071D01BE81F10003B3C3F /* VROView.mm */,
+			);
+			name = UI;
+			sourceTree = "<group>";
+		};
 		8F517BAD1BCDA2BD0017C70B = {
 			isa = PBXGroup;
 			children = (
@@ -210,6 +222,7 @@
 				8FDFA8971BDB031800883EC0 /* Sensors */,
 				8F517BF31BCDBBA80017C70B /* Renderer */,
 				8F517BEF1BCDBA570017C70B /* Layer */,
+				8F1071CE1BE81EE8003B3C3F /* UI */,
 				8F517BBC1BCDA2BD0017C70B /* AppDelegate.h */,
 				8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */,
 				8F517BBF1BCDA2BD0017C70B /* GameViewController.h */,
@@ -494,6 +507,7 @@
 				8F63186D1BD95EA6000A75DF /* VROTime.cpp in Sources */,
 				8FDFA89D1BDEA19C00883EC0 /* VROMagnetSensor.cpp in Sources */,
 				8F62483B1BDABD81000755E5 /* VROFieldOfView.h in Sources */,
+				8F1071D11BE81F10003B3C3F /* VROView.mm in Sources */,
 				8F63186A1BD956AF000A75DF /* VROAnimation.cpp in Sources */,
 				8F517BC11BCDA2BD0017C70B /* GameViewController.m in Sources */,
 				8F517BF21BCDBA8C0017C70B /* VROLayer.cpp in Sources */,

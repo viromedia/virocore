@@ -19,7 +19,7 @@ VROLayerSubstrateMetal::VROLayerSubstrateMetal(const VRORenderContext &context) 
 }
 
 
-void VROLayerSubstrateMetal::setContents(const void *data, const size_t dataLength, int width, int height) {
+void VROLayerSubstrateMetal::setContents(const void *data, const size_t dataLength, size_t width, size_t height) {
     int bytesPerPixel = 4;
     MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm
                                                                                           width:width height:height mipmapped:NO];

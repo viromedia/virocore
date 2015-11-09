@@ -12,6 +12,7 @@
 #include <stdio.h>
 #import <UIKit/UIKit.h>
 
+unsigned char *VROExtractRGBA8888FromImage(UIImage *image, size_t *length);
 void *VROImageLoadTextureDataRGBA8888(const char *resource, size_t *bitmapLength, int *width, int *height);
 
 #endif /* VROImageUtil_h */

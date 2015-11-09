@@ -23,7 +23,7 @@ void VROScene::render(const VRORenderContext &renderContext) {
     }
 }
 
-void VROScene::addLayer(std::shared_ptr<VROLayer> &layer) {
+void VROScene::addLayer(std::shared_ptr<VROLayer> layer) {
     _layers.push_back(layer);
 }
 
