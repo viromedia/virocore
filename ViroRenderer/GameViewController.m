@@ -49,27 +49,24 @@
     layerB->setFrame(VRORectMake(1.0, 1.0, 1.0, 1.0));
     layerB->setBackgroundColor({ 0.0, 0.0, 1.0, 1.0 });
     layerB->setContents(data, dataLength, width, height);
-
-    std::shared_ptr<VROLayer> layerC = std::make_shared<VROLayer>(*context);
-    layerC->setFrame(VRORectMake(0.0, 0.0, 0.5, 0.5));
-    layerC->setBackgroundColor({ 0.0, 1.0, 0.0, 1.0 });
-    layerC->setContents(data, dataLength, width, height);
     
-    _testView = [[VROView alloc] initWithFrame:CGRectMake(0, 0, 20, 20) context:context];
-    [_testView setBackgroundColor:[UIColor purpleColor]];
+    _testView = [[VROView alloc] initWithFrame:CGRectMake(0, 0, 50, 50) context:context];
+    _testView.vroLayer->setFrame(VRORectMake(0, 0, 1.0, 1.0));
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
+    [_testView setBackgroundColor:[UIColor clearColor]];
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
     [label setText:@"Test"];
-    [label setBackgroundColor:[UIColor redColor]];
+    [label setBackgroundColor:[UIColor clearColor]];
     [label setTextColor:[UIColor whiteColor]];
-    [label setFont:[UIFont systemFontOfSize:6]];
+    [label setFont:[UIFont systemFontOfSize:16]];
     
     [_testView addSubview:label];
     [_testView update];
     
     _scene->addLayer(layerA);
     layerA->addSublayer(layerB);
-    layerB->addSublayer([_testView vroLayer]);
+    layerB->addSublayer(_testView.vroLayer);
     
     free (data);
     
@@ -83,7 +80,6 @@
 }
 
 - (void)renderEye:(VROEyeType)eye context:(VRORenderContext *)renderContext {
-    [_testView update];
     _scene->render(*renderContext);
 }
 

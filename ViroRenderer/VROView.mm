@@ -15,7 +15,6 @@
 
 @end
 
-
 @implementation VROView
 
 - (instancetype)initWithFrame:(CGRect)frame context:(VRORenderContext *)context {

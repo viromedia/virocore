@@ -16,6 +16,7 @@
 - (instancetype)initWithFrame:(CGRect)frame context:(VRORenderContext *)context;
 
 - (void)update;
-- (std::shared_ptr<VROLayer>) vroLayer;
+
+@property (readonly, nonatomic) std::shared_ptr<VROLayer> vroLayer;
 
 @end
