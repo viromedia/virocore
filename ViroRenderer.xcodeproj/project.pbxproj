@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8F1071D11BE81F10003B3C3F /* VROView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8F1071D01BE81F10003B3C3F /* VROView.mm */; };
+		8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1071D21BF40FAF003B3C3F /* momentslogo.png */; };
 		8F4CA0021BDAE10C00177B8F /* VROScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CA0011BDAE10C00177B8F /* VROScreen.cpp */; };
 		8F517BBB1BCDA2BD0017C70B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBA1BCDA2BD0017C70B /* main.m */; };
 		8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */; };
@@ -68,6 +69,7 @@
 /* Begin PBXFileReference section */
 		8F1071CF1BE81F10003B3C3F /* VROView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROView.h; sourceTree = "<group>"; };
 		8F1071D01BE81F10003B3C3F /* VROView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROView.mm; sourceTree = "<group>"; };
+		8F1071D21BF40FAF003B3C3F /* momentslogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = momentslogo.png; sourceTree = "<group>"; };
 		8F4C9FFF1BDAE06A00177B8F /* VROScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROScreen.h; sourceTree = "<group>"; };
 		8F4CA0011BDAE10C00177B8F /* VROScreen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROScreen.cpp; sourceTree = "<group>"; };
 		8F517BB61BCDA2BD0017C70B /* ViroRenderer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ViroRenderer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -241,6 +243,7 @@
 		8F517BB91BCDA2BD0017C70B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F1071D21BF40FAF003B3C3F /* momentslogo.png */,
 				8F5C41541BD82C1B006D7A77 /* boba.png */,
 				8F517BBA1BCDA2BD0017C70B /* main.m */,
 			);
@@ -465,6 +468,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */,
 				8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */,
 				8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */,
 				8F517BC71BCDA2BD0017C70B /* Main.storyboard in Resources */,
