@@ -14,6 +14,7 @@
 
 VROLayer::VROLayer(const VRORenderContext &context) {
     _presentationLayer = std::make_shared<VROPresentationLayer>(this, context);
+    setBackgroundColor({ 1.0, 1.0, 1.0, 1.0 });
 }
 
 VROLayer::VROLayer(VROLayer *layer) {
