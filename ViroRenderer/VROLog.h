@@ -563,7 +563,7 @@ do { \
     } while (0)
 
 /*
- Logs a UPNVector3d.
+ Logs a VROVector3d.
  */
 #define pvec3(vec) \
     do \
@@ -574,7 +574,7 @@ do { \
     } while (0)
 
 /*
- Logs a pointer to UPNVector3d.
+ Logs a pointer to VROVector3d.
  */
 #define ppvec3(pVec) \
     do \
@@ -595,23 +595,6 @@ do { \
         pinfo("%s %6.3f, %6.3f, %6.3f, %6.3f,%s", ANSILightBlue, m[1], m[5], m[9], m[13], ANSINoColor); \
         pinfo("%s %6.3f, %6.3f, %6.3f, %6.3f,%s", ANSILightBlue, m[2], m[6], m[10], m[14], ANSINoColor); \
         pinfo("%s %6.3f, %6.3f, %6.3f, %6.3f]%s", ANSILightBlue, m[3], m[7], m[11], m[15], ANSINoColor); \
-    } while (0)
-
-/*
- Logs an area label.
- */
-#define parealabel(al) \
-    do \
-    { \
-        UPNVector3d anchor; \
-        getAnchorWorld(anchor); \
-        pinfo("%s%s()%s: "#al" = %s\"%s\"%s xy[%f,%f] hw[%f,%f] lrtb[%f,%f,%f,%f]%s", \
-                ANSILightMagenta, __FUNCTION__, ANSINoColor, \
-                ANSIBlue, getText().c_str(), \
-                ANSILightBlue, \
-                anchor.x, anchor.y, getTextHeight(), getTextWidth(), \
-                getLeft(), getRight(), getTop(), getBottom(), \
-                ANSINoColor); \
     } while (0)
 
 /*
