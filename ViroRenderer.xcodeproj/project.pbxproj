@@ -18,6 +18,9 @@
 		8F1071F01BF7DECD003B3C3F /* VROMatrix4d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1071EC1BF7DECD003B3C3F /* VROMatrix4d.cpp */; };
 		8F1071F11BF7DECD003B3C3F /* VROMatrix4f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1071EE1BF7DECD003B3C3F /* VROMatrix4f.cpp */; };
 		8F4CA0021BDAE10C00177B8F /* VROScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CA0011BDAE10C00177B8F /* VROScreen.cpp */; };
+		8F4DCE211BF7EAF900061DD7 /* VROPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4DCE1F1BF7EAF900061DD7 /* VROPlane.cpp */; };
+		8F4DCE241BF7ECC800061DD7 /* VROFrustumPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4DCE221BF7ECC800061DD7 /* VROFrustumPlane.cpp */; };
+		8F4DCE271BF7ED1A00061DD7 /* VROBoundingBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4DCE251BF7ED1A00061DD7 /* VROBoundingBox.cpp */; };
 		8F517BBB1BCDA2BD0017C70B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBA1BCDA2BD0017C70B /* main.m */; };
 		8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */; };
 		8F517BC11BCDA2BD0017C70B /* GameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC01BCDA2BD0017C70B /* GameViewController.m */; };
@@ -96,6 +99,12 @@
 		8F1071EF1BF7DECD003B3C3F /* VROMatrix4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMatrix4f.h; sourceTree = "<group>"; };
 		8F4C9FFF1BDAE06A00177B8F /* VROScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROScreen.h; sourceTree = "<group>"; };
 		8F4CA0011BDAE10C00177B8F /* VROScreen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROScreen.cpp; sourceTree = "<group>"; };
+		8F4DCE1F1BF7EAF900061DD7 /* VROPlane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROPlane.cpp; sourceTree = "<group>"; };
+		8F4DCE201BF7EAF900061DD7 /* VROPlane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPlane.h; sourceTree = "<group>"; };
+		8F4DCE221BF7ECC800061DD7 /* VROFrustumPlane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROFrustumPlane.cpp; sourceTree = "<group>"; };
+		8F4DCE231BF7ECC800061DD7 /* VROFrustumPlane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFrustumPlane.h; sourceTree = "<group>"; };
+		8F4DCE251BF7ED1A00061DD7 /* VROBoundingBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROBoundingBox.cpp; sourceTree = "<group>"; };
+		8F4DCE261BF7ED1A00061DD7 /* VROBoundingBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROBoundingBox.h; sourceTree = "<group>"; };
 		8F517BB61BCDA2BD0017C70B /* ViroRenderer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ViroRenderer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F517BBA1BCDA2BD0017C70B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8F517BBC1BCDA2BD0017C70B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -363,6 +372,12 @@
 		8F517C441BD0472C0017C70B /* Math */ = {
 			isa = PBXGroup;
 			children = (
+				8F4DCE201BF7EAF900061DD7 /* VROPlane.h */,
+				8F4DCE1F1BF7EAF900061DD7 /* VROPlane.cpp */,
+				8F4DCE231BF7ECC800061DD7 /* VROFrustumPlane.h */,
+				8F4DCE221BF7ECC800061DD7 /* VROFrustumPlane.cpp */,
+				8F4DCE261BF7ED1A00061DD7 /* VROBoundingBox.h */,
+				8F4DCE251BF7ED1A00061DD7 /* VROBoundingBox.cpp */,
 				8F1071E61BF7D9C5003B3C3F /* VROVector3d.h */,
 				8F1071E51BF7D9C5003B3C3F /* VROVector3d.cpp */,
 				8F1071E81BF7D9C5003B3C3F /* VROVector3f.h */,
@@ -567,7 +582,9 @@
 				8F1071EA1BF7D9C5003B3C3F /* VROVector3d.cpp in Sources */,
 				8FDFA8A71BDEA7F800883EC0 /* OrientationEKF.mm in Sources */,
 				8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */,
+				8F4DCE211BF7EAF900061DD7 /* VROPlane.cpp in Sources */,
 				8F1071E11BF6A0C8003B3C3F /* VROObject.cpp in Sources */,
+				8F4DCE271BF7ED1A00061DD7 /* VROBoundingBox.cpp in Sources */,
 				8F1071D71BF41791003B3C3F /* VROCrossLayout.cpp in Sources */,
 				8F63186D1BD95EA6000A75DF /* VROTime.cpp in Sources */,
 				8FDFA89D1BDEA19C00883EC0 /* VROMagnetSensor.cpp in Sources */,
@@ -575,6 +592,7 @@
 				8F1071D11BE81F10003B3C3F /* VROView.mm in Sources */,
 				8F63186A1BD956AF000A75DF /* VROAnimation.cpp in Sources */,
 				8F517BC11BCDA2BD0017C70B /* GameViewController.m in Sources */,
+				8F4DCE241BF7ECC800061DD7 /* VROFrustumPlane.cpp in Sources */,
 				8F517BF21BCDBA8C0017C70B /* VROLayer.cpp in Sources */,
 				8F5C41411BD72707006D7A77 /* VROLayerSubstrate.cpp in Sources */,
 				8F5C41511BD8262D006D7A77 /* VROLog.cpp in Sources */,

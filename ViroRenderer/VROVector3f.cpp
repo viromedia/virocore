@@ -241,12 +241,6 @@ void VROVector3f::set(const VROVector3d &value) {
     z = value.z;
 }
 
-void VROVector3f::set(float x, float y) {
-    this->x = x;
-    this->y = y;
-    this->z = 0;
-}
-
 void VROVector3f::set(float x, float y, float z) {
     this->x = x;
     this->y = y;

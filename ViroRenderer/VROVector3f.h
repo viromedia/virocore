@@ -92,7 +92,6 @@ public:
      */
     void set(const VROVector3f &value) ;
     void set(const VROVector3d &value);
-    void set(float x, float y);
     void set(float x, float y, float z);
 
     /*

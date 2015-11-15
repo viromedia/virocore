@@ -211,13 +211,13 @@ void VROVector3d::add(const VROVector3d &vB, VROVector3d *result) const {
     result->z = z + vB.z;
 }
 
-void VROVector3d::subtract(const VROVector3d &vB, VROVector3d *result) const {
-    result->x = x - vB.x;
-    result->y = y - vB.y;
-    result->z = z - vB.z;
+void VROVector3d::addScaled(const VROVector3d &scaledB, float scale, VROVector3d *result) const {
+    result->x = x + scaledB.x * scale;
+    result->y = y + scaledB.y * scale;
+    result->z = z + scaledB.z * scale;
 }
 
-void VROVector3d::subtract(const VROVector3d &vB, VROVector3f *result) const {
+void VROVector3d::subtract(const VROVector3d &vB, VROVector3d *result) const {
     result->x = x - vB.x;
     result->y = y - vB.y;
     result->z = z - vB.z;

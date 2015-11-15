@@ -18,12 +18,7 @@ class VROMatrix4f {
 public:
 
     /*
-     * Print a float[16] matrix.
-     */
-    static void print(const char *name, const float *m);
-
-    /*
-     * The 16-float data for this matrix.
+     The 16-float data for this matrix.
      */
     float mtx[16];
 
@@ -36,12 +31,12 @@ public:
     void copy(const VROMatrix4f &copy);
 
     /*
-     * Scale.
+     Scale.
      */
     void scale(float x, float y, float z);
 
     /*
-     * Rotation.
+     Rotation.
      */
     void rotateX(float angleRad);
     void rotateY(float angleRad);
@@ -49,13 +44,13 @@ public:
     void rotate(float angleRad, const VROVector3f &origin, const VROVector3f &dir);
 
     /*
-     * Translation.
+     Translation.
      */
     void translate(float x, float y, float z);
     void translate(const VROVector3f &vector);
 
     /*
-     * Multiplication.
+     Multiplication.
      */
     void preMultiply(const VROMatrix4f &A) ;
     void postMultiply(const VROMatrix4f &B) ;
