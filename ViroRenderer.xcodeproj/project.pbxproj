@@ -21,6 +21,7 @@
 		8F4DCE211BF7EAF900061DD7 /* VROPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4DCE1F1BF7EAF900061DD7 /* VROPlane.cpp */; };
 		8F4DCE241BF7ECC800061DD7 /* VROFrustumPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4DCE221BF7ECC800061DD7 /* VROFrustumPlane.cpp */; };
 		8F4DCE271BF7ED1A00061DD7 /* VROBoundingBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4DCE251BF7ED1A00061DD7 /* VROBoundingBox.cpp */; };
+		8F4DCE2A1BF8318100061DD7 /* VROFrustum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4DCE281BF8318100061DD7 /* VROFrustum.cpp */; };
 		8F517BBB1BCDA2BD0017C70B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBA1BCDA2BD0017C70B /* main.m */; };
 		8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */; };
 		8F517BC11BCDA2BD0017C70B /* GameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC01BCDA2BD0017C70B /* GameViewController.m */; };
@@ -105,6 +106,8 @@
 		8F4DCE231BF7ECC800061DD7 /* VROFrustumPlane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFrustumPlane.h; sourceTree = "<group>"; };
 		8F4DCE251BF7ED1A00061DD7 /* VROBoundingBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROBoundingBox.cpp; sourceTree = "<group>"; };
 		8F4DCE261BF7ED1A00061DD7 /* VROBoundingBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROBoundingBox.h; sourceTree = "<group>"; };
+		8F4DCE281BF8318100061DD7 /* VROFrustum.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROFrustum.cpp; sourceTree = "<group>"; };
+		8F4DCE291BF8318100061DD7 /* VROFrustum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFrustum.h; sourceTree = "<group>"; };
 		8F517BB61BCDA2BD0017C70B /* ViroRenderer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ViroRenderer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F517BBA1BCDA2BD0017C70B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8F517BBC1BCDA2BD0017C70B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -374,6 +377,8 @@
 			children = (
 				8F4DCE201BF7EAF900061DD7 /* VROPlane.h */,
 				8F4DCE1F1BF7EAF900061DD7 /* VROPlane.cpp */,
+				8F4DCE291BF8318100061DD7 /* VROFrustum.h */,
+				8F4DCE281BF8318100061DD7 /* VROFrustum.cpp */,
 				8F4DCE231BF7ECC800061DD7 /* VROFrustumPlane.h */,
 				8F4DCE221BF7ECC800061DD7 /* VROFrustumPlane.cpp */,
 				8F4DCE261BF7ED1A00061DD7 /* VROBoundingBox.h */,
@@ -568,6 +573,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F4DCE2A1BF8318100061DD7 /* VROFrustum.cpp in Sources */,
 				8FDFA8A91BDEA7F800883EC0 /* Vector3d.mm in Sources */,
 				8F5C414E1BD825B1006D7A77 /* VROByteBuffer.cpp in Sources */,
 				8F5C41471BD800F8006D7A77 /* VROPresentationLayer.cpp in Sources */,

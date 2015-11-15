@@ -119,6 +119,47 @@ public:
     void setMaxZ(float maxZ) {
         _planes[VROBoxPlaneMaxZ] = maxZ;
     }
+    
+    /*
+     Frustum intersection accessors.
+     */
+    const float *getPlanes() const {
+        return _planes;
+    }
+    float *getPositiveDistanceFromPlanes() {
+        return _positiveDistanceFromPlanes;
+    }
+    float *getNegativeDistanceFromPlanes() {
+        return _negativeDistanceFromPlanes;
+    }
+    
+    const VROFrustum *getSourceFrustumForDistances() const {
+        return _sourceFrustumForDistances;
+    }
+    void setSourceFrustumForDistances(const VROFrustum *frustum) {
+        _sourceFrustumForDistances = frustum;
+    }
+    
+    uint32_t getDistanceFrame() const {
+        return _distanceFrame;
+    }
+    void setDistanceFrame(uint32_t frame) {
+        _distanceFrame = frame;
+    }
+    
+    uint8_t getPlaneLastOutside() const {
+        return _planeLastOutside;
+    }
+    void setPlaneLastOutside(uint8_t plane) {
+        _planeLastOutside = plane;
+    }
+    
+    void setFrustumDistanceValid(bool valid) {
+        _distancesValid = valid;
+    }
+    bool isFrustumDistanceValid() const {
+        return _distancesValid;
+    }
 
     /*
      Scale by a relative amount (scaleBy) or an absolute amount (expandBy). Scales about the center of the
