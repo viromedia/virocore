@@ -16,11 +16,13 @@ class VROVector3d;
 
 class VROMatrix4d {
 public:
-
-    /*
-     The data for this matrix.
-     */
-    double mtx[16];
+    
+    double &operator[] (const int index) {
+        return mtx[index];
+    }
+    double const &operator[](int index) const {
+        return mtx[index];
+    }
 
     VROMatrix4d();
     VROMatrix4d(const VROMatrix4d &toCopy);
@@ -55,6 +57,14 @@ public:
     void preMultiply(const VROMatrix4d &A);
     void postMultiply(const VROMatrix4d &B);
     void multiplyVector(const VROVector3d &vector, VROVector3d *result) const;
+    
+private:
+    
+    /*
+     The data for this matrix.
+     */
+    double mtx[16];
+    
 };
 
 #endif /* VROMatrix4_H_ */

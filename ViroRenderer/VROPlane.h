@@ -10,6 +10,7 @@
 #define VROPLANE_H_
 
 #include "VROVector3f.h"
+#include "VROQuaternion.h"
 class VROVector3d;
 
 enum { ON_PLANE, NEGATIVE_HALF_SPACE, POSITIVE_HALF_SPACE };

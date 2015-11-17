@@ -17,6 +17,8 @@
 #include "VROMatrix4f.h"
 #include "VROMatrix4d.h"
 
+static float kRoundingErrorFloat = 0.00001;
+
 matrix_float4x4 matrix_from_scale(float sx, float sy, float sz);
 matrix_float4x4 matrix_from_translation(float x, float y, float z);
 matrix_float4x4 matrix_from_rotation(float radians, float x, float y, float z);
@@ -132,6 +134,22 @@ void VROMathGetClosestPointOnSegment(const VROVector3d &A, const VROVector3d &B,
 static inline uint32_t
 power2_ceil(const uint32_t v) {
     return  (v < 2) ? v + 1 : 1 << (sizeof(uint32_t) * 8 - __builtin_clz(v - 1));
+}
+
+float VROMathReciprocal(float value) {
+    return 1.0f / value;
+}
+
+float VROMathReciprocalSquareRoot(float value) {
+    return 1.0f / sqrt(value);
+}
+
+bool VROMathIsZero(const float a, const float tolerance = kRoundingErrorFloat) {
+    return fabs(a) <= tolerance;
+}
+
+bool VROMathEquals(const float a, const float b, const float tolerance = kRoundingErrorFloat) {
+    return (a + tolerance >= b) && (a - tolerance <= b);
 }
 
 #endif /* VROMath_h */

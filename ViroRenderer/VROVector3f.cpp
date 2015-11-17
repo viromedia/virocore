@@ -326,6 +326,15 @@ void VROVector3f::cross(const VROVector3f &vB, VROVector3f *result) const {
     result->z = x * vB.y - y * vB.x;
 }
 
+VROVector3f VROVector3f::cross(const VROVector3f &vB) const {
+    VROVector3f result;
+    result.x = y * vB.z - z * vB.y;
+    result.y = z * vB.x - x * vB.z;
+    result.z = x * vB.y - y * vB.x;
+    
+    return result;
+}
+
 void VROVector3f::normalize() {
     float inverseMag = 1.0f / sqrtf(x * x + y * y + z * z);
 

@@ -166,3 +166,10 @@ void VROMatrix4f::postMultiply(const VROMatrix4f &BM)  {
     VROMathMultMatrices(mtx, BM.mtx, nmtx);
     memcpy(mtx, nmtx, sizeof(float) * 16);
 }
+
+void VROMatrix4f::setRotationCenter(const VROVector3f &center, const VROVector3f &translation) {
+    mtx[12] = -mtx[0] * center.x - mtx[4] * center.y - mtx[8]  * center.z + (center.x - translation.x);
+    mtx[13] = -mtx[1] * center.x - mtx[5] * center.y - mtx[9]  * center.z + (center.y - translation.y);
+    mtx[14] = -mtx[2] * center.x - mtx[6] * center.y - mtx[10] * center.z + (center.z - translation.z);
+    mtx[15] = 1.0;
+}

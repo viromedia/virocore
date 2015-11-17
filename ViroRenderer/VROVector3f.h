@@ -27,6 +27,27 @@ public:
     VROVector3f(const VROVector3f &vector);
     VROVector3f(const VROVector3d &vector);
     virtual ~VROVector3f();
+    
+    VROVector3f &operator*=(const float multiplier) {
+        x *= multiplier;
+        y *= multiplier;
+        z *= multiplier;
+        return *this;
+    }
+    
+    VROVector3f &operator/=(const float divisor) {
+        x *= divisor;
+        y *= divisor;
+        z *= divisor;
+        return *this;
+    }
+    
+    VROVector3f &operator+(const VROVector3f &rhs) {
+        x += rhs.x;
+        y += rhs.y;
+        z += rhs.z;
+        return *this;
+    }
 
     /*
      Find the absolute angle between this vector and the given line. The
@@ -72,7 +93,7 @@ public:
      Rotate the vector.
      */
     void rotateZ(float angleRad, VROVector3f *result) const;
-    void rotateAboutAxis(const VROVector3f &axisDir, const VROVector3f &axisPos, float angleRad, VROVector3f *result) const ;
+    void rotateAboutAxis(const VROVector3f &axisDir, const VROVector3f &axisPos, float angleRad, VROVector3f *result) const;
 
     /*
      Intersect the line or ray defined by this vector and the given origin with the plane defined by the given point and normal.
@@ -90,7 +111,7 @@ public:
     /*
      Copy operations.
      */
-    void set(const VROVector3f &value) ;
+    void set(const VROVector3f &value);
     void set(const VROVector3d &value);
     void set(float x, float y, float z);
 
@@ -118,9 +139,10 @@ public:
     /*
      Basic vector operations.
      */
-    float  dot(const VROVector3f &vB) const ;
-    double dot(const VROVector3d &vB) const ;
-    void   cross(const VROVector3f &vB, VROVector3f *result) const ;
+    float  dot(const VROVector3f &vB) const;
+    double dot(const VROVector3d &vB) const;
+    void   cross(const VROVector3f &vB, VROVector3f *result) const;
+    VROVector3f cross(const VROVector3f &vB) const;
     void   normalize();
 
     /*
@@ -132,7 +154,7 @@ public:
     /*
      Hashing.
      */
-    bool isEqual(const VROVector3f &vector) const ;
+    bool isEqual(const VROVector3f &vector) const;
     int hash() const;
 
     /*

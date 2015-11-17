@@ -11,4 +11,13 @@
 
 #include <stdio.h>
 
+class VRORenderer {
+    
+public:
+    
+private:
+    
+    
+};
+
 #endif /* VRORenderer_h */
