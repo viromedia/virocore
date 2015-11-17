@@ -21,7 +21,7 @@ extern size_t kCornersInLayer;
 
 /*
  The representation of a layer in the underlying graphics technology. Responsible
- for rendering its parent layer.
+ for rendering the layer.
  */
 class VROLayerSubstrate {
     

@@ -18,8 +18,9 @@
 #include <stack>
 #include <memory>
 #include "VROByteBuffer.h"
+#include "VROGeometry.h"
 
-class VROLayer : public std::enable_shared_from_this<VROLayer> {
+class VROLayer : public VROGeometry, public std::enable_shared_from_this<VROLayer> {
     
 public:
     

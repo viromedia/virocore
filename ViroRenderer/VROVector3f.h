@@ -42,7 +42,7 @@ public:
         return *this;
     }
     
-    VROVector3f &operator+(const VROVector3f &rhs) {
+    VROVector3f &operator+=(const VROVector3f &rhs) {
         x += rhs.x;
         y += rhs.y;
         z += rhs.z;
