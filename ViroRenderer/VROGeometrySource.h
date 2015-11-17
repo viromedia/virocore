@@ -24,9 +24,30 @@ enum class VROGeometrySourceSemantic {
     BoneIndices
 };
 
+/*
+ Specifies per-vertex data for the set of vertices forming the surface of a three-dimensional 
+ object, or geometry. Used together with VROGeometryElement objects to define custom VROGeometry objects
+ or to inspect the data that composes an existing geometry.
+ */
 class VROGeometrySource {
     
 public:
+    
+    VROGeometrySource(std::shared_ptr<VROData> data,
+                      VROGeometrySourceSemantic semantic,
+                      int vertexCount,
+                      int componentsPerVertex,
+                      int bytesPerComponent,
+                      int dataOffset,
+                      int dataStride) :
+        _data(data),
+        _semantic(semantic),
+        _vertexCount(vertexCount),
+        _componentsPerVertex(componentsPerVertex),
+        _bytesPerComponent(bytesPerComponent),
+        _dataOffset(dataOffset),
+        _dataStride(dataStride)
+    {}
     
 private:
     
