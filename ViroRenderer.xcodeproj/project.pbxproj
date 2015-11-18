@@ -263,6 +263,7 @@
 		8F1071D81BF67EF7003B3C3F /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
+				8F4DCE441BFBF3A800061DD7 /* Shapes */,
 				8F5C413D1BD56F98006D7A77 /* VROScene.h */,
 				8F5C413C1BD56F98006D7A77 /* VROScene.cpp */,
 				8F1071DA1BF67F34003B3C3F /* VROCamera.h */,
@@ -287,6 +288,13 @@
 				8F4DCE351BFBCB8200061DD7 /* VROTexture.cpp */,
 			);
 			name = Renderer;
+			sourceTree = "<group>";
+		};
+		8F4DCE441BFBF3A800061DD7 /* Shapes */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Shapes;
 			sourceTree = "<group>";
 		};
 		8F517BAD1BCDA2BD0017C70B = {
