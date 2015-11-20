@@ -13,6 +13,8 @@
 #include <memory>
 #include "VROData.h"
 
+class VROGeometrySourceSubstrate;
+
 enum class VROGeometrySourceSemantic {
     Vertex,
     Normal,
@@ -48,6 +50,28 @@ public:
         _dataOffset(dataOffset),
         _dataStride(dataStride)
     {}
+    
+    std::shared_ptr<VROData> getData() const {
+        return _data;
+    }
+    VROGeometrySourceSemantic getSemantic() const {
+        return _semantic;
+    }
+    int getVertexCount() const {
+        return _vertexCount;
+    }
+    int getComponentsPerVertex() const {
+        return _componentsPerVertex;
+    }
+    int getBytesPerComponent() const {
+        return _bytesPerComponent;
+    }
+    int getDataOffset() const {
+        return _dataOffset;
+    }
+    int getDataStride() const {
+        return _dataStride;
+    }
     
 private:
     
@@ -86,6 +110,12 @@ private:
      The number of bytes from one vertex in the data to the next.
      */
     int _dataStride;
+    
+    /*
+     The representation of this geometry source in the underlying graphics
+     engine.
+     */
+    VROGeometrySourceSubstrate *_substrate;
     
 };
 

@@ -10,10 +10,14 @@
 #define VRORenderer_h
 
 #include <stdio.h>
+#include <memory>
+#include "VROScene.h"
 
 class VRORenderer {
     
 public:
+    
+    void render(std::shared_ptr<VROScene> scene);
     
 private:
     

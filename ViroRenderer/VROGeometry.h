@@ -50,6 +50,13 @@ public:
         return _materials;
     }
     
+    std::vector<std::shared_ptr<VROGeometrySource>> getGeometrySources() {
+        return _geometrySources;
+    }
+    std::vector<std::shared_ptr<VROGeometryElement>> getGeometryElements() {
+        return _geometryElements;
+    }
+    
 private:
     
     /*

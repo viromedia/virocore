@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 /*
- Holds onto an arbitrary block of immutable bytes.
+ Holds onto an arbitrary block of bytes.
  */
 class VROData {
     
@@ -28,7 +28,7 @@ public:
     VROData(void *data, int dataLength, bool copy = true);
     ~VROData();
     
-    const void *getData() const {
+    void *const getData() {
         return _data;
     }
     

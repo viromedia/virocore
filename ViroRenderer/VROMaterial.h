@@ -52,21 +52,52 @@ public:
     VROMaterial();
     virtual ~VROMaterial();
     
+    VROMaterialVisual &getDiffuse() {
+        return _diffuse;
+    }
+    VROMaterialVisual &getAmbient() {
+        return _ambient;
+    }
+    VROMaterialVisual &getSpecular() {
+        return _specular;
+    }
+    VROMaterialVisual &getNormal() {
+        return _normal;
+    }
+    VROMaterialVisual &getReflective() {
+        return _reflective;
+    }
+    VROMaterialVisual &getEmission() {
+        return _emission;
+    }
+    VROMaterialVisual &getTransparent() {
+        return _transparent;
+    }
+    VROMaterialVisual &getMultiply() {
+        return _multiply;
+    }
+    VROMaterialVisual &getAmbientOcclusion() {
+        return _ambientOcclusion;
+    }
+    VROMaterialVisual &getSelfIllumination() {
+        return _selfIllumination;
+    }
+    
 private:
     
     /*
-     The visual properties associated with the material. These are optional.
+     The visual properties associated with the material.
      */
-    std::shared_ptr<VROMaterialVisual> _diffuse;
-    std::shared_ptr<VROMaterialVisual> _ambient;
-    std::shared_ptr<VROMaterialVisual> _specular;
-    std::shared_ptr<VROMaterialVisual> _normal;
-    std::shared_ptr<VROMaterialVisual> _reflective;
-    std::shared_ptr<VROMaterialVisual> _emission;
-    std::shared_ptr<VROMaterialVisual> _transparent;
-    std::shared_ptr<VROMaterialVisual> _multiply;
-    std::shared_ptr<VROMaterialVisual> _ambientOcclusion;
-    std::shared_ptr<VROMaterialVisual> _selfIllumination;
+    VROMaterialVisual _diffuse;
+    VROMaterialVisual _ambient;
+    VROMaterialVisual _specular;
+    VROMaterialVisual _normal;
+    VROMaterialVisual _reflective;
+    VROMaterialVisual _emission;
+    VROMaterialVisual _transparent;
+    VROMaterialVisual _multiply;
+    VROMaterialVisual _ambientOcclusion;
+    VROMaterialVisual _selfIllumination;
     
     /*
      User-provided name of the material.

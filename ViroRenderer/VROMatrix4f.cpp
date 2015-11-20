@@ -149,22 +149,20 @@ void VROMatrix4f::scale(float x, float y, float z) {
     }
 }
 
-void VROMatrix4f::multiplyVector(const VROVector3f &vector, VROVector3f *result) const  {
-    result->x = vector.x * mtx[0] + vector.y * mtx[4] + vector.z * mtx[8] + mtx[12];
-    result->y = vector.x * mtx[1] + vector.y * mtx[5] + vector.z * mtx[9] + mtx[13];
-    result->z = vector.x * mtx[2] + vector.y * mtx[6] + vector.z * mtx[10] + mtx[14];
+VROVector3f VROMatrix4f::multiply(const VROVector3f &vector) const  {
+    VROVector3f result;
+    result.x = vector.x * mtx[0] + vector.y * mtx[4] + vector.z * mtx[8] + mtx[12];
+    result.y = vector.x * mtx[1] + vector.y * mtx[5] + vector.z * mtx[9] + mtx[13];
+    result.z = vector.x * mtx[2] + vector.y * mtx[6] + vector.z * mtx[10] + mtx[14];
+    
+    return result;
 }
 
-void VROMatrix4f::preMultiply(const VROMatrix4f &AM)   {
+VROMatrix4f VROMatrix4f::multiply(const VROMatrix4f &matrix)   {
     float nmtx[16];
-    VROMathMultMatrices(AM.mtx, mtx, nmtx);
-    memcpy(mtx, nmtx, sizeof(float) * 16);
-}
+    VROMathMultMatrices(matrix.mtx, mtx, nmtx);
 
-void VROMatrix4f::postMultiply(const VROMatrix4f &BM)  {
-    float nmtx[16];
-    VROMathMultMatrices(mtx, BM.mtx, nmtx);
-    memcpy(mtx, nmtx, sizeof(float) * 16);
+    return VROMatrix4f(nmtx);
 }
 
 void VROMatrix4f::setRotationCenter(const VROVector3f &center, const VROVector3f &translation) {

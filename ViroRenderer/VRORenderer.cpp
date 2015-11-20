@@ -7,3 +7,7 @@
 //
 
 #include "VRORenderer.h"
+
+void VRORenderer::render(std::shared_ptr<VROScene> scene) {
+    
+}

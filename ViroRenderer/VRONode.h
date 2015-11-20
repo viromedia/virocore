@@ -17,6 +17,10 @@
 #include "VROGeometry.h"
 #include "VRORenderContext.h"
 
+//TODO Delete Metal dependency
+#include <Metal/Metal.h>
+#include <MetalKit/MetalKit.h>
+
 class VRONode {
     
 public:
@@ -32,7 +36,7 @@ public:
     VRONode(VRONode *layer);
     virtual ~VRONode();
     
-    virtual void render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack);
+    virtual void render(const VRORenderContext &context, std::stack<VROMatrix4f> xforms);
     
     void setGeometry(std::shared_ptr<VROGeometry> geometry) {
         _geometry = geometry;
@@ -70,6 +74,20 @@ private:
      to the model.
      */
     std::shared_ptr<VRONode> _presentationNode;
+    
+    void renderGeometry();
+    
+    // TODO delete Metal
+    id <MTLDevice> _device;
+    
+    id <MTLRenderPipelineState> _pipelineState;
+    id <MTLDepthStencilState> _depthState;
+    
+    id <MTLBuffer> _vertexBuffer;
+    id <MTLBuffer> _uniformsBuffer;
+    id <MTLTexture> _texture;
+
+    
     
 };
 

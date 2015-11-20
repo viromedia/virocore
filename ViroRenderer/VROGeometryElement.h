@@ -16,7 +16,7 @@
 #include "VROData.h"
 
 enum class VROGeometryPrimitiveType {
-    Triangles,
+    Triangle,
     TriangleStrip,
     Line,
     Point
@@ -37,6 +37,19 @@ public:
         _data(data),
         _bytesPerIndex(bytesPerIndex)
     {}
+    
+    std::shared_ptr<VROData> getData() const {
+        return _data;
+    }
+    VROGeometryPrimitiveType getPrimitiveType() const {
+        return _primitiveType;
+    }
+    int getPrimitiveCount() const {
+        return _primitiveCount;
+    }
+    int getBytesPerIndex() const {
+        return _bytesPerIndex;
+    }
     
 private:
     

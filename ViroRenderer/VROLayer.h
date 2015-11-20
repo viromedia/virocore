@@ -20,7 +20,7 @@
 #include "VROByteBuffer.h"
 #include "VROGeometry.h"
 
-class VROLayer : public VROGeometry, public std::enable_shared_from_this<VROLayer> {
+class VROLayer : public std::enable_shared_from_this<VROLayer> {
     
 public:
     
@@ -83,6 +83,11 @@ private:
      to the model.
      */
     std::shared_ptr<VROLayer> _presentationLayer;
+    
+    /*
+     The geometry used by the renderer to draw this layer.
+     */
+    std::shared_ptr<VROGeometry> _geometry;
     
 };
 

@@ -54,9 +54,8 @@ public:
     /*
      Multiplication.
      */
-    void preMultiply(const VROMatrix4d &A);
-    void postMultiply(const VROMatrix4d &B);
-    void multiplyVector(const VROVector3d &vector, VROVector3d *result) const;
+    VROMatrix4d multiply(const VROMatrix4d &matrix);
+    VROVector3d multiply(const VROVector3d &vector) const;
     
 private:
     
