@@ -9,7 +9,7 @@
 #ifndef VROMaterialVisual_h
 #define VROMaterialVisual_h
 
-#include "VROVector3f.h"
+#include "VROVector4f.h"
 #include "VROMatrix4f.h"
 #include "VROTexture.h"
 #include <vector>
@@ -27,7 +27,7 @@ enum class VROFilterMode {
     Linear
 };
 
-enum class VROContentType {
+enum class VROContentsType {
     Fixed,
     Texture2D,
     TextureCube
@@ -38,8 +38,8 @@ class VROMaterialVisual {
 public:
     
     VROMaterialVisual() :
-        _contentType(VROContentType::Fixed),
-        _contentsColor({ 1.0, 1.0, 1.0 }),
+        _contentsType(VROContentsType::Fixed),
+        _contentsColor({ 1.0, 1.0, 1.0, 1.0 }),
         _intensity(1.0),
         _wrapS(VROWrapMode::Clamp),
         _wrapT(VROWrapMode::Clamp),
@@ -48,19 +48,41 @@ public:
         _mipFilter(VROFilterMode::None)
     {}
     
-    void setContents(VROVector3f contents) {
+    void setContents(VROVector4f contents) {
         _contentsColor = contents;
-        _contentType = VROContentType::Fixed;
+        _contentsType = VROContentsType::Fixed;
     }
     
     void setContents(std::shared_ptr<VROTexture> texture) {
         _contentsTexture = texture;
-        _contentType = VROContentType::Texture2D;
+        _contentsType = VROContentsType::Texture2D;
     }
     
     void setContents(std::vector<std::shared_ptr<VROTexture>> cubeTextures) {
         _contentsCube = cubeTextures;
-        _contentType = VROContentType::TextureCube;
+        _contentsType = VROContentsType::TextureCube;
+    }
+    
+    VROContentsType getContentsType() const {
+        return _contentsType;
+    }
+    
+    VROVector4f getContentsColor() const {
+        if (_contentsType == VROContentsType::Fixed) {
+            return _contentsColor;
+        }
+        else {
+            return { 1.0, 1.0, 1.0, 1.0 };
+        }
+    }
+    
+    std::shared_ptr<VROTexture> getContentsTexture() const {
+        if (_contentsType == VROContentsType::Texture2D) {
+            return _contentsTexture;
+        }
+        else {
+            return {};
+        }
     }
     
 private:
@@ -68,12 +90,12 @@ private:
     /*
      Indicates the content type for this visual.
      */
-    VROContentType _contentType;
+    VROContentsType _contentsType;
     
     /*
      If the visual is determined by a fixed color, _contentsColor is populated.
      */
-    VROVector3f _contentsColor;
+    VROVector4f _contentsColor;
     
     /*
      If the visual is determiend by a texture, this variable will be populated
@@ -104,7 +126,7 @@ private:
     VROWrapMode _wrapS, _wrapT;
     VROFilterMode _minificationFilter, _magnificationFilter, _mipFilter;
     
-    VROVector3f _borderColor;
+    VROVector4f _borderColor;
     
 };
 

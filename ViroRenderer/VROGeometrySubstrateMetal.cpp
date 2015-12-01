@@ -14,8 +14,8 @@
 #include <map>
 
 VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VRORenderContextMetal &context,
-                                                     std::vector<std::shared_ptr<VROGeometrySource>> sources,
-                                                     std::vector<std::shared_ptr<VROGeometryElement>> elements) {
+                                                     std::vector<std::shared_ptr<VROGeometrySource>> &sources,
+                                                     std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
     id <MTLDevice> device = context.getDevice();
 
     readGeometryElements(device, elements);
@@ -27,7 +27,7 @@ VROGeometrySubstrateMetal::~VROGeometrySubstrateMetal() {
 }
 
 void VROGeometrySubstrateMetal::readGeometryElements(id <MTLDevice> device,
-                                                     std::vector<std::shared_ptr<VROGeometryElement>> elements) {
+                                                     std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
     
     for (std::shared_ptr<VROGeometryElement> element : elements) {
         VROGeometryElementMetal elementMetal;
@@ -35,7 +35,7 @@ void VROGeometrySubstrateMetal::readGeometryElements(id <MTLDevice> device,
         elementMetal.buffer = [device newBufferWithBytesNoCopy:element->getData()->getData()
                                                         length:element->getPrimitiveCount() * element->getBytesPerIndex()
                                                        options:0 deallocator:nullptr];
-        elementMetal.primitiveType = parsePrimitiveType(element);
+        elementMetal.primitiveType = parsePrimitiveType(element->getPrimitiveType());
         elementMetal.indexCount = element->getPrimitiveCount();
         elementMetal.indexType = (element->getBytesPerIndex() == 2) ? MTLIndexTypeUInt16 : MTLIndexTypeUInt32;
         elementMetal.indexBufferOffset = 0;
@@ -45,7 +45,7 @@ void VROGeometrySubstrateMetal::readGeometryElements(id <MTLDevice> device,
 }
 
 void VROGeometrySubstrateMetal::readGeometrySources(id <MTLDevice> device,
-                                                    std::vector<std::shared_ptr<VROGeometrySource>> sources) {
+                                                    std::vector<std::shared_ptr<VROGeometrySource>> &sources) {
         
     std::shared_ptr<VROGeometrySource> source = sources.front();
     std::map<std::shared_ptr<VROData>, std::vector<std::shared_ptr<VROGeometrySource>>> dataMap;
@@ -100,10 +100,11 @@ void VROGeometrySubstrateMetal::readGeometrySources(id <MTLDevice> device,
         
         for (int i = 0; i < group.size(); i++) {
             std::shared_ptr<VROGeometrySource> source = group[i];
+            int attrIdx = parseAttributeIndex(source->getSemantic());
             
-            vertexDescriptor.attributes[i].format = parseVertexFormat(source);
-            vertexDescriptor.attributes[i].offset = source->getDataOffset();
-            vertexDescriptor.attributes[i].bufferIndex = 0;
+            vertexDescriptor.attributes[attrIdx].format = parseVertexFormat(source);
+            vertexDescriptor.attributes[attrIdx].offset = source->getDataOffset();
+            vertexDescriptor.attributes[attrIdx].bufferIndex = 0;
             
             passert (source->getDataStride() == vertexDescriptor.layouts[0].stride);
         }
@@ -160,8 +161,8 @@ MTLVertexFormat VROGeometrySubstrateMetal::parseVertexFormat(std::shared_ptr<VRO
     }
 }
 
-MTLPrimitiveType VROGeometrySubstrateMetal::parsePrimitiveType(std::shared_ptr<VROGeometryElement> &element) {
-    switch (element->getPrimitiveType()) {
+MTLPrimitiveType VROGeometrySubstrateMetal::parsePrimitiveType(VROGeometryPrimitiveType primitive) {
+    switch (primitive) {
         case VROGeometryPrimitiveType::Triangle:
             return MTLPrimitiveTypeTriangle;
             
@@ -178,3 +179,27 @@ MTLPrimitiveType VROGeometrySubstrateMetal::parsePrimitiveType(std::shared_ptr<V
             break;
     }
 }
+
+int VROGeometrySubstrateMetal::parseAttributeIndex(VROGeometrySourceSemantic semantic) {
+    switch (semantic) {
+        case VROGeometrySourceSemantic::Vertex:
+            return 0;
+        case VROGeometrySourceSemantic::Normal:
+            return 1;
+        case VROGeometrySourceSemantic::Color:
+            return 2;
+        case VROGeometrySourceSemantic::Texcoord:
+            return 3;
+        case VROGeometrySourceSemantic::VertexCrease:
+            return 4;
+        case VROGeometrySourceSemantic::EdgeCrease:
+            return 5;
+        case VROGeometrySourceSemantic::BoneWeights:
+            return 6;
+        case VROGeometrySourceSemantic::BoneIndices:
+            return 7;
+        default:
+            return 0;
+    }
+}
+

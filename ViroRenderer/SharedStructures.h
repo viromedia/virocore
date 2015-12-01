@@ -18,6 +18,50 @@ typedef struct {
 } uniforms_t;
 
 typedef struct {
+    matrix_float4x4 modelview_projection_matrix;
+    matrix_float4x4 normal_matrix;
+    
+    vector_float4   ambient_color;
+    vector_float4   diffuse_color;
+} VROConstantLightingUniforms;
+
+typedef struct {
+    matrix_float4x4 modelview_projection_matrix;
+    matrix_float4x4 normal_matrix;
+    
+    vector_float4   ambient_color;
+    vector_float4   diffuse_color;
+    vector_float4   specular_color;
+    
+    float           shininess;
+    float           fresnel;
+} VROBlinnLightingUniforms;
+
+typedef struct {
+    matrix_float4x4 modelview_projection_matrix;
+    matrix_float4x4 normal_matrix;
+    
+    vector_float4   ambient_color;
+    vector_float4   diffuse_color;
+    vector_float4   specular_color;
+    
+    float           shininess;
+    float           fresnel;
+} VROPhongLightingUniforms;
+
+typedef struct {
+    matrix_float4x4 modelview_projection_matrix;
+    matrix_float4x4 normal_matrix;
+    
+    vector_float4   ambient_color;
+    vector_float4   diffuse_color;
+    vector_float4   specular_color;
+    
+    float           shininess;
+    float           fresnel;
+} VROLambertLightingUniforms;
+
+typedef struct {
     float x;
     float y;
     float z;

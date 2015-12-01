@@ -10,6 +10,8 @@
 #define VROGeometrySubstrateMetal_h
 
 #include "VROGeometrySubstrate.h"
+#include "VROGeometrySource.h"
+#include "VROGeometryElement.h"
 #include <vector>
 #include <memory>
 #include <map>
@@ -51,8 +53,8 @@ class VROGeometrySubstrateMetal : public VROGeometrySubstrate {
 public:
     
     VROGeometrySubstrateMetal(const VRORenderContextMetal &context,
-                              std::vector<std::shared_ptr<VROGeometrySource>> sources,
-                              std::vector<std::shared_ptr<VROGeometryElement>> elements);
+                              std::vector<std::shared_ptr<VROGeometrySource>> &sources,
+                              std::vector<std::shared_ptr<VROGeometryElement>> &elements);
     virtual ~VROGeometrySubstrateMetal();
     
 private:
@@ -65,14 +67,14 @@ private:
      results.
      */
     void readGeometryElements(id <MTLDevice> device,
-                              std::vector<std::shared_ptr<VROGeometryElement>> elements);
+                              std::vector<std::shared_ptr<VROGeometryElement>> &elements);
     
     /*
      Parse the given geometry sources and populate the _sources vector with the
      results.
      */
     void readGeometrySources(id <MTLDevice> device,
-                             std::vector<std::shared_ptr<VROGeometrySource>> sources);
+                             std::vector<std::shared_ptr<VROGeometrySource>> &sources);
     
     /*
      Parse an MTLVertexFormat from the given geometry source.
@@ -80,9 +82,14 @@ private:
     MTLVertexFormat parseVertexFormat(std::shared_ptr<VROGeometrySource> &source);
     
     /*
-     Parse an MTLPrimitiveType from the given geometry element.
+     Parse an MTLPrimitiveType from the given geometry VROGeometryPrimitiveType.
      */
-    MTLPrimitiveType parsePrimitiveType(std::shared_ptr<VROGeometryElement> &element);
+    MTLPrimitiveType parsePrimitiveType(VROGeometryPrimitiveType primitive);
+    
+    /*
+     Parse the attribute index for the given semantic.
+     */
+    int parseAttributeIndex(VROGeometrySourceSemantic semantic);
     
 };
 

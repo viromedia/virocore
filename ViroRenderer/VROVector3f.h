@@ -36,9 +36,9 @@ public:
     }
     
     VROVector3f &operator/=(const float divisor) {
-        x *= divisor;
-        y *= divisor;
-        z *= divisor;
+        x /= divisor;
+        y /= divisor;
+        z /= divisor;
         return *this;
     }
     

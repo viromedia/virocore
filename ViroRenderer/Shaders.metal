@@ -56,6 +56,59 @@ fragment float4 lighting_fragment(ColorInOut in [[ stage_in ]],
 }
 
 /* ---------------------------------------
+   GEOMETRY ATTRIBUTES
+ --------------------------------------- */
+
+typedef struct {
+    float3 position       [[ attribute(0) ]];
+    float3 normal         [[ attribute(1) ]];
+    float4 color          [[ attribute(2) ]];
+    float2 texcoord       [[ attribute(3) ]];
+} VRORendererAttributes;
+
+/* ---------------------------------------
+   CONSTANT LIGHTING MODEL
+   --------------------------------------- */
+
+typedef struct {
+    float4 position [[ position ]];
+    float2 texcoord;
+} VROConstantLightingVertexOut;
+
+vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttributes attributes [[ stage_in ]],
+                                                             constant uniforms_t& uniforms [[ buffer(1) ]]) {
+    VROConstantLightingVertexOut out;
+    
+    float4 in_position = float4(attributes.position, 1.0);
+    out.position = uniforms.modelview_projection_matrix * in_position;
+    out.uv = vertex_array.uv;
+    
+    float4 eye_normal = normalize(uniforms.normal_matrix * float4(attributes.normal, 0.0));
+    float n_dot_l = dot(eye_normal.rgb, normalize(light_position));
+    n_dot_l = fmax(0.0, n_dot_l);
+    
+    out.color = uniforms.diffuse_color;
+    return out;
+}
+
+fragment float4 constant_lighting_fragment(VROConstantLightingVertexOut in [[ stage_in ]],
+                                           texture2d<float> diffuse_texture [[ texture(0) ]]) {
+    return in.color * diffuse_texture.sample(s, in.uv);
+}
+
+/* ---------------------------------------
+   PHONG LIGHTING MODEL
+   --------------------------------------- */
+
+/* ---------------------------------------
+   BLINN LIGHTING MODEL
+   --------------------------------------- */
+
+/* ---------------------------------------
+   LAMBERT LIGHTING MODEL
+   --------------------------------------- */
+
+/* ---------------------------------------
    DISTORTION SHADERS
    --------------------------------------- */
 

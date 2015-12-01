@@ -83,6 +83,37 @@ public:
         return _selfIllumination;
     }
     
+    float getShininess() const {
+        return _shininess;
+    }
+    float getFresnelExponent() const {
+        return _fresnelExponent;
+    }
+    float getTransparency() const {
+        return _transparency;
+    }
+    VROTransparencyMode getTransparencyMode() const {
+        return _transparencyMode;
+    }
+    VROLightingModel getLightingModel() const {
+        return _lightingModel;
+    }
+    bool isLitPerPixel() const {
+        return _litPerPixel;
+    }
+    VROCullMode getCullMode() const {
+        return _cullMode;
+    }
+    VROBlendMode getBlendMode() const {
+        return _blendMode;
+    }
+    bool getWritesToDepthBuffer() const {
+        return _writesToDepthBuffer;
+    }
+    bool getReadsFromDepthBuffer() const {
+        return _readsFromDepthBuffer;
+    }
+    
 private:
     
     /*
