@@ -72,6 +72,7 @@ typedef struct {
 
 typedef struct {
     float4 position [[ position ]];
+    float4 color;
     float2 texcoord;
 } VROConstantLightingVertexOut;
 
@@ -81,7 +82,7 @@ vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttribut
     
     float4 in_position = float4(attributes.position, 1.0);
     out.position = uniforms.modelview_projection_matrix * in_position;
-    out.uv = vertex_array.uv;
+    out.texcoord = attributes.texcoord;
     
     float4 eye_normal = normalize(uniforms.normal_matrix * float4(attributes.normal, 0.0));
     float n_dot_l = dot(eye_normal.rgb, normalize(light_position));
@@ -93,7 +94,7 @@ vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttribut
 
 fragment float4 constant_lighting_fragment(VROConstantLightingVertexOut in [[ stage_in ]],
                                            texture2d<float> diffuse_texture [[ texture(0) ]]) {
-    return in.color * diffuse_texture.sample(s, in.uv);
+    return in.color * diffuse_texture.sample(s, in.texcoord);
 }
 
 /* ---------------------------------------

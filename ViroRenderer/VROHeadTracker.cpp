@@ -91,7 +91,7 @@ VROHeadTracker::VROHeadTracker() :
     _tracker = new OrientationEKF();
     
     _correctedIRFToWorldMatrix = _IRFToWorldMatrix;
-    _lastHeadRotation = matrix_identity_float4x4;
+    _lastHeadRotation = VROMatrix4f();
 }
 
 VROHeadTracker::~VROHeadTracker() {
@@ -142,7 +142,7 @@ bool VROHeadTracker::isReady() {
     return isTrackerReady;
 }
 
-matrix_float4x4 VROHeadTracker::getHeadRotation() {
+VROMatrix4f VROHeadTracker::getHeadRotation() {
 #if HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION_EKF
     
     NSTimeInterval currentTimestamp = CACurrentMediaTime();

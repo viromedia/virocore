@@ -10,7 +10,7 @@
 #define VROEye_h
 
 #include <stdio.h>
-#include <simd/simd.h>
+#include "VROMatrix4f.h"
 #include "VROViewport.h"
 #include "VROFieldOfView.h"
 
@@ -30,8 +30,6 @@ public:
     
     VROEye(const Type eye) :
         _type(eye),
-        _eyeView(matrix_identity_float4x4),
-        _perspective(matrix_identity_float4x4),
         _projectionChanged(true),
         _lastZNear(0),
         _lastZFar(0) {
@@ -44,15 +42,15 @@ public:
         return _type;
     }
     
-    matrix_float4x4 getEyeView() const {
+    VROMatrix4f getEyeView() const {
         return _eyeView;
     }
     
-    void setEyeView(matrix_float4x4 eyeView) {
+    void setEyeView(VROMatrix4f eyeView) {
         _eyeView = eyeView;
     }
     
-    matrix_float4x4 perspective(float zNear, float zFar) {
+    VROMatrix4f perspective(float zNear, float zFar) {
         if (!_projectionChanged && _lastZNear == zNear && _lastZFar == zFar) {
             return _perspective;
         }
@@ -90,8 +88,8 @@ private:
     
     Type _type;
     
-    matrix_float4x4 _eyeView;
-    matrix_float4x4 _perspective;
+    VROMatrix4f _eyeView;
+    VROMatrix4f _perspective;
 
     VROViewport _viewport;
     VROFieldOfView _fov;

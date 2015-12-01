@@ -10,7 +10,6 @@
 #define VROMath_h
 
 #include <stdio.h>
-#include <simd/simd.h>
 #include <GLKit/GLKit.h>
 #include "VROVector3f.h"
 #include "VROVector3d.h"
@@ -19,16 +18,16 @@
 
 static float kRoundingErrorFloat = 0.00001;
 
-matrix_float4x4 matrix_from_scale(float sx, float sy, float sz);
-matrix_float4x4 matrix_from_translation(float x, float y, float z);
-matrix_float4x4 matrix_from_rotation(float radians, float x, float y, float z);
-matrix_float4x4 matrix_from_perspective_fov_aspectLH(const float fovY, const float aspect,
+VROMatrix4f matrix_from_scale(float sx, float sy, float sz);
+VROMatrix4f matrix_from_translation(float x, float y, float z);
+VROMatrix4f matrix_from_rotation(float radians, float x, float y, float z);
+VROMatrix4f matrix_from_perspective_fov_aspectLH(const float fovY, const float aspect,
                                                      const float nearZ, const float farZ);
-matrix_float4x4 matrix_for_frustum(const float left, const float right,
-                                   const float bottom, const float top,
-                                   const float znear, const float zfar);
+VROMatrix4f matrix_for_frustum(const float left, const float right,
+                               const float bottom, const float top,
+                               const float znear, const float zfar);
 
-matrix_float4x4 matrix_float4x4_from_GL(GLKMatrix4 glmatrix);
+VROMatrix4f matrix_float4x4_from_GL(GLKMatrix4 glmatrix);
 
 double degrees_to_radians(double degrees);
 double radians_to_degrees(double radians);
@@ -53,6 +52,8 @@ void VROMathMultMatrices_ffd(const float *a, const float *b, double *r);
 
 void VROMathMakeIdentity(float *m);
 void VROMathMakeIdentity_d(double *m);
+
+void VROMathTransposeMatrix(const float *src, float *transpose);
 
 bool VROMathInvertMatrix(const float *src, float *inverse);
 bool VROMathInvertMatrix_d(const double *src, double *inverse);

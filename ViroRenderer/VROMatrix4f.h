@@ -18,15 +18,14 @@ class VROMatrix4f {
 public:
     
     float &operator[] (const int index) {
-        return mtx[index];
+        return _mtx[index];
     }
     float const &operator[](int index) const {
-        return mtx[index];
+        return _mtx[index];
     }
 
     VROMatrix4f();
     VROMatrix4f(const float *matrix);
-    VROMatrix4f(const float *matrix, bool owner);
     virtual ~VROMatrix4f();
 
     void toIdentity();
@@ -58,12 +57,18 @@ public:
     VROMatrix4f multiply(const VROMatrix4f &matrix);
     VROVector3f multiply(const VROVector3f &vector) const;
     
+    /*
+     Other operations.
+     */
+    VROMatrix4f transpose() const;
+    VROMatrix4f invert() const;
+    
 private:
     
     /*
      The 16-float data for this matrix.
      */
-    float mtx[16];
+    float _mtx[16];
     
 };
 

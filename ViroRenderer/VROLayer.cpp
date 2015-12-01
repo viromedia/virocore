@@ -27,7 +27,7 @@ VROLayer::~VROLayer() {
 
 #pragma mark - Rendering
 
-void VROLayer::render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack) {
+void VROLayer::render(const VRORenderContext &context, std::stack<VROMatrix4f> mvStack) {
     _presentationLayer->render(context, mvStack);
 }
 

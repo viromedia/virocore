@@ -16,6 +16,7 @@
 class VRONode;
 class VRORenderContext;
 class VROMaterialVisual;
+class VROLayer;
 
 class VROScene {
     
@@ -23,14 +24,14 @@ public:
     
     void render(const VRORenderContext &renderContext);
     
-    void addNode(std::shared_ptr<VRONode> node);
+    void addNode(std::shared_ptr<VROLayer> node);
     
 private:
     
     /*
      The root nodes of the scene.
      */
-    std::vector<std::shared_ptr<VRONode>> _nodes;
+    std::vector<std::shared_ptr<VROLayer>> _nodes;
     
     /*
      The background visual to display.

@@ -9,7 +9,6 @@
 #ifndef VROFieldOfView_h
 #define VROFieldOfView_h
 
-#include <simd/simd.h>
 #include "VROMath.h"
 
 /*
@@ -68,7 +67,7 @@ public:
         return _top;
     }
     
-    matrix_float4x4 toPerspectiveMatrix(float near, float far) {
+    VROMatrix4f toPerspectiveMatrix(float near, float far) {
         float left   = -tanf(degrees_to_radians(_left))   * near;
         float right  =  tanf(degrees_to_radians(_right))  * near;
         float bottom = -tanf(degrees_to_radians(_bottom)) * near;

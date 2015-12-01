@@ -255,10 +255,10 @@
                                    rightEye:(VROEye *)rightEye
                                monocularEye:(VROEye *)monocularEye {
     
-    matrix_float4x4 headRotation = _headTracker->getHeadRotation();
+    VROMatrix4f headRotation = _headTracker->getHeadRotation();
     
     float halfLensDistance = _device->getInterLensDistance() * 0.5f;
-    matrix_float4x4 yFlip = matrix_from_scale(1.0, -1.0, 1.0);
+    VROMatrix4f yFlip = matrix_from_scale(1.0, -1.0, 1.0);
     
     if (self.vrModeEnabled) {
         /*
@@ -273,15 +273,15 @@
          5. Translate the camera by the interlens distance in each direction to get the two eyes.
          */
         
-        matrix_float4x4 camera = matrix_float4x4_from_GL(GLKMatrix4MakeLookAt(0, 0, 0,
-                                                                              0, 0, 1.0,
-                                                                              0, 1.0, 0));
-        matrix_float4x4 cameraFlipped = matrix_multiply(yFlip, camera);
-        matrix_float4x4 cameraRotatedFlipped = matrix_multiply(headRotation, cameraFlipped);
-        matrix_float4x4 cameraRotated = matrix_multiply(yFlip, cameraRotatedFlipped);
+        VROMatrix4f camera = matrix_float4x4_from_GL(GLKMatrix4MakeLookAt(0, 0, 0,
+                                                                          0, 0, 1.0,
+                                                                          0, 1.0, 0));
+        VROMatrix4f cameraFlipped = yFlip.multiply(camera);
+        VROMatrix4f cameraRotatedFlipped = headRotation.multiply(cameraFlipped);
+        VROMatrix4f cameraRotated = yFlip.multiply(cameraRotatedFlipped);
         
-        matrix_float4x4 leftEyeView  = matrix_multiply(matrix_from_translation( halfLensDistance, 0, 0), cameraRotated);
-        matrix_float4x4 rightEyeView = matrix_multiply(matrix_from_translation(-halfLensDistance, 0, 0), cameraRotated);
+        VROMatrix4f leftEyeView  = matrix_from_translation( halfLensDistance, 0, 0).multiply(cameraRotated);
+        VROMatrix4f rightEyeView = matrix_from_translation(-halfLensDistance, 0, 0).multiply(cameraRotated);
         
         leftEye->setEyeView(leftEyeView);
         rightEye->setEyeView(rightEyeView);
@@ -299,7 +299,8 @@
         }
         else if (_distortionCorrectionEnabled) {
             [self updateLeftEye:leftEye rightEye:rightEye];
-            _distortionRenderer->fovDidChange(leftEye->getFOV(), rightEye->getFOV(), [self virtualEyeToScreenDistance]);
+            _distortionRenderer->fovDidChange(leftEye->getFOV(), rightEye->getFOV(),
+                                              [self virtualEyeToScreenDistance]);
         }
         else {
             [self updateUndistortedFOVAndViewport];

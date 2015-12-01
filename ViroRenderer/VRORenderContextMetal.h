@@ -14,6 +14,8 @@
 #include <MetalKit/MetalKit.h>
 #include "VRORenderContext.h"
 #include "VRORenderTarget.h"
+#include "VROMatrix4f.h"
+#include <memory>
 
 /*
  Render context for Metal.
@@ -31,10 +33,10 @@ public:
     void setRenderTarget(std::shared_ptr<VRORenderTarget> renderTarget) {
         _renderTarget = renderTarget;
     }
-    void setProjectionMatrix(matrix_float4x4 projectionMatrix) {
+    void setProjectionMatrix(VROMatrix4f projectionMatrix) {
         _projectionMatrix = projectionMatrix;
     }
-    void setViewMatrix(matrix_float4x4 viewMatrix) {
+    void setViewMatrix(VROMatrix4f viewMatrix) {
         _viewMatrix = viewMatrix;
     }
     
@@ -51,10 +53,10 @@ public:
         return _renderTarget;
     }
     
-    matrix_float4x4 getProjectionMatrix() const {
+    VROMatrix4f getProjectionMatrix() const {
         return _projectionMatrix;
     }
-    matrix_float4x4 getViewMatrix() const {
+    VROMatrix4f getViewMatrix() const {
         return _viewMatrix;
     }
     
@@ -66,8 +68,8 @@ private:
     
     std::shared_ptr<VRORenderTarget> _renderTarget;
     
-    matrix_float4x4 _projectionMatrix;
-    matrix_float4x4 _viewMatrix;
+    VROMatrix4f _projectionMatrix;
+    VROMatrix4f _viewMatrix;
     
 };
 

@@ -15,11 +15,11 @@ VROMatrix4d::VROMatrix4d() {
 }
 
 VROMatrix4d::VROMatrix4d(const VROMatrix4d &toCopy) {
-    memcpy(mtx, toCopy.mtx, sizeof(double) * 16);
+    memcpy(_mtx, toCopy._mtx, sizeof(double) * 16);
 }
 
 VROMatrix4d::VROMatrix4d(const double *matrix) {
-    memcpy(mtx, matrix, sizeof(double) * 16);
+    memcpy(_mtx, matrix, sizeof(double) * 16);
 }
 
 VROMatrix4d::~VROMatrix4d() {
@@ -27,12 +27,12 @@ VROMatrix4d::~VROMatrix4d() {
 }
 
 void VROMatrix4d::toIdentity() {
-    memset(mtx, 0, 16 * sizeof(double));
-    mtx[0] = mtx[5] = mtx[10] = mtx[15] = 1;
+    memset(_mtx, 0, 16 * sizeof(double));
+    _mtx[0] = _mtx[5] = _mtx[10] = _mtx[15] = 1;
 }
 
 void VROMatrix4d::copy(const VROMatrix4d &copy)  {
-    memcpy(mtx, copy.mtx, sizeof(double) * 16);
+    memcpy(_mtx, copy._mtx, sizeof(double) * 16);
 }
 
 void VROMatrix4d::rotateX(double angleRad) {
@@ -42,9 +42,9 @@ void VROMatrix4d::rotateX(double angleRad) {
     for (int i = 0; i < 3; i++) {
         int i1 = i * 4 + 1;
         int i2 = i1 + 1;
-        double t = mtx[i1];
-        mtx[i1] = t * rcos - mtx[i2] * rsin;
-        mtx[i2] = t * rsin + mtx[i2] * rcos;
+        double t = _mtx[i1];
+        _mtx[i1] = t * rcos - _mtx[i2] * rsin;
+        _mtx[i2] = t * rsin + _mtx[i2] * rcos;
     }
 }
 
@@ -55,9 +55,9 @@ void VROMatrix4d::rotateY(double angleRad) {
     for (int i = 0; i < 3; i++) {
         int i0 = i * 4;
         int i2 = i0 + 2;
-        double t = mtx[i0];
-        mtx[i0] = t * rcos + mtx[i2] * rsin;
-        mtx[i2] = mtx[i2] * rcos - t * rsin;
+        double t = _mtx[i0];
+        _mtx[i0] = t * rcos + _mtx[i2] * rsin;
+        _mtx[i2] = _mtx[i2] * rcos - t * rsin;
     }
 }
 
@@ -68,9 +68,9 @@ void VROMatrix4d::rotateZ(double angleRad) {
     for (int i = 0; i < 3; i++) {
         int i0 = i * 4;
         int i1 = i0 + 1;
-        double t = mtx[i0];
-        mtx[i0] = t * rcos - mtx[i1] * rsin;
-        mtx[i1] = t * rsin + mtx[i1] * rcos;
+        double t = _mtx[i0];
+        _mtx[i0] = t * rcos - _mtx[i1] * rsin;
+        _mtx[i1] = t * rsin + _mtx[i1] * rcos;
     }
 }
 
@@ -96,9 +96,7 @@ void VROMatrix4d::rotate(double angleRad, const VROVector3d &origin, const VROVe
     double sinT = sinf(angleRad);
     double l = sqrtf(l2);
 
-    VROMatrix4d scratchMtx;
-    double *txMtx = scratchMtx.mtx;
-
+    VROMatrix4d txMtx;
     txMtx[0] = (u2 + (v2 + w2) * cosT) / l2;
     txMtx[1] = (u * v * (1 - cosT) + w * l * sinT) / l2;
     txMtx[2] = (u * w * (1 - cosT) - v * l * sinT) / l2;
@@ -119,18 +117,20 @@ void VROMatrix4d::rotate(double angleRad, const VROVector3d &origin, const VROVe
     txMtx[14] = ((c * (u2 + v2) - w * (a * u + b * v)) * (1 - cosT) + (a * v - b * u) * l * sinT) / l2;
     txMtx[15] = 1;
 
-    postMultiply(scratchMtx);
+    VROMatrix4d result = multiply(txMtx);
+    memcpy(_mtx, result._mtx, sizeof(double) * 16);
 }
 
 void VROMatrix4d::translate(double x, double y, double z) {
     VROMatrix4d translate;
     translate.toIdentity();
 
-    translate.mtx[12] = x;
-    translate.mtx[13] = y;
-    translate.mtx[14] = z;
+    translate[12] = x;
+    translate[13] = y;
+    translate[14] = z;
 
-    postMultiply(translate);
+    VROMatrix4d result = multiply(translate);
+    memcpy(_mtx, result._mtx, sizeof(double) * 16);
 }
 
 void VROMatrix4d::translate(const VROVector3d &vector) {
@@ -140,24 +140,24 @@ void VROMatrix4d::translate(const VROVector3d &vector) {
 void VROMatrix4d::scale(double x, double y, double z) {
     for (int i = 0; i < 3; i++) {
         int i0 = i * 4;
-        mtx[i0] *= x;
-        mtx[i0 + 1] *= y;
-        mtx[i0 + 2] *= z;
+        _mtx[i0] *= x;
+        _mtx[i0 + 1] *= y;
+        _mtx[i0 + 2] *= z;
     }
 }
 
 VROVector3d VROMatrix4d::multiply(const VROVector3d &vector) const  {
     VROVector3f result;
-    result.x = vector.x * mtx[0] + vector.y * mtx[4] + vector.z * mtx[8] + mtx[12];
-    result.y = vector.x * mtx[1] + vector.y * mtx[5] + vector.z * mtx[9] + mtx[13];
-    result.z = vector.x * mtx[2] + vector.y * mtx[6] + vector.z * mtx[10] + mtx[14];
+    result.x = vector.x * _mtx[0] + vector.y * _mtx[4] + vector.z * _mtx[8]  + _mtx[12];
+    result.y = vector.x * _mtx[1] + vector.y * _mtx[5] + vector.z * _mtx[9]  + _mtx[13];
+    result.z = vector.x * _mtx[2] + vector.y * _mtx[6] + vector.z * _mtx[10] + _mtx[14];
     
     return result;
 }
 
 VROMatrix4d VROMatrix4d::multiply(const VROMatrix4d &matrix)   {
     double nmtx[16];
-    VROMathMultMatrices_d(matrix.mtx, mtx, nmtx);
+    VROMathMultMatrices_d(matrix._mtx, _mtx, nmtx);
     
     return VROMatrix4d(nmtx);
 }

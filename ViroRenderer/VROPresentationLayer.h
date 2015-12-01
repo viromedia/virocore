@@ -22,7 +22,7 @@ public:
     VROPresentationLayer(const VROLayer *layer, const VRORenderContext &context);
     virtual ~VROPresentationLayer();
     
-    void render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack);
+    void render(const VRORenderContext &context, std::stack<VROMatrix4f> mvStack);
     void setContents(const void *data, size_t dataLength, size_t width, size_t height);
     
     void setFrame(VRORect frame);

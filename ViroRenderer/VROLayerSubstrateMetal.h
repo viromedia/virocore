@@ -21,7 +21,7 @@ public:
     virtual ~VROLayerSubstrateMetal() {}
     
     void render(const VRORenderContext &context,
-                matrix_float4x4 mv,
+                VROMatrix4f mv,
                 vector_float4 bgColor);
     void setContents(const void *data, size_t dataLength, size_t width, size_t height);
     

@@ -11,6 +11,7 @@
 #include "VROLayer.h"
 #include "VRORect.h"
 #include "VROMath.h"
+#include "VROMetalUtils.h"
 
 VROLayerSubstrateMetal::VROLayerSubstrateMetal(const VRORenderContext &context) :
     VROLayerSubstrate(),
@@ -94,7 +95,7 @@ void VROLayerSubstrateMetal::hydrate(const VRORenderContext &context) {
 }
 
 void VROLayerSubstrateMetal::render(const VRORenderContext &context,
-                                    matrix_float4x4 mv,
+                                    VROMatrix4f mv,
                                     vector_float4 bgColor) {
     
     if (!_pipelineState) {
@@ -104,8 +105,8 @@ void VROLayerSubstrateMetal::render(const VRORenderContext &context,
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
     
     uniforms_t *uniforms = (uniforms_t *)[_uniformsBuffer contents];
-    uniforms->normal_matrix = matrix_invert(matrix_transpose(mv));
-    uniforms->modelview_projection_matrix = matrix_multiply(metal.getProjectionMatrix(), mv);
+    uniforms->normal_matrix = toMatrixFloat4x4(mv.transpose().invert());
+    uniforms->modelview_projection_matrix = toMatrixFloat4x4(metal.getProjectionMatrix().multiply(mv));
     uniforms->diffuse_color = bgColor;
     
     id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();

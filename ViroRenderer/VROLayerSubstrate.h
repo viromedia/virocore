@@ -11,8 +11,8 @@
 
 #include <memory>
 #include <stack>
-#include <simd/simd.h>
 #include "SharedStructures.h"
+#include "VROMatrix4f.h"
 
 class VROLayer;
 class VRORenderContext;
@@ -31,7 +31,7 @@ public:
     virtual ~VROLayerSubstrate() {}
     
     virtual void render(const VRORenderContext &context,
-                        matrix_float4x4 mv,
+                        VROMatrix4f mv,
                         vector_float4 bgColor) = 0;
     virtual void setContents(const void *data, const size_t dataLength, size_t width, size_t height) = 0;
 

@@ -18,10 +18,10 @@ class VROMatrix4d {
 public:
     
     double &operator[] (const int index) {
-        return mtx[index];
+        return _mtx[index];
     }
     double const &operator[](int index) const {
-        return mtx[index];
+        return _mtx[index];
     }
 
     VROMatrix4d();
@@ -62,7 +62,7 @@ private:
     /*
      The data for this matrix.
      */
-    double mtx[16];
+    double _mtx[16];
     
 };
 

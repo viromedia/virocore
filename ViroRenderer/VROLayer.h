@@ -10,7 +10,6 @@
 #define VROLayer_h
 
 #include <stdio.h>
-#include <simd/simd.h>
 #include "VRORenderContext.h"
 #include "SharedStructures.h"
 #include "VRORect.h"
@@ -19,6 +18,7 @@
 #include <memory>
 #include "VROByteBuffer.h"
 #include "VROGeometry.h"
+#include "VROMatrix4f.h"
 
 class VROLayer : public std::enable_shared_from_this<VROLayer> {
     
@@ -35,7 +35,7 @@ public:
     VROLayer(VROLayer *layer);
     virtual ~VROLayer();
     
-    virtual void render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack);
+    virtual void render(const VRORenderContext &context, std::stack<VROMatrix4f> mvStack);
     virtual void setContents(const void *data, size_t dataLength, size_t width, size_t height);
     
     virtual void setFrame(VRORect frame);

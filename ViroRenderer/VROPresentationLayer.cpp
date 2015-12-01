@@ -26,7 +26,7 @@ void VROPresentationLayer::setContents(const void *data, size_t dataLength, size
     _substrate->setContents(data, dataLength, width, height);
 }
 
-void VROPresentationLayer::render(const VRORenderContext &context, std::stack<matrix_float4x4> mvStack) {
+void VROPresentationLayer::render(const VRORenderContext &context, std::stack<VROMatrix4f> mvStack) {
     std::shared_ptr<VROLayer> superlayer = getSuperlayer();
     
     updateAnimatedFrame();
@@ -35,18 +35,18 @@ void VROPresentationLayer::render(const VRORenderContext &context, std::stack<ma
                 _frame.origin.y + _frame.size.height / 2.0f,
                 _frame.origin.z);
     
-    matrix_float4x4 scaleMtx = matrix_from_scale(_frame.size.width, _frame.size.height, 1.0);
+    VROMatrix4f scaleMtx = matrix_from_scale(_frame.size.width, _frame.size.height, 1.0);
     
     /*
      If the layer is a sublayer, then its coordinate system follows the 2D
      convention of origin top-left, Y down.
      */
     float y = superlayer ? -pt.y : pt.y;
-    matrix_float4x4 translationMtx = matrix_from_translation(pt.x, y, pt.z);
-    matrix_float4x4 modelMtx = matrix_multiply(translationMtx, scaleMtx);
+    VROMatrix4f translationMtx = matrix_from_translation(pt.x, y, pt.z);
+    VROMatrix4f modelMtx = translationMtx.multiply(scaleMtx);
     
-    matrix_float4x4 mvParent = mvStack.top();
-    matrix_float4x4 mv = matrix_multiply(mvParent, modelMtx);
+    VROMatrix4f mvParent = mvStack.top();
+    VROMatrix4f mv = mvParent.multiply(modelMtx);
     
     _substrate->render(context, mv, _backgroundColor);
     
@@ -55,9 +55,9 @@ void VROPresentationLayer::render(const VRORenderContext &context, std::stack<ma
      left corner).
      */
     float parentOriginY = superlayer ? -_frame.origin.y : _frame.origin.y + _frame.size.height;
-    matrix_float4x4 childTransform = matrix_from_translation(_frame.origin.x, parentOriginY, _frame.origin.z);
+    VROMatrix4f childTransform = matrix_from_translation(_frame.origin.x, parentOriginY, _frame.origin.z);
     
-    mvStack.push(matrix_multiply(mvStack.top(), childTransform));
+    mvStack.push(mvStack.top().multiply(childTransform));
     
     for (std::shared_ptr<VROLayer> childLayer : _sublayers) {
         childLayer->render(context, mvStack);

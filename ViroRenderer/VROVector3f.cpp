@@ -222,7 +222,7 @@ void VROVector3f::rotateAboutAxis(const VROVector3f &axisDir, const VROVector3f 
                                   float angleRad, VROVector3f *result) const {
     VROMatrix4f pivot;
     pivot.rotate(angleRad, axisPos, axisDir);
-    pivot.multiplyVector(*this, result);
+    *result = pivot.multiply(*this);
 }
 
 float VROVector3f::distanceXY(const VROVector3f &vector) const  {

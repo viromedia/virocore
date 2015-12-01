@@ -12,8 +12,8 @@
 #include "OrientationEKF.h"
 
 #import <CoreMotion/CoreMotion.h>
-#import <simd/simd.h>
 #import <GLKit/GLKit.h>
+#import "VROMatrix4f.h"
 
 /*
  Continually tracks sensor data and returns the head rotation matrix.
@@ -29,7 +29,7 @@ public:
     
     void startTracking(UIInterfaceOrientation orientation);
     void stopTracking();
-    matrix_float4x4 getHeadRotation();
+    VROMatrix4f getHeadRotation();
     
     void updateDeviceOrientation(UIInterfaceOrientation orientation);
     bool isReady();
@@ -44,7 +44,7 @@ private:
     GLKMatrix4 _IRFToWorldMatrix;
     GLKMatrix4 _correctedIRFToWorldMatrix;
     
-    matrix_float4x4 _lastHeadRotation;
+    VROMatrix4f _lastHeadRotation;
     NSTimeInterval _lastGyroEventTimestamp;
     
     bool _headingCorrectionComputed;

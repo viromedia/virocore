@@ -168,7 +168,8 @@ void VROVector3d::rotateAboutAxis(const VROVector3d &axisDir, const VROVector3d 
                                   VROVector3d *result) const {
     VROMatrix4d pivot;
     pivot.rotate(angleRad, axisPos, axisDir);
-    pivot.multiplyVector(*this, result);
+    
+    *result = pivot.multiply(*this);
 }
 
 double VROVector3d::distanceXY(const VROVector3d &vector) const {

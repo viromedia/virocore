@@ -34,7 +34,7 @@ void VROCrossLayout::layout() {
     std::shared_ptr<VROLayer> leftLayer   = delegate->getLeftLayer();
     std::shared_ptr<VROLayer> rightLayer  = delegate->getRightLayer();
     
-    float size = 3;
+    float size = 2;
     float padding = 1;
     float z = 4;
     
@@ -44,9 +44,9 @@ void VROCrossLayout::layout() {
     leftLayer->  setFrame(VRORectMake(-size * 3/2 - padding, -size / 2,             z, size, size));
     rightLayer-> setFrame(VRORectMake( size / 2 + padding,   -size / 2,             z, size, size));
     
-    scene->addLayer(centerLayer);
-    scene->addLayer(topLayer);
-    scene->addLayer(bottomLayer);
-    scene->addLayer(leftLayer);
-    scene->addLayer(rightLayer);
+    scene->addNode(centerLayer);
+    scene->addNode(topLayer);
+    scene->addNode(bottomLayer);
+    scene->addNode(leftLayer);
+    scene->addNode(rightLayer);
 }
