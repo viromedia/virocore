@@ -11,11 +11,12 @@
 
 #include <stdio.h>
 #include <memory>
+#include <UIKit/UIKit.h>
 
 class VROGeometry;
 class VROMaterial;
 class VROGeometrySubstrate;
-class VROMaterialSubstrate;
+class VROTextureSubstrate;
 
 /*
  Contains the Metal or OpenGL context objects required to render a layer.
@@ -27,7 +28,7 @@ class VRORenderContext {
 public:
     
     virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const = 0;
-    virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) const = 0;
+    virtual VROTextureSubstrate *newTextureSubstrate(UIImage *image) const = 0;
     
 };
 

@@ -19,6 +19,7 @@
 #import "VROMagnetSensor.h"
 #import "VRORenderContextMetal.h"
 #import "VROAnimation.h"
+#import "VROImageUtil.h"
 
 @interface VROViewController () {
     VROMagnetSensor *_magnetSensor;
@@ -107,6 +108,7 @@
     
     _inflight_semaphore = dispatch_semaphore_create(3);
     _renderContext = new VRORenderContextMetal(device);
+    initBlankTexture(*_renderContext);
     
     [self.stereoRendererDelegate setupRendererWithView:self.view context:_renderContext];
 }

@@ -61,9 +61,11 @@ void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,
 
     VROMaterialVisual &ambient = material.getAmbient();
     uniforms->ambient_color = toVectorFloat4(ambient.getContentsColor());
+    _textures.push_back(((VROTextureSubstrateMetal *)ambient.getContentsTexture()->getSubstrate())->getTexture());
     
     VROMaterialVisual &diffuse = material.getDiffuse();
     uniforms->diffuse_color = toVectorFloat4(diffuse.getContentsColor());
+    _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate())->getTexture());
 }
 
 void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,

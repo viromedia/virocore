@@ -9,12 +9,32 @@
 #ifndef VROTexture_h
 #define VROTexture_h
 
-#include <stdio.h>
+#include <UIKit/UIKit.h>
+
+class VROTextureSubstrate;
+class VRORenderContext;
 
 class VROTexture {
     
+public:
     
+    VROTexture(UIImage *image);
+    virtual ~VROTexture();
     
+    void hydrate(const VRORenderContext &context);
+    
+    VROTextureSubstrate *const getSubstrate() const {
+        return _substrate;
+    }
+    
+private:
+    
+    /*
+     The image is retained until the texture is hydrated, after which the
+     substrate is populated.
+     */
+    UIImage *_image;
+    VROTextureSubstrate *_substrate;
     
 };
 

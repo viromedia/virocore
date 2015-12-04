@@ -8,6 +8,7 @@
 
 #include "VROImageUtil.h"
 #include "VROLog.h"
+#include "VROTexture.h"
 
 unsigned char *VROExtractRGBA8888FromImage(UIImage *image, size_t *length) {
     CGImageRef imageRef = [image CGImage];
@@ -44,4 +45,15 @@ void *VROImageLoadTextureDataRGBA8888(const char *resource, size_t *bitmapLength
     *height = [image size].height;
     
     return VROExtractRGBA8888FromImage(image, bitmapLength);
+}
+
+static std::shared_ptr<VROTexture> staticBlankTexture = nullptr;
+
+void initBlankTexture(const VRORenderContext &context) {
+    UIImage *image = [UIImage imageNamed:@"blank"];
+    staticBlankTexture = std::make_shared<VROTexture>(image);
+}
+
+std::shared_ptr<VROTexture> getBlankTexture() {
+    return staticBlankTexture;
 }

@@ -300,13 +300,16 @@ void VROGeometrySubstrateMetal::render(const VRORenderContext &context, const VR
         [renderEncoder setDepthStencilState:depthState];
         [renderEncoder setRenderPipelineState:pipelineState];
         
-        for (int i = 0; i < _vars.size(); i++) {
-            [renderEncoder setVertexBuffer:_vars[i].buffer offset:0 atIndex:i];
+        for (int j = 0; j < _vars.size(); ++j) {
+            [renderEncoder setVertexBuffer:_vars[j].buffer offset:0 atIndex:j];
         }
         [renderEncoder setVertexBuffer:viewUniformsBuffer offset:0 atIndex:_vars.size()];
         [renderEncoder setVertexBuffer:material->getLightingUniformsBuffer() offset:0 atIndex:_vars.size() + 1];
 
-        //[renderEncoder setFragmentTexture:_texture atIndex:0];
+        const std::vector<id <MTLTexture>> &textures = material->getTextures();
+        for (int j = 0; j < textures.size(); ++j) {
+            [renderEncoder setFragmentTexture:textures[j] atIndex:j];
+        }
         
         [renderEncoder drawIndexedPrimitives:element.primitiveType
                                   indexCount:element.indexCount

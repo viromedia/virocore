@@ -59,6 +59,7 @@ std::shared_ptr<VROBox> VROBox::createBox(float width, float height, float lengt
     
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     material->setLightingModel(VROLightingModel::Constant);
+    material->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"boba"]));
     
     box->getMaterials().push_back(material);
     

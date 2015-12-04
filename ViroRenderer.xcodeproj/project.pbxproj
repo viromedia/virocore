@@ -23,6 +23,8 @@
 		8F152A781C10D36700A211F8 /* VROBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F152A761C10D36700A211F8 /* VROBox.cpp */; };
 		8F152A7B1C10D4AE00A211F8 /* VROShapeUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F152A791C10D4AE00A211F8 /* VROShapeUtils.cpp */; };
 		8F152A7D1C11351D00A211F8 /* blank.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F152A7C1C11351D00A211F8 /* blank.png */; };
+		8F152A801C121A0E00A211F8 /* VROTextureSubstrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F152A7E1C121A0E00A211F8 /* VROTextureSubstrate.cpp */; };
+		8F152A841C121A5600A211F8 /* VROTextureSubstrateMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F152A821C121A5500A211F8 /* VROTextureSubstrateMetal.cpp */; };
 		8F4CA0021BDAE10C00177B8F /* VROScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4CA0011BDAE10C00177B8F /* VROScreen.cpp */; };
 		8F4DCE211BF7EAF900061DD7 /* VROPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4DCE1F1BF7EAF900061DD7 /* VROPlane.cpp */; };
 		8F4DCE241BF7ECC800061DD7 /* VROFrustumPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4DCE221BF7ECC800061DD7 /* VROFrustumPlane.cpp */; };
@@ -126,6 +128,10 @@
 		8F152A791C10D4AE00A211F8 /* VROShapeUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROShapeUtils.cpp; sourceTree = "<group>"; };
 		8F152A7A1C10D4AE00A211F8 /* VROShapeUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROShapeUtils.h; sourceTree = "<group>"; };
 		8F152A7C1C11351D00A211F8 /* blank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blank.png; sourceTree = "<group>"; };
+		8F152A7E1C121A0E00A211F8 /* VROTextureSubstrate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROTextureSubstrate.cpp; sourceTree = "<group>"; };
+		8F152A7F1C121A0E00A211F8 /* VROTextureSubstrate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTextureSubstrate.h; sourceTree = "<group>"; };
+		8F152A821C121A5500A211F8 /* VROTextureSubstrateMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROTextureSubstrateMetal.cpp; sourceTree = "<group>"; };
+		8F152A831C121A5500A211F8 /* VROTextureSubstrateMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTextureSubstrateMetal.h; sourceTree = "<group>"; };
 		8F4C9FFF1BDAE06A00177B8F /* VROScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROScreen.h; sourceTree = "<group>"; };
 		8F4CA0011BDAE10C00177B8F /* VROScreen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROScreen.cpp; sourceTree = "<group>"; };
 		8F4DCE1F1BF7EAF900061DD7 /* VROPlane.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPlane.cpp; sourceTree = "<group>"; };
@@ -319,6 +325,21 @@
 			name = Renderer;
 			sourceTree = "<group>";
 		};
+		8F152A811C121A3D00A211F8 /* Metal */ = {
+			isa = PBXGroup;
+			children = (
+				8F152A711C0D7A5A00A211F8 /* VROMetalUtils.h */,
+				8F152A701C0D7A5A00A211F8 /* VROMetalUtils.cpp */,
+				8FF4D7A81C0D45DA006D6157 /* VROMaterialSubstrateMetal.h */,
+				8FF4D7A71C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp */,
+				8F4DCE501BFD628A00061DD7 /* VROGeometrySubstrateMetal.h */,
+				8F4DCE4F1BFD628A00061DD7 /* VROGeometrySubstrateMetal.cpp */,
+				8F152A831C121A5500A211F8 /* VROTextureSubstrateMetal.h */,
+				8F152A821C121A5500A211F8 /* VROTextureSubstrateMetal.cpp */,
+			);
+			name = Metal;
+			sourceTree = "<group>";
+		};
 		8F4DCE441BFBF3A800061DD7 /* Shapes */ = {
 			isa = PBXGroup;
 			children = (
@@ -333,14 +354,11 @@
 		8F4DCE4B1BFD617200061DD7 /* Private */ = {
 			isa = PBXGroup;
 			children = (
+				8F152A811C121A3D00A211F8 /* Metal */,
 				8F4DCE4D1BFD625900061DD7 /* VROGeometrySubstrate.h */,
 				8F4DCE4C1BFD625900061DD7 /* VROGeometrySubstrate.cpp */,
-				8F4DCE501BFD628A00061DD7 /* VROGeometrySubstrateMetal.h */,
-				8F4DCE4F1BFD628A00061DD7 /* VROGeometrySubstrateMetal.cpp */,
-				8FF4D7A81C0D45DA006D6157 /* VROMaterialSubstrateMetal.h */,
-				8FF4D7A71C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp */,
-				8F152A711C0D7A5A00A211F8 /* VROMetalUtils.h */,
-				8F152A701C0D7A5A00A211F8 /* VROMetalUtils.cpp */,
+				8F152A7F1C121A0E00A211F8 /* VROTextureSubstrate.h */,
+				8F152A7E1C121A0E00A211F8 /* VROTextureSubstrate.cpp */,
 			);
 			name = Private;
 			sourceTree = "<group>";
@@ -678,12 +696,14 @@
 				8F4DCE4E1BFD625900061DD7 /* VROGeometrySubstrate.cpp in Sources */,
 				8F4DCE2A1BF8318100061DD7 /* VROFrustum.cpp in Sources */,
 				8FDFA8A91BDEA7F800883EC0 /* Vector3d.mm in Sources */,
+				8F152A841C121A5600A211F8 /* VROTextureSubstrateMetal.cpp in Sources */,
 				8F5C414E1BD825B1006D7A77 /* VROByteBuffer.cpp in Sources */,
 				8F5C41471BD800F8006D7A77 /* VROPresentationLayer.cpp in Sources */,
 				8F4DCE2D1BF9261600061DD7 /* VRONode.cpp in Sources */,
 				8F5C413B1BD05AD1006D7A77 /* VRORect.cpp in Sources */,
 				8FEA6C9A1BE2BA7700C2CD0F /* VRODistortionMesh.cpp in Sources */,
 				8F1071F01BF7DECD003B3C3F /* VROMatrix4d.cpp in Sources */,
+				8F152A801C121A0E00A211F8 /* VROTextureSubstrate.cpp in Sources */,
 				8F5C41581BD8300E006D7A77 /* VROImageUtil.cpp in Sources */,
 				8F4DCE311BFBAA8B00061DD7 /* VROGeometry.cpp in Sources */,
 				8F152A721C0D7A5A00A211F8 /* VROMetalUtils.cpp in Sources */,

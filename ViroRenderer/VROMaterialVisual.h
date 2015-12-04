@@ -12,6 +12,7 @@
 #include "VROVector4f.h"
 #include "VROMatrix4f.h"
 #include "VROTexture.h"
+#include "VROImageUtil.h"
 #include <vector>
 
 enum class VROWrapMode {
@@ -81,7 +82,7 @@ public:
             return _contentsTexture;
         }
         else {
-            return {};
+            return getBlankTexture();
         }
     }
     
