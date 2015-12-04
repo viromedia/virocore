@@ -66,6 +66,9 @@ private:
     std::vector<VROGeometryElementMetal> _elements;
     std::vector<VROMaterialSubstrateMetal *> _materials;
     
+    std::vector<id <MTLRenderPipelineState>> _elementPipelineStates;
+    std::vector<id <MTLDepthStencilState>> _elementDepthStates;
+    
     /*
      Parse the given geometry elements and populate the _elements vector with the
      results.

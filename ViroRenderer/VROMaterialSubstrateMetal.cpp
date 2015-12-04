@@ -19,6 +19,9 @@ VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
     id <MTLDevice> device = context.getDevice();
     id <MTLLibrary> library = context.getLibrary();
     
+    _viewUniformsBuffer = [device newBufferWithLength:sizeof(VROViewUniforms) options:0];
+    _viewUniformsBuffer.label = @"VROViewUniformBuffer";
+    
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
             loadConstantLighting(material, library, device);
@@ -45,22 +48,16 @@ VROMaterialSubstrateMetal::~VROMaterialSubstrateMetal() {
     
 }
 
-void VROMaterialSubstrateMetal::bind(const VROMatrix4f &transform, const VROMatrix4f &projection) {
-    VROConstantLightingUniforms *uniforms = (VROConstantLightingUniforms *)[_uniformsBuffer contents];
-    uniforms->normal_matrix = toMatrixFloat4x4(transform.transpose().invert());
-    uniforms->modelview_projection_matrix = toMatrixFloat4x4(projection.multiply(transform));
-}
-
 void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,
                                                      id <MTLLibrary> library, id <MTLDevice> device) {
     
     _vertexProgram   = [library newFunctionWithName:@"constant_lighting_vertex"];
     _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment"];
     
-    _uniformsBuffer = [device newBufferWithLength:sizeof(VROConstantLightingUniforms) options:0];
-    _uniformsBuffer.label = @"VROConstantLightingUniformBuffer";
+    _lightingUniformsBuffer = [device newBufferWithLength:sizeof(VROConstantLightingUniforms) options:0];
+    _lightingUniformsBuffer.label = @"VROConstantLightingUniformBuffer";
     
-    VROConstantLightingUniforms *uniforms = (VROConstantLightingUniforms *)[_uniformsBuffer contents];
+    VROConstantLightingUniforms *uniforms = (VROConstantLightingUniforms *)[_lightingUniformsBuffer contents];
 
     VROMaterialVisual &ambient = material.getAmbient();
     uniforms->ambient_color = toVectorFloat4(ambient.getContentsColor());
@@ -75,10 +72,10 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
     _vertexProgram   = [library newFunctionWithName:@"blinn_lighting_vertex"];
     _fragmentProgram = [library newFunctionWithName:@"blinn_lighting_fragment"];
     
-    _uniformsBuffer = [device newBufferWithLength:sizeof(VROBlinnLightingUniforms) options:0];
-    _uniformsBuffer.label = @"VROBlinnLightingUniformBuffer";
+    _lightingUniformsBuffer = [device newBufferWithLength:sizeof(VROBlinnLightingUniforms) options:0];
+    _lightingUniformsBuffer.label = @"VROBlinnLightingUniformBuffer";
     
-    VROBlinnLightingUniforms *uniforms = (VROBlinnLightingUniforms *)[_uniformsBuffer contents];
+    VROBlinnLightingUniforms *uniforms = (VROBlinnLightingUniforms *)[_lightingUniformsBuffer contents];
 
     VROMaterialVisual &ambient = material.getAmbient();
     uniforms->ambient_color = toVectorFloat4(ambient.getContentsColor());
@@ -94,10 +91,10 @@ void VROMaterialSubstrateMetal::loadPhongLighting(VROMaterial &material,
     _vertexProgram   = [library newFunctionWithName:@"phong_lighting_vertex"];
     _fragmentProgram = [library newFunctionWithName:@"phong_lighting_fragment"];
     
-    _uniformsBuffer = [device newBufferWithLength:sizeof(VROPhongLightingUniforms) options:0];
-    _uniformsBuffer.label = @"VROPhongLightingUniformBuffer";
+    _lightingUniformsBuffer = [device newBufferWithLength:sizeof(VROPhongLightingUniforms) options:0];
+    _lightingUniformsBuffer.label = @"VROPhongLightingUniformBuffer";
     
-    VROPhongLightingUniforms *uniforms = (VROPhongLightingUniforms *)[_uniformsBuffer contents];
+    VROPhongLightingUniforms *uniforms = (VROPhongLightingUniforms *)[_lightingUniformsBuffer contents];
     //TODO
 }
 
@@ -107,9 +104,9 @@ void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
     _vertexProgram   = [library newFunctionWithName:@"lambert_lighting_vertex"];
     _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment"];
     
-    _uniformsBuffer = [device newBufferWithLength:sizeof(VROLambertLightingUniforms) options:0];
-    _uniformsBuffer.label = @"VROLambertLightingUniformBuffer";
+    _lightingUniformsBuffer = [device newBufferWithLength:sizeof(VROLambertLightingUniforms) options:0];
+    _lightingUniformsBuffer.label = @"VROLambertLightingUniformBuffer";
     
-    VROLambertLightingUniforms *uniforms = (VROLambertLightingUniforms *)[_uniformsBuffer contents];
+    VROLambertLightingUniforms *uniforms = (VROLambertLightingUniforms *)[_lightingUniformsBuffer contents];
     //TODO
 }

@@ -32,18 +32,17 @@ public:
                               const VRORenderContextMetal &context);
     virtual ~VROMaterialSubstrateMetal();
     
-    // TODO remove this, instead use two separate uniforms buffers, one material
-    //      specific, the other for just view transformations
-    void bind(const VROMatrix4f &transform, const VROMatrix4f &projection);
-    
     id <MTLFunction> getVertexProgram() const {
         return _vertexProgram;
     }
     id <MTLFunction> getFragmentProgram() const {
         return _fragmentProgram;
     }
-    id <MTLBuffer> getUniformsBuffer() const {
-        return _uniformsBuffer;
+    id <MTLBuffer> getViewUniformsBuffer() const {
+        return _viewUniformsBuffer;
+    }
+    id <MTLBuffer> getLightingUniformsBuffer() const {
+        return _lightingUniformsBuffer;
     }
     const std::vector<id <MTLTexture>> &getTextures() const {
         return _textures;
@@ -54,7 +53,9 @@ private:
     id <MTLFunction> _vertexProgram;
     id <MTLFunction> _fragmentProgram;
     
-    id <MTLBuffer>   _uniformsBuffer;
+    id <MTLBuffer> _viewUniformsBuffer;
+    id <MTLBuffer> _lightingUniformsBuffer;
+    
     std::vector<id <MTLTexture>> _textures;
     
     void loadConstantLighting(VROMaterial &material,

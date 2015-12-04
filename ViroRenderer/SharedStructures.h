@@ -20,7 +20,9 @@ typedef struct {
 typedef struct {
     matrix_float4x4 modelview_projection_matrix;
     matrix_float4x4 normal_matrix;
-    
+} VROViewUniforms;
+
+typedef struct {    
     vector_float4   ambient_color;
     vector_float4   diffuse_color;
 } VROConstantLightingUniforms;

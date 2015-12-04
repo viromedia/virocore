@@ -77,18 +77,19 @@ typedef struct {
 } VROConstantLightingVertexOut;
 
 vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttributes attributes [[ stage_in ]],
-                                                             constant uniforms_t& uniforms [[ buffer(1) ]]) {
+                                                             constant VROViewUniforms &view [[ buffer(1) ]],
+                                                             constant VROConstantLightingUniforms &lighting [[ buffer(2) ]]) {
     VROConstantLightingVertexOut out;
     
     float4 in_position = float4(attributes.position, 1.0);
-    out.position = uniforms.modelview_projection_matrix * in_position;
+    out.position = view.modelview_projection_matrix * in_position;
     out.texcoord = attributes.texcoord;
     
-    float4 eye_normal = normalize(uniforms.normal_matrix * float4(attributes.normal, 0.0));
+    float4 eye_normal = normalize(view.normal_matrix * float4(attributes.normal, 0.0));
     float n_dot_l = dot(eye_normal.rgb, normalize(light_position));
     n_dot_l = fmax(0.0, n_dot_l);
     
-    out.color = uniforms.diffuse_color;
+    out.color = lighting.diffuse_color;
     return out;
 }
 
