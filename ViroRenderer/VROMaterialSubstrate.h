@@ -13,9 +13,6 @@
 
 class VROMaterialSubstrate {
     
-    
-    
-    
 };
 
 #endif /* VROMaterialSubstrate_h */

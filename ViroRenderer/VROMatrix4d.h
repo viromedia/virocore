@@ -54,7 +54,7 @@ public:
     /*
      Multiplication.
      */
-    VROMatrix4d multiply(const VROMatrix4d &matrix);
+    VROMatrix4d multiply(const VROMatrix4d &matrix) const;
     VROVector3d multiply(const VROVector3d &vector) const;
     
 private:

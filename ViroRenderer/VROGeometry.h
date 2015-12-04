@@ -13,10 +13,13 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include "VROGeometrySubstrate.h"
+#include "VRORenderContext.h"
 
 class VROMaterial;
 class VROGeometryElement;
 class VROGeometrySource;
+class VROMatrix4f;
 
 /*
  Represents a three-dimensional shape, a collection of vertices, normals and texture coordinates
@@ -34,7 +37,8 @@ public:
     VROGeometry(std::vector<std::shared_ptr<VROGeometrySource>> sources,
                 std::vector<std::shared_ptr<VROGeometryElement>> elements) :
         _geometrySources(sources),
-        _geometryElements(elements)
+        _geometryElements(elements),
+        _substrate(nullptr)
     {}
     
     /*
@@ -46,14 +50,32 @@ public:
         _geometryElements(geometry->_geometryElements)
     {}
     
-    std::vector<std::shared_ptr<VROMaterial>> getMaterials() {
+    ~VROGeometry() {
+        delete (_substrate);
+    }
+    
+    void render(const VRORenderContext &context, const VROMatrix4f &transform) {
+        if (!_substrate) {
+            _substrate = context.newGeometrySubstrate(*this);
+        }
+        for (std::shared_ptr<VROMaterial> &material : _materials) {
+            
+        }
+        
+        _substrate->render(context, transform);
+    }
+    
+    std::vector<std::shared_ptr<VROMaterial>> &getMaterials() {
+        return _materials;
+    }
+    const std::vector<std::shared_ptr<VROMaterial>> &getMaterials_const() const {
         return _materials;
     }
     
-    std::vector<std::shared_ptr<VROGeometrySource>> getGeometrySources() {
+    const std::vector<std::shared_ptr<VROGeometrySource>> &getGeometrySources() const {
         return _geometrySources;
     }
-    std::vector<std::shared_ptr<VROGeometryElement>> getGeometryElements() {
+    const std::vector<std::shared_ptr<VROGeometryElement>> &getGeometryElements() const {
         return _geometryElements;
     }
     
@@ -77,6 +99,11 @@ private:
     std::vector<std::shared_ptr<VROMaterial>> _materials;
     const std::vector<std::shared_ptr<VROGeometrySource>> _geometrySources;
     const std::vector<std::shared_ptr<VROGeometryElement>> _geometryElements;
+    
+    /*
+     Representation of this layer in the underlying graphics library.
+     */
+    VROGeometrySubstrate *_substrate;
     
 };
 

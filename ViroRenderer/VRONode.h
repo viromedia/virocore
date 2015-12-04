@@ -33,10 +33,10 @@ public:
     /*
      Designated initializer for nodes in the presentation tree.
      */
-    VRONode(VRONode *layer);
+    VRONode();
     virtual ~VRONode();
     
-    virtual void render(const VRORenderContext &context, std::stack<VROMatrix4f> xforms);
+    void render(const VRORenderContext &context, std::stack<VROMatrix4f> xforms);
     
     void setGeometry(std::shared_ptr<VROGeometry> geometry) {
         _geometry = geometry;

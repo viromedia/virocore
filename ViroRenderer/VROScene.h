@@ -24,14 +24,18 @@ public:
     
     void render(const VRORenderContext &renderContext);
     
-    void addNode(std::shared_ptr<VROLayer> node);
+    void addNode(std::shared_ptr<VRONode> node);
+    
+    std::vector<std::shared_ptr<VRONode>> &getRootNodes() {
+        return _nodes;
+    }
     
 private:
     
     /*
      The root nodes of the scene.
      */
-    std::vector<std::shared_ptr<VROLayer>> _nodes;
+    std::vector<std::shared_ptr<VRONode>> _nodes;
     
     /*
      The background visual to display.

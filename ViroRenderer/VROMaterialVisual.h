@@ -39,7 +39,7 @@ public:
     
     VROMaterialVisual() :
         _contentsType(VROContentsType::Fixed),
-        _contentsColor({ 1.0, 1.0, 1.0, 1.0 }),
+        _contentsColor({ 1.0, 0.0, 0.0, 1.0 }),
         _intensity(1.0),
         _wrapS(VROWrapMode::Clamp),
         _wrapT(VROWrapMode::Clamp),

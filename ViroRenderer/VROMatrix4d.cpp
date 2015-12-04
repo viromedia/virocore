@@ -146,7 +146,7 @@ void VROMatrix4d::scale(double x, double y, double z) {
     }
 }
 
-VROVector3d VROMatrix4d::multiply(const VROVector3d &vector) const  {
+VROVector3d VROMatrix4d::multiply(const VROVector3d &vector) const {
     VROVector3f result;
     result.x = vector.x * _mtx[0] + vector.y * _mtx[4] + vector.z * _mtx[8]  + _mtx[12];
     result.y = vector.x * _mtx[1] + vector.y * _mtx[5] + vector.z * _mtx[9]  + _mtx[13];
@@ -155,7 +155,7 @@ VROVector3d VROMatrix4d::multiply(const VROVector3d &vector) const  {
     return result;
 }
 
-VROMatrix4d VROMatrix4d::multiply(const VROMatrix4d &matrix)   {
+VROMatrix4d VROMatrix4d::multiply(const VROMatrix4d &matrix) const {
     double nmtx[16];
     VROMathMultMatrices_d(matrix._mtx, _mtx, nmtx);
     

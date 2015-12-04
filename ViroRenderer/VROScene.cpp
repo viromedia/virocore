@@ -19,12 +19,12 @@ void VROScene::render(const VRORenderContext &renderContext) {
     std::stack<VROMatrix4f> mvStack;
     mvStack.push(metal.getViewMatrix());
     
-    for (std::shared_ptr<VROLayer> &node : _nodes) {
+    for (std::shared_ptr<VRONode> &node : _nodes) {
         node->render(renderContext, mvStack);
     }
 }
 
-void VROScene::addNode(std::shared_ptr<VROLayer> node) {
+void VROScene::addNode(std::shared_ptr<VRONode> node) {
     _nodes.push_back(node);
 }
 

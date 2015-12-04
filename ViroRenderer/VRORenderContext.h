@@ -10,6 +10,12 @@
 #define VRORenderContext_h
 
 #include <stdio.h>
+#include <memory>
+
+class VROGeometry;
+class VROMaterial;
+class VROGeometrySubstrate;
+class VROMaterialSubstrate;
 
 /*
  Contains the Metal or OpenGL context objects required to render a layer.
@@ -18,6 +24,10 @@
  */
 class VRORenderContext {
     
+public:
+    
+    virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const = 0;
+    virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) const = 0;
     
 };
 

@@ -7,36 +7,47 @@
 //
 
 #include "VROGeometrySubstrateMetal.h"
+#include "VROGeometry.h"
 #include "VROGeometrySource.h"
 #include "VROGeometryElement.h"
 #include "VRORenderContextMetal.h"
+#include "VROMaterialSubstrateMetal.h"
 #include "VROLog.h"
+#include "SharedStructures.h"
+#include "VROMetalUtils.h"
 #include <map>
 
-VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VRORenderContextMetal &context,
-                                                     std::vector<std::shared_ptr<VROGeometrySource>> &sources,
-                                                     std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
+VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry,
+                                                     const VRORenderContextMetal &context) {
     id <MTLDevice> device = context.getDevice();
 
-    readGeometryElements(device, elements);
-    readGeometrySources(device, sources);
+    readGeometryElements(device, geometry.getGeometryElements());
+    readGeometrySources(device, geometry.getGeometrySources());
+    
+    for (const std::shared_ptr<VROMaterial> &material : geometry.getMaterials_const()) {
+        _materials.push_back(new VROMaterialSubstrateMetal(*material.get(), context));
+    }
 }
 
 VROGeometrySubstrateMetal::~VROGeometrySubstrateMetal() {
-    
+    for (VROMaterialSubstrateMetal *material : _materials) {
+        delete (material);
+    }
 }
 
 void VROGeometrySubstrateMetal::readGeometryElements(id <MTLDevice> device,
-                                                     std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
+                                                     const std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
     
     for (std::shared_ptr<VROGeometryElement> element : elements) {
         VROGeometryElementMetal elementMetal;
         
-        elementMetal.buffer = [device newBufferWithBytesNoCopy:element->getData()->getData()
-                                                        length:element->getPrimitiveCount() * element->getBytesPerIndex()
-                                                       options:0 deallocator:nullptr];
+        int indexCount = getIndicesCount(element->getPrimitiveCount(), element->getPrimitiveType());
+        
+        elementMetal.buffer = [device newBufferWithBytes:element->getData()->getData()
+                                                  length:indexCount * element->getBytesPerIndex()
+                                                 options:0];
         elementMetal.primitiveType = parsePrimitiveType(element->getPrimitiveType());
-        elementMetal.indexCount = element->getPrimitiveCount();
+        elementMetal.indexCount = indexCount;
         elementMetal.indexType = (element->getBytesPerIndex() == 2) ? MTLIndexTypeUInt16 : MTLIndexTypeUInt32;
         elementMetal.indexBufferOffset = 0;
         
@@ -45,7 +56,7 @@ void VROGeometrySubstrateMetal::readGeometryElements(id <MTLDevice> device,
 }
 
 void VROGeometrySubstrateMetal::readGeometrySources(id <MTLDevice> device,
-                                                    std::vector<std::shared_ptr<VROGeometrySource>> &sources) {
+                                                    const std::vector<std::shared_ptr<VROGeometrySource>> &sources) {
         
     std::shared_ptr<VROGeometrySource> source = sources.front();
     std::map<std::shared_ptr<VROData>, std::vector<std::shared_ptr<VROGeometrySource>>> dataMap;
@@ -67,50 +78,52 @@ void VROGeometrySubstrateMetal::readGeometrySources(id <MTLDevice> device,
         }
     }
     
+    _vertexDescriptor = [MTLVertexDescriptor vertexDescriptor];
+    int bufferIndex = 0;
+    
     /*
-     For each group, create an MTLBuffer and an MTLVertexDescriptor.
+     For each group of GeometrySources we create an MTLBuffer and layout.
      */
     for (auto &kv : dataMap) {
-        VROGeometrySourceMetal metalDesc;
+        VROVertexArrayMetal var;
         std::vector<std::shared_ptr<VROGeometrySource>> group = kv.second;
         
         /*
-         Create a metal buffer that wraps over the VROData.
+         Create an MTLBuffer that wraps over the VROData.
          */
         int dataSize = 0;
         for (std::shared_ptr<VROGeometrySource> source : group) {
-            int size = source->getVertexCount() * source->getComponentsPerVertex() *
-            source->getBytesPerComponent();
-            
+            int size = source->getVertexCount() * source->getDataStride();
             dataSize = std::max(dataSize, size);
         }
         
-        metalDesc.buffer = [device newBufferWithBytesNoCopy:kv.first->getData()
-                                                     length:dataSize options:0
-                                                deallocator:nullptr];
-        metalDesc.buffer.label = @"VROGeometryVertexBuffer";
+        var.buffer = [device newBufferWithBytes:kv.first->getData()
+                                         length:dataSize options:0];
+        var.buffer.label = @"VROGeometryVertexBuffer";
         
         /*
-         Create the vertex descriptor for all sources interleaved over this data.
+         Create the layout for this MTL buffer.
          */
-        MTLVertexDescriptor *vertexDescriptor = [MTLVertexDescriptor vertexDescriptor];
-        vertexDescriptor.layouts[0].stepRate = 1;
-        vertexDescriptor.layouts[0].stride = group[0]->getDataStride();
-        vertexDescriptor.layouts[0].stepFunction = MTLVertexStepFunctionPerVertex;
+        _vertexDescriptor.layouts[bufferIndex].stepRate = 1;
+        _vertexDescriptor.layouts[bufferIndex].stride = group[0]->getDataStride();
+        _vertexDescriptor.layouts[bufferIndex].stepFunction = MTLVertexStepFunctionPerVertex;
         
+        /*
+         Create an attribute for each geometry source in this group.
+         */
         for (int i = 0; i < group.size(); i++) {
             std::shared_ptr<VROGeometrySource> source = group[i];
             int attrIdx = parseAttributeIndex(source->getSemantic());
             
-            vertexDescriptor.attributes[attrIdx].format = parseVertexFormat(source);
-            vertexDescriptor.attributes[attrIdx].offset = source->getDataOffset();
-            vertexDescriptor.attributes[attrIdx].bufferIndex = 0;
+            _vertexDescriptor.attributes[attrIdx].format = parseVertexFormat(source);
+            _vertexDescriptor.attributes[attrIdx].offset = source->getDataOffset();
+            _vertexDescriptor.attributes[attrIdx].bufferIndex = bufferIndex;
             
-            passert (source->getDataStride() == vertexDescriptor.layouts[0].stride);
+            passert (source->getDataStride() == _vertexDescriptor.layouts[bufferIndex].stride);
         }
         
-        metalDesc.descriptor = vertexDescriptor;
-        _sources.push_back(metalDesc);
+        _vars.push_back(var);
+        ++bufferIndex;
     }
 }
 
@@ -180,6 +193,25 @@ MTLPrimitiveType VROGeometrySubstrateMetal::parsePrimitiveType(VROGeometryPrimit
     }
 }
 
+int VROGeometrySubstrateMetal::getIndicesCount(int primitiveCount, VROGeometryPrimitiveType primitiveType) {
+    switch (primitiveType) {
+        case VROGeometryPrimitiveType::Triangle:
+            return primitiveCount * 3;
+            
+        case VROGeometryPrimitiveType::TriangleStrip:
+            return primitiveCount + 2;
+            
+        case VROGeometryPrimitiveType::Line:
+            return primitiveCount * 2;
+            
+        case VROGeometryPrimitiveType::Point:
+            return primitiveCount;
+            
+        default:
+            break;
+    }
+}
+
 int VROGeometrySubstrateMetal::parseAttributeIndex(VROGeometrySourceSemantic semantic) {
     switch (semantic) {
         case VROGeometrySourceSemantic::Vertex:
@@ -203,3 +235,70 @@ int VROGeometrySubstrateMetal::parseAttributeIndex(VROGeometrySourceSemantic sem
     }
 }
 
+void VROGeometrySubstrateMetal::render(const VRORenderContext &context, const VROMatrix4f &transform) {
+    for (int i = 0; i < _elements.size(); i++) {
+        VROGeometryElementMetal element = _elements[i];
+        VROMaterialSubstrateMetal *material = _materials[i % _materials.size()];
+        
+        id <MTLBuffer> uniformsBuffer = material->getUniformsBuffer();
+        id <MTLFunction> vertexProgram = material->getVertexProgram();
+        id <MTLFunction> fragmentProgram = material->getFragmentProgram();
+        
+        const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
+        
+        std::shared_ptr<VRORenderTarget> renderTarget = metal.getRenderTarget();
+        
+        MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
+        pipelineStateDescriptor.label = @"VROLayerPipeline";
+        pipelineStateDescriptor.sampleCount = renderTarget->getSampleCount();
+        pipelineStateDescriptor.vertexFunction = vertexProgram;
+        pipelineStateDescriptor.fragmentFunction = fragmentProgram;
+        pipelineStateDescriptor.vertexDescriptor = _vertexDescriptor;
+        pipelineStateDescriptor.colorAttachments[0].pixelFormat = renderTarget->getColorPixelFormat();
+        pipelineStateDescriptor.colorAttachments[0].blendingEnabled = YES;
+        pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
+        pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
+        pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+        pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorSourceAlpha;
+        pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+        pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+        pipelineStateDescriptor.depthAttachmentPixelFormat = renderTarget->getDepthStencilPixelFormat();
+        pipelineStateDescriptor.stencilAttachmentPixelFormat = renderTarget->getDepthStencilPixelFormat();
+        
+        NSError *error = NULL;
+        id <MTLRenderPipelineState> pipelineState = [metal.getDevice() newRenderPipelineStateWithDescriptor:pipelineStateDescriptor error:&error];
+        if (!pipelineState) {
+            NSLog(@"Failed to created pipeline state, error %@", error);
+        }
+        
+        MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
+        depthStateDesc.depthCompareFunction = MTLCompareFunctionAlways;
+        depthStateDesc.depthWriteEnabled = NO;
+        
+        id <MTLDepthStencilState> depthState = [metal.getDevice() newDepthStencilStateWithDescriptor:depthStateDesc];
+        
+        ///// hydration to rendering boundary: pipelineState and depthState should be instance vars
+        
+        material->bind(transform, metal.getProjectionMatrix());
+        
+        id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
+        [renderEncoder pushDebugGroup:@"VROGeometry"];
+        
+        [renderEncoder setDepthStencilState:depthState];
+        [renderEncoder setRenderPipelineState:pipelineState];
+        
+        for (int i = 0; i < _vars.size(); i++) {
+            [renderEncoder setVertexBuffer:_vars[i].buffer offset:0 atIndex:i];
+        }
+        [renderEncoder setVertexBuffer:uniformsBuffer offset:0 atIndex:_vars.size()];
+
+        //[renderEncoder setFragmentTexture:_texture atIndex:0];
+        
+        [renderEncoder drawIndexedPrimitives:element.primitiveType
+                                  indexCount:element.indexCount
+                                   indexType:element.indexType
+                                 indexBuffer:element.buffer
+                           indexBufferOffset:0];
+        [renderEncoder popDebugGroup];
+    }
+}

@@ -30,8 +30,10 @@ class VROGeometryElement {
     
 public:
     
-    VROGeometryElement(std::shared_ptr<VROData> data, VROGeometryPrimitiveType primitiveType,
-                       int primitiveCount, int bytesPerIndex) :
+    VROGeometryElement(std::shared_ptr<VROData> data,
+                       VROGeometryPrimitiveType primitiveType,
+                       int primitiveCount,
+                       int bytesPerIndex) :
         _primitiveType(primitiveType),
         _primitiveCount(primitiveCount),
         _data(data),

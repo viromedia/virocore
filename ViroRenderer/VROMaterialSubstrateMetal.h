@@ -9,26 +9,45 @@
 #ifndef VROMaterialSubstrateMetal_h
 #define VROMaterialSubstrateMetal_h
 
-#include "VRORenderContextMetal.h"
+#include "VROMaterialSubstrate.h"
 #include "VROMaterial.h"
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
 #include <vector>
 
+class VROMatrix4f;
 class VROVector4f;
+class VRORenderContextMetal;
 
 /*
  Metal representation of a VROMaterial. Each VROMaterial defines a vertex
  program and fragment program (by way of the material's lighting model), along
  with the set of uniforms and samplers to bind to said program.
  */
-class VROMaterialSubstrateMetal {
+class VROMaterialSubstrateMetal : public VROMaterialSubstrate {
     
 public:
     
-    VROMaterialSubstrateMetal(const VRORenderContextMetal &context,
-                              std::shared_ptr<VROMaterial> material);
+    VROMaterialSubstrateMetal(VROMaterial &material,
+                              const VRORenderContextMetal &context);
     virtual ~VROMaterialSubstrateMetal();
+    
+    // TODO remove this, instead use two separate uniforms buffers, one material
+    //      specific, the other for just view transformations
+    void bind(const VROMatrix4f &transform, const VROMatrix4f &projection);
+    
+    id <MTLFunction> getVertexProgram() const {
+        return _vertexProgram;
+    }
+    id <MTLFunction> getFragmentProgram() const {
+        return _fragmentProgram;
+    }
+    id <MTLBuffer> getUniformsBuffer() const {
+        return _uniformsBuffer;
+    }
+    const std::vector<id <MTLTexture>> &getTextures() const {
+        return _textures;
+    }
     
 private:
     
@@ -38,16 +57,14 @@ private:
     id <MTLBuffer>   _uniformsBuffer;
     std::vector<id <MTLTexture>> _textures;
     
-    void loadConstantLighting(std::shared_ptr<VROMaterial> material,
+    void loadConstantLighting(VROMaterial &material,
                               id <MTLLibrary> library, id <MTLDevice> device);
-    void loadBlinnLighting(std::shared_ptr<VROMaterial> material,
+    void loadBlinnLighting(VROMaterial &material,
                            id <MTLLibrary> library, id <MTLDevice> device);
-    void loadPhongLighting(std::shared_ptr<VROMaterial> material,
+    void loadPhongLighting(VROMaterial &material,
                            id <MTLLibrary> library, id <MTLDevice> device);
-    void loadLambertLighting(std::shared_ptr<VROMaterial> material,
+    void loadLambertLighting(VROMaterial &material,
                              id <MTLLibrary> library, id <MTLDevice> device);
-    
-    
     
 };
 

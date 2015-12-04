@@ -9,15 +9,17 @@
 #include "VROMaterialSubstrateMetal.h"
 #include "SharedStructures.h"
 #include "VROMetalUtils.h"
+#include "VRORenderContextMetal.h"
+#include "VROMatrix4f.h"
 
-VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(const VRORenderContextMetal &context,
-                                                     std::shared_ptr<VROMaterial> material) {
+VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
+                                                     const VRORenderContextMetal &context) {
     
 
     id <MTLDevice> device = context.getDevice();
     id <MTLLibrary> library = context.getLibrary();
     
-    switch (material->getLightingModel()) {
+    switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
             loadConstantLighting(material, library, device);
             break;
@@ -43,7 +45,13 @@ VROMaterialSubstrateMetal::~VROMaterialSubstrateMetal() {
     
 }
 
-void VROMaterialSubstrateMetal::loadConstantLighting(std::shared_ptr<VROMaterial> material,
+void VROMaterialSubstrateMetal::bind(const VROMatrix4f &transform, const VROMatrix4f &projection) {
+    VROConstantLightingUniforms *uniforms = (VROConstantLightingUniforms *)[_uniformsBuffer contents];
+    uniforms->normal_matrix = toMatrixFloat4x4(transform.transpose().invert());
+    uniforms->modelview_projection_matrix = toMatrixFloat4x4(projection.multiply(transform));
+}
+
+void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,
                                                      id <MTLLibrary> library, id <MTLDevice> device) {
     
     _vertexProgram   = [library newFunctionWithName:@"constant_lighting_vertex"];
@@ -54,9 +62,14 @@ void VROMaterialSubstrateMetal::loadConstantLighting(std::shared_ptr<VROMaterial
     
     VROConstantLightingUniforms *uniforms = (VROConstantLightingUniforms *)[_uniformsBuffer contents];
 
+    VROMaterialVisual &ambient = material.getAmbient();
+    uniforms->ambient_color = toVectorFloat4(ambient.getContentsColor());
+    
+    VROMaterialVisual &diffuse = material.getDiffuse();
+    uniforms->diffuse_color = toVectorFloat4(diffuse.getContentsColor());
 }
 
-void VROMaterialSubstrateMetal::loadBlinnLighting(std::shared_ptr<VROMaterial> material,
+void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
                                                   id <MTLLibrary> library, id <MTLDevice> device) {
     
     _vertexProgram   = [library newFunctionWithName:@"blinn_lighting_vertex"];
@@ -67,15 +80,15 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(std::shared_ptr<VROMaterial> m
     
     VROBlinnLightingUniforms *uniforms = (VROBlinnLightingUniforms *)[_uniformsBuffer contents];
 
-    VROMaterialVisual &ambient = material->getAmbient();
+    VROMaterialVisual &ambient = material.getAmbient();
     uniforms->ambient_color = toVectorFloat4(ambient.getContentsColor());
     
-    VROMaterialVisual &diffuse = material->getDiffuse();
+    VROMaterialVisual &diffuse = material.getDiffuse();
     uniforms->diffuse_color = toVectorFloat4(diffuse.getContentsColor());
     
 }
 
-void VROMaterialSubstrateMetal::loadPhongLighting(std::shared_ptr<VROMaterial> material,
+void VROMaterialSubstrateMetal::loadPhongLighting(VROMaterial &material,
                                                   id <MTLLibrary> library, id <MTLDevice> device) {
     
     _vertexProgram   = [library newFunctionWithName:@"phong_lighting_vertex"];
@@ -88,7 +101,7 @@ void VROMaterialSubstrateMetal::loadPhongLighting(std::shared_ptr<VROMaterial> m
     //TODO
 }
 
-void VROMaterialSubstrateMetal::loadLambertLighting(std::shared_ptr<VROMaterial> material,
+void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
                                                     id <MTLLibrary> library, id <MTLDevice> device) {
     
     _vertexProgram   = [library newFunctionWithName:@"lambert_lighting_vertex"];

@@ -17,7 +17,7 @@ class VRORenderer {
     
 public:
     
-    void render(std::shared_ptr<VROScene> scene);
+    virtual void render(std::shared_ptr<VROScene> scene) = 0;
     
 private:
     

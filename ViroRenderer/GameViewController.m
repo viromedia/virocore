@@ -14,6 +14,8 @@
 #import "VROLayer.h"
 #import "VROMath.h"
 #import "VROImageUtil.h"
+#import "VROBox.h"
+#import "VRONode.h"
 #import "VROView.h"
 
 std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getCenterLayer() {
@@ -56,6 +58,17 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
 - (void)_loadAssetsWithContext:(VRORenderContext *)context {
     _scene = std::make_shared<VROScene>();
     _layout = std::make_shared<VROCrossLayout>(_scene);
+    
+    std::shared_ptr<VROBox> box = VROBox::createBox(1, 1, 1, 1);
+    
+    std::shared_ptr<VRONode> node = std::make_shared<VRONode>(*context);
+    node->setGeometry(box);
+    
+    _scene->addNode(node);
+    
+    if (true) {
+        return;
+    }
     
     size_t dataLength;
     int width, height;

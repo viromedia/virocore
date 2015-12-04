@@ -8,26 +8,26 @@
 
 #include "VRONode.h"
 
+VRONode::VRONode(const VRORenderContext &context) {
+    
+}
+
+VRONode::~VRONode() {
+    
+}
+
 void VRONode::render(const VRORenderContext &context, std::stack<VROMatrix4f> xforms) {
+    VROMatrix4f transform = xforms.top().multiply(_transform);
+    
     if (_geometry) {
-        renderGeometry();
+        _geometry->render(context, transform);
     }
     
-    xforms.push(xforms.top().multiply(_transform));
+    xforms.push(transform);
     
     for (std::shared_ptr<VRONode> childNode : _subnodes) {
         childNode->render(context, xforms);
     }
     
     xforms.pop();
-}
-
-void VRONode::renderGeometry() {
-    std::vector<std::shared_ptr<VROGeometrySource>> sources   = _geometry->getGeometrySources();
-    std::vector<std::shared_ptr<VROGeometryElement>> elements = _geometry->getGeometryElements();
-    std::vector<std::shared_ptr<VROMaterial>> materials       = _geometry->getMaterials();
-    
-    for (std::shared_ptr<VROGeometryElement> element : elements) {
-        
-    }
 }

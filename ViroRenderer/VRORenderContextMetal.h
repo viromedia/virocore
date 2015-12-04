@@ -16,6 +16,8 @@
 #include "VRORenderTarget.h"
 #include "VROMatrix4f.h"
 #include <memory>
+#include "VROGeometrySubstrateMetal.h"
+#include "VROMaterialSubstrateMetal.h"
 
 /*
  Render context for Metal.
@@ -58,6 +60,14 @@ public:
     }
     VROMatrix4f getViewMatrix() const {
         return _viewMatrix;
+    }
+    
+    VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const {
+        return new VROGeometrySubstrateMetal(geometry, *this);
+    }
+    
+    VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) const {
+        return new VROMaterialSubstrateMetal(material, *this);
     }
     
 private:

@@ -92,9 +92,8 @@ vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttribut
     return out;
 }
 
-fragment float4 constant_lighting_fragment(VROConstantLightingVertexOut in [[ stage_in ]],
-                                           texture2d<float> diffuse_texture [[ texture(0) ]]) {
-    return in.color * diffuse_texture.sample(s, in.texcoord);
+fragment float4 constant_lighting_fragment(VROConstantLightingVertexOut in [[ stage_in ]]) {
+    return in.color;//* diffuse_texture.sample(s, in.texcoord);
 }
 
 /* ---------------------------------------

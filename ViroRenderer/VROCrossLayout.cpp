@@ -44,9 +44,11 @@ void VROCrossLayout::layout() {
     leftLayer->  setFrame(VRORectMake(-size * 3/2 - padding, -size / 2,             z, size, size));
     rightLayer-> setFrame(VRORectMake( size / 2 + padding,   -size / 2,             z, size, size));
     
+    /*
     scene->addNode(centerLayer);
     scene->addNode(topLayer);
     scene->addNode(bottomLayer);
     scene->addNode(leftLayer);
     scene->addNode(rightLayer);
+     */
 }

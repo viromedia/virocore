@@ -49,8 +49,10 @@ class VROMaterial {
     
 public:
     
-    VROMaterial();
-    virtual ~VROMaterial();
+    VROMaterial()
+    {}
+    virtual ~VROMaterial()
+    {}
     
     VROMaterialVisual &getDiffuse() {
         return _diffuse;
@@ -95,9 +97,14 @@ public:
     VROTransparencyMode getTransparencyMode() const {
         return _transparencyMode;
     }
+    
+    void setLightingModel(VROLightingModel model) {
+        _lightingModel = model;
+    }
     VROLightingModel getLightingModel() const {
         return _lightingModel;
     }
+    
     bool isLitPerPixel() const {
         return _litPerPixel;
     }

@@ -18,13 +18,14 @@
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
 
+class VROGeometry;
 class VROGeometrySource;
 class VROGeometryElement;
 class VRORenderContextMetal;
+class VROMaterialSubstrateMetal;
 
-struct VROGeometrySourceMetal {
+struct VROVertexArrayMetal {
     id <MTLBuffer> buffer;
-    MTLVertexDescriptor *descriptor;
 };
 
 struct VROGeometryElementMetal {
@@ -52,29 +53,32 @@ class VROGeometrySubstrateMetal : public VROGeometrySubstrate {
     
 public:
     
-    VROGeometrySubstrateMetal(const VRORenderContextMetal &context,
-                              std::vector<std::shared_ptr<VROGeometrySource>> &sources,
-                              std::vector<std::shared_ptr<VROGeometryElement>> &elements);
+    VROGeometrySubstrateMetal(const VROGeometry &geometry,
+                              const VRORenderContextMetal &context);
     virtual ~VROGeometrySubstrateMetal();
+    
+    void render(const VRORenderContext &context, const VROMatrix4f &transform);
     
 private:
     
-    std::vector<VROGeometrySourceMetal> _sources;
+    MTLVertexDescriptor *_vertexDescriptor;
+    std::vector<VROVertexArrayMetal> _vars;
     std::vector<VROGeometryElementMetal> _elements;
+    std::vector<VROMaterialSubstrateMetal *> _materials;
     
     /*
      Parse the given geometry elements and populate the _elements vector with the
      results.
      */
     void readGeometryElements(id <MTLDevice> device,
-                              std::vector<std::shared_ptr<VROGeometryElement>> &elements);
+                              const std::vector<std::shared_ptr<VROGeometryElement>> &elements);
     
     /*
      Parse the given geometry sources and populate the _sources vector with the
      results.
      */
     void readGeometrySources(id <MTLDevice> device,
-                             std::vector<std::shared_ptr<VROGeometrySource>> &sources);
+                             const std::vector<std::shared_ptr<VROGeometrySource>> &sources);
     
     /*
      Parse an MTLVertexFormat from the given geometry source.
@@ -86,6 +90,12 @@ private:
      */
     MTLPrimitiveType parsePrimitiveType(VROGeometryPrimitiveType primitive);
     
+    /*
+     Get how many indices are required to render the given number of primitives of the
+     given type.
+     */
+    int getIndicesCount(int primitiveCount, VROGeometryPrimitiveType primitiveType);
+
     /*
      Parse the attribute index for the given semantic.
      */
