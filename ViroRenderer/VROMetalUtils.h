@@ -19,4 +19,6 @@ class VROMatrix4f;
 vector_float4 toVectorFloat4(VROVector4f v);
 matrix_float4x4 toMatrixFloat4x4(VROMatrix4f m);
 
+id <MTLTexture> getBlankTexture(id <MTLDevice> device);
+
 #endif /* VROMetalUtils_h */

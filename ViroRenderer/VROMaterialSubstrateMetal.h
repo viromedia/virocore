@@ -9,7 +9,6 @@
 #ifndef VROMaterialSubstrateMetal_h
 #define VROMaterialSubstrateMetal_h
 
-#include "VROMaterialSubstrate.h"
 #include "VROMaterial.h"
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
@@ -24,7 +23,7 @@ class VRORenderContextMetal;
  program and fragment program (by way of the material's lighting model), along
  with the set of uniforms and samplers to bind to said program.
  */
-class VROMaterialSubstrateMetal : public VROMaterialSubstrate {
+class VROMaterialSubstrateMetal {
     
 public:
     

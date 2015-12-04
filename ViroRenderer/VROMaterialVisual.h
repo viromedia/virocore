@@ -101,7 +101,7 @@ private:
      If the visual is determiend by a texture, this variable will be populated
      with the texture.
      */
-    std::shared_ptr<VROTexture>  _contentsTexture;
+    std::shared_ptr<VROTexture> _contentsTexture;
     
     /*
      If the visual is determiend by a set of 6 textures forming a cube map, this
