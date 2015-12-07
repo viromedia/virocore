@@ -21,11 +21,7 @@ public:
     VROTexture(UIImage *image);
     virtual ~VROTexture();
     
-    void hydrate(const VRORenderContext &context);
-    
-    VROTextureSubstrate *const getSubstrate() const {
-        return _substrate;
-    }
+    VROTextureSubstrate *const getSubstrate(const VRORenderContext &context);
     
 private:
     
@@ -35,6 +31,8 @@ private:
      */
     UIImage *_image;
     VROTextureSubstrate *_substrate;
+    
+    void hydrate(const VRORenderContext &context);
     
 };
 

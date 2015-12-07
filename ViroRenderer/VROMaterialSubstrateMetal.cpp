@@ -24,19 +24,19 @@ VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
     
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
-            loadConstantLighting(material, library, device);
+            loadConstantLighting(material, library, device, context);
             break;
             
         case VROLightingModel::Blinn:
-            loadBlinnLighting(material, library, device);
+            loadBlinnLighting(material, library, device, context);
             break;
             
         case VROLightingModel::Lambert:
-            loadLambertLighting(material, library, device);
+            loadLambertLighting(material, library, device, context);
             break;
             
         case VROLightingModel::Phong:
-            loadPhongLighting(material, library, device);
+            loadPhongLighting(material, library, device, context);
             break;
             
         default:
@@ -49,27 +49,48 @@ VROMaterialSubstrateMetal::~VROMaterialSubstrateMetal() {
 }
 
 void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,
-                                                     id <MTLLibrary> library, id <MTLDevice> device) {
-    
-    _vertexProgram   = [library newFunctionWithName:@"constant_lighting_vertex"];
-    _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment"];
+                                                     id <MTLLibrary> library, id <MTLDevice> device,
+                                                     const VRORenderContextMetal &context) {
     
     _lightingUniformsBuffer = [device newBufferWithLength:sizeof(VROConstantLightingUniforms) options:0];
     _lightingUniformsBuffer.label = @"VROConstantLightingUniformBuffer";
     
     VROConstantLightingUniforms *uniforms = (VROConstantLightingUniforms *)[_lightingUniformsBuffer contents];
 
+    _vertexProgram   = [library newFunctionWithName:@"constant_lighting_vertex"];
+
     VROMaterialVisual &ambient = material.getAmbient();
-    uniforms->ambient_color = toVectorFloat4(ambient.getContentsColor());
-    _textures.push_back(((VROTextureSubstrateMetal *)ambient.getContentsTexture()->getSubstrate())->getTexture());
-    
     VROMaterialVisual &diffuse = material.getDiffuse();
-    uniforms->diffuse_color = toVectorFloat4(diffuse.getContentsColor());
-    _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate())->getTexture());
+
+    if (ambient.getContentsType() == VROContentsType::Fixed) {
+        uniforms->ambient_color = toVectorFloat4(ambient.getContentsColor());
+
+        if (diffuse.getContentsType() == VROContentsType::Fixed) {
+            uniforms->diffuse_color = toVectorFloat4(diffuse.getContentsColor());
+            _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_cc"];
+        }
+        else {
+            _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
+            _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_ct"];
+        }
+    }
+    else {
+        _textures.push_back(((VROTextureSubstrateMetal *)ambient.getContentsTexture()->getSubstrate(context))->getTexture());
+
+        if (diffuse.getContentsType() == VROContentsType::Fixed) {
+            uniforms->diffuse_color = toVectorFloat4(diffuse.getContentsColor());
+            _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_ct"];
+        }
+        else {
+            _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
+            _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_tt"];
+        }
+    }
 }
 
 void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
-                                                  id <MTLLibrary> library, id <MTLDevice> device) {
+                                                  id <MTLLibrary> library, id <MTLDevice> device,
+                                                  const VRORenderContextMetal &context) {
     
     _vertexProgram   = [library newFunctionWithName:@"blinn_lighting_vertex"];
     _fragmentProgram = [library newFunctionWithName:@"blinn_lighting_fragment"];
@@ -88,7 +109,8 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
 }
 
 void VROMaterialSubstrateMetal::loadPhongLighting(VROMaterial &material,
-                                                  id <MTLLibrary> library, id <MTLDevice> device) {
+                                                  id <MTLLibrary> library, id <MTLDevice> device,
+                                                  const VRORenderContextMetal &context) {
     
     _vertexProgram   = [library newFunctionWithName:@"phong_lighting_vertex"];
     _fragmentProgram = [library newFunctionWithName:@"phong_lighting_fragment"];
@@ -101,7 +123,8 @@ void VROMaterialSubstrateMetal::loadPhongLighting(VROMaterial &material,
 }
 
 void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
-                                                    id <MTLLibrary> library, id <MTLDevice> device) {
+                                                    id <MTLLibrary> library, id <MTLDevice> device,
+                                                    const VRORenderContextMetal &context) {
     
     _vertexProgram   = [library newFunctionWithName:@"lambert_lighting_vertex"];
     _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment"];

@@ -330,10 +330,10 @@
 			children = (
 				8F152A711C0D7A5A00A211F8 /* VROMetalUtils.h */,
 				8F152A701C0D7A5A00A211F8 /* VROMetalUtils.cpp */,
-				8FF4D7A81C0D45DA006D6157 /* VROMaterialSubstrateMetal.h */,
-				8FF4D7A71C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp */,
 				8F4DCE501BFD628A00061DD7 /* VROGeometrySubstrateMetal.h */,
 				8F4DCE4F1BFD628A00061DD7 /* VROGeometrySubstrateMetal.cpp */,
+				8FF4D7A81C0D45DA006D6157 /* VROMaterialSubstrateMetal.h */,
+				8FF4D7A71C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp */,
 				8F152A831C121A5500A211F8 /* VROTextureSubstrateMetal.h */,
 				8F152A821C121A5500A211F8 /* VROTextureSubstrateMetal.cpp */,
 			);

@@ -20,6 +20,14 @@ VROTexture::~VROTexture() {
     delete (_substrate);
 }
 
+VROTextureSubstrate *const VROTexture::getSubstrate(const VRORenderContext &context) {
+    if (!_substrate) {
+        hydrate(context);
+    }
+    
+    return _substrate;
+}
+
 void VROTexture::hydrate(const VRORenderContext &context) {
     if (_image) {
         _substrate = context.newTextureSubstrate(_image);

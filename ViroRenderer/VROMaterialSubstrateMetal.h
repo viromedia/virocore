@@ -58,13 +58,17 @@ private:
     std::vector<id <MTLTexture>> _textures;
     
     void loadConstantLighting(VROMaterial &material,
-                              id <MTLLibrary> library, id <MTLDevice> device);
+                              id <MTLLibrary> library, id <MTLDevice> device,
+                              const VRORenderContextMetal &context);
     void loadBlinnLighting(VROMaterial &material,
-                           id <MTLLibrary> library, id <MTLDevice> device);
+                           id <MTLLibrary> library, id <MTLDevice> device,
+                           const VRORenderContextMetal &context);
     void loadPhongLighting(VROMaterial &material,
-                           id <MTLLibrary> library, id <MTLDevice> device);
+                           id <MTLLibrary> library, id <MTLDevice> device,
+                           const VRORenderContextMetal &context);
     void loadLambertLighting(VROMaterial &material,
-                             id <MTLLibrary> library, id <MTLDevice> device);
+                             id <MTLLibrary> library, id <MTLDevice> device,
+                             const VRORenderContextMetal &context);
     
 };
 

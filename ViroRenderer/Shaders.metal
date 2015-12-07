@@ -89,15 +89,23 @@ vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttribut
     float n_dot_l = dot(eye_normal.rgb, normalize(light_position));
     n_dot_l = fmax(0.0, n_dot_l);
     
-    out.color = lighting.diffuse_color;
+    out.color = lighting.ambient_color + lighting.diffuse_color;
     return out;
 }
 
-fragment float4 constant_lighting_fragment(VROConstantLightingVertexOut in [[ stage_in ]],
-                                           texture2d<float> ambient_texture [[ texture(0) ]],
-                                           texture2d<float> diffuse_texture [[ texture(1) ]]) {
-    
-    return in.color * diffuse_texture.sample(s, in.texcoord);
+fragment float4 constant_lighting_fragment_cc(VROConstantLightingVertexOut in [[ stage_in ]]) {
+    return in.color;
+}
+
+fragment float4 constant_lighting_fragment_ct(VROConstantLightingVertexOut in [[ stage_in ]],
+                                              texture2d<float> texture [[ texture(0) ]]) {
+    return in.color + texture.sample(s, in.texcoord);
+}
+
+fragment float4 constant_lighting_fragment_tt(VROConstantLightingVertexOut in [[ stage_in ]],
+                                              texture2d<float> ambient_texture [[ texture(0) ]],
+                                              texture2d<float> diffuse_texture [[ texture(1) ]]) {
+    return ambient_texture.sample(s, in.texcoord) + diffuse_texture.sample(s, in.texcoord);
 }
 
 /* ---------------------------------------
