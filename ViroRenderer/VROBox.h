@@ -2,7 +2,7 @@
 //  VROBox.h
 //  ViroRenderer
 //
-//  Created by Raj Advani on 12/3/15.
+//  Created by Raj Advani on 12/7/15.
 //  Copyright © 2015 Viro Media. All rights reserved.
 //
 
@@ -17,7 +17,7 @@ class VROBox : public VROGeometry {
     
 public:
     
-    static std::shared_ptr<VROBox> createBox(float width, float height, float length, float chamferRadius);
+    static std::shared_ptr<VROBox> createBox(float width, float height, float length);
     
     ~VROBox();
     
@@ -28,7 +28,8 @@ private:
         VROGeometry(sources, elements)
     {}
     
-    static void buildBox(VROShapeVertexLayout *vertexLayout, float width, float height, float length);
+    static void buildBox(VROShapeVertexLayout *vertexLayout, float width, float height,
+                         float length);
     
 };
 

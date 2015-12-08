@@ -30,7 +30,9 @@ VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry
     
     for (int i = 0; i < _elements.size(); i++) {
         VROGeometryElementMetal element = _elements[i];
-        VROMaterialSubstrateMetal *material = _materials[i % _materials.size()];
+        
+        int materialIdx = i % _materials.size();
+        VROMaterialSubstrateMetal *material = _materials[materialIdx];
         
         id <MTLFunction> vertexProgram = material->getVertexProgram();
         id <MTLFunction> fragmentProgram = material->getFragmentProgram();
@@ -65,10 +67,7 @@ VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry
         
         _elementPipelineStates.push_back(pipelineState);
         
-        MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
-        depthStateDesc.depthCompareFunction = MTLCompareFunctionAlways;
-        depthStateDesc.depthWriteEnabled = NO;
-        
+        MTLDepthStencilDescriptor *depthStateDesc = parseDepthStencil(geometry.getMaterials_const()[materialIdx]);
         _elementDepthStates.push_back([device newDepthStencilStateWithDescriptor:depthStateDesc]);
     }
     
@@ -281,6 +280,21 @@ int VROGeometrySubstrateMetal::parseAttributeIndex(VROGeometrySourceSemantic sem
             return 0;
     }
 }
+
+MTLDepthStencilDescriptor *VROGeometrySubstrateMetal::parseDepthStencil(const std::shared_ptr<VROMaterial> &material) {
+    MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
+    depthStateDesc.depthWriteEnabled = material->getWritesToDepthBuffer();
+    
+    if (material->getReadsFromDepthBuffer()) {
+        depthStateDesc.depthCompareFunction = MTLCompareFunctionLess;
+    }
+    else {
+        depthStateDesc.depthCompareFunction = MTLCompareFunctionAlways;
+    }
+    
+    return depthStateDesc;
+}
+
 
 void VROGeometrySubstrateMetal::render(const VRORenderContext &context,
                                        const VROMatrix4f &transform,

@@ -14,6 +14,7 @@
 #import "VROLayer.h"
 #import "VROMath.h"
 #import "VROImageUtil.h"
+#import "VROSurface.h"
 #import "VROBox.h"
 #import "VRONode.h"
 #import "VROView.h"
@@ -46,6 +47,9 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
     std::shared_ptr<VROScene> _scene;
     std::shared_ptr<VROCrossLayout> _layout;
     
+    std::shared_ptr<VRONode> _rootNode;
+    float angle;
+    
 }
 
 - (void)setupRendererWithView:(MTKView *)view context:(VRORenderContext *)renderContext {
@@ -60,17 +64,23 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
     _scene = std::make_shared<VROScene>();
     _layout = std::make_shared<VROCrossLayout>(_scene);
     
-    std::shared_ptr<VROBox> box = VROBox::createBox(1, 1, 1, 1);
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(1, 1);
+    std::shared_ptr<VROBox> box = VROBox::createBox(1, 1, 1);
     
-    std::shared_ptr<VRONode> node = std::make_shared<VRONode>(*context);
-    node->setGeometry(box);
+    _rootNode = std::make_shared<VRONode>(*context);
+    _rootNode->setGeometry(box);
     
-    _scene->addNode(node);
+    VROMatrix4f translation;
+    translation.translate(0, 0, 5);
+    
+    _rootNode->setTransform(translation);
+    
+    _scene->addNode(_rootNode);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Ambient);
-    light->setColor({ 0.0, 0.0, 0.0, 0.0 });
+    light->setColor({ 1.0, 1.0, 1.0, 1.0 });
     
-    node->setLight(light);
+    _rootNode->setLight(light);
     
     if (true) {
         return;
@@ -124,6 +134,14 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
 }
 
 - (void)renderEye:(VROEyeType)eye context:(VRORenderContext *)renderContext {
+    VROMatrix4f translation;
+    translation.rotateY(angle);
+    translation.translate(0, 0, 5);
+    
+    angle += .01;
+    
+    _rootNode->setTransform(translation);
+    
     _scene->render(*renderContext);
 }
 

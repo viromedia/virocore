@@ -2,7 +2,7 @@
 //  VROBox.cpp
 //  ViroRenderer
 //
-//  Created by Raj Advani on 12/3/15.
+//  Created by Raj Advani on 12/7/15.
 //  Copyright © 2015 Viro Media. All rights reserved.
 //
 
@@ -13,8 +13,10 @@
 #include "VROMaterial.h"
 #include "stdlib.h"
 
-std::shared_ptr<VROBox> VROBox::createBox(float width, float height, float length, float chamferRadius) {
-    int numVertices = 6;
+static const int kNumBoxVertices = 36;
+
+std::shared_ptr<VROBox> VROBox::createBox(float width, float height, float length) {
+    int numVertices = kNumBoxVertices;
     
     int varSizeBytes = sizeof(VROShapeVertexLayout) * numVertices;
     VROShapeVertexLayout var[varSizeBytes];
@@ -46,20 +48,26 @@ std::shared_ptr<VROBox> VROBox::createBox(float width, float height, float lengt
     
     std::vector<std::shared_ptr<VROGeometrySource>> sources = { position, texcoord, normal };
     
-    int indices[6] = { 0, 1, 2, 3, 4, 5 };
-    std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices, sizeof(int) * 6);
+    int indices[kNumBoxVertices];
+    for (int i = 0; i < kNumBoxVertices; i++) {
+        indices[i] = i;
+    }
+    std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices, sizeof(int) * kNumBoxVertices);
     
     std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(indexData,
                                                                                        VROGeometryPrimitiveType::Triangle,
-                                                                                       2,
+                                                                                       kNumBoxVertices / 3,
                                                                                        sizeof(int));
     std::vector<std::shared_ptr<VROGeometryElement>> elements = { element };
     
     std::shared_ptr<VROBox> box = std::shared_ptr<VROBox>(new VROBox(sources, elements));
     
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->setLightingModel(VROLightingModel::Constant);
+    material->setLightingModel(VROLightingModel::Lambert);
+    material->getAmbient().setContents({0.0, 0.0, 0.0, 0.0});
     material->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"boba"]));
+    material->setWritesToDepthBuffer(true);
+    material->setReadsFromDepthBuffer(true);
     
     box->getMaterials().push_back(material);
     
@@ -67,67 +75,168 @@ std::shared_ptr<VROBox> VROBox::createBox(float width, float height, float lengt
 }
 
 void VROBox::buildBox(VROShapeVertexLayout *vertexLayout, float width, float height, float length) {
-    // TODO Make this an actual box
-    float z = 1;
+    const float cubeVertices[] = {
+        // Front face
+        -1.0f, 1.0f, 1.0f,
+        -1.0f, -1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        -1.0f, -1.0f, 1.0f,
+        1.0f, -1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        
+        // Right face
+        1.0f, 1.0f, 1.0f,
+        1.0f, -1.0f, 1.0f,
+        1.0f, 1.0f, -1.0f,
+        1.0f, -1.0f, 1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, 1.0f, -1.0f,
+        
+        // Back face
+        1.0f, 1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        -1.0f, 1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, 1.0f, -1.0f,
+        
+        // Left face
+        -1.0f, 1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, 1.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f, 1.0f,
+        -1.0f, 1.0f, 1.0f,
+        
+        // Top face
+        -1.0f, 1.0f, -1.0f,
+        -1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, -1.0f,
+        -1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, -1.0f,
+        
+        // Bottom face
+        1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, 1.0f,
+        -1.0f, -1.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,
+    };
     
-    // Front Face
-    vertexLayout[0].x = -width / 2;
-    vertexLayout[0].y = -height / 2;
-    vertexLayout[0].z = z;
-    vertexLayout[0].u = 0;
-    vertexLayout[0].v = 1;
-    vertexLayout[0].nx = 0;
-    vertexLayout[0].ny = 0;
-    vertexLayout[0].nz = -1;
+    const float cubeTex[] = {
+        // Front face
+        0, 1.0f,
+        0, 0,
+        1.0f, 1.0f,
+        0, 0,
+        1.0f, 0,
+        1.0f, 1.0f,
+        
+        // Right face
+        0, 1.0f,
+        0, 0,
+        1.0f, 1.0f,
+        0, 0,
+        1.0f, 0,
+        1.0f, 1.0f,
+        
+        // Back face
+        0, 1.0f,
+        0, 0,
+        1.0f, 1.0f,
+        0, 0,
+        1.0f, 0,
+        1.0f, 1.0f,
+        
+        // Left face
+        0, 1.0f,
+        0, 0,
+        1.0f, 1.0f,
+        0, 0,
+        1.0f, 0,
+        1.0f, 1.0f,
+        
+        // Top face
+        0, 1.0f,
+        0, 0,
+        1.0f, 1.0f,
+        0, 0,
+        1.0f, 0,
+        1.0f, 1.0f,
+        
+        // Bottom face
+        0, 1.0f,
+        0, 0,
+        1.0f, 1.0f,
+        0, 0,
+        1.0f, 0,
+        1.0f, 1.0f,
+    };
     
-    vertexLayout[1].x =  width / 2;
-    vertexLayout[1].y = -height / 2;
-    vertexLayout[1].z = z;
-    vertexLayout[1].u = 1;
-    vertexLayout[1].v = 1;
-    vertexLayout[1].nx = 0;
-    vertexLayout[1].ny = 0;
-    vertexLayout[1].nz = -1;
+    const float cubeNormals[] = {
+        // Front face
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        
+        // Right face
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        
+        // Back face
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+        
+        // Left face
+        -1.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f,
+        
+        // Top face
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        
+        // Bottom face
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f
+    };
     
-    vertexLayout[2].x = -width / 2;
-    vertexLayout[2].y =  height / 2;
-    vertexLayout[2].z = z;
-    vertexLayout[2].u = 0;
-    vertexLayout[2].v = 0;
-    vertexLayout[2].nx = 0;
-    vertexLayout[2].ny = 0;
-    vertexLayout[2].nz = -1;
-    
-    vertexLayout[3].x = width / 2;
-    vertexLayout[3].y = height / 2;
-    vertexLayout[3].z = z;
-    vertexLayout[3].u = 1;
-    vertexLayout[3].v = 0;
-    vertexLayout[3].nx = 0;
-    vertexLayout[3].ny = 0;
-    vertexLayout[3].nz = -1;
-    
-    vertexLayout[4].x = -width / 2;
-    vertexLayout[4].y =  height / 2;
-    vertexLayout[4].z = z;
-    vertexLayout[4].u = 0;
-    vertexLayout[4].v = 0;
-    vertexLayout[4].nx = 0;
-    vertexLayout[4].ny = 0;
-    vertexLayout[4].nz = -1;
-    
-    vertexLayout[5].x =  width / 2;
-    vertexLayout[5].y = -height / 2;
-    vertexLayout[5].z = z;
-    vertexLayout[5].u = 1;
-    vertexLayout[5].v = 1;
-    vertexLayout[5].nx = 0;
-    vertexLayout[5].ny = 0;
-    vertexLayout[5].nz = -1;
+    for (int i = 0; i < kNumBoxVertices; i++) {
+        vertexLayout[i].x =  cubeVertices[i * 3 + 0];
+        vertexLayout[i].y =  cubeVertices[i * 3 + 1];
+        vertexLayout[i].z =  cubeVertices[i * 3 + 2];
+        vertexLayout[i].u =  cubeTex[i * 2 + 0];
+        vertexLayout[i].v =  cubeTex[i * 2 + 1];
+        vertexLayout[i].nx = cubeNormals[i * 3 + 0];
+        vertexLayout[i].ny = cubeNormals[i * 3 + 1];
+        vertexLayout[i].nz = cubeNormals[i * 3 + 2];
+    }
 }
 
 VROBox::~VROBox() {
     
 }
-
-

@@ -28,10 +28,7 @@ typedef struct {
     vector_float4   diffuse_color;
 } VROConstantLightingUniforms;
 
-typedef struct {
-    matrix_float4x4 modelview_projection_matrix;
-    matrix_float4x4 normal_matrix;
-    
+typedef struct {    
     vector_float4   ambient_color;
     vector_float4   diffuse_color;
     vector_float4   specular_color;
@@ -41,9 +38,6 @@ typedef struct {
 } VROBlinnLightingUniforms;
 
 typedef struct {
-    matrix_float4x4 modelview_projection_matrix;
-    matrix_float4x4 normal_matrix;
-    
     vector_float4   ambient_color;
     vector_float4   diffuse_color;
     vector_float4   specular_color;
@@ -53,15 +47,9 @@ typedef struct {
 } VROPhongLightingUniforms;
 
 typedef struct {
-    matrix_float4x4 modelview_projection_matrix;
-    matrix_float4x4 normal_matrix;
-    
+    vector_float4   ambient_light;
     vector_float4   ambient_color;
     vector_float4   diffuse_color;
-    vector_float4   specular_color;
-    
-    float           shininess;
-    float           fresnel;
 } VROLambertLightingUniforms;
 
 typedef struct {

@@ -19,6 +19,7 @@
 #include <MetalKit/MetalKit.h>
 
 class VROGeometry;
+class VROMaterial;
 class VROGeometrySource;
 class VROGeometryElement;
 class VRORenderContextMetal;
@@ -111,6 +112,11 @@ private:
      Parse the attribute index for the given semantic.
      */
     int parseAttributeIndex(VROGeometrySourceSemantic semantic);
+    
+    /*
+     Parse the Metal depth/stencil state from the given material.
+     */
+    MTLDepthStencilDescriptor *parseDepthStencil(const std::shared_ptr<VROMaterial> &material);
     
 };
 

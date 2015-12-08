@@ -121,6 +121,13 @@ public:
         return _readsFromDepthBuffer;
     }
     
+    void setWritesToDepthBuffer(bool writesToDepthBuffer) {
+        _writesToDepthBuffer = writesToDepthBuffer;
+    }
+    void setReadsFromDepthBuffer(bool readsFromDepthBuffer) {
+        _readsFromDepthBuffer = readsFromDepthBuffer;
+    }
+    
 private:
     
     /*

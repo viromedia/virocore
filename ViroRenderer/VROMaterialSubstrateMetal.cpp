@@ -125,14 +125,40 @@ void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
                                                     id <MTLLibrary> library, id <MTLDevice> device,
                                                     const VRORenderContextMetal &context) {
     
-    _vertexProgram   = [library newFunctionWithName:@"lambert_lighting_vertex"];
-    _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment"];
-    
     _lightingUniformsBuffer = [device newBufferWithLength:sizeof(VROLambertLightingUniforms) options:0];
     _lightingUniformsBuffer.label = @"VROLambertLightingUniformBuffer";
     
     VROLambertLightingUniforms *uniforms = (VROLambertLightingUniforms *)[_lightingUniformsBuffer contents];
-    //TODO
+    
+    _vertexProgram   = [library newFunctionWithName:@"lambert_lighting_vertex"];
+    
+    VROMaterialVisual &ambient = material.getAmbient();
+    VROMaterialVisual &diffuse = material.getDiffuse();
+    
+    if (ambient.getContentsType() == VROContentsType::Fixed) {
+        uniforms->ambient_color = toVectorFloat4(ambient.getContentsColor());
+        
+        if (diffuse.getContentsType() == VROContentsType::Fixed) {
+            uniforms->diffuse_color = toVectorFloat4(diffuse.getContentsColor());
+            _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_cc"];
+        }
+        else {
+            _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
+            _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_ct"];
+        }
+    }
+    else {
+        _textures.push_back(((VROTextureSubstrateMetal *)ambient.getContentsTexture()->getSubstrate(context))->getTexture());
+        
+        if (diffuse.getContentsType() == VROContentsType::Fixed) {
+            uniforms->diffuse_color = toVectorFloat4(diffuse.getContentsColor());
+            _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_ct"];
+        }
+        else {
+            _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
+            _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_tt"];
+        }
+    }
 }
 
 void VROMaterialSubstrateMetal::setLightingUniforms(const std::shared_ptr<VROLight> &light) {
@@ -238,7 +264,7 @@ void VROMaterialSubstrateMetal::bindLambertLighting(const std::shared_ptr<VROLig
 
     switch (light->getType()) {
         case VROLightType::Ambient:
-
+            uniforms->ambient_light = toVectorFloat4(light->getColor());
             break;
             
         case VROLightType::Directional:

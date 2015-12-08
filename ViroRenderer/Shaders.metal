@@ -74,6 +74,7 @@ typedef struct {
     float4 position [[ position ]];
     float4 color;
     float2 texcoord;
+    float4 ambient_light;
 } VROConstantLightingVertexOut;
 
 vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttributes attributes [[ stage_in ]],
@@ -84,12 +85,9 @@ vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttribut
     float4 in_position = float4(attributes.position, 1.0);
     out.position = view.modelview_projection_matrix * in_position;
     out.texcoord = attributes.texcoord;
+    out.ambient_light = lighting.ambient_light;
+    out.color = lighting.ambient_color * lighting.ambient_light + lighting.diffuse_color;
     
-    float4 eye_normal = normalize(view.normal_matrix * float4(attributes.normal, 0.0));
-    float n_dot_l = dot(eye_normal.rgb, normalize(light_position));
-    n_dot_l = fmax(0.0, n_dot_l);
-    
-    out.color = lighting.ambient_color + lighting.diffuse_color;
     return out;
 }
 
@@ -105,7 +103,7 @@ fragment float4 constant_lighting_fragment_ct(VROConstantLightingVertexOut in [[
 fragment float4 constant_lighting_fragment_tt(VROConstantLightingVertexOut in [[ stage_in ]],
                                               texture2d<float> ambient_texture [[ texture(0) ]],
                                               texture2d<float> diffuse_texture [[ texture(1) ]]) {
-    return ambient_texture.sample(s, in.texcoord) + diffuse_texture.sample(s, in.texcoord);
+    return ambient_texture.sample(s, in.texcoord) * in.ambient_light + diffuse_texture.sample(s, in.texcoord);
 }
 
 /* ---------------------------------------
@@ -119,6 +117,46 @@ fragment float4 constant_lighting_fragment_tt(VROConstantLightingVertexOut in [[
 /* ---------------------------------------
    LAMBERT LIGHTING MODEL
    --------------------------------------- */
+
+typedef struct {
+    float4 position [[ position ]];
+    float4 color;
+    float2 texcoord;
+    float4 ambient_light;
+} VROLambertLightingVertexOut;
+
+vertex VROLambertLightingVertexOut lambert_lighting_vertex(VRORendererAttributes attributes [[ stage_in ]],
+                                                            constant VROViewUniforms &view [[ buffer(1) ]],
+                                                            constant VROLambertLightingUniforms &lighting [[ buffer(2) ]]) {
+    VROLambertLightingVertexOut out;
+    
+    float4 in_position = float4(attributes.position, 1.0);
+    out.position = view.modelview_projection_matrix * in_position;
+    out.texcoord = attributes.texcoord;
+    
+    float4 eye_normal = normalize(view.normal_matrix * float4(attributes.normal, 0.0));
+    float n_dot_l = dot(eye_normal.rgb, normalize(light_position));
+    n_dot_l = fmax(0.0, n_dot_l);
+    
+    out.ambient_light = lighting.ambient_light;
+    out.color = lighting.ambient_color * lighting.ambient_light + lighting.diffuse_color * n_dot_l;
+    return out;
+}
+
+fragment float4 lambert_lighting_fragment_cc(VROConstantLightingVertexOut in [[ stage_in ]]) {
+    return in.color;
+}
+
+fragment float4 lambert_lighting_fragment_ct(VROConstantLightingVertexOut in [[ stage_in ]],
+                                             texture2d<float> texture [[ texture(0) ]]) {
+    return in.color + texture.sample(s, in.texcoord);
+}
+
+fragment float4 lambert_lighting_fragment_tt(VROLambertLightingVertexOut in [[ stage_in ]],
+                                             texture2d<float> ambient_texture [[ texture(0) ]],
+                                             texture2d<float> diffuse_texture [[ texture(1) ]]) {
+    return ambient_texture.sample(s, in.texcoord) * in.ambient_light + diffuse_texture.sample(s, in.texcoord);
+}
 
 /* ---------------------------------------
    DISTORTION SHADERS
