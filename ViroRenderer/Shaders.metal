@@ -12,10 +12,6 @@
 
 using namespace metal;
 
-// Variables in constant address space
-constant float3 light_position = float3(0.0, 1.0, -1.0);
-constant float4 ambient_color  = float4(0.18, 0.24, 0.8, 1.0);
-
 constexpr sampler s(coord::normalized,
                     address::repeat,
                     filter::linear);
@@ -36,7 +32,8 @@ typedef struct {
 vertex ColorInOut lighting_vertex(vertex_t vertex_array [[ stage_in ]],
                                   constant uniforms_t& uniforms [[ buffer(1) ]]) {
     ColorInOut out;
-    
+    float3 light_position = float3(0.0, 1.0, -1.0);
+
     float4 in_position = float4(vertex_array.position, 1.0);
     out.position = uniforms.modelview_projection_matrix * in_position;
     out.uv = vertex_array.uv;
@@ -85,8 +82,8 @@ vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttribut
     float4 in_position = float4(attributes.position, 1.0);
     out.position = view.modelview_projection_matrix * in_position;
     out.texcoord = attributes.texcoord;
-    out.ambient_light = lighting.ambient_light;
-    out.color = lighting.ambient_color * lighting.ambient_light + lighting.diffuse_color;
+    out.ambient_light = lighting.ambient_light_color;
+    out.color = lighting.ambient_surface_color * lighting.ambient_light_color + lighting.diffuse_surface_color;
     
     return out;
 }
@@ -122,7 +119,9 @@ typedef struct {
     float4 position [[ position ]];
     float4 color;
     float2 texcoord;
-    float4 ambient_light;
+    float4 ambient_light_color;
+    float4 diffuse_light_color;
+    float  n_dot_l;
 } VROLambertLightingVertexOut;
 
 vertex VROLambertLightingVertexOut lambert_lighting_vertex(VRORendererAttributes attributes [[ stage_in ]],
@@ -134,28 +133,39 @@ vertex VROLambertLightingVertexOut lambert_lighting_vertex(VRORendererAttributes
     out.position = view.modelview_projection_matrix * in_position;
     out.texcoord = attributes.texcoord;
     
-    float4 eye_normal = normalize(view.normal_matrix * float4(attributes.normal, 0.0));
-    float n_dot_l = dot(eye_normal.rgb, normalize(light_position));
+    float4 transformed_normal = normalize(view.normal_matrix * float4(attributes.normal, 0.0));
+    float n_dot_l = dot(-transformed_normal.rgb, normalize(lighting.diffuse_light_direction));
     n_dot_l = fmax(0.0, n_dot_l);
     
-    out.ambient_light = lighting.ambient_light;
-    out.color = lighting.ambient_color * lighting.ambient_light + lighting.diffuse_color * n_dot_l;
+    out.ambient_light_color = lighting.ambient_light_color;
+    out.diffuse_light_color = lighting.diffuse_light_color;
+    out.n_dot_l = n_dot_l;
+    
+    float4 intensity = float4(n_dot_l, n_dot_l, n_dot_l, 1.0);
+    out.color = lighting.ambient_surface_color * lighting.ambient_light_color +
+                lighting.diffuse_surface_color * lighting.diffuse_light_color * intensity;
     return out;
 }
 
-fragment float4 lambert_lighting_fragment_cc(VROConstantLightingVertexOut in [[ stage_in ]]) {
+fragment float4 lambert_lighting_fragment_cc(VROLambertLightingVertexOut in [[ stage_in ]]) {
     return in.color;
 }
 
-fragment float4 lambert_lighting_fragment_ct(VROConstantLightingVertexOut in [[ stage_in ]],
+fragment float4 lambert_lighting_fragment_ct(VROLambertLightingVertexOut in [[ stage_in ]],
                                              texture2d<float> texture [[ texture(0) ]]) {
-    return in.color + texture.sample(s, in.texcoord);
+    
+    float4 intensity = float4(in.n_dot_l, in.n_dot_l, in.n_dot_l, 1.0);
+    return in.color + texture.sample(s, in.texcoord) * in.diffuse_light_color * intensity;
 }
 
 fragment float4 lambert_lighting_fragment_tt(VROLambertLightingVertexOut in [[ stage_in ]],
                                              texture2d<float> ambient_texture [[ texture(0) ]],
                                              texture2d<float> diffuse_texture [[ texture(1) ]]) {
-    return ambient_texture.sample(s, in.texcoord) * in.ambient_light + diffuse_texture.sample(s, in.texcoord);
+    
+    float4 intensity = float4(in.n_dot_l, in.n_dot_l, in.n_dot_l, 1.0);
+
+    return ambient_texture.sample(s, in.texcoord) * in.ambient_light_color +
+           diffuse_texture.sample(s, in.texcoord) * in.diffuse_light_color * intensity;
 }
 
 /* ---------------------------------------

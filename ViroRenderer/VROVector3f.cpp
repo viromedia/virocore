@@ -33,13 +33,6 @@ VROVector3f::VROVector3f(const VROVector3f &vector) :
     z(vector.z) {
 }
 
-VROVector3f::VROVector3f(const VROVector3d &vector) :
-    x((float) vector.x),
-    y((float) vector.y),
-    z((float) vector.z) {
-
-}
-
 VROVector3f::~VROVector3f() {
 
 }

@@ -316,9 +316,11 @@ void VROGeometrySubstrateMetal::render(const VRORenderContext &context,
             /*
              Configure the view uniforms.
              */
+            VROMatrix4f modelview = metal.getViewMatrix().multiply(transform);
+            
             VROViewUniforms *viewUniforms = (VROViewUniforms *)[_viewUniformsBuffer contents];
             viewUniforms->normal_matrix = toMatrixFloat4x4(transform.transpose().invert());
-            viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(metal.getProjectionMatrix().multiply(transform));
+            viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(metal.getProjectionMatrix().multiply(modelview));
             
             id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
             [renderEncoder pushDebugGroup:@"VROGeometry"];

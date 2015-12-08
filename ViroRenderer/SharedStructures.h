@@ -23,9 +23,9 @@ typedef struct {
 } VROViewUniforms;
 
 typedef struct {
-    vector_float4   ambient_light;
-    vector_float4   ambient_color;
-    vector_float4   diffuse_color;
+    vector_float4   ambient_surface_color;
+    vector_float4   ambient_light_color;
+    vector_float4   diffuse_surface_color;
 } VROConstantLightingUniforms;
 
 typedef struct {    
@@ -47,9 +47,12 @@ typedef struct {
 } VROPhongLightingUniforms;
 
 typedef struct {
-    vector_float4   ambient_light;
-    vector_float4   ambient_color;
-    vector_float4   diffuse_color;
+    vector_float4   ambient_surface_color;
+    vector_float4   ambient_light_color;
+    
+    vector_float4   diffuse_surface_color;
+    vector_float4   diffuse_light_color;
+    vector_float3   diffuse_light_direction;
 } VROLambertLightingUniforms;
 
 typedef struct {

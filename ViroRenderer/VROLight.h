@@ -10,6 +10,7 @@
 #define VROLight_h
 
 #include <string>
+#include "VROVector3f.h"
 #include "VROVector4f.h"
 #include "VROSize.h"
 
@@ -36,6 +37,7 @@ public:
         _attenuationStartDistance(0.0),
         _attenuationEndDistance(0.0),
         _attenuationFalloffExponent(2.0),
+        _direction( { 0, 0, -1.0} ),
         _spotInnerAngle(0),
         _spotOuterAngle(45)
     {}
@@ -59,6 +61,14 @@ public:
     }
     std::string getName() const {
         return _name;
+    }
+    
+    void setDirection(VROVector3f direction) {
+        _direction = direction;
+        _direction.normalize();
+    }
+    VROVector3f getDirection() const {
+        return _direction;
     }
     
     void setAttenuationStartDistance(float attenuationStartDistance) {
@@ -99,6 +109,11 @@ private:
     float _attenuationStartDistance;
     float _attenuationEndDistance;
     float _attenuationFalloffExponent;
+    
+    /*
+     Diffuse parameters.
+     */
+    VROVector3f _direction;
     
     /*
      Spotlight parameters.

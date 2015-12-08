@@ -7,8 +7,13 @@
 //
 
 #include "VROMetalUtils.h"
+#include "VROVector3f.h"
 #include "VROVector4f.h"
 #include "VROMatrix4f.h"
+
+vector_float3 toVectorFloat3(VROVector3f v) {
+    return { v.x, v.y, v.z };
+}
 
 vector_float4 toVectorFloat4(VROVector4f v) {
     return { v.x, v.y, v.z, v.w };

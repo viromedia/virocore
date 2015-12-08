@@ -17,7 +17,8 @@ void VROScene::render(const VRORenderContext &renderContext) {
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)renderContext;
     
     std::stack<VROMatrix4f> mvStack;
-    mvStack.push(metal.getViewMatrix());
+    VROMatrix4f identity;
+    mvStack.push(identity);
     
     std::vector<std::shared_ptr<VROLight>> lights;
     

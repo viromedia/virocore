@@ -77,8 +77,9 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
     
     _scene->addNode(_rootNode);
     
-    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Ambient);
+    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Directional);
     light->setColor({ 1.0, 1.0, 1.0, 1.0 });
+    light->setDirection( { 0, 0, 1.0 });
     
     _rootNode->setLight(light);
     
@@ -136,7 +137,7 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
 - (void)renderEye:(VROEyeType)eye context:(VRORenderContext *)renderContext {
     VROMatrix4f translation;
     translation.rotateY(angle);
-    translation.translate(0, 0, 5);
+    translation.translate(0, 0, 0);
     
     angle += .01;
     

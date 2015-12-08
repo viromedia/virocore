@@ -13,9 +13,11 @@
 #import <MetalKit/MetalKit.h>
 #import <simd/simd.h>
 
+class VROVector3f;
 class VROVector4f;
 class VROMatrix4f;
 
+vector_float3 toVectorFloat3(VROVector3f v);
 vector_float4 toVectorFloat4(VROVector4f v);
 matrix_float4x4 toMatrixFloat4x4(VROMatrix4f m);
 

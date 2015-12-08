@@ -25,7 +25,6 @@ public:
     VROVector3f(float x, float y);
     VROVector3f(float x, float y, float z);
     VROVector3f(const VROVector3f &vector);
-    VROVector3f(const VROVector3d &vector);
     virtual ~VROVector3f();
     
     VROVector3f &operator*=(const float multiplier) {

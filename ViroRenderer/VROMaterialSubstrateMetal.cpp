@@ -62,10 +62,10 @@ void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,
     VROMaterialVisual &diffuse = material.getDiffuse();
 
     if (ambient.getContentsType() == VROContentsType::Fixed) {
-        uniforms->ambient_color = toVectorFloat4(ambient.getContentsColor());
+        uniforms->ambient_surface_color = toVectorFloat4(ambient.getContentsColor());
 
         if (diffuse.getContentsType() == VROContentsType::Fixed) {
-            uniforms->diffuse_color = toVectorFloat4(diffuse.getContentsColor());
+            uniforms->diffuse_surface_color = toVectorFloat4(diffuse.getContentsColor());
             _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_cc"];
         }
         else {
@@ -77,7 +77,7 @@ void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,
         _textures.push_back(((VROTextureSubstrateMetal *)ambient.getContentsTexture()->getSubstrate(context))->getTexture());
 
         if (diffuse.getContentsType() == VROContentsType::Fixed) {
-            uniforms->diffuse_color = toVectorFloat4(diffuse.getContentsColor());
+            uniforms->diffuse_surface_color = toVectorFloat4(diffuse.getContentsColor());
             _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_ct"];
         }
         else {
@@ -136,10 +136,10 @@ void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
     VROMaterialVisual &diffuse = material.getDiffuse();
     
     if (ambient.getContentsType() == VROContentsType::Fixed) {
-        uniforms->ambient_color = toVectorFloat4(ambient.getContentsColor());
+        uniforms->ambient_surface_color = toVectorFloat4(ambient.getContentsColor());
         
         if (diffuse.getContentsType() == VROContentsType::Fixed) {
-            uniforms->diffuse_color = toVectorFloat4(diffuse.getContentsColor());
+            uniforms->diffuse_surface_color = toVectorFloat4(diffuse.getContentsColor());
             _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_cc"];
         }
         else {
@@ -151,7 +151,7 @@ void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
         _textures.push_back(((VROTextureSubstrateMetal *)ambient.getContentsTexture()->getSubstrate(context))->getTexture());
         
         if (diffuse.getContentsType() == VROContentsType::Fixed) {
-            uniforms->diffuse_color = toVectorFloat4(diffuse.getContentsColor());
+            uniforms->diffuse_surface_color = toVectorFloat4(diffuse.getContentsColor());
             _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_ct"];
         }
         else {
@@ -189,19 +189,19 @@ void VROMaterialSubstrateMetal::bindConstantLighting(const std::shared_ptr<VROLi
     
     switch (light->getType()) {
         case VROLightType::Ambient:
-            uniforms->ambient_light = toVectorFloat4(light->getColor());
+            uniforms->ambient_light_color = toVectorFloat4(light->getColor());
             break;
             
         case VROLightType::Directional:
-            
+            // Constant lighting model does not factor in diffuse lights
             break;
             
         case VROLightType::Omni:
-            
+            // Constant lighting model does not factor in omni light
             break;
             
         case VROLightType::Spot:
-            
+            // Constant lighting model does not factor in spot lights
             break;
             
         default:
@@ -264,11 +264,12 @@ void VROMaterialSubstrateMetal::bindLambertLighting(const std::shared_ptr<VROLig
 
     switch (light->getType()) {
         case VROLightType::Ambient:
-            uniforms->ambient_light = toVectorFloat4(light->getColor());
+            uniforms->ambient_light_color = toVectorFloat4(light->getColor());
             break;
             
         case VROLightType::Directional:
-            
+            uniforms->diffuse_light_color = toVectorFloat4(light->getColor());
+            uniforms->diffuse_light_direction = toVectorFloat3(light->getDirection());
             break;
             
         case VROLightType::Omni:
