@@ -275,7 +275,7 @@
          5. Translate the camera by the interlens distance in each direction to get the two eyes.
          */
         
-        VROMatrix4f camera = matrix_float4x4_from_GL(GLKMatrix4MakeLookAt(0, 0, -5.0,
+        VROMatrix4f camera = matrix_float4x4_from_GL(GLKMatrix4MakeLookAt(0, 0, 0,
                                                                           0, 0, 1.0,
                                                                           0, 1.0, 0));
         VROMatrix4f cameraFlipped = yFlip.multiply(camera);

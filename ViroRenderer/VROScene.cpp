@@ -13,9 +13,7 @@
 #include "VRONode.h"
 #include <stack>
 
-void VROScene::render(const VRORenderContext &renderContext) {
-    const VRORenderContextMetal &metal = (VRORenderContextMetal &)renderContext;
-    
+void VROScene::render(const VRORenderContext &renderContext) {    
     std::stack<VROMatrix4f> mvStack;
     VROMatrix4f identity;
     mvStack.push(identity);
