@@ -137,20 +137,10 @@ power2_ceil(const uint32_t v) {
     return  (v < 2) ? v + 1 : 1 << (sizeof(uint32_t) * 8 - __builtin_clz(v - 1));
 }
 
-float VROMathReciprocal(float value) {
-    return 1.0f / value;
-}
+float VROMathReciprocal(float value);
+float VROMathReciprocalSquareRoot(float value);
 
-float VROMathReciprocalSquareRoot(float value) {
-    return 1.0f / sqrt(value);
-}
-
-bool VROMathIsZero(const float a, const float tolerance = kRoundingErrorFloat) {
-    return fabs(a) <= tolerance;
-}
-
-bool VROMathEquals(const float a, const float b, const float tolerance = kRoundingErrorFloat) {
-    return (a + tolerance >= b) && (a - tolerance <= b);
-}
+bool VROMathIsZero(const float a, const float tolerance = kRoundingErrorFloat);
+bool VROMathEquals(const float a, const float b, const float tolerance = kRoundingErrorFloat);
 
 #endif /* VROMath_h */

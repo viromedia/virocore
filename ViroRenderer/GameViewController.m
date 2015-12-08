@@ -69,11 +69,7 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
     
     _rootNode = std::make_shared<VRONode>(*context);
     _rootNode->setGeometry(box);
-    
-    VROMatrix4f translation;
-    translation.translate(0, 0, 5);
-    
-    _rootNode->setTransform(translation);
+    _rootNode->setPosition({0, 0, 5});
     
     _scene->addNode(_rootNode);
     
@@ -135,13 +131,8 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
 }
 
 - (void)renderEye:(VROEyeType)eye context:(VRORenderContext *)renderContext {
-    VROMatrix4f translation;
-    translation.rotateY(angle);
-    translation.translate(0, 0, 0);
-    
     angle += .01;
-    
-    _rootNode->setTransform(translation);
+    _rootNode->setRotation({ 0, angle, 0});
     
     _scene->render(*renderContext);
 }

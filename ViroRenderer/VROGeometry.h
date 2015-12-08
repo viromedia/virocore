@@ -56,13 +56,14 @@ public:
     }
     
     void render(const VRORenderContext &context,
+                const VROMatrix4f &rotation,
                 const VROMatrix4f &transform,
                 const std::vector<std::shared_ptr<VROLight>> &lights) {
         
         if (!_substrate) {
             _substrate = context.newGeometrySubstrate(*this);
         }
-        _substrate->render(context, transform, lights);
+        _substrate->render(context, rotation, transform, lights);
     }
     
     std::vector<std::shared_ptr<VROMaterial>> &getMaterials() {

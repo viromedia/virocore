@@ -13,15 +13,18 @@
 #include "VRONode.h"
 #include <stack>
 
-void VROScene::render(const VRORenderContext &renderContext) {    
-    std::stack<VROMatrix4f> mvStack;
+void VROScene::render(const VRORenderContext &renderContext) {
     VROMatrix4f identity;
+
+    std::stack<VROMatrix4f> rotationStack;
+    rotationStack.push(identity);
+    std::stack<VROMatrix4f> mvStack;
     mvStack.push(identity);
     
     std::vector<std::shared_ptr<VROLight>> lights;
     
     for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->render(renderContext, mvStack, lights);
+        node->render(renderContext, rotationStack, mvStack, lights);
     }
 }
 

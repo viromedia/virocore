@@ -297,6 +297,7 @@ MTLDepthStencilDescriptor *VROGeometrySubstrateMetal::parseDepthStencil(const st
 
 
 void VROGeometrySubstrateMetal::render(const VRORenderContext &context,
+                                       const VROMatrix4f &rotation,
                                        const VROMatrix4f &transform,
                                        const std::vector<std::shared_ptr<VROLight>> &lights) {
     
@@ -319,7 +320,7 @@ void VROGeometrySubstrateMetal::render(const VRORenderContext &context,
             VROMatrix4f modelview = metal.getViewMatrix().multiply(transform);
             
             VROViewUniforms *viewUniforms = (VROViewUniforms *)[_viewUniformsBuffer contents];
-            viewUniforms->normal_matrix = toMatrixFloat4x4(transform.transpose().invert());
+            viewUniforms->normal_matrix = toMatrixFloat4x4(rotation.transpose().invert());
             viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(metal.getProjectionMatrix().multiply(modelview));
             
             id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();

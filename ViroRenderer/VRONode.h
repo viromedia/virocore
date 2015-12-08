@@ -35,6 +35,7 @@ public:
     virtual ~VRONode();
     
     void render(const VRORenderContext  &context,
+                std::stack<VROMatrix4f> &rotations,
                 std::stack<VROMatrix4f> &xforms,
                 std::vector<std::shared_ptr<VROLight>> &lights);
     
@@ -45,11 +46,16 @@ public:
         return _geometry;
     }
     
-    VROMatrix4f getTransform() const {
-        return _transform;
+    VROMatrix4f getTransform() const;
+    
+    void setRotation(VROQuaternion rotation) {
+        _rotation = rotation;
     }
-    void setTransform(VROMatrix4f transform) {
-        _transform = transform;
+    void setPosition(VROVector3f position) {
+        _position = position;
+    }
+    void setScale(VROVector3f scale) {
+        _scale = scale;
     }
     
     void setLight(std::shared_ptr<VROLight> light) {
@@ -72,8 +78,8 @@ private:
     std::shared_ptr<VROGeometry> _geometry;
     std::shared_ptr<VROLight> _light;
     
+    VROVector3f _scale;
     VROVector3f _position;
-    VROMatrix4f _transform;
     VROQuaternion _rotation;
     
     /*

@@ -895,6 +895,30 @@ void VROMathFastSinCos2x(const float *angles, float *r) {
     VROMathFastSinCos(angles[1], r + 2);
 }
 
+float VROMathReciprocal(float value) {
+    return 1.0f / value;
+}
+
+float VROMathReciprocalSquareRoot(float value) {
+    return 1.0f / sqrt(value);
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+//
+//  Miscellaneous
+//
+/////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark Miscellaneous
+
+bool VROMathIsZero(const float a, const float tolerance) {
+    return fabs(a) <= tolerance;
+}
+
+bool VROMathEquals(const float a, const float b, const float tolerance) {
+    return (a + tolerance >= b) && (a - tolerance <= b);
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 //
 //  Geometry
