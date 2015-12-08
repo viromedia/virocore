@@ -57,7 +57,9 @@ public:
                               const VRORenderContextMetal &context);
     virtual ~VROGeometrySubstrateMetal();
     
-    void render(const VRORenderContext &context, const VROMatrix4f &transform);
+    void render(const VRORenderContext &context,
+                const VROMatrix4f &transform,
+                const std::vector<std::shared_ptr<VROLight>> &lights);
     
 private:
     
@@ -68,6 +70,12 @@ private:
     
     std::vector<id <MTLRenderPipelineState>> _elementPipelineStates;
     std::vector<id <MTLDepthStencilState>> _elementDepthStates;
+    
+    /*
+     Uniforms for the view and lighting.
+     */
+    id <MTLBuffer> _viewUniformsBuffer;
+    id <MTLBuffer> _lightingUniformsBuffer;
     
     /*
      Parse the given geometry elements and populate the _elements vector with the

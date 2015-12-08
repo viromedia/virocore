@@ -11,16 +11,15 @@
 #include "VROMetalUtils.h"
 #include "VRORenderContextMetal.h"
 #include "VROMatrix4f.h"
+#include "VROLight.h"
 
 VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
                                                      const VRORenderContextMetal &context) {
     
+    _lightingModel = material.getLightingModel();
 
     id <MTLDevice> device = context.getDevice();
     id <MTLLibrary> library = context.getLibrary();
-    
-    _viewUniformsBuffer = [device newBufferWithLength:sizeof(VROViewUniforms) options:0];
-    _viewUniformsBuffer.label = @"VROViewUniformBuffer";
     
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
@@ -134,4 +133,127 @@ void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
     
     VROLambertLightingUniforms *uniforms = (VROLambertLightingUniforms *)[_lightingUniformsBuffer contents];
     //TODO
+}
+
+void VROMaterialSubstrateMetal::setLightingUniforms(const std::shared_ptr<VROLight> &light) {
+    switch (_lightingModel) {
+        case VROLightingModel::Constant:
+            bindConstantLighting(light);
+            break;
+            
+        case VROLightingModel::Blinn:
+            bindBlinnLighting(light);
+            break;
+            
+        case VROLightingModel::Lambert:
+            bindLambertLighting(light);
+            break;
+            
+        case VROLightingModel::Phong:
+            bindPhongLighting(light);
+            break;
+            
+        default:
+            break;
+    }
+}
+
+void VROMaterialSubstrateMetal::bindConstantLighting(const std::shared_ptr<VROLight> &light) {
+    VROConstantLightingUniforms *uniforms = (VROConstantLightingUniforms *)[_lightingUniformsBuffer contents];
+    
+    switch (light->getType()) {
+        case VROLightType::Ambient:
+            uniforms->ambient_light = toVectorFloat4(light->getColor());
+            break;
+            
+        case VROLightType::Directional:
+            
+            break;
+            
+        case VROLightType::Omni:
+            
+            break;
+            
+        case VROLightType::Spot:
+            
+            break;
+            
+        default:
+            break;
+    }
+}
+
+void VROMaterialSubstrateMetal::bindBlinnLighting(const std::shared_ptr<VROLight> &light) {
+    VROBlinnLightingUniforms *uniforms = (VROBlinnLightingUniforms *)[_lightingUniformsBuffer contents];
+
+    switch (light->getType()) {
+        case VROLightType::Ambient:
+
+            break;
+            
+        case VROLightType::Directional:
+            
+            break;
+            
+        case VROLightType::Omni:
+            
+            break;
+            
+        case VROLightType::Spot:
+            
+            break;
+            
+        default:
+            break;
+    }
+}
+
+void VROMaterialSubstrateMetal::bindPhongLighting(const std::shared_ptr<VROLight> &light) {
+    VROPhongLightingUniforms *uniforms = (VROPhongLightingUniforms *)[_lightingUniformsBuffer contents];
+
+    switch (light->getType()) {
+        case VROLightType::Ambient:
+
+            break;
+            
+        case VROLightType::Directional:
+            
+            break;
+            
+        case VROLightType::Omni:
+            
+            break;
+            
+        case VROLightType::Spot:
+            
+            break;
+            
+        default:
+            break;
+    }
+}
+
+void VROMaterialSubstrateMetal::bindLambertLighting(const std::shared_ptr<VROLight> &light) {
+    VROLambertLightingUniforms *uniforms = (VROLambertLightingUniforms *)[_lightingUniformsBuffer contents];
+
+    switch (light->getType()) {
+        case VROLightType::Ambient:
+
+            break;
+            
+        case VROLightType::Directional:
+            
+            break;
+            
+        case VROLightType::Omni:
+            
+            break;
+            
+        case VROLightType::Spot:
+            
+            break;
+            
+        default:
+            break;
+    }
 }

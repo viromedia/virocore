@@ -16,6 +16,7 @@
 #include "VROGeometrySubstrate.h"
 #include "VRORenderContext.h"
 
+class VROLight;
 class VROMaterial;
 class VROGeometryElement;
 class VROGeometrySource;
@@ -54,15 +55,14 @@ public:
         delete (_substrate);
     }
     
-    void render(const VRORenderContext &context, const VROMatrix4f &transform) {
+    void render(const VRORenderContext &context,
+                const VROMatrix4f &transform,
+                const std::vector<std::shared_ptr<VROLight>> &lights) {
+        
         if (!_substrate) {
             _substrate = context.newGeometrySubstrate(*this);
         }
-        for (std::shared_ptr<VROMaterial> &material : _materials) {
-            
-        }
-        
-        _substrate->render(context, transform);
+        _substrate->render(context, transform, lights);
     }
     
     std::vector<std::shared_ptr<VROMaterial>> &getMaterials() {

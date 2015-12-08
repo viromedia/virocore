@@ -14,12 +14,10 @@
 #include <vector>
 #include "VROMatrix4f.h"
 #include "VROQuaternion.h"
-#include "VROGeometry.h"
 #include "VRORenderContext.h"
 
-//TODO Delete Metal dependency
-#include <Metal/Metal.h>
-#include <MetalKit/MetalKit.h>
+class VROGeometry;
+class VROLight;
 
 class VRONode {
     
@@ -36,7 +34,9 @@ public:
     VRONode();
     virtual ~VRONode();
     
-    void render(const VRORenderContext &context, std::stack<VROMatrix4f> xforms);
+    void render(const VRORenderContext  &context,
+                std::stack<VROMatrix4f> &xforms,
+                std::vector<std::shared_ptr<VROLight>> &lights);
     
     void setGeometry(std::shared_ptr<VROGeometry> geometry) {
         _geometry = geometry;
@@ -52,6 +52,13 @@ public:
         _transform = transform;
     }
     
+    void setLight(std::shared_ptr<VROLight> light) {
+        _light = light;
+    }
+    std::shared_ptr<VROLight> getLight() {
+        return _light;
+    }
+    
 protected:
     
     /*
@@ -63,6 +70,7 @@ protected:
 private:
     
     std::shared_ptr<VROGeometry> _geometry;
+    std::shared_ptr<VROLight> _light;
     
     VROVector3f _position;
     VROMatrix4f _transform;
@@ -74,21 +82,7 @@ private:
      to the model.
      */
     std::shared_ptr<VRONode> _presentationNode;
-    
-    void renderGeometry();
-    
-    // TODO delete Metal
-    id <MTLDevice> _device;
-    
-    id <MTLRenderPipelineState> _pipelineState;
-    id <MTLDepthStencilState> _depthState;
-    
-    id <MTLBuffer> _vertexBuffer;
-    id <MTLBuffer> _uniformsBuffer;
-    id <MTLTexture> _texture;
 
-    
-    
 };
 
 #endif /* VRONode_h */

@@ -10,7 +10,9 @@
 #define VROGeometrySubstrate_h
 
 #include <stdio.h>
+#include <vector>
 
+class VROLight;
 class VRORenderContext;
 class VROMatrix4f;
 
@@ -21,7 +23,11 @@ class VROGeometrySubstrate {
     
 public:
     
-    virtual void render(const VRORenderContext &context, const VROMatrix4f &transform) = 0;
+    virtual ~VROGeometrySubstrate() {}
+    
+    virtual void render(const VRORenderContext &context,
+                        const VROMatrix4f &transform,
+                        const std::vector<std::shared_ptr<VROLight>> &lights) = 0;
 
 };
 

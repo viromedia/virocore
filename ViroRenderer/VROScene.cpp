@@ -19,8 +19,10 @@ void VROScene::render(const VRORenderContext &renderContext) {
     std::stack<VROMatrix4f> mvStack;
     mvStack.push(metal.getViewMatrix());
     
+    std::vector<std::shared_ptr<VROLight>> lights;
+    
     for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->render(renderContext, mvStack);
+        node->render(renderContext, mvStack, lights);
     }
 }
 

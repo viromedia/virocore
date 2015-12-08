@@ -7,7 +7,3 @@
 //
 
 #include "VROGeometrySubstrate.h"
-
-void render(const VRORenderContext &context, const VROMatrix4f &transform) {
-    
-}

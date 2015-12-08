@@ -17,6 +17,7 @@
 #import "VROBox.h"
 #import "VRONode.h"
 #import "VROView.h"
+#import "VROLight.h"
 
 std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getCenterLayer() {
     return centerLayer;
@@ -65,6 +66,11 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
     node->setGeometry(box);
     
     _scene->addNode(node);
+    
+    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Ambient);
+    light->setColor({ 0.0, 0.0, 0.0, 0.0 });
+    
+    node->setLight(light);
     
     if (true) {
         return;
