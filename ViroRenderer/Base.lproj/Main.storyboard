@@ -23,7 +23,7 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
-                <customObject id="niC-Ja-Oxd" userLabel="Stereo Renderer" customClass="GameViewController"/>
+                <customObject id="niC-Ja-Oxd" userLabel="Stereo Renderer" customClass="SampleRenderer"/>
             </objects>
         </scene>
     </scenes>

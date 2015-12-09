@@ -6,19 +6,7 @@
 //  Copyright © 2015 Raj Advani. All rights reserved.
 //
 
-#import "GameViewController.h"
-#import "SharedStructures.h"
-#import "VROAnimation.h"
-#import "VRORenderContextMetal.h"
-#import "VROScene.h"
-#import "VROLayer.h"
-#import "VROMath.h"
-#import "VROImageUtil.h"
-#import "VROSurface.h"
-#import "VROBox.h"
-#import "VRONode.h"
-#import "VROView.h"
-#import "VROLight.h"
+#import "SampleRenderer.h"
 
 std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getCenterLayer() {
     return centerLayer;
@@ -40,7 +28,7 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
     return rightLayer;
 }
 
-@implementation GameViewController {
+@implementation SampleRenderer {
     MTKView *_view;
     std::shared_ptr<VROScene> _scene;
     std::shared_ptr<VROCrossLayout> _layout;

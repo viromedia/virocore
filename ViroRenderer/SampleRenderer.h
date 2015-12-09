@@ -9,10 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
-#import "VROViewController.h"
-#import "VROCrossLayout.h"
+#import <ViroKit/ViroKit.h>
 
-@interface GameViewController : NSObject <VROStereoRendererDelegate>
+@interface SampleRenderer : NSObject <VROStereoRendererDelegate>
 
 @end
 
