@@ -41,10 +41,10 @@ class VROQuaternion {
 		bool operator!=(const VROQuaternion &other) const;
 
 		//! Assignment operator
-		inline VROQuaternion& operator=(const VROQuaternion &other);
+		VROQuaternion& operator=(const VROQuaternion &other);
 
 		//! Matrix assignment operator
-		inline VROQuaternion& operator=(const VROMatrix4f& other);
+		VROQuaternion& operator=(const VROMatrix4f& other);
 
 		//! Add operator
 		VROQuaternion operator+(const VROQuaternion &other) const;

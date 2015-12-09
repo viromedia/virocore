@@ -29,7 +29,11 @@ public:
     VRORenderContextMetal(id <MTLDevice> device) {
         _device = device;
         _commandQueue = [device newCommandQueue];
-        _library = [device newDefaultLibrary];
+        
+        NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.viro.ViroKit"];
+        NSString *shaders = [bundle pathForResource:@"default" ofType:@"metallib"];
+        
+        _library = [device newLibraryWithFile:shaders error:nil];
     }
     
     void setRenderTarget(std::shared_ptr<VRORenderTarget> renderTarget) {
