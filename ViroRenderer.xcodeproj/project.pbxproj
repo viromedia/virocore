@@ -245,7 +245,7 @@
 		8F517BC61BCDA2BD0017C70B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8F517BC81BCDA2BD0017C70B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ViroRenderer/Assets.xcassets; sourceTree = "<group>"; };
 		8F517BCB1BCDA2BD0017C70B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		8F517BCD1BCDA2BD0017C70B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../ViroRenderer/Info.plist; sourceTree = "<group>"; };
+		8F517BCD1BCDA2BD0017C70B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ViroRenderer/Info.plist; sourceTree = "<group>"; };
 		8F517BD21BCDA2BD0017C70B /* ViroRendererTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViroRendererTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F517BD61BCDA2BE0017C70B /* ViroRendererTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViroRendererTests.m; sourceTree = "<group>"; };
 		8F517BD81BCDA2BE0017C70B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -629,7 +629,6 @@
 		8FD4DECE1C18ECD4003DC425 /* ViroKit */ = {
 			isa = PBXGroup;
 			children = (
-				8F517BCD1BCDA2BD0017C70B /* Info.plist */,
 				8F62482D1BDAACA4000755E5 /* VROViewController.h */,
 				8F62482E1BDAACA4000755E5 /* VROViewController.mm */,
 				8FD4DECF1C18ECD4003DC425 /* ViroKit.h */,
@@ -658,6 +657,7 @@
 				8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */,
 				8F517BBF1BCDA2BD0017C70B /* SampleRenderer.h */,
 				8F517BC01BCDA2BD0017C70B /* SampleRenderer.m */,
+				8F517BCD1BCDA2BD0017C70B /* Info.plist */,
 			);
 			name = ViroSample;
 			sourceTree = "<group>";
