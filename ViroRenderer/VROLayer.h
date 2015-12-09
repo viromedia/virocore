@@ -19,24 +19,16 @@
 #include "VROByteBuffer.h"
 #include "VROGeometry.h"
 #include "VROMatrix4f.h"
+#include "VRONode.h"
 
-class VROLayer : public std::enable_shared_from_this<VROLayer> {
+class VROLayer : public VRONode, public std::enable_shared_from_this<VROLayer> {
     
 public:
     
-    /*
-     Designated initializer for layers in the model tree.
-     */
     VROLayer(const VRORenderContext &context);
-    
-    /*
-     Designated initializer for layers in the presentation tree.
-     */
-    VROLayer(VROLayer *layer);
     virtual ~VROLayer();
     
-    virtual void render(const VRORenderContext &context, std::stack<VROMatrix4f> mvStack);
-    virtual void setContents(const void *data, size_t dataLength, size_t width, size_t height);
+    virtual void setContents(UIImage *image);
     
     virtual void setFrame(VRORect frame);
     virtual void setBounds(VRORect bounds);
@@ -56,7 +48,7 @@ public:
     void addSublayer(std::shared_ptr<VROLayer> layer);
     void removeFromSuperlayer();
     
-protected:
+private:
     
     /*
      Position and size of the layer in 3D space or in its parent layer's
@@ -75,19 +67,7 @@ protected:
     std::vector<std::shared_ptr<VROLayer>> _sublayers;
     std::shared_ptr<VROLayer> _superlayer;
     
-private:
-    
-    /*
-     The 'presentation' counterpart of this layer. The presentation layer
-     reflects what's actually on the screen during an animation, as opposed
-     to the model.
-     */
-    std::shared_ptr<VROLayer> _presentationLayer;
-    
-    /*
-     The geometry used by the renderer to draw this layer.
-     */
-    std::shared_ptr<VROGeometry> _geometry;
+    void onFrameUpdate();
     
 };
 

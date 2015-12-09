@@ -19,7 +19,8 @@ class VROTextureSubstrateMetal : public VROTextureSubstrate {
     
 public:
     
-    VROTextureSubstrateMetal(UIImage *image, const VRORenderContextMetal &context);
+    VROTextureSubstrateMetal(UIImage *image,
+                             const VRORenderContextMetal &context);
     virtual ~VROTextureSubstrateMetal();
     
     id <MTLTexture> getTexture() const {

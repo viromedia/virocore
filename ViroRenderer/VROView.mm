@@ -39,12 +39,7 @@
     [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:YES];
     
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    
-    size_t dataLength;
-    void *data = VROExtractRGBA8888FromImage(image, &dataLength);
-    _layer->setContents(data, dataLength,
-                        image.size.width * scale,
-                        image.size.height * scale);
+    _layer->setContents(image);
     
     UIGraphicsEndImageContext();
 }

@@ -32,6 +32,8 @@ private:
     UIImage *_image;
     VROTextureSubstrate *_substrate;
     
+    float scale;
+    
     void hydrate(const VRORenderContext &context);
     
 };

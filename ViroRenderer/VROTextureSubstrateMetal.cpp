@@ -13,8 +13,8 @@
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(UIImage *image,
                                                    const VRORenderContextMetal &context) {
     
-    int width = image.size.width;
-    int height = image.size.height;
+    int width = image.size.width * image.scale;
+    int height = image.size.height * image.scale;
     
     size_t dataLength;
     void *data = VROExtractRGBA8888FromImage(image, &dataLength);

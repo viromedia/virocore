@@ -7,42 +7,36 @@
 //
 
 #include "VROLayer.h"
-#include "VROPresentationLayer.h"
 #include "VROMath.h"
+#include "VROSurface.h"
+#include "VROTexture.h"
+#include "VROMaterial.h"
 
 #pragma mark - Initialization
 
-VROLayer::VROLayer(const VRORenderContext &context) {
-    _presentationLayer = std::make_shared<VROPresentationLayer>(this, context);
+VROLayer::VROLayer(const VRORenderContext &context) :
+    VRONode(context) {
     setBackgroundColor({ 1.0, 1.0, 1.0, 1.0 });
-}
-
-VROLayer::VROLayer(VROLayer *layer) {
-    // Initializer for layers in the presentation tree
+    
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(1.0, 1.0);
+    setGeometry(surface);
 }
 
 VROLayer::~VROLayer() {
 
 }
 
-#pragma mark - Rendering
-
-void VROLayer::render(const VRORenderContext &context, std::stack<VROMatrix4f> mvStack) {
-    _presentationLayer->render(context, mvStack);
-}
-
 #pragma mark - Layer Properties
 
-void VROLayer::setContents(const void *data, size_t dataLength, size_t width, size_t height) {
-    _presentationLayer->setContents(data, dataLength, width, height);
+void VROLayer::setContents(UIImage *image) {
+    const std::shared_ptr<VROGeometry> &geometry = getGeometry();
+    const std::vector<std::shared_ptr<VROMaterial>> &materials = geometry->getMaterials_const();
+    
+    materials.front()->getDiffuse().setContents(std::make_shared<VROTexture>(image));
 }
 
 void VROLayer::setBackgroundColor(vector_float4 backgroundColor) {
     _backgroundColor = backgroundColor;
-    
-    if (_presentationLayer) {
-        _presentationLayer->setBackgroundColor(backgroundColor);
-    }
 }
 
 vector_float4 VROLayer::getBackgroundColor() const {
@@ -53,18 +47,12 @@ vector_float4 VROLayer::getBackgroundColor() const {
 
 void VROLayer::setFrame(VRORect frame) {
     _frame = frame;
-    
-    if (_presentationLayer) {
-        _presentationLayer->setFrame(frame);
-    }
+    onFrameUpdate();
 }
 
 void VROLayer::setBounds(VRORect bounds) {
     _frame.size = bounds.size;
-    
-    if (_presentationLayer) {
-        _presentationLayer->setBounds(bounds);
-    }
+    onFrameUpdate();
 }
 
 void VROLayer::setPosition(VROPoint point) {
@@ -72,9 +60,14 @@ void VROLayer::setPosition(VROPoint point) {
     _frame.origin.y = point.y - _frame.size.height / 2.0f;
     _frame.origin.z = point.z;
     
-    if (_presentationLayer) {
-        _presentationLayer->setPosition(point);
-    }
+    onFrameUpdate();
+}
+
+void VROLayer::onFrameUpdate() {
+    VROPoint pt = getPosition();
+    
+    VRONode::setPosition({ pt.x, pt.y, pt.z });
+    VRONode::setScale( { _frame.size.width, _frame.size.height, 1.0 });
 }
 
 VRORect VROLayer::getFrame() const {
@@ -96,10 +89,6 @@ VROPoint VROLayer::getPosition() const {
 void VROLayer::addSublayer(std::shared_ptr<VROLayer> layer) {
     _sublayers.push_back(layer);
     layer->_superlayer = shared_from_this();
-    
-    if (_presentationLayer) {
-        _presentationLayer->addSublayer(layer->_presentationLayer);
-    }
 }
 
 void VROLayer::removeFromSuperlayer() {
@@ -110,9 +99,5 @@ void VROLayer::removeFromSuperlayer() {
                                              return layer.get() == this;
                                          }), parentSublayers.end());
     _superlayer.reset();
-    
-    if (_presentationLayer) {
-        _presentationLayer->removeFromSuperlayer();
-    }
 }
 

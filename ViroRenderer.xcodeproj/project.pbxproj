@@ -56,9 +56,6 @@
 		8F517C471BD0474E0017C70B /* VROMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F517C451BD0474E0017C70B /* VROMath.cpp */; };
 		8F5C413B1BD05AD1006D7A77 /* VRORect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C413A1BD05AD1006D7A77 /* VRORect.cpp */; };
 		8F5C413E1BD56F98006D7A77 /* VROScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C413C1BD56F98006D7A77 /* VROScene.cpp */; };
-		8F5C41411BD72707006D7A77 /* VROLayerSubstrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C413F1BD72707006D7A77 /* VROLayerSubstrate.cpp */; };
-		8F5C41441BD7277F006D7A77 /* VROLayerSubstrateMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C41421BD7277F006D7A77 /* VROLayerSubstrateMetal.cpp */; };
-		8F5C41471BD800F8006D7A77 /* VROPresentationLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C41451BD800F8006D7A77 /* VROPresentationLayer.cpp */; };
 		8F5C414E1BD825B1006D7A77 /* VROByteBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C414C1BD825B1006D7A77 /* VROByteBuffer.cpp */; };
 		8F5C41511BD8262D006D7A77 /* VROLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C414F1BD8262D006D7A77 /* VROLog.cpp */; };
 		8F5C41551BD82C1B006D7A77 /* boba.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5C41541BD82C1B006D7A77 /* boba.png */; };
@@ -198,12 +195,6 @@
 		8F5C413A1BD05AD1006D7A77 /* VRORect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VRORect.cpp; sourceTree = "<group>"; };
 		8F5C413C1BD56F98006D7A77 /* VROScene.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROScene.cpp; sourceTree = "<group>"; };
 		8F5C413D1BD56F98006D7A77 /* VROScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROScene.h; sourceTree = "<group>"; };
-		8F5C413F1BD72707006D7A77 /* VROLayerSubstrate.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLayerSubstrate.cpp; sourceTree = "<group>"; };
-		8F5C41401BD72707006D7A77 /* VROLayerSubstrate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLayerSubstrate.h; sourceTree = "<group>"; };
-		8F5C41421BD7277F006D7A77 /* VROLayerSubstrateMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLayerSubstrateMetal.cpp; sourceTree = "<group>"; };
-		8F5C41431BD7277F006D7A77 /* VROLayerSubstrateMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLayerSubstrateMetal.h; sourceTree = "<group>"; };
-		8F5C41451BD800F8006D7A77 /* VROPresentationLayer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPresentationLayer.cpp; sourceTree = "<group>"; };
-		8F5C41461BD800F8006D7A77 /* VROPresentationLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPresentationLayer.h; sourceTree = "<group>"; };
 		8F5C414C1BD825B1006D7A77 /* VROByteBuffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROByteBuffer.cpp; sourceTree = "<group>"; };
 		8F5C414D1BD825B1006D7A77 /* VROByteBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROByteBuffer.h; sourceTree = "<group>"; };
 		8F5C414F1BD8262D006D7A77 /* VROLog.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLog.cpp; sourceTree = "<group>"; };
@@ -461,16 +452,10 @@
 			children = (
 				8F517BF11BCDBA8C0017C70B /* VROLayer.h */,
 				8F517BF01BCDBA8C0017C70B /* VROLayer.cpp */,
-				8F5C41461BD800F8006D7A77 /* VROPresentationLayer.h */,
-				8F5C41451BD800F8006D7A77 /* VROPresentationLayer.cpp */,
 				8F7A9EA91BD0517A006CFAFD /* VRORect.h */,
 				8F5C413A1BD05AD1006D7A77 /* VRORect.cpp */,
 				8F5C41371BD05286006D7A77 /* VROPoint.h */,
 				8F5C41391BD052BB006D7A77 /* VROSize.h */,
-				8F5C41401BD72707006D7A77 /* VROLayerSubstrate.h */,
-				8F5C413F1BD72707006D7A77 /* VROLayerSubstrate.cpp */,
-				8F5C41431BD7277F006D7A77 /* VROLayerSubstrateMetal.h */,
-				8F5C41421BD7277F006D7A77 /* VROLayerSubstrateMetal.cpp */,
 				8F6318691BD956AF000A75DF /* VROAnimation.h */,
 				8F6318681BD956AF000A75DF /* VROAnimation.cpp */,
 			);
@@ -711,7 +696,6 @@
 				8FDFA8A91BDEA7F800883EC0 /* Vector3d.mm in Sources */,
 				8F152A841C121A5600A211F8 /* VROTextureSubstrateMetal.cpp in Sources */,
 				8F5C414E1BD825B1006D7A77 /* VROByteBuffer.cpp in Sources */,
-				8F5C41471BD800F8006D7A77 /* VROPresentationLayer.cpp in Sources */,
 				8F4DCE2D1BF9261600061DD7 /* VRONode.cpp in Sources */,
 				8F5C413B1BD05AD1006D7A77 /* VRORect.cpp in Sources */,
 				8FEA6C9A1BE2BA7700C2CD0F /* VRODistortionMesh.cpp in Sources */,
@@ -747,7 +731,6 @@
 				8F4DCE241BF7ECC800061DD7 /* VROFrustumPlane.cpp in Sources */,
 				8F517BF21BCDBA8C0017C70B /* VROLayer.cpp in Sources */,
 				8FF4D7A91C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp in Sources */,
-				8F5C41411BD72707006D7A77 /* VROLayerSubstrate.cpp in Sources */,
 				8F5C41511BD8262D006D7A77 /* VROLog.cpp in Sources */,
 				8F517BBB1BCDA2BD0017C70B /* main.m in Sources */,
 				8F1071DB1BF67F34003B3C3F /* VROCamera.cpp in Sources */,
@@ -763,7 +746,6 @@
 				8F152A781C10D36700A211F8 /* VROSurface.cpp in Sources */,
 				8FD4DE9E1C16432B003DC425 /* VROLight.cpp in Sources */,
 				8FDFA8A61BDEA7F800883EC0 /* Matrix3x3d.mm in Sources */,
-				8F5C41441BD7277F006D7A77 /* VROLayerSubstrateMetal.cpp in Sources */,
 				8F517C471BD0474E0017C70B /* VROMath.cpp in Sources */,
 				8FDFA8961BDAEAB000883EC0 /* VRODistortionRenderer.cpp in Sources */,
 				8FD4DEA11C169D71003DC425 /* VROBox.cpp in Sources */,

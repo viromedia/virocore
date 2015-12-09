@@ -40,27 +40,16 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
     return rightLayer;
 }
 
-@implementation GameViewController
-{
-    // view
+@implementation GameViewController {
     MTKView *_view;
     std::shared_ptr<VROScene> _scene;
     std::shared_ptr<VROCrossLayout> _layout;
     
     std::shared_ptr<VRONode> _rootNode;
     float angle;
-    
 }
 
-- (void)setupRendererWithView:(MTKView *)view context:(VRORenderContext *)renderContext {
-    [self _loadAssetsWithContext:renderContext];
-}
-
-- (void)shutdownRendererWithView:(MTKView *)view {
-    
-}
-
-- (void)_loadAssetsWithContext:(VRORenderContext *)context {
+- (void)setupRendererWithView:(MTKView *)view context:(VRORenderContext *)context {
     _scene = std::make_shared<VROScene>();
     _layout = std::make_shared<VROCrossLayout>(_scene);
     
@@ -79,31 +68,17 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
     
     _rootNode->setLight(light);
     
-    if (true) {
-        return;
-    }
-    
-    size_t dataLength;
-    int width, height;
-    void *data = VROImageLoadTextureDataRGBA8888("momentslogo", &dataLength, &width, &height);
+    UIImage *moments = [UIImage imageNamed:@"momentslogo"];
     
     std::shared_ptr<VROLayer> center = std::make_shared<VROLayer>(*context);
-    center->setContents(data, dataLength, width, height);
+    center->setContents(moments);
+    center->setFrame(VRORectMake(-0.5, -1.5, 2, 1, 1));
+    center->setLight(light);
     
-    std::shared_ptr<VROLayer> top = std::make_shared<VROLayer>(*context);
-    top->setContents(data, dataLength, width, height);
-    
-    std::shared_ptr<VROLayer> bottom = std::make_shared<VROLayer>(*context);
-    bottom->setContents(data, dataLength, width, height);
-    
-    std::shared_ptr<VROLayer> left = std::make_shared<VROLayer>(*context);
-    left->setContents(data, dataLength, width, height);
-    
-    std::shared_ptr<VROLayer> right = std::make_shared<VROLayer>(*context);
-    right->setContents(data, dataLength, width, height);
-    
+    _scene->addNode(center);
+
     VROView *labelView = [[VROView alloc] initWithFrame:CGRectMake(0, 0, 100, 10) context:context];
-    labelView.vroLayer->setFrame(VRORectMake(0, 1.9, 2.0, 0.2));
+    labelView.vroLayer->setFrame(VRORectMake(-1, -2, 2, 2, 0.2));
     
     [labelView setBackgroundColor:[UIColor clearColor]];
     
@@ -112,18 +87,42 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
     [label setBackgroundColor:[UIColor clearColor]];
     [label setTextAlignment:NSTextAlignmentCenter];
     [label setTextColor:[UIColor whiteColor]];
-    [label setFont:[UIFont systemFontOfSize:14]];
+    [label setFont:[UIFont systemFontOfSize:12]];
     
     [labelView addSubview:label];
     [labelView update];
     
-    center->addSublayer(labelView.vroLayer);
+    labelView.vroLayer->setLight(light);
+    _scene->addNode(labelView.vroLayer);
     
-    std::shared_ptr<VROMomentsLayoutDelegate> delegate = std::make_shared<VROMomentsLayoutDelegate>(center, top, bottom, left, right);
-    _layout->setDelegate(delegate);
-    _layout->layout();
+    /*
+     Code for cross-layout.
+     
+     std::shared_ptr<VROLayer> center = std::make_shared<VROLayer>(*context);
+     center->setContents(data, dataLength, width, height);
+     
+     std::shared_ptr<VROLayer> top = std::make_shared<VROLayer>(*context);
+     top->setContents(data, dataLength, width, height);
+     
+     std::shared_ptr<VROLayer> bottom = std::make_shared<VROLayer>(*context);
+     bottom->setContents(data, dataLength, width, height);
+     
+     std::shared_ptr<VROLayer> left = std::make_shared<VROLayer>(*context);
+     left->setContents(data, dataLength, width, height);
+     
+     std::shared_ptr<VROLayer> right = std::make_shared<VROLayer>(*context);
+     right->setContents(data, dataLength, width, height);
+
+     center->addSublayer(labelView.vroLayer);
     
-    free (data);
+     std::shared_ptr<VROMomentsLayoutDelegate> delegate = std::make_shared<VROMomentsLayoutDelegate>(center, top, bottom, left, right);
+     _layout->setDelegate(delegate);
+     _layout->layout();
+     */
+}
+
+- (void)shutdownRendererWithView:(MTKView *)view {
+    
 }
 
 - (void)prepareNewFrameWithHeadViewMatrix:(matrix_float4x4)headViewMatrix {
