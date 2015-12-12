@@ -57,9 +57,6 @@ public:
     VROMaterialVisual &getDiffuse() {
         return _diffuse;
     }
-    VROMaterialVisual &getAmbient() {
-        return _ambient;
-    }
     VROMaterialVisual &getSpecular() {
         return _specular;
     }
@@ -134,7 +131,6 @@ private:
      The visual properties associated with the material.
      */
     VROMaterialVisual _diffuse;
-    VROMaterialVisual _ambient;
     VROMaterialVisual _specular;
     VROMaterialVisual _normal;
     VROMaterialVisual _reflective;

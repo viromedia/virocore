@@ -34,9 +34,9 @@ public:
     
     /*
      Set the uniforms required to render this given material under the
-     given light.
+     given lights.
      */
-    void setLightingUniforms(const std::shared_ptr<VROLight> &light);
+    void setLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights);
     
     id <MTLFunction> getVertexProgram() const {
         return _vertexProgram;
@@ -46,6 +46,9 @@ public:
     }
     id <MTLBuffer> getLightingUniformsBuffer() const {
         return _lightingUniformsBuffer;
+    }
+    id <MTLBuffer> getMaterialUniformsBuffer() const {
+        return _materialUniformsBuffer;
     }
     const std::vector<id <MTLTexture>> &getTextures() const {
         return _textures;
@@ -58,6 +61,7 @@ private:
     id <MTLFunction> _vertexProgram;
     id <MTLFunction> _fragmentProgram;
     
+    id <MTLBuffer> _materialUniformsBuffer;
     id <MTLBuffer> _lightingUniformsBuffer;
     
     std::vector<id <MTLTexture>> _textures;

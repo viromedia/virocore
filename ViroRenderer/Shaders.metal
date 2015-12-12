@@ -8,49 +8,13 @@
 
 #include <metal_stdlib>
 #include <simd/simd.h>
-#include "SharedStructures.h"
+#include "VROSharedStructures.h"
 
 using namespace metal;
 
 constexpr sampler s(coord::normalized,
                     address::repeat,
                     filter::linear);
-
-typedef struct {
-    float3 position [[ attribute(0) ]];
-    float2 uv [[ attribute(1) ]];
-    float3 normal [[ attribute(2) ]];
-} vertex_t;
-
-typedef struct {
-    float4 position [[ position ]];
-    float4 color;
-    float2 uv;
-} ColorInOut;
-
-// Vertex shader function
-vertex ColorInOut lighting_vertex(vertex_t vertex_array [[ stage_in ]],
-                                  constant uniforms_t& uniforms [[ buffer(1) ]]) {
-    ColorInOut out;
-    float3 light_position = float3(0.0, 1.0, -1.0);
-
-    float4 in_position = float4(vertex_array.position, 1.0);
-    out.position = uniforms.modelview_projection_matrix * in_position;
-    out.uv = vertex_array.uv;
-    
-    float4 eye_normal = normalize(uniforms.normal_matrix * float4(vertex_array.normal, 0.0));
-    float n_dot_l = dot(eye_normal.rgb, normalize(light_position));
-    n_dot_l = fmax(0.0, n_dot_l);
-    
-    out.color = uniforms.diffuse_color;
-    return out;
-}
-
-// Fragment shader function
-fragment float4 lighting_fragment(ColorInOut in [[ stage_in ]],
-                                  texture2d<float> diffuse_texture [[ texture(0) ]]) {
-    return in.color * diffuse_texture.sample(s, in.uv);
-}
 
 /* ---------------------------------------
    GEOMETRY ATTRIBUTES
@@ -64,6 +28,60 @@ typedef struct {
 } VRORendererAttributes;
 
 /* ---------------------------------------
+   LIGHT APPLICATION
+ --------------------------------------- */
+
+float3 VROApplyLight(constant VROLightUniforms &light,
+                     float3 surface_pos,
+                     float3 surface_normal,
+                     float4 material_color);
+
+float3 VROApplyLight(constant VROLightUniforms &light,
+                     float3 surface_pos,
+                     float3 surface_normal,
+                     float4 material_color) {
+    
+    float3 surface_to_light;
+    float attenuation = 1.0;
+    
+    // Directional light
+    if (light.position.w == 0.0) {
+        surface_to_light = normalize(light.position.xyz);
+        attenuation = 1.0;
+    }
+    
+    // Point light
+    else {
+        surface_to_light = normalize(light.position.xyz - surface_pos);
+        float distance_to_light = length(light.position.xyz - surface_pos);
+        attenuation = 1.0 / (1.0 + light.attenuation_falloff_exp * pow(distance_to_light, 2));
+        
+        // cone restrictions (affects attenuation)
+        //float lightToSurfaceAngle = degrees(acos(dot(-surfaceToLight, normalize(light.coneDirection))));
+        //if(lightToSurfaceAngle > light.coneAngle){
+        //    attenuation = 0.0;
+        //}
+    }
+    
+    // Diffuse
+    float diffuse_coeff = fmax(0.0, dot(-surface_normal, surface_to_light));
+    float3 diffuse = diffuse_coeff * material_color.rgb * light.color;
+    
+    // Specular
+    /*
+    float specularCoefficient = 0.0;
+    if(diffuseCoefficient > 0.0) {
+        specularCoefficient = pow(max(0.0, dot(surfaceToCamera, reflect(-surfaceToLight, normal))), materialShininess);
+    }
+    float3 specular = specularCoefficient * materialSpecularColor * light.intensities;
+     */
+    
+    //return ambient + attenuation * (diffuse + specular);
+    
+    return attenuation * diffuse;
+}
+
+/* ---------------------------------------
    CONSTANT LIGHTING MODEL
    --------------------------------------- */
 
@@ -71,36 +89,90 @@ typedef struct {
     float4 position [[ position ]];
     float4 color;
     float2 texcoord;
-    float4 ambient_light;
+    
+    float4 ambient_color;
+    float4 material_color;
 } VROConstantLightingVertexOut;
 
 vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttributes attributes [[ stage_in ]],
                                                              constant VROViewUniforms &view [[ buffer(1) ]],
-                                                             constant VROConstantLightingUniforms &lighting [[ buffer(2) ]]) {
+                                                             constant VROMaterialUniforms &material [[ buffer(2) ]],
+                                                             constant VROSceneLightingUniforms &lighting [[ buffer(3) ]]) {
     VROConstantLightingVertexOut out;
     
     float4 in_position = float4(attributes.position, 1.0);
     out.position = view.modelview_projection_matrix * in_position;
     out.texcoord = attributes.texcoord;
-    out.ambient_light = lighting.ambient_light_color;
-    out.color = lighting.ambient_surface_color * lighting.ambient_light_color + lighting.diffuse_surface_color;
+    out.ambient_color = float4(lighting.ambient_light_color, 1.0) * material.diffuse_surface_color;
+    out.material_color = material.diffuse_surface_color;
     
     return out;
 }
 
-fragment float4 constant_lighting_fragment_cc(VROConstantLightingVertexOut in [[ stage_in ]]) {
-    return in.color;
+fragment float4 constant_lighting_fragment_c(VROConstantLightingVertexOut in [[ stage_in ]]) {
+    return in.ambient_color;
 }
 
-fragment float4 constant_lighting_fragment_ct(VROConstantLightingVertexOut in [[ stage_in ]],
+fragment float4 constant_lighting_fragment_t(VROConstantLightingVertexOut in [[ stage_in ]],
                                               texture2d<float> texture [[ texture(0) ]]) {
-    return in.color + texture.sample(s, in.texcoord);
+    return in.ambient_color + float4(in.material_color) * texture.sample(s, in.texcoord);
 }
 
-fragment float4 constant_lighting_fragment_tt(VROConstantLightingVertexOut in [[ stage_in ]],
-                                              texture2d<float> ambient_texture [[ texture(0) ]],
-                                              texture2d<float> diffuse_texture [[ texture(1) ]]) {
-    return ambient_texture.sample(s, in.texcoord) * in.ambient_light + diffuse_texture.sample(s, in.texcoord);
+/* ---------------------------------------
+ LAMBERT LIGHTING MODEL
+ --------------------------------------- */
+
+typedef struct {
+    float4 position [[ position ]];
+    float3 normal;
+    float2 texcoord;
+    
+    float4 ambient_color;
+    float4 material_color;
+} VROLambertLightingVertexOut;
+
+vertex VROLambertLightingVertexOut lambert_lighting_vertex(VRORendererAttributes attributes [[ stage_in ]],
+                                                           constant VROViewUniforms &view [[ buffer(1) ]],
+                                                           constant VROMaterialUniforms &material [[ buffer(2) ]],
+                                                           constant VROSceneLightingUniforms &lighting [[ buffer(3) ]]) {
+    VROLambertLightingVertexOut out;
+    
+    float4 in_position = float4(attributes.position, 1.0);
+    out.position = view.modelview_projection_matrix * in_position;
+    out.texcoord = attributes.texcoord;
+    out.normal = normalize(view.normal_matrix * float4(attributes.normal, 0.0)).xyz;
+    out.ambient_color = float4(lighting.ambient_light_color, 1.0) * material.diffuse_surface_color;
+    out.material_color = material.diffuse_surface_color;
+    
+    return out;
+}
+
+fragment float4 lambert_lighting_fragment_c(VROLambertLightingVertexOut in [[ stage_in ]],
+                                            constant VROSceneLightingUniforms &lighting [[ buffer(1) ]]) {
+    float3 color = float3(0, 0, 0);
+    for (int i = 0; i < lighting.num_lights; i++) {
+        color += VROApplyLight(lighting.lights[i],
+                               in.position.xyz,
+                               in.normal,
+                               in.material_color);
+    }
+    
+    return in.ambient_color + float4(color, in.material_color.a);
+}
+
+fragment float4 lambert_lighting_fragment_t(VROLambertLightingVertexOut in [[ stage_in ]],
+                                            texture2d<float> texture [[ texture(0) ]],
+                                            constant VROSceneLightingUniforms &lighting [[ buffer(0) ]]) {
+    
+    float3 color = float3(0, 0, 0);
+    for (int i = 0; i < lighting.num_lights; i++) {
+        color += VROApplyLight(lighting.lights[i],
+                               in.position.xyz,
+                               in.normal,
+                               in.material_color);
+    }
+    
+    return in.ambient_color + float4(color, in.material_color.a) * texture.sample(s, in.texcoord);
 }
 
 /* ---------------------------------------
@@ -110,63 +182,6 @@ fragment float4 constant_lighting_fragment_tt(VROConstantLightingVertexOut in [[
 /* ---------------------------------------
    BLINN LIGHTING MODEL
    --------------------------------------- */
-
-/* ---------------------------------------
-   LAMBERT LIGHTING MODEL
-   --------------------------------------- */
-
-typedef struct {
-    float4 position [[ position ]];
-    float4 color;
-    float2 texcoord;
-    float4 ambient_light_color;
-    float4 diffuse_light_color;
-    float  n_dot_l;
-} VROLambertLightingVertexOut;
-
-vertex VROLambertLightingVertexOut lambert_lighting_vertex(VRORendererAttributes attributes [[ stage_in ]],
-                                                            constant VROViewUniforms &view [[ buffer(1) ]],
-                                                            constant VROLambertLightingUniforms &lighting [[ buffer(2) ]]) {
-    VROLambertLightingVertexOut out;
-    
-    float4 in_position = float4(attributes.position, 1.0);
-    out.position = view.modelview_projection_matrix * in_position;
-    out.texcoord = attributes.texcoord;
-    
-    float4 transformed_normal = normalize(view.normal_matrix * float4(attributes.normal, 0.0));
-    float n_dot_l = dot(-transformed_normal.rgb, normalize(lighting.diffuse_light_direction));
-    n_dot_l = fmax(0.0, n_dot_l);
-    
-    out.ambient_light_color = lighting.ambient_light_color;
-    out.diffuse_light_color = lighting.diffuse_light_color;
-    out.n_dot_l = n_dot_l;
-    
-    float4 intensity = float4(n_dot_l, n_dot_l, n_dot_l, 1.0);
-    out.color = lighting.ambient_surface_color * lighting.ambient_light_color +
-                lighting.diffuse_surface_color * lighting.diffuse_light_color * intensity;
-    return out;
-}
-
-fragment float4 lambert_lighting_fragment_cc(VROLambertLightingVertexOut in [[ stage_in ]]) {
-    return in.color;
-}
-
-fragment float4 lambert_lighting_fragment_ct(VROLambertLightingVertexOut in [[ stage_in ]],
-                                             texture2d<float> texture [[ texture(0) ]]) {
-    
-    float4 intensity = float4(in.n_dot_l, in.n_dot_l, in.n_dot_l, 1.0);
-    return in.color + texture.sample(s, in.texcoord) * in.diffuse_light_color * intensity;
-}
-
-fragment float4 lambert_lighting_fragment_tt(VROLambertLightingVertexOut in [[ stage_in ]],
-                                             texture2d<float> ambient_texture [[ texture(0) ]],
-                                             texture2d<float> diffuse_texture [[ texture(1) ]]) {
-    
-    float4 intensity = float4(in.n_dot_l, in.n_dot_l, in.n_dot_l, 1.0);
-
-    return ambient_texture.sample(s, in.texcoord) * in.ambient_light_color +
-           diffuse_texture.sample(s, in.texcoord) * in.diffuse_light_color * intensity;
-}
 
 /* ---------------------------------------
    DISTORTION SHADERS

@@ -13,7 +13,7 @@
 #include "VRORenderContextMetal.h"
 #include "VROMaterialSubstrateMetal.h"
 #include "VROLog.h"
-#include "SharedStructures.h"
+#include "VROSharedStructures.h"
 #include "VROMetalUtils.h"
 #include <map>
 
@@ -303,48 +303,47 @@ void VROGeometrySubstrateMetal::render(const VRORenderContext &context,
     
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
 
-    for (const std::shared_ptr<VROLight> &light : lights) {
+    for (int i = 0; i < _elements.size(); i++) {
+        VROGeometryElementMetal element = _elements[i];
         
-        for (int i = 0; i < _elements.size(); i++) {
-            VROGeometryElementMetal element = _elements[i];
-            
-            VROMaterialSubstrateMetal *material = _materials[i % _materials.size()];
-            material->setLightingUniforms(light);
-            
-            id <MTLRenderPipelineState> pipelineState = _elementPipelineStates[i];
-            id <MTLDepthStencilState> depthState = _elementDepthStates[i];
-            
-            /*
-             Configure the view uniforms.
-             */
-            VROMatrix4f modelview = metal.getViewMatrix().multiply(transform);
-            
-            VROViewUniforms *viewUniforms = (VROViewUniforms *)[_viewUniformsBuffer contents];
-            viewUniforms->normal_matrix = toMatrixFloat4x4(rotation.transpose().invert());
-            viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(metal.getProjectionMatrix().multiply(modelview));
-            
-            id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
-            [renderEncoder pushDebugGroup:@"VROGeometry"];
-            [renderEncoder setDepthStencilState:depthState];
-            [renderEncoder setRenderPipelineState:pipelineState];
-            
-            for (int j = 0; j < _vars.size(); ++j) {
-                [renderEncoder setVertexBuffer:_vars[j].buffer offset:0 atIndex:j];
-            }
-            [renderEncoder setVertexBuffer:_viewUniformsBuffer offset:0 atIndex:_vars.size()];
-            [renderEncoder setVertexBuffer:material->getLightingUniformsBuffer() offset:0 atIndex:_vars.size() + 1];
-            
-            const std::vector<id <MTLTexture>> &textures = material->getTextures();
-            for (int j = 0; j < textures.size(); ++j) {
-                [renderEncoder setFragmentTexture:textures[j] atIndex:j];
-            }
-            
-            [renderEncoder drawIndexedPrimitives:element.primitiveType
-                                      indexCount:element.indexCount
-                                       indexType:element.indexType
-                                     indexBuffer:element.buffer
-                               indexBufferOffset:0];
-            [renderEncoder popDebugGroup];
+        VROMaterialSubstrateMetal *material = _materials[i % _materials.size()];
+        material->setLightingUniforms(lights);
+        
+        id <MTLRenderPipelineState> pipelineState = _elementPipelineStates[i];
+        id <MTLDepthStencilState> depthState = _elementDepthStates[i];
+        
+        /*
+         Configure the view uniforms.
+         */
+        VROMatrix4f modelview = metal.getViewMatrix().multiply(transform);
+        
+        VROViewUniforms *viewUniforms = (VROViewUniforms *)[_viewUniformsBuffer contents];
+        viewUniforms->normal_matrix = toMatrixFloat4x4(rotation.transpose().invert());
+        viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(metal.getProjectionMatrix().multiply(modelview));
+        
+        id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
+        [renderEncoder pushDebugGroup:@"VROGeometry"];
+        [renderEncoder setDepthStencilState:depthState];
+        [renderEncoder setRenderPipelineState:pipelineState];
+        
+        for (int j = 0; j < _vars.size(); ++j) {
+            [renderEncoder setVertexBuffer:_vars[j].buffer offset:0 atIndex:j];
         }
+        [renderEncoder setVertexBuffer:_viewUniformsBuffer offset:0 atIndex:_vars.size()];
+        [renderEncoder setVertexBuffer:material->getMaterialUniformsBuffer() offset:0 atIndex:_vars.size() + 1];
+        [renderEncoder setVertexBuffer:material->getLightingUniformsBuffer() offset:0 atIndex:_vars.size() + 2];
+        
+        const std::vector<id <MTLTexture>> &textures = material->getTextures();
+        for (int j = 0; j < textures.size(); ++j) {
+            [renderEncoder setFragmentTexture:textures[j] atIndex:j];
+        }
+        [renderEncoder setFragmentBuffer:material->getLightingUniformsBuffer() offset:0 atIndex:0];
+        
+        [renderEncoder drawIndexedPrimitives:element.primitiveType
+                                  indexCount:element.indexCount
+                                   indexType:element.indexType
+                                 indexBuffer:element.buffer
+                           indexBufferOffset:0];
+        [renderEncoder popDebugGroup];
     }
 }

@@ -10,7 +10,7 @@
 #include "VROMath.h"
 #include "VROViewport.h"
 #include "VROScreen.h"
-#include "SharedStructures.h"
+#include "VROSharedStructures.h"
 #include "VRORenderContextMetal.h"
 #include "VRODistortionMesh.h"
 #include "VROEye.h"

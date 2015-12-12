@@ -241,7 +241,7 @@
 		8F517BBF1BCDA2BD0017C70B /* SampleRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SampleRenderer.h; path = ViroRenderer/SampleRenderer.h; sourceTree = "<group>"; };
 		8F517BC01BCDA2BD0017C70B /* SampleRenderer.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = SampleRenderer.m; path = ViroRenderer/SampleRenderer.m; sourceTree = "<group>"; };
 		8F517BC21BCDA2BD0017C70B /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
-		8F517BC41BCDA2BD0017C70B /* SharedStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedStructures.h; sourceTree = "<group>"; };
+		8F517BC41BCDA2BD0017C70B /* VROSharedStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROSharedStructures.h; sourceTree = "<group>"; };
 		8F517BC61BCDA2BD0017C70B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8F517BC81BCDA2BD0017C70B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ViroRenderer/Assets.xcassets; sourceTree = "<group>"; };
 		8F517BCB1BCDA2BD0017C70B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -504,8 +504,8 @@
 				8F517BEF1BCDBA570017C70B /* Layer */,
 				8F1071D41BF416C1003B3C3F /* Layout */,
 				8F1071CE1BE81EE8003B3C3F /* UI */,
+				8F517BC41BCDA2BD0017C70B /* VROSharedStructures.h */,
 				8F517BC21BCDA2BD0017C70B /* Shaders.metal */,
-				8F517BC41BCDA2BD0017C70B /* SharedStructures.h */,
 				8F517BB91BCDA2BD0017C70B /* Supporting Files */,
 			);
 			path = ViroRenderer;

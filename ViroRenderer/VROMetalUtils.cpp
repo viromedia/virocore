@@ -15,6 +15,10 @@ vector_float3 toVectorFloat3(VROVector3f v) {
     return { v.x, v.y, v.z };
 }
 
+vector_float4 toVectorFloat4(VROVector3f v, float w) {
+    return { v.x, v.y, v.z, w };
+}
+
 vector_float4 toVectorFloat4(VROVector4f v) {
     return { v.x, v.y, v.z, v.w };
 }

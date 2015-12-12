@@ -7,7 +7,7 @@
 //
 
 #include "VROMaterialSubstrateMetal.h"
-#include "SharedStructures.h"
+#include "VROSharedStructures.h"
 #include "VROMetalUtils.h"
 #include "VRORenderContextMetal.h"
 #include "VROMatrix4f.h"
@@ -20,6 +20,15 @@ VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
 
     id <MTLDevice> device = context.getDevice();
     id <MTLLibrary> library = context.getLibrary();
+    
+    _lightingUniformsBuffer = [device newBufferWithLength:sizeof(VROSceneLightingUniforms) options:0];
+    _lightingUniformsBuffer.label = @"VROSceneLightingUniformBuffer";
+    
+    _materialUniformsBuffer = [device newBufferWithLength:sizeof(VROMaterialUniforms) options:0];
+    _materialUniformsBuffer.label = @"VROMaterialUniformBuffer";
+    
+    VROMaterialUniforms *uniforms = (VROMaterialUniforms *)[_materialUniformsBuffer contents];
+    uniforms->diffuse_surface_color = toVectorFloat4(material.getDiffuse().getContentsColor());
     
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
@@ -51,39 +60,32 @@ void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,
                                                      id <MTLLibrary> library, id <MTLDevice> device,
                                                      const VRORenderContextMetal &context) {
     
-    _lightingUniformsBuffer = [device newBufferWithLength:sizeof(VROConstantLightingUniforms) options:0];
-    _lightingUniformsBuffer.label = @"VROConstantLightingUniformBuffer";
-    
-    VROConstantLightingUniforms *uniforms = (VROConstantLightingUniforms *)[_lightingUniformsBuffer contents];
 
     _vertexProgram   = [library newFunctionWithName:@"constant_lighting_vertex"];
-
-    VROMaterialVisual &ambient = material.getAmbient();
     VROMaterialVisual &diffuse = material.getDiffuse();
 
-    if (ambient.getContentsType() == VROContentsType::Fixed) {
-        uniforms->ambient_surface_color = toVectorFloat4(ambient.getContentsColor());
-
-        if (diffuse.getContentsType() == VROContentsType::Fixed) {
-            uniforms->diffuse_surface_color = toVectorFloat4(diffuse.getContentsColor());
-            _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_cc"];
-        }
-        else {
-            _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
-            _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_ct"];
-        }
+    if (diffuse.getContentsType() == VROContentsType::Fixed) {
+        _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_c"];
     }
     else {
-        _textures.push_back(((VROTextureSubstrateMetal *)ambient.getContentsTexture()->getSubstrate(context))->getTexture());
+        _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
+        _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_t"];
+    }
+}
 
-        if (diffuse.getContentsType() == VROContentsType::Fixed) {
-            uniforms->diffuse_surface_color = toVectorFloat4(diffuse.getContentsColor());
-            _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_ct"];
-        }
-        else {
-            _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
-            _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_tt"];
-        }
+void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
+                                                    id <MTLLibrary> library, id <MTLDevice> device,
+                                                    const VRORenderContextMetal &context) {
+    
+    _vertexProgram   = [library newFunctionWithName:@"lambert_lighting_vertex"];
+    
+    VROMaterialVisual &diffuse = material.getDiffuse();
+    if (diffuse.getContentsType() == VROContentsType::Fixed) {
+        _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_c"];
+    }
+    else {
+        _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
+        _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_t"];
     }
 }
 
@@ -96,15 +98,6 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
     
     _lightingUniformsBuffer = [device newBufferWithLength:sizeof(VROBlinnLightingUniforms) options:0];
     _lightingUniformsBuffer.label = @"VROBlinnLightingUniformBuffer";
-    
-    VROBlinnLightingUniforms *uniforms = (VROBlinnLightingUniforms *)[_lightingUniformsBuffer contents];
-
-    VROMaterialVisual &ambient = material.getAmbient();
-    uniforms->ambient_color = toVectorFloat4(ambient.getContentsColor());
-    
-    VROMaterialVisual &diffuse = material.getDiffuse();
-    uniforms->diffuse_color = toVectorFloat4(diffuse.getContentsColor());
-    
 }
 
 void VROMaterialSubstrateMetal::loadPhongLighting(VROMaterial &material,
@@ -116,171 +109,25 @@ void VROMaterialSubstrateMetal::loadPhongLighting(VROMaterial &material,
     
     _lightingUniformsBuffer = [device newBufferWithLength:sizeof(VROPhongLightingUniforms) options:0];
     _lightingUniformsBuffer.label = @"VROPhongLightingUniformBuffer";
-    
-    VROPhongLightingUniforms *uniforms = (VROPhongLightingUniforms *)[_lightingUniformsBuffer contents];
-    //TODO
 }
 
-void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
-                                                    id <MTLLibrary> library, id <MTLDevice> device,
-                                                    const VRORenderContextMetal &context) {
+void VROMaterialSubstrateMetal::setLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights) {
+    VROSceneLightingUniforms *uniforms = (VROSceneLightingUniforms *)[_lightingUniformsBuffer contents];
+    uniforms->num_lights = (int) lights.size();
     
-    _lightingUniformsBuffer = [device newBufferWithLength:sizeof(VROLambertLightingUniforms) options:0];
-    _lightingUniformsBuffer.label = @"VROLambertLightingUniformBuffer";
-    
-    VROLambertLightingUniforms *uniforms = (VROLambertLightingUniforms *)[_lightingUniformsBuffer contents];
-    
-    _vertexProgram   = [library newFunctionWithName:@"lambert_lighting_vertex"];
-    
-    VROMaterialVisual &ambient = material.getAmbient();
-    VROMaterialVisual &diffuse = material.getDiffuse();
-    
-    if (ambient.getContentsType() == VROContentsType::Fixed) {
-        uniforms->ambient_surface_color = toVectorFloat4(ambient.getContentsColor());
+    VROVector3f ambientLight;
+
+    for (int i = 0; i < lights.size(); i++) {
+        const std::shared_ptr<VROLight> &light = lights[i];
         
-        if (diffuse.getContentsType() == VROContentsType::Fixed) {
-            uniforms->diffuse_surface_color = toVectorFloat4(diffuse.getContentsColor());
-            _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_cc"];
-        }
-        else {
-            _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
-            _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_ct"];
-        }
-    }
-    else {
-        _textures.push_back(((VROTextureSubstrateMetal *)ambient.getContentsTexture()->getSubstrate(context))->getTexture());
+        VROLightUniforms &light_uniforms = uniforms->lights[i];
+        light_uniforms.color = toVectorFloat3(light->getColor());
+        light_uniforms.position = toVectorFloat4(light->getDirection(), 0.0);
         
-        if (diffuse.getContentsType() == VROContentsType::Fixed) {
-            uniforms->diffuse_surface_color = toVectorFloat4(diffuse.getContentsColor());
-            _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_ct"];
-        }
-        else {
-            _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
-            _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_tt"];
+        if (light->getType() == VROLightType::Ambient) {
+            ambientLight += light->getColor();
         }
     }
-}
-
-void VROMaterialSubstrateMetal::setLightingUniforms(const std::shared_ptr<VROLight> &light) {
-    switch (_lightingModel) {
-        case VROLightingModel::Constant:
-            bindConstantLighting(light);
-            break;
-            
-        case VROLightingModel::Blinn:
-            bindBlinnLighting(light);
-            break;
-            
-        case VROLightingModel::Lambert:
-            bindLambertLighting(light);
-            break;
-            
-        case VROLightingModel::Phong:
-            bindPhongLighting(light);
-            break;
-            
-        default:
-            break;
-    }
-}
-
-void VROMaterialSubstrateMetal::bindConstantLighting(const std::shared_ptr<VROLight> &light) {
-    VROConstantLightingUniforms *uniforms = (VROConstantLightingUniforms *)[_lightingUniformsBuffer contents];
     
-    switch (light->getType()) {
-        case VROLightType::Ambient:
-            uniforms->ambient_light_color = toVectorFloat4(light->getColor());
-            break;
-            
-        case VROLightType::Directional:
-            // Constant lighting model does not factor in diffuse lights
-            break;
-            
-        case VROLightType::Omni:
-            // Constant lighting model does not factor in omni light
-            break;
-            
-        case VROLightType::Spot:
-            // Constant lighting model does not factor in spot lights
-            break;
-            
-        default:
-            break;
-    }
-}
-
-void VROMaterialSubstrateMetal::bindBlinnLighting(const std::shared_ptr<VROLight> &light) {
-    VROBlinnLightingUniforms *uniforms = (VROBlinnLightingUniforms *)[_lightingUniformsBuffer contents];
-
-    switch (light->getType()) {
-        case VROLightType::Ambient:
-
-            break;
-            
-        case VROLightType::Directional:
-            
-            break;
-            
-        case VROLightType::Omni:
-            
-            break;
-            
-        case VROLightType::Spot:
-            
-            break;
-            
-        default:
-            break;
-    }
-}
-
-void VROMaterialSubstrateMetal::bindPhongLighting(const std::shared_ptr<VROLight> &light) {
-    VROPhongLightingUniforms *uniforms = (VROPhongLightingUniforms *)[_lightingUniformsBuffer contents];
-
-    switch (light->getType()) {
-        case VROLightType::Ambient:
-
-            break;
-            
-        case VROLightType::Directional:
-            
-            break;
-            
-        case VROLightType::Omni:
-            
-            break;
-            
-        case VROLightType::Spot:
-            
-            break;
-            
-        default:
-            break;
-    }
-}
-
-void VROMaterialSubstrateMetal::bindLambertLighting(const std::shared_ptr<VROLight> &light) {
-    VROLambertLightingUniforms *uniforms = (VROLambertLightingUniforms *)[_lightingUniformsBuffer contents];
-
-    switch (light->getType()) {
-        case VROLightType::Ambient:
-            uniforms->ambient_light_color = toVectorFloat4(light->getColor());
-            break;
-            
-        case VROLightType::Directional:
-            uniforms->diffuse_light_color = toVectorFloat4(light->getColor());
-            uniforms->diffuse_light_direction = toVectorFloat3(light->getDirection());
-            break;
-            
-        case VROLightType::Omni:
-            
-            break;
-            
-        case VROLightType::Spot:
-            
-            break;
-            
-        default:
-            break;
-    }
+    uniforms->ambient_light_color = toVectorFloat3(ambientLight);
 }

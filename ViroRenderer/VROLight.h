@@ -33,7 +33,7 @@ public:
     
     VROLight(VROLightType type) :
         _type(type),
-        _color({ 1.0, 1.0, 1.0, 1.0 }),
+        _color({ 1.0, 1.0, 1.0 }),
         _attenuationStartDistance(0.0),
         _attenuationEndDistance(0.0),
         _attenuationFalloffExponent(2.0),
@@ -49,10 +49,10 @@ public:
         return _type;
     }
     
-    void setColor(VROVector4f color) {
+    void setColor(VROVector3f color) {
         _color = color;
     }
-    VROVector4f getColor() const {
+    VROVector3f getColor() const {
         return _color;
     }
     
@@ -99,10 +99,17 @@ public:
         return _spotInnerAngle;
     }
     
+    void setSpotOuterAngle(float spotOuterAngle) {
+        _spotOuterAngle = spotOuterAngle;
+    }
+    float getSpotOuterAngle() const {
+        return _spotOuterAngle;
+    }
+    
 private:
     
     VROLightType _type;
-    VROVector4f _color;
+    VROVector3f _color;
     
     std::string _name;
     
