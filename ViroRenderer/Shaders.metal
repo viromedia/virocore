@@ -28,31 +28,28 @@ typedef struct {
 } VRORendererAttributes;
 
 /* ---------------------------------------
-   LIGHT APPLICATION
+   SHARED LIGHTING FUNCTIONS
  --------------------------------------- */
 
-float3 VROApplyLight(constant VROLightUniforms &light,
-                     float3 surface_pos,
-                     float3 surface_normal,
-                     float4 material_color);
+float compute_attenuation(constant VROLightUniforms &light,
+                          float3 surface_pos,
+                          thread float3 *surface_to_light);
 
-float3 VROApplyLight(constant VROLightUniforms &light,
-                     float3 surface_pos,
-                     float3 surface_normal,
-                     float4 material_color) {
+float compute_attenuation(constant VROLightUniforms &light,
+                          float3 surface_pos,
+                          thread float3 *surface_to_light) {
     
-    float3 surface_to_light;
     float attenuation = 1.0;
     
     // Directional light
     if (light.position.w == 0.0) {
-        surface_to_light = normalize(light.position.xyz);
+        *surface_to_light = normalize(light.position.xyz);
         attenuation = 1.0;
     }
     
     // Point light
     else {
-        surface_to_light = normalize(light.position.xyz - surface_pos);
+        *surface_to_light = normalize(light.position.xyz - surface_pos);
         float distance_to_light = length(light.position.xyz - surface_pos);
         attenuation = 1.0 / (1.0 + light.attenuation_falloff_exp * pow(distance_to_light, 2));
         
@@ -63,22 +60,7 @@ float3 VROApplyLight(constant VROLightUniforms &light,
         //}
     }
     
-    // Diffuse
-    float diffuse_coeff = fmax(0.0, dot(-surface_normal, surface_to_light));
-    float3 diffuse = diffuse_coeff * material_color.rgb * light.color;
-    
-    // Specular
-    /*
-    float specularCoefficient = 0.0;
-    if(diffuseCoefficient > 0.0) {
-        specularCoefficient = pow(max(0.0, dot(surfaceToCamera, reflect(-surfaceToLight, normal))), materialShininess);
-    }
-    float3 specular = specularCoefficient * materialSpecularColor * light.intensities;
-     */
-    
-    //return ambient + attenuation * (diffuse + specular);
-    
-    return attenuation * diffuse;
+    return attenuation;
 }
 
 /* ---------------------------------------
@@ -127,9 +109,28 @@ typedef struct {
     float3 normal;
     float2 texcoord;
     
+    float3 surface_position;
+    
     float4 ambient_color;
     float4 material_color;
 } VROLambertLightingVertexOut;
+
+float3 apply_light_lambert(constant VROLightUniforms &light,
+                           float3 surface_pos,
+                           float3 surface_normal,
+                           float4 material_color);
+
+float3 apply_light_lambert(constant VROLightUniforms &light,
+                           float3 surface_pos,
+                           float3 surface_normal,
+                           float4 material_color) {
+    
+    thread float3 surface_to_light;
+    float attenuation = compute_attenuation(light, surface_pos, &surface_to_light);
+    
+    float diffuse_coeff = fmax(0.0, dot(-surface_normal, surface_to_light));
+    return attenuation * diffuse_coeff * material_color.rgb * light.color;
+}
 
 vertex VROLambertLightingVertexOut lambert_lighting_vertex(VRORendererAttributes attributes [[ stage_in ]],
                                                            constant VROViewUniforms &view [[ buffer(1) ]],
@@ -137,10 +138,12 @@ vertex VROLambertLightingVertexOut lambert_lighting_vertex(VRORendererAttributes
                                                            constant VROSceneLightingUniforms &lighting [[ buffer(3) ]]) {
     VROLambertLightingVertexOut out;
     
-    float4 in_position = float4(attributes.position, 1.0);
-    out.position = view.modelview_projection_matrix * in_position;
+    out.position = view.modelview_projection_matrix * float4(attributes.position, 1.0);
     out.texcoord = attributes.texcoord;
+    
+    out.surface_position = (view.model_matrix * float4(attributes.position, 1.0)).xyz;
     out.normal = normalize(view.normal_matrix * float4(attributes.normal, 0.0)).xyz;
+
     out.ambient_color = float4(lighting.ambient_light_color, 1.0) * material.diffuse_surface_color;
     out.material_color = material.diffuse_surface_color;
     
@@ -149,35 +152,153 @@ vertex VROLambertLightingVertexOut lambert_lighting_vertex(VRORendererAttributes
 
 fragment float4 lambert_lighting_fragment_c(VROLambertLightingVertexOut in [[ stage_in ]],
                                             constant VROSceneLightingUniforms &lighting [[ buffer(1) ]]) {
-    float3 color = float3(0, 0, 0);
+    
+    float4 material_diffuse_color = in.material_color;
+
+    float3 aggregated_light_color = float3(0, 0, 0);
     for (int i = 0; i < lighting.num_lights; i++) {
-        color += VROApplyLight(lighting.lights[i],
-                               in.position.xyz,
-                               in.normal,
-                               in.material_color);
+        aggregated_light_color += apply_light_lambert(lighting.lights[i],
+                                                      in.position.xyz,
+                                                      in.normal,
+                                                      material_diffuse_color);
     }
     
-    return in.ambient_color + float4(color, in.material_color.a);
+    return in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a);
 }
 
 fragment float4 lambert_lighting_fragment_t(VROLambertLightingVertexOut in [[ stage_in ]],
                                             texture2d<float> texture [[ texture(0) ]],
                                             constant VROSceneLightingUniforms &lighting [[ buffer(0) ]]) {
     
-    float3 color = float3(0, 0, 0);
+    float4 material_diffuse_color = texture.sample(s, in.texcoord);
+    
+    float3 aggregated_light_color = float3(0, 0, 0);
     for (int i = 0; i < lighting.num_lights; i++) {
-        color += VROApplyLight(lighting.lights[i],
-                               in.position.xyz,
-                               in.normal,
-                               in.material_color);
+        aggregated_light_color += apply_light_lambert(lighting.lights[i],
+                                                      in.position.xyz,
+                                                      in.normal,
+                                                      material_diffuse_color);
     }
     
-    return in.ambient_color + float4(color, in.material_color.a) * texture.sample(s, in.texcoord);
+    return in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a);
 }
 
 /* ---------------------------------------
    PHONG LIGHTING MODEL
    --------------------------------------- */
+
+typedef struct {
+    float4 position [[ position ]];
+    float3 normal;
+    float2 texcoord;
+    
+    float3 surface_position;
+    float3 camera_position;
+    
+    float4 ambient_color;
+    float4 material_color;
+    float  material_shininess;
+} VROPhongLightingVertexOut;
+
+float3 apply_light_phong(constant VROLightUniforms &light,
+                         float3 surface_pos,
+                         float3 surface_normal,
+                         float3 surface_to_camera,
+                         float4 material_diffuse_color,
+                         float4 material_specular_color,
+                         float  material_shininess);
+    
+float3 apply_light_phong(constant VROLightUniforms &light,
+                         float3 surface_pos,
+                         float3 surface_normal,
+                         float3 surface_to_camera,
+                         float4 material_diffuse_color,
+                         float4 material_specular_color,
+                         float  material_shininess) {
+    
+    thread float3 surface_to_light;
+    float attenuation = compute_attenuation(light, surface_pos, &surface_to_light);
+    
+    // Diffuse
+    float diffuse_coeff = fmax(0.0, dot(-surface_normal, surface_to_light));
+    float3 diffuse = diffuse_coeff * material_diffuse_color.rgb * light.color;
+    
+    // Specular
+    float specular_coeff = 0.0;
+    if (diffuse_coeff > 0.0) {
+        specular_coeff = pow(max(0.0, dot(surface_to_camera,
+                                          reflect(surface_to_light, -surface_normal))),
+                             material_shininess);
+    }
+
+    float3 specular = specular_coeff * material_specular_color.rgb * light.color;
+    return attenuation * (diffuse + specular);
+}
+
+vertex VROPhongLightingVertexOut phong_lighting_vertex(VRORendererAttributes attributes [[ stage_in ]],
+                                                       constant VROViewUniforms &view [[ buffer(1) ]],
+                                                       constant VROMaterialUniforms &material [[ buffer(2) ]],
+                                                       constant VROSceneLightingUniforms &lighting [[ buffer(3) ]]) {
+    VROPhongLightingVertexOut out;
+    
+    out.position = view.modelview_projection_matrix * float4(attributes.position, 1.0);
+    out.texcoord = attributes.texcoord;
+
+    out.surface_position = (view.model_matrix * float4(attributes.position, 1.0)).xyz;
+    out.camera_position  = view.camera_position;
+    out.normal = normalize(view.normal_matrix * float4(attributes.normal, 0.0)).xyz;
+    
+    out.ambient_color = float4(lighting.ambient_light_color, 1.0) * material.diffuse_surface_color;
+    out.material_color = material.diffuse_surface_color;
+    out.material_shininess = material.shininess;
+    
+    return out;
+}
+
+fragment float4 phong_lighting_fragment_c(VROPhongLightingVertexOut in [[ stage_in ]],
+                                          texture2d<float> specular_texture [[ texture(0) ]],
+                                          constant VROSceneLightingUniforms &lighting [[ buffer(1) ]]) {
+    
+    float4 material_diffuse_color = in.material_color;
+    float4 material_specular_color = specular_texture.sample(s, in.texcoord);
+    float3 surface_to_camera = normalize(in.camera_position - in.surface_position);
+
+    float3 aggregated_light_color = float3(0, 0, 0);
+    for (int i = 0; i < lighting.num_lights; i++) {
+        aggregated_light_color += apply_light_phong(lighting.lights[i],
+                                                    in.surface_position,
+                                                    in.normal,
+                                                    surface_to_camera,
+                                                    material_diffuse_color,
+                                                    material_specular_color,
+                                                    in.material_shininess);
+    }
+    
+    return in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a);
+}
+
+fragment float4 phong_lighting_fragment_t(VROPhongLightingVertexOut in [[ stage_in ]],
+                                          texture2d<float> diffuse_texture [[ texture(0) ]],
+                                          texture2d<float> specular_texture [[ texture(1) ]],
+                                          constant VROSceneLightingUniforms &lighting [[ buffer(0) ]]) {
+    
+    float4 material_diffuse_color  = diffuse_texture.sample(s, in.texcoord);
+    float4 material_specular_color = specular_texture.sample(s, in.texcoord);
+    float3 surface_to_camera = normalize(in.camera_position - in.surface_position);
+    
+    float3 aggregated_light_color = float3(0, 0, 0);
+    for (int i = 0; i < lighting.num_lights; i++) {
+        aggregated_light_color += apply_light_phong(lighting.lights[i],
+                                                    in.surface_position,
+                                                    in.normal,
+                                                    surface_to_camera,
+                                                    material_diffuse_color,
+                                                    material_specular_color,
+                                                    in.material_shininess);
+    }
+    
+    return in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a);
+}
 
 /* ---------------------------------------
    BLINN LIGHTING MODEL

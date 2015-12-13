@@ -120,6 +120,7 @@
 		8FD4DF531C18F5EB003DC425 /* VROCrossLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1071D61BF41791003B3C3F /* VROCrossLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF541C18F5EB003DC425 /* VROView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1071CF1BE81F10003B3C3F /* VROView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF551C18F698003DC425 /* VROViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F62482D1BDAACA4000755E5 /* VROViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FD4DF981C1CD67B003DC425 /* specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4DF971C1CD67B003DC425 /* specular.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -299,6 +300,7 @@
 		8FD4DF231C18EDBF003DC425 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		8FD4DF251C18EDC8003DC425 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8FD4DF271C18EDD4003DC425 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		8FD4DF971C1CD67B003DC425 /* specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = specular.png; sourceTree = "<group>"; };
 		8FDFA8941BDAEAB000883EC0 /* VRODistortionRenderer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODistortionRenderer.cpp; sourceTree = "<group>"; };
 		8FDFA8951BDAEAB000883EC0 /* VRODistortionRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODistortionRenderer.h; sourceTree = "<group>"; };
 		8FDFA8981BDEA19C00883EC0 /* VROHeadTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROHeadTracker.h; sourceTree = "<group>"; };
@@ -667,6 +669,7 @@
 			children = (
 				8F517BBA1BCDA2BD0017C70B /* main.m */,
 				8F1071D21BF40FAF003B3C3F /* momentslogo.png */,
+				8FD4DF971C1CD67B003DC425 /* specular.png */,
 				8F5C41541BD82C1B006D7A77 /* boba.png */,
 			);
 			name = "Supporting Files";
@@ -890,6 +893,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
 				8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */,
 				8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */,
 				8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */,

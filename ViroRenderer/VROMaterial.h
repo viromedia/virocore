@@ -82,14 +82,29 @@ public:
         return _selfIllumination;
     }
     
+    void setShininess(float shininess) {
+        _shininess = shininess;
+    }
     float getShininess() const {
         return _shininess;
+    }
+    
+    void setFresnelExponent(float fresnelExponent) {
+        _fresnelExponent = fresnelExponent;
     }
     float getFresnelExponent() const {
         return _fresnelExponent;
     }
+    
+    void setTransparency(float transparency) {
+        _transparency = transparency;
+    }
     float getTransparency() const {
         return _transparency;
+    }
+    
+    void setTransparencyMode(VROTransparencyMode mode) {
+        _transparencyMode = mode;
     }
     VROTransparencyMode getTransparencyMode() const {
         return _transparencyMode;

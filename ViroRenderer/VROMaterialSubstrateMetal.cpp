@@ -29,6 +29,7 @@ VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
     
     VROMaterialUniforms *uniforms = (VROMaterialUniforms *)[_materialUniformsBuffer contents];
     uniforms->diffuse_surface_color = toVectorFloat4(material.getDiffuse().getContentsColor());
+    uniforms->shininess = material.getShininess();
     
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
@@ -89,26 +90,56 @@ void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
     }
 }
 
-void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
-                                                  id <MTLLibrary> library, id <MTLDevice> device,
-                                                  const VRORenderContextMetal &context) {
-    
-    _vertexProgram   = [library newFunctionWithName:@"blinn_lighting_vertex"];
-    _fragmentProgram = [library newFunctionWithName:@"blinn_lighting_fragment"];
-    
-    _lightingUniformsBuffer = [device newBufferWithLength:sizeof(VROBlinnLightingUniforms) options:0];
-    _lightingUniformsBuffer.label = @"VROBlinnLightingUniformBuffer";
-}
-
 void VROMaterialSubstrateMetal::loadPhongLighting(VROMaterial &material,
                                                   id <MTLLibrary> library, id <MTLDevice> device,
                                                   const VRORenderContextMetal &context) {
     
-    _vertexProgram   = [library newFunctionWithName:@"phong_lighting_vertex"];
-    _fragmentProgram = [library newFunctionWithName:@"phong_lighting_fragment"];
+    /*
+     If there's no specular map, then we fall back to Lambert lighting.
+     */
+    VROMaterialVisual &specular = material.getSpecular();
+    if (specular.getContentsType() != VROContentsType::Texture2D) {
+        loadLambertLighting(material, library, device, context);
+        return;
+    }
     
-    _lightingUniformsBuffer = [device newBufferWithLength:sizeof(VROPhongLightingUniforms) options:0];
-    _lightingUniformsBuffer.label = @"VROPhongLightingUniformBuffer";
+    _vertexProgram   = [library newFunctionWithName:@"phong_lighting_vertex"];
+    
+    VROMaterialVisual &diffuse = material.getDiffuse();
+    if (diffuse.getContentsType() == VROContentsType::Fixed) {
+        _fragmentProgram = [library newFunctionWithName:@"phong_lighting_fragment_c"];
+    }
+    else {
+        _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
+        _fragmentProgram = [library newFunctionWithName:@"phong_lighting_fragment_t"];
+    }
+    _textures.push_back(((VROTextureSubstrateMetal *)specular.getContentsTexture()->getSubstrate(context))->getTexture());
+}
+
+void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
+                                                  id <MTLLibrary> library, id <MTLDevice> device,
+                                                  const VRORenderContextMetal &context) {
+    
+    /*
+     If there's no specular map, then we fall back to Lambert lighting.
+     */
+    VROMaterialVisual &specular = material.getSpecular();
+    if (specular.getContentsType() != VROContentsType::Texture2D) {
+        loadLambertLighting(material, library, device, context);
+        return;
+    }
+    
+    _vertexProgram   = [library newFunctionWithName:@"blinn_lighting_vertex"];
+    
+    VROMaterialVisual &diffuse = material.getDiffuse();
+    if (diffuse.getContentsType() == VROContentsType::Fixed) {
+        _fragmentProgram = [library newFunctionWithName:@"blinn_lighting_fragment_c"];
+    }
+    else {
+        _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
+        _fragmentProgram = [library newFunctionWithName:@"blinn_lighting_fragment_t"];
+    }
+    _textures.push_back(((VROTextureSubstrateMetal *)specular.getContentsTexture()->getSubstrate(context))->getTexture());
 }
 
 void VROMaterialSubstrateMetal::setLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights) {
