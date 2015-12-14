@@ -21,7 +21,7 @@
 #include "VROMatrix4f.h"
 #include "VRONode.h"
 
-class VROLayer : public VRONode, public std::enable_shared_from_this<VROLayer> {
+class VROLayer : public VRONode {
     
 public:
     
@@ -44,9 +44,6 @@ public:
     
     void setBackgroundColor(vector_float4 backgroundColor);
     vector_float4 getBackgroundColor() const;
-    
-    void addSublayer(std::shared_ptr<VROLayer> layer);
-    void removeFromSuperlayer();
     
 private:
     

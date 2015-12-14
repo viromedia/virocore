@@ -34,6 +34,7 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
     std::shared_ptr<VROCrossLayout> _layout;
     
     std::shared_ptr<VRONode> _rootNode;
+    std::shared_ptr<VRONode> _boxNode;
     float angle;
 }
 
@@ -46,24 +47,32 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
     
     _rootNode = std::make_shared<VRONode>(*context);
     _rootNode->setGeometry(box);
-    _rootNode->setPosition({0, 0, 5});
+    _rootNode->setPosition({0, 0, 0});
     
     _scene->addNode(_rootNode);
     
-    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Directional);
+    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Omni);
     light->setColor({ 1.0, 0.9, 0.9 });
+    light->setPosition( { 0, 0, 0 });
     light->setDirection( { 0, 0, 1.0 });
+    light->setAttenuationStartDistance(5);
+    light->setAttenuationEndDistance(10);
     
     _rootNode->setLight(light);
+    
+    _boxNode = std::make_shared<VRONode>(*context);
+    _boxNode->setGeometry(box);
+    _boxNode->setPosition({0, 0, 5});
+    
+    _rootNode->addChildNode(_boxNode);
     
     UIImage *moments = [UIImage imageNamed:@"momentslogo"];
     
     std::shared_ptr<VROLayer> center = std::make_shared<VROLayer>(*context);
     center->setContents(moments);
     center->setFrame(VRORectMake(-0.5, -1.5, 2, 1, 1));
-    center->setLight(light);
     
-    _scene->addNode(center);
+    _rootNode->addChildNode(center);
 
     VROView *labelView = [[VROView alloc] initWithFrame:CGRectMake(0, 0, 100, 10) context:context];
     labelView.vroLayer->setFrame(VRORectMake(-1, -2, 2, 2, 0.2));
@@ -80,8 +89,7 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
     [labelView addSubview:label];
     [labelView update];
     
-    labelView.vroLayer->setLight(light);
-    _scene->addNode(labelView.vroLayer);
+    _rootNode->addChildNode(labelView.vroLayer);
     
     /*
      Code for cross-layout.
@@ -119,7 +127,7 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
 
 - (void)renderEye:(VROEyeType)eye context:(VRORenderContext *)renderContext {
     angle += .01;
-    _rootNode->setRotation({ 0, angle, 0});
+    _boxNode->setRotation({ 0, angle, 0});
     
     _scene->render(*renderContext);
 }

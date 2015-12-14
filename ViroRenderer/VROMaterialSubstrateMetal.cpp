@@ -153,10 +153,21 @@ void VROMaterialSubstrateMetal::setLightingUniforms(const std::vector<std::share
         
         VROLightUniforms &light_uniforms = uniforms->lights[i];
         light_uniforms.color = toVectorFloat3(light->getColor());
-        light_uniforms.position = toVectorFloat4(light->getDirection(), 0.0);
+        light_uniforms.attenuation_start_distance = light->getAttenuationStartDistance();
+        light_uniforms.attenuation_end_distance = light->getAttenuationEndDistance();
+        light_uniforms.attenuation_falloff_exp = light->getAttenuationFalloffExponent();
+        light_uniforms.spot_inner_angle = light->getSpotInnerAngle();
+        light_uniforms.spot_outer_angle = light->getSpotOuterAngle();
         
         if (light->getType() == VROLightType::Ambient) {
             ambientLight += light->getColor();
+        }
+        
+        if (light->getType() == VROLightType::Directional) {
+            light_uniforms.position = toVectorFloat4(light->getDirection(), 0.0);
+        }
+        else {
+            light_uniforms.position = toVectorFloat4(light->getTransformedPosition(), 1.0);
         }
     }
     

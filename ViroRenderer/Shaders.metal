@@ -47,11 +47,15 @@ float compute_attenuation(constant VROLightUniforms &light,
         attenuation = 1.0;
     }
     
-    // Point light
+    // Omni + Spot lights
     else {
-        *surface_to_light = normalize(light.position.xyz - surface_pos);
+        *surface_to_light = -normalize(light.position.xyz - surface_pos);
         float distance_to_light = length(light.position.xyz - surface_pos);
-        attenuation = 1.0 / (1.0 + light.attenuation_falloff_exp * pow(distance_to_light, 2));
+        float d = clamp((distance_to_light - light.attenuation_start_distance) /
+                        (light.attenuation_end_distance - light.attenuation_start_distance),
+                        0.0, 1.0);
+        
+        attenuation = 1.0 - pow(d, 1.0 / light.attenuation_falloff_exp);
         
         // cone restrictions (affects attenuation)
         //float lightToSurfaceAngle = degrees(acos(dot(-surfaceToLight, normalize(light.coneDirection))));
@@ -158,7 +162,7 @@ fragment float4 lambert_lighting_fragment_c(VROLambertLightingVertexOut in [[ st
     float3 aggregated_light_color = float3(0, 0, 0);
     for (int i = 0; i < lighting.num_lights; i++) {
         aggregated_light_color += apply_light_lambert(lighting.lights[i],
-                                                      in.position.xyz,
+                                                      in.surface_position,
                                                       in.normal,
                                                       material_diffuse_color);
     }
@@ -175,11 +179,11 @@ fragment float4 lambert_lighting_fragment_t(VROLambertLightingVertexOut in [[ st
     float3 aggregated_light_color = float3(0, 0, 0);
     for (int i = 0; i < lighting.num_lights; i++) {
         aggregated_light_color += apply_light_lambert(lighting.lights[i],
-                                                      in.position.xyz,
+                                                      in.surface_position,
                                                       in.normal,
                                                       material_diffuse_color);
     }
-    
+
     return in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a);
 }
 

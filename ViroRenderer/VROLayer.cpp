@@ -84,20 +84,3 @@ VROPoint VROLayer::getPosition() const {
             _frame.origin.z };
 }
 
-#pragma mark - Layer Tree
-
-void VROLayer::addSublayer(std::shared_ptr<VROLayer> layer) {
-    _sublayers.push_back(layer);
-    layer->_superlayer = shared_from_this();
-}
-
-void VROLayer::removeFromSuperlayer() {
-    std::vector<std::shared_ptr<VROLayer>> parentSublayers = _superlayer->_sublayers;
-    parentSublayers.erase(
-                          std::remove_if(parentSublayers.begin(), parentSublayers.end(),
-                                         [this](std::shared_ptr<VROLayer> layer) {
-                                             return layer.get() == this;
-                                         }), parentSublayers.end());
-    _superlayer.reset();
-}
-

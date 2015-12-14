@@ -19,7 +19,7 @@
 class VROGeometry;
 class VROLight;
 
-class VRONode {
+class VRONode : public std::enable_shared_from_this<VRONode> {
     
 public:
     
@@ -63,6 +63,20 @@ public:
     }
     std::shared_ptr<VROLight> getLight() {
         return _light;
+    }
+    
+    void addChildNode(std::shared_ptr<VRONode> node) {
+        _subnodes.push_back(node);
+        node->_supernode = shared_from_this();
+    }
+    void removeFromParentNode() {
+        std::vector<std::shared_ptr<VRONode>> parentSubnodes = _supernode->_subnodes;
+        parentSubnodes.erase(
+                             std::remove_if(parentSubnodes.begin(), parentSubnodes.end(),
+                                            [this](std::shared_ptr<VRONode> layer) {
+                                                return layer.get() == this;
+                                            }), parentSubnodes.end());
+        _supernode.reset();
     }
     
 protected:

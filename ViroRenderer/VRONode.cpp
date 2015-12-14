@@ -24,12 +24,14 @@ void VRONode::render(const VRORenderContext  &context,
                      std::stack<VROMatrix4f> &xforms,
                      std::vector<std::shared_ptr<VROLight>> &lights) {
     
-    if (_light) {
-        lights.push_back(_light);
-    }
-    
     VROMatrix4f rotation = rotations.top().multiply(_rotation.getMatrix());
     VROMatrix4f transform = xforms.top().multiply(getTransform());
+    
+    if (_light) {
+        _light->setTransformedPosition(transform.multiply(_light->getPosition()));
+        lights.push_back(_light);
+    }
+
     if (_geometry) {
         _geometry->render(context, rotation, transform, lights);
     }

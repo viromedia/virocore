@@ -34,8 +34,8 @@ public:
     VROLight(VROLightType type) :
         _type(type),
         _color({ 1.0, 1.0, 1.0 }),
-        _attenuationStartDistance(0.0),
-        _attenuationEndDistance(0.0),
+        _attenuationStartDistance(2.0),
+        _attenuationEndDistance(10.0),
         _attenuationFalloffExponent(2.0),
         _direction( { 0, 0, -1.0} ),
         _spotInnerAngle(0),
@@ -61,6 +61,20 @@ public:
     }
     std::string getName() const {
         return _name;
+    }
+    
+    void setPosition(VROVector3f position) {
+        _position = position;
+    }
+    VROVector3f getPosition() const {
+        return _position;
+    }
+    
+    void setTransformedPosition(VROVector3f position) {
+        _transformedPosition = position;
+    }
+    VROVector3f getTransformedPosition() const {
+        return _transformedPosition;
     }
     
     void setDirection(VROVector3f direction) {
@@ -113,6 +127,10 @@ private:
     
     std::string _name;
     
+    /*
+     Omni and Spot parameters.
+     */
+    VROVector3f _position;
     float _attenuationStartDistance;
     float _attenuationEndDistance;
     float _attenuationFalloffExponent;
@@ -123,7 +141,7 @@ private:
     VROVector3f _direction;
     
     /*
-     Spotlight parameters.
+     Spot parameters.
      */
     float _spotInnerAngle;
     float _spotOuterAngle;
@@ -142,6 +160,11 @@ private:
     float _zNear;
     
     int _categoryBitMask;
+    
+    /*
+     Internal.
+     */
+    VROVector3f _transformedPosition;
     
 };
 
