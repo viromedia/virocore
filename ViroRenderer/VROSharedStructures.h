@@ -31,15 +31,6 @@ typedef struct {
     vector_float3   camera_position;
 } VROViewUniforms;
 
-typedef struct {    
-    vector_float4   ambient_color;
-    vector_float4   diffuse_color;
-    vector_float4   specular_color;
-    
-    float           shininess;
-    float           fresnel;
-} VROBlinnLightingUniforms;
-
 typedef struct {
     vector_float4    diffuse_surface_color;
     float            shininess;
