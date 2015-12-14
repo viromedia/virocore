@@ -12,7 +12,9 @@
 #include <simd/simd.h>
 
 typedef struct {
-    vector_float4 position;
+    int type;
+    vector_float3 position;
+    vector_float3 direction;
     vector_float3 color;
     
     float attenuation_start_distance;

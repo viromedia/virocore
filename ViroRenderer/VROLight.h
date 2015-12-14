@@ -16,8 +16,8 @@
 
 enum class VROLightType {
     Ambient,
-    Omni,
     Directional,
+    Omni,
     Spot
 };
 

@@ -42,8 +42,8 @@ float compute_attenuation(constant VROLightUniforms &light,
     float attenuation = 1.0;
     
     // Directional light
-    if (light.position.w == 0.0) {
-        *surface_to_light = normalize(light.position.xyz);
+    if (light.type == 1) {
+        *surface_to_light = normalize(light.direction);
         attenuation = 1.0;
     }
     
@@ -57,11 +57,14 @@ float compute_attenuation(constant VROLightUniforms &light,
         
         attenuation = 1.0 - pow(d, 1.0 / light.attenuation_falloff_exp);
         
-        // cone restrictions (affects attenuation)
-        //float lightToSurfaceAngle = degrees(acos(dot(-surfaceToLight, normalize(light.coneDirection))));
-        //if(lightToSurfaceAngle > light.coneAngle){
-        //    attenuation = 0.0;
-        //}
+        // Spot light
+        if (light.type == 3) {
+            float light_surface_angle = acos(dot(*surface_to_light, normalize(light.direction)));
+            if (light_surface_angle > light.spot_inner_angle) {
+                float t = (light_surface_angle - light.spot_inner_angle) / light.spot_outer_angle;
+                attenuation = mix(attenuation, 0.0, t);
+            }
+        }
     }
     
     return attenuation;

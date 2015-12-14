@@ -12,6 +12,7 @@
 #include "VRORenderContextMetal.h"
 #include "VROMatrix4f.h"
 #include "VROLight.h"
+#include "VROMath.h"
 
 VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
                                                      const VRORenderContextMetal &context) {
@@ -152,22 +153,18 @@ void VROMaterialSubstrateMetal::setLightingUniforms(const std::vector<std::share
         const std::shared_ptr<VROLight> &light = lights[i];
         
         VROLightUniforms &light_uniforms = uniforms->lights[i];
+        light_uniforms.type = (int) light->getType();
+        light_uniforms.position = toVectorFloat3(light->getTransformedPosition());
+        light_uniforms.direction = toVectorFloat3(light->getDirection());
         light_uniforms.color = toVectorFloat3(light->getColor());
         light_uniforms.attenuation_start_distance = light->getAttenuationStartDistance();
         light_uniforms.attenuation_end_distance = light->getAttenuationEndDistance();
         light_uniforms.attenuation_falloff_exp = light->getAttenuationFalloffExponent();
-        light_uniforms.spot_inner_angle = light->getSpotInnerAngle();
-        light_uniforms.spot_outer_angle = light->getSpotOuterAngle();
+        light_uniforms.spot_inner_angle = degrees_to_radians(light->getSpotInnerAngle());
+        light_uniforms.spot_outer_angle = degrees_to_radians(light->getSpotOuterAngle());
         
         if (light->getType() == VROLightType::Ambient) {
             ambientLight += light->getColor();
-        }
-        
-        if (light->getType() == VROLightType::Directional) {
-            light_uniforms.position = toVectorFloat4(light->getDirection(), 0.0);
-        }
-        else {
-            light_uniforms.position = toVectorFloat4(light->getTransformedPosition(), 1.0);
         }
     }
     

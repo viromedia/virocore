@@ -51,12 +51,14 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
     
     _scene->addNode(_rootNode);
     
-    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Omni);
+    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.9, 0.9 });
     light->setPosition( { 0, 0, 0 });
     light->setDirection( { 0, 0, 1.0 });
     light->setAttenuationStartDistance(5);
     light->setAttenuationEndDistance(10);
+    light->setSpotInnerAngle(0);
+    light->setSpotOuterAngle(15);
     
     _rootNode->setLight(light);
     
