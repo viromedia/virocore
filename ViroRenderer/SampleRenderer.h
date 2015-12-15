@@ -11,7 +11,7 @@
 #import <MetalKit/MetalKit.h>
 #import <ViroKit/ViroKit.h>
 
-@interface SampleRenderer : NSObject <VROStereoRendererDelegate>
+@interface SampleRenderer : NSObject <VRORenderDelegate>
 
 @end
 

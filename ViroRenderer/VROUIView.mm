@@ -1,21 +1,21 @@
 //
-//  VROView.m
+//  VROUIView.m
 //  ViroRenderer
 //
 //  Created by Raj Advani on 11/2/15.
 //  Copyright © 2015 Viro Media. All rights reserved.
 //
 
-#import "VROView.h"
+#import "VROUIView.h"
 #import "VROImageUtil.h"
 
-@interface VROView () {
+@interface VROUIView () {
     std::shared_ptr<VROLayer> _layer;
 }
 
 @end
 
-@implementation VROView
+@implementation VROUIView
 
 - (instancetype)initWithFrame:(CGRect)frame context:(VRORenderContext *)context {
     self = [super initWithFrame:frame];

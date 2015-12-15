@@ -12,15 +12,15 @@
                         <viewControllerLayoutGuide type="top" id="8aa-yV-Osq"/>
                         <viewControllerLayoutGuide type="bottom" id="qHh-Mt-9TT"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="3se-qz-xqx" customClass="MTKView">
+                    <view key="view" contentMode="scaleToFill" id="3se-qz-xqx" customClass="VROView">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <connections>
+                            <outlet property="renderDelegate" destination="niC-Ja-Oxd" id="ce0-I8-qJl"/>
+                        </connections>
                     </view>
-                    <connections>
-                        <outlet property="stereoRendererDelegate" destination="niC-Ja-Oxd" id="Uhk-N9-bg8"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
                 <customObject id="niC-Ja-Oxd" userLabel="Stereo Renderer" customClass="SampleRenderer"/>

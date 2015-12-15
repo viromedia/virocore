@@ -17,6 +17,8 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <ViroKit/PublicHeader.h>
 
 #import <ViroKit/VROViewController.h>
+#import <ViroKit/VROView.h>
+#import <ViroKit/VRORenderDelegate.h>
 #import <ViroKit/VRORenderContext.h>
 
 // Core Scene Graph
@@ -37,7 +39,7 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VRORect.h>
 #import <ViroKit/VROPoint.h>
 #import <ViroKit/VROSize.h>
-#import <ViroKit/VROView.h>
+#import <ViroKit/VROUIView.h>
 
 // Layout
 #import <ViroKit/VROCrossLayout.h>

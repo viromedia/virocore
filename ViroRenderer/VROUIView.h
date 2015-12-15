@@ -1,5 +1,5 @@
 //
-//  VROView.h
+//  VROUIView.h
 //  ViroRenderer
 //
 //  Created by Raj Advani on 11/2/15.
@@ -11,7 +11,7 @@
 #import "VROLayer.h"
 #import <memory>
 
-@interface VROView : UIView
+@interface VROUIView : UIView
 
 - (instancetype)initWithFrame:(CGRect)frame context:(VRORenderContext *)context;
 

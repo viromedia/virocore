@@ -76,7 +76,7 @@ std::shared_ptr<VROLayer> VROMomentsLayoutDelegate::getRightLayer() {
     
     _rootNode->addChildNode(center);
 
-    VROView *labelView = [[VROView alloc] initWithFrame:CGRectMake(0, 0, 100, 10) context:context];
+    VROUIView *labelView = [[VROUIView alloc] initWithFrame:CGRectMake(0, 0, 100, 10) context:context];
     labelView.vroLayer->setFrame(VRORectMake(-1, -2, 2, 2, 0.2));
     
     [labelView setBackgroundColor:[UIColor clearColor]];
