@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1071D21BF40FAF003B3C3F /* momentslogo.png */; };
+		8F11B7BD1C1F8F1E0026D150 /* VRORenderContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F517BF91BCDC8C20017C70B /* VRORenderContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F517BBB1BCDA2BD0017C70B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBA1BCDA2BD0017C70B /* main.m */; };
 		8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */; };
 		8F517BC11BCDA2BD0017C70B /* SampleRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC01BCDA2BD0017C70B /* SampleRenderer.m */; };
@@ -497,7 +498,6 @@
 		8F517BB81BCDA2BD0017C70B /* ViroRenderer */ = {
 			isa = PBXGroup;
 			children = (
-				8F6248291BDAAC62000755E5 /* SDK */,
 				8F5C414B1BD825A9006D7A77 /* Util */,
 				8F517C441BD0472C0017C70B /* Math */,
 				8F1071D81BF67EF7003B3C3F /* Renderer */,
@@ -621,13 +621,6 @@
 			name = Util;
 			sourceTree = "<group>";
 		};
-		8F6248291BDAAC62000755E5 /* SDK */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = SDK;
-			sourceTree = "<group>";
-		};
 		8FD4DECE1C18ECD4003DC425 /* ViroKit */ = {
 			isa = PBXGroup;
 			children = (
@@ -737,6 +730,7 @@
 				8FD4DF511C18F5EB003DC425 /* VROSize.h in Headers */,
 				8FD4DF521C18F5EB003DC425 /* VROAnimation.h in Headers */,
 				8FD4DF531C18F5EB003DC425 /* VROCrossLayout.h in Headers */,
+				8F11B7BD1C1F8F1E0026D150 /* VRORenderContext.h in Headers */,
 				8FD4DF541C18F5EB003DC425 /* VROView.h in Headers */,
 				8FD4DF551C18F698003DC425 /* VROViewController.h in Headers */,
 			);
@@ -1346,6 +1340,7 @@
 				8FD4DEE61C18ECD4003DC425 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8FD4DEE81C18ECD4003DC425 /* Build configuration list for PBXNativeTarget "ViroKitTests" */ = {
 			isa = XCConfigurationList;
@@ -1354,6 +1349,7 @@
 				8FD4DEEA1C18ECD4003DC425 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

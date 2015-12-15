@@ -10,11 +10,9 @@
 #define VRORenderContext_h
 
 #include <stdio.h>
-#include <memory>
 #include <UIKit/UIKit.h>
 
 class VROGeometry;
-class VROMaterial;
 class VROGeometrySubstrate;
 class VROTextureSubstrate;
 
