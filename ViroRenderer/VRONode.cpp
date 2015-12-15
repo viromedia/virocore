@@ -40,33 +40,57 @@ std::shared_ptr<VRONode> VRONode::clone() {
 void VRONode::render(const VRORenderContext &context,
                      VRORenderParameters &params) {
     
-    std::stack<VROMatrix4f> &rotations = params.rotations;
-    std::stack<VROMatrix4f> &transforms = params.transforms;
-    std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
+    /*
+     Render the presentation node if one is present. The presentation node
+     reflects the current state of animations.
+     */
+    VRONode *nodeToRender = _presentationNode ? _presentationNode.get() : this;
     
-    rotations.push(rotations.top().multiply(_rotation.getMatrix()));
+    pushTransforms(nodeToRender, params);
+    renderNode(nodeToRender, context, params);
     
-    VROMatrix4f transform = transforms.top().multiply(getTransform());
-    transforms.push(transform);
-    
-    if (_light) {
-        _light->setTransformedPosition(transform.multiply(_light->getPosition()));
-        lights.push_back(_light);
-    }
-
-    if (_geometry) {
-        _geometry->render(context, params);
-    }
-    
+    /*
+     Node the node tree is only present in the model node, not in the
+     presentation node, so we find children using the model node's hierarchy.
+     */
     for (std::shared_ptr<VRONode> childNode : _subnodes) {
         childNode->render(context, params);
     }
     
-    transforms.pop();
-    rotations.pop();
+    popTransforms(nodeToRender, params);
+}
+
+void VRONode::pushTransforms(VRONode *node, VRORenderParameters &params) {
+    std::stack<VROMatrix4f> &rotations = params.rotations;
+    std::stack<VROMatrix4f> &transforms = params.transforms;
+    std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
     
-    if (_light) {
-        lights.pop_back();
+    rotations.push(rotations.top().multiply(node->_rotation.getMatrix()));
+    
+    VROMatrix4f transform = transforms.top().multiply(node->getTransform());
+    transforms.push(transform);
+    
+    if (node->_light) {
+        node->_light->setTransformedPosition(transform.multiply(node->_light->getPosition()));
+        lights.push_back(node->_light);
+    }
+}
+
+void VRONode::renderNode(VRONode *node,
+                         const VRORenderContext &context,
+                         VRORenderParameters &params) {
+    
+    if (node->_geometry) {
+        node->_geometry->render(context, params);
+    }
+}
+
+void VRONode::popTransforms(VRONode *node, VRORenderParameters &params) {
+    params.transforms.pop();
+    params.rotations.pop();
+    
+    if (node->_light) {
+        params.lights.pop_back();
     }
 }
 

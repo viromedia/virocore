@@ -117,6 +117,11 @@ private:
      to the model.
      */
     std::shared_ptr<VRONode> _presentationNode;
+    
+    static void pushTransforms(VRONode *node, VRORenderParameters &params);
+    static void renderNode(VRONode *node, const VRORenderContext &context,
+                           VRORenderParameters &params);
+    static void popTransforms(VRONode *node, VRORenderParameters &params);
 
 };
 
