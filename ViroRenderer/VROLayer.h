@@ -11,7 +11,6 @@
 
 #include <stdio.h>
 #include "VRORenderContext.h"
-#include "VROSharedStructures.h"
 #include "VRORect.h"
 #include <vector>
 #include <stack>

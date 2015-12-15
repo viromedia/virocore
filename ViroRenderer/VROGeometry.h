@@ -13,13 +13,13 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include "VROGeometrySubstrate.h"
 #include "VRORenderContext.h"
 
 class VROLight;
 class VROMaterial;
 class VROGeometryElement;
 class VROGeometrySource;
+class VROGeometrySubstrate;
 class VROMatrix4f;
 
 /*
@@ -51,20 +51,12 @@ public:
         _geometryElements(geometry->_geometryElements)
     {}
     
-    ~VROGeometry() {
-        delete (_substrate);
-    }
+    ~VROGeometry();
     
     void render(const VRORenderContext &context,
                 const VROMatrix4f &rotation,
                 const VROMatrix4f &transform,
-                const std::vector<std::shared_ptr<VROLight>> &lights) {
-        
-        if (!_substrate) {
-            _substrate = context.newGeometrySubstrate(*this);
-        }
-        _substrate->render(context, rotation, transform, lights);
-    }
+                const std::vector<std::shared_ptr<VROLight>> &lights);
     
     std::vector<std::shared_ptr<VROMaterial>> &getMaterials() {
         return _materials;
