@@ -20,6 +20,7 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROView.h>
 #import <ViroKit/VRORenderDelegate.h>
 #import <ViroKit/VRORenderContext.h>
+#import <ViroKit/VRORenderParameters.h>
 
 // Core Scene Graph
 #import <ViroKit/VROScene.h>

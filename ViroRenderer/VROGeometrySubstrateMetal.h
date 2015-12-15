@@ -59,9 +59,7 @@ public:
     virtual ~VROGeometrySubstrateMetal();
     
     void render(const VRORenderContext &context,
-                const VROMatrix4f &rotation,
-                const VROMatrix4f &transform,
-                const std::vector<std::shared_ptr<VROLight>> &lights);
+                VRORenderParameters &params);
     
 private:
     

@@ -15,6 +15,7 @@
 #include "VROMatrix4f.h"
 #include "VROQuaternion.h"
 #include "VRORenderContext.h"
+#include "VRORenderParameters.h"
 
 class VROGeometry;
 class VROLight;
@@ -29,15 +30,29 @@ public:
     VRONode(const VRORenderContext &context);
     
     /*
+     Copy constructor. This copies the node but *not* the underlying
+     geometries or lights. Instead, these are shared by reference with the
+     copied node. Additionally, this constructor will not copy child nodes.
+     
+     To copy child nodes recursively, invoke the clone() function.
+     */
+    VRONode(const VRONode &node);
+    
+    /*
      Designated initializer for nodes in the presentation tree.
      */
     VRONode();
     virtual ~VRONode();
     
-    void render(const VRORenderContext  &context,
-                std::stack<VROMatrix4f> &rotations,
-                std::stack<VROMatrix4f> &xforms,
-                std::vector<std::shared_ptr<VROLight>> &lights);
+    /*
+     Copy constructor that recursively copies all child nodes. This copies
+     the node but *not* the underlying geometries or lights. Instead, these
+     are shared by reference with the copied node.
+     */
+    std::shared_ptr<VRONode> clone();
+    
+    void render(const VRORenderContext &context,
+                VRORenderParameters &params);
     
     void setGeometry(std::shared_ptr<VROGeometry> geometry) {
         _geometry = geometry;

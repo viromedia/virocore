@@ -21,6 +21,7 @@ class VROGeometryElement;
 class VROGeometrySource;
 class VROGeometrySubstrate;
 class VROMatrix4f;
+class VRORenderParameters;
 
 /*
  Represents a three-dimensional shape, a collection of vertices, normals and texture coordinates
@@ -54,9 +55,7 @@ public:
     ~VROGeometry();
     
     void render(const VRORenderContext &context,
-                const VROMatrix4f &rotation,
-                const VROMatrix4f &transform,
-                const std::vector<std::shared_ptr<VROLight>> &lights);
+                VRORenderParameters &params);
     
     std::vector<std::shared_ptr<VROMaterial>> &getMaterials() {
         return _materials;
@@ -94,7 +93,7 @@ private:
     const std::vector<std::shared_ptr<VROGeometryElement>> _geometryElements;
     
     /*
-     Representation of this layer in the underlying graphics library.
+     Representation of this geometry in the underlying graphics library.
      */
     VROGeometrySubstrate *_substrate;
     

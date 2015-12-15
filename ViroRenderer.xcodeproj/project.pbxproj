@@ -12,6 +12,7 @@
 		8F11B7C21C20B0530026D150 /* VROView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C01C20B0530026D150 /* VROView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F11B7C31C20B0530026D150 /* VROView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8F11B7C11C20B0530026D150 /* VROView.mm */; };
 		8F11B7C51C20B6180026D150 /* VRORenderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C41C20B2A20026D150 /* VRORenderDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F11B7C71C20CF200026D150 /* VRORenderParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C61C20C98E0026D150 /* VRORenderParameters.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F517BBB1BCDA2BD0017C70B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBA1BCDA2BD0017C70B /* main.m */; };
 		8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */; };
 		8F517BC11BCDA2BD0017C70B /* SampleRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC01BCDA2BD0017C70B /* SampleRenderer.m */; };
@@ -198,6 +199,7 @@
 		8F11B7C01C20B0530026D150 /* VROView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROView.h; sourceTree = "<group>"; };
 		8F11B7C11C20B0530026D150 /* VROView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROView.mm; sourceTree = "<group>"; };
 		8F11B7C41C20B2A20026D150 /* VRORenderDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRORenderDelegate.h; sourceTree = "<group>"; };
+		8F11B7C61C20C98E0026D150 /* VRORenderParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRORenderParameters.h; sourceTree = "<group>"; };
 		8F152A6D1C0D77AA00A211F8 /* VROVector4f.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVector4f.cpp; sourceTree = "<group>"; };
 		8F152A6E1C0D77AA00A211F8 /* VROVector4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVector4f.h; sourceTree = "<group>"; };
 		8F152A701C0D7A5A00A211F8 /* VROMetalUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROMetalUtils.cpp; sourceTree = "<group>"; };
@@ -424,6 +426,8 @@
 				8F4DCE351BFBCB8200061DD7 /* VROTexture.cpp */,
 				8FD4DE9D1C16432B003DC425 /* VROLight.h */,
 				8FD4DE9C1C16432B003DC425 /* VROLight.cpp */,
+				8F517BF91BCDC8C20017C70B /* VRORenderContext.h */,
+				8F11B7C61C20C98E0026D150 /* VRORenderParameters.h */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";
@@ -431,6 +435,7 @@
 		8F152A811C121A3D00A211F8 /* Metal */ = {
 			isa = PBXGroup;
 			children = (
+				8F517BFC1BCDC9170017C70B /* VRORenderContextMetal.h */,
 				8F152A711C0D7A5A00A211F8 /* VROMetalUtils.h */,
 				8F152A701C0D7A5A00A211F8 /* VROMetalUtils.cpp */,
 				8F4DCE501BFD628A00061DD7 /* VROGeometrySubstrateMetal.h */,
@@ -575,8 +580,6 @@
 				8F4C9FFF1BDAE06A00177B8F /* VROScreen.h */,
 				8F4CA0011BDAE10C00177B8F /* VROScreen.cpp */,
 				8FEA6C9C1BE3DC7100C2CD0F /* VRORenderTarget.h */,
-				8F517BF91BCDC8C20017C70B /* VRORenderContext.h */,
-				8F517BFC1BCDC9170017C70B /* VRORenderContextMetal.h */,
 			);
 			name = "VR Distortion";
 			sourceTree = "<group>";
@@ -744,6 +747,7 @@
 				8F11B7C21C20B0530026D150 /* VROView.h in Headers */,
 				8F11B7C51C20B6180026D150 /* VRORenderDelegate.h in Headers */,
 				8FD4DF551C18F698003DC425 /* VROViewController.h in Headers */,
+				8F11B7C71C20CF200026D150 /* VRORenderParameters.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -15,17 +15,39 @@ VRONode::VRONode(const VRORenderContext &context) :
     
 }
 
+VRONode::VRONode(const VRONode &node) :
+    _geometry(node._geometry),
+    _light(node._light),
+    _scale(node._scale),
+    _position(node._position),
+    _rotation(node._rotation) {
+        
+}
+
 VRONode::~VRONode() {
     
 }
 
-void VRONode::render(const VRORenderContext  &context,
-                     std::stack<VROMatrix4f> &rotations,
-                     std::stack<VROMatrix4f> &xforms,
-                     std::vector<std::shared_ptr<VROLight>> &lights) {
+std::shared_ptr<VRONode> VRONode::clone() {
+    std::shared_ptr<VRONode> node = std::make_shared<VRONode>(*this);
+    for (std::shared_ptr<VRONode> subnode : _subnodes) {
+        node->addChildNode(subnode->clone());
+    }
     
-    VROMatrix4f rotation = rotations.top().multiply(_rotation.getMatrix());
-    VROMatrix4f transform = xforms.top().multiply(getTransform());
+    return node;
+}
+
+void VRONode::render(const VRORenderContext &context,
+                     VRORenderParameters &params) {
+    
+    std::stack<VROMatrix4f> &rotations = params.rotations;
+    std::stack<VROMatrix4f> &transforms = params.transforms;
+    std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
+    
+    rotations.push(rotations.top().multiply(_rotation.getMatrix()));
+    
+    VROMatrix4f transform = transforms.top().multiply(getTransform());
+    transforms.push(transform);
     
     if (_light) {
         _light->setTransformedPosition(transform.multiply(_light->getPosition()));
@@ -33,17 +55,14 @@ void VRONode::render(const VRORenderContext  &context,
     }
 
     if (_geometry) {
-        _geometry->render(context, rotation, transform, lights);
+        _geometry->render(context, params);
     }
-    
-    rotations.push(rotation);
-    xforms.push(transform);
     
     for (std::shared_ptr<VRONode> childNode : _subnodes) {
-        childNode->render(context, rotations, xforms, lights);
+        childNode->render(context, params);
     }
     
-    xforms.pop();
+    transforms.pop();
     rotations.pop();
     
     if (_light) {

@@ -15,6 +15,7 @@
 class VROLight;
 class VRORenderContext;
 class VROMatrix4f;
+class VRORenderParameters;
 
 /*
  Represents the geometry in the underlying graphics hardware.
@@ -26,9 +27,7 @@ public:
     virtual ~VROGeometrySubstrate() {}
     
     virtual void render(const VRORenderContext &context,
-                        const VROMatrix4f &rotation,
-                        const VROMatrix4f &transform,
-                        const std::vector<std::shared_ptr<VROLight>> &lights) = 0;
+                        VRORenderParameters &params) = 0;
 
 };
 

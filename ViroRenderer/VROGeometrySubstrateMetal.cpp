@@ -15,6 +15,7 @@
 #include "VROLog.h"
 #include "VROSharedStructures.h"
 #include "VROMetalUtils.h"
+#include "VRORenderParameters.h"
 #include <map>
 
 VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry,
@@ -297,17 +298,18 @@ MTLDepthStencilDescriptor *VROGeometrySubstrateMetal::parseDepthStencil(const st
 
 
 void VROGeometrySubstrateMetal::render(const VRORenderContext &context,
-                                       const VROMatrix4f &rotation,
-                                       const VROMatrix4f &transform,
-                                       const std::vector<std::shared_ptr<VROLight>> &lights) {
+                                       VRORenderParameters &params) {
     
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
+    
+    VROMatrix4f &rotation  = params.rotations.top();
+    VROMatrix4f &transform = params.transforms.top();
 
     for (int i = 0; i < _elements.size(); i++) {
         VROGeometryElementMetal element = _elements[i];
         
         VROMaterialSubstrateMetal *material = _materials[i % _materials.size()];
-        material->setLightingUniforms(lights);
+        material->setLightingUniforms(params.lights);
         
         id <MTLRenderPipelineState> pipelineState = _elementPipelineStates[i];
         id <MTLDepthStencilState> depthState = _elementDepthStates[i];

@@ -16,15 +16,12 @@
 void VROScene::render(const VRORenderContext &renderContext) {
     VROMatrix4f identity;
 
-    std::stack<VROMatrix4f> rotationStack;
-    rotationStack.push(identity);
-    std::stack<VROMatrix4f> mvStack;
-    mvStack.push(identity);
-    
-    std::vector<std::shared_ptr<VROLight>> lights;
+    VRORenderParameters renderParams;
+    renderParams.rotations.push(identity);
+    renderParams.transforms.push(identity);
     
     for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->render(renderContext, rotationStack, mvStack, lights);
+        node->render(renderContext, renderParams);
     }
 }
 
