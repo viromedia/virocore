@@ -14,7 +14,7 @@
 		8F11B7C51C20B6180026D150 /* VRORenderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C41C20B2A20026D150 /* VRORenderDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F11B7C71C20CF200026D150 /* VRORenderParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C61C20C98E0026D150 /* VRORenderParameters.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F11B7CA1C20E7830026D150 /* VROAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F11B7C81C20E7830026D150 /* VROAnimation.cpp */; };
-		8F11B7CB1C20E7830026D150 /* VROAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C91C20E7830026D150 /* VROAnimation.h */; };
+		8F11B7CB1C20E7830026D150 /* VROAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C91C20E7830026D150 /* VROAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F517BBB1BCDA2BD0017C70B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBA1BCDA2BD0017C70B /* main.m */; };
 		8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */; };
 		8F517BC11BCDA2BD0017C70B /* SampleRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC01BCDA2BD0017C70B /* SampleRenderer.m */; };
@@ -24,6 +24,7 @@
 		8F517BD71BCDA2BE0017C70B /* ViroRendererTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BD61BCDA2BE0017C70B /* ViroRendererTests.m */; };
 		8F517BE21BCDA2BE0017C70B /* ViroRendererUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BE11BCDA2BE0017C70B /* ViroRendererUITests.m */; };
 		8F548E391C21EB8600556688 /* VROMomentsLayoutDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F548E371C21EB8600556688 /* VROMomentsLayoutDelegate.cpp */; };
+		8F548E3A1C21F4CF00556688 /* VROInterpolatable.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7CC1C20E8540026D150 /* VROInterpolatable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F5C41551BD82C1B006D7A77 /* boba.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5C41541BD82C1B006D7A77 /* boba.png */; };
 		8FD4DED01C18ECD4003DC425 /* ViroKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD4DECF1C18ECD4003DC425 /* ViroKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DED71C18ECD4003DC425 /* ViroKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; };
@@ -753,6 +754,7 @@
 				8FD4DF4F1C18F5EB003DC425 /* VRORect.h in Headers */,
 				8FD4DF501C18F5EB003DC425 /* VROPoint.h in Headers */,
 				8FD4DF511C18F5EB003DC425 /* VROSize.h in Headers */,
+				8F548E3A1C21F4CF00556688 /* VROInterpolatable.h in Headers */,
 				8FD4DF521C18F5EB003DC425 /* VROTransaction.h in Headers */,
 				8FD4DF531C18F5EB003DC425 /* VROCrossLayout.h in Headers */,
 				8F11B7BD1C1F8F1E0026D150 /* VRORenderContext.h in Headers */,

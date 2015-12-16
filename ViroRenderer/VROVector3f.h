@@ -48,11 +48,6 @@ public:
         z += rhs.z;
         return *this;
     }
-    
-    VROVector3f interpolate(VROVector3f other, float t) {
-        VROVector3f f;
-        return f;
-    }
 
     /*
      Find the absolute angle between this vector and the given line. The
@@ -149,6 +144,7 @@ public:
     void   cross(const VROVector3f &vB, VROVector3f *result) const;
     VROVector3f cross(const VROVector3f &vB) const;
     void   normalize();
+    VROVector3f interpolate(VROVector3f other, float t);
 
     /*
      Clearing.

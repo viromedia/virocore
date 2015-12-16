@@ -12,8 +12,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string>
+#include "VROInterpolatable.h"
 
-class VROVector4f {
+class VROVector4f : public VROInterpolatable <VROVector4f> {
 public:
     float x;
     float y;
@@ -74,6 +75,7 @@ public:
      */
     float  dot(const VROVector4f &vB) const;
     void   normalize();
+    VROVector4f interpolate(VROVector4f other, float t);
     
     /*
      Clearing.

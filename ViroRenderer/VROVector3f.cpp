@@ -354,6 +354,15 @@ void VROVector3f::scale(float factor, VROVector3f *result) const {
     result->z = z * factor;
 }
 
+VROVector3f VROVector3f::interpolate(VROVector3f other, float t) {
+    VROVector3f result;
+    result.x = x + (other.x - x) * t;
+    result.y = y + (other.y - y) * t;
+    result.z = z + (other.z - z) * t;
+
+    return result;
+}
+
 std::string VROVector3f::toString() const {
     std::stringstream ss;
     ss << "[x: " << x << ", y: " << y << ", z: " << z << "]";

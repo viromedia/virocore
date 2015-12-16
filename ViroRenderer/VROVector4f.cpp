@@ -119,6 +119,16 @@ void VROVector4f::scale(float factor, VROVector4f *result) const {
     result->w = w * factor;
 }
 
+VROVector4f VROVector4f::interpolate(VROVector4f other, float t) {
+    VROVector4f result;
+    result.x = x + (other.x - x) * t;
+    result.y = y + (other.y - y) * t;
+    result.z = z + (other.z - z) * t;
+    result.w = w + (other.w - w) * t;
+    
+    return result;
+}
+
 std::string VROVector4f::toString() const {
     std::stringstream ss;
     ss << "[x: " << x << ", y: " << y << ", z: " << z << "]";

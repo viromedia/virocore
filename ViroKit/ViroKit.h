@@ -57,6 +57,7 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROMatrix4f.h>
 #import <ViroKit/VROMatrix4d.h>
 #import <ViroKit/VROMath.h>
+#import <ViroKit/VROInterpolatable.h>
 
 // Shapes
 #import <ViroKit/VROBox.h>
