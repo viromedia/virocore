@@ -56,12 +56,9 @@ std::shared_ptr<VROSurface> VROSurface::createSurface(float width, float height)
     std::vector<std::shared_ptr<VROGeometryElement>> elements = { element };
     
     std::shared_ptr<VROSurface> surface = std::shared_ptr<VROSurface>(new VROSurface(sources, elements));
-    
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->setLightingModel(VROLightingModel::Lambert);
-    material->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"boba"]));
-    
     surface->getMaterials().push_back(material);
+    
     return surface;
 }
 

@@ -12,10 +12,11 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string>
+#include "VROInterpolatable.h"
 
 class VROVector3d;
 
-class VROVector3f {
+class VROVector3f : public VROInterpolatable <VROVector3f> {
 public:
     float x;
     float y;
@@ -46,6 +47,11 @@ public:
         y += rhs.y;
         z += rhs.z;
         return *this;
+    }
+    
+    VROVector3f interpolate(VROVector3f other, float t) {
+        VROVector3f f;
+        return f;
     }
 
     /*

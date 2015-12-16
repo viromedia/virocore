@@ -21,5 +21,6 @@
 @property (nonatomic) BOOL chromaticAberrationCorrectionEnabled;
 
 - (instancetype)initWithFrame:(CGRect)frame;
+- (VRORenderContext *)renderContext;
 
 @end

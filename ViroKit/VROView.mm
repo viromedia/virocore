@@ -436,4 +436,8 @@
     [self.renderDelegate renderEye:VROEyeTypeRight context:_renderContext];
 }
 
+- (VRORenderContext *)renderContext {
+    return _renderContext;
+}
+
 @end
