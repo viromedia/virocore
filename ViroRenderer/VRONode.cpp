@@ -10,6 +10,8 @@
 #include "VROGeometry.h"
 #include "VROLight.h"
 
+#pragma mark - Initialization
+
 VRONode::VRONode(const VRORenderContext &context) :
     _scale({1.0, 1.0, 1.0}) {
     
@@ -37,17 +39,17 @@ std::shared_ptr<VRONode> VRONode::clone() {
     return node;
 }
 
-void VRONode::render(const VRORenderContext &context,
-                     VRORenderParameters &params) {
-    
+#pragma mark - Rendering
+
+void VRONode::render(const VRORenderContext &context, VRORenderParameters &params) {
     /*
      Render the presentation node if one is present. The presentation node
      reflects the current state of animations.
      */
     VRONode *nodeToRender = _presentationNode ? _presentationNode.get() : this;
     
-    pushTransforms(nodeToRender, params);
-    renderNode(nodeToRender, context, params);
+    nodeToRender->pushTransforms(params);
+    nodeToRender->renderNode(context, params);
     
     /*
      Node the node tree is only present in the model node, not in the
@@ -57,39 +59,36 @@ void VRONode::render(const VRORenderContext &context,
         childNode->render(context, params);
     }
     
-    popTransforms(nodeToRender, params);
+    nodeToRender->popTransforms(params);
 }
 
-void VRONode::pushTransforms(VRONode *node, VRORenderParameters &params) {
+void VRONode::pushTransforms(VRORenderParameters &params) {
     std::stack<VROMatrix4f> &rotations = params.rotations;
     std::stack<VROMatrix4f> &transforms = params.transforms;
     std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
     
-    rotations.push(rotations.top().multiply(node->_rotation.getMatrix()));
+    rotations.push(rotations.top().multiply(_rotation.getMatrix()));
     
-    VROMatrix4f transform = transforms.top().multiply(node->getTransform());
+    VROMatrix4f transform = transforms.top().multiply(getTransform());
     transforms.push(transform);
     
-    if (node->_light) {
-        node->_light->setTransformedPosition(transform.multiply(node->_light->getPosition()));
-        lights.push_back(node->_light);
+    if (_light) {
+        _light->setTransformedPosition(transform.multiply(_light->getPosition()));
+        lights.push_back(_light);
     }
 }
 
-void VRONode::renderNode(VRONode *node,
-                         const VRORenderContext &context,
-                         VRORenderParameters &params) {
-    
-    if (node->_geometry) {
-        node->_geometry->render(context, params);
+void VRONode::renderNode(const VRORenderContext &context, VRORenderParameters &params) {
+    if (_geometry) {
+        _geometry->render(context, params);
     }
 }
 
-void VRONode::popTransforms(VRONode *node, VRORenderParameters &params) {
+void VRONode::popTransforms(VRORenderParameters &params) {
     params.transforms.pop();
     params.rotations.pop();
     
-    if (node->_light) {
+    if (_light) {
         params.lights.pop_back();
     }
 }
@@ -101,4 +100,20 @@ VROMatrix4f VRONode::getTransform() const {
     
     return transform;
 }
+
+#pragma mark - Setters
+
+void VRONode::setRotation(VROQuaternion rotation) {
+    _rotation = rotation;
+}
+
+void VRONode::setPosition(VROVector3f position) {
+    _position = position;
+}
+
+void VRONode::setScale(VROVector3f scale) {
+    _scale = scale;
+}
+
+#pragma mark - Animation
 

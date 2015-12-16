@@ -63,15 +63,9 @@ public:
     
     VROMatrix4f getTransform() const;
     
-    void setRotation(VROQuaternion rotation) {
-        _rotation = rotation;
-    }
-    void setPosition(VROVector3f position) {
-        _position = position;
-    }
-    void setScale(VROVector3f scale) {
-        _scale = scale;
-    }
+    void setRotation(VROQuaternion rotation);
+    void setPosition(VROVector3f position);
+    void setScale(VROVector3f scale);
     
     void setLight(std::shared_ptr<VROLight> light) {
         _light = light;
@@ -118,10 +112,12 @@ private:
      */
     std::shared_ptr<VRONode> _presentationNode;
     
-    static void pushTransforms(VRONode *node, VRORenderParameters &params);
-    static void renderNode(VRONode *node, const VRORenderContext &context,
-                           VRORenderParameters &params);
-    static void popTransforms(VRONode *node, VRORenderParameters &params);
+    /*
+     Render functions.
+     */
+    void pushTransforms(VRORenderParameters &params);
+    void renderNode(const VRORenderContext &context, VRORenderParameters &params);
+    void popTransforms(VRORenderParameters &params);
 
 };
 

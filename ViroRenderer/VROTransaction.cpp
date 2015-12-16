@@ -1,23 +1,23 @@
 //
-//  VROAnimation.cpp
+//  VROTransaction.cpp
 //  ViroRenderer
 //
 //  Created by Raj Advani on 10/22/15.
 //  Copyright © 2015 Viro Media. All rights reserved.
 //
 
-#include "VROAnimation.h"
+#include "VROTransaction.h"
 #include "VROTime.h"
 #include "VROLog.h"
 #include <stack>
 #include <vector>
 
-#pragma mark - Animation Management
+#pragma mark - Transaction Management
 
-static std::stack<std::shared_ptr<VROAnimation>> openAnimations;
-static std::vector<std::shared_ptr<VROAnimation>> committedAnimations;
+static std::stack<std::shared_ptr<VROTransaction>> openAnimations;
+static std::vector<std::shared_ptr<VROTransaction>> committedAnimations;
 
-std::shared_ptr<VROAnimation> VROAnimation::get() {
+std::shared_ptr<VROTransaction> VROTransaction::get() {
     if (openAnimations.empty()) {
         return {};
     }
@@ -26,19 +26,19 @@ std::shared_ptr<VROAnimation> VROAnimation::get() {
     }
 }
 
-void VROAnimation::beginImplicitAnimation() {
+void VROTransaction::beginImplicitAnimation() {
     if (openAnimations.empty()) {
         begin();
     }
 }
 
-void VROAnimation::begin() {
-    std::shared_ptr<VROAnimation> animation = std::shared_ptr<VROAnimation>(new VROAnimation());
+void VROTransaction::begin() {
+    std::shared_ptr<VROTransaction> animation = std::shared_ptr<VROTransaction>(new VROTransaction());
     openAnimations.push(animation);
 }
 
-void VROAnimation::commit() {
-    std::shared_ptr<VROAnimation> animation = get();
+void VROTransaction::commit() {
+    std::shared_ptr<VROTransaction> animation = get();
     if (!animation) {
         pabort();
     }
@@ -50,18 +50,18 @@ void VROAnimation::commit() {
     committedAnimations.push_back(animation);
 }
 
-void VROAnimation::commitAll() {
+void VROTransaction::commitAll() {
     while (!openAnimations.empty()) {
         commit();
     }
 }
 
-void VROAnimation::updateT() {
+void VROTransaction::updateT() {
     double time = VROTimeCurrentSeconds();
     
-    std::vector<std::shared_ptr<VROAnimation>>::iterator it;
+    std::vector<std::shared_ptr<VROTransaction>>::iterator it;
     for (it = committedAnimations.begin(); it != committedAnimations.end(); ++it) {
-        std::shared_ptr<VROAnimation> animation = *it;
+        std::shared_ptr<VROTransaction> animation = *it;
         animation->_t = (time - animation->_startTimeSeconds) / animation->_durationSeconds;
      
         // Remove the animation when it's complete
@@ -74,16 +74,16 @@ void VROAnimation::updateT() {
     }
 }
 
-#pragma mark - Animation Class
+#pragma mark - Transaction Class
 
-VROAnimation::VROAnimation() :
+VROTransaction::VROTransaction() :
     _t(0),
     _durationSeconds(0.2),
     _startTimeSeconds(0)
 {}
 
-void VROAnimation::setAnimationDuration(float durationSeconds) {
-    std::shared_ptr<VROAnimation> animation = get();
+void VROTransaction::setAnimationDuration(float durationSeconds) {
+    std::shared_ptr<VROTransaction> animation = get();
     if (!animation) {
         pabort();
     }
@@ -91,8 +91,8 @@ void VROAnimation::setAnimationDuration(float durationSeconds) {
     animation->_durationSeconds = durationSeconds;
 }
 
-float VROAnimation::getAnimationDuration() {
-    std::shared_ptr<VROAnimation> animation = get();
+float VROTransaction::getAnimationDuration() {
+    std::shared_ptr<VROTransaction> animation = get();
     if (!animation) {
         pabort();
     }

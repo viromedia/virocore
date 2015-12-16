@@ -17,7 +17,7 @@
 #import "VROHeadTracker.h"
 #import "VROMagnetSensor.h"
 #import "VRORenderContextMetal.h"
-#import "VROAnimation.h"
+#import "VROTransaction.h"
 #import "VROImageUtil.h"
 
 @interface VROView () {
@@ -200,8 +200,8 @@
             dispatch_semaphore_signal(block_sema);
         }];
         
-        VROAnimation::beginImplicitAnimation();
-        VROAnimation::updateT();
+        VROTransaction::beginImplicitAnimation();
+        VROTransaction::updateT();
         
         if (view.currentRenderPassDescriptor) {
             if (self.vrModeEnabled) {
@@ -220,7 +220,7 @@
         }
         
         [commandBuffer commit];
-        VROAnimation::commitAll();
+        VROTransaction::commitAll();
     }
 }
 
