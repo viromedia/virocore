@@ -12,15 +12,17 @@
 #include <memory>
 #include <stack>
 #include <vector>
+#include <string>
 #include "VROMatrix4f.h"
 #include "VROQuaternion.h"
 #include "VRORenderContext.h"
 #include "VRORenderParameters.h"
+#include "VROAnimatable.h"
 
 class VROGeometry;
 class VROLight;
 
-class VRONode : public std::enable_shared_from_this<VRONode> {
+class VRONode : public std::enable_shared_from_this<VRONode>, public VROAnimatable {
     
 public:
     
@@ -67,6 +69,9 @@ public:
     void setPosition(VROVector3f position);
     void setScale(VROVector3f scale);
     
+    //TODO DELETE
+    void setPositionAnimated(VROVector3f position);
+    
     void setLight(std::shared_ptr<VROLight> light) {
         _light = light;
     }
@@ -87,6 +92,9 @@ public:
                                             }), parentSubnodes.end());
         _supernode.reset();
     }
+    
+    void setProperty(std::string property, VROVector3f value);
+    void setProperty(std::string property, float value);
     
 protected:
     

@@ -10,7 +10,9 @@
 #define VROTransaction_h
 
 #include <stdio.h>
+#include <vector>
 #include <memory>
+#include "VROAnimation.h"
 
 class VROTransaction {
     
@@ -65,12 +67,26 @@ public:
         return _t;
     }
     
+    /*
+     Add a new animation to this transaction.
+     */
+    void addAnimation(std::shared_ptr<VROAnimation> animation) {
+        _animations.push_back(animation);
+    }
+    
+    /*
+     Process another frame of all animations in this transaction.
+     */
+    void processAnimations();
+    
 private:
     
     double _t;
     
     double _durationSeconds;
     double _startTimeSeconds;
+    
+    std::vector<std::shared_ptr<VROAnimation>> _animations;
     
 };
 

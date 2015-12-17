@@ -10,12 +10,24 @@
 #define VROAnimation_h
 
 #include <stdio.h>
+#include <memory>
+#include <functional>
+
+class VROAnimatable;
 
 class VROAnimation {
     
 public:
     
-private:
+    VROAnimation(std::shared_ptr<VROAnimatable> animatable) :
+        _animatable(animatable)
+    {}
+    
+    virtual void processAnimationFrame(float t) = 0;
+    
+protected:
+    
+    std::weak_ptr<VROAnimatable> _animatable;
     
 };
 

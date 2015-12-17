@@ -84,6 +84,14 @@
     [labelView update];
     
     _rootNode->addChildNode(labelView.vroLayer);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        VROTransaction::begin();
+        VROTransaction::setAnimationDuration(2);
+        _boxNode->setPositionAnimated({ 0, 0, 10 });
+        
+        VROTransaction::commit();
+    });
 }
 
 - (void)shutdownRendererWithView:(MTKView *)view {

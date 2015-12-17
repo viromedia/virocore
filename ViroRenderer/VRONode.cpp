@@ -9,6 +9,9 @@
 #include "VRONode.h"
 #include "VROGeometry.h"
 #include "VROLight.h"
+#include "VROAnimation.h"
+#include "VROTransaction.h"
+#include "VROAnimationVector3f.h"
 
 #pragma mark - Initialization
 
@@ -116,4 +119,43 @@ void VRONode::setScale(VROVector3f scale) {
 }
 
 #pragma mark - Animation
+
+void VRONode::setPositionAnimated(VROVector3f position) {
+    // TODO Maybe setPosition should do everything under the
+    // if (property == position) block? Then we won't need to use
+    // strings at all; we're just using function binding
+    setProperty("position", position);
+}
+
+void VRONode::setProperty(std::string property, VROVector3f value) {
+    using std::placeholders::_1;
+    std::shared_ptr<VROAnimatable> animatable = shared_from_this();
+
+    std::shared_ptr<VROAnimation> animation;
+    if (property == "position") {
+        std::function<void(VROVector3f)> method = std::bind(&VRONode::setPosition, this, _1 );
+        animation = std::shared_ptr<VROAnimation>(new VROAnimationVector3f(animatable,
+                                                                           method,
+                                                                           _position,
+                                                                           value));
+    }
+    
+    if (animation) {
+        std::shared_ptr<VROTransaction> transaction = VROTransaction::get();
+        transaction->addAnimation(animation);
+    }
+}
+
+void VRONode::setProperty(std::string property, float value) {
+    using std::placeholders::_1;
+    std::shared_ptr<VROAnimatable> animatable = shared_from_this();
+    
+    std::shared_ptr<VROAnimation> animation;
+    
+    if (animation) {
+        std::shared_ptr<VROTransaction> transaction = VROTransaction::get();
+        transaction->addAnimation(animation);
+    }
+}
+
 

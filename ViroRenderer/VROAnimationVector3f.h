@@ -1,0 +1,47 @@
+//
+//  VROAnimationVector3f.h
+//  ViroRenderer
+//
+//  Created by Raj Advani on 12/17/15.
+//  Copyright © 2015 Viro Media. All rights reserved.
+//
+
+#ifndef VROAnimationVector3f_h
+#define VROAnimationVector3f_h
+
+#include <stdio.h>
+#include "VROVector3f.h"
+#include "VROAnimation.h"
+#include "VROAnimatable.h"
+
+class VROAnimationVector3f : public VROAnimation {
+    
+public:
+    
+    VROAnimationVector3f(std::shared_ptr<VROAnimatable> target,
+                         std::function<void(VROVector3f)> method,
+                         VROVector3f start,
+                         VROVector3f end) :
+        VROAnimation(target),
+        _start(start),
+        _end(end),
+        _method(method)
+    {}
+    
+    void processAnimationFrame(float t) {
+        VROVector3f value = _start.interpolate(_end, t);
+        
+        std::shared_ptr<VROAnimatable> animatable = _animatable.lock();
+        if (animatable) {
+            _method(value);
+        }
+    }
+    
+private:
+    
+    VROVector3f _start, _end;
+    std::function<void(VROVector3f)> _method;
+    
+};
+
+#endif /* VROAnimationVector3f_h */

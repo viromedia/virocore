@@ -12,11 +12,10 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string>
-#include "VROInterpolatable.h"
 
 class VROVector3d;
 
-class VROVector3f : public VROInterpolatable <VROVector3f> {
+class VROVector3f {
 public:
     float x;
     float y;

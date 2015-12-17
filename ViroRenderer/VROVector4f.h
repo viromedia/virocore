@@ -12,9 +12,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string>
-#include "VROInterpolatable.h"
 
-class VROVector4f : public VROInterpolatable <VROVector4f> {
+class VROVector4f {
 public:
     float x;
     float y;
