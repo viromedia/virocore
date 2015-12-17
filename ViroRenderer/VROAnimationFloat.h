@@ -17,7 +17,7 @@ class VROAnimationFloat : public VROAnimation {
 public:
     
     VROAnimationFloat(std::shared_ptr<VROAnimatable> target,
-                      std::function<void(const VROAnimatable&, float)> method,
+                      std::function<void(float)> method,
                       float start, float end) :
         VROAnimation(target),
         _start(start),
@@ -30,14 +30,21 @@ public:
         
         std::shared_ptr<VROAnimatable> animatable = _animatable.lock();
         if (animatable) {
-            _method(*animatable.get(), value);
+            _method(value);
+        }
+    }
+    
+    void finish() {
+        std::shared_ptr<VROAnimatable> animatable = _animatable.lock();
+        if (animatable) {
+            _method(_end);
         }
     }
 
 private:
     
     float _start, _end;
-    std::function<void(const VROAnimatable&, float)> _method;
+    std::function<void(float)>  _method;
     
 };
 

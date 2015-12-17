@@ -21,6 +21,9 @@ class VROAnimation;
 class VROAnimatable {
 public:
     
+    static void animate(std::shared_ptr<VROAnimatable> animatable,
+                        std::shared_ptr<VROAnimation> animation);
+    
 };
 
 #endif /* VROAnimatable_hpp */

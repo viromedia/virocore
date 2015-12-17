@@ -23,7 +23,16 @@ public:
         _animatable(animatable)
     {}
     
+    /*
+     Move the property to its value corresponding to t [0, 1].
+     */
     virtual void processAnimationFrame(float t) = 0;
+    
+    /*
+     Immediately finish this animation by moving its value to the
+     end state.
+     */
+    virtual void finish() = 0;
     
 protected:
     

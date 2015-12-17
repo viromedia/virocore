@@ -37,6 +37,13 @@ public:
         }
     }
     
+    void finish() {
+        std::shared_ptr<VROAnimatable> animatable = _animatable.lock();
+        if (animatable) {
+            _method(_end);
+        }
+    }
+    
 private:
     
     VROVector3f _start, _end;

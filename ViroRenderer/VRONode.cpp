@@ -111,11 +111,6 @@ void VRONode::setRotation(VROQuaternion rotation) {
 }
 
 void VRONode::setPosition(VROVector3f position) {
-    if (!VROTransaction::get()) {
-        setPosition_direct(position);
-        return;
-    }
-    
     using std::placeholders::_1;
     std::shared_ptr<VROAnimatable> animatable = shared_from_this();
     
@@ -126,9 +121,7 @@ void VRONode::setPosition(VROVector3f position) {
                                                                        _position,
                                                                        position));
     
-
-    std::shared_ptr<VROTransaction> transaction = VROTransaction::get();
-    transaction->addAnimation(animation);
+    animate(animatable, animation);
 }
 
 void VRONode::setPosition_direct(VROVector3f position) {
