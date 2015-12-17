@@ -201,7 +201,7 @@
         }];
         
         VROTransaction::beginImplicitAnimation();
-        VROTransaction::updateT();
+        VROTransaction::update();
         
         if (view.currentRenderPassDescriptor) {
             if (self.vrModeEnabled) {

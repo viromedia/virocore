@@ -32,7 +32,7 @@ public:
     /*
      Update the T values for all committed animation transactions.
      */
-    static void updateT();
+    static void update();
     
     /*
      Begin a new VROTransaction on this thread, and make this the active animation

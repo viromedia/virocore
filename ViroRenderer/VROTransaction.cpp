@@ -56,7 +56,7 @@ void VROTransaction::commitAll() {
     }
 }
 
-void VROTransaction::updateT() {
+void VROTransaction::update() {
     double time = VROTimeCurrentSeconds();
     
     std::vector<std::shared_ptr<VROTransaction>>::iterator it;

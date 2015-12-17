@@ -37,7 +37,7 @@ public:
 private:
     
     float _start, _end;
-    std::function<void(const VROAnimatable&, float)> _method;//f_add_display = &Foo::print_add;
+    std::function<void(const VROAnimatable&, float)> _method;
     
 };
 
