@@ -19,6 +19,8 @@ VROLayer::VROLayer(const VRORenderContext &context) :
     setBackgroundColor({ 1.0, 1.0, 1.0, 1.0 });
     
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(1.0, 1.0);
+    surface->getMaterials()[0]->setLightingModel(VROLightingModel::Blinn);
+        
     setGeometry(surface);
 }
 
