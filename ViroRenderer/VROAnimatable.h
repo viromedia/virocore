@@ -21,9 +21,6 @@ class VROAnimation;
 class VROAnimatable {
 public:
     
-    virtual void setProperty(std::string property, float value) {}
-    virtual void setProperty(std::string property, VROVector3f value) {}
-    
 };
 
 #endif /* VROAnimatable_hpp */

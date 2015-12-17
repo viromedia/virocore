@@ -88,7 +88,7 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(1);
-        _boxNode->setPositionAnimated({ 0, 0, 2 });
+        _boxNode->setPosition({ 0, 0, 2 });
     });
 }
 

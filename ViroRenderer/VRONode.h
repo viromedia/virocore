@@ -69,9 +69,6 @@ public:
     void setPosition(VROVector3f position);
     void setScale(VROVector3f scale);
     
-    //TODO DELETE
-    void setPositionAnimated(VROVector3f position);
-    
     void setLight(std::shared_ptr<VROLight> light) {
         _light = light;
     }
@@ -93,9 +90,6 @@ public:
         _supernode.reset();
     }
     
-    void setProperty(std::string property, VROVector3f value);
-    void setProperty(std::string property, float value);
-    
 protected:
     
     /*
@@ -112,6 +106,11 @@ private:
     VROVector3f _scale;
     VROVector3f _position;
     VROQuaternion _rotation;
+    
+    /*
+     Internal functions to directly set animated values.
+     */
+    void setPosition_direct(VROVector3f position);
     
     /*
      The 'presentation' counterpart of this node. The presentation node
