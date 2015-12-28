@@ -12,6 +12,7 @@
 #include "VROAnimation.h"
 #include "VROTransaction.h"
 #include "VROAnimationVector3f.h"
+#include "VROAnimationQuaternion.h"
 
 #pragma mark - Initialization
 
@@ -107,13 +108,16 @@ VROMatrix4f VRONode::getTransform() const {
 #pragma mark - Setters
 
 void VRONode::setRotation(VROQuaternion rotation) {
-    _rotation = rotation;
+    animate(std::make_shared<VROAnimationQuaternion>(shared_from_this(),
+                                                     [this](VROQuaternion r) {
+                                                         _rotation = r;
+                                                     }, _rotation, rotation));
 }
 
 void VRONode::setPosition(VROVector3f position) {
     animate(std::make_shared<VROAnimationVector3f>(shared_from_this(),
-                                                   [this](VROVector3f v) {
-                                                       _position = v;
+                                                   [this](VROVector3f p) {
+                                                       _position = p;
                                                    }, _position, position));
 }
 

@@ -34,7 +34,7 @@
     light->setAttenuationStartDistance(5);
     light->setAttenuationEndDistance(10);
     light->setSpotInnerAngle(0);
-    light->setSpotOuterAngle(15);
+    light->setSpotOuterAngle(45);
     
     _rootNode->setLight(light);
     _scene->addNode(_rootNode);
@@ -88,7 +88,9 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(1);
-        _boxNode->setPosition({ 0, 0, 2 });
+       // _boxNode->setPosition({ 0, 0, 4 });
+        _boxNode->setRotation( {M_PI / 2, M_PI / 4, 0});
+        _boxNode->setScale( { 1.2, 1.2, 1.2 });
     });
 }
 
@@ -102,7 +104,7 @@
 
 - (void)renderEye:(VROEyeType)eye context:(VRORenderContext *)renderContext {
     angle += .01;
-    _boxNode->setRotation({ 0, angle, 0});
+    //_boxNode->setRotation({ 0, angle, 0});
     
     _scene->render(*renderContext);
 }
