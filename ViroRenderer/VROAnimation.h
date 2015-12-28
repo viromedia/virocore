@@ -15,6 +15,11 @@
 
 class VROAnimatable;
 
+/*
+ Represents the animation of a property. Subclasses identify the type
+ of the property (e.g. animating a floating point value, animating a
+ VROVector3f, etc.).
+ */
 class VROAnimation {
     
 public:

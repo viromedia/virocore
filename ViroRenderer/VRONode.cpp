@@ -111,23 +111,15 @@ void VRONode::setRotation(VROQuaternion rotation) {
 }
 
 void VRONode::setPosition(VROVector3f position) {
-    using std::placeholders::_1;
-    std::shared_ptr<VROAnimatable> animatable = shared_from_this();
-    
-    std::shared_ptr<VROAnimation> animation;
-    std::function<void(VROVector3f)> method = std::bind(&VRONode::setPosition_direct, this, _1 );
-    animation = std::shared_ptr<VROAnimation>(new VROAnimationVector3f(animatable,
-                                                                       method,
-                                                                       _position,
-                                                                       position));
-    
-    animate(animatable, animation);
-}
-
-void VRONode::setPosition_direct(VROVector3f position) {
-    _position = position;
+    animate(std::make_shared<VROAnimationVector3f>(shared_from_this(),
+                                                   [this](VROVector3f v) {
+                                                       _position = v;
+                                                   }, _position, position));
 }
 
 void VRONode::setScale(VROVector3f scale) {
-    _scale = scale;
+    animate(std::make_shared<VROAnimationVector3f>(shared_from_this(),
+                                                   [this](VROVector3f s) {
+                                                       _scale = s;
+                                                   }, _scale, scale));
 }

@@ -12,17 +12,17 @@
 #include <stdio.h>
 #include <string>
 #include "VROVector3f.h"
+#include <functional>
 
 class VROAnimation;
 
 /*
- Marker class objects that have animatable properties.
+ Marker class for objects that have animatable properties.
  */
-class VROAnimatable {
+class VROAnimatable : public std::enable_shared_from_this<VROAnimatable> {
 public:
     
-    static void animate(std::shared_ptr<VROAnimatable> animatable,
-                        std::shared_ptr<VROAnimation> animation);
+    void animate(std::shared_ptr<VROAnimation> animation);
     
 };
 

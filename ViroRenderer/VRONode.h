@@ -22,7 +22,7 @@
 class VROGeometry;
 class VROLight;
 
-class VRONode : public std::enable_shared_from_this<VRONode>, public VROAnimatable {
+class VRONode : public VROAnimatable {
     
 public:
     
@@ -78,7 +78,7 @@ public:
     
     void addChildNode(std::shared_ptr<VRONode> node) {
         _subnodes.push_back(node);
-        node->_supernode = shared_from_this();
+        node->_supernode = std::static_pointer_cast<VRONode>(shared_from_this());
     }
     void removeFromParentNode() {
         std::vector<std::shared_ptr<VRONode>> parentSubnodes = _supernode->_subnodes;
@@ -106,11 +106,6 @@ private:
     VROVector3f _scale;
     VROVector3f _position;
     VROQuaternion _rotation;
-    
-    /*
-     Internal functions to directly set animated values.
-     */
-    void setPosition_direct(VROVector3f position);
     
     /*
      The 'presentation' counterpart of this node. The presentation node

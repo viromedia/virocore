@@ -10,9 +10,9 @@
 #include "VROTransaction.h"
 #include "VROAnimation.h"
 
-void VROAnimatable::animate(std::shared_ptr<VROAnimatable> animatable,
-                            std::shared_ptr<VROAnimation> animation) {
-    
+#include "VROAnimationVector3f.h"
+
+void VROAnimatable::animate(std::shared_ptr<VROAnimation> animation) {
     std::shared_ptr<VROTransaction> transaction = VROTransaction::get();
     if (transaction) {
         transaction->addAnimation(animation);
