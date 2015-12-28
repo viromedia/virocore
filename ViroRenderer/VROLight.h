@@ -13,6 +13,7 @@
 #include "VROVector3f.h"
 #include "VROVector4f.h"
 #include "VROSize.h"
+#include "VROAnimatable.h"
 
 enum class VROLightType {
     Ambient,
@@ -27,7 +28,7 @@ enum class VROShadowMode {
     Modulated
 };
 
-class VROLight {
+class VROLight : public VROAnimatable {
     
 public:
     
@@ -49,9 +50,7 @@ public:
         return _type;
     }
     
-    void setColor(VROVector3f color) {
-        _color = color;
-    }
+    void setColor(VROVector3f color);
     VROVector3f getColor() const {
         return _color;
     }
@@ -63,9 +62,7 @@ public:
         return _name;
     }
     
-    void setPosition(VROVector3f position) {
-        _position = position;
-    }
+    void setPosition(VROVector3f position);
     VROVector3f getPosition() const {
         return _position;
     }
@@ -77,45 +74,32 @@ public:
         return _transformedPosition;
     }
     
-    void setDirection(VROVector3f direction) {
-        _direction = direction;
-        _direction.normalize();
-    }
+    void setDirection(VROVector3f direction);
     VROVector3f getDirection() const {
         return _direction;
     }
     
-    void setAttenuationStartDistance(float attenuationStartDistance) {
-        _attenuationStartDistance = attenuationStartDistance;
-    }
+    void setAttenuationStartDistance(float attenuationStartDistance);
     float getAttenuationStartDistance() const {
         return _attenuationStartDistance;
     }
     
-    void setAttenuationEndDistance(float attenuationEndDistance) {
-        _attenuationEndDistance = attenuationEndDistance;
-    }
+    void setAttenuationEndDistance(float attenuationEndDistance);
     float getAttenuationEndDistance() const {
         return _attenuationEndDistance;
     }
     
-    void setAttenuationFalloffExponent(float attenuationFalloffExponent) {
-        _attenuationFalloffExponent = attenuationFalloffExponent;
-    }
+    void setAttenuationFalloffExponent(float attenuationFalloffExponent);
     float getAttenuationFalloffExponent() const {
         return _attenuationFalloffExponent;
     }
     
-    void setSpotInnerAngle(float spotInnerAngle) {
-        _spotInnerAngle = spotInnerAngle;
-    }
+    void setSpotInnerAngle(float spotInnerAngle);
     float getSpotInnerAngle() const {
         return _spotInnerAngle;
     }
     
-    void setSpotOuterAngle(float spotOuterAngle) {
-        _spotOuterAngle = spotOuterAngle;
-    }
+    void setSpotOuterAngle(float spotOuterAngle);
     float getSpotOuterAngle() const {
         return _spotOuterAngle;
     }
