@@ -14,3 +14,9 @@ void VROMaterial::setShininess(float shininess) {
         _shininess = v;
     }, _shininess, shininess));
 }
+
+void VROMaterial::setFresnelExponent(float fresnelExponent) {
+    animate(std::make_shared<VROAnimationFloat>([this](float v) {
+        _fresnelExponent = v;
+    }, _fresnelExponent, fresnelExponent));
+}

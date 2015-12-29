@@ -25,7 +25,6 @@ void VROMaterialVisual::setContents(std::vector<std::shared_ptr<VROTexture>> cub
 }
 
 void VROMaterialVisual::setIntensity(float intensity) {
-    NSLog(@"Intensity: %f", intensity);
     _heartbeat->animate(std::make_shared<VROAnimationFloat>([this](float value) {
                                                                 _intensity = value;
                                                             }, _intensity, intensity));

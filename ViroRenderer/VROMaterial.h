@@ -88,9 +88,7 @@ public:
         return _shininess;
     }
     
-    void setFresnelExponent(float fresnelExponent) {
-        _fresnelExponent = fresnelExponent;
-    }
+    void setFresnelExponent(float fresnelExponent);
     float getFresnelExponent() const {
         return _fresnelExponent;
     }
