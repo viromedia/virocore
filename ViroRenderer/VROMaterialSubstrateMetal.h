@@ -33,6 +33,11 @@ public:
     virtual ~VROMaterialSubstrateMetal();
     
     /*
+     Set the uniforms required to render this material.
+     */
+    void setMaterialUniforms();
+    
+    /*
      Set the uniforms required to render this given material under the
      given lights.
      */
@@ -56,6 +61,7 @@ public:
     
 private:
     
+    VROMaterial &_material;
     VROLightingModel _lightingModel;
     
     id <MTLFunction> _vertexProgram;

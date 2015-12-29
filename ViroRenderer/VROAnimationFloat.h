@@ -16,10 +16,9 @@ class VROAnimationFloat : public VROAnimation {
     
 public:
     
-    VROAnimationFloat(std::shared_ptr<VROAnimatable> target,
-                      std::function<void(float)> method,
+    VROAnimationFloat(std::function<void(float)> method,
                       float start, float end) :
-        VROAnimation(target),
+        VROAnimation(),
         _start(start),
         _end(end),
         _method(method)

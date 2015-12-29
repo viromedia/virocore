@@ -35,6 +35,7 @@ typedef struct {
 
 typedef struct {
     vector_float4    diffuse_surface_color;
+    float            diffuse_intensity;
     float            shininess;
 } VROMaterialUniforms;
 

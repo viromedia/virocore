@@ -108,22 +108,19 @@ VROMatrix4f VRONode::getTransform() const {
 #pragma mark - Setters
 
 void VRONode::setRotation(VROQuaternion rotation) {
-    animate(std::make_shared<VROAnimationQuaternion>(shared_from_this(),
-                                                     [this](VROQuaternion r) {
+    animate(std::make_shared<VROAnimationQuaternion>([this](VROQuaternion r) {
                                                          _rotation = r;
                                                      }, _rotation, rotation));
 }
 
 void VRONode::setPosition(VROVector3f position) {
-    animate(std::make_shared<VROAnimationVector3f>(shared_from_this(),
-                                                   [this](VROVector3f p) {
+    animate(std::make_shared<VROAnimationVector3f>([this](VROVector3f p) {
                                                        _position = p;
                                                    }, _position, position));
 }
 
 void VRONode::setScale(VROVector3f scale) {
-    animate(std::make_shared<VROAnimationVector3f>(shared_from_this(),
-                                                   [this](VROVector3f s) {
+    animate(std::make_shared<VROAnimationVector3f>([this](VROVector3f s) {
                                                        _scale = s;
                                                    }, _scale, scale));
 }

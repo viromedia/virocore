@@ -13,6 +13,7 @@
 #include "VROMatrix4f.h"
 #include "VROTexture.h"
 #include "VROImageUtil.h"
+#include "VROAnimatable.h"
 #include <vector>
 
 enum class VROWrapMode {
@@ -34,11 +35,19 @@ enum class VROContentsType {
     TextureCube
 };
 
+/*
+ Used by the animation system, which requires shared pointers.
+ */
+class VROMaterialVisualHeartbeat : public VROAnimatable {
+    
+};
+
 class VROMaterialVisual {
     
 public:
     
     VROMaterialVisual() :
+        _heartbeat(std::make_shared<VROMaterialVisualHeartbeat>()),
         _contentsType(VROContentsType::Fixed),
         _contentsColor({ 1.0, 1.0, 1.0, 1.0 }),
         _intensity(1.0),
@@ -49,20 +58,9 @@ public:
         _mipFilter(VROFilterMode::None)
     {}
     
-    void setContents(VROVector4f contents) {
-        _contentsColor = contents;
-        _contentsType = VROContentsType::Fixed;
-    }
-    
-    void setContents(std::shared_ptr<VROTexture> texture) {
-        _contentsTexture = texture;
-        _contentsType = VROContentsType::Texture2D;
-    }
-    
-    void setContents(std::vector<std::shared_ptr<VROTexture>> cubeTextures) {
-        _contentsCube = cubeTextures;
-        _contentsType = VROContentsType::TextureCube;
-    }
+    void setContents(VROVector4f contents);
+    void setContents(std::shared_ptr<VROTexture> texture);
+    void setContents(std::vector<std::shared_ptr<VROTexture>> cubeTextures);
     
     VROContentsType getContentsType() const {
         return _contentsType;
@@ -86,7 +84,17 @@ public:
         }
     }
     
+    void setIntensity(float intensity);
+    float getIntensity() const {
+        return _intensity;
+    }
+    
 private:
+    
+    /*
+     Shared pointer scoped to this material, for use by the animation system.
+     */
+    std::shared_ptr<VROMaterialVisualHeartbeat> _heartbeat;
     
     /*
      Indicates the content type for this visual.

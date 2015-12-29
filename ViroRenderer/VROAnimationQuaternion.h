@@ -19,11 +19,10 @@ class VROAnimationQuaternion : public VROAnimation {
     
 public:
     
-    VROAnimationQuaternion(std::shared_ptr<VROAnimatable> target,
-                           std::function<void(VROQuaternion)> method,
+    VROAnimationQuaternion(std::function<void(VROQuaternion)> method,
                            VROQuaternion start,
                            VROQuaternion end) :
-        VROAnimation(target),
+        VROAnimation(),
         _start(start),
         _end(end),
         _method(method)

@@ -18,11 +18,10 @@ class VROAnimationVector3f : public VROAnimation {
     
 public:
     
-    VROAnimationVector3f(std::shared_ptr<VROAnimatable> target,
-                         std::function<void(VROVector3f)> method,
+    VROAnimationVector3f(std::function<void(VROVector3f)> method,
                          VROVector3f start,
                          VROVector3f end) :
-        VROAnimation(target),
+        VROAnimation(),
         _start(start),
         _end(end),
         _method(method)

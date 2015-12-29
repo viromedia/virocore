@@ -7,3 +7,10 @@
 //
 
 #include "VROMaterial.h"
+#include "VROAnimationFloat.h"
+
+void VROMaterial::setShininess(float shininess) {
+    animate(std::make_shared<VROAnimationFloat>([this](float v) {
+        _shininess = v;
+    }, _shininess, shininess));
+}

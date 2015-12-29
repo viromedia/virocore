@@ -11,6 +11,7 @@
 
 #include <memory>
 #include "VROMaterialVisual.h"
+#include "VROAnimatable.h"
 
 enum class VROCullMode {
     Back,
@@ -45,7 +46,7 @@ enum class VROLightingModel {
  visual attributes and their options, which you can then reuse for multiple geometries 
  in a scene.
  */
-class VROMaterial {
+class VROMaterial : public VROAnimatable {
     
 public:
     
@@ -82,9 +83,7 @@ public:
         return _selfIllumination;
     }
     
-    void setShininess(float shininess) {
-        _shininess = shininess;
-    }
+    void setShininess(float shininess);
     float getShininess() const {
         return _shininess;
     }

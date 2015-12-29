@@ -309,6 +309,7 @@ void VROGeometrySubstrateMetal::render(const VRORenderContext &context,
         VROGeometryElementMetal element = _elements[i];
         
         VROMaterialSubstrateMetal *material = _materials[i % _materials.size()];
+        material->setMaterialUniforms();
         material->setLightingUniforms(params.lights);
         
         id <MTLRenderPipelineState> pipelineState = _elementPipelineStates[i];

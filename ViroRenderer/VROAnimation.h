@@ -24,9 +24,17 @@ class VROAnimation {
     
 public:
     
-    VROAnimation(std::shared_ptr<VROAnimatable> animatable) :
-        _animatable(animatable)
-    {}
+    VROAnimation() {}
+    
+    /*
+     Set the animatable. This is typically the object holding the 
+     property to be animated. It is stored by a weak_ptr so we can
+     ensure it hasn't been deallocated before invoking the animation
+     each frame.
+     */
+    void setAnimatable(std::shared_ptr<VROAnimatable> animatable) {
+        _animatable = animatable;
+    }
     
     /*
      Move the property to its value corresponding to t [0, 1].

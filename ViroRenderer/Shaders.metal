@@ -81,6 +81,7 @@ typedef struct {
     
     float4 ambient_color;
     float4 material_color;
+    float  diffuse_intensity;
 } VROConstantLightingVertexOut;
 
 vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttributes attributes [[ stage_in ]],
@@ -94,6 +95,7 @@ vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttribut
     out.texcoord = attributes.texcoord;
     out.ambient_color = float4(lighting.ambient_light_color, 1.0) * material.diffuse_surface_color;
     out.material_color = material.diffuse_surface_color;
+    out.diffuse_intensity = material.diffuse_intensity;
     
     return out;
 }
@@ -104,7 +106,7 @@ fragment float4 constant_lighting_fragment_c(VROConstantLightingVertexOut in [[ 
 
 fragment float4 constant_lighting_fragment_t(VROConstantLightingVertexOut in [[ stage_in ]],
                                               texture2d<float> texture [[ texture(0) ]]) {
-    return in.ambient_color + float4(in.material_color) * texture.sample(s, in.texcoord);
+    return in.ambient_color + float4(in.material_color) * texture.sample(s, in.texcoord) * in.diffuse_intensity;
 }
 
 /* ---------------------------------------
@@ -120,6 +122,7 @@ typedef struct {
     
     float4 ambient_color;
     float4 material_color;
+    float  diffuse_intensity;
 } VROLambertLightingVertexOut;
 
 float3 apply_light_lambert(constant VROLightUniforms &light,
@@ -153,6 +156,7 @@ vertex VROLambertLightingVertexOut lambert_lighting_vertex(VRORendererAttributes
 
     out.ambient_color = float4(lighting.ambient_light_color, 1.0) * material.diffuse_surface_color;
     out.material_color = material.diffuse_surface_color;
+    out.diffuse_intensity = material.diffuse_intensity;
     
     return out;
 }
@@ -160,7 +164,7 @@ vertex VROLambertLightingVertexOut lambert_lighting_vertex(VRORendererAttributes
 fragment float4 lambert_lighting_fragment_c(VROLambertLightingVertexOut in [[ stage_in ]],
                                             constant VROSceneLightingUniforms &lighting [[ buffer(1) ]]) {
     
-    float4 material_diffuse_color = in.material_color;
+    float4 material_diffuse_color = in.material_color * in.diffuse_intensity;
 
     float3 aggregated_light_color = float3(0, 0, 0);
     for (int i = 0; i < lighting.num_lights; i++) {
@@ -177,7 +181,7 @@ fragment float4 lambert_lighting_fragment_t(VROLambertLightingVertexOut in [[ st
                                             texture2d<float> texture [[ texture(0) ]],
                                             constant VROSceneLightingUniforms &lighting [[ buffer(0) ]]) {
     
-    float4 material_diffuse_color = texture.sample(s, in.texcoord);
+    float4 material_diffuse_color = texture.sample(s, in.texcoord) * in.diffuse_intensity;
     
     float3 aggregated_light_color = float3(0, 0, 0);
     for (int i = 0; i < lighting.num_lights; i++) {
@@ -205,6 +209,7 @@ typedef struct {
     float4 ambient_color;
     float4 material_color;
     float  material_shininess;
+    float  diffuse_intensity;
 } VROPhongLightingVertexOut;
 
 float3 apply_light_phong(constant VROLightUniforms &light,
@@ -258,6 +263,7 @@ vertex VROPhongLightingVertexOut phong_lighting_vertex(VRORendererAttributes att
     out.ambient_color = float4(lighting.ambient_light_color, 1.0) * material.diffuse_surface_color;
     out.material_color = material.diffuse_surface_color;
     out.material_shininess = material.shininess;
+    out.diffuse_intensity = material.diffuse_intensity;
     
     return out;
 }
@@ -266,7 +272,7 @@ fragment float4 phong_lighting_fragment_c(VROPhongLightingVertexOut in [[ stage_
                                           texture2d<float> specular_texture [[ texture(0) ]],
                                           constant VROSceneLightingUniforms &lighting [[ buffer(1) ]]) {
     
-    float4 material_diffuse_color = in.material_color;
+    float4 material_diffuse_color = in.material_color * in.diffuse_intensity;
     float4 material_specular_color = specular_texture.sample(s, in.texcoord);
     float3 surface_to_camera = normalize(in.camera_position - in.surface_position);
 
@@ -289,7 +295,7 @@ fragment float4 phong_lighting_fragment_t(VROPhongLightingVertexOut in [[ stage_
                                           texture2d<float> specular_texture [[ texture(1) ]],
                                           constant VROSceneLightingUniforms &lighting [[ buffer(0) ]]) {
     
-    float4 material_diffuse_color  = diffuse_texture.sample(s, in.texcoord);
+    float4 material_diffuse_color  = diffuse_texture.sample(s, in.texcoord) * in.diffuse_intensity;
     float4 material_specular_color = specular_texture.sample(s, in.texcoord);
     float3 surface_to_camera = normalize(in.camera_position - in.surface_position);
     
@@ -322,6 +328,7 @@ typedef struct {
     float4 ambient_color;
     float4 material_color;
     float  material_shininess;
+    float  diffuse_intensity;
 } VROBlinnLightingVertexOut;
 
 float3 apply_light_blinn(constant VROLightUniforms &light,
@@ -375,6 +382,7 @@ vertex VROBlinnLightingVertexOut blinn_lighting_vertex(VRORendererAttributes att
     out.ambient_color = float4(lighting.ambient_light_color, 1.0) * material.diffuse_surface_color;
     out.material_color = material.diffuse_surface_color;
     out.material_shininess = material.shininess;
+    out.diffuse_intensity = material.diffuse_intensity;
     
     return out;
 }
@@ -383,7 +391,7 @@ fragment float4 blinn_lighting_fragment_c(VROBlinnLightingVertexOut in [[ stage_
                                           texture2d<float> specular_texture [[ texture(0) ]],
                                           constant VROSceneLightingUniforms &lighting [[ buffer(1) ]]) {
     
-    float4 material_diffuse_color = in.material_color;
+    float4 material_diffuse_color = in.material_color * in.diffuse_intensity;
     float4 material_specular_color = specular_texture.sample(s, in.texcoord);
     float3 surface_to_camera = normalize(in.camera_position - in.surface_position);
     
@@ -406,7 +414,7 @@ fragment float4 blinn_lighting_fragment_t(VROBlinnLightingVertexOut in [[ stage_
                                           texture2d<float> specular_texture [[ texture(1) ]],
                                           constant VROSceneLightingUniforms &lighting [[ buffer(0) ]]) {
     
-    float4 material_diffuse_color  = diffuse_texture.sample(s, in.texcoord);
+    float4 material_diffuse_color  = diffuse_texture.sample(s, in.texcoord) * in.diffuse_intensity;
     float4 material_specular_color = specular_texture.sample(s, in.texcoord);
     float3 surface_to_camera = normalize(in.camera_position - in.surface_position);
     

@@ -11,15 +11,13 @@
 #include "VROAnimationFloat.h"
 
 void VROLight::setColor(VROVector3f color) {
-    animate(std::make_shared<VROAnimationVector3f>(shared_from_this(),
-                                                   [this](VROVector3f c) {
+    animate(std::make_shared<VROAnimationVector3f>([this](VROVector3f c) {
                                                        _color = c;
                                                    }, _color, color));
 }
 
 void VROLight::setPosition(VROVector3f position) {
-    animate(std::make_shared<VROAnimationVector3f>(shared_from_this(),
-                                                   [this](VROVector3f p) {
+    animate(std::make_shared<VROAnimationVector3f>([this](VROVector3f p) {
                                                        _position = p;
                                                    }, _position, position));
 }
@@ -27,43 +25,37 @@ void VROLight::setPosition(VROVector3f position) {
 void VROLight::setDirection(VROVector3f direction) {
     direction.normalize();
     
-    animate(std::make_shared<VROAnimationVector3f>(shared_from_this(),
-                                                   [this](VROVector3f d) {
+    animate(std::make_shared<VROAnimationVector3f>([this](VROVector3f d) {
                                                        _direction = d;
                                                    }, _direction, direction));
 }
 
 void VROLight::setAttenuationStartDistance(float attenuationStartDistance) {
-    animate(std::make_shared<VROAnimationFloat>(shared_from_this(),
-                                                [this](float value) {
+    animate(std::make_shared<VROAnimationFloat>([this](float value) {
                                                     _attenuationStartDistance = value;
                                                 }, _attenuationStartDistance, attenuationStartDistance));
 }
 
 void VROLight::setAttenuationEndDistance(float attenuationEndDistance) {
-    animate(std::make_shared<VROAnimationFloat>(shared_from_this(),
-                                                [this](float value) {
+    animate(std::make_shared<VROAnimationFloat>([this](float value) {
                                                     _attenuationEndDistance = value;
                                                 }, _attenuationEndDistance, attenuationEndDistance));
 }
 
 void VROLight::setAttenuationFalloffExponent(float attenuationFalloffExponent) {
-    animate(std::make_shared<VROAnimationFloat>(shared_from_this(),
-                                                [this](float value) {
+    animate(std::make_shared<VROAnimationFloat>([this](float value) {
                                                     _attenuationFalloffExponent = value;
                                                 }, _attenuationFalloffExponent, attenuationFalloffExponent));
 }
 
 void VROLight::setSpotInnerAngle(float spotInnerAngle) {
-    animate(std::make_shared<VROAnimationFloat>(shared_from_this(),
-                                                [this](float value) {
+    animate(std::make_shared<VROAnimationFloat>([this](float value) {
                                                     _spotInnerAngle = value;
                                                 }, _spotInnerAngle, spotInnerAngle));
 }
 
 void VROLight::setSpotOuterAngle(float spotOuterAngle) {
-    animate(std::make_shared<VROAnimationFloat>(shared_from_this(),
-                                                [this](float value) {
+    animate(std::make_shared<VROAnimationFloat>([this](float value) {
                                                     _spotOuterAngle = value;
                                                 }, _spotOuterAngle, spotOuterAngle));
 }

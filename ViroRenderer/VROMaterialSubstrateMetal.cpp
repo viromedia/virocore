@@ -15,9 +15,9 @@
 #include "VROMath.h"
 
 VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
-                                                     const VRORenderContextMetal &context) {
-    
-    _lightingModel = material.getLightingModel();
+                                                     const VRORenderContextMetal &context) :
+    _material(material),
+    _lightingModel(material.getLightingModel()) {
 
     id <MTLDevice> device = context.getDevice();
     id <MTLLibrary> library = context.getLibrary();
@@ -27,10 +27,6 @@ VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
     
     _materialUniformsBuffer = [device newBufferWithLength:sizeof(VROMaterialUniforms) options:0];
     _materialUniformsBuffer.label = @"VROMaterialUniformBuffer";
-    
-    VROMaterialUniforms *uniforms = (VROMaterialUniforms *)[_materialUniformsBuffer contents];
-    uniforms->diffuse_surface_color = toVectorFloat4(material.getDiffuse().getContentsColor());
-    uniforms->shininess = material.getShininess();
     
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
@@ -141,6 +137,13 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
         _fragmentProgram = [library newFunctionWithName:@"blinn_lighting_fragment_t"];
     }
     _textures.push_back(((VROTextureSubstrateMetal *)specular.getContentsTexture()->getSubstrate(context))->getTexture());
+}
+
+void VROMaterialSubstrateMetal::setMaterialUniforms() {
+    VROMaterialUniforms *uniforms = (VROMaterialUniforms *)[_materialUniformsBuffer contents];
+    uniforms->diffuse_surface_color = toVectorFloat4(_material.getDiffuse().getContentsColor());
+    uniforms->diffuse_intensity = _material.getDiffuse().getIntensity();
+    uniforms->shininess = _material.getShininess();
 }
 
 void VROMaterialSubstrateMetal::setLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights) {
