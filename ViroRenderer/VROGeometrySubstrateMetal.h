@@ -70,6 +70,7 @@ private:
     
     std::vector<id <MTLRenderPipelineState>> _elementPipelineStates;
     std::vector<id <MTLDepthStencilState>> _elementDepthStates;
+    std::vector<id <MTLDepthStencilState>> _elementDepthStatesNoWrite;
     
     /*
      Uniforms for the view and lighting.

@@ -69,6 +69,9 @@ VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry
         
         MTLDepthStencilDescriptor *depthStateDesc = parseDepthStencil(geometry.getMaterials_const()[materialIdx]);
         _elementDepthStates.push_back([device newDepthStencilStateWithDescriptor:depthStateDesc]);
+        
+        depthStateDesc.depthWriteEnabled = NO;
+        _elementDepthStatesNoWrite.push_back([device newDepthStencilStateWithDescriptor:depthStateDesc]);
     }
     
     _viewUniformsBuffer = [device newBufferWithLength:sizeof(VROViewUniforms) options:0];
@@ -344,12 +347,7 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
         if (outgoing) {
             VROMaterialSubstrateMetal *outgoingSubstrate = static_cast<VROMaterialSubstrateMetal *>(outgoing->getSubstrate(context));
             
-            // TODO Do not allocate here
-            MTLDepthStencilDescriptor *depthStateDesc = parseDepthStencil(outgoing);
-            depthStateDesc.depthWriteEnabled = false;
-            id <MTLDepthStencilState> noWrite = [metal.getDevice() newDepthStencilStateWithDescriptor:depthStateDesc];
-            
-            renderMaterial(outgoingSubstrate, element, noWrite, renderEncoder);
+            renderMaterial(outgoingSubstrate, element, _elementDepthStatesNoWrite[i], renderEncoder);
             renderMaterial(substrate, element, depthState, renderEncoder);
         }
         else {
