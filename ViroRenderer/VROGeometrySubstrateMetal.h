@@ -122,6 +122,7 @@ private:
      */
     void renderMaterial(VROMaterialSubstrateMetal *material,
                         VROGeometryElementMetal &element,
+                        id <MTLDepthStencilState> depthState,
                         id <MTLRenderCommandEncoder> renderEncoder);
     
 };

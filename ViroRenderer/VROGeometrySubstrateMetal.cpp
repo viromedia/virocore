@@ -323,8 +323,9 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
         
         id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
         [renderEncoder pushDebugGroup:@"VROGeometry"];
-        [renderEncoder setDepthStencilState:depthState];
         [renderEncoder setRenderPipelineState:pipelineState];
+        
+        [renderEncoder setCullMode:MTLCullModeFront];
         
         for (int j = 0; j < _vars.size(); ++j) {
             [renderEncoder setVertexBuffer:_vars[j].buffer offset:0 atIndex:j];
@@ -343,11 +344,16 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
         if (outgoing) {
             VROMaterialSubstrateMetal *outgoingSubstrate = static_cast<VROMaterialSubstrateMetal *>(outgoing->getSubstrate(context));
             
-            //renderMaterial(outgoingSubstrate, element, renderEncoder);
-            renderMaterial(substrate, element, renderEncoder);
+            // TODO Do not allocate here
+            MTLDepthStencilDescriptor *depthStateDesc = parseDepthStencil(outgoing);
+            depthStateDesc.depthWriteEnabled = false;
+            id <MTLDepthStencilState> noWrite = [metal.getDevice() newDepthStencilStateWithDescriptor:depthStateDesc];
+            
+            renderMaterial(outgoingSubstrate, element, noWrite, renderEncoder);
+            renderMaterial(substrate, element, depthState, renderEncoder);
         }
         else {
-            renderMaterial(substrate, element, renderEncoder);
+            renderMaterial(substrate, element, depthState, renderEncoder);
         }
         
         [renderEncoder popDebugGroup];
@@ -356,8 +362,11 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
 
 void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *material,
                                                VROGeometryElementMetal &element,
+                                               id <MTLDepthStencilState> depthState,
                                                id <MTLRenderCommandEncoder> renderEncoder) {
     
+    [renderEncoder setDepthStencilState:depthState];
+
     material->setMaterialUniforms();
     [renderEncoder setVertexBuffer:material->getMaterialUniformsBuffer() offset:0 atIndex:_vars.size() + 1];
     

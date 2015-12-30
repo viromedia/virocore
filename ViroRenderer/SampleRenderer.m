@@ -87,7 +87,7 @@
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
-        VROTransaction::setAnimationDuration(1);
+        VROTransaction::setAnimationDuration(10);
         
         UIImage *image = [UIImage imageNamed:@"bobaraj"];
         material->getDiffuse().setContents(std::make_shared<VROTexture>(image));
@@ -104,7 +104,7 @@
 
 - (void)renderEye:(VROEyeType)eye context:(VRORenderContext *)renderContext {
     angle += .01;
-    _boxNode->setRotation({ 0, angle, 0});
+    //_boxNode->setRotation({ 0, angle, 0});
     
     _scene->render(*renderContext);
 }

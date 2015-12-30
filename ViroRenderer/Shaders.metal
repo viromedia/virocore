@@ -82,6 +82,7 @@ typedef struct {
     float4 ambient_color;
     float4 material_color;
     float  diffuse_intensity;
+    float  material_alpha;
 } VROConstantLightingVertexOut;
 
 vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttributes attributes [[ stage_in ]],
@@ -96,17 +97,18 @@ vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttribut
     out.ambient_color = float4(lighting.ambient_light_color, 1.0) * material.diffuse_surface_color;
     out.material_color = material.diffuse_surface_color;
     out.diffuse_intensity = material.diffuse_intensity;
+    out.material_alpha = material.alpha;
     
     return out;
 }
 
 fragment float4 constant_lighting_fragment_c(VROConstantLightingVertexOut in [[ stage_in ]]) {
-    return in.ambient_color;
+    return in.ambient_color * float4(1.0, 1.0, 1.0, in.material_alpha);
 }
 
 fragment float4 constant_lighting_fragment_t(VROConstantLightingVertexOut in [[ stage_in ]],
                                               texture2d<float> texture [[ texture(0) ]]) {
-    return in.ambient_color + float4(in.material_color) * texture.sample(s, in.texcoord) * in.diffuse_intensity;
+    return in.ambient_color + in.material_color * texture.sample(s, in.texcoord) * in.diffuse_intensity * float4(1.0, 1.0, 1.0, in.material_alpha);
 }
 
 /* ---------------------------------------
@@ -123,6 +125,7 @@ typedef struct {
     float4 ambient_color;
     float4 material_color;
     float  diffuse_intensity;
+    float  material_alpha;
 } VROLambertLightingVertexOut;
 
 float3 apply_light_lambert(constant VROLightUniforms &light,
@@ -157,6 +160,7 @@ vertex VROLambertLightingVertexOut lambert_lighting_vertex(VRORendererAttributes
     out.ambient_color = float4(lighting.ambient_light_color, 1.0) * material.diffuse_surface_color;
     out.material_color = material.diffuse_surface_color;
     out.diffuse_intensity = material.diffuse_intensity;
+    out.material_alpha = material.alpha;
     
     return out;
 }
@@ -174,7 +178,7 @@ fragment float4 lambert_lighting_fragment_c(VROLambertLightingVertexOut in [[ st
                                                       material_diffuse_color);
     }
     
-    return in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a);
+    return (in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a)) * float4(1.0, 1.0, 1.0, in.material_alpha);;
 }
 
 fragment float4 lambert_lighting_fragment_t(VROLambertLightingVertexOut in [[ stage_in ]],
@@ -191,7 +195,7 @@ fragment float4 lambert_lighting_fragment_t(VROLambertLightingVertexOut in [[ st
                                                       material_diffuse_color);
     }
 
-    return in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a);
+    return (in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a)) * float4(1.0, 1.0, 1.0, in.material_alpha);
 }
 
 /* ---------------------------------------
@@ -210,6 +214,7 @@ typedef struct {
     float4 material_color;
     float  material_shininess;
     float  diffuse_intensity;
+    float  material_alpha;
 } VROPhongLightingVertexOut;
 
 float3 apply_light_phong(constant VROLightUniforms &light,
@@ -264,6 +269,7 @@ vertex VROPhongLightingVertexOut phong_lighting_vertex(VRORendererAttributes att
     out.material_color = material.diffuse_surface_color;
     out.material_shininess = material.shininess;
     out.diffuse_intensity = material.diffuse_intensity;
+    out.material_alpha = material.alpha;
     
     return out;
 }
@@ -287,7 +293,7 @@ fragment float4 phong_lighting_fragment_c(VROPhongLightingVertexOut in [[ stage_
                                                     in.material_shininess);
     }
     
-    return in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a);
+    return (in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a)) * float4(1.0, 1.0, 1.0, in.material_alpha);
 }
 
 fragment float4 phong_lighting_fragment_t(VROPhongLightingVertexOut in [[ stage_in ]],
@@ -310,7 +316,7 @@ fragment float4 phong_lighting_fragment_t(VROPhongLightingVertexOut in [[ stage_
                                                     in.material_shininess);
     }
     
-    return in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a);
+    return (in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a)) * float4(1.0, 1.0, 1.0, in.material_alpha);
 }
 
 /* ---------------------------------------
@@ -329,6 +335,7 @@ typedef struct {
     float4 material_color;
     float  material_shininess;
     float  diffuse_intensity;
+    float  material_alpha;
 } VROBlinnLightingVertexOut;
 
 float3 apply_light_blinn(constant VROLightUniforms &light,
@@ -383,6 +390,7 @@ vertex VROBlinnLightingVertexOut blinn_lighting_vertex(VRORendererAttributes att
     out.material_color = material.diffuse_surface_color;
     out.material_shininess = material.shininess;
     out.diffuse_intensity = material.diffuse_intensity;
+    out.material_alpha = material.alpha;
     
     return out;
 }
@@ -406,7 +414,7 @@ fragment float4 blinn_lighting_fragment_c(VROBlinnLightingVertexOut in [[ stage_
                                                     in.material_shininess);
     }
     
-    return in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a);
+    return (in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a)) * float4(1.0, 1.0, 1.0, in.material_alpha);
 }
 
 fragment float4 blinn_lighting_fragment_t(VROBlinnLightingVertexOut in [[ stage_in ]],
@@ -429,7 +437,7 @@ fragment float4 blinn_lighting_fragment_t(VROBlinnLightingVertexOut in [[ stage_
                                                     in.material_shininess);
     }
     
-    return in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a);
+    return (in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a)) * float4(1.0, 1.0, 1.0, in.material_alpha);
 }
 
 /* ---------------------------------------

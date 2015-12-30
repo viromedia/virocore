@@ -144,6 +144,7 @@ void VROMaterialSubstrateMetal::setMaterialUniforms() {
     uniforms->diffuse_surface_color = toVectorFloat4(_material.getDiffuse().getContentsColor());
     uniforms->diffuse_intensity = _material.getDiffuse().getIntensity();
     uniforms->shininess = _material.getShininess();
+    uniforms->alpha = _material.getTransparency();
 }
 
 void VROMaterialSubstrateMetal::setLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights) {

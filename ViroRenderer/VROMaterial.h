@@ -151,9 +151,6 @@ public:
     std::shared_ptr<VROMaterial> getOutgoing() const {
         return _outgoing;
     }
-    float getOutgoingAlpha() const {
-        return _outgoingAlpha;
-    }
     
     /*
      Force the substrate of this material to update.
@@ -240,12 +237,6 @@ private:
      values of this material whenever this material is changed.
      */
     std::shared_ptr<VROMaterial> _outgoing;
-    
-    /*
-     The opacity of the outgoing material. When this hits 0, the outgoing material
-     can be removed.
-     */
-    float _outgoingAlpha;
     
     /*
      Representation of this material in the underlying graphics hardware.

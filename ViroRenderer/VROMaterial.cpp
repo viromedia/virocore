@@ -23,7 +23,6 @@ VROMaterial::VROMaterial() :
     _blendMode(VROBlendMode::Alpha),
     _writesToDepthBuffer(false),
     _readsFromDepthBuffer(false),
-    _outgoingAlpha(0.0),
     _substrate(nullptr) {
     
     _diffuse = new VROMaterialVisual(*this);
@@ -92,7 +91,16 @@ void VROMaterial::snapshotOutgoing() {
     if (transaction) {        
         if (!_outgoing) {
             _outgoing = std::make_shared<VROMaterial>(std::static_pointer_cast<VROMaterial>(shared_from_this()));
-            _outgoingAlpha = 1.0;
+            
+            _transparency = 0.0;
+            animate(std::make_shared<VROAnimationFloat>([this](float v) {
+                _transparency = v;
+            }, 0.0, 1.0));
+            
+            _outgoing->_transparency = 1.0;
+            _outgoing->animate(std::make_shared<VROAnimationFloat>([this](float v) {
+                _outgoing->_transparency = v;
+            }, 1.0, 0.0));
         }
     }
 }
