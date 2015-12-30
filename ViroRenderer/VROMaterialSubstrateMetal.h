@@ -13,6 +13,7 @@
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
 #include <vector>
+#include "VROMaterialSubstrate.h"
 
 class VROMatrix4f;
 class VROVector4f;
@@ -24,7 +25,7 @@ class VROLight;
  program and fragment program (by way of the material's lighting model), along
  with the set of uniforms and samplers to bind to said program.
  */
-class VROMaterialSubstrateMetal {
+class VROMaterialSubstrateMetal : public VROMaterialSubstrate {
     
 public:
     

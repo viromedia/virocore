@@ -58,7 +58,8 @@ public:
                               const VRORenderContextMetal &context);
     virtual ~VROGeometrySubstrateMetal();
     
-    void render(const VRORenderContext &context,
+    void render(const std::vector<std::shared_ptr<VROMaterial>> &materials,
+                const VRORenderContext &context,
                 VRORenderParameters &params);
     
 private:
@@ -66,7 +67,6 @@ private:
     MTLVertexDescriptor *_vertexDescriptor;
     std::vector<VROVertexArrayMetal> _vars;
     std::vector<VROGeometryElementMetal> _elements;
-    std::vector<VROMaterialSubstrateMetal *> _materials;
     
     std::vector<id <MTLRenderPipelineState>> _elementPipelineStates;
     std::vector<id <MTLDepthStencilState>> _elementDepthStates;

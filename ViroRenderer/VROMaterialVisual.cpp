@@ -8,6 +8,7 @@
 
 #include "VROMaterialVisual.h"
 #include "VROAnimationFloat.h"
+#include "VROMaterial.h"
 
 VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
  _material(visual._material),
@@ -27,21 +28,29 @@ VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
 {}
 
 void VROMaterialVisual::setContents(VROVector4f contents) {
+    _material.snapshotOutgoing();
+    
     _contentsColor = contents;
     _contentsType = VROContentsType::Fixed;
 }
 
 void VROMaterialVisual::setContents(std::shared_ptr<VROTexture> texture) {
+    _material.snapshotOutgoing();
+    
     _contentsTexture = texture;
     _contentsType = VROContentsType::Texture2D;
 }
 
 void VROMaterialVisual::setContents(std::vector<std::shared_ptr<VROTexture>> cubeTextures) {
+    _material.snapshotOutgoing();
+    
     _contentsCube = cubeTextures;
     _contentsType = VROContentsType::TextureCube;
 }
 
 void VROMaterialVisual::setIntensity(float intensity) {
+    // TODO Migrate this to the snapshot system
+    
     _heartbeat->animate(std::make_shared<VROAnimationFloat>([this](float value) {
                                                                 _intensity = value;
                                                             }, _intensity, intensity));

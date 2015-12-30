@@ -13,7 +13,9 @@
 #include <UIKit/UIKit.h>
 
 class VROGeometry;
+class VROMaterial;
 class VROGeometrySubstrate;
+class VROMaterialSubstrate;
 class VROTextureSubstrate;
 
 /*
@@ -26,6 +28,7 @@ class VRORenderContext {
 public:
     
     virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const = 0;
+    virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) const = 0;
     virtual VROTextureSubstrate *newTextureSubstrate(UIImage *image) const = 0;
     
 };

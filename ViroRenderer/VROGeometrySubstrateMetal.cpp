@@ -12,6 +12,7 @@
 #include "VROGeometryElement.h"
 #include "VRORenderContextMetal.h"
 #include "VROMaterialSubstrateMetal.h"
+#include "VROMaterial.h"
 #include "VROLog.h"
 #include "VROSharedStructures.h"
 #include "VROMetalUtils.h"
@@ -25,15 +26,13 @@ VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry
     readGeometryElements(device, geometry.getGeometryElements());
     readGeometrySources(device, geometry.getGeometrySources());
     
-    for (const std::shared_ptr<VROMaterial> &material : geometry.getMaterials_const()) {
-        _materials.push_back(new VROMaterialSubstrateMetal(*material.get(), context));
-    }
+    const std::vector<std::shared_ptr<VROMaterial>> &materials = geometry.getMaterials_const();
     
     for (int i = 0; i < _elements.size(); i++) {
         VROGeometryElementMetal element = _elements[i];
         
-        int materialIdx = i % _materials.size();
-        VROMaterialSubstrateMetal *material = _materials[materialIdx];
+        int materialIdx = i % materials.size();
+        VROMaterialSubstrateMetal *material = static_cast<VROMaterialSubstrateMetal *>(materials[materialIdx]->getSubstrate(context));
         
         id <MTLFunction> vertexProgram = material->getVertexProgram();
         id <MTLFunction> fragmentProgram = material->getFragmentProgram();
@@ -77,9 +76,7 @@ VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry
 }
 
 VROGeometrySubstrateMetal::~VROGeometrySubstrateMetal() {
-    for (VROMaterialSubstrateMetal *material : _materials) {
-        delete (material);
-    }
+  
 }
 
 void VROGeometrySubstrateMetal::readGeometryElements(id <MTLDevice> device,
@@ -297,7 +294,8 @@ MTLDepthStencilDescriptor *VROGeometrySubstrateMetal::parseDepthStencil(const st
 }
 
 
-void VROGeometrySubstrateMetal::render(const VRORenderContext &context,
+void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMaterial>> &materials,
+                                       const VRORenderContext &context,
                                        VRORenderParameters &params) {
     
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
@@ -307,10 +305,6 @@ void VROGeometrySubstrateMetal::render(const VRORenderContext &context,
 
     for (int i = 0; i < _elements.size(); i++) {
         VROGeometryElementMetal element = _elements[i];
-        
-        VROMaterialSubstrateMetal *material = _materials[i % _materials.size()];
-        material->setMaterialUniforms();
-        material->setLightingUniforms(params.lights);
         
         id <MTLRenderPipelineState> pipelineState = _elementPipelineStates[i];
         id <MTLDepthStencilState> depthState = _elementDepthStates[i];
@@ -335,9 +329,16 @@ void VROGeometrySubstrateMetal::render(const VRORenderContext &context,
         for (int j = 0; j < _vars.size(); ++j) {
             [renderEncoder setVertexBuffer:_vars[j].buffer offset:0 atIndex:j];
         }
+        
+        VROMaterialSubstrateMetal *material = static_cast<VROMaterialSubstrateMetal *>(materials[i % materials.size()]->getSubstrate(context));
+
+        material->setLightingUniforms(params.lights);
+        [renderEncoder setVertexBuffer:material->getLightingUniformsBuffer() offset:0 atIndex:_vars.size() + 2];
+
+        material->setMaterialUniforms();
+        
         [renderEncoder setVertexBuffer:_viewUniformsBuffer offset:0 atIndex:_vars.size()];
         [renderEncoder setVertexBuffer:material->getMaterialUniformsBuffer() offset:0 atIndex:_vars.size() + 1];
-        [renderEncoder setVertexBuffer:material->getLightingUniformsBuffer() offset:0 atIndex:_vars.size() + 2];
         
         const std::vector<id <MTLTexture>> &textures = material->getTextures();
         for (int j = 0; j < textures.size(); ++j) {

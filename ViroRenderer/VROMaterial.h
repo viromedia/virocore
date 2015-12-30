@@ -40,6 +40,8 @@ enum class VROLightingModel {
     Constant
 };
 
+class VROMaterialSubstrate;
+
 /*
  Manages the lighting and shading attributes associated with the surface of a geometry that
  define its appearance when rendered. When you create a material, you define a collection of
@@ -140,6 +142,19 @@ public:
         _readsFromDepthBuffer = readsFromDepthBuffer;
     }
     
+    /*
+     Recreate the 'outgoing' material corresponding to this material. If no
+     outgoing material exists, this simply copies the current state of this
+     material. If an outgoing material already exists, this does nothing.
+     */
+    void snapshotOutgoing();
+    
+    /*
+     Get the representation of this material in the underlying graphics 
+     technology.
+     */
+    VROMaterialSubstrate *const getSubstrate(const VRORenderContext &context);
+    
 private:
     
     /*
@@ -218,6 +233,11 @@ private:
      can be removed.
      */
     float _outgoingOpacity;
+    
+    /*
+     Representation of this material in the underlying graphics hardware.
+     */
+    VROMaterialSubstrate *_substrate;
     
 };
 

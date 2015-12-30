@@ -20,5 +20,5 @@ void VROGeometry::render(const VRORenderContext &context,
     if (!_substrate) {
         _substrate = context.newGeometrySubstrate(*this);
     }
-    _substrate->render(context, params);
+    _substrate->render(_materials, context, params);
 }

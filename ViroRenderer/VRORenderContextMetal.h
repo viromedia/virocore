@@ -17,6 +17,7 @@
 #include "VROMatrix4f.h"
 #include <memory>
 #include "VROGeometrySubstrateMetal.h"
+#include "VROMaterialSubstrateMetal.h"
 #include "VROTextureSubstrateMetal.h"
 
 /*
@@ -68,6 +69,10 @@ public:
     
     VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const {
         return new VROGeometrySubstrateMetal(geometry, *this);
+    }
+    
+    VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) const {
+        return new VROMaterialSubstrateMetal(material, *this);
     }
     
     VROTextureSubstrate *newTextureSubstrate(UIImage *image) const {

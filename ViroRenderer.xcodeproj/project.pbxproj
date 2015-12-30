@@ -133,6 +133,8 @@
 		8FD4DF551C18F698003DC425 /* VROViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F62482D1BDAACA4000755E5 /* VROViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF981C1CD67B003DC425 /* specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4DF971C1CD67B003DC425 /* specular.png */; };
 		8FD9B45D1C31E9DC006CB698 /* VROAnimationQuaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD9B45C1C31E9D9006CB698 /* VROAnimationQuaternion.h */; };
+		8FD9B4601C339ECF006CB698 /* VROMaterialSubstrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD9B45E1C339ECF006CB698 /* VROMaterialSubstrate.cpp */; };
+		8FD9B4611C339ECF006CB698 /* VROMaterialSubstrate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD9B45F1C339ECF006CB698 /* VROMaterialSubstrate.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -325,6 +327,8 @@
 		8FD4DF271C18EDD4003DC425 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8FD4DF971C1CD67B003DC425 /* specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = specular.png; sourceTree = "<group>"; };
 		8FD9B45C1C31E9D9006CB698 /* VROAnimationQuaternion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROAnimationQuaternion.h; sourceTree = "<group>"; };
+		8FD9B45E1C339ECF006CB698 /* VROMaterialSubstrate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROMaterialSubstrate.cpp; sourceTree = "<group>"; };
+		8FD9B45F1C339ECF006CB698 /* VROMaterialSubstrate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialSubstrate.h; sourceTree = "<group>"; };
 		8FDFA8941BDAEAB000883EC0 /* VRODistortionRenderer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODistortionRenderer.cpp; sourceTree = "<group>"; };
 		8FDFA8951BDAEAB000883EC0 /* VRODistortionRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODistortionRenderer.h; sourceTree = "<group>"; };
 		8FDFA8981BDEA19C00883EC0 /* VROHeadTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROHeadTracker.h; sourceTree = "<group>"; };
@@ -492,6 +496,8 @@
 				8F4DCE4C1BFD625900061DD7 /* VROGeometrySubstrate.cpp */,
 				8F152A7F1C121A0E00A211F8 /* VROTextureSubstrate.h */,
 				8F152A7E1C121A0E00A211F8 /* VROTextureSubstrate.cpp */,
+				8FD9B45F1C339ECF006CB698 /* VROMaterialSubstrate.h */,
+				8FD9B45E1C339ECF006CB698 /* VROMaterialSubstrate.cpp */,
 			);
 			name = Private;
 			sourceTree = "<group>";
@@ -762,6 +768,7 @@
 				8FD4DF4A1C18F5EB003DC425 /* VROMath.h in Headers */,
 				8FD4DF4B1C18F5EB003DC425 /* VROBox.h in Headers */,
 				8FD4DF4C1C18F5EB003DC425 /* VROSurface.h in Headers */,
+				8FD9B4611C339ECF006CB698 /* VROMaterialSubstrate.h in Headers */,
 				8FD4DF4D1C18F5EB003DC425 /* VROShapeUtils.h in Headers */,
 				8FD4DF4E1C18F5EB003DC425 /* VROLayer.h in Headers */,
 				8FD4DF4F1C18F5EB003DC425 /* VRORect.h in Headers */,
@@ -1022,6 +1029,7 @@
 				8FD4DEFC1C18ED22003DC425 /* VROBox.cpp in Sources */,
 				8FD4DEF11C18ED19003DC425 /* VROQuaternion.cpp in Sources */,
 				8FD4DF111C18ED3C003DC425 /* VROLight.cpp in Sources */,
+				8FD9B4601C339ECF006CB698 /* VROMaterialSubstrate.cpp in Sources */,
 				8FD4DF171C18ED44003DC425 /* VROMagnetSensor.cpp in Sources */,
 				8FD4DF0F1C18ED3C003DC425 /* VROMaterialVisual.cpp in Sources */,
 				8FD4DEF21C18ED19003DC425 /* VROPlane.cpp in Sources */,

@@ -8,6 +8,8 @@
 
 #include "VROMaterial.h"
 #include "VROAnimationFloat.h"
+#include "VROMaterialSubstrate.h"
+#include "VRORenderContext.h"
 
 VROMaterial::VROMaterial() :
     _shininess(2.0),
@@ -19,7 +21,9 @@ VROMaterial::VROMaterial() :
     _cullMode(VROCullMode::None),
     _blendMode(VROBlendMode::Alpha),
     _writesToDepthBuffer(false),
-    _readsFromDepthBuffer(false) {
+    _readsFromDepthBuffer(false),
+    _outgoingOpacity(0.0),
+    _substrate(nullptr) {
     
     _diffuse = new VROMaterialVisual(*this);
     _specular = new VROMaterialVisual(*this);
@@ -42,6 +46,7 @@ VROMaterial::~VROMaterial() {
     delete (_multiply);
     delete (_ambientOcclusion);
     delete (_selfIllumination);
+    delete (_substrate);
 }
 
 VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) :
@@ -55,7 +60,8 @@ VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) :
  _cullMode(material->_cullMode),
  _blendMode(material->_blendMode),
  _writesToDepthBuffer(material->_writesToDepthBuffer),
- _readsFromDepthBuffer(material->_readsFromDepthBuffer) {
+ _readsFromDepthBuffer(material->_readsFromDepthBuffer),
+ _substrate(nullptr) {
  
      _diffuse = new VROMaterialVisual(*material->_diffuse);
      _specular = new VROMaterialVisual(*material->_specular);
@@ -78,4 +84,19 @@ void VROMaterial::setFresnelExponent(float fresnelExponent) {
     animate(std::make_shared<VROAnimationFloat>([this](float v) {
         _fresnelExponent = v;
     }, _fresnelExponent, fresnelExponent));
+}
+
+void VROMaterial::snapshotOutgoing() {
+    if (!_outgoing) {
+        _outgoing = std::make_shared<VROMaterial>(std::static_pointer_cast<VROMaterial>(shared_from_this()));
+        _outgoingOpacity = 1.0;
+    }
+}
+
+VROMaterialSubstrate *const VROMaterial::getSubstrate(const VRORenderContext &context) {
+    if (!_substrate) {
+        _substrate = context.newMaterialSubstrate(*this);
+    }
+    
+    return _substrate;
 }
