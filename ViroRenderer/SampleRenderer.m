@@ -91,6 +91,8 @@
         
         UIImage *image = [UIImage imageNamed:@"bobaraj"];
         material->getDiffuse().setContents(std::make_shared<VROTexture>(image));
+        
+        VROTransaction::commit();
     });
 }
 
@@ -104,7 +106,7 @@
 
 - (void)renderEye:(VROEyeType)eye context:(VRORenderContext *)renderContext {
     angle += .01;
-    //_boxNode->setRotation({ 0, angle, 0});
+    _boxNode->setRotation({ 0, angle, 0});
     
     _scene->render(*renderContext);
 }

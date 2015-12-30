@@ -86,9 +86,9 @@ void VROMaterial::setFresnelExponent(float fresnelExponent) {
     }, _fresnelExponent, fresnelExponent));
 }
 
-void VROMaterial::snapshotOutgoing() {
+void VROMaterial::fadeSnapshot() {
     std::shared_ptr<VROTransaction> transaction = VROTransaction::get();
-    if (transaction) {        
+    if (transaction && !transaction->isDegenerate()) {
         if (!_outgoing) {
             _outgoing = std::make_shared<VROMaterial>(std::static_pointer_cast<VROMaterial>(shared_from_this()));
             

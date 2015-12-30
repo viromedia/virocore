@@ -143,11 +143,11 @@ public:
     }
     
     /*
-     Recreate the 'outgoing' material corresponding to this material. If no
-     outgoing material exists, this simply copies the current state of this
-     material. If an outgoing material already exists, this does nothing.
+     Make a snapshot of this material and cross-fade that snapshot out,
+     bringing in the current material. Used to animate material changes.
+     No effect if there is no active animation transaction.
      */
-    void snapshotOutgoing();
+    void fadeSnapshot();
     std::shared_ptr<VROMaterial> getOutgoing() const {
         return _outgoing;
     }

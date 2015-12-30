@@ -26,6 +26,10 @@ std::shared_ptr<VROTransaction> VROTransaction::get() {
     }
 }
 
+bool VROTransaction::isActive() {
+    return !openAnimations.empty() && openAnimations.top()->_durationSeconds > 0;
+}
+
 void VROTransaction::beginImplicitAnimation() {
     if (openAnimations.empty()) {
         begin();
@@ -80,7 +84,7 @@ void VROTransaction::update() {
 
 VROTransaction::VROTransaction() :
     _t(0),
-    _durationSeconds(0.2),
+    _durationSeconds(0),
     _startTimeSeconds(0)
 {}
 

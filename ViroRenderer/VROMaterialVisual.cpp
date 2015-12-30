@@ -28,7 +28,7 @@ VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
 {}
 
 void VROMaterialVisual::setContents(VROVector4f contents) {
-    _material.snapshotOutgoing();
+    _material.fadeSnapshot();
     
     _contentsColor = contents;
     _contentsType = VROContentsType::Fixed;
@@ -37,7 +37,7 @@ void VROMaterialVisual::setContents(VROVector4f contents) {
 }
 
 void VROMaterialVisual::setContents(std::shared_ptr<VROTexture> texture) {
-    _material.snapshotOutgoing();
+    _material.fadeSnapshot();
     
     _contentsTexture = texture;
     _contentsType = VROContentsType::Texture2D;
@@ -46,7 +46,7 @@ void VROMaterialVisual::setContents(std::shared_ptr<VROTexture> texture) {
 }
 
 void VROMaterialVisual::setContents(std::vector<std::shared_ptr<VROTexture>> cubeTextures) {
-    _material.snapshotOutgoing();
+    _material.fadeSnapshot();
     
     _contentsCube = cubeTextures;
     _contentsType = VROContentsType::TextureCube;

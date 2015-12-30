@@ -25,6 +25,12 @@ public:
     static std::shared_ptr<VROTransaction> get();
     
     /*
+     Return true if there exists an uncommitted VROTransaction with duration greater
+     than zero. If false, then animations are considered disabled.
+     */
+    static bool isActive();
+    
+    /*
      Begins a new VROTransaction unless there already is an active animation transaction.
      */
     static void beginImplicitAnimation();
@@ -65,6 +71,13 @@ public:
      */
     double getT() {
         return _t;
+    }
+    
+    /*
+     Return true if this animation has a duration of 0.
+     */
+    bool isDegenerate() {
+        return _durationSeconds <= 0;
     }
     
     /*
