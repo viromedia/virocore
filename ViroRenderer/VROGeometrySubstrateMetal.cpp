@@ -69,9 +69,6 @@ VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry
         
         MTLDepthStencilDescriptor *depthStateDesc = parseDepthStencil(geometry.getMaterials_const()[materialIdx]);
         _elementDepthStates.push_back([device newDepthStencilStateWithDescriptor:depthStateDesc]);
-        
-        depthStateDesc.depthWriteEnabled = NO;
-        _elementDepthStatesNoWrite.push_back([device newDepthStencilStateWithDescriptor:depthStateDesc]);
     }
     
     _viewUniformsBuffer = [device newBufferWithLength:sizeof(VROViewUniforms) options:0];
@@ -287,7 +284,13 @@ MTLDepthStencilDescriptor *VROGeometrySubstrateMetal::parseDepthStencil(const st
     depthStateDesc.depthWriteEnabled = material->getWritesToDepthBuffer();
     
     if (material->getReadsFromDepthBuffer()) {
-        depthStateDesc.depthCompareFunction = MTLCompareFunctionLess;
+        /*
+         Using LessEqual ensures that outgoing material transitions work correctly,
+         in that we can render the same face twice (once outgoing, once incoming), and
+         the incoming will not fail the depth test despite having the same depth as 
+         the outgoing.
+         */
+        depthStateDesc.depthCompareFunction = MTLCompareFunctionLessEqual;
     }
     else {
         depthStateDesc.depthCompareFunction = MTLCompareFunctionAlways;
@@ -295,7 +298,6 @@ MTLDepthStencilDescriptor *VROGeometrySubstrateMetal::parseDepthStencil(const st
     
     return depthStateDesc;
 }
-
 
 void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMaterial>> &materials,
                                        const VRORenderContext &context,
@@ -327,6 +329,7 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
         id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
         [renderEncoder pushDebugGroup:@"VROGeometry"];
         [renderEncoder setRenderPipelineState:pipelineState];
+        [renderEncoder setDepthStencilState:depthState];
         
         for (int j = 0; j < _vars.size(); ++j) {
             [renderEncoder setVertexBuffer:_vars[j].buffer offset:0 atIndex:j];
@@ -345,11 +348,11 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
         if (outgoing) {
             VROMaterialSubstrateMetal *outgoingSubstrate = static_cast<VROMaterialSubstrateMetal *>(outgoing->getSubstrate(context));
             
-            renderMaterial(outgoingSubstrate, element, _elementDepthStatesNoWrite[i], renderEncoder);
-            renderMaterial(substrate, element, depthState, renderEncoder);
+            renderMaterial(outgoingSubstrate, element, renderEncoder);
+            renderMaterial(substrate, element, renderEncoder);
         }
         else {
-            renderMaterial(substrate, element, depthState, renderEncoder);
+            renderMaterial(substrate, element, renderEncoder);
         }
         
         [renderEncoder popDebugGroup];
@@ -358,11 +361,8 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
 
 void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *material,
                                                VROGeometryElementMetal &element,
-                                               id <MTLDepthStencilState> depthState,
                                                id <MTLRenderCommandEncoder> renderEncoder) {
     
-    [renderEncoder setDepthStencilState:depthState];
-
     material->setMaterialUniforms();
     [renderEncoder setVertexBuffer:material->getMaterialUniformsBuffer() offset:0 atIndex:_vars.size() + 1];
     
