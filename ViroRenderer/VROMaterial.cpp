@@ -9,6 +9,65 @@
 #include "VROMaterial.h"
 #include "VROAnimationFloat.h"
 
+VROMaterial::VROMaterial() :
+    _shininess(2.0),
+    _fresnelExponent(1.0),
+    _transparency(1.0),
+    _transparencyMode(VROTransparencyMode::AOne),
+    _lightingModel(VROLightingModel::Blinn),
+    _litPerPixel(true),
+    _cullMode(VROCullMode::None),
+    _blendMode(VROBlendMode::Alpha),
+    _writesToDepthBuffer(false),
+    _readsFromDepthBuffer(false) {
+    
+    _diffuse = new VROMaterialVisual(*this);
+    _specular = new VROMaterialVisual(*this);
+    _normal = new VROMaterialVisual(*this);
+    _reflective = new VROMaterialVisual(*this);
+    _emission = new VROMaterialVisual(*this);
+    _transparent = new VROMaterialVisual(*this);
+    _multiply = new VROMaterialVisual(*this);
+    _ambientOcclusion = new VROMaterialVisual(*this);
+    _selfIllumination = new VROMaterialVisual(*this);
+}
+
+VROMaterial::~VROMaterial() {
+    delete (_diffuse);
+    delete (_specular);
+    delete (_normal);
+    delete (_reflective);
+    delete (_emission);
+    delete (_transparent);
+    delete (_multiply);
+    delete (_ambientOcclusion);
+    delete (_selfIllumination);
+}
+
+VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) :
+ _name(material->_name),
+ _shininess(material->_shininess),
+ _fresnelExponent(material->_fresnelExponent),
+ _transparency(material->_transparency),
+ _transparencyMode(material->_transparencyMode),
+ _lightingModel(material->_lightingModel),
+ _litPerPixel(material->_litPerPixel),
+ _cullMode(material->_cullMode),
+ _blendMode(material->_blendMode),
+ _writesToDepthBuffer(material->_writesToDepthBuffer),
+ _readsFromDepthBuffer(material->_readsFromDepthBuffer) {
+ 
+     _diffuse = new VROMaterialVisual(*material->_diffuse);
+     _specular = new VROMaterialVisual(*material->_specular);
+     _normal = new VROMaterialVisual(*material->_normal);
+     _reflective = new VROMaterialVisual(*material->_reflective);
+     _emission = new VROMaterialVisual(*material->_emission);
+     _transparent = new VROMaterialVisual(*material->_transparent);
+     _multiply = new VROMaterialVisual(*material->_multiply);
+     _ambientOcclusion = new VROMaterialVisual(*material->_ambientOcclusion);
+     _selfIllumination = new VROMaterialVisual(*material->_selfIllumination);
+}
+
 void VROMaterial::setShininess(float shininess) {
     animate(std::make_shared<VROAnimationFloat>([this](float v) {
         _shininess = v;

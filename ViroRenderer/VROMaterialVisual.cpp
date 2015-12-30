@@ -9,6 +9,23 @@
 #include "VROMaterialVisual.h"
 #include "VROAnimationFloat.h"
 
+VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
+ _material(visual._material),
+ _heartbeat(std::make_shared<VROMaterialVisualHeartbeat>()),
+ _contentsType(visual._contentsType),
+ _contentsColor(visual._contentsColor),
+ _contentsTexture(visual._contentsTexture),
+ _contentsCube(visual._contentsCube),
+ _intensity(visual._intensity),
+ _contentsTransform(visual._contentsTransform),
+ _wrapS(visual._wrapS),
+ _wrapT(visual._wrapT),
+ _minificationFilter(visual._minificationFilter),
+ _magnificationFilter(visual._magnificationFilter),
+ _mipFilter(visual._mipFilter),
+ _borderColor(visual._borderColor)
+{}
+
 void VROMaterialVisual::setContents(VROVector4f contents) {
     _contentsColor = contents;
     _contentsType = VROContentsType::Fixed;

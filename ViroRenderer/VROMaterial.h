@@ -50,37 +50,40 @@ class VROMaterial : public VROAnimatable {
     
 public:
     
-    VROMaterial()
-    {}
-    virtual ~VROMaterial()
-    {}
+    VROMaterial();
+    virtual ~VROMaterial();
+    
+    /*
+     Copy constructor for this material. Texture contents use shared references.
+     */
+    VROMaterial(std::shared_ptr<VROMaterial> material);
     
     VROMaterialVisual &getDiffuse() {
-        return _diffuse;
+        return *_diffuse;
     }
     VROMaterialVisual &getSpecular() {
-        return _specular;
+        return *_specular;
     }
     VROMaterialVisual &getNormal() {
-        return _normal;
+        return *_normal;
     }
     VROMaterialVisual &getReflective() {
-        return _reflective;
+        return *_reflective;
     }
     VROMaterialVisual &getEmission() {
-        return _emission;
+        return *_emission;
     }
     VROMaterialVisual &getTransparent() {
-        return _transparent;
+        return *_transparent;
     }
     VROMaterialVisual &getMultiply() {
-        return _multiply;
+        return *_multiply;
     }
     VROMaterialVisual &getAmbientOcclusion() {
-        return _ambientOcclusion;
+        return *_ambientOcclusion;
     }
     VROMaterialVisual &getSelfIllumination() {
-        return _selfIllumination;
+        return *_selfIllumination;
     }
     
     void setShininess(float shininess);
@@ -142,15 +145,15 @@ private:
     /*
      The visual properties associated with the material.
      */
-    VROMaterialVisual _diffuse;
-    VROMaterialVisual _specular;
-    VROMaterialVisual _normal;
-    VROMaterialVisual _reflective;
-    VROMaterialVisual _emission;
-    VROMaterialVisual _transparent;
-    VROMaterialVisual _multiply;
-    VROMaterialVisual _ambientOcclusion;
-    VROMaterialVisual _selfIllumination;
+    VROMaterialVisual *_diffuse;
+    VROMaterialVisual *_specular;
+    VROMaterialVisual *_normal;
+    VROMaterialVisual *_reflective;
+    VROMaterialVisual *_emission;
+    VROMaterialVisual *_transparent;
+    VROMaterialVisual *_multiply;
+    VROMaterialVisual *_ambientOcclusion;
+    VROMaterialVisual *_selfIllumination;
     
     /*
      User-provided name of the material.
@@ -203,6 +206,18 @@ private:
      Depth write and read settings.
      */
     bool _writesToDepthBuffer, _readsFromDepthBuffer;
+    
+    /*
+     Version of this material that's being animated away. Populated with the current
+     values of this material whenever this material is changed.
+     */
+    std::shared_ptr<VROMaterial> _outgoing;
+    
+    /*
+     The opacity of the outgoing material. When this hits 0, the outgoing material
+     can be removed.
+     */
+    float _outgoingOpacity;
     
 };
 

@@ -89,9 +89,8 @@
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(1);
         
-        //light->setPosition( {0, 0, 3 });
-        //material->getDiffuse().setIntensity(0.0);
-        material->setShininess(5);
+        light->setPosition( {0, 0, 1 });
+        material->getDiffuse().setIntensity(0.5);
     });
 }
 

@@ -35,6 +35,8 @@ enum class VROContentsType {
     TextureCube
 };
 
+class VROMaterial;
+
 /*
  Used by the animation system, which requires shared pointers.
  */
@@ -46,7 +48,8 @@ class VROMaterialVisual {
     
 public:
     
-    VROMaterialVisual() :
+    VROMaterialVisual(VROMaterial &material) :
+        _material(material),
         _heartbeat(std::make_shared<VROMaterialVisualHeartbeat>()),
         _contentsType(VROContentsType::Fixed),
         _contentsColor({ 1.0, 1.0, 1.0, 1.0 }),
@@ -55,8 +58,14 @@ public:
         _wrapT(VROWrapMode::Clamp),
         _minificationFilter(VROFilterMode::Linear),
         _magnificationFilter(VROFilterMode::Linear),
-        _mipFilter(VROFilterMode::None)
+        _mipFilter(VROFilterMode::None),
+        _borderColor( { 1.0, 1.0, 1.0, 1.0 })
     {}
+    
+    /*
+     Copy constructor. Texture references are shared.
+     */
+    VROMaterialVisual(const VROMaterialVisual &visual);
     
     void setContents(VROVector4f contents);
     void setContents(std::shared_ptr<VROTexture> texture);
@@ -92,6 +101,11 @@ public:
 private:
     
     /*
+     Parent material.
+     */
+    VROMaterial &_material;
+    
+    /*
      Shared pointer scoped to this material, for use by the animation system.
      */
     std::shared_ptr<VROMaterialVisualHeartbeat> _heartbeat;
@@ -107,13 +121,13 @@ private:
     VROVector4f _contentsColor;
     
     /*
-     If the visual is determiend by a texture, this variable will be populated
+     If the visual is determined by a texture, this variable will be populated
      with the texture.
      */
     std::shared_ptr<VROTexture> _contentsTexture;
     
     /*
-     If the visual is determiend by a set of 6 textures forming a cube map, this
+     If the visual is determined by a set of 6 textures forming a cube map, this
      variable will be populated.
      */
     std::vector<std::shared_ptr<VROTexture>> _contentsCube;
