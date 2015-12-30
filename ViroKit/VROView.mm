@@ -375,7 +375,6 @@
     float bottom = _device->getVerticalDistanceToLensCenter() - screen.getBorderSizeInMeters();
     float top = screen.getBorderSizeInMeters() + screen.getHeightInMeters() - _device->getVerticalDistanceToLensCenter();
     
-    
     _leftEye->setFOV(GLKMathRadiansToDegrees(atan2f(left, eyeToScreenDistance)),
                      GLKMathRadiansToDegrees(atan2f(right, eyeToScreenDistance)),
                      GLKMathRadiansToDegrees(atan2f(bottom, eyeToScreenDistance)),

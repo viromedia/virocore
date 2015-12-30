@@ -328,8 +328,6 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
         [renderEncoder pushDebugGroup:@"VROGeometry"];
         [renderEncoder setRenderPipelineState:pipelineState];
         
-        [renderEncoder setCullMode:MTLCullModeFront];
-        
         for (int j = 0; j < _vars.size(); ++j) {
             [renderEncoder setVertexBuffer:_vars[j].buffer offset:0 atIndex:j];
         }

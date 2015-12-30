@@ -149,6 +149,9 @@ std::shared_ptr<VRORenderTarget> VRODistortionRenderer::bindEyeRenderTarget(id <
     id <MTLRenderCommandEncoder> eyeRenderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:renderPassDesc];
     eyeRenderEncoder.label = @"EyeRenderEncoder";
     
+    [eyeRenderEncoder setFrontFacingWinding:MTLWindingCounterClockwise];
+    [eyeRenderEncoder setCullMode:MTLCullModeBack];
+    
     return std::make_shared<VRORenderTarget>(eyeRenderEncoder, _texture.pixelFormat, MTLPixelFormatInvalid, _texture.sampleCount);
 }
 
