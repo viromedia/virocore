@@ -166,7 +166,7 @@ vertex VROLambertLightingVertexOut lambert_lighting_vertex(VRORendererAttributes
 }
 
 fragment float4 lambert_lighting_fragment_c(VROLambertLightingVertexOut in [[ stage_in ]],
-                                            constant VROSceneLightingUniforms &lighting [[ buffer(1) ]]) {
+                                            constant VROSceneLightingUniforms &lighting [[ buffer(0) ]]) {
     
     float4 material_diffuse_color = in.material_color * in.diffuse_intensity;
 
@@ -276,7 +276,7 @@ vertex VROPhongLightingVertexOut phong_lighting_vertex(VRORendererAttributes att
 
 fragment float4 phong_lighting_fragment_c(VROPhongLightingVertexOut in [[ stage_in ]],
                                           texture2d<float> specular_texture [[ texture(0) ]],
-                                          constant VROSceneLightingUniforms &lighting [[ buffer(1) ]]) {
+                                          constant VROSceneLightingUniforms &lighting [[ buffer(0) ]]) {
     
     float4 material_diffuse_color = in.material_color * in.diffuse_intensity;
     float4 material_specular_color = specular_texture.sample(s, in.texcoord);
@@ -397,7 +397,7 @@ vertex VROBlinnLightingVertexOut blinn_lighting_vertex(VRORendererAttributes att
 
 fragment float4 blinn_lighting_fragment_c(VROBlinnLightingVertexOut in [[ stage_in ]],
                                           texture2d<float> specular_texture [[ texture(0) ]],
-                                          constant VROSceneLightingUniforms &lighting [[ buffer(1) ]]) {
+                                          constant VROSceneLightingUniforms &lighting [[ buffer(0) ]]) {
     
     float4 material_diffuse_color = in.material_color * in.diffuse_intensity;
     float4 material_specular_color = specular_texture.sample(s, in.texcoord);
