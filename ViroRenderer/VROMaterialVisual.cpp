@@ -32,6 +32,8 @@ void VROMaterialVisual::setContents(VROVector4f contents) {
     
     _contentsColor = contents;
     _contentsType = VROContentsType::Fixed;
+    
+    _material.updateSubstrate();
 }
 
 void VROMaterialVisual::setContents(std::shared_ptr<VROTexture> texture) {
@@ -39,6 +41,8 @@ void VROMaterialVisual::setContents(std::shared_ptr<VROTexture> texture) {
     
     _contentsTexture = texture;
     _contentsType = VROContentsType::Texture2D;
+    
+    _material.updateSubstrate();
 }
 
 void VROMaterialVisual::setContents(std::vector<std::shared_ptr<VROTexture>> cubeTextures) {
@@ -46,6 +50,8 @@ void VROMaterialVisual::setContents(std::vector<std::shared_ptr<VROTexture>> cub
     
     _contentsCube = cubeTextures;
     _contentsType = VROContentsType::TextureCube;
+    
+    _material.updateSubstrate();
 }
 
 void VROMaterialVisual::setIntensity(float intensity) {

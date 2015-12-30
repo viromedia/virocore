@@ -117,6 +117,13 @@ private:
      */
     MTLDepthStencilDescriptor *parseDepthStencil(const std::shared_ptr<VROMaterial> &material);
     
+    /*
+     Rendering helper function.
+     */
+    void renderMaterial(VROMaterialSubstrateMetal *material,
+                        VROGeometryElementMetal &element,
+                        id <MTLRenderCommandEncoder> renderEncoder);
+    
 };
 
 #endif /* VROGeometrySubstrateMetal_h */

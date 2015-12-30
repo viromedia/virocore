@@ -330,27 +330,45 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
             [renderEncoder setVertexBuffer:_vars[j].buffer offset:0 atIndex:j];
         }
         
-        VROMaterialSubstrateMetal *material = static_cast<VROMaterialSubstrateMetal *>(materials[i % materials.size()]->getSubstrate(context));
-
-        material->setLightingUniforms(params.lights);
-        [renderEncoder setVertexBuffer:material->getLightingUniformsBuffer() offset:0 atIndex:_vars.size() + 2];
-
-        material->setMaterialUniforms();
+        const std::shared_ptr<VROMaterial> &material = materials[i % materials.size()];
         
+        VROMaterialSubstrateMetal *substrate = static_cast<VROMaterialSubstrateMetal *>(material->getSubstrate(context));
+        substrate->setLightingUniforms(params.lights);
+        
+        [renderEncoder setVertexBuffer:substrate->getLightingUniformsBuffer() offset:0 atIndex:_vars.size() + 2];
+        [renderEncoder setFragmentBuffer:substrate->getLightingUniformsBuffer() offset:0 atIndex:0];
         [renderEncoder setVertexBuffer:_viewUniformsBuffer offset:0 atIndex:_vars.size()];
-        [renderEncoder setVertexBuffer:material->getMaterialUniformsBuffer() offset:0 atIndex:_vars.size() + 1];
-        
-        const std::vector<id <MTLTexture>> &textures = material->getTextures();
-        for (int j = 0; j < textures.size(); ++j) {
-            [renderEncoder setFragmentTexture:textures[j] atIndex:j];
+
+        const std::shared_ptr<VROMaterial> &outgoing = material->getOutgoing();
+        if (outgoing) {
+            VROMaterialSubstrateMetal *outgoingSubstrate = static_cast<VROMaterialSubstrateMetal *>(outgoing->getSubstrate(context));
+            
+            //renderMaterial(outgoingSubstrate, element, renderEncoder);
+            renderMaterial(substrate, element, renderEncoder);
         }
-        [renderEncoder setFragmentBuffer:material->getLightingUniformsBuffer() offset:0 atIndex:0];
+        else {
+            renderMaterial(substrate, element, renderEncoder);
+        }
         
-        [renderEncoder drawIndexedPrimitives:element.primitiveType
-                                  indexCount:element.indexCount
-                                   indexType:element.indexType
-                                 indexBuffer:element.buffer
-                           indexBufferOffset:0];
         [renderEncoder popDebugGroup];
     }
+}
+
+void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *material,
+                                               VROGeometryElementMetal &element,
+                                               id <MTLRenderCommandEncoder> renderEncoder) {
+    
+    material->setMaterialUniforms();
+    [renderEncoder setVertexBuffer:material->getMaterialUniformsBuffer() offset:0 atIndex:_vars.size() + 1];
+    
+    const std::vector<id <MTLTexture>> &textures = material->getTextures();
+    for (int j = 0; j < textures.size(); ++j) {
+        [renderEncoder setFragmentTexture:textures[j] atIndex:j];
+    }
+    
+    [renderEncoder drawIndexedPrimitives:element.primitiveType
+                              indexCount:element.indexCount
+                               indexType:element.indexType
+                             indexBuffer:element.buffer
+                       indexBufferOffset:0];
 }

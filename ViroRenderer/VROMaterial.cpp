@@ -10,6 +10,7 @@
 #include "VROAnimationFloat.h"
 #include "VROMaterialSubstrate.h"
 #include "VRORenderContext.h"
+#include "VROTransaction.h"
 
 VROMaterial::VROMaterial() :
     _shininess(2.0),
@@ -22,7 +23,7 @@ VROMaterial::VROMaterial() :
     _blendMode(VROBlendMode::Alpha),
     _writesToDepthBuffer(false),
     _readsFromDepthBuffer(false),
-    _outgoingOpacity(0.0),
+    _outgoingAlpha(0.0),
     _substrate(nullptr) {
     
     _diffuse = new VROMaterialVisual(*this);
@@ -87,9 +88,12 @@ void VROMaterial::setFresnelExponent(float fresnelExponent) {
 }
 
 void VROMaterial::snapshotOutgoing() {
-    if (!_outgoing) {
-        _outgoing = std::make_shared<VROMaterial>(std::static_pointer_cast<VROMaterial>(shared_from_this()));
-        _outgoingOpacity = 1.0;
+    std::shared_ptr<VROTransaction> transaction = VROTransaction::get();
+    if (transaction) {        
+        if (!_outgoing) {
+            _outgoing = std::make_shared<VROMaterial>(std::static_pointer_cast<VROMaterial>(shared_from_this()));
+            _outgoingAlpha = 1.0;
+        }
     }
 }
 
