@@ -25,51 +25,7 @@ VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry
 
     readGeometryElements(device, geometry.getGeometryElements());
     readGeometrySources(device, geometry.getGeometrySources());
-    
-    const std::vector<std::shared_ptr<VROMaterial>> &materials = geometry.getMaterials_const();
-    
-    for (int i = 0; i < _elements.size(); i++) {
-        VROGeometryElementMetal element = _elements[i];
-        
-        int materialIdx = i % materials.size();
-        VROMaterialSubstrateMetal *material = static_cast<VROMaterialSubstrateMetal *>(materials[materialIdx]->getSubstrate(context));
-        
-        id <MTLFunction> vertexProgram = material->getVertexProgram();
-        id <MTLFunction> fragmentProgram = material->getFragmentProgram();
-        
-        const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
-        
-        std::shared_ptr<VRORenderTarget> renderTarget = metal.getRenderTarget();
-        
-        MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
-        pipelineStateDescriptor.label = @"VROLayerPipeline";
-        pipelineStateDescriptor.sampleCount = renderTarget->getSampleCount();
-        pipelineStateDescriptor.vertexFunction = vertexProgram;
-        pipelineStateDescriptor.fragmentFunction = fragmentProgram;
-        pipelineStateDescriptor.vertexDescriptor = _vertexDescriptor;
-        pipelineStateDescriptor.colorAttachments[0].pixelFormat = renderTarget->getColorPixelFormat();
-        pipelineStateDescriptor.colorAttachments[0].blendingEnabled = YES;
-        pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
-        pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
-        pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
-        pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorSourceAlpha;
-        pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
-        pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
-        pipelineStateDescriptor.depthAttachmentPixelFormat = renderTarget->getDepthStencilPixelFormat();
-        pipelineStateDescriptor.stencilAttachmentPixelFormat = renderTarget->getDepthStencilPixelFormat();
-        
-        NSError *error = NULL;
-        id <MTLRenderPipelineState> pipelineState = [device newRenderPipelineStateWithDescriptor:pipelineStateDescriptor
-                                                                                           error:&error];
-        if (!pipelineState) {
-            NSLog(@"Failed to created pipeline state, error %@", error);
-        }
-        
-        _elementPipelineStates.push_back(pipelineState);
-        
-        MTLDepthStencilDescriptor *depthStateDesc = parseDepthStencil(geometry.getMaterials_const()[materialIdx]);
-        _elementDepthStates.push_back([device newDepthStencilStateWithDescriptor:depthStateDesc]);
-    }
+    updatePipelineStates(geometry, context);
     
     _viewUniformsBuffer = [device newBufferWithLength:sizeof(VROViewUniforms) options:0];
     _viewUniformsBuffer.label = @"VROViewUniformBuffer";
@@ -169,6 +125,81 @@ void VROGeometrySubstrateMetal::readGeometrySources(id <MTLDevice> device,
         _vars.push_back(var);
         ++bufferIndex;
     }
+}
+
+void VROGeometrySubstrateMetal::updatePipelineStates(const VROGeometry &geometry,
+                                                     const VRORenderContextMetal &context) {
+    
+    id <MTLDevice> device = context.getDevice();
+    const std::vector<std::shared_ptr<VROMaterial>> &materials = geometry.getMaterials_const();
+    
+    for (int i = 0; i < _elements.size(); i++) {
+        VROGeometryElementMetal element = _elements[i];
+        const std::shared_ptr<VROMaterial> &material = materials[i % materials.size()];
+        
+        id <MTLRenderPipelineState> pipelineState = createRenderPipelineState(material, context);
+        _elementPipelineStates.push_back(pipelineState);
+        
+        id <MTLDepthStencilState> depthStencilState = createDepthStencilState(material, device);
+        _elementDepthStates.push_back(depthStencilState);
+    }
+}
+
+id <MTLRenderPipelineState> VROGeometrySubstrateMetal::createRenderPipelineState(const std::shared_ptr<VROMaterial> &material,
+                                                                                 const VRORenderContextMetal &context) {
+    
+    id <MTLDevice> device = context.getDevice();
+    std::shared_ptr<VRORenderTarget> renderTarget = context.getRenderTarget();
+    
+    material->createSubstrate(context);
+    VROMaterialSubstrateMetal *substrate = static_cast<VROMaterialSubstrateMetal *>(material->getSubstrate());
+    
+    MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
+    pipelineStateDescriptor.label = @"VROLayerPipeline";
+    pipelineStateDescriptor.sampleCount = renderTarget->getSampleCount();
+    pipelineStateDescriptor.vertexFunction = substrate->getVertexProgram();
+    pipelineStateDescriptor.fragmentFunction = substrate->getFragmentProgram();
+    pipelineStateDescriptor.vertexDescriptor = _vertexDescriptor;
+    pipelineStateDescriptor.colorAttachments[0].pixelFormat = renderTarget->getColorPixelFormat();
+    pipelineStateDescriptor.colorAttachments[0].blendingEnabled = YES;
+    pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
+    pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
+    pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+    pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorSourceAlpha;
+    pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+    pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+    pipelineStateDescriptor.depthAttachmentPixelFormat = renderTarget->getDepthStencilPixelFormat();
+    pipelineStateDescriptor.stencilAttachmentPixelFormat = renderTarget->getDepthStencilPixelFormat();
+    
+    NSError *error = NULL;
+    id <MTLRenderPipelineState> pipelineState = [device newRenderPipelineStateWithDescriptor:pipelineStateDescriptor
+                                                                                       error:&error];
+    if (!pipelineState) {
+        NSLog(@"Failed to created pipeline state, error %@", error);
+    }
+    return  pipelineState;
+}
+
+id <MTLDepthStencilState> VROGeometrySubstrateMetal::createDepthStencilState(const std::shared_ptr<VROMaterial> &material,
+                                                                             id <MTLDevice> device) {
+    
+    MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
+    depthStateDesc.depthWriteEnabled = material->getWritesToDepthBuffer();
+    
+    if (material->getReadsFromDepthBuffer()) {
+        /*
+         Using LessEqual ensures that outgoing material transitions work correctly,
+         in that we can render the same face twice (once outgoing, once incoming), and
+         the incoming will not fail the depth test despite having the same depth as
+         the outgoing.
+         */
+        depthStateDesc.depthCompareFunction = MTLCompareFunctionLessEqual;
+    }
+    else {
+        depthStateDesc.depthCompareFunction = MTLCompareFunctionAlways;
+    }
+    
+    return [device newDepthStencilStateWithDescriptor:depthStateDesc];
 }
 
 MTLVertexFormat VROGeometrySubstrateMetal::parseVertexFormat(std::shared_ptr<VROGeometrySource> &source) {
@@ -279,40 +310,19 @@ int VROGeometrySubstrateMetal::parseAttributeIndex(VROGeometrySourceSemantic sem
     }
 }
 
-MTLDepthStencilDescriptor *VROGeometrySubstrateMetal::parseDepthStencil(const std::shared_ptr<VROMaterial> &material) {
-    MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
-    depthStateDesc.depthWriteEnabled = material->getWritesToDepthBuffer();
-    
-    if (material->getReadsFromDepthBuffer()) {
-        /*
-         Using LessEqual ensures that outgoing material transitions work correctly,
-         in that we can render the same face twice (once outgoing, once incoming), and
-         the incoming will not fail the depth test despite having the same depth as 
-         the outgoing.
-         */
-        depthStateDesc.depthCompareFunction = MTLCompareFunctionLessEqual;
-    }
-    else {
-        depthStateDesc.depthCompareFunction = MTLCompareFunctionAlways;
-    }
-    
-    return depthStateDesc;
-}
-
 void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMaterial>> &materials,
                                        const VRORenderContext &context,
                                        VRORenderParameters &params) {
     
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
+    id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
     
     VROMatrix4f &rotation  = params.rotations.top();
     VROMatrix4f &transform = params.transforms.top();
-
+    
     for (int i = 0; i < _elements.size(); i++) {
+        [renderEncoder pushDebugGroup:@"VROGeometry"];
         VROGeometryElementMetal element = _elements[i];
-        
-        id <MTLRenderPipelineState> pipelineState = _elementPipelineStates[i];
-        id <MTLDepthStencilState> depthState = _elementDepthStates[i];
         
         /*
          Configure the view uniforms.
@@ -326,33 +336,46 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
         viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(metal.getProjectionMatrix().multiply(modelview));
         viewUniforms->camera_position = { 0, 0, 0 }; //TODO fill this in
         
-        id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
-        [renderEncoder pushDebugGroup:@"VROGeometry"];
-        [renderEncoder setRenderPipelineState:pipelineState];
-        [renderEncoder setDepthStencilState:depthState];
+        [renderEncoder setVertexBuffer:_viewUniformsBuffer offset:0 atIndex:_vars.size()];
+
+        /*
+         Determine if the material has been updated. If so, we need to update our pipeline and
+         depth states.
+         */
+        const std::shared_ptr<VROMaterial> &material = materials[i % materials.size()];
+        if (material->isUpdated()) {
+            _elementPipelineStates[i] = createRenderPipelineState(material, metal);
+            _elementDepthStates[i] = createDepthStencilState(material, metal.getDevice());
+        }
+        
+        VROMaterialSubstrateMetal *substrate = static_cast<VROMaterialSubstrateMetal *>(material->getSubstrate());
+        id <MTLRenderPipelineState> pipelineState = _elementPipelineStates[i];
+        id <MTLDepthStencilState> depthState = _elementDepthStates[i];
         
         for (int j = 0; j < _vars.size(); ++j) {
             [renderEncoder setVertexBuffer:_vars[j].buffer offset:0 atIndex:j];
         }
         
-        const std::shared_ptr<VROMaterial> &material = materials[i % materials.size()];
-        
-        VROMaterialSubstrateMetal *substrate = static_cast<VROMaterialSubstrateMetal *>(material->getSubstrate(context));
         substrate->setLightingUniforms(params.lights);
-        
+    
         [renderEncoder setVertexBuffer:substrate->getLightingUniformsBuffer() offset:0 atIndex:_vars.size() + 2];
         [renderEncoder setFragmentBuffer:substrate->getLightingUniformsBuffer() offset:0 atIndex:0];
-        [renderEncoder setVertexBuffer:_viewUniformsBuffer offset:0 atIndex:_vars.size()];
 
         const std::shared_ptr<VROMaterial> &outgoing = material->getOutgoing();
         if (outgoing) {
-            VROMaterialSubstrateMetal *outgoingSubstrate = static_cast<VROMaterialSubstrateMetal *>(outgoing->getSubstrate(context));
+            auto outgoingIt = _outgoingPipelineStates.find(outgoing);
+            if (outgoingIt == _outgoingPipelineStates.end() || outgoing->isUpdated()) {
+                _outgoingPipelineStates[outgoing] = createRenderPipelineState(outgoing, metal);
+            }
             
-            renderMaterial(outgoingSubstrate, element, renderEncoder);
-            renderMaterial(substrate, element, renderEncoder);
+            id <MTLRenderPipelineState> outgoingPipelineState = _outgoingPipelineStates[outgoing];
+            VROMaterialSubstrateMetal *outgoingSubstrate = static_cast<VROMaterialSubstrateMetal *>(outgoing->getSubstrate());
+            
+            renderMaterial(outgoingSubstrate, element, outgoingPipelineState, depthState, renderEncoder);
+            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder);
         }
         else {
-            renderMaterial(substrate, element, renderEncoder);
+            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder);
         }
         
         [renderEncoder popDebugGroup];
@@ -361,7 +384,12 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
 
 void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *material,
                                                VROGeometryElementMetal &element,
+                                               id <MTLRenderPipelineState> pipelineState,
+                                               id <MTLDepthStencilState> depthStencilState,
                                                id <MTLRenderCommandEncoder> renderEncoder) {
+    
+    [renderEncoder setRenderPipelineState:pipelineState];
+    [renderEncoder setDepthStencilState:depthStencilState];
     
     material->setMaterialUniforms();
     [renderEncoder setVertexBuffer:material->getMaterialUniformsBuffer() offset:0 atIndex:_vars.size() + 1];

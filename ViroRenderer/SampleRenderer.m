@@ -89,8 +89,9 @@
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(10);
         
-        UIImage *image = [UIImage imageNamed:@"bobaraj"];
-        material->getDiffuse().setContents(std::make_shared<VROTexture>(image));
+        //UIImage *image = [UIImage imageNamed:@"bobaraj"];
+        //material->getDiffuse().setContents(std::make_shared<VROTexture>(image));
+        material->getDiffuse().setContents({ 0.0, 1.0, 0.0, 1.0 });
         
         VROTransaction::commit();
     });

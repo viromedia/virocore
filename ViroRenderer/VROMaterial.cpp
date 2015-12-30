@@ -105,10 +105,8 @@ void VROMaterial::fadeSnapshot() {
     }
 }
 
-VROMaterialSubstrate *const VROMaterial::getSubstrate(const VRORenderContext &context) {
+void VROMaterial::createSubstrate(const VRORenderContext &context) {
     if (!_substrate) {
         _substrate = context.newMaterialSubstrate(*this);
     }
-    
-    return _substrate;
 }

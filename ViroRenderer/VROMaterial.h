@@ -153,17 +153,29 @@ public:
     }
     
     /*
-     Force the substrate of this material to update.
+     Check if the material has been updated since the last substrate was
+     created.
+     */
+    bool isUpdated() {
+        return _substrate == nullptr;
+    }
+    
+    /*
+     Force the substrate of this material to update on the next render cycle.
      */
     void updateSubstrate() {
         _substrate = nullptr;
     }
     
+    void createSubstrate(const VRORenderContext &context);
+    
     /*
      Get the representation of this material in the underlying graphics 
      technology.
      */
-    VROMaterialSubstrate *const getSubstrate(const VRORenderContext &context);
+    VROMaterialSubstrate *const getSubstrate() {
+        return _substrate;
+    }
     
 private:
     

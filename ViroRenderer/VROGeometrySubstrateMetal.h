@@ -68,8 +68,17 @@ private:
     std::vector<VROVertexArrayMetal> _vars;
     std::vector<VROGeometryElementMetal> _elements;
     
+    /*
+     Pipeline and depth states for each geometry element.
+     */
     std::vector<id <MTLRenderPipelineState>> _elementPipelineStates;
     std::vector<id <MTLDepthStencilState>> _elementDepthStates;
+    
+    /*
+     Map of outgoing materials (materials fading out) to their corresponding
+     pipeline states.
+     */
+    std::map<std::shared_ptr<VROMaterial>, id <MTLRenderPipelineState>> _outgoingPipelineStates;
     
     /*
      Uniforms for the view and lighting.
@@ -90,6 +99,25 @@ private:
      */
     void readGeometrySources(id <MTLDevice> device,
                              const std::vector<std::shared_ptr<VROGeometrySource>> &sources);
+    
+    /*
+     Update the render pipeline state and depth-stencil pipeline state in response to materials
+     changing.
+     */
+    void updatePipelineStates(const VROGeometry &geometry,
+                              const VRORenderContextMetal &context);
+    
+    /*
+     Create a pipeline state from the given material, using the current _vertexDescriptor.
+     */
+    id <MTLRenderPipelineState> createRenderPipelineState(const std::shared_ptr<VROMaterial> &material,
+                                                          const VRORenderContextMetal &context);
+    
+    /*
+     Create a depth/stencil state from the given material.
+     */
+    id <MTLDepthStencilState> createDepthStencilState(const std::shared_ptr<VROMaterial> &material,
+                                                      id <MTLDevice> device);
     
     /*
      Parse an MTLVertexFormat from the given geometry source.
@@ -113,15 +141,12 @@ private:
     int parseAttributeIndex(VROGeometrySourceSemantic semantic);
     
     /*
-     Parse the Metal depth/stencil state from the given material.
-     */
-    MTLDepthStencilDescriptor *parseDepthStencil(const std::shared_ptr<VROMaterial> &material);
-    
-    /*
      Rendering helper function.
      */
     void renderMaterial(VROMaterialSubstrateMetal *material,
                         VROGeometryElementMetal &element,
+                        id <MTLRenderPipelineState> pipelineState,
+                        id <MTLDepthStencilState> depthStencilState,
                         id <MTLRenderCommandEncoder> renderEncoder);
     
 };
