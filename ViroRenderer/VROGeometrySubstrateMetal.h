@@ -69,16 +69,12 @@ private:
     std::vector<VROGeometryElementMetal> _elements;
     
     /*
-     Pipeline and depth states for each geometry element.
+     Pipeline and depth states for each geometry element. Note that pipeline 
+     state is determined by both the geometry (by way of the _vertexDescriptor) 
+     and the material; this is why it's not a member of the VROMaterialSubstrate.
      */
     std::vector<id <MTLRenderPipelineState>> _elementPipelineStates;
     std::vector<id <MTLDepthStencilState>> _elementDepthStates;
-    
-    /*
-     Map of outgoing materials (materials fading out) to their corresponding
-     pipeline states.
-     */
-    std::map<std::shared_ptr<VROMaterial>, id <MTLRenderPipelineState>> _outgoingPipelineStates;
     
     /*
      Uniforms for the view and lighting.
