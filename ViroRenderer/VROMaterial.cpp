@@ -89,24 +89,26 @@ void VROMaterial::setFresnelExponent(float fresnelExponent) {
 void VROMaterial::fadeSnapshot() {
     std::shared_ptr<VROTransaction> transaction = VROTransaction::get();
     if (transaction && !transaction->isDegenerate()) {
-        if (!_outgoing) {
-            _outgoing = std::make_shared<VROMaterial>(std::static_pointer_cast<VROMaterial>(shared_from_this()));
-            
-            _transparency = 0.0;
-            animate(std::make_shared<VROAnimationFloat>([this](float v) {
-                                                            _transparency = v;
-                                                        },
-                                                        0.0, 1.0,
-                                                        [this]() {
+        std::shared_ptr<VROMaterial> outgoing = std::make_shared<VROMaterial>(std::static_pointer_cast<VROMaterial>(shared_from_this()));
+        _outgoing = outgoing;
+        
+        _transparency = 0.0;
+        animate(std::make_shared<VROAnimationFloat>([this](float v) {
+                                                        _transparency = v;
+                                                    },
+                                                    0.0, 1.0,
+                                                    [this, outgoing]() {
+                                                        // Ensure we're not removing a more recent animation
+                                                        if (outgoing == _outgoing) {
                                                             removeOutgoingMaterial();
                                                         }
-                    ));
-            
-            _outgoing->_transparency = 1.0;
-            _outgoing->animate(std::make_shared<VROAnimationFloat>([this](float v) {
-                _outgoing->_transparency = v;
-            }, 1.0, 0.0));
-        }
+                                                    }
+                                                    ));
+        
+        _outgoing->_transparency = 1.0;
+        _outgoing->animate(std::make_shared<VROAnimationFloat>([this](float v) {
+            _outgoing->_transparency = v;
+        }, 1.0, 0.0));
     }
 }
 
