@@ -73,11 +73,14 @@ VRODistortionMesh::VRODistortionMesh(const VRODistortion distortionRed,
             vertexData[(vertexOffset + 1)] = 2.0f * vScreen - 1.0f;
             vertexData[(vertexOffset + 2)] = vignette;
             vertexData[(vertexOffset + 3)] = uTextureRed;
-            vertexData[(vertexOffset + 4)] = vTextureRed;
+            
+            // TODO For Metal, we invert the V texture coordinate (top-left origin in Metal)
+            //      Fix this for OpenGL by removing the (1.0 - v) for each.
+            vertexData[(vertexOffset + 4)] = 1.0 - vTextureRed;
             vertexData[(vertexOffset + 5)] = uTextureGreen;
-            vertexData[(vertexOffset + 6)] = vTextureGreen;
+            vertexData[(vertexOffset + 6)] = 1.0 - vTextureGreen;
             vertexData[(vertexOffset + 7)] = uTextureBlue;
-            vertexData[(vertexOffset + 8)] = vTextureBlue;
+            vertexData[(vertexOffset + 8)] = 1.0 - vTextureBlue;
             
             vertexOffset += 9;
         }

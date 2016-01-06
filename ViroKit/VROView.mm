@@ -275,22 +275,14 @@
         /*
          The full eye transform is as follows:
          
-         1. Set the camera at the origin, looking in the Z positive direction.
-         2. Flip the Y axis, to account for CoreMotion using a right-handed coordinate system and Metal
-         using a left-handed coordinate system. We need invert by Y *before* the rotation, and then invert
-         by Y again *after* the rotation.
-         3. Rotate the camera by the head rotation, which is derived from the sensors via the head tracker.
-         4. Flip the Y axis back.
-         5. Translate the camera by the interlens distance in each direction to get the two eyes.
+         1. Set the camera at the origin, looking in the Z negative direction.
+         2. Rotate by the camera by the head rotation picked up by the sensors.
+         3. Translate the camera by the interlens distance in each direction to get the two eyes.
          */
-        
         VROMatrix4f camera = matrix_float4x4_from_GL(GLKMatrix4MakeLookAt(0, 0, 0,
-                                                                          0, 0, 1.0,
+                                                                          0, 0, -1.0,
                                                                           0, 1.0, 0));
-        VROMatrix4f cameraFlipped = yFlip.multiply(camera);
-        VROMatrix4f cameraRotatedFlipped = headRotation.multiply(cameraFlipped);
-        VROMatrix4f cameraRotated = yFlip.multiply(cameraRotatedFlipped);
-        
+        VROMatrix4f cameraRotated = headRotation.multiply(camera);
         VROMatrix4f leftEyeView  = matrix_from_translation( halfLensDistance, 0, 0).multiply(cameraRotated);
         VROMatrix4f rightEyeView = matrix_from_translation(-halfLensDistance, 0, 0).multiply(cameraRotated);
         
@@ -352,10 +344,10 @@
     float bottomAngle = GLKMathRadiansToDegrees(atanf(distortion.distort(bottomDistance / eyeToScreenDistance)));
     float topAngle = GLKMathRadiansToDegrees(atanf(distortion.distort(topDistance / eyeToScreenDistance)));
     
-    leftEye->setFOV(MIN(outerAngle, _device->getMaximumLeftEyeFOV().getLeft()),
-                    MIN(innerAngle, _device->getMaximumLeftEyeFOV().getRight()),
+    leftEye->setFOV(MIN(outerAngle,  _device->getMaximumLeftEyeFOV().getLeft()),
+                    MIN(innerAngle,  _device->getMaximumLeftEyeFOV().getRight()),
                     MIN(bottomAngle, _device->getMaximumLeftEyeFOV().getBottom()),
-                    MIN(topAngle, _device->getMaximumLeftEyeFOV().getTop()));
+                    MIN(topAngle,    _device->getMaximumLeftEyeFOV().getTop()));
     
     const VROFieldOfView &leftEyeFov = leftEye->getFOV();
     rightEye->setFOV(leftEyeFov.getRight(),
