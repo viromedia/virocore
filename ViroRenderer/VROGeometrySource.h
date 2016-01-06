@@ -23,7 +23,8 @@ enum class VROGeometrySourceSemantic {
     VertexCrease,
     EdgeCrease,
     BoneWeights,
-    BoneIndices
+    BoneIndices,
+    Invalid
 };
 
 /*

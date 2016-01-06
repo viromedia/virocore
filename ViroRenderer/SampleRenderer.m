@@ -21,13 +21,16 @@
     _scene = std::make_shared<VROScene>();
     _layout = std::make_shared<VROCrossLayout>(_scene);
     
+    NSString *soccerPath = [[NSBundle mainBundle] pathForResource:@"soccerball" ofType:@"obj"];
+    NSURL *soccerURL = [NSURL fileURLWithPath:soccerPath];
+    
     /*
      Create the root node.
      */
     _rootNode = std::make_shared<VRONode>(*context);
     _rootNode->setPosition({0, 0, 0});
     
-    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
+    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Directional);
     light->setColor({ 1.0, 0.9, 0.9 });
     light->setPosition( { 0, 0, 0 });
     light->setDirection( { 0, 0, 1.0 });
@@ -37,6 +40,7 @@
     light->setSpotOuterAngle(15);
     
     _rootNode->setLight(light);
+     
     _scene->addNode(_rootNode);
 
     /*
@@ -44,15 +48,23 @@
      */
     std::shared_ptr<VROBox> box = VROBox::createBox(1, 1, 1);
     
-    std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
+    //std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
+    //material->setLightingModel(VROLightingModel::Blinn);
+    //material->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"boba"]));
+    //material->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"specular"]));
+    //material->setShininess(2.0);
+
+    _boxNode = VROLoader::loadURL(soccerURL, *context)[0];
+    std::shared_ptr<VROMaterial> material = _boxNode->getGeometry()->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);
+    //material->getDiffuse().setContents({ 1.0, 1.0, 1.0, 1.0 });
+
     material->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"boba"]));
     material->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"specular"]));
-    material->setShininess(2.0);
-
-    _boxNode = std::make_shared<VRONode>(*context);
-    _boxNode->setGeometry(box);
-    _boxNode->setPosition({0, 0, 5});
+    
+    //_boxNode = std::make_shared<VRONode>(*context);
+    //_boxNode->setGeometry(box);
+    _boxNode->setPosition({0, 0, 20});
     
     _rootNode->addChildNode(_boxNode);
     
@@ -63,7 +75,7 @@
     center->setContents([UIImage imageNamed:@"momentslogo"]);
     center->setFrame(VRORectMake(-0.5, -1.5, 2, 1, 1));
     
-    _rootNode->addChildNode(center);
+    //_rootNode->addChildNode(center);
 
     /*
      Create the label node.
@@ -83,14 +95,14 @@
     [labelView addSubview:label];
     [labelView update];
     
-    _rootNode->addChildNode(labelView.vroLayer);
+    //_rootNode->addChildNode(labelView.vroLayer);
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(10);
         
-        //UIImage *image = [UIImage imageNamed:@"bobaraj"];
-        //material->getDiffuse().setContents(std::make_shared<VROTexture>(image));
+        UIImage *image = [UIImage imageNamed:@"bobaraj"];
+        material->getDiffuse().setContents(std::make_shared<VROTexture>(image));
         material->getDiffuse().setContents({ 0.0, 1.0, 0.0, 1.0 });
         
         VROTransaction::commit();

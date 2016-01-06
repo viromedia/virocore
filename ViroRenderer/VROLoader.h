@@ -20,12 +20,13 @@
 
 class VRONode;
 class VROTexture;
+class VROVector4f;
 
 class VROLoader {
     
 public:
     
-    static std::vector<std::shared_ptr<VRONode>> loadURL(std::string path,
+    static std::vector<std::shared_ptr<VRONode>> loadURL(NSURL *url,
                                                          const VRORenderContext &context);
     
 private:
@@ -40,6 +41,8 @@ private:
     
     static VROVector4f parseColor(CGColorRef colorRef);
     static std::shared_ptr<VROTexture> parseTexture(MDLTextureSampler *sampler);
+    
+    static int getPrimitiveCount(int indexCount, VROGeometryPrimitiveType primitiveType);
     
 };
 

@@ -14,11 +14,11 @@
 #include "VROMaterialVisual.h"
 #include "VRONode.h"
 
-std::vector<std::shared_ptr<VRONode>> VROLoader::loadURL(std::string path,
+std::vector<std::shared_ptr<VRONode>> VROLoader::loadURL(NSURL *url,
                                                          const VRORenderContext &context) {
     std::vector<std::shared_ptr<VRONode>> results;
     
-    MDLAsset *asset = [[MDLAsset alloc] initWithURL:[NSURL URLWithString:[NSString stringWithUTF8String:path.c_str()]]];
+    MDLAsset *asset = [[MDLAsset alloc] initWithURL:url];
     for (int i = 0; i < asset.count; i++) {
         MDLObject *object = [asset objectAtIndex:i];
         
@@ -54,6 +54,10 @@ std::shared_ptr<VRONode> VROLoader::loadMesh(MDLMesh *mesh,
         
         for (MDLVertexAttribute *attribute in attributes) {
             VROGeometrySourceSemantic semantic = parseSemantic(attribute.name);
+            if (semantic == VROGeometrySourceSemantic::Invalid) {
+                continue;
+            }
+            
             std::pair<int, int> format = parseFormat(attribute.format);
             
             std::shared_ptr<VROGeometrySource> source = std::make_shared<VROGeometrySource>(data,
@@ -104,7 +108,7 @@ std::shared_ptr<VRONode> VROLoader::loadMesh(MDLMesh *mesh,
         
         std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(data,
                                                                                            primitive,
-                                                                                           submesh.indexCount,
+                                                                                           getPrimitiveCount(submesh.indexCount, primitive),
                                                                                            bytesPerIndex);
         elements.push_back(element);
     }
@@ -164,10 +168,10 @@ VROGeometrySourceSemantic VROLoader::parseSemantic(NSString *string) {
     if ([string isEqualToString:MDLVertexAttributeTextureCoordinate]) {
         return VROGeometrySourceSemantic::Texcoord;
     }
-    return VROGeometrySourceSemantic::Vertex;
+    return VROGeometrySourceSemantic::Invalid;
 }
 
-static std::pair<int, int> parseFormat(MDLVertexFormat format) {
+std::pair<int, int> VROLoader::parseFormat(MDLVertexFormat format) {
     switch (format) {
         case MDLVertexFormatChar:
         case MDLVertexFormatUChar:
@@ -269,7 +273,25 @@ VROVector4f VROLoader::parseColor(CGColorRef colorRef) {
 
 
 std::shared_ptr<VROTexture> VROLoader::parseTexture(MDLTextureSampler *sampler) {
-    
+    UIImage *image = [UIImage imageWithCGImage:[sampler.texture imageFromTexture]];
+    return std::make_shared<VROTexture>(image);
 }
 
-
+int VROLoader::getPrimitiveCount(int indexCount, VROGeometryPrimitiveType primitiveType) {
+    switch (primitiveType) {
+        case VROGeometryPrimitiveType::Triangle:
+            return indexCount / 3;
+            
+        case VROGeometryPrimitiveType::TriangleStrip:
+            return indexCount - 2;
+            
+        case VROGeometryPrimitiveType::Line:
+            return indexCount / 2;
+            
+        case VROGeometryPrimitiveType::Point:
+            return indexCount;
+            
+        default:
+            break;
+    }
+}
