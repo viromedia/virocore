@@ -108,7 +108,7 @@ std::shared_ptr<VRONode> VROLoader::loadMesh(MDLMesh *mesh,
         
         std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(data,
                                                                                            primitive,
-                                                                                           getPrimitiveCount(submesh.indexCount, primitive),
+                                                                                           getPrimitiveCount((int) submesh.indexCount, primitive),
                                                                                            bytesPerIndex);
         elements.push_back(element);
     }
