@@ -255,6 +255,8 @@ private:
      */
     VROMaterialSubstrate *_substrate;
     
+    void removeOutgoingMaterial();
+    
 };
 
 #endif /* VROMaterial_h */

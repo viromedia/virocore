@@ -72,9 +72,9 @@ void VROTransaction::update() {
      
         // Remove the animation when it's complete
         if (animation->_t > 1.0) {
-            animation->_t = 1.0;
-            
+            animation->onTermination();
             committedAnimations.erase(it);
+            
             --it;
         }
     }
@@ -109,5 +109,13 @@ float VROTransaction::getAnimationDuration() {
 void VROTransaction::processAnimations() {
     for (std::shared_ptr<VROAnimation> animation : _animations) {
         animation->processAnimationFrame(_t);
+    }
+}
+
+void VROTransaction::onTermination() {
+    _t = 1.0;
+    
+    for (std::shared_ptr<VROAnimation> animation : _animations) {
+        animation->onTermination();
     }
 }

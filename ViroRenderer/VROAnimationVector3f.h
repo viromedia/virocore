@@ -27,6 +27,16 @@ public:
         _method(method)
     {}
     
+    VROAnimationVector3f(std::function<void(VROVector3f)> method,
+                         VROVector3f start,
+                         VROVector3f end,
+                         std::function<void()> finishCallback) :
+    VROAnimation(finishCallback),
+    _start(start),
+    _end(end),
+    _method(method)
+    {}
+    
     void processAnimationFrame(float t) {
         VROVector3f value = _start.interpolate(_end, t);
         
@@ -41,6 +51,8 @@ public:
         if (animatable) {
             _method(_end);
         }
+        
+        onTermination();
     }
     
 private:

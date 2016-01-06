@@ -48,7 +48,7 @@
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
-        VROTransaction::setAnimationDuration(10);
+        VROTransaction::setAnimationDuration(2);
         
         UIImage *image = [UIImage imageNamed:@"bobaraj"];
         material->getDiffuse().setContents(std::make_shared<VROTexture>(image));
@@ -156,8 +156,8 @@
     _rootNode = std::make_shared<VRONode>(*context);
     _rootNode->setPosition({0, 0, 0});
     
-    [self runLayerTest:context];
-    //[self runBoxAnimationTest:context];
+    //[self runLayerTest:context];
+    [self runBoxAnimationTest:context];
     //[self runOBJTest:context];
 }
 

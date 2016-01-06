@@ -28,6 +28,16 @@ public:
         _method(method)
     {}
     
+    VROAnimationQuaternion(std::function<void(VROQuaternion)> method,
+                           VROQuaternion start,
+                           VROQuaternion end,
+                           std::function<void()> finishCallback) :
+    VROAnimation(finishCallback),
+    _start(start),
+    _end(end),
+    _method(method)
+    {}
+    
     void processAnimationFrame(float t) {
         VROQuaternion value;
         value.slerp(_start, _end, t);
@@ -43,6 +53,8 @@ public:
         if (animatable) {
             _method(_end);
         }
+        
+        onTermination();
     }
     
 private:

@@ -24,6 +24,16 @@ public:
         _method(method)
     {}
     
+    VROAnimationFloat(std::function<void(float)> method,
+                      float start,
+                      float end,
+                      std::function<void()> finishCallback) :
+        VROAnimation(finishCallback),
+        _start(start),
+        _end(end),
+        _method(method)
+    {}
+    
     void processAnimationFrame(float t) {
         float value = _start + (_end - _start) * t;
         
@@ -38,6 +48,8 @@ public:
         if (animatable) {
             _method(_end);
         }
+        
+        onTermination();
     }
 
 private:

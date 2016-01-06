@@ -25,6 +25,9 @@ class VROAnimation {
 public:
     
     VROAnimation() {}
+    VROAnimation(std::function<void()> finishCallback) :
+        _finishCallback(finishCallback)
+    {}
     
     /*
      Set the animatable. This is typically the object holding the 
@@ -34,6 +37,13 @@ public:
      */
     void setAnimatable(std::shared_ptr<VROAnimatable> animatable) {
         _animatable = animatable;
+    }
+    
+    /*
+     Set a function to invoke when the animation completes.
+     */
+    void setFinishCallback(std::function<void()> callback) {
+        _finishCallback = callback;
     }
     
     /*
@@ -47,9 +57,20 @@ public:
      */
     virtual void finish() = 0;
     
+    /*
+     Invoke after the animation is completed.
+     */
+    void onTermination() {
+        if (_finishCallback) {
+            _finishCallback();
+        }
+    }
+    
 protected:
     
     std::weak_ptr<VROAnimatable> _animatable;
+    
+    std::function<void()> _finishCallback;
     
 };
 

@@ -92,6 +92,11 @@ public:
      */
     void processAnimations();
     
+    /*
+     Invoked when the transaction is finished.
+     */
+    void onTermination();
+    
 private:
     
     double _t;

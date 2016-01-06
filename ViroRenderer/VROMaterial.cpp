@@ -94,8 +94,13 @@ void VROMaterial::fadeSnapshot() {
             
             _transparency = 0.0;
             animate(std::make_shared<VROAnimationFloat>([this](float v) {
-                _transparency = v;
-            }, 0.0, 1.0));
+                                                            _transparency = v;
+                                                        },
+                                                        0.0, 1.0,
+                                                        [this]() {
+                                                            removeOutgoingMaterial();
+                                                        }
+                    ));
             
             _outgoing->_transparency = 1.0;
             _outgoing->animate(std::make_shared<VROAnimationFloat>([this](float v) {
@@ -103,6 +108,10 @@ void VROMaterial::fadeSnapshot() {
             }, 1.0, 0.0));
         }
     }
+}
+
+void VROMaterial::removeOutgoingMaterial() {
+    _outgoing.reset();
 }
 
 void VROMaterial::createSubstrate(const VRORenderContext &context) {
