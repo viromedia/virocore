@@ -27,6 +27,10 @@ VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry
     readGeometrySources(device, geometry.getGeometrySources());
     updatePipelineStates(geometry, context);
     
+    for (int i = 0; i < _elements.size(); i++) {
+        _outgoingPipelineStates.push_back(nullptr);
+    }
+    
     _viewUniformsBuffer = [device newBufferWithLength:sizeof(VROViewUniforms) options:0];
     _viewUniformsBuffer.label = @"VROViewUniformBuffer";
 }
@@ -363,23 +367,32 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
 
         const std::shared_ptr<VROMaterial> &outgoing = material->getOutgoing();
         if (outgoing) {
-            auto outgoingIt = _outgoingPipelineStates.find(outgoing);
-            if (outgoingIt == _outgoingPipelineStates.end() || outgoing->isUpdated()) {
-                _outgoingPipelineStates[outgoing] = createRenderPipelineState(outgoing, metal);
+            if (_outgoingPipelineStates[i] == nullptr || outgoing->isUpdated()) {
+                _outgoingPipelineStates[i] = createRenderPipelineState(outgoing, metal);
             }
             
-            id <MTLRenderPipelineState> outgoingPipelineState = _outgoingPipelineStates[outgoing];
+            id <MTLRenderPipelineState> outgoingPipelineState = _outgoingPipelineStates[i];
             VROMaterialSubstrateMetal *outgoingSubstrate = static_cast<VROMaterialSubstrateMetal *>(outgoing->getSubstrate());
             
             renderMaterial(outgoingSubstrate, element, outgoingPipelineState, depthState, renderEncoder);
             renderMaterial(substrate, element, pipelineState, depthState, renderEncoder);
         }
         else {
+            _outgoingPipelineStates[i] = nullptr;
             renderMaterial(substrate, element, pipelineState, depthState, renderEncoder);
         }
         
         [renderEncoder popDebugGroup];
     }
+    
+    int count = 0;
+    for (int i = 0; i < _elements.size(); i++) {
+        if (_outgoingPipelineStates[i] != nullptr) {
+            ++count;
+        }
+    }
+    
+    pinfo("outgoing states %d", count);
 }
 
 void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *material,
