@@ -384,15 +384,6 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
         
         [renderEncoder popDebugGroup];
     }
-    
-    int count = 0;
-    for (int i = 0; i < _elements.size(); i++) {
-        if (_outgoingPipelineStates[i] != nullptr) {
-            ++count;
-        }
-    }
-    
-    pinfo("outgoing states %d", count);
 }
 
 void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *material,
