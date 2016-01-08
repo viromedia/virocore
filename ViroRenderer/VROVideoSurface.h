@@ -9,8 +9,6 @@
 #ifndef VROVideoTexture_h
 #define VROVideoTexture_h
 
-#import <Metal/Metal.h>
-#import <MetalKit/MetalKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <CoreVideo/CVMetalTextureCache.h>
 #import "VROFrameListener.h"
@@ -24,13 +22,22 @@ class VROSurface;
 
 static const long kInFlightVideoTextures = 3;
 
-class VROVideoSurface : public VROSurface, public VROFrameListener {
+class VROVideoSurface : public VROSurface, public VROFrameListener, public std::enable_shared_from_this<VROVideoSurface> {
     
 public:
     
-    static std::shared_ptr<VROVideoSurface> createVideoSurface(float width, float height,
-                                                               const VRORenderContext &context);
+    static std::shared_ptr<VROVideoSurface> createVideoSurface(float width, float height);
     ~VROVideoSurface();
+    
+    /*
+     Use this video surface to display the contents of the front-facing camera.
+     */
+    void captureFrontCamera(VRORenderContext &context);
+    
+    /*
+     Use this video surface to display the contents of the given URL.
+     */
+    void displayVideo(NSURL *url, VRORenderContext &context);
     
     int getCurrentTextureIndex() const {
         return _currentTextureIndex;
@@ -47,8 +54,7 @@ public:
 protected:
     
     VROVideoSurface(std::vector<std::shared_ptr<VROGeometrySource>> &sources,
-                    std::vector<std::shared_ptr<VROGeometryElement>> &elements,
-                    const VRORenderContext &context);
+                    std::vector<std::shared_ptr<VROGeometryElement>> &elements);
     
 private:
     

@@ -406,6 +406,8 @@
     const float zNear = 0.1;
     const float zFar  = 100;
     
+    _renderContext->notifyFrameStart();
+    
     [renderEncoder setViewport:leftEye->getViewport().toMetalViewport()];
     [renderEncoder setScissorRect:leftEye->getViewport().toMetalScissor()];
     
@@ -425,6 +427,7 @@
     _renderContext->setProjectionMatrix(rightEye->perspective(zNear, zFar));
     
     [self.renderDelegate renderEye:VROEyeTypeRight context:_renderContext];
+    _renderContext->notifyFrameEnd();
 }
 
 - (VRORenderContext *)renderContext {

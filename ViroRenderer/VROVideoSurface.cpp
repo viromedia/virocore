@@ -11,14 +11,15 @@
 #include "VROSurface.h"
 #include "VROLog.h"
 #include "VROMaterialSubstrateMetal.h"
+#include <Metal/Metal.h>
+#include <MetalKit/MetalKit.h>
 
-std::shared_ptr<VROVideoSurface> VROVideoSurface::createVideoSurface(float width, float height,
-                                                                     const VRORenderContext &context) {
+std::shared_ptr<VROVideoSurface> VROVideoSurface::createVideoSurface(float width, float height) {
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
     VROSurface::buildGeometry(width, height, sources, elements);
     
-    std::shared_ptr<VROVideoSurface> surface = std::shared_ptr<VROVideoSurface>(new VROVideoSurface(sources, elements, context));
+    std::shared_ptr<VROVideoSurface> surface = std::shared_ptr<VROVideoSurface>(new VROVideoSurface(sources, elements));
     
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     material->setWritesToDepthBuffer(true);
@@ -29,14 +30,22 @@ std::shared_ptr<VROVideoSurface> VROVideoSurface::createVideoSurface(float width
 }
 
 VROVideoSurface::VROVideoSurface(std::vector<std::shared_ptr<VROGeometrySource>> &sources,
-                                 std::vector<std::shared_ptr<VROGeometryElement>> &elements,
-                                 const VRORenderContext &context) :
-    VROSurface(sources, elements) {
-    _currentTextureIndex = 0;
+                                 std::vector<std::shared_ptr<VROGeometryElement>> &elements) :
+    VROSurface(sources, elements),
+    _currentTextureIndex(0) {
+
+}
+
+VROVideoSurface::~VROVideoSurface() {
+
+}
+
+void VROVideoSurface::captureFrontCamera(VRORenderContext &context) {
+     context.addFrameListener(shared_from_this());
     _videoDelegate = [[VROVideoCaptureDelegate alloc] initWithVROVideoSurface:this];
-
+    
     id <MTLDevice> device = ((VRORenderContextMetal &)context).getDevice();
-
+    
     CVReturn textureCacheError = CVMetalTextureCacheCreate(kCFAllocatorDefault, NULL, device,
                                                            NULL, &_videoTextureCache);
     
@@ -101,8 +110,8 @@ VROVideoSurface::VROVideoSurface(std::vector<std::shared_ptr<VROGeometrySource>>
     [_captureSession startRunning];
 }
 
-VROVideoSurface::~VROVideoSurface() {
-
+void VROVideoSurface::displayVideo(NSURL *url, VRORenderContext &context) {
+    
 }
 
 @interface VROVideoCaptureDelegate ()

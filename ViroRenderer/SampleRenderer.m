@@ -102,8 +102,8 @@
     /*
      Create the moments icon node.
      */
-    std::shared_ptr<VROVideoSurface> video = VROVideoSurface::createVideoSurface(1.0, 1.0, *context);
-    context->addFrameListener(video);
+    std::shared_ptr<VROVideoSurface> video = VROVideoSurface::createVideoSurface(1.0, 1.0);
+    video->captureFrontCamera(*context);
     
     std::shared_ptr<VRONode> videoNode = std::make_shared<VRONode>(*context);
     videoNode->setGeometry(video);
