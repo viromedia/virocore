@@ -19,12 +19,24 @@ class VROTextureSubstrateMetal : public VROTextureSubstrate {
     
 public:
     
-    VROTextureSubstrateMetal(UIImage *image,
-                             const VRORenderContextMetal &context);
+    /*
+     Create a new texture substrate with the given underlying MTLTexture.
+     */
+    VROTextureSubstrateMetal(id <MTLTexture> texture) :
+        _texture(texture)
+    {}
+    
+    /*
+     Create a new Metal texture from the given UIImage.
+     */
+    VROTextureSubstrateMetal(UIImage *image, const VRORenderContextMetal &context);
     virtual ~VROTextureSubstrateMetal();
     
     id <MTLTexture> getTexture() const {
         return _texture;
+    }
+    void setTexture(id <MTLTexture> texture) {
+        _texture = texture;
     }
     
 private:

@@ -19,12 +19,16 @@ public:
     
     static std::shared_ptr<VROSurface> createSurface(float width, float height);
     
+    static void buildGeometry(float width, float height,
+                              std::vector<std::shared_ptr<VROGeometrySource>> &sources,
+                              std::vector<std::shared_ptr<VROGeometryElement>> &elements);
+    
     ~VROSurface();
     
-private:
+protected:
     
     VROSurface(std::vector<std::shared_ptr<VROGeometrySource>> sources,
-             std::vector<std::shared_ptr<VROGeometryElement>> elements) :
+               std::vector<std::shared_ptr<VROGeometryElement>> elements) :
         VROGeometry(sources, elements)
     {}
     

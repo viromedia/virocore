@@ -95,18 +95,26 @@
     
     _boxNode = std::make_shared<VRONode>(*context);
     _boxNode->setGeometry(box);
-    _boxNode->setPosition({0, 0, -5});
+    _boxNode->setPosition({0, 1, -5});
     
     _rootNode->addChildNode(_boxNode);
     
     /*
      Create the moments icon node.
      */
-    std::shared_ptr<VROLayer> center = std::make_shared<VROLayer>(*context);
-    center->setContents([UIImage imageNamed:@"momentslogo"]);
-    center->setFrame(VRORectMake(-0.5, -1.5, -2, 1, 1));
+    std::shared_ptr<VROVideoSurface> video = VROVideoSurface::createVideoSurface(1.0, 1.0, *context);
+    context->addFrameListener(video);
     
-    _rootNode->addChildNode(center);
+    std::shared_ptr<VRONode> videoNode = std::make_shared<VRONode>(*context);
+    videoNode->setGeometry(video);
+    videoNode->setPosition({ 0, -1, -2 });
+    
+    _rootNode->addChildNode(videoNode);
+    //std::shared_ptr<VROLayer> center = std::make_shared<VROLayer>(*context);
+    //center->setContents([UIImage imageNamed:@"momentslogo"]);
+    //center->setFrame(VRORectMake(-0.5, -1.5, -2, 1, 1));
+    
+    //_rootNode->addChildNode(center);
     
     /*
      Create the label node.
@@ -166,8 +174,8 @@
     _rootNode = std::make_shared<VRONode>(*context);
     _rootNode->setPosition({0, 0, 0});
     
-    //[self runLayerTest:context];
-    [self runBoxAnimationTest:context];
+    [self runLayerTest:context];
+    //[self runBoxAnimationTest:context];
     //[self runOBJTest:context];
 }
 

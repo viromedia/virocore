@@ -14,6 +14,23 @@
 #include "stdlib.h"
 
 std::shared_ptr<VROSurface> VROSurface::createSurface(float width, float height) {
+    std::vector<std::shared_ptr<VROGeometrySource>> sources;
+    std::vector<std::shared_ptr<VROGeometryElement>> elements;
+    buildGeometry(width, height, sources, elements);
+    
+    std::shared_ptr<VROSurface> surface = std::shared_ptr<VROSurface>(new VROSurface(sources, elements));
+    
+    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+    material->setWritesToDepthBuffer(true);
+    material->setReadsFromDepthBuffer(true);
+    
+    surface->getMaterials().push_back(material);
+    return surface;
+}
+
+void VROSurface::buildGeometry(float width, float height,
+                               std::vector<std::shared_ptr<VROGeometrySource>> &sources,
+                               std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
     int numVertices = 4;
     
     int varSizeBytes = sizeof(VROShapeVertexLayout) * numVertices;
@@ -44,7 +61,9 @@ std::shared_ptr<VROSurface> VROSurface::createSurface(float width, float height)
                                                                                     sizeof(float) * 5,
                                                                                     sizeof(VROShapeVertexLayout));
     
-    std::vector<std::shared_ptr<VROGeometrySource>> sources = { position, texcoord, normal };
+    sources.push_back(position);
+    sources.push_back(texcoord);
+    sources.push_back(normal);
     
     int indices[6] = { 0, 1, 3, 2, 3, 1 };
     std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices, sizeof(int) * 6);
@@ -53,16 +72,8 @@ std::shared_ptr<VROSurface> VROSurface::createSurface(float width, float height)
                                                                                        VROGeometryPrimitiveType::Triangle,
                                                                                        2,
                                                                                        sizeof(int));
-    std::vector<std::shared_ptr<VROGeometryElement>> elements = { element };
     
-    std::shared_ptr<VROSurface> surface = std::shared_ptr<VROSurface>(new VROSurface(sources, elements));
-    
-    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->setWritesToDepthBuffer(true);
-    material->setReadsFromDepthBuffer(true);
-    
-    surface->getMaterials().push_back(material);
-    return surface;
+    elements.push_back(element);
 }
 
 void VROSurface::buildSurface(VROShapeVertexLayout *vertexLayout, float width, float height) {

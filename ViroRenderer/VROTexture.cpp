@@ -9,6 +9,13 @@
 #include "VROTexture.h"
 #include "VROTextureSubstrate.h"
 #include "VRORenderContext.h"
+#include "VROTextureSubstrateMetal.h"
+
+VROTexture::VROTexture(id <MTLTexture> texture) :
+    _image(nullptr) {
+
+    _substrate = new VROTextureSubstrateMetal(texture);
+}
 
 VROTexture::VROTexture(UIImage *image) :
     _image(image),

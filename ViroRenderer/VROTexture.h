@@ -10,6 +10,8 @@
 #define VROTexture_h
 
 #include <UIKit/UIKit.h>
+#include <Metal/Metal.h>
+#include <MetalKit/MetalKit.h>
 
 class VROTextureSubstrate;
 class VRORenderContext;
@@ -18,6 +20,15 @@ class VROTexture {
     
 public:
     
+    /*
+     Create a new VROTexture from an underlying MTLTexture.
+     */
+    // TODO This leaks Metal into the outer abstraction!
+    VROTexture(id <MTLTexture> texture);
+    
+    /*
+     Create a new VROTexture from a UIImage.
+     */
     VROTexture(UIImage *image);
     virtual ~VROTexture();
     
@@ -31,8 +42,6 @@ private:
      */
     UIImage *_image;
     VROTextureSubstrate *_substrate;
-    
-    float scale;
     
     void hydrate(const VRORenderContext &context);
     
