@@ -66,7 +66,7 @@ void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,
         _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_c"];
     }
     else {
-        _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
+        _textures.push_back(diffuse.getContentsTexture());
         _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_t"];
     }
 }
@@ -82,7 +82,7 @@ void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
         _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_c"];
     }
     else {
-        _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
+        _textures.push_back(diffuse.getContentsTexture());
         _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_t"];
     }
 }
@@ -107,10 +107,10 @@ void VROMaterialSubstrateMetal::loadPhongLighting(VROMaterial &material,
         _fragmentProgram = [library newFunctionWithName:@"phong_lighting_fragment_c"];
     }
     else {
-        _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
+        _textures.push_back(diffuse.getContentsTexture());
         _fragmentProgram = [library newFunctionWithName:@"phong_lighting_fragment_t"];
     }
-    _textures.push_back(((VROTextureSubstrateMetal *)specular.getContentsTexture()->getSubstrate(context))->getTexture());
+    _textures.push_back(specular.getContentsTexture());
 }
 
 void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
@@ -133,10 +133,10 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
         _fragmentProgram = [library newFunctionWithName:@"blinn_lighting_fragment_c"];
     }
     else {
-        _textures.push_back(((VROTextureSubstrateMetal *)diffuse.getContentsTexture()->getSubstrate(context))->getTexture());
+        _textures.push_back(diffuse.getContentsTexture());
         _fragmentProgram = [library newFunctionWithName:@"blinn_lighting_fragment_t"];
     }
-    _textures.push_back(((VROTextureSubstrateMetal *)specular.getContentsTexture()->getSubstrate(context))->getTexture());
+    _textures.push_back(specular.getContentsTexture());
 }
 
 void VROMaterialSubstrateMetal::setMaterialUniforms() {

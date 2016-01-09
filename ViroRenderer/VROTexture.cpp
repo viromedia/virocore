@@ -11,6 +11,12 @@
 #include "VRORenderContext.h"
 #include "VROTextureSubstrateMetal.h"
 
+VROTexture::VROTexture() :
+    _image(nullptr),
+    _substrate(nullptr) {
+    
+}
+
 VROTexture::VROTexture(id <MTLTexture> texture) :
     _image(nullptr) {
 
@@ -33,6 +39,10 @@ VROTextureSubstrate *const VROTexture::getSubstrate(const VRORenderContext &cont
     }
     
     return _substrate;
+}
+
+void VROTexture::setSubstrate(VROTextureSubstrate *substrate) {
+    _substrate = substrate;
 }
 
 void VROTexture::hydrate(const VRORenderContext &context) {

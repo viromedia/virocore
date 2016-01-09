@@ -374,12 +374,12 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
             id <MTLRenderPipelineState> outgoingPipelineState = _outgoingPipelineStates[i];
             VROMaterialSubstrateMetal *outgoingSubstrate = static_cast<VROMaterialSubstrateMetal *>(outgoing->getSubstrate());
             
-            renderMaterial(outgoingSubstrate, element, outgoingPipelineState, depthState, renderEncoder);
-            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder);
+            renderMaterial(outgoingSubstrate, element, outgoingPipelineState, depthState, renderEncoder, context);
+            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, context);
         }
         else {
             _outgoingPipelineStates[i] = nullptr;
-            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder);
+            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, context);
         }
         
         [renderEncoder popDebugGroup];
@@ -390,7 +390,8 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
                                                VROGeometryElementMetal &element,
                                                id <MTLRenderPipelineState> pipelineState,
                                                id <MTLDepthStencilState> depthStencilState,
-                                               id <MTLRenderCommandEncoder> renderEncoder) {
+                                               id <MTLRenderCommandEncoder> renderEncoder,
+                                               const VRORenderContext &context) {
     
     [renderEncoder setRenderPipelineState:pipelineState];
     [renderEncoder setDepthStencilState:depthStencilState];
@@ -398,9 +399,10 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
     material->setMaterialUniforms();
     [renderEncoder setVertexBuffer:material->getMaterialUniformsBuffer() offset:0 atIndex:_vars.size() + 1];
     
-    const std::vector<id <MTLTexture>> &textures = material->getTextures();
+    const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();
     for (int j = 0; j < textures.size(); ++j) {
-        [renderEncoder setFragmentTexture:textures[j] atIndex:j];
+        id <MTLTexture> texture = ((VROTextureSubstrateMetal *)textures[j]->getSubstrate(context))->getTexture();
+        [renderEncoder setFragmentTexture:texture atIndex:j];
     }
     
     [renderEncoder drawIndexedPrimitives:element.primitiveType

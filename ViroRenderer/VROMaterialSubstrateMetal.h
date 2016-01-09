@@ -56,7 +56,7 @@ public:
     id <MTLBuffer> getMaterialUniformsBuffer() const {
         return _materialUniformsBuffer;
     }
-    const std::vector<id <MTLTexture>> &getTextures() const {
+    const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
         return _textures;
     }
     
@@ -71,7 +71,7 @@ private:
     id <MTLBuffer> _materialUniformsBuffer;
     id <MTLBuffer> _lightingUniformsBuffer;
     
-    std::vector<id <MTLTexture>> _textures;
+    std::vector<std::shared_ptr<VROTexture>> _textures;
     
     void loadConstantLighting(VROMaterial &material,
                               id <MTLLibrary> library, id <MTLDevice> device,

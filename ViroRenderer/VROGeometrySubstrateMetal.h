@@ -149,7 +149,8 @@ private:
                         VROGeometryElementMetal &element,
                         id <MTLRenderPipelineState> pipelineState,
                         id <MTLDepthStencilState> depthStencilState,
-                        id <MTLRenderCommandEncoder> renderEncoder);
+                        id <MTLRenderCommandEncoder> renderEncoder,
+                        const VRORenderContext &context);
     
 };
 

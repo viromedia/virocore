@@ -21,6 +21,12 @@ class VROTexture {
 public:
     
     /*
+     Create a new VROTexture with no underlying image data.
+     The image data must be injected via setSubstrate().
+     */
+    VROTexture();
+    
+    /*
      Create a new VROTexture from an underlying MTLTexture.
      */
     // TODO This leaks Metal into the outer abstraction!
@@ -33,6 +39,7 @@ public:
     virtual ~VROTexture();
     
     VROTextureSubstrate *const getSubstrate(const VRORenderContext &context);
+    void setSubstrate(VROTextureSubstrate *substrate);
     
 private:
     
