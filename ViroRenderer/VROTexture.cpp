@@ -12,15 +12,8 @@
 #include "VROTextureSubstrateMetal.h"
 
 VROTexture::VROTexture() :
-    _image(nullptr),
-    _substrate(nullptr) {
-    
-}
-
-VROTexture::VROTexture(id <MTLTexture> texture) :
     _image(nullptr) {
-
-    _substrate = new VROTextureSubstrateMetal(texture);
+    
 }
 
 VROTexture::VROTexture(UIImage *image) :
@@ -30,7 +23,7 @@ VROTexture::VROTexture(UIImage *image) :
 }
 
 VROTexture::~VROTexture() {
-    delete (_substrate);
+
 }
 
 VROTextureSubstrate *const VROTexture::getSubstrate(const VRORenderContext &context) {
@@ -38,16 +31,16 @@ VROTextureSubstrate *const VROTexture::getSubstrate(const VRORenderContext &cont
         hydrate(context);
     }
     
-    return _substrate;
+    return _substrate.get();
 }
 
-void VROTexture::setSubstrate(VROTextureSubstrate *substrate) {
-    _substrate = substrate;
+void VROTexture::setSubstrate(std::unique_ptr<VROTextureSubstrate> substrate) {
+    _substrate = std::move(substrate);
 }
 
 void VROTexture::hydrate(const VRORenderContext &context) {
     if (_image) {
-        _substrate = context.newTextureSubstrate(_image);
+        _substrate = std::unique_ptr<VROTextureSubstrate>(context.newTextureSubstrate(_image));
         _image = NULL;
     }
 }

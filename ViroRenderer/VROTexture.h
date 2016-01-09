@@ -12,6 +12,7 @@
 #include <UIKit/UIKit.h>
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
+#include <memory>
 
 class VROTextureSubstrate;
 class VRORenderContext;
@@ -27,19 +28,13 @@ public:
     VROTexture();
     
     /*
-     Create a new VROTexture from an underlying MTLTexture.
-     */
-    // TODO This leaks Metal into the outer abstraction!
-    VROTexture(id <MTLTexture> texture);
-    
-    /*
      Create a new VROTexture from a UIImage.
      */
     VROTexture(UIImage *image);
     virtual ~VROTexture();
     
     VROTextureSubstrate *const getSubstrate(const VRORenderContext &context);
-    void setSubstrate(VROTextureSubstrate *substrate);
+    void setSubstrate(std::unique_ptr<VROTextureSubstrate> substrate);
     
 private:
     
@@ -48,7 +43,7 @@ private:
      substrate is populated.
      */
     UIImage *_image;
-    VROTextureSubstrate *_substrate;
+    std::unique_ptr<VROTextureSubstrate> _substrate;
     
     void hydrate(const VRORenderContext &context);
     

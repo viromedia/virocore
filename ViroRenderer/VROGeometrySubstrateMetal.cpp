@@ -401,8 +401,15 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
     
     const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();
     for (int j = 0; j < textures.size(); ++j) {
-        id <MTLTexture> texture = ((VROTextureSubstrateMetal *)textures[j]->getSubstrate(context))->getTexture();
-        [renderEncoder setFragmentTexture:texture atIndex:j];
+        VROTextureSubstrateMetal *substrate = (VROTextureSubstrateMetal *) textures[j]->getSubstrate(context);
+        if (!substrate) {
+            // Use a blank placeholder if a texture is not yet available (i.e.
+            // during video texture loading)
+            std::shared_ptr<VROTexture> blank = getBlankTexture();
+            substrate = (VROTextureSubstrateMetal *) blank->getSubstrate(context);
+        }
+        
+        [renderEncoder setFragmentTexture:substrate->getTexture() atIndex:j];
     }
     
     [renderEncoder drawIndexedPrimitives:element.primitiveType

@@ -39,6 +39,7 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROTransaction.h>
 #import <ViroKit/VROAnimation.h>
 #import <ViroKit/VROAnimatable.h>
+#import <ViroKit/VROVideoTexture.h>
 
 // Layer
 #import <ViroKit/VROLayer.h>

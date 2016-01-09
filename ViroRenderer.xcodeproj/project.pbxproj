@@ -38,6 +38,8 @@
 		8FD1E1B61C3F32A50005BE4E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B51C3F32A50005BE4E /* AVFoundation.framework */; };
 		8FD1E1B81C3F32B00005BE4E /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B71C3F32B00005BE4E /* CoreVideo.framework */; };
 		8FD1E1BA1C3F32D20005BE4E /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B91C3F32D20005BE4E /* CoreMedia.framework */; };
+		8FD1E1C01C4093790005BE4E /* VROVideoTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD1E1BE1C4093790005BE4E /* VROVideoTexture.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FD1E1C11C40976A0005BE4E /* VROVideoTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD1E1BD1C4093790005BE4E /* VROVideoTexture.cpp */; };
 		8FD4DED01C18ECD4003DC425 /* ViroKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD4DECF1C18ECD4003DC425 /* ViroKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DED71C18ECD4003DC425 /* ViroKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; };
 		8FD4DEDE1C18ECD4003DC425 /* ViroKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD4DEDD1C18ECD4003DC425 /* ViroKitTests.m */; };
@@ -331,6 +333,8 @@
 		8FD1E1B51C3F32A50005BE4E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8FD1E1B71C3F32B00005BE4E /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		8FD1E1B91C3F32D20005BE4E /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		8FD1E1BD1C4093790005BE4E /* VROVideoTexture.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVideoTexture.cpp; sourceTree = "<group>"; };
+		8FD1E1BE1C4093790005BE4E /* VROVideoTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoTexture.h; sourceTree = "<group>"; };
 		8FD4DE9C1C16432B003DC425 /* VROLight.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLight.cpp; sourceTree = "<group>"; };
 		8FD4DE9D1C16432B003DC425 /* VROLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLight.h; sourceTree = "<group>"; };
 		8FD4DE9F1C169D71003DC425 /* VROBox.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROBox.cpp; sourceTree = "<group>"; };
@@ -481,9 +485,11 @@
 				8F548E441C23654E00556688 /* VROAnimationFloat.h */,
 				8F548E481C23656000556688 /* VROAnimationVector3f.h */,
 				8FD9B45C1C31E9D9006CB698 /* VROAnimationQuaternion.h */,
+				8FD1E1B21C3F27190005BE4E /* VROFrameListener.h */,
 				8FD1E1AE1C3F20C70005BE4E /* VROVideoSurface.h */,
 				8FD1E1AD1C3F20C70005BE4E /* VROVideoSurface.cpp */,
-				8FD1E1B21C3F27190005BE4E /* VROFrameListener.h */,
+				8FD1E1BE1C4093790005BE4E /* VROVideoTexture.h */,
+				8FD1E1BD1C4093790005BE4E /* VROVideoTexture.cpp */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";
@@ -822,6 +828,7 @@
 				8FD4DF521C18F5EB003DC425 /* VROTransaction.h in Headers */,
 				8FD4DF531C18F5EB003DC425 /* VROCrossLayout.h in Headers */,
 				8F11B7BD1C1F8F1E0026D150 /* VRORenderContext.h in Headers */,
+				8FD1E1C01C4093790005BE4E /* VROVideoTexture.h in Headers */,
 				8FD1E1B41C3F27190005BE4E /* VROFrameListener.h in Headers */,
 				8FD4DF541C18F5EB003DC425 /* VROUIView.h in Headers */,
 				8F11B7C21C20B0530026D150 /* VROView.h in Headers */,
@@ -1064,6 +1071,7 @@
 				8FD4DEFF1C18ED2C003DC425 /* VROMetalUtils.cpp in Sources */,
 				8FD4DEF01C18ED0B003DC425 /* VROData.cpp in Sources */,
 				8F11B7C31C20B0530026D150 /* VROView.mm in Sources */,
+				8FD1E1C11C40976A0005BE4E /* VROVideoTexture.cpp in Sources */,
 				8FD4DF191C18ED4C003DC425 /* VRODistortionMesh.cpp in Sources */,
 				8FD4DEED1C18ED0B003DC425 /* VROLog.cpp in Sources */,
 				8FD4DF161C18ED44003DC425 /* VROHeadTracker.cpp in Sources */,

@@ -88,9 +88,14 @@
      */
     std::shared_ptr<VROBox> box = VROBox::createBox(1, 1, 1);
     
+    NSURL *videoURL = [NSURL URLWithString:@"https://s3-us-west-2.amazonaws.com/dmoontest/img/Zoe2.mp4"];
+    
+    std::shared_ptr<VROVideoTexture> videoTexture = std::make_shared<VROVideoTexture>();
+    videoTexture->displayVideo(videoURL, *context);
+    
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);
-    material->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"boba"]));
+    material->getDiffuse().setContents(videoTexture);
     material->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"specular"]));
     
     _boxNode = std::make_shared<VRONode>(*context);
@@ -102,22 +107,11 @@
     /*
      Create the moments icon node.
      */
-    std::shared_ptr<VROVideoSurface> video = VROVideoSurface::createVideoSurface(1.0, 1.0);
+    std::shared_ptr<VROLayer> center = std::make_shared<VROLayer>(*context);
+    center->setContents([UIImage imageNamed:@"momentslogo"]);
+    center->setFrame(VRORectMake(-0.5, -1.5, -2, 1, 1));
     
-    NSURL *videoURL = [NSURL URLWithString:@"https://s3-us-west-2.amazonaws.com/dmoontest/img/Zoe2.mp4"];
-    video->displayVideo(videoURL, *context);
-    //video->captureFrontCamera(*context);
-    
-    std::shared_ptr<VRONode> videoNode = std::make_shared<VRONode>(*context);
-    videoNode->setGeometry(video);
-    videoNode->setPosition({ 0, -1, -2 });
-    
-    _rootNode->addChildNode(videoNode);
-    //std::shared_ptr<VROLayer> center = std::make_shared<VROLayer>(*context);
-    //center->setContents([UIImage imageNamed:@"momentslogo"]);
-    //center->setFrame(VRORectMake(-0.5, -1.5, -2, 1, 1));
-    
-    //_rootNode->addChildNode(center);
+    _rootNode->addChildNode(center);
     
     /*
      Create the label node.

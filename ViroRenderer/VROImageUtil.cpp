@@ -50,7 +50,10 @@ void *VROImageLoadTextureDataRGBA8888(const char *resource, size_t *bitmapLength
 static std::shared_ptr<VROTexture> staticBlankTexture = nullptr;
 
 void initBlankTexture(const VRORenderContext &context) {
-    UIImage *image = [UIImage imageNamed:@"blank"];
+    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.viro.ViroKit"];
+    NSString *path = [bundle pathForResource:@"blank" ofType:@"png"];
+    UIImage *image = [UIImage imageWithContentsOfFile:path];
+    
     staticBlankTexture = std::make_shared<VROTexture>(image);
 }
 
