@@ -16,6 +16,7 @@
 #import <memory>
 
 @class VROVideoCaptureDelegate;
+@class VROVideoPlaybackDelegate;
 class VRORenderContext;
 class VROMaterial;
 class VROSurface;
@@ -46,9 +47,11 @@ public:
         return _videoTextureCache;
     }
     
-    void onFrameWillRender() {}
-    void onFrameDidRender() {
-        _currentTextureIndex = (_currentTextureIndex + 1) % kInFlightVideoTextures;
+    void onFrameWillRender();
+    void onFrameDidRender();
+    
+    void setPaused(bool paused) {
+        _paused = paused;
     }
     
 protected:
@@ -58,15 +61,47 @@ protected:
     
 private:
     
+    /*
+     Capture session and delegate used for live video playback.
+     */
     AVCaptureSession *_captureSession;
+    VROVideoCaptureDelegate *_videoDelegate;
+    
+    /*
+     AVPlayer for recorded video playback.
+     */
+    AVPlayer *_player;
+    AVPlayerItemVideoOutput *_videoOutput;
+    float _preferredRotation;
+    id _notificationToken;
+    bool _paused;
+    dispatch_queue_t _videoQueue;
+    VROVideoPlaybackDelegate *_videoPlaybackDelegate;
+
+    /*
+     Video texture cache used for both live and recorded playback.
+     */
+    int _currentTextureIndex;
     CVMetalTextureCacheRef _videoTextureCache;
     
-    VROVideoCaptureDelegate *_videoDelegate;
-    int _currentTextureIndex;
+    void addLoopNotification(AVPlayerItem *item);
+    void displayPixelBuffer(CVPixelBufferRef pixelBuffer);
     
 };
 
+/*
+ Delegate for capturing video from cameras.
+ */
 @interface VROVideoCaptureDelegate : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
+
+- (id)initWithVROVideoSurface:(VROVideoSurface *)surface;
+
+@end
+
+/*
+ Delegate for receiving video output from URLs.
+ */
+@interface VROVideoPlaybackDelegate : NSObject <AVPlayerItemOutputPullDelegate>
 
 - (id)initWithVROVideoSurface:(VROVideoSurface *)surface;
 

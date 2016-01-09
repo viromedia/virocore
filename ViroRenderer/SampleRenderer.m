@@ -103,7 +103,10 @@
      Create the moments icon node.
      */
     std::shared_ptr<VROVideoSurface> video = VROVideoSurface::createVideoSurface(1.0, 1.0);
-    video->captureFrontCamera(*context);
+    
+    NSURL *videoURL = [NSURL URLWithString:@"https://s3-us-west-2.amazonaws.com/dmoontest/img/Zoe2.mp4"];
+    video->displayVideo(videoURL, *context);
+    //video->captureFrontCamera(*context);
     
     std::shared_ptr<VRONode> videoNode = std::make_shared<VRONode>(*context);
     videoNode->setGeometry(video);
