@@ -111,6 +111,13 @@ fragment float4 constant_lighting_fragment_t(VROConstantLightingVertexOut in [[ 
     return in.ambient_color + in.material_color * texture.sample(s, in.texcoord) * in.diffuse_intensity * float4(1.0, 1.0, 1.0, in.material_alpha);
 }
 
+fragment float4 constant_lighting_fragment_q(VROConstantLightingVertexOut in [[ stage_in ]],
+                                             texturecube<float> texture [[ texture(0) ]]) {
+    float3 texcoord = float3(in.position.x, in.position.y, -in.position.z);
+    return texture.sample(s, texcoord);
+    //return in.ambient_color + in.material_color * texture.sample(s, texcoord) * in.diffuse_intensity * float4(1.0, 1.0, 1.0, in.material_alpha);
+}
+
 /* ---------------------------------------
  LAMBERT LIGHTING MODEL
  --------------------------------------- */

@@ -15,8 +15,8 @@
 
 class VRONode;
 class VRORenderContext;
-class VROMaterialVisual;
-class VROLayer;
+class VROTexture;
+class VROGeometry;
 
 class VROScene {
     
@@ -30,6 +30,12 @@ public:
         return _nodes;
     }
     
+    /*
+     Set the background of the scene to a cube-map defined by
+     the given cube texture.
+     */
+    void setBackground(std::shared_ptr<VROTexture> textureCube);
+    
 private:
     
     /*
@@ -38,9 +44,9 @@ private:
     std::vector<std::shared_ptr<VRONode>> _nodes;
     
     /*
-     The background visual to display.
+     The background visual to display. Rendered before any nodes.
      */
-    std::shared_ptr<VROMaterialVisual> _background;
+    std::shared_ptr<VROGeometry> _background;
     
 };
 

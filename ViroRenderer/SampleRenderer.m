@@ -167,6 +167,18 @@
 - (void)setupRendererWithView:(VROView *)view context:(VRORenderContext *)context {
     _scene = std::make_shared<VROScene>();
     _layout = std::make_shared<VROCrossLayout>(_scene);
+    
+    std::vector<UIImage *> cubeImages =  {
+        [UIImage imageNamed:@"px"],
+        [UIImage imageNamed:@"nx"],
+        [UIImage imageNamed:@"py"],
+        [UIImage imageNamed:@"ny"],
+        [UIImage imageNamed:@"pz"],
+        [UIImage imageNamed:@"nz"]
+    };
+    
+    std::shared_ptr<VROTexture> cubeTexture = std::make_shared<VROTexture>(cubeImages);
+    _scene->setBackground(cubeTexture);
 
     _rootNode = std::make_shared<VRONode>(*context);
     _rootNode->setPosition({0, 0, 0});

@@ -65,9 +65,13 @@ void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,
     if (diffuse.getContentsType() == VROContentsType::Fixed) {
         _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_c"];
     }
-    else {
+    else if (diffuse.getContentsType() == VROContentsType::Texture2D) {
         _textures.push_back(diffuse.getContentsTexture());
         _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_t"];
+    }
+    else {
+        _textures.push_back(diffuse.getContentsTexture());
+        _fragmentProgram = [library newFunctionWithName:@"constant_lighting_fragment_q"];
     }
 }
 

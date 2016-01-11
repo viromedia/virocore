@@ -69,7 +69,7 @@ public:
     
     void setContents(VROVector4f contents);
     void setContents(std::shared_ptr<VROTexture> texture);
-    void setContents(std::vector<std::shared_ptr<VROTexture>> cubeTextures);
+    void setContentsCube(std::shared_ptr<VROTexture> texture);
     
     VROContentsType getContentsType() const {
         return _contentsType;
@@ -85,7 +85,7 @@ public:
     }
     
     std::shared_ptr<VROTexture> getContentsTexture() const {
-        if (_contentsType == VROContentsType::Texture2D) {
+        if (_contentsType == VROContentsType::Texture2D || _contentsType == VROContentsType::TextureCube) {
             return _contentsTexture;
         }
         else {
@@ -125,12 +125,6 @@ private:
      with the texture.
      */
     std::shared_ptr<VROTexture> _contentsTexture;
-    
-    /*
-     If the visual is determined by a set of 6 textures forming a cube map, this
-     variable will be populated.
-     */
-    std::vector<std::shared_ptr<VROTexture>> _contentsCube;
     
     /*
      Modulates the impact of this visual on the overall material appearance.

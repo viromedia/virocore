@@ -13,7 +13,8 @@
 #include "VROLog.h"
 
 VROTexture::VROTexture() :
-    _image(nullptr) {
+    _image(nullptr),
+    _substrate(nullptr) {
     
 }
 
@@ -22,6 +23,14 @@ VROTexture::VROTexture(UIImage *image) :
     _image(image),
     _substrate(nullptr) {
         
+}
+
+VROTexture::VROTexture(std::vector<UIImage *> &images) :
+    _type(VROTextureType::Cube),
+    _image(nullptr),
+    _substrate(nullptr) {
+    
+    _imagesCube = images;
 }
 
 VROTexture::~VROTexture() {
@@ -52,7 +61,7 @@ void VROTexture::hydrate(const VRORenderContext &context) {
     
     // VROTextureType::Cube with 6 separated images
     else if (_type == VROTextureType::Cube && _imagesCube.size() == 6) {
-        
+        _substrate = std::unique_ptr<VROTextureSubstrate>(context.newTextureSubstrate(_type, _imagesCube));
         _imagesCube.clear();
     }
     
@@ -77,7 +86,7 @@ void VROTexture::setImageCube(UIImage *image) {
     _image = image;
 }
 
-void VROTexture::setImageCube(std::vector<UIImage *> images) {
+void VROTexture::setImageCube(std::vector<UIImage *> &images) {
     _type = VROTextureType::Cube;
     _imagesCube = images;
 }

@@ -16,7 +16,6 @@ VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
  _contentsType(visual._contentsType),
  _contentsColor(visual._contentsColor),
  _contentsTexture(visual._contentsTexture),
- _contentsCube(visual._contentsCube),
  _intensity(visual._intensity),
  _contentsTransform(visual._contentsTransform),
  _wrapS(visual._wrapS),
@@ -45,10 +44,10 @@ void VROMaterialVisual::setContents(std::shared_ptr<VROTexture> texture) {
     _material.updateSubstrate();
 }
 
-void VROMaterialVisual::setContents(std::vector<std::shared_ptr<VROTexture>> cubeTextures) {
+void VROMaterialVisual::setContentsCube(std::shared_ptr<VROTexture> texture) {
     _material.fadeSnapshot();
     
-    _contentsCube = cubeTextures;
+    _contentsTexture = texture;
     _contentsType = VROContentsType::TextureCube;
     
     _material.updateSubstrate();

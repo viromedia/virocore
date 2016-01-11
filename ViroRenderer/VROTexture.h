@@ -37,11 +37,12 @@ public:
      Create a new VROTexture from a UIImage.
      */
     VROTexture(UIImage *image);
+    VROTexture(std::vector<UIImage *> &images);
     virtual ~VROTexture();
     
     void setImage(UIImage *image);
     void setImageCube(UIImage *image);
-    void setImageCube(std::vector<UIImage *> images);
+    void setImageCube(std::vector<UIImage *> &images);
     
     VROTextureSubstrate *const getSubstrate(const VRORenderContext &context);
     void setSubstrate(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate);

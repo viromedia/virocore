@@ -35,6 +35,8 @@
 		8FA2E14B1C445CAA0070DB26 /* px.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1451C445CAA0070DB26 /* px.png */; };
 		8FA2E14C1C445CAA0070DB26 /* py.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1461C445CAA0070DB26 /* py.png */; };
 		8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1471C445CAA0070DB26 /* pz.png */; };
+		8FA2E1501C4463D00070DB26 /* VROSkybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E14E1C4463D00070DB26 /* VROSkybox.cpp */; };
+		8FA2E1511C4463D00070DB26 /* VROSkybox.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E14F1C4463D00070DB26 /* VROSkybox.h */; };
 		8FCB6C881C3C828200C14158 /* VROLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB6C861C3C828200C14158 /* VROLoader.cpp */; };
 		8FCB6C891C3C828200C14158 /* VROLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB6C871C3C828200C14158 /* VROLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCB6C8A1C3C83EB00C14158 /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517C421BCF1CBE0017C70B /* ModelIO.framework */; };
@@ -338,6 +340,8 @@
 		8FA2E1451C445CAA0070DB26 /* px.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = px.png; sourceTree = "<group>"; };
 		8FA2E1461C445CAA0070DB26 /* py.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = py.png; sourceTree = "<group>"; };
 		8FA2E1471C445CAA0070DB26 /* pz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pz.png; sourceTree = "<group>"; };
+		8FA2E14E1C4463D00070DB26 /* VROSkybox.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSkybox.cpp; sourceTree = "<group>"; };
+		8FA2E14F1C4463D00070DB26 /* VROSkybox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSkybox.h; sourceTree = "<group>"; };
 		8FCB6C861C3C828200C14158 /* VROLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLoader.cpp; sourceTree = "<group>"; };
 		8FCB6C871C3C828200C14158 /* VROLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLoader.h; sourceTree = "<group>"; };
 		8FD1E1AB1C3CA07A0005BE4E /* soccerball.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = soccerball.obj; sourceTree = "<group>"; };
@@ -529,6 +533,8 @@
 			children = (
 				8FD4DEA01C169D71003DC425 /* VROBox.h */,
 				8FD4DE9F1C169D71003DC425 /* VROBox.cpp */,
+				8FA2E14F1C4463D00070DB26 /* VROSkybox.h */,
+				8FA2E14E1C4463D00070DB26 /* VROSkybox.cpp */,
 				8F152A771C10D36700A211F8 /* VROSurface.h */,
 				8F152A761C10D36700A211F8 /* VROSurface.cpp */,
 				8F152A7A1C10D4AE00A211F8 /* VROShapeUtils.h */,
@@ -819,6 +825,7 @@
 				8FD4DF3A1C18F500003DC425 /* VROLight.h in Headers */,
 				8FD4DF3B1C18F5EA003DC425 /* VROTime.h in Headers */,
 				8FD4DF3C1C18F5EA003DC425 /* VROLog.h in Headers */,
+				8FA2E1511C4463D00070DB26 /* VROSkybox.h in Headers */,
 				8FD4DF3D1C18F5EA003DC425 /* VROByteBuffer.h in Headers */,
 				8FD4DF3E1C18F5EA003DC425 /* VROImageUtil.h in Headers */,
 				8FD4DF3F1C18F5EA003DC425 /* VROData.h in Headers */,
@@ -1145,6 +1152,7 @@
 				8FD4DEF51C18ED19003DC425 /* VROBoundingBox.cpp in Sources */,
 				8FD4DF291C18EE6F003DC425 /* VROUIView.mm in Sources */,
 				8FD4DF141C18ED44003DC425 /* SO3Util.mm in Sources */,
+				8FA2E1501C4463D00070DB26 /* VROSkybox.cpp in Sources */,
 				8FD4DEEF1C18ED0B003DC425 /* VROImageUtil.cpp in Sources */,
 				8FCB6C881C3C828200C14158 /* VROLoader.cpp in Sources */,
 				8FD4DF1E1C18ED57003DC425 /* VROCrossLayout.cpp in Sources */,
