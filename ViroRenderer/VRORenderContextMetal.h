@@ -75,8 +75,8 @@ public:
         return new VROMaterialSubstrateMetal(material, *this);
     }
     
-    VROTextureSubstrate *newTextureSubstrate(UIImage *image) const {
-        return new VROTextureSubstrateMetal(image, *this);
+    VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) const {
+        return new VROTextureSubstrateMetal(type, images, *this);
     }
     
 private:

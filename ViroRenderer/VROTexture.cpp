@@ -10,6 +10,7 @@
 #include "VROTextureSubstrate.h"
 #include "VRORenderContext.h"
 #include "VROTextureSubstrateMetal.h"
+#include "VROLog.h"
 
 VROTexture::VROTexture() :
     _image(nullptr) {
@@ -17,6 +18,7 @@ VROTexture::VROTexture() :
 }
 
 VROTexture::VROTexture(UIImage *image) :
+    _type(VROTextureType::Quad),
     _image(image),
     _substrate(nullptr) {
         
@@ -34,15 +36,50 @@ VROTextureSubstrate *const VROTexture::getSubstrate(const VRORenderContext &cont
     return _substrate.get();
 }
 
-void VROTexture::setSubstrate(std::unique_ptr<VROTextureSubstrate> substrate) {
+void VROTexture::setSubstrate(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate) {
+    _type = type;
     _substrate = std::move(substrate);
 }
 
 void VROTexture::hydrate(const VRORenderContext &context) {
-    if (_image) {
-        _substrate = std::unique_ptr<VROTextureSubstrate>(context.newTextureSubstrate(_image));
-        _image = NULL;
+    if (_type == VROTextureType::Quad) {
+        if (_image) {
+            std::vector<UIImage *> images = { _image };
+            _substrate = std::unique_ptr<VROTextureSubstrate>(context.newTextureSubstrate(_type, images));
+            _image = nullptr;
+        }
     }
+    
+    // VROTextureType::Cube with 6 separated images
+    else if (_type == VROTextureType::Cube && _imagesCube.size() == 6) {
+        
+        _imagesCube.clear();
+    }
+    
+    // VROTextureType::Cube with a holistic cube image (not yet divided)
+    else if (_type == VROTextureType::Cube && _image){
+        
+        _image = nullptr;
+    }
+    
+    else {
+        pinfo("Invalid texture format [type %d]", _type);
+    }
+}
+
+void VROTexture::setImage(UIImage *image) {
+    _type = VROTextureType::Quad;
+    _image = image;
+}
+
+void VROTexture::setImageCube(UIImage *image) {
+    _type = VROTextureType::Cube;
+    _image = image;
+}
+
+void VROTexture::setImageCube(std::vector<UIImage *> images) {
+    _type = VROTextureType::Cube;
+    _imagesCube = images;
 }
 
 

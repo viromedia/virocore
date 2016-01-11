@@ -28,6 +28,13 @@
 		8F548E4E1C23665100556688 /* VROAnimatable.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F548E4C1C23665100556688 /* VROAnimatable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F548E521C2378D500556688 /* VROAnimatable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F548E511C2378D500556688 /* VROAnimatable.cpp */; };
 		8F5C41551BD82C1B006D7A77 /* boba.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5C41541BD82C1B006D7A77 /* boba.png */; };
+		8FA2E1411C4447D00070DB26 /* skybox.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1401C4447D00070DB26 /* skybox.png */; };
+		8FA2E1481C445CAA0070DB26 /* nx.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1421C445CAA0070DB26 /* nx.png */; };
+		8FA2E1491C445CAA0070DB26 /* ny.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1431C445CAA0070DB26 /* ny.png */; };
+		8FA2E14A1C445CAA0070DB26 /* nz.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1441C445CAA0070DB26 /* nz.png */; };
+		8FA2E14B1C445CAA0070DB26 /* px.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1451C445CAA0070DB26 /* px.png */; };
+		8FA2E14C1C445CAA0070DB26 /* py.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1461C445CAA0070DB26 /* py.png */; };
+		8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1471C445CAA0070DB26 /* pz.png */; };
 		8FCB6C881C3C828200C14158 /* VROLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB6C861C3C828200C14158 /* VROLoader.cpp */; };
 		8FCB6C891C3C828200C14158 /* VROLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB6C871C3C828200C14158 /* VROLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCB6C8A1C3C83EB00C14158 /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517C421BCF1CBE0017C70B /* ModelIO.framework */; };
@@ -324,6 +331,13 @@
 		8F63186B1BD95EA6000A75DF /* VROTime.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROTime.cpp; sourceTree = "<group>"; };
 		8F63186C1BD95EA6000A75DF /* VROTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTime.h; sourceTree = "<group>"; };
 		8F7A9EA91BD0517A006CFAFD /* VRORect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORect.h; sourceTree = "<group>"; };
+		8FA2E1401C4447D00070DB26 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = skybox.png; sourceTree = "<group>"; };
+		8FA2E1421C445CAA0070DB26 /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nx.png; sourceTree = "<group>"; };
+		8FA2E1431C445CAA0070DB26 /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ny.png; sourceTree = "<group>"; };
+		8FA2E1441C445CAA0070DB26 /* nz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nz.png; sourceTree = "<group>"; };
+		8FA2E1451C445CAA0070DB26 /* px.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = px.png; sourceTree = "<group>"; };
+		8FA2E1461C445CAA0070DB26 /* py.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = py.png; sourceTree = "<group>"; };
+		8FA2E1471C445CAA0070DB26 /* pz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pz.png; sourceTree = "<group>"; };
 		8FCB6C861C3C828200C14158 /* VROLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLoader.cpp; sourceTree = "<group>"; };
 		8FCB6C871C3C828200C14158 /* VROLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLoader.h; sourceTree = "<group>"; };
 		8FD1E1AB1C3CA07A0005BE4E /* soccerball.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = soccerball.obj; sourceTree = "<group>"; };
@@ -748,6 +762,13 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8FA2E1421C445CAA0070DB26 /* nx.png */,
+				8FA2E1431C445CAA0070DB26 /* ny.png */,
+				8FA2E1441C445CAA0070DB26 /* nz.png */,
+				8FA2E1451C445CAA0070DB26 /* px.png */,
+				8FA2E1461C445CAA0070DB26 /* py.png */,
+				8FA2E1471C445CAA0070DB26 /* pz.png */,
+				8FA2E1401C4447D00070DB26 /* skybox.png */,
 				8FD1E1AB1C3CA07A0005BE4E /* soccerball.obj */,
 				8FD9B4641C33A933006CB698 /* bobaraj.png */,
 				8F517BBA1BCDA2BD0017C70B /* main.m */,
@@ -990,13 +1011,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
+				8FA2E14B1C445CAA0070DB26 /* px.png in Resources */,
 				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
+				8FA2E14A1C445CAA0070DB26 /* nz.png in Resources */,
 				8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */,
 				8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */,
 				8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */,
+				8FA2E14C1C445CAA0070DB26 /* py.png in Resources */,
 				8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */,
+				8FA2E1481C445CAA0070DB26 /* nx.png in Resources */,
+				8FA2E1411C4447D00070DB26 /* skybox.png in Resources */,
 				8F517BC71BCDA2BD0017C70B /* Main.storyboard in Resources */,
 				8F5C41551BD82C1B006D7A77 /* boba.png in Resources */,
+				8FA2E1491C445CAA0070DB26 /* ny.png in Resources */,
 				8FD9B4651C33A933006CB698 /* bobaraj.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

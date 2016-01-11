@@ -21,6 +21,8 @@ class VROGeometrySubstrate;
 class VROMaterialSubstrate;
 class VROTextureSubstrate;
 
+enum class VROTextureType;
+
 /*
  Contains the Metal or OpenGL context objects required to render a layer.
  In Metal, these are things like the render pass descriptor, which defines
@@ -32,7 +34,7 @@ public:
     
     virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const = 0;
     virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) const = 0;
-    virtual VROTextureSubstrate *newTextureSubstrate(UIImage *image) const = 0;
+    virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) const = 0;
     
     void addFrameListener(std::shared_ptr<VROFrameListener> listener) {
         _frameListeners.push_back(listener);

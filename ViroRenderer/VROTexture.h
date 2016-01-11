@@ -13,9 +13,15 @@
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
 #include <memory>
+#include <vector>
 
 class VROTextureSubstrate;
 class VRORenderContext;
+
+enum class VROTextureType {
+    Quad,
+    Cube
+};
 
 class VROTexture {
     
@@ -23,7 +29,7 @@ public:
     
     /*
      Create a new VROTexture with no underlying image data.
-     The image data must be injected via setSubstrate().
+     The image data must be injected via setImage*() or setSubstrate().
      */
     VROTexture();
     
@@ -33,18 +39,34 @@ public:
     VROTexture(UIImage *image);
     virtual ~VROTexture();
     
+    void setImage(UIImage *image);
+    void setImageCube(UIImage *image);
+    void setImageCube(std::vector<UIImage *> images);
+    
     VROTextureSubstrate *const getSubstrate(const VRORenderContext &context);
-    void setSubstrate(std::unique_ptr<VROTextureSubstrate> substrate);
+    void setSubstrate(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate);
     
 private:
+    
+    VROTextureType _type;
     
     /*
      The image is retained until the texture is hydrated, after which the
      substrate is populated.
+     
+     Vector of images is used for cube textures.
      */
     UIImage *_image;
+    std::vector<UIImage *> _imagesCube;
+    
+    /*
+     Representation of the texture in the underlying hardware.
+     */
     std::unique_ptr<VROTextureSubstrate> _substrate;
     
+    /*
+     Converts the image(s) into a substrate.
+     */
     void hydrate(const VRORenderContext &context);
     
 };

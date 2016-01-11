@@ -180,7 +180,7 @@ void VROVideoTexture::displayPixelBuffer(CVPixelBufferRef pixelBuffer) {
     }
     
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateMetal>(new VROTextureSubstrateMetal(videoTexture));
-    setSubstrate(std::move(substrate));
+    setSubstrate(VROTextureType::Quad, std::move(substrate));
     
     CVBufferRelease(textureRef);
 }
@@ -330,7 +330,7 @@ fromConnection:(AVCaptureConnection *)connection {
     }
     
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateMetal>(new VROTextureSubstrateMetal(_videoTexture[currentTextureIndex]));
-    _texture->setSubstrate(std::move(substrate));
+    _texture->setSubstrate(VROTextureType::Quad, std::move(substrate));
     
     CVBufferRelease(textureRef);
 }
