@@ -37,6 +37,8 @@
 		8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1471C445CAA0070DB26 /* pz.png */; };
 		8FA2E1501C4463D00070DB26 /* VROSkybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E14E1C4463D00070DB26 /* VROSkybox.cpp */; };
 		8FA2E1511C4463D00070DB26 /* VROSkybox.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E14F1C4463D00070DB26 /* VROSkybox.h */; };
+		8FA2E1551C44AE340070DB26 /* VROTorusKnot.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E1531C44AE340070DB26 /* VROTorusKnot.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FA2E1561C44BAB70070DB26 /* VROTorusKnot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E1521C44AE340070DB26 /* VROTorusKnot.cpp */; };
 		8FCB6C881C3C828200C14158 /* VROLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB6C861C3C828200C14158 /* VROLoader.cpp */; };
 		8FCB6C891C3C828200C14158 /* VROLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB6C871C3C828200C14158 /* VROLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCB6C8A1C3C83EB00C14158 /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517C421BCF1CBE0017C70B /* ModelIO.framework */; };
@@ -342,6 +344,8 @@
 		8FA2E1471C445CAA0070DB26 /* pz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pz.png; sourceTree = "<group>"; };
 		8FA2E14E1C4463D00070DB26 /* VROSkybox.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSkybox.cpp; sourceTree = "<group>"; };
 		8FA2E14F1C4463D00070DB26 /* VROSkybox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSkybox.h; sourceTree = "<group>"; };
+		8FA2E1521C44AE340070DB26 /* VROTorusKnot.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROTorusKnot.cpp; sourceTree = "<group>"; };
+		8FA2E1531C44AE340070DB26 /* VROTorusKnot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTorusKnot.h; sourceTree = "<group>"; };
 		8FCB6C861C3C828200C14158 /* VROLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLoader.cpp; sourceTree = "<group>"; };
 		8FCB6C871C3C828200C14158 /* VROLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLoader.h; sourceTree = "<group>"; };
 		8FD1E1AB1C3CA07A0005BE4E /* soccerball.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = soccerball.obj; sourceTree = "<group>"; };
@@ -537,6 +541,8 @@
 				8FA2E14E1C4463D00070DB26 /* VROSkybox.cpp */,
 				8F152A771C10D36700A211F8 /* VROSurface.h */,
 				8F152A761C10D36700A211F8 /* VROSurface.cpp */,
+				8FA2E1531C44AE340070DB26 /* VROTorusKnot.h */,
+				8FA2E1521C44AE340070DB26 /* VROTorusKnot.cpp */,
 				8F152A7A1C10D4AE00A211F8 /* VROShapeUtils.h */,
 				8F152A791C10D4AE00A211F8 /* VROShapeUtils.cpp */,
 			);
@@ -815,6 +821,7 @@
 				8FD4DF311C18F47F003DC425 /* VROScene.h in Headers */,
 				8FD4DF321C18F500003DC425 /* VROCamera.h in Headers */,
 				8FD4DF331C18F500003DC425 /* VRONode.h in Headers */,
+				8FA2E1551C44AE340070DB26 /* VROTorusKnot.h in Headers */,
 				8FD4DF341C18F500003DC425 /* VROGeometry.h in Headers */,
 				8FD4DF351C18F500003DC425 /* VROGeometryElement.h in Headers */,
 				8FD4DF361C18F500003DC425 /* VROGeometrySource.h in Headers */,
@@ -1154,6 +1161,7 @@
 				8FD4DF141C18ED44003DC425 /* SO3Util.mm in Sources */,
 				8FA2E1501C4463D00070DB26 /* VROSkybox.cpp in Sources */,
 				8FD4DEEF1C18ED0B003DC425 /* VROImageUtil.cpp in Sources */,
+				8FA2E1561C44BAB70070DB26 /* VROTorusKnot.cpp in Sources */,
 				8FCB6C881C3C828200C14158 /* VROLoader.cpp in Sources */,
 				8FD4DF1E1C18ED57003DC425 /* VROCrossLayout.cpp in Sources */,
 				8FD4DEFE1C18ED22003DC425 /* VROShapeUtils.cpp in Sources */,

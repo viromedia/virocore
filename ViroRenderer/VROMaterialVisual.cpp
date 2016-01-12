@@ -9,6 +9,7 @@
 #include "VROMaterialVisual.h"
 #include "VROAnimationFloat.h"
 #include "VROMaterial.h"
+#include "VROLog.h"
 
 VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
  _material(visual._material),
@@ -27,6 +28,11 @@ VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
 {}
 
 void VROMaterialVisual::setContents(VROVector4f contents) {
+    if ((_permissibleContentsMask & (int) VROContentsType::Fixed) == 0) {
+        pabort("Material visual does not support fixed contents");
+        return;
+    }
+    
     _material.fadeSnapshot();
     
     _contentsColor = contents;
@@ -36,6 +42,11 @@ void VROMaterialVisual::setContents(VROVector4f contents) {
 }
 
 void VROMaterialVisual::setContents(std::shared_ptr<VROTexture> texture) {
+    if ((_permissibleContentsMask & (int) VROContentsType::Texture2D) == 0) {
+        pabort("Material visual does not support 2D textures");
+        return;
+    }
+    
     _material.fadeSnapshot();
     
     _contentsTexture = texture;
@@ -45,6 +56,11 @@ void VROMaterialVisual::setContents(std::shared_ptr<VROTexture> texture) {
 }
 
 void VROMaterialVisual::setContentsCube(std::shared_ptr<VROTexture> texture) {
+    if ((_permissibleContentsMask & (int) VROContentsType::TextureCube) == 0) {
+        pabort("Material visual does not support cube textures");
+        return;
+    }
+    
     _material.fadeSnapshot();
     
     _contentsTexture = texture;

@@ -25,15 +25,17 @@ VROMaterial::VROMaterial() :
     _readsFromDepthBuffer(false),
     _substrate(nullptr) {
     
-    _diffuse = new VROMaterialVisual(*this);
-    _specular = new VROMaterialVisual(*this);
-    _normal = new VROMaterialVisual(*this);
-    _reflective = new VROMaterialVisual(*this);
-    _emission = new VROMaterialVisual(*this);
-    _transparent = new VROMaterialVisual(*this);
-    _multiply = new VROMaterialVisual(*this);
-    _ambientOcclusion = new VROMaterialVisual(*this);
-    _selfIllumination = new VROMaterialVisual(*this);
+    _diffuse          = new VROMaterialVisual(*this, (int)VROContentsType::Fixed | (int)VROContentsType::Texture2D | (int)VROContentsType::TextureCube);
+    _specular         = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
+    _normal           = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
+    _reflective       = new VROMaterialVisual(*this, (int)VROContentsType::TextureCube);
+        
+    // TODO These are not yet implemented
+    _emission         = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
+    _transparent      = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
+    _multiply         = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
+    _ambientOcclusion = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
+    _selfIllumination = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
 }
 
 VROMaterial::~VROMaterial() {

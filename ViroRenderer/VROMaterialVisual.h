@@ -30,9 +30,9 @@ enum class VROFilterMode {
 };
 
 enum class VROContentsType {
-    Fixed,
-    Texture2D,
-    TextureCube
+    Fixed = 1,
+    Texture2D = 2,
+    TextureCube = 4
 };
 
 class VROMaterial;
@@ -48,8 +48,9 @@ class VROMaterialVisual {
     
 public:
     
-    VROMaterialVisual(VROMaterial &material) :
+    VROMaterialVisual(VROMaterial &material, int permissibleContentsMask) :
         _material(material),
+        _permissibleContentsMask(permissibleContentsMask),
         _heartbeat(std::make_shared<VROMaterialVisualHeartbeat>()),
         _contentsType(VROContentsType::Fixed),
         _contentsColor({ 1.0, 1.0, 1.0, 1.0 }),
@@ -85,7 +86,9 @@ public:
     }
     
     std::shared_ptr<VROTexture> getContentsTexture() const {
-        if (_contentsType == VROContentsType::Texture2D || _contentsType == VROContentsType::TextureCube) {
+        if (_contentsType == VROContentsType::Texture2D ||
+            _contentsType == VROContentsType::TextureCube) {
+            
             return _contentsTexture;
         }
         else {
@@ -104,6 +107,12 @@ private:
      Parent material.
      */
     VROMaterial &_material;
+    
+    /*
+     Bit mask of VROContentsType that indicates which contents types are 
+     permissible to be set for this visual.
+     */
+    int _permissibleContentsMask;
     
     /*
      Shared pointer scoped to this material, for use by the animation system.

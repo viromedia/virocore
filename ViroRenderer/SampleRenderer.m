@@ -17,6 +17,57 @@
     float angle;
 }
 
+- (void)runTorusAnimationTest:(VRORenderContext *)context {
+    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
+    light->setColor({ 1.0, 0.9, 0.9 });
+    light->setPosition( { 0, 0, 0 });
+    light->setDirection( { 0, 0, -1.0 });
+    light->setAttenuationStartDistance(5);
+    light->setAttenuationEndDistance(10);
+    light->setSpotInnerAngle(0);
+    light->setSpotOuterAngle(20);
+    
+    _rootNode->setLight(light);
+    _scene->addNode(_rootNode);
+    
+    /*
+     Create the box node.
+     */
+    std::shared_ptr<VROTorusKnot> box = VROTorusKnot::createTorusKnot(3, 8, 0.2, 256, 32);
+    std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
+    material->setLightingModel(VROLightingModel::Blinn);
+    material->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"boba"]));
+    material->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"specular"]));
+    
+    _boxNode = std::make_shared<VRONode>(*context);
+    _boxNode->setGeometry(box);
+    _boxNode->setPosition({0, 0, -5});
+    
+    _rootNode->addChildNode(_boxNode);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        VROTransaction::begin();
+        VROTransaction::setAnimationDuration(2);
+        
+        UIImage *image = [UIImage imageNamed:@"bobaraj"];
+        material->getDiffuse().setContents(std::make_shared<VROTexture>(image));
+        
+        _boxNode->setPosition({ 0, 0, -3});
+        
+        VROTransaction::commit();
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        VROTransaction::begin();
+        VROTransaction::setAnimationDuration(3);
+        
+        material->getDiffuse().setContents({ 0.0, 1.0, 0.0, 1.0});
+        _boxNode->setPosition({ 0, 0, -6});
+        
+        VROTransaction::commit();
+    });
+}
+
 - (void)runBoxAnimationTest:(VRORenderContext *)context {
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.9, 0.9 });
@@ -183,7 +234,8 @@
     _rootNode = std::make_shared<VRONode>(*context);
     _rootNode->setPosition({0, 0, 0});
     
-    [self runLayerTest:context];
+    [self runTorusAnimationTest:context];
+    //[self runLayerTest:context];
     //[self runBoxAnimationTest:context];
     //[self runOBJTest:context];
 }
