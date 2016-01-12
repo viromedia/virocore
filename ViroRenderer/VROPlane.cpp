@@ -60,7 +60,7 @@ int VROPlane::getHalfSpaceOfPoint(const VROVector3f &point) const {
 
 void VROPlane::normalize() {
     float mag = normal.magnitude();
-    normal.normalize();
+    normal = normal.normalize();
 
     d /= mag;
 }

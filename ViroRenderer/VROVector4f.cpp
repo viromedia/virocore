@@ -95,13 +95,16 @@ void VROVector4f::midpoint(const VROVector4f &other, VROVector4f *result) const 
     result->w = (w + other.w) * 0.5f;
 }
 
-void VROVector4f::normalize() {
+VROVector4f VROVector4f::normalize() const {
     float inverseMag = 1.0f / sqrtf(x * x + y * y + z * z + w * w);
     
-    this->x *= inverseMag;
-    this->y *= inverseMag;
-    this->z *= inverseMag;
-    this->w *= inverseMag;
+    VROVector4f result;
+    result.x = x * inverseMag;
+    result.y = y * inverseMag;
+    result.z = z * inverseMag;
+    result.w = w * inverseMag;
+    
+    return result;
 }
 
 float VROVector4f::magnitude() const {

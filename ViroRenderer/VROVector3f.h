@@ -142,7 +142,7 @@ public:
     double dot(const VROVector3d &vB) const;
     void   cross(const VROVector3f &vB, VROVector3f *result) const;
     VROVector3f cross(const VROVector3f &vB) const;
-    void   normalize();
+    VROVector3f normalize() const;
     VROVector3f interpolate(VROVector3f other, float t);
 
     /*

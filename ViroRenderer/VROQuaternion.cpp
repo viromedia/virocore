@@ -429,10 +429,8 @@ VROQuaternion &VROQuaternion::makeIdentity() {
 VROQuaternion &VROQuaternion::rotationFromTo(const VROVector3f& from, const VROVector3f& to) {
     // Based on Stan Melax's article in Game Programming Gems
     // Copy, since cannot modify local
-    VROVector3f v0 = from;
-    VROVector3f v1 = to;
-    v0.normalize();
-    v1.normalize();
+    VROVector3f v0 = from.normalize();
+    VROVector3f v1 = to.normalize();
     
     const float d = v0.dot(v1);
     if (d >= 1.0f) // If dot == 1, vectors are the same

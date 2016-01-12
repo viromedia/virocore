@@ -58,8 +58,8 @@ double VROVector3f::angleZ(const VROVector3f &other) const {
     v1.z = 0;
     v2.z = 0;
 
-    v1.normalize();
-    v2.normalize();
+    v1 = v1.normalize();
+    v2 = v2.normalize();
 
     double dotProduct = v2.dot(v1);
     double magnitude = v1.magnitude() * v2.magnitude();
@@ -328,12 +328,15 @@ VROVector3f VROVector3f::cross(const VROVector3f &vB) const {
     return result;
 }
 
-void VROVector3f::normalize() {
+VROVector3f VROVector3f::normalize() const {
     float inverseMag = 1.0f / sqrtf(x * x + y * y + z * z);
 
-    this->x *= inverseMag;
-    this->y *= inverseMag;
-    this->z *= inverseMag;
+    VROVector3f result;
+    result.x = x * inverseMag;
+    result.y = y * inverseMag;
+    result.z = z * inverseMag;
+    
+    return result;
 }
 
 float VROVector3f::magnitude() const {

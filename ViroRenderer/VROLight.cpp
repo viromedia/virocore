@@ -23,7 +23,7 @@ void VROLight::setPosition(VROVector3f position) {
 }
 
 void VROLight::setDirection(VROVector3f direction) {
-    direction.normalize();
+    direction = direction.normalize();
     
     animate(std::make_shared<VROAnimationVector3f>([this](VROVector3f d) {
                                                        _direction = d;

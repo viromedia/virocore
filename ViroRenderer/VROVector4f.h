@@ -73,7 +73,7 @@ public:
      Basic vector operations.
      */
     float  dot(const VROVector4f &vB) const;
-    void   normalize();
+    VROVector4f normalize() const;
     VROVector4f interpolate(VROVector4f other, float t);
     
     /*
