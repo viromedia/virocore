@@ -17,6 +17,19 @@
     float angle;
 }
 
+- (std::shared_ptr<VROTexture>) cubeTexture {
+    std::vector<UIImage *> cubeImages =  {
+        [UIImage imageNamed:@"px"],
+        [UIImage imageNamed:@"nx"],
+        [UIImage imageNamed:@"py"],
+        [UIImage imageNamed:@"ny"],
+        [UIImage imageNamed:@"pz"],
+        [UIImage imageNamed:@"nz"]
+    };
+    
+    return std::make_shared<VROTexture>(cubeImages);
+}
+
 - (void)runTorusAnimationTest:(VRORenderContext *)context {
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.9, 0.9 });
@@ -36,8 +49,7 @@
     std::shared_ptr<VROTorusKnot> box = VROTorusKnot::createTorusKnot(3, 8, 0.2, 256, 32);
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);
-    material->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"boba"]));
-    material->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"specular"]));
+    material->getReflective().setContentsCube([self cubeTexture]);
     
     _boxNode = std::make_shared<VRONode>(*context);
     _boxNode->setGeometry(box);
@@ -49,9 +61,6 @@
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(2);
         
-        UIImage *image = [UIImage imageNamed:@"bobaraj"];
-        material->getDiffuse().setContents(std::make_shared<VROTexture>(image));
-        
         _boxNode->setPosition({ 0, 0, -3});
         
         VROTransaction::commit();
@@ -61,7 +70,7 @@
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(3);
         
-        material->getDiffuse().setContents({ 0.0, 1.0, 0.0, 1.0});
+        //material->getDiffuse().setContents({ 0.0, 1.0, 0.0, 1.0});
         _boxNode->setPosition({ 0, 0, -6});
         
         VROTransaction::commit();
@@ -218,18 +227,8 @@
 - (void)setupRendererWithView:(VROView *)view context:(VRORenderContext *)context {
     _scene = std::make_shared<VROScene>();
     _layout = std::make_shared<VROCrossLayout>(_scene);
-    
-    std::vector<UIImage *> cubeImages =  {
-        [UIImage imageNamed:@"px"],
-        [UIImage imageNamed:@"nx"],
-        [UIImage imageNamed:@"py"],
-        [UIImage imageNamed:@"ny"],
-        [UIImage imageNamed:@"pz"],
-        [UIImage imageNamed:@"nz"]
-    };
-    
-    std::shared_ptr<VROTexture> cubeTexture = std::make_shared<VROTexture>(cubeImages);
-    _scene->setBackground(cubeTexture);
+
+    _scene->setBackground([self cubeTexture]);
 
     _rootNode = std::make_shared<VRONode>(*context);
     _rootNode->setPosition({0, 0, 0});

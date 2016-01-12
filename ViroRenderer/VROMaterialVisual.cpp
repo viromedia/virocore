@@ -13,6 +13,7 @@
 
 VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
  _material(visual._material),
+ _permissibleContentsMask(visual._permissibleContentsMask),
  _heartbeat(std::make_shared<VROMaterialVisualHeartbeat>()),
  _contentsType(visual._contentsType),
  _contentsColor(visual._contentsColor),

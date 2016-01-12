@@ -82,12 +82,27 @@ void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
     _vertexProgram   = [library newFunctionWithName:@"lambert_lighting_vertex"];
     
     VROMaterialVisual &diffuse = material.getDiffuse();
+    VROMaterialVisual &reflective = material.getReflective();
+    
     if (diffuse.getContentsType() == VROContentsType::Fixed) {
-        _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_c"];
+        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+            _textures.push_back(reflective.getContentsTexture());
+            _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_c_reflect"];
+        }
+        else {
+            _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_c"];
+        }
     }
     else {
         _textures.push_back(diffuse.getContentsTexture());
-        _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_t"];
+        
+        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+            _textures.push_back(reflective.getContentsTexture());
+            _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_t_reflect"];
+        }
+        else {
+            _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_t"];
+        }
     }
 }
 
@@ -107,14 +122,31 @@ void VROMaterialSubstrateMetal::loadPhongLighting(VROMaterial &material,
     _vertexProgram   = [library newFunctionWithName:@"phong_lighting_vertex"];
     
     VROMaterialVisual &diffuse = material.getDiffuse();
+    VROMaterialVisual &reflective = material.getReflective();
+    
     if (diffuse.getContentsType() == VROContentsType::Fixed) {
-        _fragmentProgram = [library newFunctionWithName:@"phong_lighting_fragment_c"];
+        _textures.push_back(specular.getContentsTexture());
+        
+        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+            _textures.push_back(reflective.getContentsTexture());
+            _fragmentProgram = [library newFunctionWithName:@"phong_lighting_fragment_c_reflect"];
+        }
+        else {
+            _fragmentProgram = [library newFunctionWithName:@"phong_lighting_fragment_c"];
+        }
     }
     else {
         _textures.push_back(diffuse.getContentsTexture());
-        _fragmentProgram = [library newFunctionWithName:@"phong_lighting_fragment_t"];
+        _textures.push_back(specular.getContentsTexture());
+        
+        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+            _textures.push_back(reflective.getContentsTexture());
+            _fragmentProgram = [library newFunctionWithName:@"phong_lighting_fragment_t_reflect"];
+        }
+        else {
+            _fragmentProgram = [library newFunctionWithName:@"phong_lighting_fragment_t"];
+        }
     }
-    _textures.push_back(specular.getContentsTexture());
 }
 
 void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
@@ -133,14 +165,31 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
     _vertexProgram   = [library newFunctionWithName:@"blinn_lighting_vertex"];
     
     VROMaterialVisual &diffuse = material.getDiffuse();
+    VROMaterialVisual &reflective = material.getReflective();
+    
     if (diffuse.getContentsType() == VROContentsType::Fixed) {
-        _fragmentProgram = [library newFunctionWithName:@"blinn_lighting_fragment_c"];
+        _textures.push_back(specular.getContentsTexture());
+
+        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+            _textures.push_back(reflective.getContentsTexture());
+            _fragmentProgram = [library newFunctionWithName:@"blinn_lighting_fragment_c_reflect"];
+        }
+        else {
+            _fragmentProgram = [library newFunctionWithName:@"blinn_lighting_fragment_c"];
+        }
     }
     else {
         _textures.push_back(diffuse.getContentsTexture());
-        _fragmentProgram = [library newFunctionWithName:@"blinn_lighting_fragment_t"];
+        _textures.push_back(specular.getContentsTexture());
+
+        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+            _textures.push_back(reflective.getContentsTexture());
+            _fragmentProgram = [library newFunctionWithName:@"blinn_lighting_fragment_t_reflect"];
+        }
+        else {
+            _fragmentProgram = [library newFunctionWithName:@"blinn_lighting_fragment_t"];
+        }
     }
-    _textures.push_back(specular.getContentsTexture());
 }
 
 void VROMaterialSubstrateMetal::setMaterialUniforms() {
