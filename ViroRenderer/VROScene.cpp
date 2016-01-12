@@ -24,12 +24,8 @@ void VROScene::render(const VRORenderContext &renderContext) {
     renderParams.transforms.push(identity);
     
     if (_background) {
-        std::shared_ptr<VROLight> skyboxLight = std::make_shared<VROLight>(VROLightType::Ambient);
-        skyboxLight->setColor({ 1.0, 1.0, 1.0 });
-        
-        renderParams.lights.push_back(skyboxLight);
+        //TODO Make the skybox track the camera position
         _background->render(renderContext, renderParams);
-        renderParams.lights.pop_back();
     }
     
     for (std::shared_ptr<VRONode> &node : _nodes) {

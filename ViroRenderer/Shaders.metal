@@ -79,6 +79,8 @@ typedef struct {
     float4 color;
     float2 texcoord;
     
+    float3 surface_position;
+    
     float4 ambient_color;
     float4 material_color;
     float  diffuse_intensity;
@@ -98,6 +100,7 @@ vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttribut
     out.material_color = material.diffuse_surface_color;
     out.diffuse_intensity = material.diffuse_intensity;
     out.material_alpha = material.alpha;
+    out.surface_position = (view.model_matrix * float4(attributes.position, 1.0)).xyz;
     
     return out;
 }
@@ -113,9 +116,8 @@ fragment float4 constant_lighting_fragment_t(VROConstantLightingVertexOut in [[ 
 
 fragment float4 constant_lighting_fragment_q(VROConstantLightingVertexOut in [[ stage_in ]],
                                              texturecube<float> texture [[ texture(0) ]]) {
-    float3 texcoord = float3(in.position.x, in.position.y, -in.position.z);
-    return texture.sample(s, texcoord);
-    //return in.ambient_color + in.material_color * texture.sample(s, texcoord) * in.diffuse_intensity * float4(1.0, 1.0, 1.0, in.material_alpha);
+    float3 texcoord = float3(in.surface_position.x, in.surface_position.y, -in.surface_position.z);
+    return in.material_color * texture.sample(s, texcoord) * in.diffuse_intensity * float4(1.0, 1.0, 1.0, in.material_alpha);
 }
 
 /* ---------------------------------------
