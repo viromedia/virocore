@@ -12,8 +12,8 @@
 #import "VROMath.h"
 
 static const float kTriggerAnimationDuration = 0.4;
-static const float kTriggerAnimationInnerCircleThicknessMultiple = 5;
-static const float kTriggerAnimationWhiteCircleMultiple = 7;
+static const float kTriggerAnimationInnerCircleThicknessMultiple = 3;
+static const float kTriggerAnimationWhiteCircleMultiple = 4;
 
 @interface VROReticle ()
 
@@ -47,11 +47,9 @@ static const float kTriggerAnimationWhiteCircleMultiple = 7;
     [(VROScreenUIView *)self.superview setNeedsUpdate];
 }
 
-- (void)drawRect:(CGRect)rect {
+- (void)renderRect:(CGRect)rect context:(CGContextRef)context {
     float thickness = self.reticleThickness;
-    
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
+        
     if (self.animationActive) {
         float t = (CACurrentMediaTime() - self.animationStartSeconds) / kTriggerAnimationDuration;
         

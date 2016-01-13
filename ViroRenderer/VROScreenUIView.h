@@ -21,7 +21,7 @@ class VROEye;
 
 - (instancetype)initWithContext:(VRORenderContext *)context;
 
-- (void)update;
+- (void)updateWithContext:(VRORenderContext *)context;
 - (void)renderEye:(VROEye *)eye withContext:(VRORenderContext *)context;
 
 - (void)setReticleEnabled:(BOOL)enabled;

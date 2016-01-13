@@ -15,7 +15,7 @@
 #include "VROTextureSubstrate.h"
 
 enum class VROTextureType;
-class VRORenderContextMetal;
+class VRORenderContext;
 
 class VROTextureSubstrateMetal : public VROTextureSubstrate {
     
@@ -29,10 +29,17 @@ public:
     {}
     
     /*
+     Create a new Metal texture out of the contents of the current bitmap
+     context.
+     */
+    VROTextureSubstrateMetal(int width, int height, CGContextRef bitmapContext,
+                             const VRORenderContext &context);
+    
+    /*
      Create a new Metal texture of the given type from the given images.
      */
     VROTextureSubstrateMetal(VROTextureType type, std::vector<UIImage *> &images,
-                             const VRORenderContextMetal &context);
+                             const VRORenderContext &context);
     virtual ~VROTextureSubstrateMetal();
     
     id <MTLTexture> getTexture() const {

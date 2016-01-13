@@ -18,6 +18,13 @@ VROTexture::VROTexture() :
     
 }
 
+VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate) :
+    _type(type),
+    _image(nullptr),
+    _substrate(std::move(substrate)) {
+    
+}
+
 VROTexture::VROTexture(UIImage *image) :
     _type(VROTextureType::Quad),
     _image(image),

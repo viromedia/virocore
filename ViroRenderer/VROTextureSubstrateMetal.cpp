@@ -12,10 +12,27 @@
 #include "VRORenderContextMetal.h"
 #include "VROLog.h"
 
-VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vector<UIImage *> &images,
-                                                   const VRORenderContextMetal &context) {
+VROTextureSubstrateMetal::VROTextureSubstrateMetal(int width, int height, CGContextRef bitmapContext,
+                                                   const VRORenderContext &context) {
+    id <MTLDevice> device = ((VRORenderContextMetal &)context).getDevice();
+
+    int bytesPerPixel = 4;
+    MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm
+                                                                                          width:width
+                                                                                         height:height
+                                                                                   mipmapped:NO];
     
-    id <MTLDevice> device = context.getDevice();
+    _texture = [device newTextureWithDescriptor:descriptor];
+    [_texture replaceRegion:MTLRegionMake2D(0, 0, width, height)
+                mipmapLevel:0
+                  withBytes:CGBitmapContextGetData(bitmapContext)
+                bytesPerRow:bytesPerPixel * width];
+}
+
+VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vector<UIImage *> &images,
+                                                   const VRORenderContext &context) {
+    
+    id <MTLDevice> device = ((VRORenderContextMetal &)context).getDevice();
     
     if (type == VROTextureType::Quad) {
         UIImage *image = images.front();

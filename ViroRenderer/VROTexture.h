@@ -34,6 +34,11 @@ public:
     VROTexture();
     
     /*
+     Create a new VROTexture with the given underlying substrate.
+     */
+    VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate);
+    
+    /*
      Create a new VROTexture from a UIImage.
      */
     VROTexture(UIImage *image);

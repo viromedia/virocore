@@ -28,11 +28,13 @@ public:
     VROLayer(const VRORenderContext &context);
     virtual ~VROLayer();
     
-    virtual void setContents(UIImage *image);
+    void setContents(UIImage *image);
+    void setContents(int width, int height, CGContextRef bitmapContext,
+                     const VRORenderContext &context);
     
-    virtual void setFrame(VRORect frame);
-    virtual void setBounds(VRORect bounds);
-    virtual void setPosition(VROPoint point);
+    void setFrame(VRORect frame);
+    void setBounds(VRORect bounds);
+    void setPosition(VROPoint point);
     
     VRORect getFrame() const;
     VRORect getBounds() const;

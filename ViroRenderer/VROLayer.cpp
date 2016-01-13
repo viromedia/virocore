@@ -11,6 +11,7 @@
 #include "VROSurface.h"
 #include "VROTexture.h"
 #include "VROMaterial.h"
+#include "VROTextureSubstrateMetal.h"
 
 #pragma mark - Initialization
 
@@ -29,8 +30,17 @@ VROLayer::~VROLayer() {
 
 #pragma mark - Layer Properties
 
-void VROLayer::setContents(UIImage *image) {    
+void VROLayer::setContents(UIImage *image) {
     getMaterial()->getDiffuse().setContents(std::make_shared<VROTexture>(image));
+}
+
+void VROLayer::setContents(int width, int height, CGContextRef bitmapContext,
+                           const VRORenderContext &context) {
+    
+    std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateMetal>(
+                    new VROTextureSubstrateMetal(width, height, bitmapContext, context));
+    
+    getMaterial()->getDiffuse().setContents(std::make_shared<VROTexture>(VROTextureType::Quad, std::move(substrate)));
 }
 
 std::shared_ptr<VROMaterial> VROLayer::getMaterial() {

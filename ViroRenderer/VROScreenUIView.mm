@@ -60,24 +60,38 @@ static const float kVROLayerSize = 2;
     
 }
 
-- (void)update {
+- (void)updateWithContext:(VRORenderContext *)context {
     if (!_needsUpdate) {
         return;
     }
     _needsUpdate = NO;
-        
-    CGFloat scale = [UIScreen mainScreen].nativeScale;
-    UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, scale);
     
-    [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:YES];
-    if (self.reticle) {
-        [self.reticle drawRect:self.bounds];
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    int width = self.bounds.size.width;
+    int height = self.bounds.size.height;
+    
+    NSUInteger bytesPerPixel = 4;
+    NSUInteger bytesPerRow = bytesPerPixel * width;
+    NSUInteger bitsPerComponent = 8;
+    
+    CGContextRef bitmapContext = CGBitmapContextCreate(nullptr, width, height,
+                                                 bitsPerComponent, bytesPerRow, colorSpace,
+                                                 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+    
+    CGColorSpaceRelease(colorSpace);
+    
+    // Flip since we'll be rendering to a texture
+    CGAffineTransform flipVertical = CGAffineTransformMake(1, 0, 0, -1, 0, height);
+    CGContextConcatCTM(bitmapContext, flipVertical);
+
+    [self.layer renderInContext:bitmapContext];
+    if (self.reticleEnabled) {
+        [self.reticle renderRect:self.bounds context:bitmapContext];
     }
     
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    _layer->setContents(image);
+    _layer->setContents(self.bounds.size.width, self.bounds.size.height, bitmapContext, *context);
     
-    UIGraphicsEndImageContext();
+    CGContextRelease(bitmapContext);
 }
 
 - (void)renderEye:(VROEye *)eye withContext:(VRORenderContext *)context {

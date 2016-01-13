@@ -11,7 +11,7 @@
 @interface VROReticle : UIView
 
 - (void)trigger;
-- (void)drawRect:(CGRect)rect;
+- (void)renderRect:(CGRect)rect context:(CGContextRef)context;
 
 @property (readwrite, nonatomic) float reticleSize;
 @property (readwrite, nonatomic) float reticleThickness;

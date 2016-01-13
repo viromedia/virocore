@@ -420,7 +420,7 @@
     _renderContext->setProjectionMatrix(leftEye->perspective(zNear, zFar));
     
     [self.renderDelegate renderEye:VROEyeTypeLeft context:_renderContext];
-    [_HUD update];
+    [_HUD updateWithContext:_renderContext];
     [_HUD renderEye:leftEye withContext:_renderContext];
     
     if (rightEye == nullptr) {
