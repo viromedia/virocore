@@ -22,6 +22,7 @@ static const float kVROLayerSize = 2;
 
 @interface VROScreenUIView () {
     std::shared_ptr<VROLayer> _layer;
+    BOOL _needsUpdate;
 }
 
 @property (readwrite, nonatomic) BOOL reticleEnabled;
@@ -49,6 +50,7 @@ static const float kVROLayerSize = 2;
         
         [self setBackgroundColor:[UIColor clearColor]];
         self.reticle = [[VROReticle alloc] init];
+        _needsUpdate = YES;
     }
     
     return self;
@@ -59,6 +61,11 @@ static const float kVROLayerSize = 2;
 }
 
 - (void)update {
+    if (!_needsUpdate) {
+        return;
+    }
+    _needsUpdate = NO;
+        
     CGFloat scale = [UIScreen mainScreen].nativeScale;
     UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, scale);
     
@@ -93,7 +100,11 @@ static const float kVROLayerSize = 2;
     }
     
     _reticleEnabled = enabled;
-    [self update];
+    [self setNeedsUpdate];
+}
+
+- (void)setNeedsUpdate {
+    _needsUpdate = YES;
 }
 
 @end

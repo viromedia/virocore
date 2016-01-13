@@ -42,7 +42,7 @@
 		8FA2E15B1C45AF3C0070DB26 /* VROScreenUIView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E1591C45AF3C0070DB26 /* VROScreenUIView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FA2E15C1C45AF3C0070DB26 /* VROScreenUIView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E15A1C45AF3C0070DB26 /* VROScreenUIView.mm */; };
 		8FA2E15F1C45DD270070DB26 /* VROReticle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E15D1C45DD270070DB26 /* VROReticle.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FA2E1601C45DD270070DB26 /* VROReticle.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E15E1C45DD270070DB26 /* VROReticle.m */; };
+		8FA2E1601C45DD270070DB26 /* VROReticle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E15E1C45DD270070DB26 /* VROReticle.mm */; };
 		8FA2E1631C460C600070DB26 /* VROAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E1611C460C600070DB26 /* VROAction.cpp */; };
 		8FA2E1641C460C600070DB26 /* VROAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E1621C460C600070DB26 /* VROAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCB6C881C3C828200C14158 /* VROLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB6C861C3C828200C14158 /* VROLoader.cpp */; };
@@ -355,7 +355,7 @@
 		8FA2E1591C45AF3C0070DB26 /* VROScreenUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROScreenUIView.h; sourceTree = "<group>"; };
 		8FA2E15A1C45AF3C0070DB26 /* VROScreenUIView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROScreenUIView.mm; sourceTree = "<group>"; };
 		8FA2E15D1C45DD270070DB26 /* VROReticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROReticle.h; sourceTree = "<group>"; };
-		8FA2E15E1C45DD270070DB26 /* VROReticle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VROReticle.m; sourceTree = "<group>"; };
+		8FA2E15E1C45DD270070DB26 /* VROReticle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROReticle.mm; sourceTree = "<group>"; };
 		8FA2E1611C460C600070DB26 /* VROAction.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROAction.cpp; sourceTree = "<group>"; };
 		8FA2E1621C460C600070DB26 /* VROAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAction.h; sourceTree = "<group>"; };
 		8FCB6C861C3C828200C14158 /* VROLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLoader.cpp; sourceTree = "<group>"; };
@@ -473,7 +473,7 @@
 				8FA2E1591C45AF3C0070DB26 /* VROScreenUIView.h */,
 				8FA2E15A1C45AF3C0070DB26 /* VROScreenUIView.mm */,
 				8FA2E15D1C45DD270070DB26 /* VROReticle.h */,
-				8FA2E15E1C45DD270070DB26 /* VROReticle.m */,
+				8FA2E15E1C45DD270070DB26 /* VROReticle.mm */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -1138,7 +1138,7 @@
 				8FD4DF191C18ED4C003DC425 /* VRODistortionMesh.cpp in Sources */,
 				8FD4DEED1C18ED0B003DC425 /* VROLog.cpp in Sources */,
 				8FD4DF161C18ED44003DC425 /* VROHeadTracker.cpp in Sources */,
-				8FA2E1601C45DD270070DB26 /* VROReticle.m in Sources */,
+				8FA2E1601C45DD270070DB26 /* VROReticle.mm in Sources */,
 				8FD4DF031C18ED30003DC425 /* VROGeometrySubstrate.cpp in Sources */,
 				8FD1E1AF1C3F20C70005BE4E /* VROVideoSurface.cpp in Sources */,
 				8FD4DF021C18ED2C003DC425 /* VROTextureSubstrateMetal.cpp in Sources */,

@@ -209,7 +209,7 @@
     [label setFont:[UIFont boldSystemFontOfSize:14]];
     
     [HUD addSubview:label];
-    [HUD update];
+    [HUD setNeedsUpdate];
 }
 
 - (void)runOBJTest:(VRORenderContext *)context {

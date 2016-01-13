@@ -25,6 +25,8 @@ class VROEye;
 - (void)renderEye:(VROEye *)eye withContext:(VRORenderContext *)context;
 
 - (void)setReticleEnabled:(BOOL)enabled;
+- (void)setNeedsUpdate;
+
 @property (readonly, nonatomic) VROReticle *reticle;
 
 @end

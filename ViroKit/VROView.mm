@@ -113,6 +113,9 @@
     initBlankTexture(*_renderContext);
     
     _HUD = [[VROScreenUIView alloc] initWithContext:_renderContext];
+    
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+    [self addGestureRecognizer:tapRecognizer];
 }
 
 - (void)dealloc {
@@ -417,6 +420,7 @@
     _renderContext->setProjectionMatrix(leftEye->perspective(zNear, zFar));
     
     [self.renderDelegate renderEye:VROEyeTypeLeft context:_renderContext];
+    [_HUD update];
     [_HUD renderEye:leftEye withContext:_renderContext];
     
     if (rightEye == nullptr) {
@@ -437,6 +441,10 @@
 
 - (VRORenderContext *)renderContext {
     return _renderContext;
+}
+
+- (void)handleTap:(UIGestureRecognizer *)gestureRecognizer {
+    [_HUD.reticle trigger];
 }
 
 @end

@@ -10,6 +10,7 @@
 
 @interface VROReticle : UIView
 
+- (void)trigger;
 - (void)drawRect:(CGRect)rect;
 
 @property (readwrite, nonatomic) float reticleSize;
