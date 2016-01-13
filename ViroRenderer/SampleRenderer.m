@@ -9,6 +9,7 @@
 #import "SampleRenderer.h"
 
 @implementation SampleRenderer {
+    VROView *_view;
     std::shared_ptr<VROScene> _scene;
     std::shared_ptr<VROCrossLayout> _layout;
     
@@ -70,7 +71,6 @@
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(3);
         
-        //material->getDiffuse().setContents({ 0.0, 1.0, 0.0, 1.0});
         _boxNode->setPosition({ 0, 0, -6});
         
         VROTransaction::commit();
@@ -160,7 +160,7 @@
     
     _boxNode = std::make_shared<VRONode>(*context);
     _boxNode->setGeometry(box);
-    _boxNode->setPosition({0, 1, -5});
+    _boxNode->setPosition({0, 1.5, -5});
     
     _rootNode->addChildNode(_boxNode);
     
@@ -169,15 +169,15 @@
      */
     std::shared_ptr<VROLayer> center = std::make_shared<VROLayer>(*context);
     center->setContents([UIImage imageNamed:@"momentslogo"]);
-    center->setFrame(VRORectMake(-0.5, -1.5, -2, 1, 1));
+    center->setFrame(VRORectMake(-0.5, -1.25, -2, 1, 1));
     
     _rootNode->addChildNode(center);
     
     /*
      Create the label node.
      */
-    VROUIView *labelView = [[VROUIView alloc] initWithFrame:CGRectMake(0, 0, 100, 10) context:context];
-    labelView.vroLayer->setFrame(VRORectMake(-1, -2, -2, 2, 0.2));
+    VROWorldUIView *labelView = [[VROWorldUIView alloc] initWithFrame:CGRectMake(0, 0, 100, 10) context:context];
+    labelView.vroLayer->setFrame(VRORectMake(-1, -1.5, -2, 2, 0.2));
     
     [labelView setBackgroundColor:[UIColor clearColor]];
     
@@ -192,6 +192,22 @@
     [labelView update];
     
     _rootNode->addChildNode(labelView.vroLayer);
+    
+    /*
+     Create HUD.
+     */
+    VROScreenUIView *HUD = _view.HUD;
+    
+    label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, HUD.frame.size.width, HUD.frame.size.height)];
+    [label setCenter:CGPointMake(HUD.frame.size.width / 2.0, HUD.frame.size.height / 2.0)];
+    [label setText:@"++ HUD ++"];
+    [label setBackgroundColor:[UIColor clearColor]];
+    [label setTextAlignment:NSTextAlignmentCenter];
+    [label setTextColor:[UIColor blackColor]];
+    [label setFont:[UIFont boldSystemFontOfSize:14]];
+    
+    [HUD addSubview:label];
+    [HUD update];
 }
 
 - (void)runOBJTest:(VRORenderContext *)context {
@@ -225,6 +241,7 @@
 }
 
 - (void)setupRendererWithView:(VROView *)view context:(VRORenderContext *)context {
+    _view = view;
     _scene = std::make_shared<VROScene>();
     _layout = std::make_shared<VROCrossLayout>(_scene);
 
@@ -233,8 +250,8 @@
     _rootNode = std::make_shared<VRONode>(*context);
     _rootNode->setPosition({0, 0, 0});
     
-    [self runTorusAnimationTest:context];
-    //[self runLayerTest:context];
+    //[self runTorusAnimationTest:context];
+    [self runLayerTest:context];
     //[self runBoxAnimationTest:context];
     //[self runOBJTest:context];
 }

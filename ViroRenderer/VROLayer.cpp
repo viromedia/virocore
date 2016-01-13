@@ -16,10 +16,9 @@
 
 VROLayer::VROLayer(const VRORenderContext &context) :
     VRONode(context) {
-    setBackgroundColor({ 1.0, 1.0, 1.0, 1.0 });
     
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(1.0, 1.0);
-    surface->getMaterials()[0]->setLightingModel(VROLightingModel::Blinn);
+    surface->getMaterials().front()->setLightingModel(VROLightingModel::Lambert);
         
     setGeometry(surface);
 }
@@ -30,19 +29,12 @@ VROLayer::~VROLayer() {
 
 #pragma mark - Layer Properties
 
-void VROLayer::setContents(UIImage *image) {
-    const std::shared_ptr<VROGeometry> &geometry = getGeometry();
-    const std::vector<std::shared_ptr<VROMaterial>> &materials = geometry->getMaterials_const();
-    
-    materials.front()->getDiffuse().setContents(std::make_shared<VROTexture>(image));
+void VROLayer::setContents(UIImage *image) {    
+    getMaterial()->getDiffuse().setContents(std::make_shared<VROTexture>(image));
 }
 
-void VROLayer::setBackgroundColor(vector_float4 backgroundColor) {
-    _backgroundColor = backgroundColor;
-}
-
-vector_float4 VROLayer::getBackgroundColor() const {
-    return _backgroundColor;
+std::shared_ptr<VROMaterial> VROLayer::getMaterial() {
+    return getGeometry()->getMaterials().front();
 }
 
 #pragma mark - Spatial Position

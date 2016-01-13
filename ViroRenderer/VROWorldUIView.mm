@@ -1,28 +1,27 @@
 //
-//  VROUIView.m
+//  VROWorldUIView.m
 //  ViroRenderer
 //
 //  Created by Raj Advani on 11/2/15.
 //  Copyright © 2015 Viro Media. All rights reserved.
 //
 
-#import "VROUIView.h"
+#import "VROWorldUIView.h"
 #import "VROImageUtil.h"
 
-@interface VROUIView () {
+@interface VROWorldUIView () {
     std::shared_ptr<VROLayer> _layer;
 }
 
 @end
 
-@implementation VROUIView
+@implementation VROWorldUIView
 
 - (instancetype)initWithFrame:(CGRect)frame context:(VRORenderContext *)context {
     self = [super initWithFrame:frame];
     if (self) {
         _layer = std::make_shared<VROLayer>(*context);
         _layer->setFrame(VRORectMake(0, 0, 1.0, 1.0));
-        _layer->setBackgroundColor({ 1.0, 1.0, 1.0, 1.0 });
     }
     
     return self;

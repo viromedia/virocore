@@ -46,7 +46,8 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VRORect.h>
 #import <ViroKit/VROPoint.h>
 #import <ViroKit/VROSize.h>
-#import <ViroKit/VROUIView.h>
+#import <ViroKit/VROWorldUIView.h>
+#import <ViroKit/VROScreenUIView.h>
 
 // Layout
 #import <ViroKit/VROCrossLayout.h>

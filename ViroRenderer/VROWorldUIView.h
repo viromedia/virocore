@@ -11,10 +11,14 @@
 #import "VROLayer.h"
 #import <memory>
 
-@interface VROUIView : UIView
+/*
+ UIView rendered in world space. The view is constructed as any other
+ UIView, and can then be added to the 3D scene by adding its vroLayer
+ to the VROScene.
+ */
+@interface VROWorldUIView : UIView
 
 - (instancetype)initWithFrame:(CGRect)frame context:(VRORenderContext *)context;
-
 - (void)update;
 
 @property (readonly, nonatomic) std::shared_ptr<VROLayer> vroLayer;

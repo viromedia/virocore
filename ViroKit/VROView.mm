@@ -111,6 +111,8 @@
     _inflight_semaphore = dispatch_semaphore_create(3);
     _renderContext = new VRORenderContextMetal(device);
     initBlankTexture(*_renderContext);
+    
+    _HUD = [[VROScreenUIView alloc] initWithContext:_renderContext];
 }
 
 - (void)dealloc {
@@ -415,6 +417,7 @@
     _renderContext->setProjectionMatrix(leftEye->perspective(zNear, zFar));
     
     [self.renderDelegate renderEye:VROEyeTypeLeft context:_renderContext];
+    [_HUD renderEye:leftEye withContext:_renderContext];
     
     if (rightEye == nullptr) {
         return;
@@ -427,6 +430,8 @@
     _renderContext->setProjectionMatrix(rightEye->perspective(zNear, zFar));
     
     [self.renderDelegate renderEye:VROEyeTypeRight context:_renderContext];
+    [_HUD renderEye:rightEye withContext:_renderContext];
+    
     _renderContext->notifyFrameEnd();
 }
 

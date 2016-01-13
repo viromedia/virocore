@@ -19,6 +19,7 @@
 #include "VROGeometry.h"
 #include "VROMatrix4f.h"
 #include "VRONode.h"
+#include "VROMaterial.h"
 
 class VROLayer : public VRONode {
     
@@ -37,12 +38,7 @@ public:
     VRORect getBounds() const;
     VROPoint getPosition() const;
     
-    std::shared_ptr<VROLayer> getSuperlayer() const {
-        return _superlayer;
-    }
-    
-    void setBackgroundColor(vector_float4 backgroundColor);
-    vector_float4 getBackgroundColor() const;
+    std::shared_ptr<VROMaterial> getMaterial();
     
 private:
     
@@ -51,17 +47,6 @@ private:
      2D space.
      */
     VRORect _frame;
-    
-    /*
-     The color of the layer.
-     */
-    vector_float4 _backgroundColor;
-    
-    /*
-     The layer's parent and children.
-     */
-    std::vector<std::shared_ptr<VROLayer>> _sublayers;
-    std::shared_ptr<VROLayer> _superlayer;
     
     void onFrameUpdate();
     

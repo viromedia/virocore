@@ -11,6 +11,7 @@
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
 #import "VRORenderDelegate.h"
+#import "VROScreenUIView.h"
 
 @interface VROView : MTKView <MTKViewDelegate>
 
@@ -19,6 +20,7 @@
 @property (nonatomic) BOOL distortionCorrectionEnabled;
 @property (nonatomic) BOOL vignetteEnabled;
 @property (nonatomic) BOOL chromaticAberrationCorrectionEnabled;
+@property (nonatomic, readonly) VROScreenUIView *HUD;
 
 - (instancetype)initWithFrame:(CGRect)frame;
 - (VRORenderContext *)renderContext;
