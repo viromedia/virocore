@@ -13,6 +13,7 @@
 #include "VROTransaction.h"
 #include "VROAnimationVector3f.h"
 #include "VROAnimationQuaternion.h"
+#include "VROAction.h"
 
 #pragma mark - Initialization
 
@@ -46,6 +47,8 @@ std::shared_ptr<VRONode> VRONode::clone() {
 #pragma mark - Rendering
 
 void VRONode::render(const VRORenderContext &context, VRORenderParameters &params) {
+    processActions();
+    
     /*
      Render the presentation node if one is present. The presentation node
      reflects the current state of animations.
@@ -123,4 +126,54 @@ void VRONode::setScale(VROVector3f scale) {
     animate(std::make_shared<VROAnimationVector3f>([this](VROVector3f s) {
                                                        _scale = s;
                                                    }, _scale, scale));
+}
+
+#pragma mark - Actions
+
+void VRONode::processActions() {
+    std::vector<std::shared_ptr<VROAction>>::iterator it;
+    for (it = _actions.begin(); it != _actions.end(); ++it) {
+        std::shared_ptr<VROAction> &action = *it;
+
+        if (action->getType() == VROActionType::PerFrame) {
+            action->execute();
+            
+            // Remove the action when it's complete
+            if (!action->shouldRepeat()) {
+                _actions.erase(it);
+                --it;
+            }
+        }
+        else {
+            VROTransaction::begin();
+            VROTransaction::setAnimationDuration(action->getDuration());
+            VROTransaction::setFinishCallback([this, action]() {
+                if (action->shouldRepeat()) {
+                    this->runAction(action);
+                }
+            });
+            
+            action->execute();
+            VROTransaction::commit();
+            
+            // Remove the action; it will be re-added (if needed) after the animation
+            _actions.erase(it);
+            --it;
+        }
+    }
+}
+
+void VRONode::runAction(std::shared_ptr<VROAction> action) {
+    _actions.push_back(action);
+}
+
+void VRONode::removeAction(std::shared_ptr<VROAction> action) {
+    _actions.erase(std::remove_if(_actions.begin(), _actions.end(),
+                                  [action](std::shared_ptr<VROAction> candidate) {
+                                      return candidate == action;
+                                  }), _actions.end());
+}
+
+void VRONode::removeAllActions() {
+    _actions.clear();
 }

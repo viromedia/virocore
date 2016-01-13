@@ -256,6 +256,13 @@
     //[self runLayerTest:context];
     //[self runBoxAnimationTest:context];
     //[self runOBJTest:context];
+    
+    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self] {
+        angle += .015;
+        _boxNode->setRotation({ 0, angle, 0});
+    });
+    
+    _boxNode->runAction(action);
 }
 
 - (void)shutdownRendererWithView:(MTKView *)view {
@@ -267,9 +274,6 @@
 }
 
 - (void)renderEye:(VROEyeType)eye context:(VRORenderContext *)renderContext {
-    angle += .01;
-    _boxNode->setRotation({ 0, angle, 0});
-    
     _scene->render(*renderContext);
 }
 

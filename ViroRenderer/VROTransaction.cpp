@@ -54,6 +54,15 @@ void VROTransaction::commit() {
     committedAnimations.push_back(animation);
 }
 
+void VROTransaction::setFinishCallback(std::function<void ()> finishCallback) {
+    std::shared_ptr<VROTransaction> animation = get();
+    if (!animation) {
+        pabort();
+    }
+    
+    animation->_finishCallback = finishCallback;
+}
+
 void VROTransaction::commitAll() {
     while (!openAnimations.empty()) {
         commit();
@@ -117,5 +126,8 @@ void VROTransaction::onTermination() {
     
     for (std::shared_ptr<VROAnimation> animation : _animations) {
         animation->onTermination();
+    }
+    if (_finishCallback) {
+        _finishCallback();
     }
 }

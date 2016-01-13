@@ -21,6 +21,7 @@
 
 class VROGeometry;
 class VROLight;
+class VROAction;
 
 class VRONode : public VROAnimatable {
     
@@ -90,6 +91,10 @@ public:
         _supernode.reset();
     }
     
+    void runAction(std::shared_ptr<VROAction> action);
+    void removeAction(std::shared_ptr<VROAction> action);
+    void removeAllActions();
+    
 protected:
     
     /*
@@ -113,6 +118,17 @@ private:
      to the model.
      */
     std::shared_ptr<VRONode> _presentationNode;
+    
+    /*
+     Active actions on this node.
+     */
+    std::vector<std::shared_ptr<VROAction>> _actions;
+    
+    /*
+     Action processing: execute all current actions and remove those that are
+     expired.
+     */
+    void processActions();
     
     /*
      Render functions.

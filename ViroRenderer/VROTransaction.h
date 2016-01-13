@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <vector>
 #include <memory>
+#include <functional>
 #include "VROAnimation.h"
 
 class VROTransaction {
@@ -45,6 +46,12 @@ public:
      transaction.
      */
     static void begin();
+    
+    /*
+     Set a callback to invoke when the active transaction completes (after duration
+     seconds).
+     */
+    static void setFinishCallback(std::function<void()> finishCallback);
     
     /*
      Commit the active VROTransaction.
@@ -104,6 +111,7 @@ private:
     double _durationSeconds;
     double _startTimeSeconds;
     
+    std::function<void()> _finishCallback;
     std::vector<std::shared_ptr<VROAnimation>> _animations;
     
 };
