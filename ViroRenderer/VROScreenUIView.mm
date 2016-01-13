@@ -8,6 +8,7 @@
 
 #import "VROScreenUIView.h"
 #import "VROEye.h"
+#import "VROReticle.h"
 
 // The size of the UIView we render to; this is scaled up to fill the VR HUD
 static const int kUIViewSize = 300;
@@ -22,6 +23,9 @@ static const float kVROLayerSize = 2;
 @interface VROScreenUIView () {
     std::shared_ptr<VROLayer> _layer;
 }
+
+@property (readwrite, nonatomic) BOOL reticleEnabled;
+@property (readwrite, nonatomic) VROReticle *reticle;
 
 @end
 
@@ -41,8 +45,10 @@ static const float kVROLayerSize = 2;
         std::shared_ptr<VROMaterial> material = _layer->getMaterial();
         material->setReadsFromDepthBuffer(false);
         material->setWritesToDepthBuffer(false);
+        material->setLightingModel(VROLightingModel::Constant);
         
         [self setBackgroundColor:[UIColor clearColor]];
+        self.reticle = [[VROReticle alloc] init];
     }
     
     return self;
@@ -57,6 +63,9 @@ static const float kVROLayerSize = 2;
     UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, scale);
     
     [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:YES];
+    if (self.reticle) {
+        [self.reticle drawRect:self.bounds];
+    }
     
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     _layer->setContents(image);
@@ -66,7 +75,7 @@ static const float kVROLayerSize = 2;
 
 - (void)renderEye:(VROEye *)eye withContext:(VRORenderContext *)context {
     VROMatrix4f viewInversion = eye->getEyeView().invert();
-
+    
     // Keep the HUD in front of the camera
     VRORenderParameters renderParams;
     renderParams.rotations.push(viewInversion);
@@ -75,8 +84,16 @@ static const float kVROLayerSize = 2;
     _layer->render(*context, renderParams);
 }
 
-- (std::shared_ptr<VROLayer>) vroLayer {
-    return _layer;
+- (void)setReticleEnabled:(BOOL)enabled {
+    if (!_reticleEnabled && enabled) {
+        [self addSubview:self.reticle];
+    }
+    else if (_reticleEnabled && !enabled) {
+        [self.reticle removeFromSuperview];
+    }
+    
+    _reticleEnabled = enabled;
+    [self update];
 }
 
 @end

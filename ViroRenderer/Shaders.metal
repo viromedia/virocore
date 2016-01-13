@@ -124,7 +124,7 @@ fragment float4 constant_lighting_fragment_t(VROConstantLightingVertexOut in [[ 
                                               texture2d<float> texture [[ texture(0) ]]) {
     
     float4 material_diffuse_color = texture.sample(s, in.texcoord) * in.diffuse_intensity;
-    return float4(in.ambient_color * material_diffuse_color.xyz,
+    return float4(in.ambient_color + material_diffuse_color.xyz,
                   in.material_alpha * material_diffuse_color.a);
 }
 

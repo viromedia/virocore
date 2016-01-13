@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "VRORenderContext.h"
 #import "VROLayer.h"
+#import "VROReticle.h"
 #import <memory>
 
 class VROEye;
@@ -23,6 +24,7 @@ class VROEye;
 - (void)update;
 - (void)renderEye:(VROEye *)eye withContext:(VRORenderContext *)context;
 
-@property (readonly, nonatomic) std::shared_ptr<VROLayer> vroLayer;
+- (void)setReticleEnabled:(BOOL)enabled;
+@property (readonly, nonatomic) VROReticle *reticle;
 
 @end

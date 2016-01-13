@@ -58,6 +58,8 @@
     
     _rootNode->addChildNode(_boxNode);
     
+    [_view.HUD setReticleEnabled:YES];
+    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(2);
@@ -250,8 +252,8 @@
     _rootNode = std::make_shared<VRONode>(*context);
     _rootNode->setPosition({0, 0, 0});
     
-    //[self runTorusAnimationTest:context];
-    [self runLayerTest:context];
+    [self runTorusAnimationTest:context];
+    //[self runLayerTest:context];
     //[self runBoxAnimationTest:context];
     //[self runOBJTest:context];
 }
