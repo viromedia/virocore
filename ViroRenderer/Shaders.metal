@@ -92,7 +92,7 @@ typedef struct {
     
     float3 surface_position;
     
-    float4 ambient_color;
+    float3 ambient_color;
     float4 material_color;
     float  diffuse_intensity;
     float  material_alpha;
@@ -107,7 +107,7 @@ vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttribut
     float4 in_position = float4(attributes.position, 1.0);
     out.position = view.modelview_projection_matrix * in_position;
     out.texcoord = attributes.texcoord;
-    out.ambient_color = float4(lighting.ambient_light_color, 1.0) * material.diffuse_surface_color;
+    out.ambient_color = lighting.ambient_light_color * material.diffuse_surface_color.xyz;
     out.material_color = material.diffuse_surface_color;
     out.diffuse_intensity = material.diffuse_intensity;
     out.material_alpha = material.alpha;
@@ -117,12 +117,15 @@ vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttribut
 }
 
 fragment float4 constant_lighting_fragment_c(VROConstantLightingVertexOut in [[ stage_in ]]) {
-    return in.ambient_color * float4(1.0, 1.0, 1.0, in.material_alpha);
+    return float4(in.ambient_color, in.material_alpha);
 }
 
 fragment float4 constant_lighting_fragment_t(VROConstantLightingVertexOut in [[ stage_in ]],
                                               texture2d<float> texture [[ texture(0) ]]) {
-    return in.ambient_color + in.material_color * texture.sample(s, in.texcoord) * in.diffuse_intensity * float4(1.0, 1.0, 1.0, in.material_alpha);
+    
+    float4 material_diffuse_color = texture.sample(s, in.texcoord) * in.diffuse_intensity;
+    return float4(in.ambient_color * material_diffuse_color.xyz,
+                  in.material_alpha * material_diffuse_color.a);
 }
 
 fragment float4 constant_lighting_fragment_q(VROConstantLightingVertexOut in [[ stage_in ]],
@@ -143,7 +146,7 @@ typedef struct {
     float3 surface_position;
     float3 camera_position;
     
-    float4 ambient_color;
+    float3 ambient_color;
     float4 material_color;
     float  diffuse_intensity;
     float  material_alpha;
@@ -162,7 +165,7 @@ vertex VROLambertLightingVertexOut lambert_lighting_vertex(VRORendererAttributes
     out.camera_position  = view.camera_position;
     out.normal = normalize(view.normal_matrix * float4(attributes.normal, 0.0)).xyz;
     
-    out.ambient_color = float4(lighting.ambient_light_color, 1.0) * material.diffuse_surface_color;
+    out.ambient_color = lighting.ambient_light_color * material.diffuse_surface_color.xyz;
     out.material_color = material.diffuse_surface_color;
     out.diffuse_intensity = material.diffuse_intensity;
     out.material_alpha = material.alpha;
@@ -200,7 +203,8 @@ float4 lambert_lighting_diffuse_fixed(VROLambertLightingVertexOut in,
                                                       material_diffuse_color);
     }
     
-    return (in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a)) * float4(1.0, 1.0, 1.0, in.material_alpha);
+    return float4(in.ambient_color + aggregated_light_color,
+                  in.material_alpha * material_diffuse_color.a);
 }
 
 float4 lambert_lighting_diffuse_texture(VROLambertLightingVertexOut in,
@@ -220,7 +224,8 @@ float4 lambert_lighting_diffuse_texture(VROLambertLightingVertexOut in,
                                                       material_diffuse_color);
     }
     
-    return (in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a)) * float4(1.0, 1.0, 1.0, in.material_alpha);
+    return float4(in.ambient_color + aggregated_light_color,
+                  in.material_alpha * material_diffuse_color.a);
 }
 
 fragment float4 lambert_lighting_fragment_c(VROLambertLightingVertexOut in [[ stage_in ]],
@@ -269,7 +274,7 @@ typedef struct {
     float3 surface_position;
     float3 camera_position;
     
-    float4 ambient_color;
+    float3 ambient_color;
     float4 material_color;
     float  material_shininess;
     float  diffuse_intensity;
@@ -289,7 +294,7 @@ vertex VROPhongLightingVertexOut phong_lighting_vertex(VRORendererAttributes att
     out.camera_position  = view.camera_position;
     out.normal = normalize(view.normal_matrix * float4(attributes.normal, 0.0)).xyz;
     
-    out.ambient_color = float4(lighting.ambient_light_color, 1.0) * material.diffuse_surface_color;
+    out.ambient_color = lighting.ambient_light_color * material.diffuse_surface_color.xyz;
     out.material_color = material.diffuse_surface_color;
     out.material_shininess = material.shininess;
     out.diffuse_intensity = material.diffuse_intensity;
@@ -354,7 +359,8 @@ float4 phong_lighting_diffuse_fixed(VROPhongLightingVertexOut in [[ stage_in ]],
                                                     in.material_shininess);
     }
     
-    return (in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a)) * float4(1.0, 1.0, 1.0, in.material_alpha);
+    return float4(in.ambient_color + aggregated_light_color,
+                  in.material_alpha * material_diffuse_color.a);
 }
 
 float4 phong_lighting_diffuse_texture(VROPhongLightingVertexOut in [[ stage_in ]],
@@ -381,7 +387,8 @@ float4 phong_lighting_diffuse_texture(VROPhongLightingVertexOut in [[ stage_in ]
                                                     in.material_shininess);
     }
     
-    return (in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a)) * float4(1.0, 1.0, 1.0, in.material_alpha);
+    return float4(in.ambient_color + aggregated_light_color,
+                  in.material_alpha * material_diffuse_color.a);
 }
 
 fragment float4 phong_lighting_fragment_c(VROPhongLightingVertexOut in [[ stage_in ]],
@@ -434,7 +441,7 @@ typedef struct {
     float3 surface_position;
     float3 camera_position;
     
-    float4 ambient_color;
+    float3 ambient_color;
     float4 material_color;
     float  material_shininess;
     float  diffuse_intensity;
@@ -454,7 +461,7 @@ vertex VROBlinnLightingVertexOut blinn_lighting_vertex(VRORendererAttributes att
     out.camera_position  = view.camera_position;
     out.normal = normalize(view.normal_matrix * float4(attributes.normal, 0.0)).xyz;
     
-    out.ambient_color = float4(lighting.ambient_light_color, 1.0) * material.diffuse_surface_color;
+    out.ambient_color = lighting.ambient_light_color * material.diffuse_surface_color.xyz;
     out.material_color = material.diffuse_surface_color;
     out.material_shininess = material.shininess;
     out.diffuse_intensity = material.diffuse_intensity;
@@ -519,7 +526,8 @@ float4 blinn_lighting_diffuse_fixed(VROBlinnLightingVertexOut in,
                                                     in.material_shininess);
     }
     
-    return (in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a)) * float4(1.0, 1.0, 1.0, in.material_alpha);
+    return float4(in.ambient_color + aggregated_light_color,
+                  in.material_alpha * material_diffuse_color.a);
 }
 
 float4 blinn_lighting_diffuse_texture(VROBlinnLightingVertexOut in,
@@ -546,7 +554,8 @@ float4 blinn_lighting_diffuse_texture(VROBlinnLightingVertexOut in,
                                                     in.material_shininess);
     }
     
-    return (in.ambient_color + float4(aggregated_light_color, material_diffuse_color.a)) * float4(1.0, 1.0, 1.0, in.material_alpha);
+    return float4(in.ambient_color + aggregated_light_color,
+                  in.material_alpha * material_diffuse_color.a);
 }
 
 fragment float4 blinn_lighting_fragment_c(VROBlinnLightingVertexOut in [[ stage_in ]],
