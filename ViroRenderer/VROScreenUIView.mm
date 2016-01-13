@@ -67,29 +67,30 @@ static const float kVROLayerSize = 2;
     _needsUpdate = NO;
     
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    int width = self.bounds.size.width;
-    int height = self.bounds.size.height;
+    
+    CGFloat scale = [[UIScreen mainScreen] nativeScale];
+    int width  = self.bounds.size.width  * scale;
+    int height = self.bounds.size.height * scale;
     
     NSUInteger bytesPerPixel = 4;
     NSUInteger bytesPerRow = bytesPerPixel * width;
     NSUInteger bitsPerComponent = 8;
     
     CGContextRef bitmapContext = CGBitmapContextCreate(nullptr, width, height,
-                                                 bitsPerComponent, bytesPerRow, colorSpace,
-                                                 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
-    
+                                                       bitsPerComponent, bytesPerRow, colorSpace,
+                                                       kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
     CGColorSpaceRelease(colorSpace);
     
     // Flip since we'll be rendering to a texture
     CGAffineTransform flipVertical = CGAffineTransformMake(1, 0, 0, -1, 0, height);
     CGContextConcatCTM(bitmapContext, flipVertical);
-
+    CGContextScaleCTM(bitmapContext, scale, scale);
+    
     [self.layer renderInContext:bitmapContext];
     if (self.reticleEnabled) {
         [self.reticle renderRect:self.bounds context:bitmapContext];
     }
-    
-    _layer->setContents(self.bounds.size.width, self.bounds.size.height, bitmapContext, *context);
+    _layer->setContents(width, height, bitmapContext, *context);
     
     CGContextRelease(bitmapContext);
 }

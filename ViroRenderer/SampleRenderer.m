@@ -191,7 +191,7 @@
     [label setFont:[UIFont systemFontOfSize:12]];
     
     [labelView addSubview:label];
-    [labelView update];
+    [labelView updateWithContext:context];
     
     _rootNode->addChildNode(labelView.vroLayer);
     
