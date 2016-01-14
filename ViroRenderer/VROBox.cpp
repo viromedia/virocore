@@ -71,54 +71,58 @@ std::shared_ptr<VROBox> VROBox::createBox(float width, float height, float lengt
 }
 
 void VROBox::buildBox(VROShapeVertexLayout *vertexLayout, float width, float height, float length) {
+    float w = width  / 2;
+    float h = height / 2;
+    float l = length / 2;
+    
     const float cubeVertices[] = {
         // Front face
-        -1,  1, 1,
-        -1, -1, 1,
-         1,  1, 1,
-        -1, -1, 1,
-         1, -1, 1,
-         1,  1, 1,
+        -w,  h, l,
+        -w, -h, l,
+         w,  h, l,
+        -w, -h, l,
+         w, -h, l,
+         w,  h, l,
         
         // Right face
-         1,  1,  1,
-         1, -1,  1,
-         1,  1, -1,
-         1, -1,  1,
-         1, -1, -1,
-         1,  1, -1,
+         w,  h,  l,
+         w, -h,  l,
+         w,  h, -l,
+         w, -h,  l,
+         w, -h, -l,
+         w,  h, -l,
         
         // Back face
-         1,  1, -1,
-         1, -1, -1,
-        -1,  1, -1,
-         1, -1, -1,
-        -1, -1, -1,
-        -1,  1, -1,
+         w,  h, -l,
+         w, -h, -l,
+        -w,  h, -l,
+         w, -h, -l,
+        -w, -h, -l,
+        -w,  h, -l,
         
         // Left face
-        -1,  1, -1,
-        -1, -1, -1,
-        -1,  1,  1,
-        -1, -1, -1,
-        -1, -1,  1,
-        -1,  1,  1,
+        -w,  h, -l,
+        -w, -h, -l,
+        -w,  h,  l,
+        -w, -h, -l,
+        -w, -h,  l,
+        -w,  h,  l,
         
         // Top face
-        -1, 1, -1,
-        -1, 1,  1,
-         1, 1, -1,
-        -1, 1,  1,
-         1, 1,  1,
-         1, 1, -1,
+        -w, h, -l,
+        -w, h,  l,
+         w, h, -l,
+        -w, h,  l,
+         w, h,  l,
+         w, h, -l,
         
         // Bottom face
-         1, -1, -1,
-         1, -1,  1,
-        -1, -1, -1,
-         1, -1,  1,
-        -1, -1,  1,
-        -1, -1, -1,
+         w, -h, -l,
+         w, -h,  l,
+        -w, -h, -l,
+         w, -h,  l,
+        -w, -h,  l,
+        -w, -h, -l,
     };
     
     const float cubeTex[] = {

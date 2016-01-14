@@ -129,6 +129,7 @@ std::shared_ptr<VROTorusKnot> VROTorusKnot::createTorusKnot(float p, float q, fl
                                                                                     sizeof(float),
                                                                                     sizeof(float) * 5,
                                                                                     stride);
+    
     std::vector<std::shared_ptr<VROGeometrySource>> sources = { position, texcoords, normal };
     
     std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices, sizeof(int) * indexCount);

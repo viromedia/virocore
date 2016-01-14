@@ -276,7 +276,7 @@
 		8F4DCE391BFBD19B00061DD7 /* VROMaterialVisual.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialVisual.h; sourceTree = "<group>"; };
 		8F4DCE3B1BFBE54200061DD7 /* VROGeometryElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROGeometryElement.cpp; sourceTree = "<group>"; };
 		8F4DCE3C1BFBE54200061DD7 /* VROGeometryElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGeometryElement.h; sourceTree = "<group>"; };
-		8F4DCE3E1BFBE97600061DD7 /* VROGeometrySource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROGeometrySource.cpp; sourceTree = "<group>"; };
+		8F4DCE3E1BFBE97600061DD7 /* VROGeometrySource.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGeometrySource.cpp; sourceTree = "<group>"; };
 		8F4DCE3F1BFBE97600061DD7 /* VROGeometrySource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGeometrySource.h; sourceTree = "<group>"; };
 		8F4DCE411BFBECC400061DD7 /* VROData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROData.cpp; sourceTree = "<group>"; };
 		8F4DCE421BFBECC400061DD7 /* VROData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROData.h; sourceTree = "<group>"; };

@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <memory>
 #include "VROData.h"
+#include "VROBoundingBox.h"
 
 class VROGeometrySourceSubstrate;
 
@@ -76,6 +77,13 @@ public:
         return _dataStride;
     }
     
+    /*
+     Retrieves the bounding box for the values associated with this
+     geometry source. Generally only makes sense to invoke this method
+     for VROGeometrySourceSemantic::Vertex.
+     */
+    VROBoundingBox getBoundingBox() const;
+    
 private:
     
     /*
@@ -124,6 +132,8 @@ private:
      engine.
      */
     VROGeometrySourceSubstrate *_substrate;
+    
+    
     
 };
 
