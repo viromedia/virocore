@@ -9,6 +9,7 @@
 #include "VROTransaction.h"
 #include "VROTime.h"
 #include "VROLog.h"
+#include "VROTimingFunctionLinear.h"
 #include <stack>
 #include <vector>
 
@@ -63,6 +64,19 @@ void VROTransaction::setFinishCallback(std::function<void ()> finishCallback) {
     animation->_finishCallback = finishCallback;
 }
 
+void VROTransaction::setTimingFunction(VROTimingFunctionType timingFunctionType) {
+    setTimingFunction(VROTimingFunction::forType(timingFunctionType));
+}
+
+void VROTransaction::setTimingFunction(std::unique_ptr<VROTimingFunction> timingFunction) {
+    std::shared_ptr<VROTransaction> animation = get();
+    if (!animation) {
+        pabort();
+    }
+    
+    animation->_timingFunction = std::move(timingFunction);
+}
+
 void VROTransaction::commitAll() {
     while (!openAnimations.empty()) {
         commit();
@@ -74,14 +88,14 @@ void VROTransaction::update() {
     
     std::vector<std::shared_ptr<VROTransaction>>::iterator it;
     for (it = committedAnimations.begin(); it != committedAnimations.end(); ++it) {
-        std::shared_ptr<VROTransaction> animation = *it;
-        animation->_t = (time - animation->_startTimeSeconds) / animation->_durationSeconds;
+        std::shared_ptr<VROTransaction> transaction = *it;
         
-        animation->processAnimations();
+        float t = (time - transaction->_startTimeSeconds) / transaction->_durationSeconds;
+        transaction->processAnimations(t);
      
-        // Remove the animation when it's complete
-        if (animation->_t > 1.0) {
-            animation->onTermination();
+        // Remove the transaction when it's complete
+        if (transaction->_t > 1.0) {
+            transaction->onTermination();
             committedAnimations.erase(it);
             
             --it;
@@ -94,8 +108,10 @@ void VROTransaction::update() {
 VROTransaction::VROTransaction() :
     _t(0),
     _durationSeconds(0),
-    _startTimeSeconds(0)
-{}
+    _startTimeSeconds(0) {
+    
+    _timingFunction = std::unique_ptr<VROTimingFunction>(new VROTimingFunctionLinear());
+}
 
 void VROTransaction::setAnimationDuration(float durationSeconds) {
     std::shared_ptr<VROTransaction> animation = get();
@@ -115,9 +131,15 @@ float VROTransaction::getAnimationDuration() {
     return animation->_durationSeconds;
 }
 
-void VROTransaction::processAnimations() {
+void VROTransaction::processAnimations(float t) {
+    if (isinf(t)) {
+        return;
+    }
+    _t = t;
+    float transformedT = _timingFunction->getT(t);
+    
     for (std::shared_ptr<VROAnimation> animation : _animations) {
-        animation->processAnimationFrame(_t);
+        animation->processAnimationFrame(transformedT);
     }
 }
 

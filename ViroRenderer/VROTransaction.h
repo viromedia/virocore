@@ -14,6 +14,7 @@
 #include <memory>
 #include <functional>
 #include "VROAnimation.h"
+#include "VROTimingFunction.h"
 
 class VROTransaction {
     
@@ -48,12 +49,6 @@ public:
     static void begin();
     
     /*
-     Set a callback to invoke when the active transaction completes (after duration
-     seconds).
-     */
-    static void setFinishCallback(std::function<void()> finishCallback);
-    
-    /*
      Commit the active VROTransaction.
      */
     static void commit();
@@ -68,6 +63,19 @@ public:
      */
     static void setAnimationDuration(float durationSeconds);
     static float getAnimationDuration();
+    
+    /*
+     Set a callback to invoke when the active transaction completes (after duration
+     seconds).
+     */
+    static void setFinishCallback(std::function<void()> finishCallback);
+    
+    /*
+     Set a timing function, which defines the curve of the animation (ease in, ease out,
+     etc.)
+     */
+    static void setTimingFunction(VROTimingFunctionType timingFunctionType);
+    static void setTimingFunction(std::unique_ptr<VROTimingFunction> timingFunction);
     
     VROTransaction();
     ~VROTransaction() {}
@@ -95,9 +103,10 @@ public:
     }
     
     /*
-     Process another frame of all animations in this transaction.
+     Process another frame of all animations in this transaction. The
+     t value here is prior to timing function transformation.
      */
-    void processAnimations();
+    void processAnimations(float t);
     
     /*
      Invoked when the transaction is finished.
@@ -110,6 +119,7 @@ private:
     
     double _durationSeconds;
     double _startTimeSeconds;
+    std::unique_ptr<VROTimingFunction> _timingFunction;
     
     std::function<void()> _finishCallback;
     std::vector<std::shared_ptr<VROAnimation>> _animations;

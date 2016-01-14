@@ -22,7 +22,7 @@ uint64_t VROTimeGetCalendarTime() {
 
 double VROTimeCurrentSeconds() {
 #ifdef ANDROID_BUILD
-    return UPNTimeCurrentMillis() / 1000.0;
+    return VROTimeCurrentMillis() / 1000.0;
 #else
     return CACurrentMediaTime();
 #endif

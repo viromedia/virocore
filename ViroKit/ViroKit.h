@@ -39,6 +39,14 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROTransaction.h>
 #import <ViroKit/VROAnimation.h>
 #import <ViroKit/VROAnimatable.h>
+#import <ViroKit/VROTimingFunction.h>
+#import <ViroKit/VROTimingFunctionBounce.h>
+#import <ViroKit/VROTimingFunctionCubicBezier.h>
+#import <ViroKit/VROTimingFunctionEaseInEaseOut.h>
+#import <ViroKit/VROTimingFunctionEaseIn.h>
+#import <ViroKit/VROTimingFunctionEaseOut.h>
+#import <ViroKit/VROTimingFunctionLinear.h>
+#import <ViroKit/VROTimingFunctionPowerDeceleration.h>
 #import <ViroKit/VROVideoTexture.h>
 #import <ViroKit/VROAction.h>
 #import <ViroKit/VROHitTestResult.h>

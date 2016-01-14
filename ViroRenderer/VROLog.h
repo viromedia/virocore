@@ -290,7 +290,7 @@
         }                                                           \
     } while (0)
 
-#if UPN_THREADPOOL_LOG
+#if VRO_THREADPOOL_LOG
     #define pthreadpool(message,...) \
     do { \
     __android_log_print(ANDROID_LOG_VERBOSE, threadPoolName.c_str(), "%s%s(): "#message" %s", ANSILightMagenta, __FUNCTION__, ##__VA_ARGS__, ANSINoColor); \
@@ -400,7 +400,7 @@ do { \
 NSLog(@"WTF: "#message, ##__VA_ARGS__); \
 } while (0)
 
-#if UPN_THREADPOOL_LOG
+#if VRO_THREADPOOL_LOG
 #define pthreadpool(message,...) \
 do { \
 NSLog(@"[%s]%s(): "#message, threadPoolName.c_str(), __FUNCTION__, ##__VA_ARGS__); \
@@ -598,7 +598,7 @@ do { \
     } while (0)
 
 /*
- Logs a UPNBoundingBox.
+ Logs a VROBoundingBox.
  */
 #define pbb(bb) \
     do \
@@ -653,7 +653,7 @@ do { \
         pinfo("%s%s(): %sLine %d.%s", ANSILightMagenta, __FUNCTION__, ANSILightGreen, __LINE__, ANSINoColor); \
     } while (0)
 
-#if UPN_SECURITY_LOG
+#if VRO_SECURITY_LOG
 #define psecurityinfo(message,...) pinfo("Maps-Security:: "#message, ##__VA_ARGS__)
 #define psecurityerr(message,...) perr("Maps-Security:: "#message, ##__VA_ARGS__)
 #else
