@@ -264,8 +264,6 @@
     VROMatrix4f headRotation = _headTracker->getHeadRotation();
     
     float halfLensDistance = _device->getInterLensDistance() * 0.5f;
-    VROMatrix4f yFlip = matrix_from_scale(1.0, -1.0, 1.0);
-    
     if (self.vrModeEnabled) {
         /*
          The full eye transform is as follows:
@@ -436,24 +434,13 @@
 - (void)handleTap:(UIGestureRecognizer *)gestureRecognizer {
     [_HUD.reticle trigger];
     
-    // TODO Get this from camera
-    VROMatrix4f view = _renderContext->getViewMatrix();
-    VROMatrix4f projection = _renderContext->getProjectionMatrix();
-    VROMatrix4f mvp = projection.multiply(view);
+    // TODO This shouldn't be hard-coded, and I don't know why we're
+    //      inverting the head rotation
+    VROVector3f forward(0, 0, -1);
+    VROMatrix4f headRotation = _headTracker->getHeadRotation().invert();
     
-    int viewport[4];
-    _leftEye->getViewport().toArray(viewport);
-    
-    CGPoint pt = [gestureRecognizer locationInView:self];
-    
-    VROVector3f near;
-    VROProjector::unproject({(float)pt.x, (float)pt.y, 0}, mvp.getArray(), viewport, &near);
-    
-    VROVector3f far;
-    VROProjector::unproject({(float)pt.x, (float)pt.y, 1}, mvp.getArray(), viewport, &far);
-    
-    VROVector3f ray = (far - near).normalize();
-    [self.renderDelegate reticleTapped:pt ray:ray];
+    VROVector3f ray = headRotation.multiply(forward);
+    [self.renderDelegate reticleTapped:ray];
 }
 
 @end

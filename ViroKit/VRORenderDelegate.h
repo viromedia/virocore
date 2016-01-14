@@ -28,7 +28,7 @@ typedef NS_ENUM(NSInteger, VROEyeType) {
 - (void)prepareNewFrameWithHeadViewMatrix:(matrix_float4x4)headViewMatrix;
 - (void)renderEye:(VROEyeType)eye context:(VRORenderContext *)renderContext;
 
-- (void)reticleTapped:(CGPoint)point ray:(VROVector3f)ray;
+- (void)reticleTapped:(VROVector3f)ray;
 
 @optional
 

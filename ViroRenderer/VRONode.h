@@ -156,6 +156,12 @@ private:
     void pushTransforms(VRORenderParameters &params);
     void renderNode(const VRORenderContext &context, VRORenderParameters &params);
     void popTransforms(VRORenderParameters &params);
+    
+    /*
+     Hit test helper function.
+     */
+    void hitTest(VROVector3f ray, VROMatrix4f parentTransform,
+                 std::vector<VROHitTestResult> &results);
 
 };
 

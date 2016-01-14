@@ -189,22 +189,32 @@ VROBoundingBox VRONode::getBoundingBox() {
 std::vector<VROHitTestResult> VRONode::hitTest(VROVector3f ray) {
     std::vector<VROHitTestResult> results;
     
-    // TODO Use camera location for origin
-    VROVector3f origin;
-    
-    if (_geometry) {
-        VROBoundingBox bounds = getBoundingBox();
-        
-        VROVector3f intPt;
-        if (bounds.intersectsRay(ray, origin, &intPt)) {
-            results.push_back({_geometry, intPt});
-        }
-    }
-
-    for (std::shared_ptr<VRONode> &subnode : _subnodes) {
-        std::vector<VROHitTestResult> subResults = subnode->hitTest(ray);
-        results.insert(results.end(), subResults.begin(), subResults.end());
-    }
+    VROMatrix4f identity;
+    hitTest(ray, identity, results);
     
     return results;
 }
+
+void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform,
+                      std::vector<VROHitTestResult> &results) {
+    
+    // TODO Use camera location for origin
+    VROVector3f origin;
+    
+    VROMatrix4f transform = parentTransform.multiply(getTransform());
+    
+    if (_geometry) {
+        VROBoundingBox bounds = _geometry->getBoundingBox().transform(transform);
+        
+        VROVector3f intPt;
+        if (bounds.intersectsRay(ray, origin, &intPt)) {
+            results.push_back({std::static_pointer_cast<VRONode>(shared_from_this()), intPt});
+            pinfo("   Intersected");
+        }
+    }
+    
+    for (std::shared_ptr<VRONode> &subnode : _subnodes) {
+        subnode->hitTest(ray, transform, results);
+    }
+}
+

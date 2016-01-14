@@ -56,22 +56,14 @@
     _boxNode->setGeometry(torus);
     _boxNode->setPosition({0, 0, -5});
     
-    NSLog(@"Bounds %f, %f, %f, %f, %f, %f",
-          torus->getBoundingBox().getMinX(), torus->getBoundingBox().getMaxX(),
-          torus->getBoundingBox().getMinY(), torus->getBoundingBox().getMaxY(),
-          torus->getBoundingBox().getMinZ(), torus->getBoundingBox().getMaxZ());
-    NSLog(@"Bounds %f, %f, %f, %f, %f, %f",
-          _boxNode->getBoundingBox().getMinX(), _boxNode->getBoundingBox().getMaxX(),
-          _boxNode->getBoundingBox().getMinY(), _boxNode->getBoundingBox().getMaxY(),
-          _boxNode->getBoundingBox().getMinZ(), _boxNode->getBoundingBox().getMaxZ());
-    
     _rootNode->addChildNode(_boxNode);
     
     [_view.HUD setReticleEnabled:YES];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
-        VROTransaction::setAnimationDuration(2);
+        VROTransaction::setAnimationDuration(0.8);
+        VROTransaction::setTimingFunction(VROTimingFunctionType::Bounce);
         
         _boxNode->setPosition({ 0, 0, -3});
         
@@ -80,7 +72,8 @@
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
-        VROTransaction::setAnimationDuration(3);
+        VROTransaction::setAnimationDuration(0.8);
+        VROTransaction::setTimingFunction(VROTimingFunctionType::Bounce);
         
         _boxNode->setPosition({ 0, 0, -6});
         
@@ -286,10 +279,23 @@
     _scene->render(*renderContext);
 }
 
-- (void)reticleTapped:(CGPoint)point ray:(VROVector3f)ray {    
+- (void)reticleTapped:(VROVector3f)ray {    
     std::vector<VROHitTestResult> results = _rootNode->hitTest(ray);
     
-    NSLog(@"Ray %f, %f, %f, number of hits %lu", ray.x, ray.y, ray.z, results.size());
+    for (VROHitTestResult result : results) {
+        std::shared_ptr<VRONode> node = result.getNode();
+        std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
+        
+        #define ARC4RANDOM_MAX      0x100000000
+        float r = ((double)arc4random() / ARC4RANDOM_MAX);
+        float g = ((double)arc4random() / ARC4RANDOM_MAX);
+        float b = ((double)arc4random() / ARC4RANDOM_MAX);
+        
+        VROTransaction::begin();
+        VROTransaction::setAnimationDuration(0.3);
+        material->getDiffuse().setContents( {r, g, b, 1.0 } );
+        VROTransaction::commit();
+    }
 }
 
 
