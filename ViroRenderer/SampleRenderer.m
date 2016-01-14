@@ -292,9 +292,24 @@
         float b = ((double)arc4random() / ARC4RANDOM_MAX);
         
         VROTransaction::begin();
-        VROTransaction::setAnimationDuration(0.3);
+        VROTransaction::setAnimationDuration(1.0);
+        VROTransaction::setTimingFunction(VROTimingFunctionType::EaseIn);
         material->getDiffuse().setContents( {r, g, b, 1.0 } );
         VROTransaction::commit();
+        
+        std::shared_ptr<VROAction> action = VROAction::timedAction([node](float t) {
+            float scale = 1.0;
+            
+            if (t < 0.5) {
+                scale = 1.0 - t;
+            }
+            else {
+                scale = t;
+            }
+            
+            node->setScale({scale, scale, scale});
+        }, VROTimingFunctionType::Bounce, 1.0);
+        node->runAction(action);
     }
 }
 

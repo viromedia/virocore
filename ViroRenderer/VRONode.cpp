@@ -137,8 +137,10 @@ void VRONode::processActions() {
     for (it = _actions.begin(); it != _actions.end(); ++it) {
         std::shared_ptr<VROAction> &action = *it;
 
-        if (action->getType() == VROActionType::PerFrame) {
-            action->execute();
+        action->execute(this);
+
+        if (action->getType() == VROActionType::PerFrame ||
+            action->getType() == VROActionType::Timed) {
             
             // Remove the action when it's complete
             if (!action->shouldRepeat()) {
@@ -146,18 +148,7 @@ void VRONode::processActions() {
                 --it;
             }
         }
-        else {
-            VROTransaction::begin();
-            VROTransaction::setAnimationDuration(action->getDuration());
-            VROTransaction::setFinishCallback([this, action]() {
-                if (action->shouldRepeat()) {
-                    this->runAction(action);
-                }
-            });
-            
-            action->execute();
-            VROTransaction::commit();
-            
+        else {            
             // Remove the action; it will be re-added (if needed) after the animation
             _actions.erase(it);
             --it;
