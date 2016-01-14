@@ -35,6 +35,15 @@ VROBoundingBox::VROBoundingBox() :
         
 }
 
+VROBoundingBox::VROBoundingBox(const VROBoundingBox &copy) :
+    _planes{copy.getMinX(), copy.getMaxX(), copy.getMinY(), copy.getMaxY(), copy.getMinZ(), copy.getMaxZ()},
+    _sourceFrustumForDistances(nullptr),
+    _distanceFrame(UINT32_MAX),
+    _planeLastOutside(0),
+    _distancesValid(false) {
+    
+}
+
 VROBoundingBox::VROBoundingBox(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax) :
     _planes{xmin, xmax, ymin, ymax, zmin, zmax},
     _sourceFrustumForDistances(nullptr),
@@ -47,6 +56,14 @@ VROBoundingBox::VROBoundingBox(float xmin, float xmax, float ymin, float ymax, f
 VROBoundingBox::~VROBoundingBox() {
 
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+//
+//  Transformation
+//
+/////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark Containment and Intersection
 
 void VROBoundingBox::expandBy(float amount) {
     float x = this->getX();
@@ -78,6 +95,21 @@ void VROBoundingBox::scaleBy(float scale) {
     _planes[VROBoxPlaneMaxY] = y + (ySpan / 2) * scale;
     _planes[VROBoxPlaneMinZ] = z - (zSpan / 2) * scale;
     _planes[VROBoxPlaneMaxZ] = z + (zSpan / 2) * scale;
+}
+
+VROBoundingBox VROBoundingBox::transform(VROMatrix4f transform) const {
+    VROVector3f min(getMinX(), getMinY(), getMinZ());
+    VROVector3f max(getMaxX(), getMaxY(), getMaxZ());
+    
+    VROVector3f xMin = transform.multiply(min);
+    VROVector3f xMax = transform.multiply(max);
+    
+    return VROBoundingBox(fmin(xMin.x, xMax.x),
+                          fmax(xMin.x, xMax.x),
+                          fmin(xMin.y, xMax.y),
+                          fmax(xMin.y, xMax.y),
+                          fmin(xMin.z, xMax.z),
+                          fmax(xMin.z, xMax.z));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -341,7 +373,7 @@ VROBoundingBox VROBoundingBox::unionWith(const VROBoundingBox &box) {
     return VROBoundingBox(left, right, bottom, top, zmin, zmax);
 }
 
-void VROBoundingBox::unionLRBTDestructive(const VROBoundingBox &box) {
+void VROBoundingBox::unionDestructive(const VROBoundingBox &box) {
     _planes[VROBoxPlaneMinX] = std::min(_planes[VROBoxPlaneMinX], box._planes[VROBoxPlaneMinX]);
     _planes[VROBoxPlaneMaxX] = std::max(_planes[VROBoxPlaneMaxX], box._planes[VROBoxPlaneMaxX]);
     _planes[VROBoxPlaneMinY] = std::min(_planes[VROBoxPlaneMinY], box._planes[VROBoxPlaneMinY]);

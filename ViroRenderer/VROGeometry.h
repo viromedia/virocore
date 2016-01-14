@@ -14,6 +14,7 @@
 #include <string>
 #include <memory>
 #include "VRORenderContext.h"
+#include "VROBoundingBox.h"
 
 class VROLight;
 class VROMaterial;
@@ -22,6 +23,7 @@ class VROGeometrySource;
 class VROGeometrySubstrate;
 class VROMatrix4f;
 class VRORenderParameters;
+enum class VROGeometrySourceSemantic;
 
 /*
  Represents a three-dimensional shape, a collection of vertices, normals and texture coordinates
@@ -40,6 +42,7 @@ public:
                 std::vector<std::shared_ptr<VROGeometryElement>> elements) :
         _geometrySources(sources),
         _geometryElements(elements),
+        _bounds(nullptr),
         _substrate(nullptr)
     {}
     
@@ -71,6 +74,10 @@ public:
         return _geometryElements;
     }
     
+    const VROBoundingBox &getBoundingBox();
+    
+    std::vector<std::shared_ptr<VROGeometrySource>> getGeometrySourcesForSemantic(VROGeometrySourceSemantic semantic) const;
+    
 private:
     
     /*
@@ -91,6 +98,11 @@ private:
     std::vector<std::shared_ptr<VROMaterial>> _materials;
     const std::vector<std::shared_ptr<VROGeometrySource>> _geometrySources;
     const std::vector<std::shared_ptr<VROGeometryElement>> _geometryElements;
+    
+    /*
+     The bounding box of this geometry. Created on demand, then cached.
+     */
+    VROBoundingBox *_bounds;
     
     /*
      Representation of this geometry in the underlying graphics library.

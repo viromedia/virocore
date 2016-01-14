@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "VROVector3f.h"
+#include "VROMatrix4f.h"
 #include <string>
 #include <vector>
 
@@ -33,6 +34,7 @@ public:
      Constructors.
      */
     VROBoundingBox();
+    VROBoundingBox(const VROBoundingBox &copy);
     VROBoundingBox(float left, float right, float bottom, float top, float zmin, float zmax);
     ~VROBoundingBox();
 
@@ -167,6 +169,12 @@ public:
      */
     void scaleBy(float scale);
     void expandBy(float amount);
+    
+    /*
+     Transform this bounding box by the given matrix. Note that since this is
+     an AABB box, rotations can have significant impact on the size of the box.
+     */
+    VROBoundingBox transform(VROMatrix4f transform) const;
 
     /*
      Optimized set functions.
@@ -181,10 +189,8 @@ public:
      Union this bounding box with the supplied box, updating our member
      variables to be a bounding box that contains all points we previously
      contained, and any points the supplied box contains.
-
-     NOTE: we only update LRTB in this function, ignoring Z.
      */
-    void unionLRBTDestructive(const VROBoundingBox &box);
+    void unionDestructive(const VROBoundingBox &box);
 
     void resetFrustumDistances();
     void center(float *center) const;

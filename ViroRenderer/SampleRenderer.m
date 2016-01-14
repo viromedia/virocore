@@ -47,14 +47,23 @@
     /*
      Create the box node.
      */
-    std::shared_ptr<VROTorusKnot> box = VROTorusKnot::createTorusKnot(3, 8, 0.2, 256, 32);
-    std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
+    std::shared_ptr<VROTorusKnot> torus = VROTorusKnot::createTorusKnot(3, 8, 0.2, 256, 32);
+    std::shared_ptr<VROMaterial> material = torus->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);
     material->getReflective().setContentsCube([self cubeTexture]);
     
     _boxNode = std::make_shared<VRONode>(*context);
-    _boxNode->setGeometry(box);
+    _boxNode->setGeometry(torus);
     _boxNode->setPosition({0, 0, -5});
+    
+    NSLog(@"Bounds %f, %f, %f, %f, %f, %f",
+          torus->getBoundingBox().getMinX(), torus->getBoundingBox().getMaxX(),
+          torus->getBoundingBox().getMinY(), torus->getBoundingBox().getMaxY(),
+          torus->getBoundingBox().getMinZ(), torus->getBoundingBox().getMaxZ());
+    NSLog(@"Bounds %f, %f, %f, %f, %f, %f",
+          _boxNode->getBoundingBox().getMinX(), _boxNode->getBoundingBox().getMaxX(),
+          _boxNode->getBoundingBox().getMinY(), _boxNode->getBoundingBox().getMaxY(),
+          _boxNode->getBoundingBox().getMinZ(), _boxNode->getBoundingBox().getMaxZ());
     
     _rootNode->addChildNode(_boxNode);
     

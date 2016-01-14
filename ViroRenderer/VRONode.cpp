@@ -14,6 +14,7 @@
 #include "VROAnimationVector3f.h"
 #include "VROAnimationQuaternion.h"
 #include "VROAction.h"
+#include "VROLog.h"
 
 #pragma mark - Initialization
 
@@ -176,4 +177,14 @@ void VRONode::removeAction(std::shared_ptr<VROAction> action) {
 
 void VRONode::removeAllActions() {
     _actions.clear();
+}
+
+#pragma mark - Hit Testing
+
+VROBoundingBox VRONode::getBoundingBox() {
+    return _geometry->getBoundingBox().transform(getTransform());
+}
+
+std::vector<VROHitTestResult> VRONode::hitTest(VROVector3f ray) {
+    pabort();
 }

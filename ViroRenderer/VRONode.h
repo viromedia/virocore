@@ -18,10 +18,12 @@
 #include "VRORenderContext.h"
 #include "VRORenderParameters.h"
 #include "VROAnimatable.h"
+#include "VROBoundingBox.h"
 
 class VROGeometry;
 class VROLight;
 class VROAction;
+class VROHitTestResult;
 
 class VRONode : public VROAnimatable {
     
@@ -64,12 +66,18 @@ public:
         return _geometry;
     }
     
+    /*
+     Transforms.
+     */
     VROMatrix4f getTransform() const;
     
     void setRotation(VROQuaternion rotation);
     void setPosition(VROVector3f position);
     void setScale(VROVector3f scale);
     
+    /*
+     Lights.
+     */
     void setLight(std::shared_ptr<VROLight> light) {
         _light = light;
     }
@@ -77,6 +85,9 @@ public:
         return _light;
     }
     
+    /*
+     Child management.
+     */
     void addChildNode(std::shared_ptr<VRONode> node) {
         _subnodes.push_back(node);
         node->_supernode = std::static_pointer_cast<VRONode>(shared_from_this());
@@ -91,9 +102,18 @@ public:
         _supernode.reset();
     }
     
+    /*
+     Action management.
+     */
     void runAction(std::shared_ptr<VROAction> action);
     void removeAction(std::shared_ptr<VROAction> action);
     void removeAllActions();
+    
+    /*
+     Hit testing.
+     */
+    VROBoundingBox getBoundingBox();
+    std::vector<VROHitTestResult> hitTest(VROVector3f ray);
     
 protected:
     
