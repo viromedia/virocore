@@ -35,7 +35,8 @@ private:
                                              const VRORenderContext &context);
     
     static VROGeometrySourceSemantic parseSemantic(NSString *string);
-    static std::pair<int, int> parseFormat(MDLVertexFormat format);
+    static std::pair<bool, int> getBytesPerComponent(MDLVertexFormat format);
+    static int getComponentsPerVertex(MDLVertexFormat format);
     static int parseIndexSize(MDLIndexBitDepth depth);
     static VROGeometryPrimitiveType parsePrimitive(MDLGeometryType type);
     

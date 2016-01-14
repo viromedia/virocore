@@ -13,6 +13,7 @@
 #include "VROData.h"
 #include "VROMaterialVisual.h"
 #include "VRONode.h"
+#include "VROLog.h"
 
 std::vector<std::shared_ptr<VRONode>> VROLoader::loadURL(NSURL *url,
                                                          const VRORenderContext &context) {
@@ -58,13 +59,15 @@ std::shared_ptr<VRONode> VROLoader::loadMesh(MDLMesh *mesh,
                 continue;
             }
             
-            std::pair<int, int> format = parseFormat(attribute.format);
+            std::pair<bool, int> bytesPerComponent = getBytesPerComponent(attribute.format);
+            int componentsPerVertex = getComponentsPerVertex(attribute.format);
             
             std::shared_ptr<VROGeometrySource> source = std::make_shared<VROGeometrySource>(data,
                                                                                             semantic,
                                                                                             mesh.vertexCount,
-                                                                                            format.first,
-                                                                                            format.second,
+                                                                                            bytesPerComponent.first,
+                                                                                            componentsPerVertex,
+                                                                                            bytesPerComponent.second,
                                                                                             attribute.offset,
                                                                                             layout.stride);
             sources.push_back(source);
@@ -84,13 +87,16 @@ std::shared_ptr<VRONode> VROLoader::loadMesh(MDLMesh *mesh,
             std::shared_ptr<VROData> data = std::make_shared<VROData>([buffer map].bytes, buffer.length);
             
             VROGeometrySourceSemantic semantic = parseSemantic(attribute.name);
-            std::pair<int, int> format = parseFormat(attribute.format);
+            
+            std::pair<bool, int> bytesPerComponent = getBytesPerComponent(attribute.format);
+            int componentsPerVertex = getComponentsPerVertex(attribute.format);
             
             std::shared_ptr<VROGeometrySource> source = std::make_shared<VROGeometrySource>(data,
                                                                                             semantic,
                                                                                             mesh.vertexCount,
-                                                                                            format.first,
-                                                                                            format.second,
+                                                                                            bytesPerComponent.first,
+                                                                                            componentsPerVertex,
+                                                                                            bytesPerComponent.second,
                                                                                             attribute.offset,
                                                                                             layout.stride);
             sources.push_back(source);
@@ -171,67 +177,33 @@ VROGeometrySourceSemantic VROLoader::parseSemantic(NSString *string) {
     return VROGeometrySourceSemantic::Invalid;
 }
 
-std::pair<int, int> VROLoader::parseFormat(MDLVertexFormat format) {
-    switch (format) {
-        case MDLVertexFormatChar:
-        case MDLVertexFormatUChar:
-            return std::pair<int, int>(1, 1);
+std::pair<bool, int> VROLoader::getBytesPerComponent(MDLVertexFormat format) {
+    int bitsValue = (format & 0xFFF00);
+    switch (bitsValue) {
+        case MDLVertexFormatCharBits:
+            return std::pair<bool, int>(false, 1);
             
-        case MDLVertexFormatChar2:
-        case MDLVertexFormatUChar2:
-            return std::pair<int, int>(2, 1);
+        case MDLVertexFormatShortBits:
+        case MDLVertexFormatUShortBits:
+            return std::pair<bool, int>(false, 2);
             
-        case MDLVertexFormatChar3:
-        case MDLVertexFormatUChar3:
-            return std::pair<int, int>(3, 1);
+        case MDLVertexFormatHalfBits:
+            return std::pair<bool, int>(true, 2);;
             
-        case MDLVertexFormatChar4:
-        case MDLVertexFormatUChar4:
-            return std::pair<int, int>(4, 1);
+        case MDLVertexFormatIntBits:
+        case MDLVertexFormatUIntBits:
+            return std::pair<bool, int>(false, 4);
             
-        case MDLVertexFormatShort:
-        case MDLVertexFormatUShort:
-        case MDLVertexFormatHalf:
-            return std::pair<int, int>(1, 2);
+        case MDLVertexFormatFloatBits:
+            return std::pair<bool, int>(true, 4);
             
-        case MDLVertexFormatShort2:
-        case MDLVertexFormatUShort2:
-        case MDLVertexFormatHalf2:
-            return std::pair<int, int>(2, 2);
-            
-        case MDLVertexFormatShort3:
-        case MDLVertexFormatUShort3:
-        case MDLVertexFormatHalf3:
-            return std::pair<int, int>(3, 2);
-            
-        case MDLVertexFormatShort4:
-        case MDLVertexFormatUShort4:
-        case MDLVertexFormatHalf4:
-            return std::pair<int, int>(4, 2);
-            
-        case MDLVertexFormatInt:
-        case MDLVertexFormatUInt:
-        case MDLVertexFormatFloat:
-            return std::pair<int, int>(1, 4);
-            
-        case MDLVertexFormatInt2:
-        case MDLVertexFormatUInt2:
-        case MDLVertexFormatFloat2:
-            return std::pair<int, int>(2, 4);
-            
-        case MDLVertexFormatInt3:
-        case MDLVertexFormatUInt3:
-        case MDLVertexFormatFloat3:
-            return std::pair<int, int>(3, 4);
-            
-        case MDLVertexFormatInt4:
-        case MDLVertexFormatUInt4:
-        case MDLVertexFormatFloat4:
-            return std::pair<int, int>(4, 4);
-        
         default:
-            return std::pair<int, int>(0, 0);
+            pabort();
     }
+}
+
+int VROLoader::getComponentsPerVertex(MDLVertexFormat format) {
+    return (format & 0xFF);
 }
 
 int VROLoader::parseIndexSize(MDLIndexBitDepth depth) {

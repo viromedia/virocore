@@ -293,7 +293,7 @@ bool VROBoundingBox::intersectsBox(const VROBoundingBox &box) const {
            distanceY <= (this->getSpanY() + box.getSpanY()) / 2;
 }
 
-VROBoundingBox* VROBoundingBox::unionWith(const VROBoundingBox &box) {
+VROBoundingBox VROBoundingBox::unionWith(const VROBoundingBox &box) {
     float left, right, bottom, top, zmin, zmax = 0;
 
     if (box.getMinX() < this->getMinX()) {
@@ -338,7 +338,7 @@ VROBoundingBox* VROBoundingBox::unionWith(const VROBoundingBox &box) {
         zmax = this->getMaxZ();
     }
 
-    return new VROBoundingBox(left, right, bottom, top, zmin, zmax);
+    return VROBoundingBox(left, right, bottom, top, zmin, zmax);
 }
 
 void VROBoundingBox::unionLRBTDestructive(const VROBoundingBox &box) {

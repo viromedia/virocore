@@ -175,7 +175,7 @@ public:
     void set(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax);
     void copy(const VROBoundingBox &box);
 
-    VROBoundingBox* unionWith(const VROBoundingBox &box);
+    VROBoundingBox unionWith(const VROBoundingBox &box);
 
     /*
      Union this bounding box with the supplied box, updating our member

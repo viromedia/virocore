@@ -39,6 +39,7 @@ public:
     VROGeometrySource(std::shared_ptr<VROData> data,
                       VROGeometrySourceSemantic semantic,
                       int vertexCount,
+                      bool floatComponents,
                       int componentsPerVertex,
                       int bytesPerComponent,
                       int dataOffset,
@@ -46,6 +47,7 @@ public:
         _data(data),
         _semantic(semantic),
         _vertexCount(vertexCount),
+        _floatComponents(floatComponents),
         _componentsPerVertex(componentsPerVertex),
         _bytesPerComponent(bytesPerComponent),
         _dataOffset(dataOffset),
@@ -90,6 +92,11 @@ private:
      The number of vertices described in the _data array.
      */
     int _vertexCount;
+    
+    /*
+     True if the components are floating point. False if integer.
+     */
+    bool _floatComponents;
     
     /*
      The number of scalar components per vertex (i.e. x, y, z for position).
