@@ -42,7 +42,7 @@ public:
      Ray intersection. The intersection result will be stored in *intPt. If there are multiple intersection
      points, only one will be returned.
      */
-    bool intersectsRay(const VROVector3d &ray, const VROVector3d &origin, VROVector3d *intPt);
+    bool intersectsRay(const VROVector3f &ray, const VROVector3f &origin, VROVector3f *intPt);
 
     /*
      Point containment functions. The first function checks for full containment; the remaining functions

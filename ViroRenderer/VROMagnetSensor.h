@@ -14,8 +14,6 @@
 
 #include <vector>
 
-NSString *const VROTriggerPressedNotification = @"VROTriggerPressedNotification";
-
 class VROMagnetSensor {
     
 public:

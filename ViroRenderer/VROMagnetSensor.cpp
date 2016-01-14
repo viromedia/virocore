@@ -65,7 +65,7 @@ void VROMagnetSensor::evaluateModel()
     if (minimums[0] < 30.0f && maximums[1] > 130.0f)
     {
         _sampleIndex = 0;
-        [[NSNotificationCenter defaultCenter] postNotificationName:VROTriggerPressedNotification object:nil];
+//        [[NSNotificationCenter defaultCenter] postNotificationName:VROTriggerPressedNotification object:nil];
     }
 }
 

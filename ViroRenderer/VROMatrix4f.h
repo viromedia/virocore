@@ -62,6 +62,9 @@ public:
      */
     VROMatrix4f transpose() const;
     VROMatrix4f invert() const;
+    const float *getArray() const {
+        return _mtx;
+    }
     
 private:
     

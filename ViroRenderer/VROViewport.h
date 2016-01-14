@@ -57,6 +57,13 @@ public:
         return scissor;
     }
     
+    void toArray(int *viewport) const {
+        viewport[0] = _x;
+        viewport[1] = _y;
+        viewport[2] = _width;
+        viewport[3] = _height;
+    }
+    
 private:
     
     int _x, _y, _width, _height;

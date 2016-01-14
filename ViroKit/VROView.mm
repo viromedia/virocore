@@ -19,6 +19,7 @@
 #import "VRORenderContextMetal.h"
 #import "VROTransaction.h"
 #import "VROImageUtil.h"
+#import "VROProjector.h"
 
 @interface VROView () {
     VROMagnetSensor *_magnetSensor;
@@ -91,12 +92,7 @@
     
     _headTracker->startTracking([UIApplication sharedApplication].statusBarOrientation);
     _magnetSensor->start();
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(magneticTriggerPressed:)
-                                                 name:VROTriggerPressedNotification
-                                               object:nil];
-    
+        
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(orientationDidChange:)
                                                  name:UIApplicationDidChangeStatusBarOrientationNotification
@@ -152,12 +148,6 @@
 
 - (void)setChromaticAberrationCorrectionEnabled:(BOOL)chromaticAberrationCorrectionEnabled {
     _distortionRenderer->setChromaticAberrationEnabled(chromaticAberrationCorrectionEnabled);
-}
-
-- (void)magneticTriggerPressed:(NSNotification *)notification {
-    if ([self.renderDelegate respondsToSelector:@selector(magneticTriggerPressed)]) {
-        [self.renderDelegate magneticTriggerPressed];
-    }
 }
 
 - (float)virtualEyeToScreenDistance {
@@ -445,6 +435,25 @@
 
 - (void)handleTap:(UIGestureRecognizer *)gestureRecognizer {
     [_HUD.reticle trigger];
+    
+    // TODO Get this from camera
+    VROMatrix4f view = _renderContext->getViewMatrix();
+    VROMatrix4f projection = _renderContext->getProjectionMatrix();
+    VROMatrix4f mvp = projection.multiply(view);
+    
+    int viewport[4];
+    _leftEye->getViewport().toArray(viewport);
+    
+    CGPoint pt = [gestureRecognizer locationInView:self];
+    
+    VROVector3f near;
+    VROProjector::unproject({(float)pt.x, (float)pt.y, 0}, mvp.getArray(), viewport, &near);
+    
+    VROVector3f far;
+    VROProjector::unproject({(float)pt.x, (float)pt.y, 1}, mvp.getArray(), viewport, &far);
+    
+    VROVector3f ray = (far - near).normalize();
+    [self.renderDelegate reticleTapped:pt ray:ray];
 }
 
 @end

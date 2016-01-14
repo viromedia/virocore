@@ -286,6 +286,13 @@
     _scene->render(*renderContext);
 }
 
+- (void)reticleTapped:(CGPoint)point ray:(VROVector3f)ray {    
+    std::vector<VROHitTestResult> results = _rootNode->hitTest(ray);
+    
+    NSLog(@"Ray %f, %f, %f, number of hits %lu", ray.x, ray.y, ray.z, results.size());
+}
+
+
 - (void)renderViewDidChangeSize:(CGSize)size context:(VRORenderContext *)context {
 
 }

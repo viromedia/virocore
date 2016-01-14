@@ -120,9 +120,9 @@ VROBoundingBox VROBoundingBox::transform(VROMatrix4f transform) const {
 #pragma mark -
 #pragma mark Containment and Intersection
 
-bool VROBoundingBox::intersectsRay(const VROVector3d &ray, const VROVector3d &origin, VROVector3d *intPt) {
-    VROVector3d point;
-    VROVector3d normal;
+bool VROBoundingBox::intersectsRay(const VROVector3f &ray, const VROVector3f &origin, VROVector3f *intPt) {
+    VROVector3f point;
+    VROVector3f normal;
 
     /*
      Check the floor plane.

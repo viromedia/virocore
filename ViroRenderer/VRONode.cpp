@@ -15,6 +15,7 @@
 #include "VROAnimationQuaternion.h"
 #include "VROAction.h"
 #include "VROLog.h"
+#include "VROHitTestResult.h"
 
 #pragma mark - Initialization
 
@@ -186,5 +187,24 @@ VROBoundingBox VRONode::getBoundingBox() {
 }
 
 std::vector<VROHitTestResult> VRONode::hitTest(VROVector3f ray) {
-    pabort();
+    std::vector<VROHitTestResult> results;
+    
+    // TODO Use camera location for origin
+    VROVector3f origin;
+    
+    if (_geometry) {
+        VROBoundingBox bounds = getBoundingBox();
+        
+        VROVector3f intPt;
+        if (bounds.intersectsRay(ray, origin, &intPt)) {
+            results.push_back({_geometry, intPt});
+        }
+    }
+
+    for (std::shared_ptr<VRONode> &subnode : _subnodes) {
+        std::vector<VROHitTestResult> subResults = subnode->hitTest(ray);
+        results.insert(results.end(), subResults.begin(), subResults.end());
+    }
+    
+    return results;
 }
