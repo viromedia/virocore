@@ -15,6 +15,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include "VROMath.h"
 
 #ifdef ANDROID_BUILD
 #include <asm/unaligned.h>
@@ -130,6 +131,10 @@ std::string VROByteBuffer::readStringNullTerm() {
     _pos += (str.size() + 1);
 
     return str;
+}
+
+float VROByteBuffer::readHalf() {
+    return VROFloat16ToFloat(readShort());
 }
 
 float VROByteBuffer::readFloat() {

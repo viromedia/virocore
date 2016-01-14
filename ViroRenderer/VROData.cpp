@@ -11,10 +11,12 @@
 VROData::VROData(void *data, int dataLength, bool copy) {
     if (copy) {
         _data = malloc(dataLength);
+        _dataLength = dataLength;
         memcpy(_data, data, dataLength);
     }
     else {
         _data = data;
+        _dataLength = dataLength;
     }
 }
 

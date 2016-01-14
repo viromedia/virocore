@@ -31,11 +31,14 @@ public:
     void *const getData() {
         return _data;
     }
+    int getDataLength() const {
+        return _dataLength;
+    }
     
 private:
     
     void *_data;
-    
+    int _dataLength;
     
 };
 

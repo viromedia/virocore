@@ -919,6 +919,15 @@ bool VROMathEquals(const float a, const float b, const float tolerance) {
     return (a + tolerance >= b) && (a - tolerance <= b);
 }
 
+float VROFloat16ToFloat(short fltInt16) {
+    int fltInt32    =  ((fltInt16 & 0x8000) << 16);
+    fltInt32        |= ((fltInt16 & 0x7fff) << 13) + 0x38000000;
+    
+    float fRet;
+    memcpy(&fRet, &fltInt32, sizeof(float));
+    return fRet;
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 //
 //  Geometry

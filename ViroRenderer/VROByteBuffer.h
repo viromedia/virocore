@@ -63,6 +63,7 @@ public:
      */
     bool           readBool();
     uint64_t       readLong();
+    float          readHalf();
     float          readFloat();
     double         readDouble();
     int            readInt();

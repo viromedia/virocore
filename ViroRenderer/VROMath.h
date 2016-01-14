@@ -143,4 +143,6 @@ float VROMathReciprocalSquareRoot(float value);
 bool VROMathIsZero(const float a, const float tolerance = kRoundingErrorFloat);
 bool VROMathEquals(const float a, const float b, const float tolerance = kRoundingErrorFloat);
 
+float VROFloat16ToFloat(short fltInt16);
+
 #endif /* VROMath_h */
