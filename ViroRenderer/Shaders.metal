@@ -241,7 +241,7 @@ fragment float4 lambert_lighting_fragment_c_reflect(VROLambertLightingVertexOut 
     float4 reflective_color = compute_reflection(in.surface_position, in.camera_position, in.normal, reflect_texture);
     float4 lighting_color = lambert_lighting_diffuse_fixed(in, lighting);
     
-    return lighting_color + reflective_color;
+    return float4(lighting_color.xyz + reflective_color.xyz, lighting_color.a);
 }
 
 fragment float4 lambert_lighting_fragment_t(VROLambertLightingVertexOut in [[ stage_in ]],
@@ -259,7 +259,7 @@ fragment float4 lambert_lighting_fragment_t_reflect(VROLambertLightingVertexOut 
     float4 reflective_color = compute_reflection(in.surface_position, in.camera_position, in.normal, reflect_texture);
     float4 lighting_color = lambert_lighting_diffuse_texture(in, texture, lighting);
     
-    return lighting_color + reflective_color;
+    return float4(lighting_color.xyz + reflective_color.xyz, lighting_color.a);
 }
 
 /* ---------------------------------------
@@ -406,7 +406,7 @@ fragment float4 phong_lighting_fragment_c_reflect(VROPhongLightingVertexOut in [
     float4 reflective_color = compute_reflection(in.surface_position, in.camera_position, in.normal, reflect_texture);
     float4 lighting_color = phong_lighting_diffuse_fixed(in, specular_texture, lighting);
     
-    return lighting_color + reflective_color;
+    return float4(lighting_color.xyz + reflective_color.xyz, lighting_color.a);
 }
 
 fragment float4 phong_lighting_fragment_t(VROPhongLightingVertexOut in [[ stage_in ]],
@@ -426,7 +426,7 @@ fragment float4 phong_lighting_fragment_t_reflect(VROPhongLightingVertexOut in [
     float4 reflective_color = compute_reflection(in.surface_position, in.camera_position, in.normal, reflect_texture);
     float4 lighting_color = phong_lighting_diffuse_texture(in, diffuse_texture, specular_texture, lighting);
     
-    return lighting_color + reflective_color;
+    return float4(lighting_color.xyz + reflective_color.xyz, lighting_color.a);
 }
 
 /* ---------------------------------------
@@ -573,7 +573,7 @@ fragment float4 blinn_lighting_fragment_c_reflect(VROBlinnLightingVertexOut in [
     float4 reflective_color = compute_reflection(in.surface_position, in.camera_position, in.normal, reflect_texture);
     float4 lighting_color = blinn_lighting_diffuse_fixed(in, specular_texture, lighting);
     
-    return lighting_color + reflective_color;
+    return float4(lighting_color.xyz + reflective_color.xyz, lighting_color.a);
 }
 
 fragment float4 blinn_lighting_fragment_t(VROBlinnLightingVertexOut in [[ stage_in ]],
@@ -593,7 +593,7 @@ fragment float4 blinn_lighting_fragment_t_reflect(VROBlinnLightingVertexOut in [
     float4 reflective_color = compute_reflection(in.surface_position, in.camera_position, in.normal, reflect_texture);
     float4 lighting_color = blinn_lighting_diffuse_texture(in, diffuse_texture, specular_texture, lighting);
     
-    return lighting_color + reflective_color;
+    return float4(lighting_color.xyz + reflective_color.xyz, lighting_color.a);
 }
 
 /* ---------------------------------------

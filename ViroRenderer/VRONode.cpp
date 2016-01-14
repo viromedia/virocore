@@ -200,7 +200,6 @@ void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform,
         VROVector3f intPt;
         if (bounds.intersectsRay(ray, origin, &intPt)) {
             results.push_back({std::static_pointer_cast<VRONode>(shared_from_this()), intPt});
-            pinfo("   Intersected");
         }
     }
     
