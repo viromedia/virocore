@@ -11,6 +11,7 @@
 #include "VROMaterialSubstrate.h"
 #include "VRORenderContext.h"
 #include "VROTransaction.h"
+#include "VROAllocationTracker.h"
 
 VROMaterial::VROMaterial() :
     _shininess(2.0),
@@ -36,19 +37,8 @@ VROMaterial::VROMaterial() :
     _multiply         = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
     _ambientOcclusion = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
     _selfIllumination = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
-}
-
-VROMaterial::~VROMaterial() {
-    delete (_diffuse);
-    delete (_specular);
-    delete (_normal);
-    delete (_reflective);
-    delete (_emission);
-    delete (_transparent);
-    delete (_multiply);
-    delete (_ambientOcclusion);
-    delete (_selfIllumination);
-    delete (_substrate);
+        
+    ALLOCATION_TRACKER_ADD(Materials, 1);
 }
 
 VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) :
@@ -74,6 +64,23 @@ VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) :
      _multiply = new VROMaterialVisual(*material->_multiply);
      _ambientOcclusion = new VROMaterialVisual(*material->_ambientOcclusion);
      _selfIllumination = new VROMaterialVisual(*material->_selfIllumination);
+     
+     ALLOCATION_TRACKER_ADD(Materials, 1);
+}
+
+VROMaterial::~VROMaterial() {
+    delete (_diffuse);
+    delete (_specular);
+    delete (_normal);
+    delete (_reflective);
+    delete (_emission);
+    delete (_transparent);
+    delete (_multiply);
+    delete (_ambientOcclusion);
+    delete (_selfIllumination);
+    delete (_substrate);
+    
+    ALLOCATION_TRACKER_SUB(Materials, 1);
 }
 
 void VROMaterial::setShininess(float shininess) {

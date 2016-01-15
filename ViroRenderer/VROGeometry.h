@@ -15,6 +15,7 @@
 #include <memory>
 #include "VRORenderContext.h"
 #include "VROBoundingBox.h"
+#include "VROAllocationTracker.h"
 
 class VROLight;
 class VROMaterial;
@@ -43,8 +44,10 @@ public:
         _geometrySources(sources),
         _geometryElements(elements),
         _bounds(nullptr),
-        _substrate(nullptr)
-    {}
+        _substrate(nullptr) {
+            
+         ALLOCATION_TRACKER_ADD(Geometry, 1);
+    }
     
     /*
      Copy the given geometry. The materials will *not* be copied, and the
@@ -52,8 +55,10 @@ public:
      */
     VROGeometry(std::shared_ptr<VROGeometry> geometry) :
         _geometrySources(geometry->_geometrySources),
-        _geometryElements(geometry->_geometryElements)
-    {}
+        _geometryElements(geometry->_geometryElements) {
+        
+         ALLOCATION_TRACKER_ADD(Geometry, 1);
+    }
     
     ~VROGeometry();
     

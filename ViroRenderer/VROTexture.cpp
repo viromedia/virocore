@@ -11,11 +11,13 @@
 #include "VRORenderContext.h"
 #include "VROTextureSubstrateMetal.h"
 #include "VROLog.h"
+#include "VROAllocationTracker.h"
 
 VROTexture::VROTexture() :
     _image(nullptr),
     _substrate(nullptr) {
     
+    ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
 VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate) :
@@ -23,6 +25,7 @@ VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate>
     _image(nullptr),
     _substrate(std::move(substrate)) {
     
+    ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
 VROTexture::VROTexture(UIImage *image) :
@@ -30,6 +33,7 @@ VROTexture::VROTexture(UIImage *image) :
     _image(image),
     _substrate(nullptr) {
         
+    ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
 VROTexture::VROTexture(std::vector<UIImage *> &images) :
@@ -38,10 +42,11 @@ VROTexture::VROTexture(std::vector<UIImage *> &images) :
     _substrate(nullptr) {
     
     _imagesCube = images;
+    ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
 VROTexture::~VROTexture() {
-
+    ALLOCATION_TRACKER_SUB(Textures, 1);
 }
 
 VROTextureSubstrate *const VROTexture::getSubstrate(const VRORenderContext &context) {

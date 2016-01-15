@@ -16,12 +16,14 @@
 #include "VROAction.h"
 #include "VROLog.h"
 #include "VROHitTestResult.h"
+#include "VROAllocationTracker.h"
 
 #pragma mark - Initialization
 
 VRONode::VRONode(const VRORenderContext &context) :
     _scale({1.0, 1.0, 1.0}) {
     
+    ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
 
 VRONode::VRONode(const VRONode &node) :
@@ -31,10 +33,11 @@ VRONode::VRONode(const VRONode &node) :
     _position(node._position),
     _rotation(node._rotation) {
         
+    ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
 
 VRONode::~VRONode() {
-    
+    ALLOCATION_TRACKER_SUB(Nodes, 1);
 }
 
 std::shared_ptr<VRONode> VRONode::clone() {

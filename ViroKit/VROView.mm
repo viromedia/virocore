@@ -20,6 +20,7 @@
 #import "VROTransaction.h"
 #import "VROImageUtil.h"
 #import "VROProjector.h"
+#import "VROAllocationTracker.h"
 
 @interface VROView () {
     VROMagnetSensor *_magnetSensor;
@@ -217,6 +218,8 @@
         [commandBuffer commit];
         VROTransaction::commitAll();
     }
+    
+    ALLOCATION_TRACKER_PRINT();
 }
 
 - (void)renderVRDistortionInView:(MTKView *)view withCommandBuffer:(id <MTLCommandBuffer>)commandBuffer {

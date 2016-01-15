@@ -14,6 +14,8 @@
 VROGeometry::~VROGeometry() {
     delete (_bounds);
     delete (_substrate);
+    
+    ALLOCATION_TRACKER_SUB(Geometry, 1);
 }
 
 void VROGeometry::render(const VRORenderContext &context,

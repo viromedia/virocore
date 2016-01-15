@@ -11,6 +11,7 @@
 #include "VROTexture.h"
 #include "VRORenderContextMetal.h"
 #include "VROLog.h"
+#include "VROAllocationTracker.h"
 
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(int width, int height, CGContextRef bitmapContext,
                                                    const VRORenderContext &context) {
@@ -27,6 +28,8 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(int width, int height, CGCont
                 mipmapLevel:0
                   withBytes:CGBitmapContextGetData(bitmapContext)
                 bytesPerRow:bytesPerPixel * width];
+    
+    ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
 }
 
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vector<UIImage *> &images,
@@ -95,9 +98,11 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vec
     else {
         pabort("Invalid texture images received, could not convert to Metal");
     }
+    
+    ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
 }
 
 VROTextureSubstrateMetal::~VROTextureSubstrateMetal() {
-    
+    ALLOCATION_TRACKER_SUB(TextureSubstrates, 1);
 }
 
