@@ -12,6 +12,8 @@
 #include <stdio.h>
 
 class VROMaterialSubstrate {
+public:
+    virtual ~VROMaterialSubstrate() {}
     
 };
 

@@ -13,6 +13,7 @@
 #include "VROMatrix4f.h"
 #include "VROLight.h"
 #include "VROMath.h"
+#include "VROAllocationTracker.h"
 
 VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
                                                      const VRORenderContextMetal &context) :
@@ -48,10 +49,12 @@ VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
         default:
             break;
     }
+        
+    ALLOCATION_TRACKER_ADD(MaterialSubstrates, 1);
 }
 
 VROMaterialSubstrateMetal::~VROMaterialSubstrateMetal() {
-    
+    ALLOCATION_TRACKER_SUB(MaterialSubstrates, 1);
 }
 
 void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,

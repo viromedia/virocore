@@ -125,6 +125,11 @@ void VROMaterial::removeOutgoingMaterial() {
     _outgoing.reset();
 }
 
+void VROMaterial::updateSubstrate() {
+    delete (_substrate);
+    _substrate = nullptr;
+}
+
 void VROMaterial::createSubstrate(const VRORenderContext &context) {
     if (!_substrate) {
         _substrate = context.newMaterialSubstrate(*this);

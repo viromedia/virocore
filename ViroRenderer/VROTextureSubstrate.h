@@ -12,6 +12,8 @@
 #include <stdio.h>
 
 class VROTextureSubstrate {
+public:
+    virtual ~VROTextureSubstrate() {}
     
 };
 

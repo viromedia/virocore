@@ -163,10 +163,11 @@ public:
     /*
      Force the substrate of this material to update on the next render cycle.
      */
-    void updateSubstrate() {
-        _substrate = nullptr;
-    }
+    void updateSubstrate();
     
+    /*
+     Create a new substrate for this material.
+     */
     void createSubstrate(const VRORenderContext &context);
     
     /*

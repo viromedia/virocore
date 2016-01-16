@@ -53,9 +53,10 @@ void VROAllocationTracker::print() {
 
 void VROAllocationTracker::printNow() {
     pinfo("Allocation tracking");
-    pinfo("    Nodes:              %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Nodes)].load()));
-    pinfo("    Geometry:           %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Geometry)].load()));
-    pinfo("    Materials:          %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Materials)].load()));
-    pinfo("    Textures:           %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Textures)].load()));
-    pinfo("    Texture Substrates: %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::TextureSubstrates)].load()));
+    pinfo("    Nodes:               %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Nodes)].load()));
+    pinfo("    Geometry:            %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Geometry)].load()));
+    pinfo("    Materials:           %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Materials)].load()));
+    pinfo("    Material Substrates: %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::MaterialSubstrates)].load()));
+    pinfo("    Textures:            %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Textures)].load()));
+    pinfo("    Texture Substrates:  %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::TextureSubstrates)].load()));
 }
