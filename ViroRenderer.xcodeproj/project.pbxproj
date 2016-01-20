@@ -42,6 +42,8 @@
 		8F83DEA71C4830DC0089C31A /* VROTimingFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F83DEA61C4830DC0089C31A /* VROTimingFunction.cpp */; };
 		8F83DEAA1C49B0540089C31A /* VROAllocationTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F83DEA81C49B0530089C31A /* VROAllocationTracker.cpp */; };
 		8F83DEAB1C49B0540089C31A /* VROAllocationTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DEA91C49B0540089C31A /* VROAllocationTracker.h */; };
+		8F83DEAE1C50278C0089C31A /* VROSphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F83DEAC1C50278C0089C31A /* VROSphere.cpp */; };
+		8F83DEAF1C50278C0089C31A /* VROSphere.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DEAD1C50278C0089C31A /* VROSphere.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FA2E1411C4447D00070DB26 /* skybox.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1401C4447D00070DB26 /* skybox.png */; };
 		8FA2E1481C445CAA0070DB26 /* nx.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1421C445CAA0070DB26 /* nx.png */; };
 		8FA2E1491C445CAA0070DB26 /* ny.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1431C445CAA0070DB26 /* ny.png */; };
@@ -369,6 +371,8 @@
 		8F83DEA61C4830DC0089C31A /* VROTimingFunction.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROTimingFunction.cpp; sourceTree = "<group>"; };
 		8F83DEA81C49B0530089C31A /* VROAllocationTracker.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROAllocationTracker.cpp; sourceTree = "<group>"; };
 		8F83DEA91C49B0540089C31A /* VROAllocationTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAllocationTracker.h; sourceTree = "<group>"; };
+		8F83DEAC1C50278C0089C31A /* VROSphere.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSphere.cpp; sourceTree = "<group>"; };
+		8F83DEAD1C50278C0089C31A /* VROSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSphere.h; sourceTree = "<group>"; };
 		8FA2E1401C4447D00070DB26 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = skybox.png; sourceTree = "<group>"; };
 		8FA2E1421C445CAA0070DB26 /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nx.png; sourceTree = "<group>"; };
 		8FA2E1431C445CAA0070DB26 /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ny.png; sourceTree = "<group>"; };
@@ -583,6 +587,8 @@
 				8FA2E1521C44AE340070DB26 /* VROTorusKnot.cpp */,
 				8F152A7A1C10D4AE00A211F8 /* VROShapeUtils.h */,
 				8F152A791C10D4AE00A211F8 /* VROShapeUtils.cpp */,
+				8F83DEAD1C50278C0089C31A /* VROSphere.h */,
+				8F83DEAC1C50278C0089C31A /* VROSphere.cpp */,
 			);
 			name = Shapes;
 			sourceTree = "<group>";
@@ -948,6 +954,7 @@
 				8F83DEA11C4826F80089C31A /* VROTimingFunctionEaseOut.h in Headers */,
 				8FD4DF541C18F5EB003DC425 /* VROWorldUIView.h in Headers */,
 				8F11B7C21C20B0530026D150 /* VROView.h in Headers */,
+				8F83DEAF1C50278C0089C31A /* VROSphere.h in Headers */,
 				8F11B7C51C20B6180026D150 /* VRORenderDelegate.h in Headers */,
 				8F11B7CB1C20E7830026D150 /* VROAnimation.h in Headers */,
 				8FD4DF551C18F698003DC425 /* VROViewController.h in Headers */,
@@ -1218,6 +1225,7 @@
 				8FA2E15C1C45AF3C0070DB26 /* VROScreenUIView.mm in Sources */,
 				8FD4DF0F1C18ED3C003DC425 /* VROMaterialVisual.cpp in Sources */,
 				8FD4DEF21C18ED19003DC425 /* VROPlane.cpp in Sources */,
+				8F83DEAE1C50278C0089C31A /* VROSphere.cpp in Sources */,
 				8FD4DF1B1C18ED53003DC425 /* VROLayer.cpp in Sources */,
 				8FD4DF151C18ED44003DC425 /* Vector3d.mm in Sources */,
 				8FD4DF121C18ED44003DC425 /* Matrix3x3d.mm in Sources */,

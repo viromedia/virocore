@@ -18,7 +18,7 @@ class VROBox : public VROGeometry {
 public:
     
     static std::shared_ptr<VROBox> createBox(float width, float height, float length);
-    ~VROBox();
+    virtual ~VROBox();
     
 private:
     

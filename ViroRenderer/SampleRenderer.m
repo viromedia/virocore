@@ -31,6 +31,32 @@
     return std::make_shared<VROTexture>(cubeImages);
 }
 
+- (void)runSphereTest:(VRORenderContext *)context {
+    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
+    light->setColor({ 1.0, 0.9, 0.9 });
+    light->setPosition( { 0, 0, 0 });
+    light->setDirection( { 0, 0, -1.0 });
+    light->setAttenuationStartDistance(5);
+    light->setAttenuationEndDistance(10);
+    light->setSpotInnerAngle(0);
+    light->setSpotOuterAngle(20);
+    
+    _rootNode->setLight(light);
+    _scene->addNode(_rootNode);
+    
+    std::shared_ptr<VROSphere> sphere = VROSphere::createSphere(2, 20, 20, true);
+    std::shared_ptr<VROMaterial> material = sphere->getMaterials()[0];
+    material->setLightingModel(VROLightingModel::Blinn);
+    
+    _boxNode = std::make_shared<VRONode>(*context);
+    _boxNode->setGeometry(sphere);
+    _boxNode->setPosition({0, 0, -5});
+    
+    _rootNode->addChildNode(_boxNode);
+    
+    [_view.HUD setReticleEnabled:YES];
+}
+
 - (void)runTorusAnimationTest:(VRORenderContext *)context {
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.9, 0.9 });
@@ -254,7 +280,8 @@
     _rootNode = std::make_shared<VRONode>(*context);
     _rootNode->setPosition({0, 0, 0});
     
-    [self runTorusAnimationTest:context];
+    [self runSphereTest:context];
+    //[self runTorusAnimationTest:context];
     //[self runLayerTest:context];
     //[self runBoxAnimationTest:context];
     //[self runOBJTest:context];

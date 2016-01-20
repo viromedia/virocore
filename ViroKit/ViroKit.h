@@ -78,6 +78,7 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 
 // Shapes
 #import <ViroKit/VROBox.h>
+#import <ViroKit/VROSphere.h>
 #import <ViroKit/VROSurface.h>
 #import <ViroKit/VROVideoSurface.h>
 #import <ViroKit/VROTorusKnot.h>
