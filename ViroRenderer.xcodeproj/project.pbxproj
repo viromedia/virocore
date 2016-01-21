@@ -44,6 +44,8 @@
 		8F83DEAB1C49B0540089C31A /* VROAllocationTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DEA91C49B0540089C31A /* VROAllocationTracker.h */; };
 		8F83DEAE1C50278C0089C31A /* VROSphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F83DEAC1C50278C0089C31A /* VROSphere.cpp */; };
 		8F83DEAF1C50278C0089C31A /* VROSphere.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DEAD1C50278C0089C31A /* VROSphere.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F83DEB11C503EDF0089C31A /* beach.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F83DEB01C503EDF0089C31A /* beach.jpg */; };
+		8F83DEB31C5042240089C31A /* surfing.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 8F83DEB21C5042240089C31A /* surfing.mp4 */; };
 		8FA2E1411C4447D00070DB26 /* skybox.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1401C4447D00070DB26 /* skybox.png */; };
 		8FA2E1481C445CAA0070DB26 /* nx.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1421C445CAA0070DB26 /* nx.png */; };
 		8FA2E1491C445CAA0070DB26 /* ny.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1431C445CAA0070DB26 /* ny.png */; };
@@ -373,6 +375,8 @@
 		8F83DEA91C49B0540089C31A /* VROAllocationTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAllocationTracker.h; sourceTree = "<group>"; };
 		8F83DEAC1C50278C0089C31A /* VROSphere.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSphere.cpp; sourceTree = "<group>"; };
 		8F83DEAD1C50278C0089C31A /* VROSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSphere.h; sourceTree = "<group>"; };
+		8F83DEB01C503EDF0089C31A /* beach.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = beach.jpg; sourceTree = "<group>"; };
+		8F83DEB21C5042240089C31A /* surfing.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = surfing.mp4; sourceTree = "<group>"; };
 		8FA2E1401C4447D00070DB26 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = skybox.png; sourceTree = "<group>"; };
 		8FA2E1421C445CAA0070DB26 /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nx.png; sourceTree = "<group>"; };
 		8FA2E1431C445CAA0070DB26 /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ny.png; sourceTree = "<group>"; };
@@ -848,6 +852,8 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F83DEB21C5042240089C31A /* surfing.mp4 */,
+				8F83DEB01C503EDF0089C31A /* beach.jpg */,
 				8FA2E1421C445CAA0070DB26 /* nx.png */,
 				8FA2E1431C445CAA0070DB26 /* ny.png */,
 				8FA2E1441C445CAA0070DB26 /* nz.png */,
@@ -1125,8 +1131,10 @@
 				8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */,
 				8FA2E1481C445CAA0070DB26 /* nx.png in Resources */,
 				8FA2E1411C4447D00070DB26 /* skybox.png in Resources */,
+				8F83DEB11C503EDF0089C31A /* beach.jpg in Resources */,
 				8F517BC71BCDA2BD0017C70B /* Main.storyboard in Resources */,
 				8F5C41551BD82C1B006D7A77 /* boba.png in Resources */,
+				8F83DEB31C5042240089C31A /* surfing.mp4 in Resources */,
 				8FA2E1491C445CAA0070DB26 /* ny.png in Resources */,
 				8FD9B4651C33A933006CB698 /* bobaraj.png in Resources */,
 			);

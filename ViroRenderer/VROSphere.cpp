@@ -44,11 +44,15 @@ std::shared_ptr<VROSphere> VROSphere::createSphere(float radius, int widthSegmen
             VROVector3f normal(px, py, pz);
             normal = normal.normalize();
             
+            if (!facesOutward) {
+                normal.scale(-1, &normal);
+            }
+            
             var[index].x = px;
             var[index].y = py;
             var[index].z = pz;
-            var[index].u = u;
-            var[index].v = 1 - v;
+            var[index].u = 1 - u;
+            var[index].v = v;
             var[index].nx = normal.x;
             var[index].ny = normal.y;
             var[index].nz = normal.z;

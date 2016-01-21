@@ -65,40 +65,37 @@ void VROVideoTexture::displayVideo(NSURL *url, VRORenderContext &context) {
     AVAsset *asset = [item asset];
     
     [asset loadValuesAsynchronouslyForKeys:@[@"tracks"] completionHandler:^{
-     
-     if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
-     NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-     if ([tracks count] > 0) {
-     
-     // Choose the first video track.
-     AVAssetTrack *videoTrack = [tracks objectAtIndex:0];
-     [videoTrack loadValuesAsynchronouslyForKeys:@[@"preferredTransform"] completionHandler:^{
-      
-      if ([videoTrack statusOfValueForKey:@"preferredTransform" error:nil] == AVKeyValueStatusLoaded) {
-      CGAffineTransform preferredTransform = [videoTrack preferredTransform];
-      
-      /*
-       The orientation of the camera while recording affects the orientation
-       of the images received from an AVPlayerItemVideoOutput. Here we compute a
-       rotation that is used to correctly orientate the video.
-       */
-      _preferredRotation = -1 * atan2(preferredTransform.b, preferredTransform.a);
-      addLoopNotification(item);
-      
-      dispatch_async(dispatch_get_main_queue(), ^{
-         [item addOutput:_videoOutput];
-         [_player replaceCurrentItemWithPlayerItem:item];
-         [_videoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:ONE_FRAME_DURATION];
-         [_player play];
-     });
-      
-      }
-      
-      }];
-     }
-     }
-     
-     }];
+        
+        if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
+            NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
+            if ([tracks count] > 0) {
+                
+                // Choose the first video track.
+                AVAssetTrack *videoTrack = [tracks objectAtIndex:0];
+                [videoTrack loadValuesAsynchronouslyForKeys:@[@"preferredTransform"] completionHandler:^{
+                    
+                    if ([videoTrack statusOfValueForKey:@"preferredTransform" error:nil] == AVKeyValueStatusLoaded) {
+                        CGAffineTransform preferredTransform = [videoTrack preferredTransform];
+                        
+                        /*
+                         The orientation of the camera while recording affects the orientation
+                         of the images received from an AVPlayerItemVideoOutput. Here we compute a
+                         rotation that is used to correctly orientate the video.
+                         */
+                        _preferredRotation = -1 * atan2(preferredTransform.b, preferredTransform.a);
+                        addLoopNotification(item);
+                        
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [item addOutput:_videoOutput];
+                            [_player replaceCurrentItemWithPlayerItem:item];
+                            [_videoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:ONE_FRAME_DURATION];
+                            [_player play];
+                        });
+                    }
+                }];
+            }
+        }
+    }];
 }
 
 void VROVideoTexture::addLoopNotification(AVPlayerItem *item) {

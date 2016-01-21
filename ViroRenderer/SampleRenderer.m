@@ -8,13 +8,18 @@
 
 #import "SampleRenderer.h"
 
+@interface SampleRenderer ()
+
+@property (readwrite, nonatomic) BOOL tapEnabled;
+
+@end
+
 @implementation SampleRenderer {
     VROView *_view;
     std::shared_ptr<VROScene> _scene;
     std::shared_ptr<VROCrossLayout> _layout;
     
     std::shared_ptr<VRONode> _rootNode;
-    std::shared_ptr<VRONode> _boxNode;
     float angle;
 }
 
@@ -44,16 +49,22 @@
     _rootNode->setLight(light);
     _scene->addNode(_rootNode);
     
-    std::shared_ptr<VROSphere> sphere = VROSphere::createSphere(2, 20, 20, true);
+    std::shared_ptr<VROSphere> sphere = VROSphere::createSphere(1, 20, 20, false);
     std::shared_ptr<VROMaterial> material = sphere->getMaterials()[0];
-    material->setLightingModel(VROLightingModel::Blinn);
+    material->setLightingModel(VROLightingModel::Constant);
     
-    _boxNode = std::make_shared<VRONode>(*context);
-    _boxNode->setGeometry(sphere);
-    _boxNode->setPosition({0, 0, -5});
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"surfing" ofType:@"mp4"];
     
-    _rootNode->addChildNode(_boxNode);
+    std::shared_ptr<VROVideoTexture> videoTexture = std::make_shared<VROVideoTexture>();
+    videoTexture->displayVideo([NSURL fileURLWithPath:filePath], *context);
     
+    material->getDiffuse().setContents(videoTexture);
+    
+    std::shared_ptr<VRONode> sphereNode = std::make_shared<VRONode>(*context);
+    sphereNode->setGeometry(sphere);
+    sphereNode->setPosition({0, 0, 0});
+    
+    _rootNode->addChildNode(sphereNode);
     [_view.HUD setReticleEnabled:YES];
 }
 
@@ -78,11 +89,11 @@
     material->setLightingModel(VROLightingModel::Blinn);
     material->getReflective().setContentsCube([self cubeTexture]);
     
-    _boxNode = std::make_shared<VRONode>(*context);
-    _boxNode->setGeometry(torus);
-    _boxNode->setPosition({0, 0, -5});
+    std::shared_ptr<VRONode> torusNode = std::make_shared<VRONode>(*context);
+    torusNode->setGeometry(torus);
+    torusNode->setPosition({0, 0, -5});
     
-    _rootNode->addChildNode(_boxNode);
+    _rootNode->addChildNode(torusNode);
     
     [_view.HUD setReticleEnabled:YES];
     
@@ -91,7 +102,7 @@
         VROTransaction::setAnimationDuration(0.8);
         VROTransaction::setTimingFunction(VROTimingFunctionType::Bounce);
         
-        _boxNode->setPosition({ 0, 0, -3});
+        torusNode->setPosition({ 0, 0, -3});
         
         VROTransaction::commit();
     });
@@ -101,10 +112,17 @@
         VROTransaction::setAnimationDuration(0.8);
         VROTransaction::setTimingFunction(VROTimingFunctionType::Bounce);
         
-        _boxNode->setPosition({ 0, 0, -6});
+        torusNode->setPosition({ 0, 0, -6});
         
         VROTransaction::commit();
     });
+    
+    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([torusNode, self] {
+        angle += .015;
+        torusNode->setRotation({ 0, angle, 0});
+    });
+    
+    torusNode->runAction(action);
 }
 
 - (void)runBoxAnimationTest:(VRORenderContext *)context {
@@ -130,11 +148,11 @@
     material->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"boba"]));
     material->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"specular"]));
     
-    _boxNode = std::make_shared<VRONode>(*context);
-    _boxNode->setGeometry(box);
-    _boxNode->setPosition({0, 0, -5});
+    std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>(*context);
+    boxNode->setGeometry(box);
+    boxNode->setPosition({0, 0, -5});
     
-    _rootNode->addChildNode(_boxNode);
+    _rootNode->addChildNode(boxNode);
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
@@ -143,7 +161,7 @@
         UIImage *image = [UIImage imageNamed:@"bobaraj"];
         material->getDiffuse().setContents(std::make_shared<VROTexture>(image));
         
-        _boxNode->setPosition({ 0, 0, -3});
+        boxNode->setPosition({ 0, 0, -3});
         
         VROTransaction::commit();
     });
@@ -153,10 +171,17 @@
         VROTransaction::setAnimationDuration(3);
         
         material->getDiffuse().setContents({ 0.0, 1.0, 0.0, 1.0});
-        _boxNode->setPosition({ 0, 0, -6});
+        boxNode->setPosition({ 0, 0, -6});
         
         VROTransaction::commit();
     });
+    
+    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([boxNode, self] {
+        angle += .015;
+        boxNode->setRotation({ 0, angle, 0});
+    });
+    
+    boxNode->runAction(action);
 }
 
 - (void)runLayerTest:(VRORenderContext *)context {
@@ -177,7 +202,6 @@
      Create the box node.
      */
     std::shared_ptr<VROBox> box = VROBox::createBox(1, 1, 1);
-    
     NSURL *videoURL = [NSURL URLWithString:@"https://s3-us-west-2.amazonaws.com/dmoontest/img/Zoe2.mp4"];
     
     std::shared_ptr<VROVideoTexture> videoTexture = std::make_shared<VROVideoTexture>();
@@ -188,11 +212,11 @@
     material->getDiffuse().setContents(videoTexture);
     material->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"specular"]));
     
-    _boxNode = std::make_shared<VRONode>(*context);
-    _boxNode->setGeometry(box);
-    _boxNode->setPosition({0, 1.5, -5});
+    std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>(*context);
+    boxNode->setGeometry(box);
+    boxNode->setPosition({0, 1.5, -5});
     
-    _rootNode->addChildNode(_boxNode);
+    _rootNode->addChildNode(boxNode);
     
     /*
      Create the moments icon node.
@@ -238,6 +262,13 @@
     
     [HUD addSubview:label];
     [HUD setNeedsUpdate];
+    
+    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([boxNode, self] {
+        angle += .015;
+        boxNode->setRotation({ 0, angle, 0});
+    });
+    
+    boxNode->runAction(action);
 }
 
 - (void)runOBJTest:(VRORenderContext *)context {
@@ -256,18 +287,25 @@
     _rootNode->setLight(light);
     _scene->addNode(_rootNode);
     
-    _boxNode = VROLoader::loadURL(soccerURL, *context)[0];
-    _boxNode->setPosition({0, 0, -20});
+    std::shared_ptr<VRONode> objNode = VROLoader::loadURL(soccerURL, *context)[0];
+    objNode->setPosition({0, 0, -20});
     
-    _rootNode->addChildNode(_boxNode);
+    _rootNode->addChildNode(objNode);
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(10);
         
-        _boxNode->getGeometry()->getMaterials()[0]->getDiffuse().setContents({1.0, 0.0, 0.0, 1.0});
+        objNode->getGeometry()->getMaterials()[0]->getDiffuse().setContents({1.0, 0.0, 0.0, 1.0});
         VROTransaction::commit();
     });
+    
+    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([objNode, self] {
+        angle += .015;
+        objNode->setRotation({ 0, angle, 0});
+    });
+    
+    objNode->runAction(action);
 }
 
 - (void)setupRendererWithView:(VROView *)view context:(VRORenderContext *)context {
@@ -285,13 +323,6 @@
     //[self runLayerTest:context];
     //[self runBoxAnimationTest:context];
     //[self runOBJTest:context];
-    
-    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self] {
-        angle += .015;
-        _boxNode->setRotation({ 0, angle, 0});
-    });
-    
-    _boxNode->runAction(action);
 }
 
 - (void)shutdownRendererWithView:(MTKView *)view {
@@ -306,7 +337,11 @@
     _scene->render(*renderContext);
 }
 
-- (void)reticleTapped:(VROVector3f)ray {    
+- (void)reticleTapped:(VROVector3f)ray {
+    if (!self.tapEnabled) {
+        return;
+    }
+    
     std::vector<VROHitTestResult> results = _rootNode->hitTest(ray);
     
     for (VROHitTestResult result : results) {
