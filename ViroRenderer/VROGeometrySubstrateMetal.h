@@ -24,6 +24,7 @@ class VROGeometrySource;
 class VROGeometryElement;
 class VRORenderContextMetal;
 class VROMaterialSubstrateMetal;
+class VROConcurrentBuffer;
 
 struct VROVertexArrayMetal {
     id <MTLBuffer> buffer;
@@ -83,10 +84,9 @@ private:
     std::vector<id <MTLRenderPipelineState>> _outgoingPipelineStates;
     
     /*
-     Uniforms for the view and lighting.
+     Uniforms for the view.
      */
-    id <MTLBuffer> _viewUniformsBuffer;
-    id <MTLBuffer> _lightingUniformsBuffer;
+    VROConcurrentBuffer *_viewUniformsBuffer;
     
     /*
      Parse the given geometry elements and populate the _elements vector with the

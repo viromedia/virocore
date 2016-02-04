@@ -6,4 +6,15 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include "VROConcurrentBuffer.hpp"
+#include "VROConcurrentBuffer.h"
+
+VROConcurrentBuffer::VROConcurrentBuffer(int size, NSString *label, id <MTLDevice> device) :
+    _buffer([device newBufferWithLength:size * kMaxBuffersInFlight options:0]),
+    _size(size) {
+        
+    _buffer.label = label;
+}
+
+VROConcurrentBuffer::~VROConcurrentBuffer() {
+    
+}

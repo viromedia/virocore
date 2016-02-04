@@ -32,6 +32,11 @@ class VRORenderContext {
     
 public:
     
+    VRORenderContext() :
+        _frame(0) {
+        
+    }
+    
     virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const = 0;
     virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) const = 0;
     virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) const = 0;
@@ -81,8 +86,17 @@ public:
         }
     }
     
+    int getFrame() const {
+        return _frame;
+    }
+    
+    void incFrame() {
+        ++_frame;
+    }
+    
 private:
     
+    int _frame;
     std::vector<std::weak_ptr<VROFrameListener>> _frameListeners;
     
 };

@@ -46,6 +46,8 @@
 		8F83DEAF1C50278C0089C31A /* VROSphere.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DEAD1C50278C0089C31A /* VROSphere.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F83DEB11C503EDF0089C31A /* beach.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F83DEB01C503EDF0089C31A /* beach.jpg */; };
 		8F83DEB31C5042240089C31A /* surfing.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 8F83DEB21C5042240089C31A /* surfing.mp4 */; };
+		8F9277A51C62DBDF00FF892A /* VROConcurrentBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F9277A31C62DBDF00FF892A /* VROConcurrentBuffer.cpp */; };
+		8F9277A61C62DBDF00FF892A /* VROConcurrentBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9277A41C62DBDF00FF892A /* VROConcurrentBuffer.h */; };
 		8FA2E1411C4447D00070DB26 /* skybox.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1401C4447D00070DB26 /* skybox.png */; };
 		8FA2E1481C445CAA0070DB26 /* nx.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1421C445CAA0070DB26 /* nx.png */; };
 		8FA2E1491C445CAA0070DB26 /* ny.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1431C445CAA0070DB26 /* ny.png */; };
@@ -377,6 +379,8 @@
 		8F83DEAD1C50278C0089C31A /* VROSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSphere.h; sourceTree = "<group>"; };
 		8F83DEB01C503EDF0089C31A /* beach.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = beach.jpg; sourceTree = "<group>"; };
 		8F83DEB21C5042240089C31A /* surfing.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = surfing.mp4; sourceTree = "<group>"; };
+		8F9277A31C62DBDF00FF892A /* VROConcurrentBuffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROConcurrentBuffer.cpp; sourceTree = "<group>"; };
+		8F9277A41C62DBDF00FF892A /* VROConcurrentBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROConcurrentBuffer.h; sourceTree = "<group>"; };
 		8FA2E1401C4447D00070DB26 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = skybox.png; sourceTree = "<group>"; };
 		8FA2E1421C445CAA0070DB26 /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nx.png; sourceTree = "<group>"; };
 		8FA2E1431C445CAA0070DB26 /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ny.png; sourceTree = "<group>"; };
@@ -574,6 +578,8 @@
 				8FF4D7A71C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp */,
 				8F152A831C121A5500A211F8 /* VROTextureSubstrateMetal.h */,
 				8F152A821C121A5500A211F8 /* VROTextureSubstrateMetal.cpp */,
+				8F9277A41C62DBDF00FF892A /* VROConcurrentBuffer.h */,
+				8F9277A31C62DBDF00FF892A /* VROConcurrentBuffer.cpp */,
 			);
 			name = Metal;
 			sourceTree = "<group>";
@@ -926,6 +932,7 @@
 				8FD4DF3F1C18F5EA003DC425 /* VROData.h in Headers */,
 				8FD4DF401C18F5EA003DC425 /* VROQuaternion.h in Headers */,
 				8FCB6C891C3C828200C14158 /* VROLoader.h in Headers */,
+				8F9277A61C62DBDF00FF892A /* VROConcurrentBuffer.h in Headers */,
 				8FD4DF411C18F5EB003DC425 /* VROPlane.h in Headers */,
 				8F548E461C23654E00556688 /* VROAnimationFloat.h in Headers */,
 				8FD4DF421C18F5EB003DC425 /* VROFrustum.h in Headers */,
@@ -1247,6 +1254,7 @@
 				8FD4DEEB1C18ED03003DC425 /* VROViewController.mm in Sources */,
 				8FD4DF0C1C18ED3C003DC425 /* VROGeometryElement.cpp in Sources */,
 				8FD4DF1C1C18ED53003DC425 /* VRORect.cpp in Sources */,
+				8F9277A51C62DBDF00FF892A /* VROConcurrentBuffer.cpp in Sources */,
 				8FD4DF0B1C18ED3C003DC425 /* VROGeometry.cpp in Sources */,
 				8F83DEA71C4830DC0089C31A /* VROTimingFunction.cpp in Sources */,
 				8FD4DF1A1C18ED4C003DC425 /* VROScreen.cpp in Sources */,

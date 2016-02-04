@@ -17,6 +17,7 @@
 #include "VROSharedStructures.h"
 #include "VROMetalUtils.h"
 #include "VRORenderParameters.h"
+#include "VROConcurrentBuffer.h"
 #include <map>
 
 VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry,
@@ -31,12 +32,11 @@ VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry
         _outgoingPipelineStates.push_back(nullptr);
     }
     
-    _viewUniformsBuffer = [device newBufferWithLength:sizeof(VROViewUniforms) options:0];
-    _viewUniformsBuffer.label = @"VROViewUniformBuffer";
+    _viewUniformsBuffer = new VROConcurrentBuffer(sizeof(VROViewUniforms), @"VROViewUniformBuffer", device);
 }
 
 VROGeometrySubstrateMetal::~VROGeometrySubstrateMetal() {
-  
+    delete (_viewUniformsBuffer);
 }
 
 void VROGeometrySubstrateMetal::readGeometryElements(id <MTLDevice> device,
@@ -321,6 +321,8 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
     const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
     id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
     
+    int frame = context.getFrame();
+    
     VROMatrix4f &rotation  = params.rotations.top();
     VROMatrix4f &transform = params.transforms.top();
     
@@ -333,14 +335,15 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
          */
         VROMatrix4f modelview = metal.getViewMatrix().multiply(transform);
         
-        VROViewUniforms *viewUniforms = (VROViewUniforms *)[_viewUniformsBuffer contents];
+        VROViewUniforms *viewUniforms = (VROViewUniforms *)_viewUniformsBuffer->getWritableContents(frame);
         viewUniforms->normal_matrix = toMatrixFloat4x4(rotation.transpose().invert());
         viewUniforms->model_matrix = toMatrixFloat4x4(transform);
         viewUniforms->modelview_matrix = toMatrixFloat4x4(modelview);
         viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(metal.getProjectionMatrix().multiply(modelview));
         viewUniforms->camera_position = { 0, 0, 0 }; //TODO fill this in
         
-        [renderEncoder setVertexBuffer:_viewUniformsBuffer offset:0 atIndex:_vars.size()];
+        [renderEncoder setVertexBuffer:_viewUniformsBuffer->getMTLBuffer()
+                                offset:_viewUniformsBuffer->getWriteOffset(frame) atIndex:_vars.size()];
 
         /*
          Determine if the material has been updated. If so, we need to update our pipeline and

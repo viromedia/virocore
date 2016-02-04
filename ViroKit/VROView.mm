@@ -217,6 +217,8 @@
         
         [commandBuffer commit];
         VROTransaction::commitAll();
+        
+        _renderContext->incFrame();
     }
     
     ALLOCATION_TRACKER_PRINT();
