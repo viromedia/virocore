@@ -14,6 +14,7 @@
 #include "VROLight.h"
 #include "VROMath.h"
 #include "VROAllocationTracker.h"
+#include "VROConcurrentBuffer.h"
 
 VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
                                                      const VRORenderContextMetal &context) :
@@ -23,11 +24,8 @@ VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
     id <MTLDevice> device = context.getDevice();
     id <MTLLibrary> library = context.getLibrary();
     
-    _lightingUniformsBuffer = [device newBufferWithLength:sizeof(VROSceneLightingUniforms) options:0];
-    _lightingUniformsBuffer.label = @"VROSceneLightingUniformBuffer";
-    
-    _materialUniformsBuffer = [device newBufferWithLength:sizeof(VROMaterialUniforms) options:0];
-    _materialUniformsBuffer.label = @"VROMaterialUniformBuffer";
+    _lightingUniformsBuffer = new VROConcurrentBuffer(sizeof(VROSceneLightingUniforms), @"VROSceneLightingUniformBuffer", device);
+    _materialUniformsBuffer = new VROConcurrentBuffer(sizeof(VROMaterialUniforms), @"VROMaterialUniformBuffer", device);
     
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
@@ -54,6 +52,9 @@ VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
 }
 
 VROMaterialSubstrateMetal::~VROMaterialSubstrateMetal() {
+    delete (_materialUniformsBuffer);
+    delete (_lightingUniformsBuffer);
+    
     ALLOCATION_TRACKER_SUB(MaterialSubstrates, 1);
 }
 
@@ -195,16 +196,18 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
     }
 }
 
-void VROMaterialSubstrateMetal::setMaterialUniforms() {
-    VROMaterialUniforms *uniforms = (VROMaterialUniforms *)[_materialUniformsBuffer contents];
+VROConcurrentBuffer &VROMaterialSubstrateMetal::bindMaterialUniforms(int frame) {
+    VROMaterialUniforms *uniforms = (VROMaterialUniforms *)_materialUniformsBuffer->getWritableContents(frame);
     uniforms->diffuse_surface_color = toVectorFloat4(_material.getDiffuse().getContentsColor());
     uniforms->diffuse_intensity = _material.getDiffuse().getIntensity();
     uniforms->shininess = _material.getShininess();
     uniforms->alpha = _material.getTransparency();
+    
+    return *_materialUniformsBuffer;
 }
 
-void VROMaterialSubstrateMetal::setLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights) {
-    VROSceneLightingUniforms *uniforms = (VROSceneLightingUniforms *)[_lightingUniformsBuffer contents];
+VROConcurrentBuffer &VROMaterialSubstrateMetal::bindLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights, int frame) {
+    VROSceneLightingUniforms *uniforms = (VROSceneLightingUniforms *)_lightingUniformsBuffer->getWritableContents(frame);
     uniforms->num_lights = (int) lights.size();
     
     VROVector3f ambientLight;
@@ -229,4 +232,5 @@ void VROMaterialSubstrateMetal::setLightingUniforms(const std::vector<std::share
     }
     
     uniforms->ambient_light_color = toVectorFloat3(ambientLight);
+    return *_lightingUniformsBuffer;
 }

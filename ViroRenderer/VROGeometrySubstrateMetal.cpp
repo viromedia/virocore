@@ -363,10 +363,14 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
             [renderEncoder setVertexBuffer:_vars[j].buffer offset:0 atIndex:j];
         }
         
-        substrate->setLightingUniforms(params.lights);
+        VROConcurrentBuffer &lightingBuffer = substrate->bindLightingUniforms(params.lights, frame);
     
-        [renderEncoder setVertexBuffer:substrate->getLightingUniformsBuffer() offset:0 atIndex:_vars.size() + 2];
-        [renderEncoder setFragmentBuffer:substrate->getLightingUniformsBuffer() offset:0 atIndex:0];
+        [renderEncoder setVertexBuffer:lightingBuffer.getMTLBuffer()
+                                offset:lightingBuffer.getWriteOffset(frame)
+                               atIndex:_vars.size() + 2];
+        [renderEncoder setFragmentBuffer:lightingBuffer.getMTLBuffer()
+                                  offset:lightingBuffer.getWriteOffset(frame)
+                                 atIndex:0];
 
         const std::shared_ptr<VROMaterial> &outgoing = material->getOutgoing();
         if (outgoing) {
@@ -396,11 +400,15 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
                                                id <MTLRenderCommandEncoder> renderEncoder,
                                                const VRORenderContext &context) {
     
+    int frame = context.getFrame();
+    
     [renderEncoder setRenderPipelineState:pipelineState];
     [renderEncoder setDepthStencilState:depthStencilState];
     
-    material->setMaterialUniforms();
-    [renderEncoder setVertexBuffer:material->getMaterialUniformsBuffer() offset:0 atIndex:_vars.size() + 1];
+    VROConcurrentBuffer &materialBuffer = material->bindMaterialUniforms(frame);
+    [renderEncoder setVertexBuffer:materialBuffer.getMTLBuffer()
+                            offset:materialBuffer.getWriteOffset(frame)
+                           atIndex:_vars.size() + 1];
     
     const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();
     for (int j = 0; j < textures.size(); ++j) {

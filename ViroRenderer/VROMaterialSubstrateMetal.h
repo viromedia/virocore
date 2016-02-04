@@ -19,6 +19,7 @@ class VROMatrix4f;
 class VROVector4f;
 class VRORenderContextMetal;
 class VROLight;
+class VROConcurrentBuffer;
 
 /*
  Metal representation of a VROMaterial. Each VROMaterial defines a vertex
@@ -34,27 +35,22 @@ public:
     virtual ~VROMaterialSubstrateMetal();
     
     /*
-     Set the uniforms required to render this material.
+     Set the uniforms required to render this material, and return the buffer.
      */
-    void setMaterialUniforms();
+    VROConcurrentBuffer &bindMaterialUniforms(int frame);
     
     /*
      Set the uniforms required to render this given material under the
-     given lights.
+     given lights, and return the buffer.
      */
-    void setLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights);
+    VROConcurrentBuffer &bindLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights,
+                                              int frame);
     
     id <MTLFunction> getVertexProgram() const {
         return _vertexProgram;
     }
     id <MTLFunction> getFragmentProgram() const {
         return _fragmentProgram;
-    }
-    id <MTLBuffer> getLightingUniformsBuffer() const {
-        return _lightingUniformsBuffer;
-    }
-    id <MTLBuffer> getMaterialUniformsBuffer() const {
-        return _materialUniformsBuffer;
     }
     const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
         return _textures;
@@ -68,8 +64,8 @@ private:
     id <MTLFunction> _vertexProgram;
     id <MTLFunction> _fragmentProgram;
     
-    id <MTLBuffer> _materialUniformsBuffer;
-    id <MTLBuffer> _lightingUniformsBuffer;
+    VROConcurrentBuffer *_materialUniformsBuffer;
+    VROConcurrentBuffer *_lightingUniformsBuffer;
     
     std::vector<std::shared_ptr<VROTexture>> _textures;
     
