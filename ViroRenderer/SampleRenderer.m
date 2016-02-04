@@ -68,6 +68,19 @@
     [_view.HUD setReticleEnabled:YES];
 }
 
+- (std::shared_ptr<VRONode>) newTorus:(VRORenderContext *)context position:(VROVector3f)position {
+    std::shared_ptr<VROTorusKnot> torus = VROTorusKnot::createTorusKnot(3, 8, 0.2, 256, 32);
+    std::shared_ptr<VROMaterial> material = torus->getMaterials()[0];
+    material->setLightingModel(VROLightingModel::Blinn);
+    material->getReflective().setContentsCube([self cubeTexture]);
+    
+    std::shared_ptr<VRONode> torusNode = std::make_shared<VRONode>(*context);
+    torusNode->setGeometry(torus);
+    torusNode->setPosition(position);
+    
+    return torusNode;
+}
+
 - (void)runTorusAnimationTest:(VRORenderContext *)context {
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.9, 0.9 });
@@ -81,48 +94,40 @@
     _rootNode->setLight(light);
     _scene->addNode(_rootNode);
     
-    /*
-     Create the box node.
-     */
-    std::shared_ptr<VROTorusKnot> torus = VROTorusKnot::createTorusKnot(3, 8, 0.2, 256, 32);
-    std::shared_ptr<VROMaterial> material = torus->getMaterials()[0];
-    material->setLightingModel(VROLightingModel::Blinn);
-    material->getReflective().setContentsCube([self cubeTexture]);
+    float d = 5;
     
-    std::shared_ptr<VRONode> torusNode = std::make_shared<VRONode>(*context);
-    torusNode->setGeometry(torus);
-    torusNode->setPosition({0, 0, -5});
+    _rootNode->addChildNode([self newTorus:context position:{ 0,  0, -d}]);
+    _rootNode->addChildNode([self newTorus:context position:{ d,  0, -d}]);
+    _rootNode->addChildNode([self newTorus:context position:{ 0,  d, -d}]);
+    _rootNode->addChildNode([self newTorus:context position:{ d,  d, -d}]);
+    _rootNode->addChildNode([self newTorus:context position:{ d, -d, -d}]);
+    _rootNode->addChildNode([self newTorus:context position:{-d,  0, -d}]);
+    _rootNode->addChildNode([self newTorus:context position:{ 0, -d, -d}]);
+    _rootNode->addChildNode([self newTorus:context position:{-d,  d, -d}]);
+    _rootNode->addChildNode([self newTorus:context position:{-d, -d, -d}]);
     
-    _rootNode->addChildNode(torusNode);
+    _rootNode->addChildNode([self newTorus:context position:{ 0,  0, d}]);
+    _rootNode->addChildNode([self newTorus:context position:{ d,  0, d}]);
+    _rootNode->addChildNode([self newTorus:context position:{ 0,  d, d}]);
+    _rootNode->addChildNode([self newTorus:context position:{ d,  d, d}]);
+    _rootNode->addChildNode([self newTorus:context position:{ d, -d, d}]);
+    _rootNode->addChildNode([self newTorus:context position:{-d,  0, d}]);
+    _rootNode->addChildNode([self newTorus:context position:{ 0, -d, d}]);
+    _rootNode->addChildNode([self newTorus:context position:{-d,  d, d}]);
+    _rootNode->addChildNode([self newTorus:context position:{-d, -d, d}]);
     
     [_view.HUD setReticleEnabled:YES];
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        VROTransaction::begin();
-        VROTransaction::setAnimationDuration(0.8);
-        VROTransaction::setTimingFunction(VROTimingFunctionType::Bounce);
-        
-        torusNode->setPosition({ 0, 0, -3});
-        
-        VROTransaction::commit();
-    });
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        VROTransaction::begin();
-        VROTransaction::setAnimationDuration(0.8);
-        VROTransaction::setTimingFunction(VROTimingFunctionType::Bounce);
-        
-        torusNode->setPosition({ 0, 0, -6});
-        
-        VROTransaction::commit();
-    });
-    
-    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([torusNode, self] {
+    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self] {
         angle += .015;
-        torusNode->setRotation({ 0, angle, 0});
+        
+        for (std::shared_ptr<VRONode> &torusNode : _rootNode->getSubnodes()) {
+            torusNode->setRotation({ 0, angle, 0});
+        }
     });
     
-    torusNode->runAction(action);
+    _rootNode->runAction(action);
+    self.tapEnabled = true;
 }
 
 - (void)runBoxAnimationTest:(VRORenderContext *)context {
@@ -318,8 +323,8 @@
     _rootNode = std::make_shared<VRONode>(*context);
     _rootNode->setPosition({0, 0, 0});
     
-    [self runSphereTest:context];
-    //[self runTorusAnimationTest:context];
+    //[self runSphereTest:context];
+    [self runTorusAnimationTest:context];
     //[self runLayerTest:context];
     //[self runBoxAnimationTest:context];
     //[self runOBJTest:context];

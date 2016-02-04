@@ -103,6 +103,13 @@ public:
     }
     
     /*
+     Return a copy of the subnode list.
+     */
+    std::vector<std::shared_ptr<VRONode>> getSubnodes() const {
+        return _subnodes;
+    }
+    
+    /*
      Action management.
      */
     void runAction(std::shared_ptr<VROAction> action);

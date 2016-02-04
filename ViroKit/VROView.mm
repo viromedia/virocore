@@ -415,6 +415,7 @@
     [_HUD renderEye:leftEye withContext:_renderContext];
     
     if (rightEye == nullptr) {
+        _renderContext->notifyFrameEnd();
         return;
     }
     
