@@ -22,7 +22,6 @@
 		8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BCA1BCDA2BD0017C70B /* LaunchScreen.storyboard */; };
 		8F517BD71BCDA2BE0017C70B /* ViroRendererTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BD61BCDA2BE0017C70B /* ViroRendererTests.m */; };
 		8F517BE21BCDA2BE0017C70B /* ViroRendererUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BE11BCDA2BE0017C70B /* ViroRendererUITests.m */; };
-		8F548E391C21EB8600556688 /* VROMomentsLayoutDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F548E371C21EB8600556688 /* VROMomentsLayoutDelegate.cpp */; };
 		8F548E461C23654E00556688 /* VROAnimationFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F548E441C23654E00556688 /* VROAnimationFloat.h */; };
 		8F548E4A1C23656000556688 /* VROAnimationVector3f.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F548E481C23656000556688 /* VROAnimationVector3f.h */; };
 		8F548E4E1C23665100556688 /* VROAnimatable.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F548E4C1C23665100556688 /* VROAnimatable.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -242,7 +241,7 @@
 /* Begin PBXFileReference section */
 		8F1071CF1BE81F10003B3C3F /* VROWorldUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROWorldUIView.h; sourceTree = "<group>"; };
 		8F1071D01BE81F10003B3C3F /* VROWorldUIView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROWorldUIView.mm; sourceTree = "<group>"; };
-		8F1071D21BF40FAF003B3C3F /* momentslogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = momentslogo.png; path = ViroRenderer/momentslogo.png; sourceTree = "<group>"; };
+		8F1071D21BF40FAF003B3C3F /* momentslogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = momentslogo.png; path = ViroSample/momentslogo.png; sourceTree = "<group>"; };
 		8F1071D51BF41791003B3C3F /* VROCrossLayout.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROCrossLayout.cpp; sourceTree = "<group>"; };
 		8F1071D61BF41791003B3C3F /* VROCrossLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCrossLayout.h; sourceTree = "<group>"; };
 		8F1071D91BF67F34003B3C3F /* VROCamera.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROCamera.cpp; sourceTree = "<group>"; };
@@ -305,17 +304,17 @@
 		8F4DCE4F1BFD628A00061DD7 /* VROGeometrySubstrateMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGeometrySubstrateMetal.cpp; sourceTree = "<group>"; };
 		8F4DCE501BFD628A00061DD7 /* VROGeometrySubstrateMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGeometrySubstrateMetal.h; sourceTree = "<group>"; };
 		8F517BB61BCDA2BD0017C70B /* ViroSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ViroSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		8F517BBA1BCDA2BD0017C70B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ViroRenderer/main.m; sourceTree = "<group>"; };
-		8F517BBC1BCDA2BD0017C70B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ViroRenderer/AppDelegate.h; sourceTree = "<group>"; };
-		8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = ViroRenderer/AppDelegate.m; sourceTree = "<group>"; };
-		8F517BBF1BCDA2BD0017C70B /* SampleRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SampleRenderer.h; path = ViroRenderer/SampleRenderer.h; sourceTree = "<group>"; };
-		8F517BC01BCDA2BD0017C70B /* SampleRenderer.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = SampleRenderer.m; path = ViroRenderer/SampleRenderer.m; sourceTree = "<group>"; };
+		8F517BBA1BCDA2BD0017C70B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ViroSample/main.m; sourceTree = "<group>"; };
+		8F517BBC1BCDA2BD0017C70B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ViroSample/AppDelegate.h; sourceTree = "<group>"; };
+		8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = ViroSample/AppDelegate.m; sourceTree = "<group>"; };
+		8F517BBF1BCDA2BD0017C70B /* SampleRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SampleRenderer.h; path = ViroSample/SampleRenderer.h; sourceTree = "<group>"; };
+		8F517BC01BCDA2BD0017C70B /* SampleRenderer.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = SampleRenderer.m; path = ViroSample/SampleRenderer.m; sourceTree = "<group>"; };
 		8F517BC21BCDA2BD0017C70B /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		8F517BC41BCDA2BD0017C70B /* VROSharedStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROSharedStructures.h; sourceTree = "<group>"; };
 		8F517BC61BCDA2BD0017C70B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8F517BC81BCDA2BD0017C70B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ViroRenderer/Assets.xcassets; sourceTree = "<group>"; };
 		8F517BCB1BCDA2BD0017C70B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		8F517BCD1BCDA2BD0017C70B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ViroRenderer/Info.plist; sourceTree = "<group>"; };
+		8F517BCD1BCDA2BD0017C70B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ViroSample/Info.plist; sourceTree = "<group>"; };
 		8F517BD21BCDA2BD0017C70B /* ViroRendererTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ViroRendererTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F517BD61BCDA2BE0017C70B /* ViroRendererTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViroRendererTests.m; sourceTree = "<group>"; };
 		8F517BD81BCDA2BE0017C70B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -331,8 +330,6 @@
 		8F517C421BCF1CBE0017C70B /* ModelIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ModelIO.framework; path = System/Library/Frameworks/ModelIO.framework; sourceTree = SDKROOT; };
 		8F517C451BD0474E0017C70B /* VROMath.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROMath.cpp; sourceTree = "<group>"; };
 		8F517C461BD0474E0017C70B /* VROMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMath.h; sourceTree = "<group>"; };
-		8F548E371C21EB8600556688 /* VROMomentsLayoutDelegate.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROMomentsLayoutDelegate.cpp; sourceTree = "<group>"; };
-		8F548E381C21EB8600556688 /* VROMomentsLayoutDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMomentsLayoutDelegate.h; sourceTree = "<group>"; };
 		8F548E441C23654E00556688 /* VROAnimationFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationFloat.h; sourceTree = "<group>"; };
 		8F548E481C23656000556688 /* VROAnimationVector3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationVector3f.h; sourceTree = "<group>"; };
 		8F548E4C1C23665100556688 /* VROAnimatable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimatable.h; sourceTree = "<group>"; };
@@ -377,17 +374,17 @@
 		8F83DEA91C49B0540089C31A /* VROAllocationTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAllocationTracker.h; sourceTree = "<group>"; };
 		8F83DEAC1C50278C0089C31A /* VROSphere.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSphere.cpp; sourceTree = "<group>"; };
 		8F83DEAD1C50278C0089C31A /* VROSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSphere.h; sourceTree = "<group>"; };
-		8F83DEB01C503EDF0089C31A /* beach.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = beach.jpg; sourceTree = "<group>"; };
-		8F83DEB21C5042240089C31A /* surfing.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = surfing.mp4; sourceTree = "<group>"; };
+		8F83DEB01C503EDF0089C31A /* beach.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = beach.jpg; path = ViroSample/beach.jpg; sourceTree = "<group>"; };
+		8F83DEB21C5042240089C31A /* surfing.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = surfing.mp4; path = ViroSample/surfing.mp4; sourceTree = "<group>"; };
 		8F9277A31C62DBDF00FF892A /* VROConcurrentBuffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROConcurrentBuffer.cpp; sourceTree = "<group>"; };
 		8F9277A41C62DBDF00FF892A /* VROConcurrentBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROConcurrentBuffer.h; sourceTree = "<group>"; };
-		8FA2E1401C4447D00070DB26 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = skybox.png; sourceTree = "<group>"; };
-		8FA2E1421C445CAA0070DB26 /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nx.png; sourceTree = "<group>"; };
-		8FA2E1431C445CAA0070DB26 /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ny.png; sourceTree = "<group>"; };
-		8FA2E1441C445CAA0070DB26 /* nz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nz.png; sourceTree = "<group>"; };
-		8FA2E1451C445CAA0070DB26 /* px.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = px.png; sourceTree = "<group>"; };
-		8FA2E1461C445CAA0070DB26 /* py.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = py.png; sourceTree = "<group>"; };
-		8FA2E1471C445CAA0070DB26 /* pz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pz.png; sourceTree = "<group>"; };
+		8FA2E1401C4447D00070DB26 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = skybox.png; path = ViroSample/skybox.png; sourceTree = "<group>"; };
+		8FA2E1421C445CAA0070DB26 /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nx.png; path = ViroSample/nx.png; sourceTree = "<group>"; };
+		8FA2E1431C445CAA0070DB26 /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ny.png; path = ViroSample/ny.png; sourceTree = "<group>"; };
+		8FA2E1441C445CAA0070DB26 /* nz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nz.png; path = ViroSample/nz.png; sourceTree = "<group>"; };
+		8FA2E1451C445CAA0070DB26 /* px.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = px.png; path = ViroSample/px.png; sourceTree = "<group>"; };
+		8FA2E1461C445CAA0070DB26 /* py.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = py.png; path = ViroSample/py.png; sourceTree = "<group>"; };
+		8FA2E1471C445CAA0070DB26 /* pz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pz.png; path = ViroSample/pz.png; sourceTree = "<group>"; };
 		8FA2E14E1C4463D00070DB26 /* VROSkybox.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSkybox.cpp; sourceTree = "<group>"; };
 		8FA2E14F1C4463D00070DB26 /* VROSkybox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSkybox.h; sourceTree = "<group>"; };
 		8FA2E1521C44AE340070DB26 /* VROTorusKnot.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROTorusKnot.cpp; sourceTree = "<group>"; };
@@ -400,7 +397,7 @@
 		8FA2E1621C460C600070DB26 /* VROAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAction.h; sourceTree = "<group>"; };
 		8FCB6C861C3C828200C14158 /* VROLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLoader.cpp; sourceTree = "<group>"; };
 		8FCB6C871C3C828200C14158 /* VROLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLoader.h; sourceTree = "<group>"; };
-		8FD1E1AB1C3CA07A0005BE4E /* soccerball.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = soccerball.obj; sourceTree = "<group>"; };
+		8FD1E1AB1C3CA07A0005BE4E /* soccerball.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = soccerball.obj; path = ViroSample/soccerball.obj; sourceTree = "<group>"; };
 		8FD1E1AD1C3F20C70005BE4E /* VROVideoSurface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVideoSurface.cpp; sourceTree = "<group>"; };
 		8FD1E1AE1C3F20C70005BE4E /* VROVideoSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoSurface.h; sourceTree = "<group>"; };
 		8FD1E1B21C3F27190005BE4E /* VROFrameListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFrameListener.h; sourceTree = "<group>"; };
@@ -423,11 +420,11 @@
 		8FD4DF231C18EDBF003DC425 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		8FD4DF251C18EDC8003DC425 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8FD4DF271C18EDD4003DC425 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		8FD4DF971C1CD67B003DC425 /* specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = specular.png; sourceTree = "<group>"; };
+		8FD4DF971C1CD67B003DC425 /* specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = specular.png; path = ViroSample/specular.png; sourceTree = "<group>"; };
 		8FD9B45C1C31E9D9006CB698 /* VROAnimationQuaternion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROAnimationQuaternion.h; sourceTree = "<group>"; };
 		8FD9B45E1C339ECF006CB698 /* VROMaterialSubstrate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROMaterialSubstrate.cpp; sourceTree = "<group>"; };
 		8FD9B45F1C339ECF006CB698 /* VROMaterialSubstrate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialSubstrate.h; sourceTree = "<group>"; };
-		8FD9B4641C33A933006CB698 /* bobaraj.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bobaraj.png; sourceTree = "<group>"; };
+		8FD9B4641C33A933006CB698 /* bobaraj.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bobaraj.png; path = ViroSample/bobaraj.png; sourceTree = "<group>"; };
 		8FDFA8941BDAEAB000883EC0 /* VRODistortionRenderer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODistortionRenderer.cpp; sourceTree = "<group>"; };
 		8FDFA8951BDAEAB000883EC0 /* VRODistortionRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODistortionRenderer.h; sourceTree = "<group>"; };
 		8FDFA8981BDEA19C00883EC0 /* VROHeadTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROHeadTracker.h; sourceTree = "<group>"; };
@@ -849,8 +846,6 @@
 				8F517BBF1BCDA2BD0017C70B /* SampleRenderer.h */,
 				8F517BC01BCDA2BD0017C70B /* SampleRenderer.m */,
 				8F517BCD1BCDA2BD0017C70B /* Info.plist */,
-				8F548E381C21EB8600556688 /* VROMomentsLayoutDelegate.h */,
-				8F548E371C21EB8600556688 /* VROMomentsLayoutDelegate.cpp */,
 			);
 			name = ViroSample;
 			sourceTree = "<group>";
@@ -1183,7 +1178,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8F548E391C21EB8600556688 /* VROMomentsLayoutDelegate.cpp in Sources */,
 				8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */,
 				8F517BC11BCDA2BD0017C70B /* SampleRenderer.m in Sources */,
 				8F517BBB1BCDA2BD0017C70B /* main.m in Sources */,
@@ -1428,7 +1422,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = ViroRenderer/Info.plist;
+				INFOPLIST_FILE = ViroSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1439,7 +1433,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = ViroRenderer/Info.plist;
+				INFOPLIST_FILE = ViroSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
