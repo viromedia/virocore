@@ -117,12 +117,10 @@ void VROVideoTexture::addLoopNotification(AVPlayerItem *item) {
 }
 
 void VROVideoTexture::onFrameWillRender() {
-    if (_paused) {
-        return;
-    }
-}
-
-void VROVideoTexture::onFrameDidRender() {
+    /*
+     Stuttering is significantly reduced by placing this code in willRender() as opposed
+     to didRender(). Reason unknown: contention of resources somewhere?
+     */
     if (_paused) {
         return;
     }
@@ -144,18 +142,22 @@ void VROVideoTexture::onFrameDidRender() {
         CVPixelBufferRef pixelBuffer = [_videoOutput copyPixelBufferForItemTime:outputItemTime
                                                              itemTimeForDisplay:NULL];
         
-        displayPixelBuffer(pixelBuffer);
         if (pixelBuffer != nullptr) {
+            displayPixelBuffer(pixelBuffer);
             CFRelease(pixelBuffer);
         }
     }
 }
 
-void VROVideoTexture::displayPixelBuffer(CVPixelBufferRef pixelBuffer) {
-    if (pixelBuffer == nullptr) {
+void VROVideoTexture::onFrameDidRender() {
+    if (_paused) {
         return;
     }
     
+
+}
+
+void VROVideoTexture::displayPixelBuffer(CVPixelBufferRef pixelBuffer) {
     CVReturn error;
     
     size_t width = CVPixelBufferGetWidth(pixelBuffer);
@@ -286,7 +288,7 @@ void VROVideoTexture::displayCamera(AVCaptureDevicePosition position, VRORenderC
 
 @implementation VROVideoCaptureDelegate {
     
-    id <MTLTexture> _videoTexture[3];
+    id <MTLTexture> _videoTexture[kInFlightVideoTextures];
     
 }
 

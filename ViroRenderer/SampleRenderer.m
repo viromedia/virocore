@@ -323,8 +323,8 @@
     _rootNode = std::make_shared<VRONode>(*context);
     _rootNode->setPosition({0, 0, 0});
     
-    //[self runSphereTest:context];
-    [self runTorusAnimationTest:context];
+    [self runSphereTest:context];
+    //[self runTorusAnimationTest:context];
     //[self runLayerTest:context];
     //[self runBoxAnimationTest:context];
     //[self runOBJTest:context];
