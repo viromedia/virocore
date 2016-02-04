@@ -21,6 +21,7 @@ class VRODevice;
 class VROViewport;
 class VRORenderContextMetal;
 class VROEye;
+class VROConcurrentBuffer;
 
 /*
  Viewport specified in tangents, i.e. the tangent of the eye's
@@ -67,7 +68,7 @@ public:
      half of the eye texture to the right distortion mesh. Renders into the provided 
      encoder (typically the screen).
      */
-    void renderEyesToScreen(id <MTLRenderCommandEncoder> screenEncoder);
+    void renderEyesToScreen(id <MTLRenderCommandEncoder> screenEncoder, int frame);
     
     void setResolutionScale(float scale) {
         _resolutionScale = scale;
@@ -107,7 +108,7 @@ private:
     /*
      Buffer containing the uniforms needed for the distortion pass.
      */
-    id <MTLBuffer> _uniformsBuffer;
+    VROConcurrentBuffer *_uniformsBuffer;
     
     /*
      The texture onto which we render both eyes.
@@ -154,7 +155,8 @@ private:
     
     void renderDistortionMesh(const VRODistortionMesh &mesh,
                               id <MTLTexture> texture,
-                              id <MTLRenderCommandEncoder> renderEncoder);
+                              id <MTLRenderCommandEncoder> renderEncoder,
+                              int frame);
     
     float computeDistortionScale(const VRODistortion &distortion,
                                  float screenWidthM,

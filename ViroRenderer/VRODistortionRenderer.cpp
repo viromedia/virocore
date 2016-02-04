@@ -15,6 +15,7 @@
 #include "VRODistortionMesh.h"
 #include "VROEye.h"
 #include "VRODevice.h"
+#include "VROConcurrentBuffer.h"
 
 #pragma mark - Initialization
 
@@ -159,8 +160,7 @@ void VRODistortionRenderer::updateDistortionPassPipeline(id <MTLDevice> gpu, id 
     /*
      Set up the pipeline for rendering to the eye texture.
      */
-    _uniformsBuffer = [gpu newBufferWithLength:sizeof(VRODistortionUniforms) options:0];
-    _uniformsBuffer.label = @"VRODistortionUniformBuffer";
+    _uniformsBuffer = new VROConcurrentBuffer(sizeof(VRODistortionUniforms), @"VRODistortionUniformBuffer", gpu);
     
     id <MTLFunction> fragmentProgram = [library newFunctionWithName:@"distortion_fragment"];
     id <MTLFunction> vertexProgram   = [library newFunctionWithName:@"distortion_vertex"];
@@ -215,7 +215,7 @@ void VRODistortionRenderer::updateDistortionPassPipeline(id <MTLDevice> gpu, id 
 
 #pragma mark - Rendering Eye Texture to Distortion Mesh
 
-void VRODistortionRenderer::renderEyesToScreen(id <MTLRenderCommandEncoder> screenEncoder) {
+void VRODistortionRenderer::renderEyesToScreen(id <MTLRenderCommandEncoder> screenEncoder, int frame) {
     const VROScreen &screen = _device.getScreen();
     
     [screenEncoder setDepthStencilState:_depthState];
@@ -234,12 +234,12 @@ void VRODistortionRenderer::renderEyesToScreen(id <MTLRenderCommandEncoder> scre
     [screenEncoder setScissorRect:{ 0, 0,
         (NSUInteger) (screen.getWidth() / 2),
         (NSUInteger) (screen.getHeight()) }];
-    renderDistortionMesh(*_leftEyeDistortionMesh, _texture, screenEncoder);
+    renderDistortionMesh(*_leftEyeDistortionMesh, _texture, screenEncoder, frame);
     
     [screenEncoder setScissorRect:{ (NSUInteger) screen.getWidth() / 2, 0,
         (NSUInteger) screen.getWidth() / 2,
         (NSUInteger) screen.getHeight() }];
-    renderDistortionMesh(*_rightEyeDistortionMesh, _texture, screenEncoder);
+    renderDistortionMesh(*_rightEyeDistortionMesh, _texture, screenEncoder, frame);
     
     _drawingFrame = false;
 }
@@ -264,15 +264,19 @@ VRODistortionMesh *VRODistortionRenderer::createDistortionMesh(const VROEyeViewp
                                  gpu);
 }
 
-void VRODistortionRenderer::renderDistortionMesh(const VRODistortionMesh &mesh, id <MTLTexture> texture,
-                                                 id <MTLRenderCommandEncoder> renderEncoder) {
+void VRODistortionRenderer::renderDistortionMesh(const VRODistortionMesh &mesh,
+                                                 id <MTLTexture> texture,
+                                                 id <MTLRenderCommandEncoder> renderEncoder,
+                                                 int frame) {
     
-    VRODistortionUniforms *uniforms = (VRODistortionUniforms *)[_uniformsBuffer contents];
+    VRODistortionUniforms *uniforms = (VRODistortionUniforms *)_uniformsBuffer->getWritableContents(frame);
     uniforms->texcoord_scale = _resolutionScale;
     
     [renderEncoder pushDebugGroup:@"VRODistortion"];
     
-    [renderEncoder setVertexBuffer:_uniformsBuffer offset:0 atIndex:1];
+    [renderEncoder setVertexBuffer:_uniformsBuffer->getMTLBuffer()
+                            offset:_uniformsBuffer->getWriteOffset(frame)
+                           atIndex:1];
     [renderEncoder setFragmentTexture:_texture atIndex:0];
     mesh.render(renderEncoder);
     

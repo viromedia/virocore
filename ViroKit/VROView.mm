@@ -240,7 +240,7 @@
     
     id <MTLRenderCommandEncoder> screenRenderEncoder = screenTarget->getRenderEncoder();
     
-    _distortionRenderer->renderEyesToScreen(screenRenderEncoder);
+    _distortionRenderer->renderEyesToScreen(screenRenderEncoder, _renderContext->getFrame());
     [screenRenderEncoder endEncoding];
 }
 
