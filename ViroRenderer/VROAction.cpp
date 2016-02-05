@@ -11,21 +11,21 @@
 #include "VRONode.h"
 #include "VROMath.h"
 
-std::shared_ptr<VROAction> VROAction::perpetualPerFrameAction(std::function<void()> action) {
+std::shared_ptr<VROAction> VROAction::perpetualPerFrameAction(std::function<bool(float)> action) {
     std::shared_ptr<VROAction> vAction = std::make_shared<VROActionPerFrame>(action,
                                                                              VROActionDurationType::Count);
     vAction->_repeatCount = VROActionRepeatForever;
     return vAction;
 }
 
-std::shared_ptr<VROAction> VROAction::repeatedPerFrameActionFrames(std::function<void()> action, int repeatCount) {
+std::shared_ptr<VROAction> VROAction::repeatedPerFrameActionFrames(std::function<bool(float)> action, int repeatCount) {
     std::shared_ptr<VROAction> vAction = std::make_shared<VROActionPerFrame>(action,
                                                                              VROActionDurationType::Count);
     vAction->_repeatCount = repeatCount;
     return vAction;
 }
 
-std::shared_ptr<VROAction> VROAction::repeatedPerFrameActionSeconds(std::function<void()> action, float duration) {
+std::shared_ptr<VROAction> VROAction::repeatedPerFrameActionSeconds(std::function<bool(float)> action, float duration) {
     std::shared_ptr<VROAction> vAction = std::make_shared<VROActionPerFrame>(action, VROActionDurationType::Seconds);
     vAction->_repeatCount = VROActionRepeatForever;
     vAction->_duration = duration;
@@ -74,7 +74,7 @@ void VROAction::execute(VRONode *node) {
 }
 
 void VROActionPerFrame::execute(VRONode *node) {
-    _action();
+    _aborted = !_action(_executed ? (VROTimeCurrentSeconds() - _startTime) : 0);
     VROAction::execute(node);
 }
 

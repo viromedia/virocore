@@ -41,9 +41,9 @@ public:
      For per-frame actions, the given function will be run once per frame. These will
      run either perpetually, or for the given number of frames or actions.
      */
-    static std::shared_ptr<VROAction> perpetualPerFrameAction(std::function<void()> action);
-    static std::shared_ptr<VROAction> repeatedPerFrameActionFrames(std::function<void()> action, int repeatCount);
-    static std::shared_ptr<VROAction> repeatedPerFrameActionSeconds(std::function<void()> action, float duration);
+    static std::shared_ptr<VROAction> perpetualPerFrameAction(std::function<bool(float)> action);
+    static std::shared_ptr<VROAction> repeatedPerFrameActionFrames(std::function<bool(float)> action, int repeatCount);
+    static std::shared_ptr<VROAction> repeatedPerFrameActionSeconds(std::function<bool(float)> action, float duration);
     
     /*
      For timed actions, the given function will be run each frame until the given number of
@@ -69,7 +69,8 @@ public:
     VROAction(VROActionType type, VROActionDurationType durationType) :
         _type(type),
         _durationType(durationType),
-        _executed(false)
+        _executed(false),
+        _aborted(false)
     {}
     virtual ~VROAction() {}
     
@@ -80,7 +81,10 @@ public:
         return _duration;
     }
     bool shouldRepeat() const {
-        if (_durationType == VROActionDurationType::Count) {
+        if (_aborted) {
+            return false;
+        }
+        else if (_durationType == VROActionDurationType::Count) {
             return _repeatCount > 0 || _repeatCount == VROActionRepeatForever;
         }
         else {
@@ -121,12 +125,18 @@ protected:
      */
     float _startTime;
     
+    /*
+     True if the action was manually aborted by way of a callback returning
+     false.
+     */
+    bool _aborted;
+    
 };
 
 class VROActionPerFrame : public VROAction {
 public:
     
-    VROActionPerFrame(std::function<void()> action, VROActionDurationType durationType) :
+    VROActionPerFrame(std::function<bool(float)> action, VROActionDurationType durationType) :
     VROAction(VROActionType::PerFrame, durationType),
         _action(action)
     {}
@@ -134,7 +144,7 @@ public:
     virtual void execute(VRONode *node);
     
 private:
-    std::function<void()> _action;
+    std::function<bool(float)> _action;
     
 };
 

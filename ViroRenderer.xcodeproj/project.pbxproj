@@ -40,7 +40,7 @@
 		8F83DEA51C4830360089C31A /* VROTimingFunctionEaseIn.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DEA41C482F560089C31A /* VROTimingFunctionEaseIn.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F83DEA71C4830DC0089C31A /* VROTimingFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F83DEA61C4830DC0089C31A /* VROTimingFunction.cpp */; };
 		8F83DEAA1C49B0540089C31A /* VROAllocationTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F83DEA81C49B0530089C31A /* VROAllocationTracker.cpp */; };
-		8F83DEAB1C49B0540089C31A /* VROAllocationTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DEA91C49B0540089C31A /* VROAllocationTracker.h */; };
+		8F83DEAB1C49B0540089C31A /* VROAllocationTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DEA91C49B0540089C31A /* VROAllocationTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F83DEAE1C50278C0089C31A /* VROSphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F83DEAC1C50278C0089C31A /* VROSphere.cpp */; };
 		8F83DEAF1C50278C0089C31A /* VROSphere.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DEAD1C50278C0089C31A /* VROSphere.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F83DEB11C503EDF0089C31A /* beach.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F83DEB01C503EDF0089C31A /* beach.jpg */; };
@@ -70,7 +70,7 @@
 		8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8FD1E1AB1C3CA07A0005BE4E /* soccerball.obj */; };
 		8FD1E1AF1C3F20C70005BE4E /* VROVideoSurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD1E1AD1C3F20C70005BE4E /* VROVideoSurface.cpp */; };
 		8FD1E1B01C3F20C70005BE4E /* VROVideoSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD1E1AE1C3F20C70005BE4E /* VROVideoSurface.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FD1E1B41C3F27190005BE4E /* VROFrameListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD1E1B21C3F27190005BE4E /* VROFrameListener.h */; };
+		8FD1E1B41C3F27190005BE4E /* VROFrameListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD1E1B21C3F27190005BE4E /* VROFrameListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD1E1B61C3F32A50005BE4E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B51C3F32A50005BE4E /* AVFoundation.framework */; };
 		8FD1E1B81C3F32B00005BE4E /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B71C3F32B00005BE4E /* CoreVideo.framework */; };
 		8FD1E1BA1C3F32D20005BE4E /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B91C3F32D20005BE4E /* CoreMedia.framework */; };

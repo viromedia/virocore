@@ -118,12 +118,13 @@
     
     [_view.HUD setReticleEnabled:YES];
     
-    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self] {
+    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self] (float seconds) {
         angle += .015;
-        
         for (std::shared_ptr<VRONode> &torusNode : _rootNode->getSubnodes()) {
             torusNode->setRotation({ 0, angle, 0});
         }
+        
+        return true;
     });
     
     _rootNode->runAction(action);
@@ -181,9 +182,11 @@
         VROTransaction::commit();
     });
     
-    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([boxNode, self] {
+    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([boxNode, self](float seconds) {
         angle += .015;
         boxNode->setRotation({ 0, angle, 0});
+        
+        return true;
     });
     
     boxNode->runAction(action);
@@ -268,9 +271,11 @@
     [HUD addSubview:label];
     [HUD setNeedsUpdate];
     
-    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([boxNode, self] {
+    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([boxNode, self](float seconds) {
         angle += .015;
         boxNode->setRotation({ 0, angle, 0});
+        
+        return true;
     });
     
     boxNode->runAction(action);
@@ -305,9 +310,11 @@
         VROTransaction::commit();
     });
     
-    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([objNode, self] {
+    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([objNode, self](float seconds) {
         angle += .015;
         objNode->setRotation({ 0, angle, 0});
+        
+        return true;
     });
     
     objNode->runAction(action);
