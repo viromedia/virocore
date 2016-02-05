@@ -98,9 +98,7 @@ public:
         return _fresnelExponent;
     }
     
-    void setTransparency(float transparency) {
-        _transparency = transparency;
-    }
+    void setTransparency(float transparency);
     float getTransparency() const {
         return _transparency;
     }

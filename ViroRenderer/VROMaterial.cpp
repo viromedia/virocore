@@ -83,6 +83,12 @@ VROMaterial::~VROMaterial() {
     ALLOCATION_TRACKER_SUB(Materials, 1);
 }
 
+void VROMaterial::setTransparency(float transparency) {
+    animate(std::make_shared<VROAnimationFloat>([this](float v) {
+        _transparency = v;
+    }, _transparency, transparency));
+}
+
 void VROMaterial::setShininess(float shininess) {
     animate(std::make_shared<VROAnimationFloat>([this](float v) {
         _shininess = v;
