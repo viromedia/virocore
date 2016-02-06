@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <vector>
 #include <memory>
+#include "VROAllocationTracker.h"
 
 class VRONode;
 class VRORenderContext;
@@ -21,6 +22,9 @@ class VROGeometry;
 class VROScene {
     
 public:
+    
+    VROScene();
+    virtual ~VROScene();
     
     void render(const VRORenderContext &renderContext);
     

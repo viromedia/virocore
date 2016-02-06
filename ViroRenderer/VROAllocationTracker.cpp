@@ -53,6 +53,7 @@ void VROAllocationTracker::print() {
 
 void VROAllocationTracker::printNow() {
     pinfo("Allocation tracking");
+    pinfo("    Scenes:              %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Scenes)].load()));
     pinfo("    Nodes:               %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Nodes)].load()));
     pinfo("    Geometry:            %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Geometry)].load()));
     pinfo("    Materials:           %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Materials)].load()));

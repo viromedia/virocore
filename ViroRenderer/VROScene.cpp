@@ -16,6 +16,14 @@
 #include "VROLight.h"
 #include <stack>
 
+VROScene::VROScene() {
+    ALLOCATION_TRACKER_ADD(Scenes, 1);
+}
+
+VROScene::~VROScene() {
+    ALLOCATION_TRACKER_SUB(Scenes, 1);
+}
+
 void VROScene::render(const VRORenderContext &renderContext) {
     VROMatrix4f identity;
 

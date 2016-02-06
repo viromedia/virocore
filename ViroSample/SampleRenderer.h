@@ -13,6 +13,8 @@
 
 @interface SampleRenderer : NSObject <VRORenderDelegate>
 
+- (IBAction)nextScene:(id)sender;
+
 @end
 
 

@@ -13,6 +13,7 @@
 #include <Metal/Metal.h>
 #include <vector>
 #include "VROTextureSubstrate.h"
+#include "VROAllocationTracker.h"
 
 enum class VROTextureType;
 class VRORenderContext;
@@ -25,8 +26,10 @@ public:
      Create a new texture substrate with the given underlying MTLTexture.
      */
     VROTextureSubstrateMetal(id <MTLTexture> texture) :
-        _texture(texture)
-    {}
+        _texture(texture) {
+    
+        ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
+    }
     
     /*
      Create a new Metal texture out of the contents of the current bitmap

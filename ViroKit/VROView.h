@@ -12,6 +12,9 @@
 #import <MetalKit/MetalKit.h>
 #import "VRORenderDelegate.h"
 #import "VROScreenUIView.h"
+#import <memory>
+
+class VROScene;
 
 @interface VROView : MTKView <MTKViewDelegate>
 
@@ -20,7 +23,9 @@
 @property (nonatomic) BOOL distortionCorrectionEnabled;
 @property (nonatomic) BOOL vignetteEnabled;
 @property (nonatomic) BOOL chromaticAberrationCorrectionEnabled;
+
 @property (nonatomic, readonly) VROScreenUIView *HUD;
+@property (readwrite, nonatomic) std::shared_ptr<VROScene> scene;
 
 - (instancetype)initWithFrame:(CGRect)frame;
 - (VRORenderContext *)renderContext;

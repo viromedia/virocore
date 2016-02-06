@@ -56,14 +56,8 @@ std::shared_ptr<VRONode> VRONode::clone() {
 void VRONode::render(const VRORenderContext &context, VRORenderParameters &params) {
     processActions();
     
-    /*
-     Render the presentation node if one is present. The presentation node
-     reflects the current state of animations.
-     */
-    VRONode *nodeToRender = _presentationNode ? _presentationNode.get() : this;
-    
-    nodeToRender->pushTransforms(params);
-    nodeToRender->renderNode(context, params);
+    pushTransforms(params);
+    renderNode(context, params);
     
     /*
      Node the node tree is only present in the model node, not in the
@@ -73,7 +67,7 @@ void VRONode::render(const VRORenderContext &context, VRORenderParameters &param
         childNode->render(context, params);
     }
     
-    nodeToRender->popTransforms(params);
+    popTransforms(params);
 }
 
 void VRONode::pushTransforms(VRORenderParameters &params) {

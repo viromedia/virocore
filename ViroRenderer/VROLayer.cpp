@@ -72,8 +72,6 @@ void VROLayer::onFrameUpdate() {
     
     VRONode::setPosition({ pt.x, pt.y, pt.z });
     VRONode::setScale( { _frame.size.width, _frame.size.height, 1.0 });
-    
-    NSLog(@"Position now %f, %f, %f", pt.x, pt.y, pt.z);
 }
 
 VRORect VROLayer::getFrame() const {

@@ -11,7 +11,6 @@
 #include "VROTexture.h"
 #include "VRORenderContextMetal.h"
 #include "VROLog.h"
-#include "VROAllocationTracker.h"
 
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(int width, int height, CGContextRef bitmapContext,
                                                    const VRORenderContext &context) {

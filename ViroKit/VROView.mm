@@ -21,6 +21,7 @@
 #import "VROImageUtil.h"
 #import "VROProjector.h"
 #import "VROAllocationTracker.h"
+#import "VROScene.h"
 
 @interface VROView () {
     VROMagnetSensor *_magnetSensor;
@@ -412,7 +413,12 @@
     _renderContext->setViewMatrix(leftEye->getEyeView());
     _renderContext->setProjectionMatrix(leftEye->perspective(zNear, zFar));
     
-    [self.renderDelegate renderEye:VROEyeTypeLeft context:_renderContext];
+    [self.renderDelegate willRenderEye:VROEyeTypeLeft context:_renderContext];
+    if (_scene) {
+        _scene->render(*_renderContext);
+    }
+    [self.renderDelegate didRenderEye:VROEyeTypeLeft context:_renderContext];
+    
     [_HUD updateWithContext:_renderContext];
     [_HUD renderEye:leftEye withContext:_renderContext];
     
@@ -427,7 +433,12 @@
     _renderContext->setViewMatrix(rightEye->getEyeView());
     _renderContext->setProjectionMatrix(rightEye->perspective(zNear, zFar));
     
-    [self.renderDelegate renderEye:VROEyeTypeRight context:_renderContext];
+    [self.renderDelegate willRenderEye:VROEyeTypeRight context:_renderContext];
+    if (_scene) {
+        _scene->render(*_renderContext);
+    }
+    [self.renderDelegate didRenderEye:VROEyeTypeRight context:_renderContext];
+    
     [_HUD renderEye:rightEye withContext:_renderContext];
     
     _renderContext->notifyFrameEnd();
