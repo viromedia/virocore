@@ -32,7 +32,7 @@ public:
     /*
      Designated initializer for nodes in the model tree.
      */
-    VRONode(const VRORenderContext &context);
+    VRONode();
     
     /*
      Copy constructor. This copies the node but *not* the underlying
@@ -42,11 +42,6 @@ public:
      To copy child nodes recursively, invoke the clone() function.
      */
     VRONode(const VRONode &node);
-    
-    /*
-     Designated initializer for nodes in the presentation tree.
-     */
-    VRONode();
     virtual ~VRONode();
     
     /*

@@ -32,14 +32,14 @@ static const float kVROLayerSize = 2;
 
 @implementation VROScreenUIView
 
-- (instancetype)initWithContext:(VRORenderContext *)context {
+- (instancetype)init {
     self = [super initWithFrame:CGRectMake(0, 0, kUIViewSize, kUIViewSize)];
     if (self) {
         /*
          Place the layer in front of the camera, far enough
          away to avoid discomfort.
          */
-        _layer = std::make_shared<VROLayer>(*context);
+        _layer = std::make_shared<VROLayer>();
         _layer->setFrame(VRORectMake(-kVROLayerSize / 2.0, -kVROLayerSize / 2.0, kVROLayerDepth,
                                      kVROLayerSize, kVROLayerSize));
         

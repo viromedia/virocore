@@ -155,7 +155,7 @@ std::shared_ptr<VRONode> VROLoader::loadMesh(MDLMesh *mesh,
         geometry->getMaterials().push_back(vM);
     }
     
-    std::shared_ptr<VRONode> node = std::make_shared<VRONode>(context);
+    std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
     node->setGeometry(geometry);
     
     return node;

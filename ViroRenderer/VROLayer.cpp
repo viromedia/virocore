@@ -15,8 +15,8 @@
 
 #pragma mark - Initialization
 
-VROLayer::VROLayer(const VRORenderContext &context) :
-    VRONode(context) {
+VROLayer::VROLayer() :
+    VRONode() {
     
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(1.0, 1.0);
     surface->getMaterials().front()->setLightingModel(VROLightingModel::Lambert);
@@ -72,6 +72,8 @@ void VROLayer::onFrameUpdate() {
     
     VRONode::setPosition({ pt.x, pt.y, pt.z });
     VRONode::setScale( { _frame.size.width, _frame.size.height, 1.0 });
+    
+    NSLog(@"Position now %f, %f, %f", pt.x, pt.y, pt.z);
 }
 
 VRORect VROLayer::getFrame() const {

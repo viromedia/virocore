@@ -19,7 +19,7 @@ class VROEye;
  */
 @interface VROScreenUIView : UIView
 
-- (instancetype)initWithContext:(VRORenderContext *)context;
+- (instancetype)init;
 
 - (void)updateWithContext:(VRORenderContext *)context;
 - (void)renderEye:(VROEye *)eye withContext:(VRORenderContext *)context;

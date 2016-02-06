@@ -109,7 +109,7 @@
     _renderContext = new VRORenderContextMetal(device);
     initBlankTexture(*_renderContext);
     
-    _HUD = [[VROScreenUIView alloc] initWithContext:_renderContext];
+    _HUD = [[VROScreenUIView alloc] init];
     
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
     [self addGestureRecognizer:tapRecognizer];

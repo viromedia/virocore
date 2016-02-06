@@ -19,10 +19,10 @@ static const bool kRenderDirectToContext = true;
 
 @implementation VROWorldUIView
 
-- (instancetype)initWithFrame:(CGRect)frame context:(VRORenderContext *)context {
+- (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        _layer = std::make_shared<VROLayer>(*context);
+        _layer = std::make_shared<VROLayer>();
         _layer->setFrame(VRORectMake(0, 0, 1.0, 1.0));
     }
     

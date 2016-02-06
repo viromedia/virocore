@@ -20,7 +20,7 @@
 
 #pragma mark - Initialization
 
-VRONode::VRONode(const VRORenderContext &context) :
+VRONode::VRONode() :
     _scale({1.0, 1.0, 1.0}),
     _pivot({0.5f, 0.5f, 0.5f}) {
     

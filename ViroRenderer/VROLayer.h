@@ -25,7 +25,7 @@ class VROLayer : public VRONode {
     
 public:
     
-    VROLayer(const VRORenderContext &context);
+    VROLayer();
     virtual ~VROLayer();
     
     void setContents(UIImage *image);

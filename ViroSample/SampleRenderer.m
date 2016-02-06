@@ -60,7 +60,7 @@
     
     material->getDiffuse().setContents(videoTexture);
     
-    std::shared_ptr<VRONode> sphereNode = std::make_shared<VRONode>(*context);
+    std::shared_ptr<VRONode> sphereNode = std::make_shared<VRONode>();
     sphereNode->setGeometry(sphere);
     sphereNode->setPosition({0, 0, 0});
     
@@ -74,7 +74,7 @@
     material->setLightingModel(VROLightingModel::Blinn);
     material->getReflective().setContentsCube([self cubeTexture]);
     
-    std::shared_ptr<VRONode> torusNode = std::make_shared<VRONode>(*context);
+    std::shared_ptr<VRONode> torusNode = std::make_shared<VRONode>();
     torusNode->setGeometry(torus);
     torusNode->setPosition(position);
     torusNode->setPivot({1, 0.5, 0.5});
@@ -155,7 +155,7 @@
     material->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"boba"]));
     material->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"specular"]));
     
-    std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>(*context);
+    std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
     boxNode->setPosition({0, 0, -5});
     
@@ -221,7 +221,7 @@
     material->getDiffuse().setContents(videoTexture);
     material->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"specular"]));
     
-    std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>(*context);
+    std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
     boxNode->setPosition({0, 1.5, -5});
     
@@ -230,7 +230,7 @@
     /*
      Create the moments icon node.
      */
-    std::shared_ptr<VROLayer> center = std::make_shared<VROLayer>(*context);
+    std::shared_ptr<VROLayer> center = std::make_shared<VROLayer>();
     center->setContents([UIImage imageNamed:@"momentslogo"]);
     center->setFrame(VRORectMake(-0.5, -1.25, -2, 1, 1));
     
@@ -239,7 +239,7 @@
     /*
      Create the label node.
      */
-    VROWorldUIView *labelView = [[VROWorldUIView alloc] initWithFrame:CGRectMake(0, 0, 100, 10) context:context];
+    VROWorldUIView *labelView = [[VROWorldUIView alloc] initWithFrame:CGRectMake(0, 0, 100, 10)];
     labelView.vroLayer->setFrame(VRORectMake(-1, -1.5, -2, 2, 0.2));
     
     [labelView setBackgroundColor:[UIColor clearColor]];
@@ -328,7 +328,7 @@
 
     _scene->setBackground([self cubeTexture]);
 
-    _rootNode = std::make_shared<VRONode>(*context);
+    _rootNode = std::make_shared<VRONode>();
     _rootNode->setPosition({0, 0, 0});
     
     //[self runSphereTest:context];
