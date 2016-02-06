@@ -77,6 +77,7 @@
     std::shared_ptr<VRONode> torusNode = std::make_shared<VRONode>(*context);
     torusNode->setGeometry(torus);
     torusNode->setPosition(position);
+    torusNode->setPivot({1, 0.5, 0.5});
     
     return torusNode;
 }

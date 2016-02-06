@@ -21,7 +21,8 @@
 #pragma mark - Initialization
 
 VRONode::VRONode(const VRORenderContext &context) :
-    _scale({1.0, 1.0, 1.0}) {
+    _scale({1.0, 1.0, 1.0}),
+    _pivot({0.5f, 0.5f, 0.5f}) {
     
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -31,7 +32,8 @@ VRONode::VRONode(const VRONode &node) :
     _light(node._light),
     _scale(node._scale),
     _position(node._position),
-    _rotation(node._rotation) {
+    _rotation(node._rotation),
+    _pivot(node._pivot) {
         
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -106,9 +108,24 @@ void VRONode::popTransforms(VRORenderParameters &params) {
 }
 
 VROMatrix4f VRONode::getTransform() const {
+    VROMatrix4f pivotMtx, unpivotMtx;
+    
+    if (_geometry) {
+        VROBoundingBox bounds = _geometry->getBoundingBox();
+        VROVector3f extents = bounds.getExtents();
+        
+        VROVector3f pivotCoordinate(bounds.getMinX() * (1 - _pivot.x) + bounds.getMaxX() * _pivot.x,
+                                    bounds.getMinY() * (1 - _pivot.y) + bounds.getMaxY() * _pivot.y,
+                                    bounds.getMinZ() * (1 - _pivot.z) + bounds.getMaxZ() * _pivot.z);
+        
+        pivotMtx.translate(-pivotCoordinate.x, -pivotCoordinate.y, -pivotCoordinate.z);
+        unpivotMtx.translate(pivotCoordinate.x, pivotCoordinate.y, pivotCoordinate.z);
+    }
+    
     VROMatrix4f transform = _rotation.getMatrix();
     transform.scale(_scale.x, _scale.y, _scale.z);
     transform.translate(_position.x, _position.y, _position.z);
+    transform = unpivotMtx.multiply(transform).multiply(pivotMtx);
     
     return transform;
 }
@@ -131,6 +148,12 @@ void VRONode::setScale(VROVector3f scale) {
     animate(std::make_shared<VROAnimationVector3f>([this](VROVector3f s) {
                                                        _scale = s;
                                                    }, _scale, scale));
+}
+
+void VRONode::setPivot(VROVector3f pivot) {
+    animate(std::make_shared<VROAnimationVector3f>([this](VROVector3f s) {
+                                                        _pivot = s;
+                                                   }, _pivot, pivot));
 }
 
 #pragma mark - Actions

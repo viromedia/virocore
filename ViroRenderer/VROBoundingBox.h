@@ -99,6 +99,12 @@ public:
     float getSpanZ() const {
         return _planes[VROBoxPlaneMaxZ] - _planes[VROBoxPlaneMinZ];
     }
+    VROVector3f getCenter() const {
+        return { getX(), getY(), getZ() };
+    }
+    VROVector3f getExtents() const {
+        return { getSpanX(), getSpanY(), getSpanZ() };
+    }
 
     /*
      Set the coordinates of the bounding box.

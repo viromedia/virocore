@@ -76,6 +76,17 @@ public:
     void setScale(VROVector3f scale);
     
     /*
+     The pivot point is the point about which we apply rotation, translation,
+     and scale. This is specified as a vector ranging from [0, 1], where 0 
+     corresponds to the leftmost point (bottom-most, nearest) point in the 
+     node's local coordinate system, and 1.0 corresponds to the rightmost 
+     (top-most, furthest) point in the local coordinate system.
+     
+     Default is {0.5, 0,5. 0,5} which corresponds the center of the node.
+     */
+    void setPivot(VROVector3f pivot);
+    
+    /*
      Lights.
      */
     void setLight(std::shared_ptr<VROLight> light) {
@@ -138,6 +149,7 @@ private:
     VROVector3f _scale;
     VROVector3f _position;
     VROQuaternion _rotation;
+    VROVector3f _pivot;
     
     /*
      The 'presentation' counterpart of this node. The presentation node
