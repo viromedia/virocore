@@ -20,7 +20,6 @@ class VROScene;
 
 @property (nonatomic, unsafe_unretained) IBOutlet id <VRORenderDelegate> renderDelegate;
 @property (nonatomic) BOOL vrModeEnabled;
-@property (nonatomic) BOOL distortionCorrectionEnabled;
 @property (nonatomic) BOOL vignetteEnabled;
 @property (nonatomic) BOOL chromaticAberrationCorrectionEnabled;
 

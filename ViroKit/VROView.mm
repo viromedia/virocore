@@ -37,11 +37,6 @@
     VRORenderContextMetal *_renderContext;
     dispatch_semaphore_t _inflight_semaphore;
     
-    float _distortionCorrectionScale;
-    
-    float _zNear;
-    float _zFar;
-    
     BOOL _projectionChanged;
     BOOL _frameParamentersReady;
     BOOL _rendererInitialized;
@@ -80,14 +75,8 @@
     _rightEye = new VROEye(VROEye::TypeRight);
     
     _distortionRenderer = new VRODistortionRenderer(*_device);
-    _distortionCorrectionScale = 1.0f;
-    
     _vrModeEnabled = YES;
-    _distortionCorrectionEnabled = YES;
     _rendererInitialized = NO;
-    
-    _zNear = 0.1f;
-    _zFar = 100.0f;
     
     _projectionChanged = YES;
     _frameParamentersReady = NO;
@@ -202,12 +191,7 @@
         
         if (view.currentRenderPassDescriptor) {
             if (self.vrModeEnabled) {
-                if (_distortionCorrectionEnabled) {
-                    [self renderVRDistortionInView:view withCommandBuffer:commandBuffer];
-                }
-                else {
-                    [self renderVRInView:view withCommandBuffer:commandBuffer];
-                }
+                [self renderVRDistortionInView:view withCommandBuffer:commandBuffer];
             }
             else {
                 [self renderMonocularInView:view withCommandBuffer:commandBuffer];
@@ -243,14 +227,6 @@
     
     _distortionRenderer->renderEyesToScreen(screenRenderEncoder, _renderContext->getFrame());
     [screenRenderEncoder endEncoding];
-}
-
-- (void)renderVRInView:(MTKView *)view withCommandBuffer:(id <MTLCommandBuffer>)commandBuffer {
-    std::shared_ptr<VRORenderTarget> screenTarget = std::make_shared<VRORenderTarget>(view, commandBuffer);
-    _renderContext->setRenderTarget(screenTarget);
-    
-    [self drawFrameWithLeftEye:_leftEye rightEye:_rightEye];
-    [screenTarget->getRenderEncoder() endEncoding];
 }
 
 - (void)renderMonocularInView:(MTKView *)view withCommandBuffer:(id <MTLCommandBuffer>)commandBuffer {
@@ -299,19 +275,16 @@
         if (!self.vrModeEnabled) {
             [self updateMonocularEye:monocularEye];
         }
-        else if (_distortionCorrectionEnabled) {
+        else {
             [self updateLeftEye:leftEye rightEye:rightEye];
             _distortionRenderer->fovDidChange(leftEye->getFOV(), rightEye->getFOV(),
                                               [self virtualEyeToScreenDistance]);
-        }
-        else {
-            [self updateUndistortedFOVAndViewport];
         }
         
         _projectionChanged = NO;
     }
     
-    if (self.distortionCorrectionEnabled && _distortionRenderer->viewportsChanged()) {
+    if (_distortionRenderer->viewportsChanged()) {
         _distortionRenderer->updateViewports(leftEye, rightEye);
     }
 }
@@ -353,32 +326,6 @@
                      leftEyeFov.getLeft(),
                      leftEyeFov.getBottom(),
                      leftEyeFov.getTop());
-}
-
-- (void)updateUndistortedFOVAndViewport {
-    const VROScreen &screen = _device->getScreen();
-    
-    float halfInterLensDistance = _device->getInterLensDistance() * 0.5f;
-    float eyeToScreenDistance = [self virtualEyeToScreenDistance];
-    
-    float left = screen.getWidthInMeters() / 2.0f - halfInterLensDistance;
-    float right = halfInterLensDistance;
-    float bottom = _device->getVerticalDistanceToLensCenter() - screen.getBorderSizeInMeters();
-    float top = screen.getBorderSizeInMeters() + screen.getHeightInMeters() - _device->getVerticalDistanceToLensCenter();
-    
-    _leftEye->setFOV(GLKMathRadiansToDegrees(atan2f(left, eyeToScreenDistance)),
-                     GLKMathRadiansToDegrees(atan2f(right, eyeToScreenDistance)),
-                     GLKMathRadiansToDegrees(atan2f(bottom, eyeToScreenDistance)),
-                     GLKMathRadiansToDegrees(atan2f(top, eyeToScreenDistance)));
-    
-    const VROFieldOfView &leftEyeFov = _leftEye->getFOV();
-    _rightEye->setFOV(leftEyeFov.getRight(),
-                      leftEyeFov.getLeft(),
-                      leftEyeFov.getBottom(),
-                      leftEyeFov.getTop());
-    
-    _leftEye->setViewport(0, 0, screen.getWidth() / 2, screen.getHeight());
-    _rightEye->setViewport(screen.getWidth() / 2, 0, screen.getWidth() / 2, screen.getHeight());
 }
 
 - (void)layoutSubviews {
