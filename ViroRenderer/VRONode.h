@@ -99,13 +99,16 @@ public:
         node->_supernode = std::static_pointer_cast<VRONode>(shared_from_this());
     }
     void removeFromParentNode() {
-        std::vector<std::shared_ptr<VRONode>> parentSubnodes = _supernode->_subnodes;
-        parentSubnodes.erase(
-                             std::remove_if(parentSubnodes.begin(), parentSubnodes.end(),
-                                            [this](std::shared_ptr<VRONode> layer) {
-                                                return layer.get() == this;
-                                            }), parentSubnodes.end());
-        _supernode.reset();
+        std::shared_ptr<VRONode> supernode = _supernode.lock();
+        if (supernode) {
+            std::vector<std::shared_ptr<VRONode>> parentSubnodes = supernode->_subnodes;
+            parentSubnodes.erase(
+                                 std::remove_if(parentSubnodes.begin(), parentSubnodes.end(),
+                                                [this](std::shared_ptr<VRONode> layer) {
+                                                    return layer.get() == this;
+                                                }), parentSubnodes.end());
+            _supernode.reset();
+        }
     }
     
     /*
@@ -134,7 +137,7 @@ protected:
      The node's parent and children.
      */
     std::vector<std::shared_ptr<VRONode>> _subnodes;
-    std::shared_ptr<VRONode> _supernode;
+    std::weak_ptr<VRONode> _supernode;
     
 private:
     
@@ -145,13 +148,6 @@ private:
     VROVector3f _position;
     VROQuaternion _rotation;
     VROVector3f _pivot;
-    
-    /*
-     The 'presentation' counterpart of this node. The presentation node
-     reflects what's actually on the screen during an animation, as opposed
-     to the model.
-     */
-    std::shared_ptr<VRONode> _presentationNode;
     
     /*
      Active actions on this node.

@@ -19,7 +19,7 @@ class VROAnimationQuaternion : public VROAnimation {
     
 public:
     
-    VROAnimationQuaternion(std::function<void(VROQuaternion)> method,
+    VROAnimationQuaternion(std::function<void(VROAnimatable *const, VROQuaternion)> method,
                            VROQuaternion start,
                            VROQuaternion end) :
         VROAnimation(),
@@ -28,10 +28,10 @@ public:
         _method(method)
     {}
     
-    VROAnimationQuaternion(std::function<void(VROQuaternion)> method,
+    VROAnimationQuaternion(std::function<void(VROAnimatable *const, VROQuaternion)> method,
                            VROQuaternion start,
                            VROQuaternion end,
-                           std::function<void()> finishCallback) :
+                           std::function<void(VROAnimatable *const)> finishCallback) :
     VROAnimation(finishCallback),
     _start(start),
     _end(end),
@@ -44,14 +44,14 @@ public:
         
         std::shared_ptr<VROAnimatable> animatable = _animatable.lock();
         if (animatable) {
-            _method(value);
+            _method(animatable.get(), value);
         }
     }
     
     void finish() {
         std::shared_ptr<VROAnimatable> animatable = _animatable.lock();
         if (animatable) {
-            _method(_end);
+            _method(animatable.get(), _end);
         }
         
         onTermination();
@@ -60,7 +60,7 @@ public:
 private:
     
     VROQuaternion _start, _end;
-    std::function<void(VROQuaternion)> _method;
+    std::function<void(VROAnimatable *const, VROQuaternion)> _method;
     
 };
 

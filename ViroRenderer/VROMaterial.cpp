@@ -84,45 +84,47 @@ VROMaterial::~VROMaterial() {
 }
 
 void VROMaterial::setTransparency(float transparency) {
-    animate(std::make_shared<VROAnimationFloat>([this](float v) {
-        _transparency = v;
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
+        ((VROMaterial *)animatable)->_transparency = v;
     }, _transparency, transparency));
 }
 
 void VROMaterial::setShininess(float shininess) {
-    animate(std::make_shared<VROAnimationFloat>([this](float v) {
-        _shininess = v;
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
+        ((VROMaterial *)animatable)->_shininess = v;
     }, _shininess, shininess));
 }
 
 void VROMaterial::setFresnelExponent(float fresnelExponent) {
-    animate(std::make_shared<VROAnimationFloat>([this](float v) {
-        _fresnelExponent = v;
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
+        ((VROMaterial *)animatable)->_fresnelExponent = v;
     }, _fresnelExponent, fresnelExponent));
 }
 
 void VROMaterial::fadeSnapshot() {
     std::shared_ptr<VROTransaction> transaction = VROTransaction::get();
     if (transaction && !transaction->isDegenerate()) {
-        std::shared_ptr<VROMaterial> outgoing = std::make_shared<VROMaterial>(std::static_pointer_cast<VROMaterial>(shared_from_this()));
+        std::shared_ptr<VROMaterial> shared = std::static_pointer_cast<VROMaterial>(shared_from_this());
+        std::shared_ptr<VROMaterial> outgoing = std::make_shared<VROMaterial>(shared);
         _outgoing = outgoing;
         
         _transparency = 0.0;
-        animate(std::make_shared<VROAnimationFloat>([this](float v) {
-                                                        _transparency = v;
+        animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
+                                                        ((VROMaterial *)animatable)->_transparency = v;
                                                     },
                                                     0.0, 1.0,
-                                                    [this, outgoing]() {
+                                                    [outgoing](VROAnimatable *const animatable) {
+                                                        VROMaterial *material = ((VROMaterial *)animatable);
                                                         // Ensure we're not removing a more recent animation
-                                                        if (outgoing == _outgoing) {
-                                                            removeOutgoingMaterial();
+                                                        if (outgoing == material->_outgoing) {
+                                                            material->removeOutgoingMaterial();
                                                         }
                                                     }
                                                     ));
         
         _outgoing->_transparency = 1.0;
-        _outgoing->animate(std::make_shared<VROAnimationFloat>([this](float v) {
-            _outgoing->_transparency = v;
+        _outgoing->animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
+            ((VROMaterial *)animatable)->_transparency = v;
         }, 1.0, 0.0));
     }
 }

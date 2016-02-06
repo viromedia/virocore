@@ -25,7 +25,7 @@ class VROAnimation {
 public:
     
     VROAnimation() {}
-    VROAnimation(std::function<void()> finishCallback) :
+    VROAnimation(std::function<void(VROAnimatable *const)> finishCallback) :
         _finishCallback(finishCallback)
     {}
     
@@ -42,7 +42,7 @@ public:
     /*
      Set a function to invoke when the animation completes.
      */
-    void setFinishCallback(std::function<void()> callback) {
+    void setFinishCallback(std::function<void(VROAnimatable *const)> callback) {
         _finishCallback = callback;
     }
     
@@ -62,15 +62,17 @@ public:
      */
     void onTermination() {
         if (_finishCallback) {
-            _finishCallback();
+            std::shared_ptr<VROAnimatable> animatable = _animatable.lock();
+            if (animatable) {
+                _finishCallback(animatable.get());
+            }
         }
     }
     
 protected:
     
     std::weak_ptr<VROAnimatable> _animatable;
-    
-    std::function<void()> _finishCallback;
+    std::function<void(VROAnimatable *const)> _finishCallback;
     
 };
 

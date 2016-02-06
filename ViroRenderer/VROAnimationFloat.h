@@ -16,7 +16,7 @@ class VROAnimationFloat : public VROAnimation {
     
 public:
     
-    VROAnimationFloat(std::function<void(float)> method,
+    VROAnimationFloat(std::function<void(VROAnimatable *const, float)> method,
                       float start, float end) :
         VROAnimation(),
         _start(start),
@@ -24,10 +24,10 @@ public:
         _method(method)
     {}
     
-    VROAnimationFloat(std::function<void(float)> method,
+    VROAnimationFloat(std::function<void(VROAnimatable *const, float)> method,
                       float start,
                       float end,
-                      std::function<void()> finishCallback) :
+                      std::function<void(VROAnimatable *const)> finishCallback) :
         VROAnimation(finishCallback),
         _start(start),
         _end(end),
@@ -39,14 +39,14 @@ public:
         
         std::shared_ptr<VROAnimatable> animatable = _animatable.lock();
         if (animatable) {
-            _method(value);
+            _method(animatable.get(), value);
         }
     }
     
     void finish() {
         std::shared_ptr<VROAnimatable> animatable = _animatable.lock();
         if (animatable) {
-            _method(_end);
+            _method(animatable.get(), _end);
         }
         
         onTermination();
@@ -55,7 +55,7 @@ public:
 private:
     
     float _start, _end;
-    std::function<void(float)>  _method;
+    std::function<void(VROAnimatable *const, float)>  _method;
     
 };
 

@@ -127,26 +127,26 @@ VROMatrix4f VRONode::getTransform() const {
 #pragma mark - Setters
 
 void VRONode::setRotation(VROQuaternion rotation) {
-    animate(std::make_shared<VROAnimationQuaternion>([this](VROQuaternion r) {
-                                                         _rotation = r;
+    animate(std::make_shared<VROAnimationQuaternion>([](VROAnimatable *const animatable, VROQuaternion r) {
+                                                         ((VRONode *)animatable)->_rotation = r;
                                                      }, _rotation, rotation));
 }
 
 void VRONode::setPosition(VROVector3f position) {
-    animate(std::make_shared<VROAnimationVector3f>([this](VROVector3f p) {
-                                                       _position = p;
+    animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f p) {
+                                                       ((VRONode *)animatable)->_position = p;
                                                    }, _position, position));
 }
 
 void VRONode::setScale(VROVector3f scale) {
-    animate(std::make_shared<VROAnimationVector3f>([this](VROVector3f s) {
-                                                       _scale = s;
+    animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f s) {
+                                                       ((VRONode *)animatable)->_scale = s;
                                                    }, _scale, scale));
 }
 
 void VRONode::setPivot(VROVector3f pivot) {
-    animate(std::make_shared<VROAnimationVector3f>([this](VROVector3f s) {
-                                                        _pivot = s;
+    animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f s) {
+                                                        ((VRONode *)animatable)->_pivot = s;
                                                    }, _pivot, pivot));
 }
 

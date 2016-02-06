@@ -41,16 +41,16 @@ public:
      For per-frame actions, the given function will be run once per frame. These will
      run either perpetually, or for the given number of frames or actions.
      */
-    static std::shared_ptr<VROAction> perpetualPerFrameAction(std::function<bool(float)> action);
-    static std::shared_ptr<VROAction> repeatedPerFrameActionFrames(std::function<bool(float)> action, int repeatCount);
-    static std::shared_ptr<VROAction> repeatedPerFrameActionSeconds(std::function<bool(float)> action, float duration);
+    static std::shared_ptr<VROAction> perpetualPerFrameAction(std::function<bool(VRONode *const, float)> action);
+    static std::shared_ptr<VROAction> repeatedPerFrameActionFrames(std::function<bool(VRONode *const, float)> action, int repeatCount);
+    static std::shared_ptr<VROAction> repeatedPerFrameActionSeconds(std::function<bool(VRONode *const, float)> action, float duration);
     
     /*
      For timed actions, the given function will be run each frame until the given number of
      seconds. The function takes a variable t that runs from [0,1] over the course of the duration,
      transformed by the provided timing function.
      */
-    static std::shared_ptr<VROAction> timedAction(std::function<void(float)> action,
+    static std::shared_ptr<VROAction> timedAction(std::function<void(VRONode *const, float)> action,
                                                   VROTimingFunctionType timingFunction,
                                                   float duration);
     
@@ -59,10 +59,10 @@ public:
      to use the given timing function and duration. These are merely helper functions that sit over
      the VROTransaction animation framework.
      */
-    static std::shared_ptr<VROAction> perpetualAnimatedAction(std::function<void()> action,
+    static std::shared_ptr<VROAction> perpetualAnimatedAction(std::function<void(VRONode *const)> action,
                                                               VROTimingFunctionType timingFunction,
                                                               float duration);
-    static std::shared_ptr<VROAction> repeatedAnimatedAction(std::function<void()> action,
+    static std::shared_ptr<VROAction> repeatedAnimatedAction(std::function<void(VRONode *const)> action,
                                                              VROTimingFunctionType timingFunction,
                                                              float duration, int repeatCount);
     
@@ -136,7 +136,7 @@ protected:
 class VROActionPerFrame : public VROAction {
 public:
     
-    VROActionPerFrame(std::function<bool(float)> action, VROActionDurationType durationType) :
+    VROActionPerFrame(std::function<bool(VRONode *const, float)> action, VROActionDurationType durationType) :
     VROAction(VROActionType::PerFrame, durationType),
         _action(action)
     {}
@@ -144,14 +144,14 @@ public:
     virtual void execute(VRONode *node);
     
 private:
-    std::function<bool(float)> _action;
+    std::function<bool(VRONode *const, float)> _action;
     
 };
 
 class VROActionTimed : public VROAction {
 public:
     
-    VROActionTimed(std::function<void(float)> action, VROTimingFunctionType timingFunctionType) :
+    VROActionTimed(std::function<void(VRONode *const, float)> action, VROTimingFunctionType timingFunctionType) :
         VROAction(VROActionType::Timed, VROActionDurationType::Seconds),
         _action(action),
         _timingFunction(VROTimingFunction::forType(timingFunctionType))
@@ -160,14 +160,14 @@ public:
     virtual void execute(VRONode *node);
     
 private:
-    std::function<void(float)> _action;
+    std::function<void(VRONode *const, float)> _action;
     std::unique_ptr<VROTimingFunction> _timingFunction;
 };
 
 class VROActionAnimated : public VROAction {
 public:
     
-    VROActionAnimated(std::function<void()> action, VROTimingFunctionType timingFunctionType) :
+    VROActionAnimated(std::function<void(VRONode *const)> action, VROTimingFunctionType timingFunctionType) :
         VROAction(VROActionType::Animated, VROActionDurationType::Count),
         _action(action),
         _timingFunctionType(timingFunctionType)
@@ -176,7 +176,7 @@ public:
     virtual void execute(VRONode *node);
     
 private:
-    std::function<void()> _action;
+    std::function<void(VRONode *const)> _action;
     VROTimingFunctionType _timingFunctionType;
 };
 

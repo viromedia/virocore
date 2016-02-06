@@ -18,7 +18,7 @@ class VROAnimationVector3f : public VROAnimation {
     
 public:
     
-    VROAnimationVector3f(std::function<void(VROVector3f)> method,
+    VROAnimationVector3f(std::function<void(VROAnimatable *const, VROVector3f)> method,
                          VROVector3f start,
                          VROVector3f end) :
         VROAnimation(),
@@ -27,10 +27,10 @@ public:
         _method(method)
     {}
     
-    VROAnimationVector3f(std::function<void(VROVector3f)> method,
+    VROAnimationVector3f(std::function<void(VROAnimatable *const, VROVector3f)> method,
                          VROVector3f start,
                          VROVector3f end,
-                         std::function<void()> finishCallback) :
+                         std::function<void(VROAnimatable *const)> finishCallback) :
     VROAnimation(finishCallback),
     _start(start),
     _end(end),
@@ -42,14 +42,14 @@ public:
         
         std::shared_ptr<VROAnimatable> animatable = _animatable.lock();
         if (animatable) {
-            _method(value);
+            _method(animatable.get(), value);
         }
     }
     
     void finish() {
         std::shared_ptr<VROAnimatable> animatable = _animatable.lock();
         if (animatable) {
-            _method(_end);
+            _method(animatable.get(), _end);
         }
         
         onTermination();
@@ -58,7 +58,7 @@ public:
 private:
     
     VROVector3f _start, _end;
-    std::function<void(VROVector3f)> _method;
+    std::function<void(VROAnimatable *const, VROVector3f)> _method;
     
 };
 

@@ -11,28 +11,28 @@
 #include "VRONode.h"
 #include "VROMath.h"
 
-std::shared_ptr<VROAction> VROAction::perpetualPerFrameAction(std::function<bool(float)> action) {
+std::shared_ptr<VROAction> VROAction::perpetualPerFrameAction(std::function<bool(VRONode *const, float)> action) {
     std::shared_ptr<VROAction> vAction = std::make_shared<VROActionPerFrame>(action,
                                                                              VROActionDurationType::Count);
     vAction->_repeatCount = VROActionRepeatForever;
     return vAction;
 }
 
-std::shared_ptr<VROAction> VROAction::repeatedPerFrameActionFrames(std::function<bool(float)> action, int repeatCount) {
+std::shared_ptr<VROAction> VROAction::repeatedPerFrameActionFrames(std::function<bool(VRONode *const, float)> action, int repeatCount) {
     std::shared_ptr<VROAction> vAction = std::make_shared<VROActionPerFrame>(action,
                                                                              VROActionDurationType::Count);
     vAction->_repeatCount = repeatCount;
     return vAction;
 }
 
-std::shared_ptr<VROAction> VROAction::repeatedPerFrameActionSeconds(std::function<bool(float)> action, float duration) {
+std::shared_ptr<VROAction> VROAction::repeatedPerFrameActionSeconds(std::function<bool(VRONode *const, float)> action, float duration) {
     std::shared_ptr<VROAction> vAction = std::make_shared<VROActionPerFrame>(action, VROActionDurationType::Seconds);
     vAction->_repeatCount = VROActionRepeatForever;
     vAction->_duration = duration;
     return vAction;
 }
 
-std::shared_ptr<VROAction> VROAction::timedAction(std::function<void(float)> action,
+std::shared_ptr<VROAction> VROAction::timedAction(std::function<void(VRONode *const, float)> action,
                                                   VROTimingFunctionType timingFunction,
                                                   float duration) {
     
@@ -42,7 +42,7 @@ std::shared_ptr<VROAction> VROAction::timedAction(std::function<void(float)> act
     return vAction;
 }
 
-std::shared_ptr<VROAction> VROAction::perpetualAnimatedAction(std::function<void()> action,
+std::shared_ptr<VROAction> VROAction::perpetualAnimatedAction(std::function<void(VRONode *const)> action,
                                                               VROTimingFunctionType timingFunction,
                                                               float duration) {
     std::shared_ptr<VROAction> vAction = std::make_shared<VROActionAnimated>(action, timingFunction);
@@ -51,7 +51,7 @@ std::shared_ptr<VROAction> VROAction::perpetualAnimatedAction(std::function<void
     return vAction;
 }
 
-std::shared_ptr<VROAction> VROAction::repeatedAnimatedAction(std::function<void()> action,
+std::shared_ptr<VROAction> VROAction::repeatedAnimatedAction(std::function<void(VRONode *const)> action,
                                                              VROTimingFunctionType timingFunction,
                                                              float duration, int repeatCount) {
     std::shared_ptr<VROAction> vAction = std::make_shared<VROActionAnimated>(action, timingFunction);
@@ -74,13 +74,13 @@ void VROAction::execute(VRONode *node) {
 }
 
 void VROActionPerFrame::execute(VRONode *node) {
-    _aborted = !_action(_executed ? (VROTimeCurrentSeconds() - _startTime) : 0);
+    _aborted = !_action(node, _executed ? (VROTimeCurrentSeconds() - _startTime) : 0);
     VROAction::execute(node);
 }
 
 void VROActionTimed::execute(VRONode *node) {
     float t = VROMathClamp((VROTimeCurrentSeconds() - _startTime) / _duration, 0.0, 1.0);
-    _action(_timingFunction->getT(t));
+    _action(node, _timingFunction->getT(t));
     
     VROAction::execute(node);
 }
@@ -97,7 +97,7 @@ void VROActionAnimated::execute(VRONode *node) {
         }
     });
     
-    _action();
+    _action(node);
     VROAction::execute(node);
     
     VROTransaction::commit();

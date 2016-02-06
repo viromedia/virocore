@@ -73,7 +73,7 @@ void VROMaterialVisual::setContentsCube(std::shared_ptr<VROTexture> texture) {
 void VROMaterialVisual::setIntensity(float intensity) {
     // TODO Migrate this to the snapshot system
     
-    _heartbeat->animate(std::make_shared<VROAnimationFloat>([this](float value) {
-                                                                _intensity = value;
+    _heartbeat->animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float value) {
+                                                                ((VROMaterialVisual *)animatable)->_intensity = value;
                                                             }, _intensity, intensity));
 }
