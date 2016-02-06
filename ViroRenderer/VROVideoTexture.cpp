@@ -11,6 +11,7 @@
 #include "VROLog.h"
 #include "VROTextureSubstrateMetal.h"
 #include "VROTime.h"
+#include "VROAllocationTracker.h"
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
 
@@ -25,10 +26,12 @@ VROVideoTexture::VROVideoTexture() :
     
     NSDictionary *pixBuffAttributes = @{(id)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA)};
     _videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
+        
+    ALLOCATION_TRACKER_ADD(VideoTextures, 1);
 }
 
 VROVideoTexture::~VROVideoTexture() {
-    
+    ALLOCATION_TRACKER_SUB(VideoTextures, 1);
 }
 
 #pragma mark - Recorded Video Playback

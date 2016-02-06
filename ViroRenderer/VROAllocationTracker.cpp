@@ -60,4 +60,5 @@ void VROAllocationTracker::printNow() {
     pinfo("    Material Substrates: %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::MaterialSubstrates)].load()));
     pinfo("    Textures:            %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Textures)].load()));
     pinfo("    Texture Substrates:  %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::TextureSubstrates)].load()));
+    pinfo("    Video Textures:      %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::VideoTextures)].load()));
 }
