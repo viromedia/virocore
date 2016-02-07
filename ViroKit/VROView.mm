@@ -7,6 +7,7 @@
 //
 
 #import "VROView.h"
+#import "VROTime.h"
 #import "VRODevice.h"
 #import "VRODistortion.h"
 #import "VRODistortionRenderer.h"
@@ -40,11 +41,21 @@
     BOOL _projectionChanged;
     BOOL _frameParamentersReady;
     BOOL _rendererInitialized;
+    
+    float _sceneTransitionDuration;
+    float _sceneTransitionStartTime;
+    std::unique_ptr<VROTimingFunction> _sceneTransitionTimingFunction;
+    std::function<void(VROScene *const incoming, VROScene *const outgoing, float t)> _sceneTransitionAnimator;
+    std::function<void(VROScene *const incoming, VROScene *const outgoing)> _sceneTransitionEnd;
 }
+
+@property (readwrite, nonatomic) std::shared_ptr<VROScene> outgoingScene;
 
 @end
 
 @implementation VROView
+
+#pragma mark - Initialization
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
@@ -352,6 +363,7 @@
     const float zNear = 0.1;
     const float zFar  = 100;
     
+    BOOL sceneTransitionActive = [self processSceneTransition];
     _renderContext->notifyFrameStart();
     
     [renderEncoder setViewport:leftEye->getViewport().toMetalViewport()];
@@ -362,7 +374,17 @@
     
     [self.renderDelegate willRenderEye:VROEyeTypeLeft context:_renderContext];
     if (_scene) {
-        _scene->render(*_renderContext);
+        if (_outgoingScene) {
+            _outgoingScene->renderBackground(*_renderContext);
+            _scene->renderBackground(*_renderContext);
+            
+            _outgoingScene->render(*_renderContext);
+            _scene->render(*_renderContext);
+        }
+        else {
+            _scene->renderBackground(*_renderContext);
+            _scene->render(*_renderContext);
+        }
     }
     [self.renderDelegate didRenderEye:VROEyeTypeLeft context:_renderContext];
     
@@ -382,18 +404,34 @@
     
     [self.renderDelegate willRenderEye:VROEyeTypeRight context:_renderContext];
     if (_scene) {
-        _scene->render(*_renderContext);
+        if (_outgoingScene) {
+            _outgoingScene->renderBackground(*_renderContext);
+            _scene->renderBackground(*_renderContext);
+            
+            _outgoingScene->render(*_renderContext);
+            _scene->render(*_renderContext);
+        }
+        else {
+            _scene->renderBackground(*_renderContext);
+            _scene->render(*_renderContext);
+        }
     }
     [self.renderDelegate didRenderEye:VROEyeTypeRight context:_renderContext];
     
     [_HUD renderEye:rightEye withContext:_renderContext];
     
     _renderContext->notifyFrameEnd();
+    
+    if (!sceneTransitionActive) {
+        self.outgoingScene = nil;
+    }
 }
 
 - (VRORenderContext *)renderContext {
     return _renderContext;
 }
+
+#pragma mark - Reticle
 
 - (void)handleTap:(UIGestureRecognizer *)gestureRecognizer {
     [_HUD.reticle trigger];
@@ -405,6 +443,112 @@
     
     VROVector3f ray = headRotation.multiply(forward);
     [self.renderDelegate reticleTapped:ray];
+}
+
+#pragma mark - Scene Loading
+
+- (void)setScene:(std::shared_ptr<VROScene>)scene animated:(BOOL)animated {
+    if (!animated || !self.scene) {
+        self.scene = scene;
+        return;
+    }
+    
+    float flyAnimationDuration = 3.0;
+    float skyboxAnimationDuration = 4.5;
+    float flyInDistance = 25;
+    float flyOutDistance = 70;
+    
+    // Default animation: outgoing elements sweep in from afar, skyboxes fade
+    [self setScene:scene duration:MAX(flyAnimationDuration, skyboxAnimationDuration) timingFunction:VROTimingFunctionType::EaseIn
+             start:[flyAnimationDuration, skyboxAnimationDuration, flyInDistance, flyOutDistance](VROScene *const incoming, VROScene *const outgoing) {
+                 
+                 if (incoming->getBackground()) {
+                     incoming->getBackground()->getMaterials().front()->setTransparency(0.0);
+                 }
+                 
+                 std::map<std::shared_ptr<VRONode>, VROVector3f> finalPositions;
+                 for (std::shared_ptr<VRONode> root : incoming->getRootNodes()) {
+                     VROVector3f position = root->getPosition();
+                     finalPositions[root] = position;
+                     
+                     root->setPosition({position.x, position.y, position.z + flyInDistance});
+                 }
+                 
+                 VROTransaction::begin();
+                 VROTransaction::setAnimationDuration(flyAnimationDuration);
+                 VROTransaction::setTimingFunction(VROTimingFunctionType::EaseIn);
+                 
+                 for (std::shared_ptr<VRONode> root : outgoing->getRootNodes()) {
+                     VROVector3f position = root->getPosition();
+                     root->setPosition({position.x, position.y, position.z - flyOutDistance});
+                 }
+                 
+                 for (std::shared_ptr<VRONode> root : incoming->getRootNodes()) {
+                     VROVector3f position = finalPositions[root];
+                     root->setPosition(position);
+                 }
+                 
+                 VROTransaction::commit();
+                 
+                 VROTransaction::begin();
+                 VROTransaction::setAnimationDuration(skyboxAnimationDuration);
+                 VROTransaction::setTimingFunction(VROTimingFunctionType::EaseIn);
+                 
+                 if (incoming->getBackground()) {
+                     incoming->getBackground()->getMaterials().front()->setTransparency(1.0);
+                 }
+                 if (outgoing->getBackground()) {
+                     outgoing->getBackground()->getMaterials().front()->setTransparency(0.0);
+                 }
+                 
+                 VROTransaction::commit();
+             }
+          animator:[](VROScene *const incoming, VROScene *const outgoing, float t) {
+              
+          }
+               end:[](VROScene *const incoming, VROScene *const outgoing) {
+                   
+               }];
+}
+
+- (void)setScene:(std::shared_ptr<VROScene>)scene duration:(float)seconds timingFunction:(VROTimingFunctionType)timingFunctionType
+           start:(std::function<void(VROScene *const incoming, VROScene *const outgoing)>)start
+        animator:(std::function<void(VROScene *const incoming, VROScene *const outgoing, float t)>)animator
+             end:(std::function<void(VROScene *const incoming, VROScene *const outgoing)>)end {
+    
+    self.outgoingScene = self.scene;
+    self.scene = scene;
+    
+    _sceneTransitionStartTime = VROTimeCurrentSeconds();
+    _sceneTransitionDuration = seconds;
+    _sceneTransitionTimingFunction = VROTimingFunction::forType(timingFunctionType);
+    _sceneTransitionAnimator = animator;
+    _sceneTransitionEnd = end;
+    
+    start(self.scene.get(), self.outgoingScene.get());
+}
+
+- (BOOL)processSceneTransition {
+    if (!self.scene || !self.outgoingScene) {
+        return NO;
+    }
+    
+    float percent = (VROTimeCurrentSeconds() - _sceneTransitionStartTime) / _sceneTransitionDuration;
+    float t = _sceneTransitionTimingFunction->getT(percent);
+    
+    BOOL sceneTransitionActive = percent < 0.9999;
+    if (sceneTransitionActive) {
+        _sceneTransitionAnimator(self.scene.get(), self.outgoingScene.get(), t);
+    }
+    else {
+        _sceneTransitionAnimator(self.scene.get(), self.outgoingScene.get(), 1.0);
+        _sceneTransitionEnd(self.scene.get(), self.outgoingScene.get());
+        
+        _sceneTransitionAnimator = nullptr;
+        _sceneTransitionEnd = nullptr;
+    }
+    
+    return sceneTransitionActive;
 }
 
 @end

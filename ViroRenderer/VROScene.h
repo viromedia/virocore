@@ -26,10 +26,13 @@ public:
     VROScene();
     virtual ~VROScene();
     
-    void render(const VRORenderContext &renderContext);
+    void renderBackground(const VRORenderContext &context);
+    void render(const VRORenderContext &context);
     
+    /*
+     Add a new root node to the scene.
+     */
     void addNode(std::shared_ptr<VRONode> node);
-    
     std::vector<std::shared_ptr<VRONode>> &getRootNodes() {
         return _nodes;
     }
@@ -39,6 +42,9 @@ public:
      the given cube texture.
      */
     void setBackground(std::shared_ptr<VROTexture> textureCube);
+    std::shared_ptr<VROGeometry> getBackground() const {
+        return _background;
+    }
     
 private:
     

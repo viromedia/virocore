@@ -24,20 +24,30 @@ VROScene::~VROScene() {
     ALLOCATION_TRACKER_SUB(Scenes, 1);
 }
 
-void VROScene::render(const VRORenderContext &renderContext) {
+void VROScene::renderBackground(const VRORenderContext &context) {
+    if (!_background) {
+        return;
+    }
+    
+    VROMatrix4f identity;
+    
+    VRORenderParameters renderParams;
+    renderParams.rotations.push(identity);
+    renderParams.transforms.push(identity);
+    
+    //TODO Make the skybox track the camera position
+    _background->render(context, renderParams);
+}
+
+void VROScene::render(const VRORenderContext &context) {
     VROMatrix4f identity;
 
     VRORenderParameters renderParams;
     renderParams.rotations.push(identity);
     renderParams.transforms.push(identity);
     
-    if (_background) {
-        //TODO Make the skybox track the camera position
-        _background->render(renderContext, renderParams);
-    }
-    
     for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->render(renderContext, renderParams);
+        node->render(context, renderParams);
     }
 }
 

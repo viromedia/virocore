@@ -29,4 +29,6 @@ class VROScene;
 - (instancetype)initWithFrame:(CGRect)frame;
 - (VRORenderContext *)renderContext;
 
+- (void)setScene:(std::shared_ptr<VROScene>)scene animated:(BOOL)animated;
+
 @end

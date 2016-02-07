@@ -66,6 +66,13 @@ public:
      */
     VROMatrix4f getTransform() const;
     
+    VROVector3f getPosition() const {
+        return _position;
+    }
+    VROVector3f getScale() const {
+        return _scale;
+    }
+    
     void setRotation(VROQuaternion rotation);
     void setPosition(VROVector3f position);
     void setScale(VROVector3f scale);

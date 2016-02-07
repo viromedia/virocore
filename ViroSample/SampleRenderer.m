@@ -10,10 +10,10 @@
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneTorus = 0,
+    VROSampleSceneBox,
+    VROSampleSceneOBJ,
     VROSampleSceneVideoSphere,
     VROSampleSceneLayer,
-    VROSampleSceneOBJ,
-    VROSampleSceneBox,
     VROSampleSceneNumScenes
 };
 
@@ -22,14 +22,17 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 @property (readwrite, nonatomic) VROView *view;
 @property (readwrite, nonatomic) VRORenderContext *context;
 @property (readwrite, nonatomic) BOOL tapEnabled;
-@property (readwrite, nonatomic) float angle;
+@property (readwrite, nonatomic) float torusAngle;
+@property (readwrite, nonatomic) float boxAngle;
+@property (readwrite, nonatomic) float boxVideoAngle;
+@property (readwrite, nonatomic) float objAngle;
 @property (readwrite, nonatomic) int sceneIndex;
 
 @end
 
 @implementation SampleRenderer
 
-- (std::shared_ptr<VROTexture>) cubeTexture {
+- (std::shared_ptr<VROTexture>) niagaraTexture {
     std::vector<UIImage *> cubeImages =  {
         [UIImage imageNamed:@"px"],
         [UIImage imageNamed:@"nx"],
@@ -42,9 +45,22 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return std::make_shared<VROTexture>(cubeImages);
 }
 
+- (std::shared_ptr<VROTexture>) cloudTexture {
+    std::vector<UIImage *> cubeImages =  {
+        [UIImage imageNamed:@"px1.jpg"],
+        [UIImage imageNamed:@"nx1.jpg"],
+        [UIImage imageNamed:@"py1.jpg"],
+        [UIImage imageNamed:@"ny1.jpg"],
+        [UIImage imageNamed:@"pz1.jpg"],
+        [UIImage imageNamed:@"nz1.jpg"]
+    };
+    
+    return std::make_shared<VROTexture>(cubeImages);
+}
+
 - (std::shared_ptr<VROScene>)loadVideoSphereScene {
     std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
-    scene->setBackground([self cubeTexture]);
+    scene->setBackground([self niagaraTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.9, 0.9 });
@@ -86,7 +102,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROTorusKnot> torus = VROTorusKnot::createTorusKnot(3, 8, 0.2, 256, 32);
     std::shared_ptr<VROMaterial> material = torus->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);
-    material->getReflective().setContentsCube([self cubeTexture]);
+    material->getReflective().setContentsCube([self cloudTexture]);
     
     std::shared_ptr<VRONode> torusNode = std::make_shared<VRONode>();
     torusNode->setGeometry(torus);
@@ -98,7 +114,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (std::shared_ptr<VROScene>)loadTorusScene {
     std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
-    scene->setBackground([self cubeTexture]);
+    scene->setBackground([self cloudTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.9, 0.9 });
@@ -140,9 +156,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     [self.view.HUD setReticleEnabled:YES];
     
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self] (VRONode *const node, float seconds) {
-        self.angle += .015;
+        self.torusAngle += .015;
         for (std::shared_ptr<VRONode> &torusNode : node->getSubnodes()) {
-            torusNode->setRotation({ 0, self.angle, 0});
+            torusNode->setRotation({ 0, self.torusAngle, 0});
         }
         
         return true;
@@ -156,7 +172,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (std::shared_ptr<VROScene>)loadBoxScene {
     std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
-    scene->setBackground([self cubeTexture]);
+    scene->setBackground([self niagaraTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.9, 0.9 });
@@ -193,7 +209,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(2);
         
-        UIImage *image = [UIImage imageNamed:@"bobaraj"];
+        UIImage *image = [UIImage imageNamed:@"boba"];
         material->getDiffuse().setContents(std::make_shared<VROTexture>(image));
         
         boxNode->setPosition({ 0, 0, -3});
@@ -212,8 +228,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     });
     
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self](VRONode *const node, float seconds) {
-        self.angle += .015;
-        node->setRotation({ 0, self.angle, 0});
+        self.boxAngle += .015;
+        node->setRotation({ 0, self.boxAngle, 0});
         
         return true;
     });
@@ -224,7 +240,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (std::shared_ptr<VROScene>)loadLayerScene {
     std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
-    scene->setBackground([self cubeTexture]);
+    scene->setBackground([self cloudTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Directional);
     light->setColor({ 1.0, 0.9, 0.9 });
@@ -290,25 +306,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     rootNode->addChildNode(labelView.vroLayer);
     
-    /*
-     Create HUD.
-     */
-    VROScreenUIView *HUD = self.view.HUD;
-    
-    label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, HUD.frame.size.width, HUD.frame.size.height)];
-    [label setCenter:CGPointMake(HUD.frame.size.width / 2.0, HUD.frame.size.height / 2.0)];
-    [label setText:@"++ HUD ++"];
-    [label setBackgroundColor:[UIColor clearColor]];
-    [label setTextAlignment:NSTextAlignmentCenter];
-    [label setTextColor:[UIColor blackColor]];
-    [label setFont:[UIFont boldSystemFontOfSize:14]];
-    
-    [HUD addSubview:label];
-    [HUD setNeedsUpdate];
-    
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self](VRONode *const node, float seconds) {
-        self.angle += .015;
-        node->setRotation({ 0, self.angle, 0});
+        self.boxVideoAngle += .015;
+        node->setRotation({ 0, self.boxVideoAngle, 0});
         
         return true;
     });
@@ -319,7 +319,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (std::shared_ptr<VROScene>)loadOBJScene {
     std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
-    scene->setBackground([self cubeTexture]);
+    scene->setBackground([self niagaraTexture]);
     
     NSString *soccerPath = [[NSBundle mainBundle] pathForResource:@"soccerball" ofType:@"obj"];
     NSURL *soccerURL = [NSURL fileURLWithPath:soccerPath];
@@ -353,8 +353,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     });
     
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self](VRONode *const node, float seconds) {
-        self.angle += .015;
-        node->setRotation({ 0, self.angle, 0});
+        self.objAngle += .015;
+        node->setRotation({ 0, self.objAngle, 0});
         
         return true;
     });
@@ -392,7 +392,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (IBAction)nextScene:(id)sender {
     ++self.sceneIndex;
-    self.view.scene = [self loadSceneWithIndex:self.sceneIndex];
+    
+    std::shared_ptr<VROScene> scene = [self loadSceneWithIndex:self.sceneIndex];
+    [self.view setScene:scene animated:YES];
+    //self.view.scene = [self loadSceneWithIndex:self.sceneIndex];
 }
 
 - (void)shutdownRendererWithView:(MTKView *)view {
