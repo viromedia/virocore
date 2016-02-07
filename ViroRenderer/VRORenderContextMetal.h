@@ -40,12 +40,6 @@ public:
     void setRenderTarget(std::shared_ptr<VRORenderTarget> renderTarget) {
         _renderTarget = renderTarget;
     }
-    void setProjectionMatrix(VROMatrix4f projectionMatrix) {
-        _projectionMatrix = projectionMatrix;
-    }
-    void setViewMatrix(VROMatrix4f viewMatrix) {
-        _viewMatrix = viewMatrix;
-    }
     
     id <MTLDevice> getDevice() const {
         return _device;
@@ -58,13 +52,6 @@ public:
     }
     std::shared_ptr<VRORenderTarget> getRenderTarget() const {
         return _renderTarget;
-    }
-    
-    VROMatrix4f getProjectionMatrix() const {
-        return _projectionMatrix;
-    }
-    VROMatrix4f getViewMatrix() const {
-        return _viewMatrix;
     }
     
     VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const {
@@ -86,9 +73,6 @@ private:
     id <MTLLibrary> _library;
     
     std::shared_ptr<VRORenderTarget> _renderTarget;
-    
-    VROMatrix4f _projectionMatrix;
-    VROMatrix4f _viewMatrix;
     
 };
 

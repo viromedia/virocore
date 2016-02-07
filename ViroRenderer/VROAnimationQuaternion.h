@@ -39,8 +39,7 @@ public:
     {}
     
     void processAnimationFrame(float t) {
-        VROQuaternion value;
-        value.slerp(_start, _end, t);
+        VROQuaternion value = VROQuaternion::slerp(_start, _end, t);
         
         std::shared_ptr<VROAnimatable> animatable = _animatable.lock();
         if (animatable) {

@@ -306,14 +306,13 @@ VROQuaternion &VROQuaternion::normalize() {
 
 
 // set this quaternion to the result of the linear interpolation between two quaternions
-VROQuaternion &VROQuaternion::lerp(VROQuaternion q1, VROQuaternion q2, float time) {
+VROQuaternion VROQuaternion::lerp(VROQuaternion q1, VROQuaternion q2, float time) {
     const float scale = 1.0f - time;
-    return (*this = (q1*scale) + (q2*time));
+    return (q1 * scale) + (q2 * time);
 }
 
-
 // set this quaternion to the result of the interpolation between two quaternions
-VROQuaternion &VROQuaternion::slerp(VROQuaternion q1, VROQuaternion q2, float time, float threshold) {
+VROQuaternion VROQuaternion::slerp(VROQuaternion q1, VROQuaternion q2, float time, float threshold) {
     float angle = q1.dotProduct(q2);
     
     // make sure we use the short rotation
@@ -327,10 +326,11 @@ VROQuaternion &VROQuaternion::slerp(VROQuaternion q1, VROQuaternion q2, float ti
         const float invsintheta = VROMathReciprocal(sinf(theta));
         const float scale = sinf(theta * (1.0f-time)) * invsintheta;
         const float invscale = sinf(theta * time) * invsintheta;
-        return (*this = (q1*scale) + (q2*invscale));
+        
+        return (q1 * scale) + (q2 * invscale);
     }
     else // linear interpolation
-        return lerp(q1,q2,time);
+        return lerp(q1, q2, time);
 }
 
 
@@ -341,14 +341,17 @@ float VROQuaternion::dotProduct(const VROQuaternion &q2) const {
 
 
 //! axis must be unit length, angle in radians
-VROQuaternion &VROQuaternion::fromAngleAxis(float angle, const VROVector3f& axis) {
+VROQuaternion VROQuaternion::fromAngleAxis(float angle, const VROVector3f& axis) {
     const float fHalfAngle = 0.5f*angle;
     const float fSin = sinf(fHalfAngle);
-    W = cosf(fHalfAngle);
-    X = fSin * axis.x;
-    Y = fSin * axis.y;
-    Z = fSin * axis.z;
-    return *this;
+    
+    VROQuaternion q;
+    q.W = cosf(fHalfAngle);
+    q.X = fSin * axis.x;
+    q.Y = fSin * axis.y;
+    q.Z = fSin * axis.z;
+    
+    return q;
 }
 
 
@@ -367,6 +370,16 @@ void VROQuaternion::toAngleAxis(float &angle, VROVector3f &axis) const {
         axis.x = X * invscale;
         axis.y = Y * invscale;
         axis.z = Z * invscale;
+    }
+}
+
+float VROQuaternion::getAngle() const {
+    const float scale = sqrtf(X*X + Y*Y + Z*Z);
+    if (VROMathIsZero(scale) || W > 1.0f || W < -1.0f) {
+        return 0;
+    }
+    else {
+        return 2.0f * acosf(W);
     }
 }
 
@@ -426,7 +439,7 @@ VROQuaternion &VROQuaternion::makeIdentity() {
     return *this;
 }
 
-VROQuaternion &VROQuaternion::rotationFromTo(const VROVector3f& from, const VROVector3f& to) {
+VROQuaternion VROQuaternion::rotationFromTo(const VROVector3f& from, const VROVector3f& to) {
     // Based on Stan Melax's article in Game Programming Gems
     // Copy, since cannot modify local
     VROVector3f v0 = from.normalize();
@@ -435,7 +448,8 @@ VROQuaternion &VROQuaternion::rotationFromTo(const VROVector3f& from, const VROV
     const float d = v0.dot(v1);
     if (d >= 1.0f) // If dot == 1, vectors are the same
     {
-        return makeIdentity();
+        VROQuaternion q;
+        return q.makeIdentity();
     }
     else if (d <= -1.0f) // exactly opposite
     {
@@ -446,11 +460,15 @@ VROQuaternion &VROQuaternion::rotationFromTo(const VROVector3f& from, const VROV
             axis = axis.cross(v0);
         }
         // same as fromAngleAxis(PI, axis).normalize();
-        return set(axis.x, axis.y, axis.z, 0).normalize();
+        
+        VROQuaternion q(axis.x, axis.y, axis.z, 0);
+        return q.normalize();
     }
     
     const float s = sqrtf( (1+d)*2 ); // optimize inv_sqrt
     const float invs = 1.f / s;
     const VROVector3f c = v0.cross(v1)*invs;
-    return set(c.x, c.y, c.z, s * 0.5f).normalize();
+    
+    VROQuaternion q(c.x, c.y, c.z, s * 0.5f);
+    return q.normalize();
 }

@@ -200,16 +200,16 @@ VROBoundingBox VRONode::getBoundingBox() {
     return _geometry->getBoundingBox().transform(getTransform());
 }
 
-std::vector<VROHitTestResult> VRONode::hitTest(VROVector3f ray) {
+std::vector<VROHitTestResult> VRONode::hitTest(VROVector3f ray, bool boundsOnly) {
     std::vector<VROHitTestResult> results;
     
     VROMatrix4f identity;
-    hitTest(ray, identity, results);
+    hitTest(ray, identity, boundsOnly, results);
     
     return results;
 }
 
-void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform,
+void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsOnly,
                       std::vector<VROHitTestResult> &results) {
     
     // TODO Use camera location for origin
@@ -222,14 +222,14 @@ void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform,
         
         VROVector3f intPt;
         if (bounds.intersectsRay(ray, origin, &intPt)) {
-            if (hitTestGeometry(ray, origin, transform)) {
+            if (boundsOnly || hitTestGeometry(ray, origin, transform)) {
                 results.push_back({std::static_pointer_cast<VRONode>(shared_from_this()), intPt});
             }
         }
     }
     
     for (std::shared_ptr<VRONode> &subnode : _subnodes) {
-        subnode->hitTest(ray, transform, results);
+        subnode->hitTest(ray, transform, boundsOnly, results);
     }
 }
 

@@ -27,6 +27,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 @property (readwrite, nonatomic) float boxVideoAngle;
 @property (readwrite, nonatomic) float objAngle;
 @property (readwrite, nonatomic) int sceneIndex;
+@property (readwrite, nonatomic) std::shared_ptr<VROHoverController> torusHoverController;
 
 @end
 
@@ -102,7 +103,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROTorusKnot> torus = VROTorusKnot::createTorusKnot(3, 8, 0.2, 256, 32);
     std::shared_ptr<VROMaterial> material = torus->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);
-    material->getReflective().setContentsCube([self cloudTexture]);
     
     std::shared_ptr<VRONode> torusNode = std::make_shared<VRONode>();
     torusNode->setGeometry(torus);
@@ -167,7 +167,36 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->runAction(action);
     self.tapEnabled = true;
     
+    self.torusHoverController = std::make_shared<VROHoverController>(toRadians(1), scene,
+                                                                     [self] (VRONode *const node) {
+                                                                         [self hoverOn:node];
+                                                                     },
+                                                                     [self] (VRONode *const node) {
+                                                                         [self hoverOff:node];
+                                                                     });
+    self.context->addFrameListener(self.torusHoverController);
+    
     return scene;
+}
+
+- (void)hoverOn:(VRONode *const)node {
+    std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
+    
+    VROTransaction::begin();
+    VROTransaction::setAnimationDuration(0.2);
+    material->getDiffuse().setContents( {1.0, 1.0, 1.0, 1.0 } );
+    material->getReflective().setContentsCube([self cloudTexture]);
+    VROTransaction::commit();
+}
+
+- (void)hoverOff:(VRONode *const)node {
+    std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
+    
+    VROTransaction::begin();
+    VROTransaction::setAnimationDuration(0.2);
+    material->getDiffuse().setContents( {1.0, 1.0, 1.0, 1.0 } );
+    material->getReflective().clear();
+    VROTransaction::commit();
 }
 
 - (std::shared_ptr<VROScene>)loadBoxScene {
@@ -398,18 +427,17 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROScene> scene = [self loadSceneWithIndex:self.sceneIndex];
     [self.view setScene:scene animated:YES];
-    //self.view.scene = [self loadSceneWithIndex:self.sceneIndex];
 }
 
 - (void)shutdownRendererWithView:(MTKView *)view {
     
 }
 
-- (void)willRenderEye:(VROEyeType)eye context:(VRORenderContext *)renderContext {
+- (void)willRenderEye:(VROEyeType)eye context:(const VRORenderContext *)renderContext {
 
 }
 
-- (void)didRenderEye:(VROEyeType)eye context:(VRORenderContext *)renderContext {
+- (void)didRenderEye:(VROEyeType)eye context:(const VRORenderContext *)renderContext {
 
 }
 
@@ -451,7 +479,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         node->runAction(action);
     }
 }
-
 
 - (void)renderViewDidChangeSize:(CGSize)size context:(VRORenderContext *)context {
 

@@ -10,6 +10,7 @@
 #define VROFrameListener_h
 
 #include <stdio.h>
+class VRORenderContext;
 
 /*
  Interface for responding to frame begin and end events.
@@ -18,9 +19,9 @@ class VROFrameListener {
     
 public:
     
-    virtual void onFrameWillRender() = 0;
+    virtual void onFrameWillRender(const VRORenderContext &context) = 0;
     
-    virtual void onFrameDidRender() = 0;
+    virtual void onFrameDidRender(const VRORenderContext &context) = 0;
     
 };
 

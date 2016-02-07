@@ -23,6 +23,7 @@
 #import "VROProjector.h"
 #import "VROAllocationTracker.h"
 #import "VROScene.h"
+#import "VROLog.h"
 
 @interface VROView () {
     VROMagnetSensor *_magnetSensor;
@@ -254,8 +255,13 @@
                                    rightEye:(VROEye *)rightEye
                                monocularEye:(VROEye *)monocularEye {
     
+    VROVector3f cameraForward(0, 0, -1.0);
+
+    // I don't know why we're inverting the head rotation when computing camera forward
     VROMatrix4f headRotation = _headTracker->getHeadRotation();
-    
+    _renderContext->setCameraForward(headRotation.invert().multiply(cameraForward));
+    _renderContext->setCameraQuaternion({ headRotation });
+
     float halfLensDistance = _device->getInterLensDistance() * 0.5f;
     if (self.vrModeEnabled) {
         /*
@@ -266,7 +272,7 @@
          3. Translate the camera by the interlens distance in each direction to get the two eyes.
          */
         VROMatrix4f camera = matrix_float4x4_from_GL(GLKMatrix4MakeLookAt(0, 0, 0,
-                                                                          0, 0, -1.0,
+                                                                          cameraForward.x, cameraForward.y, cameraForward.z,
                                                                           0, 1.0, 0));
         VROMatrix4f cameraRotated = headRotation.multiply(camera);
         VROMatrix4f leftEyeView  = matrix_from_translation( halfLensDistance, 0, 0).multiply(cameraRotated);
@@ -372,21 +378,7 @@
     _renderContext->setViewMatrix(leftEye->getEyeView());
     _renderContext->setProjectionMatrix(leftEye->perspective(zNear, zFar));
     
-    [self.renderDelegate willRenderEye:VROEyeTypeLeft context:_renderContext];
-    if (_scene) {
-        if (_outgoingScene) {
-            _outgoingScene->renderBackground(*_renderContext);
-            _scene->renderBackground(*_renderContext);
-            
-            _outgoingScene->render(*_renderContext);
-            _scene->render(*_renderContext);
-        }
-        else {
-            _scene->renderBackground(*_renderContext);
-            _scene->render(*_renderContext);
-        }
-    }
-    [self.renderDelegate didRenderEye:VROEyeTypeLeft context:_renderContext];
+    [self renderEye:VROEyeTypeLeft];
     
     [_HUD updateWithContext:_renderContext];
     [_HUD renderEye:leftEye withContext:_renderContext];
@@ -402,7 +394,18 @@
     _renderContext->setViewMatrix(rightEye->getEyeView());
     _renderContext->setProjectionMatrix(rightEye->perspective(zNear, zFar));
     
-    [self.renderDelegate willRenderEye:VROEyeTypeRight context:_renderContext];
+    [self renderEye:VROEyeTypeRight];
+    [_HUD renderEye:rightEye withContext:_renderContext];
+    
+    _renderContext->notifyFrameEnd();
+    
+    if (!sceneTransitionActive) {
+        self.outgoingScene = nil;
+    }
+}
+
+- (void)renderEye:(VROEyeType)eyeType {
+    [self.renderDelegate willRenderEye:eyeType context:_renderContext];
     if (_scene) {
         if (_outgoingScene) {
             _outgoingScene->renderBackground(*_renderContext);
@@ -416,15 +419,7 @@
             _scene->render(*_renderContext);
         }
     }
-    [self.renderDelegate didRenderEye:VROEyeTypeRight context:_renderContext];
-    
-    [_HUD renderEye:rightEye withContext:_renderContext];
-    
-    _renderContext->notifyFrameEnd();
-    
-    if (!sceneTransitionActive) {
-        self.outgoingScene = nil;
-    }
+    [self.renderDelegate didRenderEye:eyeType context:_renderContext];
 }
 
 - (VRORenderContext *)renderContext {
@@ -435,14 +430,7 @@
 
 - (void)handleTap:(UIGestureRecognizer *)gestureRecognizer {
     [_HUD.reticle trigger];
-    
-    // TODO This shouldn't be hard-coded, and I don't know why we're
-    //      inverting the head rotation
-    VROVector3f forward(0, 0, -1);
-    VROMatrix4f headRotation = _headTracker->getHeadRotation().invert();
-    
-    VROVector3f ray = headRotation.multiply(forward);
-    [self.renderDelegate reticleTapped:ray];
+    [self.renderDelegate reticleTapped:_renderContext->getCameraForward()];
 }
 
 #pragma mark - Scene Loading

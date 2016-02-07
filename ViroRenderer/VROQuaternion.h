@@ -67,6 +67,9 @@ class VROQuaternion {
 
 		//! Calculates the dot product
 		inline float dotProduct(const VROQuaternion &other) const;
+    
+        // Get the magnitude of the angle represented by this quaternion.
+        float getAngle() const;
 
 		//! Sets new quaternion
 		inline VROQuaternion &set(float x, float y, float z, float w);
@@ -125,7 +128,7 @@ class VROQuaternion {
 		q1, for time=1 the result is q2. Otherwise interpolation
 		between q1 and q2.
 		*/
-		VROQuaternion &lerp(VROQuaternion q1, VROQuaternion q2, float time);
+		static VROQuaternion lerp(VROQuaternion q1, VROQuaternion q2, float time);
 
 		//! Set this quaternion to the result of the spherical interpolation between two quaternions
 		/** \param q1 First quaternion to be interpolated.
@@ -139,8 +142,8 @@ class VROQuaternion {
 		be calculated with lerp. Everything from 1-threshold up will be
 		linear interpolation.
 		*/
-		VROQuaternion &slerp(VROQuaternion q1, VROQuaternion q2,
-				float time, float threshold=.05f);
+		static VROQuaternion slerp(VROQuaternion q1, VROQuaternion q2,
+                                    float time, float threshold=.05f);
 
 		//! Create quaternion from rotation angle and rotation axis.
 		/** Axis must be unit length.
@@ -148,7 +151,7 @@ class VROQuaternion {
 		q = cos(A/2)+sin(A/2)*(x*i+y*j+z*k).
 		\param angle Rotation Angle in radians.
 		\param axis Rotation axis. */
-		VROQuaternion &fromAngleAxis (float angle, const VROVector3f& axis);
+		static VROQuaternion fromAngleAxis (float angle, const VROVector3f& axis);
 
 		//! Fills an angle (radians) around an axis (unit vector)
 		void toAngleAxis (float &angle, VROVector3f& axis) const;
@@ -160,7 +163,7 @@ class VROQuaternion {
 		VROQuaternion &makeIdentity();
 
 		//! Set quaternion to represent a rotation from one vector to another.
-		VROQuaternion &rotationFromTo(const VROVector3f& from, const VROVector3f& to);
+		static VROQuaternion rotationFromTo(const VROVector3f& from, const VROVector3f& to);
 
 		//! Quaternion elements.
 		float X; // vectorial (imaginary) part

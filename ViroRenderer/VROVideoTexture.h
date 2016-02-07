@@ -46,8 +46,8 @@ public:
         return _videoTextureCache;
     }
     
-    void onFrameWillRender();
-    void onFrameDidRender();
+    void onFrameWillRender(const VRORenderContext &context);
+    void onFrameDidRender(const VRORenderContext &context);
     
     void setPaused(bool paused) {
         _paused = paused;

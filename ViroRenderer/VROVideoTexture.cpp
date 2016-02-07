@@ -119,7 +119,7 @@ void VROVideoTexture::addLoopNotification(AVPlayerItem *item) {
                           ];
 }
 
-void VROVideoTexture::onFrameWillRender() {
+void VROVideoTexture::onFrameWillRender(const VRORenderContext &context) {
     /*
      Stuttering is significantly reduced by placing this code in willRender() as opposed
      to didRender(). Reason unknown: contention of resources somewhere?
@@ -152,7 +152,7 @@ void VROVideoTexture::onFrameWillRender() {
     }
 }
 
-void VROVideoTexture::onFrameDidRender() {
+void VROVideoTexture::onFrameDidRender(const VRORenderContext &context) {
     if (_paused) {
         return;
     }

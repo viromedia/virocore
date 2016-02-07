@@ -55,6 +55,8 @@
 		8F9278031C66BD4500FF892A /* pz1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F9277FD1C66BD4500FF892A /* pz1.jpg */; };
 		8F9278071C670FC100FF892A /* VROTriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F9278041C670B0300FF892A /* VROTriangle.cpp */; };
 		8F9278081C670FD900FF892A /* VROTriangle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9278051C670B0300FF892A /* VROTriangle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F92780B1C67DE4A00FF892A /* VROHoverController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F9278091C67DE4A00FF892A /* VROHoverController.cpp */; };
+		8F92780C1C67DE4A00FF892A /* VROHoverController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F92780A1C67DE4A00FF892A /* VROHoverController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FA2E1411C4447D00070DB26 /* skybox.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1401C4447D00070DB26 /* skybox.png */; };
 		8FA2E1481C445CAA0070DB26 /* nx.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1421C445CAA0070DB26 /* nx.png */; };
 		8FA2E1491C445CAA0070DB26 /* ny.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1431C445CAA0070DB26 /* ny.png */; };
@@ -394,6 +396,8 @@
 		8F9277FD1C66BD4500FF892A /* pz1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = pz1.jpg; path = ViroSample/pz1.jpg; sourceTree = "<group>"; };
 		8F9278041C670B0300FF892A /* VROTriangle.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROTriangle.cpp; sourceTree = "<group>"; };
 		8F9278051C670B0300FF892A /* VROTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTriangle.h; sourceTree = "<group>"; };
+		8F9278091C67DE4A00FF892A /* VROHoverController.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROHoverController.cpp; sourceTree = "<group>"; };
+		8F92780A1C67DE4A00FF892A /* VROHoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROHoverController.h; sourceTree = "<group>"; };
 		8FA2E1401C4447D00070DB26 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = skybox.png; path = ViroSample/skybox.png; sourceTree = "<group>"; };
 		8FA2E1421C445CAA0070DB26 /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nx.png; path = ViroSample/nx.png; sourceTree = "<group>"; };
 		8FA2E1431C445CAA0070DB26 /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ny.png; path = ViroSample/ny.png; sourceTree = "<group>"; };
@@ -575,6 +579,8 @@
 				8FD1E1BE1C4093790005BE4E /* VROVideoTexture.h */,
 				8FD1E1BD1C4093790005BE4E /* VROVideoTexture.cpp */,
 				8F83DE8C1C4728A30089C31A /* VROHitTestResult.h */,
+				8F92780A1C67DE4A00FF892A /* VROHoverController.h */,
+				8F9278091C67DE4A00FF892A /* VROHoverController.cpp */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";
@@ -989,6 +995,7 @@
 				8F11B7C21C20B0530026D150 /* VROView.h in Headers */,
 				8F83DEAF1C50278C0089C31A /* VROSphere.h in Headers */,
 				8F11B7C51C20B6180026D150 /* VRORenderDelegate.h in Headers */,
+				8F92780C1C67DE4A00FF892A /* VROHoverController.h in Headers */,
 				8F11B7CB1C20E7830026D150 /* VROAnimation.h in Headers */,
 				8FD4DF551C18F698003DC425 /* VROViewController.h in Headers */,
 				8F11B7C71C20CF200026D150 /* VRORenderParameters.h in Headers */,
@@ -1253,6 +1260,7 @@
 				8FD4DF0E1C18ED3C003DC425 /* VROMaterial.cpp in Sources */,
 				8FD4DF131C18ED44003DC425 /* OrientationEKF.mm in Sources */,
 				8FD4DF001C18ED2C003DC425 /* VROGeometrySubstrateMetal.cpp in Sources */,
+				8F92780B1C67DE4A00FF892A /* VROHoverController.cpp in Sources */,
 				8FD4DF0D1C18ED3C003DC425 /* VROGeometrySource.cpp in Sources */,
 				8FA2E1631C460C600070DB26 /* VROAction.cpp in Sources */,
 				8FD4DEF91C18ED19003DC425 /* VROMatrix4d.cpp in Sources */,

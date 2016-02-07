@@ -136,7 +136,7 @@ public:
      Hit testing.
      */
     VROBoundingBox getBoundingBox();
-    std::vector<VROHitTestResult> hitTest(VROVector3f ray);
+    std::vector<VROHitTestResult> hitTest(VROVector3f ray, bool boundsOnly = false);
     
 protected:
     
@@ -177,7 +177,7 @@ private:
     /*
      Hit test helper functions.
      */
-    void hitTest(VROVector3f ray, VROMatrix4f parentTransform,
+    void hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsOnly,
                  std::vector<VROHitTestResult> &results);
     bool hitTestGeometry(VROVector3f ray, VROVector3f origin, VROMatrix4f transform);
 

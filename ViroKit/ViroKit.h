@@ -22,6 +22,7 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VRORenderContext.h>
 #import <ViroKit/VRORenderParameters.h>
 #import <ViroKit/VROFrameListener.h>
+#import <ViroKit/VROHoverController.h>
 
 // Model Loader
 #import <ViroKit/VROLoader.h>
@@ -76,6 +77,7 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROMatrix4f.h>
 #import <ViroKit/VROMatrix4d.h>
 #import <ViroKit/VROMath.h>
+#import <ViroKit/VROTriangle.h>
 
 // Shapes
 #import <ViroKit/VROBox.h>

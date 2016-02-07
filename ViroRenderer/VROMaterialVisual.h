@@ -68,6 +68,7 @@ public:
      */
     VROMaterialVisual(const VROMaterialVisual &visual);
     
+    void clear();
     void setContents(VROVector4f contents);
     void setContents(std::shared_ptr<VROTexture> texture);
     void setContentsCube(std::shared_ptr<VROTexture> texture);

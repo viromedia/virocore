@@ -14,6 +14,9 @@
 #include <vector>
 #include <memory>
 #include "VROFrameListener.h"
+#include "VROMatrix4f.h"
+#include "VROVector3f.h"
+#include "VROQuaternion.h"
 
 class VROGeometry;
 class VROMaterial;
@@ -61,7 +64,7 @@ public:
             std::shared_ptr<VROFrameListener> locked = listener.lock();
             
             if (locked) {
-                locked->onFrameWillRender();
+                locked->onFrameWillRender(*this);
                 ++it;
             }
             else {
@@ -77,7 +80,7 @@ public:
             std::shared_ptr<VROFrameListener> locked = listener.lock();
             
             if (locked) {
-                locked->onFrameDidRender();
+                locked->onFrameDidRender(*this);
                 ++it;
             }
             else {
@@ -89,15 +92,54 @@ public:
     int getFrame() const {
         return _frame;
     }
-    
     void incFrame() {
         ++_frame;
+    }
+    
+    void setProjectionMatrix(VROMatrix4f projectionMatrix) {
+        _projectionMatrix = projectionMatrix;
+    }
+    void setViewMatrix(VROMatrix4f viewMatrix) {
+        _viewMatrix = viewMatrix;
+    }
+    void setCameraForward(VROVector3f cameraForward) {
+        _cameraForward = cameraForward;
+    }
+    void setCameraQuaternion(VROQuaternion cameraQuaternion) {
+        _cameraQuaternion = cameraQuaternion;
+    }
+    
+    VROMatrix4f getProjectionMatrix() const {
+        return _projectionMatrix;
+    }
+    VROMatrix4f getViewMatrix() const {
+        return _viewMatrix;
+    }
+    VROVector3f getCameraForward() const {
+        return _cameraForward;
+    }
+    VROQuaternion getCameraQuaternion() const {
+        return _cameraQuaternion;
     }
     
 private:
     
     int _frame;
     std::vector<std::weak_ptr<VROFrameListener>> _frameListeners;
+    
+    /*
+     The standard view and projection matrices.
+     */
+    VROMatrix4f _projectionMatrix;
+    VROMatrix4f _viewMatrix;
+    
+    /*
+     The camera forward vector, and the camera quaternion. The quaternion represents
+     the rotation from (0, 0, -1) required to achieve the camera's current
+     orientation.
+     */
+    VROVector3f _cameraForward;
+    VROQuaternion _cameraQuaternion;
     
 };
 

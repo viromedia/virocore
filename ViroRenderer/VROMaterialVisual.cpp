@@ -28,6 +28,16 @@ VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
  _borderColor(visual._borderColor)
 {}
 
+void VROMaterialVisual::clear() {
+    _material.fadeSnapshot();
+    
+    _contentsType = VROContentsType::Fixed;
+    _contentsColor = { 1.0, 1.0, 1.0, 1.0 };
+    _contentsTexture.reset();
+    
+    _material.updateSubstrate();
+}
+
 void VROMaterialVisual::setContents(VROVector4f contents) {
     if ((_permissibleContentsMask & (int) VROContentsType::Fixed) == 0) {
         pabort("Material visual does not support fixed contents");
