@@ -117,8 +117,10 @@ public:
     /*
      Basic arithmetic.
      */
+    VROVector3f add(VROVector3f vB) const;
     void add(const VROVector3f &vB, VROVector3f *result) const;
     void addScaled(const VROVector3f &scaledB, float scale, VROVector3f *result) const;
+    VROVector3f subtract(VROVector3f vB) const;
     void subtract(const VROVector3f &vB, VROVector3f *result) const;
     void scale(float factor, VROVector3f *result) const;
 

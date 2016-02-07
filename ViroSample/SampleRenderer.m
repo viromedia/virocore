@@ -314,6 +314,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     });
     
     boxNode->runAction(action);
+    [self.view.HUD setReticleEnabled:YES];
+    self.tapEnabled = YES;
+
     return scene;
 }
 

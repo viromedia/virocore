@@ -283,6 +283,15 @@ float VROVector3f::distanceSquared(const VROVector3f &vB) const {
     return dx * dx + dy * dy + dz * dz;
 }
 
+VROVector3f VROVector3f::add(VROVector3f vB) const {
+    VROVector3f result;
+    result.x = x + vB.x;
+    result.y = y + vB.y;
+    result.z = z + vB.z;
+    
+    return result;
+}
+
 void VROVector3f::add(const VROVector3f &vB, VROVector3f *result) const {
     result->x = x + vB.x;
     result->y = y + vB.y;
@@ -293,6 +302,15 @@ void VROVector3f::addScaled(const VROVector3f &scaledB, float scale, VROVector3f
     result->x = x + scaledB.x * scale;
     result->y = y + scaledB.y * scale;
     result->z = z + scaledB.z * scale;
+}
+
+VROVector3f VROVector3f::subtract(VROVector3f vB) const {
+    VROVector3f result;
+    result.x = x - vB.x;
+    result.y = y - vB.y;
+    result.z = z - vB.z;
+    
+    return result;
 }
 
 void VROVector3f::subtract(const VROVector3f &vB, VROVector3f *result) const {

@@ -17,6 +17,9 @@
 #include "VROLog.h"
 #include "VROHitTestResult.h"
 #include "VROAllocationTracker.h"
+#include "VROGeometrySource.h"
+#include "VROGeometryElement.h"
+#include "VROByteBuffer.h"
 
 #pragma mark - Initialization
 
@@ -219,12 +222,33 @@ void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform,
         
         VROVector3f intPt;
         if (bounds.intersectsRay(ray, origin, &intPt)) {
-            results.push_back({std::static_pointer_cast<VRONode>(shared_from_this()), intPt});
+            if (hitTestGeometry(ray, origin, transform)) {
+                results.push_back({std::static_pointer_cast<VRONode>(shared_from_this()), intPt});
+            }
         }
     }
     
     for (std::shared_ptr<VRONode> &subnode : _subnodes) {
         subnode->hitTest(ray, transform, results);
     }
+}
+
+bool VRONode::hitTestGeometry(VROVector3f ray, VROVector3f origin, VROMatrix4f transform) {
+    std::shared_ptr<VROGeometrySource> vertexSource = _geometry->getGeometrySourcesForSemantic(VROGeometrySourceSemantic::Vertex).front();
+    
+    bool hit = false;
+    for (std::shared_ptr<VROGeometryElement> element : _geometry->getGeometryElements()) {
+         element->processTriangles([&hit, ray, origin, transform](int index, VROTriangle triangle) {
+             VROTriangle transformed = triangle.transformByMatrix(transform);
+             
+             VROVector3f intPt;
+             if (transformed.intersectsRay(ray, origin, &intPt)) {
+                 hit = true;
+                 //TODO Offer a way to break out of here, as optimization
+             }
+         }, vertexSource);
+    }
+    
+    return hit;
 }
 

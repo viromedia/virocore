@@ -53,6 +53,8 @@
 		8F9278011C66BD4500FF892A /* px1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F9277FB1C66BD4500FF892A /* px1.jpg */; };
 		8F9278021C66BD4500FF892A /* py1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F9277FC1C66BD4500FF892A /* py1.jpg */; };
 		8F9278031C66BD4500FF892A /* pz1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F9277FD1C66BD4500FF892A /* pz1.jpg */; };
+		8F9278071C670FC100FF892A /* VROTriangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F9278041C670B0300FF892A /* VROTriangle.cpp */; };
+		8F9278081C670FD900FF892A /* VROTriangle.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9278051C670B0300FF892A /* VROTriangle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FA2E1411C4447D00070DB26 /* skybox.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1401C4447D00070DB26 /* skybox.png */; };
 		8FA2E1481C445CAA0070DB26 /* nx.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1421C445CAA0070DB26 /* nx.png */; };
 		8FA2E1491C445CAA0070DB26 /* ny.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1431C445CAA0070DB26 /* ny.png */; };
@@ -299,7 +301,7 @@
 		8F4DCE361BFBCB8200061DD7 /* VROTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTexture.h; sourceTree = "<group>"; };
 		8F4DCE381BFBD19B00061DD7 /* VROMaterialVisual.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROMaterialVisual.cpp; sourceTree = "<group>"; };
 		8F4DCE391BFBD19B00061DD7 /* VROMaterialVisual.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialVisual.h; sourceTree = "<group>"; };
-		8F4DCE3B1BFBE54200061DD7 /* VROGeometryElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROGeometryElement.cpp; sourceTree = "<group>"; };
+		8F4DCE3B1BFBE54200061DD7 /* VROGeometryElement.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGeometryElement.cpp; sourceTree = "<group>"; };
 		8F4DCE3C1BFBE54200061DD7 /* VROGeometryElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGeometryElement.h; sourceTree = "<group>"; };
 		8F4DCE3E1BFBE97600061DD7 /* VROGeometrySource.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGeometrySource.cpp; sourceTree = "<group>"; };
 		8F4DCE3F1BFBE97600061DD7 /* VROGeometrySource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGeometrySource.h; sourceTree = "<group>"; };
@@ -390,6 +392,8 @@
 		8F9277FB1C66BD4500FF892A /* px1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = px1.jpg; path = ViroSample/px1.jpg; sourceTree = "<group>"; };
 		8F9277FC1C66BD4500FF892A /* py1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = py1.jpg; path = ViroSample/py1.jpg; sourceTree = "<group>"; };
 		8F9277FD1C66BD4500FF892A /* pz1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = pz1.jpg; path = ViroSample/pz1.jpg; sourceTree = "<group>"; };
+		8F9278041C670B0300FF892A /* VROTriangle.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROTriangle.cpp; sourceTree = "<group>"; };
+		8F9278051C670B0300FF892A /* VROTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTriangle.h; sourceTree = "<group>"; };
 		8FA2E1401C4447D00070DB26 /* skybox.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = skybox.png; path = ViroSample/skybox.png; sourceTree = "<group>"; };
 		8FA2E1421C445CAA0070DB26 /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nx.png; path = ViroSample/nx.png; sourceTree = "<group>"; };
 		8FA2E1431C445CAA0070DB26 /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ny.png; path = ViroSample/ny.png; sourceTree = "<group>"; };
@@ -741,6 +745,8 @@
 		8F517C441BD0472C0017C70B /* Math */ = {
 			isa = PBXGroup;
 			children = (
+				8F9278051C670B0300FF892A /* VROTriangle.h */,
+				8F9278041C670B0300FF892A /* VROTriangle.cpp */,
 				8F4DCE2E1BFA8D5D00061DD7 /* VROQuaternion.h */,
 				8FD4DEA21C178CF9003DC425 /* VROQuaternion.cpp */,
 				8F4DCE201BF7EAF900061DD7 /* VROPlane.h */,
@@ -916,6 +922,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F9278081C670FD900FF892A /* VROTriangle.h in Headers */,
 				8FD4DED01C18ECD4003DC425 /* ViroKit.h in Headers */,
 				8FA2E15F1C45DD270070DB26 /* VROReticle.h in Headers */,
 				8FD4DF311C18F47F003DC425 /* VROScene.h in Headers */,
@@ -1265,6 +1272,7 @@
 				8FD4DEFA1C18ED19003DC425 /* VROMatrix4f.cpp in Sources */,
 				8FD4DF041C18ED30003DC425 /* VROTextureSubstrate.cpp in Sources */,
 				8FD4DF011C18ED2C003DC425 /* VROMaterialSubstrateMetal.cpp in Sources */,
+				8F9278071C670FC100FF892A /* VROTriangle.cpp in Sources */,
 				8FD4DEF31C18ED19003DC425 /* VROFrustum.cpp in Sources */,
 				8FD4DEF81C18ED19003DC425 /* VROVector4f.cpp in Sources */,
 				8FD4DF101C18ED3C003DC425 /* VROTexture.cpp in Sources */,

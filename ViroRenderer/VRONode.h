@@ -175,10 +175,11 @@ private:
     void popTransforms(VRORenderParameters &params);
     
     /*
-     Hit test helper function.
+     Hit test helper functions.
      */
     void hitTest(VROVector3f ray, VROMatrix4f parentTransform,
                  std::vector<VROHitTestResult> &results);
+    bool hitTestGeometry(VROVector3f ray, VROVector3f origin, VROMatrix4f transform);
 
 };
 

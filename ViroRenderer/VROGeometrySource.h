@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <memory>
+#include <functional>
 #include "VROData.h"
 #include "VROBoundingBox.h"
 
@@ -76,6 +77,15 @@ public:
     int getDataStride() const {
         return _dataStride;
     }
+    bool isFloatComponents() const {
+        return _floatComponents;
+    }
+    
+    /*
+     Read through all the vertices in this data source and invoke the provided
+     callback for each.
+     */
+    void processVertices(std::function<void(int index, VROVector3f vertex)> function) const;
     
     /*
      Retrieves the bounding box for the values associated with this
@@ -132,8 +142,6 @@ private:
      engine.
      */
     VROGeometrySourceSubstrate *_substrate;
-    
-    
     
 };
 

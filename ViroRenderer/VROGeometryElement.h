@@ -13,7 +13,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <memory>
+#include <functional>
 #include "VROData.h"
+#include "VROTriangle.h"
+
+class VROGeometrySource;
 
 enum class VROGeometryPrimitiveType {
     Triangle,
@@ -52,6 +56,19 @@ public:
     int getBytesPerIndex() const {
         return _bytesPerIndex;
     }
+    
+    /*
+     Read through the indices in this element, read the corresponding vertices
+     from the given geometry source, and invoke the provided function once per
+     triangle.
+     */
+    void processTriangles(std::function<void(int index, VROTriangle triangle)> function,
+                          std::shared_ptr<VROGeometrySource> geometrySource) const;
+    
+    /*
+     Read the indexes in this element, one by one.
+     */
+    void processIndices(std::function<void(int index, int indexRead)> function) const;
     
 private:
     

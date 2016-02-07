@@ -13,14 +13,7 @@
 #include "VROLog.h"
 #include <float.h>
 
-VROBoundingBox VROGeometrySource::getBoundingBox() const {
-    float minX =  FLT_MAX;
-    float maxX = -FLT_MAX;
-    float minY =  FLT_MAX;
-    float maxY = -FLT_MAX;
-    float minZ =  FLT_MAX;
-    float maxZ = -FLT_MAX;
-    
+void VROGeometrySource::processVertices(std::function<void (int, VROVector3f)> function) const {
     VROByteBuffer buffer(_data->getData(), _data->getDataLength(), false);
     
     for (int i = 0; i < _vertexCount; i++) {
@@ -94,25 +87,38 @@ VROBoundingBox VROGeometrySource::getBoundingBox() const {
             }
         }
         
-        if (x < minX) {
-            minX = x;
-        }
-        if (x > maxX) {
-            maxX = x;
-        }
-        if (y < minY) {
-            minY = y;
-        }
-        if (y > maxY) {
-            maxY = y;
-        }
-        if (z < minZ) {
-            minZ = z;
-        }
-        if (z > maxZ) {
-            maxZ = z;
-        }
+        function(i, { x, y, z});
     }
+}
+
+VROBoundingBox VROGeometrySource::getBoundingBox() const {
+    float minX =  FLT_MAX;
+    float maxX = -FLT_MAX;
+    float minY =  FLT_MAX;
+    float maxY = -FLT_MAX;
+    float minZ =  FLT_MAX;
+    float maxZ = -FLT_MAX;
+    
+    processVertices([&minX, &maxX, &minY, &maxY, &minZ, &maxZ](int index, VROVector3f vertex) {
+        if (vertex.x < minX) {
+            minX = vertex.x;
+        }
+        if (vertex.x > maxX) {
+            maxX = vertex.x;
+        }
+        if (vertex.y < minY) {
+            minY = vertex.y;
+        }
+        if (vertex.y > maxY) {
+            maxY = vertex.y;
+        }
+        if (vertex.z < minZ) {
+            minZ = vertex.z;
+        }
+        if (vertex.z > maxZ) {
+            maxZ = vertex.z;
+        }
+    });
     
     return VROBoundingBox(minX, maxX, minY, maxY, minZ, maxZ);
 }
