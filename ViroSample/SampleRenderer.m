@@ -449,8 +449,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         return;
     }
     
-    std::shared_ptr<VRONode> rootNode = self.view.scene->getRootNodes().front();
-    std::vector<VROHitTestResult> results = rootNode->hitTest(ray);
+    std::vector<VROHitTestResult> results = self.view.scene->hitTest(ray);
     
     for (VROHitTestResult result : results) {
         std::shared_ptr<VRONode> node = result.getNode();

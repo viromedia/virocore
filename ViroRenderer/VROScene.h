@@ -18,6 +18,8 @@ class VRONode;
 class VRORenderContext;
 class VROTexture;
 class VROGeometry;
+class VROHitTestResult;
+class VROVector3f;
 
 class VROScene {
     
@@ -45,6 +47,12 @@ public:
     std::shared_ptr<VROGeometry> getBackground() const {
         return _background;
     }
+    
+    /*
+     Perform a hit test against all of the root nodes (and their
+     children) in the scene.
+     */
+    std::vector<VROHitTestResult> hitTest(VROVector3f ray, bool boundsOnly = false);
     
 private:
     
