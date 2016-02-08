@@ -15,9 +15,11 @@
 
 VROHoverController::VROHoverController(float rotationThresholdRadians,
                                        std::shared_ptr<VROScene> scene,
+                                       std::function<bool(VRONode *const node)> isHoverable,
                                        std::function<void(VRONode *const node)> hoverOn,
                                        std::function<void(VRONode *const node)> hoverOff) :
     _scene(scene),
+    _isHoverable(isHoverable),
     _hoverOn(hoverOn),
     _hoverOff(hoverOff),
     _rotationThresholdRadians(rotationThresholdRadians),
@@ -34,9 +36,15 @@ void VROHoverController::findHoveredNode(VROVector3f ray, std::shared_ptr<VROSce
 
     for (std::shared_ptr<VRONode> &node : scene->getRootNodes()) {
         std::vector<VROHitTestResult> hits = node->hitTest(ray, true);
-        if (!hits.empty()) {
-            std::shared_ptr<VRONode> newHover = hits.front().getNode();
-            
+        
+        std::shared_ptr<VRONode> newHover;
+        for (VROHitTestResult &hit : hits) {
+            if (_isHoverable(hit.getNode().get())) {
+                newHover = hit.getNode();
+            }
+        }
+        
+        if (newHover) {
             if (oldHover) {
                 if (oldHover != newHover) {
                     _hoverOff(oldHover.get());

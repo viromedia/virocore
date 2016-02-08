@@ -169,6 +169,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     self.torusHoverController = std::make_shared<VROHoverController>(toRadians(1), scene,
                                                                      [self] (VRONode *const node) {
+                                                                         return true;
+                                                                     },
+                                                                     [self] (VRONode *const node) {
                                                                          [self hoverOn:node];
                                                                      },
                                                                      [self] (VRONode *const node) {

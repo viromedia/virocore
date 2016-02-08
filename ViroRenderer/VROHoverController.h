@@ -21,6 +21,7 @@ class VROHoverController : public VROFrameListener {
 public:
     
     VROHoverController(float rotationThresholdRadians, std::shared_ptr<VROScene> scene,
+                       std::function<bool(VRONode *const node)> isHoverable,
                        std::function<void(VRONode *const node)> onHoverOn,
                        std::function<void(VRONode *const node)> onHoverOff);
     virtual ~VROHoverController();
@@ -32,6 +33,8 @@ private:
     
     std::weak_ptr<VROScene> _scene;
     std::weak_ptr<VRONode> _hoveredNode;
+    
+    std::function<bool(VRONode *const node)> _isHoverable;
     std::function<void(VRONode *const node)> _hoverOn, _hoverOff;
     
     const float _rotationThresholdRadians;
