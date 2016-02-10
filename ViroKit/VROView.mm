@@ -499,7 +499,8 @@
                }];
 }
 
-- (void)setScene:(std::shared_ptr<VROScene>)scene duration:(float)seconds timingFunction:(VROTimingFunctionType)timingFunctionType
+- (void)setScene:(std::shared_ptr<VROScene>)scene duration:(float)seconds
+  timingFunction:(VROTimingFunctionType)timingFunctionType
            start:(std::function<void(VROScene *const incoming, VROScene *const outgoing)>)start
         animator:(std::function<void(VROScene *const incoming, VROScene *const outgoing, float t)>)animator
              end:(std::function<void(VROScene *const incoming, VROScene *const outgoing)>)end {

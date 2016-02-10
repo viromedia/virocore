@@ -167,7 +167,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->runAction(action);
     self.tapEnabled = true;
     
-    self.torusHoverController = std::make_shared<VROHoverController>(toRadians(1), scene,
+    self.torusHoverController = std::make_shared<VROHoverController>(toRadians(1), scene, true,
                                                                      [self] (VRONode *const node) {
                                                                          return true;
                                                                      },
