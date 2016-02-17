@@ -108,11 +108,11 @@ public:
     void removeFromParentNode() {
         std::shared_ptr<VRONode> supernode = _supernode.lock();
         if (supernode) {
-            std::vector<std::shared_ptr<VRONode>> parentSubnodes = supernode->_subnodes;
+            std::vector<std::shared_ptr<VRONode>> &parentSubnodes = supernode->_subnodes;
             parentSubnodes.erase(
                                  std::remove_if(parentSubnodes.begin(), parentSubnodes.end(),
-                                                [this](std::shared_ptr<VRONode> layer) {
-                                                    return layer.get() == this;
+                                                [this](std::shared_ptr<VRONode> node) {
+                                                    return node.get() == this;
                                                 }), parentSubnodes.end());
             _supernode.reset();
         }

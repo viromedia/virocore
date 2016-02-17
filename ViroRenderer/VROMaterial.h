@@ -135,9 +135,11 @@ public:
     
     void setWritesToDepthBuffer(bool writesToDepthBuffer) {
         _writesToDepthBuffer = writesToDepthBuffer;
+        updateSubstrate();
     }
     void setReadsFromDepthBuffer(bool readsFromDepthBuffer) {
         _readsFromDepthBuffer = readsFromDepthBuffer;
+        updateSubstrate();
     }
     
     /*
