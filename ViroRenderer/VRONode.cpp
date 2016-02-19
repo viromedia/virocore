@@ -119,8 +119,9 @@ VROMatrix4f VRONode::getTransform() const {
         unpivotMtx.translate(pivotCoordinate.x, pivotCoordinate.y, pivotCoordinate.z);
     }
     
-    VROMatrix4f transform = _rotation.getMatrix();
+    VROMatrix4f transform;
     transform.scale(_scale.x, _scale.y, _scale.z);
+    transform = _rotation.getMatrix().multiply(transform);
     transform.translate(_position.x, _position.y, _position.z);
     transform = unpivotMtx.multiply(transform).multiply(pivotMtx);
     
