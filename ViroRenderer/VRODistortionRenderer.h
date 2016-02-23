@@ -111,9 +111,10 @@ private:
     VROConcurrentBuffer *_uniformsBuffer;
     
     /*
-     The texture onto which we render both eyes.
+     The texture onto which we render both eyes. Eyes are rendered onto the
+     MSAA texture and resolved onto _texture.
      */
-    id <MTLTexture> _texture;
+    id <MTLTexture> _msaaTexture, _texture;
     
     float _resolutionScale;
     bool _chromaticAberrationCorrectionEnabled;

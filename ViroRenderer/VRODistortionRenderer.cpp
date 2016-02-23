@@ -17,6 +17,8 @@
 #include "VRODevice.h"
 #include "VROConcurrentBuffer.h"
 
+static const float kSampleCount = 4;
+
 #pragma mark - Initialization
 
 VRODistortionRenderer::VRODistortionRenderer(VRODevice &device) :
@@ -114,6 +116,15 @@ void VRODistortionRenderer::updateDistortion(id <MTLDevice> gpu, id <MTLLibrary>
     float xEyeOffsetTanAngleScreen = (screen.getWidthInMeters() / 2.0f - _device.getInterLensDistance() / 2.0f) / _metersPerTanAngle;
     float yEyeOffsetTanAngleScreen = (_device.getVerticalDistanceToLensCenter() - screen.getBorderSizeInMeters()) / _metersPerTanAngle;
     
+    MTLTextureDescriptor *msaaDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm
+                                                                                        width:textureWidthPx
+                                                                                       height:textureHeightPx
+                                                                                    mipmapped:NO];
+    msaaDesc.textureType = MTLTextureType2DMultisample;
+    msaaDesc.sampleCount = kSampleCount;
+    
+    _msaaTexture = [gpu newTextureWithDescriptor:msaaDesc];
+    
     MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm
                                                                                           width:textureWidthPx
                                                                                          height:textureHeightPx
@@ -143,9 +154,11 @@ std::shared_ptr<VRORenderTarget> VRODistortionRenderer::bindEyeRenderTarget(id <
     _drawingFrame = true;
     
     MTLRenderPassDescriptor *renderPassDesc = [MTLRenderPassDescriptor renderPassDescriptor];
-    renderPassDesc.colorAttachments[0].texture = _texture;
+    renderPassDesc.colorAttachments[0].texture = _msaaTexture;
+    renderPassDesc.colorAttachments[0].resolveTexture = _texture;
     renderPassDesc.colorAttachments[0].loadAction = MTLLoadActionClear;
     renderPassDesc.colorAttachments[0].clearColor = MTLClearColorMake(0.0, 0.0, 0.0, 1.0);
+    renderPassDesc.colorAttachments[0].storeAction = MTLStoreActionMultisampleResolve;
     
     id <MTLRenderCommandEncoder> eyeRenderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:renderPassDesc];
     eyeRenderEncoder.label = @"EyeRenderEncoder";
@@ -153,7 +166,7 @@ std::shared_ptr<VRORenderTarget> VRODistortionRenderer::bindEyeRenderTarget(id <
     [eyeRenderEncoder setFrontFacingWinding:MTLWindingCounterClockwise];
     [eyeRenderEncoder setCullMode:MTLCullModeBack];
     
-    return std::make_shared<VRORenderTarget>(eyeRenderEncoder, _texture.pixelFormat, MTLPixelFormatInvalid, _texture.sampleCount);
+    return std::make_shared<VRORenderTarget>(eyeRenderEncoder, _texture.pixelFormat, MTLPixelFormatInvalid, _msaaTexture.sampleCount);
 }
 
 void VRODistortionRenderer::updateDistortionPassPipeline(id <MTLDevice> gpu, id <MTLLibrary> library, MTKView *view) {
