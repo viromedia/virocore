@@ -34,7 +34,8 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(int width, int height, CGCont
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vector<UIImage *> &images,
                                                    const VRORenderContext &context) {
     
-    id <MTLDevice> device = ((VRORenderContextMetal &)context).getDevice();
+    VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
+    id <MTLDevice> device = metal.getDevice();
     
     if (type == VROTextureType::Quad) {
         UIImage *image = images.front();
@@ -48,11 +49,20 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vec
         MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm
                                                                                               width:width
                                                                                              height:height
-                                                                                          mipmapped:NO];
+                                                                                          mipmapped:YES];
         _texture = [device newTextureWithDescriptor:descriptor];
         
         MTLRegion region = MTLRegionMake2D(0, 0, width, height);
         [_texture replaceRegion:region mipmapLevel:0 withBytes:data bytesPerRow:bytesPerPixel * width];
+        
+        id <MTLCommandBuffer> textureCommandBuffer = [metal.getCommandQueue() commandBuffer];
+        id<MTLBlitCommandEncoder> commandEncoder = [textureCommandBuffer blitCommandEncoder];
+        [commandEncoder generateMipmapsForTexture:_texture];
+        [commandEncoder endEncoding];
+        [textureCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer) {
+
+        }];
+        [textureCommandBuffer commit];
         
         free (data);
     }

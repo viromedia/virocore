@@ -14,7 +14,8 @@ using namespace metal;
 
 constexpr sampler s(coord::normalized,
                     address::repeat,
-                    filter::linear);
+                    filter::linear,
+                    mip_filter::linear);
 
 /* ---------------------------------------
    GEOMETRY ATTRIBUTES
