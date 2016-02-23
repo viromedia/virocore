@@ -49,9 +49,13 @@ public:
     void onFrameWillRender(const VRORenderContext &context);
     void onFrameDidRender(const VRORenderContext &context);
     
-    void setPaused(bool paused) {
-        _paused = paused;
+    void setMediaReady(bool mediaReady) {
+        _mediaReady = mediaReady;
     }
+    
+    void pause();
+    void play();
+    bool isPaused();
     
 private:
     
@@ -68,6 +72,7 @@ private:
     AVPlayerItemVideoOutput *_videoOutput;
     float _preferredRotation;
     id _notificationToken;
+    bool _mediaReady;
     bool _paused;
     dispatch_queue_t _videoQueue;
     VROVideoPlaybackDelegate *_videoPlaybackDelegate;

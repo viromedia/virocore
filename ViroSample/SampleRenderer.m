@@ -9,10 +9,10 @@
 #import "SampleRenderer.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneTorus = 0,
-    VROSampleSceneBox,
-    VROSampleSceneOBJ,
+    VROSampleSceneOBJ = 0,
     VROSampleSceneVideoSphere,
+    VROSampleSceneTorus,
+    VROSampleSceneBox,
     VROSampleSceneLayer,
     VROSampleSceneNumScenes
 };
@@ -27,6 +27,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 @property (readwrite, nonatomic) float boxVideoAngle;
 @property (readwrite, nonatomic) float objAngle;
 @property (readwrite, nonatomic) int sceneIndex;
+@property (readwrite, nonatomic) std::shared_ptr<VROVideoTexture> videoTexture;
 @property (readwrite, nonatomic) std::shared_ptr<VROHoverController> torusHoverController;
 
 @end
@@ -84,10 +85,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"surfing" ofType:@"mp4"];
     
-    std::shared_ptr<VROVideoTexture> videoTexture = std::make_shared<VROVideoTexture>();
-    videoTexture->displayVideo([NSURL fileURLWithPath:filePath], *self.context);
+    self.videoTexture = std::make_shared<VROVideoTexture>();
+    self.videoTexture->displayVideo([NSURL fileURLWithPath:filePath], *self.context);
     
-    material->getDiffuse().setContents(videoTexture);
+    material->getDiffuse().setContents(self.videoTexture);
     
     std::shared_ptr<VRONode> sphereNode = std::make_shared<VRONode>();
     sphereNode->setGeometry(sphere);
@@ -356,15 +357,15 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
     scene->setBackground([self niagaraTexture]);
     
-    NSString *soccerPath = [[NSBundle mainBundle] pathForResource:@"soccerball" ofType:@"obj"];
+    NSString *soccerPath = [[NSBundle mainBundle] pathForResource:@"shanghai_tower" ofType:@"obj"];
     NSURL *soccerURL = [NSURL fileURLWithPath:soccerPath];
     
-    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Directional);
+    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.9, 0.9 });
     light->setPosition( { 0, 0, 0 });
     light->setDirection( { 0, 0, -1.0 });
-    light->setAttenuationStartDistance(5);
-    light->setAttenuationEndDistance(10);
+    light->setAttenuationStartDistance(15);
+    light->setAttenuationEndDistance(25);
     light->setSpotInnerAngle(0);
     light->setSpotOuterAngle(15);
     
@@ -375,17 +376,11 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     scene->addNode(rootNode);
     
     std::shared_ptr<VRONode> objNode = VROLoader::loadURL(soccerURL, *self.context)[0];
-    objNode->setPosition({0, 0, -20});
+    objNode->getGeometry()->getMaterials()[0]->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"shanghai_tower_diffuse.jpg"]));
+    objNode->getGeometry()->getMaterials()[0]->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"shanghai_tower_specular.jpg"]));
+    objNode->setPosition({0, -10, -20});
     
     rootNode->addChildNode(objNode);
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        VROTransaction::begin();
-        VROTransaction::setAnimationDuration(10);
-        
-        objNode->getGeometry()->getMaterials()[0]->getDiffuse().setContents({1.0, 0.0, 0.0, 1.0});
-        VROTransaction::commit();
-    });
     
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self](VRONode *const node, float seconds) {
         self.objAngle += .015;
@@ -445,6 +440,17 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (void)reticleTapped:(VROVector3f)ray {
+    if (self.videoTexture) {
+        if (self.videoTexture->isPaused()) {
+            self.videoTexture->play();
+        }
+        else {
+            self.videoTexture->pause();
+        }
+        
+        return;
+    }
+    
     if (!self.tapEnabled) {
         return;
     }

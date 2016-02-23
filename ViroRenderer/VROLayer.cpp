@@ -54,37 +54,22 @@ void VROLayer::setFrame(VRORect frame) {
     onFrameUpdate();
 }
 
-void VROLayer::setBounds(VRORect bounds) {
-    _frame.size = bounds.size;
-    onFrameUpdate();
-}
-
-void VROLayer::setPosition(VROPoint point) {
+void VROLayer::setPosition(VROVector3f point) {
     _frame.origin.x = point.x - _frame.size.width  / 2.0f;
     _frame.origin.y = point.y - _frame.size.height / 2.0f;
     _frame.origin.z = point.z;
     
-    onFrameUpdate();
+    VRONode::setPosition(point);
 }
 
 void VROLayer::onFrameUpdate() {
-    VROPoint pt = getPosition();
-    
-    VRONode::setPosition({ pt.x, pt.y, pt.z });
+    VRONode::setPosition({ _frame.origin.x + _frame.size.width / 2.0f,
+                           _frame.origin.y + _frame.size.height / 2.0f,
+                           _frame.origin.z });
     VRONode::setScale( { _frame.size.width, _frame.size.height, 1.0 });
 }
 
 VRORect VROLayer::getFrame() const {
     return _frame;
-}
-
-VRORect VROLayer::getBounds() const {
-    return {{0, 0}, {_frame.size.width, _frame.size.height}};
-}
-
-VROPoint VROLayer::getPosition() const {
-    return {_frame.origin.x + _frame.size.width  / 2.0f,
-            _frame.origin.y + _frame.size.height / 2.0f,
-            _frame.origin.z };
 }
 

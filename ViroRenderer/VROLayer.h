@@ -20,6 +20,7 @@
 #include "VROMatrix4f.h"
 #include "VRONode.h"
 #include "VROMaterial.h"
+#include "VROVector3f.h"
 
 class VROLayer : public VRONode {
     
@@ -33,12 +34,9 @@ public:
                      const VRORenderContext &context);
     
     void setFrame(VRORect frame);
-    void setBounds(VRORect bounds);
-    void setPosition(VROPoint point);
+    void setPosition(VROVector3f point);
     
     VRORect getFrame() const;
-    VRORect getBounds() const;
-    VROPoint getPosition() const;
     
     std::shared_ptr<VROMaterial> getMaterial();
     

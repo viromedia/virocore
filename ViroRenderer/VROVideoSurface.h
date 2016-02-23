@@ -10,10 +10,12 @@
 #define VROVideoSurface_h
 
 #import "VROSurface.h"
+#import <memory>
 
 class VRORenderContext;
 class VROMaterial;
 class VROSurface;
+class VROVideoTexture;
 
 class VROVideoSurface : public VROSurface {
     
@@ -21,13 +23,20 @@ public:
     
     static std::shared_ptr<VROVideoSurface> createVideoSurface(float width, float height,
                                                                NSURL *url, VRORenderContext &context);
-                                                              
+    
+    void pause();
+    void play();
+    bool isPaused();
+    
     ~VROVideoSurface();
     
 private:
     
     VROVideoSurface(std::vector<std::shared_ptr<VROGeometrySource>> &sources,
-                    std::vector<std::shared_ptr<VROGeometryElement>> &elements);
+                    std::vector<std::shared_ptr<VROGeometryElement>> &elements,
+                    std::shared_ptr<VROVideoTexture> texture);
+    
+    std::shared_ptr<VROVideoTexture> _texture;
     
 };
 

@@ -10,19 +10,19 @@
 #define VRORect_h
 
 #include "VROSize.h"
-#include "VROPoint.h"
+#include "VROVector3f.h"
 
 class VRORect {
     
 public:
     
-    VROPoint origin;
+    VROVector3f origin;
     VROSize size;
     
     VRORect()
     {}
     
-    VRORect(VROPoint origin, VROSize size) :
+    VRORect(VROVector3f origin, VROSize size) :
         origin(origin),
         size(size)
     {}

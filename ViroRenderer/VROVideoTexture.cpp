@@ -19,7 +19,8 @@
 
 VROVideoTexture::VROVideoTexture() :
     _notificationToken(nullptr),
-    _paused(true),
+    _mediaReady(false),
+    _paused(false),
     _currentTextureIndex(0) {
     
     _player = [[AVPlayer alloc] init];
@@ -36,8 +37,22 @@ VROVideoTexture::~VROVideoTexture() {
 
 #pragma mark - Recorded Video Playback
 
-void VROVideoTexture::displayVideo(NSURL *url, VRORenderContext &context) {
+void VROVideoTexture::play() {
+    [_player play];
+    _paused = false;
+}
+
+void VROVideoTexture::pause() {
+    [_player pause];
     _paused = true;
+}
+
+bool VROVideoTexture::isPaused() {
+    return _paused;
+}
+
+void VROVideoTexture::displayVideo(NSURL *url, VRORenderContext &context) {
+    _mediaReady = false;
     
     id <MTLDevice> device = ((VRORenderContextMetal &)context).getDevice();
     
@@ -92,7 +107,10 @@ void VROVideoTexture::displayVideo(NSURL *url, VRORenderContext &context) {
                             [item addOutput:_videoOutput];
                             [_player replaceCurrentItemWithPlayerItem:item];
                             [_videoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:ONE_FRAME_DURATION];
-                            [_player play];
+                            
+                            if (!_paused) {
+                                [_player play];
+                            }
                         });
                     }
                 }];
@@ -124,7 +142,7 @@ void VROVideoTexture::onFrameWillRender(const VRORenderContext &context) {
      Stuttering is significantly reduced by placing this code in willRender() as opposed
      to didRender(). Reason unknown: contention of resources somewhere?
      */
-    if (_paused) {
+    if (!_mediaReady) {
         return;
     }
     
@@ -153,7 +171,7 @@ void VROVideoTexture::onFrameWillRender(const VRORenderContext &context) {
 }
 
 void VROVideoTexture::onFrameDidRender(const VRORenderContext &context) {
-    if (_paused) {
+    if (!_mediaReady) {
         return;
     }
     
@@ -205,7 +223,7 @@ void VROVideoTexture::displayPixelBuffer(CVPixelBufferRef pixelBuffer) {
 }
 
 - (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender {
-    self.texture->setPaused(false);
+    self.texture->setMediaReady(true);
 }
 
 @end
@@ -280,7 +298,7 @@ void VROVideoTexture::displayCamera(AVCaptureDevicePosition position, VRORenderC
     [_captureSession commitConfiguration];
     [_captureSession startRunning];
     
-    _paused = false;
+    _mediaReady = true;
 }
 
 @interface VROVideoCaptureDelegate ()
