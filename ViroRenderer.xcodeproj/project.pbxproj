@@ -25,8 +25,8 @@
 		8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BCA1BCDA2BD0017C70B /* LaunchScreen.storyboard */; };
 		8F517BD71BCDA2BE0017C70B /* ViroRendererTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BD61BCDA2BE0017C70B /* ViroRendererTests.m */; };
 		8F517BE21BCDA2BE0017C70B /* ViroRendererUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BE11BCDA2BE0017C70B /* ViroRendererUITests.m */; };
-		8F548E461C23654E00556688 /* VROAnimationFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F548E441C23654E00556688 /* VROAnimationFloat.h */; };
-		8F548E4A1C23656000556688 /* VROAnimationVector3f.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F548E481C23656000556688 /* VROAnimationVector3f.h */; };
+		8F548E461C23654E00556688 /* VROAnimationFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F548E441C23654E00556688 /* VROAnimationFloat.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F548E4A1C23656000556688 /* VROAnimationVector3f.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F548E481C23656000556688 /* VROAnimationVector3f.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F548E4E1C23665100556688 /* VROAnimatable.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F548E4C1C23665100556688 /* VROAnimatable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F548E521C2378D500556688 /* VROAnimatable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F548E511C2378D500556688 /* VROAnimatable.cpp */; };
 		8F5C41551BD82C1B006D7A77 /* boba.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5C41541BD82C1B006D7A77 /* boba.png */; };
@@ -49,7 +49,7 @@
 		8F83DEB11C503EDF0089C31A /* beach.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F83DEB01C503EDF0089C31A /* beach.jpg */; };
 		8F83DEB31C5042240089C31A /* surfing.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 8F83DEB21C5042240089C31A /* surfing.mp4 */; };
 		8F9277A51C62DBDF00FF892A /* VROConcurrentBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F9277A31C62DBDF00FF892A /* VROConcurrentBuffer.cpp */; };
-		8F9277A61C62DBDF00FF892A /* VROConcurrentBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9277A41C62DBDF00FF892A /* VROConcurrentBuffer.h */; };
+		8F9277A61C62DBDF00FF892A /* VROConcurrentBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F9277A41C62DBDF00FF892A /* VROConcurrentBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F9277FE1C66BD4500FF892A /* nx1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F9277F81C66BD4500FF892A /* nx1.jpg */; };
 		8F9277FF1C66BD4500FF892A /* ny1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F9277F91C66BD4500FF892A /* ny1.jpg */; };
 		8F9278001C66BD4500FF892A /* nz1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F9277FA1C66BD4500FF892A /* nz1.jpg */; };
@@ -68,7 +68,7 @@
 		8FA2E14C1C445CAA0070DB26 /* py.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1461C445CAA0070DB26 /* py.png */; };
 		8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FA2E1471C445CAA0070DB26 /* pz.png */; };
 		8FA2E1501C4463D00070DB26 /* VROSkybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E14E1C4463D00070DB26 /* VROSkybox.cpp */; };
-		8FA2E1511C4463D00070DB26 /* VROSkybox.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E14F1C4463D00070DB26 /* VROSkybox.h */; };
+		8FA2E1511C4463D00070DB26 /* VROSkybox.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E14F1C4463D00070DB26 /* VROSkybox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FA2E1551C44AE340070DB26 /* VROTorusKnot.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E1531C44AE340070DB26 /* VROTorusKnot.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FA2E1561C44BAB70070DB26 /* VROTorusKnot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E1521C44AE340070DB26 /* VROTorusKnot.cpp */; };
 		8FA2E15B1C45AF3C0070DB26 /* VROScreenUIView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E1591C45AF3C0070DB26 /* VROScreenUIView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -192,9 +192,9 @@
 		8FD4DF541C18F5EB003DC425 /* VROWorldUIView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1071CF1BE81F10003B3C3F /* VROWorldUIView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF551C18F698003DC425 /* VROViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F62482D1BDAACA4000755E5 /* VROViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF981C1CD67B003DC425 /* specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4DF971C1CD67B003DC425 /* specular.png */; };
-		8FD9B45D1C31E9DC006CB698 /* VROAnimationQuaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD9B45C1C31E9D9006CB698 /* VROAnimationQuaternion.h */; };
+		8FD9B45D1C31E9DC006CB698 /* VROAnimationQuaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD9B45C1C31E9D9006CB698 /* VROAnimationQuaternion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD9B4601C339ECF006CB698 /* VROMaterialSubstrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD9B45E1C339ECF006CB698 /* VROMaterialSubstrate.cpp */; };
-		8FD9B4611C339ECF006CB698 /* VROMaterialSubstrate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD9B45F1C339ECF006CB698 /* VROMaterialSubstrate.h */; };
+		8FD9B4611C339ECF006CB698 /* VROMaterialSubstrate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD9B45F1C339ECF006CB698 /* VROMaterialSubstrate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD9B4651C33A933006CB698 /* bobaraj.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD9B4641C33A933006CB698 /* bobaraj.png */; };
 /* End PBXBuildFile section */
 
@@ -950,13 +950,11 @@
 				8FD4DF371C18F500003DC425 /* VROMaterial.h in Headers */,
 				8F83DEA01C4826F80089C31A /* VROTimingFunctionEaseInEaseOut.h in Headers */,
 				8F83DEA31C4826F80089C31A /* VROTimingFunctionPowerDeceleration.h in Headers */,
-				8FD9B45D1C31E9DC006CB698 /* VROAnimationQuaternion.h in Headers */,
 				8FD4DF381C18F500003DC425 /* VROMaterialVisual.h in Headers */,
 				8FD4DF391C18F500003DC425 /* VROTexture.h in Headers */,
 				8FD4DF3A1C18F500003DC425 /* VROLight.h in Headers */,
 				8FD4DF3B1C18F5EA003DC425 /* VROTime.h in Headers */,
 				8FD4DF3C1C18F5EA003DC425 /* VROLog.h in Headers */,
-				8FA2E1511C4463D00070DB26 /* VROSkybox.h in Headers */,
 				8F83DE9C1C4826F80089C31A /* VROTimingFunction.h in Headers */,
 				8FD4DF3D1C18F5EA003DC425 /* VROByteBuffer.h in Headers */,
 				8F83DE9D1C4826F80089C31A /* VROTimingFunctionBounce.h in Headers */,
@@ -964,9 +962,7 @@
 				8FD4DF3F1C18F5EA003DC425 /* VROData.h in Headers */,
 				8FD4DF401C18F5EA003DC425 /* VROQuaternion.h in Headers */,
 				8FCB6C891C3C828200C14158 /* VROLoader.h in Headers */,
-				8F9277A61C62DBDF00FF892A /* VROConcurrentBuffer.h in Headers */,
 				8FD4DF411C18F5EB003DC425 /* VROPlane.h in Headers */,
-				8F548E461C23654E00556688 /* VROAnimationFloat.h in Headers */,
 				8FD4DF421C18F5EB003DC425 /* VROFrustum.h in Headers */,
 				8FD4DF431C18F5EB003DC425 /* VROFrustumPlane.h in Headers */,
 				8FD4DF441C18F5EB003DC425 /* VROBoundingBox.h in Headers */,
@@ -974,14 +970,12 @@
 				8FD4DF461C18F5EB003DC425 /* VROVector3f.h in Headers */,
 				8F83DE9E1C4826F80089C31A /* VROTimingFunctionCubicBezier.h in Headers */,
 				8FD4DF471C18F5EB003DC425 /* VROVector4f.h in Headers */,
-				8F548E4A1C23656000556688 /* VROAnimationVector3f.h in Headers */,
 				8FD4DF481C18F5EB003DC425 /* VROMatrix4d.h in Headers */,
 				8FD4DF491C18F5EB003DC425 /* VROMatrix4f.h in Headers */,
 				8F548E4E1C23665100556688 /* VROAnimatable.h in Headers */,
 				8FD4DF4A1C18F5EB003DC425 /* VROMath.h in Headers */,
 				8FD4DF4B1C18F5EB003DC425 /* VROBox.h in Headers */,
 				8FD4DF4C1C18F5EB003DC425 /* VROSurface.h in Headers */,
-				8FD9B4611C339ECF006CB698 /* VROMaterialSubstrate.h in Headers */,
 				8FD4DF4D1C18F5EB003DC425 /* VROShapeUtils.h in Headers */,
 				8FD4DF4E1C18F5EB003DC425 /* VROLayer.h in Headers */,
 				8FD4DF4F1C18F5EB003DC425 /* VRORect.h in Headers */,
@@ -999,10 +993,16 @@
 				8FD4DF541C18F5EB003DC425 /* VROWorldUIView.h in Headers */,
 				8F11B7C21C20B0530026D150 /* VROView.h in Headers */,
 				8F83DEAF1C50278C0089C31A /* VROSphere.h in Headers */,
+				8FA2E1511C4463D00070DB26 /* VROSkybox.h in Headers */,
 				8F11B7C51C20B6180026D150 /* VRORenderDelegate.h in Headers */,
+				8F9277A61C62DBDF00FF892A /* VROConcurrentBuffer.h in Headers */,
 				8F92780C1C67DE4A00FF892A /* VROHoverController.h in Headers */,
+				8F548E461C23654E00556688 /* VROAnimationFloat.h in Headers */,
+				8F548E4A1C23656000556688 /* VROAnimationVector3f.h in Headers */,
 				8F11B7CB1C20E7830026D150 /* VROAnimation.h in Headers */,
+				8FD9B4611C339ECF006CB698 /* VROMaterialSubstrate.h in Headers */,
 				8FD4DF551C18F698003DC425 /* VROViewController.h in Headers */,
+				8FD9B45D1C31E9DC006CB698 /* VROAnimationQuaternion.h in Headers */,
 				8F11B7C71C20CF200026D150 /* VRORenderParameters.h in Headers */,
 				8FA2E1641C460C600070DB26 /* VROAction.h in Headers */,
 			);
