@@ -10,11 +10,13 @@
 #define VROMath_h
 
 #include <stdio.h>
+#include <vector>
 #include <GLKit/GLKit.h>
 #include "VROVector3f.h"
 #include "VROVector3d.h"
 #include "VROMatrix4f.h"
 #include "VROMatrix4d.h"
+#include "VROBoundingBox.h"
 
 static float kRoundingErrorFloat = 0.00001;
 
@@ -144,5 +146,9 @@ bool VROMathIsZero(const float a, const float tolerance = kRoundingErrorFloat);
 bool VROMathEquals(const float a, const float b, const float tolerance = kRoundingErrorFloat);
 
 float VROFloat16ToFloat(short fltInt16);
+short VROFloatToFloat16(float value);
+
+VROVector3f VROMathGetCenter(std::vector<VROVector3f> &vertices);
+VROBoundingBox VROMathGetBoundingBox(std::vector<VROVector3f> &vertices);
 
 #endif /* VROMath_h */

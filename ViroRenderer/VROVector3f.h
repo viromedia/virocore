@@ -47,6 +47,13 @@ public:
         z += rhs.z;
         return *this;
     }
+    
+    VROVector3f &operator-=(const VROVector3f &rhs) {
+        x -= rhs.x;
+        y -= rhs.y;
+        z -= rhs.z;
+        return *this;
+    }
 
     /*
      Find the absolute angle between this vector and the given line. The

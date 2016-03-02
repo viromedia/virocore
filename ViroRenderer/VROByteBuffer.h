@@ -57,6 +57,10 @@ public:
     VROByteBuffer& operator=(VROByteBuffer&& moveFrom);
 
     ~VROByteBuffer();
+    
+    size_t capacity() const {
+        return _capacity;
+    }
 
     /*
      Read methods.
@@ -147,6 +151,7 @@ public:
     void writeByte(char value);
     void writeShort(short value);
     void writeInt(int value);
+    void writeHalf(float value);
     void writeFloat(float value);
     void writeFloats(float *pValues, const int numFloats);
     void writeDouble(double value);

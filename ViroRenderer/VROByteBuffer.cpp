@@ -647,6 +647,10 @@ void VROByteBuffer::writeInt(int value) {
     _pos += 4;
 }
 
+void VROByteBuffer::writeHalf(float value) {
+    writeShort(VROFloatToFloat16(value));
+}
+
 void VROByteBuffer::writeFloat(float value) {
 #if k_bufferDebugOverruns
     const size_t newPos = _pos + 4;

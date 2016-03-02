@@ -928,6 +928,16 @@ float VROFloat16ToFloat(short fltInt16) {
     return fRet;
 }
 
+short VROFloatToFloat16(float value) {
+    short   fltInt16;
+    int     fltInt32;
+    memcpy(&fltInt32, &value, sizeof(float));
+    fltInt16 =  ((fltInt32 & 0x7fffffff) >> 13) - (0x38000000 >> 13);
+    fltInt16 |= ((fltInt32 & 0x80000000) >> 16);
+    
+    return fltInt16;
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 //
 //  Geometry
@@ -1004,4 +1014,41 @@ void VROMathGetClosestPointOnSegment(const VROVector3d &A, const VROVector3d &B,
         result.z = A.z + dz * t;
     }
 }
+
+VROVector3f VROMathGetCenter(std::vector<VROVector3f> &vertices) {
+    return VROMathGetBoundingBox(vertices).getCenter();
+}
+
+VROBoundingBox VROMathGetBoundingBox(std::vector<VROVector3f> &vertices) {
+        float minX =  FLT_MAX;
+        float maxX = -FLT_MAX;
+        float minY =  FLT_MAX;
+        float maxY = -FLT_MAX;
+        float minZ =  FLT_MAX;
+        float maxZ = -FLT_MAX;
+    
+    for (VROVector3f &vertex : vertices) {
+        if (vertex.x < minX) {
+            minX = vertex.x;
+        }
+        if (vertex.x > maxX) {
+            maxX = vertex.x;
+        }
+        if (vertex.y < minY) {
+            minY = vertex.y;
+        }
+        if (vertex.y > maxY) {
+            maxY = vertex.y;
+        }
+        if (vertex.z < minZ) {
+            minZ = vertex.z;
+        }
+        if (vertex.z > maxZ) {
+            maxZ = vertex.z;
+        }
+    };
+    
+    return VROBoundingBox(minX, maxX, minY, maxY, minZ, maxZ);
+}
+
 
