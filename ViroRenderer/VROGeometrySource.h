@@ -56,6 +56,18 @@ public:
         _dataStride(dataStride)
     {}
     
+    VROGeometrySource(std::shared_ptr<VROData> data,
+                      std::shared_ptr<VROGeometrySource> templateSource) :
+        _data(data),
+        _semantic(templateSource->getSemantic()),
+        _vertexCount(templateSource->getVertexCount()),
+        _floatComponents(templateSource->isFloatComponents()),
+        _componentsPerVertex(templateSource->getComponentsPerVertex()),
+        _bytesPerComponent(templateSource->getBytesPerComponent()),
+        _dataOffset(templateSource->getDataOffset()),
+        _dataStride(templateSource->getDataStride())
+    {}
+    
     std::shared_ptr<VROData> getData() const {
         return _data;
     }
@@ -86,6 +98,11 @@ public:
      callback for each.
      */
     void processVertices(std::function<void(int index, VROVector3f vertex)> function) const;
+    
+    /*
+     Read through all vertices in this data source and modify them.
+     */
+    void modifyVertices(std::function<VROVector3f(int index, VROVector3f vertex)> function) const;
     
     /*
      Retrieves the bounding box for the values associated with this
