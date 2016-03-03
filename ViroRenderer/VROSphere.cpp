@@ -45,7 +45,7 @@ std::shared_ptr<VROSphere> VROSphere::createSphere(float radius, int widthSegmen
             normal = normal.normalize();
             
             if (!facesOutward) {
-                normal.scale(-1, &normal);
+                normal = normal.scale(-1);
             }
             
             var[index].x = px;

@@ -73,12 +73,11 @@ double VROVector3f::angleZ(const VROVector3f &other) const {
         angle = M_PI;
     }
 
-    VROVector3f cross;
-    v1.cross(v2, &cross);
-
+    VROVector3f cross = v1.cross(v2);
     if (cross.z <= 0) {
         return angle;
-    } else {
+    }
+    else {
         return angle * -1;
     }
 }
@@ -97,12 +96,11 @@ float VROVector3f::angleZ_normed(const VROVector3f &other) const {
         angle = acos(arcAngle);
     }
 
-    VROVector3f cross;
-    this->cross(other, &cross);
-
+    VROVector3f cross = this->cross(other);
     if (cross.z <= 0) {
         return angle;
-    } else {
+    }
+    else {
         return angle * -1;
     }
 }
@@ -292,16 +290,13 @@ VROVector3f VROVector3f::add(VROVector3f vB) const {
     return result;
 }
 
-void VROVector3f::add(const VROVector3f &vB, VROVector3f *result) const {
-    result->x = x + vB.x;
-    result->y = y + vB.y;
-    result->z = z + vB.z;
-}
-
-void VROVector3f::addScaled(const VROVector3f &scaledB, float scale, VROVector3f *result) const {
-    result->x = x + scaledB.x * scale;
-    result->y = y + scaledB.y * scale;
-    result->z = z + scaledB.z * scale;
+VROVector3f VROVector3f::addScaled(const VROVector3f &scaledB, float scale) const {
+    VROVector3f result;
+    result.x = x + scaledB.x * scale;
+    result.y = y + scaledB.y * scale;
+    result.z = z + scaledB.z * scale;
+    
+    return result;
 }
 
 VROVector3f VROVector3f::subtract(VROVector3f vB) const {
@@ -313,28 +308,22 @@ VROVector3f VROVector3f::subtract(VROVector3f vB) const {
     return result;
 }
 
-void VROVector3f::subtract(const VROVector3f &vB, VROVector3f *result) const {
-    result->x = x - vB.x;
-    result->y = y - vB.y;
-    result->z = z - vB.z;
+VROVector3f VROVector3f::midpoint(const VROVector3f &other) const {
+    VROVector3f result;
+    result.x = (x + other.x) * 0.5f;
+    result.y = (y + other.y) * 0.5f;
+    result.z = (z + other.z) * 0.5f;
+    
+    return result;
 }
 
-void VROVector3f::midpoint(const VROVector3f &other, VROVector3f *result) const {
-    result->x = (x + other.x) * 0.5f;
-    result->y = (y + other.y) * 0.5f;
-    result->z = (z + other.z) * 0.5f;
-}
-
-void VROVector3f::midpoint(const VROVector3d &other, VROVector3f *result) const {
-    result->x = (x + other.x) * 0.5;
-    result->y = (y + other.y) * 0.5;
-    result->z = (z + other.z) * 0.5;
-}
-
-void VROVector3f::cross(const VROVector3f &vB, VROVector3f *result) const {
-    result->x = y * vB.z - z * vB.y;
-    result->y = z * vB.x - x * vB.z;
-    result->z = x * vB.y - y * vB.x;
+VROVector3f VROVector3f::midpoint(const VROVector3d &other) const {
+    VROVector3f result;
+    result.x = (x + other.x) * 0.5;
+    result.y = (y + other.y) * 0.5;
+    result.z = (z + other.z) * 0.5;
+    
+    return result;
 }
 
 VROVector3f VROVector3f::cross(const VROVector3f &vB) const {
@@ -369,10 +358,13 @@ float VROVector3f::magnitudeXY() const {
     return sqrt(x * x + y * y);
 }
 
-void VROVector3f::scale(float factor, VROVector3f *result) const {
-    result->x = x * factor;
-    result->y = y * factor;
-    result->z = z * factor;
+VROVector3f VROVector3f::scale(float factor) const {
+    VROVector3f result;
+    result.x = x * factor;
+    result.y = y * factor;
+    result.z = z * factor;
+    
+    return result;
 }
 
 VROVector3f VROVector3f::interpolate(VROVector3f other, float t) {

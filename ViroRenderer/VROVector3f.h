@@ -125,17 +125,15 @@ public:
      Basic arithmetic.
      */
     VROVector3f add(VROVector3f vB) const;
-    void add(const VROVector3f &vB, VROVector3f *result) const;
-    void addScaled(const VROVector3f &scaledB, float scale, VROVector3f *result) const;
+    VROVector3f addScaled(const VROVector3f &scaledB, float scale) const;
     VROVector3f subtract(VROVector3f vB) const;
-    void subtract(const VROVector3f &vB, VROVector3f *result) const;
-    void scale(float factor, VROVector3f *result) const;
+    VROVector3f scale(float factor) const;
 
     /*
      Midpoints and distances.
      */
-    void   midpoint(const VROVector3f &other, VROVector3f *result) const;
-    void   midpoint(const VROVector3d &other, VROVector3f *result) const;
+    VROVector3f midpoint(const VROVector3f &other) const;
+    VROVector3f midpoint(const VROVector3d &other) const;
     float  distance(const VROVector3f &vB) const;
     float  distanceAccurate(const VROVector3f &vB) const;
     float  distance(const VROVector3d &vB) const;
@@ -149,7 +147,6 @@ public:
      */
     float  dot(const VROVector3f &vB) const;
     double dot(const VROVector3d &vB) const;
-    void   cross(const VROVector3f &vB, VROVector3f *result) const;
     VROVector3f cross(const VROVector3f &vB) const;
     VROVector3f normalize() const;
     VROVector3f interpolate(VROVector3f other, float t);

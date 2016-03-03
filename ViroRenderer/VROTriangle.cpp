@@ -16,11 +16,11 @@ VROTriangle::VROTriangle(VROVector3f a, VROVector3f b, VROVector3f c) :
     _b(b),
     _c(c) {
    
-    _b.subtract(_a, &_segAB);
-    _c.subtract(_b, &_segBC);
-    _a.subtract(_c, &_segCA);
+    _segAB = _b.subtract(_a);
+    _segBC = _c.subtract(_b);
+    _segCA = _a.subtract(_c);
         
-    _segAB.cross(_segBC, &_normal);
+    _normal = _segAB.cross(_segBC);
     _normal = _normal.normalize();
 }
 

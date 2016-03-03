@@ -26,9 +26,8 @@ VROPlane::~VROPlane() {
 }
 
 void VROPlane::projectNormalizedVector(const VROVector3f &vector, VROVector3f *result) {
-    VROVector3f cross;
-    vector.cross(normal, &cross);
-    normal.cross(cross, result);
+    VROVector3f cross = vector.cross(normal);
+    *result = normal.cross(cross);
 }
 
 float VROPlane::distanceToPoint(const VROVector3f &point) const {
