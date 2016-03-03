@@ -92,3 +92,4 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROByteBuffer.h>
 #import <ViroKit/VROImageUtil.h>
 #import <ViroKit/VROData.h>
+#import <ViroKit/VROGeometryUtil.h>

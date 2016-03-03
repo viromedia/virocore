@@ -80,6 +80,7 @@ public:
     }
     
     const VROBoundingBox &getBoundingBox();
+    VROVector3f getCenter();
     
     std::vector<std::shared_ptr<VROGeometrySource>> getGeometrySourcesForSemantic(VROGeometrySourceSemantic semantic) const;
     

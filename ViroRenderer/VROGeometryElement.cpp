@@ -10,6 +10,7 @@
 #include "VROByteBuffer.h"
 #include "VROGeometrySource.h"
 #include "VROLog.h"
+#include "VROMath.h"
 
 void VROGeometryElement::processTriangles(std::function<void(int index, VROTriangle triangle)> function,
                                           std::shared_ptr<VROGeometrySource> geometrySource) const {
@@ -76,3 +77,4 @@ void VROGeometryElement::processIndices(std::function<void (int, int)> function)
         function(i, idx);
     }
 }
+

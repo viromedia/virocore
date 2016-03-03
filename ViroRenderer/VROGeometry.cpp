@@ -10,6 +10,9 @@
 #include "VROGeometrySource.h"
 #include "VROGeometrySubstrate.h"
 #include "VRORenderParameters.h"
+#include "VROGeometryElement.h"
+#include "VROLog.h"
+#include "VROGeometryUtil.h"
 
 VROGeometry::~VROGeometry() {
     delete (_bounds);
@@ -47,6 +50,10 @@ const VROBoundingBox &VROGeometry::getBoundingBox() {
     return *_bounds;
 }
 
+VROVector3f VROGeometry::getCenter() {
+    return getBoundingBox().getCenter();
+}
+
 std::vector<std::shared_ptr<VROGeometrySource>> VROGeometry::getGeometrySourcesForSemantic(VROGeometrySourceSemantic semantic) const {
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     
@@ -58,3 +65,4 @@ std::vector<std::shared_ptr<VROGeometrySource>> VROGeometry::getGeometrySourcesF
     
     return sources;
 }
+
