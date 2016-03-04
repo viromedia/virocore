@@ -75,22 +75,13 @@ public:
     VROVector3f getPivot() const {
         return _pivot;
     }
-    
-    void setRotation(VROQuaternion rotation);
-    void setPosition(VROVector3f position);
-    void setScale(VROVector3f scale);
-    
     VROQuaternion getRotation() const {
         return _rotation;
     }
     
-    VROVector3f getScale() const {
-        return _scale;
-    }
-    
-    VROVector3f getPosition() const {
-        return _position;
-    }
+    void setRotation(VROQuaternion rotation);
+    void setPosition(VROVector3f position);
+    void setScale(VROVector3f scale);
     
     /*
      The pivot point is the point about which we apply rotation, translation,
