@@ -72,6 +72,9 @@ public:
     VROVector3f getScale() const {
         return _scale;
     }
+    VROVector3f getPivot() const {
+        return _pivot;
+    }
     
     void setRotation(VROQuaternion rotation);
     void setPosition(VROVector3f position);
