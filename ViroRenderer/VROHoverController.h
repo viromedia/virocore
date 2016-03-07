@@ -22,9 +22,9 @@ public:
     
     VROHoverController(float rotationThresholdRadians, std::shared_ptr<VROScene> scene,
                        bool hitTestBoundsOnly,
-                       std::function<bool(VRONode *const node)> isHoverable,
-                       std::function<void(VRONode *const node)> onHoverOn,
-                       std::function<void(VRONode *const node)> onHoverOff);
+                       std::function<bool(std::shared_ptr<VRONode> node)> isHoverable,
+                       std::function<void(std::shared_ptr<VRONode> node)> onHoverOn,
+                       std::function<void(std::shared_ptr<VRONode> node)> onHoverOff);
     virtual ~VROHoverController();
     
     void onFrameWillRender(const VRORenderContext &context);
@@ -36,8 +36,8 @@ private:
     std::weak_ptr<VRONode> _hoveredNode;
     bool _hitTestBoundsOnly;
     
-    std::function<bool(VRONode *const node)> _isHoverable;
-    std::function<void(VRONode *const node)> _hoverOn, _hoverOff;
+    std::function<bool(std::shared_ptr<VRONode> node)> _isHoverable;
+    std::function<void(std::shared_ptr<VRONode> node)> _hoverOn, _hoverOff;
     
     const float _rotationThresholdRadians;
     VROVector3f _lastCameraForward;

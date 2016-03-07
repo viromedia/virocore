@@ -169,13 +169,13 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     self.tapEnabled = true;
     
     self.torusHoverController = std::make_shared<VROHoverController>(toRadians(1), scene, true,
-                                                                     [self] (VRONode *const node) {
+                                                                     [self] (std::shared_ptr<VRONode> node) {
                                                                          return true;
                                                                      },
-                                                                     [self] (VRONode *const node) {
+                                                                     [self] (std::shared_ptr<VRONode> node) {
                                                                          [self hoverOn:node];
                                                                      },
-                                                                     [self] (VRONode *const node) {
+                                                                     [self] (std::shared_ptr<VRONode> node) {
                                                                          [self hoverOff:node];
                                                                      });
     self.context->addFrameListener(self.torusHoverController);
@@ -183,7 +183,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return scene;
 }
 
-- (void)hoverOn:(VRONode *const)node {
+- (void)hoverOn:(std::shared_ptr<VRONode>)node {
     std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
     
     VROTransaction::begin();
@@ -193,7 +193,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROTransaction::commit();
 }
 
-- (void)hoverOff:(VRONode *const)node {
+- (void)hoverOff:(std::shared_ptr<VRONode>)node {
     std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
     
     VROTransaction::begin();
