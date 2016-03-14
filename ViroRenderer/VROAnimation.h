@@ -61,6 +61,8 @@ public:
      Invoke after the animation is completed.
      */
     void onTermination() {
+        finish();
+        
         if (_finishCallback) {
             std::shared_ptr<VROAnimatable> animatable = _animatable.lock();
             if (animatable) {

@@ -17,7 +17,7 @@ void VROAnimatable::animate(std::shared_ptr<VROAnimation> animation) {
     
     std::shared_ptr<VROTransaction> transaction = VROTransaction::get();
     if (!transaction || transaction->isDegenerate()) {
-        animation->finish();
+        animation->onTermination();
     }
     else {
         transaction->addAnimation(animation);

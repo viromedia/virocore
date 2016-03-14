@@ -19,6 +19,7 @@
 #include "VROBoundingBox.h"
 
 static float kRoundingErrorFloat = 0.00001;
+static float kEpsilon = 0.00000001;
 
 VROMatrix4f matrix_from_scale(float sx, float sy, float sz);
 VROMatrix4f matrix_from_translation(float x, float y, float z);

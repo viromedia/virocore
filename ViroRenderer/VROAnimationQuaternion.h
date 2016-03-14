@@ -52,8 +52,6 @@ public:
         if (animatable) {
             _method(animatable.get(), _end);
         }
-        
-        onTermination();
     }
     
 private:

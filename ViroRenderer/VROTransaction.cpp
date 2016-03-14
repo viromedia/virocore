@@ -10,36 +10,37 @@
 #include "VROTime.h"
 #include "VROLog.h"
 #include "VROTimingFunctionLinear.h"
+#include "VROMath.h"
 #include <stack>
 #include <vector>
 
 #pragma mark - Transaction Management
 
-static std::stack<std::shared_ptr<VROTransaction>> openAnimations;
-static std::vector<std::shared_ptr<VROTransaction>> committedAnimations;
+static std::stack<std::shared_ptr<VROTransaction>> openTransactions;
+static std::vector<std::shared_ptr<VROTransaction>> committedTransactions;
 
 std::shared_ptr<VROTransaction> VROTransaction::get() {
-    if (openAnimations.empty()) {
+    if (openTransactions.empty()) {
         return {};
     }
     else {
-        return openAnimations.top();
+        return openTransactions.top();
     }
 }
 
 bool VROTransaction::isActive() {
-    return !openAnimations.empty() && openAnimations.top()->_durationSeconds > 0;
+    return !openTransactions.empty() && openTransactions.top()->_durationSeconds > 0;
 }
 
 void VROTransaction::beginImplicitAnimation() {
-    if (openAnimations.empty()) {
+    if (openTransactions.empty()) {
         begin();
     }
 }
 
 void VROTransaction::begin() {
     std::shared_ptr<VROTransaction> animation = std::shared_ptr<VROTransaction>(new VROTransaction());
-    openAnimations.push(animation);
+    openTransactions.push(animation);
 }
 
 void VROTransaction::commit() {
@@ -51,8 +52,8 @@ void VROTransaction::commit() {
     animation->_t = 0;
     animation->_startTimeSeconds = VROTimeCurrentSeconds();
     
-    openAnimations.pop();
-    committedAnimations.push_back(animation);
+    openTransactions.pop();
+    committedTransactions.push_back(animation);
 }
 
 void VROTransaction::setFinishCallback(std::function<void ()> finishCallback) {
@@ -78,7 +79,7 @@ void VROTransaction::setTimingFunction(std::unique_ptr<VROTimingFunction> timing
 }
 
 void VROTransaction::commitAll() {
-    while (!openAnimations.empty()) {
+    while (!openTransactions.empty()) {
         commit();
     }
 }
@@ -86,21 +87,32 @@ void VROTransaction::commitAll() {
 void VROTransaction::update() {
     double time = VROTimeCurrentSeconds();
     
+    /*
+     Copy the vector over, because the committedTransactions vector can be modified
+     by finish callbacks during this iteration.
+     */
     std::vector<std::shared_ptr<VROTransaction>>::iterator it;
-    for (it = committedAnimations.begin(); it != committedAnimations.end(); ++it) {
+    
+    std::vector<std::shared_ptr<VROTransaction>> runningTransactions = committedTransactions;
+    for (it = runningTransactions.begin(); it != runningTransactions.end(); ++it) {
         std::shared_ptr<VROTransaction> transaction = *it;
         
         float t = (time - transaction->_startTimeSeconds) / transaction->_durationSeconds;
-        transaction->processAnimations(t);
-     
-        // Remove the transaction when it's complete
-        if (transaction->_t > 1.0) {
+        if (isinf(t) || t > 1.0 - kEpsilon) {
             transaction->onTermination();
-            committedAnimations.erase(it);
-            
-            --it;
+        }
+        else {
+            transaction->processAnimations(t);
         }
     }
+    
+    /*
+     Remove all completed transactions.
+     */
+    committedTransactions.erase(std::remove_if(committedTransactions.begin(), committedTransactions.end(),
+                                  [](std::shared_ptr<VROTransaction> candidate) {
+                                      return candidate->_t > 1.0 - kEpsilon;
+                                  }), committedTransactions.end());
 }
 
 #pragma mark - Transaction Class
@@ -132,12 +144,9 @@ float VROTransaction::getAnimationDuration() {
 }
 
 void VROTransaction::processAnimations(float t) {
-    if (isinf(t)) {
-        return;
-    }
     _t = t;
     float transformedT = _timingFunction->getT(t);
-    
+
     for (std::shared_ptr<VROAnimation> animation : _animations) {
         animation->processAnimationFrame(transformedT);
     }
