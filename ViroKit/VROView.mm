@@ -166,11 +166,6 @@
 
 // Called whenever the view needs to render
 - (void)drawInMTKView:(nonnull MTKView *)view {
-    if (!_rendererInitialized) {
-        [self.renderDelegate setupRendererWithView:self context:_renderContext];
-        _rendererInitialized = YES;
-    }
-    
     if (!_headTracker->isReady()) {
         return;
     }
@@ -226,6 +221,11 @@
     
     std::shared_ptr<VRORenderTarget> eyeTarget = _distortionRenderer->bindEyeRenderTarget(commandBuffer);
     _renderContext->setRenderTarget(eyeTarget);
+    
+    if (!_rendererInitialized) {
+        [self.renderDelegate setupRendererWithView:self context:_renderContext];
+        _rendererInitialized = YES;
+    }
     
     id <MTLRenderCommandEncoder> eyeRenderEncoder = eyeTarget->getRenderEncoder();
     

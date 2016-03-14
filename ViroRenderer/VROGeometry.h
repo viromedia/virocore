@@ -37,14 +37,20 @@ class VROGeometry {
 public:
     
     /*
-     Construct a new geometry with the given sources and elements.
+     Construct a new geometry with the given sources and elements. If a context
+     is supplied, the geometry will be prewarmed.
      */
     VROGeometry(std::vector<std::shared_ptr<VROGeometrySource>> sources,
-                std::vector<std::shared_ptr<VROGeometryElement>> elements) :
+                std::vector<std::shared_ptr<VROGeometryElement>> elements,
+                const VRORenderContext *context = nullptr) :
         _geometrySources(sources),
         _geometryElements(elements),
         _bounds(nullptr),
         _substrate(nullptr) {
+            
+        if (context) {
+            prewarm(*context);
+        }
             
          ALLOCATION_TRACKER_ADD(Geometry, 1);
     }
@@ -61,6 +67,12 @@ public:
     }
     
     ~VROGeometry();
+    
+    /*
+     Get the geometry ready for usage now, in advance of when it's visible. If not invoked,
+     the geometry will be initialized when it is made visible.
+     */
+    void prewarm(const VRORenderContext &context);
     
     void render(const VRORenderContext &context,
                 VRORenderParameters &params);

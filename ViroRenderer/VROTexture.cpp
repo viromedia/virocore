@@ -28,20 +28,26 @@ VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate>
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
-VROTexture::VROTexture(UIImage *image) :
+VROTexture::VROTexture(UIImage *image, const VRORenderContext *context) :
     _type(VROTextureType::Quad),
     _image(image),
     _substrate(nullptr) {
-        
+    
+    if (context) {
+        prewarm(*context);
+    }
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
-VROTexture::VROTexture(std::vector<UIImage *> &images) :
+VROTexture::VROTexture(std::vector<UIImage *> &images, const VRORenderContext *context) :
     _type(VROTextureType::Cube),
     _image(nullptr),
     _substrate(nullptr) {
     
     _imagesCube = images;
+    if (context) {
+        prewarm(*context);
+    }
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
@@ -60,6 +66,10 @@ VROTextureSubstrate *const VROTexture::getSubstrate(const VRORenderContext &cont
 void VROTexture::setSubstrate(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate) {
     _type = type;
     _substrate = std::move(substrate);
+}
+
+void VROTexture::prewarm(const VRORenderContext &context) {
+    hydrate(context);
 }
 
 void VROTexture::hydrate(const VRORenderContext &context) {

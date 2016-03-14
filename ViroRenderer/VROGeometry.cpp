@@ -21,12 +21,16 @@ VROGeometry::~VROGeometry() {
     ALLOCATION_TRACKER_SUB(Geometry, 1);
 }
 
-void VROGeometry::render(const VRORenderContext &context,
-                         VRORenderParameters &params) {
-    
+void VROGeometry::prewarm(const VRORenderContext &context) {
     if (!_substrate) {
         _substrate = context.newGeometrySubstrate(*this);
     }
+}
+
+void VROGeometry::render(const VRORenderContext &context,
+                         VRORenderParameters &params) {
+    
+    prewarm(context);
     _substrate->render(_materials, context, params);
 }
 

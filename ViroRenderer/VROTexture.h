@@ -39,15 +39,22 @@ public:
     VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate);
     
     /*
-     Create a new VROTexture from a UIImage.
+     Create a new VROTexture from a UIImage. If a render context is supplied, then
+     the texture will be prewarmed.
      */
-    VROTexture(UIImage *image);
-    VROTexture(std::vector<UIImage *> &images);
+    VROTexture(UIImage *image, const VRORenderContext *context = nullptr);
+    VROTexture(std::vector<UIImage *> &images, const VRORenderContext *context = nullptr);
     virtual ~VROTexture();
     
     void setImage(UIImage *image);
     void setImageCube(UIImage *image);
     void setImageCube(std::vector<UIImage *> &images);
+    
+    /*
+     Get the texture ready for usage now, in advance of when it's visible. If not invoked,
+     the texture will be initialized when it is made visible.
+     */
+    void prewarm(const VRORenderContext &context);
     
     VROTextureSubstrate *const getSubstrate(const VRORenderContext &context);
     void setSubstrate(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate);
