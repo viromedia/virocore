@@ -430,7 +430,8 @@
 
 - (void)handleTap:(UIGestureRecognizer *)gestureRecognizer {
     [_HUD.reticle trigger];
-    [self.renderDelegate reticleTapped:_renderContext->getCameraForward()];
+    [self.renderDelegate reticleTapped:_renderContext->getCameraForward()
+                               context:_renderContext];
 }
 
 #pragma mark - Scene Loading

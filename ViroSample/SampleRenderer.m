@@ -9,11 +9,11 @@
 #import "SampleRenderer.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneOBJ = 0,
+    VROSampleSceneLayer = 0,
     VROSampleSceneVideoSphere,
     VROSampleSceneTorus,
     VROSampleSceneBox,
-    VROSampleSceneLayer,
+    VROSampleSceneOBJ,
     VROSampleSceneNumScenes
 };
 
@@ -315,7 +315,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
      */
     std::shared_ptr<VROLayer> center = std::make_shared<VROLayer>();
     center->setContents([UIImage imageNamed:@"momentslogo"]);
-    center->setFrame(VRORectMake(-0.5, -1.25, -2, 1, 1));
+    center->setFrame(VRORectMake(1.0, -1.25, -2, 1, 1));
+    center->addConstraint(std::make_shared<VROBillboardConstraint>());
     
     rootNode->addChildNode(center);
     
@@ -439,7 +440,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 }
 
-- (void)reticleTapped:(VROVector3f)ray {
+- (void)reticleTapped:(VROVector3f)ray context:(const VRORenderContext *)renderContext {
     if (self.videoTexture) {
         if (self.videoTexture->isPaused()) {
             self.videoTexture->play();
@@ -455,7 +456,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         return;
     }
     
-    std::vector<VROHitTestResult> results = self.view.scene->hitTest(ray);
+    std::vector<VROHitTestResult> results = self.view.scene->hitTest(ray, *renderContext);
     
     for (VROHitTestResult result : results) {
         std::shared_ptr<VRONode> node = result.getNode();

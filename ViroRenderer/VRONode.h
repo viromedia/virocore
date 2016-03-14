@@ -24,6 +24,7 @@ class VROGeometry;
 class VROLight;
 class VROAction;
 class VROHitTestResult;
+class VROConstraint;
 
 class VRONode : public VROAnimatable {
     
@@ -64,7 +65,8 @@ public:
     /*
      Transforms.
      */
-    VROMatrix4f getTransform() const;
+    VROMatrix4f getTransform(const VRORenderContext &context) const;
+    VROVector3f getTransformedPosition(const VRORenderContext &context) const;
     
     VROVector3f getPosition() const {
         return _position;
@@ -141,8 +143,16 @@ public:
     /*
      Hit testing.
      */
-    VROBoundingBox getBoundingBox();
-    std::vector<VROHitTestResult> hitTest(VROVector3f ray, bool boundsOnly = false);
+    VROBoundingBox getBoundingBox(const VRORenderContext &context);
+    std::vector<VROHitTestResult> hitTest(VROVector3f ray, const VRORenderContext &context,
+                                          bool boundsOnly = false);
+    
+    /*
+     Constraints.
+     */
+    void addConstraint(std::shared_ptr<VROConstraint> constraint);
+    void removeConstraint(std::shared_ptr<VROConstraint> constraint);
+    void removeAllConstraints();
     
 protected:
     
@@ -168,6 +178,11 @@ private:
     std::vector<std::shared_ptr<VROAction>> _actions;
     
     /*
+     Constraints on the node, which can modify the node's transformation matrix.
+     */
+    std::vector<std::shared_ptr<VROConstraint>> _constraints;
+    
+    /*
      Action processing: execute all current actions and remove those that are
      expired.
      */
@@ -176,7 +191,7 @@ private:
     /*
      Render functions.
      */
-    void pushTransforms(VRORenderParameters &params);
+    void pushTransforms(const VRORenderContext &context, VRORenderParameters &params);
     void renderNode(const VRORenderContext &context, VRORenderParameters &params);
     void popTransforms(VRORenderParameters &params);
     
@@ -184,7 +199,7 @@ private:
      Hit test helper functions.
      */
     void hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsOnly,
-                 std::vector<VROHitTestResult> &results);
+                 const VRORenderContext &context, std::vector<VROHitTestResult> &results);
     bool hitTestGeometry(VROVector3f ray, VROVector3f origin, VROMatrix4f transform);
 
 };

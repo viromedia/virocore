@@ -52,7 +52,8 @@ public:
      Perform a hit test against all of the root nodes (and their
      children) in the scene.
      */
-    std::vector<VROHitTestResult> hitTest(VROVector3f ray, bool boundsOnly = false);
+    std::vector<VROHitTestResult> hitTest(VROVector3f ray, const VRORenderContext &context,
+                                          bool boundsOnly = false);
     
 private:
     

@@ -42,7 +42,8 @@ private:
     const float _rotationThresholdRadians;
     VROVector3f _lastCameraForward;
     
-    void findHoveredNode(VROVector3f ray, std::shared_ptr<VROScene> &scene);
+    void findHoveredNode(VROVector3f ray, std::shared_ptr<VROScene> &scene,
+                         const VRORenderContext &context);
     
 };
 

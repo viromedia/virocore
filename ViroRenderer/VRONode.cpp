@@ -20,6 +20,7 @@
 #include "VROGeometrySource.h"
 #include "VROGeometryElement.h"
 #include "VROByteBuffer.h"
+#include "VROConstraint.h"
 
 #pragma mark - Initialization
 
@@ -59,7 +60,7 @@ std::shared_ptr<VRONode> VRONode::clone() {
 void VRONode::render(const VRORenderContext &context, VRORenderParameters &params) {
     processActions();
     
-    pushTransforms(params);
+    pushTransforms(context, params);
     renderNode(context, params);
     
     /*
@@ -73,14 +74,14 @@ void VRONode::render(const VRORenderContext &context, VRORenderParameters &param
     popTransforms(params);
 }
 
-void VRONode::pushTransforms(VRORenderParameters &params) {
+void VRONode::pushTransforms(const VRORenderContext &context, VRORenderParameters &params) {
     std::stack<VROMatrix4f> &rotations = params.rotations;
     std::stack<VROMatrix4f> &transforms = params.transforms;
     std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
     
     rotations.push(rotations.top().multiply(_rotation.getMatrix()));
     
-    VROMatrix4f transform = transforms.top().multiply(getTransform());
+    VROMatrix4f transform = transforms.top().multiply(getTransform(context));
     transforms.push(transform);
     
     if (_light) {
@@ -104,7 +105,7 @@ void VRONode::popTransforms(VRORenderParameters &params) {
     }
 }
 
-VROMatrix4f VRONode::getTransform() const {
+VROMatrix4f VRONode::getTransform(const VRORenderContext &context) const {
     VROMatrix4f pivotMtx, unpivotMtx;
     
     if (_geometry) {
@@ -125,7 +126,15 @@ VROMatrix4f VRONode::getTransform() const {
     transform.translate(_position.x, _position.y, _position.z);
     transform = unpivotMtx.multiply(transform).multiply(pivotMtx);
     
+    for (const std::shared_ptr<VROConstraint> &constraint : _constraints) {
+        transform = constraint->getTransform(*this, transform, context);
+    }
+    
     return transform;
+}
+
+VROVector3f VRONode::getTransformedPosition(const VRORenderContext &context) const {
+    return getTransform(context).multiply(_position);
 }
 
 #pragma mark - Setters
@@ -197,26 +206,28 @@ void VRONode::removeAllActions() {
 
 #pragma mark - Hit Testing
 
-VROBoundingBox VRONode::getBoundingBox() {
-    return _geometry->getBoundingBox().transform(getTransform());
+VROBoundingBox VRONode::getBoundingBox(const VRORenderContext &context) {
+    return _geometry->getBoundingBox().transform(getTransform(context));
 }
 
-std::vector<VROHitTestResult> VRONode::hitTest(VROVector3f ray, bool boundsOnly) {
+std::vector<VROHitTestResult> VRONode::hitTest(VROVector3f ray, const VRORenderContext &context,
+                                               bool boundsOnly) {
     std::vector<VROHitTestResult> results;
     
     VROMatrix4f identity;
-    hitTest(ray, identity, boundsOnly, results);
+    hitTest(ray, identity, boundsOnly, context, results);
     
     return results;
 }
 
 void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsOnly,
+                      const VRORenderContext &context,
                       std::vector<VROHitTestResult> &results) {
     
     // TODO Use camera location for origin
     VROVector3f origin;
     
-    VROMatrix4f transform = parentTransform.multiply(getTransform());
+    VROMatrix4f transform = parentTransform.multiply(getTransform(context));
     
     if (_geometry) {
         VROBoundingBox bounds = _geometry->getBoundingBox().transform(transform);
@@ -230,7 +241,7 @@ void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsO
     }
     
     for (std::shared_ptr<VRONode> &subnode : _subnodes) {
-        subnode->hitTest(ray, transform, boundsOnly, results);
+        subnode->hitTest(ray, transform, boundsOnly, context, results);
     }
 }
 
@@ -252,4 +263,22 @@ bool VRONode::hitTestGeometry(VROVector3f ray, VROVector3f origin, VROMatrix4f t
     
     return hit;
 }
+
+#pragma mark - Constraints
+
+void VRONode::addConstraint(std::shared_ptr<VROConstraint> constraint) {
+    _constraints.push_back(constraint);
+}
+
+void VRONode::removeConstraint(std::shared_ptr<VROConstraint> constraint) {
+    _constraints.erase(std::remove_if(_constraints.begin(), _constraints.end(),
+                                  [constraint](std::shared_ptr<VROConstraint> candidate) {
+                                      return candidate == constraint;
+                                  }), _constraints.end());
+}
+
+void VRONode::removeAllConstraints() {
+    _constraints.clear();
+}
+
 

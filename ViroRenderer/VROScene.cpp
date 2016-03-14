@@ -60,11 +60,12 @@ void VROScene::setBackground(std::shared_ptr<VROTexture> textureCube) {
     _background = VROSkybox::createSkybox(textureCube);
 }
 
-std::vector<VROHitTestResult> VROScene::hitTest(VROVector3f ray, bool boundsOnly) {
+std::vector<VROHitTestResult> VROScene::hitTest(VROVector3f ray, const VRORenderContext &context,
+                                                bool boundsOnly) {
     std::vector<VROHitTestResult> results;
     
     for (std::shared_ptr<VRONode> &node : _nodes) {
-        std::vector<VROHitTestResult> nodeResults = node->hitTest(ray, boundsOnly);
+        std::vector<VROHitTestResult> nodeResults = node->hitTest(ray, context, boundsOnly);
         results.insert(results.end(), nodeResults.begin(), nodeResults.end());
     }
     

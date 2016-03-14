@@ -33,11 +33,12 @@ VROHoverController::~VROHoverController() {
     
 }
 
-void VROHoverController::findHoveredNode(VROVector3f ray, std::shared_ptr<VROScene> &scene) {
+void VROHoverController::findHoveredNode(VROVector3f ray, std::shared_ptr<VROScene> &scene,
+                                         const VRORenderContext &context) {
     std::shared_ptr<VRONode> oldHover = _hoveredNode.lock();
 
     for (std::shared_ptr<VRONode> &node : scene->getRootNodes()) {
-        std::vector<VROHitTestResult> hits = node->hitTest(ray, _hitTestBoundsOnly);
+        std::vector<VROHitTestResult> hits = node->hitTest(ray, context, _hitTestBoundsOnly);
         
         float minDistance = FLT_MAX;
         std::shared_ptr<VRONode> newHover;
@@ -84,7 +85,7 @@ void VROHoverController::onFrameWillRender(const VRORenderContext &context) {
     VROQuaternion distance = VROQuaternion::rotationFromTo(_lastCameraForward, currentCameraForward);
     
     if (distance.getAngle() > _rotationThresholdRadians) {
-        findHoveredNode(currentCameraForward, scene);
+        findHoveredNode(currentCameraForward, scene, context);
         _lastCameraForward = currentCameraForward;
     }
 }
