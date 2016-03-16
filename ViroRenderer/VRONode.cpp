@@ -28,7 +28,8 @@
 VRONode::VRONode() :
     _scale({1.0, 1.0, 1.0}),
     _pivot({0.5f, 0.5f, 0.5f}),
-    _opacity(1.0) {
+    _opacity(1.0),
+    _selectable(true) {
     
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -236,9 +237,12 @@ void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsO
                       const VRORenderContext &context,
                       std::vector<VROHitTestResult> &results) {
     
+    if (!_selectable) {
+        return;
+    }
+    
     // TODO Use camera location for origin
     VROVector3f origin;
-    
     VROMatrix4f transform = parentTransform.multiply(getTransform(context));
     
     if (_geometry) {

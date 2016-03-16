@@ -60,7 +60,7 @@ static const float kVROLayerSize = 2;
     
 }
 
-- (void)updateWithContext:(VRORenderContext *)context {
+- (void)updateWithContext:(const VRORenderContext *)context {
     if (!_needsUpdate) {
         return;
     }
@@ -95,7 +95,7 @@ static const float kVROLayerSize = 2;
     CGContextRelease(bitmapContext);
 }
 
-- (void)renderEye:(VROEye *)eye withContext:(VRORenderContext *)context {
+- (void)renderEye:(VROEye *)eye withContext:(const VRORenderContext *)context {
     VROMatrix4f viewInversion = eye->getEyeView().invert();
     
     // Keep the HUD in front of the camera

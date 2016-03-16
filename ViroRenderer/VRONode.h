@@ -152,6 +152,13 @@ public:
     std::vector<VROHitTestResult> hitTest(VROVector3f ray, const VRORenderContext &context,
                                           bool boundsOnly = false);
     
+    void setSelectable(bool selectable) {
+        _selectable = selectable;
+    }
+    bool isSelectable() const {
+        return _selectable;
+    }
+    
     /*
      Constraints.
      */
@@ -181,6 +188,11 @@ private:
      The opacity of the node (0.0 is transparent, 1.0 is opaque).
      */
     float _opacity;
+    
+    /*
+     True if this node is selectable by hit testing. Defaults to true.
+     */
+    bool _selectable;
     
     /*
      Active actions on this node.
