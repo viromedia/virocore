@@ -85,6 +85,11 @@ public:
     void setPosition(VROVector3f position);
     void setScale(VROVector3f scale);
     
+    float getOpacity() const {
+        return _opacity;
+    }
+    void setOpacity(float opacity);
+    
     /*
      The pivot point is the point about which we apply rotation, translation,
      and scale. This is specified as a vector ranging from [0, 1], where 0 
@@ -171,6 +176,11 @@ private:
     VROVector3f _position;
     VROQuaternion _rotation;
     VROVector3f _pivot;
+    
+    /*
+     The opacity of the node (0.0 is transparent, 1.0 is opaque).
+     */
+    float _opacity;
     
     /*
      Active actions on this node.

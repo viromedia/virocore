@@ -20,6 +20,7 @@ class VROVector4f;
 class VRORenderContextMetal;
 class VROLight;
 class VROConcurrentBuffer;
+class VRORenderParameters;
 
 /*
  Metal representation of a VROMaterial. Each VROMaterial defines a vertex
@@ -37,7 +38,7 @@ public:
     /*
      Set the uniforms required to render this material, and return the buffer.
      */
-    VROConcurrentBuffer &bindMaterialUniforms(int frame);
+    VROConcurrentBuffer &bindMaterialUniforms(VRORenderParameters &params, int frame);
     
     /*
      Set the uniforms required to render this given material under the

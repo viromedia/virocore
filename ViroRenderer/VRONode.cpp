@@ -12,6 +12,7 @@
 #include "VROAnimation.h"
 #include "VROTransaction.h"
 #include "VROAnimationVector3f.h"
+#include "VROAnimationFloat.h"
 #include "VROAnimationQuaternion.h"
 #include "VROAction.h"
 #include "VROLog.h"
@@ -26,7 +27,8 @@
 
 VRONode::VRONode() :
     _scale({1.0, 1.0, 1.0}),
-    _pivot({0.5f, 0.5f, 0.5f}) {
+    _pivot({0.5f, 0.5f, 0.5f}),
+    _opacity(1.0) {
     
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -77,12 +79,15 @@ void VRONode::render(const VRORenderContext &context, VRORenderParameters &param
 void VRONode::pushTransforms(const VRORenderContext &context, VRORenderParameters &params) {
     std::stack<VROMatrix4f> &rotations = params.rotations;
     std::stack<VROMatrix4f> &transforms = params.transforms;
+    std::stack<float> &opacities = params.opacities;
     std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
     
     rotations.push(rotations.top().multiply(_rotation.getMatrix()));
     
     VROMatrix4f transform = transforms.top().multiply(getTransform(context));
     transforms.push(transform);
+    
+    opacities.push(opacities.top() * _opacity);
     
     if (_light) {
         _light->setTransformedPosition(transform.multiply(_light->getPosition()));
@@ -99,6 +104,7 @@ void VRONode::renderNode(const VRORenderContext &context, VRORenderParameters &p
 void VRONode::popTransforms(VRORenderParameters &params) {
     params.transforms.pop();
     params.rotations.pop();
+    params.opacities.pop();
     
     if (_light) {
         params.lights.pop_back();
@@ -161,6 +167,12 @@ void VRONode::setPivot(VROVector3f pivot) {
     animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f s) {
                                                         ((VRONode *)animatable)->_pivot = s;
                                                    }, _pivot, pivot));
+}
+
+void VRONode::setOpacity(float opacity) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float s) {
+        ((VRONode *)animatable)->_opacity = s;
+    }, _opacity, opacity));
 }
 
 #pragma mark - Actions

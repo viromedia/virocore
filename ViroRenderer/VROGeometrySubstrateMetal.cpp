@@ -381,12 +381,12 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
             id <MTLRenderPipelineState> outgoingPipelineState = _outgoingPipelineStates[i];
             VROMaterialSubstrateMetal *outgoingSubstrate = static_cast<VROMaterialSubstrateMetal *>(outgoing->getSubstrate());
             
-            renderMaterial(outgoingSubstrate, element, outgoingPipelineState, depthState, renderEncoder, context);
-            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, context);
+            renderMaterial(outgoingSubstrate, element, outgoingPipelineState, depthState, renderEncoder, params, context);
+            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params, context);
         }
         else {
             _outgoingPipelineStates[i] = nullptr;
-            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, context);
+            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params, context);
         }
         
         [renderEncoder popDebugGroup];
@@ -398,6 +398,7 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
                                                id <MTLRenderPipelineState> pipelineState,
                                                id <MTLDepthStencilState> depthStencilState,
                                                id <MTLRenderCommandEncoder> renderEncoder,
+                                               VRORenderParameters &params,
                                                const VRORenderContext &context) {
     
     int frame = context.getFrame();
@@ -405,7 +406,7 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
     [renderEncoder setRenderPipelineState:pipelineState];
     [renderEncoder setDepthStencilState:depthStencilState];
     
-    VROConcurrentBuffer &materialBuffer = material->bindMaterialUniforms(frame);
+    VROConcurrentBuffer &materialBuffer = material->bindMaterialUniforms(params, frame);
     [renderEncoder setVertexBuffer:materialBuffer.getMTLBuffer()
                             offset:materialBuffer.getWriteOffset(frame)
                            atIndex:_vars.size() + 1];

@@ -15,6 +15,7 @@
 #include "VROMath.h"
 #include "VROAllocationTracker.h"
 #include "VROConcurrentBuffer.h"
+#include "VRORenderParameters.h"
 
 VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
                                                      const VRORenderContextMetal &context) :
@@ -196,12 +197,13 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
     }
 }
 
-VROConcurrentBuffer &VROMaterialSubstrateMetal::bindMaterialUniforms(int frame) {
+VROConcurrentBuffer &VROMaterialSubstrateMetal::bindMaterialUniforms(VRORenderParameters &params,
+                                                                     int frame) {
     VROMaterialUniforms *uniforms = (VROMaterialUniforms *)_materialUniformsBuffer->getWritableContents(frame);
     uniforms->diffuse_surface_color = toVectorFloat4(_material.getDiffuse().getContentsColor());
     uniforms->diffuse_intensity = _material.getDiffuse().getIntensity();
     uniforms->shininess = _material.getShininess();
-    uniforms->alpha = _material.getTransparency();
+    uniforms->alpha = _material.getTransparency() * params.opacities.top();
     
     return *_materialUniformsBuffer;
 }

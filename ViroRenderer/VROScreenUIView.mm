@@ -102,6 +102,7 @@ static const float kVROLayerSize = 2;
     VRORenderParameters renderParams;
     renderParams.rotations.push(viewInversion);
     renderParams.transforms.push(viewInversion);
+    renderParams.opacities.push(1.0);
     
     _layer->render(*context, renderParams);
 }

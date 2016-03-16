@@ -35,6 +35,7 @@ void VROScene::renderBackground(const VRORenderContext &context) {
     VRORenderParameters renderParams;
     renderParams.rotations.push(identity);
     renderParams.transforms.push(identity);
+    renderParams.opacities.push(1.0);
     
     //TODO Make the skybox track the camera position
     _background->render(context, renderParams);
@@ -46,6 +47,7 @@ void VROScene::render(const VRORenderContext &context) {
     VRORenderParameters renderParams;
     renderParams.rotations.push(identity);
     renderParams.transforms.push(identity);
+    renderParams.opacities.push(1.0);
     
     for (std::shared_ptr<VRONode> &node : _nodes) {
         node->render(context, renderParams);

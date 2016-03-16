@@ -150,6 +150,7 @@ private:
                         id <MTLRenderPipelineState> pipelineState,
                         id <MTLDepthStencilState> depthStencilState,
                         id <MTLRenderCommandEncoder> renderEncoder,
+                        VRORenderParameters &params,
                         const VRORenderContext &context);
     
 };
