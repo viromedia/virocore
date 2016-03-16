@@ -93,9 +93,9 @@ public:
     }
     
     /*
-     Internal: execute the action and decrement repeat count.
+     Internal: executes the action.
      */
-    virtual void execute(VRONode *node);
+    virtual void execute(VRONode *node) = 0;
     
 protected:
     
@@ -130,6 +130,12 @@ protected:
      false.
      */
     bool _aborted;
+    
+    /*
+     Internal: called bfore and after executing the action. Decrements repeat count.
+     */
+    void preExecute(VRONode *node);
+    void postExecute(VRONode *node);
     
 };
 

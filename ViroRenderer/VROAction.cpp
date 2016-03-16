@@ -60,12 +60,14 @@ std::shared_ptr<VROAction> VROAction::repeatedAnimatedAction(std::function<void(
     return vAction;
 }
 
-void VROAction::execute(VRONode *node) {
+void VROAction::preExecute(VRONode *node) {
     if (!_executed) {
         _startTime = VROTimeCurrentSeconds();
         _executed = true;
     }
-    
+}
+
+void VROAction::postExecute(VRONode *node) {
     if (_durationType == VROActionDurationType::Count &&
         _repeatCount != VROActionRepeatForever && _repeatCount > 0) {
         
@@ -74,18 +76,22 @@ void VROAction::execute(VRONode *node) {
 }
 
 void VROActionPerFrame::execute(VRONode *node) {
+    VROAction::preExecute(node);
     _aborted = !_action(node, _executed ? (VROTimeCurrentSeconds() - _startTime) : 0);
-    VROAction::execute(node);
+    VROAction::postExecute(node);
 }
 
 void VROActionTimed::execute(VRONode *node) {
+    VROAction::preExecute(node);
+    
     float t = VROMathClamp((VROTimeCurrentSeconds() - _startTime) / _duration, 0.0, 1.0);
     _action(node, _timingFunction->getT(t));
     
-    VROAction::execute(node);
+    VROAction::postExecute(node);
 }
 
 void VROActionAnimated::execute(VRONode *node) {
+    VROAction::preExecute(node);
     std::shared_ptr<VROAction> shared = shared_from_this();
     
     VROTransaction::begin();
@@ -98,7 +104,7 @@ void VROActionAnimated::execute(VRONode *node) {
     });
     
     _action(node);
-    VROAction::execute(node);
+    VROAction::postExecute(node);
     
     VROTransaction::commit();
 }
