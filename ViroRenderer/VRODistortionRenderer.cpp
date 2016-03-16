@@ -82,13 +82,15 @@ VROEyeViewport::VROEyeViewport(const VROFieldOfView &eyeFOV, float xOffset) {
 }
 
 void VRODistortionRenderer::updateViewports(VROEye *leftEye, VROEye *rightEye) {
+    float maxWidth = 1024;//_device.getScreen().getWidth() / 2.0;
+    
     leftEye->setViewport(round(_leftEyeViewport.x * _xPxPerTanAngle * _resolutionScale),
                          round(_leftEyeViewport.y * _yPxPerTanAngle * _resolutionScale),
-                         round(_leftEyeViewport.width * _xPxPerTanAngle * _resolutionScale),
+                         MIN(maxWidth, round(_leftEyeViewport.width * _xPxPerTanAngle * _resolutionScale)),
                          round(_leftEyeViewport.height * _yPxPerTanAngle * _resolutionScale));
-    rightEye->setViewport(round(_rightEyeViewport.x * _xPxPerTanAngle * _resolutionScale),
+    rightEye->setViewport(MIN(maxWidth, round(_rightEyeViewport.x * _xPxPerTanAngle * _resolutionScale)),
                           round(_rightEyeViewport.y * _yPxPerTanAngle * _resolutionScale),
-                          round(_rightEyeViewport.width * _xPxPerTanAngle * _resolutionScale),
+                          MIN(maxWidth, round(_rightEyeViewport.width * _xPxPerTanAngle * _resolutionScale)),
                           round(_rightEyeViewport.height * _yPxPerTanAngle * _resolutionScale));
     _viewportsChanged = false;
 }
