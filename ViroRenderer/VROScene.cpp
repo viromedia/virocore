@@ -15,7 +15,11 @@
 #include "VROSkybox.h"
 #include "VROLight.h"
 #include "VROHitTestResult.h"
+#include "VROSphere.h"
 #include <stack>
+
+static const float kSphereBackgroundRadius = 1;
+static const float kSphereBackgroundNumSegments = 20;
 
 VROScene::VROScene() {
     ALLOCATION_TRACKER_ADD(Scenes, 1);
@@ -58,8 +62,19 @@ void VROScene::addNode(std::shared_ptr<VRONode> node) {
     _nodes.push_back(node);
 }
 
-void VROScene::setBackground(std::shared_ptr<VROTexture> textureCube) {
+void VROScene::setBackgroundCube(std::shared_ptr<VROTexture> textureCube) {
     _background = VROSkybox::createSkybox(textureCube);
+}
+
+void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
+    _background = VROSphere::createSphere(kSphereBackgroundRadius,
+                                          kSphereBackgroundNumSegments,
+                                          kSphereBackgroundNumSegments,
+                                          false);
+    
+    std::shared_ptr<VROMaterial> material = _background->getMaterials()[0];
+    material->setLightingModel(VROLightingModel::Constant);
+    material->getDiffuse().setContents(textureSphere);
 }
 
 std::vector<VROHitTestResult> VROScene::hitTest(VROVector3f ray, const VRORenderContext &context,

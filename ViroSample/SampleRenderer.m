@@ -9,8 +9,8 @@
 #import "SampleRenderer.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneLayer = 0,
-    VROSampleSceneVideoSphere,
+    VROSampleSceneVideoSphere = 0,
+    VROSampleSceneLayer,
     VROSampleSceneTorus,
     VROSampleSceneBox,
     VROSampleSceneOBJ,
@@ -62,7 +62,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (std::shared_ptr<VROScene>)loadVideoSphereScene {
     std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
-    scene->setBackground([self niagaraTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.9, 0.9 });
@@ -79,22 +78,13 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     scene->addNode(rootNode);
     
-    std::shared_ptr<VROSphere> sphere = VROSphere::createSphere(1, 20, 20, false);
-    std::shared_ptr<VROMaterial> material = sphere->getMaterials()[0];
-    material->setLightingModel(VROLightingModel::Constant);
-    
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"surfing" ofType:@"mp4"];
     
     self.videoTexture = std::make_shared<VROVideoTexture>();
     self.videoTexture->displayVideo([NSURL fileURLWithPath:filePath], *self.context);
     
-    material->getDiffuse().setContents(self.videoTexture);
+    scene->setBackgroundSphere(self.videoTexture);
     
-    std::shared_ptr<VRONode> sphereNode = std::make_shared<VRONode>();
-    sphereNode->setGeometry(sphere);
-    sphereNode->setPosition({0, 0, 0});
-    
-    rootNode->addChildNode(sphereNode);
     [self.view.HUD setReticleEnabled:YES];
     
     return scene;
@@ -115,7 +105,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (std::shared_ptr<VROScene>)loadTorusScene {
     std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
-    scene->setBackground([self cloudTexture]);
+    scene->setBackgroundCube([self cloudTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.9, 0.9 });
@@ -205,7 +195,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (std::shared_ptr<VROScene>)loadBoxScene {
     std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
-    scene->setBackground([self niagaraTexture]);
+    scene->setBackgroundCube([self niagaraTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.9, 0.9 });
@@ -273,7 +263,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (std::shared_ptr<VROScene>)loadLayerScene {
     std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
-    scene->setBackground([self cloudTexture]);
+    scene->setBackgroundCube([self cloudTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Directional);
     light->setColor({ 1.0, 0.9, 0.9 });
@@ -356,7 +346,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (std::shared_ptr<VROScene>)loadOBJScene {
     std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
-    scene->setBackground([self niagaraTexture]);
+    scene->setBackgroundCube([self niagaraTexture]);
     
     NSString *soccerPath = [[NSBundle mainBundle] pathForResource:@"shanghai_tower" ofType:@"obj"];
     NSURL *soccerURL = [NSURL fileURLWithPath:soccerPath];

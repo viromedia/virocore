@@ -41,9 +41,11 @@ public:
     
     /*
      Set the background of the scene to a cube-map defined by
-     the given cube texture.
+     the given cube texture, or a sphere defined by the given spherical
+     image.
      */
-    void setBackground(std::shared_ptr<VROTexture> textureCube);
+    void setBackgroundCube(std::shared_ptr<VROTexture> textureCube);
+    void setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere);
     std::shared_ptr<VROGeometry> getBackground() const {
         return _background;
     }
