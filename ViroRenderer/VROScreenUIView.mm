@@ -100,7 +100,6 @@ static const float kVROLayerSize = 2;
     
     // Keep the HUD in front of the camera
     VRORenderParameters renderParams;
-    renderParams.rotations.push(viewInversion);
     renderParams.transforms.push(viewInversion);
     renderParams.opacities.push(1.0);
     

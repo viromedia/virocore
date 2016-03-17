@@ -78,12 +78,9 @@ void VRONode::render(const VRORenderContext &context, VRORenderParameters &param
 }
 
 void VRONode::pushTransforms(const VRORenderContext &context, VRORenderParameters &params) {
-    std::stack<VROMatrix4f> &rotations = params.rotations;
     std::stack<VROMatrix4f> &transforms = params.transforms;
     std::stack<float> &opacities = params.opacities;
     std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
-    
-    rotations.push(rotations.top().multiply(_rotation.getMatrix()));
     
     VROMatrix4f transform = transforms.top().multiply(getTransform(context));
     transforms.push(transform);
@@ -104,7 +101,6 @@ void VRONode::renderNode(const VRORenderContext &context, VRORenderParameters &p
 
 void VRONode::popTransforms(VRORenderParameters &params) {
     params.transforms.pop();
-    params.rotations.pop();
     params.opacities.pop();
     
     if (_light) {
@@ -140,8 +136,14 @@ VROMatrix4f VRONode::getTransform(const VRORenderContext &context) const {
     return transform;
 }
 
-VROVector3f VRONode::getTransformedPosition(const VRORenderContext &context) const {
-    return getTransform(context).multiply(_position);
+VROVector3f VRONode::getTransformedPosition() const {
+    std::shared_ptr<VRONode> supernode = _supernode.lock();
+    if (supernode) {
+        return _position + supernode->getTransformedPosition();
+    }
+    else {
+        return _position;
+    }
 }
 
 #pragma mark - Setters

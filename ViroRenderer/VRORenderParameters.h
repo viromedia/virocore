@@ -23,7 +23,6 @@ class VRORenderParameters {
     
 public:
     
-    std::stack<VROMatrix4f> rotations;
     std::stack<VROMatrix4f> transforms;
     std::stack<float> opacities;
     std::vector<std::shared_ptr<VROLight>> lights;

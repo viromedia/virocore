@@ -322,8 +322,6 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
     id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
     
     int frame = context.getFrame();
-    
-    VROMatrix4f &rotation  = params.rotations.top();
     VROMatrix4f &transform = params.transforms.top();
     
     for (int i = 0; i < _elements.size(); i++) {
@@ -336,7 +334,7 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
         VROMatrix4f modelview = metal.getViewMatrix().multiply(transform);
         
         VROViewUniforms *viewUniforms = (VROViewUniforms *)_viewUniformsBuffer->getWritableContents(frame);
-        viewUniforms->normal_matrix = toMatrixFloat4x4(rotation.transpose().invert());
+        viewUniforms->normal_matrix = toMatrixFloat4x4(transform.invert().transpose());
         viewUniforms->model_matrix = toMatrixFloat4x4(transform);
         viewUniforms->modelview_matrix = toMatrixFloat4x4(modelview);
         viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(metal.getProjectionMatrix().multiply(modelview));

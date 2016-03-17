@@ -66,7 +66,7 @@ public:
      Transforms.
      */
     VROMatrix4f getTransform(const VRORenderContext &context) const;
-    VROVector3f getTransformedPosition(const VRORenderContext &context) const;
+    VROVector3f getTransformedPosition() const;
     
     VROVector3f getPosition() const {
         return _position;

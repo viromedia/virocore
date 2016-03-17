@@ -164,7 +164,7 @@ vertex VROLambertLightingVertexOut lambert_lighting_vertex(VRORendererAttributes
     
     out.surface_position = (view.model_matrix * float4(attributes.position, 1.0)).xyz;
     out.camera_position  = view.camera_position;
-    out.normal = normalize(view.normal_matrix * float4(attributes.normal, 0.0)).xyz;
+    out.normal = normalize((view.normal_matrix * float4(attributes.normal, 0.0)).xyz);
     
     out.ambient_color = lighting.ambient_light_color * material.diffuse_surface_color.xyz;
     out.material_color = material.diffuse_surface_color;
@@ -293,7 +293,7 @@ vertex VROPhongLightingVertexOut phong_lighting_vertex(VRORendererAttributes att
     
     out.surface_position = (view.model_matrix * float4(attributes.position, 1.0)).xyz;
     out.camera_position  = view.camera_position;
-    out.normal = normalize(view.normal_matrix * float4(attributes.normal, 0.0)).xyz;
+    out.normal = normalize((view.normal_matrix * float4(attributes.normal, 0.0)).xyz);
     
     out.ambient_color = lighting.ambient_light_color * material.diffuse_surface_color.xyz;
     out.material_color = material.diffuse_surface_color;
@@ -460,7 +460,7 @@ vertex VROBlinnLightingVertexOut blinn_lighting_vertex(VRORendererAttributes att
     
     out.surface_position = (view.model_matrix * float4(attributes.position, 1.0)).xyz;
     out.camera_position  = view.camera_position;
-    out.normal = normalize(view.normal_matrix * float4(attributes.normal, 0.0)).xyz;
+    out.normal = normalize((view.normal_matrix * float4(attributes.normal, 0.0)).xyz);
     
     out.ambient_color = lighting.ambient_light_color * material.diffuse_surface_color.xyz;
     out.material_color = material.diffuse_surface_color;
