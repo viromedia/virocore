@@ -75,6 +75,8 @@ void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
     std::shared_ptr<VROMaterial> material = _background->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Constant);
     material->getDiffuse().setContents(textureSphere);
+    material->setWritesToDepthBuffer(false);
+    material->setReadsFromDepthBuffer(false);
 }
 
 std::vector<VROHitTestResult> VROScene::hitTest(VROVector3f ray, const VRORenderContext &context,
