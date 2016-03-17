@@ -9,10 +9,10 @@
 #import "SampleRenderer.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneOBJ = 0,
-    VROSampleSceneLayer,
-    VROSampleSceneTorus,
+    VROSampleSceneLayer = 0,
     VROSampleSceneBox,
+    VROSampleSceneTorus,
+    VROSampleSceneOBJ,
     VROSampleSceneVideoSphere,
     VROSampleSceneNumScenes
 };
@@ -265,7 +265,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
     scene->setBackgroundCube([self cloudTexture]);
     
-    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Directional);
+    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Omni);
     light->setColor({ 1.0, 0.9, 0.9 });
     light->setPosition( { 0, 0, 0 });
     light->setDirection( { 0, 0, -1.0 });
@@ -305,7 +305,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
      */
     std::shared_ptr<VROLayer> center = std::make_shared<VROLayer>();
     center->setContents([UIImage imageNamed:@"momentslogo"]);
-    center->setFrame(VRORectMake(1.0, -1.25, -2, 1, 1));
+    center->setFrame(VRORectMake(3.0, -1.25, 2, 1, 1));
     center->addConstraint(std::make_shared<VROBillboardConstraint>());
     
     rootNode->addChildNode(center);
@@ -314,7 +314,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
      Create the label node.
      */
     VROWorldUIView *labelView = [[VROWorldUIView alloc] initWithFrame:CGRectMake(0, 0, 100, 10)];
-    labelView.vroLayer->setFrame(VRORectMake(-1, -1.5, -2, 2, 0.2));
+    labelView.vroLayer->setFrame(VRORectMake(0, 0, -5, 2, 0.2));
     
     [labelView setBackgroundColor:[UIColor clearColor]];
     

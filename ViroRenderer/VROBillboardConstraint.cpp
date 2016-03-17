@@ -20,7 +20,7 @@ VROMatrix4f VROBillboardConstraint::getTransform(const VRONode &node, VROMatrix4
     objToCamProj = objToCamProj.normalize();
     
     VROVector3f lookAt(0, 0, -1);
-    VROVector3f upAux = lookAt.cross(objToCamProj);
+    VROVector3f upAux = lookAt.cross(objToCamProj).normalize();
     float angleCosine = lookAt.dot(objToCamProj);
         
     if ((angleCosine < 0.9999) && (angleCosine > -0.9999)) {        

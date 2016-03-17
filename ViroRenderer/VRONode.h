@@ -139,6 +139,13 @@ public:
     }
     
     /*
+     Return the parent node. Null if this node is root or does not have a parent.
+     */
+    std::shared_ptr<VRONode> getParentNode() const {
+        return _supernode.lock();
+    }
+    
+    /*
      Action management.
      */
     void runAction(std::shared_ptr<VROAction> action);

@@ -25,7 +25,7 @@ VROHoverController::VROHoverController(float rotationThresholdRadians,
     _hoverOn(hoverOn),
     _hoverOff(hoverOff),
     _rotationThresholdRadians(rotationThresholdRadians),
-    _lastCameraForward({ 0, 0, -1}) {
+    _lastCameraForward({ 0, 0, 1}) {
     
 }
 
