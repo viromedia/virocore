@@ -20,7 +20,7 @@
 VROVideoTexture::VROVideoTexture() :
     _notificationToken(nullptr),
     _mediaReady(false),
-    _paused(false),
+    _paused(true),
     _currentTextureIndex(0) {
     
     _player = [[AVPlayer alloc] init];
@@ -37,9 +37,17 @@ VROVideoTexture::~VROVideoTexture() {
 
 #pragma mark - Recorded Video Playback
 
-void VROVideoTexture::play() {
+void VROVideoTexture::prewarm() {
     [_player play];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [_player pause];
+        [_player seekToTime:kCMTimeZero];
+    });
+}
+
+void VROVideoTexture::play() {
     _paused = false;
+    [_player play];
 }
 
 void VROVideoTexture::pause() {
@@ -51,7 +59,7 @@ bool VROVideoTexture::isPaused() {
     return _paused;
 }
 
-void VROVideoTexture::displayVideo(NSURL *url, VRORenderContext &context) {
+void VROVideoTexture::loadVideo(NSURL *url, VRORenderContext &context) {
     _mediaReady = false;
     
     id <MTLDevice> device = ((VRORenderContextMetal &)context).getDevice();
@@ -107,10 +115,6 @@ void VROVideoTexture::displayVideo(NSURL *url, VRORenderContext &context) {
                             [item addOutput:_videoOutput];
                             [_player replaceCurrentItemWithPlayerItem:item];
                             [_videoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:ONE_FRAME_DURATION];
-                            
-                            if (!_paused) {
-                                [_player play];
-                            }
                         });
                     }
                 }];
@@ -171,11 +175,7 @@ void VROVideoTexture::onFrameWillRender(const VRORenderContext &context) {
 }
 
 void VROVideoTexture::onFrameDidRender(const VRORenderContext &context) {
-    if (!_mediaReady) {
-        return;
-    }
-    
-
+   
 }
 
 void VROVideoTexture::displayPixelBuffer(CVPixelBufferRef pixelBuffer) {

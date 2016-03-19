@@ -23,7 +23,8 @@ std::shared_ptr<VROVideoSurface> VROVideoSurface::createVideoSurface(float width
     material->setReadsFromDepthBuffer(true);
     
     std::shared_ptr<VROVideoTexture> texture = std::make_shared<VROVideoTexture>();
-    texture->displayVideo(url, context);
+    texture->loadVideo(url, context);
+    texture->play();
     material->getDiffuse().setContents(texture);
     
     std::shared_ptr<VROVideoSurface> surface = std::shared_ptr<VROVideoSurface>(new VROVideoSurface(sources, elements, texture));

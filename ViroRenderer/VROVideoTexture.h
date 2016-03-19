@@ -35,9 +35,15 @@ public:
     void displayCamera(AVCaptureDevicePosition position, VRORenderContext &context);
     
     /*
-     Use this video texture to display the contents of the given URL.
+     Use this video texture to display the contents of the given URL. The video
+     will not run until play() is invoked.
      */
-    void displayVideo(NSURL *url, VRORenderContext &context);
+    void loadVideo(NSURL *url, VRORenderContext &context);
+    
+    /*
+     Perform video initialization (which causes a stutter) early.
+     */
+    void prewarm();
     
     int getCurrentTextureIndex() const {
         return _currentTextureIndex;
