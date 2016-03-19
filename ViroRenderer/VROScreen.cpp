@@ -100,7 +100,7 @@ float VROScreen::getBorderSizeInMeters() const {
 
 float VROScreen::pixelsPerInch(UIScreen *screen) {
     // Default iPhone retina pixels per inch
-    float pixelsPerInch = 163.0f * 2;
+    float pixelsPerInch = 163.0f * _scale;
     struct utsname sysinfo;
     
     if (uname(&sysinfo) == 0) {
