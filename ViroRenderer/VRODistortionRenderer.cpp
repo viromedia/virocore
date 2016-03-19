@@ -57,12 +57,42 @@ void VRODistortionRenderer::fovDidChange(const VROFieldOfView &leftEyeFov,
     
     _leftEyeViewport = { leftEyeFov, 0.0f };
     _rightEyeViewport = { rightEyeFov, _leftEyeViewport.width };
+    
+    /*
+             Eye
+              .
+              ..  <---- angle
+              . .
+            y .  . r
+              .   .
+              .    .
+        -------------
+                 x
+     
+     
+       tan(angle) = x/y
+       unitPerTanAngle = x/tan(angle) = y, where 'unit' is meters or pixels
+     
+       In meters, this means: 
+     
+        y = virtualEyeToScreenDistance
+
+       (1) tan(angle) = screen.getWidthInMeters() / virtualEyeToScreenDistance
+       (2) metersPerTanAngle = screen.getWidthInMeters()/tan(angle) = virtualEyeToScreenDistance
+
+       In pixels, we have the analagous formula:
+     
+       (3) pixelsPerTanAngle = screen.getWidth() / tan(angle)
+     
+       Substituting in (3), we get:
+       pixelsPerTanAngle = screen.getWidth() / (screen.getWidthInMeters() / virtualEyeToScreenDistance)
+     */
+    
     _metersPerTanAngle = virtualEyeToScreenDistance;
     
     const VROScreen &screen = _device.getScreen();
-        
-    _xPxPerTanAngle = screen.getWidth()  / (screen.getWidthInMeters()  / _metersPerTanAngle);
-    _yPxPerTanAngle = screen.getHeight() / (screen.getHeightInMeters() / _metersPerTanAngle);
+    _xPxPerTanAngle = screen.getWidth()  / (screen.getWidthInMeters()  / virtualEyeToScreenDistance);
+    _yPxPerTanAngle = screen.getHeight() / (screen.getHeightInMeters() / virtualEyeToScreenDistance);
     _fovsChanged = true;
     _viewportsChanged = true;
 }

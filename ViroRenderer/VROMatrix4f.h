@@ -11,6 +11,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <string>
 
 class VROVector3f;
 
@@ -65,6 +66,8 @@ public:
     const float *getArray() const {
         return _mtx;
     }
+    
+    std::string toString() const;
     
 private:
     

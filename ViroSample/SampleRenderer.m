@@ -81,7 +81,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"surfing" ofType:@"mp4"];
     
     self.videoTexture = std::make_shared<VROVideoTexture>();
-    self.videoTexture->displayVideo([NSURL fileURLWithPath:filePath], *self.context);
+    self.videoTexture->loadVideo([NSURL fileURLWithPath:filePath], *self.context);
     
     scene->setBackgroundSphere(self.videoTexture);
     
@@ -287,7 +287,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     NSURL *videoURL = [NSURL URLWithString:@"https://s3-us-west-2.amazonaws.com/dmoontest/img/Zoe2.mp4"];
     
     std::shared_ptr<VROVideoTexture> videoTexture = std::make_shared<VROVideoTexture>();
-    videoTexture->displayVideo(videoURL, *self.context);
+    videoTexture->loadVideo(videoURL, *self.context);
     
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);

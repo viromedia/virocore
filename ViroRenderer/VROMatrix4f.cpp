@@ -9,6 +9,7 @@
 #include "VROMatrix4f.h"
 #include "VROMath.h"
 #include "VROLog.h"
+#include <sstream>
 
 VROMatrix4f::VROMatrix4f() {
     toIdentity();
@@ -184,3 +185,14 @@ VROMatrix4f VROMatrix4f::invert() const {
     
     return VROMatrix4f(inverted);
 }
+
+std::string VROMatrix4f::toString() const {
+    std::ostringstream ss;
+    ss << _mtx[0] << ", " << _mtx[4] << ", " << _mtx[8] << ", " << _mtx[12] << "\n";
+    ss << _mtx[1] << ", " << _mtx[5] << ", " << _mtx[9] << ", " << _mtx[13] << "\n";
+    ss << _mtx[2] << ", " << _mtx[6] << ", " << _mtx[10] << ", " << _mtx[14] << "\n";
+    ss << _mtx[3] << ", " << _mtx[7] << ", " << _mtx[11] << ", " << _mtx[15];
+    
+    return ss.str();
+}
+

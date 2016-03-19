@@ -124,6 +124,7 @@ float VROScreen::pixelsPerInch(UIScreen *screen) {
             @"iPhone5,1", @"iPhone5,2", @"iPhone5,3", @"iPhone5,4",
             @"iPhone6,1", @"iPhone6,2",
             @"iPhone7,1", @"iPhone7,2",
+            @"iPhone8,1", @"iPhone8,2",
             @"iPad2,5", @"iPad2,6", @"iPad2,7",
             @"iPad4,4", @"iPad4,5",
             @"i386", @"x86_64"],
