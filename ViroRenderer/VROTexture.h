@@ -17,10 +17,16 @@
 
 class VROTextureSubstrate;
 class VRORenderContext;
+class VROData;
 
 enum class VROTextureType {
     Quad,
     Cube
+};
+
+enum class VROTextureFormat {
+    ETC2,
+    ASTC_4x4_LDR
 };
 
 class VROTexture {
@@ -44,6 +50,14 @@ public:
      */
     VROTexture(UIImage *image, const VRORenderContext *context = nullptr);
     VROTexture(std::vector<UIImage *> &images, const VRORenderContext *context = nullptr);
+    
+    /*
+     Create a new VROTexture from the given raw data in the given format.
+     */
+    VROTexture(VROTextureType type, VROTextureFormat format,
+               std::shared_ptr<VROData> data, int width, int height,
+               bool mipmap, const VRORenderContext *context = nullptr);
+    
     virtual ~VROTexture();
     
     void setImage(UIImage *image);
@@ -71,6 +85,15 @@ private:
      */
     UIImage *_image;
     std::vector<UIImage *> _imagesCube;
+    
+    /*
+     If the underlying texture is compressed, its raw data is retined until the
+     substrate is populated.
+     */
+    std::shared_ptr<VROData> _data;
+    VROTextureFormat _format;
+    int _width, _height;
+    bool _mipmap;
     
     /*
      Representation of the texture in the underlying hardware.

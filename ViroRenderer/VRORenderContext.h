@@ -23,9 +23,11 @@ class VROMaterial;
 class VROGeometrySubstrate;
 class VROMaterialSubstrate;
 class VROTextureSubstrate;
+class VROData;
 
 enum class VROEyeType;
 enum class VROTextureType;
+enum class VROTextureFormat;
 
 /*
  Contains the Metal or OpenGL context objects required to render a layer.
@@ -44,6 +46,8 @@ public:
     virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const = 0;
     virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) const = 0;
     virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) const = 0;
+    virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, VROTextureFormat format, std::shared_ptr<VROData> data,
+                                                     int width, int height, bool mipmap) const = 0;
     
     void addFrameListener(std::shared_ptr<VROFrameListener> listener) {
         _frameListeners.push_back(listener);

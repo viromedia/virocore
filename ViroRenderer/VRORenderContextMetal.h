@@ -66,6 +66,11 @@ public:
         return new VROTextureSubstrateMetal(type, images, *this);
     }
     
+    VROTextureSubstrate *newTextureSubstrate(VROTextureType type, VROTextureFormat format, std::shared_ptr<VROData> data,
+                                             int width, int height, bool mipmap) const {
+        return new VROTextureSubstrateMetal(type, format, data, width, height, mipmap, *this);
+    }
+    
 private:
     
     id <MTLDevice> _device;

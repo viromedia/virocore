@@ -12,6 +12,7 @@
 #include "VROTextureSubstrateMetal.h"
 #include "VROLog.h"
 #include "VROAllocationTracker.h"
+#include "VROData.h"
 
 VROTexture::VROTexture() :
     _image(nullptr),
@@ -51,6 +52,25 @@ VROTexture::VROTexture(std::vector<UIImage *> &images, const VRORenderContext *c
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
+VROTexture::VROTexture(VROTextureType type, VROTextureFormat format,
+                       std::shared_ptr<VROData> data, int width, int height,
+                       bool mipmap, const VRORenderContext *context) :
+    _type(type),
+    _image(nullptr),
+    _data(data),
+    _format(format),
+    _width(width),
+    _height(height),
+    _mipmap(mipmap),
+    _substrate(nullptr) {
+    
+    if (context) {
+        prewarm(*context);
+    }
+    ALLOCATION_TRACKER_ADD(Textures, 1);
+}
+
+
 VROTexture::~VROTexture() {
     ALLOCATION_TRACKER_SUB(Textures, 1);
 }
@@ -78,6 +98,10 @@ void VROTexture::hydrate(const VRORenderContext &context) {
             std::vector<UIImage *> images = { _image };
             _substrate = std::unique_ptr<VROTextureSubstrate>(context.newTextureSubstrate(_type, images));
             _image = nullptr;
+        }
+        else if (_data) {
+            _substrate = std::unique_ptr<VROTextureSubstrate>(context.newTextureSubstrate(_type, _format, _data, _width, _height, _mipmap));
+            _data = nullptr;
         }
     }
     
