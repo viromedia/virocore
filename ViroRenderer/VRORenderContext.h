@@ -24,6 +24,7 @@ class VROGeometrySubstrate;
 class VROMaterialSubstrate;
 class VROTextureSubstrate;
 
+enum class VROEyeType;
 enum class VROTextureType;
 
 /*
@@ -96,6 +97,13 @@ public:
         ++_frame;
     }
     
+    void setEyeType(VROEyeType eye) {
+        _eye = eye;
+    }
+    VROEyeType getEyeType() const {
+        return _eye;
+    }
+    
     void setProjectionMatrix(VROMatrix4f projectionMatrix) {
         _projectionMatrix = projectionMatrix;
     }
@@ -125,6 +133,7 @@ public:
 private:
     
     int _frame;
+    VROEyeType _eye;
     std::vector<std::weak_ptr<VROFrameListener>> _frameListeners;
     
     /*

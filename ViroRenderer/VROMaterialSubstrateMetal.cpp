@@ -198,8 +198,9 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
 }
 
 VROConcurrentBuffer &VROMaterialSubstrateMetal::bindMaterialUniforms(VRORenderParameters &params,
+                                                                     VROEyeType eye,
                                                                      int frame) {
-    VROMaterialUniforms *uniforms = (VROMaterialUniforms *)_materialUniformsBuffer->getWritableContents(frame);
+    VROMaterialUniforms *uniforms = (VROMaterialUniforms *)_materialUniformsBuffer->getWritableContents(eye, frame);
     uniforms->diffuse_surface_color = toVectorFloat4(_material.getDiffuse().getContentsColor());
     uniforms->diffuse_intensity = _material.getDiffuse().getIntensity();
     uniforms->shininess = _material.getShininess();
@@ -208,8 +209,9 @@ VROConcurrentBuffer &VROMaterialSubstrateMetal::bindMaterialUniforms(VRORenderPa
     return *_materialUniformsBuffer;
 }
 
-VROConcurrentBuffer &VROMaterialSubstrateMetal::bindLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights, int frame) {
-    VROSceneLightingUniforms *uniforms = (VROSceneLightingUniforms *)_lightingUniformsBuffer->getWritableContents(frame);
+VROConcurrentBuffer &VROMaterialSubstrateMetal::bindLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights,
+                                                                     VROEyeType eye, int frame) {
+    VROSceneLightingUniforms *uniforms = (VROSceneLightingUniforms *)_lightingUniformsBuffer->getWritableContents(eye, frame);
     uniforms->num_lights = (int) lights.size();
     
     VROVector3f ambientLight;

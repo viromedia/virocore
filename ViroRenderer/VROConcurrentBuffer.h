@@ -10,6 +10,7 @@
 #define VROConcurrentBuffer_h
 
 #include <stdio.h>
+#include "VROEye.h"
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
 
@@ -30,12 +31,12 @@ public:
     /*
      Get the underlying MTLBuffer.
      */
-    id <MTLBuffer> getMTLBuffer() {
-        return _buffer;
+    id <MTLBuffer> getMTLBuffer(VROEyeType eye) {
+        return _buffer[(int)eye];
     }
     
-    void *getWritableContents(int frame) {
-        return (void *) ((char *)[_buffer contents] + getWriteOffset(frame));
+    void *getWritableContents(VROEyeType eye, int frame) {
+        return (void *) ((char *)[_buffer[(int)eye] contents] + getWriteOffset(frame));
     }
     
     /*
@@ -49,9 +50,9 @@ public:
 private:
     
     /*
-     The underlying Metal buffer.
+     The underlying Metal buffer for each eye.
      */
-    id <MTLBuffer> _buffer;
+    id <MTLBuffer> _buffer[2];
     
     /*
      The size of each section in the MTLBuffer.

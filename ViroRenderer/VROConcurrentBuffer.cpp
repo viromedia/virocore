@@ -9,10 +9,13 @@
 #include "VROConcurrentBuffer.h"
 
 VROConcurrentBuffer::VROConcurrentBuffer(int size, NSString *label, id <MTLDevice> device) :
-    _buffer([device newBufferWithLength:size * kMaxBuffersInFlight options:0]),
     _size(size) {
         
-    _buffer.label = label;
+    _buffer[(int)VROEyeType::Left]  = [device newBufferWithLength:size * kMaxBuffersInFlight options:0];
+    _buffer[(int)VROEyeType::Right] = [device newBufferWithLength:size * kMaxBuffersInFlight options:0];
+
+    _buffer[(int)VROEyeType::Left].label = [label stringByAppendingString:@"-Left"];
+    _buffer[(int)VROEyeType::Right].label = [label stringByAppendingString:@"-Right"];
 }
 
 VROConcurrentBuffer::~VROConcurrentBuffer() {

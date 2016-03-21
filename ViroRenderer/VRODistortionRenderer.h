@@ -14,6 +14,7 @@
 #include "VRORenderTarget.h"
 #include <memory>
 
+enum class VROEyeType;
 class VRODistortion;
 class VRODistortionMesh;
 class VROFieldOfView;
@@ -157,6 +158,7 @@ private:
     void renderDistortionMesh(const VRODistortionMesh &mesh,
                               id <MTLTexture> texture,
                               id <MTLRenderCommandEncoder> renderEncoder,
+                              VROEyeType eye,
                               int frame);
     
     float computeDistortionScale(const VRODistortion &distortion,

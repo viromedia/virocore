@@ -14,6 +14,12 @@
 #include "VROViewport.h"
 #include "VROFieldOfView.h"
 
+enum class VROEyeType {
+    Left = 0,
+    Right = 1,
+    Monocular = 2
+};
+
 /*
  An eye consists of a view matrix, a projection matrix, a viewport, and a
  field of view. These completely define the "camera" of an eye.
@@ -22,14 +28,8 @@ class VROEye {
     
 public:
     
-    typedef enum {
-        TypeMonocular = 0,
-        TypeLeft = 1,
-        TypeRight = 2
-    } Type;
-    
-    VROEye(const Type eye) :
-        _type(eye),
+    VROEye(const VROEyeType type) :
+        _type(type),
         _projectionChanged(true),
         _lastZNear(0),
         _lastZFar(0) {
@@ -38,7 +38,7 @@ public:
     
     ~VROEye() {}
     
-    Type getType() const {
+    VROEyeType getType() const {
         return _type;
     }
     
@@ -86,7 +86,7 @@ public:
     
 private:
     
-    Type _type;
+    VROEyeType _type;
     
     VROMatrix4f _eyeView;
     VROMatrix4f _perspective;

@@ -82,9 +82,9 @@
     _headTracker = new VROHeadTracker();
     _device = new VRODevice([UIScreen mainScreen]);
     
-    _monocularEye = new VROEye(VROEye::TypeMonocular);
-    _leftEye = new VROEye(VROEye::TypeLeft);
-    _rightEye = new VROEye(VROEye::TypeRight);
+    _monocularEye = new VROEye(VROEyeType::Monocular);
+    _leftEye = new VROEye(VROEyeType::Left);
+    _rightEye = new VROEye(VROEyeType::Right);
     
     _distortionRenderer = new VRODistortionRenderer(*_device);
     _vrModeEnabled = YES;
@@ -378,8 +378,8 @@
     _renderContext->setViewMatrix(leftEye->getEyeView());
     _renderContext->setProjectionMatrix(leftEye->perspective(zNear, zFar));
     
-    [self renderEye:VROEyeTypeLeft];
-    
+    _renderContext->setEyeType(VROEyeType::Left);
+    [self renderEye:VROEyeType::Left];
     [_HUD updateWithContext:_renderContext];
     [_HUD renderEye:leftEye withContext:_renderContext];
     
@@ -394,7 +394,8 @@
     _renderContext->setViewMatrix(rightEye->getEyeView());
     _renderContext->setProjectionMatrix(rightEye->perspective(zNear, zFar));
     
-    [self renderEye:VROEyeTypeRight];
+    _renderContext->setEyeType(VROEyeType::Right);
+    [self renderEye:VROEyeType::Right];
     [_HUD renderEye:rightEye withContext:_renderContext];
     
     _renderContext->notifyFrameEnd();

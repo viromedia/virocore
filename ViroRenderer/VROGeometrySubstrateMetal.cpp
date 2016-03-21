@@ -322,8 +322,9 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
     id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
     
     int frame = context.getFrame();
+    VROEyeType eyeType = context.getEyeType();
     VROMatrix4f &transform = params.transforms.top();
-    
+
     for (int i = 0; i < _elements.size(); i++) {
         [renderEncoder pushDebugGroup:@"VROGeometry"];
         VROGeometryElementMetal element = _elements[i];
@@ -332,15 +333,15 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
          Configure the view uniforms.
          */
         VROMatrix4f modelview = metal.getViewMatrix().multiply(transform);
-        
-        VROViewUniforms *viewUniforms = (VROViewUniforms *)_viewUniformsBuffer->getWritableContents(frame);
+        VROViewUniforms *viewUniforms = (VROViewUniforms *)_viewUniformsBuffer->getWritableContents(eyeType, frame);
+
         viewUniforms->normal_matrix = toMatrixFloat4x4(transform.invert().transpose());
         viewUniforms->model_matrix = toMatrixFloat4x4(transform);
         viewUniforms->modelview_matrix = toMatrixFloat4x4(modelview);
         viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(metal.getProjectionMatrix().multiply(modelview));
         viewUniforms->camera_position = { 0, 0, 0 }; //TODO fill this in
-        
-        [renderEncoder setVertexBuffer:_viewUniformsBuffer->getMTLBuffer()
+
+        [renderEncoder setVertexBuffer:_viewUniformsBuffer->getMTLBuffer(eyeType)
                                 offset:_viewUniformsBuffer->getWriteOffset(frame) atIndex:_vars.size()];
 
         /*
@@ -361,12 +362,12 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
             [renderEncoder setVertexBuffer:_vars[j].buffer offset:0 atIndex:j];
         }
         
-        VROConcurrentBuffer &lightingBuffer = substrate->bindLightingUniforms(params.lights, frame);
+        VROConcurrentBuffer &lightingBuffer = substrate->bindLightingUniforms(params.lights, eyeType, frame);
     
-        [renderEncoder setVertexBuffer:lightingBuffer.getMTLBuffer()
+        [renderEncoder setVertexBuffer:lightingBuffer.getMTLBuffer(eyeType)
                                 offset:lightingBuffer.getWriteOffset(frame)
                                atIndex:_vars.size() + 2];
-        [renderEncoder setFragmentBuffer:lightingBuffer.getMTLBuffer()
+        [renderEncoder setFragmentBuffer:lightingBuffer.getMTLBuffer(eyeType)
                                   offset:lightingBuffer.getWriteOffset(frame)
                                  atIndex:0];
 
@@ -400,12 +401,13 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
                                                const VRORenderContext &context) {
     
     int frame = context.getFrame();
+    VROEyeType eyeType = context.getEyeType();
     
     [renderEncoder setRenderPipelineState:pipelineState];
     [renderEncoder setDepthStencilState:depthStencilState];
     
-    VROConcurrentBuffer &materialBuffer = material->bindMaterialUniforms(params, frame);
-    [renderEncoder setVertexBuffer:materialBuffer.getMTLBuffer()
+    VROConcurrentBuffer &materialBuffer = material->bindMaterialUniforms(params, eyeType, frame);
+    [renderEncoder setVertexBuffer:materialBuffer.getMTLBuffer(eyeType)
                             offset:materialBuffer.getWriteOffset(frame)
                            atIndex:_vars.size() + 1];
     

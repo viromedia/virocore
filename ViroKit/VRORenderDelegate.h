@@ -12,12 +12,7 @@
 @class VROView;
 class VRORenderContext;
 class VROVector3f;
-
-typedef NS_ENUM(NSInteger, VROEyeType) {
-    VROEyeTypeMonocular,
-    VROEyeTypeLeft,
-    VROEyeTypeRight,
-};
+enum class VROEyeType;
 
 @protocol VRORenderDelegate <NSObject>
 

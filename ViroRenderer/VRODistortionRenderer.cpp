@@ -279,12 +279,12 @@ void VRODistortionRenderer::renderEyesToScreen(id <MTLRenderCommandEncoder> scre
     [screenEncoder setScissorRect:{ 0, 0,
         (NSUInteger) (screen.getWidth() / 2),
         (NSUInteger) (screen.getHeight()) }];
-    renderDistortionMesh(*_leftEyeDistortionMesh, _texture, screenEncoder, frame);
+    renderDistortionMesh(*_leftEyeDistortionMesh, _texture, screenEncoder, VROEyeType::Left, frame);
     
     [screenEncoder setScissorRect:{ (NSUInteger) screen.getWidth() / 2, 0,
         (NSUInteger) screen.getWidth() / 2,
         (NSUInteger) screen.getHeight() }];
-    renderDistortionMesh(*_rightEyeDistortionMesh, _texture, screenEncoder, frame);
+    renderDistortionMesh(*_rightEyeDistortionMesh, _texture, screenEncoder, VROEyeType::Right, frame);
     
     _drawingFrame = false;
 }
@@ -312,14 +312,15 @@ VRODistortionMesh *VRODistortionRenderer::createDistortionMesh(const VROEyeViewp
 void VRODistortionRenderer::renderDistortionMesh(const VRODistortionMesh &mesh,
                                                  id <MTLTexture> texture,
                                                  id <MTLRenderCommandEncoder> renderEncoder,
+                                                 VROEyeType eye,
                                                  int frame) {
     
-    VRODistortionUniforms *uniforms = (VRODistortionUniforms *)_uniformsBuffer->getWritableContents(frame);
+    VRODistortionUniforms *uniforms = (VRODistortionUniforms *)_uniformsBuffer->getWritableContents(eye, frame);
     uniforms->texcoord_scale = _resolutionScale;
     
     [renderEncoder pushDebugGroup:@"VRODistortion"];
     
-    [renderEncoder setVertexBuffer:_uniformsBuffer->getMTLBuffer()
+    [renderEncoder setVertexBuffer:_uniformsBuffer->getMTLBuffer(eye)
                             offset:_uniformsBuffer->getWriteOffset(frame)
                            atIndex:1];
     [renderEncoder setFragmentTexture:_texture atIndex:0];

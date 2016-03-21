@@ -21,6 +21,7 @@ class VRORenderContextMetal;
 class VROLight;
 class VROConcurrentBuffer;
 class VRORenderParameters;
+enum class VROEyeType;
 
 /*
  Metal representation of a VROMaterial. Each VROMaterial defines a vertex
@@ -38,14 +39,14 @@ public:
     /*
      Set the uniforms required to render this material, and return the buffer.
      */
-    VROConcurrentBuffer &bindMaterialUniforms(VRORenderParameters &params, int frame);
+    VROConcurrentBuffer &bindMaterialUniforms(VRORenderParameters &params, VROEyeType eye, int frame);
     
     /*
      Set the uniforms required to render this given material under the
      given lights, and return the buffer.
      */
     VROConcurrentBuffer &bindLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights,
-                                              int frame);
+                                              VROEyeType eye, int frame);
     
     id <MTLFunction> getVertexProgram() const {
         return _vertexProgram;
