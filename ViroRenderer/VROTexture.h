@@ -56,7 +56,7 @@ public:
      */
     VROTexture(VROTextureType type, VROTextureFormat format,
                std::shared_ptr<VROData> data, int width, int height,
-               bool mipmap, const VRORenderContext *context = nullptr);
+               const VRORenderContext *context = nullptr);
     
     virtual ~VROTexture();
     
@@ -93,7 +93,6 @@ private:
     std::shared_ptr<VROData> _data;
     VROTextureFormat _format;
     int _width, _height;
-    bool _mipmap;
     
     /*
      Representation of the texture in the underlying hardware.

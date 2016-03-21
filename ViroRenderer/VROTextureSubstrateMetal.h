@@ -50,7 +50,7 @@ public:
      Create a new Metal texture out of the given format, with the given width, and height.
      */
     VROTextureSubstrateMetal(VROTextureType type, VROTextureFormat format,
-                             std::shared_ptr<VROData> data, int width, int height, bool mipmap,
+                             std::shared_ptr<VROData> data, int width, int height,
                              const VRORenderContext &context);
     virtual ~VROTextureSubstrateMetal();
     

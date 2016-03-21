@@ -67,8 +67,8 @@ public:
     }
     
     VROTextureSubstrate *newTextureSubstrate(VROTextureType type, VROTextureFormat format, std::shared_ptr<VROData> data,
-                                             int width, int height, bool mipmap) const {
-        return new VROTextureSubstrateMetal(type, format, data, width, height, mipmap, *this);
+                                             int width, int height) const {
+        return new VROTextureSubstrateMetal(type, format, data, width, height, *this);
     }
     
 private:

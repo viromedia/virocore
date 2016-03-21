@@ -112,7 +112,7 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vec
 }
 
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, VROTextureFormat format,
-                                                   std::shared_ptr<VROData> data, int width, int height, bool mipmap,
+                                                   std::shared_ptr<VROData> data, int width, int height,
                                                    const VRORenderContext &context) {
     
     if (format == VROTextureFormat::ETC2) {
@@ -124,22 +124,11 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, VROTextu
             MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatETC2_RGB8
                                                                                                   width:width
                                                                                                  height:height
-                                                                                              mipmapped:mipmap];
+                                                                                              mipmapped:NO];
             _texture = [device newTextureWithDescriptor:descriptor];
      
             MTLRegion region = MTLRegionMake2D(0, 0, width, height);
             [_texture replaceRegion:region mipmapLevel:0 withBytes:data->getData() bytesPerRow:bytesPerRow];
-            
-            if (mipmap) {
-                id <MTLCommandBuffer> textureCommandBuffer = [metal.getCommandQueue() commandBuffer];
-                id<MTLBlitCommandEncoder> commandEncoder = [textureCommandBuffer blitCommandEncoder];
-                [commandEncoder generateMipmapsForTexture:_texture];
-                [commandEncoder endEncoding];
-                [textureCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer) {
-                    
-                }];
-                [textureCommandBuffer commit];
-            }
         }
         else {
             pabort();
@@ -154,22 +143,11 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, VROTextu
             MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatASTC_4x4_LDR
                                                                                                   width:width
                                                                                                  height:height
-                                                                                              mipmapped:mipmap];
+                                                                                              mipmapped:NO];
             _texture = [device newTextureWithDescriptor:descriptor];
             
             MTLRegion region = MTLRegionMake2D(0, 0, width, height);
             [_texture replaceRegion:region mipmapLevel:0 withBytes:data->getData() bytesPerRow:bytesPerRow];
-            
-            if (mipmap) {
-                id <MTLCommandBuffer> textureCommandBuffer = [metal.getCommandQueue() commandBuffer];
-                id<MTLBlitCommandEncoder> commandEncoder = [textureCommandBuffer blitCommandEncoder];
-                [commandEncoder generateMipmapsForTexture:_texture];
-                [commandEncoder endEncoding];
-                [textureCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer) {
-                    
-                }];
-                [textureCommandBuffer commit];
-            }
         }
         else {
             pabort();

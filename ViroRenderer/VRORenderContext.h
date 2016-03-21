@@ -47,7 +47,7 @@ public:
     virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) const = 0;
     virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) const = 0;
     virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, VROTextureFormat format, std::shared_ptr<VROData> data,
-                                                     int width, int height, bool mipmap) const = 0;
+                                                     int width, int height) const = 0;
     
     void addFrameListener(std::shared_ptr<VROFrameListener> listener) {
         _frameListeners.push_back(listener);

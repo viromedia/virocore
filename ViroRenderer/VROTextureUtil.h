@@ -26,14 +26,15 @@ public:
      Load a texture with an ASTC header. Read the width and height from the texture then
      strip the header out and return the raw texture data.
      */
-    static std::shared_ptr<VROTexture> loadASTCTexture(NSData *data, VROTextureType type, VROTextureFormat format,
+    static std::shared_ptr<VROTexture> loadASTCTexture(NSData *data, VROTextureType type,
                                                       const VRORenderContext *context = nullptr);
     
     /*
      Read a texture file with an ASTC header. Read the width and height from the header then
      strip it out and return the raw texture data.
      */
-    static std::shared_ptr<VROData> readASTCHeader(NSData *data, int *width, int *height);
+    static std::shared_ptr<VROData> readASTCHeader(NSData *data, VROTextureFormat *outFormat,
+                                                   int *outWidth, int *outHeight);
     
 };
 
