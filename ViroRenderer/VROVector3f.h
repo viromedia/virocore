@@ -56,12 +56,9 @@ public:
     }
 
     /*
-     Find the absolute angle between this vector and the given line. The
-     direction of the line is not taken into account. The return value will be in
-     the range [0, PI/2]. The input line vector must be normalized, as must
-     this vector.
+     Find the absolute angle between this vector and the given vector. 
      */
-    float angleWithLine(const VROVector3f &line) const;
+    float angleWithVector(const VROVector3f &line) const;
 
     /*
      Find the angle between this vector and another vector. Both must be
@@ -70,36 +67,10 @@ public:
     float angleWithNormedVector(const VROVector3f &vector) const;
 
     /*
-     Return the angle formed between this vector and the given vector about the Z axis.
-     This method assumes away each vector's Z coordinate, treating them as if they're 0.
-
-     Uses the dot product for the magnitude of the angle and the cross product for the
-     direction. Positive angles are counter-clockwise, negative angles are clockwise.
-     Return value in the range [-PI, PI].
-     */
-    double angleZ(const VROVector3f &other) const;
-
-    /*
-     Optimized angle Z computation for use when both this vector and the given vector have
-     no Z coordinate and are already normalized. Positive angles are counter-clockwise, negative angles
-     are clockwise. Return value is in the range [-PI, PI].
-     */
-    float angleZ_normed(const VROVector3f &other) const;
-
-    /*
-     Optimized angle Z computation, returns the angle this vector makes against the X axis.
-     Positive angles are counter-clockwise, negative angles are clockwise. Return value is
-     in the range (-PI, PI]. This vector does not need to be normalized.
-
-     Implementation note: this just wraps atan2 using the x and y of this vector.
-     */
-    float angleZ_xAxis() const;
-
-    /*
      Rotate the vector.
      */
-    void rotateZ(float angleRad, VROVector3f *result) const;
-    void rotateAboutAxis(const VROVector3f &axisDir, const VROVector3f &axisPos, float angleRad, VROVector3f *result) const;
+    VROVector3f rotateZ(float angleRad) const;
+    VROVector3f rotateAboutAxis(const VROVector3f &axisDir, const VROVector3f &axisPos, float angleRad) const;
 
     /*
      Intersect the line or ray defined by this vector and the given origin with the plane defined by the given point and normal.

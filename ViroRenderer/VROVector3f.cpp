@@ -51,74 +51,15 @@ void VROVector3f::clear() {
     z = 0;
 }
 
-double VROVector3f::angleZ(const VROVector3f &other) const {
-    VROVector3f v1(*this);
-    VROVector3f v2(other);
-
-    v1.z = 0;
-    v2.z = 0;
-
-    v1 = v1.normalize();
-    v2 = v2.normalize();
-
-    double dotProduct = v2.dot(v1);
-    double magnitude = v1.magnitude() * v2.magnitude();
-    double arcAngle = dotProduct / magnitude;
-
-    double angle = acos(dotProduct / magnitude);
-    if (arcAngle > 1) {
-        angle = 0;
-    }
-    if (arcAngle < -1) {
-        angle = M_PI;
-    }
-
-    VROVector3f cross = v1.cross(v2);
-    if (cross.z <= 0) {
-        return angle;
-    }
-    else {
-        return angle * -1;
-    }
-}
-
-float VROVector3f::angleZ_normed(const VROVector3f &other) const {
-    double arcAngle = dot(other);
-
-    double angle = 0;
-    if (arcAngle > 1) {
-        angle = 0;
-    }
-    else if (arcAngle < -1) {
-        angle = M_PI;
-    }
-    else {
-        angle = acos(arcAngle);
-    }
-
-    VROVector3f cross = this->cross(other);
-    if (cross.z <= 0) {
-        return angle;
-    }
-    else {
-        return angle * -1;
-    }
-}
-
-float VROVector3f::angleZ_xAxis() const {
-    return atan2f(y, x);
-}
-
 float VROVector3f::angleWithNormedVector(const VROVector3f &vector) const {
-    return acosf(dot(vector));
+    return acos(VROMathClamp(dot(vector), -1.0 + kEpsilon, 1.0 - kEpsilon));
 }
 
-float VROVector3f::angleWithLine(const VROVector3f &line) const {
-    float angle = acosf(dot(line));
-    if (angle > M_PI_2) {
-        angle = M_PI - angle;
-    }
-    return angle;
+float VROVector3f::angleWithVector(const VROVector3f &vector) const {
+    float lenSq1 = x * x + y * y + z * z;
+    float lenSq2 = vector.x * vector.x + vector.y * vector.y + vector.z * vector.z;
+    
+    return acos(VROMathClamp(dot(vector)/sqrt(lenSq1 * lenSq2), -1.0 + kEpsilon, 1.0 - kEpsilon));
 }
 
 bool VROVector3f::lineIntersectPlane(const VROVector3f &point, const VROVector3f &normal,
@@ -195,25 +136,28 @@ bool VROVector3f::rayIntersectPlane(const VROVector3f &point, const VROVector3f 
     return true;
 }
 
-void VROVector3f::rotateZ(float angleRad, VROVector3f *result) const {
+VROVector3f VROVector3f::rotateZ(float angleRad) const {
     float sincosr[2];
     VROMathFastSinCos(VROMathNormalizeAnglePI(angleRad), sincosr);
 
     float sinR = sincosr[0];
     float cosR = sincosr[1];
-
     float rx = x * cosR - y * sinR;
     float ry = x * sinR + y * cosR;
 
-    result->x = rx;
-    result->y = ry;
+    VROVector3f result;
+    result.x = rx;
+    result.y = ry;
+    
+    return result;
 }
 
-void VROVector3f::rotateAboutAxis(const VROVector3f &axisDir, const VROVector3f &axisPos,
-                                  float angleRad, VROVector3f *result) const {
+VROVector3f VROVector3f::rotateAboutAxis(const VROVector3f &axisDir, const VROVector3f &axisPos,
+                                  float angleRad) const {
     VROMatrix4f pivot;
     pivot.rotate(angleRad, axisPos, axisDir);
-    *result = pivot.multiply(*this);
+    
+    return pivot.multiply(*this);
 }
 
 float VROVector3f::distanceXY(const VROVector3f &vector) const  {
