@@ -13,6 +13,7 @@
 #include <vector>
 #include <memory>
 #include "VROAllocationTracker.h"
+#include "VROAudioPlayer.h"
 
 class VRONode;
 class VRORenderContext;
@@ -57,6 +58,14 @@ public:
     std::vector<VROHitTestResult> hitTest(VROVector3f ray, const VRORenderContext &context,
                                           bool boundsOnly = false);
     
+    
+    /*
+     Get the audio player for the background track in this scene.
+     */
+    VROAudioPlayer &getBackgroundAudioPlayer() {
+        return _backgroundAudio;
+    }
+    
 private:
     
     /*
@@ -68,6 +77,11 @@ private:
      The background visual to display. Rendered before any nodes.
      */
     std::shared_ptr<VROGeometry> _background;
+    
+    /*
+     The audio player for the background track of this scene.
+     */
+    VROAudioPlayer _backgroundAudio;
     
 };
 
