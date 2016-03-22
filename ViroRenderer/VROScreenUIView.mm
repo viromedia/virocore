@@ -96,11 +96,8 @@ static const float kVROLayerSize = 2;
 }
 
 - (void)renderEye:(VROEye *)eye withContext:(const VRORenderContext *)context {
-    VROMatrix4f viewInversion = eye->getEyeView().invert();
-    
-    // Keep the HUD in front of the camera
     VRORenderParameters renderParams;
-    renderParams.transforms.push(viewInversion);
+    renderParams.transforms.push(context->getHUDViewMatrix());
     renderParams.opacities.push(1.0);
     
     _layer->render(*context, renderParams);

@@ -386,6 +386,7 @@
     [renderEncoder setScissorRect:leftEye->getViewport().toMetalScissor()];
     
     _renderContext->setMonocularViewMatrix(_monocularEye->getEyeView());
+    _renderContext->setHUDViewMatrix(matrix_from_translation(_device->getInterLensDistance() * 0.5, 0, 0).multiply(leftEye->getEyeView().invert()));
     _renderContext->setViewMatrix(leftEye->getEyeView());
     _renderContext->setProjectionMatrix(leftEye->perspective(zNear, zFar));
     _renderContext->setEyeType(VROEyeType::Left);
@@ -402,6 +403,7 @@
     [renderEncoder setViewport:rightEye->getViewport().toMetalViewport()];
     [renderEncoder setScissorRect:rightEye->getViewport().toMetalScissor()];
     
+    _renderContext->setHUDViewMatrix(matrix_from_translation(-_device->getInterLensDistance() * 0.5, 0, 0).multiply(rightEye->getEyeView().invert()));
     _renderContext->setViewMatrix(rightEye->getEyeView());
     _renderContext->setProjectionMatrix(rightEye->perspective(zNear, zFar));
     _renderContext->setEyeType(VROEyeType::Right);

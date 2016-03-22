@@ -117,6 +117,9 @@ public:
     void setMonocularViewMatrix(VROMatrix4f monocularViewMatrix) {
         _monocularViewMatrix = monocularViewMatrix;
     }
+    void setHUDViewMatrix(VROMatrix4f hudViewMatrix) {
+        _hudViewMatrix = hudViewMatrix;
+    }
     void setCameraForward(VROVector3f cameraForward) {
         _cameraForward = cameraForward;
     }
@@ -132,6 +135,9 @@ public:
     }
     VROMatrix4f getMonocularViewMatrix() const {
         return _monocularViewMatrix;
+    }
+    VROMatrix4f getHUDViewMatrix() const {
+        return _hudViewMatrix;
     }
     VROVector3f getCameraForward() const {
         return _cameraForward;
@@ -157,6 +163,13 @@ private:
      The view matrix for non-stereo rendered objects.
      */
     VROMatrix4f _monocularViewMatrix;
+    
+    /*
+     The view matrix for objects rendered on the HUD. This is a stereo view matrix:
+     it essentially removes head rotation and the camera, but retains the interlens
+     distance translation.
+     */
+    VROMatrix4f _hudViewMatrix;
     
     /*
      The camera forward vector, and the camera quaternion. The quaternion represents
