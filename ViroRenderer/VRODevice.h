@@ -28,7 +28,7 @@ public:
         _model("cardboard"),
         _interLensDistance(0.06f),
         _verticalDistanceToLensCenter(0.035f),
-        _screenToLensDistance(0.038f), //.042
+        _screenToLensDistance(0.042f), //.042
         _screen(screen) {
             
     }

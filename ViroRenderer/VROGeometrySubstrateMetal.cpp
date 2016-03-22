@@ -314,7 +314,8 @@ int VROGeometrySubstrateMetal::parseAttributeIndex(VROGeometrySourceSemantic sem
     }
 }
 
-void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMaterial>> &materials,
+void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
+                                       const std::vector<std::shared_ptr<VROMaterial>> &materials,
                                        const VRORenderContext &context,
                                        VRORenderParameters &params) {
     
@@ -324,7 +325,14 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
     int frame = context.getFrame();
     VROEyeType eyeType = context.getEyeType();
     VROMatrix4f &transform = params.transforms.top();
-
+    
+    VROMatrix4f viewMatrix = context.getViewMatrix();
+    VROMatrix4f projectionMatrix = context.getProjectionMatrix();
+    
+    if (!geometry.isStereoRenderingEnabled()) {
+        viewMatrix = context.getMonocularViewMatrix();
+    }
+    
     for (int i = 0; i < _elements.size(); i++) {
         [renderEncoder pushDebugGroup:@"VROGeometry"];
         VROGeometryElementMetal element = _elements[i];
@@ -332,13 +340,13 @@ void VROGeometrySubstrateMetal::render(const std::vector<std::shared_ptr<VROMate
         /*
          Configure the view uniforms.
          */
-        VROMatrix4f modelview = metal.getViewMatrix().multiply(transform);
+        VROMatrix4f modelview = viewMatrix.multiply(transform);
         VROViewUniforms *viewUniforms = (VROViewUniforms *)_viewUniformsBuffer->getWritableContents(eyeType, frame);
 
         viewUniforms->normal_matrix = toMatrixFloat4x4(transform.invert().transpose());
         viewUniforms->model_matrix = toMatrixFloat4x4(transform);
         viewUniforms->modelview_matrix = toMatrixFloat4x4(modelview);
-        viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(metal.getProjectionMatrix().multiply(modelview));
+        viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(projectionMatrix.multiply(modelview));
         viewUniforms->camera_position = { 0, 0, 0 }; //TODO fill this in
 
         [renderEncoder setVertexBuffer:_viewUniformsBuffer->getMTLBuffer(eyeType)

@@ -31,7 +31,7 @@ void VROGeometry::render(const VRORenderContext &context,
                          VRORenderParameters &params) {
     
     prewarm(context);
-    _substrate->render(_materials, context, params);
+    _substrate->render(*this, _materials, context, params);
 }
 
 const VROBoundingBox &VROGeometry::getBoundingBox() {

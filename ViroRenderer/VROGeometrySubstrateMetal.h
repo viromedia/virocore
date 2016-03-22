@@ -59,7 +59,8 @@ public:
                               const VRORenderContextMetal &context);
     virtual ~VROGeometrySubstrateMetal();
     
-    void render(const std::vector<std::shared_ptr<VROMaterial>> &materials,
+    void render(const VROGeometry &geometry,
+                const std::vector<std::shared_ptr<VROMaterial>> &materials,
                 const VRORenderContext &context,
                 VRORenderParameters &params);
     

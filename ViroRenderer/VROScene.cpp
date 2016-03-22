@@ -69,6 +69,7 @@ void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
                                           kSphereBackgroundNumSegments,
                                           kSphereBackgroundNumSegments,
                                           false);
+    _background->setStereoRenderingEnabled(false);
     
     std::shared_ptr<VROMaterial> material = _background->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Constant);

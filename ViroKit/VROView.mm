@@ -261,7 +261,7 @@
     VROMatrix4f headRotation = _headTracker->getHeadRotation();
     _renderContext->setCameraForward(headRotation.invert().multiply(cameraForward));
     _renderContext->setCameraQuaternion({ headRotation });
-
+    
     float halfLensDistance = _device->getInterLensDistance() * 0.5f;
     if (self.vrModeEnabled) {
         /*
@@ -270,16 +270,26 @@
          1. Set the camera at the origin, looking in the Z negative direction.
          2. Rotate by the camera by the head rotation picked up by the sensors.
          3. Translate the camera by the interlens distance in each direction to get the two eyes.
+         
+         (Note we do these in the reverse order below because of matrix multiplication order).
          */
+        VROMatrix4f leftHeadRotation  = matrix_from_translation( halfLensDistance, 0, 0).multiply(headRotation);
+        VROMatrix4f rightHeadRotation = matrix_from_translation(-halfLensDistance, 0, 0).multiply(headRotation);
+        
         VROMatrix4f camera = matrix_float4x4_from_GL(GLKMatrix4MakeLookAt(0, 0, 0,
                                                                           cameraForward.x, cameraForward.y, cameraForward.z,
                                                                           0, 1.0, 0));
-        VROMatrix4f cameraRotated = headRotation.multiply(camera);
-        VROMatrix4f leftEyeView  = matrix_from_translation( halfLensDistance, 0, 0).multiply(cameraRotated);
-        VROMatrix4f rightEyeView = matrix_from_translation(-halfLensDistance, 0, 0).multiply(cameraRotated);
+        VROMatrix4f leftEyeView  = leftHeadRotation.multiply(camera);
+        VROMatrix4f rightEyeView = rightHeadRotation.multiply(camera);
         
         leftEye->setEyeView(leftEyeView);
         rightEye->setEyeView(rightEyeView);
+        
+        /*
+         In VR mode, the monocular eye holds the non-stereoscopic matrix (which is used for objects that
+         should appear distant, like skyboxes.
+         */
+        monocularEye->setEyeView(headRotation.multiply(camera));
     }
     else {
         monocularEye->setEyeView(headRotation);
@@ -375,10 +385,11 @@
     [renderEncoder setViewport:leftEye->getViewport().toMetalViewport()];
     [renderEncoder setScissorRect:leftEye->getViewport().toMetalScissor()];
     
+    _renderContext->setMonocularViewMatrix(_monocularEye->getEyeView());
     _renderContext->setViewMatrix(leftEye->getEyeView());
     _renderContext->setProjectionMatrix(leftEye->perspective(zNear, zFar));
-    
     _renderContext->setEyeType(VROEyeType::Left);
+    
     [self renderEye:VROEyeType::Left];
     [_HUD updateWithContext:_renderContext];
     [_HUD renderEye:leftEye withContext:_renderContext];
@@ -393,8 +404,8 @@
     
     _renderContext->setViewMatrix(rightEye->getEyeView());
     _renderContext->setProjectionMatrix(rightEye->perspective(zNear, zFar));
-    
     _renderContext->setEyeType(VROEyeType::Right);
+    
     [self renderEye:VROEyeType::Right];
     [_HUD renderEye:rightEye withContext:_renderContext];
     

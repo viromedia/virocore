@@ -104,6 +104,7 @@ std::shared_ptr<VROSkybox> VROSkybox::createSkybox(std::shared_ptr<VROTexture> t
     material->setLightingModel(VROLightingModel::Constant);
     
     skybox->getMaterials().push_back(material);
+    skybox->setStereoRenderingEnabled(false);
     return skybox;
 }
 

@@ -296,7 +296,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
-    boxNode->setPosition({0, 1.0, -2});
+    boxNode->setPosition({0, 0, -2});
     
     rootNode->addChildNode(boxNode);
     

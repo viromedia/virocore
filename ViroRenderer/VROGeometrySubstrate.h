@@ -17,6 +17,7 @@ class VRORenderContext;
 class VROMatrix4f;
 class VRORenderParameters;
 class VROMaterial;
+class VROGeometry;
 
 /*
  Represents the geometry in the underlying graphics hardware.
@@ -27,7 +28,8 @@ public:
     
     virtual ~VROGeometrySubstrate() {}
     
-    virtual void render(const std::vector<std::shared_ptr<VROMaterial>> &materials,
+    virtual void render(const VROGeometry &geometry,
+                        const std::vector<std::shared_ptr<VROMaterial>> &materials,
                         const VRORenderContext &context,
                         VRORenderParameters &params) = 0;
 

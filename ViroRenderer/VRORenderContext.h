@@ -114,6 +114,9 @@ public:
     void setViewMatrix(VROMatrix4f viewMatrix) {
         _viewMatrix = viewMatrix;
     }
+    void setMonocularViewMatrix(VROMatrix4f monocularViewMatrix) {
+        _monocularViewMatrix = monocularViewMatrix;
+    }
     void setCameraForward(VROVector3f cameraForward) {
         _cameraForward = cameraForward;
     }
@@ -126,6 +129,9 @@ public:
     }
     VROMatrix4f getViewMatrix() const {
         return _viewMatrix;
+    }
+    VROMatrix4f getMonocularViewMatrix() const {
+        return _monocularViewMatrix;
     }
     VROVector3f getCameraForward() const {
         return _cameraForward;
@@ -141,10 +147,16 @@ private:
     std::vector<std::weak_ptr<VROFrameListener>> _frameListeners;
     
     /*
-     The standard view and projection matrices.
+     The standard view and projection matrices. The view matrix is specific for
+     the eye currently being rendered (it includes the stereo translation).
      */
     VROMatrix4f _projectionMatrix;
     VROMatrix4f _viewMatrix;
+    
+    /*
+     The view matrix for non-stereo rendered objects.
+     */
+    VROMatrix4f _monocularViewMatrix;
     
     /*
      The camera forward vector, and the camera quaternion. The quaternion represents
