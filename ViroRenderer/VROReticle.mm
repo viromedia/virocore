@@ -32,7 +32,7 @@ static const float kTriggerAnimationWhiteCircleMultiple = 4;
         self.backgroundColor = [UIColor clearColor];
         
         // Sensible defaults
-        self.reticleSize = 2.5;
+        self.reticleSize = 2.0;
         self.reticleThickness = 1;
     }
     

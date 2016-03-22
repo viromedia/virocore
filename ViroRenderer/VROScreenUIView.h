@@ -27,6 +27,8 @@ class VROEye;
 - (void)setReticleEnabled:(BOOL)enabled;
 - (void)setNeedsUpdate;
 
+- (void)setDepth:(float)depth;
+
 @property (readonly, nonatomic) VROReticle *reticle;
 
 @end

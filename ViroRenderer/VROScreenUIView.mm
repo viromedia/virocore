@@ -115,6 +115,11 @@ static const float kVROLayerSize = 2;
     [self setNeedsUpdate];
 }
 
+- (void)setDepth:(float)depth {
+    _layer->setPosition({_layer->getPosition().x, _layer->getPosition().y, depth});
+    [self setNeedsUpdate];
+}
+
 - (void)setNeedsUpdate {
     _needsUpdate = YES;
 }
