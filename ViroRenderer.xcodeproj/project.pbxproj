@@ -43,6 +43,8 @@
 		8F65F8161CA073C100415115 /* VROTextureUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F65F8141CA073C100415115 /* VROTextureUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F65F82A1CA19A9A00415115 /* VROAudioPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F65F8281CA19A9A00415115 /* VROAudioPlayer.cpp */; };
 		8F65F82B1CA19A9A00415115 /* VROAudioPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F65F8291CA19A9A00415115 /* VROAudioPlayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F65F8461CA2E26F00415115 /* VROSoundEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F65F8441CA2E26F00415115 /* VROSoundEffect.cpp */; };
+		8F65F8471CA2E26F00415115 /* VROSoundEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F65F8451CA2E26F00415115 /* VROSoundEffect.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F83DE8E1C4728A30089C31A /* VROHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DE8C1C4728A30089C31A /* VROHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F83DE911C474A800089C31A /* VROProjector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F83DE8F1C474A800089C31A /* VROProjector.cpp */; };
 		8F83DE921C474A800089C31A /* VROProjector.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DE901C474A800089C31A /* VROProjector.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -407,6 +409,8 @@
 		8F65F8141CA073C100415115 /* VROTextureUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTextureUtil.h; sourceTree = "<group>"; };
 		8F65F8281CA19A9A00415115 /* VROAudioPlayer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROAudioPlayer.cpp; sourceTree = "<group>"; };
 		8F65F8291CA19A9A00415115 /* VROAudioPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAudioPlayer.h; sourceTree = "<group>"; };
+		8F65F8441CA2E26F00415115 /* VROSoundEffect.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSoundEffect.cpp; sourceTree = "<group>"; };
+		8F65F8451CA2E26F00415115 /* VROSoundEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSoundEffect.h; sourceTree = "<group>"; };
 		8F7A9EA91BD0517A006CFAFD /* VRORect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORect.h; sourceTree = "<group>"; };
 		8F83DE8C1C4728A30089C31A /* VROHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROHitTestResult.h; sourceTree = "<group>"; };
 		8F83DE8F1C474A800089C31A /* VROProjector.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROProjector.cpp; sourceTree = "<group>"; };
@@ -855,6 +859,8 @@
 			children = (
 				8F65F8291CA19A9A00415115 /* VROAudioPlayer.h */,
 				8F65F8281CA19A9A00415115 /* VROAudioPlayer.cpp */,
+				8F65F8451CA2E26F00415115 /* VROSoundEffect.h */,
+				8F65F8441CA2E26F00415115 /* VROSoundEffect.cpp */,
 			);
 			name = Audio;
 			sourceTree = "<group>";
@@ -997,6 +1003,7 @@
 				8FD4DF311C18F47F003DC425 /* VROScene.h in Headers */,
 				8FD4DF321C18F500003DC425 /* VROCamera.h in Headers */,
 				8FD4DF331C18F500003DC425 /* VRONode.h in Headers */,
+				8F65F8471CA2E26F00415115 /* VROSoundEffect.h in Headers */,
 				8F83DEAB1C49B0540089C31A /* VROAllocationTracker.h in Headers */,
 				8FA2E15B1C45AF3C0070DB26 /* VROScreenUIView.h in Headers */,
 				8F83DEA21C4826F80089C31A /* VROTimingFunctionLinear.h in Headers */,
@@ -1362,6 +1369,7 @@
 				8FD4DEF71C18ED19003DC425 /* VROVector3f.cpp in Sources */,
 				8FD4DEEB1C18ED03003DC425 /* VROViewController.mm in Sources */,
 				8FD4DF0C1C18ED3C003DC425 /* VROGeometryElement.cpp in Sources */,
+				8F65F8461CA2E26F00415115 /* VROSoundEffect.cpp in Sources */,
 				8FD4DF1C1C18ED53003DC425 /* VRORect.cpp in Sources */,
 				8F65F7891C90CD4700415115 /* VROBillboardConstraint.cpp in Sources */,
 				8F9277A51C62DBDF00FF892A /* VROConcurrentBuffer.cpp in Sources */,

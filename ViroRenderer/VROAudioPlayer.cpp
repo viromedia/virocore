@@ -32,6 +32,7 @@ void VROAudioPlayer::stop() {
 }
 
 void VROAudioPlayer::play() {
+    _player.volume = 1.0;
     [_player play];
 }
 
