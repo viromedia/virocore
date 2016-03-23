@@ -563,7 +563,7 @@ do { \
     } while (0)
 
 /*
- Logs a VROVector3d.
+ Logs a VROVector3f.
  */
 #define pvec3(vec) \
     do \
@@ -574,7 +574,7 @@ do { \
     } while (0)
 
 /*
- Logs a pointer to VROVector3d.
+ Logs a pointer to VROVector3f.
  */
 #define ppvec3(pVec) \
     do \

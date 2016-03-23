@@ -66,7 +66,7 @@ class VROQuaternion {
 		VROQuaternion &operator*=(const VROQuaternion &other);
 
 		//! Calculates the dot product
-		inline float dotProduct(const VROQuaternion &other) const;
+		float dotProduct(const VROQuaternion &other) const;
     
         // Get the magnitude of the angle represented by this quaternion.
         float getAngle() const;

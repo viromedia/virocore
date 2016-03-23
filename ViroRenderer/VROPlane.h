@@ -11,7 +11,6 @@
 
 #include "VROVector3f.h"
 #include "VROQuaternion.h"
-class VROVector3d;
 
 enum { ON_PLANE, NEGATIVE_HALF_SPACE, POSITIVE_HALF_SPACE };
 
@@ -36,8 +35,6 @@ public:
 
     float distanceToPoint(const VROVector3f &point) const;
     float distanceToPointXY(const VROVector3f &point) const;
-    float distanceToPoint(const VROVector3d &point) const;
-    float distanceToPointXY(const VROVector3d &point) const;
 
     int getHalfSpaceOfPoint(const VROVector3f &point) const;
 

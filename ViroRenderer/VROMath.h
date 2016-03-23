@@ -13,9 +13,7 @@
 #include <vector>
 #include <GLKit/GLKit.h>
 #include "VROVector3f.h"
-#include "VROVector3d.h"
 #include "VROMatrix4f.h"
-#include "VROMatrix4d.h"
 #include "VROBoundingBox.h"
 
 static float kRoundingErrorFloat = 0.00001;
@@ -132,7 +130,7 @@ bool VROMathPointIsInPolygon(float x, float y, float x1, float y1,
 /*
  Get the point on segment AB that is closest to p.
  */
-void VROMathGetClosestPointOnSegment(const VROVector3d &A, const VROVector3d &B, const VROVector3d &p, VROVector3d &result);
+VROVector3f VROMathGetClosestPointOnSegment(const VROVector3f A, const VROVector3f B, const VROVector3f p);
 
 /* return the power of 2 that is equal or greater to the given value */
 static inline uint32_t

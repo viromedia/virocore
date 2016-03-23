@@ -8,7 +8,6 @@
 
 #include "VROPlane.h"
 #include "VROVector3f.h"
-#include "VROVector3d.h"
 
 VROPlane::VROPlane() :
     d(0) {
@@ -35,14 +34,6 @@ float VROPlane::distanceToPoint(const VROVector3f &point) const {
 }
 
 float VROPlane::distanceToPointXY(const VROVector3f &point) const {
-    return normal.x * point.x + normal.y * point.y + d;
-}
-
-float VROPlane::distanceToPoint(const VROVector3d &point) const {
-    return normal.dot(point) + d;
-}
-
-float VROPlane::distanceToPointXY(const VROVector3d &point) const {
     return normal.x * point.x + normal.y * point.y + d;
 }
 

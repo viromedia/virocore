@@ -49,7 +49,6 @@ public:
      only check for containment along the indicated axes.
      */
     bool containsPoint(const VROVector3f &point) const;
-    bool containsPoint(const VROVector3d &point) const;
     bool containsPointXY(const VROVector3f &point) const;
     bool containsPointXZ(const VROVector3f &point) const;
     bool containsPointYZ(const VROVector3f &point) const;

@@ -8,7 +8,6 @@
 
 #include "VROBoundingBox.h"
 #include <sstream>
-#include "VROVector3d.h"
 #include "VROVector3f.h"
 
 //Epsilon value for point containment to account for precision errors
@@ -209,29 +208,6 @@ bool VROBoundingBox::intersectsRay(const VROVector3f &ray, const VROVector3f &or
 }
 
 bool VROBoundingBox::containsPoint(const VROVector3f &point) const {
-    if (point.x - _planes[VROBoxPlaneMinX] < -kContainsPointEpsilon) {
-        return false;
-    }
-    if (point.x - _planes[VROBoxPlaneMaxX] > kContainsPointEpsilon) {
-        return false;
-    }
-    if (point.y - _planes[VROBoxPlaneMinY] < -kContainsPointEpsilon) {
-        return false;
-    }
-    if (point.y - _planes[VROBoxPlaneMaxY] > kContainsPointEpsilon) {
-        return false;
-    }
-    if (point.z - _planes[VROBoxPlaneMinZ] < -kContainsPointEpsilon) {
-        return false;
-    }
-    if (point.z - _planes[VROBoxPlaneMaxZ] > kContainsPointEpsilon) {
-        return false;
-    }
-
-    return true;
-}
-
-bool VROBoundingBox::containsPoint(const VROVector3d &point) const {
     if (point.x - _planes[VROBoxPlaneMinX] < -kContainsPointEpsilon) {
         return false;
     }

@@ -77,11 +77,9 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROFrustum.h>
 #import <ViroKit/VROFrustumPlane.h>
 #import <ViroKit/VROBoundingBox.h>
-#import <ViroKit/VROVector3d.h>
 #import <ViroKit/VROVector3f.h>
 #import <ViroKit/VROVector4f.h>
 #import <ViroKit/VROMatrix4f.h>
-#import <ViroKit/VROMatrix4d.h>
 #import <ViroKit/VROMath.h>
 #import <ViroKit/VROTriangle.h>
 

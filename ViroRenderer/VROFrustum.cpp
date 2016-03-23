@@ -631,7 +631,7 @@ bool VROFrustum::containsPoint(const VROVector3f &pt) const {
     }
 }
 
-float VROFrustum::distanceFromFCP(const VROVector3d &pt) const {
+float VROFrustum::distanceFromFCP(VROVector3f pt) const {
     if (!tdf) {
         return planes[(int)VROFrustumSide::Far].distanceToPoint(pt);
     }
@@ -640,7 +640,7 @@ float VROFrustum::distanceFromFCP(const VROVector3d &pt) const {
     }
 }
 
-float VROFrustum::distanceFromNCP(const VROVector3d &pt) const {
+float VROFrustum::distanceFromNCP(VROVector3f pt) const {
     if (!tdf) {
         return planes[(int)VROFrustumSide::Near].distanceToPoint(pt);
     }

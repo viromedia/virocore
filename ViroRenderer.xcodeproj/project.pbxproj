@@ -120,10 +120,8 @@
 		8FD4DEF31C18ED19003DC425 /* VROFrustum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4DCE281BF8318100061DD7 /* VROFrustum.cpp */; };
 		8FD4DEF41C18ED19003DC425 /* VROFrustumPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4DCE221BF7ECC800061DD7 /* VROFrustumPlane.cpp */; };
 		8FD4DEF51C18ED19003DC425 /* VROBoundingBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4DCE251BF7ED1A00061DD7 /* VROBoundingBox.cpp */; };
-		8FD4DEF61C18ED19003DC425 /* VROVector3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1071E51BF7D9C5003B3C3F /* VROVector3d.cpp */; };
 		8FD4DEF71C18ED19003DC425 /* VROVector3f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1071E71BF7D9C5003B3C3F /* VROVector3f.cpp */; };
 		8FD4DEF81C18ED19003DC425 /* VROVector4f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F152A6D1C0D77AA00A211F8 /* VROVector4f.cpp */; };
-		8FD4DEF91C18ED19003DC425 /* VROMatrix4d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1071EC1BF7DECD003B3C3F /* VROMatrix4d.cpp */; };
 		8FD4DEFA1C18ED19003DC425 /* VROMatrix4f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1071EE1BF7DECD003B3C3F /* VROMatrix4f.cpp */; };
 		8FD4DEFB1C18ED19003DC425 /* VROMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F517C451BD0474E0017C70B /* VROMath.cpp */; };
 		8FD4DEFC1C18ED22003DC425 /* VROBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD4DE9F1C169D71003DC425 /* VROBox.cpp */; };
@@ -190,10 +188,8 @@
 		8FD4DF421C18F5EB003DC425 /* VROFrustum.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4DCE291BF8318100061DD7 /* VROFrustum.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF431C18F5EB003DC425 /* VROFrustumPlane.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4DCE231BF7ECC800061DD7 /* VROFrustumPlane.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF441C18F5EB003DC425 /* VROBoundingBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4DCE261BF7ED1A00061DD7 /* VROBoundingBox.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FD4DF451C18F5EB003DC425 /* VROVector3d.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1071E61BF7D9C5003B3C3F /* VROVector3d.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF461C18F5EB003DC425 /* VROVector3f.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1071E81BF7D9C5003B3C3F /* VROVector3f.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF471C18F5EB003DC425 /* VROVector4f.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F152A6E1C0D77AA00A211F8 /* VROVector4f.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FD4DF481C18F5EB003DC425 /* VROMatrix4d.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1071ED1BF7DECD003B3C3F /* VROMatrix4d.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF491C18F5EB003DC425 /* VROMatrix4f.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1071EF1BF7DECD003B3C3F /* VROMatrix4f.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF4A1C18F5EB003DC425 /* VROMath.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F517C461BD0474E0017C70B /* VROMath.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF4B1C18F5EB003DC425 /* VROBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD4DEA01C169D71003DC425 /* VROBox.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -286,12 +282,8 @@
 		8F1071D61BF41791003B3C3F /* VROCrossLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCrossLayout.h; sourceTree = "<group>"; };
 		8F1071D91BF67F34003B3C3F /* VROCamera.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROCamera.cpp; sourceTree = "<group>"; };
 		8F1071DA1BF67F34003B3C3F /* VROCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCamera.h; sourceTree = "<group>"; };
-		8F1071E51BF7D9C5003B3C3F /* VROVector3d.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVector3d.cpp; sourceTree = "<group>"; };
-		8F1071E61BF7D9C5003B3C3F /* VROVector3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVector3d.h; sourceTree = "<group>"; };
 		8F1071E71BF7D9C5003B3C3F /* VROVector3f.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVector3f.cpp; sourceTree = "<group>"; };
 		8F1071E81BF7D9C5003B3C3F /* VROVector3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVector3f.h; sourceTree = "<group>"; };
-		8F1071EC1BF7DECD003B3C3F /* VROMatrix4d.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROMatrix4d.cpp; sourceTree = "<group>"; };
-		8F1071ED1BF7DECD003B3C3F /* VROMatrix4d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMatrix4d.h; sourceTree = "<group>"; };
 		8F1071EE1BF7DECD003B3C3F /* VROMatrix4f.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROMatrix4f.cpp; sourceTree = "<group>"; };
 		8F1071EF1BF7DECD003B3C3F /* VROMatrix4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMatrix4f.h; sourceTree = "<group>"; };
 		8F11B7C01C20B0530026D150 /* VROView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROView.h; sourceTree = "<group>"; };
@@ -813,14 +805,10 @@
 				8F4DCE221BF7ECC800061DD7 /* VROFrustumPlane.cpp */,
 				8F4DCE261BF7ED1A00061DD7 /* VROBoundingBox.h */,
 				8F4DCE251BF7ED1A00061DD7 /* VROBoundingBox.cpp */,
-				8F1071E61BF7D9C5003B3C3F /* VROVector3d.h */,
-				8F1071E51BF7D9C5003B3C3F /* VROVector3d.cpp */,
 				8F1071E81BF7D9C5003B3C3F /* VROVector3f.h */,
 				8F1071E71BF7D9C5003B3C3F /* VROVector3f.cpp */,
 				8F152A6E1C0D77AA00A211F8 /* VROVector4f.h */,
 				8F152A6D1C0D77AA00A211F8 /* VROVector4f.cpp */,
-				8F1071ED1BF7DECD003B3C3F /* VROMatrix4d.h */,
-				8F1071EC1BF7DECD003B3C3F /* VROMatrix4d.cpp */,
 				8F1071EF1BF7DECD003B3C3F /* VROMatrix4f.h */,
 				8F1071EE1BF7DECD003B3C3F /* VROMatrix4f.cpp */,
 				8F517C461BD0474E0017C70B /* VROMath.h */,
@@ -1033,11 +1021,9 @@
 				8FD4DF421C18F5EB003DC425 /* VROFrustum.h in Headers */,
 				8FD4DF431C18F5EB003DC425 /* VROFrustumPlane.h in Headers */,
 				8FD4DF441C18F5EB003DC425 /* VROBoundingBox.h in Headers */,
-				8FD4DF451C18F5EB003DC425 /* VROVector3d.h in Headers */,
 				8FD4DF461C18F5EB003DC425 /* VROVector3f.h in Headers */,
 				8F83DE9E1C4826F80089C31A /* VROTimingFunctionCubicBezier.h in Headers */,
 				8FD4DF471C18F5EB003DC425 /* VROVector4f.h in Headers */,
-				8FD4DF481C18F5EB003DC425 /* VROMatrix4d.h in Headers */,
 				8FD4DF491C18F5EB003DC425 /* VROMatrix4f.h in Headers */,
 				8F548E4E1C23665100556688 /* VROAnimatable.h in Headers */,
 				8FD4DF4A1C18F5EB003DC425 /* VROMath.h in Headers */,
@@ -1345,7 +1331,6 @@
 				8F92780B1C67DE4A00FF892A /* VROHoverController.cpp in Sources */,
 				8FD4DF0D1C18ED3C003DC425 /* VROGeometrySource.cpp in Sources */,
 				8FA2E1631C460C600070DB26 /* VROAction.cpp in Sources */,
-				8FD4DEF91C18ED19003DC425 /* VROMatrix4d.cpp in Sources */,
 				8FD4DEFC1C18ED22003DC425 /* VROBox.cpp in Sources */,
 				8F83DEAA1C49B0540089C31A /* VROAllocationTracker.cpp in Sources */,
 				8FD4DEF11C18ED19003DC425 /* VROQuaternion.cpp in Sources */,
@@ -1384,7 +1369,6 @@
 				8FD4DF0A1C18ED3C003DC425 /* VRONode.cpp in Sources */,
 				8FD4DEF41C18ED19003DC425 /* VROFrustumPlane.cpp in Sources */,
 				8FD4DEEE1C18ED0B003DC425 /* VROByteBuffer.cpp in Sources */,
-				8FD4DEF61C18ED19003DC425 /* VROVector3d.cpp in Sources */,
 				8FD4DF1D1C18ED53003DC425 /* VROTransaction.cpp in Sources */,
 				8FD4DEF51C18ED19003DC425 /* VROBoundingBox.cpp in Sources */,
 				8FD4DF291C18EE6F003DC425 /* VROWorldUIView.mm in Sources */,

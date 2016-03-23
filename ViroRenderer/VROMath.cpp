@@ -983,12 +983,12 @@ bool VROMathPointIsInPolygon(float x, float y, float x1, float y1, float x2, flo
     return false;
 }
 
-void VROMathGetClosestPointOnSegment(const VROVector3d &A, const VROVector3d &B, const VROVector3d &p, VROVector3d &result) {
+VROVector3f VROMathGetClosestPointOnSegment(const VROVector3f A, const VROVector3f B, const VROVector3f p) {
     if (p.isEqual(A)) {
-        result.set(A);
+        return A;
     }
     else if (p.isEqual(B)) {
-        result.set(B);
+        return B;
     }
     else {
         double dx = B.x - A.x;
@@ -1009,9 +1009,12 @@ void VROMathGetClosestPointOnSegment(const VROVector3d &A, const VROVector3d &B,
             t = 1.0;
         }
         
+        VROVector3f result;
         result.x = A.x + dx * t;
         result.y = A.y + dy * t;
         result.z = A.z + dz * t;
+        
+        return result;
     }
 }
 

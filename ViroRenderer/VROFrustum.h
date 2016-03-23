@@ -97,8 +97,8 @@ public:
      Get the distance of the given point from the near or far clipping plane of this
      frustum.
      */
-    float distanceFromFCP(const VROVector3d &pt) const;
-    float distanceFromNCP(const VROVector3d &pt) const;
+    float distanceFromFCP(VROVector3f pt) const;
+    float distanceFromNCP(VROVector3f pt) const;
 
 private:
 

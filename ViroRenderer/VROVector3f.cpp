@@ -8,7 +8,6 @@
 
 #include "VROVector3f.h"
 #include "VROMatrix4f.h"
-#include "VROVector3d.h"
 #include "VROMath.h"
 #include <sstream>
 
@@ -79,45 +78,8 @@ bool VROVector3f::lineIntersectPlane(const VROVector3f &point, const VROVector3f
     return true;
 }
 
-bool VROVector3f::lineIntersectPlane(const VROVector3f &point, const VROVector3f &normal,
-                                     const VROVector3d &origin, VROVector3d *intPt) const {
-    double denom = dot(normal);
-    if (denom == 0) {
-        return false;
-    }
-
-    float c = normal.dot(point);
-    double t = (c - normal.dot(origin)) / denom;
-
-    intPt->x = origin.x + x * t;
-    intPt->y = origin.y + y * t;
-    intPt->z = origin.z + z * t;
-
-    return true;
-}
-
 bool VROVector3f::rayIntersectPlane(const VROVector3f &point, const VROVector3f &normal,
                                     const VROVector3f &origin, VROVector3f *intPt) const {
-    float denom = dot(normal);
-    if (denom == 0) {
-        return false;
-    }
-
-    float c = normal.dot(point);
-    float t = (c - normal.dot(origin)) / denom;
-    if (t < 0) {
-        return false;
-    }
-
-    intPt->x = origin.x + x * t;
-    intPt->y = origin.y + y * t;
-    intPt->z = origin.z + z * t;
-
-    return true;
-}
-
-bool VROVector3f::rayIntersectPlane(const VROVector3f &point, const VROVector3f &normal,
-                                    const VROVector3d &origin, VROVector3d *intPt) const {
     float denom = dot(normal);
     if (denom == 0) {
         return false;
@@ -170,12 +132,6 @@ void VROVector3f::set(const VROVector3f &value) {
     z = value.z;
 }
 
-void VROVector3f::set(const VROVector3d &value) {
-    x = value.x;
-    y = value.y;
-    z = value.z;
-}
-
 void VROVector3f::set(float x, float y, float z) {
     this->x = x;
     this->y = y;
@@ -183,10 +139,6 @@ void VROVector3f::set(float x, float y, float z) {
 }
 
 float VROVector3f::dot(const VROVector3f &vB) const {
-    return x * vB.x + y * vB.y + z * vB.z;
-}
-
-double VROVector3f::dot(const VROVector3d &vB) const {
     return x * vB.x + y * vB.y + z * vB.z;
 }
 
@@ -207,14 +159,6 @@ float VROVector3f::distanceAccurate(const VROVector3f &vB) const {
     float dz = (vB.z - this->z);
 
     return (float)sqrt(dx * dx + dy * dy + dz * dz);
-}
-
-float VROVector3f::distance(const VROVector3d &vB) const  {
-    float dx = (vB.x - this->x);
-    float dy = (vB.y - this->y);
-    float dz = (vB.z - this->z);
-
-    return VROMathFastSquareRoot(dx * dx + dy * dy + dz * dz);
 }
 
 float VROVector3f::distanceSquared(const VROVector3f &vB) const {
@@ -257,15 +201,6 @@ VROVector3f VROVector3f::midpoint(const VROVector3f &other) const {
     result.x = (x + other.x) * 0.5f;
     result.y = (y + other.y) * 0.5f;
     result.z = (z + other.z) * 0.5f;
-    
-    return result;
-}
-
-VROVector3f VROVector3f::midpoint(const VROVector3d &other) const {
-    VROVector3f result;
-    result.x = (x + other.x) * 0.5;
-    result.y = (y + other.y) * 0.5;
-    result.z = (z + other.z) * 0.5;
     
     return result;
 }

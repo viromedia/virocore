@@ -13,8 +13,6 @@
 #include <math.h>
 #include <string>
 
-class VROVector3d;
-
 class VROVector3f {
 public:
     float x;
@@ -78,18 +76,13 @@ public:
      */
     bool lineIntersectPlane(const VROVector3f &point, const VROVector3f &normal,
                             const VROVector3f &origin, VROVector3f *intPt) const;
-    bool lineIntersectPlane(const VROVector3f &point, const VROVector3f &normal,
-                            const VROVector3d &origin, VROVector3d *intPt) const;
     bool rayIntersectPlane(const VROVector3f &point, const VROVector3f &normal,
                            const VROVector3f &origin, VROVector3f *intPt) const;
-    bool rayIntersectPlane(const VROVector3f &point, const VROVector3f &normal,
-                           const VROVector3d &origin, VROVector3d *intPt) const;
 
     /*
      Copy operations.
      */
     void set(const VROVector3f &value);
-    void set(const VROVector3d &value);
     void set(float x, float y, float z);
 
     /*
@@ -104,10 +97,8 @@ public:
      Midpoints and distances.
      */
     VROVector3f midpoint(const VROVector3f &other) const;
-    VROVector3f midpoint(const VROVector3d &other) const;
     float  distance(const VROVector3f &vB) const;
     float  distanceAccurate(const VROVector3f &vB) const;
-    float  distance(const VROVector3d &vB) const;
     float  distanceXY(const VROVector3f &vB) const;
     float  distanceSquared(const VROVector3f &vB) const;
     float  magnitude() const;
@@ -117,7 +108,6 @@ public:
      Basic vector operations.
      */
     float  dot(const VROVector3f &vB) const;
-    double dot(const VROVector3d &vB) const;
     VROVector3f cross(const VROVector3f &vB) const;
     VROVector3f normalize() const;
     VROVector3f interpolate(VROVector3f other, float t);
