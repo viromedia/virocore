@@ -296,7 +296,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
-    boxNode->setPosition({0, 0, -2});
+    boxNode->setPosition({0, 0, -5});
     
     rootNode->addChildNode(boxNode);
     
@@ -335,6 +335,15 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         node->setRotation({ 0, self.boxVideoAngle, 0});
         
         return true;
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        VROTransaction::begin();
+        VROTransaction::setAnimationDuration(5.0);
+        
+        [self.view setPosition:{0, 0, -4}];
+        
+        VROTransaction::commit();
     });
     
     boxNode->runAction(action);

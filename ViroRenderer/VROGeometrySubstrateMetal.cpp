@@ -347,7 +347,7 @@ void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
         viewUniforms->model_matrix = toMatrixFloat4x4(transform);
         viewUniforms->modelview_matrix = toMatrixFloat4x4(modelview);
         viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(projectionMatrix.multiply(modelview));
-        viewUniforms->camera_position = { 0, 0, 0 }; //TODO fill this in
+        viewUniforms->camera_position = toVectorFloat3(context.getCamera().getPosition());
 
         [renderEncoder setVertexBuffer:_viewUniformsBuffer->getMTLBuffer(eyeType)
                                 offset:_viewUniformsBuffer->getWriteOffset(frame) atIndex:_vars.size()];

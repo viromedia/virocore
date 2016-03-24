@@ -105,6 +105,36 @@ VROMatrix4f matrix_float4x4_from_GL(GLKMatrix4 glm) {
     return VROMatrix4f(m);
 }
 
+VROMatrix4f VROMathComputeLookAtMatrix(VROVector3f eye, VROVector3f forward, VROVector3f up) {
+    VROVector3f side = forward.cross(up);
+    side.normalize();
+    
+    VROVector3f txUp = side.cross(forward);
+    
+    VROMatrix4f matrix;
+    matrix[0]  = side.x;
+    matrix[4]  = side.y;
+    matrix[8]  = side.z;
+    matrix[12] = side.x * -eye.x + side.y * -eye.y + side.z * -eye.z;
+    
+    matrix[1]  = txUp.x;
+    matrix[5]  = txUp.y;
+    matrix[9]  = txUp.z;
+    matrix[13] = txUp.x * -eye.x + txUp.y * -eye.y + txUp.z * -eye.z;
+    
+    matrix[2]  = -forward.x;
+    matrix[6]  = -forward.y;
+    matrix[10] = -forward.z;
+    matrix[14] = forward.x * eye.x + forward.y * eye.y + forward.z * eye.z;
+    
+    matrix[3] = 0;
+    matrix[7] = 0;
+    matrix[11] = 0;
+    matrix[15] = 1;
+    
+    return matrix;
+}
+
 double degrees_to_radians(double degrees) {
     return degrees * M_PI / 180.0;
 }

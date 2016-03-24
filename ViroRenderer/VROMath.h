@@ -30,6 +30,8 @@ VROMatrix4f matrix_for_frustum(const float left, const float right,
 
 VROMatrix4f matrix_float4x4_from_GL(GLKMatrix4 glmatrix);
 
+VROMatrix4f VROMathComputeLookAtMatrix(VROVector3f eye, VROVector3f forward, VROVector3f up);
+
 double degrees_to_radians(double degrees);
 double radians_to_degrees(double radians);
 

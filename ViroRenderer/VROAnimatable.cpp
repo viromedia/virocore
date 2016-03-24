@@ -10,8 +10,6 @@
 #include "VROTransaction.h"
 #include "VROAnimation.h"
 
-#include "VROAnimationVector3f.h"
-
 void VROAnimatable::animate(std::shared_ptr<VROAnimation> animation) {
     animation->setAnimatable(shared_from_this());
     

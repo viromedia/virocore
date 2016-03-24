@@ -243,8 +243,7 @@ void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsO
         return;
     }
     
-    // TODO Use camera location for origin
-    VROVector3f origin;
+    VROVector3f origin = context.getCamera().getPosition();
     VROMatrix4f transform = parentTransform.multiply(getTransform(context));
     
     if (_geometry) {

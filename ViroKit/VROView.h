@@ -37,4 +37,8 @@ enum class VROTimingFunctionType;
         animator:(std::function<void(VROScene *const incoming, VROScene *const outgoing, float t)>)animator
              end:(std::function<void(VROScene *const incoming, VROScene *const outgoing)>)end;
 
+- (void)setPosition:(VROVector3f)position;
+- (void)setBaseRotation:(VROQuaternion)rotation;
+- (float)worldPerScreenAtDepth:(float)distance;
+
 @end

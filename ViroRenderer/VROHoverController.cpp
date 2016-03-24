@@ -81,7 +81,7 @@ void VROHoverController::onFrameWillRender(const VRORenderContext &context) {
         return;
     }
     
-    VROVector3f currentCameraForward = context.getCameraForward();
+    VROVector3f currentCameraForward = context.getCamera().getForward();
     VROQuaternion distance = VROQuaternion::rotationFromTo(_lastCameraForward, currentCameraForward);
     
     if (distance.getAngle() > _rotationThresholdRadians) {

@@ -208,8 +208,7 @@ unsigned char VROByteBuffer::readUnsignedByte() {
     return c;
 }
 
-uint64_t VROByteBuffer::readLong() {
-    // TODO -- rename this function:  long in C++ is 4 bytes, not the 8 (which is long long) that this assumes.
+uint64_t VROByteBuffer::readUInt64() {
     passert(_pos + 8 <= _capacity);
 
     uint64_t value[1];

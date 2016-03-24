@@ -34,13 +34,13 @@ void VROScene::renderBackground(const VRORenderContext &context) {
         return;
     }
     
-    VROMatrix4f identity;
+    VROMatrix4f translation;
+    translation.translate(context.getCamera().getPosition());
     
     VRORenderParameters renderParams;
-    renderParams.transforms.push(identity);
+    renderParams.transforms.push(translation);
     renderParams.opacities.push(1.0);
     
-    //TODO Make the skybox track the camera position
     _background->render(context, renderParams);
 }
 

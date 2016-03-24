@@ -17,6 +17,7 @@
 #include "VROMatrix4f.h"
 #include "VROVector3f.h"
 #include "VROQuaternion.h"
+#include "VROCamera.h"
 
 class VROGeometry;
 class VROMaterial;
@@ -120,11 +121,8 @@ public:
     void setHUDViewMatrix(VROMatrix4f hudViewMatrix) {
         _hudViewMatrix = hudViewMatrix;
     }
-    void setCameraForward(VROVector3f cameraForward) {
-        _cameraForward = cameraForward;
-    }
-    void setCameraQuaternion(VROQuaternion cameraQuaternion) {
-        _cameraQuaternion = cameraQuaternion;
+    void setCamera(VROCamera camera) {
+        _camera = camera;
     }
     
     VROMatrix4f getProjectionMatrix() const {
@@ -139,11 +137,9 @@ public:
     VROMatrix4f getHUDViewMatrix() const {
         return _hudViewMatrix;
     }
-    VROVector3f getCameraForward() const {
-        return _cameraForward;
-    }
-    VROQuaternion getCameraQuaternion() const {
-        return _cameraQuaternion;
+    
+    const VROCamera &getCamera() const {
+        return _camera;
     }
     
 private:
@@ -172,12 +168,9 @@ private:
     VROMatrix4f _hudViewMatrix;
     
     /*
-     The camera forward vector, and the camera quaternion. The quaternion represents
-     the rotation from (0, 0, -1) required to achieve the camera's current
-     orientation.
+     The camera used for this frame.
      */
-    VROVector3f _cameraForward;
-    VROQuaternion _cameraQuaternion;
+    VROCamera _camera;
     
 };
 

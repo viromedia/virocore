@@ -66,11 +66,11 @@ public:
      Read methods.
      */
     bool           readBool();
-    uint64_t       readLong();
     float          readHalf();
     float          readFloat();
     double         readDouble();
     int            readInt();
+    uint64_t       readUInt64();
     short          readShort();
     unsigned short readUnsignedShort();
     signed char    readByte();

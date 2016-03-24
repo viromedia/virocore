@@ -24,6 +24,7 @@
 #import "VROAllocationTracker.h"
 #import "VROScene.h"
 #import "VROLog.h"
+#import "VROCameraMutable.h"
 
 @interface VROView () {
     VROMagnetSensor *_magnetSensor;
@@ -43,6 +44,14 @@
     BOOL _frameParamentersReady;
     BOOL _rendererInitialized;
     
+    /*
+     Internal representation of the camera.
+     */
+    std::shared_ptr<VROCameraMutable> _camera;
+    
+    /*
+     Scene transition variables.
+     */
     float _sceneTransitionDuration;
     float _sceneTransitionStartTime;
     std::unique_ptr<VROTimingFunction> _sceneTransitionTimingFunction;
@@ -81,6 +90,7 @@
     _magnetSensor = new VROMagnetSensor();
     _headTracker = new VROHeadTracker();
     _device = new VRODevice([UIScreen mainScreen]);
+    _camera = std::make_shared<VROCameraMutable>();
     
     _monocularEye = new VROEye(VROEyeType::Monocular);
     _leftEye = new VROEye(VROEyeType::Left);
@@ -155,6 +165,32 @@
 
 - (float)virtualEyeToScreenDistance {
     return _device->getScreenToLensDistance();
+}
+
+#pragma mark - Camera
+
+- (void)setPosition:(VROVector3f)position {
+    _camera->setPosition(position);
+}
+
+- (void)setBaseRotation:(VROQuaternion)rotation {
+    _camera->setBaseRotation(rotation);
+}
+
+- (float)worldPerScreenAtDepth:(float)distance {
+    /*
+     Arbitrarily chose left eye's left FOV. tan(fov) = perp/distance, where
+     perp is in the direction perpendicular to the camera's up vector and
+     forward vector, and distance is in the direction of the camera's forward
+     vector.
+     */
+    float radians = _leftEye->getFOV().getLeft();
+    float perp = distance * tan(radians);
+    
+    /*
+     The perspective divide is perp divided by half the viewport.
+     */
+    return perp / (_leftEye->getViewport().getWidth() / 2.0f);
 }
 
 #pragma mark - Rendering
@@ -257,10 +293,14 @@
     
     VROVector3f cameraForward(0, 0, -1.0);
 
-    // I don't know why we're inverting the head rotation when computing camera forward
     VROMatrix4f headRotation = _headTracker->getHeadRotation();
-    _renderContext->setCameraForward(headRotation.invert().multiply(cameraForward));
-    _renderContext->setCameraQuaternion({ headRotation });
+    
+    VROCamera camera;
+    camera.setHeadRotation(headRotation.invert());
+    camera.setBaseRotation(_camera->getBaseRotation());
+    camera.setPosition(_camera->getPosition());
+    
+    _renderContext->setCamera(camera);
     
     float halfLensDistance = _device->getInterLensDistance() * 0.5f;
     if (self.vrModeEnabled) {
@@ -270,26 +310,17 @@
          1. Set the camera at the origin, looking in the Z negative direction.
          2. Rotate by the camera by the head rotation picked up by the sensors.
          3. Translate the camera by the interlens distance in each direction to get the two eyes.
-         
-         (Note we do these in the reverse order below because of matrix multiplication order).
          */
-        VROMatrix4f leftHeadRotation  = matrix_from_translation( halfLensDistance, 0, 0).multiply(headRotation);
-        VROMatrix4f rightHeadRotation = matrix_from_translation(-halfLensDistance, 0, 0).multiply(headRotation);
-        
-        VROMatrix4f camera = matrix_float4x4_from_GL(GLKMatrix4MakeLookAt(0, 0, 0,
-                                                                          cameraForward.x, cameraForward.y, cameraForward.z,
-                                                                          0, 1.0, 0));
-        VROMatrix4f leftEyeView  = leftHeadRotation.multiply(camera);
-        VROMatrix4f rightEyeView = rightHeadRotation.multiply(camera);
-        
-        leftEye->setEyeView(leftEyeView);
-        rightEye->setEyeView(rightEyeView);
+        VROMatrix4f cameraMatrix = camera.computeLookAtMatrix();
+       
+        leftEye->setEyeView(matrix_from_translation( halfLensDistance, 0, 0).multiply(cameraMatrix));
+        rightEye->setEyeView(matrix_from_translation(-halfLensDistance, 0, 0).multiply(cameraMatrix));
         
         /*
          In VR mode, the monocular eye holds the non-stereoscopic matrix (which is used for objects that
          should appear distant, like skyboxes.
          */
-        monocularEye->setEyeView(headRotation.multiply(camera));
+        monocularEye->setEyeView(cameraMatrix);
     }
     else {
         monocularEye->setEyeView(headRotation);
@@ -444,7 +475,7 @@
 
 - (void)handleTap:(UIGestureRecognizer *)gestureRecognizer {
     [_HUD.reticle trigger];
-    [self.renderDelegate reticleTapped:_renderContext->getCameraForward()
+    [self.renderDelegate reticleTapped:_renderContext->getCamera().getForward()
                                context:_renderContext];
 }
 
