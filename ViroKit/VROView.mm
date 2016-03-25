@@ -23,8 +23,11 @@
 #import "VROProjector.h"
 #import "VROAllocationTracker.h"
 #import "VROScene.h"
+#import "VROSceneController.h"
 #import "VROLog.h"
 #import "VROCameraMutable.h"
+
+static const float kDefaultSceneTransitionDuration = 1.0;
 
 @interface VROView () {
     VROMagnetSensor *_magnetSensor;
@@ -55,11 +58,10 @@
     float _sceneTransitionDuration;
     float _sceneTransitionStartTime;
     std::unique_ptr<VROTimingFunction> _sceneTransitionTimingFunction;
-    std::function<void(VROScene *const incoming, VROScene *const outgoing, float t)> _sceneTransitionAnimator;
-    std::function<void(VROScene *const incoming, VROScene *const outgoing)> _sceneTransitionEnd;
+
 }
 
-@property (readwrite, nonatomic) std::shared_ptr<VROScene> outgoingScene;
+@property (readwrite, nonatomic) VROSceneController *outgoingSceneController;
 
 @end
 
@@ -445,23 +447,27 @@
     _renderContext->notifyFrameEnd();
     
     if (!sceneTransitionActive) {
-        self.outgoingScene = nil;
+        self.outgoingSceneController = nil;
     }
 }
 
 - (void)renderEye:(VROEyeType)eyeType {
     [self.renderDelegate willRenderEye:eyeType context:_renderContext];
-    if (_scene) {
-        if (_outgoingScene) {
-            _outgoingScene->renderBackground(*_renderContext);
-            _scene->renderBackground(*_renderContext);
+    if (_sceneController) {
+        if (_outgoingSceneController) {
+            [_outgoingSceneController sceneWillRender:_renderContext];
+            [_sceneController sceneWillRender:_renderContext];
             
-            _outgoingScene->render(*_renderContext);
-            _scene->render(*_renderContext);
+            _outgoingSceneController.scene->renderBackground(*_renderContext);
+            _sceneController.scene->renderBackground(*_renderContext);
+            
+            _outgoingSceneController.scene->render(*_renderContext);
+            _sceneController.scene->render(*_renderContext);
         }
         else {
-            _scene->renderBackground(*_renderContext);
-            _scene->render(*_renderContext);
+            [_sceneController sceneWillRender:_renderContext];
+            _sceneController.scene->renderBackground(*_renderContext);
+            _sceneController.scene->render(*_renderContext);
         }
     }
     [self.renderDelegate didRenderEye:eyeType context:_renderContext];
@@ -477,94 +483,59 @@
     [_HUD.reticle trigger];
     [self.renderDelegate reticleTapped:_renderContext->getCamera().getForward()
                                context:_renderContext];
+    if (self.sceneController) {
+        [self.sceneController reticleTapped:_renderContext->getCamera().getForward()
+                                    context:_renderContext];
+    }
 }
 
 #pragma mark - Scene Loading
 
-- (void)setScene:(std::shared_ptr<VROScene>)scene animated:(BOOL)animated {
-    if (!animated || !self.scene) {
-        self.scene = scene;
+- (void)setSceneController:(VROSceneController *)sceneController {
+    VROSceneController *outgoingSceneController = _sceneController;
+    
+    [sceneController sceneWillAppear:self.renderContext];
+    if (outgoingSceneController) {
+        [outgoingSceneController sceneWillDisappear:self.renderContext];
+    }
+    
+    _sceneController = sceneController;
+    
+    [sceneController sceneDidAppear:self.renderContext];
+    if (outgoingSceneController) {
+        [outgoingSceneController sceneDidDisappear:self.renderContext];
+    }
+}
+
+- (void)setSceneController:(VROSceneController *)sceneController animated:(BOOL)animated {
+    if (!animated || !self.sceneController) {
+        self.sceneController = sceneController;
         return;
     }
     
-    float flyAnimationDuration = 3.0;
-    float skyboxAnimationDuration = 4.5;
-    float flyInDistance = 25;
-    float flyOutDistance = 70;
-    
-    // Default animation: outgoing elements sweep in from afar, skyboxes fade
-    [self setScene:scene duration:MAX(flyAnimationDuration, skyboxAnimationDuration) timingFunction:VROTimingFunctionType::EaseIn
-             start:[flyAnimationDuration, skyboxAnimationDuration, flyInDistance, flyOutDistance](VROScene *const incoming, VROScene *const outgoing) {
-                 
-                 if (incoming->getBackground()) {
-                     incoming->getBackground()->getMaterials().front()->setTransparency(0.0);
-                 }
-                 
-                 std::map<std::shared_ptr<VRONode>, VROVector3f> finalPositions;
-                 for (std::shared_ptr<VRONode> root : incoming->getRootNodes()) {
-                     VROVector3f position = root->getPosition();
-                     finalPositions[root] = position;
-                     
-                     root->setPosition({position.x, position.y, position.z + flyInDistance});
-                 }
-                 
-                 VROTransaction::begin();
-                 VROTransaction::setAnimationDuration(flyAnimationDuration);
-                 VROTransaction::setTimingFunction(VROTimingFunctionType::EaseIn);
-                 
-                 for (std::shared_ptr<VRONode> root : outgoing->getRootNodes()) {
-                     VROVector3f position = root->getPosition();
-                     root->setPosition({position.x, position.y, position.z - flyOutDistance});
-                 }
-                 
-                 for (std::shared_ptr<VRONode> root : incoming->getRootNodes()) {
-                     VROVector3f position = finalPositions[root];
-                     root->setPosition(position);
-                 }
-                 
-                 VROTransaction::commit();
-                 
-                 VROTransaction::begin();
-                 VROTransaction::setAnimationDuration(skyboxAnimationDuration);
-                 VROTransaction::setTimingFunction(VROTimingFunctionType::EaseIn);
-                 
-                 if (incoming->getBackground()) {
-                     incoming->getBackground()->getMaterials().front()->setTransparency(1.0);
-                 }
-                 if (outgoing->getBackground()) {
-                     outgoing->getBackground()->getMaterials().front()->setTransparency(0.0);
-                 }
-                 
-                 VROTransaction::commit();
-             }
-          animator:[](VROScene *const incoming, VROScene *const outgoing, float t) {
-              
-          }
-               end:[](VROScene *const incoming, VROScene *const outgoing) {
-                   
-               }];
+    [self setSceneController:sceneController duration:kDefaultSceneTransitionDuration
+              timingFunction:VROTimingFunctionType::EaseIn];
 }
 
-- (void)setScene:(std::shared_ptr<VROScene>)scene duration:(float)seconds
-  timingFunction:(VROTimingFunctionType)timingFunctionType
-           start:(std::function<void(VROScene *const incoming, VROScene *const outgoing)>)start
-        animator:(std::function<void(VROScene *const incoming, VROScene *const outgoing, float t)>)animator
-             end:(std::function<void(VROScene *const incoming, VROScene *const outgoing)>)end {
+- (void)setSceneController:(VROSceneController *)sceneController duration:(float)seconds
+            timingFunction:(VROTimingFunctionType)timingFunctionType {
     
-    self.outgoingScene = self.scene;
-    self.scene = scene;
+    _outgoingSceneController = _sceneController;
+    _sceneController = sceneController;
     
     _sceneTransitionStartTime = VROTimeCurrentSeconds();
     _sceneTransitionDuration = seconds;
     _sceneTransitionTimingFunction = VROTimingFunction::forType(timingFunctionType);
-    _sceneTransitionAnimator = animator;
-    _sceneTransitionEnd = end;
     
-    start(self.scene.get(), self.outgoingScene.get());
+    [self.sceneController sceneWillAppear:self.renderContext];
+    [self.outgoingSceneController sceneWillDisappear:self.renderContext];
+    
+    [self.sceneController startIncomingTransition:self.renderContext duration:seconds];
+    [self.outgoingSceneController startOutgoingTransition:self.renderContext duration:seconds];
 }
 
 - (BOOL)processSceneTransition {
-    if (!self.scene || !self.outgoingScene) {
+    if (!self.sceneController || !self.outgoingSceneController) {
         return NO;
     }
     
@@ -573,14 +544,18 @@
     
     BOOL sceneTransitionActive = percent < 0.9999;
     if (sceneTransitionActive) {
-        _sceneTransitionAnimator(self.scene.get(), self.outgoingScene.get(), t);
+        [self.sceneController animateIncomingTransition:self.renderContext percentComplete:t];
+        [self.outgoingSceneController animateOutgoingTransition:self.renderContext percentComplete:t];
     }
     else {
-        _sceneTransitionAnimator(self.scene.get(), self.outgoingScene.get(), 1.0);
-        _sceneTransitionEnd(self.scene.get(), self.outgoingScene.get());
+        [self.sceneController animateIncomingTransition:self.renderContext percentComplete:1.0];
+        [self.outgoingSceneController animateOutgoingTransition:self.renderContext percentComplete:1.0];
         
-        _sceneTransitionAnimator = nullptr;
-        _sceneTransitionEnd = nullptr;
+        [self.sceneController endIncomingTransition:self.renderContext];
+        [self.outgoingSceneController endOutgoingTransition:self.renderContext];
+        
+        [self.sceneController sceneDidAppear:self.renderContext];
+        [self.outgoingSceneController sceneDidDisappear:self.renderContext];
     }
     
     return sceneTransitionActive;

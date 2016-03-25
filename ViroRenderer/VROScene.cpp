@@ -16,6 +16,7 @@
 #include "VROLight.h"
 #include "VROHitTestResult.h"
 #include "VROSphere.h"
+#include "VROHoverController.h"
 #include <stack>
 
 static const float kSphereBackgroundRadius = 1;

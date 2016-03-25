@@ -9,6 +9,9 @@
 #ifndef VRORenderDelegate_h
 #define VRORenderDelegate_h
 
+#import <Foundation/Foundation.h>
+#import <CoreGraphics/CoreGraphics.h>
+
 @class VROView;
 class VRORenderContext;
 class VROVector3f;

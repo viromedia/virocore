@@ -9,11 +9,11 @@
 #import "SampleRenderer.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneLayer = 0,
+    VROSampleSceneVideoSphere = 0,
     VROSampleSceneBox,
     VROSampleSceneTorus,
     VROSampleSceneOBJ,
-    VROSampleSceneVideoSphere,
+    VROSampleSceneLayer,
     VROSampleSceneNumScenes
 };
 
@@ -28,7 +28,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 @property (readwrite, nonatomic) float objAngle;
 @property (readwrite, nonatomic) int sceneIndex;
 @property (readwrite, nonatomic) std::shared_ptr<VROVideoTexture> videoTexture;
-@property (readwrite, nonatomic) std::shared_ptr<VROHoverController> torusHoverController;
+@property (readwrite, nonatomic) std::shared_ptr<VROHoverDelegate> hoverDelegate;
 
 @end
 
@@ -60,8 +60,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return std::make_shared<VROTexture>(cubeImages);
 }
 
-- (std::shared_ptr<VROScene>)loadVideoSphereScene {
-    std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
+- (VROSceneController *)loadVideoSphereScene {
+    VROSceneController *sceneController = [[VROSceneController alloc] init];
+    std::shared_ptr<VROScene> scene = sceneController.scene;
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.9, 0.9 });
@@ -87,7 +88,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     [self.view.HUD setReticleEnabled:YES];
     
-    return scene;
+    return sceneController;
 }
 
 - (std::shared_ptr<VRONode>) newTorusWithPosition:(VROVector3f)position {
@@ -103,8 +104,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return torusNode;
 }
 
-- (std::shared_ptr<VROScene>)loadTorusScene {
-    std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
+- (VROSceneController *)loadTorusScene {
+    VROSceneController *sceneController = [[VROSceneController alloc] init];
+    std::shared_ptr<VROScene> scene = sceneController.scene;
     scene->setBackgroundCube([self cloudTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
@@ -158,19 +160,18 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->runAction(action);
     self.tapEnabled = true;
     
-    self.torusHoverController = std::make_shared<VROHoverController>(toRadians(1), scene, true,
-                                                                     [self] (std::shared_ptr<VRONode> node) {
-                                                                         return true;
-                                                                     },
-                                                                     [self] (std::shared_ptr<VRONode> node) {
-                                                                         [self hoverOn:node];
-                                                                     },
-                                                                     [self] (std::shared_ptr<VRONode> node) {
-                                                                         [self hoverOff:node];
-                                                                     });
-    self.context->addFrameListener(self.torusHoverController);
-    
-    return scene;
+    self.hoverDelegate = std::make_shared<VROHoverDelegate>(true,
+                                                            [self] (std::shared_ptr<VRONode> node) {
+                                                                return true;
+                                                            },
+                                                            [self] (std::shared_ptr<VRONode> node) {
+                                                                [self hoverOn:node];
+                                                            },
+                                                            [self] (std::shared_ptr<VRONode> node) {
+                                                                [self hoverOff:node];
+                                                            });
+    [sceneController setHoverDelegate:self.hoverDelegate];
+    return sceneController;
 }
 
 - (void)hoverOn:(std::shared_ptr<VRONode>)node {
@@ -193,8 +194,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROTransaction::commit();
 }
 
-- (std::shared_ptr<VROScene>)loadBoxScene {
-    std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
+- (VROSceneController *)loadBoxScene {
+    VROSceneController *sceneController = [[VROSceneController alloc] init];
+
+    std::shared_ptr<VROScene> scene = sceneController.scene;
     scene->setBackgroundCube([self niagaraTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
@@ -258,11 +261,13 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     });
     
     boxNode->runAction(action);
-    return scene;
+    return sceneController;
 }
 
-- (std::shared_ptr<VROScene>)loadLayerScene {
-    std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
+- (VROSceneController *)loadLayerScene {
+    VROSceneController *sceneController = [[VROSceneController alloc] init];
+
+    std::shared_ptr<VROScene> scene = sceneController.scene;
     scene->setBackgroundCube([self cloudTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Omni);
@@ -341,7 +346,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(5.0);
         
-        [self.view setPosition:{0, 0, -4}];
+        //[self.view setPosition:{0, 0, -4}];
         
         VROTransaction::commit();
     });
@@ -350,11 +355,12 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     [self.view.HUD setReticleEnabled:YES];
     self.tapEnabled = YES;
 
-    return scene;
+    return sceneController;
 }
 
-- (std::shared_ptr<VROScene>)loadOBJScene {
-    std::shared_ptr<VROScene> scene = std::make_shared<VROScene>();
+- (VROSceneController *)loadOBJScene {
+    VROSceneController *sceneController = [[VROSceneController alloc] init];
+    std::shared_ptr<VROScene> scene = sceneController.scene;
     scene->setBackgroundCube([self niagaraTexture]);
     
     NSString *soccerPath = [[NSBundle mainBundle] pathForResource:@"shanghai_tower" ofType:@"obj"];
@@ -390,10 +396,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     });
     
     objNode->runAction(action);
-    return scene;
+    return sceneController;
 }
 
-- (std::shared_ptr<VROScene>)loadSceneWithIndex:(int)index {
+- (VROSceneController *)loadSceneWithIndex:(int)index {
     int modulo = index % VROSampleSceneNumScenes;
     
     switch (modulo) {
@@ -417,14 +423,14 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (void)setupRendererWithView:(VROView *)view context:(VRORenderContext *)context {
     self.view = view;
     self.context = context;
-    self.view.scene = [self loadSceneWithIndex:self.sceneIndex];
+    self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
 }
 
 - (IBAction)nextScene:(id)sender {
     ++self.sceneIndex;
     
-    std::shared_ptr<VROScene> scene = [self loadSceneWithIndex:self.sceneIndex];
-    [self.view setScene:scene animated:YES];
+    VROSceneController *sceneController = [self loadSceneWithIndex:self.sceneIndex];
+    [self.view setSceneController:sceneController animated:YES];
 }
 
 - (void)shutdownRendererWithView:(MTKView *)view {
@@ -455,7 +461,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         return;
     }
     
-    std::vector<VROHitTestResult> results = self.view.scene->hitTest(ray, *renderContext);
+    std::vector<VROHitTestResult> results = self.view.sceneController.scene->hitTest(ray, *renderContext);
     
     for (VROHitTestResult result : results) {
         std::shared_ptr<VRONode> node = result.getNode();

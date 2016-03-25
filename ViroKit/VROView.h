@@ -14,6 +14,7 @@
 #import "VROScreenUIView.h"
 #import <memory>
 
+@class VROSceneController;
 class VROScene;
 enum class VROTimingFunctionType;
 
@@ -25,17 +26,14 @@ enum class VROTimingFunctionType;
 @property (nonatomic) BOOL chromaticAberrationCorrectionEnabled;
 
 @property (nonatomic, readonly) VROScreenUIView *HUD;
-@property (readwrite, nonatomic) std::shared_ptr<VROScene> scene;
+@property (readwrite, nonatomic) VROSceneController *sceneController;
 
 - (instancetype)initWithFrame:(CGRect)frame;
 - (VRORenderContext *)renderContext;
 
-- (void)setScene:(std::shared_ptr<VROScene>)scene animated:(BOOL)animated;
-- (void)setScene:(std::shared_ptr<VROScene>)scene duration:(float)seconds
-  timingFunction:(VROTimingFunctionType)timingFunctionType
-           start:(std::function<void(VROScene *const incoming, VROScene *const outgoing)>)start
-        animator:(std::function<void(VROScene *const incoming, VROScene *const outgoing, float t)>)animator
-             end:(std::function<void(VROScene *const incoming, VROScene *const outgoing)>)end;
+- (void)setSceneController:(VROSceneController *)sceneController animated:(BOOL)animated;
+- (void)setSceneController:(VROSceneController *)sceneController duration:(float)seconds
+            timingFunction:(VROTimingFunctionType)timingFunctionType;
 
 - (void)setPosition:(VROVector3f)position;
 - (void)setBaseRotation:(VROQuaternion)rotation;

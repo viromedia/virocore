@@ -97,6 +97,11 @@
 		8FCB6C881C3C828200C14158 /* VROLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB6C861C3C828200C14158 /* VROLoader.cpp */; };
 		8FCB6C891C3C828200C14158 /* VROLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB6C871C3C828200C14158 /* VROLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCB6C8A1C3C83EB00C14158 /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517C421BCF1CBE0017C70B /* ModelIO.framework */; };
+		8FCF39581CA57AC600A86CA3 /* VROHoverDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF39561CA57AC500A86CA3 /* VROHoverDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FCF395B1CA5844E00A86CA3 /* VROSceneControllerInternal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCF39591CA5844E00A86CA3 /* VROSceneControllerInternal.cpp */; };
+		8FCF395C1CA5844E00A86CA3 /* VROSceneControllerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF395A1CA5844E00A86CA3 /* VROSceneControllerInternal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FCF395F1CA589AF00A86CA3 /* VROSceneController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF395D1CA589AF00A86CA3 /* VROSceneController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FCF39601CA589AF00A86CA3 /* VROSceneController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8FCF395E1CA589AF00A86CA3 /* VROSceneController.mm */; };
 		8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8FD1E1AB1C3CA07A0005BE4E /* soccerball.obj */; };
 		8FD1E1AF1C3F20C70005BE4E /* VROVideoSurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD1E1AD1C3F20C70005BE4E /* VROVideoSurface.cpp */; };
 		8FD1E1B01C3F20C70005BE4E /* VROVideoSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD1E1AE1C3F20C70005BE4E /* VROVideoSurface.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -457,6 +462,11 @@
 		8FC908851CA458EB00069C89 /* VROCameraMutable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCameraMutable.h; sourceTree = "<group>"; };
 		8FCB6C861C3C828200C14158 /* VROLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLoader.cpp; sourceTree = "<group>"; };
 		8FCB6C871C3C828200C14158 /* VROLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLoader.h; sourceTree = "<group>"; };
+		8FCF39561CA57AC500A86CA3 /* VROHoverDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROHoverDelegate.h; sourceTree = "<group>"; };
+		8FCF39591CA5844E00A86CA3 /* VROSceneControllerInternal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSceneControllerInternal.cpp; sourceTree = "<group>"; };
+		8FCF395A1CA5844E00A86CA3 /* VROSceneControllerInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneControllerInternal.h; sourceTree = "<group>"; };
+		8FCF395D1CA589AF00A86CA3 /* VROSceneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneController.h; sourceTree = "<group>"; };
+		8FCF395E1CA589AF00A86CA3 /* VROSceneController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROSceneController.mm; sourceTree = "<group>"; };
 		8FD1E1AB1C3CA07A0005BE4E /* soccerball.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = soccerball.obj; path = ViroSample/soccerball.obj; sourceTree = "<group>"; };
 		8FD1E1AD1C3F20C70005BE4E /* VROVideoSurface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVideoSurface.cpp; sourceTree = "<group>"; };
 		8FD1E1AE1C3F20C70005BE4E /* VROVideoSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoSurface.h; sourceTree = "<group>"; };
@@ -594,6 +604,8 @@
 				8F4DCE4B1BFD617200061DD7 /* Private */,
 				8F5C413D1BD56F98006D7A77 /* VROScene.h */,
 				8F5C413C1BD56F98006D7A77 /* VROScene.cpp */,
+				8FCF395A1CA5844E00A86CA3 /* VROSceneControllerInternal.h */,
+				8FCF39591CA5844E00A86CA3 /* VROSceneControllerInternal.cpp */,
 				8F1071DA1BF67F34003B3C3F /* VROCamera.h */,
 				8F1071D91BF67F34003B3C3F /* VROCamera.cpp */,
 				8F4DCE2C1BF9261600061DD7 /* VRONode.h */,
@@ -622,6 +634,7 @@
 				8F83DE8C1C4728A30089C31A /* VROHitTestResult.h */,
 				8F92780A1C67DE4A00FF892A /* VROHoverController.h */,
 				8F9278091C67DE4A00FF892A /* VROHoverController.cpp */,
+				8FCF39561CA57AC500A86CA3 /* VROHoverDelegate.h */,
 				8F65F7841C90CD0B00415115 /* VROConstraint.h */,
 				8F65F7881C90CD4700415115 /* VROBillboardConstraint.h */,
 				8F65F7871C90CD4700415115 /* VROBillboardConstraint.cpp */,
@@ -897,12 +910,14 @@
 		8FD4DECE1C18ECD4003DC425 /* ViroKit */ = {
 			isa = PBXGroup;
 			children = (
+				8FD4DECF1C18ECD4003DC425 /* ViroKit.h */,
 				8F11B7C01C20B0530026D150 /* VROView.h */,
 				8F11B7C11C20B0530026D150 /* VROView.mm */,
 				8F62482D1BDAACA4000755E5 /* VROViewController.h */,
 				8F62482E1BDAACA4000755E5 /* VROViewController.mm */,
 				8F11B7C41C20B2A20026D150 /* VRORenderDelegate.h */,
-				8FD4DECF1C18ECD4003DC425 /* ViroKit.h */,
+				8FCF395D1CA589AF00A86CA3 /* VROSceneController.h */,
+				8FCF395E1CA589AF00A86CA3 /* VROSceneController.mm */,
 				8FD4DED11C18ECD4003DC425 /* Info.plist */,
 			);
 			path = ViroKit;
@@ -1027,6 +1042,7 @@
 				8FD4DF411C18F5EB003DC425 /* VROPlane.h in Headers */,
 				8FD4DF421C18F5EB003DC425 /* VROFrustum.h in Headers */,
 				8FD4DF431C18F5EB003DC425 /* VROFrustumPlane.h in Headers */,
+				8FCF39581CA57AC600A86CA3 /* VROHoverDelegate.h in Headers */,
 				8FD4DF441C18F5EB003DC425 /* VROBoundingBox.h in Headers */,
 				8FD4DF461C18F5EB003DC425 /* VROVector3f.h in Headers */,
 				8F83DE9E1C4826F80089C31A /* VROTimingFunctionCubicBezier.h in Headers */,
@@ -1052,6 +1068,7 @@
 				8F83DEA11C4826F80089C31A /* VROTimingFunctionEaseOut.h in Headers */,
 				8FD4DF541C18F5EB003DC425 /* VROWorldUIView.h in Headers */,
 				8F11B7C21C20B0530026D150 /* VROView.h in Headers */,
+				8FCF395F1CA589AF00A86CA3 /* VROSceneController.h in Headers */,
 				8F83DEAF1C50278C0089C31A /* VROSphere.h in Headers */,
 				8F65F8161CA073C100415115 /* VROTextureUtil.h in Headers */,
 				8FA2E1511C4463D00070DB26 /* VROSkybox.h in Headers */,
@@ -1060,6 +1077,7 @@
 				8F92780C1C67DE4A00FF892A /* VROHoverController.h in Headers */,
 				8F548E461C23654E00556688 /* VROAnimationFloat.h in Headers */,
 				8F548E4A1C23656000556688 /* VROAnimationVector3f.h in Headers */,
+				8FCF395C1CA5844E00A86CA3 /* VROSceneControllerInternal.h in Headers */,
 				8F65F78A1C90CD4700415115 /* VROBillboardConstraint.h in Headers */,
 				8F11B7CB1C20E7830026D150 /* VROAnimation.h in Headers */,
 				8FD9B4611C339ECF006CB698 /* VROMaterialSubstrate.h in Headers */,
@@ -1335,6 +1353,7 @@
 				8FD4DF0E1C18ED3C003DC425 /* VROMaterial.cpp in Sources */,
 				8FD4DF131C18ED44003DC425 /* OrientationEKF.mm in Sources */,
 				8FD4DF001C18ED2C003DC425 /* VROGeometrySubstrateMetal.cpp in Sources */,
+				8FCF395B1CA5844E00A86CA3 /* VROSceneControllerInternal.cpp in Sources */,
 				8F92780B1C67DE4A00FF892A /* VROHoverController.cpp in Sources */,
 				8FD4DF0D1C18ED3C003DC425 /* VROGeometrySource.cpp in Sources */,
 				8FA2E1631C460C600070DB26 /* VROAction.cpp in Sources */,
@@ -1381,6 +1400,7 @@
 				8FD4DF291C18EE6F003DC425 /* VROWorldUIView.mm in Sources */,
 				8FD4DF141C18ED44003DC425 /* SO3Util.mm in Sources */,
 				8FA2E1501C4463D00070DB26 /* VROSkybox.cpp in Sources */,
+				8FCF39601CA589AF00A86CA3 /* VROSceneController.mm in Sources */,
 				8FC908861CA458EB00069C89 /* VROCameraMutable.cpp in Sources */,
 				8FD4DEEF1C18ED0B003DC425 /* VROImageUtil.cpp in Sources */,
 				8F0856581C87960900E66709 /* VROGeometryUtil.cpp in Sources */,

@@ -22,7 +22,7 @@ class VROGeometry;
 class VROHitTestResult;
 class VROVector3f;
 
-class VROScene {
+class VROScene : public std::enable_shared_from_this<VROScene> {
     
 public:
     
