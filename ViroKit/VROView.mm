@@ -446,7 +446,13 @@ static const float kDefaultSceneTransitionDuration = 1.0;
     
     _renderContext->notifyFrameEnd();
     
-    if (!sceneTransitionActive) {
+    if (!sceneTransitionActive && self.outgoingSceneController) {
+        [self.sceneController endIncomingTransition:self.renderContext];
+        [self.outgoingSceneController endOutgoingTransition:self.renderContext];
+        
+        [self.sceneController sceneDidAppear:self.renderContext];
+        [self.outgoingSceneController sceneDidDisappear:self.renderContext];
+        
         self.outgoingSceneController = nil;
     }
 }
@@ -550,12 +556,6 @@ static const float kDefaultSceneTransitionDuration = 1.0;
     else {
         [self.sceneController animateIncomingTransition:self.renderContext percentComplete:1.0];
         [self.outgoingSceneController animateOutgoingTransition:self.renderContext percentComplete:1.0];
-        
-        [self.sceneController endIncomingTransition:self.renderContext];
-        [self.outgoingSceneController endOutgoingTransition:self.renderContext];
-        
-        [self.sceneController sceneDidAppear:self.renderContext];
-        [self.outgoingSceneController sceneDidDisappear:self.renderContext];
     }
     
     return sceneTransitionActive;
