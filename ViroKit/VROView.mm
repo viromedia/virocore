@@ -298,8 +298,8 @@ static const float kDefaultSceneTransitionDuration = 1.0;
     VROMatrix4f headRotation = _headTracker->getHeadRotation();
     
     VROCamera camera;
-    camera.setHeadRotation(headRotation.invert());
-    camera.setBaseRotation(_camera->getBaseRotation());
+    camera.setHeadRotation({headRotation.invert()});
+    camera.setBaseRotation(_camera->getBaseRotation().getMatrix());
     camera.setPosition(_camera->getPosition());
     
     _renderContext->setCamera(camera);

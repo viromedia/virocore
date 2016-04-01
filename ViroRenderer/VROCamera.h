@@ -21,8 +21,8 @@ public:
     virtual ~VROCamera();
     
     void setPosition(VROVector3f position);
-    void setHeadRotation(VROQuaternion headRotation);
-    void setBaseRotation(VROQuaternion baseRotation);
+    void setHeadRotation(VROMatrix4f headRotation);
+    void setBaseRotation(VROMatrix4f baseRotation);
 
     VROVector3f getPosition() const {
         return _position;
@@ -64,13 +64,13 @@ private:
      The current head rotation. Head rotation is set by the user's HMD orientation.
      Total rotation is head rotation plus base rotation.
      */
-    VROQuaternion _headRotation;
+    VROMatrix4f _headRotation;
     
     /*
      The base rotation. This is set by the application. Total rotation is head
      rotation plus base rotation.
      */
-    VROQuaternion _baseRotation;
+    VROMatrix4f _baseRotation;
     
     void onRotationChanged();
     

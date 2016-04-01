@@ -22,24 +22,25 @@ void VROCamera::setPosition(VROVector3f position) {
     _position = position;
 }
 
-void VROCamera::setHeadRotation(VROQuaternion headRotation) {
+void VROCamera::setHeadRotation(VROMatrix4f headRotation) {
     _headRotation = headRotation;
     onRotationChanged();
 }
 
-void VROCamera::setBaseRotation(VROQuaternion baseRotation) {
+void VROCamera::setBaseRotation(VROMatrix4f baseRotation) {
     _baseRotation = baseRotation;
     onRotationChanged();
 }
 
 void VROCamera::onRotationChanged() {
-    _rotation = _headRotation * _baseRotation;
+    VROMatrix4f rotation = _headRotation.multiply(_baseRotation);
+    _rotation = { rotation };
     
     VROVector3f zAxis(0, 0, -1.0);
-    _forward = _rotation * zAxis;
+    _forward = rotation.multiply(zAxis);
     
     VROVector3f yAxis(0, 1.0, 0);
-    _up = _rotation * yAxis;
+    _up = rotation.multiply(yAxis);
 }
 
 VROMatrix4f VROCamera::computeLookAtMatrix() const {
