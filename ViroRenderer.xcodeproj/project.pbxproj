@@ -102,6 +102,8 @@
 		8FCF395C1CA5844E00A86CA3 /* VROSceneControllerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF395A1CA5844E00A86CA3 /* VROSceneControllerInternal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCF395F1CA589AF00A86CA3 /* VROSceneController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF395D1CA589AF00A86CA3 /* VROSceneController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCF39601CA589AF00A86CA3 /* VROSceneController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8FCF395E1CA589AF00A86CA3 /* VROSceneController.mm */; };
+		8FCF39641CAEE26F00A86CA3 /* VROHoverDistanceListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF39621CAEE26F00A86CA3 /* VROHoverDistanceListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FCF39681CAEE5B700A86CA3 /* VROReticleSizeListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF39661CAEE5B700A86CA3 /* VROReticleSizeListener.h */; };
 		8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8FD1E1AB1C3CA07A0005BE4E /* soccerball.obj */; };
 		8FD1E1AF1C3F20C70005BE4E /* VROVideoSurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD1E1AD1C3F20C70005BE4E /* VROVideoSurface.cpp */; };
 		8FD1E1B01C3F20C70005BE4E /* VROVideoSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD1E1AE1C3F20C70005BE4E /* VROVideoSurface.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -467,6 +469,8 @@
 		8FCF395A1CA5844E00A86CA3 /* VROSceneControllerInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneControllerInternal.h; sourceTree = "<group>"; };
 		8FCF395D1CA589AF00A86CA3 /* VROSceneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneController.h; sourceTree = "<group>"; };
 		8FCF395E1CA589AF00A86CA3 /* VROSceneController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROSceneController.mm; sourceTree = "<group>"; };
+		8FCF39621CAEE26F00A86CA3 /* VROHoverDistanceListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROHoverDistanceListener.h; sourceTree = "<group>"; };
+		8FCF39661CAEE5B700A86CA3 /* VROReticleSizeListener.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROReticleSizeListener.h; sourceTree = "<group>"; };
 		8FD1E1AB1C3CA07A0005BE4E /* soccerball.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = soccerball.obj; path = ViroSample/soccerball.obj; sourceTree = "<group>"; };
 		8FD1E1AD1C3F20C70005BE4E /* VROVideoSurface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVideoSurface.cpp; sourceTree = "<group>"; };
 		8FD1E1AE1C3F20C70005BE4E /* VROVideoSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoSurface.h; sourceTree = "<group>"; };
@@ -635,11 +639,13 @@
 				8F92780A1C67DE4A00FF892A /* VROHoverController.h */,
 				8F9278091C67DE4A00FF892A /* VROHoverController.cpp */,
 				8FCF39561CA57AC500A86CA3 /* VROHoverDelegate.h */,
+				8FCF39621CAEE26F00A86CA3 /* VROHoverDistanceListener.h */,
 				8F65F7841C90CD0B00415115 /* VROConstraint.h */,
 				8F65F7881C90CD4700415115 /* VROBillboardConstraint.h */,
 				8F65F7871C90CD4700415115 /* VROBillboardConstraint.cpp */,
 				8F65F78C1C90D83600415115 /* VROTransformConstraint.h */,
 				8F65F78B1C90D83600415115 /* VROTransformConstraint.cpp */,
+				8FCF39661CAEE5B700A86CA3 /* VROReticleSizeListener.h */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";
@@ -1021,6 +1027,7 @@
 				8FD4DF351C18F500003DC425 /* VROGeometryElement.h in Headers */,
 				8FD4DF361C18F500003DC425 /* VROGeometrySource.h in Headers */,
 				8FD4DF371C18F500003DC425 /* VROMaterial.h in Headers */,
+				8FCF39681CAEE5B700A86CA3 /* VROReticleSizeListener.h in Headers */,
 				8F83DEA01C4826F80089C31A /* VROTimingFunctionEaseInEaseOut.h in Headers */,
 				8F83DEA31C4826F80089C31A /* VROTimingFunctionPowerDeceleration.h in Headers */,
 				8F65F7861C90CD0B00415115 /* VROConstraint.h in Headers */,
@@ -1040,6 +1047,7 @@
 				8FD4DF401C18F5EA003DC425 /* VROQuaternion.h in Headers */,
 				8FCB6C891C3C828200C14158 /* VROLoader.h in Headers */,
 				8FD4DF411C18F5EB003DC425 /* VROPlane.h in Headers */,
+				8FCF39641CAEE26F00A86CA3 /* VROHoverDistanceListener.h in Headers */,
 				8FD4DF421C18F5EB003DC425 /* VROFrustum.h in Headers */,
 				8FD4DF431C18F5EB003DC425 /* VROFrustumPlane.h in Headers */,
 				8FCF39581CA57AC600A86CA3 /* VROHoverDelegate.h in Headers */,

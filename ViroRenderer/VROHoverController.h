@@ -16,6 +16,7 @@
 class VROScene;
 class VRONode;
 class VROHoverDelegate;
+class VROHoverDistanceListener;
 
 class VROHoverController : public VROFrameListener {
     
@@ -27,6 +28,9 @@ public:
     
     void setDelegate(std::shared_ptr<VROHoverDelegate> delegate);
     
+    void addHoverDistanceListener(std::shared_ptr<VROHoverDistanceListener> listener);
+    void removeHoverDistanceListener(std::shared_ptr<VROHoverDistanceListener> listener);
+    
     void onFrameWillRender(const VRORenderContext &context);
     void onFrameDidRender(const VRORenderContext &context);
     
@@ -35,6 +39,7 @@ private:
     std::weak_ptr<VROScene> _scene;
     std::weak_ptr<VRONode> _hoveredNode;
     std::weak_ptr<VROHoverDelegate> _delegate;
+    std::vector<std::shared_ptr<VROHoverDistanceListener>> _distanceListeners;
     
     const float _rotationThresholdRadians;
     VROVector3f _lastCameraForward;

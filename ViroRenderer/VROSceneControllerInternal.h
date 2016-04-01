@@ -15,12 +15,13 @@ class VROScene;
 class VRORenderContext;
 class VROHoverDelegate;
 class VROHoverController;
+class VROHoverDistanceListener;
 
 class VROSceneControllerInternal {
     
 public:
     
-    VROSceneControllerInternal();
+    VROSceneControllerInternal(std::shared_ptr<VROHoverDistanceListener> reticleSizeListener);
     virtual ~VROSceneControllerInternal();
     
     std::shared_ptr<VROScene> getScene() const {

@@ -13,6 +13,7 @@
 #include "VRONode.h"
 #include "VROHitTestResult.h"
 #include "VROHoverDelegate.h"
+#include "VROHoverDistanceListener.h"
 
 VROHoverController::VROHoverController(float rotationThresholdRadians,
                                        std::shared_ptr<VROScene> scene) :
@@ -30,8 +31,22 @@ void VROHoverController::setDelegate(std::shared_ptr<VROHoverDelegate> delegate)
     _delegate = delegate;
 }
 
+void VROHoverController::addHoverDistanceListener(std::shared_ptr<VROHoverDistanceListener> listener) {
+    _distanceListeners.push_back(listener);
+}
+
+void VROHoverController::removeHoverDistanceListener(std::shared_ptr<VROHoverDistanceListener> listener) {
+    _distanceListeners.erase(
+                             std::remove_if(_distanceListeners.begin(), _distanceListeners.end(),
+                                            [listener](std::shared_ptr<VROHoverDistanceListener> candidate) {
+                                                return candidate == listener;
+                                            }), _distanceListeners.end());
+}
+
 void VROHoverController::findHoveredNode(VROVector3f ray, std::shared_ptr<VROScene> &scene,
                                          const VRORenderContext &context) {
+    
+    VROVector3f cameraPosition = context.getCamera().getPosition();
     
     std::shared_ptr<VRONode> oldHover = _hoveredNode.lock();
     std::shared_ptr<VROHoverDelegate> delegate = _delegate.lock();
@@ -47,7 +62,7 @@ void VROHoverController::findHoveredNode(VROVector3f ray, std::shared_ptr<VROSce
         std::shared_ptr<VRONode> newHover;
         
         for (VROHitTestResult &hit : hits) {
-            float distance = hit.getNode()->getPosition().magnitude();
+            float distance = hit.getLocation().distance(cameraPosition);
             if (distance < minDistance) {
                 minDistance = distance;
             }
@@ -58,6 +73,10 @@ void VROHoverController::findHoveredNode(VROVector3f ray, std::shared_ptr<VROSce
                     newHover = hit.getNode();
                 }
             }
+        }
+        
+        for (std::shared_ptr<VROHoverDistanceListener> &listener : _distanceListeners) {
+            listener->onHoverDistanceChanged(minDistance);
         }
         
         if (delegate) {

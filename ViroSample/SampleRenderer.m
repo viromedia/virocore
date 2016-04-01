@@ -28,7 +28,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 @property (readwrite, nonatomic) float objAngle;
 @property (readwrite, nonatomic) int sceneIndex;
 @property (readwrite, nonatomic) std::shared_ptr<VROVideoTexture> videoTexture;
-@property (readwrite, nonatomic) std::shared_ptr<VROHoverDelegate> hoverDelegate;
 
 @end
 
@@ -61,7 +60,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (VROSceneController *)loadVideoSphereScene {
-    VROSceneController *sceneController = [[VROSceneController alloc] init];
+    VROSceneController *sceneController = [[VROSceneController alloc] initWithView:self.view];
     std::shared_ptr<VROScene> scene = sceneController.scene;
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
@@ -105,7 +104,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (VROSceneController *)loadTorusScene {
-    VROSceneController *sceneController = [[VROSceneController alloc] init];
+    VROSceneController *sceneController = [[VROSceneController alloc] initWithView:self.view];
     std::shared_ptr<VROScene> scene = sceneController.scene;
     scene->setBackgroundCube([self cloudTexture]);
     
@@ -160,17 +159,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->runAction(action);
     self.tapEnabled = true;
     
-    self.hoverDelegate = std::make_shared<VROHoverDelegate>(true,
-                                                            [self] (std::shared_ptr<VRONode> node) {
-                                                                return true;
-                                                            },
-                                                            [self] (std::shared_ptr<VRONode> node) {
-                                                                [self hoverOn:node];
-                                                            },
-                                                            [self] (std::shared_ptr<VRONode> node) {
-                                                                [self hoverOff:node];
-                                                            });
-    [sceneController setHoverDelegate:self.hoverDelegate];
+    [sceneController setHoverEnabled:true boundsOnly:true];
     return sceneController;
 }
 
@@ -195,7 +184,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (VROSceneController *)loadBoxScene {
-    VROSceneController *sceneController = [[VROSceneController alloc] init];
+    VROSceneController *sceneController = [[VROSceneController alloc] initWithView:self.view];
 
     std::shared_ptr<VROScene> scene = sceneController.scene;
     scene->setBackgroundCube([self niagaraTexture]);
@@ -265,7 +254,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (VROSceneController *)loadLayerScene {
-    VROSceneController *sceneController = [[VROSceneController alloc] init];
+    VROSceneController *sceneController = [[VROSceneController alloc] initWithView:self.view];
 
     std::shared_ptr<VROScene> scene = sceneController.scene;
     scene->setBackgroundCube([self cloudTexture]);
@@ -359,7 +348,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (VROSceneController *)loadOBJScene {
-    VROSceneController *sceneController = [[VROSceneController alloc] init];
+    VROSceneController *sceneController = [[VROSceneController alloc] initWithView:self.view];
     std::shared_ptr<VROScene> scene = sceneController.scene;
     scene->setBackgroundCube([self niagaraTexture]);
     

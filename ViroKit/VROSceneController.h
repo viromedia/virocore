@@ -11,15 +11,16 @@
 #import "VROVector3f.h"
 #import "VRORenderDelegate.h"
 
+class VRONode;
 class VROScene;
 class VRORenderContext;
 class VROHoverDelegate;
 
+@class VROScreenUIView;
+
 @interface VROSceneController : NSObject
 
-@property (readwrite, nonatomic) std::shared_ptr<VROHoverDelegate> hoverDelegate;
-
-- (id)init;
+- (id)initWithView:(VROView *)view;
 
 - (void)sceneWillAppear:(VRORenderContext *)context;
 - (void)sceneDidAppear:(VRORenderContext *)context;
@@ -34,7 +35,14 @@ class VROHoverDelegate;
 - (void)animateOutgoingTransition:(VRORenderContext *)context percentComplete:(float)t;
 
 - (void)sceneWillRender:(const VRORenderContext *)context;
+
+- (BOOL)isHoverable:(std::shared_ptr<VRONode>)node;
+- (void)hoverOnNode:(std::shared_ptr<VRONode>)node;
+- (void)hoverOffNode:(std::shared_ptr<VRONode>)node;
+- (void)setHoverEnabled:(BOOL)enabled boundsOnly:(BOOL)boundsOnly;
+
 - (void)reticleTapped:(VROVector3f)ray context:(const VRORenderContext *)context;
+
 - (std::shared_ptr<VROScene>)scene;
 
 @end

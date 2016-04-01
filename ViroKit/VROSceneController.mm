@@ -8,25 +8,31 @@
 
 #import "VROSceneController.h"
 #import "VROSceneControllerInternal.h"
+#import "VROHoverDelegate.h"
 #import "VROTransaction.h"
 #import "VROScene.h"
 #import "VROMaterial.h"
 #import "VROGeometry.h"
 #import "VRONode.h"
+#import "VROReticleSizeListener.h"
+#import "VROScreenUIView.h"
+#import "VROView.h"
 #import <map>
 
 @interface VROSceneController ()
 
+@property (readwrite, nonatomic) std::shared_ptr<VROHoverDelegate> hoverDelegate;
 @property (readwrite, nonatomic) std::shared_ptr<VROSceneControllerInternal> internal;
 
 @end
 
 @implementation VROSceneController
 
-- (id)init {
+- (id)initWithView:(VROView *)view {
     self = [super init];
     if (self) {
-        self.internal = std::make_shared<VROSceneControllerInternal>();
+        std::shared_ptr<VROHoverDistanceListener> listener = std::make_shared<VROReticleSizeListener>(view);
+        self.internal = std::make_shared<VROSceneControllerInternal>(listener);
     }
     
     return self;
@@ -122,6 +128,38 @@
 
 - (void)sceneWillRender:(const VRORenderContext *)context {
     
+}
+
+- (BOOL)isHoverable:(std::shared_ptr<VRONode>)node {
+    return NO;
+}
+
+- (void)hoverOnNode:(std::shared_ptr<VRONode>)node {
+    
+}
+
+- (void)hoverOffNode:(std::shared_ptr<VRONode>)node {
+    
+}
+
+- (void)setHoverEnabled:(BOOL)enabled boundsOnly:(BOOL)boundsOnly {
+    if (enabled) {
+        self.hoverDelegate = std::make_shared<VROHoverDelegate>(boundsOnly,
+                                                                [self](std::shared_ptr<VRONode> node) {
+                                                                    return [self isHoverable:node];
+                                                                },
+                                                                [self](std::shared_ptr<VRONode> node) {
+                                                                    [self hoverOnNode:node];
+                                                                },
+                                                                [self](std::shared_ptr<VRONode> node) {
+                                                                    [self hoverOffNode:node];
+                                                                });
+        self.internal->setHoverDelegate(self.hoverDelegate);
+    }
+    else {
+        self.hoverDelegate = nil;
+        self.internal->setHoverDelegate({});
+    }
 }
 
 - (void)reticleTapped:(VROVector3f)ray context:(const VRORenderContext *)context {
