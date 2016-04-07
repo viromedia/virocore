@@ -104,6 +104,8 @@
 		8FCF39601CA589AF00A86CA3 /* VROSceneController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8FCF395E1CA589AF00A86CA3 /* VROSceneController.mm */; };
 		8FCF39641CAEE26F00A86CA3 /* VROHoverDistanceListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF39621CAEE26F00A86CA3 /* VROHoverDistanceListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCF39681CAEE5B700A86CA3 /* VROReticleSizeListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF39661CAEE5B700A86CA3 /* VROReticleSizeListener.h */; };
+		8FCF396B1CB4242000A86CA3 /* VRORenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCF39691CB4242000A86CA3 /* VRORenderer.cpp */; };
+		8FCF396C1CB4242000A86CA3 /* VRORenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF396A1CB4242000A86CA3 /* VRORenderer.h */; };
 		8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8FD1E1AB1C3CA07A0005BE4E /* soccerball.obj */; };
 		8FD1E1AF1C3F20C70005BE4E /* VROVideoSurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD1E1AD1C3F20C70005BE4E /* VROVideoSurface.cpp */; };
 		8FD1E1B01C3F20C70005BE4E /* VROVideoSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD1E1AE1C3F20C70005BE4E /* VROVideoSurface.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -471,6 +473,8 @@
 		8FCF395E1CA589AF00A86CA3 /* VROSceneController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROSceneController.mm; sourceTree = "<group>"; };
 		8FCF39621CAEE26F00A86CA3 /* VROHoverDistanceListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROHoverDistanceListener.h; sourceTree = "<group>"; };
 		8FCF39661CAEE5B700A86CA3 /* VROReticleSizeListener.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROReticleSizeListener.h; sourceTree = "<group>"; };
+		8FCF39691CB4242000A86CA3 /* VRORenderer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRORenderer.cpp; sourceTree = "<group>"; };
+		8FCF396A1CB4242000A86CA3 /* VRORenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORenderer.h; sourceTree = "<group>"; };
 		8FD1E1AB1C3CA07A0005BE4E /* soccerball.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = soccerball.obj; path = ViroSample/soccerball.obj; sourceTree = "<group>"; };
 		8FD1E1AD1C3F20C70005BE4E /* VROVideoSurface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVideoSurface.cpp; sourceTree = "<group>"; };
 		8FD1E1AE1C3F20C70005BE4E /* VROVideoSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoSurface.h; sourceTree = "<group>"; };
@@ -646,6 +650,8 @@
 				8F65F78C1C90D83600415115 /* VROTransformConstraint.h */,
 				8F65F78B1C90D83600415115 /* VROTransformConstraint.cpp */,
 				8FCF39661CAEE5B700A86CA3 /* VROReticleSizeListener.h */,
+				8FCF396A1CB4242000A86CA3 /* VRORenderer.h */,
+				8FCF39691CB4242000A86CA3 /* VRORenderer.cpp */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";
@@ -1063,6 +1069,7 @@
 				8FD4DF4D1C18F5EB003DC425 /* VROShapeUtils.h in Headers */,
 				8FD4DF4E1C18F5EB003DC425 /* VROLayer.h in Headers */,
 				8FD4DF4F1C18F5EB003DC425 /* VRORect.h in Headers */,
+				8FCF396C1CB4242000A86CA3 /* VRORenderer.h in Headers */,
 				8FD1E1B01C3F20C70005BE4E /* VROVideoSurface.h in Headers */,
 				8FD4DF511C18F5EB003DC425 /* VROSize.h in Headers */,
 				8F83DEA51C4830360089C31A /* VROTimingFunctionEaseIn.h in Headers */,
@@ -1385,6 +1392,7 @@
 				8FD4DEF31C18ED19003DC425 /* VROFrustum.cpp in Sources */,
 				8FD4DEF81C18ED19003DC425 /* VROVector4f.cpp in Sources */,
 				8FD4DF101C18ED3C003DC425 /* VROTexture.cpp in Sources */,
+				8FCF396B1CB4242000A86CA3 /* VRORenderer.cpp in Sources */,
 				8FD4DEF71C18ED19003DC425 /* VROVector3f.cpp in Sources */,
 				8FD4DEEB1C18ED03003DC425 /* VROViewController.mm in Sources */,
 				8FD4DF0C1C18ED3C003DC425 /* VROGeometryElement.cpp in Sources */,

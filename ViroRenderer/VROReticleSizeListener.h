@@ -28,10 +28,8 @@ public:
     void onHoverDistanceChanged(float distance) {
         float depth = -distance;
         if (distance == FLT_MAX) {
-            depth = -8;
+            depth = -5;
         }
-        
-        NSLog(@"setting reticle distance %f", depth);
         
         float worldPerScreen = [_view worldPerScreenAtDepth:depth];
         

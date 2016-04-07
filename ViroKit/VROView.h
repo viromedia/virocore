@@ -21,9 +21,6 @@ enum class VROTimingFunctionType;
 @interface VROView : MTKView <MTKViewDelegate>
 
 @property (nonatomic, unsafe_unretained) IBOutlet id <VRORenderDelegate> renderDelegate;
-@property (nonatomic) BOOL vrModeEnabled;
-@property (nonatomic) BOOL vignetteEnabled;
-@property (nonatomic) BOOL chromaticAberrationCorrectionEnabled;
 
 @property (nonatomic, readonly) VROScreenUIView *HUD;
 @property (readwrite, nonatomic) VROSceneController *sceneController;

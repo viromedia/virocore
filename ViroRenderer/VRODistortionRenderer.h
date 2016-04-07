@@ -24,6 +24,8 @@ class VRORenderContextMetal;
 class VROEye;
 class VROConcurrentBuffer;
 
+@class VROView;
+
 /*
  Viewport specified in tangents, i.e. the tangent of the eye's
  field of view angle in each direction.
@@ -56,7 +58,7 @@ public:
      Update the render-texture and the distortion mesh using hte latest FOV and viewport
      parameters.
      */
-    void updateDistortion(id <MTLDevice> gpu, id <MTLLibrary> library, MTKView *view);
+    void updateDistortion(id <MTLDevice> gpu, id <MTLLibrary> library, VROView *view);
     
     /*
      Binds the eye texture (the texture to which we will render both eyes) as the 

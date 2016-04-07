@@ -16,6 +16,7 @@
 #include "VROEye.h"
 #include "VRODevice.h"
 #include "VROConcurrentBuffer.h"
+#include "VROView.h"
 
 static const float kSampleCount = 4;
 
@@ -125,7 +126,7 @@ void VRODistortionRenderer::updateViewports(VROEye *leftEye, VROEye *rightEye) {
     _viewportsChanged = false;
 }
 
-void VRODistortionRenderer::updateDistortion(id <MTLDevice> gpu, id <MTLLibrary> library, MTKView *view) {
+void VRODistortionRenderer::updateDistortion(id <MTLDevice> gpu, id <MTLLibrary> library, VROView *view) {
     if (!_fovsChanged) {
         return;
     }

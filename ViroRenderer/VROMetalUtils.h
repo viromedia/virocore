@@ -9,8 +9,6 @@
 #ifndef VROMetalUtils_h
 #define VROMetalUtils_h
 
-#import <Metal/Metal.h>
-#import <MetalKit/MetalKit.h>
 #import <simd/simd.h>
 
 class VROVector3f;
