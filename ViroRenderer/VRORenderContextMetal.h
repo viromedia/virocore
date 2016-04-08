@@ -41,6 +41,13 @@ public:
         _renderTarget = renderTarget;
     }
     
+    void setCommandBuffer(id <MTLCommandBuffer> buffer) {
+        _commandBuffer = buffer;
+    }
+    id <MTLCommandBuffer> getCommandBuffer() const {
+        return _commandBuffer;
+    }
+    
     id <MTLDevice> getDevice() const {
         return _device;
     }
@@ -76,6 +83,11 @@ private:
     id <MTLDevice> _device;
     id <MTLCommandQueue> _commandQueue;
     id <MTLLibrary> _library;
+    
+    /*
+     The command buffer active during this frame.
+     */
+    id <MTLCommandBuffer> _commandBuffer;
     
     std::shared_ptr<VRORenderTarget> _renderTarget;
     

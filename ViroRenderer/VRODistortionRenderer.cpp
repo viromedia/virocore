@@ -22,7 +22,7 @@ static const float kSampleCount = 4;
 
 #pragma mark - Initialization
 
-VRODistortionRenderer::VRODistortionRenderer(VRODevice &device) :
+VRODistortionRenderer::VRODistortionRenderer(std::shared_ptr<VRODevice> device) :
     _resolutionScale(1.0f),
     _chromaticAberrationCorrectionEnabled(false),
     _vignetteEnabled(true),
@@ -30,7 +30,6 @@ VRODistortionRenderer::VRODistortionRenderer(VRODevice &device) :
     _rightEyeDistortionMesh(nullptr),
     _device(device),
     _fovsChanged(false),
-    _viewportsChanged(false),
     _drawingFrame(false),
     _xPxPerTanAngle(0),
     _yPxPerTanAngle(0),
@@ -48,13 +47,15 @@ VRODistortionRenderer::~VRODistortionRenderer() {
 
 #pragma mark - Viewport Computation
 
-void VRODistortionRenderer::fovDidChange(const VROFieldOfView &leftEyeFov,
-                                         const VROFieldOfView &rightEyeFov,
+void VRODistortionRenderer::fovDidChange(VROEye *leftEye, VROEye *rightEye,
                                          float virtualEyeToScreenDistance) {
     if (_drawingFrame) {
         NSLog(@"Cannot change FOV while rendering a frame.");
         return;
     }
+    
+    const VROFieldOfView &leftEyeFov = leftEye->getFOV();
+    const VROFieldOfView &rightEyeFov = rightEye->getFOV();
     
     _leftEyeViewport = { leftEyeFov, 0.0f };
     _rightEyeViewport = { rightEyeFov, _leftEyeViewport.width };
@@ -91,11 +92,12 @@ void VRODistortionRenderer::fovDidChange(const VROFieldOfView &leftEyeFov,
     
     _metersPerTanAngle = virtualEyeToScreenDistance;
     
-    const VROScreen &screen = _device.getScreen();
+    const VROScreen &screen = _device->getScreen();
     _xPxPerTanAngle = screen.getWidth()  / (screen.getWidthInMeters()  / virtualEyeToScreenDistance);
     _yPxPerTanAngle = screen.getHeight() / (screen.getHeightInMeters() / virtualEyeToScreenDistance);
     _fovsChanged = true;
-    _viewportsChanged = true;
+    
+    updateViewports(leftEye, rightEye);
 }
 
 VROEyeViewport::VROEyeViewport(const VROFieldOfView &eyeFOV, float xOffset) {
@@ -113,7 +115,7 @@ VROEyeViewport::VROEyeViewport(const VROFieldOfView &eyeFOV, float xOffset) {
 }
 
 void VRODistortionRenderer::updateViewports(VROEye *leftEye, VROEye *rightEye) {
-    float maxWidth = 1024;//_device.getScreen().getWidth() / 2.0;
+    float maxWidth = 1024;//_device->getScreen().getWidth() / 2.0;
     
     leftEye->setViewport(round(_leftEyeViewport.x * _xPxPerTanAngle * _resolutionScale),
                          round(_leftEyeViewport.y * _yPxPerTanAngle * _resolutionScale),
@@ -123,14 +125,13 @@ void VRODistortionRenderer::updateViewports(VROEye *leftEye, VROEye *rightEye) {
                           round(_rightEyeViewport.y * _yPxPerTanAngle * _resolutionScale),
                           MIN(maxWidth, round(_rightEyeViewport.width * _xPxPerTanAngle * _resolutionScale)),
                           round(_rightEyeViewport.height * _yPxPerTanAngle * _resolutionScale));
-    _viewportsChanged = false;
 }
 
 void VRODistortionRenderer::updateDistortion(id <MTLDevice> gpu, id <MTLLibrary> library, VROView *view) {
     if (!_fovsChanged) {
         return;
     }
-    const VROScreen &screen = _device.getScreen();
+    const VROScreen &screen = _device->getScreen();
     
     /*
      Compute the size of the required eye render texture (the texture to which we render
@@ -146,8 +147,8 @@ void VRODistortionRenderer::updateDistortion(id <MTLDevice> gpu, id <MTLLibrary>
     int textureHeightPx = MIN(round(MAX(_leftEyeViewport.height, _rightEyeViewport.height) * _yPxPerTanAngle),
                                 maxTextureSize);
     
-    float xEyeOffsetTanAngleScreen = (screen.getWidthInMeters() / 2.0f - _device.getInterLensDistance() / 2.0f) / _metersPerTanAngle;
-    float yEyeOffsetTanAngleScreen = (_device.getVerticalDistanceToLensCenter() - screen.getBorderSizeInMeters()) / _metersPerTanAngle;
+    float xEyeOffsetTanAngleScreen = (screen.getWidthInMeters() / 2.0f - _device->getInterLensDistance() / 2.0f) / _metersPerTanAngle;
+    float yEyeOffsetTanAngleScreen = (_device->getVerticalDistanceToLensCenter() - screen.getBorderSizeInMeters()) / _metersPerTanAngle;
     
     MTLTextureDescriptor *msaaDesc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm
                                                                                         width:textureWidthPx
@@ -262,7 +263,7 @@ void VRODistortionRenderer::updateDistortionPassPipeline(id <MTLDevice> gpu, id 
 #pragma mark - Rendering Eye Texture to Distortion Mesh
 
 void VRODistortionRenderer::renderEyesToScreen(id <MTLRenderCommandEncoder> screenEncoder, int frame) {
-    const VROScreen &screen = _device.getScreen();
+    const VROScreen &screen = _device->getScreen();
     
     [screenEncoder setDepthStencilState:_depthState];
     [screenEncoder setViewport: { 0, 0,
@@ -296,11 +297,11 @@ VRODistortionMesh *VRODistortionRenderer::createDistortionMesh(const VROEyeViewp
                                                                float xEyeOffsetTanAngleScreen,
                                                                float yEyeOffsetTanAngleScreen,
                                                                id <MTLDevice> gpu) {
-    return new VRODistortionMesh(_device.getDistortion(),
-                                 _device.getDistortion(),
-                                 _device.getDistortion(),
-                                 _device.getScreen().getWidthInMeters() / _metersPerTanAngle,
-                                 _device.getScreen().getHeightInMeters() / _metersPerTanAngle,
+    return new VRODistortionMesh(_device->getDistortion(),
+                                 _device->getDistortion(),
+                                 _device->getDistortion(),
+                                 _device->getScreen().getWidthInMeters() / _metersPerTanAngle,
+                                 _device->getScreen().getHeightInMeters() / _metersPerTanAngle,
                                  xEyeOffsetTanAngleScreen, yEyeOffsetTanAngleScreen,
                                  textureWidthTanAngle, textureHeightTanAngle,
                                  eyeViewport.eyeX, eyeViewport.eyeY,

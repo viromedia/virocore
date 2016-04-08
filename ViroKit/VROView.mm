@@ -26,7 +26,7 @@
 #import "VROSceneController.h"
 #import "VROLog.h"
 #import "VROCameraMutable.h"
-#import "VRORenderer.h"
+#import "VRORendererMetal.h"
 
 @interface VROView () {
   
@@ -71,16 +71,16 @@
     self.delegate = self;
     self.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
     
-    self.renderer = new VRORenderer(self, new VRORenderContextMetal(device));
+    std::shared_ptr<VRODevice> vroDevice = std::make_shared<VRODevice>([UIScreen mainScreen]);
+    self.renderer = new VRORendererMetal(vroDevice, self, new VRORenderContextMetal(device));
 
-    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                    action:@selector(handleTap:)];
     [self addGestureRecognizer:tapRecognizer];
 }
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self.renderDelegate shutdownRendererWithView:self];
-    
     delete (self.renderer);
 }
 

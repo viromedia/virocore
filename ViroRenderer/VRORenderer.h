@@ -36,16 +36,15 @@ class VRORenderer {
     
 public:
     
-    VRORenderer(VROView *view, VRORenderContext *renderContext);
+    VRORenderer(std::shared_ptr<VRODevice> device, VRORenderContext *renderContext);
     virtual ~VRORenderer();
     
     void onOrientationChange(UIInterfaceOrientation orientation);
     
-    bool isVignetteEnabled() const;
-    void setVignetteEnabled(bool vignetteEnabled);
-    
-    bool isChromaticAberrationCorrectionEnabled() const;
-    void setChromaticAberrationCorrectionEnabled(bool enabled);
+    virtual bool isVignetteEnabled() const = 0;
+    virtual void setVignetteEnabled(bool vignetteEnabled) = 0;
+    virtual bool isChromaticAberrationCorrectionEnabled() const = 0;
+    virtual void setChromaticAberrationCorrectionEnabled(bool enabled) = 0;
     
     float getVirtualEyeToScreenDistance() const;
     
@@ -70,20 +69,29 @@ public:
         return _HUD;
     }
     
+protected:
+    
+    virtual void prepareFrame(const VRORenderContext &context) = 0;
+    virtual void endFrame(const VRORenderContext &context) = 0;
+    
+    virtual void renderVRDistortion(const VRORenderContext &context) = 0;
+    virtual void renderMonocular(const VRORenderContext &context) = 0;
+    
+    virtual void onEyesUpdated(VROEye *leftEye, VROEye *rightEye) = 0;
+    
+    void drawFrame(bool monocular);
+
 private:
     
     VROMagnetSensor *_magnetSensor;
     VROHeadTracker *_headTracker;
-    VRODevice *_device;
+    std::shared_ptr<VRODevice> _device;
     
     VROEye *_monocularEye;
     VROEye *_leftEye;
     VROEye *_rightEye;
-    
-    VRODistortionRenderer *_distortionRenderer;
-    
+        
     VRORenderContextMetal *_renderContext;
-    dispatch_semaphore_t _inflight_semaphore;
     
     VROScreenUIView *_HUD;
     
@@ -97,7 +105,6 @@ private:
      */
     std::shared_ptr<VROCameraMutable> _camera;
     
-    VROView *_view;
     id <VRORenderDelegate> _renderDelegate;
     
 #pragma mark - Scene
@@ -118,12 +125,8 @@ private:
     void updateMonocularEye();
     void updateLeftRightEyes();
     
-    void renderVRDistortionInView(VROView *view, id <MTLCommandBuffer> commandBuffer);
-    void renderMonocularInView(VROView *view, id <MTLCommandBuffer> commandBuffer);
-    
 #pragma mark - Stereo renderer methods
     
-    void drawFrame(bool monocular);
     void renderEye(VROEyeType eyeType);
     
 #pragma mark - Scene Loading

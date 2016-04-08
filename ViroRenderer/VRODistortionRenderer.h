@@ -51,7 +51,7 @@ class VRODistortionRenderer {
     
 public:
     
-    VRODistortionRenderer(VRODevice &device);
+    VRODistortionRenderer(std::shared_ptr<VRODevice> device);
     ~VRODistortionRenderer();
     
     /*
@@ -73,11 +73,6 @@ public:
      */
     void renderEyesToScreen(id <MTLRenderCommandEncoder> screenEncoder, int frame);
     
-    void setResolutionScale(float scale) {
-        _resolutionScale = scale;
-        _viewportsChanged = true;
-    }
-    
     bool isChromaticAberrationEnabled() {
         return _chromaticAberrationCorrectionEnabled;
     }
@@ -93,13 +88,10 @@ public:
         _fovsChanged = true;
     }
     
-    bool viewportsChanged() {
-        return _viewportsChanged;
-    }
     void updateViewports(VROEye *leftEye, VROEye *rightEye);
     
-    void fovDidChange(const VROFieldOfView &leftEyeFov,
-                      const VROFieldOfView &rightEyeFov,
+    void fovDidChange(VROEye *leftEye,
+                      VROEye *rightEye,
                       float virtualEyeToScreenDistance);
     
 private:
@@ -129,12 +121,11 @@ private:
     VRODistortionMesh *_leftEyeDistortionMesh;
     VRODistortionMesh *_rightEyeDistortionMesh;
     
-    VRODevice &_device;
+    std::shared_ptr<VRODevice> _device;
     VROEyeViewport _leftEyeViewport;
     VROEyeViewport _rightEyeViewport;
     
     bool _fovsChanged;
-    bool _viewportsChanged;
     bool _drawingFrame;
     
     /*

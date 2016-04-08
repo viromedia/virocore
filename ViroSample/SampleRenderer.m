@@ -19,7 +19,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 @interface SampleRenderer ()
 
-@property (readwrite, nonatomic) VROView *view;
 @property (readwrite, nonatomic) VRORenderContext *context;
 @property (readwrite, nonatomic) BOOL tapEnabled;
 @property (readwrite, nonatomic) float torusAngle;
@@ -409,8 +408,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return [self loadTorusScene];
 }
 
-- (void)setupRendererWithView:(VROView *)view context:(VRORenderContext *)context {
-    self.view = view;
+- (void)setupRendererWithContext:(VRORenderContext *)context {
     self.context = context;
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
 }
@@ -422,7 +420,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     [self.view setSceneController:sceneController animated:YES];
 }
 
-- (void)shutdownRendererWithView:(MTKView *)view {
+- (void)shutdownRenderer {
     
 }
 

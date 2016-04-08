@@ -8,6 +8,7 @@
 
 #include "VROHeadTracker.h"
 #include "VROMath.h"
+#include "VROQuaternion.h"
 
 #define HEAD_TRACKER_MODE_CORE_MOTION 1
 #define HEAD_TRACKER_MODE_CORE_MOTION_EKF 2
@@ -120,6 +121,9 @@ void VROHeadTracker::startTracking(UIInterfaceOrientation orientation) {
         if (_sampleCount <= kInitialSamplesToSkip) { return; }
         CMAcceleration acceleration = motion.gravity;
         CMRotationRate rotationRate = motion.rotationRate;
+        
+        //NSLog(@"Acceleration %f, %f, %f", acceleration.x, acceleration.y, acceleration.z);
+        //NSLog(@"Rotation %f, %f, %f", rotationRate.x, rotationRate.y, rotationRate.z);
         // note core motion uses units of G while the EKF uses ms^-2
         const float kG = 9.81f;
         _tracker->processAcceleration(GLKVector3Make(kG*acceleration.x, kG*acceleration.y, kG*acceleration.z), motion.timestamp);
@@ -151,6 +155,8 @@ VROMatrix4f VROHeadTracker::getHeadRotation() {
     // 1/30 of a second prediction (shoud it be 1/60?)
     double secondsToPredictForward = secondsSinceLastGyroEvent + 1.0 / 30;
     GLKMatrix4 rotationMatrix_IRF = _tracker->getPredictedGLMatrix(secondsToPredictForward);
+    
+    VROQuaternion quatOld(_lastHeadRotation);
     
 #elif HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION
     
@@ -220,6 +226,12 @@ VROMatrix4f VROHeadTracker::getHeadRotation() {
     GLKMatrix4 rotationMatrix_display = GLKMatrix4Multiply(_worldToDeviceMatrix, rotationMatrix_world);
     
     _lastHeadRotation = matrix_float4x4_from_GL(rotationMatrix_display);
+    VROQuaternion quatNew(_lastHeadRotation);
+    
+    float innerProduct = quatOld.dotProduct(quatNew);
+    float distance = 1.0 - innerProduct * innerProduct;
+   // NSLog(@"Distance %f", distance);
+
     return _lastHeadRotation;
 }
 

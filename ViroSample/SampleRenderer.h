@@ -11,6 +11,8 @@
 
 @interface SampleRenderer : NSObject <VRORenderDelegate>
 
+@property (readwrite, nonatomic) IBOutlet VROView *view;
+
 - (IBAction)nextScene:(id)sender;
 
 @end

@@ -33,44 +33,37 @@ static const float kDefaultSceneTransitionDuration = 1.0;
 
 #pragma mark - Initialization
 
-VRORenderer::VRORenderer(VROView *view, VRORenderContext *renderContext) {
-    _view = view;
+VRORenderer::VRORenderer(std::shared_ptr<VRODevice> device, VRORenderContext *renderContext) {
     _magnetSensor = new VROMagnetSensor();
     _headTracker = new VROHeadTracker();
-    _device = new VRODevice([UIScreen mainScreen]);
     _camera = std::make_shared<VROCameraMutable>();
+    _device = device;
     _renderContext = (VRORenderContextMetal *)renderContext; //TODO fix move semenatics here
     
     _monocularEye = new VROEye(VROEyeType::Monocular);
     _leftEye = new VROEye(VROEyeType::Left);
     _rightEye = new VROEye(VROEyeType::Right);
     
-    _distortionRenderer = new VRODistortionRenderer(*_device);
     _vrModeEnabled = true;
     _rendererInitialized = false;
     
     _projectionChanged = true;
-    _frameParamentersReady = false;
     
     _headTracker->startTracking([UIApplication sharedApplication].statusBarOrientation);
-    _magnetSensor->start();
-    
-    _inflight_semaphore = dispatch_semaphore_create(3);
+    _magnetSensor->start();    
     initBlankTexture(*_renderContext);
     
     _HUD = [[VROScreenUIView alloc] init];
 }
 
 VRORenderer::~VRORenderer() {
-    [_renderDelegate shutdownRendererWithView:_view];
+    [_renderDelegate shutdownRenderer];
     
     delete (_magnetSensor);
     delete (_headTracker);
-    delete (_device);
     delete (_monocularEye);
     delete (_leftEye);
     delete (_rightEye);
-    delete (_distortionRenderer);
     delete (_renderContext);
 }
 
@@ -78,22 +71,6 @@ VRORenderer::~VRORenderer() {
 
 void VRORenderer::onOrientationChange(UIInterfaceOrientation orientation) {
     _headTracker->updateDeviceOrientation(orientation);
-}
-
-bool VRORenderer::isVignetteEnabled() const {
-    return _distortionRenderer->isVignetteEnabled();
-}
-
-void VRORenderer::setVignetteEnabled(bool vignetteEnabled) {
-    _distortionRenderer->setVignetteEnabled(vignetteEnabled);
-}
-
-bool VRORenderer::isChromaticAberrationCorrectionEnabled() const {
-    return _distortionRenderer->isChromaticAberrationEnabled();
-}
-
-void VRORenderer::setChromaticAberrationCorrectionEnabled(bool enabled) {
-    _distortionRenderer->setChromaticAberrationEnabled(enabled);
 }
 
 float VRORenderer::getVirtualEyeToScreenDistance() const {
@@ -137,81 +114,32 @@ void VRORenderer::drawFrame() {
         return;
     }
     
-    dispatch_semaphore_wait(_inflight_semaphore, DISPATCH_TIME_FOREVER);
-    
     @autoreleasepool {
+        prepareFrame(*_renderContext);
         calculateFrameParameters();
-        _frameParamentersReady = YES;
-        
-        /*
-         A single command buffer collects all render events for a frame.
-         */
-        id <MTLCommandBuffer> commandBuffer = [_renderContext->getCommandQueue() commandBuffer];
-        commandBuffer.label = @"CommandBuffer";
-        
-        /*
-         When the command buffer is executed by the GPU, signal the semaphor
-         (required by the view since it will signal set up the next buffer).
-         */
-        __block dispatch_semaphore_t block_sema = _inflight_semaphore;
-        [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer) {
-         dispatch_semaphore_signal(block_sema);
-         }];
         
         VROTransaction::beginImplicitAnimation();
         VROTransaction::update();
         
-        if (_view.currentRenderPassDescriptor) {
-            if (_vrModeEnabled) {
-                renderVRDistortionInView(_view, commandBuffer);
-            }
-            else {
-                renderMonocularInView(_view, commandBuffer);
-            }
-            
-            [commandBuffer presentDrawable:_view.currentDrawable];
+        if (!_rendererInitialized) {
+            [_renderDelegate setupRendererWithContext:_renderContext];
+            _rendererInitialized = YES;
         }
         
-        [commandBuffer commit];
+        if (_vrModeEnabled) {
+            renderVRDistortion(*_renderContext);
+        }
+        else {
+            renderMonocular(*_renderContext);
+        }
+        
+        endFrame(*_renderContext);
         VROTransaction::commitAll();
         
         _renderContext->incFrame();
     }
     
     ALLOCATION_TRACKER_PRINT();
-}
-
-void VRORenderer::renderVRDistortionInView(VROView *view, id <MTLCommandBuffer> commandBuffer) {
-    _distortionRenderer->updateDistortion(_renderContext->getDevice(), _renderContext->getLibrary(), view);
-    
-    std::shared_ptr<VRORenderTarget> eyeTarget = _distortionRenderer->bindEyeRenderTarget(commandBuffer);
-    _renderContext->setRenderTarget(eyeTarget);
-    
-    if (!_rendererInitialized) {
-        [_renderDelegate setupRendererWithView:view context:_renderContext];
-        _rendererInitialized = YES;
-    }
-    
-    id <MTLRenderCommandEncoder> eyeRenderEncoder = eyeTarget->getRenderEncoder();
-    
-    drawFrame(false);
-    [eyeRenderEncoder endEncoding];
-    
-    std::shared_ptr<VRORenderTarget> screenTarget = std::make_shared<VRORenderTarget>(view, commandBuffer);
-    _renderContext->setRenderTarget(screenTarget);
-    
-    id <MTLRenderCommandEncoder> screenRenderEncoder = screenTarget->getRenderEncoder();
-    
-    _distortionRenderer->renderEyesToScreen(screenRenderEncoder, _renderContext->getFrame());
-    [screenRenderEncoder endEncoding];
-}
-
-void VRORenderer::renderMonocularInView(VROView *view, id <MTLCommandBuffer> commandBuffer) {
-    std::shared_ptr<VRORenderTarget> screenTarget = std::make_shared<VRORenderTarget>(view, commandBuffer);
-    _renderContext->setRenderTarget(screenTarget);
-    
-    drawFrame(true);
-    [screenTarget->getRenderEncoder() endEncoding];
 }
 
 #pragma mark - View Computation
@@ -261,15 +189,10 @@ void VRORenderer::calculateFrameParameters() {
         }
         else {
             updateLeftRightEyes();
-            _distortionRenderer->fovDidChange(_leftEye->getFOV(), _rightEye->getFOV(),
-                                              getVirtualEyeToScreenDistance());
+            onEyesUpdated(_leftEye, _rightEye);
         }
         
         _projectionChanged = NO;
-    }
-    
-    if (_distortionRenderer->viewportsChanged()) {
-        _distortionRenderer->updateViewports(_leftEye, _rightEye);
     }
 }
 

@@ -19,8 +19,8 @@ enum class VROEyeType;
 
 @protocol VRORenderDelegate <NSObject>
 
-- (void)setupRendererWithView:(VROView *)view context:(VRORenderContext *)context;
-- (void)shutdownRendererWithView:(VROView *)view;
+- (void)setupRendererWithContext:(VRORenderContext *)context;
+- (void)shutdownRenderer;
 - (void)renderViewDidChangeSize:(CGSize)size context:(VRORenderContext *)context;
 
 - (void)willRenderEye:(VROEyeType)eye context:(const VRORenderContext *)context;
