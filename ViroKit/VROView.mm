@@ -33,7 +33,7 @@
 
 @property (readwrite, nonatomic) VRODriverMetal *driver;
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
-@property (readwrite, nonatomic) int frame;
+@property (readwrite, nonatomic) int frameNumber;
 
 @end
 
@@ -68,7 +68,7 @@
     
     id <MTLDevice> device = MTLCreateSystemDefaultDevice();
     
-    self.frame = 0;
+    self.frameNumber = 0;
     self.device = device;
     self.delegate = self;
     self.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
@@ -124,8 +124,8 @@
 
 // Called whenever the view needs to render
 - (void)drawInMTKView:(nonnull MTKView *)view {
-    _driver->driveFrame(_frame);
-    ++_frame;
+    _driver->driveFrame(_frameNumber);
+    ++_frameNumber;
     
     ALLOCATION_TRACKER_PRINT();
 }

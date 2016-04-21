@@ -26,13 +26,11 @@ class VROLoader {
     
 public:
     
-    static std::vector<std::shared_ptr<VRONode>> loadURL(NSURL *url,
-                                                         const VRORenderContext &context);
+    static std::vector<std::shared_ptr<VRONode>> loadURL(NSURL *url);
     
 private:
     
-    static std::shared_ptr<VRONode> loadMesh(MDLMesh *mesh,
-                                             const VRORenderContext &context);
+    static std::shared_ptr<VRONode> loadMesh(MDLMesh *mesh);
     
     static VROGeometrySourceSemantic parseSemantic(NSString *string);
     static std::pair<bool, int> getBytesPerComponent(MDLVertexFormat format);

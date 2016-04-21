@@ -137,15 +137,15 @@ void VRODriverMetal::renderVRDistortion(int frame, id <MTLCommandBuffer> command
     VRODriverContextMetal *driverContext = (VRODriverContextMetal *)_context.get();
     _distortionRenderer->updateDistortion(driverContext->getDevice(), driverContext->getLibrary(), _view);
     
+    std::shared_ptr<VRORenderTarget> eyeTarget = _distortionRenderer->bindEyeRenderTarget(commandBuffer);
+    driverContext->setRenderTarget(eyeTarget);
+    
     VROMatrix4f headRotation = _headTracker->getHeadRotation();
     _renderer->prepareFrame(frame, _view, headRotation, *driverContext);
     
     float halfLensDistance = _device->getInterLensDistance() * 0.5f;
     VROMatrix4f leftEyeMatrix  = matrix_from_translation( halfLensDistance, 0, 0);
     VROMatrix4f rightEyeMatrix = matrix_from_translation(-halfLensDistance, 0, 0);
-    
-    std::shared_ptr<VRORenderTarget> eyeTarget = _distortionRenderer->bindEyeRenderTarget(commandBuffer);
-    driverContext->setRenderTarget(eyeTarget);
     
     id <MTLRenderCommandEncoder> eyeRenderEncoder = eyeTarget->getRenderEncoder();
     [eyeRenderEncoder setViewport:_leftEye->getViewport().toMetalViewport()];

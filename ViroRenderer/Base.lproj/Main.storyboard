@@ -36,11 +36,7 @@
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
-                <customObject id="niC-Ja-Oxd" userLabel="Stereo Renderer" customClass="SampleRenderer">
-                    <connections>
-                        <outlet property="view" destination="3se-qz-xqx" id="7zW-HA-Qq3"/>
-                    </connections>
-                </customObject>
+                <customObject id="niC-Ja-Oxd" userLabel="Stereo Renderer" customClass="SampleRenderer"/>
             </objects>
         </scene>
     </scenes>

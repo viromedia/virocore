@@ -15,8 +15,7 @@
 #include "VRONode.h"
 #include "VROLog.h"
 
-std::vector<std::shared_ptr<VRONode>> VROLoader::loadURL(NSURL *url,
-                                                         const VRORenderContext &context) {
+std::vector<std::shared_ptr<VRONode>> VROLoader::loadURL(NSURL *url) {
     std::vector<std::shared_ptr<VRONode>> results;
     
     MDLAsset *asset = [[MDLAsset alloc] initWithURL:url];
@@ -24,7 +23,7 @@ std::vector<std::shared_ptr<VRONode>> VROLoader::loadURL(NSURL *url,
         MDLObject *object = [asset objectAtIndex:i];
         
         if ([object isKindOfClass:[MDLMesh class]]) {
-            results.push_back(loadMesh((MDLMesh *) object, context));
+            results.push_back(loadMesh((MDLMesh *) object));
         }
         else if ([object isKindOfClass:[MDLLight class]]) {
             // TODO
@@ -37,8 +36,7 @@ std::vector<std::shared_ptr<VRONode>> VROLoader::loadURL(NSURL *url,
     return results;
 }
 
-std::shared_ptr<VRONode> VROLoader::loadMesh(MDLMesh *mesh,
-                                             const VRORenderContext &context) {
+std::shared_ptr<VRONode> VROLoader::loadMesh(MDLMesh *mesh) {
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     
     MDLVertexDescriptor *descriptor = mesh.vertexDescriptor;

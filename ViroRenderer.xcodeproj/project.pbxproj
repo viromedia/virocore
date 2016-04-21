@@ -92,7 +92,7 @@
 		8FA2E1601C45DD270070DB26 /* VROReticle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E15E1C45DD270070DB26 /* VROReticle.mm */; };
 		8FA2E1631C460C600070DB26 /* VROAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E1611C460C600070DB26 /* VROAction.cpp */; };
 		8FA2E1641C460C600070DB26 /* VROAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E1621C460C600070DB26 /* VROAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FA9D0A41CC947DD00B00B93 /* VRODriverContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D0A21CC947DD00B00B93 /* VRODriverContext.h */; };
+		8FA9D0A41CC947DD00B00B93 /* VRODriverContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D0A21CC947DD00B00B93 /* VRODriverContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FC908861CA458EB00069C89 /* VROCameraMutable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FC908841CA458EB00069C89 /* VROCameraMutable.cpp */; };
 		8FC908871CA458EB00069C89 /* VROCameraMutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FC908851CA458EB00069C89 /* VROCameraMutable.h */; };
 		8FCB6C881C3C828200C14158 /* VROLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB6C861C3C828200C14158 /* VROLoader.cpp */; };
