@@ -16,6 +16,7 @@
 #include "VROMatrix4f.h"
 #include "VROQuaternion.h"
 #include "VRORenderContext.h"
+#include "VRODriverContext.h"
 #include "VRORenderParameters.h"
 #include "VROAnimatable.h"
 #include "VROBoundingBox.h"
@@ -53,6 +54,7 @@ public:
     std::shared_ptr<VRONode> clone();
     
     void render(const VRORenderContext &context,
+                const VRODriverContext &driverContext,
                 VRORenderParameters &params);
     
     void setGeometry(std::shared_ptr<VROGeometry> geometry) {
@@ -221,7 +223,9 @@ private:
      Render functions.
      */
     void pushTransforms(const VRORenderContext &context, VRORenderParameters &params);
-    void renderNode(const VRORenderContext &context, VRORenderParameters &params);
+    void renderNode(const VRORenderContext &renderContext,
+                    const VRODriverContext &driverContext,
+                    VRORenderParameters &params);
     void popTransforms(VRORenderParameters &params);
     
     /*

@@ -20,6 +20,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 @interface SampleRenderer ()
 
 @property (readwrite, nonatomic) VRORenderContext *context;
+@property (readwrite, nonatomic) VRODriverContext *driverContext;
 @property (readwrite, nonatomic) BOOL tapEnabled;
 @property (readwrite, nonatomic) float torusAngle;
 @property (readwrite, nonatomic) float boxAngle;
@@ -80,7 +81,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"surfing" ofType:@"mp4"];
     
     self.videoTexture = std::make_shared<VROVideoTexture>();
-    self.videoTexture->loadVideo([NSURL fileURLWithPath:filePath], *self.context);
+    self.videoTexture->loadVideo([NSURL fileURLWithPath:filePath], *self.context, *self.driverContext);
+    self.videoTexture->play();
     
     scene->setBackgroundSphere(self.videoTexture);
     
@@ -280,7 +282,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     NSURL *videoURL = [NSURL URLWithString:@"https://s3-us-west-2.amazonaws.com/dmoontest/img/Zoe2.mp4"];
     
     std::shared_ptr<VROVideoTexture> videoTexture = std::make_shared<VROVideoTexture>();
-    videoTexture->loadVideo(videoURL, *self.context);
+    videoTexture->loadVideo(videoURL, *self.context, *self.driverContext);
     
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);
@@ -319,7 +321,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     [label setFont:[UIFont systemFontOfSize:12]];
     
     [labelView addSubview:label];
-    [labelView updateWithContext:self.context];
+    [labelView updateWithContext:self.driverContext];
     
     rootNode->addChildNode(labelView.vroLayer);
     
@@ -408,7 +410,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return [self loadTorusScene];
 }
 
-- (void)setupRendererWithContext:(VRORenderContext *)context {
+- (void)setupRendererWithView:(VROView *)view renderContext:(VRORenderContext *)context driverContext:(VRODriverContext *)driverContext {
+    self.view = view;
+    self.driverContext = driverContext;
     self.context = context;
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
 }
@@ -420,7 +424,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     [self.view setSceneController:sceneController animated:YES];
 }
 
-- (void)shutdownRenderer {
+- (void)shutdownRendererWithView:(VROView *)view {
     
 }
 

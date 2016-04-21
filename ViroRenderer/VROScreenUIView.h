@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "VRORenderContext.h"
+#import "VRODriverContext.h"
 #import "VROLayer.h"
 #import "VROReticle.h"
 #import <memory>
@@ -21,8 +22,10 @@ class VROEye;
 
 - (instancetype)init;
 
-- (void)updateWithContext:(const VRORenderContext *)context;
-- (void)renderEye:(VROEye *)eye withContext:(const VRORenderContext *)context;
+- (void)updateWithContext:(const VRODriverContext *)context;
+- (void)renderEye:(VROEyeType)eye
+withRenderContext:(const VRORenderContext *)renderContext
+    driverContext:(const VRODriverContext *)driverContext;
 
 - (void)setReticleEnabled:(BOOL)enabled;
 - (void)setNeedsUpdate;

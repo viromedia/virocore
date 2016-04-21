@@ -16,8 +16,6 @@
 #import "VROViewport.h"
 #import "VROScreen.h"
 #import "VROHeadTracker.h"
-#import "VROMagnetSensor.h"
-#import "VRORenderContextMetal.h"
 #import "VROTransaction.h"
 #import "VROImageUtil.h"
 #import "VROProjector.h"
@@ -26,13 +24,16 @@
 #import "VROSceneController.h"
 #import "VROLog.h"
 #import "VROCameraMutable.h"
-#import "VRORendererMetal.h"
+#import "VRODriverMetal.h"
+#import "VRORenderer.h"
 
 @interface VROView () {
   
 }
 
-@property (readwrite, nonatomic) VRORenderer *renderer;
+@property (readwrite, nonatomic) VRODriverMetal *driver;
+@property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
+@property (readwrite, nonatomic) int frame;
 
 @end
 
@@ -67,12 +68,14 @@
     
     id <MTLDevice> device = MTLCreateSystemDefaultDevice();
     
+    self.frame = 0;
     self.device = device;
     self.delegate = self;
     self.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
     
-    std::shared_ptr<VRODevice> vroDevice = std::make_shared<VRODevice>([UIScreen mainScreen]);
-    self.renderer = new VRORendererMetal(vroDevice, self, new VRORenderContextMetal(device));
+    self.renderer = std::make_shared<VRORenderer>();
+    self.driver = new VRODriverMetal(device, self);
+    ((VRODriverMetal *)self.driver)->setRenderer(self.renderer);
 
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                     action:@selector(handleTap:)];
@@ -80,18 +83,20 @@
 }
 
 - (void)dealloc {
+    [_renderDelegate shutdownRendererWithView:self];
+
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    delete (self.renderer);
 }
 
 #pragma mark - Settings
 
 - (void)orientationDidChange:(NSNotification *)notification {
-    self.renderer->onOrientationChange([UIApplication sharedApplication].statusBarOrientation);
+    self.driver->onOrientationChange([UIApplication sharedApplication].statusBarOrientation);
 }
 
 - (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {
-    self.renderer->setRenderDelegate(renderDelegate);
+    _renderDelegate = renderDelegate;
+    self.renderer->setDelegate(renderDelegate);
 }
 
 #pragma mark - Camera
@@ -105,7 +110,9 @@
 }
 
 - (float)worldPerScreenAtDepth:(float)distance {
-    return self.renderer->getWorldPerScreen(distance);
+    return self.renderer->getWorldPerScreen(distance,
+                                            self.driver->getFOV(VROEyeType::Left),
+                                            self.driver->getViewport(VROEyeType::Left));
 }
 
 #pragma mark - Rendering
@@ -117,16 +124,15 @@
 
 // Called whenever the view needs to render
 - (void)drawInMTKView:(nonnull MTKView *)view {
-    _renderer->drawFrame();
+    _driver->driveFrame(_frame);
+    ++_frame;
+    
+    ALLOCATION_TRACKER_PRINT();
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
     _renderer->updateRenderViewSize(self.bounds.size);
-}
-
-- (VRORenderContext *)renderContext {
-    return _renderer->getRenderContext();
 }
 
 #pragma mark - Reticle

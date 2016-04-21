@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
-#include "VRORenderContext.h"
+#include "VRODriverContext.h"
 #include "VRORenderTarget.h"
 #include "VROMatrix4f.h"
 #include <memory>
@@ -21,13 +21,13 @@
 #include "VROTextureSubstrateMetal.h"
 
 /*
- Render context for Metal.
+ Driver context for Metal.
  */
-class VRORenderContextMetal : public VRORenderContext {
+class VRODriverContextMetal : public VRODriverContext {
     
 public:
     
-    VRORenderContextMetal(id <MTLDevice> device) {
+    VRODriverContextMetal(id <MTLDevice> device) {
         _device = device;
         _commandQueue = [device newCommandQueue];
         
@@ -39,13 +39,6 @@ public:
     
     void setRenderTarget(std::shared_ptr<VRORenderTarget> renderTarget) {
         _renderTarget = renderTarget;
-    }
-    
-    void setCommandBuffer(id <MTLCommandBuffer> buffer) {
-        _commandBuffer = buffer;
-    }
-    id <MTLCommandBuffer> getCommandBuffer() const {
-        return _commandBuffer;
     }
     
     id <MTLDevice> getDevice() const {
@@ -83,11 +76,6 @@ private:
     id <MTLDevice> _device;
     id <MTLCommandQueue> _commandQueue;
     id <MTLLibrary> _library;
-    
-    /*
-     The command buffer active during this frame.
-     */
-    id <MTLCommandBuffer> _commandBuffer;
     
     std::shared_ptr<VRORenderTarget> _renderTarget;
     

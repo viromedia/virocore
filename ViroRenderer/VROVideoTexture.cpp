@@ -7,7 +7,8 @@
 //
 
 #include "VROVideoTexture.h"
-#include "VRORenderContextMetal.h"
+#include "VRORenderContext.h"
+#include "VRODriverContextMetal.h"
 #include "VROLog.h"
 #include "VROTextureSubstrateMetal.h"
 #include "VROTime.h"
@@ -58,10 +59,13 @@ bool VROVideoTexture::isPaused() {
     return _paused;
 }
 
-void VROVideoTexture::loadVideo(NSURL *url, VRORenderContext &context) {
+void VROVideoTexture::loadVideo(NSURL *url,
+                                VRORenderContext &renderContext,
+                                VRODriverContext &driverContext) {
+    
     _mediaReady = false;
     
-    id <MTLDevice> device = ((VRORenderContextMetal &)context).getDevice();
+    id <MTLDevice> device = ((VRODriverContextMetal &)driverContext).getDevice();
     
     CVReturn textureCacheError = CVMetalTextureCacheCreate(kCFAllocatorDefault, NULL, device,
                                                            NULL, &_videoTextureCache);
@@ -74,7 +78,7 @@ void VROVideoTexture::loadVideo(NSURL *url, VRORenderContext &context) {
     _videoPlaybackDelegate = [[VROVideoPlaybackDelegate alloc] initWithVROVideoTexture:this];
     [_videoOutput setDelegate:_videoPlaybackDelegate queue:_videoQueue];
     
-    context.addFrameListener(shared_from_this());
+    renderContext.addFrameListener(shared_from_this());
     
     /*
      Sets up player item and adds video output to it. The tracks property of an asset is
@@ -229,11 +233,14 @@ void VROVideoTexture::displayPixelBuffer(CVPixelBufferRef pixelBuffer) {
 
 #pragma mark - Live Video Playback
 
-void VROVideoTexture::displayCamera(AVCaptureDevicePosition position, VRORenderContext &context) {
-    context.addFrameListener(shared_from_this());
+void VROVideoTexture::displayCamera(AVCaptureDevicePosition position,
+                                    VRORenderContext &renderContext,
+                                    VRODriverContext &driverContext) {
+    
+    renderContext.addFrameListener(shared_from_this());
     _videoDelegate = [[VROVideoCaptureDelegate alloc] initWithVROVideoTexture:this];
     
-    id <MTLDevice> device = ((VRORenderContextMetal &)context).getDevice();
+    id <MTLDevice> device = ((VRODriverContextMetal &)driverContext).getDevice();
     
     CVReturn textureCacheError = CVMetalTextureCacheCreate(kCFAllocatorDefault, NULL, device,
                                                            NULL, &_videoTextureCache);

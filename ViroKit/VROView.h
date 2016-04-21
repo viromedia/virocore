@@ -26,7 +26,6 @@ enum class VROTimingFunctionType;
 @property (readwrite, nonatomic) VROSceneController *sceneController;
 
 - (instancetype)initWithFrame:(CGRect)frame;
-- (VRORenderContext *)renderContext;
 
 - (void)setSceneController:(VROSceneController *)sceneController animated:(BOOL)animated;
 - (void)setSceneController:(VROSceneController *)sceneController duration:(float)seconds

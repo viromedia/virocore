@@ -29,10 +29,7 @@ class VROEye {
 public:
     
     VROEye(const VROEyeType type) :
-        _type(type),
-        _projectionChanged(true),
-        _lastZNear(0),
-        _lastZFar(0) {
+        _type(type) {
         
     }
     
@@ -50,26 +47,16 @@ public:
         _eyeView = eyeView;
     }
     
-    VROMatrix4f perspective(float zNear, float zFar) {
-        if (!_projectionChanged && _lastZNear == zNear && _lastZFar == zFar) {
-            return _perspective;
-        }
-        
-        _perspective = _fov.toPerspectiveMatrix(zNear, zFar);
-        _lastZNear = zNear;
-        _lastZFar = zFar;
-        _projectionChanged = false;
-        
+    VROMatrix4f getPerspectiveMatrix() const {
         return _perspective;
     }
     
-    void setFOV(float left, float right, float bottom, float top) {
+    void setFOV(float left, float right, float bottom, float top, float zNear, float zFar) {
         _fov.setLeft(left);
         _fov.setRight(right);
         _fov.setBottom(bottom);
         _fov.setTop(top);
-        
-        _projectionChanged = true;
+        _perspective = _fov.toPerspectiveMatrix(zNear, zFar);
     }
     
     const VROFieldOfView &getFOV() const {
@@ -94,9 +81,6 @@ private:
     VROViewport _viewport;
     VROFieldOfView _fov;
     
-    bool _projectionChanged;
-    float _lastZNear;
-    float _lastZFar;
 };
 
 #endif /* VROEye_h */

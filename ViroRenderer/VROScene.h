@@ -17,6 +17,7 @@
 
 class VRONode;
 class VRORenderContext;
+class VRODriverContext;
 class VROTexture;
 class VROGeometry;
 class VROHitTestResult;
@@ -29,8 +30,10 @@ public:
     VROScene();
     virtual ~VROScene();
     
-    void renderBackground(const VRORenderContext &context);
-    void render(const VRORenderContext &context);
+    void renderBackground(const VRORenderContext &renderContext,
+                          const VRODriverContext &driverContext);
+    void render(const VRORenderContext &renderContext,
+                const VRODriverContext &driverContext);
     
     /*
      Add a new root node to the scene.

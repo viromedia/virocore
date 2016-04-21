@@ -18,6 +18,7 @@
 @class VROVideoCaptureDelegate;
 @class VROVideoPlaybackDelegate;
 class VRORenderContext;
+class VRODriverContext;
 class VROMaterial;
 
 static const long kInFlightVideoTextures = 3;
@@ -32,13 +33,17 @@ public:
     /*
      Use this video texture to display the contents of the front-facing camera.
      */
-    void displayCamera(AVCaptureDevicePosition position, VRORenderContext &context);
+    void displayCamera(AVCaptureDevicePosition position,
+                       VRORenderContext &renderContext,
+                       VRODriverContext &driverContext);
     
     /*
      Use this video texture to display the contents of the given URL. The video
      will not run until play() is invoked.
      */
-    void loadVideo(NSURL *url, VRORenderContext &context);
+    void loadVideo(NSURL *url,
+                   VRORenderContext &renderContext,
+                   VRODriverContext &driverContext);
     
     /*
      Perform video initialization (which causes a stutter) early.

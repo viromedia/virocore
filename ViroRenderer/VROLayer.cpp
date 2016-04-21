@@ -35,7 +35,7 @@ void VROLayer::setContents(UIImage *image) {
 }
 
 void VROLayer::setContents(int width, int height, CGContextRef bitmapContext,
-                           const VRORenderContext &context) {
+                           const VRODriverContext &context) {
     
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateMetal>(
                     new VROTextureSubstrateMetal(width, height, bitmapContext, context));

@@ -14,6 +14,7 @@
 #include <string>
 #include <memory>
 #include "VRORenderContext.h"
+#include "VRODriverContext.h"
 #include "VROBoundingBox.h"
 #include "VROAllocationTracker.h"
 
@@ -42,7 +43,7 @@ public:
      */
     VROGeometry(std::vector<std::shared_ptr<VROGeometrySource>> sources,
                 std::vector<std::shared_ptr<VROGeometryElement>> elements,
-                const VRORenderContext *context = nullptr) :
+                const VRODriverContext *context = nullptr) :
         _geometrySources(sources),
         _geometryElements(elements),
         _stereoRenderingEnabled(true),
@@ -73,9 +74,10 @@ public:
      Get the geometry ready for usage now, in advance of when it's visible. If not invoked,
      the geometry will be initialized when it is made visible.
      */
-    void prewarm(const VRORenderContext &context);
+    void prewarm(const VRODriverContext &context);
     
     void render(const VRORenderContext &context,
+                const VRODriverContext &driverContext,
                 VRORenderParameters &params);
     
     std::vector<std::shared_ptr<VROMaterial>> &getMaterials() {

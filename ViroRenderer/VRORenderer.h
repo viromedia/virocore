@@ -10,19 +10,21 @@
 #define VRORenderer_h
 
 #include <memory>
-#import <UIKit/UIKit.h>
 #include "VROVector3f.h"
 #include "VROQuaternion.h"
-#include "VRORenderDelegate.h" //TODO Delete
+#include "VROMatrix4f.h"
+#include "VRORenderDelegate.h"
 
 class VROEye;
+class VRODriverContext;
 class VRODistortionRenderer;
-class VROMagnetSensor;
 class VRODevice;
 class VROHeadTracker;
 class VROCameraMutable;
 class VROTimingFunction;
 class VRORenderContext;
+class VROViewport;
+class VROFieldOfView;
 enum class VROEyeType;
 enum class VROTimingFunctionType;
 
@@ -36,102 +38,73 @@ class VRORenderer {
     
 public:
     
-    VRORenderer(std::shared_ptr<VRODevice> device, VRORenderContext *renderContext);
+    VRORenderer();
     virtual ~VRORenderer();
-    
-    void onOrientationChange(UIInterfaceOrientation orientation);
-    
-    virtual bool isVignetteEnabled() const = 0;
-    virtual void setVignetteEnabled(bool vignetteEnabled) = 0;
-    virtual bool isChromaticAberrationCorrectionEnabled() const = 0;
-    virtual void setChromaticAberrationCorrectionEnabled(bool enabled) = 0;
-    
-    float getVirtualEyeToScreenDistance() const;
-    
+        
     void setPosition(VROVector3f position);
     void setBaseRotation(VROQuaternion quaternion);
-    
-    float getWorldPerScreen(float distance) const;
-    
-    void setRenderDelegate(id <VRORenderDelegate> renderDelegate);
-    
-    void drawFrame();
+    float getWorldPerScreen(float distance, const VROFieldOfView &fov,
+                            const VROViewport &viewport) const;
     
     void setSceneController(VROSceneController *sceneController);
     void setSceneController(VROSceneController *sceneController, bool animated);
     void setSceneController(VROSceneController *sceneController, float seconds, VROTimingFunctionType timingFunctionType);
     
+    void setDelegate(id <VRORenderDelegate> delegate);
+    
     void updateRenderViewSize(CGSize size);
+    
+    void prepareFrame(int frame, VROView *view, VROMatrix4f headRotation,
+                      VRODriverContext &driverContext);
+    void renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
+                   const VRODriverContext &driverContext);
+    void endFrame(const VRODriverContext &driverContext);
 
     void handleTap();
-    VRORenderContext *getRenderContext();
     VROScreenUIView *getHUD() {
         return _HUD;
     }
     
-protected:
-    
-    virtual void prepareFrame(const VRORenderContext &context) = 0;
-    virtual void endFrame(const VRORenderContext &context) = 0;
-    
-    virtual void renderVRDistortion(const VRORenderContext &context) = 0;
-    virtual void renderMonocular(const VRORenderContext &context) = 0;
-    
-    virtual void onEyesUpdated(VROEye *leftEye, VROEye *rightEye) = 0;
-    
-    void drawFrame(bool monocular);
-
 private:
     
-    VROMagnetSensor *_magnetSensor;
-    VROHeadTracker *_headTracker;
-    std::shared_ptr<VRODevice> _device;
-    
-    VROEye *_monocularEye;
-    VROEye *_leftEye;
-    VROEye *_rightEye;
-        
-    VRORenderContextMetal *_renderContext;
-    
-    VROScreenUIView *_HUD;
-    
-    bool _projectionChanged;
-    bool _frameParamentersReady;
-    bool _vrModeEnabled;
     bool _rendererInitialized;
+    
+    /*
+     Maintains parameters used for scene rendering.
+     */
+    std::shared_ptr<VRORenderContext> _context;
+    
+    /*
+     The screen-space view.
+     */
+    VROScreenUIView *_HUD;
     
     /*
      Internal representation of the camera.
      */
     std::shared_ptr<VROCameraMutable> _camera;
     
-    id <VRORenderDelegate> _renderDelegate;
-    
-#pragma mark - Scene
+    /*
+     Delegate receiving scene rendering updates.
+     */
+    id <VRORenderDelegate> _delegate; //TODO Make this not Obj-C, and weak ptr
+        
+#pragma mark - Scene and Scene Transitions
     
     VROSceneController *_sceneController;
     VROSceneController *_outgoingSceneController;
-    
-    /*
-     Scene transition variables.
-     */
+
+    bool _sceneTransitionActive;
     float _sceneTransitionDuration;
     float _sceneTransitionStartTime;
     std::unique_ptr<VROTimingFunction> _sceneTransitionTimingFunction;
     
-#pragma mark - View Computation
-
-    void calculateFrameParameters();
-    void updateMonocularEye();
-    void updateLeftRightEyes();
-    
-#pragma mark - Stereo renderer methods
-    
-    void renderEye(VROEyeType eyeType);
-    
-#pragma mark - Scene Loading
-    
     bool processSceneTransition();
+    
+#pragma mark - Scene Rendering
+    
+    void renderEye(VROEyeType eyeType, const VRODriverContext &driverContext);
+    
 };
 
 #endif /* VRORenderer_h */

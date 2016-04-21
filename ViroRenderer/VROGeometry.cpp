@@ -21,17 +21,18 @@ VROGeometry::~VROGeometry() {
     ALLOCATION_TRACKER_SUB(Geometry, 1);
 }
 
-void VROGeometry::prewarm(const VRORenderContext &context) {
+void VROGeometry::prewarm(const VRODriverContext &context) {
     if (!_substrate) {
         _substrate = context.newGeometrySubstrate(*this);
     }
 }
 
-void VROGeometry::render(const VRORenderContext &context,
+void VROGeometry::render(const VRORenderContext &renderContext,
+                         const VRODriverContext &driverContext,
                          VRORenderParameters &params) {
     
-    prewarm(context);
-    _substrate->render(*this, _materials, context, params);
+    prewarm(driverContext);
+    _substrate->render(*this, _materials, renderContext, driverContext, params);
 }
 
 const VROBoundingBox &VROGeometry::getBoundingBox() {

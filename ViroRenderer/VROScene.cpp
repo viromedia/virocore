@@ -9,7 +9,6 @@
 #include "VROScene.h"
 #include "VROLayer.h"
 #include "VRORenderContext.h"
-#include "VRORenderContextMetal.h"
 #include "VRONode.h"
 #include "VROGeometry.h"
 #include "VROSkybox.h"
@@ -30,22 +29,24 @@ VROScene::~VROScene() {
     ALLOCATION_TRACKER_SUB(Scenes, 1);
 }
 
-void VROScene::renderBackground(const VRORenderContext &context) {
+void VROScene::renderBackground(const VRORenderContext &renderContext,
+                                const VRODriverContext &driverContext) {
     if (!_background) {
         return;
     }
     
     VROMatrix4f translation;
-    translation.translate(context.getCamera().getPosition());
+    translation.translate(renderContext.getCamera().getPosition());
     
     VRORenderParameters renderParams;
     renderParams.transforms.push(translation);
     renderParams.opacities.push(1.0);
     
-    _background->render(context, renderParams);
+    _background->render(renderContext, driverContext, renderParams);
 }
 
-void VROScene::render(const VRORenderContext &context) {
+void VROScene::render(const VRORenderContext &renderContext,
+                      const VRODriverContext &driverContext) {
     VROMatrix4f identity;
 
     VRORenderParameters renderParams;
@@ -53,7 +54,7 @@ void VROScene::render(const VRORenderContext &context) {
     renderParams.opacities.push(1.0);
     
     for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->render(context, renderParams);
+        node->render(renderContext, driverContext, renderParams);
     }
 }
 

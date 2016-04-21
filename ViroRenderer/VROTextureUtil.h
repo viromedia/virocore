@@ -13,7 +13,7 @@
 #include <Foundation/Foundation.h>
 
 class VROTexture;
-class VRORenderContext;
+class VRODriverContext;
 class VROData;
 enum class VROTextureFormat;
 enum class VROTextureType;
@@ -27,7 +27,7 @@ public:
      strip the header out and return the raw texture data.
      */
     static std::shared_ptr<VROTexture> loadASTCTexture(NSData *data, VROTextureType type,
-                                                      const VRORenderContext *context = nullptr);
+                                                      const VRODriverContext *context = nullptr);
     
     /*
      Read a texture file with an ASTC header. Read the width and height from the header then

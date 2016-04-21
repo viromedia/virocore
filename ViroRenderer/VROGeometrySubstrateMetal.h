@@ -22,7 +22,9 @@ class VROGeometry;
 class VROMaterial;
 class VROGeometrySource;
 class VROGeometryElement;
-class VRORenderContextMetal;
+class VRORenderContext;
+class VRODriverContext;
+class VRODriverContextMetal;
 class VROMaterialSubstrateMetal;
 class VROConcurrentBuffer;
 
@@ -56,12 +58,13 @@ class VROGeometrySubstrateMetal : public VROGeometrySubstrate {
 public:
     
     VROGeometrySubstrateMetal(const VROGeometry &geometry,
-                              const VRORenderContextMetal &context);
+                              const VRODriverContextMetal &context);
     virtual ~VROGeometrySubstrateMetal();
     
     void render(const VROGeometry &geometry,
                 const std::vector<std::shared_ptr<VROMaterial>> &materials,
-                const VRORenderContext &context,
+                const VRORenderContext &renderContext,
+                const VRODriverContext &driverContext,
                 VRORenderParameters &params);
     
 private:
@@ -108,13 +111,13 @@ private:
      changing.
      */
     void updatePipelineStates(const VROGeometry &geometry,
-                              const VRORenderContextMetal &context);
+                              const VRODriverContextMetal &context);
     
     /*
      Create a pipeline state from the given material, using the current _vertexDescriptor.
      */
     id <MTLRenderPipelineState> createRenderPipelineState(const std::shared_ptr<VROMaterial> &material,
-                                                          const VRORenderContextMetal &context);
+                                                          const VRODriverContextMetal &context);
     
     /*
      Create a depth/stencil state from the given material.
@@ -152,7 +155,8 @@ private:
                         id <MTLDepthStencilState> depthStencilState,
                         id <MTLRenderCommandEncoder> renderEncoder,
                         VRORenderParameters &params,
-                        const VRORenderContext &context);
+                        const VRORenderContext &renderContext,
+                        const VRODriverContext &driverContext);
     
 };
 

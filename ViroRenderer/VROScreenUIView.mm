@@ -60,7 +60,7 @@ static const float kVROLayerSize = 2;
     
 }
 
-- (void)updateWithContext:(const VRORenderContext *)context {
+- (void)updateWithContext:(const VRODriverContext *)context {
     if (!_needsUpdate) {
         return;
     }
@@ -95,12 +95,15 @@ static const float kVROLayerSize = 2;
     CGContextRelease(bitmapContext);
 }
 
-- (void)renderEye:(VROEye *)eye withContext:(const VRORenderContext *)context {
+- (void)renderEye:(VROEyeType)eye
+withRenderContext:(const VRORenderContext *)renderContext
+    driverContext:(const VRODriverContext *)driverContext {
+    
     VRORenderParameters renderParams;
-    renderParams.transforms.push(context->getHUDViewMatrix());
+    renderParams.transforms.push(renderContext->getHUDViewMatrix());
     renderParams.opacities.push(1.0);
     
-    _layer->render(*context, renderParams);
+    _layer->render(*renderContext, *driverContext, renderParams);
 }
 
 - (void)setReticleEnabled:(BOOL)enabled {

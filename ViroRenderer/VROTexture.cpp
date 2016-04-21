@@ -8,7 +8,7 @@
 
 #include "VROTexture.h"
 #include "VROTextureSubstrate.h"
-#include "VRORenderContext.h"
+#include "VRODriverContext.h"
 #include "VROTextureSubstrateMetal.h"
 #include "VROLog.h"
 #include "VROAllocationTracker.h"
@@ -29,7 +29,7 @@ VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate>
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
-VROTexture::VROTexture(UIImage *image, const VRORenderContext *context) :
+VROTexture::VROTexture(UIImage *image, const VRODriverContext *context) :
     _type(VROTextureType::Quad),
     _image(image),
     _substrate(nullptr) {
@@ -40,7 +40,7 @@ VROTexture::VROTexture(UIImage *image, const VRORenderContext *context) :
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
-VROTexture::VROTexture(std::vector<UIImage *> &images, const VRORenderContext *context) :
+VROTexture::VROTexture(std::vector<UIImage *> &images, const VRODriverContext *context) :
     _type(VROTextureType::Cube),
     _image(nullptr),
     _substrate(nullptr) {
@@ -54,7 +54,7 @@ VROTexture::VROTexture(std::vector<UIImage *> &images, const VRORenderContext *c
 
 VROTexture::VROTexture(VROTextureType type, VROTextureFormat format,
                        std::shared_ptr<VROData> data, int width, int height,
-                       const VRORenderContext *context) :
+                       const VRODriverContext *context) :
     _type(type),
     _image(nullptr),
     _data(data),
@@ -74,7 +74,7 @@ VROTexture::~VROTexture() {
     ALLOCATION_TRACKER_SUB(Textures, 1);
 }
 
-VROTextureSubstrate *const VROTexture::getSubstrate(const VRORenderContext &context) {
+VROTextureSubstrate *const VROTexture::getSubstrate(const VRODriverContext &context) {
     if (!_substrate) {
         hydrate(context);
     }
@@ -87,11 +87,11 @@ void VROTexture::setSubstrate(VROTextureType type, std::unique_ptr<VROTextureSub
     _substrate = std::move(substrate);
 }
 
-void VROTexture::prewarm(const VRORenderContext &context) {
+void VROTexture::prewarm(const VRODriverContext &context) {
     hydrate(context);
 }
 
-void VROTexture::hydrate(const VRORenderContext &context) {
+void VROTexture::hydrate(const VRODriverContext &context) {
     if (_type == VROTextureType::Quad) {
         if (_image) {
             std::vector<UIImage *> images = { _image };

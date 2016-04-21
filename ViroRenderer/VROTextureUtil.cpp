@@ -25,7 +25,7 @@ static int read24BitInt(const uint8_t *buf) {
 }
 
 std::shared_ptr<VROTexture> VROTextureUtil::loadASTCTexture(NSData *data, VROTextureType type,
-                                                            const VRORenderContext *context) {
+                                                            const VRODriverContext *context) {
     int width;
     int height;
     VROTextureFormat format;

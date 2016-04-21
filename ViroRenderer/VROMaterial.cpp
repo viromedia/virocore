@@ -9,7 +9,7 @@
 #include "VROMaterial.h"
 #include "VROAnimationFloat.h"
 #include "VROMaterialSubstrate.h"
-#include "VRORenderContext.h"
+#include "VRODriverContext.h"
 #include "VROTransaction.h"
 #include "VROAllocationTracker.h"
 
@@ -138,7 +138,7 @@ void VROMaterial::updateSubstrate() {
     _substrate = nullptr;
 }
 
-void VROMaterial::createSubstrate(const VRORenderContext &context) {
+void VROMaterial::createSubstrate(const VRODriverContext &context) {
     if (!_substrate) {
         _substrate = context.newMaterialSubstrate(*this);
     }

@@ -19,21 +19,11 @@
 #include "VROQuaternion.h"
 #include "VROCamera.h"
 
-class VROGeometry;
-class VROMaterial;
-class VROGeometrySubstrate;
-class VROMaterialSubstrate;
-class VROTextureSubstrate;
-class VROData;
-
 enum class VROEyeType;
-enum class VROTextureType;
-enum class VROTextureFormat;
 
 /*
- Contains the Metal or OpenGL context objects required to render a layer.
- In Metal, these are things like the render pass descriptor, which defines
- the target for rendering.
+ Holds data specific to the current frame. Includes things like transformation
+ matrices. There is nothing driver or device specific contained here.
  */
 class VRORenderContext {
     
@@ -43,12 +33,6 @@ public:
         _frame(0) {
         
     }
-    
-    virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const = 0;
-    virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) const = 0;
-    virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) const = 0;
-    virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, VROTextureFormat format, std::shared_ptr<VROData> data,
-                                                     int width, int height) const = 0;
     
     void addFrameListener(std::shared_ptr<VROFrameListener> listener) {
         _frameListeners.push_back(listener);
@@ -98,8 +82,8 @@ public:
     int getFrame() const {
         return _frame;
     }
-    void incFrame() {
-        ++_frame;
+    void setFrame(int frame) {
+        _frame = frame;
     }
     
     void setEyeType(VROEyeType eye) {

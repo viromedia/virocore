@@ -16,7 +16,7 @@
 #include <vector>
 
 class VROTextureSubstrate;
-class VRORenderContext;
+class VRODriverContext;
 class VROData;
 
 enum class VROTextureType {
@@ -48,15 +48,15 @@ public:
      Create a new VROTexture from a UIImage. If a render context is supplied, then
      the texture will be prewarmed.
      */
-    VROTexture(UIImage *image, const VRORenderContext *context = nullptr);
-    VROTexture(std::vector<UIImage *> &images, const VRORenderContext *context = nullptr);
+    VROTexture(UIImage *image, const VRODriverContext *context = nullptr);
+    VROTexture(std::vector<UIImage *> &images, const VRODriverContext *context = nullptr);
     
     /*
      Create a new VROTexture from the given raw data in the given format.
      */
     VROTexture(VROTextureType type, VROTextureFormat format,
                std::shared_ptr<VROData> data, int width, int height,
-               const VRORenderContext *context = nullptr);
+               const VRODriverContext *context = nullptr);
     
     virtual ~VROTexture();
     
@@ -68,9 +68,9 @@ public:
      Get the texture ready for usage now, in advance of when it's visible. If not invoked,
      the texture will be initialized when it is made visible.
      */
-    void prewarm(const VRORenderContext &context);
+    void prewarm(const VRODriverContext &context);
     
-    VROTextureSubstrate *const getSubstrate(const VRORenderContext &context);
+    VROTextureSubstrate *const getSubstrate(const VRODriverContext &context);
     void setSubstrate(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate);
     
 private:
@@ -102,7 +102,7 @@ private:
     /*
      Converts the image(s) into a substrate.
      */
-    void hydrate(const VRORenderContext &context);
+    void hydrate(const VRODriverContext &context);
     
 };
 

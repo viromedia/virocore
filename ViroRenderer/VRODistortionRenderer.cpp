@@ -11,7 +11,6 @@
 #include "VROViewport.h"
 #include "VROScreen.h"
 #include "VROSharedStructures.h"
-#include "VRORenderContextMetal.h"
 #include "VRODistortionMesh.h"
 #include "VROEye.h"
 #include "VRODevice.h"

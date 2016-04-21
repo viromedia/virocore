@@ -10,7 +10,7 @@
 #include "VROGeometry.h"
 #include "VROGeometrySource.h"
 #include "VROGeometryElement.h"
-#include "VRORenderContextMetal.h"
+#include "VRODriverContextMetal.h"
 #include "VROMaterialSubstrateMetal.h"
 #include "VROMaterial.h"
 #include "VROLog.h"
@@ -21,7 +21,7 @@
 #include <map>
 
 VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry,
-                                                     const VRORenderContextMetal &context) {
+                                                     const VRODriverContextMetal &context) {
     id <MTLDevice> device = context.getDevice();
 
     readGeometryElements(device, geometry.getGeometryElements());
@@ -132,7 +132,7 @@ void VROGeometrySubstrateMetal::readGeometrySources(id <MTLDevice> device,
 }
 
 void VROGeometrySubstrateMetal::updatePipelineStates(const VROGeometry &geometry,
-                                                     const VRORenderContextMetal &context) {
+                                                     const VRODriverContextMetal &context) {
     
     id <MTLDevice> device = context.getDevice();
     const std::vector<std::shared_ptr<VROMaterial>> &materials = geometry.getMaterials_const();
@@ -150,7 +150,7 @@ void VROGeometrySubstrateMetal::updatePipelineStates(const VROGeometry &geometry
 }
 
 id <MTLRenderPipelineState> VROGeometrySubstrateMetal::createRenderPipelineState(const std::shared_ptr<VROMaterial> &material,
-                                                                                 const VRORenderContextMetal &context) {
+                                                                                 const VRODriverContextMetal &context) {
     
     id <MTLDevice> device = context.getDevice();
     std::shared_ptr<VRORenderTarget> renderTarget = context.getRenderTarget();
@@ -316,21 +316,22 @@ int VROGeometrySubstrateMetal::parseAttributeIndex(VROGeometrySourceSemantic sem
 
 void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
                                        const std::vector<std::shared_ptr<VROMaterial>> &materials,
-                                       const VRORenderContext &context,
+                                       const VRORenderContext &renderContext,
+                                       const VRODriverContext &driverContext,
                                        VRORenderParameters &params) {
     
-    const VRORenderContextMetal &metal = (VRORenderContextMetal &)context;
+    const VRODriverContextMetal &metal = (VRODriverContextMetal &)driverContext;
     id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
     
-    int frame = context.getFrame();
-    VROEyeType eyeType = context.getEyeType();
+    int frame = renderContext.getFrame();
+    VROEyeType eyeType = renderContext.getEyeType();
     VROMatrix4f &transform = params.transforms.top();
     
-    VROMatrix4f viewMatrix = context.getViewMatrix();
-    VROMatrix4f projectionMatrix = context.getProjectionMatrix();
+    VROMatrix4f viewMatrix = renderContext.getViewMatrix();
+    VROMatrix4f projectionMatrix = renderContext.getProjectionMatrix();
     
     if (!geometry.isStereoRenderingEnabled()) {
-        viewMatrix = context.getMonocularViewMatrix();
+        viewMatrix = renderContext.getMonocularViewMatrix();
     }
     
     for (int i = 0; i < _elements.size(); i++) {
@@ -347,7 +348,7 @@ void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
         viewUniforms->model_matrix = toMatrixFloat4x4(transform);
         viewUniforms->modelview_matrix = toMatrixFloat4x4(modelview);
         viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(projectionMatrix.multiply(modelview));
-        viewUniforms->camera_position = toVectorFloat3(context.getCamera().getPosition());
+        viewUniforms->camera_position = toVectorFloat3(renderContext.getCamera().getPosition());
 
         [renderEncoder setVertexBuffer:_viewUniformsBuffer->getMTLBuffer(eyeType)
                                 offset:_viewUniformsBuffer->getWriteOffset(frame) atIndex:_vars.size()];
@@ -388,12 +389,15 @@ void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
             id <MTLRenderPipelineState> outgoingPipelineState = _outgoingPipelineStates[i];
             VROMaterialSubstrateMetal *outgoingSubstrate = static_cast<VROMaterialSubstrateMetal *>(outgoing->getSubstrate());
             
-            renderMaterial(outgoingSubstrate, element, outgoingPipelineState, depthState, renderEncoder, params, context);
-            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params, context);
+            renderMaterial(outgoingSubstrate, element, outgoingPipelineState, depthState, renderEncoder, params,
+                           renderContext, driverContext);
+            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params,
+                           renderContext, driverContext);
         }
         else {
             _outgoingPipelineStates[i] = nullptr;
-            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params, context);
+            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params,
+                           renderContext, driverContext);
         }
         
         [renderEncoder popDebugGroup];
@@ -406,10 +410,11 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
                                                id <MTLDepthStencilState> depthStencilState,
                                                id <MTLRenderCommandEncoder> renderEncoder,
                                                VRORenderParameters &params,
-                                               const VRORenderContext &context) {
+                                               const VRORenderContext &renderContext,
+                                               const VRODriverContext &driverContext) {
     
-    int frame = context.getFrame();
-    VROEyeType eyeType = context.getEyeType();
+    int frame = renderContext.getFrame();
+    VROEyeType eyeType = renderContext.getEyeType();
     
     [renderEncoder setRenderPipelineState:pipelineState];
     [renderEncoder setDepthStencilState:depthStencilState];
@@ -421,12 +426,12 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
     
     const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();
     for (int j = 0; j < textures.size(); ++j) {
-        VROTextureSubstrateMetal *substrate = (VROTextureSubstrateMetal *) textures[j]->getSubstrate(context);
+        VROTextureSubstrateMetal *substrate = (VROTextureSubstrateMetal *) textures[j]->getSubstrate(driverContext);
         if (!substrate) {
             // Use a blank placeholder if a texture is not yet available (i.e.
             // during video texture loading)
             std::shared_ptr<VROTexture> blank = getBlankTexture();
-            substrate = (VROTextureSubstrateMetal *) blank->getSubstrate(context);
+            substrate = (VROTextureSubstrateMetal *) blank->getSubstrate(driverContext);
         }
         
         [renderEncoder setFragmentTexture:substrate->getTexture() atIndex:j];

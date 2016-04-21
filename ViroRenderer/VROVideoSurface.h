@@ -13,6 +13,7 @@
 #import <memory>
 
 class VRORenderContext;
+class VRODriverContext;
 class VROMaterial;
 class VROSurface;
 class VROVideoTexture;
@@ -22,7 +23,8 @@ class VROVideoSurface : public VROSurface {
 public:
     
     static std::shared_ptr<VROVideoSurface> createVideoSurface(float width, float height,
-                                                               NSURL *url, VRORenderContext &context);
+                                                               NSURL *url, VRORenderContext &renderContext,
+                                                               VRODriverContext &driverContext);
     
     void pause();
     void play();
