@@ -1,0 +1,6 @@
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
+HEADER_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/CardboardSDK"
+LIBRARY_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/CardboardSDK/Libraries"
+OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/CardboardSDK"
+OTHER_LDFLAGS = $(inherited) -ObjC -l"CardboardSDK" -l"c++" -framework "AVFoundation" -framework "AudioToolbox" -framework "CoreGraphics" -framework "CoreMedia" -framework "CoreMotion" -framework "CoreVideo" -framework "GLKit" -framework "MediaPlayer" -framework "OpenGLES" -framework "QuartzCore"
+PODS_ROOT = ${SRCROOT}/Pods

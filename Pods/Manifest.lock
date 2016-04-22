@@ -1,0 +1,10 @@
+PODS:
+  - CardboardSDK (0.7.2)
+
+DEPENDENCIES:
+  - CardboardSDK
+
+SPEC CHECKSUMS:
+  CardboardSDK: 42aa8f9e638515abb5991460c3091edc969027d4
+
+COCOAPODS: 0.39.0

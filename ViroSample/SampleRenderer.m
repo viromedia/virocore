@@ -371,7 +371,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     scene->addNode(rootNode);
     
-    std::shared_ptr<VRONode> objNode = VROLoader::loadURL(soccerURL, *self.context)[0];
+    std::shared_ptr<VRONode> objNode = VROLoader::loadURL(soccerURL)[0];
     objNode->getGeometry()->getMaterials()[0]->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"shanghai_tower_diffuse.jpg"]));
     objNode->getGeometry()->getMaterials()[0]->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"shanghai_tower_specular.jpg"]));
     objNode->setPosition({0, -10, -20});
