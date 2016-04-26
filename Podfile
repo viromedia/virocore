@@ -1,1 +1,3 @@
-pod 'CardboardSDK'
+target 'ViroKit' do
+   pod 'CardboardSDK'
+end
