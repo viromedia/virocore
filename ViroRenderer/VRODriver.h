@@ -24,11 +24,7 @@ public:
     VRODriver();
     virtual ~VRODriver();
     
-    virtual bool isVignetteEnabled() const = 0;
-    virtual void setVignetteEnabled(bool vignetteEnabled) = 0;
-    virtual bool isChromaticAberrationCorrectionEnabled() const = 0;
-    virtual void setChromaticAberrationCorrectionEnabled(bool enabled) = 0;
-    
+    virtual UIView *getRenderingView() = 0;
     virtual void onOrientationChange(UIInterfaceOrientation orientation) = 0;
     
     virtual VROViewport getViewport(VROEyeType eye) = 0;

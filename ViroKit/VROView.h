@@ -8,8 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <Metal/Metal.h>
-#import <MetalKit/MetalKit.h>
 #import "VRORenderDelegate.h"
 #import "VROScreenUIView.h"
 #import <memory>
@@ -18,7 +16,7 @@
 class VROScene;
 enum class VROTimingFunctionType;
 
-@interface VROView : MTKView <MTKViewDelegate>
+@interface VROView : UIView
 
 @property (nonatomic, unsafe_unretained) IBOutlet id <VRORenderDelegate> renderDelegate;
 

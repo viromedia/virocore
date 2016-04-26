@@ -28,9 +28,7 @@ class VROFieldOfView;
 enum class VROEyeType;
 enum class VROTimingFunctionType;
 
-class VRORenderContextMetal; //TODO delegate
 @class VROScreenUIView; //TODO delete
-@class MTKView; //TODO delete
 @class VROView;
 @class VROSceneController;
 
@@ -54,8 +52,7 @@ public:
     
     void updateRenderViewSize(CGSize size);
     
-    void prepareFrame(int frame, VROView *view, VROMatrix4f headRotation,
-                      VRODriverContext &driverContext);
+    void prepareFrame(int frame, VROMatrix4f headRotation, VRODriverContext &driverContext);
     void renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
                    const VRODriverContext &driverContext);
     void endFrame(const VRODriverContext &driverContext);
@@ -63,6 +60,10 @@ public:
     void handleTap();
     VROScreenUIView *getHUD() {
         return _HUD;
+    }
+    
+    VROSceneController *getSceneController() const {
+        return _sceneController;
     }
     
 private:

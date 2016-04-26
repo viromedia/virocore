@@ -44,7 +44,7 @@ VRORenderer::VRORenderer() :
 }
 
 VRORenderer::~VRORenderer() {
-
+    [_delegate shutdownRenderer];
 }
 
 void VRORenderer::setDelegate(id <VRORenderDelegate> delegate) {
@@ -81,20 +81,12 @@ float VRORenderer::getWorldPerScreen(float distance, const VROFieldOfView &fov,
 #pragma mark - Stereo renderer methods
 
 void VRORenderer::updateRenderViewSize(CGSize size) {
-    /*
-    if (_vrModeEnabled) {
-        [_renderDelegate renderViewDidChangeSize:CGSizeMake(size.width / 2, size.height) context:_context];
-    }
-    else {
-        [_renderDelegate renderViewDidChangeSize:CGSizeMake(size.width, size.height) context:_context];
-    }
-     */
+   [_delegate renderViewDidChangeSize:CGSizeMake(size.width / 2, size.height) context:_context.get()];
 }
 
-void VRORenderer::prepareFrame(int frame, VROView *view, VROMatrix4f headRotation,
-                               VRODriverContext &driverContext) {
+void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriverContext &driverContext) {
     if (!_rendererInitialized) {
-        [_delegate setupRendererWithView:view renderContext:_context.get() driverContext:&driverContext];
+        [_delegate setupRendererWithDriverContext:&driverContext];
         _rendererInitialized = YES;
     }
     

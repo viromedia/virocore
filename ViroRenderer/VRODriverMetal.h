@@ -15,42 +15,36 @@
 
 class VRORenderer;
 class VRODevice;
-class VRODriverContext;
+class VRODriverContextMetal;
 class VROEye;
 class VROHeadTracker;
 class VROViewport;
 class VRODistortionRenderer;
-@class VROView;
+@class VROViewMetal;
 
-class VRODriverMetal : public VRODriver {
+class VRODriverMetal : public VRODriver, public std::enable_shared_from_this<VRODriverMetal> {
     
 public:
     
-    VRODriverMetal(id <MTLDevice> device, VROView *view);
+    VRODriverMetal(std::shared_ptr<VRORenderer> renderer,
+                   VROView *view);
     virtual ~VRODriverMetal();
     
-    void driveFrame(int frame);
+    void driveFrame();
     
-    bool isVignetteEnabled() const;
-    void setVignetteEnabled(bool vignetteEnabled);
-    bool isChromaticAberrationCorrectionEnabled() const;
-    void setChromaticAberrationCorrectionEnabled(bool enabled);
-    
+    UIView *getRenderingView();
     void onOrientationChange(UIInterfaceOrientation orientation);
-    float getVirtualEyeToScreenDistance() const;
     
     VROViewport getViewport(VROEyeType eye);
     VROFieldOfView getFOV(VROEyeType eye);
     
-    void setRenderer(std::shared_ptr<VRORenderer> renderer) {
-        _renderer = renderer;
-    }
-    
 private:
     
+    int _frame;
     bool _vrModeEnabled;
     bool _projectionChanged;
     
+    VROViewMetal *_view;
     VROEye *_monocularEye;
     VROEye *_leftEye;
     VROEye *_rightEye;
@@ -59,19 +53,20 @@ private:
     
     VROHeadTracker *_headTracker;
     std::shared_ptr<VRODevice> _device;
-    std::shared_ptr<VRODriverContext> _context;
+    std::shared_ptr<VRODriverContextMetal> _context;
     
-    __weak VROView *_view;
+#pragma mark - Rendering
+
     VRODistortionRenderer *_distortionRenderer;
     
     dispatch_semaphore_t _inflight_semaphore;
     
-#pragma mark - Rendering
     
     void renderVRDistortion(int frame, id <MTLCommandBuffer> commandBuffer);
     
 #pragma mark - View Computation
     
+    float getVirtualEyeToScreenDistance() const;
     void calculateFrameParameters();
     void updateMonocularEye();
     void updateLeftRightEyes();

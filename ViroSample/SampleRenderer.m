@@ -9,9 +9,9 @@
 #import "SampleRenderer.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneVideoSphere = 0,
+    VROSampleSceneTorus = 0,
+    VROSampleSceneVideoSphere,
     VROSampleSceneBox,
-    VROSampleSceneTorus,
     VROSampleSceneOBJ,
     VROSampleSceneLayer,
     VROSampleSceneNumScenes
@@ -410,10 +410,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return [self loadTorusScene];
 }
 
-- (void)setupRendererWithView:(VROView *)view renderContext:(VRORenderContext *)context driverContext:(VRODriverContext *)driverContext {
-    self.view = view;
+- (void)setupRendererWithDriverContext:(VRODriverContext *)driverContext {
     self.driverContext = driverContext;
-    self.context = context;
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
 }
 
@@ -424,7 +422,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     [self.view setSceneController:sceneController animated:YES];
 }
 
-- (void)shutdownRendererWithView:(VROView *)view {
+- (void)shutdownRenderer {
     
 }
 

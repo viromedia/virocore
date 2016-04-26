@@ -31,7 +31,7 @@
   
 }
 
-@property (readwrite, nonatomic) VRODriverMetal *driver;
+@property (readwrite, nonatomic) std::shared_ptr<VRODriverMetal> driver;
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
 @property (readwrite, nonatomic) int frameNumber;
 
@@ -66,25 +66,21 @@
                                                  name:UIApplicationDidChangeStatusBarOrientationNotification
                                                object:nil];
     
-    id <MTLDevice> device = MTLCreateSystemDefaultDevice();
-    
     self.frameNumber = 0;
-    self.device = device;
-    self.delegate = self;
-    self.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
-    
     self.renderer = std::make_shared<VRORenderer>();
-    self.driver = new VRODriverMetal(device, self);
-    ((VRODriverMetal *)self.driver)->setRenderer(self.renderer);
+    self.driver = std::make_shared<VRODriverMetal>(self.renderer, self);
 
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                     action:@selector(handleTap:)];
     [self addGestureRecognizer:tapRecognizer];
+    
+    UIView *renderingView = self.driver->getRenderingView();
+    [renderingView setFrame:self.bounds];
+    
+    [self addSubview:renderingView];
 }
 
 - (void)dealloc {
-    [_renderDelegate shutdownRendererWithView:self];
-
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -95,7 +91,6 @@
 }
 
 - (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {
-    _renderDelegate = renderDelegate;
     self.renderer->setDelegate(renderDelegate);
 }
 
@@ -115,21 +110,6 @@
                                             self.driver->getViewport(VROEyeType::Left));
 }
 
-#pragma mark - Rendering
-
-// Called whenever view changes orientation or layout is changed
-- (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size {
-    //[self _reshape];
-}
-
-// Called whenever the view needs to render
-- (void)drawInMTKView:(nonnull MTKView *)view {
-    _driver->driveFrame(_frameNumber);
-    ++_frameNumber;
-    
-    ALLOCATION_TRACKER_PRINT();
-}
-
 - (void)layoutSubviews {
     [super layoutSubviews];
     _renderer->updateRenderViewSize(self.bounds.size);
@@ -146,6 +126,10 @@
 }
 
 #pragma mark - Scene Loading
+
+- (VROSceneController *)sceneController {
+    return _renderer->getSceneController();
+}
 
 - (void)setSceneController:(VROSceneController *)sceneController {
     _renderer->setSceneController(sceneController);

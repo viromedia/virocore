@@ -15,7 +15,7 @@
 #include "VROEye.h"
 #include "VRODevice.h"
 #include "VROConcurrentBuffer.h"
-#include "VROView.h"
+#include "VROViewMetal.h"
 
 static const float kSampleCount = 4;
 
@@ -126,7 +126,7 @@ void VRODistortionRenderer::updateViewports(VROEye *leftEye, VROEye *rightEye) {
                           round(_rightEyeViewport.height * _yPxPerTanAngle * _resolutionScale));
 }
 
-void VRODistortionRenderer::updateDistortion(id <MTLDevice> gpu, id <MTLLibrary> library, VROView *view) {
+void VRODistortionRenderer::updateDistortion(id <MTLDevice> gpu, id <MTLLibrary> library, VROViewMetal *view) {
     if (!_fovsChanged) {
         return;
     }

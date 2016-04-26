@@ -15,18 +15,21 @@
 #include "VRORenderer.h"
 #include "VROHeadTracker.h"
 #include "VRODevice.h"
+#include "VROViewMetal.h"
 
 static const float zNear = 0.1;
 static const float zFar  = 100;
 
-VRODriverMetal::VRODriverMetal(id <MTLDevice> device,
+VRODriverMetal::VRODriverMetal(std::shared_ptr<VRORenderer> renderer,
                                VROView *view) :
-    //_renderer(renderer),
+    _frame(0),
+    _renderer(renderer),
     _vrModeEnabled(true),
     _projectionChanged(true),
-    _device(std::make_shared<VRODevice>([UIScreen mainScreen])),
-    _context(std::make_shared<VRODriverContextMetal>(device)),
-    _view(view) {
+    _device(std::make_shared<VRODevice>([UIScreen mainScreen])) {
+        
+    id <MTLDevice> device = MTLCreateSystemDefaultDevice();
+    _context = std::make_shared<VRODriverContextMetal>(device);
 
     _distortionRenderer = new VRODistortionRenderer(_device);
     _inflight_semaphore = dispatch_semaphore_create(3);
@@ -47,23 +50,16 @@ VRODriverMetal::~VRODriverMetal() {
     delete (_rightEye);
 }
 
+UIView *VRODriverMetal::getRenderingView() {
+    if (!_view) {
+        _view = [[VROViewMetal alloc] initWithFrame:CGRectZero
+                                             device:_context->getDevice()
+                                             driver:shared_from_this()];
+    }
+    return _view;
+}
+
 #pragma mark - Settings
-
-bool VRODriverMetal::isVignetteEnabled() const {
-    return _distortionRenderer->isVignetteEnabled();
-}
-
-void VRODriverMetal::setVignetteEnabled(bool vignetteEnabled) {
-    _distortionRenderer->setVignetteEnabled(vignetteEnabled);
-}
-
-bool VRODriverMetal::isChromaticAberrationCorrectionEnabled() const {
-    return _distortionRenderer->isChromaticAberrationEnabled();
-}
-
-void VRODriverMetal::setChromaticAberrationCorrectionEnabled(bool enabled) {
-    _distortionRenderer->setChromaticAberrationEnabled(enabled);
-}
 
 void VRODriverMetal::onOrientationChange(UIInterfaceOrientation orientation) {
     _headTracker->updateDeviceOrientation(orientation);
@@ -94,7 +90,7 @@ VROEye *VRODriverMetal::getEye(VROEyeType type) {
 
 #pragma mark - Render Loop
 
-void VRODriverMetal::driveFrame(int frame) {
+void VRODriverMetal::driveFrame() {
     if (!_headTracker->isReady()) {
         return;
     }
@@ -124,13 +120,15 @@ void VRODriverMetal::driveFrame(int frame) {
         VROTransaction::beginImplicitAnimation();
         VROTransaction::update();
         
-        renderVRDistortion(frame, commandBuffer);
+        renderVRDistortion(_frame, commandBuffer);
 
         [commandBuffer presentDrawable:_view.currentDrawable];
         [commandBuffer commit];
         
         VROTransaction::commitAll();
     }
+    
+    ++_frame;
 }
 
 void VRODriverMetal::renderVRDistortion(int frame, id <MTLCommandBuffer> commandBuffer) {
@@ -141,7 +139,7 @@ void VRODriverMetal::renderVRDistortion(int frame, id <MTLCommandBuffer> command
     driverContext->setRenderTarget(eyeTarget);
     
     VROMatrix4f headRotation = _headTracker->getHeadRotation();
-    _renderer->prepareFrame(frame, _view, headRotation, *driverContext);
+    _renderer->prepareFrame(frame, headRotation, *driverContext);
     
     float halfLensDistance = _device->getInterLensDistance() * 0.5f;
     VROMatrix4f leftEyeMatrix  = matrix_from_translation( halfLensDistance, 0, 0);
