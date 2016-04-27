@@ -33,7 +33,6 @@
 
 @property (readwrite, nonatomic) std::shared_ptr<VRODriverMetal> driver;
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
-@property (readwrite, nonatomic) int frameNumber;
 
 @end
 
@@ -65,8 +64,6 @@
                                              selector:@selector(orientationDidChange:)
                                                  name:UIApplicationDidChangeStatusBarOrientationNotification
                                                object:nil];
-    
-    self.frameNumber = 0;
     self.renderer = std::make_shared<VRORenderer>();
     self.driver = std::make_shared<VRODriverMetal>(self.renderer, self);
 
@@ -74,10 +71,14 @@
                                                                                     action:@selector(handleTap:)];
     [self addGestureRecognizer:tapRecognizer];
     
+    [self setBackgroundColor:[UIColor redColor]];
+    
     UIView *renderingView = self.driver->getRenderingView();
     [renderingView setFrame:self.bounds];
+    [renderingView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
     
     [self addSubview:renderingView];
+    [self sendSubviewToBack:renderingView];
 }
 
 - (void)dealloc {
