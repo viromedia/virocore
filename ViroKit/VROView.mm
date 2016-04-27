@@ -146,4 +146,10 @@
     _renderer->setSceneController(sceneController, seconds, timingFunctionType);
 }
 
+#pragma mark - Frame Listeners
+
+- (std::shared_ptr<VROFrameSynchronizer>)frameSynchronizer {
+    return _renderer;
+}
+
 @end

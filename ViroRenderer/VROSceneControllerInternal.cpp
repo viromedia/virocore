@@ -11,6 +11,7 @@
 #include "VROHoverController.h"
 #include "VROScene.h"
 #include "VROFrameListener.h"
+#include "VROFrameSynchronizer.h"
 #include "VROLog.h"
 
 static const float kHoverControllerRadiusDegrees = 1;
@@ -44,11 +45,17 @@ void VROSceneControllerInternal::onSceneDidAppear(VRORenderContext &context) {
                                                                 _scene);
     }
     
-    context.addFrameListener(_hoverController);
+    std::shared_ptr<VROFrameSynchronizer> synchronizer = _frameSynchronizer.lock();
+    if (synchronizer) {
+        synchronizer->addFrameListener(_hoverController);
+    }
 }
 
 void VROSceneControllerInternal::onSceneWillDisappear(VRORenderContext &context) {
-    context.removeFrameListener(_hoverController);
+    std::shared_ptr<VROFrameSynchronizer> synchronizer = _frameSynchronizer.lock();
+    if (synchronizer) {
+        synchronizer->removeFrameListener(_hoverController);
+    }
 }
 
 void VROSceneControllerInternal::onSceneDidDisappear(VRORenderContext &context) {

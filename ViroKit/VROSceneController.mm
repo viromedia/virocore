@@ -16,6 +16,7 @@
 #import "VRONode.h"
 #import "VROReticleSizeListener.h"
 #import "VROScreenUIView.h"
+#import "VROFrameSynchronizer.h"
 #import "VROView.h"
 #import <map>
 

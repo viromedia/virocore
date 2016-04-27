@@ -15,6 +15,7 @@ class VROScene;
 class VRORenderContext;
 class VROHoverDelegate;
 class VROHoverController;
+class VROFrameSynchronizer;
 class VROHoverDistanceListener;
 
 class VROSceneControllerInternal {
@@ -50,6 +51,11 @@ private:
      The hover controller used for this scene.
      */
     std::shared_ptr<VROHoverController> _hoverController;
+    
+    /*
+     Used to add/remove frame listeners.
+     */
+    std::weak_ptr<VROFrameSynchronizer> _frameSynchronizer;
     
 };
 

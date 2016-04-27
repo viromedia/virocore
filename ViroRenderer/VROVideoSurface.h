@@ -17,14 +17,16 @@ class VRODriverContext;
 class VROMaterial;
 class VROSurface;
 class VROVideoTexture;
+class VROFrameSynchronizer;
 
 class VROVideoSurface : public VROSurface {
     
 public:
     
     static std::shared_ptr<VROVideoSurface> createVideoSurface(float width, float height,
-                                                               NSURL *url, VRORenderContext &renderContext,
-                                                               VRODriverContext &driverContext);
+                                                               NSURL *url,
+                                                               std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+                                                               const VRODriverContext &driverContext);
     
     void pause();
     void play();

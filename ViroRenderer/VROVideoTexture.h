@@ -18,6 +18,7 @@
 @class VROVideoCaptureDelegate;
 @class VROVideoPlaybackDelegate;
 class VRORenderContext;
+class VROFrameSynchronizer;
 class VRODriverContext;
 class VROMaterial;
 
@@ -34,16 +35,16 @@ public:
      Use this video texture to display the contents of the front-facing camera.
      */
     void displayCamera(AVCaptureDevicePosition position,
-                       VRORenderContext &renderContext,
-                       VRODriverContext &driverContext);
+                       std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+                       const VRODriverContext &driverContext);
     
     /*
      Use this video texture to display the contents of the given URL. The video
      will not run until play() is invoked.
      */
     void loadVideo(NSURL *url,
-                   VRORenderContext &renderContext,
-                   VRODriverContext &driverContext);
+                   std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+                   const VRODriverContext &driverContext);
     
     /*
      Perform video initialization (which causes a stutter) early.

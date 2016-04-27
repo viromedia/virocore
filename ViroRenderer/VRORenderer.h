@@ -10,10 +10,12 @@
 #define VRORenderer_h
 
 #include <memory>
+#include <vector>
 #include "VROVector3f.h"
 #include "VROQuaternion.h"
 #include "VROMatrix4f.h"
 #include "VRORenderDelegate.h"
+#include "VROFrameSynchronizer.h"
 
 class VROEye;
 class VRODriverContext;
@@ -25,6 +27,7 @@ class VROTimingFunction;
 class VRORenderContext;
 class VROViewport;
 class VROFieldOfView;
+class VROFrameListener;
 enum class VROEyeType;
 enum class VROTimingFunctionType;
 
@@ -32,7 +35,7 @@ enum class VROTimingFunctionType;
 @class VROView;
 @class VROSceneController;
 
-class VRORenderer {
+class VRORenderer : public VROFrameSynchronizer {
     
 public:
     
@@ -43,27 +46,33 @@ public:
     void setBaseRotation(VROQuaternion quaternion);
     float getWorldPerScreen(float distance, const VROFieldOfView &fov,
                             const VROViewport &viewport) const;
+    void setDelegate(id <VRORenderDelegate> delegate);
+    void updateRenderViewSize(CGSize size);
+    
+#pragma mark - Scene Controllers
     
     void setSceneController(VROSceneController *sceneController);
     void setSceneController(VROSceneController *sceneController, bool animated);
     void setSceneController(VROSceneController *sceneController, float seconds, VROTimingFunctionType timingFunctionType);
+    VROSceneController *getSceneController() const {
+        return _sceneController;
+    }
     
-    void setDelegate(id <VRORenderDelegate> delegate);
-    
-    void updateRenderViewSize(CGSize size);
+#pragma mark - Render Loop
     
     void prepareFrame(int frame, VROMatrix4f headRotation, VRODriverContext &driverContext);
     void renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
                    const VRODriverContext &driverContext);
     void endFrame(const VRODriverContext &driverContext);
+    
+#pragma mark - Frame Listeners
+    
+    void addFrameListener(std::shared_ptr<VROFrameListener> listener);
+    void removeFrameListener(std::shared_ptr<VROFrameListener> listener);
 
     void handleTap();
     VROScreenUIView *getHUD() {
         return _HUD;
-    }
-    
-    VROSceneController *getSceneController() const {
-        return _sceneController;
     }
     
 private:
@@ -89,7 +98,12 @@ private:
      Delegate receiving scene rendering updates.
      */
     id <VRORenderDelegate> _delegate; //TODO Make this not Obj-C, and weak ptr
-        
+
+    /*
+     Listeners that receive an update each frame.
+     */
+    std::vector<std::weak_ptr<VROFrameListener>> _frameListeners;
+
 #pragma mark - Scene and Scene Transitions
     
     VROSceneController *_sceneController;
@@ -105,6 +119,11 @@ private:
 #pragma mark - Scene Rendering
     
     void renderEye(VROEyeType eyeType, const VRODriverContext &driverContext);
+    
+#pragma mark - Frame Listeners
+    
+    void notifyFrameStart();
+    void notifyFrameEnd();
     
 };
 

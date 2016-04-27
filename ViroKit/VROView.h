@@ -14,6 +14,7 @@
 
 @class VROSceneController;
 class VROScene;
+class VROFrameSynchronizer;
 enum class VROTimingFunctionType;
 
 @interface VROView : UIView
@@ -32,5 +33,7 @@ enum class VROTimingFunctionType;
 - (void)setPosition:(VROVector3f)position;
 - (void)setBaseRotation:(VROQuaternion)rotation;
 - (float)worldPerScreenAtDepth:(float)distance;
+
+- (std::shared_ptr<VROFrameSynchronizer>)frameSynchronizer;
 
 @end

@@ -93,7 +93,7 @@ void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriverCon
     _sceneTransitionActive = processSceneTransition();
     
     _context->setFrame(frame);
-    _context->notifyFrameStart();
+    notifyFrameStart();
     
     VROCamera camera;
     camera.setHeadRotation({headRotation.invert()});
@@ -148,7 +148,7 @@ void VRORenderer::endFrame(const VRODriverContext &driverContext) {
         _outgoingSceneController = nullptr;
     }
     
-    _context->notifyFrameEnd();
+    notifyFrameEnd();
 }
 
 void VRORenderer::renderEye(VROEyeType eyeType, const VRODriverContext &driverContext) {
@@ -245,4 +245,53 @@ bool VRORenderer::processSceneTransition() {
     }
     
     return sceneTransitionActive;
+}
+
+#pragma mark - Frame Listeners
+
+void VRORenderer::addFrameListener(std::shared_ptr<VROFrameListener> listener) {
+    _frameListeners.push_back(listener);
+}
+
+void VRORenderer::removeFrameListener(std::shared_ptr<VROFrameListener> listener) {
+    _frameListeners.erase(
+                          std::remove_if(_frameListeners.begin(), _frameListeners.end(),
+                                         [this, listener](std::weak_ptr<VROFrameListener> l) {
+                                             std::shared_ptr<VROFrameListener> locked = l.lock();
+                                             return locked && locked == listener;
+                                         }), _frameListeners.end());
+}
+
+void VRORenderer::notifyFrameStart() {
+    auto it = _frameListeners.begin();
+    
+    while (it != _frameListeners.end()) {
+        std::weak_ptr<VROFrameListener> listener = *it;
+        std::shared_ptr<VROFrameListener> locked = listener.lock();
+        
+        if (locked) {
+            locked->onFrameWillRender(*_context);
+            ++it;
+        }
+        else {
+            it = _frameListeners.erase(it);
+        }
+    }
+}
+
+void VRORenderer::notifyFrameEnd() {
+    auto it = _frameListeners.begin();
+    
+    while (it != _frameListeners.end()) {
+        std::weak_ptr<VROFrameListener> listener = *it;
+        std::shared_ptr<VROFrameListener> locked = listener.lock();
+        
+        if (locked) {
+            locked->onFrameDidRender(*_context);
+            ++it;
+        }
+        else {
+            it = _frameListeners.erase(it);
+        }
+    }
 }

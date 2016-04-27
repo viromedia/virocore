@@ -10,6 +10,7 @@
 		42F6CA9BC26A30987D44C675 /* libPods-ViroKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 025778F86F5FBA711F5AE6AF /* libPods-ViroKit.a */; };
 		8F0856581C87960900E66709 /* VROGeometryUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0856561C87960900E66709 /* VROGeometryUtil.cpp */; };
 		8F0856591C87960900E66709 /* VROGeometryUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0856571C87960900E66709 /* VROGeometryUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F0FE65F1CD129FF00A4C297 /* VROFrameSynchronizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1071D21BF40FAF003B3C3F /* momentslogo.png */; };
 		8F11B7BD1C1F8F1E0026D150 /* VRORenderContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F517BF91BCDC8C20017C70B /* VRORenderContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F11B7C21C20B0530026D150 /* VROView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C01C20B0530026D150 /* VROView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -297,6 +298,7 @@
 		871D3D9C712106EF79F3A819 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		8F0856561C87960900E66709 /* VROGeometryUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGeometryUtil.cpp; sourceTree = "<group>"; };
 		8F0856571C87960900E66709 /* VROGeometryUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGeometryUtil.h; sourceTree = "<group>"; };
+		8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROFrameSynchronizer.h; sourceTree = "<group>"; };
 		8F1071CF1BE81F10003B3C3F /* VROWorldUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROWorldUIView.h; sourceTree = "<group>"; };
 		8F1071D01BE81F10003B3C3F /* VROWorldUIView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROWorldUIView.mm; sourceTree = "<group>"; };
 		8F1071D21BF40FAF003B3C3F /* momentslogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = momentslogo.png; path = ViroSample/momentslogo.png; sourceTree = "<group>"; };
@@ -690,6 +692,7 @@
 				8FCF396E1CB6F86700A86CA3 /* VRODriverMetal.h */,
 				8FCF396D1CB6F86700A86CA3 /* VRODriverMetal.cpp */,
 				8FA9D0A21CC947DD00B00B93 /* VRODriverContext.h */,
+				8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";
@@ -1096,6 +1099,7 @@
 				8FD4DF371C18F500003DC425 /* VROMaterial.h in Headers */,
 				8FCF39681CAEE5B700A86CA3 /* VROReticleSizeListener.h in Headers */,
 				8F83DEA01C4826F80089C31A /* VROTimingFunctionEaseInEaseOut.h in Headers */,
+				8F0FE65F1CD129FF00A4C297 /* VROFrameSynchronizer.h in Headers */,
 				8F83DEA31C4826F80089C31A /* VROTimingFunctionPowerDeceleration.h in Headers */,
 				8F65F7861C90CD0B00415115 /* VROConstraint.h in Headers */,
 				8FC908871CA458EB00069C89 /* VROCameraMutable.h in Headers */,
