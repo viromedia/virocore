@@ -19,6 +19,7 @@
 #import "VROCameraMutable.h"
 #import "VROScreenUIView.h"
 #import "VRORenderDelegate.h"
+#import "VROTransaction.h"
 
 static const float kDefaultSceneTransitionDuration = 1.0;
 
@@ -81,6 +82,9 @@ void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriverCon
         _rendererInitialized = YES;
     }
     
+    VROTransaction::beginImplicitAnimation();
+    VROTransaction::update();
+    
     _sceneTransitionActive = processSceneTransition();
     
     _context->setFrame(frame);
@@ -140,6 +144,7 @@ void VRORenderer::endFrame(const VRODriverContext &driverContext) {
     }
     
     notifyFrameEnd();
+    VROTransaction::commitAll();
 }
 
 void VRORenderer::renderEye(VROEyeType eyeType, const VRODriverContext &driverContext) {

@@ -6,12 +6,19 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include "VRODriverCardboard.h"
-#include "VROViewport.h"
-#include "VROFieldOfView.h"
+#import "VRODriverCardboard.h"
+#import "VROViewport.h"
+#import "VROFieldOfView.h"
+#import "VRODriverContextMetal.h"
+#import "VROCardboardViewDelegate.h"
 
-VRODriverCardboard::VRODriverCardboard() {
+VRODriverCardboard::VRODriverCardboard(std::shared_ptr<VRORenderer> renderer) :
+    _renderer(renderer) {
+        
+    id <MTLDevice> device = MTLCreateSystemDefaultDevice();
+    _context = std::make_shared<VRODriverContextMetal>(device);
     
+    _delegate = [[VROCardboardViewDelegate alloc] init];
 }
 
 VRODriverCardboard::~VRODriverCardboard() {
@@ -19,7 +26,12 @@ VRODriverCardboard::~VRODriverCardboard() {
 }
 
 UIView *VRODriverCardboard::getRenderingView() {
-    return nullptr;
+    if (!_view) {
+        _view = [[GCSCardboardView alloc] initWithFrame:CGRectZero];
+        _view.delegate = _delegate;
+    }
+    
+    return _view;
 }
 
 void VRODriverCardboard::onOrientationChange(UIInterfaceOrientation orientation) {

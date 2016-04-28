@@ -11,6 +11,9 @@
 		8F0856581C87960900E66709 /* VROGeometryUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0856561C87960900E66709 /* VROGeometryUtil.cpp */; };
 		8F0856591C87960900E66709 /* VROGeometryUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0856571C87960900E66709 /* VROGeometryUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F0FE65F1CD129FF00A4C297 /* VROFrameSynchronizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F0FE6641CD25F0C00A4C297 /* VRODriverCardboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDE20C1CCFD72300674DE2 /* VRODriverCardboard.cpp */; };
+		8F0FE6671CD2605100A4C297 /* VROCardboardViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE6651CD2605100A4C297 /* VROCardboardViewDelegate.h */; };
+		8F0FE6681CD2605100A4C297 /* VROCardboardViewDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F0FE6661CD2605100A4C297 /* VROCardboardViewDelegate.m */; };
 		8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1071D21BF40FAF003B3C3F /* momentslogo.png */; };
 		8F11B7BD1C1F8F1E0026D150 /* VRORenderContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F517BF91BCDC8C20017C70B /* VRORenderContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F11B7C21C20B0530026D150 /* VROView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C01C20B0530026D150 /* VROView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -299,6 +302,8 @@
 		8F0856561C87960900E66709 /* VROGeometryUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGeometryUtil.cpp; sourceTree = "<group>"; };
 		8F0856571C87960900E66709 /* VROGeometryUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGeometryUtil.h; sourceTree = "<group>"; };
 		8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROFrameSynchronizer.h; sourceTree = "<group>"; };
+		8F0FE6651CD2605100A4C297 /* VROCardboardViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCardboardViewDelegate.h; sourceTree = "<group>"; };
+		8F0FE6661CD2605100A4C297 /* VROCardboardViewDelegate.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROCardboardViewDelegate.m; sourceTree = "<group>"; };
 		8F1071CF1BE81F10003B3C3F /* VROWorldUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROWorldUIView.h; sourceTree = "<group>"; };
 		8F1071D01BE81F10003B3C3F /* VROWorldUIView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROWorldUIView.mm; sourceTree = "<group>"; };
 		8F1071D21BF40FAF003B3C3F /* momentslogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = momentslogo.png; path = ViroSample/momentslogo.png; sourceTree = "<group>"; };
@@ -649,6 +654,8 @@
 			children = (
 				8FDDE20D1CCFD72300674DE2 /* VRODriverCardboard.h */,
 				8FDDE20C1CCFD72300674DE2 /* VRODriverCardboard.cpp */,
+				8F0FE6651CD2605100A4C297 /* VROCardboardViewDelegate.h */,
+				8F0FE6661CD2605100A4C297 /* VROCardboardViewDelegate.m */,
 			);
 			name = Cardboard;
 			sourceTree = "<group>";
@@ -1158,6 +1165,7 @@
 				8FD4DF521C18F5EB003DC425 /* VROTransaction.h in Headers */,
 				8FD4DF531C18F5EB003DC425 /* VROCrossLayout.h in Headers */,
 				8F11B7BD1C1F8F1E0026D150 /* VRORenderContext.h in Headers */,
+				8F0FE6671CD2605100A4C297 /* VROCardboardViewDelegate.h in Headers */,
 				8FD1E1C01C4093790005BE4E /* VROVideoTexture.h in Headers */,
 				8F83DE921C474A800089C31A /* VROProjector.h in Headers */,
 				8FD1E1B41C3F27190005BE4E /* VROFrameListener.h in Headers */,
@@ -1487,6 +1495,7 @@
 				8FD4DF001C18ED2C003DC425 /* VROGeometrySubstrateMetal.cpp in Sources */,
 				8FCF395B1CA5844E00A86CA3 /* VROSceneControllerInternal.cpp in Sources */,
 				8F92780B1C67DE4A00FF892A /* VROHoverController.cpp in Sources */,
+				8F0FE6681CD2605100A4C297 /* VROCardboardViewDelegate.m in Sources */,
 				8FD4DF0D1C18ED3C003DC425 /* VROGeometrySource.cpp in Sources */,
 				8FA2E1631C460C600070DB26 /* VROAction.cpp in Sources */,
 				8FD4DEFC1C18ED22003DC425 /* VROBox.cpp in Sources */,
@@ -1540,6 +1549,7 @@
 				8FD4DEEF1C18ED0B003DC425 /* VROImageUtil.cpp in Sources */,
 				8F0856581C87960900E66709 /* VROGeometryUtil.cpp in Sources */,
 				8FA2E1561C44BAB70070DB26 /* VROTorusKnot.cpp in Sources */,
+				8F0FE6641CD25F0C00A4C297 /* VRODriverCardboard.cpp in Sources */,
 				8FCB6C881C3C828200C14158 /* VROLoader.cpp in Sources */,
 				8FD4DF1E1C18ED57003DC425 /* VROCrossLayout.cpp in Sources */,
 				8FD4DEFE1C18ED22003DC425 /* VROShapeUtils.cpp in Sources */,

@@ -9,14 +9,18 @@
 #ifndef VRODriverCardboard_h
 #define VRODriverCardboard_h
 
-#include "VRODriver.h"
-#include "GCSCardboardView.h"
+#import "VRODriver.h"
+#import "GCSCardboardView.h"
+
+class VRORenderer;
+class VRODriverContextMetal;
+@class VROCardboardViewDelegate;
 
 class VRODriverCardboard : public VRODriver {
     
 public:
     
-    VRODriverCardboard();
+    VRODriverCardboard(std::shared_ptr<VRORenderer> renderer);
     virtual ~VRODriverCardboard();
     
     virtual UIView *getRenderingView();
@@ -24,8 +28,14 @@ public:
     
     virtual VROViewport getViewport(VROEyeType eye);
     virtual VROFieldOfView getFOV(VROEyeType eye);
-
+    
 private:
+    
+    GCSCardboardView *_view;
+    VROCardboardViewDelegate *_delegate;
+
+    std::shared_ptr<VRORenderer> _renderer;
+    std::shared_ptr<VRODriverContextMetal> _context;
     
 };
 

@@ -23,14 +23,16 @@
 #import "VROSceneController.h"
 #import "VROLog.h"
 #import "VROCameraMutable.h"
-#import "VRODriverMetal.h"
 #import "VRORenderer.h"
+
+#import "VRODriverMetal.h"
+#import "VRODriverCardboard.h"
 
 @interface VROView () {
   
 }
 
-@property (readwrite, nonatomic) std::shared_ptr<VRODriverMetal> driver;
+@property (readwrite, nonatomic) std::shared_ptr<VRODriver> driver;
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
 
 @end
@@ -64,7 +66,7 @@
                                                  name:UIApplicationDidChangeStatusBarOrientationNotification
                                                object:nil];
     self.renderer = std::make_shared<VRORenderer>();
-    self.driver = std::make_shared<VRODriverMetal>(self.renderer, self);
+    self.driver = std::make_shared<VRODriverMetal>(self.renderer);
 
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                     action:@selector(handleTap:)];

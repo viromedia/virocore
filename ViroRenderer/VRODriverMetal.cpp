@@ -11,7 +11,6 @@
 #include "VRODistortionRenderer.h"
 #include "VROView.h"
 #include "VROEye.h"
-#include "VROTransaction.h"
 #include "VRORenderer.h"
 #include "VROHeadTracker.h"
 #include "VRODevice.h"
@@ -20,8 +19,7 @@
 static const float zNear = 0.1;
 static const float zFar  = 100;
 
-VRODriverMetal::VRODriverMetal(std::shared_ptr<VRORenderer> renderer,
-                               VROView *view) :
+VRODriverMetal::VRODriverMetal(std::shared_ptr<VRORenderer> renderer) :
     _frame(0),
     _renderer(renderer),
     _vrModeEnabled(true),
@@ -116,16 +114,10 @@ void VRODriverMetal::driveFrame() {
         }];
 
         calculateFrameParameters();
-        
-        VROTransaction::beginImplicitAnimation();
-        VROTransaction::update();
-        
         renderVRDistortion(_frame, commandBuffer);
 
         [commandBuffer presentDrawable:_view.currentDrawable];
-        [commandBuffer commit];
-        
-        VROTransaction::commitAll();
+        [commandBuffer commit];        
     }
     
     ++_frame;

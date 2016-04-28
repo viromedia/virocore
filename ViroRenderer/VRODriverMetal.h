@@ -26,8 +26,7 @@ class VRODriverMetal : public VRODriver, public std::enable_shared_from_this<VRO
     
 public:
     
-    VRODriverMetal(std::shared_ptr<VRORenderer> renderer,
-                   VROView *view);
+    VRODriverMetal(std::shared_ptr<VRORenderer> renderer);
     virtual ~VRODriverMetal();
     
     void driveFrame();
@@ -58,9 +57,7 @@ private:
 #pragma mark - Rendering
 
     VRODistortionRenderer *_distortionRenderer;
-    
     dispatch_semaphore_t _inflight_semaphore;
-    
     
     void renderVRDistortion(int frame, id <MTLCommandBuffer> commandBuffer);
     
