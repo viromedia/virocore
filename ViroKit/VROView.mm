@@ -14,7 +14,6 @@
 #import "VROEye.h"
 #import "VROFieldOfView.h"
 #import "VROViewport.h"
-#import "VROScreen.h"
 #import "VROHeadTracker.h"
 #import "VROTransaction.h"
 #import "VROImageUtil.h"

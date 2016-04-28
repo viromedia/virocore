@@ -615,6 +615,57 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		8F0FE6601CD25A2300A4C297 /* Drivers */ = {
+			isa = PBXGroup;
+			children = (
+				8F0FE6621CD25A3500A4C297 /* Cardboard */,
+				8F0FE6611CD25A2C00A4C297 /* Metal */,
+			);
+			name = Drivers;
+			sourceTree = "<group>";
+		};
+		8F0FE6611CD25A2C00A4C297 /* Metal */ = {
+			isa = PBXGroup;
+			children = (
+				8FDFA8971BDB031800883EC0 /* Sensors */,
+				8F0FE6631CD25B7E00A4C297 /* Renderer */,
+				8F517BF31BCDBBA80017C70B /* VR Distortion */,
+				8FCF396E1CB6F86700A86CA3 /* VRODriverMetal.h */,
+				8FCF396D1CB6F86700A86CA3 /* VRODriverMetal.cpp */,
+				8F517BFC1BCDC9170017C70B /* VRODriverContextMetal.h */,
+				8FDDE2061CCFD69D00674DE2 /* VROViewMetal.h */,
+				8FDDE2071CCFD69D00674DE2 /* VROViewMetal.m */,
+				8F152A711C0D7A5A00A211F8 /* VROMetalUtils.h */,
+				8F152A701C0D7A5A00A211F8 /* VROMetalUtils.cpp */,
+				8F9277A41C62DBDF00FF892A /* VROConcurrentBuffer.h */,
+				8F9277A31C62DBDF00FF892A /* VROConcurrentBuffer.cpp */,
+				8F517BC21BCDA2BD0017C70B /* Shaders.metal */,
+			);
+			name = Metal;
+			sourceTree = "<group>";
+		};
+		8F0FE6621CD25A3500A4C297 /* Cardboard */ = {
+			isa = PBXGroup;
+			children = (
+				8FDDE20D1CCFD72300674DE2 /* VRODriverCardboard.h */,
+				8FDDE20C1CCFD72300674DE2 /* VRODriverCardboard.cpp */,
+			);
+			name = Cardboard;
+			sourceTree = "<group>";
+		};
+		8F0FE6631CD25B7E00A4C297 /* Renderer */ = {
+			isa = PBXGroup;
+			children = (
+				8F4DCE501BFD628A00061DD7 /* VROGeometrySubstrateMetal.h */,
+				8F4DCE4F1BFD628A00061DD7 /* VROGeometrySubstrateMetal.cpp */,
+				8FF4D7A81C0D45DA006D6157 /* VROMaterialSubstrateMetal.h */,
+				8FF4D7A71C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp */,
+				8F152A831C121A5500A211F8 /* VROTextureSubstrateMetal.h */,
+				8F152A821C121A5500A211F8 /* VROTextureSubstrateMetal.cpp */,
+			);
+			name = Renderer;
+			sourceTree = "<group>";
+		};
 		8F1071CE1BE81EE8003B3C3F /* UI */ = {
 			isa = PBXGroup;
 			children = (
@@ -689,32 +740,13 @@
 				8FCF39691CB4242000A86CA3 /* VRORenderer.cpp */,
 				8FCF39721CB83AB000A86CA3 /* VRODriver.h */,
 				8FCF39711CB83AB000A86CA3 /* VRODriver.cpp */,
-				8FCF396E1CB6F86700A86CA3 /* VRODriverMetal.h */,
-				8FCF396D1CB6F86700A86CA3 /* VRODriverMetal.cpp */,
 				8FA9D0A21CC947DD00B00B93 /* VRODriverContext.h */,
 				8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */,
+				8F6248371BDABB43000755E5 /* VROEye.h */,
+				8F6248391BDABD81000755E5 /* VROFieldOfView.h */,
+				8F62483D1BDAC069000755E5 /* VROViewport.h */,
 			);
 			name = Renderer;
-			sourceTree = "<group>";
-		};
-		8F152A811C121A3D00A211F8 /* Metal */ = {
-			isa = PBXGroup;
-			children = (
-				8F517BFC1BCDC9170017C70B /* VRODriverContextMetal.h */,
-				8FDDE2061CCFD69D00674DE2 /* VROViewMetal.h */,
-				8FDDE2071CCFD69D00674DE2 /* VROViewMetal.m */,
-				8F152A711C0D7A5A00A211F8 /* VROMetalUtils.h */,
-				8F152A701C0D7A5A00A211F8 /* VROMetalUtils.cpp */,
-				8F4DCE501BFD628A00061DD7 /* VROGeometrySubstrateMetal.h */,
-				8F4DCE4F1BFD628A00061DD7 /* VROGeometrySubstrateMetal.cpp */,
-				8FF4D7A81C0D45DA006D6157 /* VROMaterialSubstrateMetal.h */,
-				8FF4D7A71C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp */,
-				8F152A831C121A5500A211F8 /* VROTextureSubstrateMetal.h */,
-				8F152A821C121A5500A211F8 /* VROTextureSubstrateMetal.cpp */,
-				8F9277A41C62DBDF00FF892A /* VROConcurrentBuffer.h */,
-				8F9277A31C62DBDF00FF892A /* VROConcurrentBuffer.cpp */,
-			);
-			name = Metal;
 			sourceTree = "<group>";
 		};
 		8F4DCE441BFBF3A800061DD7 /* Shapes */ = {
@@ -739,8 +771,6 @@
 		8F4DCE4B1BFD617200061DD7 /* Private */ = {
 			isa = PBXGroup;
 			children = (
-				8FDDE20B1CCFD6D400674DE2 /* Cardboard */,
-				8F152A811C121A3D00A211F8 /* Metal */,
 				8F4DCE4D1BFD625900061DD7 /* VROGeometrySubstrate.h */,
 				8F4DCE4C1BFD625900061DD7 /* VROGeometrySubstrate.cpp */,
 				8F152A7F1C121A0E00A211F8 /* VROTextureSubstrate.h */,
@@ -795,16 +825,14 @@
 		8F517BB81BCDA2BD0017C70B /* ViroRenderer */ = {
 			isa = PBXGroup;
 			children = (
+				8F0FE6601CD25A2300A4C297 /* Drivers */,
 				8F5C414B1BD825A9006D7A77 /* Util */,
 				8F517C441BD0472C0017C70B /* Math */,
 				8F1071D81BF67EF7003B3C3F /* Renderer */,
-				8FDFA8971BDB031800883EC0 /* Sensors */,
-				8F517BF31BCDBBA80017C70B /* VR Distortion */,
 				8F517BEF1BCDBA570017C70B /* Layer */,
 				8F1071D41BF416C1003B3C3F /* Layout */,
 				8F1071CE1BE81EE8003B3C3F /* UI */,
 				8F517BC41BCDA2BD0017C70B /* VROSharedStructures.h */,
-				8F517BC21BCDA2BD0017C70B /* Shaders.metal */,
 				8F517BB91BCDA2BD0017C70B /* Supporting Files */,
 			);
 			path = ViroRenderer;
@@ -856,9 +884,6 @@
 				8FDFA8941BDAEAB000883EC0 /* VRODistortionRenderer.cpp */,
 				8FEA6C991BE2BA7700C2CD0F /* VRODistortionMesh.h */,
 				8FEA6C981BE2BA7700C2CD0F /* VRODistortionMesh.cpp */,
-				8F6248371BDABB43000755E5 /* VROEye.h */,
-				8F6248391BDABD81000755E5 /* VROFieldOfView.h */,
-				8F62483D1BDAC069000755E5 /* VROViewport.h */,
 				8F6248311BDAB44B000755E5 /* VRODevice.h */,
 				8F4C9FFF1BDAE06A00177B8F /* VROScreen.h */,
 				8F4CA0011BDAE10C00177B8F /* VROScreen.cpp */,
@@ -1035,15 +1060,6 @@
 				8F5C41541BD82C1B006D7A77 /* boba.png */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		8FDDE20B1CCFD6D400674DE2 /* Cardboard */ = {
-			isa = PBXGroup;
-			children = (
-				8FDDE20D1CCFD72300674DE2 /* VRODriverCardboard.h */,
-				8FDDE20C1CCFD72300674DE2 /* VRODriverCardboard.cpp */,
-			);
-			name = Cardboard;
 			sourceTree = "<group>";
 		};
 		8FDFA8971BDB031800883EC0 /* Sensors */ = {

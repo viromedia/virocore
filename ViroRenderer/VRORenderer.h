@@ -19,9 +19,6 @@
 
 class VROEye;
 class VRODriverContext;
-class VRODistortionRenderer;
-class VRODevice;
-class VROHeadTracker;
 class VROCameraMutable;
 class VROTimingFunction;
 class VRORenderContext;
@@ -32,7 +29,6 @@ enum class VROEyeType;
 enum class VROTimingFunctionType;
 
 @class VROScreenUIView; //TODO delete
-@class VROView;
 @class VROSceneController;
 
 class VRORenderer : public VROFrameSynchronizer {
