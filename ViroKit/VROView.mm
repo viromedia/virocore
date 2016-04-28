@@ -71,8 +71,6 @@
                                                                                     action:@selector(handleTap:)];
     [self addGestureRecognizer:tapRecognizer];
     
-    [self setBackgroundColor:[UIColor redColor]];
-    
     UIView *renderingView = self.driver->getRenderingView();
     [renderingView setFrame:self.bounds];
     [renderingView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];

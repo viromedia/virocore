@@ -33,7 +33,7 @@
     self = [super init];
     if (self) {
         std::shared_ptr<VROHoverDistanceListener> listener = std::make_shared<VROReticleSizeListener>(view);
-        self.internal = std::make_shared<VROSceneControllerInternal>(listener);
+        self.internal = std::make_shared<VROSceneControllerInternal>(listener, [view frameSynchronizer]);
     }
     
     return self;
