@@ -122,7 +122,7 @@ void VRODriverMetal::renderVRDistortion(int frame, id <MTLCommandBuffer> command
     driverContext->setRenderTarget(eyeTarget);
     
     VROMatrix4f headRotation = _headTracker->getHeadRotation();
-    _renderer->prepareFrame(frame, headRotation, *driverContext);
+    _renderer->prepareFrame(frame, headRotation.invert(), *driverContext);
     
     float halfLensDistance = _device->getInterLensDistance() * 0.5f;
     VROMatrix4f leftEyeMatrix  = matrix_from_translation( halfLensDistance, 0, 0);

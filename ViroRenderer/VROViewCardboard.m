@@ -222,7 +222,7 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
     _blitter = new VROShaderProgram("blit", 0);
     
     const char *samplers[1];
-    samplers[0] = "map0";
+    samplers[0] = "map";
     _blitter->setSamplers(samplers, 1);
     _blitter->hydrate();
 }
@@ -237,13 +237,12 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
     
     _eyeTarget = [self createEyeRenderTarget];
     _context->setRenderTarget(_eyeTarget);
+    
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_SCISSOR_TEST);
 }
 
-/**
- * Called on each frame to perform the required GL rendering. Delegate should set the GL viewport
- * and scissor it to the viewport returned from |GCSHeadTransforms|'s |viewportForEye| method.
- * This method is called on the GL thread.
- */
 - (void)cardboardView:(GCSCardboardView *)cardboardView
               drawEye:(GCSEye)eye
     withHeadTransform:(GCSHeadTransform *)headTransform {
@@ -252,7 +251,9 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
     VROViewport viewport(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
     VROMatrix4f headRotation = matrix_float4x4_from_GL([headTransform headPoseInStartSpace]);
-    _renderer->prepareFrame(_frameNumber, headRotation, *_context.get());
+    if (eye == kGCSLeftEye || eye == kGCSCenterEye) {
+        _renderer->prepareFrame(_frameNumber, headRotation, *_context.get());
+    }
     
     VROMatrix4f eyeMatrix = matrix_float4x4_from_GL([headTransform eyeFromHeadMatrix:eye]);
     VROMatrix4f projectionMatrix = matrix_float4x4_from_GL([headTransform projectionMatrixForEye:eye near:0.01 far:100]); //TODO Near far
@@ -260,13 +261,6 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
     id <MTLRenderCommandEncoder> renderEncoder = _eyeTarget->getRenderEncoder();
     [renderEncoder setViewport:viewport.toMetalViewport()];
     [renderEncoder setScissorRect:viewport.toMetalScissor()];
-    
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_SCISSOR_TEST);
-
-    glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-    glScissor(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     
     VROEyeType eyeType = (eye == kGCSLeftEye ? VROEyeType::Left : VROEyeType::Right);
     _renderer->renderEye(eyeType, eyeMatrix, projectionMatrix, *_context.get());
@@ -277,10 +271,18 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
         [renderEncoder endEncoding];
         
         [self writeGLTexture];
+        
+        /*
+         We write the entire OpenGL texture to the screen, so set the viewport
+         and scissor to the full width and height.
+         */
+        glViewport(0, 0, (int)[_texture width], (int)[_texture height]);
+        glScissor(0, 0, (int)[_texture width], (int)[_texture height]);
+
         [self drawTexture];
         
         [_commandBuffer commit];
-        //[_context->getCommandQueue() insertDebugCaptureBoundary];
+        [_context->getCommandQueue() insertDebugCaptureBoundary];
         
         ++_frameNumber;
     }

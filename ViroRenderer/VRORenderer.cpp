@@ -91,7 +91,7 @@ void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriverCon
     notifyFrameStart();
     
     VROCamera camera;
-    camera.setHeadRotation({headRotation.invert()});
+    camera.setHeadRotation({headRotation});
     camera.setBaseRotation(_camera->getBaseRotation().getMatrix());
     camera.setPosition(_camera->getPosition());
     
