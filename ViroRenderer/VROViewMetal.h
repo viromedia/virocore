@@ -9,12 +9,10 @@
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
 #import <memory>
+#import "VROView.h"
 
 class VRODriverMetal;
 
-@interface VROViewMetal : MTKView <MTKViewDelegate>
-
-- (id)initWithFrame:(CGRect)frame device:(id <MTLDevice>)device
-             driver:(std::shared_ptr<VRODriverMetal>)driver;
+@interface VROViewMetal : MTKView <MTKViewDelegate, VROView>
 
 @end

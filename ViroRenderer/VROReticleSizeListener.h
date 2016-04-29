@@ -21,7 +21,7 @@ class VROReticleSizeListener : public VROHoverDistanceListener {
     
 public:
     
-    VROReticleSizeListener(VROView *view) {
+    VROReticleSizeListener(id <VROView> view) {
         _view = view;
     }
     
@@ -43,7 +43,7 @@ public:
     
 private:
     
-    __weak VROView *_view;
+    __weak id <VROView> _view;
 
 };
 

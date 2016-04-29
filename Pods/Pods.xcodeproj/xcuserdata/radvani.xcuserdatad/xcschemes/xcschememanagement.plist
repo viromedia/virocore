@@ -9,10 +9,20 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Pods-ViroSample.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>43AD109C5E281FAF35422B145DCAB1E1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B589F4B0EB4545145547E77B4DAF0AD</key>
 		<dict>
 			<key>primary</key>
 			<true/>

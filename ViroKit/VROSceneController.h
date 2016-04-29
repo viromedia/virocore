@@ -10,6 +10,7 @@
 #import <memory>
 #import "VROVector3f.h"
 #import "VRORenderDelegate.h"
+#import "VROView.h"
 
 class VRONode;
 class VROScene;
@@ -20,7 +21,7 @@ class VROHoverDelegate;
 
 @interface VROSceneController : NSObject
 
-- (id)initWithView:(VROView *)view;
+- (id)initWithView:(id <VROView>)view;
 
 - (void)sceneWillAppear:(VRORenderContext *)context;
 - (void)sceneDidAppear:(VRORenderContext *)context;

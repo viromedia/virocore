@@ -19,16 +19,16 @@
 static const float zNear = 0.1;
 static const float zFar  = 100;
 
-VRODriverMetal::VRODriverMetal(std::shared_ptr<VRORenderer> renderer) :
+VRODriverMetal::VRODriverMetal(std::shared_ptr<VRORenderer> renderer, id <MTLDevice> device,
+                               VROViewMetal *view) :
     _frame(0),
     _renderer(renderer),
     _vrModeEnabled(true),
     _projectionChanged(true),
+    _view(view),
     _device(std::make_shared<VRODevice>([UIScreen mainScreen])) {
         
-    id <MTLDevice> device = MTLCreateSystemDefaultDevice();
     _context = std::make_shared<VRODriverContextMetal>(device);
-
     _distortionRenderer = new VRODistortionRenderer(_device);
     _inflight_semaphore = dispatch_semaphore_create(3);
         
@@ -46,15 +46,6 @@ VRODriverMetal::~VRODriverMetal() {
     delete (_monocularEye);
     delete (_leftEye);
     delete (_rightEye);
-}
-
-UIView *VRODriverMetal::getRenderingView() {
-    if (!_view) {
-        _view = [[VROViewMetal alloc] initWithFrame:CGRectZero
-                                             device:_context->getDevice()
-                                             driver:shared_from_this()];
-    }
-    return _view;
 }
 
 #pragma mark - Settings

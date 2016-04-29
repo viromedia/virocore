@@ -24,9 +24,7 @@ public:
     VRODriver();
     virtual ~VRODriver();
     
-    virtual UIView *getRenderingView() = 0;
     virtual void onOrientationChange(UIInterfaceOrientation orientation) = 0;
-    
     virtual VROViewport getViewport(VROEyeType eye) = 0;
     virtual VROFieldOfView getFOV(VROEyeType eye) = 0;
     

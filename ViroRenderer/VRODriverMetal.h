@@ -26,12 +26,11 @@ class VRODriverMetal : public VRODriver, public std::enable_shared_from_this<VRO
     
 public:
     
-    VRODriverMetal(std::shared_ptr<VRORenderer> renderer);
+    VRODriverMetal(std::shared_ptr<VRORenderer> renderer, id <MTLDevice> device,
+                   VROViewMetal *_view);
     virtual ~VRODriverMetal();
     
-    void driveFrame();
-    
-    UIView *getRenderingView();
+    void driveFrame();    
     void onOrientationChange(UIInterfaceOrientation orientation);
     
     VROViewport getViewport(VROEyeType eye);
@@ -43,7 +42,7 @@ private:
     bool _vrModeEnabled;
     bool _projectionChanged;
     
-    VROViewMetal *_view;
+    __weak VROViewMetal *_view;
     VROEye *_monocularEye;
     VROEye *_leftEye;
     VROEye *_rightEye;

@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '449298790E0C85D2B3FB4F4C'
-               BlueprintName = 'Pods-ViroKit'
+               BlueprintIdentifier = 'F93071B3E60A9DDEDED36D17'
+               BlueprintName = 'Pods-ViroSample'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libPods-ViroKit.a'>
+               BuildableName = 'libPods-ViroSample.a'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

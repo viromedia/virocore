@@ -12,7 +12,6 @@
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 
-@class VROView;
 class VRORenderContext;
 class VRODriverContext;
 class VROVector3f;

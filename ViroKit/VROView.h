@@ -17,14 +17,13 @@ class VROScene;
 class VROFrameSynchronizer;
 enum class VROTimingFunctionType;
 
-@interface VROView : UIView
+@protocol VROView <NSObject>
+
+@required
 
 @property (nonatomic, unsafe_unretained) IBOutlet id <VRORenderDelegate> renderDelegate;
-
 @property (nonatomic, readonly) VROScreenUIView *HUD;
 @property (readwrite, nonatomic) VROSceneController *sceneController;
-
-- (instancetype)initWithFrame:(CGRect)frame;
 
 - (void)setSceneController:(VROSceneController *)sceneController animated:(BOOL)animated;
 - (void)setSceneController:(VROSceneController *)sceneController duration:(float)seconds

@@ -29,7 +29,7 @@
 
 @implementation VROSceneController
 
-- (id)initWithView:(VROView *)view {
+- (id)initWithView:(id <VROView>)view {
     self = [super init];
     if (self) {
         std::shared_ptr<VROHoverDistanceListener> listener = std::make_shared<VROReticleSizeListener>(view);

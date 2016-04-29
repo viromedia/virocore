@@ -14,7 +14,7 @@
 
 class VRORenderer;
 class VRODriverContextMetal;
-@class VROCardboardViewDelegate;
+@class VROCardboardRenderLoop;
 
 class VRODriverCardboard : public VRODriver {
     
@@ -23,7 +23,6 @@ public:
     VRODriverCardboard(std::shared_ptr<VRORenderer> renderer);
     virtual ~VRODriverCardboard();
     
-    virtual UIView *getRenderingView();
     virtual void onOrientationChange(UIInterfaceOrientation orientation);
     
     virtual VROViewport getViewport(VROEyeType eye);
@@ -31,11 +30,9 @@ public:
     
 private:
     
-    GCSCardboardView *_view;
-    VROCardboardViewDelegate *_delegate;
-
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VRODriverContextMetal> _context;
+    
     
 };
 
