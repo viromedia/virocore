@@ -7,14 +7,40 @@
 //
 
 #import "VROViewMetal.h"
-#import "VRODriverMetal.h"
+#import "VRODriverContextMetal.h"
 #import "VROAllocationTracker.h"
 #import "VRORenderer.h"
+#import "VROHeadTracker.h"
+#import "VRODevice.h"
+#import "VROScreen.h"
+#import "VRODistortionRenderer.h"
 #import "VROEye.h"
 
-@interface VROViewMetal ()
+static const float zNear = 0.1;
+static const float zFar  = 100;
 
-@property (readwrite, nonatomic) std::shared_ptr<VRODriverMetal> driver;
+@interface VROViewMetal () {
+    
+    int _frameNumber;
+    bool _vrModeEnabled;
+    bool _projectionChanged;
+    
+    VROEye *_monocularEye;
+    VROEye *_leftEye;
+    VROEye *_rightEye;
+    
+    std::shared_ptr<VRORenderer> _renderer;
+    
+    VROHeadTracker *_headTracker;
+    std::shared_ptr<VRODevice> _vrDevice;
+    std::shared_ptr<VRODriverContextMetal> _context;
+    
+    VRODistortionRenderer *_distortionRenderer;
+    dispatch_semaphore_t _inflight_semaphore;
+    
+}
+
+@property (readwrite, nonatomic) std::shared_ptr<VRORenderLoopMetal> renderLoop;
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
 
 @end
@@ -42,9 +68,25 @@
 }
 
 - (void)initRenderer {
+    _frameNumber = 0;
+    _vrModeEnabled = true;
+    _projectionChanged = true;
+    _vrDevice = std::make_shared<VRODevice>([UIScreen mainScreen]);
+    
     self.device = MTLCreateSystemDefaultDevice();
     self.delegate = self;
     self.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
+
+    _context = std::make_shared<VRODriverContextMetal>(self.device);
+    _distortionRenderer = new VRODistortionRenderer(_vrDevice);
+    _inflight_semaphore = dispatch_semaphore_create(3);
+        
+    _monocularEye = new VROEye(VROEyeType::Monocular);
+    _leftEye = new VROEye(VROEyeType::Left);
+    _rightEye = new VROEye(VROEyeType::Right);
+        
+    _headTracker = new VROHeadTracker();
+    _headTracker->startTracking([UIApplication sharedApplication].statusBarOrientation);
     
     // Do not allow the display to go into sleep
     [UIApplication sharedApplication].idleTimerDisabled = YES;
@@ -54,8 +96,6 @@
                                                  name:UIApplicationDidChangeStatusBarOrientationNotification
                                                object:nil];
     self.renderer = std::make_shared<VRORenderer>();
-    self.driver = std::make_shared<VRODriverMetal>(self.renderer, self.device, self);
-        
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                     action:@selector(handleTap:)];
     [self addGestureRecognizer:tapRecognizer];
@@ -63,12 +103,18 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    delete (_distortionRenderer);
+    delete (_headTracker);
+    delete (_monocularEye);
+    delete (_leftEye);
+    delete (_rightEye);
 }
 
 #pragma mark - Settings
 
 - (void)orientationDidChange:(NSNotification *)notification {
-    self.driver->onOrientationChange([UIApplication sharedApplication].statusBarOrientation);
+    _headTracker->updateDeviceOrientation([UIApplication sharedApplication].statusBarOrientation);
 }
 
 - (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {
@@ -87,13 +133,24 @@
 
 - (float)worldPerScreenAtDepth:(float)distance {
     return self.renderer->getWorldPerScreen(distance,
-                                            self.driver->getFOV(VROEyeType::Left),
-                                            self.driver->getViewport(VROEyeType::Left));
+                                            _leftEye->getFOV(),
+                                            _leftEye->getViewport());
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
     _renderer->updateRenderViewSize(self.bounds.size);
+}
+
+- (VROEye *)eyeForType:(VROEyeType)type {
+    switch (type) {
+        case VROEyeType::Left:
+            return _leftEye;
+        case VROEyeType::Right:
+            return _rightEye;
+        default:
+            return _monocularEye;
+    }
 }
 
 #pragma mark - Reticle
@@ -139,8 +196,139 @@
 }
 
 - (void)drawInMTKView:(nonnull MTKView *)view {
-    self.driver->driveFrame();
+    if (!_headTracker->isReady()) {
+        return;
+    }
+    
+    @autoreleasepool {
+        dispatch_semaphore_wait(_inflight_semaphore, DISPATCH_TIME_FOREVER);
+        
+        /*
+         A single command buffer collects all render events for a frame.
+         */
+        VRODriverContextMetal *driverContext = (VRODriverContextMetal *)_context.get();
+        
+        id <MTLCommandBuffer> commandBuffer = [driverContext->getCommandQueue() commandBuffer];
+        commandBuffer.label = @"CommandBuffer";
+        
+        /*
+         When the command buffer is executed by the GPU, signal the semaphor
+         (required by the view since it will signal set up the next buffer).
+         */
+        __block dispatch_semaphore_t block_sema = _inflight_semaphore;
+        [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer) {
+            dispatch_semaphore_signal(block_sema);
+        }];
+        
+        [self calculateFrameParameters];
+        [self renderVRDistortionWithCommandBuffer:commandBuffer];
+        
+        [commandBuffer presentDrawable:self.currentDrawable];
+        [commandBuffer commit];
+    }
+    
+    ++_frameNumber;
     ALLOCATION_TRACKER_PRINT();
+}
+
+- (void)renderVRDistortionWithCommandBuffer:(id <MTLCommandBuffer>)commandBuffer {
+    VRODriverContextMetal *driverContext = (VRODriverContextMetal *)_context.get();
+    _distortionRenderer->updateDistortion(driverContext->getDevice(), driverContext->getLibrary(), self);
+    
+    std::shared_ptr<VRORenderTarget> eyeTarget = _distortionRenderer->bindEyeRenderTarget(commandBuffer);
+    driverContext->setRenderTarget(eyeTarget);
+    
+    VROMatrix4f headRotation = _headTracker->getHeadRotation();
+    _renderer->prepareFrame(_frameNumber, headRotation.invert(), *driverContext);
+    
+    float halfLensDistance = _vrDevice->getInterLensDistance() * 0.5f;
+    VROMatrix4f leftEyeMatrix  = matrix_from_translation( halfLensDistance, 0, 0);
+    VROMatrix4f rightEyeMatrix = matrix_from_translation(-halfLensDistance, 0, 0);
+    
+    id <MTLRenderCommandEncoder> eyeRenderEncoder = eyeTarget->getRenderEncoder();
+    [eyeRenderEncoder setViewport:_leftEye->getViewport().toMetalViewport()];
+    [eyeRenderEncoder setScissorRect:_leftEye->getViewport().toMetalScissor()];
+    
+    _renderer->renderEye(_leftEye->getType(), leftEyeMatrix, _leftEye->getPerspectiveMatrix(),
+                         *driverContext);
+    
+    [eyeRenderEncoder setViewport:_rightEye->getViewport().toMetalViewport()];
+    [eyeRenderEncoder setScissorRect:_rightEye->getViewport().toMetalScissor()];
+    
+    _renderer->renderEye(_rightEye->getType(), rightEyeMatrix, _rightEye->getPerspectiveMatrix(),
+                         *driverContext);
+    _renderer->endFrame(*driverContext);
+    
+    [eyeRenderEncoder endEncoding];
+    
+    std::shared_ptr<VRORenderTarget> screenTarget = std::make_shared<VRORenderTarget>(self, commandBuffer);
+    id <MTLRenderCommandEncoder> screenRenderEncoder = screenTarget->getRenderEncoder();
+    
+    _distortionRenderer->renderEyesToScreen(screenRenderEncoder, _frameNumber);
+    [screenRenderEncoder endEncoding];
+}
+
+#pragma mark - View Computation
+
+- (void)calculateFrameParameters {
+    if (_projectionChanged) {
+        const VROScreen &screen = _vrDevice->getScreen();
+        _monocularEye->setViewport(0, 0, screen.getWidth(), screen.getHeight());
+        
+        if (!_vrModeEnabled) {
+            [self updateMonocularEye];
+        }
+        else {
+            [self updateLeftRightEyes];
+        }
+        
+        _projectionChanged = NO;
+    }
+}
+
+- (void)updateMonocularEye {
+    const VROScreen &screen = _vrDevice->getScreen();
+    const float monocularBottomFov = 22.5f;
+    const float monocularLeftFov = GLKMathRadiansToDegrees(
+                                                           atanf(
+                                                                 tanf(GLKMathDegreesToRadians(monocularBottomFov))
+                                                                 * screen.getWidthInMeters()
+                                                                 / screen.getHeightInMeters()));
+    _monocularEye->setFOV(monocularLeftFov, monocularLeftFov, monocularBottomFov, monocularBottomFov,
+                          zNear, zFar);
+}
+
+- (void)updateLeftRightEyes {
+    const VROScreen &screen = _vrDevice->getScreen();
+    
+    const VRODistortion &distortion = _vrDevice->getDistortion();
+    float eyeToScreenDistance = _vrDevice->getScreenToLensDistance();
+    
+    float outerDistance = (screen.getWidthInMeters() - _vrDevice->getInterLensDistance() ) / 2.0f;
+    float innerDistance = _vrDevice->getInterLensDistance() / 2.0f;
+    float bottomDistance = _vrDevice->getVerticalDistanceToLensCenter() - screen.getBorderSizeInMeters();
+    float topDistance = screen.getHeightInMeters() + screen.getBorderSizeInMeters() - _vrDevice->getVerticalDistanceToLensCenter();
+    
+    float outerAngle = GLKMathRadiansToDegrees(atanf(distortion.distort(outerDistance / eyeToScreenDistance)));
+    float innerAngle = GLKMathRadiansToDegrees(atanf(distortion.distort(innerDistance / eyeToScreenDistance)));
+    float bottomAngle = GLKMathRadiansToDegrees(atanf(distortion.distort(bottomDistance / eyeToScreenDistance)));
+    float topAngle = GLKMathRadiansToDegrees(atanf(distortion.distort(topDistance / eyeToScreenDistance)));
+    
+    _leftEye->setFOV(MIN(outerAngle,  _vrDevice->getMaximumLeftEyeFOV().getLeft()),
+                     MIN(innerAngle,  _vrDevice->getMaximumLeftEyeFOV().getRight()),
+                     MIN(bottomAngle, _vrDevice->getMaximumLeftEyeFOV().getBottom()),
+                     MIN(topAngle,    _vrDevice->getMaximumLeftEyeFOV().getTop()),
+                     zNear, zFar);
+    
+    const VROFieldOfView &leftEyeFov = _leftEye->getFOV();
+    _rightEye->setFOV(leftEyeFov.getRight(),
+                      leftEyeFov.getLeft(),
+                      leftEyeFov.getBottom(),
+                      leftEyeFov.getTop(),
+                      zNear, zFar);
+    
+    _distortionRenderer->fovDidChange(_leftEye, _rightEye,
+                                      _vrDevice->getScreenToLensDistance());
 }
 
 @end

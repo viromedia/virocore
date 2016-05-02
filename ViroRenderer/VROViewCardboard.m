@@ -11,7 +11,6 @@
 #import "VRORenderer.h"
 #import "VROViewport.h"
 #import "VROEye.h"
-#import "VRODriverCardboard.h"
 #import "VRODriverContextMetal.h"
 #import "VRORenderTarget.h"
 #import "VROCardboardRenderLoop.h"
@@ -49,7 +48,6 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
 }
 
 @property (readwrite, nonatomic) int frameNumber;
-@property (readwrite, nonatomic) std::shared_ptr<VRODriver> driver;
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
 
 @end
@@ -88,8 +86,7 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
                                                  name:UIApplicationDidChangeStatusBarOrientationNotification
                                                object:nil];
     self.renderer = std::make_shared<VRORenderer>();
-    self.driver = std::make_shared<VRODriverCardboard>(self.renderer);
-
+    
     id <MTLDevice> device = MTLCreateSystemDefaultDevice();
     _context = std::make_shared<VRODriverContextMetal>(device);
 
@@ -108,7 +105,7 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
 #pragma mark - Settings
 
 - (void)orientationDidChange:(NSNotification *)notification {
-    self.driver->onOrientationChange([UIApplication sharedApplication].statusBarOrientation);
+
 }
 
 - (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {
@@ -127,8 +124,7 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
 
 - (float)worldPerScreenAtDepth:(float)distance {
     return self.renderer->getWorldPerScreen(distance,
-                                            self.driver->getFOV(VROEyeType::Left),
-                                            self.driver->getViewport(VROEyeType::Left));
+                                            {}, {}); //TODO
 }
 
 - (void)layoutSubviews {
@@ -217,7 +213,7 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
     
     uint32_t bytesPerPixel = 4;
     uint64_t bytesPerRow = bytesPerPixel * [_texture width];
-    _textureBuffer = (char *) malloc(bytesPerRow * [_texture height]);
+    _textureBuffer = (char *) malloc(bytesPerRow * (int) [_texture height]);
     
     _blitter = new VROShaderProgram("blit", 0);
     
