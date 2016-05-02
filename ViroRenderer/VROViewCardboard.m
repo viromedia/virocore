@@ -11,7 +11,7 @@
 #import "VRORenderer.h"
 #import "VROViewport.h"
 #import "VROEye.h"
-#import "VRODriverContextMetal.h"
+#import "VRODriverMetal.h"
 #import "VRORenderTarget.h"
 #import "VROCardboardRenderLoop.h"
 #import "VROShaderProgram.h"
@@ -26,7 +26,7 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
 
 @interface VROViewCardboard () {
     std::shared_ptr<VRORenderer> _renderer;
-    std::shared_ptr<VRODriverContextMetal> _context;
+    std::shared_ptr<VRODriverMetal> _context;
     id <MTLCommandBuffer> _commandBuffer;
     std::shared_ptr<VRORenderTarget> _eyeTarget;
     
@@ -88,7 +88,7 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
     self.renderer = std::make_shared<VRORenderer>();
     
     id <MTLDevice> device = MTLCreateSystemDefaultDevice();
-    _context = std::make_shared<VRODriverContextMetal>(device);
+    _context = std::make_shared<VRODriverMetal>(device);
 
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                     action:@selector(handleTap:)];
@@ -226,7 +226,7 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
 - (void)cardboardView:(GCSCardboardView *)cardboardView
      prepareDrawFrame:(GCSHeadTransform *)headTransform {
     
-    VRODriverContextMetal *driverContext = (VRODriverContextMetal *)_context.get();
+    VRODriverMetal *driverContext = (VRODriverMetal *)_context.get();
     
     _commandBuffer = [driverContext->getCommandQueue() commandBuffer];
     _commandBuffer.label = @"CommandBuffer";

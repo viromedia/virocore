@@ -14,7 +14,7 @@
 
 class VROLight;
 class VRORenderContext;
-class VRODriverContext;
+class VRODriver;
 class VROMatrix4f;
 class VRORenderParameters;
 class VROMaterial;
@@ -32,7 +32,7 @@ public:
     virtual void render(const VROGeometry &geometry,
                         const std::vector<std::shared_ptr<VROMaterial>> &materials,
                         const VRORenderContext &renderContext,
-                        const VRODriverContext &driverContext,
+                        const VRODriver &driverContext,
                         VRORenderParameters &params) = 0;
 
 };

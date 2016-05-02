@@ -14,7 +14,7 @@
 std::shared_ptr<VROVideoSurface> VROVideoSurface::createVideoSurface(float width, float height,
                                                                      NSURL *url,
                                                                      std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                                                     const VRODriverContext &driverContext) {
+                                                                     const VRODriver &driver) {
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
     VROSurface::buildGeometry(width, height, sources, elements);
@@ -25,7 +25,7 @@ std::shared_ptr<VROVideoSurface> VROVideoSurface::createVideoSurface(float width
     material->setReadsFromDepthBuffer(true);
     
     std::shared_ptr<VROVideoTexture> texture = std::make_shared<VROVideoTexture>();
-    texture->loadVideo(url, frameSynchronizer, driverContext);
+    texture->loadVideo(url, frameSynchronizer, driver);
     texture->play();
     material->getDiffuse().setContents(texture);
     

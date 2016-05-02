@@ -13,13 +13,13 @@
 #import <CoreGraphics/CoreGraphics.h>
 
 class VRORenderContext;
-class VRODriverContext;
+class VRODriver;
 class VROVector3f;
 enum class VROEyeType;
 
 @protocol VRORenderDelegate <NSObject>
 
-- (void)setupRendererWithDriverContext:(VRODriverContext *)driverContext;
+- (void)setupRendererWithDriverContext:(VRODriver *)driver;
 - (void)shutdownRenderer;
 - (void)renderViewDidChangeSize:(CGSize)size context:(VRORenderContext *)context;
 

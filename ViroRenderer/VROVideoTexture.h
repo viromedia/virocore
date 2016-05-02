@@ -19,7 +19,7 @@
 @class VROVideoPlaybackDelegate;
 class VRORenderContext;
 class VROFrameSynchronizer;
-class VRODriverContext;
+class VRODriver;
 class VROMaterial;
 
 static const long kInFlightVideoTextures = 3;
@@ -36,7 +36,7 @@ public:
      */
     void displayCamera(AVCaptureDevicePosition position,
                        std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                       const VRODriverContext &driverContext);
+                       const VRODriver &driver);
     
     /*
      Use this video texture to display the contents of the given URL. The video
@@ -44,7 +44,7 @@ public:
      */
     void loadVideo(NSURL *url,
                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                   const VRODriverContext &driverContext);
+                   const VRODriver &driver);
     
     /*
      Perform video initialization (which causes a stutter) early.

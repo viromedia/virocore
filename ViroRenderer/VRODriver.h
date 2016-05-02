@@ -2,35 +2,40 @@
 //  VRODriver.h
 //  ViroRenderer
 //
-//  Created by Raj Advani on 4/8/16.
+//  Created by Raj Advani on 4/21/16.
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
 #ifndef VRODriver_h
 #define VRODriver_h
 
-#include <memory>
-#import <UIKit/UIKit.h> //TODO Delete
+#include <vector>
+#import <UIKit/UIKit.h>
 
-class VRORenderer;
-class VROFieldOfView;
-class VROViewport;
-enum class VROEyeType;
+class VROGeometry;
+class VROMaterial;
+class VROGeometrySubstrate;
+class VROMaterialSubstrate;
+class VROTextureSubstrate;
+class VROData;
 
+enum class VROTextureType;
+enum class VROTextureFormat;
+
+/*
+ The driver is used to interface with the rendering subsystem (OpenGL,
+ Metal, etc.).
+ */
 class VRODriver {
     
 public:
     
-    VRODriver();
-    virtual ~VRODriver();
-    
-    virtual void onOrientationChange(UIInterfaceOrientation orientation) = 0;
-    virtual VROViewport getViewport(VROEyeType eye) = 0;
-    virtual VROFieldOfView getFOV(VROEyeType eye) = 0;
-    
-private:
+    virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const = 0;
+    virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) const = 0;
+    virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) const = 0;
+    virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, VROTextureFormat format, std::shared_ptr<VROData> data,
+                                                     int width, int height) const = 0;
     
 };
 
-
-#endif /* VRODriver_h */
+#endif /* VRODriver_hpp */

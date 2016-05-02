@@ -60,7 +60,7 @@ static const float kVROLayerSize = 2;
     
 }
 
-- (void)updateWithContext:(const VRODriverContext *)context {
+- (void)updateWithContext:(const VRODriver *)context {
     if (!_needsUpdate) {
         return;
     }
@@ -97,13 +97,13 @@ static const float kVROLayerSize = 2;
 
 - (void)renderEye:(VROEyeType)eye
 withRenderContext:(const VRORenderContext *)renderContext
-    driverContext:(const VRODriverContext *)driverContext {
+    driver:(const VRODriver *)driver {
     
     VRORenderParameters renderParams;
     renderParams.transforms.push(renderContext->getHUDViewMatrix());
     renderParams.opacities.push(1.0);
     
-    _layer->render(*renderContext, *driverContext, renderParams);
+    _layer->render(*renderContext, *driver, renderParams);
 }
 
 - (void)setReticleEnabled:(BOOL)enabled {

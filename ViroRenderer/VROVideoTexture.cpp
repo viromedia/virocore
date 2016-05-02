@@ -9,7 +9,7 @@
 #include "VROVideoTexture.h"
 #include "VRORenderContext.h"
 #include "VROFrameSynchronizer.h"
-#include "VRODriverContextMetal.h"
+#include "VRODriverMetal.h"
 #include "VROLog.h"
 #include "VROTextureSubstrateMetal.h"
 #include "VROTime.h"
@@ -62,11 +62,11 @@ bool VROVideoTexture::isPaused() {
 
 void VROVideoTexture::loadVideo(NSURL *url,
                                 std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                const VRODriverContext &driverContext) {
+                                const VRODriver &driver) {
     
     _mediaReady = false;
     
-    id <MTLDevice> device = ((VRODriverContextMetal &)driverContext).getDevice();
+    id <MTLDevice> device = ((VRODriverMetal &)driver).getDevice();
     
     CVReturn textureCacheError = CVMetalTextureCacheCreate(kCFAllocatorDefault, NULL, device,
                                                            NULL, &_videoTextureCache);
@@ -236,12 +236,12 @@ void VROVideoTexture::displayPixelBuffer(CVPixelBufferRef pixelBuffer) {
 
 void VROVideoTexture::displayCamera(AVCaptureDevicePosition position,
                                     std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                    const VRODriverContext &driverContext) {
+                                    const VRODriver &driver) {
     
     frameSynchronizer->addFrameListener(shared_from_this());
     _videoDelegate = [[VROVideoCaptureDelegate alloc] initWithVROVideoTexture:this];
     
-    id <MTLDevice> device = ((VRODriverContextMetal &)driverContext).getDevice();
+    id <MTLDevice> device = ((VRODriverMetal &)driver).getDevice();
     
     CVReturn textureCacheError = CVMetalTextureCacheCreate(kCFAllocatorDefault, NULL, device,
                                                            NULL, &_videoTextureCache);

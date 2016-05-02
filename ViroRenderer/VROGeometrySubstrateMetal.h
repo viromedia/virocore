@@ -23,8 +23,8 @@ class VROMaterial;
 class VROGeometrySource;
 class VROGeometryElement;
 class VRORenderContext;
-class VRODriverContext;
-class VRODriverContextMetal;
+class VRODriver;
+class VRODriverMetal;
 class VROMaterialSubstrateMetal;
 class VROConcurrentBuffer;
 
@@ -58,13 +58,13 @@ class VROGeometrySubstrateMetal : public VROGeometrySubstrate {
 public:
     
     VROGeometrySubstrateMetal(const VROGeometry &geometry,
-                              const VRODriverContextMetal &context);
+                              const VRODriverMetal &context);
     virtual ~VROGeometrySubstrateMetal();
     
     void render(const VROGeometry &geometry,
                 const std::vector<std::shared_ptr<VROMaterial>> &materials,
                 const VRORenderContext &renderContext,
-                const VRODriverContext &driverContext,
+                const VRODriver &driverContext,
                 VRORenderParameters &params);
     
 private:
@@ -111,13 +111,13 @@ private:
      changing.
      */
     void updatePipelineStates(const VROGeometry &geometry,
-                              const VRODriverContextMetal &context);
+                              const VRODriverMetal &context);
     
     /*
      Create a pipeline state from the given material, using the current _vertexDescriptor.
      */
     id <MTLRenderPipelineState> createRenderPipelineState(const std::shared_ptr<VROMaterial> &material,
-                                                          const VRODriverContextMetal &context);
+                                                          const VRODriverMetal &context);
     
     /*
      Create a depth/stencil state from the given material.
@@ -156,7 +156,7 @@ private:
                         id <MTLRenderCommandEncoder> renderEncoder,
                         VRORenderParameters &params,
                         const VRORenderContext &renderContext,
-                        const VRODriverContext &driverContext);
+                        const VRODriver &driverContext);
     
 };
 

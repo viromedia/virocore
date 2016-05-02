@@ -25,13 +25,13 @@ static int read24BitInt(const uint8_t *buf) {
 }
 
 std::shared_ptr<VROTexture> VROTextureUtil::loadASTCTexture(NSData *data, VROTextureType type,
-                                                            const VRODriverContext *context) {
+                                                            const VRODriver *driver) {
     int width;
     int height;
     VROTextureFormat format;
     std::shared_ptr<VROData> stripped = readASTCHeader(data, &format, &width, &height);
     
-    return std::make_shared<VROTexture>(type, format, stripped, width, height, context);
+    return std::make_shared<VROTexture>(type, format, stripped, width, height, driver);
 }
 
 /*

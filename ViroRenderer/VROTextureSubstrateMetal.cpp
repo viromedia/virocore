@@ -9,12 +9,12 @@
 #include "VROTextureSubstrateMetal.h"
 #include "VROImageUtil.h"
 #include "VROTexture.h"
-#include "VRODriverContextMetal.h"
+#include "VRODriverMetal.h"
 #include "VROLog.h"
 
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(int width, int height, CGContextRef bitmapContext,
-                                                   const VRODriverContext &context) {
-    id <MTLDevice> device = ((VRODriverContextMetal &)context).getDevice();
+                                                   const VRODriver &driver) {
+    id <MTLDevice> device = ((VRODriverMetal &)driver).getDevice();
 
     int bytesPerPixel = 4;
     MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm
@@ -32,9 +32,9 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(int width, int height, CGCont
 }
 
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vector<UIImage *> &images,
-                                                   const VRODriverContext &context) {
+                                                   const VRODriver &driver) {
     
-    VRODriverContextMetal &metal = (VRODriverContextMetal &)context;
+    VRODriverMetal &metal = (VRODriverMetal &)driver;
     id <MTLDevice> device = metal.getDevice();
     
     if (type == VROTextureType::Quad) {
@@ -113,10 +113,10 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vec
 
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, VROTextureFormat format,
                                                    std::shared_ptr<VROData> data, int width, int height,
-                                                   const VRODriverContext &context) {
+                                                   const VRODriver &driver) {
     
     if (format == VROTextureFormat::ETC2) {
-        VRODriverContextMetal &metal = (VRODriverContextMetal &)context;
+        VRODriverMetal &metal = (VRODriverMetal &)driver;
         id <MTLDevice> device = metal.getDevice();
         
         if (type == VROTextureType::Quad) {
@@ -135,7 +135,7 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, VROTextu
         }
     }
     else if (format == VROTextureFormat::ASTC_4x4_LDR) {
-        VRODriverContextMetal &metal = (VRODriverContextMetal &)context;
+        VRODriverMetal &metal = (VRODriverMetal &)driver;
         id <MTLDevice> device = metal.getDevice();
         
         if (type == VROTextureType::Quad) {

@@ -9,7 +9,7 @@
 #include "VROMaterialSubstrateMetal.h"
 #include "VROSharedStructures.h"
 #include "VROMetalUtils.h"
-#include "VRODriverContextMetal.h"
+#include "VRODriverMetal.h"
 #include "VROMatrix4f.h"
 #include "VROLight.h"
 #include "VROMath.h"
@@ -18,7 +18,7 @@
 #include "VRORenderParameters.h"
 
 VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
-                                                     const VRODriverContextMetal &context) :
+                                                     const VRODriverMetal &context) :
     _material(material),
     _lightingModel(material.getLightingModel()) {
 
@@ -61,7 +61,7 @@ VROMaterialSubstrateMetal::~VROMaterialSubstrateMetal() {
 
 void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,
                                                      id <MTLLibrary> library, id <MTLDevice> device,
-                                                     const VRODriverContextMetal &context) {
+                                                     const VRODriverMetal &context) {
     
 
     _vertexProgram   = [library newFunctionWithName:@"constant_lighting_vertex"];
@@ -82,7 +82,7 @@ void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,
 
 void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
                                                     id <MTLLibrary> library, id <MTLDevice> device,
-                                                    const VRODriverContextMetal &context) {
+                                                    const VRODriverMetal &context) {
     
     _vertexProgram   = [library newFunctionWithName:@"lambert_lighting_vertex"];
     
@@ -113,7 +113,7 @@ void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
 
 void VROMaterialSubstrateMetal::loadPhongLighting(VROMaterial &material,
                                                   id <MTLLibrary> library, id <MTLDevice> device,
-                                                  const VRODriverContextMetal &context) {
+                                                  const VRODriverMetal &context) {
     
     /*
      If there's no specular map, then we fall back to Lambert lighting.
@@ -156,7 +156,7 @@ void VROMaterialSubstrateMetal::loadPhongLighting(VROMaterial &material,
 
 void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
                                                   id <MTLLibrary> library, id <MTLDevice> device,
-                                                  const VRODriverContextMetal &context) {
+                                                  const VRODriverMetal &context) {
     
     /*
      If there's no specular map, then we fall back to Lambert lighting.

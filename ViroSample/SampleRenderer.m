@@ -19,7 +19,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 @interface SampleRenderer ()
 
-@property (readwrite, nonatomic) VRODriverContext *driverContext;
+@property (readwrite, nonatomic) VRODriver *driverContext;
 @property (readwrite, nonatomic) BOOL tapEnabled;
 @property (readwrite, nonatomic) float torusAngle;
 @property (readwrite, nonatomic) float boxAngle;
@@ -409,7 +409,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return [self loadTorusScene];
 }
 
-- (void)setupRendererWithDriverContext:(VRODriverContext *)driverContext {
+- (void)setupRendererWithDriverContext:(VRODriver *)driverContext {
     self.driverContext = driverContext;
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
 }

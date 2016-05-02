@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
-#include "VRODriverContext.h"
+#include "VRODriver.h"
 #include "VRORenderTarget.h"
 #include "VROMatrix4f.h"
 #include <memory>
@@ -21,13 +21,13 @@
 #include "VROTextureSubstrateMetal.h"
 
 /*
- Driver context for Metal.
+ Driver for Metal.
  */
-class VRODriverContextMetal : public VRODriverContext {
+class VRODriverMetal : public VRODriver {
     
 public:
     
-    VRODriverContextMetal(id <MTLDevice> device) {
+    VRODriverMetal(id <MTLDevice> device) {
         _device = device;
         _commandQueue = [device newCommandQueue];
         

@@ -76,9 +76,9 @@ void VRORenderer::updateRenderViewSize(CGSize size) {
    [_delegate renderViewDidChangeSize:CGSizeMake(size.width / 2, size.height) context:_context.get()];
 }
 
-void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriverContext &driverContext) {
+void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &driver) {
     if (!_rendererInitialized) {
-        [_delegate setupRendererWithDriverContext:&driverContext];
+        [_delegate setupRendererWithDriverContext:&driver];
         _rendererInitialized = YES;
     }
     
@@ -111,11 +111,11 @@ void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriverCon
      */
     _context->setMonocularViewMatrix(cameraMatrix);
 
-    [_HUD updateWithContext:&driverContext];
+    [_HUD updateWithContext:&driver];
 }
 
 void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
-                            const VRODriverContext &driverContext) {
+                            const VRODriver &driver) {
     [_delegate willRenderEye:eye context:_context.get()];
 
     VROMatrix4f cameraMatrix = _context->getCamera().computeLookAtMatrix();
@@ -126,13 +126,13 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     _context->setProjectionMatrix(projectionMatrix);
     _context->setEyeType(eye);
     
-    renderEye(eye, driverContext);
-    [_HUD renderEye:eye withRenderContext:_context.get() driverContext:&driverContext];
+    renderEye(eye, driver);
+    [_HUD renderEye:eye withRenderContext:_context.get() driver:&driver];
     
     [_delegate didRenderEye:eye context:_context.get()];
 }
 
-void VRORenderer::endFrame(const VRODriverContext &driverContext) {
+void VRORenderer::endFrame(const VRODriver &driver) {
     if (!_sceneTransitionActive && _outgoingSceneController) {
         [_sceneController endIncomingTransition:_context.get()];
         [_outgoingSceneController endOutgoingTransition:_context.get()];
@@ -147,22 +147,22 @@ void VRORenderer::endFrame(const VRODriverContext &driverContext) {
     VROTransaction::commitAll();
 }
 
-void VRORenderer::renderEye(VROEyeType eyeType, const VRODriverContext &driverContext) {
+void VRORenderer::renderEye(VROEyeType eyeType, const VRODriver &driver) {
     if (_sceneController) {
         if (_outgoingSceneController) {
             [_outgoingSceneController sceneWillRender:_context.get()];
             [_sceneController sceneWillRender:_context.get()];
             
-            _outgoingSceneController.scene->renderBackground(*_context, driverContext);
-            _sceneController.scene->renderBackground(*_context, driverContext);
+            _outgoingSceneController.scene->renderBackground(*_context, driver);
+            _sceneController.scene->renderBackground(*_context, driver);
             
-            _outgoingSceneController.scene->render(*_context, driverContext);
-            _sceneController.scene->render(*_context, driverContext);
+            _outgoingSceneController.scene->render(*_context, driver);
+            _sceneController.scene->render(*_context, driver);
         }
         else {
             [_sceneController sceneWillRender:_context.get()];
-            _sceneController.scene->renderBackground(*_context, driverContext);
-            _sceneController.scene->render(*_context, driverContext);
+            _sceneController.scene->renderBackground(*_context, driver);
+            _sceneController.scene->render(*_context, driver);
         }
     }
 }

@@ -61,19 +61,19 @@ std::shared_ptr<VRONode> VRONode::clone() {
 #pragma mark - Rendering
 
 void VRONode::render(const VRORenderContext &renderContext,
-                     const VRODriverContext &driverContext,
+                     const VRODriver &driver,
                      VRORenderParameters &params) {
     processActions();
     
     pushTransforms(renderContext, params);
-    renderNode(renderContext, driverContext, params);
+    renderNode(renderContext, driver, params);
     
     /*
      Node the node tree is only present in the model node, not in the
      presentation node, so we find children using the model node's hierarchy.
      */
     for (std::shared_ptr<VRONode> childNode : _subnodes) {
-        childNode->render(renderContext, driverContext, params);
+        childNode->render(renderContext, driver, params);
     }
     
     popTransforms(params);
@@ -96,11 +96,11 @@ void VRONode::pushTransforms(const VRORenderContext &context, VRORenderParameter
 }
 
 void VRONode::renderNode(const VRORenderContext &renderContext,
-                         const VRODriverContext &driverContext,
+                         const VRODriver &driver,
                          VRORenderParameters &params) {
     
     if (_geometry) {
-        _geometry->render(renderContext, driverContext, params);
+        _geometry->render(renderContext, driver, params);
     }
 }
 

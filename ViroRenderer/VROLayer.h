@@ -10,7 +10,7 @@
 #define VROLayer_h
 
 #include <stdio.h>
-#include "VRODriverContext.h"
+#include "VRODriver.h"
 #include "VRORect.h"
 #include <vector>
 #include <stack>
@@ -31,7 +31,7 @@ public:
     
     void setContents(UIImage *image);
     void setContents(int width, int height, CGContextRef bitmapContext,
-                     const VRODriverContext &context);
+                     const VRODriver &driver);
     
     void setFrame(VRORect frame);
     void setPosition(VROVector3f point);

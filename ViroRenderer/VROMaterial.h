@@ -40,7 +40,7 @@ enum class VROLightingModel {
     Constant
 };
 
-class VRODriverContext;
+class VRODriver;
 class VROMaterialSubstrate;
 
 /*
@@ -169,7 +169,7 @@ public:
     /*
      Create a new substrate for this material.
      */
-    void createSubstrate(const VRODriverContext &context);
+    void createSubstrate(const VRODriver &driver);
     
     /*
      Get the representation of this material in the underlying graphics 

@@ -7,7 +7,7 @@
 //
 
 #import "VROViewMetal.h"
-#import "VRODriverContextMetal.h"
+#import "VRODriverMetal.h"
 #import "VROAllocationTracker.h"
 #import "VRORenderer.h"
 #import "VROHeadTracker.h"
@@ -33,7 +33,7 @@ static const float zFar  = 100;
     
     VROHeadTracker *_headTracker;
     std::shared_ptr<VRODevice> _vrDevice;
-    std::shared_ptr<VRODriverContextMetal> _context;
+    std::shared_ptr<VRODriverMetal> _context;
     
     VRODistortionRenderer *_distortionRenderer;
     dispatch_semaphore_t _inflight_semaphore;
@@ -77,7 +77,7 @@ static const float zFar  = 100;
     self.delegate = self;
     self.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
 
-    _context = std::make_shared<VRODriverContextMetal>(self.device);
+    _context = std::make_shared<VRODriverMetal>(self.device);
     _distortionRenderer = new VRODistortionRenderer(_vrDevice);
     _inflight_semaphore = dispatch_semaphore_create(3);
         
@@ -206,7 +206,7 @@ static const float zFar  = 100;
         /*
          A single command buffer collects all render events for a frame.
          */
-        VRODriverContextMetal *driverContext = (VRODriverContextMetal *)_context.get();
+        VRODriverMetal *driverContext = (VRODriverMetal *)_context.get();
         
         id <MTLCommandBuffer> commandBuffer = [driverContext->getCommandQueue() commandBuffer];
         commandBuffer.label = @"CommandBuffer";
@@ -232,7 +232,7 @@ static const float zFar  = 100;
 }
 
 - (void)renderVRDistortionWithCommandBuffer:(id <MTLCommandBuffer>)commandBuffer {
-    VRODriverContextMetal *driverContext = (VRODriverContextMetal *)_context.get();
+    VRODriverMetal *driverContext = (VRODriverMetal *)_context.get();
     _distortionRenderer->updateDistortion(driverContext->getDevice(), driverContext->getLibrary(), self);
     
     std::shared_ptr<VRORenderTarget> eyeTarget = _distortionRenderer->bindEyeRenderTarget(commandBuffer);

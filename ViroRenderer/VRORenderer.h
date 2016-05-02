@@ -18,7 +18,7 @@
 #include "VROFrameSynchronizer.h"
 
 class VROEye;
-class VRODriverContext;
+class VRODriver;
 class VROCameraMutable;
 class VROTimingFunction;
 class VRORenderContext;
@@ -56,10 +56,10 @@ public:
     
 #pragma mark - Render Loop
     
-    void prepareFrame(int frame, VROMatrix4f headRotation, VRODriverContext &driverContext);
+    void prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &driver);
     void renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
-                   const VRODriverContext &driverContext);
-    void endFrame(const VRODriverContext &driverContext);
+                   const VRODriver &driver);
+    void endFrame(const VRODriver &driver);
     
 #pragma mark - Frame Listeners
     
@@ -114,7 +114,7 @@ private:
     
 #pragma mark - Scene Rendering
     
-    void renderEye(VROEyeType eyeType, const VRODriverContext &driverContext);
+    void renderEye(VROEyeType eyeType, const VRODriver &driver);
     
 #pragma mark - Frame Listeners
     
