@@ -104,6 +104,9 @@
 		8FA2E1631C460C600070DB26 /* VROAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E1611C460C600070DB26 /* VROAction.cpp */; };
 		8FA2E1641C460C600070DB26 /* VROAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E1621C460C600070DB26 /* VROAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FA9D0A41CC947DD00B00B93 /* VRODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D0A21CC947DD00B00B93 /* VRODriver.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FB6590C1CD82FD200D036EB /* VROSceneRendererCardboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */; };
+		8FB6590F1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6590D1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp */; };
+		8FB659101CD8301000D036EB /* VROSceneRendererCardboardMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB6590E1CD8301000D036EB /* VROSceneRendererCardboardMetal.h */; };
 		8FC908861CA458EB00069C89 /* VROCameraMutable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FC908841CA458EB00069C89 /* VROCameraMutable.cpp */; };
 		8FC908871CA458EB00069C89 /* VROCameraMutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FC908851CA458EB00069C89 /* VROCameraMutable.h */; };
 		8FCB6C881C3C828200C14158 /* VROLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB6C861C3C828200C14158 /* VROLoader.cpp */; };
@@ -485,6 +488,9 @@
 		8FA2E1611C460C600070DB26 /* VROAction.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROAction.cpp; sourceTree = "<group>"; };
 		8FA2E1621C460C600070DB26 /* VROAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAction.h; sourceTree = "<group>"; };
 		8FA9D0A21CC947DD00B00B93 /* VRODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODriver.h; sourceTree = "<group>"; };
+		8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneRendererCardboard.h; sourceTree = "<group>"; };
+		8FB6590D1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSceneRendererCardboardMetal.cpp; sourceTree = "<group>"; };
+		8FB6590E1CD8301000D036EB /* VROSceneRendererCardboardMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneRendererCardboardMetal.h; sourceTree = "<group>"; };
 		8FC908841CA458EB00069C89 /* VROCameraMutable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROCameraMutable.cpp; sourceTree = "<group>"; };
 		8FC908851CA458EB00069C89 /* VROCameraMutable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCameraMutable.h; sourceTree = "<group>"; };
 		8FCB6C861C3C828200C14158 /* VROLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLoader.cpp; sourceTree = "<group>"; };
@@ -649,13 +655,12 @@
 		8F0FE6621CD25A3500A4C297 /* Cardboard */ = {
 			isa = PBXGroup;
 			children = (
+				8FB659081CD82F7900D036EB /* Renderer */,
 				8F0FE6771CD3DFC800A4C297 /* Shaders */,
 				8F0FE6691CD289FD00A4C297 /* VRORenderLoopCardboard.h */,
 				8F0FE66A1CD289FD00A4C297 /* VRORenderLoopCardboard.m */,
 				8F0FE66D1CD29BF900A4C297 /* VROViewCardboard.h */,
 				8F0FE66E1CD29BF900A4C297 /* VROViewCardboard.m */,
-				8F0FE67D1CD3E12F00A4C297 /* VROShaderProgram.h */,
-				8F0FE67C1CD3E12F00A4C297 /* VROShaderProgram.cpp */,
 			);
 			name = Cardboard;
 			sourceTree = "<group>";
@@ -995,6 +1000,18 @@
 			name = Animation;
 			sourceTree = "<group>";
 		};
+		8FB659081CD82F7900D036EB /* Renderer */ = {
+			isa = PBXGroup;
+			children = (
+				8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */,
+				8FB6590E1CD8301000D036EB /* VROSceneRendererCardboardMetal.h */,
+				8FB6590D1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp */,
+				8F0FE67D1CD3E12F00A4C297 /* VROShaderProgram.h */,
+				8F0FE67C1CD3E12F00A4C297 /* VROShaderProgram.cpp */,
+			);
+			name = Renderer;
+			sourceTree = "<group>";
+		};
 		8FCB6C851C3C826C00C14158 /* IO */ = {
 			isa = PBXGroup;
 			children = (
@@ -1188,6 +1205,7 @@
 				8F92780C1C67DE4A00FF892A /* VROHoverController.h in Headers */,
 				8F548E461C23654E00556688 /* VROAnimationFloat.h in Headers */,
 				8F548E4A1C23656000556688 /* VROAnimationVector3f.h in Headers */,
+				8FB6590C1CD82FD200D036EB /* VROSceneRendererCardboard.h in Headers */,
 				8FCF395C1CA5844E00A86CA3 /* VROSceneControllerInternal.h in Headers */,
 				8F65F78A1C90CD4700415115 /* VROBillboardConstraint.h in Headers */,
 				8F11B7CB1C20E7830026D150 /* VROAnimation.h in Headers */,
@@ -1195,6 +1213,7 @@
 				8FD9B45D1C31E9DC006CB698 /* VROAnimationQuaternion.h in Headers */,
 				8F11B7C71C20CF200026D150 /* VRORenderParameters.h in Headers */,
 				8FA2E1641C460C600070DB26 /* VROAction.h in Headers */,
+				8FB659101CD8301000D036EB /* VROSceneRendererCardboardMetal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1531,6 +1550,7 @@
 				8FD4DEFB1C18ED19003DC425 /* VROMath.cpp in Sources */,
 				8FD4DEEC1C18ED0B003DC425 /* VROTime.cpp in Sources */,
 				8FD4DF061C18ED3C003DC425 /* VROCamera.cpp in Sources */,
+				8FB6590F1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp in Sources */,
 				8F65F78D1C90D83600415115 /* VROTransformConstraint.cpp in Sources */,
 				8FD4DF051C18ED3C003DC425 /* VROScene.cpp in Sources */,
 				8FD4DEFF1C18ED2C003DC425 /* VROMetalUtils.cpp in Sources */,

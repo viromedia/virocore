@@ -10,9 +10,6 @@
 #import "VROView.h"
 #import "GCSCardboardView.h"
 
-#import <Metal/Metal.h>
-#import <MetalKit/MetalKit.h>
-
 @interface VROViewCardboard : GCSCardboardView <GCSCardboardViewDelegate, VROView>
 
 @end
