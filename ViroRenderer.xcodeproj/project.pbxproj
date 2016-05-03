@@ -646,8 +646,8 @@
 		8F0FE6601CD25A2300A4C297 /* Drivers */ = {
 			isa = PBXGroup;
 			children = (
-				8F0FE6621CD25A3500A4C297 /* Cardboard */,
 				8F0FE6611CD25A2C00A4C297 /* Metal */,
+				8FB659261CD9084F00D036EB /* OpenGL */,
 			);
 			name = Drivers;
 			sourceTree = "<group>";
@@ -655,12 +655,13 @@
 		8F0FE6611CD25A2C00A4C297 /* Metal */ = {
 			isa = PBXGroup;
 			children = (
-				8FDFA8971BDB031800883EC0 /* Sensors */,
-				8F0FE6631CD25B7E00A4C297 /* Renderer */,
-				8F517BF31BCDBBA80017C70B /* VR Distortion */,
 				8F517BFC1BCDC9170017C70B /* VRODriverMetal.h */,
-				8FDDE2061CCFD69D00674DE2 /* VROViewMetal.h */,
-				8FDDE2071CCFD69D00674DE2 /* VROViewMetal.m */,
+				8F4DCE501BFD628A00061DD7 /* VROGeometrySubstrateMetal.h */,
+				8F4DCE4F1BFD628A00061DD7 /* VROGeometrySubstrateMetal.cpp */,
+				8FF4D7A81C0D45DA006D6157 /* VROMaterialSubstrateMetal.h */,
+				8FF4D7A71C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp */,
+				8F152A831C121A5500A211F8 /* VROTextureSubstrateMetal.h */,
+				8F152A821C121A5500A211F8 /* VROTextureSubstrateMetal.cpp */,
 				8F152A711C0D7A5A00A211F8 /* VROMetalUtils.h */,
 				8F152A701C0D7A5A00A211F8 /* VROMetalUtils.cpp */,
 				8F9277A41C62DBDF00FF892A /* VROConcurrentBuffer.h */,
@@ -673,27 +674,17 @@
 		8F0FE6621CD25A3500A4C297 /* Cardboard */ = {
 			isa = PBXGroup;
 			children = (
-				8FB659081CD82F7900D036EB /* Renderer */,
-				8F0FE6771CD3DFC800A4C297 /* Shaders */,
+				8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */,
+				8FB6590E1CD8301000D036EB /* VROSceneRendererCardboardMetal.h */,
+				8FB6590D1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp */,
+				8FB659131CD8389300D036EB /* VROSceneRendererCardboardOpenGL.h */,
+				8FB659121CD8389300D036EB /* VROSceneRendererCardboardOpenGL.cpp */,
 				8F0FE6691CD289FD00A4C297 /* VRORenderLoopCardboard.h */,
 				8F0FE66A1CD289FD00A4C297 /* VRORenderLoopCardboard.m */,
 				8F0FE66D1CD29BF900A4C297 /* VROViewCardboard.h */,
 				8F0FE66E1CD29BF900A4C297 /* VROViewCardboard.m */,
 			);
 			name = Cardboard;
-			sourceTree = "<group>";
-		};
-		8F0FE6631CD25B7E00A4C297 /* Renderer */ = {
-			isa = PBXGroup;
-			children = (
-				8F4DCE501BFD628A00061DD7 /* VROGeometrySubstrateMetal.h */,
-				8F4DCE4F1BFD628A00061DD7 /* VROGeometrySubstrateMetal.cpp */,
-				8FF4D7A81C0D45DA006D6157 /* VROMaterialSubstrateMetal.h */,
-				8FF4D7A71C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp */,
-				8F152A831C121A5500A211F8 /* VROTextureSubstrateMetal.h */,
-				8F152A821C121A5500A211F8 /* VROTextureSubstrateMetal.cpp */,
-			);
-			name = Renderer;
 			sourceTree = "<group>";
 		};
 		8F0FE6771CD3DFC800A4C297 /* Shaders */ = {
@@ -862,6 +853,7 @@
 		8F517BB81BCDA2BD0017C70B /* ViroRenderer */ = {
 			isa = PBXGroup;
 			children = (
+				8FB659241CD9082000D036EB /* Platforms */,
 				8F0FE6601CD25A2300A4C297 /* Drivers */,
 				8F5C414B1BD825A9006D7A77 /* Util */,
 				8F517C441BD0472C0017C70B /* Math */,
@@ -1018,16 +1010,30 @@
 			name = Animation;
 			sourceTree = "<group>";
 		};
-		8FB659081CD82F7900D036EB /* Renderer */ = {
+		8FB659241CD9082000D036EB /* Platforms */ = {
 			isa = PBXGroup;
 			children = (
-				8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */,
-				8FB6590E1CD8301000D036EB /* VROSceneRendererCardboardMetal.h */,
-				8FB6590D1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp */,
-				8FB659131CD8389300D036EB /* VROSceneRendererCardboardOpenGL.h */,
-				8FB659121CD8389300D036EB /* VROSceneRendererCardboardOpenGL.cpp */,
-				8F0FE67D1CD3E12F00A4C297 /* VROShaderProgram.h */,
-				8F0FE67C1CD3E12F00A4C297 /* VROShaderProgram.cpp */,
+				8FB659251CD9083800D036EB /* Metal */,
+				8F0FE6621CD25A3500A4C297 /* Cardboard */,
+			);
+			name = Platforms;
+			sourceTree = "<group>";
+		};
+		8FB659251CD9083800D036EB /* Metal */ = {
+			isa = PBXGroup;
+			children = (
+				8FDFA8971BDB031800883EC0 /* Sensors */,
+				8F517BF31BCDBBA80017C70B /* VR Distortion */,
+				8FDDE2061CCFD69D00674DE2 /* VROViewMetal.h */,
+				8FDDE2071CCFD69D00674DE2 /* VROViewMetal.m */,
+			);
+			name = Metal;
+			sourceTree = "<group>";
+		};
+		8FB659261CD9084F00D036EB /* OpenGL */ = {
+			isa = PBXGroup;
+			children = (
+				8F0FE6771CD3DFC800A4C297 /* Shaders */,
 				8FB659161CD839A000D036EB /* VRODriverOpenGL.h */,
 				8FB659191CD839DC00D036EB /* VROGeometrySubstrateOpenGL.h */,
 				8FB659181CD839DC00D036EB /* VROGeometrySubstrateOpenGL.cpp */,
@@ -1035,8 +1041,10 @@
 				8FB6591C1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.cpp */,
 				8FB659211CD83A2200D036EB /* VROTextureSubstrateOpenGL.h */,
 				8FB659201CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp */,
+				8F0FE67D1CD3E12F00A4C297 /* VROShaderProgram.h */,
+				8F0FE67C1CD3E12F00A4C297 /* VROShaderProgram.cpp */,
 			);
-			name = Renderer;
+			name = OpenGL;
 			sourceTree = "<group>";
 		};
 		8FCB6C851C3C826C00C14158 /* IO */ = {
