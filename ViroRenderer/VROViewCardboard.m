@@ -45,6 +45,8 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
     float _quadFSVAR[24];
     
     VROShaderProgram *_blitter;
+    VROCardboardRenderLoop *_renderLoop;
+
 }
 
 @property (readwrite, nonatomic) int frameNumber;
@@ -77,6 +79,8 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
 - (void)initRenderer {
     self.frameNumber = 0;
     self.delegate = self;
+    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.vrModeEnabled = YES;
     
     // Do not allow the display to go into sleep
     [UIApplication sharedApplication].idleTimerDisabled = YES;
@@ -100,6 +104,24 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
     delete (_blitter);
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)willMoveToWindow:(UIWindow *)newWindow {
+    if (newWindow) {
+        /*
+         Render loop target ensures ensures that the render loop doesn't hold a
+         strong reference to this view (prevents a cycle).
+         */
+        VRORenderLoopTarget *target = [[VRORenderLoopTarget alloc] init];
+        target.cardboardView = self; // weak reference
+        
+        _renderLoop = [[VROCardboardRenderLoop alloc] initWithRenderTarget:target
+                                                                  selector:@selector(render)];
+    }
+    else {
+        [_renderLoop invalidate];
+        _renderLoop = nil;
+    }
 }
 
 #pragma mark - Settings

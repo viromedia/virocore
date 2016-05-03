@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+@class VROViewCardboard;
+
 @interface VROCardboardRenderLoop : NSObject
 
 /*
@@ -26,6 +28,18 @@
  Sets or returns the paused state of the underlying |CADisplayLink| reference. 
  */
 @property(nonatomic) BOOL paused;
+
+@end
+
+/*
+ Interface used to maintain a weak reference from the render loop to the
+ cardboard view.
+ */
+@interface VRORenderLoopTarget : NSObject
+
+@property (readwrite, nonatomic) VROViewCardboard *cardboardView;
+
+- (void)render;
 
 @end
 

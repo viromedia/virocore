@@ -7,6 +7,7 @@
 //
 
 #import "VROCardboardRenderLoop.h"
+#import "VROViewCardboard.h"
 
 // Flag to control if rendering is performed on a background thread or on the main thread.
 static const BOOL kRenderInBackgroundThread = YES;
@@ -112,6 +113,16 @@ static const BOOL kRenderInBackgroundThread = YES;
     [_renderThread cancel];
     _renderThread = nil;
   });
+}
+
+@end
+
+@implementation VRORenderLoopTarget
+
+- (void)render {
+    if (self.cardboardView && self.cardboardView.superview) {
+        [self.cardboardView render];
+    }
 }
 
 @end
