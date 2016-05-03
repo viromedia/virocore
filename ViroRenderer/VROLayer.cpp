@@ -37,8 +37,8 @@ void VROLayer::setContents(UIImage *image) {
 void VROLayer::setContents(int width, int height, CGContextRef bitmapContext,
                            const VRODriver &driver) {
     
-    std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateMetal>(
-                    new VROTextureSubstrateMetal(width, height, bitmapContext, driver));
+    std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrate>(
+                    driver.newTextureSubstrate(width, height, bitmapContext));
     
     getMaterial()->getDiffuse().setContents(std::make_shared<VROTexture>(VROTextureType::Quad, std::move(substrate)));
 }

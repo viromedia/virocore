@@ -10,8 +10,6 @@
 #define VROTexture_h
 
 #include <UIKit/UIKit.h>
-#include <Metal/Metal.h>
-#include <MetalKit/MetalKit.h>
 #include <memory>
 #include <vector>
 

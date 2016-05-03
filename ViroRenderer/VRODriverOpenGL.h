@@ -9,5 +9,36 @@
 #ifndef VRODriverOpenGL_h
 #define VRODriverOpenGL_h
 
+#include "VRODriver.h"
+#include "VROGeometrySubstrateOpenGL.h"
+#include "VROMaterialSubstrateOpenGL.h"
+#include "VROTextureSubstrateOpenGL.h"
+
+class VRODriverOpenGL : public VRODriver {
+    
+public:
+    
+    VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const {
+        return nullptr;//new VROGeometrySubstrateMetal(geometry, *this);
+    }
+    
+    VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) const {
+        return nullptr;//new VROMaterialSubstrateMetal(material, *this);
+    }
+    
+    VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) const {
+        return new VROTextureSubstrateOpenGL(type, images, *this);
+    }
+    
+    VROTextureSubstrate *newTextureSubstrate(VROTextureType type, VROTextureFormat format, std::shared_ptr<VROData> data,
+                                             int width, int height) const {
+        return new VROTextureSubstrateOpenGL(type, format, data, width, height, *this);
+    }
+    
+    VROTextureSubstrate *newTextureSubstrate(int width, int height, CGContextRef bitmapContext) const {
+        return new VROTextureSubstrateOpenGL(width, height, bitmapContext, *this);
+    }
+    
+};
 
 #endif /* VRODriverOpenGL_h */

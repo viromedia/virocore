@@ -35,6 +35,7 @@ public:
     virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) const = 0;
     virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, VROTextureFormat format, std::shared_ptr<VROData> data,
                                                      int width, int height) const = 0;
+    virtual VROTextureSubstrate *newTextureSubstrate(int width, int height, CGContextRef bitmapContext) const = 0;
     
 };
 

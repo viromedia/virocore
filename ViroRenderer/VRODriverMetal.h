@@ -71,6 +71,10 @@ public:
         return new VROTextureSubstrateMetal(type, format, data, width, height, *this);
     }
     
+    VROTextureSubstrate *newTextureSubstrate(int width, int height, CGContextRef bitmapContext) const {
+        return new VROTextureSubstrateMetal(width, height, bitmapContext, *this);
+    }
+    
 private:
     
     id <MTLDevice> _device;
