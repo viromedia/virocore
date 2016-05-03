@@ -19,7 +19,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 @interface SampleRenderer ()
 
-@property (readwrite, nonatomic) VRODriver *driverContext;
+@property (readwrite, nonatomic) VRODriver *driver;
 @property (readwrite, nonatomic) BOOL tapEnabled;
 @property (readwrite, nonatomic) float torusAngle;
 @property (readwrite, nonatomic) float boxAngle;
@@ -80,7 +80,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"surfing" ofType:@"mp4"];
     
     self.videoTexture = std::make_shared<VROVideoTexture>();
-    self.videoTexture->loadVideo([NSURL fileURLWithPath:filePath], [self.view frameSynchronizer], *self.driverContext);
+    self.videoTexture->loadVideo([NSURL fileURLWithPath:filePath], [self.view frameSynchronizer], *self.driver);
     self.videoTexture->play();
     
     scene->setBackgroundSphere(self.videoTexture);
@@ -281,7 +281,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     NSURL *videoURL = [NSURL URLWithString:@"https://s3-us-west-2.amazonaws.com/dmoontest/img/Zoe2.mp4"];
     
     std::shared_ptr<VROVideoTexture> videoTexture = std::make_shared<VROVideoTexture>();
-    videoTexture->loadVideo(videoURL, [self.view frameSynchronizer], *self.driverContext);
+    videoTexture->loadVideo(videoURL, [self.view frameSynchronizer], *self.driver);
     
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);
@@ -320,7 +320,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     [label setFont:[UIFont systemFontOfSize:12]];
     
     [labelView addSubview:label];
-    [labelView updateWithContext:self.driverContext];
+    [labelView updateWithContext:self.driver];
     
     rootNode->addChildNode(labelView.vroLayer);
     
@@ -409,8 +409,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return [self loadTorusScene];
 }
 
-- (void)setupRendererWithDriverContext:(VRODriver *)driverContext {
-    self.driverContext = driverContext;
+- (void)setupRendererWithDriverContext:(VRODriver *)driver {
+    self.driver = driver;
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
 }
 

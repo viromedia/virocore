@@ -31,9 +31,9 @@ public:
     virtual ~VROScene();
     
     void renderBackground(const VRORenderContext &renderContext,
-                          const VRODriver &driverContext);
+                          const VRODriver &driver);
     void render(const VRORenderContext &renderContext,
-                const VRODriver &driverContext);
+                const VRODriver &driver);
     
     /*
      Add a new root node to the scene.

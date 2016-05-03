@@ -28,11 +28,11 @@ void VROGeometry::prewarm(const VRODriver &driver) {
 }
 
 void VROGeometry::render(const VRORenderContext &renderContext,
-                         const VRODriver &driverContext,
+                         const VRODriver &driver,
                          VRORenderParameters &params) {
     
-    prewarm(driverContext);
-    _substrate->render(*this, _materials, renderContext, driverContext, params);
+    prewarm(driver);
+    _substrate->render(*this, _materials, renderContext, driver, params);
 }
 
 const VROBoundingBox &VROGeometry::getBoundingBox() {

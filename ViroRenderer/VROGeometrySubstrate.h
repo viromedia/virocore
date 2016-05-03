@@ -32,7 +32,7 @@ public:
     virtual void render(const VROGeometry &geometry,
                         const std::vector<std::shared_ptr<VROMaterial>> &materials,
                         const VRORenderContext &renderContext,
-                        const VRODriver &driverContext,
+                        const VRODriver &driver,
                         VRORenderParameters &params) = 0;
 
 };

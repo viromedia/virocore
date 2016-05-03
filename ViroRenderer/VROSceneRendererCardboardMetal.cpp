@@ -81,9 +81,9 @@ void VROSceneRendererCardboardMetal::initRenderer(GCSHeadTransform *headTransfor
 }
 
 void VROSceneRendererCardboardMetal::prepareFrame(GCSHeadTransform *headTransform) {
-    VRODriverMetal *driverContext = (VRODriverMetal *)_driver.get();
+    VRODriverMetal *driver = (VRODriverMetal *)_driver.get();
     
-    _commandBuffer = [driverContext->getCommandQueue() commandBuffer];
+    _commandBuffer = [driver->getCommandQueue() commandBuffer];
     _commandBuffer.label = @"CommandBuffer";
     
     _eyeTarget = createEyeRenderTarget();

@@ -206,9 +206,9 @@ static const float zFar  = 100;
         /*
          A single command buffer collects all render events for a frame.
          */
-        VRODriverMetal *driverContext = (VRODriverMetal *)_context.get();
+        VRODriverMetal *driver = (VRODriverMetal *)_context.get();
         
-        id <MTLCommandBuffer> commandBuffer = [driverContext->getCommandQueue() commandBuffer];
+        id <MTLCommandBuffer> commandBuffer = [driver->getCommandQueue() commandBuffer];
         commandBuffer.label = @"CommandBuffer";
         
         /*
@@ -232,14 +232,14 @@ static const float zFar  = 100;
 }
 
 - (void)renderVRDistortionWithCommandBuffer:(id <MTLCommandBuffer>)commandBuffer {
-    VRODriverMetal *driverContext = (VRODriverMetal *)_context.get();
-    _distortionRenderer->updateDistortion(driverContext->getDevice(), driverContext->getLibrary(), self);
+    VRODriverMetal *driver = (VRODriverMetal *)_context.get();
+    _distortionRenderer->updateDistortion(driver->getDevice(), driver->getLibrary(), self);
     
     std::shared_ptr<VRORenderTarget> eyeTarget = _distortionRenderer->bindEyeRenderTarget(commandBuffer);
-    driverContext->setRenderTarget(eyeTarget);
+    driver->setRenderTarget(eyeTarget);
     
     VROMatrix4f headRotation = _headTracker->getHeadRotation();
-    _renderer->prepareFrame(_frameNumber, headRotation.invert(), *driverContext);
+    _renderer->prepareFrame(_frameNumber, headRotation.invert(), *driver);
     
     float halfLensDistance = _vrDevice->getInterLensDistance() * 0.5f;
     VROMatrix4f leftEyeMatrix  = matrix_from_translation( halfLensDistance, 0, 0);
@@ -250,14 +250,14 @@ static const float zFar  = 100;
     [eyeRenderEncoder setScissorRect:_leftEye->getViewport().toMetalScissor()];
     
     _renderer->renderEye(_leftEye->getType(), leftEyeMatrix, _leftEye->getPerspectiveMatrix(),
-                         *driverContext);
+                         *driver);
     
     [eyeRenderEncoder setViewport:_rightEye->getViewport().toMetalViewport()];
     [eyeRenderEncoder setScissorRect:_rightEye->getViewport().toMetalScissor()];
     
     _renderer->renderEye(_rightEye->getType(), rightEyeMatrix, _rightEye->getPerspectiveMatrix(),
-                         *driverContext);
-    _renderer->endFrame(*driverContext);
+                         *driver);
+    _renderer->endFrame(*driver);
     
     [eyeRenderEncoder endEncoding];
     
