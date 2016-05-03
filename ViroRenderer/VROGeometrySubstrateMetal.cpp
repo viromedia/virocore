@@ -21,12 +21,12 @@
 #include <map>
 
 VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry,
-                                                     const VRODriverMetal &context) {
-    id <MTLDevice> device = context.getDevice();
+                                                     const VRODriverMetal &driver) {
+    id <MTLDevice> device = driver.getDevice();
 
     readGeometryElements(device, geometry.getGeometryElements());
     readGeometrySources(device, geometry.getGeometrySources());
-    updatePipelineStates(geometry, context);
+    updatePipelineStates(geometry, driver);
     
     for (int i = 0; i < _elements.size(); i++) {
         _outgoingPipelineStates.push_back(nullptr);
@@ -132,16 +132,16 @@ void VROGeometrySubstrateMetal::readGeometrySources(id <MTLDevice> device,
 }
 
 void VROGeometrySubstrateMetal::updatePipelineStates(const VROGeometry &geometry,
-                                                     const VRODriverMetal &context) {
+                                                     const VRODriverMetal &driver) {
     
-    id <MTLDevice> device = context.getDevice();
+    id <MTLDevice> device = driver.getDevice();
     const std::vector<std::shared_ptr<VROMaterial>> &materials = geometry.getMaterials_const();
     
     for (int i = 0; i < _elements.size(); i++) {
         VROGeometryElementMetal element = _elements[i];
         const std::shared_ptr<VROMaterial> &material = materials[i % materials.size()];
         
-        id <MTLRenderPipelineState> pipelineState = createRenderPipelineState(material, context);
+        id <MTLRenderPipelineState> pipelineState = createRenderPipelineState(material, driver);
         _elementPipelineStates.push_back(pipelineState);
         
         id <MTLDepthStencilState> depthStencilState = createDepthStencilState(material, device);
@@ -150,12 +150,12 @@ void VROGeometrySubstrateMetal::updatePipelineStates(const VROGeometry &geometry
 }
 
 id <MTLRenderPipelineState> VROGeometrySubstrateMetal::createRenderPipelineState(const std::shared_ptr<VROMaterial> &material,
-                                                                                 const VRODriverMetal &context) {
+                                                                                 const VRODriverMetal &driver) {
     
-    id <MTLDevice> device = context.getDevice();
-    std::shared_ptr<VRORenderTarget> renderTarget = context.getRenderTarget();
+    id <MTLDevice> device = driver.getDevice();
+    std::shared_ptr<VRORenderTarget> renderTarget = driver.getRenderTarget();
     
-    material->createSubstrate(context);
+    material->createSubstrate(driver);
     VROMaterialSubstrateMetal *substrate = static_cast<VROMaterialSubstrateMetal *>(material->getSubstrate());
     
     MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
@@ -317,10 +317,10 @@ int VROGeometrySubstrateMetal::parseAttributeIndex(VROGeometrySourceSemantic sem
 void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
                                        const std::vector<std::shared_ptr<VROMaterial>> &materials,
                                        const VRORenderContext &renderContext,
-                                       const VRODriver &driverContext,
+                                       const VRODriver &driver,
                                        VRORenderParameters &params) {
     
-    const VRODriverMetal &metal = (VRODriverMetal &)driverContext;
+    const VRODriverMetal &metal = (VRODriverMetal &)driver;
     id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
     
     int frame = renderContext.getFrame();
@@ -390,14 +390,14 @@ void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
             VROMaterialSubstrateMetal *outgoingSubstrate = static_cast<VROMaterialSubstrateMetal *>(outgoing->getSubstrate());
             
             renderMaterial(outgoingSubstrate, element, outgoingPipelineState, depthState, renderEncoder, params,
-                           renderContext, driverContext);
+                           renderContext, driver);
             renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params,
-                           renderContext, driverContext);
+                           renderContext, driver);
         }
         else {
             _outgoingPipelineStates[i] = nullptr;
             renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params,
-                           renderContext, driverContext);
+                           renderContext, driver);
         }
         
         [renderEncoder popDebugGroup];
@@ -411,7 +411,7 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
                                                id <MTLRenderCommandEncoder> renderEncoder,
                                                VRORenderParameters &params,
                                                const VRORenderContext &renderContext,
-                                               const VRODriver &driverContext) {
+                                               const VRODriver &driver) {
     
     int frame = renderContext.getFrame();
     VROEyeType eyeType = renderContext.getEyeType();
@@ -426,12 +426,12 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
     
     const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();
     for (int j = 0; j < textures.size(); ++j) {
-        VROTextureSubstrateMetal *substrate = (VROTextureSubstrateMetal *) textures[j]->getSubstrate(driverContext);
+        VROTextureSubstrateMetal *substrate = (VROTextureSubstrateMetal *) textures[j]->getSubstrate(driver);
         if (!substrate) {
             // Use a blank placeholder if a texture is not yet available (i.e.
             // during video texture loading)
             std::shared_ptr<VROTexture> blank = getBlankTexture();
-            substrate = (VROTextureSubstrateMetal *) blank->getSubstrate(driverContext);
+            substrate = (VROTextureSubstrateMetal *) blank->getSubstrate(driver);
         }
         
         [renderEncoder setFragmentTexture:substrate->getTexture() atIndex:j];

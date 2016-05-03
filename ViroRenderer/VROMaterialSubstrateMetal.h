@@ -33,7 +33,7 @@ class VROMaterialSubstrateMetal : public VROMaterialSubstrate {
 public:
     
     VROMaterialSubstrateMetal(VROMaterial &material,
-                              const VRODriverMetal &context);
+                              const VRODriverMetal &driver);
     virtual ~VROMaterialSubstrateMetal();
     
     /*
@@ -73,16 +73,16 @@ private:
     
     void loadConstantLighting(VROMaterial &material,
                               id <MTLLibrary> library, id <MTLDevice> device,
-                              const VRODriverMetal &context);
+                              const VRODriverMetal &driver);
     void loadBlinnLighting(VROMaterial &material,
                            id <MTLLibrary> library, id <MTLDevice> device,
-                           const VRODriverMetal &context);
+                           const VRODriverMetal &driver);
     void loadPhongLighting(VROMaterial &material,
                            id <MTLLibrary> library, id <MTLDevice> device,
-                           const VRODriverMetal &context);
+                           const VRODriverMetal &driver);
     void loadLambertLighting(VROMaterial &material,
                              id <MTLLibrary> library, id <MTLDevice> device,
-                             const VRODriverMetal &context);
+                             const VRODriverMetal &driver);
     
     void bindConstantLighting(const std::shared_ptr<VROLight> &light);
     void bindBlinnLighting(const std::shared_ptr<VROLight> &light);

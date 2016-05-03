@@ -18,31 +18,31 @@
 #include "VRORenderParameters.h"
 
 VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
-                                                     const VRODriverMetal &context) :
+                                                     const VRODriverMetal &driver) :
     _material(material),
     _lightingModel(material.getLightingModel()) {
 
-    id <MTLDevice> device = context.getDevice();
-    id <MTLLibrary> library = context.getLibrary();
+    id <MTLDevice> device = driver.getDevice();
+    id <MTLLibrary> library = driver.getLibrary();
     
     _lightingUniformsBuffer = new VROConcurrentBuffer(sizeof(VROSceneLightingUniforms), @"VROSceneLightingUniformBuffer", device);
     _materialUniformsBuffer = new VROConcurrentBuffer(sizeof(VROMaterialUniforms), @"VROMaterialUniformBuffer", device);
     
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
-            loadConstantLighting(material, library, device, context);
+            loadConstantLighting(material, library, device, driver);
             break;
             
         case VROLightingModel::Blinn:
-            loadBlinnLighting(material, library, device, context);
+            loadBlinnLighting(material, library, device, driver);
             break;
             
         case VROLightingModel::Lambert:
-            loadLambertLighting(material, library, device, context);
+            loadLambertLighting(material, library, device, driver);
             break;
             
         case VROLightingModel::Phong:
-            loadPhongLighting(material, library, device, context);
+            loadPhongLighting(material, library, device, driver);
             break;
             
         default:
@@ -61,7 +61,7 @@ VROMaterialSubstrateMetal::~VROMaterialSubstrateMetal() {
 
 void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,
                                                      id <MTLLibrary> library, id <MTLDevice> device,
-                                                     const VRODriverMetal &context) {
+                                                     const VRODriverMetal &driver) {
     
 
     _vertexProgram   = [library newFunctionWithName:@"constant_lighting_vertex"];
@@ -82,7 +82,7 @@ void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,
 
 void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
                                                     id <MTLLibrary> library, id <MTLDevice> device,
-                                                    const VRODriverMetal &context) {
+                                                    const VRODriverMetal &driver) {
     
     _vertexProgram   = [library newFunctionWithName:@"lambert_lighting_vertex"];
     
@@ -113,14 +113,14 @@ void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
 
 void VROMaterialSubstrateMetal::loadPhongLighting(VROMaterial &material,
                                                   id <MTLLibrary> library, id <MTLDevice> device,
-                                                  const VRODriverMetal &context) {
+                                                  const VRODriverMetal &driver) {
     
     /*
      If there's no specular map, then we fall back to Lambert lighting.
      */
     VROMaterialVisual &specular = material.getSpecular();
     if (specular.getContentsType() != VROContentsType::Texture2D) {
-        loadLambertLighting(material, library, device, context);
+        loadLambertLighting(material, library, device, driver);
         return;
     }
     
@@ -156,14 +156,14 @@ void VROMaterialSubstrateMetal::loadPhongLighting(VROMaterial &material,
 
 void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
                                                   id <MTLLibrary> library, id <MTLDevice> device,
-                                                  const VRODriverMetal &context) {
+                                                  const VRODriverMetal &driver) {
     
     /*
      If there's no specular map, then we fall back to Lambert lighting.
      */
     VROMaterialVisual &specular = material.getSpecular();
     if (specular.getContentsType() != VROContentsType::Texture2D) {
-        loadLambertLighting(material, library, device, context);
+        loadLambertLighting(material, library, device, driver);
         return;
     }
     
