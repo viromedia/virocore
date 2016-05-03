@@ -1,5 +1,5 @@
 //
-//  VROCardboardRenderLoop.h
+//  VRORenderLoopCardboard.h
 //  ViroRenderer
 //
 //  Created by Raj Advani on 4/22/16.
@@ -10,7 +10,7 @@
 
 @class VROViewCardboard;
 
-@interface VROCardboardRenderLoop : NSObject
+@interface VRORenderLoopCardboard : NSObject
 
 /*
  Initializes the render loop with target and selector. The underlying |CADisplayLink| instance

@@ -13,7 +13,7 @@
 #import "VROEye.h"
 #import "VRODriverMetal.h"
 #import "VRORenderTarget.h"
-#import "VROCardboardRenderLoop.h"
+#import "VRORenderLoopCardboard.h"
 #import "VROShaderProgram.h"
 
 #import <GLKit/GLKit.h>
@@ -45,7 +45,7 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
     float _quadFSVAR[24];
     
     VROShaderProgram *_blitter;
-    VROCardboardRenderLoop *_renderLoop;
+    VRORenderLoopCardboard *_renderLoop;
 
 }
 
@@ -115,7 +115,7 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
         VRORenderLoopTarget *target = [[VRORenderLoopTarget alloc] init];
         target.cardboardView = self; // weak reference
         
-        _renderLoop = [[VROCardboardRenderLoop alloc] initWithRenderTarget:target
+        _renderLoop = [[VRORenderLoopCardboard alloc] initWithRenderTarget:target
                                                                   selector:@selector(render)];
     }
     else {

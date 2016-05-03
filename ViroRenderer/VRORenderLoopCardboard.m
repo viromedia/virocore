@@ -1,18 +1,18 @@
 //
-//  VROCardboardRenderLoop.m
+//  VRORenderLoopCardboard.m
 //  ViroRenderer
 //
 //  Created by Raj Advani on 4/22/16.
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#import "VROCardboardRenderLoop.h"
+#import "VRORenderLoopCardboard.h"
 #import "VROViewCardboard.h"
 
 // Flag to control if rendering is performed on a background thread or on the main thread.
 static const BOOL kRenderInBackgroundThread = YES;
 
-@implementation VROCardboardRenderLoop {
+@implementation VRORenderLoopCardboard {
   NSThread *_renderThread;
   CADisplayLink *_displayLink;
   BOOL _paused;
