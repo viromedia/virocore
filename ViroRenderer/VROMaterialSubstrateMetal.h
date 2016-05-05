@@ -32,7 +32,7 @@ class VROMaterialSubstrateMetal : public VROMaterialSubstrate {
     
 public:
     
-    VROMaterialSubstrateMetal(VROMaterial &material,
+    VROMaterialSubstrateMetal(const VROMaterial &material,
                               const VRODriverMetal &driver);
     virtual ~VROMaterialSubstrateMetal();
     
@@ -60,7 +60,7 @@ public:
     
 private:
     
-    VROMaterial &_material;
+    const VROMaterial &_material;
     VROLightingModel _lightingModel;
     
     id <MTLFunction> _vertexProgram;
@@ -71,16 +71,16 @@ private:
     
     std::vector<std::shared_ptr<VROTexture>> _textures;
     
-    void loadConstantLighting(VROMaterial &material,
+    void loadConstantLighting(const VROMaterial &material,
                               id <MTLLibrary> library, id <MTLDevice> device,
                               const VRODriverMetal &driver);
-    void loadBlinnLighting(VROMaterial &material,
+    void loadBlinnLighting(const VROMaterial &material,
                            id <MTLLibrary> library, id <MTLDevice> device,
                            const VRODriverMetal &driver);
-    void loadPhongLighting(VROMaterial &material,
+    void loadPhongLighting(const VROMaterial &material,
                            id <MTLLibrary> library, id <MTLDevice> device,
                            const VRODriverMetal &driver);
-    void loadLambertLighting(VROMaterial &material,
+    void loadLambertLighting(const VROMaterial &material,
                              id <MTLLibrary> library, id <MTLDevice> device,
                              const VRODriverMetal &driver);
     

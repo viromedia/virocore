@@ -157,7 +157,9 @@
 #pragma mark - Cardboard View Delegate
 
 - (void)cardboardView:(GCSCardboardView *)cardboardView didFireEvent:(GCSUserEvent)event {
-    
+    if (event == kGCSUserEventTrigger) {
+        _renderer->handleTap();
+    }
 }
 
 - (void)cardboardView:(GCSCardboardView *)cardboardView

@@ -88,3 +88,45 @@ std::shared_ptr<VROData> VROGeometryUtilExtractAndCenter(std::shared_ptr<VROGeom
     });
     return source->getData();
 }
+
+int VROGeometryUtilGetIndicesCount(int primitiveCount, VROGeometryPrimitiveType primitiveType) {
+    switch (primitiveType) {
+        case VROGeometryPrimitiveType::Triangle:
+            return primitiveCount * 3;
+            
+        case VROGeometryPrimitiveType::TriangleStrip:
+            return primitiveCount + 2;
+            
+        case VROGeometryPrimitiveType::Line:
+            return primitiveCount * 2;
+            
+        case VROGeometryPrimitiveType::Point:
+            return primitiveCount;
+            
+        default:
+            break;
+    }
+}
+
+int VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic semantic) {
+    switch (semantic) {
+        case VROGeometrySourceSemantic::Vertex:
+            return 0;
+        case VROGeometrySourceSemantic::Normal:
+            return 1;
+        case VROGeometrySourceSemantic::Color:
+            return 2;
+        case VROGeometrySourceSemantic::Texcoord:
+            return 3;
+        case VROGeometrySourceSemantic::VertexCrease:
+            return 4;
+        case VROGeometrySourceSemantic::EdgeCrease:
+            return 5;
+        case VROGeometrySourceSemantic::BoneWeights:
+            return 6;
+        case VROGeometrySourceSemantic::BoneIndices:
+            return 7;
+        default:
+            return 0;
+    }
+}

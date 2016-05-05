@@ -211,8 +211,8 @@ void VROSceneRendererCardboardMetal::drawScreenSpaceVAR() {
 }
 
 void VROSceneRendererCardboardMetal::buildFullScreenQuadVAR() {
-    float qstartV = 0.0f;
-    float qendV = 1.0f;
+    float qstartV = 1.0f;
+    float qendV = 0.0f;
     float qendU = 1.0f;
     
     float qleft = -1;

@@ -100,7 +100,7 @@ private:
                               const std::vector<std::shared_ptr<VROGeometryElement>> &elements);
     
     /*
-     Parse the given geometry sources and populate the _sources vector with the
+     Parse the given geometry sources and populate the _vars vector with the
      results.
      */
     void readGeometrySources(id <MTLDevice> device,
@@ -134,17 +134,6 @@ private:
      Parse an MTLPrimitiveType from the given geometry VROGeometryPrimitiveType.
      */
     MTLPrimitiveType parsePrimitiveType(VROGeometryPrimitiveType primitive);
-    
-    /*
-     Get how many indices are required to render the given number of primitives of the
-     given type.
-     */
-    int getIndicesCount(int primitiveCount, VROGeometryPrimitiveType primitiveType);
-
-    /*
-     Parse the attribute index for the given semantic.
-     */
-    int parseAttributeIndex(VROGeometrySourceSemantic semantic);
     
     /*
      Rendering helper function.

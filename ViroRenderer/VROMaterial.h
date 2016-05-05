@@ -61,31 +61,31 @@ public:
      */
     VROMaterial(std::shared_ptr<VROMaterial> material);
     
-    VROMaterialVisual &getDiffuse() {
+    VROMaterialVisual &getDiffuse() const {
         return *_diffuse;
     }
-    VROMaterialVisual &getSpecular() {
+    VROMaterialVisual &getSpecular() const {
         return *_specular;
     }
-    VROMaterialVisual &getNormal() {
+    VROMaterialVisual &getNormal() const {
         return *_normal;
     }
-    VROMaterialVisual &getReflective() {
+    VROMaterialVisual &getReflective() const {
         return *_reflective;
     }
-    VROMaterialVisual &getEmission() {
+    VROMaterialVisual &getEmission() const {
         return *_emission;
     }
-    VROMaterialVisual &getTransparent() {
+    VROMaterialVisual &getTransparent() const {
         return *_transparent;
     }
-    VROMaterialVisual &getMultiply() {
+    VROMaterialVisual &getMultiply() const {
         return *_multiply;
     }
-    VROMaterialVisual &getAmbientOcclusion() {
+    VROMaterialVisual &getAmbientOcclusion() const {
         return *_ambientOcclusion;
     }
-    VROMaterialVisual &getSelfIllumination() {
+    VROMaterialVisual &getSelfIllumination() const {
         return *_selfIllumination;
     }
     

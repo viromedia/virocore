@@ -18,6 +18,8 @@ class VROVector3f;
 class VROGeometryElement;
 class VROGeometrySource;
 class VRONode;
+enum class VROGeometrySourceSemantic;
+enum class VROGeometryPrimitiveType;
 
 /*
  Return one VRONode per VROGeometryElement. The position of the node will be set
@@ -33,5 +35,16 @@ std::vector<std::shared_ptr<VRONode>> VROGeometryUtilSplitNodeByGeometryElements
 std::shared_ptr<VROData> VROGeometryUtilExtractAndCenter(std::shared_ptr<VROGeometryElement> element,
                                                          std::shared_ptr<VROGeometrySource> geometrySource,
                                                          VROVector3f *outCenter);
+
+/*
+ Get how many indices are required to render the given number of primitives of the
+ given type.
+ */
+int VROGeometryUtilGetIndicesCount(int primitiveCount, VROGeometryPrimitiveType primitiveType);
+
+/*
+ Parse the attribute index for the given semantic.
+ */
+int VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic semantic);
 
 #endif /* VROGeometryUtil_h */

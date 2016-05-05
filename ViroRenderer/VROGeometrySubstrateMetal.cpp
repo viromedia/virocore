@@ -10,6 +10,7 @@
 #include "VROGeometry.h"
 #include "VROGeometrySource.h"
 #include "VROGeometryElement.h"
+#include "VROGeometryUtil.h"
 #include "VRODriverMetal.h"
 #include "VROMaterialSubstrateMetal.h"
 #include "VROMaterial.h"
@@ -45,7 +46,8 @@ void VROGeometrySubstrateMetal::readGeometryElements(id <MTLDevice> device,
     for (std::shared_ptr<VROGeometryElement> element : elements) {
         VROGeometryElementMetal elementMetal;
         
-        int indexCount = getIndicesCount(element->getPrimitiveCount(), element->getPrimitiveType());
+        int indexCount = VROGeometryUtilGetIndicesCount(element->getPrimitiveCount(),
+                                                        element->getPrimitiveType());
         
         elementMetal.buffer = [device newBufferWithBytes:element->getData()->getData()
                                                   length:indexCount * element->getBytesPerIndex()
@@ -117,7 +119,7 @@ void VROGeometrySubstrateMetal::readGeometrySources(id <MTLDevice> device,
          */
         for (int i = 0; i < group.size(); i++) {
             std::shared_ptr<VROGeometrySource> source = group[i];
-            int attrIdx = parseAttributeIndex(source->getSemantic());
+            int attrIdx = VROGeometryUtilParseAttributeIndex(source->getSemantic());
             
             _vertexDescriptor.attributes[attrIdx].format = parseVertexFormat(source);
             _vertexDescriptor.attributes[attrIdx].offset = source->getDataOffset();
@@ -269,48 +271,6 @@ MTLPrimitiveType VROGeometrySubstrateMetal::parsePrimitiveType(VROGeometryPrimit
             
         default:
             break;
-    }
-}
-
-int VROGeometrySubstrateMetal::getIndicesCount(int primitiveCount, VROGeometryPrimitiveType primitiveType) {
-    switch (primitiveType) {
-        case VROGeometryPrimitiveType::Triangle:
-            return primitiveCount * 3;
-            
-        case VROGeometryPrimitiveType::TriangleStrip:
-            return primitiveCount + 2;
-            
-        case VROGeometryPrimitiveType::Line:
-            return primitiveCount * 2;
-            
-        case VROGeometryPrimitiveType::Point:
-            return primitiveCount;
-            
-        default:
-            break;
-    }
-}
-
-int VROGeometrySubstrateMetal::parseAttributeIndex(VROGeometrySourceSemantic semantic) {
-    switch (semantic) {
-        case VROGeometrySourceSemantic::Vertex:
-            return 0;
-        case VROGeometrySourceSemantic::Normal:
-            return 1;
-        case VROGeometrySourceSemantic::Color:
-            return 2;
-        case VROGeometrySourceSemantic::Texcoord:
-            return 3;
-        case VROGeometrySourceSemantic::VertexCrease:
-            return 4;
-        case VROGeometrySourceSemantic::EdgeCrease:
-            return 5;
-        case VROGeometrySourceSemantic::BoneWeights:
-            return 6;
-        case VROGeometrySourceSemantic::BoneIndices:
-            return 7;
-        default:
-            return 0;
     }
 }
 

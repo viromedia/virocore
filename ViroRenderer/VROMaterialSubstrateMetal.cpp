@@ -17,7 +17,7 @@
 #include "VROConcurrentBuffer.h"
 #include "VRORenderParameters.h"
 
-VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(VROMaterial &material,
+VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(const VROMaterial &material,
                                                      const VRODriverMetal &driver) :
     _material(material),
     _lightingModel(material.getLightingModel()) {
@@ -59,7 +59,7 @@ VROMaterialSubstrateMetal::~VROMaterialSubstrateMetal() {
     ALLOCATION_TRACKER_SUB(MaterialSubstrates, 1);
 }
 
-void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,
+void VROMaterialSubstrateMetal::loadConstantLighting(const VROMaterial &material,
                                                      id <MTLLibrary> library, id <MTLDevice> device,
                                                      const VRODriverMetal &driver) {
     
@@ -80,7 +80,7 @@ void VROMaterialSubstrateMetal::loadConstantLighting(VROMaterial &material,
     }
 }
 
-void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
+void VROMaterialSubstrateMetal::loadLambertLighting(const VROMaterial &material,
                                                     id <MTLLibrary> library, id <MTLDevice> device,
                                                     const VRODriverMetal &driver) {
     
@@ -111,7 +111,7 @@ void VROMaterialSubstrateMetal::loadLambertLighting(VROMaterial &material,
     }
 }
 
-void VROMaterialSubstrateMetal::loadPhongLighting(VROMaterial &material,
+void VROMaterialSubstrateMetal::loadPhongLighting(const VROMaterial &material,
                                                   id <MTLLibrary> library, id <MTLDevice> device,
                                                   const VRODriverMetal &driver) {
     
@@ -154,7 +154,7 @@ void VROMaterialSubstrateMetal::loadPhongLighting(VROMaterial &material,
     }
 }
 
-void VROMaterialSubstrateMetal::loadBlinnLighting(VROMaterial &material,
+void VROMaterialSubstrateMetal::loadBlinnLighting(const VROMaterial &material,
                                                   id <MTLLibrary> library, id <MTLDevice> device,
                                                   const VRODriverMetal &driver) {
     
