@@ -104,7 +104,7 @@ public:
 
     }
 
-    virtual void set(void *value) = 0;
+    virtual void set(const void *value) = 0;
 
     inline void setLocation(int location) {
         this->location = location;
@@ -121,7 +121,7 @@ public:
         VROUniform(name, VROShaderProperty::Int, arraySize), curValue(0) {
     }
 
-    void set(void *value) {
+    void set(const void *value) {
         GLint *val = (GLint *) value;
 
         if (*val != curValue) {
@@ -145,7 +145,7 @@ public:
         VROUniform(name, VROShaderProperty::IVec2, arraySize) {
     }
 
-    void set(void *value) {
+    void set(const void *value) {
         glUniform2iv(location, arraySize, (GLint *) value);
     }
 
@@ -157,7 +157,7 @@ public:
         VROUniform(name, VROShaderProperty::IVec3, arraySize) {
     }
 
-    void set(void *value) {
+    void set(const void *value) {
         glUniform3iv(location, arraySize, (GLint *) value);
     }
 
@@ -169,7 +169,7 @@ public:
         VROUniform(name, VROShaderProperty::IVec4, arraySize) {
     }
 
-    void set(void *value) {
+    void set(const void *value) {
         glUniform4iv(location, arraySize, (GLint *) value);
     }
 
@@ -182,7 +182,7 @@ public:
         VROUniform(name, VROShaderProperty::Float, arraySize), curValue(9999) {
     }
 
-    void set(void *value) {
+    void set(const void *value) {
         GLfloat *val = (GLfloat *) value;
 
         if (arraySize > 1 || *val != curValue) {
@@ -206,7 +206,7 @@ public:
         VROUniform(name, VROShaderProperty::Vec2, arraySize) {
     }
 
-    void set(void *value) {
+    void set(const void *value) {
         glUniform2fv(location, arraySize, (GLfloat *) value);
     }
 
@@ -221,7 +221,7 @@ public:
         curValue[2] = 0;
     }
 
-    void set(void *value) {
+    void set(const void *value) {
         GLfloat *val = (GLfloat *) value;
         if (arraySize > 1 || memcmp(val, curValue, sizeof(GLfloat) * 3) != 0) {
             glUniform3fv(location, arraySize, val);
@@ -250,7 +250,7 @@ public:
         VROUniform(name, VROShaderProperty::Vec4, arraySize) {
     }
 
-    void set(void *value) {
+    void set(const void *value) {
         glUniform4fv(location, arraySize, (GLfloat *) value);
     }
 
@@ -262,7 +262,7 @@ public:
         VROUniform(name, VROShaderProperty::Mat2, 1) {
     }
 
-    void set(void *value) {
+    void set(const void *value) {
         glUniformMatrix2fv(location, arraySize, GL_FALSE, (GLfloat *) value);
     }
 
@@ -274,7 +274,7 @@ public:
         VROUniform(name, VROShaderProperty::Mat3, 1) {
     }
 
-    void set(void *value) {
+    void set(const void *value) {
         glUniformMatrix3fv(location, arraySize, GL_FALSE, (GLfloat *) value);
     }
 
@@ -286,7 +286,7 @@ public:
         VROUniform(name, VROShaderProperty::Mat4, 1) {
     }
 
-    void set(void *value) {
+    void set(const void *value) {
         glUniformMatrix4fv(location, arraySize, GL_FALSE, (GLfloat *) value);
     }
 

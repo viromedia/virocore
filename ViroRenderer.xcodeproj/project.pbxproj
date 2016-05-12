@@ -104,15 +104,21 @@
 		8FA2E1631C460C600070DB26 /* VROAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E1611C460C600070DB26 /* VROAction.cpp */; };
 		8FA2E1641C460C600070DB26 /* VROAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E1621C460C600070DB26 /* VROAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FA9D0A41CC947DD00B00B93 /* VRODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D0A21CC947DD00B00B93 /* VRODriver.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FAE23C71CE3F61300E98B47 /* VROGeometrySubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB659181CD839DC00D036EB /* VROGeometrySubstrateOpenGL.cpp */; };
+		8FAE23C81CE3F61700E98B47 /* VROMaterialSubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6591C1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.cpp */; };
+		8FAE23CF1CE4D7D500E98B47 /* blinn_fsh in Resources */ = {isa = PBXBuildFile; fileRef = 8FAE23C91CE4D7D500E98B47 /* blinn_fsh */; };
+		8FAE23D01CE4D7D500E98B47 /* blinn_vsh in Resources */ = {isa = PBXBuildFile; fileRef = 8FAE23CA1CE4D7D500E98B47 /* blinn_vsh */; };
+		8FAE23D11CE4D7D500E98B47 /* lambert_fsh in Resources */ = {isa = PBXBuildFile; fileRef = 8FAE23CB1CE4D7D500E98B47 /* lambert_fsh */; };
+		8FAE23D21CE4D7D500E98B47 /* lambert_vsh in Resources */ = {isa = PBXBuildFile; fileRef = 8FAE23CC1CE4D7D500E98B47 /* lambert_vsh */; };
+		8FAE23D31CE4D7D500E98B47 /* phong_fsh in Resources */ = {isa = PBXBuildFile; fileRef = 8FAE23CD1CE4D7D500E98B47 /* phong_fsh */; };
+		8FAE23D41CE4D7D500E98B47 /* phong_vsh in Resources */ = {isa = PBXBuildFile; fileRef = 8FAE23CE1CE4D7D500E98B47 /* phong_vsh */; };
 		8FB6590C1CD82FD200D036EB /* VROSceneRendererCardboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */; };
 		8FB6590F1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6590D1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp */; };
 		8FB659101CD8301000D036EB /* VROSceneRendererCardboardMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB6590E1CD8301000D036EB /* VROSceneRendererCardboardMetal.h */; };
 		8FB659141CD8389300D036EB /* VROSceneRendererCardboardOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB659121CD8389300D036EB /* VROSceneRendererCardboardOpenGL.cpp */; };
 		8FB659151CD8389300D036EB /* VROSceneRendererCardboardOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB659131CD8389300D036EB /* VROSceneRendererCardboardOpenGL.h */; };
 		8FB659171CD839A000D036EB /* VRODriverOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB659161CD839A000D036EB /* VRODriverOpenGL.h */; };
-		8FB6591A1CD839DC00D036EB /* VROGeometrySubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB659181CD839DC00D036EB /* VROGeometrySubstrateOpenGL.cpp */; };
 		8FB6591B1CD839DC00D036EB /* VROGeometrySubstrateOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB659191CD839DC00D036EB /* VROGeometrySubstrateOpenGL.h */; };
-		8FB6591E1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6591C1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.cpp */; };
 		8FB6591F1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB6591D1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.h */; };
 		8FB659221CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB659201CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp */; };
 		8FB659231CD83A2200D036EB /* VROTextureSubstrateOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB659211CD83A2200D036EB /* VROTextureSubstrateOpenGL.h */; };
@@ -497,6 +503,12 @@
 		8FA2E1611C460C600070DB26 /* VROAction.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROAction.cpp; sourceTree = "<group>"; };
 		8FA2E1621C460C600070DB26 /* VROAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAction.h; sourceTree = "<group>"; };
 		8FA9D0A21CC947DD00B00B93 /* VRODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODriver.h; sourceTree = "<group>"; };
+		8FAE23C91CE4D7D500E98B47 /* blinn_fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_fsh; sourceTree = "<group>"; };
+		8FAE23CA1CE4D7D500E98B47 /* blinn_vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_vsh; sourceTree = "<group>"; };
+		8FAE23CB1CE4D7D500E98B47 /* lambert_fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lambert_fsh; sourceTree = "<group>"; };
+		8FAE23CC1CE4D7D500E98B47 /* lambert_vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lambert_vsh; sourceTree = "<group>"; };
+		8FAE23CD1CE4D7D500E98B47 /* phong_fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = phong_fsh; sourceTree = "<group>"; };
+		8FAE23CE1CE4D7D500E98B47 /* phong_vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = phong_vsh; sourceTree = "<group>"; };
 		8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneRendererCardboard.h; sourceTree = "<group>"; };
 		8FB6590D1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSceneRendererCardboardMetal.cpp; sourceTree = "<group>"; };
 		8FB6590E1CD8301000D036EB /* VROSceneRendererCardboardMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneRendererCardboardMetal.h; sourceTree = "<group>"; };
@@ -690,6 +702,12 @@
 		8F0FE6771CD3DFC800A4C297 /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
+				8FAE23C91CE4D7D500E98B47 /* blinn_fsh */,
+				8FAE23CA1CE4D7D500E98B47 /* blinn_vsh */,
+				8FAE23CB1CE4D7D500E98B47 /* lambert_fsh */,
+				8FAE23CC1CE4D7D500E98B47 /* lambert_vsh */,
+				8FAE23CD1CE4D7D500E98B47 /* phong_fsh */,
+				8FAE23CE1CE4D7D500E98B47 /* phong_vsh */,
 				8F0FE6781CD3DFF800A4C297 /* blit_fsh */,
 				8F0FE6791CD3DFF800A4C297 /* blit_vsh */,
 			);
@@ -1418,6 +1436,7 @@
 				8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
 				8FA2E14B1C445CAA0070DB26 /* px.png in Resources */,
+				8FAE23D11CE4D7D500E98B47 /* lambert_fsh in Resources */,
 				8F9278021C66BD4500FF892A /* py1.jpg in Resources */,
 				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
 				8F9278011C66BD4500FF892A /* px1.jpg in Resources */,
@@ -1426,18 +1445,23 @@
 				8F3B968F1C77D64200B4FEE0 /* shanghai_tower_specular.jpg in Resources */,
 				8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */,
 				8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */,
+				8FAE23CF1CE4D7D500E98B47 /* blinn_fsh in Resources */,
 				8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */,
 				8F9278031C66BD4500FF892A /* pz1.jpg in Resources */,
 				8FA2E14C1C445CAA0070DB26 /* py.png in Resources */,
+				8FAE23D21CE4D7D500E98B47 /* lambert_vsh in Resources */,
 				8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */,
+				8FAE23D31CE4D7D500E98B47 /* phong_fsh in Resources */,
 				8F9277FE1C66BD4500FF892A /* nx1.jpg in Resources */,
 				8FA2E1481C445CAA0070DB26 /* nx.png in Resources */,
+				8FAE23D41CE4D7D500E98B47 /* phong_vsh in Resources */,
 				8FA2E1411C4447D00070DB26 /* skybox.png in Resources */,
 				8F83DEB11C503EDF0089C31A /* beach.jpg in Resources */,
 				8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */,
 				8F9277FF1C66BD4500FF892A /* ny1.jpg in Resources */,
 				8F517BC71BCDA2BD0017C70B /* Main.storyboard in Resources */,
 				8F5C41551BD82C1B006D7A77 /* boba.png in Resources */,
+				8FAE23D01CE4D7D500E98B47 /* blinn_vsh in Resources */,
 				8F83DEB31C5042240089C31A /* surfing.mp4 in Resources */,
 				8FA2E1491C445CAA0070DB26 /* ny.png in Resources */,
 				8FD9B4651C33A933006CB698 /* bobaraj.png in Resources */,
@@ -1597,7 +1621,6 @@
 				8FD4DEF01C18ED0B003DC425 /* VROData.cpp in Sources */,
 				8FD1E1C11C40976A0005BE4E /* VROVideoTexture.cpp in Sources */,
 				8FD4DF191C18ED4C003DC425 /* VRODistortionMesh.cpp in Sources */,
-				8FB6591E1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.cpp in Sources */,
 				8F65F8151CA073C100415115 /* VROTextureUtil.cpp in Sources */,
 				8FB659221CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp in Sources */,
 				8FD4DEED1C18ED0B003DC425 /* VROLog.cpp in Sources */,
@@ -1609,6 +1632,7 @@
 				8F65F82A1CA19A9A00415115 /* VROAudioPlayer.cpp in Sources */,
 				8FD4DF0E1C18ED3C003DC425 /* VROMaterial.cpp in Sources */,
 				8FD4DF131C18ED44003DC425 /* OrientationEKF.mm in Sources */,
+				8FAE23C81CE3F61700E98B47 /* VROMaterialSubstrateOpenGL.cpp in Sources */,
 				8FD4DF001C18ED2C003DC425 /* VROGeometrySubstrateMetal.cpp in Sources */,
 				8FCF395B1CA5844E00A86CA3 /* VROSceneControllerInternal.cpp in Sources */,
 				8F92780B1C67DE4A00FF892A /* VROHoverController.cpp in Sources */,
@@ -1629,13 +1653,13 @@
 				8FD4DF121C18ED44003DC425 /* Matrix3x3d.mm in Sources */,
 				8FD4DEFA1C18ED19003DC425 /* VROMatrix4f.cpp in Sources */,
 				8FD4DF041C18ED30003DC425 /* VROTextureSubstrate.cpp in Sources */,
+				8FAE23C71CE3F61300E98B47 /* VROGeometrySubstrateOpenGL.cpp in Sources */,
 				8FD4DF011C18ED2C003DC425 /* VROMaterialSubstrateMetal.cpp in Sources */,
 				8F9278071C670FC100FF892A /* VROTriangle.cpp in Sources */,
 				8FD4DEF31C18ED19003DC425 /* VROFrustum.cpp in Sources */,
 				8FD4DEF81C18ED19003DC425 /* VROVector4f.cpp in Sources */,
 				8FD4DF101C18ED3C003DC425 /* VROTexture.cpp in Sources */,
 				8FCF396B1CB4242000A86CA3 /* VRORenderer.cpp in Sources */,
-				8FB6591A1CD839DC00D036EB /* VROGeometrySubstrateOpenGL.cpp in Sources */,
 				8FD4DEF71C18ED19003DC425 /* VROVector3f.cpp in Sources */,
 				8FD4DF0C1C18ED3C003DC425 /* VROGeometryElement.cpp in Sources */,
 				8F65F8461CA2E26F00415115 /* VROSoundEffect.cpp in Sources */,
