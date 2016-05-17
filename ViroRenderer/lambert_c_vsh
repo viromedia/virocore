@@ -1,0 +1,18 @@
+attribute vec3 position;
+attribute vec3 normal;
+attribute vec2 texcoord;
+
+uniform mat4 normal_matrix;
+uniform mat4 model_matrix;
+uniform mat4 modelview_projection_matrix;
+
+varying vec3 v_normal;
+varying vec2 v_texcoord;
+varying vec3 v_surface_position;
+
+void main() {
+    gl_Position = modelview_projection_matrix * vec4(position, 1.0);
+    v_texcoord = texcoord;
+    v_surface_position = (model_matrix * vec4(position, 1.0)).xyz;
+    v_normal = normalize((normal_matrix * vec4(normal, 0.0)).xyz);
+}

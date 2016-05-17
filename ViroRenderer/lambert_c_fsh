@@ -1,0 +1,28 @@
+#include lambert_functions_fsh
+
+uniform highp vec3 camera_position;
+uniform lowp vec3 ambient_light_color;
+uniform lowp vec4 material_diffuse_surface_color;
+uniform lowp float material_diffuse_intensity;
+uniform lowp float material_alpha;
+
+uniform VROSceneLightingUniforms lighting;
+
+varying lowp vec3 v_normal;
+varying highp vec2 v_texcoord;
+varying highp vec3 v_surface_position;
+
+void main() {
+    VROLambertLighting lambert;
+    lambert.normal = v_normal;
+    lambert.texcoord = v_texcoord;
+    lambert.surface_position = v_surface_position;
+    lambert.camera_position = camera_position;
+
+    lambert.ambient_color = ambient_light_color * material_diffuse_surface_color.xyz;
+    lambert.material_color = material_diffuse_surface_color;
+    lambert.diffuse_intensity = material_diffuse_intensity;
+    lambert.material_alpha = material_alpha;
+
+    gl_FragColor = lambert_lighting_diffuse_fixed(lambert, lighting);
+}

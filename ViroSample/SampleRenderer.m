@@ -9,9 +9,9 @@
 #import "SampleRenderer.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneTorus = 0,
+    VROSampleSceneBox = 0,
+    VROSampleSceneTorus,
     VROSampleSceneVideoSphere,
-    VROSampleSceneBox,
     VROSampleSceneOBJ,
     VROSampleSceneLayer,
     VROSampleSceneNumScenes
@@ -187,10 +187,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSceneController *sceneController = [[VROSceneController alloc] initWithView:self.view];
 
     std::shared_ptr<VROScene> scene = sceneController.scene;
-    scene->setBackgroundCube([self niagaraTexture]);
+    //scene->setBackgroundCube([self niagaraTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
-    light->setColor({ 1.0, 0.9, 0.9 });
+    light->setColor({ 1.0, 0.0, 0.0 });
     light->setPosition( { 0, 0, 0 });
     light->setDirection( { 0, 0, -1.0 });
     light->setAttenuationStartDistance(5);
@@ -220,6 +220,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     rootNode->addChildNode(boxNode);
     
+    /*
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(2);
@@ -241,7 +242,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         
         VROTransaction::commit();
     });
-    
+    */
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self](VRONode *const node, float seconds) {
         self.boxAngle += .015;
         node->setRotation({ 0, self.boxAngle, 0});

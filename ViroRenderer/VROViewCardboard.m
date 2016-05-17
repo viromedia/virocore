@@ -11,6 +11,7 @@
 #import "VRORenderer.h"
 #import "VRORenderLoopCardboard.h"
 #import "VROSceneRendererCardboardMetal.h"
+#import "VROSceneRendererCardboardOpenGL.h"
 #import "VROFieldOfView.h"
 #import "VROViewport.h"
 
@@ -59,7 +60,7 @@
                                                  name:UIApplicationDidChangeStatusBarOrientationNotification
                                                object:nil];
     self.renderer = std::make_shared<VRORenderer>();
-    self.sceneRenderer = new VROSceneRendererCardboardMetal(self.renderer);
+    self.sceneRenderer = new VROSceneRendererCardboardOpenGL(self.renderer);
 
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                     action:@selector(handleTap:)];

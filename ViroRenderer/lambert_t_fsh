@@ -1,0 +1,6 @@
+fragment float4 lambert_lighting_fragment_t(VROLambertLightingVertexOut in [[ stage_in ]],
+                                            texture2d<float> texture [[ texture(0) ]],
+                                            constant VROSceneLightingUniforms &lighting [[ buffer(0) ]]) {
+    
+    return lambert_lighting_diffuse_texture(in, texture, lighting);
+}

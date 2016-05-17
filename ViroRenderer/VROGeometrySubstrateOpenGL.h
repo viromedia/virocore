@@ -20,15 +20,8 @@ class VROGeometry;
 class VROMaterial;
 class VROGeometrySource;
 class VROGeometryElement;
+class VROMaterialSubstrateOpenGL;
 enum class VROGeometryPrimitiveType;
-
-
-//TODO delete
-class VROShaderProgram;
-
-struct VROVertexArrayOpenGL {
-    GLuint buffer;
-};
 
 struct VROGeometryElementOpenGL {
     GLuint buffer;
@@ -46,7 +39,9 @@ struct VROVertexAttributeOpenGL {
 };
 
 struct VROVertexDescriptorOpenGL {
+    GLuint buffer;
     GLuint stride;
+    int numAttributes;
     VROVertexAttributeOpenGL attributes[10];
 };
 
@@ -66,12 +61,8 @@ public:
     
 private:
     
-    std::vector<VROVertexArrayOpenGL> _vars;
     std::vector<VROGeometryElementOpenGL> _elements;
-    
     std::vector<VROVertexDescriptorOpenGL> _vertexDescriptor;
-    
-    VROShaderProgram *_program;
     
     /*
      Parse the given geometry elements and populate the _elements vector with the
@@ -94,6 +85,12 @@ private:
      Parse a GL primitive type from the given geometry VROGeometryPrimitiveType.
      */
     GLuint parsePrimitiveType(VROGeometryPrimitiveType primitive);
+    
+    void renderMaterial(VROMaterialSubstrateOpenGL *material,
+                        VROGeometryElementOpenGL &element,
+                        VRORenderParameters &params,
+                        const VRORenderContext &renderContext,
+                        const VRODriver &driver);
     
 };
 

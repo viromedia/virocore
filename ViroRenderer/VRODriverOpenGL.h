@@ -19,11 +19,11 @@ class VRODriverOpenGL : public VRODriver {
 public:
     
     VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const {
-        return nullptr;//new VROGeometrySubstrateMetal(geometry, *this);
+        return new VROGeometrySubstrateOpenGL(geometry, *this);
     }
     
     VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) const {
-        return nullptr;//new VROMaterialSubstrateMetal(material, *this);
+        return new VROMaterialSubstrateOpenGL(material, *this);
     }
     
     VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) const {

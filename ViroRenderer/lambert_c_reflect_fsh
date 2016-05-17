@@ -1,0 +1,9 @@
+fragment float4 lambert_lighting_fragment_c_reflect(VROLambertLightingVertexOut in [[ stage_in ]],
+                                                    texturecube<float> reflect_texture [[ texture(0) ]],
+                                                    constant VROSceneLightingUniforms &lighting [[ buffer(0) ]]) {
+    
+    float4 reflective_color = compute_reflection(in.surface_position, in.camera_position, in.normal, reflect_texture);
+    float4 lighting_color = lambert_lighting_diffuse_fixed(in, lighting);
+    
+    return float4(lighting_color.xyz + reflective_color.xyz, lighting_color.a);
+}

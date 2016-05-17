@@ -22,17 +22,6 @@ VROGeometrySubstrateOpenGL::VROGeometrySubstrateOpenGL(const VROGeometry &geomet
     
     readGeometryElements(geometry.getGeometryElements());
     readGeometrySources(geometry.getGeometrySources());
-    
-    _program = new VROShaderProgram("lambert", 0);
-    
-    VROShaderProperty uniformTypes[1];
-    uniformTypes[0] = VROShaderProperty::Mat4;
-    
-    const char *names[1];
-    names[0] = "mvp_matrix";
-    
-    _program->setUniforms(uniformTypes, names, 1);
-    _program->hydrate();
 }
 
 VROGeometrySubstrateOpenGL::~VROGeometrySubstrateOpenGL() {
@@ -48,8 +37,8 @@ void VROGeometrySubstrateOpenGL::readGeometryElements(const std::vector<std::sha
         
         glGenBuffers(1, &elementOGL.buffer);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementOGL.buffer);
-        glBufferData(elementOGL.buffer, indexCount * element->getBytesPerIndex(), element->getData()->getData(), GL_STATIC_DRAW);
-        
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * element->getBytesPerIndex(), element->getData()->getData(), GL_STATIC_DRAW);
+     
         elementOGL.primitiveType = parsePrimitiveType(element->getPrimitiveType());
         elementOGL.indexCount = indexCount;
         elementOGL.indexType = (element->getBytesPerIndex() == 2) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
@@ -81,13 +70,10 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
         }
     }
     
-    int bufferIndex = 0;
-    
     /*
      For each group of GeometrySources we create an MTLBuffer and layout.
      */
     for (auto &kv : dataMap) {
-        VROVertexArrayOpenGL var;
         std::vector<std::shared_ptr<VROGeometrySource>> group = kv.second;
         
         /*
@@ -99,14 +85,13 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
             dataSize = std::max(dataSize, size);
         }
         
-        glGenBuffers(1, &var.buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, var.buffer);
-        glBufferData(var.buffer, dataSize, kv.first->getData(), GL_STATIC_DRAW);
+        VROVertexDescriptorOpenGL vd;
+        vd.stride = group[0]->getDataStride();
+        vd.numAttributes = 0;
         
-        /*
-         Create the layout for this MTL buffer.
-         */
-        _vertexDescriptor[bufferIndex].stride = group[0]->getDataStride();
+        glGenBuffers(1, &vd.buffer);
+        glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);
+        glBufferData(GL_ARRAY_BUFFER, dataSize, kv.first->getData(), GL_STATIC_DRAW);
         
         /*
          Create an attribute for each geometry source in this group.
@@ -116,16 +101,16 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
             int attrIdx = VROGeometryUtilParseAttributeIndex(source->getSemantic());
             
             std::pair<GLuint, int> format = parseVertexFormat(source);
-            _vertexDescriptor[bufferIndex].attributes[attrIdx].index = attrIdx;
-            _vertexDescriptor[bufferIndex].attributes[attrIdx].size = format.second;
-            _vertexDescriptor[bufferIndex].attributes[attrIdx].type = format.first;
-            _vertexDescriptor[bufferIndex].attributes[attrIdx].offset = source->getDataOffset();
+            vd.attributes[attrIdx].index = attrIdx;
+            vd.attributes[attrIdx].size = format.second;
+            vd.attributes[attrIdx].type = format.first;
+            vd.attributes[attrIdx].offset = source->getDataOffset();
             
-            passert (source->getDataStride() == _vertexDescriptor[bufferIndex].stride);
+            vd.numAttributes++;
+            passert (source->getDataStride() == vd.stride);
         }
         
-        _vars.push_back(var);
-        ++bufferIndex;
+        _vertexDescriptor.push_back(vd);
     }
 }
 
@@ -217,86 +202,60 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
         VROGeometryElementOpenGL element = _elements[i];
         
         /*
-         Configure the view uniforms.
-         */
-        VROMatrix4f modelview = viewMatrix.multiply(transform);
-        
-        /*
-        VROViewUniforms *viewUniforms = (VROViewUniforms *)_viewUniformsBuffer->getWritableContents(eyeType, frame);
-        
-        viewUniforms->normal_matrix = toMatrixFloat4x4(transform.invert().transpose());
-        viewUniforms->model_matrix = toMatrixFloat4x4(transform);
-        viewUniforms->modelview_matrix = toMatrixFloat4x4(modelview);
-        viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(projectionMatrix.multiply(modelview));
-        viewUniforms->camera_position = toVectorFloat3(renderContext.getCamera().getPosition());
-         */
-        _program->getUniform(0)->set(projectionMatrix.multiply(modelview).getArray());
-        
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element.buffer);
-        glDrawElements(element.primitiveType, element.indexCount, element.indexType, 0);
-        
-        
-        //[renderEncoder setVertexBuffer:_viewUniformsBuffer->getMTLBuffer(eyeType)
-        //                        offset:_viewUniformsBuffer->getWriteOffset(frame) atIndex:_vars.size()];
-        
-        /*
          Determine if the material has been updated. If so, we need to update our pipeline and
          depth states.
          */
+         const std::shared_ptr<VROMaterial> &material = materials[i % materials.size()];
         /*
-        const std::shared_ptr<VROMaterial> &material = materials[i % materials.size()];
-        if (material->isUpdated()) {
-            _elementPipelineStates[i] = createRenderPipelineState(material, metal);
-            _elementDepthStates[i] = createDepthStencilState(material, metal.getDevice());
+         if (material->isUpdated()) {
+         _elementPipelineStates[i] = createRenderPipelineState(material, metal);
+         _elementDepthStates[i] = createDepthStencilState(material, metal.getDevice());
+         }
+         */
+        
+        material->createSubstrate(driver);
+        VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate());
+        
+        /*
+         Configure the view uniforms.
+         */
+        VROMatrix4f modelview = viewMatrix.multiply(transform);
+        substrate->bindShader();
+        substrate->bindViewUniforms(transform, modelview, projectionMatrix, renderContext.getCamera().getPosition());
+        substrate->bindLightingUniforms(params.lights, eyeType, frame);
+        
+        for (VROVertexDescriptorOpenGL &vd : _vertexDescriptor) {
+            glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);
+           
+            for (int i = 0; i < vd.numAttributes; i++) {
+                glVertexAttribPointer(vd.attributes[i].index, vd.attributes[i].size, vd.attributes[i].type, GL_FALSE, vd.stride, 0);
+                glEnableVertexAttribArray(vd.attributes[i].index);
+            }
         }
         
-        VROMaterialSubstrateMetal *substrate = static_cast<VROMaterialSubstrateMetal *>(material->getSubstrate());
-        id <MTLRenderPipelineState> pipelineState = _elementPipelineStates[i];
-        id <MTLDepthStencilState> depthState = _elementDepthStates[i];
-        
-        for (int j = 0; j < _vars.size(); ++j) {
-            [renderEncoder setVertexBuffer:_vars[j].buffer offset:0 atIndex:j];
-        }
-        
-        VROConcurrentBuffer &lightingBuffer = substrate->bindLightingUniforms(params.lights, eyeType, frame);
-        
-        [renderEncoder setVertexBuffer:lightingBuffer.getMTLBuffer(eyeType)
-                                offset:lightingBuffer.getWriteOffset(frame)
-                               atIndex:_vars.size() + 2];
-        [renderEncoder setFragmentBuffer:lightingBuffer.getMTLBuffer(eyeType)
-                                  offset:lightingBuffer.getWriteOffset(frame)
-                                 atIndex:0];
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element.buffer);
         
         const std::shared_ptr<VROMaterial> &outgoing = material->getOutgoing();
         if (outgoing) {
-            if (_outgoingPipelineStates[i] == nullptr || outgoing->isUpdated()) {
-                _outgoingPipelineStates[i] = createRenderPipelineState(outgoing, metal);
-            }
+            VROMaterialSubstrateOpenGL *outgoingSubstrate = static_cast<VROMaterialSubstrateOpenGL *>(outgoing->getSubstrate());
             
-            id <MTLRenderPipelineState> outgoingPipelineState = _outgoingPipelineStates[i];
-            VROMaterialSubstrateMetal *outgoingSubstrate = static_cast<VROMaterialSubstrateMetal *>(outgoing->getSubstrate());
-            
-            renderMaterial(outgoingSubstrate, element, outgoingPipelineState, depthState, renderEncoder, params,
+            renderMaterial(outgoingSubstrate, element, params,
                            renderContext, driver);
-            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params,
+            renderMaterial(substrate, element, params,
                            renderContext, driver);
         }
         else {
-            _outgoingPipelineStates[i] = nullptr;
-            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params,
+            renderMaterial(substrate, element, params,
                            renderContext, driver);
         }
-        */
+        
         pglpop();
     }
 }
 
-/*
-void VROGeometrySubstrateOpenGL::renderMaterial(VROMaterialSubstrateMetal *material,
-                                                VROGeometryElementMetal &element,
-                                                id <MTLRenderPipelineState> pipelineState,
-                                                id <MTLDepthStencilState> depthStencilState,
-                                                id <MTLRenderCommandEncoder> renderEncoder,
+void VROGeometrySubstrateOpenGL::renderMaterial(VROMaterialSubstrateOpenGL *material,
+                                                VROGeometryElementOpenGL &element,
                                                 VRORenderParameters &params,
                                                 const VRORenderContext &renderContext,
                                                 const VRODriver &driver) {
@@ -304,16 +263,11 @@ void VROGeometrySubstrateOpenGL::renderMaterial(VROMaterialSubstrateMetal *mater
     int frame = renderContext.getFrame();
     VROEyeType eyeType = renderContext.getEyeType();
     
-    [renderEncoder setRenderPipelineState:pipelineState];
-    [renderEncoder setDepthStencilState:depthStencilState];
+    material->bindMaterialUniforms(params, eyeType, frame);
     
-    VROConcurrentBuffer &materialBuffer = material->bindMaterialUniforms(params, eyeType, frame);
-    [renderEncoder setVertexBuffer:materialBuffer.getMTLBuffer(eyeType)
-                            offset:materialBuffer.getWriteOffset(frame)
-                           atIndex:_vars.size() + 1];
-    
-    const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();
-    for (int j = 0; j < textures.size(); ++j) {
+    //const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();
+   // for (int j = 0; j < textures.size(); ++j) {
+        /*
         VROTextureSubstrateMetal *substrate = (VROTextureSubstrateMetal *) textures[j]->getSubstrate(driver);
         if (!substrate) {
             // Use a blank placeholder if a texture is not yet available (i.e.
@@ -323,12 +277,8 @@ void VROGeometrySubstrateOpenGL::renderMaterial(VROMaterialSubstrateMetal *mater
         }
         
         [renderEncoder setFragmentTexture:substrate->getTexture() atIndex:j];
-    }
+         */
+    //}
     
-    [renderEncoder drawIndexedPrimitives:element.primitiveType
-                              indexCount:element.indexCount
-                               indexType:element.indexType
-                             indexBuffer:element.buffer
-                       indexBufferOffset:0];
+    glDrawElements(element.primitiveType, element.indexCount, element.indexType, 0);
 }
-*/

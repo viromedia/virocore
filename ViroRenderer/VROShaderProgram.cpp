@@ -8,6 +8,9 @@
 
 #include "VROShaderProgram.h"
 #include "VROLog.h"
+#include "VROVector3f.h"
+#include "VROVector4f.h"
+#include "VROMatrix4f.h"
 
 #define kDebugShaders 0
 
@@ -101,12 +104,15 @@ VROShaderProgram::VROShaderProgram(const char *name, int cap) :
     strcat(vertShaderName, "_vsh");
 
     embeddedVertexSource = loadTextAsset(vertShaderName);
+    inflateIncludes(embeddedVertexSource);
 
     char fragShaderName[200];
     strcpy(fragShaderName, shaderName.c_str());
     strcat(fragShaderName, "_fsh");
 
     embeddedFragmentSource = loadTextAsset(fragShaderName);
+    inflateIncludes(embeddedFragmentSource);
+        
     passert (!embeddedVertexSource.empty() && !embeddedFragmentSource.empty());
 
     // We don't immediately attempt to compileAndLink here because our
@@ -278,7 +284,7 @@ bool VROShaderProgram::compileShader(GLuint *shader, GLenum type, const char *so
     glShaderSource(*shader, 1, &source, &len);
     glCompileShader(*shader);
 
-#if kDebugShaders
+//#if kDebugShaders
     GLint logLength;
     glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength); // <-- This is broken in qcomm's drivers
 
@@ -289,7 +295,7 @@ bool VROShaderProgram::compileShader(GLuint *shader, GLenum type, const char *so
     if (logLength > 1) { // when there are no logs we have just a '\n', don't print that out
         perr("Shader compile log:\n%s", elog);
     }
-#endif
+//#endif
 
     glGetShaderiv(*shader, GL_COMPILE_STATUS, &status);
     if (status == 0) {
@@ -400,10 +406,10 @@ bool VROShaderProgram::compileAndLink() {
     glBindAttribLocation(program, (int)VROShaderAttribute::Verts, "position");
 
     if ((capabilities & (int)VROShaderMask::Tex) != 0) {
-        glBindAttribLocation(program, (int)VROShaderAttribute::Tex, "tex");
+        glBindAttribLocation(program, (int)VROShaderAttribute::Tex, "texcoord");
     }
     if ((capabilities & (int)VROShaderMask::Color) != 0) {
-        glBindAttribLocation(program, (int)VROShaderAttribute::Color, "color_attr");
+        glBindAttribLocation(program, (int)VROShaderAttribute::Color, "color");
     }
     if ((capabilities & (int)VROShaderMask::Norm) != 0) {
         glBindAttribLocation(program, (int)VROShaderAttribute::Norm, "normal");
@@ -513,11 +519,43 @@ VROUniform *VROShaderProgram::getUniform(int index) {
     return uniforms[index];
 }
 
-void VROShaderProgram::setUniformValue(void *value, const std::string &name) {
+void VROShaderProgram::setUniformValue(const void *value, const std::string &name) {
     VROUniform *uniform = getUniform(name);
     if (uniform != nullptr) {
         uniform->set(value);
     }
+}
+
+void VROShaderProgram::setUniformValueVec3(VROVector3f value, const std::string &name) {
+    float v[3];
+    v[0] = value.x;
+    v[1] = value.y;
+    v[2] = value.z;
+    
+    setUniformValue(v, name);
+}
+
+void VROShaderProgram::setUniformValueVec4(VROVector4f value, const std::string &name) {
+    float v[4];
+    v[0] = value.x;
+    v[1] = value.y;
+    v[2] = value.z;
+    v[3] = value.w;
+    
+    setUniformValue(v, name);
+}
+
+void VROShaderProgram::setUniformValueMat4(VROMatrix4f value, const std::string &name) {
+    setUniformValue(value.getArray(), name);
+}
+
+void VROShaderProgram::setUniformValueInt(int value, const std::string &name) {
+    int v = value;
+    setUniformValue(&v, name);
+}
+
+void VROShaderProgram::setUniformValueFloat(float value, const std::string &name) {
+    setUniformValue(&value, name);
 }
 
 void VROShaderProgram::setVertexTransform(const float *mvpMatrix) {
@@ -599,4 +637,23 @@ int VROShaderProgram::getColorUniformIndex() {
     }
 
     return colorUniformIndex;
+}
+
+void VROShaderProgram::inflateIncludes(std::string &sourceToInflate) {
+    std::string includeDirective("#include ");
+    
+    size_t includeStart = sourceToInflate.find(includeDirective);
+    if (includeStart == std::string::npos) {
+        return;
+    }
+    
+    size_t includeEnd = sourceToInflate.find("\n", includeStart);
+    std::string includeFile = sourceToInflate.substr(includeStart + includeDirective.size(),
+                                                     includeEnd - (includeStart + includeDirective.size()));
+    
+    std::string includeSource = loadTextAsset(includeFile.c_str());
+    sourceToInflate.replace(includeStart, includeEnd, includeSource);
+    
+    // Support recursive includes by invoking this again with the result
+    return inflateIncludes(sourceToInflate);
 }

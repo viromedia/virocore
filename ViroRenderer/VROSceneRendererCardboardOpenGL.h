@@ -13,6 +13,7 @@
 #include <memory>
 
 class VRORenderer;
+class VRODriverOpenGL;
 
 class VROSceneRendererCardboardOpenGL : public VROSceneRendererCardboard {
     
@@ -30,6 +31,7 @@ private:
     
     int _frame;
     std::shared_ptr<VRORenderer> _renderer;
+    std::shared_ptr<VRODriverOpenGL> _driver;
     
 };
 

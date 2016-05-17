@@ -14,11 +14,16 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "VROLog.h"
 
 #import <GLKit/GLKit.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
+
+class VROVector3f;
+class VROVector4f;
+class VROMatrix4f;
 
 /*
  Attribute indices for this shader program. These are bound to variable names in the program.
@@ -122,6 +127,7 @@ public:
     }
 
     void set(const void *value) {
+        passert (location != -1);
         GLint *val = (GLint *) value;
 
         if (*val != curValue) {
@@ -146,6 +152,7 @@ public:
     }
 
     void set(const void *value) {
+        passert (location != -1);
         glUniform2iv(location, arraySize, (GLint *) value);
     }
 
@@ -158,6 +165,7 @@ public:
     }
 
     void set(const void *value) {
+        passert (location != -1);
         glUniform3iv(location, arraySize, (GLint *) value);
     }
 
@@ -170,6 +178,7 @@ public:
     }
 
     void set(const void *value) {
+        passert (location != -1);
         glUniform4iv(location, arraySize, (GLint *) value);
     }
 
@@ -183,6 +192,7 @@ public:
     }
 
     void set(const void *value) {
+        passert (location != -1);
         GLfloat *val = (GLfloat *) value;
 
         if (arraySize > 1 || *val != curValue) {
@@ -207,6 +217,7 @@ public:
     }
 
     void set(const void *value) {
+        passert (location != -1);
         glUniform2fv(location, arraySize, (GLfloat *) value);
     }
 
@@ -222,6 +233,8 @@ public:
     }
 
     void set(const void *value) {
+        passert (location != -1);
+        
         GLfloat *val = (GLfloat *) value;
         if (arraySize > 1 || memcmp(val, curValue, sizeof(GLfloat) * 3) != 0) {
             glUniform3fv(location, arraySize, val);
@@ -251,6 +264,7 @@ public:
     }
 
     void set(const void *value) {
+        passert (location != -1);
         glUniform4fv(location, arraySize, (GLfloat *) value);
     }
 
@@ -263,6 +277,7 @@ public:
     }
 
     void set(const void *value) {
+        passert (location != -1);
         glUniformMatrix2fv(location, arraySize, GL_FALSE, (GLfloat *) value);
     }
 
@@ -275,6 +290,7 @@ public:
     }
 
     void set(const void *value) {
+        passert (location != -1);
         glUniformMatrix3fv(location, arraySize, GL_FALSE, (GLfloat *) value);
     }
 
@@ -287,6 +303,7 @@ public:
     }
 
     void set(const void *value) {
+        passert (location != -1);
         glUniformMatrix4fv(location, arraySize, GL_FALSE, (GLfloat *) value);
     }
 
@@ -318,7 +335,13 @@ public:
     int getUniformIndex(const std::string &name);
     VROUniform *getUniform(const std::string &name);
     VROUniform *getUniform(int index);
-    void setUniformValue(void *value, const std::string &name);
+    void setUniformValue(const void *value, const std::string &name);
+    
+    void setUniformValueVec3(VROVector3f value, const std::string &name);
+    void setUniformValueVec4(VROVector4f value, const std::string &name);
+    void setUniformValueMat4(VROMatrix4f value, const std::string &name);
+    void setUniformValueInt(int value, const std::string &name);
+    void setUniformValueFloat(float value, const std::string &name);
 
     /*
      Add a new uniform to this shader. Faster to invoke setUniforms(..).
@@ -501,6 +524,8 @@ private:
      list. Requires an EGL context and requires that this shader is bound.
      */
     void findUniformLocations();
+    
+    void inflateIncludes(std::string &source);
 
 };
 

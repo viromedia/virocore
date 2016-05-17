@@ -69,8 +69,8 @@ void VROSceneRendererCardboardMetal::initRenderer(GCSHeadTransform *headTransfor
     glGenTextures(1, &_textureGL);
     
     uint32_t bytesPerPixel = 4;
-    uint64_t bytesPerRow = bytesPerPixel * [_texture width];
-    _textureBuffer = (char *) malloc(bytesPerRow * (int) [_texture height]);
+    uint32_t bytesPerRow = bytesPerPixel * (uint32_t)[_texture width];
+    _textureBuffer = (char *) malloc(bytesPerRow * [_texture height]);
     
     _blitter = new VROShaderProgram("blit", 0);
     
