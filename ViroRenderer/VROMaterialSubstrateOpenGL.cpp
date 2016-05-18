@@ -29,7 +29,7 @@ VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &materi
             break;
                 
         case VROLightingModel::Blinn:
-            loadLambertLighting(material, driver);
+            loadBlinnLighting(material, driver);
             break;
                 
         case VROLightingModel::Lambert:
@@ -84,11 +84,8 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
     if (diffuse.getContentsType() == VROContentsType::Fixed) {
         if (reflective.getContentsType() == VROContentsType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
-            //_program = new VROShaderProgram("lambert_c_vsh", "lambert_c_reflect_fsh",
-            //                                ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
-            _program = new VROShaderProgram("lambert_vsh", "lambert_c_fsh",
+            _program = new VROShaderProgram("lambert_vsh", "lambert_c_reflect_fsh",
                                             ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
-            
             _program->addSampler("reflect_texture");
         }
         else {
@@ -101,9 +98,7 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
         
         if (reflective.getContentsType() == VROContentsType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
-            //_program = new VROShaderProgram("lambert_c_vsh", "lambert_t_reflect_fsh",
-            //                                ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
-            _program = new VROShaderProgram("lambert_vsh", "lambert_c_fsh",
+            _program = new VROShaderProgram("lambert_vsh", "lambert_t_reflect_fsh",
                                             ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
             _program->addSampler("texture");
             _program->addSampler("reflect_texture");
@@ -112,6 +107,58 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
             _program = new VROShaderProgram("lambert_vsh", "lambert_t_fsh",
                                             ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
             _program->addSampler("texture");
+        }
+    }
+}
+
+void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, const VRODriverOpenGL &driver) {
+    /*
+     If there's no specular map, then we fall back to Lambert lighting.
+     */
+    VROMaterialVisual &specular = material.getSpecular();
+    if (specular.getContentsType() != VROContentsType::Texture2D) {
+        loadLambertLighting(material, driver);
+        return;
+    }
+    
+    VROMaterialVisual &diffuse = material.getDiffuse();
+    VROMaterialVisual &reflective = material.getReflective();
+    
+    if (diffuse.getContentsType() == VROContentsType::Fixed) {
+        _textures.push_back(specular.getContentsTexture());
+        
+        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+            _textures.push_back(reflective.getContentsTexture());
+            
+            _program = new VROShaderProgram("blinn_vsh", "blinn_c_reflect_fsh",
+                                            ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+            _program->addSampler("specular_texture");
+            _program->addSampler("reflect_texture");
+        }
+        else {
+            _program = new VROShaderProgram("blinn_vsh", "blinn_c_fsh",
+                                            ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+            _program->addSampler("specular_texture");
+        }
+    }
+    else {
+        _textures.push_back(diffuse.getContentsTexture());
+        _textures.push_back(specular.getContentsTexture());
+        
+        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+            _textures.push_back(reflective.getContentsTexture());
+            
+            _program = new VROShaderProgram("blinn_vsh", "blinn_t_reflect_fsh",
+                                            ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+            _program->addSampler("diffuse_texture");
+            _program->addSampler("specular_texture");
+            _program->addSampler("reflect_texture");
+        }
+        else {
+            _program = new VROShaderProgram("blinn_vsh", "blinn_t_fsh",
+                                            ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+            _program->addSampler("diffuse_texture");
+            _program->addSampler("specular_texture");
         }
     }
 }
@@ -157,7 +204,7 @@ void VROMaterialSubstrateOpenGL::bindViewUniforms(VROMatrix4f transform, VROMatr
     
     _program->setUniformValueMat4(transform.invert().transpose(), "normal_matrix");
     _program->setUniformValueMat4(transform, "model_matrix");
-   // _program->setUniformValueMat4(modelview, "modelview_matrix");
+    _program->setUniformValueMat4(modelview, "modelview_matrix");
     _program->setUniformValueMat4(projectionMatrix.multiply(modelview), "modelview_projection_matrix");
     _program->setUniformValueVec3(cameraPosition, "camera_position");
 }
@@ -166,7 +213,7 @@ void VROMaterialSubstrateOpenGL::bindMaterialUniforms(VRORenderParameters &param
     _program->setUniformValueVec4(_material.getDiffuse().getContentsColor(), "material_diffuse_surface_color");
     _program->setUniformValueFloat(_material.getDiffuse().getIntensity(), "material_diffuse_intensity");
     _program->setUniformValueFloat(_material.getTransparency() * params.opacities.top(), "material_alpha");
-    //_program->setUniformValueFloat(_material.getShininess(), "material_shininess");
+    _program->setUniformValueFloat(_material.getShininess(), "material_shininess");
 }
 
 void VROMaterialSubstrateOpenGL::bindLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights,

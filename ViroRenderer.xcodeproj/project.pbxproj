@@ -9,6 +9,18 @@
 /* Begin PBXBuildFile section */
 		42F6CA9BC26A30987D44C675 /* libPods-ViroKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 025778F86F5FBA711F5AE6AF /* libPods-ViroKit.a */; };
 		5EC0722ADDCFD149E9BC29B6 /* libPods-ViroSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C8C519976E6BB10BB40F4CE /* libPods-ViroSample.a */; };
+		8F03BCDA1CECC30E00D071F8 /* blinn_c_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD41CECC30E00D071F8 /* blinn_c_fsh.glsl */; };
+		8F03BCDB1CECC30E00D071F8 /* blinn_c_reflect_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD51CECC30E00D071F8 /* blinn_c_reflect_fsh.glsl */; };
+		8F03BCDC1CECC30E00D071F8 /* blinn_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD61CECC30E00D071F8 /* blinn_functions_fsh.glsl */; };
+		8F03BCDD1CECC30E00D071F8 /* blinn_t_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD71CECC30E00D071F8 /* blinn_t_fsh.glsl */; };
+		8F03BCDE1CECC30E00D071F8 /* blinn_t_reflect_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD81CECC30E00D071F8 /* blinn_t_reflect_fsh.glsl */; };
+		8F03BCDF1CECC30E00D071F8 /* blinn_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD91CECC30E00D071F8 /* blinn_vsh.glsl */; };
+		8F03BCE01CECC92300D071F8 /* blinn_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD91CECC30E00D071F8 /* blinn_vsh.glsl */; };
+		8F03BCE11CECC92300D071F8 /* blinn_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD61CECC30E00D071F8 /* blinn_functions_fsh.glsl */; };
+		8F03BCE21CECC92300D071F8 /* blinn_c_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD41CECC30E00D071F8 /* blinn_c_fsh.glsl */; };
+		8F03BCE31CECC92300D071F8 /* blinn_c_reflect_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD51CECC30E00D071F8 /* blinn_c_reflect_fsh.glsl */; };
+		8F03BCE41CECC92300D071F8 /* blinn_t_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD71CECC30E00D071F8 /* blinn_t_fsh.glsl */; };
+		8F03BCE51CECC92300D071F8 /* blinn_t_reflect_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD81CECC30E00D071F8 /* blinn_t_reflect_fsh.glsl */; };
 		8F0856581C87960900E66709 /* VROGeometryUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0856561C87960900E66709 /* VROGeometryUtil.cpp */; };
 		8F0856591C87960900E66709 /* VROGeometryUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0856571C87960900E66709 /* VROGeometryUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F0FE65F1CD129FF00A4C297 /* VROFrameSynchronizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -106,10 +118,6 @@
 		8FA9D0A41CC947DD00B00B93 /* VRODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D0A21CC947DD00B00B93 /* VRODriver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FAE23C71CE3F61300E98B47 /* VROGeometrySubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB659181CD839DC00D036EB /* VROGeometrySubstrateOpenGL.cpp */; };
 		8FAE23C81CE3F61700E98B47 /* VROMaterialSubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6591C1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.cpp */; };
-		8FAE23CF1CE4D7D500E98B47 /* blinn_fsh in Resources */ = {isa = PBXBuildFile; fileRef = 8FAE23C91CE4D7D500E98B47 /* blinn_fsh */; };
-		8FAE23D01CE4D7D500E98B47 /* blinn_vsh in Resources */ = {isa = PBXBuildFile; fileRef = 8FAE23CA1CE4D7D500E98B47 /* blinn_vsh */; };
-		8FAE23D31CE4D7D500E98B47 /* phong_fsh in Resources */ = {isa = PBXBuildFile; fileRef = 8FAE23CD1CE4D7D500E98B47 /* phong_fsh */; };
-		8FAE23D41CE4D7D500E98B47 /* phong_vsh in Resources */ = {isa = PBXBuildFile; fileRef = 8FAE23CE1CE4D7D500E98B47 /* phong_vsh */; };
 		8FAE23D91CEA28E100E98B47 /* VROShaderBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE23D71CEA28E100E98B47 /* VROShaderBuilder.cpp */; };
 		8FAE23DA1CEA28E100E98B47 /* VROShaderBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE23D81CEA28E100E98B47 /* VROShaderBuilder.h */; };
 		8FB6590C1CD82FD200D036EB /* VROSceneRendererCardboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */; };
@@ -331,6 +339,12 @@
 		5C8C519976E6BB10BB40F4CE /* libPods-ViroSample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroSample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6470C4FA3E4142541648AEF0 /* Pods-ViroKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.release.xcconfig"; sourceTree = "<group>"; };
 		66B417AC43559D5315999C14 /* Pods-ViroSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.debug.xcconfig"; sourceTree = "<group>"; };
+		8F03BCD41CECC30E00D071F8 /* blinn_c_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_c_fsh.glsl; sourceTree = "<group>"; };
+		8F03BCD51CECC30E00D071F8 /* blinn_c_reflect_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_c_reflect_fsh.glsl; sourceTree = "<group>"; };
+		8F03BCD61CECC30E00D071F8 /* blinn_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_functions_fsh.glsl; sourceTree = "<group>"; };
+		8F03BCD71CECC30E00D071F8 /* blinn_t_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_t_fsh.glsl; sourceTree = "<group>"; };
+		8F03BCD81CECC30E00D071F8 /* blinn_t_reflect_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_t_reflect_fsh.glsl; sourceTree = "<group>"; };
+		8F03BCD91CECC30E00D071F8 /* blinn_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_vsh.glsl; sourceTree = "<group>"; };
 		8F0856561C87960900E66709 /* VROGeometryUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGeometryUtil.cpp; sourceTree = "<group>"; };
 		8F0856571C87960900E66709 /* VROGeometryUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGeometryUtil.h; sourceTree = "<group>"; };
 		8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROFrameSynchronizer.h; sourceTree = "<group>"; };
@@ -516,10 +530,6 @@
 		8FA2E1611C460C600070DB26 /* VROAction.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROAction.cpp; sourceTree = "<group>"; };
 		8FA2E1621C460C600070DB26 /* VROAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAction.h; sourceTree = "<group>"; };
 		8FA9D0A21CC947DD00B00B93 /* VRODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODriver.h; sourceTree = "<group>"; };
-		8FAE23C91CE4D7D500E98B47 /* blinn_fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_fsh; sourceTree = "<group>"; };
-		8FAE23CA1CE4D7D500E98B47 /* blinn_vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_vsh; sourceTree = "<group>"; };
-		8FAE23CD1CE4D7D500E98B47 /* phong_fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = phong_fsh; sourceTree = "<group>"; };
-		8FAE23CE1CE4D7D500E98B47 /* phong_vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = phong_vsh; sourceTree = "<group>"; };
 		8FAE23D71CEA28E100E98B47 /* VROShaderBuilder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROShaderBuilder.cpp; sourceTree = "<group>"; };
 		8FAE23D81CEA28E100E98B47 /* VROShaderBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROShaderBuilder.h; sourceTree = "<group>"; };
 		8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneRendererCardboard.h; sourceTree = "<group>"; };
@@ -680,6 +690,19 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		8F03BCD31CECC25E00D071F8 /* Blinn */ = {
+			isa = PBXGroup;
+			children = (
+				8F03BCD91CECC30E00D071F8 /* blinn_vsh.glsl */,
+				8F03BCD61CECC30E00D071F8 /* blinn_functions_fsh.glsl */,
+				8F03BCD41CECC30E00D071F8 /* blinn_c_fsh.glsl */,
+				8F03BCD51CECC30E00D071F8 /* blinn_c_reflect_fsh.glsl */,
+				8F03BCD71CECC30E00D071F8 /* blinn_t_fsh.glsl */,
+				8F03BCD81CECC30E00D071F8 /* blinn_t_reflect_fsh.glsl */,
+			);
+			name = Blinn;
+			sourceTree = "<group>";
+		};
 		8F0FE6601CD25A2300A4C297 /* Drivers */ = {
 			isa = PBXGroup;
 			children = (
@@ -729,11 +752,8 @@
 			children = (
 				8FC6E1CE1CECB350008EFD5F /* Constant */,
 				8FC6E1CD1CECB34A008EFD5F /* Lambert */,
+				8F03BCD31CECC25E00D071F8 /* Blinn */,
 				8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */,
-				8FAE23C91CE4D7D500E98B47 /* blinn_fsh */,
-				8FAE23CA1CE4D7D500E98B47 /* blinn_vsh */,
-				8FAE23CD1CE4D7D500E98B47 /* phong_fsh */,
-				8FAE23CE1CE4D7D500E98B47 /* phong_vsh */,
 				8F0FE6781CD3DFF800A4C297 /* blit_fsh.glsl */,
 				8F0FE6791CD3DFF800A4C297 /* blit_vsh.glsl */,
 			);
@@ -1489,33 +1509,35 @@
 			files = (
 				8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
+				8F03BCDE1CECC30E00D071F8 /* blinn_t_reflect_fsh.glsl in Resources */,
 				8FA2E14B1C445CAA0070DB26 /* px.png in Resources */,
 				8F9278021C66BD4500FF892A /* py1.jpg in Resources */,
 				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
 				8F9278011C66BD4500FF892A /* px1.jpg in Resources */,
 				8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
+				8F03BCDF1CECC30E00D071F8 /* blinn_vsh.glsl in Resources */,
 				8F9278001C66BD4500FF892A /* nz1.jpg in Resources */,
 				8FA2E14A1C445CAA0070DB26 /* nz.png in Resources */,
 				8F3B968F1C77D64200B4FEE0 /* shanghai_tower_specular.jpg in Resources */,
 				8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */,
+				8F03BCDC1CECC30E00D071F8 /* blinn_functions_fsh.glsl in Resources */,
 				8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */,
-				8FAE23CF1CE4D7D500E98B47 /* blinn_fsh in Resources */,
 				8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */,
 				8F9278031C66BD4500FF892A /* pz1.jpg in Resources */,
 				8FA2E14C1C445CAA0070DB26 /* py.png in Resources */,
 				8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */,
-				8FAE23D31CE4D7D500E98B47 /* phong_fsh in Resources */,
+				8F03BCDB1CECC30E00D071F8 /* blinn_c_reflect_fsh.glsl in Resources */,
 				8F9277FE1C66BD4500FF892A /* nx1.jpg in Resources */,
+				8F03BCDA1CECC30E00D071F8 /* blinn_c_fsh.glsl in Resources */,
 				8FA2E1481C445CAA0070DB26 /* nx.png in Resources */,
-				8FAE23D41CE4D7D500E98B47 /* phong_vsh in Resources */,
 				8FA2E1411C4447D00070DB26 /* skybox.png in Resources */,
 				8F83DEB11C503EDF0089C31A /* beach.jpg in Resources */,
 				8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */,
 				8F9277FF1C66BD4500FF892A /* ny1.jpg in Resources */,
 				8F517BC71BCDA2BD0017C70B /* Main.storyboard in Resources */,
 				8F5C41551BD82C1B006D7A77 /* boba.png in Resources */,
-				8FAE23D01CE4D7D500E98B47 /* blinn_vsh in Resources */,
 				8F83DEB31C5042240089C31A /* surfing.mp4 in Resources */,
+				8F03BCDD1CECC30E00D071F8 /* blinn_t_fsh.glsl in Resources */,
 				8FA2E1491C445CAA0070DB26 /* ny.png in Resources */,
 				8FD9B4651C33A933006CB698 /* bobaraj.png in Resources */,
 			);
@@ -1539,6 +1561,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F03BCE01CECC92300D071F8 /* blinn_vsh.glsl in Resources */,
+				8F03BCE11CECC92300D071F8 /* blinn_functions_fsh.glsl in Resources */,
+				8F03BCE21CECC92300D071F8 /* blinn_c_fsh.glsl in Resources */,
+				8F03BCE31CECC92300D071F8 /* blinn_c_reflect_fsh.glsl in Resources */,
+				8F03BCE41CECC92300D071F8 /* blinn_t_fsh.glsl in Resources */,
+				8F03BCE51CECC92300D071F8 /* blinn_t_reflect_fsh.glsl in Resources */,
 				8FC6E1C61CEBB31C008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
 				8FC6E1DA1CECB376008EFD5F /* constant_functions_fsh.glsl in Resources */,
 				8FC6E1DD1CECB376008EFD5F /* constant_vsh.glsl in Resources */,

@@ -201,24 +201,11 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
         pglpush("VROGeometry");
         VROGeometryElementOpenGL element = _elements[i];
         
-        /*
-         Determine if the material has been updated. If so, we need to update our pipeline and
-         depth states.
-         */
-         const std::shared_ptr<VROMaterial> &material = materials[i % materials.size()];
-        /*
-         if (material->isUpdated()) {
-         _elementPipelineStates[i] = createRenderPipelineState(material, metal);
-         _elementDepthStates[i] = createDepthStencilState(material, metal.getDevice());
-         }
-         */
+        const std::shared_ptr<VROMaterial> &material = materials[i % materials.size()];
         
         material->createSubstrate(driver);
         VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate());
         
-        /*
-         Configure the view uniforms.
-         */
         VROMatrix4f modelview = viewMatrix.multiply(transform);
         substrate->bindShader();
         substrate->bindViewUniforms(transform, modelview, projectionMatrix, renderContext.getCamera().getPosition());
@@ -241,14 +228,11 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
             outgoing->createSubstrate(driver);
             VROMaterialSubstrateOpenGL *outgoingSubstrate = static_cast<VROMaterialSubstrateOpenGL *>(outgoing->getSubstrate());
             
-            renderMaterial(outgoingSubstrate, element, params,
-                           renderContext, driver);
-            renderMaterial(substrate, element, params,
-                           renderContext, driver);
+            renderMaterial(outgoingSubstrate, element, params, renderContext, driver);
+            renderMaterial(substrate, element, params, renderContext, driver);
         }
         else {
-            renderMaterial(substrate, element, params,
-                           renderContext, driver);
+            renderMaterial(substrate, element, params, renderContext, driver);
         }
         
         pglpop();
