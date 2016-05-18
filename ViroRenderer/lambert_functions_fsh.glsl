@@ -43,8 +43,8 @@ lowp vec4 lambert_lighting_diffuse_fixed(VROLambertLighting lambert,
 }
 
 lowp vec4 lambert_lighting_diffuse_texture(VROLambertLighting lambert,
-                                        sampler2D sampler,
-                                        const VROSceneLightingUniforms lighting) {
+                                           sampler2D sampler,
+                                           const VROSceneLightingUniforms lighting) {
     
     lowp vec4 material_diffuse_color = texture(sampler, lambert.texcoord) * lambert.diffuse_intensity;
     

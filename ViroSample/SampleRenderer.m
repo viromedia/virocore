@@ -187,16 +187,16 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSceneController *sceneController = [[VROSceneController alloc] initWithView:self.view];
 
     std::shared_ptr<VROScene> scene = sceneController.scene;
-    //scene->setBackgroundCube([self niagaraTexture]);
+    scene->setBackgroundCube([self niagaraTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
-    light->setColor({ 1.0, 0.9, 0.9 });
+    light->setColor({ 1.0, 1.0, 1.0 });
     light->setPosition( { 0, 0, 0 });
     light->setDirection( { 0, 0, -1.0 });
-    light->setAttenuationStartDistance(5);
+    light->setAttenuationStartDistance(8);
     light->setAttenuationEndDistance(10);
     light->setSpotInnerAngle(0);
-    light->setSpotOuterAngle(20);
+    light->setSpotOuterAngle(80);
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
@@ -242,7 +242,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         
         VROTransaction::commit();
     });
-    */
+     */
+
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self](VRONode *const node, float seconds) {
         self.boxAngle += .015;
         node->setRotation({ 0, self.boxAngle, 0});

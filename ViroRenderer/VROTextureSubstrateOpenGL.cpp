@@ -19,9 +19,11 @@
 #define GL_COMPRESSED_RGBA8_ETC2_EAC                     0x9278
 
 VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(int width, int height, CGContextRef bitmapContext,
-                                                   const VRODriver &driver) {
+                                                     const VRODriver &driver) {
     
+    _target = GL_TEXTURE_2D;
     glGenTextures(1, &_texture);
+    glActiveTexture(GL_TEXTURE0);
     
     glBindTexture(GL_TEXTURE_2D, _texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -36,16 +38,19 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(int width, int height, CGCo
 }
 
 VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::vector<UIImage *> &images,
-                                                   const VRODriver &driver) {
+                                                     const VRODriver &driver) {
     
     glGenTextures(1, &_texture);
+    glActiveTexture(GL_TEXTURE0);
     
     if (type == VROTextureType::Quad) {
+        _target = GL_TEXTURE_2D;
+        
         glBindTexture(GL_TEXTURE_2D, _texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         
         UIImage *image = images.front();
         int width = image.size.width * image.scale;
@@ -62,11 +67,14 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::v
         passert_msg(images.size() == 6,
                     "Cube texture can only be created from exactly six images");
         
+        _target = GL_TEXTURE_CUBE_MAP;
+        
         glBindTexture(GL_TEXTURE_CUBE_MAP, _texture);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         
         UIImage *firstImage = images.front();
         const CGFloat cubeSize = firstImage.size.width * firstImage.scale;
@@ -80,7 +88,7 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::v
             passert_msg(image.size.width == cubeSize && image.size.height == cubeSize,
                         "Cube map images must be square and uniformly-sized");
             
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + slice, 0, GL_RGB, cubeSize, cubeSize, 0, GL_RGBA,
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + slice, 0, GL_RGBA, cubeSize, cubeSize, 0, GL_RGBA,
                          GL_UNSIGNED_BYTE, data);
             free(data);
         }
@@ -94,10 +102,14 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::v
 }
 
 VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, VROTextureFormat format,
-                                                   std::shared_ptr<VROData> data, int width, int height,
-                                                   const VRODriver &driver) {
+                                                     std::shared_ptr<VROData> data, int width, int height,
+                                                     const VRODriver &driver) {
+    
+    _target = GL_TEXTURE_2D;
     
     glGenTextures(1, &_texture);
+    glActiveTexture(GL_TEXTURE0);
+
     glBindTexture(GL_TEXTURE_2D, _texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

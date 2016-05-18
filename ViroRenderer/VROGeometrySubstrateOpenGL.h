@@ -35,7 +35,7 @@ struct VROVertexAttributeOpenGL {
     GLuint index;
     GLint size;
     GLenum type;
-    int offset;
+    uintptr_t offset;
 };
 
 struct VROVertexDescriptorOpenGL {

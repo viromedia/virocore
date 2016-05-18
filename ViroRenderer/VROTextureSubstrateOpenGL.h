@@ -48,8 +48,8 @@ public:
                               const VRODriver &driver);
     virtual ~VROTextureSubstrateOpenGL();
     
-    GLuint getTexture() const {
-        return _texture;
+    std::pair<GLenum, GLint> getTexture() const {
+        return std::pair<GLenum, GLint>(_target, _texture);
     }
     void setTexture(GLuint texture) {
         _texture = texture;
@@ -57,6 +57,7 @@ public:
     
 private:
     
+    GLenum _target;
     GLuint _texture;
     
 };

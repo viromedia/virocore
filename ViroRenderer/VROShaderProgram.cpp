@@ -15,8 +15,8 @@
 
 #define kDebugShaders 0
 
-std::string loadTextAsset(const char *resource) {
-    NSString *file = [[NSBundle bundleWithIdentifier:@"com.viro.ViroKit"] pathForResource:[NSString stringWithUTF8String:resource] ofType:nil];
+std::string loadTextAsset(std::string resource) {
+    NSString *file = [[NSBundle bundleWithIdentifier:@"com.viro.ViroKit"] pathForResource:[NSString stringWithUTF8String:resource.c_str()] ofType:@"glsl"];
     return std::string([[NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil] UTF8String]);
 }
 
@@ -85,7 +85,7 @@ VROUniform *newUniformForType(const std::string &name, VROShaderProperty type, i
 #pragma mark -
 #pragma mark Initialize From Embedded Resources
 
-VROShaderProgram::VROShaderProgram(const char *vertexShader, const char *fragmentShader, int cap) :
+VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmentShader, int cap) :
     capabilities(cap),
     normTransformsSet(false),
     uniformsNeedRebind(true),

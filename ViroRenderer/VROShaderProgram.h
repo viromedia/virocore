@@ -311,7 +311,7 @@ public:
      shader code is bundled with the application. The uniforms used by the shader may then be set using the
      various setUniforms(..) and setSamplers(..) methods.
      */
-    VROShaderProgram(const char *vertexShader, const char *fragmentShader, int capabilities);
+    VROShaderProgram(std::string vertexShader, std::string fragmentShader, int capabilities);
     void setUniforms(VROShaderProperty *uniformTypes, const char **names, int count);
     void setSamplers(const char **names, int count);
 

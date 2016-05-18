@@ -25,7 +25,7 @@ VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &materi
 
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
-            loadLambertLighting(material, driver);
+            loadConstantLighting(material, driver);
             break;
                 
         case VROLightingModel::Blinn:
@@ -44,11 +44,37 @@ VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &materi
             break;
     }
         
+    loadLightUniforms(_program);
+    _program->hydrate();
+        
     ALLOCATION_TRACKER_ADD(MaterialSubstrates, 1);
 }
     
 VROMaterialSubstrateOpenGL::~VROMaterialSubstrateOpenGL() {
     ALLOCATION_TRACKER_SUB(MaterialSubstrates, 1);
+}
+
+void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &material, const VRODriverOpenGL &driver) {
+    VROMaterialVisual &diffuse = material.getDiffuse();
+    
+    if (diffuse.getContentsType() == VROContentsType::Fixed) {
+        _program = new VROShaderProgram("constant_vsh", "constant_c_fsh",
+                                        ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+    }
+    else if (diffuse.getContentsType() == VROContentsType::Texture2D) {
+        _textures.push_back(diffuse.getContentsTexture());
+        
+        _program = new VROShaderProgram("constant_vsh", "constant_t_fsh",
+                                        ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+        _program->addSampler("sampler");
+    }
+    else {
+        _textures.push_back(diffuse.getContentsTexture());
+        
+        _program = new VROShaderProgram("constant_vsh", "constant_q_fsh",
+                                        ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+        _program->addSampler("sampler");
+    }
 }
 
 void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material, const VRODriverOpenGL &driver) {
@@ -60,13 +86,13 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
             _textures.push_back(reflective.getContentsTexture());
             //_program = new VROShaderProgram("lambert_c_vsh", "lambert_c_reflect_fsh",
             //                                ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
-            _program = new VROShaderProgram("lambert_c_vsh", "lambert_c_fsh",
+            _program = new VROShaderProgram("lambert_vsh", "lambert_c_fsh",
                                             ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
             
             _program->addSampler("reflect_texture");
         }
         else {
-            _program = new VROShaderProgram("lambert_c_vsh", "lambert_c_fsh",
+            _program = new VROShaderProgram("lambert_vsh", "lambert_c_fsh",
                                             ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
         }
     }
@@ -77,20 +103,17 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
             _textures.push_back(reflective.getContentsTexture());
             //_program = new VROShaderProgram("lambert_c_vsh", "lambert_t_reflect_fsh",
             //                                ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
-            _program = new VROShaderProgram("lambert_c_vsh", "lambert_c_fsh",
+            _program = new VROShaderProgram("lambert_vsh", "lambert_c_fsh",
                                             ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
             _program->addSampler("texture");
             _program->addSampler("reflect_texture");
         }
         else {
-            _program = new VROShaderProgram("lambert_c_vsh", "lambert_t_fsh",
+            _program = new VROShaderProgram("lambert_vsh", "lambert_t_fsh",
                                             ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
             _program->addSampler("texture");
         }
     }
-    
-    loadLightUniforms(_program);
-    _program->hydrate();
 }
 
 void VROMaterialSubstrateOpenGL::loadLightUniforms(VROShaderProgram *program) {

@@ -228,7 +228,7 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
             glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);
            
             for (int i = 0; i < vd.numAttributes; i++) {
-                glVertexAttribPointer(vd.attributes[i].index, vd.attributes[i].size, vd.attributes[i].type, GL_FALSE, vd.stride, 0);
+                glVertexAttribPointer(vd.attributes[i].index, vd.attributes[i].size, vd.attributes[i].type, GL_FALSE, vd.stride, (GLvoid *) vd.attributes[i].offset);
                 glEnableVertexAttribArray(vd.attributes[i].index);
             }
         }
@@ -238,6 +238,7 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
         
         const std::shared_ptr<VROMaterial> &outgoing = material->getOutgoing();
         if (outgoing) {
+            outgoing->createSubstrate(driver);
             VROMaterialSubstrateOpenGL *outgoingSubstrate = static_cast<VROMaterialSubstrateOpenGL *>(outgoing->getSubstrate());
             
             renderMaterial(outgoingSubstrate, element, params,
@@ -275,8 +276,10 @@ void VROGeometrySubstrateOpenGL::renderMaterial(VROMaterialSubstrateOpenGL *mate
             substrate = (VROTextureSubstrateOpenGL *) blank->getSubstrate(driver);
         }
         
+        std::pair<GLenum, GLint> targetAndTexture = substrate->getTexture();
+        
         glActiveTexture(GL_TEXTURE0 + j);
-        glBindTexture(GL_TEXTURE_2D, substrate->getTexture());
+        glBindTexture(targetAndTexture.first, targetAndTexture.second);
     }
     
     glDrawElements(element.primitiveType, element.indexCount, element.indexType, 0);
