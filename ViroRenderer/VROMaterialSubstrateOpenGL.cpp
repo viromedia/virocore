@@ -52,36 +52,44 @@ VROMaterialSubstrateOpenGL::~VROMaterialSubstrateOpenGL() {
 }
 
 void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material, const VRODriverOpenGL &driver) {
-    _program = new VROShaderProgram("lambert_c",
-                                    ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
-    
-    loadLightUniforms(_program);
     VROMaterialVisual &diffuse = material.getDiffuse();
     VROMaterialVisual &reflective = material.getReflective();
     
     if (diffuse.getContentsType() == VROContentsType::Fixed) {
         if (reflective.getContentsType() == VROContentsType::TextureCube) {
-            //_textures.push_back(reflective.getContentsTexture());
-            //_fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_c_reflect"];
+            _textures.push_back(reflective.getContentsTexture());
+            //_program = new VROShaderProgram("lambert_c_vsh", "lambert_c_reflect_fsh",
+            //                                ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+            _program = new VROShaderProgram("lambert_c_vsh", "lambert_c_fsh",
+                                            ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+            
+            _program->addSampler("reflect_texture");
         }
         else {
-            //_fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_c"];
+            _program = new VROShaderProgram("lambert_c_vsh", "lambert_c_fsh",
+                                            ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
         }
     }
-    /*
     else {
         _textures.push_back(diffuse.getContentsTexture());
         
         if (reflective.getContentsType() == VROContentsType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
-            _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_t_reflect"];
+            //_program = new VROShaderProgram("lambert_c_vsh", "lambert_t_reflect_fsh",
+            //                                ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+            _program = new VROShaderProgram("lambert_c_vsh", "lambert_c_fsh",
+                                            ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+            _program->addSampler("texture");
+            _program->addSampler("reflect_texture");
         }
         else {
-            _fragmentProgram = [library newFunctionWithName:@"lambert_lighting_fragment_t"];
+            _program = new VROShaderProgram("lambert_c_vsh", "lambert_t_fsh",
+                                            ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+            _program->addSampler("texture");
         }
     }
-     */
     
+    loadLightUniforms(_program);
     _program->hydrate();
 }
 

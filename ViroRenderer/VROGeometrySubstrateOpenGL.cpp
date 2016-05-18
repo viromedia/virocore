@@ -101,10 +101,10 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
             int attrIdx = VROGeometryUtilParseAttributeIndex(source->getSemantic());
             
             std::pair<GLuint, int> format = parseVertexFormat(source);
-            vd.attributes[attrIdx].index = attrIdx;
-            vd.attributes[attrIdx].size = format.second;
-            vd.attributes[attrIdx].type = format.first;
-            vd.attributes[attrIdx].offset = source->getDataOffset();
+            vd.attributes[vd.numAttributes].index = attrIdx;
+            vd.attributes[vd.numAttributes].size = format.second;
+            vd.attributes[vd.numAttributes].type = format.first;
+            vd.attributes[vd.numAttributes].offset = source->getDataOffset();
             
             vd.numAttributes++;
             passert (source->getDataStride() == vd.stride);
@@ -265,20 +265,19 @@ void VROGeometrySubstrateOpenGL::renderMaterial(VROMaterialSubstrateOpenGL *mate
     
     material->bindMaterialUniforms(params, eyeType, frame);
     
-    //const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();
-   // for (int j = 0; j < textures.size(); ++j) {
-        /*
-        VROTextureSubstrateMetal *substrate = (VROTextureSubstrateMetal *) textures[j]->getSubstrate(driver);
+    const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();
+    for (int j = 0; j < textures.size(); ++j) {
+        VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) textures[j]->getSubstrate(driver);
         if (!substrate) {
             // Use a blank placeholder if a texture is not yet available (i.e.
             // during video texture loading)
             std::shared_ptr<VROTexture> blank = getBlankTexture();
-            substrate = (VROTextureSubstrateMetal *) blank->getSubstrate(driver);
+            substrate = (VROTextureSubstrateOpenGL *) blank->getSubstrate(driver);
         }
         
-        [renderEncoder setFragmentTexture:substrate->getTexture() atIndex:j];
-         */
-    //}
+        glActiveTexture(GL_TEXTURE0 + j);
+        glBindTexture(GL_TEXTURE_2D, substrate->getTexture());
+    }
     
     glDrawElements(element.primitiveType, element.indexCount, element.indexType, 0);
 }

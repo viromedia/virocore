@@ -11,6 +11,7 @@
 #include "VROVector3f.h"
 #include "VROVector4f.h"
 #include "VROMatrix4f.h"
+#include "VROGeometrySource.h"
 
 #define kDebugShaders 0
 
@@ -84,11 +85,11 @@ VROUniform *newUniformForType(const std::string &name, VROShaderProperty type, i
 #pragma mark -
 #pragma mark Initialize From Embedded Resources
 
-VROShaderProgram::VROShaderProgram(const char *name, int cap) :
+VROShaderProgram::VROShaderProgram(const char *vertexShader, const char *fragmentShader, int cap) :
     capabilities(cap),
     normTransformsSet(false),
     uniformsNeedRebind(true),
-    shaderName(name),
+    shaderName(fragmentShader),
     program(0),
     failedToLink(false),
     alphaUniformIndex(-1),
@@ -99,18 +100,10 @@ VROShaderProgram::VROShaderProgram(const char *name, int cap) :
     hasOffsetUniform(true),
     glslVersion(GLSLVersion::V0) {
 
-    char vertShaderName[200];
-    strcpy(vertShaderName, shaderName.c_str());
-    strcat(vertShaderName, "_vsh");
-
-    embeddedVertexSource = loadTextAsset(vertShaderName);
+    embeddedVertexSource = loadTextAsset(vertexShader);
     inflateIncludes(embeddedVertexSource);
 
-    char fragShaderName[200];
-    strcpy(fragShaderName, shaderName.c_str());
-    strcat(fragShaderName, "_fsh");
-
-    embeddedFragmentSource = loadTextAsset(fragShaderName);
+    embeddedFragmentSource = loadTextAsset(fragmentShader);
     inflateIncludes(embeddedFragmentSource);
         
     passert (!embeddedVertexSource.empty() && !embeddedFragmentSource.empty());
@@ -180,19 +173,19 @@ void VROShaderProgram::addUniform(VROShaderProperty type, int arraySize, const s
     uniformsNeedRebind = true;
 }
 
-void VROShaderProgram::addAttribute(VROShaderAttribute attr) {
+void VROShaderProgram::addAttribute(VROGeometrySourceSemantic attr) {
     passert (program == 0);
 
     switch (attr) {
-        case VROShaderAttribute::Tex:
+        case VROGeometrySourceSemantic::Texcoord:
             capabilities |= (int)VROShaderMask::Tex;
             break;
 
-        case VROShaderAttribute::Norm:
+        case VROGeometrySourceSemantic::Normal:
             capabilities |= (int)VROShaderMask::Norm;
             break;
 
-        case VROShaderAttribute::Color:
+        case VROGeometrySourceSemantic::Color:
             capabilities |= (int)VROShaderMask::Color;
             break;
 
@@ -403,16 +396,16 @@ bool VROShaderProgram::compileAndLink() {
     /*
      Bind attribute locations.
      */
-    glBindAttribLocation(program, (int)VROShaderAttribute::Verts, "position");
+    glBindAttribLocation(program, (int)VROGeometrySourceSemantic::Vertex, "position");
 
     if ((capabilities & (int)VROShaderMask::Tex) != 0) {
-        glBindAttribLocation(program, (int)VROShaderAttribute::Tex, "texcoord");
+        glBindAttribLocation(program, (int)VROGeometrySourceSemantic::Texcoord, "texcoord");
     }
     if ((capabilities & (int)VROShaderMask::Color) != 0) {
-        glBindAttribLocation(program, (int)VROShaderAttribute::Color, "color");
+        glBindAttribLocation(program, (int)VROGeometrySourceSemantic::Color, "color");
     }
     if ((capabilities & (int)VROShaderMask::Norm) != 0) {
-        glBindAttribLocation(program, (int)VROShaderAttribute::Norm, "normal");
+        glBindAttribLocation(program, (int)VROGeometrySourceSemantic::Normal, "normal");
     }
 
     /*
@@ -652,7 +645,7 @@ void VROShaderProgram::inflateIncludes(std::string &sourceToInflate) {
                                                      includeEnd - (includeStart + includeDirective.size()));
     
     std::string includeSource = loadTextAsset(includeFile.c_str());
-    sourceToInflate.replace(includeStart, includeEnd, includeSource);
+    sourceToInflate.replace(includeStart, includeEnd - includeStart, includeSource);
     
     // Support recursive includes by invoking this again with the result
     return inflateIncludes(sourceToInflate);

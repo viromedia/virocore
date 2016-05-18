@@ -1,14 +1,16 @@
-attribute vec3 position;
-attribute vec3 normal;
-attribute vec2 texcoord;
+#version 300 es
+
+in vec3 position;
+in vec3 normal;
+in vec2 texcoord;
 
 uniform mat4 normal_matrix;
 uniform mat4 model_matrix;
 uniform mat4 modelview_projection_matrix;
 
-varying vec3 v_normal;
-varying vec2 v_texcoord;
-varying vec3 v_surface_position;
+out vec3 v_normal;
+out vec2 v_texcoord;
+out vec3 v_surface_position;
 
 void main() {
     gl_Position = modelview_projection_matrix * vec4(position, 1.0);

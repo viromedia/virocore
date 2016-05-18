@@ -24,18 +24,7 @@
 class VROVector3f;
 class VROVector4f;
 class VROMatrix4f;
-
-/*
- Attribute indices for this shader program. These are bound to variable names in the program.
- All shaders programs share these same attributes, but not all programs USE them.
- */
-enum class VROShaderAttribute : int {
-    Verts,
-    Tex,
-    Color,
-    Norm,
-    NUM_ATTRIBUTES
-};
+enum class VROGeometrySourceSemantic;
 
 /*
  Uniforms used by all shaders. The location of each of these uniforms must be populated in
@@ -127,7 +116,7 @@ public:
     }
 
     void set(const void *value) {
-        passert (location != -1);
+        //passert (location != -1);
         GLint *val = (GLint *) value;
 
         if (*val != curValue) {
@@ -152,7 +141,7 @@ public:
     }
 
     void set(const void *value) {
-        passert (location != -1);
+        //passert (location != -1);
         glUniform2iv(location, arraySize, (GLint *) value);
     }
 
@@ -178,7 +167,7 @@ public:
     }
 
     void set(const void *value) {
-        passert (location != -1);
+        //passert (location != -1);
         glUniform4iv(location, arraySize, (GLint *) value);
     }
 
@@ -192,7 +181,7 @@ public:
     }
 
     void set(const void *value) {
-        passert (location != -1);
+        //passert (location != -1);
         GLfloat *val = (GLfloat *) value;
 
         if (arraySize > 1 || *val != curValue) {
@@ -217,7 +206,7 @@ public:
     }
 
     void set(const void *value) {
-        passert (location != -1);
+        //passert (location != -1);
         glUniform2fv(location, arraySize, (GLfloat *) value);
     }
 
@@ -233,7 +222,7 @@ public:
     }
 
     void set(const void *value) {
-        passert (location != -1);
+        //passert (location != -1);
         
         GLfloat *val = (GLfloat *) value;
         if (arraySize > 1 || memcmp(val, curValue, sizeof(GLfloat) * 3) != 0) {
@@ -264,7 +253,7 @@ public:
     }
 
     void set(const void *value) {
-        passert (location != -1);
+        //passert (location != -1);
         glUniform4fv(location, arraySize, (GLfloat *) value);
     }
 
@@ -277,7 +266,7 @@ public:
     }
 
     void set(const void *value) {
-        passert (location != -1);
+        //passert (location != -1);
         glUniformMatrix2fv(location, arraySize, GL_FALSE, (GLfloat *) value);
     }
 
@@ -290,7 +279,7 @@ public:
     }
 
     void set(const void *value) {
-        passert (location != -1);
+        //passert (location != -1);
         glUniformMatrix3fv(location, arraySize, GL_FALSE, (GLfloat *) value);
     }
 
@@ -303,7 +292,7 @@ public:
     }
 
     void set(const void *value) {
-        passert (location != -1);
+        //passert (location != -1);
         glUniformMatrix4fv(location, arraySize, GL_FALSE, (GLfloat *) value);
     }
 
@@ -322,7 +311,7 @@ public:
      shader code is bundled with the application. The uniforms used by the shader may then be set using the
      various setUniforms(..) and setSamplers(..) methods.
      */
-    VROShaderProgram(const char *name, int capabilities);
+    VROShaderProgram(const char *vertexShader, const char *fragmentShader, int capabilities);
     void setUniforms(VROShaderProperty *uniformTypes, const char **names, int count);
     void setSamplers(const char **names, int count);
 
@@ -359,7 +348,7 @@ public:
     /*
      Add a new attribute to this shader. May only be invoked prior to compile.
      */
-    void addAttribute(VROShaderAttribute attribute);
+    void addAttribute(VROGeometrySourceSemantic attribute);
 
     /*
      Hydration, for shaders, involves compiling and linking the shader program so it can be

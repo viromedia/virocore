@@ -53,13 +53,11 @@ highp float compute_attenuation(const VROLightUniforms light,
     return attenuation;
 }
 
-/*
-vec4 compute_reflection(vec3 surface_position, vec3 camera_position, vec3 normal,
-                        texturecube<float> reflect_texture) {
+lowp vec4 compute_reflection(highp vec3 surface_position, highp vec3 camera_position, lowp vec3 normal,
+                             samplerCube reflect_sampler) {
     
-    float3 surface_to_camera = normalize(surface_position - camera_position);
-    float3 reflect_ray = reflect(surface_to_camera, -normal);
+    highp vec3 surface_to_camera = normalize(surface_position - camera_position);
+    highp vec3 reflect_ray = reflect(surface_to_camera, -normal);
     
-    return reflect_texture.sample(s, vec3(reflect_ray.xy, -reflect_ray.z));
+    return texture(reflect_sampler, vec3(reflect_ray.xy, -reflect_ray.z));
 }
-*/

@@ -25,7 +25,8 @@ VROSceneRendererCardboardOpenGL::~VROSceneRendererCardboardOpenGL() {
 }
 
 void VROSceneRendererCardboardOpenGL::initRenderer(GCSHeadTransform *headTransform) {
-    
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 }
 
 void VROSceneRendererCardboardOpenGL::prepareFrame(GCSHeadTransform *headTransform) {

@@ -49,12 +49,17 @@ public:
     void bindLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights,
                               VROEyeType eye, int frame);
     
+    const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
+        return _textures;
+    }
+    
 private:
     
     const VROMaterial &_material;
     VROLightingModel _lightingModel;
     
     VROShaderProgram *_program;
+    std::vector<std::shared_ptr<VROTexture>> _textures;
     
     void loadLightUniforms(VROShaderProgram *program);
     void loadLambertLighting(const VROMaterial &material, const VRODriverOpenGL &driver);

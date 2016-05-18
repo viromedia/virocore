@@ -190,7 +190,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     //scene->setBackgroundCube([self niagaraTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
-    light->setColor({ 1.0, 0.0, 0.0 });
+    light->setColor({ 1.0, 0.9, 0.9 });
     light->setPosition( { 0, 0, 0 });
     light->setDirection( { 0, 0, -1.0 });
     light->setAttenuationStartDistance(5);

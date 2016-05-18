@@ -72,7 +72,7 @@ void VROSceneRendererCardboardMetal::initRenderer(GCSHeadTransform *headTransfor
     uint32_t bytesPerRow = bytesPerPixel * (uint32_t)[_texture width];
     _textureBuffer = (char *) malloc(bytesPerRow * [_texture height]);
     
-    _blitter = new VROShaderProgram("blit", 0);
+    _blitter = new VROShaderProgram("blit_vsh", "blit_fsh", 0);
     
     const char *samplers[1];
     samplers[0] = "map";
@@ -200,11 +200,11 @@ void VROSceneRendererCardboardMetal::drawScreenSpaceVAR() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     _blitter->bind();
     
-    glEnableVertexAttribArray((int) VROShaderAttribute::Verts);
-    glEnableVertexAttribArray((int) VROShaderAttribute::Tex);
+    glEnableVertexAttribArray((int) VROGeometrySourceSemantic::Vertex);
+    glEnableVertexAttribArray((int) VROGeometrySourceSemantic::Texcoord);
     
-    glVertexAttribPointer((int) VROShaderAttribute::Verts, 2, GL_FLOAT, 0, 16, _quadFSVAR);
-    glVertexAttribPointer((int) VROShaderAttribute::Tex, 2, GL_FLOAT, 0, 16, ((char *) _quadFSVAR + 2 * sizeof(float)));
+    glVertexAttribPointer((int) VROGeometrySourceSemantic::Vertex, 2, GL_FLOAT, 0, 16, _quadFSVAR);
+    glVertexAttribPointer((int) VROGeometrySourceSemantic::Texcoord, 2, GL_FLOAT, 0, 16, ((char *) _quadFSVAR + 2 * sizeof(float)));
     
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindTexture(GL_TEXTURE_2D, 0);
