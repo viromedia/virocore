@@ -210,7 +210,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROBox> box = VROBox::createBox(2, 4, 2);
     
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
-    material->setLightingModel(VROLightingModel::Blinn);
+    material->setLightingModel(VROLightingModel::Phong);
     material->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"boba"]));
     material->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"specular"]));
     

@@ -64,6 +64,7 @@ private:
     void loadLightUniforms(VROShaderProgram *program);
     void loadConstantLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
     void loadLambertLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
+    void loadPhongLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
     void loadBlinnLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
     
 };

@@ -37,7 +37,7 @@ VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &materi
             break;
                 
         case VROLightingModel::Phong:
-            loadLambertLighting(material, driver);
+            loadPhongLighting(material, driver);
             break;
                 
         default:
@@ -107,6 +107,58 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
             _program = new VROShaderProgram("lambert_vsh", "lambert_t_fsh",
                                             ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
             _program->addSampler("texture");
+        }
+    }
+}
+
+void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, const VRODriverOpenGL &driver) {
+    /*
+     If there's no specular map, then we fall back to Lambert lighting.
+     */
+    VROMaterialVisual &specular = material.getSpecular();
+    if (specular.getContentsType() != VROContentsType::Texture2D) {
+        loadLambertLighting(material, driver);
+        return;
+    }
+    
+    VROMaterialVisual &diffuse = material.getDiffuse();
+    VROMaterialVisual &reflective = material.getReflective();
+    
+    if (diffuse.getContentsType() == VROContentsType::Fixed) {
+        _textures.push_back(specular.getContentsTexture());
+        
+        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+            _textures.push_back(reflective.getContentsTexture());
+            
+            _program = new VROShaderProgram("phong_vsh", "phong_c_reflect_fsh",
+                                            ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+            _program->addSampler("specular_texture");
+            _program->addSampler("reflect_texture");
+        }
+        else {
+            _program = new VROShaderProgram("phong_vsh", "phong_c_fsh",
+                                            ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+            _program->addSampler("specular_texture");
+        }
+    }
+    else {
+        _textures.push_back(diffuse.getContentsTexture());
+        _textures.push_back(specular.getContentsTexture());
+        
+        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+            _textures.push_back(reflective.getContentsTexture());
+            
+            _program = new VROShaderProgram("phong_vsh", "phong_t_reflect_fsh",
+                                            ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+            _program->addSampler("diffuse_texture");
+            _program->addSampler("specular_texture");
+            _program->addSampler("reflect_texture");
+        }
+        else {
+            _program = new VROShaderProgram("phong_vsh", "phong_t_fsh",
+                                            ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+            _program->addSampler("diffuse_texture");
+            _program->addSampler("specular_texture");
         }
     }
 }
