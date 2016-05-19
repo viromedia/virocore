@@ -9,10 +9,10 @@
 #import "SampleRenderer.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneBox = 0,
-    VROSampleSceneTorus,
-    VROSampleSceneVideoSphere,
+    VROSampleSceneVideoSphere = 0,
+    VROSampleSceneBox,
     VROSampleSceneOBJ,
+    VROSampleSceneTorus,
     VROSampleSceneLayer,
     VROSampleSceneNumScenes
 };
@@ -94,6 +94,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROTorusKnot> torus = VROTorusKnot::createTorusKnot(3, 8, 0.2, 256, 32);
     std::shared_ptr<VROMaterial> material = torus->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);
+    material->getReflective().setContentsCube([self cloudTexture]);
+
     
     std::shared_ptr<VRONode> torusNode = std::make_shared<VRONode>();
     torusNode->setGeometry(torus);

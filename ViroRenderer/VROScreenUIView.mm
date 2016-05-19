@@ -87,9 +87,9 @@ static const float kVROLayerSize = 2;
     CGContextScaleCTM(bitmapContext, scale, scale);
     
     [self.layer renderInContext:bitmapContext];
-    if (self.reticleEnabled) {
+    //if (self.reticleEnabled) {
         [self.reticle renderRect:self.bounds context:bitmapContext];
-    }
+    //}
     _layer->setContents(width, height, bitmapContext, *context);
     
     CGContextRelease(bitmapContext);

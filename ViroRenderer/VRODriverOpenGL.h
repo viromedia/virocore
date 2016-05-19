@@ -13,10 +13,16 @@
 #include "VROGeometrySubstrateOpenGL.h"
 #include "VROMaterialSubstrateOpenGL.h"
 #include "VROTextureSubstrateOpenGL.h"
+#include "VROVideoTextureCacheOpenGL.h"
 
 class VRODriverOpenGL : public VRODriver {
     
 public:
+    
+    VRODriverOpenGL(EAGLContext *eaglContext) :
+        _eaglContext(eaglContext) {
+        
+    }
     
     VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const {
         return new VROGeometrySubstrateOpenGL(geometry, *this);
@@ -38,6 +44,14 @@ public:
     VROTextureSubstrate *newTextureSubstrate(int width, int height, CGContextRef bitmapContext) const {
         return new VROTextureSubstrateOpenGL(width, height, bitmapContext, *this);
     }
+    
+    VROVideoTextureCache *newVideoTextureCache() const {
+        return new VROVideoTextureCacheOpenGL(_eaglContext);
+    }
+    
+private:
+    
+    EAGLContext *_eaglContext;
     
 };
 

@@ -14,6 +14,7 @@
 #include "VROTextureSubstrateMetal.h"
 #include "VROTime.h"
 #include "VROAllocationTracker.h"
+#include "VROVideoTextureCache.h"
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
 
@@ -23,7 +24,8 @@ VROVideoTexture::VROVideoTexture() :
     _notificationToken(nullptr),
     _mediaReady(false),
     _paused(true),
-    _currentTextureIndex(0) {
+    _currentTextureIndex(0),
+    _videoTextureCache(nullptr) {
     
     _player = [[AVPlayer alloc] init];
     
@@ -34,6 +36,7 @@ VROVideoTexture::VROVideoTexture() :
 }
 
 VROVideoTexture::~VROVideoTexture() {
+    delete (_videoTextureCache);
     ALLOCATION_TRACKER_SUB(VideoTextures, 1);
 }
 
@@ -66,15 +69,7 @@ void VROVideoTexture::loadVideo(NSURL *url,
     
     _mediaReady = false;
     
-    id <MTLDevice> device = ((VRODriverMetal &)driver).getDevice();
-    
-    CVReturn textureCacheError = CVMetalTextureCacheCreate(kCFAllocatorDefault, NULL, device,
-                                                           NULL, &_videoTextureCache);
-    if (textureCacheError) {
-        pinfo("ERROR: Couldnt create a texture cache");
-        pabort();
-    }
-    
+    _videoTextureCache = driver.newVideoTextureCache();
     _videoQueue = dispatch_queue_create("video_output_queue", DISPATCH_QUEUE_SERIAL);
     _videoPlaybackDelegate = [[VROVideoPlaybackDelegate alloc] initWithVROVideoTexture:this];
     [_videoOutput setDelegate:_videoPlaybackDelegate queue:_videoQueue];
@@ -183,30 +178,7 @@ void VROVideoTexture::onFrameDidRender(const VRORenderContext &context) {
 }
 
 void VROVideoTexture::displayPixelBuffer(CVPixelBufferRef pixelBuffer) {
-    CVReturn error;
-    
-    size_t width = CVPixelBufferGetWidth(pixelBuffer);
-    size_t height = CVPixelBufferGetHeight(pixelBuffer);
-    
-    CVMetalTextureRef textureRef;
-    error = CVMetalTextureCacheCreateTextureFromImage(kCFAllocatorDefault, _videoTextureCache, pixelBuffer,
-                                                      NULL, MTLPixelFormatBGRA8Unorm, width, height, 0, &textureRef);
-    
-    if (error) {
-        pinfo("ERROR: Couldnt create texture from image");
-        pabort();
-    }
-    
-    id <MTLTexture> videoTexture = CVMetalTextureGetTexture(textureRef);
-    if (!videoTexture) {
-        pinfo("ERROR: Couldn't get texture from texture ref");
-        pabort();
-    }
-    
-    std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateMetal>(new VROTextureSubstrateMetal(videoTexture));
-    setSubstrate(VROTextureType::Quad, std::move(substrate));
-    
-    CVBufferRelease(textureRef);
+    setSubstrate(VROTextureType::Quad, std::move(_videoTextureCache->createTextureSubstrate(pixelBuffer)));
 }
 
 @interface VROVideoPlaybackDelegate ()
@@ -240,16 +212,7 @@ void VROVideoTexture::displayCamera(AVCaptureDevicePosition position,
     
     frameSynchronizer->addFrameListener(shared_from_this());
     _videoDelegate = [[VROVideoCaptureDelegate alloc] initWithVROVideoTexture:this];
-    
-    id <MTLDevice> device = ((VRODriverMetal &)driver).getDevice();
-    
-    CVReturn textureCacheError = CVMetalTextureCacheCreate(kCFAllocatorDefault, NULL, device,
-                                                           NULL, &_videoTextureCache);
-    
-    if (textureCacheError) {
-        pinfo("ERROR: Couldnt create a texture cache");
-        pabort();
-    }
+    _videoTextureCache = driver.newVideoTextureCache();
     
     // Create a capture session
     _captureSession = [[AVCaptureSession alloc] init];
@@ -332,34 +295,8 @@ void VROVideoTexture::displayCamera(AVCaptureDevicePosition position,
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 fromConnection:(AVCaptureConnection *)connection {
     
-    CVMetalTextureCacheRef videoTextureCache = _texture->getVideoTextureCache();
-    int currentTextureIndex = _texture->getCurrentTextureIndex();
-    
-    CVReturn error;
-    
-    CVImageBufferRef sourceImageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-    size_t width = CVPixelBufferGetWidth(sourceImageBuffer);
-    size_t height = CVPixelBufferGetHeight(sourceImageBuffer);
-    
-    CVMetalTextureRef textureRef;
-    error = CVMetalTextureCacheCreateTextureFromImage(kCFAllocatorDefault, videoTextureCache, sourceImageBuffer,
-                                                      NULL, MTLPixelFormatBGRA8Unorm, width, height, 0, &textureRef);
-    
-    if (error) {
-        pinfo("ERROR: Couldnt create texture from image");
-        pabort();
-    }
-    
-    _videoTexture[currentTextureIndex] = CVMetalTextureGetTexture(textureRef);
-    if (!_videoTexture[currentTextureIndex]) {
-        pinfo("ERROR: Couldn't get texture from texture ref");
-        pabort();
-    }
-    
-    std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateMetal>(new VROTextureSubstrateMetal(_videoTexture[currentTextureIndex]));
-    _texture->setSubstrate(VROTextureType::Quad, std::move(substrate));
-    
-    CVBufferRelease(textureRef);
+    VROVideoTextureCache *videoTextureCache = _texture->getVideoTextureCache();
+    _texture->setSubstrate(VROTextureType::Quad, videoTextureCache->createTextureSubstrate(sampleBuffer));    
 }
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didDropSampleBuffer:(CMSampleBufferRef)sampleBuffer

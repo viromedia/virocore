@@ -18,6 +18,7 @@ class VROGeometrySubstrate;
 class VROMaterialSubstrate;
 class VROTextureSubstrate;
 class VROData;
+class VROVideoTextureCache;
 
 enum class VROTextureType;
 enum class VROTextureFormat;
@@ -36,6 +37,7 @@ public:
     virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, VROTextureFormat format, std::shared_ptr<VROData> data,
                                                      int width, int height) const = 0;
     virtual VROTextureSubstrate *newTextureSubstrate(int width, int height, CGContextRef bitmapContext) const = 0;
+    virtual VROVideoTextureCache *newVideoTextureCache() const = 0;
     
 };
 

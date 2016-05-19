@@ -249,6 +249,20 @@ void VROMaterialSubstrateOpenGL::loadLightUniforms(VROShaderProgram *program) {
 
 void VROMaterialSubstrateOpenGL::bindShader() {
     _program->bind();
+    
+    if (_material.getWritesToDepthBuffer()) {
+        glDepthMask(GL_TRUE);
+    }
+    else {
+        glDepthMask(GL_FALSE);
+    }
+    
+    if (_material.getReadsFromDepthBuffer()) {
+        glDepthFunc(GL_LEQUAL);
+    }
+    else {
+        glDepthFunc(GL_ALWAYS);
+    }
 }
 
 void VROMaterialSubstrateOpenGL::bindViewUniforms(VROMatrix4f transform, VROMatrix4f modelview,

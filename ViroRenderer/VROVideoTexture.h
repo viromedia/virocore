@@ -21,6 +21,7 @@ class VRORenderContext;
 class VROFrameSynchronizer;
 class VRODriver;
 class VROMaterial;
+class VROVideoTextureCache;
 
 static const long kInFlightVideoTextures = 3;
 
@@ -54,7 +55,7 @@ public:
     int getCurrentTextureIndex() const {
         return _currentTextureIndex;
     }
-    CVMetalTextureCacheRef getVideoTextureCache() {
+    VROVideoTextureCache *getVideoTextureCache() {
         return _videoTextureCache;
     }
     
@@ -93,7 +94,7 @@ private:
      Video texture cache used for both live and recorded playback.
      */
     int _currentTextureIndex;
-    CVMetalTextureCacheRef _videoTextureCache;
+    VROVideoTextureCache *_videoTextureCache;
     
     void addLoopNotification(AVPlayerItem *item);
     void displayPixelBuffer(CVPixelBufferRef pixelBuffer);

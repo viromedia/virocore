@@ -21,6 +21,11 @@
 		8F03BCF61CECCADF00D071F8 /* phong_t_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCEA1CECCAD500D071F8 /* phong_t_fsh.glsl */; };
 		8F03BCF71CECCADF00D071F8 /* phong_t_reflect_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCEB1CECCAD500D071F8 /* phong_t_reflect_fsh.glsl */; };
 		8F03BCF81CECCADF00D071F8 /* phong_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCEC1CECCAD500D071F8 /* phong_vsh.glsl */; };
+		8F03BCFC1CEE30B200D071F8 /* VROVideoTextureCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F03BCFA1CEE30B200D071F8 /* VROVideoTextureCache.h */; };
+		8F03BCFF1CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F03BCFD1CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.cpp */; };
+		8F03BD001CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F03BCFE1CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.h */; };
+		8F03BD031CEE45BB00D071F8 /* VROVideoTextureCacheOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F03BD011CEE45BB00D071F8 /* VROVideoTextureCacheOpenGL.cpp */; };
+		8F03BD041CEE45BB00D071F8 /* VROVideoTextureCacheOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F03BD021CEE45BB00D071F8 /* VROVideoTextureCacheOpenGL.h */; };
 		8F0856581C87960900E66709 /* VROGeometryUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0856561C87960900E66709 /* VROGeometryUtil.cpp */; };
 		8F0856591C87960900E66709 /* VROGeometryUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0856571C87960900E66709 /* VROGeometryUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F0FE65F1CD129FF00A4C297 /* VROFrameSynchronizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -351,6 +356,11 @@
 		8F03BCEA1CECCAD500D071F8 /* phong_t_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = phong_t_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCEB1CECCAD500D071F8 /* phong_t_reflect_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = phong_t_reflect_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCEC1CECCAD500D071F8 /* phong_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = phong_vsh.glsl; sourceTree = "<group>"; };
+		8F03BCFA1CEE30B200D071F8 /* VROVideoTextureCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoTextureCache.h; sourceTree = "<group>"; };
+		8F03BCFD1CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVideoTextureCacheMetal.cpp; sourceTree = "<group>"; };
+		8F03BCFE1CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoTextureCacheMetal.h; sourceTree = "<group>"; };
+		8F03BD011CEE45BB00D071F8 /* VROVideoTextureCacheOpenGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVideoTextureCacheOpenGL.cpp; sourceTree = "<group>"; };
+		8F03BD021CEE45BB00D071F8 /* VROVideoTextureCacheOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoTextureCacheOpenGL.h; sourceTree = "<group>"; };
 		8F0856561C87960900E66709 /* VROGeometryUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGeometryUtil.cpp; sourceTree = "<group>"; };
 		8F0856571C87960900E66709 /* VROGeometryUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGeometryUtil.h; sourceTree = "<group>"; };
 		8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROFrameSynchronizer.h; sourceTree = "<group>"; };
@@ -745,6 +755,8 @@
 				8F152A701C0D7A5A00A211F8 /* VROMetalUtils.cpp */,
 				8F9277A41C62DBDF00FF892A /* VROConcurrentBuffer.h */,
 				8F9277A31C62DBDF00FF892A /* VROConcurrentBuffer.cpp */,
+				8F03BCFE1CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.h */,
+				8F03BCFD1CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.cpp */,
 				8F517BC21BCDA2BD0017C70B /* Shaders.metal */,
 			);
 			name = Metal;
@@ -839,6 +851,7 @@
 				8FD1E1AD1C3F20C70005BE4E /* VROVideoSurface.cpp */,
 				8FD1E1BE1C4093790005BE4E /* VROVideoTexture.h */,
 				8FD1E1BD1C4093790005BE4E /* VROVideoTexture.cpp */,
+				8F03BCFA1CEE30B200D071F8 /* VROVideoTextureCache.h */,
 				8F83DE8C1C4728A30089C31A /* VROHitTestResult.h */,
 				8F92780A1C67DE4A00FF892A /* VROHoverController.h */,
 				8F9278091C67DE4A00FF892A /* VROHoverController.cpp */,
@@ -1129,6 +1142,8 @@
 				8F0FE67C1CD3E12F00A4C297 /* VROShaderProgram.cpp */,
 				8FAE23D81CEA28E100E98B47 /* VROShaderBuilder.h */,
 				8FAE23D71CEA28E100E98B47 /* VROShaderBuilder.cpp */,
+				8F03BD021CEE45BB00D071F8 /* VROVideoTextureCacheOpenGL.h */,
+				8F03BD011CEE45BB00D071F8 /* VROVideoTextureCacheOpenGL.cpp */,
 			);
 			name = OpenGL;
 			sourceTree = "<group>";
@@ -1285,6 +1300,7 @@
 				8FA2E15B1C45AF3C0070DB26 /* VROScreenUIView.h in Headers */,
 				8F83DEA21C4826F80089C31A /* VROTimingFunctionLinear.h in Headers */,
 				8FA2E1551C44AE340070DB26 /* VROTorusKnot.h in Headers */,
+				8F03BD001CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.h in Headers */,
 				8FD4DF341C18F500003DC425 /* VROGeometry.h in Headers */,
 				8FD4DF351C18F500003DC425 /* VROGeometryElement.h in Headers */,
 				8FD4DF361C18F500003DC425 /* VROGeometrySource.h in Headers */,
@@ -1318,11 +1334,13 @@
 				8F0FE66B1CD289FD00A4C297 /* VRORenderLoopCardboard.h in Headers */,
 				8FD4DF421C18F5EB003DC425 /* VROFrustum.h in Headers */,
 				8FD4DF431C18F5EB003DC425 /* VROFrustumPlane.h in Headers */,
+				8F03BCFC1CEE30B200D071F8 /* VROVideoTextureCache.h in Headers */,
 				8FCF39581CA57AC600A86CA3 /* VROHoverDelegate.h in Headers */,
 				8FD4DF441C18F5EB003DC425 /* VROBoundingBox.h in Headers */,
 				8FD4DF461C18F5EB003DC425 /* VROVector3f.h in Headers */,
 				8F83DE9E1C4826F80089C31A /* VROTimingFunctionCubicBezier.h in Headers */,
 				8FD4DF471C18F5EB003DC425 /* VROVector4f.h in Headers */,
+				8F03BD041CEE45BB00D071F8 /* VROVideoTextureCacheOpenGL.h in Headers */,
 				8FD4DF491C18F5EB003DC425 /* VROMatrix4f.h in Headers */,
 				8F548E4E1C23665100556688 /* VROAnimatable.h in Headers */,
 				8FB659231CD83A2200D036EB /* VROTextureSubstrateOpenGL.h in Headers */,
@@ -1790,6 +1808,7 @@
 				8FD4DF2A1C18EE7F003DC425 /* Shaders.metal in Sources */,
 				8FD4DF0A1C18ED3C003DC425 /* VRONode.cpp in Sources */,
 				8FD4DEF41C18ED19003DC425 /* VROFrustumPlane.cpp in Sources */,
+				8F03BD031CEE45BB00D071F8 /* VROVideoTextureCacheOpenGL.cpp in Sources */,
 				8FD4DEEE1C18ED0B003DC425 /* VROByteBuffer.cpp in Sources */,
 				8FDDE2091CCFD6A100674DE2 /* VROViewMetal.m in Sources */,
 				8FD4DF1D1C18ED53003DC425 /* VROTransaction.cpp in Sources */,
@@ -1807,6 +1826,7 @@
 				8FCB6C881C3C828200C14158 /* VROLoader.cpp in Sources */,
 				8FD4DF1E1C18ED57003DC425 /* VROCrossLayout.cpp in Sources */,
 				8FD4DEFE1C18ED22003DC425 /* VROShapeUtils.cpp in Sources */,
+				8F03BCFF1CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

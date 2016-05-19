@@ -12,7 +12,6 @@
 #include "VROData.h"
 #include "VRODriverOpenGL.h"
 #include "VROLog.h"
-#include "VROAllocationTracker.h"
 
 // Constants for ETC2 ripped from NDKr9 headers
 #define GL_COMPRESSED_RGB8_ETC2                          0x9274
@@ -31,8 +30,11 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(int width, int height, CGCo
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
+    void *data = CGBitmapContextGetData(bitmapContext);
+    passert (data != nullptr);
+    
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, CGBitmapContextGetData(bitmapContext));
+                 GL_UNSIGNED_BYTE, data);
     
     ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
 }

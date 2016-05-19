@@ -19,6 +19,7 @@
 #include "VROGeometrySubstrateMetal.h"
 #include "VROMaterialSubstrateMetal.h"
 #include "VROTextureSubstrateMetal.h"
+#include "VROVideoTextureCacheMetal.h"
 
 /*
  Driver for Metal.
@@ -74,6 +75,11 @@ public:
     VROTextureSubstrate *newTextureSubstrate(int width, int height, CGContextRef bitmapContext) const {
         return new VROTextureSubstrateMetal(width, height, bitmapContext, *this);
     }
+    
+    VROVideoTextureCache *newVideoTextureCache() const {
+        return new VROVideoTextureCacheMetal(_device);
+    }
+
     
 private:
     

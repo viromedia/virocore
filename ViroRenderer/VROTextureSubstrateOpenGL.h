@@ -17,6 +17,7 @@
 #import <UIKit/UIKit.h>
 #import <memory>
 #import <vector>
+#import "VROAllocationTracker.h"
 
 class VROData;
 class VRODriver;
@@ -26,6 +27,17 @@ enum class VROTextureFormat;
 class VROTextureSubstrateOpenGL : public VROTextureSubstrate {
     
 public:
+    
+    /*
+     Create a new texture substrate with the given underlying OpenGL target
+     and name.
+     */
+    VROTextureSubstrateOpenGL(GLenum target, GLuint name) :
+        _target(target),
+        _texture(name) {
+        
+        ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
+    }
     
     /*
      Create a new OpenGL texture out of the contents of the current bitmap

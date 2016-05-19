@@ -22,6 +22,8 @@
 
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
 @property (readwrite, nonatomic) VROSceneRendererCardboard *sceneRenderer;
+@property (readwrite, nonatomic) VROFieldOfView fov;
+@property (readwrite, nonatomic) VROViewport viewport;
 
 @end
 
@@ -60,11 +62,14 @@
                                                  name:UIApplicationDidChangeStatusBarOrientationNotification
                                                object:nil];
     self.renderer = std::make_shared<VRORenderer>();
-    self.sceneRenderer = new VROSceneRendererCardboardOpenGL(self.renderer);
+    self.sceneRenderer = new VROSceneRendererCardboardOpenGL(self.context, self.renderer);
 
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                     action:@selector(handleTap:)];
     [self addGestureRecognizer:tapRecognizer];
+    
+    // TODO Bug in Cardboard prevents [headTransform fieldOfViewForEye:] from working
+    self.fov = { 30.63, 40, 40, 34.178 };
 }
 
 - (void)dealloc {    
@@ -110,8 +115,7 @@
 }
 
 - (float)worldPerScreenAtDepth:(float)distance {
-    return self.renderer->getWorldPerScreen(distance,
-                                            {}, {}); //TODO
+    return self.renderer->getWorldPerScreen(distance, self.fov, self.viewport);
 }
 
 - (void)layoutSubviews {
@@ -166,11 +170,15 @@
 - (void)cardboardView:(GCSCardboardView *)cardboardView
      willStartDrawing:(GCSHeadTransform *)headTransform {
     
+    
     self.sceneRenderer->initRenderer(headTransform);
 }
 
 - (void)cardboardView:(GCSCardboardView *)cardboardView
      prepareDrawFrame:(GCSHeadTransform *)headTransform {
+    
+    CGRect rect = [headTransform viewportForEye:kGCSLeftEye];
+    self.viewport = { (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height };
     
     self.sceneRenderer->prepareFrame(headTransform);
 }

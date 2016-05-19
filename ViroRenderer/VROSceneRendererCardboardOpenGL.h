@@ -19,7 +19,7 @@ class VROSceneRendererCardboardOpenGL : public VROSceneRendererCardboard {
     
 public:
     
-    VROSceneRendererCardboardOpenGL(std::shared_ptr<VRORenderer> renderer);
+    VROSceneRendererCardboardOpenGL(EAGLContext *context, std::shared_ptr<VRORenderer> renderer);
     virtual ~VROSceneRendererCardboardOpenGL();
     
     virtual void initRenderer(GCSHeadTransform *headTransform);

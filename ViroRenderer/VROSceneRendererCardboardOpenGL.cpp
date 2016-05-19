@@ -13,11 +13,12 @@
 #include "VROViewport.h"
 #include "VROEye.h"
 
-VROSceneRendererCardboardOpenGL::VROSceneRendererCardboardOpenGL(std::shared_ptr<VRORenderer> renderer) :
+VROSceneRendererCardboardOpenGL::VROSceneRendererCardboardOpenGL(EAGLContext *context,
+                                                                 std::shared_ptr<VRORenderer> renderer) :
     _frame(0),
     _renderer(renderer) {
     
-    _driver = std::make_shared<VRODriverOpenGL>();
+    _driver = std::make_shared<VRODriverOpenGL>(context);
 }
 
 VROSceneRendererCardboardOpenGL::~VROSceneRendererCardboardOpenGL() {
@@ -25,6 +26,13 @@ VROSceneRendererCardboardOpenGL::~VROSceneRendererCardboardOpenGL() {
 }
 
 void VROSceneRendererCardboardOpenGL::initRenderer(GCSHeadTransform *headTransform) {
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glDepthMask(GL_TRUE);
+    
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 }
@@ -33,9 +41,11 @@ void VROSceneRendererCardboardOpenGL::prepareFrame(GCSHeadTransform *headTransfo
     VROMatrix4f headRotation = matrix_float4x4_from_GL([headTransform headPoseInStartSpace]);
     _renderer->prepareFrame(_frame, headRotation, *_driver.get());
     
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE); // Must enable writes to clear depth buffer
+    
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_SCISSOR_TEST);
 }
 
 void VROSceneRendererCardboardOpenGL::renderEye(GCSEye eye, GCSHeadTransform *headTransform) {
