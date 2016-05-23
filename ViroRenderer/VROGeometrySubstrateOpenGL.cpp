@@ -25,7 +25,15 @@ VROGeometrySubstrateOpenGL::VROGeometrySubstrateOpenGL(const VROGeometry &geomet
 }
 
 VROGeometrySubstrateOpenGL::~VROGeometrySubstrateOpenGL() {
+    std::vector<GLuint> buffers;
+    for (VROGeometryElementOpenGL &element : _elements) {
+        buffers.push_back(element.buffer);
+    }
+    for (VROVertexDescriptorOpenGL &vd : _vertexDescriptors) {
+        buffers.push_back(vd.buffer);
+    }
     
+    glDeleteBuffers((int) buffers.size(), buffers.data());
 }
 
 void VROGeometrySubstrateOpenGL::readGeometryElements(const std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
@@ -110,7 +118,7 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
             passert (source->getDataStride() == vd.stride);
         }
         
-        _vertexDescriptor.push_back(vd);
+        _vertexDescriptors.push_back(vd);
     }
 }
 
@@ -211,7 +219,7 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
         substrate->bindViewUniforms(transform, modelview, projectionMatrix, renderContext.getCamera().getPosition());
         substrate->bindLightingUniforms(params.lights, eyeType, frame);
         
-        for (VROVertexDescriptorOpenGL &vd : _vertexDescriptor) {
+        for (VROVertexDescriptorOpenGL &vd : _vertexDescriptors) {
             glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);
            
             for (int i = 0; i < vd.numAttributes; i++) {

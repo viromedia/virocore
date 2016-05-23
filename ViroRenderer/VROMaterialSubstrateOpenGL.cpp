@@ -21,7 +21,8 @@ static const int kMaxLights = 4;
 
 VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &material, const VRODriverOpenGL &driver) :
     _material(material),
-    _lightingModel(material.getLightingModel()) {
+    _lightingModel(material.getLightingModel()),
+    _program(nullptr) {
 
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
@@ -51,6 +52,8 @@ VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &materi
 }
     
 VROMaterialSubstrateOpenGL::~VROMaterialSubstrateOpenGL() {
+    delete (_program);
+    
     ALLOCATION_TRACKER_SUB(MaterialSubstrates, 1);
 }
 

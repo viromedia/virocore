@@ -62,7 +62,7 @@ public:
 private:
     
     std::vector<VROGeometryElementOpenGL> _elements;
-    std::vector<VROVertexDescriptorOpenGL> _vertexDescriptor;
+    std::vector<VROVertexDescriptorOpenGL> _vertexDescriptors;
     
     /*
      Parse the given geometry elements and populate the _elements vector with the

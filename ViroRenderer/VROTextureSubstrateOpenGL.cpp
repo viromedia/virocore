@@ -39,6 +39,11 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(int width, int height, CGCo
     ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
 }
 
+VROTextureSubstrateOpenGL::~VROTextureSubstrateOpenGL() {
+    ALLOCATION_TRACKER_SUB(TextureSubstrates, 1);
+    glDeleteTextures(1, &_texture);
+}
+
 VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::vector<UIImage *> &images,
                                                      const VRODriver &driver) {
     
@@ -138,8 +143,4 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, VROTex
         pabort();
     }
     
-}
-
-VROTextureSubstrateOpenGL::~VROTextureSubstrateOpenGL() {
-    ALLOCATION_TRACKER_SUB(TextureSubstrates, 1);
 }
