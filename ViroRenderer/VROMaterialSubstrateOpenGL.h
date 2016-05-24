@@ -11,6 +11,8 @@
 
 #include "VROMaterial.h"
 #include "VROMaterialSubstrate.h"
+#include <map>
+#include <memory>
 
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES2/gl.h>
@@ -54,13 +56,16 @@ public:
     
 private:
     
+    static std::shared_ptr<VROShaderProgram> getPooledShader(std::string vertexShader, std::string fragmentShader,
+                                                             const std::vector<std::string> &samplers);
+    static void loadLightUniforms(VROShaderProgram *program);
+
     const VROMaterial &_material;
     VROLightingModel _lightingModel;
     
-    VROShaderProgram *_program;
+    std::shared_ptr<VROShaderProgram> _program;
     std::vector<std::shared_ptr<VROTexture>> _textures;
     
-    void loadLightUniforms(VROShaderProgram *program);
     void loadConstantLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
     void loadLambertLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
     void loadPhongLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
