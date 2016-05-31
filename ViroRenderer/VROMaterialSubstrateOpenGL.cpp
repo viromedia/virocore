@@ -78,6 +78,9 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
     }
     
     _program = getPooledShader(vertexShader, fragmentShader, samplers);
+    if (!_program->isHydrated()) {
+        _program->hydrate();
+    }
 }
 
 void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material, const VRODriverOpenGL &driver) {
@@ -116,6 +119,10 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
     }
     
     _program = getPooledShader(vertexShader, fragmentShader, samplers);
+    if (!_program->isHydrated()) {
+        _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
+        _program->hydrate();
+    }
 }
 
 void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, const VRODriverOpenGL &driver) {
@@ -164,11 +171,15 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
             fragmentShader = "phong_t_reflect_fsh";
         }
         else {
-            fragmentShader = "phont_t_fsh";
+            fragmentShader = "phong_t_fsh";
         }
     }
     
     _program = getPooledShader(vertexShader, fragmentShader, samplers);
+    if (!_program->isHydrated()) {
+        _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
+        _program->hydrate();
+    }
 }
 
 void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, const VRODriverOpenGL &driver) {
@@ -222,6 +233,10 @@ void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, 
     }
     
     _program = getPooledShader(vertexShader, fragmentShader, samplers);
+    if (!_program->isHydrated()) {
+        _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
+        _program->hydrate();
+    }
 }
 
 void VROMaterialSubstrateOpenGL::loadLightUniforms(VROShaderProgram *program) {
@@ -338,8 +353,6 @@ std::shared_ptr<VROShaderProgram> VROMaterialSubstrateOpenGL::getPooledShader(st
         _sharedPrograms[name] = program;
         
         loadLightUniforms(program.get());
-        program->hydrate();
-        
         return program;
     }
     else {
