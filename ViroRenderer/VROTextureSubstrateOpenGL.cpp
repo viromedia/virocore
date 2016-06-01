@@ -18,7 +18,8 @@
 #define GL_COMPRESSED_RGBA8_ETC2_EAC                     0x9278
 
 VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(int width, int height, CGContextRef bitmapContext,
-                                                     const VRODriver &driver) {
+                                                     const VRODriver &driver) :
+    _owned(true) {
     
     _target = GL_TEXTURE_2D;
     glGenTextures(1, &_texture);
@@ -39,13 +40,9 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(int width, int height, CGCo
     ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
 }
 
-VROTextureSubstrateOpenGL::~VROTextureSubstrateOpenGL() {
-    ALLOCATION_TRACKER_SUB(TextureSubstrates, 1);
-    glDeleteTextures(1, &_texture);
-}
-
 VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::vector<UIImage *> &images,
-                                                     const VRODriver &driver) {
+                                                     const VRODriver &driver) :
+    _owned(true) {
     
     glGenTextures(1, &_texture);
     glActiveTexture(GL_TEXTURE0);
@@ -110,7 +107,8 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::v
 
 VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, VROTextureFormat format,
                                                      std::shared_ptr<VROData> data, int width, int height,
-                                                     const VRODriver &driver) {
+                                                     const VRODriver &driver) :
+    _owned(true) {
     
     _target = GL_TEXTURE_2D;
     
@@ -141,6 +139,12 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, VROTex
     }
     else {
         pabort();
+    }    
+}
+
+VROTextureSubstrateOpenGL::~VROTextureSubstrateOpenGL() {
+    ALLOCATION_TRACKER_SUB(TextureSubstrates, 1);
+    if (_owned) {
+        glDeleteTextures(1, &_texture);
     }
-    
 }

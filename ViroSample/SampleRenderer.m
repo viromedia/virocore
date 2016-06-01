@@ -284,6 +284,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROVideoTexture> videoTexture = std::make_shared<VROVideoTexture>();
     videoTexture->loadVideo(videoURL, [self.view frameSynchronizer], *self.driver);
+    videoTexture->play();
     
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);

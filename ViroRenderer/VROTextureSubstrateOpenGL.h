@@ -30,11 +30,13 @@ public:
     
     /*
      Create a new texture substrate with the given underlying OpenGL target
-     and name.
+     and name. If owned is true, then the underlying texture will be deleted
+     when this substrate is deleted.
      */
-    VROTextureSubstrateOpenGL(GLenum target, GLuint name) :
+    VROTextureSubstrateOpenGL(GLenum target, GLuint name, bool owned = true) :
         _target(target),
-        _texture(name) {
+        _texture(name),
+        _owned(owned) {
         
         ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
     }
@@ -71,6 +73,7 @@ private:
     
     GLenum _target;
     GLuint _texture;
+    bool _owned;
     
 };
 

@@ -11,6 +11,8 @@
 
 #include "VROVideoTextureCache.h"
 
+static const int kVideoTextureCacheOpenGLNumTextures = 3;
+
 class VROVideoTextureCacheOpenGL : public VROVideoTextureCache {
     
 public:
@@ -24,6 +26,9 @@ public:
 private:
     
     CVOpenGLESTextureCacheRef _cache;
+    CVOpenGLESTextureRef _textureRef[kVideoTextureCacheOpenGLNumTextures];
+    
+    int _currentTextureIndex;
     
 };
 
