@@ -168,9 +168,12 @@ void VROShaderProgram::findUniformLocations() {
 #pragma mark -
 #pragma mark Add Uniforms / Attributes / Samplers
 
-void VROShaderProgram::addUniform(VROShaderProperty type, int arraySize, const std::string &name) {
-    uniforms.push_back(newUniformForType(name, type, arraySize));
+VROUniform *VROShaderProgram::addUniform(VROShaderProperty type, int arraySize, const std::string &name) {
+    VROUniform *uniform = newUniformForType(name, type, arraySize);
+    uniforms.push_back(uniform);
     uniformsNeedRebind = true;
+    
+    return uniform;
 }
 
 void VROShaderProgram::addAttribute(VROGeometrySourceSemantic attr) {

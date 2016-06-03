@@ -23,7 +23,11 @@ static std::map<std::string, std::shared_ptr<VROShaderProgram>> _sharedPrograms;
 VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &material, const VRODriverOpenGL &driver) :
     _material(material),
     _lightingModel(material.getLightingModel()),
-    _program(nullptr) {
+    _program(nullptr),
+    _diffuseSurfaceColorUniform(nullptr),
+    _diffuseIntensityUniform(nullptr),
+    _alphaUniform(nullptr),
+    _shininessUniform(nullptr) {
 
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
@@ -79,6 +83,7 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
     
     _program = getPooledShader(vertexShader, fragmentShader, samplers);
     if (!_program->isHydrated()) {
+        loadLightUniforms();
         _program->hydrate();
     }
 }
@@ -120,7 +125,7 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
     
     _program = getPooledShader(vertexShader, fragmentShader, samplers);
     if (!_program->isHydrated()) {
-        _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
+        loadLightUniforms();
         _program->hydrate();
     }
 }
@@ -177,7 +182,8 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
     
     _program = getPooledShader(vertexShader, fragmentShader, samplers);
     if (!_program->isHydrated()) {
-        _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
+        loadLightUniforms();
+        _shininessUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
         _program->hydrate();
     }
 }
@@ -234,41 +240,44 @@ void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, 
     
     _program = getPooledShader(vertexShader, fragmentShader, samplers);
     if (!_program->isHydrated()) {
-        _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
+        loadLightUniforms();
+        _shininessUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
         _program->hydrate();
     }
 }
 
-void VROMaterialSubstrateOpenGL::loadLightUniforms(VROShaderProgram *program) {
-    program->addUniform(VROShaderProperty::Int, 1, "lighting.num_lights");
-    program->addUniform(VROShaderProperty::Vec3, 1, "lighting.ambient_light_color");
+void VROMaterialSubstrateOpenGL::loadLightUniforms() {
+    _program->addUniform(VROShaderProperty::Int, 1, "lighting.num_lights");
+    _program->addUniform(VROShaderProperty::Vec3, 1, "lighting.ambient_light_color");
     
     for (int i = 0; i < kMaxLights; i++) {
         std::stringstream ss;
         ss << "lighting.lights[" << i << "].";
         
         std::string prefix = ss.str();
-        program->addUniform(VROShaderProperty::Int, 1, prefix + "type");
-        program->addUniform(VROShaderProperty::Vec3, 1, prefix + "position");
-        program->addUniform(VROShaderProperty::Vec3, 1, prefix + "direction");
-        program->addUniform(VROShaderProperty::Vec3, 1, prefix + "color");
+        _program->addUniform(VROShaderProperty::Int, 1, prefix + "type");
         
-        program->addUniform(VROShaderProperty::Float, 1, prefix + "attenuation_start_distance");
-        program->addUniform(VROShaderProperty::Float, 1, prefix + "attenuation_end_distance");
-        program->addUniform(VROShaderProperty::Float, 1, prefix + "attenuation_falloff_exp");
-        program->addUniform(VROShaderProperty::Float, 1, prefix + "spot_inner_angle");
-        program->addUniform(VROShaderProperty::Float, 1, prefix + "spot_outer_angle");
+        _program->addUniform(VROShaderProperty::Vec3, 1, prefix + "position");
+        _program->addUniform(VROShaderProperty::Vec3, 1, prefix + "direction");
+        _program->addUniform(VROShaderProperty::Vec3, 1, prefix + "color");
+        
+        _program->addUniform(VROShaderProperty::Float, 1, prefix + "attenuation_start_distance");
+        _program->addUniform(VROShaderProperty::Float, 1, prefix + "attenuation_end_distance");
+        _program->addUniform(VROShaderProperty::Float, 1, prefix + "attenuation_falloff_exp");
+        _program->addUniform(VROShaderProperty::Float, 1, prefix + "spot_inner_angle");
+        _program->addUniform(VROShaderProperty::Float, 1, prefix + "spot_outer_angle");
     }
     
-    program->addUniform(VROShaderProperty::Mat4, 1, "normal_matrix");
-    program->addUniform(VROShaderProperty::Mat4, 1, "model_matrix");
-    program->addUniform(VROShaderProperty::Mat4, 1, "modelview_matrix");
-    program->addUniform(VROShaderProperty::Mat4, 1, "modelview_projection_matrix");
-    program->addUniform(VROShaderProperty::Vec3, 1, "camera_position");
-    program->addUniform(VROShaderProperty::Vec3, 1, "ambient_light_color");
-    program->addUniform(VROShaderProperty::Vec4, 1, "material_diffuse_surface_color");
-    program->addUniform(VROShaderProperty::Float, 1, "material_diffuse_intensity");
-    program->addUniform(VROShaderProperty::Float, 1, "material_alpha");
+    _program->addUniform(VROShaderProperty::Mat4, 1, "normal_matrix");
+    _program->addUniform(VROShaderProperty::Mat4, 1, "model_matrix");
+    _program->addUniform(VROShaderProperty::Mat4, 1, "modelview_matrix");
+    _program->addUniform(VROShaderProperty::Mat4, 1, "modelview_projection_matrix");
+    _program->addUniform(VROShaderProperty::Vec3, 1, "camera_position");
+    _program->addUniform(VROShaderProperty::Vec3, 1, "ambient_light_color");
+    
+    _diffuseSurfaceColorUniform = _program->addUniform(VROShaderProperty::Vec4, 1, "material_diffuse_surface_color");
+    _diffuseIntensityUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_diffuse_intensity");
+    _alphaUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_alpha");
 }
 
 void VROMaterialSubstrateOpenGL::bindShader() {
@@ -300,10 +309,18 @@ void VROMaterialSubstrateOpenGL::bindViewUniforms(VROMatrix4f transform, VROMatr
 }
 
 void VROMaterialSubstrateOpenGL::bindMaterialUniforms(VRORenderParameters &params, VROEyeType eye, int frame) {
-    _program->setUniformValueVec4(_material.getDiffuse().getContentsColor(), "material_diffuse_surface_color");
-    _program->setUniformValueFloat(_material.getDiffuse().getIntensity(), "material_diffuse_intensity");
-    _program->setUniformValueFloat(_material.getTransparency() * params.opacities.top(), "material_alpha");
-    _program->setUniformValueFloat(_material.getShininess(), "material_shininess");
+    if (_diffuseSurfaceColorUniform != nullptr) {
+        _diffuseSurfaceColorUniform->setVec4(_material.getDiffuse().getContentsColor());
+    }
+    if (_diffuseIntensityUniform != nullptr) {
+        _diffuseIntensityUniform->setFloat(_material.getDiffuse().getIntensity());
+    }
+    if (_alphaUniform != nullptr) {
+        _alphaUniform->setFloat(_material.getTransparency() * params.opacities.top());
+    }
+    if (_shininessUniform != nullptr) {
+        _shininessUniform->setFloat(_material.getShininess());
+    }
 }
 
 void VROMaterialSubstrateOpenGL::bindLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights,
@@ -351,8 +368,6 @@ std::shared_ptr<VROShaderProgram> VROMaterialSubstrateOpenGL::getPooledShader(st
             program->addSampler(sampler);
         }
         _sharedPrograms[name] = program;
-        
-        loadLightUniforms(program.get());
         return program;
     }
     else {

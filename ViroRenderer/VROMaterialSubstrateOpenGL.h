@@ -25,6 +25,7 @@ class VROLight;
 class VROMatrix4f;
 class VROVector3f;
 class VRORenderParameters;
+class VROUniform;
 enum class VROEyeType;
 
 class VROMaterialSubstrateOpenGL : public VROMaterialSubstrate {
@@ -58,13 +59,18 @@ private:
     
     static std::shared_ptr<VROShaderProgram> getPooledShader(std::string vertexShader, std::string fragmentShader,
                                                              const std::vector<std::string> &samplers);
-    static void loadLightUniforms(VROShaderProgram *program);
+    void loadLightUniforms();
 
     const VROMaterial &_material;
     VROLightingModel _lightingModel;
     
     std::shared_ptr<VROShaderProgram> _program;
     std::vector<std::shared_ptr<VROTexture>> _textures;
+    
+    VROUniform *_diffuseSurfaceColorUniform;
+    VROUniform *_diffuseIntensityUniform;
+    VROUniform *_alphaUniform;
+    VROUniform *_shininessUniform;
     
     void loadConstantLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
     void loadLambertLighting(const VROMaterial &material, const VRODriverOpenGL &driver);

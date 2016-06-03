@@ -15,15 +15,15 @@
 #include <string>
 #include <vector>
 #include "VROLog.h"
+#include "VROVector3f.h"
+#include "VROVector4f.h"
+#include "VROMatrix4f.h"
 
 #import <GLKit/GLKit.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
 
-class VROVector3f;
-class VROVector4f;
-class VROMatrix4f;
 enum class VROGeometrySourceSemantic;
 
 /*
@@ -106,6 +106,38 @@ public:
 
     virtual void reset() {
         //sublcass to reset any cached value
+    }
+    
+    void setVec3(VROVector3f value) {
+        float v[3];
+        v[0] = value.x;
+        v[1] = value.y;
+        v[2] = value.z;
+        
+        set(v);
+    }
+    
+    void setVec4(VROVector4f value) {
+        float v[4];
+        v[0] = value.x;
+        v[1] = value.y;
+        v[2] = value.z;
+        v[3] = value.w;
+        
+        set(v);
+    }
+    
+    void setMat4(VROMatrix4f value) {
+        set(value.getArray());
+    }
+    
+    void setInt(int value) {
+        int v = value;
+        set(&v);
+    }
+    
+    void setFloat(float value) {
+        set(&value);
     }
 };
 
@@ -335,7 +367,7 @@ public:
     /*
      Add a new uniform to this shader. Faster to invoke setUniforms(..).
      */
-    void addUniform(VROShaderProperty type, int arraySize, const std::string &name);
+    VROUniform *addUniform(VROShaderProperty type, int arraySize, const std::string &name);
 
     /*
      Add a new sampler to this shader. The shader code must reference the sampler by
