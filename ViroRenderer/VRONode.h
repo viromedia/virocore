@@ -20,6 +20,7 @@
 #include "VRORenderParameters.h"
 #include "VROAnimatable.h"
 #include "VROBoundingBox.h"
+#include "VROSortKey.h"
 
 class VROGeometry;
 class VROLight;
