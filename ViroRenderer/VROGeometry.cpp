@@ -12,7 +12,9 @@
 #include "VRORenderParameters.h"
 #include "VROGeometryElement.h"
 #include "VROLog.h"
+#include "VROLight.h"
 #include "VROGeometryUtil.h"
+#include "VROMaterial.h"
 
 VROGeometry::~VROGeometry() {
     delete (_bounds);
@@ -33,6 +35,29 @@ void VROGeometry::render(const VRORenderContext &renderContext,
     
     prewarm(driver);
     _substrate->render(*this, _materials, renderContext, driver, params);
+}
+
+void VROGeometry::updateSortKeys(uint32_t lightsHash) {
+    size_t numElements = _geometryElements.size();
+
+    if (_sortKeys.size() != numElements) {
+        _sortKeys.clear();
+        for (size_t i = 0; i < numElements; i++) {
+            _sortKeys.push_back({});
+        }
+    }
+    
+    for (size_t i = 0; i < numElements; i++) {
+        int materialIndex = i % (int) _materials.size();
+        
+        VROSortKey &key = _sortKeys[i];
+        key.renderingOrder = _renderingOrder;
+        key.lights = lightsHash;
+        key.substrate = (uintptr_t) _substrate;
+        key.elementIndex = i;
+        
+        _materials[materialIndex]->updateSortKey(key);
+    }
 }
 
 const VROBoundingBox &VROGeometry::getBoundingBox() {

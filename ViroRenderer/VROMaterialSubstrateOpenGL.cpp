@@ -15,6 +15,7 @@
 #include "VROEye.h"
 #include "VROLight.h"
 #include "VRORenderParameters.h"
+#include "VROSortKey.h"
 #include <sstream>
 
 static const int kMaxLights = 4;
@@ -373,4 +374,17 @@ std::shared_ptr<VROShaderProgram> VROMaterialSubstrateOpenGL::getPooledShader(st
     else {
         return it->second;
     }
+}
+
+void VROMaterialSubstrateOpenGL::updateSortKey(VROSortKey &key) const {
+    key.shader = _program->getShaderId();
+    key.textures = hashTextures(_textures);
+}
+
+uint32_t VROMaterialSubstrateOpenGL::hashTextures(const std::vector<std::shared_ptr<VROTexture>> &textures) const {
+    uint32_t h = 0;
+    for (const std::shared_ptr<VROTexture> &texture : textures) {
+        h = 31 * h + texture->getTextureId();
+    }
+    return h;
 }

@@ -58,6 +58,8 @@ public:
         return _textures;
     }
     
+    void updateSortKey(VROSortKey &key) const;
+    
 private:
     
     const VROMaterial &_material;

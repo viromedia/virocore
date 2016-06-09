@@ -79,6 +79,33 @@ void VRONode::render(const VRORenderContext &renderContext,
     popTransforms(params);
 }
 
+void VRONode::updateSortKeys(std::vector<std::shared_ptr<VROLight>> &lights) {
+    if (_light) {
+        lights.push_back(_light);
+    }
+    
+    if (_geometry) {
+        int lightsHash = hashLights(lights);
+        _geometry->updateSortKeys(lightsHash);
+    }
+    
+    for (std::shared_ptr<VRONode> childNode : _subnodes) {
+        childNode->updateSortKeys(lights);
+    }
+    
+    if (_light) {
+        lights.pop_back();
+    }
+}
+
+uint32_t VRONode::hashLights(std::vector<std::shared_ptr<VROLight>> &lights) {
+    uint32_t h = 0;
+    for (std::shared_ptr<VROLight> &light : lights) {
+        h = 31 * h + light->getLightId();
+    }
+    return h;
+}
+
 void VRONode::pushTransforms(const VRORenderContext &context, VRORenderParameters &params) {
     std::stack<VROMatrix4f> &transforms = params.transforms;
     std::stack<float> &opacities = params.opacities;

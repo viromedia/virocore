@@ -12,8 +12,12 @@
 #include "VRODriver.h"
 #include "VROTransaction.h"
 #include "VROAllocationTracker.h"
+#include "VROSortKey.h"
+
+static std::atomic_int sMaterialId;
 
 VROMaterial::VROMaterial() :
+    _materialId(sMaterialId++),
     _shininess(2.0),
     _fresnelExponent(1.0),
     _transparency(1.0),
@@ -141,5 +145,17 @@ void VROMaterial::updateSubstrate() {
 void VROMaterial::createSubstrate(const VRODriver &driver) {
     if (!_substrate) {
         _substrate = driver.newMaterialSubstrate(*this);
+    }
+}
+
+void VROMaterial::updateSortKey(VROSortKey &key) {
+    key.material = _materialId;
+    
+    if (_substrate) {
+        _substrate->updateSortKey(key);
+    }
+    else {
+        key.shader = 0;
+        key.textures = 0;
     }
 }

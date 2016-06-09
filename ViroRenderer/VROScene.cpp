@@ -58,6 +58,14 @@ void VROScene::render(const VRORenderContext &renderContext,
     }
 }
 
+void VROScene::updateSortKeys() {
+    std::vector<std::shared_ptr<VROLight>> lights;
+    
+    for (std::shared_ptr<VRONode> &node : _nodes) {
+        node->updateSortKeys(lights);
+    }
+}
+
 void VROScene::addNode(std::shared_ptr<VRONode> node) {
     _nodes.push_back(node);
 }

@@ -58,6 +58,10 @@ public:
     
     virtual ~VROTexture();
     
+    uint32_t getTextureId() const {
+        return _textureId;
+    }
+    
     void setImage(UIImage *image);
     void setImageCube(UIImage *image);
     void setImageCube(std::vector<UIImage *> &images);
@@ -73,6 +77,7 @@ public:
     
 private:
     
+    uint32_t _textureId;
     VROTextureType _type;
     
     /*

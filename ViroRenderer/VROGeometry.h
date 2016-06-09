@@ -15,6 +15,7 @@
 #include <memory>
 #include "VRORenderContext.h"
 #include "VRODriver.h"
+#include "VROSortKey.h"
 #include "VROBoundingBox.h"
 #include "VROAllocationTracker.h"
 
@@ -44,6 +45,7 @@ public:
     VROGeometry(std::vector<std::shared_ptr<VROGeometrySource>> sources,
                 std::vector<std::shared_ptr<VROGeometryElement>> elements,
                 const VRODriver *driver = nullptr) :
+        _renderingOrder(0),
         _geometrySources(sources),
         _geometryElements(elements),
         _stereoRenderingEnabled(true),
@@ -62,6 +64,7 @@ public:
      underlying immutable geometry data will be shared.
      */
     VROGeometry(std::shared_ptr<VROGeometry> geometry) :
+        _renderingOrder(geometry->_renderingOrder),
         _geometrySources(geometry->_geometrySources),
         _geometryElements(geometry->_geometryElements) {
         
@@ -79,6 +82,8 @@ public:
     void render(const VRORenderContext &context,
                 const VRODriver &driver,
                 VRORenderParameters &params);
+    
+    void updateSortKeys(uint32_t lightsHash);
     
     std::vector<std::shared_ptr<VROMaterial>> &getMaterials() {
         return _materials;
@@ -114,6 +119,11 @@ private:
     std::string _name;
     
     /*
+     User-defined rendering order for this geometry.
+     */
+    int _renderingOrder;
+    
+    /*
      The materials, which define the surface appearance (color, lighting, texture, and effects)
      of each geometry element.
      
@@ -126,6 +136,11 @@ private:
     std::vector<std::shared_ptr<VROMaterial>> _materials;
     const std::vector<std::shared_ptr<VROGeometrySource>> _geometrySources;
     const std::vector<std::shared_ptr<VROGeometryElement>> _geometryElements;
+    
+    /*
+     Used for sorting the elements prior to rendering.
+     */
+    std::vector<VROSortKey> _sortKeys;
     
     /*
      True if stereo rendering is enabled for this object. If disabled, the monocular view matrix

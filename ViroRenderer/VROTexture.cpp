@@ -14,7 +14,10 @@
 #include "VROAllocationTracker.h"
 #include "VROData.h"
 
+static std::atomic_int sTextureId;
+
 VROTexture::VROTexture() :
+    _textureId(sTextureId++),
     _image(nullptr),
     _substrate(nullptr) {
     
@@ -22,6 +25,7 @@ VROTexture::VROTexture() :
 }
 
 VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate) :
+    _textureId(sTextureId++),
     _type(type),
     _image(nullptr),
     _substrate(std::move(substrate)) {
@@ -30,6 +34,7 @@ VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate>
 }
 
 VROTexture::VROTexture(UIImage *image, const VRODriver *driver) :
+    _textureId(sTextureId++),
     _type(VROTextureType::Quad),
     _image(image),
     _substrate(nullptr) {
@@ -41,6 +46,7 @@ VROTexture::VROTexture(UIImage *image, const VRODriver *driver) :
 }
 
 VROTexture::VROTexture(std::vector<UIImage *> &images, const VRODriver *driver) :
+    _textureId(sTextureId++),
     _type(VROTextureType::Cube),
     _image(nullptr),
     _substrate(nullptr) {
@@ -55,6 +61,7 @@ VROTexture::VROTexture(std::vector<UIImage *> &images, const VRODriver *driver) 
 VROTexture::VROTexture(VROTextureType type, VROTextureFormat format,
                        std::shared_ptr<VROData> data, int width, int height,
                        const VRODriver *driver) :
+    _textureId(sTextureId++),
     _type(type),
     _image(nullptr),
     _data(data),

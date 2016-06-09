@@ -55,6 +55,8 @@ public:
         return _textures;
     }
     
+    void updateSortKey(VROSortKey &key) const;
+    
 private:
     
     static std::shared_ptr<VROShaderProgram> getPooledShader(std::string vertexShader, std::string fragmentShader,
@@ -76,6 +78,8 @@ private:
     void loadLambertLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
     void loadPhongLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
     void loadBlinnLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
+    
+    uint32_t hashTextures(const std::vector<std::shared_ptr<VROTexture>> &textures) const;
     
 };
 

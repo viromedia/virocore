@@ -20,7 +20,6 @@
 #include "VRORenderParameters.h"
 #include "VROAnimatable.h"
 #include "VROBoundingBox.h"
-#include "VROSortKey.h"
 
 class VROGeometry;
 class VROLight;
@@ -57,6 +56,7 @@ public:
     void render(const VRORenderContext &context,
                 const VRODriver &driver,
                 VRORenderParameters &params);
+    void updateSortKeys(std::vector<std::shared_ptr<VROLight>> &lights);
     
     void setGeometry(std::shared_ptr<VROGeometry> geometry) {
         _geometry = geometry;
@@ -235,6 +235,8 @@ private:
     void hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsOnly,
                  const VRORenderContext &context, std::vector<VROHitTestResult> &results);
     bool hitTestGeometry(VROVector3f ray, VROVector3f origin, VROMatrix4f transform);
+    
+    uint32_t hashLights(std::vector<std::shared_ptr<VROLight>> &lights);
 
 };
 

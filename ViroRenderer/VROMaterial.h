@@ -41,6 +41,7 @@ enum class VROLightingModel {
 };
 
 class VRODriver;
+class VROSortKey;
 class VROMaterialSubstrate;
 
 /*
@@ -60,6 +61,10 @@ public:
      Copy constructor for this material. Texture contents use shared references.
      */
     VROMaterial(std::shared_ptr<VROMaterial> material);
+    
+    uint32_t getMaterialId() const {
+        return _materialId;
+    }
     
     VROMaterialVisual &getDiffuse() const {
         return *_diffuse;
@@ -179,7 +184,14 @@ public:
         return _substrate;
     }
     
+    /*
+     Update the given sort key with fields from this material.
+     */
+    void updateSortKey(VROSortKey &key);
+    
 private:
+    
+    uint32_t _materialId;
     
     /*
      The visual properties associated with the material.

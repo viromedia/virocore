@@ -11,11 +11,11 @@
 
 #include <stdio.h>
 
-#define kSortKeySize 24
+#define kSortKeySize 40
 
 /*
- Sort keys are used to quickly sort nodes into optimal batch rendering order, to
- limit state changes on the GPU. They consist of a large byte[] that can be sorted
+ Sort keys are used to quickly sort geometry elements into optimal batch rendering order,
+ to limit state changes on the GPU. They consist of a large byte[] that can be sorted
  quickly via memcmp.
  */
 class VROSortKey {
@@ -69,17 +69,18 @@ public:
             /*
              State-change minimization concerns.
              */
-            uint16_t shader;
-            uint16_t tex0;
-            uint16_t tex1;
-            uint16_t light0;
-            uint16_t light1;
-            uint16_t material;
+            uint32_t shader;
+            uint32_t textures;
+            uint32_t lights;
+            uint32_t material;
             
             /*
-             Tie-breaker.
+             Tie-breakers, double as pointer to the geometry substrate and
+             index of the geometry element.
              */
-            size_t tieBreaker;
+            uintptr_t substrate;
+            uint8_t elementIndex;
+            
         };
         
         unsigned char key[kSortKeySize];

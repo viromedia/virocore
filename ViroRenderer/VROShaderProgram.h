@@ -334,11 +334,6 @@ class VROShaderProgram {
 public:
 
     /*
-     The MD5 of this shader. Used to uniquely identify the shader on the server.
-     */
-    const std::string shaderMD5;
-
-    /*
      Create a new shader program with the given name and capabilities. This constructor assumes that the
      shader code is bundled with the application. The uniforms used by the shader may then be set using the
      various setUniforms(..) and setSamplers(..) methods.
@@ -346,6 +341,10 @@ public:
     VROShaderProgram(std::string vertexShader, std::string fragmentShader, int capabilities);
     void setUniforms(VROShaderProperty *uniformTypes, const char **names, int count);
     void setSamplers(const char **names, int count);
+    
+    uint32_t getShaderId() const {
+        return _shaderId;
+    }
 
     virtual ~VROShaderProgram();
 
@@ -408,16 +407,6 @@ public:
     void setNormTransform(const float *norm);
 
     /*
-     Retrieve cached, frequently accessed uniform types. Returns nullptr if the shader does not
-     support the requested uniform.
-     */
-    VROUniform1f *getAlphaUniform();
-    int getAlphaUniformIndex();
-
-    VROUniform3f *getColorUniform();
-    int getColorUniformIndex();
-
-    /*
      Get the vertex and fragment source code for this shader.
      */
     const std::string &getVertexSource() const;
@@ -442,6 +431,8 @@ public:
     }
 
 private:
+    
+    uint32_t _shaderId;
 
     /*
      VROUniform for each uniform in the shader. The VROUniform holds both the location of the uniform
@@ -498,24 +489,6 @@ private:
      List of the names of all samplers used by this shader.
      */
     std::vector<std::string> samplers;
-
-    /*
-     Cached alpha uniform index.
-     */
-    int alphaUniformIndex;
-    bool hasAlphaUniform;
-
-    /*
-     Cached color uniform index.
-     */
-    int colorUniformIndex;
-    bool hasColorUniform;
-
-    /*
-     Cached offset uniform index.
-     */
-    int offsetUniformIndex;
-    bool hasOffsetUniform;
 
     /*
      The GLSL version this shader is written in.

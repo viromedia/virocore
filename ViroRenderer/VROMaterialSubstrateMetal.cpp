@@ -238,3 +238,7 @@ VROConcurrentBuffer &VROMaterialSubstrateMetal::bindLightingUniforms(const std::
     uniforms->ambient_light_color = toVectorFloat3(ambientLight);
     return *_lightingUniformsBuffer;
 }
+
+void VROMaterialSubstrateMetal::updateSortKey(VROSortKey &key) const {
+    
+}

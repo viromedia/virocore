@@ -15,6 +15,8 @@
 
 #define kDebugShaders 0
 
+static std::atomic_int sMaterialId;
+
 std::string loadTextAsset(std::string resource) {
     NSString *file = [[NSBundle bundleWithIdentifier:@"com.viro.ViroKit"] pathForResource:[NSString stringWithUTF8String:resource.c_str()] ofType:@"glsl"];
     return std::string([[NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil] UTF8String]);
@@ -86,18 +88,13 @@ VROUniform *newUniformForType(const std::string &name, VROShaderProperty type, i
 #pragma mark Initialize From Embedded Resources
 
 VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmentShader, int cap) :
+    _shaderId(sMaterialId++),
     capabilities(cap),
     normTransformsSet(false),
     uniformsNeedRebind(true),
     shaderName(fragmentShader),
     program(0),
     failedToLink(false),
-    alphaUniformIndex(-1),
-    hasAlphaUniform(true),
-    colorUniformIndex(-1),
-    hasColorUniform(true),
-    offsetUniformIndex(-1),
-    hasOffsetUniform(true),
     glslVersion(GLSLVersion::V0) {
 
     embeddedVertexSource = loadTextAsset(vertexShader);
@@ -257,12 +254,6 @@ void VROShaderProgram::evict() {
     }
 
     normTransformsSet = false;
-    alphaUniformIndex = -1;
-    hasAlphaUniform = true;
-    colorUniformIndex = -1;
-    hasColorUniform = true;
-    offsetUniformIndex = -1;
-    hasOffsetUniform = true;
     uniformsNeedRebind = true;
 
     for (VROUniform *uniform : uniforms) {
@@ -584,55 +575,6 @@ const std::string &VROShaderProgram::getVertexSource() const {
 
 const std::string &VROShaderProgram::getFragmentSource() const {
     return embeddedFragmentSource;
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-//
-//  Fast (Common) Uniform Access
-//
-/////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-#pragma mark Fast (Common) Uniform Access
-
-VROUniform1f *VROShaderProgram::getAlphaUniform() {
-    int index = getAlphaUniformIndex();
-    return index >= 0 ? (VROUniform1f *) uniforms[index] : nullptr;
-}
-
-int VROShaderProgram::getAlphaUniformIndex() {
-    if (!hasAlphaUniform) {
-        return -1;
-    }
-
-    if (alphaUniformIndex == -1) {
-        alphaUniformIndex = getUniformIndex("alpha");
-        if (alphaUniformIndex == -1) {
-            hasAlphaUniform = false;
-        }
-    }
-
-    return alphaUniformIndex;
-}
-
-VROUniform3f *VROShaderProgram::getColorUniform() {
-    int index = getColorUniformIndex();
-    return index >= 0 ? (VROUniform3f *) uniforms[index] : nullptr;
-}
-
-int VROShaderProgram::getColorUniformIndex() {
-    if (!hasColorUniform) {
-        return -1;
-    }
-
-    if (colorUniformIndex == -1) {
-        colorUniformIndex = getUniformIndex("color");
-
-        if (colorUniformIndex == -1) {
-            hasColorUniform = false;
-        }
-    }
-
-    return colorUniformIndex;
 }
 
 void VROShaderProgram::inflateIncludes(std::string &sourceToInflate) {

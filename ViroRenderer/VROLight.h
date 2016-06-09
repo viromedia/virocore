@@ -15,6 +15,8 @@
 #include "VROSize.h"
 #include "VROAnimatable.h"
 
+static std::atomic_int sLightId;
+
 enum class VROLightType {
     Ambient,
     Directional,
@@ -33,6 +35,7 @@ class VROLight : public VROAnimatable {
 public:
     
     VROLight(VROLightType type) :
+        _lightId(sLightId++),
         _type(type),
         _color({ 1.0, 1.0, 1.0 }),
         _attenuationStartDistance(2.0),
@@ -45,6 +48,10 @@ public:
     
     ~VROLight()
     {}
+    
+    uint32_t getLightId() const {
+        return _lightId;
+    }
     
     VROLightType getType() const {
         return _type;
@@ -106,6 +113,7 @@ public:
     
 private:
     
+    uint32_t _lightId;
     VROLightType _type;
     VROVector3f _color;
     

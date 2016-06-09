@@ -11,9 +11,13 @@
 
 #include <stdio.h>
 
+class VROSortKey;
+
 class VROMaterialSubstrate {
 public:
     virtual ~VROMaterialSubstrate() {}
+    
+    virtual void updateSortKey(VROSortKey &key) const = 0;
     
 };
 
