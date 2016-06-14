@@ -246,3 +246,7 @@ void VROMaterialSubstrateMetal::updateSortKey(VROSortKey &key) const {
 void VROMaterialSubstrateMetal::bindShader() {
     
 }
+
+void VROMaterialSubstrateMetal::bindLights(const std::vector<std::shared_ptr<VROLight>> &lights) {
+    
+}

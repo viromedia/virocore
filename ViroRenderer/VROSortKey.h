@@ -29,27 +29,6 @@ public:
         return memcmp(key, other.key, kSortKeySize);
     }
     
-    /*
-     Returns true if this sort key is in the same 'rendering batch' as another
-     sort-key; this is the case if all the render-order and state-change components
-     of the sort-keys are equal, without inspecting the tiebreaker component.
-     
-     If the material ID of this sort-key is zero, then we always return false,
-     because direct materials are never batched. Note we don't have to check the
-     other's material ID because the memcmp ensures that this.material=other.material.
-     
-     Note that the material buffer mask we use is assuming little-endian order, which is
-     why it appears reversed (i.e. in big-endian it would be 0xFFFFFF00).
-     */
-    bool isSameBatch(const VROSortKey& other) const {
-#ifdef UPN_ARCH_64_BIT
-        // There are 4 bytes of padding in 64-bit: 12 body + 4 padding + 8 tie-breaker = 24
-        return memcmp(key, other.key, sizeof(VROSortKey) - sizeof(size_t) - 4) == 0 && material != 0;
-#else
-        return memcmp(key, other.key, sizeof(VROSortKey) - sizeof(size_t)) == 0 && material != 0;
-#endif
-    }
-    
     bool operator==(const VROSortKey& r) const { return compare(r) == 0; }
     bool operator!=(const VROSortKey& r) const { return compare(r) != 0; }
     bool operator< (const VROSortKey& r) const { return compare(r) <  0; }
@@ -75,7 +54,7 @@ public:
             uint32_t material;
             
             /*
-             Tie-breakers, double as pointer to the node and
+             Tie-breakers, double as pointers to the node and
              index of the geometry element.
              */
             uintptr_t node;

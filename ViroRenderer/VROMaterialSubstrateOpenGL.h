@@ -36,6 +36,8 @@ public:
     virtual ~VROMaterialSubstrateOpenGL();
     
     void bindShader();
+    void bindLights(const std::vector<std::shared_ptr<VROLight>> &lights);
+    
     void bindDepthSettings();
     void bindViewUniforms(VROMatrix4f transform, VROMatrix4f modelview,
                           VROMatrix4f projectionMatrix, VROVector3f cameraPosition);
@@ -44,13 +46,6 @@ public:
      Set the uniforms required to render this material.
      */
     void bindMaterialUniforms(float opacity, VROEyeType eye, int frame);
-    
-    /*
-     Set the uniforms required to render this given material under the
-     given lights.
-     */
-    void bindLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights,
-                              VROEyeType eye, int frame);
     
     const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
         return _textures;

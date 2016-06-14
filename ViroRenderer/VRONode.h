@@ -64,6 +64,10 @@ public:
     void updateSortKeys(VRORenderParameters &params);
     void getSortKeys(std::vector<VROSortKey> *outKeys);
     
+    std::vector<std::shared_ptr<VROLight>> &getComputedLights() {
+        return _computedLights;
+    }
+    
     void setGeometry(std::shared_ptr<VROGeometry> geometry) {
         _geometry = geometry;
     }
@@ -207,7 +211,6 @@ private:
     VROMatrix4f _computedTransform;
     float _computedOpacity;
     std::vector<std::shared_ptr<VROLight>> _computedLights;
-    
     
     /*
      The opacity of the node (0.0 is transparent, 1.0 is opaque).

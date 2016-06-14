@@ -305,6 +305,38 @@ void VROMaterialSubstrateOpenGL::bindShader() {
     _program->bind();
 }
 
+void VROMaterialSubstrateOpenGL::bindLights(const std::vector<std::shared_ptr<VROLight>> &lights) {
+    pglpush("Lights");
+    _program->setUniformValueInt((int)lights.size(), "lighting.num_lights");
+    
+    VROVector3f ambientLight;
+    
+    for (int i = 0; i < lights.size(); i++) {
+        std::stringstream ss;
+        ss << "lighting.lights[" << i << "].";
+        std::string prefix = ss.str();
+        
+        const std::shared_ptr<VROLight> &light = lights[i];
+        
+        _program->setUniformValueInt((int) light->getType(), prefix + "type");
+        _program->setUniformValueVec3(light->getTransformedPosition(), prefix + "position");
+        _program->setUniformValueVec3(light->getDirection(), prefix + "direction");
+        _program->setUniformValueVec3(light->getColor(), prefix + "color");
+        _program->setUniformValueFloat(light->getAttenuationStartDistance(), prefix + "attenuation_start_distance");
+        _program->setUniformValueFloat(light->getAttenuationEndDistance(), prefix + "attenuation_end_distance");
+        _program->setUniformValueFloat(light->getAttenuationFalloffExponent(), prefix + "attenuation_falloff_exp");
+        _program->setUniformValueFloat(light->getSpotInnerAngle(), prefix + "spot_inner_angle");
+        _program->setUniformValueFloat(light->getSpotOuterAngle(), prefix + "spot_outer_angle");
+        
+        if (light->getType() == VROLightType::Ambient) {
+            ambientLight += light->getColor();
+        }
+    }
+    
+    _program->setUniformValueVec3(ambientLight, "lighting.ambient_light_color");
+    pglpop();
+}
+
 void VROMaterialSubstrateOpenGL::bindDepthSettings() {
     if (_material.getWritesToDepthBuffer()) {
         glDepthMask(GL_TRUE);
@@ -344,38 +376,6 @@ void VROMaterialSubstrateOpenGL::bindMaterialUniforms(float opacity, VROEyeType 
     if (_shininessUniform != nullptr) {
         _shininessUniform->setFloat(_material.getShininess());
     }
-}
-
-void VROMaterialSubstrateOpenGL::bindLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights,
-                                                      VROEyeType eye, int frame) {
-   
-    _program->setUniformValueInt((int)lights.size(), "lighting.num_lights");
-    
-    VROVector3f ambientLight;
-    
-    for (int i = 0; i < lights.size(); i++) {
-        std::stringstream ss;
-        ss << "lighting.lights[" << i << "].";
-        std::string prefix = ss.str();
-        
-        const std::shared_ptr<VROLight> &light = lights[i];
-    
-        _program->setUniformValueInt((int) light->getType(), prefix + "type");
-        _program->setUniformValueVec3(light->getTransformedPosition(), prefix + "position");
-        _program->setUniformValueVec3(light->getDirection(), prefix + "direction");
-        _program->setUniformValueVec3(light->getColor(), prefix + "color");
-        _program->setUniformValueFloat(light->getAttenuationStartDistance(), prefix + "attenuation_start_distance");
-        _program->setUniformValueFloat(light->getAttenuationEndDistance(), prefix + "attenuation_end_distance");
-        _program->setUniformValueFloat(light->getAttenuationFalloffExponent(), prefix + "attenuation_falloff_exp");
-        _program->setUniformValueFloat(light->getSpotInnerAngle(), prefix + "spot_inner_angle");
-        _program->setUniformValueFloat(light->getSpotOuterAngle(), prefix + "spot_outer_angle");
-        
-        if (light->getType() == VROLightType::Ambient) {
-            ambientLight += light->getColor();
-        }
-    }
-    
-    _program->setUniformValueVec3(ambientLight, "lighting.ambient_light_color");
 }
 
 std::shared_ptr<VROShaderProgram> VROMaterialSubstrateOpenGL::getPooledShader(std::string vertexShader,

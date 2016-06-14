@@ -16,6 +16,7 @@
 #include "VROHitTestResult.h"
 #include "VROSphere.h"
 #include "VROHoverController.h"
+#include "VROLog.h"
 #include <stack>
 
 static const float kSphereBackgroundRadius = 1;
@@ -62,18 +63,25 @@ void VROScene::render2(const VRORenderContext &context,
                        const VRODriver &driver) {
     
     uint32_t boundShaderId = 0;
+    std::vector<std::shared_ptr<VROLight>> boundLights;
     
     for (VROSortKey &key : _keys) {
         VRONode *node = (VRONode *)key.node;
         int elementIndex = key.elementIndex;
         
-        if (key.shader != boundShaderId) {
-            const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
-            if (geometry) {
-                geometry->getMaterialForElement(elementIndex)->bindShader(driver);
+        const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
+        if (geometry) {
+            std::shared_ptr<VROMaterial> material = geometry->getMaterialForElement(elementIndex);
+            
+            if (key.shader != boundShaderId) {
+                material->bindShader(driver);
+                boundShaderId = key.shader;
             }
             
-            boundShaderId = key.shader;
+            if (boundLights != node->getComputedLights()) {
+                material->bindLights(node->getComputedLights(), driver);
+                boundLights = node->getComputedLights();
+            }
         }
         
         node->render2(elementIndex, context, driver);

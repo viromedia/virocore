@@ -37,6 +37,7 @@ public:
     virtual ~VROMaterialSubstrateMetal();
     
     void bindShader();
+    void bindLights(const std::vector<std::shared_ptr<VROLight>> &lights);
     
     /*
      Set the uniforms required to render this material, and return the buffer.

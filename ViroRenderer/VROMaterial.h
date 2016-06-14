@@ -40,6 +40,7 @@ enum class VROLightingModel {
     Constant
 };
 
+class VROLight;
 class VRODriver;
 class VROSortKey;
 class VROMaterialSubstrate;
@@ -67,6 +68,7 @@ public:
     }
     
     void bindShader(const VRODriver &driver);
+    void bindLights(std::vector<std::shared_ptr<VROLight>> &lights, const VRODriver &driver);
     
     VROMaterialVisual &getDiffuse() const {
         return *_diffuse;

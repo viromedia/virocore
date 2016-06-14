@@ -197,9 +197,6 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
                                         const VRORenderContext &context,
                                         const VRODriver &driver) {
     
-    int frame = context.getFrame();
-    VROEyeType eyeType = context.getEyeType();
-    
     VROMatrix4f viewMatrix = context.getViewMatrix();
     VROMatrix4f projectionMatrix = context.getProjectionMatrix();
     
@@ -213,10 +210,9 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     material->createSubstrate(driver);
     VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate());
     substrate->bindDepthSettings();
-
+    
     VROMatrix4f modelview = viewMatrix.multiply(transform);
     substrate->bindViewUniforms(transform, modelview, projectionMatrix, context.getCamera().getPosition());
-    substrate->bindLightingUniforms(lights, eyeType, frame);
     
     for (VROVertexDescriptorOpenGL &vd : _vertexDescriptors) {
         glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);
@@ -275,7 +271,7 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
         substrate->bindShader();
         substrate->bindDepthSettings();
         substrate->bindViewUniforms(transform, modelview, projectionMatrix, renderContext.getCamera().getPosition());
-        substrate->bindLightingUniforms(params.lights, eyeType, frame);
+        substrate->bindLights(params.lights);
         
         for (VROVertexDescriptorOpenGL &vd : _vertexDescriptors) {
             glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);
