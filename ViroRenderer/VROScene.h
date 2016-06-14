@@ -14,6 +14,7 @@
 #include <memory>
 #include "VROAllocationTracker.h"
 #include "VROAudioPlayer.h"
+#include "VROSortKey.h"
 
 class VRONode;
 class VRORenderContext;
@@ -84,6 +85,11 @@ private:
      The background visual to display. Rendered before any nodes.
      */
     std::shared_ptr<VROGeometry> _background;
+    
+    /*
+     The nodes ordered for rendering by their sort keys.
+     */
+    std::vector<VROSortKey> _keys;
     
     /*
      The audio player for the background track of this scene.
