@@ -135,7 +135,7 @@
 		8FB6591F1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB6591D1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.h */; };
 		8FB659221CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB659201CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp */; };
 		8FB659231CD83A2200D036EB /* VROTextureSubstrateOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB659211CD83A2200D036EB /* VROTextureSubstrateOpenGL.h */; };
-		8FBDBE2B1D01EE5E00801B59 /* VROSortKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FBDBE291D01EE5E00801B59 /* VROSortKey.h */; };
+		8FBDBE2B1D01EE5E00801B59 /* VROSortKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FBDBE291D01EE5E00801B59 /* VROSortKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */; };
 		8FC6E1C61CEBB31C008EFD5F /* lighting_general_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */; };
 		8FC6E1C71CEBB31C008EFD5F /* lambert_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BA1CEB62E9008EFD5F /* lambert_functions_fsh.glsl */; };

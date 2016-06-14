@@ -28,7 +28,12 @@ VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &materi
     _diffuseSurfaceColorUniform(nullptr),
     _diffuseIntensityUniform(nullptr),
     _alphaUniform(nullptr),
-    _shininessUniform(nullptr) {
+    _shininessUniform(nullptr),
+    _normalMatrixUniform(nullptr),
+    _modelMatrixUniform(nullptr),
+    _modelViewMatrixUniform(nullptr),
+    _modelViewProjectionMatrixUniform(nullptr),
+    _cameraPositionUniform(nullptr) {
 
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
@@ -283,12 +288,13 @@ void VROMaterialSubstrateOpenGL::addUniforms() {
         _program->addUniform(VROShaderProperty::Float, 1, prefix + "spot_outer_angle");
     }
     
-    _program->addUniform(VROShaderProperty::Mat4, 1, "normal_matrix");
-    _program->addUniform(VROShaderProperty::Mat4, 1, "model_matrix");
-    _program->addUniform(VROShaderProperty::Mat4, 1, "modelview_matrix");
-    _program->addUniform(VROShaderProperty::Mat4, 1, "modelview_projection_matrix");
-    _program->addUniform(VROShaderProperty::Vec3, 1, "camera_position");
     _program->addUniform(VROShaderProperty::Vec3, 1, "ambient_light_color");
+
+    _normalMatrixUniform = _program->addUniform(VROShaderProperty::Mat4, 1, "normal_matrix");
+    _modelMatrixUniform = _program->addUniform(VROShaderProperty::Mat4, 1, "model_matrix");
+    _modelViewMatrixUniform = _program->addUniform(VROShaderProperty::Mat4, 1, "modelview_matrix");
+    _modelViewProjectionMatrixUniform = _program->addUniform(VROShaderProperty::Mat4, 1, "modelview_projection_matrix");
+    _cameraPositionUniform = _program->addUniform(VROShaderProperty::Vec3, 1, "camera_position");
     
     _diffuseSurfaceColorUniform = _program->addUniform(VROShaderProperty::Vec4, 1, "material_diffuse_surface_color");
     _diffuseIntensityUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_diffuse_intensity");
@@ -299,6 +305,12 @@ void VROMaterialSubstrateOpenGL::loadUniforms() {
     _diffuseSurfaceColorUniform = _program->getUniform("material_diffuse_surface_color");
     _diffuseIntensityUniform = _program->getUniform("material_diffuse_intensity");
     _alphaUniform = _program->getUniform("material_alpha");
+    
+    _normalMatrixUniform = _program->getUniform("normal_matrix");
+    _modelMatrixUniform = _program->getUniform("model_matrix");
+    _modelViewMatrixUniform = _program->getUniform("modelview_matrix");
+    _modelViewProjectionMatrixUniform = _program->getUniform("modelview_projection_matrix");
+    _cameraPositionUniform = _program->getUniform("camera_position");
 }
 
 void VROMaterialSubstrateOpenGL::bindShader() {
@@ -356,11 +368,21 @@ void VROMaterialSubstrateOpenGL::bindDepthSettings() {
 void VROMaterialSubstrateOpenGL::bindViewUniforms(VROMatrix4f transform, VROMatrix4f modelview,
                                                   VROMatrix4f projectionMatrix, VROVector3f cameraPosition) {
     
-    _program->setUniformValueMat4(transform.invert().transpose(), "normal_matrix");
-    _program->setUniformValueMat4(transform, "model_matrix");
-    _program->setUniformValueMat4(modelview, "modelview_matrix");
-    _program->setUniformValueMat4(projectionMatrix.multiply(modelview), "modelview_projection_matrix");
-    _program->setUniformValueVec3(cameraPosition, "camera_position");
+    if (_normalMatrixUniform != nullptr) {
+        _normalMatrixUniform->setMat4(transform.invert().transpose());
+    }
+    if (_modelMatrixUniform != nullptr) {
+        _modelMatrixUniform->setMat4(transform);
+    }
+    if (_modelViewMatrixUniform != nullptr) {
+        _modelViewMatrixUniform->setMat4(modelview);
+    }
+    if (_modelViewProjectionMatrixUniform != nullptr) {
+        _modelViewProjectionMatrixUniform->setMat4(projectionMatrix.multiply(modelview));
+    }
+    if (_cameraPositionUniform != nullptr) {
+        _cameraPositionUniform->setVec3(cameraPosition);
+    }
 }
 
 void VROMaterialSubstrateOpenGL::bindMaterialUniforms(float opacity, VROEyeType eye, int frame) {

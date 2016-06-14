@@ -21,6 +21,7 @@
 
 class VRONode;
 class VROLight;
+class VROSortKey;
 class VROMaterial;
 class VROGeometryElement;
 class VROGeometrySource;

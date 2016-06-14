@@ -71,6 +71,12 @@ private:
     VROUniform *_alphaUniform;
     VROUniform *_shininessUniform;
     
+    VROUniform *_normalMatrixUniform;
+    VROUniform *_modelMatrixUniform;
+    VROUniform *_modelViewMatrixUniform;
+    VROUniform *_modelViewProjectionMatrixUniform;
+    VROUniform *_cameraPositionUniform;
+    
     void loadConstantLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
     void loadLambertLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
     void loadPhongLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
