@@ -37,7 +37,20 @@ void VROGeometry::render(const VRORenderContext &renderContext,
     _substrate->render(*this, _materials, renderContext, driver, params);
 }
 
-void VROGeometry::updateSortKeys(uint32_t lightsHash) {
+void VROGeometry::render(int elementIndex,
+                         VROMatrix4f transform,
+                         float opacity,
+                         const std::vector<std::shared_ptr<VROLight>> &lights,
+                         const VRORenderContext &context,
+                         const VRODriver &driver) {
+    
+    prewarm(driver);
+    
+    std::shared_ptr<VROMaterial> &material = _materials[elementIndex % _materials.size()];
+    _substrate->render(*this, elementIndex, transform, opacity, material, lights, context, driver);
+}
+
+void VROGeometry::updateSortKeys(VRONode *node, uint32_t lightsHash) {
     size_t numElements = _geometryElements.size();
 
     if (_sortKeys.size() != numElements) {
@@ -53,11 +66,15 @@ void VROGeometry::updateSortKeys(uint32_t lightsHash) {
         VROSortKey &key = _sortKeys[i];
         key.renderingOrder = _renderingOrder;
         key.lights = lightsHash;
-        key.substrate = (uintptr_t) _substrate;
+        key.node = (uintptr_t) node;
         key.elementIndex = i;
         
         _materials[materialIndex]->updateSortKey(key);
     }
+}
+
+void VROGeometry::getSortKeys(std::vector<VROSortKey> *outKeys) {
+    outKeys->insert(outKeys->end(), _sortKeys.begin(), _sortKeys.end());
 }
 
 const VROBoundingBox &VROGeometry::getBoundingBox() {

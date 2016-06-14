@@ -67,6 +67,15 @@ public:
                 const VRODriver &driver,
                 VRORenderParameters &params);
     
+    void render(const VROGeometry &geometry,
+                int elementIndex,
+                VROMatrix4f transform,
+                float opacity,
+                std::shared_ptr<VROMaterial> &material,
+                const std::vector<std::shared_ptr<VROLight>> &lights,
+                const VRORenderContext &context,
+                const VRODriver &driver);
+    
 private:
     
     MTLVertexDescriptor *_vertexDescriptor;

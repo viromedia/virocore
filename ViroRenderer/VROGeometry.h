@@ -19,6 +19,7 @@
 #include "VROBoundingBox.h"
 #include "VROAllocationTracker.h"
 
+class VRONode;
 class VROLight;
 class VROMaterial;
 class VROGeometryElement;
@@ -83,7 +84,15 @@ public:
                 const VRODriver &driver,
                 VRORenderParameters &params);
     
-    void updateSortKeys(uint32_t lightsHash);
+    void render(int elementIndex,
+                VROMatrix4f transform,
+                float opacity,
+                const std::vector<std::shared_ptr<VROLight>> &lights,
+                const VRORenderContext &context,
+                const VRODriver &driver);
+    
+    void updateSortKeys(VRONode *node, uint32_t lightsHash);
+    void getSortKeys(std::vector<VROSortKey> *outKeys);
     
     std::vector<std::shared_ptr<VROMaterial>> &getMaterials() {
         return _materials;

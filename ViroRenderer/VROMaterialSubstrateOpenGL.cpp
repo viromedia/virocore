@@ -309,7 +309,7 @@ void VROMaterialSubstrateOpenGL::bindViewUniforms(VROMatrix4f transform, VROMatr
     _program->setUniformValueVec3(cameraPosition, "camera_position");
 }
 
-void VROMaterialSubstrateOpenGL::bindMaterialUniforms(VRORenderParameters &params, VROEyeType eye, int frame) {
+void VROMaterialSubstrateOpenGL::bindMaterialUniforms(float opacity, VROEyeType eye, int frame) {
     if (_diffuseSurfaceColorUniform != nullptr) {
         _diffuseSurfaceColorUniform->setVec4(_material.getDiffuse().getContentsColor());
     }
@@ -317,7 +317,7 @@ void VROMaterialSubstrateOpenGL::bindMaterialUniforms(VRORenderParameters &param
         _diffuseIntensityUniform->setFloat(_material.getDiffuse().getIntensity());
     }
     if (_alphaUniform != nullptr) {
-        _alphaUniform->setFloat(_material.getTransparency() * params.opacities.top());
+        _alphaUniform->setFloat(_material.getTransparency() * opacity);
     }
     if (_shininessUniform != nullptr) {
         _shininessUniform->setFloat(_material.getShininess());

@@ -18,6 +18,7 @@
 #include "VROFrameSynchronizer.h"
 
 class VROEye;
+class VRONode;
 class VRODriver;
 class VROCameraMutable;
 class VROTimingFunction;

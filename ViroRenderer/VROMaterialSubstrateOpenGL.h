@@ -42,7 +42,7 @@ public:
     /*
      Set the uniforms required to render this material.
      */
-    void bindMaterialUniforms(VRORenderParameters &params, VROEyeType eye, int frame);
+    void bindMaterialUniforms(float opacity, VROEyeType eye, int frame);
     
     /*
      Set the uniforms required to render this given material under the

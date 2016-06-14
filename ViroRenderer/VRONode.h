@@ -20,6 +20,7 @@
 #include "VRORenderParameters.h"
 #include "VROAnimatable.h"
 #include "VROBoundingBox.h"
+#include "VROSortKey.h"
 
 class VROGeometry;
 class VROLight;
@@ -56,7 +57,12 @@ public:
     void render(const VRORenderContext &context,
                 const VRODriver &driver,
                 VRORenderParameters &params);
-    void updateSortKeys(std::vector<std::shared_ptr<VROLight>> &lights);
+    void render2(int elementIndex,
+                 const VRORenderContext &context,
+                 const VRODriver &driver);
+    
+    void updateSortKeys(VRORenderParameters &params);
+    void getSortKeys(std::vector<VROSortKey> *outKeys);
     
     void setGeometry(std::shared_ptr<VROGeometry> geometry) {
         _geometry = geometry;
@@ -68,7 +74,7 @@ public:
     /*
      Transforms.
      */
-    VROMatrix4f getTransform(const VRORenderContext &context) const;
+    VROMatrix4f getTransform() const;
     VROVector3f getTransformedPosition() const;
     
     VROVector3f getPosition() const {
@@ -193,6 +199,15 @@ private:
     VROVector3f _position;
     VROQuaternion _rotation;
     VROVector3f _pivot;
+    
+    /*
+     Parameters computed by descending down the tree. These are updated whenever
+     any parent or this node itself is updated.
+     */
+    VROMatrix4f _computedTransform;
+    float _computedOpacity;
+    std::vector<std::shared_ptr<VROLight>> _computedLights;
+    
     
     /*
      The opacity of the node (0.0 is transparent, 1.0 is opaque).

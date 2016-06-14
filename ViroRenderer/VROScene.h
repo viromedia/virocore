@@ -30,10 +30,12 @@ public:
     VROScene();
     virtual ~VROScene();
     
-    void renderBackground(const VRORenderContext &renderContext,
+    void renderBackground(const VRORenderContext &context,
                           const VRODriver &driver);
-    void render(const VRORenderContext &renderContext,
+    void render(const VRORenderContext &context,
                 const VRODriver &driver);
+    void render2(const VRORenderContext &context,
+                 const VRODriver &driver);
     
     void updateSortKeys();
     

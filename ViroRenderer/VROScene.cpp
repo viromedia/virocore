@@ -58,11 +58,33 @@ void VROScene::render(const VRORenderContext &renderContext,
     }
 }
 
+void VROScene::render2(const VRORenderContext &context,
+                       const VRODriver &driver) {
+    
+    updateSortKeys();
+    
+    std::vector<VROSortKey> keys;
+    for (std::shared_ptr<VRONode> &node : _nodes) {
+        node->getSortKeys(&keys);
+    }
+    
+    for (VROSortKey &key : keys) {
+        VRONode *node = (VRONode *)key.node;
+        int elementIndex = key.elementIndex;
+        
+        node->render2(elementIndex, context, driver);
+    }
+}
+
 void VROScene::updateSortKeys() {
-    std::vector<std::shared_ptr<VROLight>> lights;
+    VROMatrix4f identity;
+
+    VRORenderParameters renderParams;
+    renderParams.transforms.push(identity);
+    renderParams.opacities.push(1.0);
     
     for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->updateSortKeys(lights);
+        node->updateSortKeys(renderParams);
     }
 }
 

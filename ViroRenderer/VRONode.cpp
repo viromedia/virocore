@@ -29,6 +29,7 @@ VRONode::VRONode() :
     _scale({1.0, 1.0, 1.0}),
     _pivot({0.5f, 0.5f, 0.5f}),
     _opacity(1.0),
+    _computedOpacity(1.0),
     _selectable(true) {
     
     ALLOCATION_TRACKER_ADD(Nodes, 1);
@@ -63,7 +64,6 @@ std::shared_ptr<VRONode> VRONode::clone() {
 void VRONode::render(const VRORenderContext &renderContext,
                      const VRODriver &driver,
                      VRORenderParameters &params) {
-    processActions();
     
     pushTransforms(renderContext, params);
     renderNode(renderContext, driver, params);
@@ -79,22 +79,66 @@ void VRONode::render(const VRORenderContext &renderContext,
     popTransforms(params);
 }
 
-void VRONode::updateSortKeys(std::vector<std::shared_ptr<VROLight>> &lights) {
+void VRONode::render2(int elementIndex,
+                      const VRORenderContext &context,
+                      const VRODriver &driver) {
+    
+    if (_geometry) {
+        _geometry->render(elementIndex, _computedTransform, _computedOpacity, _computedLights,
+                          context, driver);
+    }
+}
+
+void VRONode::updateSortKeys(VRORenderParameters &params) {
+    processActions();
+    
+    std::stack<VROMatrix4f> &transforms = params.transforms;
+    std::stack<float> &opacities = params.opacities;
+    std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
+    
+    /*
+     Compute the specific parameters for this node.
+     */
+    _computedTransform = transforms.top().multiply(getTransform());
+    transforms.push(_computedTransform);
+    
+    _computedOpacity = opacities.top() * _opacity;
+    opacities.push(_computedOpacity);
+    
     if (_light) {
         lights.push_back(_light);
     }
+    _computedLights.clear();
+    _computedLights.insert(_computedLights.begin(), lights.begin(), lights.end());
     
+    /*
+     Compute the sort key for this node's geometry elements.
+     */
     if (_geometry) {
         int lightsHash = hashLights(lights);
-        _geometry->updateSortKeys(lightsHash);
+        _geometry->updateSortKeys(this, lightsHash);
     }
     
+    /*
+     Move down the tree.
+     */
     for (std::shared_ptr<VRONode> childNode : _subnodes) {
-        childNode->updateSortKeys(lights);
+        childNode->updateSortKeys(params);
     }
     
+    params.transforms.pop();
+    params.opacities.pop();
     if (_light) {
         lights.pop_back();
+    }
+}
+
+void VRONode::getSortKeys(std::vector<VROSortKey> *outKeys) {
+    if (_geometry) {
+        _geometry->getSortKeys(outKeys);
+    }
+    for (std::shared_ptr<VRONode> childNode : _subnodes) {
+        childNode->getSortKeys(outKeys);
     }
 }
 
@@ -111,7 +155,7 @@ void VRONode::pushTransforms(const VRORenderContext &context, VRORenderParameter
     std::stack<float> &opacities = params.opacities;
     std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
     
-    VROMatrix4f transform = transforms.top().multiply(getTransform(context));
+    VROMatrix4f transform = transforms.top().multiply(getTransform());
     transforms.push(transform);
     
     opacities.push(opacities.top() * _opacity);
@@ -140,7 +184,7 @@ void VRONode::popTransforms(VRORenderParameters &params) {
     }
 }
 
-VROMatrix4f VRONode::getTransform(const VRORenderContext &context) const {
+VROMatrix4f VRONode::getTransform() const {
     VROMatrix4f pivotMtx, unpivotMtx;
     
     if (_geometry) {
@@ -162,7 +206,7 @@ VROMatrix4f VRONode::getTransform(const VRORenderContext &context) const {
     transform = unpivotMtx.multiply(transform).multiply(pivotMtx);
     
     for (const std::shared_ptr<VROConstraint> &constraint : _constraints) {
-        transform = constraint->getTransform(*this, transform, context);
+        transform = constraint->getTransform(*this, transform);
     }
     
     return transform;
@@ -254,7 +298,7 @@ void VRONode::removeAllActions() {
 #pragma mark - Hit Testing
 
 VROBoundingBox VRONode::getBoundingBox(const VRORenderContext &context) {
-    return _geometry->getBoundingBox().transform(getTransform(context));
+    return _geometry->getBoundingBox().transform(getTransform());
 }
 
 std::vector<VROHitTestResult> VRONode::hitTest(VROVector3f ray, const VRORenderContext &context,
@@ -276,7 +320,7 @@ void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsO
     }
     
     VROVector3f origin = context.getCamera().getPosition();
-    VROMatrix4f transform = parentTransform.multiply(getTransform(context));
+    VROMatrix4f transform = parentTransform.multiply(getTransform());
     
     if (_geometry) {
         VROBoundingBox bounds = _geometry->getBoundingBox().transform(transform);

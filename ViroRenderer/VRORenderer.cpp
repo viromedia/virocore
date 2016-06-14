@@ -162,7 +162,7 @@ void VRORenderer::renderEye(VROEyeType eyeType, const VRODriver &driver) {
         else {
             [_sceneController sceneWillRender:_context.get()];
             _sceneController.scene->renderBackground(*_context, driver);
-            _sceneController.scene->render(*_context, driver);
+            _sceneController.scene->render2(*_context, driver);
         }
     }
 }

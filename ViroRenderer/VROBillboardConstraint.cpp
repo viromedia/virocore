@@ -12,9 +12,7 @@
 #include "VROQuaternion.h"
 #include "VRONode.h"
 
-VROMatrix4f VROBillboardConstraint::getTransform(const VRONode &node, VROMatrix4f transform,
-                                                 const VRORenderContext &context) {
-    
+VROMatrix4f VROBillboardConstraint::getTransform(const VRONode &node, VROMatrix4f transform) {
     VROVector3f objToCamProj = node.getTransformedPosition();
     objToCamProj.y = 0;
     objToCamProj = objToCamProj.normalize();

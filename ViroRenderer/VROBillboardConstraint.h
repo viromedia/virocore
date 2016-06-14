@@ -15,8 +15,7 @@ class VROBillboardConstraint : public VROConstraint {
     
 public:
     
-    virtual VROMatrix4f getTransform(const VRONode &node, VROMatrix4f transform,
-                                     const VRORenderContext &context);
+    virtual VROMatrix4f getTransform(const VRONode &node, VROMatrix4f transform);
     
     
 private:

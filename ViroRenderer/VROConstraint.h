@@ -22,8 +22,7 @@ class VROConstraint {
     
 public:
     
-    virtual VROMatrix4f getTransform(const VRONode &node, VROMatrix4f transform,
-                                     const VRORenderContext &context) = 0;
+    virtual VROMatrix4f getTransform(const VRONode &node, VROMatrix4f transform) = 0;
     
 };
 

@@ -75,10 +75,10 @@ public:
             uint32_t material;
             
             /*
-             Tie-breakers, double as pointer to the geometry substrate and
+             Tie-breakers, double as pointer to the node and
              index of the geometry element.
              */
-            uintptr_t substrate;
+            uintptr_t node;
             uint8_t elementIndex;
             
         };
