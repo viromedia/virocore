@@ -16,19 +16,15 @@ class VROTransformConstraint : public VROConstraint {
     
 public:
     
-    VROTransformConstraint(std::function<VROMatrix4f(const VRONode &node, VROMatrix4f transform,
-                                                     const VRORenderContext &context)> function) :
-        
+    VROTransformConstraint(std::function<VROMatrix4f(const VRONode &node, VROMatrix4f transform)> function) :
         _function(function)
     {}
     
-    VROMatrix4f getTransform(const VRONode &node, VROMatrix4f transform,
-                             const VRORenderContext &context);
+    VROMatrix4f getTransform(const VRONode &node, VROMatrix4f transform);
     
 private:
     
-    std::function<VROMatrix4f(const VRONode &node, VROMatrix4f transform,
-                              const VRORenderContext &context)> _function;
+    std::function<VROMatrix4f(const VRONode &node, VROMatrix4f transform)> _function;
     
 };
 

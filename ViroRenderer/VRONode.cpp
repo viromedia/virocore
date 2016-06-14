@@ -65,6 +65,8 @@ void VRONode::render(const VRORenderContext &renderContext,
                      const VRODriver &driver,
                      VRORenderParameters &params) {
     
+    processActions();
+    
     pushTransforms(renderContext, params);
     renderNode(renderContext, driver, params);
     

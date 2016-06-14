@@ -9,8 +9,6 @@
 #include "VROTransformConstraint.h"
 #include "VROMatrix4f.h"
 
-VROMatrix4f VROTransformConstraint::getTransform(const VRONode &node, VROMatrix4f transform,
-                                                 const VRORenderContext &context) {
-    
-    return _function(node, transform, context);
+VROMatrix4f VROTransformConstraint::getTransform(const VRONode &node, VROMatrix4f transform) {
+    return _function(node, transform);
 }

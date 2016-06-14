@@ -148,7 +148,9 @@ public:
     }
 
     void set(const void *value) {
-        //passert (location != -1);
+        if (location == -1) {
+            return;
+        }
         GLint *val = (GLint *) value;
 
         if (*val != curValue) {
@@ -213,7 +215,9 @@ public:
     }
 
     void set(const void *value) {
-        //passert (location != -1);
+        if (location == -1) {
+            return;
+        }
         GLfloat *val = (GLfloat *) value;
 
         if (arraySize > 1 || *val != curValue) {
@@ -254,7 +258,9 @@ public:
     }
 
     void set(const void *value) {
-        //passert (location != -1);
+        if (location == -1) {
+            return;
+        }
         
         GLfloat *val = (GLfloat *) value;
         if (arraySize > 1 || memcmp(val, curValue, sizeof(GLfloat) * 3) != 0) {

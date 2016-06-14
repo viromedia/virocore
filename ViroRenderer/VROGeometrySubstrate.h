@@ -43,7 +43,6 @@ public:
                         const std::vector<std::shared_ptr<VROLight>> &lights,
                         const VRORenderContext &context,
                         const VRODriver &driver) = 0;
-
 };
 
 #endif /* VROGeometrySubstrate_h */

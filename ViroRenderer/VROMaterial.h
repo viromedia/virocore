@@ -66,6 +66,8 @@ public:
         return _materialId;
     }
     
+    void bindShader(const VRODriver &driver);
+    
     VROMaterialVisual &getDiffuse() const {
         return *_diffuse;
     }

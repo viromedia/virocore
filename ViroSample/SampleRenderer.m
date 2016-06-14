@@ -9,11 +9,11 @@
 #import "SampleRenderer.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneOBJ = 0,
-    VROSampleSceneVideoSphere,
+    VROSampleSceneTorus = 0,
     VROSampleSceneBox,
-    VROSampleSceneTorus,
+    VROSampleSceneOBJ,
     VROSampleSceneLayer,
+    VROSampleSceneVideoSphere,
     VROSampleSceneNumScenes
 };
 

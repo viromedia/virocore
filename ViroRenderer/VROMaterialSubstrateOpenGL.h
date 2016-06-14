@@ -36,6 +36,7 @@ public:
     virtual ~VROMaterialSubstrateOpenGL();
     
     void bindShader();
+    void bindDepthSettings();
     void bindViewUniforms(VROMatrix4f transform, VROMatrix4f modelview,
                           VROMatrix4f projectionMatrix, VROVector3f cameraPosition);
     
@@ -61,7 +62,8 @@ private:
     
     static std::shared_ptr<VROShaderProgram> getPooledShader(std::string vertexShader, std::string fragmentShader,
                                                              const std::vector<std::string> &samplers);
-    void loadLightUniforms();
+    void addUniforms();
+    void loadUniforms();
 
     const VROMaterial &_material;
     VROLightingModel _lightingModel;

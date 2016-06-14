@@ -242,3 +242,7 @@ VROConcurrentBuffer &VROMaterialSubstrateMetal::bindLightingUniforms(const std::
 void VROMaterialSubstrateMetal::updateSortKey(VROSortKey &key) const {
     
 }
+
+void VROMaterialSubstrateMetal::bindShader() {
+    
+}

@@ -36,6 +36,8 @@ public:
                               const VRODriverMetal &driver);
     virtual ~VROMaterialSubstrateMetal();
     
+    void bindShader();
+    
     /*
      Set the uniforms required to render this material, and return the buffer.
      */

@@ -159,3 +159,8 @@ void VROMaterial::updateSortKey(VROSortKey &key) {
         key.textures = 0;
     }
 }
+
+void VROMaterial::bindShader(const VRODriver &driver) {
+    createSubstrate(driver);
+    _substrate->bindShader();
+}

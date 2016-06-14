@@ -18,6 +18,7 @@ public:
     virtual ~VROMaterialSubstrate() {}
     
     virtual void updateSortKey(VROSortKey &key) const = 0;
+    virtual void bindShader() = 0;
     
 };
 

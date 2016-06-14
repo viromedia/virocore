@@ -68,9 +68,20 @@ void VROScene::render2(const VRORenderContext &context,
         node->getSortKeys(&keys);
     }
     
+    uint32_t boundShaderId = 0;
+    
     for (VROSortKey &key : keys) {
         VRONode *node = (VRONode *)key.node;
         int elementIndex = key.elementIndex;
+        
+        if (key.shader != boundShaderId) {
+            const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
+            if (geometry) {
+                geometry->getMaterialForElement(elementIndex)->bindShader(driver);
+            }
+            
+            boundShaderId = key.shader;
+        }
         
         node->render2(elementIndex, context, driver);
     }

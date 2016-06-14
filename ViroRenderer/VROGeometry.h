@@ -94,6 +94,10 @@ public:
     void updateSortKeys(VRONode *node, uint32_t lightsHash);
     void getSortKeys(std::vector<VROSortKey> *outKeys);
     
+    std::shared_ptr<VROMaterial> &getMaterialForElement(int elementIndex) {
+        return _materials[elementIndex % _materials.size()];
+    }
+    
     std::vector<std::shared_ptr<VROMaterial>> &getMaterials() {
         return _materials;
     }

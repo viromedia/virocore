@@ -84,8 +84,11 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
     
     _program = getPooledShader(vertexShader, fragmentShader, samplers);
     if (!_program->isHydrated()) {
-        loadLightUniforms();
+        addUniforms();
         _program->hydrate();
+    }
+    else {
+        loadUniforms();
     }
 }
 
@@ -126,8 +129,11 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
     
     _program = getPooledShader(vertexShader, fragmentShader, samplers);
     if (!_program->isHydrated()) {
-        loadLightUniforms();
+        addUniforms();
         _program->hydrate();
+    }
+    else {
+        loadUniforms();
     }
 }
 
@@ -183,9 +189,13 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
     
     _program = getPooledShader(vertexShader, fragmentShader, samplers);
     if (!_program->isHydrated()) {
-        loadLightUniforms();
+        addUniforms();
         _shininessUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
         _program->hydrate();
+    }
+    else {
+        _shininessUniform = _program->getUniform("material_shininess");
+        loadUniforms();
     }
 }
 
@@ -241,13 +251,17 @@ void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, 
     
     _program = getPooledShader(vertexShader, fragmentShader, samplers);
     if (!_program->isHydrated()) {
-        loadLightUniforms();
+        addUniforms();
         _shininessUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
         _program->hydrate();
     }
+    else {
+        _shininessUniform = _program->getUniform("material_shininess");
+        loadUniforms();
+    }
 }
 
-void VROMaterialSubstrateOpenGL::loadLightUniforms() {
+void VROMaterialSubstrateOpenGL::addUniforms() {
     _program->addUniform(VROShaderProperty::Int, 1, "lighting.num_lights");
     _program->addUniform(VROShaderProperty::Vec3, 1, "lighting.ambient_light_color");
     
@@ -281,9 +295,17 @@ void VROMaterialSubstrateOpenGL::loadLightUniforms() {
     _alphaUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_alpha");
 }
 
+void VROMaterialSubstrateOpenGL::loadUniforms() {
+    _diffuseSurfaceColorUniform = _program->getUniform("material_diffuse_surface_color");
+    _diffuseIntensityUniform = _program->getUniform("material_diffuse_intensity");
+    _alphaUniform = _program->getUniform("material_alpha");
+}
+
 void VROMaterialSubstrateOpenGL::bindShader() {
     _program->bind();
-    
+}
+
+void VROMaterialSubstrateOpenGL::bindDepthSettings() {
     if (_material.getWritesToDepthBuffer()) {
         glDepthMask(GL_TRUE);
     }

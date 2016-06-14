@@ -46,7 +46,7 @@ void VROGeometry::render(int elementIndex,
     
     prewarm(driver);
     
-    std::shared_ptr<VROMaterial> &material = _materials[elementIndex % _materials.size()];
+    std::shared_ptr<VROMaterial> &material = getMaterialForElement(elementIndex);
     _substrate->render(*this, elementIndex, transform, opacity, material, lights, context, driver);
 }
 
