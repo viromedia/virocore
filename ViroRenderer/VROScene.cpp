@@ -61,8 +61,6 @@ void VROScene::render(const VRORenderContext &renderContext,
 void VROScene::render2(const VRORenderContext &context,
                        const VRODriver &driver) {
     
-    updateSortKeys();
-    
     std::vector<VROSortKey> keys;
     for (std::shared_ptr<VRONode> &node : _nodes) {
         node->getSortKeys(&keys);
@@ -82,6 +80,8 @@ void VROScene::render2(const VRORenderContext &context,
             
             boundShaderId = key.shader;
         }
+        
+        
         
         node->render2(elementIndex, context, driver);
     }

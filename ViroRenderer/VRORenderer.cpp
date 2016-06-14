@@ -112,6 +112,16 @@ void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &d
     _context->setMonocularViewMatrix(cameraMatrix);
 
     [_HUD updateWithContext:&driver];
+    
+    if (_sceneController) {
+        if (_outgoingSceneController) {
+            _outgoingSceneController.scene->updateSortKeys();
+            _sceneController.scene->updateSortKeys();
+        }
+        else {
+            _sceneController.scene->updateSortKeys();
+        }
+    }
 }
 
 void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
