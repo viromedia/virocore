@@ -86,6 +86,7 @@ public:
                 VRORenderParameters &params);
     
     void render(int elementIndex,
+                std::shared_ptr<VROMaterial> &material,
                 VROMatrix4f transform,
                 float opacity,
                 const std::vector<std::shared_ptr<VROLight>> &lights,

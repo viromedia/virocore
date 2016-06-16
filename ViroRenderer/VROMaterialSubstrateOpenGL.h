@@ -41,11 +41,7 @@ public:
     void bindDepthSettings();
     void bindViewUniforms(VROMatrix4f transform, VROMatrix4f modelview,
                           VROMatrix4f projectionMatrix, VROVector3f cameraPosition);
-    
-    /*
-     Set the uniforms required to render this material.
-     */
-    void bindMaterialUniforms(float opacity, VROEyeType eye, int frame);
+    void bindMaterialUniforms(float opacity);
     
     const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
         return _textures;

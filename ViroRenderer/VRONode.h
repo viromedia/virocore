@@ -58,6 +58,7 @@ public:
                 const VRODriver &driver,
                 VRORenderParameters &params);
     void render2(int elementIndex,
+                 std::shared_ptr<VROMaterial> &material,
                  const VRORenderContext &context,
                  const VRODriver &driver);
     

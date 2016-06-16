@@ -240,20 +240,9 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     substrate->bindViewUniforms(transform, modelview, projectionMatrix, context.getCamera().getPosition());
    
     glBindVertexArray(_vaos[elementIndex]);
-    
-    const std::shared_ptr<VROMaterial> &outgoing = material->getOutgoing();
-    if (outgoing) {
-        outgoing->createSubstrate(driver);
-        VROMaterialSubstrateOpenGL *outgoingSubstrate = static_cast<VROMaterialSubstrateOpenGL *>(outgoing->getSubstrate());
-        
-        renderMaterial(outgoingSubstrate, element, opacity, context, driver);
-        renderMaterial(substrate, element, opacity, context, driver);
-    }
-    else {
-        renderMaterial(substrate, element, opacity, context, driver);
-    }
-    
+    renderMaterial(substrate, element, opacity, context, driver);
     glBindVertexArray(0);
+    
     pglpop();
 }
 
@@ -321,10 +310,7 @@ void VROGeometrySubstrateOpenGL::renderMaterial(VROMaterialSubstrateOpenGL *mate
                                                 const VRORenderContext &renderContext,
                                                 const VRODriver &driver) {
     
-    int frame = renderContext.getFrame();
-    VROEyeType eyeType = renderContext.getEyeType();
-    
-    material->bindMaterialUniforms(opacity, eyeType, frame);
+    material->bindMaterialUniforms(opacity);
     
     const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();
     for (int j = 0; j < textures.size(); ++j) {

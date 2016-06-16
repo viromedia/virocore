@@ -38,6 +38,7 @@ void VROGeometry::render(const VRORenderContext &renderContext,
 }
 
 void VROGeometry::render(int elementIndex,
+                         std::shared_ptr<VROMaterial> &material,
                          VROMatrix4f transform,
                          float opacity,
                          const std::vector<std::shared_ptr<VROLight>> &lights,
@@ -45,31 +46,35 @@ void VROGeometry::render(int elementIndex,
                          const VRODriver &driver) {
     
     prewarm(driver);
-    
-    std::shared_ptr<VROMaterial> &material = getMaterialForElement(elementIndex);
     _substrate->render(*this, elementIndex, transform, opacity, material, lights, context, driver);
 }
 
 void VROGeometry::updateSortKeys(VRONode *node, uint32_t lightsHash) {
-    size_t numElements = _geometryElements.size();
-
-    if (_sortKeys.size() != numElements) {
-        _sortKeys.clear();
-        for (size_t i = 0; i < numElements; i++) {
-            _sortKeys.push_back({});
-        }
-    }
+    _sortKeys.clear();
     
+    size_t numElements = _geometryElements.size();
     for (size_t i = 0; i < numElements; i++) {
         int materialIndex = i % (int) _materials.size();
         
-        VROSortKey &key = _sortKeys[i];
+        VROSortKey key;
         key.renderingOrder = _renderingOrder;
         key.lights = lightsHash;
         key.node = (uintptr_t) node;
         key.elementIndex = i;
         
-        _materials[materialIndex]->updateSortKey(key);
+        std::shared_ptr<VROMaterial> &material = _materials[materialIndex];
+        material->updateSortKey(key);
+        key.outgoing = false;
+        
+        _sortKeys.push_back(key);
+        
+        const std::shared_ptr<VROMaterial> &outgoing = material->getOutgoing();
+        if (outgoing) {
+            outgoing->updateSortKey(key);
+            key.outgoing = true;
+            
+            _sortKeys.push_back(key);
+        }
     }
 }
 

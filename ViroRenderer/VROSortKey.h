@@ -59,6 +59,7 @@ public:
              */
             uintptr_t node;
             uint8_t elementIndex;
+            bool outgoing;
             
         };
         

@@ -82,11 +82,12 @@ void VRONode::render(const VRORenderContext &renderContext,
 }
 
 void VRONode::render2(int elementIndex,
+                      std::shared_ptr<VROMaterial> &material,
                       const VRORenderContext &context,
                       const VRODriver &driver) {
     
     if (_geometry) {
-        _geometry->render(elementIndex, _computedTransform, _computedOpacity, _computedLights,
+        _geometry->render(elementIndex, material, _computedTransform, _computedOpacity, _computedLights,
                           context, driver);
     }
 }

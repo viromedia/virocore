@@ -46,6 +46,7 @@ VROMaterial::VROMaterial() :
 }
 
 VROMaterial::VROMaterial(std::shared_ptr<VROMaterial> material) :
+ _materialId(sMaterialId++),
  _name(material->_name),
  _shininess(material->_shininess),
  _fresnelExponent(material->_fresnelExponent),

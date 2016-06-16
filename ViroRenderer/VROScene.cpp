@@ -72,6 +72,9 @@ void VROScene::render2(const VRORenderContext &context,
         const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
         if (geometry) {
             std::shared_ptr<VROMaterial> material = geometry->getMaterialForElement(elementIndex);
+            if (key.outgoing) {
+                material = material->getOutgoing();
+            }
             
             if (key.shader != boundShaderId) {
                 material->bindShader(driver);
@@ -82,9 +85,9 @@ void VROScene::render2(const VRORenderContext &context,
                 material->bindLights(node->getComputedLights(), driver);
                 boundLights = node->getComputedLights();
             }
+            
+            node->render2(elementIndex, material, context, driver);
         }
-        
-        node->render2(elementIndex, context, driver);
     }
 }
 
