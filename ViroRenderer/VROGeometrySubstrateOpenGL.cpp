@@ -22,6 +22,7 @@ VROGeometrySubstrateOpenGL::VROGeometrySubstrateOpenGL(const VROGeometry &geomet
     
     readGeometryElements(geometry.getGeometryElements());
     readGeometrySources(geometry.getGeometrySources());
+    createVAO();
 }
 
 VROGeometrySubstrateOpenGL::~VROGeometrySubstrateOpenGL() {
@@ -122,6 +123,30 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
     }
 }
 
+void VROGeometrySubstrateOpenGL::createVAO() {
+    GLuint vaos[_elements.size()];
+    glGenVertexArrays((int) _elements.size(), vaos);
+    
+    for (int i = 0; i < _elements.size(); i++) {
+        glBindVertexArray(vaos[i]);
+        
+        for (VROVertexDescriptorOpenGL &vd : _vertexDescriptors) {
+            glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);
+            
+            for (int i = 0; i < vd.numAttributes; i++) {
+                glVertexAttribPointer(vd.attributes[i].index, vd.attributes[i].size, vd.attributes[i].type, GL_FALSE, vd.stride, (GLvoid *) vd.attributes[i].offset);
+                glEnableVertexAttribArray(vd.attributes[i].index);
+            }
+        }
+        
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elements[i].buffer);
+        glBindVertexArray(0);
+    }
+    
+    _vaos.assign(vaos, vaos + _elements.size());
+}
+
 std::pair<GLuint, int> VROGeometrySubstrateOpenGL::parseVertexFormat(std::shared_ptr<VROGeometrySource> &source) {
     // Currently assuming floats
     switch (source->getBytesPerComponent()) {
@@ -213,18 +238,8 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     
     VROMatrix4f modelview = viewMatrix.multiply(transform);
     substrate->bindViewUniforms(transform, modelview, projectionMatrix, context.getCamera().getPosition());
-    
-    for (VROVertexDescriptorOpenGL &vd : _vertexDescriptors) {
-        glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);
-        
-        for (int i = 0; i < vd.numAttributes; i++) {
-            glVertexAttribPointer(vd.attributes[i].index, vd.attributes[i].size, vd.attributes[i].type, GL_FALSE, vd.stride, (GLvoid *) vd.attributes[i].offset);
-            glEnableVertexAttribArray(vd.attributes[i].index);
-        }
-    }
-    
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element.buffer);
+   
+    glBindVertexArray(_vaos[elementIndex]);
     
     const std::shared_ptr<VROMaterial> &outgoing = material->getOutgoing();
     if (outgoing) {
@@ -238,6 +253,7 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
         renderMaterial(substrate, element, opacity, context, driver);
     }
     
+    glBindVertexArray(0);
     pglpop();
 }
 
@@ -247,8 +263,6 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
                                         const VRODriver &driver,
                                         VRORenderParameters &params) {
     
-    int frame = renderContext.getFrame();
-    VROEyeType eyeType = renderContext.getEyeType();
     VROMatrix4f &transform = params.transforms.top();
     
     VROMatrix4f viewMatrix = renderContext.getViewMatrix();

@@ -70,6 +70,7 @@ public:
     
 private:
     
+    std::vector<GLuint> _vaos;
     std::vector<VROGeometryElementOpenGL> _elements;
     std::vector<VROVertexDescriptorOpenGL> _vertexDescriptors;
     
@@ -84,6 +85,11 @@ private:
      results.
      */
     void readGeometrySources(const std::vector<std::shared_ptr<VROGeometrySource>> &sources);
+    
+    /*
+     Create a Vertex Array Object for each element.
+     */
+    void createVAO();
 
     /*
      Parse the component type and number of components from the given geometry source.
