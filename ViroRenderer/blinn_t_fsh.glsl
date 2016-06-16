@@ -2,13 +2,11 @@
 #include blinn_functions_fsh
 
 uniform highp vec3 camera_position;
-uniform lowp vec3 ambient_light_color;
 uniform lowp vec4 material_diffuse_surface_color;
 uniform lowp float material_diffuse_intensity;
 uniform lowp float material_alpha;
 uniform lowp float material_shininess;
 
-uniform VROSceneLightingUniforms lighting;
 uniform sampler2D diffuse_texture;
 uniform sampler2D specular_texture;
 
@@ -31,5 +29,5 @@ void main() {
     blinn.diffuse_intensity = material_diffuse_intensity;
     blinn.material_alpha = material_alpha;
     
-    frag_color = blinn_lighting_diffuse_texture(blinn, diffuse_texture, specular_texture, lighting);
+    frag_color = blinn_lighting_diffuse_texture(blinn, diffuse_texture, specular_texture);
 }

@@ -1,21 +1,28 @@
+// Grouped in 4N slots (int and float take 1N, vec3 takes 3N, vec4 takes 4N)
 struct VROLightUniforms {
     int type;
-    highp vec3 position;
-    highp vec3 direction;
-    lowp vec3 color;
-
     highp float attenuation_start_distance;
     highp float attenuation_end_distance;
     highp float attenuation_falloff_exp;
-
+    
+    highp vec3 position;
+    highp vec3 direction;
+    
+    lowp vec3 color;
     highp float spot_inner_angle;
+    
     highp float spot_outer_angle;
+    lowp float padding3;
+    lowp float padding4;
+    lowp float padding5;
 };
 
-struct VROSceneLightingUniforms {
-    lowp vec3             ambient_light_color;
+layout (std140) uniform lighting {
+    int num_lights;
+    lowp float padding0, padding1, padding2;
+    
+    lowp vec3 ambient_light_color;
     VROLightUniforms lights[8];
-    int              num_lights;
 };
 
 highp float compute_attenuation(const VROLightUniforms light,

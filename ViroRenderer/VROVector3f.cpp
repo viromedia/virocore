@@ -261,3 +261,9 @@ std::string VROVector3f::toString() const {
 
     return ss.str();
 }
+
+void VROVector3f::toArray(float *array) const {
+    array[0] = x;
+    array[1] = y;
+    array[2] = z;
+}

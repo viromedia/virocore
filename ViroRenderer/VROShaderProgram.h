@@ -435,6 +435,10 @@ public:
     inline const std::string &getName() const {
         return shaderName;
     }
+    
+    GLuint getProgram() const {
+        return program;
+    }
 
 private:
     

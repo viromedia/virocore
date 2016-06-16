@@ -2,12 +2,10 @@
 #include lambert_functions_fsh
 
 uniform highp vec3 camera_position;
-uniform lowp vec3 ambient_light_color;
 uniform lowp vec4 material_diffuse_surface_color;
 uniform lowp float material_diffuse_intensity;
 uniform lowp float material_alpha;
 
-uniform VROSceneLightingUniforms lighting;
 uniform sampler2D texture;
 
 in lowp vec3 v_normal;
@@ -28,5 +26,5 @@ void main() {
     lambert.diffuse_intensity = material_diffuse_intensity;
     lambert.material_alpha = material_alpha;
 
-    frag_color = lambert_lighting_diffuse_texture(lambert, texture, lighting);
+    frag_color = lambert_lighting_diffuse_texture(lambert, texture);
 }

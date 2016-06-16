@@ -57,8 +57,12 @@ private:
     
     static std::shared_ptr<VROShaderProgram> getPooledShader(std::string vertexShader, std::string fragmentShader,
                                                              const std::vector<std::string> &samplers);
+    
+    static void initLightingUBO();
+    
     void addUniforms();
     void loadUniforms();
+    void hydrateProgram();
 
     const VROMaterial &_material;
     VROLightingModel _lightingModel;

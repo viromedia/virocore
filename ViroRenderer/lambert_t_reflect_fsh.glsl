@@ -2,12 +2,10 @@
 #include lambert_functions_fsh
 
 uniform highp vec3 camera_position;
-uniform lowp vec3 ambient_light_color;
 uniform lowp vec4 material_diffuse_surface_color;
 uniform lowp float material_diffuse_intensity;
 uniform lowp float material_alpha;
 
-uniform VROSceneLightingUniforms lighting;
 uniform sampler2D diffuse_texture;
 uniform samplerCube reflect_texture;
 
@@ -30,7 +28,7 @@ void main() {
     lambert.material_alpha = material_alpha;
     
     float4 reflective_color = compute_reflection(v_surface_position, camera_position, v_normal, reflect_texture);
-    float4 lighting_color = lambert_lighting_diffuse_texture(blinn, diffuse_texture, lighting);
+    float4 lighting_color = lambert_lighting_diffuse_texture(blinn, diffuse_texture);
     
     frag_color = vec4(lighting_color.xyz + reflective_color.xyz, lighting_color.a);
 }

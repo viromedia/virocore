@@ -128,6 +128,7 @@ public:
      Utilities.
      */
     std::string toString() const;
+    void toArray(float *array) const;
 };
 
 /*

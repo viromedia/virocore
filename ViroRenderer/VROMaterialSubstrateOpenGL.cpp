@@ -21,6 +21,56 @@
 static const int kMaxLights = 4;
 static std::map<std::string, std::shared_ptr<VROShaderProgram>> _sharedPrograms;
 
+static GLuint _lightingUBO = 0;
+static const int _lightingUBOBindingPoint = 0;
+
+// Grouped in 4N slots, matching lighting_general_functions.glsl
+typedef struct {
+    int type;
+    float attenuation_start_distance;
+    float attenuation_end_distance;
+    float attenuation_falloff_exp;
+    
+    float position[4];
+    float direction[4];
+    
+    float color[3];
+    float spot_inner_angle;
+    
+    float spot_outer_angle;
+    float padding3;
+    float padding4;
+    float padding5;
+} VROLightData;
+
+typedef struct {
+    int num_lights;
+    float padding0, padding1, padding2;
+    
+    float ambient_light_color[4];
+    VROLightData lights[8];
+} VROLightingData;
+
+void VROMaterialSubstrateOpenGL::initLightingUBO() {
+    if (_lightingUBO > 0) {
+        return;
+    }
+    
+    glGenBuffers(1, &_lightingUBO);
+    glBindBuffer(GL_UNIFORM_BUFFER, _lightingUBO);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingData), NULL, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    
+    glBindBufferBase(GL_UNIFORM_BUFFER, _lightingUBOBindingPoint, _lightingUBO);
+}
+
+void VROMaterialSubstrateOpenGL::hydrateProgram() {
+    _program->hydrate();
+    
+    unsigned int blockIndex = glGetUniformBlockIndex(_program->getProgram(), "lighting");
+    glUniformBlockBinding(_program->getProgram(), blockIndex, _lightingUBOBindingPoint);
+}
+
 VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &material, const VRODriverOpenGL &driver) :
     _material(material),
     _lightingModel(material.getLightingModel()),
@@ -34,6 +84,8 @@ VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &materi
     _modelViewMatrixUniform(nullptr),
     _modelViewProjectionMatrixUniform(nullptr),
     _cameraPositionUniform(nullptr) {
+        
+    initLightingUBO();
 
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
@@ -90,7 +142,7 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
     _program = getPooledShader(vertexShader, fragmentShader, samplers);
     if (!_program->isHydrated()) {
         addUniforms();
-        _program->hydrate();
+        hydrateProgram();
     }
     else {
         loadUniforms();
@@ -135,7 +187,7 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
     _program = getPooledShader(vertexShader, fragmentShader, samplers);
     if (!_program->isHydrated()) {
         addUniforms();
-        _program->hydrate();
+        hydrateProgram();
     }
     else {
         loadUniforms();
@@ -196,7 +248,7 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
     if (!_program->isHydrated()) {
         addUniforms();
         _shininessUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
-        _program->hydrate();
+        hydrateProgram();
     }
     else {
         _shininessUniform = _program->getUniform("material_shininess");
@@ -258,7 +310,7 @@ void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, 
     if (!_program->isHydrated()) {
         addUniforms();
         _shininessUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
-        _program->hydrate();
+        hydrateProgram();
     }
     else {
         _shininessUniform = _program->getUniform("material_shininess");
@@ -319,33 +371,35 @@ void VROMaterialSubstrateOpenGL::bindShader() {
 
 void VROMaterialSubstrateOpenGL::bindLights(const std::vector<std::shared_ptr<VROLight>> &lights) {
     pglpush("Lights");
-    _program->setUniformValueInt((int)lights.size(), "lighting.num_lights");
-    
     VROVector3f ambientLight;
     
+    VROLightingData data;
+    data.num_lights = (int) lights.size();
+    
     for (int i = 0; i < lights.size(); i++) {
-        std::stringstream ss;
-        ss << "lighting.lights[" << i << "].";
-        std::string prefix = ss.str();
-        
         const std::shared_ptr<VROLight> &light = lights[i];
         
-        _program->setUniformValueInt((int) light->getType(), prefix + "type");
-        _program->setUniformValueVec3(light->getTransformedPosition(), prefix + "position");
-        _program->setUniformValueVec3(light->getDirection(), prefix + "direction");
-        _program->setUniformValueVec3(light->getColor(), prefix + "color");
-        _program->setUniformValueFloat(light->getAttenuationStartDistance(), prefix + "attenuation_start_distance");
-        _program->setUniformValueFloat(light->getAttenuationEndDistance(), prefix + "attenuation_end_distance");
-        _program->setUniformValueFloat(light->getAttenuationFalloffExponent(), prefix + "attenuation_falloff_exp");
-        _program->setUniformValueFloat(light->getSpotInnerAngle(), prefix + "spot_inner_angle");
-        _program->setUniformValueFloat(light->getSpotOuterAngle(), prefix + "spot_outer_angle");
+        data.lights[i].type = (int) light->getType();
+        light->getTransformedPosition().toArray(data.lights[i].position);
+        light->getDirection().toArray(data.lights[i].direction);
+        light->getColor().toArray(data.lights[i].color);
+        data.lights[i].attenuation_start_distance = light->getAttenuationStartDistance();
+        data.lights[i].attenuation_end_distance = light->getAttenuationEndDistance();
+        data.lights[i].attenuation_falloff_exp = light->getAttenuationFalloffExponent();
+        data.lights[i].spot_inner_angle = light->getSpotInnerAngle();
+        data.lights[i].spot_outer_angle = light->getSpotOuterAngle();
         
         if (light->getType() == VROLightType::Ambient) {
             ambientLight += light->getColor();
         }
     }
     
-    _program->setUniformValueVec3(ambientLight, "lighting.ambient_light_color");
+    ambientLight.toArray(data.ambient_light_color);
+    
+    glBindBuffer(GL_UNIFORM_BUFFER, _lightingUBO);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROLightingData), &data);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    
     pglpop();
 }
 

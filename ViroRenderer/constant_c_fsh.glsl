@@ -1,12 +1,9 @@
 #version 300 es
 #include constant_functions_fsh
 
-uniform lowp vec3 ambient_light_color;
 uniform lowp vec4 material_diffuse_surface_color;
 uniform lowp float material_diffuse_intensity;
 uniform lowp float material_alpha;
-
-uniform VROSceneLightingUniforms lighting;
 
 in lowp vec3 v_normal;
 in highp vec2 v_texcoord;

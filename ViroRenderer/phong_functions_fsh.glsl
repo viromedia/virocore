@@ -43,16 +43,15 @@ lowp vec3 apply_light_phong(const VROLightUniforms light,
 }
 
 lowp vec4 phong_lighting_diffuse_fixed(VROPhongLighting phong,
-                                       sampler2D specular_texture,
-                                       const VROSceneLightingUniforms lighting) {
+                                       sampler2D specular_texture) {
     
     lowp vec4 material_diffuse_color = phong.material_color * phong.diffuse_intensity;
     lowp vec4 material_specular_color = texture(specular_texture, phong.texcoord);
     highp vec3 surface_to_camera = normalize(phong.camera_position - phong.surface_position);
     
     lowp vec3 aggregated_light_color = vec3(0, 0, 0);
-    for (int i = 0; i < lighting.num_lights; i++) {
-        aggregated_light_color += apply_light_phong(lighting.lights[i],
+    for (int i = 0; i < num_lights; i++) {
+        aggregated_light_color += apply_light_phong(lights[i],
                                                     phong.surface_position,
                                                     phong.normal,
                                                     surface_to_camera,
@@ -67,16 +66,15 @@ lowp vec4 phong_lighting_diffuse_fixed(VROPhongLighting phong,
 
 lowp vec4 phong_lighting_diffuse_texture(VROPhongLighting phong,
                                          sampler2D diffuse_texture,
-                                         sampler2D specular_texture,
-                                         const VROSceneLightingUniforms lighting) {
+                                         sampler2D specular_texture) {
     
     lowp vec4 material_diffuse_color  = texture(diffuse_texture, phong.texcoord) * phong.diffuse_intensity;
     lowp vec4 material_specular_color = texture(specular_texture, phong.texcoord);
     highp vec3 surface_to_camera = normalize(phong.camera_position - phong.surface_position);
     
     lowp vec3 aggregated_light_color = vec3(0, 0, 0);
-    for (int i = 0; i < lighting.num_lights; i++) {
-        aggregated_light_color += apply_light_phong(lighting.lights[i],
+    for (int i = 0; i < num_lights; i++) {
+        aggregated_light_color += apply_light_phong(lights[i],
                                                     phong.surface_position,
                                                     phong.normal,
                                                     surface_to_camera,

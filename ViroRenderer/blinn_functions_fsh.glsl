@@ -43,16 +43,15 @@ lowp vec3 apply_light_blinn(const VROLightUniforms light,
 }
 
 lowp vec4 blinn_lighting_diffuse_fixed(VROBlinnLighting blinn,
-                                       sampler2D specular_texture,
-                                       const VROSceneLightingUniforms lighting) {
+                                       sampler2D specular_texture) {
     
     lowp vec4 material_diffuse_color = blinn.material_color * blinn.diffuse_intensity;
     lowp vec4 material_specular_color = texture(specular_texture, blinn.texcoord);
     highp vec3 surface_to_camera = normalize(blinn.camera_position - blinn.surface_position);
     
     lowp vec3 aggregated_light_color = vec3(0, 0, 0);
-    for (int i = 0; i < lighting.num_lights; i++) {
-        aggregated_light_color += apply_light_blinn(lighting.lights[i],
+    for (int i = 0; i < num_lights; i++) {
+        aggregated_light_color += apply_light_blinn(lights[i],
                                                     blinn.surface_position,
                                                     blinn.normal,
                                                     surface_to_camera,
@@ -67,16 +66,15 @@ lowp vec4 blinn_lighting_diffuse_fixed(VROBlinnLighting blinn,
 
 lowp vec4 blinn_lighting_diffuse_texture(VROBlinnLighting blinn,
                                          sampler2D diffuse_texture,
-                                         sampler2D specular_texture,
-                                         const VROSceneLightingUniforms lighting) {
+                                         sampler2D specular_texture) {
     
     lowp vec4 material_diffuse_color  = texture(diffuse_texture, blinn.texcoord) * blinn.diffuse_intensity;
     lowp vec4 material_specular_color = texture(specular_texture, blinn.texcoord);
     highp vec3 surface_to_camera = normalize(blinn.camera_position - blinn.surface_position);
     
     lowp vec3 aggregated_light_color = vec3(0, 0, 0);
-    for (int i = 0; i < lighting.num_lights; i++) {
-        aggregated_light_color += apply_light_blinn(lighting.lights[i],
+    for (int i = 0; i < num_lights; i++) {
+        aggregated_light_color += apply_light_blinn(lights[i],
                                                     blinn.surface_position,
                                                     blinn.normal,
                                                     surface_to_camera,
