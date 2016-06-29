@@ -349,14 +349,14 @@ void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
             id <MTLRenderPipelineState> outgoingPipelineState = _outgoingPipelineStates[i];
             VROMaterialSubstrateMetal *outgoingSubstrate = static_cast<VROMaterialSubstrateMetal *>(outgoing->getSubstrate());
             
-            renderMaterial(outgoingSubstrate, element, outgoingPipelineState, depthState, renderEncoder, params,
+            renderMaterial(outgoingSubstrate, element, outgoingPipelineState, depthState, renderEncoder, params.opacities.top(),
                            renderContext, driver);
-            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params,
+            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params.opacities.top(),
                            renderContext, driver);
         }
         else {
             _outgoingPipelineStates[i] = nullptr;
-            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params,
+            renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params.opacities.top(),
                            renderContext, driver);
         }
         
@@ -364,12 +364,107 @@ void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
     }
 }
 
+void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
+                                       int elementIndex,
+                                       VROMatrix4f transform,
+                                       float opacity,
+                                       std::shared_ptr<VROMaterial> &material,
+                                       const std::vector<std::shared_ptr<VROLight>> &lights,
+                                       const VRORenderContext &context,
+                                       const VRODriver &driver) {
+    
+    const VRODriverMetal &metal = (VRODriverMetal &)driver;
+    id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
+    
+    int frame = context.getFrame();
+    VROEyeType eyeType = context.getEyeType();
+    
+    VROMatrix4f viewMatrix = context.getViewMatrix();
+    VROMatrix4f projectionMatrix = context.getProjectionMatrix();
+    
+    if (!geometry.isStereoRenderingEnabled()) {
+        viewMatrix = context.getMonocularViewMatrix();
+    }
+    
+    [renderEncoder pushDebugGroup:@"VROGeometry"];
+    VROGeometryElementMetal element = _elements[elementIndex];
+    
+    /*
+     Configure the view uniforms.
+     */
+    VROMatrix4f modelview = viewMatrix.multiply(transform);
+    VROViewUniforms *viewUniforms = (VROViewUniforms *)_viewUniformsBuffer->getWritableContents(eyeType, frame);
+    
+    viewUniforms->normal_matrix = toMatrixFloat4x4(transform.invert().transpose());
+    viewUniforms->model_matrix = toMatrixFloat4x4(transform);
+    viewUniforms->modelview_matrix = toMatrixFloat4x4(modelview);
+    viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(projectionMatrix.multiply(modelview));
+    viewUniforms->camera_position = toVectorFloat3(context.getCamera().getPosition());
+    
+    [renderEncoder setVertexBuffer:_viewUniformsBuffer->getMTLBuffer(eyeType)
+                            offset:_viewUniformsBuffer->getWriteOffset(frame) atIndex:_vars.size()];
+    
+    /*
+     Determine if the material has been updated. If so, we need to update our pipeline and
+     depth states.
+     */
+    if (material->isUpdated()) {
+        _elementPipelineStates[elementIndex] = createRenderPipelineState(material, metal);
+        _elementDepthStates[elementIndex] = createDepthStencilState(material, metal.getDevice());
+    }
+    
+    VROMaterialSubstrateMetal *substrate = static_cast<VROMaterialSubstrateMetal *>(material->getSubstrate());
+    id <MTLRenderPipelineState> pipelineState = _elementPipelineStates[elementIndex];
+    id <MTLDepthStencilState> depthState = _elementDepthStates[elementIndex];
+    
+    for (int j = 0; j < _vars.size(); ++j) {
+        [renderEncoder setVertexBuffer:_vars[j].buffer offset:0 atIndex:j];
+    }
+    
+    VROConcurrentBuffer &lightingBuffer = substrate->bindLightingUniforms(lights, eyeType, frame);
+    
+    [renderEncoder setVertexBuffer:lightingBuffer.getMTLBuffer(eyeType)
+                            offset:lightingBuffer.getWriteOffset(frame)
+                           atIndex:_vars.size() + 2];
+    [renderEncoder setFragmentBuffer:lightingBuffer.getMTLBuffer(eyeType)
+                              offset:lightingBuffer.getWriteOffset(frame)
+                             atIndex:0];
+    
+    /*
+     const std::shared_ptr<VROMaterial> &outgoing = material->getOutgoing();
+     if (outgoing) {
+     if (_outgoingPipelineStates[i] == nullptr || outgoing->isUpdated()) {
+     _outgoingPipelineStates[i] = createRenderPipelineState(outgoing, metal);
+     }
+     
+     id <MTLRenderPipelineState> outgoingPipelineState = _outgoingPipelineStates[i];
+     VROMaterialSubstrateMetal *outgoingSubstrate = static_cast<VROMaterialSubstrateMetal *>(outgoing->getSubstrate());
+     
+     renderMaterial(outgoingSubstrate, element, outgoingPipelineState, depthState, renderEncoder, params,
+     renderContext, driver);
+     renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params,
+     renderContext, driver);
+     }
+     else {
+     _outgoingPipelineStates[i] = nullptr;
+     renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params,
+     renderContext, driver);
+     }
+     
+     */
+    _outgoingPipelineStates[elementIndex] = nullptr;
+    renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, opacity,
+                   context, driver);
+    
+    [renderEncoder popDebugGroup];
+}
+
 void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *material,
                                                VROGeometryElementMetal &element,
                                                id <MTLRenderPipelineState> pipelineState,
                                                id <MTLDepthStencilState> depthStencilState,
                                                id <MTLRenderCommandEncoder> renderEncoder,
-                                               VRORenderParameters &params,
+                                               float opacity,
                                                const VRORenderContext &renderContext,
                                                const VRODriver &driver) {
     
@@ -379,7 +474,7 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
     [renderEncoder setRenderPipelineState:pipelineState];
     [renderEncoder setDepthStencilState:depthStencilState];
     
-    VROConcurrentBuffer &materialBuffer = material->bindMaterialUniforms(params, eyeType, frame);
+    VROConcurrentBuffer &materialBuffer = material->bindMaterialUniforms(opacity, eyeType, frame);
     [renderEncoder setVertexBuffer:materialBuffer.getMTLBuffer(eyeType)
                             offset:materialBuffer.getWriteOffset(frame)
                            atIndex:_vars.size() + 1];
@@ -402,15 +497,4 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
                                indexType:element.indexType
                              indexBuffer:element.buffer
                        indexBufferOffset:0];
-}
-
-void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
-                                       int elementIndex,
-                                       VROMatrix4f transform,
-                                       float opacity,
-                                       std::shared_ptr<VROMaterial> &material,
-                                       const std::vector<std::shared_ptr<VROLight>> &lights,
-                                       const VRORenderContext &context,
-                                       const VRODriver &driver) {
-    
 }

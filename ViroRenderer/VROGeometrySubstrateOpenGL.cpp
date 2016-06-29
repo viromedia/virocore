@@ -274,7 +274,7 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
         substrate->bindShader();
         substrate->bindDepthSettings();
         substrate->bindViewUniforms(transform, modelview, projectionMatrix, renderContext.getCamera().getPosition());
-        substrate->bindLights(params.lights);
+        substrate->bindLights(params.lights, renderContext, driver);
         
         for (VROVertexDescriptorOpenGL &vd : _vertexDescriptors) {
             glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);

@@ -14,6 +14,7 @@
 #include <MetalKit/MetalKit.h>
 #include <vector>
 #include "VROMaterialSubstrate.h"
+#include "VROMetalShader.h"
 
 class VROMatrix4f;
 class VROVector4f;
@@ -37,12 +38,14 @@ public:
     virtual ~VROMaterialSubstrateMetal();
     
     void bindShader();
-    void bindLights(const std::vector<std::shared_ptr<VROLight>> &lights);
+    void bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,
+                    const VRORenderContext &context,
+                    const VRODriver &driver);
     
     /*
      Set the uniforms required to render this material, and return the buffer.
      */
-    VROConcurrentBuffer &bindMaterialUniforms(VRORenderParameters &params, VROEyeType eye, int frame);
+    VROConcurrentBuffer &bindMaterialUniforms(float opacity, VROEyeType eye, int frame);
     
     /*
      Set the uniforms required to render this given material under the
@@ -52,10 +55,10 @@ public:
                                               VROEyeType eye, int frame);
     
     id <MTLFunction> getVertexProgram() const {
-        return _vertexProgram;
+        return _program->getVertexProgram();
     }
     id <MTLFunction> getFragmentProgram() const {
-        return _fragmentProgram;
+        return _program->getFragmentProgram();
     }
     const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
         return _textures;
@@ -65,11 +68,14 @@ public:
     
 private:
     
+    static std::shared_ptr<VROMetalShader> getPooledShader(std::string vertexShader,
+                                                           std::string fragmentShader,
+                                                           id <MTLLibrary> library);
+    
     const VROMaterial &_material;
     VROLightingModel _lightingModel;
     
-    id <MTLFunction> _vertexProgram;
-    id <MTLFunction> _fragmentProgram;
+    std::shared_ptr<VROMetalShader> _program;
     
     VROConcurrentBuffer *_materialUniformsBuffer;
     VROConcurrentBuffer *_lightingUniformsBuffer;
@@ -93,6 +99,8 @@ private:
     void bindBlinnLighting(const std::shared_ptr<VROLight> &light);
     void bindPhongLighting(const std::shared_ptr<VROLight> &light);
     void bindLambertLighting(const std::shared_ptr<VROLight> &light);
+    
+    uint32_t hashTextures(const std::vector<std::shared_ptr<VROTexture>> &textures) const;
     
 };
 

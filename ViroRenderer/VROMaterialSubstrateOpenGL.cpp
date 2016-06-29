@@ -369,7 +369,9 @@ void VROMaterialSubstrateOpenGL::bindShader() {
     _program->bind();
 }
 
-void VROMaterialSubstrateOpenGL::bindLights(const std::vector<std::shared_ptr<VROLight>> &lights) {
+void VROMaterialSubstrateOpenGL::bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,
+                                            const VRORenderContext &context,
+                                            const VRODriver &driver) {
     pglpush("Lights");
     VROVector3f ambientLight;
     

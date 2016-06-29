@@ -152,7 +152,7 @@ private:
                         id <MTLRenderPipelineState> pipelineState,
                         id <MTLDepthStencilState> depthStencilState,
                         id <MTLRenderCommandEncoder> renderEncoder,
-                        VRORenderParameters &params,
+                        float opacity,
                         const VRORenderContext &renderContext,
                         const VRODriver &driver);
     

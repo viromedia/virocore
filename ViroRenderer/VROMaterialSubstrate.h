@@ -15,6 +15,8 @@
 
 class VROSortKey;
 class VROLight;
+class VRORenderContext;
+class VRODriver;
 
 class VROMaterialSubstrate {
 public:
@@ -22,7 +24,9 @@ public:
     virtual void updateSortKey(VROSortKey &key) const = 0;
     
     virtual void bindShader() = 0;
-    virtual void bindLights(const std::vector<std::shared_ptr<VROLight>> &lights) = 0;
+    virtual void bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,
+                            const VRORenderContext &context,
+                            const VRODriver &driver) = 0;
     
 };
 

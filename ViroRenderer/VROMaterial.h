@@ -68,7 +68,9 @@ public:
     }
     
     void bindShader(const VRODriver &driver);
-    void bindLights(std::vector<std::shared_ptr<VROLight>> &lights, const VRODriver &driver);
+    void bindLights(std::vector<std::shared_ptr<VROLight>> &lights,
+                    const VRORenderContext &context,
+                    const VRODriver &driver);
     
     VROMaterialVisual &getDiffuse() const {
         return *_diffuse;

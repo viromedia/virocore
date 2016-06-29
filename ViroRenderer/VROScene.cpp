@@ -82,7 +82,7 @@ void VROScene::render2(const VRORenderContext &context,
             }
             
             if (boundLights != node->getComputedLights()) {
-                material->bindLights(node->getComputedLights(), driver);
+                material->bindLights(node->getComputedLights(), context, driver);
                 boundLights = node->getComputedLights();
             }
             

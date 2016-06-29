@@ -36,7 +36,9 @@ public:
     virtual ~VROMaterialSubstrateOpenGL();
     
     void bindShader();
-    void bindLights(const std::vector<std::shared_ptr<VROLight>> &lights);
+    void bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,
+                    const VRORenderContext &context,
+                    const VRODriver &driver);
     
     void bindDepthSettings();
     void bindViewUniforms(VROMatrix4f transform, VROMatrix4f modelview,

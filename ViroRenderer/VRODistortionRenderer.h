@@ -20,7 +20,6 @@ class VRODistortionMesh;
 class VROFieldOfView;
 class VRODevice;
 class VROViewport;
-class VRORenderContextMetal;
 class VROEye;
 class VROConcurrentBuffer;
 
