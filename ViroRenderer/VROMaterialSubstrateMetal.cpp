@@ -245,36 +245,6 @@ VROConcurrentBuffer &VROMaterialSubstrateMetal::bindMaterialUniforms(float opaci
     return *_materialUniformsBuffer;
 }
 
-VROConcurrentBuffer &VROMaterialSubstrateMetal::bindLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights,
-                                                                     VROEyeType eye, int frame) {
-    VROSceneLightingUniforms *uniforms = (VROSceneLightingUniforms *)_lightingUniformsBuffer->getWritableContents(eye, frame);
-    uniforms->num_lights = (int) lights.size();
-    
-    VROVector3f ambientLight;
-
-    for (int i = 0; i < lights.size(); i++) {
-        const std::shared_ptr<VROLight> &light = lights[i];
-        
-        VROLightUniforms &light_uniforms = uniforms->lights[i];
-        light_uniforms.type = (int) light->getType();
-        light_uniforms.position = toVectorFloat3(light->getTransformedPosition());
-        light_uniforms.direction = toVectorFloat3(light->getDirection());
-        light_uniforms.color = toVectorFloat3(light->getColor());
-        light_uniforms.attenuation_start_distance = light->getAttenuationStartDistance();
-        light_uniforms.attenuation_end_distance = light->getAttenuationEndDistance();
-        light_uniforms.attenuation_falloff_exp = light->getAttenuationFalloffExponent();
-        light_uniforms.spot_inner_angle = degrees_to_radians(light->getSpotInnerAngle());
-        light_uniforms.spot_outer_angle = degrees_to_radians(light->getSpotOuterAngle());
-        
-        if (light->getType() == VROLightType::Ambient) {
-            ambientLight += light->getColor();
-        }
-    }
-    
-    uniforms->ambient_light_color = toVectorFloat3(ambientLight);
-    return *_lightingUniformsBuffer;
-}
-
 void VROMaterialSubstrateMetal::updateSortKey(VROSortKey &key) const {
     key.shader = _program->getShaderId();
     key.textures = hashTextures(_textures);
@@ -293,8 +263,11 @@ void VROMaterialSubstrateMetal::bindLights(const std::vector<std::shared_ptr<VRO
     const VRODriverMetal &metal = (VRODriverMetal &)driver;
     id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
     
-    VROSceneLightingUniforms *uniforms = (VROSceneLightingUniforms *)_lightingUniformsBuffer->getWritableContents(context.getEyeType(),
-                                                                                                                  context.getFrame());
+    VROEyeType eyeType = context.getEyeType();
+    int frame = context.getFrame();
+    
+    VROSceneLightingUniforms *uniforms = (VROSceneLightingUniforms *)_lightingUniformsBuffer->getWritableContents(eyeType,
+                                                                                                                  frame);
     uniforms->num_lights = (int) lights.size();
     
     VROVector3f ambientLight;
@@ -319,7 +292,13 @@ void VROMaterialSubstrateMetal::bindLights(const std::vector<std::shared_ptr<VRO
     }
     
     uniforms->ambient_light_color = toVectorFloat3(ambientLight);
-    //return *_lightingUniformsBuffer;
+    
+    [renderEncoder setVertexBuffer:_lightingUniformsBuffer->getMTLBuffer(eyeType)
+                            offset:_lightingUniformsBuffer->getWriteOffset(frame)
+                           atIndex:3];
+    [renderEncoder setFragmentBuffer:_lightingUniformsBuffer->getMTLBuffer(eyeType)
+                              offset:_lightingUniformsBuffer->getWriteOffset(frame)
+                             atIndex:0];
 }
 
 uint32_t VROMaterialSubstrateMetal::hashTextures(const std::vector<std::shared_ptr<VROTexture>> &textures) const {

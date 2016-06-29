@@ -29,10 +29,6 @@ VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry
     readGeometrySources(device, geometry.getGeometrySources());
     updatePipelineStates(geometry, driver);
     
-    for (int i = 0; i < _elements.size(); i++) {
-        _outgoingPipelineStates.push_back(nullptr);
-    }
-    
     _viewUniformsBuffer = new VROConcurrentBuffer(sizeof(VROViewUniforms), @"VROViewUniformBuffer", device);
 }
 
@@ -105,10 +101,9 @@ void VROGeometrySubstrateMetal::readGeometrySources(id <MTLDevice> device,
         dataSize = std::max(dataSize, size);
     }
     
-    VROVertexArrayMetal var;
-    var.buffer = [device newBufferWithBytes:iterator->first->getData()
+    _var.buffer = [device newBufferWithBytes:iterator->first->getData()
                                      length:dataSize options:0];
-    var.buffer.label = @"VROGeometryVertexBuffer";
+    _var.buffer.label = @"VROGeometryVertexBuffer";
     
     /*
      Create the layout for this MTL buffer.
@@ -130,8 +125,6 @@ void VROGeometrySubstrateMetal::readGeometrySources(id <MTLDevice> device,
         
         passert (source->getDataStride() == _vertexDescriptor.layouts[bufferIndex].stride);
     }
-    
-    _var = var;
 }
 
 void VROGeometrySubstrateMetal::updatePipelineStates(const VROGeometry &geometry,
@@ -330,38 +323,10 @@ void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
     
     [renderEncoder setVertexBuffer:_var.buffer offset:0 atIndex:0];
     
-    VROConcurrentBuffer &lightingBuffer = substrate->bindLightingUniforms(lights, eyeType, frame);
-    
-    [renderEncoder setVertexBuffer:lightingBuffer.getMTLBuffer(eyeType)
-                            offset:lightingBuffer.getWriteOffset(frame)
-                           atIndex:3];
-    [renderEncoder setFragmentBuffer:lightingBuffer.getMTLBuffer(eyeType)
-                              offset:lightingBuffer.getWriteOffset(frame)
-                             atIndex:0];
-    
     /*
-     const std::shared_ptr<VROMaterial> &outgoing = material->getOutgoing();
-     if (outgoing) {
-     if (_outgoingPipelineStates[i] == nullptr || outgoing->isUpdated()) {
-     _outgoingPipelineStates[i] = createRenderPipelineState(outgoing, metal);
-     }
-     
-     id <MTLRenderPipelineState> outgoingPipelineState = _outgoingPipelineStates[i];
-     VROMaterialSubstrateMetal *outgoingSubstrate = static_cast<VROMaterialSubstrateMetal *>(outgoing->getSubstrate());
-     
-     renderMaterial(outgoingSubstrate, element, outgoingPipelineState, depthState, renderEncoder, params,
-     renderContext, driver);
-     renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params,
-     renderContext, driver);
-     }
-     else {
-     _outgoingPipelineStates[i] = nullptr;
-     renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, params,
-     renderContext, driver);
-     }
-     
+     Note that outgoing materials share the same pipeline state as their counterparts. This is because
+     they always have the same shaders and vertex layouts.
      */
-    _outgoingPipelineStates[elementIndex] = nullptr;
     renderMaterial(substrate, element, pipelineState, depthState, renderEncoder, opacity,
                    context, driver);
     

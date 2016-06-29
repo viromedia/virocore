@@ -47,13 +47,6 @@ public:
      */
     VROConcurrentBuffer &bindMaterialUniforms(float opacity, VROEyeType eye, int frame);
     
-    /*
-     Set the uniforms required to render this given material under the
-     given lights, and return the buffer.
-     */
-    VROConcurrentBuffer &bindLightingUniforms(const std::vector<std::shared_ptr<VROLight>> &lights,
-                                              VROEyeType eye, int frame);
-    
     id <MTLFunction> getVertexProgram() const {
         return _program->getVertexProgram();
     }

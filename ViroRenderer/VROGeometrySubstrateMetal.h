@@ -83,12 +83,6 @@ private:
      */
     std::vector<id <MTLRenderPipelineState>> _elementPipelineStates;
     std::vector<id <MTLDepthStencilState>> _elementDepthStates;
-
-    /*
-     Index of each element to its outgoing material, if it has one. Otherwise
-     set to null for that index.
-     */
-    std::vector<id <MTLRenderPipelineState>> _outgoingPipelineStates;
     
     /*
      Uniforms for the view.
