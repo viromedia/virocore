@@ -73,7 +73,7 @@ public:
 private:
     
     MTLVertexDescriptor *_vertexDescriptor;
-    std::vector<VROVertexArrayMetal> _vars;
+    VROVertexArrayMetal _var;
     std::vector<VROGeometryElementMetal> _elements;
     
     /*

@@ -88,49 +88,50 @@ void VROGeometrySubstrateMetal::readGeometrySources(id <MTLDevice> device,
     int bufferIndex = 0;
     
     /*
-     For each group of GeometrySources we create an MTLBuffer and layout.
+     Our shaders currently only support a single data array, so we abort if we have multiple
+     arrays (i.e. if we have geometry sources that aren't interleaved into a single array).
      */
-    for (auto &kv : dataMap) {
-        VROVertexArrayMetal var;
-        std::vector<std::shared_ptr<VROGeometrySource>> group = kv.second;
-        
-        /*
-         Create an MTLBuffer that wraps over the VROData.
-         */
-        int dataSize = 0;
-        for (std::shared_ptr<VROGeometrySource> source : group) {
-            int size = source->getVertexCount() * source->getDataStride();
-            dataSize = std::max(dataSize, size);
-        }
-        
-        var.buffer = [device newBufferWithBytes:kv.first->getData()
-                                         length:dataSize options:0];
-        var.buffer.label = @"VROGeometryVertexBuffer";
-        
-        /*
-         Create the layout for this MTL buffer.
-         */
-        _vertexDescriptor.layouts[bufferIndex].stepRate = 1;
-        _vertexDescriptor.layouts[bufferIndex].stride = group[0]->getDataStride();
-        _vertexDescriptor.layouts[bufferIndex].stepFunction = MTLVertexStepFunctionPerVertex;
-        
-        /*
-         Create an attribute for each geometry source in this group.
-         */
-        for (int i = 0; i < group.size(); i++) {
-            std::shared_ptr<VROGeometrySource> source = group[i];
-            int attrIdx = VROGeometryUtilParseAttributeIndex(source->getSemantic());
-            
-            _vertexDescriptor.attributes[attrIdx].format = parseVertexFormat(source);
-            _vertexDescriptor.attributes[attrIdx].offset = source->getDataOffset();
-            _vertexDescriptor.attributes[attrIdx].bufferIndex = bufferIndex;
-            
-            passert (source->getDataStride() == _vertexDescriptor.layouts[bufferIndex].stride);
-        }
-        
-        _vars.push_back(var);
-        ++bufferIndex;
+    passert (dataMap.size() == 1);
+    auto iterator = dataMap.begin();
+    
+    std::vector<std::shared_ptr<VROGeometrySource>> group = iterator->second;
+    
+    /*
+     Create an MTLBuffer that wraps over the VROData.
+     */
+    int dataSize = 0;
+    for (std::shared_ptr<VROGeometrySource> source : group) {
+        int size = source->getVertexCount() * source->getDataStride();
+        dataSize = std::max(dataSize, size);
     }
+    
+    VROVertexArrayMetal var;
+    var.buffer = [device newBufferWithBytes:iterator->first->getData()
+                                     length:dataSize options:0];
+    var.buffer.label = @"VROGeometryVertexBuffer";
+    
+    /*
+     Create the layout for this MTL buffer.
+     */
+    _vertexDescriptor.layouts[bufferIndex].stepRate = 1;
+    _vertexDescriptor.layouts[bufferIndex].stride = group[0]->getDataStride();
+    _vertexDescriptor.layouts[bufferIndex].stepFunction = MTLVertexStepFunctionPerVertex;
+    
+    /*
+     Create an attribute for each geometry source in this group.
+     */
+    for (int i = 0; i < group.size(); i++) {
+        std::shared_ptr<VROGeometrySource> source = group[i];
+        int attrIdx = VROGeometryUtilParseAttributeIndex(source->getSemantic());
+        
+        _vertexDescriptor.attributes[attrIdx].format = parseVertexFormat(source);
+        _vertexDescriptor.attributes[attrIdx].offset = source->getDataOffset();
+        _vertexDescriptor.attributes[attrIdx].bufferIndex = bufferIndex;
+        
+        passert (source->getDataStride() == _vertexDescriptor.layouts[bufferIndex].stride);
+    }
+    
+    _var = var;
 }
 
 void VROGeometrySubstrateMetal::updatePipelineStates(const VROGeometry &geometry,
@@ -312,7 +313,7 @@ void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
     viewUniforms->camera_position = toVectorFloat3(context.getCamera().getPosition());
     
     [renderEncoder setVertexBuffer:_viewUniformsBuffer->getMTLBuffer(eyeType)
-                            offset:_viewUniformsBuffer->getWriteOffset(frame) atIndex:_vars.size()];
+                            offset:_viewUniformsBuffer->getWriteOffset(frame) atIndex:1];
     
     /*
      Determine if the material has been updated. If so, we need to update our pipeline and
@@ -327,15 +328,13 @@ void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
     id <MTLRenderPipelineState> pipelineState = _elementPipelineStates[elementIndex];
     id <MTLDepthStencilState> depthState = _elementDepthStates[elementIndex];
     
-    for (int j = 0; j < _vars.size(); ++j) {
-        [renderEncoder setVertexBuffer:_vars[j].buffer offset:0 atIndex:j];
-    }
+    [renderEncoder setVertexBuffer:_var.buffer offset:0 atIndex:0];
     
     VROConcurrentBuffer &lightingBuffer = substrate->bindLightingUniforms(lights, eyeType, frame);
     
     [renderEncoder setVertexBuffer:lightingBuffer.getMTLBuffer(eyeType)
                             offset:lightingBuffer.getWriteOffset(frame)
-                           atIndex:_vars.size() + 2];
+                           atIndex:3];
     [renderEncoder setFragmentBuffer:lightingBuffer.getMTLBuffer(eyeType)
                               offset:lightingBuffer.getWriteOffset(frame)
                              atIndex:0];
@@ -387,7 +386,7 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
     VROConcurrentBuffer &materialBuffer = material->bindMaterialUniforms(opacity, eyeType, frame);
     [renderEncoder setVertexBuffer:materialBuffer.getMTLBuffer(eyeType)
                             offset:materialBuffer.getWriteOffset(frame)
-                           atIndex:_vars.size() + 1];
+                           atIndex:2];
     
     const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();
     for (int j = 0; j < textures.size(); ++j) {
