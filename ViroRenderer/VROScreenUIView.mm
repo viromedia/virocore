@@ -103,7 +103,8 @@ withRenderContext:(const VRORenderContext *)renderContext
     renderParams.transforms.push(renderContext->getHUDViewMatrix());
     renderParams.opacities.push(1.0);
     
-    _layer->render(*renderContext, *driver, renderParams);
+    std::shared_ptr<VROMaterial> material = _layer->getMaterial();
+    _layer->render2(0, material, *renderContext, *driver);
 }
 
 - (void)setReticleEnabled:(BOOL)enabled {

@@ -80,11 +80,7 @@ public:
      the geometry will be initialized when it is made visible.
      */
     void prewarm(const VRODriver &driver);
-    
-    void render(const VRORenderContext &context,
-                const VRODriver &driver,
-                VRORenderParameters &params);
-    
+
     void render(int elementIndex,
                 std::shared_ptr<VROMaterial> &material,
                 VROMatrix4f transform,

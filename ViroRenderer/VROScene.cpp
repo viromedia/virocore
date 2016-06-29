@@ -43,20 +43,7 @@ void VROScene::renderBackground(const VRORenderContext &renderContext,
     renderParams.transforms.push(translation);
     renderParams.opacities.push(1.0);
     
-    _background->render(renderContext, driver, renderParams);
-}
-
-void VROScene::render(const VRORenderContext &renderContext,
-                      const VRODriver &driver) {
-    VROMatrix4f identity;
-
-    VRORenderParameters renderParams;
-    renderParams.transforms.push(identity);
-    renderParams.opacities.push(1.0);
-    
-    for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->render(renderContext, driver, renderParams);
-    }
+    _background->render(0, _background->getMaterials()[0], translation, 1.0, {}, renderContext, driver);
 }
 
 void VROScene::render2(const VRORenderContext &context,

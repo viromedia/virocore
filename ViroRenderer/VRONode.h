@@ -53,10 +53,7 @@ public:
      are shared by reference with the copied node.
      */
     std::shared_ptr<VRONode> clone();
-    
-    void render(const VRORenderContext &context,
-                const VRODriver &driver,
-                VRORenderParameters &params);
+
     void render2(int elementIndex,
                  std::shared_ptr<VROMaterial> &material,
                  const VRORenderContext &context,
@@ -238,15 +235,6 @@ private:
      expired.
      */
     void processActions();
-    
-    /*
-     Render functions.
-     */
-    void pushTransforms(const VRORenderContext &context, VRORenderParameters &params);
-    void renderNode(const VRORenderContext &renderContext,
-                    const VRODriver &driver,
-                    VRORenderParameters &params);
-    void popTransforms(VRORenderParameters &params);
     
     /*
      Hit test helper functions.

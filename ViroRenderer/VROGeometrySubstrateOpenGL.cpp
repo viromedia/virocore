@@ -246,64 +246,6 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     pglpop();
 }
 
-void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
-                                        const std::vector<std::shared_ptr<VROMaterial>> &materials,
-                                        const VRORenderContext &renderContext,
-                                        const VRODriver &driver,
-                                        VRORenderParameters &params) {
-    
-    VROMatrix4f &transform = params.transforms.top();
-    
-    VROMatrix4f viewMatrix = renderContext.getViewMatrix();
-    VROMatrix4f projectionMatrix = renderContext.getProjectionMatrix();
-    
-    if (!geometry.isStereoRenderingEnabled()) {
-        viewMatrix = renderContext.getMonocularViewMatrix();
-    }
-    
-    for (int i = 0; i < _elements.size(); i++) {
-        pglpush("VROGeometry");
-        VROGeometryElementOpenGL element = _elements[i];
-        
-        const std::shared_ptr<VROMaterial> &material = materials[i % materials.size()];
-        
-        material->createSubstrate(driver);
-        VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate());
-        
-        VROMatrix4f modelview = viewMatrix.multiply(transform);
-        substrate->bindShader();
-        substrate->bindDepthSettings();
-        substrate->bindViewUniforms(transform, modelview, projectionMatrix, renderContext.getCamera().getPosition());
-        substrate->bindLights(params.lights, renderContext, driver);
-        
-        for (VROVertexDescriptorOpenGL &vd : _vertexDescriptors) {
-            glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);
-           
-            for (int i = 0; i < vd.numAttributes; i++) {
-                glVertexAttribPointer(vd.attributes[i].index, vd.attributes[i].size, vd.attributes[i].type, GL_FALSE, vd.stride, (GLvoid *) vd.attributes[i].offset);
-                glEnableVertexAttribArray(vd.attributes[i].index);
-            }
-        }
-        
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element.buffer);
-        
-        const std::shared_ptr<VROMaterial> &outgoing = material->getOutgoing();
-        if (outgoing) {
-            outgoing->createSubstrate(driver);
-            VROMaterialSubstrateOpenGL *outgoingSubstrate = static_cast<VROMaterialSubstrateOpenGL *>(outgoing->getSubstrate());
-            
-            renderMaterial(outgoingSubstrate, element, params.opacities.top(), renderContext, driver);
-            renderMaterial(substrate, element, params.opacities.top(), renderContext, driver);
-        }
-        else {
-            renderMaterial(substrate, element, params.opacities.top(), renderContext, driver);
-        }
-        
-        pglpop();
-    }
-}
-
 void VROGeometrySubstrateOpenGL::renderMaterial(VROMaterialSubstrateOpenGL *material,
                                                 VROGeometryElementOpenGL &element,
                                                 float opacity,

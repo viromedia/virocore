@@ -62,12 +62,6 @@ public:
     virtual ~VROGeometrySubstrateMetal();
     
     void render(const VROGeometry &geometry,
-                const std::vector<std::shared_ptr<VROMaterial>> &materials,
-                const VRORenderContext &renderContext,
-                const VRODriver &driver,
-                VRORenderParameters &params);
-    
-    void render(const VROGeometry &geometry,
                 int elementIndex,
                 VROMatrix4f transform,
                 float opacity,

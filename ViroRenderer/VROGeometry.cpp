@@ -29,14 +29,6 @@ void VROGeometry::prewarm(const VRODriver &driver) {
     }
 }
 
-void VROGeometry::render(const VRORenderContext &renderContext,
-                         const VRODriver &driver,
-                         VRORenderParameters &params) {
-    
-    prewarm(driver);
-    _substrate->render(*this, _materials, renderContext, driver, params);
-}
-
 void VROGeometry::render(int elementIndex,
                          std::shared_ptr<VROMaterial> &material,
                          VROMatrix4f transform,
