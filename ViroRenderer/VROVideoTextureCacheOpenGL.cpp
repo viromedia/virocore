@@ -41,7 +41,7 @@ std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSu
     
     CVReturn error;
     error = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, _cache, sourceImageBuffer,
-                                                         NULL, GL_TEXTURE_2D, GL_RGBA, width, height, GL_RGBA, GL_UNSIGNED_BYTE, 0,
+                                                         NULL, GL_TEXTURE_2D, GL_RGBA, width, height, GL_BGRA, GL_UNSIGNED_BYTE, 0,
                                                          &_textureRef[_currentTextureIndex]);
     
     if (error) {
@@ -68,7 +68,7 @@ std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSu
     
     CVReturn error;
     error = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, _cache, pixelBuffer,
-                                                         NULL, GL_TEXTURE_2D, GL_RGBA, width, height, GL_RGBA, GL_UNSIGNED_BYTE, 0,
+                                                         NULL, GL_TEXTURE_2D, GL_RGBA, width, height, GL_BGRA, GL_UNSIGNED_BYTE, 0,
                                                          &_textureRef[_currentTextureIndex]);
     
     if (error) {
