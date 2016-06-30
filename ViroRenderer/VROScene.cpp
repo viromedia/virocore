@@ -43,6 +43,9 @@ void VROScene::renderBackground(const VRORenderContext &renderContext,
     renderParams.transforms.push(translation);
     renderParams.opacities.push(1.0);
     
+    std::shared_ptr<VROMaterial> &material = _background->getMaterials()[0];
+    material->bindShader(driver);
+    
     _background->render(0, _background->getMaterials()[0], translation, 1.0, {}, renderContext, driver);
 }
 
