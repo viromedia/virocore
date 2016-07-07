@@ -253,7 +253,7 @@ void VROMaterialSubstrateMetal::updateSortKey(VROSortKey &key) const {
 void VROMaterialSubstrateMetal::bindShader() {
     // Do nothing in Metal, consider changing this to binding pipeline state?
     // The problem is that pipeline state in metal emcompasses both shader and
-    // VBO.
+    // vertex layout
 }
 
 void VROMaterialSubstrateMetal::bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,

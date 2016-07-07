@@ -58,7 +58,6 @@ public:
                 VROMatrix4f transform,
                 float opacity,
                 std::shared_ptr<VROMaterial> &material,
-                const std::vector<std::shared_ptr<VROLight>> &lights,
                 const VRORenderContext &context,
                 const VRODriver &driver);
     

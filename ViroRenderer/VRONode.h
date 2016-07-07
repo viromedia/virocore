@@ -21,6 +21,7 @@
 #include "VROAnimatable.h"
 #include "VROBoundingBox.h"
 #include "VROSortKey.h"
+#include "VROLog.h"
 
 class VROGeometry;
 class VROLight;
@@ -126,6 +127,8 @@ public:
      Child management.
      */
     void addChildNode(std::shared_ptr<VRONode> node) {
+        passert (node);
+        
         _subnodes.push_back(node);
         node->_supernode = std::static_pointer_cast<VRONode>(shared_from_this());
     }

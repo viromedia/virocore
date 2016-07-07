@@ -166,7 +166,7 @@ void VROMaterial::bindShader(const VRODriver &driver) {
     _substrate->bindShader();
 }
 
-void VROMaterial::bindLights(std::vector<std::shared_ptr<VROLight>> &lights,
+void VROMaterial::bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,
                              const VRORenderContext &context, const VRODriver &driver) {
     createSubstrate(driver);
     _substrate->bindLights(lights, context, driver);

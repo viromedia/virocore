@@ -33,12 +33,11 @@ void VROGeometry::render(int elementIndex,
                          std::shared_ptr<VROMaterial> &material,
                          VROMatrix4f transform,
                          float opacity,
-                         const std::vector<std::shared_ptr<VROLight>> &lights,
                          const VRORenderContext &context,
                          const VRODriver &driver) {
     
     prewarm(driver);
-    _substrate->render(*this, elementIndex, transform, opacity, material, lights, context, driver);
+    _substrate->render(*this, elementIndex, transform, opacity, material, context, driver);
 }
 
 void VROGeometry::updateSortKeys(VRONode *node, uint32_t lightsHash) {

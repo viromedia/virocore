@@ -67,7 +67,7 @@ void VRONode::render2(int elementIndex,
                       const VRODriver &driver) {
     
     if (_geometry) {
-        _geometry->render(elementIndex, material, _computedTransform, _computedOpacity, _computedLights,
+        _geometry->render(elementIndex, material, _computedTransform, _computedOpacity,
                           context, driver);
     }
 }
