@@ -218,6 +218,8 @@ void VRORenderer::setSceneController(VROSceneController *sceneController, bool a
 }
 
 void VRORenderer::setSceneController(VROSceneController *sceneController, float seconds, VROTimingFunctionType timingFunctionType) {
+    passert (_sceneController != nil);
+    
     _outgoingSceneController = _sceneController;
     _sceneController = sceneController;
     
