@@ -26,12 +26,16 @@ VROVideoTextureCacheOpenGL::VROVideoTextureCacheOpenGL(CVEAGLContext eaglContext
 
 VROVideoTextureCacheOpenGL::~VROVideoTextureCacheOpenGL() {
     for (int i = 0; i < kVideoTextureCacheOpenGLNumTextures; i++) {
-        CVBufferRelease(_textureRef[i]);
+        if (_textureRef[i] != NULL) {
+            CVBufferRelease(_textureRef[i]);
+        }
     }
 }
 
 std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSubstrate(CMSampleBufferRef sampleBuffer) {
     CVBufferRelease(_textureRef[_currentTextureIndex]);
+    _textureRef[_currentTextureIndex] = NULL;
+    
     _currentTextureIndex = (_currentTextureIndex + 1) % kVideoTextureCacheOpenGLNumTextures;
     CVOpenGLESTextureCacheFlush(_cache, 0);
 
@@ -60,6 +64,8 @@ std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSu
 
 std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSubstrate(CVPixelBufferRef pixelBuffer) {
     CVBufferRelease(_textureRef[_currentTextureIndex]);
+    _textureRef[_currentTextureIndex] = NULL;
+    
     _currentTextureIndex = (_currentTextureIndex + 1) % kVideoTextureCacheOpenGLNumTextures;
     CVOpenGLESTextureCacheFlush(_cache, 0);
     
