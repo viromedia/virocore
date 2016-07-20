@@ -231,8 +231,7 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     pglpush("VROGeometry");
     VROGeometryElementOpenGL element = _elements[elementIndex];
     
-    material->createSubstrate(driver);
-    VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate());
+    VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
     substrate->bindDepthSettings();
     
     VROMatrix4f modelview = viewMatrix.multiply(transform);

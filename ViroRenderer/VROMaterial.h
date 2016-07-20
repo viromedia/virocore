@@ -178,17 +178,10 @@ public:
     void updateSubstrate();
     
     /*
-     Create a new substrate for this material.
-     */
-    void createSubstrate(const VRODriver &driver);
-    
-    /*
      Get the representation of this material in the underlying graphics 
      technology.
      */
-    VROMaterialSubstrate *const getSubstrate() {
-        return _substrate;
-    }
+    VROMaterialSubstrate *const getSubstrate(const VRODriver &driver);
     
     /*
      Update the given sort key with fields from this material.

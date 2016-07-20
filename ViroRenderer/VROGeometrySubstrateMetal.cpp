@@ -151,8 +151,7 @@ id <MTLRenderPipelineState> VROGeometrySubstrateMetal::createRenderPipelineState
     id <MTLDevice> device = driver.getDevice();
     std::shared_ptr<VRORenderTarget> renderTarget = driver.getRenderTarget();
     
-    material->createSubstrate(driver);
-    VROMaterialSubstrateMetal *substrate = static_cast<VROMaterialSubstrateMetal *>(material->getSubstrate());
+    VROMaterialSubstrateMetal *substrate = static_cast<VROMaterialSubstrateMetal *>(material->getSubstrate(driver));
     
     MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
     pipelineStateDescriptor.label = @"VROLayerPipeline";
@@ -316,7 +315,7 @@ void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
         _elementDepthStates[elementIndex] = createDepthStencilState(material, metal.getDevice());
     }
     
-    VROMaterialSubstrateMetal *substrate = static_cast<VROMaterialSubstrateMetal *>(material->getSubstrate());
+    VROMaterialSubstrateMetal *substrate = static_cast<VROMaterialSubstrateMetal *>(material->getSubstrate(driver));
     id <MTLRenderPipelineState> pipelineState = _elementPipelineStates[elementIndex];
     id <MTLDepthStencilState> depthState = _elementDepthStates[elementIndex];
     
