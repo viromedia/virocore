@@ -224,8 +224,8 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     VROMatrix4f viewMatrix = context.getViewMatrix();
     VROMatrix4f projectionMatrix = context.getProjectionMatrix();
     
-    if (!geometry.isStereoRenderingEnabled()) {
-        viewMatrix = context.getMonocularViewMatrix();
+    if (geometry.isCameraEnclosure()) {
+        viewMatrix = context.getEnclosureViewMatrix();
     }
     
     pglpush("VROGeometry");

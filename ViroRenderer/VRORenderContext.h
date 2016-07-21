@@ -54,8 +54,8 @@ public:
     void setViewMatrix(VROMatrix4f viewMatrix) {
         _viewMatrix = viewMatrix;
     }
-    void setMonocularViewMatrix(VROMatrix4f monocularViewMatrix) {
-        _monocularViewMatrix = monocularViewMatrix;
+    void setEnclosureViewMatrix(VROMatrix4f enclosureViewMatrix) {
+        _enclosureViewMatrix = enclosureViewMatrix;
     }
     void setHUDViewMatrix(VROMatrix4f hudViewMatrix) {
         _hudViewMatrix = hudViewMatrix;
@@ -70,8 +70,8 @@ public:
     VROMatrix4f getViewMatrix() const {
         return _viewMatrix;
     }
-    VROMatrix4f getMonocularViewMatrix() const {
-        return _monocularViewMatrix;
+    VROMatrix4f getEnclosureViewMatrix() const {
+        return _enclosureViewMatrix;
     }
     VROMatrix4f getHUDViewMatrix() const {
         return _hudViewMatrix;
@@ -94,9 +94,9 @@ private:
     VROMatrix4f _viewMatrix;
     
     /*
-     The view matrix for non-stereo rendered objects.
+     The view matrix for camera enclosure objects (e.g. skyboxes).
      */
-    VROMatrix4f _monocularViewMatrix;
+    VROMatrix4f _enclosureViewMatrix;
     
     /*
      The view matrix for objects rendered on the HUD. This is a stereo view matrix:

@@ -114,6 +114,14 @@
     self.renderer->setBaseRotation(rotation);
 }
 
+- (void)setCameraRotationType:(VROCameraRotationType)type {
+    self.renderer->setCameraRotationType(type);
+}
+
+- (void)setOrbitFocalPoint:(VROVector3f)focalPt {
+    self.renderer->setOrbitFocalPoint(focalPt);
+}
+
 - (float)worldPerScreenAtDepth:(float)distance {
     return self.renderer->getWorldPerScreen(distance, self.fov, self.viewport);
 }

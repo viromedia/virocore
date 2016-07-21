@@ -9,8 +9,8 @@
 #import "SampleRenderer.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneTorus = 0,
-    VROSampleSceneBox,
+    VROSampleSceneBox = 0,
+    VROSampleSceneTorus,
     VROSampleSceneOBJ,
     VROSampleSceneLayer,
     VROSampleSceneVideoSphere,
@@ -221,6 +221,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     boxNode->setPosition({0, 0, -5});
     
     rootNode->addChildNode(boxNode);
+    
+    [self.view setCameraRotationType:VROCameraRotationType::Orbit];
+    [self.view setOrbitFocalPoint:boxNode->getPosition()];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();

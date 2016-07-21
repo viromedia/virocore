@@ -36,18 +36,11 @@ void VROScene::renderBackground(const VRORenderContext &renderContext,
         return;
     }
     
-    VROMatrix4f translation;
-    translation.translate(renderContext.getCamera().getPosition());
-    
-    VRORenderParameters renderParams;
-    renderParams.transforms.push(translation);
-    renderParams.opacities.push(1.0);
-    
     std::shared_ptr<VROMaterial> &material = _background->getMaterials()[0];
     material->bindShader(driver);
     material->bindLights({ _nodes[0]->getLight() }, renderContext, driver);
     
-    _background->render(0, material, translation, 1.0, renderContext, driver);
+    _background->render(0, material, {}, 1.0, renderContext, driver);
 }
 
 void VROScene::render2(const VRORenderContext &context,
@@ -112,7 +105,7 @@ void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
                                           kSphereBackgroundNumSegments,
                                           kSphereBackgroundNumSegments,
                                           false);
-    _background->setStereoRenderingEnabled(false);
+    _background->setCameraEnclosure(true);
     
     std::shared_ptr<VROMaterial> material = _background->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Constant);

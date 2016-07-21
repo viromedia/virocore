@@ -26,6 +26,7 @@ class VRORenderContext;
 class VROViewport;
 class VROFieldOfView;
 class VROFrameListener;
+enum class VROCameraRotationType;
 enum class VROEyeType;
 enum class VROTimingFunctionType;
 
@@ -41,6 +42,9 @@ public:
         
     void setPosition(VROVector3f position);
     void setBaseRotation(VROQuaternion quaternion);
+    void setCameraRotationType(VROCameraRotationType type);
+    void setOrbitFocalPoint(VROVector3f focalPt);
+    
     float getWorldPerScreen(float distance, const VROFieldOfView &fov,
                             const VROViewport &viewport) const;
     void setDelegate(id <VRORenderDelegate> delegate);

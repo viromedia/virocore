@@ -53,6 +53,14 @@ void VRORenderer::setBaseRotation(VROQuaternion quaternion) {
     _camera->setBaseRotation(quaternion);
 }
 
+void VRORenderer::setCameraRotationType(VROCameraRotationType type) {
+    _camera->setRotationType(type);
+}
+
+void VRORenderer::setOrbitFocalPoint(VROVector3f focalPt) {
+    _camera->setOrbitFocalPoint(focalPt);
+}
+
 float VRORenderer::getWorldPerScreen(float distance, const VROFieldOfView &fov,
                                      const VROViewport &viewport) const {
     /*
@@ -93,23 +101,30 @@ void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &d
     VROCamera camera;
     camera.setHeadRotation({headRotation});
     camera.setBaseRotation(_camera->getBaseRotation().getMatrix());
-    camera.setPosition(_camera->getPosition());
+    
+    /*
+     This matrix is used for rendering objects that follow the camera, such
+     as skyboxes. To get them to follow the camera, we do not include the 
+     camera's translation component in the view matrix.
+     */
+    camera.setPosition({0, 0, 0 });
+    VROMatrix4f enclosureMatrix = camera.computeLookAtMatrix();
+    
+    if (_camera->getRotationType() == VROCameraRotationType::Standard) {
+        camera.setPosition(_camera->getPosition());
+    }
+    else { // Orbit
+        VROVector3f pos = _camera->getPosition();
+        VROVector3f focal = _camera->getOrbitFocalPoint();
+        
+        float magnitude = pos.distance(focal);
+        VROVector3f ray = headRotation.multiply({ 0, 0, 1});
+        
+        camera.setPosition(focal + ray.scale(magnitude));
+    }
     
     _context->setCamera(camera);
-    
-    /*
-     The full eye transform is as follows:
-     
-     1. Set the camera at the origin, looking in the Z negative direction.
-     2. Rotate by the camera by the head rotation picked up by the sensors.
-     3. Translate the camera by the interlens distance in each direction to get the two eyes.
-     */
-    VROMatrix4f cameraMatrix = camera.computeLookAtMatrix();
-        
-    /*
-     The monocular view matrix is used for objects that should appear distant, like skyboxes.
-     */
-    _context->setMonocularViewMatrix(cameraMatrix);
+    _context->setEnclosureViewMatrix(enclosureMatrix);
 
     [_HUD updateWithContext:&driver];
     

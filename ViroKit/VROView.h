@@ -17,6 +17,11 @@ class VROScene;
 class VROFrameSynchronizer;
 enum class VROTimingFunctionType;
 
+enum class VROCameraRotationType {
+    Standard,
+    Orbit
+};
+
 @protocol VROView <NSObject>
 
 @required
@@ -31,6 +36,9 @@ enum class VROTimingFunctionType;
 
 - (void)setPosition:(VROVector3f)position;
 - (void)setBaseRotation:(VROQuaternion)rotation;
+- (void)setCameraRotationType:(VROCameraRotationType)type;
+- (void)setOrbitFocalPoint:(VROVector3f)focalPt;
+
 - (float)worldPerScreenAtDepth:(float)distance;
 
 - (std::shared_ptr<VROFrameSynchronizer>)frameSynchronizer;

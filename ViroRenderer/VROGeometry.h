@@ -50,7 +50,7 @@ public:
         _renderingOrder(0),
         _geometrySources(sources),
         _geometryElements(elements),
-        _stereoRenderingEnabled(true),
+        _cameraEnclosure(false),
         _bounds(nullptr),
         _substrate(nullptr) {
             
@@ -112,11 +112,11 @@ public:
     const VROBoundingBox &getBoundingBox();
     VROVector3f getCenter();
     
-    bool isStereoRenderingEnabled() const {
-        return _stereoRenderingEnabled;
+    bool isCameraEnclosure() const {
+        return _cameraEnclosure;
     }
-    void setStereoRenderingEnabled(bool enabled) {
-        _stereoRenderingEnabled = enabled;
+    void setCameraEnclosure(bool enabled) {
+        _cameraEnclosure = enabled;
     }
     
     std::vector<std::shared_ptr<VROGeometrySource>> getGeometrySourcesForSemantic(VROGeometrySourceSemantic semantic) const;
@@ -153,11 +153,10 @@ private:
     std::vector<VROSortKey> _sortKeys;
     
     /*
-     True if stereo rendering is enabled for this object. If disabled, the monocular view matrix
-     will be used when rendering. Stereo rendering should be disabled for nearby objects that 
-     simulate being far away, like skyboxes.
+     True if this geometry is a camera enclosure, e.g. a skybox. Camera enclosures follow
+     the camera and ignore interlens distance (since they generally simulate far away objects).
      */
-    bool _stereoRenderingEnabled;
+    bool _cameraEnclosure;
     
     /*
      The bounding box of this geometry. Created on demand, then cached.

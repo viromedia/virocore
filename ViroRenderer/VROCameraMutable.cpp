@@ -10,7 +10,8 @@
 #include "VROAnimationVector3f.h"
 #include "VROAnimationQuaternion.h"
 
-VROCameraMutable::VROCameraMutable() {
+VROCameraMutable::VROCameraMutable() :
+    _rotationType(VROCameraRotationType::Standard) {
     
 }
 
@@ -28,4 +29,14 @@ void VROCameraMutable::setBaseRotation(VROQuaternion baseRotation) {
     animate(std::make_shared<VROAnimationQuaternion>([](VROAnimatable *const animatable, VROQuaternion r) {
         ((VROCameraMutable *)animatable)->_baseRotation = r;
     }, _baseRotation, baseRotation));
+}
+
+void VROCameraMutable::setRotationType(VROCameraRotationType type) {
+    _rotationType = type;
+}
+
+void VROCameraMutable::setOrbitFocalPoint(VROVector3f focalPt) {
+    animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f o) {
+        ((VROCameraMutable *)animatable)->_orbitFocalPt = o;
+    }, _orbitFocalPt, focalPt));
 }
