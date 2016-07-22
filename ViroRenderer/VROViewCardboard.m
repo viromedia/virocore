@@ -171,7 +171,9 @@
 
 - (void)cardboardView:(GCSCardboardView *)cardboardView didFireEvent:(GCSUserEvent)event {
     if (event == kGCSUserEventTrigger) {
-        _renderer->handleTap();
+        dispatch_async(dispatch_get_main_queue(), ^{
+            _renderer->handleTap();
+        });
     }
 }
 
