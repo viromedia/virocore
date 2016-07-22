@@ -55,12 +55,12 @@ public:
      */
     std::shared_ptr<VRONode> clone();
 
-    void render2(int elementIndex,
-                 std::shared_ptr<VROMaterial> &material,
-                 const VRORenderContext &context,
-                 const VRODriver &driver);
+    void render(int elementIndex,
+                std::shared_ptr<VROMaterial> &material,
+                const VRORenderContext &context,
+                const VRODriver &driver);
     
-    void updateSortKeys(VRORenderParameters &params);
+    void updateSortKeys(VRORenderParameters &params, const VRORenderContext &context);
     void getSortKeys(std::vector<VROSortKey> *outKeys);
     
     std::vector<std::shared_ptr<VROLight>> &getComputedLights() {
@@ -77,7 +77,7 @@ public:
     /*
      Transforms.
      */
-    VROMatrix4f getTransform() const;
+    VROMatrix4f getTransform(const VRORenderContext &context) const;
     VROVector3f getTransformedPosition() const;
     
     VROVector3f getPosition() const {

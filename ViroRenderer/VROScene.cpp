@@ -43,8 +43,8 @@ void VROScene::renderBackground(const VRORenderContext &renderContext,
     _background->render(0, material, {}, 1.0, renderContext, driver);
 }
 
-void VROScene::render2(const VRORenderContext &context,
-                       const VRODriver &driver) {
+void VROScene::render(const VRORenderContext &context,
+                      const VRODriver &driver) {
     
     uint32_t boundShaderId = 0;
     std::vector<std::shared_ptr<VROLight>> boundLights;
@@ -70,12 +70,12 @@ void VROScene::render2(const VRORenderContext &context,
                 boundLights = node->getComputedLights();
             }
             
-            node->render2(elementIndex, material, context, driver);
+            node->render(elementIndex, material, context, driver);
         }
     }
 }
 
-void VROScene::updateSortKeys() {
+void VROScene::updateSortKeys(const VRORenderContext &context) {
     VROMatrix4f identity;
 
     VRORenderParameters renderParams;
@@ -83,7 +83,7 @@ void VROScene::updateSortKeys() {
     renderParams.opacities.push(1.0);
     
     for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->updateSortKeys(renderParams);
+        node->updateSortKeys(renderParams, context);
     }
     
     _keys.clear();

@@ -10,10 +10,16 @@
 #include "VROMatrix4f.h"
 #include "VROVector3f.h"
 #include "VROQuaternion.h"
+#include "VROCamera.h"
 #include "VRONode.h"
 
-VROMatrix4f VROBillboardConstraint::getTransform(const VRONode &node, VROMatrix4f transform) {
-    VROVector3f objToCamProj = node.getTransformedPosition();
+VROMatrix4f VROBillboardConstraint::getTransform(const VRONode &node,
+                                                 const VRORenderContext &context,
+                                                 VROMatrix4f transform) {
+    
+    const VROCamera &camera = context.getCamera();
+    
+    VROVector3f objToCamProj = node.getTransformedPosition().subtract(camera.getPosition());
     objToCamProj.y = 0;
     objToCamProj = objToCamProj.normalize();
     

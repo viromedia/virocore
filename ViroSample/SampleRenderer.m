@@ -225,6 +225,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     [self.view setCameraRotationType:VROCameraRotationType::Orbit];
     [self.view setOrbitFocalPoint:boxNode->getPosition()];
     
+    boxNode->addConstraint(std::make_shared<VROBillboardConstraint>());
+    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(2);
@@ -254,7 +256,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         return true;
     });
     
-    boxNode->runAction(action);
+    //boxNode->runAction(action);
     return sceneController;
 }
 

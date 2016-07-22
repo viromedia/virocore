@@ -61,10 +61,10 @@ std::shared_ptr<VRONode> VRONode::clone() {
 
 #pragma mark - Rendering
 
-void VRONode::render2(int elementIndex,
-                      std::shared_ptr<VROMaterial> &material,
-                      const VRORenderContext &context,
-                      const VRODriver &driver) {
+void VRONode::render(int elementIndex,
+                     std::shared_ptr<VROMaterial> &material,
+                     const VRORenderContext &context,
+                     const VRODriver &driver) {
     
     if (_geometry) {
         _geometry->render(elementIndex, material, _computedTransform, _computedOpacity,
@@ -72,7 +72,7 @@ void VRONode::render2(int elementIndex,
     }
 }
 
-void VRONode::updateSortKeys(VRORenderParameters &params) {
+void VRONode::updateSortKeys(VRORenderParameters &params, const VRORenderContext &context) {
     processActions();
     
     std::stack<VROMatrix4f> &transforms = params.transforms;
@@ -82,7 +82,7 @@ void VRONode::updateSortKeys(VRORenderParameters &params) {
     /*
      Compute the specific parameters for this node.
      */
-    _computedTransform = transforms.top().multiply(getTransform());
+    _computedTransform = transforms.top().multiply(getTransform(context));
     transforms.push(_computedTransform);
     
     _computedOpacity = opacities.top() * _opacity;
@@ -106,7 +106,7 @@ void VRONode::updateSortKeys(VRORenderParameters &params) {
      Move down the tree.
      */
     for (std::shared_ptr<VRONode> childNode : _subnodes) {
-        childNode->updateSortKeys(params);
+        childNode->updateSortKeys(params, context);
     }
     
     params.transforms.pop();
@@ -133,7 +133,7 @@ uint32_t VRONode::hashLights(std::vector<std::shared_ptr<VROLight>> &lights) {
     return h;
 }
 
-VROMatrix4f VRONode::getTransform() const {
+VROMatrix4f VRONode::getTransform(const VRORenderContext &context) const {
     VROMatrix4f pivotMtx, unpivotMtx;
     
     if (_geometry) {
@@ -155,7 +155,7 @@ VROMatrix4f VRONode::getTransform() const {
     transform = unpivotMtx.multiply(transform).multiply(pivotMtx);
     
     for (const std::shared_ptr<VROConstraint> &constraint : _constraints) {
-        transform = constraint->getTransform(*this, transform);
+        transform = constraint->getTransform(*this, context, transform);
     }
     
     return transform;
@@ -247,7 +247,7 @@ void VRONode::removeAllActions() {
 #pragma mark - Hit Testing
 
 VROBoundingBox VRONode::getBoundingBox(const VRORenderContext &context) {
-    return _geometry->getBoundingBox().transform(getTransform());
+    return _geometry->getBoundingBox().transform(getTransform(context));
 }
 
 std::vector<VROHitTestResult> VRONode::hitTest(VROVector3f ray, const VRORenderContext &context,
@@ -269,7 +269,7 @@ void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsO
     }
     
     VROVector3f origin = context.getCamera().getPosition();
-    VROMatrix4f transform = parentTransform.multiply(getTransform());
+    VROMatrix4f transform = parentTransform.multiply(getTransform(context));
     
     if (_geometry) {
         VROBoundingBox bounds = _geometry->getBoundingBox().transform(transform);

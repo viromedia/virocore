@@ -130,11 +130,11 @@ void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &d
     
     if (_sceneController) {
         if (_outgoingSceneController) {
-            _outgoingSceneController.scene->updateSortKeys();
-            _sceneController.scene->updateSortKeys();
+            _outgoingSceneController.scene->updateSortKeys(*_context.get());
+            _sceneController.scene->updateSortKeys(*_context.get());
         }
         else {
-            _sceneController.scene->updateSortKeys();
+            _sceneController.scene->updateSortKeys(*_context.get());
         }
     }
 }
@@ -178,16 +178,16 @@ void VRORenderer::renderEye(VROEyeType eyeType, const VRODriver &driver) {
             [_outgoingSceneController sceneWillRender:_context.get()];
             [_sceneController sceneWillRender:_context.get()];
             
-            _outgoingSceneController.scene->renderBackground(*_context, driver);
-            _sceneController.scene->renderBackground(*_context, driver);
+            _outgoingSceneController.scene->renderBackground(*_context.get(), driver);
+            _sceneController.scene->renderBackground(*_context.get(), driver);
             
-            _outgoingSceneController.scene->render2(*_context, driver);
-            _sceneController.scene->render2(*_context, driver);
+            _outgoingSceneController.scene->render(*_context.get(), driver);
+            _sceneController.scene->render(*_context.get(), driver);
         }
         else {
             [_sceneController sceneWillRender:_context.get()];
-            _sceneController.scene->renderBackground(*_context, driver);
-            _sceneController.scene->render2(*_context, driver);
+            _sceneController.scene->renderBackground(*_context.get(), driver);
+            _sceneController.scene->render(*_context.get(), driver);
         }
     }
 }
