@@ -38,11 +38,14 @@ void VROSceneRendererCardboardOpenGL::initRenderer(GCSHeadTransform *headTransfo
 }
 
 void VROSceneRendererCardboardOpenGL::prepareFrame(GCSHeadTransform *headTransform) {
-    VROMatrix4f headRotation = matrix_float4x4_from_GL([headTransform headPoseInStartSpace]);
+    VROMatrix4f headRotation = matrix_float4x4_from_GL([headTransform headPoseInStartSpace]).invert();
     _renderer->prepareFrame(_frame, headRotation, *_driver.get());
     
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE); // Must enable writes to clear depth buffer
+    
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
