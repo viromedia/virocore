@@ -19,6 +19,7 @@
 #include "VROQuaternion.h"
 #include "VROCamera.h"
 
+class VROFrameSynchronizer;
 enum class VROEyeType;
 
 /*
@@ -29,8 +30,9 @@ class VRORenderContext {
     
 public:
     
-    VRORenderContext() :
-        _frame(0) {
+    VRORenderContext(std::shared_ptr<VROFrameSynchronizer> synchronizer) :
+        _frame(0),
+        _frameSynchronizer(synchronizer) {
         
     }
     
@@ -81,6 +83,10 @@ public:
         return _camera;
     }
     
+    std::shared_ptr<VROFrameSynchronizer> getFrameSynchronizer() const {
+        return _frameSynchronizer;
+    }
+    
 private:
     
     int _frame;
@@ -109,6 +115,11 @@ private:
      The camera used for this frame.
      */
     VROCamera _camera;
+    
+    /*
+     Synchronizer used to add or remove frame listeners.
+     */
+    std::shared_ptr<VROFrameSynchronizer> _frameSynchronizer;
     
 };
 

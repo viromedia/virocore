@@ -33,7 +33,7 @@ static const bool kRenderDirectToContext = true;
 
 }
 
-- (void)updateWithContext:(const VRODriver *)context {
+- (void)updateWithDriver:(const VRODriver *)driver {
     if (kRenderDirectToContext) {
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
         
@@ -56,7 +56,7 @@ static const bool kRenderDirectToContext = true;
         CGContextScaleCTM(bitmapContext, scale, scale);
 
         [self.layer renderInContext:bitmapContext];
-        _layer->setContents(width, height, bitmapContext, *context);
+        _layer->setContents(width, height, bitmapContext, *driver);
         
         CGContextRelease(bitmapContext);
     }

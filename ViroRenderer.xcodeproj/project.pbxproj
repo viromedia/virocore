@@ -47,6 +47,10 @@
 		8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */; };
 		8F3B968F1C77D64200B4FEE0 /* shanghai_tower_specular.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968C1C77D64200B4FEE0 /* shanghai_tower_specular.jpg */; };
 		8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968D1C77D64200B4FEE0 /* shanghai_tower.obj */; };
+		8F4AD9001D42BD710044B3F0 /* ViroKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; };
+		8F4AD9011D42BD770044B3F0 /* ViroKit.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8F65F79F1C99D50F00415115 /* ViroKit.framework.dSYM */; };
+		8F4AD9201D42D60C0044B3F0 /* VROFrameSynchronizerInternal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4AD91E1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.cpp */; };
+		8F4AD9211D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4AD91F1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h */; };
 		8F517BBB1BCDA2BD0017C70B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBA1BCDA2BD0017C70B /* main.m */; };
 		8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */; };
 		8F517BC11BCDA2BD0017C70B /* SampleRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC01BCDA2BD0017C70B /* SampleRenderer.m */; };
@@ -316,6 +320,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		8F4AD8FF1D42BD220044B3F0 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "/Users/radvani/Source/react-native-vro/ViroFramework";
+			dstSubfolderSpec = 0;
+			files = (
+				8F4AD9011D42BD770044B3F0 /* ViroKit.framework.dSYM in CopyFiles */,
+				8F4AD9001D42BD710044B3F0 /* ViroKit.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8F65F7941C971F1B00415115 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -405,6 +420,8 @@
 		8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shanghai_tower_diffuse.jpg; path = ViroSample/shanghai_tower_diffuse.jpg; sourceTree = "<group>"; };
 		8F3B968C1C77D64200B4FEE0 /* shanghai_tower_specular.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shanghai_tower_specular.jpg; path = ViroSample/shanghai_tower_specular.jpg; sourceTree = "<group>"; };
 		8F3B968D1C77D64200B4FEE0 /* shanghai_tower.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = shanghai_tower.obj; path = ViroSample/shanghai_tower.obj; sourceTree = "<group>"; };
+		8F4AD91E1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROFrameSynchronizerInternal.cpp; sourceTree = "<group>"; };
+		8F4AD91F1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFrameSynchronizerInternal.h; sourceTree = "<group>"; };
 		8F4C9FFF1BDAE06A00177B8F /* VROScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROScreen.h; sourceTree = "<group>"; };
 		8F4CA0011BDAE10C00177B8F /* VROScreen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROScreen.cpp; sourceTree = "<group>"; };
 		8F4DCE1F1BF7EAF900061DD7 /* VROPlane.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPlane.cpp; sourceTree = "<group>"; };
@@ -872,6 +889,8 @@
 				8FCF39691CB4242000A86CA3 /* VRORenderer.cpp */,
 				8FA9D0A21CC947DD00B00B93 /* VRODriver.h */,
 				8F0FE65E1CD129CE00A4C297 /* VROFrameSynchronizer.h */,
+				8F4AD91F1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h */,
+				8F4AD91E1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.cpp */,
 				8F6248371BDABB43000755E5 /* VROEye.h */,
 				8F6248391BDABD81000755E5 /* VROFieldOfView.h */,
 				8F62483D1BDAC069000755E5 /* VROViewport.h */,
@@ -1307,6 +1326,7 @@
 				8FA2E15B1C45AF3C0070DB26 /* VROScreenUIView.h in Headers */,
 				8F83DEA21C4826F80089C31A /* VROTimingFunctionLinear.h in Headers */,
 				8FA2E1551C44AE340070DB26 /* VROTorusKnot.h in Headers */,
+				8F4AD9211D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h in Headers */,
 				8F03BD001CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.h in Headers */,
 				8FD4DF341C18F500003DC425 /* VROGeometry.h in Headers */,
 				8FD4DF351C18F500003DC425 /* VROGeometryElement.h in Headers */,
@@ -1466,6 +1486,7 @@
 				8FD4DECA1C18ECD4003DC425 /* Headers */,
 				8FD4DECB1C18ECD4003DC425 /* Resources */,
 				8F65F7941C971F1B00415115 /* CopyFiles */,
+				8F4AD8FF1D42BD220044B3F0 /* CopyFiles */,
 				C27C39AA2B0946D0BF3CD926 /* Copy Pods Resources */,
 			);
 			buildRules = (
@@ -1803,6 +1824,7 @@
 				8FD4DF0C1C18ED3C003DC425 /* VROGeometryElement.cpp in Sources */,
 				8F65F8461CA2E26F00415115 /* VROSoundEffect.cpp in Sources */,
 				8FD4DF1C1C18ED53003DC425 /* VRORect.cpp in Sources */,
+				8F4AD9201D42D60C0044B3F0 /* VROFrameSynchronizerInternal.cpp in Sources */,
 				8FAE23D91CEA28E100E98B47 /* VROShaderBuilder.cpp in Sources */,
 				8F65F7891C90CD4700415115 /* VROBillboardConstraint.cpp in Sources */,
 				8F9277A51C62DBDF00FF892A /* VROConcurrentBuffer.cpp in Sources */,

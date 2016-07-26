@@ -17,6 +17,8 @@ class VROFrameSynchronizer {
     
 public:
     
+    virtual ~VROFrameSynchronizer() {}
+    
     virtual void addFrameListener(std::shared_ptr<VROFrameListener> listener) = 0;
     virtual void removeFrameListener(std::shared_ptr<VROFrameListener> listener) = 0;
     

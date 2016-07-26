@@ -33,14 +33,13 @@ static const float zFar  = 100;
     
     VROHeadTracker *_headTracker;
     std::shared_ptr<VRODevice> _vrDevice;
-    std::shared_ptr<VRODriverMetal> _context;
+    std::shared_ptr<VRODriverMetal> _driver;
     
     VRODistortionRenderer *_distortionRenderer;
     dispatch_semaphore_t _inflight_semaphore;
     
 }
 
-@property (readwrite, nonatomic) std::shared_ptr<VRORenderLoopMetal> renderLoop;
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
 
 @end
@@ -77,7 +76,7 @@ static const float zFar  = 100;
     self.delegate = self;
     self.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
 
-    _context = std::make_shared<VRODriverMetal>(self.device);
+    _driver = std::make_shared<VRODriverMetal>(self.device);
     _distortionRenderer = new VRODistortionRenderer(_vrDevice);
     _inflight_semaphore = dispatch_semaphore_create(3);
         
@@ -178,23 +177,23 @@ static const float zFar  = 100;
 }
 
 - (void)setSceneController:(VROSceneController *)sceneController {
-    _renderer->setSceneController(sceneController);
+    _renderer->setSceneController(sceneController, *_driver);
 }
 
 - (void)setSceneController:(VROSceneController *)sceneController animated:(BOOL)animated {
-    _renderer->setSceneController(sceneController, animated);
+    _renderer->setSceneController(sceneController, animated, *_driver);
 }
 
 - (void)setSceneController:(VROSceneController *)sceneController duration:(float)seconds
             timingFunction:(VROTimingFunctionType)timingFunctionType {
     
-    _renderer->setSceneController(sceneController, seconds, timingFunctionType);
+    _renderer->setSceneController(sceneController, seconds, timingFunctionType, *_driver);
 }
 
 #pragma mark - Frame Listeners
 
 - (std::shared_ptr<VROFrameSynchronizer>)frameSynchronizer {
-    return _renderer;
+    return _renderer->getFrameSynchronizer();
 }
 
 #pragma mark - Rendering
@@ -214,7 +213,7 @@ static const float zFar  = 100;
         /*
          A single command buffer collects all render events for a frame.
          */
-        VRODriverMetal *driver = (VRODriverMetal *)_context.get();
+        VRODriverMetal *driver = (VRODriverMetal *)_driver.get();
         
         id <MTLCommandBuffer> commandBuffer = [driver->getCommandQueue() commandBuffer];
         commandBuffer.label = @"CommandBuffer";
@@ -240,7 +239,7 @@ static const float zFar  = 100;
 }
 
 - (void)renderVRDistortionWithCommandBuffer:(id <MTLCommandBuffer>)commandBuffer {
-    VRODriverMetal *driver = (VRODriverMetal *)_context.get();
+    VRODriverMetal *driver = (VRODriverMetal *)_driver.get();
     _distortionRenderer->updateDistortion(driver->getDevice(), driver->getLibrary(), self);
     
     std::shared_ptr<VRORenderTarget> eyeTarget = _distortionRenderer->bindEyeRenderTarget(commandBuffer);

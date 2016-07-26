@@ -12,6 +12,7 @@
 #include <memory>
 
 class VROScene;
+class VRODriver;
 class VRORenderContext;
 class VROHoverDelegate;
 class VROHoverController;
@@ -30,10 +31,10 @@ public:
         return _scene;
     }
     
-    virtual void onSceneWillAppear(VRORenderContext &context);
-    virtual void onSceneDidAppear(VRORenderContext &context);
-    virtual void onSceneWillDisappear(VRORenderContext &context);
-    virtual void onSceneDidDisappear(VRORenderContext &context);
+    virtual void onSceneWillAppear(VRORenderContext &context, const VRODriver &driver);
+    virtual void onSceneDidAppear(VRORenderContext &context, const VRODriver &driver);
+    virtual void onSceneWillDisappear(VRORenderContext &context, const VRODriver &driver);
+    virtual void onSceneDidDisappear(VRORenderContext &context, const VRODriver &driver);
     
     /*
      Set a hover delegate for this scene. Controls the response to hovering

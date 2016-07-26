@@ -39,20 +39,20 @@
     return self;
 }
 
-- (void)sceneWillAppear:(VRORenderContext *)context {
-    self.internal->onSceneWillAppear(*context);
+- (void)sceneWillAppear:(VRORenderContext *)context driver:(const VRODriver *)driver {
+    self.internal->onSceneWillAppear(*context, *driver);
 }
 
-- (void)sceneDidAppear:(VRORenderContext *)context {
-    self.internal->onSceneDidAppear(*context);
+- (void)sceneDidAppear:(VRORenderContext *)context driver:(const VRODriver *)driver {
+    self.internal->onSceneDidAppear(*context, *driver);
 }
 
-- (void)sceneWillDisappear:(VRORenderContext *)context {
-    self.internal->onSceneWillDisappear(*context);
+- (void)sceneWillDisappear:(VRORenderContext *)context driver:(const VRODriver *)driver {
+    self.internal->onSceneWillDisappear(*context, *driver);
 }
 
-- (void)sceneDidDisappear:(VRORenderContext *)context {
-    self.internal->onSceneDidDisappear(*context);
+- (void)sceneDidDisappear:(VRORenderContext *)context driver:(const VRODriver *)driver {
+    self.internal->onSceneDidDisappear(*context, *driver);
 }
 
 - (void)startIncomingTransition:(VRORenderContext *)context duration:(float)seconds {    

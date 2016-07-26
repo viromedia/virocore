@@ -22,7 +22,7 @@ class VROEye;
 
 - (instancetype)init;
 
-- (void)updateWithContext:(const VRODriver *)context;
+- (void)updateWithDriver:(const VRODriver *)driver;
 - (void)renderEye:(VROEyeType)eye
 withRenderContext:(const VRORenderContext *)renderContext
     driver:(const VRODriver *)driver;

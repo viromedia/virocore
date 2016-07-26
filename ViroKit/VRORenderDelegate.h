@@ -19,7 +19,7 @@ enum class VROEyeType;
 
 @protocol VRORenderDelegate <NSObject>
 
-- (void)setupRendererWithDriverContext:(VRODriver *)driver;
+- (void)setupRendererWithDriver:(VRODriver *)driver;
 - (void)shutdownRenderer;
 - (void)renderViewDidChangeSize:(CGSize)size context:(VRORenderContext *)context;
 

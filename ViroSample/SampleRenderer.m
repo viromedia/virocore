@@ -328,7 +328,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     [label setFont:[UIFont systemFontOfSize:12]];
     
     [labelView addSubview:label];
-    [labelView updateWithContext:self.driver];
+    [labelView updateWithDriver:self.driver];
     
     rootNode->addChildNode(labelView.vroLayer);
     
@@ -417,7 +417,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return [self loadTorusScene];
 }
 
-- (void)setupRendererWithDriverContext:(VRODriver *)driver {
+- (void)setupRendererWithDriver:(VRODriver *)driver {
     self.driver = driver;
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
 }

@@ -27,6 +27,11 @@ public:
     virtual void renderEye(GCSEye eye, GCSHeadTransform *headTransform);
     virtual void endFrame();
     
+    void setSceneController(VROSceneController *sceneController);
+    void setSceneController(VROSceneController *sceneController, bool animated);
+    void setSceneController(VROSceneController *sceneController, float seconds,
+                            VROTimingFunctionType timingFunctionType);
+    
 private:
     
     int _frame;

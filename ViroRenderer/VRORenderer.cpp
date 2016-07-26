@@ -20,6 +20,7 @@
 #import "VROScreenUIView.h"
 #import "VRORenderDelegate.h"
 #import "VROTransaction.h"
+#import "VROFrameSynchronizerInternal.h"
 
 static const float kDefaultSceneTransitionDuration = 1.0;
 
@@ -27,7 +28,8 @@ static const float kDefaultSceneTransitionDuration = 1.0;
 
 VRORenderer::VRORenderer() :
     _rendererInitialized(false),
-    _context(std::make_shared<VRORenderContext>()),
+    _frameSynchronizer(std::make_shared<VROFrameSynchronizerInternal>()),
+    _context(std::make_shared<VRORenderContext>(_frameSynchronizer)),
     _HUD([[VROScreenUIView alloc] init]),
     _camera(std::make_shared<VROCameraMutable>()),
     _sceneTransitionActive(false) {
@@ -86,7 +88,7 @@ void VRORenderer::updateRenderViewSize(CGSize size) {
 
 void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &driver) {
     if (!_rendererInitialized) {
-        [_delegate setupRendererWithDriverContext:&driver];
+        [_delegate setupRendererWithDriver:&driver];
         _rendererInitialized = YES;
     }
     
@@ -126,7 +128,7 @@ void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &d
     _context->setCamera(camera);
     _context->setEnclosureViewMatrix(enclosureMatrix);
 
-    [_HUD updateWithContext:&driver];
+    [_HUD updateWithDriver:&driver];
     
     if (_sceneController) {
         if (_outgoingSceneController) {
@@ -162,8 +164,8 @@ void VRORenderer::endFrame(const VRODriver &driver) {
         [_sceneController endIncomingTransition:_context.get()];
         [_outgoingSceneController endOutgoingTransition:_context.get()];
         
-        [_sceneController sceneDidAppear:_context.get()];
-        [_outgoingSceneController sceneDidDisappear:_context.get()];
+        [_sceneController sceneDidAppear:_context.get() driver:&driver];
+        [_outgoingSceneController sceneDidDisappear:_context.get() driver:&driver];
         
         _outgoingSceneController = nullptr;
     }
@@ -207,32 +209,33 @@ void VRORenderer::handleTap() {
 
 #pragma mark - Scene Loading
 
-void VRORenderer::setSceneController(VROSceneController *sceneController) {
+void VRORenderer::setSceneController(VROSceneController *sceneController, const VRODriver &driver) {
     VROSceneController *outgoingSceneController = _sceneController;
     
-    [sceneController sceneWillAppear:_context.get()];
+    [sceneController sceneWillAppear:_context.get() driver:&driver];
     if (outgoingSceneController) {
-        [outgoingSceneController sceneWillDisappear:_context.get()];
+        [outgoingSceneController sceneWillDisappear:_context.get() driver:&driver];
     }
     
     _sceneController = sceneController;
     
-    [sceneController sceneDidAppear:_context.get()];
+    [sceneController sceneDidAppear:_context.get() driver:&driver];
     if (outgoingSceneController) {
-        [outgoingSceneController sceneDidDisappear:_context.get()];
+        [outgoingSceneController sceneDidDisappear:_context.get() driver:&driver];
     }
 }
 
-void VRORenderer::setSceneController(VROSceneController *sceneController, bool animated) {
+void VRORenderer::setSceneController(VROSceneController *sceneController, bool animated, const VRODriver &driver) {
     if (!animated || !_sceneController) {
         _sceneController = sceneController;
         return;
     }
     
-    setSceneController(sceneController, kDefaultSceneTransitionDuration, VROTimingFunctionType::EaseIn);
+    setSceneController(sceneController, kDefaultSceneTransitionDuration, VROTimingFunctionType::EaseIn, driver);
 }
 
-void VRORenderer::setSceneController(VROSceneController *sceneController, float seconds, VROTimingFunctionType timingFunctionType) {
+void VRORenderer::setSceneController(VROSceneController *sceneController, float seconds,
+                                     VROTimingFunctionType timingFunctionType, const VRODriver &driver) {
     passert (_sceneController != nil);
     
     _outgoingSceneController = _sceneController;
@@ -242,8 +245,8 @@ void VRORenderer::setSceneController(VROSceneController *sceneController, float 
     _sceneTransitionDuration = seconds;
     _sceneTransitionTimingFunction = VROTimingFunction::forType(timingFunctionType);
     
-    [_sceneController sceneWillAppear:_context.get()];
-    [_outgoingSceneController sceneWillDisappear:_context.get()];
+    [_sceneController sceneWillAppear:_context.get() driver:&driver];
+    [_outgoingSceneController sceneWillDisappear:_context.get() driver:&driver];
     
     [_sceneController startIncomingTransition:_context.get() duration:seconds];
     [_outgoingSceneController startOutgoingTransition:_context.get() duration:seconds];
@@ -272,49 +275,11 @@ bool VRORenderer::processSceneTransition() {
 
 #pragma mark - Frame Listeners
 
-void VRORenderer::addFrameListener(std::shared_ptr<VROFrameListener> listener) {
-    _frameListeners.push_back(listener);
-}
-
-void VRORenderer::removeFrameListener(std::shared_ptr<VROFrameListener> listener) {
-    _frameListeners.erase(
-                          std::remove_if(_frameListeners.begin(), _frameListeners.end(),
-                                         [this, listener](std::weak_ptr<VROFrameListener> l) {
-                                             std::shared_ptr<VROFrameListener> locked = l.lock();
-                                             return locked && locked == listener;
-                                         }), _frameListeners.end());
-}
-
 void VRORenderer::notifyFrameStart() {
-    auto it = _frameListeners.begin();
-    
-    while (it != _frameListeners.end()) {
-        std::weak_ptr<VROFrameListener> listener = *it;
-        std::shared_ptr<VROFrameListener> locked = listener.lock();
-        
-        if (locked) {
-            locked->onFrameWillRender(*_context);
-            ++it;
-        }
-        else {
-            it = _frameListeners.erase(it);
-        }
-    }
+    ((VROFrameSynchronizerInternal *)_frameSynchronizer.get())->notifyFrameStart(*_context.get());
 }
 
 void VRORenderer::notifyFrameEnd() {
-    auto it = _frameListeners.begin();
-    
-    while (it != _frameListeners.end()) {
-        std::weak_ptr<VROFrameListener> listener = *it;
-        std::shared_ptr<VROFrameListener> locked = listener.lock();
-        
-        if (locked) {
-            locked->onFrameDidRender(*_context);
-            ++it;
-        }
-        else {
-            it = _frameListeners.erase(it);
-        }
-    }
+    ((VROFrameSynchronizerInternal *)_frameSynchronizer.get())->notifyFrameEnd(*_context.get());
+
 }

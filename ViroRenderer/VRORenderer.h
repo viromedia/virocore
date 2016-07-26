@@ -33,7 +33,7 @@ enum class VROTimingFunctionType;
 @class VROScreenUIView; //TODO delete
 @class VROSceneController;
 
-class VRORenderer : public VROFrameSynchronizer {
+class VRORenderer {
     
 public:
     
@@ -52,9 +52,10 @@ public:
     
 #pragma mark - Scene Controllers
     
-    void setSceneController(VROSceneController *sceneController);
-    void setSceneController(VROSceneController *sceneController, bool animated);
-    void setSceneController(VROSceneController *sceneController, float seconds, VROTimingFunctionType timingFunctionType);
+    void setSceneController(VROSceneController *sceneController, const VRODriver &driver);
+    void setSceneController(VROSceneController *sceneController, bool animated, const VRODriver &driver);
+    void setSceneController(VROSceneController *sceneController, float seconds,
+                            VROTimingFunctionType timingFunctionType, const VRODriver &driver);
     VROSceneController *getSceneController() const {
         return _sceneController;
     }
@@ -66,10 +67,11 @@ public:
                    const VRODriver &driver);
     void endFrame(const VRODriver &driver);
     
-#pragma mark - Frame Listeners
+#pragma mark - Frame Synchronizer
     
-    void addFrameListener(std::shared_ptr<VROFrameListener> listener);
-    void removeFrameListener(std::shared_ptr<VROFrameListener> listener);
+    std::shared_ptr<VROFrameSynchronizer> getFrameSynchronizer() {
+        return _frameSynchronizer;
+    }
 
     void handleTap();
     VROScreenUIView *getHUD() {
@@ -79,6 +81,11 @@ public:
 private:
     
     bool _rendererInitialized;
+    
+    /*
+     Manages per-frame listeners.
+     */
+    std::shared_ptr<VROFrameSynchronizer> _frameSynchronizer;
     
     /*
      Maintains parameters used for scene rendering.
@@ -99,11 +106,6 @@ private:
      Delegate receiving scene rendering updates.
      */
     id <VRORenderDelegate> _delegate; //TODO Make this not Obj-C, and weak ptr
-
-    /*
-     Listeners that receive an update each frame.
-     */
-    std::vector<std::weak_ptr<VROFrameListener>> _frameListeners;
 
 #pragma mark - Scene and Scene Transitions
     

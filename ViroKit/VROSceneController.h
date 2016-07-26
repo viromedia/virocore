@@ -23,10 +23,10 @@ class VROHoverDelegate;
 
 - (id)initWithView:(id <VROView>)view;
 
-- (void)sceneWillAppear:(VRORenderContext *)context;
-- (void)sceneDidAppear:(VRORenderContext *)context;
-- (void)sceneWillDisappear:(VRORenderContext *)context;
-- (void)sceneDidDisappear:(VRORenderContext *)context;
+- (void)sceneWillAppear:(VRORenderContext *)context driver:(const VRODriver *)driver;
+- (void)sceneDidAppear:(VRORenderContext *)context driver:(const VRODriver *)driver;
+- (void)sceneWillDisappear:(VRORenderContext *)context driver:(const VRODriver *)driver;
+- (void)sceneDidDisappear:(VRORenderContext *)context driver:(const VRODriver *)driver;
 
 - (void)startIncomingTransition:(VRORenderContext *)context duration:(float)duration;
 - (void)startOutgoingTransition:(VRORenderContext *)context duration:(float)duration;

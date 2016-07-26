@@ -37,6 +37,20 @@ void VROSceneRendererCardboardOpenGL::initRenderer(GCSHeadTransform *headTransfo
     glCullFace(GL_BACK);
 }
 
+void VROSceneRendererCardboardOpenGL::setSceneController(VROSceneController *sceneController) {
+    _renderer->setSceneController(sceneController, *_driver);
+}
+
+void VROSceneRendererCardboardOpenGL::setSceneController(VROSceneController *sceneController, bool animated) {
+    _renderer->setSceneController(sceneController, animated, *_driver);
+}
+
+void VROSceneRendererCardboardOpenGL::setSceneController(VROSceneController *sceneController, float seconds,
+                                                         VROTimingFunctionType timingFunctionType) {
+    
+    _renderer->setSceneController(sceneController, seconds, timingFunctionType, *_driver);
+}
+
 void VROSceneRendererCardboardOpenGL::prepareFrame(GCSHeadTransform *headTransform) {
     VROMatrix4f headRotation = matrix_float4x4_from_GL([headTransform headPoseInStartSpace]).invert();
     _renderer->prepareFrame(_frame, headRotation, *_driver.get());

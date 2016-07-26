@@ -60,7 +60,7 @@ static const float kVROLayerSize = 2;
     
 }
 
-- (void)updateWithContext:(const VRODriver *)context {
+- (void)updateWithDriver:(const VRODriver *)driver {
     if (!_needsUpdate) {
         return;
     }
@@ -90,7 +90,7 @@ static const float kVROLayerSize = 2;
     //if (self.reticleEnabled) {
         [self.reticle renderRect:self.bounds context:bitmapContext];
     //}
-    _layer->setContents(width, height, bitmapContext, *context);
+    _layer->setContents(width, height, bitmapContext, *driver);
     
     CGContextRelease(bitmapContext);
 }

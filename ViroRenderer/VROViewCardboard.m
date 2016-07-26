@@ -148,23 +148,23 @@
 }
 
 - (void)setSceneController:(VROSceneController *)sceneController {
-    _renderer->setSceneController(sceneController);
+    self.sceneRenderer->setSceneController(sceneController);
 }
 
 - (void)setSceneController:(VROSceneController *)sceneController animated:(BOOL)animated {
-    _renderer->setSceneController(sceneController, animated);
+    self.sceneRenderer->setSceneController(sceneController, animated);
 }
 
 - (void)setSceneController:(VROSceneController *)sceneController duration:(float)seconds
             timingFunction:(VROTimingFunctionType)timingFunctionType {
     
-    _renderer->setSceneController(sceneController, seconds, timingFunctionType);
+    self.sceneRenderer->setSceneController(sceneController, seconds, timingFunctionType);
 }
 
 #pragma mark - Frame Listeners
 
 - (std::shared_ptr<VROFrameSynchronizer>)frameSynchronizer {
-    return _renderer;
+    return _renderer->getFrameSynchronizer();
 }
 
 #pragma mark - Cardboard View Delegate

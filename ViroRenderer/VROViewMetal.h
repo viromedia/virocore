@@ -11,8 +11,6 @@
 #import <memory>
 #import "VROView.h"
 
-class VRORenderLoopMetal;
-
 @interface VROViewMetal : MTKView <MTKViewDelegate, VROView>
 
 @end

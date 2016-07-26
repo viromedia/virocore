@@ -227,10 +227,6 @@ VROMatrix4f VROHeadTracker::getHeadRotation() {
     
     _lastHeadRotation = matrix_float4x4_from_GL(rotationMatrix_display);
     VROQuaternion quatNew(_lastHeadRotation);
-    
-    float innerProduct = quatOld.dotProduct(quatNew);
-    float distance = 1.0 - innerProduct * innerProduct;
-   // NSLog(@"Distance %f", distance);
 
     return _lastHeadRotation;
 }
