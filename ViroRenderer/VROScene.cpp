@@ -46,7 +46,7 @@ void VROScene::renderBackground(const VRORenderContext &renderContext,
 void VROScene::render(const VRORenderContext &context,
                       const VRODriver &driver) {
     
-    uint32_t boundShaderId = 0;
+    uint32_t boundShaderId = UINT32_MAX;
     std::vector<std::shared_ptr<VROLight>> boundLights;
     
     for (VROSortKey &key : _keys) {
