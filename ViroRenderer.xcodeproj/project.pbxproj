@@ -323,7 +323,7 @@
 		8F4AD8FF1D42BD220044B3F0 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "/Users/radvani/Source/react-native-vro/ViroFramework";
+			dstPath = "/Users/radvani/Source/react-native-vro/React";
 			dstSubfolderSpec = 0;
 			files = (
 				8F4AD9011D42BD770044B3F0 /* ViroKit.framework.dSYM in CopyFiles */,
