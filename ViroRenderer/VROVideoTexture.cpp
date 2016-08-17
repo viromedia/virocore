@@ -21,22 +21,12 @@
 # define ONE_FRAME_DURATION 0.03
 
 VROVideoTexture::VROVideoTexture() :
-    _notificationToken(nullptr),
-    _mediaReady(false),
-    _paused(true),
-    _currentTextureIndex(0),
-    _videoTextureCache(nullptr) {
+    _paused(true) {
     
-    _player = [[AVPlayer alloc] init];
-    
-    NSDictionary *pixBuffAttributes = @{(id)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA)};
-    _videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
-        
     ALLOCATION_TRACKER_ADD(VideoTextures, 1);
 }
 
 VROVideoTexture::~VROVideoTexture() {
-    delete (_videoTextureCache);
     ALLOCATION_TRACKER_SUB(VideoTextures, 1);
 }
 
@@ -67,80 +57,122 @@ void VROVideoTexture::loadVideo(NSURL *url,
                                 std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                 const VRODriver &driver) {
     
-    _mediaReady = false;
-    
-    _videoTextureCache = driver.newVideoTextureCache();
-    _videoQueue = dispatch_queue_create("video_output_queue", DISPATCH_QUEUE_SERIAL);
-    _videoPlaybackDelegate = [[VROVideoPlaybackDelegate alloc] initWithVROVideoTexture:this];
-    [_videoOutput setDelegate:_videoPlaybackDelegate queue:_videoQueue];
-    
     frameSynchronizer->addFrameListener(shared_from_this());
     
-    /*
-     Sets up player item and adds video output to it. The tracks property of an asset is
-     loaded via asynchronous key value loading, to access the preferred transform of a
-     video track used to orientate the video while rendering.
-     
-     After adding the video output, we request a notification of media change in order
-     to restart the CADisplayLink.
-     */
-    [[_player currentItem] removeOutput:_videoOutput];
+    _player = [AVPlayer playerWithURL:url];
+    _videoPlaybackDelegate = [[VROVideoPlaybackDelegate alloc] initWithVideoTexture:this
+                                                                             player:_player
+                                                                             driver:driver];
     
-    AVPlayerItem *item = [AVPlayerItem playerItemWithURL:url];
-    AVAsset *asset = [item asset];
+    [_player.currentItem addObserver:_videoPlaybackDelegate
+           forKeyPath:@"status"
+              options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+              context:this];
     
-    [asset loadValuesAsynchronouslyForKeys:@[@"tracks"] completionHandler:^{
-        
-        if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
-            NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-            if ([tracks count] > 0) {
-                
-                // Choose the first video track.
-                AVAssetTrack *videoTrack = [tracks objectAtIndex:0];
-                [videoTrack loadValuesAsynchronouslyForKeys:@[@"preferredTransform"] completionHandler:^{
-                    
-                    if ([videoTrack statusOfValueForKey:@"preferredTransform" error:nil] == AVKeyValueStatusLoaded) {
-                        CGAffineTransform preferredTransform = [videoTrack preferredTransform];
-                        
-                        /*
-                         The orientation of the camera while recording affects the orientation
-                         of the images received from an AVPlayerItemVideoOutput. Here we compute a
-                         rotation that is used to correctly orientate the video.
-                         */
-                        _preferredRotation = -1 * atan2(preferredTransform.b, preferredTransform.a);
-                        addLoopNotification(item);
-                        
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [item addOutput:_videoOutput];
-                            [_player replaceCurrentItemWithPlayerItem:item];
-                            [_videoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:ONE_FRAME_DURATION];
-                        });
-                    }
-                }];
-            }
-        }
-    }];
-}
-
-void VROVideoTexture::addLoopNotification(AVPlayerItem *item) {
-    if (_notificationToken) {
-        _notificationToken = nil;
-    }
-    
-    /*
-     Setting actionAtItemEnd to None prevents the movie from getting paused at item end. A very simplistic, and not gapless, looped playback.
-     */
-    _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
-    _notificationToken = [[NSNotificationCenter defaultCenter] addObserverForName:AVPlayerItemDidPlayToEndTimeNotification
-                                                                           object:item
-                                                                            queue:[NSOperationQueue mainQueue]
-                                                                       usingBlock:^(NSNotification *note) {
-                          [[_player currentItem] seekToTime:kCMTimeZero];
-                          }
-                          ];
+    [_player.currentItem addObserver:_videoPlaybackDelegate
+                          forKeyPath:@"playbackLikelyToKeepUp"
+                             options:NSKeyValueObservingOptionNew
+                             context:this];
 }
 
 void VROVideoTexture::onFrameWillRender(const VRORenderContext &context) {
+    [_videoPlaybackDelegate renderFrame];
+}
+
+void VROVideoTexture::onFrameDidRender(const VRORenderContext &context) {
+   
+}
+
+void VROVideoTexture::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> substrate) {
+    setSubstrate(VROTextureType::Quad, std::move(substrate));
+}
+
+#pragma mark - Video Playback Delegate
+
+@interface VROVideoPlaybackDelegate () {
+    
+    dispatch_queue_t _videoQueue;
+    int _currentTextureIndex;
+    VROVideoTextureCache *_videoTextureCache;
+
+}
+
+@property (readonly) VROVideoTexture *texture;
+@property (readonly) AVPlayer *player;
+
+@property (readwrite) AVPlayerItemVideoOutput *output;
+@property (readwrite) BOOL mediaReady;
+@property (readwrite) BOOL playerReady;
+
+@property (readwrite) id notificationToken;
+
+@end
+
+@implementation VROVideoPlaybackDelegate
+
+- (id)initWithVideoTexture:(VROVideoTexture *)texture
+                    player:(AVPlayer *)player
+                    driver:(const VRODriver &)driver {
+                        
+    self = [super init];
+    if (self) {
+        _texture = texture;
+        _player = player;
+        
+        _currentTextureIndex = 0;
+        _mediaReady = false;
+        _playerReady = false;
+        
+        _videoTextureCache = driver.newVideoTextureCache();
+        _videoQueue = dispatch_queue_create("video_output_queue", DISPATCH_QUEUE_SERIAL);
+    }
+    
+    return self;
+}
+
+- (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender {
+    _mediaReady = true;
+}
+
+- (void)observeValueForKeyPath:(NSString *)path ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if (context == _texture) {
+        
+        if (!self.playerReady &&
+            [path isEqualToString:@"status"] &&
+            self.player.status == AVPlayerStatusReadyToPlay &&
+            self.player.currentItem.status == AVPlayerItemStatusReadyToPlay) {
+            
+            self.playerReady = true;
+            
+            // It's unclear what thread we receive this notification on,
+            // so return to main
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self attachVideoOutput];
+            });
+        }
+        else if ([path isEqualToString:@"playbackLikelyToKeepUp"]) {
+            if (!self.texture->isPaused()) {
+                [self.player play];
+            }
+        }
+    }
+    else {
+        [super observeValueForKeyPath:path ofObject:object change:change context:context];
+    }
+}
+
+- (void)attachVideoOutput {
+    NSDictionary *pixBuffAttributes = @{(id)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA)};
+    self.output = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
+    [self addLoopNotification:self.player.currentItem];
+
+    [self.output setDelegate:self queue:_videoQueue];
+    [self.output requestNotificationOfMediaDataChangeWithAdvanceInterval:ONE_FRAME_DURATION];
+    
+    [self.player.currentItem addOutput:self.output];
+}
+
+- (void)renderFrame {
     /*
      Stuttering is significantly reduced by placing this code in willRender() as opposed
      to didRender(). Reason unknown: contention of resources somewhere?
@@ -160,148 +192,41 @@ void VROVideoTexture::onFrameWillRender(const VRORenderContext &context) {
      and later rendered on screen.
      */
     CFTimeInterval nextVSync = timestamp + duration;
-    CMTime outputItemTime = [_videoOutput itemTimeForHostTime:nextVSync];
+    CMTime outputItemTime = [_output itemTimeForHostTime:nextVSync];
     
-    if ([_videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
-        CVPixelBufferRef pixelBuffer = [_videoOutput copyPixelBufferForItemTime:outputItemTime
-                                                             itemTimeForDisplay:NULL];
+    if ([_output hasNewPixelBufferForItemTime:outputItemTime]) {
+        CMTime presentationTime = kCMTimeZero;
+        CVPixelBufferRef pixelBuffer = [_output copyPixelBufferForItemTime:outputItemTime
+                                                             itemTimeForDisplay:&presentationTime];
         
         if (pixelBuffer != nullptr) {
-            displayPixelBuffer(pixelBuffer);
+            CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+            
+            self.texture->displayPixelBuffer(std::move(_videoTextureCache->createTextureSubstrate(pixelBuffer)));
+            
+            CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
             CFRelease(pixelBuffer);
         }
     }
 }
 
-void VROVideoTexture::onFrameDidRender(const VRORenderContext &context) {
-   
-}
-
-void VROVideoTexture::displayPixelBuffer(CVPixelBufferRef pixelBuffer) {
-    setSubstrate(VROTextureType::Quad, std::move(_videoTextureCache->createTextureSubstrate(pixelBuffer)));
-}
-
-@interface VROVideoPlaybackDelegate ()
-
-@property (readonly) VROVideoTexture *texture;
-
-@end
-
-@implementation VROVideoPlaybackDelegate
-
-- (id)initWithVROVideoTexture:(VROVideoTexture *)texture {
-    self = [super init];
-    if (self) {
-        _texture = texture;
+-(void) addLoopNotification:(AVPlayerItem *)item {
+    if (_notificationToken) {
+        _notificationToken = nil;
     }
     
-    return self;
-}
-
-- (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender {
-    self.texture->setMediaReady(true);
-}
-
-@end
-
-#pragma mark - Live Video Playback
-
-void VROVideoTexture::displayCamera(AVCaptureDevicePosition position,
-                                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                    const VRODriver &driver) {
-    
-    frameSynchronizer->addFrameListener(shared_from_this());
-    _videoDelegate = [[VROVideoCaptureDelegate alloc] initWithVROVideoTexture:this];
-    _videoTextureCache = driver.newVideoTextureCache();
-    
-    // Create a capture session
-    _captureSession = [[AVCaptureSession alloc] init];
-    if (!_captureSession) {
-        pinfo("ERROR: Couldnt create a capture session");
-        pabort();
-    }
-    
-    [_captureSession beginConfiguration];
-    [_captureSession setSessionPreset:AVCaptureSessionPresetLow];
-    
-    // Get the a video device with preference to the front facing camera
-    AVCaptureDevice *videoDevice = nil;
-    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-    for (AVCaptureDevice *device in devices) {
-        if ([device position] == position) {
-            videoDevice = device;
-        }
-    }
-    
-    if (videoDevice == nil) {
-        videoDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-    }
-    
-    if (videoDevice == nil) {
-        pinfo("ERROR: Couldnt create a AVCaptureDevice");
-        pabort();
-    }
-    
-    NSError *error;
-    
-    // Device input
-    AVCaptureDeviceInput *deviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&error];
-    if (error) {
-        pinfo("ERROR: Couldnt create AVCaptureDeviceInput");
-        pabort();
-    }
-    
-    [_captureSession addInput:deviceInput];
-    
-    // Create the output for the capture session.
-    AVCaptureVideoDataOutput *dataOutput = [[AVCaptureVideoDataOutput alloc] init];
-    [dataOutput setAlwaysDiscardsLateVideoFrames:YES];
-    
-    // Set the color space.
-    [dataOutput setVideoSettings:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:kCVPixelFormatType_32BGRA]
-                                                             forKey:(id)kCVPixelBufferPixelFormatTypeKey]];
-    
-    // Set dispatch to be on the main thread to create the texture in memory and allow Metal to use it for rendering
-    [dataOutput setSampleBufferDelegate:_videoDelegate queue:dispatch_get_main_queue()];
-    
-    [_captureSession addOutput:dataOutput];
-    [_captureSession commitConfiguration];
-    [_captureSession startRunning];
-    
-    _mediaReady = true;
-}
-
-@interface VROVideoCaptureDelegate ()
-
-@property (readonly) VROVideoTexture *texture;
-
-@end
-
-@implementation VROVideoCaptureDelegate {
-    
-    id <MTLTexture> _videoTexture[kInFlightVideoTextures];
-    
-}
-
-- (id)initWithVROVideoTexture:(VROVideoTexture *)texture {
-    self = [super init];
-    if (self) {
-        _texture = texture;
-    }
-    
-    return self;
-}
-
-- (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
-fromConnection:(AVCaptureConnection *)connection {
-    
-    VROVideoTextureCache *videoTextureCache = _texture->getVideoTextureCache();
-    _texture->setSubstrate(VROTextureType::Quad, videoTextureCache->createTextureSubstrate(sampleBuffer));    
-}
-
-- (void)captureOutput:(AVCaptureOutput *)captureOutput didDropSampleBuffer:(CMSampleBufferRef)sampleBuffer
-fromConnection:(AVCaptureConnection *)connection {
-    
+    /*
+     Setting actionAtItemEnd to None prevents the movie from getting paused at item end. 
+     A very simplistic, and not gapless, looped playback.
+     */
+    _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
+    _notificationToken = [[NSNotificationCenter defaultCenter] addObserverForName:AVPlayerItemDidPlayToEndTimeNotification
+                                                                           object:item
+                                                                            queue:[NSOperationQueue mainQueue]
+                                                                       usingBlock:^(NSNotification *note) {
+                            [[_player currentItem] seekToTime:kCMTimeZero];
+                          }
+                          ];
 }
 
 @end
