@@ -24,5 +24,5 @@ void main() {
     lambert.diffuse_intensity = material_diffuse_intensity;
     lambert.material_alpha = material_alpha;
 
-    frag_color = lambert_lighting_diffuse_fixed(lambert, lighting);
+    frag_color = lambert_lighting_diffuse_fixed(lambert);
 }
