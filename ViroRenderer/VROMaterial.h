@@ -67,10 +67,10 @@ public:
         return _materialId;
     }
     
-    void bindShader(const VRODriver &driver);
+    void bindShader(VRODriver &driver);
     void bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,
                     const VRORenderContext &context,
-                    const VRODriver &driver);
+                    VRODriver &driver);
     
     VROMaterialVisual &getDiffuse() const {
         return *_diffuse;
@@ -181,7 +181,7 @@ public:
      Get the representation of this material in the underlying graphics 
      technology.
      */
-    VROMaterialSubstrate *const getSubstrate(const VRODriver &driver);
+    VROMaterialSubstrate *const getSubstrate(VRODriver &driver);
     
     /*
      Update the given sort key with fields from this material.

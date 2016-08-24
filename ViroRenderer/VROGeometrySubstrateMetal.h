@@ -58,7 +58,7 @@ class VROGeometrySubstrateMetal : public VROGeometrySubstrate {
 public:
     
     VROGeometrySubstrateMetal(const VROGeometry &geometry,
-                              const VRODriverMetal &driver);
+                              VRODriverMetal &driver);
     virtual ~VROGeometrySubstrateMetal();
     
     void render(const VROGeometry &geometry,
@@ -67,7 +67,7 @@ public:
                 float opacity,
                 std::shared_ptr<VROMaterial> &material,
                 const VRORenderContext &context,
-                const VRODriver &driver);
+                VRODriver &driver);
     
 private:
     
@@ -107,13 +107,13 @@ private:
      changing.
      */
     void updatePipelineStates(const VROGeometry &geometry,
-                              const VRODriverMetal &driver);
+                              VRODriverMetal &driver);
     
     /*
      Create a pipeline state from the given material, using the current _vertexDescriptor.
      */
     id <MTLRenderPipelineState> createRenderPipelineState(const std::shared_ptr<VROMaterial> &material,
-                                                          const VRODriverMetal &driver);
+                                                          VRODriverMetal &driver);
     
     /*
      Create a depth/stencil state from the given material.
@@ -141,7 +141,7 @@ private:
                         id <MTLRenderCommandEncoder> renderEncoder,
                         float opacity,
                         const VRORenderContext &renderContext,
-                        const VRODriver &driver);
+                        VRODriver &driver);
     
 };
 

@@ -31,13 +31,13 @@ class VRODriver {
     
 public:
     
-    virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const = 0;
-    virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) const = 0;
-    virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) const = 0;
+    virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) = 0;
+    virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) = 0;
+    virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) = 0;
     virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, VROTextureFormat format, std::shared_ptr<VROData> data,
-                                                     int width, int height) const = 0;
-    virtual VROTextureSubstrate *newTextureSubstrate(int width, int height, CGContextRef bitmapContext) const = 0;
-    virtual VROVideoTextureCache *newVideoTextureCache() const = 0;
+                                                     int width, int height) = 0;
+    virtual VROTextureSubstrate *newTextureSubstrate(int width, int height, CGContextRef bitmapContext) = 0;
+    virtual VROVideoTextureCache *newVideoTextureCache() = 0;
     
 };
 

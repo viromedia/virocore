@@ -60,7 +60,7 @@ static const float kVROLayerSize = 2;
     
 }
 
-- (void)updateWithDriver:(const VRODriver *)driver {
+- (void)updateWithDriver:(VRODriver *)driver {
     if (!_needsUpdate) {
         return;
     }
@@ -97,7 +97,7 @@ static const float kVROLayerSize = 2;
 
 - (void)renderEye:(VROEyeType)eye
 withRenderContext:(const VRORenderContext *)renderContext
-    driver:(const VRODriver *)driver {
+    driver:(VRODriver *)driver {
     
     VRORenderParameters renderParams;
     renderParams.transforms.push(renderContext->getHUDViewMatrix());

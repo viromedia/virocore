@@ -33,7 +33,7 @@ static const bool kRenderDirectToContext = true;
 
 }
 
-- (void)updateWithDriver:(const VRODriver *)driver {
+- (void)updateWithDriver:(VRODriver *)driver {
     if (kRenderDirectToContext) {
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
         

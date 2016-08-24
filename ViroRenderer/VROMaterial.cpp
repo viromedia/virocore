@@ -143,7 +143,7 @@ void VROMaterial::updateSubstrate() {
     _substrate = nullptr;
 }
 
-VROMaterialSubstrate *const VROMaterial::getSubstrate(const VRODriver &driver) {
+VROMaterialSubstrate *const VROMaterial::getSubstrate(VRODriver &driver) {
     if (!_substrate) {
         _substrate = driver.newMaterialSubstrate(*this);
     }
@@ -162,11 +162,11 @@ void VROMaterial::updateSortKey(VROSortKey &key) {
     }
 }
 
-void VROMaterial::bindShader(const VRODriver &driver) {
+void VROMaterial::bindShader(VRODriver &driver) {
     getSubstrate(driver)->bindShader();
 }
 
 void VROMaterial::bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,
-                             const VRORenderContext &context, const VRODriver &driver) {
+                             const VRORenderContext &context, VRODriver &driver) {
     getSubstrate(driver)->bindLights(lights, context, driver);
 }

@@ -55,7 +55,7 @@ bool VROVideoTexture::isPaused() {
 
 void VROVideoTexture::loadVideo(NSURL *url,
                                 std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                const VRODriver &driver) {
+                                VRODriver &driver) {
     
     frameSynchronizer->addFrameListener(shared_from_this());
     
@@ -112,7 +112,7 @@ void VROVideoTexture::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> su
 
 - (id)initWithVideoTexture:(VROVideoTexture *)texture
                     player:(AVPlayer *)player
-                    driver:(const VRODriver &)driver {
+                    driver:(VRODriver &)driver {
                         
     self = [super init];
     if (self) {

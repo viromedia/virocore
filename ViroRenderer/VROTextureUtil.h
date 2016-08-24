@@ -27,7 +27,7 @@ public:
      strip the header out and return the raw texture data.
      */
     static std::shared_ptr<VROTexture> loadASTCTexture(NSData *data, VROTextureType type,
-                                                      const VRODriver *driver = nullptr);
+                                                      VRODriver *driver = nullptr);
     
     /*
      Read a texture file with an ASTC header. Read the width and height from the header then

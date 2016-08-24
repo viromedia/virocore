@@ -24,28 +24,28 @@ public:
         
     }
     
-    VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) const {
+    VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) {
         return new VROGeometrySubstrateOpenGL(geometry, *this);
     }
     
-    VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) const {
+    VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) {
         return new VROMaterialSubstrateOpenGL(material, *this);
     }
     
-    VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) const {
+    VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) {
         return new VROTextureSubstrateOpenGL(type, images, *this);
     }
     
     VROTextureSubstrate *newTextureSubstrate(VROTextureType type, VROTextureFormat format, std::shared_ptr<VROData> data,
-                                             int width, int height) const {
+                                             int width, int height) {
         return new VROTextureSubstrateOpenGL(type, format, data, width, height, *this);
     }
     
-    VROTextureSubstrate *newTextureSubstrate(int width, int height, CGContextRef bitmapContext) const {
+    VROTextureSubstrate *newTextureSubstrate(int width, int height, CGContextRef bitmapContext) {
         return new VROTextureSubstrateOpenGL(width, height, bitmapContext, *this);
     }
     
-    VROVideoTextureCache *newVideoTextureCache() const {
+    VROVideoTextureCache *newVideoTextureCache() {
         return new VROVideoTextureCacheOpenGL(_eaglContext);
     }
     

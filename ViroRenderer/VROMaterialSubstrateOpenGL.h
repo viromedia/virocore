@@ -32,13 +32,13 @@ class VROMaterialSubstrateOpenGL : public VROMaterialSubstrate {
     
 public:
     
-    VROMaterialSubstrateOpenGL(const VROMaterial &material, const VRODriverOpenGL &driver);
+    VROMaterialSubstrateOpenGL(const VROMaterial &material, VRODriverOpenGL &driver);
     virtual ~VROMaterialSubstrateOpenGL();
     
     void bindShader();
     void bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,
                     const VRORenderContext &context,
-                    const VRODriver &driver);
+                    VRODriver &driver);
     
     void bindDepthSettings();
     void bindViewUniforms(VROMatrix4f transform, VROMatrix4f modelview,
@@ -79,10 +79,10 @@ private:
     VROUniform *_modelViewProjectionMatrixUniform;
     VROUniform *_cameraPositionUniform;
     
-    void loadConstantLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
-    void loadLambertLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
-    void loadPhongLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
-    void loadBlinnLighting(const VROMaterial &material, const VRODriverOpenGL &driver);
+    void loadConstantLighting(const VROMaterial &material, VRODriverOpenGL &driver);
+    void loadLambertLighting(const VROMaterial &material, VRODriverOpenGL &driver);
+    void loadPhongLighting(const VROMaterial &material, VRODriverOpenGL &driver);
+    void loadBlinnLighting(const VROMaterial &material, VRODriverOpenGL &driver);
     
     uint32_t hashTextures(const std::vector<std::shared_ptr<VROTexture>> &textures) const;
     

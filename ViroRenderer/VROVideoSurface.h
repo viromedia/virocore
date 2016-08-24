@@ -26,7 +26,7 @@ public:
     static std::shared_ptr<VROVideoSurface> createVideoSurface(float width, float height,
                                                                NSURL *url,
                                                                std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                                               const VRODriver &driver);
+                                                               VRODriver &driver);
     
     void pause();
     void play();

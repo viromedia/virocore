@@ -13,7 +13,7 @@
 #include "VROLog.h"
 
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(int width, int height, CGContextRef bitmapContext,
-                                                   const VRODriver &driver) {
+                                                   VRODriver &driver) {
     id <MTLDevice> device = ((VRODriverMetal &)driver).getDevice();
 
     int bytesPerPixel = 4;
@@ -32,7 +32,7 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(int width, int height, CGCont
 }
 
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vector<UIImage *> &images,
-                                                   const VRODriver &driver) {
+                                                   VRODriver &driver) {
     
     VRODriverMetal &metal = (VRODriverMetal &)driver;
     id <MTLDevice> device = metal.getDevice();
@@ -113,7 +113,7 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vec
 
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, VROTextureFormat format,
                                                    std::shared_ptr<VROData> data, int width, int height,
-                                                   const VRODriver &driver) {
+                                                   VRODriver &driver) {
     
     if (format == VROTextureFormat::ETC2) {
         VRODriverMetal &metal = (VRODriverMetal &)driver;

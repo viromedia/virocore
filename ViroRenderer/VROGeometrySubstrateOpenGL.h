@@ -50,7 +50,7 @@ class VROGeometrySubstrateOpenGL : public VROGeometrySubstrate {
 public:
     
     VROGeometrySubstrateOpenGL(const VROGeometry &geometry,
-                               const VRODriverOpenGL &driver);
+                               VRODriverOpenGL &driver);
     virtual ~VROGeometrySubstrateOpenGL();
     
     void render(const VROGeometry &geometry,
@@ -59,7 +59,7 @@ public:
                 float opacity,
                 std::shared_ptr<VROMaterial> &material,
                 const VRORenderContext &context,
-                const VRODriver &driver);
+                VRODriver &driver);
     
 private:
     
@@ -98,7 +98,7 @@ private:
                         VROGeometryElementOpenGL &element,
                         float opacity,
                         const VRORenderContext &renderContext,
-                        const VRODriver &driver);
+                        VRODriver &driver);
     
 };
 

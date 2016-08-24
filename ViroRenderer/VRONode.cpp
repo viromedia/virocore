@@ -64,7 +64,7 @@ std::shared_ptr<VRONode> VRONode::clone() {
 void VRONode::render(int elementIndex,
                      std::shared_ptr<VROMaterial> &material,
                      const VRORenderContext &context,
-                     const VRODriver &driver) {
+                     VRODriver &driver) {
     
     if (_geometry) {
         _geometry->render(elementIndex, material, _computedTransform, _computedOpacity,

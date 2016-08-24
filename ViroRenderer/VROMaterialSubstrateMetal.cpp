@@ -42,7 +42,7 @@ std::shared_ptr<VROMetalShader> VROMaterialSubstrateMetal::getPooledShader(std::
 }
 
 VROMaterialSubstrateMetal::VROMaterialSubstrateMetal(const VROMaterial &material,
-                                                     const VRODriverMetal &driver) :
+                                                     VRODriverMetal &driver) :
     _material(material),
     _lightingModel(material.getLightingModel()) {
 
@@ -85,7 +85,7 @@ VROMaterialSubstrateMetal::~VROMaterialSubstrateMetal() {
 
 void VROMaterialSubstrateMetal::loadConstantLighting(const VROMaterial &material,
                                                      id <MTLLibrary> library, id <MTLDevice> device,
-                                                     const VRODriverMetal &driver) {
+                                                     VRODriverMetal &driver) {
     
     
     std::string vertexProgram = "constant_lighting_vertex";
@@ -110,7 +110,7 @@ void VROMaterialSubstrateMetal::loadConstantLighting(const VROMaterial &material
 
 void VROMaterialSubstrateMetal::loadLambertLighting(const VROMaterial &material,
                                                     id <MTLLibrary> library, id <MTLDevice> device,
-                                                    const VRODriverMetal &driver) {
+                                                    VRODriverMetal &driver) {
     
     std::string vertexProgram = "lambert_lighting_vertex";
     std::string fragmentProgram;
@@ -144,7 +144,7 @@ void VROMaterialSubstrateMetal::loadLambertLighting(const VROMaterial &material,
 
 void VROMaterialSubstrateMetal::loadPhongLighting(const VROMaterial &material,
                                                   id <MTLLibrary> library, id <MTLDevice> device,
-                                                  const VRODriverMetal &driver) {
+                                                  VRODriverMetal &driver) {
     
     /*
      If there's no specular map, then we fall back to Lambert lighting.
@@ -190,7 +190,7 @@ void VROMaterialSubstrateMetal::loadPhongLighting(const VROMaterial &material,
 
 void VROMaterialSubstrateMetal::loadBlinnLighting(const VROMaterial &material,
                                                   id <MTLLibrary> library, id <MTLDevice> device,
-                                                  const VRODriverMetal &driver) {
+                                                  VRODriverMetal &driver) {
     
     /*
      If there's no specular map, then we fall back to Lambert lighting.
@@ -258,9 +258,9 @@ void VROMaterialSubstrateMetal::bindShader() {
 
 void VROMaterialSubstrateMetal::bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,
                                            const VRORenderContext &context,
-                                           const VRODriver &driver) {
+                                           VRODriver &driver) {
     
-    const VRODriverMetal &metal = (VRODriverMetal &)driver;
+    VRODriverMetal &metal = (VRODriverMetal &)driver;
     id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
     
     VROEyeType eyeType = context.getEyeType();

@@ -46,7 +46,7 @@ public:
      */
     VROGeometry(std::vector<std::shared_ptr<VROGeometrySource>> sources,
                 std::vector<std::shared_ptr<VROGeometryElement>> elements,
-                const VRODriver *driver = nullptr) :
+                VRODriver *driver = nullptr) :
         _renderingOrder(0),
         _geometrySources(sources),
         _geometryElements(elements),
@@ -79,14 +79,14 @@ public:
      Get the geometry ready for usage now, in advance of when it's visible. If not invoked,
      the geometry will be initialized when it is made visible.
      */
-    void prewarm(const VRODriver &driver);
+    void prewarm(VRODriver &driver);
 
     void render(int elementIndex,
                 std::shared_ptr<VROMaterial> &material,
                 VROMatrix4f transform,
                 float opacity,
                 const VRORenderContext &context,
-                const VRODriver &driver);
+                VRODriver &driver);
     
     void updateSortKeys(VRONode *node, uint32_t lightsHash);
     void getSortKeys(std::vector<VROSortKey> *outKeys);

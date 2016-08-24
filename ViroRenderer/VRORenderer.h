@@ -52,10 +52,10 @@ public:
     
 #pragma mark - Scene Controllers
     
-    void setSceneController(VROSceneController *sceneController, const VRODriver &driver);
-    void setSceneController(VROSceneController *sceneController, bool animated, const VRODriver &driver);
+    void setSceneController(VROSceneController *sceneController, VRODriver &driver);
+    void setSceneController(VROSceneController *sceneController, bool animated, VRODriver &driver);
     void setSceneController(VROSceneController *sceneController, float seconds,
-                            VROTimingFunctionType timingFunctionType, const VRODriver &driver);
+                            VROTimingFunctionType timingFunctionType, VRODriver &driver);
     VROSceneController *getSceneController() const {
         return _sceneController;
     }
@@ -64,8 +64,8 @@ public:
     
     void prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &driver);
     void renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
-                   const VRODriver &driver);
-    void endFrame(const VRODriver &driver);
+                   VRODriver &driver);
+    void endFrame(VRODriver &driver);
     
 #pragma mark - Frame Synchronizer
     
@@ -121,7 +121,7 @@ private:
     
 #pragma mark - Scene Rendering
     
-    void renderEye(VROEyeType eyeType, const VRODriver &driver);
+    void renderEye(VROEyeType eyeType, VRODriver &driver);
     
 #pragma mark - Frame Listeners
     

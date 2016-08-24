@@ -26,7 +26,7 @@ public:
     virtual void bindShader() = 0;
     virtual void bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,
                             const VRORenderContext &context,
-                            const VRODriver &driver) = 0;
+                            VRODriver &driver) = 0;
     
 };
 

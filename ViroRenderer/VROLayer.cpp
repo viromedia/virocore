@@ -35,7 +35,7 @@ void VROLayer::setContents(UIImage *image) {
 }
 
 void VROLayer::setContents(int width, int height, CGContextRef bitmapContext,
-                           const VRODriver &driver) {
+                           VRODriver &driver) {
     
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrate>(
                     driver.newTextureSubstrate(width, height, bitmapContext));

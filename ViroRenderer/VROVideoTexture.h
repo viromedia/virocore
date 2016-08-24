@@ -38,7 +38,7 @@ public:
      */
     void loadVideo(NSURL *url,
                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                   const VRODriver &driver);
+                   VRODriver &driver);
     
     /*
      Perform video initialization (which causes a stutter) early.
@@ -75,7 +75,7 @@ private:
 
 - (id)initWithVideoTexture:(VROVideoTexture *)texture
                     player:(AVPlayer *)player
-                    driver:(const VRODriver &)driver;
+                    driver:(VRODriver &)driver;
 
 - (void)renderFrame;
 

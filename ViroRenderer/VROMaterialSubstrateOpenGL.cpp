@@ -71,7 +71,7 @@ void VROMaterialSubstrateOpenGL::hydrateProgram() {
     glUniformBlockBinding(_program->getProgram(), blockIndex, _lightingUBOBindingPoint);
 }
 
-VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &material, const VRODriverOpenGL &driver) :
+VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &material, VRODriverOpenGL &driver) :
     _material(material),
     _lightingModel(material.getLightingModel()),
     _program(nullptr),
@@ -115,7 +115,7 @@ VROMaterialSubstrateOpenGL::~VROMaterialSubstrateOpenGL() {
     ALLOCATION_TRACKER_SUB(MaterialSubstrates, 1);
 }
 
-void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &material, const VRODriverOpenGL &driver) {
+void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
     VROMaterialVisual &diffuse = material.getDiffuse();
     
     std::string vertexShader = "constant_vsh";
@@ -149,7 +149,7 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
     }
 }
 
-void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material, const VRODriverOpenGL &driver) {
+void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
     std::string vertexShader = "lambert_vsh";
     std::string fragmentShader;
     
@@ -194,7 +194,7 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
     }
 }
 
-void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, const VRODriverOpenGL &driver) {
+void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
     std::string vertexShader = "phong_vsh";
     std::string fragmentShader;
     
@@ -256,7 +256,7 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
     }
 }
 
-void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, const VRODriverOpenGL &driver) {
+void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
     std::string vertexShader = "blinn_vsh";
     std::string fragmentShader;
     
@@ -371,7 +371,7 @@ void VROMaterialSubstrateOpenGL::bindShader() {
 
 void VROMaterialSubstrateOpenGL::bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,
                                             const VRORenderContext &context,
-                                            const VRODriver &driver) {
+                                            VRODriver &driver) {
     pglpush("Lights");
     VROVector3f ambientLight;
     

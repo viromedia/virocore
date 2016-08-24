@@ -16,7 +16,7 @@ static const int kNumSkyboxVertices = 24;
 static const int kNumSkyboxIndices = 36;
 static const int kSkyboxStride = 32;
 
-static float vertices[] = {
+static const float vertices[] = {
     // +Y
     -0.5,  0.5,  0.5,  1.0, 0.0,  0.0, -1.0, 0.0,
      0.5,  0.5,  0.5,  1.0, 0.0,  0.0, -1.0, 0.0,

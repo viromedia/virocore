@@ -22,7 +22,7 @@
 #include <map>
 
 VROGeometrySubstrateMetal::VROGeometrySubstrateMetal(const VROGeometry &geometry,
-                                                     const VRODriverMetal &driver) {
+                                                     VRODriverMetal &driver) {
     id <MTLDevice> device = driver.getDevice();
 
     readGeometryElements(device, geometry.getGeometryElements());
@@ -128,7 +128,7 @@ void VROGeometrySubstrateMetal::readGeometrySources(id <MTLDevice> device,
 }
 
 void VROGeometrySubstrateMetal::updatePipelineStates(const VROGeometry &geometry,
-                                                     const VRODriverMetal &driver) {
+                                                     VRODriverMetal &driver) {
     
     id <MTLDevice> device = driver.getDevice();
     const std::vector<std::shared_ptr<VROMaterial>> &materials = geometry.getMaterials_const();
@@ -146,7 +146,7 @@ void VROGeometrySubstrateMetal::updatePipelineStates(const VROGeometry &geometry
 }
 
 id <MTLRenderPipelineState> VROGeometrySubstrateMetal::createRenderPipelineState(const std::shared_ptr<VROMaterial> &material,
-                                                                                 const VRODriverMetal &driver) {
+                                                                                 VRODriverMetal &driver) {
     
     id <MTLDevice> device = driver.getDevice();
     std::shared_ptr<VRORenderTarget> renderTarget = driver.getRenderTarget();
@@ -273,9 +273,9 @@ void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
                                        float opacity,
                                        std::shared_ptr<VROMaterial> &material,
                                        const VRORenderContext &context,
-                                       const VRODriver &driver) {
+                                       VRODriver &driver) {
     
-    const VRODriverMetal &metal = (VRODriverMetal &)driver;
+    VRODriverMetal &metal = (VRODriverMetal &)driver;
     id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
     
     int frame = context.getFrame();
@@ -338,7 +338,7 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
                                                id <MTLRenderCommandEncoder> renderEncoder,
                                                float opacity,
                                                const VRORenderContext &renderContext,
-                                               const VRODriver &driver) {
+                                               VRODriver &driver) {
     
     int frame = renderContext.getFrame();
     VROEyeType eyeType = renderContext.getEyeType();

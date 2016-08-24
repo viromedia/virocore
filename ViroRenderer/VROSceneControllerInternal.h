@@ -31,10 +31,10 @@ public:
         return _scene;
     }
     
-    virtual void onSceneWillAppear(VRORenderContext &context, const VRODriver &driver);
-    virtual void onSceneDidAppear(VRORenderContext &context, const VRODriver &driver);
-    virtual void onSceneWillDisappear(VRORenderContext &context, const VRODriver &driver);
-    virtual void onSceneDidDisappear(VRORenderContext &context, const VRODriver &driver);
+    virtual void onSceneWillAppear(VRORenderContext &context, VRODriver &driver);
+    virtual void onSceneDidAppear(VRORenderContext &context, VRODriver &driver);
+    virtual void onSceneWillDisappear(VRORenderContext &context, VRODriver &driver);
+    virtual void onSceneDidDisappear(VRORenderContext &context, VRODriver &driver);
     
     /*
      Set a hover delegate for this scene. Controls the response to hovering

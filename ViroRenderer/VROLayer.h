@@ -31,7 +31,7 @@ public:
     
     void setContents(UIImage *image);
     void setContents(int width, int height, CGContextRef bitmapContext,
-                     const VRODriver &driver);
+                     VRODriver &driver);
     
     void setFrame(VRORect frame);
     void setPosition(VROVector3f point);

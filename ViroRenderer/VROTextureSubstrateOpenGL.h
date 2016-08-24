@@ -46,20 +46,20 @@ public:
      context.
      */
     VROTextureSubstrateOpenGL(int width, int height, CGContextRef bitmapContext,
-                              const VRODriver &driver);
+                              VRODriver &driver);
     
     /*
      Create a new Metal texture of the given type from the given images.
      */
     VROTextureSubstrateOpenGL(VROTextureType type, std::vector<UIImage *> &images,
-                             const VRODriver &driver);
+                             VRODriver &driver);
     
     /*
      Create a new Metal texture out of the given format, with the given width, and height.
      */
     VROTextureSubstrateOpenGL(VROTextureType type, VROTextureFormat format,
                               std::shared_ptr<VROData> data, int width, int height,
-                              const VRODriver &driver);
+                              VRODriver &driver);
     virtual ~VROTextureSubstrateOpenGL();
     
     std::pair<GLenum, GLint> getTexture() const {

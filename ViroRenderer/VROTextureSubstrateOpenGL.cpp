@@ -18,7 +18,7 @@
 #define GL_COMPRESSED_RGBA8_ETC2_EAC                     0x9278
 
 VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(int width, int height, CGContextRef bitmapContext,
-                                                     const VRODriver &driver) :
+                                                     VRODriver &driver) :
     _owned(true) {
     
     _target = GL_TEXTURE_2D;
@@ -41,7 +41,7 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(int width, int height, CGCo
 }
 
 VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::vector<UIImage *> &images,
-                                                     const VRODriver &driver) :
+                                                     VRODriver &driver) :
     _owned(true) {
     
     glGenTextures(1, &_texture);
@@ -107,7 +107,7 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::v
 
 VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, VROTextureFormat format,
                                                      std::shared_ptr<VROData> data, int width, int height,
-                                                     const VRODriver &driver) :
+                                                     VRODriver &driver) :
     _owned(true) {
     
     _target = GL_TEXTURE_2D;

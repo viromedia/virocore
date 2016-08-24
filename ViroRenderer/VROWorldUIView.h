@@ -19,7 +19,7 @@
 @interface VROWorldUIView : UIView
 
 - (instancetype)initWithFrame:(CGRect)frame;
-- (void)updateWithDriver:(const VRODriver *)driver;
+- (void)updateWithDriver:(VRODriver *)driver;
 
 @property (readonly, nonatomic) std::shared_ptr<VROLayer> vroLayer;
 

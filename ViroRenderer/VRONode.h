@@ -58,7 +58,7 @@ public:
     void render(int elementIndex,
                 std::shared_ptr<VROMaterial> &material,
                 const VRORenderContext &context,
-                const VRODriver &driver);
+                VRODriver &driver);
     
     void updateSortKeys(VRORenderParameters &params, const VRORenderContext &context);
     void getSortKeys(std::vector<VROSortKey> *outKeys);

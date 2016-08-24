@@ -142,7 +142,7 @@ void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &d
 }
 
 void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
-                            const VRODriver &driver) {
+                            VRODriver &driver) {
     [_delegate willRenderEye:eye context:_context.get()];
 
     VROMatrix4f cameraMatrix = _context->getCamera().computeLookAtMatrix();
@@ -159,7 +159,7 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     [_delegate didRenderEye:eye context:_context.get()];
 }
 
-void VRORenderer::endFrame(const VRODriver &driver) {
+void VRORenderer::endFrame(VRODriver &driver) {
     if (!_sceneTransitionActive && _outgoingSceneController) {
         [_sceneController endIncomingTransition:_context.get()];
         [_outgoingSceneController endOutgoingTransition:_context.get()];
@@ -174,7 +174,7 @@ void VRORenderer::endFrame(const VRODriver &driver) {
     VROTransaction::commitAll();
 }
 
-void VRORenderer::renderEye(VROEyeType eyeType, const VRODriver &driver) {
+void VRORenderer::renderEye(VROEyeType eyeType, VRODriver &driver) {
     if (_sceneController) {
         if (_outgoingSceneController) {
             [_outgoingSceneController sceneWillRender:_context.get()];
@@ -209,7 +209,7 @@ void VRORenderer::handleTap() {
 
 #pragma mark - Scene Loading
 
-void VRORenderer::setSceneController(VROSceneController *sceneController, const VRODriver &driver) {
+void VRORenderer::setSceneController(VROSceneController *sceneController, VRODriver &driver) {
     VROSceneController *outgoingSceneController = _sceneController;
     
     [sceneController sceneWillAppear:_context.get() driver:&driver];
@@ -225,7 +225,7 @@ void VRORenderer::setSceneController(VROSceneController *sceneController, const 
     }
 }
 
-void VRORenderer::setSceneController(VROSceneController *sceneController, bool animated, const VRODriver &driver) {
+void VRORenderer::setSceneController(VROSceneController *sceneController, bool animated, VRODriver &driver) {
     if (!animated || !_sceneController) {
         _sceneController = sceneController;
         return;
@@ -235,7 +235,7 @@ void VRORenderer::setSceneController(VROSceneController *sceneController, bool a
 }
 
 void VRORenderer::setSceneController(VROSceneController *sceneController, float seconds,
-                                     VROTimingFunctionType timingFunctionType, const VRODriver &driver) {
+                                     VROTimingFunctionType timingFunctionType, VRODriver &driver) {
     passert (_sceneController != nil);
     
     _outgoingSceneController = _sceneController;

@@ -23,7 +23,7 @@ VROGeometry::~VROGeometry() {
     ALLOCATION_TRACKER_SUB(Geometry, 1);
 }
 
-void VROGeometry::prewarm(const VRODriver &driver) {
+void VROGeometry::prewarm(VRODriver &driver) {
     if (!_substrate) {
         _substrate = driver.newGeometrySubstrate(*this);
     }
@@ -34,7 +34,7 @@ void VROGeometry::render(int elementIndex,
                          VROMatrix4f transform,
                          float opacity,
                          const VRORenderContext &context,
-                         const VRODriver &driver) {
+                         VRODriver &driver) {
     
     prewarm(driver);
     _substrate->render(*this, elementIndex, transform, opacity, material, context, driver);

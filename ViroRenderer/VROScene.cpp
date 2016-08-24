@@ -31,7 +31,7 @@ VROScene::~VROScene() {
 }
 
 void VROScene::renderBackground(const VRORenderContext &renderContext,
-                                const VRODriver &driver) {
+                                VRODriver &driver) {
     if (!_background) {
         return;
     }
@@ -44,7 +44,7 @@ void VROScene::renderBackground(const VRORenderContext &renderContext,
 }
 
 void VROScene::render(const VRORenderContext &context,
-                      const VRODriver &driver) {
+                      VRODriver &driver) {
     
     uint32_t boundShaderId = UINT32_MAX;
     std::vector<std::shared_ptr<VROLight>> boundLights;

@@ -37,11 +37,11 @@ void VROSceneControllerInternal::setHoverDelegate(std::shared_ptr<VROHoverDelega
     _hoverController->setDelegate(delegate);
 }
 
-void VROSceneControllerInternal::onSceneWillAppear(VRORenderContext &context, const VRODriver &driver) {
+void VROSceneControllerInternal::onSceneWillAppear(VRORenderContext &context, VRODriver &driver) {
     
 }
 
-void VROSceneControllerInternal::onSceneDidAppear(VRORenderContext &context, const VRODriver &driver) {
+void VROSceneControllerInternal::onSceneDidAppear(VRORenderContext &context, VRODriver &driver) {
     if (!_hoverController) {
         _hoverController = std::make_shared<VROHoverController>(toRadians(kHoverControllerRadiusDegrees),
                                                                 _scene);
@@ -53,13 +53,13 @@ void VROSceneControllerInternal::onSceneDidAppear(VRORenderContext &context, con
     }
 }
 
-void VROSceneControllerInternal::onSceneWillDisappear(VRORenderContext &context, const VRODriver &driver) {
+void VROSceneControllerInternal::onSceneWillDisappear(VRORenderContext &context, VRODriver &driver) {
     std::shared_ptr<VROFrameSynchronizer> synchronizer = _frameSynchronizer.lock();
     if (synchronizer) {
         synchronizer->removeFrameListener(_hoverController);
     }
 }
 
-void VROSceneControllerInternal::onSceneDidDisappear(VRORenderContext &context, const VRODriver &driver) {
+void VROSceneControllerInternal::onSceneDidDisappear(VRORenderContext &context, VRODriver &driver) {
     
 }

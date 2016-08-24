@@ -22,10 +22,10 @@ class VROEye;
 
 - (instancetype)init;
 
-- (void)updateWithDriver:(const VRODriver *)driver;
+- (void)updateWithDriver:(VRODriver *)driver;
 - (void)renderEye:(VROEyeType)eye
 withRenderContext:(const VRORenderContext *)renderContext
-    driver:(const VRODriver *)driver;
+           driver:(VRODriver *)driver;
 
 - (void)setReticleEnabled:(BOOL)enabled;
 - (void)setNeedsUpdate;
