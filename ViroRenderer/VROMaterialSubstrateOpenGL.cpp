@@ -19,56 +19,12 @@
 #include <sstream>
 
 static const int kMaxLights = 4;
-static std::map<std::string, std::shared_ptr<VROShaderProgram>> _sharedPrograms;
 
-static GLuint _lightingUBO = 0;
-static const int _lightingUBOBindingPoint = 0;
-
-// Grouped in 4N slots, matching lighting_general_functions.glsl
-typedef struct {
-    int type;
-    float attenuation_start_distance;
-    float attenuation_end_distance;
-    float attenuation_falloff_exp;
-    
-    float position[4];
-    float direction[4];
-    
-    float color[3];
-    float spot_inner_angle;
-    
-    float spot_outer_angle;
-    float padding3;
-    float padding4;
-    float padding5;
-} VROLightData;
-
-typedef struct {
-    int num_lights;
-    float padding0, padding1, padding2;
-    
-    float ambient_light_color[4];
-    VROLightData lights[8];
-} VROLightingData;
-
-void VROMaterialSubstrateOpenGL::initLightingUBO() {
-    if (_lightingUBO > 0) {
-        return;
-    }
-    
-    glGenBuffers(1, &_lightingUBO);
-    glBindBuffer(GL_UNIFORM_BUFFER, _lightingUBO);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingData), NULL, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    
-    glBindBufferBase(GL_UNIFORM_BUFFER, _lightingUBOBindingPoint, _lightingUBO);
-}
-
-void VROMaterialSubstrateOpenGL::hydrateProgram() {
+void VROMaterialSubstrateOpenGL::hydrateProgram(VRODriverOpenGL &driver) {
     _program->hydrate();
     
     unsigned int blockIndex = glGetUniformBlockIndex(_program->getProgram(), "lighting");
-    glUniformBlockBinding(_program->getProgram(), blockIndex, _lightingUBOBindingPoint);
+    glUniformBlockBinding(_program->getProgram(), blockIndex, driver.getLightingUBOBindingPoint());
 }
 
 VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &material, VRODriverOpenGL &driver) :
@@ -84,8 +40,6 @@ VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &materi
     _modelViewMatrixUniform(nullptr),
     _modelViewProjectionMatrixUniform(nullptr),
     _cameraPositionUniform(nullptr) {
-        
-    initLightingUBO();
 
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
@@ -139,10 +93,10 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
         fragmentShader = "constant_q_fsh";
     }
     
-    _program = getPooledShader(vertexShader, fragmentShader, samplers);
+    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers);
     if (!_program->isHydrated()) {
         addUniforms();
-        hydrateProgram();
+        hydrateProgram(driver);
     }
     else {
         loadUniforms();
@@ -184,10 +138,10 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
         }
     }
     
-    _program = getPooledShader(vertexShader, fragmentShader, samplers);
+    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers);
     if (!_program->isHydrated()) {
         addUniforms();
-        hydrateProgram();
+        hydrateProgram(driver);
     }
     else {
         loadUniforms();
@@ -244,11 +198,11 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
         }
     }
     
-    _program = getPooledShader(vertexShader, fragmentShader, samplers);
+    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers);
     if (!_program->isHydrated()) {
         addUniforms();
         _shininessUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
-        hydrateProgram();
+        hydrateProgram(driver);
     }
     else {
         _shininessUniform = _program->getUniform("material_shininess");
@@ -306,11 +260,11 @@ void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, 
         }
     }
     
-    _program = getPooledShader(vertexShader, fragmentShader, samplers);
+    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers);
     if (!_program->isHydrated()) {
         addUniforms();
         _shininessUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
-        hydrateProgram();
+        hydrateProgram(driver);
     }
     else {
         _shininessUniform = _program->getUniform("material_shininess");
@@ -398,7 +352,7 @@ void VROMaterialSubstrateOpenGL::bindLights(const std::vector<std::shared_ptr<VR
     
     ambientLight.toArray(data.ambient_light_color);
     
-    glBindBuffer(GL_UNIFORM_BUFFER, _lightingUBO);
+    glBindBuffer(GL_UNIFORM_BUFFER, ((VRODriverOpenGL &)driver).getLightingUBO());
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROLightingData), &data);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     
@@ -453,26 +407,6 @@ void VROMaterialSubstrateOpenGL::bindMaterialUniforms(float opacity) {
     }
     if (_shininessUniform != nullptr) {
         _shininessUniform->setFloat(_material.getShininess());
-    }
-}
-
-std::shared_ptr<VROShaderProgram> VROMaterialSubstrateOpenGL::getPooledShader(std::string vertexShader,
-                                                                              std::string fragmentShader,
-                                                                              const std::vector<std::string> &samplers) {
-    std::string name = vertexShader + "_" + fragmentShader;
-    
-    std::map<std::string, std::shared_ptr<VROShaderProgram>>::iterator it = _sharedPrograms.find(name);
-    if (it == _sharedPrograms.end()) {
-        std::shared_ptr<VROShaderProgram> program = std::make_shared<VROShaderProgram>(vertexShader, fragmentShader,
-                                                                                       ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
-        for (const std::string &sampler : samplers) {
-            program->addSampler(sampler);
-        }
-        _sharedPrograms[name] = program;
-        return program;
-    }
-    else {
-        return it->second;
     }
 }
 
