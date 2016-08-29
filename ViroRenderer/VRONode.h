@@ -181,6 +181,16 @@ public:
     }
     
     /*
+     Visbility
+     */
+    void setVisible(bool visible) {
+        _visible = visible;
+    }
+    bool isVisible() const {
+        return _visible;
+    }
+    
+    /*
      Constraints.
      */
     void addConstraint(std::shared_ptr<VROConstraint> constraint);
@@ -217,6 +227,11 @@ private:
      The opacity of the node (0.0 is transparent, 1.0 is opaque).
      */
     float _opacity;
+    
+    /*
+     Determines whether or not to render this node. Defaults to true.
+     */
+    bool _visible;
     
     /*
      True if this node is selectable by hit testing. Defaults to true.

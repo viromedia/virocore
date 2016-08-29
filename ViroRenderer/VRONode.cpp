@@ -30,7 +30,8 @@ VRONode::VRONode() :
     _pivot({0.5f, 0.5f, 0.5f}),
     _opacity(1.0),
     _computedOpacity(1.0),
-    _selectable(true) {
+    _selectable(true),
+    _visible(true) {
     
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -66,7 +67,7 @@ void VRONode::render(int elementIndex,
                      const VRORenderContext &context,
                      VRODriver &driver) {
     
-    if (_geometry) {
+    if (_geometry && _visible) {
         _geometry->render(elementIndex, material, _computedTransform, _computedOpacity,
                           context, driver);
     }
