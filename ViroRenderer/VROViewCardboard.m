@@ -72,7 +72,11 @@
     self.fov = { 30.63, 40, 40, 34.178 };
 }
 
-- (void)dealloc {    
+- (void) setVrMode:(BOOL)enabled {
+    self.vrModeEnabled = enabled;
+}
+
+- (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 

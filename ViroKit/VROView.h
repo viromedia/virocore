@@ -39,6 +39,13 @@ enum class VROCameraRotationType {
 - (void)setCameraRotationType:(VROCameraRotationType)type;
 - (void)setOrbitFocalPoint:(VROVector3f)focalPt;
 
+/**
+ * Calling setVrMode allows switching to and from VR mode.
+ * When set to NO, it transitions back to pre-VR (mono) mode.
+ * When set to YES, we set thie view into a full VR mode
+ */
+- (void)setVrMode:(BOOL)enabled;
+
 - (float)worldPerScreenAtDepth:(float)distance;
 
 - (std::shared_ptr<VROFrameSynchronizer>)frameSynchronizer;
