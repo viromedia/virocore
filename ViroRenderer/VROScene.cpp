@@ -123,5 +123,9 @@ std::vector<VROHitTestResult> VROScene::hitTest(VROVector3f ray, const VRORender
         results.insert(results.end(), nodeResults.begin(), nodeResults.end());
     }
     
+    std::sort(results.begin(), results.end(), [](VROHitTestResult a, VROHitTestResult b) {
+        return a.getDistance() < b.getDistance();
+    });
+
     return results;
 }

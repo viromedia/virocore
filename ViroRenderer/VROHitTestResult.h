@@ -18,9 +18,10 @@ class VROHitTestResult {
     
 public:
     
-    VROHitTestResult(std::shared_ptr<VRONode> node, VROVector3f location) :
+    VROHitTestResult(std::shared_ptr<VRONode> node, VROVector3f location, float distance) :
         _node(node),
-        _location(location)
+        _location(location),
+        _distance(distance)
     {}
     
     ~VROHitTestResult() {}
@@ -33,11 +34,16 @@ public:
         return _location;
     }
     
+    float getDistance() const {
+        return _distance;
+    }
+
 private:
     
     std::shared_ptr<VRONode> _node;
     VROVector3f _location;
-    
+    float _distance;
+
 };
 
 #endif /* VROHitTestResult_h */
