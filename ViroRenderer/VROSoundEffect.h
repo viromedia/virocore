@@ -17,6 +17,7 @@ class VROSoundEffect {
 public:
     
     VROSoundEffect(NSURL *url);
+    VROSoundEffect(NSData *data);
     virtual ~VROSoundEffect();
     
     void play();

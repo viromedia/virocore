@@ -20,6 +20,7 @@ public:
     virtual ~VROAudioPlayer();
     
     void setTrack(NSURL *url, int loopCount);
+    void setTrack(NSData *data, int loopCount);
     void play();
     void stop();
     void pause();

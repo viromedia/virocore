@@ -27,6 +27,16 @@ void VROAudioPlayer::setTrack(NSURL *url, int loopCount) {
     [_player prepareToPlay];
 }
 
+void VROAudioPlayer::setTrack(NSData *data, int loopCount) {
+    if (_player) {
+        [_player stop];
+    }
+    
+    _player = [[AVAudioPlayer alloc] initWithData:data error:NULL];
+    _player.numberOfLoops = loopCount;
+    [_player prepareToPlay];
+}
+
 void VROAudioPlayer::stop() {
     doFadeThenStop();
 }

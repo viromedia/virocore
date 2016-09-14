@@ -15,6 +15,12 @@ VROSoundEffect::VROSoundEffect(NSURL *url) {
     [_player prepareToPlay];
 }
 
+VROSoundEffect::VROSoundEffect(NSData *data) {
+    _player = [[AVAudioPlayer alloc] initWithData:data error:NULL];
+    _player.numberOfLoops = 0;
+    [_player prepareToPlay];
+}
+
 VROSoundEffect::~VROSoundEffect() {
 
 }
