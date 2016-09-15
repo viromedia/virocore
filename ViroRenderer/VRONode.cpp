@@ -23,15 +23,19 @@
 #include "VROByteBuffer.h"
 #include "VROConstraint.h"
 
+// Opacity below which a node is considered hidden
+static const float kHiddenOpacityThreshold = 0.02;
+
 #pragma mark - Initialization
 
 VRONode::VRONode() :
     _scale({1.0, 1.0, 1.0}),
     _pivot({0.5f, 0.5f, 0.5f}),
+    _hidden(false),
+    _opacityFromHiddenFlag(1.0),
     _opacity(1.0),
     _computedOpacity(1.0),
-    _selectable(true),
-    _visible(true) {
+    _selectable(true) {
     
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -42,7 +46,11 @@ VRONode::VRONode(const VRONode &node) :
     _scale(node._scale),
     _position(node._position),
     _rotation(node._rotation),
-    _pivot(node._pivot) {
+    _pivot(node._pivot),
+    _hidden(node._hidden),
+    _opacityFromHiddenFlag(node._opacityFromHiddenFlag),
+    _opacity(node._opacity),
+    _selectable(node._selectable) {
         
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -67,7 +75,7 @@ void VRONode::render(int elementIndex,
                      const VRORenderContext &context,
                      VRODriver &driver) {
     
-    if (_geometry && _visible) {
+    if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
         _geometry->render(elementIndex, material, _computedTransform, _computedOpacity,
                           context, driver);
     }
@@ -86,7 +94,7 @@ void VRONode::updateSortKeys(VRORenderParameters &params, const VRORenderContext
     _computedTransform = transforms.top().multiply(getTransform(context));
     transforms.push(_computedTransform);
     
-    _computedOpacity = opacities.top() * _opacity;
+    _computedOpacity = opacities.top() * _opacity * _opacityFromHiddenFlag;
     opacities.push(_computedOpacity);
     
     if (_light) {
@@ -204,6 +212,15 @@ void VRONode::setOpacity(float opacity) {
     }, _opacity, opacity));
 }
 
+void VRONode::setHidden(bool hidden) {
+    _hidden = hidden;
+    
+    float opacity = hidden ? 0.0 : 1.0;
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float s) {
+        ((VRONode *)animatable)->_opacityFromHiddenFlag = s;
+    }, _opacityFromHiddenFlag, opacity));
+}
+
 #pragma mark - Actions
 
 void VRONode::processActions() {
@@ -272,7 +289,7 @@ void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsO
     VROVector3f origin = context.getCamera().getPosition();
     VROMatrix4f transform = parentTransform.multiply(getTransform(context));
     
-    if (_geometry) {
+    if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
         VROBoundingBox bounds = _geometry->getBoundingBox().transform(transform);
         
         VROVector3f intPt;

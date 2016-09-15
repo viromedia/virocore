@@ -219,44 +219,48 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
     boxNode->setPosition({0, 0, -5});
-    
+
     rootNode->addChildNode(boxNode);
+    boxNode->addConstraint(std::make_shared<VROBillboardConstraint>());
+    
+    /*
+     Create a second box node behind the first.
+     */
+    std::shared_ptr<VROBox> box2 = VROBox::createBox(2, 4, 2);
+    
+    std::shared_ptr<VROMaterial> material2 = box2->getMaterials()[0];
+    material2->setLightingModel(VROLightingModel::Phong);
+    material2->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"boba"]));
+    material2->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"specular"]));
+    
+    std::shared_ptr<VRONode> boxNode2 = std::make_shared<VRONode>();
+    boxNode2->setGeometry(box2);
+    boxNode2->setPosition({0, 0, -10});
+    
+    rootNode->addChildNode(boxNode2);
     
     [self.view setCameraRotationType:VROCameraRotationType::Orbit];
     [self.view setOrbitFocalPoint:boxNode->getPosition()];
-    
-    boxNode->addConstraint(std::make_shared<VROBillboardConstraint>());
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(2);
         
-        UIImage *image = [UIImage imageNamed:@"boba"];
-        material->getDiffuse().setContents(std::make_shared<VROTexture>(image));
-        
-        boxNode->setPosition({ 0, 0, -3});
+        boxNode->setOpacity(0.5);
+        boxNode->setHidden(true);
         
         VROTransaction::commit();
     });
-   
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
-        VROTransaction::setAnimationDuration(3);
+        VROTransaction::setAnimationDuration(2);
         
-        //material->getDiffuse().setContents({ 0.0, 1.0, 0.0, 1.0});
-        boxNode->setPosition({ 0, 0, -6});
+        boxNode->setHidden(false);
         
         VROTransaction::commit();
     });
 
-    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self](VRONode *const node, float seconds) {
-        self.boxAngle += .015;
-        node->setRotation({ 0, self.boxAngle, 0});
-        
-        return true;
-    });
-    
-    //boxNode->runAction(action);
     return sceneController;
 }
 

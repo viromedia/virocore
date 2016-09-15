@@ -102,6 +102,11 @@ public:
     }
     void setOpacity(float opacity);
     
+    bool isHidden() const {
+        return _hidden;
+    }
+    void setHidden(bool hidden);
+    
     /*
      The pivot point is the point about which we apply rotation, translation,
      and scale. This is specified as a vector ranging from [0, 1], where 0 
@@ -181,16 +186,6 @@ public:
     }
     
     /*
-     Visbility
-     */
-    void setVisible(bool visible) {
-        _visible = visible;
-    }
-    bool isVisible() const {
-        return _visible;
-    }
-    
-    /*
      Constraints.
      */
     void addConstraint(std::shared_ptr<VROConstraint> constraint);
@@ -224,14 +219,21 @@ private:
     std::vector<std::shared_ptr<VROLight>> _computedLights;
     
     /*
-     The opacity of the node (0.0 is transparent, 1.0 is opaque).
+     True if this node is hidden. Hidden nodes are not rendered, and do not 
+     respond to tap events. Hiding a node within an animation results in a 
+     fade-out animation. The _opacityFromHiddenFlag is the opacity as derived
+     from _hidden: 0.0 if _hidden is true, 1.0 if _hidden is false, or somewhere
+     in-between during animation.
      */
-    float _opacity;
+    bool _hidden;
+    float _opacityFromHiddenFlag;
     
     /*
-     Determines whether or not to render this node. Defaults to true.
+     The opacity of the node (0.0 is transparent, 1.0 is opaque). When opacity
+     drops below a threshold value, the node is hidden. This opacity is set by
+     the user.
      */
-    bool _visible;
+    float _opacity;
     
     /*
      True if this node is selectable by hit testing. Defaults to true.
