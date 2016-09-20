@@ -19,17 +19,20 @@ VROMatrix4f VROBillboardConstraint::getTransform(const VRONode &node,
     
     const VROCamera &camera = context.getCamera();
     
-    VROVector3f objToCamProj = node.getTransformedPosition().subtract(camera.getPosition());
+    VROVector3f objToCamProj = camera.getPosition().subtract(node.getTransformedPosition());
     objToCamProj.y = 0;
     objToCamProj = objToCamProj.normalize();
     
-    VROVector3f lookAt(0, 0, -1);
+    // The direction the object is assumed to be facing (positive Z)
+    VROVector3f lookAt(0, 0, 1);
+    
+    // Derives the axis and angle of billboard rotation
     VROVector3f upAux = lookAt.cross(objToCamProj).normalize();
     float angleCosine = lookAt.dot(objToCamProj);
-        
-    if ((angleCosine < 0.9999) && (angleCosine > -0.9999)) {        
+    
+    if ((angleCosine < 0.9999) && (angleCosine > -0.9999)) {
         VROQuaternion quaternion = VROQuaternion::fromAngleAxis(acos(angleCosine), upAux);
-        return transform.multiply(quaternion.getMatrix());
+        return quaternion.getMatrix().multiply(transform);
     }
     else {
         return transform;

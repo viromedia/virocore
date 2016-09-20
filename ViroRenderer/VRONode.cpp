@@ -160,13 +160,14 @@ VROMatrix4f VRONode::getTransform(const VRORenderContext &context) const {
     VROMatrix4f transform;
     transform.scale(_scale.x, _scale.y, _scale.z);
     transform = _rotation.getMatrix().multiply(transform);
-    transform.translate(_position.x, _position.y, _position.z);
-    transform = unpivotMtx.multiply(transform).multiply(pivotMtx);
     
     for (const std::shared_ptr<VROConstraint> &constraint : _constraints) {
         transform = constraint->getTransform(*this, context, transform);
     }
     
+    transform.translate(_position.x, _position.y, _position.z);
+    transform = unpivotMtx.multiply(transform).multiply(pivotMtx);
+
     return transform;
 }
 
