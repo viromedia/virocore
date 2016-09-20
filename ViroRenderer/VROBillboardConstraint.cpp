@@ -30,11 +30,14 @@ VROMatrix4f VROBillboardConstraint::getTransform(const VRONode &node,
     VROVector3f upAux = lookAt.cross(objToCamProj).normalize();
     float angleCosine = lookAt.dot(objToCamProj);
     
-    if ((angleCosine < 0.9999) && (angleCosine > -0.9999)) {
-        VROQuaternion quaternion = VROQuaternion::fromAngleAxis(acos(angleCosine), upAux);
-        return quaternion.getMatrix().multiply(transform);
+    VROQuaternion quaternion;
+    if ((angleCosine < 0.99999999) && (angleCosine > -0.99999999)) {
+        quaternion = VROQuaternion::fromAngleAxis(acos(angleCosine), upAux);
     }
     else {
-        return transform;
+        quaternion = VROQuaternion::fromAngleAxis(M_PI, upAux);
     }
+    
+    return quaternion.getMatrix().multiply(transform);
+
 }
