@@ -154,7 +154,8 @@ private:
     int _categoryBitMask;
     
     /*
-     Internal.
+     Internal. The position of the light after all its supernode
+     transforms have been applied.
      */
     VROVector3f _transformedPosition;
     

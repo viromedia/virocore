@@ -193,12 +193,12 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 1.0, 1.0 });
-    light->setPosition( { 0, 0, 0 });
+    light->setPosition( { -5, 0, 0 });
     light->setDirection( { 0, 0, -1.0 });
     light->setAttenuationStartDistance(8);
     light->setAttenuationEndDistance(10);
     light->setSpotInnerAngle(0);
-    light->setSpotOuterAngle(80);
+    light->setSpotOuterAngle(-5);
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
@@ -244,10 +244,12 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
-        VROTransaction::setAnimationDuration(2);
+        VROTransaction::setAnimationDuration(6);
         
         boxNode->setOpacity(0.5);
         boxNode->setHidden(true);
+        
+        light->setPosition( { 5, 0, 0 });
         
         VROTransaction::commit();
     });

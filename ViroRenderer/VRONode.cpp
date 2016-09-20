@@ -98,6 +98,7 @@ void VRONode::updateSortKeys(VRORenderParameters &params, const VRORenderContext
     opacities.push(_computedOpacity);
     
     if (_light) {
+        _light->setTransformedPosition(_computedTransform.multiply(_light->getPosition()));
         lights.push_back(_light);
     }
     _computedLights.clear();
