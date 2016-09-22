@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "VROView.h"
-#import "GCSCardboardView.h"
+#import "GVRCardboardView.h"
 
-@interface VROViewCardboard : GCSCardboardView <GCSCardboardViewDelegate, VROView>
+@interface VROViewCardboard : GVRCardboardView <GVRCardboardViewDelegate, VROView>
 
 @end

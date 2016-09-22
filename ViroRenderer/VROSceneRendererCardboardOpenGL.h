@@ -22,9 +22,9 @@ public:
     VROSceneRendererCardboardOpenGL(EAGLContext *context, std::shared_ptr<VRORenderer> renderer);
     virtual ~VROSceneRendererCardboardOpenGL();
     
-    virtual void initRenderer(GCSHeadTransform *headTransform);
-    virtual void prepareFrame(GCSHeadTransform *headTransform);
-    virtual void renderEye(GCSEye eye, GCSHeadTransform *headTransform);
+    virtual void initRenderer(GVRHeadTransform *headTransform);
+    virtual void prepareFrame(GVRHeadTransform *headTransform);
+    virtual void renderEye(GVREye eye, GVRHeadTransform *headTransform);
     virtual void endFrame();
     
     void setSceneController(VROSceneController *sceneController);

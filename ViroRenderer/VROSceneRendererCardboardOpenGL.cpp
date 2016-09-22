@@ -25,7 +25,7 @@ VROSceneRendererCardboardOpenGL::~VROSceneRendererCardboardOpenGL() {
     
 }
 
-void VROSceneRendererCardboardOpenGL::initRenderer(GCSHeadTransform *headTransform) {
+void VROSceneRendererCardboardOpenGL::initRenderer(GVRHeadTransform *headTransform) {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glDepthMask(GL_TRUE);
@@ -51,7 +51,7 @@ void VROSceneRendererCardboardOpenGL::setSceneController(VROSceneController *sce
     _renderer->setSceneController(sceneController, seconds, timingFunctionType, *_driver);
 }
 
-void VROSceneRendererCardboardOpenGL::prepareFrame(GCSHeadTransform *headTransform) {
+void VROSceneRendererCardboardOpenGL::prepareFrame(GVRHeadTransform *headTransform) {
     VROMatrix4f headRotation = matrix_float4x4_from_GL([headTransform headPoseInStartSpace]).invert();
     _renderer->prepareFrame(_frame, headRotation, *_driver.get());
     
@@ -65,7 +65,7 @@ void VROSceneRendererCardboardOpenGL::prepareFrame(GCSHeadTransform *headTransfo
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void VROSceneRendererCardboardOpenGL::renderEye(GCSEye eye, GCSHeadTransform *headTransform) {
+void VROSceneRendererCardboardOpenGL::renderEye(GVREye eye, GVRHeadTransform *headTransform) {
     CGRect rect = [headTransform viewportForEye:eye];
     VROViewport viewport(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
@@ -75,7 +75,7 @@ void VROSceneRendererCardboardOpenGL::renderEye(GCSEye eye, GCSHeadTransform *he
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     glScissor(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     
-    VROEyeType eyeType = (eye == kGCSLeftEye ? VROEyeType::Left : VROEyeType::Right);
+    VROEyeType eyeType = (eye == kGVRLeftEye ? VROEyeType::Left : VROEyeType::Right);
     _renderer->renderEye(eyeType, eyeMatrix, projectionMatrix, *_driver.get());
 }
 

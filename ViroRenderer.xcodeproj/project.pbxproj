@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		42F6CA9BC26A30987D44C675 /* libPods-ViroKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 025778F86F5FBA711F5AE6AF /* libPods-ViroKit.a */; };
-		5EC0722ADDCFD149E9BC29B6 /* libPods-ViroSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C8C519976E6BB10BB40F4CE /* libPods-ViroSample.a */; };
+		6386C3B94B3E92D246F8F9EB /* libPods-ViroKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6447C487DE6546AF514106CC /* libPods-ViroKit.a */; };
 		8F03BCE01CECC92300D071F8 /* blinn_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD91CECC30E00D071F8 /* blinn_vsh.glsl */; };
 		8F03BCE11CECC92300D071F8 /* blinn_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD61CECC30E00D071F8 /* blinn_functions_fsh.glsl */; };
 		8F03BCE21CECC92300D071F8 /* blinn_c_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD41CECC30E00D071F8 /* blinn_c_fsh.glsl */; };
@@ -279,6 +278,7 @@
 		8FD9B4651C33A933006CB698 /* bobaraj.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD9B4641C33A933006CB698 /* bobaraj.png */; };
 		8FDDE2091CCFD6A100674DE2 /* VROViewMetal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDE2071CCFD69D00674DE2 /* VROViewMetal.m */; };
 		8FDDE2121CD00F2600674DE2 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FDDE2111CD00F2600674DE2 /* CoreText.framework */; };
+		EC8D0A685CE2FA0BE80B7363 /* libPods-ViroSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF43BA975D626635F2D5584C /* libPods-ViroSample.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -356,11 +356,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		025778F86F5FBA711F5AE6AF /* libPods-ViroKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroKit.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		03012A81061C58F04F94B820 /* Pods-ViroKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.debug.xcconfig"; sourceTree = "<group>"; };
-		5C8C519976E6BB10BB40F4CE /* libPods-ViroSample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroSample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6470C4FA3E4142541648AEF0 /* Pods-ViroKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.release.xcconfig"; sourceTree = "<group>"; };
-		66B417AC43559D5315999C14 /* Pods-ViroSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.debug.xcconfig"; sourceTree = "<group>"; };
+		6447C487DE6546AF514106CC /* libPods-ViroKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroKit.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E1141125FCC9320616556D8 /* Pods-ViroKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.debug.xcconfig"; sourceTree = "<group>"; };
+		710AAB43C4650092845EAD81 /* Pods-ViroKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.release.xcconfig"; sourceTree = "<group>"; };
 		8F03BCD41CECC30E00D071F8 /* blinn_c_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_c_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCD51CECC30E00D071F8 /* blinn_c_reflect_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_c_reflect_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCD61CECC30E00D071F8 /* blinn_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_functions_fsh.glsl; sourceTree = "<group>"; };
@@ -656,7 +654,9 @@
 		8FEA6C9C1BE3DC7100C2CD0F /* VRORenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORenderTarget.h; sourceTree = "<group>"; };
 		8FF4D7A71C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROMaterialSubstrateMetal.cpp; sourceTree = "<group>"; };
 		8FF4D7A81C0D45DA006D6157 /* VROMaterialSubstrateMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialSubstrateMetal.h; sourceTree = "<group>"; };
-		E88347E9B8C5CF4FBCBD67FA /* Pods-ViroSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.release.xcconfig"; sourceTree = "<group>"; };
+		B1049B08B869A86043674A7C /* Pods-ViroSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.release.xcconfig"; sourceTree = "<group>"; };
+		BF43BA975D626635F2D5584C /* libPods-ViroSample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroSample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D3267984E31F54DDFDA5BFE7 /* Pods-ViroSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -667,7 +667,7 @@
 				8FD4DF2C1C18EFFE003DC425 /* Metal.framework in Frameworks */,
 				8FD4DF2D1C18EFFE003DC425 /* MetalKit.framework in Frameworks */,
 				8FD4DEE21C18ECD4003DC425 /* ViroKit.framework in Frameworks */,
-				5EC0722ADDCFD149E9BC29B6 /* libPods-ViroSample.a in Frameworks */,
+				EC8D0A685CE2FA0BE80B7363 /* libPods-ViroSample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -701,7 +701,7 @@
 				8FD4DF201C18EDA4003DC425 /* GLKit.framework in Frameworks */,
 				8FD4DF211C18EDA4003DC425 /* Metal.framework in Frameworks */,
 				8FD4DF221C18EDA4003DC425 /* MetalKit.framework in Frameworks */,
-				42F6CA9BC26A30987D44C675 /* libPods-ViroKit.a in Frameworks */,
+				6386C3B94B3E92D246F8F9EB /* libPods-ViroKit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -716,13 +716,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3D2902D0F8DE83BB23AAB8AE /* Pods */ = {
+		305D8D8D1ADA8A9CF8C5BF77 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				03012A81061C58F04F94B820 /* Pods-ViroKit.debug.xcconfig */,
-				6470C4FA3E4142541648AEF0 /* Pods-ViroKit.release.xcconfig */,
-				66B417AC43559D5315999C14 /* Pods-ViroSample.debug.xcconfig */,
-				E88347E9B8C5CF4FBCBD67FA /* Pods-ViroSample.release.xcconfig */,
+				6E1141125FCC9320616556D8 /* Pods-ViroKit.debug.xcconfig */,
+				710AAB43C4650092845EAD81 /* Pods-ViroKit.release.xcconfig */,
+				D3267984E31F54DDFDA5BFE7 /* Pods-ViroSample.debug.xcconfig */,
+				B1049B08B869A86043674A7C /* Pods-ViroSample.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -955,8 +955,8 @@
 				8F517BE01BCDA2BE0017C70B /* ViroRendererUITests */,
 				8FD4DEDC1C18ECD4003DC425 /* ViroKitTests */,
 				8F517BB71BCDA2BD0017C70B /* Products */,
-				3D2902D0F8DE83BB23AAB8AE /* Pods */,
 				95E5BC90E51A0FC2C3AA4D42 /* Frameworks */,
+				305D8D8D1ADA8A9CF8C5BF77 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1297,8 +1297,8 @@
 			isa = PBXGroup;
 			children = (
 				8FDDE2111CD00F2600674DE2 /* CoreText.framework */,
-				025778F86F5FBA711F5AE6AF /* libPods-ViroKit.a */,
-				5C8C519976E6BB10BB40F4CE /* libPods-ViroSample.a */,
+				6447C487DE6546AF514106CC /* libPods-ViroKit.a */,
+				BF43BA975D626635F2D5584C /* libPods-ViroSample.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1422,13 +1422,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8F517BE61BCDA2BE0017C70B /* Build configuration list for PBXNativeTarget "ViroSample" */;
 			buildPhases = (
-				C086BD9EBB333803971B7106 /* Check Pods Manifest.lock */,
+				28DF86205EAC10F859C52919 /* [CP] Check Pods Manifest.lock */,
 				8F517BB21BCDA2BD0017C70B /* Sources */,
 				8F517BB31BCDA2BD0017C70B /* Frameworks */,
 				8F517BB41BCDA2BD0017C70B /* Resources */,
 				8FD4DEE71C18ECD4003DC425 /* Embed Frameworks */,
-				7CB531BE26D4908DD20D31A0 /* Embed Pods Frameworks */,
-				72975E25DB0B0BAA33B63D7D /* Copy Pods Resources */,
+				62F405512A8B0011924043F4 /* [CP] Embed Pods Frameworks */,
+				1D59E3A97053F06F0060A165 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1480,14 +1480,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8FD4DEE41C18ECD4003DC425 /* Build configuration list for PBXNativeTarget "ViroKit" */;
 			buildPhases = (
-				B705AB16F310AF0ACDB41B86 /* Check Pods Manifest.lock */,
+				125C60D7B7453DFCA3017FAC /* [CP] Check Pods Manifest.lock */,
 				8FD4DEC81C18ECD4003DC425 /* Sources */,
 				8FD4DEC91C18ECD4003DC425 /* Frameworks */,
 				8FD4DECA1C18ECD4003DC425 /* Headers */,
 				8FD4DECB1C18ECD4003DC425 /* Resources */,
 				8F65F7941C971F1B00415115 /* CopyFiles */,
 				8F4AD8FF1D42BD220044B3F0 /* CopyFiles */,
-				C27C39AA2B0946D0BF3CD926 /* Copy Pods Resources */,
+				C97786BFF2EA12734F1F7046 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1662,14 +1662,29 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		72975E25DB0B0BAA33B63D7D /* Copy Pods Resources */ = {
+		125C60D7B7453DFCA3017FAC /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		1D59E3A97053F06F0060A165 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1677,14 +1692,29 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		7CB531BE26D4908DD20D31A0 /* Embed Pods Frameworks */ = {
+		28DF86205EAC10F859C52919 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		62F405512A8B0011924043F4 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1692,44 +1722,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B705AB16F310AF0ACDB41B86 /* Check Pods Manifest.lock */ = {
+		C97786BFF2EA12734F1F7046 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		C086BD9EBB333803971B7106 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		C27C39AA2B0946D0BF3CD926 /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2006,7 +2006,7 @@
 		};
 		8F517BE71BCDA2BE0017C70B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 66B417AC43559D5315999C14 /* Pods-ViroSample.debug.xcconfig */;
+			baseConfigurationReference = D3267984E31F54DDFDA5BFE7 /* Pods-ViroSample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -2020,7 +2020,7 @@
 		};
 		8F517BE81BCDA2BE0017C70B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E88347E9B8C5CF4FBCBD67FA /* Pods-ViroSample.release.xcconfig */;
+			baseConfigurationReference = B1049B08B869A86043674A7C /* Pods-ViroSample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -2084,7 +2084,7 @@
 		};
 		8FD4DEE51C18ECD4003DC425 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 03012A81061C58F04F94B820 /* Pods-ViroKit.debug.xcconfig */;
+			baseConfigurationReference = 6E1141125FCC9320616556D8 /* Pods-ViroKit.debug.xcconfig */;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -2108,7 +2108,7 @@
 		};
 		8FD4DEE61C18ECD4003DC425 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6470C4FA3E4142541648AEF0 /* Pods-ViroKit.release.xcconfig */;
+			baseConfigurationReference = 710AAB43C4650092845EAD81 /* Pods-ViroKit.release.xcconfig */;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;

@@ -10,7 +10,7 @@
 #define VROSceneRendererCardboard_h
 
 #include <stdio.h>
-#import "GCSCardboardView.h"
+#import "GVRCardboardView.h"
 
 @class VROSceneController;
 enum class VROTimingFunctionType;
@@ -26,14 +26,14 @@ public:
     /*
      Invoked once with the active GL context.
      */
-    virtual void initRenderer(GCSHeadTransform *headTransform) = 0;
+    virtual void initRenderer(GVRHeadTransform *headTransform) = 0;
     
     /*
      Invoked at the start of each frame, then once per eye, and at the end
      of the frame, respectively.
      */
-    virtual void prepareFrame(GCSHeadTransform *headTransform) = 0;
-    virtual void renderEye(GCSEye eye, GCSHeadTransform *headTransform) = 0;
+    virtual void prepareFrame(GVRHeadTransform *headTransform) = 0;
+    virtual void renderEye(GVREye eye, GVRHeadTransform *headTransform) = 0;
     virtual void endFrame()= 0;
     
     /*

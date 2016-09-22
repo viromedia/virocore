@@ -33,7 +33,7 @@ VROSceneRendererCardboardMetal::~VROSceneRendererCardboardMetal() {
     delete (_blitter);
 }
 
-void VROSceneRendererCardboardMetal::initRenderer(GCSHeadTransform *headTransform) {
+void VROSceneRendererCardboardMetal::initRenderer(GVRHeadTransform *headTransform) {
     id <MTLDevice> gpu = _driver->getDevice();
     
     /*
@@ -42,8 +42,8 @@ void VROSceneRendererCardboardMetal::initRenderer(GCSHeadTransform *headTransfor
      */
     int maxTextureSize = 2048; // TODO query GPU to find this
     
-    CGRect leftViewport  = [headTransform viewportForEye:kGCSLeftEye];
-    CGRect rightViewport = [headTransform viewportForEye:kGCSRightEye];
+    CGRect leftViewport  = [headTransform viewportForEye:kGVRLeftEye];
+    CGRect rightViewport = [headTransform viewportForEye:kGVRRightEye];
     
     int textureWidthPx  = MIN(leftViewport.size.width + rightViewport.size.width,
                               maxTextureSize);
@@ -94,7 +94,7 @@ void VROSceneRendererCardboardMetal::setSceneController(VROSceneController *scen
     _renderer->setSceneController(sceneController, seconds, timingFunctionType, *_driver);
 }
 
-void VROSceneRendererCardboardMetal::prepareFrame(GCSHeadTransform *headTransform) {
+void VROSceneRendererCardboardMetal::prepareFrame(GVRHeadTransform *headTransform) {
     VRODriverMetal *driver = (VRODriverMetal *)_driver.get();
     
     _commandBuffer = [driver->getCommandQueue() commandBuffer];
@@ -111,7 +111,7 @@ void VROSceneRendererCardboardMetal::prepareFrame(GCSHeadTransform *headTransfor
     glEnable(GL_SCISSOR_TEST);
 }
 
-void VROSceneRendererCardboardMetal::renderEye(GCSEye eye, GCSHeadTransform *headTransform) {
+void VROSceneRendererCardboardMetal::renderEye(GVREye eye, GVRHeadTransform *headTransform) {
     CGRect rect = [headTransform viewportForEye:eye];
     VROViewport viewport(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
@@ -122,7 +122,7 @@ void VROSceneRendererCardboardMetal::renderEye(GCSEye eye, GCSHeadTransform *hea
     [renderEncoder setViewport:viewport.toMetalViewport()];
     [renderEncoder setScissorRect:viewport.toMetalScissor()];
     
-    VROEyeType eyeType = (eye == kGCSLeftEye ? VROEyeType::Left : VROEyeType::Right);
+    VROEyeType eyeType = (eye == kGVRLeftEye ? VROEyeType::Left : VROEyeType::Right);
     _renderer->renderEye(eyeType, eyeMatrix, projectionMatrix, *_driver.get());
 }
 

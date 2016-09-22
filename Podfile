@@ -1,7 +1,7 @@
 target 'ViroKit' do
-   pod 'CardboardSDK'
+   pod 'GVRSDK'
 end
 
 target 'ViroSample' do
-   pod 'CardboardSDK'
+   pod 'GVRSDK'
 end

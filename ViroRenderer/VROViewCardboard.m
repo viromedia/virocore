@@ -173,36 +173,36 @@
 
 #pragma mark - Cardboard View Delegate
 
-- (void)cardboardView:(GCSCardboardView *)cardboardView didFireEvent:(GCSUserEvent)event {
-    if (event == kGCSUserEventTrigger) {
+- (void)cardboardView:(GVRCardboardView *)cardboardView didFireEvent:(GVRUserEvent)event {
+    if (event == kGVRUserEventTrigger) {
         dispatch_async(dispatch_get_main_queue(), ^{
             _renderer->handleTap();
         });
     }
 }
 
-- (void)cardboardView:(GCSCardboardView *)cardboardView
-     willStartDrawing:(GCSHeadTransform *)headTransform {
+- (void)cardboardView:(GVRCardboardView *)cardboardView
+     willStartDrawing:(GVRHeadTransform *)headTransform {
     
     
     self.sceneRenderer->initRenderer(headTransform);
 }
 
-- (void)cardboardView:(GCSCardboardView *)cardboardView
-     prepareDrawFrame:(GCSHeadTransform *)headTransform {
+- (void)cardboardView:(GVRCardboardView *)cardboardView
+     prepareDrawFrame:(GVRHeadTransform *)headTransform {
     
-    CGRect rect = [headTransform viewportForEye:kGCSLeftEye];
+    CGRect rect = [headTransform viewportForEye:kGVRLeftEye];
     self.viewport = { (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height };
     
     self.sceneRenderer->prepareFrame(headTransform);
 }
 
-- (void)cardboardView:(GCSCardboardView *)cardboardView
-              drawEye:(GCSEye)eye
-    withHeadTransform:(GCSHeadTransform *)headTransform {
+- (void)cardboardView:(GVRCardboardView *)cardboardView
+              drawEye:(GVREye)eye
+    withHeadTransform:(GVRHeadTransform *)headTransform {
     
     self.sceneRenderer->renderEye(eye, headTransform);
-    if (eye == kGCSRightEye || eye == kGCSCenterEye) {
+    if (eye == kGVRRightEye || eye == kGVRCenterEye) {
         self.sceneRenderer->endFrame();
     }
 }
