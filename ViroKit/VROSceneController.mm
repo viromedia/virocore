@@ -144,22 +144,21 @@
 }
 
 - (void)setHoverEnabled:(BOOL)enabled boundsOnly:(BOOL)boundsOnly {
+    __weak VROSceneController *weakSelf = self;
     if (enabled) {
         self.hoverDelegate = std::make_shared<VROHoverDelegate>(boundsOnly,
-                                                                [self](std::shared_ptr<VRONode> node) {
-                                                                    return [self isHoverable:node];
+                                                                [weakSelf](std::shared_ptr<VRONode> node){
+                                                                    return [weakSelf isHoverable:node];
                                                                 },
-                                                                [self](std::shared_ptr<VRONode> node) {
-                                                                    [self hoverOnNode:node];
+                                                                [weakSelf](std::shared_ptr<VRONode> node){
+                                                                    [weakSelf hoverOnNode:node];
                                                                 },
-                                                                [self](std::shared_ptr<VRONode> node) {
-                                                                    [self hoverOffNode:node];
+                                                                [weakSelf](std::shared_ptr<VRONode> node){
+                                                                    [weakSelf hoverOffNode:node];
                                                                 });
-        self.internal->setHoverDelegate(self.hoverDelegate);
-    }
-    else {
+        
+    } else {
         self.hoverDelegate = nil;
-        self.internal->setHoverDelegate({});
     }
 }
 
