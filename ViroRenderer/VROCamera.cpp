@@ -36,11 +36,8 @@ void VROCamera::onRotationChanged() {
     VROMatrix4f rotation = _headRotation.multiply(_baseRotation);
     _rotation = { rotation };
     
-    VROVector3f zAxis(0, 0, -1.0);
-    _forward = rotation.multiply(zAxis);
-    
-    VROVector3f yAxis(0, 1.0, 0);
-    _up = rotation.multiply(yAxis);
+    _forward = rotation.multiply(kBaseForward);
+    _up = rotation.multiply(kBaseUp);
 }
 
 VROMatrix4f VROCamera::computeLookAtMatrix() const {

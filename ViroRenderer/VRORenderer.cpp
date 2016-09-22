@@ -101,16 +101,8 @@ void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &d
     notifyFrameStart();
     
     VROCamera camera;
-    camera.setHeadRotation({headRotation});
+    camera.setHeadRotation(headRotation);
     camera.setBaseRotation(_camera->getBaseRotation().getMatrix());
-    
-    /*
-     This matrix is used for rendering objects that follow the camera, such
-     as skyboxes. To get them to follow the camera, we do not include the 
-     camera's translation component in the view matrix.
-     */
-    camera.setPosition({0, 0, 0 });
-    VROMatrix4f enclosureMatrix = camera.computeLookAtMatrix();
     
     if (_camera->getRotationType() == VROCameraRotationType::Standard) {
         camera.setPosition(_camera->getPosition());
@@ -119,13 +111,29 @@ void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &d
         VROVector3f pos = _camera->getPosition();
         VROVector3f focal = _camera->getOrbitFocalPoint();
         
-        float magnitude = pos.distance(focal);
-        VROVector3f ray = headRotation.multiply({ 0, 0, 1});
+        VROVector3f v = focal.subtract(pos);
+        VROVector3f ray = v.normalize();
         
-        camera.setPosition(focal + ray.scale(magnitude));
+        // Set the orbit position by pushing out the camera at an angle
+        // defined by the current head rotation
+        VROVector3f orbitedRay = headRotation.multiply(v.normalize());
+        camera.setPosition(focal - orbitedRay.scale(v.magnitude()));
+        
+        // Set the orbit rotation. This is the current head rotation plus
+        // the rotation required to get from kBaseForward to the forward
+        // vector defined by the camera's position and focal point
+        VROQuaternion rotation = VROQuaternion::rotationFromTo(ray, kBaseForward);
+        camera.setHeadRotation(rotation.getMatrix().invert().multiply(headRotation));
     }
     
     _context->setCamera(camera);
+    
+    /*
+     This matrix is used for rendering objects that follow the camera, such
+     as skyboxes. To get them to follow the camera, we do not include the
+     camera's translation component in the view matrix.
+     */
+    VROMatrix4f enclosureMatrix = VROMathComputeLookAtMatrix({ 0, 0, 0 }, camera.getForward(), camera.getUp());
     _context->setEnclosureViewMatrix(enclosureMatrix);
 
     [_HUD updateWithDriver:&driver];

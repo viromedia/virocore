@@ -13,6 +13,14 @@
 #include "VROQuaternion.h"
 #include "VROMatrix4f.h"
 
+
+/*
+ The default forward and up vectors. These are rotated by the base and head
+ rotation to derive the actual forward and up vectors.
+ */
+static const VROVector3f kBaseForward = { 0, 0, -1 };
+static const VROVector3f kBaseUp = { 0, 1, 0 };
+
 class VROCamera {
     
 public:
@@ -23,7 +31,7 @@ public:
     void setPosition(VROVector3f position);
     void setHeadRotation(VROMatrix4f headRotation);
     void setBaseRotation(VROMatrix4f baseRotation);
-
+    
     VROVector3f getPosition() const {
         return _position;
     }
@@ -37,7 +45,7 @@ public:
         return _rotation;
     }
     VROMatrix4f computeLookAtMatrix() const;
-        
+    
 private:
     
     VROVector3f _position;
