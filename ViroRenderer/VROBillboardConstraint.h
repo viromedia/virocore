@@ -11,9 +11,19 @@
 
 #include "VROConstraint.h"
 
+enum class VROBillboardAxis {
+    X,
+    Y,
+    Z,
+    All
+};
+
 class VROBillboardConstraint : public VROConstraint {
     
 public:
+    
+    VROBillboardConstraint(VROBillboardAxis freeAxis) :
+        _freeAxis(freeAxis) {}
     
     virtual VROMatrix4f getTransform(const VRONode &node,
                                      const VRORenderContext &context,
@@ -21,6 +31,10 @@ public:
     
     
 private:
+    
+    VROBillboardAxis _freeAxis;
+    
+    VROQuaternion computeAxisRotation(VROVector3f defaultAxis, VROVector3f objToCamProj);
     
 };
 

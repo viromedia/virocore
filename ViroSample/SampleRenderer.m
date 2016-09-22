@@ -221,7 +221,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     boxNode->setPosition({0, 0, -5});
 
     rootNode->addChildNode(boxNode);
-    boxNode->addConstraint(std::make_shared<VROBillboardConstraint>());
+    boxNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
     
     /*
      Create a second box node behind the first.
@@ -302,7 +302,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROLayer> center = std::make_shared<VROLayer>();
     center->setContents([UIImage imageNamed:@"momentslogo"]);
     center->setFrame(VRORectMake(3.0, -1.25, 2, 1, 1));
-    center->addConstraint(std::make_shared<VROBillboardConstraint>());
+    center->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::Y));
     
     rootNode->addChildNode(center);
     
