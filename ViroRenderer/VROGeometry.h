@@ -47,7 +47,6 @@ public:
     VROGeometry(std::vector<std::shared_ptr<VROGeometrySource>> sources,
                 std::vector<std::shared_ptr<VROGeometryElement>> elements,
                 VRODriver *driver = nullptr) :
-        _renderingOrder(0),
         _geometrySources(sources),
         _geometryElements(elements),
         _cameraEnclosure(false),
@@ -66,7 +65,6 @@ public:
      underlying immutable geometry data will be shared.
      */
     VROGeometry(std::shared_ptr<VROGeometry> geometry) :
-        _renderingOrder(geometry->_renderingOrder),
         _geometrySources(geometry->_geometrySources),
         _geometryElements(geometry->_geometryElements) {
         
@@ -88,7 +86,8 @@ public:
                 const VRORenderContext &context,
                 VRODriver &driver);
     
-    void updateSortKeys(VRONode *node, uint32_t lightsHash);
+    void updateSortKeys(VRONode *node, uint32_t lightsHash,
+                        float opacity, float distanceFromCamera, float zFar);
     void getSortKeys(std::vector<VROSortKey> *outKeys);
     
     std::shared_ptr<VROMaterial> &getMaterialForElement(int elementIndex) {
@@ -127,11 +126,6 @@ private:
      User-assigned name of this geometry.
      */
     std::string _name;
-    
-    /*
-     User-defined rendering order for this geometry.
-     */
-    int _renderingOrder;
     
     /*
      The materials, which define the surface appearance (color, lighting, texture, and effects)

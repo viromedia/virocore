@@ -31,6 +31,7 @@ static const float kHiddenOpacityThreshold = 0.02;
 VRONode::VRONode() :
     _scale({1.0, 1.0, 1.0}),
     _pivot({0.5f, 0.5f, 0.5f}),
+    _renderingOrder(0),
     _hidden(false),
     _opacityFromHiddenFlag(1.0),
     _opacity(1.0),
@@ -47,6 +48,7 @@ VRONode::VRONode(const VRONode &node) :
     _position(node._position),
     _rotation(node._rotation),
     _pivot(node._pivot),
+    _renderingOrder(node._renderingOrder),
     _hidden(node._hidden),
     _opacityFromHiddenFlag(node._opacityFromHiddenFlag),
     _opacity(node._opacity),
@@ -109,7 +111,8 @@ void VRONode::updateSortKeys(VRORenderParameters &params, const VRORenderContext
      */
     if (_geometry) {
         int lightsHash = hashLights(lights);
-        _geometry->updateSortKeys(this, lightsHash);
+        float distanceFromCamera = getTransformedPosition().distance(context.getCamera().getPosition());
+        _geometry->updateSortKeys(this, lightsHash, _computedOpacity, distanceFromCamera, context.getZFar());
     }
     
     /*

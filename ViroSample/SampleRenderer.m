@@ -195,8 +195,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     light->setColor({ 1.0, 1.0, 1.0 });
     light->setPosition( { 0, 0, 0 });
     light->setDirection( { 0, 0, -1.0 });
-    light->setAttenuationStartDistance(8);
-    light->setAttenuationEndDistance(10);
+    light->setAttenuationStartDistance(20);
+    light->setAttenuationEndDistance(30);
     light->setSpotInnerAngle(0);
     light->setSpotOuterAngle(-5);
     
@@ -235,9 +235,25 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VRONode> boxNode2 = std::make_shared<VRONode>();
     boxNode2->setGeometry(box2);
-    boxNode2->setPosition({0, 0, -10});
+    boxNode2->setPosition({0, 0, -9});
     
     rootNode->addChildNode(boxNode2);
+    
+    /*
+     Create a second box node behind the first.
+     */
+    std::shared_ptr<VROBox> box3 = VROBox::createBox(2, 4, 2);
+    
+    std::shared_ptr<VROMaterial> material3 = box3->getMaterials()[0];
+    material3->setLightingModel(VROLightingModel::Phong);
+    material3->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"boba"]));
+    material3->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"specular"]));
+    
+    std::shared_ptr<VRONode> boxNode3 = std::make_shared<VRONode>();
+    boxNode3->setGeometry(box3);
+    boxNode3->setPosition({0, 0, -13});
+    
+    rootNode->addChildNode(boxNode3);
     
     [self.view setCameraRotationType:VROCameraRotationType::Orbit];
     [self.view setOrbitFocalPoint:boxNode->getPosition()];
@@ -246,8 +262,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(6);
         
-        [self.view setPosition:{ 0, 5, -5 }];
-
+        boxNode->setOpacity(0.2);
+        boxNode2->setOpacity(0.2);
+        
         VROTransaction::commit();
     });
 

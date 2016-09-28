@@ -116,7 +116,7 @@ void VROSceneRendererCardboardMetal::renderEye(GVREye eye, GVRHeadTransform *hea
     VROViewport viewport(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
     VROMatrix4f eyeMatrix = matrix_float4x4_from_GL([headTransform eyeFromHeadMatrix:eye]);
-    VROMatrix4f projectionMatrix = matrix_float4x4_from_GL([headTransform projectionMatrixForEye:eye near:0.01 far:100]); //TODO Near far
+    VROMatrix4f projectionMatrix = matrix_float4x4_from_GL([headTransform projectionMatrixForEye:eye near:kZNear far:kZFar]);
     
     id <MTLRenderCommandEncoder> renderEncoder = _eyeTarget->getRenderEncoder();
     [renderEncoder setViewport:viewport.toMetalViewport()];

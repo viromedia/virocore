@@ -16,9 +16,6 @@
 #import "VRODistortionRenderer.h"
 #import "VROEye.h"
 
-static const float zNear = 0.1;
-static const float zFar  = 100;
-
 @interface VROViewMetal () {
     
     int _frameNumber;
@@ -302,7 +299,7 @@ static const float zFar  = 100;
                                                                  * screen.getWidthInMeters()
                                                                  / screen.getHeightInMeters()));
     _monocularEye->setFOV(monocularLeftFov, monocularLeftFov, monocularBottomFov, monocularBottomFov,
-                          zNear, zFar);
+                          kZNear, kZFar);
 }
 
 - (void)updateLeftRightEyes {
@@ -325,14 +322,14 @@ static const float zFar  = 100;
                      MIN(innerAngle,  _vrDevice->getMaximumLeftEyeFOV().getRight()),
                      MIN(bottomAngle, _vrDevice->getMaximumLeftEyeFOV().getBottom()),
                      MIN(topAngle,    _vrDevice->getMaximumLeftEyeFOV().getTop()),
-                     zNear, zFar);
+                     kZNear, kZFar);
     
     const VROFieldOfView &leftEyeFov = _leftEye->getFOV();
     _rightEye->setFOV(leftEyeFov.getRight(),
                       leftEyeFov.getLeft(),
                       leftEyeFov.getBottom(),
                       leftEyeFov.getTop(),
-                      zNear, zFar);
+                      kZNear, kZFar);
     
     _distortionRenderer->fovDidChange(_leftEye, _rightEye,
                                       _vrDevice->getScreenToLensDistance());

@@ -10,8 +10,7 @@
 #define VROSortKey_hpp
 
 #include <stdio.h>
-
-#define kSortKeySize 40
+#include <tuple>
 
 /*
  Sort keys are used to quickly sort geometry elements into optimal batch rendering order,
@@ -22,52 +21,49 @@ class VROSortKey {
     
 public:
     VROSortKey() {
-        memset(key, 0, kSortKeySize);
-    }
-    
-    int compare(const VROSortKey &other) const {
-        return memcmp(key, other.key, kSortKeySize);
-    }
-    
-    bool operator==(const VROSortKey& r) const { return compare(r) == 0; }
-    bool operator!=(const VROSortKey& r) const { return compare(r) != 0; }
-    bool operator< (const VROSortKey& r) const { return compare(r) <  0; }
-    bool operator> (const VROSortKey& r) const { return compare(r) >  0; }
-    bool operator<=(const VROSortKey& r) const { return compare(r) <= 0; }
-    bool operator>=(const VROSortKey& r) const { return compare(r) >= 0; }
-    bool operator- (const VROSortKey& r) const { return compare(r); }
-    
-    union {
-        struct {
-            
-            /*
-             Manual rendering order setting is the highest sorting concern.
-             */
-            uint32_t renderingOrder;
-            
-            /*
-             State-change minimization concerns.
-             */
-            uint32_t shader;
-            uint32_t textures;
-            uint32_t lights;
-            uint32_t material;
-            
-            /*
-             Tie-breakers, double as pointers to the node and
-             index of the geometry element.
-             */
-            uintptr_t node;
-            uint8_t elementIndex;
-            bool outgoing;
-            
-        };
         
-        unsigned char key[kSortKeySize];
-    };
-};
+    }
 
-static_assert (kSortKeySize == sizeof(VROSortKey), "Sort key size incorrect");
+    bool operator< (const VROSortKey& r) const {
+        return std::tie(renderingOrder, transparentDistanceFromCamera, shader, textures, lights, material, node, elementIndex, outgoing) <
+               std::tie(r.renderingOrder, r.transparentDistanceFromCamera, r.shader, r.textures, r.lights, r.material, r.node, r.elementIndex, r.outgoing);
+    }
+            
+    /*
+     Manual rendering order setting is the highest sorting concern.
+     */
+    uint32_t renderingOrder;
+    
+    /*
+     Distance to camera for transparent objects is next
+     (back to front). This value is set to 0 for opaque objects.
+     For transparent objects, this value is set to 
+     (zFar - distance from the camera).
+     
+     When sorted, this results in back to front rendering of
+     transparent objects.
+     */
+    float transparentDistanceFromCamera;
+    
+    /*
+     State-change minimization concerns.
+     */
+    uint32_t shader;
+    uint32_t textures;
+    uint32_t lights;
+    uint32_t material;
+    
+    //// 24 bytes to this point. Keep uintptr_t at an 8 byte boundary to avoid waste ////
+    
+    /*
+     Tie-breakers, double as pointers to the node and
+     index of the geometry element.
+     */
+    uintptr_t node;
+    uint8_t elementIndex;
+    bool outgoing;
+    
+};
 
 // Uncomment to see a compiler error indicating the size of each VROSortKey
 // template<int s> struct SortKeySize;

@@ -18,6 +18,7 @@
 #include "VROHoverController.h"
 #include "VROLog.h"
 #include <stack>
+#include <algorithm>
 
 static const float kSphereBackgroundRadius = 1;
 static const float kSphereBackgroundNumSegments = 20;
@@ -90,6 +91,8 @@ void VROScene::updateSortKeys(const VRORenderContext &context) {
     for (std::shared_ptr<VRONode> &node : _nodes) {
         node->getSortKeys(&_keys);
     }
+    
+    std::sort(_keys.begin(), _keys.end());
 }
 
 void VROScene::addNode(std::shared_ptr<VRONode> node) {

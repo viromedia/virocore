@@ -50,6 +50,20 @@ public:
         return _eye;
     }
     
+    void setZNear(float zNear) {
+        _zNear = zNear;
+    }
+    float getZNear() const {
+        return _zNear;
+    }
+    
+    void setZFar(float zFar) {
+        _zFar = zFar;
+    }
+    float getZFar() const {
+        return _zFar;
+    }
+    
     void setProjectionMatrix(VROMatrix4f projectionMatrix) {
         _projectionMatrix = projectionMatrix;
     }
@@ -115,6 +129,11 @@ private:
      The camera used for this frame.
      */
     VROCamera _camera;
+    
+    /*
+     The near and far clipping planes.
+     */
+    float _zNear, _zFar;
     
     /*
      Synchronizer used to add or remove frame listeners.

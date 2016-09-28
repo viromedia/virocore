@@ -33,6 +33,9 @@ enum class VROTimingFunctionType;
 @class VROScreenUIView; //TODO delete
 @class VROSceneController;
 
+static const float kZNear = 0.1;
+static const float kZFar  = 100;
+
 class VRORenderer {
     
 public:

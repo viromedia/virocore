@@ -107,6 +107,13 @@ public:
     }
     void setHidden(bool hidden);
     
+    int getRenderingOrder() const {
+        return _renderingOrder;
+    }
+    void setRenderingOrder(int renderingOrder) {
+        _renderingOrder = renderingOrder;
+    }
+    
     /*
      The pivot point is the point about which we apply rotation, translation,
      and scale. This is specified as a vector ranging from [0, 1], where 0 
@@ -209,6 +216,11 @@ private:
     VROVector3f _position;
     VROQuaternion _rotation;
     VROVector3f _pivot;
+    
+    /*
+     User-defined rendering order for this node.
+     */
+    int _renderingOrder;
     
     /*
      Parameters computed by descending down the tree. These are updated whenever

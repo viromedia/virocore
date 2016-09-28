@@ -160,6 +160,8 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     _context->setViewMatrix(eyeView);
     _context->setProjectionMatrix(projectionMatrix);
     _context->setEyeType(eye);
+    _context->setZNear(kZNear);
+    _context->setZFar(kZFar);
     
     renderEye(eye, driver);
     [_HUD renderEye:eye withRenderContext:_context.get() driver:&driver];

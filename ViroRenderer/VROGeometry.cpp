@@ -13,6 +13,7 @@
 #include "VROGeometryElement.h"
 #include "VROLog.h"
 #include "VROLight.h"
+#include "VRONode.h"
 #include "VROGeometryUtil.h"
 #include "VROMaterial.h"
 
@@ -40,7 +41,8 @@ void VROGeometry::render(int elementIndex,
     _substrate->render(*this, elementIndex, transform, opacity, material, context, driver);
 }
 
-void VROGeometry::updateSortKeys(VRONode *node, uint32_t lightsHash) {
+void VROGeometry::updateSortKeys(VRONode *node, uint32_t lightsHash,
+                                 float opacity, float distanceFromCamera, float zFar) {
     _sortKeys.clear();
     
     size_t numElements = _geometryElements.size();
@@ -48,10 +50,17 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t lightsHash) {
         int materialIndex = i % (int) _materials.size();
         
         VROSortKey key;
-        key.renderingOrder = _renderingOrder;
+        key.renderingOrder = node->getRenderingOrder();
         key.lights = lightsHash;
         key.node = (uintptr_t) node;
         key.elementIndex = i;
+        
+        if (opacity < 1.0) {
+            key.transparentDistanceFromCamera = zFar - distanceFromCamera;
+        }
+        else {
+            key.transparentDistanceFromCamera = 0;
+        }
         
         std::shared_ptr<VROMaterial> &material = _materials[materialIndex];
         material->updateSortKey(key);
