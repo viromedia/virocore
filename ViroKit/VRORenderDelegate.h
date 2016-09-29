@@ -26,6 +26,7 @@ enum class VROEyeType;
 - (void)willRenderEye:(VROEyeType)eye context:(const VRORenderContext *)context;
 - (void)didRenderEye:(VROEyeType)eye context:(const VRORenderContext *)context;
 - (void)reticleTapped:(VROVector3f)ray context:(const VRORenderContext *)context;
+- (void)userDidRequestExitVR;
 
 @end
 

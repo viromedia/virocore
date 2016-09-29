@@ -293,3 +293,11 @@ void VRORenderer::notifyFrameEnd() {
     ((VROFrameSynchronizerInternal *)_frameSynchronizer.get())->notifyFrameEnd(*_context.get());
 
 }
+
+#pragma mark - VR Framework Specific
+
+void VRORenderer::requestExitVR() {
+    if (_delegate) {
+        [_delegate userDidRequestExitVR];
+    }
+}

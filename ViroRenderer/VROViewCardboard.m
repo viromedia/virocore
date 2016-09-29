@@ -178,6 +178,10 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             _renderer->handleTap();
         });
+    } else if (event == kGVRUserEventBackButton) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            _renderer->requestExitVR();
+        });
     }
 }
 

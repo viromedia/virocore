@@ -80,6 +80,10 @@ public:
     VROScreenUIView *getHUD() {
         return _HUD;
     }
+
+#pragma mark - VR Framework Specific
+    // Some VR frameworks provide controls to allow the user to exit VR
+    void requestExitVR();
     
 private:
     
