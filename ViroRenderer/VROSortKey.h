@@ -25,8 +25,8 @@ public:
     }
 
     bool operator< (const VROSortKey& r) const {
-        return std::tie(renderingOrder, transparentDistanceFromCamera, shader, textures, lights, material, node, elementIndex, outgoing) <
-               std::tie(r.renderingOrder, r.transparentDistanceFromCamera, r.shader, r.textures, r.lights, r.material, r.node, r.elementIndex, r.outgoing);
+        return std::tie(renderingOrder, distanceFromCamera, shader, textures, lights, material, node, elementIndex, outgoing) <
+               std::tie(r.renderingOrder, r.distanceFromCamera, r.shader, r.textures, r.lights, r.material, r.node, r.elementIndex, r.outgoing);
     }
             
     /*
@@ -35,15 +35,13 @@ public:
     uint32_t renderingOrder;
     
     /*
-     Distance to camera for transparent objects is next
-     (back to front). This value is set to 0 for opaque objects.
-     For transparent objects, this value is set to 
-     (zFar - distance from the camera).
+     Distance fom camera for objects is next (back to front).
+     This value is set to (zFar - distance from the camera).
      
      When sorted, this results in back to front rendering of
-     transparent objects.
+     objects, ensuring correct rendering of translucent objects.
      */
-    float transparentDistanceFromCamera;
+    float distanceFromCamera;
     
     /*
      State-change minimization concerns.

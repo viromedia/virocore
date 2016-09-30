@@ -54,13 +54,7 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t lightsHash,
         key.lights = lightsHash;
         key.node = (uintptr_t) node;
         key.elementIndex = i;
-        
-        if (opacity < 1.0) {
-            key.transparentDistanceFromCamera = zFar - distanceFromCamera;
-        }
-        else {
-            key.transparentDistanceFromCamera = 0;
-        }
+        key.distanceFromCamera = zFar - distanceFromCamera;
         
         std::shared_ptr<VROMaterial> &material = _materials[materialIndex];
         material->updateSortKey(key);
