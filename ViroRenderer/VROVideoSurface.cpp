@@ -54,6 +54,26 @@ void VROVideoSurface::pause() {
     _texture->pause();
 }
 
+void VROVideoSurface::seekToTime(int seconds) {
+    _texture->seekToTime(seconds);
+}
+
+void VROVideoSurface::setMuted(bool muted) {
+    _texture->setMuted(muted);
+}
+
+void VROVideoSurface::setVolume(float volume) {
+    _texture->setVolume(volume);
+}
+
+void VROVideoSurface::setLoop(bool loop) {
+    _texture->setLoop(loop);
+}
+
 bool VROVideoSurface::isPaused() {
     return _texture->isPaused();
+}
+
+void VROVideoSurface::setDelegate(id <VROVideoDelegate> delegate) {
+    _texture->setDelegate(delegate);
 }

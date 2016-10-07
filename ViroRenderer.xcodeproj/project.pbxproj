@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6386C3B94B3E92D246F8F9EB /* libPods-ViroKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6447C487DE6546AF514106CC /* libPods-ViroKit.a */; };
+		8A305E071DA82719007407EF /* VROVideoDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A305E061DA82719007407EF /* VROVideoDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F03BCE01CECC92300D071F8 /* blinn_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD91CECC30E00D071F8 /* blinn_vsh.glsl */; };
 		8F03BCE11CECC92300D071F8 /* blinn_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD61CECC30E00D071F8 /* blinn_functions_fsh.glsl */; };
 		8F03BCE21CECC92300D071F8 /* blinn_c_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD41CECC30E00D071F8 /* blinn_c_fsh.glsl */; };
@@ -359,6 +360,7 @@
 		6447C487DE6546AF514106CC /* libPods-ViroKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroKit.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E1141125FCC9320616556D8 /* Pods-ViroKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.debug.xcconfig"; sourceTree = "<group>"; };
 		710AAB43C4650092845EAD81 /* Pods-ViroKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.release.xcconfig"; sourceTree = "<group>"; };
+		8A305E061DA82719007407EF /* VROVideoDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoDelegate.h; sourceTree = "<group>"; };
 		8F03BCD41CECC30E00D071F8 /* blinn_c_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_c_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCD51CECC30E00D071F8 /* blinn_c_reflect_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_c_reflect_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCD61CECC30E00D071F8 /* blinn_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_functions_fsh.glsl; sourceTree = "<group>"; };
@@ -873,6 +875,7 @@
 				8FD1E1AD1C3F20C70005BE4E /* VROVideoSurface.cpp */,
 				8FD1E1BE1C4093790005BE4E /* VROVideoTexture.h */,
 				8FD1E1BD1C4093790005BE4E /* VROVideoTexture.cpp */,
+				8A305E061DA82719007407EF /* VROVideoDelegate.h */,
 				8F03BCFA1CEE30B200D071F8 /* VROVideoTextureCache.h */,
 				8F83DE8C1C4728A30089C31A /* VROHitTestResult.h */,
 				8F92780A1C67DE4A00FF892A /* VROHoverController.h */,
@@ -1394,6 +1397,7 @@
 				8F11B7C21C20B0530026D150 /* VROView.h in Headers */,
 				8FCF395F1CA589AF00A86CA3 /* VROSceneController.h in Headers */,
 				8F83DEAF1C50278C0089C31A /* VROSphere.h in Headers */,
+				8A305E071DA82719007407EF /* VROVideoDelegate.h in Headers */,
 				8F65F8161CA073C100415115 /* VROTextureUtil.h in Headers */,
 				8FA2E1511C4463D00070DB26 /* VROSkybox.h in Headers */,
 				8F11B7C51C20B6180026D150 /* VRORenderDelegate.h in Headers */,

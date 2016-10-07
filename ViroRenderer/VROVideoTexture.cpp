@@ -20,6 +20,9 @@
 
 # define ONE_FRAME_DURATION 0.03
 
+static NSString *const kStatusKey = @"status";
+static NSString *const kPlaybackKeepUpKey = @"playbackLikelyToKeepUp";
+
 VROVideoTexture::VROVideoTexture() :
     _paused(true) {
     
@@ -28,6 +31,9 @@ VROVideoTexture::VROVideoTexture() :
 
 VROVideoTexture::~VROVideoTexture() {
     ALLOCATION_TRACKER_SUB(VideoTextures, 1);
+    // Remove observers from the player's item when this is deallocated.
+    [_player.currentItem removeObserver:_avPlayerDelegate forKeyPath:kStatusKey context:this];
+    [_player.currentItem removeObserver:_avPlayerDelegate forKeyPath:kPlaybackKeepUpKey context:this];
 }
 
 #pragma mark - Recorded Video Playback
@@ -49,8 +55,34 @@ void VROVideoTexture::pause() {
     _paused = true;
 }
 
+void VROVideoTexture::seekToTime(int seconds) {
+    [_player seekToTime:CMTimeMake(seconds, 1)];
+}
+
 bool VROVideoTexture::isPaused() {
     return _paused;
+}
+
+void VROVideoTexture::setMuted(bool muted) {
+    _player.muted = muted;
+}
+
+void VROVideoTexture::setVolume(float volume) {
+    _player.volume = volume;
+}
+
+void VROVideoTexture::setLoop(bool loop) {
+    _loop = loop;
+    if (_videoNotificationListener) {
+      [_videoNotificationListener shouldLoop:loop];
+    }
+}
+
+void VROVideoTexture::setDelegate(id <VROVideoDelegate> delegate) {
+    _delegate = delegate;
+    if (_videoNotificationListener) {
+        [_videoNotificationListener setDelegate:delegate];
+    }
 }
 
 void VROVideoTexture::loadVideo(NSURL *url,
@@ -60,23 +92,27 @@ void VROVideoTexture::loadVideo(NSURL *url,
     frameSynchronizer->addFrameListener(shared_from_this());
     
     _player = [AVPlayer playerWithURL:url];
-    _videoPlaybackDelegate = [[VROVideoPlaybackDelegate alloc] initWithVideoTexture:this
-                                                                             player:_player
-                                                                             driver:driver];
+    _avPlayerDelegate = [[VROAVPlayerDelegate alloc] initWithVideoTexture:this
+                                                                        player:_player
+                                                                        driver:driver];
     
-    [_player.currentItem addObserver:_videoPlaybackDelegate
-           forKeyPath:@"status"
+    [_player.currentItem addObserver:_avPlayerDelegate
+           forKeyPath:kStatusKey
               options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
               context:this];
     
-    [_player.currentItem addObserver:_videoPlaybackDelegate
-                          forKeyPath:@"playbackLikelyToKeepUp"
+    [_player.currentItem addObserver:_avPlayerDelegate
+                          forKeyPath:kPlaybackKeepUpKey
                              options:NSKeyValueObservingOptionNew
                              context:this];
+
+    _videoNotificationListener = [[VROVideoNotificationListener alloc] initWithVideoPlayer:_player
+                                                                                      loop:_loop
+                                                                             videoDelegate:_delegate];
 }
 
 void VROVideoTexture::onFrameWillRender(const VRORenderContext &context) {
-    [_videoPlaybackDelegate renderFrame];
+    [_avPlayerDelegate renderFrame];
 }
 
 void VROVideoTexture::onFrameDidRender(const VRORenderContext &context) {
@@ -87,9 +123,9 @@ void VROVideoTexture::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> su
     setSubstrate(VROTextureType::Quad, std::move(substrate));
 }
 
-#pragma mark - Video Playback Delegate
+#pragma mark - AVPlayer Video Playback Delegate
 
-@interface VROVideoPlaybackDelegate () {
+@interface VROAVPlayerDelegate () {
     
     dispatch_queue_t _videoQueue;
     int _currentTextureIndex;
@@ -108,7 +144,7 @@ void VROVideoTexture::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> su
 
 @end
 
-@implementation VROVideoPlaybackDelegate
+@implementation VROAVPlayerDelegate
 
 - (id)initWithVideoTexture:(VROVideoTexture *)texture
                     player:(AVPlayer *)player
@@ -164,8 +200,6 @@ void VROVideoTexture::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> su
 - (void)attachVideoOutput {
     NSDictionary *pixBuffAttributes = @{(id)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA)};
     self.output = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
-    [self addLoopNotification:self.player.currentItem];
-
     [self.output setDelegate:self queue:_videoQueue];
     [self.output requestNotificationOfMediaDataChangeWithAdvanceInterval:ONE_FRAME_DURATION];
     
@@ -210,23 +244,63 @@ void VROVideoTexture::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> su
     }
 }
 
--(void) addLoopNotification:(AVPlayerItem *)item {
-    if (_notificationToken) {
-        _notificationToken = nil;
+@end
+
+#pragma mark - Video Notification Listener
+@interface VROVideoNotificationListener ()
+
+@property (nonatomic, weak, readonly) AVPlayer *player;
+@property (nonatomic, assign) BOOL loop;
+
+@end
+
+@implementation VROVideoNotificationListener {
+    __weak id <VROVideoDelegate> _delegate;
+}
+
+- (id)initWithVideoPlayer:(AVPlayer *)player
+                     loop:(BOOL)loop
+            videoDelegate:(id<VROVideoDelegate>)videoDelegate {
+    self = [super init];
+    if (self) {
+        _player = player;
+        _loop = loop;
+        _delegate = videoDelegate;
+        [self registerForPlayerFinish];
     }
-    
-    /*
-     Setting actionAtItemEnd to None prevents the movie from getting paused at item end. 
-     A very simplistic, and not gapless, looped playback.
-     */
-    _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
-    _notificationToken = [[NSNotificationCenter defaultCenter] addObserverForName:AVPlayerItemDidPlayToEndTimeNotification
-                                                                           object:item
-                                                                            queue:[NSOperationQueue mainQueue]
-                                                                       usingBlock:^(NSNotification *note) {
-                            [[_player currentItem] seekToTime:kCMTimeZero];
-                          }
-                          ];
+    return self;
+}
+
+- (void)shouldLoop:(BOOL)loop {
+    _loop = loop;
+}
+
+- (void)setDelegate:(id<VROVideoDelegate>)videoDelegate {
+    _delegate = videoDelegate;
+}
+
+- (void)registerForPlayerFinish {
+    if (self.player) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(playerDidFinish:)
+                                                     name:AVPlayerItemDidPlayToEndTimeNotification
+                                                   object:[self.player currentItem]];
+    }
+}
+
+- (void)dealloc {
+    // make sure we stop observing when we're dealloc'd
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)playerDidFinish:(NSNotification *)notification {
+    // when a video finishes, either loop or let the delegate know that we're done playing.
+    if (self.loop) {
+        AVPlayerItem *playerItem = [notification object];
+        [playerItem seekToTime:kCMTimeZero];
+    } else if (_delegate) {
+        [_delegate videoDidFinish];
+    }
 }
 
 @end

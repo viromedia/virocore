@@ -10,6 +10,7 @@
 #define VROVideoSurface_h
 
 #import "VROSurface.h"
+#include "VROVideoDelegate.h"
 #import <memory>
 
 class VRORenderContext;
@@ -31,7 +32,12 @@ public:
     void pause();
     void play();
     bool isPaused();
-    
+    void setMuted(bool muted);
+    void setVolume(float volume);
+    void setLoop(bool loop);
+    void seekToTime(int seconds);
+    void setDelegate(id <VROVideoDelegate> delegate);
+  
     ~VROVideoSurface();
     
 private:

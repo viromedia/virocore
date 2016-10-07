@@ -14,9 +14,11 @@
 #import "VROFrameListener.h"
 #import "VROTexture.h"
 #import <memory>
+#import "VROVideoDelegate.h"
 
 @class VROVideoCaptureDelegate;
-@class VROVideoPlaybackDelegate;
+@class VROAVPlayerDelegate;
+@class VROVideoNotificationListener;
 class VRORenderContext;
 class VROFrameSynchronizer;
 class VRODriver;
@@ -51,7 +53,14 @@ public:
     void pause();
     void play();
     bool isPaused();
-    
+    void seekToTime(int seconds);
+
+    void setMuted(bool muted);
+    void setVolume(float volume);
+    void setLoop(bool loop);
+
+    void setDelegate(id <VROVideoDelegate> delegate);
+  
     /*
      Internal: invoked by the delegate.
      */
@@ -64,20 +73,38 @@ private:
      */
     AVPlayer *_player;
     bool _paused;
-    VROVideoPlaybackDelegate *_videoPlaybackDelegate;
-    
+    bool _loop;
+    VROAVPlayerDelegate *_avPlayerDelegate;
+    VROVideoNotificationListener *_videoNotificationListener;
+    __weak id <VROVideoDelegate> _delegate;
+
 };
 
 /*
  Delegate for receiving video output from URLs.
  */
-@interface VROVideoPlaybackDelegate : NSObject <AVPlayerItemOutputPullDelegate>
+@interface VROAVPlayerDelegate : NSObject <AVPlayerItemOutputPullDelegate>
 
 - (id)initWithVideoTexture:(VROVideoTexture *)texture
                     player:(AVPlayer *)player
                     driver:(VRODriver &)driver;
 
 - (void)renderFrame;
+
+@end
+
+/*
+ Simple object to register for AVPlayer notifications
+ */
+@interface VROVideoNotificationListener : NSObject
+
+- (id)initWithVideoPlayer:(AVPlayer *)player
+                     loop:(BOOL)loop
+            videoDelegate:(id <VROVideoDelegate>)videoDelegate;
+
+- (void)shouldLoop:(BOOL)loop;
+
+- (void)setDelegate:(id <VROVideoDelegate>)videoDelegate;
 
 @end
 
