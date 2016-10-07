@@ -38,10 +38,12 @@ void VROScene::renderBackground(const VRORenderContext &renderContext,
     }
     
     // Background will not render without any light
-    std::shared_ptr<VROLight> light = _nodes[0]->getLight();
-    if (!light) {
+    std::vector<std::shared_ptr<VROLight>> &lights = _nodes[0]->getLights();
+    if (lights.empty()) {
         return;
     }
+    
+    std::shared_ptr<VROLight> &light = lights.front();
     
     std::shared_ptr<VROMaterial> &material = _background->getMaterials()[0];
     material->bindShader(driver);

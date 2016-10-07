@@ -128,11 +128,21 @@ public:
     /*
      Lights.
      */
-    void setLight(std::shared_ptr<VROLight> light) {
-        _light = light;
+    void addLight(std::shared_ptr<VROLight> light) {
+        _lights.push_back(light);
     }
-    std::shared_ptr<VROLight> getLight() {
-        return _light;
+    void removeLight(std::shared_ptr<VROLight> light) {
+        _lights.erase(
+                      std::remove_if(_lights.begin(), _lights.end(),
+                                     [light](std::shared_ptr<VROLight> candidate) {
+                                         return candidate == light;
+                                     }), _lights.end());
+    }
+    void removeAllLights() {
+        _lights.clear();
+    }
+    std::vector<std::shared_ptr<VROLight>> &getLights() {
+        return _lights;
     }
     
     /*
@@ -210,7 +220,7 @@ protected:
 private:
     
     std::shared_ptr<VROGeometry> _geometry;
-    std::shared_ptr<VROLight> _light;
+    std::vector<std::shared_ptr<VROLight>> _lights;
     
     VROVector3f _scale;
     VROVector3f _position;

@@ -43,7 +43,7 @@ VRONode::VRONode() :
 
 VRONode::VRONode(const VRONode &node) :
     _geometry(node._geometry),
-    _light(node._light),
+    _lights(node._lights),
     _scale(node._scale),
     _position(node._position),
     _rotation(node._rotation),
@@ -99,9 +99,9 @@ void VRONode::updateSortKeys(VRORenderParameters &params, const VRORenderContext
     _computedOpacity = opacities.top() * _opacity * _opacityFromHiddenFlag;
     opacities.push(_computedOpacity);
     
-    if (_light) {
-        _light->setTransformedPosition(_computedTransform.multiply(_light->getPosition()));
-        lights.push_back(_light);
+    for (std::shared_ptr<VROLight> &light : _lights) {
+        light->setTransformedPosition(_computedTransform.multiply(light->getPosition()));
+        lights.push_back(light);
     }
     _computedLights.clear();
     _computedLights.insert(_computedLights.begin(), lights.begin(), lights.end());
@@ -124,7 +124,7 @@ void VRONode::updateSortKeys(VRORenderParameters &params, const VRORenderContext
     
     params.transforms.pop();
     params.opacities.pop();
-    if (_light) {
+    for (int i = 0; i < _lights.size(); i++) {
         lights.pop_back();
     }
 }

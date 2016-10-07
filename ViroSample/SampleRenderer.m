@@ -73,7 +73,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
-    rootNode->setLight(light);
+    rootNode->addLight(light);
     
     scene->addNode(rootNode);
     
@@ -121,7 +121,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
-    rootNode->setLight(light);
+    rootNode->addLight(light);
     
     scene->addNode(rootNode);
     
@@ -191,19 +191,35 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROScene> scene = sceneController.scene;
     scene->setBackgroundCube([self niagaraTexture]);
     
-    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
-    light->setColor({ 1.0, 1.0, 1.0 });
-    light->setPosition( { 0, 0, 0 });
-    light->setDirection( { 0, 0, -1.0 });
-    light->setAttenuationStartDistance(20);
-    light->setAttenuationEndDistance(30);
-    light->setSpotInnerAngle(30);
-    light->setSpotOuterAngle(40);
-    
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
-    rootNode->setLight(light);
     
+    
+    std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
+    ambient->setColor({ 0.4, 0.4, 0.4 });
+    
+    std::shared_ptr<VROLight> spotRed = std::make_shared<VROLight>(VROLightType::Spot);
+    spotRed->setColor({ 1.0, 0.0, 0.0 });
+    spotRed->setPosition( { -1, 0, 0 });
+    spotRed->setDirection( { 1, 0, -1.0 });
+    spotRed->setAttenuationStartDistance(20);
+    spotRed->setAttenuationEndDistance(30);
+    spotRed->setSpotInnerAngle(10);
+    spotRed->setSpotOuterAngle(20);
+    
+    std::shared_ptr<VROLight> spotBlue = std::make_shared<VROLight>(VROLightType::Spot);
+    spotBlue->setColor({ 0.0, 0.0, 1.0 });
+    spotBlue->setPosition( { 1, 0, 0 });
+    spotBlue->setDirection( { -1, 0, -1.0 });
+    spotBlue->setAttenuationStartDistance(20);
+    spotBlue->setAttenuationEndDistance(30);
+    spotBlue->setSpotInnerAngle(10);
+    spotBlue->setSpotOuterAngle(20);
+    
+    rootNode->addLight(ambient);
+    rootNode->addLight(spotRed);
+    rootNode->addLight(spotBlue);
+
     scene->addNode(rootNode);
     
     /*
@@ -262,7 +278,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(6);
         
-        boxNode->setOpacity(0.2);
         boxNode2->setOpacity(0.2);
         
         VROTransaction::commit();
@@ -288,7 +303,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
-    rootNode->setLight(light);
+    rootNode->addLight(light);
     
     scene->addNode(rootNode);
     
@@ -385,7 +400,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
-    rootNode->setLight(light);
+    rootNode->addLight(light);
     
     scene->addNode(rootNode);
     
