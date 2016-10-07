@@ -129,12 +129,17 @@ public:
         return _lightingModel;
     }
     
-    bool isLitPerPixel() const {
-        return _litPerPixel;
+    void setCullMode(VROCullMode cullMode) {
+        _cullMode = cullMode;
     }
     VROCullMode getCullMode() const {
         return _cullMode;
     }
+    
+    bool isLitPerPixel() const {
+        return _litPerPixel;
+    }
+    
     VROBlendMode getBlendMode() const {
         return _blendMode;
     }

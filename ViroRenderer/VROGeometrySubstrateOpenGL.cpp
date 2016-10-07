@@ -233,6 +233,7 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     
     VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
     substrate->bindDepthSettings();
+    substrate->bindCullingSettings();
     
     VROMatrix4f modelview = viewMatrix.multiply(transform);
     substrate->bindViewUniforms(transform, modelview, projectionMatrix, context.getCamera().getPosition());

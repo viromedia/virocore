@@ -24,7 +24,7 @@ VROMaterial::VROMaterial() :
     _transparencyMode(VROTransparencyMode::AOne),
     _lightingModel(VROLightingModel::Blinn),
     _litPerPixel(true),
-    _cullMode(VROCullMode::None),
+    _cullMode(VROCullMode::Back),
     _blendMode(VROBlendMode::Alpha),
     _writesToDepthBuffer(false),
     _readsFromDepthBuffer(false),

@@ -383,6 +383,22 @@ void VROMaterialSubstrateOpenGL::bindDepthSettings() {
     }
 }
 
+void VROMaterialSubstrateOpenGL::bindCullingSettings() {
+    VROCullMode cullMode = _material.getCullMode();
+    
+    if (cullMode == VROCullMode::None) {
+        glDisable(GL_CULL_FACE);
+    }
+    else if (cullMode == VROCullMode::Back) {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+    }
+    else if (cullMode == VROCullMode::Front) {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
+    }
+}
+
 void VROMaterialSubstrateOpenGL::bindViewUniforms(VROMatrix4f transform, VROMatrix4f modelview,
                                                   VROMatrix4f projectionMatrix, VROVector3f cameraPosition) {
     
