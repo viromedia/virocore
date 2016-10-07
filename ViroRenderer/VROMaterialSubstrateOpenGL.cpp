@@ -338,15 +338,23 @@ void VROMaterialSubstrateOpenGL::bindLights(const std::vector<std::shared_ptr<VR
         data.lights[i].type = (int) light->getType();
         light->getTransformedPosition().toArray(data.lights[i].position);
         light->getDirection().toArray(data.lights[i].direction);
-        light->getColor().toArray(data.lights[i].color);
         data.lights[i].attenuation_start_distance = light->getAttenuationStartDistance();
         data.lights[i].attenuation_end_distance = light->getAttenuationEndDistance();
         data.lights[i].attenuation_falloff_exp = light->getAttenuationFalloffExponent();
         data.lights[i].spot_inner_angle = degrees_to_radians(light->getSpotInnerAngle());
         data.lights[i].spot_outer_angle = degrees_to_radians(light->getSpotOuterAngle());
         
+        // Ambient lights have no diffuse color; instead they are added
+        // to the aggregate ambient light color, which is passed as a single
+        // value into the shader
         if (light->getType() == VROLightType::Ambient) {
             ambientLight += light->getColor();
+            data.lights[i].color[0] = 0;
+            data.lights[i].color[1] = 0;
+            data.lights[i].color[2] = 0;
+        }
+        else {
+            light->getColor().toArray(data.lights[i].color);
         }
     }
     

@@ -45,13 +45,15 @@ lowp vec3 apply_light_blinn(const VROLightUniforms light,
 lowp vec4 blinn_lighting_diffuse_fixed(VROBlinnLighting blinn,
                                        sampler2D specular_texture) {
     
+    lowp vec3 ambient_light_color = blinn.ambient_color * blinn.material_color.xyz;
+
     lowp vec4 material_diffuse_color = blinn.material_color * blinn.diffuse_intensity;
     lowp vec4 material_specular_color = texture(specular_texture, blinn.texcoord);
     highp vec3 surface_to_camera = normalize(blinn.camera_position - blinn.surface_position);
     
-    lowp vec3 aggregated_light_color = vec3(0, 0, 0);
+    lowp vec3 diffuse_light_color = vec3(0, 0, 0);
     for (int i = 0; i < num_lights; i++) {
-        aggregated_light_color += apply_light_blinn(lights[i],
+        diffuse_light_color += apply_light_blinn(lights[i],
                                                     blinn.surface_position,
                                                     blinn.normal,
                                                     surface_to_camera,
@@ -60,21 +62,24 @@ lowp vec4 blinn_lighting_diffuse_fixed(VROBlinnLighting blinn,
                                                     blinn.material_shininess);
     }
     
-    return vec4(blinn.ambient_color + aggregated_light_color,
-                blinn.material_alpha * material_diffuse_color.a);
+    return vec4(ambient_light_color + diffuse_light_color,
+                blinn.material_alpha * blinn.material_color.a);
 }
 
 lowp vec4 blinn_lighting_diffuse_texture(VROBlinnLighting blinn,
                                          sampler2D diffuse_texture,
                                          sampler2D specular_texture) {
     
-    lowp vec4 material_diffuse_color  = texture(diffuse_texture, blinn.texcoord) * blinn.diffuse_intensity;
+    lowp vec4 diffuse_texture_color = texture(diffuse_texture, blinn.texcoord);
+    lowp vec3 ambient_light_color = blinn.ambient_color * diffuse_texture_color.xyz;
+    
+    lowp vec4 material_diffuse_color  = diffuse_texture_color * blinn.diffuse_intensity;
     lowp vec4 material_specular_color = texture(specular_texture, blinn.texcoord);
     highp vec3 surface_to_camera = normalize(blinn.camera_position - blinn.surface_position);
     
-    lowp vec3 aggregated_light_color = vec3(0, 0, 0);
+    lowp vec3 diffuse_light_color = vec3(0, 0, 0);
     for (int i = 0; i < num_lights; i++) {
-        aggregated_light_color += apply_light_blinn(lights[i],
+        diffuse_light_color += apply_light_blinn(lights[i],
                                                     blinn.surface_position,
                                                     blinn.normal,
                                                     surface_to_camera,
@@ -83,6 +88,6 @@ lowp vec4 blinn_lighting_diffuse_texture(VROBlinnLighting blinn,
                                                     blinn.material_shininess);
     }
     
-    return vec4(blinn.ambient_color + aggregated_light_color,
-                blinn.material_alpha * material_diffuse_color.a);
+    return vec4(ambient_light_color + diffuse_light_color,
+                blinn.material_alpha * diffuse_texture_color.a);
 }

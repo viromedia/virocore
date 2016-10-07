@@ -19,7 +19,7 @@ void main() {
     lambert.surface_position = v_surface_position;
     lambert.camera_position = camera_position;
 
-    lambert.ambient_color = ambient_light_color * material_diffuse_surface_color.xyz;
+    lambert.ambient_color = ambient_light_color;
     lambert.material_color = material_diffuse_surface_color;
     lambert.diffuse_intensity = material_diffuse_intensity;
     lambert.material_alpha = material_alpha;
