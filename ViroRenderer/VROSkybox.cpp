@@ -64,6 +64,38 @@ static uint32_t indices[] = {
 };
 
 std::shared_ptr<VROSkybox> VROSkybox::createSkybox(std::shared_ptr<VROTexture> textureCube) {
+    std::shared_ptr<VROSkybox> skybox = buildSkyboxGeometry();
+    
+    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+    material->setWritesToDepthBuffer(false);
+    material->setReadsFromDepthBuffer(false);
+    material->getDiffuse().setContentsCube(textureCube);
+    material->setLightingModel(VROLightingModel::Constant);
+    
+    skybox->getMaterials().push_back(material);
+    skybox->setCameraEnclosure(true);
+    return skybox;
+}
+
+std::shared_ptr<VROSkybox> VROSkybox::createSkybox(VROVector4f color) {
+    std::shared_ptr<VROSkybox> skybox = buildSkyboxGeometry();
+    
+    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+    material->setWritesToDepthBuffer(false);
+    material->setReadsFromDepthBuffer(false);
+    material->getDiffuse().setContents(color);
+    material->setLightingModel(VROLightingModel::Constant);
+    
+    skybox->getMaterials().push_back(material);
+    skybox->setCameraEnclosure(true);
+    return skybox;
+}
+
+VROSkybox::~VROSkybox() {
+    
+}
+
+std::shared_ptr<VROSkybox> VROSkybox::buildSkyboxGeometry() {
     std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) vertices, kSkyboxStride * kNumSkyboxVertices);
     std::shared_ptr<VROGeometrySource> position = std::make_shared<VROGeometrySource>(vertexData,
                                                                                       VROGeometrySourceSemantic::Vertex,
@@ -94,20 +126,5 @@ std::shared_ptr<VROSkybox> VROSkybox::createSkybox(std::shared_ptr<VROTexture> t
                                                                                        kNumSkyboxIndices / 3,
                                                                                        sizeof(int32_t));
     std::vector<std::shared_ptr<VROGeometryElement>> elements = { element };
-    
-    std::shared_ptr<VROSkybox> skybox = std::shared_ptr<VROSkybox>(new VROSkybox(sources, elements));
-    
-    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->setWritesToDepthBuffer(false);
-    material->setReadsFromDepthBuffer(false);
-    material->getDiffuse().setContentsCube(textureCube);
-    material->setLightingModel(VROLightingModel::Constant);
-    
-    skybox->getMaterials().push_back(material);
-    skybox->setCameraEnclosure(true);
-    return skybox;
-}
-
-VROSkybox::~VROSkybox() {
-    
+    return std::shared_ptr<VROSkybox>(new VROSkybox(sources, elements));
 }

@@ -14,12 +14,14 @@
 #include "VROGeometry.h"
 
 class VROTexture;
+class VROVector4f;
 
 class VROSkybox : public VROGeometry {
     
 public:
     
     static std::shared_ptr<VROSkybox> createSkybox(std::shared_ptr<VROTexture> textureCube);
+    static std::shared_ptr<VROSkybox> createSkybox(VROVector4f color);
     ~VROSkybox();
     
 private:
@@ -29,7 +31,7 @@ private:
         VROGeometry(sources, elements)
     {}
     
-    static void buildSkybox();
+    static std::shared_ptr<VROSkybox> buildSkyboxGeometry();
     
 };
 

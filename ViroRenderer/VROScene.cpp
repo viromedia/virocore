@@ -111,6 +111,10 @@ void VROScene::setBackgroundCube(std::shared_ptr<VROTexture> textureCube) {
     _background = VROSkybox::createSkybox(textureCube);
 }
 
+void VROScene::setBackgroundCube(VROVector4f color) {
+    _background = VROSkybox::createSkybox(color);
+}
+
 void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
     _background = VROSphere::createSphere(kSphereBackgroundRadius,
                                           kSphereBackgroundNumSegments,

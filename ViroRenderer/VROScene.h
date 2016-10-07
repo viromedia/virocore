@@ -23,6 +23,7 @@ class VROTexture;
 class VROGeometry;
 class VROHitTestResult;
 class VROVector3f;
+class VROVector4f;
 
 class VROScene : public std::enable_shared_from_this<VROScene> {
     
@@ -48,10 +49,11 @@ public:
     
     /*
      Set the background of the scene to a cube-map defined by
-     the given cube texture, or a sphere defined by the given spherical
-     image.
+     the given cube texture or color, or a sphere defined by the given
+     spherical image.
      */
     void setBackgroundCube(std::shared_ptr<VROTexture> textureCube);
+    void setBackgroundCube(VROVector4f color);
     void setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere);
     std::shared_ptr<VROGeometry> getBackground() const {
         return _background;
