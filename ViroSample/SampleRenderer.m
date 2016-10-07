@@ -197,8 +197,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     light->setDirection( { 0, 0, -1.0 });
     light->setAttenuationStartDistance(20);
     light->setAttenuationEndDistance(30);
-    light->setSpotInnerAngle(0);
-    light->setSpotOuterAngle(-5);
+    light->setSpotInnerAngle(30);
+    light->setSpotOuterAngle(40);
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
