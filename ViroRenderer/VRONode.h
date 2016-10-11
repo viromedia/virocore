@@ -77,7 +77,7 @@ public:
     /*
      Transforms.
      */
-    VROMatrix4f getTransform(const VRORenderContext &context) const;
+    void computeTransform(const VRORenderContext &context, VROMatrix4f parentTransforms);
     VROVector3f getTransformedPosition() const;
     
     VROVector3f getPosition() const {
@@ -239,6 +239,7 @@ private:
     VROMatrix4f _computedTransform;
     float _computedOpacity;
     std::vector<std::shared_ptr<VROLight>> _computedLights;
+    VROVector3f _computedPosition;
     
     /*
      True if this node is hidden. Hidden nodes are not rendered, and do not 

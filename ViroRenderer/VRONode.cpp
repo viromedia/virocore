@@ -93,7 +93,7 @@ void VRONode::updateSortKeys(VRORenderParameters &params, const VRORenderContext
     /*
      Compute the specific parameters for this node.
      */
-    _computedTransform = transforms.top().multiply(getTransform(context));
+    computeTransform(context, transforms.top());
     transforms.push(_computedTransform);
     
     _computedOpacity = opacities.top() * _opacity * _opacityFromHiddenFlag;
@@ -146,7 +146,7 @@ uint32_t VRONode::hashLights(std::vector<std::shared_ptr<VROLight>> &lights) {
     return h;
 }
 
-VROMatrix4f VRONode::getTransform(const VRORenderContext &context) const {
+void VRONode::computeTransform(const VRORenderContext &context, VROMatrix4f parentTransforms) {
     VROMatrix4f pivotMtx, unpivotMtx;
     
     if (_geometry) {
@@ -165,6 +165,8 @@ VROMatrix4f VRONode::getTransform(const VRORenderContext &context) const {
     transform.scale(_scale.x, _scale.y, _scale.z);
     transform = _rotation.getMatrix().multiply(transform);
     
+    // The constraints may use the _computedPosition so we calculate that first
+    _computedPosition = parentTransforms.multiply(transform).multiply(_position);
     for (const std::shared_ptr<VROConstraint> &constraint : _constraints) {
         transform = constraint->getTransform(*this, context, transform);
     }
@@ -172,17 +174,11 @@ VROMatrix4f VRONode::getTransform(const VRORenderContext &context) const {
     transform.translate(_position.x, _position.y, _position.z);
     transform = unpivotMtx.multiply(transform).multiply(pivotMtx);
 
-    return transform;
+    _computedTransform = parentTransforms.multiply(transform);
 }
 
 VROVector3f VRONode::getTransformedPosition() const {
-    std::shared_ptr<VRONode> supernode = _supernode.lock();
-    if (supernode) {
-        return _position + supernode->getTransformedPosition();
-    }
-    else {
-        return _position;
-    }
+    return _computedPosition;
 }
 
 #pragma mark - Setters
@@ -270,7 +266,7 @@ void VRONode::removeAllActions() {
 #pragma mark - Hit Testing
 
 VROBoundingBox VRONode::getBoundingBox(const VRORenderContext &context) {
-    return _geometry->getBoundingBox().transform(getTransform(context));
+    return _geometry->getBoundingBox().transform(_computedTransform);
 }
 
 std::vector<VROHitTestResult> VRONode::hitTest(VROVector3f ray, const VRORenderContext &context,
@@ -292,7 +288,7 @@ void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsO
     }
     
     VROVector3f origin = context.getCamera().getPosition();
-    VROMatrix4f transform = parentTransform.multiply(getTransform(context));
+    VROMatrix4f transform = _computedTransform;
     
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
         VROBoundingBox bounds = _geometry->getBoundingBox().transform(transform);
