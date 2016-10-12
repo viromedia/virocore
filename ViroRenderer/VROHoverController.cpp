@@ -17,14 +17,14 @@
 
 VROHoverController::VROHoverController(float rotationThresholdRadians,
                                        std::shared_ptr<VROScene> scene) :
+    _firstHoverEvent(true),
     _scene(scene),
     _rotationThresholdRadians(rotationThresholdRadians),
     _lastCameraForward({ 0, 0, 1}) {
-    
 }
 
 VROHoverController::~VROHoverController() {
-    
+
 }
 
 void VROHoverController::setDelegate(std::shared_ptr<VROHoverDelegate> delegate) {
@@ -43,30 +43,30 @@ void VROHoverController::removeHoverDistanceListener(std::shared_ptr<VROHoverDis
                                             }), _distanceListeners.end());
 }
 
-void VROHoverController::findHoveredNode(VROVector3f ray, std::shared_ptr<VROScene> &scene,
+/**
+ * Perform a hit test on each node within the scene and returns immediately
+ * once something has been hit and is hoverable. Returns nil if nothing has been
+ * hit - the user would be gazing directly into the background of the scene.
+ */
+std::shared_ptr<VRONode> VROHoverController::findHoveredNode(VROVector3f ray, std::shared_ptr<VROScene> &scene,
                                          const VRORenderContext &context) {
-    
     VROVector3f cameraPosition = context.getCamera().getPosition();
-    
-    std::shared_ptr<VRONode> oldHover = _hoveredNode.lock();
+
     std::shared_ptr<VROHoverDelegate> delegate = _delegate.lock();
-    
     bool hitTestBoundsOnly = delegate ? delegate->isHitTestBoundsOnly() : false;
+
+    std::shared_ptr<VRONode> newHover;
+    float minDistance = FLT_MAX;
+    float minDistanceHoverable = FLT_MAX;
 
     for (std::shared_ptr<VRONode> &node : scene->getRootNodes()) {
         std::vector<VROHitTestResult> hits = node->hitTest(ray, context, hitTestBoundsOnly);
-        
-        float minDistance = FLT_MAX;
-        float minDistanceHoverable = FLT_MAX;
-        
-        std::shared_ptr<VRONode> newHover;
-        
         for (VROHitTestResult &hit : hits) {
             float distance = hit.getLocation().distance(cameraPosition);
             if (distance < minDistance) {
                 minDistance = distance;
             }
-            
+
             if (delegate && delegate->isHoverable(hit.getNode())) {
                 if (distance < minDistanceHoverable) {
                     minDistanceHoverable = distance;
@@ -74,32 +74,42 @@ void VROHoverController::findHoveredNode(VROVector3f ray, std::shared_ptr<VROSce
                 }
             }
         }
-        
-        for (std::shared_ptr<VROHoverDistanceListener> &listener : _distanceListeners) {
-            listener->onHoverDistanceChanged(minDistance);
+
+        if (newHover) {
+            break;
         }
-        
-        if (delegate) {
-            if (newHover) {
-                if (oldHover) {
-                    if (oldHover != newHover) {
-                        delegate->hoverOff(oldHover);
-                        delegate->hoverOn(newHover);
-                        
-                        _hoveredNode = newHover;
-                    }
-                }
-                else {
-                    delegate->hoverOn(newHover);
-                    _hoveredNode = newHover;
-                }
-                return;
-            }
-            else if (oldHover) {
-                delegate->hoverOff(oldHover);
-                _hoveredNode.reset();
-            }
-        }
+    }
+
+    for (std::shared_ptr<VROHoverDistanceListener> &listener : _distanceListeners) {
+        listener->onHoverDistanceChanged(minDistance);
+    }
+    return newHover;
+}
+
+/**
+ * Notify hover events via the VROHoverDelegate with a given VRONode upon which the
+ * event applies to. newHover will be nil if the user is gazing into the background
+ * of the current scene.
+ */
+void VROHoverController::notifyDelegatesOnHoveredNode(std::shared_ptr<VRONode> newHover) {
+    std::shared_ptr<VROHoverDelegate> delegate = _delegate.lock();
+    if (!delegate) {
+        return;
+    }
+
+    std::shared_ptr<VRONode> oldHover = _hoveredNode.lock();
+    if (_firstHoverEvent == true) {
+        _firstHoverEvent = false;
+        _hoveredNode = newHover;
+        delegate->hoverOn(newHover);
+    } else if (oldHover != newHover) {
+        delegate->hoverOff(oldHover);
+        delegate->hoverOn(newHover);
+        _hoveredNode = newHover;
+    }
+
+    if (!newHover && oldHover) {
+        _hoveredNode.reset();
     }
 }
 
@@ -108,12 +118,13 @@ void VROHoverController::onFrameWillRender(const VRORenderContext &context) {
     if (!scene) {
         return;
     }
-    
+
     VROVector3f currentCameraForward = context.getCamera().getForward();
     VROQuaternion distance = VROQuaternion::rotationFromTo(_lastCameraForward, currentCameraForward);
-    
+
     if (distance.getAngle() > _rotationThresholdRadians) {
-        findHoveredNode(currentCameraForward, scene, context);
+        std::shared_ptr<VRONode> hoveredNode = findHoveredNode(currentCameraForward, scene, context);
+        notifyDelegatesOnHoveredNode(hoveredNode);
         _lastCameraForward = currentCameraForward;
     }
 }

@@ -40,13 +40,14 @@ private:
     std::weak_ptr<VRONode> _hoveredNode;
     std::weak_ptr<VROHoverDelegate> _delegate;
     std::vector<std::shared_ptr<VROHoverDistanceListener>> _distanceListeners;
+    bool _firstHoverEvent;
     
     const float _rotationThresholdRadians;
     VROVector3f _lastCameraForward;
-    
-    void findHoveredNode(VROVector3f ray, std::shared_ptr<VROScene> &scene,
+
+    std::shared_ptr<VRONode> findHoveredNode(VROVector3f ray, std::shared_ptr<VROScene> &scene,
                          const VRORenderContext &context);
-    
+    void notifyDelegatesOnHoveredNode(std::shared_ptr<VRONode> node);
 };
 
 #endif /* VROHoverController_h */
