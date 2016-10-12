@@ -32,6 +32,7 @@ public:
     virtual void render(const VROGeometry &geometry,
                         int elementIndex,
                         VROMatrix4f transform,
+                        VROMatrix4f normalMatrix,
                         float opacity,
                         std::shared_ptr<VROMaterial> &material,
                         const VRORenderContext &context,

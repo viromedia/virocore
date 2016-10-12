@@ -400,10 +400,11 @@ void VROMaterialSubstrateOpenGL::bindCullingSettings() {
 }
 
 void VROMaterialSubstrateOpenGL::bindViewUniforms(VROMatrix4f transform, VROMatrix4f modelview,
-                                                  VROMatrix4f projectionMatrix, VROVector3f cameraPosition) {
+                                                  VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
+                                                  VROVector3f cameraPosition) {
     
     if (_normalMatrixUniform != nullptr) {
-        _normalMatrixUniform->setMat4(transform.invert().transpose());
+        _normalMatrixUniform->setMat4(normalMatrix);
     }
     if (_modelMatrixUniform != nullptr) {
         _modelMatrixUniform->setMat4(transform);

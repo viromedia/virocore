@@ -82,6 +82,7 @@ public:
     void render(int elementIndex,
                 std::shared_ptr<VROMaterial> &material,
                 VROMatrix4f transform,
+                VROMatrix4f normalMatrix,
                 float opacity,
                 const VRORenderContext &context,
                 VRODriver &driver);

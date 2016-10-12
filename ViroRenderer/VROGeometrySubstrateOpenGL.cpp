@@ -216,6 +216,7 @@ GLuint VROGeometrySubstrateOpenGL::parsePrimitiveType(VROGeometryPrimitiveType p
 void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
                                         int elementIndex,
                                         VROMatrix4f transform,
+                                        VROMatrix4f normalMatrix,
                                         float opacity,
                                         std::shared_ptr<VROMaterial> &material,
                                         const VRORenderContext &context,
@@ -236,7 +237,8 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     substrate->bindCullingSettings();
     
     VROMatrix4f modelview = viewMatrix.multiply(transform);
-    substrate->bindViewUniforms(transform, modelview, projectionMatrix, context.getCamera().getPosition());
+    substrate->bindViewUniforms(transform, modelview, projectionMatrix, normalMatrix,
+                                context.getCamera().getPosition());
    
     glBindVertexArray(_vaos[elementIndex]);
     renderMaterial(substrate, element, opacity, context, driver);

@@ -78,7 +78,8 @@ void VRONode::render(int elementIndex,
                      VRODriver &driver) {
     
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
-        _geometry->render(elementIndex, material, _computedTransform, _computedOpacity,
+        _geometry->render(elementIndex, material,
+                          _computedTransform, _computedInverseTransposeTransform, _computedOpacity,
                           context, driver);
     }
 }
@@ -175,6 +176,7 @@ void VRONode::computeTransform(const VRORenderContext &context, VROMatrix4f pare
     transform = unpivotMtx.multiply(transform).multiply(pivotMtx);
 
     _computedTransform = parentTransforms.multiply(transform);
+    _computedInverseTransposeTransform = _computedTransform.invert().transpose();
 }
 
 VROVector3f VRONode::getTransformedPosition() const {

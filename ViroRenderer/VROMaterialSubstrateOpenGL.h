@@ -43,7 +43,8 @@ public:
     void bindDepthSettings();
     void bindCullingSettings();
     void bindViewUniforms(VROMatrix4f transform, VROMatrix4f modelview,
-                          VROMatrix4f projectionMatrix, VROVector3f cameraPosition);
+                          VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
+                          VROVector3f cameraPosition);
     void bindMaterialUniforms(float opacity);
     
     const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {

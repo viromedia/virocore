@@ -49,7 +49,7 @@ void VROScene::renderBackground(const VRORenderContext &renderContext,
     material->bindShader(driver);
     material->bindLights({ light }, renderContext, driver);
     
-    _background->render(0, material, {}, 1.0, renderContext, driver);
+    _background->render(0, material, {}, {}, 1.0, renderContext, driver);
 }
 
 void VROScene::render(const VRORenderContext &context,

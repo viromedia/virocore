@@ -237,6 +237,7 @@ private:
      any parent or this node itself is updated.
      */
     VROMatrix4f _computedTransform;
+    VROMatrix4f _computedInverseTransposeTransform;
     float _computedOpacity;
     std::vector<std::shared_ptr<VROLight>> _computedLights;
     VROVector3f _computedPosition;

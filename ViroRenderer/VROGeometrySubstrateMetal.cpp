@@ -270,6 +270,7 @@ MTLPrimitiveType VROGeometrySubstrateMetal::parsePrimitiveType(VROGeometryPrimit
 void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
                                        int elementIndex,
                                        VROMatrix4f transform,
+                                       VROMatrix4f normalMatrix,
                                        float opacity,
                                        std::shared_ptr<VROMaterial> &material,
                                        const VRORenderContext &context,
@@ -297,7 +298,7 @@ void VROGeometrySubstrateMetal::render(const VROGeometry &geometry,
     VROMatrix4f modelview = viewMatrix.multiply(transform);
     VROViewUniforms *viewUniforms = (VROViewUniforms *)_viewUniformsBuffer->getWritableContents(eyeType, frame);
     
-    viewUniforms->normal_matrix = toMatrixFloat4x4(transform.invert().transpose());
+    viewUniforms->normal_matrix = toMatrixFloat4x4(normalMatrix);
     viewUniforms->model_matrix = toMatrixFloat4x4(transform);
     viewUniforms->modelview_matrix = toMatrixFloat4x4(modelview);
     viewUniforms->modelview_projection_matrix = toMatrixFloat4x4(projectionMatrix.multiply(modelview));
