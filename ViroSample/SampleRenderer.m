@@ -194,29 +194,27 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
     
-    
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 0.4, 0.4, 0.4 });
     
     std::shared_ptr<VROLight> spotRed = std::make_shared<VROLight>(VROLightType::Spot);
     spotRed->setColor({ 1.0, 0.0, 0.0 });
-    spotRed->setPosition( { -1, 0, 0 });
-    spotRed->setDirection( { 1, 0, -1.0 });
+    spotRed->setPosition( { -5, 0, 0 });
+    spotRed->setDirection( { 1.0, 0, -1.0 });
     spotRed->setAttenuationStartDistance(20);
     spotRed->setAttenuationEndDistance(30);
-    spotRed->setSpotInnerAngle(10);
-    spotRed->setSpotOuterAngle(20);
+    spotRed->setSpotInnerAngle(2.5);
+    spotRed->setSpotOuterAngle(5.0);
     
     std::shared_ptr<VROLight> spotBlue = std::make_shared<VROLight>(VROLightType::Spot);
     spotBlue->setColor({ 0.0, 0.0, 1.0 });
-    spotBlue->setPosition( { 1, 0, 0 });
-    spotBlue->setDirection( { -1, 0, -1.0 });
+    spotBlue->setPosition( { 5, 0, 0 });
+    spotBlue->setDirection( { -1.0, 0, -1.0 });
     spotBlue->setAttenuationStartDistance(20);
     spotBlue->setAttenuationEndDistance(30);
-    spotBlue->setSpotInnerAngle(10);
-    spotBlue->setSpotOuterAngle(20);
+    spotBlue->setSpotInnerAngle(2.5);
+    spotBlue->setSpotOuterAngle(5.0);
     
-    rootNode->addLight(ambient);
     rootNode->addLight(spotRed);
     rootNode->addLight(spotBlue);
 
@@ -231,14 +229,13 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     material->setLightingModel(VROLightingModel::Phong);
     material->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"boba"]));
     material->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"specular"]));
-    material->setCullMode(VROCullMode::Front);
     
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
     boxNode->setPosition({0, 0, -5});
 
     rootNode->addChildNode(boxNode);
-    boxNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
+    //boxNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
     
     /*
      Create a second box node behind the first.
@@ -253,6 +250,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VRONode> boxNode2 = std::make_shared<VRONode>();
     boxNode2->setGeometry(box2);
     boxNode2->setPosition({0, 0, -9});
+    boxNode2->addLight(ambient);
+
     
     rootNode->addChildNode(boxNode2);
     
@@ -279,7 +278,11 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(6);
         
-        boxNode2->setOpacity(0.2);
+        spotRed->setPosition({5, 0, 0});
+        spotRed->setDirection({-1, 0, -1});
+        
+        spotBlue->setPosition({-5, 0, 0});
+        spotBlue->setDirection({1, 0, -1});
         
         VROTransaction::commit();
     });

@@ -111,7 +111,7 @@ void VRONode::updateSortKeys(VRORenderParameters &params, const VRORenderContext
      Compute the sort key for this node's geometry elements.
      */
     if (_geometry) {
-        int lightsHash = hashLights(lights);
+        int lightsHash = VROLight::hashLights(lights);
         float distanceFromCamera = getTransformedPosition().distance(context.getCamera().getPosition());
         _geometry->updateSortKeys(this, lightsHash, _computedOpacity, distanceFromCamera, context.getZFar());
     }
@@ -137,14 +137,6 @@ void VRONode::getSortKeys(std::vector<VROSortKey> *outKeys) {
     for (std::shared_ptr<VRONode> childNode : _subnodes) {
         childNode->getSortKeys(outKeys);
     }
-}
-
-uint32_t VRONode::hashLights(std::vector<std::shared_ptr<VROLight>> &lights) {
-    uint32_t h = 0;
-    for (std::shared_ptr<VROLight> &light : lights) {
-        h = 31 * h + light->getLightId();
-    }
-    return h;
 }
 
 void VRONode::computeTransform(const VRORenderContext &context, VROMatrix4f parentTransforms) {

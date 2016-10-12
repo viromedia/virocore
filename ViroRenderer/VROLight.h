@@ -10,6 +10,7 @@
 #define VROLight_h
 
 #include <string>
+#include <vector>
 #include "VROVector3f.h"
 #include "VROVector4f.h"
 #include "VROSize.h"
@@ -34,10 +35,13 @@ class VROLight : public VROAnimatable {
     
 public:
     
+    static uint32_t hashLights(const std::vector<std::shared_ptr<VROLight>> &lights);
+    
     VROLight(VROLightType type) :
         _lightId(sLightId++),
         _type(type),
         _color({ 1.0, 1.0, 1.0 }),
+        _updated(true),
         _attenuationStartDistance(2.0),
         _attenuationEndDistance(10.0),
         _attenuationFalloffExponent(2.0),
@@ -111,6 +115,13 @@ public:
         return _spotOuterAngle;
     }
     
+    bool isUpdated() const {
+        return _updated;
+    }
+    void setIsUpdated(bool updated) {
+        _updated = updated;
+    }
+    
 private:
     
     uint32_t _lightId;
@@ -118,6 +129,7 @@ private:
     VROVector3f _color;
     
     std::string _name;
+    bool _updated;
     
     /*
      Omni and Spot parameters.

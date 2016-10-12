@@ -23,6 +23,7 @@
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
+#import <OpenGLES/ES3/glext.h>
 
 enum class VROGeometrySourceSemantic;
 
@@ -439,6 +440,10 @@ public:
     GLuint getProgram() const {
         return program;
     }
+    
+    GLuint getLightingBlockIndex() {
+        return _lightingBlockIndex;
+    }
 
 private:
     
@@ -449,6 +454,11 @@ private:
      and the proper glUniform function to invoke to set its value.
      */
     std::vector<VROUniform *> uniforms;
+    
+    /*
+     The uniform block index used by this shader to refer to the lighting block.
+     */
+    GLuint _lightingBlockIndex;
 
     /*
      The capabilities of this shader, as defined by the VROShader enum above.

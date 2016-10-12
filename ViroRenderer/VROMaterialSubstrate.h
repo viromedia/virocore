@@ -24,7 +24,8 @@ public:
     virtual void updateSortKey(VROSortKey &key) const = 0;
     
     virtual void bindShader() = 0;
-    virtual void bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,
+    virtual void bindLights(int lightsHash,
+                            const std::vector<std::shared_ptr<VROLight>> &lights,
                             const VRORenderContext &context,
                             VRODriver &driver) = 0;
     

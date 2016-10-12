@@ -47,7 +47,7 @@ void VROScene::renderBackground(const VRORenderContext &renderContext,
     
     std::shared_ptr<VROMaterial> &material = _background->getMaterials()[0];
     material->bindShader(driver);
-    material->bindLights({ light }, renderContext, driver);
+    material->bindLights(light->getLightId(), { light }, renderContext, driver);
     
     _background->render(0, material, {}, {}, 1.0, renderContext, driver);
 }
@@ -75,7 +75,7 @@ void VROScene::render(const VRORenderContext &context,
             }
             
             if (boundLights != node->getComputedLights()) {
-                material->bindLights(node->getComputedLights(), context, driver);
+                material->bindLights(key.lights, node->getComputedLights(), context, driver);
                 boundLights = node->getComputedLights();
             }
             

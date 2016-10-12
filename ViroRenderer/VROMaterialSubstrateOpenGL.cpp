@@ -22,9 +22,6 @@ static const int kMaxLights = 4;
 
 void VROMaterialSubstrateOpenGL::hydrateProgram(VRODriverOpenGL &driver) {
     _program->hydrate();
-    
-    unsigned int blockIndex = glGetUniformBlockIndex(_program->getProgram(), "lighting");
-    glUniformBlockBinding(_program->getProgram(), blockIndex, driver.getLightingUBOBindingPoint());
 }
 
 VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &material, VRODriverOpenGL &driver) :
@@ -323,48 +320,34 @@ void VROMaterialSubstrateOpenGL::bindShader() {
     _program->bind();
 }
 
-void VROMaterialSubstrateOpenGL::bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,
+void VROMaterialSubstrateOpenGL::bindLights(int lightsHash,
+                                            const std::vector<std::shared_ptr<VROLight>> &lights,
                                             const VRORenderContext &context,
                                             VRODriver &driver) {
-    pglpush("Lights");
-    VROVector3f ambientLight;
     
-    VROLightingData data;
-    data.num_lights = (int) lights.size();
+    VRODriverOpenGL &glDriver = (VRODriverOpenGL &)driver;
     
-    for (int i = 0; i < lights.size(); i++) {
-        const std::shared_ptr<VROLight> &light = lights[i];
-        
-        data.lights[i].type = (int) light->getType();
-        light->getTransformedPosition().toArray(data.lights[i].position);
-        light->getDirection().toArray(data.lights[i].direction);
-        data.lights[i].attenuation_start_distance = light->getAttenuationStartDistance();
-        data.lights[i].attenuation_end_distance = light->getAttenuationEndDistance();
-        data.lights[i].attenuation_falloff_exp = light->getAttenuationFalloffExponent();
-        data.lights[i].spot_inner_angle = degrees_to_radians(light->getSpotInnerAngle());
-        data.lights[i].spot_outer_angle = degrees_to_radians(light->getSpotOuterAngle());
-        
-        // Ambient lights have no diffuse color; instead they are added
-        // to the aggregate ambient light color, which is passed as a single
-        // value into the shader
-        if (light->getType() == VROLightType::Ambient) {
-            ambientLight += light->getColor();
-            data.lights[i].color[0] = 0;
-            data.lights[i].color[1] = 0;
-            data.lights[i].color[2] = 0;
-        }
-        else {
-            light->getColor().toArray(data.lights[i].color);
+    std::shared_ptr<VROLightingUBO> lightingUBO = glDriver.getLightingUBO(lightsHash);
+    if (!lightingUBO) {
+        lightingUBO = glDriver.createLightingUBO(lightsHash);
+        lightingUBO->writeLights(lights);
+    }
+    
+    // If any light was updated, rewrite the lights to the UBO
+    for (const std::shared_ptr<VROLight> &light : lights) {
+        if (light->isUpdated()) {
+            lightingUBO->writeLights(lights);
+            
+            // Mark all light updated flags false now that the new UBO is
+            // written
+            for (const std::shared_ptr<VROLight> &l : lights) {
+                l->setIsUpdated(false);
+            }
+            break;
         }
     }
     
-    ambientLight.toArray(data.ambient_light_color);
-    
-    glBindBuffer(GL_UNIFORM_BUFFER, ((VRODriverOpenGL &)driver).getLightingUBO());
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(VROLightingData), &data);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    
-    pglpop();
+    lightingUBO->bind(_program);
 }
 
 void VROMaterialSubstrateOpenGL::bindDepthSettings() {

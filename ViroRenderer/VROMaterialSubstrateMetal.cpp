@@ -256,7 +256,8 @@ void VROMaterialSubstrateMetal::bindShader() {
     // vertex layout
 }
 
-void VROMaterialSubstrateMetal::bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,
+void VROMaterialSubstrateMetal::bindLights(int lightsHash,
+                                           const std::vector<std::shared_ptr<VROLight>> &lights,
                                            const VRORenderContext &context,
                                            VRODriver &driver) {
     
@@ -268,29 +269,26 @@ void VROMaterialSubstrateMetal::bindLights(const std::vector<std::shared_ptr<VRO
     
     VROSceneLightingUniforms *uniforms = (VROSceneLightingUniforms *)_lightingUniformsBuffer->getWritableContents(eyeType,
                                                                                                                   frame);
-    uniforms->num_lights = (int) lights.size();
-    
+    uniforms->num_lights = 0;
     VROVector3f ambientLight;
     
-    for (int i = 0; i < lights.size(); i++) {
-        const std::shared_ptr<VROLight> &light = lights[i];
-        
-        VROLightUniforms &light_uniforms = uniforms->lights[i];
-        light_uniforms.type = (int) light->getType();
-        light_uniforms.position = toVectorFloat3(light->getTransformedPosition());
-        light_uniforms.direction = toVectorFloat3(light->getDirection());
-        light_uniforms.attenuation_start_distance = light->getAttenuationStartDistance();
-        light_uniforms.attenuation_end_distance = light->getAttenuationEndDistance();
-        light_uniforms.attenuation_falloff_exp = light->getAttenuationFalloffExponent();
-        light_uniforms.spot_inner_angle = degrees_to_radians(light->getSpotInnerAngle());
-        light_uniforms.spot_outer_angle = degrees_to_radians(light->getSpotOuterAngle());
-        
+    for (const std::shared_ptr<VROLight> &light : lights) {
         if (light->getType() == VROLightType::Ambient) {
             ambientLight += light->getColor();
-            light_uniforms.color = { 0, 0, 0 };
         }
         else {
+            VROLightUniforms &light_uniforms = uniforms->lights[uniforms->num_lights];
+            light_uniforms.type = (int) light->getType();
             light_uniforms.color = toVectorFloat3(light->getColor());
+            light_uniforms.position = toVectorFloat3(light->getTransformedPosition());
+            light_uniforms.direction = toVectorFloat3(light->getDirection());
+            light_uniforms.attenuation_start_distance = light->getAttenuationStartDistance();
+            light_uniforms.attenuation_end_distance = light->getAttenuationEndDistance();
+            light_uniforms.attenuation_falloff_exp = light->getAttenuationFalloffExponent();
+            light_uniforms.spot_inner_angle = degrees_to_radians(light->getSpotInnerAngle());
+            light_uniforms.spot_outer_angle = degrees_to_radians(light->getSpotOuterAngle());
+            
+            uniforms->num_lights++;
         }
     }
     

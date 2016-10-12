@@ -38,7 +38,8 @@ public:
     virtual ~VROMaterialSubstrateMetal();
     
     void bindShader();
-    void bindLights(const std::vector<std::shared_ptr<VROLight>> &lights,
+    void bindLights(int lightsHash,
+                    const std::vector<std::shared_ptr<VROLight>> &lights,
                     const VRORenderContext &context,
                     VRODriver &driver);
     

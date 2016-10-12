@@ -89,6 +89,7 @@ VROUniform *newUniformForType(const std::string &name, VROShaderProperty type, i
 
 VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmentShader, int cap) :
     _shaderId(sMaterialId++),
+    _lightingBlockIndex(0),
     capabilities(cap),
     normTransformsSet(false),
     uniformsNeedRebind(true),
@@ -422,6 +423,8 @@ bool VROShaderProgram::compileAndLink() {
         pabort("Failed to link program %d, name %s", program, shaderName.c_str());
         return false;
     }
+    
+    _lightingBlockIndex = glGetUniformBlockIndex(program, "lighting");
 
     /*
      Release vertex and fragment shaders.
