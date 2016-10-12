@@ -51,6 +51,7 @@ static const float kVROLayerSize = 2;
         [self setBackgroundColor:[UIColor clearColor]];
         self.reticle = [[VROReticle alloc] init];
         _needsUpdate = YES;
+        _reticleEnabled = YES;
     }
     
     return self;
@@ -87,9 +88,9 @@ static const float kVROLayerSize = 2;
     CGContextScaleCTM(bitmapContext, scale, scale);
     
     [self.layer renderInContext:bitmapContext];
-    //if (self.reticleEnabled) {
+    if (self.reticleEnabled) {
         [self.reticle renderRect:self.bounds context:bitmapContext];
-    //}
+    }
     _layer->setContents(width, height, bitmapContext, *driver);
     
     CGContextRelease(bitmapContext);
@@ -112,13 +113,6 @@ withRenderContext:(const VRORenderContext *)renderContext
 }
 
 - (void)setReticleEnabled:(BOOL)enabled {
-    if (!_reticleEnabled && enabled) {
-        [self addSubview:self.reticle];
-    }
-    else if (_reticleEnabled && !enabled) {
-        [self.reticle removeFromSuperview];
-    }
-    
     _reticleEnabled = enabled;
     [self setNeedsUpdate];
 }
