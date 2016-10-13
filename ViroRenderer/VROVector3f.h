@@ -129,6 +129,17 @@ public:
      */
     std::string toString() const;
     void toArray(float *array) const;
+    
+    /*
+     Operator overloads.
+     */
+    inline bool operator ==(const VROVector3f &other) const {
+        return other.x == x && other.y == y && other.z == z;
+    }
+    
+    inline bool operator !=(const VROVector3f &other) const {
+        return !this->operator ==(other);
+    }
 };
 
 /*
