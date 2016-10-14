@@ -8,6 +8,7 @@
 
 #include "VROShaderModifier.h"
 #include "VROLog.h"
+#include "VROUniform.h"
 
 static std::atomic_int sShaderModifierId;
 
@@ -31,6 +32,32 @@ VROShaderModifier::VROShaderModifier(VROShaderEntryPoint entryPoint, std::vector
 
 VROShaderModifier::~VROShaderModifier() {
     
+}
+
+void VROShaderModifier::setUniformBinder(std::string uniform,
+                                         VROUniformBindingBlock bindingBlock) {
+    
+    _uniformBinders[uniform] = bindingBlock;
+}
+
+void VROShaderModifier::bindUniform(VROUniform *uniform, GLuint location) {
+    auto it = _uniformBinders.find(uniform->getName());
+    if (it == _uniformBinders.end()) {
+        pabort("No binder was found for uniform %s", uniform->getName().c_str());
+    }
+    
+    VROUniformBindingBlock block = it->second;
+    block(uniform, location);
+}
+
+std::vector<std::string> VROShaderModifier::getUniforms() const {
+    std::vector<std::string> keys;
+    keys.reserve(_uniformBinders.size());
+    
+    for (auto keyValue : _uniformBinders) {
+        keys.push_back(keyValue.first);
+    }
+    return keys;
 }
 
 std::string VROShaderModifier::extractUniforms(std::string *source) {

@@ -23,185 +23,65 @@ std::string loadTextAsset(std::string resource) {
     return std::string([[NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil] UTF8String]);
 }
 
-VROUniform *newUniformForType(const std::string &name, VROShaderProperty type, int arraySize) {
-
-    VROUniform *uniform = nullptr;
-
-    switch (type) {
-        case VROShaderProperty::Int:
-            uniform = new VROUniform1i(name, arraySize);
-            break;
-
-        case VROShaderProperty::IVec2:
-            uniform = new VROUniform2i(name, arraySize);
-            break;
-
-        case VROShaderProperty::IVec3:
-            uniform = new VROUniform3i(name, arraySize);
-            break;
-
-        case VROShaderProperty::IVec4:
-            uniform = new VROUniform4i(name, arraySize);
-            break;
-
-        case VROShaderProperty::Float:
-            uniform = new VROUniform1f(name, arraySize);
-            break;
-
-        case VROShaderProperty::Vec2:
-            uniform = new VROUniform2f(name, arraySize);
-            break;
-
-        case VROShaderProperty::Vec3:
-            uniform = new VROUniform3f(name, arraySize);
-            break;
-
-        case VROShaderProperty::Vec4:
-            uniform = new VROUniform4f(name, arraySize);
-            break;
-
-        case VROShaderProperty::Mat2:
-            uniform = new VROUniformMat2(name);
-            break;
-
-        case VROShaderProperty::Mat3:
-            uniform = new VROUniformMat3(name);
-            break;
-
-        case VROShaderProperty::Mat4:
-            uniform = new VROUniformMat4(name);
-            break;
-
-        default:
-            pabort("Unsupported shader uniform type VROShaderProperty: %d", static_cast<int>(type));
-            break;
-    }
-
-    return uniform;
-}
-
 /////////////////////////////////////////////////////////////////////////////////
 //
-//  Initialize From Embedded Resources
+//  Initialization
 //
 /////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
-#pragma mark Initialize From Embedded Resources
+#pragma mark Initialization
 
 VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmentShader,
                                    const std::vector<std::string> &samplers,
                                    const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
-                                   int cap) :
+                                   const std::vector<VROGeometrySourceSemantic> attributes) :
     _shaderId(sMaterialId++),
     _lightingBlockIndex(0),
-    capabilities(cap),
-    normTransformsSet(false),
-    uniformsNeedRebind(true),
-    shaderName(fragmentShader),
-    program(0),
-    failedToLink(false),
-    glslVersion(GLSLVersion::V0) {
+    _capabilities(0),
+    _uniformsNeedRebind(true),
+    _shaderName(fragmentShader),
+    _program(0),
+    _failedToLink(false),
+    _samplers(samplers) {
 
-    embeddedVertexSource = loadTextAsset(vertexShader);
-    inflateIncludes(embeddedVertexSource);
+    _vertexSource = loadTextAsset(vertexShader);
+    inflateIncludes(_vertexSource);
 
-    embeddedFragmentSource = loadTextAsset(fragmentShader);
-    inflateIncludes(embeddedFragmentSource);
+    _fragmentSource = loadTextAsset(fragmentShader);
+    inflateIncludes(_fragmentSource);
     
-    inflateVertexShaderModifiers(modifiers, embeddedVertexSource);
-    inflateFragmentShaderModifiers(modifiers, embeddedFragmentSource);
+    inflateVertexShaderModifiers(modifiers, _vertexSource);
+    inflateFragmentShaderModifiers(modifiers, _fragmentSource);
         
-    passert (!embeddedVertexSource.empty() && !embeddedFragmentSource.empty());
+    passert (!_vertexSource.empty() && !_fragmentSource.empty());
+       
+    for (VROGeometrySourceSemantic attr : attributes) {
+        switch (attr) {
+            case VROGeometrySourceSemantic::Texcoord:
+                _capabilities |= (int)VROShaderMask::Tex;
+                break;
+                
+            case VROGeometrySourceSemantic::Normal:
+                _capabilities |= (int)VROShaderMask::Norm;
+                break;
+                
+            case VROGeometrySourceSemantic::Color:
+                _capabilities |= (int)VROShaderMask::Color;
+                break;
+                
+            default:
+                break;
+        }
+    }
         
-    for (const std::string &sampler : samplers) {
-        addSampler(sampler);
+    for (const std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
+        std::vector<std::string> uniformNames = modifier->getUniforms();
+            
+        for (std::string &uniformName : uniformNames) {
+            VROUniform *uniform = new VROUniformShaderModifier(uniformName, modifier);
+            _uniforms.push_back(uniform);
+        }
     }
-
-    // We don't immediately attempt to compileAndLink here because our
-    // uniform and sampler maps are not yet initialized
-}
-
-void VROShaderProgram::setUniforms(VROShaderProperty *uniformTypes, const char **names, int count) {
-    for (VROUniform *uniform : uniforms) {
-        delete (uniform);
-    }
-    uniforms.clear();
-
-    for (int i = 0; i < count; i++) {
-        uniforms.push_back(newUniformForType(names[i], uniformTypes[i], 1));
-    }
-
-    uniformsNeedRebind = true;
-}
-
-void VROShaderProgram::findTransformUniformLocations() {
-    xforms[(int)VROShaderXForm::MVP]    = glGetUniformLocation(program, "mvp_matrix");
-
-    if ((capabilities & (int)VROShaderMask::Tex) != 0) {
-        xforms[(int)VROShaderXForm::Tex] = glGetUniformLocation(program, "tex_norm_matrix");
-    }
-    if ((capabilities & (int)VROShaderMask::Norm) != 0) {
-        xforms[(int)VROShaderXForm::Norm] = glGetUniformLocation(program, "norm_norm_matrix");
-    }
-}
-
-void VROShaderProgram::findUniformLocations() {
-    for (VROUniform *uniform : uniforms) {
-        int location = glGetUniformLocation(program, uniform->name.c_str());
-        uniform->setLocation(location);
-    }
-
-    int samplerIdx = 0;
-
-    for (std::string &samplerName : samplers) {
-        int location = glGetUniformLocation(program, samplerName.c_str());
-        glUniform1i(location, samplerIdx);
-
-        ++samplerIdx;
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-//
-//  Add Uniforms / Attributes / Samplers
-//
-/////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-#pragma mark Add Uniforms / Attributes / Samplers
-
-VROUniform *VROShaderProgram::addUniform(VROShaderProperty type, int arraySize, const std::string &name) {
-    VROUniform *uniform = newUniformForType(name, type, arraySize);
-    uniforms.push_back(uniform);
-    uniformsNeedRebind = true;
-    
-    return uniform;
-}
-
-void VROShaderProgram::addAttribute(VROGeometrySourceSemantic attr) {
-    passert (program == 0);
-
-    switch (attr) {
-        case VROGeometrySourceSemantic::Texcoord:
-            capabilities |= (int)VROShaderMask::Tex;
-            break;
-
-        case VROGeometrySourceSemantic::Normal:
-            capabilities |= (int)VROShaderMask::Norm;
-            break;
-
-        case VROGeometrySourceSemantic::Color:
-            capabilities |= (int)VROShaderMask::Color;
-            break;
-
-        default:
-            pabort();
-    }
-}
-
-void VROShaderProgram::addSampler(const std::string &name) {
-    samplers.push_back(name);
-
-    uniformsNeedRebind = true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -213,11 +93,11 @@ void VROShaderProgram::addSampler(const std::string &name) {
 #pragma mark Destruction
 
 VROShaderProgram::~VROShaderProgram() {
-    for (VROUniform *uniform : uniforms) {
+    for (VROUniform *uniform : _uniforms) {
         delete (uniform);
     }
     
-    glDeleteShader(program);
+    glDeleteShader(_program);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -229,11 +109,11 @@ VROShaderProgram::~VROShaderProgram() {
 #pragma mark Compiling and Linking
 
 bool VROShaderProgram::hydrate() {
-    passert (program == 0);
+    passert (_program == 0);
 
 #if kDebugShaders
-    if (!shaderName.empty()) {
-        pinfo("Compiling [%s], ID %d", shaderName.c_str(), shaderId);
+    if (!_shaderName.empty()) {
+        pinfo("Compiling [%s], ID %d", _shaderName.c_str(), shaderId);
     }
     else {
         pinfo("Compiling anonymous shader with ID %d", shaderId);
@@ -241,30 +121,28 @@ bool VROShaderProgram::hydrate() {
 #endif
 
     if (!compileAndLink()) {
-        failedToLink = true;
+        _failedToLink = true;
         return false;
     }
 
     return true;
 }
 
-bool VROShaderProgram::isHydrated() {
-    return program != 0;
+bool VROShaderProgram::isHydrated() const {
+    return _program != 0;
 }
 
 void VROShaderProgram::evict() {
-    if (program != 0) {
-        glDeleteProgram(program);
+    if (_program != 0) {
+        glDeleteProgram(_program);
     }
 
-    normTransformsSet = false;
-    uniformsNeedRebind = true;
-
-    for (VROUniform *uniform : uniforms) {
+    _uniformsNeedRebind = true;
+    for (VROUniform *uniform : _uniforms) {
         uniform->reset();
     }
 
-    program = 0;
+    _program = 0;
 }
 
 bool VROShaderProgram::compileShader(GLuint *shader, GLenum type, const char *source) {
@@ -348,13 +226,13 @@ bool VROShaderProgram::validateProgram(GLuint prog) {
 
 bool VROShaderProgram::compileAndLink() {
     GLuint vertShader, fragShader;
-    program = glCreateProgram();
+    _program = glCreateProgram();
 
-    if (program == 0) {
-        if (shaderName.empty()) {
+    if (_program == 0) {
+        if (_shaderName.empty()) {
             pinfo("Could not create shader program with glCreateProgram for anonymous shader (do you have an active EGL context?)");
         } else {
-            pinfo("Could not create shader program with glCreateProgram for shader with name[%s] (do you have an active EGL context?)", shaderName.c_str());
+            pinfo("Could not create shader program with glCreateProgram for shader with name[%s] (do you have an active EGL context?)", _shaderName.c_str());
         }
 
         // Return true here so we retry the compile later
@@ -362,8 +240,8 @@ bool VROShaderProgram::compileAndLink() {
     }
 
 #if kDebugShaders
-    if (!shaderName.empty()) {
-        pinfo("Compiling and linking shader with name %s, ID %d into GL object %d", shaderName.c_str(), shaderId, program);
+    if (!_shaderName.empty()) {
+        pinfo("Compiling and linking shader with name %s, ID %d into GL object %d", _shaderName.c_str(), shaderId, program);
     }
     else {
         pinfo("Compiling and linking anonymous shader with ID %d into GL object %d", shaderId, program);
@@ -373,43 +251,43 @@ bool VROShaderProgram::compileAndLink() {
     /*
      Compile and attach the shaders to the program.
      */
-    passert (!embeddedVertexSource.empty());
-    passert (!embeddedFragmentSource.empty());
+    passert (!_vertexSource.empty());
+    passert (!_fragmentSource.empty());
 
-    if (!compileShader(&vertShader, GL_VERTEX_SHADER, embeddedVertexSource.c_str())) {
+    if (!compileShader(&vertShader, GL_VERTEX_SHADER, _vertexSource.c_str())) {
         pabort("Failed to compile vertex shader \"%s\" with code:\n%s",
-               shaderName.c_str(), embeddedVertexSource.c_str());
+               _shaderName.c_str(), _vertexSource.c_str());
         return false;
     }
 
-    if (!compileShader(&fragShader, GL_FRAGMENT_SHADER, embeddedFragmentSource.c_str())) {
+    if (!compileShader(&fragShader, GL_FRAGMENT_SHADER, _fragmentSource.c_str())) {
         pabort("Failed to compile fragment shader \"%s\" with code:\n%s",
-               shaderName.c_str(), embeddedFragmentSource.c_str());
+               _shaderName.c_str(), _fragmentSource.c_str());
         return false;
     }
 
-    glAttachShader(program, vertShader);
-    glAttachShader(program, fragShader);
+    glAttachShader(_program, vertShader);
+    glAttachShader(_program, fragShader);
 
     /*
      Bind attribute locations.
      */
-    glBindAttribLocation(program, (int)VROGeometrySourceSemantic::Vertex, "position");
+    glBindAttribLocation(_program, (int)VROGeometrySourceSemantic::Vertex, "position");
 
-    if ((capabilities & (int)VROShaderMask::Tex) != 0) {
-        glBindAttribLocation(program, (int)VROGeometrySourceSemantic::Texcoord, "texcoord");
+    if ((_capabilities & (int)VROShaderMask::Tex) != 0) {
+        glBindAttribLocation(_program, (int)VROGeometrySourceSemantic::Texcoord, "texcoord");
     }
-    if ((capabilities & (int)VROShaderMask::Color) != 0) {
-        glBindAttribLocation(program, (int)VROGeometrySourceSemantic::Color, "color");
+    if ((_capabilities & (int)VROShaderMask::Color) != 0) {
+        glBindAttribLocation(_program, (int)VROGeometrySourceSemantic::Color, "color");
     }
-    if ((capabilities & (int)VROShaderMask::Norm) != 0) {
-        glBindAttribLocation(program, (int)VROGeometrySourceSemantic::Normal, "normal");
+    if ((_capabilities & (int)VROShaderMask::Norm) != 0) {
+        glBindAttribLocation(_program, (int)VROGeometrySourceSemantic::Normal, "normal");
     }
 
     /*
      Link the program.
      */
-    if (!linkProgram(program)) {
+    if (!linkProgram(_program)) {
         if (vertShader) {
             glDeleteShader(vertShader);
             vertShader = 0;
@@ -418,16 +296,16 @@ bool VROShaderProgram::compileAndLink() {
             glDeleteShader(fragShader);
             fragShader = 0;
         }
-        if (program) {
-            glDeleteProgram(program);
-            program = 0;
+        if (_program) {
+            glDeleteProgram(_program);
+            _program = 0;
         }
         
-        pabort("Failed to link program %d, name %s", program, shaderName.c_str());
+        pabort("Failed to link program %d, name %s", _program, _shaderName.c_str());
         return false;
     }
     
-    _lightingBlockIndex = glGetUniformBlockIndex(program, "lighting");
+    _lightingBlockIndex = glGetUniformBlockIndex(_program, "lighting");
 
     /*
      Release vertex and fragment shaders.
@@ -440,13 +318,13 @@ bool VROShaderProgram::compileAndLink() {
     }
 
 #if kDebugShaders
-    pinfo("Finished compiling shader %s", shaderName.c_str());
+    pinfo("Finished compiling shader %s", _shaderName.c_str());
 
-     if (embeddedVertexSource.c_str() != nullptr) {
-         pinfo("Shader vertex source %s", embeddedVertexSource.c_str());
+     if (_vertexSource.c_str() != nullptr) {
+         pinfo("Shader vertex source %s", _vertexSource.c_str());
      }
-     if (embeddedFragmentSource.c_str() != nullptr) {
-         pinfo("Shader frag source %s", embeddedFragmentSource.c_str());
+     if (_fragmentSource.c_str() != nullptr) {
+         pinfo("Shader frag source %s", _fragmentSource.c_str());
      }
 #endif
 
@@ -454,19 +332,17 @@ bool VROShaderProgram::compileAndLink() {
 }
 
 bool VROShaderProgram::bind() {
-    if (failedToLink) {
+    if (_failedToLink) {
         return false;
     }
 
     passert (isHydrated());
-    glUseProgram(program);
+    glUseProgram(_program);
 
     // Bind uniforms locations here, if required.
-    if (uniformsNeedRebind) {
-        findTransformUniformLocations();
+    if (_uniformsNeedRebind) {
         findUniformLocations();
-
-        uniformsNeedRebind = false;
+        _uniformsNeedRebind = false;
     }
 
     return true;
@@ -478,17 +354,25 @@ void VROShaderProgram::unbind() {
 
 /////////////////////////////////////////////////////////////////////////////////
 //
-//  Get/Set Uniform and Transform Data
+//  Uniforms
 //
 /////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
-#pragma mark Set Transform
+#pragma mark Uniforms
+
+VROUniform *VROShaderProgram::addUniform(VROShaderProperty type, int arraySize, const std::string &name) {
+    VROUniform *uniform = VROUniform::newUniformForType(name, type, arraySize);
+    _uniforms.push_back(uniform);
+    _uniformsNeedRebind = true;
+    
+    return uniform;
+}
 
 int VROShaderProgram::getUniformIndex(const std::string &name) {
     int idx = 0;
 
-    for (VROUniform *uniform : uniforms) {
-        if (uniform->name == name) {
+    for (VROUniform *uniform : _uniforms) {
+        if (uniform->getName() == name) {
             return idx;
         }
 
@@ -499,8 +383,8 @@ int VROShaderProgram::getUniformIndex(const std::string &name) {
 }
 
 VROUniform *VROShaderProgram::getUniform(const std::string &name) {
-    for (VROUniform *uniform : uniforms) {
-        if (uniform->name == name) {
+    for (VROUniform *uniform : _uniforms) {
+        if (uniform->getName() == name) {
             return uniform;
         }
     }
@@ -509,78 +393,33 @@ VROUniform *VROShaderProgram::getUniform(const std::string &name) {
 }
 
 VROUniform *VROShaderProgram::getUniform(int index) {
-    return uniforms[index];
+    return _uniforms[index];
 }
 
-void VROShaderProgram::setUniformValue(const void *value, const std::string &name) {
-    VROUniform *uniform = getUniform(name);
-    if (uniform != nullptr) {
-        uniform->set(value);
+void VROShaderProgram::findUniformLocations() {
+    for (VROUniform *uniform : _uniforms) {
+        int location = glGetUniformLocation(_program, uniform->getName().c_str());
+        uniform->setLocation(location);
     }
-}
-
-void VROShaderProgram::setUniformValueVec3(VROVector3f value, const std::string &name) {
-    float v[3];
-    v[0] = value.x;
-    v[1] = value.y;
-    v[2] = value.z;
     
-    setUniformValue(v, name);
-}
-
-void VROShaderProgram::setUniformValueVec4(VROVector4f value, const std::string &name) {
-    float v[4];
-    v[0] = value.x;
-    v[1] = value.y;
-    v[2] = value.z;
-    v[3] = value.w;
+    int samplerIdx = 0;
     
-    setUniformValue(v, name);
-}
-
-void VROShaderProgram::setUniformValueMat4(VROMatrix4f value, const std::string &name) {
-    setUniformValue(value.getArray(), name);
-}
-
-void VROShaderProgram::setUniformValueInt(int value, const std::string &name) {
-    int v = value;
-    setUniformValue(&v, name);
-}
-
-void VROShaderProgram::setUniformValueFloat(float value, const std::string &name) {
-    setUniformValue(&value, name);
-}
-
-void VROShaderProgram::setVertexTransform(const float *mvpMatrix) {
-    if (xforms[(int)VROShaderXForm::MVP] >= 0) {
-        glUniformMatrix4fv(xforms[(int)VROShaderXForm::MVP], 1, GL_FALSE, mvpMatrix);
+    for (std::string &samplerName : _samplers) {
+        int location = glGetUniformLocation(_program, samplerName.c_str());
+        glUniform1i(location, samplerIdx);
+        
+        ++samplerIdx;
     }
 }
 
-void VROShaderProgram::setTexTransform(const float *tex) {
-    if ((capabilities & (int)VROShaderMask::Tex) != 0) {
-        glUniformMatrix4fv(xforms[(int)VROShaderXForm::Tex], 1, GL_FALSE, tex);
-    }
-}
-
-void VROShaderProgram::setNormTransform(const float *norm) {
-    if (normTransformsSet) {
-        return;
-    }
-
-    if ((capabilities & (int)VROShaderMask::Norm) != 0) {
-        glUniformMatrix4fv(xforms[(int)VROShaderXForm::Norm], 1, GL_FALSE, norm);
-    }
-
-    normTransformsSet = true;
-}
+#pragma mark - Source Inflation and Shader Modifiers
 
 const std::string &VROShaderProgram::getVertexSource() const {
-    return embeddedVertexSource;
+    return _vertexSource;
 }
 
 const std::string &VROShaderProgram::getFragmentSource() const {
-    return embeddedFragmentSource;
+    return _fragmentSource;
 }
 
 void VROShaderProgram::inflateIncludes(std::string &source) {
@@ -606,8 +445,8 @@ void VROShaderProgram::inflateVertexShaderModifiers(const std::vector<std::share
                                                     std::string &source) {
     
     for (const std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
-        insertModifier(modifier->getBody(), modifier->getDirective(VROShaderSection::Body), source);
-        insertModifier(modifier->getUniforms(), modifier->getDirective(VROShaderSection::Uniforms), source);
+        insertModifier(modifier->getBodySource(), modifier->getDirective(VROShaderSection::Body), source);
+        insertModifier(modifier->getUniformsSource(), modifier->getDirective(VROShaderSection::Uniforms), source);
     }
 }
 

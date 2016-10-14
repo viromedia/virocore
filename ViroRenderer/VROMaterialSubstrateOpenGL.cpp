@@ -306,6 +306,15 @@ void VROMaterialSubstrateOpenGL::addUniforms() {
     _diffuseSurfaceColorUniform = _program->addUniform(VROShaderProperty::Vec4, 1, "material_diffuse_surface_color");
     _diffuseIntensityUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_diffuse_intensity");
     _alphaUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_alpha");
+    
+    for (const std::shared_ptr<VROShaderModifier> &modifier : _material.getShaderModifiers()) {
+        std::vector<std::string> uniformNames = modifier->getUniforms();
+        
+        for (std::string &uniformName : uniformNames) {
+            VROUniform *uniform = _program->getUniform(uniformName);
+            _shaderModifierUniforms.push_back(uniform);
+        }
+    }
 }
 
 void VROMaterialSubstrateOpenGL::loadUniforms() {
@@ -318,6 +327,15 @@ void VROMaterialSubstrateOpenGL::loadUniforms() {
     _modelViewMatrixUniform = _program->getUniform("modelview_matrix");
     _modelViewProjectionMatrixUniform = _program->getUniform("modelview_projection_matrix");
     _cameraPositionUniform = _program->getUniform("camera_position");
+    
+    for (const std::shared_ptr<VROShaderModifier> &modifier : _material.getShaderModifiers()) {
+        std::vector<std::string> uniformNames = modifier->getUniforms();
+        
+        for (std::string &uniformName : uniformNames) {
+            VROUniform *uniform = _program->getUniform(uniformName);
+            _shaderModifierUniforms.push_back(uniform);
+        }
+    }
 }
 
 void VROMaterialSubstrateOpenGL::bindShader() {
@@ -419,6 +437,10 @@ void VROMaterialSubstrateOpenGL::bindMaterialUniforms(float opacity) {
     }
     if (_shininessUniform != nullptr) {
         _shininessUniform->setFloat(_material.getShininess());
+    }
+    
+    for (VROUniform *uniform : _shaderModifierUniforms) {
+        uniform->set(nullptr);
     }
 }
 

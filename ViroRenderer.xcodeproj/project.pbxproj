@@ -36,7 +36,7 @@
 		8F0FE67A1CD3DFF800A4C297 /* blit_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F0FE6781CD3DFF800A4C297 /* blit_fsh.glsl */; };
 		8F0FE67B1CD3DFF800A4C297 /* blit_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F0FE6791CD3DFF800A4C297 /* blit_vsh.glsl */; };
 		8F0FE67E1CD3E12F00A4C297 /* VROShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F0FE67C1CD3E12F00A4C297 /* VROShaderProgram.cpp */; };
-		8F0FE67F1CD3E12F00A4C297 /* VROShaderProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE67D1CD3E12F00A4C297 /* VROShaderProgram.h */; };
+		8F0FE67F1CD3E12F00A4C297 /* VROShaderProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F0FE67D1CD3E12F00A4C297 /* VROShaderProgram.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1071D21BF40FAF003B3C3F /* momentslogo.png */; };
 		8F11B7BD1C1F8F1E0026D150 /* VRORenderContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F517BF91BCDC8C20017C70B /* VRORenderContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F11B7C21C20B0530026D150 /* VROView.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C01C20B0530026D150 /* VROView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -280,6 +280,8 @@
 		8FDDB4A81DAF134300DE0968 /* VROLineSegment.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB4A61DAF134300DE0968 /* VROLineSegment.h */; };
 		8FDDB4AF1DB055A700DE0968 /* VROShaderModifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB4AD1DB055A700DE0968 /* VROShaderModifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FDDB4B01DB055A700DE0968 /* VROShaderModifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB4AE1DB055A700DE0968 /* VROShaderModifier.cpp */; };
+		8FDDB4B31DB1316700DE0968 /* VROUniform.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB4B11DB1316700DE0968 /* VROUniform.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FDDB4B61DB1389300DE0968 /* VROUniform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB4B51DB1389300DE0968 /* VROUniform.cpp */; };
 		8FDDE2091CCFD6A100674DE2 /* VROViewMetal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDE2071CCFD69D00674DE2 /* VROViewMetal.m */; };
 		8FDDE2121CD00F2600674DE2 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FDDE2111CD00F2600674DE2 /* CoreText.framework */; };
 		EC8D0A685CE2FA0BE80B7363 /* libPods-ViroSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF43BA975D626635F2D5584C /* libPods-ViroSample.a */; };
@@ -639,7 +641,9 @@
 		8FDDB4A51DAF134300DE0968 /* VROLineSegment.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLineSegment.cpp; sourceTree = "<group>"; };
 		8FDDB4A61DAF134300DE0968 /* VROLineSegment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLineSegment.h; sourceTree = "<group>"; };
 		8FDDB4AD1DB055A700DE0968 /* VROShaderModifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROShaderModifier.h; sourceTree = "<group>"; };
-		8FDDB4AE1DB055A700DE0968 /* VROShaderModifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROShaderModifier.cpp; sourceTree = "<group>"; };
+		8FDDB4AE1DB055A700DE0968 /* VROShaderModifier.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROShaderModifier.cpp; sourceTree = "<group>"; };
+		8FDDB4B11DB1316700DE0968 /* VROUniform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROUniform.h; sourceTree = "<group>"; };
+		8FDDB4B51DB1389300DE0968 /* VROUniform.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROUniform.cpp; sourceTree = "<group>"; };
 		8FDDE2061CCFD69D00674DE2 /* VROViewMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROViewMetal.h; sourceTree = "<group>"; };
 		8FDDE2071CCFD69D00674DE2 /* VROViewMetal.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROViewMetal.m; sourceTree = "<group>"; };
 		8FDDE2111CD00F2600674DE2 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
@@ -1173,6 +1177,8 @@
 				8FB6591C1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.cpp */,
 				8FB659211CD83A2200D036EB /* VROTextureSubstrateOpenGL.h */,
 				8FB659201CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp */,
+				8FDDB4B11DB1316700DE0968 /* VROUniform.h */,
+				8FDDB4B51DB1389300DE0968 /* VROUniform.cpp */,
 				8F0FE67D1CD3E12F00A4C297 /* VROShaderProgram.h */,
 				8F0FE67C1CD3E12F00A4C297 /* VROShaderProgram.cpp */,
 				8FDDB4AD1DB055A700DE0968 /* VROShaderModifier.h */,
@@ -1355,6 +1361,7 @@
 				8FC908871CA458EB00069C89 /* VROCameraMutable.h in Headers */,
 				8FD4DF381C18F500003DC425 /* VROMaterialVisual.h in Headers */,
 				8FD4DF391C18F500003DC425 /* VROTexture.h in Headers */,
+				8FDDB4B31DB1316700DE0968 /* VROUniform.h in Headers */,
 				8FD4DF3A1C18F500003DC425 /* VROLight.h in Headers */,
 				8FD4DF3B1C18F5EA003DC425 /* VROTime.h in Headers */,
 				8FAE23DA1CEA28E100E98B47 /* VROShaderBuilder.h in Headers */,
@@ -1832,6 +1839,7 @@
 				8FD4DF011C18ED2C003DC425 /* VROMaterialSubstrateMetal.cpp in Sources */,
 				8F9278071C670FC100FF892A /* VROTriangle.cpp in Sources */,
 				8FD4DEF31C18ED19003DC425 /* VROFrustum.cpp in Sources */,
+				8FDDB4B61DB1389300DE0968 /* VROUniform.cpp in Sources */,
 				8FD4DEF81C18ED19003DC425 /* VROVector4f.cpp in Sources */,
 				8FD4DF101C18ED3C003DC425 /* VROTexture.cpp in Sources */,
 				8FCF396B1CB4242000A86CA3 /* VRORenderer.cpp in Sources */,

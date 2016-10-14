@@ -17,6 +17,7 @@
 #include "VROShaderProgram.h"
 #include "VROLightingUBO.h"
 #include "VROShaderModifier.h"
+#include "VROGeometrySource.h"
 
 class VRODriverOpenGL : public VRODriver {
     
@@ -78,9 +79,10 @@ public:
         
         std::map<std::string, std::shared_ptr<VROShaderProgram>>::iterator it = _sharedPrograms.find(name);
         if (it == _sharedPrograms.end()) {
+            const std::vector<VROGeometrySourceSemantic> attributes = { VROGeometrySourceSemantic::Texcoord,
+                VROGeometrySourceSemantic::Normal };
             std::shared_ptr<VROShaderProgram> program = std::make_shared<VROShaderProgram>(vertexShader, fragmentShader,
-                                                                                           samplers, modifiers,
-                                                                                           ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
+                                                                                           samplers, modifiers, attributes);
             _sharedPrograms[name] = program;
             return program;
         }

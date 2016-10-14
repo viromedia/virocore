@@ -232,10 +232,14 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::vector<std::string> modifierCode =  { "uniform float testA;",
                                                "uniform float testB;",
-                                               "_geometry.position.x = _geometry.position.x + 1.0;"
+                                               "_geometry.position.x = _geometry.position.x + testA;"
                                              };
     std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
                                                                                       modifierCode);
+    
+    modifier->setUniformBinder("testA", [](VROUniform *uniform, GLuint location) {
+        uniform->setFloat(1.0);
+    });
     material->addShaderModifier(modifier);
     
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();

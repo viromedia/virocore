@@ -77,6 +77,8 @@ private:
     VROUniform *_modelViewProjectionMatrixUniform;
     VROUniform *_cameraPositionUniform;
     
+    std::vector<VROUniform *> _shaderModifierUniforms;
+    
     void loadConstantLighting(const VROMaterial &material, VRODriverOpenGL &driver);
     void loadLambertLighting(const VROMaterial &material, VRODriverOpenGL &driver);
     void loadPhongLighting(const VROMaterial &material, VRODriverOpenGL &driver);
