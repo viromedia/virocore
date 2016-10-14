@@ -11,7 +11,7 @@
 #include "VROVector3f.h"
 
 //Epsilon value for point containment to account for precision errors
-#define kContainsPointEpsilon 0.5
+#define kContainsPointEpsilon 0.01
 
 // Uncomment to see a compiler error indicating the size of each VROBoundingBox
 // template<int s> struct BoundingBoxSize;
