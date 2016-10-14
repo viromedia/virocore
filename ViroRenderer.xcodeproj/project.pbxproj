@@ -278,6 +278,8 @@
 		8FDDB49E1DADB8C200DE0968 /* VROLightingUBO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB49C1DADB8C200DE0968 /* VROLightingUBO.cpp */; };
 		8FDDB4A71DAF134300DE0968 /* VROLineSegment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB4A51DAF134300DE0968 /* VROLineSegment.cpp */; };
 		8FDDB4A81DAF134300DE0968 /* VROLineSegment.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB4A61DAF134300DE0968 /* VROLineSegment.h */; };
+		8FDDB4A91DAF2A3E00DE0968 /* VROPolyline.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB4A11DAF0BC300DE0968 /* VROPolyline.h */; };
+		8FDDB4AA1DAF2A4000DE0968 /* VROPolyline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB4A21DAF0BC300DE0968 /* VROPolyline.cpp */; };
 		8FDDB4AF1DB055A700DE0968 /* VROShaderModifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB4AD1DB055A700DE0968 /* VROShaderModifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FDDB4B01DB055A700DE0968 /* VROShaderModifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB4AE1DB055A700DE0968 /* VROShaderModifier.cpp */; };
 		8FDDB4B31DB1316700DE0968 /* VROUniform.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB4B11DB1316700DE0968 /* VROUniform.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -638,6 +640,8 @@
 		8FD9B4641C33A933006CB698 /* bobaraj.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bobaraj.png; path = ViroSample/bobaraj.png; sourceTree = "<group>"; };
 		8FDDB49B1DADB8C200DE0968 /* VROLightingUBO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLightingUBO.h; sourceTree = "<group>"; };
 		8FDDB49C1DADB8C200DE0968 /* VROLightingUBO.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLightingUBO.cpp; sourceTree = "<group>"; };
+		8FDDB4A11DAF0BC300DE0968 /* VROPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPolyline.h; sourceTree = "<group>"; };
+		8FDDB4A21DAF0BC300DE0968 /* VROPolyline.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPolyline.cpp; sourceTree = "<group>"; };
 		8FDDB4A51DAF134300DE0968 /* VROLineSegment.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLineSegment.cpp; sourceTree = "<group>"; };
 		8FDDB4A61DAF134300DE0968 /* VROLineSegment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLineSegment.h; sourceTree = "<group>"; };
 		8FDDB4AD1DB055A700DE0968 /* VROShaderModifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROShaderModifier.h; sourceTree = "<group>"; };
@@ -926,6 +930,8 @@
 				8F152A791C10D4AE00A211F8 /* VROShapeUtils.cpp */,
 				8F83DEAD1C50278C0089C31A /* VROSphere.h */,
 				8F83DEAC1C50278C0089C31A /* VROSphere.cpp */,
+				8FDDB4A11DAF0BC300DE0968 /* VROPolyline.h */,
+				8FDDB4A21DAF0BC300DE0968 /* VROPolyline.cpp */,
 			);
 			name = Shapes;
 			sourceTree = "<group>";
@@ -1404,6 +1410,7 @@
 				8F83DEA51C4830360089C31A /* VROTimingFunctionEaseIn.h in Headers */,
 				8F83DE8E1C4728A30089C31A /* VROHitTestResult.h in Headers */,
 				8FD4DF521C18F5EB003DC425 /* VROTransaction.h in Headers */,
+				8FDDB4A91DAF2A3E00DE0968 /* VROPolyline.h in Headers */,
 				8FD4DF531C18F5EB003DC425 /* VROCrossLayout.h in Headers */,
 				8F11B7BD1C1F8F1E0026D150 /* VRORenderContext.h in Headers */,
 				8FD1E1C01C4093790005BE4E /* VROVideoTexture.h in Headers */,
@@ -1826,6 +1833,7 @@
 				8FD4DF111C18ED3C003DC425 /* VROLight.cpp in Sources */,
 				8FD9B4601C339ECF006CB698 /* VROMaterialSubstrate.cpp in Sources */,
 				8FB659141CD8389300D036EB /* VROSceneRendererCardboardOpenGL.cpp in Sources */,
+				8FDDB4AA1DAF2A4000DE0968 /* VROPolyline.cpp in Sources */,
 				8FA2E15C1C45AF3C0070DB26 /* VROScreenUIView.mm in Sources */,
 				8FD4DF0F1C18ED3C003DC425 /* VROMaterialVisual.cpp in Sources */,
 				8FD4DEF21C18ED19003DC425 /* VROPlane.cpp in Sources */,

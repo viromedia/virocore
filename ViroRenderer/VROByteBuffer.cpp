@@ -21,10 +21,20 @@
 #include <asm/unaligned.h>
 #endif
 
+#define kBufferDefaultCapacity 128
+
 // Turn on to add debug messaging (and exit) on overruns
 #define k_bufferDebugOverruns 1
 // Also turn on to abort on overruns
 #define k_bufferAbortOverruns 1
+
+VROByteBuffer::VROByteBuffer() :
+    _pos(0),
+    _capacity(kBufferDefaultCapacity),
+    _buffer((char *) malloc(kBufferDefaultCapacity)),
+    _freeOnDealloc(true) {
+    
+}
 
 VROByteBuffer::VROByteBuffer(size_t _capacity) :
     _pos(0),
@@ -239,13 +249,13 @@ std::string VROByteBuffer::readSTLStringUTF8() {
         return {};
     }
 
-    std::string s(pointer(), numBytes);
+    std::string s(getData(), numBytes);
     _pos += numBytes;
     return s;
 }
 
 std::string VROByteBuffer::readSTLStringUTF8NullTerm() {
-    std::string s(pointer());
+    std::string s(getData());
     _pos += s.size() + 1;
     return s;
 }
@@ -278,7 +288,7 @@ std::string VROByteBuffer::readSTLTextUTF8() {
     }
 
     char characters[numChars + 1];
-    memcpy(characters, pointer(), numChars);
+    memcpy(characters, getData(), numChars);
     characters[numChars] = '\0';
     _pos += numChars;
 
@@ -295,11 +305,11 @@ int VROByteBuffer::peekInt() {
     return (__p[0] | __p[1] << 8 | __p[2] << 16 | __p[3] << 24);
 }
 
-char* VROByteBuffer::pointer() {
+char* VROByteBuffer::getData() {
     return _buffer + _pos;
 }
 
-char* VROByteBuffer::pointerAtPosition(size_t _position) {
+char* VROByteBuffer::getDataFromPosition(size_t _position) {
     return _buffer + _position;
 }
 

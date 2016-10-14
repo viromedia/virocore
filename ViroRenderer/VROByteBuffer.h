@@ -19,6 +19,12 @@
 
 class VROByteBuffer final {
 public:
+    
+    /*
+     Default writing constructor, creating a new byte array of default 
+     length.
+     */
+    VROByteBuffer();
 
     /*
      Writing constructor, creating a new byte array of the given length.
@@ -26,7 +32,7 @@ public:
     VROByteBuffer(size_t capacity);
 
     /*
-     Read constructors. Wrap the given array of bytes of the given length. Set copy to true
+     Read constructor. Wrap the given array of bytes of the given length. Set copy to true
      to copy the bytes into this VROByteBuffer. If false, then the bytes will continue to be
      owned by the caller and will not be deleted when this VROByteBuffer is destroyed.
      */
@@ -92,13 +98,17 @@ public:
     void readStringNullTerm(char *result);
     std::string readStringNullTerm();
 
-    /*
-     Pointer manipulation and retrieval.
-     */
+    size_t getPosition() const {
+        return _pos;
+    }
     void setPosition(size_t position);
-    char* pointer();
-    char* pointerAtPosition(size_t position);
     void skip(size_t bytes);
+    
+    /*
+     Underlying data manipulation and retrieval.
+     */
+    char* getData();
+    char* getDataFromPosition(size_t position);
 
     /*
      Create a byte-buffer from a subrange of this byte-buffer, using absolute position and length.
@@ -141,8 +151,10 @@ public:
      */
     void clear();
 
+    /*
+     Set position to zero.
+     */
     void rewind();
-    void flip();
 
     /*
      Write methods.
