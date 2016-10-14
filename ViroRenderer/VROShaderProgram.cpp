@@ -12,6 +12,7 @@
 #include "VROVector4f.h"
 #include "VROMatrix4f.h"
 #include "VROGeometrySource.h"
+#include "VROShaderModifier.h"
 
 #define kDebugShaders 0
 
@@ -87,7 +88,10 @@ VROUniform *newUniformForType(const std::string &name, VROShaderProperty type, i
 #pragma mark -
 #pragma mark Initialize From Embedded Resources
 
-VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmentShader, int cap) :
+VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmentShader,
+                                   const std::vector<std::string> &samplers,
+                                   const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
+                                   int cap) :
     _shaderId(sMaterialId++),
     _lightingBlockIndex(0),
     capabilities(cap),
@@ -103,8 +107,15 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
 
     embeddedFragmentSource = loadTextAsset(fragmentShader);
     inflateIncludes(embeddedFragmentSource);
+    
+    inflateVertexShaderModifiers(modifiers, embeddedVertexSource);
+    inflateFragmentShaderModifiers(modifiers, embeddedFragmentSource);
         
     passert (!embeddedVertexSource.empty() && !embeddedFragmentSource.empty());
+        
+    for (const std::string &sampler : samplers) {
+        addSampler(sampler);
+    }
 
     // We don't immediately attempt to compileAndLink here because our
     // uniform and sampler maps are not yet initialized
@@ -121,14 +132,6 @@ void VROShaderProgram::setUniforms(VROShaderProperty *uniformTypes, const char *
     }
 
     uniformsNeedRebind = true;
-}
-
-void VROShaderProgram::setSamplers(const char **names, int count) {
-    samplers.clear();
-
-    for (int i = 0; i < count; i++) {
-        samplers.push_back(std::string(names[i]));
-    }
 }
 
 void VROShaderProgram::findTransformUniformLocations() {
@@ -580,21 +583,47 @@ const std::string &VROShaderProgram::getFragmentSource() const {
     return embeddedFragmentSource;
 }
 
-void VROShaderProgram::inflateIncludes(std::string &sourceToInflate) {
+void VROShaderProgram::inflateIncludes(std::string &source) {
     std::string includeDirective("#include ");
     
-    size_t includeStart = sourceToInflate.find(includeDirective);
+    size_t includeStart = source.find(includeDirective);
     if (includeStart == std::string::npos) {
         return;
     }
     
-    size_t includeEnd = sourceToInflate.find("\n", includeStart);
-    std::string includeFile = sourceToInflate.substr(includeStart + includeDirective.size(),
-                                                     includeEnd - (includeStart + includeDirective.size()));
+    size_t includeEnd = source.find("\n", includeStart);
+    std::string includeFile = source.substr(includeStart + includeDirective.size(),
+                                            includeEnd - (includeStart + includeDirective.size()));
     
     std::string includeSource = loadTextAsset(includeFile.c_str());
-    sourceToInflate.replace(includeStart, includeEnd - includeStart, includeSource);
+    source.replace(includeStart, includeEnd - includeStart, includeSource);
     
     // Support recursive includes by invoking this again with the result
-    return inflateIncludes(sourceToInflate);
+    inflateIncludes(source);
+}
+
+void VROShaderProgram::inflateVertexShaderModifiers(const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
+                                                    std::string &source) {
+    
+    for (const std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
+        insertModifier(modifier->getBody(), modifier->getDirective(VROShaderSection::Body), source);
+        insertModifier(modifier->getUniforms(), modifier->getDirective(VROShaderSection::Uniforms), source);
+    }
+}
+
+void VROShaderProgram::inflateFragmentShaderModifiers(const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
+                                                      std::string &source) {
+    // TODO Not yet supported
+}
+
+void VROShaderProgram::insertModifier(std::string modifierSource, std::string directive,
+                                      std::string &source) {
+
+    size_t start = source.find(directive);
+    if (start == std::string::npos) {
+        return;
+    }
+    
+    size_t end = source.find("\n", start);
+    source.replace(start, end - start, modifierSource);
 }

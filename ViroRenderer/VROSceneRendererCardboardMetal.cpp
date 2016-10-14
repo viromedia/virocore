@@ -72,11 +72,7 @@ void VROSceneRendererCardboardMetal::initRenderer(GVRHeadTransform *headTransfor
     uint32_t bytesPerRow = bytesPerPixel * (uint32_t)[_texture width];
     _textureBuffer = (char *) malloc(bytesPerRow * [_texture height]);
     
-    _blitter = new VROShaderProgram("blit_vsh", "blit_fsh", 0);
-    
-    const char *samplers[1];
-    samplers[0] = "map";
-    _blitter->setSamplers(samplers, 1);
+    _blitter = new VROShaderProgram("blit_vsh", "blit_fsh",  { "map" }, {}, 0);
     _blitter->hydrate();
 }
 

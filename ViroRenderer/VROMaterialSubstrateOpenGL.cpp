@@ -69,7 +69,7 @@ VROMaterialSubstrateOpenGL::~VROMaterialSubstrateOpenGL() {
 void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
     VROMaterialVisual &diffuse = material.getDiffuse();
     
-    std::string vertexShader = "constant_vsh";
+    std::string vertexShader = "standard_vsh";
     std::string fragmentShader;
     
     std::vector<std::string> samplers;
@@ -90,7 +90,8 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
         fragmentShader = "constant_q_fsh";
     }
     
-    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers);
+    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers,
+                                      material.getShaderModifiers());
     if (!_program->isHydrated()) {
         addUniforms();
         hydrateProgram(driver);
@@ -101,7 +102,7 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
 }
 
 void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
-    std::string vertexShader = "lambert_vsh";
+    std::string vertexShader = "standard_vsh";
     std::string fragmentShader;
     
     std::vector<std::string> samplers;
@@ -135,7 +136,8 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
         }
     }
     
-    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers);
+    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers,
+                                      material.getShaderModifiers());
     if (!_program->isHydrated()) {
         addUniforms();
         hydrateProgram(driver);
@@ -146,7 +148,7 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
 }
 
 void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
-    std::string vertexShader = "phong_vsh";
+    std::string vertexShader = "standard_vsh";
     std::string fragmentShader;
     
     std::vector<std::string> samplers;
@@ -194,8 +196,9 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
             fragmentShader = "phong_t_fsh";
         }
     }
-    
-    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers);
+
+    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers,
+                                      material.getShaderModifiers());
     if (!_program->isHydrated()) {
         addUniforms();
         _shininessUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
@@ -208,7 +211,7 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
 }
 
 void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
-    std::string vertexShader = "blinn_vsh";
+    std::string vertexShader = "standard_vsh";
     std::string fragmentShader;
     
     std::vector<std::string> samplers;
@@ -257,7 +260,8 @@ void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, 
         }
     }
     
-    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers);
+    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers,
+                                      material.getShaderModifiers());
     if (!_program->isHydrated()) {
         addUniforms();
         _shininessUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");

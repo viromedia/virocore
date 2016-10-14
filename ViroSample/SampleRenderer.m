@@ -230,6 +230,14 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     material->getDiffuse().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"boba"]));
     material->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"specular"]));
     
+    std::vector<std::string> modifierCode =  { "uniform float testA;",
+                                               "uniform float testB;",
+                                               "_geometry.position.x = _geometry.position.x + 1.0;"
+                                             };
+    std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
+                                                                                      modifierCode);
+    material->addShaderModifier(modifier);
+    
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
     boxNode->setPosition({0, 0, -5});

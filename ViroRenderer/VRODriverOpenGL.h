@@ -16,6 +16,7 @@
 #include "VROVideoTextureCacheOpenGL.h"
 #include "VROShaderProgram.h"
 #include "VROLightingUBO.h"
+#include "VROShaderModifier.h"
 
 class VRODriverOpenGL : public VRODriver {
     
@@ -70,16 +71,16 @@ public:
     
     std::shared_ptr<VROShaderProgram> getPooledShader(std::string vertexShader,
                                                       std::string fragmentShader,
-                                                      const std::vector<std::string> &samplers) {
-        std::string name = vertexShader + "_" + fragmentShader;
+                                                      const std::vector<std::string> &samplers,
+                                                      const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers) {
+        int modifiersHash = VROShaderModifier::hashShaderModifiers(modifiers);
+        std::string name = vertexShader + "_" + fragmentShader + "_" + std::to_string(modifiersHash);
         
         std::map<std::string, std::shared_ptr<VROShaderProgram>>::iterator it = _sharedPrograms.find(name);
         if (it == _sharedPrograms.end()) {
             std::shared_ptr<VROShaderProgram> program = std::make_shared<VROShaderProgram>(vertexShader, fragmentShader,
+                                                                                           samplers, modifiers,
                                                                                            ((int)VROShaderMask::Tex | (int)VROShaderMask::Norm));
-            for (const std::string &sampler : samplers) {
-                program->addSampler(sampler);
-            }
             _sharedPrograms[name] = program;
             return program;
         }

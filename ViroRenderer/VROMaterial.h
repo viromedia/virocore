@@ -44,6 +44,7 @@ class VROLight;
 class VRODriver;
 class VROSortKey;
 class VROMaterialSubstrate;
+class VROShaderModifier;
 
 /*
  Manages the lighting and shading attributes associated with the surface of a geometry that
@@ -159,6 +160,11 @@ public:
         _readsFromDepthBuffer = readsFromDepthBuffer;
         updateSubstrate();
     }
+
+    void addShaderModifier(std::shared_ptr<VROShaderModifier> modifier);
+    const std::vector<std::shared_ptr<VROShaderModifier>> &getShaderModifiers() const {
+        return _shaderModifiers;
+    }
     
     /*
      Make a snapshot of this material and cross-fade that snapshot out,
@@ -268,6 +274,11 @@ private:
      values of this material whenever this material is changed.
      */
     std::shared_ptr<VROMaterial> _outgoing;
+    
+    /*
+     Modifiers to alter the shader code.
+     */
+    std::vector<std::shared_ptr<VROShaderModifier>> _shaderModifiers;
     
     /*
      Representation of this material in the underlying graphics hardware.

@@ -134,6 +134,11 @@ void VROMaterial::fadeSnapshot() {
     }
 }
 
+void VROMaterial::addShaderModifier(std::shared_ptr<VROShaderModifier> modifier) {
+    _shaderModifiers.push_back(modifier);
+    updateSubstrate();
+}
+
 void VROMaterial::removeOutgoingMaterial() {
     _outgoing.reset();
 }

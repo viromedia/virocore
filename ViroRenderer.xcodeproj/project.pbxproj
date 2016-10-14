@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		6386C3B94B3E92D246F8F9EB /* libPods-ViroKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6447C487DE6546AF514106CC /* libPods-ViroKit.a */; };
 		8A305E071DA82719007407EF /* VROVideoDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A305E061DA82719007407EF /* VROVideoDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8F03BCE01CECC92300D071F8 /* blinn_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD91CECC30E00D071F8 /* blinn_vsh.glsl */; };
+		8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */; };
 		8F03BCE11CECC92300D071F8 /* blinn_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD61CECC30E00D071F8 /* blinn_functions_fsh.glsl */; };
 		8F03BCE21CECC92300D071F8 /* blinn_c_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD41CECC30E00D071F8 /* blinn_c_fsh.glsl */; };
 		8F03BCE31CECC92300D071F8 /* blinn_c_reflect_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD51CECC30E00D071F8 /* blinn_c_reflect_fsh.glsl */; };
@@ -20,7 +20,6 @@
 		8F03BCF51CECCADF00D071F8 /* phong_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCE91CECCAD500D071F8 /* phong_functions_fsh.glsl */; };
 		8F03BCF61CECCADF00D071F8 /* phong_t_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCEA1CECCAD500D071F8 /* phong_t_fsh.glsl */; };
 		8F03BCF71CECCADF00D071F8 /* phong_t_reflect_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCEB1CECCAD500D071F8 /* phong_t_reflect_fsh.glsl */; };
-		8F03BCF81CECCADF00D071F8 /* phong_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCEC1CECCAD500D071F8 /* phong_vsh.glsl */; };
 		8F03BCFC1CEE30B200D071F8 /* VROVideoTextureCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F03BCFA1CEE30B200D071F8 /* VROVideoTextureCache.h */; };
 		8F03BCFF1CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F03BCFD1CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.cpp */; };
 		8F03BD001CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F03BCFE1CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.h */; };
@@ -144,7 +143,6 @@
 		8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */; };
 		8FC6E1C61CEBB31C008EFD5F /* lighting_general_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */; };
 		8FC6E1C71CEBB31C008EFD5F /* lambert_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BA1CEB62E9008EFD5F /* lambert_functions_fsh.glsl */; };
-		8FC6E1C81CEBB31C008EFD5F /* lambert_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BD1CEB62E9008EFD5F /* lambert_vsh.glsl */; };
 		8FC6E1C91CEBB31C008EFD5F /* lambert_c_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1B81CEB62E9008EFD5F /* lambert_c_fsh.glsl */; };
 		8FC6E1CA1CEBB31C008EFD5F /* lambert_c_reflect_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1B91CEB62E9008EFD5F /* lambert_c_reflect_fsh.glsl */; };
 		8FC6E1CB1CEBB31C008EFD5F /* lambert_t_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BB1CEB62E9008EFD5F /* lambert_t_fsh.glsl */; };
@@ -153,7 +151,6 @@
 		8FC6E1DA1CECB376008EFD5F /* constant_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1D01CECB364008EFD5F /* constant_functions_fsh.glsl */; };
 		8FC6E1DB1CECB376008EFD5F /* constant_q_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1D11CECB364008EFD5F /* constant_q_fsh.glsl */; };
 		8FC6E1DC1CECB376008EFD5F /* constant_t_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1D21CECB364008EFD5F /* constant_t_fsh.glsl */; };
-		8FC6E1DD1CECB376008EFD5F /* constant_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1D31CECB364008EFD5F /* constant_vsh.glsl */; };
 		8FC908861CA458EB00069C89 /* VROCameraMutable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FC908841CA458EB00069C89 /* VROCameraMutable.cpp */; };
 		8FC908871CA458EB00069C89 /* VROCameraMutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FC908851CA458EB00069C89 /* VROCameraMutable.h */; };
 		8FCB6C881C3C828200C14158 /* VROLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB6C861C3C828200C14158 /* VROLoader.cpp */; };
@@ -281,6 +278,8 @@
 		8FDDB49E1DADB8C200DE0968 /* VROLightingUBO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB49C1DADB8C200DE0968 /* VROLightingUBO.cpp */; };
 		8FDDB4A71DAF134300DE0968 /* VROLineSegment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB4A51DAF134300DE0968 /* VROLineSegment.cpp */; };
 		8FDDB4A81DAF134300DE0968 /* VROLineSegment.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB4A61DAF134300DE0968 /* VROLineSegment.h */; };
+		8FDDB4AF1DB055A700DE0968 /* VROShaderModifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB4AD1DB055A700DE0968 /* VROShaderModifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FDDB4B01DB055A700DE0968 /* VROShaderModifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB4AE1DB055A700DE0968 /* VROShaderModifier.cpp */; };
 		8FDDE2091CCFD6A100674DE2 /* VROViewMetal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDE2071CCFD69D00674DE2 /* VROViewMetal.m */; };
 		8FDDE2121CD00F2600674DE2 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FDDE2111CD00F2600674DE2 /* CoreText.framework */; };
 		EC8D0A685CE2FA0BE80B7363 /* libPods-ViroSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF43BA975D626635F2D5584C /* libPods-ViroSample.a */; };
@@ -370,13 +369,12 @@
 		8F03BCD61CECC30E00D071F8 /* blinn_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_functions_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCD71CECC30E00D071F8 /* blinn_t_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_t_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCD81CECC30E00D071F8 /* blinn_t_reflect_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_t_reflect_fsh.glsl; sourceTree = "<group>"; };
-		8F03BCD91CECC30E00D071F8 /* blinn_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_vsh.glsl; sourceTree = "<group>"; };
+		8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = standard_vsh.glsl; sourceTree = "<group>"; };
 		8F03BCE71CECCAD500D071F8 /* phong_c_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = phong_c_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCE81CECCAD500D071F8 /* phong_c_reflect_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = phong_c_reflect_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCE91CECCAD500D071F8 /* phong_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = phong_functions_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCEA1CECCAD500D071F8 /* phong_t_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = phong_t_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCEB1CECCAD500D071F8 /* phong_t_reflect_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = phong_t_reflect_fsh.glsl; sourceTree = "<group>"; };
-		8F03BCEC1CECCAD500D071F8 /* phong_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = phong_vsh.glsl; sourceTree = "<group>"; };
 		8F03BCFA1CEE30B200D071F8 /* VROVideoTextureCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoTextureCache.h; sourceTree = "<group>"; };
 		8F03BCFD1CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVideoTextureCacheMetal.cpp; sourceTree = "<group>"; };
 		8F03BCFE1CEE3EEE00D071F8 /* VROVideoTextureCacheMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoTextureCacheMetal.h; sourceTree = "<group>"; };
@@ -590,13 +588,11 @@
 		8FC6E1BA1CEB62E9008EFD5F /* lambert_functions_fsh.glsl */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; fileEncoding = 4; path = lambert_functions_fsh.glsl; sourceTree = "<group>"; };
 		8FC6E1BB1CEB62E9008EFD5F /* lambert_t_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lambert_t_fsh.glsl; sourceTree = "<group>"; };
 		8FC6E1BC1CEB62E9008EFD5F /* lambert_t_reflect_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lambert_t_reflect_fsh.glsl; sourceTree = "<group>"; };
-		8FC6E1BD1CEB62E9008EFD5F /* lambert_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lambert_vsh.glsl; sourceTree = "<group>"; };
 		8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lighting_general_functions_fsh.glsl; sourceTree = "<group>"; };
 		8FC6E1CF1CECB364008EFD5F /* constant_c_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constant_c_fsh.glsl; sourceTree = "<group>"; };
 		8FC6E1D01CECB364008EFD5F /* constant_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constant_functions_fsh.glsl; sourceTree = "<group>"; };
 		8FC6E1D11CECB364008EFD5F /* constant_q_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constant_q_fsh.glsl; sourceTree = "<group>"; };
 		8FC6E1D21CECB364008EFD5F /* constant_t_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constant_t_fsh.glsl; sourceTree = "<group>"; };
-		8FC6E1D31CECB364008EFD5F /* constant_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constant_vsh.glsl; sourceTree = "<group>"; };
 		8FC908841CA458EB00069C89 /* VROCameraMutable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROCameraMutable.cpp; sourceTree = "<group>"; };
 		8FC908851CA458EB00069C89 /* VROCameraMutable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCameraMutable.h; sourceTree = "<group>"; };
 		8FCB6C861C3C828200C14158 /* VROLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLoader.cpp; sourceTree = "<group>"; };
@@ -642,6 +638,8 @@
 		8FDDB49C1DADB8C200DE0968 /* VROLightingUBO.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLightingUBO.cpp; sourceTree = "<group>"; };
 		8FDDB4A51DAF134300DE0968 /* VROLineSegment.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLineSegment.cpp; sourceTree = "<group>"; };
 		8FDDB4A61DAF134300DE0968 /* VROLineSegment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLineSegment.h; sourceTree = "<group>"; };
+		8FDDB4AD1DB055A700DE0968 /* VROShaderModifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROShaderModifier.h; sourceTree = "<group>"; };
+		8FDDB4AE1DB055A700DE0968 /* VROShaderModifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROShaderModifier.cpp; sourceTree = "<group>"; };
 		8FDDE2061CCFD69D00674DE2 /* VROViewMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROViewMetal.h; sourceTree = "<group>"; };
 		8FDDE2071CCFD69D00674DE2 /* VROViewMetal.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROViewMetal.m; sourceTree = "<group>"; };
 		8FDDE2111CD00F2600674DE2 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
@@ -740,7 +738,6 @@
 		8F03BCD31CECC25E00D071F8 /* Blinn */ = {
 			isa = PBXGroup;
 			children = (
-				8F03BCD91CECC30E00D071F8 /* blinn_vsh.glsl */,
 				8F03BCD61CECC30E00D071F8 /* blinn_functions_fsh.glsl */,
 				8F03BCD41CECC30E00D071F8 /* blinn_c_fsh.glsl */,
 				8F03BCD51CECC30E00D071F8 /* blinn_c_reflect_fsh.glsl */,
@@ -753,7 +750,6 @@
 		8F03BCE61CECCA5700D071F8 /* Phong */ = {
 			isa = PBXGroup;
 			children = (
-				8F03BCEC1CECCAD500D071F8 /* phong_vsh.glsl */,
 				8F03BCE91CECCAD500D071F8 /* phong_functions_fsh.glsl */,
 				8F03BCE71CECCAD500D071F8 /* phong_c_fsh.glsl */,
 				8F03BCE81CECCAD500D071F8 /* phong_c_reflect_fsh.glsl */,
@@ -818,6 +814,7 @@
 				8F03BCE61CECCA5700D071F8 /* Phong */,
 				8F03BCD31CECC25E00D071F8 /* Blinn */,
 				8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */,
+				8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */,
 				8F0FE6781CD3DFF800A4C297 /* blit_fsh.glsl */,
 				8F0FE6791CD3DFF800A4C297 /* blit_vsh.glsl */,
 			);
@@ -1178,6 +1175,8 @@
 				8FB659201CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp */,
 				8F0FE67D1CD3E12F00A4C297 /* VROShaderProgram.h */,
 				8F0FE67C1CD3E12F00A4C297 /* VROShaderProgram.cpp */,
+				8FDDB4AD1DB055A700DE0968 /* VROShaderModifier.h */,
+				8FDDB4AE1DB055A700DE0968 /* VROShaderModifier.cpp */,
 				8FAE23D81CEA28E100E98B47 /* VROShaderBuilder.h */,
 				8FAE23D71CEA28E100E98B47 /* VROShaderBuilder.cpp */,
 				8F03BD021CEE45BB00D071F8 /* VROVideoTextureCacheOpenGL.h */,
@@ -1191,7 +1190,6 @@
 		8FC6E1CD1CECB34A008EFD5F /* Lambert */ = {
 			isa = PBXGroup;
 			children = (
-				8FC6E1BD1CEB62E9008EFD5F /* lambert_vsh.glsl */,
 				8FC6E1BA1CEB62E9008EFD5F /* lambert_functions_fsh.glsl */,
 				8FC6E1B81CEB62E9008EFD5F /* lambert_c_fsh.glsl */,
 				8FC6E1B91CEB62E9008EFD5F /* lambert_c_reflect_fsh.glsl */,
@@ -1204,7 +1202,6 @@
 		8FC6E1CE1CECB350008EFD5F /* Constant */ = {
 			isa = PBXGroup;
 			children = (
-				8FC6E1D31CECB364008EFD5F /* constant_vsh.glsl */,
 				8FC6E1D01CECB364008EFD5F /* constant_functions_fsh.glsl */,
 				8FC6E1CF1CECB364008EFD5F /* constant_c_fsh.glsl */,
 				8FC6E1D21CECB364008EFD5F /* constant_t_fsh.glsl */,
@@ -1381,6 +1378,7 @@
 				8FCF39581CA57AC600A86CA3 /* VROHoverDelegate.h in Headers */,
 				8FD4DF441C18F5EB003DC425 /* VROBoundingBox.h in Headers */,
 				8FD4DF461C18F5EB003DC425 /* VROVector3f.h in Headers */,
+				8FDDB4AF1DB055A700DE0968 /* VROShaderModifier.h in Headers */,
 				8F83DE9E1C4826F80089C31A /* VROTimingFunctionCubicBezier.h in Headers */,
 				8FD4DF471C18F5EB003DC425 /* VROVector4f.h in Headers */,
 				8F03BD041CEE45BB00D071F8 /* VROVideoTextureCacheOpenGL.h in Headers */,
@@ -1640,7 +1638,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8F03BCE01CECC92300D071F8 /* blinn_vsh.glsl in Resources */,
+				8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */,
 				8F03BCE11CECC92300D071F8 /* blinn_functions_fsh.glsl in Resources */,
 				8F03BCE21CECC92300D071F8 /* blinn_c_fsh.glsl in Resources */,
 				8F03BCE31CECC92300D071F8 /* blinn_c_reflect_fsh.glsl in Resources */,
@@ -1649,15 +1647,12 @@
 				8F03BCE51CECC92300D071F8 /* blinn_t_reflect_fsh.glsl in Resources */,
 				8FC6E1C61CEBB31C008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
 				8FC6E1DA1CECB376008EFD5F /* constant_functions_fsh.glsl in Resources */,
-				8FC6E1DD1CECB376008EFD5F /* constant_vsh.glsl in Resources */,
 				8FC6E1DC1CECB376008EFD5F /* constant_t_fsh.glsl in Resources */,
 				8F03BCF41CECCADF00D071F8 /* phong_c_reflect_fsh.glsl in Resources */,
 				8FC6E1C71CEBB31C008EFD5F /* lambert_functions_fsh.glsl in Resources */,
-				8FC6E1C81CEBB31C008EFD5F /* lambert_vsh.glsl in Resources */,
 				8FC6E1C91CEBB31C008EFD5F /* lambert_c_fsh.glsl in Resources */,
 				8FC6E1CA1CEBB31C008EFD5F /* lambert_c_reflect_fsh.glsl in Resources */,
 				8FC6E1CB1CEBB31C008EFD5F /* lambert_t_fsh.glsl in Resources */,
-				8F03BCF81CECCADF00D071F8 /* phong_vsh.glsl in Resources */,
 				8FC6E1CC1CEBB31C008EFD5F /* lambert_t_reflect_fsh.glsl in Resources */,
 				8FC6E1D91CECB376008EFD5F /* constant_c_fsh.glsl in Resources */,
 				8F03BCF71CECCADF00D071F8 /* phong_t_reflect_fsh.glsl in Resources */,
@@ -1804,6 +1799,7 @@
 				8FD4DEED1C18ED0B003DC425 /* VROLog.cpp in Sources */,
 				8FD4DF161C18ED44003DC425 /* VROHeadTracker.cpp in Sources */,
 				8FA2E1601C45DD270070DB26 /* VROReticle.mm in Sources */,
+				8FDDB4B01DB055A700DE0968 /* VROShaderModifier.cpp in Sources */,
 				8FD4DF031C18ED30003DC425 /* VROGeometrySubstrate.cpp in Sources */,
 				8FD1E1AF1C3F20C70005BE4E /* VROVideoSurface.cpp in Sources */,
 				8FD4DF021C18ED2C003DC425 /* VROTextureSubstrateMetal.cpp in Sources */,

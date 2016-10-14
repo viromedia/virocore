@@ -337,17 +337,20 @@ public:
 
 };
 
+class VROShaderModifier;
+
 class VROShaderProgram {
 public:
 
     /*
-     Create a new shader program with the given name and capabilities. This constructor assumes that the
-     shader code is bundled with the application. The uniforms used by the shader may then be set using the
-     various setUniforms(..) and setSamplers(..) methods.
+     Create a new shader program with the given source. This constructor assumes that the
+     shader code is bundled with the application.
      */
-    VROShaderProgram(std::string vertexShader, std::string fragmentShader, int capabilities);
+    VROShaderProgram(std::string vertexShader, std::string fragmentShader,
+                     const std::vector<std::string> &samplers,
+                     const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
+                     int capabilities);
     void setUniforms(VROShaderProperty *uniformTypes, const char **names, int count);
-    void setSamplers(const char **names, int count);
     
     uint32_t getShaderId() const {
         return _shaderId;
@@ -378,8 +381,6 @@ public:
     /*
      Add a new sampler to this shader. The shader code must reference the sampler by
      the given name.
-     
-     @ThreadRestricted("Renderer")
      */
     void addSampler(const std::string &name);
 
@@ -539,7 +540,20 @@ private:
      */
     void findUniformLocations();
     
+    /*
+     Inflate the #include directives in the source. Loads the files referred to by the
+     includes into the shader.
+     */
     void inflateIncludes(std::string &source);
+    
+    /*
+     Inflate the shader modifiers into the shader source.
+     */
+    void inflateVertexShaderModifiers(const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
+                                      std::string &source);
+    void inflateFragmentShaderModifiers(const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
+                                      std::string &source);
+    void insertModifier(std::string modifierSource, std::string directive, std::string &source);
 
 };
 
