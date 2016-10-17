@@ -101,7 +101,13 @@ public:
         return _opacity;
     }
     void setOpacity(float opacity);
-    
+
+    void setHighAccuracyGaze(bool enabled);
+
+    bool getHighAccuracyGaze() const {
+        return _highAccuracyGaze;
+    }
+
     bool isHidden() const {
         return _hidden;
     }
@@ -263,7 +269,14 @@ private:
      True if this node is selectable by hit testing. Defaults to true.
      */
     bool _selectable;
-    
+
+
+    /*
+     True if we want to perform more accurate hit testing against this node's geometry
+     rather than it's bounding box.
+     */
+    bool _highAccuracyGaze;
+
     /*
      Active actions on this node.
      */

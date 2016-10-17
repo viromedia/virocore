@@ -216,6 +216,10 @@ void VRONode::setHidden(bool hidden) {
     }, _opacityFromHiddenFlag, opacity));
 }
 
+void VRONode::setHighAccuracyGaze(bool enabled) {
+    _highAccuracyGaze = enabled;
+}
+
 #pragma mark - Actions
 
 void VRONode::processActions() {
@@ -283,6 +287,7 @@ void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsO
     
     VROVector3f origin = context.getCamera().getPosition();
     VROMatrix4f transform = _computedTransform;
+    boundsOnly = boundsOnly && !getHighAccuracyGaze();
     
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
         VROBoundingBox bounds = _geometry->getBoundingBox().transform(transform);
