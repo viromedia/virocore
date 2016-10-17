@@ -36,7 +36,8 @@ VRONode::VRONode() :
     _opacityFromHiddenFlag(1.0),
     _opacity(1.0),
     _computedOpacity(1.0),
-    _selectable(true) {
+    _selectable(true),
+    _highAccuracyGaze(false) {
     
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -52,7 +53,8 @@ VRONode::VRONode(const VRONode &node) :
     _hidden(node._hidden),
     _opacityFromHiddenFlag(node._opacityFromHiddenFlag),
     _opacity(node._opacity),
-    _selectable(node._selectable) {
+    _selectable(node._selectable),
+    _highAccuracyGaze(node._highAccuracyGaze) {
         
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
