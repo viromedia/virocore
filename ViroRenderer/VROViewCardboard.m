@@ -51,8 +51,6 @@
 
 - (void)initRenderer {
     self.delegate = self;
-    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.vrModeEnabled = YES;
     
     // Do not allow the display to go into sleep
     [UIApplication sharedApplication].idleTimerDisabled = YES;
@@ -101,7 +99,8 @@
 #pragma mark - Settings
 
 - (void)orientationDidChange:(NSNotification *)notification {
-
+  // If the orientation changes, set the frame of the view to the asme as the screen.
+  self.frame = CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height);
 }
 
 - (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {
