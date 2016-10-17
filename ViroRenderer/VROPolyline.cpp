@@ -14,12 +14,15 @@
 #include "VROMath.h"
 #include "VROVector3f.h"
 #include "VROMaterial.h"
+#include "VROShaderProgram.h"
+#include "VROShaderModifier.h"
 #include "VROGeometrySource.h"
 #include "VROGeometryElement.h"
+#include "VROGeometryUtil.h"
 
 static const int kNumJointSegments = 16;
 
-std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f> &path) {
+std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f> &path, float width) {
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
     buildGeometry(path, sources, elements);
@@ -30,7 +33,20 @@ std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f
     material->setWritesToDepthBuffer(false);
     material->setReadsFromDepthBuffer(false);
     material->getDiffuse().setContents({ 1.0, 1.0, 1.0, 1.0 });
+    material->setCullMode(VROCullMode::None);
+    material->setLightingModel(VROLightingModel::Constant);
     
+    std::vector<std::string> modifierCode = { "uniform float width;",
+                                              "vec3 normal_offset = (width / 2.0) * normal;",
+                                              "_geometry.position = _geometry.position + normal_offset;"
+                                            };
+    std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
+                                                                                      modifierCode);
+    modifier->setUniformBinder("width", [width](VROUniform *uniform, GLuint location) {
+        uniform->setFloat(width);
+    });
+    
+    material->addShaderModifier(modifier);
     polyline->getMaterials().push_back(material);
     return polyline;
 }
@@ -70,7 +86,7 @@ void VROPolyline::buildGeometry(std::vector<VROVector3f> &path,
     sources.push_back(normal);
     
     // Each vertex is used exactly once in this strip
-    int *indices = (int *) malloc(sizeof(int) * numVertices);
+    int indices[numVertices];
     for (int i = 0; i < numVertices; i++) {
         indices[i] = i;
     }
@@ -78,7 +94,7 @@ void VROPolyline::buildGeometry(std::vector<VROVector3f> &path,
     std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices, sizeof(int) * numVertices);
     std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(indexData,
                                                                                        VROGeometryPrimitiveType::TriangleStrip,
-                                                                                       2,
+                                                                                       VROGeometryUtilGetPrimitiveCount((int) numVertices, VROGeometryPrimitiveType::TriangleStrip),
                                                                                        sizeof(int));
     elements.push_back(element);
 }
@@ -121,17 +137,17 @@ size_t VROPolyline::encodeQuad(VROLineSegment segment,
     VROVector3f negativeNormal = segment.normal2DUnitVector(false);
     
     if (beginDegenerate) {
-        writeCorners(segment.getA(), negativeNormal, buffer);
+        writeCorner(segment.getA(), negativeNormal, buffer);
     }
     
-    writeCorners(segment.getA(), negativeNormal, buffer);
-    writeCorners(segment.getA(), positiveNormal, buffer);
+    writeCorner(segment.getA(), negativeNormal, buffer);
+    writeCorner(segment.getA(), positiveNormal, buffer);
     
-    writeCorners(segment.getB(), negativeNormal, buffer);
-    writeCorners(segment.getB(), positiveNormal, buffer);
+    writeCorner(segment.getB(), negativeNormal, buffer);
+    writeCorner(segment.getB(), positiveNormal, buffer);
     
     if (endDegenerate) {
-        writeCorners(segment.getB(), positiveNormal, buffer);
+        writeCorner(segment.getB(), positiveNormal, buffer);
     }
     
     return numCorners;
@@ -160,16 +176,12 @@ size_t VROPolyline::encodeCircularEndcap(VROVector3f center,
     buffer.grow(numCorners * sizeof(VROShapeVertexLayout));
     
     if (beginDegenerate) {
-        writeCorner(center, buffer);
-        writeCorner({ x, y, 0 }, buffer);
+        writeCorner(center, { x, y, 0 }, buffer);
     }
     
     for (int i = 0; i < kNumJointSegments; ++i) {
-        writeCorner(center, buffer);
-        writeCorner({ x, y, 0 }, buffer);
-        
-        writeCorner(center, buffer);
-        writeCorner({ 0, 0, 0 }, buffer);
+        writeCorner(center, { x, y, 0 }, buffer);
+        writeCorner(center, { 0, 0, 0 }, buffer);
         
         const float temp = x;
         x = angleCos * x - angleSin * y;
@@ -177,47 +189,23 @@ size_t VROPolyline::encodeCircularEndcap(VROVector3f center,
     }
     
     // close the circle
-    writeCorner(center, buffer);
-    writeCorner({ 1, 0, 0 }, buffer);
-    
-    writeCorner(center, buffer);
-    writeCorner({ 0, 0, 0 }, buffer);
+    writeCorner(center, { 1, 0, 0 }, buffer);
+    writeCorner(center, { 0, 0, 0 }, buffer);
     
     if (endDegenerate) {
-        writeCorner(center, buffer);
-        writeCorner({ 0, 0, 0 }, buffer);
+        writeCorner(center, { 0, 0, 0, }, buffer);
     }
     
     return numCorners;
 }
 
-void VROPolyline::writeCorner(VROVector3f v, VROByteBuffer &buffer) {
-    buffer.writeFloat(v.x);
-    buffer.writeFloat(v.y);
-    buffer.writeFloat(v.z);
+void VROPolyline::writeCorner(VROVector3f position, VROVector3f normal, VROByteBuffer &buffer) {
+    buffer.writeFloat(position.x);
+    buffer.writeFloat(position.y);
+    buffer.writeFloat(position.z);
     buffer.writeFloat(0); // u
     buffer.writeFloat(0); // v
-    buffer.writeFloat(0); // nx
-    buffer.writeFloat(0); // ny
-    buffer.writeFloat(1); // nz
-}
-
-void VROPolyline::writeCorners(VROVector3f first, VROVector3f second, VROByteBuffer &buffer) {
-    buffer.writeFloat(first.x);
-    buffer.writeFloat(first.y);
-    buffer.writeFloat(first.z);
-    buffer.writeFloat(0); // u
-    buffer.writeFloat(0); // v
-    buffer.writeFloat(0); // nx
-    buffer.writeFloat(0); // ny
-    buffer.writeFloat(1); // nz
-    
-    buffer.writeFloat(second.x);
-    buffer.writeFloat(second.y);
-    buffer.writeFloat(second.z);
-    buffer.writeFloat(0); // u
-    buffer.writeFloat(0); // v
-    buffer.writeFloat(0); // nx
-    buffer.writeFloat(0); // ny
-    buffer.writeFloat(1); // nz
+    buffer.writeFloat(normal.x); // nx
+    buffer.writeFloat(normal.y); // ny
+    buffer.writeFloat(normal.z); // nz
 }

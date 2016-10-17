@@ -58,7 +58,11 @@ void VROGeometryElement::processTriangles(std::function<void(int index, VROTrian
 void VROGeometryElement::processIndices(std::function<void (int, int)> function) const {
     VROByteBuffer buffer(_data->getData(), _data->getDataLength(), false);
     
-    //TODO Make this class store index count instead!
+    //TODO Support all primitive types!
+    if (_primitiveType != VROGeometryPrimitiveType::Triangle) {
+        return;
+    }
+    
     int indexCount = _primitiveCount * 3;
     
     for (int i = 0; i < indexCount; i++) {

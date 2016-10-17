@@ -38,9 +38,11 @@ std::shared_ptr<VROData> VROGeometryUtilExtractAndCenter(std::shared_ptr<VROGeom
 
 /*
  Get how many indices are required to render the given number of primitives of the
- given type.
+ given type, and vice-versa.
  */
 int VROGeometryUtilGetIndicesCount(int primitiveCount, VROGeometryPrimitiveType primitiveType);
+int VROGeometryUtilGetPrimitiveCount(int indicesCount, VROGeometryPrimitiveType primitiveType);
+
 
 /*
  Parse the attribute index for the given semantic.

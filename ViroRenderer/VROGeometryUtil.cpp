@@ -108,6 +108,25 @@ int VROGeometryUtilGetIndicesCount(int primitiveCount, VROGeometryPrimitiveType 
     }
 }
 
+int VROGeometryUtilGetPrimitiveCount(int indicesCount, VROGeometryPrimitiveType primitiveType) {
+    switch (primitiveType) {
+        case VROGeometryPrimitiveType::Triangle:
+            return indicesCount / 3;
+            
+        case VROGeometryPrimitiveType::TriangleStrip:
+            return indicesCount - 2;
+            
+        case VROGeometryPrimitiveType::Line:
+            return indicesCount / 2;
+            
+        case VROGeometryPrimitiveType::Point:
+            return indicesCount;
+            
+        default:
+            break;
+    }
+}
+
 int VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic semantic) {
     switch (semantic) {
         case VROGeometrySourceSemantic::Vertex:

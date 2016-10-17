@@ -18,7 +18,7 @@ class VROPolyline : public VROGeometry {
     
 public:
     
-    static std::shared_ptr<VROPolyline> createPolyline(std::vector<VROVector3f> &path);
+    static std::shared_ptr<VROPolyline> createPolyline(std::vector<VROVector3f> &path, float width);
     
     
 private:
@@ -36,7 +36,6 @@ private:
     static size_t encodeQuad(VROLineSegment segment, bool beginDegenerate, bool endDegenerate, VROByteBuffer &buffer);
     static size_t encodeCircularEndcap(VROVector3f center, bool beginDegenerate, bool endDegenerate, VROByteBuffer &buffer);
 
-    static void writeCorner(VROVector3f v, VROByteBuffer &buffer);
-    static void writeCorners(VROVector3f first, VROVector3f second, VROByteBuffer &buffer);
+    static void writeCorner(VROVector3f position, VROVector3f normal, VROByteBuffer &buffer);
     
 };

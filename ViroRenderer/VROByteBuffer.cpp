@@ -306,7 +306,7 @@ int VROByteBuffer::peekInt() {
 }
 
 char* VROByteBuffer::getData() {
-    return _buffer + _pos;
+    return _buffer;
 }
 
 char* VROByteBuffer::getDataFromPosition(size_t _position) {
