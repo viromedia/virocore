@@ -26,6 +26,7 @@ class VRORenderContext;
 class VROViewport;
 class VROFieldOfView;
 class VROFrameListener;
+class VROReticle;
 enum class VROCameraRotationType;
 enum class VROEyeType;
 enum class VROTimingFunctionType;
@@ -77,8 +78,8 @@ public:
     }
 
     void handleTap();
-    VROScreenUIView *getHUD() {
-        return _HUD;
+    VROReticle *getReticle() {
+        return _reticle.get();
     }
 
 #pragma mark - VR Framework Specific
@@ -100,9 +101,9 @@ private:
     std::shared_ptr<VRORenderContext> _context;
     
     /*
-     The screen-space view.
+     The reticle.
      */
-    VROScreenUIView *_HUD;
+    std::unique_ptr<VROReticle> _reticle;
     
     /*
      Internal representation of the camera.

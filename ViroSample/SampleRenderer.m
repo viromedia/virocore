@@ -84,8 +84,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     self.videoTexture->play();
     
     scene->setBackgroundSphere(self.videoTexture);
-    
-    [self.view.HUD setReticleEnabled:YES];
+    self.view.reticle->setEnabled(true);
     
     return sceneController;
 }
@@ -147,7 +146,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->addChildNode([self newTorusWithPosition:{-d,  d, d}]);
     rootNode->addChildNode([self newTorusWithPosition:{-d, -d, d}]);
     
-    [self.view.HUD setReticleEnabled:YES];
+    self.view.reticle->setEnabled(true);
     
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self] (VRONode *const node, float seconds) {
         self.torusAngle += .015;
@@ -391,7 +390,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     });
     
     boxNode->runAction(action);
-    [self.view.HUD setReticleEnabled:YES];
+    self.view.reticle->setEnabled(true);
     self.tapEnabled = YES;
 
     return sceneController;

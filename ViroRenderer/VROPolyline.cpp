@@ -19,6 +19,7 @@
 #include "VROGeometrySource.h"
 #include "VROGeometryElement.h"
 #include "VROGeometryUtil.h"
+#include "VROAnimationFloat.h"
 
 static const int kNumJointSegments = 16;
 
@@ -27,7 +28,7 @@ std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
     buildGeometry(path, sources, elements);
     
-    std::shared_ptr<VROPolyline> polyline = std::shared_ptr<VROPolyline>(new VROPolyline(sources, elements));
+    std::shared_ptr<VROPolyline> polyline = std::shared_ptr<VROPolyline>(new VROPolyline(sources, elements, width));
     
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     material->setWritesToDepthBuffer(false);
@@ -42,8 +43,8 @@ std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f
                                             };
     std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
                                                                                       modifierCode);
-    modifier->setUniformBinder("width", [width](VROUniform *uniform, GLuint location) {
-        uniform->setFloat(width);
+    modifier->setUniformBinder("width", [polyline](VROUniform *uniform, GLuint location) {
+        uniform->setFloat(polyline->getWidth());
     });
     
     material->addShaderModifier(modifier);
@@ -208,4 +209,10 @@ void VROPolyline::writeCorner(VROVector3f position, VROVector3f normal, VROByteB
     buffer.writeFloat(normal.x); // nx
     buffer.writeFloat(normal.y); // ny
     buffer.writeFloat(normal.z); // nz
+}
+
+void VROPolyline::setWidth(float width) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
+        ((VROPolyline *)animatable)->_width = v;
+    }, _width, width));
 }

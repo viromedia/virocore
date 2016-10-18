@@ -20,6 +20,7 @@
 #import "VROScreenUIView.h"
 #import "VRORenderDelegate.h"
 #import "VROTransaction.h"
+#import "VROReticle.h"
 #import "VROFrameSynchronizerInternal.h"
 
 static const float kDefaultSceneTransitionDuration = 1.0;
@@ -30,7 +31,7 @@ VRORenderer::VRORenderer() :
     _rendererInitialized(false),
     _frameSynchronizer(std::make_shared<VROFrameSynchronizerInternal>()),
     _context(std::make_shared<VRORenderContext>(_frameSynchronizer)),
-    _HUD([[VROScreenUIView alloc] init]),
+    _reticle(std::unique_ptr<VROReticle>(new VROReticle())),
     _camera(std::make_shared<VROCameraMutable>()),
     _sceneTransitionActive(false) {
     
@@ -135,8 +136,6 @@ void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &d
      */
     VROMatrix4f enclosureMatrix = VROMathComputeLookAtMatrix({ 0, 0, 0 }, camera.getForward(), camera.getUp());
     _context->setEnclosureViewMatrix(enclosureMatrix);
-
-    [_HUD updateWithDriver:&driver];
     
     if (_sceneController) {
         if (_outgoingSceneController) {
@@ -164,7 +163,7 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     _context->setZFar(kZFar);
     
     renderEye(eye, driver);
-    [_HUD renderEye:eye withRenderContext:_context.get() driver:&driver];
+    _reticle->renderEye(eye, _context.get(), &driver);
     
     [_delegate didRenderEye:eye context:_context.get()];
 }
@@ -207,7 +206,7 @@ void VRORenderer::renderEye(VROEyeType eyeType, VRODriver &driver) {
 #pragma mark - Reticle
 
 void VRORenderer::handleTap() {
-    [_HUD.reticle trigger];
+    _reticle->trigger();
     
     [_delegate reticleTapped:_context->getCamera().getForward()
                            context:_context.get()];

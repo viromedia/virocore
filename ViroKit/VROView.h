@@ -9,11 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "VRORenderDelegate.h"
-#import "VROScreenUIView.h"
+#import "VROQuaternion.h"
 #import <memory>
 
 @class VROSceneController;
 class VROScene;
+class VROReticle;
 class VROFrameSynchronizer;
 enum class VROTimingFunctionType;
 
@@ -27,7 +28,7 @@ enum class VROCameraRotationType {
 @required
 
 @property (nonatomic, unsafe_unretained) IBOutlet id <VRORenderDelegate> renderDelegate;
-@property (nonatomic, readonly) VROScreenUIView *HUD;
+@property (nonatomic, readonly) VROReticle *reticle;
 @property (readwrite, nonatomic) VROSceneController *sceneController;
 
 - (void)setSceneController:(VROSceneController *)sceneController animated:(BOOL)animated;

@@ -6,101 +6,109 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#import "VROReticle.h"
-#import <QuartzCore/QuartzCore.h>
-#import "VROScreenUIView.h"
-#import "VROMath.h"
+#include "VROReticle.h"
+#include "VROMath.h"
+#include "VROPolyline.h"
+#include "VRONode.h"
+#include "VROMaterial.h"
+#include "VROAction.h"
 
 static const float kTriggerAnimationDuration = 0.4;
 static const float kTriggerAnimationInnerCircleThicknessMultiple = 3;
 static const float kTriggerAnimationWhiteCircleMultiple = 4;
 
-@interface VROReticle ()
-
-@property (readwrite, nonatomic) float t;
-@property (readwrite, nonatomic) float animationStartSeconds;
-@property (readwrite, nonatomic) float endThickness;
-@property (readwrite, nonatomic) BOOL  animationActive;
-
-@end
-
-@implementation VROReticle
-
-- (id)init {
-    self = [super initWithFrame:CGRectZero];
-    if (self) {
-        self.backgroundColor = [UIColor clearColor];
+VROReticle::VROReticle() :
+    _enabled(true),
+    _size(0.01),
+    _thickness(0.005),
+    _endThickness(_thickness * kTriggerAnimationInnerCircleThicknessMultiple) {
         
-        // Sensible defaults
-        self.reticleSize = 2.0;
-        self.reticleThickness = 1;
-    }
-    
-    return self;
+    std::vector<VROVector3f> path = createArc(_size, 32);
+    _polyline = VROPolyline::createPolyline(path, _thickness);
+    _polyline->getMaterials().front()->getDiffuse().setContents({0.33, 0.976, 0.968, 1.0});
+        
+    _node = std::make_shared<VRONode>();
+    _node->setGeometry(_polyline);
+    _node->setPosition({0, 0, -2});
 }
 
-- (void)trigger {
-    self.animationStartSeconds = CACurrentMediaTime();
-    self.endThickness = self.reticleThickness * kTriggerAnimationInnerCircleThicknessMultiple;
-    self.animationActive = YES;
+VROReticle::~VROReticle() {
     
-    [(VROScreenUIView *)self.superview setNeedsUpdate];
 }
 
-- (void)renderRect:(CGRect)rect context:(CGContextRef)context {
-    float thickness = self.reticleThickness;
-        
-    if (self.animationActive) {
-        float t = (CACurrentMediaTime() - self.animationStartSeconds) / kTriggerAnimationDuration;
-        
+void VROReticle::trigger() {
+    std::shared_ptr<VROAction> action = VROAction::timedAction([this](VRONode *const node, float t) {
         float whiteAlpha = 0.0;
+        float thickness = _thickness;
+        
         if (t < 0.5) {
-            thickness = VROMathInterpolate(t, 0, 0.5, self.reticleThickness, self.endThickness);
+            thickness = VROMathInterpolate(t, 0, 0.5, _thickness, _endThickness);
             whiteAlpha = VROMathInterpolate(t, 0, 0.5, 0, 1.0);
         }
         else {
-            thickness = VROMathInterpolate(t, 0.5, 1.0, self.endThickness, self.reticleThickness);
+            thickness = VROMathInterpolate(t, 0.5, 1.0, _endThickness, _thickness);
             whiteAlpha = VROMathInterpolate(t, 0.5, 1.0, 1.0, 0);
         }
-        float whiteRadius = VROMathInterpolate(t, 0, 1.0, self.reticleSize, self.reticleSize * kTriggerAnimationWhiteCircleMultiple);
         
-        CGContextSetRGBFillColor(context, 1.0, 1.0, 1.0, whiteAlpha);
+        // float whiteRadius = VROMathInterpolate(t, 0, 1.0, _size, _size * kTriggerAnimationWhiteCircleMultiple);
+        // TODO Draw a filled circle with whiteRadius and whiteAlpha
         
-        CGContextBeginPath(context);
-        CGContextSetLineWidth(context, thickness);
+        _polyline->setWidth(thickness);
         
-        CGContextAddArc(context,
-                        rect.size.width  / 2.0,
-                        rect.size.height / 2.0,
-                        whiteRadius,
-                        0, M_PI * 2,
-                        YES);
-        
-        CGContextClosePath(context);
-        CGContextFillPath(context);
-        
-        if (t < 1.0) {
-            [(VROScreenUIView *)self.superview setNeedsUpdate];
-        }
-        else {
-            self.animationActive = NO;
-        }
-    }
-
-    CGContextSetRGBStrokeColor(context, 0.33, 0.976, 0.968, 1.0);
+    }, VROTimingFunctionType::Linear, kTriggerAnimationDuration);
     
-    CGContextBeginPath(context);
-    CGContextSetLineWidth(context, thickness);
+    _node->runAction(action);
     
-    CGContextAddArc(context,
-                    rect.size.width  / 2.0,
-                    rect.size.height / 2.0,
-                    self.reticleSize,
-                    0, M_PI * 2,
-                    YES);
-    
-    CGContextClosePath(context);
-    CGContextStrokePath(context);
+    _endThickness = _thickness * kTriggerAnimationInnerCircleThicknessMultiple;
 }
 
-@end
+void VROReticle::setEnabled(bool enabled) {
+    _node->setHidden(!enabled);
+}
+
+void VROReticle::setDepth(float depth) {
+    _node->setPosition({0, 0, depth});
+}
+
+void VROReticle::setRadius(float radius) {
+    float scale = radius / _size;
+    _node->setScale({scale, scale, scale});
+}
+
+void VROReticle::setThickness(float thickness) {
+    _polyline->setWidth(thickness);
+}
+
+void VROReticle::renderEye(VROEyeType eye, const VRORenderContext *renderContext, VRODriver *driver) {
+    VRORenderParameters renderParams;
+    renderParams.transforms.push(renderContext->getHUDViewMatrix());
+    renderParams.opacities.push(1.0);
+    
+    _node->updateSortKeys(renderParams, *renderContext);
+    
+    std::shared_ptr<VROMaterial> material = _polyline->getMaterials().front();
+    material->bindShader(*driver);
+    
+    _node->render(0, material, *renderContext, *driver);
+}
+
+std::vector<VROVector3f> VROReticle::createArc(float radius, int numSegments) {
+    float x = radius;
+    float y = 0;
+    
+    float sincos[2];
+    VROMathFastSinCos(2 * M_PI / numSegments, sincos);
+    const float angleSin = sincos[0];
+    const float angleCos = sincos[1];
+    
+    std::vector<VROVector3f> path;
+    for (int i = 0; i < numSegments + 1; ++i) {
+        path.push_back({ x, y, 0 });
+        
+        const float temp = x;
+        x = angleCos * x - angleSin * y;
+        y = angleSin * temp + angleCos * y;
+    }
+
+    return path;
+}

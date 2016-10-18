@@ -10,13 +10,15 @@
 #import "VRORenderContext.h"
 #import "VRODriver.h"
 #import "VROLayer.h"
-#import "VROReticle.h"
 #import <memory>
 
 class VROEye;
 
 /*
  UIView for rendering a HUD in screen space.
+ 
+ Deprecated: the performance of the HUD is abysmal because it requires
+ re-rendering textures.
  */
 @interface VROScreenUIView : UIView
 
@@ -27,11 +29,7 @@ class VROEye;
 withRenderContext:(const VRORenderContext *)renderContext
            driver:(VRODriver *)driver;
 
-- (void)setReticleEnabled:(BOOL)enabled;
 - (void)setNeedsUpdate;
-
 - (void)setDepth:(float)depth;
-
-@property (readonly, nonatomic) VROReticle *reticle;
 
 @end

@@ -15,13 +15,14 @@
 #include "VROMath.h"
 #include "VROView.h"
 
-static const float kReticleSizeMultiple = 666;
+static const float kReticleSizeMultiple = 3;
 
 class VROReticleSizeListener : public VROHoverDistanceListener {
     
 public:
     
-    VROReticleSizeListener(id <VROView> view) {
+    VROReticleSizeListener(id <VROView> view) :
+        _previousHoverDepth(0) {
         _view = view;
     }
     
@@ -30,20 +31,23 @@ public:
         if (distance == FLT_MAX) {
             depth = -5;
         }
+        if (fabs(_previousHoverDepth - depth) < kEpsilon) {
+            return;
+        }
+        _previousHoverDepth = depth;
         
         float worldPerScreen = [_view worldPerScreenAtDepth:depth];
+        float radius = worldPerScreen * kReticleSizeMultiple;
         
-        float size = worldPerScreen * kReticleSizeMultiple;
-        float thickness = size / 2.0;
-        
-        [_view.HUD setDepth:depth];
-        [_view.HUD.reticle setReticleSize:size];
-        [_view.HUD.reticle setReticleThickness:thickness];
+        VROReticle *reticle = _view.reticle;
+        reticle->setDepth(depth);
+        reticle->setRadius(radius);
     }
     
 private:
     
     __weak id <VROView> _view;
+    float _previousHoverDepth;
 
 };
 

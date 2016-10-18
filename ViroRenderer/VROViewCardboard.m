@@ -140,8 +140,8 @@
     _renderer->handleTap();
 }
 
-- (VROScreenUIView *)HUD {
-    return _renderer->getHUD();
+- (VROReticle *)reticle {
+    return _renderer->getReticle();
 }
 
 #pragma mark - Scene Loading

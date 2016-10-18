@@ -8,7 +8,6 @@
 
 #import "VROScreenUIView.h"
 #import "VROEye.h"
-#import "VROReticle.h"
 
 // The size of the UIView we render to; this is scaled up to fill the VR HUD
 static const int kUIViewSize = 300;
@@ -24,9 +23,6 @@ static const float kVROLayerSize = 2;
     std::shared_ptr<VROLayer> _layer;
     BOOL _needsUpdate;
 }
-
-@property (readwrite, nonatomic) BOOL reticleEnabled;
-@property (readwrite, nonatomic) VROReticle *reticle;
 
 @end
 
@@ -49,9 +45,8 @@ static const float kVROLayerSize = 2;
         material->setLightingModel(VROLightingModel::Constant);
         
         [self setBackgroundColor:[UIColor clearColor]];
-        self.reticle = [[VROReticle alloc] init];
+    
         _needsUpdate = YES;
-        _reticleEnabled = YES;
     }
     
     return self;
@@ -88,9 +83,6 @@ static const float kVROLayerSize = 2;
     CGContextScaleCTM(bitmapContext, scale, scale);
     
     [self.layer renderInContext:bitmapContext];
-    if (self.reticleEnabled) {
-        [self.reticle renderRect:self.bounds context:bitmapContext];
-    }
     _layer->setContents(width, height, bitmapContext, *driver);
     
     CGContextRelease(bitmapContext);
@@ -110,11 +102,6 @@ withRenderContext:(const VRORenderContext *)renderContext
     material->bindShader(*driver);
     
     _layer->render(0, material, *renderContext, *driver);
-}
-
-- (void)setReticleEnabled:(BOOL)enabled {
-    _reticleEnabled = enabled;
-    [self setNeedsUpdate];
 }
 
 - (void)setDepth:(float)depth {
