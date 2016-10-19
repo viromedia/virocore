@@ -32,11 +32,14 @@ public:
     void setSceneController(VROSceneController *sceneController, float seconds,
                             VROTimingFunctionType timingFunctionType);
     
+    void setSuspended(bool suspended);
+    
 private:
     
     int _frame;
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VRODriverOpenGL> _driver;
+    bool _suspended;
     
 };
 

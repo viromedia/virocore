@@ -16,7 +16,8 @@
 VROSceneRendererCardboardOpenGL::VROSceneRendererCardboardOpenGL(EAGLContext *context,
                                                                  std::shared_ptr<VRORenderer> renderer) :
     _frame(0),
-    _renderer(renderer) {
+    _renderer(renderer),
+    _suspended(false) {
     
     _driver = std::make_shared<VRODriverOpenGL>(context);
 }
@@ -66,6 +67,10 @@ void VROSceneRendererCardboardOpenGL::prepareFrame(GVRHeadTransform *headTransfo
 }
 
 void VROSceneRendererCardboardOpenGL::renderEye(GVREye eye, GVRHeadTransform *headTransform) {
+    if (_suspended) {
+        return;
+    }
+    
     CGRect rect = [headTransform viewportForEye:eye];
     VROViewport viewport(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
@@ -81,4 +86,8 @@ void VROSceneRendererCardboardOpenGL::renderEye(GVREye eye, GVRHeadTransform *he
 
 void VROSceneRendererCardboardOpenGL::endFrame() {
     _renderer->endFrame(*_driver.get());
+}
+
+void VROSceneRendererCardboardOpenGL::setSuspended(bool suspended) {
+    _suspended = suspended;
 }

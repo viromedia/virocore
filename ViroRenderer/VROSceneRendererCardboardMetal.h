@@ -41,6 +41,8 @@ public:
     void setSceneController(VROSceneController *sceneController, float seconds,
                             VROTimingFunctionType timingFunctionType);
     
+    void setSuspended(bool suspended);
+    
 private:
     
     int _frame;
@@ -64,6 +66,7 @@ private:
     float _quadFSVAR[24];
     
     VROShaderProgram *_blitter;
+    bool _suspended;
     
     std::shared_ptr<VRORenderTarget> createEyeRenderTarget();
     void writeGLTexture();

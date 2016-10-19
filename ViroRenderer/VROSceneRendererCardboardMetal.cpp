@@ -22,7 +22,8 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
 
 VROSceneRendererCardboardMetal::VROSceneRendererCardboardMetal(std::shared_ptr<VRORenderer> renderer) :
     _frame(0),
-    _renderer(renderer) {
+    _renderer(renderer),
+    _suspended(false) {
     
     id <MTLDevice> device = MTLCreateSystemDefaultDevice();
     _driver = std::make_shared<VRODriverMetal>(device);
@@ -108,6 +109,10 @@ void VROSceneRendererCardboardMetal::prepareFrame(GVRHeadTransform *headTransfor
 }
 
 void VROSceneRendererCardboardMetal::renderEye(GVREye eye, GVRHeadTransform *headTransform) {
+    if (_suspended) {
+        return;
+    }
+    
     CGRect rect = [headTransform viewportForEye:eye];
     VROViewport viewport(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
@@ -265,4 +270,9 @@ void VROSceneRendererCardboardMetal::buildFullScreenQuadVAR() {
     _quadFSVAR[21] = qbottom;
     _quadFSVAR[22] = qendU;
     _quadFSVAR[23] = qstartV;
+}
+
+
+void VROSceneRendererCardboardMetal::setSuspended(bool suspended) {
+    _suspended = suspended;
 }

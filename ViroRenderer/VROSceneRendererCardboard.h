@@ -44,6 +44,11 @@ public:
     virtual void setSceneController(VROSceneController *sceneController, float seconds,
                                     VROTimingFunctionType timingFunctionType) = 0;
     
+    /*
+     Suspend the renderer, displaying only a black screen.
+     */
+    virtual void setSuspended(bool suspended) = 0;
+    
 };
 
 #endif /* VROSceneRendererCardboard_h */
