@@ -100,10 +100,12 @@ void VROScene::addNode(std::shared_ptr<VRONode> node) {
 
 void VROScene::setBackgroundCube(std::shared_ptr<VROTexture> textureCube) {
     _background = VROSkybox::createSkybox(textureCube);
+    _background->setName("Background");
 }
 
 void VROScene::setBackgroundCube(VROVector4f color) {
     _background = VROSkybox::createSkybox(color);
+    _background->setName("Background");
 }
 
 void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
@@ -112,6 +114,7 @@ void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
                                           kSphereBackgroundNumSegments,
                                           false);
     _background->setCameraEnclosure(true);
+    _background->setName("Background");
     
     std::shared_ptr<VROMaterial> material = _background->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Constant);

@@ -229,7 +229,9 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
         viewMatrix = context.getEnclosureViewMatrix();
     }
     
-    pglpush("VROGeometry");
+    std::string name = geometry.getName();
+    pglpush("Geometry [%s]", name.c_str());
+    
     VROGeometryElementOpenGL element = _elements[elementIndex];
     
     VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));

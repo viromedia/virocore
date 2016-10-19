@@ -224,6 +224,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
      Create the box node.
      */
     std::shared_ptr<VROBox> box = VROBox::createBox(2, 4, 2);
+    box->setName("Box 1");
     
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Phong);
@@ -253,6 +254,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
      Create a second box node behind the first.
      */
     std::shared_ptr<VROBox> box2 = VROBox::createBox(2, 4, 2);
+    box2->setName("Box 2");
     
     std::shared_ptr<VROMaterial> material2 = box2->getMaterials()[0];
     material2->setLightingModel(VROLightingModel::Phong);
@@ -271,6 +273,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
      Create a second box node behind the first.
      */
     std::shared_ptr<VROBox> box3 = VROBox::createBox(2, 4, 2);
+    box3->setName("Box 3");
     
     std::shared_ptr<VROMaterial> material3 = box3->getMaterials()[0];
     material3->setLightingModel(VROLightingModel::Phong);

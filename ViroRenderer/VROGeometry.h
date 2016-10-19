@@ -119,6 +119,13 @@ public:
         _cameraEnclosure = enabled;
     }
     
+    std::string getName() const {
+        return _name;
+    }
+    void setName(std::string name) {
+        _name = name;
+    }
+    
     std::vector<std::shared_ptr<VROGeometrySource>> getGeometrySourcesForSemantic(VROGeometrySourceSemantic semantic) const;
     
 private:

@@ -25,6 +25,7 @@ VROReticle::VROReticle() :
         
     std::vector<VROVector3f> path = createArc(_size, 32);
     _polyline = VROPolyline::createPolyline(path, _thickness);
+    _polyline->setName("Reticle");
     _polyline->getMaterials().front()->getDiffuse().setContents({0.33, 0.976, 0.968, 1.0});
         
     _node = std::make_shared<VRONode>();
