@@ -119,14 +119,9 @@ vertex VROConstantLightingVertexOut constant_lighting_vertex(VRORendererAttribut
 
 fragment float4 constant_lighting_fragment_c(VROConstantLightingVertexOut in [[ stage_in ]],
                                              constant VROSceneLightingUniforms &lighting [[ buffer(0) ]]) {
-    float3 diffuse_light_color = float3(0, 0, 0);
-    for (int i = 0; i < lighting.num_lights; i++) {
-        diffuse_light_color += lighting.lights[i].color;
-    }
-    diffuse_light_color *= in.diffuse_intensity;
     
-    return float4((in.ambient_color + diffuse_light_color) * in.material_color.xyz,
-                   in.material_alpha * in.material_color.a);
+    return float4(in.material_color.xyz,
+                  in.material_alpha * in.material_color.a);
 }
 
 fragment float4 constant_lighting_fragment_t(VROConstantLightingVertexOut in [[ stage_in ]],
@@ -134,16 +129,8 @@ fragment float4 constant_lighting_fragment_t(VROConstantLightingVertexOut in [[ 
                                              constant VROSceneLightingUniforms &lighting [[ buffer(0) ]]) {
     
     float4 diffuse_texture_color = texture.sample(s, in.texcoord);
-    float3 material_diffuse_color = diffuse_texture_color.xyz * in.diffuse_intensity;
-    
-    float3 diffuse_light_color = float3(0, 0, 0);
-    for (int i = 0; i < lighting.num_lights; i++) {
-        diffuse_light_color += lighting.lights[i].color;
-    }
-    diffuse_light_color *= in.diffuse_intensity;
-    
-    return float4((in.ambient_color + diffuse_light_color) * material_diffuse_color,
-                   in.material_alpha * diffuse_texture_color.a);
+    return float4(diffuse_texture_color.xyz,
+                  in.material_alpha * diffuse_texture_color.a);
 }
 
 fragment float4 constant_lighting_fragment_q(VROConstantLightingVertexOut in [[ stage_in ]],
