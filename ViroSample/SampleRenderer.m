@@ -214,6 +214,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     spotBlue->setSpotInnerAngle(2.5);
     spotBlue->setSpotOuterAngle(5.0);
     
+    rootNode->addLight(ambient);
     rootNode->addLight(spotRed);
     rootNode->addLight(spotBlue);
 

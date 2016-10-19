@@ -63,7 +63,7 @@ float compute_attenuation(constant VROLightUniforms &light,
             float light_surface_angle = acos(dot(*surface_to_light, normalize(light.direction)));
             if (light_surface_angle > light.spot_inner_angle) {
                 float t = (light_surface_angle - light.spot_inner_angle) / light.spot_outer_angle;
-                attenuation = mix(attenuation, 0.0, t);
+                attenuation = clamp(mix(attenuation, 0.0, t), 0.0, 1.0);
             }
         }
     }
