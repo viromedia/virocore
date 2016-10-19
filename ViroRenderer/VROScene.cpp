@@ -70,7 +70,12 @@ void VROScene::render(const VRORenderContext &context,
                 boundLights = node->getComputedLights();
             }
             
-            node->render(elementIndex, material, context, driver);
+            // Only render the material if there are lights, or if the material uses
+            // constant lighting. Non-constant materials do not render unless we have
+            // at least one light.
+            if (!boundLights.empty() || material->getLightingModel() == VROLightingModel::Constant) {
+                node->render(elementIndex, material, context, driver);
+            }
         }
     }
 }
