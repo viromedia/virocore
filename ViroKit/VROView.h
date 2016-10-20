@@ -23,6 +23,8 @@ enum class VROCameraRotationType {
     Orbit
 };
 
+typedef void (^VROViewValidApiKeyBlock)(BOOL);
+
 @protocol VROView <NSObject>
 
 @required
@@ -39,6 +41,8 @@ enum class VROCameraRotationType {
 - (void)setBaseRotation:(VROQuaternion)rotation;
 - (void)setCameraRotationType:(VROCameraRotationType)type;
 - (void)setOrbitFocalPoint:(VROVector3f)focalPt;
+
+- (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROViewValidApiKeyBlock)completionBlock;
 
 /**
  * Calling setVrMode allows switching to and from VR mode.

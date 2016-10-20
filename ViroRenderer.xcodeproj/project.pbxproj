@@ -9,6 +9,16 @@
 /* Begin PBXBuildFile section */
 		6386C3B94B3E92D246F8F9EB /* libPods-ViroKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6447C487DE6546AF514106CC /* libPods-ViroKit.a */; };
 		8A305E071DA82719007407EF /* VROVideoDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A305E061DA82719007407EF /* VROVideoDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8ABD8F301DB6970600BD9C83 /* VROApiKeyValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F2E1DB6970600BD9C83 /* VROApiKeyValidator.h */; };
+		8ABD8F311DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD8F2F1DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m */; };
+		8ABD8F371DB72CDD00BD9C83 /* VROApiKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD8F351DB70CE400BD9C83 /* VROApiKey.m */; };
+		8ABD8F381DB72CE000BD9C83 /* VROApiKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F341DB70CE400BD9C83 /* VROApiKey.h */; };
+		8ABD8F3A1DB739E000BD9C83 /* VROApiKeyValidatorDynamo.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F391DB739E000BD9C83 /* VROApiKeyValidatorDynamo.h */; };
+		8ABD8F3D1DB7DF8F00BD9C83 /* VROApiKeyMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F3B1DB7DF8F00BD9C83 /* VROApiKeyMetrics.h */; };
+		8ABD8F3E1DB7DF8F00BD9C83 /* VROApiKeyMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD8F3C1DB7DF8F00BD9C83 /* VROApiKeyMetrics.m */; };
+		8ABD8F411DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F3F1DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h */; };
+		8ABD8F421DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD8F401DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m */; };
+		8ABD8F541DB957C900BD9C83 /* VROCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F531DB957C900BD9C83 /* VROCredentials.h */; };
 		8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */; };
 		8F03BCE11CECC92300D071F8 /* blinn_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD61CECC30E00D071F8 /* blinn_functions_fsh.glsl */; };
 		8F03BCE21CECC92300D071F8 /* blinn_c_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD41CECC30E00D071F8 /* blinn_c_fsh.glsl */; };
@@ -368,6 +378,16 @@
 		6E1141125FCC9320616556D8 /* Pods-ViroKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.debug.xcconfig"; sourceTree = "<group>"; };
 		710AAB43C4650092845EAD81 /* Pods-ViroKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.release.xcconfig"; sourceTree = "<group>"; };
 		8A305E061DA82719007407EF /* VROVideoDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoDelegate.h; sourceTree = "<group>"; };
+		8ABD8F2E1DB6970600BD9C83 /* VROApiKeyValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROApiKeyValidator.h; sourceTree = "<group>"; };
+		8ABD8F2F1DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VROApiKeyValidatorDynamo.m; sourceTree = "<group>"; };
+		8ABD8F341DB70CE400BD9C83 /* VROApiKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROApiKey.h; sourceTree = "<group>"; };
+		8ABD8F351DB70CE400BD9C83 /* VROApiKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VROApiKey.m; sourceTree = "<group>"; };
+		8ABD8F391DB739E000BD9C83 /* VROApiKeyValidatorDynamo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROApiKeyValidatorDynamo.h; sourceTree = "<group>"; };
+		8ABD8F3B1DB7DF8F00BD9C83 /* VROApiKeyMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROApiKeyMetrics.h; sourceTree = "<group>"; };
+		8ABD8F3C1DB7DF8F00BD9C83 /* VROApiKeyMetrics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VROApiKeyMetrics.m; sourceTree = "<group>"; };
+		8ABD8F3F1DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROApiMetricsIncrementRequest.h; sourceTree = "<group>"; };
+		8ABD8F401DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VROApiMetricsIncrementRequest.m; sourceTree = "<group>"; };
+		8ABD8F531DB957C900BD9C83 /* VROCredentials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCredentials.h; sourceTree = "<group>"; };
 		8F03BCD41CECC30E00D071F8 /* blinn_c_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_c_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCD51CECC30E00D071F8 /* blinn_c_reflect_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_c_reflect_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCD61CECC30E00D071F8 /* blinn_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_functions_fsh.glsl; sourceTree = "<group>"; };
@@ -743,6 +763,17 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		8ABD8F331DB70C8900BD9C83 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				8ABD8F341DB70CE400BD9C83 /* VROApiKey.h */,
+				8ABD8F351DB70CE400BD9C83 /* VROApiKey.m */,
+				8ABD8F3B1DB7DF8F00BD9C83 /* VROApiKeyMetrics.h */,
+				8ABD8F3C1DB7DF8F00BD9C83 /* VROApiKeyMetrics.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
 		8F03BCD31CECC25E00D071F8 /* Blinn */ = {
 			isa = PBXGroup;
 			children = (
@@ -993,6 +1024,7 @@
 		8F517BB81BCDA2BD0017C70B /* ViroRenderer */ = {
 			isa = PBXGroup;
 			children = (
+				8ABD8F331DB70C8900BD9C83 /* Model */,
 				8FB659241CD9082000D036EB /* Platforms */,
 				8F0FE6601CD25A2300A4C297 /* Drivers */,
 				8F5C414B1BD825A9006D7A77 /* Util */,
@@ -1095,6 +1127,12 @@
 		8F5C414B1BD825A9006D7A77 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				8ABD8F2E1DB6970600BD9C83 /* VROApiKeyValidator.h */,
+				8ABD8F391DB739E000BD9C83 /* VROApiKeyValidatorDynamo.h */,
+				8ABD8F2F1DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m */,
+				8ABD8F3F1DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h */,
+				8ABD8F401DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m */,
+				8ABD8F531DB957C900BD9C83 /* VROCredentials.h */,
 				8F83DEA91C49B0540089C31A /* VROAllocationTracker.h */,
 				8F83DEA81C49B0530089C31A /* VROAllocationTracker.cpp */,
 				8F63186C1BD95EA6000A75DF /* VROTime.h */,
@@ -1334,6 +1372,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8ABD8F301DB6970600BD9C83 /* VROApiKeyValidator.h in Headers */,
 				8F9278081C670FD900FF892A /* VROTriangle.h in Headers */,
 				8F65F78E1C90D83600415115 /* VROTransformConstraint.h in Headers */,
 				8FD4DED01C18ECD4003DC425 /* ViroKit.h in Headers */,
@@ -1345,6 +1384,7 @@
 				8F0FE6761CD2D47900A4C297 /* VROViewCardboard.h in Headers */,
 				8F65F8471CA2E26F00415115 /* VROSoundEffect.h in Headers */,
 				8F83DEAB1C49B0540089C31A /* VROAllocationTracker.h in Headers */,
+				8ABD8F3A1DB739E000BD9C83 /* VROApiKeyValidatorDynamo.h in Headers */,
 				8FB659151CD8389300D036EB /* VROSceneRendererCardboardOpenGL.h in Headers */,
 				8FA9D0A41CC947DD00B00B93 /* VRODriver.h in Headers */,
 				8FA2E15B1C45AF3C0070DB26 /* VROScreenUIView.h in Headers */,
@@ -1405,6 +1445,7 @@
 				8FD4DF4E1C18F5EB003DC425 /* VROLayer.h in Headers */,
 				8FD4DF4F1C18F5EB003DC425 /* VRORect.h in Headers */,
 				8FCF396C1CB4242000A86CA3 /* VRORenderer.h in Headers */,
+				8ABD8F3D1DB7DF8F00BD9C83 /* VROApiKeyMetrics.h in Headers */,
 				8FD1E1B01C3F20C70005BE4E /* VROVideoSurface.h in Headers */,
 				8FD4DF511C18F5EB003DC425 /* VROSize.h in Headers */,
 				8F83DEA51C4830360089C31A /* VROTimingFunctionEaseIn.h in Headers */,
@@ -1434,12 +1475,15 @@
 				8FB6591F1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.h in Headers */,
 				8FB6590C1CD82FD200D036EB /* VROSceneRendererCardboard.h in Headers */,
 				8FCF395C1CA5844E00A86CA3 /* VROSceneControllerInternal.h in Headers */,
+				8ABD8F381DB72CE000BD9C83 /* VROApiKey.h in Headers */,
 				8FBDBE2B1D01EE5E00801B59 /* VROSortKey.h in Headers */,
 				8F65F78A1C90CD4700415115 /* VROBillboardConstraint.h in Headers */,
+				8ABD8F411DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h in Headers */,
 				8F11B7CB1C20E7830026D150 /* VROAnimation.h in Headers */,
 				8FD9B4611C339ECF006CB698 /* VROMaterialSubstrate.h in Headers */,
 				8FD9B45D1C31E9DC006CB698 /* VROAnimationQuaternion.h in Headers */,
 				8F11B7C71C20CF200026D150 /* VRORenderParameters.h in Headers */,
+				8ABD8F541DB957C900BD9C83 /* VROCredentials.h in Headers */,
 				8FA2E1641C460C600070DB26 /* VROAction.h in Headers */,
 				8FB659101CD8301000D036EB /* VROSceneRendererCardboardMetal.h in Headers */,
 			);
@@ -1840,6 +1884,7 @@
 				8F83DEAE1C50278C0089C31A /* VROSphere.cpp in Sources */,
 				8FD4DF1B1C18ED53003DC425 /* VROLayer.cpp in Sources */,
 				8FD4DF151C18ED44003DC425 /* Vector3d.mm in Sources */,
+				8ABD8F3E1DB7DF8F00BD9C83 /* VROApiKeyMetrics.m in Sources */,
 				8FD4DF121C18ED44003DC425 /* Matrix3x3d.mm in Sources */,
 				8FD4DEFA1C18ED19003DC425 /* VROMatrix4f.cpp in Sources */,
 				8FD4DF041C18ED30003DC425 /* VROTextureSubstrate.cpp in Sources */,
@@ -1862,6 +1907,7 @@
 				8FD4DF0B1C18ED3C003DC425 /* VROGeometry.cpp in Sources */,
 				8F83DEA71C4830DC0089C31A /* VROTimingFunction.cpp in Sources */,
 				8FD4DF1A1C18ED4C003DC425 /* VROScreen.cpp in Sources */,
+				8ABD8F421DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m in Sources */,
 				8FD4DEFD1C18ED22003DC425 /* VROSurface.cpp in Sources */,
 				8F548E521C2378D500556688 /* VROAnimatable.cpp in Sources */,
 				8F83DE911C474A800089C31A /* VROProjector.cpp in Sources */,
@@ -1877,11 +1923,13 @@
 				8FD4DF291C18EE6F003DC425 /* VROWorldUIView.mm in Sources */,
 				8FD4DF141C18ED44003DC425 /* SO3Util.mm in Sources */,
 				8F0FE66C1CD289FD00A4C297 /* VRORenderLoopCardboard.m in Sources */,
+				8ABD8F371DB72CDD00BD9C83 /* VROApiKey.m in Sources */,
 				8F0FE67E1CD3E12F00A4C297 /* VROShaderProgram.cpp in Sources */,
 				8FA2E1501C4463D00070DB26 /* VROSkybox.cpp in Sources */,
 				8FCF39601CA589AF00A86CA3 /* VROSceneController.mm in Sources */,
 				8FC908861CA458EB00069C89 /* VROCameraMutable.cpp in Sources */,
 				8FD4DEEF1C18ED0B003DC425 /* VROImageUtil.cpp in Sources */,
+				8ABD8F311DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m in Sources */,
 				8F0856581C87960900E66709 /* VROGeometryUtil.cpp in Sources */,
 				8FA2E1561C44BAB70070DB26 /* VROTorusKnot.cpp in Sources */,
 				8FDDB4A71DAF134300DE0968 /* VROLineSegment.cpp in Sources */,

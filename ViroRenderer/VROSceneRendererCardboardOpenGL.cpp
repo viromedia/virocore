@@ -17,7 +17,7 @@ VROSceneRendererCardboardOpenGL::VROSceneRendererCardboardOpenGL(EAGLContext *co
                                                                  std::shared_ptr<VRORenderer> renderer) :
     _frame(0),
     _renderer(renderer),
-    _suspended(false) {
+    _suspended(true) {
     
     _driver = std::make_shared<VRODriverOpenGL>(context);
 }

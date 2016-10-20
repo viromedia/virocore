@@ -14,6 +14,7 @@
 #import "VROSceneRendererCardboardOpenGL.h"
 #import "VROFieldOfView.h"
 #import "VROViewport.h"
+#import "VROApiKeyValidatorDynamo.h"
 
 @interface VROViewCardboard () {
     std::shared_ptr<VRORenderer> _renderer;
@@ -24,6 +25,7 @@
 @property (readwrite, nonatomic) VROSceneRendererCardboard *sceneRenderer;
 @property (readwrite, nonatomic) VROFieldOfView fov;
 @property (readwrite, nonatomic) VROViewport viewport;
+@property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
 
 @end
 
@@ -51,7 +53,8 @@
 
 - (void)initRenderer {
     self.delegate = self;
-    
+    self.keyValidator = [[VROApiKeyValidatorDynamo alloc] init];
+  
     // Do not allow the display to go into sleep
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     
@@ -94,6 +97,21 @@
         [_renderLoop invalidate];
         _renderLoop = nil;
     }
+}
+
+/**
+ * This function will asynchronously validate the given API key and notify the
+ * renderer if the key is invalid.
+ */
+- (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROViewValidApiKeyBlock)completionBlock {
+    // If the user gives us a key, then let them use the API until we successfully checked the key.
+    self.sceneRenderer->setSuspended(true);
+    VROApiKeyValidatorBlock validatorCompletionBlock = ^(BOOL valid) {
+        self.sceneRenderer->setSuspended(!valid);
+        completionBlock(valid);
+        NSLog(@"[ApiKeyValidator] The key is %@!", valid ? @"valid" : @"invalid");
+    };
+    [self.keyValidator validateApiKey:apiKey withCompletionBlock:validatorCompletionBlock];
 }
 
 #pragma mark - Settings

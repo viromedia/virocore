@@ -23,7 +23,7 @@ static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
 VROSceneRendererCardboardMetal::VROSceneRendererCardboardMetal(std::shared_ptr<VRORenderer> renderer) :
     _frame(0),
     _renderer(renderer),
-    _suspended(false) {
+    _suspended(true) {
     
     id <MTLDevice> device = MTLCreateSystemDefaultDevice();
     _driver = std::make_shared<VRODriverMetal>(device);
