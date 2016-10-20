@@ -1,0 +1,1 @@
+../../../AWSCore/AWSCore/Mantle/AWSMTLJSONAdapter.h
