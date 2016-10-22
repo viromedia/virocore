@@ -105,7 +105,7 @@
  */
 - (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROViewValidApiKeyBlock)completionBlock {
     // If the user gives us a key, then let them use the API until we successfully checked the key.
-    self.sceneRenderer->setSuspended(true);
+    self.sceneRenderer->setSuspended(false);
     VROApiKeyValidatorBlock validatorCompletionBlock = ^(BOOL valid) {
         self.sceneRenderer->setSuspended(!valid);
         completionBlock(valid);
