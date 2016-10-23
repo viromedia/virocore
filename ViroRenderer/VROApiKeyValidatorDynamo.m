@@ -28,8 +28,8 @@ static NSInteger const kVROApiValidatorMaxRetryDelay = 64; // seconds
  This object locks any changes to the 3 objects below it.
  */
 @property (nonatomic, strong) NSObject *taskLock;
-@property (nonatomic, strong) AWSTask *currentTask;
-@property (nonatomic, strong) AWSTask *nextTask;
+@property (nonatomic, copy) NSString *currentKeyToCheck;
+@property (nonatomic, copy) NSString *nextKeyToCheck;
 @property (nonatomic, strong) VROApiKeyValidatorBlock nextTaskCompletion;
 
 @end
@@ -76,31 +76,31 @@ static NSInteger const kVROApiValidatorMaxRetryDelay = 64; // seconds
             return;
         }
 
-        // create a task to check if the given apiKey exists in the table
-        AWSTask *task = [self.dynamoObjectMapper load:[VROApiKey class] hashKey:apiKey rangeKey:nil];
-
-        // only execute the task if there isn't already one running (we can't seem to cancel)
-        if (self.currentTask) {
-            self.nextTask = task;
+        // If there's already a key in the process of being checked (currentKeyToCheck), then store it in nextKeyToCheck
+        // this is there doesn't seem to be a way to cancel an ongoing AWSTask.
+        if (self.currentKeyToCheck) {
+            self.nextKeyToCheck = apiKey;
             self.nextTaskCompletion = completionBlock;
         } else {
-            self.currentTask = task;
-            [self executeCurrentTask:completionBlock attempt:1];
+            self.currentKeyToCheck = apiKey;
+            [self checkCurrentKey:completionBlock attempt:1];
         }
     }
 }
 
 /**
- This function executes the current task, adding a delay when necessary.
+ This function checks the current key by creating a task and executing it.
  */
-- (void)executeCurrentTask:(VROApiKeyValidatorBlock)completionBlock attempt:(NSInteger)attempt {
+- (void)checkCurrentKey:(VROApiKeyValidatorBlock)completionBlock attempt:(NSInteger)attempt {
   
     NSInteger delay = attempt == 1 ? 0 : MIN(kVROApiValidatorMaxRetryDelay, pow(kVROApiValidatorMinRetryDelay, attempt - 1));
 
     NSLog(@"[ApiKeyValidator] Attempt %ld, performing validation in %ld seconds", (long)attempt, (long)delay);
     dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC));
     dispatch_after(delayTime, dispatch_get_main_queue(), ^(void) {
-        [self.currentTask continueWithBlock:[self getValidationEndBlock:completionBlock attempt:attempt]];
+        // construct a NEW task and run it. We can't keep calling continueWithBlock on a task esp if it already failed.
+        AWSTask *task = [self.dynamoObjectMapper load:[VROApiKey class] hashKey:self.currentKeyToCheck rangeKey:nil];
+        [task continueWithBlock:[self getValidationEndBlock:completionBlock attempt:attempt]];
     });
 }
 
@@ -113,21 +113,22 @@ static NSInteger const kVROApiValidatorMaxRetryDelay = 64; // seconds
     return ^id(AWSTask *task) {
         @synchronized (self.taskLock) {
             // If there's a next task, just start running it, don't even bother to call the completion block.
-            if (self.nextTask) {
-                self.currentTask = self.nextTask;
-                [self executeCurrentTask:self.nextTaskCompletion attempt:attempt + 1];
+            if (self.nextKeyToCheck) {
+                self.currentKeyToCheck = self.nextKeyToCheck;
+                [self checkCurrentKey:self.nextTaskCompletion attempt:attempt + 1];
+                self.nextKeyToCheck = nil;
                 self.nextTaskCompletion = nil;
                 return nil;
             }
           
             // If the task is cancelled or has errored out, then try to get the apiKey again.
             if (task.cancelled || task.faulted) {
-                [self executeCurrentTask:completionBlock attempt:attempt + 1];
+                [self checkCurrentKey:completionBlock attempt:attempt + 1];
                 return nil;
             }
 
             // If the task completed, then check if the apiKey is valid.
-            self.currentTask = nil;
+            self.currentKeyToCheck = nil;
             BOOL valid = NO;
             if (task.result) {
                 VROApiKey *key = task.result;
