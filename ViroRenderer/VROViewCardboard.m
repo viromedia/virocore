@@ -22,7 +22,7 @@
 }
 
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
-@property (readwrite, nonatomic) VROSceneRendererCardboard *sceneRenderer;
+@property (readwrite, nonatomic) std::shared_ptr<VROSceneRendererCardboard> sceneRenderer;
 @property (readwrite, nonatomic) VROFieldOfView fov;
 @property (readwrite, nonatomic) VROViewport viewport;
 @property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
@@ -63,7 +63,7 @@
                                                  name:UIApplicationDidChangeStatusBarOrientationNotification
                                                object:nil];
     self.renderer = std::make_shared<VRORenderer>();
-    self.sceneRenderer = new VROSceneRendererCardboardOpenGL(self.context, self.renderer);
+    self.sceneRenderer = std::make_shared<VROSceneRendererCardboardOpenGL>(self.context, self.renderer);
 
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                     action:@selector(handleTap:)];
