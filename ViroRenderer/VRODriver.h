@@ -31,6 +31,8 @@ class VRODriver {
     
 public:
     
+    virtual ~VRODriver() {}
+    
     virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) = 0;
     virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) = 0;
     virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) = 0;

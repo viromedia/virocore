@@ -19,8 +19,9 @@ class VROFrameListener {
     
 public:
     
-    virtual void onFrameWillRender(const VRORenderContext &context) = 0;
+    virtual ~VROFrameListener() {}
     
+    virtual void onFrameWillRender(const VRORenderContext &context) = 0;
     virtual void onFrameDidRender(const VRORenderContext &context) = 0;
     
 };

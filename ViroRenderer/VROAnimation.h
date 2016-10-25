@@ -29,6 +29,8 @@ public:
         _finishCallback(finishCallback)
     {}
     
+    virtual ~VROAnimation() {}
+    
     /*
      Set the animatable. This is typically the object holding the 
      property to be animated. It is stored by a weak_ptr so we can

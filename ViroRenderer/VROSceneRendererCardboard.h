@@ -23,6 +23,8 @@ class VROSceneRendererCardboard {
     
 public:
     
+    virtual ~VROSceneRendererCardboard() {}
+    
     /*
      Invoked once with the active GL context.
      */
