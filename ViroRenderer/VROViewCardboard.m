@@ -21,6 +21,7 @@
     VRORenderLoopCardboard *_renderLoop;
 }
 
+@property (nonatomic) IBInspectable BOOL testingMode;
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
 @property (readwrite, nonatomic) std::shared_ptr<VROSceneRendererCardboard> sceneRenderer;
 @property (readwrite, nonatomic) VROFieldOfView fov;
@@ -49,6 +50,13 @@
         [self initRenderer];
     }
     return self;
+}
+
+- (void)awakeFromNib {
+    if (self.testingMode) {
+        self.vrModeEnabled = YES;
+        self.sceneRenderer->setSuspended(false);
+    }
 }
 
 - (void)initRenderer {
@@ -99,9 +107,9 @@
     }
 }
 
-/**
- * This function will asynchronously validate the given API key and notify the
- * renderer if the key is invalid.
+/*
+ This function will asynchronously validate the given API key and notify the
+ renderer if the key is invalid.
  */
 - (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROViewValidApiKeyBlock)completionBlock {
     // If the user gives us a key, then let them use the API until we successfully checked the key.
