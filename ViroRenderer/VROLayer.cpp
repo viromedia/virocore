@@ -19,10 +19,6 @@ VROLayer::VROLayer() :
     VRONode() {
     
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(1.0, 1.0);
-    
-    std::shared_ptr<VROMaterial> material = surface->getMaterials().front();
-    material->setLightingModel(VROLightingModel::Constant);
-        
     setGeometry(surface);
 }
 

@@ -123,7 +123,6 @@ std::shared_ptr<VRONode> VROLoader::loadMesh(MDLMesh *mesh) {
         MDLMaterial *material = submesh.material;
         
         std::shared_ptr<VROMaterial> vM = std::make_shared<VROMaterial>();
-        vM->setLightingModel(VROLightingModel::Blinn);
         vM->setReadsFromDepthBuffer(true);
         vM->setWritesToDepthBuffer(true);
         

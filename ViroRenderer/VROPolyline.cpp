@@ -35,7 +35,6 @@ std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f
     material->setReadsFromDepthBuffer(false);
     material->getDiffuse().setContents({ 1.0, 1.0, 1.0, 1.0 });
     material->setCullMode(VROCullMode::None);
-    material->setLightingModel(VROLightingModel::Constant);
     
     std::vector<std::string> modifierCode = { "uniform float width;",
                                               "vec3 normal_offset = (width / 2.0) * normal;",

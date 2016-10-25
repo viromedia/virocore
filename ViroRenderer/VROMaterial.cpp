@@ -22,7 +22,7 @@ VROMaterial::VROMaterial() :
     _fresnelExponent(1.0),
     _transparency(1.0),
     _transparencyMode(VROTransparencyMode::AOne),
-    _lightingModel(VROLightingModel::Blinn),
+    _lightingModel(VROLightingModel::Constant),
     _litPerPixel(true),
     _cullMode(VROCullMode::Back),
     _blendMode(VROBlendMode::Alpha),
