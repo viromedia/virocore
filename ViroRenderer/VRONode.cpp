@@ -86,7 +86,8 @@ void VRONode::render(int elementIndex,
     }
 }
 
-void VRONode::updateSortKeys(VRORenderParameters &params, const VRORenderContext &context) {
+void VRONode::updateSortKeys(VRORenderParameters &params, const VRORenderContext &context,
+                             VRODriver &driver) {
     processActions();
     
     std::stack<VROMatrix4f> &transforms = params.transforms;
@@ -115,14 +116,15 @@ void VRONode::updateSortKeys(VRORenderParameters &params, const VRORenderContext
     if (_geometry) {
         int lightsHash = VROLight::hashLights(lights);
         float distanceFromCamera = getTransformedPosition().distance(context.getCamera().getPosition());
-        _geometry->updateSortKeys(this, lightsHash, _computedOpacity, distanceFromCamera, context.getZFar());
+        _geometry->updateSortKeys(this, lightsHash, _computedOpacity, distanceFromCamera, context.getZFar(),
+                                  driver);
     }
     
     /*
      Move down the tree.
      */
     for (std::shared_ptr<VRONode> childNode : _subnodes) {
-        childNode->updateSortKeys(params, context);
+        childNode->updateSortKeys(params, context, driver);
     }
     
     params.transforms.pop();

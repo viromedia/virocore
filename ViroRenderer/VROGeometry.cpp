@@ -44,7 +44,8 @@ void VROGeometry::render(int elementIndex,
 }
 
 void VROGeometry::updateSortKeys(VRONode *node, uint32_t lightsHash,
-                                 float opacity, float distanceFromCamera, float zFar) {
+                                 float opacity, float distanceFromCamera, float zFar,
+                                 VRODriver &driver) {
     _sortKeys.clear();
     
     size_t numElements = _geometryElements.size();
@@ -59,14 +60,14 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t lightsHash,
         key.distanceFromCamera = zFar - distanceFromCamera;
         
         std::shared_ptr<VROMaterial> &material = _materials[materialIndex];
-        material->updateSortKey(key);
+        material->updateSortKey(key, driver);
         key.outgoing = false;
         
         _sortKeys.push_back(key);
         
         const std::shared_ptr<VROMaterial> &outgoing = material->getOutgoing();
         if (outgoing) {
-            outgoing->updateSortKey(key);
+            outgoing->updateSortKey(key, driver);
             key.outgoing = true;
             
             _sortKeys.push_back(key);

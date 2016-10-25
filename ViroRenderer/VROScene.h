@@ -37,7 +37,8 @@ public:
     void render(const VRORenderContext &context,
                 VRODriver &driver);
     
-    void updateSortKeys(const VRORenderContext &context);
+    void updateSortKeys(const VRORenderContext &context,
+                        VRODriver &driver);
     
     /*
      Add a new root node to the scene.

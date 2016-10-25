@@ -1,5 +1,3 @@
-#include lighting_general_functions_fsh
-
 struct VROConstantLighting {
     highp vec4 position;
     lowp vec4 color;

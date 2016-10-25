@@ -60,7 +60,9 @@ public:
                 const VRORenderContext &context,
                 VRODriver &driver);
     
-    void updateSortKeys(VRORenderParameters &params, const VRORenderContext &context);
+    void updateSortKeys(VRORenderParameters &params,
+                        const VRORenderContext &context,
+                        VRODriver &driver);
     void getSortKeys(std::vector<VROSortKey> *outKeys);
     
     std::vector<std::shared_ptr<VROLight>> &getComputedLights() {

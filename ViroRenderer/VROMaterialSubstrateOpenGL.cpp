@@ -274,29 +274,6 @@ void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, 
 }
 
 void VROMaterialSubstrateOpenGL::addUniforms() {
-    _program->addUniform(VROShaderProperty::Int, 1, "lighting.num_lights");
-    _program->addUniform(VROShaderProperty::Vec3, 1, "lighting.ambient_light_color");
-    
-    for (int i = 0; i < kMaxLights; i++) {
-        std::stringstream ss;
-        ss << "lighting.lights[" << i << "].";
-        
-        std::string prefix = ss.str();
-        _program->addUniform(VROShaderProperty::Int, 1, prefix + "type");
-        
-        _program->addUniform(VROShaderProperty::Vec3, 1, prefix + "position");
-        _program->addUniform(VROShaderProperty::Vec3, 1, prefix + "direction");
-        _program->addUniform(VROShaderProperty::Vec3, 1, prefix + "color");
-        
-        _program->addUniform(VROShaderProperty::Float, 1, prefix + "attenuation_start_distance");
-        _program->addUniform(VROShaderProperty::Float, 1, prefix + "attenuation_end_distance");
-        _program->addUniform(VROShaderProperty::Float, 1, prefix + "attenuation_falloff_exp");
-        _program->addUniform(VROShaderProperty::Float, 1, prefix + "spot_inner_angle");
-        _program->addUniform(VROShaderProperty::Float, 1, prefix + "spot_outer_angle");
-    }
-    
-    _program->addUniform(VROShaderProperty::Vec3, 1, "ambient_light_color");
-
     _normalMatrixUniform = _program->addUniform(VROShaderProperty::Mat4, 1, "normal_matrix");
     _modelMatrixUniform = _program->addUniform(VROShaderProperty::Mat4, 1, "model_matrix");
     _modelViewMatrixUniform = _program->addUniform(VROShaderProperty::Mat4, 1, "modelview_matrix");

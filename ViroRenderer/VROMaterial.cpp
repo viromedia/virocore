@@ -155,16 +155,9 @@ VROMaterialSubstrate *const VROMaterial::getSubstrate(VRODriver &driver) {
     return _substrate;
 }
 
-void VROMaterial::updateSortKey(VROSortKey &key) {
+void VROMaterial::updateSortKey(VROSortKey &key, VRODriver &driver) {
     key.material = _materialId;
-    
-    if (_substrate) {
-        _substrate->updateSortKey(key);
-    }
-    else {
-        key.shader = 0;
-        key.textures = 0;
-    }
+    getSubstrate(driver)->updateSortKey(key);
 }
 
 void VROMaterial::bindShader(VRODriver &driver) {

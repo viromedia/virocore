@@ -139,11 +139,11 @@ void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &d
     
     if (_sceneController) {
         if (_outgoingSceneController) {
-            _outgoingSceneController.scene->updateSortKeys(*_context.get());
-            _sceneController.scene->updateSortKeys(*_context.get());
+            _outgoingSceneController.scene->updateSortKeys(*_context.get(), driver);
+            _sceneController.scene->updateSortKeys(*_context.get(), driver);
         }
         else {
-            _sceneController.scene->updateSortKeys(*_context.get());
+            _sceneController.scene->updateSortKeys(*_context.get(), driver);
         }
     }
 }

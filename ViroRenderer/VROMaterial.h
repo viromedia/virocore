@@ -198,7 +198,7 @@ public:
     /*
      Update the given sort key with fields from this material.
      */
-    void updateSortKey(VROSortKey &key);
+    void updateSortKey(VROSortKey &key, VRODriver &driver);
     
 private:
     

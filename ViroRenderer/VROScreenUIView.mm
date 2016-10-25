@@ -95,7 +95,7 @@ withRenderContext:(const VRORenderContext *)renderContext
     renderParams.transforms.push(renderContext->getHUDViewMatrix());
     renderParams.opacities.push(1.0);
     
-    _layer->updateSortKeys(renderParams, *renderContext);
+    _layer->updateSortKeys(renderParams, *renderContext, *driver);
     
     std::shared_ptr<VROMaterial> material = _layer->getMaterial();
     material->bindShader(*driver);

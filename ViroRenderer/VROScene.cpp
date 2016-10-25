@@ -80,7 +80,7 @@ void VROScene::render(const VRORenderContext &context,
     }
 }
 
-void VROScene::updateSortKeys(const VRORenderContext &context) {
+void VROScene::updateSortKeys(const VRORenderContext &context, VRODriver &driver) {
     VROMatrix4f identity;
 
     VRORenderParameters renderParams;
@@ -88,7 +88,7 @@ void VROScene::updateSortKeys(const VRORenderContext &context) {
     renderParams.opacities.push(1.0);
     
     for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->updateSortKeys(renderParams, context);
+        node->updateSortKeys(renderParams, context, driver);
     }
     
     _keys.clear();

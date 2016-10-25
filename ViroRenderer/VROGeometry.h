@@ -88,7 +88,8 @@ public:
                 VRODriver &driver);
     
     void updateSortKeys(VRONode *node, uint32_t lightsHash,
-                        float opacity, float distanceFromCamera, float zFar);
+                        float opacity, float distanceFromCamera, float zFar,
+                        VRODriver &driver);
     void getSortKeys(std::vector<VROSortKey> *outKeys);
     
     std::shared_ptr<VROMaterial> &getMaterialForElement(int elementIndex) {
