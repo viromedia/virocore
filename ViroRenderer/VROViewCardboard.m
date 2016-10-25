@@ -53,6 +53,8 @@
 }
 
 - (void)awakeFromNib {
+    [super awakeFromNib];
+    
     if (self.testingMode) {
         self.vrModeEnabled = YES;
         self.sceneRenderer->setSuspended(false);

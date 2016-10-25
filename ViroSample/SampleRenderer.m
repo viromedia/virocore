@@ -311,48 +311,17 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROScene> scene = sceneController.scene;
     scene->setBackgroundCube([self cloudTexture]);
     
-    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Omni);
-    light->setColor({ 1.0, 0.9, 0.9 });
-    light->setPosition( { 0, 0, 0 });
-    light->setDirection( { 0, 0, -1.0 });
-    light->setAttenuationStartDistance(5);
-    light->setAttenuationEndDistance(10);
-    light->setSpotInnerAngle(0);
-    light->setSpotOuterAngle(15);
-    
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
-    rootNode->addLight(light);
     
     scene->addNode(rootNode);
-    
-    /*
-     Create the box node.
-     */
-    std::shared_ptr<VROBox> box = VROBox::createBox(1, 1, 1);
-    NSURL *videoURL = [NSURL URLWithString:@"https://s3-us-west-2.amazonaws.com/dmoontest/img/Zoe2.mp4"];
-    
-    std::shared_ptr<VROVideoTexture> videoTexture = std::make_shared<VROVideoTexture>();
-    videoTexture->loadVideo(videoURL, [self.view frameSynchronizer], *self.driver);
-    videoTexture->play();
-    
-    std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
-    material->setLightingModel(VROLightingModel::Blinn);
-    material->getDiffuse().setContents(videoTexture);
-    material->getSpecular().setContents(std::make_shared<VROTexture>([UIImage imageNamed:@"specular"]));
-    
-    std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
-    boxNode->setGeometry(box);
-    boxNode->setPosition({0, 0, -5});
-    
-    rootNode->addChildNode(boxNode);
     
     /*
      Create the moments icon node.
      */
     std::shared_ptr<VROLayer> center = std::make_shared<VROLayer>();
     center->setContents([UIImage imageNamed:@"momentslogo"]);
-    center->setFrame(VRORectMake(3.0, -1.25, 2, 1, 1));
+    center->setFrame(VRORectMake(0, -1.25, -2, 1, 1));
     center->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::Y));
     
     rootNode->addChildNode(center);
@@ -377,23 +346,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     rootNode->addChildNode(labelView.vroLayer);
     
-    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self](VRONode *const node, float seconds) {
-        self.boxVideoAngle += .015;
-        node->setRotation({ 0, self.boxVideoAngle, 0});
-        
-        return true;
-    });
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        VROTransaction::begin();
-        VROTransaction::setAnimationDuration(5.0);
-        
-        //[self.view setPosition:{0, 0, -4}];
-        
-        VROTransaction::commit();
-    });
-    
-    boxNode->runAction(action);
     self.view.reticle->setEnabled(true);
     self.tapEnabled = YES;
 
