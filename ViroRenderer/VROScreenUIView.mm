@@ -42,7 +42,6 @@ static const float kVROLayerSize = 2;
         std::shared_ptr<VROMaterial> material = _layer->getMaterial();
         material->setReadsFromDepthBuffer(false);
         material->setWritesToDepthBuffer(false);
-        material->setLightingModel(VROLightingModel::Constant);
         
         [self setBackgroundColor:[UIColor clearColor]];
     
