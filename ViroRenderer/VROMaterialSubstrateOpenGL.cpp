@@ -331,18 +331,13 @@ void VROMaterialSubstrateOpenGL::bindLights(int lightsHash,
         lightingUBO = glDriver.createLightingUBO(lightsHash);
         lightingUBO->writeLights(lights);
     }
-    
-    // If any light was updated, rewrite the lights to the UBO
-    for (const std::shared_ptr<VROLight> &light : lights) {
-        if (light->isUpdated()) {
-            lightingUBO->writeLights(lights);
-            
-            // Mark all light updated flags false now that the new UBO is
-            // written
-            for (const std::shared_ptr<VROLight> &l : lights) {
-                l->setIsUpdated(false);
+    else {
+        // If any light was updated, rewrite the lights to the UBO
+        for (const std::shared_ptr<VROLight> &light : lights) {
+            if (light->isUpdated()) {
+                lightingUBO->writeLights(lights);
+                break;
             }
-            break;
         }
     }
     

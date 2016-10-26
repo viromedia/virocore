@@ -63,11 +63,18 @@ void VROScene::render(const VRORenderContext &context,
             if (key.shader != boundShaderId) {
                 material->bindShader(driver);
                 boundShaderId = key.shader;
-            }
-            
-            if (boundLights != node->getComputedLights()) {
+                
+                // If the shader changes, we have to rebind the lights so they attach
+                // to the new shader
                 material->bindLights(key.lights, node->getComputedLights(), context, driver);
                 boundLights = node->getComputedLights();
+            }
+            else {
+                // Otherwise we only rebind lights if the lights themselves have changed
+                if (boundLights != node->getComputedLights()) {
+                    material->bindLights(key.lights, node->getComputedLights(), context, driver);
+                    boundLights = node->getComputedLights();
+                }
             }
             
             // Only render the material if there are lights, or if the material uses

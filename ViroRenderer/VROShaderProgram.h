@@ -113,6 +113,9 @@ public:
         return _program;
     }
     
+    bool hasLightingBlock() const {
+        return _lightingBlockIndex != GL_INVALID_INDEX;
+    }
     GLuint getLightingBlockIndex() const {
         return _lightingBlockIndex;
     }

@@ -13,7 +13,9 @@
 #import "VROShaderProgram.h"
 
 void VROLightingUBO::bind(std::shared_ptr<VROShaderProgram> &program) {
-    glUniformBlockBinding(program->getProgram(), program->getLightingBlockIndex(), _lightingUBOBindingPoint);
+    if (program->hasLightingBlock()) {
+        glUniformBlockBinding(program->getProgram(), program->getLightingBlockIndex(), _lightingUBOBindingPoint);
+    }
 }
 
 void VROLightingUBO::writeLights(const std::vector<std::shared_ptr<VROLight>> &lights) {
@@ -45,6 +47,9 @@ void VROLightingUBO::writeLights(const std::vector<std::shared_ptr<VROLight>> &l
             
             data.num_lights++;
         }
+        
+        // Mark all light updated flags false now that the new UBO is being written
+        light->setIsUpdated(false);
     }
     
     ambientLight.toArray(data.ambient_light_color);

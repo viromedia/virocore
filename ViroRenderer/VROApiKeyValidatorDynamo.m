@@ -43,7 +43,7 @@ static NSInteger const kVROApiValidatorMaxRetryDelay = 64; // seconds
         _bundleId = [[NSBundle mainBundle] bundleIdentifier];
 
 #if DEBUG
-        [AWSLogger defaultLogger].logLevel = AWSLogLevelDebug;
+        [AWSLogger defaultLogger].logLevel = AWSLogLevelWarn;
 #else 
         [AWSLogger defaultLogger].logLevel = AWSLogLevelWarn;
 #endif

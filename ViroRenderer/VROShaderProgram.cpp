@@ -36,7 +36,7 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
                                    const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
                                    const std::vector<VROGeometrySourceSemantic> attributes) :
     _shaderId(sMaterialId++),
-    _lightingBlockIndex(0),
+    _lightingBlockIndex(GL_INVALID_INDEX),
     _capabilities(0),
     _uniformsNeedRebind(true),
     _shaderName(fragmentShader),
