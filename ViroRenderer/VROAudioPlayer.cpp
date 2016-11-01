@@ -9,12 +9,12 @@
 #include "VROAudioPlayer.h"
 
 VROAudioPlayer::VROAudioPlayer() :
-    _player(nullptr) {
-    
+    _player(nullptr), _paused(true) {
+
 }
 
 VROAudioPlayer::~VROAudioPlayer() {
-    
+
 }
 
 void VROAudioPlayer::setTrack(NSURL *url, int loopCount) {
@@ -44,10 +44,17 @@ void VROAudioPlayer::stop() {
 void VROAudioPlayer::play() {
     _player.volume = 1.0;
     [_player play];
+    _paused = false;
 }
 
 void VROAudioPlayer::pause() {
     doFadeThenPause();
+}
+
+void VROAudioPlayer::playIfPaused() {
+    if (_paused) {
+        [_player play];
+    }
 }
 
 void VROAudioPlayer::doFadeThenPause() {
@@ -59,6 +66,7 @@ void VROAudioPlayer::doFadeThenPause() {
     }
     else {
         [_player pause];
+        _paused = true;
     }
 }
 
@@ -71,7 +79,5 @@ void VROAudioPlayer::doFadeThenStop() {
     }
     else {
         [_player stop];
-        _player = nullptr;
     }
 }
-

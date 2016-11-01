@@ -24,14 +24,15 @@ public:
     void play();
     void stop();
     void pause();
-    
+    void playIfPaused();
+
 private:
     
     AVAudioPlayer *_player;
-    
+    bool _paused; // whether or not paused has been called
+  
     void doFadeThenPause();
     void doFadeThenStop();
-    
 };
 
 #endif /* VROAudioPlayer_h */
