@@ -1,0 +1,1 @@
+../../../AWSCore/AWSCore/CognitoIdentity/AWSCognitoIdentityService.h

@@ -1,0 +1,1 @@
+../../../AWSCore/AWSCore/STS/AWSSTS.h

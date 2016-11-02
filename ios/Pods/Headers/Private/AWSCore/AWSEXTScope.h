@@ -1,0 +1,1 @@
+../../../AWSCore/AWSCore/Mantle/extobjc/AWSEXTScope.h

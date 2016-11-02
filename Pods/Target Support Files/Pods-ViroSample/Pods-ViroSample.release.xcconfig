@@ -1,8 +1,0 @@
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/AWSCore" "${PODS_ROOT}/Headers/Public/AWSDynamoDB" "${PODS_ROOT}/Headers/Public/GVRSDK"
-LIBRARY_SEARCH_PATHS = $(inherited) "$PODS_CONFIGURATION_BUILD_DIR/AWSCore-iOS9.0" "$PODS_CONFIGURATION_BUILD_DIR/AWSDynamoDB-iOS9.0" $(inherited) "${PODS_ROOT}/GVRSDK/Libraries"
-OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/AWSCore" -isystem "${PODS_ROOT}/Headers/Public/AWSDynamoDB" -isystem "${PODS_ROOT}/Headers/Public/GVRSDK"
-OTHER_LDFLAGS = $(inherited) -ObjC -l"AWSCore-iOS9.0" -l"AWSDynamoDB-iOS9.0" -l"CardboardSDK_arm64" -l"CardboardSDK_armv7" -l"CardboardSDK_i386" -l"CardboardSDK_x86_64" -l"c++" -l"sqlite3" -l"z" -framework "AVFoundation" -framework "AudioToolbox" -framework "CoreGraphics" -framework "CoreMedia" -framework "CoreMotion" -framework "CoreText" -framework "CoreVideo" -framework "Foundation" -framework "GLKit" -framework "MediaPlayer" -framework "OpenGLES" -framework "QuartzCore" -framework "SystemConfiguration" -framework "UIKit"
-PODS_BUILD_DIR = $BUILD_DIR
-PODS_CONFIGURATION_BUILD_DIR = $PODS_BUILD_DIR/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
-PODS_ROOT = ${SRCROOT}/Pods

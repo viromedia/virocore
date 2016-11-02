@@ -1,0 +1,1 @@
+../../../AWSCore/AWSCore/Authentication/AWSCredentialsProvider.h

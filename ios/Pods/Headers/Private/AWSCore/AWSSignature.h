@@ -1,0 +1,1 @@
+../../../AWSCore/AWSCore/Authentication/AWSSignature.h

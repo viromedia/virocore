@@ -1,0 +1,1 @@
+../../../AWSCore/AWSCore/AWSCore.h
