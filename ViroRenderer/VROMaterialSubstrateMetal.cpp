@@ -7,6 +7,8 @@
 //
 
 #include "VROMaterialSubstrateMetal.h"
+#if VRO_METAL
+
 #include "VROSharedStructures.h"
 #include "VROMetalUtils.h"
 #include "VRODriverMetal.h"
@@ -309,3 +311,5 @@ uint32_t VROMaterialSubstrateMetal::hashTextures(const std::vector<std::shared_p
     }
     return h;
 }
+
+#endif

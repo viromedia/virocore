@@ -9,6 +9,9 @@
 #ifndef VRODistortion_h
 #define VRODistortion_h
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 #include <stdio.h>
 
 /*
@@ -89,4 +92,5 @@ private:
     
 };
 
+#endif
 #endif /* VRODistortion_h */

@@ -9,6 +9,9 @@
 #ifndef VRODistortionRenderer_h
 #define VRODistortionRenderer_h
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 #include <stdio.h>
 #include <MetalKit/MetalKit.h>
 #include "VRORenderTarget.h"
@@ -159,4 +162,5 @@ private:
 
 };
 
+#endif
 #endif /* VRODistortionRenderer_h */

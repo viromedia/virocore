@@ -9,6 +9,9 @@
 #ifndef VROVideoTextureCacheMetal_h
 #define VROVideoTextureCacheMetal_h
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 #include <Metal/Metal.h>
 #include "VROVideoTextureCache.h"
 
@@ -28,4 +31,5 @@ private:
     
 };
 
+#endif
 #endif /* VROVideoTextureCacheMetal_h */

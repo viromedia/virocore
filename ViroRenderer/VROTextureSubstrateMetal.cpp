@@ -7,6 +7,8 @@
 //
 
 #include "VROTextureSubstrateMetal.h"
+#if VRO_METAL
+
 #include "VROImageUtil.h"
 #include "VROTexture.h"
 #include "VRODriverMetal.h"
@@ -162,4 +164,6 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, VROTextu
 VROTextureSubstrateMetal::~VROTextureSubstrateMetal() {
     ALLOCATION_TRACKER_SUB(TextureSubstrates, 1);
 }
+
+#endif
 

@@ -9,6 +9,9 @@
 #ifndef VRORenderContextMetal_h
 #define VRORenderContextMetal_h
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 #include <stdio.h>
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
@@ -91,4 +94,5 @@ private:
     
 };
 
+#endif
 #endif /* VRORenderContextMetal_h */

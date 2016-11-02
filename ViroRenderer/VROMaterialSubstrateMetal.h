@@ -9,6 +9,9 @@
 #ifndef VROMaterialSubstrateMetal_h
 #define VROMaterialSubstrateMetal_h
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 #include "VROMaterial.h"
 #include <Metal/Metal.h>
 #include <MetalKit/MetalKit.h>
@@ -98,4 +101,5 @@ private:
     
 };
 
+#endif
 #endif /* VROMaterialSubstrateMetal_h */

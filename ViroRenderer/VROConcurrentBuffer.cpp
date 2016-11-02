@@ -7,6 +7,7 @@
 //
 
 #include "VROConcurrentBuffer.h"
+#if VRO_METAL
 
 VROConcurrentBuffer::VROConcurrentBuffer(int size, NSString *label, id <MTLDevice> device) :
     _size(size) {
@@ -21,3 +22,5 @@ VROConcurrentBuffer::VROConcurrentBuffer(int size, NSString *label, id <MTLDevic
 VROConcurrentBuffer::~VROConcurrentBuffer() {
     
 }
+
+#endif

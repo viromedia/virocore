@@ -9,6 +9,9 @@
 #ifndef VROGeometrySubstrateMetal_h
 #define VROGeometrySubstrateMetal_h
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 #include "VROGeometrySubstrate.h"
 #include "VROGeometrySource.h"
 #include "VROGeometryElement.h"
@@ -146,4 +149,5 @@ private:
     
 };
 
+#endif
 #endif /* VROGeometrySubstrateMetal_h */

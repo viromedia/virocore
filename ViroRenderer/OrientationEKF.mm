@@ -4,9 +4,9 @@
 //
 
 #include "OrientationEKF.h"
+#if VRO_METAL
 
 #include "SO3Util.h"
-
 #include <cmath>
 #include <algorithm>
 
@@ -250,3 +250,5 @@ void OrientationEKF::accelerationObservationFunctionForNumericalJacobian(Matrix3
     SO3Util::so3FromTwoVecN(&_vH, &_vZ, &temp);
     SO3Util::muFromSO3(&temp, result);
 }
+
+#endif

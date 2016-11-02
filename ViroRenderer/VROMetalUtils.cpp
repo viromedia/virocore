@@ -7,6 +7,8 @@
 //
 
 #include "VROMetalUtils.h"
+#if VRO_METAL
+
 #include "VROVector3f.h"
 #include "VROVector4f.h"
 #include "VROMatrix4f.h"
@@ -34,3 +36,4 @@ matrix_float4x4 toMatrixFloat4x4(VROMatrix4f m) {
     return m4x4;
 }
 
+#endif

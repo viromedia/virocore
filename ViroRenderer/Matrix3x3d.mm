@@ -4,6 +4,7 @@
 //
 
 #include "Matrix3x3d.h"
+#if VRO_METAL
 
 Matrix3x3d::Matrix3x3d()
 {
@@ -219,3 +220,5 @@ GLKMatrix3 Matrix3x3d::getGLKMatrix()
                           _m[3], _m[4], _m[5],
                           _m[6], _m[7], _m[8]);
 }
+
+#endif

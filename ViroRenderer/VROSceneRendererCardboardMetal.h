@@ -9,6 +9,9 @@
 #ifndef VROSceneRendererCardboardMetal_h
 #define VROSceneRendererCardboardMetal_h
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 #import "VROSceneRendererCardboard.h"
 #import <memory>
 #import <Metal/Metal.h>
@@ -77,4 +80,5 @@ private:
     
 };
 
+#endif
 #endif /* VROSceneRendererCardboardMetal_h */

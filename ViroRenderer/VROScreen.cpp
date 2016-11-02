@@ -7,6 +7,7 @@
 //
 
 #include "VROScreen.h"
+#if VRO_METAL
 
 #include <sys/utsname.h>
 
@@ -142,3 +143,5 @@ float VROScreen::pixelsPerInch(UIScreen *screen) {
     
     return pixelsPerInch;
 }
+
+#endif

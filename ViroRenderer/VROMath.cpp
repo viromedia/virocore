@@ -511,7 +511,7 @@ void VROMathTransposeMatrix(const float *src, float *transpose) {
     transpose[15] = src[15];
 }
 
-static __attribute__((__always_inline__, __nodebug__)) void invert4x4(const float *src, float *dst) {
+static __attribute__((__always_inline__, __nodebug__)) void invert4x4_simd(const float *src, float *dst) {
     typedef __attribute__((__ext_vector_type__(4))) float float4;
     
     float4 row0, row1, row2, row3;
@@ -639,8 +639,75 @@ static __attribute__((__always_inline__, __nodebug__)) void invert4x4(const floa
     ((float4 *) dst)[3] = col3;
 }
 
+void invert4x4(const float *src, float *inverse) {
+    float temp[16];
+    int i, j, k, swap;
+    float t;
+    
+    for (int i = 0; i < 16; i++) {
+        temp[i] = src[i];
+    }
+    
+    VROMathMakeIdentity(inverse);
+    
+    for (i = 0; i < 4; i++) {
+        /*
+         * Look for largest element in column
+         */
+        swap = i;
+        for (j = i + 1; j < 4; j++) {
+            if (std::abs(temp[(j << 2) + i]) > std::abs(temp[(i << 2) + i])) {
+                swap = j;
+            }
+        }
+        
+        if (swap != i) {
+            /*
+             * Swap rows.
+             */
+            for (k = 0; k < 4; k++) {
+                t = temp[(i << 2) + k];
+                temp[(i << 2) + k] = temp[(swap << 2) + k];
+                temp[(swap << 2) + k] = t;
+                
+                t = inverse[(i << 2) + k];
+                inverse[(i << 2) + k] = inverse[(swap << 2) + k];
+                
+                inverse[(swap << 2) + k] = t;
+            }
+        }
+        
+        if (temp[(i << 2) + i] == 0) {
+            /*
+             * No non-zero pivot. The matrix is singular, which shouldn't
+             * happen. This means the user gave us a bad matrix.
+             */
+            return;
+        }
+        
+        t = temp[(i << 2) + i];
+        for (k = 0; k < 4; k++) {
+            temp[(i << 2) + k] /= t;
+            inverse[(i << 2) + k] = inverse[(i << 2) + k] / t;
+        }
+        for (j = 0; j < 4; j++) {
+            if (j != i) {
+                t = temp[(j << 2) + i];
+                for (k = 0; k < 4; k++) {
+                    temp[(j << 2) + k] -= temp[(i << 2) + k] * t;
+                    inverse[(j << 2) + k] = inverse[(j << 2) + k] - inverse[(i << 2) + k] * t;
+                }
+            }
+        }
+    }
+}
+
 bool VROMathInvertMatrix(const float *src, float *inverse) {
+#if TARGET_OS_SIMULATOR
     invert4x4(src, inverse);
+#else
+    invert4x4_simd(src, inverse);
+#endif
     return true;
 }
 

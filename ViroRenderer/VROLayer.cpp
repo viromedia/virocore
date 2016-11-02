@@ -11,7 +11,7 @@
 #include "VROSurface.h"
 #include "VROTexture.h"
 #include "VROMaterial.h"
-#include "VROTextureSubstrateMetal.h"
+#include "VROTextureSubstrate.h"
 
 #pragma mark - Initialization
 

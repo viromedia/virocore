@@ -7,6 +7,8 @@
 //
 
 #include "VROVideoTextureCacheMetal.h"
+#if VRO_METAL
+
 #include "VROLog.h"
 #include "VROTextureSubstrateMetal.h"
 
@@ -73,3 +75,5 @@ std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheMetal::createTextureSub
     CVBufferRelease(textureRef);
     return std::unique_ptr<VROTextureSubstrateMetal>(new VROTextureSubstrateMetal(videoTexture));
 }
+
+#endif

@@ -9,6 +9,9 @@
 #ifndef VROTextureSubstrateMetal_h
 #define VROTextureSubstrateMetal_h
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 #include <UIKit/UIKit.h>
 #include <Metal/Metal.h>
 #include <vector>
@@ -67,4 +70,5 @@ private:
     
 };
 
+#endif
 #endif /* VROTextureSubstrateMetal_h */

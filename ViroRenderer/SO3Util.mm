@@ -4,6 +4,7 @@
 //
 
 #include "SO3Util.h"
+#if VRO_METAL
 
 void SO3Util::so3FromTwoVecN(Vector3d *a, Vector3d *b, Matrix3x3d *result)
 {
@@ -179,3 +180,5 @@ void SO3Util::generatorField(int i, Matrix3x3d *pos, Matrix3x3d *result)
                 0,
                 pos->get((i + 1) % 3, 0));
 }
+
+#endif

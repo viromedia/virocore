@@ -6,6 +6,9 @@
 #ifndef __CardboardSDK_iOS__Vector3d__
 #define __CardboardSDK_iOS__Vector3d__
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 class Vector3d
 {
     friend class Matrix3x3d;
@@ -39,4 +42,5 @@ class Vector3d
     double _z;
 };
 
+#endif
 #endif

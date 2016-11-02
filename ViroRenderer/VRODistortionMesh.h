@@ -9,8 +9,11 @@
 #ifndef VRODistortionMesh_h
 #define VRODistortionMesh_h
 
-#include <MetalKit/MetalKit.h>
+#include "VRODefines.h"
+#if VRO_METAL
+
 #include "VRODistortion.h"
+#include <MetalKit/MetalKit.h>
 
 /*
  The mesh onto which we render each eye to perform barrel distortion.
@@ -41,4 +44,5 @@ private:
 
 };
 
+#endif /* VRO_METAL */
 #endif /* VRODistortionMesh_h */

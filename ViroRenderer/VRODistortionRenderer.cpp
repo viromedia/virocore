@@ -7,6 +7,8 @@
 //
 
 #include "VRODistortionRenderer.h"
+#if VRO_METAL
+
 #include "VROMath.h"
 #include "VROViewport.h"
 #include "VROScreen.h"
@@ -335,3 +337,5 @@ float VRODistortionRenderer::computeDistortionScale(const VRODistortion &distort
                                                     float interpupillaryDistanceM) {
     return distortion.getDistortionFactor((screenWidthM / 2.0f - interpupillaryDistanceM / 2.0f) / (screenWidthM / 4.0f));
 }
+
+#endif

@@ -7,6 +7,8 @@
 //
 
 #import "VROViewMetal.h"
+#if VRO_METAL
+
 #import "VRODriverMetal.h"
 #import "VROAllocationTracker.h"
 #import "VRORenderer.h"
@@ -336,3 +338,5 @@
 }
 
 @end
+
+#endif

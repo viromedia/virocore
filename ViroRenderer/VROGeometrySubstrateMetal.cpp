@@ -7,6 +7,8 @@
 //
 
 #include "VROGeometrySubstrateMetal.h"
+#if VRO_METAL
+
 #include "VROGeometry.h"
 #include "VROGeometrySource.h"
 #include "VROGeometryElement.h"
@@ -371,3 +373,5 @@ void VROGeometrySubstrateMetal::renderMaterial(VROMaterialSubstrateMetal *materi
                              indexBuffer:element.buffer
                        indexBufferOffset:0];
 }
+
+#endif

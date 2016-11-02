@@ -9,6 +9,9 @@
 #ifndef VROScreen_h
 #define VROScreen_h
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 #include <stdio.h>
 #include <UIKit/UIKit.h>
 
@@ -39,4 +42,5 @@ private:
     
 };
 
+#endif
 #endif /* VROScreen_h */

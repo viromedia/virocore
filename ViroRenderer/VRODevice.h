@@ -9,6 +9,9 @@
 #ifndef VRODevice_h
 #define VRODevice_h
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 #include <string>
 #include "VRODistortion.h"
 #include "VROFieldOfView.h"
@@ -80,4 +83,5 @@ private:
     
 };
 
+#endif
 #endif /* VRODevice_h */

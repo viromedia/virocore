@@ -9,14 +9,12 @@
 #include "VROVideoTexture.h"
 #include "VRORenderContext.h"
 #include "VROFrameSynchronizer.h"
-#include "VRODriverMetal.h"
 #include "VROLog.h"
-#include "VROTextureSubstrateMetal.h"
 #include "VROTime.h"
 #include "VROAllocationTracker.h"
 #include "VROVideoTextureCache.h"
-#include <Metal/Metal.h>
-#include <MetalKit/MetalKit.h>
+#include "VRODriver.h"
+#include "VROTextureSubstrate.h"
 
 # define ONE_FRAME_DURATION 0.03
 

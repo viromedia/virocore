@@ -9,6 +9,9 @@
 #ifndef VROMetalUtils_h
 #define VROMetalUtils_h
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 #import <simd/simd.h>
 
 class VROVector3f;
@@ -20,4 +23,5 @@ vector_float4 toVectorFloat4(VROVector3f v, float w);
 vector_float4 toVectorFloat4(VROVector4f v);
 matrix_float4x4 toMatrixFloat4x4(VROMatrix4f m);
 
+#endif
 #endif /* VROMetalUtils_h */

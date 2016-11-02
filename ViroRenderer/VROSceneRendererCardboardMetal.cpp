@@ -7,6 +7,8 @@
 //
 
 #import "VROSceneRendererCardboardMetal.h"
+#if VRO_METAL
+
 #import <GLKit/GLKit.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES2/gl.h>
@@ -276,3 +278,5 @@ void VROSceneRendererCardboardMetal::buildFullScreenQuadVAR() {
 void VROSceneRendererCardboardMetal::setSuspended(bool suspended) {
     _suspended = suspended;
 }
+
+#endif

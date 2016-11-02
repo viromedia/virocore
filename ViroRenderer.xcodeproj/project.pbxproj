@@ -236,15 +236,11 @@
 		8FD4DF1E1C18ED57003DC425 /* VROCrossLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1071D51BF41791003B3C3F /* VROCrossLayout.cpp */; };
 		8FD4DF1F1C18EDA4003DC425 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FDFA8AC1BDEC34C00883EC0 /* CoreMotion.framework */; };
 		8FD4DF201C18EDA4003DC425 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FDFA8AA1BDEC32700883EC0 /* GLKit.framework */; };
-		8FD4DF211C18EDA4003DC425 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517BF41BCDBF140017C70B /* Metal.framework */; };
-		8FD4DF221C18EDA4003DC425 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517BF51BCDBF140017C70B /* MetalKit.framework */; };
 		8FD4DF241C18EDBF003DC425 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DF231C18EDBF003DC425 /* CoreGraphics.framework */; };
 		8FD4DF261C18EDC8003DC425 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DF251C18EDC8003DC425 /* UIKit.framework */; };
 		8FD4DF281C18EDD4003DC425 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DF271C18EDD4003DC425 /* QuartzCore.framework */; };
 		8FD4DF291C18EE6F003DC425 /* VROWorldUIView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8F1071D01BE81F10003B3C3F /* VROWorldUIView.mm */; };
 		8FD4DF2A1C18EE7F003DC425 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC21BCDA2BD0017C70B /* Shaders.metal */; };
-		8FD4DF2C1C18EFFE003DC425 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517BF41BCDBF140017C70B /* Metal.framework */; };
-		8FD4DF2D1C18EFFE003DC425 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517BF51BCDBF140017C70B /* MetalKit.framework */; };
 		8FD4DF2F1C18F3F4003DC425 /* blank.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F152A7C1C11351D00A211F8 /* blank.png */; };
 		8FD4DF311C18F47F003DC425 /* VROScene.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F5C413D1BD56F98006D7A77 /* VROScene.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DF321C18F500003DC425 /* VROCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1071DA1BF67F34003B3C3F /* VROCamera.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -688,6 +684,7 @@
 		8FEA6C981BE2BA7700C2CD0F /* VRODistortionMesh.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODistortionMesh.cpp; sourceTree = "<group>"; };
 		8FEA6C991BE2BA7700C2CD0F /* VRODistortionMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODistortionMesh.h; sourceTree = "<group>"; };
 		8FEA6C9C1BE3DC7100C2CD0F /* VRORenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORenderTarget.h; sourceTree = "<group>"; };
+		8FF253B11DC9398A00C1C5C7 /* VRODefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODefines.h; sourceTree = "<group>"; };
 		8FF4D7A71C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROMaterialSubstrateMetal.cpp; sourceTree = "<group>"; };
 		8FF4D7A81C0D45DA006D6157 /* VROMaterialSubstrateMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialSubstrateMetal.h; sourceTree = "<group>"; };
 		B1049B08B869A86043674A7C /* Pods-ViroSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.release.xcconfig"; sourceTree = "<group>"; };
@@ -700,8 +697,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8FD4DF2C1C18EFFE003DC425 /* Metal.framework in Frameworks */,
-				8FD4DF2D1C18EFFE003DC425 /* MetalKit.framework in Frameworks */,
 				8FD4DEE21C18ECD4003DC425 /* ViroKit.framework in Frameworks */,
 				EC8D0A685CE2FA0BE80B7363 /* libPods-ViroSample.a in Frameworks */,
 			);
@@ -735,8 +730,6 @@
 				8FD4DF241C18EDBF003DC425 /* CoreGraphics.framework in Frameworks */,
 				8FD4DF1F1C18EDA4003DC425 /* CoreMotion.framework in Frameworks */,
 				8FD4DF201C18EDA4003DC425 /* GLKit.framework in Frameworks */,
-				8FD4DF211C18EDA4003DC425 /* Metal.framework in Frameworks */,
-				8FD4DF221C18EDA4003DC425 /* MetalKit.framework in Frameworks */,
 				6386C3B94B3E92D246F8F9EB /* libPods-ViroKit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1034,6 +1027,7 @@
 				8F1071D41BF416C1003B3C3F /* Layout */,
 				8F1071CE1BE81EE8003B3C3F /* UI */,
 				8F517BC41BCDA2BD0017C70B /* VROSharedStructures.h */,
+				8FF253B11DC9398A00C1C5C7 /* VRODefines.h */,
 				8F517BB91BCDA2BD0017C70B /* Supporting Files */,
 			);
 			path = ViroRenderer;

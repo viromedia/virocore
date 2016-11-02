@@ -9,6 +9,9 @@
 #ifndef __CardboardSDK_iOS__HeadTracker__
 #define __CardboardSDK_iOS__HeadTracker__
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 #include "OrientationEKF.h"
 
 #import <CoreMotion/CoreMotion.h>
@@ -51,4 +54,5 @@ private:
     
 };
 
+#endif
 #endif

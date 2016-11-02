@@ -6,6 +6,9 @@
 #ifndef __CardboardSDK_iOS__OrientationEKF__
 #define __CardboardSDK_iOS__OrientationEKF__
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 #include "Vector3d.h"
 #include "Matrix3x3d.h"
 
@@ -64,4 +67,5 @@ class OrientationEKF
     void accelerationObservationFunctionForNumericalJacobian(Matrix3x3d *so3SensorFromWorldPred, Vector3d *result);
 };
 
+#endif
 #endif

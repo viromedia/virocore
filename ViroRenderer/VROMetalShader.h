@@ -9,6 +9,9 @@
 #ifndef VROMetalShader_h
 #define VROMetalShader_h
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 static std::atomic_int sShaderId;
 
 class VROMetalShader {
@@ -29,4 +32,5 @@ private:
     id <MTLFunction> _fragmentProgram;
 };
 
+#endif
 #endif /* VROMetalShader_h */

@@ -9,7 +9,11 @@
 #ifndef VROViewport_hpp
 #define VROViewport_hpp
 
+#include "VRODefines.h"
+
+#if VRO_METAL
 #include <MetalKit/MetalKit.h>
+#endif
 
 class VROViewport {
     
@@ -35,6 +39,7 @@ public:
         _height = height;
     }
     
+#if VRO_METAL
     MTLViewport toMetalViewport() const {
         MTLViewport viewport;
         viewport.originX = _x;
@@ -56,6 +61,7 @@ public:
         
         return scissor;
     }
+#endif
     
     void toArray(int *viewport) const {
         viewport[0] = _x;

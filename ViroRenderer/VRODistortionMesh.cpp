@@ -7,6 +7,8 @@
 //
 
 #include "VRODistortionMesh.h"
+#if VRO_METAL
+
 #include "VROMath.h"
 
 VRODistortionMesh::VRODistortionMesh(const VRODistortion distortionRed,
@@ -131,3 +133,5 @@ void VRODistortionMesh::render(id <MTLRenderCommandEncoder> renderEncoder) const
                              indexBuffer:_indexBuffer
                        indexBufferOffset:0];
 }
+
+#endif
