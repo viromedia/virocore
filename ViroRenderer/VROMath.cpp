@@ -8,6 +8,7 @@
 
 #include "VROMath.h"
 #include <algorithm>
+#include <limits>
 
 VROMatrix4f matrix_from_scale(float sx, float sy, float sz) {
     VROMatrix4f m;
@@ -25,34 +26,6 @@ VROMatrix4f matrix_from_translation(float x, float y, float z) {
     m[14] = z;
     
     return m;
-}
-
-VROMatrix4f matrix_from_rotation(float radians, float x, float y, float z) {
-    vector_float3 v = vector_normalize(((vector_float3){x, y, z}));
-    float cos = cosf(radians);
-    float cosp = 1.0f - cos;
-    float sin = sinf(radians);
-    
-    float m[16] = {
-            cos + cosp * v.x * v.x,
-            cosp * v.x * v.y + v.z * sin,
-            cosp * v.x * v.z - v.y * sin,
-            0.0f,
-        
-            cosp * v.x * v.y - v.z * sin,
-            cos + cosp * v.y * v.y,
-            cosp * v.y * v.z + v.x * sin,
-            0.0f,
-        
-            cosp * v.x * v.z + v.y * sin,
-            cosp * v.y * v.z - v.x * sin,
-            cos + cosp * v.z * v.z,
-            0.0f,
-        
-            0.0f, 0.0f, 0.0f, 1.0f
-    };
-    
-    return VROMatrix4f(m);
 }
 
 VROMatrix4f matrix_from_perspective_fov_aspectLH(const float fovY, const float aspect, const float nearZ, const float farZ) {
@@ -91,17 +64,6 @@ VROMatrix4f matrix_for_frustum(const float left, const float right,
            0, 0, x_2nf / m_nf, 0
     };
 
-    return VROMatrix4f(m);
-}
-
-VROMatrix4f matrix_float4x4_from_GL(GLKMatrix4 glm) {
-    float m[16] = {
-        glm.m[0],  glm.m[1],  glm.m[2],  glm.m[3] ,
-        glm.m[4],  glm.m[5],  glm.m[6],  glm.m[7] ,
-        glm.m[8],  glm.m[9],  glm.m[10], glm.m[11],
-        glm.m[12], glm.m[13], glm.m[14], glm.m[15]
-    };
-    
     return VROMatrix4f(m);
 }
 
@@ -656,7 +618,7 @@ void invert4x4(const float *src, float *inverse) {
          */
         swap = i;
         for (j = i + 1; j < 4; j++) {
-            if (std::abs(temp[(j << 2) + i]) > std::abs(temp[(i << 2) + i])) {
+            if (std::abs((int)temp[(j << 2) + i]) > std::abs((int)temp[(i << 2) + i])) {
                 swap = j;
             }
         }
@@ -728,7 +690,7 @@ bool VROMathInvertMatrix_d(const double *src, double *inverse) {
          */
         swap = i;
         for (j = i + 1; j < 4; j++) {
-            if (std::abs(temp[(j << 2) + i]) > std::abs(temp[(i << 2) + i])) {
+            if (std::abs((int)temp[(j << 2) + i]) > std::abs((int)temp[(i << 2) + i])) {
                 swap = j;
             }
         }
@@ -863,7 +825,7 @@ double VROMathClamp(double input, double min, double max) {
 
 float VROMathMin(const float values[], int count) {
     if (count < 1) {
-        return FLT_MAX;
+        return std::numeric_limits<float>::max();
     }
     float minValue = values[0];
     for (int i = 1; i < count; i++) {
@@ -874,7 +836,7 @@ float VROMathMin(const float values[], int count) {
 
 float VROMathMax(const float values[], int count) {
     if (count < 1) {
-        return FLT_MIN;
+        return std::numeric_limits<float>::min();
     }
     float maxValue = values[0];
     for (int i = 1; i < count; i++) {
@@ -1189,12 +1151,12 @@ VROVector3f VROMathGetCenter(std::vector<VROVector3f> &vertices) {
 }
 
 VROBoundingBox VROMathGetBoundingBox(std::vector<VROVector3f> &vertices) {
-        float minX =  FLT_MAX;
-        float maxX = -FLT_MAX;
-        float minY =  FLT_MAX;
-        float maxY = -FLT_MAX;
-        float minZ =  FLT_MAX;
-        float maxZ = -FLT_MAX;
+    float minX = std::numeric_limits<float>::max();
+    float maxX = std::numeric_limits<float>::lowest();
+    float minY = std::numeric_limits<float>::max();
+    float maxY = std::numeric_limits<float>::lowest();
+    float minZ = std::numeric_limits<float>::max();
+    float maxZ = std::numeric_limits<float>::lowest();
     
     for (VROVector3f &vertex : vertices) {
         if (vertex.x < minX) {

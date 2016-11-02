@@ -12,6 +12,7 @@
 #include "VRODriverOpenGL.h"
 #include "VROViewport.h"
 #include "VROEye.h"
+#include "VROConvert.h"
 
 VROSceneRendererCardboardOpenGL::VROSceneRendererCardboardOpenGL(EAGLContext *context,
                                                                  std::shared_ptr<VRORenderer> renderer) :
@@ -50,7 +51,7 @@ void VROSceneRendererCardboardOpenGL::setSceneController(VROSceneController *sce
 }
 
 void VROSceneRendererCardboardOpenGL::prepareFrame(GVRHeadTransform *headTransform) {
-    VROMatrix4f headRotation = matrix_float4x4_from_GL([headTransform headPoseInStartSpace]).invert();
+    VROMatrix4f headRotation = VROConvert::toMatrix4f([headTransform headPoseInStartSpace]).invert();
     _renderer->prepareFrame(_frame, headRotation, *_driver.get());
     
     glEnable(GL_DEPTH_TEST);
@@ -74,8 +75,8 @@ void VROSceneRendererCardboardOpenGL::renderEye(GVREye eye, GVRHeadTransform *he
     CGRect rect = [headTransform viewportForEye:eye];
     VROViewport viewport(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
-    VROMatrix4f eyeMatrix = matrix_float4x4_from_GL([headTransform eyeFromHeadMatrix:eye]);
-    VROMatrix4f projectionMatrix = matrix_float4x4_from_GL([headTransform projectionMatrixForEye:eye near:0.01 far:100]); //TODO Near far
+    VROMatrix4f eyeMatrix = VROConvert::toMatrix4f([headTransform eyeFromHeadMatrix:eye]);
+    VROMatrix4f projectionMatrix = VROConvert::toMatrix4f([headTransform projectionMatrixForEye:eye near:0.01 far:100]); //TODO Near far
     
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     glScissor(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());

@@ -18,6 +18,7 @@
 #import "VRORenderTarget.h"
 #import "VROViewport.h"
 #import "VROEye.h"
+#import "VROConvert.h"
 
 static const float kSampleCount = 4;
 static const MTLPixelFormat kResolvePixelFormat = MTLPixelFormatRGBA8Unorm;
@@ -102,7 +103,7 @@ void VROSceneRendererCardboardMetal::prepareFrame(GVRHeadTransform *headTransfor
     _eyeTarget = createEyeRenderTarget();
     _driver->setRenderTarget(_eyeTarget);
     
-    VROMatrix4f headRotation = matrix_float4x4_from_GL([headTransform headPoseInStartSpace]);
+    VROMatrix4f headRotation = VROConvert::toMatrix4f([headTransform headPoseInStartSpace]);
     _renderer->prepareFrame(_frame, headRotation, *_driver.get());
     
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -118,8 +119,8 @@ void VROSceneRendererCardboardMetal::renderEye(GVREye eye, GVRHeadTransform *hea
     CGRect rect = [headTransform viewportForEye:eye];
     VROViewport viewport(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
-    VROMatrix4f eyeMatrix = matrix_float4x4_from_GL([headTransform eyeFromHeadMatrix:eye]);
-    VROMatrix4f projectionMatrix = matrix_float4x4_from_GL([headTransform projectionMatrixForEye:eye near:kZNear far:kZFar]);
+    VROMatrix4f eyeMatrix = VROConvert::toMatrix4f([headTransform eyeFromHeadMatrix:eye]);
+    VROMatrix4f projectionMatrix = VROConvert::toMatrix4f([headTransform projectionMatrixForEye:eye near:kZNear far:kZFar]);
     
     id <MTLRenderCommandEncoder> renderEncoder = _eyeTarget->getRenderEncoder();
     [renderEncoder setViewport:viewport.toMetalViewport()];

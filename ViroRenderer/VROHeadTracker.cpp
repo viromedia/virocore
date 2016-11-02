@@ -11,6 +11,7 @@
 
 #include "VROMath.h"
 #include "VROQuaternion.h"
+#include "VROConvert.h"
 
 #define HEAD_TRACKER_MODE_CORE_MOTION 1
 #define HEAD_TRACKER_MODE_CORE_MOTION_EKF 2
@@ -227,7 +228,7 @@ VROMatrix4f VROHeadTracker::getHeadRotation() {
     GLKMatrix4 rotationMatrix_world = GLKMatrix4Multiply(rotationMatrix_IRF, _correctedIRFToWorldMatrix);
     GLKMatrix4 rotationMatrix_display = GLKMatrix4Multiply(_worldToDeviceMatrix, rotationMatrix_world);
     
-    _lastHeadRotation = matrix_float4x4_from_GL(rotationMatrix_display);
+    _lastHeadRotation = VROConvert::toMatrix4f(rotationMatrix_display);
     VROQuaternion quatNew(_lastHeadRotation);
 
     return _lastHeadRotation;
