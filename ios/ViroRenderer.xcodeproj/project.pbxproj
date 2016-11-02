@@ -1003,7 +1003,6 @@
 			isa = PBXGroup;
 			children = (
 				8ABD8F331DB70C8900BD9C83 /* Model */,
-				8FB659241CD9082000D036EB /* Platforms */,
 				8F0FE6601CD25A2300A4C297 /* Drivers */,
 				8F5C414B1BD825A9006D7A77 /* Util */,
 				8F517C441BD0472C0017C70B /* Math */,
@@ -1251,6 +1250,7 @@
 		8FD4DECE1C18ECD4003DC425 /* ViroKit */ = {
 			isa = PBXGroup;
 			children = (
+				8FB659241CD9082000D036EB /* Platforms */,
 				8FD4DECF1C18ECD4003DC425 /* ViroKit.h */,
 				8F11B7C01C20B0530026D150 /* VROView.h */,
 				8F11B7C41C20B2A20026D150 /* VRORenderDelegate.h */,
