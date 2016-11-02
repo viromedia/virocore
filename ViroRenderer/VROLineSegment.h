@@ -11,8 +11,6 @@
 
 #include "VROVector3f.h"
 
-class VROBoundingBox;
-
 enum class VROOrientation {
     Colinear = 0,
     Left = 1,
@@ -188,20 +186,23 @@ public:
     std::string toString() const;
 
     inline bool operator==(const VROLineSegment &other) const {
-        return other._A == _A && other._B == _B;
+        return other.__A == __A && other.__B == __B;
     }
 
 private:
     
+    // Note: we use double underscores here (__A, __B, etc.) because _B is a
+    //       reserved macro on some platforms (Android NDK)
+    
     /*
      The two points joined by this segment.
      */
-    VROVector3f _A, _B;
+    VROVector3f __A, __B;
 
     /*
      Useful values for intermediate calculations.
      */
-    float _ABx, _ABy, _ABz;
+    float __ABx, __ABy, __ABz;
     
     /*
      Square of the length.

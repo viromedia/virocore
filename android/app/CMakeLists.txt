@@ -4,6 +4,8 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
+include_directories(../../ViroRenderer)
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds it for you.
@@ -18,7 +20,21 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              # Associated headers in the same location as their source
              # file are automatically included.
-             src/main/cpp/native-lib.cpp )
+             src/main/cpp/native-lib.cpp
+
+             # Math
+             ../../ViroRenderer/VROLineSegment.cpp
+             ../../ViroRenderer/VROTriangle.cpp
+             ../../ViroRenderer/VROQuaternion.cpp
+             ../../ViroRenderer/VROPlane.cpp
+             ../../ViroRenderer/VROFrustum.cpp
+             ../../ViroRenderer/VROFrustumPlane.cpp
+             ../../ViroRenderer/VROBoundingBox.cpp
+             ../../ViroRenderer/VROVector3f.cpp
+             ../../ViroRenderer/VROVector4f.cpp
+             ../../ViroRenderer/VROMatrix4f.cpp
+             ../../ViroRenderer/VROMath.cpp
+             ../../ViroRenderer/VROProjector.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because system libraries are included in the search path by
