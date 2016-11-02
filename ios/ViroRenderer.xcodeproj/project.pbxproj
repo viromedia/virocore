@@ -799,6 +799,7 @@
 			isa = PBXGroup;
 			children = (
 				8F517BFC1BCDC9170017C70B /* VRODriverMetal.h */,
+				8F517BC41BCDA2BD0017C70B /* VROSharedStructures.h */,
 				8F4DCE501BFD628A00061DD7 /* VROGeometrySubstrateMetal.h */,
 				8F4DCE4F1BFD628A00061DD7 /* VROGeometrySubstrateMetal.cpp */,
 				8FF4D7A81C0D45DA006D6157 /* VROMaterialSubstrateMetal.h */,
@@ -1009,7 +1010,6 @@
 				8F1071D81BF67EF7003B3C3F /* Renderer */,
 				8F517BEF1BCDBA570017C70B /* Layer */,
 				8F1071CE1BE81EE8003B3C3F /* UI */,
-				8F517BC41BCDA2BD0017C70B /* VROSharedStructures.h */,
 				8FF253B11DC9398A00C1C5C7 /* VRODefines.h */,
 				8F517BB91BCDA2BD0017C70B /* Supporting Files */,
 			);

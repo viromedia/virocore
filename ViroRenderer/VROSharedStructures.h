@@ -9,6 +9,9 @@
 #ifndef VROSharedStructures_h
 #define VROSharedStructures_h
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 #include <simd/simd.h>
 
 typedef struct {
@@ -50,5 +53,6 @@ typedef struct {
     float texcoord_scale;
 } VRODistortionUniforms;
 
+#endif
 #endif /* SharedStructures_h */
 
