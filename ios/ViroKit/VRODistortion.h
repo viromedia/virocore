@@ -13,6 +13,7 @@
 #if VRO_METAL
 
 #include <stdio.h>
+#include <cmath>
 
 /*
  Parameterizes the barrel distortion to use in the distortion renderer.
@@ -57,7 +58,7 @@ public:
         float r = radius * 0.9f;
         float dr0 = radius - distort(r0);
         
-        while (fabsf(r - r0) > 0.0001f) {
+        while (std::abs((float) (r - r0)) > 0.0001f) {
             float dr = radius - distort(r);
             float r2 = r - dr * ((r - r0) / (dr - dr0));
             r0 = r;

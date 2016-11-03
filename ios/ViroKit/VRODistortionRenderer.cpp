@@ -102,10 +102,10 @@ void VRODistortionRenderer::fovDidChange(VROEye *leftEye, VROEye *rightEye,
 }
 
 VROEyeViewport::VROEyeViewport(const VROFieldOfView &eyeFOV, float xOffset) {
-    float left   = tanf(GLKMathDegreesToRadians(eyeFOV.getLeft()));
-    float right  = tanf(GLKMathDegreesToRadians(eyeFOV.getRight()));
-    float bottom = tanf(GLKMathDegreesToRadians(eyeFOV.getBottom()));
-    float top    = tanf(GLKMathDegreesToRadians(eyeFOV.getTop()));
+    float left   = tanf(toRadians(eyeFOV.getLeft()));
+    float right  = tanf(toRadians(eyeFOV.getRight()));
+    float bottom = tanf(toRadians(eyeFOV.getBottom()));
+    float top    = tanf(toRadians(eyeFOV.getTop()));
     
     x = xOffset;
     y = 0.0f;
