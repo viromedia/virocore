@@ -11,8 +11,9 @@
 #define DECAF_BAD 0xdecafbad
 #define LOG_BUFFER_SIZE 1024
 
-#ifdef ANDROID_BUILD
+#if VRO_PLATFORM_ANDROID
 #include "debug_stacktrace.h"
+#include <cstdio>
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -22,20 +23,7 @@
 #pragma mark -
 #pragma mark Android Logging
 
-void pwtf_args(const char *fmt, va_list args) {
-    char buf[LOG_BUFFER_SIZE];
-    vsnprintf(buf, LOG_BUFFER_SIZE, fmt, args);
-    pwtf_jni(buf);
-}
-
-void pwtf(const char *fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    pwtf_args(fmt, args);
-    va_end(args);
-}
-
-#else
+#elif VRO_PLATFORM_IOS
 
 #import <UIKit/UIKit.h>
 
@@ -60,7 +48,7 @@ void pwtf(const char *fmt, ...) {
 #pragma mark (Common) Stack Trace
 
 void pstack(const char *fmt, ...) {
-#ifdef ANDROID_BUILD
+#if VRO_PLATFORM_ANDROID
     va_list args;
     va_start(args, fmt);
     va_end(args);
@@ -70,7 +58,7 @@ void pstack(const char *fmt, ...) {
 }
 
 void pstack() {
-#ifdef ANDROID_BUILD
+#if VRO_PLATFORM_ANDROID
     DebugStacktrace::getInstance().logStacktrace(2);
 #endif
 }

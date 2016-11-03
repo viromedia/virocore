@@ -16,12 +16,7 @@
 #include <vector>
 #include "VROLog.h"
 #include "VROUniform.h"
-
-#import <GLKit/GLKit.h>
-#import <OpenGLES/EAGL.h>
-#import <OpenGLES/ES2/gl.h>
-#import <OpenGLES/ES2/glext.h>
-#import <OpenGLES/ES3/glext.h>
+#include "VROOpenGL.h"
 
 enum class VROGeometrySourceSemantic;
 

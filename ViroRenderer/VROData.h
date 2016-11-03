@@ -26,6 +26,12 @@ public:
      ownership of the bytes.
      */
     VROData(void *data, int dataLength, bool copy = true);
+    
+    /*
+     Construct a new VROData, copying the bytes into this object.
+     */
+    VROData(const void *data, int dataLength);
+    
     ~VROData();
     
     void *const getData() {

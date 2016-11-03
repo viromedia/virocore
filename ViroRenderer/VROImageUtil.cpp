@@ -10,6 +10,14 @@
 #include "VROLog.h"
 #include "VROTexture.h"
 
+static std::shared_ptr<VROTexture> staticBlankTexture = nullptr;
+
+std::shared_ptr<VROTexture> getBlankTexture() {
+    return staticBlankTexture;
+}
+
+#if VRO_PLATFORM_IOS
+
 unsigned char *VROExtractRGBA8888FromImage(UIImage *image, size_t *length) {
     CGImageRef imageRef = [image CGImage];
     NSUInteger width = CGImageGetWidth(imageRef);
@@ -47,8 +55,6 @@ void *VROImageLoadTextureDataRGBA8888(const char *resource, size_t *bitmapLength
     return VROExtractRGBA8888FromImage(image, bitmapLength);
 }
 
-static std::shared_ptr<VROTexture> staticBlankTexture = nullptr;
-
 void initBlankTexture(const VRORenderContext &context) {
     NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.viro.ViroKit"];
     NSString *path = [bundle pathForResource:@"blank" ofType:@"png"];
@@ -57,6 +63,15 @@ void initBlankTexture(const VRORenderContext &context) {
     staticBlankTexture = std::make_shared<VROTexture>(image);
 }
 
-std::shared_ptr<VROTexture> getBlankTexture() {
-    return staticBlankTexture;
+#elif VRO_PLATFORM_ANDROID
+
+void *VROImageLoadTextureDataRGBA8888(const char *resource, size_t *bitmapLength, int *width, int *height) {
+    //TODO Android
+    return nullptr;
 }
+
+void initBlankTexture(const VRORenderContext &context) {
+    //TODO Android
+}
+
+#endif

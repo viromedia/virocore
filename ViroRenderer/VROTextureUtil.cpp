@@ -24,12 +24,12 @@ static int read24BitInt(const uint8_t *buf) {
           (static_cast<int>(buf[2]) << 16);
 }
 
-std::shared_ptr<VROTexture> VROTextureUtil::loadASTCTexture(NSData *data, VROTextureType type,
+std::shared_ptr<VROTexture> VROTextureUtil::loadASTCTexture(const uint8_t *data, int length, VROTextureType type,
                                                             VRODriver *driver) {
     int width;
     int height;
     VROTextureFormat format;
-    std::shared_ptr<VROData> stripped = readASTCHeader(data, &format, &width, &height);
+    std::shared_ptr<VROData> stripped = readASTCHeader(data, length, &format, &width, &height);
     
     return std::make_shared<VROTexture>(type, format, stripped, width, height, driver);
 }
@@ -38,11 +38,10 @@ std::shared_ptr<VROTexture> VROTextureUtil::loadASTCTexture(NSData *data, VROTex
  Read a texture file with a PKM header. Read the width and height from the header then
  strip it out and return the raw texture data.
  */
-std::shared_ptr<VROData> VROTextureUtil::readASTCHeader(NSData *data, VROTextureFormat *outFormat,
+std::shared_ptr<VROData> VROTextureUtil::readASTCHeader(const uint8_t *data, int length, VROTextureFormat *outFormat,
                                                         int *outWidth, int *outHeight) {
-    uint8_t *bytes = (uint8_t *)[data bytes];
-    int blockDimX = bytes[kASTCBlockXOffset];
-    int blockDimY = bytes[kASTCBlockYOffset];
+    int blockDimX = data[kASTCBlockXOffset];
+    int blockDimY = data[kASTCBlockYOffset];
     
     if (4 == blockDimX && 4 == blockDimY) {
         *outFormat = VROTextureFormat::ASTC_4x4_LDR;
@@ -91,9 +90,9 @@ std::shared_ptr<VROData> VROTextureUtil::readASTCHeader(NSData *data, VROTexture
         pabort();
     }
     
-    *outWidth  = read24BitInt(bytes + kASTCWidthOffset);
-    *outHeight = read24BitInt(bytes + kASTCHeightOffset);
+    *outWidth  = read24BitInt(data + kASTCWidthOffset);
+    *outHeight = read24BitInt(data + kASTCHeightOffset);
     
-    return std::make_shared<VROData>(((char*) [data bytes]) + kASTCHeaderLength,
-                                     [data length] - kASTCHeaderLength);
+    return std::make_shared<VROData>(((const char *) data) + kASTCHeaderLength,
+                                     length - kASTCHeaderLength);
 }

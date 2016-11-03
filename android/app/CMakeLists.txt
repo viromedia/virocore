@@ -4,7 +4,8 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
-include_directories(../../ViroRenderer)
+include_directories(../../ViroRenderer
+                    src/main/cpp)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -20,7 +21,11 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              # Associated headers in the same location as their source
              # file are automatically included.
+
+             # Android Platform
              src/main/cpp/native-lib.cpp
+             src/main/cpp/debug_stacktrace.cpp
+             src/main/cpp/debug_mapinfo.cpp
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp
@@ -34,20 +39,27 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROVector4f.cpp
              ../../ViroRenderer/VROMatrix4f.cpp
              ../../ViroRenderer/VROMath.cpp
-             ../../ViroRenderer/VROProjector.cpp)
+             ../../ViroRenderer/VROProjector.cpp
+
+             # Util
+             ../../ViroRenderer/VROAllocationTracker.cpp
+             ../../ViroRenderer/VROTime.cpp
+             ../../ViroRenderer/VROLog.cpp
+             ../../ViroRenderer/VROByteBuffer.cpp
+             ../../ViroRenderer/VROImageUtil.cpp
+             ../../ViroRenderer/VROData.cpp
+             )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because system libraries are included in the search path by
 # default, you only need to specify the name of the public NDK library
 # you want to add. CMake verifies that the library exists before
-# completing its build.
+# completing its build. The first argument to find_library is the output
+# variable where the path to the library will be stored.
 
-find_library( # Sets the name of the path variable.
-              log-lib
-
-              # Specifies the name of the NDK library that
-              # you want CMake to locate.
-              log )
+find_library( log-lib log )
+find_library( lib-egl EGL )
+find_library( lib-GLESv3 GLESv3 )
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in the
@@ -58,4 +70,6 @@ target_link_libraries( # Specifies the target library.
 
                        # Links the target library to the log library
                        # included in the NDK.
-                       ${log-lib} )
+                       ${log-lib}
+                       ${lib-egl}
+                       ${lib-GlESv3})

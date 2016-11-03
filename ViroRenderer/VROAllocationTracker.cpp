@@ -7,12 +7,12 @@
 //
 
 #include "VROAllocationTracker.h"
-#include "VROLayer.h"
 #include "VROTime.h"
 #include "VROLog.h"
 #include <mutex>
 #include <map>
 #include <limits>
+#include <atomic>
 
 #define ALLOCATION_TRACKING_FREQUENCY 1 // in Hz
 

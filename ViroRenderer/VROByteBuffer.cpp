@@ -17,10 +17,6 @@
 #include <unistd.h>
 #include "VROMath.h"
 
-#ifdef ANDROID_BUILD
-#include <asm/unaligned.h>
-#endif
-
 #define kBufferDefaultCapacity 128
 
 // Turn on to add debug messaging (and exit) on overruns

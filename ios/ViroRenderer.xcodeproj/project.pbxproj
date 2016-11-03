@@ -498,6 +498,7 @@
 		8F517C461BD0474E0017C70B /* VROMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMath.h; sourceTree = "<group>"; };
 		8F53D39C1DCA883A001C91A8 /* VROConvert.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROConvert.cpp; sourceTree = "<group>"; };
 		8F53D39D1DCA883A001C91A8 /* VROConvert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROConvert.h; sourceTree = "<group>"; };
+		8F53D3A11DCAB670001C91A8 /* VROOpenGL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROOpenGL.h; sourceTree = "<group>"; };
 		8F548E441C23654E00556688 /* VROAnimationFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationFloat.h; sourceTree = "<group>"; };
 		8F548E481C23656000556688 /* VROAnimationVector3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationVector3f.h; sourceTree = "<group>"; };
 		8F548E4C1C23665100556688 /* VROAnimatable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimatable.h; sourceTree = "<group>"; };
@@ -1210,6 +1211,7 @@
 				8F03BD011CEE45BB00D071F8 /* VROVideoTextureCacheOpenGL.cpp */,
 				8FDDB49B1DADB8C200DE0968 /* VROLightingUBO.h */,
 				8FDDB49C1DADB8C200DE0968 /* VROLightingUBO.cpp */,
+				8F53D3A11DCAB670001C91A8 /* VROOpenGL.h */,
 			);
 			name = OpenGL;
 			sourceTree = "<group>";

@@ -9,6 +9,14 @@
 #ifndef VRODefines_h
 #define VRODefines_h
 
+#ifndef __OBJC__
+#define VRO_PLATFORM_ANDROID 1
+#define VRO_PLATFORM_IOS 0
+#else
+#define VRO_PLATFORM_ANDROID 0
+#define VRO_PLATFORM_IOS 1
+#endif
+
 #define VRO_METAL 0
 
 #endif /* VRODefines_h */

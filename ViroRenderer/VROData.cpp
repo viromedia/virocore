@@ -20,6 +20,12 @@ VROData::VROData(void *data, int dataLength, bool copy) {
     }
 }
 
+VROData::VROData(const void *data, int dataLength) {
+    _data = malloc(dataLength);
+    _dataLength = dataLength;
+    memcpy(_data, data, dataLength);
+}
+
 VROData::~VROData() {
     free (_data);
 }

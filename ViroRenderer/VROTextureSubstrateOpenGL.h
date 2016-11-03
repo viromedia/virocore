@@ -10,10 +10,7 @@
 #define VROTextureSubstrateOpenGL_h
 
 #import "VROTextureSubstrate.h"
-#import <OpenGLES/EAGL.h>
-#import <OpenGLES/ES2/gl.h>
-#import <OpenGLES/ES2/glext.h>
-#import <OpenGLES/ES3/glext.h>
+#include "VROOpenGL.h"
 #import <UIKit/UIKit.h>
 #import <memory>
 #import <vector>

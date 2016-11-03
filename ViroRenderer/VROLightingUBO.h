@@ -6,11 +6,8 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#import <OpenGLES/EAGL.h>
-#import <OpenGLES/ES2/gl.h>
-#import <OpenGLES/ES2/glext.h>
-#import <OpenGLES/ES3/glext.h>
-#import <vector>
+#include "VROOpenGL.h"
+#include <vector>
 
 // Incrementing binding points
 static std::atomic_int sUBOBindingPoint;
