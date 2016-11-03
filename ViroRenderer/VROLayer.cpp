@@ -12,6 +12,7 @@
 #include "VROTexture.h"
 #include "VROMaterial.h"
 #include "VROTextureSubstrate.h"
+#include "VROImageUIKit.h"
 
 #pragma mark - Initialization
 
@@ -29,7 +30,8 @@ VROLayer::~VROLayer() {
 #pragma mark - Layer Properties
 
 void VROLayer::setContents(UIImage *image) {
-    getMaterial()->getDiffuse().setContents(std::make_shared<VROTexture>(image));
+    std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageUIKit>(image);
+    getMaterial()->getDiffuse().setContents(std::make_shared<VROTexture>(wrapper));
 }
 
 void VROLayer::setContents(int width, int height, CGContextRef bitmapContext,

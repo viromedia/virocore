@@ -22,6 +22,7 @@ enum class VROTextureType;
 enum class VROTextureFormat;
 class VRODriver;
 class VROData;
+class VROImage;
 
 class VROTextureSubstrateMetal : public VROTextureSubstrate {
     
@@ -46,7 +47,7 @@ public:
     /*
      Create a new Metal texture of the given type from the given images.
      */
-    VROTextureSubstrateMetal(VROTextureType type, std::vector<UIImage *> &images,
+    VROTextureSubstrateMetal(VROTextureType type, std::vector<std::shared_ptr<VROImage>> &images,
                              VRODriver &driver);
     
     /*

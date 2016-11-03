@@ -13,6 +13,7 @@
 #include "VROTexture.h"
 #include "VRODriverMetal.h"
 #include "VROLog.h"
+#include "VROImage.h"
 
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(int width, int height, CGContextRef bitmapContext,
                                                    VRODriver &driver) {
@@ -33,19 +34,19 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(int width, int height, CGCont
     ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
 }
 
-VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vector<UIImage *> &images,
+VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vector<std::shared_ptr<VROImage>> &images,
                                                    VRODriver &driver) {
     
     VRODriverMetal &metal = (VRODriverMetal &)driver;
     id <MTLDevice> device = metal.getDevice();
     
     if (type == VROTextureType::Quad) {
-        UIImage *image = images.front();
-        int width = image.size.width * image.scale;
-        int height = image.size.height * image.scale;
+        std::shared_ptr<VROImage> &image = images.front();
+        int width = image->getWidth();
+        int height = image->getHeight();
         
         size_t dataLength;
-        void *data = VROExtractRGBA8888FromImage(image, &dataLength);
+        void *data = image->extractRGBA8888(&dataLength);
         
         int bytesPerPixel = 4;
         MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm
@@ -73,8 +74,8 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vec
         passert_msg(images.size() == 6,
                     "Cube texture can only be created from exactly six images");
         
-        UIImage *firstImage = images.front();
-        const CGFloat cubeSize = firstImage.size.width * firstImage.scale;
+        std::shared_ptr<VROImage> &firstImage = images.front();
+        const CGFloat cubeSize = firstImage->getWidth();
         
         const NSUInteger bytesPerPixel = 4;
         const NSUInteger bytesPerRow = bytesPerPixel * cubeSize;
@@ -88,12 +89,12 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vec
         _texture = [device newTextureWithDescriptor:textureDescriptor];
         
         for (size_t slice = 0; slice < 6; ++slice) {
-            UIImage *image = images[slice];
+            std::shared_ptr<VROImage> &image = images[slice];
             
             size_t dataLength;
-            void *data = VROExtractRGBA8888FromImage(image, &dataLength);
+            void *data = image->extractRGBA8888(&dataLength);
             
-            passert_msg(image.size.width == cubeSize && image.size.height == cubeSize,
+            passert_msg(image->getWidth() == cubeSize && image->getHeight() == cubeSize,
                         "Cube map images must be square and uniformly-sized");
             
             [_texture replaceRegion:region

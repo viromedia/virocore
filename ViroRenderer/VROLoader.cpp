@@ -14,6 +14,7 @@
 #include "VROMaterialVisual.h"
 #include "VRONode.h"
 #include "VROLog.h"
+#include "VROImageUIKit.h"
 
 std::vector<std::shared_ptr<VRONode>> VROLoader::loadURL(NSURL *url) {
     std::vector<std::shared_ptr<VRONode>> results;
@@ -243,7 +244,7 @@ VROVector4f VROLoader::parseColor(CGColorRef colorRef) {
 
 std::shared_ptr<VROTexture> VROLoader::parseTexture(MDLTextureSampler *sampler) {
     UIImage *image = [UIImage imageWithCGImage:[sampler.texture imageFromTexture]];
-    return std::make_shared<VROTexture>(image);
+    return std::make_shared<VROTexture>(std::make_shared<VROImageUIKit>(image));
 }
 
 int VROLoader::getPrimitiveCount(int indexCount, VROGeometryPrimitiveType primitiveType) {

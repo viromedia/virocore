@@ -36,7 +36,7 @@ public:
         return new VROMaterialSubstrateOpenGL(material, *this);
     }
     
-    VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) {
+    VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<std::shared_ptr<VROImage>> &images) {
         return new VROTextureSubstrateOpenGL(type, images, *this);
     }
     

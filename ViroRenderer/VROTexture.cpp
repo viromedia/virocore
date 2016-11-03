@@ -33,7 +33,7 @@ VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate>
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
-VROTexture::VROTexture(UIImage *image, VRODriver *driver) :
+VROTexture::VROTexture(std::shared_ptr<VROImage> image, VRODriver *driver) :
     _textureId(sTextureId++),
     _type(VROTextureType::Quad),
     _image(image),
@@ -45,7 +45,7 @@ VROTexture::VROTexture(UIImage *image, VRODriver *driver) :
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
-VROTexture::VROTexture(std::vector<UIImage *> &images, VRODriver *driver) :
+VROTexture::VROTexture(std::vector<std::shared_ptr<VROImage>> &images, VRODriver *driver) :
     _textureId(sTextureId++),
     _type(VROTextureType::Cube),
     _image(nullptr),
@@ -101,7 +101,7 @@ void VROTexture::prewarm(VRODriver &driver) {
 void VROTexture::hydrate(VRODriver &driver) {
     if (_type == VROTextureType::Quad) {
         if (_image) {
-            std::vector<UIImage *> images = { _image };
+            std::vector<std::shared_ptr<VROImage>> images = { _image };
             _substrate = std::unique_ptr<VROTextureSubstrate>(driver.newTextureSubstrate(_type, images));
             _image = nullptr;
         }
@@ -128,21 +128,18 @@ void VROTexture::hydrate(VRODriver &driver) {
     }
 }
 
-void VROTexture::setImage(UIImage *image) {
+void VROTexture::setImage(std::shared_ptr<VROImage> image) {
     _type = VROTextureType::Quad;
     _image = image;
 }
 
-void VROTexture::setImageCube(UIImage *image) {
+void VROTexture::setImageCube(std::shared_ptr<VROImage> image) {
     _type = VROTextureType::Cube;
     _image = image;
 }
 
-void VROTexture::setImageCube(std::vector<UIImage *> &images) {
+void VROTexture::setImageCube(std::vector<std::shared_ptr<VROImage>> &images) {
     _type = VROTextureType::Cube;
     _imagesCube = images;
 }
-
-
-
 

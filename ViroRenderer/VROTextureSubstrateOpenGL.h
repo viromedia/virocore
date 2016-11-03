@@ -17,6 +17,7 @@
 #import "VROAllocationTracker.h"
 
 class VROData;
+class VROImage;
 class VRODriver;
 enum class VROTextureType;
 enum class VROTextureFormat;
@@ -48,7 +49,7 @@ public:
     /*
      Create a new Metal texture of the given type from the given images.
      */
-    VROTextureSubstrateOpenGL(VROTextureType type, std::vector<UIImage *> &images,
+    VROTextureSubstrateOpenGL(VROTextureType type, std::vector<std::shared_ptr<VROImage>> &images,
                              VRODriver &driver);
     
     /*

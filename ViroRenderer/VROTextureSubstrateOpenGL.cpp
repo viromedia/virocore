@@ -12,6 +12,7 @@
 #include "VROData.h"
 #include "VRODriverOpenGL.h"
 #include "VROLog.h"
+#include "VROImage.h"
 
 // Constants for ETC2 ripped from NDKr9 headers
 #define GL_COMPRESSED_RGB8_ETC2                          0x9274
@@ -40,7 +41,7 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(int width, int height, CGCo
     ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
 }
 
-VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::vector<UIImage *> &images,
+VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::vector<std::shared_ptr<VROImage>> &images,
                                                      VRODriver &driver) :
     _owned(true) {
     
@@ -56,12 +57,12 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::v
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         
-        UIImage *image = images.front();
-        int width = image.size.width * image.scale;
-        int height = image.size.height * image.scale;
+        std::shared_ptr<VROImage> &image = images.front();
+        int width = image->getWidth();
+        int height = image->getHeight();
         
         size_t dataLength;
-        void *data = VROExtractRGBA8888FromImage(image, &dataLength);
+        void *data = image->extractRGBA8888(&dataLength);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
                      GL_UNSIGNED_BYTE, data);
         free (data);
@@ -80,16 +81,16 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::v
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         
-        UIImage *firstImage = images.front();
-        const CGFloat cubeSize = firstImage.size.width * firstImage.scale;
+        std::shared_ptr<VROImage> &firstImage = images.front();
+        const CGFloat cubeSize = firstImage->getWidth();
         
         for (int slice = 0; slice < 6; ++slice) {
-            UIImage *image = images[slice];
+            std::shared_ptr<VROImage> &image = images[slice];
             
             size_t dataLength;
-            void *data = VROExtractRGBA8888FromImage(image, &dataLength);
+            void *data = image->extractRGBA8888(&dataLength);
             
-            passert_msg(image.size.width == cubeSize && image.size.height == cubeSize,
+            passert_msg(image->getWidth() == cubeSize && image->getHeight() == cubeSize,
                         "Cube map images must be square and uniformly-sized");
             
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + slice, 0, GL_RGBA, cubeSize, cubeSize, 0, GL_RGBA,

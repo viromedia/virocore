@@ -18,6 +18,7 @@ class VROGeometrySubstrate;
 class VROMaterialSubstrate;
 class VROTextureSubstrate;
 class VROData;
+class VROImage;
 class VROVideoTextureCache;
 
 enum class VROTextureType;
@@ -35,7 +36,7 @@ public:
     
     virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) = 0;
     virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) = 0;
-    virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<UIImage *> &images) = 0;
+    virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<std::shared_ptr<VROImage>> &images) = 0;
     virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, VROTextureFormat format, std::shared_ptr<VROData> data,
                                                      int width, int height) = 0;
     virtual VROTextureSubstrate *newTextureSubstrate(int width, int height, CGContextRef bitmapContext) = 0;

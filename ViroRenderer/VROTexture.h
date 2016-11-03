@@ -13,12 +13,9 @@
 #include <vector>
 #include "VRODefines.h"
 
-#if VRO_PLATFORM_IOS
-#import <UIKit/UIKit.h>
-#endif
-
 class VROTextureSubstrate;
 class VRODriver;
+class VROImage;
 class VROData;
 
 enum class VROTextureType {
@@ -46,14 +43,12 @@ public:
      */
     VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate);
     
-#if VRO_PLATFORM_IOS
     /*
-     Create a new VROTexture from a UIImage. If a render context is supplied, then
+     Create a new VROTexture from a VROImage. If a render context is supplied, then
      the texture will be prewarmed.
      */
-    VROTexture(UIImage *image, VRODriver *driver = nullptr);
-    VROTexture(std::vector<UIImage *> &images, VRODriver *driver = nullptr);
-#endif
+    VROTexture(std::shared_ptr<VROImage> image, VRODriver *driver = nullptr);
+    VROTexture(std::vector<std::shared_ptr<VROImage>> &images, VRODriver *driver = nullptr);
     
     /*
      Create a new VROTexture from the given raw data in the given format.
@@ -68,11 +63,9 @@ public:
         return _textureId;
     }
     
-#if VRO_PLATFORM_IOS
-    void setImage(UIImage *image);
-    void setImageCube(UIImage *image);
-    void setImageCube(std::vector<UIImage *> &images);
-#endif
+    void setImage(std::shared_ptr<VROImage> image);
+    void setImageCube(std::shared_ptr<VROImage> image);
+    void setImageCube(std::vector<std::shared_ptr<VROImage>> &images);
     
     /*
      Get the texture ready for usage now, in advance of when it's visible. If not invoked,
@@ -94,10 +87,8 @@ private:
      
      Vector of images is used for cube textures.
      */
-#if VRO_PLATFORM_IOS
-    UIImage *_image;
-    std::vector<UIImage *> _imagesCube;
-#endif
+    std::shared_ptr<VROImage> _image;
+    std::vector<std::shared_ptr<VROImage>> _imagesCube;
     
     /*
      If the underlying texture is compressed, its raw data is retined until the
