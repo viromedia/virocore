@@ -751,17 +751,6 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		8ABD8F331DB70C8900BD9C83 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				8ABD8F341DB70CE400BD9C83 /* VROApiKey.h */,
-				8ABD8F351DB70CE400BD9C83 /* VROApiKey.m */,
-				8ABD8F3B1DB7DF8F00BD9C83 /* VROApiKeyMetrics.h */,
-				8ABD8F3C1DB7DF8F00BD9C83 /* VROApiKeyMetrics.m */,
-			);
-			name = Model;
-			sourceTree = "<group>";
-		};
 		8F03BCD31CECC25E00D071F8 /* Blinn */ = {
 			isa = PBXGroup;
 			children = (
@@ -1003,7 +992,6 @@
 		8F517BB81BCDA2BD0017C70B /* ViroRenderer */ = {
 			isa = PBXGroup;
 			children = (
-				8ABD8F331DB70C8900BD9C83 /* Model */,
 				8F0FE6601CD25A2300A4C297 /* Drivers */,
 				8F5C414B1BD825A9006D7A77 /* Util */,
 				8F517C441BD0472C0017C70B /* Math */,
@@ -1102,15 +1090,26 @@
 			name = Math;
 			sourceTree = "<group>";
 		};
-		8F5C414B1BD825A9006D7A77 /* Util */ = {
+		8F53D3A01DCAB4F0001C91A8 /* Key Validation */ = {
 			isa = PBXGroup;
 			children = (
+				8ABD8F341DB70CE400BD9C83 /* VROApiKey.h */,
+				8ABD8F351DB70CE400BD9C83 /* VROApiKey.m */,
+				8ABD8F3B1DB7DF8F00BD9C83 /* VROApiKeyMetrics.h */,
+				8ABD8F3C1DB7DF8F00BD9C83 /* VROApiKeyMetrics.m */,
 				8ABD8F2E1DB6970600BD9C83 /* VROApiKeyValidator.h */,
 				8ABD8F391DB739E000BD9C83 /* VROApiKeyValidatorDynamo.h */,
 				8ABD8F2F1DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m */,
 				8ABD8F3F1DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h */,
 				8ABD8F401DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m */,
 				8ABD8F531DB957C900BD9C83 /* VROCredentials.h */,
+			);
+			name = "Key Validation";
+			sourceTree = "<group>";
+		};
+		8F5C414B1BD825A9006D7A77 /* Util */ = {
+			isa = PBXGroup;
+			children = (
 				8F83DEA91C49B0540089C31A /* VROAllocationTracker.h */,
 				8F83DEA81C49B0530089C31A /* VROAllocationTracker.cpp */,
 				8F63186C1BD95EA6000A75DF /* VROTime.h */,
@@ -1250,6 +1249,7 @@
 		8FD4DECE1C18ECD4003DC425 /* ViroKit */ = {
 			isa = PBXGroup;
 			children = (
+				8F53D3A01DCAB4F0001C91A8 /* Key Validation */,
 				8FB659241CD9082000D036EB /* Platforms */,
 				8FD4DECF1C18ECD4003DC425 /* ViroKit.h */,
 				8F11B7C01C20B0530026D150 /* VROView.h */,
