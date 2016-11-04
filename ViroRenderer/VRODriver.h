@@ -10,7 +10,7 @@
 #define VRODriver_h
 
 #include <vector>
-#import <UIKit/UIKit.h>
+#include "VRODefines.h"
 
 class VROGeometry;
 class VROMaterial;
@@ -39,9 +39,8 @@ public:
     virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<std::shared_ptr<VROImage>> &images) = 0;
     virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, VROTextureFormat format, std::shared_ptr<VROData> data,
                                                      int width, int height) = 0;
-    virtual VROTextureSubstrate *newTextureSubstrate(int width, int height, CGContextRef bitmapContext) = 0;
     virtual VROVideoTextureCache *newVideoTextureCache() = 0;
-    
+
 };
 
 #endif /* VRODriver_hpp */

@@ -13,6 +13,7 @@
 #include "VROMaterial.h"
 #include "VROTextureSubstrate.h"
 #include "VROImageUIKit.h"
+#include "VROData.h"
 
 #pragma mark - Initialization
 
@@ -37,8 +38,13 @@ void VROLayer::setContents(UIImage *image) {
 void VROLayer::setContents(int width, int height, CGContextRef bitmapContext,
                            VRODriver &driver) {
     
+    // Note we don't need the data size in driver.newTextureSubstrate(), so we
+    // set the VROData length to 0
+    std::shared_ptr<VROData> data = std::make_shared<VROData>(CGBitmapContextGetData(bitmapContext), 0, VRODataOwnership::Wrap);
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrate>(
-                    driver.newTextureSubstrate(width, height, bitmapContext));
+                                                                                          driver.newTextureSubstrate(VROTextureType::Quad,
+                                                                                                                     VROTextureFormat::RGBA8,
+                                                                                                                     data, width, height));
     
     getMaterial()->getDiffuse().setContents(std::make_shared<VROTexture>(VROTextureType::Quad, std::move(substrate)));
 }

@@ -25,7 +25,8 @@ enum class VROTextureType {
 
 enum class VROTextureFormat {
     ETC2,
-    ASTC_4x4_LDR
+    ASTC_4x4_LDR,
+    RGBA8
 };
 
 class VROTexture {

@@ -10,8 +10,9 @@
 #define VROVideoSurface_h
 
 #import "VROSurface.h"
-#include "VROVideoDelegate.h"
+#import "VROVideoDelegate.h"
 #import <memory>
+#import <Foundation/Foundation.h>
 
 class VRORenderContext;
 class VRODriver;

@@ -18,29 +18,6 @@
 #define GL_COMPRESSED_RGB8_ETC2                          0x9274
 #define GL_COMPRESSED_RGBA8_ETC2_EAC                     0x9278
 
-VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(int width, int height, CGContextRef bitmapContext,
-                                                     VRODriver &driver) :
-    _owned(true) {
-    
-    _target = GL_TEXTURE_2D;
-    glGenTextures(1, &_texture);
-    glActiveTexture(GL_TEXTURE0);
-    
-    glBindTexture(GL_TEXTURE_2D, _texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    
-    void *data = CGBitmapContextGetData(bitmapContext);
-    passert (data != nullptr);
-    
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, data);
-    
-    ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
-}
-
 VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::vector<std::shared_ptr<VROImage>> &images,
                                                      VRODriver &driver) :
     _owned(true) {
@@ -138,9 +115,19 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, VROTex
             pabort();
         }
     }
+    else if (format == VROTextureFormat::RGBA8) {
+        if (type == VROTextureType::Quad) {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data->getData());
+        }
+        else {
+            pabort();
+        }
+    }
     else {
         pabort();
-    }    
+    }
+        
+    ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
 }
 
 VROTextureSubstrateOpenGL::~VROTextureSubstrateOpenGL() {

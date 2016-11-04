@@ -8,8 +8,10 @@
 
 #include "VROData.h"
 
-VROData::VROData(void *data, int dataLength, bool copy) {
-    if (copy) {
+VROData::VROData(void *data, int dataLength, VRODataOwnership ownership) :
+    _ownership(ownership) {
+        
+    if (ownership == VRODataOwnership::Copy) {
         _data = malloc(dataLength);
         _dataLength = dataLength;
         memcpy(_data, data, dataLength);
@@ -20,12 +22,15 @@ VROData::VROData(void *data, int dataLength, bool copy) {
     }
 }
 
-VROData::VROData(const void *data, int dataLength) {
+VROData::VROData(const void *data, int dataLength) :
+    _ownership(VRODataOwnership::Copy) {
     _data = malloc(dataLength);
     _dataLength = dataLength;
     memcpy(_data, data, dataLength);
 }
 
 VROData::~VROData() {
-    free (_data);
+    if (_ownership == VRODataOwnership::Copy || _ownership == VRODataOwnership::Move) {
+        free (_data);
+    }
 }

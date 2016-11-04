@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include <string>
 #include <vector>
-#import <Foundation/Foundation.h>
 
 class VROShaderBuilder {
     

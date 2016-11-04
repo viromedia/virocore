@@ -38,13 +38,6 @@ public:
     }
     
     /*
-     Create a new Metal texture out of the contents of the current bitmap
-     context.
-     */
-    VROTextureSubstrateMetal(int width, int height, CGContextRef bitmapContext,
-                             VRODriver &driver);
-    
-    /*
      Create a new Metal texture of the given type from the given images.
      */
     VROTextureSubstrateMetal(VROTextureType type, std::vector<std::shared_ptr<VROImage>> &images,

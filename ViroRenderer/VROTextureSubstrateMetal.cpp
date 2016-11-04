@@ -15,25 +15,6 @@
 #include "VROLog.h"
 #include "VROImage.h"
 
-VROTextureSubstrateMetal::VROTextureSubstrateMetal(int width, int height, CGContextRef bitmapContext,
-                                                   VRODriver &driver) {
-    id <MTLDevice> device = ((VRODriverMetal &)driver).getDevice();
-
-    int bytesPerPixel = 4;
-    MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm
-                                                                                          width:width
-                                                                                         height:height
-                                                                                   mipmapped:NO];
-    
-    _texture = [device newTextureWithDescriptor:descriptor];
-    [_texture replaceRegion:MTLRegionMake2D(0, 0, width, height)
-                mipmapLevel:0
-                  withBytes:CGBitmapContextGetData(bitmapContext)
-                bytesPerRow:bytesPerPixel * width];
-    
-    ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
-}
-
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vector<std::shared_ptr<VROImage>> &images,
                                                    VRODriver &driver) {
     
@@ -156,10 +137,25 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, VROTextu
             pabort();
         }
     }
+    else if (format == VROTextureFormat::RGBA8) {
+        id <MTLDevice> device = ((VRODriverMetal &)driver).getDevice();
+        
+        int bytesPerPixel = 4;
+        MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm
+                                                                                              width:width
+                                                                                             height:height
+                                                                                          mipmapped:NO];
+        
+        _texture = [device newTextureWithDescriptor:descriptor];
+        
+        MTLRegion region = MTLRegionMake2D(0, 0, width, height);
+        [_texture replaceRegion:region mipmapLevel:0 withBytes:data->getData() bytesPerRow:bytesPerPixel * width];
+    }
     else {
         pabort();
     }
     
+    ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
 }
 
 VROTextureSubstrateMetal::~VROTextureSubstrateMetal() {

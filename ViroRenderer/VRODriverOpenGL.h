@@ -45,10 +45,6 @@ public:
         return new VROTextureSubstrateOpenGL(type, format, data, width, height, *this);
     }
     
-    VROTextureSubstrate *newTextureSubstrate(int width, int height, CGContextRef bitmapContext) {
-        return new VROTextureSubstrateOpenGL(width, height, bitmapContext, *this);
-    }
-    
     VROVideoTextureCache *newVideoTextureCache() {
         return new VROVideoTextureCacheOpenGL(_eaglContext);
     }

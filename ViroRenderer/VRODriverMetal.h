@@ -75,14 +75,9 @@ public:
         return new VROTextureSubstrateMetal(type, format, data, width, height, *this);
     }
     
-    VROTextureSubstrate *newTextureSubstrate(int width, int height, CGContextRef bitmapContext) {
-        return new VROTextureSubstrateMetal(width, height, bitmapContext, *this);
-    }
-    
     VROVideoTextureCache *newVideoTextureCache() {
         return new VROVideoTextureCacheMetal(_device);
     }
-
     
 private:
     
