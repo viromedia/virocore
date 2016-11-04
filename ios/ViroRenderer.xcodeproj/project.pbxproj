@@ -53,6 +53,8 @@
 		8F11B7C51C20B6180026D150 /* VRORenderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C41C20B2A20026D150 /* VRORenderDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F11B7C71C20CF200026D150 /* VRORenderParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C61C20C98E0026D150 /* VRORenderParameters.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F11B7CB1C20E7830026D150 /* VROAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C91C20E7830026D150 /* VROAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F203F0A1DCD236500DC50F2 /* VRODefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF253B11DC9398A00C1C5C7 /* VRODefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F203F0B1DCD245200DC50F2 /* VROOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F53D3A11DCAB670001C91A8 /* VROOpenGL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */; };
 		8F3B968F1C77D64200B4FEE0 /* shanghai_tower_specular.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968C1C77D64200B4FEE0 /* shanghai_tower_specular.jpg */; };
 		8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968D1C77D64200B4FEE0 /* shanghai_tower.obj */; };
@@ -1453,6 +1455,7 @@
 				8FD4DF511C18F5EB003DC425 /* VROSize.h in Headers */,
 				8F83DEA51C4830360089C31A /* VROTimingFunctionEaseIn.h in Headers */,
 				8F83DE8E1C4728A30089C31A /* VROHitTestResult.h in Headers */,
+				8F203F0B1DCD245200DC50F2 /* VROOpenGL.h in Headers */,
 				8FD4DF521C18F5EB003DC425 /* VROTransaction.h in Headers */,
 				8FDDB4A91DAF2A3E00DE0968 /* VROPolyline.h in Headers */,
 				8F11B7BD1C1F8F1E0026D150 /* VRORenderContext.h in Headers */,
@@ -1475,6 +1478,7 @@
 				8F548E461C23654E00556688 /* VROAnimationFloat.h in Headers */,
 				8F548E4A1C23656000556688 /* VROAnimationVector3f.h in Headers */,
 				8FB6591F1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.h in Headers */,
+				8F203F0A1DCD236500DC50F2 /* VRODefines.h in Headers */,
 				8FB6590C1CD82FD200D036EB /* VROSceneRendererCardboard.h in Headers */,
 				8FCF395C1CA5844E00A86CA3 /* VROSceneControllerInternal.h in Headers */,
 				8ABD8F381DB72CE000BD9C83 /* VROApiKey.h in Headers */,
@@ -2093,11 +2097,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = ViroSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -2107,11 +2113,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = ViroSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

@@ -16,6 +16,8 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <ViroKit/PublicHeader.h>
 
+#import <ViroKit/VRODefines.h>
+#import <ViroKit/VROOpenGL.h>
 #import <ViroKit/VROSceneController.h>
 #import <ViroKit/VROView.h>
 #import <ViroKit/VROViewMetal.h>

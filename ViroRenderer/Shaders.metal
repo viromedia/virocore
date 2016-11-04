@@ -10,6 +10,9 @@
 #include <simd/simd.h>
 #include "VROSharedStructures.h"
 
+#include "VRODefines.h"
+#if VRO_METAL
+
 using namespace metal;
 
 constexpr sampler s(coord::normalized,
@@ -679,3 +682,5 @@ fragment float4 distortion_aberration_fragment(VRODistortionAberrationVertexOut 
                                 texture.sample(s, in.blue_texcoord).b,
                                 1.0);
 }
+
+#endif
