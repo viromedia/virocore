@@ -1,24 +1,24 @@
 //
-//  VROImageUIKit.h
+//  VROImageiOS.h
 //  ViroRenderer
 //
 //  Created by Raj Advani on 11/3/16.
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#ifndef VROImageUIKit_h
-#define VROImageUIKit_h
+#ifndef VROImageiOS_h
+#define VROImageiOS_h
 
 #import "VROImage.h"
 #import <UIKit/UIKit.h>
 
-class VROImageUIKit : public VROImage {
+class VROImageiOS : public VROImage {
     
 public:
     
-    VROImageUIKit(UIImage *image) :
+    VROImageiOS(UIImage *image) :
         _image(image) {}
-    virtual ~VROImageUIKit();
+    virtual ~VROImageiOS();
     
     int getWidth() const {
         return _image.size.width * _image.scale;
@@ -34,4 +34,4 @@ private:
     
 };
 
-#endif /* VROImageUIKit_h */
+#endif /* VROImageiOS_h */

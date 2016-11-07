@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 #import "VRORenderDelegate.h"
 #import "VROQuaternion.h"
+#import "VROCamera.h"
 #import <memory>
 
 @class VROSceneController;
@@ -17,11 +18,6 @@ class VROScene;
 class VROReticle;
 class VROFrameSynchronizer;
 enum class VROTimingFunctionType;
-
-enum class VROCameraRotationType {
-    Standard,
-    Orbit
-};
 
 typedef void (^VROViewValidApiKeyBlock)(BOOL);
 

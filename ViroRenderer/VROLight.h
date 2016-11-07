@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <atomic>
 #include "VROVector3f.h"
 #include "VROVector4f.h"
 #include "VROSize.h"

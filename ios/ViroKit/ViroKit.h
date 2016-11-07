@@ -46,7 +46,7 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROTexture.h>
 #import <ViroKit/VROLight.h>
 #import <ViroKit/VROImage.h>
-#import <ViroKit/VROImageUIKit.h>
+#import <ViroKit/VROImageiOS.h>
 #import <ViroKit/VROShaderModifier.h>
 #import <ViroKit/VROShaderProgram.h>
 #import <ViroKit/VROTransaction.h>
@@ -77,7 +77,9 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 
 // Audio
 #import <ViroKit/VROAudioPlayer.h>
+#import <ViroKit/VROAudioPlayeriOS.h>
 #import <ViroKit/VROSoundEffect.h>
+#import <ViroKit/VROSoundEffectiOS.h>
 
 // Math
 #import <ViroKit/VROQuaternion.h>

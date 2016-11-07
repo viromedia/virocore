@@ -13,6 +13,7 @@
 #include "VROMath.h"
 #include <stack>
 #include <vector>
+#include <algorithm>
 
 #pragma mark - Transaction Management
 
@@ -87,10 +88,10 @@ void VROTransaction::commitAll() {
 
 void VROTransaction::resume(std::shared_ptr<VROTransaction> transaction){
     if (transaction->_t == 1.0){
-        NSLog(@"WARN: Cannot resume a completed VROTansaction!");
+        pinfo("WARN: Cannot resume a completed VROTansaction!");
         return;
     } else if (!transaction->_paused){
-        NSLog(@"WARN: Cannot resume an VROTansaction that is not paused!");
+        pinfo("WARN: Cannot resume an VROTansaction that is not paused!");
         return;
     }
 
@@ -102,10 +103,10 @@ void VROTransaction::resume(std::shared_ptr<VROTransaction> transaction){
 
 void VROTransaction::pause(std::shared_ptr<VROTransaction> transaction){
     if (transaction->_t == 1.0){
-        NSLog(@"WARN: Cannot to pause completed VROTansaction!");
+        pinfo("WARN: Cannot to pause completed VROTansaction!");
         return;
     } else if (transaction->_paused){
-        NSLog(@"WARN: Cannot pause an VROTansaction that is paused!");
+        pinfo("WARN: Cannot pause an VROTansaction that is paused!");
         return;
     }
 
@@ -117,7 +118,7 @@ void VROTransaction::pause(std::shared_ptr<VROTransaction> transaction){
 void VROTransaction::terminate(std::shared_ptr<VROTransaction> transaction){
     std::vector<std::shared_ptr<VROTransaction>>::iterator transactionToTerminate =  std::find(committedTransactions.begin(), committedTransactions.end(), transaction);
     if (transactionToTerminate == committedTransactions.end()){
-        NSLog(@"WARN:Can't terminate terminated transaction!");
+        pinfo("WARN: Can't terminate terminated transaction!");
         return;
     }
 

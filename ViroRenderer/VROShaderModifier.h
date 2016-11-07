@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <memory>
 #include <map>
 #include "VROOpenGL.h"
 

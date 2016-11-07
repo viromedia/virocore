@@ -13,14 +13,15 @@
 #include "VROMatrix4f.h"
 #include "VROGeometrySource.h"
 #include "VROShaderModifier.h"
+#include "VROPlatformUtil.h"
+#include <atomic>
 
 #define kDebugShaders 0
 
 static std::atomic_int sMaterialId;
 
 std::string loadTextAsset(std::string resource) {
-    NSString *file = [[NSBundle bundleWithIdentifier:@"com.viro.ViroKit"] pathForResource:[NSString stringWithUTF8String:resource.c_str()] ofType:@"glsl"];
-    return std::string([[NSString stringWithContentsOfFile:file encoding:NSUTF8StringEncoding error:nil] UTF8String]);
+    return VROPlatformLoadFileAsString(VROPlatformGetPathForResource(resource, "glsl"));
 }
 
 /////////////////////////////////////////////////////////////////////////////////

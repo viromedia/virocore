@@ -6,8 +6,8 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#import "VROScreenUIView.h"
-#import "VROEye.h"
+#include "VROScreenUIView.h"
+#include "VROEye.h"
 
 // The size of the UIView we render to; this is scaled up to fill the VR HUD
 static const int kUIViewSize = 300;

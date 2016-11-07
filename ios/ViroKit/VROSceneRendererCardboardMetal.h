@@ -39,9 +39,9 @@ public:
     virtual void renderEye(GVREye eye, GVRHeadTransform *headTransform);
     virtual void endFrame();
     
-    void setSceneController(VROSceneController *sceneController);
-    void setSceneController(VROSceneController *sceneController, bool animated);
-    void setSceneController(VROSceneController *sceneController, float seconds,
+    void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController);
+    void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, bool animated);
+    void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, float seconds,
                             VROTimingFunctionType timingFunctionType);
     
     void setSuspended(bool suspended);

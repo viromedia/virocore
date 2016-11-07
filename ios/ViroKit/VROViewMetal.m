@@ -37,6 +37,8 @@
     VRODistortionRenderer *_distortionRenderer;
     dispatch_semaphore_t _inflight_semaphore;
     
+    VROSceneController *_sceneController;
+    
 }
 
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
@@ -176,17 +178,20 @@
 }
 
 - (void)setSceneController:(VROSceneController *)sceneController {
-    _renderer->setSceneController(sceneController, *_driver);
+    _sceneController = sceneController;
+    _renderer->setSceneController(sceneController.internal, *_driver);
 }
 
 - (void)setSceneController:(VROSceneController *)sceneController animated:(BOOL)animated {
-    _renderer->setSceneController(sceneController, animated, *_driver);
+    _sceneController = sceneController;
+    _renderer->setSceneController(sceneController.internal, animated, *_driver);
 }
 
 - (void)setSceneController:(VROSceneController *)sceneController duration:(float)seconds
             timingFunction:(VROTimingFunctionType)timingFunctionType {
     
-    _renderer->setSceneController(sceneController, seconds, timingFunctionType, *_driver);
+    _sceneController = sceneController;
+    _renderer->setSceneController(sceneController.internal, seconds, timingFunctionType, *_driver);
 }
 
 #pragma mark - Frame Listeners

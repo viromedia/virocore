@@ -34,12 +34,12 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (std::shared_ptr<VROTexture>) niagaraTexture {
     std::vector<std::shared_ptr<VROImage>> cubeImages =  {
-        std::make_shared<VROImageUIKit>([UIImage imageNamed:@"px"]),
-        std::make_shared<VROImageUIKit>([UIImage imageNamed:@"nx"]),
-        std::make_shared<VROImageUIKit>([UIImage imageNamed:@"py"]),
-        std::make_shared<VROImageUIKit>([UIImage imageNamed:@"ny"]),
-        std::make_shared<VROImageUIKit>([UIImage imageNamed:@"pz"]),
-        std::make_shared<VROImageUIKit>([UIImage imageNamed:@"nz"])
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"px"]),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"nx"]),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"py"]),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"ny"]),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"pz"]),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"nz"])
     };
     
     return std::make_shared<VROTexture>(cubeImages);
@@ -47,12 +47,12 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (std::shared_ptr<VROTexture>) cloudTexture {
     std::vector<std::shared_ptr<VROImage>> cubeImages =  {
-        std::make_shared<VROImageUIKit>([UIImage imageNamed:@"px1.jpg"]),
-        std::make_shared<VROImageUIKit>([UIImage imageNamed:@"nx1.jpg"]),
-        std::make_shared<VROImageUIKit>([UIImage imageNamed:@"py1.jpg"]),
-        std::make_shared<VROImageUIKit>([UIImage imageNamed:@"ny1.jpg"]),
-        std::make_shared<VROImageUIKit>([UIImage imageNamed:@"pz1.jpg"]),
-        std::make_shared<VROImageUIKit>([UIImage imageNamed:@"nz1.jpg"])
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"px1.jpg"]),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"nx1.jpg"]),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"py1.jpg"]),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"ny1.jpg"]),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"pz1.jpg"]),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"nz1.jpg"])
     };
     
     return std::make_shared<VROTexture>(cubeImages);
@@ -228,8 +228,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Phong);
-    material->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageUIKit>([UIImage imageNamed:@"boba"])));
-    material->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageUIKit>([UIImage imageNamed:@"specular"])));
+    material->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"])));
+    material->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"])));
     
     std::vector<std::string> modifierCode =  { "uniform float testA;",
                                                "uniform float testB;",
@@ -258,8 +258,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROMaterial> material2 = box2->getMaterials()[0];
     material2->setLightingModel(VROLightingModel::Phong);
-    material2->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageUIKit>([UIImage imageNamed:@"boba"])));
-    material2->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageUIKit>([UIImage imageNamed:@"specular"])));
+    material2->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"])));
+    material2->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"])));
     
     std::shared_ptr<VRONode> boxNode2 = std::make_shared<VRONode>();
     boxNode2->setGeometry(box2);
@@ -277,8 +277,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROMaterial> material3 = box3->getMaterials()[0];
     material3->setLightingModel(VROLightingModel::Phong);
-    material3->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageUIKit>([UIImage imageNamed:@"boba"])));
-    material3->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageUIKit>([UIImage imageNamed:@"specular"])));
+    material3->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"])));
+    material3->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"])));
     
     std::shared_ptr<VRONode> boxNode3 = std::make_shared<VRONode>();
     boxNode3->setGeometry(box3);
@@ -376,8 +376,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     scene->addNode(rootNode);
     
     std::shared_ptr<VRONode> objNode = VROLoader::loadURL(soccerURL)[0];
-    objNode->getGeometry()->getMaterials()[0]->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageUIKit>([UIImage imageNamed:@"shanghai_tower_diffuse.jpg"])));
-    objNode->getGeometry()->getMaterials()[0]->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageUIKit>([UIImage imageNamed:@"shanghai_tower_specular.jpg"])));
+    objNode->getGeometry()->getMaterials()[0]->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_diffuse.jpg"])));
+    objNode->getGeometry()->getMaterials()[0]->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_specular.jpg"])));
     objNode->setPosition({0, -10, -20});
     
     rootNode->addChildNode(objNode);
@@ -494,6 +494,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (void)renderViewDidChangeSize:(CGSize)size context:(VRORenderContext *)context {
 
+}
+
+- (void)userDidRequestExitVR {
+    
 }
 
 @end

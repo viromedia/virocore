@@ -1,18 +1,18 @@
 //
-//  VROImageUIKit.cpp
+//  VROImageiOS.cpp
 //  ViroRenderer
 //
 //  Created by Raj Advani on 11/3/16.
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include "VROImageUIKit.h"
+#include "VROImageiOS.h"
 
-VROImageUIKit::~VROImageUIKit() {
+VROImageiOS::~VROImageiOS() {
     
 }
 
-unsigned char *VROImageUIKit::extractRGBA8888(size_t *length) {
+unsigned char *VROImageiOS::extractRGBA8888(size_t *length) {
     CGImageRef imageRef = [_image CGImage];
     NSUInteger width = CGImageGetWidth(imageRef);
     NSUInteger height = CGImageGetHeight(imageRef);

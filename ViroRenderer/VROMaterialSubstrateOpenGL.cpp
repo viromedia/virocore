@@ -9,7 +9,6 @@
 #include "VROMaterialSubstrateOpenGL.h"
 #include "VRODriverOpenGL.h"
 #include "VROMaterial.h"
-#include "VROShaderBuilder.h"
 #include "VROShaderProgram.h"
 #include "VROAllocationTracker.h"
 #include "VROEye.h"

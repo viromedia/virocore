@@ -6,11 +6,11 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#import "VROLightingUBO.h"
-#import "VROLight.h"
-#import "VROLog.h"
-#import "VROMath.h"
-#import "VROShaderProgram.h"
+#include "VROLightingUBO.h"
+#include "VROLight.h"
+#include "VROLog.h"
+#include "VROMath.h"
+#include "VROShaderProgram.h"
 
 void VROLightingUBO::bind(std::shared_ptr<VROShaderProgram> &program) {
     if (program->hasLightingBlock()) {

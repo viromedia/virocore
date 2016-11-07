@@ -7,7 +7,6 @@
 //
 
 #include "VROScene.h"
-#include "VROLayer.h"
 #include "VRORenderContext.h"
 #include "VRONode.h"
 #include "VROGeometry.h"
@@ -15,8 +14,10 @@
 #include "VROLight.h"
 #include "VROHitTestResult.h"
 #include "VROSphere.h"
+#include "VROMaterial.h"
 #include "VROHoverController.h"
 #include "VROLog.h"
+#include "VROAudioPlayer.h"
 #include <stack>
 #include <algorithm>
 

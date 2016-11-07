@@ -15,10 +15,14 @@
 #import "VROFieldOfView.h"
 #import "VROViewport.h"
 #import "VROApiKeyValidatorDynamo.h"
+#import "VRORenderDelegateiOS.h"
+#import "VROSceneControlleriOS.h"
 
 @interface VROViewCardboard () {
     std::shared_ptr<VRORenderer> _renderer;
     VRORenderLoopCardboard *_renderLoop;
+    VROSceneController *_sceneController;
+    std::shared_ptr<VRORenderDelegateiOS> _renderDelegateWrapper;
 }
 
 @property (nonatomic) IBInspectable BOOL testingMode;
@@ -132,7 +136,8 @@
 }
 
 - (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {
-    self.renderer->setDelegate(renderDelegate);
+    _renderDelegateWrapper = std::make_shared<VRORenderDelegateiOS>(renderDelegate);
+    self.renderer->setDelegate(_renderDelegateWrapper);
 }
 
 #pragma mark - Camera
@@ -159,7 +164,7 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    _renderer->updateRenderViewSize(self.bounds.size);
+    _renderer->updateRenderViewSize(self.bounds.size.width, self.bounds.size.height);
 }
 
 #pragma mark - Reticle
@@ -175,21 +180,23 @@
 #pragma mark - Scene Loading
 
 - (VROSceneController *)sceneController {
-    return _renderer->getSceneController();
+    return _sceneController;
 }
 
 - (void)setSceneController:(VROSceneController *)sceneController {
-    self.sceneRenderer->setSceneController(sceneController);
+    _sceneController = sceneController;
+    self.sceneRenderer->setSceneController(sceneController.internal);
 }
 
 - (void)setSceneController:(VROSceneController *)sceneController animated:(BOOL)animated {
-    self.sceneRenderer->setSceneController(sceneController, animated);
+    _sceneController = sceneController;
+    self.sceneRenderer->setSceneController(sceneController.internal, animated);
 }
 
 - (void)setSceneController:(VROSceneController *)sceneController duration:(float)seconds
             timingFunction:(VROTimingFunctionType)timingFunctionType {
-    
-    self.sceneRenderer->setSceneController(sceneController, seconds, timingFunctionType);
+    _sceneController = sceneController;
+    self.sceneRenderer->setSceneController(sceneController.internal, seconds, timingFunctionType);
 }
 
 #pragma mark - Frame Listeners
@@ -214,7 +221,6 @@
 
 - (void)cardboardView:(GVRCardboardView *)cardboardView
      willStartDrawing:(GVRHeadTransform *)headTransform {
-    
     
     self.sceneRenderer->initRenderer(headTransform);
 }

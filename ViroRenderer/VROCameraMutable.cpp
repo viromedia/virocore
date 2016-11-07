@@ -9,6 +9,7 @@
 #include "VROCameraMutable.h"
 #include "VROAnimationVector3f.h"
 #include "VROAnimationQuaternion.h"
+#include "VROCamera.h"
 
 VROCameraMutable::VROCameraMutable() :
     _rotationType(VROCameraRotationType::Standard) {

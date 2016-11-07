@@ -10,10 +10,11 @@
 #define VRODriverOpenGL_h
 
 #include "VRODriver.h"
+#include "VRODefines.h"
+#include "VROStringUtil.h"
 #include "VROGeometrySubstrateOpenGL.h"
 #include "VROMaterialSubstrateOpenGL.h"
 #include "VROTextureSubstrateOpenGL.h"
-#include "VROVideoTextureCacheOpenGL.h"
 #include "VROShaderProgram.h"
 #include "VROLightingUBO.h"
 #include "VROShaderModifier.h"
@@ -22,11 +23,6 @@
 class VRODriverOpenGL : public VRODriver {
     
 public:
-    
-    VRODriverOpenGL(EAGLContext *eaglContext) :
-        _eaglContext(eaglContext) {
-
-    }
     
     VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) {
         return new VROGeometrySubstrateOpenGL(geometry, *this);
@@ -45,9 +41,7 @@ public:
         return new VROTextureSubstrateOpenGL(type, format, data, width, height, *this);
     }
     
-    VROVideoTextureCache *newVideoTextureCache() {
-        return new VROVideoTextureCacheOpenGL(_eaglContext);
-    }
+    virtual VROVideoTextureCache *newVideoTextureCache() = 0;
     
     std::shared_ptr<VROLightingUBO> getLightingUBO(int lightsHash) {
         auto it = _lightingUBOs.find(lightsHash);
@@ -71,7 +65,7 @@ public:
                                                       const std::vector<std::string> &samplers,
                                                       const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers) {
         int modifiersHash = VROShaderModifier::hashShaderModifiers(modifiers);
-        std::string name = vertexShader + "_" + fragmentShader + "_" + std::to_string(modifiersHash);
+        std::string name = vertexShader + "_" + fragmentShader + "_" + VROStringUtil::toString(modifiersHash);
         
         std::map<std::string, std::shared_ptr<VROShaderProgram>>::iterator it = _sharedPrograms.find(name);
         if (it == _sharedPrograms.end()) {
@@ -88,8 +82,6 @@ public:
     }
     
 private:
-    
-    EAGLContext *_eaglContext;
 
     /*
      Map of light hashes to corresponding lighting UBOs.

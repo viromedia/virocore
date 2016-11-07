@@ -7,21 +7,23 @@
 //
 
 #include "VRORenderer.h"
-#import "VROTime.h"
-#import "VROEye.h"
-#import "VROFieldOfView.h"
-#import "VROViewport.h"
-#import "VROTransaction.h"
-#import "VROAllocationTracker.h"
-#import "VROScene.h"
-#import "VROSceneController.h"
-#import "VROLog.h"
-#import "VROCameraMutable.h"
-#import "VROScreenUIView.h"
-#import "VRORenderDelegate.h"
-#import "VROTransaction.h"
-#import "VROReticle.h"
-#import "VROFrameSynchronizerInternal.h"
+#include "VROTime.h"
+#include "VROEye.h"
+#include "VROFieldOfView.h"
+#include "VROViewport.h"
+#include "VROTransaction.h"
+#include "VROAllocationTracker.h"
+#include "VROScene.h"
+#include "VROSceneControllerInternal.h"
+#include "VROLog.h"
+#include "VROCameraMutable.h"
+#include "VROTransaction.h"
+#include "VROReticle.h"
+#include "VRORenderDelegateInternal.h"
+#include "VROFrameSynchronizerInternal.h"
+#include "VROImageUtil.h"
+#include "VRORenderContext.h"
+#include "VROCamera.h"
 
 static const float kDefaultSceneTransitionDuration = 1.0;
 
@@ -39,10 +41,13 @@ VRORenderer::VRORenderer() :
 }
 
 VRORenderer::~VRORenderer() {
-    [_delegate shutdownRenderer];
+    std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->shutdownRenderer();
+    }
 }
 
-void VRORenderer::setDelegate(id <VRORenderDelegate> delegate) {
+void VRORenderer::setDelegate(std::shared_ptr<VRORenderDelegateInternal> delegate) {
     _delegate = delegate;
 }
 
@@ -83,14 +88,20 @@ float VRORenderer::getWorldPerScreen(float distance, const VROFieldOfView &fov,
 
 #pragma mark - Stereo renderer methods
 
-void VRORenderer::updateRenderViewSize(CGSize size) {
-   [_delegate renderViewDidChangeSize:CGSizeMake(size.width / 2, size.height) context:_context.get()];
+void VRORenderer::updateRenderViewSize(float width, float height) {
+    std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->renderViewDidChangeSize(width, height, _context.get());
+    }
 }
 
 void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &driver) {
     if (!_rendererInitialized) {
-        [_delegate setupRendererWithDriver:&driver];
-        _rendererInitialized = YES;
+        std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
+        if (delegate) {
+            delegate->setupRendererWithDriver(&driver);
+        }
+        _rendererInitialized = true;
     }
     
     VROTransaction::beginImplicitAnimation();
@@ -139,18 +150,21 @@ void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &d
     
     if (_sceneController) {
         if (_outgoingSceneController) {
-            _outgoingSceneController.scene->updateSortKeys(*_context.get(), driver);
-            _sceneController.scene->updateSortKeys(*_context.get(), driver);
+            _outgoingSceneController->getScene()->updateSortKeys(*_context.get(), driver);
+            _sceneController->getScene()->updateSortKeys(*_context.get(), driver);
         }
         else {
-            _sceneController.scene->updateSortKeys(*_context.get(), driver);
+            _sceneController->getScene()->updateSortKeys(*_context.get(), driver);
         }
     }
 }
 
 void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
                             VRODriver &driver) {
-    [_delegate willRenderEye:eye context:_context.get()];
+    std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->willRenderEye(eye, _context.get());
+    }
 
     VROMatrix4f cameraMatrix = _context->getCamera().computeLookAtMatrix();
     VROMatrix4f eyeView = eyeFromHeadMatrix.multiply(cameraMatrix);
@@ -165,16 +179,18 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     renderEye(eye, driver);
     _reticle->renderEye(eye, _context.get(), &driver);
     
-    [_delegate didRenderEye:eye context:_context.get()];
+    if (delegate) {
+        delegate->didRenderEye(eye, _context.get());
+    }
 }
 
 void VRORenderer::endFrame(VRODriver &driver) {
     if (!_sceneTransitionActive && _outgoingSceneController) {
-        [_sceneController endIncomingTransition:_context.get()];
-        [_outgoingSceneController endOutgoingTransition:_context.get()];
-        
-        [_sceneController sceneDidAppear:_context.get() driver:&driver];
-        [_outgoingSceneController sceneDidDisappear:_context.get() driver:&driver];
+        _sceneController->endIncomingTransition(_context.get());
+        _outgoingSceneController->endOutgoingTransition(_context.get());
+    
+        _sceneController->onSceneDidAppear(*_context.get(), driver);
+        _outgoingSceneController->onSceneDidDisappear(*_context.get(), driver);
         
         _outgoingSceneController = nullptr;
     }
@@ -186,19 +202,19 @@ void VRORenderer::endFrame(VRODriver &driver) {
 void VRORenderer::renderEye(VROEyeType eyeType, VRODriver &driver) {
     if (_sceneController) {
         if (_outgoingSceneController) {
-            [_outgoingSceneController sceneWillRender:_context.get()];
-            [_sceneController sceneWillRender:_context.get()];
+            _outgoingSceneController->sceneWillRender(_context.get());
+            _sceneController->sceneWillRender(_context.get());
             
-            _outgoingSceneController.scene->renderBackground(*_context.get(), driver);
-            _sceneController.scene->renderBackground(*_context.get(), driver);
+            _outgoingSceneController->getScene()->renderBackground(*_context.get(), driver);
+            _sceneController->getScene()->renderBackground(*_context.get(), driver);
             
-            _outgoingSceneController.scene->render(*_context.get(), driver);
-            _sceneController.scene->render(*_context.get(), driver);
+            _outgoingSceneController->getScene()->render(*_context.get(), driver);
+            _sceneController->getScene()->render(*_context.get(), driver);
         }
         else {
-            [_sceneController sceneWillRender:_context.get()];
-            _sceneController.scene->renderBackground(*_context.get(), driver);
-            _sceneController.scene->render(*_context.get(), driver);
+            _sceneController->sceneWillRender(_context.get());
+            _sceneController->getScene()->renderBackground(*_context.get(), driver);
+            _sceneController->getScene()->render(*_context.get(), driver);
         }
     }
 }
@@ -208,33 +224,35 @@ void VRORenderer::renderEye(VROEyeType eyeType, VRODriver &driver) {
 void VRORenderer::handleTap() {
     _reticle->trigger();
     
-    [_delegate reticleTapped:_context->getCamera().getForward()
-                           context:_context.get()];
+    std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->reticleTapped(_context->getCamera().getForward(), _context.get());
+    }
+    
     if (_sceneController) {
-        [_sceneController reticleTapped:_context->getCamera().getForward()
-                                context:_context.get()];
+        _sceneController->reticleTapped(_context->getCamera().getForward(), _context.get());
     }
 }
 
 #pragma mark - Scene Loading
 
-void VRORenderer::setSceneController(VROSceneController *sceneController, VRODriver &driver) {
-    VROSceneController *outgoingSceneController = _sceneController;
+void VRORenderer::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, VRODriver &driver) {
+    std::shared_ptr<VROSceneControllerInternal> outgoingSceneController = _sceneController;
     
-    [sceneController sceneWillAppear:_context.get() driver:&driver];
+    sceneController->onSceneWillAppear(*_context.get(), driver);
     if (outgoingSceneController) {
-        [outgoingSceneController sceneWillDisappear:_context.get() driver:&driver];
+        outgoingSceneController->onSceneWillDisappear(*_context.get(), driver);
     }
     
     _sceneController = sceneController;
     
-    [sceneController sceneDidAppear:_context.get() driver:&driver];
+    sceneController->onSceneDidAppear(*_context.get(), driver);
     if (outgoingSceneController) {
-        [outgoingSceneController sceneDidDisappear:_context.get() driver:&driver];
+        outgoingSceneController->onSceneDidDisappear(*_context.get(), driver);
     }
 }
 
-void VRORenderer::setSceneController(VROSceneController *sceneController, bool animated, VRODriver &driver) {
+void VRORenderer::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, bool animated, VRODriver &driver) {
     if (!animated || !_sceneController) {
         _sceneController = sceneController;
         return;
@@ -243,9 +261,9 @@ void VRORenderer::setSceneController(VROSceneController *sceneController, bool a
     setSceneController(sceneController, kDefaultSceneTransitionDuration, VROTimingFunctionType::EaseIn, driver);
 }
 
-void VRORenderer::setSceneController(VROSceneController *sceneController, float seconds,
+void VRORenderer::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, float seconds,
                                      VROTimingFunctionType timingFunctionType, VRODriver &driver) {
-    passert (_sceneController != nil);
+    passert (_sceneController != nullptr);
     
     _outgoingSceneController = _sceneController;
     _sceneController = sceneController;
@@ -254,29 +272,29 @@ void VRORenderer::setSceneController(VROSceneController *sceneController, float 
     _sceneTransitionDuration = seconds;
     _sceneTransitionTimingFunction = VROTimingFunction::forType(timingFunctionType);
     
-    [_sceneController sceneWillAppear:_context.get() driver:&driver];
-    [_outgoingSceneController sceneWillDisappear:_context.get() driver:&driver];
+    _sceneController->onSceneWillAppear(*_context.get(), driver);
+    _outgoingSceneController->onSceneWillDisappear(*_context.get(), driver);
     
-    [_sceneController startIncomingTransition:_context.get() duration:seconds];
-    [_outgoingSceneController startOutgoingTransition:_context.get() duration:seconds];
+    _sceneController->startIncomingTransition(_context.get(), seconds);
+    _outgoingSceneController->startOutgoingTransition(_context.get(), seconds);
 }
 
 bool VRORenderer::processSceneTransition() {
     if (!_sceneController || !_outgoingSceneController) {
-        return NO;
+        return false;
     }
     
     float percent = (VROTimeCurrentSeconds() - _sceneTransitionStartTime) / _sceneTransitionDuration;
     float t = _sceneTransitionTimingFunction->getT(percent);
     
-    BOOL sceneTransitionActive = percent < 0.9999;
+    bool sceneTransitionActive = percent < 0.9999;
     if (sceneTransitionActive) {
-        [_sceneController animateIncomingTransition:_context.get() percentComplete:t];
-        [_outgoingSceneController animateOutgoingTransition:_context.get() percentComplete:t];
+        _sceneController->animateIncomingTransition(_context.get(), t);
+        _outgoingSceneController->animateOutgoingTransition(_context.get(), t);
     }
     else {
-        [_sceneController animateIncomingTransition:_context.get() percentComplete:1.0];
-        [_outgoingSceneController animateOutgoingTransition:_context.get() percentComplete:1.0];
+        _sceneController->animateIncomingTransition(_context.get(), 1.0);
+        _outgoingSceneController->animateOutgoingTransition(_context.get(), 1.0);
     }
     
     return sceneTransitionActive;
@@ -296,7 +314,8 @@ void VRORenderer::notifyFrameEnd() {
 #pragma mark - VR Framework Specific
 
 void VRORenderer::requestExitVR() {
-    if (_delegate) {
-        [_delegate userDidRequestExitVR];
+    std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->userDidRequestExitVR();
     }
 }

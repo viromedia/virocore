@@ -13,6 +13,7 @@
 #include "VROLog.h"
 #include "VROAllocationTracker.h"
 #include "VROData.h"
+#include <atomic>
 
 static std::atomic_int sTextureId;
 

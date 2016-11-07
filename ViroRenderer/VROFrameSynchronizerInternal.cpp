@@ -8,6 +8,7 @@
 
 #include "VROFrameSynchronizerInternal.h"
 #include "VROFrameListener.h"
+#include <algorithm>
 
 void VROFrameSynchronizerInternal::addFrameListener(std::shared_ptr<VROFrameListener> listener) {
     _frameListeners.push_back(listener);

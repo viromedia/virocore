@@ -59,7 +59,7 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::v
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
         
         std::shared_ptr<VROImage> &firstImage = images.front();
-        const CGFloat cubeSize = firstImage->getWidth();
+        const float cubeSize = firstImage->getWidth();
         
         for (int slice = 0; slice < 6; ++slice) {
             std::shared_ptr<VROImage> &image = images[slice];

@@ -9,7 +9,7 @@
 #include "VROSceneRendererCardboardOpenGL.h"
 #include "VRORenderer.h"
 #include "VROMatrix4f.h"
-#include "VRODriverOpenGL.h"
+#include "VRODriverOpenGLiOS.h"
 #include "VROViewport.h"
 #include "VROEye.h"
 #include "VROConvert.h"
@@ -20,7 +20,7 @@ VROSceneRendererCardboardOpenGL::VROSceneRendererCardboardOpenGL(EAGLContext *co
     _renderer(renderer),
     _suspended(true) {
     
-    _driver = std::make_shared<VRODriverOpenGL>(context);
+    _driver = std::make_shared<VRODriverOpenGLiOS>(context);
 }
 
 VROSceneRendererCardboardOpenGL::~VROSceneRendererCardboardOpenGL() {
@@ -36,15 +36,15 @@ void VROSceneRendererCardboardOpenGL::initRenderer(GVRHeadTransform *headTransfo
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void VROSceneRendererCardboardOpenGL::setSceneController(VROSceneController *sceneController) {
+void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController) {
     _renderer->setSceneController(sceneController, *_driver);
 }
 
-void VROSceneRendererCardboardOpenGL::setSceneController(VROSceneController *sceneController, bool animated) {
+void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, bool animated) {
     _renderer->setSceneController(sceneController, animated, *_driver);
 }
 
-void VROSceneRendererCardboardOpenGL::setSceneController(VROSceneController *sceneController, float seconds,
+void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, float seconds,
                                                          VROTimingFunctionType timingFunctionType) {
     
     _renderer->setSceneController(sceneController, seconds, timingFunctionType, *_driver);

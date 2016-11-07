@@ -14,7 +14,6 @@
 #include "VROVector3f.h"
 #include "VROQuaternion.h"
 #include "VROMatrix4f.h"
-#include "VRORenderDelegate.h"
 #include "VROFrameSynchronizer.h"
 
 class VROEye;
@@ -27,12 +26,11 @@ class VROViewport;
 class VROFieldOfView;
 class VROFrameListener;
 class VROReticle;
+class VROSceneControllerInternal;
+class VRORenderDelegateInternal;
 enum class VROCameraRotationType;
 enum class VROEyeType;
 enum class VROTimingFunctionType;
-
-@class VROScreenUIView; //TODO delete
-@class VROSceneController;
 
 static const float kZNear = 0.1;
 static const float kZFar  = 100;
@@ -51,18 +49,15 @@ public:
     
     float getWorldPerScreen(float distance, const VROFieldOfView &fov,
                             const VROViewport &viewport) const;
-    void setDelegate(id <VRORenderDelegate> delegate);
-    void updateRenderViewSize(CGSize size);
+    void setDelegate(std::shared_ptr<VRORenderDelegateInternal> delegate);
+    void updateRenderViewSize(float width, float height);
     
 #pragma mark - Scene Controllers
     
-    void setSceneController(VROSceneController *sceneController, VRODriver &driver);
-    void setSceneController(VROSceneController *sceneController, bool animated, VRODriver &driver);
-    void setSceneController(VROSceneController *sceneController, float seconds,
+    void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, VRODriver &driver);
+    void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, bool animated, VRODriver &driver);
+    void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, float seconds,
                             VROTimingFunctionType timingFunctionType, VRODriver &driver);
-    VROSceneController *getSceneController() const {
-        return _sceneController;
-    }
     
 #pragma mark - Render Loop
     
@@ -113,12 +108,12 @@ private:
     /*
      Delegate receiving scene rendering updates.
      */
-    id <VRORenderDelegate> _delegate; //TODO Make this not Obj-C, and weak ptr
+    std::weak_ptr<VRORenderDelegateInternal> _delegate;
 
 #pragma mark - Scene and Scene Transitions
     
-    VROSceneController *_sceneController;
-    VROSceneController *_outgoingSceneController;
+    std::shared_ptr<VROSceneControllerInternal> _sceneController;
+    std::shared_ptr<VROSceneControllerInternal> _outgoingSceneController;
 
     bool _sceneTransitionActive;
     float _sceneTransitionDuration;

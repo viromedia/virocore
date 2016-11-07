@@ -29,12 +29,14 @@ VROSceneControllerInternal::~VROSceneControllerInternal() {
     
 }
 
-void VROSceneControllerInternal::setHoverDelegate(std::shared_ptr<VROHoverDelegate> delegate) {
-    if (!_hoverController) {
-        
+void VROSceneControllerInternal::setHoverEnabled(bool enabled, bool boundsOnly) {
+    _hoverTestBoundsOnly = boundsOnly;
+    if (enabled) {
+        _hoverController->setDelegate(shared_from_this());
     }
-    
-    _hoverController->setDelegate(delegate);
+    else {
+        _hoverController->setDelegate({});
+    }
 }
 
 void VROSceneControllerInternal::onSceneWillAppear(VRORenderContext &context, VRODriver &driver) {

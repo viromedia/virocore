@@ -9,6 +9,7 @@
 #include "VROShaderModifier.h"
 #include "VROLog.h"
 #include "VROUniform.h"
+#include <atomic>
 
 static std::atomic_int sShaderModifierId;
 

@@ -13,6 +13,7 @@
 #include "VROTransaction.h"
 #include "VROAllocationTracker.h"
 #include "VROSortKey.h"
+#include <atomic>
 
 static std::atomic_int sMaterialId;
 

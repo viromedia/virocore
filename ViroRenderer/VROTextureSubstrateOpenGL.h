@@ -9,12 +9,11 @@
 #ifndef VROTextureSubstrateOpenGL_h
 #define VROTextureSubstrateOpenGL_h
 
-#import "VROTextureSubstrate.h"
+#include "VROTextureSubstrate.h"
 #include "VROOpenGL.h"
-#import <UIKit/UIKit.h>
-#import <memory>
-#import <vector>
-#import "VROAllocationTracker.h"
+#include <memory>
+#include <vector>
+#include "VROAllocationTracker.h"
 
 class VROData;
 class VROImage;

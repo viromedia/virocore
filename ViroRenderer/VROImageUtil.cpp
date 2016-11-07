@@ -19,14 +19,14 @@ std::shared_ptr<VROTexture> getBlankTexture() {
 
 #if VRO_PLATFORM_IOS
 
-#include "VROImageUIKit.h"
+#include "VROImageiOS.h"
 
 void *VROImageLoadTextureDataRGBA8888(const char *resource, size_t *bitmapLength, int *width, int *height) {
     NSString *file = [[NSBundle mainBundle] pathForResource:[NSString stringWithUTF8String:resource] ofType:@"png"];
     UIImage *image = [UIImage imageWithContentsOfFile:file];
     passert (image != nullptr);
 
-    std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageUIKit>(image);
+    std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageiOS>(image);
     *width = wrapper->getWidth();
     *height = wrapper->getHeight();
     
@@ -38,7 +38,7 @@ void initBlankTexture(const VRORenderContext &context) {
     NSString *path = [bundle pathForResource:@"blank" ofType:@"png"];
     UIImage *image = [UIImage imageWithContentsOfFile:path];
     
-    std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageUIKit>(image);
+    std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageiOS>(image);
     staticBlankTexture = std::make_shared<VROTexture>(wrapper);
 }
 

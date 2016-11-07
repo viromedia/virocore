@@ -8,6 +8,8 @@
 
 #include "VROOpenGL.h"
 #include <vector>
+#include <atomic>
+#include <memory>
 
 // Incrementing binding points
 static std::atomic_int sUBOBindingPoint;

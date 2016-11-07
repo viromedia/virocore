@@ -13,7 +13,6 @@
 #include <vector>
 #include <memory>
 #include "VROAllocationTracker.h"
-#include "VROAudioPlayer.h"
 #include "VROSortKey.h"
 #include "VROQuaternion.h"
 
@@ -25,6 +24,7 @@ class VROGeometry;
 class VROHitTestResult;
 class VROVector3f;
 class VROVector4f;
+class VROAudioPlayer;
 
 class VROScene : public std::enable_shared_from_this<VROScene> {
     
@@ -74,7 +74,7 @@ public:
      Get the audio player for the background track in this scene.
      */
     VROAudioPlayer &getBackgroundAudioPlayer() {
-        return _backgroundAudio;
+        return *_backgroundAudio;
     }
     
 private:
@@ -102,7 +102,7 @@ private:
     /*
      The audio player for the background track of this scene.
      */
-    VROAudioPlayer _backgroundAudio;
+    VROAudioPlayer *_backgroundAudio;
     
 };
 

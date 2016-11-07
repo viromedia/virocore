@@ -7,6 +7,7 @@
 //
 
 #include <string>
+#include <memory>
 #include "VROVector3f.h"
 #include "VROVector4f.h"
 #include "VROMatrix4f.h"

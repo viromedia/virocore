@@ -13,6 +13,10 @@
 #include "VROQuaternion.h"
 #include "VROMatrix4f.h"
 
+enum class VROCameraRotationType {
+    Standard,
+    Orbit
+};
 
 /*
  The default forward and up vectors. These are rotated by the base and head

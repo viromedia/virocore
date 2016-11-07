@@ -53,7 +53,7 @@ std::shared_ptr<VRONode> VROHoverController::findHoveredNode(VROVector3f ray, st
     VROVector3f cameraPosition = context.getCamera().getPosition();
 
     std::shared_ptr<VROHoverDelegate> delegate = _delegate.lock();
-    bool hitTestBoundsOnly = delegate ? delegate->isHitTestBoundsOnly() : false;
+    bool hitTestBoundsOnly = delegate ? delegate->isHoverTestBoundsOnly() : false;
 
     std::shared_ptr<VRONode> newHover;
     float minDistance = FLT_MAX;
@@ -101,10 +101,10 @@ void VROHoverController::notifyDelegatesOnHoveredNode(std::shared_ptr<VRONode> n
     if (_firstHoverEvent == true) {
         _firstHoverEvent = false;
         _hoveredNode = newHover;
-        delegate->hoverOn(newHover);
+        delegate->hoverOnNode(newHover);
     } else if (oldHover != newHover) {
-        delegate->hoverOff(oldHover);
-        delegate->hoverOn(newHover);
+        delegate->hoverOffNode(oldHover);
+        delegate->hoverOnNode(newHover);
         _hoveredNode = newHover;
     }
 

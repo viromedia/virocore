@@ -10,9 +10,10 @@
 #define VROSceneRendererCardboard_h
 
 #include <stdio.h>
+#include <memory>
 #import "GVRCardboardView.h"
 
-@class VROSceneController;
+class VROSceneControllerInternal;
 enum class VROTimingFunctionType;
 
 /*
@@ -41,9 +42,9 @@ public:
     /*
      Set the active scene.
      */
-    virtual void setSceneController(VROSceneController *sceneController) = 0;
-    virtual void setSceneController(VROSceneController *sceneController, bool animated) = 0;
-    virtual void setSceneController(VROSceneController *sceneController, float seconds,
+    virtual void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController) = 0;
+    virtual void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, bool animated) = 0;
+    virtual void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, float seconds,
                                     VROTimingFunctionType timingFunctionType) = 0;
     
     /*

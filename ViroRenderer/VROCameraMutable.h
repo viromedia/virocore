@@ -12,7 +12,8 @@
 #include "VROAnimatable.h"
 #include "VROVector3f.h"
 #include "VROQuaternion.h"
-#include "VROView.h"
+
+enum class VROCameraRotationType;
 
 class VROCameraMutable : public VROAnimatable {
     

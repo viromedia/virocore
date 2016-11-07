@@ -48,6 +48,60 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROByteBuffer.cpp
              ../../ViroRenderer/VROImageUtil.cpp
              ../../ViroRenderer/VROData.cpp
+             ../../ViroRenderer/VROGeometryUtil.cpp
+             ../../ViroRenderer/VROTextureUtil.cpp
+             ../../ViroRenderer/VROStringUtil.cpp
+             ../../ViroRenderer/VROPlatformUtil.cpp
+
+             # Renderer
+             ../../ViroRenderer/VROScene.cpp
+             ../../ViroRenderer/VROSceneControllerInternal.cpp
+             ../../ViroRenderer/VROCamera.cpp
+             ../../ViroRenderer/VRONode.cpp
+             ../../ViroRenderer/VROGeometry.cpp
+             ../../ViroRenderer/VROGeometryElement.cpp
+             ../../ViroRenderer/VROGeometrySource.cpp
+             ../../ViroRenderer/VROMaterial.cpp
+             ../../ViroRenderer/VROMaterialVisual.cpp
+             ../../ViroRenderer/VROTexture.cpp
+             ../../ViroRenderer/VROLight.cpp
+             ../../ViroRenderer/VROHoverController.cpp
+             ../../ViroRenderer/VROBillboardConstraint.cpp
+             ../../ViroRenderer/VROTransformConstraint.cpp
+             ../../ViroRenderer/VRORenderer.cpp
+             ../../ViroRenderer/VROFrameSynchronizerInternal.cpp
+             ../../ViroRenderer/VROGeometrySubstrate.cpp
+             ../../ViroRenderer/VROTextureSubstrate.cpp
+             ../../ViroRenderer/VROMaterialSubstrate.cpp
+             ../../ViroRenderer/VROCameraMutable.cpp
+
+             # Animation
+             ../../ViroRenderer/VROTimingFunction.cpp
+             ../../ViroRenderer/VROTransaction.cpp
+             ../../ViroRenderer/VROAnimatable.cpp
+             ../../ViroRenderer/VROAction.cpp
+
+             # Shapes
+             ../../ViroRenderer/VROBox.cpp
+             ../../ViroRenderer/VROSkybox.cpp
+             ../../ViroRenderer/VROSurface.cpp
+             ../../ViroRenderer/VROTorusKnot.cpp
+             ../../ViroRenderer/VROShapeUtils.cpp
+             ../../ViroRenderer/VROSphere.cpp
+             ../../ViroRenderer/VROPolyline.cpp
+
+             # UI
+             ../../ViroRenderer/VROReticle.cpp
+
+             # OpenGL
+             ../../ViroRenderer/VROGeometrySubstrateOpenGL.cpp
+             ../../ViroRenderer/VROMaterialSubstrateOpenGL.cpp
+             ../../ViroRenderer/VROTextureSubstrateOpenGL.cpp
+             ../../ViroRenderer/VROUniform.cpp
+             ../../ViroRenderer/VROShaderProgram.cpp
+             ../../ViroRenderer/VROShaderModifier.cpp
+             #../../ViroRenderer/VROVideoTextureCacheOpenGL.cpp
+             ../../ViroRenderer/VROLightingUBO.cpp
              )
 
 # Searches for a specified prebuilt library and stores the path as a
@@ -72,4 +126,4 @@ target_link_libraries( # Specifies the target library.
                        # included in the NDK.
                        ${log-lib}
                        ${lib-egl}
-                       ${lib-GlESv3})
+                       ${lib-GLESv3})
