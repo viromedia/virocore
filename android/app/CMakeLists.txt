@@ -27,9 +27,8 @@ add_library( # Sets the name of the library.
              src/main/cpp/native-lib.cpp
              src/main/cpp/debug_stacktrace.cpp
              src/main/cpp/debug_mapinfo.cpp
-
-             src/main/cpp/treasure_hunt_jni.cc
-             src/main/cpp/treasure_hunt_renderer.cc
+             src/main/cpp/VROSceneRendererCardboard.cpp
+             src/main/cpp/VRORenderer_JNI.cpp
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp
