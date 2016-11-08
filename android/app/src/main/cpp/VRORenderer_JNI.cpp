@@ -21,12 +21,12 @@
 
 namespace {
 
-inline jlong jptr(TreasureHuntRenderer *native_treasure_hunt) {
-  return reinterpret_cast<intptr_t>(native_treasure_hunt);
+inline jlong jptr(VROSceneRendererCardboard *native_renderer) {
+  return reinterpret_cast<intptr_t>(native_renderer);
 }
 
-inline TreasureHuntRenderer *native(jlong ptr) {
-  return reinterpret_cast<TreasureHuntRenderer *>(ptr);
+inline VROSceneRendererCardboard *native(jlong ptr) {
+  return reinterpret_cast<VROSceneRendererCardboard *>(ptr);
 }
 }  // anonymous namespace
 
@@ -41,38 +41,38 @@ JNI_METHOD(jlong, nativeCreateRenderer)(JNIEnv *env, jclass clazz,
                       GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
 
   return jptr(
-      new TreasureHuntRenderer(reinterpret_cast<gvr_context *>(native_gvr_api),
+      new VROSceneRendererCardboard(reinterpret_cast<gvr_context *>(native_gvr_api),
                                std::move(audio_context)));
 }
 
 JNI_METHOD(void, nativeDestroyRenderer)
-(JNIEnv *env, jclass clazz, jlong native_treasure_hunt) {
-  delete native(native_treasure_hunt);
+(JNIEnv *env, jclass clazz, jlong native_renderer) {
+  delete native(native_renderer);
 }
 
 JNI_METHOD(void, nativeInitializeGl)(JNIEnv *env, jobject obj,
-                                     jlong native_treasure_hunt) {
-  native(native_treasure_hunt)->InitializeGl();
+                                     jlong native_renderer) {
+  native(native_renderer)->InitializeGl();
 }
 
 JNI_METHOD(void, nativeDrawFrame)(JNIEnv *env, jobject obj,
-                                  jlong native_treasure_hunt) {
-  native(native_treasure_hunt)->DrawFrame();
+                                  jlong native_renderer) {
+  native(native_renderer)->DrawFrame();
 }
 
 JNI_METHOD(void, nativeOnTriggerEvent)(JNIEnv *env, jobject obj,
-                                       jlong native_treasure_hunt) {
-  native(native_treasure_hunt)->OnTriggerEvent();
+                                       jlong native_renderer) {
+  native(native_renderer)->OnTriggerEvent();
 }
 
 JNI_METHOD(void, nativeOnPause)(JNIEnv *env, jobject obj,
-                                jlong native_treasure_hunt) {
-  native(native_treasure_hunt)->OnPause();
+                                jlong native_renderer) {
+  native(native_renderer)->OnPause();
 }
 
 JNI_METHOD(void, nativeOnResume)(JNIEnv *env, jobject obj,
-                                 jlong native_treasure_hunt) {
-  native(native_treasure_hunt)->OnResume();
+                                 jlong native_renderer) {
+  native(native_renderer)->OnResume();
 }
 
 }  // extern "C"
