@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.viro.virorenderer">
+    package="com.viro.renderer">
 
     <!-- The GVR SDK requires API 19+ and OpenGL ES 2+. -->
     <uses-sdk android:minSdkVersion="19" android:targetSdkVersion="24" />
@@ -30,7 +30,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ViroActivity"
-            android:enableVrMode="true">
+            android:enableVrMode="true"
+            android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

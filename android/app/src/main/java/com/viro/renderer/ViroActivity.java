@@ -1,13 +1,10 @@
-package com.viro.virorenderer;
+package com.viro.renderer;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.TextView;
 
-import android.app.Activity;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -27,8 +24,8 @@ public class ViroActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
-    private GvrLayout gvrLayout;
-    private long nativeTreasureHuntRenderer;
+    private GvrLayout mGVRLayout;
+    private long mNativeRenderer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +46,12 @@ public class ViroActivity extends AppCompatActivity {
                         });
 
         // Initialize GvrLayout and the native renderer.
-        gvrLayout = new GvrLayout(this);
-        nativeTreasureHuntRenderer =
+        mGVRLayout = new GvrLayout(this);
+        mNativeRenderer =
                 nativeCreateRenderer(
                         getClass().getClassLoader(),
                         this.getApplicationContext(),
-                        gvrLayout.getGvrApi().getNativeGvrContext());
+                        mGVRLayout.getGvrApi().getNativeGvrContext());
 
         // Add the GLSurfaceView to the GvrLayout.
         GLSurfaceView glSurfaceView = new GLSurfaceView(this);
@@ -65,7 +62,7 @@ public class ViroActivity extends AppCompatActivity {
                 new GLSurfaceView.Renderer() {
                     @Override
                     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-                        nativeInitializeGl(nativeTreasureHuntRenderer);
+                        nativeInitializeGl(mNativeRenderer);
                     }
 
                     @Override
@@ -73,7 +70,7 @@ public class ViroActivity extends AppCompatActivity {
 
                     @Override
                     public void onDrawFrame(GL10 gl) {
-                        nativeDrawFrame(nativeTreasureHuntRenderer);
+                        nativeDrawFrame(mNativeRenderer);
                     }
                 });
         glSurfaceView.setOnTouchListener(
@@ -83,19 +80,19 @@ public class ViroActivity extends AppCompatActivity {
                         if (event.getAction() == MotionEvent.ACTION_DOWN) {
                             // Give user feedback and signal a trigger event.
                             ((Vibrator) getSystemService(Context.VIBRATOR_SERVICE)).vibrate(50);
-                            nativeOnTriggerEvent(nativeTreasureHuntRenderer);
+                            nativeOnTriggerEvent(mNativeRenderer);
                             return true;
                         }
                         return false;
                     }
                 });
-        gvrLayout.setPresentationView(glSurfaceView);
+        mGVRLayout.setPresentationView(glSurfaceView);
 
         // Add the GvrLayout to the View hierarchy.
-        setContentView(gvrLayout);
+        setContentView(mGVRLayout);
 
         // Enable scan line racing.
-        if (gvrLayout.setAsyncReprojectionEnabled(true)) {
+        if (mGVRLayout.setAsyncReprojectionEnabled(true)) {
             // Scanline racing decouples the app framerate from the display framerate,
             // allowing immersive interaction even at the throttled clockrates set by
             // sustained performance mode.
@@ -112,15 +109,15 @@ public class ViroActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        nativeOnPause(nativeTreasureHuntRenderer);
-        gvrLayout.onPause();
+        nativeOnPause(mNativeRenderer);
+        mGVRLayout.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        nativeOnResume(nativeTreasureHuntRenderer);
-        gvrLayout.onResume();
+        nativeOnResume(mNativeRenderer);
+        mGVRLayout.onResume();
     }
 
     @Override
@@ -129,8 +126,8 @@ public class ViroActivity extends AppCompatActivity {
         // Destruction order is important; shutting down the GvrLayout will detach
         // the GLSurfaceView and stop the GL thread, allowing safe shutdown of
         // native resources from the UI thread.
-        gvrLayout.shutdown();
-        nativeDestroyRenderer(nativeTreasureHuntRenderer);
+        mGVRLayout.shutdown();
+        nativeDestroyRenderer(mNativeRenderer);
     }
 
     @Override
@@ -165,10 +162,10 @@ public class ViroActivity extends AppCompatActivity {
 
     private native long nativeCreateRenderer(
             ClassLoader appClassLoader, Context context, long nativeGvrContext);
-    private native void nativeDestroyRenderer(long nativeTreasureHuntRenderer);
-    private native void nativeInitializeGl(long nativeTreasureHuntRenderer);
-    private native long nativeDrawFrame(long nativeTreasureHuntRenderer);
-    private native void nativeOnTriggerEvent(long nativeTreasureHuntRenderer);
-    private native void nativeOnPause(long nativeTreasureHuntRenderer);
-    private native void nativeOnResume(long nativeTreasureHuntRenderer);
+    private native void nativeDestroyRenderer(long nativeRenderer);
+    private native void nativeInitializeGl(long nativeRenderer);
+    private native long nativeDrawFrame(long nativeRenderer);
+    private native void nativeOnTriggerEvent(long nativeRenderer);
+    private native void nativeOnPause(long nativeRenderer);
+    private native void nativeOnResume(long nativeRenderer);
 }

@@ -1,4 +1,4 @@
-package com.viro.virorenderer;
+package com.viro.renderer;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.viro.virorenderer", appContext.getPackageName());
+        assertEquals("com.viro.renderer", appContext.getPackageName());
     }
 }

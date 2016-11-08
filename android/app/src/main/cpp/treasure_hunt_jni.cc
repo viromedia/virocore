@@ -24,7 +24,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_virorenderer_ViroActivity_##method_name
+      Java_com_viro_renderer_ViroActivity_##method_name
 
 namespace {
 

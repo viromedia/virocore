@@ -1,4 +1,4 @@
-package com.viro.virorenderer;
+package com.viro.renderer;
 
 import org.junit.Test;
 

@@ -1154,6 +1154,8 @@
 				8FCB10011DD0060900FE425C /* VRORenderDelegateiOS.h */,
 				8FCB10041DD0EC5B00FE425C /* VROSceneControlleriOS.h */,
 				8FCB100A1DD12BDF00FE425C /* VRODriverOpenGLiOS.h */,
+				8F53D39D1DCA883A001C91A8 /* VROConvert.h */,
+				8F53D39C1DCA883A001C91A8 /* VROConvert.cpp */,
 			);
 			name = "iOS Impl";
 			sourceTree = "<group>";
@@ -1310,8 +1312,6 @@
 				8FCF395D1CA589AF00A86CA3 /* VROSceneController.h */,
 				8FCF395E1CA589AF00A86CA3 /* VROSceneController.mm */,
 				8FD4DED11C18ECD4003DC425 /* Info.plist */,
-				8F53D39D1DCA883A001C91A8 /* VROConvert.h */,
-				8F53D39C1DCA883A001C91A8 /* VROConvert.cpp */,
 			);
 			path = ViroKit;
 			sourceTree = "<group>";
