@@ -15,6 +15,11 @@ android {
                 cppFlags "-std=c++11 -frtti"
             }
         }
+        ndk {
+            // Specifies the ABI configurations of your native
+            // libraries Gradle should build and package with your APK.
+            abiFilters 'armeabi-v7a'
+        }
     }
     buildTypes {
         release {
@@ -35,5 +40,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.0.0'
+    compile project(':libs:gvr')
+    compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
     testCompile 'junit:junit:4.12'
 }

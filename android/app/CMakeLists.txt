@@ -5,7 +5,8 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 include_directories(../../ViroRenderer
-                    src/main/cpp)
+                    src/main/cpp
+                    ../libs/gvr/include)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -26,6 +27,9 @@ add_library( # Sets the name of the library.
              src/main/cpp/native-lib.cpp
              src/main/cpp/debug_stacktrace.cpp
              src/main/cpp/debug_mapinfo.cpp
+
+             src/main/cpp/treasure_hunt_jni.cc
+             src/main/cpp/treasure_hunt_renderer.cc
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp
@@ -104,6 +108,22 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROLightingUBO.cpp
              )
 
+# Add pre-build libraries
+add_library( lib-gvr
+             SHARED
+             IMPORTED )
+set_target_properties( lib-gvr
+                       PROPERTIES IMPORTED_LOCATION
+                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libgvr.so )
+
+add_library( lib-gvr-audio
+             SHARED
+             IMPORTED )
+set_target_properties( lib-gvr-audio
+                       PROPERTIES IMPORTED_LOCATION
+                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libgvr_audio.so )
+
+
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because system libraries are included in the search path by
 # default, you only need to specify the name of the public NDK library
@@ -111,7 +131,7 @@ add_library( # Sets the name of the library.
 # completing its build. The first argument to find_library is the output
 # variable where the path to the library will be stored.
 
-find_library( log-lib log )
+find_library( lib-log log )
 find_library( lib-egl EGL )
 find_library( lib-GLESv3 GLESv3 )
 
@@ -124,6 +144,8 @@ target_link_libraries( # Specifies the target library.
 
                        # Links the target library to the log library
                        # included in the NDK.
-                       ${log-lib}
+                       ${lib-log}
                        ${lib-egl}
-                       ${lib-GLESv3})
+                       ${lib-GLESv3}
+                       lib-gvr
+                       lib-gvr-audio)
