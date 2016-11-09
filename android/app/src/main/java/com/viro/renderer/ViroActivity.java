@@ -1,5 +1,6 @@
 package com.viro.renderer;
 
+import android.content.res.AssetManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -26,6 +27,7 @@ public class ViroActivity extends AppCompatActivity {
 
     private GvrLayout mGVRLayout;
     private long mNativeRenderer;
+    private AssetManager mAssetManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,15 +49,17 @@ public class ViroActivity extends AppCompatActivity {
 
         // Initialize GvrLayout and the native renderer.
         mGVRLayout = new GvrLayout(this);
+        mAssetManager = getResources().getAssets();
         mNativeRenderer =
                 nativeCreateRenderer(
                         getClass().getClassLoader(),
                         this.getApplicationContext(),
+                        mAssetManager,
                         mGVRLayout.getGvrApi().getNativeGvrContext());
 
         // Add the GLSurfaceView to the GvrLayout.
         GLSurfaceView glSurfaceView = new GLSurfaceView(this);
-        glSurfaceView.setEGLContextClientVersion(2);
+        glSurfaceView.setEGLContextClientVersion(3);
         glSurfaceView.setEGLConfigChooser(8, 8, 8, 0, 0, 0);
         glSurfaceView.setPreserveEGLContextOnPause(true);
         glSurfaceView.setRenderer(
@@ -161,7 +165,7 @@ public class ViroActivity extends AppCompatActivity {
     }
 
     private native long nativeCreateRenderer(
-            ClassLoader appClassLoader, Context context, long nativeGvrContext);
+            ClassLoader appClassLoader, Context context, AssetManager assets, long nativeGvrContext);
     private native void nativeDestroyRenderer(long nativeRenderer);
     private native void nativeInitializeGl(long nativeRenderer);
     private native long nativeDrawFrame(long nativeRenderer);

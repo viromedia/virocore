@@ -21,7 +21,7 @@
 static std::atomic_int sMaterialId;
 
 std::string loadTextAsset(std::string resource) {
-    return VROPlatformLoadFileAsString(VROPlatformGetPathForResource(resource, "glsl"));
+    return VROPlatformLoadResourceAsString(resource, "glsl");
 }
 
 /////////////////////////////////////////////////////////////////////////////////

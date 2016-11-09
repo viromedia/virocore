@@ -7,6 +7,7 @@
 //
 
 #include "VROPlatformUtil.h"
+#include "VROLog.h"
 
 #if VRO_PLATFORM_IOS
 
@@ -26,16 +27,44 @@ std::string VROPlatformLoadFileAsString(std::string path) {
                                                      error:nil] UTF8String]);
 }
 
+std::string VROPlatformLoadResourceAsString(std::string resource, std::string type) {
+    return VROPlatformLoadFileAsString(VROPlatformGetPathForResource(resource, type));
+}
+
 #elif VRO_PLATFORM_ANDROID
 
+static AAssetManager *sAssetMgr = nullptr;
+
+void VROPlatformSetAssetManager(JNIEnv *env, jobject assetManager) {
+    sAssetMgr = AAssetManager_fromJava(env, assetManager);
+}
+
 std::string VROPlatformGetPathForResource(std::string resource, std::string type) {
-    // TODO Android
+    // Android does not expose paths to resources
+    pabort();
     return "";
 }
 
 std::string VROPlatformLoadFileAsString(std::string path) {
-    // TODO Android
+    pabort();
     return "";
+}
+
+std::string VROPlatformLoadResourceAsString(std::string resource, std::string type) {
+    std::string assetName = resource + "." + type;
+
+    AAsset *asset = AAssetManager_open(sAssetMgr, assetName.c_str(), AASSET_MODE_BUFFER);
+    size_t length = AAsset_getLength(asset);
+    
+    char *buffer = (char *)malloc(length + 1);
+    AAsset_read(asset, buffer, length);
+    buffer[length] = 0;
+    
+    std::string str(buffer);
+    AAsset_close(asset);
+    free(buffer);
+
+    return str;
 }
 
 #endif

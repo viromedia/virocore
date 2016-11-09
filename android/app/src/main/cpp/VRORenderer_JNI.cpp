@@ -14,6 +14,7 @@
 #include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "VROSceneRendererCardboard.h"
+#include "VROPlatformUtil.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -35,10 +36,12 @@ extern "C" {
 JNI_METHOD(jlong, nativeCreateRenderer)(JNIEnv *env, jclass clazz,
                                         jobject class_loader,
                                         jobject android_context,
+                                        jobject asset_mgr,
                                         jlong native_gvr_api) {
   std::unique_ptr<gvr::AudioApi> audio_context(new gvr::AudioApi);
   audio_context->Init(env, android_context, class_loader,
                       GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
+  VROPlatformSetAssetManager(env, asset_mgr);
 
   return jptr(
       new VROSceneRendererCardboard(reinterpret_cast<gvr_context *>(native_gvr_api),
