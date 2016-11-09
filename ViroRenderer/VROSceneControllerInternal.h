@@ -11,10 +11,10 @@
 
 #include <memory>
 #include "VROHoverDelegate.h"
+#include "VROVector3f.h"
 
 class VROScene;
 class VRODriver;
-class VROVector3f;
 class VRONode;
 class VRORenderContext;
 class VROHoverDelegate;

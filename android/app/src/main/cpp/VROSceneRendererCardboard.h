@@ -18,6 +18,11 @@
 #include <thread>  // NOLINT
 #include <vector>
 
+#include "VRORenderer.h"
+#include "VRORenderDelegate.h"
+#include "VRODriverOpenGLAndroid.h"
+#include "VROEye.h"
+
 #include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "vr/gvr/capi/include/gvr_types.h"
@@ -25,69 +30,68 @@
 class VROSceneRendererCardboard {
  public:
 
-  /*
-   Create a VROSceneRendererCardboard using a given |gvr_context|.
+    /*
+    Create a VROSceneRendererCardboard using a given |gvr_context|.
 
-   @param gvr_api The (non-owned) gvr_context.
-   @param gvr_audio_api The (owned) gvr::AudioApi context.
-   */
-  VROSceneRendererCardboard(gvr_context* gvr_context,
-                            std::unique_ptr<gvr::AudioApi> gvr_audio_api);
+    @param gvr_api The (non-owned) gvr_context.
+     @param gvr_audio_api The (owned) gvr::AudioApi context.
+     */
+    VROSceneRendererCardboard(gvr_context* gvr_context,
+                              std::unique_ptr<gvr::AudioApi> gvr_audio_api);
+    ~VROSceneRendererCardboard();
 
-  /*
-   Destructor.
-   */
-  ~VROSceneRendererCardboard();
+    /*
+     GL initialization invoked from rendering thread.
+     */
+     void InitializeGl();
 
-  /*
-   GL initialization invoked from rendering thread.
-   */
-  void InitializeGl();
+    /*
+     Main render loop.
+     */
+    void DrawFrame();
 
-  /*
-   Main render loop.
-   */
-  void DrawFrame();
+    /*
+     Event on trigger.
+     */
+    void OnTriggerEvent();
 
-  /*
-   Event on trigger.
-   */
-  void OnTriggerEvent();
+    /*
+     Pause head tracking.
+     */
+    void OnPause();
 
-  /*
-   Pause head tracking.
-   */
-  void OnPause();
-
-  /*
-   Resume head tracking, refreshing viewer parameters if necessary.
-   */
-  void OnResume();
+    /*
+     Resume head tracking, refreshing viewer parameters if necessary.
+     */
+    void OnResume();
 
  private:
 
-  /*
-   Prepares the GvrApi framebuffer for rendering, resizing if needed.
-   */
-  void PrepareFramebuffer();
+    /*
+     Prepares the GvrApi framebuffer for rendering, resizing if needed.
+     */
+    void prepareFrame();
 
-  /*
-   Draws all world-space objects for one eye.
+    /*
+     Draws the scene for the given eye.
+     */
+    void renderEye(VROEyeType eyeType,
+                   const gvr::Mat4f& view_matrix,
+                   const gvr::BufferViewport& viewport);
 
-   @param view_matrix View transformation for the current eye.
-   @param viewport The buffer viewport for which we are rendering.
-   */
-  void DrawWorld(const gvr::Mat4f& view_matrix,
-                 const gvr::BufferViewport& viewport);
+    int _frame;
+    std::shared_ptr<VRORenderer> _renderer;
+    std::shared_ptr<VRORenderDelegate> _renderDelegate;
+    std::shared_ptr<VRODriverOpenGL> _driver;
 
-  std::unique_ptr<gvr::GvrApi> _gvr;
-  std::unique_ptr<gvr::AudioApi> _gvrAudio;
-  std::unique_ptr<gvr::BufferViewportList> _viewportList;
-  std::unique_ptr<gvr::SwapChain> _swapchain;
-  gvr::BufferViewport _scratchViewport;
+    std::unique_ptr<gvr::GvrApi> _gvr;
+    std::unique_ptr<gvr::AudioApi> _gvrAudio;
+    std::unique_ptr<gvr::BufferViewportList> _viewportList;
+    std::unique_ptr<gvr::SwapChain> _swapchain;
+    gvr::BufferViewport _scratchViewport;
 
-  gvr::Mat4f _headView;
-  gvr::Sizei _renderSize;
+    gvr::Mat4f _headView;
+    gvr::Sizei _renderSize;
 };
 
 #endif  // VRO_SCENE_RENDERER_CARDBOARD_H  // NOLINT

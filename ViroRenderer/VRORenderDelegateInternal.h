@@ -9,6 +9,10 @@
 #ifndef VRORenderDelegateInternal_h
 #define VRORenderDelegateInternal_h
 
+enum class VROEyeType;
+class VRORenderContext;
+class VROVector3f;
+
 class VRORenderDelegateInternal {
     
 public:

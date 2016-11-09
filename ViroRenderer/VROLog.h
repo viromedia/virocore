@@ -268,7 +268,7 @@
 #define passert(condition) \
     do \
     { \
-        if ((condition)) {                               \
+        if (!(condition)) {                               \
             _pabort(__FILE__, __LINE__, __func__,                   \
                     "ASSERTION FAILED\n"                            \
                     "  Expression: %s",                             \
