@@ -35,7 +35,8 @@ public:
     virtual ~VROSceneRendererCardboardMetal();
     
     virtual void initRenderer(GVRHeadTransform *headTransform);
-    virtual void prepareFrame(GVRHeadTransform *headTransform);
+    virtual void prepareFrame(VROViewport viewport, VROFieldOfView fov,
+                              GVRHeadTransform *headTransform);
     virtual void renderEye(GVREye eye, GVRHeadTransform *headTransform);
     virtual void endFrame();
     

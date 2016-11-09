@@ -81,7 +81,7 @@ std::shared_ptr<VRONode> VROHoverController::findHoveredNode(VROVector3f ray, st
     }
 
     for (std::shared_ptr<VROHoverDistanceListener> &listener : _distanceListeners) {
-        listener->onHoverDistanceChanged(minDistance);
+        listener->onHoverDistanceChanged(minDistance, context);
     }
     return newHover;
 }

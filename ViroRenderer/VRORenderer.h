@@ -14,6 +14,8 @@
 #include "VROVector3f.h"
 #include "VROQuaternion.h"
 #include "VROMatrix4f.h"
+#include "VROViewport.h"
+#include "VROFieldOfView.h"
 #include "VROFrameSynchronizer.h"
 
 class VROEye;
@@ -22,8 +24,6 @@ class VRODriver;
 class VROCameraMutable;
 class VROTimingFunction;
 class VRORenderContext;
-class VROViewport;
-class VROFieldOfView;
 class VROFrameListener;
 class VROReticle;
 class VROSceneControllerInternal;
@@ -47,8 +47,6 @@ public:
     void setCameraRotationType(VROCameraRotationType type);
     void setOrbitFocalPoint(VROVector3f focalPt);
     
-    float getWorldPerScreen(float distance, const VROFieldOfView &fov,
-                            const VROViewport &viewport) const;
     void setDelegate(std::shared_ptr<VRORenderDelegateInternal> delegate);
     void updateRenderViewSize(float width, float height);
     
@@ -61,7 +59,8 @@ public:
     
 #pragma mark - Render Loop
     
-    void prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &driver);
+    void prepareFrame(int frame, VROViewport viewport, VROFieldOfView fov,
+                      VROMatrix4f headRotation, VRODriver &driver);
     void renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
                    VRODriver &driver);
     void endFrame(VRODriver &driver);
@@ -73,10 +72,10 @@ public:
     }
 
     void handleTap();
-    VROReticle *getReticle() {
-        return _reticle.get();
+    std::shared_ptr<VROReticle> getReticle() {
+        return _reticle;
     }
-
+    
 #pragma mark - VR Framework Specific
     // Some VR frameworks provide controls to allow the user to exit VR
     void requestExitVR();
@@ -98,7 +97,7 @@ private:
     /*
      The reticle.
      */
-    std::unique_ptr<VROReticle> _reticle;
+    std::shared_ptr<VROReticle> _reticle;
     
     /*
      Internal representation of the camera.

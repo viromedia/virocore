@@ -158,10 +158,6 @@
     self.renderer->setOrbitFocalPoint(focalPt);
 }
 
-- (float)worldPerScreenAtDepth:(float)distance {
-    return self.renderer->getWorldPerScreen(distance, self.fov, self.viewport);
-}
-
 - (void)layoutSubviews {
     [super layoutSubviews];
     _renderer->updateRenderViewSize(self.bounds.size.width, self.bounds.size.height);
@@ -173,7 +169,7 @@
     _renderer->handleTap();
 }
 
-- (VROReticle *)reticle {
+- (std::shared_ptr<VROReticle>)reticle {
     return _renderer->getReticle();
 }
 
@@ -231,7 +227,7 @@
     CGRect rect = [headTransform viewportForEye:kGVRLeftEye];
     self.viewport = { (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height };
     
-    self.sceneRenderer->prepareFrame(headTransform);
+    self.sceneRenderer->prepareFrame(self.viewport, self.fov, headTransform);
 }
 
 - (void)cardboardView:(GVRCardboardView *)cardboardView

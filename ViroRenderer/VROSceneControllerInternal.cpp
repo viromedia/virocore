@@ -13,14 +13,17 @@
 #include "VROFrameListener.h"
 #include "VROFrameSynchronizer.h"
 #include "VROLog.h"
+#include "VROReticleSizeListener.h"
 
 static const float kHoverControllerRadiusDegrees = 1;
 
-VROSceneControllerInternal::VROSceneControllerInternal(std::shared_ptr<VROHoverDistanceListener> reticleSizeListener,
+VROSceneControllerInternal::VROSceneControllerInternal(std::shared_ptr<VROReticle> reticle,
                                                        std::shared_ptr<VROFrameSynchronizer> frameSynchronizer) :
     _scene(std::make_shared<VROScene>()),
     _frameSynchronizer(frameSynchronizer) {
     
+    std::shared_ptr<VROHoverDistanceListener> reticleSizeListener = std::make_shared<VROReticleSizeListener>(reticle);
+        
     _hoverController = std::make_shared<VROHoverController>(toRadians(kHoverControllerRadiusDegrees), _scene);
     _hoverController->addHoverDistanceListener(reticleSizeListener);
 }

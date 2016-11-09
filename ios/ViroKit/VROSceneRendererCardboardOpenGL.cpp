@@ -50,9 +50,10 @@ void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROScen
     _renderer->setSceneController(sceneController, seconds, timingFunctionType, *_driver);
 }
 
-void VROSceneRendererCardboardOpenGL::prepareFrame(GVRHeadTransform *headTransform) {
+void VROSceneRendererCardboardOpenGL::prepareFrame(VROViewport viewport, VROFieldOfView fov,
+                                                   GVRHeadTransform *headTransform) {
     VROMatrix4f headRotation = VROConvert::toMatrix4f([headTransform headPoseInStartSpace]).invert();
-    _renderer->prepareFrame(_frame, headRotation, *_driver.get());
+    _renderer->prepareFrame(_frame, viewport, fov, headRotation, *_driver.get());
     
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE); // Must enable writes to clear depth buffer
@@ -76,8 +77,10 @@ void VROSceneRendererCardboardOpenGL::renderEye(GVREye eye, GVRHeadTransform *he
     VROViewport viewport(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
     VROMatrix4f eyeMatrix = VROConvert::toMatrix4f([headTransform eyeFromHeadMatrix:eye]);
-    VROMatrix4f projectionMatrix = VROConvert::toMatrix4f([headTransform projectionMatrixForEye:eye near:0.01 far:100]); //TODO Near far
-    
+    VROMatrix4f projectionMatrix = VROConvert::toMatrix4f([headTransform projectionMatrixForEye:eye
+                                                                                           near:kZNear
+                                                                                            far:kZFar]);
+
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     glScissor(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     

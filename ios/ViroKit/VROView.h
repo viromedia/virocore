@@ -26,7 +26,7 @@ typedef void (^VROViewValidApiKeyBlock)(BOOL);
 @required
 
 @property (nonatomic, unsafe_unretained) IBOutlet id <VRORenderDelegate> renderDelegate;
-@property (nonatomic, readonly) VROReticle *reticle;
+@property (nonatomic, readonly) std::shared_ptr<VROReticle> reticle;
 @property (readwrite, nonatomic) VROSceneController *sceneController;
 
 - (void)setSceneController:(VROSceneController *)sceneController animated:(BOOL)animated;
@@ -46,8 +46,6 @@ typedef void (^VROViewValidApiKeyBlock)(BOOL);
  * When set to YES, we set thie view into a full VR mode
  */
 - (void)setVrMode:(BOOL)enabled;
-
-- (float)worldPerScreenAtDepth:(float)distance;
 
 - (std::shared_ptr<VROFrameSynchronizer>)frameSynchronizer;
 

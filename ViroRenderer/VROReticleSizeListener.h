@@ -10,10 +10,9 @@
 #define VROReticleSizeListener_h
 
 #include "VROHoverDistanceListener.h"
-#include "VROScreenUIView.h"
 #include "VROReticle.h"
 #include "VROMath.h"
-#include "VROView.h"
+#include <memory>
 
 static const float kReticleSizeMultiple = 3;
 
@@ -21,12 +20,12 @@ class VROReticleSizeListener : public VROHoverDistanceListener {
     
 public:
     
-    VROReticleSizeListener(id <VROView> view) :
+    VROReticleSizeListener(std::shared_ptr<VROReticle> reticle) :
         _previousHoverDepth(0) {
-        _view = view;
+        _reticle = reticle;
     }
     
-    void onHoverDistanceChanged(float distance) {
+    void onHoverDistanceChanged(float distance, const VRORenderContext &context) {
         float depth = -distance;
         if (distance == FLT_MAX) {
             depth = -5;
@@ -34,19 +33,24 @@ public:
         if (fabs(_previousHoverDepth - depth) < kEpsilon) {
             return;
         }
+        
+        std::shared_ptr<VROReticle> reticle = _reticle.lock();
+        if (!reticle) {
+            return;
+        }
+        
         _previousHoverDepth = depth;
         
-        float worldPerScreen = [_view worldPerScreenAtDepth:depth];
+        float worldPerScreen = context.getCamera().getWorldPerScreen(depth);
         float radius = worldPerScreen * kReticleSizeMultiple;
         
-        VROReticle *reticle = _view.reticle;
         reticle->setDepth(depth);
         reticle->setRadius(radius);
     }
     
 private:
     
-    __weak id <VROView> _view;
+    std::weak_ptr<VROReticle> _reticle;
     float _previousHoverDepth;
 
 };

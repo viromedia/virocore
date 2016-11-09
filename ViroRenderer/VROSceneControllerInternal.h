@@ -16,6 +16,7 @@
 class VROScene;
 class VRODriver;
 class VRONode;
+class VROReticle;
 class VRORenderContext;
 class VROHoverDelegate;
 class VROHoverController;
@@ -26,7 +27,7 @@ class VROSceneControllerInternal : public VROHoverDelegate {
     
 public:
     
-    VROSceneControllerInternal(std::shared_ptr<VROHoverDistanceListener> reticleSizeListener,
+    VROSceneControllerInternal(std::shared_ptr<VROReticle> reticle,
                                std::shared_ptr<VROFrameSynchronizer> frameSynchronizer);
     virtual ~VROSceneControllerInternal();
     

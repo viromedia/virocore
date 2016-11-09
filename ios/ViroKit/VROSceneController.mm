@@ -32,8 +32,7 @@
 - (id)initWithView:(id <VROView>)view {
     self = [super init];
     if (self) {
-        std::shared_ptr<VROHoverDistanceListener> listener = std::make_shared<VROReticleSizeListener>(view);
-        self.internal = std::make_shared<VROSceneControlleriOS>(listener, [view frameSynchronizer], self);
+        self.internal = std::make_shared<VROSceneControlleriOS>([view reticle], [view frameSynchronizer], self);
     }
     
     return self;

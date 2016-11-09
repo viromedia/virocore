@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <memory>
 #import "GVRCardboardView.h"
+#include "VROViewport.h"
+#include "VROFieldOfView.h"
 
 class VROSceneControllerInternal;
 enum class VROTimingFunctionType;
@@ -35,7 +37,7 @@ public:
      Invoked at the start of each frame, then once per eye, and at the end
      of the frame, respectively.
      */
-    virtual void prepareFrame(GVRHeadTransform *headTransform) = 0;
+    virtual void prepareFrame(VROViewport viewport, VROFieldOfView fov, GVRHeadTransform *headTransform) = 0;
     virtual void renderEye(GVREye eye, GVRHeadTransform *headTransform) = 0;
     virtual void endFrame()= 0;
     

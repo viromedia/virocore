@@ -155,7 +155,7 @@
 
 // define LOG_TAG, if not already defined
 #ifndef LOG_TAG
-#define LOG_TAG "Maps-Polaris"
+#define LOG_TAG "Viro"
 #endif
 
 #if VRO_PLATFORM_ANDROID
@@ -633,8 +633,8 @@ do { \
     } while (0)
 
 #if VRO_SECURITY_LOG
-#define psecurityinfo(message,...) pinfo("Maps-Security:: "#message, ##__VA_ARGS__)
-#define psecurityerr(message,...) perr("Maps-Security:: "#message, ##__VA_ARGS__)
+#define psecurityinfo(message,...) pinfo("Viro-Security:: "#message, ##__VA_ARGS__)
+#define psecurityerr(message,...) perr("Viro-Security:: "#message, ##__VA_ARGS__)
 #else
 #define psecurityinfo(message,...) ((void)0)
 #define psecurityerr(message,...) ((void)0)

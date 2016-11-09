@@ -94,7 +94,8 @@ void VROSceneRendererCardboardMetal::setSceneController(std::shared_ptr<VROScene
     _renderer->setSceneController(sceneController, seconds, timingFunctionType, *_driver);
 }
 
-void VROSceneRendererCardboardMetal::prepareFrame(GVRHeadTransform *headTransform) {
+void VROSceneRendererCardboardMetal::prepareFrame(VROViewport viewport, VROFieldOfView fov,
+                                                  GVRHeadTransform *headTransform) {
     VRODriverMetal *driver = (VRODriverMetal *)_driver.get();
     
     _commandBuffer = [driver->getCommandQueue() commandBuffer];
@@ -104,7 +105,7 @@ void VROSceneRendererCardboardMetal::prepareFrame(GVRHeadTransform *headTransfor
     _driver->setRenderTarget(_eyeTarget);
     
     VROMatrix4f headRotation = VROConvert::toMatrix4f([headTransform headPoseInStartSpace]);
-    _renderer->prepareFrame(_frame, headRotation, *_driver.get());
+    _renderer->prepareFrame(_frame, viewport, fov, headRotation, *_driver.get());
     
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

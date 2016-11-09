@@ -9,8 +9,6 @@
 #include "VRORenderer.h"
 #include "VROTime.h"
 #include "VROEye.h"
-#include "VROFieldOfView.h"
-#include "VROViewport.h"
 #include "VROTransaction.h"
 #include "VROAllocationTracker.h"
 #include "VROScene.h"
@@ -33,7 +31,7 @@ VRORenderer::VRORenderer() :
     _rendererInitialized(false),
     _frameSynchronizer(std::make_shared<VROFrameSynchronizerInternal>()),
     _context(std::make_shared<VRORenderContext>(_frameSynchronizer)),
-    _reticle(std::unique_ptr<VROReticle>(new VROReticle())),
+    _reticle(std::make_shared<VROReticle>()),
     _camera(std::make_shared<VROCameraMutable>()),
     _sceneTransitionActive(false) {
     
@@ -69,23 +67,6 @@ void VRORenderer::setOrbitFocalPoint(VROVector3f focalPt) {
     _camera->setOrbitFocalPoint(focalPt);
 }
 
-float VRORenderer::getWorldPerScreen(float distance, const VROFieldOfView &fov,
-                                     const VROViewport &viewport) const {
-    /*
-     Arbitrarily chose eye's left FOV. tan(fov) = perp/distance, where
-     perp is in the direction perpendicular to the camera's up vector and
-     forward vector, and distance is in the direction of the camera's forward
-     vector.
-     */
-    float radians = fov.getLeft();
-    float perp = distance * tan(radians);
-    
-    /*
-     The perspective divide is perp divided by half the viewport.
-     */
-    return perp / (viewport.getWidth() / 2.0f);
-}
-
 #pragma mark - Stereo renderer methods
 
 void VRORenderer::updateRenderViewSize(float width, float height) {
@@ -95,7 +76,9 @@ void VRORenderer::updateRenderViewSize(float width, float height) {
     }
 }
 
-void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &driver) {
+void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView fov,
+                               VROMatrix4f headRotation, VRODriver &driver) {
+    
     if (!_rendererInitialized) {
         std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
         if (delegate) {
@@ -115,6 +98,8 @@ void VRORenderer::prepareFrame(int frame, VROMatrix4f headRotation, VRODriver &d
     VROCamera camera;
     camera.setHeadRotation(headRotation);
     camera.setBaseRotation(_camera->getBaseRotation().getMatrix());
+    camera.setViewport(viewport);
+    camera.setFOV(fov);
     
     if (_camera->getRotationType() == VROCameraRotationType::Standard) {
         camera.setPosition(_camera->getPosition());
