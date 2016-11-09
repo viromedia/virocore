@@ -6,6 +6,9 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
+#ifndef VROShaderModifier_h
+#define VROShaderModifier_h
+
 #include <stdlib.h>
 #include <vector>
 #include <string>
@@ -103,3 +106,5 @@ private:
     void extractNextUniform(std::string *uniforms, std::string *body);
     
 };
+
+#endif

@@ -27,6 +27,8 @@
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "vr/gvr/capi/include/gvr_types.h"
 
+class VROSceneControllerInternal;
+
 class VROSceneRendererCardboard {
  public:
 
@@ -65,18 +67,22 @@ class VROSceneRendererCardboard {
      */
     void OnResume();
 
- private:
+    void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, VRODriver &driver);
+
+private:
 
     /*
      Prepares the GvrApi framebuffer for rendering, resizing if needed.
      */
-    void prepareFrame();
+    void prepareFrame(VROViewport viewport,
+                      VROFieldOfView fov,
+                      VROMatrix4f headRotation);
 
     /*
      Draws the scene for the given eye.
      */
     void renderEye(VROEyeType eyeType,
-                   const gvr::Mat4f& view_matrix,
+                   VROMatrix4f eyeFromHeadMatrix,
                    const gvr::BufferViewport& viewport);
 
     int _frame;

@@ -29,6 +29,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/debug_mapinfo.cpp
              src/main/cpp/VROSceneRendererCardboard.cpp
              src/main/cpp/VRORenderer_JNI.cpp
+             src/main/cpp/VROSampleRenderer.cpp
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp
@@ -131,6 +132,7 @@ set_target_properties( lib-gvr-audio
 # variable where the path to the library will be stored.
 
 find_library( lib-log log )
+find_library( lib-android android )
 find_library( lib-egl EGL )
 find_library( lib-GLESv3 GLESv3 )
 
@@ -144,6 +146,7 @@ target_link_libraries( # Specifies the target library.
                        # Links the target library to the log library
                        # included in the NDK.
                        ${lib-log}
+                       ${lib-android}
                        ${lib-egl}
                        ${lib-GLESv3}
                        lib-gvr

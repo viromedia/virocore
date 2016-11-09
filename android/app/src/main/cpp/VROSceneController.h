@@ -19,9 +19,9 @@ class VROSceneController : public VROSceneControllerInternal {
 
 public:
 
-    VROSceneController(std::shared_ptr<VROHoverDistanceListener> reticleSizeListener,
+    VROSceneController(std::shared_ptr<VROReticle> reticle,
                        std::shared_ptr<VROFrameSynchronizer> frameSynchronizer) :
-            VROSceneControllerInternal(reticleSizeListener, frameSynchronizer) {}
+            VROSceneControllerInternal(reticle, frameSynchronizer) {}
     virtual ~VROSceneController() {}
 
     std::shared_ptr<VROScene> getScene() {
