@@ -45,27 +45,27 @@ class VROSceneRendererCardboard {
     /*
      GL initialization invoked from rendering thread.
      */
-     void InitializeGl();
+     void initGL();
 
     /*
      Main render loop.
      */
-    void DrawFrame();
+    void onDrawFrame();
 
     /*
      Event on trigger.
      */
-    void OnTriggerEvent();
+    void onTriggerEvent();
 
     /*
      Pause head tracking.
      */
-    void OnPause();
+    void onPause();
 
     /*
      Resume head tracking, refreshing viewer parameters if necessary.
      */
-    void OnResume();
+    void onResume();
 
     void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, VRODriver &driver);
 
@@ -74,7 +74,7 @@ private:
     /*
      Prepares the GvrApi framebuffer for rendering, resizing if needed.
      */
-    void prepareFrame(VROViewport viewport,
+    void prepareFrame(VROViewport leftViewport,
                       VROFieldOfView fov,
                       VROMatrix4f headRotation);
 
@@ -83,7 +83,11 @@ private:
      */
     void renderEye(VROEyeType eyeType,
                    VROMatrix4f eyeFromHeadMatrix,
-                   const gvr::BufferViewport& viewport);
+                   VROViewport viewport,
+                   VROFieldOfView fov);
+
+    void extractViewParameters(gvr::BufferViewport &viewport,
+                               VROViewport *outViewport, VROFieldOfView *outFov);
 
     int _frame;
     std::shared_ptr<VRORenderer> _renderer;

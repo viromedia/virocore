@@ -55,27 +55,27 @@ JNI_METHOD(void, nativeDestroyRenderer)
 
 JNI_METHOD(void, nativeInitializeGl)(JNIEnv *env, jobject obj,
                                      jlong native_renderer) {
-  native(native_renderer)->InitializeGl();
+  native(native_renderer)->initGL();
 }
 
 JNI_METHOD(void, nativeDrawFrame)(JNIEnv *env, jobject obj,
                                   jlong native_renderer) {
-  native(native_renderer)->DrawFrame();
+  native(native_renderer)->onDrawFrame();
 }
 
 JNI_METHOD(void, nativeOnTriggerEvent)(JNIEnv *env, jobject obj,
                                        jlong native_renderer) {
-  native(native_renderer)->OnTriggerEvent();
+  native(native_renderer)->onTriggerEvent();
 }
 
 JNI_METHOD(void, nativeOnPause)(JNIEnv *env, jobject obj,
                                 jlong native_renderer) {
-  native(native_renderer)->OnPause();
+  native(native_renderer)->onPause();
 }
 
 JNI_METHOD(void, nativeOnResume)(JNIEnv *env, jobject obj,
                                  jlong native_renderer) {
-  native(native_renderer)->OnResume();
+  native(native_renderer)->onResume();
 }
 
 }  // extern "C"
