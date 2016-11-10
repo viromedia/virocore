@@ -6,7 +6,6 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include <android/bitmap.h>
 #include "VROPlatformUtil.h"
 #include "VROLog.h"
 
