@@ -33,20 +33,33 @@ std::string VROPlatformLoadResourceAsString(std::string resource, std::string ty
 
 #elif VRO_PLATFORM_ANDROID
 
-static JNIEnv *sEnv = nullptr;
+// We can hold a static reference to the JVM and to global references, but not to individual
+// JNIEnv objects, as those are thread-local. Access the JNIEnv object via getJNIEnv().
+// There is one JavaVM per application on Android (shared across activities).
+static JavaVM *sVM = nullptr;
 static jobject sActivity = nullptr;
 static AAssetManager *sAssetMgr = nullptr;
 
+// Get the JNI Environment for the current thread. If the JavaVM is not yet attached to the
+// current thread, attach it
+void getJNIEnv(JNIEnv **jenv) {
+    if (sVM->GetEnv((void **) jenv, JNI_VERSION_1_6) == JNI_EDETACHED) {
+        sVM->AttachCurrentThread(jenv, nullptr);
+    }
+}
+
 void VROPlatformSetEnv(JNIEnv *env, jobject activity, jobject assetManager) {
-    sEnv = env;
+    env->GetJavaVM(&sVM);
     sActivity = env->NewGlobalRef(activity);
     sAssetMgr = AAssetManager_fromJava(env, assetManager);
 }
 
 void VROPlatformReleaseEnv() {
-    sEnv->DeleteGlobalRef(sActivity);
+    JNIEnv *env;
+    getJNIEnv(&env);
 
-    sEnv = nullptr;
+    env->DeleteGlobalRef(sActivity);
+
     sActivity = nullptr;
     sAssetMgr = nullptr;
 }
@@ -93,14 +106,17 @@ void *VROPlatformLoadBinaryAsset(std::string resource, std::string type, size_t 
 }
 
 void *VROPlatformLoadImageAssetRGBA8888(std::string resource, int *bitmapLength, int *width, int *height) {
-    jclass cls = sEnv->GetObjectClass(sActivity);
-    jmethodID jmethod = sEnv->GetMethodID(cls, "loadBitmap", "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
+    JNIEnv *env;
+    getJNIEnv(&env);
 
-    jstring string = sEnv->NewStringUTF(resource.c_str());
-    jobject jbitmap = sEnv->CallObjectMethod(sActivity, jmethod, string);
+    jclass cls = env->GetObjectClass(sActivity);
+    jmethodID jmethod = env->GetMethodID(cls, "loadBitmap", "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
+
+    jstring string = env->NewStringUTF(resource.c_str());
+    jobject jbitmap = env->CallObjectMethod(sActivity, jmethod, string);
 
     AndroidBitmapInfo bitmapInfo;
-    AndroidBitmap_getInfo(sEnv, jbitmap, &bitmapInfo);
+    AndroidBitmap_getInfo(env, jbitmap, &bitmapInfo);
 
     passert (bitmapInfo.format == ANDROID_BITMAP_FORMAT_RGBA_8888);
 
@@ -109,16 +125,16 @@ void *VROPlatformLoadImageAssetRGBA8888(std::string resource, int *bitmapLength,
     *bitmapLength = bitmapInfo.height * bitmapInfo.stride;
 
     void *bitmapData;
-    AndroidBitmap_lockPixels(sEnv, jbitmap, &bitmapData);
+    AndroidBitmap_lockPixels(env, jbitmap, &bitmapData);
 
     void *safeData = malloc(*bitmapLength);
     memcpy(safeData, bitmapData, *bitmapLength);
 
-    AndroidBitmap_unlockPixels(sEnv, jbitmap);
+    AndroidBitmap_unlockPixels(env, jbitmap);
 
-    sEnv->DeleteLocalRef(jbitmap);
-    sEnv->DeleteLocalRef(string);
-    sEnv->DeleteLocalRef(cls);
+    env->DeleteLocalRef(jbitmap);
+    env->DeleteLocalRef(string);
+    env->DeleteLocalRef(cls);
 
     return safeData;
 }

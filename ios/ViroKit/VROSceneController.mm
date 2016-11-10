@@ -29,10 +29,10 @@
 
 @implementation VROSceneController
 
-- (id)initWithView:(id <VROView>)view {
+- (id)init {
     self = [super init];
     if (self) {
-        self.internal = std::make_shared<VROSceneControlleriOS>([view reticle], [view frameSynchronizer], self);
+        self.internal = std::make_shared<VROSceneControlleriOS>(self);
     }
     
     return self;

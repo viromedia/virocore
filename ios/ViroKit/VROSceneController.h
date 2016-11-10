@@ -22,7 +22,7 @@ class VROSceneControlleriOS;
 
 @interface VROSceneController : NSObject
 
-- (id)initWithView:(id <VROView>)view;
+- (id)init;
 
 @property (readonly, nonatomic) std::shared_ptr<VROSceneControlleriOS> internal;
 

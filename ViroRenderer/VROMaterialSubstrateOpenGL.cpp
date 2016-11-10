@@ -17,8 +17,6 @@
 #include "VROSortKey.h"
 #include <sstream>
 
-static const int kMaxLights = 4;
-
 void VROMaterialSubstrateOpenGL::hydrateProgram(VRODriverOpenGL &driver) {
     _program->hydrate();
 }

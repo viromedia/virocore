@@ -63,7 +63,7 @@
 		8F4AD9211D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4AD91F1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h */; };
 		8F517BBB1BCDA2BD0017C70B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBA1BCDA2BD0017C70B /* main.m */; };
 		8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */; };
-		8F517BC11BCDA2BD0017C70B /* SampleRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC01BCDA2BD0017C70B /* SampleRenderer.m */; };
+		8F517BC11BCDA2BD0017C70B /* VROSample.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC01BCDA2BD0017C70B /* VROSample.m */; };
 		8F517BC71BCDA2BD0017C70B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BC51BCDA2BD0017C70B /* Main.storyboard */; };
 		8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BC81BCDA2BD0017C70B /* Assets.xcassets */; };
 		8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BCA1BCDA2BD0017C70B /* LaunchScreen.storyboard */; };
@@ -486,8 +486,8 @@
 		8F517BBA1BCDA2BD0017C70B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ViroSample/main.m; sourceTree = "<group>"; };
 		8F517BBC1BCDA2BD0017C70B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ViroSample/AppDelegate.h; sourceTree = "<group>"; };
 		8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = ViroSample/AppDelegate.m; sourceTree = "<group>"; };
-		8F517BBF1BCDA2BD0017C70B /* SampleRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SampleRenderer.h; path = ViroSample/SampleRenderer.h; sourceTree = "<group>"; };
-		8F517BC01BCDA2BD0017C70B /* SampleRenderer.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = SampleRenderer.m; path = ViroSample/SampleRenderer.m; sourceTree = "<group>"; };
+		8F517BBF1BCDA2BD0017C70B /* VROSample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VROSample.h; path = ViroSample/VROSample.h; sourceTree = "<group>"; };
+		8F517BC01BCDA2BD0017C70B /* VROSample.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = VROSample.m; path = ViroSample/VROSample.m; sourceTree = "<group>"; };
 		8F517BC21BCDA2BD0017C70B /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		8F517BC41BCDA2BD0017C70B /* VROSharedStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROSharedStructures.h; sourceTree = "<group>"; };
 		8F517BC61BCDA2BD0017C70B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -1334,8 +1334,8 @@
 				8F517BCA1BCDA2BD0017C70B /* LaunchScreen.storyboard */,
 				8F517BBC1BCDA2BD0017C70B /* AppDelegate.h */,
 				8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */,
-				8F517BBF1BCDA2BD0017C70B /* SampleRenderer.h */,
-				8F517BC01BCDA2BD0017C70B /* SampleRenderer.m */,
+				8F517BBF1BCDA2BD0017C70B /* VROSample.h */,
+				8F517BC01BCDA2BD0017C70B /* VROSample.m */,
 				8F517BCD1BCDA2BD0017C70B /* Info.plist */,
 			);
 			name = ViroSample;
@@ -1861,7 +1861,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */,
-				8F517BC11BCDA2BD0017C70B /* SampleRenderer.m in Sources */,
+				8F517BC11BCDA2BD0017C70B /* VROSample.m in Sources */,
 				8F517BBB1BCDA2BD0017C70B /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

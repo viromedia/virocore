@@ -12,6 +12,7 @@
 enum class VROEyeType;
 class VRORenderContext;
 class VROVector3f;
+class VRODriver;
 
 class VRORenderDelegateInternal {
     

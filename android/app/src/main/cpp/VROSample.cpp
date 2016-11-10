@@ -3,18 +3,23 @@
 //
 
 #include "Viro.h"
-#include "VROSampleRenderer.h"
+#include "VROSample.h"
 #include "VRORenderer.h"
 #include "VRODriverOpenGLAndroid.h"
 #include "VROImageAndroid.h"
 #include "VROSceneRendererCardboard.h"
 
-VROSampleRenderer::VROSampleRenderer(std::shared_ptr<VRORenderer> renderer, VROSceneRendererCardboard *sceneRenderer) :
-    _sceneRenderer(sceneRenderer) {
+VROSample::VROSample() {
 
-    _sceneController = std::make_shared<VROSceneController>(renderer->getReticle(), renderer->getFrameSynchronizer());
+}
 
-    std::shared_ptr<VROScene> scene = _sceneController->getScene();
+VROSample::~VROSample() {
+
+}
+
+std::shared_ptr<VROSceneController> VROSample::loadBoxScene() {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundCube(getNiagaraTexture());
 
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
@@ -116,38 +121,29 @@ VROSampleRenderer::VROSampleRenderer(std::shared_ptr<VRORenderer> renderer, VROS
     //[self.view setCameraRotationType:VROCameraRotationType::Orbit];
     //[self.view setOrbitFocalPoint:boxNode->getPosition()];
 
-    //dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        VROTransaction::begin();
-        VROTransaction::setAnimationDuration(6);
+    VROTransaction::begin();
+    VROTransaction::setAnimationDuration(6);
 
-        spotRed->setPosition({5, 0, 0});
-        spotRed->setDirection({-1, 0, -1});
+    spotRed->setPosition({5, 0, 0});
+    spotRed->setDirection({-1, 0, -1});
 
-        spotBlue->setPosition({-5, 0, 0});
-        spotBlue->setDirection({1, 0, -1});
+    spotBlue->setPosition({-5, 0, 0});
+    spotBlue->setDirection({1, 0, -1});
 
-        VROTransaction::commit();
-    //});
+    VROTransaction::commit();
+
+    return sceneController;
 }
 
-VROSampleRenderer::~VROSampleRenderer() {
+std::shared_ptr<VROTexture> VROSample::getNiagaraTexture() {
+    std::vector<std::shared_ptr<VROImage>> cubeImages = {
+            std::make_shared<VROImageAndroid>("px.png"),
+            std::make_shared<VROImageAndroid>("nx.png"),
+            std::make_shared<VROImageAndroid>("py.png"),
+            std::make_shared<VROImageAndroid>("ny.png"),
+            std::make_shared<VROImageAndroid>("pz.png"),
+            std::make_shared<VROImageAndroid>("nz.png")
+    };
 
-}
-
-std::shared_ptr<VROTexture> VROSampleRenderer::getNiagaraTexture() {
-std::vector<std::shared_ptr<VROImage>> cubeImages =  {
-        std::make_shared<VROImageAndroid>("px.png"),
-        std::make_shared<VROImageAndroid>("nx.png"),
-        std::make_shared<VROImageAndroid>("py.png"),
-        std::make_shared<VROImageAndroid>("ny.png"),
-        std::make_shared<VROImageAndroid>("pz.png"),
-        std::make_shared<VROImageAndroid>("nz.png")
-};
-
-return std::make_shared<VROTexture>(cubeImages);
-}
-
-void VROSampleRenderer::setupRendererWithDriver(VRODriver *driver) {
-    _driver = driver;
-    _sceneRenderer->setSceneController(_sceneController);
+    return std::make_shared<VROTexture>(cubeImages);
 }

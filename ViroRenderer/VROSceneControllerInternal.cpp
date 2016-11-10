@@ -17,19 +17,28 @@
 
 static const float kHoverControllerRadiusDegrees = 1;
 
-VROSceneControllerInternal::VROSceneControllerInternal(std::shared_ptr<VROReticle> reticle,
-                                                       std::shared_ptr<VROFrameSynchronizer> frameSynchronizer) :
+VROSceneControllerInternal::VROSceneControllerInternal() :
     _scene(std::make_shared<VROScene>()),
-    _frameSynchronizer(frameSynchronizer) {
-    
-    std::shared_ptr<VROHoverDistanceListener> reticleSizeListener = std::make_shared<VROReticleSizeListener>(reticle);
-        
-    _hoverController = std::make_shared<VROHoverController>(toRadians(kHoverControllerRadiusDegrees), _scene);
-    _hoverController->addHoverDistanceListener(reticleSizeListener);
+    _hoverController(std::make_shared<VROHoverController>(toRadians(kHoverControllerRadiusDegrees), _scene)) {
+
 }
 
 VROSceneControllerInternal::~VROSceneControllerInternal() {
     
+}
+
+void VROSceneControllerInternal::attach(std::shared_ptr<VROReticle> reticle,
+                                        std::shared_ptr<VROFrameSynchronizer> frameSynchronizer) {
+    
+    _frameSynchronizer = frameSynchronizer;
+    
+    if (_reticleSizeListener) {
+        _hoverController->removeHoverDistanceListener(_reticleSizeListener);
+    }
+    _reticleSizeListener = std::make_shared<VROReticleSizeListener>(reticle);
+    _hoverController->addHoverDistanceListener(_reticleSizeListener);
+    
+    frameSynchronizer->addFrameListener(_hoverController);
 }
 
 void VROSceneControllerInternal::setHoverEnabled(bool enabled, bool boundsOnly) {
@@ -47,15 +56,7 @@ void VROSceneControllerInternal::onSceneWillAppear(VRORenderContext &context, VR
 }
 
 void VROSceneControllerInternal::onSceneDidAppear(VRORenderContext &context, VRODriver &driver) {
-    if (!_hoverController) {
-        _hoverController = std::make_shared<VROHoverController>(toRadians(kHoverControllerRadiusDegrees),
-                                                                _scene);
-    }
-    
-    std::shared_ptr<VROFrameSynchronizer> synchronizer = _frameSynchronizer.lock();
-    if (synchronizer) {
-        synchronizer->addFrameListener(_hoverController);
-    }
+
 }
 
 void VROSceneControllerInternal::onSceneWillDisappear(VRORenderContext &context, VRODriver &driver) {

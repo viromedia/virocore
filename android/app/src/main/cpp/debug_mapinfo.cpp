@@ -47,7 +47,7 @@ static mapinfo_t* parse_maps_line(char* line) {
   uintptr_t start;
   uintptr_t end;
   int name_pos;
-  if (sscanf(line, "%lu-%lu %*4s %*x %*x:%*x %*d%n", &start,
+  if (sscanf(line, "%u-%u %*4s %*x %*x:%*x %*d%n", &start,
              &end, &name_pos) < 2) {
     return nullptr;
   }

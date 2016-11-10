@@ -40,10 +40,10 @@ typedef void (^VROViewValidApiKeyBlock)(BOOL);
 
 - (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROViewValidApiKeyBlock)completionBlock;
 
-/**
- * Calling setVrMode allows switching to and from VR mode.
- * When set to NO, it transitions back to pre-VR (mono) mode.
- * When set to YES, we set thie view into a full VR mode
+/*
+ Calling setVrMode allows switching to and from VR mode.
+ When set to NO, it transitions back to pre-VR (mono) mode.
+ When set to YES, we set thie view into a full VR mode
  */
 - (void)setVrMode:(BOOL)enabled;
 

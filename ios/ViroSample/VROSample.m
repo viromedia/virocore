@@ -1,12 +1,12 @@
 //
-//  GameViewController.m
+//  VROSample.m
 //  ViroRenderer
 //
 //  Created by Raj Advani on 10/13/15.
 //  Copyright © 2015 Raj Advani. All rights reserved.
 //
 
-#import "SampleRenderer.h"
+#import "VROSample.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneBox = 0,
@@ -17,7 +17,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneNumScenes
 };
 
-@interface SampleRenderer ()
+@interface VROSample ()
 
 @property (readwrite, nonatomic) VRODriver *driver;
 @property (readwrite, nonatomic) BOOL tapEnabled;
@@ -30,7 +30,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 @end
 
-@implementation SampleRenderer
+@implementation VROSample
 
 - (std::shared_ptr<VROTexture>) niagaraTexture {
     std::vector<std::shared_ptr<VROImage>> cubeImages =  {
@@ -59,7 +59,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (VROSceneController *)loadVideoSphereScene {
-    VROSceneController *sceneController = [[VROSceneController alloc] initWithView:self.view];
+    VROSceneController *sceneController = [[VROSceneController alloc] init];
     std::shared_ptr<VROScene> scene = sceneController.scene;
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
@@ -105,7 +105,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (VROSceneController *)loadTorusScene {
-    VROSceneController *sceneController = [[VROSceneController alloc] initWithView:self.view];
+    VROSceneController *sceneController = [[VROSceneController alloc] init];
     std::shared_ptr<VROScene> scene = sceneController.scene;
     scene->setBackgroundCube([self cloudTexture]);
     
@@ -185,7 +185,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (VROSceneController *)loadBoxScene {
-    VROSceneController *sceneController = [[VROSceneController alloc] initWithView:self.view];
+    VROSceneController *sceneController = [[VROSceneController alloc] init];
 
     std::shared_ptr<VROScene> scene = sceneController.scene;
     scene->setBackgroundCube([self niagaraTexture]);
@@ -306,7 +306,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (VROSceneController *)loadLayerScene {
-    VROSceneController *sceneController = [[VROSceneController alloc] initWithView:self.view];
+    VROSceneController *sceneController = [[VROSceneController alloc] init];
 
     std::shared_ptr<VROScene> scene = sceneController.scene;
     scene->setBackgroundCube([self cloudTexture]);
@@ -353,7 +353,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (VROSceneController *)loadOBJScene {
-    VROSceneController *sceneController = [[VROSceneController alloc] initWithView:self.view];
+    VROSceneController *sceneController = [[VROSceneController alloc] init];
     std::shared_ptr<VROScene> scene = sceneController.scene;
     scene->setBackgroundCube([self niagaraTexture]);
     

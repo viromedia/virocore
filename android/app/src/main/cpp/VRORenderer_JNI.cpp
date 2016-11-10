@@ -6,15 +6,14 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include <android/log.h>
 #include <jni.h>
-
 #include <memory>
 
 #include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "VROSceneRendererCardboard.h"
 #include "VROPlatformUtil.h"
+#include "VROSample.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -32,6 +31,8 @@ inline VROSceneRendererCardboard *native(jlong ptr) {
 }  // anonymous namespace
 
 extern "C" {
+
+static std::shared_ptr<VROSample> sample;
 
 JNI_METHOD(jlong, nativeCreateRenderer)(JNIEnv *env, jclass clazz,
                                         jobject class_loader,
@@ -57,6 +58,11 @@ JNI_METHOD(void, nativeDestroyRenderer)
 
 JNI_METHOD(void, nativeInitializeGl)(JNIEnv *env, jobject obj,
                                      jlong native_renderer) {
+
+  // TODO Temporary place for sample
+  sample = std::make_shared<VROSample>();
+  native(native_renderer)->setRenderDelegate(sample);
+  native(native_renderer)->setSceneController(sample->loadBoxScene());
   native(native_renderer)->initGL();
 }
 

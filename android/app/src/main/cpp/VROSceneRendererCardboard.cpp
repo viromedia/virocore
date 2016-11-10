@@ -21,59 +21,9 @@
 #include "VROSceneController.h"
 #include "VRORenderDelegate.h"
 
-// TODO Remove
-#include "VROSampleRenderer.h"
-
 static const uint64_t kPredictionTimeWithoutVsyncNanos = 50000000;
 
-static gvr::Rectf modulateRect(const gvr::Rectf& rect, float width,
-                               float height) {
-    gvr::Rectf result = {rect.left * width, rect.right * width,
-                         rect.bottom * height, rect.top * height};
-    return result;
-}
-
-static gvr::Recti calculatePixelSpaceRect(const gvr::Sizei& texture_size,
-                                          const gvr::Rectf& texture_rect) {
-    float width = static_cast<float>(texture_size.width);
-    float height = static_cast<float>(texture_size.height);
-    gvr::Rectf rect = modulateRect(texture_rect, width, height);
-    gvr::Recti result = {
-            static_cast<int>(rect.left), static_cast<int>(rect.right),
-            static_cast<int>(rect.bottom), static_cast<int>(rect.top)};
-    return result;
-}
-
-static gvr::Sizei halfPixelCount(const gvr::Sizei& in) {
-    // Scale each dimension by sqrt(2)/2 ~= 7/10ths.
-    gvr::Sizei out;
-    out.width = (7 * in.width) / 10;
-    out.height = (7 * in.height) / 10;
-    return out;
-}
-
-static VROMatrix4f toMatrix4f(const gvr::Mat4f &glm) {
-    float m[16] = {
-            glm.m[0][0], glm.m[1][0], glm.m[2][0], glm.m[3][0],
-            glm.m[0][1], glm.m[1][1], glm.m[2][1], glm.m[3][1],
-            glm.m[0][2], glm.m[1][2], glm.m[2][2], glm.m[3][2],
-            glm.m[0][3], glm.m[1][3], glm.m[2][3], glm.m[3][3],
-    };
-
-    return VROMatrix4f(m);
-}
-
-void VROSceneRendererCardboard::extractViewParameters(gvr::BufferViewport &viewport,
-                                                      VROViewport *outViewport, VROFieldOfView *outFov) {
-
-    const gvr::Recti rect = calculatePixelSpaceRect(_renderSize, viewport.GetSourceUv());
-    *outViewport = VROViewport(rect.left, rect.bottom,
-                              rect.right - rect.left,
-                              rect.top   - rect.bottom);
-    const gvr::Rectf fov = _scratchViewport.GetSourceFov();
-    *outFov = VROFieldOfView(fov.left, fov.right,
-                             fov.bottom, fov.top);
-}
+#pragma mark - Setup
 
 VROSceneRendererCardboard::VROSceneRendererCardboard(gvr_context* gvr_context,
                                                      std::unique_ptr<gvr::AudioApi> gvr_audio_api) :
@@ -84,13 +34,14 @@ VROSceneRendererCardboard::VROSceneRendererCardboard(gvr_context* gvr_context,
 
     _renderer = std::make_shared<VRORenderer>();
     _driver = std::make_shared<VRODriverOpenGLAndroid>();
-
-  // TODO Remove sample renderer, place somewhere else
-    _renderDelegate = std::make_shared<VROSampleRenderer>(_renderer, this);
-    _renderer->setDelegate(_renderDelegate);
 }
 
 VROSceneRendererCardboard::~VROSceneRendererCardboard() {
+
+}
+
+void VROSceneRendererCardboard::setRenderDelegate(std::shared_ptr<VRORenderDelegate> delegate) {
+    _renderer->setDelegate(delegate);
 }
 
 void VROSceneRendererCardboard::setSceneController(std::shared_ptr<VROSceneController> sceneController) {
@@ -105,6 +56,8 @@ void VROSceneRendererCardboard::setSceneController(std::shared_ptr<VROSceneContr
                         VROTimingFunctionType timingFunction) {
     _renderer->setSceneController(sceneController, seconds, timingFunction, *_driver.get());
 }
+
+#pragma mark - Rendering
 
 void VROSceneRendererCardboard::initGL() {
   _gvr->InitializeGl();
@@ -226,7 +179,55 @@ void VROSceneRendererCardboard::renderEye(VROEyeType eyeType,
     _renderer->renderEye(eyeType, eyeFromHeadMatrix, projectionMatrix, *_driver.get());
 }
 
+#pragma mark - Utility Methods
 
+gvr::Rectf VROSceneRendererCardboard::modulateRect(const gvr::Rectf &rect, float width,
+                                                   float height) {
+    gvr::Rectf result = {rect.left * width, rect.right * width,
+                         rect.bottom * height, rect.top * height};
+    return result;
+}
 
+gvr::Recti VROSceneRendererCardboard::calculatePixelSpaceRect(const gvr::Sizei &texture_size,
+                                                              const gvr::Rectf &texture_rect) {
+    float width = static_cast<float>(texture_size.width);
+    float height = static_cast<float>(texture_size.height);
+    gvr::Rectf rect = modulateRect(texture_rect, width, height);
+    gvr::Recti result = {
+            static_cast<int>(rect.left), static_cast<int>(rect.right),
+            static_cast<int>(rect.bottom), static_cast<int>(rect.top)};
+    return result;
+}
+
+gvr::Sizei VROSceneRendererCardboard::halfPixelCount(const gvr::Sizei& in) {
+    // Scale each dimension by sqrt(2)/2 ~= 7/10ths.
+    gvr::Sizei out;
+    out.width = (7 * in.width) / 10;
+    out.height = (7 * in.height) / 10;
+    return out;
+}
+
+VROMatrix4f VROSceneRendererCardboard::toMatrix4f(const gvr::Mat4f &glm) {
+    float m[16] = {
+            glm.m[0][0], glm.m[1][0], glm.m[2][0], glm.m[3][0],
+            glm.m[0][1], glm.m[1][1], glm.m[2][1], glm.m[3][1],
+            glm.m[0][2], glm.m[1][2], glm.m[2][2], glm.m[3][2],
+            glm.m[0][3], glm.m[1][3], glm.m[2][3], glm.m[3][3],
+    };
+
+    return VROMatrix4f(m);
+}
+
+void VROSceneRendererCardboard::extractViewParameters(gvr::BufferViewport &viewport,
+                                                      VROViewport *outViewport, VROFieldOfView *outFov) {
+
+    const gvr::Recti rect = calculatePixelSpaceRect(_renderSize, viewport.GetSourceUv());
+    *outViewport = VROViewport(rect.left, rect.bottom,
+                               rect.right - rect.left,
+                               rect.top   - rect.bottom);
+    const gvr::Rectf fov = _scratchViewport.GetSourceFov();
+    *outFov = VROFieldOfView(fov.left, fov.right,
+                             fov.bottom, fov.top);
+}
 
 

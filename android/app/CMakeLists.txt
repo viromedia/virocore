@@ -29,7 +29,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/debug_mapinfo.cpp
              src/main/cpp/VROSceneRendererCardboard.cpp
              src/main/cpp/VRORenderer_JNI.cpp
-             src/main/cpp/VROSampleRenderer.cpp
+             src/main/cpp/VROSample.cpp
              src/main/cpp/VROImageAndroid.cpp
 
              # Math

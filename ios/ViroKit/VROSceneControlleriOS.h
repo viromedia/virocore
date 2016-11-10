@@ -16,11 +16,7 @@ class VROSceneControlleriOS : public VROSceneControllerInternal {
     
 public:
     
-    VROSceneControlleriOS(std::shared_ptr<VROReticle> reticle,
-                          std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                          VROSceneController *sceneController) :
-    
-        VROSceneControllerInternal(reticle, frameSynchronizer),
+    VROSceneControlleriOS(VROSceneController *sceneController) :
         _sceneController(sceneController) {}
     virtual ~VROSceneControlleriOS() {}
     

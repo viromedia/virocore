@@ -65,7 +65,7 @@ public:
                    VRODriver &driver);
     void endFrame(VRODriver &driver);
     
-#pragma mark - Frame Synchronizer
+#pragma mark - Events
     
     std::shared_ptr<VROFrameSynchronizer> getFrameSynchronizer() {
         return _frameSynchronizer;

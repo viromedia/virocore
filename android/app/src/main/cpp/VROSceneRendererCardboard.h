@@ -24,6 +24,7 @@
 #include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "vr/gvr/capi/include/gvr_types.h"
+#include "VRORenderDelegate.h"
 
 class VRODriverOpenGL;
 class VROSceneController;
@@ -69,6 +70,12 @@ class VROSceneRendererCardboard {
     void onResume();
 
     /*
+     Set the render delegate, which responds to renderer initialization and
+     receives per-frame callbacks.
+     */
+    void setRenderDelegate(std::shared_ptr<VRORenderDelegate> delegate);
+
+    /*
      Set the active scene controller, which dictates what scene is rendered.
      */
     void setSceneController(std::shared_ptr<VROSceneController> sceneController);
@@ -93,9 +100,6 @@ private:
                    VROViewport viewport,
                    VROFieldOfView fov);
 
-    void extractViewParameters(gvr::BufferViewport &viewport,
-                               VROViewport *outViewport, VROFieldOfView *outFov);
-
     int _frame;
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VRORenderDelegate> _renderDelegate;
@@ -109,6 +113,17 @@ private:
 
     gvr::Mat4f _headView;
     gvr::Sizei _renderSize;
+
+    /*
+     Utility methods.
+     */
+    gvr::Rectf modulateRect(const gvr::Rectf &rect, float width, float height);
+    gvr::Recti calculatePixelSpaceRect(const gvr::Sizei &texture_size, const gvr::Rectf &texture_rect);
+    gvr::Sizei halfPixelCount(const gvr::Sizei& in);
+    VROMatrix4f toMatrix4f(const gvr::Mat4f &glm);
+    void extractViewParameters(gvr::BufferViewport &viewport, VROViewport *outViewport,
+                               VROFieldOfView *outFov);
+
 };
 
 #endif  // VRO_SCENE_RENDERER_CARDBOARD_H  // NOLINT

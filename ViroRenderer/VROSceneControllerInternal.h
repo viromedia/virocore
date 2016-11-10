@@ -27,8 +27,7 @@ class VROSceneControllerInternal : public VROHoverDelegate {
     
 public:
     
-    VROSceneControllerInternal(std::shared_ptr<VROReticle> reticle,
-                               std::shared_ptr<VROFrameSynchronizer> frameSynchronizer);
+    VROSceneControllerInternal();
     virtual ~VROSceneControllerInternal();
     
 #pragma mark - Control methods
@@ -79,6 +78,11 @@ public:
      */
     virtual void reticleTapped(VROVector3f ray, const VRORenderContext *context) = 0;
     
+#pragma mark - Internal
+    
+    void attach(std::shared_ptr<VROReticle> reticle,
+                std::shared_ptr<VROFrameSynchronizer> frameSynchronizer);
+    
 private:
     
     /*
@@ -100,6 +104,11 @@ private:
      True if the hover test should only use bounding boxes.
      */
     bool _hoverTestBoundsOnly;
+    
+    /*
+     Listener that changes size of reticle based on what we're hovering.
+     */
+    std::shared_ptr<VROHoverDistanceListener> _reticleSizeListener;
 };
 
 #endif /* VROSceneControllerInternal_h */

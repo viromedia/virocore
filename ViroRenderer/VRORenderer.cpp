@@ -224,6 +224,8 @@ void VRORenderer::handleTap() {
 void VRORenderer::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, VRODriver &driver) {
     std::shared_ptr<VROSceneControllerInternal> outgoingSceneController = _sceneController;
     
+    sceneController->attach(_reticle, _frameSynchronizer);
+    
     sceneController->onSceneWillAppear(*_context.get(), driver);
     if (outgoingSceneController) {
         outgoingSceneController->onSceneWillDisappear(*_context.get(), driver);
@@ -257,6 +259,7 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneControllerInternal>
     _sceneTransitionDuration = seconds;
     _sceneTransitionTimingFunction = VROTimingFunction::forType(timingFunctionType);
     
+    _sceneController->attach(_reticle, _frameSynchronizer);
     _sceneController->onSceneWillAppear(*_context.get(), driver);
     _outgoingSceneController->onSceneWillDisappear(*_context.get(), driver);
     

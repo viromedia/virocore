@@ -44,7 +44,7 @@
                     <navigationItem key="navigationItem" id="UjR-Mx-FQL"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
-                <customObject id="niC-Ja-Oxd" userLabel="Stereo Renderer" customClass="SampleRenderer">
+                <customObject id="niC-Ja-Oxd" userLabel="Sample Render Delegate" customClass="VROSample">
                     <connections>
                         <outlet property="view" destination="3se-qz-xqx" id="gAp-JI-V18"/>
                     </connections>
@@ -57,7 +57,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="oxg-kk-3TJ" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="ADL-N6-P4H">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ADL-N6-P4H">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>

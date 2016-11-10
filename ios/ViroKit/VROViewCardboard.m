@@ -163,7 +163,7 @@
     _renderer->updateRenderViewSize(self.bounds.size.width, self.bounds.size.height);
 }
 
-#pragma mark - Reticle
+#pragma mark - Events
 
 - (void)handleTap:(UIGestureRecognizer *)gestureRecognizer {
     _renderer->handleTap();

@@ -1,5 +1,5 @@
 //
-//  GameViewController.h
+//  VROSample.h
 //  ViroRenderer
 //
 //  Created by Raj Advani on 10/13/15.
@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <ViroKit/ViroKit.h>
 
-@interface SampleRenderer : NSObject <VRORenderDelegate>
+@interface VROSample : NSObject <VRORenderDelegate>
 
 @property (readwrite, nonatomic) IBOutlet id <VROView> view;
 
