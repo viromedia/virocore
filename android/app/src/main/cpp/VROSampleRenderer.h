@@ -17,7 +17,9 @@ class VROSampleRenderer : public VRORenderDelegate {
 
 public:
 
-    VROSampleRenderer(std::shared_ptr<VRORenderer> renderer, VROSceneRendererCardboard *sceneRenderer);
+    VROSampleRenderer(std::shared_ptr<VRORenderer> renderer,
+                      VROSceneRendererCardboard *sceneRenderer);
+
     virtual ~VROSampleRenderer();
 
     void setupRendererWithDriver(VRODriver *driver);
@@ -27,6 +29,8 @@ private:
     VROSceneRendererCardboard *_sceneRenderer;
     VRODriver *_driver;
     std::shared_ptr<VROSceneController> _sceneController;
+
+    std::shared_ptr<VROTexture> getNiagaraTexture();
 
 };
 

@@ -14,8 +14,12 @@
 #include <cmath>
 #include <random>
 
+#include "VRODriverOpenGLAndroid.h"
 #include "VROMatrix4f.h"
 #include "VROViewport.h"
+#include "VRORenderer.h"
+#include "VROSceneController.h"
+#include "VRORenderDelegate.h"
 
 // TODO Remove
 #include "VROSampleRenderer.h"
@@ -89,8 +93,17 @@ VROSceneRendererCardboard::VROSceneRendererCardboard(gvr_context* gvr_context,
 VROSceneRendererCardboard::~VROSceneRendererCardboard() {
 }
 
-void VROSceneRendererCardboard::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, VRODriver &driver) {
-    _renderer->setSceneController(sceneController, driver);
+void VROSceneRendererCardboard::setSceneController(std::shared_ptr<VROSceneController> sceneController) {
+    _renderer->setSceneController(sceneController, *_driver.get());
+}
+
+void VROSceneRendererCardboard::setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated) {
+    _renderer->setSceneController(sceneController, animated, *_driver.get());
+}
+
+void VROSceneRendererCardboard::setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
+                        VROTimingFunctionType timingFunction) {
+    _renderer->setSceneController(sceneController, seconds, timingFunction, *_driver.get());
 }
 
 void VROSceneRendererCardboard::initGL() {
@@ -168,6 +181,7 @@ void VROSceneRendererCardboard::onDrawFrame() {
 
     frame.Unbind();
     frame.Submit(*_viewportList, _headView);
+    ++_frame;
 }
 
 void VROSceneRendererCardboard::onTriggerEvent() {

@@ -35,13 +35,14 @@ extern "C" {
 
 JNI_METHOD(jlong, nativeCreateRenderer)(JNIEnv *env, jclass clazz,
                                         jobject class_loader,
+                                        jobject activity,
                                         jobject android_context,
                                         jobject asset_mgr,
                                         jlong native_gvr_api) {
   std::unique_ptr<gvr::AudioApi> audio_context(new gvr::AudioApi);
   audio_context->Init(env, android_context, class_loader,
                       GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
-  VROPlatformSetAssetManager(env, asset_mgr);
+  VROPlatformSetEnv(env, activity, asset_mgr);
 
   return jptr(
       new VROSceneRendererCardboard(reinterpret_cast<gvr_context *>(native_gvr_api),
@@ -50,6 +51,7 @@ JNI_METHOD(jlong, nativeCreateRenderer)(JNIEnv *env, jclass clazz,
 
 JNI_METHOD(void, nativeDestroyRenderer)
 (JNIEnv *env, jclass clazz, jlong native_renderer) {
+  VROPlatformReleaseEnv();
   delete native(native_renderer);
 }
 

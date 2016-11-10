@@ -20,8 +20,6 @@
 class VRORenderContext;
 class VROTexture;
 
-void *VROImageLoadTextureDataRGBA8888(const char *resource, size_t *bitmapLength, int *width, int *height);
-
 void initBlankTexture(const VRORenderContext &context);
 std::shared_ptr<VROTexture> getBlankTexture();
 

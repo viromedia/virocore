@@ -18,16 +18,17 @@
 #include <thread>  // NOLINT
 #include <vector>
 
-#include "VRORenderer.h"
-#include "VRORenderDelegate.h"
-#include "VRODriverOpenGLAndroid.h"
 #include "VROEye.h"
+#include "VROTimingFunction.h"
 
 #include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "vr/gvr/capi/include/gvr_types.h"
 
-class VROSceneControllerInternal;
+class VRODriverOpenGL;
+class VROSceneController;
+class VRORenderer;
+class VRORenderDelegate;
 
 class VROSceneRendererCardboard {
  public:
@@ -67,7 +68,13 @@ class VROSceneRendererCardboard {
      */
     void onResume();
 
-    void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, VRODriver &driver);
+    /*
+     Set the active scene controller, which dictates what scene is rendered.
+     */
+    void setSceneController(std::shared_ptr<VROSceneController> sceneController);
+    void setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated);
+    void setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
+                            VROTimingFunctionType timingFunction);
 
 private:
 

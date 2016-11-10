@@ -90,6 +90,7 @@ void VROSceneRendererCardboardOpenGL::renderEye(GVREye eye, GVRHeadTransform *he
 
 void VROSceneRendererCardboardOpenGL::endFrame() {
     _renderer->endFrame(*_driver.get());
+    ++_frame;
 }
 
 void VROSceneRendererCardboardOpenGL::setSuspended(bool suspended) {

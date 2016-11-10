@@ -47,8 +47,6 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vec
 
         }];
         [textureCommandBuffer commit];
-        
-        free (data);
     }
     
     else if (type == VROTextureType::Cube && images.size() == 6) {
@@ -84,7 +82,6 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vec
                           withBytes:data
                         bytesPerRow:bytesPerRow
                       bytesPerImage:bytesPerImage];
-            free(data);
         }
     }
     

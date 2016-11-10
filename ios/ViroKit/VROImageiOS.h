@@ -16,21 +16,22 @@ class VROImageiOS : public VROImage {
     
 public:
     
-    VROImageiOS(UIImage *image) :
-        _image(image) {}
+    VROImageiOS(UIImage *image);
     virtual ~VROImageiOS();
     
     int getWidth() const {
-        return _image.size.width * _image.scale;
+        return _width;
     }
     int getHeight() const {
-        return _image.size.height * _image.scale;
+        return _height;
     }
     unsigned char *extractRGBA8888(size_t *length);
     
 private:
     
-    UIImage *_image;
+    int _width, _height;
+    int _dataLength;
+    unsigned char *_data;
     
 };
 

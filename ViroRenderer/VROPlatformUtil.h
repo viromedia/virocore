@@ -17,11 +17,21 @@ std::string VROPlatformLoadResourceAsString(std::string resource, std::string ty
 std::string VROPlatformLoadFileAsString(std::string path);
 
 #if VRO_PLATFORM_ANDROID
+
 #include <jni.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
+#include <android/bitmap.h>
 
-void VROPlatformSetAssetManager(JNIEnv *env, jobject assetManager);
+void VROPlatformSetEnv(JNIEnv *env, jobject activity, jobject assetManager);
+void VROPlatformReleaseEnv();
+
+// Note the returned buffer *must* be freed by the caller!
+void *VROPlatformLoadBinaryAsset(std::string resource, std::string type, size_t *length);
+
+// Note the returned buffer *must* be freed by the caller!
+void *VROPlatformLoadImageAssetRGBA8888(std::string resource, int *bitmapLength, int *width, int *height);
+
 #endif
 
 #endif /* VROPlatformUtil_h */

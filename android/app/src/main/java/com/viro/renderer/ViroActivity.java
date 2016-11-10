@@ -1,6 +1,8 @@
 package com.viro.renderer;
 
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -13,6 +15,10 @@ import android.view.View;
 import android.view.WindowManager;
 import com.google.vr.ndk.base.AndroidCompat;
 import com.google.vr.ndk.base.GvrLayout;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -53,6 +59,7 @@ public class ViroActivity extends AppCompatActivity {
         mNativeRenderer =
                 nativeCreateRenderer(
                         getClass().getClassLoader(),
+                        this,
                         this.getApplicationContext(),
                         mAssetManager,
                         mGVRLayout.getGvrApi().getNativeGvrContext());
@@ -164,8 +171,23 @@ public class ViroActivity extends AppCompatActivity {
                                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
+    // Accessed by Native code (VROPlatformUtil.cpp)
+    public Bitmap loadBitmap(String assetPath) {
+        InputStream in;
+        Bitmap bitmap = null;
+        try {
+            in = mAssetManager.open(assetPath);
+            bitmap = BitmapFactory.decodeStream(in);
+
+            in.close();
+        } catch (IOException e) {
+        }
+
+        return bitmap;
+    }
+
     private native long nativeCreateRenderer(
-            ClassLoader appClassLoader, Context context, AssetManager assets, long nativeGvrContext);
+            ClassLoader appClassLoader, ViroActivity activity, Context context, AssetManager assets, long nativeGvrContext);
     private native void nativeDestroyRenderer(long nativeRenderer);
     private native void nativeInitializeGl(long nativeRenderer);
     private native long nativeDrawFrame(long nativeRenderer);

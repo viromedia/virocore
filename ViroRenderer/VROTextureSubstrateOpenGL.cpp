@@ -42,7 +42,6 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::v
         void *data = image->extractRGBA8888(&dataLength);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
                      GL_UNSIGNED_BYTE, data);
-        free (data);
     }
     
     else if (type == VROTextureType::Cube && images.size() == 6) {
@@ -72,7 +71,6 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::v
             
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + slice, 0, GL_RGBA, cubeSize, cubeSize, 0, GL_RGBA,
                          GL_UNSIGNED_BYTE, data);
-            free(data);
         }
     }
     

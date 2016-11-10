@@ -6,6 +6,7 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
+#include <android/bitmap.h>
 #include "VROPlatformUtil.h"
 #include "VROLog.h"
 
@@ -33,10 +34,22 @@ std::string VROPlatformLoadResourceAsString(std::string resource, std::string ty
 
 #elif VRO_PLATFORM_ANDROID
 
+static JNIEnv *sEnv = nullptr;
+static jobject sActivity = nullptr;
 static AAssetManager *sAssetMgr = nullptr;
 
-void VROPlatformSetAssetManager(JNIEnv *env, jobject assetManager) {
+void VROPlatformSetEnv(JNIEnv *env, jobject activity, jobject assetManager) {
+    sEnv = env;
+    sActivity = env->NewGlobalRef(activity);
     sAssetMgr = AAssetManager_fromJava(env, assetManager);
+}
+
+void VROPlatformReleaseEnv() {
+    sEnv->DeleteGlobalRef(sActivity);
+
+    sEnv = nullptr;
+    sActivity = nullptr;
+    sAssetMgr = nullptr;
 }
 
 std::string VROPlatformGetPathForResource(std::string resource, std::string type) {
@@ -65,6 +78,50 @@ std::string VROPlatformLoadResourceAsString(std::string resource, std::string ty
     free(buffer);
 
     return str;
+}
+
+void *VROPlatformLoadBinaryAsset(std::string resource, std::string type, size_t *length) {
+    std::string assetName = resource + "." + type;
+
+    AAsset *asset = AAssetManager_open(sAssetMgr, assetName.c_str(), AASSET_MODE_BUFFER);
+    *length = AAsset_getLength(asset);
+
+    char *buffer = (char *)malloc(*length);
+    AAsset_read(asset, buffer, *length);
+    AAsset_close(asset);
+
+    return buffer;
+}
+
+void *VROPlatformLoadImageAssetRGBA8888(std::string resource, int *bitmapLength, int *width, int *height) {
+    jclass cls = sEnv->GetObjectClass(sActivity);
+    jmethodID jmethod = sEnv->GetMethodID(cls, "loadBitmap", "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
+
+    jstring string = sEnv->NewStringUTF(resource.c_str());
+    jobject jbitmap = sEnv->CallObjectMethod(sActivity, jmethod, string);
+
+    AndroidBitmapInfo bitmapInfo;
+    AndroidBitmap_getInfo(sEnv, jbitmap, &bitmapInfo);
+
+    passert (bitmapInfo.format == ANDROID_BITMAP_FORMAT_RGBA_8888);
+
+    *width = bitmapInfo.width;
+    *height = bitmapInfo.height;
+    *bitmapLength = bitmapInfo.height * bitmapInfo.stride;
+
+    void *bitmapData;
+    AndroidBitmap_lockPixels(sEnv, jbitmap, &bitmapData);
+
+    void *safeData = malloc(*bitmapLength);
+    memcpy(safeData, bitmapData, *bitmapLength);
+
+    AndroidBitmap_unlockPixels(sEnv, jbitmap);
+
+    sEnv->DeleteLocalRef(jbitmap);
+    sEnv->DeleteLocalRef(string);
+    sEnv->DeleteLocalRef(cls);
+
+    return safeData;
 }
 
 #endif
