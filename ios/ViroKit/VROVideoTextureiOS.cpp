@@ -1,12 +1,12 @@
 //
-//  VROVideoTexture.cpp
+//  VROVideoTextureiOS.cpp
 //  ViroRenderer
 //
-//  Created by Raj Advani on 1/8/16.
+//  Created by Raj Advani on 11/10/16.
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include "VROVideoTexture.h"
+#include "VROVideoTextureiOS.h"
 #include "VRORenderContext.h"
 #include "VROFrameSynchronizer.h"
 #include "VROLog.h"
@@ -15,19 +15,20 @@
 #include "VROVideoTextureCache.h"
 #include "VRODriver.h"
 #include "VROTextureSubstrate.h"
+#include "VROVideoDelegateiOS.h"
 
 # define ONE_FRAME_DURATION 0.03
 
 static NSString *const kStatusKey = @"status";
 static NSString *const kPlaybackKeepUpKey = @"playbackLikelyToKeepUp";
 
-VROVideoTexture::VROVideoTexture() :
+VROVideoTextureiOS::VROVideoTextureiOS() :
     _paused(true) {
     
     ALLOCATION_TRACKER_ADD(VideoTextures, 1);
 }
 
-VROVideoTexture::~VROVideoTexture() {
+VROVideoTextureiOS::~VROVideoTextureiOS() {
     ALLOCATION_TRACKER_SUB(VideoTextures, 1);
     // Remove observers from the player's item when this is deallocated.
     [_player.currentItem removeObserver:_avPlayerDelegate forKeyPath:kStatusKey context:this];
@@ -36,88 +37,88 @@ VROVideoTexture::~VROVideoTexture() {
 
 #pragma mark - Recorded Video Playback
 
-void VROVideoTexture::prewarm() {
+void VROVideoTextureiOS::prewarm() {
     [_player play];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [_player pause];
     });
 }
 
-void VROVideoTexture::play() {
+void VROVideoTextureiOS::play() {
     _paused = false;
     [_player play];
 }
 
-void VROVideoTexture::pause() {
+void VROVideoTextureiOS::pause() {
     [_player pause];
     _paused = true;
 }
 
-void VROVideoTexture::seekToTime(int seconds) {
+void VROVideoTextureiOS::seekToTime(int seconds) {
     [_player seekToTime:CMTimeMake(seconds, 1)];
 }
 
-bool VROVideoTexture::isPaused() {
+bool VROVideoTextureiOS::isPaused() {
     return _paused;
 }
 
-void VROVideoTexture::setMuted(bool muted) {
+void VROVideoTextureiOS::setMuted(bool muted) {
     _player.muted = muted;
 }
 
-void VROVideoTexture::setVolume(float volume) {
+void VROVideoTextureiOS::setVolume(float volume) {
     _player.volume = volume;
 }
 
-void VROVideoTexture::setLoop(bool loop) {
+void VROVideoTextureiOS::setLoop(bool loop) {
     _loop = loop;
     if (_videoNotificationListener) {
-      [_videoNotificationListener shouldLoop:loop];
+        [_videoNotificationListener shouldLoop:loop];
     }
 }
 
-void VROVideoTexture::setDelegate(id <VROVideoDelegate> delegate) {
-    _delegate = delegate;
+void VROVideoTextureiOS::setDelegate(std::shared_ptr<VROVideoDelegateInternal> delegate) {
+    VROVideoTexture::setDelegate(delegate);
     if (_videoNotificationListener) {
         [_videoNotificationListener setDelegate:delegate];
     }
 }
 
-void VROVideoTexture::loadVideo(NSURL *url,
-                                std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                VRODriver &driver) {
+void VROVideoTextureiOS::loadVideo(std::string url,
+                                   std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+                                   VRODriver &driver) {
     
     frameSynchronizer->addFrameListener(shared_from_this());
     
-    _player = [AVPlayer playerWithURL:url];
+    _player = [AVPlayer playerWithURL:[NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]]];
     _avPlayerDelegate = [[VROAVPlayerDelegate alloc] initWithVideoTexture:this
-                                                                        player:_player
-                                                                        driver:driver];
+                                                                   player:_player
+                                                                   driver:driver];
     
     [_player.currentItem addObserver:_avPlayerDelegate
-           forKeyPath:kStatusKey
-              options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-              context:this];
+                          forKeyPath:kStatusKey
+                             options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                             context:this];
     
     [_player.currentItem addObserver:_avPlayerDelegate
                           forKeyPath:kPlaybackKeepUpKey
                              options:NSKeyValueObservingOptionNew
                              context:this];
-
+    
     _videoNotificationListener = [[VROVideoNotificationListener alloc] initWithVideoPlayer:_player
                                                                                       loop:_loop
-                                                                             videoDelegate:_delegate];
+                                                                             videoDelegate:_delegate.lock()];
 }
 
-void VROVideoTexture::onFrameWillRender(const VRORenderContext &context) {
+void VROVideoTextureiOS::onFrameWillRender(const VRORenderContext &context) {
     [_avPlayerDelegate renderFrame];
 }
 
-void VROVideoTexture::onFrameDidRender(const VRORenderContext &context) {
-   
+void VROVideoTextureiOS::onFrameDidRender(const VRORenderContext &context) {
+    
 }
 
-void VROVideoTexture::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> substrate) {
+void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> substrate) {
     setSubstrate(VROTextureType::Quad, std::move(substrate));
 }
 
@@ -128,10 +129,10 @@ void VROVideoTexture::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> su
     dispatch_queue_t _videoQueue;
     int _currentTextureIndex;
     VROVideoTextureCache *_videoTextureCache;
-
+    
 }
 
-@property (readonly) VROVideoTexture *texture;
+@property (readonly) VROVideoTextureiOS *texture;
 @property (readonly) AVPlayer *player;
 
 @property (readwrite) AVPlayerItemVideoOutput *output;
@@ -144,10 +145,10 @@ void VROVideoTexture::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> su
 
 @implementation VROAVPlayerDelegate
 
-- (id)initWithVideoTexture:(VROVideoTexture *)texture
+- (id)initWithVideoTexture:(VROVideoTextureiOS *)texture
                     player:(AVPlayer *)player
                     driver:(VRODriver &)driver {
-                        
+    
     self = [super init];
     if (self) {
         _texture = texture;
@@ -229,7 +230,7 @@ void VROVideoTexture::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> su
     if ([_output hasNewPixelBufferForItemTime:outputItemTime]) {
         CMTime presentationTime = kCMTimeZero;
         CVPixelBufferRef pixelBuffer = [_output copyPixelBufferForItemTime:outputItemTime
-                                                             itemTimeForDisplay:&presentationTime];
+                                                        itemTimeForDisplay:&presentationTime];
         
         if (pixelBuffer != nullptr) {
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
@@ -253,12 +254,11 @@ void VROVideoTexture::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> su
 @end
 
 @implementation VROVideoNotificationListener {
-    __weak id <VROVideoDelegate> _delegate;
+    std::weak_ptr<VROVideoDelegateInternal> _delegate;
 }
 
-- (id)initWithVideoPlayer:(AVPlayer *)player
-                     loop:(BOOL)loop
-            videoDelegate:(id<VROVideoDelegate>)videoDelegate {
+- (id)initWithVideoPlayer:(AVPlayer *)player loop:(BOOL)loop
+            videoDelegate:(std::shared_ptr<VROVideoDelegateInternal>)videoDelegate {
     self = [super init];
     if (self) {
         _player = player;
@@ -273,7 +273,7 @@ void VROVideoTexture::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> su
     _loop = loop;
 }
 
-- (void)setDelegate:(id<VROVideoDelegate>)videoDelegate {
+- (void)setDelegate:(std::shared_ptr<VROVideoDelegateInternal>)videoDelegate {
     _delegate = videoDelegate;
 }
 
@@ -292,12 +292,14 @@ void VROVideoTexture::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> su
 }
 
 - (void)playerDidFinish:(NSNotification *)notification {
+    std::shared_ptr<VROVideoDelegateInternal> delegate = _delegate.lock();
+    
     // when a video finishes, either loop or let the delegate know that we're done playing.
     if (self.loop) {
         AVPlayerItem *playerItem = [notification object];
         [playerItem seekToTime:kCMTimeZero];
-    } else if (_delegate) {
-        [_delegate videoDidFinish];
+    } else if (delegate) {
+        delegate->videoDidFinish();
     }
 }
 

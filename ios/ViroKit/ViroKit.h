@@ -60,7 +60,6 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROTimingFunctionEaseOut.h>
 #import <ViroKit/VROTimingFunctionLinear.h>
 #import <ViroKit/VROTimingFunctionPowerDeceleration.h>
-#import <ViroKit/VROVideoTexture.h>
 #import <ViroKit/VROAction.h>
 #import <ViroKit/VROHitTestResult.h>
 #import <ViroKit/VROConstraint.h>
@@ -74,6 +73,11 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROWorldUIView.h>
 #import <ViroKit/VROScreenUIView.h>
 #import <ViroKit/VROReticle.h>
+
+// Video
+#import <ViroKit/VROVideoSurface.h>
+#import <ViroKit/VROVideoTexture.h>
+#import <ViroKit/VROVideoTextureiOS.h>
 
 // Audio
 #import <ViroKit/VROAudioPlayer.h>
@@ -98,7 +102,6 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROSphere.h>
 #import <ViroKit/VROSurface.h>
 #import <ViroKit/VROPolyline.h>
-#import <ViroKit/VROVideoSurface.h>
 #import <ViroKit/VROTorusKnot.h>
 #import <ViroKit/VROShapeUtils.h>
 

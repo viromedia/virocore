@@ -12,8 +12,9 @@
 #include <memory>
 
 std::shared_ptr<VROVideoSurface> VROVideoSurface::createVideoSurface(float width, float height,
-                                                                     NSURL *url,
+                                                                     std::string url,
                                                                      std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+                                                                     std::shared_ptr<VROVideoTexture> texture,
                                                                      VRODriver &driver) {
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
@@ -24,7 +25,6 @@ std::shared_ptr<VROVideoSurface> VROVideoSurface::createVideoSurface(float width
     material->setWritesToDepthBuffer(true);
     material->setReadsFromDepthBuffer(true);
     
-    std::shared_ptr<VROVideoTexture> texture = std::make_shared<VROVideoTexture>();
     texture->loadVideo(url, frameSynchronizer, driver);
     texture->play();
     material->getDiffuse().setContents(texture);
@@ -74,6 +74,6 @@ bool VROVideoSurface::isPaused() {
     return _texture->isPaused();
 }
 
-void VROVideoSurface::setDelegate(id <VROVideoDelegate> delegate) {
+void VROVideoSurface::setDelegate(std::shared_ptr<VROVideoDelegateInternal> delegate) {
     _texture->setDelegate(delegate);
 }

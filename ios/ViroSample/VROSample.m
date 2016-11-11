@@ -78,9 +78,11 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     scene->addNode(rootNode);
     
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"surfing" ofType:@"mp4"];
+    NSURL *fileURL = [NSURL fileURLWithPath:filePath];
+    std::string url = std::string([[fileURL description] UTF8String]);
     
-    self.videoTexture = std::make_shared<VROVideoTexture>();
-    self.videoTexture->loadVideo([NSURL fileURLWithPath:filePath], [self.view frameSynchronizer], *self.driver);
+    self.videoTexture = std::make_shared<VROVideoTextureiOS>();
+    self.videoTexture->loadVideo(url, [self.view frameSynchronizer], *self.driver);
     self.videoTexture->play();
     
     scene->setBackgroundSphere(self.videoTexture);

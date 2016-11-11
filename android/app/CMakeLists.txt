@@ -94,6 +94,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROShapeUtils.cpp
              ../../ViroRenderer/VROSphere.cpp
              ../../ViroRenderer/VROPolyline.cpp
+             ../../ViroRenderer/VROVideoSurface.cpp
 
              # UI
              ../../ViroRenderer/VROReticle.cpp
@@ -105,7 +106,6 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROUniform.cpp
              ../../ViroRenderer/VROShaderProgram.cpp
              ../../ViroRenderer/VROShaderModifier.cpp
-             #../../ViroRenderer/VROVideoTextureCacheOpenGL.cpp
              ../../ViroRenderer/VROLightingUBO.cpp
              )
 
