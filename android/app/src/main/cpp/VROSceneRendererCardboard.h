@@ -17,6 +17,9 @@
 #include <string>
 #include <thread>  // NOLINT
 #include <vector>
+#include "VRODriverOpenGL.h"
+#include "VRORenderer.h"
+#include "VROFrameSynchronizer.h"
 
 #include "VROEye.h"
 #include "VROTimingFunction.h"
@@ -82,6 +85,13 @@ class VROSceneRendererCardboard {
     void setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated);
     void setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                             VROTimingFunctionType timingFunction);
+
+    VRODriver &getDriver() {
+        return *_driver.get();
+    }
+    std::shared_ptr<VROFrameSynchronizer> getFrameSynchronizer() {
+        return _renderer->getFrameSynchronizer();
+    }
 
 private:
 

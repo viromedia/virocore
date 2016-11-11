@@ -11,6 +11,7 @@
 #include "VRODriverOpenGLAndroid.h"
 #include "VROImageAndroid.h"
 #include "VROSceneRendererCardboard.h"
+#include "VROVideoTextureAndroid.h"
 
 VROSample::VROSample() {
 
@@ -20,7 +21,8 @@ VROSample::~VROSample() {
 
 }
 
-std::shared_ptr<VROSceneController> VROSample::loadBoxScene() {
+std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+                                                            VRODriver &driver) {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundCube(getNiagaraTexture());
@@ -61,10 +63,15 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene() {
     std::shared_ptr<VROBox> box = VROBox::createBox(2, 4, 2);
     box->setName("Box 1");
 
+    std::shared_ptr<VROVideoTexture> video = std::make_shared<VROVideoTextureAndroid>();
+    video->loadVideo("", frameSynchronizer, driver);
+    video->play();
+
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Phong);
-    material->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("boba.png")));
-    material->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("specular.png")));
+    material->getDiffuse().setContents(video);
+    //material->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("boba.png")));
+    //material->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("specular.png")));
 
     std::vector<std::string> modifierCode =  { "uniform float testA;",
                                                "uniform float testB;",
@@ -100,26 +107,8 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene() {
     boxNode2->setGeometry(box2);
     boxNode2->setPosition({0, 0, -9});
     boxNode2->addLight(ambient);
-
-
-    rootNode->addChildNode(boxNode2);
-
-    /*
-     Create a second box node behind the first.
-     */
-    std::shared_ptr<VROBox> box3 = VROBox::createBox(2, 4, 2);
-    box3->setName("Box 3");
-
-    std::shared_ptr<VROMaterial> material3 = box3->getMaterials()[0];
-    material3->setLightingModel(VROLightingModel::Phong);
-    material3->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("boba.png")));
-    material3->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("specular.png")));
-
-    std::shared_ptr<VRONode> boxNode3 = std::make_shared<VRONode>();
-    boxNode3->setGeometry(box3);
-    boxNode3->setPosition({0, 0, -13});
-
-    rootNode->addChildNode(boxNode3);
+    
+    //rootNode->addChildNode(boxNode2);
 
     //[self.view setCameraRotationType:VROCameraRotationType::Orbit];
     //[self.view setOrbitFocalPoint:boxNode->getPosition()];

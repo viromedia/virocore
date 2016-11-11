@@ -10,6 +10,26 @@
 #define ANDROID_VROVIDEOTEXTUREANDROID_H
 
 #include "VROVideoTexture.h"
+#include "VROOpenGL.h"
+
+#include <android/native_window_jni.h>
+#include "VROLooper.h"
+#include "media/NdkMediaCodec.h"
+#include "media/NdkMediaExtractor.h"
+
+typedef struct {
+    int fd;
+    ANativeWindow* window;
+    AMediaExtractor* ex;
+    AMediaCodec *codec;
+    int64_t renderstart;
+    bool sawInputEOS;
+    bool sawOutputEOS;
+    bool isPlaying;
+    bool renderonce;
+} VROVideoData;
+
+class VROVideoLooper;
 
 class VROVideoTextureAndroid : public VROVideoTexture {
 
@@ -35,6 +55,24 @@ public:
     void setMuted(bool muted);
     void setVolume(float volume);
     void setLoop(bool loop);
+
+private:
+
+    VROVideoData _data;
+    VROVideoLooper *_looper;
+
+    void createVideoTexture();
+
+};
+
+/*
+ * Runs on another thread decoding the video. Post messages
+ * to this thread using the VROLooper interface.
+ */
+class VROVideoLooper : public VROLooper {
+
+    virtual void handle(int what, void* obj);
+    void doCodecWork(VROVideoData *d);
 
 };
 

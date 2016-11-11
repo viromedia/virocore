@@ -27,6 +27,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/native-lib.cpp
              src/main/cpp/debug_stacktrace.cpp
              src/main/cpp/debug_mapinfo.cpp
+             src/main/cpp/VROLooper.cpp
              src/main/cpp/VROSceneRendererCardboard.cpp
              src/main/cpp/VRORenderer_JNI.cpp
              src/main/cpp/VROSample.cpp
@@ -136,6 +137,8 @@ set_target_properties( lib-gvr-audio
 find_library( lib-log log )
 find_library( lib-android android )
 find_library( lib-jnigraphics jnigraphics )
+find_library( lib-mediandk mediandk )
+find_library( lib-openmax OpenMAXAL )
 find_library( lib-egl EGL )
 find_library( lib-GLESv3 GLESv3 )
 
@@ -151,6 +154,8 @@ target_link_libraries( # Specifies the target library.
                        ${lib-log}
                        ${lib-android}
                        ${lib-jnigraphics}
+                       ${lib-mediandk}
+                       ${lib-openmax}
                        ${lib-egl}
                        ${lib-GLESv3}
                        lib-gvr

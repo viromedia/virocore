@@ -54,6 +54,17 @@ void VROPlatformSetEnv(JNIEnv *env, jobject activity, jobject assetManager) {
     sAssetMgr = AAssetManager_fromJava(env, assetManager);
 }
 
+JNIEnv *VROPlatformGetJNIEnv() {
+    JNIEnv *env;
+    getJNIEnv(&env);
+
+    return env;
+}
+
+AAssetManager *VROPlatformGetAssetManager() {
+    return sAssetMgr;
+}
+
 void VROPlatformReleaseEnv() {
     JNIEnv *env;
     getJNIEnv(&env);
@@ -137,6 +148,18 @@ void *VROPlatformLoadImageAssetRGBA8888(std::string resource, int *bitmapLength,
     env->DeleteLocalRef(cls);
 
     return safeData;
+}
+
+jobject VROPlatformCreateVideoSink(int textureId) {
+    JNIEnv *env;
+    getJNIEnv(&env);
+
+    jclass cls = env->GetObjectClass(sActivity);
+    jmethodID jmethod = env->GetMethodID(cls, "createVideoSink", "(I)Landroid/view/Surface;");
+    jobject jsurface = env->CallObjectMethod(sActivity, jmethod, textureId);
+
+    env->DeleteLocalRef(cls);
+    return jsurface;
 }
 
 #endif

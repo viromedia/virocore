@@ -10,6 +10,7 @@
 #define ANDROID_VROSAMPLERENDERER_H
 
 #include <memory>
+#include <VROFrameSynchronizer.h>
 #include "VRORenderDelegate.h"
 
 class VROSceneController;
@@ -23,7 +24,8 @@ public:
     VROSample();
     virtual ~VROSample();
 
-    std::shared_ptr<VROSceneController> loadBoxScene();
+    std::shared_ptr<VROSceneController> loadBoxScene(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+                                                     VRODriver &driver);
 
 private:
 

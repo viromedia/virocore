@@ -11,6 +11,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Vibrator;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import com.google.vr.ndk.base.AndroidCompat;
@@ -18,6 +19,10 @@ import com.google.vr.ndk.base.GvrLayout;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -34,6 +39,8 @@ public class ViroActivity extends AppCompatActivity {
     private GvrLayout mGVRLayout;
     private long mNativeRenderer;
     private AssetManager mAssetManager;
+    private List<FrameListener> mFrameListeners = new ArrayList<FrameListener>();
+    private Map<Integer, VideoSink> mVideoSinks = new HashMap<Integer, VideoSink>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +88,9 @@ public class ViroActivity extends AppCompatActivity {
 
                     @Override
                     public void onDrawFrame(GL10 gl) {
+                        for (FrameListener listener : mFrameListeners) {
+                            listener.onDrawFrame();;
+                        }
                         nativeDrawFrame(mNativeRenderer);
                     }
                 });
@@ -184,6 +194,22 @@ public class ViroActivity extends AppCompatActivity {
         }
 
         return bitmap;
+    }
+
+    // Accessed by Native code (VROPlatformUtil.cpp)
+    public Surface createVideoSink(int textureId) {
+        VideoSink videoSink = new VideoSink(textureId);
+        mVideoSinks.put(textureId, videoSink);
+        mFrameListeners.add(videoSink);
+
+        return videoSink.getSurface();
+    }
+
+    public void removeVideoSink(int textureId) {
+        VideoSink videoSink = mVideoSinks.remove(textureId);
+        mFrameListeners.remove(videoSink);
+
+        videoSink.releaseSurface();
     }
 
     private native long nativeCreateRenderer(

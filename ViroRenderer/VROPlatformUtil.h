@@ -32,6 +32,12 @@ void *VROPlatformLoadBinaryAsset(std::string resource, std::string type, size_t 
 // Note the returned buffer *must* be freed by the caller!
 void *VROPlatformLoadImageAssetRGBA8888(std::string resource, int *bitmapLength, int *width, int *height);
 
+// Create a video sink on the Java side. Returns the Surface.
+jobject VROPlatformCreateVideoSink(int textureId);
+
+JNIEnv *VROPlatformGetJNIEnv();
+AAssetManager *VROPlatformGetAssetManager();
+
 #endif
 
 #endif /* VROPlatformUtil_h */

@@ -61,9 +61,12 @@ JNI_METHOD(void, nativeInitializeGl)(JNIEnv *env, jobject obj,
 
   // TODO Temporary place for sample
   sample = std::make_shared<VROSample>();
-  native(native_renderer)->setRenderDelegate(sample);
-  native(native_renderer)->setSceneController(sample->loadBoxScene());
-  native(native_renderer)->initGL();
+
+  VROSceneRendererCardboard *sceneRenderer = native(native_renderer);
+  sceneRenderer->setRenderDelegate(sample);
+  sceneRenderer->setSceneController(sample->loadBoxScene(sceneRenderer->getFrameSynchronizer(),
+                                                         sceneRenderer->getDriver()));
+  sceneRenderer->initGL();
 }
 
 JNI_METHOD(void, nativeDrawFrame)(JNIEnv *env, jobject obj,
