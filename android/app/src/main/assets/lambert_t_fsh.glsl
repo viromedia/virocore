@@ -26,5 +26,6 @@ void main() {
     lambert.diffuse_intensity = material_diffuse_intensity;
     lambert.material_alpha = material_alpha;
 
-    frag_color = lambert_lighting_diffuse_texture(lambert, diffuse_texture);
+    lowp vec4 diffuse_texture_color = texture(diffuse_texture, lambert.texcoord);
+    frag_color = lambert_lighting_diffuse_texture(lambert, diffuse_texture_color);
 }

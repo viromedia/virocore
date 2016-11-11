@@ -67,10 +67,9 @@ lowp vec4 blinn_lighting_diffuse_fixed(VROBlinnLighting blinn,
 }
 
 lowp vec4 blinn_lighting_diffuse_texture(VROBlinnLighting blinn,
-                                         sampler2D diffuse_texture,
+                                         lowp vec4 diffuse_texture_color,
                                          sampler2D specular_texture) {
-    
-    lowp vec4 diffuse_texture_color = texture(diffuse_texture, blinn.texcoord);
+
     lowp vec3 ambient_light_color = blinn.ambient_color * diffuse_texture_color.xyz;
     
     lowp vec4 material_diffuse_color  = diffuse_texture_color * blinn.diffuse_intensity;

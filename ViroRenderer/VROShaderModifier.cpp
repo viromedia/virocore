@@ -61,14 +61,14 @@ std::vector<std::string> VROShaderModifier::getUniforms() const {
     return keys;
 }
 
-std::string VROShaderModifier::extractUniforms(std::string *source) {
+std::string VROShaderModifier::extractUniforms(std::string *source) const {
     std::string uniforms;
     extractNextUniform(&uniforms, source);
     
     return uniforms;
 }
 
-void VROShaderModifier::extractNextUniform(std::string *uniforms, std::string *body) {
+void VROShaderModifier::extractNextUniform(std::string *uniforms, std::string *body) const {
     size_t start = body->find("uniform");
     if (start == std::string::npos) {
         return;
@@ -91,6 +91,10 @@ std::string VROShaderModifier::getDirective(VROShaderSection section) const {
         else {
             return "#pragma geometry_modifier_uniforms";
         }
+    }
+    
+    else if (_entryPoint == VROShaderEntryPoint::Surface) {
+        pabort(); // TODO Not yet supported, directives must be added to the shader files
     }
 
     // Fill in additional entry points directives as they are supported

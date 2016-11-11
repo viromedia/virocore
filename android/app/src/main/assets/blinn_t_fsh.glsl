@@ -28,6 +28,7 @@ void main() {
     blinn.material_shininess = material_shininess;
     blinn.diffuse_intensity = material_diffuse_intensity;
     blinn.material_alpha = material_alpha;
-    
-    frag_color = blinn_lighting_diffuse_texture(blinn, diffuse_texture, specular_texture);
+
+    lowp vec4 diffuse_texture_color = texture(diffuse_texture, blinn.texcoord);
+    frag_color = blinn_lighting_diffuse_texture(blinn, diffuse_texture_color, specular_texture);
 }

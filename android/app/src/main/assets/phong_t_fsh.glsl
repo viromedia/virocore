@@ -28,6 +28,7 @@ void main() {
     phong.material_shininess = material_shininess;
     phong.diffuse_intensity = material_diffuse_intensity;
     phong.material_alpha = material_alpha;
-    
-    frag_color = phong_lighting_diffuse_texture(phong, diffuse_texture, specular_texture);
+
+    lowp vec4 diffuse_texture_color = texture(diffuse_texture, phong.texcoord);
+    frag_color = phong_lighting_diffuse_texture(phong, diffuse_texture_color, specular_texture);
 }

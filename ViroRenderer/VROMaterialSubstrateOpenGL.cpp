@@ -103,6 +103,7 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
     std::string fragmentShader;
     
     std::vector<std::string> samplers;
+    std::vector<std::shared_ptr<VROShaderModifier>> modifiers = material.getShaderModifiers();
     
     VROMaterialVisual &diffuse = material.getDiffuse();
     VROMaterialVisual &reflective = material.getReflective();
@@ -120,7 +121,7 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
     }
     else {
         _textures.push_back(diffuse.getContentsTexture());
-        samplers.push_back("texture");
+        samplers.push_back("diffuse_texture");
         
         if (reflective.getTextureType() == VROTextureType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
@@ -130,11 +131,14 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
         }
         else {
             fragmentShader = "lambert_t_fsh";
+            if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
+                modifiers.push_back(createEGLImageModifier());
+            }
         }
     }
     
     _program = driver.getPooledShader(vertexShader, fragmentShader, samplers,
-                                      material.getShaderModifiers());
+                                      modifiers);
     if (!_program->isHydrated()) {
         addUniforms();
         hydrateProgram(driver);
@@ -149,6 +153,7 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
     std::string fragmentShader;
     
     std::vector<std::string> samplers;
+    std::vector<std::shared_ptr<VROShaderModifier>> modifiers = material.getShaderModifiers();
     
     /*
      If there's no specular map, then we fall back to Lambert lighting.
@@ -191,11 +196,14 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
         }
         else {
             fragmentShader = "phong_t_fsh";
+            if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
+                modifiers.push_back(createEGLImageModifier());
+            }
         }
     }
 
     _program = driver.getPooledShader(vertexShader, fragmentShader, samplers,
-                                      material.getShaderModifiers());
+                                      modifiers);
     if (!_program->isHydrated()) {
         addUniforms();
         _shininessUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
@@ -212,6 +220,7 @@ void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, 
     std::string fragmentShader;
     
     std::vector<std::string> samplers;
+    std::vector<std::shared_ptr<VROShaderModifier>> modifiers = material.getShaderModifiers();
     
     /*
      If there's no specular map, then we fall back to Lambert lighting.
@@ -254,11 +263,14 @@ void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, 
         }
         else {
             fragmentShader = "blinn_t_fsh";
+            if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
+                modifiers.push_back(createEGLImageModifier());
+            }
         }
     }
     
     _program = driver.getPooledShader(vertexShader, fragmentShader, samplers,
-                                      material.getShaderModifiers());
+                                      modifiers);
     if (!_program->isHydrated()) {
         addUniforms();
         _shininessUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
@@ -416,6 +428,14 @@ void VROMaterialSubstrateOpenGL::bindMaterialUniforms(float opacity) {
 void VROMaterialSubstrateOpenGL::updateSortKey(VROSortKey &key) const {
     key.shader = _program->getShaderId();
     key.textures = hashTextures(_textures);
+}
+
+std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createEGLImageModifier() {
+    std::vector<std::string> input;
+    std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface, input);
+    modifier->addReplacement("uniform sampler2D diffuse_texture;", "uniform samplerExternalOES diffuse_texture;");
+    
+    return modifier;
 }
 
 uint32_t VROMaterialSubstrateOpenGL::hashTextures(const std::vector<std::shared_ptr<VROTexture>> &textures) const {

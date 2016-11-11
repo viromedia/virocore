@@ -67,10 +67,9 @@ lowp vec4 phong_lighting_diffuse_fixed(VROPhongLighting phong,
 }
 
 lowp vec4 phong_lighting_diffuse_texture(VROPhongLighting phong,
-                                         sampler2D diffuse_texture,
+                                         lowp vec4 diffuse_texture_color,
                                          sampler2D specular_texture) {
     
-    lowp vec4 diffuse_texture_color = texture(diffuse_texture, phong.texcoord);
     lowp vec3 ambient_light_color = phong.ambient_color * diffuse_texture_color.xyz;
 
     lowp vec4 material_diffuse_color  = diffuse_texture_color * phong.diffuse_intensity;

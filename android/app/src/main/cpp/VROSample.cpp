@@ -70,8 +70,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Phong);
     material->getDiffuse().setContents(video);
-    //material->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("boba.png")));
-    //material->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("specular.png")));
+    material->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("specular.png")));
 
     std::vector<std::string> modifierCode =  { "uniform float testA;",
                                                "uniform float testB;",
@@ -107,7 +106,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     boxNode2->setGeometry(box2);
     boxNode2->setPosition({0, 0, -9});
     boxNode2->addLight(ambient);
-    
+
     //rootNode->addChildNode(boxNode2);
 
     //[self.view setCameraRotationType:VROCameraRotationType::Orbit];

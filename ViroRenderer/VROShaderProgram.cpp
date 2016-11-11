@@ -423,7 +423,7 @@ const std::string &VROShaderProgram::getFragmentSource() const {
     return _fragmentSource;
 }
 
-void VROShaderProgram::inflateIncludes(std::string &source) {
+void VROShaderProgram::inflateIncludes(std::string &source) const {
     std::string includeDirective("#include ");
     
     size_t includeStart = source.find(includeDirective);
@@ -443,21 +443,48 @@ void VROShaderProgram::inflateIncludes(std::string &source) {
 }
 
 void VROShaderProgram::inflateVertexShaderModifiers(const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
-                                                    std::string &source) {
+                                                    std::string &source) const {
     
     for (const std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
+        if (modifier->getEntryPoint() != VROShaderEntryPoint::Geometry) {
+            continue;
+        }
+        
         insertModifier(modifier->getBodySource(), modifier->getDirective(VROShaderSection::Body), source);
         insertModifier(modifier->getUniformsSource(), modifier->getDirective(VROShaderSection::Uniforms), source);
+        inflateReplacements(modifier->getReplacements(), source);
     }
 }
 
 void VROShaderProgram::inflateFragmentShaderModifiers(const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
-                                                      std::string &source) {
-    // TODO Not yet supported
+                                                      std::string &source) const {
+    
+    for (const std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
+        if (modifier->getEntryPoint() != VROShaderEntryPoint::Surface) {
+            continue;
+        }
+        
+        // TODO Body and uniforms modifiers not yet supported, only replacements        
+        inflateReplacements(modifier->getReplacements(), source);
+    }
 }
 
+void VROShaderProgram::inflateReplacements(const std::map<std::string, std::string> &replacements, std::string &source) const {
+    for (auto key : replacements) {
+        const std::string &stringMatching = key.first;
+        const std::string &replacementString = key.second;
+        
+        size_t replaceStart = source.find(stringMatching);
+        if (replaceStart != std::string::npos) {
+            size_t replaceEnd = source.find("\n", replaceStart);
+            source.replace(replaceStart, replaceEnd - replaceStart, replacementString);
+        }
+    }
+}
+
+
 void VROShaderProgram::insertModifier(std::string modifierSource, std::string directive,
-                                      std::string &source) {
+                                      std::string &source) const {
 
     size_t start = source.find(directive);
     if (start == std::string::npos) {

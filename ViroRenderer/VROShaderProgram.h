@@ -189,16 +189,17 @@ private:
      Inflate the #include directives in the source. Loads the files referred to by the
      includes into the shader.
      */
-    void inflateIncludes(std::string &source);
+    void inflateIncludes(std::string &source) const;
     
     /*
      Inflate the shader modifiers into the shader source.
      */
     void inflateVertexShaderModifiers(const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
-                                      std::string &source);
+                                      std::string &source) const;
     void inflateFragmentShaderModifiers(const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
-                                      std::string &source);
-    void insertModifier(std::string modifierSource, std::string directive, std::string &source);
+                                      std::string &source) const;
+    void inflateReplacements(const std::map<std::string, std::string> &replacements, std::string &source) const;
+    void insertModifier(std::string modifierSource, std::string directive, std::string &source) const;
 
 };
 
