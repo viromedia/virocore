@@ -31,7 +31,9 @@ enum {
 };
 
 VROVideoTextureAndroid::VROVideoTextureAndroid() :
-    VROVideoTexture(VROTextureType::TextureEGLImage) {
+    VROVideoTexture(VROTextureType::TextureEGLImage),
+    _paused(true),
+    _loop(true) {
 
     _data = {-1, NULL, NULL, NULL, 0, false, false, false, false};
 }
@@ -68,8 +70,6 @@ void VROVideoTextureAndroid::loadVideo(std::string url,
     frameSynchronizer->addFrameListener(shared_from_this());
     createVideoTexture();
 
-    pinfo("@@@ create");
-
     JNIEnv *env = VROPlatformGetJNIEnv();
     AAssetManager *assetMgr = VROPlatformGetAssetManager();
 
@@ -77,7 +77,7 @@ void VROVideoTextureAndroid::loadVideo(std::string url,
     int fd = AAsset_openFileDescriptor(AAssetManager_open(assetMgr, "testfile.mp4", 0),
                                        &outStart, &outLen);
     if (fd < 0) {
-        pinfo("failed to open URL: %s %d (%s)", url.c_str(), fd, strerror(errno));
+        pinfo("[video]: failed to open URL: %s %d (%s)", url.c_str(), fd, strerror(errno));
         return;
     }
 
@@ -90,7 +90,7 @@ void VROVideoTextureAndroid::loadVideo(std::string url,
                                                          static_cast<off64_t>(outLen));
     close(d->fd);
     if (err != AMEDIA_OK) {
-        pinfo("setDataSource error: %d", err);
+        pinfo("[video]: setDataSource error: %d", err);
         return;
     }
 
@@ -98,11 +98,11 @@ void VROVideoTextureAndroid::loadVideo(std::string url,
 
     AMediaCodec *codec = NULL;
 
-    pinfo("input has %d tracks", numtracks);
+    pinfo("[video]: input has %d tracks", numtracks);
     for (int i = 0; i < numtracks; i++) {
         AMediaFormat *format = AMediaExtractor_getTrackFormat(ex, i);
         const char *s = AMediaFormat_toString(format);
-        pinfo("track %d format: %s", i, s);
+        pinfo("[video]: track %d format: %s", i, s);
         const char *mime;
         if (!AMediaFormat_getString(format, AMEDIAFORMAT_KEY_MIME, &mime)) {
             pinfo("no mime type");
@@ -134,35 +134,51 @@ void VROVideoTextureAndroid::prewarm() {
 }
 
 void VROVideoTextureAndroid::onFrameWillRender(const VRORenderContext &context) {
-
+    if (_data.sawOutputEOS) {
+        pause();
+        if (_loop) {
+            seekToTime(0);
+            play();
+        }
+    }
 }
+
 void VROVideoTextureAndroid::onFrameDidRender(const VRORenderContext &context) {
 
 }
 
 void VROVideoTextureAndroid::pause() {
     _looper->post(kMsgPause, &_data);
+    _paused = true;
 }
+
 void VROVideoTextureAndroid::play() {
     _looper->post(kMsgResume, &_data);
+    _paused = false;
 }
 
 bool VROVideoTextureAndroid::isPaused() {
-
+    return _paused;
 }
 
 void VROVideoTextureAndroid::seekToTime(int seconds) {
+    VROVideoSeek *seek = (VROVideoSeek *) malloc(sizeof(VROVideoSeek));
+    seek->data = &_data;
+    seek->seekTime = seconds * 1000000;
 
+    _looper->post(kMsgSeek, seek);
 }
 
 void VROVideoTextureAndroid::setMuted(bool muted) {
 
 }
+
 void VROVideoTextureAndroid::setVolume(float volume) {
 
 }
-void VROVideoTextureAndroid::setLoop(bool loop) {
 
+void VROVideoTextureAndroid::setLoop(bool loop) {
+    _loop = loop;
 }
 
 void VROVideoLooper::handle(int what, void *obj) {
@@ -182,8 +198,9 @@ void VROVideoLooper::handle(int what, void *obj) {
             break;
 
         case kMsgSeek: {
-            VROVideoData *d = (VROVideoData *) obj;
-            AMediaExtractor_seekTo(d->ex, 0, AMEDIAEXTRACTOR_SEEK_NEXT_SYNC);
+            VROVideoSeek *seek = (VROVideoSeek *)obj;
+            VROVideoData *d = (VROVideoData *) seek->data;
+            AMediaExtractor_seekTo(d->ex, seek->seekTime, AMEDIAEXTRACTOR_SEEK_NEXT_SYNC);
             AMediaCodec_flush(d->codec);
             d->renderstart = -1;
             d->sawInputEOS = false;
@@ -192,7 +209,8 @@ void VROVideoLooper::handle(int what, void *obj) {
                 d->renderonce = true;
                 post(kMsgCodecBuffer, d);
             }
-            pinfo("seeked");
+            pinfo("[video]: seeked to %llu", seek->seekTime);
+            free (seek);
         }
             break;
 
@@ -228,7 +246,6 @@ void VROVideoLooper::doCodecWork(VROVideoData *d) {
     ssize_t bufidx = -1;
     if (!d->sawInputEOS) {
         bufidx = AMediaCodec_dequeueInputBuffer(d->codec, 2000);
-        pinfo("input buffer %zd", bufidx);
         if (bufidx >= 0) {
             size_t bufsize;
             auto buf = AMediaCodec_getInputBuffer(d->codec, bufidx, &bufsize);
@@ -236,7 +253,7 @@ void VROVideoLooper::doCodecWork(VROVideoData *d) {
             if (sampleSize < 0) {
                 sampleSize = 0;
                 d->sawInputEOS = true;
-                pinfo("EOS");
+                pinfo("[video]: EOS");
             }
             auto presentationTimeUs = AMediaExtractor_getSampleTime(d->ex);
 
@@ -251,7 +268,7 @@ void VROVideoLooper::doCodecWork(VROVideoData *d) {
         auto status = AMediaCodec_dequeueOutputBuffer(d->codec, &info, 0);
         if (status >= 0) {
             if (info.flags & AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM) {
-                pinfo("output EOS");
+                pinfo("[video]: output EOS");
                 d->sawOutputEOS = true;
             }
             int64_t presentationNano = info.presentationTimeUs * 1000;
@@ -268,15 +285,14 @@ void VROVideoLooper::doCodecWork(VROVideoData *d) {
                 return;
             }
         } else if (status == AMEDIACODEC_INFO_OUTPUT_BUFFERS_CHANGED) {
-            pinfo("output buffers changed");
+            pinfo("[video]: output buffers changed");
         } else if (status == AMEDIACODEC_INFO_OUTPUT_FORMAT_CHANGED) {
             auto format = AMediaCodec_getOutputFormat(d->codec);
-            pinfo("format changed to: %s", AMediaFormat_toString(format));
+            pinfo("[video]: format changed to: %s", AMediaFormat_toString(format));
             AMediaFormat_delete(format);
         } else if (status == AMEDIACODEC_INFO_TRY_AGAIN_LATER) {
-            pinfo("no output buffer right now");
         } else {
-            pinfo("unexpected info code: %zd", status);
+            pinfo("[video]: unexpected info code: %zd", status);
         }
     }
 

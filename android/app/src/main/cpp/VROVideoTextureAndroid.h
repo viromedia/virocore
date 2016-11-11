@@ -29,6 +29,11 @@ typedef struct {
     bool renderonce;
 } VROVideoData;
 
+typedef struct {
+    VROVideoData *data;
+    int64_t seekTime;
+} VROVideoSeek;
+
 class VROVideoLooper;
 
 class VROVideoTextureAndroid : public VROVideoTexture {
@@ -60,6 +65,8 @@ private:
 
     VROVideoData _data;
     VROVideoLooper *_looper;
+    bool _paused;
+    bool _loop;
 
     void createVideoTexture();
 
