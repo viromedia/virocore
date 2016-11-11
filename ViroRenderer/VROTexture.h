@@ -18,8 +18,12 @@ class VRODriver;
 class VROImage;
 class VROData;
 
-// Defined in VROMaterialVisual
-enum class VROTextureType;
+enum class VROTextureType {
+    None = 1,
+    Texture2D = 2,
+    TextureCube = 4,
+    TextureEGLImage = 8
+};
 
 enum class VROTextureFormat {
     ETC2,
@@ -35,7 +39,7 @@ public:
      Create a new VROTexture with no underlying image data.
      The image data must be injected via setImage*() or setSubstrate().
      */
-    VROTexture();
+    VROTexture(VROTextureType type);
     
     /*
      Create a new VROTexture with the given underlying substrate.
@@ -58,6 +62,9 @@ public:
     
     virtual ~VROTexture();
     
+    VROTextureType getType() const {
+        return _type;
+    }
     uint32_t getTextureId() const {
         return _textureId;
     }

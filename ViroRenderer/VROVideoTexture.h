@@ -22,7 +22,8 @@ class VROVideoTexture : public VROTexture, public VROFrameListener, public std::
     
 public:
     
-    VROVideoTexture() {}
+    VROVideoTexture(VROTextureType type) :
+        VROTexture(type) {}
     virtual ~VROVideoTexture() {}
     
     /*

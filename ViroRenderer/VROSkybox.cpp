@@ -69,7 +69,7 @@ std::shared_ptr<VROSkybox> VROSkybox::createSkybox(std::shared_ptr<VROTexture> t
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     material->setWritesToDepthBuffer(false);
     material->setReadsFromDepthBuffer(false);
-    material->getDiffuse().setContentsCube(textureCube);
+    material->getDiffuse().setContents(textureCube);
     material->setLightingModel(VROLightingModel::Constant);
     
     skybox->getMaterials().push_back(material);

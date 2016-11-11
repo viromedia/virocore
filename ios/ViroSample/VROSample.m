@@ -95,7 +95,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROTorusKnot> torus = VROTorusKnot::createTorusKnot(3, 8, 0.2, 256, 32);
     std::shared_ptr<VROMaterial> material = torus->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);
-    material->getReflective().setContentsCube([self cloudTexture]);
+    material->getReflective().setContents([self cloudTexture]);
 
     
     std::shared_ptr<VRONode> torusNode = std::make_shared<VRONode>();
@@ -172,7 +172,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROTransaction::begin();
     VROTransaction::setAnimationDuration(0.2);
     material->getDiffuse().setContents( {1.0, 1.0, 1.0, 1.0 } );
-    material->getReflective().setContentsCube([self cloudTexture]);
+    material->getReflective().setContents([self cloudTexture]);
     VROTransaction::commit();
 }
 

@@ -29,13 +29,6 @@ enum class VROFilterMode {
     Linear
 };
 
-enum class VROTextureType {
-    None = 1,
-    Texture2D = 2,
-    TextureCube = 4,
-    TextureEGLImage = 8
-};
-
 class VROMaterial;
 
 /*
@@ -53,7 +46,6 @@ public:
         _material(material),
         _permissibleContentsMask(permissibleContentsMask),
         _heartbeat(std::make_shared<VROMaterialVisualHeartbeat>()),
-        _textureType(VROTextureType::None),
         _contentsColor({ 1.0, 1.0, 1.0, 1.0 }),
         _intensity(1.0),
         _wrapS(VROWrapMode::Clamp),
@@ -72,14 +64,18 @@ public:
     void clear();
     void setContents(VROVector4f contents);
     void setContents(std::shared_ptr<VROTexture> texture);
-    void setContentsCube(std::shared_ptr<VROTexture> texture);
     
     VROTextureType getTextureType() const {
-        return _textureType;
+        if (_contentsTexture) {
+            return _contentsTexture->getType();
+        }
+        else {
+            return VROTextureType::None;
+        }
     }
     
     VROVector4f getColor() const {
-        if (_textureType == VROTextureType::None) {
+        if (getTextureType() == VROTextureType::None) {
             return _contentsColor;
         }
         else {
@@ -88,10 +84,7 @@ public:
     }
     
     std::shared_ptr<VROTexture> getContentsTexture() const {
-        if (_textureType == VROTextureType::Texture2D ||
-            _textureType == VROTextureType::TextureCube ||
-            _textureType == VROTextureType::TextureEGLImage) {
-            
+        if (_contentsTexture) {
             return _contentsTexture;
         }
         else {
@@ -123,12 +116,7 @@ private:
     std::shared_ptr<VROMaterialVisualHeartbeat> _heartbeat;
     
     /*
-     Indicates the content type for this visual.
-     */
-    VROTextureType _textureType;
-    
-    /*
-     If the visual is determined by a fixed color (_textureType = None), then
+     If the visual is determined by a fixed color (getTextureType == None), then
      _contentsColor is populated.
      */
     VROVector4f _contentsColor;

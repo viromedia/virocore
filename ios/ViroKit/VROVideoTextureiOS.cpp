@@ -16,7 +16,6 @@
 #include "VRODriver.h"
 #include "VROTextureSubstrate.h"
 #include "VROVideoDelegateiOS.h"
-#include "VROMaterialVisual.h"
 
 # define ONE_FRAME_DURATION 0.03
 
@@ -24,6 +23,7 @@ static NSString *const kStatusKey = @"status";
 static NSString *const kPlaybackKeepUpKey = @"playbackLikelyToKeepUp";
 
 VROVideoTextureiOS::VROVideoTextureiOS() :
+    VROVideoTexture(VROTextureType::Texture2D),
     _paused(true) {
     
     ALLOCATION_TRACKER_ADD(VideoTextures, 1);

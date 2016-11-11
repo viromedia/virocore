@@ -18,8 +18,9 @@
 
 static std::atomic_int sTextureId;
 
-VROTexture::VROTexture() :
+VROTexture::VROTexture(VROTextureType type) :
     _textureId(sTextureId++),
+    _type(type),
     _image(nullptr),
     _substrate(nullptr) {
     
