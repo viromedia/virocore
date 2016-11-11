@@ -25,7 +25,7 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::v
     glGenTextures(1, &_texture);
     glActiveTexture(GL_TEXTURE0);
     
-    if (type == VROTextureType::Quad) {
+    if (type == VROTextureType::Texture2D) {
         _target = GL_TEXTURE_2D;
         
         glBindTexture(GL_TEXTURE_2D, _texture);
@@ -44,7 +44,7 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::v
                      GL_UNSIGNED_BYTE, data);
     }
     
-    else if (type == VROTextureType::Cube && images.size() == 6) {
+    else if (type == VROTextureType::TextureCube && images.size() == 6) {
         passert_msg(images.size() == 6,
                     "Cube texture can only be created from exactly six images");
         
@@ -98,7 +98,7 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, VROTex
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     if (format == VROTextureFormat::ETC2) {
-        if (type == VROTextureType::Quad) {
+        if (type == VROTextureType::Texture2D) {
             glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA8_ETC2_EAC, width, height, 0, data->getDataLength(), data->getData());
         }
         else {
@@ -106,7 +106,7 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, VROTex
         }
     }
     else if (format == VROTextureFormat::ASTC_4x4_LDR) {
-        if (type == VROTextureType::Quad) {
+        if (type == VROTextureType::Texture2D) {
             glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_ASTC_4x4_KHR, width, height, 0, data->getDataLength(), data->getData());
         }
         else {
@@ -114,7 +114,7 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, VROTex
         }
     }
     else if (format == VROTextureFormat::RGBA8) {
-        if (type == VROTextureType::Quad) {
+        if (type == VROTextureType::Texture2D) {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data->getData());
         }
         else {

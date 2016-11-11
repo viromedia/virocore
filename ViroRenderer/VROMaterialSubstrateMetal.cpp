@@ -95,10 +95,10 @@ void VROMaterialSubstrateMetal::loadConstantLighting(const VROMaterial &material
     
     VROMaterialVisual &diffuse = material.getDiffuse();
 
-    if (diffuse.getContentsType() == VROContentsType::Fixed) {
+    if (diffuse.getTextureType() == VROTextureType::None) {
         fragmentProgram = "constant_lighting_fragment_c";
     }
-    else if (diffuse.getContentsType() == VROContentsType::Texture2D) {
+    else if (diffuse.getTextureType() == VROTextureType::Texture2D) {
         _textures.push_back(diffuse.getContentsTexture());
         fragmentProgram = "constant_lighting_fragment_t";
     }
@@ -120,8 +120,8 @@ void VROMaterialSubstrateMetal::loadLambertLighting(const VROMaterial &material,
     VROMaterialVisual &diffuse = material.getDiffuse();
     VROMaterialVisual &reflective = material.getReflective();
     
-    if (diffuse.getContentsType() == VROContentsType::Fixed) {
-        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+    if (diffuse.getTextureType() == VROTextureType::None) {
+        if (reflective.getTextureType() == VROTextureType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
             fragmentProgram = "lambert_lighting_fragment_c_reflect";
         }
@@ -132,7 +132,7 @@ void VROMaterialSubstrateMetal::loadLambertLighting(const VROMaterial &material,
     else {
         _textures.push_back(diffuse.getContentsTexture());
         
-        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+        if (reflective.getTextureType() == VROTextureType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
             fragmentProgram = "lambert_lighting_fragment_t_reflect";
         }
@@ -152,7 +152,7 @@ void VROMaterialSubstrateMetal::loadPhongLighting(const VROMaterial &material,
      If there's no specular map, then we fall back to Lambert lighting.
      */
     VROMaterialVisual &specular = material.getSpecular();
-    if (specular.getContentsType() != VROContentsType::Texture2D) {
+    if (specular.getTextureType() != VROTextureType::Texture2D) {
         loadLambertLighting(material, library, device, driver);
         return;
     }
@@ -163,10 +163,10 @@ void VROMaterialSubstrateMetal::loadPhongLighting(const VROMaterial &material,
     VROMaterialVisual &diffuse = material.getDiffuse();
     VROMaterialVisual &reflective = material.getReflective();
     
-    if (diffuse.getContentsType() == VROContentsType::Fixed) {
+    if (diffuse.getTextureType() == VROTextureType::None) {
         _textures.push_back(specular.getContentsTexture());
         
-        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+        if (reflective.getTextureType() == VROTextureType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
             fragmentProgram = "phong_lighting_fragment_c_reflect";
         }
@@ -178,7 +178,7 @@ void VROMaterialSubstrateMetal::loadPhongLighting(const VROMaterial &material,
         _textures.push_back(diffuse.getContentsTexture());
         _textures.push_back(specular.getContentsTexture());
         
-        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+        if (reflective.getTextureType() == VROTextureType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
             fragmentProgram = "phong_lighting_fragment_t_reflect";
         }
@@ -198,7 +198,7 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(const VROMaterial &material,
      If there's no specular map, then we fall back to Lambert lighting.
      */
     VROMaterialVisual &specular = material.getSpecular();
-    if (specular.getContentsType() != VROContentsType::Texture2D) {
+    if (specular.getTextureType() != VROTextureType::Texture2D) {
         loadLambertLighting(material, library, device, driver);
         return;
     }
@@ -209,10 +209,10 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(const VROMaterial &material,
     VROMaterialVisual &diffuse = material.getDiffuse();
     VROMaterialVisual &reflective = material.getReflective();
     
-    if (diffuse.getContentsType() == VROContentsType::Fixed) {
+    if (diffuse.getTextureType() == VROTextureType::None) {
         _textures.push_back(specular.getContentsTexture());
 
-        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+        if (reflective.getTextureType() == VROTextureType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
             fragmentProgram = "blinn_lighting_fragment_c_reflect";
         }
@@ -224,7 +224,7 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(const VROMaterial &material,
         _textures.push_back(diffuse.getContentsTexture());
         _textures.push_back(specular.getContentsTexture());
 
-        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+        if (reflective.getTextureType() == VROTextureType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
             fragmentProgram = "blinn_lighting_fragment_t_reflect";
         }
@@ -239,7 +239,7 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(const VROMaterial &material,
 VROConcurrentBuffer &VROMaterialSubstrateMetal::bindMaterialUniforms(float opacity, VROEyeType eye,
                                                                      int frame) {
     VROMaterialUniforms *uniforms = (VROMaterialUniforms *)_materialUniformsBuffer->getWritableContents(eye, frame);
-    uniforms->diffuse_surface_color = toVectorFloat4(_material.getDiffuse().getContentsColor());
+    uniforms->diffuse_surface_color = toVectorFloat4(_material.getDiffuse().getColor());
     uniforms->diffuse_intensity = _material.getDiffuse().getIntensity();
     uniforms->shininess = _material.getShininess();
     uniforms->alpha = _material.getTransparency() * opacity;

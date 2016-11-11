@@ -71,10 +71,10 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
     
     std::vector<std::string> samplers;
     
-    if (diffuse.getContentsType() == VROContentsType::Fixed) {
+    if (diffuse.getTextureType() == VROTextureType::None) {
         fragmentShader = "constant_c_fsh";
     }
-    else if (diffuse.getContentsType() == VROContentsType::Texture2D) {
+    else if (diffuse.getTextureType() == VROTextureType::Texture2D) {
         _textures.push_back(diffuse.getContentsTexture());
         samplers.push_back("sampler");
 
@@ -107,8 +107,8 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
     VROMaterialVisual &diffuse = material.getDiffuse();
     VROMaterialVisual &reflective = material.getReflective();
     
-    if (diffuse.getContentsType() == VROContentsType::Fixed) {
-        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+    if (diffuse.getTextureType() == VROTextureType::None) {
+        if (reflective.getTextureType() == VROTextureType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
             samplers.push_back("reflect_texture");
 
@@ -122,7 +122,7 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
         _textures.push_back(diffuse.getContentsTexture());
         samplers.push_back("texture");
         
-        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+        if (reflective.getTextureType() == VROTextureType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
             samplers.push_back("reflect_texture");
             
@@ -154,7 +154,7 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
      If there's no specular map, then we fall back to Lambert lighting.
      */
     VROMaterialVisual &specular = material.getSpecular();
-    if (specular.getContentsType() != VROContentsType::Texture2D) {
+    if (specular.getTextureType() != VROTextureType::Texture2D) {
         loadLambertLighting(material, driver);
         return;
     }
@@ -162,11 +162,11 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
     VROMaterialVisual &diffuse = material.getDiffuse();
     VROMaterialVisual &reflective = material.getReflective();
     
-    if (diffuse.getContentsType() == VROContentsType::Fixed) {
+    if (diffuse.getTextureType() == VROTextureType::None) {
         _textures.push_back(specular.getContentsTexture());
         samplers.push_back("specular_texture");
         
-        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+        if (reflective.getTextureType() == VROTextureType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
             samplers.push_back("reflect_texture");
             
@@ -183,7 +183,7 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
         samplers.push_back("diffuse_texture");
         samplers.push_back("specular_texture");
         
-        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+        if (reflective.getTextureType() == VROTextureType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
             samplers.push_back("reflect_texture");
 
@@ -217,7 +217,7 @@ void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, 
      If there's no specular map, then we fall back to Lambert lighting.
      */
     VROMaterialVisual &specular = material.getSpecular();
-    if (specular.getContentsType() != VROContentsType::Texture2D) {
+    if (specular.getTextureType() != VROTextureType::Texture2D) {
         loadLambertLighting(material, driver);
         return;
     }
@@ -225,11 +225,11 @@ void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, 
     VROMaterialVisual &diffuse = material.getDiffuse();
     VROMaterialVisual &reflective = material.getReflective();
     
-    if (diffuse.getContentsType() == VROContentsType::Fixed) {
+    if (diffuse.getTextureType() == VROTextureType::None) {
         _textures.push_back(specular.getContentsTexture());
         samplers.push_back("specular_texture");
 
-        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+        if (reflective.getTextureType() == VROTextureType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
             samplers.push_back("reflect_texture");
             
@@ -246,7 +246,7 @@ void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, 
         samplers.push_back("diffuse_texture");
         samplers.push_back("specular_texture");
         
-        if (reflective.getContentsType() == VROContentsType::TextureCube) {
+        if (reflective.getTextureType() == VROTextureType::TextureCube) {
             _textures.push_back(reflective.getContentsTexture());
             samplers.push_back("reflect_texture");
 
@@ -396,7 +396,7 @@ void VROMaterialSubstrateOpenGL::bindViewUniforms(VROMatrix4f transform, VROMatr
 
 void VROMaterialSubstrateOpenGL::bindMaterialUniforms(float opacity) {
     if (_diffuseSurfaceColorUniform != nullptr) {
-        _diffuseSurfaceColorUniform->setVec4(_material.getDiffuse().getContentsColor());
+        _diffuseSurfaceColorUniform->setVec4(_material.getDiffuse().getColor());
     }
     if (_diffuseIntensityUniform != nullptr) {
         _diffuseIntensityUniform->setFloat(_material.getDiffuse().getIntensity());

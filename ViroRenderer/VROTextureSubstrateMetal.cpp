@@ -21,7 +21,7 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vec
     VRODriverMetal &metal = (VRODriverMetal &)driver;
     id <MTLDevice> device = metal.getDevice();
     
-    if (type == VROTextureType::Quad) {
+    if (type == VROTextureType::Texture2D) {
         std::shared_ptr<VROImage> &image = images.front();
         int width = image->getWidth();
         int height = image->getHeight();
@@ -49,7 +49,7 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vec
         [textureCommandBuffer commit];
     }
     
-    else if (type == VROTextureType::Cube && images.size() == 6) {
+    else if (type == VROTextureType::TextureCube && images.size() == 6) {
         passert_msg(images.size() == 6,
                     "Cube texture can only be created from exactly six images");
         
@@ -100,7 +100,7 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, VROTextu
         VRODriverMetal &metal = (VRODriverMetal &)driver;
         id <MTLDevice> device = metal.getDevice();
         
-        if (type == VROTextureType::Quad) {
+        if (type == VROTextureType::Texture2D) {
             int bytesPerRow = width / 4 * 8; // TODO This is not working
             MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatETC2_RGB8
                                                                                                   width:width
@@ -119,7 +119,7 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, VROTextu
         VRODriverMetal &metal = (VRODriverMetal &)driver;
         id <MTLDevice> device = metal.getDevice();
         
-        if (type == VROTextureType::Quad) {
+        if (type == VROTextureType::Texture2D) {
             int bytesPerRow = width / 4 * 16; // texels per row / block footprint (4) / * 16 (each ASTC block is 16 bytes)
             MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatASTC_4x4_LDR
                                                                                                   width:width

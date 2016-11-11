@@ -31,17 +31,20 @@ VROMaterial::VROMaterial() :
     _readsFromDepthBuffer(false),
     _substrate(nullptr) {
     
-    _diffuse          = new VROMaterialVisual(*this, (int)VROContentsType::Fixed | (int)VROContentsType::Texture2D | (int)VROContentsType::TextureCube);
-    _specular         = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
-    _normal           = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
-    _reflective       = new VROMaterialVisual(*this, (int)VROContentsType::TextureCube);
+    _diffuse          = new VROMaterialVisual(*this, (int)VROTextureType::None |
+                                                     (int)VROTextureType::Texture2D |
+                                                     (int)VROTextureType::TextureCube |
+                                                     (int)VROTextureType::TextureEGLImage);
+    _specular         = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
+    _normal           = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
+    _reflective       = new VROMaterialVisual(*this, (int)VROTextureType::TextureCube);
         
     // TODO These are not yet implemented
-    _emission         = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
-    _transparent      = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
-    _multiply         = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
-    _ambientOcclusion = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
-    _selfIllumination = new VROMaterialVisual(*this, (int)VROContentsType::Texture2D);
+    _emission         = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
+    _transparent      = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
+    _multiply         = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
+    _ambientOcclusion = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
+    _selfIllumination = new VROMaterialVisual(*this, (int)VROTextureType::Texture2D);
         
     ALLOCATION_TRACKER_ADD(Materials, 1);
 }

@@ -17,6 +17,9 @@
 #import "VROScreen.h"
 #import "VRODistortionRenderer.h"
 #import "VROEye.h"
+#import "VRORenderDelegateiOS.h"
+#import "VROSceneController.h"
+#import "VROSceneControlleriOS.h"
 
 @interface VROViewMetal () {
     
@@ -38,6 +41,7 @@
     dispatch_semaphore_t _inflight_semaphore;
     
     VROSceneController *_sceneController;
+    std::shared_ptr<VRORenderDelegateiOS> _renderDelegateWrapper;
     
 }
 
@@ -118,7 +122,8 @@
 }
 
 - (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {
-    self.renderer->setDelegate(renderDelegate);
+    _renderDelegateWrapper = std::make_shared<VRORenderDelegateiOS>(renderDelegate);
+    self.renderer->setDelegate(_renderDelegateWrapper);
 }
 
 #pragma mark - Camera
@@ -139,15 +144,9 @@
     self.renderer->setOrbitFocalPoint(focalPt);
 }
 
-- (float)worldPerScreenAtDepth:(float)distance {
-    return self.renderer->getWorldPerScreen(distance,
-                                            _leftEye->getFOV(),
-                                            _leftEye->getViewport());
-}
-
 - (void)layoutSubviews {
     [super layoutSubviews];
-    _renderer->updateRenderViewSize(self.bounds.size);
+    _renderer->updateRenderViewSize(self.bounds.size.width, self.bounds.size.height);
 }
 
 - (VROEye *)eyeForType:(VROEyeType)type {
@@ -167,14 +166,14 @@
     _renderer->handleTap();
 }
 
-- (VROReticle *)reticle {
+- (std::shared_ptr<VROReticle>)reticle {
     return _renderer->getReticle();
 }
 
 #pragma mark - Scene Loading
 
 - (VROSceneController *)sceneController {
-    return _renderer->getSceneController();
+    return _sceneController;
 }
 
 - (void)setSceneController:(VROSceneController *)sceneController {
@@ -250,7 +249,8 @@
     driver->setRenderTarget(eyeTarget);
     
     VROMatrix4f headRotation = _headTracker->getHeadRotation();
-    _renderer->prepareFrame(_frameNumber, headRotation.invert(), *driver);
+    _renderer->prepareFrame(_frameNumber, _leftEye->getViewport(), _leftEye->getFOV(),
+                            headRotation.invert(), *driver);
     
     float halfLensDistance = _vrDevice->getInterLensDistance() * 0.5f;
     VROMatrix4f leftEyeMatrix  = matrix_from_translation( halfLensDistance, 0, 0);

@@ -18,15 +18,13 @@ class VRODriver;
 class VROImage;
 class VROData;
 
-enum class VROTextureType {
-    Quad,
-    Cube
-};
+// Defined in VROMaterialVisual
+enum class VROTextureType;
 
 enum class VROTextureFormat {
     ETC2,
     ASTC_4x4_LDR,
-    RGBA8
+    RGBA8,
 };
 
 class VROTexture {

@@ -42,11 +42,11 @@ void VROLayer::setContents(int width, int height, CGContextRef bitmapContext,
     // set the VROData length to 0
     std::shared_ptr<VROData> data = std::make_shared<VROData>(CGBitmapContextGetData(bitmapContext), 0, VRODataOwnership::Wrap);
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrate>(
-                                                                                          driver.newTextureSubstrate(VROTextureType::Quad,
+                                                                                          driver.newTextureSubstrate(VROTextureType::Texture2D,
                                                                                                                      VROTextureFormat::RGBA8,
                                                                                                                      data, width, height));
     
-    getMaterial()->getDiffuse().setContents(std::make_shared<VROTexture>(VROTextureType::Quad, std::move(substrate)));
+    getMaterial()->getDiffuse().setContents(std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate)));
 }
 
 std::shared_ptr<VROMaterial> VROLayer::getMaterial() {

@@ -29,10 +29,11 @@ enum class VROFilterMode {
     Linear
 };
 
-enum class VROContentsType {
-    Fixed = 1,
+enum class VROTextureType {
+    None = 1,
     Texture2D = 2,
-    TextureCube = 4
+    TextureCube = 4,
+    TextureEGLImage = 8
 };
 
 class VROMaterial;
@@ -52,7 +53,7 @@ public:
         _material(material),
         _permissibleContentsMask(permissibleContentsMask),
         _heartbeat(std::make_shared<VROMaterialVisualHeartbeat>()),
-        _contentsType(VROContentsType::Fixed),
+        _textureType(VROTextureType::None),
         _contentsColor({ 1.0, 1.0, 1.0, 1.0 }),
         _intensity(1.0),
         _wrapS(VROWrapMode::Clamp),
@@ -73,12 +74,12 @@ public:
     void setContents(std::shared_ptr<VROTexture> texture);
     void setContentsCube(std::shared_ptr<VROTexture> texture);
     
-    VROContentsType getContentsType() const {
-        return _contentsType;
+    VROTextureType getTextureType() const {
+        return _textureType;
     }
     
-    VROVector4f getContentsColor() const {
-        if (_contentsType == VROContentsType::Fixed) {
+    VROVector4f getColor() const {
+        if (_textureType == VROTextureType::None) {
             return _contentsColor;
         }
         else {
@@ -87,8 +88,9 @@ public:
     }
     
     std::shared_ptr<VROTexture> getContentsTexture() const {
-        if (_contentsType == VROContentsType::Texture2D ||
-            _contentsType == VROContentsType::TextureCube) {
+        if (_textureType == VROTextureType::Texture2D ||
+            _textureType == VROTextureType::TextureCube ||
+            _textureType == VROTextureType::TextureEGLImage) {
             
             return _contentsTexture;
         }
@@ -123,10 +125,11 @@ private:
     /*
      Indicates the content type for this visual.
      */
-    VROContentsType _contentsType;
+    VROTextureType _textureType;
     
     /*
-     If the visual is determined by a fixed color, _contentsColor is populated.
+     If the visual is determined by a fixed color (_textureType = None), then
+     _contentsColor is populated.
      */
     VROVector4f _contentsColor;
     

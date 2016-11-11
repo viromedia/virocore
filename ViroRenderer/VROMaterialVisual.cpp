@@ -15,7 +15,7 @@ VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
  _material(visual._material),
  _permissibleContentsMask(visual._permissibleContentsMask),
  _heartbeat(std::make_shared<VROMaterialVisualHeartbeat>()),
- _contentsType(visual._contentsType),
+ _textureType(visual._textureType),
  _contentsColor(visual._contentsColor),
  _contentsTexture(visual._contentsTexture),
  _intensity(visual._intensity),
@@ -31,7 +31,7 @@ VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
 void VROMaterialVisual::clear() {
     _material.fadeSnapshot();
     
-    _contentsType = VROContentsType::Fixed;
+    _textureType = VROTextureType::None;
     _contentsColor = { 1.0, 1.0, 1.0, 1.0 };
     _contentsTexture.reset();
     
@@ -39,7 +39,7 @@ void VROMaterialVisual::clear() {
 }
 
 void VROMaterialVisual::setContents(VROVector4f contents) {
-    if ((_permissibleContentsMask & (int) VROContentsType::Fixed) == 0) {
+    if ((_permissibleContentsMask & (int) VROTextureType::None) == 0) {
         pabort("Material visual does not support fixed contents");
         return;
     }
@@ -47,13 +47,13 @@ void VROMaterialVisual::setContents(VROVector4f contents) {
     _material.fadeSnapshot();
     
     _contentsColor = contents;
-    _contentsType = VROContentsType::Fixed;
+    _textureType = VROTextureType::None;
     
     _material.updateSubstrate();
 }
 
 void VROMaterialVisual::setContents(std::shared_ptr<VROTexture> texture) {
-    if ((_permissibleContentsMask & (int) VROContentsType::Texture2D) == 0) {
+    if ((_permissibleContentsMask & (int) VROTextureType::Texture2D) == 0) {
         pabort("Material visual does not support 2D textures");
         return;
     }
@@ -61,13 +61,13 @@ void VROMaterialVisual::setContents(std::shared_ptr<VROTexture> texture) {
     _material.fadeSnapshot();
     
     _contentsTexture = texture;
-    _contentsType = VROContentsType::Texture2D;
+    _textureType = VROTextureType::Texture2D;
     
     _material.updateSubstrate();
 }
 
 void VROMaterialVisual::setContentsCube(std::shared_ptr<VROTexture> texture) {
-    if ((_permissibleContentsMask & (int) VROContentsType::TextureCube) == 0) {
+    if ((_permissibleContentsMask & (int) VROTextureType::TextureCube) == 0) {
         pabort("Material visual does not support cube textures");
         return;
     }
@@ -75,7 +75,7 @@ void VROMaterialVisual::setContentsCube(std::shared_ptr<VROTexture> texture) {
     _material.fadeSnapshot();
     
     _contentsTexture = texture;
-    _contentsType = VROContentsType::TextureCube;
+    _textureType = VROTextureType::TextureCube;
     
     _material.updateSubstrate();
 }

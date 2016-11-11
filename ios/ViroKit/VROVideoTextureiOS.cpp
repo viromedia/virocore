@@ -16,6 +16,7 @@
 #include "VRODriver.h"
 #include "VROTextureSubstrate.h"
 #include "VROVideoDelegateiOS.h"
+#include "VROMaterialVisual.h"
 
 # define ONE_FRAME_DURATION 0.03
 
@@ -119,7 +120,7 @@ void VROVideoTextureiOS::onFrameDidRender(const VRORenderContext &context) {
 }
 
 void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> substrate) {
-    setSubstrate(VROTextureType::Quad, std::move(substrate));
+    setSubstrate(VROTextureType::Texture2D, std::move(substrate));
 }
 
 #pragma mark - AVPlayer Video Playback Delegate

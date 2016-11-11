@@ -13,6 +13,7 @@
 #include "VROLog.h"
 #include "VROAllocationTracker.h"
 #include "VROData.h"
+#include "VROMaterialVisual.h"
 #include <atomic>
 
 static std::atomic_int sTextureId;
@@ -36,7 +37,7 @@ VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate>
 
 VROTexture::VROTexture(std::shared_ptr<VROImage> image, VRODriver *driver) :
     _textureId(sTextureId++),
-    _type(VROTextureType::Quad),
+    _type(VROTextureType::Texture2D),
     _image(image),
     _substrate(nullptr) {
     
@@ -48,7 +49,7 @@ VROTexture::VROTexture(std::shared_ptr<VROImage> image, VRODriver *driver) :
 
 VROTexture::VROTexture(std::vector<std::shared_ptr<VROImage>> &images, VRODriver *driver) :
     _textureId(sTextureId++),
-    _type(VROTextureType::Cube),
+    _type(VROTextureType::TextureCube),
     _image(nullptr),
     _substrate(nullptr) {
     
@@ -100,7 +101,7 @@ void VROTexture::prewarm(VRODriver &driver) {
 }
 
 void VROTexture::hydrate(VRODriver &driver) {
-    if (_type == VROTextureType::Quad) {
+    if (_type == VROTextureType::Texture2D) {
         if (_image) {
             std::vector<std::shared_ptr<VROImage>> images = { _image };
             _substrate = std::unique_ptr<VROTextureSubstrate>(driver.newTextureSubstrate(_type, images));
@@ -113,13 +114,13 @@ void VROTexture::hydrate(VRODriver &driver) {
     }
     
     // VROTextureType::Cube with 6 separated images
-    else if (_type == VROTextureType::Cube && _imagesCube.size() == 6) {
+    else if (_type == VROTextureType::TextureCube && _imagesCube.size() == 6) {
         _substrate = std::unique_ptr<VROTextureSubstrate>(driver.newTextureSubstrate(_type, _imagesCube));
         _imagesCube.clear();
     }
     
     // VROTextureType::Cube with a holistic cube image (not yet divided)
-    else if (_type == VROTextureType::Cube && _image){
+    else if (_type == VROTextureType::TextureCube && _image){
         
         _image = nullptr;
     }
@@ -130,17 +131,17 @@ void VROTexture::hydrate(VRODriver &driver) {
 }
 
 void VROTexture::setImage(std::shared_ptr<VROImage> image) {
-    _type = VROTextureType::Quad;
+    _type = VROTextureType::Texture2D;
     _image = image;
 }
 
 void VROTexture::setImageCube(std::shared_ptr<VROImage> image) {
-    _type = VROTextureType::Cube;
+    _type = VROTextureType::TextureCube;
     _image = image;
 }
 
 void VROTexture::setImageCube(std::vector<std::shared_ptr<VROImage>> &images) {
-    _type = VROTextureType::Cube;
+    _type = VROTextureType::TextureCube;
     _imagesCube = images;
 }
 
