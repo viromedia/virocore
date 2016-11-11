@@ -1,7 +1,10 @@
 //
-// Created by Raj Advani on 11/9/16.
+//  VROSample.cpp
+//  ViroRenderer
 //
-
+//  Created by Raj Advani on 11/9/16.
+//  Copyright © 2016 Viro Media. All rights reserved.
+//
 #include "Viro.h"
 #include "VROSample.h"
 #include "VRORenderer.h"

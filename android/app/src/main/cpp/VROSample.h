@@ -1,5 +1,9 @@
 //
-// Created by Raj Advani on 11/9/16.
+//  VROSample.h
+//  ViroRenderer
+//
+//  Created by Raj Advani on 11/9/16.
+//  Copyright © 2016 Viro Media. All rights reserved.
 //
 
 #ifndef ANDROID_VROSAMPLERENDERER_H

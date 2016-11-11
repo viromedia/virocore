@@ -31,6 +31,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/VRORenderer_JNI.cpp
              src/main/cpp/VROSample.cpp
              src/main/cpp/VROImageAndroid.cpp
+             src/main/cpp/VROVideoTextureAndroid.cpp
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp
