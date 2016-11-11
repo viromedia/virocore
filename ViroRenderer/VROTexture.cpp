@@ -92,8 +92,7 @@ VROTextureSubstrate *const VROTexture::getSubstrate(VRODriver &driver) {
     return _substrate.get();
 }
 
-void VROTexture::setSubstrate(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate) {
-    _type = type;
+void VROTexture::setSubstrate(std::unique_ptr<VROTextureSubstrate> substrate) {
     _substrate = std::move(substrate);
 }
 
@@ -129,20 +128,5 @@ void VROTexture::hydrate(VRODriver &driver) {
     else {
         pinfo("Invalid texture format [type %d]", _type);
     }
-}
-
-void VROTexture::setImage(std::shared_ptr<VROImage> image) {
-    _type = VROTextureType::Texture2D;
-    _image = image;
-}
-
-void VROTexture::setImageCube(std::shared_ptr<VROImage> image) {
-    _type = VROTextureType::TextureCube;
-    _image = image;
-}
-
-void VROTexture::setImageCube(std::vector<std::shared_ptr<VROImage>> &images) {
-    _type = VROTextureType::TextureCube;
-    _imagesCube = images;
 }
 

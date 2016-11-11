@@ -69,10 +69,6 @@ public:
         return _textureId;
     }
     
-    void setImage(std::shared_ptr<VROImage> image);
-    void setImageCube(std::shared_ptr<VROImage> image);
-    void setImageCube(std::vector<std::shared_ptr<VROImage>> &images);
-    
     /*
      Get the texture ready for usage now, in advance of when it's visible. If not invoked,
      the texture will be initialized when it is made visible.
@@ -80,12 +76,12 @@ public:
     void prewarm(VRODriver &driver);
     
     VROTextureSubstrate *const getSubstrate(VRODriver &driver);
-    void setSubstrate(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate);
+    void setSubstrate(std::unique_ptr<VROTextureSubstrate> substrate);
     
 private:
     
     uint32_t _textureId;
-    VROTextureType _type;
+    const VROTextureType _type;
     
     /*
      The image is retained until the texture is hydrated, after which the
