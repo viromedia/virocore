@@ -17,20 +17,38 @@
 #include "media/NdkMediaCodec.h"
 #include "media/NdkMediaExtractor.h"
 
-typedef struct {
+class VROMediaData {
+
+public:
+
     int fd;
-    ANativeWindow* window;
-    AMediaExtractor* ex;
-    AMediaCodec *codec;
-    int64_t renderstart;
+    ANativeWindow *window;
+    AMediaExtractor *extractor;
+    AMediaCodec *videoCodec;
+    AMediaCodec *audioCodec;
+    int videoCodecTrack;
+    int audioCodecTrack;
+    int64_t renderStart;
     bool sawInputEOS;
     bool sawOutputEOS;
     bool isPlaying;
-    bool renderonce;
-} VROVideoData;
+    bool renderOnce;
+
+    AMediaCodec *codecForTrack(int track) {
+        if (track == videoCodecTrack) {
+            return videoCodec;
+        }
+        else if (track == audioCodecTrack) {
+            return audioCodec;
+        }
+        else {
+            return nullptr;
+        }
+    }
+};
 
 typedef struct {
-    VROVideoData *data;
+    VROMediaData *data;
     int64_t seekTime;
 } VROVideoSeek;
 
@@ -63,7 +81,7 @@ public:
 
 private:
 
-    VROVideoData _data;
+    VROMediaData _mediaData;
     VROVideoLooper *_looper;
     bool _paused;
     bool _loop;
@@ -79,7 +97,11 @@ private:
 class VROVideoLooper : public VROLooper {
 
     virtual void handle(int what, void* obj);
-    void doCodecWork(VROVideoData *d);
+    void doCodecWork(VROMediaData *d);
+
+    void writeToCodec(AMediaCodec *codec, AMediaExtractor *extractor, bool *outSawInputEOS);
+    void readFromVideoCodec(AMediaCodec *codec, bool *renderOnce, int64_t *renderStart, bool *outSawOutputEOS);
+    void readFromAudioCodec(AMediaCodec *codec, bool *outSawOutputEOS);
 
 };
 

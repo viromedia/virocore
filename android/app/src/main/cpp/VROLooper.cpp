@@ -99,7 +99,6 @@ void VROLooper::addmsg(loopermessage *msg, bool flush) {
     } else {
         head = msg;
     }
-    LOGV("post msg %d", msg->what);
     sem_post(&headwriteprotect);
     sem_post(&headdataavailable);
 }
@@ -113,7 +112,6 @@ void VROLooper::loop() {
         sem_wait(&headwriteprotect);
         loopermessage *msg = head;
         if (msg == NULL) {
-            LOGV("no msg");
             sem_post(&headwriteprotect);
             continue;
         }
@@ -125,7 +123,6 @@ void VROLooper::loop() {
             delete msg;
             return;
         }
-        LOGV("processing msg %d", msg->what);
         handle(msg->what, msg->obj);
         delete msg;
     }
