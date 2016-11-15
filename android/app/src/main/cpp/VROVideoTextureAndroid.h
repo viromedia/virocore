@@ -12,12 +12,79 @@
 #include "VROVideoTexture.h"
 #include "VROOpenGL.h"
 
+#include <vector>
 #include <android/native_window_jni.h>
 #include "VROLooper.h"
 #include "media/NdkMediaCodec.h"
 #include "media/NdkMediaExtractor.h"
-#include <SLES/OpenSLES.h>
-#include <SLES/OpenSLES_Android.h>
+
+class VROPCMAudioPlayer;
+
+enum class VROCodecType {
+    Video,
+    Audio
+};
+
+class VROCodec {
+public:
+
+    VROCodec(VROCodecType type, AMediaCodec *codec, int track) :
+            _type(type), _codec(codec), _track(track) {}
+
+    VROCodecType getType() const { return _type; }
+    AMediaCodec *getCodec() const { return _codec; }
+    int getTrack() const { return _track; }
+
+    /*
+     Lifecycle operations.
+     */
+    void stop() {
+        AMediaCodec_stop(_codec);
+        AMediaCodec_delete(_codec);
+    }
+    void flush() {
+        AMediaCodec_flush(_codec);
+    }
+
+    /*
+     Input buffer operations.
+     */
+    ssize_t dequeueInputBuffer(int64_t timeoutUs) {
+        return AMediaCodec_dequeueInputBuffer(_codec, timeoutUs);
+    }
+    uint8_t *getInputBuffer(ssize_t bufferIndex, size_t *outBufSize) {
+        return AMediaCodec_getInputBuffer(_codec, bufferIndex, outBufSize);
+    }
+    media_status_t queueInputBuffer(size_t idx, off_t offset, size_t size, uint64_t time, uint32_t flags) {
+        return AMediaCodec_queueInputBuffer(_codec, idx, offset, size, time, flags);
+    }
+
+    /*
+     Output buffer operations.
+     */
+    ssize_t dequeueOutputBuffer(AMediaCodecBufferInfo *info, int64_t timeoutUs) {
+        return AMediaCodec_dequeueOutputBuffer(_codec, info, timeoutUs);
+    }
+    media_status_t releaseOutputBuffer(size_t idx, bool render) {
+        return AMediaCodec_releaseOutputBuffer(_codec, idx, render);
+    }
+    AMediaFormat* getOutputFormat() {
+        return AMediaCodec_getOutputFormat(_codec);
+    }
+    uint8_t* getOutputBuffer(size_t idx, size_t *out_size) {
+        return AMediaCodec_getOutputBuffer(_codec, idx, out_size);
+    }
+
+
+private:
+
+    const VROCodecType _type;
+    AMediaCodec *_codec;
+    const int _track;
+
+    std::vector<ssize_t> availableOutputBuffers;
+
+};
 
 class VROMediaData {
 
@@ -26,21 +93,25 @@ public:
     int fd;
     ANativeWindow *window;
     AMediaExtractor *extractor;
-    AMediaCodec *videoCodec;
-    AMediaCodec *audioCodec;
-    int videoCodecTrack;
-    int audioCodecTrack;
+    VROCodec *videoCodec = nullptr;
+    VROCodec *audioCodec = nullptr;
+
     int64_t renderStart;
     bool sawInputEOS;
     bool sawOutputEOS;
     bool isPlaying;
     bool renderOnce;
 
-    AMediaCodec *codecForTrack(int track) {
-        if (track == videoCodecTrack) {
+    virtual ~VROMediaData() {
+        delete (videoCodec);
+        delete (audioCodec);
+    }
+
+    VROCodec *codecForTrack(int track) {
+        if (track == videoCodec->getTrack()) {
             return videoCodec;
         }
-        else if (track == audioCodecTrack) {
+        else if (track == audioCodec->getTrack()) {
             return audioCodec;
         }
         else {
@@ -92,8 +163,6 @@ private:
 
 };
 
-class VROBufferAudioPlayer;
-
 /*
  * Runs on another thread decoding the video. Post messages
  * to this thread using the VROLooper interface.
@@ -109,44 +178,15 @@ public:
 
 private:
 
-    VROBufferAudioPlayer *_audio = nullptr;
+    VROPCMAudioPlayer *_audio = nullptr;
 
     void doCodecWork(VROMediaData *d);
 
-    void writeToCodec(AMediaCodec *codec, AMediaExtractor *extractor, bool *outSawInputEOS);
-    void readFromVideoCodec(AMediaCodec *codec, bool *renderOnce, int64_t *renderStart, bool *outSawOutputEOS);
-    void readFromAudioCodec(AMediaCodec *codec, bool *outSawOutputEOS);
+    void writeToCodec(VROCodec *codec, AMediaExtractor *extractor, bool *outSawInputEOS);
+    void readFromVideoCodec(VROCodec *codec, bool *renderOnce, int64_t *renderStart, bool *outSawOutputEOS);
+    void readFromAudioCodec(VROCodec *codec, bool *outSawOutputEOS);
 
 };
 
-class VROBufferAudioPlayer {
-
-public:
-
-    void playClip();
-
-    VROBufferAudioPlayer(int sampleRate, int bufferSize);
-    virtual ~VROBufferAudioPlayer();
-
-    void queueAudio(const char *audio, int size);
-
-private:
-
-    SLObjectItf _audio;
-    SLEngineItf _audioEngine;
-    SLObjectItf _outputMix;
-
-    SLObjectItf _player;
-    SLPlayItf _playState;
-    SLAndroidSimpleBufferQueueItf _bufferQueue;
-    SLVolumeItf _volume;
-    SLmilliHertz _sampleRate;
-    int _bufferSize;
-
-    short *createResampledBuffer(const char *source, int sourceSize, uint32_t sourceRate,
-                                 unsigned *outSize);
-
-
-};
 
 #endif //ANDROID_VROVIDEOTEXTUREANDROID_H
