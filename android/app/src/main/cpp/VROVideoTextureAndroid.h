@@ -16,6 +16,8 @@
 #include "VROLooper.h"
 #include "media/NdkMediaCodec.h"
 #include "media/NdkMediaExtractor.h"
+#include <SLES/OpenSLES.h>
+#include <SLES/OpenSLES_Android.h>
 
 class VROMediaData {
 
@@ -90,18 +92,60 @@ private:
 
 };
 
+class VROBufferAudioPlayer;
+
 /*
  * Runs on another thread decoding the video. Post messages
  * to this thread using the VROLooper interface.
  */
 class VROVideoLooper : public VROLooper {
 
-    virtual void handle(int what, void* obj);
+public:
+
+    //VROVideoLooper();
+    virtual ~VROVideoLooper();
+
+    void handle(int what, void* obj);
+
+private:
+
+    VROBufferAudioPlayer *_audio = nullptr;
+
     void doCodecWork(VROMediaData *d);
 
     void writeToCodec(AMediaCodec *codec, AMediaExtractor *extractor, bool *outSawInputEOS);
     void readFromVideoCodec(AMediaCodec *codec, bool *renderOnce, int64_t *renderStart, bool *outSawOutputEOS);
     void readFromAudioCodec(AMediaCodec *codec, bool *outSawOutputEOS);
+
+};
+
+class VROBufferAudioPlayer {
+
+public:
+
+    void playClip();
+
+    VROBufferAudioPlayer(int sampleRate, int bufferSize);
+    virtual ~VROBufferAudioPlayer();
+
+    void queueAudio(const char *audio, int size);
+
+private:
+
+    SLObjectItf _audio;
+    SLEngineItf _audioEngine;
+    SLObjectItf _outputMix;
+
+    SLObjectItf _player;
+    SLPlayItf _playState;
+    SLAndroidSimpleBufferQueueItf _bufferQueue;
+    SLVolumeItf _volume;
+    SLmilliHertz _sampleRate;
+    int _bufferSize;
+
+    short *createResampledBuffer(const char *source, int sourceSize, uint32_t sourceRate,
+                                 unsigned *outSize);
+
 
 };
 

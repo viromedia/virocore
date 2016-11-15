@@ -111,7 +111,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROLightingUBO.cpp
              )
 
-# Add pre-build libraries
+# Add pre-built libraries
 add_library( lib-gvr
              SHARED
              IMPORTED )
@@ -139,6 +139,7 @@ find_library( lib-android android )
 find_library( lib-jnigraphics jnigraphics )
 find_library( lib-mediandk mediandk )
 find_library( lib-openmax OpenMAXAL )
+find_library( lib-opensles OpenSLES )
 find_library( lib-egl EGL )
 find_library( lib-GLESv3 GLESv3 )
 
@@ -156,6 +157,7 @@ target_link_libraries( # Specifies the target library.
                        ${lib-jnigraphics}
                        ${lib-mediandk}
                        ${lib-openmax}
+                       ${lib-opensles}
                        ${lib-egl}
                        ${lib-GLESv3}
                        lib-gvr
