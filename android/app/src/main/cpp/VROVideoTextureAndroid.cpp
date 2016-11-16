@@ -39,7 +39,8 @@ VROVideoTextureAndroid::VROVideoTextureAndroid() :
     _mediaData.sawOutputEOS = false;
     _mediaData.isPlaying = false;
     _mediaData.renderOnce = false;
-    _mediaData.audioSampleRate = 44100;
+    _mediaData.deviceAudioSampleRate = VROPlatformGetAudioSampleRate();
+    _mediaData.deviceAudioBufferSize = VROPlatformGetAudioBufferSize();
     _mediaData.audioNumChannels = 1;
     _mediaData.loop = true;
 }
@@ -130,11 +131,11 @@ void VROVideoTextureAndroid::loadVideo(std::string url,
             AMediaCodec_configure(codec, format, NULL, NULL, 0);
             AMediaCodec_start(codec);
 
-            AMediaFormat_getInt32(format, AMEDIAFORMAT_KEY_SAMPLE_RATE, &mediaData->audioSampleRate);
+            AMediaFormat_getInt32(format, AMEDIAFORMAT_KEY_SAMPLE_RATE, &mediaData->sourceAudioSampleRate);
             AMediaFormat_getInt32(format, AMEDIAFORMAT_KEY_CHANNEL_COUNT, &mediaData->audioNumChannels);
 
-            pinfo("Audio track has sample rate %d, num channels %d",
-                  mediaData->audioSampleRate, mediaData->audioNumChannels);
+            pinfo("[video] audio track has sample rate %d, num channels %d",
+                  mediaData->sourceAudioSampleRate, mediaData->audioNumChannels);
             mediaData->audioCodec = new VROCodec(VROCodecType::Audio, codec, i);
         }
 
@@ -315,7 +316,7 @@ int64_t systemnanotime() {
 
 void VROVideoLooper::doCodecWork(VROMediaData *d) {
     if (_audio == nullptr) {
-        _audio = new VROPCMAudioPlayer(d->audioSampleRate, d->audioNumChannels, 960);
+        _audio = new VROPCMAudioPlayer(d->sourceAudioSampleRate, d->audioNumChannels, d->deviceAudioBufferSize);
     }
 
     /*

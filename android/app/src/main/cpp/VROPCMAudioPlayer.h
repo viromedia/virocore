@@ -21,9 +21,17 @@ class VROPCMAudioPlayer {
 
 public:
 
+    /*
+     Create a new audio for playing PCM audio with the given properties.
+     The sample rate and channels are derived from the source audio; the
+     buffer size can be retrieved from the device (see VROPlatformUtils).
+     */
     VROPCMAudioPlayer(int sampleRate, SLuint32 numChannels, int bufferSize);
     virtual ~VROPCMAudioPlayer();
 
+    /*
+     Queue the given raw PCM data to be played.
+     */
     void queueAudio(const char *audio, int size);
 
 private:

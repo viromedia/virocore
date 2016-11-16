@@ -13,6 +13,8 @@ VROPCMAudioPlayer::VROPCMAudioPlayer(int sampleRate, SLuint32 numChannels, int b
         _sampleRate(sampleRate * 1000),
         _bufferSize(bufferSize) {
 
+    pinfo("Creating PCM audio player [source audio sample rate: %d, buffer size %d, num channels %d]",
+          sampleRate, bufferSize, numChannels);
     SLresult result;
 
     // Create the Open SLES audio and engine interfaces

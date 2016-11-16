@@ -3,6 +3,7 @@ package com.viro.renderer;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -84,12 +85,14 @@ public class ViroActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onSurfaceChanged(GL10 gl, int width, int height) {}
+                    public void onSurfaceChanged(GL10 gl, int width, int height) {
+                    }
 
                     @Override
                     public void onDrawFrame(GL10 gl) {
                         for (FrameListener listener : mFrameListeners) {
-                            listener.onDrawFrame();;
+                            listener.onDrawFrame();
+                            ;
                         }
                         nativeDrawFrame(mNativeRenderer);
                     }
@@ -205,11 +208,26 @@ public class ViroActivity extends AppCompatActivity {
         return videoSink.getSurface();
     }
 
+    // Accessed by Native code (VROPlatformUtil.cpp)
     public void removeVideoSink(int textureId) {
         VideoSink videoSink = mVideoSinks.remove(textureId);
         mFrameListeners.remove(videoSink);
 
         videoSink.releaseSurface();
+    }
+
+    // Accessed by Native code (VROPlatformUtil.cpp)
+    public int getAudioSampleRate() {
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        String nativeParam = audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
+        return Integer.parseInt(nativeParam);
+    }
+
+    // Accessed by Native code (VROPlatformUtil.cpp)
+    public int getAudioBufferSize() {
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        String nativeParam = audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
+        return Integer.parseInt(nativeParam);
     }
 
     private native long nativeCreateRenderer(

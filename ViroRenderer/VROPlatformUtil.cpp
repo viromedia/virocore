@@ -162,4 +162,28 @@ jobject VROPlatformCreateVideoSink(int textureId) {
     return jsurface;
 }
 
+int VROPlatformGetAudioSampleRate() {
+    JNIEnv *env;
+    getJNIEnv(&env);
+
+    jclass cls = env->GetObjectClass(sActivity);
+    jmethodID jmethod = env->GetMethodID(cls, "getAudioSampleRate", "()I");
+    jint sampleRate = env->CallIntMethod(sActivity, jmethod);
+
+    env->DeleteLocalRef(cls);
+    return sampleRate;
+}
+
+int VROPlatformGetAudioBufferSize() {
+    JNIEnv *env;
+    getJNIEnv(&env);
+
+    jclass cls = env->GetObjectClass(sActivity);
+    jmethodID jmethod = env->GetMethodID(cls, "getAudioBufferSize", "()I");
+    jint bufferSize = env->CallIntMethod(sActivity, jmethod);
+
+    env->DeleteLocalRef(cls);
+    return bufferSize;
+}
+
 #endif

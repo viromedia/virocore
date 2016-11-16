@@ -127,7 +127,9 @@ class VROMediaData {
 public:
 
     int fd;
-    int32_t audioSampleRate;
+    int32_t deviceAudioSampleRate;
+    int32_t deviceAudioBufferSize;
+    int32_t sourceAudioSampleRate;
     int32_t audioNumChannels;
 
     ANativeWindow *window;
