@@ -13,6 +13,7 @@
 #include "VROOpenGL.h"
 
 #include <vector>
+#include <queue>
 #include <android/native_window_jni.h>
 #include "VROLooper.h"
 #include "media/NdkMediaCodec.h"
@@ -23,6 +24,17 @@ class VROPCMAudioPlayer;
 enum class VROCodecType {
     Video,
     Audio
+};
+
+class VROCodecOutputBuffer {
+public:
+    ssize_t index;
+    AMediaCodecBufferInfo info;
+
+    VROCodecOutputBuffer(ssize_t index, AMediaCodecBufferInfo info) {
+        this->index = index;
+        this->info = info;
+    }
 };
 
 class VROCodec {
@@ -47,7 +59,7 @@ public:
     }
 
     /*
-     Input buffer operations.
+     Input (to codec) buffer operations.
      */
     ssize_t dequeueInputBuffer(int64_t timeoutUs) {
         return AMediaCodec_dequeueInputBuffer(_codec, timeoutUs);
@@ -60,7 +72,7 @@ public:
     }
 
     /*
-     Output buffer operations.
+     Output (from codec) buffer operations.
      */
     ssize_t dequeueOutputBuffer(AMediaCodecBufferInfo *info, int64_t timeoutUs) {
         return AMediaCodec_dequeueOutputBuffer(_codec, info, timeoutUs);
@@ -75,6 +87,21 @@ public:
         return AMediaCodec_getOutputBuffer(_codec, idx, out_size);
     }
 
+    /*
+     Ready (to render) output buffer operations.
+     */
+    bool hasOutputBuffer() {
+        return !readyOutputBuffers.empty();
+    }
+    void pushOutputBuffer(VROCodecOutputBuffer buffer) {
+        readyOutputBuffers.push(buffer);
+    }
+    VROCodecOutputBuffer nextOutputBuffer() {
+        return readyOutputBuffers.front();
+    }
+    void popOutputBuffer() {
+        readyOutputBuffers.pop();
+    }
 
 private:
 
@@ -82,7 +109,7 @@ private:
     AMediaCodec *_codec;
     const int _track;
 
-    std::vector<ssize_t> availableOutputBuffers;
+    std::queue<VROCodecOutputBuffer> readyOutputBuffers;
 
 };
 
@@ -108,10 +135,10 @@ public:
     }
 
     VROCodec *codecForTrack(int track) {
-        if (track == videoCodec->getTrack()) {
+        if (videoCodec && track == videoCodec->getTrack()) {
             return videoCodec;
         }
-        else if (track == audioCodec->getTrack()) {
+        else if (audioCodec && track == audioCodec->getTrack()) {
             return audioCodec;
         }
         else {
@@ -183,8 +210,15 @@ private:
     void doCodecWork(VROMediaData *d);
 
     void writeToCodec(VROCodec *codec, AMediaExtractor *extractor, bool *outSawInputEOS);
-    void readFromVideoCodec(VROCodec *codec, bool *renderOnce, int64_t *renderStart, bool *outSawOutputEOS);
-    void readFromAudioCodec(VROCodec *codec, bool *outSawOutputEOS);
+    void readFromCodec(VROCodec *codec, bool *outSawOutputEOS);
+
+    void writeToSinks(VROCodec *videoCodec, VROCodec *audioCodec, int64_t *renderStart);
+    void writeToVideoSink(VROCodec *codec, int64_t *renderStart);
+    void writeToAudioSink(VROCodec *codec, int64_t *renderStart);
+
+    int64_t computeDelayToRender(VROCodecOutputBuffer buffer, int64_t *renderStart);
+    void renderVideo(VROCodecOutputBuffer buffer, VROCodec *codec);
+    void renderAudio(VROCodecOutputBuffer buffer, VROCodec *codec);
 
 };
 

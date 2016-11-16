@@ -77,7 +77,7 @@ void VROVideoTextureAndroid::loadVideo(std::string url,
     AAssetManager *assetMgr = VROPlatformGetAssetManager();
 
     off_t outStart, outLen;
-    int fd = AAsset_openFileDescriptor(AAssetManager_open(assetMgr, "vest.mp4", 0),
+    int fd = AAsset_openFileDescriptor(AAssetManager_open(assetMgr, "testfile.mp4", 0),
                                        &outStart, &outLen);
     if (fd < 0) {
         pinfo("[video]: failed to open URL: %s %d (%s)", url.c_str(), fd, strerror(errno));
@@ -203,7 +203,6 @@ VROVideoLooper::~VROVideoLooper() {
 void VROVideoLooper::handle(int what, void *obj) {
     if (_audio == nullptr) {
         _audio = new VROPCMAudioPlayer(48000, 960);
-        //_audio->playClip();
     }
     switch (what) {
         case kMsgCodecBuffer:
@@ -279,16 +278,19 @@ int64_t systemnanotime() {
 }
 
 void VROVideoLooper::doCodecWork(VROMediaData *d) {
-
-    // In this block we read encoded track data from the extractor, and
-    // write into the codec for decoding
+    /*
+     In this block we read encoded track data from the extractor, and
+     write into the codec for decoding.
+     */
     if (!d->sawInputEOS) {
 
         // Get the track index of the current sample
         int trackIndex = AMediaExtractor_getSampleTrackIndex(d->extractor);
         if (trackIndex == -1) {
-            // If there are no more samples, then queue one more buffer
-            // in each codec so we can pass the END_OF_STREAM flag
+            /*
+             If there are no more samples, then queue one more buffer
+             in each codec so we can pass the END_OF_STREAM flag.
+             */
             pinfo("[video]: track index -1, end of stream reached");
 
             if (d->videoCodec) {
@@ -307,23 +309,36 @@ void VROVideoLooper::doCodecWork(VROMediaData *d) {
         AMediaExtractor_advance(d->extractor);
     }
 
-    // In this block we read decoded track data from the codecs, and write it
-    // into the audio/video sinks
+    /*
+     In this block we read decoded track data from the codecs, and store the
+     output buffers that are ready to be written into the audio/video sinks.
+     */
     if (!d->sawOutputEOS) {
-
-        // Read video data. To read video we just have to dequeue the output buffer
-        // and pass 'true' to the release function; since we attached a surface when configuring the
-        // codec, the data will be automatically passed to the surface for rendering
         if (d->videoCodec) {
-            bool wasRenderOnce = d->renderOnce;
-            readFromVideoCodec(d->videoCodec, &d->renderOnce, &d->renderStart, &d->sawOutputEOS);
-            if (wasRenderOnce && !d->renderOnce) {
-                return;
-            }
+            readFromCodec(d->videoCodec, &d->sawOutputEOS);
         }
         if (d->audioCodec) {
-            readFromAudioCodec(d->audioCodec, &d->sawOutputEOS);
+            readFromCodec(d->audioCodec, &d->sawOutputEOS);
         }
+    }
+
+    /*
+     Finally in this block we render any available audio or video
+     output buffers, delaying until the first buffer's presentation time.
+     */
+    if (d->videoCodec && d->audioCodec) {
+        writeToSinks(d->videoCodec, d->audioCodec, &d->renderStart);
+    }
+    else if (d->videoCodec) {
+        writeToVideoSink(d->videoCodec, &d->renderStart);
+    }
+    else if (d->audioCodec) {
+        writeToAudioSink(d->audioCodec, &d->renderStart);
+    }
+
+    if (d->renderOnce) {
+        d->renderOnce = false;
+        return;
     }
 
     if (!d->sawInputEOS || !d->sawOutputEOS) {
@@ -333,8 +348,10 @@ void VROVideoLooper::doCodecWork(VROMediaData *d) {
 
 void VROVideoLooper::writeToCodec(VROCodec *codec, AMediaExtractor *extractor,
                                   bool *outSawInputEOS) {
-    // Retrieve an input buffer from the codec, and read the sample
-    // data into it
+    /*
+     Retrieve an input buffer from the codec, and read the sample
+     data into it.
+     */
     ssize_t bufferIndex = codec->dequeueInputBuffer(2000);
     if (bufferIndex >= 0) {
         size_t bufsize;
@@ -347,51 +364,28 @@ void VROVideoLooper::writeToCodec(VROCodec *codec, AMediaExtractor *extractor,
             pinfo("[video]: sample size 0, end of stream reached");
         }
 
-        // Now that the sample data is in the input buffer, queue it back into the
-        // codec for processing (decoding). The presentation time is simply passed
-        // through; we'll get it back on the decoding side.
+        /*
+         Now that the sample data is in the input buffer, queue it back into the
+         codec for processing (decoding). The presentation time is simply passed
+         through; we'll get it back on the decoding side.
+         */
         int64_t presentationTimeUs = AMediaExtractor_getSampleTime(extractor);
-
-        pinfo("Wrote presentation time %lld", presentationTimeUs);
         codec->queueInputBuffer(bufferIndex, 0, sampleSize, presentationTimeUs,
                                 *outSawInputEOS ? AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM : 0);
     }
 }
 
-void VROVideoLooper::readFromVideoCodec(VROCodec *codec, bool *renderOnce, int64_t *renderStart,
-                                        bool *sawOutputEOS) {
+void VROVideoLooper::readFromCodec(VROCodec *codec, bool *outSawOutputEOS) {
     AMediaCodecBufferInfo info;
-    auto status = codec->dequeueOutputBuffer(&info, 0);
+    ssize_t status = codec->dequeueOutputBuffer(&info, 0);
     if (status >= 0) {
         if (info.flags & AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM) {
             pinfo("[video]: output EOS");
-            *sawOutputEOS = true;
+            *outSawOutputEOS = true;
         }
 
-        /*
-         Retrieve the presentation time for this video buffer. Wait until
-         we reach that time before rendering.
-         */
-        int64_t presentationNano = info.presentationTimeUs * 1000;
-        if (*renderStart < 0) {
-            *renderStart = systemnanotime() - presentationNano;
-        }
-        int64_t delay = (*renderStart + presentationNano) - systemnanotime();
-        if (delay > 0) {
-            usleep(delay / 1000);
-        }
-
-        pinfo("Read presentation time (video): %lld", info.presentationTimeUs);
-
-        /*
-         This call performs the actual rendering of the buffer to the
-         provided surface (the third argument, when true).
-         */
-        codec->releaseOutputBuffer(status, info.size != 0);
-        if (*renderOnce) {
-            *renderOnce = false;
-            return;
-        }
+        VROCodecOutputBuffer readyBuffer(status, info);
+        codec->pushOutputBuffer(readyBuffer);
     }
     else if (status == AMEDIACODEC_INFO_OUTPUT_BUFFERS_CHANGED) {
         pinfo("[video]: output buffers changed");
@@ -408,45 +402,132 @@ void VROVideoLooper::readFromVideoCodec(VROCodec *codec, bool *renderOnce, int64
     }
 }
 
-void VROVideoLooper::readFromAudioCodec(VROCodec *codec, bool *sawOutputEOS) {
-    AMediaCodecBufferInfo info;
-    ssize_t bufferIndex = codec->dequeueOutputBuffer(&info, 0);
-    if (bufferIndex >= 0) {
-        if (info.flags & AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM) {
-            pinfo("[video]: output EOS");
-            *sawOutputEOS = true;
-        }
-
-        size_t bufSize;
-        uint8_t *audioBuffer = codec->getOutputBuffer(bufferIndex, &bufSize);
-        _audio->queueAudio((char *) audioBuffer, info.size);
-
-        pinfo("Read presentation time (audio): %lld", info.presentationTimeUs);
-
-        /*
-        int64_t presentationNano = info.presentationTimeUs * 1000;
-        if (*renderStart < 0) {
-            *renderStart = systemnanotime() - presentationNano;
-        }
-        int64_t delay = (*renderStart + presentationNano) - systemnanotime();
-        if (delay > 0) {
-            usleep(delay / 1000);
-        }
-         */
-
-        codec->releaseOutputBuffer(bufferIndex, false);
+void VROVideoLooper::writeToSinks(VROCodec *videoCodec, VROCodec *audioCodec, int64_t *renderStart) {
+    if (!videoCodec->hasOutputBuffer() && !audioCodec->hasOutputBuffer()) {
+        return;
     }
-    else if (bufferIndex == AMEDIACODEC_INFO_OUTPUT_BUFFERS_CHANGED) {
-        pinfo("[audio]: output buffers changed");
+
+    /*
+     If there's only a video buffer available, wait until its presentation time
+     and render it.
+     */
+    else if (videoCodec->hasOutputBuffer()) {
+        writeToVideoSink(videoCodec, renderStart);
     }
-    else if (bufferIndex == AMEDIACODEC_INFO_OUTPUT_FORMAT_CHANGED) {
-        auto format = codec->getOutputFormat();
-        pinfo("[audio]: format changed to: %s", AMediaFormat_toString(format));
-        AMediaFormat_delete(format);
+
+    /*
+     If there's only an audio buffer available, same thing.
+     */
+    else if (audioCodec->hasOutputBuffer()) {
+        writeToAudioSink(audioCodec, renderStart);
     }
-    else if (bufferIndex == AMEDIACODEC_INFO_TRY_AGAIN_LATER) {
-    }
+
+    /*
+     Otherwise both are available, so wait until the first's presentation time and
+     render it, or render both if both are ready.
+     */
     else {
-        pinfo("[audio]: unexpected info code: %zd", bufferIndex);
+        VROCodecOutputBuffer videoBuffer = videoCodec->nextOutputBuffer();
+        int64_t videoDelay = computeDelayToRender(videoBuffer, renderStart);
+
+        VROCodecOutputBuffer audioBuffer = audioCodec->nextOutputBuffer();
+        int64_t audioDelay = computeDelayToRender(audioBuffer, renderStart);
+
+        if (videoDelay > 0 && audioDelay > 0) {
+            if (videoDelay < audioDelay) {
+                usleep(videoDelay / 1000);
+                renderVideo(videoBuffer, videoCodec);
+                videoCodec->popOutputBuffer();
+            }
+            else {
+                usleep(audioDelay / 1000);
+                renderAudio(audioBuffer, audioCodec);
+                audioCodec->popOutputBuffer();
+            }
+        }
+        else {
+            if (videoDelay < 0) {
+                renderVideo(videoBuffer, videoCodec);
+                videoCodec->popOutputBuffer();
+            }
+            if (audioDelay < 0) {
+                renderAudio(audioBuffer, audioCodec);
+                audioCodec->popOutputBuffer();
+            }
+        }
     }
+}
+
+
+void VROVideoLooper::writeToVideoSink(VROCodec *codec, int64_t *renderStart) {
+    if (!codec->hasOutputBuffer()) {
+        return;
+    }
+    VROCodecOutputBuffer outputBuffer = codec->nextOutputBuffer();
+
+    int64_t delay = computeDelayToRender(outputBuffer, renderStart);
+    if (delay > 0) {
+        usleep(delay / 1000);
+    }
+    renderVideo(outputBuffer, codec);
+    codec->popOutputBuffer();
+}
+
+void VROVideoLooper::writeToAudioSink(VROCodec *codec, int64_t *renderStart) {
+    if (!codec->hasOutputBuffer()) {
+        return;
+    }
+    VROCodecOutputBuffer outputBuffer = codec->nextOutputBuffer();
+
+    int64_t delay = computeDelayToRender(outputBuffer, renderStart);
+    if (delay > 0) {
+        usleep(delay / 1000);
+    }
+
+    renderAudio(outputBuffer, codec);
+    codec->popOutputBuffer();
+}
+
+int64_t VROVideoLooper::computeDelayToRender(VROCodecOutputBuffer buffer, int64_t *renderStart) {
+    /*
+     If the render start time is not yet initialized, then we're going
+     to render this frame now. So set the render start time to the
+     past: current time minus the presentation time of this frame. This
+     way,
+
+     renderStart + presentationNano = currentTime
+
+     meaning renderStart will represent the time at which we started the
+     video.
+     */
+    int64_t presentationNano = buffer.info.presentationTimeUs * 1000;
+    int64_t currentTime = systemnanotime();
+    if (*renderStart < 0) {
+        *renderStart = currentTime - presentationNano;
+    }
+
+    /*
+     See how long we have to wait to render this frame.
+     */
+    int64_t delay = (*renderStart + presentationNano) - currentTime;
+    return delay;
+}
+
+void VROVideoLooper::renderVideo(VROCodecOutputBuffer buffer, VROCodec *codec) {
+    /*
+     This call performs the actual rendering of the buffer to the
+     provided surface (by setting the third param to true).
+     */
+    codec->releaseOutputBuffer(buffer.index, buffer.info.size != 0);
+}
+
+void VROVideoLooper::renderAudio(VROCodecOutputBuffer buffer, VROCodec *codec) {
+    /*
+     Render audio by writing the PCM data to our PCM audio player.
+     */
+    size_t bufSize;
+    uint8_t *audioBuffer = codec->getOutputBuffer(buffer.index, &bufSize);
+    _audio->queueAudio((char *) audioBuffer, buffer.info.size);
+
+    codec->releaseOutputBuffer(buffer.index, false);
 }
