@@ -29,6 +29,9 @@ public:
     VROPCMAudioPlayer(int sampleRate, SLuint32 numChannels, int bufferSize);
     virtual ~VROPCMAudioPlayer();
 
+    void setMuted(bool muted);
+    void setVolume(float volume);
+
     /*
      Queue the given raw PCM data to be played.
      */
@@ -47,13 +50,6 @@ private:
     SLmilliHertz _sampleRate;
     int _bufferSize;
 
-    /*
-     Upsample the given source sound to this player's sampling rate. Only supports
-     simple upsampling (where the sampler's rate is divisible by the source audio's
-     rate). Returns nullptr on failure.
-     */
-    short *upsampleBuffer(const char *source, int sourceSize, uint32_t sourceRate,
-                          unsigned *outSize);
 };
 
 #endif //ANDROID_VROPCMAUDIOPLAYER_H

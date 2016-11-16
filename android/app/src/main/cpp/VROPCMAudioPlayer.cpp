@@ -8,6 +8,7 @@
 
 #include "VROPCMAudioPlayer.h"
 #include "VROLog.h"
+#include <cmath>
 
 VROPCMAudioPlayer::VROPCMAudioPlayer(int sampleRate, SLuint32 numChannels, int bufferSize) :
         _sampleRate(sampleRate * 1000),
@@ -96,33 +97,15 @@ void VROPCMAudioPlayer::queueAudio(const char *audio, int size) {
     }
 }
 
-short *VROPCMAudioPlayer::upsampleBuffer(const char *source, int sourceSize, uint32_t sourceRate,
-                                            unsigned *outSize) {
-    if (_sampleRate == 0) {
-        return nullptr;
-    }
+void VROPCMAudioPlayer::setMuted(bool muted) {
+    pinfo("[audio] muted set to %d", muted);
+    (*_volume)->SetMute(_volume, muted);
+}
 
-    // Simple up-sampling, must be divisible
-    if (_sampleRate % sourceRate) {
-        return nullptr;
-    }
+void VROPCMAudioPlayer::setVolume(float volume) {
+    // Standard gain to DB formula (with cutoff near 0 to effectively mute at low gain)
+    float volumeDB = volume < .01 ? -96.0f : 20 * std::log10(volume);
 
-    int upSampleRate = _sampleRate / sourceRate;
-
-    int32_t sourceSampleCount = sourceSize >> 1;
-    short *src = (short *) source;
-
-    short *resampleBuf = (short *) malloc((sourceSampleCount * upSampleRate) << 1);
-    if (resampleBuf == nullptr) {
-        return resampleBuf;
-    }
-    short *workBuf = resampleBuf;
-    for (int sample = 0; sample < sourceSampleCount; sample++) {
-        for (int dup = 0; dup < upSampleRate; dup++) {
-            *workBuf++ = src[sample];
-        }
-    }
-
-    *outSize = (sourceSampleCount * upSampleRate) << 1;
-    return resampleBuf;
+    pinfo("[audio] volume set to %f gain, %f db", volume, volumeDB);
+    (*_volume)->SetVolumeLevel(_volume, volumeDB * 100);
 }

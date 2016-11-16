@@ -22,6 +22,8 @@ enum {
     kMsgDecodeDone,
     kMsgSeek,
     kMsgLoop,
+    kMsgVolume,
+    kMsgMute
 };
 
 VROVideoTextureAndroid::VROVideoTextureAndroid() :
@@ -42,7 +44,9 @@ VROVideoTextureAndroid::VROVideoTextureAndroid() :
     _mediaData.deviceAudioSampleRate = VROPlatformGetAudioSampleRate();
     _mediaData.deviceAudioBufferSize = VROPlatformGetAudioBufferSize();
     _mediaData.audioNumChannels = 1;
-    _mediaData.loop = true;
+    _mediaData.loop = false;
+    _mediaData.volume = 1.0;
+    _mediaData.muted = false;
 }
 
 VROVideoTextureAndroid::~VROVideoTextureAndroid() {
@@ -188,11 +192,19 @@ void VROVideoTextureAndroid::seekToTime(int seconds) {
 }
 
 void VROVideoTextureAndroid::setMuted(bool muted) {
+    VROVideoMute *mute = (VROVideoMute *) malloc(sizeof(VROVideoMute));
+    mute->data = &_mediaData;
+    mute->muted = muted;
 
+    _looper->post(kMsgMute, mute);
 }
 
 void VROVideoTextureAndroid::setVolume(float volume) {
+    VROVideoVolume *vol = (VROVideoVolume *) malloc(sizeof(VROVideoVolume));
+    vol->data = &_mediaData;
+    vol->volume = volume;
 
+    _looper->post(kMsgVolume, vol);
 }
 
 void VROVideoTextureAndroid::setLoop(bool loop) {
@@ -226,6 +238,36 @@ void VROVideoLooper::handle(int what, void *obj) {
             d->sawOutputEOS = true;
         }
             break;
+
+        case kMsgMute: {
+            pinfo("[video] received message [mute]");
+
+            VROVideoMute *mute = (VROVideoMute *) obj;
+            VROMediaData *d = (VROMediaData *) mute->data;
+
+            // If audio is null, muted will be set on kMsgResume
+            d->muted = mute->muted;
+            if (_audio) {
+                _audio->setMuted(d->muted);
+            }
+            free (mute);
+        }
+        break;
+
+        case kMsgVolume: {
+            pinfo("[video] received message [volume]");
+
+            VROVideoVolume *volume = (VROVideoVolume *) obj;
+            VROMediaData *d = (VROMediaData *) volume->data;
+
+            // If _audio is null, volume will be set on kMsgResume
+            d->volume = volume->volume;
+            if (_audio) {
+                _audio->setVolume(d->volume);
+            }
+            free (volume);
+        }
+        break;
 
         case kMsgSeek: {
             pinfo("[video] received message [seek]");
@@ -276,6 +318,14 @@ void VROVideoLooper::handle(int what, void *obj) {
 
             VROMediaData *d = (VROMediaData *) obj;
             if (!d->isPlaying) {
+                if (!_audio) {
+                    _audio = new VROPCMAudioPlayer(d->sourceAudioSampleRate,
+                                                   d->audioNumChannels,
+                                                   d->deviceAudioBufferSize);
+                }
+                _audio->setVolume(d->volume);
+                _audio->setMuted(d->muted);
+
                 d->renderStart = -1;
                 d->isPlaying = true;
                 post(kMsgCodecBuffer, d);
@@ -315,10 +365,6 @@ int64_t systemnanotime() {
 }
 
 void VROVideoLooper::doCodecWork(VROMediaData *d) {
-    if (_audio == nullptr) {
-        _audio = new VROPCMAudioPlayer(d->sourceAudioSampleRate, d->audioNumChannels, d->deviceAudioBufferSize);
-    }
-
     /*
      In this block we read encoded track data from the extractor, and
      write into the codec for decoding.
