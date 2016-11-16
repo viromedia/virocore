@@ -21,9 +21,7 @@ class VROPCMAudioPlayer {
 
 public:
 
-    void playClip();
-
-    VROPCMAudioPlayer(int sampleRate, int bufferSize);
+    VROPCMAudioPlayer(int sampleRate, SLuint32 numChannels, int bufferSize);
     virtual ~VROPCMAudioPlayer();
 
     void queueAudio(const char *audio, int size);

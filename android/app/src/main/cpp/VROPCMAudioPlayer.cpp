@@ -9,12 +9,7 @@
 #include "VROPCMAudioPlayer.h"
 #include "VROLog.h"
 
-// pre-recorded sound clips, both are 8 kHz mono 16-bit signed little endian
-static const char hello[] =
-#include "hello_clip.h"
-;
-
-VROPCMAudioPlayer::VROPCMAudioPlayer(int sampleRate, int bufferSize) :
+VROPCMAudioPlayer::VROPCMAudioPlayer(int sampleRate, SLuint32 numChannels, int bufferSize) :
         _sampleRate(sampleRate * 1000),
         _bufferSize(bufferSize) {
 
@@ -37,11 +32,16 @@ VROPCMAudioPlayer::VROPCMAudioPlayer(int sampleRate, int bufferSize) :
     result = (*_outputMix)->Realize(_outputMix, SL_BOOLEAN_FALSE);
     passert(result == SL_RESULT_SUCCESS);
 
+    SLuint32 channelMask = SL_SPEAKER_FRONT_CENTER;
+    if (numChannels == 2) {
+        channelMask = SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT;
+    }
+
     // configure audio source
     SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 2};
-    SLDataFormat_PCM formatPCM = {SL_DATAFORMAT_PCM, 2, SL_SAMPLINGRATE_8,
+    SLDataFormat_PCM formatPCM = {SL_DATAFORMAT_PCM, numChannels, SL_SAMPLINGRATE_8,
                                   SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
-                                  SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT, SL_BYTEORDER_LITTLEENDIAN};
+                                  channelMask, SL_BYTEORDER_LITTLEENDIAN};
 
     formatPCM.samplesPerSec = _sampleRate;
     SLDataSource audioSource = {&loc_bufq, &formatPCM};
@@ -87,27 +87,11 @@ VROPCMAudioPlayer::~VROPCMAudioPlayer() {
 
 }
 
-void VROPCMAudioPlayer::playClip() {
-    unsigned nextSize;
-    short *nextBuffer = upsampleBuffer(hello, sizeof(hello), SL_SAMPLINGRATE_8, &nextSize);
-    if (!nextBuffer) {
-        nextBuffer = (short *) hello;
-        nextSize = sizeof(hello);
-    }
-
-    if (nextSize > 0) {
-        // here we only enqueue one buffer because it is a long clip,
-        // but for streaming playback we would typically enqueue at least 2 buffers to start
-        SLresult result;
-        result = (*_bufferQueue)->Enqueue(_bufferQueue, nextBuffer, nextSize);
-    }
-}
-
 void VROPCMAudioPlayer::queueAudio(const char *audio, int size) {
-    SLresult result;
-    result = (*_bufferQueue)->Enqueue(_bufferQueue, audio, size);
-
-    //passert(result == SL_RESULT_SUCCESS);
+    SLresult result = (*_bufferQueue)->Enqueue(_bufferQueue, audio, size);
+    if (result != SL_RESULT_SUCCESS) {
+        pinfo("[audio]: error enqueuing PCM data [result: %d]", result);
+    }
 }
 
 short *VROPCMAudioPlayer::upsampleBuffer(const char *source, int sourceSize, uint32_t sourceRate,

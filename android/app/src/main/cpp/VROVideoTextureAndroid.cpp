@@ -21,13 +21,13 @@ enum {
     kMsgPauseAck,
     kMsgDecodeDone,
     kMsgSeek,
+    kMsgLoop,
 };
 
 VROVideoTextureAndroid::VROVideoTextureAndroid() :
         VROVideoTexture(VROTextureType::TextureEGLImage),
         _looper(nullptr),
-        _paused(true),
-        _loop(true) {
+        _paused(true) {
 
     _mediaData.fd = -1;
     _mediaData.window = nullptr;
@@ -39,6 +39,9 @@ VROVideoTextureAndroid::VROVideoTextureAndroid() :
     _mediaData.sawOutputEOS = false;
     _mediaData.isPlaying = false;
     _mediaData.renderOnce = false;
+    _mediaData.audioSampleRate = 44100;
+    _mediaData.audioNumChannels = 1;
+    _mediaData.loop = true;
 }
 
 VROVideoTextureAndroid::~VROVideoTextureAndroid() {
@@ -80,7 +83,7 @@ void VROVideoTextureAndroid::loadVideo(std::string url,
     int fd = AAsset_openFileDescriptor(AAssetManager_open(assetMgr, "testfile.mp4", 0),
                                        &outStart, &outLen);
     if (fd < 0) {
-        pinfo("[video]: failed to open URL: %s %d (%s)", url.c_str(), fd, strerror(errno));
+        pinfo("[video] failed to open URL: %s %d (%s)", url.c_str(), fd, strerror(errno));
         return;
     }
 
@@ -94,21 +97,21 @@ void VROVideoTextureAndroid::loadVideo(std::string url,
                                                          static_cast<off64_t>(outLen));
     close(mediaData->fd);
     if (err != AMEDIA_OK) {
-        pinfo("[video]: setDataSource error: %d", err);
+        pinfo("[video] setDataSource error: %d", err);
         return;
     }
 
     int numTracks = AMediaExtractor_getTrackCount(extractor);
 
-    pinfo("[video]: input has %d tracks", numTracks);
+    pinfo("[video] input has %d tracks", numTracks);
     for (int i = 0; i < numTracks; i++) {
         AMediaFormat *format = AMediaExtractor_getTrackFormat(extractor, i);
         const char *s = AMediaFormat_toString(format);
-        pinfo("[video]: track %d format: %s", i, s);
+        pinfo("[video] track %d format: %s", i, s);
 
         const char *mime;
         if (!AMediaFormat_getString(format, AMEDIAFORMAT_KEY_MIME, &mime)) {
-            pinfo("[video]: no mime type");
+            pinfo("[video] track %d has no mime type, ignoring", i);
             return;
         }
         else if (!strncmp(mime, "video/", 6)) {
@@ -127,6 +130,11 @@ void VROVideoTextureAndroid::loadVideo(std::string url,
             AMediaCodec_configure(codec, format, NULL, NULL, 0);
             AMediaCodec_start(codec);
 
+            AMediaFormat_getInt32(format, AMEDIAFORMAT_KEY_SAMPLE_RATE, &mediaData->audioSampleRate);
+            AMediaFormat_getInt32(format, AMEDIAFORMAT_KEY_CHANNEL_COUNT, &mediaData->audioNumChannels);
+
+            pinfo("Audio track has sample rate %d, num channels %d",
+                  mediaData->audioSampleRate, mediaData->audioNumChannels);
             mediaData->audioCodec = new VROCodec(VROCodecType::Audio, codec, i);
         }
 
@@ -149,13 +157,7 @@ void VROVideoTextureAndroid::prewarm() {
 }
 
 void VROVideoTextureAndroid::onFrameWillRender(const VRORenderContext &context) {
-    if (_mediaData.sawOutputEOS) {
-        pause();
-        if (_loop) {
-            seekToTime(0);
-            play();
-        }
-    }
+
 }
 
 void VROVideoTextureAndroid::onFrameDidRender(const VRORenderContext &context) {
@@ -193,7 +195,7 @@ void VROVideoTextureAndroid::setVolume(float volume) {
 }
 
 void VROVideoTextureAndroid::setLoop(bool loop) {
-    _loop = loop;
+    _mediaData.loop = loop;
 }
 
 VROVideoLooper::~VROVideoLooper() {
@@ -201,15 +203,14 @@ VROVideoLooper::~VROVideoLooper() {
 }
 
 void VROVideoLooper::handle(int what, void *obj) {
-    if (_audio == nullptr) {
-        _audio = new VROPCMAudioPlayer(48000, 960);
-    }
     switch (what) {
         case kMsgCodecBuffer:
             doCodecWork((VROMediaData *) obj);
             break;
 
         case kMsgDecodeDone: {
+            pinfo("[video] received message [done]");
+
             VROMediaData *d = (VROMediaData *) obj;
 
             if (d->videoCodec != nullptr) {
@@ -226,15 +227,17 @@ void VROVideoLooper::handle(int what, void *obj) {
             break;
 
         case kMsgSeek: {
+            pinfo("[video] received message [seek]");
+
             VROVideoSeek *seek = (VROVideoSeek *) obj;
             VROMediaData *d = (VROMediaData *) seek->data;
-            AMediaExtractor_seekTo(d->extractor, seek->seekTime, AMEDIAEXTRACTOR_SEEK_NEXT_SYNC);
 
+            AMediaExtractor_seekTo(d->extractor, seek->seekTime, AMEDIAEXTRACTOR_SEEK_NEXT_SYNC);
             if (d->videoCodec != nullptr) {
                 d->videoCodec->flush();
             }
             if (d->audioCodec != nullptr) {
-                d->videoCodec->flush();
+                d->audioCodec->flush();
             }
             d->renderStart = -1;
             d->sawInputEOS = false;
@@ -244,14 +247,22 @@ void VROVideoLooper::handle(int what, void *obj) {
                 post(kMsgCodecBuffer, d);
             }
 
-            pinfo("[video]: seeked to %llu", seek->seekTime);
+            pinfo("[video] seeked to %llu", seek->seekTime);
             free(seek);
         }
             break;
 
         case kMsgPause: {
+            pinfo("[video] received message [pause]");
+
             VROMediaData *d = (VROMediaData *) obj;
             if (d->isPlaying) {
+                if (d->videoCodec) {
+                    d->videoCodec->clear();
+                }
+                if (d->audioCodec) {
+                    d->audioCodec->clear();
+                }
                 // flush all outstanding codecbuffer messages with a no-op message
                 d->isPlaying = false;
                 post(kMsgPauseAck, NULL, true);
@@ -260,6 +271,8 @@ void VROVideoLooper::handle(int what, void *obj) {
             break;
 
         case kMsgResume: {
+            pinfo("[video] received message [resume]");
+
             VROMediaData *d = (VROMediaData *) obj;
             if (!d->isPlaying) {
                 d->renderStart = -1;
@@ -268,6 +281,29 @@ void VROVideoLooper::handle(int what, void *obj) {
             }
         }
             break;
+
+        case kMsgLoop: {
+            pinfo("[video] received message [loop]");
+            VROMediaData *d = (VROMediaData *) obj;
+
+            AMediaExtractor_seekTo(d->extractor, 0, AMEDIAEXTRACTOR_SEEK_NEXT_SYNC);
+            if (d->videoCodec) {
+                d->videoCodec->flush();
+            }
+            if (d->audioCodec) {
+                d->audioCodec->flush();
+            }
+            d->renderStart = -1;
+            d->sawInputEOS = false;
+            d->sawOutputEOS = false;
+
+            if (!d->isPlaying) {
+                d->renderOnce = true;
+            }
+            post(kMsgCodecBuffer, d);
+        }
+            break;
+
     }
 }
 
@@ -278,6 +314,10 @@ int64_t systemnanotime() {
 }
 
 void VROVideoLooper::doCodecWork(VROMediaData *d) {
+    if (_audio == nullptr) {
+        _audio = new VROPCMAudioPlayer(d->audioSampleRate, d->audioNumChannels, 960);
+    }
+
     /*
      In this block we read encoded track data from the extractor, and
      write into the codec for decoding.
@@ -291,7 +331,7 @@ void VROVideoLooper::doCodecWork(VROMediaData *d) {
              If there are no more samples, then queue one more buffer
              in each codec so we can pass the END_OF_STREAM flag.
              */
-            pinfo("[video]: track index -1, end of stream reached");
+            pinfo("[video] no tracks available, end of stream reached");
 
             if (d->videoCodec) {
                 writeToCodec(d->videoCodec, d->extractor, &d->sawInputEOS);
@@ -338,11 +378,27 @@ void VROVideoLooper::doCodecWork(VROMediaData *d) {
 
     if (d->renderOnce) {
         d->renderOnce = false;
-        return;
     }
 
-    if (!d->sawInputEOS || !d->sawOutputEOS) {
-        post(kMsgCodecBuffer, d);
+    if (d->isPlaying) {
+        /*
+         If we're reached the EOS, either loop or pause.
+         */
+        if (d->sawInputEOS && d->sawOutputEOS) {
+            pinfo("[video] end of stream");
+            if (d->loop) {
+                post(kMsgLoop, d);
+            }
+            else {
+                post(kMsgPause, d);
+            }
+        }
+        /*
+         Otherwise keep playing.
+         */
+        else {
+            post(kMsgCodecBuffer, d);
+        }
     }
 }
 
@@ -361,7 +417,7 @@ void VROVideoLooper::writeToCodec(VROCodec *codec, AMediaExtractor *extractor,
         if (sampleSize < 0) {
             sampleSize = 0;
             *outSawInputEOS = true;
-            pinfo("[video]: sample size 0, end of stream reached");
+            pinfo("[video] no samples to extract, end of stream reached");
         }
 
         /*
@@ -380,7 +436,7 @@ void VROVideoLooper::readFromCodec(VROCodec *codec, bool *outSawOutputEOS) {
     ssize_t status = codec->dequeueOutputBuffer(&info, 0);
     if (status >= 0) {
         if (info.flags & AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM) {
-            pinfo("[video]: output EOS");
+            pinfo("[video] dequeued output buffer at end of stream");
             *outSawOutputEOS = true;
         }
 
@@ -388,45 +444,26 @@ void VROVideoLooper::readFromCodec(VROCodec *codec, bool *outSawOutputEOS) {
         codec->pushOutputBuffer(readyBuffer);
     }
     else if (status == AMEDIACODEC_INFO_OUTPUT_BUFFERS_CHANGED) {
-        pinfo("[video]: output buffers changed");
+        pinfo("[video] output buffers changed");
     }
     else if (status == AMEDIACODEC_INFO_OUTPUT_FORMAT_CHANGED) {
         auto format = codec->getOutputFormat();
-        pinfo("[video]: format changed to: %s", AMediaFormat_toString(format));
+        pinfo("[video] format changed to: %s", AMediaFormat_toString(format));
         AMediaFormat_delete(format);
     }
     else if (status == AMEDIACODEC_INFO_TRY_AGAIN_LATER) {
     }
     else {
-        pinfo("[video]: unexpected info code: %zd", status);
+        pinfo("[video] unexpected info code: %zd", status);
     }
 }
 
 void VROVideoLooper::writeToSinks(VROCodec *videoCodec, VROCodec *audioCodec, int64_t *renderStart) {
-    if (!videoCodec->hasOutputBuffer() && !audioCodec->hasOutputBuffer()) {
-        return;
-    }
-
     /*
-     If there's only a video buffer available, wait until its presentation time
-     and render it.
-     */
-    else if (videoCodec->hasOutputBuffer()) {
-        writeToVideoSink(videoCodec, renderStart);
-    }
-
-    /*
-     If there's only an audio buffer available, same thing.
-     */
-    else if (audioCodec->hasOutputBuffer()) {
-        writeToAudioSink(audioCodec, renderStart);
-    }
-
-    /*
-     Otherwise both are available, so wait until the first's presentation time and
+     If both are available, wait until the first's presentation time and
      render it, or render both if both are ready.
      */
-    else {
+    if (videoCodec->hasOutputBuffer() && audioCodec->hasOutputBuffer()) {
         VROCodecOutputBuffer videoBuffer = videoCodec->nextOutputBuffer();
         int64_t videoDelay = computeDelayToRender(videoBuffer, renderStart);
 
@@ -455,6 +492,21 @@ void VROVideoLooper::writeToSinks(VROCodec *videoCodec, VROCodec *audioCodec, in
                 audioCodec->popOutputBuffer();
             }
         }
+    }
+
+    /*
+     If there's only a video buffer available, wait until its presentation time
+     and render it.
+     */
+    else if (videoCodec->hasOutputBuffer()) {
+        writeToVideoSink(videoCodec, renderStart);
+    }
+
+    /*
+     If there's only an audio buffer available, same thing.
+     */
+    else if (audioCodec->hasOutputBuffer()) {
+        writeToAudioSink(audioCodec, renderStart);
     }
 }
 
@@ -504,6 +556,7 @@ int64_t VROVideoLooper::computeDelayToRender(VROCodecOutputBuffer buffer, int64_
     int64_t currentTime = systemnanotime();
     if (*renderStart < 0) {
         *renderStart = currentTime - presentationNano;
+        pinfo("[video] render start reset to %lld", (*renderStart / 1000));
     }
 
     /*

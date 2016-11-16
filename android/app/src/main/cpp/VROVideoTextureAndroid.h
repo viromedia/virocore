@@ -51,11 +51,20 @@ public:
      Lifecycle operations.
      */
     void stop() {
+        clear();
         AMediaCodec_stop(_codec);
         AMediaCodec_delete(_codec);
     }
     void flush() {
+        clear();
         AMediaCodec_flush(_codec);
+    }
+    void clear() {
+        while (!readyOutputBuffers.empty()) {
+            VROCodecOutputBuffer buffer = readyOutputBuffers.front();
+            releaseOutputBuffer(buffer.index, false);
+            readyOutputBuffers.pop();
+        }
     }
 
     /*
@@ -118,6 +127,9 @@ class VROMediaData {
 public:
 
     int fd;
+    int32_t audioSampleRate;
+    int32_t audioNumChannels;
+
     ANativeWindow *window;
     AMediaExtractor *extractor;
     VROCodec *videoCodec = nullptr;
@@ -128,6 +140,7 @@ public:
     bool sawOutputEOS;
     bool isPlaying;
     bool renderOnce;
+    bool loop;
 
     virtual ~VROMediaData() {
         delete (videoCodec);
@@ -184,7 +197,6 @@ private:
     VROMediaData _mediaData;
     VROVideoLooper *_looper;
     bool _paused;
-    bool _loop;
 
     void createVideoTexture();
 
