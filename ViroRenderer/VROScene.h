@@ -15,6 +15,7 @@
 #include "VROAllocationTracker.h"
 #include "VROAudioPlayer.h"
 #include "VROSortKey.h"
+#include "VROQuaternion.h"
 
 class VRONode;
 class VRORenderContext;
@@ -56,6 +57,7 @@ public:
     void setBackgroundCube(std::shared_ptr<VROTexture> textureCube);
     void setBackgroundCube(VROVector4f color);
     void setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere);
+    void setBackgroundRotation(VROQuaternion rotation);
     std::shared_ptr<VROGeometry> getBackground() const {
         return _background;
     }
@@ -86,7 +88,12 @@ private:
      The background visual to display. Rendered before any nodes.
      */
     std::shared_ptr<VROGeometry> _background;
-    
+
+    /*
+     The rotation to apply to the background geometry
+     */
+    VROQuaternion _backgroundRotation;
+
     /*
      The nodes ordered for rendering by their sort keys.
      */

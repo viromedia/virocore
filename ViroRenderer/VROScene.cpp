@@ -39,8 +39,11 @@ void VROScene::renderBackground(const VRORenderContext &renderContext,
     
     std::shared_ptr<VROMaterial> &material = _background->getMaterials()[0];
     material->bindShader(driver);
-    
-    _background->render(0, material, {}, {}, 1.0, renderContext, driver);
+
+    VROMatrix4f transform;
+    transform = _backgroundRotation.getMatrix().multiply(transform);
+
+    _background->render(0, material, transform, {}, 1.0, renderContext, driver);
 }
 
 void VROScene::render(const VRORenderContext &context,
@@ -133,6 +136,10 @@ void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
     material->getDiffuse().setContents(textureSphere);
     material->setWritesToDepthBuffer(false);
     material->setReadsFromDepthBuffer(false);
+}
+
+void VROScene::setBackgroundRotation(VROQuaternion rotation) {
+    _backgroundRotation = rotation;
 }
 
 std::vector<VROHitTestResult> VROScene::hitTest(VROVector3f ray, const VRORenderContext &context,
