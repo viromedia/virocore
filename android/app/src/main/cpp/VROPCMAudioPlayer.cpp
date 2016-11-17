@@ -11,6 +11,13 @@
 #include <cmath>
 
 VROPCMAudioPlayer::VROPCMAudioPlayer(int sampleRate, SLuint32 numChannels, int bufferSize) :
+        _audio(nullptr),
+        _outputMix(nullptr),
+        _player(nullptr),
+        _audioEngine(nullptr),
+        _playState(nullptr),
+        _bufferQueue(nullptr),
+        _volume(nullptr),
         _sampleRate(sampleRate * 1000),
         _bufferSize(bufferSize) {
 
@@ -40,22 +47,20 @@ VROPCMAudioPlayer::VROPCMAudioPlayer(int sampleRate, SLuint32 numChannels, int b
         channelMask = SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT;
     }
 
-    // configure audio source
-    SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 2};
+    // Configure the audio source
+    SLDataLocator_AndroidSimpleBufferQueue locBufferQueue = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 2};
     SLDataFormat_PCM formatPCM = {SL_DATAFORMAT_PCM, numChannels, SL_SAMPLINGRATE_8,
                                   SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
                                   channelMask, SL_BYTEORDER_LITTLEENDIAN};
 
     formatPCM.samplesPerSec = _sampleRate;
-    SLDataSource audioSource = {&loc_bufq, &formatPCM};
+    SLDataSource audioSource = {&locBufferQueue, &formatPCM};
 
-    // configure audio sink
-    SLDataLocator_OutputMix loc_outmix = {SL_DATALOCATOR_OUTPUTMIX, _outputMix};
-    SLDataSink audioSink = {&loc_outmix, NULL};
+    // Configure the audio sink
+    SLDataLocator_OutputMix locOutputMix = {SL_DATALOCATOR_OUTPUTMIX, _outputMix};
+    SLDataSink audioSink = {&locOutputMix, NULL};
 
-    /*
-     Create the audio player.
-     */
+    // Create the audio player
     const SLInterfaceID ids[3] = {SL_IID_BUFFERQUEUE, SL_IID_VOLUME};
     const SLboolean req[3] = {SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE};
 
@@ -76,24 +81,27 @@ VROPCMAudioPlayer::VROPCMAudioPlayer(int sampleRate, SLuint32 numChannels, int b
     result = (*_player)->GetInterface(_player, SL_IID_VOLUME, &_volume);
     passert(result == SL_RESULT_SUCCESS);
 
-    // register callback on the buffer queue
-    //result = (*_bufferQueue)->RegisterCallback(_bufferQueue, playerCallback, NULL);
-    //passert(result == SL_RESULT_SUCCESS);
-    //(void)result;
-
     // Set the player's state to playing
     result = (*_playState)->SetPlayState(_playState, SL_PLAYSTATE_PLAYING);
     passert(result == SL_RESULT_SUCCESS);
 }
 
 VROPCMAudioPlayer::~VROPCMAudioPlayer() {
-
+    if (_audio) {
+        (*_audio)->Destroy(_audio);
+    }
+    if (_outputMix) {
+        (*_outputMix)->Destroy(_outputMix);
+    }
+    if (_player) {
+        (*_player)->Destroy(_player);
+    }
 }
 
 void VROPCMAudioPlayer::queueAudio(const char *audio, int size) {
     SLresult result = (*_bufferQueue)->Enqueue(_bufferQueue, audio, size);
     if (result != SL_RESULT_SUCCESS) {
-        pinfo("[audio]: error enqueuing PCM data [result: %d]", result);
+        pinfo("[audio] error enqueuing PCM data [result: %d]", result);
     }
 }
 

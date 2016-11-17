@@ -39,11 +39,17 @@ public:
 
 private:
 
+    /*
+     Allocated audio engine components. Must be deallocated.
+     */
     SLObjectItf _audio;
-    SLEngineItf _audioEngine;
     SLObjectItf _outputMix;
-
     SLObjectItf _player;
+
+    /*
+     Audio interfaces.
+     */
+    SLEngineItf _audioEngine;
     SLPlayItf _playState;
     SLAndroidSimpleBufferQueueItf _bufferQueue;
     SLVolumeItf _volume;

@@ -34,6 +34,7 @@ void *VROPlatformLoadImageAssetRGBA8888(std::string resource, int *bitmapLength,
 
 // Create a video sink on the Java side. Returns the Surface.
 jobject VROPlatformCreateVideoSink(int textureId);
+void VROPlatformDestroyVideoSink(int textureId);
 
 // Get audio properties for this device.
 int VROPlatformGetAudioSampleRate();

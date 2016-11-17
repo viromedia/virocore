@@ -19,7 +19,7 @@ class VROLooper {
         virtual ~VROLooper();
 
         void post(int what, void *data, bool flush = false);
-        void quit();
+        virtual void quit();
 
         virtual void handle(int what, void *data);
 

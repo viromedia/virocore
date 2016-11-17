@@ -19,9 +19,10 @@ enum {
     kMsgPause,
     kMsgResume,
     kMsgPauseAck,
-    kMsgDecodeDone,
+    kMsgDestroy,
     kMsgSeek,
     kMsgLoop,
+    kMsgSetLoop,
     kMsgVolume,
     kMsgMute
 };
@@ -31,32 +32,18 @@ VROVideoTextureAndroid::VROVideoTextureAndroid() :
         _looper(nullptr),
         _paused(true) {
 
-    _mediaData.fd = -1;
-    _mediaData.window = nullptr;
-    _mediaData.extractor = nullptr;
-    _mediaData.videoCodec = nullptr;
-    _mediaData.audioCodec = nullptr;
-    _mediaData.renderStart = 0;
-    _mediaData.sawInputEOS = false;
-    _mediaData.sawOutputEOS = false;
-    _mediaData.isPlaying = false;
-    _mediaData.renderOnce = false;
-    _mediaData.deviceAudioSampleRate = VROPlatformGetAudioSampleRate();
-    _mediaData.deviceAudioBufferSize = VROPlatformGetAudioBufferSize();
-    _mediaData.audioNumChannels = 1;
-    _mediaData.loop = false;
-    _mediaData.volume = 1.0;
-    _mediaData.muted = false;
 }
 
 VROVideoTextureAndroid::~VROVideoTextureAndroid() {
-    delete (_looper);
+    if (_looper) {
+        _looper->quit();
+        delete (_looper);
+    }
 }
 
-void VROVideoTextureAndroid::createVideoTexture() {
-    GLuint textureId;
-    glGenTextures(1, &textureId);
-    glBindTexture(GL_TEXTURE_EXTERNAL_OES, textureId);
+ANativeWindow *VROVideoTextureAndroid::createVideoTexture(GLuint *textureId) {
+    glGenTextures(1, textureId);
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, *textureId);
 
     // Can't do mipmapping with video textures, and clamp to edge is only option
     glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -65,46 +52,74 @@ void VROVideoTextureAndroid::createVideoTexture() {
     glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(
-            new VROTextureSubstrateOpenGL(GL_TEXTURE_EXTERNAL_OES, textureId, true));
+            new VROTextureSubstrateOpenGL(GL_TEXTURE_EXTERNAL_OES, *textureId, true));
     setSubstrate(std::move(substrate));
 
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jobject jsurface = VROPlatformCreateVideoSink(textureId);
+    jobject jsurface = VROPlatformCreateVideoSink(*textureId);
 
-    _mediaData.window = ANativeWindow_fromSurface(env, jsurface);
+    return ANativeWindow_fromSurface(env, jsurface);
 }
 
 void VROVideoTextureAndroid::loadVideo(std::string url,
                                        std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                        VRODriver &driver) {
 
-    frameSynchronizer->addFrameListener(shared_from_this());
-    createVideoTexture();
+    // Note: the Android implementation does not need to be added as a frame listener
+
+    if (_looper) {
+        _looper->quit();
+        delete (_looper);
+        _looper = nullptr;
+    }
 
     JNIEnv *env = VROPlatformGetJNIEnv();
     AAssetManager *assetMgr = VROPlatformGetAssetManager();
 
     off_t outStart, outLen;
-    int fd = AAsset_openFileDescriptor(AAssetManager_open(assetMgr, "testfile.mp4", 0),
+    int fd = AAsset_openFileDescriptor(AAssetManager_open(assetMgr, url.c_str(), 0),
                                        &outStart, &outLen);
     if (fd < 0) {
         pinfo("[video] failed to open URL: %s %d (%s)", url.c_str(), fd, strerror(errno));
         return;
     }
 
-    _mediaData.fd = fd;
-
-    VROMediaData *mediaData = &_mediaData;
-
     AMediaExtractor *extractor = AMediaExtractor_new();
-    media_status_t err = AMediaExtractor_setDataSourceFd(extractor, mediaData->fd,
+    media_status_t err = AMediaExtractor_setDataSourceFd(extractor, fd,
                                                          static_cast<off64_t>(outStart),
                                                          static_cast<off64_t>(outLen));
-    close(mediaData->fd);
+    close(fd);
     if (err != AMEDIA_OK) {
-        pinfo("[video] setDataSource error: %d", err);
+        pinfo("[video] error loading video [%d]", err);
+        AMediaExtractor_delete(extractor);
+
         return;
     }
+
+    /*
+     IMPORTANT: quit() must be invoked on the looper before deleting it,
+     to perform necessary cleanup on the worker thread.
+     */
+    _looper = new VROVideoLooper();
+
+    VROMediaData &mediaData = _looper->getData();
+    mediaData.window = nullptr;
+    mediaData.extractor = nullptr;
+    mediaData.videoCodec = nullptr;
+    mediaData.audioCodec = nullptr;
+    mediaData.renderStart = -1;
+    mediaData.sawInputEOS = false;
+    mediaData.sawOutputEOS = false;
+    mediaData.isPlaying = false;
+    mediaData.renderOnce = true;
+    mediaData.deviceAudioSampleRate = VROPlatformGetAudioSampleRate();
+    mediaData.deviceAudioBufferSize = VROPlatformGetAudioBufferSize();
+    mediaData.audioNumChannels = 1;
+    mediaData.loop = false;
+    mediaData.volume = 1.0;
+    mediaData.muted = false;
+    mediaData.extractor = extractor;
+    mediaData.window = createVideoTexture(&mediaData.textureId);
 
     int numTracks = AMediaExtractor_getTrackCount(extractor);
 
@@ -121,40 +136,23 @@ void VROVideoTextureAndroid::loadVideo(std::string url,
         }
         else if (!strncmp(mime, "video/", 6)) {
             AMediaExtractor_selectTrack(extractor, i);
-
-            AMediaCodec *codec = AMediaCodec_createDecoderByType(mime);
-            AMediaCodec_configure(codec, format, mediaData->window, NULL, 0);
-            AMediaCodec_start(codec);
-
-            mediaData->videoCodec = new VROCodec(VROCodecType::Video, codec, i);
+            mediaData.videoCodec = new VROCodec(VROCodecType::Video, mime, format, mediaData.window, i);
         }
         else if (!strncmp(mime, "audio/", 6)) {
             AMediaExtractor_selectTrack(extractor, i);
+            mediaData.audioCodec = new VROCodec(VROCodecType::Audio, mime, format, nullptr, i);
 
-            AMediaCodec *codec = AMediaCodec_createDecoderByType(mime);
-            AMediaCodec_configure(codec, format, NULL, NULL, 0);
-            AMediaCodec_start(codec);
-
-            AMediaFormat_getInt32(format, AMEDIAFORMAT_KEY_SAMPLE_RATE, &mediaData->sourceAudioSampleRate);
-            AMediaFormat_getInt32(format, AMEDIAFORMAT_KEY_CHANNEL_COUNT, &mediaData->audioNumChannels);
+            AMediaFormat_getInt32(format, AMEDIAFORMAT_KEY_SAMPLE_RATE, &mediaData.sourceAudioSampleRate);
+            AMediaFormat_getInt32(format, AMEDIAFORMAT_KEY_CHANNEL_COUNT, &mediaData.audioNumChannels);
 
             pinfo("[video] audio track has sample rate %d, num channels %d",
-                  mediaData->sourceAudioSampleRate, mediaData->audioNumChannels);
-            mediaData->audioCodec = new VROCodec(VROCodecType::Audio, codec, i);
+                  mediaData.sourceAudioSampleRate, mediaData.audioNumChannels);
         }
 
         AMediaFormat_delete(format);
     }
 
-    mediaData->extractor = extractor;
-    mediaData->renderStart = -1;
-    mediaData->sawInputEOS = false;
-    mediaData->sawOutputEOS = false;
-    mediaData->isPlaying = false;
-    mediaData->renderOnce = true;
-
-    _looper = new VROVideoLooper();
-    _looper->post(kMsgCodecBuffer, &_mediaData);
+    _looper->post(kMsgCodecBuffer, nullptr);
 }
 
 void VROVideoTextureAndroid::prewarm() {
@@ -170,12 +168,12 @@ void VROVideoTextureAndroid::onFrameDidRender(const VRORenderContext &context) {
 }
 
 void VROVideoTextureAndroid::pause() {
-    _looper->post(kMsgPause, &_mediaData);
+    _looper->post(kMsgPause, nullptr);
     _paused = true;
 }
 
 void VROVideoTextureAndroid::play() {
-    _looper->post(kMsgResume, &_mediaData);
+    _looper->post(kMsgResume, nullptr);
     _paused = false;
 }
 
@@ -185,7 +183,6 @@ bool VROVideoTextureAndroid::isPaused() {
 
 void VROVideoTextureAndroid::seekToTime(int seconds) {
     VROVideoSeek *seek = (VROVideoSeek *) malloc(sizeof(VROVideoSeek));
-    seek->data = &_mediaData;
     seek->seekTime = seconds * 1000000;
 
     _looper->post(kMsgSeek, seek);
@@ -193,7 +190,6 @@ void VROVideoTextureAndroid::seekToTime(int seconds) {
 
 void VROVideoTextureAndroid::setMuted(bool muted) {
     VROVideoMute *mute = (VROVideoMute *) malloc(sizeof(VROVideoMute));
-    mute->data = &_mediaData;
     mute->muted = muted;
 
     _looper->post(kMsgMute, mute);
@@ -201,39 +197,55 @@ void VROVideoTextureAndroid::setMuted(bool muted) {
 
 void VROVideoTextureAndroid::setVolume(float volume) {
     VROVideoVolume *vol = (VROVideoVolume *) malloc(sizeof(VROVideoVolume));
-    vol->data = &_mediaData;
     vol->volume = volume;
 
     _looper->post(kMsgVolume, vol);
 }
 
 void VROVideoTextureAndroid::setLoop(bool loop) {
-    _mediaData.loop = loop;
+    VROVideoLoop *lp = (VROVideoLoop *) malloc(sizeof(VROVideoLoop));
+    lp->loop = loop;
+
+    _looper->post(kMsgSetLoop, lp);
 }
 
 VROVideoLooper::~VROVideoLooper() {
+    if (_mediaData.window) {
+        VROPlatformDestroyVideoSink(_mediaData.textureId);
+        ANativeWindow_release(_mediaData.window);
+    }
+    if (_mediaData.extractor) {
+        AMediaExtractor_delete(_mediaData.extractor);
+    }
+    if (_mediaData.textureId) {
+        glDeleteTextures(1, &_mediaData.textureId);
+    }
+
+    delete (_mediaData.videoCodec);
+    delete (_mediaData.audioCodec);
+}
+
+void VROVideoLooper::quit() {
+    post(kMsgDestroy, nullptr, true);
+    VROLooper::quit();
+
     delete (_audio);
 }
 
 void VROVideoLooper::handle(int what, void *obj) {
     switch (what) {
         case kMsgCodecBuffer:
-            doCodecWork((VROMediaData *) obj);
+            doCodecWork();
             break;
 
-        case kMsgDecodeDone: {
-            pinfo("[video] received message [done]");
+        case kMsgDestroy: {
+            pinfo("[video] received message [destroy]");
 
-            VROMediaData *d = (VROMediaData *) obj;
-
-            if (d->videoCodec != nullptr) {
-                d->videoCodec->stop();
-            }
-            if (d->audioCodec != nullptr) {
-                d->audioCodec->stop();
-            }
-
-            AMediaExtractor_delete(d->extractor);
+            /*
+             This message should always be sent with a flush, since
+             we clean up here.
+             */
+            VROMediaData *d = &_mediaData;
             d->sawInputEOS = true;
             d->sawOutputEOS = true;
         }
@@ -243,12 +255,11 @@ void VROVideoLooper::handle(int what, void *obj) {
             pinfo("[video] received message [mute]");
 
             VROVideoMute *mute = (VROVideoMute *) obj;
-            VROMediaData *d = (VROMediaData *) mute->data;
 
             // If audio is null, muted will be set on kMsgResume
-            d->muted = mute->muted;
+            _mediaData.muted = mute->muted;
             if (_audio) {
-                _audio->setMuted(d->muted);
+                _audio->setMuted(mute->muted);
             }
             free (mute);
         }
@@ -258,22 +269,31 @@ void VROVideoLooper::handle(int what, void *obj) {
             pinfo("[video] received message [volume]");
 
             VROVideoVolume *volume = (VROVideoVolume *) obj;
-            VROMediaData *d = (VROMediaData *) volume->data;
 
             // If _audio is null, volume will be set on kMsgResume
-            d->volume = volume->volume;
+            _mediaData.volume = volume->volume;
             if (_audio) {
-                _audio->setVolume(d->volume);
+                _audio->setVolume(volume->volume);
             }
             free (volume);
         }
         break;
 
+        case kMsgSetLoop: {
+            pinfo("[video] received message [set loop]");
+
+            VROVideoLoop *loop = (VROVideoLoop *) obj;
+            _mediaData.loop = loop->loop;
+
+            free (loop);
+        }
+            break;
+
         case kMsgSeek: {
             pinfo("[video] received message [seek]");
 
             VROVideoSeek *seek = (VROVideoSeek *) obj;
-            VROMediaData *d = (VROMediaData *) seek->data;
+            VROMediaData *d = &_mediaData;
 
             AMediaExtractor_seekTo(d->extractor, seek->seekTime, AMEDIAEXTRACTOR_SEEK_NEXT_SYNC);
             if (d->videoCodec != nullptr) {
@@ -298,7 +318,7 @@ void VROVideoLooper::handle(int what, void *obj) {
         case kMsgPause: {
             pinfo("[video] received message [pause]");
 
-            VROMediaData *d = (VROMediaData *) obj;
+            VROMediaData *d = &_mediaData;
             if (d->isPlaying) {
                 if (d->videoCodec) {
                     d->videoCodec->clear();
@@ -316,7 +336,7 @@ void VROVideoLooper::handle(int what, void *obj) {
         case kMsgResume: {
             pinfo("[video] received message [resume]");
 
-            VROMediaData *d = (VROMediaData *) obj;
+            VROMediaData *d = &_mediaData;
             if (!d->isPlaying) {
                 if (!_audio) {
                     _audio = new VROPCMAudioPlayer(d->sourceAudioSampleRate,
@@ -335,7 +355,7 @@ void VROVideoLooper::handle(int what, void *obj) {
 
         case kMsgLoop: {
             pinfo("[video] received message [loop]");
-            VROMediaData *d = (VROMediaData *) obj;
+            VROMediaData *d = &_mediaData;
 
             AMediaExtractor_seekTo(d->extractor, 0, AMEDIAEXTRACTOR_SEEK_NEXT_SYNC);
             if (d->videoCodec) {
@@ -364,7 +384,9 @@ int64_t systemnanotime() {
     return now.tv_sec * 1000000000LL + now.tv_nsec;
 }
 
-void VROVideoLooper::doCodecWork(VROMediaData *d) {
+void VROVideoLooper::doCodecWork() {
+    VROMediaData *d = &_mediaData;
+
     /*
      In this block we read encoded track data from the extractor, and
      write into the codec for decoding.

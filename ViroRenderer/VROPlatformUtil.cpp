@@ -162,6 +162,17 @@ jobject VROPlatformCreateVideoSink(int textureId) {
     return jsurface;
 }
 
+void VROPlatformDestroyVideoSink(int textureId) {
+    JNIEnv *env;
+    getJNIEnv(&env);
+
+    jclass cls = env->GetObjectClass(sActivity);
+    jmethodID jmethod = env->GetMethodID(cls, "destroyVideoSink", "(I)V");
+    env->CallVoidMethod(sActivity, jmethod, textureId);
+
+    env->DeleteLocalRef(cls);
+}
+
 int VROPlatformGetAudioSampleRate() {
     JNIEnv *env;
     getJNIEnv(&env);

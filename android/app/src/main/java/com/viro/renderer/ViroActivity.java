@@ -209,7 +209,7 @@ public class ViroActivity extends AppCompatActivity {
     }
 
     // Accessed by Native code (VROPlatformUtil.cpp)
-    public void removeVideoSink(int textureId) {
+    public void destroyVideoSink(int textureId) {
         VideoSink videoSink = mVideoSinks.remove(textureId);
         mFrameListeners.remove(videoSink);
 

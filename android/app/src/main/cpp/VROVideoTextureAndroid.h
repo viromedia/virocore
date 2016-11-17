@@ -69,8 +69,21 @@ public:
 class VROCodec {
 public:
 
-    VROCodec(VROCodecType type, AMediaCodec *codec, int track) :
-            _type(type), _codec(codec), _track(track) {}
+    VROCodec(VROCodecType type, const char *mime,
+             AMediaFormat *format, ANativeWindow *window,
+             int track) :
+            _type(type), _track(track) {
+
+        _codec = AMediaCodec_createDecoderByType(mime);
+        AMediaCodec_configure(_codec, format, window, NULL, 0);
+        AMediaCodec_start(_codec);
+    }
+
+    virtual ~VROCodec() {
+        clear();
+        AMediaCodec_stop(_codec);
+        AMediaCodec_delete(_codec);
+    }
 
     VROCodecType getType() const { return _type; }
     AMediaCodec *getCodec() const { return _codec; }
@@ -79,11 +92,6 @@ public:
     /*
      Lifecycle operations.
      */
-    void stop() {
-        clear();
-        AMediaCodec_stop(_codec);
-        AMediaCodec_delete(_codec);
-    }
     void flush() {
         clear();
         AMediaCodec_flush(_codec);
@@ -160,7 +168,6 @@ class VROMediaData {
 
 public:
 
-    int fd;
     int32_t deviceAudioSampleRate;
     int32_t deviceAudioBufferSize;
     int32_t sourceAudioSampleRate;
@@ -169,6 +176,7 @@ public:
     bool muted;
     float volume;
 
+    GLuint textureId;
     ANativeWindow *window;
     AMediaExtractor *extractor;
     VROCodec *videoCodec = nullptr;
@@ -182,8 +190,7 @@ public:
     bool loop;
 
     virtual ~VROMediaData() {
-        delete (videoCodec);
-        delete (audioCodec);
+
     }
 
     VROCodec *codecForTrack(int track) {
@@ -203,19 +210,20 @@ public:
  More data structures used for communication with VROVideoLooper.
  */
 typedef struct {
-    VROMediaData *data;
     int64_t seekTime;
 } VROVideoSeek;
 
 typedef struct {
-    VROMediaData *data;
     float volume;
 } VROVideoVolume;
 
 typedef struct {
-    VROMediaData *data;
     bool muted;
 } VROVideoMute;
+
+typedef struct {
+    bool loop;
+} VROVideoLoop;
 
 class VROVideoLooper;
 
@@ -251,11 +259,10 @@ public:
 
 private:
 
-    VROMediaData _mediaData;
     VROVideoLooper *_looper;
     bool _paused;
 
-    void createVideoTexture();
+    ANativeWindow *createVideoTexture(GLuint *textureId);
 
 };
 
@@ -269,6 +276,11 @@ class VROVideoLooper : public VROLooper {
 public:
 
     virtual ~VROVideoLooper();
+    virtual void quit();
+
+    VROMediaData &getData() {
+        return _mediaData;
+    }
     void handle(int what, void* obj);
 
 private:
@@ -278,7 +290,7 @@ private:
      decodes them via their associated codecs, and writes the data
      into the corresponding video or audio sinks.
      */
-    void doCodecWork(VROMediaData *d);
+    void doCodecWork();
 
     /*
      Write the latest data from the given media extractor into the
@@ -319,6 +331,11 @@ private:
      The audio player for playing audio tracks via raw PCM data.
      */
     VROPCMAudioPlayer *_audio = nullptr;
+
+    /*
+     The data associated with the video.
+     */
+    VROMediaData _mediaData;
 
 };
 

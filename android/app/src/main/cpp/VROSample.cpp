@@ -12,6 +12,8 @@
 #include "VROImageAndroid.h"
 #include "VROSceneRendererCardboard.h"
 #include "VROVideoTextureAndroid.h"
+#include <chrono>
+#include <ctime>
 
 VROSample::VROSample() {
 
@@ -23,6 +25,10 @@ VROSample::~VROSample() {
 
 std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                                             VRODriver &driver) {
+
+    _driver = &driver;
+    frameSynchronizer->addFrameListener(shared_from_this());
+
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundCube(getNiagaraTexture());
@@ -63,14 +69,14 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     std::shared_ptr<VROBox> box = VROBox::createBox(2, 4, 2);
     box->setName("Box 1");
 
-    std::shared_ptr<VROVideoTexture> video = std::make_shared<VROVideoTextureAndroid>();
-    video->loadVideo("", frameSynchronizer, driver);
-    video->play();
+    _videoA = std::make_shared<VROVideoTextureAndroid>();
+    _videoA->loadVideo("vest.mp4", frameSynchronizer, driver);
+    _videoA->play();
 
-    std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
-    material->setLightingModel(VROLightingModel::Phong);
-    material->getDiffuse().setContents(video);
-    material->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("specular.png")));
+    _material = box->getMaterials()[0];
+    _material->setLightingModel(VROLightingModel::Phong);
+    _material->getDiffuse().setContents(_videoA);
+    _material->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("specular.png")));
 
     std::vector<std::string> modifierCode =  { "uniform float testA;",
                                                "uniform float testB;",
@@ -82,7 +88,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     modifier->setUniformBinder("testA", [](VROUniform *uniform, GLuint location) {
         uniform->setFloat(1.0);
     });
-    material->addShaderModifier(modifier);
+    _material->addShaderModifier(modifier);
 
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
@@ -137,4 +143,23 @@ std::shared_ptr<VROTexture> VROSample::getNiagaraTexture() {
     };
 
     return std::make_shared<VROTexture>(cubeImages);
+}
+
+// Test changing the video after a given number of seconds
+std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
+static bool isSet = false;
+
+void VROSample::onFrameWillRender(const VRORenderContext &context) {
+    std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = now - start;
+
+    if (elapsed_seconds.count() > 8 && !isSet) {
+        _videoA->loadVideo("testfile.mp4", {}, *_driver);
+        _videoA->play();
+        isSet = true;
+    }
+}
+
+void VROSample::onFrameDidRender(const VRORenderContext &context) {
+
 }
