@@ -1,5 +1,5 @@
 //
-//  VROSoundEffect.h
+//  VROSoundEffectAndroid.h
 //  ViroRenderer
 //
 //  Created by Raj Advani on 11/17/16.

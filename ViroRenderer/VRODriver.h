@@ -21,6 +21,7 @@ class VROData;
 class VROImage;
 class VROVideoTextureCache;
 class VROSoundEffect;
+class VROAudioPlayer;
 
 enum class VROTextureType;
 enum class VROTextureFormat;
@@ -42,6 +43,7 @@ public:
                                                      int width, int height) = 0;
     virtual VROVideoTextureCache *newVideoTextureCache() = 0;
     virtual std::shared_ptr<VROSoundEffect> newSoundEffect(std::string fileName) = 0;
+    virtual std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::string fileName) = 0;
 
 };
 

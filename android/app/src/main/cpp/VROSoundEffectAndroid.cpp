@@ -7,7 +7,6 @@
 //
 
 #include "VROSoundEffectAndroid.h"
-#include "vr/gvr/capi/include/gvr_audio.h"
 #include "VROLog.h"
 
 VROSoundEffectAndroid::VROSoundEffectAndroid(std::string fileName, std::shared_ptr<gvr::AudioApi> gvrAudio) :

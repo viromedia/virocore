@@ -19,6 +19,7 @@ class VROSceneRendererCardboard;
 class VROTexture;
 class VROVideoTextureAndroid;
 class VROSoundEffect;
+class VROAudioPlayer;
 
 class VROSample : public VRORenderDelegate, public VROFrameListener, public std::enable_shared_from_this<VROSample> {
 
@@ -41,6 +42,7 @@ private:
     std::shared_ptr<VROVideoTextureAndroid> _videoB;
 
     std::shared_ptr<VROSoundEffect> _soundEffect;
+    std::shared_ptr<VROAudioPlayer> _audio;
 
     std::shared_ptr<VROMaterial> _material;
     std::shared_ptr<VROTexture> getNiagaraTexture();

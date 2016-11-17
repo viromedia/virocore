@@ -16,18 +16,19 @@ class VROAudioPlayeriOS : public VROAudioPlayer {
     
 public:
     
-    VROAudioPlayeriOS();
+    VROAudioPlayeriOS(std::string url);
+    VROAudioPlayeriOS(std::shared_ptr<VROData> data);
     virtual ~VROAudioPlayeriOS();
     
-    void setTrack(std::string url, int loopCount);
-    void setTrack(std::shared_ptr<VROData> data, int loopCount);
+    void setLoop(bool loop);
     void play();
-    void stop();
     void pause();
+    void setVolume(float volume);
     
 private:
     
     AVAudioPlayer *_player;
+    float _playVolume;
     
     void doFadeThenPause();
     void doFadeThenStop();

@@ -86,6 +86,13 @@ public:
         
         return std::make_shared<VROSoundEffectiOS>(url);
     }
+    
+    std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::string fileName) {
+        NSURL *fileURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:fileName.c_str()]];
+        std::string url = std::string([[fileURL description] UTF8String]);
+        
+        return std::make_shared<VROAudioPlayeriOS>(url);
+    }
 
 private:
     

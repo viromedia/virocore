@@ -30,6 +30,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     frameSynchronizer->addFrameListener(shared_from_this());
 
     _soundEffect = driver.newSoundEffect("btn_tap.mp3");
+    _audio = driver.newAudioPlayer("underwater.mp3");
 
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();

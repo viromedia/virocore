@@ -35,6 +35,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/VROPCMAudioPlayer.cpp
              src/main/cpp/VROVideoTextureAndroid.cpp
              src/main/cpp/VROSoundEffectAndroid.cpp
+             src/main/cpp/VROAudioPlayerAndroid.cpp
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp

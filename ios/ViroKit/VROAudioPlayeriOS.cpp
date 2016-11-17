@@ -9,43 +9,37 @@
 #include "VROAudioPlayeriOS.h"
 #include "VROData.h"
 
-VROAudioPlayeriOS::VROAudioPlayeriOS() :
-    _player(nullptr) {
+VROAudioPlayeriOS::VROAudioPlayeriOS(std::string url) :
+    _playVolume(1.0) {
+        
+    _player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]]
+                                                     error:NULL];
+    [_player prepareToPlay];
+}
+
+VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROData> data) :
+    _playVolume(1.0) {
     
+    _player = [[AVAudioPlayer alloc] initWithData:[NSData dataWithBytes:data->getData() length:data->getDataLength()]
+                                            error:NULL];
+    [_player prepareToPlay];
 }
 
 VROAudioPlayeriOS::~VROAudioPlayeriOS() {
     
 }
 
-void VROAudioPlayeriOS::setTrack(std::string url, int loopCount) {
-    if (_player) {
-        [_player stop];
-    }
-    
-    _player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]]
-                                                     error:NULL];
-    _player.numberOfLoops = loopCount;
-    [_player prepareToPlay];
+void VROAudioPlayeriOS::setLoop(bool loop) {
+    _player.numberOfLoops = loop ? -1 : 0;
 }
 
-void VROAudioPlayeriOS::setTrack(std::shared_ptr<VROData> data, int loopCount) {
-    if (_player) {
-        [_player stop];
-    }
-    
-    _player = [[AVAudioPlayer alloc] initWithData:[NSData dataWithBytes:data->getData() length:data->getDataLength()]
-                                            error:NULL];
-    _player.numberOfLoops = loopCount;
-    [_player prepareToPlay];
-}
-
-void VROAudioPlayeriOS::stop() {
-    doFadeThenStop();
+void VROAudioPlayeriOS::setVolume(float volume) {
+    _playVolume = volume;
+    _player.volume = volume;
 }
 
 void VROAudioPlayeriOS::play() {
-    _player.volume = 1.0;
+    _player.volume = _playVolume;
     [_player play];
     _paused = false;
 }
@@ -67,14 +61,3 @@ void VROAudioPlayeriOS::doFadeThenPause() {
     }
 }
 
-void VROAudioPlayeriOS::doFadeThenStop() {
-    if (_player.volume > 0.1) {
-        _player.volume = _player.volume - 0.1;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            doFadeThenStop();
-        });
-    }
-    else {
-        [_player stop];
-    }
-}
