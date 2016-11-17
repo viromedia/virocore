@@ -35,9 +35,14 @@ VROVideoTextureAndroid::VROVideoTextureAndroid() :
 }
 
 VROVideoTextureAndroid::~VROVideoTextureAndroid() {
+    killVideo();
+}
+
+void VROVideoTextureAndroid::killVideo() {
     if (_looper) {
         _looper->quit();
         delete (_looper);
+        _looper = nullptr;
     }
 }
 
@@ -67,20 +72,29 @@ void VROVideoTextureAndroid::loadVideo(std::string url,
 
     // Note: the Android implementation does not need to be added as a frame listener
 
-    if (_looper) {
-        _looper->quit();
-        delete (_looper);
-        _looper = nullptr;
+    killVideo();
+
+    AMediaExtractor *extractor = AMediaExtractor_new();
+    media_status_t err = AMediaExtractor_setDataSource(extractor, url.c_str());
+    if (err != AMEDIA_OK) {
+        pinfo("[video] error loading video from URL [%s], error [%d]", url.c_str(), err);
+        AMediaExtractor_delete(extractor);
+
+        return;
     }
 
-    JNIEnv *env = VROPlatformGetJNIEnv();
+    loadVideo(extractor, driver);
+}
+
+void VROVideoTextureAndroid::loadVideoFromAsset(std::string asset, VRODriver &driver) {
+    killVideo();
     AAssetManager *assetMgr = VROPlatformGetAssetManager();
 
     off_t outStart, outLen;
-    int fd = AAsset_openFileDescriptor(AAssetManager_open(assetMgr, url.c_str(), 0),
+    int fd = AAsset_openFileDescriptor(AAssetManager_open(assetMgr, asset.c_str(), 0),
                                        &outStart, &outLen);
     if (fd < 0) {
-        pinfo("[video] failed to open URL: %s %d (%s)", url.c_str(), fd, strerror(errno));
+        pinfo("[video] failed to open URL: %s %d (%s)", asset.c_str(), fd, strerror(errno));
         return;
     }
 
@@ -90,12 +104,16 @@ void VROVideoTextureAndroid::loadVideo(std::string url,
                                                          static_cast<off64_t>(outLen));
     close(fd);
     if (err != AMEDIA_OK) {
-        pinfo("[video] error loading video [%d]", err);
+        pinfo("[video] error loading video from asset [%s], error [%d]", asset.c_str(), err);
         AMediaExtractor_delete(extractor);
 
         return;
     }
 
+    loadVideo(extractor, driver);
+}
+
+void VROVideoTextureAndroid::loadVideo(AMediaExtractor *extractor, VRODriver &driver) {
     /*
      IMPORTANT: quit() must be invoked on the looper before deleting it,
      to perform necessary cleanup on the worker thread.
@@ -168,11 +186,21 @@ void VROVideoTextureAndroid::onFrameDidRender(const VRORenderContext &context) {
 }
 
 void VROVideoTextureAndroid::pause() {
+    if (!_looper) {
+        pinfo("[video] pause ignored, no video is loaded");
+        return;
+    }
+
     _looper->post(kMsgPause, nullptr);
     _paused = true;
 }
 
 void VROVideoTextureAndroid::play() {
+    if (!_looper) {
+        pinfo("[video] play ignored, no video is loaded");
+        return;
+    }
+
     _looper->post(kMsgResume, nullptr);
     _paused = false;
 }
@@ -182,6 +210,11 @@ bool VROVideoTextureAndroid::isPaused() {
 }
 
 void VROVideoTextureAndroid::seekToTime(int seconds) {
+    if (!_looper) {
+        pinfo("[video] seek ignored, no video is loaded");
+        return;
+    }
+
     VROVideoSeek *seek = (VROVideoSeek *) malloc(sizeof(VROVideoSeek));
     seek->seekTime = seconds * 1000000;
 
@@ -189,6 +222,11 @@ void VROVideoTextureAndroid::seekToTime(int seconds) {
 }
 
 void VROVideoTextureAndroid::setMuted(bool muted) {
+    if (!_looper) {
+        pinfo("[video] mute ignored, no video is loaded");
+        return;
+    }
+
     VROVideoMute *mute = (VROVideoMute *) malloc(sizeof(VROVideoMute));
     mute->muted = muted;
 
@@ -196,6 +234,11 @@ void VROVideoTextureAndroid::setMuted(bool muted) {
 }
 
 void VROVideoTextureAndroid::setVolume(float volume) {
+    if (!_looper) {
+        pinfo("[video] set volume ignored, no video is loaded");
+        return;
+    }
+
     VROVideoVolume *vol = (VROVideoVolume *) malloc(sizeof(VROVideoVolume));
     vol->volume = volume;
 
@@ -203,6 +246,11 @@ void VROVideoTextureAndroid::setVolume(float volume) {
 }
 
 void VROVideoTextureAndroid::setLoop(bool loop) {
+    if (!_looper) {
+        pinfo("[video] set loop ignored, no video is loaded");
+        return;
+    }
+
     VROVideoLoop *lp = (VROVideoLoop *) malloc(sizeof(VROVideoLoop));
     lp->loop = loop;
 

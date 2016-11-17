@@ -70,7 +70,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     box->setName("Box 1");
 
     _videoA = std::make_shared<VROVideoTextureAndroid>();
-    _videoA->loadVideo("vest.mp4", frameSynchronizer, driver);
+    _videoA->loadVideoFromAsset("vest.mp4", driver);
     _videoA->play();
 
     _material = box->getMaterials()[0];
@@ -153,8 +153,8 @@ void VROSample::onFrameWillRender(const VRORenderContext &context) {
     std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = now - start;
 
-    if (elapsed_seconds.count() > 8 && !isSet) {
-        _videoA->loadVideo("testfile.mp4", {}, *_driver);
+    if (elapsed_seconds.count() > 10 && !isSet) {
+        _videoA->loadVideo("http://s3-us-west-2.amazonaws.com/viro/360_surf.mp4", {}, *_driver);
         _videoA->play();
         isSet = true;
     }

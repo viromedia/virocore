@@ -239,9 +239,17 @@ public:
     VROVideoTextureAndroid();
     virtual ~VROVideoTextureAndroid();
 
+    /*
+     Standard load video function: loads from URL.
+     */
     virtual void loadVideo(std::string url,
                            std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                            VRODriver &driver);
+
+    /*
+     Load from an asset with the given name.
+     */
+    void loadVideoFromAsset(std::string asset, VRODriver &driver);
 
     void prewarm();
 
@@ -261,6 +269,9 @@ private:
 
     VROVideoLooper *_looper;
     bool _paused;
+
+    void killVideo();
+    void loadVideo( AMediaExtractor *extractor, VRODriver &driver);
 
     ANativeWindow *createVideoTexture(GLuint *textureId);
 

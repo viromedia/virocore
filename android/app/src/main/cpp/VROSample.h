@@ -17,7 +17,7 @@
 class VROSceneController;
 class VROSceneRendererCardboard;
 class VROTexture;
-class VROVideoTexture;
+class VROVideoTextureAndroid;
 
 class VROSample : public VRORenderDelegate, public VROFrameListener, public std::enable_shared_from_this<VROSample> {
 
@@ -34,8 +34,8 @@ public:
 
 private:
 
-    std::shared_ptr<VROVideoTexture> _videoA;
-    std::shared_ptr<VROVideoTexture> _videoB;
+    std::shared_ptr<VROVideoTextureAndroid> _videoA;
+    std::shared_ptr<VROVideoTextureAndroid> _videoB;
 
     std::shared_ptr<VROMaterial> _material;
     std::shared_ptr<VROTexture> getNiagaraTexture();
