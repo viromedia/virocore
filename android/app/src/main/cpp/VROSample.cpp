@@ -29,6 +29,8 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     _driver = &driver;
     frameSynchronizer->addFrameListener(shared_from_this());
 
+    _soundEffect = driver.newSoundEffect("btn_tap.mp3");
+
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundCube(getNiagaraTexture());
@@ -143,6 +145,10 @@ std::shared_ptr<VROTexture> VROSample::getNiagaraTexture() {
     };
 
     return std::make_shared<VROTexture>(cubeImages);
+}
+
+void VROSample::reticleTapped(VROVector3f ray, const VRORenderContext *context) {
+    _soundEffect->play();
 }
 
 // Test changing the video after a given number of seconds

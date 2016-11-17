@@ -17,7 +17,7 @@
 #include <string>
 #include <thread>  // NOLINT
 #include <vector>
-#include "VRODriverOpenGL.h"
+#include "VRODriverOpenGLAndroid.h"
 #include "VRORenderer.h"
 #include "VROFrameSynchronizer.h"
 
@@ -29,7 +29,6 @@
 #include "vr/gvr/capi/include/gvr_types.h"
 #include "VRORenderDelegate.h"
 
-class VRODriverOpenGL;
 class VROSceneController;
 class VRORenderer;
 class VRORenderDelegate;
@@ -44,7 +43,7 @@ class VROSceneRendererCardboard {
      @param gvr_audio_api The (owned) gvr::AudioApi context.
      */
     VROSceneRendererCardboard(gvr_context* gvr_context,
-                              std::unique_ptr<gvr::AudioApi> gvr_audio_api);
+                              std::shared_ptr<gvr::AudioApi> gvrAudio);
     ~VROSceneRendererCardboard();
 
     /*
@@ -113,10 +112,10 @@ private:
     int _frame;
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VRORenderDelegate> _renderDelegate;
-    std::shared_ptr<VRODriverOpenGL> _driver;
+    std::shared_ptr<VRODriverOpenGLAndroid> _driver;
 
     std::unique_ptr<gvr::GvrApi> _gvr;
-    std::unique_ptr<gvr::AudioApi> _gvrAudio;
+    std::shared_ptr<gvr::AudioApi> _gvrAudio;
     std::unique_ptr<gvr::BufferViewportList> _viewportList;
     std::unique_ptr<gvr::SwapChain> _swapchain;
     gvr::BufferViewport _scratchViewport;

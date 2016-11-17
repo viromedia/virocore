@@ -26,14 +26,14 @@ static const uint64_t kPredictionTimeWithoutVsyncNanos = 50000000;
 #pragma mark - Setup
 
 VROSceneRendererCardboard::VROSceneRendererCardboard(gvr_context* gvr_context,
-                                                     std::unique_ptr<gvr::AudioApi> gvr_audio_api) :
+                                                     std::shared_ptr<gvr::AudioApi> gvrAudio) :
     _frame(0),
     _gvr(gvr::GvrApi::WrapNonOwned(gvr_context)),
-    _gvrAudio(std::move(gvr_audio_api)),
+    _gvrAudio(gvrAudio),
     _scratchViewport(_gvr->CreateBufferViewport()) {
 
     _renderer = std::make_shared<VRORenderer>();
-    _driver = std::make_shared<VRODriverOpenGLAndroid>();
+    _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
 }
 
 VROSceneRendererCardboard::~VROSceneRendererCardboard() {
@@ -138,18 +138,18 @@ void VROSceneRendererCardboard::onDrawFrame() {
 }
 
 void VROSceneRendererCardboard::onTriggerEvent() {
-
+    _renderer->handleTap();
 }
 
 void VROSceneRendererCardboard::onPause() {
-  _gvr->PauseTracking();
-  _gvrAudio->Pause();
+    _gvr->PauseTracking();
+    _gvrAudio->Pause();
 }
 
 void VROSceneRendererCardboard::onResume() {
-  _gvr->RefreshViewerProfile();
-  _gvr->ResumeTracking();
-  _gvrAudio->Resume();
+    _gvr->RefreshViewerProfile();
+    _gvr->ResumeTracking();
+    _gvrAudio->Resume();
 }
 
 void VROSceneRendererCardboard::prepareFrame(VROViewport leftViewport, VROFieldOfView fov, VROMatrix4f headRotation) {

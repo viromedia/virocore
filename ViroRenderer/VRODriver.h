@@ -20,6 +20,7 @@ class VROTextureSubstrate;
 class VROData;
 class VROImage;
 class VROVideoTextureCache;
+class VROSoundEffect;
 
 enum class VROTextureType;
 enum class VROTextureFormat;
@@ -40,6 +41,7 @@ public:
     virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type, VROTextureFormat format, std::shared_ptr<VROData> data,
                                                      int width, int height) = 0;
     virtual VROVideoTextureCache *newVideoTextureCache() = 0;
+    virtual std::shared_ptr<VROSoundEffect> newSoundEffect(std::string fileName) = 0;
 
 };
 

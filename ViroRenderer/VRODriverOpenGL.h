@@ -42,6 +42,7 @@ public:
     }
     
     virtual VROVideoTextureCache *newVideoTextureCache() = 0;
+    virtual std::shared_ptr<VROSoundEffect> newSoundEffect(std::string fileName) = 0;
     
     std::shared_ptr<VROLightingUBO> getLightingUBO(int lightsHash) {
         auto it = _lightingUBOs.find(lightsHash);
@@ -80,6 +81,7 @@ public:
             return it->second;
         }
     }
+    
     
 private:
 

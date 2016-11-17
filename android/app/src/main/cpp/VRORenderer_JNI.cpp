@@ -40,14 +40,12 @@ JNI_METHOD(jlong, nativeCreateRenderer)(JNIEnv *env, jclass clazz,
                                         jobject android_context,
                                         jobject asset_mgr,
                                         jlong native_gvr_api) {
-  std::unique_ptr<gvr::AudioApi> audio_context(new gvr::AudioApi);
-  audio_context->Init(env, android_context, class_loader,
-                      GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
+  std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
+  gvrAudio->Init(env, android_context, class_loader, GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
   VROPlatformSetEnv(env, activity, asset_mgr);
 
   return jptr(
-      new VROSceneRendererCardboard(reinterpret_cast<gvr_context *>(native_gvr_api),
-                               std::move(audio_context)));
+      new VROSceneRendererCardboard(reinterpret_cast<gvr_context *>(native_gvr_api), gvrAudio));
 }
 
 JNI_METHOD(void, nativeDestroyRenderer)

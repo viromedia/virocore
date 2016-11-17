@@ -10,6 +10,7 @@
 #define VRODriverOpenGLiOS_h
 
 #include "VRODriverOpenGL.h"
+#include "VROSoundEffectiOS.h"
 #include "VROVideoTextureCacheOpenGL.h"
 
 class VRODriverOpenGLiOS : public VRODriverOpenGL {
@@ -25,6 +26,13 @@ public:
     
     VROVideoTextureCache *newVideoTextureCache() {
         return new VROVideoTextureCacheOpenGL(_eaglContext);
+    }
+    
+    std::shared_ptr<VROSoundEffect> newSoundEffect(std::string fileName) {
+        NSURL *fileURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:fileName.c_str()]];
+        std::string url = std::string([[fileURL description] UTF8String]);
+        
+        return std::make_shared<VROSoundEffectiOS>(url);
     }
     
 private:

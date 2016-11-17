@@ -18,6 +18,7 @@ class VROSceneController;
 class VROSceneRendererCardboard;
 class VROTexture;
 class VROVideoTextureAndroid;
+class VROSoundEffect;
 
 class VROSample : public VRORenderDelegate, public VROFrameListener, public std::enable_shared_from_this<VROSample> {
 
@@ -32,10 +33,14 @@ public:
     void onFrameWillRender(const VRORenderContext &context);
     void onFrameDidRender(const VRORenderContext &context);
 
+    void reticleTapped(VROVector3f ray, const VRORenderContext *context);
+
 private:
 
     std::shared_ptr<VROVideoTextureAndroid> _videoA;
     std::shared_ptr<VROVideoTextureAndroid> _videoB;
+
+    std::shared_ptr<VROSoundEffect> _soundEffect;
 
     std::shared_ptr<VROMaterial> _material;
     std::shared_ptr<VROTexture> getNiagaraTexture();
