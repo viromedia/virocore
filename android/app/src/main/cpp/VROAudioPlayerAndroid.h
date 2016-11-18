@@ -12,7 +12,11 @@
 #include "VROAudioPlayer.h"
 #include <memory>
 #include <string>
+
+// TODO delete
 #include "vr/gvr/capi/include/gvr_audio.h"
+
+class VROAVPlayer;
 
 class VROAudioPlayerAndroid : public VROAudioPlayer {
 
@@ -28,16 +32,7 @@ public:
 
 private:
 
-    std::shared_ptr<gvr::AudioApi> _gvrAudio;
-    std::string _fileName;
-    bool _loop;
-    float _volume;
-
-    /*
-     GVR ID for the currently playing sound. This gets rewritten each time play()
-     is invoked.
-     */
-    gvr::AudioSourceId _audioId;
+    VROAVPlayer *_player;
 
 };
 

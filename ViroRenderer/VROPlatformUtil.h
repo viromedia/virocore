@@ -41,6 +41,7 @@ int VROPlatformGetAudioSampleRate();
 int VROPlatformGetAudioBufferSize();
 
 JNIEnv *VROPlatformGetJNIEnv();
+jobject VROPlatformGetJavaAssetManager();
 AAssetManager *VROPlatformGetAssetManager();
 
 #endif

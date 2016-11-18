@@ -38,6 +38,7 @@ std::string VROPlatformLoadResourceAsString(std::string resource, std::string ty
 // There is one JavaVM per application on Android (shared across activities).
 static JavaVM *sVM = nullptr;
 static jobject sActivity = nullptr;
+static jobject sJavaAssetMgr = nullptr;
 static AAssetManager *sAssetMgr = nullptr;
 
 // Get the JNI Environment for the current thread. If the JavaVM is not yet attached to the
@@ -51,6 +52,7 @@ void getJNIEnv(JNIEnv **jenv) {
 void VROPlatformSetEnv(JNIEnv *env, jobject activity, jobject assetManager) {
     env->GetJavaVM(&sVM);
     sActivity = env->NewGlobalRef(activity);
+    sJavaAssetMgr = env->NewGlobalRef(assetManager);
     sAssetMgr = AAssetManager_fromJava(env, assetManager);
 }
 
@@ -59,6 +61,10 @@ JNIEnv *VROPlatformGetJNIEnv() {
     getJNIEnv(&env);
 
     return env;
+}
+
+jobject VROPlatformGetJavaAssetManager() {
+    return sJavaAssetMgr;
 }
 
 AAssetManager *VROPlatformGetAssetManager() {
@@ -70,8 +76,10 @@ void VROPlatformReleaseEnv() {
     getJNIEnv(&env);
 
     env->DeleteGlobalRef(sActivity);
+    env->DeleteGlobalRef(sJavaAssetMgr);
 
     sActivity = nullptr;
+    sJavaAssetMgr = nullptr;
     sAssetMgr = nullptr;
 }
 

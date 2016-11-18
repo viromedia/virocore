@@ -12,6 +12,7 @@
 #include "VROImageAndroid.h"
 #include "VROSceneRendererCardboard.h"
 #include "VROVideoTextureAndroid.h"
+#include "VROVideoTextureAVP.h"
 #include <chrono>
 #include <ctime>
 
@@ -30,7 +31,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     frameSynchronizer->addFrameListener(shared_from_this());
 
     _soundEffect = driver.newSoundEffect("btn_tap.mp3");
-   // _audio = driver.newAudioPlayer("underwater.mp3");
+    _audio = driver.newAudioPlayer("underwater.mp3");
 
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
@@ -72,14 +73,14 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     std::shared_ptr<VROBox> box = VROBox::createBox(2, 4, 2);
     box->setName("Box 1");
 
-    //_videoA = std::make_shared<VROVideoTextureAndroid>();
-    //_videoA->loadVideoFromAsset("vest.mp4", driver);
-    //_videoA->play();
+    _videoA = std::make_shared<VROVideoTextureAVP>();
+    _videoA->loadVideoFromAsset("vest.mp4", driver);
+    _videoA->play();
 
     _material = box->getMaterials()[0];
     _material->setLightingModel(VROLightingModel::Blinn);
-    //_material->getDiffuse().setContents(_videoA);
-    _material->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("boba.png")));
+    _material->getDiffuse().setContents(_videoA);
+    //_material->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("boba.png")));
     _material->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("specular.png")));
 
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
@@ -117,7 +118,7 @@ std::shared_ptr<VROTexture> VROSample::getNiagaraTexture() {
 }
 
 void VROSample::reticleTapped(VROVector3f ray, const VRORenderContext *context) {
-
+    _audio->play();
 }
 
 // Test changing the video after a given number of seconds

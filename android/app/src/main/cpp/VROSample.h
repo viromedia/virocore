@@ -18,6 +18,7 @@ class VROSceneController;
 class VROSceneRendererCardboard;
 class VROTexture;
 class VROVideoTextureAndroid;
+class VROVideoTextureAVP;
 class VROSoundEffect;
 class VROAudioPlayer;
 
@@ -38,8 +39,8 @@ public:
 
 private:
 
-    std::shared_ptr<VROVideoTextureAndroid> _videoA;
-    std::shared_ptr<VROVideoTextureAndroid> _videoB;
+    std::shared_ptr<VROVideoTextureAVP> _videoA;
+    std::shared_ptr<VROVideoTextureAVP> _videoB;
 
     std::shared_ptr<VROSoundEffect> _soundEffect;
     std::shared_ptr<VROAudioPlayer> _audio;
