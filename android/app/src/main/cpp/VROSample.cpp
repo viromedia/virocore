@@ -30,7 +30,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     frameSynchronizer->addFrameListener(shared_from_this());
 
     _soundEffect = driver.newSoundEffect("btn_tap.mp3");
-    _audio = driver.newAudioPlayer("underwater.mp3");
+   // _audio = driver.newAudioPlayer("underwater.mp3");
 
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
@@ -72,26 +72,15 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     std::shared_ptr<VROBox> box = VROBox::createBox(2, 4, 2);
     box->setName("Box 1");
 
-    _videoA = std::make_shared<VROVideoTextureAndroid>();
-    _videoA->loadVideoFromAsset("vest.mp4", driver);
-    _videoA->play();
+    //_videoA = std::make_shared<VROVideoTextureAndroid>();
+    //_videoA->loadVideoFromAsset("vest.mp4", driver);
+    //_videoA->play();
 
     _material = box->getMaterials()[0];
-    _material->setLightingModel(VROLightingModel::Phong);
-    _material->getDiffuse().setContents(_videoA);
+    _material->setLightingModel(VROLightingModel::Blinn);
+    //_material->getDiffuse().setContents(_videoA);
+    _material->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("boba.png")));
     _material->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("specular.png")));
-
-    std::vector<std::string> modifierCode =  { "uniform float testA;",
-                                               "uniform float testB;",
-                                               "_geometry.position.x = _geometry.position.x + testA;"
-    };
-    std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
-                                                                                      modifierCode);
-
-    modifier->setUniformBinder("testA", [](VROUniform *uniform, GLuint location) {
-        uniform->setFloat(1.0);
-    });
-    _material->addShaderModifier(modifier);
 
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
@@ -99,27 +88,6 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
 
     rootNode->addChildNode(boxNode);
     //boxNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
-
-    /*
-     Create a second box node behind the first.
-     */
-    std::shared_ptr<VROBox> box2 = VROBox::createBox(2, 4, 2);
-    box2->setName("Box 2");
-
-    std::shared_ptr<VROMaterial> material2 = box2->getMaterials()[0];
-    material2->setLightingModel(VROLightingModel::Phong);
-    material2->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("boba.png")));
-    material2->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("specular.png")));
-
-    std::shared_ptr<VRONode> boxNode2 = std::make_shared<VRONode>();
-    boxNode2->setGeometry(box2);
-    boxNode2->setPosition({0, 0, -9});
-    boxNode2->addLight(ambient);
-
-    //rootNode->addChildNode(boxNode2);
-
-    //[self.view setCameraRotationType:VROCameraRotationType::Orbit];
-    //[self.view setOrbitFocalPoint:boxNode->getPosition()];
 
     VROTransaction::begin();
     VROTransaction::setAnimationDuration(6);
@@ -149,7 +117,7 @@ std::shared_ptr<VROTexture> VROSample::getNiagaraTexture() {
 }
 
 void VROSample::reticleTapped(VROVector3f ray, const VRORenderContext *context) {
-    _soundEffect->play();
+
 }
 
 // Test changing the video after a given number of seconds
@@ -157,6 +125,7 @@ std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_c
 static bool isSet = false;
 
 void VROSample::onFrameWillRender(const VRORenderContext &context) {
+    /*
     std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = now - start;
 
@@ -165,6 +134,7 @@ void VROSample::onFrameWillRender(const VRORenderContext &context) {
         _videoA->play();
         isSet = true;
     }
+     */
 }
 
 void VROSample::onFrameDidRender(const VRORenderContext &context) {

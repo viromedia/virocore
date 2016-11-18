@@ -24,7 +24,7 @@ void main() {
     phong.surface_position = v_surface_position;
     phong.camera_position = camera_position;
     
-    phong.ambient_color = ambient_light_color;
+    phong.ambient_color = ambient_light_color.xyz;
     phong.material_color = material_diffuse_surface_color;
     phong.material_shininess = material_shininess;
     phong.diffuse_intensity = material_diffuse_intensity;

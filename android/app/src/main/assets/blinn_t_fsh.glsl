@@ -23,7 +23,7 @@ void main() {
     blinn.surface_position = v_surface_position;
     blinn.camera_position = camera_position;
     
-    blinn.ambient_color = ambient_light_color;
+    blinn.ambient_color = ambient_light_color.xyz;
     blinn.material_color = material_diffuse_surface_color;
     blinn.material_shininess = material_shininess;
     blinn.diffuse_intensity = material_diffuse_intensity;
