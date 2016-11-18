@@ -95,6 +95,11 @@ private:
     VROQuaternion _backgroundRotation;
 
     /*
+     The rotation to apply to the background geometry
+     */
+    VROQuaternion _backgroundRotation;
+    
+    /*
      The nodes ordered for rendering by their sort keys.
      */
     std::vector<VROSortKey> _keys;
