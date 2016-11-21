@@ -13,8 +13,6 @@
 #include "VROSceneRendererCardboard.h"
 #include "VROVideoTextureAndroid.h"
 #include "VROVideoTextureAVP.h"
-#include <chrono>
-#include <ctime>
 
 VROSample::VROSample() {
 
@@ -75,6 +73,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
 
     _videoA = std::make_shared<VROVideoTextureAVP>();
     _videoA->loadVideoFromAsset("vest.mp4", driver);
+    _videoA->setLoop(true);
     _videoA->play();
 
     _material = box->getMaterials()[0];
@@ -117,25 +116,39 @@ std::shared_ptr<VROTexture> VROSample::getNiagaraTexture() {
     return std::make_shared<VROTexture>(cubeImages);
 }
 
+static int count = 0;
+
 void VROSample::reticleTapped(VROVector3f ray, const VRORenderContext *context) {
-    _audio->play();
+    if (count == 0) {
+        _videoA->setVolume(0.5);
+    }
+    else if (count == 1) {
+        _videoA->setMuted(true);
+    }
+    else if (count == 2) {
+        _videoA->setMuted(false);
+    }
+    else if (count == 3) {
+        _videoA->setVolume(1.0);
+    }
+    else if (count == 4) {
+        _videoA->seekToTime(2);
+    }
+    else if (count == 5) {
+        _videoA->pause();
+    }
+    else if (count == 6) {
+        _videoA->play();
+    }
+
+    ++count;
+    if (count == 7) {
+        count = 0;
+    }
 }
 
-// Test changing the video after a given number of seconds
-std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
-static bool isSet = false;
-
 void VROSample::onFrameWillRender(const VRORenderContext &context) {
-    /*
-    std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds = now - start;
 
-    if (elapsed_seconds.count() > 10 && !isSet) {
-        _videoA->loadVideo("http://s3-us-west-2.amazonaws.com/viro/360_surf.mp4", {}, *_driver);
-        _videoA->play();
-        isSet = true;
-    }
-     */
 }
 
 void VROSample::onFrameDidRender(const VRORenderContext &context) {

@@ -209,7 +209,7 @@ bool VROVideoTextureAndroid::isPaused() {
     return _paused;
 }
 
-void VROVideoTextureAndroid::seekToTime(int seconds) {
+void VROVideoTextureAndroid::seekToTime(float seconds) {
     if (!_looper) {
         pinfo("[video] seek ignored, no video is loaded");
         return;

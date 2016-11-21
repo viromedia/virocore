@@ -25,6 +25,9 @@ public:
     void pause();
     void setVolume(float volume);
     
+    void setMuted(bool muted);
+    void seekToTime(float seconds);
+    
 private:
     
     AVAudioPlayer *_player;

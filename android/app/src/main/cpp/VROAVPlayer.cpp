@@ -19,7 +19,8 @@ inline VROAVPlayer *native(jlong ptr) {
     return reinterpret_cast<VROAVPlayer *>(ptr);
 }
 
-VROAVPlayer::VROAVPlayer() {
+VROAVPlayer::VROAVPlayer() :
+    _jsurface(nullptr) {
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     jclass cls = env->FindClass(AVPlayerClass);
@@ -33,6 +34,10 @@ VROAVPlayer::VROAVPlayer() {
 VROAVPlayer::~VROAVPlayer() {
     JNIEnv *env = VROPlatformGetJNIEnv();
     env->DeleteGlobalRef(_javPlayer);
+
+    if (_jsurface) {
+        env->DeleteGlobalRef(_jsurface);
+    }
 }
 
 bool VROAVPlayer::setDataSourceURL(const char *fileOrURL) {
@@ -67,11 +72,19 @@ bool VROAVPlayer::setDataSourceAsset(const char *assetName) {
 
 void VROAVPlayer::setSurface(GLuint textureId) {
     JNIEnv *env = VROPlatformGetJNIEnv();
+
     jobject jsurface = VROPlatformCreateVideoSink(textureId);
+    _jsurface = env->NewGlobalRef(jsurface);
+
+    bindVideoSink();
+}
+
+void VROAVPlayer::bindVideoSink() {
+    JNIEnv *env = VROPlatformGetJNIEnv();
 
     jclass cls = env->GetObjectClass(_javPlayer);
     jmethodID jmethod = env->GetMethodID(cls, "setVideoSink", "(Landroid/view/Surface;)V");
-    env->CallVoidMethod(_javPlayer, jmethod, jsurface);
+    env->CallVoidMethod(_javPlayer, jmethod, _jsurface);
 
     env->DeleteLocalRef(cls);
 }
@@ -96,6 +109,16 @@ void VROAVPlayer::play() {
     env->DeleteLocalRef(cls);
 }
 
+void VROAVPlayer::reset() {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+
+    jclass cls = env->GetObjectClass(_javPlayer);
+    jmethodID jmethod = env->GetMethodID(cls, "reset", "()V");
+    env->CallVoidMethod(_javPlayer, jmethod);
+
+    env->DeleteLocalRef(cls);
+}
+
 bool VROAVPlayer::isPaused() {
     JNIEnv *env = VROPlatformGetJNIEnv();
 
@@ -107,11 +130,11 @@ bool VROAVPlayer::isPaused() {
     return paused;
 }
 
-void VROAVPlayer::seekToTime(int seconds) {
+void VROAVPlayer::seekToTime(float seconds) {
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     jclass cls = env->GetObjectClass(_javPlayer);
-    jmethodID jmethod = env->GetMethodID(cls, "seekToTime", "(I)V");
+    jmethodID jmethod = env->GetMethodID(cls, "seekToTime", "(F)V");
     env->CallVoidMethod(_javPlayer, jmethod, seconds);
 
     env->DeleteLocalRef(cls);
@@ -121,7 +144,7 @@ void VROAVPlayer::setMuted(bool muted) {
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     jclass cls = env->GetObjectClass(_javPlayer);
-    jmethodID jmethod = env->GetMethodID(cls, "pause", "(Z)V");
+    jmethodID jmethod = env->GetMethodID(cls, "setMuted", "(Z)V");
     env->CallVoidMethod(_javPlayer, jmethod, muted);
 
     env->DeleteLocalRef(cls);
@@ -131,7 +154,7 @@ void VROAVPlayer::setVolume(float volume) {
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     jclass cls = env->GetObjectClass(_javPlayer);
-    jmethodID jmethod = env->GetMethodID(cls, "pause", "(F)V");
+    jmethodID jmethod = env->GetMethodID(cls, "setVolume", "(F)V");
     env->CallVoidMethod(_javPlayer, jmethod, volume);
 
     env->DeleteLocalRef(cls);

@@ -34,3 +34,11 @@ void VROAudioPlayerAndroid::pause() {
 void VROAudioPlayerAndroid::setVolume(float volume) {
     _player->setVolume(volume);
 }
+
+void VROAudioPlayerAndroid::setMuted(bool muted) {
+    _player->setMuted(muted);
+}
+
+void VROAudioPlayerAndroid::seekToTime(float seconds) {
+    _player->seekToTime(seconds);
+}

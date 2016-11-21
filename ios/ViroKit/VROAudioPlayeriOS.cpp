@@ -33,6 +33,19 @@ void VROAudioPlayeriOS::setLoop(bool loop) {
     _player.numberOfLoops = loop ? -1 : 0;
 }
 
+void VROAudioPlayeriOS::setMuted(bool muted) {
+    if (muted) {
+        _player.volume = 0;
+    }
+    else {
+        _player.volume = _playVolume;
+    }
+}
+
+void VROAudioPlayeriOS::seekToTime(float seconds) {
+    _player.currentTime = seconds;
+}
+
 void VROAudioPlayeriOS::setVolume(float volume) {
     _playVolume = volume;
     _player.volume = volume;

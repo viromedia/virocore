@@ -27,10 +27,10 @@ VROVideoTextureAVP::~VROVideoTextureAVP() {
 }
 
 void VROVideoTextureAVP::loadVideo(std::string url,
-                       std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                       VRODriver &driver) {
+                                   std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+                                   VRODriver &driver) {
 
-    // TODO
+    _player->setDataSourceURL(url.c_str());
 }
 
 void VROVideoTextureAVP::loadVideoFromAsset(std::string asset, VRODriver &driver) {
@@ -53,12 +53,12 @@ bool VROVideoTextureAVP::isPaused() {
     return _player->isPaused();
 }
 
-void VROVideoTextureAVP::seekToTime(int seconds) {
+void VROVideoTextureAVP::seekToTime(float seconds) {
     _player->seekToTime(seconds);
 }
 
 void VROVideoTextureAVP::setMuted(bool muted) {
-    // TODO
+    _player->setMuted(muted);
 }
 
 void VROVideoTextureAVP::setVolume(float volume) {

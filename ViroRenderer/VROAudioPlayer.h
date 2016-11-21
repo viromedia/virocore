@@ -23,6 +23,8 @@ public:
     virtual void play() = 0;
     virtual void pause() = 0;
     virtual void setVolume(float volume) = 0;
+    virtual void setMuted(bool muted) = 0;
+    virtual void seekToTime(float seconds) = 0;
     
 };
 

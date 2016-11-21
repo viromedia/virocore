@@ -21,15 +21,16 @@ import java.io.IOException;
 public class AVPlayer {
 
     private MediaPlayer _mediaPlayer;
+    private float _volume;
 
     public AVPlayer() {
         _mediaPlayer = new MediaPlayer();
-
-
+        _volume = 1.0f;
     }
 
     public boolean setDataSourceURL(String pathOrURL) {
         try {
+            reset();
             _mediaPlayer.setDataSource(pathOrURL);
             _mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             _mediaPlayer.prepare();
@@ -43,7 +44,9 @@ public class AVPlayer {
 
     public boolean setDataSourceAsset(String asset, AssetManager assetManager) {
         try {
+            reset();
             AssetFileDescriptor afd = assetManager.openFd(asset);
+
             _mediaPlayer.setDataSource(afd);
             _mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             _mediaPlayer.prepare();
@@ -59,8 +62,11 @@ public class AVPlayer {
         _mediaPlayer.setSurface(videoSink);
     }
 
-    public void stop() {
-        _mediaPlayer.stop();
+    public void reset() {
+        if (_mediaPlayer.isPlaying()) {
+            _mediaPlayer.stop();
+        }
+        _mediaPlayer.reset();
     }
 
     public void play() {
@@ -80,10 +86,20 @@ public class AVPlayer {
     }
 
     public void setVolume(float volume) {
-        _mediaPlayer.setVolume(volume, volume);
+        _volume = volume;
+        _mediaPlayer.setVolume(_volume, _volume);
     }
 
-    public void seekTo(int seconds) {
-        _mediaPlayer.seekTo(seconds * 1000);
+    public void setMuted(boolean muted) {
+        if (muted) {
+            _mediaPlayer.setVolume(0, 0);
+        }
+        else {
+            _mediaPlayer.setVolume(_volume, _volume);
+        }
+    }
+
+    public void seekToTime(float seconds) {
+        _mediaPlayer.seekTo((int) (seconds * 1000));
     }
 }
