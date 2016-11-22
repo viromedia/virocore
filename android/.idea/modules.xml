@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/libs/gvr/gvr.iml" filepath="$PROJECT_DIR$/libs/gvr/gvr.iml" />
       <module fileurl="file://$PROJECT_DIR$/libs/libs.iml" filepath="$PROJECT_DIR$/libs/libs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/renderertest/renderertest.iml" filepath="$PROJECT_DIR$/renderertest/renderertest.iml" />
     </modules>
   </component>
 </project>

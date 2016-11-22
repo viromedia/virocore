@@ -1,1 +1,1 @@
-include ':app', ':libs:gvr'
+include ':app', ':libs:gvr', ':renderertest'

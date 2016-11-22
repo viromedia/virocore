@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/libs" />
             <option value="$PROJECT_DIR$/libs/gvr" />
+            <option value="$PROJECT_DIR$/renderertest" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

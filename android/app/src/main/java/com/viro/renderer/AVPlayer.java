@@ -47,9 +47,14 @@ public class AVPlayer {
             reset();
             AssetFileDescriptor afd = assetManager.openFd(asset);
 
-            _mediaPlayer.setDataSource(afd);
-            _mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            _mediaPlayer.prepare();
+            // MediaPlayer.setDataSource(AssetFileDescriptor) was introduced w/ API Level 24 (Nougat)
+            if (android.os.Build.VERSION.SDK_INT >= 24) {
+                _mediaPlayer.setDataSource(afd);
+                _mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                _mediaPlayer.prepare();
+            } else {
+                // TODO: Figure out how to setDataSource for API Level < 24
+            }
 
             return true;
         }catch(IOException e) {
@@ -103,3 +108,4 @@ public class AVPlayer {
         _mediaPlayer.seekTo((int) (seconds * 1000));
     }
 }
+

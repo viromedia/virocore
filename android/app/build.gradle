@@ -1,10 +1,9 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
     defaultConfig {
-        applicationId "com.viro.renderer"
         minSdkVersion 23
         targetSdkVersion 25
         versionCode 1
@@ -43,4 +42,34 @@ dependencies {
     compile project(':libs:gvr')
     compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
     testCompile 'junit:junit:4.12'
+}
+
+task copyDebugAAR(type: Copy) {
+    from('build/outputs/aar')
+    // Change the next line to reflect the path to your react-viro repo, this
+    // script is run from ViroRenderer/android/app/
+    into('../../../react-viro/android/viro_renderer/')
+    include(project.name + '-debug.aar')
+    rename(project.name + '-debug.aar', 'viro_renderer-debug.aar')
+}
+
+task copyReleaseAAR(type: Copy) {
+    from('build/outputs/aar')
+    // Change the next line to reflect the path to your react-viro repo, this
+    // script is run from ViroRenderer/android/app/
+    into('../../../react-viro/android/viro_renderer/')
+    include(project.name + '-release.aar')
+    rename(project.name + '-release.aar', 'viro_renderer-release.aar')
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'assembleRelease') {
+        task.finalizedBy 'copyReleaseAAR'
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'assembleDebug') {
+        task.finalizedBy 'copyDebugAAR'
+    }
 }
