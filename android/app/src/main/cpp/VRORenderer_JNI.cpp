@@ -17,7 +17,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_ViroActivity_##method_name
+      Java_com_viro_renderer_ViroGvrLayout_##method_name
 
 namespace {
 
@@ -36,13 +36,13 @@ static std::shared_ptr<VROSample> sample;
 
 JNI_METHOD(jlong, nativeCreateRenderer)(JNIEnv *env, jclass clazz,
                                         jobject class_loader,
-                                        jobject activity,
+                                        jobject gvr_layout,
                                         jobject android_context,
                                         jobject asset_mgr,
                                         jlong native_gvr_api) {
   std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
   gvrAudio->Init(env, android_context, class_loader, GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
-  VROPlatformSetEnv(env, activity, asset_mgr);
+  VROPlatformSetEnv(env, gvr_layout, asset_mgr);
 
   return jptr(
       new VROSceneRendererCardboard(reinterpret_cast<gvr_context *>(native_gvr_api), gvrAudio));
