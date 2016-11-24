@@ -73,6 +73,9 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROWorldUIView.h>
 #import <ViroKit/VROScreenUIView.h>
 #import <ViroKit/VROReticle.h>
+#import <ViroKit/VROText.h>
+#import <ViroKit/VROGlyph.h>
+#import <ViroKit/VROTypeface.h>
 
 // Video
 #import <ViroKit/VROVideoSurface.h>

@@ -39,6 +39,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/VROAudioPlayerAndroid.cpp
              src/main/cpp/VROAVPlayer.cpp
              src/main/cpp/VROVideoTextureAVP.cpp
+             src/main/cpp/VROTypefaceAndroid.cpp
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp
@@ -106,6 +107,7 @@ add_library( # Sets the name of the library.
 
              # UI
              ../../ViroRenderer/VROReticle.cpp
+             ../../ViroRenderer/VROText.cpp
 
              # OpenGL
              ../../ViroRenderer/VROGeometrySubstrateOpenGL.cpp
@@ -115,6 +117,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROShaderProgram.cpp
              ../../ViroRenderer/VROShaderModifier.cpp
              ../../ViroRenderer/VROLightingUBO.cpp
+             ../../ViroRenderer/VROGlyphOpenGL.cpp
              )
 
 # Add pre-built libraries
