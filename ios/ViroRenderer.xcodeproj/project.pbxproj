@@ -72,6 +72,8 @@
 		8F548E4A1C23656000556688 /* VROAnimationVector3f.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F548E481C23656000556688 /* VROAnimationVector3f.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F548E4E1C23665100556688 /* VROAnimatable.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F548E4C1C23665100556688 /* VROAnimatable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F548E521C2378D500556688 /* VROAnimatable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F548E511C2378D500556688 /* VROAnimatable.cpp */; };
+		8F56AE9C1DE6810800DD65B6 /* libFreetype2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F56AE9B1DE6810800DD65B6 /* libFreetype2.a */; };
+		8F56AEA61DE7682300DD65B6 /* libFreetype2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F56AE9B1DE6810800DD65B6 /* libFreetype2.a */; };
 		8F57664E1D14429A0051AB0A /* VROMetalShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F57664D1D14429A0051AB0A /* VROMetalShader.h */; };
 		8F5C41551BD82C1B006D7A77 /* boba.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5C41541BD82C1B006D7A77 /* boba.png */; };
 		8F65F7861C90CD0B00415115 /* VROConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F65F7841C90CD0B00415115 /* VROConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -516,6 +518,7 @@
 		8F548E481C23656000556688 /* VROAnimationVector3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationVector3f.h; sourceTree = "<group>"; };
 		8F548E4C1C23665100556688 /* VROAnimatable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimatable.h; sourceTree = "<group>"; };
 		8F548E511C2378D500556688 /* VROAnimatable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROAnimatable.cpp; sourceTree = "<group>"; };
+		8F56AE9B1DE6810800DD65B6 /* libFreetype2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFreetype2.a; path = Libraries/freetype/libFreetype2.a; sourceTree = "<group>"; };
 		8F57664D1D14429A0051AB0A /* VROMetalShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMetalShader.h; sourceTree = "<group>"; };
 		8F5C41391BD052BB006D7A77 /* VROSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROSize.h; sourceTree = "<group>"; };
 		8F5C413A1BD05AD1006D7A77 /* VRORect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VRORect.cpp; sourceTree = "<group>"; };
@@ -725,6 +728,7 @@
 			files = (
 				8FD4DEE21C18ECD4003DC425 /* ViroKit.framework in Frameworks */,
 				EC8D0A685CE2FA0BE80B7363 /* libPods-ViroSample.a in Frameworks */,
+				8F56AE9C1DE6810800DD65B6 /* libFreetype2.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -746,6 +750,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F56AEA61DE7682300DD65B6 /* libFreetype2.a in Frameworks */,
 				8FDDE2121CD00F2600674DE2 /* CoreText.framework in Frameworks */,
 				8FD1E1BA1C3F32D20005BE4E /* CoreMedia.framework in Frameworks */,
 				8FD1E1B81C3F32B00005BE4E /* CoreVideo.framework in Frameworks */,
@@ -1401,6 +1406,7 @@
 		95E5BC90E51A0FC2C3AA4D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8F56AE9B1DE6810800DD65B6 /* libFreetype2.a */,
 				8FDDE2111CD00F2600674DE2 /* CoreText.framework */,
 				6447C487DE6546AF514106CC /* libPods-ViroKit.a */,
 				BF43BA975D626635F2D5584C /* libPods-ViroSample.a */,
@@ -2095,6 +2101,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Libraries/freetype/include";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2134,6 +2141,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/Libraries/freetype/include";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = "-ferror-limit=50";
@@ -2153,6 +2161,10 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = ViroSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -2169,6 +2181,10 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = ViroSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -2240,6 +2256,10 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2263,6 +2283,10 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/freetype",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
