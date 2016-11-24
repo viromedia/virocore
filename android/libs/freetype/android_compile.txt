@@ -1,0 +1,19 @@
+Cross-compiling freetype for Android
+
+Create a standalone NDK toolchain for the platform you're interested in (e.g. android-23 or android-24). Do this from the NDK itself. The following command creates a standalone NDK toolchain in /Users/radvani/Source/ndk-toolchain/android-23, for platform android-23:
+
+cd NDK_PATH/build/tools
+./make-standalone-toolchain.sh --platform=android-23 --install-dir=/Users/radvani/Source/ndk-toolchain/android-23
+
+Now add the toolchain binaries to the path:
+
+export TOOLCHAIN=/path/to/toolchain
+export PATH=$TOOLCHAIN/bin:$PATH
+
+Then cd into the freetype sources root, and run:
+
+./configure --host=arm-linux-androideabi --prefix=/Users/radvani/Source/ndk-toolchain/android-23 --without-zlib --enable-shared
+make
+make install
+
+This will place the compiled library libfreetype.so in ~/Source/ndk-toolchain/android-23/lib and the corresponding includes in the /include sibling directory.

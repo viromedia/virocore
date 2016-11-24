@@ -6,7 +6,8 @@ cmake_minimum_required(VERSION 3.4.1)
 
 include_directories(../../ViroRenderer
                     src/main/cpp
-                    ../libs/gvr/include)
+                    ../libs/gvr/include
+                    ../libs/freetype/include)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -131,6 +132,13 @@ set_target_properties( lib-gvr-audio
                        PROPERTIES IMPORTED_LOCATION
                        ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libgvr_audio.so )
 
+add_library( lib-freetype
+             SHARED
+             IMPORTED )
+set_target_properties( lib-freetype
+                       PROPERTIES IMPORTED_LOCATION
+                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libfreetype.so )
+
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because system libraries are included in the search path by
@@ -166,4 +174,5 @@ target_link_libraries( # Specifies the target library.
                        ${lib-egl}
                        ${lib-GLESv3}
                        lib-gvr
-                       lib-gvr-audio)
+                       lib-gvr-audio
+                       lib-freetype)
