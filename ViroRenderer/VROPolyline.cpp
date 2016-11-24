@@ -33,7 +33,7 @@ std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     material->setWritesToDepthBuffer(false);
     material->setReadsFromDepthBuffer(false);
-    material->getDiffuse().setContents({ 1.0, 1.0, 1.0, 1.0 });
+    material->getDiffuse().setColor({ 1.0, 1.0, 1.0, 1.0 });
     material->setCullMode(VROCullMode::None);
     
     std::vector<std::string> modifierCode = { "uniform float width;",

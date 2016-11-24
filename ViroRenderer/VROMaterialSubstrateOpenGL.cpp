@@ -75,13 +75,13 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
         fragmentShader = "constant_c_fsh";
     }
     else if (diffuse.getTextureType() == VROTextureType::Texture2D) {
-        _textures.push_back(diffuse.getContentsTexture());
+        _textures.push_back(diffuse.getTexture());
         samplers.push_back("sampler");
 
         fragmentShader = "constant_t_fsh";
     }
     else {
-        _textures.push_back(diffuse.getContentsTexture());
+        _textures.push_back(diffuse.getTexture());
         samplers.push_back("sampler");
 
         fragmentShader = "constant_q_fsh";
@@ -110,7 +110,7 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
     
     if (diffuse.getTextureType() == VROTextureType::None) {
         if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getContentsTexture());
+            _textures.push_back(reflective.getTexture());
             samplers.push_back("reflect_texture");
 
             fragmentShader = "lambert_c_reflect_fsh";
@@ -120,11 +120,11 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
         }
     }
     else {
-        _textures.push_back(diffuse.getContentsTexture());
+        _textures.push_back(diffuse.getTexture());
         samplers.push_back("diffuse_texture");
         
         if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getContentsTexture());
+            _textures.push_back(reflective.getTexture());
             samplers.push_back("reflect_texture");
             
             fragmentShader = "lambert_t_reflect_fsh";
@@ -168,11 +168,11 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
     VROMaterialVisual &reflective = material.getReflective();
     
     if (diffuse.getTextureType() == VROTextureType::None) {
-        _textures.push_back(specular.getContentsTexture());
+        _textures.push_back(specular.getTexture());
         samplers.push_back("specular_texture");
         
         if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getContentsTexture());
+            _textures.push_back(reflective.getTexture());
             samplers.push_back("reflect_texture");
             
             fragmentShader = "phong_c_reflect_fsh";
@@ -182,14 +182,14 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
         }
     }
     else {
-        _textures.push_back(diffuse.getContentsTexture());
-        _textures.push_back(specular.getContentsTexture());
+        _textures.push_back(diffuse.getTexture());
+        _textures.push_back(specular.getTexture());
         
         samplers.push_back("diffuse_texture");
         samplers.push_back("specular_texture");
         
         if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getContentsTexture());
+            _textures.push_back(reflective.getTexture());
             samplers.push_back("reflect_texture");
 
             fragmentShader = "phong_t_reflect_fsh";
@@ -235,11 +235,11 @@ void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, 
     VROMaterialVisual &reflective = material.getReflective();
     
     if (diffuse.getTextureType() == VROTextureType::None) {
-        _textures.push_back(specular.getContentsTexture());
+        _textures.push_back(specular.getTexture());
         samplers.push_back("specular_texture");
 
         if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getContentsTexture());
+            _textures.push_back(reflective.getTexture());
             samplers.push_back("reflect_texture");
             
             fragmentShader = "blinn_c_reflect_fsh";
@@ -249,14 +249,14 @@ void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, 
         }
     }
     else {
-        _textures.push_back(diffuse.getContentsTexture());
-        _textures.push_back(specular.getContentsTexture());
+        _textures.push_back(diffuse.getTexture());
+        _textures.push_back(specular.getTexture());
         
         samplers.push_back("diffuse_texture");
         samplers.push_back("specular_texture");
         
         if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getContentsTexture());
+            _textures.push_back(reflective.getTexture());
             samplers.push_back("reflect_texture");
 
             fragmentShader = "blinn_t_reflect_fsh";

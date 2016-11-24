@@ -62,8 +62,8 @@ public:
     VROMaterialVisual(const VROMaterialVisual &visual);
     
     void clear();
-    void setContents(VROVector4f contents);
-    void setContents(std::shared_ptr<VROTexture> texture);
+    void setColor(VROVector4f contents);
+    void setTexture(std::shared_ptr<VROTexture> texture);
     
     VROTextureType getTextureType() const {
         if (_contentsTexture) {
@@ -75,15 +75,10 @@ public:
     }
     
     VROVector4f getColor() const {
-        if (getTextureType() == VROTextureType::None) {
-            return _contentsColor;
-        }
-        else {
-            return { 1.0, 1.0, 1.0, 1.0 };
-        }
+        return _contentsColor;
     }
     
-    std::shared_ptr<VROTexture> getContentsTexture() const {
+    std::shared_ptr<VROTexture> getTexture() const {
         if (_contentsTexture) {
             return _contentsTexture;
         }
@@ -116,14 +111,12 @@ private:
     std::shared_ptr<VROMaterialVisualHeartbeat> _heartbeat;
     
     /*
-     If the visual is determined by a fixed color (getTextureType == None), then
-     _contentsColor is populated.
+     The color component of the visual.
      */
     VROVector4f _contentsColor;
     
     /*
-     If the visual is determined by a texture, this variable will be populated
-     with the texture.
+     The texture component of the visual.
      */
     std::shared_ptr<VROTexture> _contentsTexture;
     

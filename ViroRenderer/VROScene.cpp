@@ -134,7 +134,7 @@ void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
     
     std::shared_ptr<VROMaterial> material = _background->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Constant);
-    material->getDiffuse().setContents(textureSphere);
+    material->getDiffuse().setTexture(textureSphere);
     material->setWritesToDepthBuffer(false);
     material->setReadsFromDepthBuffer(false);
 }

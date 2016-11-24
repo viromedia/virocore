@@ -95,7 +95,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROTorusKnot> torus = VROTorusKnot::createTorusKnot(3, 8, 0.2, 256, 32);
     std::shared_ptr<VROMaterial> material = torus->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);
-    material->getReflective().setContents([self cloudTexture]);
+    material->getReflective().setTexture([self cloudTexture]);
 
     
     std::shared_ptr<VRONode> torusNode = std::make_shared<VRONode>();
@@ -171,8 +171,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     VROTransaction::begin();
     VROTransaction::setAnimationDuration(0.2);
-    material->getDiffuse().setContents( {1.0, 1.0, 1.0, 1.0 } );
-    material->getReflective().setContents([self cloudTexture]);
+    material->getDiffuse().setColor( {1.0, 1.0, 1.0, 1.0 } );
+    material->getReflective().setTexture([self cloudTexture]);
     VROTransaction::commit();
 }
 
@@ -181,7 +181,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     VROTransaction::begin();
     VROTransaction::setAnimationDuration(0.2);
-    material->getDiffuse().setContents( {1.0, 1.0, 1.0, 1.0 } );
+    material->getDiffuse().setColor( {1.0, 1.0, 1.0, 1.0 } );
     material->getReflective().clear();
     VROTransaction::commit();
 }
@@ -229,9 +229,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     box->setName("Box 1");
     
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
-    material->setLightingModel(VROLightingModel::Phong);
-    material->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"])));
-    material->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"])));
+    material->setLightingModel(VROLightingModel::Blinn);
+    material->getDiffuse().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"])));
+    material->getDiffuse().setColor({0.6, 0.3, 0.3, 1.0});
+    material->getSpecular().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"])));
     
     std::vector<std::string> modifierCode =  { "uniform float testA;",
                                                "uniform float testB;",
@@ -260,27 +261,25 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROMaterial> material2 = box2->getMaterials()[0];
     material2->setLightingModel(VROLightingModel::Phong);
-    material2->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"])));
-    material2->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"])));
+    material2->getDiffuse().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"])));
+    material2->getSpecular().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"])));
     
     std::shared_ptr<VRONode> boxNode2 = std::make_shared<VRONode>();
     boxNode2->setGeometry(box2);
     boxNode2->setPosition({0, 0, -9});
-    boxNode2->addLight(ambient);
-
     
     rootNode->addChildNode(boxNode2);
     
     /*
-     Create a second box node behind the first.
+     Create a third box node behind the second.
      */
     std::shared_ptr<VROBox> box3 = VROBox::createBox(2, 4, 2);
     box3->setName("Box 3");
     
     std::shared_ptr<VROMaterial> material3 = box3->getMaterials()[0];
-    material3->setLightingModel(VROLightingModel::Phong);
-    material3->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"])));
-    material3->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"])));
+    material3->setLightingModel(VROLightingModel::Blinn);
+    material3->getDiffuse().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"])));
+    material3->getSpecular().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"])));
     
     std::shared_ptr<VRONode> boxNode3 = std::make_shared<VRONode>();
     boxNode3->setGeometry(box3);
@@ -378,8 +377,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     scene->addNode(rootNode);
     
     std::shared_ptr<VRONode> objNode = VROLoader::loadURL(soccerURL)[0];
-    objNode->getGeometry()->getMaterials()[0]->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_diffuse.jpg"])));
-    objNode->getGeometry()->getMaterials()[0]->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_specular.jpg"])));
+    objNode->getGeometry()->getMaterials()[0]->getDiffuse().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_diffuse.jpg"])));
+    objNode->getGeometry()->getMaterials()[0]->getSpecular().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_specular.jpg"])));
     objNode->setPosition({0, -10, -20});
     
     rootNode->addChildNode(objNode);
@@ -475,7 +474,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(1.0);
         VROTransaction::setTimingFunction(VROTimingFunctionType::EaseIn);
-        material->getDiffuse().setContents( {r, g, b, 1.0 } );
+        material->getDiffuse().setColor( {r, g, b, 1.0 } );
         VROTransaction::commit();
         
         std::shared_ptr<VROAction> action = VROAction::timedAction([](VRONode *const node, float t) {

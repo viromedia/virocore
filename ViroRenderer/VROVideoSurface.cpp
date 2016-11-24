@@ -27,7 +27,7 @@ std::shared_ptr<VROVideoSurface> VROVideoSurface::createVideoSurface(float width
     
     texture->loadVideo(url, frameSynchronizer, driver);
     texture->play();
-    material->getDiffuse().setContents(texture);
+    material->getDiffuse().setTexture(texture);
     
     std::shared_ptr<VROVideoSurface> surface = std::shared_ptr<VROVideoSurface>(new VROVideoSurface(sources, elements, texture));
     surface->getMaterials().push_back(material);

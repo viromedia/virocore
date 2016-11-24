@@ -55,8 +55,8 @@ void VROVideoTextureiOS::pause() {
     _paused = true;
 }
 
-void VROVideoTextureiOS::seekToTime(int seconds) {
-    [_player seekToTime:CMTimeMake(seconds, 1)];
+void VROVideoTextureiOS::seekToTime(float seconds) {
+    [_player seekToTime:CMTimeMakeWithSeconds(seconds, 1)];
 }
 
 bool VROVideoTextureiOS::isPaused() {

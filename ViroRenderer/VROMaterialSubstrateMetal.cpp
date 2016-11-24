@@ -99,11 +99,11 @@ void VROMaterialSubstrateMetal::loadConstantLighting(const VROMaterial &material
         fragmentProgram = "constant_lighting_fragment_c";
     }
     else if (diffuse.getTextureType() == VROTextureType::Texture2D) {
-        _textures.push_back(diffuse.getContentsTexture());
+        _textures.push_back(diffuse.getTexture());
         fragmentProgram = "constant_lighting_fragment_t";
     }
     else {
-        _textures.push_back(diffuse.getContentsTexture());
+        _textures.push_back(diffuse.getTexture());
         fragmentProgram = "constant_lighting_fragment_q";
     }
     
@@ -122,7 +122,7 @@ void VROMaterialSubstrateMetal::loadLambertLighting(const VROMaterial &material,
     
     if (diffuse.getTextureType() == VROTextureType::None) {
         if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getContentsTexture());
+            _textures.push_back(reflective.getTexture());
             fragmentProgram = "lambert_lighting_fragment_c_reflect";
         }
         else {
@@ -130,10 +130,10 @@ void VROMaterialSubstrateMetal::loadLambertLighting(const VROMaterial &material,
         }
     }
     else {
-        _textures.push_back(diffuse.getContentsTexture());
+        _textures.push_back(diffuse.getTexture());
         
         if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getContentsTexture());
+            _textures.push_back(reflective.getTexture());
             fragmentProgram = "lambert_lighting_fragment_t_reflect";
         }
         else {
@@ -164,10 +164,10 @@ void VROMaterialSubstrateMetal::loadPhongLighting(const VROMaterial &material,
     VROMaterialVisual &reflective = material.getReflective();
     
     if (diffuse.getTextureType() == VROTextureType::None) {
-        _textures.push_back(specular.getContentsTexture());
+        _textures.push_back(specular.getTexture());
         
         if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getContentsTexture());
+            _textures.push_back(reflective.getTexture());
             fragmentProgram = "phong_lighting_fragment_c_reflect";
         }
         else {
@@ -175,11 +175,11 @@ void VROMaterialSubstrateMetal::loadPhongLighting(const VROMaterial &material,
         }
     }
     else {
-        _textures.push_back(diffuse.getContentsTexture());
-        _textures.push_back(specular.getContentsTexture());
+        _textures.push_back(diffuse.getTexture());
+        _textures.push_back(specular.getTexture());
         
         if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getContentsTexture());
+            _textures.push_back(reflective.getTexture());
             fragmentProgram = "phong_lighting_fragment_t_reflect";
         }
         else {
@@ -210,10 +210,10 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(const VROMaterial &material,
     VROMaterialVisual &reflective = material.getReflective();
     
     if (diffuse.getTextureType() == VROTextureType::None) {
-        _textures.push_back(specular.getContentsTexture());
+        _textures.push_back(specular.getTexture());
 
         if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getContentsTexture());
+            _textures.push_back(reflective.getTexture());
             fragmentProgram = "blinn_lighting_fragment_c_reflect";
         }
         else {
@@ -221,11 +221,11 @@ void VROMaterialSubstrateMetal::loadBlinnLighting(const VROMaterial &material,
         }
     }
     else {
-        _textures.push_back(diffuse.getContentsTexture());
-        _textures.push_back(specular.getContentsTexture());
+        _textures.push_back(diffuse.getTexture());
+        _textures.push_back(specular.getTexture());
 
         if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getContentsTexture());
+            _textures.push_back(reflective.getTexture());
             fragmentProgram = "blinn_lighting_fragment_t_reflect";
         }
         else {

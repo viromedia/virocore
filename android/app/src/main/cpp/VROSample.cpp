@@ -77,10 +77,10 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     _videoA->play();
 
     _material = box->getMaterials()[0];
-    _material->setLightingModel(VROLightingModel::Blinn);
-    _material->getDiffuse().setContents(_videoA);
-    //_material->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("boba.png")));
-    _material->getSpecular().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("specular.png")));
+    _material->setLightingModel(VROLightingModel::Lambert);
+    //_material->getDiffuse().setTexture(_videoA);
+    _material->getDiffuse().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("boba.png")));
+    _material->getSpecular().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("specular.png")));
 
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);

@@ -32,7 +32,7 @@ VROLayer::~VROLayer() {
 
 void VROLayer::setContents(UIImage *image) {
     std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageiOS>(image);
-    getMaterial()->getDiffuse().setContents(std::make_shared<VROTexture>(wrapper));
+    getMaterial()->getDiffuse().setTexture(std::make_shared<VROTexture>(wrapper));
 }
 
 void VROLayer::setContents(int width, int height, CGContextRef bitmapContext,
@@ -46,7 +46,7 @@ void VROLayer::setContents(int width, int height, CGContextRef bitmapContext,
                                                                                                                      VROTextureFormat::RGBA8,
                                                                                                                      data, width, height));
     
-    getMaterial()->getDiffuse().setContents(std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate)));
+    getMaterial()->getDiffuse().setTexture(std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate)));
 }
 
 std::shared_ptr<VROMaterial> VROLayer::getMaterial() {

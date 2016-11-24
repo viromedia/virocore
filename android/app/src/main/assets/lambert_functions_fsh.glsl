@@ -27,35 +27,35 @@ lowp vec3 apply_light_lambert(const VROLightUniforms light,
 }
 
 lowp vec4 lambert_lighting_diffuse_fixed(VROLambertLighting lambert) {
-    lowp vec3 ambient_light_color = lambert.ambient_color * lambert.material_color.xyz;
+    lowp vec3 light_ambient_color = lambert.ambient_color * lambert.material_color.xyz;
 
     lowp vec4 material_diffuse_color = lambert.material_color * lambert.diffuse_intensity;
-    lowp vec3 diffuse_light_color = vec3(0, 0, 0);
+    lowp vec3 light_diffuse_color = vec3(0, 0, 0);
     for (int i = 0; i < num_lights; i++) {
-        diffuse_light_color += apply_light_lambert(lights[i],
+        light_diffuse_color += apply_light_lambert(lights[i],
                                                    lambert.surface_position,
                                                    lambert.normal,
                                                    material_diffuse_color);
     }
     
-    return vec4(ambient_light_color + diffuse_light_color,
+    return vec4(light_ambient_color + light_diffuse_color,
                 lambert.material_alpha * lambert.material_color.a);
 }
 
 lowp vec4 lambert_lighting_diffuse_texture(VROLambertLighting lambert,
                                            lowp vec4 diffuse_texture_color) {
 
-    lowp vec3 ambient_light_color = lambert.ambient_color * diffuse_texture_color.xyz;
+    lowp vec3 light_ambient_color = lambert.ambient_color * diffuse_texture_color.xyz;
 
-    lowp vec4 material_diffuse_color = diffuse_texture_color * lambert.diffuse_intensity;
-    lowp vec3 diffuse_light_color = vec3(0, 0, 0);
+    lowp vec4 material_diffuse_color = lambert.material_color * diffuse_texture_color * lambert.diffuse_intensity;
+    lowp vec3 light_diffuse_color = vec3(0, 0, 0);
     for (int i = 0; i < num_lights; i++) {
-        diffuse_light_color += apply_light_lambert(lights[i],
+        light_diffuse_color += apply_light_lambert(lights[i],
                                                    lambert.surface_position,
                                                    lambert.normal,
                                                    material_diffuse_color);
     }
     
-    return vec4(ambient_light_color + diffuse_light_color,
+    return vec4(light_ambient_color + light_diffuse_color,
                 lambert.material_alpha * diffuse_texture_color.a);
 }

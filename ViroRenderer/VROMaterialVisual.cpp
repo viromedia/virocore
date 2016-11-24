@@ -36,7 +36,7 @@ void VROMaterialVisual::clear() {
     _material.updateSubstrate();
 }
 
-void VROMaterialVisual::setContents(VROVector4f contents) {
+void VROMaterialVisual::setColor(VROVector4f color) {
     if ((_permissibleContentsMask & (int) VROTextureType::None) == 0) {
         pabort("Material visual does not support fixed contents");
         return;
@@ -44,13 +44,11 @@ void VROMaterialVisual::setContents(VROVector4f contents) {
     
     _material.fadeSnapshot();
     
-    _contentsColor = contents;
-    _contentsTexture.reset();
-    
+    _contentsColor = color;
     _material.updateSubstrate();
 }
 
-void VROMaterialVisual::setContents(std::shared_ptr<VROTexture> texture) {
+void VROMaterialVisual::setTexture(std::shared_ptr<VROTexture> texture) {
     if ((_permissibleContentsMask & (int) texture->getType()) == 0) {
         pabort("Material visual does not support texture of type %d", texture->getType());
         return;

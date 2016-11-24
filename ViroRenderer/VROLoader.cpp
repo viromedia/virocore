@@ -133,19 +133,19 @@ std::shared_ptr<VRONode> VROLoader::loadMesh(MDLMesh *mesh) {
             
             if (semantic == MDLMaterialSemanticBaseColor) {
                 if (property.type == MDLMaterialPropertyTypeColor) {
-                    vM->getDiffuse().setContents(parseColor([property color]));
+                    vM->getDiffuse().setColor(parseColor([property color]));
                 }
                 else if (property.type == MDLMaterialPropertyTypeTexture) {
-                    vM->getDiffuse().setContents(parseTexture([property textureSamplerValue]));
+                    vM->getDiffuse().setTexture(parseTexture([property textureSamplerValue]));
                 }
             }
             
             if (semantic == MDLMaterialSemanticSpecular) {
                 if (property.type == MDLMaterialPropertyTypeColor) {
-                    vM->getSpecular().setContents(parseColor([property color]));
+                    vM->getSpecular().setColor(parseColor([property color]));
                 }
                 else if (property.type == MDLMaterialPropertyTypeTexture) {
-                    vM->getSpecular().setContents(parseTexture([property textureSamplerValue]));
+                    vM->getSpecular().setTexture(parseTexture([property textureSamplerValue]));
                 }
             }
         }
