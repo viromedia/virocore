@@ -13,6 +13,7 @@
 #include "VROLog.h"
 #include "VROSoundEffectAndroid.h"
 #include "VROAudioPlayerAndroid.h"
+#include "VROTypefaceAndroid.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
 
 class VRODriverOpenGLAndroid : public VRODriverOpenGL {
@@ -54,6 +55,11 @@ public:
             return it->second;
         }
     }
+
+    std::shared_ptr<VROTypeface> newTypeface(std::string typeface, int size) {
+        return std::make_shared<VROTypefaceAndroid>(typeface, size);
+    }
+
 
 private:
 

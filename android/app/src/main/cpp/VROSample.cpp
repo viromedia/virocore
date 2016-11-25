@@ -13,6 +13,7 @@
 #include "VROSceneRendererCardboard.h"
 #include "VROVideoTextureAndroid.h"
 #include "VROVideoTextureAVP.h"
+#include "VROText.h"
 
 VROSample::VROSample() {
 
@@ -24,6 +25,7 @@ VROSample::~VROSample() {
 
 std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                                             VRODriver &driver) {
+
 
     _driver = &driver;
     frameSynchronizer->addFrameListener(shared_from_this());
@@ -87,6 +89,16 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     boxNode->setPosition({0, 0, -5});
 
     rootNode->addChildNode(boxNode);
+
+    std::shared_ptr<VROText> text = VROText::createText("Hello Freetype", driver);
+    text->setName("Text");
+
+    std::shared_ptr<VRONode> textNode = std::make_shared<VRONode>();
+    textNode->setGeometry(text);
+    textNode->setPosition({-5, 0, -5});
+
+    rootNode->addChildNode(textNode);
+
     //boxNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
 
     VROTransaction::begin();

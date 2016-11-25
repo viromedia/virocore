@@ -28,7 +28,7 @@ typedef struct TableEntry {
     uint32_t fLength;
 } TableEntry;
 
-VROTypefaceiOS::VROTypefaceiOS(std::string name) :
+VROTypefaceiOS::VROTypefaceiOS(std::string name, int size) :
     VROTypeface(name) {
     if (FT_Init_FreeType(&_ft)) {
         pabort("Could not initialize freetype library");
@@ -42,12 +42,10 @@ VROTypefaceiOS::VROTypefaceiOS(std::string name) :
     NSData *fontData = getFontData(fontRef);
     
     if (FT_New_Memory_Face(_ft, (const FT_Byte *)[fontData bytes], [fontData length], 0, &_face)) {
-        //if (FT_New_Face(ft, [arialPathSting UTF8String], 0, &face)) {
         pabort("Failed to load font");
     }
     
-    //TODO set proper font
-    FT_Set_Pixel_Sizes(_face, 0, 12);
+    FT_Set_Pixel_Sizes(_face, 0, size);
 }
 
 VROTypefaceiOS::~VROTypefaceiOS() {

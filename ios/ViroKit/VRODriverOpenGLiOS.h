@@ -13,6 +13,7 @@
 #include "VROSoundEffectiOS.h"
 #include "VROAudioPlayeriOS.h"
 #include "VROVideoTextureCacheOpenGL.h"
+#include "VROTypefaceiOS.h"
 
 class VRODriverOpenGLiOS : public VRODriverOpenGL {
     
@@ -42,6 +43,11 @@ public:
         
         return std::make_shared<VROAudioPlayeriOS>(url);
     }
+    
+    std::shared_ptr<VROTypeface> newTypeface(std::string typeface, int size) {
+        return std::make_shared<VROTypefaceiOS>(typeface, size);
+    }
+
     
 private:
     

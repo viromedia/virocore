@@ -18,7 +18,7 @@ class VROTypefaceiOS : public VROTypeface {
     
 public:
     
-    VROTypefaceiOS(std::string name);
+    VROTypefaceiOS(std::string name, int size);
     virtual ~VROTypefaceiOS();
     
     std::unique_ptr<VROGlyph> loadGlyph(FT_ULong charCode);

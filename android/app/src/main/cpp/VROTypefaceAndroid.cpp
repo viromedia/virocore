@@ -10,7 +10,7 @@
 #include "VROLog.h"
 #include "VROGlyphOpenGL.h"
 
-VROTypefaceAndroid::VROTypefaceAndroid(std::string name) :
+VROTypefaceAndroid::VROTypefaceAndroid(std::string name, int size) :
         VROTypeface(name) {
     if (FT_Init_FreeType(&_ft)) {
         pabort("Could not initialize freetype library");
@@ -21,8 +21,7 @@ VROTypefaceAndroid::VROTypefaceAndroid(std::string name) :
         pabort("Failed to load font");
     }
 
-    //TODO set proper font
-    FT_Set_Pixel_Sizes(_face, 0, 12);
+    FT_Set_Pixel_Sizes(_face, 0, size);
 }
 
 VROTypefaceAndroid::~VROTypefaceAndroid() {

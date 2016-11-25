@@ -14,14 +14,11 @@
 #include "VROTypeface.h"
 #include "VROGlyph.h"
 
-// TODO Remove
-#include "VROTypefaceAndroid.h"
-
-std::shared_ptr<VROText> VROText::createText(std::string text) {
+std::shared_ptr<VROText> VROText::createText(std::string text, VRODriver &driver) {
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
     std::vector<std::shared_ptr<VROMaterial>> materials;
-    buildGeometry(text, sources, elements, materials);
+    buildGeometry(text, driver, sources, elements, materials);
     
     std::shared_ptr<VROText> model = std::shared_ptr<VROText>(new VROText(sources, elements));
     model->getMaterials().insert(model->getMaterials().end(), materials.begin(), materials.end());
@@ -30,12 +27,13 @@ std::shared_ptr<VROText> VROText::createText(std::string text) {
 }
 
 void VROText::buildGeometry(std::string text,
+                            VRODriver &driver,
                             std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                             std::vector<std::shared_ptr<VROGeometryElement>> &elements,
                             std::vector<std::shared_ptr<VROMaterial>> &materials) {
     
-    // TODO replace with typeface
-    VROTypefaceAndroid typeface("whatever");
+    // TODO replace with typeface name
+    std::shared_ptr<VROTypeface> typeface = driver.newTypeface("TYPEFACE-NAME", 12);
     
     int verticesPerGlyph = 6;
     int numVertices = (int) text.size() * verticesPerGlyph;
@@ -48,7 +46,7 @@ void VROText::buildGeometry(std::string text,
     float x = 0;
     for (c = text.begin(); c != text.end(); c++) {
         FT_ULong charCode = *c;
-        std::unique_ptr<VROGlyph> glyph = typeface.loadGlyph(charCode);
+        std::unique_ptr<VROGlyph> glyph = typeface->loadGlyph(charCode);
         
         x += glyph->getBearing().x;
         float y = glyph->getSize().y - glyph->getBearing().y;

@@ -93,6 +93,11 @@ public:
         
         return std::make_shared<VROAudioPlayeriOS>(url);
     }
+    
+    std::shared_ptr<VROTypeface> newTypeface(std::string typeface, int size) {
+        // TODO Metal: Not supported
+        pabort();
+    }
 
 private:
     
