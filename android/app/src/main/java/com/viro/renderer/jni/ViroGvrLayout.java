@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  */
-package com.viro.renderer;
+package com.viro.renderer.jni;
 
 import android.app.Activity;
 import android.app.Application;
@@ -28,6 +28,9 @@ import android.view.WindowManager;
 import com.google.vr.ndk.base.AndroidCompat;
 import com.google.vr.ndk.base.GvrApi;
 import com.google.vr.ndk.base.GvrLayout;
+import com.viro.renderer.FrameListener;
+import com.viro.renderer.VideoSink;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -261,6 +264,10 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
         //No-op
     }
 
+    public void setScene(SceneJni scene){
+        nativeSetScene(mNativeRenderer, scene.mNativeRef);
+    }
+
     private native long nativeCreateRenderer(
             ClassLoader appClassLoader, ViroGvrLayout view, Context context, AssetManager assets, long nativeGvrContext);
     private native void nativeDestroyRenderer(long nativeRenderer);
@@ -269,4 +276,5 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
     private native void nativeOnTriggerEvent(long nativeRenderer);
     private native void nativeOnPause(long nativeRenderer);
     private native void nativeOnResume(long nativeRenderer);
+    private native void nativeSetScene(long mNativeRenderer, long nativeScene);
 }

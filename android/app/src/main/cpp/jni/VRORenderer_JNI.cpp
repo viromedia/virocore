@@ -14,10 +14,14 @@
 #include "VROSceneRendererCardboard.h"
 #include "VROPlatformUtil.h"
 #include "VROSample.h"
+#include "VROSceneController.h"
+#include "VROImageAndroid.h"
+#include "VROScene.h"
+
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_ViroGvrLayout_##method_name
+      Java_com_viro_renderer_jni_ViroGvrLayout_##method_name
 
 namespace {
 
@@ -56,14 +60,12 @@ JNI_METHOD(void, nativeDestroyRenderer)
 
 JNI_METHOD(void, nativeInitializeGl)(JNIEnv *env, jobject obj,
                                      jlong native_renderer) {
-
-  // TODO Temporary place for sample
-  sample = std::make_shared<VROSample>();
-
   VROSceneRendererCardboard *sceneRenderer = native(native_renderer);
-  sceneRenderer->setRenderDelegate(sample);
-  sceneRenderer->setSceneController(sample->loadBoxScene(sceneRenderer->getFrameSynchronizer(),
-                                                         sceneRenderer->getDriver()));
+  // TODO Temporary place for sample
+  // sample = std::make_shared<VROSample>();
+  // sceneRenderer->setRenderDelegate(sample);
+  // sceneRenderer->setSceneController(sample->loadBoxScene(sceneRenderer->getFrameSynchronizer(),
+  //                                                       sceneRenderer->getDriver()));
   sceneRenderer->initGL();
 }
 
@@ -85,6 +87,14 @@ JNI_METHOD(void, nativeOnPause)(JNIEnv *env, jobject obj,
 JNI_METHOD(void, nativeOnResume)(JNIEnv *env, jobject obj,
                                  jlong native_renderer) {
   native(native_renderer)->onResume();
+}
+
+JNI_METHOD(void, nativeSetScene)(JNIEnv *env, jobject obj,
+                                           jlong native_renderer,
+                                           jlong native_scene_controller_ref) {
+  VROSceneController *scene_controller = reinterpret_cast<VROSceneController *>(native_scene_controller_ref);
+  std::shared_ptr<VROSceneController> shared_controller = std::shared_ptr<VROSceneController>(scene_controller);
+  native(native_renderer)->setSceneController(shared_controller);
 }
 
 }  // extern "C"

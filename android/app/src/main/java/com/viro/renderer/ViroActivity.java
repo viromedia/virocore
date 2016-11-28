@@ -8,8 +8,14 @@
  */
 package com.viro.renderer;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.viro.renderer.jni.BoxJni;
+import com.viro.renderer.jni.NodeJni;
+import com.viro.renderer.jni.SceneJni;
+import com.viro.renderer.jni.ViroGvrLayout;
 
 public class ViroActivity extends AppCompatActivity {
     private ViroGvrLayout mViroGvrLayout;
@@ -19,5 +25,27 @@ public class ViroActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mViroGvrLayout = new ViroGvrLayout(this, true);
         setContentView(mViroGvrLayout);
+
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+
+        // Creation of SceneJni within scene navigator
+        NodeJni rootNode = new NodeJni(this);
+        SceneJni scene = new SceneJni(rootNode);
+
+        // Creation of ViroBox
+        BoxJni boxGeometry = new BoxJni(this, 2,4,2);
+        NodeJni boxNode = new NodeJni(this);
+        boxNode.setGeometry(boxGeometry);
+        boxNode.setPosition(0,0,-5);
+
+        // Assignment of ViroBox to scene
+        rootNode.addChildNode(boxNode);
+
+        // Updating the scene.
+        mViroGvrLayout.setScene(scene);
     }
 }

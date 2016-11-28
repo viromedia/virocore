@@ -30,7 +30,6 @@ add_library( # Sets the name of the library.
              src/main/cpp/debug_mapinfo.cpp
              src/main/cpp/VROLooper.cpp
              src/main/cpp/VROSceneRendererCardboard.cpp
-             src/main/cpp/VRORenderer_JNI.cpp
              src/main/cpp/VROSample.cpp
              src/main/cpp/VROImageAndroid.cpp
              src/main/cpp/VROPCMAudioPlayer.cpp
@@ -40,6 +39,12 @@ add_library( # Sets the name of the library.
              src/main/cpp/VROAVPlayer.cpp
              src/main/cpp/VROVideoTextureAVP.cpp
              src/main/cpp/VROTypefaceAndroid.cpp
+
+             # Android JNI
+             src/main/cpp/jni/VRORenderer_JNI.cpp
+             src/main/cpp/jni/Node_JNI.cpp
+             src/main/cpp/jni/Scene_JNI.cpp
+             src/main/cpp/jni/Box_JNI.cpp
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp
