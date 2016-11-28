@@ -48,7 +48,7 @@ JNI_METHOD(jlong, nativeCreateBox)(JNIEnv *env,
      */
     std::shared_ptr<VROMaterial> _material = box->getMaterials()[0];
     _material->setLightingModel(VROLightingModel::Constant);
-    _material->getDiffuse().setContents(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("boba.png")));
+    _material->getDiffuse().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("boba.png")));
     return Box::jptr(box);
 }
 

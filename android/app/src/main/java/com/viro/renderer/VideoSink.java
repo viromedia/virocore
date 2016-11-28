@@ -56,11 +56,11 @@ public class VideoSink implements SurfaceTexture.OnFrameAvailableListener, Frame
         mSurfacedUpdated = true;
     }
 
-    Surface getSurface() {
+    public Surface getSurface() {
         return mSurface;
     }
 
-    void releaseSurface() {
+    public void releaseSurface() {
         mSurface.release();
     }
 }
