@@ -149,4 +149,6 @@ short VROFloatToFloat16(float value);
 VROVector3f VROMathGetCenter(std::vector<VROVector3f> &vertices);
 VROBoundingBox VROMathGetBoundingBox(std::vector<VROVector3f> &vertices);
 
+uint32_t VROMathRoundUpToNextPow2(uint32_t v);
+
 #endif /* VROMath_h */

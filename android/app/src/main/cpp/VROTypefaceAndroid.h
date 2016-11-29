@@ -27,6 +27,8 @@ private:
     FT_Library _ft;
     FT_Face _face;
 
+    std::string getFontPath(std::string fontName);
+
 };
 
 

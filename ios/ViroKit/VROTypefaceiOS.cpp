@@ -10,7 +10,6 @@
 #include "VROLog.h"
 #include "VROGlyphOpenGL.h"
 
-// TODO remove soon
 #import <UIKit/UIKit.h>
 
 typedef struct FontHeader {
@@ -34,8 +33,11 @@ VROTypefaceiOS::VROTypefaceiOS(std::string name, int size) :
         pabort("Could not initialize freetype library");
     }
     
-    // TODO replace this, use the font name only
-    UIFont *font = [UIFont systemFontOfSize:12];
+    UIFont *font = [UIFont fontWithName:[NSString stringWithUTF8String:name.c_str()] size:size];
+    if (!font) {
+        pinfo("Could not find font with name %s, reverting to system font", name.c_str());
+        font = [UIFont systemFontOfSize:size];
+    }
     
     CFStringRef fontName = (__bridge CFStringRef)[font fontName];
     CGFontRef fontRef = CGFontCreateWithFontName(fontName);
@@ -67,13 +69,6 @@ static uint32_t CalcTableCheckSum(const uint32_t *table, uint32_t numberOfBytesI
         sum += CFSwapInt32HostToBig(*table++);
     }
     return sum;
-}
-
-static uint32_t CalcTableDataRefCheckSum(CFDataRef dataRef) {
-    const uint32_t *dataBuff = (const uint32_t *)CFDataGetBytePtr(dataRef);
-    uint32_t dataLength = (uint32_t)CFDataGetLength(dataRef);
-    
-    return CalcTableCheckSum(dataBuff, dataLength);
 }
 
 NSData *VROTypefaceiOS::getFontData(CGFontRef cgFont) {
@@ -159,7 +154,7 @@ NSData *VROTypefaceiOS::getFontData(CGFontRef cgFont) {
         entry->fTag = CFSwapInt32HostToBig((uint32_t)aTag);
         entry->fCheckSum = CFSwapInt32HostToBig(CalcTableCheckSum((uint32_t *)dataPtr, (uint32_t)tableSize));
         
-        uint32_t offset = dataPtr - dataStart;
+        uint32_t offset = (uint32_t) (dataPtr - dataStart);
         entry->fOffset = CFSwapInt32HostToBig((uint32_t)offset);
         entry->fLength = CFSwapInt32HostToBig((uint32_t)tableSize);
         dataPtr += (tableSize + 3) & ~3;

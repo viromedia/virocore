@@ -21,7 +21,7 @@ class VROText : public VROGeometry {
     
 public:
     
-    static std::shared_ptr<VROText> createText(std::string text, VRODriver &driver);
+    static std::shared_ptr<VROText> createText(std::string text, std::string typefaceName, int pointSize, VRODriver &driver);
     virtual ~VROText();
     
 private:
@@ -32,6 +32,8 @@ private:
     {}
     
     static void buildGeometry(std::string text,
+                              std::shared_ptr<VROTypeface> typeface,
+                              float scale,
                               VRODriver &driver,
                               std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                               std::vector<std::shared_ptr<VROGeometryElement>> &elements,

@@ -15,6 +15,5 @@ out lowp vec4 frag_color;
 
 void main() {
     lowp vec4 diffuse_color = texture(sampler, v_texcoord) * material_diffuse_surface_color;
-    frag_color = vec4(diffuse_color.xyz,
-                      material_alpha * diffuse_color.a);
+    frag_color = vec4(diffuse_color.xyz, material_alpha * diffuse_color.a);
 }

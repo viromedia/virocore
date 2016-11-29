@@ -13,12 +13,17 @@
 #include "VROMaterial.h"
 #include "VROTypeface.h"
 #include "VROGlyph.h"
+#include "VROLog.h"
 
-std::shared_ptr<VROText> VROText::createText(std::string text, VRODriver &driver) {
+static const float kTextPointToWorldScale = 0.05;
+
+std::shared_ptr<VROText> VROText::createText(std::string text, std::string typefaceName, int pointSize, VRODriver &driver) {
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
     std::vector<std::shared_ptr<VROMaterial>> materials;
-    buildGeometry(text, driver, sources, elements, materials);
+    
+    std::shared_ptr<VROTypeface> typeface = driver.newTypeface(typefaceName, pointSize);
+    buildGeometry(text, typeface, kTextPointToWorldScale, driver, sources, elements, materials);
     
     std::shared_ptr<VROText> model = std::shared_ptr<VROText>(new VROText(sources, elements));
     model->getMaterials().insert(model->getMaterials().end(), materials.begin(), materials.end());
@@ -27,13 +32,12 @@ std::shared_ptr<VROText> VROText::createText(std::string text, VRODriver &driver
 }
 
 void VROText::buildGeometry(std::string text,
+                            std::shared_ptr<VROTypeface> typeface,
+                            float scale,
                             VRODriver &driver,
                             std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                             std::vector<std::shared_ptr<VROGeometryElement>> &elements,
                             std::vector<std::shared_ptr<VROMaterial>> &materials) {
-    
-    // TODO replace with typeface name
-    std::shared_ptr<VROTypeface> typeface = driver.newTypeface("TYPEFACE-NAME", 12);
     
     int verticesPerGlyph = 6;
     int numVertices = (int) text.size() * verticesPerGlyph;
@@ -48,17 +52,21 @@ void VROText::buildGeometry(std::string text,
         FT_ULong charCode = *c;
         std::unique_ptr<VROGlyph> glyph = typeface->loadGlyph(charCode);
         
-        x += glyph->getBearing().x;
-        float y = glyph->getSize().y - glyph->getBearing().y;
+        char name2[2];
+        name2[0] = (char)*c;
+        name2[1] = 0;
         
-        float w = glyph->getSize().x;
-        float h = glyph->getSize().y;
+        x += glyph->getBearing().x * scale;
+        float y = (glyph->getBearing().y - glyph->getSize().y) * scale;
+        
+        float w = glyph->getSize().x * scale;
+        float h = glyph->getSize().y * scale;
         
         var[idx + 0].x = x;
         var[idx + 0].y = y + h;
         var[idx + 0].z = 0;
-        var[idx + 0].u = 0;
-        var[idx + 0].v = 0;
+        var[idx + 0].u = glyph->getMinU();
+        var[idx + 0].v = glyph->getMinV();
         var[idx + 0].nx = 0;
         var[idx + 0].ny = 0;
         var[idx + 0].nz = 1;
@@ -66,8 +74,8 @@ void VROText::buildGeometry(std::string text,
         var[idx + 1].x = x;
         var[idx + 1].y = y;
         var[idx + 1].z = 0;
-        var[idx + 1].u = 0;
-        var[idx + 1].v = 1;
+        var[idx + 1].u = glyph->getMinU();
+        var[idx + 1].v = glyph->getMaxV();
         var[idx + 1].nx = 0;
         var[idx + 1].ny = 0;
         var[idx + 1].nz = 1;
@@ -75,8 +83,8 @@ void VROText::buildGeometry(std::string text,
         var[idx + 2].x = x + w;
         var[idx + 2].y = y;
         var[idx + 2].z = 0;
-        var[idx + 2].u = 1;
-        var[idx + 2].v = 1;
+        var[idx + 2].u = glyph->getMaxU();
+        var[idx + 2].v = glyph->getMaxV();
         var[idx + 2].nx = 0;
         var[idx + 2].ny = 0;
         var[idx + 2].nz = 1;
@@ -84,8 +92,8 @@ void VROText::buildGeometry(std::string text,
         var[idx + 3].x = x;
         var[idx + 3].y = y + h;
         var[idx + 3].z = 0;
-        var[idx + 3].u = 0;
-        var[idx + 3].v = 0;
+        var[idx + 3].u = glyph->getMinU();
+        var[idx + 3].v = glyph->getMinV();
         var[idx + 3].nx = 0;
         var[idx + 3].ny = 0;
         var[idx + 3].nz = 1;
@@ -93,8 +101,8 @@ void VROText::buildGeometry(std::string text,
         var[idx + 4].x = x + w;
         var[idx + 4].y = y;
         var[idx + 4].z = 0;
-        var[idx + 4].u = 1;
-        var[idx + 4].v = 1;
+        var[idx + 4].u = glyph->getMaxU();
+        var[idx + 4].v = glyph->getMaxV();
         var[idx + 4].nx = 0;
         var[idx + 4].ny = 0;
         var[idx + 4].nz = 1;
@@ -102,8 +110,8 @@ void VROText::buildGeometry(std::string text,
         var[idx + 5].x = x + w;
         var[idx + 5].y = y + h;
         var[idx + 5].z = 0;
-        var[idx + 5].u = 1;
-        var[idx + 5].v = 0;
+        var[idx + 5].u = glyph->getMaxU();
+        var[idx + 5].v = glyph->getMinV();
         var[idx + 5].nx = 0;
         var[idx + 5].ny = 0;
         var[idx + 5].nz = 1;
@@ -112,7 +120,7 @@ void VROText::buildGeometry(std::string text,
          Now advance cursors for next glyph. Each advance unit is 1/64 of a pixel,
          so divide by 64 (>> 6) to get advance in pixels.
          */
-        x += (glyph->getAdvance() >> 6);
+        x += (glyph->getAdvance() >> 6) * scale;
         
         int indices[verticesPerGlyph];
         for (int i = 0; i < verticesPerGlyph; i++) {

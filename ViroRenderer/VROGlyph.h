@@ -38,6 +38,19 @@ public:
         return _advance;
     }
     
+    float getMinU() const {
+        return _minU;
+    }
+    float getMaxU() const {
+        return _maxU;
+    }
+    float getMinV() const {
+        return _minV;
+    }
+    float getMaxV() const {
+        return _maxV;
+    }
+    
 protected:
     
     /*
@@ -59,6 +72,14 @@ protected:
      Offset to advance to the next glyph.
      */
     long _advance;
+    
+    /*
+     The min and max U and V values for the texture. These
+     indicate what section of the texture corresponds to 
+     this character.
+     */
+    float _minU, _minV;
+    float _maxU, _maxV;
     
 };
 
