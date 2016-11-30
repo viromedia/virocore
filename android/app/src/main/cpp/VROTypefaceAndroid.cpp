@@ -13,25 +13,26 @@
 static const std::string kSystemFont = "Roboto-Regular";
 
 VROTypefaceAndroid::VROTypefaceAndroid(std::string name, int size) :
-        VROTypeface(name) {
-    if (FT_Init_FreeType(&_ft)) {
-        pabort("Could not initialize freetype library");
-    }
+        VROTypeface(name, size) {
 
-    if (FT_New_Face(_ft, getFontPath(name).c_str(), 0, &_face)) {
+}
+
+VROTypefaceAndroid::~VROTypefaceAndroid() {
+
+}
+
+FT_Face VROTypefaceAndroid::loadFace(std::string name, int size, FT_Library ft) {
+    FT_Face face;
+    if (FT_New_Face(_ft, getFontPath(name).c_str(), 0, &face)) {
         pinfo("Failed to load font %s, loading system font", name.c_str());
 
-        if (FT_New_Face(_ft, getFontPath(kSystemFont).c_str(), 0, &_face)) {
+        if (FT_New_Face(_ft, getFontPath(kSystemFont).c_str(), 0, &face)) {
             pabort("Failed to load system font %s", kSystemFont.c_str());
         }
     }
 
-    FT_Set_Pixel_Sizes(_face, 0, size);
-}
-
-VROTypefaceAndroid::~VROTypefaceAndroid() {
-    FT_Done_Face(_face);
-    FT_Done_FreeType(_ft);
+    FT_Set_Pixel_Sizes(face, 0, size);
+    return face;
 }
 
 std::unique_ptr<VROGlyph> VROTypefaceAndroid::loadGlyph(FT_ULong charCode) {

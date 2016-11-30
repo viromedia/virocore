@@ -21,12 +21,14 @@ public:
     VROTypefaceiOS(std::string name, int size);
     virtual ~VROTypefaceiOS();
     
+    float getLineHeight();
     std::unique_ptr<VROGlyph> loadGlyph(FT_ULong charCode);
     
-private:
+protected:
     
-    FT_Library _ft;
-    FT_Face _face;
+    FT_Face loadFace(std::string name, int size, FT_Library ft);
+    
+private:
     
     NSData *getFontData(CGFontRef cgFont);
     

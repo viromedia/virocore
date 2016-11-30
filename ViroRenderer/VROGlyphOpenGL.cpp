@@ -84,7 +84,11 @@ bool VROGlyphOpenGL::load(FT_Face face, FT_ULong charCode) {
     _texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
     _size = VROVector3f(bitmap.width, bitmap.rows);
     _bearing = VROVector3f(glyph->bitmap_left, glyph->bitmap_top);
-    _advance = glyph->advance.x;
+    
+    /*
+     Each advance unit is 1/64 of a pixel so divide by 64 (>> 6) to get advance in pixels.
+     */
+    _advance = glyph->advance.x >> 6;
     
     _minU = 0;
     _maxU = (float)bitmap.width / (float)texWidth;

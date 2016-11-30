@@ -13,6 +13,8 @@
 #include "VROTypeface.h"
 #include "VROGlyph.h"
 #include "VROLog.h"
+#include <cstddef>
+#include "VROStringUtil.h"
 
 static const int kVerticesPerGlyph = 6;
 static const float kTextPointToWorldScale = 0.05;
@@ -35,8 +37,8 @@ std::shared_ptr<VROText> VROText::createText(std::string text, std::shared_ptr<V
     return model;
 }
 
-void VROText::buildText(std::string text,
-                        std::shared_ptr<VROTypeface> typeface,
+void VROText::buildText(std::string &text,
+                        std::shared_ptr<VROTypeface> &typeface,
                         float scale,
                         float width,
                         float height,
@@ -77,33 +79,75 @@ void VROText::buildText(std::string text,
             glyphMap[charCode] = std::move(glyph);
         }
     }
+    
+    /*
+     Divide the text into its individual lines.
+     */
+    std::vector<std::string> lines = divideIntoLines(text, width, lineBreakMode, maxLines, glyphMap);
+    float lineHeight = typeface->getLineHeight() * scale;
+    float totalHeight = lines.size() * lineHeight;
 
+    /*
+     Compute the Y starting point for the text based on the vertical 
+     alignment setting.
+     */
+    float y = 0;
+    if (verticalAlignment == VROTextVerticalAlignment::Top) {
+        y = height / 2.0 - lineHeight;
+    }
+    else if (verticalAlignment == VROTextVerticalAlignment::Bottom) {
+        y = -height / 2.0 + totalHeight - lineHeight;
+    }
+    else { // Center
+        y = totalHeight / 2.0 - lineHeight / 2.0;
+    }
+    
     /*
      Build the geometry of the text into the var vector, while updating the
      associated indices in the materialMap.
      */
     std::vector<VROShapeVertexLayout> var;
-    std::map<FT_ULong, std::shared_ptr<VROGeometryElement>> elementMap;
-    
-    float x = 0;
-    for (std::string::const_iterator c = text.begin(); c != text.end(); ++c) {
-        FT_ULong charCode = *c;
-        std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
-        
-        x += glyph->getBearing().x * scale;
-        //*outRealizedHeight = std::max(*outRealizedHeight, h);
-        
-        buildChar(glyph, x, 0, scale, var, materialMap[charCode].second);
+    for (std::string &line : lines) {
+        /*
+         Compute the width of the line.
+         */
+        float lineWidth = 0;
+        for (std::string::const_iterator c = line.begin(); c != line.end(); ++c) {
+            FT_ULong charCode = *c;
+            std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
+            
+            lineWidth += glyph->getAdvance() * scale;
+        }
         
         /*
-         Now advance cursors for next glyph. Each advance unit is 1/64 of a pixel,
-         so divide by 64 (>> 6) to get advance in pixels.
+         Compute the X starting point for the text based on the
+         horizontal alignment setting.
          */
-        x += (glyph->getAdvance() >> 6) * scale;
+        float x = 0;
+        if (horizontalAlignment == VROTextHorizontalAlignment::Left) {
+            x = -width / 2.0;
+        }
+        else if (horizontalAlignment == VROTextHorizontalAlignment::Right) {
+            x = width / 2.0 - lineWidth;
+        }
+        else { // Center
+            x = -lineWidth / 2.0;
+        }
+        
+        for (std::string::const_iterator c = line.begin(); c != line.end(); ++c) {
+            FT_ULong charCode = *c;
+            std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
+            
+            buildChar(glyph, x, y, scale, var, materialMap[charCode].second);
+            x += glyph->getAdvance() * scale;
+        }
+        
+        y -= lineHeight;
+        *outRealizedWidth = std::max(*outRealizedWidth, lineWidth);
     }
     
-    //*outRealizedWidth = x;
     buildGeometry(var, materialMap, sources, elements, materials);
+    *outRealizedHeight = totalHeight;
 }
 
 void VROText::buildChar(std::unique_ptr<VROGlyph> &glyph,
@@ -182,6 +226,46 @@ void VROText::buildGeometry(std::vector<VROShapeVertexLayout> &var,
         elements.push_back(element);
         materials.push_back(material);
     }
+}
+
+std::vector<std::string> VROText::divideIntoLines(std::string &text, int maxWidth,
+                                                  VROLineBreakMode lineBreakMode, int maxLines,
+                                                  std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
+    
+    std::string delimeters = " \n\t\v\r";
+    
+    std::vector<std::string> lines;
+    if (lineBreakMode == VROLineBreakMode::WordWrap) {
+        lines = VROStringUtil::split(text, delimeters, false);
+    }
+    else if (lineBreakMode == VROLineBreakMode::CharWrap) {
+        float lineWidth = 0;
+        std::string currentLine;
+        
+        for (std::string::const_iterator c = text.begin(); c != text.end(); ++c) {
+            FT_ULong charCode = *c;
+            std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
+            
+            float charWidth = glyph->getAdvance() * kTextPointToWorldScale;
+            if (lineWidth + charWidth > maxWidth) {
+                lines.push_back(currentLine);
+                
+                currentLine.clear();
+                lineWidth = 0;
+                --c;
+            }
+            else {
+                lineWidth += charWidth;
+                currentLine += *c;
+            }
+        }
+        
+        if (!currentLine.empty()) {
+            lines.push_back(currentLine);
+        }
+    }
+    
+    return lines;
 }
 
 VROText::~VROText() {

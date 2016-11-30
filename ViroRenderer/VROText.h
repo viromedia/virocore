@@ -36,9 +36,7 @@ enum class VROTextVerticalAlignment {
 
 enum class VROLineBreakMode {
     WordWrap,
-    CharWrap,
-    Clip,
-    TruncateTail
+    CharWrap
 };
 
 class VROTextLayout {
@@ -81,8 +79,8 @@ private:
         _height(height)
     {}
     
-    static void buildText(std::string text,
-                          std::shared_ptr<VROTypeface> typeface,
+    static void buildText(std::string &text,
+                          std::shared_ptr<VROTypeface> &typeface,
                           float scale,
                           float width,
                           float height,
@@ -114,6 +112,10 @@ private:
                           float x, float y, float scale,
                           std::vector<VROShapeVertexLayout> &var,
                           std::vector<int> &indices);
+    
+    static std::vector<std::string> divideIntoLines(std::string &text, int maxWidth,
+                                                    VROLineBreakMode lineBreakMode, int maxLines,
+                                                    std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap);
     
     float _width, _height;
     

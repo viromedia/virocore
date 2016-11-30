@@ -44,8 +44,11 @@ public:
         return std::make_shared<VROAudioPlayeriOS>(url);
     }
     
-    std::shared_ptr<VROTypeface> newTypeface(std::string typeface, int size) {
-        return std::make_shared<VROTypefaceiOS>(typeface, size);
+    std::shared_ptr<VROTypeface> newTypeface(std::string typefaceName, int size) {
+        std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceiOS>(typefaceName, size);
+        typeface->loadFace();
+        
+        return typeface;
     }
 
     

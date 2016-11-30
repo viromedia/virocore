@@ -28,11 +28,16 @@ typedef struct TableEntry {
 } TableEntry;
 
 VROTypefaceiOS::VROTypefaceiOS(std::string name, int size) :
-    VROTypeface(name) {
-    if (FT_Init_FreeType(&_ft)) {
-        pabort("Could not initialize freetype library");
-    }
+    VROTypeface(name, size) {
     
+    
+}
+
+VROTypefaceiOS::~VROTypefaceiOS() {
+
+}
+
+FT_Face VROTypefaceiOS::loadFace(std::string name, int size, FT_Library ft) {
     UIFont *font = [UIFont fontWithName:[NSString stringWithUTF8String:name.c_str()] size:size];
     if (!font) {
         pinfo("Could not find font with name %s, reverting to system font", name.c_str());
@@ -43,16 +48,13 @@ VROTypefaceiOS::VROTypefaceiOS(std::string name, int size) :
     CGFontRef fontRef = CGFontCreateWithFontName(fontName);
     NSData *fontData = getFontData(fontRef);
     
-    if (FT_New_Memory_Face(_ft, (const FT_Byte *)[fontData bytes], [fontData length], 0, &_face)) {
+    FT_Face face;
+    if (FT_New_Memory_Face(_ft, (const FT_Byte *)[fontData bytes], [fontData length], 0, &face)) {
         pabort("Failed to load font");
     }
     
-    FT_Set_Pixel_Sizes(_face, 0, size);
-}
-
-VROTypefaceiOS::~VROTypefaceiOS() {
-    FT_Done_Face(_face);
-    FT_Done_FreeType(_ft);
+    FT_Set_Pixel_Sizes(face, 0, size);
+    return face;
 }
 
 std::unique_ptr<VROGlyph> VROTypefaceiOS::loadGlyph(FT_ULong charCode) {

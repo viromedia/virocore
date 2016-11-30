@@ -11,12 +11,17 @@
 
 #include <stdio.h>
 #include <string>
+#include <vector>
 
 class VROStringUtil {
     
 public:
     
     static std::string toString(int i);
+    
+    static std::vector<std::string> split(std::string &s,
+                                          std::string &delimiters,
+                                          bool emptiesOk);
     
 private:
     

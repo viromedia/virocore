@@ -56,8 +56,11 @@ public:
         }
     }
 
-    std::shared_ptr<VROTypeface> newTypeface(std::string typeface, int size) {
-        return std::make_shared<VROTypefaceAndroid>(typeface, size);
+    std::shared_ptr<VROTypeface> newTypeface(std::string typefaceName, int size) {
+        std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceAndroid>(typefaceName, size);
+        typeface->loadFace();
+
+        return typeface;
     }
 
 
