@@ -22,8 +22,7 @@ VROGlyphOpenGL::~VROGlyphOpenGL() {
 
 bool VROGlyphOpenGL::load(FT_Face face, FT_ULong charCode) {
     /*
-     Load the glyph from freetype. Specifying FT_LOAD_RENDER makes
-     freetype create the 8-bit greyscale glyph in face->glyph->bitmap.
+     Load the glyph from freetype.
      */
     if (FT_Load_Char(face, charCode, FT_LOAD_DEFAULT)) {
         pinfo("Failed to load glyph %lu", charCode);

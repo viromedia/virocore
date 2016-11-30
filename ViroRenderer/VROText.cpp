@@ -26,8 +26,8 @@ std::shared_ptr<VROText> VROText::createText(std::string text, std::shared_ptr<V
     std::vector<std::shared_ptr<VROMaterial>> materials;
     
     float realizedWidth, realizedHeight;
-    buildGeometry(text, typeface, kTextPointToWorldScale, width, height, horizontalAlignment, verticalAlignment,
-                  lineBreakMode, maxLines, sources, elements, materials, &realizedWidth, &realizedHeight);
+    buildText(text, typeface, kTextPointToWorldScale, width, height, horizontalAlignment, verticalAlignment,
+              lineBreakMode, maxLines, sources, elements, materials, &realizedWidth, &realizedHeight);
     
     std::shared_ptr<VROText> model = std::shared_ptr<VROText>(new VROText(sources, elements, width, height));
     model->getMaterials().insert(model->getMaterials().end(), materials.begin(), materials.end());
@@ -35,41 +35,65 @@ std::shared_ptr<VROText> VROText::createText(std::string text, std::shared_ptr<V
     return model;
 }
 
-void VROText::buildGeometry(std::string text,
-                            std::shared_ptr<VROTypeface> typeface,
-                            float scale,
-                            float width,
-                            float height,
-                            VROTextHorizontalAlignment horizontalAlignment,
-                            VROTextVerticalAlignment verticalAlignment,
-                            VROLineBreakMode lineBreakMode,
-                            int maxLines,
-                            std::vector<std::shared_ptr<VROGeometrySource>> &sources,
-                            std::vector<std::shared_ptr<VROGeometryElement>> &elements,
-                            std::vector<std::shared_ptr<VROMaterial>> &materials,
-                            float *outRealizedWidth, float *outRealizedHeight) {
+void VROText::buildText(std::string text,
+                        std::shared_ptr<VROTypeface> typeface,
+                        float scale,
+                        float width,
+                        float height,
+                        VROTextHorizontalAlignment horizontalAlignment,
+                        VROTextVerticalAlignment verticalAlignment,
+                        VROLineBreakMode lineBreakMode,
+                        int maxLines,
+                        std::vector<std::shared_ptr<VROGeometrySource>> &sources,
+                        std::vector<std::shared_ptr<VROGeometryElement>> &elements,
+                        std::vector<std::shared_ptr<VROMaterial>> &materials,
+                        float *outRealizedWidth, float *outRealizedHeight) {
     
+    /*
+     Create a glyph, material, and vector of indices for each character
+     in the text string. If a character appears multiple times in the text,
+     we can share the same glyph, material, and indices vector across them
+     all.
+     */
+    std::map<FT_ULong, std::unique_ptr<VROGlyph>> glyphMap;
+    std::map<FT_ULong, std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> materialMap;
+    
+    for (std::string::const_iterator c = text.begin(); c != text.end(); ++c) {
+        FT_ULong charCode = *c;
+        if (glyphMap.find(charCode) == glyphMap.end()) {
+            std::unique_ptr<VROGlyph> glyph = typeface->loadGlyph(charCode);
+            
+            std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+            material->setWritesToDepthBuffer(true);
+            material->setReadsFromDepthBuffer(true);
+            material->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
+            material->getDiffuse().setTexture(glyph->getTexture());
+            
+            char name[2] = { (char)charCode, 0 };
+            material->setName(name);
+            
+            std::vector<int> indices;
+            materialMap[charCode] = {material, indices};
+            glyphMap[charCode] = std::move(glyph);
+        }
+    }
+
+    /*
+     Build the geometry of the text into the var vector, while updating the
+     associated indices in the materialMap.
+     */
     std::vector<VROShapeVertexLayout> var;
+    std::map<FT_ULong, std::shared_ptr<VROGeometryElement>> elementMap;
     
     float x = 0;
-    
-    std::string::const_iterator c;
-    for (c = text.begin(); c != text.end(); c++) {
+    for (std::string::const_iterator c = text.begin(); c != text.end(); ++c) {
         FT_ULong charCode = *c;
-        std::unique_ptr<VROGlyph> glyph = typeface->loadGlyph(charCode);
+        std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
         
         x += glyph->getBearing().x * scale;
-        float y = (glyph->getBearing().y - glyph->getSize().y) * scale;
+        //*outRealizedHeight = std::max(*outRealizedHeight, h);
         
-        float w = glyph->getSize().x * scale;
-        float h = glyph->getSize().y * scale;
-        
-        *outRealizedHeight = std::max(*outRealizedHeight, h);
-        
-        buildChar(var, (char)*c, x, y, w, h,
-                  glyph->getMinU(), glyph->getMaxU(), glyph->getMinV(), glyph->getMaxV(),
-                  glyph->getTexture(), elements, materials);
-        
+        buildChar(glyph, x, 0, scale, var, materialMap[charCode].second);
         
         /*
          Now advance cursors for next glyph. Each advance unit is 1/64 of a pixel,
@@ -78,7 +102,45 @@ void VROText::buildGeometry(std::string text,
         x += (glyph->getAdvance() >> 6) * scale;
     }
     
-    *outRealizedWidth = x;
+    //*outRealizedWidth = x;
+    buildGeometry(var, materialMap, sources, elements, materials);
+}
+
+void VROText::buildChar(std::unique_ptr<VROGlyph> &glyph,
+                        float x, float y, float scale,
+                        std::vector<VROShapeVertexLayout> &var,
+                        std::vector<int> &indices) {
+    
+    int index = (int)var.size();
+    
+    x += glyph->getBearing().x * scale;
+    y += (glyph->getBearing().y - glyph->getSize().y) * scale;
+    
+    float w = glyph->getSize().x * scale;
+    float h = glyph->getSize().y * scale;
+    
+    float minU = glyph->getMinU();
+    float maxU = glyph->getMaxU();
+    float minV = glyph->getMinV();
+    float maxV = glyph->getMaxV();
+    
+    var.push_back({x,     y + h, 0, minU, minV, 0, 0, 1});
+    var.push_back({x,     y,     0, minU, maxV, 0, 0, 1});
+    var.push_back({x + w, y,     0, maxU, maxV, 0, 0, 1});
+    var.push_back({x,     y + h, 0, minU, minV, 0, 0, 1});
+    var.push_back({x + w, y,     0, maxU, maxV, 0, 0, 1});
+    var.push_back({x + w, y + h, 0, maxU, minV, 0, 0, 1});
+    
+    for (int i = 0; i < kVerticesPerGlyph; i++) {
+        indices.push_back(index + i);
+    }
+}
+
+void VROText::buildGeometry(std::vector<VROShapeVertexLayout> &var,
+                            std::map<FT_ULong, std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> &materialMap,
+                            std::vector<std::shared_ptr<VROGeometrySource>> &sources,
+                            std::vector<std::shared_ptr<VROGeometryElement>> &elements,
+                            std::vector<std::shared_ptr<VROMaterial>> &materials) {
     
     int numVertices = (int) var.size();
     std::shared_ptr<VROData> vertexData = std::make_shared<VROData>(var.data(), var.size() * sizeof(VROShapeVertexLayout));
@@ -107,51 +169,19 @@ void VROText::buildGeometry(std::string text,
     sources.push_back(position);
     sources.push_back(texcoord);
     sources.push_back(normal);
-}
-
-void VROText::buildChar(std::vector<VROShapeVertexLayout> &var,
-                        char c, float x, float y, float w, float h,
-                        float minU, float maxU, float minV, float maxV,
-                        std::shared_ptr<VROTexture> texture,
-                        std::vector<std::shared_ptr<VROGeometryElement>> &elements,
-                        std::vector<std::shared_ptr<VROMaterial>> &materials) {
     
-    int index = (int)var.size();
-    
-    var.push_back({x,     y + h, 0, minU, minV, 0, 0, 1});
-    var.push_back({x,     y,     0, minU, maxV, 0, 0, 1});
-    var.push_back({x + w, y,     0, maxU, maxV, 0, 0, 1});
-    var.push_back({x,     y + h, 0, minU, minV, 0, 0, 1});
-    var.push_back({x + w, y,     0, maxU, maxV, 0, 0, 1});
-    var.push_back({x + w, y + h, 0, maxU, minV, 0, 0, 1});
-    
-    /*
-     Make the index array and element.
-     */
-    int indices[kVerticesPerGlyph];
-    for (int i = 0; i < kVerticesPerGlyph; i++) {
-        indices[i] = index + i;
+    for (auto &kv : materialMap) {
+        std::shared_ptr<VROMaterial> &material = kv.second.first;
+        std::vector<int> &indices = kv.second.second;
+        
+        std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices.data(), sizeof(int) * indices.size());
+        std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(indexData,
+                                                                                           VROGeometryPrimitiveType::Triangle,
+                                                                                           indices.size() / 3,
+                                                                                           sizeof(int));
+        elements.push_back(element);
+        materials.push_back(material);
     }
-    std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices, sizeof(int) * kVerticesPerGlyph);
-    std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(indexData,
-                                                                                       VROGeometryPrimitiveType::Triangle,
-                                                                                       kVerticesPerGlyph / 3,
-                                                                                       sizeof(int));
-    elements.push_back(element);
-    
-    /*
-     Make the corresponding material.
-     */
-    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->setWritesToDepthBuffer(true);
-    material->setReadsFromDepthBuffer(true);
-    material->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
-    material->getDiffuse().setTexture(texture);
-    
-    char name[2] = { c, 0 };
-    material->setName(name);
-    
-    materials.push_back(material);
 }
 
 VROText::~VROText() {

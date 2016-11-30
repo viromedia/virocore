@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <ft2build.h>
+#include <map>
 #include FT_FREETYPE_H
 
 #include "VROGeometry.h"
@@ -18,6 +19,7 @@
 
 class VROMaterial;
 class VROTexture;
+class VROGlyph;
 
 enum class VROTextHorizontalAlignment {
     Left,
@@ -79,26 +81,39 @@ private:
         _height(height)
     {}
     
-    static void buildGeometry(std::string text,
-                              std::shared_ptr<VROTypeface> typeface,
-                              float scale,
-                              float width,
-                              float height,
-                              VROTextHorizontalAlignment horizontalAlignment,
-                              VROTextVerticalAlignment verticalAlignment,
-                              VROLineBreakMode lineBreakMode,
-                              int maxLines,
+    static void buildText(std::string text,
+                          std::shared_ptr<VROTypeface> typeface,
+                          float scale,
+                          float width,
+                          float height,
+                          VROTextHorizontalAlignment horizontalAlignment,
+                          VROTextVerticalAlignment verticalAlignment,
+                          VROLineBreakMode lineBreakMode,
+                          int maxLines,
+                          std::vector<std::shared_ptr<VROGeometrySource>> &sources,
+                          std::vector<std::shared_ptr<VROGeometryElement>> &elements,
+                          std::vector<std::shared_ptr<VROMaterial>> &materials,
+                          float *outRealizedWidth, float *outRealizedHeight);
+    
+    /*
+     Build a standard Viro geometry from the given vertex array and material/indices
+     pairs.
+     */
+    static void buildGeometry(std::vector<VROShapeVertexLayout> &var,
+                              std::map<FT_ULong, std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> &materialMap,
                               std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                               std::vector<std::shared_ptr<VROGeometryElement>> &elements,
-                              std::vector<std::shared_ptr<VROMaterial>> &materials,
-                              float *outRealizedWidth, float *outRealizedHeight);
+                              std::vector<std::shared_ptr<VROMaterial>> &materials);
     
-    static void buildChar(std::vector<VROShapeVertexLayout> &var,
-                          char c, float x, float y, float w, float h,
-                          float minU, float maxU, float minV, float maxV,
-                          std::shared_ptr<VROTexture> texture,
-                          std::vector<std::shared_ptr<VROGeometryElement>> &elements,
-                          std::vector<std::shared_ptr<VROMaterial>> &materials);
+    /*
+     Write the geometry for the given glyph (at the given position) into the
+     provided vertex array, and write the associated indices into the indices 
+     array as well.
+     */
+    static void buildChar(std::unique_ptr<VROGlyph> &glyph,
+                          float x, float y, float scale,
+                          std::vector<VROShapeVertexLayout> &var,
+                          std::vector<int> &indices);
     
     float _width, _height;
     
