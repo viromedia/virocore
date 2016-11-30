@@ -37,7 +37,7 @@ public class ViroActivity extends AppCompatActivity {
         SceneJni scene = new SceneJni(rootNode);
 
         // Creation of ViroBox
-        BoxJni boxGeometry = new BoxJni(this, 2,4,2);
+        BoxJni boxGeometry = new BoxJni(2,4,2);
         NodeJni boxNode = new NodeJni(this);
         boxNode.setGeometry(boxGeometry);
         boxNode.setPosition(0,0,-5);

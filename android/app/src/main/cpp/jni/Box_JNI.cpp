@@ -35,11 +35,10 @@ JNI_METHOD(jlong, nativeCreateBox)(JNIEnv *env,
                                         jclass clazz,
                                         jobject class_loader,
                                         jobject node_jni,
-                                        jobject android_context,
-                                        jlong wdith,
+                                        jlong width,
                                         jlong height,
                                         jlong length) {
-    std::shared_ptr<VROBox> box = VROBox::createBox(wdith, height, length);
+    std::shared_ptr<VROBox> box = VROBox::createBox(width, height, length);
 
     /**
      * TODO:
@@ -55,7 +54,7 @@ JNI_METHOD(jlong, nativeCreateBox)(JNIEnv *env,
 JNI_METHOD(void, nativeDestroyBox)(JNIEnv *env,
                                         jclass clazz,
                                         jlong native_node_ref) {
-  delete reinterpret_cast<PersistentRef<VROBox> *>(native_node_ref);
+    delete reinterpret_cast<PersistentRef<VROBox> *>(native_node_ref);
 }
 
 }  // extern "C"

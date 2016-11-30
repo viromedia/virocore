@@ -14,16 +14,20 @@ import android.content.Context;
  * Cpp Object           : VROBox.cpp
  */
 public class BoxJni extends BaseGeometry{
-    public BoxJni(Context context, long width, long height, long length) {
+    public BoxJni(long width, long height, long length) {
         mNativeRef = nativeCreateBox(
                 getClass().getClassLoader(),
                 this,
-                context.getApplicationContext(),
                 width,
                 height,
                 length);
     }
 
-    private native long nativeCreateBox(ClassLoader appClassLoader, BoxJni node_jni, Context context, long width, long hight, long length);
+    public void destroy() {
+        nativeDestroyBox(mNativeRef);
+    }
+
+    private native long nativeCreateBox(ClassLoader appClassLoader, BoxJni boxJni,
+                                        long width, long height, long length);
     private native void nativeDestroyBox(long nodeReference);
 }

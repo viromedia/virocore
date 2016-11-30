@@ -16,8 +16,12 @@
 template <class T>
 class PersistentRef {
 public:
-    PersistentRef(std::shared_ptr<T> ptr) :
-    _persistedSharedPtr(ptr){}
+
+    PersistentRef(std::shared_ptr<T> ptr) : _persistedSharedPtr(ptr){}
+
+    ~PersistentRef() {
+        _persistedSharedPtr.reset();
+    }
 
     std::shared_ptr<T> get() const {
         return _persistedSharedPtr;
