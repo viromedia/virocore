@@ -23,9 +23,12 @@ std::shared_ptr<VROText> VROText::createText(std::string text, std::string typef
     std::vector<std::shared_ptr<VROMaterial>> materials;
     
     std::shared_ptr<VROTypeface> typeface = driver.newTypeface(typefaceName, pointSize);
-    buildGeometry(text, typeface, kTextPointToWorldScale, driver, sources, elements, materials);
     
-    std::shared_ptr<VROText> model = std::shared_ptr<VROText>(new VROText(sources, elements));
+    float width, height;
+    buildGeometry(text, typeface, kTextPointToWorldScale, driver, sources, elements, materials,
+                  &width, &height);
+    
+    std::shared_ptr<VROText> model = std::shared_ptr<VROText>(new VROText(sources, elements, width, height));
     model->getMaterials().insert(model->getMaterials().end(), materials.begin(), materials.end());
     
     return model;
@@ -37,17 +40,18 @@ void VROText::buildGeometry(std::string text,
                             VRODriver &driver,
                             std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                             std::vector<std::shared_ptr<VROGeometryElement>> &elements,
-                            std::vector<std::shared_ptr<VROMaterial>> &materials) {
+                            std::vector<std::shared_ptr<VROMaterial>> &materials,
+                            float *width, float *height) {
     
     int verticesPerGlyph = 6;
     int numVertices = (int) text.size() * verticesPerGlyph;
     int varSizeBytes = sizeof(VROShapeVertexLayout) * numVertices;
     VROShapeVertexLayout var[varSizeBytes];
     
-    int idx = 0;
-    std::string::const_iterator c;
-
     float x = 0;
+    int idx = 0;
+    
+    std::string::const_iterator c;
     for (c = text.begin(); c != text.end(); c++) {
         FT_ULong charCode = *c;
         std::unique_ptr<VROGlyph> glyph = typeface->loadGlyph(charCode);
@@ -61,6 +65,8 @@ void VROText::buildGeometry(std::string text,
         
         float w = glyph->getSize().x * scale;
         float h = glyph->getSize().y * scale;
+        
+        *height = std::max(*height, h);
         
         var[idx + 0].x = x;
         var[idx + 0].y = y + h;
@@ -149,6 +155,8 @@ void VROText::buildGeometry(std::string text,
         
         idx += 6;
     }
+    
+    *width = x;
     
     std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) var, varSizeBytes);
     

@@ -24,11 +24,24 @@ public:
     static std::shared_ptr<VROText> createText(std::string text, std::string typefaceName, int pointSize, VRODriver &driver);
     virtual ~VROText();
     
+    /*
+     Get the width and height of the text.
+     */
+    float getWidth() const {
+        return _width;
+    }
+    float getHeight() const {
+        return _height;
+    }
+    
 private:
     
     VROText(std::vector<std::shared_ptr<VROGeometrySource>> sources,
-            std::vector<std::shared_ptr<VROGeometryElement>> elements) :
-        VROGeometry(sources, elements)
+            std::vector<std::shared_ptr<VROGeometryElement>> elements,
+            float width, float height) :
+        VROGeometry(sources, elements),
+        _width(width),
+        _height(height)
     {}
     
     static void buildGeometry(std::string text,
@@ -37,7 +50,10 @@ private:
                               VRODriver &driver,
                               std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                               std::vector<std::shared_ptr<VROGeometryElement>> &elements,
-                              std::vector<std::shared_ptr<VROMaterial>> &materials);
+                              std::vector<std::shared_ptr<VROMaterial>> &materials,
+                              float *width, float *height);
+    
+    float _width, _height;
     
 };
 
