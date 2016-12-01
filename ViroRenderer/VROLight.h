@@ -14,7 +14,6 @@
 #include <atomic>
 #include "VROVector3f.h"
 #include "VROVector4f.h"
-#include "VROSize.h"
 #include "VROAnimatable.h"
 
 static std::atomic_int sLightId;
@@ -150,21 +149,6 @@ private:
      */
     float _spotInnerAngle;
     float _spotOuterAngle;
-    
-    /*
-     Shadow parameters.
-     */
-    bool  _castsShadow;
-    float _shadowRadius;
-    VROVector4f _shadowColor;
-    VROSize _shadowMapSize;
-    int   _shadowSampleCount;
-    float _shadowBias;
-    float _orthographicScale;
-    float _zFar;
-    float _zNear;
-    
-    int _categoryBitMask;
     
     /*
      Internal. The position of the light after all its supernode

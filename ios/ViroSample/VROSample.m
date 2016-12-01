@@ -251,7 +251,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     boxNode->setPosition({0, 0, -5});
 
     rootNode->addChildNode(boxNode);
-    //boxNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
+    boxNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
     
     /*
      Create a second box node behind the first.
@@ -318,34 +318,37 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     scene->addNode(rootNode);
     
     /*
-     Create the moments icon node.
+     Create background for text.
      */
-    std::shared_ptr<VROLayer> center = std::make_shared<VROLayer>();
-    center->setContents([UIImage imageNamed:@"momentslogo"]);
-    center->setFrame(VRORectMake(0, -1.25, -2, 1, 1));
-    center->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::Y));
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(10, 10);
+    surface->getMaterials().front()->getDiffuse().setColor({1.0, 0.0, 0.0, 1.0});
     
-    rootNode->addChildNode(center);
+    std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
+    surfaceNode->setGeometry(surface);
+    surfaceNode->setPosition({0, 0, -10.01});
+    
+    rootNode->addChildNode(surfaceNode);
     
     /*
-     Create the label node.
+     Create text.
      */
-    VROWorldUIView *labelView = [[VROWorldUIView alloc] initWithFrame:CGRectMake(0, 0, 100, 10)];
-    labelView.vroLayer->setFrame(VRORectMake(0, 0, -5, 2, 0.2));
+    std::shared_ptr<VROTypeface> typeface = self.driver->newTypeface("SF", 24);
+    std::string string = "Hello\nFreetype\nThis is a Test of Wrapping a Long Passage";
     
-    [labelView setBackgroundColor:[UIColor clearColor]];
+    VROVector3f size = VROText::getTextSize(string, typeface, 10, VROLineBreakMode::WordWrap);
+    NSLog(@"Estimated size %f, %f", size.x, size.y);
     
-    UILabel *label = [[UILabel alloc] initWithFrame:labelView.bounds];
-    [label setText:@"Moments"];
-    [label setBackgroundColor:[UIColor clearColor]];
-    [label setTextAlignment:NSTextAlignmentCenter];
-    [label setTextColor:[UIColor whiteColor]];
-    [label setFont:[UIFont systemFontOfSize:12]];
+    std::shared_ptr<VROText> text = VROText::createText(string, typeface, 10, 10,
+                                                        VROTextHorizontalAlignment::Center, VROTextVerticalAlignment::Center,
+                                                        VROLineBreakMode::WordWrap);
+    text->setName("Text");
+    NSLog(@"Realized size %f, %f", text->getWidth(), text->getHeight());
     
-    [labelView addSubview:label];
-    [labelView updateWithDriver:self.driver];
+    std::shared_ptr<VRONode> textNode = std::make_shared<VRONode>();
+    textNode->setGeometry(text);
+    textNode->setPosition({0, 0, -10});
     
-    rootNode->addChildNode(labelView.vroLayer);
+    rootNode->addChildNode(textNode);
     
     self.view.reticle->setEnabled(true);
     self.tapEnabled = YES;

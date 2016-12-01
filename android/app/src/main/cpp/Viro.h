@@ -49,19 +49,12 @@
 #include "VROTimingFunctionEaseOut.h"
 #include "VROTimingFunctionLinear.h"
 #include "VROTimingFunctionPowerDeceleration.h"
-//#include "VROVideoTexture.h"
+#include "VROVideoTexture.h"
 #include "VROAction.h"
 #include "VROHitTestResult.h"
 #include "VROConstraint.h"
 #include "VROBillboardConstraint.h"
 #include "VROTransformConstraint.h"
-
-// Layer
-//#include "VROLayer.h"
-#include "VRORect.h"
-#include "VROSize.h"
-//#include "VROWorldUIView.h"
-//#include "VROScreenUIView.h"
 #include "VROReticle.h"
 
 // Audio
@@ -85,7 +78,7 @@
 #include "VROSphere.h"
 #include "VROSurface.h"
 #include "VROPolyline.h"
-//#include "VROVideoSurface.h"
+#include "VROVideoSurface.h"
 #include "VROTorusKnot.h"
 #include "VROShapeUtils.h"
 

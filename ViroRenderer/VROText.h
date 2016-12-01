@@ -24,8 +24,7 @@ class VROGlyph;
 enum class VROTextHorizontalAlignment {
     Left,
     Right,
-    Center,
-    Justified
+    Center
 };
 
 enum class VROTextVerticalAlignment {

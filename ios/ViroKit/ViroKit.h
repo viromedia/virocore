@@ -66,12 +66,7 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROBillboardConstraint.h>
 #import <ViroKit/VROTransformConstraint.h>
 
-// Layer
-#import <ViroKit/VROLayer.h>
-#import <ViroKit/VRORect.h>
-#import <ViroKit/VROSize.h>
-#import <ViroKit/VROWorldUIView.h>
-#import <ViroKit/VROScreenUIView.h>
+// UI
 #import <ViroKit/VROReticle.h>
 #import <ViroKit/VROText.h>
 #import <ViroKit/VROGlyph.h>
