@@ -8,13 +8,15 @@
  */
 package com.viro.renderer;
 
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.viro.renderer.jni.BoxJni;
+import com.viro.renderer.jni.ImageJni;
+import com.viro.renderer.jni.MaterialJni;
 import com.viro.renderer.jni.NodeJni;
 import com.viro.renderer.jni.SceneJni;
+import com.viro.renderer.jni.TextureJni;
 import com.viro.renderer.jni.ViroGvrLayout;
 
 public class ViroActivity extends AppCompatActivity {
@@ -41,6 +43,17 @@ public class ViroActivity extends AppCompatActivity {
         NodeJni boxNode = new NodeJni(this);
         boxNode.setGeometry(boxGeometry);
         boxNode.setPosition(0,0,-5);
+
+        // Testing random material creation stuff, should have no effect for now.
+        MaterialJni material = new MaterialJni();
+        ImageJni image = new ImageJni("boba.png");
+
+        TextureJni texture = new TextureJni(image);
+        TextureJni texture2 = new TextureJni(image, image, image,
+                image, image, image);
+
+        material.setTexture(texture, "diffuseTexture");
+        material.setColor(0xff00ff, "diffuseColor");
 
         // Assignment of ViroBox to scene
         rootNode.addChildNode(boxNode);

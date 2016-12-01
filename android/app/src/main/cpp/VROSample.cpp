@@ -91,7 +91,9 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     //rootNode->addChildNode(boxNode);
 
     std::shared_ptr<VROTypeface> typeface = driver.newTypeface("Roboto", 24);
-    std::shared_ptr<VROText> text = VROText::createText("Hello Freetype", typeface, 10, 10, VROTextHorizontalAlignment::Center, VROTextVerticalAlignment::Center, VROLineBreakMode::WordWrap);
+    std::shared_ptr<VROText> text = VROText::createText("Hello Freetype", typeface, 10, 10,
+                                                        VROTextHorizontalAlignment::Center, VROTextVerticalAlignment::Center,
+                                                        VROLineBreakMode::WordWrap, VROTextClipMode::None, 3);
     text->setName("Text");
 
     std::shared_ptr<VRONode> textNode = std::make_shared<VRONode>();

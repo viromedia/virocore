@@ -45,6 +45,9 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/Node_JNI.cpp
              src/main/cpp/jni/Scene_JNI.cpp
              src/main/cpp/jni/Box_JNI.cpp
+             src/main/cpp/jni/Material_JNI.cpp
+             src/main/cpp/jni/Image_JNI.cpp
+             src/main/cpp/jni/Texture_JNI.cpp
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp
