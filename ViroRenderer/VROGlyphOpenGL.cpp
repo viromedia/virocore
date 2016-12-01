@@ -20,7 +20,7 @@ VROGlyphOpenGL::~VROGlyphOpenGL() {
     
 }
 
-bool VROGlyphOpenGL::load(FT_Face face, FT_ULong charCode) {
+bool VROGlyphOpenGL::load(FT_Face face, FT_ULong charCode, bool forRendering) {
     /*
      Load the glyph from freetype.
      */
@@ -28,11 +28,24 @@ bool VROGlyphOpenGL::load(FT_Face face, FT_ULong charCode) {
         pinfo("Failed to load glyph %lu", charCode);
         return false;
     }
-    
+ 
     FT_GlyphSlot &glyph = face->glyph;
+    
+    /*
+     Each advance unit is 1/64 of a pixel so divide by 64 (>> 6) to get advance in pixels.
+     */
+    _advance = glyph->advance.x >> 6;
+    
+    if (forRendering) {
+        loadTexture(face, glyph);
+    }
+    return true;
+}
+
+void VROGlyphOpenGL::loadTexture(FT_Face face, FT_GlyphSlot &glyph) {
     FT_Render_Glyph(glyph, FT_RENDER_MODE_LIGHT);
     FT_Bitmap &bitmap = glyph->bitmap;
-    
+
     int texWidth  = VROMathRoundUpToNextPow2(bitmap.width);
     int texHeight = VROMathRoundUpToNextPow2(bitmap.rows);
     
@@ -82,13 +95,8 @@ bool VROGlyphOpenGL::load(FT_Face face, FT_ULong charCode) {
         new VROTextureSubstrateOpenGL(GL_TEXTURE_2D, texture, true));
     
     _texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
-    _size = VROVector3f(bitmap.width, bitmap.rows);
     _bearing = VROVector3f(glyph->bitmap_left, glyph->bitmap_top);
-    
-    /*
-     Each advance unit is 1/64 of a pixel so divide by 64 (>> 6) to get advance in pixels.
-     */
-    _advance = glyph->advance.x >> 6;
+    _size = VROVector3f(bitmap.width, bitmap.rows);
     
     _minU = 0;
     _maxU = (float)bitmap.width / (float)texWidth;
@@ -96,5 +104,4 @@ bool VROGlyphOpenGL::load(FT_Face face, FT_ULong charCode) {
     _maxV = (float)bitmap.rows / (float)texHeight;
     
     free (luminanceAlphaBitmap);
-    return true;
 }

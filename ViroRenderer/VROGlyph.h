@@ -23,7 +23,12 @@ public:
     VROGlyph() {}
     virtual ~VROGlyph() {}
     
-    virtual bool load(FT_Face face, FT_ULong charCode) = 0;
+    /*
+     If forRendering is false, then the texture and all bitmap
+     fields will not be loaded, and only getAdvance() will be
+     available.
+     */
+    virtual bool load(FT_Face face, FT_ULong charCode, bool forRendering) = 0;
     
     std::shared_ptr<VROTexture> getTexture() const {
         return _texture;

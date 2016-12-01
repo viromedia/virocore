@@ -43,7 +43,12 @@ public:
     void loadFace() {
         _face = loadFace(_name, _size, _ft);
     }
-    virtual std::unique_ptr<VROGlyph> loadGlyph(FT_ULong charCode) = 0;
+    
+    /*
+     Load the glyph for the given character. If forRendering is true, then the
+     texture in the VROGlyph will be populated; otherwise it is left empty.
+     */
+    virtual std::unique_ptr<VROGlyph> loadGlyph(FT_ULong charCode, bool forRendering) = 0;
     
     float getLineHeight() const {
         return _face->size->metrics.height >> 6;

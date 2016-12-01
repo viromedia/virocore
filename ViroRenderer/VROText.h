@@ -50,17 +50,30 @@ class VROText : public VROGeometry {
     
 public:
     
+    /*
+     Create a text object for displaying the given string with the given typeface,
+     constrained to the bounds defined by the provided width and height, and aligned
+     according to the given alignment parameters and linebreak mode. If set, the
+     maxLines property caps the number of lines; when zero, there is no limit to the
+     number of lines generated.
+     */
     static std::shared_ptr<VROText> createText(std::string text, std::shared_ptr<VROTypeface> typeface, float width, float height,
                                                VROTextHorizontalAlignment horizontalAlignment, VROTextVerticalAlignment verticalAlignment,
                                                VROLineBreakMode lineBreakMode, int maxLines = 0);
     
+    /*
+     Return the width and height of a text object displaying the given string, with the
+     given typeface.
+     */
     static VROVector3f getTextSize(std::string text, std::shared_ptr<VROTypeface> typeface,
                                    float maxWidth, VROLineBreakMode lineBreakMode, int maxLines = 0);
     
     virtual ~VROText();
     
     /*
-     Get the width and height of the text.
+     Get the width and height of the text. This is not the width and height of the
+     bounds used when the text was created, but the width and height of the actual
+     text.
      */
     float getWidth() const {
         return _width;

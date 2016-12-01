@@ -32,10 +32,48 @@ std::shared_ptr<VROText> VROText::createText(std::string text, std::shared_ptr<V
     buildText(text, typeface, width, height, horizontalAlignment, verticalAlignment,
               lineBreakMode, maxLines, sources, elements, materials, &realizedWidth, &realizedHeight);
     
-    std::shared_ptr<VROText> model = std::shared_ptr<VROText>(new VROText(sources, elements, width, height));
+    std::shared_ptr<VROText> model = std::shared_ptr<VROText>(new VROText(sources, elements, realizedWidth, realizedHeight));
     model->getMaterials().insert(model->getMaterials().end(), materials.begin(), materials.end());
     
     return model;
+}
+
+VROVector3f VROText::getTextSize(std::string text, std::shared_ptr<VROTypeface> typeface,
+                                 float maxWidth, VROLineBreakMode lineBreakMode, int maxLines) {
+    
+    VROVector3f size;
+    std::map<FT_ULong, std::unique_ptr<VROGlyph>> glyphMap;
+    
+    for (std::string::const_iterator c = text.begin(); c != text.end(); ++c) {
+        FT_ULong charCode = *c;
+        if (glyphMap.find(charCode) == glyphMap.end()) {
+            std::unique_ptr<VROGlyph> glyph = typeface->loadGlyph(charCode, false);
+            glyphMap[charCode] = std::move(glyph);
+        }
+    }
+    
+    std::vector<std::string> lines = (lineBreakMode == VROLineBreakMode::WordWrap) ?
+        wrapByWords(text, maxWidth, maxLines, typeface, glyphMap) :
+        wrapByChars(text, maxWidth, maxLines, glyphMap);
+    
+    float lineHeight = typeface->getLineHeight() * kTextPointToWorldScale;
+    size.y = lines.size() * lineHeight;
+    
+    std::vector<VROShapeVertexLayout> var;
+    for (std::string &line : lines) {
+        
+        float lineWidth = 0;
+        for (std::string::const_iterator c = line.begin(); c != line.end(); ++c) {
+            FT_ULong charCode = *c;
+            std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
+            
+            lineWidth += glyph->getAdvance() * kTextPointToWorldScale;
+        }
+        
+        size.x = std::max(size.x, lineWidth);
+    }
+    
+    return size;
 }
 
 void VROText::buildText(std::string &text,
@@ -63,7 +101,7 @@ void VROText::buildText(std::string &text,
     for (std::string::const_iterator c = text.begin(); c != text.end(); ++c) {
         FT_ULong charCode = *c;
         if (glyphMap.find(charCode) == glyphMap.end()) {
-            std::unique_ptr<VROGlyph> glyph = typeface->loadGlyph(charCode);
+            std::unique_ptr<VROGlyph> glyph = typeface->loadGlyph(charCode, true);
             
             std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
             material->setWritesToDepthBuffer(true);

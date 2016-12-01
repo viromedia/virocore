@@ -19,9 +19,11 @@ public:
     VROGlyphOpenGL();
     virtual ~VROGlyphOpenGL();
     
-    virtual bool load(FT_Face face, FT_ULong charCode);
+    virtual bool load(FT_Face face, FT_ULong charCode, bool forRendering);
     
 private:
+    
+    void loadTexture(FT_Face face, FT_GlyphSlot &glyph);
     
 };
 

@@ -57,9 +57,9 @@ FT_Face VROTypefaceiOS::loadFace(std::string name, int size, FT_Library ft) {
     return face;
 }
 
-std::unique_ptr<VROGlyph> VROTypefaceiOS::loadGlyph(FT_ULong charCode) {
+std::unique_ptr<VROGlyph> VROTypefaceiOS::loadGlyph(FT_ULong charCode, bool forRendering) {
     std::unique_ptr<VROGlyph> glyph = std::unique_ptr<VROGlyph>(new VROGlyphOpenGL());
-    glyph->load(_face, charCode);
+    glyph->load(_face, charCode, forRendering);
     
     return glyph;
 }

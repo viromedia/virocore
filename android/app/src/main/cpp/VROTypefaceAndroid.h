@@ -20,7 +20,7 @@ public:
     VROTypefaceAndroid(std::string name, int size);
     virtual ~VROTypefaceAndroid();
 
-    std::unique_ptr<VROGlyph> loadGlyph(FT_ULong charCode);
+    std::unique_ptr<VROGlyph> loadGlyph(FT_ULong charCode, bool forRendering);
 
 protected:
 
