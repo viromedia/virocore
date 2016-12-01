@@ -18,7 +18,7 @@
 
 static const int kVerticesPerGlyph = 6;
 static const float kTextPointToWorldScale = 0.05;
-static const std::string kWhitespaceDelimeters = " \n\t\v\r";
+static const std::string kWhitespaceDelimeters = " \t\v\r";
 
 std::shared_ptr<VROText> VROText::createText(std::string text, std::shared_ptr<VROTypeface> typeface, float width, float height,
                                              VROTextHorizontalAlignment horizontalAlignment, VROTextVerticalAlignment verticalAlignment,
@@ -242,8 +242,29 @@ std::vector<std::string> VROText::wrapByWords(std::string &text, int maxWidth, i
     
     size_t current = 0;
     while (true) {
+        if (current == text.size()) {
+            break;
+        }
+        
+        /*
+         If the first character is a user supplied newline, process it.
+         */
+        if (text[current] == '\n') {
+            lines.push_back(currentLine);
+            lineWidth = 0;
+            currentLine.clear();
+            
+            if (maxLines > 0 && lines.size() >= maxLines) {
+                break;
+            }
+            
+            ++current;
+            continue;
+        }
+        
         size_t delimeterStart = text.find_first_of(kWhitespaceDelimeters, current);
         size_t delimeterEnd;
+        size_t newlinePos = text.find_first_of('\n', current);
         
         if (delimeterStart == std::string::npos) {
             delimeterEnd = text.size();
@@ -252,8 +273,16 @@ std::vector<std::string> VROText::wrapByWords(std::string &text, int maxWidth, i
             delimeterEnd = text.find_first_not_of(kWhitespaceDelimeters, delimeterStart);
         }
         
-        std::string word = text.substr(current, delimeterEnd - current);
+        /*
+         If we found a user-supplied newline, set the end of the word to the newline
+         character, so the newline character is the first thing we pick up next time
+         around the loop.
+         */
+        if (newlinePos <= delimeterEnd) {
+            delimeterEnd = newlinePos;
+        }
         
+        std::string word = text.substr(current, delimeterEnd - current);
         if (!word.empty()) {
             float wordWidth = 0;
             for (std::string::const_iterator c = word.begin(); c != word.end(); ++c) {
@@ -297,10 +326,6 @@ std::vector<std::string> VROText::wrapByWords(std::string &text, int maxWidth, i
         else {
             current = delimeterEnd;
         }
-        
-        if (current == text.size()) {
-            break;
-        }
     }
     
     if (!currentLine.empty() && (maxLines == 0 || lines.size() < maxLines)) {
@@ -323,7 +348,7 @@ std::vector<std::string> VROText::wrapByChars(std::string &text, int maxWidth, i
         std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
         
         float charWidth = glyph->getAdvance() * kTextPointToWorldScale;
-        if (lineWidth + charWidth > maxWidth) {
+        if (lineWidth + charWidth > maxWidth || charCode == '\n') {
             lines.push_back(currentLine);
             if (maxLines > 0 && lines.size() >= maxLines) {
                 break;
@@ -331,7 +356,10 @@ std::vector<std::string> VROText::wrapByChars(std::string &text, int maxWidth, i
             
             currentLine.clear();
             lineWidth = 0;
-            --c;
+            
+            if (charCode != '\n') {
+                --c;
+            }
         }
         else {
             lineWidth += charWidth;
