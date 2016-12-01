@@ -18,6 +18,7 @@
 
 static const int kVerticesPerGlyph = 6;
 static const float kTextPointToWorldScale = 0.05;
+static const std::string kWhitespaceDelimeters = " \n\t\v\r";
 
 std::shared_ptr<VROText> VROText::createText(std::string text, std::shared_ptr<VROTypeface> typeface, float width, float height,
                                              VROTextHorizontalAlignment horizontalAlignment, VROTextVerticalAlignment verticalAlignment,
@@ -28,7 +29,7 @@ std::shared_ptr<VROText> VROText::createText(std::string text, std::shared_ptr<V
     std::vector<std::shared_ptr<VROMaterial>> materials;
     
     float realizedWidth, realizedHeight;
-    buildText(text, typeface, kTextPointToWorldScale, width, height, horizontalAlignment, verticalAlignment,
+    buildText(text, typeface, width, height, horizontalAlignment, verticalAlignment,
               lineBreakMode, maxLines, sources, elements, materials, &realizedWidth, &realizedHeight);
     
     std::shared_ptr<VROText> model = std::shared_ptr<VROText>(new VROText(sources, elements, width, height));
@@ -39,7 +40,6 @@ std::shared_ptr<VROText> VROText::createText(std::string text, std::shared_ptr<V
 
 void VROText::buildText(std::string &text,
                         std::shared_ptr<VROTypeface> &typeface,
-                        float scale,
                         float width,
                         float height,
                         VROTextHorizontalAlignment horizontalAlignment,
@@ -83,8 +83,11 @@ void VROText::buildText(std::string &text,
     /*
      Divide the text into its individual lines.
      */
-    std::vector<std::string> lines = divideIntoLines(text, width, lineBreakMode, maxLines, glyphMap);
-    float lineHeight = typeface->getLineHeight() * scale;
+    std::vector<std::string> lines = (lineBreakMode == VROLineBreakMode::WordWrap) ?
+        wrapByWords(text, width, maxLines, typeface, glyphMap) :
+        wrapByChars(text, width, maxLines, glyphMap);
+    
+    float lineHeight = typeface->getLineHeight() * kTextPointToWorldScale;
     float totalHeight = lines.size() * lineHeight;
 
     /*
@@ -116,7 +119,7 @@ void VROText::buildText(std::string &text,
             FT_ULong charCode = *c;
             std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
             
-            lineWidth += glyph->getAdvance() * scale;
+            lineWidth += glyph->getAdvance() * kTextPointToWorldScale;
         }
         
         /*
@@ -138,8 +141,8 @@ void VROText::buildText(std::string &text,
             FT_ULong charCode = *c;
             std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
             
-            buildChar(glyph, x, y, scale, var, materialMap[charCode].second);
-            x += glyph->getAdvance() * scale;
+            buildChar(glyph, x, y, var, materialMap[charCode].second);
+            x += glyph->getAdvance() * kTextPointToWorldScale;
         }
         
         y -= lineHeight;
@@ -151,17 +154,17 @@ void VROText::buildText(std::string &text,
 }
 
 void VROText::buildChar(std::unique_ptr<VROGlyph> &glyph,
-                        float x, float y, float scale,
+                        float x, float y,
                         std::vector<VROShapeVertexLayout> &var,
                         std::vector<int> &indices) {
     
     int index = (int)var.size();
     
-    x += glyph->getBearing().x * scale;
-    y += (glyph->getBearing().y - glyph->getSize().y) * scale;
+    x += glyph->getBearing().x * kTextPointToWorldScale;
+    y += (glyph->getBearing().y - glyph->getSize().y) * kTextPointToWorldScale;
     
-    float w = glyph->getSize().x * scale;
-    float h = glyph->getSize().y * scale;
+    float w = glyph->getSize().x * kTextPointToWorldScale;
+    float h = glyph->getSize().y * kTextPointToWorldScale;
     
     float minU = glyph->getMinU();
     float maxU = glyph->getMaxU();
@@ -228,41 +231,109 @@ void VROText::buildGeometry(std::vector<VROShapeVertexLayout> &var,
     }
 }
 
-std::vector<std::string> VROText::divideIntoLines(std::string &text, int maxWidth,
-                                                  VROLineBreakMode lineBreakMode, int maxLines,
-                                                  std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
+std::vector<std::string> VROText::wrapByWords(std::string &text, int maxWidth, int maxLines,
+                                              std::shared_ptr<VROTypeface> &typeface,
+                                              std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
     
-    std::string delimeters = " \n\t\v\r";
     
     std::vector<std::string> lines;
-    if (lineBreakMode == VROLineBreakMode::WordWrap) {
-        lines = VROStringUtil::split(text, delimeters, false);
-    }
-    else if (lineBreakMode == VROLineBreakMode::CharWrap) {
-        float lineWidth = 0;
-        std::string currentLine;
+    float lineWidth = 0;
+    std::string currentLine;
+    
+    size_t current = 0;
+    while (true) {
+        size_t delimeterStart = text.find_first_of(kWhitespaceDelimeters, current);
+        size_t delimeterEnd;
         
-        for (std::string::const_iterator c = text.begin(); c != text.end(); ++c) {
-            FT_ULong charCode = *c;
-            std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
-            
-            float charWidth = glyph->getAdvance() * kTextPointToWorldScale;
-            if (lineWidth + charWidth > maxWidth) {
-                lines.push_back(currentLine);
+        if (delimeterStart == std::string::npos) {
+            delimeterEnd = text.size();
+        }
+        else {
+            delimeterEnd = text.find_first_not_of(kWhitespaceDelimeters, delimeterStart);
+        }
+        
+        std::string word = text.substr(current, delimeterEnd - current);
+        
+        if (!word.empty()) {
+            float wordWidth = 0;
+            for (std::string::const_iterator c = word.begin(); c != word.end(); ++c) {
+                FT_ULong charCode = *c;
+                std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
                 
-                currentLine.clear();
-                lineWidth = 0;
-                --c;
+                wordWidth += glyph->getAdvance() * kTextPointToWorldScale;
+            }
+            
+            if (lineWidth + wordWidth > maxWidth) {
+                /*
+                 If true, then the word is too large for an empty line,
+                 so place it in its own line and move on.
+                 */
+                if (currentLine.empty()) {
+                    lines.push_back(word);
+                    current = delimeterEnd;
+                }
+                
+                /*
+                 Otherwise finish the current line and try placing the word
+                 again, with a fresh line.
+                 */
+                else {
+                    lines.push_back(currentLine);
+                    lineWidth = 0;
+                    currentLine.clear();
+                }
             }
             else {
-                lineWidth += charWidth;
-                currentLine += *c;
+                lineWidth += wordWidth;
+                currentLine += word;
+                
+                current = delimeterEnd;
             }
         }
-        
-        if (!currentLine.empty()) {
-            lines.push_back(currentLine);
+        else {
+            current = delimeterEnd;
         }
+        
+        if (current == text.size()) {
+            break;
+        }
+    }
+    
+    if (!currentLine.empty()) {
+        lines.push_back(currentLine);
+    }
+
+    return lines;
+}
+
+std::vector<std::string> VROText::wrapByChars(std::string &text, int maxWidth, int maxLines,
+                                              std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
+    
+    
+    std::vector<std::string> lines;
+    float lineWidth = 0;
+    std::string currentLine;
+    
+    for (std::string::const_iterator c = text.begin(); c != text.end(); ++c) {
+        FT_ULong charCode = *c;
+        std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
+        
+        float charWidth = glyph->getAdvance() * kTextPointToWorldScale;
+        if (lineWidth + charWidth > maxWidth) {
+            lines.push_back(currentLine);
+            
+            currentLine.clear();
+            lineWidth = 0;
+            --c;
+        }
+        else {
+            lineWidth += charWidth;
+            currentLine += *c;
+        }
+    }
+    
+    if (!currentLine.empty()) {
+        lines.push_back(currentLine);
     }
     
     return lines;

@@ -48,9 +48,6 @@ public:
     float getLineHeight() const {
         return _face->size->metrics.height >> 6;
     }
-    float getMaxAdvance() const {
-        return _face->size->metrics.max_advance >> 6;
-    }
     
 protected:
     

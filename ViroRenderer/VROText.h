@@ -81,7 +81,6 @@ private:
     
     static void buildText(std::string &text,
                           std::shared_ptr<VROTypeface> &typeface,
-                          float scale,
                           float width,
                           float height,
                           VROTextHorizontalAlignment horizontalAlignment,
@@ -109,13 +108,16 @@ private:
      array as well.
      */
     static void buildChar(std::unique_ptr<VROGlyph> &glyph,
-                          float x, float y, float scale,
+                          float x, float y, 
                           std::vector<VROShapeVertexLayout> &var,
                           std::vector<int> &indices);
     
-    static std::vector<std::string> divideIntoLines(std::string &text, int maxWidth,
-                                                    VROLineBreakMode lineBreakMode, int maxLines,
-                                                    std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap);
+    static std::vector<std::string> wrapByWords(std::string &text, int maxWidth, int maxLines,
+                                                std::shared_ptr<VROTypeface> &typeface,
+                                                std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap);
+    
+    static std::vector<std::string> wrapByChars(std::string &text, int maxWidth, int maxLines,
+                                                std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap);
     
     float _width, _height;
     
