@@ -36,7 +36,8 @@ enum class VROTextVerticalAlignment {
 
 enum class VROLineBreakMode {
     WordWrap,
-    CharWrap
+    CharWrap,
+    None
 };
 
 class VROTextLayout {
@@ -60,6 +61,12 @@ public:
     static std::shared_ptr<VROText> createText(std::string text, std::shared_ptr<VROTypeface> typeface, float width, float height,
                                                VROTextHorizontalAlignment horizontalAlignment, VROTextVerticalAlignment verticalAlignment,
                                                VROLineBreakMode lineBreakMode, int maxLines = 0);
+    
+    /*
+     Helper method to create a single-line text. The text will be centered (vertically
+     and horizontally) about the parent node's position.
+     */
+    static std::shared_ptr<VROText> createSingleLineText(std::string text, std::shared_ptr<VROTypeface> typeface);
     
     /*
      Return the width and height of a text object displaying the given string, with the
@@ -125,12 +132,18 @@ private:
                           std::vector<VROShapeVertexLayout> &var,
                           std::vector<int> &indices);
     
+    /*
+     Functions for processing the line-break mode. All of the functions also introduce
+     a newline whenever the '\n' character is encountered (the wrapByNewlines function
+     does nothing else).
+     */
     static std::vector<std::string> wrapByWords(std::string &text, int maxWidth, int maxLines,
                                                 std::shared_ptr<VROTypeface> &typeface,
                                                 std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap);
-    
     static std::vector<std::string> wrapByChars(std::string &text, int maxWidth, int maxLines,
                                                 std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap);
+    static std::vector<std::string> wrapByNewlines(std::string &text, int maxWidth, int maxLines,
+                                                   std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap);
     
     float _width, _height;
     

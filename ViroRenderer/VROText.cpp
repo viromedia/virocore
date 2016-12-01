@@ -14,6 +14,7 @@
 #include "VROGlyph.h"
 #include "VROLog.h"
 #include <cstddef>
+#include <limits>
 #include "VROStringUtil.h"
 
 static const int kVerticesPerGlyph = 6;
@@ -38,6 +39,11 @@ std::shared_ptr<VROText> VROText::createText(std::string text, std::shared_ptr<V
     return model;
 }
 
+std::shared_ptr<VROText> VROText::createSingleLineText(std::string text, std::shared_ptr<VROTypeface> typeface) {
+    return createText(text, typeface, std::numeric_limits<float>::max(), std::numeric_limits<float>::max(),
+                      VROTextHorizontalAlignment::Center, VROTextVerticalAlignment::Center, VROLineBreakMode::None);
+}
+
 VROVector3f VROText::getTextSize(std::string text, std::shared_ptr<VROTypeface> typeface,
                                  float maxWidth, VROLineBreakMode lineBreakMode, int maxLines) {
     
@@ -52,9 +58,21 @@ VROVector3f VROText::getTextSize(std::string text, std::shared_ptr<VROTypeface> 
         }
     }
     
-    std::vector<std::string> lines = (lineBreakMode == VROLineBreakMode::WordWrap) ?
-        wrapByWords(text, maxWidth, maxLines, typeface, glyphMap) :
-        wrapByChars(text, maxWidth, maxLines, glyphMap);
+    std::vector<std::string> lines;
+    switch (lineBreakMode) {
+        case VROLineBreakMode::WordWrap:
+            lines = wrapByWords(text, maxWidth, maxLines, typeface, glyphMap);
+            break;
+        case VROLineBreakMode::CharWrap:
+            lines = wrapByChars(text, maxWidth, maxLines, glyphMap);
+            break;
+        case VROLineBreakMode::None:
+            lines = wrapByNewlines(text, maxWidth, maxLines, glyphMap);
+            break;
+        default:
+            pabort("Invalid linebreak mode found for VROText");
+            break;
+    }
     
     float lineHeight = typeface->getLineHeight() * kTextPointToWorldScale;
     size.y = lines.size() * lineHeight;
@@ -121,9 +139,21 @@ void VROText::buildText(std::string &text,
     /*
      Divide the text into its individual lines.
      */
-    std::vector<std::string> lines = (lineBreakMode == VROLineBreakMode::WordWrap) ?
-        wrapByWords(text, width, maxLines, typeface, glyphMap) :
-        wrapByChars(text, width, maxLines, glyphMap);
+    std::vector<std::string> lines;
+    switch (lineBreakMode) {
+        case VROLineBreakMode::WordWrap:
+            lines = wrapByWords(text, width, maxLines, typeface, glyphMap);
+            break;
+        case VROLineBreakMode::CharWrap:
+            lines = wrapByChars(text, width, maxLines, glyphMap);
+            break;
+        case VROLineBreakMode::None:
+            lines = wrapByNewlines(text, width, maxLines, glyphMap);
+            break;
+        default:
+            pabort("Invalid linebreak mode found for VROText");
+            break;
+    }
     
     float lineHeight = typeface->getLineHeight() * kTextPointToWorldScale;
     float totalHeight = lines.size() * lineHeight;
@@ -376,7 +406,6 @@ std::vector<std::string> VROText::wrapByWords(std::string &text, int maxWidth, i
 std::vector<std::string> VROText::wrapByChars(std::string &text, int maxWidth, int maxLines,
                                               std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
     
-    
     std::vector<std::string> lines;
     float lineWidth = 0;
     std::string currentLine;
@@ -398,6 +427,44 @@ std::vector<std::string> VROText::wrapByChars(std::string &text, int maxWidth, i
             if (charCode != '\n') {
                 --c;
             }
+        }
+        else {
+            lineWidth += charWidth;
+            currentLine += *c;
+        }
+    }
+    
+    if (!currentLine.empty() && (maxLines == 0 || lines.size() < maxLines)) {
+        lines.push_back(currentLine);
+    }
+    
+    return lines;
+}
+
+std::vector<std::string> VROText::wrapByNewlines(std::string &text, int maxWidth, int maxLines,
+                                                 std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
+ 
+    /*
+     Note: this function does not use lineWidth but we're keeping it in here
+     because we have to introduce clipping.
+     */
+    std::vector<std::string> lines;
+    float lineWidth = 0;
+    std::string currentLine;
+    
+    for (std::string::const_iterator c = text.begin(); c != text.end(); ++c) {
+        FT_ULong charCode = *c;
+        std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
+        
+        float charWidth = glyph->getAdvance() * kTextPointToWorldScale;
+        if (charCode == '\n') {
+            lines.push_back(currentLine);
+            if (maxLines > 0 && lines.size() >= maxLines) {
+                break;
+            }
+            
+            currentLine.clear();
+            lineWidth = 0;
         }
         else {
             lineWidth += charWidth;
