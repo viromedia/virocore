@@ -282,6 +282,10 @@ std::vector<std::string> VROText::wrapByWords(std::string &text, int maxWidth, i
                     lineWidth = 0;
                     currentLine.clear();
                 }
+                
+                if (maxLines > 0 && lines.size() >= maxLines) {
+                    break;
+                }
             }
             else {
                 lineWidth += wordWidth;
@@ -299,7 +303,7 @@ std::vector<std::string> VROText::wrapByWords(std::string &text, int maxWidth, i
         }
     }
     
-    if (!currentLine.empty()) {
+    if (!currentLine.empty() && (maxLines == 0 || lines.size() < maxLines)) {
         lines.push_back(currentLine);
     }
 
@@ -321,6 +325,9 @@ std::vector<std::string> VROText::wrapByChars(std::string &text, int maxWidth, i
         float charWidth = glyph->getAdvance() * kTextPointToWorldScale;
         if (lineWidth + charWidth > maxWidth) {
             lines.push_back(currentLine);
+            if (maxLines > 0 && lines.size() >= maxLines) {
+                break;
+            }
             
             currentLine.clear();
             lineWidth = 0;
@@ -332,7 +339,7 @@ std::vector<std::string> VROText::wrapByChars(std::string &text, int maxWidth, i
         }
     }
     
-    if (!currentLine.empty()) {
+    if (!currentLine.empty() && (maxLines == 0 || lines.size() < maxLines)) {
         lines.push_back(currentLine);
     }
     
