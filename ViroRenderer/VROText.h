@@ -39,6 +39,11 @@ enum class VROLineBreakMode {
     None
 };
 
+enum class VROTextClipMode {
+    ClipToBounds,
+    None
+};
+
 class VROTextLayout {
     float width;
     float height;
@@ -53,16 +58,27 @@ public:
     /*
      Create a text object for displaying the given string with the given typeface,
      constrained to the bounds defined by the provided width and height, and aligned
-     according to the given alignment parameters and linebreak mode. If set, the
-     maxLines property caps the number of lines; when zero, there is no limit to the
-     number of lines generated.
+     according to the given alignment parameters and linebreak mode. 
+     
+     The clip mode determines whether the text is clipped to the given bounds.
+     
+     The maxLines parameter, if set, caps the number of lines; when zero, there is no
+     limit to the number of lines generated.
      */
     static std::shared_ptr<VROText> createText(std::string text, std::shared_ptr<VROTypeface> typeface, float width, float height,
                                                VROTextHorizontalAlignment horizontalAlignment, VROTextVerticalAlignment verticalAlignment,
-                                               VROLineBreakMode lineBreakMode, int maxLines = 0);
+                                               VROLineBreakMode lineBreakMode, VROTextClipMode clipMode, int maxLines = 0);
     
     /*
-     Helper method to create a single-line text. The text will be centered (vertically
+     Helper method to create a single-line text in a horizontal box of the given width.
+     The box is centered at the parent node's position, and the text is aligned within the
+     box according to the given alignment.
+     */
+    static std::shared_ptr<VROText> createSingleLineText(std::string text, std::shared_ptr<VROTypeface> typeface, float width,
+                                                         VROTextHorizontalAlignment alignment, VROTextClipMode clipMode);
+
+    /*
+     Helper method to create a centered single-line text. The text will be centered (vertically
      and horizontally) about the parent node's position.
      */
     static std::shared_ptr<VROText> createSingleLineText(std::string text, std::shared_ptr<VROTypeface> typeface);
@@ -72,7 +88,8 @@ public:
      given typeface.
      */
     static VROVector3f getTextSize(std::string text, std::shared_ptr<VROTypeface> typeface,
-                                   float maxWidth, VROLineBreakMode lineBreakMode, int maxLines = 0);
+                                   float maxWidth, float maxHeight, VROLineBreakMode lineBreakMode,
+                                   VROTextClipMode clipMode, int maxLines = 0);
     
     virtual ~VROText();
     
@@ -105,6 +122,7 @@ private:
                           VROTextHorizontalAlignment horizontalAlignment,
                           VROTextVerticalAlignment verticalAlignment,
                           VROLineBreakMode lineBreakMode,
+                          VROTextClipMode clipMode,
                           int maxLines,
                           std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                           std::vector<std::shared_ptr<VROGeometryElement>> &elements,
@@ -135,14 +153,29 @@ private:
      Functions for processing the line-break mode. All of the functions also introduce
      a newline whenever the '\n' character is encountered (the wrapByNewlines function
      does nothing else).
+     
+     These functions also process clipping. When char/word wrapping is on, we only have to
+     clip text vertically (horizontal edges are implicitly taken care of by the wrapping
+     function). When char/word wrapping is off, we also have to clip text horizontally.
      */
-    static std::vector<std::string> wrapByWords(std::string &text, int maxWidth, int maxLines,
+    static std::vector<std::string> wrapByWords(std::string &text, int maxWidth, int maxHeight, int maxLines,
                                                 std::shared_ptr<VROTypeface> &typeface,
+                                                VROTextClipMode clipMode,
                                                 std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap);
-    static std::vector<std::string> wrapByChars(std::string &text, int maxWidth, int maxLines,
+    static std::vector<std::string> wrapByChars(std::string &text, int maxWidth, int maxHeight, int maxLines,
+                                                std::shared_ptr<VROTypeface> &typeface,
+                                                VROTextClipMode clipMode,
                                                 std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap);
-    static std::vector<std::string> wrapByNewlines(std::string &text, int maxWidth, int maxLines,
+    static std::vector<std::string> wrapByNewlines(std::string &text, int maxWidth, int maxHeight, int maxLines,
+                                                   std::shared_ptr<VROTypeface> &typeface,
+                                                   VROTextClipMode clipMode,
                                                    std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap);
+    
+    /*
+     Helper for wrapping/clipping.
+     */
+    static bool isAnotherLineAvailable(size_t numLinesNow, int maxHeight, int maxLines,
+                                       std::shared_ptr<VROTypeface> &typeface, VROTextClipMode clipMode);
     
     float _width, _height;
     

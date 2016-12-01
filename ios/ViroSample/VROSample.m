@@ -9,10 +9,10 @@
 #import "VROSample.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneBox = 0,
+    VROSampleSceneText = 0,
     VROSampleSceneTorus,
     VROSampleSceneOBJ,
-    VROSampleSceneLayer,
+    VROSampleSceneBox,
     VROSampleSceneVideoSphere,
     VROSampleSceneNumScenes
 };
@@ -306,7 +306,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return sceneController;
 }
 
-- (VROSceneController *)loadLayerScene {
+- (VROSceneController *)loadTextScene {
     VROSceneController *sceneController = [[VROSceneController alloc] init];
 
     std::shared_ptr<VROScene> scene = sceneController.scene;
@@ -320,7 +320,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     /*
      Create background for text.
      */
-    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(10, 10);
+    int width = 10;
+    int height = 10;
+    
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height);
     surface->getMaterials().front()->getDiffuse().setColor({1.0, 0.0, 0.0, 1.0});
     
     std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
@@ -332,15 +335,19 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     /*
      Create text.
      */
-    std::shared_ptr<VROTypeface> typeface = self.driver->newTypeface("SF", 24);
-    std::string string = "Hello\nFreetype\nThis is a Test of Wrapping a Long Passage";
+    VROLineBreakMode linebreakMode = VROLineBreakMode::WordWrap;
+    VROTextClipMode clipMode = VROTextClipMode::ClipToBounds;
     
-    VROVector3f size = VROText::getTextSize(string, typeface, 10, VROLineBreakMode::WordWrap);
+    std::shared_ptr<VROTypeface> typeface = self.driver->newTypeface("SF", 24);
+    std::string string = "Hello Freetype\nThis is a test of wrapping a long piece of text, longer than all the previous pieces of text.";
+    
+    VROVector3f size = VROText::getTextSize(string, typeface, width, height, linebreakMode, clipMode);
     NSLog(@"Estimated size %f, %f", size.x, size.y);
     
-    std::shared_ptr<VROText> text = VROText::createText(string, typeface, 10, 10,
-                                                        VROTextHorizontalAlignment::Center, VROTextVerticalAlignment::Center,
-                                                        VROLineBreakMode::WordWrap);
+    std::shared_ptr<VROText> text = VROText::createText(string, typeface, width, height,
+                                                        VROTextHorizontalAlignment::Center, VROTextVerticalAlignment::Top,
+                                                        linebreakMode, clipMode);
+    
     text->setName("Text");
     NSLog(@"Realized size %f, %f", text->getWidth(), text->getHeight());
     
@@ -405,8 +412,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
             return [self loadTorusScene];
         case VROSampleSceneVideoSphere:
             return [self loadVideoSphereScene];
-        case VROSampleSceneLayer:
-            return [self loadLayerScene];
+        case VROSampleSceneText:
+            return [self loadTextScene];
         case VROSampleSceneOBJ:
             return [self loadOBJScene];
         case VROSampleSceneBox:
