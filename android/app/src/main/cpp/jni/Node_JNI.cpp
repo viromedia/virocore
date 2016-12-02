@@ -8,6 +8,7 @@
 #include <jni.h>
 #include <memory>
 #include <VROBox.h>
+#include <VROSurface.h>
 #include "VRONode.h"
 #include "PersistentRef.h"
 
@@ -41,13 +42,6 @@ JNI_METHOD(void, nativeDestroyNode)(JNIEnv *env,
   delete reinterpret_cast<PersistentRef<VRONode> *>(native_node_ref);
 }
 
-JNI_METHOD(void, nativeSetOpacity)(JNIEnv *env,
-                             jobject obj,
-                             jlong native_node_ref,
-                             jlong opacity) {
-    Node::native(native_node_ref)->setOpacity(opacity);
-}
-
 JNI_METHOD(void, nativeAddChildNode)(JNIEnv *env,
                              jobject obj,
                              jlong native_node_ref,
@@ -61,24 +55,54 @@ JNI_METHOD(void, nativeRemoveFromParent)(JNIEnv *env,
     Node::native(native_node_ref)->removeFromParentNode();
 }
 
-JNI_METHOD(void, nativeSetGeometry)(JNIEnv *env,
-                                   jobject obj,
-                                   jlong native_node_ref,
-                                   jlong native_geo_ref) {
-    PersistentRef<VROBox> *boxGeometry = reinterpret_cast<PersistentRef<VROBox> *>(native_geo_ref);
-    std::shared_ptr<VROBox> box = boxGeometry->get();
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
-    node->setGeometry(box);
-}
-
 JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
                                     jobject obj,
                                     jlong native_node_ref,
                                     jfloat positionX,
                                     jfloat positionY,
                                     jfloat positionZ) {
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
-    node->setPosition({positionX, positionY, positionZ});
+    Node::native(native_node_ref)->setPosition({positionX, positionY, positionZ});
+}
+
+JNI_METHOD(void, nativeSetRotation)(JNIEnv *env,
+                                    jobject obj,
+                                    jlong native_node_ref,
+                                    jfloat rotationRadiansX,
+                                    jfloat rotationRadiansY,
+                                    jfloat rotationRadiansZ) {
+    Node::native(native_node_ref)->setRotation({rotationRadiansX, rotationRadiansY, rotationRadiansZ});
+}
+
+JNI_METHOD(void, nativeSetScale)(JNIEnv *env,
+                                    jobject obj,
+                                    jlong native_node_ref,
+                                    jfloat scaleX,
+                                    jfloat scaleY,
+                                    jfloat scaleZ) {
+    Node::native(native_node_ref)->setScale({scaleX, scaleY, scaleZ});
+}
+
+JNI_METHOD(void, nativeSetOpacity)(JNIEnv *env,
+                                 jobject obj,
+                                 jlong native_node_ref,
+                                 jfloat opacity) {
+    Node::native(native_node_ref)->setOpacity(opacity);
+}
+
+JNI_METHOD(void, nativeSetVisible)(JNIEnv *env,
+                                   jobject obj,
+                                   jlong native_node_ref,
+                                   jfloat opacity) {
+    Node::native(native_node_ref)->setOpacity(opacity);
+}
+
+JNI_METHOD(void, nativeSetGeometry)(JNIEnv *env,
+                                    jobject obj,
+                                    jlong native_node_ref,
+                                    jlong native_geo_ref) {
+    PersistentRef<VROGeometry> *baseGeometryRef = reinterpret_cast<PersistentRef<VROGeometry> *>(native_geo_ref);
+    std::shared_ptr<VROGeometry> baseGeometry = baseGeometryRef->get();
+    Node::native(native_node_ref)->setGeometry(baseGeometry);
 }
 
 }  // extern "C"
