@@ -17,9 +17,6 @@ public class SceneJni {
     public long mNativeRef;
 
     public SceneJni(NodeJni node) {
-        // Recenter the scene to the world origin
-        node.setPosition(0,0,0);
-
         // Set the root node of this scene
         mNativeRef = nativeCreateScene(node.mNativeRef);
     }

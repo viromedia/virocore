@@ -42,7 +42,8 @@ public class ViroActivity extends AppCompatActivity {
         BoxJni boxGeometry = new BoxJni(2,4,2);
         NodeJni boxNode = new NodeJni(this);
         boxNode.setGeometry(boxGeometry);
-        boxNode.setPosition(0,0,-5);
+        float[] boxPosition = {0,0,-5};
+        boxNode.setPosition(boxPosition);
 
         // Testing random material creation stuff, should have no effect for now.
         MaterialJni material = new MaterialJni();

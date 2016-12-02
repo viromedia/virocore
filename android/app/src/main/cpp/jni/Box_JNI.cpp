@@ -18,8 +18,8 @@
       Java_com_viro_renderer_jni_BoxJni_##method_name
 
 namespace Box {
-    inline jlong jptr(std::shared_ptr<VROBox> shared_node) {
-        PersistentRef<VROBox> *native_box = new PersistentRef<VROBox>(shared_node);
+    inline jlong jptr(std::shared_ptr<VROGeometry> shared_node) {
+        PersistentRef<VROGeometry> *native_box = new PersistentRef<VROGeometry>(shared_node);
         return reinterpret_cast<intptr_t>(native_box);
     }
 

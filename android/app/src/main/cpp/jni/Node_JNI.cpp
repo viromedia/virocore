@@ -7,8 +7,7 @@
 #include <iostream>
 #include <jni.h>
 #include <memory>
-#include <VROBox.h>
-#include <VROSurface.h>
+#include "VROGeometry.h"
 #include "VRONode.h"
 #include "PersistentRef.h"
 
