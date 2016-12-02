@@ -6,9 +6,9 @@
 //
 #include <jni.h>
 #include <memory>
-#include <android/log.h>
 
-#include "Controls_JNI.h"
+#include "Image_JNI.h"
+#include "Texture_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \

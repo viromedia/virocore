@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "VROMaterial.h"
-#include "Controls_JNI.h"
+#include "Texture_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -41,7 +41,6 @@ namespace Material {
 extern "C" {
 
 JNI_METHOD(jlong, nativeCreateMaterial)(JNIEnv *env, jobject obj) {
-
     std::shared_ptr<VROMaterial> materialPtr = std::make_shared<VROMaterial>();
     return Material::jptr(materialPtr);
 }

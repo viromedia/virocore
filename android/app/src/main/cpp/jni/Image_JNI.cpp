@@ -7,7 +7,7 @@
 #include <jni.h>
 #include <memory>
 
-#include "Controls_JNI.h"
+#include "Image_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
