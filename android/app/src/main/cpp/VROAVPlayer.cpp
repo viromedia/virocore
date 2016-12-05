@@ -5,27 +5,48 @@
 //  Created by Raj Advani on 11/18/16.
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
-
+#include <jni.h>
 #include "VROAVPlayer.h"
 #include "VROPlatformUtil.h"
 
+#define JNI_METHOD(return_type, method_name) \
+  JNIEXPORT return_type JNICALL              \
+      Java_com_viro_renderer_AVPlayer_##method_name
+
+extern "C" {
+    inline jlong jptr(VROAVPlayer *nativePlayer) {
+        return reinterpret_cast<intptr_t>(nativePlayer);
+    }
+
+    inline VROAVPlayer *native(jlong ptr) {
+        return reinterpret_cast<VROAVPlayer *>(ptr);
+    }
+
+    JNI_METHOD(void, nativeOnVideoFinished)(JNIEnv *env,
+                                            jclass clazz,
+                                            jlong native_video_ref) {
+        std::weak_ptr<VROVideoDelegateInternal> delegateWeak
+                = native(native_video_ref)->getDelegate();
+        if(auto tmp = delegateWeak.lock()){
+            tmp->videoDidFinish();
+        }
+    }
+}
+
 static const char *AVPlayerClass = "com/viro/renderer/AVPlayer";
-
-inline jlong jptr(VROAVPlayer *nativePlayer) {
-    return reinterpret_cast<intptr_t>(nativePlayer);
-}
-
-inline VROAVPlayer *native(jlong ptr) {
-    return reinterpret_cast<VROAVPlayer *>(ptr);
-}
-
 VROAVPlayer::VROAVPlayer() :
     _jsurface(nullptr) {
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     jclass cls = env->FindClass(AVPlayerClass);
-    jmethodID jmethod = env->GetMethodID(cls, "<init>", "()V");
-    jobject javPlayer = env->NewObject(cls, jmethod);
+    jmethodID jmethod = env->GetMethodID(cls, "<init>", "(J)V");
+
+    /**
+     * Pass into AVPlayer a long address referencing it's corresponding
+     * native object.
+     */
+    jlong myLongVal = jptr(this);
+    jobject javPlayer = env->NewObject(cls, jmethod, myLongVal);
 
     env->DeleteLocalRef(cls);
     _javPlayer = env->NewGlobalRef(javPlayer);

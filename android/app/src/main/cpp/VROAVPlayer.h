@@ -11,6 +11,8 @@
 
 #include <jni.h>
 #include <stdint.h>
+#include <VROVideoDelegateInternal.h>
+#include <memory>
 #include "VROOpenGL.h"
 
 class VROAVPlayer {
@@ -34,14 +36,23 @@ public:
     void setLoop(bool loop);
 
     void reset();
+    void setDelegate(std::shared_ptr<VROVideoDelegateInternal> delegate) {
+        _delegate = delegate;
+    }
+    std::weak_ptr<VROVideoDelegateInternal> getDelegate(){
+        return _delegate;
+    }
 
 private:
-
     jobject _javPlayer;
     jobject _jsurface;
 
     void bindVideoSink();
 
+    /**
+     * VideoDelegateInternal provided by VROVideoTexture for triggering video callbacks.
+     */
+    std::weak_ptr<VROVideoDelegateInternal> _delegate;
 };
 
 #endif //ANDROID_VROAVPLAYER_H

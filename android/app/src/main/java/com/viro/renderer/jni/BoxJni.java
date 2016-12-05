@@ -25,7 +25,14 @@ public class BoxJni extends BaseGeometry{
         nativeDestroyBox(mNativeRef);
     }
 
+    @Override
+    public void attachToNode(NodeJni node) {
+        nativeAttachToNode(mNativeRef, node.mNativeRef);
+    }
+
     private native long nativeCreateBox(ClassLoader appClassLoader, BoxJni boxJni,
                                         long width, long height, long length);
     private native void nativeDestroyBox(long nodeReference);
+
+    private native void nativeAttachToNode(long boxReference, long nodeReference);
 }

@@ -10,22 +10,11 @@
 #include "VROGeometry.h"
 #include "VRONode.h"
 #include "PersistentRef.h"
+#include "Node_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_renderer_jni_NodeJni_##method_name
-
-namespace Node{
-    inline jlong jptr(std::shared_ptr<VRONode> shared_node) {
-        PersistentRef<VRONode> *native_node = new PersistentRef<VRONode>(shared_node);
-        return reinterpret_cast<intptr_t>(native_node);
-    }
-
-    inline std::shared_ptr<VRONode> native(jlong ptr) {
-        PersistentRef<VRONode> *persistentNode = reinterpret_cast<PersistentRef<VRONode> *>(ptr);
-        return persistentNode->get();
-    }
-}
 
 extern "C" {
 
@@ -94,14 +83,4 @@ JNI_METHOD(void, nativeSetVisible)(JNIEnv *env,
                                    jfloat opacity) {
     Node::native(native_node_ref)->setOpacity(opacity);
 }
-
-JNI_METHOD(void, nativeSetGeometry)(JNIEnv *env,
-                                    jobject obj,
-                                    jlong native_node_ref,
-                                    jlong native_geo_ref) {
-    PersistentRef<VROGeometry> *baseGeometryRef = reinterpret_cast<PersistentRef<VROGeometry> *>(native_geo_ref);
-    std::shared_ptr<VROGeometry> baseGeometry = baseGeometryRef->get();
-    Node::native(native_node_ref)->setGeometry(baseGeometry);
-}
-
 }  // extern "C"

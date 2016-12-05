@@ -3,10 +3,8 @@
  */
 package com.viro.renderer.jni;
 
-import android.content.Context;
-
 /**
- * Java JNI wrapper for linking the following classes below across the bridge.
+ * Java JNI wrapper for linking the following classes across the bridge:
  *
  * Android Java Object  : com.viromedia.bridge.viewgroups.Scene.java
  * Java JNI Wrapper     : com.viro.renderer.SceneJni.java

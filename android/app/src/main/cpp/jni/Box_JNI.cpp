@@ -12,6 +12,8 @@
 #include "VROMaterial.h"
 #include "VROImageAndroid.h"
 #include "PersistentRef.h"
+#include "VRONode.h"
+#include "Node_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -55,6 +57,14 @@ JNI_METHOD(void, nativeDestroyBox)(JNIEnv *env,
                                         jclass clazz,
                                         jlong native_node_ref) {
     delete reinterpret_cast<PersistentRef<VROBox> *>(native_node_ref);
+}
+
+JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
+                                     jclass clazz,
+                                     jlong native_box_ref,
+                                     jlong native_node_ref) {
+    std::shared_ptr<VROBox> videoSurface = Box::native(native_box_ref);
+    Node::native(native_node_ref)->setGeometry(videoSurface);
 }
 
 }  // extern "C"

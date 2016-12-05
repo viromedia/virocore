@@ -26,10 +26,21 @@ VROVideoTextureAVP::~VROVideoTextureAVP() {
     }
 }
 
+void VROVideoTextureAVP::setDelegate(std::shared_ptr<VROVideoDelegateInternal> delegate) {
+    /*
+     * Store a strong delegate reference within VROVideoTextureAVP
+     * for keeping alive VROVideoDelegateInternal for triggering
+     * callbacks through the JNI bridge. Callbacks are triggered from
+     * within the AVPlayer of which stores a weak reference of
+     * the delegate.
+     */
+    VROVideoTexture::setDelegate(delegate);
+    _player->setDelegate(delegate);
+}
+
 void VROVideoTextureAVP::loadVideo(std::string url,
                                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                    VRODriver &driver) {
-
     _player->setDataSourceURL(url.c_str());
 }
 

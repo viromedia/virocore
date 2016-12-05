@@ -19,13 +19,22 @@ import java.io.IOException;
  * via JNI.
  */
 public class AVPlayer {
-
     private MediaPlayer _mediaPlayer;
     private float _volume;
+    private long mNativeReference;
 
-    public AVPlayer() {
+    public AVPlayer(long nativeReference) {
         _mediaPlayer = new MediaPlayer();
         _volume = 1.0f;
+        mNativeReference = nativeReference;
+
+        // Attach listeners to be called back into native
+        _mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                nativeOnVideoFinished(mNativeReference);
+            }
+        });
     }
 
     public boolean setDataSourceURL(String pathOrURL) {
@@ -107,5 +116,10 @@ public class AVPlayer {
     public void seekToTime(float seconds) {
         _mediaPlayer.seekTo((int) (seconds * 1000));
     }
+
+    /**
+     * Native Callbacks
+     */
+    private native void nativeOnVideoFinished(long ref);
 }
 

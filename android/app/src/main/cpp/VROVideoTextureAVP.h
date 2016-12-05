@@ -52,6 +52,7 @@ public:
     void setVolume(float volume);
     void setLoop(bool loop);
 
+    void setDelegate(std::shared_ptr<VROVideoDelegateInternal> delegate);
 private:
 
     VROAVPlayer *_player;

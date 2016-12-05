@@ -27,6 +27,11 @@ std::shared_ptr<VROVideoSurface> VROVideoSurface::createVideoSurface(float width
     
     texture->loadVideo(url, frameSynchronizer, driver);
     texture->play();
+
+    /**
+     * TODO: Remove this once we have fixed constant lighting
+     */
+    material->setLightingModel(VROLightingModel::Lambert);
     material->getDiffuse().setTexture(texture);
     
     std::shared_ptr<VROVideoSurface> surface = std::shared_ptr<VROVideoSurface>(new VROVideoSurface(sources, elements, texture));

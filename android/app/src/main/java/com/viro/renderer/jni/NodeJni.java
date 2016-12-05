@@ -65,7 +65,10 @@ public class NodeJni {
         if (geometry == null){
             throw new IllegalArgumentException("Missing Required geometry to be set on Node.");
         }
-        nativeSetGeometry(mNativeRef, geometry.mNativeRef);
+        // Reverse the setting of node to occur within the
+        // corresponding geometry to avoid polymorphing across
+        // the JNI layer.
+        geometry.attachToNode(this);
     }
 
     private native long nativeCreateNode();
@@ -77,5 +80,4 @@ public class NodeJni {
     private native void nativeSetScale(long nodeReference, float x, float y, float z);
     private native void nativeSetOpacity(long nodeReference, float opacity);
     private native void nativeSetVisible(long nodeReference, boolean visible);
-    private native void nativeSetGeometry(long nodeReference, long geometryReference);
 }

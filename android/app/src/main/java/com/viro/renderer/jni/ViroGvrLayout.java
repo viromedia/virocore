@@ -53,7 +53,8 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
         System.loadLibrary("gvr_audio");
         System.loadLibrary("native-lib");
     }
-    private long mNativeRenderer;
+    private long mNativeRendererRef;
+    private final RenderContextJni mNativeRenderContext;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
     private Map<Integer, VideoSink> mVideoSinks = new HashMap();
@@ -67,12 +68,13 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
 
         // Initialize the native renderer.
         mAssetManager = getResources().getAssets();
-        mNativeRenderer = nativeCreateRenderer(
+        mNativeRendererRef = nativeCreateRenderer(
                 getClass().getClassLoader(),
                 this,
                 activityContext.getApplicationContext(),
                 mAssetManager,
                 getGvrApi().getNativeGvrContext());
+        mNativeRenderContext = new RenderContextJni(mNativeRendererRef);
 
         // Add the GLSurfaceView to the GvrLayout.
         GLSurfaceView glSurfaceView = new GLSurfaceView(activityContext.getApplicationContext());
@@ -81,7 +83,7 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
         glSurfaceView.setPreserveEGLContextOnPause(true);
         glSurfaceView.setRenderer(new Renderer() {
             public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-                nativeInitializeGl(mNativeRenderer);
+                nativeInitializeGl(mNativeRendererRef);
             }
 
             public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -102,7 +104,7 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
                     listener.onDrawFrame();
                     ;
                 }
-                nativeDrawFrame(mNativeRenderer);
+                nativeDrawFrame(mNativeRendererRef);
             }
         });
 
@@ -110,7 +112,7 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    nativeOnTriggerEvent(mNativeRenderer);
+                    nativeOnTriggerEvent(mNativeRendererRef);
                     return true;
                 }
                 return false;
@@ -141,15 +143,19 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
         app.registerActivityLifecycleCallbacks(this);
     }
 
+    public RenderContextJni getRenderContextRef(){
+        return mNativeRenderContext;
+    }
+
     @Override
     public void onActivityPaused(Activity activity) {
-        nativeOnPause(mNativeRenderer);
+        nativeOnPause(mNativeRendererRef);
         super.onPause();
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
-        nativeOnResume(mNativeRenderer);
+        nativeOnResume(mNativeRendererRef);
 
         // Ensure fullscreen immersion.
         setImmersiveSticky();
@@ -172,7 +178,8 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
     @Override
     public void onActivityDestroyed(Activity activity) {
         super.shutdown();
-        nativeDestroyRenderer(this.mNativeRenderer);
+        mNativeRenderContext.delete();
+        nativeDestroyRenderer(mNativeRendererRef);
     }
 
     @Override
@@ -265,7 +272,7 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
     }
 
     public void setScene(SceneJni scene){
-        nativeSetScene(mNativeRenderer, scene.mNativeRef);
+        nativeSetScene(mNativeRendererRef, scene.mNativeRef);
     }
 
     private native long nativeCreateRenderer(

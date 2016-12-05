@@ -85,8 +85,9 @@ class VROSceneRendererCardboard {
     void setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                             VROTimingFunctionType timingFunction);
 
-    VRODriver &getDriver() {
-        return *_driver.get();
+
+    std::shared_ptr<VRODriver> getDriver() {
+        return _driver;
     }
     std::shared_ptr<VROFrameSynchronizer> getFrameSynchronizer() {
         return _renderer->getFrameSynchronizer();
