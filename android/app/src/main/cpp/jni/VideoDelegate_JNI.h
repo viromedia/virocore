@@ -1,14 +1,15 @@
 //
-//  VideoSurface_JNI.h
+//  VideoDelegate_JNI.h
 //  ViroRenderer
 //
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#ifndef ANDROID_VIDEO_SURFACE_JNI_H
-#define ANDROID_VIDEO_SURFACE_JNI_H
+#ifndef ANDROID_VIDEO_DELEGATE_JNI_H
+#define ANDROID_VIDEO_DELEGATE_JNI_H
 
 #include <jni.h>
+#include <PersistentRef.h>
 #include "VROVideoDelegateInternal.h"
 
 class VideoDelegate : public VROVideoDelegateInternal {
@@ -35,16 +36,4 @@ class VideoDelegate : public VROVideoDelegateInternal {
         jobject _javaObject;
         JNIEnv *_env;
 };
-
-namespace VideoSurface {
-    inline jlong jptr(std::shared_ptr<VROVideoSurface> videoSurface) {
-        PersistentRef<VROVideoSurface> *persistedSurface = new PersistentRef<VROVideoSurface>(videoSurface);
-        return reinterpret_cast<intptr_t>(persistedSurface);
-    }
-
-    inline std::shared_ptr<VROVideoSurface> native(jlong ptr) {
-        PersistentRef<VROVideoSurface> *persistedSurface = reinterpret_cast<PersistentRef<VROVideoSurface> *>(ptr);
-        return persistedSurface->get();
-    }
-}
 #endif

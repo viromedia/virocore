@@ -131,7 +131,7 @@ void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
                                           false);
     _background->setCameraEnclosure(true);
     _background->setName("Background");
-    
+
     std::shared_ptr<VROMaterial> material = _background->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Constant);
     material->getDiffuse().setTexture(textureSphere);

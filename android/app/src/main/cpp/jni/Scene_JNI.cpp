@@ -15,6 +15,7 @@
 #include "VROSceneController.h"
 #include "Viro.h"
 #include "PersistentRef.h"
+#include "VideoTexture_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -72,6 +73,14 @@ JNI_METHOD(void, nativeDestroyScene)(JNIEnv *env,
                                         jclass clazz,
                                         jlong native_object_ref) {
   delete reinterpret_cast<PersistentRef<VROScene> *>(native_object_ref);
+}
+
+JNI_METHOD(void, nativeSetBackgroundVideoTexture)(JNIEnv *env,
+                                     jclass clazz,
+                                     jlong sceneRef,
+                                     jlong textureRef) {
+    VROSceneController *sceneController = native(sceneRef);
+    sceneController->getScene()->setBackgroundSphere(VideoTexture::native(textureRef));
 }
 
 }  // extern "C"

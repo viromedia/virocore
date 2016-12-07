@@ -17,8 +17,10 @@ import com.viro.renderer.jni.ImageJni;
 import com.viro.renderer.jni.MaterialJni;
 import com.viro.renderer.jni.NodeJni;
 import com.viro.renderer.jni.SceneJni;
+import com.viro.renderer.jni.SphereJni;
+import com.viro.renderer.jni.SurfaceJni;
 import com.viro.renderer.jni.TextureJni;
-import com.viro.renderer.jni.VideoSurfaceJni;
+import com.viro.renderer.jni.VideoTextureJni;
 import com.viro.renderer.jni.ViroGvrLayout;
 
 import java.util.Arrays;
@@ -41,20 +43,10 @@ public class ViroActivity extends AppCompatActivity {
         NodeJni rootNode = new NodeJni(this);
         SceneJni scene = new SceneJni(rootNode);
         NodeJni videoSurfaceNode = new NodeJni(this);
-
-        // Testing video
-        String url = "https://s3.amazonaws.com/viro.video/Climber2Top.mp4";
-        VideoSurfaceJni video = new VideoSurfaceJni(40,40, url, mViroGvrLayout.getRenderContextRef());
-        videoSurfaceNode.setGeometry(video);
-        video.setVolume(0.1f);
-        video.play();
-        video.setLoop(false);
-        video.setVideoDelegate(new VideoSurfaceJni.VideoDelegate() {
-            @Override
-            public void onVideoFinish() {
-                Log.e(TAG,"onVideoFinished within ViroActivity");
-            }
-        });
+        //testSurfaceVideo(node);
+        //testSphereVideo(node);
+        //testBackgroundVideo(scene);
+        //testBox(node);
 
         float[] position = {0F,0F,-5F};
         videoSurfaceNode.setPosition(position);
@@ -63,7 +55,6 @@ public class ViroActivity extends AppCompatActivity {
         ImageJni bobaImage = new ImageJni("boba.png");
 
         TextureJni bobaTexture = new TextureJni(bobaImage);
-
         MaterialJni material = new MaterialJni();
         material.setTexture(bobaTexture, "diffuseTexture");
 
@@ -82,5 +73,60 @@ public class ViroActivity extends AppCompatActivity {
 
         // Updating the scene.
         mViroGvrLayout.setScene(scene);
+    }
+
+    private void testSurfaceVideo(NodeJni node){
+        SurfaceJni surface = new SurfaceJni(40,40);
+        VideoTextureJni videoTexture = new VideoTextureJni();
+        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mViroGvrLayout.getRenderContextRef());
+        videoTexture.setVolume(0.1f);
+        videoTexture.setLoop(false);
+        videoTexture.play();
+        videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
+            @Override
+            public void onVideoFinish() {
+                Log.e(TAG,"onVideoFinished for Surface within ViroActivity");
+            }
+        });
+        surface.setVideoTexture(videoTexture);
+        node.setGeometry(surface);
+    }
+
+    private void testSphereVideo(NodeJni node){
+        SphereJni sphere = new SphereJni(2, 20, 20, false);
+        VideoTextureJni videoTexture = new VideoTextureJni();
+        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mViroGvrLayout.getRenderContextRef());
+        videoTexture.setVolume(0.1f);
+        videoTexture.setLoop(false);
+        videoTexture.play();
+        videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
+            @Override
+            public void onVideoFinish() {
+                Log.e(TAG,"onVideoFinished for Sphere within ViroActivity");
+            }
+        });
+        sphere.setVideoTexture(videoTexture);
+        node.setGeometry(sphere);
+    }
+
+    private void testBackgroundVideo(SceneJni scene){
+        VideoTextureJni videoTexture = new VideoTextureJni();
+        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mViroGvrLayout.getRenderContextRef());
+        videoTexture.setVolume(0.1f);
+        videoTexture.setLoop(false);
+        videoTexture.play();
+        videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
+            @Override
+            public void onVideoFinish() {
+                Log.e(TAG,"onVideoFinished for Background within ViroActivity");
+            }
+        });
+        scene.setBackgroundVideoTexture(videoTexture);
+    }
+
+    private void testBox(NodeJni node){
+        //Creation of ViroBox
+        BoxJni boxGeometry = new BoxJni(2,4,2);
+        node.setGeometry(boxGeometry);
     }
 }

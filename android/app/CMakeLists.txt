@@ -45,10 +45,13 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/Node_JNI.cpp
              src/main/cpp/jni/Scene_JNI.cpp
              src/main/cpp/jni/Box_JNI.cpp
+             src/main/cpp/jni/Surface_JNI.cpp
+             src/main/cpp/jni/Sphere_JNI.cpp
              src/main/cpp/jni/Material_JNI.cpp
              src/main/cpp/jni/Image_JNI.cpp
              src/main/cpp/jni/Texture_JNI.cpp
-             src/main/cpp/jni/VideoSurface_JNI.cpp
+             src/main/cpp/jni/VideoTexture_JNI.cpp
+             src/main/cpp/jni/VideoDelegate_JNI.cpp
              src/main/cpp/jni/RenderContext_JNI.cpp
 
              # Math

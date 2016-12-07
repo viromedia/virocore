@@ -1,5 +1,5 @@
 //
-//  Texture_JNI.cpp
+//  VideoTexture_JNI.cpp
 //  ViroRenderer
 //
 //  Copyright © 2016 Viro Media. All rights reserved.
