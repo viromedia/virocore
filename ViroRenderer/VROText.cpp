@@ -644,8 +644,28 @@ std::vector<VROTextLine> VROText::justify(std::string &text, int maxWidth, int m
             }
         }
     }
-    
-    return lines;
+
+    /*
+     Finally, handle clipping.
+     */
+    int maxLinesByClipping = std::numeric_limits<int>::max();
+    if (clipMode == VROTextClipMode::ClipToBounds) {
+        float lineHeight = typeface->getLineHeight() * kTextPointToWorldScale;
+        maxLinesByClipping = floorf(maxHeight / lineHeight);
+    }
+
+    int maxLinesByLimit = std::numeric_limits<int>::max();
+    if (maxLines != 0) {
+        maxLinesByLimit = maxLines;
+    }
+
+    int linesToKeep = std::min(maxLinesByClipping, maxLinesByLimit);
+    if (linesToKeep < lines.size()) {
+        return { lines.begin(), lines.begin() + linesToKeep };
+    }
+    else {
+        return lines;
+    }
 }
 
 std::vector<std::string> VROText::divideIntoParagraphs(std::string &text) {

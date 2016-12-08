@@ -188,7 +188,7 @@ private:
      Justification routine. Considerably more complex than the greedy algorithms above. Note that
      justification is a word-wrapping technique that reduces the 'raggedness' of the text edges;
      it can be used with left, right, and centered horizontal alignment. To achieve traditional 
-     justified text as seen in newspapers, use it with VROTextHorizontalAlignment::Center.
+     justified text as seen in newspapers, use it with VROTextHorizontalAlignment::Left.
      */
     static std::vector<VROTextLine> justify(std::string &text, int maxWidth, int maxHeight, int maxLines,
                                             std::shared_ptr<VROTypeface> &typeface,
