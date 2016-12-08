@@ -19,8 +19,8 @@ public:
     
     static std::string toString(int i);
     
-    static std::vector<std::string> split(std::string &s,
-                                          std::string &delimiters,
+    static std::vector<std::string> split(const std::string &s,
+                                          const std::string &delimiters,
                                           bool emptiesOk);
     
 private:

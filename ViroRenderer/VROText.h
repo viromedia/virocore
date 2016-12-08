@@ -36,6 +36,7 @@ enum class VROTextVerticalAlignment {
 enum class VROLineBreakMode {
     WordWrap,
     CharWrap,
+    Justify,
     None
 };
 
@@ -49,6 +50,16 @@ class VROTextLayout {
     float height;
     VROTextHorizontalAlignment horizontalAlignment;
     VROTextVerticalAlignment verticalAlignment;
+};
+
+class VROTextLine {
+public:
+    std::string line;
+    float spacingRatio;
+    
+    VROTextLine(std::string &line) : line(line), spacingRatio(1) {}
+    VROTextLine(std::string &line, float spacingRatio) : line(line), spacingRatio(spacingRatio) {}
+    virtual ~VROTextLine() {}
 };
 
 class VROText : public VROGeometry {
@@ -150,30 +161,46 @@ private:
                           std::vector<int> &indices);
     
     /*
-     Functions for processing the line-break mode. All of the functions also introduce
-     a newline whenever the '\n' character is encountered (the wrapByNewlines function
-     does nothing else).
+     Simple methods for processing the line-break mode. All of the methods below use a 
+     'greedy' algorithm, filling as much space in the current line as possible then moving
+     to the next line. These methods also introduce a newline on hard breaks (i.e. whenever
+     the '\n' character is encountered). In particular, the wrapByNewlines function *only*
+     processes hard breaks; the rest process both hard and soft.
      
-     These functions also process clipping. When char/word wrapping is on, we only have to
+     These functions also handle clipping. When char/word wrapping is on, we only have to
      clip text vertically (horizontal edges are implicitly taken care of by the wrapping
      function). When char/word wrapping is off, we also have to clip text horizontally.
      */
-    static std::vector<std::string> wrapByWords(std::string &text, int maxWidth, int maxHeight, int maxLines,
+    static std::vector<VROTextLine> wrapByWords(std::string &text, int maxWidth, int maxHeight, int maxLines,
                                                 std::shared_ptr<VROTypeface> &typeface,
                                                 VROTextClipMode clipMode,
                                                 std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap);
-    static std::vector<std::string> wrapByChars(std::string &text, int maxWidth, int maxHeight, int maxLines,
+    static std::vector<VROTextLine> wrapByChars(std::string &text, int maxWidth, int maxHeight, int maxLines,
                                                 std::shared_ptr<VROTypeface> &typeface,
                                                 VROTextClipMode clipMode,
                                                 std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap);
-    static std::vector<std::string> wrapByNewlines(std::string &text, int maxWidth, int maxHeight, int maxLines,
+    static std::vector<VROTextLine> wrapByNewlines(std::string &text, int maxWidth, int maxHeight, int maxLines,
                                                    std::shared_ptr<VROTypeface> &typeface,
                                                    VROTextClipMode clipMode,
                                                    std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap);
     
     /*
-     Helper for wrapping/clipping.
+     Justification routine. Considerably more complex than the greedy algorithms above. Note that
+     justification is a word-wrapping technique that reduces the 'raggedness' of the text edges;
+     it can be used with left, right, and centered horizontal alignment. To achieve traditional 
+     justified text as seen in newspapers, use it with VROTextHorizontalAlignment::Center.
      */
+    static std::vector<VROTextLine> justify(std::string &text, int maxWidth, int maxHeight, int maxLines,
+                                            std::shared_ptr<VROTypeface> &typeface,
+                                            VROTextClipMode clipMode,
+                                            std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap);
+    
+    /*
+     Helpers for wrapping/clipping.
+     */
+    static std::vector<std::string> divideIntoParagraphs(std::string &text);
+    static float getLengthOfWord(const std::string &word, std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap);
+
     static bool isAnotherLineAvailable(size_t numLinesNow, int maxHeight, int maxLines,
                                        std::shared_ptr<VROTypeface> &typeface, VROTextClipMode clipMode);
     

@@ -324,7 +324,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     int height = 10;
     
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height);
-    surface->getMaterials().front()->getDiffuse().setColor({1.0, 0.0, 0.0, 1.0});
+    surface->getMaterials().front()->getDiffuse().setColor({0.0, 0.0, 1.0, 1.0});
     
     std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
     surfaceNode->setGeometry(surface);
@@ -335,17 +335,19 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     /*
      Create text.
      */
-    VROLineBreakMode linebreakMode = VROLineBreakMode::WordWrap;
+    VROLineBreakMode linebreakMode = VROLineBreakMode::Justify;
     VROTextClipMode clipMode = VROTextClipMode::ClipToBounds;
     
-    std::shared_ptr<VROTypeface> typeface = self.driver->newTypeface("SF", 24);
-    std::string string = "Hello Freetype\nThis is a test of wrapping a long piece of text, longer than all the previous pieces of text.";
+    std::shared_ptr<VROTypeface> typeface = self.driver->newTypeface("SF", 10);
+    //std::string string = "Hello Freetype, this is a test of wrapping a long piece of text, longer than all the previous pieces of text.";
+    
+    std::string string = "In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
     
     VROVector3f size = VROText::getTextSize(string, typeface, width, height, linebreakMode, clipMode);
     NSLog(@"Estimated size %f, %f", size.x, size.y);
     
     std::shared_ptr<VROText> text = VROText::createText(string, typeface, width, height,
-                                                        VROTextHorizontalAlignment::Center, VROTextVerticalAlignment::Top,
+                                                        VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Top,
                                                         linebreakMode, clipMode);
     
     text->setName("Text");

@@ -16,6 +16,7 @@
 #include <cstddef>
 #include <limits>
 #include "VROStringUtil.h"
+#include "VROKnuthPlassFormatter.h"
 
 static const int kVerticesPerGlyph = 6;
 static const float kTextPointToWorldScale = 0.05;
@@ -66,7 +67,7 @@ VROVector3f VROText::getTextSize(std::string text, std::shared_ptr<VROTypeface> 
         }
     }
     
-    std::vector<std::string> lines;
+    std::vector<VROTextLine> lines;
     switch (lineBreakMode) {
         case VROLineBreakMode::WordWrap:
             lines = wrapByWords(text, maxWidth, maxHeight, maxLines, typeface, clipMode, glyphMap);
@@ -77,6 +78,9 @@ VROVector3f VROText::getTextSize(std::string text, std::shared_ptr<VROTypeface> 
         case VROLineBreakMode::None:
             lines = wrapByNewlines(text, maxWidth, maxHeight, maxLines, typeface, clipMode, glyphMap);
             break;
+        case VROLineBreakMode::Justify:
+            lines = justify(text, maxWidth, maxHeight, maxLines, typeface, clipMode, glyphMap);
+            break;
         default:
             pabort("Invalid linebreak mode found for VROText");
             break;
@@ -86,7 +90,8 @@ VROVector3f VROText::getTextSize(std::string text, std::shared_ptr<VROTypeface> 
     size.y = lines.size() * lineHeight;
     
     std::vector<VROShapeVertexLayout> var;
-    for (std::string &line : lines) {
+    for (VROTextLine &textLine : lines) {
+        std::string &line = textLine.line;
         
         float lineWidth = 0;
         for (std::string::const_iterator c = line.begin(); c != line.end(); ++c) {
@@ -148,7 +153,7 @@ void VROText::buildText(std::string &text,
     /*
      Divide the text into its individual lines.
      */
-    std::vector<std::string> lines;
+    std::vector<VROTextLine> lines;
     switch (lineBreakMode) {
         case VROLineBreakMode::WordWrap:
             lines = wrapByWords(text, width, height, maxLines, typeface, clipMode, glyphMap);
@@ -158,6 +163,9 @@ void VROText::buildText(std::string &text,
             break;
         case VROLineBreakMode::None:
             lines = wrapByNewlines(text, width, height, maxLines, typeface, clipMode, glyphMap);
+            break;
+        case VROLineBreakMode::Justify:
+            lines = justify(text, width, height, maxLines, typeface, clipMode, glyphMap);
             break;
         default:
             pabort("Invalid linebreak mode found for VROText");
@@ -187,7 +195,9 @@ void VROText::buildText(std::string &text,
      associated indices in the materialMap.
      */
     std::vector<VROShapeVertexLayout> var;
-    for (std::string &line : lines) {
+    for (VROTextLine &textLine : lines) {
+        std::string &line = textLine.line;
+        
         /*
          Compute the width of the line.
          */
@@ -219,7 +229,13 @@ void VROText::buildText(std::string &text,
             std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
             
             buildChar(glyph, x, y, var, materialMap[charCode].second);
-            x += glyph->getAdvance() * kTextPointToWorldScale;
+            float advance = glyph->getAdvance() * kTextPointToWorldScale;
+            
+            if (charCode == ' ') {
+                advance *= textLine.spacingRatio;
+            }
+            
+            x += advance;
         }
         
         y -= lineHeight;
@@ -308,13 +324,20 @@ void VROText::buildGeometry(std::vector<VROShapeVertexLayout> &var,
     }
 }
 
-std::vector<std::string> VROText::wrapByWords(std::string &text, int maxWidth, int maxHeight, int maxLines,
+std::vector<VROTextLine> VROText::wrapByWords(std::string &text, int maxWidth, int maxHeight, int maxLines,
                                               std::shared_ptr<VROTypeface> &typeface,
                                               VROTextClipMode clipMode,
                                               std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
     
+    /*
+     NOTE: the greedy algorithm used here combines hard breaks with soft breaks, which
+     makes it more unwieldy but more efficient. If we need to add functionality and it
+     gets more out of hand, it may be worthwhile to simplify this function by instead
+     first dividing the string up into paragraphs based on hard breaks ('\n' characters), 
+     and then wrapping each paragraph individually.
+     */
     
-    std::vector<std::string> lines;
+    std::vector<VROTextLine> lines;
     float lineWidth = 0;
     std::string currentLine;
     
@@ -325,10 +348,10 @@ std::vector<std::string> VROText::wrapByWords(std::string &text, int maxWidth, i
         }
         
         /*
-         If the first character is a user supplied newline, process it.
+         If the first character is a hard break, process it.
          */
         if (text[current] == '\n') {
-            lines.push_back(currentLine);
+            lines.push_back({currentLine});
             lineWidth = 0;
             currentLine.clear();
             
@@ -352,7 +375,7 @@ std::vector<std::string> VROText::wrapByWords(std::string &text, int maxWidth, i
         }
         
         /*
-         If we found a user-supplied newline, set the end of the word to the newline
+         If we found a hard break ('\n'), set the end of the word to the newline
          character, so the newline character is the first thing we pick up next time
          around the loop.
          */
@@ -362,14 +385,7 @@ std::vector<std::string> VROText::wrapByWords(std::string &text, int maxWidth, i
         
         std::string word = text.substr(current, delimeterEnd - current);
         if (!word.empty()) {
-            float wordWidth = 0;
-            for (std::string::const_iterator c = word.begin(); c != word.end(); ++c) {
-                FT_ULong charCode = *c;
-                std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
-                
-                wordWidth += glyph->getAdvance() * kTextPointToWorldScale;
-            }
-            
+            float wordWidth = getLengthOfWord(word, glyphMap);
             if (lineWidth + wordWidth > maxWidth) {
                 /*
                  If true, then the word is too large for an empty line,
@@ -381,7 +397,7 @@ std::vector<std::string> VROText::wrapByWords(std::string &text, int maxWidth, i
                  worse, as would omitting the word entirely.
                  */
                 if (currentLine.empty()) {
-                    lines.push_back(word);
+                    lines.push_back({word});
                     current = delimeterEnd;
                 }
                 
@@ -390,7 +406,7 @@ std::vector<std::string> VROText::wrapByWords(std::string &text, int maxWidth, i
                  again, with a fresh line.
                  */
                 else {
-                    lines.push_back(currentLine);
+                    lines.push_back({currentLine});
                     lineWidth = 0;
                     currentLine.clear();
                 }
@@ -412,18 +428,18 @@ std::vector<std::string> VROText::wrapByWords(std::string &text, int maxWidth, i
     }
     
     if (!currentLine.empty() && isAnotherLineAvailable(lines.size(), maxHeight, maxLines, typeface, clipMode)) {
-        lines.push_back(currentLine);
+        lines.push_back({currentLine});
     }
 
     return lines;
 }
 
-std::vector<std::string> VROText::wrapByChars(std::string &text, int maxWidth, int maxHeight, int maxLines,
+std::vector<VROTextLine> VROText::wrapByChars(std::string &text, int maxWidth, int maxHeight, int maxLines,
                                               std::shared_ptr<VROTypeface> &typeface,
                                               VROTextClipMode clipMode,
                                               std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
     
-    std::vector<std::string> lines;
+    std::vector<VROTextLine> lines;
     float lineWidth = 0;
     std::string currentLine;
     
@@ -433,7 +449,7 @@ std::vector<std::string> VROText::wrapByChars(std::string &text, int maxWidth, i
         
         float charWidth = glyph->getAdvance() * kTextPointToWorldScale;
         if (lineWidth + charWidth > maxWidth || charCode == '\n') {
-            lines.push_back(currentLine);
+            lines.push_back({currentLine});
             if (!isAnotherLineAvailable(lines.size(), maxHeight, maxLines, typeface, clipMode)) {
                 break;
             }
@@ -452,18 +468,18 @@ std::vector<std::string> VROText::wrapByChars(std::string &text, int maxWidth, i
     }
     
     if (!currentLine.empty() && isAnotherLineAvailable(lines.size(), maxHeight, maxLines, typeface, clipMode)) {
-        lines.push_back(currentLine);
+        lines.push_back({currentLine});
     }
     
     return lines;
 }
 
-std::vector<std::string> VROText::wrapByNewlines(std::string &text, int maxWidth, int maxHeight, int maxLines,
+std::vector<VROTextLine> VROText::wrapByNewlines(std::string &text, int maxWidth, int maxHeight, int maxLines,
                                                  std::shared_ptr<VROTypeface> &typeface,
                                                  VROTextClipMode clipMode,
                                                  std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
  
-    std::vector<std::string> lines;
+    std::vector<VROTextLine> lines;
     float lineWidth = 0;
     std::string currentLine;
     
@@ -477,7 +493,7 @@ std::vector<std::string> VROText::wrapByNewlines(std::string &text, int maxWidth
          '\n' character.
          */
         if (charCode == '\n') {
-            lines.push_back(currentLine);
+            lines.push_back({currentLine});
             if (!isAnotherLineAvailable(lines.size(), maxHeight, maxLines, typeface, clipMode)) {
                 break;
             }
@@ -499,10 +515,134 @@ std::vector<std::string> VROText::wrapByNewlines(std::string &text, int maxWidth
     }
     
     if (!currentLine.empty() && isAnotherLineAvailable(lines.size(), maxHeight, maxLines, typeface, clipMode)) {
-        lines.push_back(currentLine);
+        lines.push_back({currentLine});
     }
     
     return lines;
+}
+
+std::vector<VROTextLine> VROText::justify(std::string &text, int maxWidth, int maxHeight, int maxLines,
+                                          std::shared_ptr<VROTypeface> &typeface,
+                                          VROTextClipMode clipMode,
+                                          std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
+    std::vector<VROTextLine> lines;
+    
+    std::string space = " ";
+    float spaceWidth = getLengthOfWord(space, glyphMap);
+    float spaceStretch = (spaceWidth * 3) / 6;
+    float spaceShrink  = (spaceWidth * 3) / 9;
+    
+    std::vector<std::string> paragraphs = divideIntoParagraphs(text);
+    for (std::string &paragraph : paragraphs) {
+        /*
+         Handle empty newlines.
+         */
+        if (paragraph.empty()) {
+            lines.push_back({paragraph, 1.0});
+            continue;
+        }
+        
+        std::vector<int> lineLengths = { maxWidth };
+        
+        std::vector<std::shared_ptr<KPNode>> nodes;
+        std::vector<std::string> words = VROStringUtil::split(paragraph, kWhitespaceDelimeters, false);
+        
+        int index = 0;
+        for (std::string &word : words) {
+            float length = getLengthOfWord(word, glyphMap);
+            nodes.push_back(std::make_shared<KPBox>(length, word));
+            
+            if (index == words.size() - 1) {
+                nodes.push_back(std::make_shared<KPGlue>(0, kInfinity, 0, ""));
+                nodes.push_back(std::make_shared<KPPenalty>(0, -kInfinity, 1));
+            }
+            else {
+                nodes.push_back(std::make_shared<KPGlue>(spaceWidth, spaceStretch, spaceShrink, " "));
+            }
+            
+            ++index;
+        }
+        
+        VROKnuthPlassFormatter formatter(nodes, lineLengths);
+        std::vector<VROBreakpoint> breaks = formatter.run();
+        
+        /*
+         Construct the lines.
+         */
+        std::vector<std::vector<std::shared_ptr<KPNode>>> formattedLines;
+        int lineStart = 0;
+
+        for (int i = 1; i < breaks.size(); i++) {
+            int point = breaks[i].position;
+            
+            for (int j = lineStart; j < nodes.size(); j ++) {
+                // After a line break, we skip any nodes unless they are boxes or forced breaks.
+                if (nodes[j]->type == KPNodeType::Box ||
+                   (nodes[j]->type == KPNodeType::Penalty && std::dynamic_pointer_cast<KPPenalty>(nodes[j])->penalty == -kInfinity)) {
+                    
+                    lineStart = j;
+                    break;
+                }
+            }
+            
+            std::vector<std::shared_ptr<KPNode>>::iterator start = nodes.begin() + lineStart;
+            std::vector<std::shared_ptr<KPNode>>::iterator end   = nodes.begin() + (point + 1);
+            
+            formattedLines.push_back({start, end});
+            lineStart = point;
+        }
+        
+        for (int i = 0; i < formattedLines.size(); i++) {
+            std::vector<std::shared_ptr<KPNode>> &nodesOnLine = formattedLines[i];
+            
+            std::string line = "";
+            int numSpaces = 0;
+            float textWidth = 0;
+            
+            for (std::shared_ptr<KPNode> &node : nodesOnLine) {
+                if (node->value == " ") {
+                    numSpaces++;
+                }
+                
+                line += node->value;
+                textWidth += getLengthOfWord(node->value, glyphMap);
+            }
+            
+            // Don't justify the last line of a paragraph
+            if (i == formattedLines.size() - 1) {
+                lines.push_back({line, 1.0});
+            }
+            
+            // Otherwise, to justify, compute how large each whitespace should be
+            else {
+                float spacePerWhitespace = (maxWidth - textWidth) / (float) numSpaces;
+                float ratio = 1.0 + spacePerWhitespace / spaceWidth;
+                
+                lines.push_back({line, ratio});
+            }
+        }
+    }
+    
+    return lines;
+}
+
+std::vector<std::string> VROText::divideIntoParagraphs(std::string &text) {
+    std::vector<std::string> lines;
+    std::string delimeters = "\n";
+    
+    return VROStringUtil::split(text, delimeters, true);
+}
+
+float VROText::getLengthOfWord(const std::string &word, std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
+    float wordWidth = 0;
+    for (std::string::const_iterator c = word.begin(); c != word.end(); ++c) {
+        FT_ULong charCode = *c;
+        std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
+        
+        wordWidth += glyph->getAdvance() * kTextPointToWorldScale;
+    }
+    
+    return wordWidth;
 }
 
 bool VROText::isAnotherLineAvailable(size_t numLinesNow, int maxHeight, int maxLines,

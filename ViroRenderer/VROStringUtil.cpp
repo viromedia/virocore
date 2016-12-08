@@ -15,8 +15,8 @@ std::string VROStringUtil::toString(int i) {
     return ss.str();
 }
 
-std::vector<std::string> VROStringUtil::split(std::string &s,
-                                              std::string &delimiters,
+std::vector<std::string> VROStringUtil::split(const std::string &s,
+                                              const std::string &delimiters,
                                               bool emptiesOk) {
     
     std::vector<std::string> result;

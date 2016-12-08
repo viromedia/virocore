@@ -116,6 +116,7 @@ add_library( # Sets the name of the library.
              # UI
              ../../ViroRenderer/VROReticle.cpp
              ../../ViroRenderer/VROText.cpp
+             ../../ViroRenderer/VROKnuthPlassFormatter.cpp
 
              # OpenGL
              ../../ViroRenderer/VROGeometrySubstrateOpenGL.cpp
