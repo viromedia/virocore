@@ -70,7 +70,8 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
     std::string fragmentShader;
     
     std::vector<std::string> samplers;
-    
+    std::vector<std::shared_ptr<VROShaderModifier>> modifiers = material.getShaderModifiers();
+
     if (diffuse.getTextureType() == VROTextureType::None) {
         fragmentShader = "constant_c_fsh";
     }
@@ -80,7 +81,14 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
 
         fragmentShader = "constant_t_fsh";
     }
-    else {
+    else if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
+        _textures.push_back(diffuse.getTexture());
+        samplers.push_back("sampler");
+
+        fragmentShader = "constant_t_fsh";
+        modifiers.push_back(createEGLImageModifier());
+    }
+    else { // TextureCube
         _textures.push_back(diffuse.getTexture());
         samplers.push_back("sampler");
 
@@ -88,7 +96,7 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
     }
     
     _program = driver.getPooledShader(vertexShader, fragmentShader, samplers,
-                                      material.getShaderModifiers());
+                                      modifiers);
     if (!_program->isHydrated()) {
         addUniforms();
         hydrateProgram(driver);
@@ -129,7 +137,7 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
             
             fragmentShader = "lambert_t_reflect_fsh";
         }
-        else {
+        else { //Texture2D or TextureEGLImage
             fragmentShader = "lambert_t_fsh";
             if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
                 modifiers.push_back(createEGLImageModifier());
@@ -194,7 +202,7 @@ void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, 
 
             fragmentShader = "phong_t_reflect_fsh";
         }
-        else {
+        else { //Texture2D or TextureEGLImage
             fragmentShader = "phong_t_fsh";
             if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
                 modifiers.push_back(createEGLImageModifier());
@@ -261,7 +269,7 @@ void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, 
 
             fragmentShader = "blinn_t_reflect_fsh";
         }
-        else {
+        else { //Texture2D or TextureEGLImage
             fragmentShader = "blinn_t_fsh";
             if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
                 modifiers.push_back(createEGLImageModifier());
