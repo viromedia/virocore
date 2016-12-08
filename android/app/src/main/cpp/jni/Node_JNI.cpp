@@ -11,6 +11,7 @@
 #include "VRONode.h"
 #include "PersistentRef.h"
 #include "Node_JNI.h"
+#include "Material_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -83,4 +84,26 @@ JNI_METHOD(void, nativeSetVisible)(JNIEnv *env,
                                    jfloat opacity) {
     Node::native(native_node_ref)->setOpacity(opacity);
 }
+
+JNI_METHOD(void, nativeSetMaterials)(JNIEnv *env,
+                                     jobject obj,
+                                     jlong nativeNodeRef,
+                                     jlongArray longArrayRef) {
+    std::shared_ptr<VROGeometry> geometryPtr = Node::native(nativeNodeRef)->getGeometry();
+
+    jlong *longArray = env->GetLongArrayElements(longArrayRef, 0);
+    jsize len = env->GetArrayLength(longArrayRef);
+
+    if (geometryPtr != nullptr) {
+        std::vector<std::shared_ptr<VROMaterial>> tempMaterials;
+        for (int i = 0; i < len; i++) {
+            tempMaterials.push_back(Material::native(longArray[i]));
+        }
+
+        geometryPtr->getMaterials() = tempMaterials;
+    }
+
+    env->ReleaseLongArrayElements(longArrayRef, longArray, 0);
+}
+
 }  // extern "C"

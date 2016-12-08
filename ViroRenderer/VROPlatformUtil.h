@@ -24,6 +24,12 @@ std::string VROPlatformLoadFileAsString(std::string path);
 #include <android/bitmap.h>
 
 void VROPlatformSetEnv(JNIEnv *env, jobject activity, jobject assetManager);
+
+// This function was added because VROPlatformConvertBitmap can be called before the renderer
+// is created and as a result, activity and assetManager hasn't been set yet. We should think
+// about how to do this better.
+void VROPlatformSetEnv(JNIEnv *env);
+
 void VROPlatformReleaseEnv();
 
 // Note the returned buffer *must* be freed by the caller!
@@ -31,6 +37,9 @@ void *VROPlatformLoadBinaryAsset(std::string resource, std::string type, size_t 
 
 // Note the returned buffer *must* be freed by the caller!
 void *VROPlatformLoadImageAssetRGBA8888(std::string resource, int *bitmapLength, int *width, int *height);
+
+// Note the returned buffer *must* be freed by the caller!
+void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, int *height);
 
 // Create a video sink on the Java side. Returns the Surface.
 jobject VROPlatformCreateVideoSink(int textureId);

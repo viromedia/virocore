@@ -20,8 +20,8 @@
       Java_com_viro_renderer_jni_BoxJni_##method_name
 
 namespace Box {
-    inline jlong jptr(std::shared_ptr<VROGeometry> shared_node) {
-        PersistentRef<VROGeometry> *native_box = new PersistentRef<VROGeometry>(shared_node);
+    inline jlong jptr(std::shared_ptr<VROBox> shared_node) {
+        PersistentRef<VROBox> *native_box = new PersistentRef<VROBox>(shared_node);
         return reinterpret_cast<intptr_t>(native_box);
     }
 
@@ -35,36 +35,25 @@ extern "C" {
 
 JNI_METHOD(jlong, nativeCreateBox)(JNIEnv *env,
                                         jclass clazz,
-                                        jobject class_loader,
-                                        jobject node_jni,
-                                        jlong width,
-                                        jlong height,
-                                        jlong length) {
+                                        jfloat width,
+                                        jfloat height,
+                                        jfloat length) {
     std::shared_ptr<VROBox> box = VROBox::createBox(width, height, length);
-
-    /**
-     * TODO:
-     * Set lighting model and materials to this geometry once we have
-     * created it's corresponding managers.
-     */
-    std::shared_ptr<VROMaterial> _material = box->getMaterials()[0];
-    _material->setLightingModel(VROLightingModel::Constant);
-    _material->getDiffuse().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("boba.png")));
     return Box::jptr(box);
 }
 
 JNI_METHOD(void, nativeDestroyBox)(JNIEnv *env,
                                         jclass clazz,
-                                        jlong native_node_ref) {
-    delete reinterpret_cast<PersistentRef<VROBox> *>(native_node_ref);
+                                        jlong nativeBoxRef) {
+    delete reinterpret_cast<PersistentRef<VROBox> *>(nativeBoxRef);
 }
 
 JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
                                      jclass clazz,
                                      jlong native_box_ref,
                                      jlong native_node_ref) {
-    std::shared_ptr<VROBox> videoSurface = Box::native(native_box_ref);
-    Node::native(native_node_ref)->setGeometry(videoSurface);
+    std::shared_ptr<VROBox> box = Box::native(native_box_ref);
+    Node::native(native_node_ref)->setGeometry(box);
 }
 
 }  // extern "C"

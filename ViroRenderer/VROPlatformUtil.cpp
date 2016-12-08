@@ -56,6 +56,10 @@ void VROPlatformSetEnv(JNIEnv *env, jobject activity, jobject assetManager) {
     sAssetMgr = AAssetManager_fromJava(env, assetManager);
 }
 
+void VROPlatformSetEnv(JNIEnv *env) {
+    env->GetJavaVM(&sVM);
+}
+
 JNIEnv *VROPlatformGetJNIEnv() {
     JNIEnv *env;
     getJNIEnv(&env);
@@ -155,6 +159,31 @@ void *VROPlatformLoadImageAssetRGBA8888(std::string resource, int *bitmapLength,
     env->DeleteLocalRef(string);
     env->DeleteLocalRef(cls);
 
+    return safeData;
+}
+
+void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, int *height) {
+    JNIEnv *env;
+    getJNIEnv(&env);
+
+    AndroidBitmapInfo bitmapInfo;
+    AndroidBitmap_getInfo(env, jbitmap, &bitmapInfo);
+
+    passert (bitmapInfo.format == ANDROID_BITMAP_FORMAT_RGBA_8888);
+
+    *width = bitmapInfo.width;
+    *height = bitmapInfo.height;
+    *bitmapLength = bitmapInfo.height * bitmapInfo.stride;
+
+    void *bitmapData;
+    AndroidBitmap_lockPixels(env, jbitmap, &bitmapData);
+
+    void *safeData = malloc(*bitmapLength);
+    memcpy(safeData, bitmapData, *bitmapLength);
+
+    AndroidBitmap_unlockPixels(env, jbitmap);
+
+    env->DeleteLocalRef(jbitmap);
     return safeData;
 }
 

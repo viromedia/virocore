@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.viro.renderer.jni.BoxJni;
 import com.viro.renderer.jni.ImageJni;
 import com.viro.renderer.jni.MaterialJni;
 import com.viro.renderer.jni.NodeJni;
@@ -19,6 +20,8 @@ import com.viro.renderer.jni.SceneJni;
 import com.viro.renderer.jni.TextureJni;
 import com.viro.renderer.jni.VideoSurfaceJni;
 import com.viro.renderer.jni.ViroGvrLayout;
+
+import java.util.Arrays;
 
 public class ViroActivity extends AppCompatActivity {
     private ViroGvrLayout mViroGvrLayout;
@@ -37,12 +40,12 @@ public class ViroActivity extends AppCompatActivity {
         // Creation of SceneJni within scene navigator
         NodeJni rootNode = new NodeJni(this);
         SceneJni scene = new SceneJni(rootNode);
-        NodeJni node = new NodeJni(this);
+        NodeJni videoSurfaceNode = new NodeJni(this);
 
         // Testing video
         String url = "https://s3.amazonaws.com/viro.video/Climber2Top.mp4";
         VideoSurfaceJni video = new VideoSurfaceJni(40,40, url, mViroGvrLayout.getRenderContextRef());
-        node.setGeometry(video);
+        videoSurfaceNode.setGeometry(video);
         video.setVolume(0.1f);
         video.play();
         video.setLoop(false);
@@ -54,27 +57,28 @@ public class ViroActivity extends AppCompatActivity {
         });
 
         float[] position = {0F,0F,-5F};
-        node.setPosition(position);
+        videoSurfaceNode.setPosition(position);
+
+        // Create a new material with a diffuseTexture set to the image "boba.png"
+        ImageJni bobaImage = new ImageJni("boba.png");
+
+        TextureJni bobaTexture = new TextureJni(bobaImage);
+
+        MaterialJni material = new MaterialJni();
+        material.setTexture(bobaTexture, "diffuseTexture");
 
         // Creation of ViroBox
-        // BoxJni boxGeometry = new BoxJni(2,4,2);
-        // boxNode.setGeometry(boxGeometry);
-        // float[] boxPosition = {0,0,-5};
-        // node.setPosition(boxPosition);
+        BoxJni boxGeometry = new BoxJni(2,4,2);
 
-        // Testing random material creation stuff, should have no effect for now.
-        MaterialJni material = new MaterialJni();
-        ImageJni image = new ImageJni("boba.png");
+        NodeJni boxNode = new NodeJni(this);
+        boxNode.setGeometry(boxGeometry);
+        float[] boxPosition = {5,0,0};
+        boxNode.setPosition(boxPosition);
+        boxNode.setMaterials(Arrays.asList(material));
 
-        TextureJni texture = new TextureJni(image);
-        // TextureJni texture2 = new TextureJni(image, image, image,
-        //        image, image, image);
-
-        material.setTexture(texture, "diffuseTexture");
-        material.setColor(0xff00ff, "diffuseColor");
-
-        // Assignment of ViroBox to scene
-        rootNode.addChildNode(node);
+        // add Video and Box to scene
+        rootNode.addChildNode(videoSurfaceNode);
+        rootNode.addChildNode(boxNode);
 
         // Updating the scene.
         mViroGvrLayout.setScene(scene);

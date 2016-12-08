@@ -5,6 +5,8 @@ package com.viro.renderer.jni;
 
 import android.content.Context;
 
+import java.util.List;
+
 /**
  * Java JNI wrapper for linking the following classes below across the bridge.
  *
@@ -71,6 +73,15 @@ public class NodeJni {
         geometry.attachToNode(this);
     }
 
+    public void setMaterials(List<MaterialJni> materials) {
+        // create list of longs (refs)
+        long[] materialRefs = new long[materials.size()];
+        for (int i = 0; i < materials.size(); i++) {
+            materialRefs[i] = materials.get(i).mNativeRef;
+        }
+        nativeSetMaterials(mNativeRef, materialRefs);
+    }
+
     private native long nativeCreateNode();
     private native void nativeDestroyNode(long nodeReference);
     private native void nativeAddChildNode(long nodeReference, long childNodeReference);
@@ -80,4 +91,5 @@ public class NodeJni {
     private native void nativeSetScale(long nodeReference, float x, float y, float z);
     private native void nativeSetOpacity(long nodeReference, float opacity);
     private native void nativeSetVisible(long nodeReference, boolean visible);
+    private native void nativeSetMaterials(long nodeReference, long[] materials);
 }

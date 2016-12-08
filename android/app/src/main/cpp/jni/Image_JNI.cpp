@@ -6,6 +6,7 @@
 //
 #include <jni.h>
 #include <memory>
+#include <VROPlatformUtil.h>
 
 #include "Image_JNI.h"
 
@@ -20,6 +21,12 @@ JNI_METHOD(jlong, nativeCreateImage)(JNIEnv *env, jobject obj, jstring resource)
     std::string strResource(cStrResource);
     std::shared_ptr<VROImageAndroid> imagePtr = std::make_shared<VROImageAndroid>(strResource);
     env->ReleaseStringUTFChars(resource, cStrResource);
+    return Image::jptr(imagePtr);
+}
+
+JNI_METHOD(jlong, nativeCreateImageFromBitmap)(JNIEnv *env, jobject obj, jobject jbitmap) {
+    VROPlatformSetEnv(env);
+    std::shared_ptr<VROImageAndroid> imagePtr = std::make_shared<VROImageAndroid>(jbitmap);
     return Image::jptr(imagePtr);
 }
 

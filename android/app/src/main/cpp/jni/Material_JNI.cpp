@@ -4,39 +4,12 @@
 //
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
-#include <jni.h>
-#include <memory>
 
-#include "VROMaterial.h"
-#include "Texture_JNI.h"
+#include "Material_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_renderer_jni_MaterialJni_##method_name
-
-namespace Material {
-    inline jlong jptr(std::shared_ptr<VROMaterial> ptr) {
-        PersistentRef<VROMaterial> *persistentRef = new PersistentRef<VROMaterial>(ptr);
-        return reinterpret_cast<intptr_t>(persistentRef);
-    }
-
-    inline std::shared_ptr<VROMaterial> native(jlong ptr) {
-        PersistentRef<VROMaterial> *persistentRef = reinterpret_cast<PersistentRef<VROMaterial> *>(ptr);
-        return persistentRef->get();
-    }
-
-    inline bool strcmpinsensitive(const std::string& a, const std::string& b) {
-        if (a.size() != b.size()) {
-            return false;
-        }
-        for (int i = 0; i < a.size(); i++) {
-            if (tolower(a[i]) != tolower(b[i])) {
-                return false;
-            }
-        }
-        return true;
-    }
-}
 
 extern "C" {
 

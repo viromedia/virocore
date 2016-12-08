@@ -10,13 +10,19 @@
 #define ANDROID_VROIMAGEANDROID_H
 
 #include "VROImage.h"
+#include <jni.h>
 #include <string>
 
 class VROImageAndroid : public VROImage {
 
 public:
 
+    // This constructor can only really be used by the Renderer projects
     VROImageAndroid(std::string resource);
+
+    // This is the constructor that should be called from JNI
+    VROImageAndroid(jobject jbitmap);
+
     virtual ~VROImageAndroid();
 
     int getWidth() const;

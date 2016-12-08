@@ -11,14 +11,9 @@ package com.viro.renderer.jni;
  * Cpp JNI wrapper      : Box_JNI.cpp
  * Cpp Object           : VROBox.cpp
  */
-public class BoxJni extends BaseGeometry{
-    public BoxJni(long width, long height, long length) {
-        mNativeRef = nativeCreateBox(
-                getClass().getClassLoader(),
-                this,
-                width,
-                height,
-                length);
+public class BoxJni extends BaseGeometry {
+    public BoxJni(float width, float height, float length) {
+        mNativeRef = nativeCreateBox(width, height, length);
     }
 
     public void destroy() {
@@ -30,8 +25,8 @@ public class BoxJni extends BaseGeometry{
         nativeAttachToNode(mNativeRef, node.mNativeRef);
     }
 
-    private native long nativeCreateBox(ClassLoader appClassLoader, BoxJni boxJni,
-                                        long width, long height, long length);
+    private native long nativeCreateBox(float width, float height, float length);
+
     private native void nativeDestroyBox(long nodeReference);
 
     private native void nativeAttachToNode(long boxReference, long nodeReference);
