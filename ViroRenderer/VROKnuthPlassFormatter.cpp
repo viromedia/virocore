@@ -15,14 +15,15 @@
 int kInfinity = 10000;
 
 VROKnuthPlassFormatter::VROKnuthPlassFormatter(std::vector<std::shared_ptr<KPNode>> &nodes,
-                                               std::vector<int> &lineLengths) :
+                                               std::vector<int> &lineLengths,
+                                               float tolerance) :
     _nodes(nodes),
     _lineLengths(lineLengths) {
         
     _options.demerits.line = 10;
     _options.demerits.flagged = 100;
     _options.demerits.fitness = 3000;
-    _options.tolerance = 2;
+    _options.tolerance = tolerance;
 }
 
 float VROKnuthPlassFormatter::computeCost(const KPSum &sumFromParentToNode,

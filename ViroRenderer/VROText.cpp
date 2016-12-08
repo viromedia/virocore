@@ -22,6 +22,9 @@ static const int kVerticesPerGlyph = 6;
 static const float kTextPointToWorldScale = 0.05;
 static const std::string kWhitespaceDelimeters = " \t\v\r";
 
+static const int kJustificationToleranceStart = 2;
+static const int kJustificationToleranceEnd = 4;
+
 std::shared_ptr<VROText> VROText::createText(std::string text, std::shared_ptr<VROTypeface> typeface, float width, float height,
                                              VROTextHorizontalAlignment horizontalAlignment, VROTextVerticalAlignment verticalAlignment,
                                              VROLineBreakMode lineBreakMode, VROTextClipMode clipMode, int maxLines) {
@@ -562,9 +565,28 @@ std::vector<VROTextLine> VROText::justify(std::string &text, int maxWidth, int m
             
             ++index;
         }
-        
-        VROKnuthPlassFormatter formatter(nodes, lineLengths);
-        std::vector<VROBreakpoint> breaks = formatter.run();
+
+        std::vector<VROBreakpoint> breaks;
+        for (int tolerance = kJustificationToleranceStart; tolerance <= kJustificationToleranceEnd; tolerance++) {
+            VROKnuthPlassFormatter formatter(nodes, lineLengths, tolerance);
+            breaks = formatter.run();
+
+            if (!breaks.empty()) {
+                break;
+            } // Otherwise loop, increasing tolerance
+        }
+
+        /*
+         If we still fail to justify after trying our max tolerance, revert to standard word
+         wrapping for this paragraph.
+         */
+        if (breaks.empty()) {
+            pinfo("Failed to justify paragraph using tolerances %d through %d, falling back to greedy word wrapping",
+                  kJustificationToleranceStart, kJustificationToleranceEnd);
+            std::vector<VROTextLine> paragraphLines = wrapByWords(paragraph, maxWidth, maxHeight, maxLines,
+                                                                  typeface, clipMode, glyphMap);
+            lines.insert(lines.end(), paragraphLines.begin(), paragraphLines.end());
+        }
         
         /*
          Construct the lines.
