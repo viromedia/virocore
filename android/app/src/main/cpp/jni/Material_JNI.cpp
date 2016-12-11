@@ -6,6 +6,7 @@
 //
 
 #include "Material_JNI.h"
+#include "VROStringUtil.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -42,23 +43,23 @@ JNI_METHOD(void, nativeSetTexture)(JNIEnv *env, jobject obj,
     std::shared_ptr<VROTexture> texture = Texture::native(textureRef);
 
     // Depending on the name, set the texture
-    if (Material::strcmpinsensitive(strName, "diffuseTexture")) {
+    if (VROStringUtil::strcmpinsensitive(strName, "diffuseTexture")) {
         Material::native(nativeRef).get()->getDiffuse().setTexture(texture);
-    } else if (Material::strcmpinsensitive(strName, "specularTexture")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "specularTexture")) {
         Material::native(nativeRef).get()->getSpecular().setTexture(texture);
-    } else if (Material::strcmpinsensitive(strName, "normalTexture")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "normalTexture")) {
         Material::native(nativeRef).get()->getNormal().setTexture(texture);
-    } else if (Material::strcmpinsensitive(strName, "reflectiveTexture")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "reflectiveTexture")) {
         Material::native(nativeRef).get()->getReflective().setTexture(texture);
-    } else if (Material::strcmpinsensitive(strName, "emissionTexture")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "emissionTexture")) {
         Material::native(nativeRef).get()->getEmission().setTexture(texture);
-    } else if (Material::strcmpinsensitive(strName, "transparentTexture")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "transparentTexture")) {
         Material::native(nativeRef).get()->getTransparent().setTexture(texture);
-    } else if (Material::strcmpinsensitive(strName, "multiplyTexture")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "multiplyTexture")) {
         Material::native(nativeRef).get()->getMultiply().setTexture(texture);
-    } else if (Material::strcmpinsensitive(strName, "ambientOcclusionTexture")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "ambientOcclusionTexture")) {
         Material::native(nativeRef).get()->getAmbientOcclusion().setTexture(texture);
-    } else if (Material::strcmpinsensitive(strName, "selfIlluminationTexture")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "selfIlluminationTexture")) {
         Material::native(nativeRef).get()->getSelfIllumination().setTexture(texture);
     }
 
@@ -82,23 +83,23 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env, jobject obj,
     VROVector4f vecColor(r, g, b, a);
 
     // Depending on the name, set the color
-    if (Material::strcmpinsensitive(strName, "diffuseColor")) {
+    if (VROStringUtil::strcmpinsensitive(strName, "diffuseColor")) {
         Material::native(nativeRef).get()->getDiffuse().setColor(vecColor);
-    } else if (Material::strcmpinsensitive(strName, "specularColor")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "specularColor")) {
         Material::native(nativeRef).get()->getSpecular().setColor(vecColor);
-    } else if (Material::strcmpinsensitive(strName, "normalColor")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "normalColor")) {
         Material::native(nativeRef).get()->getNormal().setColor(vecColor);
-    } else if (Material::strcmpinsensitive(strName, "reflectiveColor")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "reflectiveColor")) {
         Material::native(nativeRef).get()->getReflective().setColor(vecColor);
-    } else if (Material::strcmpinsensitive(strName, "emissionColor")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "emissionColor")) {
         Material::native(nativeRef).get()->getEmission().setColor(vecColor);
-    } else if (Material::strcmpinsensitive(strName, "transparentColor")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "transparentColor")) {
         Material::native(nativeRef).get()->getTransparent().setColor(vecColor);
-    } else if (Material::strcmpinsensitive(strName, "multiplyColor")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "multiplyColor")) {
         Material::native(nativeRef).get()->getMultiply().setColor(vecColor);
-    } else if (Material::strcmpinsensitive(strName, "ambientOcclusionColor")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "ambientOcclusionColor")) {
         Material::native(nativeRef).get()->getAmbientOcclusion().setColor(vecColor);
-    } else if (Material::strcmpinsensitive(strName, "selfIlluminationColor")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "selfIlluminationColor")) {
         Material::native(nativeRef).get()->getSelfIllumination().setColor(vecColor);
     }
 
@@ -123,11 +124,11 @@ JNI_METHOD(void, nativeSetLightingModel)(JNIEnv *env, jobject obj,
     const char *cStrName = env->GetStringUTFChars(lightingModelName, NULL);
     std::string strName(cStrName);
 
-    if (Material::strcmpinsensitive(strName, "Constant")) {
+    if (VROStringUtil::strcmpinsensitive(strName, "Constant")) {
         Material::native(nativeRef).get()->setLightingModel(VROLightingModel::Constant);
-    } else if (Material::strcmpinsensitive(strName, "Lambert")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "Lambert")) {
         Material::native(nativeRef).get()->setLightingModel(VROLightingModel::Lambert);
-    } else if (Material::strcmpinsensitive(strName, "Phong")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "Phong")) {
         Material::native(nativeRef).get()->setLightingModel(VROLightingModel::Phong);
     } else {
         // Default lightingModel is Blinn, so no use checking.
@@ -143,7 +144,7 @@ JNI_METHOD(void, nativeSetTransparencyMode)(JNIEnv *env, jobject obj,
     const char *cStrName = env->GetStringUTFChars(transparencyModeName, NULL);
     std::string strName(cStrName);
 
-    if (Material::strcmpinsensitive(strName, "RGBZero")) {
+    if (VROStringUtil::strcmpinsensitive(strName, "RGBZero")) {
         Material::native(nativeRef).get()->setTransparencyMode(VROTransparencyMode::RGBZero);
     } else {
         // Default transparencyMode is AOne, so no use checking.
@@ -153,15 +154,16 @@ JNI_METHOD(void, nativeSetTransparencyMode)(JNIEnv *env, jobject obj,
     env->ReleaseStringUTFChars(transparencyModeName, cStrName);
 }
 
-JNI_METHOD(void, nativeSetCullMode)(JNIEnv *env, jobject obj,
-                                      jlong nativeRef,
-                                      jstring cullModeName) {
+JNI_METHOD(void, nativeSetCullMode)(JNIEnv *env,
+                                    jobject obj,
+                                    jlong nativeRef,
+                                    jstring cullModeName) {
     const char *cStrName = env->GetStringUTFChars(cullModeName, NULL);
     std::string strName(cStrName);
 
-    if (Material::strcmpinsensitive(strName, "None")) {
+    if (VROStringUtil::strcmpinsensitive(strName, "None")) {
         Material::native(nativeRef).get()->setCullMode(VROCullMode::None);
-    } else if (Material::strcmpinsensitive(strName, "Front")) {
+    } else if (VROStringUtil::strcmpinsensitive(strName, "Front")) {
         Material::native(nativeRef).get()->setCullMode(VROCullMode::Front);
     } else {
         // Default cullMode is Back, so no use checking.
@@ -173,7 +175,7 @@ JNI_METHOD(void, nativeSetCullMode)(JNIEnv *env, jobject obj,
 
 JNI_METHOD(void, nativeDestroyMaterial)(JNIEnv *env,
                                         jobject obj,
-                                   jlong nativeRef) {
+                                        jlong nativeRef) {
     delete reinterpret_cast<PersistentRef<VROMaterial> *>(nativeRef);
 }
 

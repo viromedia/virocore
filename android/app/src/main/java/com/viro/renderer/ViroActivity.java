@@ -42,34 +42,14 @@ public class ViroActivity extends AppCompatActivity {
         // Creation of SceneJni within scene navigator
         NodeJni rootNode = new NodeJni(this);
         SceneJni scene = new SceneJni(rootNode);
-        NodeJni videoSurfaceNode = new NodeJni(this);
+        NodeJni node = new NodeJni(this);
+
         //testSurfaceVideo(node);
         //testSphereVideo(node);
         //testBackgroundVideo(scene);
-        //testBox(node);
+        testBox(node);
 
-        float[] position = {0F,0F,-5F};
-        videoSurfaceNode.setPosition(position);
-
-        // Create a new material with a diffuseTexture set to the image "boba.png"
-        ImageJni bobaImage = new ImageJni("boba.png");
-
-        TextureJni bobaTexture = new TextureJni(bobaImage);
-        MaterialJni material = new MaterialJni();
-        material.setTexture(bobaTexture, "diffuseTexture");
-
-        // Creation of ViroBox
-        BoxJni boxGeometry = new BoxJni(2,4,2);
-
-        NodeJni boxNode = new NodeJni(this);
-        boxNode.setGeometry(boxGeometry);
-        float[] boxPosition = {5,0,0};
-        boxNode.setPosition(boxPosition);
-        boxNode.setMaterials(Arrays.asList(material));
-
-        // add Video and Box to scene
-        rootNode.addChildNode(videoSurfaceNode);
-        rootNode.addChildNode(boxNode);
+        rootNode.addChildNode(node);
 
         // Updating the scene.
         mViroGvrLayout.setScene(scene);
@@ -125,8 +105,26 @@ public class ViroActivity extends AppCompatActivity {
     }
 
     private void testBox(NodeJni node){
-        //Creation of ViroBox
+
+        // Create a new material with a diffuseTexture set to the image "boba.png"
+        ImageJni bobaImage = new ImageJni("boba.png");
+
+        TextureJni bobaTexture = new TextureJni(bobaImage);
+        MaterialJni material = new MaterialJni();
+        material.setTexture(bobaTexture, "diffuseTexture");
+
+        // Creation of ViroBox
         BoxJni boxGeometry = new BoxJni(2,4,2);
-        node.setGeometry(boxGeometry);
+
+        NodeJni boxNode = new NodeJni(this);
+        boxNode.setGeometry(boxGeometry);
+        float[] boxPosition = {5,0,-3};
+        boxNode.setPosition(boxPosition);
+        boxNode.setMaterials(Arrays.asList(material));
+        String[] behaviors = {"billboard"};
+        boxNode.setTransformBehaviors(behaviors);
+
+        // add Video and Box to scene
+        node.addChildNode(boxNode);
     }
 }

@@ -22,7 +22,11 @@ public:
     static std::vector<std::string> split(const std::string &s,
                                           const std::string &delimiters,
                                           bool emptiesOk);
-    
+
+    // Simple string compare, not unicode safe (since there are multiple ways of representing some
+    // characters and this function does a character-by-character comparison.
+    static bool strcmpinsensitive(const std::string& a, const std::string& b);
+
 private:
     
 };

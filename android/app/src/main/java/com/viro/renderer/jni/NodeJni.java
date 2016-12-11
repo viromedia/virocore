@@ -82,6 +82,10 @@ public class NodeJni {
         nativeSetMaterials(mNativeRef, materialRefs);
     }
 
+    public void setTransformBehaviors(String[] transformBehaviors) {
+        nativeSetTransformBehaviors(mNativeRef, transformBehaviors);
+    }
+
     private native long nativeCreateNode();
     private native void nativeDestroyNode(long nodeReference);
     private native void nativeAddChildNode(long nodeReference, long childNodeReference);
@@ -92,4 +96,5 @@ public class NodeJni {
     private native void nativeSetOpacity(long nodeReference, float opacity);
     private native void nativeSetVisible(long nodeReference, boolean visible);
     private native void nativeSetMaterials(long nodeReference, long[] materials);
+    private native void nativeSetTransformBehaviors(long nodeReference, String[] transformBehaviors);
 }

@@ -41,3 +41,15 @@ std::vector<std::string> VROStringUtil::split(const std::string &s,
     
     return result;
 }
+
+bool VROStringUtil::strcmpinsensitive(const std::string& a, const std::string& b) {
+    if (a.size() != b.size()) {
+        return false;
+    }
+    for (int i = 0; i < a.size(); i++) {
+        if (tolower(a[i]) != tolower(b[i])) {
+            return false;
+        }
+    }
+    return true;
+}

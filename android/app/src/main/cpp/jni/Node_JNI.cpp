@@ -7,11 +7,13 @@
 #include <iostream>
 #include <jni.h>
 #include <memory>
+#include <VROBillboardConstraint.h>
 #include "VROGeometry.h"
 #include "VRONode.h"
 #include "PersistentRef.h"
 #include "Node_JNI.h"
 #include "Material_JNI.h"
+#include "VROStringUtil.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -104,6 +106,33 @@ JNI_METHOD(void, nativeSetMaterials)(JNIEnv *env,
     }
 
     env->ReleaseLongArrayElements(longArrayRef, longArray, 0);
+}
+
+JNI_METHOD(void, nativeSetTransformBehaviors)(JNIEnv *env,
+                                              jobject obj,
+                                              jlong nativeNodeRef,
+                                              jobjectArray stringArrayRef) {
+    int length = env->GetArrayLength(stringArrayRef);
+
+    // TODO: clear out the existing constraints... but iOS doesn't currently do this either...
+
+    for (int i = 0; i < length; i++) {
+        jstring string = (jstring) (env->GetObjectArrayElement(stringArrayRef, i));
+        const char *rawString = env->GetStringUTFChars(string, NULL);
+        std::string transformBehavior(rawString);
+
+        if (VROStringUtil::strcmpinsensitive(transformBehavior, "billboard")) {
+            Node::native(nativeNodeRef)->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
+        } else if (VROStringUtil::strcmpinsensitive(transformBehavior, "billboardX")) {
+            Node::native(nativeNodeRef)->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::X));
+        } else if (VROStringUtil::strcmpinsensitive(transformBehavior, "billboardY")) {
+            Node::native(nativeNodeRef)->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::Y));
+        } else if (VROStringUtil::strcmpinsensitive(transformBehavior, "billboardZ")) {
+            Node::native(nativeNodeRef)->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::Z));
+        }
+        env->ReleaseStringUTFChars(string, rawString);
+    }
+    env->DeleteLocalRef(stringArrayRef);
 }
 
 }  // extern "C"
