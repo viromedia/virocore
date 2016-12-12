@@ -22,22 +22,27 @@ import com.viro.renderer.jni.SurfaceJni;
 import com.viro.renderer.jni.TextureJni;
 import com.viro.renderer.jni.VideoTextureJni;
 import com.viro.renderer.jni.ViroGvrLayout;
+import com.viro.renderer.jni.VrView;
 
 import java.util.Arrays;
 
 public class ViroActivity extends AppCompatActivity {
-    private ViroGvrLayout mViroGvrLayout;
+    private VrView mVrView;
     private static String TAG = ViroActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViroGvrLayout = new ViroGvrLayout(this, true);
-        setContentView(mViroGvrLayout);
+        mVrView = new ViroGvrLayout(this);
+        mVrView.setVrModeEnabled(true);
+        setContentView((ViroGvrLayout) mVrView);
     }
+
     @Override
     protected void onStart(){
         super.onStart();
+
+        mVrView.getNativeRenderer().enableReticle(false);
 
         // Creation of SceneJni within scene navigator
         NodeJni rootNode = new NodeJni(this);
@@ -52,13 +57,13 @@ public class ViroActivity extends AppCompatActivity {
         rootNode.addChildNode(node);
 
         // Updating the scene.
-        mViroGvrLayout.setScene(scene);
+        mVrView.setScene(scene);
     }
 
     private void testSurfaceVideo(NodeJni node){
         SurfaceJni surface = new SurfaceJni(40,40);
         VideoTextureJni videoTexture = new VideoTextureJni();
-        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mViroGvrLayout.getRenderContextRef());
+        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
         videoTexture.setVolume(0.1f);
         videoTexture.setLoop(false);
         videoTexture.play();
@@ -75,7 +80,7 @@ public class ViroActivity extends AppCompatActivity {
     private void testSphereVideo(NodeJni node){
         SphereJni sphere = new SphereJni(2, 20, 20, false);
         VideoTextureJni videoTexture = new VideoTextureJni();
-        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mViroGvrLayout.getRenderContextRef());
+        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
         videoTexture.setVolume(0.1f);
         videoTexture.setLoop(false);
         videoTexture.play();
@@ -91,7 +96,7 @@ public class ViroActivity extends AppCompatActivity {
 
     private void testBackgroundVideo(SceneJni scene){
         VideoTextureJni videoTexture = new VideoTextureJni();
-        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mViroGvrLayout.getRenderContextRef());
+        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
         videoTexture.setVolume(0.1f);
         videoTexture.setLoop(false);
         videoTexture.play();

@@ -1,10 +1,5 @@
 /**
- * Copyright (c) 2015-present, ViroMedia, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * Copyright © 2016 Viro Media. All rights reserved.
  */
 package com.viro.renderer.jni;
 
@@ -46,35 +41,33 @@ import javax.microedition.khronos.opengles.GL10;
  * Create this view during or post onCreate within
  * the activity lifecycle.
  */
-public class ViroGvrLayout extends GvrLayout implements Application.ActivityLifecycleCallbacks {
+public class ViroGvrLayout extends GvrLayout implements VrView, Application.ActivityLifecycleCallbacks {
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("gvr");
         System.loadLibrary("gvr_audio");
         System.loadLibrary("native-lib");
     }
-    private long mNativeRendererRef;
+    private RendererJni mNativeRenderer;
     private final RenderContextJni mNativeRenderContext;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
     private Map<Integer, VideoSink> mVideoSinks = new HashMap();
-    private boolean mVrModeEnabled;
 
-    public ViroGvrLayout(Context context, boolean vrModeEnabled) {
+    public ViroGvrLayout(Context context) {
         super(context);
-        mVrModeEnabled = vrModeEnabled;
 
         final Context activityContext = getContext();
 
         // Initialize the native renderer.
         mAssetManager = getResources().getAssets();
-        mNativeRendererRef = nativeCreateRenderer(
+        mNativeRenderer = new RendererJni(
                 getClass().getClassLoader(),
                 this,
                 activityContext.getApplicationContext(),
                 mAssetManager,
                 getGvrApi().getNativeGvrContext());
-        mNativeRenderContext = new RenderContextJni(mNativeRendererRef);
+        mNativeRenderContext = new RenderContextJni(mNativeRenderer.mNativeRef);
 
         // Add the GLSurfaceView to the GvrLayout.
         GLSurfaceView glSurfaceView = new GLSurfaceView(activityContext.getApplicationContext());
@@ -83,7 +76,7 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
         glSurfaceView.setPreserveEGLContextOnPause(true);
         glSurfaceView.setRenderer(new Renderer() {
             public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-                nativeInitializeGl(mNativeRendererRef);
+                mNativeRenderer.initalizeGl();
             }
 
             public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -104,7 +97,7 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
                     listener.onDrawFrame();
                     ;
                 }
-                nativeDrawFrame(mNativeRendererRef);
+                mNativeRenderer.drawFrame();
             }
         });
 
@@ -112,7 +105,7 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    nativeOnTriggerEvent(mNativeRendererRef);
+                    mNativeRenderer.onTriggerEvent();
                     return true;
                 }
                 return false;
@@ -130,12 +123,6 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
             AndroidCompat.setSustainedPerformanceMode((Activity)activityContext, true);
         }
 
-        // Enable VR Mode.
-        AndroidCompat.setVrModeEnabled((Activity)activityContext, mVrModeEnabled);
-        if (mVrModeEnabled){
-            ((Activity)activityContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }
-
         // Prevent screen from dimming/locking.
         ((Activity)activityContext).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -143,19 +130,43 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
         app.registerActivityLifecycleCallbacks(this);
     }
 
+    @Override
     public RenderContextJni getRenderContextRef(){
         return mNativeRenderContext;
     }
 
     @Override
+    public void setScene(SceneJni scene) {
+        mNativeRenderer.setScene(scene.mNativeRef);
+    }
+
+    @Override
+    public void setVrModeEnabled(boolean vrModeEnabled) {
+        // TODO: actually make it possible to change vrModeEnabled.
+        vrModeEnabled = true;
+        // According to the GVR documentation, this only sets the activity to "VR mode" and is only
+        // supported on Android Nougat and up.
+        AndroidCompat.setVrModeEnabled((Activity)getContext(), vrModeEnabled);
+
+        // Set the right screen orientation based on whether or not vrMode is enabled.
+        ((Activity)getContext()).setRequestedOrientation(
+                vrModeEnabled ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+    }
+
+    @Override
+    public RendererJni getNativeRenderer() {
+        return mNativeRenderer;
+    }
+
+    @Override
     public void onActivityPaused(Activity activity) {
-        nativeOnPause(mNativeRendererRef);
+        mNativeRenderer.onPause();
         super.onPause();
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
-        nativeOnResume(mNativeRendererRef);
+        mNativeRenderer.onResume();
 
         // Ensure fullscreen immersion.
         setImmersiveSticky();
@@ -179,7 +190,7 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
     public void onActivityDestroyed(Activity activity) {
         super.shutdown();
         mNativeRenderContext.delete();
-        nativeDestroyRenderer(mNativeRendererRef);
+        mNativeRenderer.destroy();
     }
 
     @Override
@@ -270,18 +281,4 @@ public class ViroGvrLayout extends GvrLayout implements Application.ActivityLife
     public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
         //No-op
     }
-
-    public void setScene(SceneJni scene){
-        nativeSetScene(mNativeRendererRef, scene.mNativeRef);
-    }
-
-    private native long nativeCreateRenderer(
-            ClassLoader appClassLoader, ViroGvrLayout view, Context context, AssetManager assets, long nativeGvrContext);
-    private native void nativeDestroyRenderer(long nativeRenderer);
-    private native void nativeInitializeGl(long nativeRenderer);
-    private native long nativeDrawFrame(long nativeRenderer);
-    private native void nativeOnTriggerEvent(long nativeRenderer);
-    private native void nativeOnPause(long nativeRenderer);
-    private native void nativeOnResume(long nativeRenderer);
-    private native void nativeSetScene(long mNativeRenderer, long nativeScene);
 }

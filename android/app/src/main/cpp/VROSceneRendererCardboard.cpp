@@ -20,6 +20,7 @@
 #include "VRORenderer.h"
 #include "VROSceneController.h"
 #include "VRORenderDelegate.h"
+#include "VROReticle.h"
 
 static const uint64_t kPredictionTimeWithoutVsyncNanos = 50000000;
 

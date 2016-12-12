@@ -9,6 +9,7 @@
 #include <jni.h>
 #include <memory>
 #include <PersistentRef.h>
+#include <VROCamera.h>
 
 #include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
@@ -17,11 +18,11 @@
 #include "VROSample.h"
 #include "VROSceneController.h"
 #include "VRORenderer_JNI.h"
-#include "RenderContext_JNI.h"
+#include "VROReticle.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_ViroGvrLayout_##method_name
+      Java_com_viro_renderer_jni_RendererJni_##method_name
 
 extern "C" {
 
@@ -92,6 +93,42 @@ JNI_METHOD(void, nativeSetScene)(JNIEnv *env,
     VROSceneController *scene_controller = reinterpret_cast<VROSceneController *>(native_scene_controller_ref);
     std::shared_ptr<VROSceneController> shared_controller = std::shared_ptr<VROSceneController>(scene_controller);
     Renderer::native(native_renderer)->setSceneController(shared_controller);
+}
+
+JNI_METHOD(void, nativeEnableReticle)(JNIEnv *env,
+                                 jobject obj,
+                                 jlong native_renderer,
+                                 jboolean enable) {
+    Renderer::native(native_renderer)->getRenderer()->getReticle()->setEnabled(enable);
+}
+
+JNI_METHOD(void, nativeSetCameraPosition)(JNIEnv *env,
+                                          jobject obj,
+                                          jlong nativeRenderer, jfloat x, jfloat y, jfloat z) {
+    Renderer::native(nativeRenderer)->getRenderer()->setPosition(VROVector3f(x, y, z));
+}
+
+JNI_METHOD(void, nativeSetCameraRotationType)(JNIEnv *env,
+                                              jobject obj,
+                                              jlong nativeRenderer,
+                                              jstring rotationType) {
+    // Get the string
+    const char *cStrRotationType = env->GetStringUTFChars(rotationType, NULL);
+    std::string strRotationType(cStrRotationType);
+
+    if (VROStringUtil::strcmpinsensitive(strRotationType, "orbit")) {
+        Renderer::native(nativeRenderer)->getRenderer()->setCameraRotationType(VROCameraRotationType::Orbit);
+    } else {
+        // default rotation type is standard.
+        Renderer::native(nativeRenderer)->getRenderer()->setCameraRotationType(VROCameraRotationType::Standard);
+    }
+    env->ReleaseStringUTFChars(rotationType, cStrRotationType);
+}
+
+JNI_METHOD(void, nativeSetOrbitCameraFocalPoint)(JNIEnv *env,
+                                                 jobject obj,
+                                                 jlong nativeRenderer, jfloat x, jfloat y, jfloat z) {
+    Renderer::native(nativeRenderer)->getRenderer()->setOrbitFocalPoint(VROVector3f(x, y, z));
 }
 
 }  // extern "C"
