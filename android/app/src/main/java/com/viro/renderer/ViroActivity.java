@@ -50,9 +50,9 @@ public class ViroActivity extends AppCompatActivity {
         NodeJni node = new NodeJni(this);
 
         //testSurfaceVideo(node);
-        //testSphereVideo(node);
+        testSphereVideo(node);
         //testBackgroundVideo(scene);
-        testBox(node);
+        //testBox(node);
 
         rootNode.addChildNode(node);
 
@@ -110,7 +110,6 @@ public class ViroActivity extends AppCompatActivity {
     }
 
     private void testBox(NodeJni node){
-
         // Create a new material with a diffuseTexture set to the image "boba.png"
         ImageJni bobaImage = new ImageJni("boba.png");
 
@@ -120,16 +119,14 @@ public class ViroActivity extends AppCompatActivity {
 
         // Creation of ViroBox
         BoxJni boxGeometry = new BoxJni(2,4,2);
-
-        NodeJni boxNode = new NodeJni(this);
-        boxNode.setGeometry(boxGeometry);
+        node.setGeometry(boxGeometry);
         float[] boxPosition = {5,0,-3};
-        boxNode.setPosition(boxPosition);
-        boxNode.setMaterials(Arrays.asList(material));
+        node.setPosition(boxPosition);
+        node.setMaterials(Arrays.asList(material));
         String[] behaviors = {"billboard"};
-        boxNode.setTransformBehaviors(behaviors);
+        node.setTransformBehaviors(behaviors);
 
         // add Video and Box to scene
-        node.addChildNode(boxNode);
+        node.addChildNode(node);
     }
 }

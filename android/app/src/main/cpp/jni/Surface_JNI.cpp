@@ -66,13 +66,6 @@ JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
                                         jlong textureRef) {
     std::shared_ptr<VROVideoTexture> videoTexture = VideoTexture::native(textureRef);
     std::shared_ptr<VROSurface> surface = Surface::native(surfaceRef);
-
-   // std::shared_ptr<VROMaterial> material = surface->getMaterials()[0];
-
-    //material->setWritesToDepthBuffer(false);
-    //material->setReadsFromDepthBuffer(false);
-    //material->getDiffuse().setTexture(videoTexture);
-
     std::shared_ptr<VROMaterial> material;
     if (surface->getMaterials().size() > 0){
         // If there's an existing material, make a copy of that so that

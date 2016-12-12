@@ -67,8 +67,6 @@ JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
                              jlong textureRef) {
     std::shared_ptr<VROVideoTexture> videoTexture = VideoTexture::native(textureRef);
     std::shared_ptr<VROSphere> sphere = Sphere::native(sphereRef);
-
-
     std::shared_ptr<VROMaterial> material;
     if (sphere->getMaterials().size() > 0){
         // If there's an existing material, make a copy of that so that

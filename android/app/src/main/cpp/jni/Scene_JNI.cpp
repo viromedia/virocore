@@ -16,25 +16,16 @@
 #include "Viro.h"
 #include "PersistentRef.h"
 #include "VideoTexture_JNI.h"
+#include "Scene_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_renderer_jni_SceneJni_##method_name
 
-namespace {
-  inline jlong jptr(VROSceneController *native_sceneController) {
-    return reinterpret_cast<intptr_t>(native_sceneController);
-  }
-
-  inline VROSceneController *native(jlong ptr) {
-    return reinterpret_cast<VROSceneController *>(ptr);
-  }
-}  // anonymous namespace
-
 extern "C" {
 
 JNI_METHOD(jlong, nativeCreateScene)(JNIEnv *env,
-                                        jclass clazz,
+                                        jobject object,
                                         jlong root_node_ref) {
     VROSceneController *sceneController = new VROSceneController();
 
@@ -48,8 +39,10 @@ JNI_METHOD(jlong, nativeCreateScene)(JNIEnv *env,
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 0.4, 0.4, 0.4 });
     rootNode->addLight(ambient);
-
     sceneController->getScene()->addNode(rootNode);
+
+    std::shared_ptr<SceneDelegate> delegate = std::make_shared<SceneDelegate>(object, env);
+    sceneController->setDelegate(delegate);
 
     /**
      * TODO:
@@ -66,7 +59,7 @@ JNI_METHOD(jlong, nativeCreateScene)(JNIEnv *env,
     };
 
     sceneController->getScene()->setBackgroundCube(std::make_shared<VROTexture>(cubeImages));
-    return jptr(sceneController);
+    return Scene::jptr(sceneController);
 }
 
 JNI_METHOD(void, nativeDestroyScene)(JNIEnv *env,
@@ -79,8 +72,46 @@ JNI_METHOD(void, nativeSetBackgroundVideoTexture)(JNIEnv *env,
                                      jclass clazz,
                                      jlong sceneRef,
                                      jlong textureRef) {
-    VROSceneController *sceneController = native(sceneRef);
+    VROSceneController *sceneController = Scene::native(sceneRef);
     sceneController->getScene()->setBackgroundSphere(VideoTexture::native(textureRef));
 }
 
 }  // extern "C"
+
+/*
+ *   Scene delegates for triggering Java methods.
+ */
+void SceneDelegate::onSceneWillAppear(VRORenderContext &context, VRODriver &driver) {
+    callVoidFunctionWithName("onSceneWillAppear");
+}
+void SceneDelegate::onSceneDidAppear(VRORenderContext &context, VRODriver &driver) {
+    callVoidFunctionWithName("onSceneDidAppear");
+}
+void SceneDelegate::onSceneWillDisappear(VRORenderContext &context, VRODriver &driver) {
+    callVoidFunctionWithName("onSceneWillDisappear");
+}
+void SceneDelegate::onSceneDidDisappear(VRORenderContext &context, VRODriver &driver) {
+    callVoidFunctionWithName("onSceneDidDisappear");
+}
+
+void SceneDelegate::callVoidFunctionWithName(std::string functionName) {
+    _env->ExceptionClear();
+    jclass viroClass = _env->FindClass("com/viro/renderer/jni/SceneJni");
+    if (viroClass == nullptr) {
+        perr("Unable to find SceneJni class for to trigger callbacks.");
+        return;
+    }
+
+    jmethodID method = _env->GetMethodID(viroClass, functionName.c_str(), "()V");
+    if (method == nullptr) {
+        perr("Unable to find method %s callback.", functionName.c_str());
+        return;
+    }
+
+    _env->CallVoidMethod(_javaObject, method);
+    if (_env->ExceptionOccurred()) {
+        perr("Exception occured when calling %s.", functionName.c_str());
+        _env->ExceptionClear();
+    }
+    _env->DeleteLocalRef(viroClass);
+}

@@ -3,6 +3,9 @@
  */
 package com.viro.renderer.jni;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Java JNI wrapper for linking the following classes across the bridge:
  *
@@ -29,4 +32,43 @@ public class SceneJni {
     private native long nativeCreateScene(long nodeRef);
     private native void nativeDestroyScene(long sceneReference);
     private native long nativeSetBackgroundVideoTexture(long sceneRef, long sphereRef);
+
+    private SceneDelegate mDelegate;
+    public interface SceneDelegate{
+        void onSceneWillAppear();
+        void onSceneDidAppear();
+        void onSceneWillDisappear();
+        void onSceneDidDisappear();
+    }
+
+    /**
+     * Registers the given delegate for callbacks. Registering the same
+     * delegate twice will still only result in that delegate being
+     * called once.
+     */
+    public void registerDelegate(SceneDelegate delegate){
+        mDelegate = delegate;
+    }
+
+    /* Called by Native */
+    public void onSceneWillAppear(){
+        mDelegate.onSceneWillAppear();
+
+    }
+
+    /* Called by Native */
+    public void onSceneDidAppear(){
+        mDelegate.onSceneDidAppear();
+
+    }
+
+    /* Called by Native */
+    public void onSceneWillDisappear(){
+        mDelegate.onSceneWillDisappear();
+    }
+
+    /* Called by Native */
+    public void onSceneDidDisappear(){
+        mDelegate.onSceneDidDisappear();
+    }
 }

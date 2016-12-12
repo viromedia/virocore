@@ -18,6 +18,18 @@ class VROVector3f;
 class VROSceneController : public VROSceneControllerInternal {
 
 public:
+    // Delegate for callbacks across the bridge
+    class VROSceneControllerDelegate {
+    public:
+        virtual void onSceneWillAppear(VRORenderContext &context, VRODriver &driver) =0;
+        virtual void onSceneDidAppear(VRORenderContext &context, VRODriver &driver) =0;
+        virtual void onSceneWillDisappear(VRORenderContext &context, VRODriver &driver) =0;
+        virtual void onSceneDidDisappear(VRORenderContext &context, VRODriver &driver) =0;
+    };
+
+    void setDelegate(std::shared_ptr<VROSceneControllerDelegate> delegate){
+        _delegate = delegate;
+    }
 
     VROSceneController() {}
     virtual ~VROSceneController() {}
@@ -34,15 +46,30 @@ public:
      */
     virtual void onSceneWillAppear(VRORenderContext &context, VRODriver &driver) {
         VROSceneControllerInternal::onSceneWillAppear(context, driver);
+        if (_delegate != NULL){
+            _delegate->onSceneWillAppear(context, driver);
+        }
+
     }
     virtual void onSceneDidAppear(VRORenderContext &context, VRODriver &driver) {
         VROSceneControllerInternal::onSceneDidAppear(context, driver);
+        if (_delegate != NULL){
+            _delegate->onSceneDidAppear(context, driver);
+        }
+
     }
     virtual void onSceneWillDisappear(VRORenderContext &context, VRODriver &driver) {
         VROSceneControllerInternal::onSceneWillDisappear(context, driver);
+        if (_delegate != NULL){
+            _delegate->onSceneWillDisappear(context, driver);
+        }
+
     }
     virtual void onSceneDidDisappear(VRORenderContext &context, VRODriver &driver) {
         VROSceneControllerInternal::onSceneDidDisappear(context, driver);
+        if (_delegate != NULL){
+            _delegate->onSceneDidDisappear(context, driver);
+        }
     }
 
     /*
@@ -76,7 +103,7 @@ public:
 private:
 
     VROSceneController *_sceneController;
-
+    std::shared_ptr<VROSceneControllerDelegate> _delegate;
 };
 
 #endif //ANDROID_VROSCENECONTROLLER_H
