@@ -21,7 +21,7 @@ public class NodeJni {
         mNativeRef = nativeCreateNode();
     }
 
-    public void destroyNode(){
+    public void destroy(){
         nativeDestroyNode(mNativeRef);
     }
 

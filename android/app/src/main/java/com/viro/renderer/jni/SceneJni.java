@@ -26,6 +26,10 @@ public class SceneJni {
         nativeSetBackgroundVideoTexture(mNativeRef, videoTexture.mNativeRef);
     }
 
+    public void destroy(){
+        nativeDestroyScene(mNativeRef);
+    }
+
     /**
      * Native Functions called into JNI
      */

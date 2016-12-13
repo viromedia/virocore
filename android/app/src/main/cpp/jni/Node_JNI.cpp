@@ -30,6 +30,7 @@ JNI_METHOD(jlong, nativeCreateNode)(JNIEnv *env,
 JNI_METHOD(void, nativeDestroyNode)(JNIEnv *env,
                                         jclass clazz,
                                         jlong native_node_ref) {
+  Node::native(native_node_ref)->removeFromParentNode();
   delete reinterpret_cast<PersistentRef<VRONode> *>(native_node_ref);
 }
 
