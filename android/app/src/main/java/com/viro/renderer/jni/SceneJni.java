@@ -22,11 +22,19 @@ public class SceneJni {
         mNativeRef = nativeCreateScene(node.mNativeRef);
     }
 
-    public void setBackgroundVideoTexture(VideoTextureJni videoTexture){
+    public void setBackgroundVideoTexture(VideoTextureJni videoTexture) {
         nativeSetBackgroundVideoTexture(mNativeRef, videoTexture.mNativeRef);
     }
 
-    public void destroy(){
+    public void setBackgroundImageTexture(TextureJni imageTexture) {
+        nativeSetBackgroundImageTexture(mNativeRef, imageTexture.mNativeRef);
+    }
+
+    public void setBackgroundRotation(float[] rotation) {
+        nativeSetBackgroundRotation(mNativeRef, rotation[0], rotation[1], rotation[2]);
+    }
+
+    public void destroy() {
         nativeDestroyScene(mNativeRef);
     }
 
@@ -35,10 +43,12 @@ public class SceneJni {
      */
     private native long nativeCreateScene(long nodeRef);
     private native void nativeDestroyScene(long sceneReference);
-    private native long nativeSetBackgroundVideoTexture(long sceneRef, long sphereRef);
+    private native void nativeSetBackgroundVideoTexture(long sceneRef, long videoRef);
+    private native void nativeSetBackgroundImageTexture(long sceneRef, long imageRef);
+    private native void nativeSetBackgroundRotation(long sceneRef, float degreeX, float degreeY, float degreeZ);
 
     private SceneDelegate mDelegate;
-    public interface SceneDelegate{
+    public interface SceneDelegate {
         void onSceneWillAppear();
         void onSceneDidAppear();
         void onSceneWillDisappear();
@@ -50,29 +60,29 @@ public class SceneJni {
      * delegate twice will still only result in that delegate being
      * called once.
      */
-    public void registerDelegate(SceneDelegate delegate){
+    public void registerDelegate(SceneDelegate delegate) {
         mDelegate = delegate;
     }
 
     /* Called by Native */
-    public void onSceneWillAppear(){
+    public void onSceneWillAppear() {
         mDelegate.onSceneWillAppear();
 
     }
 
     /* Called by Native */
-    public void onSceneDidAppear(){
+    public void onSceneDidAppear() {
         mDelegate.onSceneDidAppear();
 
     }
 
     /* Called by Native */
-    public void onSceneWillDisappear(){
+    public void onSceneWillDisappear() {
         mDelegate.onSceneWillDisappear();
     }
 
     /* Called by Native */
-    public void onSceneDidDisappear(){
+    public void onSceneDidDisappear() {
         mDelegate.onSceneDidDisappear();
     }
 }

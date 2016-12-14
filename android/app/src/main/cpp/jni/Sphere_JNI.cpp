@@ -76,12 +76,11 @@ JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
     } else {
         material = std::make_shared<VROMaterial>();
     }
-    sphere->getMaterials().push_back(material);
 
-    std::shared_ptr<VROMaterial> textureMaterial = sphere->getMaterials()[0];
-    textureMaterial->setWritesToDepthBuffer(false);
-    textureMaterial->setReadsFromDepthBuffer(false);
-    textureMaterial->getDiffuse().setTexture(videoTexture);
+    material->setWritesToDepthBuffer(false);
+    material->setReadsFromDepthBuffer(false);
+    material->getDiffuse().setTexture(videoTexture);
+    sphere->getMaterials().clear();
     sphere->getMaterials().push_back(material);
 }
 

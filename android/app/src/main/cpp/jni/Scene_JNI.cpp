@@ -17,6 +17,7 @@
 #include "PersistentRef.h"
 #include "VideoTexture_JNI.h"
 #include "Scene_JNI.h"
+#include "Texture_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -74,6 +75,27 @@ JNI_METHOD(void, nativeSetBackgroundVideoTexture)(JNIEnv *env,
                                      jlong textureRef) {
     VROSceneController *sceneController = Scene::native(sceneRef);
     sceneController->getScene()->setBackgroundSphere(VideoTexture::native(textureRef));
+}
+
+JNI_METHOD(void, nativeSetBackgroundImageTexture)(JNIEnv *env,
+                                                  jclass clazz,
+                                                  jlong sceneRef,
+                                                  jlong imageRef) {
+    VROSceneController *sceneController = Scene::native(sceneRef);
+    sceneController->getScene()->setBackgroundSphere(Texture::native(imageRef));
+}
+
+JNI_METHOD(void, nativeSetBackgroundRotation)(JNIEnv *env,
+                                              jclass clazz,
+                                              jlong sceneRef,
+                                              jfloat rotationDegreeX,
+                                              jfloat rotationDegreeY,
+                                              jfloat rotationDegreeZ) {
+
+    VROSceneController *sceneController = Scene::native(sceneRef);
+    sceneController->getScene()->setBackgroundRotation({toRadians(rotationDegreeX),
+                                                        toRadians(rotationDegreeY),
+                                                        toRadians(rotationDegreeZ)});
 }
 
 }  // extern "C"

@@ -18,6 +18,7 @@
 #include "Node_JNI.h"
 #include "RenderContext_JNI.h"
 #include "VideoTexture_JNI.h"
+#include "Material_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -45,6 +46,19 @@ JNI_METHOD(jlong, nativeCreateSurface)(JNIEnv *env,
     return Surface::jptr(surface);
 }
 
+JNI_METHOD(jlong, nativeCreateSurfaceFromSurface)(JNIEnv *env,
+                                       jobject object,
+                                       jfloat width,
+                                       jfloat height,
+                                       jlong oldSurface) {
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height);
+    std::vector<std::shared_ptr<VROMaterial>> materials = Surface::native(oldSurface)->getMaterials();
+    if (materials.size() > 0) {
+        surface->getMaterials().push_back(materials[0]);
+    }
+    return Surface::jptr(surface);
+}
+
 JNI_METHOD(void, nativeDestroySurface)(JNIEnv *env,
                               jclass clazz,
                               jlong nativeSurface) {
@@ -58,7 +72,6 @@ JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
     std::shared_ptr<VROSurface> surfaceGeometry = Surface::native(surfaceRef);
     Node::native(nodeRef)->setGeometry(surfaceGeometry);
 }
-
 
 JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
                                         jobject obj,
@@ -75,13 +88,43 @@ JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
     } else {
         material = std::make_shared<VROMaterial>();
     }
-    surface->getMaterials().push_back(material);
 
-    std::shared_ptr<VROMaterial> textureMaterial = surface->getMaterials()[0];
-    textureMaterial->setWritesToDepthBuffer(false);
-    textureMaterial->setReadsFromDepthBuffer(false);
-    textureMaterial->getDiffuse().setTexture(videoTexture);
+    material->setWritesToDepthBuffer(false);
+    material->setReadsFromDepthBuffer(false);
+    material->getDiffuse().setTexture(videoTexture);
+    surface->getMaterials().clear();
     surface->getMaterials().push_back(material);
+}
+
+JNI_METHOD(void, nativeSetImageTexture)(JNIEnv *env,
+                                        jobject obj,
+                                        jlong surfaceRef,
+                                        jlong textureRef) {
+    std::shared_ptr<VROTexture> imageTexture = Texture::native(textureRef);
+    std::shared_ptr<VROSurface> surface = Surface::native(surfaceRef);;
+
+    // If we're setting an image, see if we can copy &modify and existing material. Make
+    // sure you set a material *before* setting the image texture, else the material will
+    // override the image.
+    std::shared_ptr<VROMaterial> material;
+    if (surface->getMaterials().size() > 0) {
+        material = std::make_shared<VROMaterial>(surface->getMaterials()[0]);
+    } else {
+        material = std::make_shared<VROMaterial>();
+    }
+    material->setWritesToDepthBuffer(false);
+    material->setReadsFromDepthBuffer(false);
+    material->getDiffuse().setTexture(imageTexture);
+    surface->getMaterials().clear();
+    surface->getMaterials().push_back(material);
+}
+
+JNI_METHOD(void, nativeSetMaterial)(JNIEnv *env,
+                                    jobject obj,
+                                    jlong surfaceRef,
+                                    jlong materialRef) {
+    std::shared_ptr<VROSurface> surface = Surface::native(surfaceRef);;
+    surface->getMaterials().push_back(Material::native(materialRef));
 }
 
 }  // extern "C"

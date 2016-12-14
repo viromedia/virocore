@@ -59,10 +59,12 @@ JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
 JNI_METHOD(void, nativeSetRotation)(JNIEnv *env,
                                     jobject obj,
                                     jlong native_node_ref,
-                                    jfloat rotationRadiansX,
-                                    jfloat rotationRadiansY,
-                                    jfloat rotationRadiansZ) {
-    Node::native(native_node_ref)->setRotation({rotationRadiansX, rotationRadiansY, rotationRadiansZ});
+                                    jfloat rotationDegreesX,
+                                    jfloat rotationDegreesY,
+                                    jfloat rotationDegreesZ) {
+    Node::native(native_node_ref)->setRotation({toRadians(rotationDegreesX),
+                                                toRadians(rotationDegreesY),
+                                                toRadians(rotationDegreesZ)});
 }
 
 JNI_METHOD(void, nativeSetScale)(JNIEnv *env,
@@ -115,7 +117,7 @@ JNI_METHOD(void, nativeSetTransformBehaviors)(JNIEnv *env,
                                               jobjectArray stringArrayRef) {
     int length = env->GetArrayLength(stringArrayRef);
 
-    // TODO: clear out the existing constraints... but iOS doesn't currently do this either...
+    Node::native(nativeNodeRef)->removeAllConstraints();
 
     for (int i = 0; i < length; i++) {
         jstring string = (jstring) (env->GetObjectArrayElement(stringArrayRef, i));

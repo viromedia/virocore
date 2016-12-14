@@ -8,6 +8,7 @@
  */
 package com.viro.renderer;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,7 +25,11 @@ import com.viro.renderer.jni.VideoTextureJni;
 import com.viro.renderer.jni.ViroGvrLayout;
 import com.viro.renderer.jni.VrView;
 
+import org.w3c.dom.Node;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ViroActivity extends AppCompatActivity {
     private VrView mVrView;
@@ -47,21 +52,29 @@ public class ViroActivity extends AppCompatActivity {
         // Creation of SceneJni within scene navigator
         NodeJni rootNode = new NodeJni(this);
         SceneJni scene = new SceneJni(rootNode);
-        NodeJni node = new NodeJni(this);
 
-        //testSurfaceVideo(node);
-        testSphereVideo(node);
+        List<NodeJni> nodes = new ArrayList<>();
+        //nodes = testSurfaceVideo(this);
+        //nodes = testSphereVideo(this);
+        //nodes = testBox(this);
+        //nodes = testImageSurface(this);
+
         //testBackgroundVideo(scene);
-        //testBox(node);
+        testBackgroundImage(scene);
 
-        rootNode.addChildNode(node);
+        for (NodeJni node: nodes) {
+            rootNode.addChildNode(node);
+        }
 
         // Updating the scene.
         mVrView.setScene(scene);
     }
 
-    private void testSurfaceVideo(NodeJni node){
-        SurfaceJni surface = new SurfaceJni(40,40);
+    private List<NodeJni> testSurfaceVideo(Context context) {
+        NodeJni node = new NodeJni(context);
+        SurfaceJni surface = new SurfaceJni(4,4);
+        float[] position = {0,0,-3};
+        node.setPosition(position);
         VideoTextureJni videoTexture = new VideoTextureJni();
         videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
         videoTexture.setVolume(0.1f);
@@ -75,9 +88,11 @@ public class ViroActivity extends AppCompatActivity {
         });
         surface.setVideoTexture(videoTexture);
         node.setGeometry(surface);
+        return Arrays.asList(node);
     }
 
-    private void testSphereVideo(NodeJni node){
+    private List<NodeJni> testSphereVideo(Context context) {
+        NodeJni node = new NodeJni(context);
         SphereJni sphere = new SphereJni(2, 20, 20, false);
         VideoTextureJni videoTexture = new VideoTextureJni();
         videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
@@ -92,9 +107,10 @@ public class ViroActivity extends AppCompatActivity {
         });
         sphere.setVideoTexture(videoTexture);
         node.setGeometry(sphere);
+        return Arrays.asList(node);
     }
 
-    private void testBackgroundVideo(SceneJni scene){
+    private void testBackgroundVideo(SceneJni scene) {
         VideoTextureJni videoTexture = new VideoTextureJni();
         videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
         videoTexture.setVolume(0.1f);
@@ -109,7 +125,17 @@ public class ViroActivity extends AppCompatActivity {
         scene.setBackgroundVideoTexture(videoTexture);
     }
 
-    private void testBox(NodeJni node){
+    private void testBackgroundImage(SceneJni scene) {
+        ImageJni imageJni = new ImageJni("boba.png");
+        TextureJni videoTexture = new TextureJni(imageJni);
+        scene.setBackgroundImageTexture(videoTexture);
+        float[] rotation = {90, 0, 0};
+        scene.setBackgroundRotation(rotation);
+    }
+
+    private List<NodeJni> testBox(Context context) {
+        NodeJni node1 = new NodeJni(context);
+        NodeJni node2 = new NodeJni(context);
         // Create a new material with a diffuseTexture set to the image "boba.png"
         ImageJni bobaImage = new ImageJni("boba.png");
 
@@ -117,16 +143,38 @@ public class ViroActivity extends AppCompatActivity {
         MaterialJni material = new MaterialJni();
         material.setTexture(bobaTexture, "diffuseTexture");
 
-        // Creation of ViroBox
+        // Creation of ViroBox to the right and billboarded
         BoxJni boxGeometry = new BoxJni(2,4,2);
-        node.setGeometry(boxGeometry);
+        node1.setGeometry(boxGeometry);
         float[] boxPosition = {5,0,-3};
-        node.setPosition(boxPosition);
-        node.setMaterials(Arrays.asList(material));
+        node1.setPosition(boxPosition);
+        node1.setMaterials(Arrays.asList(material));
         String[] behaviors = {"billboard"};
-        node.setTransformBehaviors(behaviors);
+        node1.setTransformBehaviors(behaviors);
 
-        // add Video and Box to scene
-        node.addChildNode(node);
+        // Creation of ViroBox to the left not billboarded
+        BoxJni boxGeometry2 = new BoxJni(2, 2, 2);
+        node2.setGeometry(boxGeometry2);
+        float[] boxPosition2 = {-2, 0, -3};
+        node2.setPosition(boxPosition2);
+        node2.setMaterials(Arrays.asList(material));
+        return Arrays.asList(node1, node2);
+    }
+
+    private List<NodeJni> testImageSurface(Context context) {
+        NodeJni node = new NodeJni(context);
+        ImageJni bobaImage = new ImageJni("boba.png");
+
+        TextureJni bobaTexture = new TextureJni(bobaImage);
+        MaterialJni material = new MaterialJni();
+
+        SurfaceJni surface = new SurfaceJni(1, 1);
+        surface.setMaterial(material);
+        surface.setImageTexture(bobaTexture);
+
+        node.setGeometry(surface);
+        float[] position = {0, 0, -2};
+        node.setPosition(position);
+        return Arrays.asList(node);
     }
 }
