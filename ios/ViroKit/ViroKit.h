@@ -32,6 +32,7 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 
 // Model Loader
 #import <ViroKit/VROLoader.h>
+#import <ViroKit/VROOBJLoader.h>
 
 // Core Scene Graph
 #import <ViroKit/VROScene.h>

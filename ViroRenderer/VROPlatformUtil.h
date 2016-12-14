@@ -11,10 +11,22 @@
 
 #include "VRODefines.h"
 #include <string>
+#include <memory>
+
+class VROImage;
 
 std::string VROPlatformGetPathForResource(std::string resource, std::string type);
 std::string VROPlatformLoadResourceAsString(std::string resource, std::string type);
 std::string VROPlatformLoadFileAsString(std::string path);
+
+/*
+ Load the given URL to a file, and return the path to the file. If the file
+ is temporary and must be deleted after its processed, temp will be set to true.
+ */
+std::string VROPlatformLoadURLToFile(std::string url, bool *temp);
+void VROPlatformDeleteFile(std::string filename);
+
+std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename);
 
 #if VRO_PLATFORM_ANDROID
 

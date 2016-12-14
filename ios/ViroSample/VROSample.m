@@ -372,6 +372,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     NSString *soccerPath = [[NSBundle mainBundle] pathForResource:@"shanghai_tower" ofType:@"obj"];
     NSURL *soccerURL = [NSURL fileURLWithPath:soccerPath];
+    std::string url = std::string([[soccerURL description] UTF8String]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.9, 0.9 });
@@ -388,9 +389,13 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     scene->addNode(rootNode);
     
-    std::shared_ptr<VRONode> objNode = VROLoader::loadURL(soccerURL)[0];
-    objNode->getGeometry()->getMaterials()[0]->getDiffuse().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_diffuse.jpg"])));
-    objNode->getGeometry()->getMaterials()[0]->getSpecular().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_specular.jpg"])));
+    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJ(url, "");
+    
+    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+    material->getDiffuse().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_diffuse.jpg"])));
+    material->getSpecular().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_specular.jpg"])));
+    objNode->getGeometry()->getMaterials().push_back(material);
+    
     objNode->setPosition({0, -10, -20});
     
     rootNode->addChildNode(objNode);

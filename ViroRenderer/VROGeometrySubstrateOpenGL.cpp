@@ -80,14 +80,11 @@ void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shar
     }
     
     /*
-     For each group of GeometrySources we create an MTLBuffer and layout.
+     For each group of GeometrySources we create a VROVertexDescriptorOpenGL.
      */
     for (auto &kv : dataMap) {
         std::vector<std::shared_ptr<VROGeometrySource>> group = kv.second;
         
-        /*
-         Create an MTLBuffer that wraps over the VROData.
-         */
         int dataSize = 0;
         for (std::shared_ptr<VROGeometrySource> source : group) {
             int size = source->getVertexCount() * source->getDataStride();

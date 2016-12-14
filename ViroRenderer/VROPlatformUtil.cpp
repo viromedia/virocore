@@ -11,7 +11,8 @@
 
 #if VRO_PLATFORM_IOS
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import "VROImageiOS.h"
 
 std::string VROPlatformGetPathForResource(std::string resource, std::string type) {
     NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.viro.ViroKit"];
@@ -29,6 +30,74 @@ std::string VROPlatformLoadFileAsString(std::string path) {
 
 std::string VROPlatformLoadResourceAsString(std::string resource, std::string type) {
     return VROPlatformLoadFileAsString(VROPlatformGetPathForResource(resource, type));
+}
+
+NSURLSessionDataTask *downloadDataWithURLSynchronous(NSURL *url,
+                                                     void (^completionBlock)(NSData *data, NSError *error)) {
+    
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    sessionConfig.timeoutIntervalForRequest = 30;
+    
+    NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
+    NSURLSessionDataTask * downloadTask = [downloadSession dataTaskWithURL:url
+                                                         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
+                                                             completionBlock(data, error);
+                                                             dispatch_semaphore_signal(semaphore);
+                                                         }];
+    [downloadTask resume];
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    
+    return downloadTask;
+}
+
+NSURLSessionDataTask *downloadDataWithURL(NSURL *url, void (^completionBlock)(NSData *data, NSError *error)) {
+    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    sessionConfig.timeoutIntervalForRequest = 30;
+    
+    NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
+    NSURLSessionDataTask * downloadTask = [downloadSession dataTaskWithURL:url
+                                                         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
+                                                             completionBlock(data, error);
+                                                         }];
+    [downloadTask resume];
+    return downloadTask;
+}
+
+std::string VROPlatformLoadURLToFile(std::string url, bool *temp) {
+    NSURL *URL = [NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]];
+    
+    __block NSString *tempFilePath;
+    
+    downloadDataWithURLSynchronous(URL, ^(NSData *data, NSError *error) {
+        if (error.code == NSURLErrorCancelled){
+            return;
+        }
+        
+        if (!error) {
+            NSString *fileName = [NSString stringWithFormat:@"%@.tmp", [[NSProcessInfo processInfo] globallyUniqueString]];
+            NSURL *fileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:fileName]];
+            
+            [data writeToURL:fileURL atomically:NO];
+            
+            *temp = true;
+            tempFilePath = [fileURL path];
+        }
+    });
+    
+    return std::string([tempFilePath UTF8String]);
+}
+
+void VROPlatformDeleteFile(std::string filename) {
+    NSError *deleteError = nil;
+    [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithUTF8String:filename.c_str()]
+                                               error:&deleteError];
+}
+
+std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename) {
+    UIImage *image = [UIImage imageNamed:[NSString stringWithUTF8String:filename.c_str()]];
+    return std::make_shared<VROImageiOS>(image);
 }
 
 #elif VRO_PLATFORM_ANDROID
@@ -126,6 +195,18 @@ void *VROPlatformLoadBinaryAsset(std::string resource, std::string type, size_t 
     AAsset_close(asset);
 
     return buffer;
+}
+
+std::string VROPlatformLoadURLToFile(std::string url, bool *temp) {
+    return "";
+}
+
+void VROPlatformDeleteFile(std::string filename) {
+
+}
+
+std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename) {
+    return {};
 }
 
 void *VROPlatformLoadImageAssetRGBA8888(std::string resource, int *bitmapLength, int *width, int *height) {
