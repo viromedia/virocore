@@ -14,6 +14,8 @@
 #include "VROVideoTextureAndroid.h"
 #include "VROVideoTextureAVP.h"
 #include "VROText.h"
+#include "VROPlatformUtil.h"
+#include "VROOBJLoader.h"
 
 VROSample::VROSample() {
 
@@ -68,21 +70,36 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     scene->addNode(rootNode);
 
     /*
+     Create the obj node.
+     */
+    std::string heartPath = VROPlatformCopyAssetToFile("heart.obj");
+    std::shared_ptr<VRONode> heartNode = VROOBJLoader::loadOBJFromFile(heartPath, "");
+
+    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+    material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("heart_d.jpg")));
+    material->getSpecular().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("heart_s.jpg")));
+    material->setLightingModel(VROLightingModel::Blinn);
+    heartNode->getGeometry()->getMaterials().push_back(material);
+    heartNode->setPosition({0, -5.25, -1});
+
+    rootNode->addChildNode(heartNode);
+
+    /*
      Create the box node.
      */
     std::shared_ptr<VROBox> box = VROBox::createBox(2, 4, 2);
     box->setName("Box 1");
 
-    _videoA = std::make_shared<VROVideoTextureAVP>();
-    _videoA->loadVideoFromAsset("vest.mp4", driver);
-    _videoA->setLoop(true);
-    _videoA->play();
+    //_videoA = std::make_shared<VROVideoTextureAVP>();
+    //_videoA->loadVideoFromAsset("vest.mp4", driver);
+    //_videoA->setLoop(true);
+    //_videoA->play();
 
     _material = box->getMaterials()[0];
     _material->setLightingModel(VROLightingModel::Lambert);
     //_material->getDiffuse().setTexture(_videoA);
-    _material->getDiffuse().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("boba.png")));
-    _material->getSpecular().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageAndroid>("specular.png")));
+    _material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("boba.png")));
+    _material->getSpecular().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("specular.png")));
 
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);

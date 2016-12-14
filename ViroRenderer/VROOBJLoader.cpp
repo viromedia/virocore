@@ -19,27 +19,33 @@
 #include "VROByteBuffer.h"
 #include "tiny_obj_loader.h"
 
-std::shared_ptr<VRONode> VROOBJLoader::loadOBJ(std::string url, std::string baseURL) {
+std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromURL(std::string url, std::string baseURL) {
     bool isTemp = false;
-    std::string filename = VROPlatformLoadURLToFile(url, &isTemp);
+    std::string file = VROPlatformDownloadURLToFile(url, &isTemp);
     
+    // TODO Viro-669 baseURL isn't used yet but needs to be converted to baseDir somehow
+    std::shared_ptr<VRONode> node = loadOBJFromFile(file, baseURL);
+    if (isTemp) {
+        VROPlatformDeleteFile(file);
+    }
+    
+    return node;
+}
+
+std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromFile(std::string file, std::string baseDir) {
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
     
     std::string err;
-    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, filename.c_str(), nullptr);
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, file.c_str(), nullptr);
     if (!err.empty()) {
         pinfo("OBJ loading error [%s]", err.c_str());
     }
     
     if (!ret) {
-        pabort("Failed to load url %s", url.c_str());
+        pabort("Failed to load OBJ");
         return {};
-    }
-    
-    if (isTemp) {
-        VROPlatformDeleteFile(filename);
     }
     
     pinfo("OBJ # of vertices  = %d", (int)(attrib.vertices.size()) / 3);
@@ -67,7 +73,7 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJ(std::string url, std::string base
                 std::string texURL = baseURL + "/" + texture_filename;
                 
                 bool texFileTemp = false;
-                std::string texFile = VROPlatformLoadURLToFile(texURL, &texFileTemp);
+                std::string texFile = VROPlatformDownloadURLToFile(texURL, &texFileTemp);
                 
                 std::shared_ptr<VROImage> image = VROPlatformLoadImageFromFile(texFile);
                 if (texFileTemp) {

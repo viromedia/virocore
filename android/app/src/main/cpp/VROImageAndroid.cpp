@@ -9,9 +9,9 @@
 #include "VROImageAndroid.h"
 #include "VROPlatformUtil.h"
 
-
-VROImageAndroid::VROImageAndroid(std::string resource) {
-    _data = (unsigned char *)VROPlatformLoadImageAssetRGBA8888(resource, &_dataLength, &_width, &_height);
+VROImageAndroid::VROImageAndroid(std::string asset) {
+    jobject jbitmap = VROPlatformLoadBitmapFromAsset(asset);
+    _data = (unsigned char *)VROPlatformConvertBitmap(jbitmap, &_dataLength, &_width, &_height);
 }
 
 VROImageAndroid::VROImageAndroid(jobject jbitmap) {

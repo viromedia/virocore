@@ -54,6 +54,8 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
     private List<FrameListener> mFrameListeners = new ArrayList();
     private Map<Integer, VideoSink> mVideoSinks = new HashMap();
 
+    private PlatformUtil mPlatformUtil;
+
     public ViroGvrLayout(Context context) {
         super(context);
 
@@ -61,11 +63,12 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
 
         // Initialize the native renderer.
         mAssetManager = getResources().getAssets();
+        mPlatformUtil = new PlatformUtil(activityContext, mAssetManager);
         mNativeRenderer = new RendererJni(
                 getClass().getClassLoader(),
                 this,
                 activityContext.getApplicationContext(),
-                mAssetManager,
+                mAssetManager, mPlatformUtil,
                 getGvrApi().getNativeGvrContext());
         mNativeRenderContext = new RenderContextJni(mNativeRenderer.mNativeRef);
 
@@ -217,21 +220,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
     }
 
     // Accessed by Native code (VROPlatformUtil.cpp)
-    public Bitmap loadBitmap(String assetPath) {
-        InputStream in;
-        Bitmap bitmap = null;
-        try {
-            in = mAssetManager.open(assetPath);
-            bitmap = BitmapFactory.decodeStream(in);
-
-            in.close();
-        } catch (IOException e) {
-        }
-
-        return bitmap;
-    }
-
-    // Accessed by Native code (VROPlatformUtil.cpp)
     public Surface createVideoSink(int textureId) {
         VideoSink videoSink = new VideoSink(textureId);
         mVideoSinks.put(textureId, videoSink);
@@ -246,20 +234,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
         mFrameListeners.remove(videoSink);
 
         videoSink.releaseSurface();
-    }
-
-    // Accessed by Native code (VROPlatformUtil.cpp)
-    public int getAudioSampleRate() {
-        AudioManager audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-        String nativeParam = audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
-        return Integer.parseInt(nativeParam);
-    }
-
-    // Accessed by Native code (VROPlatformUtil.cpp)
-    public int getAudioBufferSize() {
-        AudioManager audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-        String nativeParam = audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
-        return Integer.parseInt(nativeParam);
     }
 
     @Override
@@ -281,4 +255,5 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
     public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
         //No-op
     }
+
 }

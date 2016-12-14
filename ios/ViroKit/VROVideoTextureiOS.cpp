@@ -108,7 +108,7 @@ void VROVideoTextureiOS::loadVideo(std::string url,
     
     _videoNotificationListener = [[VROVideoNotificationListener alloc] initWithVideoPlayer:_player
                                                                                       loop:_loop
-                                                                             videoDelegate:_delegate.lock()];
+                                                                             videoDelegate:_delegate];
 }
 
 void VROVideoTextureiOS::onFrameWillRender(const VRORenderContext &context) {

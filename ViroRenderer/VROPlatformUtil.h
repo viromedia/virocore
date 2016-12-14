@@ -13,21 +13,6 @@
 #include <string>
 #include <memory>
 
-class VROImage;
-
-std::string VROPlatformGetPathForResource(std::string resource, std::string type);
-std::string VROPlatformLoadResourceAsString(std::string resource, std::string type);
-std::string VROPlatformLoadFileAsString(std::string path);
-
-/*
- Load the given URL to a file, and return the path to the file. If the file
- is temporary and must be deleted after its processed, temp will be set to true.
- */
-std::string VROPlatformLoadURLToFile(std::string url, bool *temp);
-void VROPlatformDeleteFile(std::string filename);
-
-std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename);
-
 #if VRO_PLATFORM_ANDROID
 
 #include <jni.h>
@@ -35,23 +20,60 @@ std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename);
 #include <android/asset_manager_jni.h>
 #include <android/bitmap.h>
 
-void VROPlatformSetEnv(JNIEnv *env, jobject activity, jobject assetManager);
+#endif
+
+class VROImage;
+
+#pragma mark - String Loading
+
+std::string VROPlatformLoadResourceAsString(std::string resource, std::string type);
+std::string VROPlatformLoadFileAsString(std::string path);
+
+#pragma mark - Network and File Utilities
+
+/*
+ Load the given URL to a file, and return the path to the file. If the file
+ is temporary and must be deleted after its processed, temp will be set to true.
+ */
+std::string VROPlatformDownloadURLToFile(std::string url, bool *temp);
+void VROPlatformDeleteFile(std::string filename);
+
+#pragma mark - Image Loading
+
+std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename);
+
+#if VRO_PLATFORM_ANDROID
+std::shared_ptr<VROImage> VROPlatformLoadImageFromAsset(std::string asset);
+jobject VROPlatformLoadBitmapFromAsset(std::string resource);
+jobject VROPlatformLoadBitmapFromFile(std::string path);
+
+// Note the returned buffer *must* be freed by the caller!
+void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, int *height);
+#endif
+
+#pragma mark - Android Setup
+
+#if VRO_PLATFORM_ANDROID
+
+void VROPlatformSetEnv(JNIEnv *env, jobject activity, jobject assetManager, jobject platformUtil);
 
 // This function was added because VROPlatformConvertBitmap can be called before the renderer
 // is created and as a result, activity and assetManager hasn't been set yet. We should think
 // about how to do this better.
 void VROPlatformSetEnv(JNIEnv *env);
-
 void VROPlatformReleaseEnv();
 
-// Note the returned buffer *must* be freed by the caller!
-void *VROPlatformLoadBinaryAsset(std::string resource, std::string type, size_t *length);
+JNIEnv *VROPlatformGetJNIEnv();
+jobject VROPlatformGetJavaAssetManager();
+AAssetManager *VROPlatformGetAssetManager();
 
-// Note the returned buffer *must* be freed by the caller!
-void *VROPlatformLoadImageAssetRGBA8888(std::string resource, int *bitmapLength, int *width, int *height);
+// Create a temporary file containing the contents of the given asset.
+// This enables us to load assets through routines that only take file paths,
+// for testing purposes only. Not needed in prod because assets are not used
+// in prod.
+std::string VROPlatformCopyAssetToFile(std::string asset);
 
-// Note the returned buffer *must* be freed by the caller!
-void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, int *height);
+#pragma mark - Android A/V
 
 // Create a video sink on the Java side. Returns the Surface.
 jobject VROPlatformCreateVideoSink(int textureId);
@@ -60,10 +82,6 @@ void VROPlatformDestroyVideoSink(int textureId);
 // Get audio properties for this device.
 int VROPlatformGetAudioSampleRate();
 int VROPlatformGetAudioBufferSize();
-
-JNIEnv *VROPlatformGetJNIEnv();
-jobject VROPlatformGetJavaAssetManager();
-AAssetManager *VROPlatformGetAssetManager();
 
 #endif
 

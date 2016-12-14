@@ -65,7 +65,7 @@ NSURLSessionDataTask *downloadDataWithURL(NSURL *url, void (^completionBlock)(NS
     return downloadTask;
 }
 
-std::string VROPlatformLoadURLToFile(std::string url, bool *temp) {
+std::string VROPlatformDownloadURLToFile(std::string url, bool *temp) {
     NSURL *URL = [NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]];
     
     __block NSString *tempFilePath;
@@ -102,12 +102,15 @@ std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename) {
 
 #elif VRO_PLATFORM_ANDROID
 
+#include "VROImageAndroid.h"
+
 // We can hold a static reference to the JVM and to global references, but not to individual
 // JNIEnv objects, as those are thread-local. Access the JNIEnv object via getJNIEnv().
 // There is one JavaVM per application on Android (shared across activities).
 static JavaVM *sVM = nullptr;
 static jobject sActivity = nullptr;
 static jobject sJavaAssetMgr = nullptr;
+static jobject sPlatformUtil = nullptr;
 static AAssetManager *sAssetMgr = nullptr;
 
 // Get the JNI Environment for the current thread. If the JavaVM is not yet attached to the
@@ -118,10 +121,11 @@ void getJNIEnv(JNIEnv **jenv) {
     }
 }
 
-void VROPlatformSetEnv(JNIEnv *env, jobject activity, jobject assetManager) {
+void VROPlatformSetEnv(JNIEnv *env, jobject activity, jobject assetManager, jobject platformUtil) {
     env->GetJavaVM(&sVM);
     sActivity = env->NewGlobalRef(activity);
     sJavaAssetMgr = env->NewGlobalRef(assetManager);
+    sPlatformUtil = env->NewGlobalRef(platformUtil);
     sAssetMgr = AAssetManager_fromJava(env, assetManager);
 }
 
@@ -150,16 +154,11 @@ void VROPlatformReleaseEnv() {
 
     env->DeleteGlobalRef(sActivity);
     env->DeleteGlobalRef(sJavaAssetMgr);
+    env->DeleteGlobalRef(sPlatformUtil);
 
     sActivity = nullptr;
     sJavaAssetMgr = nullptr;
     sAssetMgr = nullptr;
-}
-
-std::string VROPlatformGetPathForResource(std::string resource, std::string type) {
-    // Android does not expose paths to resources
-    pabort();
-    return "";
 }
 
 std::string VROPlatformLoadFileAsString(std::string path) {
@@ -184,63 +183,97 @@ std::string VROPlatformLoadResourceAsString(std::string resource, std::string ty
     return str;
 }
 
-void *VROPlatformLoadBinaryAsset(std::string resource, std::string type, size_t *length) {
-    std::string assetName = resource + "." + type;
+std::string VROPlatformDownloadURLToFile(std::string url, bool *temp) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jstring jurl = env->NewStringUTF(url.c_str());
 
-    AAsset *asset = AAssetManager_open(sAssetMgr, assetName.c_str(), AASSET_MODE_BUFFER);
-    *length = AAsset_getLength(asset);
+    jclass cls = env->GetObjectClass(sPlatformUtil);
+    jmethodID jmethod = env->GetMethodID(cls, "downloadURLToTempFile", "(Ljava/lang/String;)Ljava/lang/String;");
+    jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jurl);
 
-    char *buffer = (char *)malloc(*length);
-    AAsset_read(asset, buffer, *length);
-    AAsset_close(asset);
+    const char *path = env->GetStringUTFChars(jpath, 0);
+    std::string spath(path);
 
-    return buffer;
-}
+    pinfo("Path to file is %s", path);
 
-std::string VROPlatformLoadURLToFile(std::string url, bool *temp) {
-    return "";
+    env->ReleaseStringUTFChars(jpath, path);
+    env->DeleteLocalRef(jpath);
+    env->DeleteLocalRef(cls);
+
+    *temp = true;
+    return spath;
 }
 
 void VROPlatformDeleteFile(std::string filename) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jstring jfilename = env->NewStringUTF(filename.c_str());
 
+    jclass cls = env->GetObjectClass(sPlatformUtil);
+    jmethodID jmethod = env->GetMethodID(cls, "deleteFile", "(Ljava/lang/String;)V");
+    env->CallVoidMethod(sPlatformUtil, jmethod, jfilename);
+
+    env->DeleteLocalRef(jfilename);
+    env->DeleteLocalRef(cls);
+}
+
+std::string VROPlatformCopyAssetToFile(std::string asset) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jstring jasset = env->NewStringUTF(asset.c_str());
+
+    jclass cls = env->GetObjectClass(sPlatformUtil);
+    jmethodID jmethod = env->GetMethodID(cls, "copyAssetToFile", "(Ljava/lang/String;)Ljava/lang/String;");
+    jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jasset);
+
+    const char *path = env->GetStringUTFChars(jpath, 0);
+    std::string spath(path);
+
+    pinfo("Path to file is %s", path);
+
+    env->ReleaseStringUTFChars(jpath, path);
+    env->DeleteLocalRef(jpath);
+    env->DeleteLocalRef(cls);
+
+    return spath;
 }
 
 std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename) {
-    return {};
+    jobject bitmap = VROPlatformLoadBitmapFromFile(filename);
+    return std::make_shared<VROImageAndroid>(bitmap);
 }
 
-void *VROPlatformLoadImageAssetRGBA8888(std::string resource, int *bitmapLength, int *width, int *height) {
+std::shared_ptr<VROImage> VROPlatformLoadImageFromAsset(std::string asset) {
+    jobject bitmap = VROPlatformLoadBitmapFromAsset(asset);
+    return std::make_shared<VROImageAndroid>(bitmap);
+}
+
+jobject VROPlatformLoadBitmapFromAsset(std::string asset) {
     JNIEnv *env;
     getJNIEnv(&env);
 
-    jclass cls = env->GetObjectClass(sActivity);
-    jmethodID jmethod = env->GetMethodID(cls, "loadBitmap", "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
+    jclass cls = env->GetObjectClass(sPlatformUtil);
+    jmethodID jmethod = env->GetMethodID(cls, "loadBitmapFromAsset", "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
 
-    jstring string = env->NewStringUTF(resource.c_str());
-    jobject jbitmap = env->CallObjectMethod(sActivity, jmethod, string);
+    jstring string = env->NewStringUTF(asset.c_str());
+    jobject jbitmap = env->CallObjectMethod(sPlatformUtil, jmethod, string);
 
-    AndroidBitmapInfo bitmapInfo;
-    AndroidBitmap_getInfo(env, jbitmap, &bitmapInfo);
-
-    passert (bitmapInfo.format == ANDROID_BITMAP_FORMAT_RGBA_8888);
-
-    *width = bitmapInfo.width;
-    *height = bitmapInfo.height;
-    *bitmapLength = bitmapInfo.height * bitmapInfo.stride;
-
-    void *bitmapData;
-    AndroidBitmap_lockPixels(env, jbitmap, &bitmapData);
-
-    void *safeData = malloc(*bitmapLength);
-    memcpy(safeData, bitmapData, *bitmapLength);
-
-    AndroidBitmap_unlockPixels(env, jbitmap);
-
-    env->DeleteLocalRef(jbitmap);
     env->DeleteLocalRef(string);
     env->DeleteLocalRef(cls);
+    return jbitmap;
+}
 
-    return safeData;
+jobject VROPlatformLoadBitmapFromFile(std::string path) {
+    JNIEnv *env;
+    getJNIEnv(&env);
+
+    jclass cls = env->GetObjectClass(sPlatformUtil);
+    jmethodID jmethod = env->GetMethodID(cls, "loadBitmapFromFile", "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
+
+    jstring string = env->NewStringUTF(path.c_str());
+    jobject jbitmap = env->CallObjectMethod(sPlatformUtil, jmethod, string);
+
+    env->DeleteLocalRef(string);
+    env->DeleteLocalRef(cls);
+    return jbitmap;
 }
 
 void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, int *height) {
@@ -295,9 +328,9 @@ int VROPlatformGetAudioSampleRate() {
     JNIEnv *env;
     getJNIEnv(&env);
 
-    jclass cls = env->GetObjectClass(sActivity);
+    jclass cls = env->GetObjectClass(sPlatformUtil);
     jmethodID jmethod = env->GetMethodID(cls, "getAudioSampleRate", "()I");
-    jint sampleRate = env->CallIntMethod(sActivity, jmethod);
+    jint sampleRate = env->CallIntMethod(sPlatformUtil, jmethod);
 
     env->DeleteLocalRef(cls);
     return sampleRate;
@@ -307,9 +340,9 @@ int VROPlatformGetAudioBufferSize() {
     JNIEnv *env;
     getJNIEnv(&env);
 
-    jclass cls = env->GetObjectClass(sActivity);
+    jclass cls = env->GetObjectClass(sPlatformUtil);
     jmethodID jmethod = env->GetMethodID(cls, "getAudioBufferSize", "()I");
-    jint bufferSize = env->CallIntMethod(sActivity, jmethod);
+    jint bufferSize = env->CallIntMethod(sPlatformUtil, jmethod);
 
     env->DeleteLocalRef(cls);
     return bufferSize;

@@ -16,8 +16,8 @@ public class RendererJni {
     protected long mNativeRef;
 
     public RendererJni(ClassLoader appClassLoader, VrView view, Context context,
-                       AssetManager assets, long nativeGvrContext) {
-        mNativeRef = nativeCreateRenderer(appClassLoader, view, context, assets, nativeGvrContext);
+                       AssetManager assets, PlatformUtil platformUtil, long nativeGvrContext) {
+        mNativeRef = nativeCreateRenderer(appClassLoader, view, context, assets, platformUtil, nativeGvrContext);
     }
 
     public void destroy() {
@@ -65,7 +65,7 @@ public class RendererJni {
     }
 
     private native long nativeCreateRenderer(ClassLoader appClassLoader, VrView view, Context context,
-                                             AssetManager assets, long nativeGvrContext);
+                                             AssetManager assets, PlatformUtil platformUtil, long nativeGvrContext);
     private native void nativeDestroyRenderer(long nativeRenderer);
     private native void nativeInitializeGl(long nativeRenderer);
     private native long nativeDrawFrame(long nativeRenderer);

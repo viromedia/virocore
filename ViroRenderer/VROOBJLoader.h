@@ -23,14 +23,11 @@ class VROOBJLoader {
 public:
     
     /*
-     Load the OBJ file at the given URL. For all dependent resources 
-     (e.g. textures) found, locate them by prepending the given baseURL.
+     Load the OBJ file at the given URL or file. For all dependent resources
+     (e.g. textures) found, locate them by prepending the given baseURL or baseDir.
      */
-    static std::shared_ptr<VRONode> loadOBJ(std::string url, std::string baseURL);
-
-private:
-    
-    
+    static std::shared_ptr<VRONode> loadOBJFromURL(std::string url, std::string baseURL);
+    static std::shared_ptr<VRONode> loadOBJFromFile(std::string file, std::string baseDir);
     
 };
 

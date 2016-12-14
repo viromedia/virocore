@@ -18,7 +18,7 @@ class VROImageAndroid : public VROImage {
 public:
 
     // This constructor can only really be used by the Renderer projects
-    VROImageAndroid(std::string resource);
+    VROImageAndroid(std::string asset);
 
     // This is the constructor that should be called from JNI
     VROImageAndroid(jobject jbitmap);

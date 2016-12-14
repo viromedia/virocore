@@ -9,9 +9,9 @@
 #import "VROSample.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneText = 0,
+    VROSampleSceneOBJ = 0,
     VROSampleSceneTorus,
-    VROSampleSceneOBJ,
+    VROSampleSceneText,
     VROSampleSceneBox,
     VROSampleSceneVideoSphere,
     VROSampleSceneNumScenes
@@ -389,7 +389,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     scene->addNode(rootNode);
     
-    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJ(url, "");
+    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(url, "");
     
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     material->getDiffuse().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_diffuse.jpg"])));
