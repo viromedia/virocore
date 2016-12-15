@@ -12,6 +12,7 @@
 #include "VRODefines.h"
 #include <string>
 #include <memory>
+#include <functional>
 
 #if VRO_PLATFORM_ANDROID
 
@@ -51,6 +52,20 @@ jobject VROPlatformLoadBitmapFromFile(std::string path);
 void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, int *height);
 #endif
 
+#pragma mark - Threading
+
+/*
+ Run the given function on the main thread, asynchronously (this function
+ returns immediately).
+ */
+void VROPlatformDispatchAsyncMain(std::function<void()> fcn);
+
+/*
+ Run the given function on a background thread. The thread can be pooled, 
+ or spun up fresh. The caller should make no assumptions.
+ */
+void VROPlatformDispatchAsyncBackground(std::function<void()> fcn);
+
 #pragma mark - Android Setup
 
 #if VRO_PLATFORM_ANDROID
@@ -84,5 +99,11 @@ int VROPlatformGetAudioSampleRate();
 int VROPlatformGetAudioBufferSize();
 
 #endif
+
+extern "C" {
+
+void Java_com_viro_renderer_jni_PlatformUtil_runTask(JNIEnv *env, jclass clazz, jint taskId);
+
+}
 
 #endif /* VROPlatformUtil_h */

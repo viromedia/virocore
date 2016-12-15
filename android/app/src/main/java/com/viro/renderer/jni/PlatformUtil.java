@@ -5,6 +5,8 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.view.Surface;
 
 import com.viro.renderer.FrameListener;
@@ -30,11 +32,13 @@ import java.util.Map;
 public class PlatformUtil {
 
     private Context mContext;
+    private Handler mHandler;
     private AssetManager mAssetManager;
 
     public PlatformUtil(Context context, AssetManager assetManager) {
         mContext = context;
         mAssetManager = assetManager;
+        mHandler = new Handler(mContext.getMainLooper());
     }
 
     // Accessed by Native code (VROPlatformUtil.cpp)
@@ -147,6 +151,33 @@ public class PlatformUtil {
             }
         }
     }
+
+    /*
+     * Run the the native function identified by the given task ID
+     * asynchronously. If backround is true, the task will be run in
+     * a background thread. If background is false, it will be run on
+     * the main thread.
+     */
+    public void dispatchAsync(final int taskId, boolean background) {
+        if (background) {
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    runTask(taskId);
+                }
+            });
+        }
+        else {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    runTask(taskId);
+                }
+            });
+        }
+    }
+
+    private native void runTask(int taskId);
 
     /**
      * Copies an {@link InputStream} to an {@link OutputStream}.

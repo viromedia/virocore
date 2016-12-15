@@ -389,14 +389,20 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     scene->addNode(rootNode);
     
-    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(url, "");
+    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(url, "", false,
+        [](std::shared_ptr<VRONode> node, bool success) {
+            if (!success) {
+                return;
+            }
+        
+            std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+            material->getDiffuse().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_diffuse.jpg"])));
+            material->getSpecular().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_specular.jpg"])));
+            node->getGeometry()->getMaterials().push_back(material);
+            
+            node->setPosition({0, -10, -20});
+    });
     
-    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->getDiffuse().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_diffuse.jpg"])));
-    material->getSpecular().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_specular.jpg"])));
-    objNode->getGeometry()->getMaterials().push_back(material);
-    
-    objNode->setPosition({0, -10, -20});
     
     rootNode->addChildNode(objNode);
     

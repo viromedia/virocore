@@ -1311,8 +1311,8 @@
 		8FCB6C851C3C826C00C14158 /* IO */ = {
 			isa = PBXGroup;
 			children = (
-				8F53C8F61E00F03E008314B4 /* tiny_obj_loader.cc */,
 				8F53C8F71E00F03E008314B4 /* tiny_obj_loader.h */,
+				8F53C8F61E00F03E008314B4 /* tiny_obj_loader.cc */,
 				8FCB6C871C3C828200C14158 /* VROLoader.h */,
 				8FCB6C861C3C828200C14158 /* VROLoader.cpp */,
 				8F53C8F31E00EE07008314B4 /* VROOBJLoader.h */,

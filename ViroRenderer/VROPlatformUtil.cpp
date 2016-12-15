@@ -100,9 +100,24 @@ std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename) {
     return std::make_shared<VROImageiOS>(image);
 }
 
+void VROPlatformDispatchAsyncMain(std::function<void()> fcn) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        fcn();
+    });
+}
+
+void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        fcn();
+    });
+}
+
 #elif VRO_PLATFORM_ANDROID
 
 #include "VROImageAndroid.h"
+#include <mutex>
+#include <thread>
+#include <map>
 
 // We can hold a static reference to the JVM and to global references, but not to individual
 // JNIEnv objects, as those are thread-local. Access the JNIEnv object via getJNIEnv().
@@ -112,6 +127,14 @@ static jobject sActivity = nullptr;
 static jobject sJavaAssetMgr = nullptr;
 static jobject sPlatformUtil = nullptr;
 static AAssetManager *sAssetMgr = nullptr;
+
+// Map (and mutex) holding native tasks waiting to be dispatched. On Android the threading
+// functionality is handled on the Java layer, so we need some mechanism for mapping IDs
+// to corresponding tasks. Both the ID generator and the map itself are protected by the
+// mutex.
+static std::mutex sTaskMapMutex;
+static int sTaskIdGenerator;
+static std::map<int, std::function<void()>> sTaskMap;
 
 // Get the JNI Environment for the current thread. If the JavaVM is not yet attached to the
 // current thread, attach it
@@ -347,5 +370,68 @@ int VROPlatformGetAudioBufferSize() {
     env->DeleteLocalRef(cls);
     return bufferSize;
 }
+
+int VROPlatformGenerateTask(std::function<void()> fcn) {
+    std::lock_guard<std::mutex> lock(sTaskMapMutex);
+
+    int taskId = ++sTaskIdGenerator;
+    sTaskMap[taskId] = fcn;
+
+    pinfo("Generated task %d, task queue size %d", taskId, sTaskMap.size());
+    return taskId;
+}
+
+void VROPlatformRunTask(int taskId) {
+    std::function<void()> fcn;
+    {
+        std::lock_guard<std::mutex> lock(sTaskMapMutex);
+        auto it = sTaskMap.find(taskId);
+        if (it != sTaskMap.end()) {
+            fcn = it->second;
+            sTaskMap.erase(it);
+        }
+    }
+
+    if (fcn) {
+        fcn();
+        pinfo("Ran task %d, task queue size %d", taskId, sTaskMap.size());
+    }
+}
+
+void VROPlatformDispatchAsyncMain(std::function<void()> fcn) {
+    pinfo("Generating task for main thread");
+    int task = VROPlatformGenerateTask(fcn);
+
+    JNIEnv *env;
+    getJNIEnv(&env);
+
+    jclass cls = env->GetObjectClass(sPlatformUtil);
+    jmethodID jmethod = env->GetMethodID(cls, "dispatchAsync", "(IZ)V");
+    env->CallVoidMethod(sPlatformUtil, jmethod, task, false);
+
+    env->DeleteLocalRef(cls);
+    pinfo("Dispatched async for main thread");
+}
+
+void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
+    pinfo("Generating task for background thread");
+    int task = VROPlatformGenerateTask(fcn);
+
+    JNIEnv *env;
+    getJNIEnv(&env);
+
+    jclass cls = env->GetObjectClass(sPlatformUtil);
+    jmethodID jmethod = env->GetMethodID(cls, "dispatchAsync", "(IZ)V");
+    env->CallVoidMethod(sPlatformUtil, jmethod, task, true);
+
+    env->DeleteLocalRef(cls);
+    pinfo("Dispatched async for background thread");
+}
+
+void Java_com_viro_renderer_jni_PlatformUtil_runTask(JNIEnv *env, jclass clazz, jint taskId) {
+    pinfo("Running task %d", taskId);
+    VROPlatformRunTask(taskId);
+}
+
 
 #endif
