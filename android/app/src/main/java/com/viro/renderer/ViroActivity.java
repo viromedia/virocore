@@ -60,7 +60,8 @@ public class ViroActivity extends AppCompatActivity {
         //nodes = testImageSurface(this);
 
         //testBackgroundVideo(scene);
-        testBackgroundImage(scene);
+        //testBackgroundImage(scene);
+        testSkyBoxImage(scene);
 
         for (NodeJni node: nodes) {
             rootNode.addChildNode(node);
@@ -131,6 +132,20 @@ public class ViroActivity extends AppCompatActivity {
         scene.setBackgroundImageTexture(videoTexture);
         float[] rotation = {90, 0, 0};
         scene.setBackgroundRotation(rotation);
+    }
+
+    private void testSkyBoxImage(SceneJni scene) {
+        ImageJni pximageJni = new ImageJni("px.png");
+        ImageJni nximageJni = new ImageJni("nx.png");
+        ImageJni pyimageJni = new ImageJni("py.png");
+        ImageJni nyimageJni = new ImageJni("ny.png");
+        ImageJni pzimageJni = new ImageJni("pz.png");
+        ImageJni nzimageJni = new ImageJni("nz.png");
+
+        TextureJni cubeTexture = new TextureJni(pximageJni, nximageJni, pyimageJni, nyimageJni,
+                pzimageJni, nzimageJni);
+
+        scene.setBackgroundCubeImageTexture(cubeTexture);
     }
 
     private List<NodeJni> testBox(Context context) {

@@ -3,9 +3,6 @@
  */
 package com.viro.renderer.jni;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Java JNI wrapper for linking the following classes across the bridge:
  *
@@ -34,6 +31,10 @@ public class SceneJni {
         nativeSetBackgroundRotation(mNativeRef, rotation[0], rotation[1], rotation[2]);
     }
 
+    public void setBackgroundCubeImageTexture(TextureJni cubeTexture) {
+        nativeSetBackgroundCubeImageTexture(mNativeRef, cubeTexture.mNativeRef);
+    }
+
     public void destroy() {
         nativeDestroyScene(mNativeRef);
     }
@@ -45,7 +46,9 @@ public class SceneJni {
     private native void nativeDestroyScene(long sceneReference);
     private native void nativeSetBackgroundVideoTexture(long sceneRef, long videoRef);
     private native void nativeSetBackgroundImageTexture(long sceneRef, long imageRef);
-    private native void nativeSetBackgroundRotation(long sceneRef, float degreeX, float degreeY, float degreeZ);
+    private native void nativeSetBackgroundCubeImageTexture(long sceneRef, long textureRef);
+    private native void nativeSetBackgroundRotation(long sceneRef, float degreeX, float degreeY,
+                                                    float degreeZ);
 
     private SceneDelegate mDelegate;
     public interface SceneDelegate {

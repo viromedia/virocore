@@ -45,21 +45,6 @@ JNI_METHOD(jlong, nativeCreateScene)(JNIEnv *env,
     std::shared_ptr<SceneDelegate> delegate = std::make_shared<SceneDelegate>(object, env);
     sceneController->setDelegate(delegate);
 
-    /**
-     * TODO:
-     * Update setBackground for scene once we have impelmented the texture managers.
-     * For now display a standard default background.
-     */
-    std::vector<std::shared_ptr<VROImage>> cubeImages = {
-            std::make_shared<VROImageAndroid>("px.png"),
-            std::make_shared<VROImageAndroid>("nx.png"),
-            std::make_shared<VROImageAndroid>("py.png"),
-            std::make_shared<VROImageAndroid>("ny.png"),
-            std::make_shared<VROImageAndroid>("pz.png"),
-            std::make_shared<VROImageAndroid>("nz.png")
-    };
-
-    sceneController->getScene()->setBackgroundCube(std::make_shared<VROTexture>(cubeImages));
     return Scene::jptr(sceneController);
 }
 
@@ -96,6 +81,15 @@ JNI_METHOD(void, nativeSetBackgroundRotation)(JNIEnv *env,
     sceneController->getScene()->setBackgroundRotation({toRadians(rotationDegreeX),
                                                         toRadians(rotationDegreeY),
                                                         toRadians(rotationDegreeZ)});
+}
+
+JNI_METHOD(void, nativeSetBackgroundCubeImageTexture)(JNIEnv *env,
+                                          jclass clazz,
+                                          jlong sceneRef,
+                                          jlong textureRef) {
+
+    VROSceneController *sceneController = Scene::native(sceneRef);
+    sceneController->getScene()->setBackgroundCube(Texture::native(textureRef));
 }
 
 }  // extern "C"

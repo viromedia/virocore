@@ -7,8 +7,8 @@ package com.viro.renderer.jni;
 public class TextureJni {
     protected long mNativeRef;
 
-    public TextureJni(ImageJni px, ImageJni nx, ImageJni ny,
-                      ImageJni py, ImageJni pz, ImageJni nz) {
+    public TextureJni(ImageJni px, ImageJni nx, ImageJni py,
+                      ImageJni ny, ImageJni pz, ImageJni nz) {
         mNativeRef = nativeCreateCubeTexture(px.mNativeRef, nx.mNativeRef,
                                              py.mNativeRef, ny.mNativeRef,
                                              pz.mNativeRef, nz.mNativeRef);
