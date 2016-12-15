@@ -62,8 +62,10 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
         final Context activityContext = getContext();
 
         // Initialize the native renderer.
+        GLSurfaceView glSurfaceView = new GLSurfaceView(activityContext.getApplicationContext());
+
         mAssetManager = getResources().getAssets();
-        mPlatformUtil = new PlatformUtil(activityContext, mAssetManager);
+        mPlatformUtil = new PlatformUtil(glSurfaceView, activityContext, mAssetManager);
         mNativeRenderer = new RendererJni(
                 getClass().getClassLoader(),
                 this,
@@ -73,7 +75,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
         mNativeRenderContext = new RenderContextJni(mNativeRenderer.mNativeRef);
 
         // Add the GLSurfaceView to the GvrLayout.
-        GLSurfaceView glSurfaceView = new GLSurfaceView(activityContext.getApplicationContext());
         glSurfaceView.setEGLContextClientVersion(3);
         glSurfaceView.setEGLConfigChooser(8, 8, 8, 0, 0, 0);
         glSurfaceView.setPreserveEGLContextOnPause(true);
@@ -98,7 +99,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
             public void onDrawFrame(GL10 gl) {
                 for (FrameListener listener : mFrameListeners) {
                     listener.onDrawFrame();
-                    ;
                 }
                 mNativeRenderer.drawFrame();
             }

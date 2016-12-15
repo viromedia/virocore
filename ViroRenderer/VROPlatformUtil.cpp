@@ -100,7 +100,7 @@ std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename) {
     return std::make_shared<VROImageiOS>(image);
 }
 
-void VROPlatformDispatchAsyncMain(std::function<void()> fcn) {
+void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
     dispatch_async(dispatch_get_main_queue(), ^{
         fcn();
     });
@@ -377,7 +377,6 @@ int VROPlatformGenerateTask(std::function<void()> fcn) {
     int taskId = ++sTaskIdGenerator;
     sTaskMap[taskId] = fcn;
 
-    pinfo("Generated task %d, task queue size %d", taskId, sTaskMap.size());
     return taskId;
 }
 
@@ -394,13 +393,13 @@ void VROPlatformRunTask(int taskId) {
 
     if (fcn) {
         fcn();
-        pinfo("Ran task %d, task queue size %d", taskId, sTaskMap.size());
+        pinfo("Executed task %d [task queue size %d]", taskId, sTaskMap.size());
     }
 }
 
-void VROPlatformDispatchAsyncMain(std::function<void()> fcn) {
-    pinfo("Generating task for main thread");
+void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
     int task = VROPlatformGenerateTask(fcn);
+    pinfo("Generated async task %d for renderer [task queue size %d]", task, sTaskMap.size());
 
     JNIEnv *env;
     getJNIEnv(&env);
@@ -410,12 +409,11 @@ void VROPlatformDispatchAsyncMain(std::function<void()> fcn) {
     env->CallVoidMethod(sPlatformUtil, jmethod, task, false);
 
     env->DeleteLocalRef(cls);
-    pinfo("Dispatched async for main thread");
 }
 
 void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
-    pinfo("Generating task for background thread");
     int task = VROPlatformGenerateTask(fcn);
+    pinfo("Generated async task %d for background [task queue size %d]", task, sTaskMap.size());
 
     JNIEnv *env;
     getJNIEnv(&env);
@@ -425,11 +423,9 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     env->CallVoidMethod(sPlatformUtil, jmethod, task, true);
 
     env->DeleteLocalRef(cls);
-    pinfo("Dispatched async for background thread");
 }
 
 void Java_com_viro_renderer_jni_PlatformUtil_runTask(JNIEnv *env, jclass clazz, jint taskId) {
-    pinfo("Running task %d", taskId);
     VROPlatformRunTask(taskId);
 }
 

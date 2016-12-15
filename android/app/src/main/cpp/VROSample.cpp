@@ -73,15 +73,20 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
      Create the obj node.
      */
     std::string heartPath = VROPlatformCopyAssetToFile("heart.obj");
-    std::shared_ptr<VRONode> heartNode = VROOBJLoader::loadOBJFromFile(heartPath, "");
+    std::shared_ptr<VRONode> heartNode = VROOBJLoader::loadOBJFromFile(heartPath, "", true, [](std::shared_ptr<VRONode> node, bool success) {
+        if (!success) {
+            return;
+        }
 
-    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("heart_d.jpg")));
-    material->getSpecular().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("heart_s.jpg")));
-    material->setLightingModel(VROLightingModel::Blinn);
-    heartNode->getGeometry()->getMaterials().push_back(material);
+        std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+        material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("heart_d.jpg")));
+        material->getSpecular().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("heart_s.jpg")));
+        material->setLightingModel(VROLightingModel::Blinn);
+
+        node->getGeometry()->getMaterials().push_back(material);
+    });
+
     heartNode->setPosition({0, -5.25, -1});
-
     rootNode->addChildNode(heartNode);
 
     /*
@@ -90,22 +95,22 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     std::shared_ptr<VROBox> box = VROBox::createBox(2, 4, 2);
     box->setName("Box 1");
 
-    //_videoA = std::make_shared<VROVideoTextureAVP>();
-    //_videoA->loadVideoFromAsset("vest.mp4", driver);
-    //_videoA->setLoop(true);
+    _videoA = std::make_shared<VROVideoTextureAVP>();
+    _videoA->loadVideoFromAsset("vest.mp4", driver);
+    _videoA->setLoop(true);
     //_videoA->play();
 
     _material = box->getMaterials()[0];
     _material->setLightingModel(VROLightingModel::Lambert);
-    //_material->getDiffuse().setTexture(_videoA);
-    _material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("boba.png")));
+    _material->getDiffuse().setTexture(_videoA);
+    //_material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("boba.png")));
     _material->getSpecular().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("specular.png")));
 
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
     boxNode->setPosition({0, 0, -15});
 
-    //rootNode->addChildNode(boxNode);
+    rootNode->addChildNode(boxNode);
 
     std::string string = "In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
     std::shared_ptr<VROTypeface> typeface = driver.newTypeface("Roboto", 10);

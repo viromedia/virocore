@@ -34,8 +34,8 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromURL(std::string url, std::stri
             if (isTemp) {
                 VROPlatformDeleteFile(file);
             }
-            
-            VROPlatformDispatchAsyncMain([node, geometry, onFinish] {
+
+            VROPlatformDispatchAsyncRenderer([node, geometry, onFinish] {
                 injectOBJ(geometry, node, onFinish);
             });
         });
@@ -64,8 +64,8 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromFile(std::string file, std::st
     if (async) {
         VROPlatformDispatchAsyncBackground([file, baseDir, node, onFinish] {
             std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseDir);
-            
-            VROPlatformDispatchAsyncMain([node, geometry, onFinish] {
+
+            VROPlatformDispatchAsyncRenderer([node, geometry, onFinish] {
                 injectOBJ(geometry, node, onFinish);
             });
         });

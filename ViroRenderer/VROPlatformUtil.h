@@ -55,10 +55,10 @@ void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, i
 #pragma mark - Threading
 
 /*
- Run the given function on the main thread, asynchronously (this function
+ Run the given function on the rendering thread, asynchronously (this function
  returns immediately).
  */
-void VROPlatformDispatchAsyncMain(std::function<void()> fcn);
+void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn);
 
 /*
  Run the given function on a background thread. The thread can be pooled, 

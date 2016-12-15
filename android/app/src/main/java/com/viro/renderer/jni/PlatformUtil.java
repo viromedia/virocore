@@ -5,8 +5,11 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
+import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.Surface;
 
 import com.viro.renderer.FrameListener;
@@ -32,13 +35,13 @@ import java.util.Map;
 public class PlatformUtil {
 
     private Context mContext;
-    private Handler mHandler;
+    private GLSurfaceView mSurfaceView;
     private AssetManager mAssetManager;
 
-    public PlatformUtil(Context context, AssetManager assetManager) {
+    public PlatformUtil(GLSurfaceView view, Context context, AssetManager assetManager) {
         mContext = context;
         mAssetManager = assetManager;
-        mHandler = new Handler(mContext.getMainLooper());
+        mSurfaceView = view;
     }
 
     // Accessed by Native code (VROPlatformUtil.cpp)
@@ -156,7 +159,7 @@ public class PlatformUtil {
      * Run the the native function identified by the given task ID
      * asynchronously. If backround is true, the task will be run in
      * a background thread. If background is false, it will be run on
-     * the main thread.
+     * the rendering thread.
      */
     public void dispatchAsync(final int taskId, boolean background) {
         if (background) {
@@ -168,7 +171,7 @@ public class PlatformUtil {
             });
         }
         else {
-            mHandler.post(new Runnable() {
+            mSurfaceView.queueEvent(new Runnable() {
                 @Override
                 public void run() {
                     runTask(taskId);
