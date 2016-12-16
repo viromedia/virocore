@@ -82,7 +82,7 @@ JNIEnv *VROPlatformGetJNIEnv();
 jobject VROPlatformGetJavaAssetManager();
 AAssetManager *VROPlatformGetAssetManager();
 
-// Create a temporary file containing the contents of the given asset.
+// Copy the given asset into a file with the same name in the cache dir.
 // This enables us to load assets through routines that only take file paths,
 // for testing purposes only. Not needed in prod because assets are not used
 // in prod.

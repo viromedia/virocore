@@ -78,16 +78,31 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
             return;
         }
 
-        std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+        std::shared_ptr<VROMaterial> &material = node->getGeometry()->getMaterials().front();
         material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("heart_d.jpg")));
         material->getSpecular().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("heart_s.jpg")));
         material->setLightingModel(VROLightingModel::Blinn);
-
-        node->getGeometry()->getMaterials().push_back(material);
     });
 
     heartNode->setPosition({0, -5.25, -1});
     rootNode->addChildNode(heartNode);
+
+    /*
+     Create the 007 node. Copy all the required assets into the cache dir so they
+     can be accessed by the OBJ loader.
+     */
+    std::string malePath = VROPlatformCopyAssetToFile("male02.obj");
+    VROPlatformCopyAssetToFile("male02.mtl");
+    VROPlatformCopyAssetToFile("male-02-1noCulling.JPG");
+    VROPlatformCopyAssetToFile("orig_02_-_Defaul1noCulling.JPG");
+    VROPlatformCopyAssetToFile("01_-_Default1noCulling.JPG");
+
+    std::string base = malePath.substr(0, malePath.find_last_of('/'));
+
+    std::shared_ptr<VRONode> maleNode = VROOBJLoader::loadOBJFromFile(malePath, base, true);
+    maleNode->setPosition({0, -100, -10});
+    maleNode->setScale({ 0.1, 0.1, 0.1 });
+    rootNode->addChildNode(maleNode);
 
     /*
      Create the box node.

@@ -100,7 +100,7 @@ public class PlatformUtil {
 
     // Accessed by Native code (VROPlatformUtil.cpp)
     public String copyAssetToFile(String asset) throws IOException {
-        File file = File.createTempFile("Viro", ".tmp");
+        File file = new File(mContext.getCacheDir(), asset);
 
         InputStream in = null;
         FileOutputStream out = null;

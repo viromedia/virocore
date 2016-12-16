@@ -171,11 +171,21 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
     std::vector<float> &texcoords = attrib.texcoords;
     std::vector<float> &normals = attrib.normals;
     
+    /*
+     Create a default material. This material will be used for the elements created
+     from shapes that have no material specified. If there is no MTL file, then
+     this material will be set for all elements.
+     */
+    std::shared_ptr<VROMaterial> defaultMaterial = std::make_shared<VROMaterial>();
+    defaultMaterial->setName("OBJ Default");
+    defaultMaterial->setWritesToDepthBuffer(true);
+    defaultMaterial->setReadsFromDepthBuffer(true);
+    
     std::vector<std::shared_ptr<VROMaterial>> elementMaterials;
     
     int stride = 8 * sizeof(float);
     VROByteBuffer interleaved;
-    
+
     int currentIndex = 0;
     for (tinyobj::shape_t &shape : shapes) {
         tinyobj::mesh_t &mesh = shape.mesh;
@@ -213,7 +223,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
                 interleaved.writeFloat(0);
             }
         }
-        
+
         /*
          Create one element for each material used by this shape.
          Maps from material index to indices using said material.
@@ -232,7 +242,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
                 indices.push_back(currentIndex++);
             }
         }
-        pinfo("indices by material size %d", indicesByMaterial.size());
+        
         for (auto &kv : indicesByMaterial) {
             std::vector<int> &indices = kv.second;
             
@@ -247,7 +257,18 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
                                                                                                primitiveCount,
                                                                                                bytesPerIndex);
             elements.push_back(element);
-            elementMaterials.push_back(materialsIndexed[kv.first]);
+            
+            /*
+             Material index -1 corresponds to no MTL file, or no material set for the
+             group of faces. In this case we set the default material.
+             */
+            int materialIndex = kv.first;
+            if (materialIndex >= 0) {
+                elementMaterials.push_back(materialsIndexed[kv.first]);
+            }
+            else {
+                elementMaterials.push_back(defaultMaterial);
+            }
         }
     }
     
@@ -288,7 +309,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
                                                                                            sizeof(float) * 5,
                                                                                            stride);
     sources.push_back(normalsSource);
-    
+
     std::shared_ptr<VROGeometry> geometry = std::make_shared<VROGeometry>(sources, elements);
     for (std::shared_ptr<VROMaterial> &material : elementMaterials) {
         geometry->getMaterials().push_back(material);
