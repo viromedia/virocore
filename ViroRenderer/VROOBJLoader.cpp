@@ -30,7 +30,7 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromURL(std::string url, std::stri
             std::string file = VROPlatformDownloadURLToFile(url, &isTemp);
             
             // TODO Viro-669 baseURL isn't used yet but needs to be converted to baseDir somehow
-            std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseURL);
+            std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseURL, true);
             if (isTemp) {
                 VROPlatformDeleteFile(file);
             }
@@ -45,7 +45,7 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromURL(std::string url, std::stri
         std::string file = VROPlatformDownloadURLToFile(url, &isTemp);
         
         // TODO Viro-669 baseURL isn't used yet but needs to be converted to baseDir somehow
-        std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseURL);
+        std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseURL, true);
         if (isTemp) {
             VROPlatformDeleteFile(file);
         }
@@ -63,7 +63,7 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromFile(std::string file, std::st
     
     if (async) {
         VROPlatformDispatchAsyncBackground([file, baseDir, node, onFinish] {
-            std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseDir);
+            std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseDir, false);
 
             VROPlatformDispatchAsyncRenderer([node, geometry, onFinish] {
                 injectOBJ(geometry, node, onFinish);
@@ -71,7 +71,7 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromFile(std::string file, std::st
         });
     }
     else {
-        std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseDir);
+        std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseDir, false);
         injectOBJ(geometry, node, onFinish);
     }
     
@@ -95,7 +95,8 @@ void VROOBJLoader::injectOBJ(std::shared_ptr<VROGeometry> geometry,
     }
 }
 
-std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string baseDir) {
+std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string base,
+                                                   bool isBaseURL) {
     pinfo("Loading OBJ from file %s", file.c_str());
     
     tinyobj::attrib_t attrib;
@@ -103,7 +104,8 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
     std::vector<tinyobj::material_t> materials;
     
     std::string err;
-    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, file.c_str(), nullptr);
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, file.c_str(),
+                                base.c_str(), isBaseURL);
     if (!err.empty()) {
         pinfo("OBJ loading warning [%s]", err.c_str());
     }
@@ -121,36 +123,45 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
     
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
-    std::map<std::string, std::shared_ptr<VROTexture>> textures;
     
     /*
-     Load materials, which come from the MTL file. Not currently supported.
-     Code left commented out because this will serve as the stub for future
-     work, tracked by VIRO-669.
+     Load materials, if provided, creating a VROMaterial for each OBJ material.
      */
-    /*
-     for (tinyobj::material_t &mp : materials) {
-        if (mp.diffuse_texname.length() > 0) {
-        // Only load the texture if it is not already loaded
-            if (textures.find(mp.diffuse_texname) == textures.end()) {
-     
-                std::string texture_filename = mp.diffuse_texname;
-                std::string texURL = baseURL + "/" + texture_filename;
-     
-                bool texFileTemp = false;
-                std::string texFile = VROPlatformDownloadURLToFile(texURL, &texFileTemp);
-     
-                std::shared_ptr<VROImage> image = VROPlatformLoadImageFromFile(texFile);
-                if (texFileTemp) {
-                    VROPlatformDeleteFile(texFile);
-                }
-     
-                std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(image);
-                textures.insert(std::make_pair(mp.diffuse_texname, texture));
-            }
+    std::map<std::string, std::shared_ptr<VROTexture>> textures;
+    std::vector<std::shared_ptr<VROMaterial>> materialsIndexed;
+    
+    for (tinyobj::material_t &m : materials) {
+        std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+        material->setName(m.name);
+        material->getDiffuse().setColor({ m.diffuse, 3 });
+        material->setShininess(m.shininess);
+        material->setTransparency(m.dissolve);
+        material->setWritesToDepthBuffer(true);
+        material->setReadsFromDepthBuffer(true);
+        
+        if (m.illum == 0) {
+            material->setLightingModel(VROLightingModel::Constant);
         }
-     }
-     */
+        else if (m.illum == 1) {
+            material->setLightingModel(VROLightingModel::Lambert);
+        }
+        else if (m.illum >= 2) {
+            material->setLightingModel(VROLightingModel::Blinn);
+        }
+        // Future, support additional illumination models: http://paulbourke.net/dataformats/mtl/
+        
+        if (m.diffuse_texname.length() > 0) {
+            std::shared_ptr<VROTexture> texture = loadTexture(m.diffuse_texname, base, isBaseURL, textures);
+            material->getDiffuse().setTexture(texture);
+        }
+        
+        if (m.specular_texname.length() > 0) {
+            std::shared_ptr<VROTexture> texture = loadTexture(m.specular_texname, base, isBaseURL, textures);
+            material->getSpecular().setTexture(texture);
+        }
+        
+        materialsIndexed.push_back(material);
+    }
     
     /*
      Build a single interleaved vertex array. All geometry elements will point to this
@@ -159,6 +170,8 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
     std::vector<float> &vertices = attrib.vertices;
     std::vector<float> &texcoords = attrib.texcoords;
     std::vector<float> &normals = attrib.normals;
+    
+    std::vector<std::shared_ptr<VROMaterial>> elementMaterials;
     
     int stride = 8 * sizeof(float);
     VROByteBuffer interleaved;
@@ -176,11 +189,26 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
             interleaved.writeFloat(vertices[index.vertex_index * 3 + 0]);
             interleaved.writeFloat(vertices[index.vertex_index * 3 + 1]);
             interleaved.writeFloat(vertices[index.vertex_index * 3 + 2]);
-            interleaved.writeFloat(texcoords[index.texcoord_index * 2 + 0]);
-            interleaved.writeFloat(texcoords[index.texcoord_index * 2 + 1]);
-            interleaved.writeFloat(normals[index.normal_index * 3 + 0]);
-            interleaved.writeFloat(normals[index.normal_index * 3 + 1]);
-            interleaved.writeFloat(normals[index.normal_index * 3 + 2]);
+            
+            if (index.texcoord_index >= 0) {
+                interleaved.writeFloat(texcoords[index.texcoord_index * 2 + 0]);
+                interleaved.writeFloat(texcoords[index.texcoord_index * 2 + 1]);
+            }
+            else {
+                interleaved.writeFloat(0);
+                interleaved.writeFloat(0);
+            }
+            
+            if (index.normal_index >= 0) {
+                interleaved.writeFloat(normals[index.normal_index * 3 + 0]);
+                interleaved.writeFloat(normals[index.normal_index * 3 + 1]);
+                interleaved.writeFloat(normals[index.normal_index * 3 + 2]);
+            }
+            else {
+                interleaved.writeFloat(0);
+                interleaved.writeFloat(0);
+                interleaved.writeFloat(0);
+            }
             
             indices.push_back(currentIndex);
             ++currentIndex;
@@ -197,6 +225,9 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
                                                                                            primitiveCount,
                                                                                            bytesPerIndex);
         elements.push_back(element);
+        
+        // TODO Currently we only accept ONE material per element. 
+        elementMaterials.push_back(materialsIndexed[mesh.material_ids[0]]);
     }
     
     /*
@@ -237,8 +268,37 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
                                                                                            stride);
     sources.push_back(normalsSource);
     
-    return std::make_shared<VROGeometry>(sources, elements);
+    std::shared_ptr<VROGeometry> geometry = std::make_shared<VROGeometry>(sources, elements);
+    for (std::shared_ptr<VROMaterial> &material : elementMaterials) {
+        geometry->getMaterials().push_back(material);
+    }
+    
+    return geometry;
 }
 
-
-
+std::shared_ptr<VROTexture> VROOBJLoader::loadTexture(std::string &name, std::string &base, bool isBaseURL,
+                               std::map<std::string, std::shared_ptr<VROTexture>> &cache) {
+    std::shared_ptr<VROTexture> texture;
+    
+    auto it = cache.find(name);
+    if (it == cache.end()) {
+        bool isTempTextureFile = false;
+        std::string textureFile = base + "/" + name;
+        if (isBaseURL) {
+            textureFile = VROPlatformDownloadURLToFile(textureFile, &isTempTextureFile);
+        }
+        
+        std::shared_ptr<VROImage> image = VROPlatformLoadImageFromFile(textureFile);
+        if (isTempTextureFile) {
+            VROPlatformDeleteFile(textureFile);
+        }
+        
+        texture = std::make_shared<VROTexture>(image);
+        cache.insert(std::make_pair(name, texture));
+    }
+    else {
+        texture = it->second;
+    }
+    
+    return texture;
+}

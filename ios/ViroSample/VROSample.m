@@ -370,18 +370,22 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROScene> scene = sceneController.scene;
     scene->setBackgroundCube([self niagaraTexture]);
     
-    NSString *soccerPath = [[NSBundle mainBundle] pathForResource:@"shanghai_tower" ofType:@"obj"];
-    NSURL *soccerURL = [NSURL fileURLWithPath:soccerPath];
-    std::string url = std::string([[soccerURL description] UTF8String]);
+    NSString *objPath = [[NSBundle mainBundle] pathForResource:@"male02" ofType:@"obj"];
+    NSURL *objURL = [NSURL fileURLWithPath:objPath];
+    std::string url = std::string([[objURL description] UTF8String]);
+    
+    NSString *basePath = [objPath stringByDeletingLastPathComponent];
+    NSURL *baseURL = [NSURL fileURLWithPath:basePath];
+    std::string base = std::string([[baseURL description] UTF8String]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
-    light->setColor({ 1.0, 0.9, 0.9 });
+    light->setColor({ 1.0, 1.0, 1.0 });
     light->setPosition( { 0, 0, 0 });
     light->setDirection( { 0, 0, -1.0 });
-    light->setAttenuationStartDistance(15);
-    light->setAttenuationEndDistance(25);
-    light->setSpotInnerAngle(0);
-    light->setSpotOuterAngle(15);
+    light->setAttenuationStartDistance(50);
+    light->setAttenuationEndDistance(75);
+    light->setSpotInnerAngle(45);
+    light->setSpotOuterAngle(90);
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
@@ -389,18 +393,15 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     scene->addNode(rootNode);
     
-    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(url, "", false,
+    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(url, base, true,
         [](std::shared_ptr<VRONode> node, bool success) {
             if (!success) {
                 return;
             }
         
             std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-            material->getDiffuse().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_diffuse.jpg"])));
-            material->getSpecular().setTexture(std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"shanghai_tower_specular.jpg"])));
-            node->getGeometry()->getMaterials().push_back(material);
-            
-            node->setPosition({0, -10, -20});
+            node->setPosition({0, -100, -10});
+            node->setScale({ 0.1, 0.1, 0.1 });
     });
     
     

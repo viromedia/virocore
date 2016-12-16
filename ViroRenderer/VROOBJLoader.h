@@ -13,11 +13,13 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <map>
 #include <functional>
 #include "VROGeometrySource.h"
 #include "VROGeometryElement.h"
 
 class VRONode;
+class VROTexture;
 class VROGeometry;
 
 class VROOBJLoader {
@@ -43,7 +45,10 @@ private:
     
     static void injectOBJ(std::shared_ptr<VROGeometry> geometry, std::shared_ptr<VRONode> node,
                           std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish);
-    static std::shared_ptr<VROGeometry> loadOBJ(std::string file, std::string baseDir);
+    static std::shared_ptr<VROGeometry> loadOBJ(std::string file, std::string base, bool isBaseURL);
+    
+    static std::shared_ptr<VROTexture> loadTexture(std::string &name, std::string &base, bool isBaseURL,
+                                                   std::map<std::string, std::shared_ptr<VROTexture>> &cache);
     
 };
 

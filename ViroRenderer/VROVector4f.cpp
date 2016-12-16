@@ -13,6 +13,14 @@ VROVector4f::VROVector4f() {
     x = 0;
     y = 0;
     z = 0;
+    w = 1;
+}
+
+VROVector4f::VROVector4f(const float *components, int count) {
+    x = count > 0 ? components[0] : 0;
+    y = count > 1 ? components[1] : 0;
+    z = count > 2 ? components[2] : 0;
+    w = count > 3 ? components[3] : 1;
 }
 
 VROVector4f::VROVector4f(float xIn, float yIn, float zIn, float wIn) :
