@@ -180,7 +180,10 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
     for (tinyobj::shape_t &shape : shapes) {
         tinyobj::mesh_t &mesh = shape.mesh;
         
-        std::vector<int> indices;
+        /*
+         Write all the indices of this mesh into the interleaved
+         array.
+         */
         interleaved.grow(stride * mesh.indices.size());
         
         for (int i = 0; i < mesh.indices.size(); i++) {
@@ -192,7 +195,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
             
             if (index.texcoord_index >= 0) {
                 interleaved.writeFloat(texcoords[index.texcoord_index * 2 + 0]);
-                interleaved.writeFloat(texcoords[index.texcoord_index * 2 + 1]);
+                interleaved.writeFloat(1 - texcoords[index.texcoord_index * 2 + 1]);
             }
             else {
                 interleaved.writeFloat(0);
@@ -209,25 +212,43 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
                 interleaved.writeFloat(0);
                 interleaved.writeFloat(0);
             }
-            
-            indices.push_back(currentIndex);
-            ++currentIndex;
         }
         
-        VROGeometryPrimitiveType primitive = VROGeometryPrimitiveType::Triangle;
-        int indexCount = (int) indices.size();
-        int bytesPerIndex = sizeof(int);
-        int primitiveCount = VROGeometryUtilGetPrimitiveCount(indexCount, primitive);
-        std::shared_ptr<VROData> data = std::make_shared<VROData>(indices.data(), indexCount * bytesPerIndex);
+        /*
+         Create one element for each material used by this shape.
+         Maps from material index to indices using said material.
+         */
+        std::map<int, std::vector<int>> indicesByMaterial;
         
-        std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(data,
-                                                                                           primitive,
-                                                                                           primitiveCount,
-                                                                                           bytesPerIndex);
-        elements.push_back(element);
-        
-        // TODO Currently we only accept ONE material per element. 
-        elementMaterials.push_back(materialsIndexed[mesh.material_ids[0]]);
+        for (int f = 0; f < mesh.num_face_vertices.size(); f++) {
+            int numFaceVertices = mesh.num_face_vertices[f];
+            if (numFaceVertices != 3) {
+                pinfo("Non-triangular OBJ files not supported!");
+                return {};
+            }
+            
+            std::vector<int> &indices = indicesByMaterial[mesh.material_ids[f]];
+            for (int c = 0; c < numFaceVertices; c++) {
+                indices.push_back(currentIndex++);
+            }
+        }
+        pinfo("indices by material size %d", indicesByMaterial.size());
+        for (auto &kv : indicesByMaterial) {
+            std::vector<int> &indices = kv.second;
+            
+            VROGeometryPrimitiveType primitive = VROGeometryPrimitiveType::Triangle;
+            int indexCount = (int) indices.size();
+            int bytesPerIndex = sizeof(int);
+            int primitiveCount = VROGeometryUtilGetPrimitiveCount(indexCount, primitive);
+            std::shared_ptr<VROData> data = std::make_shared<VROData>(indices.data(), indexCount * bytesPerIndex);
+            
+            std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(data,
+                                                                                               primitive,
+                                                                                               primitiveCount,
+                                                                                               bytesPerIndex);
+            elements.push_back(element);
+            elementMaterials.push_back(materialsIndexed[kv.first]);
+        }
     }
     
     /*
