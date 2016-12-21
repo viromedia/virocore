@@ -1,5 +1,5 @@
 //
-//  VROViewport.hpp
+//  VROViewport.h
 //  ViroRenderer
 //
 //  Created by Raj Advani on 10/23/15.

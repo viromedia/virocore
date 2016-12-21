@@ -69,14 +69,6 @@ public:
     std::vector<VROHitTestResult> hitTest(VROVector3f ray, const VRORenderContext &context,
                                           bool boundsOnly = false);
     
-    
-    /*
-     Get the audio player for the background track in this scene.
-     */
-    VROAudioPlayer &getBackgroundAudioPlayer() {
-        return *_backgroundAudio;
-    }
-    
 private:
     
     /*
@@ -103,11 +95,6 @@ private:
      The nodes ordered for rendering by their sort keys.
      */
     std::vector<VROSortKey> _keys;
-    
-    /*
-     The audio player for the background track of this scene.
-     */
-    VROAudioPlayer *_backgroundAudio;
     
 };
 

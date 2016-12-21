@@ -70,13 +70,13 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 // UI
 #import <ViroKit/VROReticle.h>
 #import <ViroKit/VROText.h>
-#import <ViroKit/VROGlyph.h>
 #import <ViroKit/VROTypeface.h>
 
 // Video
 #import <ViroKit/VROVideoSurface.h>
 #import <ViroKit/VROVideoTexture.h>
 #import <ViroKit/VROVideoTextureiOS.h>
+#import <ViroKit/VROVideoDelegateiOS.h>
 
 // Audio
 #import <ViroKit/VROAudioPlayer.h>

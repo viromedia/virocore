@@ -26,7 +26,7 @@ VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROData> data) :
 }
 
 VROAudioPlayeriOS::~VROAudioPlayeriOS() {
-    
+    [_player stop];
 }
 
 void VROAudioPlayeriOS::setLoop(bool loop) {
