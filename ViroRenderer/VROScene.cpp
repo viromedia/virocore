@@ -15,7 +15,6 @@
 #include "VROHitTestResult.h"
 #include "VROSphere.h"
 #include "VROMaterial.h"
-#include "VROHoverController.h"
 #include "VROLog.h"
 #include "VROAudioPlayer.h"
 #include <stack>
@@ -141,20 +140,4 @@ void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
 
 void VROScene::setBackgroundRotation(VROQuaternion rotation) {
     _backgroundRotation = rotation;
-}
-
-std::vector<VROHitTestResult> VROScene::hitTest(VROVector3f ray, const VRORenderContext &context,
-                                                bool boundsOnly) {
-    std::vector<VROHitTestResult> results;
-    
-    for (std::shared_ptr<VRONode> &node : _nodes) {
-        std::vector<VROHitTestResult> nodeResults = node->hitTest(ray, context, boundsOnly);
-        results.insert(results.end(), nodeResults.begin(), nodeResults.end());
-    }
-    
-    std::sort(results.begin(), results.end(), [](VROHitTestResult a, VROHitTestResult b) {
-        return a.getDistance() < b.getDistance();
-    });
-
-    return results;
 }

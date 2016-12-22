@@ -8,14 +8,15 @@
 
 #ifndef ANDROID_VROSCENECONTROLLER_H
 #define ANDROID_VROSCENECONTROLLER_H
-
-#include "VROSceneControllerInternal.h"
 #include <memory>
+#include "VROScene.h"
 
 class VROScene;
 class VROVector3f;
+class VRODriver;
+class VRORenderContext;
 
-class VROSceneController : public VROSceneControllerInternal {
+class VROSceneController {
 
 public:
     // Delegate for callbacks across the bridge
@@ -31,42 +32,37 @@ public:
         _delegate = delegate;
     }
 
-    VROSceneController() {}
+    VROSceneController() {
+        _scene = std::make_shared<VROScene>();
+    }
     virtual ~VROSceneController() {}
 
     std::shared_ptr<VROScene> getScene() {
-        return VROSceneControllerInternal::getScene();
-    }
-    void setHoverEnabled(bool enabled, bool boundsOnly) {
-        VROSceneControllerInternal::setHoverEnabled(enabled, boundsOnly);
+        return _scene;
     }
 
     /*
      Scene appeared delegate methods.
      */
-    virtual void onSceneWillAppear(VRORenderContext &context, VRODriver &driver) {
-        VROSceneControllerInternal::onSceneWillAppear(context, driver);
+    void onSceneWillAppear(VRORenderContext &context, VRODriver &driver) {
         if (_delegate != NULL){
             _delegate->onSceneWillAppear(context, driver);
         }
 
     }
-    virtual void onSceneDidAppear(VRORenderContext &context, VRODriver &driver) {
-        VROSceneControllerInternal::onSceneDidAppear(context, driver);
+    void onSceneDidAppear(VRORenderContext &context, VRODriver &driver) {
         if (_delegate != NULL){
             _delegate->onSceneDidAppear(context, driver);
         }
 
     }
-    virtual void onSceneWillDisappear(VRORenderContext &context, VRODriver &driver) {
-        VROSceneControllerInternal::onSceneWillDisappear(context, driver);
+    void onSceneWillDisappear(VRORenderContext &context, VRODriver &driver) {
         if (_delegate != NULL){
             _delegate->onSceneWillDisappear(context, driver);
         }
 
     }
-    virtual void onSceneDidDisappear(VRORenderContext &context, VRODriver &driver) {
-        VROSceneControllerInternal::onSceneDidDisappear(context, driver);
+    void onSceneDidDisappear(VRORenderContext &context, VRODriver &driver) {
         if (_delegate != NULL){
             _delegate->onSceneDidDisappear(context, driver);
         }
@@ -75,34 +71,20 @@ public:
     /*
      Scene animation delegate methods.
      */
-    virtual void startIncomingTransition(VRORenderContext *context, float duration) {}
-    virtual void startOutgoingTransition(VRORenderContext *context, float duration) {}
-    virtual void endIncomingTransition(VRORenderContext *context) {}
-    virtual void endOutgoingTransition(VRORenderContext *context) {}
-
-    virtual void animateIncomingTransition(VRORenderContext *context, float t) {}
-    virtual void animateOutgoingTransition(VRORenderContext *context, float t) {}
+    void startIncomingTransition(VRORenderContext *context, float duration){}
+    void startOutgoingTransition(VRORenderContext *context, float duration){}
+    void endIncomingTransition(VRORenderContext *context) {}
+    void endOutgoingTransition(VRORenderContext *context) {}
+    void animateIncomingTransition(VRORenderContext *context, float t){}
+    void animateOutgoingTransition(VRORenderContext *context, float t){}
 
     /*
      Per-frame rendering delegate methods.
      */
-    virtual void sceneWillRender(const VRORenderContext *context) {}
-
-    /*
-     Hover delegate methods.
-     */
-    virtual bool isHoverable(std::shared_ptr<VRONode> node) { return false; }
-    virtual void hoverOnNode(std::shared_ptr<VRONode> node) {}
-    virtual void hoverOffNode(std::shared_ptr<VRONode> node) {}
-
-    /*
-     Reticle delegate methods.
-     */
-    virtual void reticleTapped(VROVector3f ray, const VRORenderContext *context) {}
+    void sceneWillRender(const VRORenderContext *context) {}
 
 private:
-
-    VROSceneController *_sceneController;
+    std::shared_ptr<VROScene> _scene;
     std::shared_ptr<VROSceneControllerDelegate> _delegate;
 };
 

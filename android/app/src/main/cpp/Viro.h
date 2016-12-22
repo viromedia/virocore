@@ -17,15 +17,12 @@
 #include "VRODriver.h"
 #include "VRORenderParameters.h"
 #include "VROFrameListener.h"
-#include "VROHoverController.h"
-#include "VROHoverDelegate.h"
 
 // Model Loader
 // TODO Android
 
 // Core Scene Graph
 #include "VROScene.h"
-#include "VROSceneControllerInternal.h"
 #include "VROCamera.h"
 #include "VRONode.h"
 #include "VROGeometry.h"

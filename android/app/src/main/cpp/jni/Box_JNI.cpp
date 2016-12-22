@@ -7,12 +7,9 @@
 
 #include <jni.h>
 #include <memory>
-
 #include "VROBox.h"
 #include "VROMaterial.h"
-#include "VROImageAndroid.h"
 #include "PersistentRef.h"
-#include "VRONode.h"
 #include "Node_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \

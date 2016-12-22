@@ -4,6 +4,8 @@
 //
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
+#ifndef Material_JNI_h
+#define Material_JNI_h
 
 #include <jni.h>
 #include <memory>
@@ -22,3 +24,4 @@ namespace Material {
         return persistentRef->get();
     }
 }
+#endif

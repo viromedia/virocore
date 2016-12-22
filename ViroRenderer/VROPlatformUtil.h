@@ -88,6 +88,19 @@ AAssetManager *VROPlatformGetAssetManager();
 // in prod.
 std::string VROPlatformCopyAssetToFile(std::string asset);
 
+// Calls a java function from native through JNI on the given jObject with the given
+// classPath, functionName, methodID and desired java function parameters.
+//
+// Example: VROPlatformCallJavaFunction(jObj,
+//                                      "com/viro/renderer/jni/EventDelegateJni",
+//                                      "onGaze",
+//                                      "(Z)V",
+//                                      isGazing);
+void VROPlatformCallJavaFunction(jobject javaObject,
+                                 std::string classPath,
+                                 std::string functionName,
+                                 std::string methodID, ...);
+
 #pragma mark - Android A/V
 
 // Create a video sink on the Java side. Returns the Surface.

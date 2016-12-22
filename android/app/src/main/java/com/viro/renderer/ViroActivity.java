@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.viro.renderer.jni.BoxJni;
+import com.viro.renderer.jni.EventDelegateJni;
 import com.viro.renderer.jni.ImageJni;
 import com.viro.renderer.jni.MaterialJni;
 import com.viro.renderer.jni.NodeJni;
@@ -24,8 +25,6 @@ import com.viro.renderer.jni.TextureJni;
 import com.viro.renderer.jni.VideoTextureJni;
 import com.viro.renderer.jni.ViroGvrLayout;
 import com.viro.renderer.jni.VrView;
-
-import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,8 +46,6 @@ public class ViroActivity extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
 
-        mVrView.getNativeRenderer().enableReticle(false);
-
         // Creation of SceneJni within scene navigator
         NodeJni rootNode = new NodeJni(this);
         SceneJni scene = new SceneJni(rootNode);
@@ -61,7 +58,7 @@ public class ViroActivity extends AppCompatActivity {
 
         //testBackgroundVideo(scene);
         //testBackgroundImage(scene);
-        testSkyBoxImage(scene);
+        //testSkyBoxImage(scene);
 
         for (NodeJni node: nodes) {
             rootNode.addChildNode(node);
@@ -158,6 +155,21 @@ public class ViroActivity extends AppCompatActivity {
         MaterialJni material = new MaterialJni();
         material.setTexture(bobaTexture, "diffuseTexture");
 
+        EventDelegateJni delegateJni = new EventDelegateJni();
+        delegateJni.setEventEnabled(EventDelegateJni.EventType.ON_GAZE, true);
+        delegateJni.setEventEnabled(EventDelegateJni.EventType.ON_TAP, true);
+        delegateJni.setEventDelegateCallback(new EventDelegateJni.EventDelegateCallback() {
+            @Override
+            public void onTapped() {
+                Log.e(TAG," Tapped on Box One.");
+            }
+
+            @Override
+            public void onGaze(boolean isGazing) {
+                Log.e(TAG,"Gaze event on Box One.");
+            }
+        });
+
         // Creation of ViroBox to the right and billboarded
         BoxJni boxGeometry = new BoxJni(2,4,2);
         node1.setGeometry(boxGeometry);
@@ -166,6 +178,23 @@ public class ViroActivity extends AppCompatActivity {
         node1.setMaterials(Arrays.asList(material));
         String[] behaviors = {"billboard"};
         node1.setTransformBehaviors(behaviors);
+        node1.setEventDelegateJni(delegateJni);
+
+
+        EventDelegateJni delegateJni2 = new EventDelegateJni();
+        delegateJni2.setEventEnabled(EventDelegateJni.EventType.ON_GAZE, true);
+        delegateJni2.setEventEnabled(EventDelegateJni.EventType.ON_TAP, true);
+        delegateJni2.setEventDelegateCallback(new EventDelegateJni.EventDelegateCallback() {
+            @Override
+            public void onTapped() {
+                Log.e(TAG," Tapped on Box Two.");
+            }
+
+            @Override
+            public void onGaze(boolean isGazing) {
+                Log.e(TAG,"Gaze event on Box Two.");
+            }
+        });
 
         // Creation of ViroBox to the left not billboarded
         BoxJni boxGeometry2 = new BoxJni(2, 2, 2);
@@ -173,6 +202,7 @@ public class ViroActivity extends AppCompatActivity {
         float[] boxPosition2 = {-2, 0, -3};
         node2.setPosition(boxPosition2);
         node2.setMaterials(Arrays.asList(material));
+        node2.setEventDelegateJni(delegateJni2);
         return Arrays.asList(node1, node2);
     }
 

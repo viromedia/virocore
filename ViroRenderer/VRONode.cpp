@@ -38,7 +38,6 @@ VRONode::VRONode() :
     _computedOpacity(1.0),
     _selectable(true),
     _highAccuracyGaze(false) {
-    
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
 
@@ -271,25 +270,23 @@ VROBoundingBox VRONode::getBoundingBox(const VRORenderContext &context) {
     return _geometry->getBoundingBox().transform(_computedTransform);
 }
 
-std::vector<VROHitTestResult> VRONode::hitTest(VROVector3f ray, const VRORenderContext &context,
+std::vector<VROHitTestResult> VRONode::hitTest(VROVector3f ray, VROVector3f origin,
                                                bool boundsOnly) {
     std::vector<VROHitTestResult> results;
-    
+
     VROMatrix4f identity;
-    hitTest(ray, identity, boundsOnly, context, results);
-    
+    hitTest(ray, identity, boundsOnly, origin, results);
+
     return results;
 }
 
 void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsOnly,
-                      const VRORenderContext &context,
-                      std::vector<VROHitTestResult> &results) {
+                      VROVector3f origin, std::vector<VROHitTestResult> &results) {
     
     if (!_selectable) {
         return;
     }
     
-    VROVector3f origin = context.getCamera().getPosition();
     VROMatrix4f transform = _computedTransform;
     boundsOnly = boundsOnly && !getHighAccuracyGaze();
     
@@ -305,7 +302,7 @@ void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsO
     }
     
     for (std::shared_ptr<VRONode> &subnode : _subnodes) {
-        subnode->hitTest(ray, transform, boundsOnly, context, results);
+        subnode->hitTest(ray, transform, boundsOnly, origin, results);
     }
 }
 

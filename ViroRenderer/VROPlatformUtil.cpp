@@ -425,6 +425,37 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     env->DeleteLocalRef(cls);
 }
 
+void VROPlatformCallJavaFunction(jobject javaObject,
+                                 std::string classPath,
+                                 std::string functionName,
+                                 std::string methodID, ...){
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    env->ExceptionClear();
+
+    jclass viroClass = env->FindClass(classPath.c_str());
+    if (viroClass == nullptr) {
+        perr("Unable to find classpath %s for making java calls.", classPath.c_str());
+        return;
+    }
+
+    jmethodID method = env->GetMethodID(viroClass, functionName.c_str(), methodID.c_str());
+    if (method == nullptr) {
+        perr("Unable to find method %s callback.", functionName.c_str());
+        return;
+    }
+
+    va_list args;
+    va_start(args, methodID);
+    env->CallVoidMethodV(javaObject, method, args);
+    if (env->ExceptionOccurred()) {
+        perr("Exception occured when calling %s.", functionName.c_str());
+        env->ExceptionClear();
+    }
+    va_end(args);
+
+    env->DeleteLocalRef(viroClass);
+}
+
 void Java_com_viro_renderer_jni_PlatformUtil_runTask(JNIEnv *env, jclass clazz, jint taskId) {
     VROPlatformRunTask(taskId);
 }

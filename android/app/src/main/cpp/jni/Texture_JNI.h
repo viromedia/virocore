@@ -5,6 +5,9 @@
 //  Created by Andy Chu on 12/01/16.
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
+
+#ifndef Texture_JNI_h
+#define Texture_JNI_h
 #include <jni.h>
 #include <memory>
 
@@ -22,3 +25,5 @@ namespace Texture {
         return persistentRef->get();
     }
 }
+
+#endif

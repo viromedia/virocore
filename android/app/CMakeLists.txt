@@ -53,6 +53,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/VideoTexture_JNI.cpp
              src/main/cpp/jni/VideoDelegate_JNI.cpp
              src/main/cpp/jni/RenderContext_JNI.cpp
+             src/main/cpp/jni/EventDelegate_JNI.cpp
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp
@@ -84,7 +85,6 @@ add_library( # Sets the name of the library.
 
              # Renderer
              ../../ViroRenderer/VROScene.cpp
-             ../../ViroRenderer/VROSceneControllerInternal.cpp
              ../../ViroRenderer/VROCamera.cpp
              ../../ViroRenderer/VRONode.cpp
              ../../ViroRenderer/VROGeometry.cpp
@@ -94,7 +94,6 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROMaterialVisual.cpp
              ../../ViroRenderer/VROTexture.cpp
              ../../ViroRenderer/VROLight.cpp
-             ../../ViroRenderer/VROHoverController.cpp
              ../../ViroRenderer/VROBillboardConstraint.cpp
              ../../ViroRenderer/VROTransformConstraint.cpp
              ../../ViroRenderer/VRORenderer.cpp
@@ -103,6 +102,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROTextureSubstrate.cpp
              ../../ViroRenderer/VROMaterialSubstrate.cpp
              ../../ViroRenderer/VROCameraMutable.cpp
+             ../../ViroRenderer/VROEventManager.cpp
 
              # Animation
              ../../ViroRenderer/VROTimingFunction.cpp

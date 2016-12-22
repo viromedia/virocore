@@ -31,6 +31,7 @@ VROReticle::VROReticle() :
     _node = std::make_shared<VRONode>();
     _node->setGeometry(_polyline);
     _node->setPosition({0, 0, -2});
+    _node->setHidden(!_enabled);
 }
 
 VROReticle::~VROReticle() {
@@ -84,12 +85,12 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext *renderContext
     VRORenderParameters renderParams;
     renderParams.transforms.push(renderContext->getHUDViewMatrix());
     renderParams.opacities.push(1.0);
-    
+
     _node->updateSortKeys(renderParams, *renderContext, *driver);
     
     std::shared_ptr<VROMaterial> material = _polyline->getMaterials().front();
     material->bindShader(*driver);
-    
+
     _node->render(0, material, *renderContext, *driver);
 }
 

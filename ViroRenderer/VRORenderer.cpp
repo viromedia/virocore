@@ -12,7 +12,6 @@
 #include "VROTransaction.h"
 #include "VROAllocationTracker.h"
 #include "VROScene.h"
-#include "VROSceneControllerInternal.h"
 #include "VROLog.h"
 #include "VROCameraMutable.h"
 #include "VROTransaction.h"
@@ -22,6 +21,8 @@
 #include "VROImageUtil.h"
 #include "VRORenderContext.h"
 #include "VROCamera.h"
+#include "VROEventManager.h"
+#include "VROReticleSizeListener.h"
 
 static const float kDefaultSceneTransitionDuration = 1.0;
 
@@ -33,8 +34,18 @@ VRORenderer::VRORenderer() :
     _context(std::make_shared<VRORenderContext>(_frameSynchronizer)),
     _reticle(std::make_shared<VROReticle>()),
     _camera(std::make_shared<VROCameraMutable>()),
-    _sceneTransitionActive(false) {
-    
+    _sceneTransitionActive(false){
+
+    _eventManager = std::make_shared<VROEventManager>(_context);
+
+    /*
+     * Binds the size listener to the reticle and register it within
+     * the eventController in order to respond to gaze events (we
+     * change the size of the reticle based on the gazed location).
+     */
+    std::shared_ptr<VROReticleSizeListener> _reticleSizeListener
+            = std::make_shared<VROReticleSizeListener>(_reticle, _context);
+    _eventManager->registerEventDelegate(_reticleSizeListener);
     initBlankTexture(*_context);
 }
 
@@ -94,7 +105,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     
     _context->setFrame(frame);
     notifyFrameStart();
-    
+
     VROCamera camera;
     camera.setHeadRotation(headRotation);
     camera.setBaseRotation(_camera->getBaseRotation().getMatrix());
@@ -142,6 +153,12 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
             _sceneController->getScene()->updateSortKeys(*_context.get(), driver);
         }
     }
+
+    /**
+     * Proccess events at the end of prepareFrame.
+     * TODO VIRO-696: Remove this in favor of an input controller during DayDream integration.
+     */
+    _eventManager->onHeadGearGaze();
 }
 
 void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
@@ -162,6 +179,7 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     _context->setZFar(kZFar);
     
     renderEye(eye, driver);
+
     _reticle->renderEye(eye, _context.get(), &driver);
     
     if (delegate) {
@@ -204,34 +222,17 @@ void VRORenderer::renderEye(VROEyeType eyeType, VRODriver &driver) {
     }
 }
 
-#pragma mark - Reticle
-
-void VRORenderer::handleTap() {
-    _reticle->trigger();
-    
-    std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
-    if (delegate) {
-        delegate->reticleTapped(_context->getCamera().getForward(), _context.get());
-    }
-    
-    if (_sceneController) {
-        _sceneController->reticleTapped(_context->getCamera().getForward(), _context.get());
-    }
-}
-
 #pragma mark - Scene Loading
 
-void VRORenderer::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, VRODriver &driver) {
-    std::shared_ptr<VROSceneControllerInternal> outgoingSceneController = _sceneController;
-    
-    sceneController->attach(_reticle, _frameSynchronizer);
-    
+void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneController, VRODriver &driver) {
+    std::shared_ptr<VROSceneController> outgoingSceneController = _sceneController;
     sceneController->onSceneWillAppear(*_context.get(), driver);
     if (outgoingSceneController) {
         outgoingSceneController->onSceneWillDisappear(*_context.get(), driver);
     }
     
     _sceneController = sceneController;
+    _eventManager->attachScene(_sceneController->getScene());
     
     sceneController->onSceneDidAppear(*_context.get(), driver);
     if (outgoingSceneController) {
@@ -239,7 +240,7 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneControllerInternal>
     }
 }
 
-void VRORenderer::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, bool animated, VRODriver &driver) {
+void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated, VRODriver &driver) {
     if (!animated || !_sceneController) {
         _sceneController = sceneController;
         return;
@@ -248,7 +249,7 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneControllerInternal>
     setSceneController(sceneController, kDefaultSceneTransitionDuration, VROTimingFunctionType::EaseIn, driver);
 }
 
-void VRORenderer::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, float seconds,
+void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                                      VROTimingFunctionType timingFunctionType, VRODriver &driver) {
     passert (_sceneController != nullptr);
     
@@ -258,8 +259,8 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneControllerInternal>
     _sceneTransitionStartTime = VROTimeCurrentSeconds();
     _sceneTransitionDuration = seconds;
     _sceneTransitionTimingFunction = VROTimingFunction::forType(timingFunctionType);
-    
-    _sceneController->attach(_reticle, _frameSynchronizer);
+
+    _eventManager->attachScene(_sceneController->getScene());
     _sceneController->onSceneWillAppear(*_context.get(), driver);
     _outgoingSceneController->onSceneWillDisappear(*_context.get(), driver);
     

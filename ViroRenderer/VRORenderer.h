@@ -11,12 +11,14 @@
 
 #include <memory>
 #include <vector>
+#include <VROSceneController.h>
 #include "VROVector3f.h"
 #include "VROQuaternion.h"
 #include "VROMatrix4f.h"
 #include "VROViewport.h"
 #include "VROFieldOfView.h"
 #include "VROFrameSynchronizer.h"
+#include "VROEventManager.h"
 
 class VROEye;
 class VRONode;
@@ -26,7 +28,6 @@ class VROTimingFunction;
 class VRORenderContext;
 class VROFrameListener;
 class VROReticle;
-class VROSceneControllerInternal;
 class VRORenderDelegateInternal;
 enum class VROCameraRotationType;
 enum class VROEyeType;
@@ -52,9 +53,9 @@ public:
     
 #pragma mark - Scene Controllers
     
-    void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, VRODriver &driver);
-    void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, bool animated, VRODriver &driver);
-    void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, float seconds,
+    void setSceneController(std::shared_ptr<VROSceneController> sceneController, VRODriver &driver);
+    void setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated, VRODriver &driver);
+    void setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                             VROTimingFunctionType timingFunctionType, VRODriver &driver);
     
 #pragma mark - Render Loop
@@ -71,7 +72,10 @@ public:
         return _frameSynchronizer;
     }
 
-    void handleTap();
+     std::shared_ptr<VROEventManager> getEventManager(){
+        return _eventManager;
+     }
+
     std::shared_ptr<VROReticle> getReticle() {
         return _reticle;
     }
@@ -81,7 +85,7 @@ public:
     void requestExitVR();
     
 private:
-    
+
     bool _rendererInitialized;
     
     /*
@@ -93,7 +97,12 @@ private:
      Maintains parameters used for scene rendering.
      */
     std::shared_ptr<VRORenderContext> _context;
-    
+
+    /*
+     Handles the processing and notification of input events (like ontap).
+     */
+    std::shared_ptr<VROEventManager> _eventManager;
+
     /*
      The reticle.
      */
@@ -111,8 +120,8 @@ private:
 
 #pragma mark - Scene and Scene Transitions
     
-    std::shared_ptr<VROSceneControllerInternal> _sceneController;
-    std::shared_ptr<VROSceneControllerInternal> _outgoingSceneController;
+    std::shared_ptr<VROSceneController> _sceneController;
+    std::shared_ptr<VROSceneController> _outgoingSceneController;
 
     bool _sceneTransitionActive;
     float _sceneTransitionDuration;

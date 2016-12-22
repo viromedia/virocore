@@ -50,7 +50,7 @@ public class SceneJni {
     private native void nativeSetBackgroundRotation(long sceneRef, float degreeX, float degreeY,
                                                     float degreeZ);
 
-    private SceneDelegate mDelegate;
+    private SceneDelegate mDelegate = null;
     public interface SceneDelegate {
         void onSceneWillAppear();
         void onSceneDidAppear();
@@ -69,23 +69,29 @@ public class SceneJni {
 
     /* Called by Native */
     public void onSceneWillAppear() {
-        mDelegate.onSceneWillAppear();
-
+        if (mDelegate != null){
+            mDelegate.onSceneWillAppear();
+        }
     }
 
     /* Called by Native */
     public void onSceneDidAppear() {
-        mDelegate.onSceneDidAppear();
-
+        if (mDelegate != null) {
+            mDelegate.onSceneDidAppear();
+        }
     }
 
     /* Called by Native */
-    public void onSceneWillDisappear() {
-        mDelegate.onSceneWillDisappear();
+    public void onSceneWillDisappear(){
+        if (mDelegate != null) {
+            mDelegate.onSceneWillDisappear();
+        }
     }
 
     /* Called by Native */
     public void onSceneDidDisappear() {
-        mDelegate.onSceneDidDisappear();
+        if (mDelegate != null) {
+            mDelegate.onSceneDidDisappear();
+        }
     }
 }

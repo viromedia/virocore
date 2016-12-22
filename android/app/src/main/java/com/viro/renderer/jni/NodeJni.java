@@ -4,7 +4,6 @@
 package com.viro.renderer.jni;
 
 import android.content.Context;
-
 import java.util.List;
 
 /**
@@ -16,6 +15,7 @@ import java.util.List;
  */
 public class NodeJni {
     final protected long mNativeRef;
+    private EventDelegateJni mEventDelegate = null;
 
     public NodeJni(Context context) {
         mNativeRef = nativeCreateNode();
@@ -23,6 +23,18 @@ public class NodeJni {
 
     public void destroy(){
         nativeDestroyNode(mNativeRef);
+    }
+
+    public void setEventDelegateJni(EventDelegateJni eventDelegate){
+        if (mEventDelegate != null){
+            mEventDelegate.destroy();
+        }
+
+        mEventDelegate = eventDelegate;
+
+        if (mEventDelegate != null){
+            nativeSetEventDelegate(mNativeRef, mEventDelegate.mNativeRef);
+        }
     }
 
     public void addChildNode(NodeJni childNode){
@@ -97,4 +109,5 @@ public class NodeJni {
     private native void nativeSetVisible(long nodeReference, boolean visible);
     private native void nativeSetMaterials(long nodeReference, long[] materials);
     private native void nativeSetTransformBehaviors(long nodeReference, String[] transformBehaviors);
+    private native void nativeSetEventDelegate(long nodeReference, long evenDelegateRef);
 }

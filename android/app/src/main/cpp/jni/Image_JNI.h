@@ -5,6 +5,10 @@
 //  Created by Andy Chu on 12/01/16.
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
+
+#ifndef Image_JNI_h
+#define Image_JNI_h
+
 #include <jni.h>
 #include <memory>
 
@@ -22,3 +26,5 @@ namespace Image {
         return persistentRef->get();
     }
 }
+
+#endif

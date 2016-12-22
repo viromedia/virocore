@@ -4,11 +4,15 @@
 //
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
+
+#ifndef Node_JNI_h
+#define Node_JNI_h
+
 #include <jni.h>
 #include <memory>
 #include <VRONode.h>
-
 #include "PersistentRef.h"
+
 
 namespace Node{
     inline jlong jptr(std::shared_ptr<VRONode> shared_node) {
@@ -21,3 +25,5 @@ namespace Node{
         return persistentNode->get();
     }
 }
+
+#endif

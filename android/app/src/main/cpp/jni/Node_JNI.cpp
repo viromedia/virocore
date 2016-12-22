@@ -4,6 +4,7 @@
 //
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
+
 #include <iostream>
 #include <jni.h>
 #include <memory>
@@ -14,6 +15,7 @@
 #include "Node_JNI.h"
 #include "Material_JNI.h"
 #include "VROStringUtil.h"
+#include "EventDelegate_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -22,7 +24,7 @@
 extern "C" {
 
 JNI_METHOD(jlong, nativeCreateNode)(JNIEnv *env,
-                                        jclass clazz) {
+                                    jclass clazz) {
    std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
    return Node::jptr(node);
 }
@@ -136,6 +138,13 @@ JNI_METHOD(void, nativeSetTransformBehaviors)(JNIEnv *env,
         env->ReleaseStringUTFChars(string, rawString);
     }
     env->DeleteLocalRef(stringArrayRef);
+}
+
+JNI_METHOD(void, nativeSetEventDelegate)(JNIEnv *env,
+                                     jobject obj,
+                                     jlong native_node_ref,
+                                     jlong native_delegate_ref) {
+    Node::native(native_node_ref)->setEventDelegate(EventDelegate::native(native_delegate_ref));
 }
 
 }  // extern "C"

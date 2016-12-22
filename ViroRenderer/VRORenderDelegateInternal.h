@@ -27,7 +27,6 @@ public:
     
     virtual void willRenderEye(VROEyeType eye, const VRORenderContext *context) = 0;
     virtual void didRenderEye(VROEyeType eye, const VRORenderContext *context) = 0;
-    virtual void reticleTapped(VROVector3f ray, const VRORenderContext *context) = 0;
     virtual void userDidRequestExitVR() = 0;
     
 };

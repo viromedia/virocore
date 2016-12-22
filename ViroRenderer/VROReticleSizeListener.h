@@ -12,44 +12,46 @@
 #include "VROHoverDistanceListener.h"
 #include "VROReticle.h"
 #include "VROMath.h"
+#include "VROEventDelegate.h"
 #include <memory>
+#include <float.h>
 
 static const float kReticleSizeMultiple = 3;
 
-class VROReticleSizeListener : public VROHoverDistanceListener {
-    
+class VROReticleSizeListener : public VROEventDelegate {
 public:
     
-    VROReticleSizeListener(std::shared_ptr<VROReticle> reticle) :
-        _previousHoverDepth(0) {
-        _reticle = reticle;
+    VROReticleSizeListener(std::shared_ptr<VROReticle> reticle,
+                           std::shared_ptr<VRORenderContext> context) :
+            _previousHoverDepth(0),
+            _context(context),
+            _reticle(reticle) {
     }
-    
-    void onHoverDistanceChanged(float distance, const VRORenderContext &context) {
+
+    /*VROEventDelegate*/
+    void onGazeHitDistance(float distance){
         float depth = -distance;
-        if (distance == FLT_MAX) {
-            depth = -5;
-        }
+
         if (fabs(_previousHoverDepth - depth) < kEpsilon) {
             return;
         }
-        
+
+        std::shared_ptr<VRORenderContext> context = _context.lock();
         std::shared_ptr<VROReticle> reticle = _reticle.lock();
-        if (!reticle) {
+        if (!reticle || !context) {
             return;
         }
-        
+
         _previousHoverDepth = depth;
         
-        float worldPerScreen = context.getCamera().getWorldPerScreen(depth);
+        float worldPerScreen = context->getCamera().getWorldPerScreen(depth);
         float radius = worldPerScreen * kReticleSizeMultiple;
-        
         reticle->setDepth(depth);
         reticle->setRadius(radius);
     }
     
 private:
-    
+    std::weak_ptr<VRORenderContext> _context;
     std::weak_ptr<VROReticle> _reticle;
     float _previousHoverDepth;
 

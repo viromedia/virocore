@@ -139,7 +139,11 @@ void VROSceneRendererCardboard::onDrawFrame() {
 }
 
 void VROSceneRendererCardboard::onTriggerEvent() {
-    _renderer->handleTap();
+    /**
+     * TODO VIRO-696: Move this into it's own Input Controller with daydream integration.
+     */
+    _renderer->getReticle()->trigger();
+    _renderer->getEventManager()->onHeadGearTap();
 }
 
 void VROSceneRendererCardboard::onPause() {
