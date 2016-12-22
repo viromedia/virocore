@@ -29,7 +29,6 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromURL(std::string url, std::stri
             bool isTemp = false;
             std::string file = VROPlatformDownloadURLToFile(url, &isTemp);
             
-            // TODO Viro-669 baseURL isn't used yet but needs to be converted to baseDir somehow
             std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseURL, true);
             if (isTemp) {
                 VROPlatformDeleteFile(file);
@@ -44,7 +43,6 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromURL(std::string url, std::stri
         bool isTemp = false;
         std::string file = VROPlatformDownloadURLToFile(url, &isTemp);
         
-        // TODO Viro-669 baseURL isn't used yet but needs to be converted to baseDir somehow
         std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseURL, true);
         if (isTemp) {
             VROPlatformDeleteFile(file);
