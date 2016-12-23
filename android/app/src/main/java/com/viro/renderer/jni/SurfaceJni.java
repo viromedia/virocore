@@ -35,6 +35,10 @@ public class SurfaceJni extends BaseGeometry {
         nativeSetMaterial(mNativeRef, material.mNativeRef);
     }
 
+    public void clearMaterial() {
+        nativeClearMaterial(mNativeRef);
+    }
+
     /**
      * Native Functions called into JNI
      */
@@ -46,6 +50,7 @@ public class SurfaceJni extends BaseGeometry {
     private native void nativeSetVideoTexture(long surfaceRef, long textureRef);
     private native void nativeSetImageTexture(long surfaceRef, long textureRef);
     private native void nativeSetMaterial(long surfaceRef, long materialRef);
+    private native void nativeClearMaterial(long surfaceRef);
 
     @Override
     public void attachToNode(NodeJni node) {

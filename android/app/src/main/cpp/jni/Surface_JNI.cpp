@@ -60,8 +60,8 @@ JNI_METHOD(jlong, nativeCreateSurfaceFromSurface)(JNIEnv *env,
 }
 
 JNI_METHOD(void, nativeDestroySurface)(JNIEnv *env,
-                              jclass clazz,
-                              jlong nativeSurface) {
+                                        jclass clazz,
+                                        jlong nativeSurface) {
     delete reinterpret_cast<PersistentRef<VROSurface> *>(nativeSurface);
 }
 
@@ -101,7 +101,7 @@ JNI_METHOD(void, nativeSetImageTexture)(JNIEnv *env,
                                         jlong surfaceRef,
                                         jlong textureRef) {
     std::shared_ptr<VROTexture> imageTexture = Texture::native(textureRef);
-    std::shared_ptr<VROSurface> surface = Surface::native(surfaceRef);;
+    std::shared_ptr<VROSurface> surface = Surface::native(surfaceRef);
 
     // If we're setting an image, see if we can copy &modify and existing material. Make
     // sure you set a material *before* setting the image texture, else the material will
@@ -112,8 +112,8 @@ JNI_METHOD(void, nativeSetImageTexture)(JNIEnv *env,
     } else {
         material = std::make_shared<VROMaterial>();
     }
-    material->setWritesToDepthBuffer(false);
-    material->setReadsFromDepthBuffer(false);
+    material->setWritesToDepthBuffer(true);
+    material->setReadsFromDepthBuffer(true);
     material->getDiffuse().setTexture(imageTexture);
     surface->getMaterials().clear();
     surface->getMaterials().push_back(material);
@@ -123,8 +123,16 @@ JNI_METHOD(void, nativeSetMaterial)(JNIEnv *env,
                                     jobject obj,
                                     jlong surfaceRef,
                                     jlong materialRef) {
-    std::shared_ptr<VROSurface> surface = Surface::native(surfaceRef);;
+    std::shared_ptr<VROSurface> surface = Surface::native(surfaceRef);
+    surface->getMaterials().clear();
     surface->getMaterials().push_back(Material::native(materialRef));
+}
+
+JNI_METHOD(void, nativeClearMaterial)(JNIEnv *env,
+                                      jobject obj,
+                                      jlong surfaceRef) {
+    std::shared_ptr<VROSurface> surface = Surface::native(surfaceRef);
+    surface->getMaterials().clear();
 }
 
 }  // extern "C"
