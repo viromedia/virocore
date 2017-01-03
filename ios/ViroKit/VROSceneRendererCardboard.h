@@ -15,7 +15,7 @@
 #include "VROViewport.h"
 #include "VROFieldOfView.h"
 
-class VROSceneControllerInternal;
+class VROSceneController;
 enum class VROTimingFunctionType;
 
 /*
@@ -44,9 +44,9 @@ public:
     /*
      Set the active scene.
      */
-    virtual void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController) = 0;
-    virtual void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, bool animated) = 0;
-    virtual void setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, float seconds,
+    virtual void setSceneController(std::shared_ptr<VROSceneController> sceneController) = 0;
+    virtual void setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated) = 0;
+    virtual void setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                                     VROTimingFunctionType timingFunctionType) = 0;
     
     /*

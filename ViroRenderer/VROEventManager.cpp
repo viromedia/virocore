@@ -5,12 +5,7 @@
 //  Copyright © 2015 Viro Media. All rights reserved.
 //
 
-#include <float.h>
 #include "VROEventManager.h"
-#include "VRONode.h"
-#include "VROHitTestResult.h"
-#include <android/log.h>
-
 void VROEventManager::onHeadGearTap() {
     // Return for now if scene is not ready - it is required for the hit test.
     if (_scene == nullptr){

@@ -36,15 +36,15 @@ void VROSceneRendererCardboardOpenGL::initRenderer(GVRHeadTransform *headTransfo
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController) {
+void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROSceneController> sceneController) {
     _renderer->setSceneController(sceneController, *_driver);
 }
 
-void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, bool animated) {
+void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated) {
     _renderer->setSceneController(sceneController, animated, *_driver);
 }
 
-void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, float seconds,
+void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                                                          VROTimingFunctionType timingFunctionType) {
     
     _renderer->setSceneController(sceneController, seconds, timingFunctionType, *_driver);

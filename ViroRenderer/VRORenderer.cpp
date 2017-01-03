@@ -21,7 +21,6 @@
 #include "VROImageUtil.h"
 #include "VRORenderContext.h"
 #include "VROCamera.h"
-#include "VROEventManager.h"
 #include "VROReticleSizeListener.h"
 
 static const float kDefaultSceneTransitionDuration = 1.0;
@@ -192,8 +191,8 @@ void VRORenderer::endFrame(VRODriver &driver) {
         _sceneController->endIncomingTransition(_context.get());
         _outgoingSceneController->endOutgoingTransition(_context.get());
     
-        _sceneController->onSceneDidAppear(*_context.get(), driver);
-        _outgoingSceneController->onSceneDidDisappear(*_context.get(), driver);
+        _sceneController->onSceneDidAppear(_context.get(), driver);
+        _outgoingSceneController->onSceneDidDisappear(_context.get(), driver);
         
         _outgoingSceneController = nullptr;
     }
@@ -226,17 +225,17 @@ void VRORenderer::renderEye(VROEyeType eyeType, VRODriver &driver) {
 
 void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneController, VRODriver &driver) {
     std::shared_ptr<VROSceneController> outgoingSceneController = _sceneController;
-    sceneController->onSceneWillAppear(*_context.get(), driver);
+    sceneController->onSceneWillAppear(_context.get(), driver);
     if (outgoingSceneController) {
-        outgoingSceneController->onSceneWillDisappear(*_context.get(), driver);
+        outgoingSceneController->onSceneWillDisappear(_context.get(), driver);
     }
     
     _sceneController = sceneController;
     _eventManager->attachScene(_sceneController->getScene());
     
-    sceneController->onSceneDidAppear(*_context.get(), driver);
+    sceneController->onSceneDidAppear(_context.get(), driver);
     if (outgoingSceneController) {
-        outgoingSceneController->onSceneDidDisappear(*_context.get(), driver);
+        outgoingSceneController->onSceneDidDisappear(_context.get(), driver);
     }
 }
 
@@ -261,8 +260,8 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneCo
     _sceneTransitionTimingFunction = VROTimingFunction::forType(timingFunctionType);
 
     _eventManager->attachScene(_sceneController->getScene());
-    _sceneController->onSceneWillAppear(*_context.get(), driver);
-    _outgoingSceneController->onSceneWillDisappear(*_context.get(), driver);
+    _sceneController->onSceneWillAppear(_context.get(), driver);
+    _outgoingSceneController->onSceneWillDisappear(_context.get(), driver);
     
     _sceneController->startIncomingTransition(_context.get(), seconds);
     _outgoingSceneController->startOutgoingTransition(_context.get(), seconds);

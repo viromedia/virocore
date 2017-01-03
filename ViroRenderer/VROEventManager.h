@@ -16,6 +16,9 @@
 #include "VROScene.h"
 #include "VRORenderContext.h"
 #include "VROEventDelegate.h"
+#include "VROHitTestResult.h"
+#include <float.h>
+#include "VRONode.h"
 
 /**
  * Responsible for mapping generalized input data from a controller, to a unified

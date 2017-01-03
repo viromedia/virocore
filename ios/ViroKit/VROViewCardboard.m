@@ -16,12 +16,11 @@
 #import "VROViewport.h"
 #import "VROApiKeyValidatorDynamo.h"
 #import "VRORenderDelegateiOS.h"
-#import "VROSceneControlleriOS.h"
 
 @interface VROViewCardboard () {
     std::shared_ptr<VRORenderer> _renderer;
     VRORenderLoopCardboard *_renderLoop;
-    VROSceneController *_sceneController;
+    std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VRORenderDelegateiOS> _renderDelegateWrapper;
 }
 
@@ -166,7 +165,7 @@
 #pragma mark - Events
 
 - (void)handleTap:(UIGestureRecognizer *)gestureRecognizer {
-    _renderer->handleTap();
+    _renderer->getEventManager()->onHeadGearTap();
 }
 
 - (std::shared_ptr<VROReticle>)reticle {
@@ -175,24 +174,24 @@
 
 #pragma mark - Scene Loading
 
-- (VROSceneController *)sceneController {
-    return _sceneController;
-}
+- (void)setSceneController:(std::shared_ptr<VROSceneController>) sceneController {
+    perr("Daniel VROViewCardboard setSceneController");
 
-- (void)setSceneController:(VROSceneController *)sceneController {
     _sceneController = sceneController;
-    self.sceneRenderer->setSceneController(sceneController.internal);
+    self.sceneRenderer->setSceneController(_sceneController);
 }
 
-- (void)setSceneController:(VROSceneController *)sceneController animated:(BOOL)animated {
+- (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController
+                  animated:(BOOL)animated {
     _sceneController = sceneController;
-    self.sceneRenderer->setSceneController(sceneController.internal, animated);
+    self.sceneRenderer->setSceneController(sceneController, animated);
 }
 
-- (void)setSceneController:(VROSceneController *)sceneController duration:(float)seconds
+- (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController
+                  duration:(float)seconds
             timingFunction:(VROTimingFunctionType)timingFunctionType {
     _sceneController = sceneController;
-    self.sceneRenderer->setSceneController(sceneController.internal, seconds, timingFunctionType);
+    self.sceneRenderer->setSceneController(sceneController, seconds, timingFunctionType);
 }
 
 #pragma mark - Frame Listeners
@@ -206,7 +205,7 @@
 - (void)cardboardView:(GVRCardboardView *)cardboardView didFireEvent:(GVRUserEvent)event {
     if (event == kGVRUserEventTrigger) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            _renderer->handleTap();
+            _renderer->getEventManager()->onHeadGearTap();
         });
     } else if (event == kGVRUserEventBackButton) {
         dispatch_async(dispatch_get_main_queue(), ^{

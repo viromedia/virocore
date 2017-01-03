@@ -11,7 +11,7 @@
 
 #include <memory>
 #include <vector>
-#include <VROSceneController.h>
+#include "VROSceneController.h"
 #include "VROVector3f.h"
 #include "VROQuaternion.h"
 #include "VROMatrix4f.h"

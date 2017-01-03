@@ -61,13 +61,6 @@ public:
     std::shared_ptr<VROGeometry> getBackground() const {
         return _background;
     }
-
-    /*
-     Get the audio player for the background track in this scene.
-     */
-    VROAudioPlayer &getBackgroundAudioPlayer() {
-        return *_backgroundAudio;
-    }
 private:
     
     /*
@@ -94,7 +87,6 @@ private:
      The nodes ordered for rendering by their sort keys.
      */
     std::vector<VROSortKey> _keys;
-    
 };
 
 #endif /* VROScene_h */

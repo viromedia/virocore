@@ -80,15 +80,15 @@ void VROSceneRendererCardboardMetal::initRenderer(GVRHeadTransform *headTransfor
     _blitter->hydrate();
 }
 
-void VROSceneRendererCardboardMetal::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController) {
+void VROSceneRendererCardboardMetal::setSceneController(std::shared_ptr<VROSceneController> sceneController) {
     _renderer->setSceneController(sceneController, *_driver);
 }
 
-void VROSceneRendererCardboardMetal::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, bool animated) {
+void VROSceneRendererCardboardMetal::setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated) {
     _renderer->setSceneController(sceneController, animated, *_driver);
 }
 
-void VROSceneRendererCardboardMetal::setSceneController(std::shared_ptr<VROSceneControllerInternal> sceneController, float seconds,
+void VROSceneRendererCardboardMetal::setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                                                         VROTimingFunctionType timingFunctionType) {
     
     _renderer->setSceneController(sceneController, seconds, timingFunctionType, *_driver);

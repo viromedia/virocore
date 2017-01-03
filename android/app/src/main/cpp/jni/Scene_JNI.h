@@ -31,11 +31,10 @@ public:
     ~SceneDelegate() {
         _env->DeleteGlobalRef(_javaObject);
     }
-    void onSceneWillAppear(VRORenderContext &context, VRODriver &driver);
-    void onSceneDidAppear(VRORenderContext &context, VRODriver &driver);
-    void onSceneWillDisappear(VRORenderContext &context, VRODriver &driver);
-    void onSceneDidDisappear(VRORenderContext &context, VRODriver &driver);
-
+    void onSceneWillAppear(VRORenderContext * context, VRODriver *driver);
+    void onSceneDidAppear(VRORenderContext * context, VRODriver *driver);
+    void onSceneWillDisappear(VRORenderContext * context, VRODriver *driver);
+    void onSceneDidDisappear(VRORenderContext * context, VRODriver *driver);
 private:
     void callVoidFunctionWithName(std::string functionName);
     jobject _javaObject;

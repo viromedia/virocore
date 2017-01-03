@@ -97,16 +97,16 @@ JNI_METHOD(void, nativeSetBackgroundCubeImageTexture)(JNIEnv *env,
 /*
  *   Scene delegates for triggering Java methods.
  */
-void SceneDelegate::onSceneWillAppear(VRORenderContext &context, VRODriver &driver) {
+void SceneDelegate::onSceneWillAppear(VRORenderContext *context, VRODriver *driver) {
     callVoidFunctionWithName("onSceneWillAppear");
 }
-void SceneDelegate::onSceneDidAppear(VRORenderContext &context, VRODriver &driver) {
+void SceneDelegate::onSceneDidAppear(VRORenderContext *context, VRODriver *driver) {
     callVoidFunctionWithName("onSceneDidAppear");
 }
-void SceneDelegate::onSceneWillDisappear(VRORenderContext &context, VRODriver &driver) {
+void SceneDelegate::onSceneWillDisappear(VRORenderContext *context, VRODriver *driver) {
     callVoidFunctionWithName("onSceneWillDisappear");
 }
-void SceneDelegate::onSceneDidDisappear(VRORenderContext &context, VRODriver &driver) {
+void SceneDelegate::onSceneDidDisappear(VRORenderContext *context, VRODriver *driver) {
     callVoidFunctionWithName("onSceneDidDisappear");
 }
 
