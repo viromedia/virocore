@@ -360,6 +360,19 @@ typedef enum {
 
 typedef struct gvr_user_prefs_ gvr_user_prefs;
 
+// Anonymous enum for miscellaneous integer constants.
+enum {
+  /// Constant that represents a nonexistent external surface. Pass to
+  /// gvr_buffer_viewport_set_external_surface_id() to disable sampling from
+  /// an external surface.
+  GVR_EXTERNAL_SURFACE_ID_NONE = -1,
+  /// Special index for a source buffer that has the same contents as the
+  /// external surface attached to the given viewport. Pass this to
+  /// gvr_buffer_viewport_set_source_buffer_index() to use the external surface
+  /// as the buffer contents.
+  GVR_BUFFER_INDEX_EXTERNAL_SURFACE = -1,
+};
+
 /// @}
 
 #ifdef __cplusplus
@@ -427,7 +440,7 @@ const ControllerButton kControllerButtonCount =
     static_cast<ControllerButton>(GVR_CONTROLLER_BUTTON_COUNT);
 
 /// An uninitialized external surface ID.
-const int32_t kUninitializedExternalSurface = -1;
+const int32_t kUninitializedExternalSurface = GVR_BUFFER_INDEX_EXTERNAL_SURFACE;
 /// The default source buffer index for viewports.
 const int32_t kDefaultBufferIndex = 0;
 

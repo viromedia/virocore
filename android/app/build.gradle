@@ -73,3 +73,5 @@ tasks.whenTaskAdded { task ->
         task.finalizedBy 'copyDebugAAR'
     }
 }
+
+build.dependsOn(':extractNdk')

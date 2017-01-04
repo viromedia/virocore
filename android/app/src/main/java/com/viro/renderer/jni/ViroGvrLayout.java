@@ -8,9 +8,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.AudioManager;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
 import android.os.Bundle;
@@ -26,8 +23,6 @@ import com.google.vr.ndk.base.GvrLayout;
 import com.viro.renderer.FrameListener;
 import com.viro.renderer.VideoSink;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -118,6 +113,8 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
         setPresentationView(glSurfaceView);
 
         // Enable scan line racing.
+        // According to Google, we should only set this to true when we're in stereo mode which is
+        // okay to do here because its the default. See https://github.com/googlevr/gvr-android-sdk/issues/316
         if(setAsyncReprojectionEnabled(true)) {
 
             // Scanline racing decouples the app framerate from the display framerate,
@@ -145,11 +142,17 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
 
     @Override
     public void setVrModeEnabled(boolean vrModeEnabled) {
-        // TODO: actually make it possible to change vrModeEnabled.
-        vrModeEnabled = true;
         // According to the GVR documentation, this only sets the activity to "VR mode" and is only
         // supported on Android Nougat and up.
         AndroidCompat.setVrModeEnabled((Activity)getContext(), vrModeEnabled);
+
+        // Note: GvrLayout.setStereoModeEnabled() is a hidden API.
+        setStereoModeEnabled(vrModeEnabled);
+        // Also set async reprojection because this is something that Google advised us to do.
+        // See https://github.com/googlevr/gvr-android-sdk/issues/316
+        if (setAsyncReprojectionEnabled(vrModeEnabled)) {
+            AndroidCompat.setSustainedPerformanceMode((Activity)getContext(), true);
+        }
 
         // Set the right screen orientation based on whether or not vrMode is enabled.
         ((Activity)getContext()).setRequestedOrientation(

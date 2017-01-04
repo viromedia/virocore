@@ -403,9 +403,10 @@ bool gvr_audio_preload_soundfile(gvr_audio_context* api, const char* filename);
 /// @param filename Name of the file, used as identifier.
 void gvr_audio_unload_soundfile(gvr_audio_context* api, const char* filename);
 
-/// Returns a new sound object. Note that the sample referred to needs to be
-/// preloaded and may only contain a single audio channel (mono).  The handle
-/// automatically destroys itself at the moment the sound playback has stopped.
+/// Returns a new sound object. Note that the sample should only contain a
+/// single audio channel (stereo sources are automatically downmixed to mono).
+/// The handle automatically destroys itself at the moment the sound playback
+/// has stopped.
 ///
 /// @param api Pointer to a gvr_audio_context.
 /// @param filename The path/name of the file to be played.

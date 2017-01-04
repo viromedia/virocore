@@ -368,17 +368,44 @@ void gvr_buffer_viewport_set_source_uv(gvr_buffer_viewport* viewport,
 
 /// Retrieves the field of view for the referenced buffer region.
 ///
+/// This is a helper that converts the stored projection matrix to a field of
+/// view. Note that if the previously set projection matrix cannot be expressed
+/// as a view frustum aligned with the eye's optical axis, the result will be
+/// incorrect.
+///
 /// @param viewport The buffer viewport.
 /// @return The field of view of the rendered image, in degrees.
 gvr_rectf gvr_buffer_viewport_get_source_fov(
     const gvr_buffer_viewport* viewport);
 
-/// Sets the field of view for the referenced buffer region.
+/// Sets the field of view for the viewport contents.
+///
+/// This is a helper that sets the projection matrix in such a way that the
+/// viewport's contents fill the specified FOV around the eye's optical axis.
 ///
 /// @param viewport The buffer viewport.
-/// @param fov The field of view to use when compositing the rendered image.
+/// @param fov The field of view to use when compositing the rendered image,
+///     in degrees.
 void gvr_buffer_viewport_set_source_fov(gvr_buffer_viewport* viewport,
                                         gvr_rectf fov);
+
+/// Gets the matrix that positions the viewport in eye space.
+///
+/// @param viewport The buffer viewport.
+/// @return Matrix that transforms a quad with vertices (-1, -1, 0), (1, -1, 0),
+///     (-1, 1, 0), (1, 1, 0) representing the viewport contents to its desired
+///     eye space position for the target eye.
+gvr_mat4f gvr_buffer_viewport_get_transform(
+    const gvr_buffer_viewport* viewport);
+
+/// Sets the matrix that positions the viewport in eye space.
+///
+/// @param viewport The buffer viewport.
+/// @param transform Matrix that transforms a quad with vertices (-1, -1, 0),
+///     (1, -1, 0), (-1, 1, 0), (1, 1, 0) representing the viewport contents to
+///     its desired eye space position for the target eye.
+void gvr_buffer_viewport_set_transform(gvr_buffer_viewport* viewport,
+                                       gvr_mat4f transform);
 
 /// Gets the target logical eye for the specified viewport.
 ///
@@ -404,10 +431,15 @@ int32_t gvr_buffer_viewport_get_source_buffer_index(
 
 /// Sets the buffer from which the viewport reads its undistorted pixels.
 ///
+/// To use the contents of the external surface as buffer contents, associate an
+/// external surface with the viewport by calling
+/// gvr_buffer_viewport_set_external_surface_id(), then call this function and
+/// pass GVR_BUFFER_INDEX_EXTERNAL_SURFACE.
+///
 /// @param viewport The buffer viewport.
-/// @param buffer_index The index of the source buffer. This corresponds to the
-///     index in the list of buffer specs that was passed to
-///     gvr_swap_chain_create().
+/// @param buffer_index The index of the source buffer. This is either an index
+///     in the list of buffer specs that was passed to
+///     gvr_swap_chain_create(), or GVR_BUFFER_INDEX_EXTERNAL_SURFACE.
 void gvr_buffer_viewport_set_source_buffer_index(
     gvr_buffer_viewport* viewport, int32_t buffer_index);
 
@@ -937,6 +969,16 @@ class BufferViewport {
   /// For more information, see gvr_buffer_viewport_set_source_fov().
   void SetSourceFov(const Rectf& fov) {
     gvr_buffer_viewport_set_source_fov(viewport_, fov);
+  }
+
+  /// For more information, see gvr_buffer_viewport_get_transform().
+  Mat4f GetTransform() const {
+    return gvr_buffer_viewport_get_transform(viewport_);
+  }
+
+  /// For more information, see gvr_buffer_viewport_set_transform().
+  void SetTransform(const Mat4f& transform) {
+    gvr_buffer_viewport_set_transform(viewport_, transform);
   }
 
   /// For more information, see gvr_buffer_viewport_get_source_uv().
