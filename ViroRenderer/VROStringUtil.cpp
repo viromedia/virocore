@@ -8,11 +8,22 @@
 
 #include "VROStringUtil.h"
 #include <sstream>
+#include <string>
+#include <cstdlib>
+#include "VRODefines.h"
 
 std::string VROStringUtil::toString(int i) {
     std::stringstream ss;
     ss << i;
     return ss.str();
+}
+
+int VROStringUtil::toInt(std::string s) {
+    return atoi(s.c_str());
+}
+
+float VROStringUtil::toFloat(std::string s) {
+    return atof(s.c_str());
 }
 
 std::vector<std::string> VROStringUtil::split(const std::string &s,

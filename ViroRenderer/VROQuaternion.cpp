@@ -383,7 +383,8 @@ float VROQuaternion::getAngle() const {
     }
 }
 
-void VROQuaternion::toEuler(VROVector3f& euler) const {
+VROVector3f VROQuaternion::toEuler() const {
+    VROVector3f euler;
     const double sqw = W*W;
     const double sqx = X*X;
     const double sqy = Y*Y;
@@ -415,6 +416,8 @@ void VROQuaternion::toEuler(VROVector3f& euler) const {
         // attitude = rotation about y-axis
         euler.y = (float) asin( clamp(test, -1.0, 1.0) );
     }
+    
+    return euler;
 }
 
 VROVector3f VROQuaternion::operator* (const VROVector3f& v) const {

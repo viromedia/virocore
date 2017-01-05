@@ -18,6 +18,8 @@ class VROStringUtil {
 public:
     
     static std::string toString(int i);
+    static int toInt(std::string s);
+    static float toFloat(std::string s);
     
     static std::vector<std::string> split(const std::string &s,
                                           const std::string &delimiters,
