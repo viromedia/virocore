@@ -3,3 +3,4 @@
 /ios/ViroRenderer.xcworkspace/xcuserdata/**
 /ios/Pods/Pods.xcodeproj/xcuserdata/**
 .DS_Store
+android/.idea/misc.xml
