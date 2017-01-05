@@ -325,7 +325,6 @@
 		A566EB301E1B129E008B4AE2 /* VROSceneController.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB251E1AF448008B4AE2 /* VROSceneController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB391E1B38A3008B4AE2 /* VROSceneDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB381E1B38A3008B4AE2 /* VROSceneDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB3D1E1B47B7008B4AE2 /* VROEventDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB3C1E1B47B7008B4AE2 /* VROEventDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A5B1FD351E1DC08200C54961 /* ViroKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC8D0A685CE2FA0BE80B7363 /* libPods-ViroSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF43BA975D626635F2D5584C /* libPods-ViroSample.a */; };
 /* End PBXBuildFile section */
 
@@ -387,16 +386,6 @@
 				8FD4DEE31C18ECD4003DC425 /* ViroKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A5B1FD341E1DC05C00C54961 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = Users/radvani/Source/ViroDemo;
-			dstSubfolderSpec = 7;
-			files = (
-				A5B1FD351E1DC08200C54961 /* ViroKit.framework in CopyFiles */,
-			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -1684,7 +1673,6 @@
 				8FD4DECB1C18ECD4003DC425 /* Resources */,
 				8F4AD8FF1D42BD220044B3F0 /* CopyFiles */,
 				C97786BFF2EA12734F1F7046 /* [CP] Copy Pods Resources */,
-				A5B1FD341E1DC05C00C54961 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1737,6 +1725,7 @@
 					};
 					8FD4DECC1C18ECD4003DC425 = {
 						CreatedOnToolsVersion = 7.1;
+						DevelopmentTeam = UN8MD7234Y;
 					};
 					8FD4DED51C18ECD4003DC425 = {
 						CreatedOnToolsVersion = 7.1;
@@ -2313,9 +2302,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6E1141125FCC9320616556D8 /* Pods-ViroKit.debug.xcconfig */;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = UN8MD7234Y;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2343,6 +2334,7 @@
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = UN8MD7234Y;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
