@@ -156,6 +156,14 @@ float VROMathNormalizeAnglePI(float rad) {
     }
 }
 
+VROVector3f VROMathNormalizeAngles2PI(VROVector3f vector) {
+    VROVector3f n;
+    n.x = VROMathNormalizeAngle2PI(vector.x);
+    n.y = VROMathNormalizeAngle2PI(vector.y);
+    n.z = VROMathNormalizeAngle2PI(vector.z);
+    return n;
+}
+
 float VROMathAngleDistance(float radA, float radB) {
     radA = VROMathNormalizeAngle2PI(radA);
     radB = VROMathNormalizeAngle2PI(radB);

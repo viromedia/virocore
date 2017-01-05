@@ -229,16 +229,16 @@ void VROAnimationGroup::animateRotation(std::shared_ptr<VRONode> &node) {
         return;
     }
     
-    VROVector3f rotation = node->getRotation().toEuler();
+    VROVector3f rotation = node->getRotationEuler();
     
     float rotateX = rotation.x;
     if (rotateX_it != _animations.end()) {
         std::shared_ptr<VROPropertyAnimation> &a = rotateX_it->second;
         if (a->isAdditive()) {
-            rotateX += a->getValue();
+            rotateX += toRadians(a->getValue());
         }
         else {
-            rotateX = a->getValue();
+            rotateX = toRadians(a->getValue());
         }
     }
     
@@ -246,10 +246,10 @@ void VROAnimationGroup::animateRotation(std::shared_ptr<VRONode> &node) {
     if (rotateY_it != _animations.end()) {
         std::shared_ptr<VROPropertyAnimation> &a = rotateY_it->second;
         if (a->isAdditive()) {
-            rotateY += a->getValue();
+            rotateY += toRadians(a->getValue());
         }
         else {
-            rotateY = a->getValue();
+            rotateY = toRadians(a->getValue());
         }
     }
     
@@ -257,15 +257,14 @@ void VROAnimationGroup::animateRotation(std::shared_ptr<VRONode> &node) {
     if (rotateZ_it != _animations.end()) {
         std::shared_ptr<VROPropertyAnimation> &a = rotateZ_it->second;
         if (a->isAdditive()) {
-            rotateZ += a->getValue();
+            rotateZ += toRadians(a->getValue());
         }
         else {
-            rotateZ = a->getValue();
+            rotateZ = toRadians(a->getValue());
         }
     }
     
-    // The embedded VROQuaternion constructor takes 3 Euler angles
-    node->setRotation({rotateX, rotateY, rotateZ});
+    node->setRotationEuler({rotateX, rotateY, rotateZ});
 }
 
 std::string VROAnimationGroup::toString() const {

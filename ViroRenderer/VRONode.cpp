@@ -31,6 +31,7 @@ static const float kHiddenOpacityThreshold = 0.02;
 VRONode::VRONode() :
     _scale({1.0, 1.0, 1.0}),
     _pivot({0.5f, 0.5f, 0.5f}),
+    _euler({0, 0, 0}),
     _renderingOrder(0),
     _hidden(false),
     _opacityFromHiddenFlag(1.0),
@@ -47,6 +48,7 @@ VRONode::VRONode(const VRONode &node) :
     _scale(node._scale),
     _position(node._position),
     _rotation(node._rotation),
+    _euler(node._euler),
     _pivot(node._pivot),
     _renderingOrder(node._renderingOrder),
     _hidden(node._hidden),
@@ -183,7 +185,15 @@ VROVector3f VRONode::getTransformedPosition() const {
 void VRONode::setRotation(VROQuaternion rotation) {
     animate(std::make_shared<VROAnimationQuaternion>([](VROAnimatable *const animatable, VROQuaternion r) {
                                                          ((VRONode *)animatable)->_rotation = r;
+                                                         ((VRONode *)animatable)->_euler = r.toEuler();
                                                      }, _rotation, rotation));
+}
+
+void VRONode::setRotationEuler(VROVector3f euler) {
+    animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f r) {
+                                                        ((VRONode *)animatable)->_euler = VROMathNormalizeAngles2PI(r);
+                                                        ((VRONode *)animatable)->_rotation = { r.x, r.y, r.z };
+                                                     }, _euler, euler));
 }
 
 void VRONode::setPosition(VROVector3f position) {
