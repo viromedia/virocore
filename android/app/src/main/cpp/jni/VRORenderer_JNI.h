@@ -10,17 +10,17 @@
 
 #include <jni.h>
 #include <memory>
-#include <VROSceneRendererCardboard.h>
+#include <VROSceneRenderer.h>
 #include "PersistentRef.h"
 
 namespace Renderer{
-    inline jlong jptr(std::shared_ptr<VROSceneRendererCardboard> native_renderer) {
-        PersistentRef<VROSceneRendererCardboard> *persistedRenderer = new PersistentRef<VROSceneRendererCardboard>(native_renderer);
+    inline jlong jptr(std::shared_ptr<VROSceneRenderer> native_renderer) {
+        PersistentRef<VROSceneRenderer> *persistedRenderer = new PersistentRef<VROSceneRenderer>(native_renderer);
         return reinterpret_cast<intptr_t>(persistedRenderer);
     }
 
-    inline std::shared_ptr<VROSceneRendererCardboard> native(jlong ptr) {
-        PersistentRef<VROSceneRendererCardboard> *persistedRenderer = reinterpret_cast<PersistentRef<VROSceneRendererCardboard> *>(ptr);
+    inline std::shared_ptr<VROSceneRenderer> native(jlong ptr) {
+        PersistentRef<VROSceneRenderer> *persistedRenderer = reinterpret_cast<PersistentRef<VROSceneRenderer> *>(ptr);
         return persistedRenderer->get();
     }
 }

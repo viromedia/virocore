@@ -13,28 +13,19 @@
 #include <GLES2/gl2.h>
 #include <jni.h>
 
-#include <memory>
 #include <string>
 #include <thread>  // NOLINT
 #include <vector>
+#include "VROSceneRenderer.h"
 #include "VRODriverOpenGLAndroid.h"
-#include "VRORenderer.h"
-#include "VROFrameSynchronizer.h"
-
-#include "VROEye.h"
-#include "VROTimingFunction.h"
 
 #include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "vr/gvr/capi/include/gvr_types.h"
-#include "VRORenderDelegate.h"
 
-class VROSceneController;
-class VRORenderer;
-class VRORenderDelegate;
+class VROSceneRendererCardboard : public VROSceneRenderer {
 
-class VROSceneRendererCardboard {
- public:
+public:
 
     /*
     Create a VROSceneRendererCardboard using a given |gvr_context|.
@@ -44,60 +35,16 @@ class VROSceneRendererCardboard {
      */
     VROSceneRendererCardboard(gvr_context* gvr_context,
                               std::shared_ptr<gvr::AudioApi> gvrAudio);
-    ~VROSceneRendererCardboard();
+    virtual ~VROSceneRendererCardboard();
 
     /*
-     GL initialization invoked from rendering thread.
+     Inherited from VROSceneRenderer.
      */
-     void initGL();
-
-    /*
-     Main render loop.
-     */
+    void initGL();
     void onDrawFrame();
-
-    /*
-     Event on trigger.
-     */
     void onTriggerEvent();
-
-    /*
-     Pause head tracking.
-     */
     void onPause();
-
-    /*
-     Resume head tracking, refreshing viewer parameters if necessary.
-     */
     void onResume();
-
-    /*
-     Set the render delegate, which responds to renderer initialization and
-     receives per-frame callbacks.
-     */
-    void setRenderDelegate(std::shared_ptr<VRORenderDelegate> delegate);
-
-    /*
-     Set the active scene controller, which dictates what scene is rendered.
-     */
-    void setSceneController(std::shared_ptr<VROSceneController> sceneController);
-    void setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated);
-    void setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
-                            VROTimingFunctionType timingFunction);
-
-    /**
-     Returns the contained renderer
-     */
-    std::shared_ptr<VRORenderer> getRenderer() {
-        return _renderer;
-    }
-
-    std::shared_ptr<VRODriver> getDriver() {
-        return _driver;
-    }
-    std::shared_ptr<VROFrameSynchronizer> getFrameSynchronizer() {
-        return _renderer->getFrameSynchronizer();
-    }
 
 private:
 
@@ -115,11 +62,6 @@ private:
                    VROMatrix4f eyeFromHeadMatrix,
                    VROViewport viewport,
                    VROFieldOfView fov);
-
-    int _frame;
-    std::shared_ptr<VRORenderer> _renderer;
-    std::shared_ptr<VRORenderDelegate> _renderDelegate;
-    std::shared_ptr<VRODriverOpenGLAndroid> _driver;
 
     std::unique_ptr<gvr::GvrApi> _gvr;
     std::shared_ptr<gvr::AudioApi> _gvrAudio;

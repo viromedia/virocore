@@ -15,7 +15,6 @@
 #include "VROFrameListener.h"
 
 class VROSceneController;
-class VROSceneRendererCardboard;
 class VROTexture;
 class VROVideoTextureAndroid;
 class VROVideoTextureAVP;

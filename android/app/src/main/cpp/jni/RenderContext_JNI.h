@@ -11,7 +11,7 @@
 #include <jni.h>
 #include <memory>
 #include <android/log.h>
-#include <VROSceneRendererCardboard.h>
+#include <VROSceneRenderer.h>
 #include "VROImageAndroid.h"
 #include "PersistentRef.h"
 
@@ -20,7 +20,7 @@
  */
 class RenderContext {
     public:
-    RenderContext(std::shared_ptr<VROSceneRendererCardboard> renderer) {
+    RenderContext(std::shared_ptr<VROSceneRenderer> renderer) {
         _renderer = renderer;
     }
     ~RenderContext(){}
@@ -43,7 +43,7 @@ class RenderContext {
     }
 
     private:
-    std::shared_ptr<VROSceneRendererCardboard>_renderer;
+    std::shared_ptr<VROSceneRenderer>_renderer;
 };
 
 #endif

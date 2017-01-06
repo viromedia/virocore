@@ -28,34 +28,15 @@ static const uint64_t kPredictionTimeWithoutVsyncNanos = 50000000;
 
 VROSceneRendererCardboard::VROSceneRendererCardboard(gvr_context* gvr_context,
                                                      std::shared_ptr<gvr::AudioApi> gvrAudio) :
-    _frame(0),
     _gvr(gvr::GvrApi::WrapNonOwned(gvr_context)),
     _gvrAudio(gvrAudio),
     _scratchViewport(_gvr->CreateBufferViewport()) {
 
-    _renderer = std::make_shared<VRORenderer>();
     _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
 }
 
 VROSceneRendererCardboard::~VROSceneRendererCardboard() {
 
-}
-
-void VROSceneRendererCardboard::setRenderDelegate(std::shared_ptr<VRORenderDelegate> delegate) {
-    _renderer->setDelegate(delegate);
-}
-
-void VROSceneRendererCardboard::setSceneController(std::shared_ptr<VROSceneController> sceneController) {
-    _renderer->setSceneController(sceneController, *_driver.get());
-}
-
-void VROSceneRendererCardboard::setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated) {
-    _renderer->setSceneController(sceneController, animated, *_driver.get());
-}
-
-void VROSceneRendererCardboard::setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
-                        VROTimingFunctionType timingFunction) {
-    _renderer->setSceneController(sceneController, seconds, timingFunction, *_driver.get());
 }
 
 #pragma mark - Rendering

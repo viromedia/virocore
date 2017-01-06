@@ -40,7 +40,7 @@ JNI_METHOD(jlong, nativeCreateRenderer)(JNIEnv *env, jclass clazz,
     VROPlatformSetEnv(env, gvr_layout, asset_mgr, platform_util);
 
     gvr_context *gvrContext = reinterpret_cast<gvr_context *>(native_gvr_api);
-    std::shared_ptr<VROSceneRendererCardboard> renderer
+    std::shared_ptr<VROSceneRenderer> renderer
             = std::make_shared<VROSceneRendererCardboard>(gvrContext, gvrAudio);
     return Renderer::jptr(renderer);
 }
@@ -49,7 +49,7 @@ JNI_METHOD(void, nativeDestroyRenderer)(JNIEnv *env,
                                         jclass clazz,
                                         jlong native_renderer) {
     VROPlatformReleaseEnv();
-    delete reinterpret_cast<PersistentRef<VROSceneRendererCardboard> *>(native_renderer);
+    delete reinterpret_cast<PersistentRef<VROSceneRenderer> *>(native_renderer);
 }
 
 JNI_METHOD(void, nativeInitializeGl)(JNIEnv *env,
