@@ -124,15 +124,15 @@ JNI_METHOD(void, nativeSetLightingModel)(JNIEnv *env, jobject obj,
     const char *cStrName = env->GetStringUTFChars(lightingModelName, NULL);
     std::string strName(cStrName);
 
-    if (VROStringUtil::strcmpinsensitive(strName, "Constant")) {
-        Material::native(nativeRef).get()->setLightingModel(VROLightingModel::Constant);
+    if (VROStringUtil::strcmpinsensitive(strName, "Blinn")) {
+        Material::native(nativeRef).get()->setLightingModel(VROLightingModel::Blinn);
     } else if (VROStringUtil::strcmpinsensitive(strName, "Lambert")) {
         Material::native(nativeRef).get()->setLightingModel(VROLightingModel::Lambert);
     } else if (VROStringUtil::strcmpinsensitive(strName, "Phong")) {
         Material::native(nativeRef).get()->setLightingModel(VROLightingModel::Phong);
     } else {
-        // Default lightingModel is Blinn, so no use checking.
-        Material::native(nativeRef).get()->setLightingModel(VROLightingModel::Blinn);
+        // Default lightingModel is Constant, so no use checking.
+        Material::native(nativeRef).get()->setLightingModel(VROLightingModel::Constant);
     }
 
     env->ReleaseStringUTFChars(lightingModelName, cStrName);

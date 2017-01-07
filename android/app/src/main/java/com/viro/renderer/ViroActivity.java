@@ -9,6 +9,7 @@
 package com.viro.renderer;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,19 +54,32 @@ public class ViroActivity extends AppCompatActivity {
         List<NodeJni> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
         //nodes = testSphereVideo(this);
-        //nodes = testBox(this);
+        nodes = testBox(this);
         //nodes = testImageSurface(this);
 
         //testBackgroundVideo(scene);
         //testBackgroundImage(scene);
-        //testSkyBoxImage(scene);
+        testSkyBoxImage(scene);
 
         for (NodeJni node: nodes) {
             rootNode.addChildNode(node);
         }
 
+        testSceneLighting(scene, rootNode);
+
         // Updating the scene.
         mVrView.setScene(scene);
+    }
+
+    private void testSceneLighting(SceneJni scene, NodeJni node) {
+        float[] lightDirection = {0, 0, -1};
+        scene.addDirectionalLight(node, Color.BLUE, lightDirection);
+        scene.addAmbientLight(node, Color.BLACK);
+        float[] omniLightPosition = {1,0,0};
+        scene.addOmniLight(node, Color.RED, 1, 10, omniLightPosition);
+
+        float[] spotLightPosition = {-2, 0, 3};
+        scene.addSpotLight(node, Color.YELLOW, 1, 10, spotLightPosition, lightDirection, 2, 10);
     }
 
     private List<NodeJni> testSurfaceVideo(Context context) {
@@ -148,12 +162,15 @@ public class ViroActivity extends AppCompatActivity {
     private List<NodeJni> testBox(Context context) {
         NodeJni node1 = new NodeJni(context);
         NodeJni node2 = new NodeJni(context);
+
         // Create a new material with a diffuseTexture set to the image "boba.png"
         ImageJni bobaImage = new ImageJni("boba.png");
 
         TextureJni bobaTexture = new TextureJni(bobaImage);
         MaterialJni material = new MaterialJni();
-        material.setTexture(bobaTexture, "diffuseTexture");
+//        material.setTexture(bobaTexture, "diffuseTexture");
+        material.setColor(Color.WHITE, "whiteColor");
+        material.setLightingModel("Blinn");
 
         EventDelegateJni delegateJni = new EventDelegateJni();
         delegateJni.setEventEnabled(EventDelegateJni.EventType.ON_GAZE, true);
@@ -203,6 +220,7 @@ public class ViroActivity extends AppCompatActivity {
         node2.setPosition(boxPosition2);
         node2.setMaterials(Arrays.asList(material));
         node2.setEventDelegateJni(delegateJni2);
+
         return Arrays.asList(node1, node2);
     }
 
