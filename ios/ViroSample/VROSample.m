@@ -9,9 +9,9 @@
 #import "VROSample.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneOBJ = 0,
+    VROSampleSceneText = 0,
     VROSampleSceneTorus,
-    VROSampleSceneText,
+    VROSampleSceneOBJ,
     VROSampleSceneBox,
     VROSampleSceneVideoSphere,
     VROSampleSceneNumScenes
@@ -58,9 +58,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return std::make_shared<VROTexture>(cubeImages);
 }
 
-- (VROSceneController *)loadVideoSphereScene {
-    VROSceneController *sceneController = [[VROSceneController alloc] init];
-    std::shared_ptr<VROScene> scene = sceneController.scene;
+- (std::shared_ptr<VROSceneController>)loadVideoSphereScene {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.9, 0.9 });
@@ -106,9 +106,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return torusNode;
 }
 
-- (VROSceneController *)loadTorusScene {
-    VROSceneController *sceneController = [[VROSceneController alloc] init];
-    std::shared_ptr<VROScene> scene = sceneController.scene;
+- (std::shared_ptr<VROSceneController>)loadTorusScene {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundCube([self cloudTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
@@ -162,7 +162,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->runAction(action);
     self.tapEnabled = true;
     
-    [sceneController setHoverEnabled:true boundsOnly:true];
     return sceneController;
 }
 
@@ -186,10 +185,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROTransaction::commit();
 }
 
-- (VROSceneController *)loadBoxScene {
-    VROSceneController *sceneController = [[VROSceneController alloc] init];
+- (std::shared_ptr<VROSceneController>)loadBoxScene {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
 
-    std::shared_ptr<VROScene> scene = sceneController.scene;
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundCube([self niagaraTexture]);
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
@@ -306,10 +305,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return sceneController;
 }
 
-- (VROSceneController *)loadTextScene {
-    VROSceneController *sceneController = [[VROSceneController alloc] init];
+- (std::shared_ptr<VROSceneController>)loadTextScene {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
 
-    std::shared_ptr<VROScene> scene = sceneController.scene;
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundCube([self cloudTexture]);
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
@@ -324,7 +323,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     int height = 10;
     
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height);
-    surface->getMaterials().front()->getDiffuse().setColor({0.0, 0.0, 1.0, 1.0});
+    surface->getMaterials().front()->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
     
     std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
     surfaceNode->setGeometry(surface);
@@ -346,7 +345,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROVector3f size = VROText::getTextSize(string, typeface, width, height, linebreakMode, clipMode);
     NSLog(@"Estimated size %f, %f", size.x, size.y);
     
-    std::shared_ptr<VROText> text = VROText::createText(string, typeface, width, height,
+    std::shared_ptr<VROText> text = VROText::createText(string, typeface, {1.0, 0.0, 0.0, 1.0}, width, height,
                                                         VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Top,
                                                         linebreakMode, clipMode);
     
@@ -365,9 +364,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return sceneController;
 }
 
-- (VROSceneController *)loadOBJScene {
-    VROSceneController *sceneController = [[VROSceneController alloc] init];
-    std::shared_ptr<VROScene> scene = sceneController.scene;
+- (std::shared_ptr<VROSceneController>)loadOBJScene {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundCube([self niagaraTexture]);
     
     NSString *objPath = [[NSBundle mainBundle] pathForResource:@"male02" ofType:@"obj"];
@@ -418,7 +417,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return sceneController;
 }
 
-- (VROSceneController *)loadSceneWithIndex:(int)index {
+- (std::shared_ptr<VROSceneController>)loadSceneWithIndex:(int)index {
     int modulo = index % VROSampleSceneNumScenes;
     
     switch (modulo) {
@@ -447,7 +446,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (IBAction)nextScene:(id)sender {
     ++self.sceneIndex;
     
-    VROSceneController *sceneController = [self loadSceneWithIndex:self.sceneIndex];
+    std::shared_ptr<VROSceneController> sceneController = [self loadSceneWithIndex:self.sceneIndex];
     [self.view setSceneController:sceneController animated:YES];
 }
 
@@ -478,42 +477,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         }
         
         return;
-    }
-    
-    if (!self.tapEnabled) {
-        return;
-    }
-    
-    std::vector<VROHitTestResult> results = self.view.sceneController.scene->hitTest(ray, *renderContext);
-    
-    for (VROHitTestResult result : results) {
-        std::shared_ptr<VRONode> node = result.getNode();
-        std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
-        
-        #define ARC4RANDOM_MAX      0x100000000
-        float r = ((double)arc4random() / ARC4RANDOM_MAX);
-        float g = ((double)arc4random() / ARC4RANDOM_MAX);
-        float b = ((double)arc4random() / ARC4RANDOM_MAX);
-        
-        VROTransaction::begin();
-        VROTransaction::setAnimationDuration(1.0);
-        VROTransaction::setTimingFunction(VROTimingFunctionType::EaseIn);
-        material->getDiffuse().setColor( {r, g, b, 1.0 } );
-        VROTransaction::commit();
-        
-        std::shared_ptr<VROAction> action = VROAction::timedAction([](VRONode *const node, float t) {
-            float scale = 1.0;
-            
-            if (t < 0.5) {
-                scale = 1.0 - t;
-            }
-            else {
-                scale = t;
-            }
-            
-            node->setScale({scale, scale, scale});
-        }, VROTimingFunctionType::Bounce, 1.0);
-        node->runAction(action);
     }
 }
 

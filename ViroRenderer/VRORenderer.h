@@ -71,11 +71,9 @@ public:
     std::shared_ptr<VROFrameSynchronizer> getFrameSynchronizer() {
         return _frameSynchronizer;
     }
-
-     std::shared_ptr<VROEventManager> getEventManager(){
+    std::shared_ptr<VROEventManager> getEventManager(){
         return _eventManager;
-     }
-
+    }
     std::shared_ptr<VROReticle> getReticle() {
         return _reticle;
     }

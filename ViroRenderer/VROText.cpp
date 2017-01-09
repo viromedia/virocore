@@ -25,7 +25,8 @@ static const std::string kWhitespaceDelimeters = " \t\v\r";
 static const int kJustificationToleranceStart = 2;
 static const int kJustificationToleranceEnd = 4;
 
-std::shared_ptr<VROText> VROText::createText(std::string text, std::shared_ptr<VROTypeface> typeface, float width, float height,
+std::shared_ptr<VROText> VROText::createText(std::string text, std::shared_ptr<VROTypeface> typeface, VROVector4f color,
+                                             float width, float height,
                                              VROTextHorizontalAlignment horizontalAlignment, VROTextVerticalAlignment verticalAlignment,
                                              VROLineBreakMode lineBreakMode, VROTextClipMode clipMode, int maxLines) {
     
@@ -34,7 +35,7 @@ std::shared_ptr<VROText> VROText::createText(std::string text, std::shared_ptr<V
     std::vector<std::shared_ptr<VROMaterial>> materials;
     
     float realizedWidth, realizedHeight;
-    buildText(text, typeface, width, height, horizontalAlignment, verticalAlignment,
+    buildText(text, typeface, color, width, height, horizontalAlignment, verticalAlignment,
               lineBreakMode, clipMode, maxLines, sources, elements, materials,
               &realizedWidth, &realizedHeight);
     
@@ -44,14 +45,14 @@ std::shared_ptr<VROText> VROText::createText(std::string text, std::shared_ptr<V
     return model;
 }
 
-std::shared_ptr<VROText> VROText::createSingleLineText(std::string text, std::shared_ptr<VROTypeface> typeface, float width,
-                                                       VROTextHorizontalAlignment alignment, VROTextClipMode clipMode) {
-    return createText(text, typeface, width, std::numeric_limits<float>::max(), alignment, VROTextVerticalAlignment::Center,
+std::shared_ptr<VROText> VROText::createSingleLineText(std::string text, std::shared_ptr<VROTypeface> typeface, VROVector4f color,
+                                                       float width, VROTextHorizontalAlignment alignment, VROTextClipMode clipMode) {
+    return createText(text, typeface, color, width, std::numeric_limits<float>::max(), alignment, VROTextVerticalAlignment::Center,
                       VROLineBreakMode::None, clipMode);
 }
 
-std::shared_ptr<VROText> VROText::createSingleLineText(std::string text, std::shared_ptr<VROTypeface> typeface) {
-    return createSingleLineText(text, typeface, std::numeric_limits<float>::max(), VROTextHorizontalAlignment::Center,
+std::shared_ptr<VROText> VROText::createSingleLineText(std::string text, std::shared_ptr<VROTypeface> typeface, VROVector4f color) {
+    return createSingleLineText(text, typeface, color, std::numeric_limits<float>::max(), VROTextHorizontalAlignment::Center,
                                 VROTextClipMode::None);
 }
 
@@ -112,6 +113,7 @@ VROVector3f VROText::getTextSize(std::string text, std::shared_ptr<VROTypeface> 
 
 void VROText::buildText(std::string &text,
                         std::shared_ptr<VROTypeface> &typeface,
+                        VROVector4f color,
                         float width,
                         float height,
                         VROTextHorizontalAlignment horizontalAlignment,
@@ -141,7 +143,7 @@ void VROText::buildText(std::string &text,
             std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
             material->setWritesToDepthBuffer(true);
             material->setReadsFromDepthBuffer(true);
-            material->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
+            material->getDiffuse().setColor(color);
             material->getDiffuse().setTexture(glyph->getTexture());
             
             char name[2] = { (char)charCode, 0 };
