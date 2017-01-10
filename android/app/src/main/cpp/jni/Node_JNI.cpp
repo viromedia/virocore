@@ -88,8 +88,8 @@ JNI_METHOD(void, nativeSetOpacity)(JNIEnv *env,
 JNI_METHOD(void, nativeSetVisible)(JNIEnv *env,
                                    jobject obj,
                                    jlong native_node_ref,
-                                   jfloat opacity) {
-    Node::native(native_node_ref)->setOpacity(opacity);
+                                   jboolean visible) {
+    Node::native(native_node_ref)->setHidden(!visible);
 }
 
 JNI_METHOD(void, nativeSetMaterials)(JNIEnv *env,
@@ -142,9 +142,21 @@ JNI_METHOD(void, nativeSetTransformBehaviors)(JNIEnv *env,
 
 JNI_METHOD(void, nativeSetEventDelegate)(JNIEnv *env,
                                      jobject obj,
-                                     jlong native_node_ref,
-                                     jlong native_delegate_ref) {
-    Node::native(native_node_ref)->setEventDelegate(EventDelegate::native(native_delegate_ref));
+                                     jlong nativeRef,
+                                     jlong delegateRef) {
+    Node::native(nativeRef)->setEventDelegate(EventDelegate::native(delegateRef));
+}
+
+JNI_METHOD(bool, nativeContainsChild)(JNIEnv *env, jobject obj,
+                                      jlong nativeRef, jlong candidateRef) {
+    std::shared_ptr<VRONode> node = Node::native(nativeRef);
+    std::shared_ptr<VRONode> candidate = Node::native(candidateRef);
+    for (std::shared_ptr<VRONode> subnode: node->getSubnodes()) {
+        if (subnode.get() == candidate.get()) {
+            return true;
+        }
+    }
+    return false;
 }
 
 }  // extern "C"

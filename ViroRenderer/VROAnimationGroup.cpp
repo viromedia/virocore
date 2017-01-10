@@ -64,7 +64,7 @@ void VROAnimationGroup::execute(std::shared_ptr<VRONode> node,
     animateOpacity(node);
     animateScale(node);
     animateRotation(node);
-    
+
     VROTransaction::setFinishCallback([this, onFinished]{
         _transaction.reset();
         onFinished();

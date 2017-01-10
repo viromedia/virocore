@@ -14,7 +14,6 @@
 #include "PersistentRef.h"
 #include "VROFrameSynchronizer.h"
 #include "VRORenderer_JNI.h"
-#include "Node_JNI.h"
 #include "RenderContext_JNI.h"
 #include "VideoTexture_JNI.h"
 #include "VideoDelegate_JNI.h"

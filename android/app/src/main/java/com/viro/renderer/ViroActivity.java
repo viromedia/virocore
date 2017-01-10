@@ -60,6 +60,7 @@ public class ViroActivity extends AppCompatActivity {
         //testBackgroundVideo(scene);
         //testBackgroundImage(scene);
         testSkyBoxImage(scene);
+        //testSkyBoxImage(scene);
 
         for (NodeJni node: nodes) {
             rootNode.addChildNode(node);

@@ -87,6 +87,10 @@ void VROAnimationChain::terminate() {
     }
 }
 
+void VROAnimationChain::addAnimation(std::shared_ptr<VROExecutableAnimation> animation) {
+    _animations.push_back(animation);
+}
+
 std::string VROAnimationChain::toString() const {
     std::stringstream ss;
     if (_execution == VROAnimationChainExecution::Serial) {

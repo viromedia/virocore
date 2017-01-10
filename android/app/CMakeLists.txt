@@ -55,6 +55,9 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/VideoDelegate_JNI.cpp
              src/main/cpp/jni/RenderContext_JNI.cpp
              src/main/cpp/jni/EventDelegate_JNI.cpp
+             src/main/cpp/jni/AnimationChain_JNI.cpp
+             src/main/cpp/jni/AnimationGroup_JNI.cpp
+
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp
@@ -110,6 +113,9 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROTransaction.cpp
              ../../ViroRenderer/VROAnimatable.cpp
              ../../ViroRenderer/VROAction.cpp
+             ../../ViroRenderer/VROAnimationChain.cpp
+             ../../ViroRenderer/VROAnimationGroup.cpp
+             ../../ViroRenderer/VROPropertyAnimation.cpp
 
              # Shapes
              ../../ViroRenderer/VROBox.cpp

@@ -98,6 +98,10 @@ public class NodeJni {
         nativeSetTransformBehaviors(mNativeRef, transformBehaviors);
     }
 
+    public boolean containsChild(NodeJni nodeJni) {
+        return nativeContainsChild(mNativeRef, nodeJni.mNativeRef);
+    }
+
     private native long nativeCreateNode();
     private native void nativeDestroyNode(long nodeReference);
     private native void nativeAddChildNode(long nodeReference, long childNodeReference);
@@ -109,5 +113,6 @@ public class NodeJni {
     private native void nativeSetVisible(long nodeReference, boolean visible);
     private native void nativeSetMaterials(long nodeReference, long[] materials);
     private native void nativeSetTransformBehaviors(long nodeReference, String[] transformBehaviors);
-    private native void nativeSetEventDelegate(long nodeReference, long evenDelegateRef);
+    private native void nativeSetEventDelegate(long nodeReference, long eventDelegateRef);
+    private native boolean nativeContainsChild(long nodeReference, long candidateReference);
 }
