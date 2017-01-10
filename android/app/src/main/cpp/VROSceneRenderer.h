@@ -44,14 +44,19 @@ public:
     virtual void onTriggerEvent() = 0;
 
     /*
-     Pause head tracking.
+     Activity lifecycle.
      */
+    virtual void onStart() = 0;
+    virtual void onResume() = 0;
     virtual void onPause() = 0;
+    virtual void onStop() = 0;
 
     /*
-     Resume head tracking, refreshing viewer parameters if necessary.
+     Surface lifecycle.
      */
-    virtual void onResume() = 0;
+    virtual void onSurfaceCreated(jobject surface) = 0;
+    virtual void onSurfaceChanged(jobject surface) = 0;
+    virtual void onSurfaceDestroyed() = 0;
 
     /*
      Set the render delegate, which responds to renderer initialization and

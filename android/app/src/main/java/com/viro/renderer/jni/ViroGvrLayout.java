@@ -13,7 +13,6 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -22,13 +21,9 @@ import com.google.vr.ndk.base.GvrApi;
 import com.google.vr.ndk.base.GvrLayout;
 import com.viro.renderer.FrameListener;
 import com.viro.renderer.GLSurfaceViewQueue;
-import com.viro.renderer.RenderCommandQueue;
-import com.viro.renderer.VideoSink;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -58,7 +53,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
         final Context activityContext = getContext();
 
         // Initialize the native renderer.
-        GLSurfaceView glSurfaceView = new GLSurfaceView(activityContext.getApplicationContext());
+        final GLSurfaceView glSurfaceView = new GLSurfaceView(activityContext.getApplicationContext());
 
         mAssetManager = getResources().getAssets();
         mPlatformUtil = new PlatformUtil(
@@ -79,6 +74,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
         glSurfaceView.setPreserveEGLContextOnPause(true);
         glSurfaceView.setRenderer(new Renderer() {
             public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+                mNativeRenderer.onSurfaceCreated(glSurfaceView.getHolder().getSurface());
                 mNativeRenderer.initalizeGl();
             }
 
@@ -92,6 +88,8 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
                 if (gvr != null){
                     gvr.refreshDisplayMetrics();
                 }
+
+                mNativeRenderer.onSurfaceChanged(glSurfaceView.getHolder().getSurface());
             }
 
             @Override
@@ -236,12 +234,12 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
 
     @Override
     public void onActivityStarted(Activity activity) {
-        //No-op
+        mNativeRenderer.onStart();
     }
 
     @Override
     public void onActivityStopped(Activity activity) {
-        //No-op
+        mNativeRenderer.onStop();
     }
 
     @Override

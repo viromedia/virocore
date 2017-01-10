@@ -43,8 +43,21 @@ public:
     void initGL();
     void onDrawFrame();
     void onTriggerEvent();
+
+    /*
+     Activity lifecycle.
+     */
+    void onStart() {}
     void onPause();
     void onResume();
+    void onStop() {}
+
+    /*
+     Surface lifecycle.
+     */
+    void onSurfaceCreated(jobject surface) {}
+    void onSurfaceChanged(jobject surface) {}
+    void onSurfaceDestroyed() {}
 
 private:
 
