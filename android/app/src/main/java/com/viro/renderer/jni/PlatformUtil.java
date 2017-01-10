@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Surface;
 
 import com.viro.renderer.FrameListener;
+import com.viro.renderer.RenderCommandQueue;
 import com.viro.renderer.VideoSink;
 
 import java.io.File;
@@ -35,13 +36,17 @@ import java.util.Map;
 public class PlatformUtil {
 
     private Context mContext;
-    private GLSurfaceView mSurfaceView;
+    private RenderCommandQueue mRenderQueue;
     private AssetManager mAssetManager;
+    private List<FrameListener> mFrameListeners;
+    private Map<Integer, VideoSink> mVideoSinks = new HashMap();
 
-    public PlatformUtil(GLSurfaceView view, Context context, AssetManager assetManager) {
+    public PlatformUtil(RenderCommandQueue queue, List<FrameListener> frameListeners,
+                        Context context, AssetManager assetManager) {
         mContext = context;
+        mFrameListeners = frameListeners;
         mAssetManager = assetManager;
-        mSurfaceView = view;
+        mRenderQueue = queue;
     }
 
     // Accessed by Native code (VROPlatformUtil.cpp)
@@ -74,6 +79,23 @@ public class PlatformUtil {
         }
 
         return bitmap;
+    }
+
+    // Accessed by Native code (VROPlatformUtil.cpp)
+    public Surface createVideoSink(int textureId) {
+        VideoSink videoSink = new VideoSink(textureId);
+        mVideoSinks.put(textureId, videoSink);
+        mFrameListeners.add(videoSink);
+
+        return videoSink.getSurface();
+    }
+
+    // Accessed by Native code (VROPlatformUtil.cpp)
+    public void destroyVideoSink(int textureId) {
+        VideoSink videoSink = mVideoSinks.remove(textureId);
+        mFrameListeners.remove(videoSink);
+
+        videoSink.releaseSurface();
     }
 
     // Accessed by Native code (VROPlatformUtil.cpp)
@@ -171,7 +193,7 @@ public class PlatformUtil {
             });
         }
         else {
-            mSurfaceView.queueEvent(new Runnable() {
+            mRenderQueue.queueEvent(new Runnable() {
                 @Override
                 public void run() {
                     runTask(taskId);

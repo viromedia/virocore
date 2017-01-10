@@ -21,6 +21,8 @@ import com.google.vr.ndk.base.AndroidCompat;
 import com.google.vr.ndk.base.GvrApi;
 import com.google.vr.ndk.base.GvrLayout;
 import com.viro.renderer.FrameListener;
+import com.viro.renderer.GLSurfaceViewQueue;
+import com.viro.renderer.RenderCommandQueue;
 import com.viro.renderer.VideoSink;
 
 import java.util.ArrayList;
@@ -47,7 +49,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
     private final RenderContextJni mNativeRenderContext;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
-    private Map<Integer, VideoSink> mVideoSinks = new HashMap();
 
     private PlatformUtil mPlatformUtil;
 
@@ -60,10 +61,13 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
         GLSurfaceView glSurfaceView = new GLSurfaceView(activityContext.getApplicationContext());
 
         mAssetManager = getResources().getAssets();
-        mPlatformUtil = new PlatformUtil(glSurfaceView, activityContext, mAssetManager);
+        mPlatformUtil = new PlatformUtil(
+                new GLSurfaceViewQueue(glSurfaceView),
+                mFrameListeners,
+                activityContext,
+                mAssetManager);
         mNativeRenderer = new RendererJni(
                 getClass().getClassLoader(),
-                this,
                 activityContext.getApplicationContext(),
                 mAssetManager, mPlatformUtil,
                 getGvrApi().getNativeGvrContext());
@@ -165,6 +169,9 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
     }
 
     @Override
+    public View getContentView() { return this; }
+
+    @Override
     public void onActivityPaused(Activity activity) {
         mNativeRenderer.onPause();
         super.onPause();
@@ -220,23 +227,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
                                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-    }
-
-    // Accessed by Native code (VROPlatformUtil.cpp)
-    public Surface createVideoSink(int textureId) {
-        VideoSink videoSink = new VideoSink(textureId);
-        mVideoSinks.put(textureId, videoSink);
-        mFrameListeners.add(videoSink);
-
-        return videoSink.getSurface();
-    }
-
-    // Accessed by Native code (VROPlatformUtil.cpp)
-    public void destroyVideoSink(int textureId) {
-        VideoSink videoSink = mVideoSinks.remove(textureId);
-        mFrameListeners.remove(videoSink);
-
-        videoSink.releaseSurface();
     }
 
     @Override

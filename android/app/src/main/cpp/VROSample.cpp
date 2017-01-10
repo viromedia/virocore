@@ -11,7 +11,6 @@
 #include "VRODriverOpenGLAndroid.h"
 #include "VROImageAndroid.h"
 #include "VROSceneRendererCardboard.h"
-#include "VROVideoTextureAndroid.h"
 #include "VROVideoTextureAVP.h"
 #include "VROText.h"
 #include "VROPlatformUtil.h"
@@ -110,8 +109,10 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     std::shared_ptr<VROBox> box = VROBox::createBox(2, 4, 2);
     box->setName("Box 1");
 
+    std::string videoPath = VROPlatformCopyAssetToFile("vest.mp4");
+
     _videoA = std::make_shared<VROVideoTextureAVP>();
-    _videoA->loadVideoFromAsset("vest.mp4", driver);
+    _videoA->loadVideoFromURL(videoPath, driver);
     _videoA->setLoop(true);
     //_videoA->play();
 
@@ -119,11 +120,11 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     _material->setLightingModel(VROLightingModel::Lambert);
     _material->getDiffuse().setTexture(_videoA);
     //_material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("boba.png")));
-    _material->getSpecular().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("specular.png")));
+    //_material->getSpecular().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("specular.png")));
 
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
-    boxNode->setPosition({0, 0, -15});
+    boxNode->setPosition({0, 0, -5});
 
     rootNode->addChildNode(boxNode);
 

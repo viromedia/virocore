@@ -27,15 +27,17 @@ public:
     virtual ~VROVideoTextureAVP();
 
     /*
-     Standard load video function: loads from URL.
+     Standard load video function: loads from URL. Frame synchronizer is not
+     required (inherited argument from superclass).
      */
     virtual void loadVideo(std::string url,
                            std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                            VRODriver &driver);
 
     /*
-     Load from an asset with the given name.
+     Load from a file at the given URL or an asset with the given name.
      */
+    void loadVideoFromURL(std::string url, VRODriver &driver);
     void loadVideoFromAsset(std::string asset, VRODriver &driver);
 
     void prewarm();

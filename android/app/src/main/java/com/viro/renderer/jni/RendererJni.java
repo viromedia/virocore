@@ -15,9 +15,9 @@ import android.content.res.AssetManager;
 public class RendererJni {
     protected long mNativeRef;
 
-    public RendererJni(ClassLoader appClassLoader, VrView view, Context context,
+    public RendererJni(ClassLoader appClassLoader, Context context,
                        AssetManager assets, PlatformUtil platformUtil, long nativeGvrContext) {
-        mNativeRef = nativeCreateRenderer(appClassLoader, view, context, assets, platformUtil, nativeGvrContext);
+        mNativeRef = nativeCreateRenderer(appClassLoader, context, assets, platformUtil, nativeGvrContext);
     }
 
     public void destroy() {
@@ -64,7 +64,7 @@ public class RendererJni {
         nativeSetOrbitCameraFocalPoint(mNativeRef, position[0], position[1], position[2]);
     }
 
-    private native long nativeCreateRenderer(ClassLoader appClassLoader, VrView view, Context context,
+    private native long nativeCreateRenderer(ClassLoader appClassLoader, Context context,
                                              AssetManager assets, PlatformUtil platformUtil, long nativeGvrContext);
     private native void nativeDestroyRenderer(long nativeRenderer);
     private native void nativeInitializeGl(long nativeRenderer);

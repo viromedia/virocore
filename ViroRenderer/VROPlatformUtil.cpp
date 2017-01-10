@@ -123,7 +123,6 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
 // JNIEnv objects, as those are thread-local. Access the JNIEnv object via getJNIEnv().
 // There is one JavaVM per application on Android (shared across activities).
 static JavaVM *sVM = nullptr;
-static jobject sActivity = nullptr;
 static jobject sJavaAssetMgr = nullptr;
 static jobject sPlatformUtil = nullptr;
 static AAssetManager *sAssetMgr = nullptr;
@@ -144,9 +143,8 @@ void getJNIEnv(JNIEnv **jenv) {
     }
 }
 
-void VROPlatformSetEnv(JNIEnv *env, jobject activity, jobject assetManager, jobject platformUtil) {
+void VROPlatformSetEnv(JNIEnv *env, jobject assetManager, jobject platformUtil) {
     env->GetJavaVM(&sVM);
-    sActivity = env->NewGlobalRef(activity);
     sJavaAssetMgr = env->NewGlobalRef(assetManager);
     sPlatformUtil = env->NewGlobalRef(platformUtil);
     sAssetMgr = AAssetManager_fromJava(env, assetManager);
@@ -175,11 +173,9 @@ void VROPlatformReleaseEnv() {
     JNIEnv *env;
     getJNIEnv(&env);
 
-    env->DeleteGlobalRef(sActivity);
     env->DeleteGlobalRef(sJavaAssetMgr);
     env->DeleteGlobalRef(sPlatformUtil);
 
-    sActivity = nullptr;
     sJavaAssetMgr = nullptr;
     sAssetMgr = nullptr;
 }
@@ -328,9 +324,9 @@ jobject VROPlatformCreateVideoSink(int textureId) {
     JNIEnv *env;
     getJNIEnv(&env);
 
-    jclass cls = env->GetObjectClass(sActivity);
+    jclass cls = env->GetObjectClass(sPlatformUtil);
     jmethodID jmethod = env->GetMethodID(cls, "createVideoSink", "(I)Landroid/view/Surface;");
-    jobject jsurface = env->CallObjectMethod(sActivity, jmethod, textureId);
+    jobject jsurface = env->CallObjectMethod(sPlatformUtil, jmethod, textureId);
 
     env->DeleteLocalRef(cls);
     return jsurface;
@@ -340,9 +336,9 @@ void VROPlatformDestroyVideoSink(int textureId) {
     JNIEnv *env;
     getJNIEnv(&env);
 
-    jclass cls = env->GetObjectClass(sActivity);
+    jclass cls = env->GetObjectClass(sPlatformUtil);
     jmethodID jmethod = env->GetMethodID(cls, "destroyVideoSink", "(I)V");
-    env->CallVoidMethod(sActivity, jmethod, textureId);
+    env->CallVoidMethod(sPlatformUtil, jmethod, textureId);
 
     env->DeleteLocalRef(cls);
 }

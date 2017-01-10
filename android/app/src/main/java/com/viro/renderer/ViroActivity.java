@@ -40,7 +40,7 @@ public class ViroActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mVrView = new ViroGvrLayout(this);
         mVrView.setVrModeEnabled(true);
-        setContentView((ViroGvrLayout) mVrView);
+        setContentView(mVrView.getContentView());
     }
 
     @Override

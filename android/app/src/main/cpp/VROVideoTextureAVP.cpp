@@ -44,6 +44,10 @@ void VROVideoTextureAVP::loadVideo(std::string url,
     _player->setDataSourceURL(url.c_str());
 }
 
+void VROVideoTextureAVP::loadVideoFromURL(std::string url, VRODriver &driver) {
+    _player->setDataSourceURL(url.c_str());
+}
+
 void VROVideoTextureAVP::loadVideoFromAsset(std::string asset, VRODriver &driver) {
     _player->setDataSourceAsset(asset.c_str());
 }

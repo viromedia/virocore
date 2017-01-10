@@ -70,7 +70,7 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn);
 
 #if VRO_PLATFORM_ANDROID
 
-void VROPlatformSetEnv(JNIEnv *env, jobject activity, jobject assetManager, jobject platformUtil);
+void VROPlatformSetEnv(JNIEnv *env, jobject assetManager, jobject platformUtil);
 
 // This function was added because VROPlatformConvertBitmap can be called before the renderer
 // is created and as a result, activity and assetManager hasn't been set yet. We should think
