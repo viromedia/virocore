@@ -22,15 +22,41 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class ViroOvrView extends SurfaceView implements RenderCommandQueue, VrView, Application.ActivityLifecycleCallbacks, SurfaceHolder.Callback {
+public class ViroOvrView extends SurfaceView implements VrView, Application.ActivityLifecycleCallbacks, SurfaceHolder.Callback {
 
     static {
         System.loadLibrary("vrapi");
         System.loadLibrary("native-lib");
+    }
+
+    /**
+     * Executes events on the renderer thread by collecting them in a
+     * queue and running them as a {@link FrameListener}.
+     */
+    static class OVRRenderCommandQueue implements RenderCommandQueue, FrameListener {
+
+        private Queue<Runnable> mQueue = new ConcurrentLinkedQueue<Runnable>();
+
+        @Override
+        public void queueEvent(Runnable r) {
+            mQueue.add(r);
+        }
+
+        @Override
+        public void onDrawFrame() {
+            while (!mQueue.isEmpty()) {
+                Runnable r = mQueue.poll();
+                if (r != null) {
+                    r.run();
+                }
+            }
+        }
     }
 
     private RendererJni mNativeRenderer;
@@ -47,7 +73,10 @@ public class ViroOvrView extends SurfaceView implements RenderCommandQueue, VrVi
         final Context activityContext = getContext();
 
         mAssetManager = getResources().getAssets();
-        mPlatformUtil = new PlatformUtil(this, mFrameListeners, activityContext, mAssetManager);
+
+        OVRRenderCommandQueue commandQueue = new OVRRenderCommandQueue();
+        mPlatformUtil = new PlatformUtil(commandQueue, mFrameListeners, activityContext, mAssetManager);
+        mFrameListeners.add(commandQueue);
 
         mNativeRenderer = new RendererJni(
                 getClass().getClassLoader(),
@@ -175,11 +204,6 @@ public class ViroOvrView extends SurfaceView implements RenderCommandQueue, VrVi
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         mNativeRenderer.onSurfaceDestroyed(holder.getSurface());
-    }
-
-    @Override
-    public void queueEvent(Runnable r) {
-
     }
 
     // Accessed by Native code (VROSceneRendererOVR.cpp)
