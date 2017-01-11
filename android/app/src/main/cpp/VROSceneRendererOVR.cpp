@@ -89,21 +89,13 @@ OVR to VRO Utility Functions
 
 static VROMatrix4f toMatrix4f(ovrMatrix4f in)
 {
-
     float m[16] = {
             in.M[0][0], in.M[1][0], in.M[2][0], in.M[3][0],
             in.M[0][1], in.M[1][1], in.M[2][1], in.M[3][1],
             in.M[0][2], in.M[1][2], in.M[2][2], in.M[3][2],
             in.M[0][3], in.M[1][3], in.M[2][3], in.M[3][3],
     };
-    /*
-    float m[16] = {
-            in.M[0][0], in.M[0][1], in.M[0][2], in.M[0][3],
-            in.M[1][0], in.M[1][1], in.M[1][2], in.M[1][3],
-            in.M[2][0], in.M[2][1], in.M[2][2], in.M[2][3],
-            in.M[3][0], in.M[3][1], in.M[3][2], in.M[3][3],
-    };
-*/
+
     return VROMatrix4f(m);
 }
 
@@ -1305,6 +1297,9 @@ void * AppThreadFunction( void * parm )
     appState.vroRenderer = appThread->vroRenderer;
     appState.driver = appThread->driver;
 
+    jclass viewCls = java.Env->GetObjectClass(appThread->view);
+    jmethodID drawFrameMethod = java.Env->GetMethodID(viewCls, "onDrawFrame", "()V");
+
     for ( bool destroyed = false; destroyed == false; )
     {
         for ( ; ; )
@@ -1346,10 +1341,7 @@ void * AppThreadFunction( void * parm )
         }
 
         // Invoke the frame listeners on the Java side
-        jclass cls = java.Env->GetObjectClass(appThread->view);
-        jmethodID jmethod = java.Env->GetMethodID(cls, "onDrawFrame", "()V");
-        java.Env->CallVoidMethod(appThread->view, jmethod);
-        java.Env->DeleteLocalRef(cls);
+        java.Env->CallVoidMethod(appThread->view, drawFrameMethod);
 
         // This is the only place the frame index is incremented, right before
         // calling vrapi_GetPredictedDisplayTime().
