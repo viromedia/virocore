@@ -77,7 +77,6 @@ static const int CPU_LEVEL			= 2;
 static const int GPU_LEVEL			= 3;
 static const int NUM_MULTI_SAMPLES	= 4;
 
-#define MULTI_THREADED			0
 #define REDUCED_LATENCY			0
 
 /*
@@ -864,255 +863,6 @@ static ovrFrameParms ovrRenderer_RenderFrame( ovrRenderer * rendererOVR, const o
 /*
 ================================================================================
 
-ovrRenderThread
-
-================================================================================
-*/
-
-#if MULTI_THREADED
-
-typedef enum
-{
-	RENDER_FRAME,
-	RENDER_LOADING_ICON,
-	RENDER_BLACK_FLUSH,
-	RENDER_BLACK_FINAL
-} ovrRenderType;
-
-typedef struct
-{
-	JavaVM *			JavaVm;
-	jobject				ActivityObject;
-	const ovrEgl *		ShareEgl;
-	pthread_t			Thread;
-	int					Tid;
-	// Synchronization
-	bool				Exit;
-	bool				WorkAvailableFlag;
-	bool				WorkDoneFlag;
-	pthread_cond_t		WorkAvailableCondition;
-	pthread_cond_t		WorkDoneCondition;
-	pthread_mutex_t		Mutex;
-	// Latched data for rendering.
-	ovrMobile *			Ovr;
-	ovrRenderType		RenderType;
-	long long			FrameIndex;
-	int					MinimumVsyncs;
-	ovrPerformanceParms	PerformanceParms;
-	ovrScene *			Scene;
-	ovrSimulation		Simulation;
-	ovrTracking			Tracking;
-} ovrRenderThread;
-
-void * RenderThreadFunction( void * parm )
-{
-	ovrRenderThread * renderThread = (ovrRenderThread *)parm;
-	renderThread->Tid = gettid();
-
-	ovrJava java;
-	java.Vm = renderThread->JavaVm;
-	(*java.Vm)->AttachCurrentThread( java.Vm, &java.Env, NULL );
-	java.ActivityObject = renderThread->ActivityObject;
-
-	// Note that AttachCurrentThread will reset the thread name.
-	prctl( PR_SET_NAME, (long)"OVR::Renderer", 0, 0, 0 );
-
-	ovrEgl egl;
-	ovrEgl_CreateContext( &egl, renderThread->ShareEgl );
-
-	ovrRenderer renderer;
-	ovrRenderer_Create( &renderer, &java );
-
-	ovrScene * lastScene = NULL;
-
-	for( ; ; )
-	{
-		// Signal work completed.
-		pthread_mutex_lock( &renderThread->Mutex );
-		renderThread->WorkDoneFlag = true;
-		pthread_cond_signal( &renderThread->WorkDoneCondition );
-		pthread_mutex_unlock( &renderThread->Mutex );
-
-		// Wait for work.
-		pthread_mutex_lock( &renderThread->Mutex );
-		while ( !renderThread->WorkAvailableFlag )
-		{
-			pthread_cond_wait( &renderThread->WorkAvailableCondition, &renderThread->Mutex );
-		}
-		renderThread->WorkAvailableFlag = false;
-		pthread_mutex_unlock( &renderThread->Mutex );
-
-		// Check for exit.
-		if ( renderThread->Exit )
-		{
-			break;
-		}
-
-		// Make sure the scene has VAOs created for this context.
-		if ( renderThread->Scene != NULL && renderThread->Scene != lastScene )
-		{
-			if ( lastScene != NULL )
-			{
-				ovrScene_DestroyVAOs( lastScene );
-			}
-			ovrScene_CreateVAOs( renderThread->Scene );
-			lastScene = renderThread->Scene;
-		}
-
-		// Render.
-		ovrFrameParms frameParms;
-		if ( renderThread->RenderType == RENDER_FRAME )
-		{
-			frameParms = ovrRenderer_RenderFrame( &renderer, &java,
-					renderThread->FrameIndex, renderThread->MinimumVsyncs, &renderThread->PerformanceParms,
-					renderThread->Scene, &renderThread->Simulation,
-					&renderThread->Tracking, renderThread->Ovr );
-		}
-		else if ( renderThread->RenderType == RENDER_LOADING_ICON )
-		{
-			frameParms = vrapi_DefaultFrameParms( &java, VRAPI_FRAME_INIT_LOADING_ICON_FLUSH, vrapi_GetTimeInSeconds(), NULL );
-			frameParms.FrameIndex = renderThread->FrameIndex;
-			frameParms.MinimumVsyncs = renderThread->MinimumVsyncs;
-			frameParms.PerformanceParms = renderThread->PerformanceParms;
-		}
-		else if ( renderThread->RenderType == RENDER_BLACK_FLUSH )
-		{
-			frameParms = vrapi_DefaultFrameParms( &java, VRAPI_FRAME_INIT_BLACK_FLUSH, vrapi_GetTimeInSeconds(), NULL );
-			frameParms.FrameIndex = renderThread->FrameIndex;
-			frameParms.MinimumVsyncs = renderThread->MinimumVsyncs;
-			frameParms.PerformanceParms = renderThread->PerformanceParms;
-		}
-		else if ( renderThread->RenderType == RENDER_BLACK_FINAL )
-		{
-			frameParms = vrapi_DefaultFrameParms( &java, VRAPI_FRAME_INIT_BLACK_FINAL, vrapi_GetTimeInSeconds(), NULL );
-			frameParms.FrameIndex = renderThread->FrameIndex;
-			frameParms.MinimumVsyncs = renderThread->MinimumVsyncs;
-			frameParms.PerformanceParms = renderThread->PerformanceParms;
-		}
-
-		// Hand over the eye images to the time warp.
-		vrapi_SubmitFrame( renderThread->Ovr, &frameParms );
-	}
-
-	if ( lastScene != NULL )
-	{
-		ovrScene_DestroyVAOs( lastScene );
-	}
-
-	ovrRenderer_Destroy( &renderer );
-	ovrEgl_DestroyContext( &egl );
-
-	(*java.Vm)->DetachCurrentThread( java.Vm );
-}
-
-static void ovrRenderThread_Clear( ovrRenderThread * renderThread )
-{
-	renderThread->JavaVm = NULL;
-	renderThread->ActivityObject = NULL;
-	renderThread->ShareEgl = NULL;
-	renderThread->Thread = 0;
-	renderThread->Tid = 0;
-	renderThread->Exit = false;
-	renderThread->WorkAvailableFlag = false;
-	renderThread->WorkDoneFlag = false;
-	renderThread->Ovr = NULL;
-	renderThread->RenderType = RENDER_FRAME;
-	renderThread->FrameIndex = 1;
-	renderThread->MinimumVsyncs = 1;
-	renderThread->PerformanceParms = vrapi_DefaultPerformanceParms();
-	renderThread->Scene = NULL;
-	ovrSimulation_Clear( &renderThread->Simulation );
-}
-
-static void ovrRenderThread_Create( ovrRenderThread * renderThread, const ovrJava * java, const ovrEgl * shareEgl )
-{
-	renderThread->JavaVm = java->Vm;
-	renderThread->ActivityObject = java->ActivityObject;
-	renderThread->ShareEgl = shareEgl;
-	renderThread->Thread = 0;
-	renderThread->Tid = 0;
-	renderThread->Exit = false;
-	renderThread->WorkAvailableFlag = false;
-	renderThread->WorkDoneFlag = false;
-	pthread_cond_init( &renderThread->WorkAvailableCondition, NULL );
-	pthread_cond_init( &renderThread->WorkDoneCondition, NULL );
-	pthread_mutex_init( &renderThread->Mutex, NULL );
-
-	const int createErr = pthread_create( &renderThread->Thread, NULL, RenderThreadFunction, renderThread );
-	if ( createErr != 0 )
-	{
-		ALOGE( "pthread_create returned %i", createErr );
-	}
-}
-
-static void ovrRenderThread_Destroy( ovrRenderThread * renderThread )
-{
-	pthread_mutex_lock( &renderThread->Mutex );
-	renderThread->Exit = true;
-	renderThread->WorkAvailableFlag = true;
-	pthread_cond_signal( &renderThread->WorkAvailableCondition );
-	pthread_mutex_unlock( &renderThread->Mutex );
-
-	pthread_join( renderThread->Thread, NULL );
-	pthread_cond_destroy( &renderThread->WorkAvailableCondition );
-	pthread_cond_destroy( &renderThread->WorkDoneCondition );
-	pthread_mutex_destroy( &renderThread->Mutex );
-}
-
-static void ovrRenderThread_Submit( ovrRenderThread * renderThread, ovrMobile * ovr,
-		ovrRenderType type, long long frameIndex, int minimumVsyncs, const ovrPerformanceParms * perfParms,
-		ovrScene * scene, const ovrSimulation * simulation, const ovrTracking * tracking )
-{
-	// Wait for the renderer thread to finish the last frame.
-	pthread_mutex_lock( &renderThread->Mutex );
-	while ( !renderThread->WorkDoneFlag )
-	{
-		pthread_cond_wait( &renderThread->WorkDoneCondition, &renderThread->Mutex );
-	}
-	renderThread->WorkDoneFlag = false;
-	// Latch the render data.
-	renderThread->Ovr = ovr;
-	renderThread->RenderType = type;
-	renderThread->FrameIndex = frameIndex;
-	renderThread->MinimumVsyncs = minimumVsyncs;
-	renderThread->PerformanceParms = *perfParms;
-	renderThread->Scene = scene;
-	if ( simulation != NULL )
-	{
-		renderThread->Simulation = *simulation;
-	}
-	if ( tracking != NULL )
-	{
-		renderThread->Tracking = *tracking;
-	}
-	// Signal work is available.
-	renderThread->WorkAvailableFlag = true;
-	pthread_cond_signal( &renderThread->WorkAvailableCondition );
-	pthread_mutex_unlock( &renderThread->Mutex );
-}
-
-static void ovrRenderThread_Wait( ovrRenderThread * renderThread )
-{
-	// Wait for the renderer thread to finish the last frame.
-	pthread_mutex_lock( &renderThread->Mutex );
-	while ( !renderThread->WorkDoneFlag )
-	{
-		pthread_cond_wait( &renderThread->WorkDoneCondition, &renderThread->Mutex );
-	}
-	pthread_mutex_unlock( &renderThread->Mutex );
-}
-
-static int ovrRenderThread_GetTid( ovrRenderThread * renderThread )
-{
-	ovrRenderThread_Wait( renderThread );
-	return renderThread->Tid;
-}
-
-#endif // MULTI_THREADED
-
-/*
-================================================================================
-
 ovrApp
 
 ================================================================================
@@ -1138,13 +888,9 @@ typedef struct
     ovrBackButtonState	BackButtonState;
     bool				BackButtonDown;
     double				BackButtonDownStartTime;
-#if MULTI_THREADED
-    ovrRenderThread		RenderThread;
-#else
     ovrRenderer			Renderer;
     std::shared_ptr<VRORenderer> vroRenderer;
     std::shared_ptr<VRODriver> driver;
-#endif
     bool				UseMultiview;
 } ovrApp;
 
@@ -1164,25 +910,15 @@ static void ovrApp_Clear( ovrApp * app )
     app->UseMultiview = true;
 
     ovrEgl_Clear( &app->Egl );
-#if MULTI_THREADED
-    ovrRenderThread_Clear( &app->RenderThread );
-#else
     ovrRenderer_Clear( &app->Renderer );
-#endif
 }
 
 static void ovrApp_PushBlackFinal( ovrApp * app, const ovrPerformanceParms * perfParms )
 {
-#if MULTI_THREADED
-    ovrRenderThread_Submit( &app->RenderThread, app->Ovr,
-			RENDER_BLACK_FINAL, app->FrameIndex, app->MinimumVsyncs, perfParms,
-			NULL, NULL, NULL );
-#else
     ovrFrameParms frameParms = vrapi_DefaultFrameParms( &app->Java, VRAPI_FRAME_INIT_BLACK_FINAL, vrapi_GetTimeInSeconds(), NULL );
     frameParms.FrameIndex = app->FrameIndex;
     frameParms.PerformanceParms = *perfParms;
     vrapi_SubmitFrame( app->Ovr, &frameParms );
-#endif
 }
 
 static void ovrApp_HandleVrModeChanges( ovrApp * app )
@@ -1220,10 +956,6 @@ static void ovrApp_HandleVrModeChanges( ovrApp * app )
     {
         if ( app->Ovr != NULL )
         {
-#if MULTI_THREADED
-            // Make sure the renderer thread is no longer using the ovrMobile.
-			ovrRenderThread_Wait( &app->RenderThread );
-#endif
             ALOGV( "        eglGetCurrentSurface( EGL_DRAW ) = %p", eglGetCurrentSurface( EGL_DRAW ) );
 
             ALOGV( "        vrapi_LeaveVrMode()" );
@@ -1569,15 +1301,9 @@ void * AppThreadFunction( void * parm )
     perfParms.GpuLevel = GPU_LEVEL;
     perfParms.MainThreadTid = gettid();
 
-#if MULTI_THREADED
-    ovrRenderThread_Create( &appState.RenderThread, &appState.Java, &appState.Egl );
-	// Also set the renderer thread to SCHED_FIFO.
-	perfParms.RenderThreadTid = ovrRenderThread_GetTid( &appState.RenderThread );
-#else
     ovrRenderer_Create( &appState.Renderer, &java, appState.UseMultiview );
     appState.vroRenderer = appThread->vroRenderer;
     appState.driver = appThread->driver;
-#endif
 
     for ( bool destroyed = false; destroyed == false; )
     {
@@ -1640,12 +1366,6 @@ void * AppThreadFunction( void * parm )
         const ovrHeadModelParms headModelParms = vrapi_DefaultHeadModelParms();
         const ovrTracking tracking = vrapi_ApplyHeadModel( &headModelParms, &baseTracking );
 
-#if MULTI_THREADED
-        // Render the eye images on a separate thread.
-		ovrRenderThread_Submit( &appState.RenderThread, appState.Ovr,
-				RENDER_FRAME, appState.FrameIndex, appState.MinimumVsyncs, &perfParms,
-				&appState.Scene, &appState.Simulation, &tracking );
-#else
         // Render eye images and setup ovrFrameParms using ovrTracking.
         const ovrFrameParms frameParms = ovrRenderer_RenderFrame( &appState.Renderer, &appState.Java,
                                                                   appState.vroRenderer, appState.driver,
@@ -1655,20 +1375,13 @@ void * AppThreadFunction( void * parm )
 
         // Hand over the eye images to the time warp.
         vrapi_SubmitFrame( appState.Ovr, &frameParms );
-#endif
     }
 
-#if MULTI_THREADED
-    ovrRenderThread_Destroy( &appState.RenderThread );
-#else
     ovrRenderer_Destroy( &appState.Renderer );
-#endif
-
     ovrEgl_DestroyContext( &appState.Egl );
     vrapi_Shutdown();
 
     java.Vm->DetachCurrentThread( );
-
     return NULL;
 }
 
