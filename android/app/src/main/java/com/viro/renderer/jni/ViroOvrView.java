@@ -32,7 +32,6 @@ public class ViroOvrView extends SurfaceView implements RenderCommandQueue, VrVi
         System.loadLibrary("native-lib");
     }
 
-    private Activity mActivity; // TODO make this weak
     private RendererJni mNativeRenderer;
     private final RenderContextJni mNativeRenderContext;
     private AssetManager mAssetManager;
@@ -42,7 +41,6 @@ public class ViroOvrView extends SurfaceView implements RenderCommandQueue, VrVi
 
     public ViroOvrView(Activity activity) {
         super(activity);
-        mActivity = activity;
         getHolder().addCallback(this);
 
         final Context activityContext = getContext();
@@ -165,6 +163,7 @@ public class ViroOvrView extends SurfaceView implements RenderCommandQueue, VrVi
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         mNativeRenderer.onSurfaceCreated(holder.getSurface());
+        mNativeRenderer.initalizeGl();
     }
 
     @Override

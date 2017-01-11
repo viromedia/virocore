@@ -9,6 +9,7 @@
 #define ANDROID_VROSCENERENDEREROVR_H
 
 #include "VROSceneRenderer.h"
+#include <memory>
 
 struct ovrAppThread;
 
