@@ -24,6 +24,7 @@
 #include <EGL/eglext.h>
 #include <GLES3/gl3.h>
 #include <GLES3/gl3ext.h>
+#include <VrApi_Types.h>
 
 #pragma mark - OVR System
 
@@ -1524,6 +1525,7 @@ struct ovrAppThread
 
     std::shared_ptr<VRORenderer> vroRenderer;
     std::shared_ptr<VRODriver> driver;
+    jobject view;
 };
 
 void * AppThreadFunction( void * parm )
@@ -1617,6 +1619,12 @@ void * AppThreadFunction( void * parm )
             continue;
         }
 
+        // Invoke the frame listeners on the Java side
+        jclass cls = java.Env->GetObjectClass(appThread->view);
+        jmethodID jmethod = java.Env->GetMethodID(cls, "onDrawFrame", "()V");
+        java.Env->CallVoidMethod(appThread->view, jmethod);
+        java.Env->DeleteLocalRef(cls);
+
         // This is the only place the frame index is incremented, right before
         // calling vrapi_GetPredictedDisplayTime().
         appState.FrameIndex++;
@@ -1664,12 +1672,16 @@ void * AppThreadFunction( void * parm )
     return NULL;
 }
 
-static void ovrAppThread_Create( ovrAppThread * appThread, JNIEnv * env, jobject activityObject )
+static void ovrAppThread_Create( ovrAppThread * appThread, JNIEnv * env, jobject activityObject, jobject viewObject,
+                                 std::shared_ptr<VRORenderer> renderer, std::shared_ptr<VRODriver> driver)
 {
     env->GetJavaVM( &appThread->JavaVm );
     appThread->ActivityObject = env->NewGlobalRef( activityObject );
     appThread->Thread = 0;
     appThread->NativeWindow = NULL;
+    appThread->view = env->NewGlobalRef(viewObject);
+    appThread->vroRenderer = renderer;
+    appThread->driver = driver;
     ovrMessageQueue_Create( &appThread->MessageQueue );
 
     const int createErr = pthread_create( &appThread->Thread, NULL, AppThreadFunction, appThread );
@@ -1683,6 +1695,9 @@ static void ovrAppThread_Destroy( ovrAppThread * appThread, JNIEnv * env )
 {
     pthread_join( appThread->Thread, NULL );
     env->DeleteGlobalRef( appThread->ActivityObject );
+    env->DeleteGlobalRef( appThread->view );
+    appThread->vroRenderer.reset();
+    appThread->driver.reset();
     ovrMessageQueue_Destroy( &appThread->MessageQueue );
 }
 
@@ -1695,15 +1710,13 @@ Activity lifecycle
 */
 
 VROSceneRendererOVR::VROSceneRendererOVR(std::shared_ptr<gvr::AudioApi> gvrAudio,
-                                         jobject activity, JNIEnv *env) {
+                                         jobject view, jobject activity, JNIEnv *env) {
     _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
 
     ALOGV( "    GLES3JNILib::onCreate()" );
 
     _appThread = (ovrAppThread *) malloc( sizeof( ovrAppThread ) );
-    _appThread->vroRenderer = _renderer;
-    _appThread->driver = _driver;
-    ovrAppThread_Create( _appThread, env, activity );
+    ovrAppThread_Create( _appThread, env, activity, view, _renderer, _driver );
 
     ovrMessageQueue_Enable( &_appThread->MessageQueue, true );
     ovrMessage message;

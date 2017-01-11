@@ -456,5 +456,4 @@ void Java_com_viro_renderer_jni_PlatformUtil_runTask(JNIEnv *env, jclass clazz, 
     VROPlatformRunTask(taskId);
 }
 
-
 #endif

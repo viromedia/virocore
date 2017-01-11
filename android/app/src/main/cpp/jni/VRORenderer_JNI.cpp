@@ -48,6 +48,7 @@ JNI_METHOD(jlong, nativeCreateRendererGVR)(JNIEnv *env, jclass clazz,
 JNI_METHOD(jlong, nativeCreateRendererOVR)(JNIEnv *env, jclass clazz,
                                            jobject class_loader,
                                            jobject android_context,
+                                           jobject view,
                                            jobject activity,
                                            jobject asset_mgr,
                                            jobject platform_util) {
@@ -56,7 +57,7 @@ JNI_METHOD(jlong, nativeCreateRendererOVR)(JNIEnv *env, jclass clazz,
     VROPlatformSetEnv(env, asset_mgr, platform_util);
 
     std::shared_ptr<VROSceneRenderer> renderer
-            = std::make_shared<VROSceneRendererOVR>(gvrAudio, activity, env);
+            = std::make_shared<VROSceneRendererOVR>(gvrAudio, view, activity, env);
     return Renderer::jptr(renderer);
 }
 

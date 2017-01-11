@@ -18,7 +18,7 @@ class VROSceneRendererOVR : public VROSceneRenderer {
 public:
 
     VROSceneRendererOVR(std::shared_ptr<gvr::AudioApi> gvrAudio,
-                        jobject activity, JNIEnv *env);
+                        jobject view, jobject activity, JNIEnv *env);
     virtual ~VROSceneRendererOVR();
 
     /*
@@ -47,6 +47,7 @@ private:
 
     ovrAppThread *_appThread;
     jobject _surface;
+    jobject _view;
 
 };
 

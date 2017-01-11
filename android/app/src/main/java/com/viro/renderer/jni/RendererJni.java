@@ -32,8 +32,8 @@ public class RendererJni {
     /* ----------     OVR only methods    ---------- */
 
     public RendererJni(ClassLoader appClassLoader, Context context,
-                       Activity activity, AssetManager assets, PlatformUtil platformUtil) {
-        mNativeRef = nativeCreateRendererOVR(appClassLoader, context, activity, assets, platformUtil);
+                       ViroOvrView view, Activity activity, AssetManager assets, PlatformUtil platformUtil) {
+        mNativeRef = nativeCreateRendererOVR(appClassLoader, context, view, activity, assets, platformUtil);
     }
 
     public void onSurfaceDestroyed(Surface surface) { nativeOnSurfaceDestroyed(mNativeRef); }
@@ -80,7 +80,7 @@ public class RendererJni {
     private native long nativeCreateRendererGVR(ClassLoader appClassLoader, Context context,
                                                 AssetManager assets, PlatformUtil platformUtil, long nativeGvrContext);
     private native long nativeCreateRendererOVR(ClassLoader appClassLoader, Context context,
-                                                Activity activity, AssetManager assets, PlatformUtil platformUtil);
+                                                ViroOvrView view, Activity activity, AssetManager assets, PlatformUtil platformUtil);
     private native void nativeDestroyRenderer(long nativeRenderer);
     private native void nativeInitializeGl(long nativeRenderer);
     private native long nativeDrawFrame(long nativeRenderer);

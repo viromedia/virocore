@@ -8,6 +8,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -51,7 +52,7 @@ public class ViroOvrView extends SurfaceView implements RenderCommandQueue, VrVi
         mNativeRenderer = new RendererJni(
                 getClass().getClassLoader(),
                 activityContext.getApplicationContext(),
-                activity, mAssetManager, mPlatformUtil);
+                this, activity, mAssetManager, mPlatformUtil);
 
         mNativeRenderContext = new RenderContextJni(mNativeRenderer.mNativeRef);
 
@@ -179,5 +180,12 @@ public class ViroOvrView extends SurfaceView implements RenderCommandQueue, VrVi
     @Override
     public void queueEvent(Runnable r) {
 
+    }
+
+    // Accessed by Native code (VROSceneRendererOVR.cpp)
+    public void onDrawFrame() {
+        for (FrameListener listener : mFrameListeners) {
+            listener.onDrawFrame();
+        }
     }
 }
