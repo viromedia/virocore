@@ -217,6 +217,7 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp) {
 
     env->ReleaseStringUTFChars(jpath, path);
     env->DeleteLocalRef(jpath);
+    env->DeleteLocalRef(jurl);
     env->DeleteLocalRef(cls);
 
     *temp = true;
@@ -421,25 +422,59 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     env->DeleteLocalRef(cls);
 }
 
+jobject VROPlatformGetClassLoader(JNIEnv *jni, jobject jcontext) {
+    jclass contextClass = jni->GetObjectClass(jcontext);
+    jclass contextClassClass = jni->GetObjectClass(contextClass);
+
+    jmethodID method = jni->GetMethodID(contextClassClass, "getClassLoader", "()Ljava/lang/ClassLoader;");
+    jobject classLoader = jni->CallObjectMethod(contextClass, method);
+
+    jni->DeleteLocalRef(contextClass);
+    jni->DeleteLocalRef(contextClassClass);
+
+    if (classLoader == 0) {
+        perr("Failed to get class loader from activity context");
+    }
+    return classLoader;
+}
+
+jclass VROPlatformFindClass(JNIEnv *jni, jobject javaObject, const char *className) {
+    jobject classLoader = VROPlatformGetClassLoader(jni, javaObject);
+    jclass classLoaderClass = jni->FindClass("java/lang/ClassLoader");
+    jmethodID loadClassMethodId = jni->GetMethodID(classLoaderClass, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;" );
+
+    jstring jclassName = jni->NewStringUTF(className);
+    jclass cls = static_cast<jclass>(jni->CallObjectMethod(classLoader, loadClassMethodId, jclassName));
+    if (cls == 0) {
+        perr("Failed to locate class %s using activity class loader", className);
+    }
+
+    jni->DeleteLocalRef(classLoaderClass);
+    jni->DeleteLocalRef(classLoader);
+    jni->DeleteLocalRef(jclassName);
+
+    return cls;
+}
+
 void VROPlatformCallJavaFunction(jobject javaObject,
-                                 std::string classPath,
                                  std::string functionName,
                                  std::string methodID, ...){
     JNIEnv *env = VROPlatformGetJNIEnv();
     env->ExceptionClear();
-
-    jclass viroClass = env->FindClass(classPath.c_str());
+    
+    jclass viroClass = env->GetObjectClass(javaObject);
     if (viroClass == nullptr) {
-        perr("Unable to find classpath %s for making java calls.", classPath.c_str());
+        perr("Unable to find class for making java calls [function %s, method %s]",
+             functionName.c_str(), methodID.c_str());
         return;
     }
-
+    
     jmethodID method = env->GetMethodID(viroClass, functionName.c_str(), methodID.c_str());
     if (method == nullptr) {
         perr("Unable to find method %s callback.", functionName.c_str());
         return;
     }
-
+    
     va_list args;
     va_start(args, methodID);
     env->CallVoidMethodV(javaObject, method, args);
@@ -448,7 +483,7 @@ void VROPlatformCallJavaFunction(jobject javaObject,
         env->ExceptionClear();
     }
     va_end(args);
-
+    
     env->DeleteLocalRef(viroClass);
 }
 

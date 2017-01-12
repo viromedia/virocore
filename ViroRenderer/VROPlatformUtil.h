@@ -88,16 +88,25 @@ AAssetManager *VROPlatformGetAssetManager();
 // in prod.
 std::string VROPlatformCopyAssetToFile(std::string asset);
 
+#pragma mark - JNI Utilities
+
+// Get the class loader from the given object
+jobject VROPlatformGetClassLoader(JNIEnv *jni, jobject jcontext);
+
+// Find a class using the class loader associated with the given object,
+// typically an activity.
+// This is safe to call from any thread, even those not spawned in Java
+// (i.e. threads created using pthread_create).
+jclass VROPlatformFindClass(JNIEnv *jni, jobject javaObject, const char *className);
+
 // Calls a java function from native through JNI on the given jObject with the given
-// classPath, functionName, methodID and desired java function parameters.
+// functionName, methodID and desired java function parameters.
 //
 // Example: VROPlatformCallJavaFunction(jObj,
-//                                      "com/viro/renderer/jni/EventDelegateJni",
 //                                      "onGaze",
 //                                      "(Z)V",
 //                                      isGazing);
 void VROPlatformCallJavaFunction(jobject javaObject,
-                                 std::string classPath,
                                  std::string functionName,
                                  std::string methodID, ...);
 

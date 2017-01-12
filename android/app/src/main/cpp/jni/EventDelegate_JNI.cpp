@@ -39,11 +39,9 @@ JNI_METHOD(void, nativeEnableEvent)(JNIEnv *env,
 }  // extern "C"
 
 void EventDelegate_JNI::onTapped() {
-    VROPlatformCallJavaFunction(_javaObject, EventDelegate_JNI::JAVA_CLASS_PATH,
-                                "onTapped", "()V");
+    VROPlatformCallJavaFunction(_javaObject, "onTapped", "()V");
 }
 
 void EventDelegate_JNI::onGaze(bool isGazing) {
-    VROPlatformCallJavaFunction(_javaObject, EventDelegate_JNI::JAVA_CLASS_PATH,
-                                "onGaze", "(Z)V", isGazing);
+    VROPlatformCallJavaFunction(_javaObject, "onGaze", "(Z)V", isGazing);
 }

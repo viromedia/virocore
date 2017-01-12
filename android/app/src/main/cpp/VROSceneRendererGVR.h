@@ -6,8 +6,8 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#ifndef VRO_SCENE_RENDERER_CARDBOARD_H_  // NOLINT
-#define VRO_SCENE_RENDERER_CARDBOARD_H_  // NOLINT
+#ifndef VRO_SCENE_RENDERER_GVR_H_  // NOLINT
+#define VRO_SCENE_RENDERER_GVR_H_  // NOLINT
 
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
@@ -97,4 +97,4 @@ private:
 
 };
 
-#endif  // VRO_SCENE_RENDERER_CARDBOARD_H  // NOLINT
+#endif  // VRO_SCENE_RENDERER_GVR_H  // NOLINT
