@@ -62,6 +62,7 @@ public class ViroOvrView extends SurfaceView implements VrView, Application.Acti
     private RendererJni mNativeRenderer;
     private final RenderContextJni mNativeRenderContext;
     private AssetManager mAssetManager;
+    private OVRRenderCommandQueue mRenderQueue = new OVRRenderCommandQueue();
     private List<FrameListener> mFrameListeners = new ArrayList();
 
     private PlatformUtil mPlatformUtil;
@@ -74,9 +75,8 @@ public class ViroOvrView extends SurfaceView implements VrView, Application.Acti
 
         mAssetManager = getResources().getAssets();
 
-        OVRRenderCommandQueue commandQueue = new OVRRenderCommandQueue();
-        mPlatformUtil = new PlatformUtil(commandQueue, mFrameListeners, activityContext, mAssetManager);
-        mFrameListeners.add(commandQueue);
+        mPlatformUtil = new PlatformUtil(mRenderQueue, mFrameListeners, activityContext, mAssetManager);
+        mFrameListeners.add(mRenderQueue);
 
         mNativeRenderer = new RendererJni(
                 getClass().getClassLoader(),
@@ -193,7 +193,12 @@ public class ViroOvrView extends SurfaceView implements VrView, Application.Acti
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         mNativeRenderer.onSurfaceCreated(holder.getSurface());
-        mNativeRenderer.initalizeGl();
+        mRenderQueue.queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                mNativeRenderer.initalizeGl();
+            }
+        });
     }
 
     @Override

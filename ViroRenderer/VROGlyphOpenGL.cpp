@@ -57,7 +57,7 @@ void VROGlyphOpenGL::loadTexture(FT_Face face, FT_GlyphSlot &glyph) {
      alpha pair. The GPU assigns the 8-bit luminance value to the R, G, B
      channels of the texture, and the 8-bit alpha value to the A channel.
      
-     We set the luminace portion to 1.0 so RGB are each 1.0. This way the color
+     We set the luminance portion to 1.0 so RGB are each 1.0. This way the color
      of the text is determined entirely by the material's diffuse color. The
      alpha value of the texture is taken from the glyph's value.
      */
@@ -76,20 +76,19 @@ void VROGlyphOpenGL::loadTexture(FT_Face face, FT_GlyphSlot &glyph) {
     }
     
     /*
-     Initialize the OpenGL texture. The glyphs are 8-bit so use GL_RED
-     for the format.
+     Initialize the OpenGL texture.
      */
     GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, texWidth, texHeight, 0,
-                 GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, luminanceAlphaBitmap);
+    GL( glGenTextures(1, &texture) );
+    GL( glBindTexture(GL_TEXTURE_2D, texture) );
+
+    GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+    GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+    GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
+    GL( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+
+    GL( glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, texWidth, texHeight, 0,
+                     GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, luminanceAlphaBitmap) );
     
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(
         new VROTextureSubstrateOpenGL(GL_TEXTURE_2D, texture, true));

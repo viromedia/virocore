@@ -169,43 +169,6 @@ static const char * GlFrameBufferStatusString( GLenum status )
     }
 }
 
-#ifdef CHECK_GL_ERRORS
-
-static const char * GlErrorString( GLenum error )
-{
-	switch ( error )
-	{
-		case GL_NO_ERROR:						return "GL_NO_ERROR";
-		case GL_INVALID_ENUM:					return "GL_INVALID_ENUM";
-		case GL_INVALID_VALUE:					return "GL_INVALID_VALUE";
-		case GL_INVALID_OPERATION:				return "GL_INVALID_OPERATION";
-		case GL_INVALID_FRAMEBUFFER_OPERATION:	return "GL_INVALID_FRAMEBUFFER_OPERATION";
-		case GL_OUT_OF_MEMORY:					return "GL_OUT_OF_MEMORY";
-		default: return "unknown";
-	}
-}
-
-static void GLCheckErrors( int line )
-{
-	for ( int i = 0; i < 10; i++ )
-	{
-		const GLenum error = glGetError();
-		if ( error == GL_NO_ERROR )
-		{
-			break;
-		}
-		ALOGE( "GL error on line %d: %s", line, GlErrorString( error ) );
-	}
-}
-
-#define GL( func )		func; GLCheckErrors( __LINE__ );
-
-#else // CHECK_GL_ERRORS
-
-#define GL( func )		func;
-
-#endif // CHECK_GL_ERRORS
-
 /*
 ================================================================================
 
@@ -753,10 +716,6 @@ static ovrFrameParms ovrRenderer_RenderFrame( ovrRenderer * rendererOVR, const o
 
     // Calculate the view matrix.
     const ovrMatrix4f centerEyeViewMatrix = vrapi_GetCenterEyeTransform(&headModelParms, &updatedTracking, NULL);
-    //vrapi_GetCenterEyeViewMatrix( &headModelParms, &updatedTracking, NULL );
-
-    GL( glUnmapBuffer( GL_UNIFORM_BUFFER ) );
-    GL( glBindBuffer( GL_UNIFORM_BUFFER, 0 ) );
 
     for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
     {
