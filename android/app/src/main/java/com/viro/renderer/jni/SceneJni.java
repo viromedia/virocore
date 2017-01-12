@@ -35,6 +35,10 @@ public class SceneJni {
         nativeSetBackgroundCubeImageTexture(mNativeRef, cubeTexture.mNativeRef);
     }
 
+    public void setBackgroundCubeWithColor(long color) {
+        nativeSetBackgroundCubeWithColor(mNativeRef, color);
+    }
+
     public void addDirectionalLight(NodeJni node, long color, float[] direction) {
 
         nativeAddDirectionalLight(mNativeRef, node.mNativeRef, color, direction[0], direction[1], direction[2]);
@@ -73,6 +77,7 @@ public class SceneJni {
     private native void nativeSetBackgroundVideoTexture(long sceneRef, long videoRef);
     private native void nativeSetBackgroundImageTexture(long sceneRef, long imageRef);
     private native void nativeSetBackgroundCubeImageTexture(long sceneRef, long textureRef);
+    private native void nativeSetBackgroundCubeWithColor(long sceneRef, long color);
     private native void nativeSetBackgroundRotation(long sceneRef, float degreeX, float degreeY,
                                                     float degreeZ);
 

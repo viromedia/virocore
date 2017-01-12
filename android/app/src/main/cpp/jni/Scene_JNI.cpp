@@ -85,6 +85,21 @@ JNI_METHOD(void, nativeSetBackgroundCubeImageTexture)(JNIEnv *env,
     sceneController->getScene()->setBackgroundCube(Texture::native(textureRef));
 }
 
+JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
+                                                   jclass clazz,
+                                                   jlong sceneRef,
+                                                   jlong color) {
+    // Get the color
+    float a = ((color >> 24) & 0xFF) / 255.0;
+    float r = ((color >> 16) & 0xFF) / 255.0;
+    float g = ((color >> 8) & 0xFF) / 255.0;
+    float b = (color & 0xFF) / 255.0;
+
+    VROVector4f vecColor(r, g, b, a);
+    VROSceneController *sceneController = Scene::native(sceneRef);
+    sceneController->getScene()->setBackgroundCube(vecColor);
+}
+
 JNI_METHOD(void, nativeAddAmbientLight)(JNIEnv *env,
                                         jclass clazz,
                                         jlong sceneRef,
