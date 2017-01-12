@@ -17,6 +17,7 @@
 #import "VROReticle.h"
 #import "VROApiKeyValidatorDynamo.h"
 #import "VRORenderDelegateiOS.h"
+#import "VROInputControllerCardboardiOS.h"
 
 @interface VROViewCardboard () {
     std::shared_ptr<VRORenderer> _renderer;
@@ -76,7 +77,7 @@
                                              selector:@selector(orientationDidChange:)
                                                  name:UIApplicationDidChangeStatusBarOrientationNotification
                                                object:nil];
-    self.renderer = std::make_shared<VRORenderer>();
+    self.renderer = std::make_shared<VRORenderer>(std::make_shared<VROInputControllerCardboardiOS>());
     self.sceneRenderer = std::make_shared<VROSceneRendererCardboardOpenGL>(self.context, self.renderer);
     
     // TODO Bug in Cardboard prevents [headTransform fieldOfViewForEye:] from working
@@ -147,12 +148,6 @@
     _renderer->updateRenderViewSize(self.bounds.size.width, self.bounds.size.height);
 }
 
-#pragma mark - Events
-
-- (std::shared_ptr<VROReticle>)reticle {
-    return _renderer->getReticle();
-}
-
 #pragma mark - Scene Loading
 
 - (void)setSceneController:(std::shared_ptr<VROSceneController>) sceneController {
@@ -186,8 +181,10 @@
 - (void)cardboardView:(GVRCardboardView *)cardboardView didFireEvent:(GVRUserEvent)event {
     if (event == kGVRUserEventTrigger) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            _renderer->getReticle()->trigger();
-            _renderer->getEventManager()->onHeadGearTap();
+            std::shared_ptr<VROInputControllerBase> baseController =  _renderer->getInputController();
+            std::shared_ptr<VROInputControllerCardboardiOS> cardboardController
+                        = std::dynamic_pointer_cast<VROInputControllerCardboardiOS>(baseController);
+            cardboardController->onScreenClicked();
         });
     } else if (event == kGVRUserEventBackButton) {
         dispatch_async(dispatch_get_main_queue(), ^{

@@ -42,7 +42,7 @@ public:
      */
     void initGL();
     void onDrawFrame();
-    void onTriggerEvent();
+    void onScreenTouchEvent(bool enabled);
     void setVRModeEnabled(bool enabled);
 
     /*
@@ -88,6 +88,7 @@ private:
 
     gvr::Mat4f _headView;
     gvr::Sizei _renderSize;
+    gvr::ViewerType _viewerType;
 
     bool _vrModeEnabled;
 

@@ -165,7 +165,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     rootNode->runAction(action);
     self.tapEnabled = true;
-    
     return sceneController;
 }
 
@@ -191,7 +190,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (std::shared_ptr<VROSceneController>)loadBoxScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
-
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundSphere([self westlakeTexture]);
     
@@ -321,7 +319,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (std::shared_ptr<VROSceneController>)loadTextScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
-
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundCube([self cloudTexture]);
     

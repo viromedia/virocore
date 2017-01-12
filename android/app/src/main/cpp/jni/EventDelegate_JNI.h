@@ -39,11 +39,12 @@ public:
     /**
      * Java event delegates to be triggered across the JNI bridge.
      */
-    void onTapped();
-    void onGaze(bool gazeOn);
-
-    const std::string JAVA_CLASS_PATH = "com/viro/renderer/jni/EventDelegateJni";
-
+    void onControllerStatus(ControllerStatus status);
+    void onButtonEvent(EventSource type, EventAction event);
+    void onTouchPadEvent(EventSource type, EventAction event, float x, float y);
+    void onRotate(VROVector3f rotation);
+    void onPosition(VROVector3f location);
+    void onGaze(bool isGazing);
 private:
     jobject _javaObject;
     void callJavaFunction(std::string functionName, std::string methodID, ...);

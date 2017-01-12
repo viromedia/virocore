@@ -95,10 +95,13 @@ JNI_METHOD(void, nativeDrawFrame)(JNIEnv *env,
     Renderer::native(native_renderer)->onDrawFrame();
 }
 
-JNI_METHOD(void, nativeOnTriggerEvent)(JNIEnv *env,
+JNI_METHOD(void, nativeOnScreenTouchEvent)(JNIEnv *env,
                                        jobject obj,
-                                       jlong native_renderer) {
-    Renderer::native(native_renderer)->onTriggerEvent();
+                                       jlong native_renderer,
+                                       jboolean onTouch) {
+
+
+    Renderer::native(native_renderer)->onScreenTouchEvent(onTouch);
 }
 
 JNI_METHOD(void, nativeSetVRModeEnabled)(JNIEnv *env,
@@ -143,18 +146,10 @@ JNI_METHOD(void, nativeSetScene)(JNIEnv *env,
     }
 }
 
-JNI_METHOD(void, nativeEnableReticle)(JNIEnv *env,
-                                 jobject obj,
-                                 jlong native_renderer,
-                                 jboolean enable) {
-    Renderer::native(native_renderer)->getRenderer()->getReticle()->setEnabled(enable);
-}
-
 JNI_METHOD(void, nativeSetPointOfView)(JNIEnv *env,
                                        jobject obj,
                                        jlong native_renderer,
                                        jlong native_node_ref) {
-
     if (native_node_ref == 0) {
         Renderer::native(native_renderer)->getRenderer()->setPointOfView(nullptr);
     }

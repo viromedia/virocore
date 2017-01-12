@@ -41,6 +41,8 @@ add_library( # Sets the name of the library.
              src/main/cpp/VROAVPlayer.cpp
              src/main/cpp/VROVideoTextureAVP.cpp
              src/main/cpp/VROTypefaceAndroid.cpp
+             src/main/cpp/VROInputControllerDaydream.cpp
+             src/main/cpp/VROInputControllerCardboard.cpp
 
              # Android JNI
              src/main/cpp/jni/VRORenderer_JNI.cpp
@@ -48,6 +50,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/Scene_JNI.cpp
              src/main/cpp/jni/Camera_JNI.cpp
              src/main/cpp/jni/Box_JNI.cpp
+             src/main/cpp/jni/Controller_JNI.cpp
              src/main/cpp/jni/Surface_JNI.cpp
              src/main/cpp/jni/Sphere_JNI.cpp
              src/main/cpp/jni/Material_JNI.cpp
@@ -112,7 +115,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROTextureSubstrate.cpp
              ../../ViroRenderer/VROMaterialSubstrate.cpp
              ../../ViroRenderer/VRONodeCamera.cpp
-             ../../ViroRenderer/VROEventManager.cpp
+             ../../ViroRenderer/VROInputControllerBase.cpp
 
              # Animation
              ../../ViroRenderer/VROTimingFunction.cpp

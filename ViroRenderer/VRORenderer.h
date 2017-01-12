@@ -18,7 +18,7 @@
 #include "VROViewport.h"
 #include "VROFieldOfView.h"
 #include "VROFrameSynchronizer.h"
-#include "VROEventManager.h"
+#include "VROInputControllerBase.h"
 
 class VROEye;
 class VRONode;
@@ -39,8 +39,8 @@ static const float kZFar  = 50;
 class VRORenderer {
     
 public:
-    
-    VRORenderer();
+
+    VRORenderer(std::shared_ptr<VROInputControllerBase> inputController);
     virtual ~VRORenderer();
     
     void setPointOfView(std::shared_ptr<VRONode> node);
@@ -67,16 +67,14 @@ public:
     std::shared_ptr<VROFrameSynchronizer> getFrameSynchronizer() {
         return _frameSynchronizer;
     }
-    std::shared_ptr<VROEventManager> getEventManager(){
-        return _eventManager;
+
+    std::shared_ptr<VROInputControllerBase> getInputController(){
+        return _inputController;
     }
-    std::shared_ptr<VROReticle> getReticle() {
-        return _reticle;
-    }
+
     std::shared_ptr<VRORenderContext> getRenderContext() {
         return _context;
     }
-    
 #pragma mark - VR Framework Specific
     
     // Some VR frameworks provide controls to allow the user to exit VR
@@ -97,11 +95,12 @@ private:
     std::shared_ptr<VRORenderContext> _context;
 
     /*
-     Handles the processing and notification of input events (like ontap).
+     Controller used for handling all input events.
      */
-    std::shared_ptr<VROEventManager> _eventManager;
+    std::shared_ptr<VROInputControllerBase> _inputController;
 
     /*
+<<<<<<< HEAD
      The reticle.
      */
     std::shared_ptr<VROReticle> _reticle;
@@ -109,6 +108,9 @@ private:
     /*
      The node that owns the VRONodeCamera that will determine the point of
      view from which we display the scene.
+=======
+     Internal representation of the camera.
+>>>>>>> 139bdac... VIRO-696: DayDream Controller Integration Part 1
      */
     std::shared_ptr<VRONode> _pointOfView;
     

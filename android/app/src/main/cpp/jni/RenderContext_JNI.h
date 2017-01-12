@@ -45,6 +45,9 @@ class RenderContext {
         return _renderer->getFrameSynchronizer();
     }
 
+    std::shared_ptr<VROInputControllerBase> getInputController() {
+        return _renderer->getRenderer()->getInputController();
+    }
     private:
     std::shared_ptr<VROSceneRenderer>_renderer;
 };

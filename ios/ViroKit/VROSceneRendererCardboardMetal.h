@@ -24,7 +24,7 @@ class VROShaderProgram;
 
 /*
  Uses the Metal driver to render a scene to Cardboard. The scene
- is rendered to a Metal texture, which is then blitted via OpenGL
+ is rendered to a Metal texture, which is then blitted via Open GL
  onto Cardboard's OpenGL context.
  */
 class VROSceneRendererCardboardMetal : public VROSceneRendererCardboard {

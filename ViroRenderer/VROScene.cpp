@@ -5,7 +5,7 @@
 //  Created by Raj Advani on 10/19/15.
 //  Copyright © 2015 Viro Media. All rights reserved.
 //
-
+#include <algorithm>
 #include "VROScene.h"
 #include "VRORenderContext.h"
 #include "VRONode.h"
@@ -137,6 +137,21 @@ void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
     material->getDiffuse().setTexture(textureSphere);
     material->setWritesToDepthBuffer(false);
     material->setReadsFromDepthBuffer(false);
+}
+
+void VROScene::setControllerPresenter(std::shared_ptr<VROInputPresenter> presenter) {
+    std::shared_ptr<VRONode> node = presenter->getRootNode();
+
+    // Add the controller presenter to the scene tree if we haven't already
+    if (_controllerPresenter != presenter){
+        auto it = std::find(_nodes.begin(), _nodes.end(), node);
+        if (it != _nodes.end()){
+            _nodes.erase(it);
+        }
+        _nodes.push_back(node);
+    }
+
+    _controllerPresenter = presenter;
 }
 
 void VROScene::setBackgroundRotation(VROQuaternion rotation) {

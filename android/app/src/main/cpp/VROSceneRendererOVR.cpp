@@ -1519,7 +1519,6 @@ void VROSceneRendererOVR::onSurfaceDestroyed() {
     ANativeWindow_release( appThread->NativeWindow );
     appThread->NativeWindow = NULL;
 }
-
 /*
 ================================================================================
 
@@ -1555,10 +1554,4 @@ JNIEXPORT void JNICALL Java_com_oculus_gles3jni_GLES3JNILib_onTouchEvent( JNIEnv
     ovrMessage_SetFloatParm( &message, 1, x );
     ovrMessage_SetFloatParm( &message, 2, y );
     ovrMessageQueue_PostMessage( &appThread->MessageQueue, &message );
-}
-
-#pragma mark - Rendering
-
-void VROSceneRendererOVR::onTriggerEvent() {
-
 }

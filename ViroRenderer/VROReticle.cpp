@@ -12,24 +12,25 @@
 #include "VRONode.h"
 #include "VROMaterial.h"
 #include "VROAction.h"
+#include "VROBillboardConstraint.h"
 
 static const float kTriggerAnimationDuration = 0.4;
 static const float kTriggerAnimationInnerCircleThicknessMultiple = 3;
 static const float kTriggerAnimationWhiteCircleMultiple = 4;
 
 VROReticle::VROReticle() :
+    _isPointerFixed(false),
     _enabled(true),
     _size(0.01),
     _thickness(0.005),
     _endThickness(_thickness * kTriggerAnimationInnerCircleThicknessMultiple) {
-        
     std::vector<VROVector3f> path = createArc(_size, 32);
     _polyline = VROPolyline::createPolyline(path, _thickness);
     _polyline->setName("Reticle");
     _polyline->getMaterials().front()->setWritesToDepthBuffer(false);
     _polyline->getMaterials().front()->setReadsFromDepthBuffer(false);
     _polyline->getMaterials().front()->getDiffuse().setColor({0.33, 0.976, 0.968, 1.0});
-        
+
     _node = std::make_shared<VRONode>();
     _node->setGeometry(_polyline);
     _node->setPosition({0, 0, -2});
@@ -41,10 +42,9 @@ VROReticle::~VROReticle() {
 }
 
 void VROReticle::trigger() {
-    std::shared_ptr<VROAction> action = VROAction::timedAction([this](VRONode *const node, float t) {
+   std::shared_ptr<VROAction> action = VROAction::timedAction([this](VRONode *const node, float t) {
         float whiteAlpha = 0.0;
         float thickness = _thickness;
-        
         if (t < 0.5) {
             thickness = VROMathInterpolate(t, 0, 0.5, _thickness, _endThickness);
             whiteAlpha = VROMathInterpolate(t, 0, 0.5, 0, 1.0);
@@ -53,16 +53,12 @@ void VROReticle::trigger() {
             thickness = VROMathInterpolate(t, 0.5, 1.0, _endThickness, _thickness);
             whiteAlpha = VROMathInterpolate(t, 0.5, 1.0, 1.0, 0);
         }
-        
         // float whiteRadius = VROMathInterpolate(t, 0, 1.0, _size, _size * kTriggerAnimationWhiteCircleMultiple);
         // TODO Draw a filled circle with whiteRadius and whiteAlpha
         
         _polyline->setWidth(thickness);
-        
     }, VROTimingFunctionType::Linear, kTriggerAnimationDuration);
-    
     _node->runAction(action);
-    
     _endThickness = _thickness * kTriggerAnimationInnerCircleThicknessMultiple;
 }
 
@@ -70,8 +66,8 @@ void VROReticle::setEnabled(bool enabled) {
     _node->setHidden(!enabled);
 }
 
-void VROReticle::setDepth(float depth) {
-    _node->setPosition({0, 0, depth});
+void VROReticle::setPosition(VROVector3f position){
+    _node->setPosition(position);
 }
 
 void VROReticle::setRadius(float radius) {
@@ -83,9 +79,30 @@ void VROReticle::setThickness(float thickness) {
     _polyline->setWidth(thickness);
 }
 
+void VROReticle::setPointerMode(bool pointerMode){
+    _isPointerFixed = pointerMode;
+
+    // Add billboard constraints in pointer mode so that reticle always faces the
+    // user even if it's pointed at a sharp angle.
+    if (_isPointerFixed){
+        _node->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
+    } else {
+        _node->removeConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
+    }
+}
+
+bool VROReticle::getPointerMode(){
+    return _isPointerFixed;
+}
+
 void VROReticle::renderEye(VROEyeType eye, const VRORenderContext *renderContext, VRODriver *driver) {
     VRORenderParameters renderParams;
-    renderParams.transforms.push(renderContext->getHUDViewMatrix());
+    if (_isPointerFixed){
+        VROMatrix4f identity;
+        renderParams.transforms.push(identity);
+    } else {
+        renderParams.transforms.push(renderContext->getHUDViewMatrix());
+    }
     renderParams.opacities.push(1.0);
     renderParams.hierarchical.push(false);
 

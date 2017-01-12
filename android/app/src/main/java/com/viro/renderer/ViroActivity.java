@@ -17,6 +17,7 @@ import android.util.Log;
 import com.viro.renderer.jni.AmbientLightJni;
 import com.viro.renderer.jni.BoxJni;
 import com.viro.renderer.jni.DirectionalLightJni;
+import com.viro.renderer.jni.ControllerJni;
 import com.viro.renderer.jni.EventDelegateJni;
 import com.viro.renderer.jni.ImageJni;
 import com.viro.renderer.jni.MaterialJni;
@@ -63,7 +64,6 @@ public class ViroActivity extends AppCompatActivity {
 
         //testBackgroundVideo(scene);
         //testBackgroundImage(scene);
-        testSkyBoxImage(scene);
         //testSkyBoxImage(scene);
 
         for (NodeJni node: nodes) {
@@ -185,17 +185,37 @@ public class ViroActivity extends AppCompatActivity {
         material.setLightingModel("Blinn");
 
         EventDelegateJni delegateJni = new EventDelegateJni();
-        delegateJni.setEventEnabled(EventDelegateJni.EventType.ON_GAZE, true);
-        delegateJni.setEventEnabled(EventDelegateJni.EventType.ON_TAP, true);
+        delegateJni.setEventEnabled(EventDelegateJni.EventSource.CONTROLLER_GAZE, true);
+        delegateJni.setEventEnabled(EventDelegateJni.EventSource.SECONDARY_CLICK, true);
         delegateJni.setEventDelegateCallback(new EventDelegateJni.EventDelegateCallback() {
             @Override
-            public void onTapped() {
-                Log.e(TAG," Tapped on Box One.");
+            public void onControllerStatus(EventDelegateJni.ControllerStatus status) {
+
+            }
+
+            @Override
+            public void onButtonEvent(EventDelegateJni.EventSource type, EventDelegateJni.EventAction event) {
+                Log.e(TAG, "Button Event on box " + type.toString() + " || " + event.toString());
+            }
+
+            @Override
+            public void onTouchpadEvent(EventDelegateJni.EventSource type, EventDelegateJni.EventAction event, float x, float y) {
+                //No-op
+            }
+
+            @Override
+            public void onRotate(float x, float y, float z) {
+                //No-op
+            }
+
+            @Override
+            public void onPosition(float x, float y, float z) {
+                //No-op
             }
 
             @Override
             public void onGaze(boolean isGazing) {
-                Log.e(TAG,"Gaze event on Box One.");
+                Log.e(TAG,"Gaze event on Box two.");
             }
         });
 
@@ -209,30 +229,11 @@ public class ViroActivity extends AppCompatActivity {
         node1.setTransformBehaviors(behaviors);
         node1.setEventDelegateJni(delegateJni);
 
-
-        EventDelegateJni delegateJni2 = new EventDelegateJni();
-        delegateJni2.setEventEnabled(EventDelegateJni.EventType.ON_GAZE, true);
-        delegateJni2.setEventEnabled(EventDelegateJni.EventType.ON_TAP, true);
-        delegateJni2.setEventDelegateCallback(new EventDelegateJni.EventDelegateCallback() {
-            @Override
-            public void onTapped() {
-                Log.e(TAG," Tapped on Box Two.");
-            }
-
-            @Override
-            public void onGaze(boolean isGazing) {
-                Log.e(TAG,"Gaze event on Box Two.");
-            }
-        });
-
-        // Creation of ViroBox to the left not billboarded
         BoxJni boxGeometry2 = new BoxJni(2, 2, 2);
         node2.setGeometry(boxGeometry2);
         float[] boxPosition2 = {-2, 0, -3};
         node2.setPosition(boxPosition2);
         node2.setMaterials(Arrays.asList(material));
-        node2.setEventDelegateJni(delegateJni2);
-
         return Arrays.asList(node1, node2);
     }
 

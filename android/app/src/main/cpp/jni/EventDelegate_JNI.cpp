@@ -31,17 +31,39 @@ JNI_METHOD(void, nativeEnableEvent)(JNIEnv *env,
                                         jlong native_node_ref,
                                         jint eventTypeId,
                                         jboolean enabled) {
-    VROEventDelegate::EventType eventType
-            = static_cast<VROEventDelegate::EventType>(eventTypeId);
+    VROEventDelegate::EventSource eventType
+            = static_cast<VROEventDelegate::EventSource>(eventTypeId);
     EventDelegate::native(native_node_ref)->setEnabledEvent(eventType, enabled);
 }
 
 }  // extern "C"
 
-void EventDelegate_JNI::onTapped() {
-    VROPlatformCallJavaFunction(_javaObject, "onTapped", "()V");
+void EventDelegate_JNI::onControllerStatus(ControllerStatus status) {
+    VROPlatformCallJavaFunction(_javaObject,
+                                "onControllerStatus", "(I)V", status);
 }
 
-void EventDelegate_JNI::onGaze(bool isGazing) {
-    VROPlatformCallJavaFunction(_javaObject, "onGaze", "(Z)V", isGazing);
+void EventDelegate_JNI::onButtonEvent(EventSource type, EventAction event) {
+    VROPlatformCallJavaFunction(_javaObject,
+                                "onButtonEvent", "(II)V", type, event);
+}
+
+void EventDelegate_JNI::onTouchPadEvent(EventSource type, EventAction event, float x, float y){
+    VROPlatformCallJavaFunction(_javaObject,
+                                "onTouchpadEvent", "(IIFF)V", type, event, x, y);
+}
+
+void EventDelegate_JNI::onRotate(VROVector3f rotation) {
+    VROPlatformCallJavaFunction(_javaObject,
+                                "onRotate", "(FFF)V", rotation.x,rotation.y, rotation.z);
+}
+
+void EventDelegate_JNI::onPosition(VROVector3f location) {
+    VROPlatformCallJavaFunction(_javaObject,
+                                "onPosition", "(FFF)V", location.x, location.y, location.z);
+}
+
+void EventDelegate_JNI::onGaze(bool isGazing){
+    VROPlatformCallJavaFunction(_javaObject,
+                                "onGaze", "(Z)V", isGazing);
 }

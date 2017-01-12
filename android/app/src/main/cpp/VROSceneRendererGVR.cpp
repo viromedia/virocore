@@ -21,6 +21,8 @@
 #include "VROSceneController.h"
 #include "VRORenderDelegate.h"
 #include "VROReticle.h"
+#include "VROInputControllerDaydream.h"
+#include "VROInputControllerCardboard.h"
 
 static const uint64_t kPredictionTimeWithoutVsyncNanos = 50000000;
 
@@ -33,6 +35,21 @@ VROSceneRendererGVR::VROSceneRendererGVR(gvr_context* gvr_context,
     _scratchViewport(_gvr->CreateBufferViewport()),
     _vrModeEnabled(true) {
 
+    // Create corresponding controllers - cardboard, or daydream if supported.
+    std::shared_ptr<VROInputControllerBase> controller;
+    _viewerType = _gvr->GetViewerType();
+
+    if (_viewerType == GVR_VIEWER_TYPE_DAYDREAM) {
+        controller = std::make_shared<VROInputControllerDaydream>(gvr_context);
+    } else if (_viewerType == GVR_VIEWER_TYPE_CARDBOARD){
+        controller = std::make_shared<VROInputControllerCardboard>();
+    } else {
+        perror("Unrecognized Viewer type! Falling back to Cardboard Controller as default.");
+        controller = std::make_shared<VROInputControllerCardboard>();
+    }
+
+    // Create renderer and attach the controller to it.
+    _renderer = std::make_shared<VRORenderer>(controller);
     _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
 }
 
@@ -152,20 +169,23 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headRotation) {
     _renderer->endFrame(*_driver.get());
 }
 
-void VROSceneRendererGVR::onTriggerEvent() {
-    /**
-     * TODO VIRO-696: Move this into it's own Input Controller with daydream integration.
-     */
-    _renderer->getReticle()->trigger();
-    _renderer->getEventManager()->onHeadGearTap();
+void VROSceneRendererGVR::onScreenTouchEvent(bool isTouching) {
+    if (_viewerType == GVR_VIEWER_TYPE_CARDBOARD) {
+        std::shared_ptr<VROInputControllerBase> baseController =  _renderer->getInputController();
+        std::shared_ptr<VROInputControllerCardboard> cardboardController
+                = std::dynamic_pointer_cast<VROInputControllerCardboard>(baseController);
+        cardboardController->updateScreenTouch(isTouching);
+    }
 }
 
 void VROSceneRendererGVR::onPause() {
+    _renderer->getInputController()->onPause();
     _gvr->PauseTracking();
     _gvrAudio->Pause();
 }
 
 void VROSceneRendererGVR::onResume() {
+    _renderer->getInputController()->onResume();
     _gvr->RefreshViewerProfile();
     _gvr->ResumeTracking();
     _gvrAudio->Resume();

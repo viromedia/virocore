@@ -24,7 +24,6 @@ public:
 
     VROSceneRenderer() :
         _frame(0) {
-        _renderer = std::make_shared<VRORenderer>();
     }
     virtual ~VROSceneRenderer() {}
 
@@ -41,7 +40,7 @@ public:
     /*
      Event on trigger.
      */
-    virtual void onTriggerEvent() = 0;
+    virtual void onScreenTouchEvent(bool enabled) = 0;
 
     /*
      Enable or disable stereo rendering (VR mode). When false, we will render

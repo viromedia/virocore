@@ -105,7 +105,10 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    mNativeRenderer.onTriggerEvent();
+                    mNativeRenderer.onScreenTouchEvent(true);
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    mNativeRenderer.onScreenTouchEvent(false);
                     return true;
                 }
                 return false;
@@ -152,6 +155,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
         setStereoModeEnabled(vrModeEnabled);
         // Also set async reprojection because this is something that Google advised us to do.
         // See https://github.com/googlevr/gvr-android-sdk/issues/316
+
         if (setAsyncReprojectionEnabled(vrModeEnabled)) {
             AndroidCompat.setSustainedPerformanceMode((Activity)getContext(), true);
         }

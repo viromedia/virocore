@@ -26,7 +26,7 @@ public:
      */
     void initGL() {} // Not required
     void onDrawFrame() {} // Not required
-    void onTriggerEvent();
+    void onScreenTouchEvent(bool enabled) {} // Not supported
     void setVRModeEnabled(bool enabled) {} // Not supported
 
     /*

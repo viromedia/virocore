@@ -21,30 +21,19 @@
 #include "VROImageUtil.h"
 #include "VRORenderContext.h"
 #include "VROCamera.h"
-#include "VROReticleSizeListener.h"
 
 static const float kDefaultSceneTransitionDuration = 1.0;
 
 #pragma mark - Initialization
 
-VRORenderer::VRORenderer() :
+VRORenderer::VRORenderer(std::shared_ptr<VROInputControllerBase> inputController) :
     _rendererInitialized(false),
     _frameSynchronizer(std::make_shared<VROFrameSynchronizerInternal>()),
     _context(std::make_shared<VRORenderContext>(_frameSynchronizer)),
-    _reticle(std::make_shared<VROReticle>()),
-    _sceneTransitionActive(false) {
-
-    _eventManager = std::make_shared<VROEventManager>(_context);
-
-    /*
-     * Binds the size listener to the reticle and register it within
-     * the eventController in order to respond to gaze events (we
-     * change the size of the reticle based on the gazed location).
-     */
-    std::shared_ptr<VROReticleSizeListener> _reticleSizeListener
-            = std::make_shared<VROReticleSizeListener>(_reticle, _context);
-    _eventManager->registerEventDelegate(_reticleSizeListener);
+    _inputController(inputController),
+    _sceneTransitionActive(false){
     initBlankTexture(*_context);
+    _inputController->setContext(_context);
 }
 
 VRORenderer::~VRORenderer() {
@@ -75,7 +64,7 @@ void VRORenderer::updateRenderViewSize(float width, float height) {
 
 void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView fov,
                                VROMatrix4f headRotation, VRODriver &driver) {
-    
+
     if (!_rendererInitialized) {
         std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
         if (delegate) {
@@ -83,12 +72,12 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         }
         _rendererInitialized = true;
     }
-    
+
     VROTransaction::beginImplicitAnimation();
     VROTransaction::update();
-    
+
     _sceneTransitionActive = processSceneTransition();
-    
+
     _context->setFrame(frame);
     notifyFrameStart();
 
@@ -96,7 +85,6 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     camera.setHeadRotation(headRotation);
     camera.setViewport(viewport);
     camera.setFOV(fov);
-    
     // Make a default camera if no point of view is set
     if (!_pointOfView) {
         camera.setPosition({0, 0, 0 });
@@ -138,9 +126,9 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
             }
         }
     }
-    
+
     _context->setCamera(camera);
-    
+
     /*
      This matrix is used for rendering objects that follow the camera, such
      as skyboxes. To get them to follow the camera, we do not include the
@@ -148,7 +136,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
      */
     VROMatrix4f enclosureMatrix = VROMathComputeLookAtMatrix({ 0, 0, 0 }, camera.getForward(), camera.getUp());
     _context->setEnclosureViewMatrix(enclosureMatrix);
-    
+
     if (_sceneController) {
         if (_outgoingSceneController) {
             _outgoingSceneController->getScene()->updateSortKeys(*_context.get(), driver);
@@ -157,13 +145,9 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         else {
             _sceneController->getScene()->updateSortKeys(*_context.get(), driver);
         }
-    }
 
-    /**
-     * Proccess events at the end of prepareFrame.
-     * TODO VIRO-696: Remove this in favor of an input controller during DayDream integration.
-     */
-    _eventManager->onHeadGearGaze();
+        _inputController->onProcess();
+    }
 }
 
 void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
@@ -175,18 +159,24 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
 
     VROMatrix4f cameraMatrix = _context->getCamera().computeLookAtMatrix();
     VROMatrix4f eyeView = eyeFromHeadMatrix.multiply(cameraMatrix);
-    
+
     _context->setHUDViewMatrix(eyeFromHeadMatrix.multiply(eyeView.invert()));
     _context->setViewMatrix(eyeView);
     _context->setProjectionMatrix(projectionMatrix);
     _context->setEyeType(eye);
     _context->setZNear(kZNear);
     _context->setZFar(kZFar);
-    
+
     renderEye(eye, driver);
 
-    _reticle->renderEye(eye, _context.get(), &driver);
-    
+    /**
+     * Render the reticle with a HudViewMatrix instead.
+     */
+    std::shared_ptr<VROReticle> reticle = _inputController->getPresenter()->getReticle();
+    if (reticle != nullptr){
+        reticle->renderEye(eye, _context.get(), &driver);
+    }
+
     if (delegate) {
         delegate->didRenderEye(eye, _context.get());
     }
@@ -196,13 +186,13 @@ void VRORenderer::endFrame(VRODriver &driver) {
     if (!_sceneTransitionActive && _outgoingSceneController) {
         _sceneController->endIncomingTransition(_context.get());
         _outgoingSceneController->endOutgoingTransition(_context.get());
-    
+
         _sceneController->onSceneDidAppear(_context.get(), driver);
         _outgoingSceneController->onSceneDidDisappear(_context.get(), driver);
-        
+
         _outgoingSceneController = nullptr;
     }
-    
+
     notifyFrameEnd();
     VROTransaction::commitAll();
 }
@@ -212,10 +202,10 @@ void VRORenderer::renderEye(VROEyeType eyeType, VRODriver &driver) {
         if (_outgoingSceneController) {
             _outgoingSceneController->sceneWillRender(_context.get());
             _sceneController->sceneWillRender(_context.get());
-            
+
             _outgoingSceneController->getScene()->renderBackground(*_context.get(), driver);
             _sceneController->getScene()->renderBackground(*_context.get(), driver);
-            
+
             _outgoingSceneController->getScene()->render(*_context.get(), driver);
             _sceneController->getScene()->render(*_context.get(), driver);
         }
@@ -235,10 +225,10 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneCo
     if (outgoingSceneController) {
         outgoingSceneController->onSceneWillDisappear(_context.get(), driver);
     }
-    
+
     _sceneController = sceneController;
-    _eventManager->attachScene(_sceneController->getScene());
-    
+    _inputController->attachScene(_sceneController->getScene());
+
     sceneController->onSceneDidAppear(_context.get(), driver);
     if (outgoingSceneController) {
         outgoingSceneController->onSceneDidDisappear(_context.get(), driver);
@@ -250,25 +240,25 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneCo
         _sceneController = sceneController;
         return;
     }
-    
+
     setSceneController(sceneController, kDefaultSceneTransitionDuration, VROTimingFunctionType::EaseIn, driver);
 }
 
 void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                                      VROTimingFunctionType timingFunctionType, VRODriver &driver) {
     passert (_sceneController != nullptr);
-    
+
     _outgoingSceneController = _sceneController;
     _sceneController = sceneController;
-    
+    _inputController->attachScene(_sceneController->getScene());
+
     _sceneTransitionStartTime = VROTimeCurrentSeconds();
     _sceneTransitionDuration = seconds;
     _sceneTransitionTimingFunction = VROTimingFunction::forType(timingFunctionType);
 
-    _eventManager->attachScene(_sceneController->getScene());
     _sceneController->onSceneWillAppear(_context.get(), driver);
     _outgoingSceneController->onSceneWillDisappear(_context.get(), driver);
-    
+
     _sceneController->startIncomingTransition(_context.get(), seconds);
     _outgoingSceneController->startOutgoingTransition(_context.get(), seconds);
 }
@@ -277,10 +267,10 @@ bool VRORenderer::processSceneTransition() {
     if (!_sceneController || !_outgoingSceneController) {
         return false;
     }
-    
+
     float percent = (VROTimeCurrentSeconds() - _sceneTransitionStartTime) / _sceneTransitionDuration;
     float t = _sceneTransitionTimingFunction->getT(percent);
-    
+
     bool sceneTransitionActive = percent < 0.9999;
     if (sceneTransitionActive) {
         _sceneController->animateIncomingTransition(_context.get(), t);
@@ -290,14 +280,15 @@ bool VRORenderer::processSceneTransition() {
         _sceneController->animateIncomingTransition(_context.get(), 1.0);
         _outgoingSceneController->animateOutgoingTransition(_context.get(), 1.0);
     }
-    
+
     return sceneTransitionActive;
 }
 
 #pragma mark - Frame Listeners
 
 void VRORenderer::notifyFrameStart() {
-    ((VROFrameSynchronizerInternal *)_frameSynchronizer.get())->notifyFrameStart(*_context.get());
+    ((VROFrameSynchronizerInternal *)_frameSynchronizer.get())->
+            notifyFrameStart(*_context.get());
 }
 
 void VRORenderer::notifyFrameEnd() {
