@@ -10,7 +10,6 @@
 #include "VRORenderer.h"
 #include "VRODriverOpenGLAndroid.h"
 #include "VROImageAndroid.h"
-#include "VROSceneRendererCardboard.h"
 #include "VROVideoTextureAVP.h"
 #include "VROText.h"
 #include "VROPlatformUtil.h"

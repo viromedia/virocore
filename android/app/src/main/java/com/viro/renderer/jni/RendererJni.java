@@ -12,7 +12,7 @@ import android.view.Surface;
  * This class is a convenience wrapper around:
  *
  * Cpp JNI wrapper      : VRORenderer_JNI.cpp
- * Cpp Object           : VROSceneRendererCardboard.cpp
+ * Cpp Object           : VROSceneRendererGVR.cpp
  */
 public class RendererJni {
 

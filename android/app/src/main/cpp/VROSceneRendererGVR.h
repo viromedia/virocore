@@ -1,5 +1,5 @@
 //
-//  VROSceneRendererCardboard.h
+//  VROSceneRendererGVR.h
 //  ViroRenderer
 //
 //  Created by Raj Advani on 11/8/16.
@@ -23,19 +23,19 @@
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "vr/gvr/capi/include/gvr_types.h"
 
-class VROSceneRendererCardboard : public VROSceneRenderer {
+class VROSceneRendererGVR : public VROSceneRenderer {
 
 public:
 
     /*
-    Create a VROSceneRendererCardboard using a given |gvr_context|.
+    Create a VROSceneRendererGVR using a given |gvr_context|.
 
     @param gvr_api The (non-owned) gvr_context.
      @param gvr_audio_api The (owned) gvr::AudioApi context.
      */
-    VROSceneRendererCardboard(gvr_context* gvr_context,
+    VROSceneRendererGVR(gvr_context* gvr_context,
                               std::shared_ptr<gvr::AudioApi> gvrAudio);
-    virtual ~VROSceneRendererCardboard();
+    virtual ~VROSceneRendererGVR();
 
     /*
      Inherited from VROSceneRenderer.

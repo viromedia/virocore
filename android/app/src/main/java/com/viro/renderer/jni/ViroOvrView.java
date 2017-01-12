@@ -137,7 +137,24 @@ public class ViroOvrView extends SurfaceView implements VrView, Application.Acti
 
     @Override
     public void onActivityResumed(Activity activity) {
-        mNativeRenderer.onResume(); }
+        mNativeRenderer.onResume();
+
+        // Ensure fullscreen immersion.
+        setImmersiveSticky();
+        final Context activityContext = getContext();
+        ((Activity)activityContext)
+                .getWindow()
+                .getDecorView()
+                .setOnSystemUiVisibilityChangeListener(
+                        new View.OnSystemUiVisibilityChangeListener() {
+                            @Override
+                            public void onSystemUiVisibilityChange(int visibility) {
+                                if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                                    setImmersiveSticky();
+                                }
+                            }
+                        });
+    }
 
     @Override
     public void onActivityDestroyed(Activity activity) {
@@ -187,4 +204,18 @@ public class ViroOvrView extends SurfaceView implements VrView, Application.Acti
             listener.onDrawFrame();
         }
     }
+
+    private void setImmersiveSticky() {
+        ((Activity)getContext())
+                .getWindow()
+                .getDecorView()
+                .setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+    }
+
 }

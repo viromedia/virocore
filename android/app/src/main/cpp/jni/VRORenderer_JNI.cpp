@@ -13,7 +13,7 @@
 
 #include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
-#include "VROSceneRendererCardboard.h"
+#include "VROSceneRendererGVR.h"
 #include "VROSceneRendererOVR.h"
 #include "VROPlatformUtil.h"
 #include "VROSample.h"
@@ -41,7 +41,7 @@ JNI_METHOD(jlong, nativeCreateRendererGVR)(JNIEnv *env, jclass clazz,
 
     gvr_context *gvrContext = reinterpret_cast<gvr_context *>(native_gvr_api);
     std::shared_ptr<VROSceneRenderer> renderer
-            = std::make_shared<VROSceneRendererCardboard>(gvrContext, gvrAudio);
+            = std::make_shared<VROSceneRendererGVR>(gvrContext, gvrAudio);
     return Renderer::jptr(renderer);
 }
 

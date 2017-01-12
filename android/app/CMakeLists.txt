@@ -30,7 +30,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/debug_stacktrace.cpp
              src/main/cpp/debug_mapinfo.cpp
              src/main/cpp/VROLooper.cpp
-             src/main/cpp/VROSceneRendererCardboard.cpp
+             src/main/cpp/VROSceneRendererGVR.cpp
              src/main/cpp/VROSceneRendererOVR.cpp
              src/main/cpp/VROSample.cpp
              src/main/cpp/VROImageAndroid.cpp

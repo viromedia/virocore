@@ -1,12 +1,12 @@
 //
-//  VROSceneRendererCardboard.cpp
+//  VROSceneRendererGVR.cpp
 //  ViroRenderer
 //
 //  Created by Raj Advani on 11/8/16.
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include "VROSceneRendererCardboard.h"
+#include "VROSceneRendererGVR.h"
 
 #include <android/log.h>
 #include <assert.h>
@@ -26,7 +26,7 @@ static const uint64_t kPredictionTimeWithoutVsyncNanos = 50000000;
 
 #pragma mark - Setup
 
-VROSceneRendererCardboard::VROSceneRendererCardboard(gvr_context* gvr_context,
+VROSceneRendererGVR::VROSceneRendererGVR(gvr_context* gvr_context,
                                                      std::shared_ptr<gvr::AudioApi> gvrAudio) :
     _gvr(gvr::GvrApi::WrapNonOwned(gvr_context)),
     _gvrAudio(gvrAudio),
@@ -35,13 +35,13 @@ VROSceneRendererCardboard::VROSceneRendererCardboard(gvr_context* gvr_context,
     _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
 }
 
-VROSceneRendererCardboard::~VROSceneRendererCardboard() {
+VROSceneRendererGVR::~VROSceneRendererGVR() {
 
 }
 
 #pragma mark - Rendering
 
-void VROSceneRendererCardboard::initGL() {
+void VROSceneRendererGVR::initGL() {
   _gvr->InitializeGl();
 
   // Because we are using 2X MSAA, we can render to half as many pixels and
@@ -68,7 +68,7 @@ void VROSceneRendererCardboard::initGL() {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void VROSceneRendererCardboard::onDrawFrame() {
+void VROSceneRendererGVR::onDrawFrame() {
     // Because we are using 2X MSAA, we can render to half as many pixels and
     // achieve similar quality. If the size changed, resize the framebuffer
     gvr::Sizei recommended_size = halfPixelCount(_gvr->GetMaximumEffectiveRenderTargetSize());
@@ -119,7 +119,7 @@ void VROSceneRendererCardboard::onDrawFrame() {
     ++_frame;
 }
 
-void VROSceneRendererCardboard::onTriggerEvent() {
+void VROSceneRendererGVR::onTriggerEvent() {
     /**
      * TODO VIRO-696: Move this into it's own Input Controller with daydream integration.
      */
@@ -127,18 +127,18 @@ void VROSceneRendererCardboard::onTriggerEvent() {
     _renderer->getEventManager()->onHeadGearTap();
 }
 
-void VROSceneRendererCardboard::onPause() {
+void VROSceneRendererGVR::onPause() {
     _gvr->PauseTracking();
     _gvrAudio->Pause();
 }
 
-void VROSceneRendererCardboard::onResume() {
+void VROSceneRendererGVR::onResume() {
     _gvr->RefreshViewerProfile();
     _gvr->ResumeTracking();
     _gvrAudio->Resume();
 }
 
-void VROSceneRendererCardboard::prepareFrame(VROViewport leftViewport, VROFieldOfView fov, VROMatrix4f headRotation) {
+void VROSceneRendererGVR::prepareFrame(VROViewport leftViewport, VROFieldOfView fov, VROMatrix4f headRotation) {
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE); // Must enable writes to clear depth buffer
 
@@ -154,7 +154,7 @@ void VROSceneRendererCardboard::prepareFrame(VROViewport leftViewport, VROFieldO
     _renderer->prepareFrame(_frame, leftViewport, fov, headRotation, *_driver.get());
 }
 
-void VROSceneRendererCardboard::renderEye(VROEyeType eyeType,
+void VROSceneRendererGVR::renderEye(VROEyeType eyeType,
                                           VROMatrix4f eyeFromHeadMatrix,
                                           VROViewport viewport,
                                           VROFieldOfView fov) {
@@ -167,14 +167,14 @@ void VROSceneRendererCardboard::renderEye(VROEyeType eyeType,
 
 #pragma mark - Utility Methods
 
-gvr::Rectf VROSceneRendererCardboard::modulateRect(const gvr::Rectf &rect, float width,
+gvr::Rectf VROSceneRendererGVR::modulateRect(const gvr::Rectf &rect, float width,
                                                    float height) {
     gvr::Rectf result = {rect.left * width, rect.right * width,
                          rect.bottom * height, rect.top * height};
     return result;
 }
 
-gvr::Recti VROSceneRendererCardboard::calculatePixelSpaceRect(const gvr::Sizei &texture_size,
+gvr::Recti VROSceneRendererGVR::calculatePixelSpaceRect(const gvr::Sizei &texture_size,
                                                               const gvr::Rectf &texture_rect) {
     float width = static_cast<float>(texture_size.width);
     float height = static_cast<float>(texture_size.height);
@@ -185,7 +185,7 @@ gvr::Recti VROSceneRendererCardboard::calculatePixelSpaceRect(const gvr::Sizei &
     return result;
 }
 
-gvr::Sizei VROSceneRendererCardboard::halfPixelCount(const gvr::Sizei& in) {
+gvr::Sizei VROSceneRendererGVR::halfPixelCount(const gvr::Sizei& in) {
     // Scale each dimension by sqrt(2)/2 ~= 7/10ths.
     gvr::Sizei out;
     out.width = (7 * in.width) / 10;
@@ -193,7 +193,7 @@ gvr::Sizei VROSceneRendererCardboard::halfPixelCount(const gvr::Sizei& in) {
     return out;
 }
 
-VROMatrix4f VROSceneRendererCardboard::toMatrix4f(const gvr::Mat4f &glm) {
+VROMatrix4f VROSceneRendererGVR::toMatrix4f(const gvr::Mat4f &glm) {
     float m[16] = {
             glm.m[0][0], glm.m[1][0], glm.m[2][0], glm.m[3][0],
             glm.m[0][1], glm.m[1][1], glm.m[2][1], glm.m[3][1],
@@ -204,7 +204,7 @@ VROMatrix4f VROSceneRendererCardboard::toMatrix4f(const gvr::Mat4f &glm) {
     return VROMatrix4f(m);
 }
 
-void VROSceneRendererCardboard::extractViewParameters(gvr::BufferViewport &viewport,
+void VROSceneRendererGVR::extractViewParameters(gvr::BufferViewport &viewport,
                                                       VROViewport *outViewport, VROFieldOfView *outFov) {
 
     const gvr::Recti rect = calculatePixelSpaceRect(_renderSize, viewport.GetSourceUv());
