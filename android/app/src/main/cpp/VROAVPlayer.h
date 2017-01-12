@@ -44,8 +44,10 @@ public:
     }
 
 private:
+
     jobject _javPlayer;
     jobject _jsurface;
+    GLuint _textureId;
 
     void bindVideoSink();
 

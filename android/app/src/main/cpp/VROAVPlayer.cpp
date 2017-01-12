@@ -35,7 +35,8 @@ extern "C" {
 
 static const char *AVPlayerClass = "com/viro/renderer/AVPlayer";
 VROAVPlayer::VROAVPlayer() :
-    _jsurface(nullptr) {
+    _jsurface(nullptr),
+    _textureId(0) {
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     jclass cls = env->FindClass(AVPlayerClass);
@@ -58,6 +59,9 @@ VROAVPlayer::~VROAVPlayer() {
 
     if (_jsurface) {
         env->DeleteGlobalRef(_jsurface);
+    }
+    if (_textureId) {
+        VROPlatformDestroyVideoSink(_textureId);
     }
 }
 
@@ -93,7 +97,14 @@ bool VROAVPlayer::setDataSourceAsset(const char *assetName) {
 
 void VROAVPlayer::setSurface(GLuint textureId) {
     JNIEnv *env = VROPlatformGetJNIEnv();
+    if (_jsurface) {
+        env->DeleteGlobalRef(_jsurface);
+    }
+    if (_textureId) {
+        VROPlatformDestroyVideoSink(_textureId);
+    }
 
+    _textureId = textureId;
     jobject jsurface = VROPlatformCreateVideoSink(textureId);
     _jsurface = env->NewGlobalRef(jsurface);
 

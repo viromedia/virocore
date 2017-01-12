@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -63,7 +64,7 @@ public class ViroOvrView extends SurfaceView implements VrView, Application.Acti
     private final RenderContextJni mNativeRenderContext;
     private AssetManager mAssetManager;
     private OVRRenderCommandQueue mRenderQueue = new OVRRenderCommandQueue();
-    private List<FrameListener> mFrameListeners = new ArrayList();
+    private List<FrameListener> mFrameListeners = new CopyOnWriteArrayList<FrameListener>();
 
     private PlatformUtil mPlatformUtil;
 
@@ -132,29 +133,11 @@ public class ViroOvrView extends SurfaceView implements VrView, Application.Acti
 
     @Override
     public void onActivityPaused(Activity activity) {
-        mNativeRenderer.onPause();
-    }
+        mNativeRenderer.onPause(); }
 
     @Override
     public void onActivityResumed(Activity activity) {
-        mNativeRenderer.onResume();
-
-        // Ensure fullscreen immersion.
-        setImmersiveSticky();
-        final Context activityContext = getContext();
-        ((Activity)activityContext)
-                .getWindow()
-                .getDecorView()
-                .setOnSystemUiVisibilityChangeListener(
-                        new View.OnSystemUiVisibilityChangeListener() {
-                            @Override
-                            public void onSystemUiVisibilityChange(int visibility) {
-                                if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                                    setImmersiveSticky();
-                                }
-                            }
-                        });
-    }
+        mNativeRenderer.onResume(); }
 
     @Override
     public void onActivityDestroyed(Activity activity) {
@@ -170,19 +153,6 @@ public class ViroOvrView extends SurfaceView implements VrView, Application.Acti
             return true;
         }
         return super.dispatchKeyEvent(event);
-    }
-
-    public void setImmersiveSticky() {
-        ((Activity)getContext())
-                .getWindow()
-                .getDecorView()
-                .setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
     @Override
