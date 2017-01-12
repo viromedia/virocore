@@ -39,32 +39,6 @@ public class SceneJni {
         nativeSetBackgroundCubeWithColor(mNativeRef, color);
     }
 
-    public void addDirectionalLight(NodeJni node, long color, float[] direction) {
-
-        nativeAddDirectionalLight(mNativeRef, node.mNativeRef, color, direction[0], direction[1], direction[2]);
-    }
-
-    public void addAmbientLight(NodeJni node, long color) {
-
-        nativeAddAmbientLight(mNativeRef, node.mNativeRef, color);
-    }
-
-    public void addOmniLight(NodeJni node, long color, float attenuationStartDistance,
-                             float attenuationEndDistance, float[] position) {
-
-        nativeAddOmniLight(mNativeRef, node.mNativeRef, color, attenuationStartDistance,
-                attenuationEndDistance, position[0], position[1], position[2]);
-    }
-
-    public void addSpotLight(NodeJni node, long color, float attenuationStartDistance,
-                             float attenuationEndDistance, float[] position, float[] direction,
-                             float innerAngle, float outerAngle) {
-        nativeAddSpotLight(mNativeRef, node.mNativeRef, color, attenuationStartDistance,
-                attenuationEndDistance, position[0], position[1],position[2],
-                                        direction[0], direction[1], direction[2],
-                innerAngle, outerAngle);
-
-    }
     public void destroy() {
         nativeDestroyScene(mNativeRef);
     }
@@ -81,20 +55,6 @@ public class SceneJni {
     private native void nativeSetBackgroundRotation(long sceneRef, float degreeX, float degreeY,
                                                     float degreeZ);
 
-    private native void nativeAddDirectionalLight(long sceneRef, long nodeRef, long color,
-                                                  float directionX, float directionY,
-                                                  float directionZ);
-    private native void nativeAddAmbientLight(long sceneRef, long nodeRef, long color);
-    private native void nativeAddOmniLight(long sceneRef, long nodeRef, long color,
-                                           float attenuationStartDistance,
-                                           float attenuationEndDistance,
-                                           float positionX, float positionY, float positionZ);
-    private native void nativeAddSpotLight(long sceneRef, long nodeRef, long color,
-                                           float attenuationStartDistance,
-                                           float attenuationEndDistance,
-                                           float positionX, float positionY, float positionZ,
-                                           float directionX, float directionY, float directionZ,
-                                           float innerAngle, float outerAngle);
     private SceneDelegate mDelegate = null;
     public interface SceneDelegate {
         void onSceneWillAppear();

@@ -14,13 +14,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.viro.renderer.jni.AmbientLightJni;
 import com.viro.renderer.jni.BoxJni;
+import com.viro.renderer.jni.DirectionalLightJni;
 import com.viro.renderer.jni.EventDelegateJni;
 import com.viro.renderer.jni.ImageJni;
 import com.viro.renderer.jni.MaterialJni;
 import com.viro.renderer.jni.NodeJni;
+import com.viro.renderer.jni.OmniLightJni;
 import com.viro.renderer.jni.SceneJni;
 import com.viro.renderer.jni.SphereJni;
+import com.viro.renderer.jni.SpotLightJni;
 import com.viro.renderer.jni.SurfaceJni;
 import com.viro.renderer.jni.TextureJni;
 import com.viro.renderer.jni.VideoTextureJni;
@@ -66,21 +70,28 @@ public class ViroActivity extends AppCompatActivity {
             rootNode.addChildNode(node);
         }
 
-        testSceneLighting(scene, rootNode);
+        testSceneLighting(rootNode);
 
         // Updating the scene.
         mVrView.setScene(scene);
     }
 
-    private void testSceneLighting(SceneJni scene, NodeJni node) {
+    private void testSceneLighting(NodeJni node) {
         float[] lightDirection = {0, 0, -1};
-        scene.addDirectionalLight(node, Color.BLUE, lightDirection);
-        scene.addAmbientLight(node, Color.BLACK);
+        AmbientLightJni ambientLightJni = new AmbientLightJni(Color.BLACK);
+        ambientLightJni.addToNode(node);
+
+        DirectionalLightJni directionalLightJni = new DirectionalLightJni(Color.BLUE, lightDirection);
+        directionalLightJni.addToNode(node);
+
         float[] omniLightPosition = {1,0,0};
-        scene.addOmniLight(node, Color.RED, 1, 10, omniLightPosition);
+        OmniLightJni omniLightJni = new OmniLightJni(Color.RED, 1, 10, omniLightPosition);
+        omniLightJni.addToNode(node);
 
         float[] spotLightPosition = {-2, 0, 3};
-        scene.addSpotLight(node, Color.YELLOW, 1, 10, spotLightPosition, lightDirection, 2, 10);
+        SpotLightJni spotLightJni = new SpotLightJni(Color.YELLOW, 1, 10, spotLightPosition,
+                lightDirection, 2, 10);
+        spotLightJni.addToNode(node);
     }
 
     private List<NodeJni> testSurfaceVideo(Context context) {

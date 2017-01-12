@@ -58,6 +58,10 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/EventDelegate_JNI.cpp
              src/main/cpp/jni/AnimationChain_JNI.cpp
              src/main/cpp/jni/AnimationGroup_JNI.cpp
+             src/main/cpp/jni/AmbientLight_JNI.cpp
+             src/main/cpp/jni/SpotLight_JNI.cpp
+             src/main/cpp/jni/DirectionalLight_JNI.cpp
+             src/main/cpp/jni/OmniLight_JNI.cpp
 
 
              # Math
