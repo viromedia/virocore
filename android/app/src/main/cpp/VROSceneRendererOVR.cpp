@@ -1242,7 +1242,7 @@ void * AppThreadFunction( void * parm )
     appState.UseMultiview &= ( glExtensions.multi_view &&
                                vrapi_GetSystemPropertyInt( &appState.Java, VRAPI_SYS_PROP_MULTIVIEW_AVAILABLE ) );
 
-    // TODO Enable multiview eventually
+    // TODO VIRO-725: enable multiview rendering (start by removing this line to detect multiview support correctly)
     appState.UseMultiview = false;
 
     ALOGV( "AppState UseMultiview : %d", appState.UseMultiview );
