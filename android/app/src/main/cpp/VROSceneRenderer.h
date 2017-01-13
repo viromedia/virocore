@@ -44,6 +44,13 @@ public:
     virtual void onTriggerEvent() = 0;
 
     /*
+     Enable or disable stereo rendering (VR mode). When false, we will render
+     using the entire device window. When true, we will render in stereo using
+     the platform's distortion renderer.
+     */
+    virtual void setVRModeEnabled(bool enabled) = 0;
+
+    /*
      Activity lifecycle.
      */
     virtual void onStart() = 0;

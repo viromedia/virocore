@@ -28,6 +28,7 @@ public class RendererJni {
     public void drawFrame() {
         nativeDrawFrame(mNativeRef);
     }
+    public void setVRModeEnabled(boolean enabled) { nativeSetVRModeEnabled(mNativeRef, enabled); }
 
     /* ----------     OVR only methods    ---------- */
 
@@ -83,6 +84,7 @@ public class RendererJni {
                                                 ViroOvrView view, Activity activity, AssetManager assets, PlatformUtil platformUtil);
     private native void nativeDestroyRenderer(long nativeRenderer);
     private native void nativeInitializeGl(long nativeRenderer);
+    private native void nativeSetVRModeEnabled(long nativeRenderer, boolean enabled);
     private native long nativeDrawFrame(long nativeRenderer);
     private native void nativeOnTriggerEvent(long nativeRenderer);
     private native void nativeOnStart(long nativeRenderer);

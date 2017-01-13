@@ -91,6 +91,12 @@ JNI_METHOD(void, nativeOnTriggerEvent)(JNIEnv *env,
     Renderer::native(native_renderer)->onTriggerEvent();
 }
 
+JNI_METHOD(void, nativeSetVRModeEnabled)(JNIEnv *env,
+                                         jobject obj,
+                                         jlong nativeRenderer, jboolean enabled) {
+    Renderer::native(nativeRenderer)->setVRModeEnabled(enabled);
+}
+
 JNI_METHOD(void, nativeOnStart)(JNIEnv *env,
                                 jobject obj,
                                 jlong native_renderer) {

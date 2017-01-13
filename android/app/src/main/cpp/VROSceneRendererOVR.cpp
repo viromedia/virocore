@@ -1559,14 +1559,6 @@ JNIEXPORT void JNICALL Java_com_oculus_gles3jni_GLES3JNILib_onTouchEvent( JNIEnv
 
 #pragma mark - Rendering
 
-void VROSceneRendererOVR::initGL() {
-
-}
-
-void VROSceneRendererOVR::onDrawFrame() {
-    // Not called for OVR since render-loop is handled internally
-}
-
 void VROSceneRendererOVR::onTriggerEvent() {
 
 }

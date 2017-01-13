@@ -24,9 +24,10 @@ public:
     /*
      Inherited from VROSceneRenderer.
      */
-    void initGL();
-    void onDrawFrame();
+    void initGL() {} // Not required
+    void onDrawFrame() {} // Not required
     void onTriggerEvent();
+    void setVRModeEnabled(bool enabled) {} // Not supported
 
     /*
      Activity lifecycle.

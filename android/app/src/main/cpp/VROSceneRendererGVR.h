@@ -43,6 +43,7 @@ public:
     void initGL();
     void onDrawFrame();
     void onTriggerEvent();
+    void setVRModeEnabled(bool enabled);
 
     /*
      Activity lifecycle.
@@ -68,6 +69,9 @@ private:
                       VROFieldOfView fov,
                       VROMatrix4f headRotation);
 
+    void renderStereo(VROMatrix4f &headRotation);
+    void renderMono(VROMatrix4f &headRotation);
+
     /*
      Draws the scene for the given eye.
      */
@@ -84,6 +88,8 @@ private:
 
     gvr::Mat4f _headView;
     gvr::Sizei _renderSize;
+
+    bool _vrModeEnabled;
 
     /*
      Utility methods.

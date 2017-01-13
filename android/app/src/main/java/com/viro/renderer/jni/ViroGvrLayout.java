@@ -156,9 +156,8 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
             AndroidCompat.setSustainedPerformanceMode((Activity)getContext(), true);
         }
 
-        // Set the right screen orientation based on whether or not vrMode is enabled.
-        ((Activity)getContext()).setRequestedOrientation(
-                vrModeEnabled ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        ((Activity)getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        mNativeRenderer.setVRModeEnabled(vrModeEnabled);
     }
 
     @Override

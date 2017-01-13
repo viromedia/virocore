@@ -30,7 +30,8 @@ VROSceneRendererGVR::VROSceneRendererGVR(gvr_context* gvr_context,
                                                      std::shared_ptr<gvr::AudioApi> gvrAudio) :
     _gvr(gvr::GvrApi::WrapNonOwned(gvr_context)),
     _gvrAudio(gvrAudio),
-    _scratchViewport(_gvr->CreateBufferViewport()) {
+    _scratchViewport(_gvr->CreateBufferViewport()),
+    _vrModeEnabled(true) {
 
     _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
 }
@@ -77,12 +78,6 @@ void VROSceneRendererGVR::onDrawFrame() {
         _renderSize = recommended_size;
     }
 
-    // Update the viewports to the latest (these change if the user changed the viewer)
-    _viewportList->SetToRecommendedBufferViewports();
-
-    // Acquire a frame from the swap chain
-    gvr::Frame frame = _swapchain->AcquireFrame();
-
     // Obtain the latest, predicted head pose
     gvr::ClockTimePoint target_time = gvr::GvrApi::GetTimePointNow();
     target_time.monotonic_system_time_nanos += kPredictionTimeWithoutVsyncNanos;
@@ -90,6 +85,25 @@ void VROSceneRendererGVR::onDrawFrame() {
     _headView = _gvr->GetHeadSpaceFromStartSpaceRotation(target_time);
     VROMatrix4f headRotation = toMatrix4f(_headView).invert();
 
+    if (_vrModeEnabled) {
+        renderStereo(headRotation);
+    }
+    else {
+        renderMono(headRotation);
+    }
+    ++_frame;
+}
+
+// For stereo rendering we use GVR's swapchain, which provides async projection
+// (async timewarp, basically), and distorts the images. To do this we render
+// to each of the buffers. The gvr::Frame performs distortion and async reprojection
+// when we invoke Submit().
+void VROSceneRendererGVR::renderStereo(VROMatrix4f &headRotation) {
+    // Update the viewports to the latest (these change if the user changed the viewer)
+    _viewportList->SetToRecommendedBufferViewports();
+
+    // Acquire a frame from the swap chain
+    gvr::Frame frame = _swapchain->AcquireFrame();
     frame.BindBuffer(0);
 
     // Extract the left viewport parameters
@@ -116,7 +130,26 @@ void VROSceneRendererGVR::onDrawFrame() {
 
     frame.Unbind();
     frame.Submit(*_viewportList, _headView);
-    ++_frame;
+}
+
+// For mono rendering we simply render direct to our GLSurfaceView, avoiding
+// the gvr::Frame and its buffers (so long as gvr::Frame.BindBuffer is not
+// called, the GLSurfaceView's primary default framebuffer is bound)
+void VROSceneRendererGVR::renderMono(VROMatrix4f &headRotation) {
+    const gvr::Recti rect = calculatePixelSpaceRect(_renderSize, {0, 1, 0, 1});
+    VROViewport viewport(rect.left, rect.bottom,
+                         rect.right - rect.left,
+                         rect.top   - rect.bottom);
+
+    VROFieldOfView fov(45, 45, 45, 45);
+    prepareFrame(viewport, fov, headRotation);
+
+    VROMatrix4f projectionMatrix = fov.toPerspectiveMatrix(kZNear, kZFar);
+    VROMatrix4f eyeFromHeadMatrix; // Identity
+
+    glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
+    _renderer->renderEye(VROEyeType::Monocular, eyeFromHeadMatrix, projectionMatrix, *_driver.get());
+    _renderer->endFrame(*_driver.get());
 }
 
 void VROSceneRendererGVR::onTriggerEvent() {
@@ -168,14 +201,14 @@ void VROSceneRendererGVR::renderEye(VROEyeType eyeType,
 #pragma mark - Utility Methods
 
 gvr::Rectf VROSceneRendererGVR::modulateRect(const gvr::Rectf &rect, float width,
-                                                   float height) {
+                                             float height) {
     gvr::Rectf result = {rect.left * width, rect.right * width,
                          rect.bottom * height, rect.top * height};
     return result;
 }
 
 gvr::Recti VROSceneRendererGVR::calculatePixelSpaceRect(const gvr::Sizei &texture_size,
-                                                              const gvr::Rectf &texture_rect) {
+                                                        const gvr::Rectf &texture_rect) {
     float width = static_cast<float>(texture_size.width);
     float height = static_cast<float>(texture_size.height);
     gvr::Rectf rect = modulateRect(texture_rect, width, height);
@@ -205,7 +238,7 @@ VROMatrix4f VROSceneRendererGVR::toMatrix4f(const gvr::Mat4f &glm) {
 }
 
 void VROSceneRendererGVR::extractViewParameters(gvr::BufferViewport &viewport,
-                                                      VROViewport *outViewport, VROFieldOfView *outFov) {
+                                                VROViewport *outViewport, VROFieldOfView *outFov) {
 
     const gvr::Recti rect = calculatePixelSpaceRect(_renderSize, viewport.GetSourceUv());
     *outViewport = VROViewport(rect.left, rect.bottom,
@@ -214,6 +247,10 @@ void VROSceneRendererGVR::extractViewParameters(gvr::BufferViewport &viewport,
     const gvr::Rectf fov = _scratchViewport.GetSourceFov();
     *outFov = VROFieldOfView(fov.left, fov.right,
                              fov.bottom, fov.top);
+}
+
+void VROSceneRendererGVR::setVRModeEnabled(bool enabled) {
+    _vrModeEnabled = enabled;
 }
 
 
