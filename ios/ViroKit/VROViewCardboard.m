@@ -14,6 +14,7 @@
 #import "VROSceneRendererCardboardOpenGL.h"
 #import "VROFieldOfView.h"
 #import "VROViewport.h"
+#import "VROReticle.h"
 #import "VROApiKeyValidatorDynamo.h"
 #import "VRORenderDelegateiOS.h"
 
@@ -77,10 +78,6 @@
                                                object:nil];
     self.renderer = std::make_shared<VRORenderer>();
     self.sceneRenderer = std::make_shared<VROSceneRendererCardboardOpenGL>(self.context, self.renderer);
-
-    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
-                                                                                    action:@selector(handleTap:)];
-    [self addGestureRecognizer:tapRecognizer];
     
     // TODO Bug in Cardboard prevents [headTransform fieldOfViewForEye:] from working
     self.fov = { 30.63, 40, 40, 34.178 };
@@ -164,10 +161,6 @@
 
 #pragma mark - Events
 
-- (void)handleTap:(UIGestureRecognizer *)gestureRecognizer {
-    _renderer->getEventManager()->onHeadGearTap();
-}
-
 - (std::shared_ptr<VROReticle>)reticle {
     return _renderer->getReticle();
 }
@@ -205,6 +198,7 @@
 - (void)cardboardView:(GVRCardboardView *)cardboardView didFireEvent:(GVRUserEvent)event {
     if (event == kGVRUserEventTrigger) {
         dispatch_async(dispatch_get_main_queue(), ^{
+            _renderer->getReticle()->trigger();
             _renderer->getEventManager()->onHeadGearTap();
         });
     } else if (event == kGVRUserEventBackButton) {
