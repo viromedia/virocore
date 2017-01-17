@@ -208,6 +208,66 @@ void VRONode::setScale(VROVector3f scale) {
                                                    }, _scale, scale));
 }
 
+void VRONode::setPositionX(float x) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float p) {
+        ((VRONode *)animatable)->_position.x = p;
+    }, _position.x, x));
+}
+
+void VRONode::setPositionY(float y) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float p) {
+        ((VRONode *)animatable)->_position.y = p;
+    }, _position.y, y));
+}
+
+void VRONode::setPositionZ(float z) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float p) {
+        ((VRONode *)animatable)->_position.z = p;
+    }, _position.z, z));
+}
+
+void VRONode::setScaleX(float x) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float s) {
+        ((VRONode *)animatable)->_scale.x = s;
+    }, _scale.x, x));
+}
+
+void VRONode::setScaleY(float y) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float s) {
+        ((VRONode *)animatable)->_scale.y = s;
+    }, _scale.y, y));
+}
+
+void VRONode::setScaleZ(float z) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float s) {
+        ((VRONode *)animatable)->_scale.z = s;
+    }, _scale.z, z));
+}
+
+void VRONode::setRotationEulerX(float radians) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float r) {
+        VROVector3f &euler = ((VRONode *) animatable)->_euler;
+        euler.x = VROMathNormalizeAngle2PI(r);
+        ((VRONode *)animatable)->_rotation = { euler.x, euler.y, euler.z };
+    }, _euler.x, radians));
+}
+
+void VRONode::setRotationEulerY(float radians) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float r) {
+        VROVector3f &euler = ((VRONode *) animatable)->_euler;
+        euler.y = VROMathNormalizeAngle2PI(r);
+        ((VRONode *)animatable)->_rotation = { euler.x, euler.y, euler.z };
+    }, _euler.y, radians));
+}
+
+void VRONode::setRotationEulerZ(float radians) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float r) {
+        VROVector3f &euler = ((VRONode *) animatable)->_euler;
+        euler.z = VROMathNormalizeAngle2PI(r);
+        ((VRONode *)animatable)->_rotation = { euler.x, euler.y, euler.z };
+    }, _euler.z, radians));
+}
+
 void VRONode::setPivot(VROVector3f pivot) {
     animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f s) {
                                                         ((VRONode *)animatable)->_pivot = s;

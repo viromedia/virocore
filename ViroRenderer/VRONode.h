@@ -115,6 +115,21 @@ public:
      */
     void setRotationEuler(VROVector3f euler);
     
+    /*
+     These piecewise setters are used in order to change one axis
+     only, without altering the remaining axes. Useful when animating
+     across multiple axes across separate calls. Animatable.
+     */
+    void setPositionX(float x);
+    void setPositionY(float y);
+    void setPositionZ(float z);
+    void setScaleX(float x);
+    void setScaleY(float y);
+    void setScaleZ(float z);
+    void setRotationEulerX(float radians);
+    void setRotationEulerY(float radians);
+    void setRotationEulerZ(float radians);
+    
     float getOpacity() const {
         return _opacity;
     }

@@ -96,13 +96,7 @@ void VROAnimationGroup::animatePosition(std::shared_ptr<VRONode> &node) {
     auto posX_it = _animations.find("positionX");
     auto posY_it = _animations.find("positionY");
     auto posZ_it = _animations.find("positionZ");
-    
-    if (posX_it == _animations.end() &&
-        posY_it == _animations.end() &&
-        posZ_it == _animations.end()) {
-        return;
-    }
-    
+
     float posX = node->getPosition().x;
     if (posX_it != _animations.end()) {
         std::shared_ptr<VROPropertyAnimation> &a = posX_it->second;
@@ -112,6 +106,7 @@ void VROAnimationGroup::animatePosition(std::shared_ptr<VRONode> &node) {
         else {
             posX = a->getValue();
         }
+        node->setPositionX(posX);
     }
     
     float posY = node->getPosition().y;
@@ -123,6 +118,7 @@ void VROAnimationGroup::animatePosition(std::shared_ptr<VRONode> &node) {
         else {
             posY = a->getValue();
         }
+        node->setPositionY(posY);
     }
     
     float posZ = node->getPosition().z;
@@ -134,21 +130,14 @@ void VROAnimationGroup::animatePosition(std::shared_ptr<VRONode> &node) {
         else {
             posZ = a->getValue();
         }
+        node->setPositionZ(posZ);
     }
-    
-    node->setPosition({posX, posY, posZ});
 }
 
 void VROAnimationGroup::animateScale(std::shared_ptr<VRONode> &node) {
     auto scaleX_it = _animations.find("scaleX");
     auto scaleY_it = _animations.find("scaleY");
     auto scaleZ_it = _animations.find("scaleZ");
-    
-    if (scaleX_it == _animations.end() &&
-        scaleY_it == _animations.end() &&
-        scaleZ_it == _animations.end()) {
-        return;
-    }
     
     float scaleX = node->getScale().x;
     if (scaleX_it != _animations.end()) {
@@ -159,6 +148,7 @@ void VROAnimationGroup::animateScale(std::shared_ptr<VRONode> &node) {
         else {
             scaleX = a->getValue();
         }
+        node->setScaleX(scaleX);
     }
     
     float scaleY = node->getScale().y;
@@ -170,6 +160,7 @@ void VROAnimationGroup::animateScale(std::shared_ptr<VRONode> &node) {
         else {
             scaleY = a->getValue();
         }
+        node->setScaleY(scaleY);
     }
     
     float scaleZ = node->getScale().z;
@@ -181,9 +172,8 @@ void VROAnimationGroup::animateScale(std::shared_ptr<VRONode> &node) {
         else {
             scaleZ = a->getValue();
         }
+        node->setScaleZ(scaleZ);
     }
-    
-    node->setScale({scaleX, scaleY, scaleZ});
 }
 
 void VROAnimationGroup::animateColor(std::shared_ptr<VRONode> &node) {
@@ -223,12 +213,6 @@ void VROAnimationGroup::animateRotation(std::shared_ptr<VRONode> &node) {
     auto rotateY_it = _animations.find("rotateY");
     auto rotateZ_it = _animations.find("rotateZ");
     
-    if (rotateX_it == _animations.end() &&
-        rotateY_it == _animations.end() &&
-        rotateZ_it == _animations.end()) {
-        return;
-    }
-    
     VROVector3f rotation = node->getRotationEuler();
     
     float rotateX = rotation.x;
@@ -240,6 +224,7 @@ void VROAnimationGroup::animateRotation(std::shared_ptr<VRONode> &node) {
         else {
             rotateX = toRadians(a->getValue());
         }
+        node->setRotationEulerX(rotateX);
     }
     
     float rotateY = rotation.y;
@@ -251,6 +236,7 @@ void VROAnimationGroup::animateRotation(std::shared_ptr<VRONode> &node) {
         else {
             rotateY = toRadians(a->getValue());
         }
+        node->setRotationEulerY(rotateY);
     }
     
     float rotateZ = rotation.z;
@@ -262,9 +248,8 @@ void VROAnimationGroup::animateRotation(std::shared_ptr<VRONode> &node) {
         else {
             rotateZ = toRadians(a->getValue());
         }
+        node->setRotationEulerZ(rotateZ);
     }
-    
-    node->setRotationEuler({rotateX, rotateY, rotateZ});
 }
 
 std::string VROAnimationGroup::toString() const {
