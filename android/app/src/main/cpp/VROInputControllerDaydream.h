@@ -44,7 +44,7 @@ private:
     void updateOrientation();
     void updateButtons();
     void updateTouchPad();
-    void notifyButtonEventForType(gvr::ControllerButton button, VROEventDelegate::EventSource type);
+    void notifyButtonEventForType(gvr::ControllerButton button, ViroDayDream::InputSource source);
 
     std::unique_ptr<gvr::ControllerApi> _gvr_controller;
     gvr::ControllerState _controller_state;

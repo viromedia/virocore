@@ -481,6 +481,7 @@
 		9F6CA37E483B7FE4107B18301DF07588 /* libCardboardSDK_i386.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libCardboardSDK_i386.a; path = Libraries/libCardboardSDK_i386.a; sourceTree = "<group>"; };
 		A3275C8789FAE0EB084290BA0B735849 /* AWSServiceEnum.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AWSServiceEnum.h; path = AWSCore/Service/AWSServiceEnum.h; sourceTree = "<group>"; };
 		A52078DF61F969F48173128831A40BAE /* AWSCategory.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AWSCategory.h; path = AWSCore/Utility/AWSCategory.h; sourceTree = "<group>"; };
+		A548BED81E358437007CC570 /* ViroRenderer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ViroRenderer.xcodeproj; path = ../ViroRenderer.xcodeproj; sourceTree = "<group>"; };
 		A6DB63C1A94F23FEBA991FECAE325A2C /* libCardboardSDK_armv7.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libCardboardSDK_armv7.a; path = Libraries/libCardboardSDK_armv7.a; sourceTree = "<group>"; };
 		A7034CB7E5555E7FDCD312C218526C15 /* AWSTMMemoryCache.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AWSTMMemoryCache.h; path = AWSCore/TMCache/AWSTMMemoryCache.h; sourceTree = "<group>"; };
 		A9E0457A95EFB4D3BF384EB2A1A28699 /* AWSCancellationTokenSource.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AWSCancellationTokenSource.h; path = AWSCore/Bolts/AWSCancellationTokenSource.h; sourceTree = "<group>"; };
@@ -885,12 +886,18 @@
 		7DB346D0F39D3F0E887471402A8071AB = {
 			isa = PBXGroup;
 			children = (
+				A548BED81E358437007CC570 /* ViroRenderer.xcodeproj */,
 				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
 				122DA2E5084A4393C29BE363C764795C /* Frameworks */,
 				1E8F36235A6AD931AB88FFE8A0F0D658 /* Pods */,
 				29CD659EE3007338C194806114AFC388 /* Products */,
 				D1F83005BC54487E773DA8AF561A7C29 /* Targets Support Files */,
 			);
+			sourceTree = "<group>";
+		};
+		A548BED91E358437007CC570 /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
 			sourceTree = "<group>";
 		};
 		D1F83005BC54487E773DA8AF561A7C29 /* Targets Support Files */ = {
@@ -1248,6 +1255,12 @@
 			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
 			productRefGroup = 29CD659EE3007338C194806114AFC388 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = A548BED91E358437007CC570 /* Products */;
+					ProjectRef = A548BED81E358437007CC570 /* ViroRenderer.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				76BEF493E64B5E0E9D1ED4E46756F83D /* AWSCore-iOS9.0 */,

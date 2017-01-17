@@ -35,9 +35,10 @@ static const float SCENE_BACKGROUND_DIST = 5.0f;
 class VROInputControllerBase{
 public:
     VROInputControllerBase(){
-        _hoveredNode = nullptr;
+        _lastClickedNode = nullptr;
+        _lastHoveredNode = nullptr;
         _scene = nullptr;
-        _currentControllerStatus = VROEventDelegate::ControllerStatus::UNKNOWN;
+        _currentControllerStatus = VROEventDelegate::ControllerStatus::Unknown;
     }
     virtual ~VROInputControllerBase(){}
 
@@ -98,17 +99,15 @@ public:
      * Viro-specific input events to be trigged by derived Input Controller classes; these
      * are the Viro-sepcific events that platform-specific events are mapped to.
      */
-    void onControllerStatus(VROEventDelegate::ControllerStatus status);
-    void onButtonEvent(VROEventDelegate::EventSource eventType, VROEventDelegate::EventAction action);
-    void onTouchpadEvent(VROEventDelegate::EventSource eventType,
-                         VROEventDelegate::EventAction action,
-                         float lastKnownX, float lastKnownY);
-    void onRotate(VROQuaternion rotation);
-    void onPosition(VROVector3f position);
+    void onControllerStatus(int source, VROEventDelegate::ControllerStatus status);
+    void onButtonEvent(int source, VROEventDelegate::ClickState clickAction);
+    void onTouchpadEvent(int source, VROEventDelegate::TouchState touchAction, float lastKnownX, float lastKnownY);
+    void onRotate(int source, VROQuaternion rotation);
+    void onPosition(int source, VROVector3f position);
 
 protected:
     virtual std::shared_ptr<VROInputPresenter> createPresenter(std::shared_ptr<VRORenderContext> context){
-        perror("ERROR: Derived class should create a presenter for BaseInputController to consume!");
+        perror("Error: Derived class should create a presenter for BaseInputController to consume!");
         return nullptr;
     }
 
@@ -146,10 +145,20 @@ private:
      */
     std::shared_ptr<VRONode> _hitNode;
 
+    /**
+     * Last node that we have clicked down on.
+     */
+    std::shared_ptr<VRONode> _lastClickedNode;
+
     /*
      * Last known that was successfully hovered upon.
      */
-    std::shared_ptr<VRONode> _hoveredNode;
+    std::shared_ptr<VRONode> _lastHoveredNode;
+
+    /**
+     * Lat known position that a TouchEvent occured on.
+     */
+    VROVector3f _lastTouchedPosition;
 
     /**
      * Delegates registered within the manager to be notified of events
@@ -163,14 +172,14 @@ private:
     VROHitTestResult hitTest(VROVector3f vector, VROVector3f hitFromPosition, bool boundsOnly);
 
     /**
-     * Returns the first node that is able to handle the event by bubbling it up.
+     * Returns the first node that is able to handle the event action by bubbling it up.
      * If nothing is able to handle the event, nullptr is returned.
      */
-    std::shared_ptr<VRONode> getNodeToHandleEvent(VROEventDelegate::EventSource type,
+    std::shared_ptr<VRONode> getNodeToHandleEvent(VROEventDelegate::EventAction action,
                                                   std::shared_ptr<VRONode> startingNode);
 
-    void processGazeEvent(std::shared_ptr<VRONode> node);
-    void updateControllerOrientation();
+    void processGazeEvent(int source, std::shared_ptr<VRONode> node);
+    void updateControllerOrientation(int source);
 };
 
 #endif

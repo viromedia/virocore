@@ -11,11 +11,14 @@ void VROInputControllerCardboardiOS::onProcess() {
 }
 
 void VROInputControllerCardboardiOS::onScreenClicked(){
-        VROInputControllerBase::onButtonEvent(VROEventDelegate::EventSource::PRIMARY_CLICK,
-                                              VROEventDelegate::EventAction::CLICK_UP);
+    // As ios doesn't have separate down up events, we simulate a button click
+    // by triggering both click down / click up.
+    VROInputControllerBase::onButtonEvent(ViroCardBoard::ViewerButton, VROEventDelegate::ClickState::ClickDown);
+    VROInputControllerBase::onButtonEvent(ViroCardBoard::ViewerButton, VROEventDelegate::ClickState::ClickUp);
 }
 
 void VROInputControllerCardboardiOS::updateOrientation(){
-    VROInputControllerBase::onRotate(_context->getCamera().getRotation());
+    VROInputControllerBase::onRotate(ViroCardBoard::Controller,
+                                     _context->getCamera().getRotation());
 }
 

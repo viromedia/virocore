@@ -7,11 +7,10 @@
 
 #include "VROInputControllerBase.h"
 
-void VROInputControllerBase::onButtonEvent(VROEventDelegate::EventSource event,
-                                           VROEventDelegate::EventAction action){
+void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickState clickState){
     // Notify internal delegates
     for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
-        delegate->onButtonEvent(event, action);
+        delegate->onClick(source, clickState);
     }
 
     // Return if we have not focused on any node upon which to trigger events.
@@ -19,19 +18,44 @@ void VROInputControllerBase::onButtonEvent(VROEventDelegate::EventSource event,
         return;
     }
 
-    std::shared_ptr<VRONode> focusedNode = getNodeToHandleEvent(event, _hitNode);
+    std::shared_ptr<VRONode> focusedNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnClick, _hitNode);
     if (focusedNode != nullptr){
-        focusedNode->getEventDelegate()->onButtonEvent(event, action);
+        focusedNode->getEventDelegate()->onClick(source, clickState);
+    }
+
+    /*
+     * If we have completed a ClickUp and ClickDown event sequentially for a
+     * given Node, trigger an onClicked event.
+     *
+     * NOTE: This only tracks the last node that was CLICKED_DOWN irregardless of source;
+     * it does not consider the corner case where DOWN / UP events may be performed from
+     * different sources.
+     */
+    if (clickState == VROEventDelegate::ClickUp) {
+        if (focusedNode != nullptr && _lastClickedNode != nullptr && _hitNode == _lastClickedNode) {
+            focusedNode->getEventDelegate()->onClick(source, VROEventDelegate::ClickState::Clicked);
+        }
+        _lastClickedNode = nullptr;
+    } else if (clickState == VROEventDelegate::ClickDown){
+        _lastClickedNode = _hitNode;
     }
 }
 
-void VROInputControllerBase::onTouchpadEvent(VROEventDelegate::EventSource event,
-                                             VROEventDelegate::EventAction action,
-                                             float lastKnownXPos,
-                                             float lastKnownYPos){
+void VROInputControllerBase::onTouchpadEvent(int source, VROEventDelegate::TouchState touchState,
+                                             float posX,
+                                             float posY){
+
+    // Avoid spamming similar TouchDownMove events.
+    VROVector3f currentTouchedPosition = VROVector3f(posX, posY, 0);
+    if (touchState == VROEventDelegate::TouchState::TouchDownMove &&
+            _lastTouchedPosition.isEqual(currentTouchedPosition)){
+        return;
+    }
+    _lastTouchedPosition = currentTouchedPosition;
+
     // Notify internal delegates
     for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
-        delegate->onTouchPadEvent(event, action, lastKnownXPos, lastKnownYPos);
+        delegate->onTouch(source, touchState, posX, posY);
     }
 
     // Return if we have not focused on any node upon which to trigger events.
@@ -39,24 +63,28 @@ void VROInputControllerBase::onTouchpadEvent(VROEventDelegate::EventSource event
         return;
     }
 
-    std::shared_ptr<VRONode> focusedNode = getNodeToHandleEvent(event, _hitNode);
+    std::shared_ptr<VRONode> focusedNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnTouch, _hitNode);
     if (focusedNode != nullptr){
-        focusedNode->getEventDelegate()->onTouchPadEvent(event, action, lastKnownXPos, lastKnownYPos);
+        focusedNode->getEventDelegate()->onTouch(source, touchState, posX, posY);
     }
 }
 
-void VROInputControllerBase::onRotate(VROQuaternion rotation){
-     _lastKnownRotation = rotation;
-     _lastKnownForward = _lastKnownRotation.getMatrix().multiply(kBaseForward);
-     updateControllerOrientation();
+void VROInputControllerBase::onRotate(int source, const VROQuaternion rotation){
+    if (_lastKnownRotation == rotation){
+        return;
+    }
+
+    _lastKnownRotation = rotation;
+    _lastKnownForward = _lastKnownRotation.getMatrix().multiply(kBaseForward);
+    updateControllerOrientation(source);
 }
 
-void VROInputControllerBase::onPosition(VROVector3f position){
+void VROInputControllerBase::onPosition(int source, VROVector3f position){
      _lastKnownPosition = position;
-     updateControllerOrientation();
+     updateControllerOrientation(source);
 }
 
-void VROInputControllerBase::updateControllerOrientation(){
+void VROInputControllerBase::updateControllerOrientation(int source){
     // Return for now if scene is not ready - it is required for the hit test.
     if (_scene == nullptr){
         return;
@@ -69,30 +97,23 @@ void VROInputControllerBase::updateControllerOrientation(){
 
     // Trigger orientation delegate callbacks within the scene.
     std::shared_ptr<VRONode> gazableNode
-            = getNodeToHandleEvent(VROEventDelegate::EventSource::CONTROLLER_GAZE, hitResult.getNode());
-    processGazeEvent(gazableNode);
+            = getNodeToHandleEvent(VROEventDelegate::EventAction::OnHover, hitResult.getNode());
+    processGazeEvent(source, gazableNode);
 
-    std::shared_ptr<VRONode> rotatableNode
-            = getNodeToHandleEvent(VROEventDelegate::EventSource::CONTROLLER_ROTATE, hitResult.getNode());
-    if (rotatableNode != nullptr){
-        rotatableNode->getEventDelegate()->onRotate(rotationEuler);
-    }
-
-    std::shared_ptr<VRONode> positionableNode
-            = getNodeToHandleEvent(VROEventDelegate::EventSource::CONTROLLER_MOVEMENT, hitResult.getNode());
-    if (positionableNode != nullptr){
-        positionableNode->getEventDelegate()->onPosition(_lastKnownPosition);
+    std::shared_ptr<VRONode> movableNode
+            = getNodeToHandleEvent(VROEventDelegate::EventAction::OnMove, hitResult.getNode());
+    if (movableNode != nullptr){
+        movableNode->getEventDelegate()->onMove(source, rotationEuler, _lastKnownPosition);
     }
 
     // Trigger orientation delegate callbacks for non-scene elements.
     for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
-        delegate->onGazeHit(hitResult.getDistance(), hitResult.getLocation());
-        delegate->onRotate(rotationEuler);
-        delegate->onPosition(_lastKnownPosition);
+        delegate->onGazeHit(source, hitResult.getDistance(), hitResult.getLocation());
+        delegate->onMove(source, rotationEuler, _lastKnownPosition);
     }
 }
 
-void VROInputControllerBase::onControllerStatus(VROEventDelegate::ControllerStatus status){
+void VROInputControllerBase::onControllerStatus(int source, VROEventDelegate::ControllerStatus status){
     if (_currentControllerStatus == status){
         return;
     }
@@ -101,7 +122,7 @@ void VROInputControllerBase::onControllerStatus(VROEventDelegate::ControllerStat
 
     // Notify internal delegates
     for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
-        delegate->onControllerStatus(status);
+        delegate->onControllerStatus(source, status);
     }
 
     // Return if we have not focused on any node upon which to trigger events.
@@ -110,25 +131,25 @@ void VROInputControllerBase::onControllerStatus(VROEventDelegate::ControllerStat
     }
 
     std::shared_ptr<VRONode> focusedNode
-            = getNodeToHandleEvent(VROEventDelegate::EventSource ::CONTROLLER_STATUS, _hitNode);
+            = getNodeToHandleEvent(VROEventDelegate::EventAction::OnControllerStatus, _hitNode);
     if (focusedNode != nullptr){
-        focusedNode->getEventDelegate()->onControllerStatus(status);
+        focusedNode->getEventDelegate()->onControllerStatus(source, status);
     }
 }
 
-void VROInputControllerBase::processGazeEvent(std::shared_ptr<VRONode> newNode) {
-    if (_hoveredNode == newNode){
+void VROInputControllerBase::processGazeEvent(int source, std::shared_ptr<VRONode> newNode) {
+    if (_lastHoveredNode == newNode){
         return;
     }
 
     if (newNode) {
-        newNode->getEventDelegate()->onGaze(true);
+        newNode->getEventDelegate()->onHover(source, true);
     }
 
-    if (_hoveredNode){
-        _hoveredNode->getEventDelegate()->onGaze(false);
+    if (_lastHoveredNode){
+        _lastHoveredNode->getEventDelegate()->onHover(source, false);
     }
-    _hoveredNode = newNode;
+    _lastHoveredNode = newNode;
 }
 
 VROHitTestResult VROInputControllerBase::hitTest(VROVector3f vector, VROVector3f hitFromPosition, bool boundsOnly) {
@@ -156,7 +177,7 @@ VROHitTestResult VROInputControllerBase::hitTest(VROVector3f vector, VROVector3f
    return sceneBackgroundHitResult;
 }
 
-std::shared_ptr<VRONode> VROInputControllerBase::getNodeToHandleEvent(VROEventDelegate::EventSource type,
+std::shared_ptr<VRONode> VROInputControllerBase::getNodeToHandleEvent(VROEventDelegate::EventAction action,
                                                                std::shared_ptr<VRONode> node){
     // Base condition, we are asking for the scene's root node's parent, return.
     if (node == nullptr){
@@ -164,9 +185,9 @@ std::shared_ptr<VRONode> VROInputControllerBase::getNodeToHandleEvent(VROEventDe
     }
 
     std::shared_ptr<VROEventDelegate> delegate = node->getEventDelegate();
-    if (delegate != nullptr && delegate->isEventEnabled(type)){
+    if (delegate != nullptr && delegate->isEventEnabled(action)){
         return node;
     } else {
-        return getNodeToHandleEvent(type, node->getParentNode());
+        return getNodeToHandleEvent(action, node->getParentNode());
     }
 }

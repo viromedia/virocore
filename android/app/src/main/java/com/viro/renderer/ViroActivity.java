@@ -184,41 +184,6 @@ public class ViroActivity extends AppCompatActivity {
         material.setColor(Color.WHITE, "whiteColor");
         material.setLightingModel("Blinn");
 
-        EventDelegateJni delegateJni = new EventDelegateJni();
-        delegateJni.setEventEnabled(EventDelegateJni.EventSource.CONTROLLER_GAZE, true);
-        delegateJni.setEventEnabled(EventDelegateJni.EventSource.SECONDARY_CLICK, true);
-        delegateJni.setEventDelegateCallback(new EventDelegateJni.EventDelegateCallback() {
-            @Override
-            public void onControllerStatus(EventDelegateJni.ControllerStatus status) {
-
-            }
-
-            @Override
-            public void onButtonEvent(EventDelegateJni.EventSource type, EventDelegateJni.EventAction event) {
-                Log.e(TAG, "Button Event on box " + type.toString() + " || " + event.toString());
-            }
-
-            @Override
-            public void onTouchpadEvent(EventDelegateJni.EventSource type, EventDelegateJni.EventAction event, float x, float y) {
-                //No-op
-            }
-
-            @Override
-            public void onRotate(float x, float y, float z) {
-                //No-op
-            }
-
-            @Override
-            public void onPosition(float x, float y, float z) {
-                //No-op
-            }
-
-            @Override
-            public void onGaze(boolean isGazing) {
-                Log.e(TAG,"Gaze event on Box two.");
-            }
-        });
-
         // Creation of ViroBox to the right and billboarded
         BoxJni boxGeometry = new BoxJni(2,4,2);
         node1.setGeometry(boxGeometry);
@@ -227,7 +192,7 @@ public class ViroActivity extends AppCompatActivity {
         node1.setMaterials(Arrays.asList(material));
         String[] behaviors = {"billboard"};
         node1.setTransformBehaviors(behaviors);
-        node1.setEventDelegateJni(delegateJni);
+        node1.setEventDelegateJni(getGenericDelegate("Box"));
 
         BoxJni boxGeometry2 = new BoxJni(2, 2, 2);
         node2.setGeometry(boxGeometry2);
@@ -235,6 +200,41 @@ public class ViroActivity extends AppCompatActivity {
         node2.setPosition(boxPosition2);
         node2.setMaterials(Arrays.asList(material));
         return Arrays.asList(node1, node2);
+    }
+
+    private EventDelegateJni getGenericDelegate(final String delegateTag){
+        EventDelegateJni delegateJni = new EventDelegateJni();
+        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_HOVER, true);
+        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_CLICK, true);
+        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_TOUCH, true);
+        delegateJni.setEventDelegateCallback(new EventDelegateJni.EventDelegateCallback() {
+            @Override
+            public void onHover(int source, boolean isHovering) {
+                Log.e(TAG, delegateTag + " onHover " + isHovering);
+            }
+
+            @Override
+            public void onClick(int source, EventDelegateJni.ClickState clickState) {
+                Log.e(TAG, delegateTag + " onClick " + clickState.toString());
+            }
+
+            @Override
+            public void onTouch(int source, EventDelegateJni.TouchState touchState, float[] touchPadPos) {
+                Log.e(TAG, delegateTag + " onTouch " + touchState.toString());
+            }
+
+            @Override
+            public void onMove(int source, float[] rotation, float[] position) {
+
+            }
+
+            @Override
+            public void onControllerStatus(int source, EventDelegateJni.ControllerStatus status) {
+
+            }
+        });
+
+        return delegateJni;
     }
 
     private List<NodeJni> testImageSurface(Context context) {

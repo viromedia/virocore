@@ -323,12 +323,14 @@
 		A566EB301E1B129E008B4AE2 /* VROSceneController.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB251E1AF448008B4AE2 /* VROSceneController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB391E1B38A3008B4AE2 /* VROSceneDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB381E1B38A3008B4AE2 /* VROSceneDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB3D1E1B47B7008B4AE2 /* VROEventDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB3C1E1B47B7008B4AE2 /* VROEventDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A58697991E357E8E00191090 /* VROInputControllerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A58697961E357E8E00191090 /* VROInputControllerBase.cpp */; };
-		A586979D1E3580DC00191090 /* VROInputControllerCardboardiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A586979A1E3580DC00191090 /* VROInputControllerCardboardiOS.cpp */; };
-		A586979E1E3580DC00191090 /* VROInputControllerCardboardiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A586979B1E3580DC00191090 /* VROInputControllerCardboardiOS.h */; };
-		A586979F1E3580DC00191090 /* VROInputPresenterCardboardiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A586979C1E3580DC00191090 /* VROInputPresenterCardboardiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A58697A01E3581A800191090 /* VROInputControllerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A58697971E357E8E00191090 /* VROInputControllerBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A58697A11E3581C000191090 /* VROInputControllerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A58697961E357E8E00191090 /* VROInputControllerBase.cpp */; };
+		A58697811E30843000191090 /* VROInputControllerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A586977E1E30843000191090 /* VROInputControllerBase.cpp */; };
+		A58697851E3084A400191090 /* VROInputControllerCardboardiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A58697821E3084A400191090 /* VROInputControllerCardboardiOS.cpp */; };
+		A58697861E3084A400191090 /* VROInputControllerCardboardiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A58697831E3084A400191090 /* VROInputControllerCardboardiOS.h */; };
+		A58697871E3084A400191090 /* VROInputPresenterCardboardiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A58697841E3084A400191090 /* VROInputPresenterCardboardiOS.h */; };
+		A58697891E30887500191090 /* VROInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = A58697881E30887500191090 /* VROInputType.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A586978A1E308B4500191090 /* VROInputControllerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A586977F1E30843000191090 /* VROInputControllerBase.h */; };
+		A586978B1E308B5400191090 /* VROInputControllerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A586977E1E30843000191090 /* VROInputControllerBase.cpp */; };
+		A586978C1E308BD300191090 /* VROInputPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A58697801E30843000191090 /* VROInputPresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EC8D0A685CE2FA0BE80B7363 /* libPods-ViroSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF43BA975D626635F2D5584C /* libPods-ViroSample.a */; };
 /* End PBXBuildFile section */
 
@@ -374,7 +376,7 @@
 		8F4AD8FF1D42BD220044B3F0 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "/Users/radvani/Source/react-viro/ios/ViroRenderer";
+			dstPath = "/Users/danielthian/Desktop/VideoWorkspace/react-viro/ios/ViroRenderer";
 			dstSubfolderSpec = 0;
 			files = (
 				8F4AD9001D42BD710044B3F0 /* ViroKit.framework in CopyFiles */,
@@ -741,12 +743,13 @@
 		A566EB251E1AF448008B4AE2 /* VROSceneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneController.h; sourceTree = "<group>"; };
 		A566EB381E1B38A3008B4AE2 /* VROSceneDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneDelegateiOS.h; sourceTree = "<group>"; };
 		A566EB3C1E1B47B7008B4AE2 /* VROEventDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROEventDelegateiOS.h; sourceTree = "<group>"; };
-		A58697961E357E8E00191090 /* VROInputControllerBase.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROInputControllerBase.cpp; sourceTree = "<group>"; };
-		A58697971E357E8E00191090 /* VROInputControllerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputControllerBase.h; sourceTree = "<group>"; };
-		A58697981E357E8E00191090 /* VROInputPresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputPresenter.h; sourceTree = "<group>"; };
-		A586979A1E3580DC00191090 /* VROInputControllerCardboardiOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROInputControllerCardboardiOS.cpp; sourceTree = "<group>"; };
-		A586979B1E3580DC00191090 /* VROInputControllerCardboardiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputControllerCardboardiOS.h; sourceTree = "<group>"; };
-		A586979C1E3580DC00191090 /* VROInputPresenterCardboardiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputPresenterCardboardiOS.h; sourceTree = "<group>"; };
+		A586977E1E30843000191090 /* VROInputControllerBase.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROInputControllerBase.cpp; sourceTree = "<group>"; };
+		A586977F1E30843000191090 /* VROInputControllerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputControllerBase.h; sourceTree = "<group>"; };
+		A58697801E30843000191090 /* VROInputPresenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputPresenter.h; sourceTree = "<group>"; };
+		A58697821E3084A400191090 /* VROInputControllerCardboardiOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROInputControllerCardboardiOS.cpp; sourceTree = "<group>"; };
+		A58697831E3084A400191090 /* VROInputControllerCardboardiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputControllerCardboardiOS.h; sourceTree = "<group>"; };
+		A58697841E3084A400191090 /* VROInputPresenterCardboardiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputPresenterCardboardiOS.h; sourceTree = "<group>"; };
+		A58697881E30887500191090 /* VROInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputType.h; sourceTree = "<group>"; };
 		B1049B08B869A86043674A7C /* Pods-ViroSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.release.xcconfig"; sourceTree = "<group>"; };
 		BF43BA975D626635F2D5584C /* libPods-ViroSample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroSample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3267984E31F54DDFDA5BFE7 /* Pods-ViroSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.debug.xcconfig"; sourceTree = "<group>"; };
@@ -875,9 +878,9 @@
 		8F0FE6621CD25A3500A4C297 /* Cardboard */ = {
 			isa = PBXGroup;
 			children = (
-				A586979A1E3580DC00191090 /* VROInputControllerCardboardiOS.cpp */,
-				A586979B1E3580DC00191090 /* VROInputControllerCardboardiOS.h */,
-				A586979C1E3580DC00191090 /* VROInputPresenterCardboardiOS.h */,
+				A58697821E3084A400191090 /* VROInputControllerCardboardiOS.cpp */,
+				A58697831E3084A400191090 /* VROInputControllerCardboardiOS.h */,
+				A58697841E3084A400191090 /* VROInputPresenterCardboardiOS.h */,
 				8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */,
 				8FB6590E1CD8301000D036EB /* VROSceneRendererCardboardMetal.h */,
 				8FB6590D1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp */,
@@ -917,9 +920,10 @@
 				8F4DCE441BFBF3A800061DD7 /* Shapes */,
 				8F4DCE4B1BFD617200061DD7 /* Private */,
 				8F5C413D1BD56F98006D7A77 /* VROScene.h */,
-				A58697961E357E8E00191090 /* VROInputControllerBase.cpp */,
-				A58697971E357E8E00191090 /* VROInputControllerBase.h */,
-				A58697981E357E8E00191090 /* VROInputPresenter.h */,
+				A586977E1E30843000191090 /* VROInputControllerBase.cpp */,
+				A586977F1E30843000191090 /* VROInputControllerBase.h */,
+				A58697881E30887500191090 /* VROInputType.h */,
+				A58697801E30843000191090 /* VROInputPresenter.h */,
 				8F5C413C1BD56F98006D7A77 /* VROScene.cpp */,
 				A566EB251E1AF448008B4AE2 /* VROSceneController.h */,
 				8F1071DA1BF67F34003B3C3F /* VROCamera.h */,
@@ -1472,8 +1476,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A586979F1E3580DC00191090 /* VROInputPresenterCardboardiOS.h in Headers */,
-				A58697A01E3581A800191090 /* VROInputControllerBase.h in Headers */,
+				A58697891E30887500191090 /* VROInputType.h in Headers */,
+				A586978C1E308BD300191090 /* VROInputPresenter.h in Headers */,
 				A566EB3D1E1B47B7008B4AE2 /* VROEventDelegateiOS.h in Headers */,
 				A566EB391E1B38A3008B4AE2 /* VROSceneDelegateiOS.h in Headers */,
 				A566EB301E1B129E008B4AE2 /* VROSceneController.h in Headers */,
@@ -1557,6 +1561,7 @@
 				8FD4DF491C18F5EB003DC425 /* VROMatrix4f.h in Headers */,
 				8F548E4E1C23665100556688 /* VROAnimatable.h in Headers */,
 				8FB659231CD83A2200D036EB /* VROTextureSubstrateOpenGL.h in Headers */,
+				A58697871E3084A400191090 /* VROInputPresenterCardboardiOS.h in Headers */,
 				8F50FC6E1E09C99900A9B4B2 /* VROViewport.h in Headers */,
 				8FD4DF4A1C18F5EB003DC425 /* VROMath.h in Headers */,
 				8FD4DF4B1C18F5EB003DC425 /* VROBox.h in Headers */,
@@ -1574,6 +1579,7 @@
 				8FDDB4A91DAF2A3E00DE0968 /* VROPolyline.h in Headers */,
 				8F11B7BD1C1F8F1E0026D150 /* VRORenderContext.h in Headers */,
 				8FD1E1C01C4093790005BE4E /* VROVideoTexture.h in Headers */,
+				A586978A1E308B4500191090 /* VROInputControllerBase.h in Headers */,
 				8F83DE921C474A800089C31A /* VROProjector.h in Headers */,
 				8FD1E1B41C3F27190005BE4E /* VROFrameListener.h in Headers */,
 				8F0FE6751CD2D3FD00A4C297 /* VROViewMetal.h in Headers */,
@@ -1608,6 +1614,7 @@
 				8FD9B45D1C31E9DC006CB698 /* VROAnimationQuaternion.h in Headers */,
 				8F11B7C71C20CF200026D150 /* VRORenderParameters.h in Headers */,
 				8ABD8F541DB957C900BD9C83 /* VROCredentials.h in Headers */,
+				A58697861E3084A400191090 /* VROInputControllerCardboardiOS.h in Headers */,
 				8FA2E1641C460C600070DB26 /* VROAction.h in Headers */,
 				8FB659101CD8301000D036EB /* VROSceneRendererCardboardMetal.h in Headers */,
 				8F67B5A01DF1DC930096C26F /* VROKnuthPlassFormatter.h in Headers */,
@@ -1947,7 +1954,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */,
-				A58697991E357E8E00191090 /* VROInputControllerBase.cpp in Sources */,
+				A58697811E30843000191090 /* VROInputControllerBase.cpp in Sources */,
 				8F517BC11BCDA2BD0017C70B /* VROSample.m in Sources */,
 				8F517BBB1BCDA2BD0017C70B /* main.m in Sources */,
 			);
@@ -1973,7 +1980,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A58697A11E3581C000191090 /* VROInputControllerBase.cpp in Sources */,
+				A586978B1E308B5400191090 /* VROInputControllerBase.cpp in Sources */,
 				8F0FE6701CD29BF900A4C297 /* VROViewCardboard.m in Sources */,
 				8FD4DEFB1C18ED19003DC425 /* VROMath.cpp in Sources */,
 				8FD4DEEC1C18ED0B003DC425 /* VROTime.cpp in Sources */,
@@ -2046,6 +2053,7 @@
 				8FD4DEFD1C18ED22003DC425 /* VROSurface.cpp in Sources */,
 				8F548E521C2378D500556688 /* VROAnimatable.cpp in Sources */,
 				8F83DE911C474A800089C31A /* VROProjector.cpp in Sources */,
+				A58697851E3084A400191090 /* VROInputControllerCardboardiOS.cpp in Sources */,
 				8F53D3A91DCBA06A001C91A8 /* VROImageiOS.cpp in Sources */,
 				8FD4DF181C18ED4C003DC425 /* VRODistortionRenderer.cpp in Sources */,
 				8FD4DF2A1C18EE7F003DC425 /* Shaders.metal in Sources */,

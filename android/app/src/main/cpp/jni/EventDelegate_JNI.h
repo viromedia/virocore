@@ -39,12 +39,12 @@ public:
     /**
      * Java event delegates to be triggered across the JNI bridge.
      */
-    void onControllerStatus(ControllerStatus status);
-    void onButtonEvent(EventSource type, EventAction event);
-    void onTouchPadEvent(EventSource type, EventAction event, float x, float y);
-    void onRotate(VROVector3f rotation);
-    void onPosition(VROVector3f location);
-    void onGaze(bool isGazing);
+    void onHover(int source, bool isHovering);
+    void onClick(int source, ClickState clickState);
+    void onTouch(int source, TouchState touchState, float x, float y);
+    void onMove(int source, VROVector3f rotation, VROVector3f position);
+    void onControllerStatus(int source, ControllerStatus status);
+    void onGazeHit(int source, float distance, VROVector3f hitLocation);
 private:
     jobject _javaObject;
     void callJavaFunction(std::string functionName, std::string methodID, ...);

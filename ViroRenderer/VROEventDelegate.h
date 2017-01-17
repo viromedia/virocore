@@ -22,44 +22,38 @@
 class VROEventDelegate {
 public:
     /**
-     * Enum EventSource types that are supported by this delegate.
-     *
-     * IMPORTANT: Enum values should match EventSource within EventDelegateJni.java
-     * as the standard format to be passed through the JNI layer when enabling /
-     * disabling delegate event callbacks. Do Not change the Enum Values!!!
-     * Simply add additional event types as need be.
-     */
-    enum EventSource{
-        PRIMARY_CLICK = 1,
-        SECONDARY_CLICK = 2,
-        VOLUME_UP_CLICK = 3,
-        VOLUME_DOWN_CLICK = 4,
-
-        TOUCHPAD_CLICK = 5,
-        TOUCHPAD_TOUCH = 6,
-
-        CONTROLLER_GAZE = 7,
-        CONTROLLER_ROTATE = 8,
-        CONTROLLER_MOVEMENT = 9,
-        CONTROLLER_STATUS = 10
-    };
-
-    /**
      * Enum EventAction types that are supported by this delegate, used for
-     * describing EventSource types. For example, if a click event
-     * was CLICK_UP or CLICK_DOWN.
+     * describing InputSources from InputTypes.h. For example, an OnClick
+     * action may originate from a ViroDayDream AppButton inputSource.
      *
      * IMPORTANT: Enum values should match EventAction within EventDelegateJni.java
      * as the standard format to be passed through the JNI layer.
      * Do Not change the Enum Values!!! Simply add additional event types as need be.
      */
     enum EventAction{
-        CLICK_UP = 1,
-        CLICK_DOWN = 2,
-        GAZE_ON = 3,
-        GAZE_OFF = 4,
-        TOUCH_ON = 5,
-        TOUCH_OFF = 6
+        OnHover = 1,
+        OnClick = 2,
+        OnTouch = 3,
+        OnMove = 4,
+        OnControllerStatus = 5
+    };
+
+    /**
+     * ClickState enum describing the OnClick Event action.
+     */
+    enum ClickState {
+        ClickDown = 1,
+        ClickUp = 2,
+        Clicked = 3
+    };
+
+    /**
+     * TouchState enum describing the OnTouch Event action.
+     */
+    enum TouchState{
+        TouchDown = 1,
+        TouchDownMove = 2,
+        TouchUp = 3,
     };
 
     /**
@@ -71,77 +65,61 @@ public:
      * Do Not change the Enum Values!!! Simply add additional event types as need be.
      */
     enum ControllerStatus{
-        UNKNOWN = 1,
-        CONNECTING = 2,
-        CONNECTED = 3,
-        DISCONNECTED = 4,
-        ERROR = 5
+        Unknown = 1,
+        Connecting = 2,
+        Connected = 3,
+        Disconnected = 4,
+        Error = 5
     };
 
     // Disable all event callbacks by default
     VROEventDelegate(){
-        // Controller status
-        _enabledEventMap[VROEventDelegate::EventSource::CONTROLLER_STATUS] = false;
-
-        // Orientation events
-        _enabledEventMap[VROEventDelegate::EventSource::CONTROLLER_GAZE] = false;
-        _enabledEventMap[VROEventDelegate::EventSource::CONTROLLER_ROTATE] = false;
-        _enabledEventMap[VROEventDelegate::EventSource::CONTROLLER_MOVEMENT] = false;
-
-        // Button events
-        _enabledEventMap[VROEventDelegate::EventSource::PRIMARY_CLICK] = false;
-        _enabledEventMap[VROEventDelegate::EventSource::SECONDARY_CLICK] = false;
-        _enabledEventMap[VROEventDelegate::EventSource::VOLUME_UP_CLICK] = false;
-        _enabledEventMap[VROEventDelegate::EventSource::VOLUME_DOWN_CLICK] = false;
-
-        // Touch pad events
-        _enabledEventMap[VROEventDelegate::EventSource::TOUCHPAD_CLICK] = false;
-        _enabledEventMap[VROEventDelegate::EventSource::TOUCHPAD_TOUCH] = false;
+        _enabledEventMap[VROEventDelegate::EventAction::OnHover] = false;
+        _enabledEventMap[VROEventDelegate::EventAction::OnClick] = false;
+        _enabledEventMap[VROEventDelegate::EventAction::OnTouch] = false;
+        _enabledEventMap[VROEventDelegate::EventAction::OnMove] = false;
+        _enabledEventMap[VROEventDelegate::EventAction::OnControllerStatus] = false;
     }
 
     /**
      * Informs the renderer to enable / disable the triggering of
      * specific EventSource delegate callbacks.
      */
-    void setEnabledEvent(VROEventDelegate::EventSource type, bool enabled){
+    void setEnabledEvent(VROEventDelegate::EventAction type, bool enabled){
         _enabledEventMap[type] = enabled;
     }
 
-    bool isEventEnabled(VROEventDelegate::EventSource type){
+    bool isEventEnabled(VROEventDelegate::EventAction type){
         return _enabledEventMap[type];
     }
 
     /*
-     * Delegate events triggered by the EventManager.
+     * Delegate events triggered by the VROInputControllerBase.
      */
-    virtual void onControllerStatus(ControllerStatus status){
+    virtual void onHover(int source, bool isHovering) {
         //No-op
     }
 
-    virtual void onButtonEvent(EventSource type, EventAction event){
+    virtual void onClick(int source, ClickState clickState) {
         //No-op
     }
 
-    virtual void onTouchPadEvent(EventSource type, EventAction event, float x, float y){
+    virtual void onTouch(int source, TouchState touchState, float x, float y){
         //No-op
     }
 
-    virtual void onRotate(VROVector3f rotation) {
+    virtual void onMove(int source, VROVector3f rotation, VROVector3f position) {
         //No-op
     }
 
-    virtual void onPosition(VROVector3f location) {
+    virtual void onControllerStatus(int source, ControllerStatus status) {
         //No-op
     }
 
-    virtual void onGaze(bool isGazing){
-        //No-op
-    }
-
-    virtual void onGazeHit(float distance, VROVector3f hitLocation){
+    virtual void onGazeHit(int source, float distance, VROVector3f hitLocation) {
         //No-op
     }
 private:
-    std::map<VROEventDelegate::EventSource, bool> _enabledEventMap;
+    std::map<VROEventDelegate::EventAction , bool> _enabledEventMap;
 };
 #endif

@@ -1,12 +1,12 @@
 //
-//  VROControllerInputCardboardiOS.h
+//  VROInputControllerCardboardiOS.h
 //  ViroRenderer
 //
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
-#ifndef VROControllerInputCardboardiOS_H
-#define VROControllerInputCardboardiOS_H
+#ifndef VROInputControllerCardboardiOS_H
+#define VROInputControllerCardboardiOS_H
 
 #include <memory>
 #include "VRORenderContext.h"
@@ -18,8 +18,7 @@ class VROInputControllerCardboardiOS : public VROInputControllerBase {
 public:
     VROInputControllerCardboardiOS(){}
     virtual ~VROInputControllerCardboardiOS(){}
-
-    virtual void onProcess();
+    void onProcess();
     void onScreenClicked();
 
 protected:

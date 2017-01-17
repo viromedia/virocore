@@ -26,25 +26,25 @@ public:
     ~VROInputPresenterDaydream() {}
     void updateController();
 
-    void onButtonEvent(EventSource type, EventAction event){
-        if (type==EventSource::PRIMARY_CLICK && event==EventAction::CLICK_UP){
+    void onClick(int source, ClickState clickState){
+        if (source ==ViroDayDream::InputSource::TouchPad && clickState == ClickState::ClickUp){
             getReticle()->trigger();
         }
     }
 
-    void onTouchPadEvent(EventSource type, EventAction event, float x, float y){
+    void onTouch(int source, TouchState touchState, float x, float y){
         /**
           * TODO VIRO-704: Implement UI Components for daydream controller.
           */
     }
 
-    void onRotate(VROVector3f rotation){
+    void onMove(int source, VROVector3f rotation, VROVector3f position){
         /**
          * TODO VIRO-704: Implement UI Components for daydream controller.
          */
     }
 
-    void onGazeHit(float distance, VROVector3f hitLocation){
+    void onGazeHit(int source, float distance, VROVector3f hitLocation){
         VROInputPresenter::onReticleGazeHit(distance, hitLocation);
     }
 };

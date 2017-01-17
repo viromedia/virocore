@@ -12,15 +12,16 @@ void VROInputControllerCardboard::onProcess() {
 
 void VROInputControllerCardboard::updateScreenTouch(bool onTouchDown){
     if (onTouchDown){
-        VROInputControllerBase::onButtonEvent(VROEventDelegate::EventSource::PRIMARY_CLICK,
-                                              VROEventDelegate::EventAction::CLICK_DOWN);
+        VROInputControllerBase::onButtonEvent(ViroCardBoard::InputSource::ViewerButton,
+                                          VROEventDelegate::ClickState::ClickDown);
     } else {
-        VROInputControllerBase::onButtonEvent(VROEventDelegate::EventSource::PRIMARY_CLICK,
-                                              VROEventDelegate::EventAction::CLICK_UP);
+        VROInputControllerBase::onButtonEvent(ViroCardBoard::InputSource::ViewerButton,
+                                          VROEventDelegate::ClickState::ClickUp);
     }
 }
 
 void VROInputControllerCardboard::updateOrientation(){
-    VROInputControllerBase::onRotate(_context->getCamera().getRotation());
+    VROInputControllerBase::onRotate(ViroCardBoard::InputSource::Controller,
+                                 _context->getCamera().getRotation());
 }
 

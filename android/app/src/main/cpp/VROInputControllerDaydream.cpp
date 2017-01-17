@@ -8,12 +8,11 @@
 
 VROInputControllerDaydream::VROInputControllerDaydream(gvr_context *gvr_context) :
     _gvr_controller(new gvr::ControllerApi) {
-
     // Initialize default options for the controller API.
     int32_t options = gvr::ControllerApi::DefaultOptions();
     _hasInitalized = _gvr_controller->Init(options, gvr_context);
     if (!_hasInitalized){
-        perror("ERROR: Failure to initialize DayDream Controller!");
+        perror("Error: Failure to initialize DayDream Controller!");
     }
 }
 
@@ -40,48 +39,42 @@ void VROInputControllerDaydream::onProcess() {
 }
 
 void VROInputControllerDaydream::updateButtons() {
-    notifyButtonEventForType(GVR_CONTROLLER_BUTTON_CLICK, VROEventDelegate::EventSource::PRIMARY_CLICK);
-    notifyButtonEventForType(GVR_CONTROLLER_BUTTON_APP, VROEventDelegate::EventSource::SECONDARY_CLICK);
-    notifyButtonEventForType(GVR_CONTROLLER_BUTTON_VOLUME_UP, VROEventDelegate::EventSource::VOLUME_UP_CLICK);
-    notifyButtonEventForType(GVR_CONTROLLER_BUTTON_VOLUME_DOWN, VROEventDelegate::EventSource::VOLUME_DOWN_CLICK);
+    notifyButtonEventForType(GVR_CONTROLLER_BUTTON_CLICK, ViroDayDream::InputSource::TouchPad);
+    notifyButtonEventForType(GVR_CONTROLLER_BUTTON_APP, ViroDayDream::InputSource::AppButton);
+    notifyButtonEventForType(GVR_CONTROLLER_BUTTON_VOLUME_UP, ViroDayDream::InputSource::VolUpButton);
+    notifyButtonEventForType(GVR_CONTROLLER_BUTTON_VOLUME_DOWN, ViroDayDream::InputSource::VolDownButton);
 }
 
-void VROInputControllerDaydream::notifyButtonEventForType(gvr::ControllerButton button, VROEventDelegate::EventSource type) {
+void VROInputControllerDaydream::notifyButtonEventForType(gvr::ControllerButton button, ViroDayDream::InputSource source) {
     if (_controller_state.GetButtonDown(button)){
-        VROInputControllerBase::onButtonEvent(type, VROEventDelegate::EventAction::CLICK_DOWN);
+        VROInputControllerBase::onButtonEvent(source, VROEventDelegate::ClickState::ClickDown);
     } else if (_controller_state.GetButtonUp(button)){
-        VROInputControllerBase::onButtonEvent(type, VROEventDelegate::EventAction::CLICK_UP);
+        VROInputControllerBase::onButtonEvent(source, VROEventDelegate::ClickState::ClickUp);
     }
 }
 
 void VROInputControllerDaydream::updateTouchPad() {
-    float lastTouchedPos_x = _controller_state.GetTouchPos().x;
-    float lastTouchPos_y =  _controller_state.GetTouchPos().y;
+    float posX = _controller_state.GetTouchPos().x;
+    float posY =  _controller_state.GetTouchPos().y;
 
-    VROEventDelegate::EventAction action;
-    VROEventDelegate::EventSource source;
-    if (_controller_state.GetButtonUp(GVR_CONTROLLER_BUTTON_CLICK)){
-        action = VROEventDelegate::EventAction::CLICK_UP;
-        source = VROEventDelegate::EventSource::TOUCHPAD_CLICK;
-    } else if (_controller_state.GetButtonDown(GVR_CONTROLLER_BUTTON_CLICK)){
-        action = VROEventDelegate::EventAction::CLICK_DOWN;
-        source = VROEventDelegate::EventSource::TOUCHPAD_CLICK;
-    } else if (_controller_state.GetTouchUp()){
-        action = VROEventDelegate::EventAction::TOUCH_OFF;
-        source = VROEventDelegate::EventSource::TOUCHPAD_TOUCH;
-    } else if (_controller_state.IsTouching()){
-        action = VROEventDelegate::EventAction::TOUCH_ON;
-        source = VROEventDelegate::EventSource::TOUCHPAD_TOUCH;
+    VROEventDelegate::TouchState action;
+    if (_controller_state.GetTouchUp()){
+        action = VROEventDelegate::TouchState::TouchUp;
+    } else if (_controller_state.GetTouchDown()){
+        action = VROEventDelegate::TouchState::TouchDown;
+    }  else if (_controller_state.IsTouching()){
+        action = VROEventDelegate::TouchState::TouchDownMove;
     } else {
         return;
     }
 
-    VROInputControllerBase::onTouchpadEvent(source, action, lastTouchedPos_x, lastTouchPos_y);
+    VROInputControllerBase::onTouchpadEvent(ViroDayDream::InputSource::TouchPad, action, posX, posY);
 }
 
 void VROInputControllerDaydream::updateOrientation(){
     gvr_quatf rotation = _controller_state.GetOrientation();
-    VROInputControllerBase::onRotate(VROQuaternion(rotation.qx, rotation.qy, rotation.qz, rotation.qw));
+    VROInputControllerBase::onRotate(ViroDayDream::InputSource::Controller,
+                                     VROQuaternion(rotation.qx, rotation.qy, rotation.qz, rotation.qw));
 }
 
 bool VROInputControllerDaydream::isControllerReady(){
@@ -91,7 +84,8 @@ bool VROInputControllerDaydream::isControllerReady(){
         case GVR_CONTROLLER_API_OK:
             break;
         default:
-            VROInputControllerBase::onControllerStatus(VROEventDelegate::ControllerStatus::ERROR);
+            VROInputControllerBase::onControllerStatus(ViroDayDream::InputSource::Controller,
+                                                       VROEventDelegate::ControllerStatus::Error);
             return false;
     }
 
@@ -99,14 +93,17 @@ bool VROInputControllerDaydream::isControllerReady(){
     gvr::ControllerConnectionState connState = _controller_state.GetConnectionState();
     switch (connState) {
         case GVR_CONTROLLER_CONNECTED:
-            VROInputControllerBase::onControllerStatus(VROEventDelegate::ControllerStatus::CONNECTED);
+            VROInputControllerBase::onControllerStatus(ViroDayDream::InputSource::Controller,
+                                                       VROEventDelegate::ControllerStatus::Connected);
             return true;
         case GVR_CONTROLLER_SCANNING:
         case GVR_CONTROLLER_CONNECTING:
-            VROInputControllerBase::onControllerStatus(VROEventDelegate::ControllerStatus::CONNECTING);
+            VROInputControllerBase::onControllerStatus(ViroDayDream::InputSource::Controller,
+                                                       VROEventDelegate::ControllerStatus::Connecting);
             return false;
         default:
-            VROInputControllerBase::onControllerStatus(VROEventDelegate::ControllerStatus::DISCONNECTED);
+            VROInputControllerBase::onControllerStatus(ViroDayDream::InputSource::Controller,
+                                                       VROEventDelegate::ControllerStatus::Disconnected);
             return false;
     }
 }

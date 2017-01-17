@@ -32,7 +32,7 @@ public class EventDelegateJni {
      * the even type is triggered, else, disabled otherwise. Note: All EventTypes are
      * disabled by default.
      */
-    public void setEventEnabled(EventSource type, boolean enabled) {
+    public void setEventEnabled(EventAction type, boolean enabled) {
         nativeEnableEvent(mNativeRef, type.mTypeId, enabled);
     }
 
@@ -48,65 +48,20 @@ public class EventDelegateJni {
     private native void nativeEnableEvent(long mNativeNodeRef, int eventType, boolean enabled);
 
     /**
-     * EventSource types corresponding to VROEventDelegate.h, used for enabling or
-     * disabling delegate event callbacks through the JNI layer.
-     *
-     * EventTypes used in Java are mapped to the function callbacks within
-     * EventDelegateCallbacks.
-     *
-     * IMPORTANT: Do Not change the Enum Values!!! Simply add additional
-     * event types as need be. This should always map directly to
-     * VROEventDelegate.h
-     */
-    public enum EventSource {
-        // Button events
-        PRIMARY_CLICK(1),
-        SECONDARY_CLICK(2),
-        VOLUME_UP_CLICK(3),
-        VOLUME_DOWN_CLICK(4),
-
-        // Touch pad events
-        TOUCHPAD_CLICK(5),
-        TOUCHPAD_TOUCH(6),
-
-        // Orientation Events
-        CONTROLLER_GAZE(7),
-        CONTROLLER_ROTATE(8),
-        CONTROLLER_MOVEMENT(9),
-        CONTROLLER_STATUS(10);
-
-        public final int mTypeId;
-        EventSource(int id){
-            mTypeId = id;
-        }
-
-        private static Map<Integer, EventSource> map = new HashMap<Integer, EventSource>();
-        static {
-            for (EventSource source : EventSource.values()) {
-                map.put(source.mTypeId, source);
-            }
-        }
-        public static EventSource valueOf(int id) {
-            return map.get(id);
-        }
-    }
-
-    /**
      * EventAction types corresponding to VROEventDelegate.h, used for
      * describing EventSource types. For example, if a click event
-     * was CLICK_UP or CLICK_DOWN.
+     * was ClickUp or ClickDown.
      *
      * IMPORTANT: Do Not change the Enum Values!!! Simply add additional
      * event types as need be. This should always map directly to
      * VROEventDelegate.h
      */
     public enum EventAction {
-        CLICK_UP(1),
-        CLICK_DOWN(2),
-        GAZE_ON(3),
-        GAZE_OFF(4),
-        TOUCH_ON(5),
-        TOUCH_OFF(6);
+        ON_HOVER(1),
+        ON_CLICK(2),
+        ON_TOUCH(3),
+        ON_MOVE(4),
+        ON_CONTROLLER_STATUS(5);
 
         public final int mTypeId;
 
@@ -157,6 +112,51 @@ public class EventDelegateJni {
         }
     }
 
+    public enum ClickState {
+        CLICK_DOWN(1),
+        CLICK_UP(2),
+        CLICKED(3);
+
+        public final int mTypeId;
+
+        ClickState(int id){
+            mTypeId = id;
+        }
+
+        private static Map<Integer, ClickState> map = new HashMap<Integer, ClickState>();
+        static {
+            for (ClickState status : ClickState.values()) {
+                map.put(status.mTypeId, status);
+            }
+        }
+        public static ClickState valueOf(int id) {
+            return map.get(id);
+        }
+    }
+
+    public enum TouchState {
+        TOUCH_DOWN(1),
+        TOUCH_DOWN_MOVE(2),
+        TOUCH_UP(3);
+
+        public final int mTypeId;
+
+        TouchState(int id){
+            mTypeId = id;
+        }
+
+        private static Map<Integer, TouchState> map = new HashMap<Integer, TouchState>();
+        static {
+            for (TouchState status : TouchState.values()) {
+                map.put(status.mTypeId, status);
+            }
+        }
+        public static TouchState valueOf(int id) {
+            return map.get(id);
+        }
+    }
+
+
     /**
      * Delegate interface to be implemented by a java view component so as
      * to receive event callbacks triggered from native. Implemented delegates
@@ -168,12 +168,11 @@ public class EventDelegateJni {
      * be needed or useful for Java views or components).
      */
     public interface EventDelegateCallback {
-        void onControllerStatus(ControllerStatus status);
-        void onButtonEvent(EventSource type, EventAction event);
-        void onTouchpadEvent(EventSource type, EventAction event, float x, float y);
-        void onRotate(float x, float y , float z);
-        void onPosition(float x, float y , float z);
-        void onGaze(boolean isGazing);
+        void onHover(int source, boolean isHovering);
+        void onClick(int source, ClickState clickState);
+        void onTouch(int source, TouchState touchState, float touchPadPos[]);
+        void onMove(int source, float rotation[], float position[]);
+        void onControllerStatus(int source, ControllerStatus status);
     }
 
     /**
@@ -181,38 +180,37 @@ public class EventDelegateJni {
      * that then triggers the corresponding EventDelegateCallback (mDelegate)
      * that has been set through setEventDelegateCallback().
      */
-    void onControllerStatus(int status){
+    void onHover(int source, boolean isHovering) {
         if (mDelegate != null){
-            mDelegate.onControllerStatus(ControllerStatus.valueOf(status));
+            mDelegate.onHover(source, isHovering);
         }
     }
-    void onButtonEvent(int source, int action){
+
+    void onClick(int source, int clickState) {
         if (mDelegate != null){
-            mDelegate.onButtonEvent(EventSource.valueOf(source), EventAction.valueOf(action));
+            mDelegate.onClick(source, ClickState.valueOf(clickState));
         }
     }
-    void onTouchpadEvent(int source, int action, float x, float y){
+
+    void onMove(int source,
+                float rotX, float rotY, float rotZ,
+                float postX, float posY, float posZ) {
         if (mDelegate != null){
-            mDelegate.onTouchpadEvent(EventSource.valueOf(source),
-                    EventAction.valueOf(action), x,y);
+            mDelegate.onMove(source,
+                    new float[]{rotX, rotY, rotZ},
+                    new float[]{postX, posY, posZ});
         }
     }
-    void onRotate(float x, float y , float z){
+
+    void onControllerStatus(int source, int status) {
         if (mDelegate != null){
-            mDelegate.onRotate(x,y,z);
+            mDelegate.onControllerStatus(source, ControllerStatus.valueOf(status));
         }
     }
-    void onPosition(float x, float y , float z){
+
+    void onTouch(int source, int touchState, float x, float y){
         if (mDelegate != null){
-            mDelegate.onPosition(x,y,z);
+            mDelegate.onTouch(source, TouchState.valueOf(touchState), new float[]{x,y});
         }
-    }
-    void onGaze(boolean isGazing){
-        if (mDelegate != null){
-            mDelegate.onGaze(isGazing);
-        }
-    }
-    void onGazeHitDistance(float distance){
-        //No-op
     }
 }

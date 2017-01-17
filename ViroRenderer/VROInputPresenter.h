@@ -14,6 +14,7 @@
 #include "VROReticle.h"
 #include "VRONode.h"
 #include "VROMath.h"
+#include "VROInputType.h"
 
 static const float kReticleSizeMultiple = 3;
 
@@ -43,40 +44,38 @@ public:
         _delegate = delegate;
     }
 
-    virtual void onButtonEvent(EventSource type, EventAction event){
+    virtual void onHover(int source, bool isHovering) {
         if (_delegate != nullptr){
-            _delegate->onButtonEvent(type, event);
+            _delegate->onHover(source, isHovering);
         }
     }
 
-    virtual void onTouchPadEvent(EventSource type, EventAction event, float x, float y){
+    virtual void onClick(int source, ClickState clickState) {
         if (_delegate != nullptr){
-            _delegate->onTouchPadEvent(type, event, x, y);
+            _delegate->onClick(source, clickState);
         }
     }
 
-    virtual void onRotate(VROVector3f rotation) {
+    virtual void onTouch(int source, TouchState state, float x, float y){
         if (_delegate != nullptr){
-            _delegate->onRotate((VROVector3f()));
+            _delegate->onTouch(source, state, x, y);
         }
     }
 
-    virtual void onPosition(VROVector3f location) {
+    virtual void onMove(int source, VROVector3f rotation, VROVector3f position) {
         if (_delegate != nullptr){
-            _delegate->onPosition((VROVector3f()));
+            _delegate->onMove(source, rotation, position);
         }
     }
 
-    virtual void onGaze(bool isGazing){
+    virtual void onControllerStatus(int source, ControllerStatus status) {
         if (_delegate != nullptr){
-            _delegate->onGaze(isGazing);
+            _delegate->onControllerStatus(source, status);
         }
     }
 
-    virtual void onGazeHit(float distance, VROVector3f hitLocation){
-        if (_delegate != nullptr){
-            _delegate->onGazeHit(distance, hitLocation);
-        }
+    virtual void onGazeHit(int source, float distance, VROVector3f hitLocation) {
+        //No-op
     }
 
     std::shared_ptr<VROReticle> getReticle() {

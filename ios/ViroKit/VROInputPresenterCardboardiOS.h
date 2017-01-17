@@ -21,13 +21,12 @@ public:
     }
     virtual ~VROInputPresenterCardboardiOS() {}
 
-    void onButtonEvent(EventSource type, EventAction event){
-        if (type==EventSource::PRIMARY_CLICK && event==EventAction::CLICK_UP){
+    void onClick(int source, ClickState clickState) {
+        if (clickState==ClickState::ClickUp){
             getReticle()->trigger();
         }
     }
-
-    void onGazeHit(float distance, VROVector3f hitLocation){
+    void onGazeHit(int source, float distance, VROVector3f hitLocation) {
         VROInputPresenter::onReticleGazeHit(distance, hitLocation);
      }
 };

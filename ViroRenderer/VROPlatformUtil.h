@@ -103,7 +103,7 @@ jclass VROPlatformFindClass(JNIEnv *jni, jobject javaObject, const char *classNa
 // functionName, methodID and desired java function parameters.
 //
 // Example: VROPlatformCallJavaFunction(jObj,
-//                                      "onGaze",
+//                                      "onHover",
 //                                      "(Z)V",
 //                                      isGazing);
 void VROPlatformCallJavaFunction(jobject javaObject,
