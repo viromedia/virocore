@@ -27,6 +27,20 @@ VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
  _borderColor(visual._borderColor)
 {}
 
+void VROMaterialVisual::copyFrom(const VROMaterialVisual &visual) {
+    _permissibleContentsMask = visual._permissibleContentsMask;
+    _contentsColor = visual._contentsColor;
+    _contentsTexture = visual._contentsTexture;
+    _intensity = visual._intensity;
+    _contentsTransform = visual._contentsTransform;
+    _wrapS = visual._wrapS;
+    _wrapT = visual._wrapT;
+    _minificationFilter = visual._minificationFilter;
+    _magnificationFilter = visual._magnificationFilter;
+    _mipFilter = visual._mipFilter;
+    _borderColor = visual._borderColor;
+}
+
 void VROMaterialVisual::clear() {
     _material.fadeSnapshot();
     

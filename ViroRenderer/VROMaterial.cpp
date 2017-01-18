@@ -13,6 +13,7 @@
 #include "VROTransaction.h"
 #include "VROAllocationTracker.h"
 #include "VROSortKey.h"
+#include "VROLog.h"
 #include <atomic>
 
 static std::atomic_int sMaterialId;
@@ -90,6 +91,32 @@ VROMaterial::~VROMaterial() {
     delete (_substrate);
     
     ALLOCATION_TRACKER_SUB(Materials, 1);
+}
+
+void VROMaterial::copyFrom(std::shared_ptr<VROMaterial> material) {
+    _name = material->_name;
+    _shininess = material->_shininess;
+    _fresnelExponent = material->_fresnelExponent;
+    _transparency = material->_transparency;
+    _transparencyMode = material->_transparencyMode;
+    _lightingModel = material->_lightingModel;
+    _litPerPixel = material->_litPerPixel;
+    _cullMode = material->_cullMode;
+    _blendMode = material->_blendMode;
+    _writesToDepthBuffer = material->_writesToDepthBuffer;
+    _readsFromDepthBuffer = material->_readsFromDepthBuffer;
+    
+    _substrate = nullptr;
+    
+    _diffuse->copyFrom(*material->_diffuse);
+    _specular->copyFrom(*material->_specular);
+    _normal->copyFrom(*material->_normal);
+    _reflective->copyFrom(*material->_reflective);
+    _emission->copyFrom(*material->_emission);
+    _transparent->copyFrom(*material->_transparent);
+    _multiply->copyFrom(*material->_multiply);
+    _ambientOcclusion->copyFrom(*material->_ambientOcclusion);
+    _selfIllumination->copyFrom(*material->_selfIllumination);
 }
 
 void VROMaterial::setTransparency(float transparency) {
