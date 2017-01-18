@@ -27,6 +27,10 @@
 
 extern "C" {
 
+// The renderer test runs VROSample.cpp, for fast prototyping when working
+// on renderer features (no bridge integration). Do not check-in with this
+// flag true!
+static const bool kRunRendererTest = false;
 static std::shared_ptr<VROSample> sample;
 
 JNI_METHOD(jlong, nativeCreateRendererGVR)(JNIEnv *env, jclass clazz,
@@ -71,12 +75,17 @@ JNI_METHOD(void, nativeDestroyRenderer)(JNIEnv *env,
 JNI_METHOD(void, nativeInitializeGl)(JNIEnv *env,
                                      jobject obj,
                                      jlong native_renderer) {
-    // TODO Temporary place for sample
-    // sample = std::make_shared<VROSample>();
-    // sceneRenderer->setRenderDelegate(sample);
-    // sceneRenderer->setSceneController(sample->loadBoxScene(sceneRenderer->getFrameSynchronizer(),
-    //                                                       sceneRenderer->getDriver()));
-    Renderer::native(native_renderer)->initGL();
+
+    std::shared_ptr<VROSceneRenderer> sceneRenderer = Renderer::native(native_renderer);
+
+    if (kRunRendererTest) {
+        sample = std::make_shared<VROSample>();
+        sceneRenderer->setRenderDelegate(sample);
+        sceneRenderer->setSceneController(
+                sample->loadBoxScene(sceneRenderer->getFrameSynchronizer(),
+                                     *sceneRenderer->getDriver().get()));
+    }
+    sceneRenderer->initGL();
 }
 
 JNI_METHOD(void, nativeDrawFrame)(JNIEnv *env,
@@ -125,9 +134,12 @@ JNI_METHOD(void, nativeSetScene)(JNIEnv *env,
                                  jobject obj,
                                  jlong native_renderer,
                                  jlong native_scene_controller_ref) {
-    VROSceneController *scene_controller = reinterpret_cast<VROSceneController *>(native_scene_controller_ref);
-    std::shared_ptr<VROSceneController> shared_controller = std::shared_ptr<VROSceneController>(scene_controller);
-    Renderer::native(native_renderer)->setSceneController(shared_controller);
+    if (!kRunRendererTest) {
+        VROSceneController *scene_controller = reinterpret_cast<VROSceneController *>(native_scene_controller_ref);
+        std::shared_ptr<VROSceneController> shared_controller = std::shared_ptr<VROSceneController>(
+                scene_controller);
+        Renderer::native(native_renderer)->setSceneController(shared_controller);
+    }
 }
 
 JNI_METHOD(void, nativeEnableReticle)(JNIEnv *env,
