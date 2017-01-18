@@ -116,12 +116,14 @@ void VROMaterial::fadeSnapshot() {
         std::shared_ptr<VROMaterial> shared = std::static_pointer_cast<VROMaterial>(shared_from_this());
         std::shared_ptr<VROMaterial> outgoing = std::make_shared<VROMaterial>(shared);
         _outgoing = outgoing;
-        
+
+        // Fade the incoming material (this material) in, up to its previous transparency
+        float previousTransparency = _transparency;
         _transparency = 0.0;
         animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
                                                         ((VROMaterial *)animatable)->_transparency = v;
                                                     },
-                                                    0.0, 1.0,
+                                                    0.0, previousTransparency,
                                                     [outgoing](VROAnimatable *const animatable) {
                                                         VROMaterial *material = ((VROMaterial *)animatable);
                                                         // Ensure we're not removing a more recent animation
@@ -130,11 +132,18 @@ void VROMaterial::fadeSnapshot() {
                                                         }
                                                     }
                                                     ));
-        
-        _outgoing->_transparency = 1.0;
-        _outgoing->animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
-            ((VROMaterial *)animatable)->_transparency = v;
-        }, 1.0, 0.0));
+
+        // If the incoming material is not fully opaque, then fade the outgoing material
+        // out as well; it looks better to cross-fade between transparent materials, so
+        // there won't be a 'pop' effect when we suddenly remove the outgoing material
+        // (when the incoming material is opaque this is not a problem because it completely
+        // blocks the outgoing material as its transparency reaches 1.0
+        if (previousTransparency < 1.0) {
+            _outgoing->_transparency = previousTransparency;
+            _outgoing->animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
+                ((VROMaterial *)animatable)->_transparency = v;
+            }, previousTransparency, 0.0));
+        }
     }
 }
 

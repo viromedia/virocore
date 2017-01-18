@@ -61,14 +61,14 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t lightsHash,
         
         std::shared_ptr<VROMaterial> &material = _materials[materialIndex];
         material->updateSortKey(key, driver);
-        key.outgoing = false;
+        key.incoming = true;
         
         _sortKeys.push_back(key);
         
         const std::shared_ptr<VROMaterial> &outgoing = material->getOutgoing();
         if (outgoing) {
             outgoing->updateSortKey(key, driver);
-            key.outgoing = true;
+            key.incoming = false;
             
             _sortKeys.push_back(key);
         }

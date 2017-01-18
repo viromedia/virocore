@@ -59,7 +59,7 @@ void VROScene::render(const VRORenderContext &context,
         const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
         if (geometry) {
             std::shared_ptr<VROMaterial> material = geometry->getMaterialForElement(elementIndex);
-            if (key.outgoing) {
+            if (!key.incoming) {
                 material = material->getOutgoing();
             }
             

@@ -25,8 +25,8 @@ public:
     }
 
     bool operator< (const VROSortKey& r) const {
-        return std::tie(renderingOrder, distanceFromCamera, shader, textures, lights, material, node, elementIndex, outgoing) <
-               std::tie(r.renderingOrder, r.distanceFromCamera, r.shader, r.textures, r.lights, r.material, r.node, r.elementIndex, r.outgoing);
+        return std::tie(renderingOrder, distanceFromCamera, incoming, shader, textures, lights, material, node, elementIndex) <
+               std::tie(r.renderingOrder, r.distanceFromCamera, r.incoming, r.shader, r.textures, r.lights, r.material, r.node, r.elementIndex);
     }
             
     /*
@@ -42,6 +42,14 @@ public:
      objects, ensuring correct rendering of translucent objects.
      */
     float distanceFromCamera;
+
+    /*
+     If a material is incoming (i.e. geometry transitioning in to
+     a new material as a result of an animation), we render it after
+     its outgoing counterpart. The incoming material renders
+     second (on top), as its alpha moves from 0 to 1.
+    */
+    bool incoming;
     
     /*
      State-change minimization concerns.
@@ -59,7 +67,6 @@ public:
      */
     uintptr_t node;
     uint8_t elementIndex;
-    bool outgoing;
     
 };
 
