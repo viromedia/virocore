@@ -122,14 +122,14 @@ class VROKnuthPlassFormatter {
     
 public:
     
-    VROKnuthPlassFormatter(std::vector<std::shared_ptr<KPNode>> &nodes, std::vector<int> &lineLengths,
+    VROKnuthPlassFormatter(std::vector<std::shared_ptr<KPNode>> &nodes, std::vector<float> &lineLengths,
                            float tolerance);
     std::vector<VROBreakpoint> run();
     
 private:
     
     std::vector<std::shared_ptr<KPNode>> _nodes;
-    std::vector<int> _lineLengths;
+    std::vector<float> _lineLengths;
     KPOptions _options;
     
     /*

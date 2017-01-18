@@ -15,7 +15,7 @@
 int kInfinity = 10000;
 
 VROKnuthPlassFormatter::VROKnuthPlassFormatter(std::vector<std::shared_ptr<KPNode>> &nodes,
-                                               std::vector<int> &lineLengths,
+                                               std::vector<float> &lineLengths,
                                                float tolerance) :
     _nodes(nodes),
     _lineLengths(lineLengths) {

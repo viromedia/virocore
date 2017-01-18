@@ -19,7 +19,7 @@
 #include "VROKnuthPlassFormatter.h"
 
 static const int kVerticesPerGlyph = 6;
-static const float kTextPointToWorldScale = 0.05;
+static const float kTextPointToWorldScale = 0.01;
 static const std::string kWhitespaceDelimeters = " \t\v\r";
 
 static const int kJustificationToleranceStart = 2;
@@ -329,7 +329,7 @@ void VROText::buildGeometry(std::vector<VROShapeVertexLayout> &var,
     }
 }
 
-std::vector<VROTextLine> VROText::wrapByWords(std::string &text, int maxWidth, int maxHeight, int maxLines,
+std::vector<VROTextLine> VROText::wrapByWords(std::string &text, float maxWidth, float maxHeight, int maxLines,
                                               std::shared_ptr<VROTypeface> &typeface,
                                               VROTextClipMode clipMode,
                                               std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
@@ -439,7 +439,7 @@ std::vector<VROTextLine> VROText::wrapByWords(std::string &text, int maxWidth, i
     return lines;
 }
 
-std::vector<VROTextLine> VROText::wrapByChars(std::string &text, int maxWidth, int maxHeight, int maxLines,
+std::vector<VROTextLine> VROText::wrapByChars(std::string &text, float maxWidth, float maxHeight, int maxLines,
                                               std::shared_ptr<VROTypeface> &typeface,
                                               VROTextClipMode clipMode,
                                               std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
@@ -479,7 +479,7 @@ std::vector<VROTextLine> VROText::wrapByChars(std::string &text, int maxWidth, i
     return lines;
 }
 
-std::vector<VROTextLine> VROText::wrapByNewlines(std::string &text, int maxWidth, int maxHeight, int maxLines,
+std::vector<VROTextLine> VROText::wrapByNewlines(std::string &text, float maxWidth, float maxHeight, int maxLines,
                                                  std::shared_ptr<VROTypeface> &typeface,
                                                  VROTextClipMode clipMode,
                                                  std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
@@ -526,7 +526,7 @@ std::vector<VROTextLine> VROText::wrapByNewlines(std::string &text, int maxWidth
     return lines;
 }
 
-std::vector<VROTextLine> VROText::justify(std::string &text, int maxWidth, int maxHeight, int maxLines,
+std::vector<VROTextLine> VROText::justify(std::string &text, float maxWidth, float maxHeight, int maxLines,
                                           std::shared_ptr<VROTypeface> &typeface,
                                           VROTextClipMode clipMode,
                                           std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
@@ -547,7 +547,7 @@ std::vector<VROTextLine> VROText::justify(std::string &text, int maxWidth, int m
             continue;
         }
         
-        std::vector<int> lineLengths = { maxWidth };
+        std::vector<float> lineLengths = { maxWidth };
         
         std::vector<std::shared_ptr<KPNode>> nodes;
         std::vector<std::string> words = VROStringUtil::split(paragraph, kWhitespaceDelimeters, false);
@@ -689,10 +689,8 @@ float VROText::getLengthOfWord(const std::string &word, std::map<FT_ULong, std::
     return wordWidth;
 }
 
-bool VROText::isAnotherLineAvailable(size_t numLinesNow, int maxHeight, int maxLines,
+bool VROText::isAnotherLineAvailable(size_t numLinesNow, float maxHeight, int maxLines,
                                      std::shared_ptr<VROTypeface> &typeface, VROTextClipMode clipMode) {
-    
-    
     // Checks both the maxLines condition and the clipping condition
     return (maxLines <= 0 || numLinesNow < maxLines) &&
            (clipMode == VROTextClipMode::None || (numLinesNow + 1) * typeface->getLineHeight() * kTextPointToWorldScale < maxHeight);
