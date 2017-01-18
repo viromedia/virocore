@@ -77,20 +77,20 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
     }
     else if (diffuse.getTextureType() == VROTextureType::Texture2D) {
         _textures.push_back(diffuse.getTexture());
-        samplers.push_back("sampler");
+        samplers.push_back("diffuse_texture");
 
         fragmentShader = "constant_t_fsh";
     }
     else if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
         _textures.push_back(diffuse.getTexture());
-        samplers.push_back("sampler");
+        samplers.push_back("diffuse_texture");
 
         fragmentShader = "constant_t_fsh";
         modifiers.push_back(createEGLImageModifier());
     }
     else { // TextureCube
         _textures.push_back(diffuse.getTexture());
-        samplers.push_back("sampler");
+        samplers.push_back("diffuse_texture");
 
         fragmentShader = "constant_q_fsh";
     }

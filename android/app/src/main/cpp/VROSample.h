@@ -41,9 +41,6 @@ private:
     std::shared_ptr<VROVideoTextureAVP> _videoA;
     std::shared_ptr<VROVideoTextureAVP> _videoB;
 
-    std::shared_ptr<VROSoundEffect> _soundEffect;
-    std::shared_ptr<VROAudioPlayer> _audio;
-
     std::shared_ptr<VROMaterial> _material;
     std::shared_ptr<VROTexture> getNiagaraTexture();
 

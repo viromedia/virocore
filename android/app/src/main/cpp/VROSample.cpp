@@ -30,9 +30,6 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     _driver = &driver;
     frameSynchronizer->addFrameListener(shared_from_this());
 
-    _soundEffect = driver.newSoundEffect("btn_tap.mp3");
-    _audio = driver.newAudioPlayer("underwater.mp3");
-
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundCube(getNiagaraTexture());
@@ -78,8 +75,16 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
 
         std::shared_ptr<VROMaterial> &material = node->getGeometry()->getMaterials().front();
         material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("heart_d.jpg")));
-        material->getSpecular().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("heart_s.jpg")));
-        material->setLightingModel(VROLightingModel::Blinn);
+        //material->getSpecular().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("heart_s.jpg")));
+        //material->setLightingModel(VROLightingModel::Blinn);
+        //material->getDiffuse().setColor({1, 0, 0, 1});
+        VROTransaction::begin();
+        VROTransaction::setAnimationDelay(3);
+        VROTransaction::setAnimationDuration(6);
+
+        material->getDiffuse().setColor({0, 0, 1, 1});
+
+        VROTransaction::commit();
     });
 
     heartNode->setPosition({0, -5.25, -1});
@@ -168,35 +173,8 @@ std::shared_ptr<VROTexture> VROSample::getNiagaraTexture() {
     return std::make_shared<VROTexture>(cubeImages);
 }
 
-static int count = 0;
-
 void VROSample::reticleTapped(VROVector3f ray, const VRORenderContext *context) {
-    if (count == 0) {
-        _videoA->setVolume(0.5);
-    }
-    else if (count == 1) {
-        _videoA->setMuted(true);
-    }
-    else if (count == 2) {
-        _videoA->setMuted(false);
-    }
-    else if (count == 3) {
-        _videoA->setVolume(1.0);
-    }
-    else if (count == 4) {
-        _videoA->seekToTime(2);
-    }
-    else if (count == 5) {
-        _videoA->pause();
-    }
-    else if (count == 6) {
-        _videoA->play();
-    }
 
-    ++count;
-    if (count == 7) {
-        count = 0;
-    }
 }
 
 void VROSample::onFrameWillRender(const VRORenderContext &context) {
