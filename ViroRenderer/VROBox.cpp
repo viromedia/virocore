@@ -63,9 +63,6 @@ std::shared_ptr<VROBox> VROBox::createBox(float width, float height, float lengt
     std::shared_ptr<VROBox> box = std::shared_ptr<VROBox>(new VROBox(sources, elements));
     
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->setWritesToDepthBuffer(true);
-    material->setReadsFromDepthBuffer(true);
-    
     box->getMaterials().push_back(material);    
     return box;
 }

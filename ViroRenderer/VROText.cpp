@@ -141,8 +141,6 @@ void VROText::buildText(std::string &text,
             std::unique_ptr<VROGlyph> glyph = typeface->loadGlyph(charCode, true);
             
             std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-            material->setWritesToDepthBuffer(true);
-            material->setReadsFromDepthBuffer(true);
             material->getDiffuse().setColor(color);
             material->getDiffuse().setTexture(glyph->getTexture());
             

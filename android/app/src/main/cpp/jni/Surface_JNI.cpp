@@ -82,8 +82,6 @@ JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
     passert (!surface->getMaterials().empty());
 
     std::shared_ptr<VROMaterial> &material = surface->getMaterials().front();
-    material->setWritesToDepthBuffer(true);
-    material->setReadsFromDepthBuffer(true);
     material->getDiffuse().setTexture(videoTexture);
 }
 
@@ -96,8 +94,6 @@ JNI_METHOD(void, nativeSetImageTexture)(JNIEnv *env,
     passert (!surface->getMaterials().empty());
 
     std::shared_ptr<VROMaterial> &material = surface->getMaterials().front();
-    material->setWritesToDepthBuffer(true);
-    material->setReadsFromDepthBuffer(true);
     material->getDiffuse().setTexture(imageTexture);
 }
 

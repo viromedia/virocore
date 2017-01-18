@@ -20,11 +20,7 @@ std::shared_ptr<VROVideoSurface> VROVideoSurface::createVideoSurface(float width
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
     VROSurface::buildGeometry(width, height, sources, elements);
     
-    
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->setWritesToDepthBuffer(true);
-    material->setReadsFromDepthBuffer(true);
-    
     texture->loadVideo(url, frameSynchronizer, driver);
     texture->play();
 

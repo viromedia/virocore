@@ -124,8 +124,6 @@ std::shared_ptr<VRONode> VROLoader::loadMesh(MDLMesh *mesh) {
         MDLMaterial *material = submesh.material;
         
         std::shared_ptr<VROMaterial> vM = std::make_shared<VROMaterial>();
-        vM->setReadsFromDepthBuffer(true);
-        vM->setWritesToDepthBuffer(true);
         
         for (int i = 0; i < material.count; i++) {
             MDLMaterialProperty *property = [material objectAtIndexedSubscript:i];

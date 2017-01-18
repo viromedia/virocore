@@ -19,12 +19,9 @@ std::shared_ptr<VROSurface> VROSurface::createSurface(float width, float height)
     buildGeometry(width, height, sources, elements);
     
     std::shared_ptr<VROSurface> surface = std::shared_ptr<VROSurface>(new VROSurface(sources, elements));
-    
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->setWritesToDepthBuffer(true);
-    material->setReadsFromDepthBuffer(true);
-    
     surface->getMaterials().push_back(material);
+    
     return surface;
 }
 

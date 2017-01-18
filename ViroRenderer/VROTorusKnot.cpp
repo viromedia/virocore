@@ -142,12 +142,9 @@ std::shared_ptr<VROTorusKnot> VROTorusKnot::createTorusKnot(float p, float q, fl
     std::vector<std::shared_ptr<VROGeometryElement>> elements = { element };
     
     std::shared_ptr<VROTorusKnot> torusKnot = std::shared_ptr<VROTorusKnot>(new VROTorusKnot(sources, elements));
-    
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->setWritesToDepthBuffer(true);
-    material->setReadsFromDepthBuffer(true);
-    
     torusKnot->getMaterials().push_back(material);
+    
     return torusKnot;
 }
 

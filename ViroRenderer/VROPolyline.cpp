@@ -31,8 +31,6 @@ std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f
     std::shared_ptr<VROPolyline> polyline = std::shared_ptr<VROPolyline>(new VROPolyline(sources, elements, width));
     
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->setWritesToDepthBuffer(false);
-    material->setReadsFromDepthBuffer(false);
     material->getDiffuse().setColor({ 1.0, 1.0, 1.0, 1.0 });
     material->setCullMode(VROCullMode::None);
     

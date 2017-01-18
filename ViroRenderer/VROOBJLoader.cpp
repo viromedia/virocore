@@ -134,8 +134,6 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
         material->getDiffuse().setColor({ m.diffuse, 3 });
         material->setShininess(m.shininess);
         material->setTransparency(m.dissolve);
-        material->setWritesToDepthBuffer(true);
-        material->setReadsFromDepthBuffer(true);
         
         if (m.illum == 0) {
             material->setLightingModel(VROLightingModel::Constant);
@@ -176,8 +174,6 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
      */
     std::shared_ptr<VROMaterial> defaultMaterial = std::make_shared<VROMaterial>();
     defaultMaterial->setName("OBJ Default");
-    defaultMaterial->setWritesToDepthBuffer(true);
-    defaultMaterial->setReadsFromDepthBuffer(true);
     
     std::vector<std::shared_ptr<VROMaterial>> elementMaterials;
     

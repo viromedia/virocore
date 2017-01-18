@@ -28,8 +28,8 @@ VROMaterial::VROMaterial() :
     _litPerPixel(true),
     _cullMode(VROCullMode::Back),
     _blendMode(VROBlendMode::Alpha),
-    _writesToDepthBuffer(false),
-    _readsFromDepthBuffer(false),
+    _writesToDepthBuffer(true),
+    _readsFromDepthBuffer(true),
     _substrate(nullptr) {
     
     _diffuse          = new VROMaterialVisual(*this, (int)VROTextureType::None |

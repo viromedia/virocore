@@ -136,8 +136,6 @@ std::shared_ptr<VROSphere> VROSphere::createSphere(float radius, int widthSegmen
     std::shared_ptr<VROSphere> sphere = std::shared_ptr<VROSphere>(new VROSphere(sources, elements));
     
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->setWritesToDepthBuffer(true);
-    material->setReadsFromDepthBuffer(true);
     
     sphere->getMaterials().push_back(material);
     return sphere;
