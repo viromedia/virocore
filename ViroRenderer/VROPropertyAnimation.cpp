@@ -36,14 +36,23 @@ std::shared_ptr<VROPropertyAnimation> VROPropertyAnimation::parse(const std::str
     }
     
     std::string numberStr = value.substr(indexOfNumber);
-    float number = VROStringUtil::toFloat(numberStr);
     
-    return std::make_shared<VROPropertyAnimation>(name, number, isAdditive);
+    VROAnimationValue animationValue;
+    if (name == "color") {
+        animationValue.type = VROValueType::Int;
+        animationValue.valueInt = VROStringUtil::toInt(numberStr);
+    }
+    else {
+        animationValue.type = VROValueType::Float;
+        animationValue.valueFloat = VROStringUtil::toFloat(numberStr);
+    }
+    
+    return std::make_shared<VROPropertyAnimation>(name, animationValue, isAdditive);
 }
 
 std::string VROPropertyAnimation::toString() const {
     std::stringstream ss;
-    ss << _value;
+    ss << (_value.type == VROValueType::Float ? _value.valueFloat : _value.valueInt);
    
     return ss.str();
 }
