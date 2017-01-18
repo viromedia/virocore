@@ -15,7 +15,7 @@
 #include "VROStringUtil.h"
 #include <sstream>
 
-std::shared_ptr<VROAnimationGroup> VROAnimationGroup::parse(float duration, float delay, std::string functionName,
+std::shared_ptr<VROAnimationGroup> VROAnimationGroup::parse(float durationSeconds, float delaySeconds, std::string functionName,
                                                             std::map<std::string, std::string> &propertyAnimations) {
    
     VROTimingFunctionType timingFunction = parseTimingFunction(functionName);
@@ -25,7 +25,7 @@ std::shared_ptr<VROAnimationGroup> VROAnimationGroup::parse(float duration, floa
         animations[name] = VROPropertyAnimation::parse(name, kv.second);
     }
     
-    return std::make_shared<VROAnimationGroup>(duration, delay, timingFunction, animations);
+    return std::make_shared<VROAnimationGroup>(durationSeconds, delaySeconds, timingFunction, animations);
 }
 
 VROTimingFunctionType VROAnimationGroup::parseTimingFunction(std::string &name) {
@@ -55,8 +55,8 @@ VROTimingFunctionType VROAnimationGroup::parseTimingFunction(std::string &name) 
 void VROAnimationGroup::execute(std::shared_ptr<VRONode> node,
                                 std::function<void()> onFinished) {
     VROTransaction::begin();
-    VROTransaction::setAnimationDelay(_delayMillis);
-    VROTransaction::setAnimationDuration(_durationMillis);
+    VROTransaction::setAnimationDelay(_delay);
+    VROTransaction::setAnimationDuration(_duration);
     VROTransaction::setTimingFunction(_timingFunctionType);
     
     animatePosition(node);
@@ -257,7 +257,7 @@ void VROAnimationGroup::animateRotation(std::shared_ptr<VRONode> &node) {
 
 std::string VROAnimationGroup::toString() const {
     std::stringstream ss;
-    ss << "[duration: " << _durationMillis << ", delay: " << _delayMillis;
+    ss << "[duration: " << _duration << ", delay: " << _delay;
     
     for (auto kv : _animations) {
         ss << ", " << kv.first << ":" << kv.second->toString();
