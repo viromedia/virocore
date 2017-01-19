@@ -9,7 +9,6 @@
 #include "VROGeometry.h"
 #include "VROGeometrySource.h"
 #include "VROGeometrySubstrate.h"
-#include "VRORenderParameters.h"
 #include "VROGeometryElement.h"
 #include "VROLog.h"
 #include "VROLight.h"
@@ -43,7 +42,7 @@ void VROGeometry::render(int elementIndex,
                        opacity, material, context, driver);
 }
 
-void VROGeometry::updateSortKeys(VRONode *node, uint32_t lightsHash,
+void VROGeometry::updateSortKeys(VRONode *node, uint32_t depth, uint32_t lightsHash,
                                  float opacity, float distanceFromCamera, float zFar,
                                  VRODriver &driver) {
     _sortKeys.clear();
@@ -54,6 +53,7 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t lightsHash,
         
         VROSortKey key;
         key.renderingOrder = node->getRenderingOrder();
+        key.graphDepth = depth;
         key.lights = lightsHash;
         key.node = (uintptr_t) node;
         key.elementIndex = i;

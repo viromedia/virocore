@@ -38,7 +38,8 @@ VRONode::VRONode() :
     _opacity(1.0),
     _computedOpacity(1.0),
     _selectable(true),
-    _highAccuracyGaze(false) {
+    _highAccuracyGaze(false),
+    _hierarchicalRendering(false) {
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
 
@@ -55,7 +56,8 @@ VRONode::VRONode(const VRONode &node) :
     _opacityFromHiddenFlag(node._opacityFromHiddenFlag),
     _opacity(node._opacity),
     _selectable(node._selectable),
-    _highAccuracyGaze(node._highAccuracyGaze) {
+    _highAccuracyGaze(node._highAccuracyGaze),
+    _hierarchicalRendering(node._hierarchicalRendering) {
         
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -87,13 +89,14 @@ void VRONode::render(int elementIndex,
     }
 }
 
-void VRONode::updateSortKeys(VRORenderParameters &params, const VRORenderContext &context,
-                             VRODriver &driver) {
+void VRONode::updateSortKeys(uint32_t depth, VRORenderParameters &params,
+                             const VRORenderContext &context, VRODriver &driver) {
     processActions();
     
     std::stack<VROMatrix4f> &transforms = params.transforms;
     std::stack<float> &opacities = params.opacities;
     std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
+    std::stack<bool> &hierarchical = params.hierarchical;
     
     /*
      Compute the specific parameters for this node.
@@ -112,27 +115,37 @@ void VRONode::updateSortKeys(VRORenderParameters &params, const VRORenderContext
     _computedLights.insert(_computedLights.begin(), lights.begin(), lights.end());
     
     /*
+     This node uses hierarchical rendering if its flag is set, or if its parent
+     used hierarchical rendering.
+     */
+    bool isHierarchical = _hierarchicalRendering | hierarchical.top();
+    hierarchical.push(isHierarchical);
+    
+    int graphDepth = isHierarchical ? depth : 0;
+    
+    /*
      Compute the sort key for this node's geometry elements.
      */
     if (_geometry) {
         int lightsHash = VROLight::hashLights(lights);
         float distanceFromCamera = getTransformedPosition().distance(context.getCamera().getPosition());
-        _geometry->updateSortKeys(this, lightsHash, _computedOpacity, distanceFromCamera, context.getZFar(),
-                                  driver);
+        _geometry->updateSortKeys(this, graphDepth, lightsHash, _computedOpacity, distanceFromCamera,
+                                  context.getZFar(), driver);
     }
     
     /*
      Move down the tree.
      */
     for (std::shared_ptr<VRONode> childNode : _subnodes) {
-        childNode->updateSortKeys(params, context, driver);
+        childNode->updateSortKeys(depth + 1, params, context, driver);
     }
     
-    params.transforms.pop();
-    params.opacities.pop();
+    transforms.pop();
+    opacities.pop();
     for (int i = 0; i < _lights.size(); i++) {
         lights.pop_back();
     }
+    hierarchical.pop();
 }
 
 void VRONode::getSortKeys(std::vector<VROSortKey> *outKeys) {

@@ -24,7 +24,6 @@ class VROVector4f;
 class VRODriverMetal;
 class VROLight;
 class VROConcurrentBuffer;
-class VRORenderParameters;
 enum class VROEyeType;
 
 /*

@@ -19,7 +19,6 @@
 #include "VROLog.h"
 #include "VROSharedStructures.h"
 #include "VROMetalUtils.h"
-#include "VRORenderParameters.h"
 #include "VROConcurrentBuffer.h"
 #include <map>
 

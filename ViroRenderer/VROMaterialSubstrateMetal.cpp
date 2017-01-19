@@ -17,7 +17,6 @@
 #include "VROMath.h"
 #include "VROAllocationTracker.h"
 #include "VROConcurrentBuffer.h"
-#include "VRORenderParameters.h"
 #include "VROSortKey.h"
 #include "VRORenderContext.h"
 

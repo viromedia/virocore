@@ -75,6 +75,10 @@ public class NodeJni {
         nativeSetVisible(mNativeRef, visible);
     }
 
+    public void setHierarchicalRendering(boolean hierarchicalRendering) {
+        nativeSetHierarchicalRendering(mNativeRef, hierarchicalRendering);
+    }
+
     public void setGeometry(BaseGeometry geometry){
         if (geometry == null){
             throw new IllegalArgumentException("Missing Required geometry to be set on Node.");
@@ -106,6 +110,7 @@ public class NodeJni {
     private native void nativeDestroyNode(long nodeReference);
     private native void nativeAddChildNode(long nodeReference, long childNodeReference);
     private native void nativeRemoveFromParent(long nodeReference);
+    private native void nativeSetHierarchicalRendering(long nodeReference, boolean hierarchicalRendering);
     private native void nativeSetPosition(long nodeReference, float x, float y, float z);
     private native void nativeSetRotation(long nodeReference, float x, float y, float z);
     private native void nativeSetScale(long nodeReference, float x, float y, float z);

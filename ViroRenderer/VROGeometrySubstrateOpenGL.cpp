@@ -14,7 +14,6 @@
 #include "VROGeometryUtil.h"
 #include "VROLog.h"
 #include "VROShaderProgram.h"
-#include "VRORenderParameters.h"
 #include <map>
 
 VROGeometrySubstrateOpenGL::VROGeometrySubstrateOpenGL(const VROGeometry &geometry,

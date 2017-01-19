@@ -17,7 +17,6 @@ class VROLight;
 class VRORenderContext;
 class VRODriver;
 class VROMatrix4f;
-class VRORenderParameters;
 class VROMaterial;
 class VROGeometry;
 

@@ -13,7 +13,6 @@
 #include "VROAllocationTracker.h"
 #include "VROEye.h"
 #include "VROLight.h"
-#include "VRORenderParameters.h"
 #include "VROSortKey.h"
 #include <sstream>
 

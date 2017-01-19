@@ -87,8 +87,9 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext *renderContext
     VRORenderParameters renderParams;
     renderParams.transforms.push(renderContext->getHUDViewMatrix());
     renderParams.opacities.push(1.0);
+    renderParams.hierarchical.push(false);
 
-    _node->updateSortKeys(renderParams, *renderContext, *driver);
+    _node->updateSortKeys(0, renderParams, *renderContext, *driver);
     
     std::shared_ptr<VROMaterial> material = _polyline->getMaterials().front();
     material->bindShader(*driver);

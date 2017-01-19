@@ -92,6 +92,13 @@ JNI_METHOD(void, nativeSetVisible)(JNIEnv *env,
     Node::native(native_node_ref)->setHidden(!visible);
 }
 
+JNI_METHOD(void, nativeSetHierarchicalRendering)(JNIEnv *env,
+                                                 jobject obj,
+                                                 jlong native_node_ref,
+                                                 jboolean hierarchicalRendering) {
+    Node::native(native_node_ref)->setHierarchicalRendering(hierarchicalRendering);
+}
+
 JNI_METHOD(void, nativeSetMaterials)(JNIEnv *env,
                                      jobject obj,
                                      jlong nativeNodeRef,

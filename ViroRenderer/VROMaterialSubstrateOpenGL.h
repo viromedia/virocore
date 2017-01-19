@@ -20,7 +20,6 @@ class VRODriverOpenGL;
 class VROLight;
 class VROMatrix4f;
 class VROVector3f;
-class VRORenderParameters;
 class VROUniform;
 enum class VROEyeType;
 

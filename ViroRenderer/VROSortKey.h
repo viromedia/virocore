@@ -25,14 +25,25 @@ public:
     }
 
     bool operator< (const VROSortKey& r) const {
-        return std::tie(renderingOrder, distanceFromCamera, incoming, shader, textures, lights, material, node, elementIndex) <
-               std::tie(r.renderingOrder, r.distanceFromCamera, r.incoming, r.shader, r.textures, r.lights, r.material, r.node, r.elementIndex);
+        return std::tie(renderingOrder, graphDepth, distanceFromCamera, incoming, shader, textures, lights, material, node, elementIndex) <
+               std::tie(r.renderingOrder, r.graphDepth, r.distanceFromCamera, r.incoming, r.shader, r.textures, r.lights, r.material, r.node, r.elementIndex);
     }
             
     /*
      Manual rendering order setting is the highest sorting concern.
      */
     uint32_t renderingOrder;
+    
+    /*
+     The depth of the node in the scene graph. This is normally set
+     to zero. If any of the node's parents is set to hierarchical 
+     rendering, then this is set to the node's depth in the graph.
+     
+     This ensures that when a hierarchial node is rendered, all 
+     of its children will be rendered immediately after by order of 
+     their depth.
+     */
+    uint32_t graphDepth;
     
     /*
      Distance fom camera for objects is next (back to front).
