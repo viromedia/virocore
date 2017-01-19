@@ -38,29 +38,19 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     rootNode->setPosition({0, 0, 0});
 
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
-    ambient->setColor({ 0.4, 0.4, 0.4 });
+    ambient->setColor({ 0.9, 0.9, 0.9 });
 
-    std::shared_ptr<VROLight> spotRed = std::make_shared<VROLight>(VROLightType::Spot);
-    spotRed->setColor({ 1.0, 0.0, 0.0 });
-    spotRed->setPosition( { -5, 0, 0 });
-    spotRed->setDirection( { 1.0, 0, -1.0 });
-    spotRed->setAttenuationStartDistance(20);
-    spotRed->setAttenuationEndDistance(30);
-    spotRed->setSpotInnerAngle(2.5);
-    spotRed->setSpotOuterAngle(5.0);
-
-    std::shared_ptr<VROLight> spotBlue = std::make_shared<VROLight>(VROLightType::Spot);
-    spotBlue->setColor({ 0.0, 0.0, 1.0 });
-    spotBlue->setPosition( { 5, 0, 0 });
-    spotBlue->setDirection( { -1.0, 0, -1.0 });
-    spotBlue->setAttenuationStartDistance(20);
-    spotBlue->setAttenuationEndDistance(30);
-    spotBlue->setSpotInnerAngle(2.5);
-    spotBlue->setSpotOuterAngle(5.0);
+    std::shared_ptr<VROLight> spot = std::make_shared<VROLight>(VROLightType::Spot);
+    spot->setColor({ 1.0, 1.0, 1.0 });
+    spot->setPosition( { 0, 0, 0 });
+    spot->setDirection( { 0, 0, -1 });
+    spot->setAttenuationStartDistance(20);
+    spot->setAttenuationEndDistance(30);
+    spot->setSpotInnerAngle(10.0);
+    spot->setSpotOuterAngle(20.0);
 
     rootNode->addLight(ambient);
-    rootNode->addLight(spotRed);
-    rootNode->addLight(spotBlue);
+    rootNode->addLight(spot);
 
     scene->addNode(rootNode);
 
@@ -75,19 +65,18 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
 
         std::shared_ptr<VROMaterial> &material = node->getGeometry()->getMaterials().front();
         material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("heart_d.jpg")));
-        //material->getSpecular().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("heart_s.jpg")));
-        //material->setLightingModel(VROLightingModel::Blinn);
-        //material->getDiffuse().setColor({1, 0, 0, 1});
-        VROTransaction::begin();
-        VROTransaction::setAnimationDelay(3);
-        VROTransaction::setAnimationDuration(6);
-
-        material->getDiffuse().setColor({0, 0, 1, 1});
-
-        VROTransaction::commit();
+        material->setLightingModel(VROLightingModel::Lambert);
     });
 
     heartNode->setPosition({0, -5.25, -1});
+    _objAngle = 0;
+    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([this](VRONode *const node, float seconds) {
+        _objAngle += .01;
+        node->setRotation({ 0, _objAngle, 0});
+
+        return true;
+    });
+    heartNode->runAction(action);
     rootNode->addChildNode(heartNode);
 
     /*
@@ -103,9 +92,15 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     std::string base = malePath.substr(0, malePath.find_last_of('/'));
 
     std::shared_ptr<VRONode> maleNode = VROOBJLoader::loadOBJFromFile(malePath, base, true);
-    maleNode->setPosition({0, -100, -10});
+    maleNode->setPosition({-10, -100, -10});
     maleNode->setScale({ 0.1, 0.1, 0.1 });
     rootNode->addChildNode(maleNode);
+
+    std::shared_ptr<VROAction> maleAction = VROAction::perpetualPerFrameAction([this](VRONode *const node, float seconds) {
+        node->setRotation({ 0, _objAngle, 0});
+        return true;
+    });
+    maleNode->runAction(maleAction);
 
     /*
      Create the box node.
@@ -142,20 +137,9 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
 
     std::shared_ptr<VRONode> textNode = std::make_shared<VRONode>();
     textNode->setGeometry(text);
-    textNode->setPosition({-5, 0, -10});
+    textNode->setPosition({10, 0, -10});
 
-    rootNode->addChildNode(textNode);
-
-    VROTransaction::begin();
-    VROTransaction::setAnimationDuration(6);
-
-    spotRed->setPosition({5, 0, 0});
-    spotRed->setDirection({-1, 0, -1});
-
-    spotBlue->setPosition({-5, 0, 0});
-    spotBlue->setDirection({1, 0, -1});
-
-    VROTransaction::commit();
+    //rootNode->addChildNode(textNode);
 
     return sceneController;
 }

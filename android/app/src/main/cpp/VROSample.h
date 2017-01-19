@@ -45,7 +45,7 @@ private:
     std::shared_ptr<VROTexture> getNiagaraTexture();
 
     VRODriver *_driver;
-
+    float _objAngle;
 };
 
 #endif //ANDROID_VROSAMPLERENDERER_H

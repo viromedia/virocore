@@ -33,8 +33,8 @@ enum class VROCameraRotationType;
 enum class VROEyeType;
 enum class VROTimingFunctionType;
 
-static const float kZNear = 0.1;
-static const float kZFar  = 100;
+static const float kZNear = 0.25;
+static const float kZFar  = 50;
 
 class VRORenderer {
     
