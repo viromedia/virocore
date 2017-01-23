@@ -8,8 +8,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -18,16 +18,10 @@ import android.view.WindowManager;
 import com.viro.renderer.FrameListener;
 import com.viro.renderer.RenderCommandQueue;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
 
 public class ViroOvrView extends SurfaceView implements VrView, Application.ActivityLifecycleCallbacks, SurfaceHolder.Callback {
 
@@ -169,7 +163,14 @@ public class ViroOvrView extends SurfaceView implements VrView, Application.Acti
                 || event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
             return true;
         }
-        return super.dispatchKeyEvent(event);
+        mNativeRenderer.onKeyEvent(event.getKeyCode(), event.getAction());
+        return true;
+    }
+
+    @Override
+    public boolean onTouchEvent( MotionEvent event ){
+        mNativeRenderer.onTouchEvent(event.getAction(), event.getX(), event.getY());
+        return true;
     }
 
     @Override

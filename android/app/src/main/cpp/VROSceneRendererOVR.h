@@ -26,7 +26,8 @@ public:
      */
     void initGL() {} // Not required
     void onDrawFrame() {} // Not required
-    void onScreenTouchEvent(bool enabled) {} // Not supported
+    void onTouchEvent(int action, float x, float y);
+    void onKeyEvent(int keyCode, int action);
     void setVRModeEnabled(bool enabled) {} // Not supported
 
     /*

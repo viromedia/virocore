@@ -38,9 +38,10 @@ public:
     virtual void onDrawFrame() = 0;
 
     /*
-     Event on trigger.
+     InputEvent methods for notifying the renderer.
      */
-    virtual void onScreenTouchEvent(bool enabled) = 0;
+    virtual void onTouchEvent(int action, float xPos, float yPos) = 0;
+    virtual void onKeyEvent(int keyCode, int action) = 0;
 
     /*
      Enable or disable stereo rendering (VR mode). When false, we will render

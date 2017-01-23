@@ -95,13 +95,21 @@ JNI_METHOD(void, nativeDrawFrame)(JNIEnv *env,
     Renderer::native(native_renderer)->onDrawFrame();
 }
 
-JNI_METHOD(void, nativeOnScreenTouchEvent)(JNIEnv *env,
+JNI_METHOD (void, nativeOnKeyEvent)(JNIEnv * env,
+                                    jobject obj,
+                                    jlong native_renderer,
+                                    int keyCode,
+                                    int action ){
+    Renderer::native(native_renderer)->onKeyEvent(keyCode, action);
+}
+
+JNI_METHOD(void, nativeOnTouchEvent)(JNIEnv *env,
                                        jobject obj,
                                        jlong native_renderer,
-                                       jboolean onTouch) {
-
-
-    Renderer::native(native_renderer)->onScreenTouchEvent(onTouch);
+                                       jint onTouchAction,
+                                           float xPos,
+                                           float yPos) {
+    Renderer::native(native_renderer)->onTouchEvent(onTouchAction, xPos, yPos);
 }
 
 JNI_METHOD(void, nativeSetVRModeEnabled)(JNIEnv *env,

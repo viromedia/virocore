@@ -30,6 +30,7 @@ import com.viro.renderer.jni.SurfaceJni;
 import com.viro.renderer.jni.TextureJni;
 import com.viro.renderer.jni.VideoTextureJni;
 import com.viro.renderer.jni.ViroGvrLayout;
+import com.viro.renderer.jni.ViroOvrView;
 import com.viro.renderer.jni.VrView;
 
 import java.util.ArrayList;
@@ -199,6 +200,7 @@ public class ViroActivity extends AppCompatActivity {
         float[] boxPosition2 = {-2, 0, -3};
         node2.setPosition(boxPosition2);
         node2.setMaterials(Arrays.asList(material));
+        node2.setEventDelegateJni(getGenericDelegate("Box2"));
         return Arrays.asList(node1, node2);
     }
 
@@ -206,7 +208,7 @@ public class ViroActivity extends AppCompatActivity {
         EventDelegateJni delegateJni = new EventDelegateJni();
         delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_HOVER, true);
         delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_CLICK, true);
-        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_TOUCH, true);
+        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_TOUCH, false);
         delegateJni.setEventDelegateCallback(new EventDelegateJni.EventDelegateCallback() {
             @Override
             public void onHover(int source, boolean isHovering) {

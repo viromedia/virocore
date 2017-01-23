@@ -35,4 +35,12 @@ namespace ViroCardBoard{
         ViewerButton = 2
     };
 }
+
+namespace ViroOculus{
+    enum InputSource{
+        Controller = 1,
+        TouchPad = 2,
+        BackButton = 3
+    };
+}
 #endif

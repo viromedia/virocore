@@ -10,14 +10,10 @@ void VROInputControllerCardboard::onProcess() {
     updateOrientation();
 }
 
-void VROInputControllerCardboard::updateScreenTouch(bool onTouchDown){
-    if (onTouchDown){
-        VROInputControllerBase::onButtonEvent(ViroCardBoard::InputSource::ViewerButton,
-                                          VROEventDelegate::ClickState::ClickDown);
-    } else {
-        VROInputControllerBase::onButtonEvent(ViroCardBoard::InputSource::ViewerButton,
-                                          VROEventDelegate::ClickState::ClickUp);
-    }
+void VROInputControllerCardboard::updateScreenTouch(int touchAction){
+    VROEventDelegate::ClickState state = touchAction == AMOTION_EVENT_ACTION_DOWN ?
+                VROEventDelegate::ClickState::ClickDown : VROEventDelegate::ClickState::ClickUp;
+    VROInputControllerBase::onButtonEvent(ViroCardBoard::InputSource::ViewerButton, state);
 }
 
 void VROInputControllerCardboard::updateOrientation(){

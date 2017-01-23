@@ -43,6 +43,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/VROTypefaceAndroid.cpp
              src/main/cpp/VROInputControllerDaydream.cpp
              src/main/cpp/VROInputControllerCardboard.cpp
+             src/main/cpp/VROInputControllerOVR.cpp
 
              # Android JNI
              src/main/cpp/jni/VRORenderer_JNI.cpp

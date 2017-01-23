@@ -31,10 +31,6 @@ public class RendererJni {
     public void setVRModeEnabled(boolean enabled) { nativeSetVRModeEnabled(mNativeRef, enabled); }
 
     /* ----------     OVR only methods    ---------- */
-    public void onScreenTouchEvent(boolean onTouch) {
-        nativeOnScreenTouchEvent(mNativeRef, onTouch);
-    }
-
     public RendererJni(ClassLoader appClassLoader, Context context,
                        ViroOvrView view, Activity activity, AssetManager assets, PlatformUtil platformUtil) {
         mNativeRef = nativeCreateRendererOVR(appClassLoader, context, view, activity, assets, platformUtil);
@@ -59,6 +55,12 @@ public class RendererJni {
     public void onSurfaceChanged(Surface surface) { nativeOnSurfaceChanged(surface, mNativeRef); }
 
     /* ----------     Common other methods   ---------- */
+    public void onKeyEvent(int keyCode, int action) {
+        nativeOnKeyEvent(mNativeRef, keyCode, action);
+    }
+    public void onTouchEvent(int onTouchAction, float touchPosX, float touchPosY) {
+        nativeOnTouchEvent(mNativeRef, onTouchAction, touchPosX, touchPosY);
+    }
     public void setScene(long nativeSceneRef) {
         nativeSetScene(mNativeRef, nativeSceneRef);
     }
@@ -82,7 +84,8 @@ public class RendererJni {
     private native void nativeSetVRModeEnabled(long nativeRenderer, boolean enabled);
     private native long nativeDrawFrame(long nativeRenderer);
     private native void nativeOnStart(long nativeRenderer);
-    private native void nativeOnScreenTouchEvent(long nativeRenderer, boolean onTouch);
+    private native void nativeOnKeyEvent(long nativeRenderer, int keyCode, int action);
+    private native void nativeOnTouchEvent(long nativeRenderer, int onTouchAction, float touchPosX, float touchPosY);
     private native void nativeOnPause(long nativeRenderer);
     private native void nativeOnResume(long nativeRenderer);
     private native void nativeOnStop(long nativeRenderer);

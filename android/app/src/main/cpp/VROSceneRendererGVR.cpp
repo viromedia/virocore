@@ -169,12 +169,12 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headRotation) {
     _renderer->endFrame(*_driver.get());
 }
 
-void VROSceneRendererGVR::onScreenTouchEvent(bool isTouching) {
+void VROSceneRendererGVR::onTouchEvent(int action, float x, float y) {
     if (_viewerType == GVR_VIEWER_TYPE_CARDBOARD) {
         std::shared_ptr<VROInputControllerBase> baseController =  _renderer->getInputController();
         std::shared_ptr<VROInputControllerCardboard> cardboardController
                 = std::dynamic_pointer_cast<VROInputControllerCardboard>(baseController);
-        cardboardController->updateScreenTouch(isTouching);
+        cardboardController->updateScreenTouch(action);
     }
 }
 

@@ -11,6 +11,7 @@
 #include "VRORenderContext.h"
 #include "VROInputControllerBase.h"
 #include "VROInputPresenterCardboard.h"
+#include <android/input.h>
 
 class VROInputControllerCardboard : public VROInputControllerBase {
 
@@ -19,7 +20,7 @@ public:
     virtual ~VROInputControllerCardboard(){}
 
     virtual void onProcess();
-    void updateScreenTouch(bool isTouching);
+    void updateScreenTouch(int touchAction);
 
 protected:
     std::shared_ptr<VROInputPresenter> createPresenter(std::shared_ptr<VRORenderContext> context){

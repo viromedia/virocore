@@ -63,6 +63,7 @@ PFNEGLGETSYNCATTRIBKHRPROC		eglGetSyncAttribKHR;
 #include "VrApi.h"
 #include "VrApi_Helpers.h"
 #include "VrApi_SystemUtils.h"
+#include "VROInputControllerOVR.h"
 
 #define DEBUG 1
 
@@ -975,6 +976,11 @@ static int ovrApp_HandleKeyEvent( ovrApp * app, const int keyCode, const int act
             }
             app->BackButtonDown = false;
         }
+        std::shared_ptr<VROInputControllerBase> inputControllerBase
+                = app->vroRenderer->getInputController();
+        std::shared_ptr<VROInputControllerOVR> inputControllerOvr
+                = std::dynamic_pointer_cast<VROInputControllerOVR>(inputControllerBase);
+        inputControllerOvr->handleOVRKeyEvent(keyCode, action);
         return 1;
     }
     return 0;
@@ -982,6 +988,12 @@ static int ovrApp_HandleKeyEvent( ovrApp * app, const int keyCode, const int act
 
 static int ovrApp_HandleTouchEvent( ovrApp * app, const int action, const float x, const float y )
 {
+    std::shared_ptr<VROInputControllerBase> inputControllerBase
+            = app->vroRenderer->getInputController();
+    std::shared_ptr<VROInputControllerOVR> inputControllerOvr
+            = std::dynamic_pointer_cast<VROInputControllerOVR>(inputControllerBase);
+    inputControllerOvr->handleOVRTouchEvent(action, x, y);
+
     // Handle GearVR touch pad.
     if ( app->Ovr != NULL && action == AMOTION_EVENT_ACTION_UP )
     {
@@ -1375,6 +1387,7 @@ Activity lifecycle
 
 VROSceneRendererOVR::VROSceneRendererOVR(std::shared_ptr<gvr::AudioApi> gvrAudio,
                                          jobject view, jobject activity, JNIEnv *env) {
+    _renderer = std::make_shared<VRORenderer>(std::make_shared<VROInputControllerOVR>());
     _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
 
     ALOGV( "    GLES3JNILib::onCreate()" );
@@ -1527,31 +1540,27 @@ Input
 ================================================================================
 */
 
-JNIEXPORT void JNICALL Java_com_oculus_gles3jni_GLES3JNILib_onKeyEvent( JNIEnv * env, jobject obj, jlong handle, int keyCode, int action )
-{
+void VROSceneRendererOVR::onKeyEvent(int keyCode, int action) {
     if ( action == AKEY_EVENT_ACTION_UP )
     {
         ALOGV( "    GLES3JNILib::onKeyEvent( %d, %d )", keyCode, action );
     }
-    ovrAppThread * appThread = (ovrAppThread *)((size_t)handle);
     ovrMessage message;
     ovrMessage_Init( &message, MESSAGE_ON_KEY_EVENT, MQ_WAIT_NONE );
     ovrMessage_SetIntegerParm( &message, 0, keyCode );
     ovrMessage_SetIntegerParm( &message, 1, action );
-    ovrMessageQueue_PostMessage( &appThread->MessageQueue, &message );
+    ovrMessageQueue_PostMessage( &_appThread->MessageQueue, &message );
 }
 
-JNIEXPORT void JNICALL Java_com_oculus_gles3jni_GLES3JNILib_onTouchEvent( JNIEnv * env, jobject obj, jlong handle, int action, float x, float y )
-{
+void VROSceneRendererOVR::onTouchEvent(int action, float x, float y) {
     if ( action == AMOTION_EVENT_ACTION_UP )
     {
         ALOGV( "    GLES3JNILib::onTouchEvent( %d, %1.0f, %1.0f )", action, x, y );
     }
-    ovrAppThread * appThread = (ovrAppThread *)((size_t)handle);
     ovrMessage message;
     ovrMessage_Init( &message, MESSAGE_ON_TOUCH_EVENT, MQ_WAIT_NONE );
     ovrMessage_SetIntegerParm( &message, 0, action );
     ovrMessage_SetFloatParm( &message, 1, x );
     ovrMessage_SetFloatParm( &message, 2, y );
-    ovrMessageQueue_PostMessage( &appThread->MessageQueue, &message );
+    ovrMessageQueue_PostMessage( &_appThread->MessageQueue, &message );
 }

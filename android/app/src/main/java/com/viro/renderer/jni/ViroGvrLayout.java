@@ -104,11 +104,9 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
         glSurfaceView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    mNativeRenderer.onScreenTouchEvent(true);
-                    return true;
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    mNativeRenderer.onScreenTouchEvent(false);
+                int action = event.getAction();
+                if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_UP) {
+                    mNativeRenderer.onTouchEvent(action, event.getX(), event.getY());
                     return true;
                 }
                 return false;
