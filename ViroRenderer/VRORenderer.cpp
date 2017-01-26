@@ -13,7 +13,7 @@
 #include "VROAllocationTracker.h"
 #include "VROScene.h"
 #include "VROLog.h"
-#include "VROCameraMutable.h"
+#include "VRONodeCamera.h"
 #include "VROTransaction.h"
 #include "VROReticle.h"
 #include "VRORenderDelegateInternal.h"
@@ -32,8 +32,7 @@ VRORenderer::VRORenderer() :
     _frameSynchronizer(std::make_shared<VROFrameSynchronizerInternal>()),
     _context(std::make_shared<VRORenderContext>(_frameSynchronizer)),
     _reticle(std::make_shared<VROReticle>()),
-    _camera(std::make_shared<VROCameraMutable>()),
-    _sceneTransitionActive(false){
+    _sceneTransitionActive(false) {
 
     _eventManager = std::make_shared<VROEventManager>(_context);
 
@@ -61,20 +60,8 @@ void VRORenderer::setDelegate(std::shared_ptr<VRORenderDelegateInternal> delegat
 
 #pragma mark - Camera
 
-void VRORenderer::setPosition(VROVector3f position) {
-    _camera->setPosition(position);
-}
-
-void VRORenderer::setBaseRotation(VROQuaternion quaternion) {
-    _camera->setBaseRotation(quaternion);
-}
-
-void VRORenderer::setCameraRotationType(VROCameraRotationType type) {
-    _camera->setRotationType(type);
-}
-
-void VRORenderer::setOrbitFocalPoint(VROVector3f focalPt) {
-    _camera->setOrbitFocalPoint(focalPt);
+void VRORenderer::setPointOfView(std::shared_ptr<VRONode> node) {
+    _pointOfView = node;
 }
 
 #pragma mark - Stereo renderer methods
@@ -107,30 +94,49 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
 
     VROCamera camera;
     camera.setHeadRotation(headRotation);
-    camera.setBaseRotation(_camera->getBaseRotation().getMatrix());
     camera.setViewport(viewport);
     camera.setFOV(fov);
     
-    if (_camera->getRotationType() == VROCameraRotationType::Standard) {
-        camera.setPosition(_camera->getPosition());
+    // Make a default camera if no point of view is set
+    if (!_pointOfView) {
+        camera.setPosition({0, 0, 0 });
+        camera.setBaseRotation({});
     }
-    else { // Orbit
-        VROVector3f pos = _camera->getPosition();
-        VROVector3f focal = _camera->getOrbitFocalPoint();
+    else {
+        // If no node camera is set, just use the point of view node's position and
+        // rotation, with standard rotation type
+        if (!_pointOfView->getCamera()) {
+            camera.setPosition(_pointOfView->getPosition());
+            camera.setBaseRotation(_pointOfView->getRotation().getMatrix());
+        }
         
-        VROVector3f v = focal.subtract(pos);
-        VROVector3f ray = v.normalize();
-        
-        // Set the orbit position by pushing out the camera at an angle
-        // defined by the current head rotation
-        VROVector3f orbitedRay = headRotation.multiply(v.normalize());
-        camera.setPosition(focal - orbitedRay.scale(v.magnitude()));
-        
-        // Set the orbit rotation. This is the current head rotation plus
-        // the rotation required to get from kBaseForward to the forward
-        // vector defined by the camera's position and focal point
-        VROQuaternion rotation = VROQuaternion::rotationFromTo(ray, kBaseForward);
-        camera.setHeadRotation(rotation.getMatrix().invert().multiply(headRotation));
+        // Otherwise our camera is fully specified
+        else {
+            const std::shared_ptr<VRONodeCamera> &nodeCamera = _pointOfView->getCamera();
+            camera.setBaseRotation(_pointOfView->getRotation().getMatrix().multiply(nodeCamera->getBaseRotation().getMatrix()));
+            
+            if (nodeCamera->getRotationType() == VROCameraRotationType::Standard) {
+                camera.setPosition(_pointOfView->getPosition() + nodeCamera->getPosition());
+            }
+            else { // Orbit
+                VROVector3f pos = _pointOfView->getPosition() + nodeCamera->getPosition();
+                VROVector3f focal = _pointOfView->getPosition() + nodeCamera->getOrbitFocalPoint();
+                
+                VROVector3f v = focal.subtract(pos);
+                VROVector3f ray = v.normalize();
+                
+                // Set the orbit position by pushing out the camera at an angle
+                // defined by the current head rotation
+                VROVector3f orbitedRay = headRotation.multiply(v.normalize());
+                camera.setPosition(focal - orbitedRay.scale(v.magnitude()));
+                
+                // Set the orbit rotation. This is the current head rotation plus
+                // the rotation required to get from kBaseForward to the forward
+                // vector defined by the camera's position and focal point
+                VROQuaternion rotation = VROQuaternion::rotationFromTo(ray, kBaseForward);
+                camera.setHeadRotation(rotation.getMatrix().invert().multiply(headRotation));
+            }
+        }
     }
     
     _context->setCamera(camera);

@@ -66,14 +66,13 @@ public class RendererJni {
     public void enableReticle(boolean enable) {
         nativeEnableReticle(mNativeRef, enable);
     }
-    public void setCameraPosition(float[] position) {
-        nativeSetCameraPosition(mNativeRef, position[0], position[1], position[2]);
-    }
-    public void setCameraRotationType(String rotationType) {
-        nativeSetCameraRotationType(mNativeRef, rotationType);
-    }
-    public void setOrbitCameraFocalPoint(float[] position) {
-        nativeSetOrbitCameraFocalPoint(mNativeRef, position[0], position[1], position[2]);
+    public void setPointOfView(NodeJni node) {
+        if (node != null) {
+            nativeSetPointOfView(mNativeRef, node.mNativeRef);
+        }
+        else {
+            nativeSetPointOfView(mNativeRef, 0);
+        }
     }
 
     /* ----------     Native methods    ---------- */
@@ -96,7 +95,5 @@ public class RendererJni {
     private native void nativeOnSurfaceDestroyed(long nativeRenderer);
     private native void nativeSetScene(long nativeRenderer, long nativeScene);
     private native void nativeEnableReticle(long nativeRenderer, boolean enable);
-    private native void nativeSetCameraPosition(long nativeRenderer, float x, float y, float z);
-    private native void nativeSetCameraRotationType(long nativeRenderer, String rotationType);
-    private native void nativeSetOrbitCameraFocalPoint(long nativeRenderer, float x, float y, float z);
+    private native void nativeSetPointOfView(long nativeRenderer, long nodeRef);
 }

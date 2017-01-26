@@ -9,10 +9,10 @@
 #import "VROSample.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneText = 0,
+    VROSampleSceneBox = 0,
     VROSampleSceneTorus,
     VROSampleSceneOBJ,
-    VROSampleSceneBox,
+    VROSampleSceneText,
     VROSampleSceneVideoSphere,
     VROSampleSceneNumScenes
 };
@@ -286,8 +286,16 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     rootNode->addChildNode(boxNode3);
     
-    [self.view setCameraRotationType:VROCameraRotationType::Orbit];
-    [self.view setOrbitFocalPoint:boxNode->getPosition()];
+    std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();
+    camera->setRotationType(VROCameraRotationType::Orbit);
+    camera->setOrbitFocalPoint(boxNode->getPosition());
+    camera->setPosition({0, -5, 0});
+    
+    std::shared_ptr<VRONode> cameraNode = std::make_shared<VRONode>();
+    cameraNode->setCamera(camera);
+    rootNode->addChildNode(cameraNode);
+    
+    [self.view setPointOfView:cameraNode];
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
@@ -298,6 +306,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         
         spotBlue->setPosition({-5, 0, 0});
         spotBlue->setDirection({1, 0, -1});
+        
+        cameraNode->setPosition({0, 5, 0});
         
         VROTransaction::commit();
     });
@@ -337,7 +347,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROLineBreakMode linebreakMode = VROLineBreakMode::Justify;
     VROTextClipMode clipMode = VROTextClipMode::ClipToBounds;
     
-    std::shared_ptr<VROTypeface> typeface = self.driver->newTypeface("SF", 10);
+    std::shared_ptr<VROTypeface> typeface = self.driver->newTypeface("SF", 26);
     //std::string string = "Hello Freetype, this is a test of wrapping a long piece of text, longer than all the previous pieces of text.";
     
     std::string string = "In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";

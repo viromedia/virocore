@@ -23,7 +23,7 @@
 class VROEye;
 class VRONode;
 class VRODriver;
-class VROCameraMutable;
+class VRONodeCamera;
 class VROTimingFunction;
 class VRORenderContext;
 class VROFrameListener;
@@ -42,12 +42,8 @@ public:
     
     VRORenderer();
     virtual ~VRORenderer();
-        
-    void setPosition(VROVector3f position);
-    void setBaseRotation(VROQuaternion quaternion);
-    void setCameraRotationType(VROCameraRotationType type);
-    void setOrbitFocalPoint(VROVector3f focalPt);
     
+    void setPointOfView(std::shared_ptr<VRONode> node);
     void setDelegate(std::shared_ptr<VRORenderDelegateInternal> delegate);
     void updateRenderViewSize(float width, float height);
     
@@ -107,9 +103,10 @@ private:
     std::shared_ptr<VROReticle> _reticle;
     
     /*
-     Internal representation of the camera.
+     The node that owns the VRONodeCamera that will determine the point of
+     view from which we display the scene.
      */
-    std::shared_ptr<VROCameraMutable> _camera;
+    std::shared_ptr<VRONode> _pointOfView;
     
     /*
      Delegate receiving scene rendering updates.

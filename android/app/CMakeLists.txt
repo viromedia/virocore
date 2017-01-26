@@ -46,6 +46,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/VRORenderer_JNI.cpp
              src/main/cpp/jni/Node_JNI.cpp
              src/main/cpp/jni/Scene_JNI.cpp
+             src/main/cpp/jni/Camera_JNI.cpp
              src/main/cpp/jni/Box_JNI.cpp
              src/main/cpp/jni/Surface_JNI.cpp
              src/main/cpp/jni/Sphere_JNI.cpp
@@ -110,7 +111,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROGeometrySubstrate.cpp
              ../../ViroRenderer/VROTextureSubstrate.cpp
              ../../ViroRenderer/VROMaterialSubstrate.cpp
-             ../../ViroRenderer/VROCameraMutable.cpp
+             ../../ViroRenderer/VRONodeCamera.cpp
              ../../ViroRenderer/VROEventManager.cpp
 
              # Animation

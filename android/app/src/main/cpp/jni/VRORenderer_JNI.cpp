@@ -17,6 +17,7 @@
 #include "VROSceneRendererOVR.h"
 #include "VROPlatformUtil.h"
 #include "VROSample.h"
+#include "Node_JNI.h"
 #include "VROSceneController.h"
 #include "VRORenderer_JNI.h"
 #include "VROReticle.h"
@@ -149,33 +150,18 @@ JNI_METHOD(void, nativeEnableReticle)(JNIEnv *env,
     Renderer::native(native_renderer)->getRenderer()->getReticle()->setEnabled(enable);
 }
 
-JNI_METHOD(void, nativeSetCameraPosition)(JNIEnv *env,
-                                          jobject obj,
-                                          jlong nativeRenderer, jfloat x, jfloat y, jfloat z) {
-    Renderer::native(nativeRenderer)->getRenderer()->setPosition(VROVector3f(x, y, z));
-}
+JNI_METHOD(void, nativeSetPointOfView)(JNIEnv *env,
+                                       jobject obj,
+                                       jlong native_renderer,
+                                       jlong native_node_ref) {
 
-JNI_METHOD(void, nativeSetCameraRotationType)(JNIEnv *env,
-                                              jobject obj,
-                                              jlong nativeRenderer,
-                                              jstring rotationType) {
-    // Get the string
-    const char *cStrRotationType = env->GetStringUTFChars(rotationType, NULL);
-    std::string strRotationType(cStrRotationType);
-
-    if (VROStringUtil::strcmpinsensitive(strRotationType, "orbit")) {
-        Renderer::native(nativeRenderer)->getRenderer()->setCameraRotationType(VROCameraRotationType::Orbit);
-    } else {
-        // default rotation type is standard.
-        Renderer::native(nativeRenderer)->getRenderer()->setCameraRotationType(VROCameraRotationType::Standard);
+    if (native_node_ref == 0) {
+        Renderer::native(native_renderer)->getRenderer()->setPointOfView(nullptr);
     }
-    env->ReleaseStringUTFChars(rotationType, cStrRotationType);
-}
-
-JNI_METHOD(void, nativeSetOrbitCameraFocalPoint)(JNIEnv *env,
-                                                 jobject obj,
-                                                 jlong nativeRenderer, jfloat x, jfloat y, jfloat z) {
-    Renderer::native(nativeRenderer)->getRenderer()->setOrbitFocalPoint(VROVector3f(x, y, z));
+    else {
+        std::shared_ptr<VRONode> node = Node::native(native_node_ref);
+        Renderer::native(native_renderer)->getRenderer()->setPointOfView(node);
+    }
 }
 
 JNI_METHOD(void, nativeOnSurfaceCreated)(JNIEnv *env,

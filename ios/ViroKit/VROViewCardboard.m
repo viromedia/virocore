@@ -138,20 +138,8 @@
 
 #pragma mark - Camera
 
-- (void)setPosition:(VROVector3f)position {
-    self.renderer->setPosition(position);
-}
-
-- (void)setBaseRotation:(VROQuaternion)rotation {
-    self.renderer->setBaseRotation(rotation);
-}
-
-- (void)setCameraRotationType:(VROCameraRotationType)type {
-    self.renderer->setCameraRotationType(type);
-}
-
-- (void)setOrbitFocalPoint:(VROVector3f)focalPt {
-    self.renderer->setOrbitFocalPoint(focalPt);
+- (void)setPointOfView:(std::shared_ptr<VRONode>)node {
+    self.renderer->setPointOfView(node);
 }
 
 - (void)layoutSubviews {

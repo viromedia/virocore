@@ -1,43 +1,43 @@
 //
-//  VROCameraMutable.cpp
+//  VRONodeCamera.cpp
 //  ViroRenderer
 //
 //  Created by Raj Advani on 3/24/16.
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include "VROCameraMutable.h"
+#include "VRONodeCamera.h"
 #include "VROAnimationVector3f.h"
 #include "VROAnimationQuaternion.h"
 #include "VROCamera.h"
 
-VROCameraMutable::VROCameraMutable() :
+VRONodeCamera::VRONodeCamera() :
     _rotationType(VROCameraRotationType::Standard) {
     
 }
 
-VROCameraMutable::~VROCameraMutable() {
+VRONodeCamera::~VRONodeCamera() {
     
 }
 
-void VROCameraMutable::setPosition(VROVector3f position) {
+void VRONodeCamera::setPosition(VROVector3f position) {
     animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f p) {
-        ((VROCameraMutable *)animatable)->_position = p;
+        ((VRONodeCamera *)animatable)->_position = p;
     }, _position, position));
 }
 
-void VROCameraMutable::setBaseRotation(VROQuaternion baseRotation) {
+void VRONodeCamera::setBaseRotation(VROQuaternion baseRotation) {
     animate(std::make_shared<VROAnimationQuaternion>([](VROAnimatable *const animatable, VROQuaternion r) {
-        ((VROCameraMutable *)animatable)->_baseRotation = r;
+        ((VRONodeCamera *)animatable)->_baseRotation = r;
     }, _baseRotation, baseRotation));
 }
 
-void VROCameraMutable::setRotationType(VROCameraRotationType type) {
+void VRONodeCamera::setRotationType(VROCameraRotationType type) {
     _rotationType = type;
 }
 
-void VROCameraMutable::setOrbitFocalPoint(VROVector3f focalPt) {
+void VRONodeCamera::setOrbitFocalPoint(VROVector3f focalPt) {
     animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f o) {
-        ((VROCameraMutable *)animatable)->_orbitFocalPt = o;
+        ((VRONodeCamera *)animatable)->_orbitFocalPt = o;
     }, _orbitFocalPt, focalPt));
 }
