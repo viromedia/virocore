@@ -62,7 +62,7 @@ public:
                    VRODriver &driver);
     void endFrame(VRODriver &driver);
     
-#pragma mark - Events
+#pragma mark - Integration
     
     std::shared_ptr<VROFrameSynchronizer> getFrameSynchronizer() {
         return _frameSynchronizer;
@@ -73,8 +73,12 @@ public:
     std::shared_ptr<VROReticle> getReticle() {
         return _reticle;
     }
+    std::shared_ptr<VRORenderContext> getRenderContext() {
+        return _context;
+    }
     
 #pragma mark - VR Framework Specific
+    
     // Some VR frameworks provide controls to allow the user to exit VR
     void requestExitVR();
     

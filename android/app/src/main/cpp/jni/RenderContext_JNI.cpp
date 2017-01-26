@@ -31,4 +31,16 @@ JNI_METHOD(void, nativeDeleteRenderContext)(JNIEnv *env,
     delete reinterpret_cast<PersistentRef<RenderContext> *>(native_render_context_ref);
 }
 
+JNI_METHOD(jfloatArray, nativeGetCameraPosition)(JNIEnv *env,
+                                                 jobject obj,
+                                                 jlong native_render_context_ref) {
+    std::shared_ptr<VRORenderContext> context = RenderContext::native(native_render_context_ref)->getContext();
+    VROVector3f position = context->getCamera().getPosition();
+
+    jfloatArray result = env->NewFloatArray(3);
+    float data[3] = { position.x, position.y, position.z };
+    env->SetFloatArrayRegion(result, 0, 3, data);
+    return result;
+}
+
 }  // extern "C"

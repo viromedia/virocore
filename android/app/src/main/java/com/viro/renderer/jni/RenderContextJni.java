@@ -21,6 +21,9 @@ public class RenderContextJni {
         nativeDeleteRenderContext(mRef);
     }
 
+    public float[] getCameraPosition() { return nativeGetCameraPosition(mRef); }
+
     private native long nativeCreateRenderContext(long mNativeRenderer);
     private native void nativeDeleteRenderContext(long mNativeContextRef);
+    private native float[] nativeGetCameraPosition(long mNativecontextRef);
 }
