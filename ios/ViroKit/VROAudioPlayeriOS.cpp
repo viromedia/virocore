@@ -54,7 +54,6 @@ void VROAudioPlayeriOS::setVolume(float volume) {
 void VROAudioPlayeriOS::play() {
     _player.volume = _playVolume;
     [_player play];
-    _paused = false;
 }
 
 void VROAudioPlayeriOS::pause() {
@@ -70,7 +69,6 @@ void VROAudioPlayeriOS::doFadeThenPause() {
     }
     else {
         [_player pause];
-        _paused = true;
     }
 }
 

@@ -6,6 +6,5 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#error place encoded keys here
 static NSString *const kVROEncodedAccessKey = @"";
 static NSString *const kVROEncodedSecretKey = @"";
