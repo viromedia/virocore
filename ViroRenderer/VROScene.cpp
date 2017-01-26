@@ -21,7 +21,7 @@
 #include <algorithm>
 
 static const float kSphereBackgroundRadius = 1;
-static const float kSphereBackgroundNumSegments = 20;
+static const float kSphereBackgroundNumSegments = 60;
 
 VROScene::VROScene() {
     ALLOCATION_TRACKER_ADD(Scenes, 1);

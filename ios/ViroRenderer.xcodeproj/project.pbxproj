@@ -307,6 +307,7 @@
 		8FD9B4601C339ECF006CB698 /* VROMaterialSubstrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD9B45E1C339ECF006CB698 /* VROMaterialSubstrate.cpp */; };
 		8FD9B4611C339ECF006CB698 /* VROMaterialSubstrate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD9B45F1C339ECF006CB698 /* VROMaterialSubstrate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD9B4651C33A933006CB698 /* bobaraj.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD9B4641C33A933006CB698 /* bobaraj.png */; };
+		8FDD8FF31E3A9907006CF466 /* 360_westlake.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8FDD8FF21E3A9907006CF466 /* 360_westlake.jpg */; };
 		8FDDB49D1DADB8C200DE0968 /* VROLightingUBO.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB49B1DADB8C200DE0968 /* VROLightingUBO.h */; };
 		8FDDB49E1DADB8C200DE0968 /* VROLightingUBO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB49C1DADB8C200DE0968 /* VROLightingUBO.cpp */; };
 		8FDDB4A71DAF134300DE0968 /* VROLineSegment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB4A51DAF134300DE0968 /* VROLineSegment.cpp */; };
@@ -700,6 +701,7 @@
 		8FD9B45E1C339ECF006CB698 /* VROMaterialSubstrate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROMaterialSubstrate.cpp; sourceTree = "<group>"; };
 		8FD9B45F1C339ECF006CB698 /* VROMaterialSubstrate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialSubstrate.h; sourceTree = "<group>"; };
 		8FD9B4641C33A933006CB698 /* bobaraj.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bobaraj.png; path = ViroSample/bobaraj.png; sourceTree = "<group>"; };
+		8FDD8FF21E3A9907006CF466 /* 360_westlake.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = 360_westlake.jpg; path = ViroSample/360_westlake.jpg; sourceTree = "<group>"; };
 		8FDDB49B1DADB8C200DE0968 /* VROLightingUBO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLightingUBO.h; sourceTree = "<group>"; };
 		8FDDB49C1DADB8C200DE0968 /* VROLightingUBO.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLightingUBO.cpp; sourceTree = "<group>"; };
 		8FDDB4A11DAF0BC300DE0968 /* VROPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPolyline.h; sourceTree = "<group>"; };
@@ -1392,6 +1394,7 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8FDD8FF21E3A9907006CF466 /* 360_westlake.jpg */,
 				8F50FC831E0AF54F00A9B4B2 /* 01_-_Default1noCulling.JPG */,
 				8F50FC841E0AF54F00A9B4B2 /* male-02-1noCulling.JPG */,
 				8F50FC851E0AF54F00A9B4B2 /* male02.mtl */,
@@ -1783,6 +1786,7 @@
 				8F83DEB11C503EDF0089C31A /* beach.jpg in Resources */,
 				8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */,
 				8F9277FF1C66BD4500FF892A /* ny1.jpg in Resources */,
+				8FDD8FF31E3A9907006CF466 /* 360_westlake.jpg in Resources */,
 				8F50FC8C1E0AF54F00A9B4B2 /* orig_02_-_Defaul1noCulling.JPG in Resources */,
 				8F50FC881E0AF54F00A9B4B2 /* 01_-_Default1noCulling.JPG in Resources */,
 				8F517BC71BCDA2BD0017C70B /* Main.storyboard in Resources */,

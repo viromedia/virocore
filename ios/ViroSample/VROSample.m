@@ -58,6 +58,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return std::make_shared<VROTexture>(cubeImages);
 }
 
+- (std::shared_ptr<VROTexture>) westlakeTexture {
+    return std::make_shared<VROTexture>(std::make_shared<VROImageiOS>([UIImage imageNamed:@"360_westlake.jpg"]));
+}
+
 - (std::shared_ptr<VROSceneController>)loadVideoSphereScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
@@ -189,7 +193,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
 
     std::shared_ptr<VROScene> scene = sceneController->getScene();
-    scene->setBackgroundCube([self niagaraTexture]);
+    scene->setBackgroundSphere([self westlakeTexture]);
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});

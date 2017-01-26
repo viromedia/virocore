@@ -25,8 +25,10 @@ std::shared_ptr<VROSphere> VROSphere::createSphere(float radius, int widthSegmen
     
     int vertexCount = ((widthSegments + 1) * (heightSegments + 1));
     int varSizeBytes = sizeof(VROShapeVertexLayout) * vertexCount;
-    VROShapeVertexLayout var[varSizeBytes];
-
+    
+    // Will be moved to VROData so does not need to be explicitly freed!
+    VROShapeVertexLayout *var = (VROShapeVertexLayout *)malloc(varSizeBytes);
+    
     int index = 0;
     std::vector<std::vector<int>> vertices;
     
@@ -47,6 +49,8 @@ std::shared_ptr<VROSphere> VROSphere::createSphere(float radius, int widthSegmen
             if (!facesOutward) {
                 normal = normal.scale(-1);
             }
+            
+            passert (index < varSizeBytes / sizeof(VROShapeVertexLayout));
             
             var[index].x = px;
             var[index].y = py;
@@ -100,7 +104,7 @@ std::shared_ptr<VROSphere> VROSphere::createSphere(float radius, int widthSegmen
         }
     }
     
-    std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) var, varSizeBytes);
+    std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) var, varSizeBytes, VRODataOwnership::Move);
     std::shared_ptr<VROGeometrySource> position = std::make_shared<VROGeometrySource>(vertexData,
                                                                                       VROGeometrySourceSemantic::Vertex,
                                                                                       vertexCount,
@@ -134,7 +138,6 @@ std::shared_ptr<VROSphere> VROSphere::createSphere(float radius, int widthSegmen
     std::vector<std::shared_ptr<VROGeometryElement>> elements = { element };
     
     std::shared_ptr<VROSphere> sphere = std::shared_ptr<VROSphere>(new VROSphere(sources, elements));
-    
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     
     sphere->getMaterials().push_back(material);
