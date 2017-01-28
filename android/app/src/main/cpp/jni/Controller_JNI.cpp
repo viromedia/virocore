@@ -41,6 +41,8 @@ JNI_METHOD(void, nativeEnableReticle)(JNIEnv *env,
     controllerPresenter->getReticle()->setEnabled(enable);
 }
 
+
+
 /**
  * TODO VIRO-704: Add APIs for custom controls - replacing Obj or adding tooltip support.
  */

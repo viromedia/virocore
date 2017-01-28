@@ -43,6 +43,7 @@ void VROInputControllerDaydream::updateButtons() {
     notifyButtonEventForType(GVR_CONTROLLER_BUTTON_APP, ViroDayDream::InputSource::AppButton);
     notifyButtonEventForType(GVR_CONTROLLER_BUTTON_VOLUME_UP, ViroDayDream::InputSource::VolUpButton);
     notifyButtonEventForType(GVR_CONTROLLER_BUTTON_VOLUME_DOWN, ViroDayDream::InputSource::VolDownButton);
+    notifyButtonEventForType(GVR_CONTROLLER_BUTTON_HOME, ViroDayDream::InputSource::HomeButton);
 }
 
 void VROInputControllerDaydream::notifyButtonEventForType(gvr::ControllerButton button, ViroDayDream::InputSource source) {
@@ -71,10 +72,32 @@ void VROInputControllerDaydream::updateTouchPad() {
     VROInputControllerBase::onTouchpadEvent(ViroDayDream::InputSource::TouchPad, action, posX, posY);
 }
 
-void VROInputControllerDaydream::updateOrientation(){
-    gvr_quatf rotation = _controller_state.GetOrientation();
-    VROInputControllerBase::onRotate(ViroDayDream::InputSource::Controller,
-                                     VROQuaternion(rotation.qx, rotation.qy, rotation.qz, rotation.qw));
+void VROInputControllerDaydream::updateOrientation() {
+    // Get raw controller rotation from GVR
+    gvr_quatf gvr_rotation = _controller_state.GetOrientation();
+    VROQuaternion rotation = VROQuaternion(gvr_rotation.qx, gvr_rotation.qy, gvr_rotation.qz, gvr_rotation.qw);
+    VROInputControllerBase::onRotate(ViroDayDream::InputSource ::Controller, rotation);
+
+    // Tilt the controller forwards by 15 degrees as required by Daydream.
+    VROVector3f leftward = _lastKnownRotation.getMatrix().multiply({ -1, 0, 0 }).normalize();
+    VROVector3f controllerTiltedDirection = _lastKnownForward.rotateAboutAxis(leftward, {0,0,0}, 0.261799);
+
+    // Apply the rotation to the ARM model within the presenter.
+    _daydreamPresenter->onMove(ViroDayDream::InputSource::Controller,
+                                 _lastKnownRotation.toEuler(), _lastKnownPosition);
+
+    // Grab the calculated pointerNode's position from the ARM Model. If the controller does not
+    // have pointer node (laser-less), use the controller's body node position.
+    std::shared_ptr<VRONode> hitFromNode = _daydreamPresenter->getControllerPointerNode();
+    if (hitFromNode == nullptr){
+        hitFromNode = _daydreamPresenter->getControllerNode();
+    }
+
+    // Perform a ray-hit test starting from the node's position. Update and notify delegates.
+    VROInputControllerBase::updateHitNode(hitFromNode->getTransformedPosition(),
+                                          controllerTiltedDirection);
+    VROInputControllerBase::onPosition(ViroDayDream::InputSource::Controller, hitFromNode->getTransformedPosition());
+    VROInputControllerBase::notifyOrientationDelegates(ViroOculus::InputSource::Controller);
 }
 
 bool VROInputControllerDaydream::isControllerReady(){

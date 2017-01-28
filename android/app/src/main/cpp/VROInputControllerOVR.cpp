@@ -34,4 +34,6 @@ void VROInputControllerOVR::handleOVRKeyEvent(int keyCode, int action){
 void VROInputControllerOVR::onProcess() {
     VROInputControllerBase::onRotate(ViroOculus::Controller,
                                      _context->getCamera().getRotation());
+    VROInputControllerBase::updateHitNode(_lastKnownPosition, _lastKnownForward);
+    VROInputControllerBase::notifyOrientationDelegates(ViroOculus::InputSource::Controller);
 }

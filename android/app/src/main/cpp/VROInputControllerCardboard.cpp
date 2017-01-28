@@ -19,5 +19,6 @@ void VROInputControllerCardboard::updateScreenTouch(int touchAction){
 void VROInputControllerCardboard::updateOrientation(){
     VROInputControllerBase::onRotate(ViroCardBoard::InputSource::Controller,
                                  _context->getCamera().getRotation());
+    VROInputControllerBase::updateHitNode(_lastKnownPosition, _lastKnownForward);
+    VROInputControllerBase::notifyOrientationDelegates(ViroOculus::InputSource::Controller);
 }
-

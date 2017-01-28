@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <VROReticle.h>
+#include <VROPlatformUtil.h>
 
 #include "VROFrameListener.h"
 #include "VRORenderContext.h"
@@ -21,6 +22,7 @@
 class VROInputPresenterCardboard : public VROInputPresenter {
 public:
     VROInputPresenterCardboard(std::shared_ptr<VRORenderContext> context):VROInputPresenter(context) {
+        setReticle(std::make_shared<VROReticle>(nullptr));
         getReticle()->setPointerMode(false);
     }
     ~VROInputPresenterCardboard() {}

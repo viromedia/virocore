@@ -20,5 +20,7 @@ void VROInputControllerCardboardiOS::onScreenClicked(){
 void VROInputControllerCardboardiOS::updateOrientation(){
     VROInputControllerBase::onRotate(ViroCardBoard::Controller,
                                      _context->getCamera().getRotation());
+    VROInputControllerBase::updateHitNode(_lastKnownPosition, _lastKnownForward);
+    VROInputControllerBase::notifyOrientationDelegates(ViroCardBoard::Controller);
 }
 

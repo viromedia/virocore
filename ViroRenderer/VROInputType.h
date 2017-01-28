@@ -24,8 +24,9 @@ namespace ViroDayDream{
         Controller = 1,
         TouchPad = 2,
         AppButton = 3,
-        VolUpButton = 4,
-        VolDownButton = 5
+        HomeButton = 4,
+        VolUpButton = 5,
+        VolDownButton = 6
     };
 }
 

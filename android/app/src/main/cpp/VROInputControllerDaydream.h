@@ -35,7 +35,8 @@ public:
 
 protected:
     std::shared_ptr<VROInputPresenter> createPresenter(std::shared_ptr<VRORenderContext> context){
-        return std::make_shared<VROInputPresenterDaydream>(context);
+        _daydreamPresenter = std::make_shared<VROInputPresenterDaydream>(context);
+        return _daydreamPresenter;
     }
 
 private:
@@ -48,6 +49,7 @@ private:
 
     std::unique_ptr<gvr::ControllerApi> _gvr_controller;
     gvr::ControllerState _controller_state;
+    std::shared_ptr<VROInputPresenterDaydream> _daydreamPresenter;
     bool _hasInitalized;
 };
 #endif

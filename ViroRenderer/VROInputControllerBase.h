@@ -35,6 +35,7 @@ static const float SCENE_BACKGROUND_DIST = 5.0f;
 class VROInputControllerBase{
 public:
     VROInputControllerBase(){
+        _lastKnownPosition = VROVector3f(0,0,0);
         _lastClickedNode = nullptr;
         _lastHoveredNode = nullptr;
         _scene = nullptr;
@@ -125,25 +126,33 @@ protected:
      * Status of the current controller, for example if it's Connected / Disconnected.
      */
     VROEventDelegate::ControllerStatus _currentControllerStatus;
-private:
+
+protected:
     /*
      * The controller forward vector. Normalized vector indicating where the controller
      * is pointing.
      */
     VROVector3f _lastKnownForward;
-
+    /**
+     * Last known position that a TouchEvent occured on.
+     */
+    VROVector3f _lastTouchedPosition;
     /*
      * The controller's quaternion that represents the rotation from (0, 0, -1) required to
      * achieve the controller's current orientation.
      */
     VROQuaternion _lastKnownRotation;
     VROVector3f _lastKnownPosition;
+    void notifyOrientationDelegates(int source);
+    void updateHitNode(VROVector3f fromPosition, VROVector3f withDirection);
+
+private:
     std::shared_ptr<VROScene> _scene;
 
     /*
-     * Last node that was returned from the hit test.
+     * Last result that was returned from the hit test.
      */
-    std::shared_ptr<VRONode> _hitNode;
+    std::shared_ptr<VROHitTestResult> _hitResult;
 
     /**
      * Last node that we have clicked down on.
@@ -154,11 +163,6 @@ private:
      * Last known that was successfully hovered upon.
      */
     std::shared_ptr<VRONode> _lastHoveredNode;
-
-    /**
-     * Lat known position that a TouchEvent occured on.
-     */
-    VROVector3f _lastTouchedPosition;
 
     /**
      * Delegates registered within the manager to be notified of events
@@ -179,7 +183,6 @@ private:
                                                   std::shared_ptr<VRONode> startingNode);
 
     void processGazeEvent(int source, std::shared_ptr<VRONode> node);
-    void updateControllerOrientation(int source);
 };
 
 #endif

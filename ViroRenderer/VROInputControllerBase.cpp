@@ -14,11 +14,11 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
     }
 
     // Return if we have not focused on any node upon which to trigger events.
-    if (_hitNode == nullptr){
+    if (_hitResult == nullptr){
         return;
     }
 
-    std::shared_ptr<VRONode> focusedNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnClick, _hitNode);
+    std::shared_ptr<VRONode> focusedNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnClick, _hitResult->getNode());
     if (focusedNode != nullptr){
         focusedNode->getEventDelegate()->onClick(source, clickState);
     }
@@ -32,12 +32,12 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
      * different sources.
      */
     if (clickState == VROEventDelegate::ClickUp) {
-        if (focusedNode != nullptr && _lastClickedNode != nullptr && _hitNode == _lastClickedNode) {
+        if (focusedNode != nullptr && _lastClickedNode != nullptr && _hitResult->getNode() == _lastClickedNode) {
             focusedNode->getEventDelegate()->onClick(source, VROEventDelegate::ClickState::Clicked);
         }
         _lastClickedNode = nullptr;
     } else if (clickState == VROEventDelegate::ClickDown){
-        _lastClickedNode = _hitNode;
+        _lastClickedNode = _hitResult->getNode();
     }
 }
 
@@ -59,11 +59,11 @@ void VROInputControllerBase::onTouchpadEvent(int source, VROEventDelegate::Touch
     }
 
     // Return if we have not focused on any node upon which to trigger events.
-    if (_hitNode == nullptr){
+    if (_hitResult == nullptr){
         return;
     }
 
-    std::shared_ptr<VRONode> focusedNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnTouch, _hitNode);
+    std::shared_ptr<VRONode> focusedNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnTouch, _hitResult->getNode());
     if (focusedNode != nullptr){
         focusedNode->getEventDelegate()->onTouch(source, touchState, posX, posY);
     }
@@ -74,43 +74,45 @@ void VROInputControllerBase::onRotate(int source, const VROQuaternion rotation){
         return;
     }
 
-    _lastKnownRotation = rotation;
     _lastKnownForward = _lastKnownRotation.getMatrix().multiply(kBaseForward);
-    updateControllerOrientation(source);
+    _lastKnownRotation = rotation;
 }
 
 void VROInputControllerBase::onPosition(int source, VROVector3f position){
      _lastKnownPosition = position;
-     updateControllerOrientation(source);
 }
 
-void VROInputControllerBase::updateControllerOrientation(int source){
-    // Return for now if scene is not ready - it is required for the hit test.
-    if (_scene == nullptr){
+void VROInputControllerBase::notifyOrientationDelegates(int source){
+    if (_hitResult == nullptr){
         return;
     }
 
-    // Perform hit test re-calculate forward vectors as needed.
-    VROHitTestResult hitResult = hitTest(_lastKnownForward, _lastKnownPosition, true);
-    VROVector3f rotationEuler =_lastKnownRotation.toEuler();
-    _hitNode = hitResult.getNode();
-
     // Trigger orientation delegate callbacks within the scene.
     std::shared_ptr<VRONode> gazableNode
-            = getNodeToHandleEvent(VROEventDelegate::EventAction::OnHover, hitResult.getNode());
+            = getNodeToHandleEvent(VROEventDelegate::EventAction::OnHover, _hitResult->getNode());
     processGazeEvent(source, gazableNode);
 
     std::shared_ptr<VRONode> movableNode
-            = getNodeToHandleEvent(VROEventDelegate::EventAction::OnMove, hitResult.getNode());
+            = getNodeToHandleEvent(VROEventDelegate::EventAction::OnMove, _hitResult->getNode());
+    VROVector3f rotationEuler =_lastKnownRotation.toEuler();
     if (movableNode != nullptr){
         movableNode->getEventDelegate()->onMove(source, rotationEuler, _lastKnownPosition);
     }
 
     // Trigger orientation delegate callbacks for non-scene elements.
     for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
-        delegate->onGazeHit(source, hitResult.getDistance(), hitResult.getLocation());
+        delegate->onGazeHit(source, _hitResult->getDistance(), _hitResult->getLocation());
         delegate->onMove(source, rotationEuler, _lastKnownPosition);
     }
+}
+
+void VROInputControllerBase::updateHitNode(VROVector3f fromPosition, VROVector3f withDirection){
+    if (_scene == nullptr) {
+        return;
+    }
+
+    // Perform hit test re-calculate forward vectors as needed.
+    _hitResult = std::make_shared<VROHitTestResult>(hitTest(withDirection, fromPosition, true));
 }
 
 void VROInputControllerBase::onControllerStatus(int source, VROEventDelegate::ControllerStatus status){
@@ -121,17 +123,17 @@ void VROInputControllerBase::onControllerStatus(int source, VROEventDelegate::Co
     _currentControllerStatus = status;
 
     // Notify internal delegates
-    for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
+    for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
         delegate->onControllerStatus(source, status);
     }
 
     // Return if we have not focused on any node upon which to trigger events.
-    if (_hitNode == nullptr){
+    if (_hitResult == nullptr){
         return;
     }
 
     std::shared_ptr<VRONode> focusedNode
-            = getNodeToHandleEvent(VROEventDelegate::EventAction::OnControllerStatus, _hitNode);
+            = getNodeToHandleEvent(VROEventDelegate::EventAction::OnControllerStatus, _hitResult->getNode());
     if (focusedNode != nullptr){
         focusedNode->getEventDelegate()->onControllerStatus(source, status);
     }
@@ -172,9 +174,9 @@ VROHitTestResult VROInputControllerBase::hitTest(VROVector3f vector, VROVector3f
         return results[0];
     }
 
-   VROVector3f backgroundPosition =  hitFromPosition + (vector * SCENE_BACKGROUND_DIST);
-   VROHitTestResult sceneBackgroundHitResult = {_scene->getRootNodes()[0], backgroundPosition , SCENE_BACKGROUND_DIST};
-   return sceneBackgroundHitResult;
+    VROVector3f backgroundPosition =  hitFromPosition + (vector * SCENE_BACKGROUND_DIST);
+    VROHitTestResult sceneBackgroundHitResult = {_scene->getRootNodes()[0], backgroundPosition , SCENE_BACKGROUND_DIST};
+    return sceneBackgroundHitResult;
 }
 
 std::shared_ptr<VRONode> VROInputControllerBase::getNodeToHandleEvent(VROEventDelegate::EventAction action,

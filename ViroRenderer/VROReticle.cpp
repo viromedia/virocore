@@ -13,36 +13,52 @@
 #include "VROMaterial.h"
 #include "VROAction.h"
 #include "VROBillboardConstraint.h"
+#include "VROPlatformUtil.h"
 
 static const float kTriggerAnimationDuration = 0.4;
 static const float kTriggerAnimationInnerCircleThicknessMultiple = 3;
 static const float kTriggerAnimationWhiteCircleMultiple = 4;
 
-VROReticle::VROReticle() :
+VROReticle::VROReticle(std::shared_ptr<VROTexture> reticleTexture) :
     _isPointerFixed(false),
     _enabled(true),
     _size(0.01),
     _thickness(0.005),
     _endThickness(_thickness * kTriggerAnimationInnerCircleThicknessMultiple) {
-    std::vector<VROVector3f> path = createArc(_size, 32);
-    _polyline = VROPolyline::createPolyline(path, _thickness);
-    _polyline->setName("Reticle");
-    _polyline->getMaterials().front()->setWritesToDepthBuffer(false);
-    _polyline->getMaterials().front()->setReadsFromDepthBuffer(false);
-    _polyline->getMaterials().front()->getDiffuse().setColor({0.33, 0.976, 0.968, 1.0});
 
     _node = std::make_shared<VRONode>();
-    _node->setGeometry(_polyline);
-    _node->setPosition({0, 0, -2});
     _node->setHidden(!_enabled);
+    if (reticleTexture == nullptr){
+        // Polyline Reticle
+        std::vector<VROVector3f> path = createArc(_size, 32);
+        _polyline = VROPolyline::createPolyline(path, _thickness);
+        _polyline->setName("Reticle");
+        _polyline->getMaterials().front()->setWritesToDepthBuffer(false);
+        _polyline->getMaterials().front()->setReadsFromDepthBuffer(false);
+        _polyline->getMaterials().front()->getDiffuse().setColor({0.33, 0.976, 0.968, 1.0});
+        _node->setGeometry(_polyline);
+        _node->setPosition({0, 0, -2});
+        _reticleIcon = nullptr;
+    } else {
+        // Image Reticle
+        _reticleIcon = VROSurface::createSurface(0.03,0.03);
+        std::shared_ptr<VROMaterial> &material = _reticleIcon->getMaterials().front();
+        material->getDiffuse().setTexture(reticleTexture);
+        material->setWritesToDepthBuffer(false);
+        material->setReadsFromDepthBuffer(false);
+        _node->setGeometry(_reticleIcon);
+    }
 }
 
-VROReticle::~VROReticle() {
-    
-}
+VROReticle::~VROReticle() {}
 
 void VROReticle::trigger() {
-   std::shared_ptr<VROAction> action = VROAction::timedAction([this](VRONode *const node, float t) {
+    if (_reticleIcon != nullptr){
+        // we don't scale an image reticle during a trigger.
+        return;
+    }
+
+    std::shared_ptr<VROAction> action = VROAction::timedAction([this](VRONode *const node, float t) {
         float whiteAlpha = 0.0;
         float thickness = _thickness;
         if (t < 0.5) {
@@ -55,7 +71,7 @@ void VROReticle::trigger() {
         }
         // float whiteRadius = VROMathInterpolate(t, 0, 1.0, _size, _size * kTriggerAnimationWhiteCircleMultiple);
         // TODO Draw a filled circle with whiteRadius and whiteAlpha
-        
+
         _polyline->setWidth(thickness);
     }, VROTimingFunctionType::Linear, kTriggerAnimationDuration);
     _node->runAction(action);
@@ -107,8 +123,8 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext *renderContext
     renderParams.hierarchical.push(false);
 
     _node->updateSortKeys(0, renderParams, *renderContext, *driver);
-    
-    std::shared_ptr<VROMaterial> material = _polyline->getMaterials().front();
+
+    std::shared_ptr<VROMaterial> material = _node->getGeometry()->getMaterials().front();
     material->bindShader(*driver);
 
     _node->render(0, material, *renderContext, *driver);
@@ -117,16 +133,16 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext *renderContext
 std::vector<VROVector3f> VROReticle::createArc(float radius, int numSegments) {
     float x = radius;
     float y = 0;
-    
+
     float sincos[2];
     VROMathFastSinCos(2 * M_PI / numSegments, sincos);
     const float angleSin = sincos[0];
     const float angleCos = sincos[1];
-    
+
     std::vector<VROVector3f> path;
     for (int i = 0; i < numSegments + 1; ++i) {
         path.push_back({ x, y, 0 });
-        
+
         const float temp = x;
         x = angleCos * x - angleSin * y;
         y = angleSin * temp + angleCos * y;
