@@ -8,13 +8,24 @@
 
 #include "VROAudioPlayeriOS.h"
 #include "VROData.h"
+#include "VROLog.h"
+#include "VROPlatformUtil.h"
 
-VROAudioPlayeriOS::VROAudioPlayeriOS(std::string url) :
+VROAudioPlayeriOS::VROAudioPlayeriOS(std::string url, bool isLocalUrl) :
     _playVolume(1.0) {
-        
-    _player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]]
+    if (isLocalUrl) {
+        _player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]]
                                                      error:NULL];
-    [_player prepareToPlay];
+        [_player prepareToPlay];
+        _delegate->soundIsReady();
+    } else {
+        // download to file
+        NSURL *urlObj = [NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]];
+        downloadDataWithURL(urlObj, ^(NSData *data, NSError *error) {
+            _player = [[AVAudioPlayer alloc] initWithData:data error:NULL];
+            _delegate->soundIsReady();
+        });
+    }
 }
 
 VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROData> data) :

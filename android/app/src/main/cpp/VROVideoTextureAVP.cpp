@@ -35,7 +35,8 @@ void VROVideoTextureAVP::setDelegate(std::shared_ptr<VROVideoDelegateInternal> d
      * the delegate.
      */
     VROVideoTexture::setDelegate(delegate);
-    _player->setDelegate(delegate);
+    std::shared_ptr<VROAVPlayerDelegate> avDelegate = std::dynamic_pointer_cast<VROAVPlayerDelegate>(shared_from_this());
+    _player->setDelegate(avDelegate);
 }
 
 void VROVideoTextureAVP::loadVideo(std::string url,
@@ -99,4 +100,15 @@ void VROVideoTextureAVP::bindSurface() {
     setSubstrate(std::move(substrate));
 
     _player->setSurface(_textureId);
+}
+
+#pragma mark - VROAVPlayerDelegate
+void VROVideoTextureAVP::onPrepared() {
+    // do nothing
+}
+
+void VROVideoTextureAVP::onFinished() {
+    if (_delegate) {
+        _delegate->videoDidFinish();
+    }
 }

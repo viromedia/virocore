@@ -11,17 +11,17 @@ package com.viro.renderer.jni;
  * Cpp Object           : RenderContext
  */
 public class RenderContextJni {
-    protected long mRef;
+    protected long mNativeRef;
 
     public RenderContextJni(long mRenderRef){
-        mRef = nativeCreateRenderContext(mRenderRef);
+        mNativeRef = nativeCreateRenderContext(mRenderRef);
     }
 
     public void delete(){
-        nativeDeleteRenderContext(mRef);
+        nativeDeleteRenderContext(mNativeRef);
     }
 
-    public float[] getCameraPosition() { return nativeGetCameraPosition(mRef); }
+    public float[] getCameraPosition() { return nativeGetCameraPosition(mNativeRef); }
 
     private native long nativeCreateRenderContext(long mNativeRenderer);
     private native void nativeDeleteRenderContext(long mNativeContextRef);

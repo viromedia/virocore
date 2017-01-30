@@ -151,8 +151,6 @@
 #pragma mark - Scene Loading
 
 - (void)setSceneController:(std::shared_ptr<VROSceneController>) sceneController {
-    perr("Daniel VROViewCardboard setSceneController");
-
     _sceneController = sceneController;
     self.sceneRenderer->setSceneController(_sceneController);
 }

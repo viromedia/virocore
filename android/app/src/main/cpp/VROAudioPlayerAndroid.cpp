@@ -7,12 +7,11 @@
 //
 
 #include "VROAudioPlayerAndroid.h"
-#include "VROLog.h"
-#include "VROAVPlayer.h"
 
-VROAudioPlayerAndroid::VROAudioPlayerAndroid(std::string fileName, std::shared_ptr<gvr::AudioApi> gvrAudio) {
+VROAudioPlayerAndroid::VROAudioPlayerAndroid(std::string fileName) {
     _player = new VROAVPlayer();
-    _player->setDataSourceAsset(fileName.c_str());
+    // this URL can either be an external web link or a local file link
+    _player->setDataSourceURL(fileName.c_str());
 }
 
 VROAudioPlayerAndroid::~VROAudioPlayerAndroid() {
@@ -41,4 +40,24 @@ void VROAudioPlayerAndroid::setMuted(bool muted) {
 
 void VROAudioPlayerAndroid::seekToTime(float seconds) {
     _player->seekToTime(seconds);
+}
+
+void VROAudioPlayerAndroid::setDelegate(std::shared_ptr<VROSoundDelegateInternal> delegate) {
+    _delegate = delegate;
+    std::shared_ptr<VROAVPlayerDelegate> avDelegate =
+            std::dynamic_pointer_cast<VROAVPlayerDelegate>(shared_from_this());
+    _player->setDelegate(avDelegate);
+}
+
+#pragma mark - VROAVPlayerDelegate
+void VROAudioPlayerAndroid::onPrepared() {
+    if (_delegate) {
+        _delegate->soundIsReady();
+    }
+}
+
+void VROAudioPlayerAndroid::onFinished() {
+    if (_delegate) {
+        _delegate->soundDidFinish();
+    }
 }

@@ -20,7 +20,13 @@ VROSceneRendererCardboardOpenGL::VROSceneRendererCardboardOpenGL(EAGLContext *co
     _renderer(renderer),
     _suspended(true) {
     
-    _driver = std::make_shared<VRODriverOpenGLiOS>(context);
+    _gvrAudio = std::make_shared<gvr::AudioApi>();
+    _gvrAudio->Init(GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
+    _driver = std::make_shared<VRODriverOpenGLiOS>(context, _gvrAudio);
+        
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord
+                                     withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker
+                                           error:nil];
 }
 
 VROSceneRendererCardboardOpenGL::~VROSceneRendererCardboardOpenGL() {
@@ -66,6 +72,12 @@ void VROSceneRendererCardboardOpenGL::prepareFrame(VROViewport viewport, VROFiel
     
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
+
+    // GLKMatrix is a float[16] array, whereas gvr::Mat4f is a float[4][4] array, this is just converting one to the other.
+    GLKMatrix4 glkmatrix = [headTransform headPoseInStartSpace];
+    gvr::Mat4f matrix = {glkmatrix.m[0], glkmatrix.m[4], glkmatrix.m[8], glkmatrix.m[12]};
+    _gvrAudio->SetHeadPose(matrix);
+    _gvrAudio->Update();
 }
 
 void VROSceneRendererCardboardOpenGL::renderEye(GVREye eye, GVRHeadTransform *headTransform) {

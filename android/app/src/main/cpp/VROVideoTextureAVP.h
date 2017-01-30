@@ -19,7 +19,7 @@
  The VROVideoLooper is the underlying workhorse class for
  rendering video.
  */
-class VROVideoTextureAVP : public VROVideoTexture {
+class VROVideoTextureAVP : public VROVideoTexture, public VROAVPlayerDelegate {
 
 public:
 
@@ -55,6 +55,11 @@ public:
     void setLoop(bool loop);
 
     void setDelegate(std::shared_ptr<VROVideoDelegateInternal> delegate);
+
+    #pragma mark - VROAVPlayerDelegate
+    virtual void onPrepared();
+    virtual void onFinished();
+
 private:
 
     VROAVPlayer *_player;

@@ -11,6 +11,7 @@
 
 #include "VROSceneRendererCardboard.h"
 #include <memory>
+#include "vr/gvr/capi/include/gvr_audio.h"
 
 class VRORenderer;
 class VRODriverOpenGL;
@@ -39,6 +40,7 @@ private:
     int _frame;
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VRODriverOpenGL> _driver;
+    std::shared_ptr<gvr::AudioApi> _gvrAudio;
     bool _suspended;
     
 };

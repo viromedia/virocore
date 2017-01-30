@@ -19,7 +19,7 @@ public class VideoTextureJni {
         nativeDeleteVideoTexture(mNativeRef);
     }
     public void loadSource(String url, RenderContextJni renderContext){
-        nativeLoadSource(mNativeRef, url, renderContext.mRef);
+        nativeLoadSource(mNativeRef, url, renderContext.mNativeRef);
     }
 
     public void pause () {

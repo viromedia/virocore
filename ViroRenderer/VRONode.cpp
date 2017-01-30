@@ -46,6 +46,7 @@ VRONode::VRONode() :
 VRONode::VRONode(const VRONode &node) :
     _geometry(node._geometry),
     _lights(node._lights),
+    _sounds(node._sounds),
     _scale(node._scale),
     _position(node._position),
     _rotation(node._rotation),
@@ -113,7 +114,11 @@ void VRONode::updateSortKeys(uint32_t depth, VRORenderParameters &params,
     }
     _computedLights.clear();
     _computedLights.insert(_computedLights.begin(), lights.begin(), lights.end());
-    
+
+    for (std::shared_ptr<VROSound> &sound : _sounds) {
+        sound->setTransformedPosition(_computedTransform.multiply(sound->getPosition()));
+    }
+
     /*
      This node uses hierarchical rendering if its flag is set, or if its parent
      used hierarchical rendering.

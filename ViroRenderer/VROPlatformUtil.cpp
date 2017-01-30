@@ -492,3 +492,60 @@ void Java_com_viro_renderer_jni_PlatformUtil_runTask(JNIEnv *env, jclass clazz, 
 }
 
 #endif
+
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
+
+#include "VROStringUtil.h"
+
+gvr_audio_material_type VROPlatformParseGVRAudioMaterial(std::string property) {
+    if (VROStringUtil::strcmpinsensitive(property, "transparent")) {
+        return GVR_AUDIO_MATERIAL_TRANSPARENT;
+    } else if (VROStringUtil::strcmpinsensitive(property, "acoustic_ceiling_tiles")) {
+        return GVR_AUDIO_MATERIAL_ACOUSTIC_CEILING_TILES;
+    } else if (VROStringUtil::strcmpinsensitive(property, "brick_bare")) {
+        return GVR_AUDIO_MATERIAL_BRICK_BARE;
+    } else if (VROStringUtil::strcmpinsensitive(property, "brick_painted")) {
+        return GVR_AUDIO_MATERIAL_BRICK_PAINTED;
+    } else if (VROStringUtil::strcmpinsensitive(property, "concrete_block_coarse")) {
+        return GVR_AUDIO_MATERIAL_CONCRETE_BLOCK_COARSE;
+    } else if (VROStringUtil::strcmpinsensitive(property, "concrete_block_painted")) {
+        return GVR_AUDIO_MATERIAL_CONCRETE_BLOCK_PAINTED;
+    } else if (VROStringUtil::strcmpinsensitive(property, "curtain_heavy")) {
+        return GVR_AUDIO_MATERIAL_CURTAIN_HEAVY;
+    } else if (VROStringUtil::strcmpinsensitive(property, "fiber_glass_insulation")) {
+        return GVR_AUDIO_MATERIAL_FIBER_GLASS_INSULATION;
+    } else if (VROStringUtil::strcmpinsensitive(property, "glass_thin")) {
+        return GVR_AUDIO_MATERIAL_GLASS_THIN;
+    } else if (VROStringUtil::strcmpinsensitive(property, "glass_thick")) {
+        return GVR_AUDIO_MATERIAL_GLASS_THICK;
+    } else if (VROStringUtil::strcmpinsensitive(property, "grass")) {
+        return GVR_AUDIO_MATERIAL_GRASS;
+    } else if (VROStringUtil::strcmpinsensitive(property, "linoleum_on_concrete")) {
+        return GVR_AUDIO_MATERIAL_LINOLEUM_ON_CONCRETE;
+    } else if (VROStringUtil::strcmpinsensitive(property, "marble")) {
+        return GVR_AUDIO_MATERIAL_MARBLE;
+    } else if (VROStringUtil::strcmpinsensitive(property, "metal")) {
+        return GVR_AUDIO_MATERIAL_METAL;
+    } else if (VROStringUtil::strcmpinsensitive(property, "parquet_on_concrete")) {
+        return GVR_AUDIO_MATERIAL_PARQUET_ON_CONCRETE;
+    } else if (VROStringUtil::strcmpinsensitive(property, "plaster_rough")) {
+        return GVR_AUDIO_MATERIAL_PLASTER_ROUGH;
+    } else if (VROStringUtil::strcmpinsensitive(property, "plaster_smooth")) {
+        return GVR_AUDIO_MATERIAL_PLASTER_SMOOTH;
+    } else if (VROStringUtil::strcmpinsensitive(property, "plywood_panel")) {
+        return GVR_AUDIO_MATERIAL_PLYWOOD_PANEL;
+    } else if (VROStringUtil::strcmpinsensitive(property, "polished_concrete_or_tile")) {
+        return GVR_AUDIO_MATERIAL_POLISHED_CONCRETE_OR_TILE;
+    } else if (VROStringUtil::strcmpinsensitive(property, "sheet_rock")) {
+        return GVR_AUDIO_MATERIAL_SHEET_ROCK;
+    } else if (VROStringUtil::strcmpinsensitive(property, "water_or_ice_surface")) {
+        return GVR_AUDIO_MATERIAL_WATER_OR_ICE_SURFACE;
+    } else if (VROStringUtil::strcmpinsensitive(property, "wood_ceiling")) {
+        return GVR_AUDIO_MATERIAL_WOOD_CEILING;
+    } else if (VROStringUtil::strcmpinsensitive(property, "wood_panel")) {
+        return GVR_AUDIO_MATERIAL_WOOD_PANEL;
+    }
+    return GVR_AUDIO_MATERIAL_TRANSPARENT;
+}
+
+#endif

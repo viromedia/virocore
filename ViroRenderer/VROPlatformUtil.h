@@ -66,6 +66,13 @@ void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn);
  */
 void VROPlatformDispatchAsyncBackground(std::function<void()> fcn);
 
+#if VRO_PLATFORM_IOS
+#import <UIKit/UIKit.h>
+
+NSURLSessionDataTask *downloadDataWithURL(NSURL *url, void (^completionBlock)(NSData *data, NSError *error));
+
+#endif
+
 #pragma mark - Android Setup
 
 #if VRO_PLATFORM_ANDROID
@@ -125,6 +132,14 @@ extern "C" {
 void Java_com_viro_renderer_jni_PlatformUtil_runTask(JNIEnv *env, jclass clazz, jint taskId);
 
 }
+
+#endif
+
+#if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
+
+#include "vr/gvr/capi/include/gvr_audio.h"
+
+gvr_audio_material_type VROPlatformParseGVRAudioMaterial(std::string property);
 
 #endif
 

@@ -10,19 +10,17 @@
 #define ANDROID_VROAUDIOPLAYERANDROID_H
 
 #include "VROAudioPlayer.h"
+#include "VROAVPlayer.h"
 #include <memory>
 #include <string>
 
-// TODO delete
-#include "vr/gvr/capi/include/gvr_audio.h"
-
-class VROAVPlayer;
-
-class VROAudioPlayerAndroid : public VROAudioPlayer {
+class VROAudioPlayerAndroid : public VROAudioPlayer,
+                              public VROAVPlayerDelegate,
+                              public std::enable_shared_from_this<VROAudioPlayerAndroid> {
 
 public:
 
-    VROAudioPlayerAndroid(std::string fileName, std::shared_ptr<gvr::AudioApi> gvrAudio);
+    VROAudioPlayerAndroid(std::string fileName);
     virtual ~VROAudioPlayerAndroid();
 
     void setLoop(bool loop);
@@ -31,6 +29,11 @@ public:
     void setVolume(float volume);
     void setMuted(bool muted);
     void seekToTime(float seconds);
+    void setDelegate(std::shared_ptr<VROSoundDelegateInternal> delegate);
+
+    #pragma mark - VROAVPlayerDelegate
+    virtual void onPrepared();
+    virtual void onFinished();
 
 private:
 

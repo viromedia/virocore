@@ -32,7 +32,14 @@ public class AVPlayer {
         _mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                nativeOnVideoFinished(mNativeReference);
+                nativeOnFinished(mNativeReference);
+            }
+        });
+
+        _mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                nativeOnPrepared(mNativeReference);
             }
         });
     }
@@ -120,6 +127,7 @@ public class AVPlayer {
     /**
      * Native Callbacks
      */
-    private native void nativeOnVideoFinished(long ref);
+    private native void nativeOnFinished(long ref);
+    private native void nativeOnPrepared(long ref);
 }
 

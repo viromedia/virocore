@@ -36,7 +36,6 @@ add_library( # Sets the name of the library.
              src/main/cpp/VROImageAndroid.cpp
              src/main/cpp/VROPCMAudioPlayer.cpp
              src/main/cpp/VROVideoTextureAndroid.cpp
-             src/main/cpp/VROSoundEffectAndroid.cpp
              src/main/cpp/VROAudioPlayerAndroid.cpp
              src/main/cpp/VROAVPlayer.cpp
              src/main/cpp/VROVideoTextureAVP.cpp
@@ -67,7 +66,10 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/SpotLight_JNI.cpp
              src/main/cpp/jni/DirectionalLight_JNI.cpp
              src/main/cpp/jni/OmniLight_JNI.cpp
-
+             src/main/cpp/jni/Sound_JNI.cpp
+             src/main/cpp/jni/SoundField_JNI.cpp
+             src/main/cpp/jni/SpatialSound_JNI.cpp
+             src/main/cpp/jni/SoundDelegate_JNI.cpp
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp
@@ -151,6 +153,9 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROShaderModifier.cpp
              ../../ViroRenderer/VROLightingUBO.cpp
              ../../ViroRenderer/VROGlyphOpenGL.cpp
+
+             # GVR Audio
+             ../../ViroRenderer/VROSoundGVR.cpp
              )
 
 # Add pre-built libraries

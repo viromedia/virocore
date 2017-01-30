@@ -56,7 +56,7 @@
 
 // Audio
 #include "VROAudioPlayer.h"
-#include "VROSoundEffect.h"
+#include "VROSound.h"
 
 // Math
 #include "VROQuaternion.h"

@@ -80,7 +80,7 @@ public:
         return new VROVideoTextureCacheMetal(_device);
     }
     
-    std::shared_ptr<VROSoundEffect> newSoundEffect(std::string fileName) {
+    std::shared_ptr<VROSound> newSound(std::string fileName, VROSoundType type) {
         NSURL *fileURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:fileName.c_str()]];
         std::string url = std::string([[fileURL description] UTF8String]);
         

@@ -23,7 +23,12 @@ import com.viro.renderer.jni.ImageJni;
 import com.viro.renderer.jni.MaterialJni;
 import com.viro.renderer.jni.NodeJni;
 import com.viro.renderer.jni.OmniLightJni;
+import com.viro.renderer.jni.RenderContextJni;
 import com.viro.renderer.jni.SceneJni;
+import com.viro.renderer.jni.SoundDelegate;
+import com.viro.renderer.jni.SoundFieldJni;
+import com.viro.renderer.jni.SoundJni;
+import com.viro.renderer.jni.SpatialSoundJni;
 import com.viro.renderer.jni.SphereJni;
 import com.viro.renderer.jni.SpotLightJni;
 import com.viro.renderer.jni.SurfaceJni;
@@ -35,10 +40,16 @@ import com.viro.renderer.jni.VrView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ViroActivity extends AppCompatActivity {
+    private static int SOUND_COUNT = 0;
     private VrView mVrView;
+    private Map<String, SoundJni> mSoundMap = new HashMap<>();
+    private Map<String, SoundFieldJni> mSoundFieldMap = new HashMap();
+    private Map<String, SpatialSoundJni> mSpatialSoundMap = new HashMap<>();
     private static String TAG = ViroActivity.class.getSimpleName();
 
     @Override
@@ -60,12 +71,20 @@ public class ViroActivity extends AppCompatActivity {
         List<NodeJni> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
         //nodes = testSphereVideo(this);
-        nodes = testBox(this);
+        //nodes = testBox(this);
         //nodes = testImageSurface(this);
 
         //testBackgroundVideo(scene);
         //testBackgroundImage(scene);
         //testSkyBoxImage(scene);
+        //testSkyBoxImage(scene);
+
+        addNormalSound("http://www.kozco.com/tech/32.mp3");
+        addNormalSound("http://www.kozco.com/tech/32.mp3");
+        // addNormalSound("http://www.bensound.com/royalty-free-music?download=dubstep");
+        // addSoundField("http://ambisonics.dreamhosters.com/AMB/pink_pan_H.amb");
+        // addSpatialSound("http://www.kozco.com/tech/32.mp3");
+        setSoundRoom(scene, mVrView.getRenderContextRef());
 
         for (NodeJni node: nodes) {
             rootNode.addChildNode(node);
@@ -254,5 +273,78 @@ public class ViroActivity extends AppCompatActivity {
         float[] position = {0, 0, -2};
         node.setPosition(position);
         return Arrays.asList(node);
+    }
+
+    private void addNormalSound(String path) {
+        final String key = path + SOUND_COUNT++;
+        mSoundMap.put(key, new SoundJni(path,
+                mVrView.getRenderContextRef(), new SoundDelegate() {
+            @Override
+            public void onSoundReady() {
+                Log.i("NormalSound", "ViroActivity sound is ready!");
+                if (mSoundMap.get(key) != null) {
+                    mSoundMap.get(key).play();
+                }
+            }
+
+            @Override
+            public void onSoundFinish() {
+                Log.i("NormalSound", "ViroActivity sound has finished!");
+            }
+        }, false));
+    }
+
+    private void addSoundField(String path) {
+        final String key = path + SOUND_COUNT++;
+        mSoundFieldMap.put(key, new SoundFieldJni(path,
+                mVrView.getRenderContextRef(), new SoundDelegate() {
+            @Override
+            public void onSoundReady() {
+                Log.i("SoundField", "ViroActivity sound is ready!");
+                if (mSoundFieldMap.get(key) != null) {
+                    mSoundFieldMap.get(key).setMuted(false);
+                    mSoundFieldMap.get(key).setVolume(1);
+                    mSoundFieldMap.get(key).play();
+                }
+            }
+
+            @Override
+            public void onSoundFinish() {
+                Log.i("SoundField", "ViroActivity sound has finished!");
+            }
+        }, false));
+        float[] rotation = {0,0,90};
+        mSoundFieldMap.get(key).setRotation(rotation);
+    }
+
+    private void addSpatialSound(final String path) {
+        final String key = path + SOUND_COUNT++;
+        mSpatialSoundMap.put(key, new SpatialSoundJni(path,
+                mVrView.getRenderContextRef(), new SoundDelegate() {
+            @Override
+            public void onSoundReady() {
+                Log.i("SpatialSound", "ViroActivity sound is ready!");
+
+                SpatialSoundJni sound = mSpatialSoundMap.get(key);
+                if (sound != null) {
+                    float[] position = {5, 0, 0};
+                    sound.setPosition(position);
+                    sound.setMuted(false);
+                    sound.setVolume(1);
+                    sound.setLoop(true);
+                    sound.play();
+                }
+            }
+
+            @Override
+            public void onSoundFinish() {
+                Log.i("SpatialSound", "ViroActivity sound has finished!");
+            }
+        }, false));
+    }
+
+    private void setSoundRoom(SceneJni scene, RenderContextJni renderContextJni) {
+        float[] size = {2, 2, 2};
+        scene.setSoundRoom(renderContextJni, size, "transparent", "wood_panel", "thin_glass");
     }
 }

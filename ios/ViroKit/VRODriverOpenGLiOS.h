@@ -10,18 +10,20 @@
 #define VRODriverOpenGLiOS_h
 
 #include "VRODriverOpenGL.h"
-#include "VROSoundEffectiOS.h"
+#include "VROSoundGVR.h"
 #include "VROAudioPlayeriOS.h"
 #include "VROVideoTextureCacheOpenGL.h"
 #include "VROTypefaceiOS.h"
+#include "vr/gvr/capi/include/gvr_audio.h"
+#include "VROPlatformUtil.h"
 
 class VRODriverOpenGLiOS : public VRODriverOpenGL {
     
 public:
     
-    VRODriverOpenGLiOS(EAGLContext *eaglContext) :
-        _eaglContext(eaglContext) {
-        
+    VRODriverOpenGLiOS(EAGLContext *eaglContext, std::shared_ptr<gvr::AudioApi> gvrAudio) :
+    _eaglContext(eaglContext),
+    _gvrAudio(gvrAudio) {
     }
     
     virtual ~VRODriverOpenGLiOS() { }
@@ -30,18 +32,16 @@ public:
         return new VROVideoTextureCacheOpenGL(_eaglContext);
     }
     
-    std::shared_ptr<VROSoundEffect> newSoundEffect(std::string fileName) {
-        NSURL *fileURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:fileName.c_str()]];
-        std::string url = std::string([[fileURL description] UTF8String]);
-        
-        return std::make_shared<VROSoundEffectiOS>(url);
+    std::shared_ptr<VROSound> newSound(std::string path, VROSoundType type) {
+        // TODO: VIRO-756 make use of the local flag (assumes it's a webfile)
+        std::shared_ptr<VROSound> sound = std::make_shared<VROSoundGVR>(path, _gvrAudio, type, false);
+        return sound;
     }
     
-    std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::string fileName) {
-        NSURL *fileURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:fileName.c_str()]];
-        std::string url = std::string([[fileURL description] UTF8String]);
+    std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::string path) {
+        // TODO: VIRO-756 make use of local flag (always assumes it's a web file)
         
-        return std::make_shared<VROAudioPlayeriOS>(url);
+        return std::make_shared<VROAudioPlayeriOS>(path, false);
     }
     
     std::shared_ptr<VROTypeface> newTypeface(std::string typefaceName, int size) {
@@ -51,9 +51,16 @@ public:
         return typeface;
     }
 
+    void setSoundRoom(float sizeX, float sizeY, float sizeZ, std::string wallMaterial,
+                      std::string ceilingMaterial, std::string floorMaterial) {
+        _gvrAudio->SetRoomProperties(sizeX, sizeY, sizeZ,
+                                     VROPlatformParseGVRAudioMaterial(wallMaterial),
+                                     VROPlatformParseGVRAudioMaterial(ceilingMaterial),
+                                     VROPlatformParseGVRAudioMaterial(floorMaterial));
+    }
     
 private:
-    
+    std::shared_ptr<gvr::AudioApi> _gvrAudio;
     EAGLContext *_eaglContext;
     
 };

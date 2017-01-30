@@ -22,13 +22,23 @@ extern "C" {
         return reinterpret_cast<VROAVPlayer *>(ptr);
     }
 
-    JNI_METHOD(void, nativeOnVideoFinished)(JNIEnv *env,
+    JNI_METHOD(void, nativeOnFinished)(JNIEnv *env,
                                             jclass clazz,
-                                            jlong native_video_ref) {
-        std::weak_ptr<VROVideoDelegateInternal> delegateWeak
-                = native(native_video_ref)->getDelegate();
+                                            jlong nativePlayerRef) {
+        std::weak_ptr<VROAVPlayerDelegate> delegateWeak
+                = native(nativePlayerRef)->getDelegate();
         if(auto tmp = delegateWeak.lock()){
-            tmp->videoDidFinish();
+            tmp->onFinished();
+        }
+    }
+
+    JNI_METHOD(void, nativeOnPrepared)(JNIEnv *env,
+                                       jclass clazz,
+                                       jlong nativePlayerRef) {
+        std::weak_ptr<VROAVPlayerDelegate> delegateWeak
+                = native(nativePlayerRef)->getDelegate();
+        if(auto tmp = delegateWeak.lock()){
+            tmp->onPrepared();
         }
     }
 }

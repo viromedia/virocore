@@ -15,6 +15,20 @@
 #include <memory>
 #include "VROOpenGL.h"
 
+class VROAVPlayerDelegate {
+
+public:
+    VROAVPlayerDelegate() {}
+    virtual ~VROAVPlayerDelegate() {}
+
+    // this is called when the MediaPlayer has finished preparing the media
+    virtual void onPrepared() = 0;
+
+    // this is called when the MediaPlayer has finished playing the media
+    virtual void onFinished() = 0;
+};
+
+
 class VROAVPlayer {
 
 public:
@@ -36,10 +50,10 @@ public:
     void setLoop(bool loop);
 
     void reset();
-    void setDelegate(std::shared_ptr<VROVideoDelegateInternal> delegate) {
+    void setDelegate(std::shared_ptr<VROAVPlayerDelegate> delegate) {
         _delegate = delegate;
     }
-    std::weak_ptr<VROVideoDelegateInternal> getDelegate(){
+    std::weak_ptr<VROAVPlayerDelegate> getDelegate(){
         return _delegate;
     }
 
@@ -51,10 +65,7 @@ private:
 
     void bindVideoSink();
 
-    /**
-     * VideoDelegateInternal provided by VROVideoTexture for triggering video callbacks.
-     */
-    std::weak_ptr<VROVideoDelegateInternal> _delegate;
+    std::weak_ptr<VROAVPlayerDelegate> _delegate;
 };
 
 #endif //ANDROID_VROAVPLAYER_H

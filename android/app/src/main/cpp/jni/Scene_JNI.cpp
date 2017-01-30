@@ -18,6 +18,7 @@
 #include "VideoTexture_JNI.h"
 #include "Scene_JNI.h"
 #include "Texture_JNI.h"
+#include "RenderContext_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -98,6 +99,26 @@ JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
     VROVector4f vecColor(r, g, b, a);
     VROSceneController *sceneController = Scene::native(sceneRef);
     sceneController->getScene()->setBackgroundCube(vecColor);
+}
+
+JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, jlong renderContextRef,
+                                     jfloat sizeX, jfloat sizeY, jfloat sizeZ, jstring wallMaterial,
+                                     jstring ceilingMaterial, jstring floorMaterial) {
+    const char *cWallMaterial = env->GetStringUTFChars(wallMaterial, NULL);
+    const char *cCeilingMaterial = env->GetStringUTFChars(ceilingMaterial, NULL);
+    const char *cFloorMaterial = env->GetStringUTFChars(floorMaterial, NULL);
+
+    std::string strWallMaterial(cWallMaterial);
+    std::string strCeilingMaterial(cCeilingMaterial);
+    std::string strFloorMaterial(cFloorMaterial);
+
+    RenderContext::native(renderContextRef)->getDriver()->setSoundRoom(sizeX, sizeY, sizeZ,
+                                                                       strWallMaterial, strCeilingMaterial,
+                                                                       strFloorMaterial);
+    env->ReleaseStringUTFChars(wallMaterial, cWallMaterial);
+    env->ReleaseStringUTFChars(ceilingMaterial, cCeilingMaterial);
+    env->ReleaseStringUTFChars(floorMaterial, cFloorMaterial);
+
 }
 
 }  // extern "C"

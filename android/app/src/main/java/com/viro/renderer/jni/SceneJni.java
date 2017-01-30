@@ -39,6 +39,12 @@ public class SceneJni {
         nativeSetBackgroundCubeWithColor(mNativeRef, color);
     }
 
+    public void setSoundRoom(RenderContextJni renderContext, float[] size, String wallMaterial,
+                             String ceilingMaterial, String floorMaterial) {
+        nativeSetSoundRoom(mNativeRef, renderContext.mNativeRef, size[0], size[1], size[2],
+                wallMaterial, ceilingMaterial, floorMaterial);
+    }
+
     public void destroy() {
         nativeDestroyScene(mNativeRef);
     }
@@ -54,8 +60,12 @@ public class SceneJni {
     private native void nativeSetBackgroundCubeWithColor(long sceneRef, long color);
     private native void nativeSetBackgroundRotation(long sceneRef, float degreeX, float degreeY,
                                                     float degreeZ);
+    private native void nativeSetSoundRoom(long sceneRef, long renderContextRef, float sizeX,
+                                           float sizeY, float sizeZ, String wallMaterial,
+                                           String ceilingMaterial, String floorMaterial);
 
     private SceneDelegate mDelegate = null;
+
     public interface SceneDelegate {
         void onSceneWillAppear();
         void onSceneDidAppear();

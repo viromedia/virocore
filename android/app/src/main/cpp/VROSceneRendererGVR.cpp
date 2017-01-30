@@ -108,6 +108,8 @@ void VROSceneRendererGVR::onDrawFrame() {
     else {
         renderMono(headRotation);
     }
+    _gvrAudio->SetHeadPose(_headView);
+    _gvrAudio->Update();
     ++_frame;
 }
 
