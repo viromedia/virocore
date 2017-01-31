@@ -41,6 +41,7 @@ public:
     void attachElbowNode() {
         _elbowNode = std::make_shared<VRONode>();
         _elbowNode->setSelectable(false);
+        _elbowNode->setScale(VROVector3f(.2,  .2,  .2));
         _elbowNode->setPosition(VROVector3f(0.29,  -0.78,  .18));
         getRootNode()->addChildNode(_elbowNode);
     }

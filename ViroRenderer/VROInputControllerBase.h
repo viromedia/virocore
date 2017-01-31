@@ -105,7 +105,8 @@ public:
     void onTouchpadEvent(int source, VROEventDelegate::TouchState touchAction, float lastKnownX, float lastKnownY);
     void onRotate(int source, VROQuaternion rotation);
     void onPosition(int source, VROVector3f position);
-
+    void onSwipe(int source, VROEventDelegate::SwipeState swipeState);
+    void onScroll(int source, float x, float y);
 protected:
     virtual std::shared_ptr<VROInputPresenter> createPresenter(std::shared_ptr<VRORenderContext> context){
         perror("Error: Derived class should create a presenter for BaseInputController to consume!");

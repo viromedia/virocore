@@ -11,8 +11,10 @@ void VROInputControllerOVR::handleOVRTouchEvent(int touchAction, float posX, flo
     if ( touchAction == AMOTION_EVENT_ACTION_UP){
         action = VROEventDelegate::TouchState::TouchUp;
         VROInputControllerBase::onButtonEvent(ViroOculus::TouchPad, VROEventDelegate::ClickState::ClickUp);
+        updateSwipeGesture(_touchDownLocationStart, VROVector3f(posX, posY, 0));
     } else if ( touchAction == AMOTION_EVENT_ACTION_DOWN){
         action = VROEventDelegate::TouchState::TouchDown;
+        _touchDownLocationStart = VROVector3f(posX, posY, 0);
         VROInputControllerBase::onButtonEvent(ViroOculus::TouchPad, VROEventDelegate::ClickState::ClickDown);
     }  else if ( touchAction == AMOTION_EVENT_ACTION_MOVE){
         action = VROEventDelegate::TouchState::TouchDownMove;
@@ -20,7 +22,28 @@ void VROInputControllerOVR::handleOVRTouchEvent(int touchAction, float posX, flo
         return;
     }
 
-    VROInputControllerBase::onTouchpadEvent(ViroDayDream::InputSource::TouchPad, action, posX, posY);
+    VROInputControllerBase::onTouchpadEvent(ViroOculus::InputSource::TouchPad, action, posX, posY);
+}
+
+void VROInputControllerOVR::updateSwipeGesture(VROVector3f start, VROVector3f end){
+    VROVector3f diff = end - start;
+    float xDist = fabs(diff.x);
+    float yDist = fabs(diff.y);
+    VROEventDelegate::SwipeState swipeState;
+    if (xDist > yDist){
+        if (diff.x > 0){
+            swipeState = VROEventDelegate::SwipeState::SwipeLeft;
+        } else {
+            swipeState = VROEventDelegate::SwipeState::SwipeRight;
+        }
+    } else {
+        if (diff.y > 0){
+            swipeState = VROEventDelegate::SwipeState::SwipeDown;
+        } else {
+            swipeState = VROEventDelegate::SwipeState::SwipeUp;
+        }
+    }
+    VROInputControllerBase::onSwipe(ViroOculus::InputSource::TouchPad, swipeState);
 }
 
 void VROInputControllerOVR::handleOVRKeyEvent(int keyCode, int action){

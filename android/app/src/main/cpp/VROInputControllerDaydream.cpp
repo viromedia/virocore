@@ -61,15 +61,49 @@ void VROInputControllerDaydream::updateTouchPad() {
     VROEventDelegate::TouchState action;
     if (_controller_state.GetTouchUp()){
         action = VROEventDelegate::TouchState::TouchUp;
+        updateSwipeGesture(_touchDownLocationStart, VROVector3f(posX, posY, 0));
     } else if (_controller_state.GetTouchDown()){
         action = VROEventDelegate::TouchState::TouchDown;
+        _touchDownLocationStart = VROVector3f(posX, posY, 0);
     }  else if (_controller_state.IsTouching()){
         action = VROEventDelegate::TouchState::TouchDownMove;
+        updateScrollGesture(_touchDownLocationStart, VROVector3f(posX, posY, 0));
     } else {
         return;
     }
 
     VROInputControllerBase::onTouchpadEvent(ViroDayDream::InputSource::TouchPad, action, posX, posY);
+}
+
+void VROInputControllerDaydream::updateSwipeGesture(VROVector3f start, VROVector3f end){
+    VROVector3f diff = end - start;
+    float xDist = fabs(diff.x);
+    float yDist = fabs(diff.y);
+    VROEventDelegate::SwipeState swipeState;
+
+    if (xDist > yDist){
+        if (diff.x > 0){
+            swipeState = VROEventDelegate::SwipeState::SwipeRight;
+        } else {
+            swipeState = VROEventDelegate::SwipeState::SwipeLeft;
+        }
+    } else {
+        if (diff.y > 0){
+            swipeState = VROEventDelegate::SwipeState::SwipeDown;
+        } else {
+            swipeState = VROEventDelegate::SwipeState::SwipeUp;
+        }
+    }
+    VROInputControllerBase::onSwipe(ViroDayDream::InputSource::TouchPad, swipeState);
+
+}
+
+void VROInputControllerDaydream::updateScrollGesture(VROVector3f start, VROVector3f end){
+    VROVector3f diff = end - start;
+    if (diff.magnitude() == 0){
+        return;
+    }
+    VROInputControllerBase::onScroll(ViroDayDream::InputSource::TouchPad, diff.x, diff.y);
 }
 
 void VROInputControllerDaydream::updateOrientation() {

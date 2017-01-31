@@ -46,10 +46,13 @@ private:
     void updateButtons();
     void updateTouchPad();
     void notifyButtonEventForType(gvr::ControllerButton button, ViroDayDream::InputSource source);
+    void updateSwipeGesture(VROVector3f start, VROVector3f end);
+    void updateScrollGesture(VROVector3f start, VROVector3f end);
 
     std::unique_ptr<gvr::ControllerApi> _gvr_controller;
     gvr::ControllerState _controller_state;
     std::shared_ptr<VROInputPresenterDaydream> _daydreamPresenter;
     bool _hasInitalized;
+    VROVector3f _touchDownLocationStart;
 };
 #endif

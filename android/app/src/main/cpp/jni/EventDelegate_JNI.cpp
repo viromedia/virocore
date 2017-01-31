@@ -65,3 +65,13 @@ void EventDelegate_JNI::onControllerStatus(int source, ControllerStatus status) 
 void EventDelegate_JNI::onGazeHit(int source, float distance, VROVector3f hitLocation) {
     //No-op
 }
+
+void EventDelegate_JNI::onSwipe(int source, SwipeState swipeState) {
+    VROPlatformCallJavaFunction(_javaObject,
+                                "onSwipe", "(II)V", source, swipeState);
+}
+
+void EventDelegate_JNI::onScroll(int source, float x, float y) {
+    VROPlatformCallJavaFunction(_javaObject,
+                                "onScroll", "(IFF)V", source, x, y);
+}

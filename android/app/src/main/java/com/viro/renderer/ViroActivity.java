@@ -234,9 +234,11 @@ public class ViroActivity extends AppCompatActivity implements ViroGvrLayout.GlL
 
     private EventDelegateJni getGenericDelegate(final String delegateTag){
         EventDelegateJni delegateJni = new EventDelegateJni();
-        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_HOVER, true);
-        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_CLICK, true);
-        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_TOUCH, false);
+        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_HOVER, false);
+        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_CLICK, false);
+        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_SWIPE, false);
+        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_SCROLL, false);
+        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_TOUCH, true);
         delegateJni.setEventDelegateCallback(new EventDelegateJni.EventDelegateCallback() {
             @Override
             public void onHover(int source, boolean isHovering) {
@@ -250,7 +252,7 @@ public class ViroActivity extends AppCompatActivity implements ViroGvrLayout.GlL
 
             @Override
             public void onTouch(int source, EventDelegateJni.TouchState touchState, float[] touchPadPos) {
-                Log.e(TAG, delegateTag + " onTouch " + touchState.toString());
+                Log.e(TAG, delegateTag + "onTouch " + touchPadPos[0] + "," + touchPadPos[1]);
             }
 
             @Override
@@ -260,6 +262,17 @@ public class ViroActivity extends AppCompatActivity implements ViroGvrLayout.GlL
 
             @Override
             public void onControllerStatus(int source, EventDelegateJni.ControllerStatus status) {
+
+            }
+
+            @Override
+            public void onSwipe(int source, EventDelegateJni.SwipeState swipeState) {
+                Log.e(TAG, delegateTag + " onSwipe " + swipeState.toString());
+            }
+
+            @Override
+            public void onScroll(int source, float x, float y) {
+                Log.e(TAG, delegateTag + " onScroll " + x + "," +y);
 
             }
         });

@@ -139,6 +139,32 @@ void VROInputControllerBase::onControllerStatus(int source, VROEventDelegate::Co
     }
 }
 
+void VROInputControllerBase::onSwipe(int source, VROEventDelegate::SwipeState swipeState) {
+    // Return if we have not focused on any node upon which to trigger events.
+    if (_hitResult == nullptr){
+        return;
+    }
+
+    std::shared_ptr<VRONode> focusedNode
+            = getNodeToHandleEvent(VROEventDelegate::EventAction::OnSwipe, _hitResult->getNode());
+    if (focusedNode != nullptr){
+        focusedNode->getEventDelegate()->onSwipe(source, swipeState);
+    }
+}
+
+void VROInputControllerBase::onScroll(int source, float x, float y) {
+    // Return if we have not focused on any node upon which to trigger events.
+    if (_hitResult == nullptr){
+        return;
+    }
+
+    std::shared_ptr<VRONode> focusedNode
+            = getNodeToHandleEvent(VROEventDelegate::EventAction::OnScroll, _hitResult->getNode());
+    if (focusedNode != nullptr){
+        focusedNode->getEventDelegate()->onScroll(source, x, y);
+    }
+}
+
 void VROInputControllerBase::processGazeEvent(int source, std::shared_ptr<VRONode> newNode) {
     if (_lastHoveredNode == newNode){
         return;

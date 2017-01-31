@@ -61,7 +61,9 @@ public class EventDelegateJni {
         ON_CLICK(2),
         ON_TOUCH(3),
         ON_MOVE(4),
-        ON_CONTROLLER_STATUS(5);
+        ON_CONTROLLER_STATUS(5),
+        ON_SWIPE(6),
+        ON_SCROLL(7);
 
         public final int mTypeId;
 
@@ -156,7 +158,28 @@ public class EventDelegateJni {
         }
     }
 
+    public enum SwipeState {
+        SWIPE_UP(1),
+        SWIPE_DOWN(2),
+        SWIPE_LEFT(3),
+        SWIPE_RIGHT(4);
 
+        public final int mTypeId;
+
+        SwipeState(int id){
+            mTypeId = id;
+        }
+
+        private static Map<Integer, SwipeState> map = new HashMap<Integer, SwipeState>();
+        static {
+            for (SwipeState status : SwipeState.values()) {
+                map.put(status.mTypeId, status);
+            }
+        }
+        public static SwipeState valueOf(int id) {
+            return map.get(id);
+        }
+    }
     /**
      * Delegate interface to be implemented by a java view component so as
      * to receive event callbacks triggered from native. Implemented delegates
@@ -173,6 +196,8 @@ public class EventDelegateJni {
         void onTouch(int source, TouchState touchState, float touchPadPos[]);
         void onMove(int source, float rotation[], float position[]);
         void onControllerStatus(int source, ControllerStatus status);
+        void onSwipe(int source, SwipeState swipeState);
+        void onScroll(int source, float x, float y);
     }
 
     /**
@@ -211,6 +236,18 @@ public class EventDelegateJni {
     void onTouch(int source, int touchState, float x, float y){
         if (mDelegate != null){
             mDelegate.onTouch(source, TouchState.valueOf(touchState), new float[]{x,y});
+        }
+    }
+
+    void onSwipe(int source, int swipeState){
+        if (mDelegate != null){
+            mDelegate.onSwipe(source, SwipeState.valueOf(swipeState));
+        }
+    }
+
+    void onScroll(int source, float x, float y){
+        if (mDelegate != null){
+            mDelegate.onScroll(source, x, y);
         }
     }
 }

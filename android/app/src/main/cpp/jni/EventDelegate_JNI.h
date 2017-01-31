@@ -45,6 +45,8 @@ public:
     void onMove(int source, VROVector3f rotation, VROVector3f position);
     void onControllerStatus(int source, ControllerStatus status);
     void onGazeHit(int source, float distance, VROVector3f hitLocation);
+    void onSwipe(int source, SwipeState swipeState);
+    void onScroll(int source, float x, float y);
 private:
     jobject _javaObject;
     void callJavaFunction(std::string functionName, std::string methodID, ...);
