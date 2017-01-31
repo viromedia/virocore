@@ -8,10 +8,6 @@
 #include <jni.h>
 #include <memory>
 #include <VROInputPresenterDaydream.h>
-#include "VROMaterial.h"
-#include "PersistentRef.h"
-#include "VROInputPresenterDaydream.h"
-#include "Node_JNI.h"
 #include "RenderContext_JNI.h"
 #include "EventDelegate_JNI.h"
 
@@ -38,10 +34,21 @@ JNI_METHOD(void, nativeEnableReticle)(JNIEnv *env,
     std::shared_ptr<RenderContext> nativeContext = RenderContext::native(render_context_ref);
     std::shared_ptr<VROInputPresenter> controllerPresenter
             = nativeContext->getInputController()->getPresenter();
-    controllerPresenter->getReticle()->setEnabled(enable);
+    std::shared_ptr<VROReticle> reticle = controllerPresenter->getReticle();
+    if (reticle != nullptr){
+        reticle->setEnabled(enable);
+    }
 }
 
-
+JNI_METHOD(void, nativeEnableController)(JNIEnv *env,
+                                      jobject obj,
+                                      jlong render_context_ref,
+                                      jboolean enable) {
+    std::shared_ptr<RenderContext> nativeContext = RenderContext::native(render_context_ref);
+    std::shared_ptr<VROInputPresenter> controllerPresenter
+            = nativeContext->getInputController()->getPresenter();
+    controllerPresenter->getRootNode()->setHidden(!enable);
+}
 
 /**
  * TODO VIRO-704: Add APIs for custom controls - replacing Obj or adding tooltip support.

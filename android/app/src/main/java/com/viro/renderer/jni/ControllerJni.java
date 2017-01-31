@@ -21,10 +21,15 @@ public class ControllerJni {
         nativeSetEventDelegate(mRenderContext.mNativeRef, delegate.mNativeRef);
     }
 
-    public void enableReticle(boolean enable) {
-        nativeEnableReticle(mRenderContext.mNativeRef, enable);
+    public void setReticleVisibility(boolean visible) {
+        nativeEnableReticle(mRenderContext.mNativeRef, visible);
+    }
+
+    public void setControllerVisibility(boolean visible) {
+        nativeEnableController(mRenderContext.mNativeRef, visible);
     }
 
     private native void nativeSetEventDelegate(long contextRef, long delegateRef);
     private native void nativeEnableReticle(long contextRef, boolean enabled);
+    private native void nativeEnableController(long contextRef, boolean enabled);
 }

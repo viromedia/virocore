@@ -26,6 +26,7 @@ public:
     ~VROInputPresenterOVR() {}
 
     void onClick(int source, ClickState clickState){
+        VROInputPresenter::onClick(source, clickState);
         if (source==ViroOculus::InputSource::TouchPad && clickState==ClickState::ClickUp){
             getReticle()->trigger();
         }

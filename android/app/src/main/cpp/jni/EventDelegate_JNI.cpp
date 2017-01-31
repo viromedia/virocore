@@ -53,9 +53,7 @@ void EventDelegate_JNI::onTouch(int source, TouchState touchState, float x, floa
 }
 
 void EventDelegate_JNI::onMove(int source, VROVector3f rotation, VROVector3f position) {
-    VROPlatformCallJavaFunction(_javaObject,
-                                "onMove", "(IFFFFFF)V", source, rotation.x,rotation.y, rotation.z,
-                                                            position.x, position.y, position.z);
+    //No-op
 }
 void EventDelegate_JNI::onControllerStatus(int source, ControllerStatus status) {
     VROPlatformCallJavaFunction(_javaObject,

@@ -32,9 +32,16 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
      * different sources.
      */
     if (clickState == VROEventDelegate::ClickUp) {
-        if (focusedNode != nullptr && _lastClickedNode != nullptr && _hitResult->getNode() == _lastClickedNode) {
-            focusedNode->getEventDelegate()->onClick(source, VROEventDelegate::ClickState::Clicked);
+        if (_hitResult->getNode() == _lastClickedNode) {
+            for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
+                delegate->onClick(source, VROEventDelegate::ClickState::Clicked);
+            }
+            if (focusedNode != nullptr && _lastClickedNode != nullptr) {
+                focusedNode->getEventDelegate()->onClick(source,
+                                                         VROEventDelegate::ClickState::Clicked);
+            }
         }
+
         _lastClickedNode = nullptr;
     } else if (clickState == VROEventDelegate::ClickDown){
         _lastClickedNode = _hitResult->getNode();
@@ -44,7 +51,6 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
 void VROInputControllerBase::onTouchpadEvent(int source, VROEventDelegate::TouchState touchState,
                                              float posX,
                                              float posY){
-
     // Avoid spamming similar TouchDownMove events.
     VROVector3f currentTouchedPosition = VROVector3f(posX, posY, 0);
     if (touchState == VROEventDelegate::TouchState::TouchDownMove &&
@@ -83,6 +89,12 @@ void VROInputControllerBase::onPosition(int source, VROVector3f position){
 }
 
 void VROInputControllerBase::notifyOrientationDelegates(int source){
+    // Trigger orientation delegate callbacks for non-scene elements.
+    for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
+        delegate->onGazeHit(source, _hitResult->getDistance(), _hitResult->getLocation());
+        delegate->onMove(source, _lastKnownRotation.toEuler(), _lastKnownPosition);
+    }
+
     if (_hitResult == nullptr){
         return;
     }
@@ -94,15 +106,8 @@ void VROInputControllerBase::notifyOrientationDelegates(int source){
 
     std::shared_ptr<VRONode> movableNode
             = getNodeToHandleEvent(VROEventDelegate::EventAction::OnMove, _hitResult->getNode());
-    VROVector3f rotationEuler =_lastKnownRotation.toEuler();
     if (movableNode != nullptr){
-        movableNode->getEventDelegate()->onMove(source, rotationEuler, _lastKnownPosition);
-    }
-
-    // Trigger orientation delegate callbacks for non-scene elements.
-    for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
-        delegate->onGazeHit(source, _hitResult->getDistance(), _hitResult->getLocation());
-        delegate->onMove(source, rotationEuler, _lastKnownPosition);
+        movableNode->getEventDelegate()->onMove(source, _lastKnownRotation.toEuler(), _lastKnownPosition);
     }
 }
 
@@ -140,6 +145,11 @@ void VROInputControllerBase::onControllerStatus(int source, VROEventDelegate::Co
 }
 
 void VROInputControllerBase::onSwipe(int source, VROEventDelegate::SwipeState swipeState) {
+    // Notify internal delegates
+    for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
+        delegate->onSwipe(source, swipeState);
+    }
+
     // Return if we have not focused on any node upon which to trigger events.
     if (_hitResult == nullptr){
         return;
@@ -153,6 +163,11 @@ void VROInputControllerBase::onSwipe(int source, VROEventDelegate::SwipeState sw
 }
 
 void VROInputControllerBase::onScroll(int source, float x, float y) {
+    // Notify internal delegates
+    for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
+        delegate->onScroll(source, x, y);
+    }
+
     // Return if we have not focused on any node upon which to trigger events.
     if (_hitResult == nullptr){
         return;

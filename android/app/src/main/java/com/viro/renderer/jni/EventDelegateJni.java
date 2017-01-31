@@ -194,7 +194,6 @@ public class EventDelegateJni {
         void onHover(int source, boolean isHovering);
         void onClick(int source, ClickState clickState);
         void onTouch(int source, TouchState touchState, float touchPadPos[]);
-        void onMove(int source, float rotation[], float position[]);
         void onControllerStatus(int source, ControllerStatus status);
         void onSwipe(int source, SwipeState swipeState);
         void onScroll(int source, float x, float y);
@@ -214,16 +213,6 @@ public class EventDelegateJni {
     void onClick(int source, int clickState) {
         if (mDelegate != null){
             mDelegate.onClick(source, ClickState.valueOf(clickState));
-        }
-    }
-
-    void onMove(int source,
-                float rotX, float rotY, float rotZ,
-                float postX, float posY, float posZ) {
-        if (mDelegate != null){
-            mDelegate.onMove(source,
-                    new float[]{rotX, rotY, rotZ},
-                    new float[]{postX, posY, posZ});
         }
     }
 

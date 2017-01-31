@@ -31,6 +31,8 @@ public:
         if (source==ViroCardBoard::InputSource::ViewerButton && clickState==ClickState::ClickUp){
             getReticle()->trigger();
         }
+
+        VROInputPresenter::onClick(source, clickState);
     }
 
     void onGazeHit(int source, float distance, VROVector3f hitLocation){

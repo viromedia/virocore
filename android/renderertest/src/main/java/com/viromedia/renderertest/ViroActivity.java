@@ -296,11 +296,6 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             }
 
             @Override
-            public void onMove(int source, float[] rotation, float[] position) {
-
-            }
-
-            @Override
             public void onControllerStatus(int source, EventDelegateJni.ControllerStatus status) {
 
             }

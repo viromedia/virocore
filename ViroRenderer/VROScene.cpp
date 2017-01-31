@@ -150,8 +150,11 @@ void VROScene::setControllerPresenter(std::shared_ptr<VROInputPresenter> present
         }
         _nodes.push_back(node);
     }
-
     _controllerPresenter = presenter;
+}
+
+std::shared_ptr<VROInputPresenter> VROScene::getControllerPresenter(){
+    return _controllerPresenter;
 }
 
 void VROScene::setBackgroundRotation(VROQuaternion rotation) {

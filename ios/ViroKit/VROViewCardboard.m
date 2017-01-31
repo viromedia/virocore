@@ -79,7 +79,6 @@
                                                object:nil];
     self.renderer = std::make_shared<VRORenderer>(std::make_shared<VROInputControllerCardboardiOS>());
     self.sceneRenderer = std::make_shared<VROSceneRendererCardboardOpenGL>(self.context, self.renderer);
-    
     // TODO Bug in Cardboard prevents [headTransform fieldOfViewForEye:] from working
     self.fov = { 30.63, 40, 40, 34.178 };
 }

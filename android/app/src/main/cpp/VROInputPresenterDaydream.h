@@ -105,6 +105,8 @@ public:
     }
 
     void onClick(int source, ClickState clickState){
+        VROInputPresenter::onClick(source, clickState);
+
         if (source ==ViroDayDream::InputSource::TouchPad && clickState == ClickState::ClickUp){
             getReticle()->trigger();
         }
@@ -134,6 +136,7 @@ public:
     }
 
     void onTouch(int source, TouchState touchState, float x, float y){
+        VROInputPresenter::onTouch(source, touchState, x, y);
         if (touchState == TouchState::TouchUp){
             setTextureOnController(_controllerIdleTexture);
             return;
@@ -141,6 +144,7 @@ public:
     }
 
     void onMove(int source, VROVector3f controllerRotation, VROVector3f controllerPosition){
+        VROInputPresenter::onMove(source, controllerRotation, controllerPosition);
         _elbowNode->setRotation(controllerRotation);
     }
 

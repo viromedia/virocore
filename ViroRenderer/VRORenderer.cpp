@@ -212,13 +212,13 @@ void VRORenderer::renderEye(VROEyeType eyeType, VRODriver &driver) {
 
 void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneController, VRODriver &driver) {
     std::shared_ptr<VROSceneController> outgoingSceneController = _sceneController;
+    _inputController->attachScene(sceneController->getScene());
     sceneController->onSceneWillAppear(_context.get(), driver);
     if (outgoingSceneController) {
         outgoingSceneController->onSceneWillDisappear(_context.get(), driver);
     }
 
     _sceneController = sceneController;
-    _inputController->attachScene(_sceneController->getScene());
 
     sceneController->onSceneDidAppear(_context.get(), driver);
     if (outgoingSceneController) {

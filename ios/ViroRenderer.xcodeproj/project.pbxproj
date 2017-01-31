@@ -385,7 +385,7 @@
 		8F4AD8FF1D42BD220044B3F0 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "/Users/vadvani/ViroReact/react-viro/ios/ViroRenderer";
+			dstPath = "$(PROJECT_DIR)/../../react-viro/ios/ViroRenderer";
 			dstSubfolderSpec = 0;
 			files = (
 				8F4AD9001D42BD710044B3F0 /* ViroKit.framework in CopyFiles */,
