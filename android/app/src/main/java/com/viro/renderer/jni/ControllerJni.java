@@ -18,11 +18,11 @@ public class ControllerJni {
     }
 
     public void setEventDelegate(EventDelegateJni delegate) {
-        nativeSetEventDelegate(mRenderContext.mRef, delegate.mNativeRef);
+        nativeSetEventDelegate(mRenderContext.mNativeRef, delegate.mNativeRef);
     }
 
     public void enableReticle(boolean enable) {
-        nativeEnableReticle(mRenderContext.mRef, enable);
+        nativeEnableReticle(mRenderContext.mNativeRef, enable);
     }
 
     private native void nativeSetEventDelegate(long contextRef, long delegateRef);
