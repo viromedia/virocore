@@ -70,6 +70,8 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/SoundField_JNI.cpp
              src/main/cpp/jni/SpatialSound_JNI.cpp
              src/main/cpp/jni/SoundDelegate_JNI.cpp
+             src/main/cpp/jni/Text_JNI.cpp
+             src/main/cpp/jni/TextDelegate_JNI.cpp
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp

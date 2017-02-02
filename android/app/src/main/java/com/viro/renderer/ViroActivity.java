@@ -32,6 +32,7 @@ import com.viro.renderer.jni.SpatialSoundJni;
 import com.viro.renderer.jni.SphereJni;
 import com.viro.renderer.jni.SpotLightJni;
 import com.viro.renderer.jni.SurfaceJni;
+import com.viro.renderer.jni.TextJni;
 import com.viro.renderer.jni.TextureJni;
 import com.viro.renderer.jni.VideoTextureJni;
 import com.viro.renderer.jni.ViroGvrLayout;
@@ -44,7 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ViroActivity extends AppCompatActivity {
+public class ViroActivity extends AppCompatActivity implements ViroGvrLayout.GlListener {
     private static int SOUND_COUNT = 0;
     private VrView mVrView;
     private Map<String, SoundJni> mSoundMap = new HashMap<>();
@@ -55,28 +56,28 @@ public class ViroActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mVrView = new ViroGvrLayout(this);
+        mVrView = new ViroGvrLayout(this, this);
         mVrView.setVrModeEnabled(true);
         setContentView(mVrView.getContentView());
     }
 
+
     @Override
-    protected void onStart(){
-        super.onStart();
-
+    public void onGlInitialized() {
+        Log.e("ViroActivity", "onGlInitialized called");
         // Creation of SceneJni within scene navigator
-        NodeJni rootNode = new NodeJni(this);
+        NodeJni rootNode = new NodeJni(getApplicationContext());
         SceneJni scene = new SceneJni(rootNode);
-
         List<NodeJni> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
         //nodes = testSphereVideo(this);
-        //nodes = testBox(this);
+        nodes = testBox(getApplicationContext());
+
         //nodes = testImageSurface(this);
 
         //testBackgroundVideo(scene);
         //testBackgroundImage(scene);
-        //testSkyBoxImage(scene);
+        testSkyBoxImage(scene);
         //testSkyBoxImage(scene);
 
         addNormalSound("http://www.kozco.com/tech/32.mp3");
@@ -195,6 +196,14 @@ public class ViroActivity extends AppCompatActivity {
         NodeJni node1 = new NodeJni(context);
         NodeJni node2 = new NodeJni(context);
 
+        NodeJni node3 = new NodeJni(context);
+        TextJni textJni = new TextJni(mVrView.getRenderContextRef(), "Test text 1 2 3", "Roboto", 24,
+                Color.WHITE, 10, 4, "Center", "Center", "None", "None", 1);
+
+        float[] position = {0, -1, -2};
+        node3.setPosition(position);
+        node3.setGeometry(textJni);
+
         // Create a new material with a diffuseTexture set to the image "boba.png"
         ImageJni bobaImage = new ImageJni("boba.png");
 
@@ -220,7 +229,7 @@ public class ViroActivity extends AppCompatActivity {
         node2.setPosition(boxPosition2);
         node2.setMaterials(Arrays.asList(material));
         node2.setEventDelegateJni(getGenericDelegate("Box2"));
-        return Arrays.asList(node1, node2);
+        return Arrays.asList(node1, node2, node3);
     }
 
     private EventDelegateJni getGenericDelegate(final String delegateTag){

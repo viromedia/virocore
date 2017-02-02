@@ -44,10 +44,10 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
     private final RenderContextJni mNativeRenderContext;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
-
+    private GlListener mGlListener = null;
     private PlatformUtil mPlatformUtil;
 
-    public ViroGvrLayout(Context context) {
+    public ViroGvrLayout(Context context, GlListener glListener) {
         super(context);
 
         final Context activityContext = getContext();
@@ -68,6 +68,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
                 getGvrApi().getNativeGvrContext());
         mNativeRenderContext = new RenderContextJni(mNativeRenderer.mNativeRef);
 
+        mGlListener = glListener;
         // Add the GLSurfaceView to the GvrLayout.
         glSurfaceView.setEGLContextClientVersion(3);
         glSurfaceView.setEGLConfigChooser(8, 8, 8, 0, 0, 0);
@@ -76,6 +77,9 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
             public void onSurfaceCreated(GL10 gl, EGLConfig config) {
                 mNativeRenderer.onSurfaceCreated(glSurfaceView.getHolder().getSurface());
                 mNativeRenderer.initalizeGl();
+                if (mGlListener != null) {
+                    mGlListener.onGlInitialized();
+                }
             }
 
             public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -132,7 +136,9 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
         Application app = (Application)activityContext.getApplicationContext();
         app.registerActivityLifecycleCallbacks(this);
     }
-
+    public interface GlListener {
+        void onGlInitialized();
+    }
     @Override
     public RenderContextJni getRenderContextRef(){
         return mNativeRenderContext;
