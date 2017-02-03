@@ -11,6 +11,7 @@
 #include "PersistentRef.h"
 #include "RenderContext_JNI.h"
 #include "SoundDelegate_JNI.h"
+#include "SoundData_JNI.h"
 
 
 #define JNI_METHOD(return_type, method_name) \
@@ -30,6 +31,7 @@ namespace SoundField {
 }
 
 extern "C" {
+
 JNI_METHOD(jlong, nativeCreateSoundFieldFromFile)(JNIEnv *env,
                                              jobject object,
                                              jstring filename,
@@ -58,8 +60,22 @@ JNI_METHOD(jlong, nativeCreateSoundFieldFromUrl)(JNIEnv *env,
     std::string file(cStrFile);
     env->ReleaseStringUTFChars(filename, cStrFile);
 
-    std::shared_ptr<VROSound> soundEffect = renderContext->getDriver()->newSound(file, VROSoundType::SoundField);
-    std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(soundEffect);
+    std::shared_ptr<VROSound> sound = renderContext->getDriver()->newSound(file, VROSoundType::SoundField);
+    std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(sound);
+    soundGvr->setDelegate(std::make_shared<SoundDelegate>(object));
+
+    return SoundField::jptr(soundGvr);
+}
+
+JNI_METHOD(jlong, nativeCreateSoundFieldWithData)(JNIEnv *env,
+                                                  jobject object,
+                                                  jlong dataRef,
+                                                  jlong renderContextRef) {
+    std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
+    std::shared_ptr<VROSoundDataGVR> data = SoundData::native(dataRef);
+
+    std::shared_ptr<VROSound> sound = renderContext->getDriver()->newSound(data, VROSoundType::SoundField);
+    std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(sound);
     soundGvr->setDelegate(std::make_shared<SoundDelegate>(object));
 
     return SoundField::jptr(soundGvr);

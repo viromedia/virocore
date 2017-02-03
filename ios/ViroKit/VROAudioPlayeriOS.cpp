@@ -36,8 +36,21 @@ VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROData> data) :
     [_player prepareToPlay];
 }
 
+std::shared_ptr<VROAudioPlayeriOS> VROAudioPlayeriOS::create(std::shared_ptr<VROSoundData> data) {
+    std::shared_ptr<VROAudioPlayeriOS> player = std::make_shared<VROAudioPlayeriOS>(data);
+    player->setup();
+    return player;
+}
+
+VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROSoundData> data) :
+_playVolume(1.0) {
+    _data = data;
+}
+
 VROAudioPlayeriOS::~VROAudioPlayeriOS() {
-    [_player stop];
+    if (_player) {
+        [_player stop];
+    }
 }
 
 void VROAudioPlayeriOS::setLoop(bool loop) {
@@ -45,30 +58,44 @@ void VROAudioPlayeriOS::setLoop(bool loop) {
 }
 
 void VROAudioPlayeriOS::setMuted(bool muted) {
-    if (muted) {
-        _player.volume = 0;
-    }
-    else {
-        _player.volume = _playVolume;
+    _muted = muted;
+    if (_player) {
+        _player.volume = muted ? 0 : _playVolume;
     }
 }
 
 void VROAudioPlayeriOS::seekToTime(float seconds) {
-    _player.currentTime = seconds;
+    if (_player) {
+        _player.currentTime = seconds;
+    }
 }
 
 void VROAudioPlayeriOS::setVolume(float volume) {
     _playVolume = volume;
-    _player.volume = volume;
+    if (_player) {
+        _player.volume = volume;
+    }
 }
 
 void VROAudioPlayeriOS::play() {
-    _player.volume = _playVolume;
-    [_player play];
+    _paused = false;
+    if (_player) {
+        _player.volume = _playVolume;
+        [_player play];
+    }
 }
 
 void VROAudioPlayeriOS::pause() {
-    doFadeThenPause();
+    _paused = true;
+    if (_player) {
+        doFadeThenPause();
+    }
+}
+
+void VROAudioPlayeriOS::setup() {
+    if (_data) {
+        _data->setDelegate(shared_from_this());
+    }
 }
 
 void VROAudioPlayeriOS::doFadeThenPause() {
@@ -83,3 +110,14 @@ void VROAudioPlayeriOS::doFadeThenPause() {
     }
 }
 
+void VROAudioPlayeriOS::dataIsReady() {
+    if (!_player) {
+        _player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL URLWithString:[NSString stringWithUTF8String:_data->getLocalFilePath().c_str()]]
+                                                         error:NULL];
+        [_player prepareToPlay];
+        if (!_paused) {
+            _player.volume = _muted ? 0 : _playVolume;
+            [_player play];
+        }
+    }
+}

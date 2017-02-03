@@ -8,10 +8,12 @@
 #include <memory>
 #include <VROSound.h>
 #include <VROSoundGVR.h>
+#include <VROSoundDataGVR.h>
 #include "PersistentRef.h"
 #include "RenderContext_JNI.h"
 #include "SoundDelegate_JNI.h"
 #include "Node_JNI.h"
+#include "SoundData_JNI.h"
 
 
 #define JNI_METHOD(return_type, method_name) \
@@ -41,7 +43,7 @@ JNI_METHOD(jlong, nativeCreateSpatialSoundFromFile)(JNIEnv *env,
     std::string file(cStrFile);
     env->ReleaseStringUTFChars(filename, cStrFile);
 
-    // TODO: VIRO-749 do something different for local files
+    // TODO: VIRO-756 do something different for local files
     std::shared_ptr<VROSound> soundEffect = renderContext->getDriver()->newSound(file, VROSoundType::Spatial);
     std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(soundEffect);
     soundGvr->setDelegate(std::make_shared<SoundDelegate>(object));
@@ -61,6 +63,21 @@ JNI_METHOD(jlong, nativeCreateSpatialSoundFromUrl)(JNIEnv *env,
     std::shared_ptr<VROSound> soundEffect = renderContext->getDriver()->newSound(file, VROSoundType::Spatial);
     std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(soundEffect);
     soundGvr->setDelegate(std::make_shared<SoundDelegate>(object));
+
+    return SpatialSound::jptr(soundGvr);
+}
+
+JNI_METHOD(jlong, nativeCreateSpatialSoundWithData)(JNIEnv *env,
+                                                    jobject object,
+                                                    jlong dataRef,
+                                                    jlong renderContextRef) {
+    std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
+    std::shared_ptr<VROSoundDataGVR> data = SoundData::native(dataRef);
+
+    std::shared_ptr<VROSound> sound = renderContext->getDriver()->newSound(data, VROSoundType::Spatial);
+    std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(sound);
+    std::shared_ptr<SoundDelegate> delegate = std::make_shared<SoundDelegate>(object);
+    soundGvr->setDelegate(delegate);
 
     return SpatialSound::jptr(soundGvr);
 }
@@ -144,7 +161,7 @@ JNI_METHOD(void, nativeSetDistanceRolloff)(JNIEnv *env,
 }
 
 JNI_METHOD(void, nativeDestroySpatialSound)(JNIEnv *env, jobject obj, jlong nativeRef) {
-    pinfo("kirby", "we're trying to destroy the spatial sound!");
+    SpatialSound::native(nativeRef)->setDelegate(nullptr);
     delete reinterpret_cast<PersistentRef<VROSoundGVR> *>(nativeRef);
 }
 

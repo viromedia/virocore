@@ -15,13 +15,16 @@ import java.util.List;
  */
 public class NodeJni {
     final protected long mNativeRef;
+
+    protected boolean mDestroyed = false;
     private EventDelegateJni mEventDelegate = null;
 
     public NodeJni(Context context) {
         mNativeRef = nativeCreateNode();
     }
 
-    public void destroy(){
+    public void destroy() {
+        mDestroyed = true;
         nativeDestroyNode(mNativeRef);
     }
 

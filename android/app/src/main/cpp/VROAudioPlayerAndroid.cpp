@@ -14,6 +14,18 @@ VROAudioPlayerAndroid::VROAudioPlayerAndroid(std::string fileName) {
     _player->setDataSourceURL(fileName.c_str());
 }
 
+std::shared_ptr<VROAudioPlayerAndroid> VROAudioPlayerAndroid::create(
+        std::shared_ptr<VROSoundData> data) {
+    std::shared_ptr<VROAudioPlayerAndroid> player = std::make_shared<VROAudioPlayerAndroid>(data);
+    player->setup();
+    return player;
+}
+
+VROAudioPlayerAndroid::VROAudioPlayerAndroid(std::shared_ptr<VROSoundData> data) {
+    _player = new VROAVPlayer();
+    _data = data;
+}
+
 VROAudioPlayerAndroid::~VROAudioPlayerAndroid() {
     delete (_player);
 }
@@ -49,6 +61,12 @@ void VROAudioPlayerAndroid::setDelegate(std::shared_ptr<VROSoundDelegateInternal
     _player->setDelegate(avDelegate);
 }
 
+void VROAudioPlayerAndroid::setup() {
+    if (_data) {
+        _data->setDelegate(shared_from_this());
+    }
+}
+
 #pragma mark - VROAVPlayerDelegate
 void VROAudioPlayerAndroid::onPrepared() {
     if (_delegate) {
@@ -59,5 +77,12 @@ void VROAudioPlayerAndroid::onPrepared() {
 void VROAudioPlayerAndroid::onFinished() {
     if (_delegate) {
         _delegate->soundDidFinish();
+    }
+}
+
+#pragma mark - VROSoundDataDelegate
+void VROAudioPlayerAndroid::dataIsReady() {
+    if (_player) {
+        _player->setDataSourceURL(_data->getLocalFilePath().c_str());
     }
 }

@@ -113,7 +113,7 @@ public class PlatformUtil {
     }
 
     // Accessed by Native code (VROPlatformUtil.cpp)
-    public String downloadURLToTempFile(String url) throws IOException {
+    public static String downloadURLToTempFile(String url) throws IOException {
         File file = File.createTempFile("Viro", "tmp");
         downloadURLSynchronous(url, file);
 
@@ -149,7 +149,7 @@ public class PlatformUtil {
         file.delete();
     }
 
-    private void downloadURLSynchronous(String myurl, File file) throws IOException {
+    private static void downloadURLSynchronous(String myurl, File file) throws IOException {
         InputStream in = null;
         FileOutputStream out = null;
 
@@ -179,30 +179,33 @@ public class PlatformUtil {
 
     /*
      * Run the the native function identified by the given task ID
-     * asynchronously. If backround is true, the task will be run in
-     * a background thread. If background is false, it will be run on
-     * the rendering thread.
+     * asynchronously on a background thread
      */
-    public void dispatchAsync(final int taskId, boolean background) {
-        if (background) {
-            AsyncTask.execute(new Runnable() {
-                @Override
-                public void run() {
-                    runTask(taskId);
-                }
-            });
-        }
-        else {
-            mRenderQueue.queueEvent(new Runnable() {
-                @Override
-                public void run() {
-                    runTask(taskId);
-                }
-            });
-        }
+    public static void dispatchAsyncBackground(final int taskId) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                runTask(taskId);
+            }
+        });
     }
 
-    private native void runTask(int taskId);
+    /*
+     * Run the the native function identified by the given task ID
+     * asynchronously on the renderer thread. Non-static, which means
+     * that it requires the renderer to instantiate VROPlatformUtil
+     * before this method can be invoked
+     */
+    public void dispatchAsyncRenderer(final int taskId) {
+        mRenderQueue.queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                runTask(taskId);
+            }
+        });
+    }
+
+    private static native void runTask(int taskId);
 
     /**
      * Copies an {@link InputStream} to an {@link OutputStream}.

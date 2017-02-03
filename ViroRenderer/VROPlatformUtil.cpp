@@ -151,7 +151,10 @@ void VROPlatformSetEnv(JNIEnv *env, jobject assetManager, jobject platformUtil) 
 }
 
 void VROPlatformSetEnv(JNIEnv *env) {
-    env->GetJavaVM(&sVM);
+    // If the VM was already set, then don't reset it.
+    if (!sVM) {
+        env->GetJavaVM(&sVM);
+    }
 }
 
 JNIEnv *VROPlatformGetJNIEnv() {
@@ -206,9 +209,9 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jstring jurl = env->NewStringUTF(url.c_str());
 
-    jclass cls = env->GetObjectClass(sPlatformUtil);
-    jmethodID jmethod = env->GetMethodID(cls, "downloadURLToTempFile", "(Ljava/lang/String;)Ljava/lang/String;");
-    jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jurl);
+    jclass cls = env->FindClass("com/viro/renderer/jni/PlatformUtil");
+    jmethodID jmethod = env->GetStaticMethodID(cls, "downloadURLToTempFile", "(Ljava/lang/String;)Ljava/lang/String;");
+    jstring jpath = (jstring) env->CallStaticObjectMethod(cls, jmethod, jurl);
 
     const char *path = env->GetStringUTFChars(jpath, 0);
     std::string spath(path);
@@ -402,11 +405,13 @@ void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
     getJNIEnv(&env);
 
     jclass cls = env->GetObjectClass(sPlatformUtil);
-    jmethodID jmethod = env->GetMethodID(cls, "dispatchAsync", "(IZ)V");
-    env->CallVoidMethod(sPlatformUtil, jmethod, task, false);
+    jmethodID jmethod = env->GetMethodID(cls, "dispatchAsyncRenderer", "(I)V");
+    env->CallVoidMethod(sPlatformUtil, jmethod, task);
 
     env->DeleteLocalRef(cls);
 }
+
+
 
 void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     int task = VROPlatformGenerateTask(fcn);
@@ -415,9 +420,9 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     JNIEnv *env;
     getJNIEnv(&env);
 
-    jclass cls = env->GetObjectClass(sPlatformUtil);
-    jmethodID jmethod = env->GetMethodID(cls, "dispatchAsync", "(IZ)V");
-    env->CallVoidMethod(sPlatformUtil, jmethod, task, true);
+    jclass cls = env->FindClass("com/viro/renderer/jni/PlatformUtil");
+    jmethodID jmethod = env->GetStaticMethodID(cls, "dispatchAsyncBackground", "(I)V");
+    env->CallStaticVoidMethod(cls, jmethod, task);
 
     env->DeleteLocalRef(cls);
 }

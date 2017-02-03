@@ -13,14 +13,20 @@
 #include "VROAVPlayer.h"
 #include <memory>
 #include <string>
+#include <VROSoundData.h>
 
 class VROAudioPlayerAndroid : public VROAudioPlayer,
                               public VROAVPlayerDelegate,
+                              public VROSoundDataDelegate,
                               public std::enable_shared_from_this<VROAudioPlayerAndroid> {
 
 public:
 
+    // If creating a VROAudioPlayerAndroid w/ data, use the static initializer.
+    static std::shared_ptr<VROAudioPlayerAndroid> create(std::shared_ptr<VROSoundData> data);
+
     VROAudioPlayerAndroid(std::string fileName);
+    VROAudioPlayerAndroid(std::shared_ptr<VROSoundData> data);
     virtual ~VROAudioPlayerAndroid();
 
     void setLoop(bool loop);
@@ -35,9 +41,15 @@ public:
     virtual void onPrepared();
     virtual void onFinished();
 
+    #pragma mark VROSoundDataDelegate Implementation
+    void dataIsReady();
+
 private:
 
+    void setup();
+
     VROAVPlayer *_player;
+    std::shared_ptr<VROSoundData> _data;
 
 };
 

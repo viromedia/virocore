@@ -20,6 +20,12 @@ public class SoundFieldJni implements BaseSoundJni {
         mDelegate = delegate;
     }
 
+    public SoundFieldJni(SoundDataJni data, RenderContextJni renderContext,
+                           SoundDelegate delegate) {
+        mNativeRef = nativeCreateSoundFieldWithData(data.mNativeRef, renderContext.mNativeRef);
+        mDelegate = delegate;
+    }
+
     @Override
     public void destroy() {
         nativeDestroySoundField(mNativeRef);
@@ -96,6 +102,7 @@ public class SoundFieldJni implements BaseSoundJni {
 
     private native long nativeCreateSoundFieldFromFile(String filename, long renderContextRef);
     private native long nativeCreateSoundFieldFromUrl(String url, long renderContextRef);
+    private native long nativeCreateSoundFieldWithData(long dataRef, long renderContextRef);
     private native void nativeDestroySoundField(long mNativeRef);
     private native void nativePlaySoundField(long nativeRef);
     private native void nativePauseSoundField(long nativeRef);

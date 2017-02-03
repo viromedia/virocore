@@ -8,85 +8,75 @@
 
 
 #include "VROSoundGVR.h"
-#include <VROPlatformUtil.h>
+#include "VROSoundDataGVR.h"
 #include "VROLog.h"
-#include "VROStringUtil.h"
 
-std::map<std::string, std::string> VROSoundGVR::_preloadedFiles = {};
+std::shared_ptr<VROSoundGVR> VROSoundGVR::create(std::string path,
+                                                 std::shared_ptr<gvr::AudioApi> gvrAudio,
+                                                 VROSoundType type,
+                                                 bool isLocalFile) {
+    std::shared_ptr<VROSoundGVR> sound = std::make_shared<VROSoundGVR>(path, gvrAudio, type, isLocalFile);
+    sound->setup();
+    return sound;
+}
+
+std::shared_ptr<VROSoundGVR> VROSoundGVR::create(std::shared_ptr<VROSoundData> data,
+                                                 std::shared_ptr<gvr::AudioApi> gvrAudio,
+                                                 VROSoundType type) {
+    std::shared_ptr<VROSoundGVR> sound = std::make_shared<VROSoundGVR>(data, gvrAudio, type);
+    sound->setup();
+    return sound;
+}
+
 
 VROSoundGVR::VROSoundGVR(std::string path,
                                  std::shared_ptr<gvr::AudioApi> gvrAudio,
                                  VROSoundType type,
                                  bool isLocalFile) :
-    _gvrAudio(gvrAudio),
-    _originalPath(path) {
+    _gvrAudio(gvrAudio) {
     _type = type;
-    if (isLocalFile) {
-        _fileName = path;
-        pinfo("Pre-loading GVR sound effect, local file: [%s]", _fileName.c_str());
-        bool result = _gvrAudio->PreloadSoundfile(_fileName);
-        passert (result);
+    std::shared_ptr<VROSoundDataGVR> data = VROSoundDataGVR::create(path, isLocalFile);
+    _data = std::dynamic_pointer_cast<VROSoundData>(data);
+}
 
-        _isReady = true;
-        _delegate->soundIsReady();
-    } else {
-        // Check if we've already downloaded & preloaded the file
-        auto it = _preloadedFiles.find(path);
-        if (it == _preloadedFiles.end()) {
-            loadSound(path, [this, path](std::string filename) {
-                _fileName = filename;
-
-                pinfo("Pre-loading GVR sound effect, temp file: [%s]", _fileName.c_str());
-
-                bool result = _gvrAudio->PreloadSoundfile(_fileName);
-                passert(result);
-
-                _preloadedFiles[path] = filename;
-
-                _isReady = true;
-                if (_delegate != nullptr) {
-                    _delegate->soundIsReady();
-                }
-            });
-        } else {
-            _fileName = it->second;
-            _isReady = true;
-            _delegate->soundIsReady();
-        }
-    }
+VROSoundGVR::VROSoundGVR(std::shared_ptr<VROSoundData> data, std::shared_ptr<gvr::AudioApi> gvrAudio,
+                         VROSoundType type) :
+    _data(data),
+    _gvrAudio(gvrAudio) {
+    _type = type;
 }
 
 VROSoundGVR::~VROSoundGVR() {
-    if (_audioId) {
+    if (_gvrAudio && _gvrAudio->IsSoundPlaying(_audioId)) {
         _gvrAudio->PauseSound(_audioId);
     }
-    auto it = _preloadedFiles.find(_originalPath);
-    if (it != _preloadedFiles.end()) {
-        _preloadedFiles.erase(it);
-    }
-    _gvrAudio->UnloadSoundfile(_fileName);
 
-    // If originalPath is the same as fileName, then we know the file was a local resource, so don't
-    // delete it. If they differ, then delete the local file.
-    // TODO: VIRO-749 don't delete preloaded files either
-    if (!VROStringUtil::strcmpinsensitive(_originalPath.c_str(), _fileName.c_str())) {
-        VROPlatformDeleteFile(_fileName);
+    if (_gvrAudio && _data) {
+        _gvrAudio->UnloadSoundfile(_data->getLocalFilePath());
     }
-    pinfo("Unloaded GVR sound effect [%s]", _fileName.c_str());
+}
+
+void VROSoundGVR::setup() {
+    _data->setDelegate(shared_from_this());
 }
 
 void VROSoundGVR::play() {
+    if (!_ready) {
+        pwarn("VROSoundGVR play() called before it's ready.");
+        return;
+    }
+
     // create the sound if it hasn't been created yet.
     if (_audioId == -1) {
         switch (_type) {
             case VROSoundType::Normal:
-                _audioId = _gvrAudio->CreateStereoSound(_fileName);
+                _audioId = _gvrAudio->CreateStereoSound(_data->getLocalFilePath());
                 break;
             case VROSoundType::Spatial:
-                _audioId = _gvrAudio->CreateSoundObject(_fileName);
+                _audioId = _gvrAudio->CreateSoundObject(_data->getLocalFilePath());
                 break;
             case VROSoundType::SoundField:
-                _audioId = _gvrAudio->CreateSoundfield(_fileName);
+                _audioId = _gvrAudio->CreateSoundfield(_data->getLocalFilePath());
                 break;
         }
     }
@@ -184,6 +174,25 @@ void VROSoundGVR::setDistanceRolloffModel(VROSoundRolloffModel model, float minD
     }
 }
 
+void VROSoundGVR::setDelegate(std::shared_ptr<VROSoundDelegateInternal> delegate) {
+    _delegate = delegate;
+    if (_ready && _delegate) {
+        _delegate->soundIsReady();
+    }
+}
+
+void VROSoundGVR::dataIsReady() {
+    _ready = true;
+    if (_gvrAudio) {
+        bool result = _gvrAudio->PreloadSoundfile(_data->getLocalFilePath());
+        passert(result);
+
+        if (_delegate) {
+            _delegate->soundIsReady();
+        }
+    }
+}
+
 void VROSoundGVR::setProperties() {
     if (_audioId == -1) {
         return;
@@ -200,13 +209,4 @@ void VROSoundGVR::setProperties() {
         _gvrAudio->SetSoundfieldRotation(_audioId,
                                          {_rotation.X, _rotation.Y, _rotation.Z, _rotation.W});
     }
-}
-
-void VROSoundGVR::loadSound(std::string path, std::function<void(std::string)> onFinish) {
-    VROPlatformDispatchAsyncBackground([path, onFinish] {
-        bool isTemp = false;
-        std::string filename = VROPlatformDownloadURLToFile(path, &isTemp);
-        
-        onFinish(filename);
-    });
 }

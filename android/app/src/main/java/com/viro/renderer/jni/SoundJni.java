@@ -27,6 +27,12 @@ public class SoundJni implements BaseSoundJni {
         mDelegate = delegate;
     }
 
+    public SoundJni(SoundDataJni data, RenderContextJni renderContext,
+                    SoundDelegate delegate) {
+        mNativeRef = nativeCreateSoundWithData(data.mNativeRef, renderContext.mNativeRef);
+        mDelegate = delegate;
+    }
+
     @Override
     public void destroy() {
         nativeDestroySound(mNativeRef);
@@ -102,6 +108,7 @@ public class SoundJni implements BaseSoundJni {
     }
 
     private native long nativeCreateSound(String filename, long renderContextRef);
+    private native long nativeCreateSoundWithData(long dataRef, long renderContextRef);
     private native void nativeDestroySound(long mNativeRef);
     private native void nativePlaySound(long nativeRef);
     private native void nativePauseSound(long nativeRef);

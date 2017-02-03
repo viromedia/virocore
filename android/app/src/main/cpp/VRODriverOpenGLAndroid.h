@@ -31,8 +31,16 @@ public:
         return nullptr;
     }
 
+    std::shared_ptr<VROSound> newSound(std::shared_ptr<VROSoundData> data, VROSoundType type) {
+        return VROSoundGVR::create(data, _gvrAudio, type);
+    }
+
     std::shared_ptr<VROSound> newSound(std::string fileName, VROSoundType type) {
-        return std::make_shared<VROSoundGVR>(fileName, _gvrAudio, type, false);
+        return VROSoundGVR::create(fileName, _gvrAudio, type, false);
+    }
+
+    std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::shared_ptr<VROSoundData> data) {
+        return VROAudioPlayerAndroid::create(data);
     }
 
     std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::string fileName) {

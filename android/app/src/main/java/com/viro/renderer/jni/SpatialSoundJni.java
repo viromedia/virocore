@@ -21,8 +21,14 @@ public class SpatialSoundJni implements BaseSoundJni {
         mDelegate = delegate;
     }
 
+    public SpatialSoundJni(SoundDataJni data, RenderContextJni renderContext,
+                    SoundDelegate delegate) {
+        mNativeRef = nativeCreateSpatialSoundWithData(data.mNativeRef, renderContext.mNativeRef);
+        mDelegate = delegate;
+    }
+
     public void destroy() {
-        if (mParentNode != null) {
+        if (mParentNode != null && !mParentNode.mDestroyed) {
             nativeDetachFromNode(mNativeRef, mParentNode.mNativeRef);
             mParentNode = null;
         }
@@ -101,6 +107,7 @@ public class SpatialSoundJni implements BaseSoundJni {
 
     private native long nativeCreateSpatialSoundFromFile(String filename, long renderContextRef);
     private native long nativeCreateSpatialSoundFromUrl(String url, long renderContextRef);
+    private native long nativeCreateSpatialSoundWithData(long nativeRef, long dataRef);
     private native void nativeDestroySpatialSound(long nativeRef);
     private native void nativeAttachToNode(long nativeRef, long nodeRef);
     private native void nativeDetachFromNode(long nativeRef, long nodeRef);

@@ -31,17 +31,26 @@ public:
     VROVideoTextureCache *newVideoTextureCache() {
         return new VROVideoTextureCacheOpenGL(_eaglContext);
     }
-    
+
     std::shared_ptr<VROSound> newSound(std::string path, VROSoundType type) {
         // TODO: VIRO-756 make use of the local flag (assumes it's a webfile)
-        std::shared_ptr<VROSound> sound = std::make_shared<VROSoundGVR>(path, _gvrAudio, type, false);
+        std::shared_ptr<VROSound> sound = VROSoundGVR::create(path, _gvrAudio, type, false);
         return sound;
     }
     
+    std::shared_ptr<VROSound> newSound(std::shared_ptr<VROSoundData> data, VROSoundType type) {
+        std::shared_ptr<VROSound> sound = VROSoundGVR::create(data, _gvrAudio, type);
+        return sound;
+    }
+
+    
     std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::string path) {
         // TODO: VIRO-756 make use of local flag (always assumes it's a web file)
-        
         return std::make_shared<VROAudioPlayeriOS>(path, false);
+    }
+
+    std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::shared_ptr<VROSoundData> data) {
+        return VROAudioPlayeriOS::create(data);
     }
     
     std::shared_ptr<VROTypeface> newTypeface(std::string typefaceName, int size) {

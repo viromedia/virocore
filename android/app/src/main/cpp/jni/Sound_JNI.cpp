@@ -8,9 +8,11 @@
 #include <memory>
 #include <VRORenderContext.h>
 #include <VROSoundGVR.h>
+#include <VROSoundDataGVR.h>
 #include "PersistentRef.h"
 #include "RenderContext_JNI.h"
 #include "SoundDelegate_JNI.h"
+#include "SoundData_JNI.h"
 
 
 #define JNI_METHOD(return_type, method_name) \
@@ -47,6 +49,20 @@ extern "C" {
 
         // TODO: VIRO-756 do something different for local files
         std::shared_ptr<VROAudioPlayer> player = renderContext->getDriver()->newAudioPlayer(file);
+        std::shared_ptr<VROAudioPlayerAndroid> playerAndroid = std::dynamic_pointer_cast<VROAudioPlayerAndroid>(player);
+        playerAndroid->setDelegate(std::make_shared<SoundDelegate>(object));
+
+        return Sound::jptr(playerAndroid);
+    }
+
+    JNI_METHOD(jlong, nativeCreateSoundWithData)(JNIEnv *env,
+                                                 jobject object,
+                                                 jlong dataRef,
+                                                 jlong renderContextRef) {
+        std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
+        std::shared_ptr<VROSoundDataGVR> data = SoundData::native(dataRef);
+
+        std::shared_ptr<VROAudioPlayer> player = renderContext->getDriver()->newAudioPlayer(data);
         std::shared_ptr<VROAudioPlayerAndroid> playerAndroid = std::dynamic_pointer_cast<VROAudioPlayerAndroid>(player);
         playerAndroid->setDelegate(std::make_shared<SoundDelegate>(object));
 
