@@ -1,2 +1,2 @@
 configurations.create("default")
-artifacts.add("default", file('sdk-common-1.10.0.aar'))
+artifacts.add("default", file('sdk-common-1.20.0.aar'))
