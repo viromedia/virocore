@@ -50,7 +50,6 @@ public:
 #pragma mark - Scene Controllers
     
     void setSceneController(std::shared_ptr<VROSceneController> sceneController, VRODriver &driver);
-    void setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated, VRODriver &driver);
     void setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                             VROTimingFunctionType timingFunctionType, VRODriver &driver);
     
@@ -120,17 +119,9 @@ private:
     std::weak_ptr<VRORenderDelegateInternal> _delegate;
 
 #pragma mark - Scene and Scene Transitions
-    
     std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VROSceneController> _outgoingSceneController;
 
-    bool _sceneTransitionActive;
-    float _sceneTransitionDuration;
-    float _sceneTransitionStartTime;
-    std::unique_ptr<VROTimingFunction> _sceneTransitionTimingFunction;
-    
-    bool processSceneTransition();
-    
 #pragma mark - Scene Rendering
     
     void renderEye(VROEyeType eyeType, VRODriver &driver);

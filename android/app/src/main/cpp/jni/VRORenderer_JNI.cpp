@@ -154,6 +154,19 @@ JNI_METHOD(void, nativeSetScene)(JNIEnv *env,
     }
 }
 
+JNI_METHOD(void, nativeSetSceneWithAnimation)(JNIEnv *env,
+                                 jobject obj,
+                                 jlong native_renderer,
+                                 jlong native_scene_controller_ref,
+                                 jfloat duration) {
+    if (!kRunRendererTest) {
+        VROSceneController *scene_controller = reinterpret_cast<VROSceneController *>(native_scene_controller_ref);
+        std::shared_ptr<VROSceneController> shared_controller = std::shared_ptr<VROSceneController>(
+                scene_controller);
+        Renderer::native(native_renderer)->setSceneController(shared_controller, duration, VROTimingFunctionType::EaseOut);
+    }
+}
+
 JNI_METHOD(void, nativeSetPointOfView)(JNIEnv *env,
                                        jobject obj,
                                        jlong native_renderer,

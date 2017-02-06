@@ -64,6 +64,7 @@ public class RendererJni {
     public void setScene(long nativeSceneRef) {
         nativeSetScene(mNativeRef, nativeSceneRef);
     }
+    public void setScene(long nativeSceneRef, float duration) {nativeSetSceneWithAnimation(mNativeRef, nativeSceneRef, duration);};
     public void setPointOfView(NodeJni node) {
         if (node != null) {
             nativeSetPointOfView(mNativeRef, node.mNativeRef);
@@ -93,5 +94,6 @@ public class RendererJni {
     private native void nativeOnSurfaceChanged(Surface surface, long nativeRenderer);
     private native void nativeOnSurfaceDestroyed(long nativeRenderer);
     private native void nativeSetScene(long nativeRenderer, long nativeScene);
+    private native void nativeSetSceneWithAnimation(long nativeRenderer, long nativeScene, float duration);
     private native void nativeSetPointOfView(long nativeRenderer, long nodeRef);
 }

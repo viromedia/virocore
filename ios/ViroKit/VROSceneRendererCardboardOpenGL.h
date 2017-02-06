@@ -29,7 +29,6 @@ public:
     virtual void endFrame();
     
     void setSceneController(std::shared_ptr<VROSceneController> sceneController);
-    void setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated);
     void setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                             VROTimingFunctionType timingFunctionType);
     

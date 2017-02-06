@@ -46,10 +46,6 @@ void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROScen
     _renderer->setSceneController(sceneController, *_driver);
 }
 
-void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated) {
-    _renderer->setSceneController(sceneController, animated, *_driver);
-}
-
 void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                                                          VROTimingFunctionType timingFunctionType) {
     

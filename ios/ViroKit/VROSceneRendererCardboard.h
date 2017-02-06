@@ -45,7 +45,6 @@ public:
      Set the active scene.
      */
     virtual void setSceneController(std::shared_ptr<VROSceneController> sceneController) = 0;
-    virtual void setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated) = 0;
     virtual void setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                                     VROTimingFunctionType timingFunctionType) = 0;
     

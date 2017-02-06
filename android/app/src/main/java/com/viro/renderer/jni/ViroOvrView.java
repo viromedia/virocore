@@ -96,7 +96,7 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
 
     @Override
     public void setScene(SceneJni scene) {
-        mNativeRenderer.setScene(scene.mNativeRef);
+        mNativeRenderer.setScene(scene.mNativeRef, 1.0f);
     }
 
     @Override

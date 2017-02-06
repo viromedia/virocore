@@ -144,7 +144,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
 
     @Override
     public void setScene(SceneJni scene) {
-        mNativeRenderer.setScene(scene.mNativeRef);
+        mNativeRenderer.setScene(scene.mNativeRef, 1.0f);
     }
 
     @Override

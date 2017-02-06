@@ -22,16 +22,13 @@
 #include "VRORenderContext.h"
 #include "VROCamera.h"
 
-static const float kDefaultSceneTransitionDuration = 1.0;
-
 #pragma mark - Initialization
 
 VRORenderer::VRORenderer(std::shared_ptr<VROInputControllerBase> inputController) :
     _rendererInitialized(false),
     _frameSynchronizer(std::make_shared<VROFrameSynchronizerInternal>()),
     _context(std::make_shared<VRORenderContext>(_frameSynchronizer)),
-    _inputController(inputController),
-    _sceneTransitionActive(false){
+    _inputController(inputController){
     initBlankTexture(*_context);
     _inputController->setContext(_context);
 }
@@ -75,8 +72,6 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
 
     VROTransaction::beginImplicitAnimation();
     VROTransaction::update();
-
-    _sceneTransitionActive = processSceneTransition();
 
     _context->setFrame(frame);
     notifyFrameStart();
@@ -183,13 +178,9 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
 }
 
 void VRORenderer::endFrame(VRODriver &driver) {
-    if (!_sceneTransitionActive && _outgoingSceneController) {
-        _sceneController->endIncomingTransition(_context.get());
-        _outgoingSceneController->endOutgoingTransition(_context.get());
-
+    if (_outgoingSceneController && !_outgoingSceneController->hasActiveTransitionAnimation()) {
         _sceneController->onSceneDidAppear(_context.get(), driver);
         _outgoingSceneController->onSceneDidDisappear(_context.get(), driver);
-
         _outgoingSceneController = nullptr;
     }
 
@@ -235,53 +226,23 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneCo
     }
 }
 
-void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated, VRODriver &driver) {
-    if (!animated || !_sceneController) {
-        _sceneController = sceneController;
-        return;
-    }
-
-    setSceneController(sceneController, kDefaultSceneTransitionDuration, VROTimingFunctionType::EaseIn, driver);
-}
-
 void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                                      VROTimingFunctionType timingFunctionType, VRODriver &driver) {
-    passert (_sceneController != nullptr);
+    passert (sceneController != nullptr);
 
     _outgoingSceneController = _sceneController;
     _sceneController = sceneController;
     _inputController->attachScene(_sceneController->getScene());
 
-    _sceneTransitionStartTime = VROTimeCurrentSeconds();
-    _sceneTransitionDuration = seconds;
-    _sceneTransitionTimingFunction = VROTimingFunction::forType(timingFunctionType);
-
     _sceneController->onSceneWillAppear(_context.get(), driver);
-    _outgoingSceneController->onSceneWillDisappear(_context.get(), driver);
-
-    _sceneController->startIncomingTransition(_context.get(), seconds);
-    _outgoingSceneController->startOutgoingTransition(_context.get(), seconds);
-}
-
-bool VRORenderer::processSceneTransition() {
-    if (!_sceneController || !_outgoingSceneController) {
-        return false;
+    if (_outgoingSceneController) {
+        _outgoingSceneController->onSceneWillDisappear(_context.get(), driver);
     }
 
-    float percent = (VROTimeCurrentSeconds() - _sceneTransitionStartTime) / _sceneTransitionDuration;
-    float t = _sceneTransitionTimingFunction->getT(percent);
-
-    bool sceneTransitionActive = percent < 0.9999;
-    if (sceneTransitionActive) {
-        _sceneController->animateIncomingTransition(_context.get(), t);
-        _outgoingSceneController->animateOutgoingTransition(_context.get(), t);
+    _sceneController->startIncomingTransition(seconds, timingFunctionType);
+    if (_outgoingSceneController) {
+        _outgoingSceneController->startOutgoingTransition(seconds, timingFunctionType);
     }
-    else {
-        _sceneController->animateIncomingTransition(_context.get(), 1.0);
-        _outgoingSceneController->animateOutgoingTransition(_context.get(), 1.0);
-    }
-
-    return sceneTransitionActive;
 }
 
 #pragma mark - Frame Listeners

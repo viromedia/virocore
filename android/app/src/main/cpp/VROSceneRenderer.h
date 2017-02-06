@@ -74,14 +74,15 @@ public:
     }
 
     /*
-     Set the active scene controller, which dictates what scene is rendered.
+     Set the active scene controller immediately, which dictates what scene is rendered.
      */
     void setSceneController(std::shared_ptr<VROSceneController> sceneController) {
         _renderer->setSceneController(sceneController, *_driver.get());
     }
-    void setSceneController(std::shared_ptr<VROSceneController> sceneController, bool animated) {
-        _renderer->setSceneController(sceneController, animated, *_driver.get());
-    }
+
+    /*
+     Set the active scene controller with an animation.
+     */
     void setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                             VROTimingFunctionType timingFunction) {
         _renderer->setSceneController(sceneController, seconds, timingFunction, *_driver.get());

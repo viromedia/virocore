@@ -156,12 +156,6 @@
 }
 
 - (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController
-                  animated:(BOOL)animated {
-    _sceneController = sceneController;
-    self.sceneRenderer->setSceneController(sceneController, animated);
-}
-
-- (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController
                   duration:(float)seconds
             timingFunction:(VROTimingFunctionType)timingFunctionType {
     _sceneController = sceneController;
