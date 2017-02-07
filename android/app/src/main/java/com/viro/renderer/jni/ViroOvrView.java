@@ -23,7 +23,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ViroOvrView extends SurfaceView implements VrView, Application.ActivityLifecycleCallbacks, SurfaceHolder.Callback {
+public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Callback {
 
     static {
         System.loadLibrary("vrapi");
@@ -59,10 +59,10 @@ public class ViroOvrView extends SurfaceView implements VrView, Application.Acti
     private AssetManager mAssetManager;
     private OVRRenderCommandQueue mRenderQueue = new OVRRenderCommandQueue();
     private List<FrameListener> mFrameListeners = new CopyOnWriteArrayList<FrameListener>();
-
+    private GlListener mGlListener = null;
     private PlatformUtil mPlatformUtil;
 
-    public ViroOvrView(Activity activity) {
+    public ViroOvrView(Activity activity, GlListener glListener) {
         super(activity);
         getHolder().addCallback(this);
 
@@ -79,6 +79,8 @@ public class ViroOvrView extends SurfaceView implements VrView, Application.Acti
                 this, activity, mAssetManager, mPlatformUtil);
 
         mNativeRenderContext = new RenderContextJni(mNativeRenderer.mNativeRef);
+
+        mGlListener = glListener;
 
         // Prevent screen from dimming/locking.
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -187,6 +189,9 @@ public class ViroOvrView extends SurfaceView implements VrView, Application.Acti
                 mNativeRenderer.initalizeGl();
             }
         });
+        if (mGlListener != null) {
+            mGlListener.onGlInitialized();
+        }
     }
 
     @Override

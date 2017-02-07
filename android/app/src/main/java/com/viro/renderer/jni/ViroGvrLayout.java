@@ -33,7 +33,7 @@ import javax.microedition.khronos.opengles.GL10;
  * Create this view during or post onCreate within
  * the activity lifecycle.
  */
-public class ViroGvrLayout extends GvrLayout implements VrView, Application.ActivityLifecycleCallbacks {
+public class ViroGvrLayout extends GvrLayout implements VrView {
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("gvr");
@@ -136,9 +136,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView, Application.Acti
         Application app = (Application)activityContext.getApplicationContext();
         app.registerActivityLifecycleCallbacks(this);
     }
-    public interface GlListener {
-        void onGlInitialized();
-    }
+
     @Override
     public RenderContextJni getRenderContextRef(){
         return mNativeRenderContext;

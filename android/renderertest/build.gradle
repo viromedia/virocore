@@ -20,6 +20,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+        gvr {
+            resValue "string", "app_name", "RendererTest-gvr"
+            applicationIdSuffix ".gvr"
+            buildConfigField "String", "VR_PLATFORM", "\"GVR\""
+        }
+        ovr {
+            resValue "string", "app_name", "RendererTest-ovr"
+            applicationIdSuffix ".ovr"
+            buildConfigField "String", "VR_PLATFORM", "\"OVR\""
+        }
+    }
+    sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
 }
 
 dependencies {

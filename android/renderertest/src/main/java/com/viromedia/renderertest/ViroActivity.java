@@ -6,21 +6,21 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  */
-package com.viro.renderer;
+package com.viromedia.renderertest;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.viro.renderer.*;
 import com.viro.renderer.jni.AmbientLightJni;
 import com.viro.renderer.jni.BoxJni;
 import com.viro.renderer.jni.DirectionalLightJni;
 import com.viro.renderer.jni.ControllerJni;
 import com.viro.renderer.jni.EventDelegateJni;
+import com.viro.renderer.jni.GlListener;
 import com.viro.renderer.jni.ImageJni;
 import com.viro.renderer.jni.MaterialJni;
 import com.viro.renderer.jni.NodeJni;
@@ -48,7 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ViroActivity extends AppCompatActivity implements ViroGvrLayout.GlListener {
+public class ViroActivity extends AppCompatActivity implements GlListener {
     private static int SOUND_COUNT = 0;
     private VrView mVrView;
     private final Map<String, SoundJni> mSoundMap = new HashMap<>();
@@ -59,7 +59,13 @@ public class ViroActivity extends AppCompatActivity implements ViroGvrLayout.GlL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mVrView = new ViroGvrLayout(this, this);
+
+        if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
+            mVrView = new ViroGvrLayout(this, this);
+        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
+            mVrView = new ViroOvrView(this, this);
+        }
+
         mVrView.setVrModeEnabled(true);
         setContentView(mVrView.getContentView());
     }

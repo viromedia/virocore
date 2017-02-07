@@ -4,9 +4,10 @@
 package com.viro.renderer.jni;
 
 
+import android.app.Application;
 import android.view.View;
 
-public interface VrView {
+public interface VrView extends Application.ActivityLifecycleCallbacks {
 
     public RenderContextJni getRenderContextRef();
 
