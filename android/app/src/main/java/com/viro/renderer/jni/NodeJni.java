@@ -78,6 +78,10 @@ public class NodeJni {
         nativeSetVisible(mNativeRef, visible);
     }
 
+    public void setHighAccuracyGaze(boolean visible){
+        nativeSetHighAccuracyGaze(mNativeRef, visible);
+    }
+
     public void setHierarchicalRendering(boolean hierarchicalRendering) {
         nativeSetHierarchicalRendering(mNativeRef, hierarchicalRendering);
     }
@@ -119,6 +123,7 @@ public class NodeJni {
     private native void nativeSetScale(long nodeReference, float x, float y, float z);
     private native void nativeSetOpacity(long nodeReference, float opacity);
     private native void nativeSetVisible(long nodeReference, boolean visible);
+    private native void nativeSetHighAccuracyGaze(long nodeReference, boolean enabled);
     private native void nativeSetMaterials(long nodeReference, long[] materials);
     private native void nativeSetTransformBehaviors(long nodeReference, String[] transformBehaviors);
     private native void nativeSetEventDelegate(long nodeReference, long eventDelegateRef);

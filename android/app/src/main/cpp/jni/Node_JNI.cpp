@@ -85,7 +85,14 @@ JNI_METHOD(void, nativeSetOpacity)(JNIEnv *env,
     Node::native(native_node_ref)->setOpacity(opacity);
 }
 
-JNI_METHOD(void, nativeSetVisible)(JNIEnv *env,
+JNI_METHOD(void, nativeSetHighAccuracyGaze)(JNIEnv *env,
+                                   jobject obj,
+                                   jlong native_node_ref,
+                                   jboolean enabled) {
+    Node::native(native_node_ref)->setHighAccuracyGaze(enabled);
+}
+
+JNI_METHOD(void, nativeSetHighAccurac)(JNIEnv *env,
                                    jobject obj,
                                    jlong native_node_ref,
                                    jboolean visible) {
