@@ -28,6 +28,9 @@
 		8ABD8F411DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F3F1DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h */; };
 		8ABD8F421DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD8F401DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m */; };
 		8ABD8F541DB957C900BD9C83 /* VROCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F531DB957C900BD9C83 /* VROCredentials.h */; };
+		8BDD9E281E49575100A42870 /* VROAnimateMaterialDelegateInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDD9E271E49575100A42870 /* VROAnimateMaterialDelegateInternal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8BDD9E2B1E4AA75C00A42870 /* VROAnimateMaterialDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDD9E2A1E4A87CC00A42870 /* VROAnimateMaterialDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8BDD9E2C1E4AA75C00A42870 /* VROAnimateMaterialDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDD9E291E4A86D400A42870 /* VROAnimateMaterialDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */; };
 		8F03BCE11CECC92300D071F8 /* blinn_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD61CECC30E00D071F8 /* blinn_functions_fsh.glsl */; };
 		8F03BCE21CECC92300D071F8 /* blinn_c_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD41CECC30E00D071F8 /* blinn_c_fsh.glsl */; };
@@ -427,6 +430,9 @@
 		8ABD8F3F1DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROApiMetricsIncrementRequest.h; sourceTree = "<group>"; };
 		8ABD8F401DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VROApiMetricsIncrementRequest.m; sourceTree = "<group>"; };
 		8ABD8F531DB957C900BD9C83 /* VROCredentials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCredentials.h; sourceTree = "<group>"; };
+		8BDD9E271E49575100A42870 /* VROAnimateMaterialDelegateInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimateMaterialDelegateInternal.h; sourceTree = "<group>"; };
+		8BDD9E291E4A86D400A42870 /* VROAnimateMaterialDelegateiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROAnimateMaterialDelegateiOS.h; sourceTree = "<group>"; };
+		8BDD9E2A1E4A87CC00A42870 /* VROAnimateMaterialDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROAnimateMaterialDelegate.h; sourceTree = "<group>"; };
 		8F03BCD41CECC30E00D071F8 /* blinn_c_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_c_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCD51CECC30E00D071F8 /* blinn_c_reflect_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_c_reflect_fsh.glsl; sourceTree = "<group>"; };
 		8F03BCD61CECC30E00D071F8 /* blinn_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_functions_fsh.glsl; sourceTree = "<group>"; };
@@ -1179,6 +1185,8 @@
 		8F53D3A61DCBA041001C91A8 /* iOS Impl */ = {
 			isa = PBXGroup;
 			children = (
+				8BDD9E2A1E4A87CC00A42870 /* VROAnimateMaterialDelegate.h */,
+				8BDD9E291E4A86D400A42870 /* VROAnimateMaterialDelegateiOS.h */,
 				A566EB3C1E1B47B7008B4AE2 /* VROEventDelegateiOS.h */,
 				A566EB381E1B38A3008B4AE2 /* VROSceneDelegateiOS.h */,
 				8FCB10261DD544FF00FE425C /* VROVideoDelegate.h */,
@@ -1293,6 +1301,7 @@
 		8FB2B58D1E1442A700EDB629 /* Execution API */ = {
 			isa = PBXGroup;
 			children = (
+				8BDD9E271E49575100A42870 /* VROAnimateMaterialDelegateInternal.h */,
 				8FB2B58F1E1442EC00EDB629 /* VROPropertyAnimation.h */,
 				8FB2B58E1E1442EC00EDB629 /* VROPropertyAnimation.cpp */,
 				8FB2B5931E1445BB00EDB629 /* VROAnimationGroup.h */,
@@ -1497,6 +1506,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8BDD9E281E49575100A42870 /* VROAnimateMaterialDelegateInternal.h in Headers */,
+				8BDD9E2B1E4AA75C00A42870 /* VROAnimateMaterialDelegate.h in Headers */,
+				8BDD9E2C1E4AA75C00A42870 /* VROAnimateMaterialDelegateiOS.h in Headers */,
 				A58697891E30887500191090 /* VROInputType.h in Headers */,
 				A586978C1E308BD300191090 /* VROInputPresenter.h in Headers */,
 				A566EB3D1E1B47B7008B4AE2 /* VROEventDelegateiOS.h in Headers */,

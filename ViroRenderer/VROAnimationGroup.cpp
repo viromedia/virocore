@@ -58,7 +58,8 @@ void VROAnimationGroup::execute(std::shared_ptr<VRONode> node,
     VROTransaction::setAnimationDelay(_delay);
     VROTransaction::setAnimationDuration(_duration);
     VROTransaction::setTimingFunction(_timingFunctionType);
-    
+  
+    animateMaterial(node);
     animatePosition(node);
     animateColor(node);
     animateOpacity(node);
@@ -90,6 +91,17 @@ void VROAnimationGroup::terminate() {
         VROTransaction::terminate(_transaction);
         _transaction.reset();
     }
+}
+
+void VROAnimationGroup::animateMaterial(std::shared_ptr<VRONode> &node) {
+  auto material_it =  _animations.find("material");
+  
+  if (material_it != _animations.end()) {
+    if(getDelegate()) {
+      std::shared_ptr<VROPropertyAnimation> &value = material_it->second;
+      getDelegate()->onAnimateMaterial(node, value->getValue().valueString);
+    }
+  }
 }
 
 void VROAnimationGroup::animatePosition(std::shared_ptr<VRONode> &node) {
@@ -254,6 +266,20 @@ void VROAnimationGroup::animateRotation(std::shared_ptr<VRONode> &node) {
         node->setRotationEulerZ(rotateZ);
     }
 }
+
+
+void VROAnimationGroup::setDelegate(std::shared_ptr<VROAnimateMaterialDelegateInternal> delegate) {
+    auto autoWeakDelegate = delegate;
+    _delegate = autoWeakDelegate;
+}
+
+std::shared_ptr<VROAnimateMaterialDelegateInternal> VROAnimationGroup::getDelegate() {
+  if (_delegate.expired()) {
+    return nullptr;
+  }
+  return _delegate.lock();
+}
+
 
 std::string VROAnimationGroup::toString() const {
     std::stringstream ss;
