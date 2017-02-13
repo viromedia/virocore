@@ -31,33 +31,83 @@ JNI_METHOD(void, nativeEnableEvent)(JNIEnv *env,
                                         jlong native_node_ref,
                                         jint eventTypeId,
                                         jboolean enabled) {
-    VROEventDelegate::EventAction eventType
-            = static_cast<VROEventDelegate::EventAction>(eventTypeId);
-    EventDelegate::native(native_node_ref)->setEnabledEvent(eventType, enabled);
+    VROPlatformDispatchAsyncRenderer([native_node_ref, eventTypeId, enabled] {
+        VROEventDelegate::EventAction eventType
+                = static_cast<VROEventDelegate::EventAction>(eventTypeId);
+        EventDelegate::native(native_node_ref)->setEnabledEvent(eventType, enabled);
+    });
 }
 
 }  // extern "C"
 void EventDelegate_JNI::onHover(int source, bool isHovering) {
-    VROPlatformCallJavaFunction(_javaObject,
-                                "onHover", "(IZ)V", source, isHovering);
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj, source, isHovering]{
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj,
+                                    "onHover", "(IZ)V", source, isHovering);
+        env->DeleteLocalRef(localObj);
+    });
 }
 
 void EventDelegate_JNI::onClick(int source, ClickState clickState) {
-    VROPlatformCallJavaFunction(_javaObject,
-                                "onClick", "(II)V", source, clickState);
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj, source, clickState] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj,
+                                    "onClick", "(II)V", source, clickState);
+        env->DeleteLocalRef(localObj);
+    });
 }
 
 void EventDelegate_JNI::onTouch(int source, TouchState touchState, float x, float y){
-    VROPlatformCallJavaFunction(_javaObject,
-                                "onTouch", "(IIFF)V", source, touchState, x, y);
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj, source, touchState, x, y] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj,
+                                    "onTouch", "(IIFF)V", source, touchState, x, y);
+        env->DeleteLocalRef(localObj);
+    });
 }
 
 void EventDelegate_JNI::onMove(int source, VROVector3f rotation, VROVector3f position) {
     //No-op
 }
 void EventDelegate_JNI::onControllerStatus(int source, ControllerStatus status) {
-    VROPlatformCallJavaFunction(_javaObject,
-                                "onControllerStatus", "(II)V", source, status);
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj, source, status] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj,
+                                    "onControllerStatus", "(II)V", source, status);
+        env->DeleteLocalRef(localObj);
+    });
 }
 
 void EventDelegate_JNI::onGazeHit(int source, float distance, VROVector3f hitLocation) {
@@ -65,11 +115,35 @@ void EventDelegate_JNI::onGazeHit(int source, float distance, VROVector3f hitLoc
 }
 
 void EventDelegate_JNI::onSwipe(int source, SwipeState swipeState) {
-    VROPlatformCallJavaFunction(_javaObject,
-                                "onSwipe", "(II)V", source, swipeState);
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj, source, swipeState] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj,
+                                    "onSwipe", "(II)V", source, swipeState);
+        env->DeleteLocalRef(localObj);
+    });
 }
 
 void EventDelegate_JNI::onScroll(int source, float x, float y) {
-    VROPlatformCallJavaFunction(_javaObject,
-                                "onScroll", "(IFF)V", source, x, y);
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj, source, x, y] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj,
+                                    "onScroll", "(IFF)V", source, x, y);
+        env->DeleteLocalRef(localObj);
+    });
 }

@@ -100,7 +100,9 @@ JNI_METHOD (void, nativeOnKeyEvent)(JNIEnv * env,
                                     jlong native_renderer,
                                     int keyCode,
                                     int action ){
-    Renderer::native(native_renderer)->onKeyEvent(keyCode, action);
+    VROPlatformDispatchAsyncRenderer([native_renderer, keyCode, action] {
+        Renderer::native(native_renderer)->onKeyEvent(keyCode, action);
+    });
 }
 
 JNI_METHOD(void, nativeOnTouchEvent)(JNIEnv *env,
@@ -109,49 +111,56 @@ JNI_METHOD(void, nativeOnTouchEvent)(JNIEnv *env,
                                        jint onTouchAction,
                                            float xPos,
                                            float yPos) {
-    Renderer::native(native_renderer)->onTouchEvent(onTouchAction, xPos, yPos);
+    VROPlatformDispatchAsyncRenderer([native_renderer, onTouchAction, xPos, yPos] {
+        Renderer::native(native_renderer)->onTouchEvent(onTouchAction, xPos, yPos);
+    });
 }
 
 JNI_METHOD(void, nativeSetVRModeEnabled)(JNIEnv *env,
                                          jobject obj,
                                          jlong nativeRenderer, jboolean enabled) {
-    Renderer::native(nativeRenderer)->setVRModeEnabled(enabled);
+    VROPlatformDispatchAsyncRenderer([nativeRenderer, enabled] {
+        Renderer::native(nativeRenderer)->setVRModeEnabled(enabled);
+    });
 }
 
 JNI_METHOD(void, nativeOnStart)(JNIEnv *env,
                                 jobject obj,
                                 jlong native_renderer) {
-    Renderer::native(native_renderer)->onStart();
+        Renderer::native(native_renderer)->onStart();
 }
 
 JNI_METHOD(void, nativeOnPause)(JNIEnv *env,
                                 jobject obj,
                                 jlong native_renderer) {
-    Renderer::native(native_renderer)->onPause();
+        Renderer::native(native_renderer)->onPause();
 }
 
 JNI_METHOD(void, nativeOnResume)(JNIEnv *env,
                                  jobject obj,
                                  jlong native_renderer) {
-    Renderer::native(native_renderer)->onResume();
+        Renderer::native(native_renderer)->onResume();
 }
 
 JNI_METHOD(void, nativeOnStop)(JNIEnv *env,
                                 jobject obj,
                                 jlong native_renderer) {
-    Renderer::native(native_renderer)->onStop();
+        Renderer::native(native_renderer)->onStop();
 }
 
 JNI_METHOD(void, nativeSetScene)(JNIEnv *env,
                                  jobject obj,
                                  jlong native_renderer,
                                  jlong native_scene_controller_ref) {
-    if (!kRunRendererTest) {
-        VROSceneController *scene_controller = reinterpret_cast<VROSceneController *>(native_scene_controller_ref);
-        std::shared_ptr<VROSceneController> shared_controller = std::shared_ptr<VROSceneController>(
-                scene_controller);
-        Renderer::native(native_renderer)->setSceneController(shared_controller);
+    if (kRunRendererTest) {
+        return;
     }
+
+    VROPlatformDispatchAsyncRenderer([native_renderer, native_scene_controller_ref] {
+        VROSceneController *scene_controller = reinterpret_cast<VROSceneController *>(native_scene_controller_ref);
+        std::shared_ptr<VROSceneController> shared_controller = std::shared_ptr<VROSceneController>(scene_controller);
+        Renderer::native(native_renderer)->setSceneController(shared_controller);
+    });
 }
 
 JNI_METHOD(void, nativeSetSceneWithAnimation)(JNIEnv *env,
@@ -159,45 +168,53 @@ JNI_METHOD(void, nativeSetSceneWithAnimation)(JNIEnv *env,
                                  jlong native_renderer,
                                  jlong native_scene_controller_ref,
                                  jfloat duration) {
-    if (!kRunRendererTest) {
+    if (kRunRendererTest) {
+        return;
+    }
+
+    VROPlatformDispatchAsyncRenderer([native_renderer, native_scene_controller_ref, duration] {
         VROSceneController *scene_controller = reinterpret_cast<VROSceneController *>(native_scene_controller_ref);
         std::shared_ptr<VROSceneController> shared_controller = std::shared_ptr<VROSceneController>(
                 scene_controller);
-        Renderer::native(native_renderer)->setSceneController(shared_controller, duration, VROTimingFunctionType::EaseOut);
-    }
+        Renderer::native(native_renderer)->setSceneController(shared_controller, duration,
+                                                              VROTimingFunctionType::EaseOut);
+    });
 }
 
 JNI_METHOD(void, nativeSetPointOfView)(JNIEnv *env,
                                        jobject obj,
                                        jlong native_renderer,
                                        jlong native_node_ref) {
-    if (native_node_ref == 0) {
-        Renderer::native(native_renderer)->getRenderer()->setPointOfView(nullptr);
-    }
-    else {
-        std::shared_ptr<VRONode> node = Node::native(native_node_ref);
-        Renderer::native(native_renderer)->getRenderer()->setPointOfView(node);
-    }
+    VROPlatformDispatchAsyncRenderer([native_renderer, native_node_ref] {
+        std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
+        if (native_node_ref == 0) {
+            renderer->getRenderer()->setPointOfView(nullptr);
+        }
+        else {
+            std::shared_ptr<VRONode> node = Node::native(native_node_ref);
+            renderer->getRenderer()->setPointOfView(node);
+        }
+    });
 }
 
 JNI_METHOD(void, nativeOnSurfaceCreated)(JNIEnv *env,
-                                jobject obj,
-                                jobject surface,
-                                jlong native_renderer) {
+                                         jobject obj,
+                                         jobject surface,
+                                         jlong native_renderer) {
     Renderer::native(native_renderer)->onSurfaceCreated(surface);
 }
 
 JNI_METHOD(void, nativeOnSurfaceChanged)(JNIEnv *env,
-                                jobject obj,
-                                jobject surface,
-                                jlong native_renderer) {
+                                         jobject obj,
+                                         jobject surface,
+                                         jlong native_renderer) {
     Renderer::native(native_renderer)->onSurfaceChanged(surface);
 }
 
 JNI_METHOD(void, nativeOnSurfaceDestroyed)(JNIEnv *env,
                                 jobject obj,
                                 jlong native_renderer) {
-    Renderer::native(native_renderer)->onSurfaceDestroyed();
+        Renderer::native(native_renderer)->onSurfaceDestroyed();
 }
 
 JNI_METHOD(jstring, nativeGetHeadset)(JNIEnv *env, jobject obj, jlong nativeRenderer) {

@@ -24,23 +24,32 @@ VideoDelegate::~VideoDelegate() {
 
 void VideoDelegate::videoDidFinish() {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    env->ExceptionClear();
-    jclass viroClass = env->FindClass("com/viro/renderer/jni/VideoTextureJni");
-    if (viroClass == nullptr) {
-        perr("Unable to find VideoTextureJni class for playerDidFinishPlaying() callback.");
-        return;
-    }
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    jmethodID method = env->GetMethodID(viroClass, "playerDidFinishPlaying", "()V");
-    if (method == nullptr) {
-        perr("Unable to find method playerDidFinishPlaying() callback.");
-        return;
-    }
+    VROPlatformDispatchAsyncApplication([weakObj] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
 
-    env->CallVoidMethod(_javaObject, method);
-    if (env->ExceptionOccurred()) {
-        perr("Exception occured when calling nativeOnVideoFinished.");
-        env->ExceptionClear();
-    }
-    env->DeleteLocalRef(viroClass);
+        VROPlatformCallJavaFunction(localObj, "playerDidFinishPlaying", "()V");
+        env->DeleteLocalRef(localObj);
+    });
+}
+
+void VideoDelegate::onReady(jlong ref) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj, ref] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(weakObj, "onReady", "(J)V", ref);
+        env->DeleteLocalRef(localObj);
+    });
 }

@@ -77,6 +77,11 @@ void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn);
  */
 void VROPlatformDispatchAsyncBackground(std::function<void()> fcn);
 
+/*
+ Run the given function on the application UI thread, asynchronously.
+ */
+void VROPlatformDispatchAsyncApplication(std::function<void()> fcn);
+
 #if VRO_PLATFORM_IOS
 #import <UIKit/UIKit.h>
 

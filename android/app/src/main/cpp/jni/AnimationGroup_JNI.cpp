@@ -102,19 +102,27 @@ JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeR
 }
 
 JNI_METHOD(void, nativePauseAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
-    AnimationGroup::native(nativeRef)->pause();
+    VROPlatformDispatchAsyncRenderer([nativeRef] {
+        AnimationGroup::native(nativeRef)->pause();
+    });
 }
 
 JNI_METHOD(void, nativeResumeAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
-    AnimationGroup::native(nativeRef)->resume();
+    VROPlatformDispatchAsyncRenderer([nativeRef] {
+        AnimationGroup::native(nativeRef)->resume();
+    });
 }
 
 JNI_METHOD(void, nativeTerminateAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
-    AnimationGroup::native(nativeRef)->terminate();
+    VROPlatformDispatchAsyncRenderer([nativeRef] {
+        AnimationGroup::native(nativeRef)->terminate();
+    });
 }
 
 JNI_METHOD(void, nativeDestroyAnimationGroup)(JNIEnv *env, jobject obj, jlong nativeRef) {
-    delete reinterpret_cast<PersistentRef<VROAnimationGroup> *>(nativeRef);
+    VROPlatformDispatchAsyncRenderer([nativeRef] {
+        delete reinterpret_cast<PersistentRef<VROAnimationGroup> *>(nativeRef);
+    });
 }
 
 } // extern "C"

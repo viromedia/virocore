@@ -11,6 +11,8 @@ import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -78,7 +80,13 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
                 mNativeRenderer.onSurfaceCreated(glSurfaceView.getHolder().getSurface());
                 mNativeRenderer.initalizeGl();
                 if (mGlListener != null) {
-                    mGlListener.onGlInitialized();
+                    Runnable myRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            mGlListener.onGlInitialized();
+                        }
+                    };
+                    new Handler(Looper.getMainLooper()).post(myRunnable);
                 }
             }
 

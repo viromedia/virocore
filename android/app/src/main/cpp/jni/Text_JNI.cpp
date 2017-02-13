@@ -165,7 +165,9 @@ JNI_METHOD(void, nativeCreateText)(JNIEnv *env,
 JNI_METHOD(void, nativeDestroyText)(JNIEnv *env,
                                    jclass clazz,
                                    jlong native_text_ref) {
-    delete reinterpret_cast<PersistentRef<VROText> *>(native_text_ref);
+    VROPlatformDispatchAsyncRenderer([native_text_ref] {
+        delete reinterpret_cast<PersistentRef<VROText> *>(native_text_ref);
+    });
 }
 
 } // extern "C"

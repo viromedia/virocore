@@ -11,15 +11,21 @@ package com.viro.renderer.jni;
  * Cpp Object           : VROVideoTextureAVP.cpp
  */
 public class VideoTextureJni {
-    protected long mNativeRef;
+    private static long INVALID_REF = Long.MAX_VALUE;
+    protected long mNativeRef = INVALID_REF;
+
     public VideoTextureJni() {
-        mNativeRef = nativeCreateVideoTexture();
+        nativeCreateVideoTexture();
     }
     public void delete() {
         nativeDeleteVideoTexture(mNativeRef);
+        mNativeRef = INVALID_REF;
     }
     public void loadSource(String url, RenderContextJni renderContext){
         nativeLoadSource(mNativeRef, url, renderContext.mNativeRef);
+    }
+    public boolean isReady(){
+        return mNativeRef != INVALID_REF;
     }
 
     public void pause () {
@@ -27,9 +33,6 @@ public class VideoTextureJni {
     }
     public void play (){
         nativePlay(mNativeRef);
-    }
-    public boolean isPaused() {
-        return nativeIsPaused(mNativeRef);
     }
     public void setMuted(boolean muted){
         nativeSetMuted(mNativeRef, muted);
@@ -47,11 +50,10 @@ public class VideoTextureJni {
     /**
      * Native Functions called into JNI
      */
-    public native long nativeCreateVideoTexture();
+    public native void nativeCreateVideoTexture();
     public native void nativeDeleteVideoTexture(long nativeTexture);
     private native void nativePause(long nativeRennativeTexturederer);
     private native void nativePlay(long nativeTexture);
-    private native boolean nativeIsPaused(long nativeTexture);
     private native void nativeSetMuted(long nativeTexture, boolean muted);
     private native void nativeSetVolume(long nativeTexture, float volume);
     private native void nativeSetLoop(long nativeTexture, boolean loop);
@@ -64,15 +66,26 @@ public class VideoTextureJni {
     private VideoDelegate mDelegate = null;
     public interface VideoDelegate{
         void onVideoFinish();
+        void onReady();
     }
 
     public void setVideoDelegate(VideoDelegate delegate){
         mDelegate = delegate;
+        if (isReady()){
+            mDelegate.onReady();
+        }
     }
 
     public void playerDidFinishPlaying(){
-        if (mDelegate != null){
+        if (mDelegate != null && mNativeRef != INVALID_REF){
             mDelegate.onVideoFinish();
+        }
+    }
+
+    public void onReady(long ref){
+        mNativeRef = ref;
+        if (mDelegate != null && mNativeRef != INVALID_REF){
+            mDelegate.onReady();
         }
     }
 }

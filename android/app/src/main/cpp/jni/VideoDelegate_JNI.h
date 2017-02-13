@@ -31,6 +31,7 @@ class VideoDelegate : public VROVideoDelegateInternal {
      * Video Delegate Callbacks
      */
     virtual void videoDidFinish();
+    virtual void onReady(jlong ref);
 
     private:
         jobject _javaObject;

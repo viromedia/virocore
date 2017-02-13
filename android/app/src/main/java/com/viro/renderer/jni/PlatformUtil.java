@@ -7,6 +7,8 @@ import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Surface;
 
 import com.viro.renderer.FrameListener;
@@ -36,6 +38,7 @@ public class PlatformUtil {
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners;
     private Map<Integer, VideoSink> mVideoSinks = new HashMap();
+    private Handler mApplicationHandler;
 
     public PlatformUtil(RenderCommandQueue queue, List<FrameListener> frameListeners,
                         Context context, AssetManager assetManager) {
@@ -43,6 +46,7 @@ public class PlatformUtil {
         mFrameListeners = frameListeners;
         mAssetManager = assetManager;
         mRenderQueue = queue;
+        mApplicationHandler = new Handler(Looper.getMainLooper());
     }
 
     // Accessed by Native code (VROPlatformUtil.cpp)
@@ -215,17 +219,31 @@ public class PlatformUtil {
 
     /*
      * Run the the native function identified by the given task ID
-     * asynchronously on the renderer thread. Non-static, which means
-     * that it requires the renderer to instantiate VROPlatformUtil
-     * before this method can be invoked
+     * asynchronously. If backround is true, the task will be run in
+     * a background thread. If background is false, it will be run on
+     * the rendering thread.
      */
-    public void dispatchAsyncRenderer(final int taskId) {
+    public void dispatchRenderer(final int taskId) {
         mRenderQueue.queueEvent(new Runnable() {
+                @Override
+                public void run() {
+                    runTask(taskId);
+                }
+        });
+    }
+
+    /*
+     * Run the the native function identified by the given task ID
+     * asynchronously on an the application UI thread.
+     */
+    public void dispatchApplication(final int taskId) {
+        Runnable myRunnable = new Runnable() {
             @Override
             public void run() {
                 runTask(taskId);
             }
-        });
+        };
+        mApplicationHandler.post(myRunnable);
     }
 
     private static native void runTask(int taskId);

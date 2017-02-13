@@ -28,19 +28,32 @@ JNI_METHOD(jlong, nativeCreateRenderContext)(JNIEnv *env,
 JNI_METHOD(void, nativeDeleteRenderContext)(JNIEnv *env,
                                             jobject obj,
                                             jlong native_render_context_ref) {
-    delete reinterpret_cast<PersistentRef<RenderContext> *>(native_render_context_ref);
+    VROPlatformDispatchAsyncRenderer([native_render_context_ref] {
+        delete reinterpret_cast<PersistentRef<RenderContext> *>(native_render_context_ref);
+    });
 }
 
-JNI_METHOD(jfloatArray, nativeGetCameraPosition)(JNIEnv *env,
+JNI_METHOD(void, nativeGetCameraPosition)(JNIEnv *env,
                                                  jobject obj,
-                                                 jlong native_render_context_ref) {
-    std::shared_ptr<VRORenderContext> context = RenderContext::native(native_render_context_ref)->getContext();
-    VROVector3f position = context->getCamera().getPosition();
+                                                 jlong native_render_context_ref,
+                                                 jobject callback) {
+    jweak weakCallback = env->NewWeakGlobalRef(callback);
 
-    jfloatArray result = env->NewFloatArray(3);
-    float data[3] = { position.x, position.y, position.z };
-    env->SetFloatArrayRegion(result, 0, 3, data);
-    return result;
+    VROPlatformDispatchAsyncRenderer([native_render_context_ref, weakCallback] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject jCallback = env->NewLocalRef(weakCallback);
+        if (jCallback == NULL) {
+            return;
+        }
+
+        std::shared_ptr<RenderContext> helperContext = RenderContext::native(native_render_context_ref);
+        std::shared_ptr<VRORenderContext> context = helperContext->getContext();
+        VROVector3f position = context->getCamera().getPosition();
+
+        VROPlatformCallJavaFunction(jCallback,
+                                    "onGetCameraPosition", "(FFF)V", position.x, position.y, position.z);
+        env->DeleteLocalRef(jCallback);
+    });
 }
 
 }  // extern "C"

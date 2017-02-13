@@ -445,20 +445,6 @@ void VROPlatformRunTask(int taskId) {
     }
 }
 
-void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
-    int task = VROPlatformGenerateTask(fcn);
-    pinfo("Generated async task %d for renderer [task queue size %d]", task, sTaskMap.size());
-
-    JNIEnv *env;
-    getJNIEnv(&env);
-
-    jclass cls = env->GetObjectClass(sPlatformUtil);
-    jmethodID jmethod = env->GetMethodID(cls, "dispatchAsyncRenderer", "(I)V");
-    env->CallVoidMethod(sPlatformUtil, jmethod, task);
-
-    env->DeleteLocalRef(cls);
-}
-
 void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     int task = VROPlatformGenerateTask(fcn);
     pinfo("Generated async task %d for background [task queue size %d]", task, sTaskMap.size());
@@ -471,6 +457,22 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     env->CallStaticVoidMethod(cls, jmethod, task);
 
     env->DeleteLocalRef(cls);
+}
+
+void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
+    int task = VROPlatformGenerateTask(fcn);
+    pinfo("Generated async task %d for background [task queue size %d]", task, sTaskMap.size());
+
+    VROPlatformCallJavaFunction(sPlatformUtil,
+                                "dispatchRenderer", "(I)V", task);
+}
+
+void VROPlatformDispatchAsyncApplication(std::function<void()> fcn){
+    int task = VROPlatformGenerateTask(fcn);
+    pinfo("Generated async task %d for background [task queue size %d]", task, sTaskMap.size());
+
+    VROPlatformCallJavaFunction(sPlatformUtil,
+                                "dispatchApplication", "(I)V", task);
 }
 
 jobject VROPlatformGetClassLoader(JNIEnv *jni, jobject jcontext) {

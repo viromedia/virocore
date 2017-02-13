@@ -20,6 +20,17 @@ TextDelegate::~TextDelegate() {
     env->DeleteGlobalRef(_javaObject);
 }
 
-void TextDelegate::textCreated(long native_text_ref) {
-    VROPlatformCallJavaFunction(_javaObject, "textDidFinishCreation", "(J)V", native_text_ref);
+void TextDelegate::textCreated(jlong nativeTextRef) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj, nativeTextRef] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj, "textDidFinishCreation", "(J)V", nativeTextRef);
+    });
 }

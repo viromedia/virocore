@@ -83,13 +83,13 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         //nodes = testSurfaceVideo(this);
         //nodes = testSphereVideo(this);
         //nodes = testBox(getApplicationContext());
-        nodes = test3dObjectLoading(getApplicationContext());
+        //nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
+        //nodes = testText(this);
 
         //testBackgroundVideo(scene);
         //testBackgroundImage(scene);
-        testSkyBoxImage(scene);
         //testSkyBoxImage(scene);
 
         // addNormalSound("http://www.kozco.com/tech/32.mp3");
@@ -106,11 +106,22 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         for (NodeJni node: nodes) {
             rootNode.addChildNode(node);
         }
-
         testSceneLighting(rootNode);
 
         // Updating the scene.
         mVrView.setScene(scene);
+    }
+
+    private List<NodeJni> testText(Context context) {
+        NodeJni node = new NodeJni(context);
+        // Create text
+        TextJni text = new TextJni(mVrView.getRenderContextRef(),
+                "Test Text Here", "Roboto", 25, Color.WHITE, 1f,
+                1f, "Left", "Top", "WordWrap", "None", 0);
+        float[] position = {0, -0.5f, -0.5f};
+        node.setPosition(position);
+        node.setGeometry(text);
+        return Arrays.asList(node);
     }
 
     private void testSceneLighting(NodeJni node) {
@@ -133,57 +144,65 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
     private List<NodeJni> testSurfaceVideo(Context context) {
         NodeJni node = new NodeJni(context);
-        SurfaceJni surface = new SurfaceJni(4,4);
+        final SurfaceJni surface = new SurfaceJni(4,4);
         float[] position = {0,0,-3};
         node.setPosition(position);
-        VideoTextureJni videoTexture = new VideoTextureJni();
-        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
-        videoTexture.setVolume(0.1f);
-        videoTexture.setLoop(false);
-        videoTexture.play();
+        final VideoTextureJni videoTexture = new VideoTextureJni();
         videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
             @Override
             public void onVideoFinish() {
-                Log.e(TAG,"onVideoFinished for Surface within ViroActivity");
+            }
+
+            @Override
+            public void onReady() {
+                surface.setVideoTexture(videoTexture);
+                videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
+                videoTexture.setVolume(0.1f);
+                videoTexture.setLoop(false);
+                videoTexture.play();
             }
         });
-        surface.setVideoTexture(videoTexture);
+
         node.setGeometry(surface);
         return Arrays.asList(node);
     }
 
     private List<NodeJni> testSphereVideo(Context context) {
         NodeJni node = new NodeJni(context);
-        SphereJni sphere = new SphereJni(2, 20, 20, false);
-        VideoTextureJni videoTexture = new VideoTextureJni();
-        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
-        videoTexture.setVolume(0.1f);
-        videoTexture.setLoop(false);
-        videoTexture.play();
+        final SphereJni sphere = new SphereJni(2, 20, 20, false);
+        final VideoTextureJni videoTexture = new VideoTextureJni();
         videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
             @Override
             public void onVideoFinish() {
-                Log.e(TAG,"onVideoFinished for Sphere within ViroActivity");
+            }
+            @Override
+            public void onReady() {
+                sphere.setVideoTexture(videoTexture);
+                videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
+                videoTexture.setVolume(0.1f);
+                videoTexture.setLoop(false);
+                videoTexture.play();
             }
         });
-        sphere.setVideoTexture(videoTexture);
         node.setGeometry(sphere);
         return Arrays.asList(node);
     }
 
-    private void testBackgroundVideo(SceneJni scene) {
-        VideoTextureJni videoTexture = new VideoTextureJni();
-        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
-        videoTexture.setVolume(0.1f);
-        videoTexture.setLoop(false);
-        videoTexture.play();
+    private void testBackgroundVideo(final SceneJni scene) {
+        final VideoTextureJni videoTexture = new VideoTextureJni();
         videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
             @Override
             public void onVideoFinish() {
-                Log.e(TAG,"onVideoFinished for Background within ViroActivity");
+            }
+            @Override
+            public void onReady() {
+                scene.setBackgroundVideoTexture(videoTexture);
+                videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
+                videoTexture.setVolume(0.1f);
+                videoTexture.setLoop(false);
+                videoTexture.play();
             }
         });
-        scene.setBackgroundVideoTexture(videoTexture);
     }
 
     private void testBackgroundImage(SceneJni scene) {
@@ -255,14 +274,13 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         ObjectJni objectJni = new ObjectJni("heart.obj", new AsyncObjListener() {
             @Override
             public void onObjLoaded() {
-//                // Create a new material with a diffuseTexture set to the image "heart_d.jpg"
+                // Create a new material with a diffuseTexture set to the image "heart_d.jpg"
                 ImageJni heartImage = new ImageJni("heart_d.jpg");
                 TextureJni heartTexture = new TextureJni(heartImage);
                 MaterialJni material = new MaterialJni();
                 material.setTexture(heartTexture, "diffuseTexture");
                 material.setLightingModel("Constant");
                 node1.setMaterials(Arrays.asList(material));
-
             }
         });
         node1.setGeometry(objectJni);

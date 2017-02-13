@@ -7,6 +7,7 @@
 
 #include <jni.h>
 #include <memory>
+#include <VROPlatformUtil.h>
 #include "VROBox.h"
 #include "VROMaterial.h"
 #include "PersistentRef.h"
@@ -42,15 +43,19 @@ JNI_METHOD(jlong, nativeCreateBox)(JNIEnv *env,
 JNI_METHOD(void, nativeDestroyBox)(JNIEnv *env,
                                         jclass clazz,
                                         jlong nativeBoxRef) {
-    delete reinterpret_cast<PersistentRef<VROBox> *>(nativeBoxRef);
+    VROPlatformDispatchAsyncRenderer([nativeBoxRef] {
+        delete reinterpret_cast<PersistentRef<VROBox> *>(nativeBoxRef);
+    });
 }
 
 JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
                                      jclass clazz,
                                      jlong native_box_ref,
                                      jlong native_node_ref) {
-    std::shared_ptr<VROBox> box = Box::native(native_box_ref);
-    Node::native(native_node_ref)->setGeometry(box);
+    VROPlatformDispatchAsyncRenderer([native_box_ref, native_node_ref] {
+        Node::native(native_node_ref)->setGeometry(Box::native(native_box_ref));
+    });
+
 }
 
 }  // extern "C"

@@ -9,6 +9,7 @@
 #include <memory>
 #include <VROSphere.h>
 #include <Viro.h>
+#include <VROPlatformUtil.h>
 #include "VROMaterial.h"
 #include "VRONode.h"
 #include "PersistentRef.h"
@@ -50,38 +51,44 @@ JNI_METHOD(jlong, nativeCreateSphere)(JNIEnv *env,
 JNI_METHOD(void, nativeDestroySphere)(JNIEnv *env,
                                         jclass clazz,
                                         jlong nativeNode) {
-    delete reinterpret_cast<PersistentRef<VRONode> *>(nativeNode);
+    VROPlatformDispatchAsyncRenderer([nativeNode] {
+        delete reinterpret_cast<PersistentRef<VRONode> *>(nativeNode);
+    });
 }
 
 JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
                                      jclass clazz,
                                      jlong nativeSphere,
                                      jlong nativeNode) {
-    std::shared_ptr<VROSphere> sphereGeometry = Sphere::native(nativeSphere);
-    Node::native(nativeNode)->setGeometry(sphereGeometry);
+    VROPlatformDispatchAsyncRenderer([nativeSphere, nativeNode] {
+        std::shared_ptr<VROSphere> sphereGeometry = Sphere::native(nativeSphere);
+        Node::native(nativeNode)->setGeometry(sphereGeometry);
+    });
 }
 
 JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
                              jobject obj,
                              jlong sphereRef,
                              jlong textureRef) {
-    std::shared_ptr<VROVideoTexture> videoTexture = VideoTexture::native(textureRef);
-    std::shared_ptr<VROSphere> sphere = Sphere::native(sphereRef);
-    std::shared_ptr<VROMaterial> material;
-    if (sphere->getMaterials().size() > 0){
-        // If there's an existing material, make a copy of that so that
-        // we can shift existing materials to the end, and align Video Texture
-        // materials to be the first on the array.
-        material = std::make_shared<VROMaterial>(sphere->getMaterials()[0]);
-    } else {
-        material = std::make_shared<VROMaterial>();
-    }
+    VROPlatformDispatchAsyncRenderer([sphereRef, textureRef] {
+        std::shared_ptr<VROVideoTexture> videoTexture = VideoTexture::native(textureRef);
+        std::shared_ptr<VROSphere> sphere = Sphere::native(sphereRef);
+        std::shared_ptr<VROMaterial> material;
+        if (sphere->getMaterials().size() > 0) {
+            // If there's an existing material, make a copy of that so that
+            // we can shift existing materials to the end, and align Video Texture
+            // materials to be the first on the array.
+            material = std::make_shared<VROMaterial>(sphere->getMaterials()[0]);
+        } else {
+            material = std::make_shared<VROMaterial>();
+        }
 
-    material->setWritesToDepthBuffer(false);
-    material->setReadsFromDepthBuffer(false);
-    material->getDiffuse().setTexture(videoTexture);
-    sphere->getMaterials().clear();
-    sphere->getMaterials().push_back(material);
+        material->setWritesToDepthBuffer(false);
+        material->setReadsFromDepthBuffer(false);
+        material->getDiffuse().setTexture(videoTexture);
+        sphere->getMaterials().clear();
+        sphere->getMaterials().push_back(material);
+    });
 }
 
 }  // extern "C"

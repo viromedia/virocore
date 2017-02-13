@@ -21,5 +21,17 @@ OBJLoaderDelegate::~OBJLoaderDelegate() {
 }
 
 void OBJLoaderDelegate::objLoaded() {
-    VROPlatformCallJavaFunction(_javaObject, "nodeDidFinishCreation", "()V");
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj, "nodeDidFinishCreation", "()V");
+        env->DeleteLocalRef(localObj);
+    });
 }

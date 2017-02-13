@@ -45,23 +45,30 @@ JNI_METHOD(jlong, nativeCreateScene)(JNIEnv *env,
 JNI_METHOD(void, nativeDestroyScene)(JNIEnv *env,
                                         jclass clazz,
                                         jlong native_object_ref) {
-  delete reinterpret_cast<PersistentRef<VROScene> *>(native_object_ref);
+    VROPlatformDispatchAsyncRenderer([native_object_ref] {
+        delete reinterpret_cast<PersistentRef<VROScene> *>(native_object_ref);
+    });
 }
 
 JNI_METHOD(void, nativeSetBackgroundVideoTexture)(JNIEnv *env,
                                      jclass clazz,
                                      jlong sceneRef,
                                      jlong textureRef) {
-    VROSceneController *sceneController = Scene::native(sceneRef);
-    sceneController->getScene()->setBackgroundSphere(VideoTexture::native(textureRef));
+    VROPlatformDispatchAsyncRenderer([sceneRef, textureRef] {
+        VROSceneController *sceneController = Scene::native(sceneRef);
+        sceneController->getScene()->setBackgroundSphere(VideoTexture::native(textureRef));
+    });
 }
 
 JNI_METHOD(void, nativeSetBackgroundImageTexture)(JNIEnv *env,
                                                   jclass clazz,
                                                   jlong sceneRef,
                                                   jlong imageRef) {
-    VROSceneController *sceneController = Scene::native(sceneRef);
-    sceneController->getScene()->setBackgroundSphere(Texture::native(imageRef));
+    std::shared_ptr<VROTexture> image = Texture::native(imageRef);
+    VROPlatformDispatchAsyncRenderer([sceneRef, image] {
+        VROSceneController *sceneController = Scene::native(sceneRef);
+        sceneController->getScene()->setBackgroundSphere(image);
+    });
 }
 
 JNI_METHOD(void, nativeSetBackgroundRotation)(JNIEnv *env,
@@ -70,35 +77,39 @@ JNI_METHOD(void, nativeSetBackgroundRotation)(JNIEnv *env,
                                               jfloat rotationDegreeX,
                                               jfloat rotationDegreeY,
                                               jfloat rotationDegreeZ) {
-
-    VROSceneController *sceneController = Scene::native(sceneRef);
-    sceneController->getScene()->setBackgroundRotation({toRadians(rotationDegreeX),
-                                                        toRadians(rotationDegreeY),
-                                                        toRadians(rotationDegreeZ)});
+    VROPlatformDispatchAsyncRenderer([sceneRef, rotationDegreeX, rotationDegreeY, rotationDegreeZ] {
+        VROSceneController *sceneController = Scene::native(sceneRef);
+        sceneController->getScene()->setBackgroundRotation({toRadians(rotationDegreeX),
+                                                            toRadians(rotationDegreeY),
+                                                            toRadians(rotationDegreeZ)});
+    });
 }
 
 JNI_METHOD(void, nativeSetBackgroundCubeImageTexture)(JNIEnv *env,
                                           jclass clazz,
                                           jlong sceneRef,
                                           jlong textureRef) {
-
-    VROSceneController *sceneController = Scene::native(sceneRef);
-    sceneController->getScene()->setBackgroundCube(Texture::native(textureRef));
+    VROPlatformDispatchAsyncRenderer([sceneRef, textureRef] {
+        VROSceneController *sceneController = Scene::native(sceneRef);
+        sceneController->getScene()->setBackgroundCube(Texture::native(textureRef));
+    });
 }
 
 JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
                                                    jclass clazz,
                                                    jlong sceneRef,
                                                    jlong color) {
-    // Get the color
-    float a = ((color >> 24) & 0xFF) / 255.0;
-    float r = ((color >> 16) & 0xFF) / 255.0;
-    float g = ((color >> 8) & 0xFF) / 255.0;
-    float b = (color & 0xFF) / 255.0;
+    VROPlatformDispatchAsyncRenderer([sceneRef, color] {
+        // Get the color
+        float a = ((color >> 24) & 0xFF) / 255.0;
+        float r = ((color >> 16) & 0xFF) / 255.0;
+        float g = ((color >> 8) & 0xFF) / 255.0;
+        float b = (color & 0xFF) / 255.0;
 
-    VROVector4f vecColor(r, g, b, a);
-    VROSceneController *sceneController = Scene::native(sceneRef);
-    sceneController->getScene()->setBackgroundCube(vecColor);
+        VROVector4f vecColor(r, g, b, a);
+        VROSceneController *sceneController = Scene::native(sceneRef);
+        sceneController->getScene()->setBackgroundCube(vecColor);
+    });
 }
 
 JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, jlong renderContextRef,
@@ -112,9 +123,17 @@ JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, j
     std::string strCeilingMaterial(cCeilingMaterial);
     std::string strFloorMaterial(cFloorMaterial);
 
-    RenderContext::native(renderContextRef)->getDriver()->setSoundRoom(sizeX, sizeY, sizeZ,
-                                                                       strWallMaterial, strCeilingMaterial,
-                                                                       strFloorMaterial);
+    VROPlatformDispatchAsyncRenderer([renderContextRef,
+                                             sizeX, sizeY, sizeZ,
+                                             strWallMaterial,
+                                             strCeilingMaterial,
+                                             strFloorMaterial] {
+        RenderContext::native(renderContextRef)->getDriver()->setSoundRoom(sizeX, sizeY, sizeZ,
+                                                                           strWallMaterial,
+                                                                           strCeilingMaterial,
+                                                                           strFloorMaterial);
+    });
+
     env->ReleaseStringUTFChars(wallMaterial, cWallMaterial);
     env->ReleaseStringUTFChars(ceilingMaterial, cCeilingMaterial);
     env->ReleaseStringUTFChars(floorMaterial, cFloorMaterial);
@@ -140,23 +159,17 @@ void SceneDelegate::onSceneDidDisappear(VRORenderContext *context, VRODriver *dr
 }
 
 void SceneDelegate::callVoidFunctionWithName(std::string functionName) {
-    _env->ExceptionClear();
-    jclass viroClass = _env->FindClass("com/viro/renderer/jni/SceneJni");
-    if (viroClass == nullptr) {
-        perr("Unable to find SceneJni class for to trigger callbacks.");
-        return;
-    }
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
+    VROPlatformDispatchAsyncApplication([jObjWeak, functionName] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(jObjWeak);
+        if (localObj == NULL) {
+            return;
+        }
 
-    jmethodID method = _env->GetMethodID(viroClass, functionName.c_str(), "()V");
-    if (method == nullptr) {
-        perr("Unable to find method %s callback.", functionName.c_str());
-        return;
-    }
-
-    _env->CallVoidMethod(_javaObject, method);
-    if (_env->ExceptionOccurred()) {
-        perr("Exception occured when calling %s.", functionName.c_str());
-        _env->ExceptionClear();
-    }
-    _env->DeleteLocalRef(viroClass);
+        VROPlatformCallJavaFunction(localObj,
+                                    functionName, "()V");
+        env->DeleteLocalRef(localObj);
+    });
 }
