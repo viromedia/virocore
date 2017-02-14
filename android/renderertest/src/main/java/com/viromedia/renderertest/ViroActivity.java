@@ -16,6 +16,7 @@ import android.util.Log;
 
 import com.viro.renderer.*;
 import com.viro.renderer.jni.AmbientLightJni;
+import com.viro.renderer.jni.AsyncObjListener;
 import com.viro.renderer.jni.BoxJni;
 import com.viro.renderer.jni.DirectionalLightJni;
 import com.viro.renderer.jni.ControllerJni;
@@ -24,6 +25,7 @@ import com.viro.renderer.jni.GlListener;
 import com.viro.renderer.jni.ImageJni;
 import com.viro.renderer.jni.MaterialJni;
 import com.viro.renderer.jni.NodeJni;
+import com.viro.renderer.jni.ObjectJni;
 import com.viro.renderer.jni.OmniLightJni;
 import com.viro.renderer.jni.RenderContextJni;
 import com.viro.renderer.jni.SceneJni;
@@ -80,7 +82,8 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         List<NodeJni> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
         //nodes = testSphereVideo(this);
-        nodes = testBox(getApplicationContext());
+        //nodes = testBox(getApplicationContext());
+        nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
 
@@ -243,6 +246,30 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         node2.setMaterials(Arrays.asList(material));
         node2.setEventDelegateJni(getGenericDelegate("Box2"));
         return Arrays.asList(node1, node2, node3);
+    }
+
+    private List<NodeJni> test3dObjectLoading(Context context) {
+        final NodeJni node1 = new NodeJni(context);
+
+        // Creation of ObjectJni to the right
+        ObjectJni objectJni = new ObjectJni("heart.obj", new AsyncObjListener() {
+            @Override
+            public void onObjLoaded() {
+//                // Create a new material with a diffuseTexture set to the image "heart_d.jpg"
+                ImageJni heartImage = new ImageJni("heart_d.jpg");
+                TextureJni heartTexture = new TextureJni(heartImage);
+                MaterialJni material = new MaterialJni();
+                material.setTexture(heartTexture, "diffuseTexture");
+                material.setLightingModel("Constant");
+                node1.setMaterials(Arrays.asList(material));
+
+            }
+        });
+        node1.setGeometry(objectJni);
+
+        float[] heartPosition = {-0, -5.5f, -1.15f};
+        node1.setPosition(heartPosition);
+        return Arrays.asList(node1);
     }
 
     private EventDelegateJni getGenericDelegate(final String delegateTag){

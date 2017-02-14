@@ -38,7 +38,7 @@ JNI_METHOD(jlong, nativeCreateAnimationGroup)(JNIEnv *env, jclass clazz,
                                               jstring opacity, jstring color, jfloat durationSeconds,
                                               jfloat delaySeconds, jstring functionType) {
     std::map<std::string, std::string> animationProperties;
-
+    std::vector<std::shared_ptr<VROLazyMaterial>> materialAnimations;
     // NOTE: AddPropertyIfNotNull WILL release the jstring after its done running so don't
     // use the jstring after!
     AddPropertyIfNotNull(env, "positionX", positionX, animationProperties);
@@ -57,7 +57,8 @@ JNI_METHOD(jlong, nativeCreateAnimationGroup)(JNIEnv *env, jclass clazz,
     std::string functionTypeStr(functionTypeCStr);
 
     std::shared_ptr<VROAnimationGroup> animationGroup = VROAnimationGroup::parse(durationSeconds, delaySeconds,
-                                                                                 functionTypeStr, animationProperties);
+                                                                                 functionTypeStr, animationProperties,
+                                                                                 materialAnimations);
     env->ReleaseStringUTFChars(functionType, functionTypeCStr);
     return AnimationGroup::jptr(animationGroup);
 }
