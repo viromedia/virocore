@@ -35,17 +35,11 @@ std::shared_ptr<VROPropertyAnimation> VROPropertyAnimation::parse(const std::str
         }
     }
     
-  
-    
     VROAnimationValue animationValue;
     if (name == "color") {
         std::string numberStr = value.substr(indexOfNumber);
         animationValue.type = VROValueType::Int;
         animationValue.valueInt = VROStringUtil::toInt(numberStr);
-    }
-    else if(name == "material") {
-      animationValue.type = VROValueType::String;
-      animationValue.valueString = value;
     }
     else {
         std::string numberStr = value.substr(indexOfNumber);

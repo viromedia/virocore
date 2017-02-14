@@ -16,16 +16,24 @@
 #include <sstream>
 
 std::shared_ptr<VROAnimationGroup> VROAnimationGroup::parse(float durationSeconds, float delaySeconds, std::string functionName,
-                                                            std::map<std::string, std::string> &propertyAnimations) {
+                                                            std::map<std::string, std::string> &propertyAnimations,
+                                                            std::vector<std::shared_ptr<VROLazyMaterial>> materialAnimations) {
    
     VROTimingFunctionType timingFunction = parseTimingFunction(functionName);
-    std::map<std::string, std::shared_ptr<VROPropertyAnimation>> animations;
+    std::map<std::string, std::shared_ptr<VROPropertyAnimation>> pAnimations;
     for (auto kv : propertyAnimations) {
         std::string name = kv.first;
-        animations[name] = VROPropertyAnimation::parse(name, kv.second);
+        pAnimations[name] = VROPropertyAnimation::parse(name, kv.second);
     }
     
-    return std::make_shared<VROAnimationGroup>(durationSeconds, delaySeconds, timingFunction, animations);
+    std::vector<std::shared_ptr<VROMaterialAnimation>> mAnimations;
+    for (int i = 0; i < materialAnimations.size(); i++) {
+        std::shared_ptr<VROMaterialAnimation> animation = std::make_shared<VROMaterialAnimation>(i, materialAnimations[i]);
+        mAnimations.push_back(animation);
+    }
+    
+    return std::make_shared<VROAnimationGroup>(durationSeconds, delaySeconds, timingFunction,
+                                               pAnimations, mAnimations);
 }
 
 VROTimingFunctionType VROAnimationGroup::parseTimingFunction(std::string &name) {
@@ -94,23 +102,48 @@ void VROAnimationGroup::terminate() {
 }
 
 void VROAnimationGroup::animateMaterial(std::shared_ptr<VRONode> &node) {
-  auto material_it =  _animations.find("material");
-  
-  if (material_it != _animations.end()) {
-    if(getDelegate()) {
-      std::shared_ptr<VROPropertyAnimation> &value = material_it->second;
-      getDelegate()->onAnimateMaterial(node, value->getValue().valueString);
+    if (_materialAnimations.empty()) {
+        return;
     }
-  }
+    if (!node->getGeometry()) {
+        return;
+    }
+    
+    for (std::shared_ptr<VROMaterialAnimation> &animation : _materialAnimations) {
+        std::vector<std::shared_ptr<VROMaterial>> &materials = node->getGeometry()->getMaterials();
+        if (animation->getIndex() >= materials.size()) {
+            continue;
+        }
+        
+        std::shared_ptr<VROMaterial> materialStart = materials[animation->getIndex()];
+        std::shared_ptr<VROMaterial> materialEnd   = animation->getMaterial();
+        if (!materialStart || !materialEnd) {
+            continue;
+        }
+        
+        if (materialEnd->getDiffuse().getTextureType() != VROTextureType::None) {
+            materialStart->getDiffuse().setTexture(materialEnd->getDiffuse().getTexture());
+        }
+        else {
+            materialStart->getDiffuse().setColor(materialEnd->getDiffuse().getColor());
+        }
+        
+        materialStart->setShininess(materialEnd->getShininess());
+        materialStart->setFresnelExponent(materialEnd->getFresnelExponent());
+        materialStart->setCullMode(materialEnd->getCullMode());
+        materialStart->setLightingModel(materialEnd->getLightingModel());
+        materialStart->setWritesToDepthBuffer(materialEnd->getWritesToDepthBuffer());
+        materialStart->setReadsFromDepthBuffer(materialEnd->getReadsFromDepthBuffer());
+    }
 }
 
 void VROAnimationGroup::animatePosition(std::shared_ptr<VRONode> &node) {
-    auto posX_it = _animations.find("positionX");
-    auto posY_it = _animations.find("positionY");
-    auto posZ_it = _animations.find("positionZ");
+    auto posX_it = _propertyAnimations.find("positionX");
+    auto posY_it = _propertyAnimations.find("positionY");
+    auto posZ_it = _propertyAnimations.find("positionZ");
 
     float posX = node->getPosition().x;
-    if (posX_it != _animations.end()) {
+    if (posX_it != _propertyAnimations.end()) {
         std::shared_ptr<VROPropertyAnimation> &a = posX_it->second;
         if (a->isAdditive()) {
             posX += a->getValue().valueFloat;
@@ -122,7 +155,7 @@ void VROAnimationGroup::animatePosition(std::shared_ptr<VRONode> &node) {
     }
     
     float posY = node->getPosition().y;
-    if (posY_it != _animations.end()) {
+    if (posY_it != _propertyAnimations.end()) {
         std::shared_ptr<VROPropertyAnimation> &a = posY_it->second;
         if (a->isAdditive()) {
             posY += a->getValue().valueFloat;
@@ -134,7 +167,7 @@ void VROAnimationGroup::animatePosition(std::shared_ptr<VRONode> &node) {
     }
     
     float posZ = node->getPosition().z;
-    if (posZ_it != _animations.end()) {
+    if (posZ_it != _propertyAnimations.end()) {
         std::shared_ptr<VROPropertyAnimation> &a = posZ_it->second;
         if (a->isAdditive()) {
             posZ += a->getValue().valueFloat;
@@ -147,12 +180,12 @@ void VROAnimationGroup::animatePosition(std::shared_ptr<VRONode> &node) {
 }
 
 void VROAnimationGroup::animateScale(std::shared_ptr<VRONode> &node) {
-    auto scaleX_it = _animations.find("scaleX");
-    auto scaleY_it = _animations.find("scaleY");
-    auto scaleZ_it = _animations.find("scaleZ");
+    auto scaleX_it = _propertyAnimations.find("scaleX");
+    auto scaleY_it = _propertyAnimations.find("scaleY");
+    auto scaleZ_it = _propertyAnimations.find("scaleZ");
     
     float scaleX = node->getScale().x;
-    if (scaleX_it != _animations.end()) {
+    if (scaleX_it != _propertyAnimations.end()) {
         std::shared_ptr<VROPropertyAnimation> &a = scaleX_it->second;
         if (a->isAdditive()) {
             scaleX += a->getValue().valueFloat;
@@ -164,7 +197,7 @@ void VROAnimationGroup::animateScale(std::shared_ptr<VRONode> &node) {
     }
     
     float scaleY = node->getScale().y;
-    if (scaleY_it != _animations.end()) {
+    if (scaleY_it != _propertyAnimations.end()) {
         std::shared_ptr<VROPropertyAnimation> &a = scaleY_it->second;
         if (a->isAdditive()) {
             scaleY += a->getValue().valueFloat;
@@ -176,7 +209,7 @@ void VROAnimationGroup::animateScale(std::shared_ptr<VRONode> &node) {
     }
     
     float scaleZ = node->getScale().z;
-    if (scaleZ_it != _animations.end()) {
+    if (scaleZ_it != _propertyAnimations.end()) {
         std::shared_ptr<VROPropertyAnimation> &a = scaleZ_it->second;
         if (a->isAdditive()) {
             scaleZ += a->getValue().valueFloat;
@@ -189,8 +222,8 @@ void VROAnimationGroup::animateScale(std::shared_ptr<VRONode> &node) {
 }
 
 void VROAnimationGroup::animateColor(std::shared_ptr<VRONode> &node) {
-    auto color_it = _animations.find("color");
-    if (color_it != _animations.end()) {
+    auto color_it = _propertyAnimations.find("color");
+    if (color_it != _propertyAnimations.end()) {
         std::shared_ptr<VROPropertyAnimation> &animation = color_it->second;
         
         int color = animation->getValue().valueInt;
@@ -211,8 +244,8 @@ void VROAnimationGroup::animateColor(std::shared_ptr<VRONode> &node) {
 }
 
 void VROAnimationGroup::animateOpacity(std::shared_ptr<VRONode> &node) {
-    auto opacity_it = _animations.find("opacity");
-    if (opacity_it != _animations.end()) {
+    auto opacity_it = _propertyAnimations.find("opacity");
+    if (opacity_it != _propertyAnimations.end()) {
         std::shared_ptr<VROPropertyAnimation> &a = opacity_it->second;
         if (a->isAdditive()) {
             node->setOpacity(node->getOpacity() + a->getValue().valueFloat);
@@ -224,14 +257,14 @@ void VROAnimationGroup::animateOpacity(std::shared_ptr<VRONode> &node) {
 }
 
 void VROAnimationGroup::animateRotation(std::shared_ptr<VRONode> &node) {
-    auto rotateX_it = _animations.find("rotateX");
-    auto rotateY_it = _animations.find("rotateY");
-    auto rotateZ_it = _animations.find("rotateZ");
+    auto rotateX_it = _propertyAnimations.find("rotateX");
+    auto rotateY_it = _propertyAnimations.find("rotateY");
+    auto rotateZ_it = _propertyAnimations.find("rotateZ");
     
     VROVector3f rotation = node->getRotationEuler();
     
     float rotateX = rotation.x;
-    if (rotateX_it != _animations.end()) {
+    if (rotateX_it != _propertyAnimations.end()) {
         std::shared_ptr<VROPropertyAnimation> &a = rotateX_it->second;
         if (a->isAdditive()) {
             rotateX += toRadians(a->getValue().valueFloat);
@@ -243,7 +276,7 @@ void VROAnimationGroup::animateRotation(std::shared_ptr<VRONode> &node) {
     }
     
     float rotateY = rotation.y;
-    if (rotateY_it != _animations.end()) {
+    if (rotateY_it != _propertyAnimations.end()) {
         std::shared_ptr<VROPropertyAnimation> &a = rotateY_it->second;
         if (a->isAdditive()) {
             rotateY += toRadians(a->getValue().valueFloat);
@@ -255,7 +288,7 @@ void VROAnimationGroup::animateRotation(std::shared_ptr<VRONode> &node) {
     }
     
     float rotateZ = rotation.z;
-    if (rotateZ_it != _animations.end()) {
+    if (rotateZ_it != _propertyAnimations.end()) {
         std::shared_ptr<VROPropertyAnimation> &a = rotateZ_it->second;
         if (a->isAdditive()) {
             rotateZ += toRadians(a->getValue().valueFloat);
@@ -267,25 +300,11 @@ void VROAnimationGroup::animateRotation(std::shared_ptr<VRONode> &node) {
     }
 }
 
-
-void VROAnimationGroup::setDelegate(std::shared_ptr<VROAnimateMaterialDelegateInternal> delegate) {
-    auto autoWeakDelegate = delegate;
-    _delegate = autoWeakDelegate;
-}
-
-std::shared_ptr<VROAnimateMaterialDelegateInternal> VROAnimationGroup::getDelegate() {
-  if (_delegate.expired()) {
-    return nullptr;
-  }
-  return _delegate.lock();
-}
-
-
 std::string VROAnimationGroup::toString() const {
     std::stringstream ss;
     ss << "[duration: " << _duration << ", delay: " << _delay;
     
-    for (auto kv : _animations) {
+    for (auto kv : _propertyAnimations) {
         ss << ", " << kv.first << ":" << kv.second->toString();
     }
     ss << "]";
