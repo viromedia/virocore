@@ -175,6 +175,21 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     public View getContentView() { return this; }
 
     @Override
+    public String getVRPlatform() {
+        return "gvr";
+    }
+
+    @Override
+    public String getHeadset() {
+        return mNativeRenderer.getHeadset();
+    }
+
+    @Override
+    public String getController() {
+        return mNativeRenderer.getController();
+    }
+
+    @Override
     public void onActivityPaused(Activity activity) {
         mNativeRenderer.onPause();
         super.onPause();

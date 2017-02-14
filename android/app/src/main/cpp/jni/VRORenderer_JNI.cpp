@@ -200,4 +200,14 @@ JNI_METHOD(void, nativeOnSurfaceDestroyed)(JNIEnv *env,
     Renderer::native(native_renderer)->onSurfaceDestroyed();
 }
 
+JNI_METHOD(jstring, nativeGetHeadset)(JNIEnv *env, jobject obj, jlong nativeRenderer) {
+    std::string headset = Renderer::native(nativeRenderer)->getRenderer()->getInputController()->getHeadset();
+    return env->NewStringUTF(headset.c_str());
+}
+
+JNI_METHOD(jstring, nativeGetController)(JNIEnv *env, jobject obj, jlong nativeRenderer) {
+    std::string controller = Renderer::native(nativeRenderer)->getRenderer()->getInputController()->getController();
+    return env->NewStringUTF(controller.c_str());
+}
+
 }  // extern "C"

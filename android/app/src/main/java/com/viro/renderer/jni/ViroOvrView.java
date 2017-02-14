@@ -113,6 +113,21 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     public View getContentView() { return this; }
 
     @Override
+    public String getVRPlatform() {
+        return "ovr-mobile";
+    }
+
+    @Override
+    public String getHeadset() {
+        return mNativeRenderer.getHeadset();
+    }
+
+    @Override
+    public String getController() {
+        return mNativeRenderer.getController();
+    }
+
+    @Override
     public void onActivityCreated(Activity activity, Bundle bundle) {
         //No-op
     }

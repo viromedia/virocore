@@ -14,7 +14,7 @@
 
 class VideoDelegate : public VROVideoDelegateInternal {
     public:
-    VideoDelegate(jobject videoJavaObject, JNIEnv *env);
+    VideoDelegate(jobject videoJavaObject);
     ~VideoDelegate();
 
     static jlong jptr(std::shared_ptr<VideoDelegate> shared_node) {
@@ -34,6 +34,5 @@ class VideoDelegate : public VROVideoDelegateInternal {
 
     private:
         jobject _javaObject;
-        JNIEnv *_env;
 };
 #endif

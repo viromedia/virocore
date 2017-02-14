@@ -29,7 +29,7 @@ JNI_METHOD(jlong, nativeCreateVideoTexture)(JNIEnv *env,
     std::shared_ptr<VROVideoTextureAVP> videoTexture = std::make_shared<VROVideoTextureAVP>();
 
     // Attach delegate callbacks to be triggered across the JNI bridge
-    std::shared_ptr<VideoDelegate> delegateRef = std::make_shared<VideoDelegate>(object, env);
+    std::shared_ptr<VideoDelegate> delegateRef = std::make_shared<VideoDelegate>(object);
     videoTexture->setDelegate(delegateRef);
 
     // Return a jlong point reference to the created VideoTexture object

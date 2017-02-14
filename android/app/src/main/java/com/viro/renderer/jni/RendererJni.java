@@ -73,6 +73,12 @@ public class RendererJni {
             nativeSetPointOfView(mNativeRef, 0);
         }
     }
+    public String getHeadset() {
+        return nativeGetHeadset(mNativeRef);
+    }
+    public String getController() {
+        return nativeGetController(mNativeRef);
+    }
 
     /* ----------     Native methods    ---------- */
 
@@ -96,4 +102,6 @@ public class RendererJni {
     private native void nativeSetScene(long nativeRenderer, long nativeScene);
     private native void nativeSetSceneWithAnimation(long nativeRenderer, long nativeScene, float duration);
     private native void nativeSetPointOfView(long nativeRenderer, long nodeRef);
+    private native String nativeGetHeadset(long nativeRenderer);
+    private native String nativeGetController(long nativeRenderer);
 }

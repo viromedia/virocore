@@ -18,4 +18,10 @@ public interface VrView extends Application.ActivityLifecycleCallbacks {
     public RendererJni getNativeRenderer();
 
     public View getContentView();
+
+    public String getVRPlatform();
+
+    public String getHeadset();
+
+    public String getController();
 }

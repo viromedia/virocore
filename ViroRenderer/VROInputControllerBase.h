@@ -83,6 +83,9 @@ public:
         return _controllerPresenter;
     }
 
+    virtual std::string getHeadset() = 0;
+    virtual std::string getController() = 0;
+
     /**
     * For notifying components outside the scene tree, we specifically register
     * them here to be tracked by the VROEventManager. Calling registerEventDelegate

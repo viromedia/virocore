@@ -33,6 +33,14 @@ public:
     void onPause();
     void onResume();
 
+    virtual std::string getHeadset() {
+        return "daydream";
+    }
+
+    virtual std::string getController() {
+        return "daydream";
+    }
+
 protected:
     std::shared_ptr<VROInputPresenter> createPresenter(std::shared_ptr<VRORenderContext> context){
         _daydreamPresenter = std::make_shared<VROInputPresenterDaydream>(context);

@@ -20,6 +20,15 @@ public:
     virtual ~VROInputControllerCardboard(){}
 
     virtual void onProcess();
+
+    virtual std::string getHeadset() {
+        return "cardboard";
+    }
+
+    virtual std::string getController() {
+        return "cardboard";
+    }
+
     void updateScreenTouch(int touchAction);
 
 protected:
