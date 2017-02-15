@@ -17,6 +17,14 @@ void VROInputControllerCardboardiOS::onScreenClicked(){
     VROInputControllerBase::onButtonEvent(ViroCardBoard::ViewerButton, VROEventDelegate::ClickState::ClickUp);
 }
 
+std::string VROInputControllerCardboardiOS::getHeadset() {
+  return std::string("cardboard");
+}
+
+std::string VROInputControllerCardboardiOS::getController() {
+  return std::string("cardboard");
+}
+
 void VROInputControllerCardboardiOS::updateOrientation(){
     VROInputControllerBase::onRotate(ViroCardBoard::Controller,
                                      _context->getCamera().getRotation());

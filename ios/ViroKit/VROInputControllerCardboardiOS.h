@@ -20,6 +20,8 @@ public:
     virtual ~VROInputControllerCardboardiOS(){}
     void onProcess();
     void onScreenClicked();
+    std::string getHeadset();
+    std::string getController();
 
 protected:
     std::shared_ptr<VROInputPresenter> createPresenter(std::shared_ptr<VRORenderContext> context){
