@@ -11,6 +11,8 @@ public class MaterialJni {
         mNativeRef = nativeCreateMaterial();
     }
 
+    public long getNativeRef() { return mNativeRef; }
+
     public void setWritesToDepthBuffer(boolean writesToDepthBuffer) {
         nativeSetWritesToDepthBuffer(mNativeRef, writesToDepthBuffer);
     }

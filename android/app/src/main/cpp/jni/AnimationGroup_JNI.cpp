@@ -7,6 +7,7 @@
 
 #include "AnimationGroup_JNI.h"
 #include "Node_JNI.h"
+#include "LazyMaterial_JNI.h"
 #include <VROPlatformUtil.h>
 
 #define JNI_METHOD(return_type, method_name) \
@@ -35,10 +36,10 @@ JNI_METHOD(jlong, nativeCreateAnimationGroup)(JNIEnv *env, jclass clazz,
                                               jstring positionX, jstring positionY, jstring positionZ,
                                               jstring scaleX, jstring scaleY, jstring scaleZ,
                                               jstring rotateX, jstring rotateY, jstring rotateZ,
-                                              jstring opacity, jstring color, jfloat durationSeconds,
-                                              jfloat delaySeconds, jstring functionType) {
+                                              jstring opacity, jstring color, jlong lazyMaterialRef,
+                                              jfloat durationSeconds, jfloat delaySeconds, jstring functionType) {
     std::map<std::string, std::string> animationProperties;
-    std::vector<std::shared_ptr<VROLazyMaterial>> materialAnimations;
+
     // NOTE: AddPropertyIfNotNull WILL release the jstring after its done running so don't
     // use the jstring after!
     AddPropertyIfNotNull(env, "positionX", positionX, animationProperties);
@@ -52,6 +53,12 @@ JNI_METHOD(jlong, nativeCreateAnimationGroup)(JNIEnv *env, jclass clazz,
     AddPropertyIfNotNull(env, "rotateZ", rotateZ, animationProperties);
     AddPropertyIfNotNull(env, "opacity", opacity, animationProperties);
     AddPropertyIfNotNull(env, "color", color, animationProperties);
+
+    std::vector<std::shared_ptr<VROLazyMaterial>> materialAnimations;
+    if (lazyMaterialRef != 0) {
+        std::shared_ptr<VROLazyMaterial> lazyMaterial = LazyMaterial::native(lazyMaterialRef);
+        materialAnimations.push_back(lazyMaterial);
+    }
 
     const char *functionTypeCStr = env->GetStringUTFChars(functionType, NULL);
     std::string functionTypeStr(functionTypeCStr);

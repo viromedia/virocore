@@ -116,6 +116,9 @@ jclass VROPlatformFindClass(JNIEnv *jni, jobject javaObject, const char *classNa
 void VROPlatformCallJavaFunction(jobject javaObject,
                                  std::string functionName,
                                  std::string methodID, ...);
+jlong VROPlatformCallJavaLongFunction(jobject javaObject,
+                                     std::string functionName,
+                                     std::string methodID, ...);
 
 #pragma mark - Android A/V
 

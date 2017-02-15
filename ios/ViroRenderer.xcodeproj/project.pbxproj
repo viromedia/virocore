@@ -1183,8 +1183,6 @@
 		8F53D3A61DCBA041001C91A8 /* iOS Impl */ = {
 			isa = PBXGroup;
 			children = (
-				8BDD9E2A1E4A87CC00A42870 /* VROAnimateMaterialDelegate.h */,
-				8BDD9E291E4A86D400A42870 /* VROAnimateMaterialDelegateiOS.h */,
 				A566EB3C1E1B47B7008B4AE2 /* VROEventDelegateiOS.h */,
 				A566EB381E1B38A3008B4AE2 /* VROSceneDelegateiOS.h */,
 				8FCB10261DD544FF00FE425C /* VROVideoDelegate.h */,
@@ -1299,14 +1297,15 @@
 		8FB2B58D1E1442A700EDB629 /* Execution API */ = {
 			isa = PBXGroup;
 			children = (
-				8BDD9E271E49575100A42870 /* VROAnimateMaterialDelegateInternal.h */,
 				8FB2B58F1E1442EC00EDB629 /* VROPropertyAnimation.h */,
 				8FB2B58E1E1442EC00EDB629 /* VROPropertyAnimation.cpp */,
+				8FDD900B1E535B71006CF466 /* VROMaterialAnimation.h */,
 				8FB2B5931E1445BB00EDB629 /* VROAnimationGroup.h */,
 				8FB2B5921E1445BB00EDB629 /* VROAnimationGroup.cpp */,
 				8FB2B5971E1445EE00EDB629 /* VROAnimationChain.h */,
 				8FB2B5961E1445EE00EDB629 /* VROAnimationChain.cpp */,
 				8F52EA2F1E1D643000F1AF9D /* VROExecutableAnimation.h */,
+				8FDD90081E5356D0006CF466 /* VROLazyMaterial.h */,
 			);
 			name = "Execution API";
 			sourceTree = "<group>";

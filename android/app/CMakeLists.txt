@@ -75,6 +75,8 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/SoundData_JNI.cpp
              src/main/cpp/jni/Object_JNI.cpp
              src/main/cpp/jni/OBJLoaderDelegate_JNI.cpp
+             src/main/cpp/jni/LazyMaterial_JNI.cpp
+
              # Math
              ../../ViroRenderer/VROLineSegment.cpp
              ../../ViroRenderer/VROTriangle.cpp

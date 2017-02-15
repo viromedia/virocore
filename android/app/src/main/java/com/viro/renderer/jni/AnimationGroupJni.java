@@ -5,15 +5,26 @@ package com.viro.renderer.jni;
 
 public class AnimationGroupJni extends BaseAnimation {
 
+    private LazyMaterialJni mLazyMaterial;
+
     public AnimationGroupJni(String positionX, String positionY, String positionZ,
                              String scaleX, String scaleY, String scaleZ,
                              String rotateX, String rotateY, String rotateZ,
-                             String opacity, String color, float durationSeconds,
+                             String opacity, String color, LazyMaterialJni lazyMaterial,
+                             float durationSeconds,
                              float delaySeconds, String functionType) {
+
+        long lazyMaterialRef = 0;
+        if (lazyMaterial != null) {
+            mLazyMaterial = lazyMaterial;
+            lazyMaterialRef = lazyMaterial.getNativeRef();
+        }
+
         mNativeRef = nativeCreateAnimationGroup(positionX, positionY, positionZ,
                 scaleX, scaleY, scaleZ,
                 rotateX, rotateY, rotateZ,
-                opacity, color, durationSeconds, delaySeconds, functionType);
+                opacity, color, lazyMaterialRef,
+                durationSeconds, delaySeconds, functionType);
     }
 
     @Override
@@ -37,14 +48,17 @@ public class AnimationGroupJni extends BaseAnimation {
     }
 
     public void destroy() {
+        if (mLazyMaterial != null) {
+            mLazyMaterial.destroy();
+        }
         nativeDestroyAnimationGroup(mNativeRef);
     }
 
     private native long nativeCreateAnimationGroup(String positionX, String positionY, String positionZ,
                                                    String scaleX, String scaleY, String scaleZ,
                                                    String rotateX, String rotateY, String rotateZ,
-                                                   String opacity, String color, float durationSeconds,
-                                                   float delaySeconds, String functionType);
+                                                   String opacity, String color, long lazyMaterialRef,
+                                                   float durationSeconds, float delaySeconds, String functionType);
     private native void nativeExecuteAnimation(long nativeRef, long nodeRef);
     private native void nativePauseAnimation(long nativeRef);
     private native void nativeResumeAnimation(long nativeRef);

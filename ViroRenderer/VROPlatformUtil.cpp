@@ -411,8 +411,6 @@ void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
     env->DeleteLocalRef(cls);
 }
 
-
-
 void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     int task = VROPlatformGenerateTask(fcn);
     pinfo("Generated async task %d for background [task queue size %d]", task, sTaskMap.size());
@@ -490,6 +488,38 @@ void VROPlatformCallJavaFunction(jobject javaObject,
     va_end(args);
     
     env->DeleteLocalRef(viroClass);
+}
+
+ jlong VROPlatformCallJavaLongFunction(jobject javaObject,
+                                       std::string functionName,
+                                       std::string methodID, ...){
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    env->ExceptionClear();
+
+    jclass viroClass = env->GetObjectClass(javaObject);
+    if (viroClass == nullptr) {
+        perr("Unable to find class for making java calls [function %s, method %s]",
+             functionName.c_str(), methodID.c_str());
+        return 0;
+    }
+
+    jmethodID method = env->GetMethodID(viroClass, functionName.c_str(), methodID.c_str());
+    if (method == nullptr) {
+        perr("Unable to find method %s callback.", functionName.c_str());
+        return 0;
+    }
+
+    va_list args;
+    va_start(args, methodID);
+    jlong result = env->CallLongMethodV(javaObject, method, args);
+    if (env->ExceptionOccurred()) {
+        perr("Exception occured when calling %s.", functionName.c_str());
+        env->ExceptionClear();
+    }
+    va_end(args);
+
+    env->DeleteLocalRef(viroClass);
+    return result;
 }
 
 void Java_com_viro_renderer_jni_PlatformUtil_runTask(JNIEnv *env, jclass clazz, jint taskId) {
