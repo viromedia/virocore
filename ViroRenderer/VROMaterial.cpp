@@ -160,15 +160,22 @@ void VROMaterial::fadeSnapshot() {
                                                     }
                                                     ));
 
-        // Fadethe outgoing material out as well; it looks better to cross-fade between materials, so there won't be a 'pop' effect when we suddenly remove the outgoing material
+        // Fade the outgoing material out as well; it looks better to cross-fade between materials,
+        // so there won't be a 'pop' effect when we suddenly remove the outgoing material
         // (when the incoming material is opaque this is not a problem because it completely
         // blocks the outgoing material as its transparency reaches 1.0).
-        // VA: Before we had a conditional if(previousTransparency < 1.0), now we fade out regardless since textures can contain an alpha texture.
+        
+        // VA: Before we had a conditional if(previousTransparency < 1.0), now we fade out regardless
+        //     since textures can contain an alpha texture.
+        // RA: the problem with removing the previousTransparency conditional is that when we crossfade two
+        //     opaque materials, we end up with opacity < 1.0 during the crossfade. e.g., when incoming opacity
+        //     is 0.25 and outgoing is 0.75, the total opacity is < 1.0.
+        
+        // TODO Figure out how to cross-fade in a way that works for both opaque and transparent materials
           _outgoing->_transparency = previousTransparency;
           _outgoing->animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
                 ((VROMaterial *)animatable)->_transparency = v;
           }, previousTransparency, 0.0));
-      
     }
 }
 
