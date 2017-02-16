@@ -75,13 +75,14 @@ VROAVPlayer::~VROAVPlayer() {
     }
 }
 
-bool VROAVPlayer::setDataSourceURL(const char *fileOrURL) {
+bool VROAVPlayer::setDataSourceURL(const char *resourceOrUrl) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jstring jstring = env->NewStringUTF(fileOrURL);
+    jstring jstring = env->NewStringUTF(resourceOrUrl);
+    jobject jcontext = VROPlatformGetJavaAppContext();
 
     jclass cls = env->GetObjectClass(_javPlayer);
-    jmethodID jmethod = env->GetMethodID(cls, "setDataSourceURL", "(Ljava/lang/String;)Z");
-    jboolean result = env->CallBooleanMethod(_javPlayer, jmethod, jstring);
+    jmethodID jmethod = env->GetMethodID(cls, "setDataSourceURL", "(Ljava/lang/String;Landroid/content/Context;)Z");
+    jboolean result = env->CallBooleanMethod(_javPlayer, jmethod, jstring, jcontext);
 
     env->DeleteLocalRef(jstring);
     env->DeleteLocalRef(cls);

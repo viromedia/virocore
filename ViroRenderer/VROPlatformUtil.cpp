@@ -91,6 +91,11 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp) {
     return std::string([tempFilePath UTF8String]);
 }
 
+std::string VROPlatformCopyResourceToFile(std::string asset) {
+    // TODO: VIRO-767
+    return "";
+}
+
 void VROPlatformDeleteFile(std::string filename) {
     NSError *deleteError = nil;
     [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithUTF8String:filename.c_str()]
@@ -125,6 +130,7 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
 // JNIEnv objects, as those are thread-local. Access the JNIEnv object via getJNIEnv().
 // There is one JavaVM per application on Android (shared across activities).
 static JavaVM *sVM = nullptr;
+static jobject sJavaAppContext = nullptr;
 static jobject sJavaAssetMgr = nullptr;
 static jobject sPlatformUtil = nullptr;
 static AAssetManager *sAssetMgr = nullptr;
@@ -145,8 +151,9 @@ void getJNIEnv(JNIEnv **jenv) {
     }
 }
 
-void VROPlatformSetEnv(JNIEnv *env, jobject assetManager, jobject platformUtil) {
+void VROPlatformSetEnv(JNIEnv *env, jobject appContext, jobject assetManager, jobject platformUtil) {
     env->GetJavaVM(&sVM);
+    sJavaAppContext = env->NewGlobalRef(appContext);
     sJavaAssetMgr = env->NewGlobalRef(assetManager);
     sPlatformUtil = env->NewGlobalRef(platformUtil);
     sAssetMgr = AAssetManager_fromJava(env, assetManager);
@@ -164,6 +171,10 @@ JNIEnv *VROPlatformGetJNIEnv() {
     getJNIEnv(&env);
 
     return env;
+}
+
+jobject VROPlatformGetJavaAppContext() {
+    return sJavaAppContext;
 }
 
 jobject VROPlatformGetJavaAssetManager() {
@@ -254,6 +265,27 @@ void *VROPlatformLoadFile(std::string filename, int *outLength) {
     return ret;
 }
 
+std::string VROPlatformCopyResourceToFile(std::string asset) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jstring jasset = env->NewStringUTF(asset.c_str());
+
+    jclass cls = env->GetObjectClass(sPlatformUtil);
+    jmethodID jmethod = env->GetMethodID(cls, "copyResourceToFile", "(Ljava/lang/String;)Ljava/lang/String;");
+    jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jasset);
+
+    const char *path = env->GetStringUTFChars(jpath, 0);
+    std::string spath(path);
+
+    pinfo("Path to file is %s", path);
+
+    env->ReleaseStringUTFChars(jpath, path);
+    env->DeleteLocalRef(jpath);
+    env->DeleteLocalRef(jasset);
+    env->DeleteLocalRef(cls);
+
+    return spath;
+}
+
 std::string VROPlatformCopyAssetToFile(std::string asset) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jstring jasset = env->NewStringUTF(asset.c_str());
@@ -269,6 +301,7 @@ std::string VROPlatformCopyAssetToFile(std::string asset) {
 
     env->ReleaseStringUTFChars(jpath, path);
     env->DeleteLocalRef(jpath);
+    env->DeleteLocalRef(jasset);
     env->DeleteLocalRef(cls);
 
     return spath;

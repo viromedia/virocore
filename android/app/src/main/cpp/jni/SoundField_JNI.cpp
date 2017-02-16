@@ -32,36 +32,19 @@ namespace SoundField {
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateSoundFieldFromFile)(JNIEnv *env,
-                                             jobject object,
-                                             jstring filename,
-                                             jlong renderContextRef) {
+JNI_METHOD(jlong, nativeCreateSoundField)(JNIEnv *env,
+                                          jobject object,
+                                          jstring filename,
+                                          jboolean local,
+                                          jlong renderContextRef) {
     std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
 
     const char *cStrFile = env->GetStringUTFChars(filename, NULL);
     std::string file(cStrFile);
     env->ReleaseStringUTFChars(filename, cStrFile);
 
-    // TODO: VIRO-756 do something different for local files
-    std::shared_ptr<VROSound> soundEffect = renderContext->getDriver()->newSound(file, VROSoundType::SoundField);
+    std::shared_ptr<VROSound> soundEffect = renderContext->getDriver()->newSound(file, VROSoundType::SoundField, local);
     std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(soundEffect);
-    soundGvr->setDelegate(std::make_shared<SoundDelegate>(object));
-
-    return SoundField::jptr(soundGvr);
-}
-
-JNI_METHOD(jlong, nativeCreateSoundFieldFromUrl)(JNIEnv *env,
-                                            jobject object,
-                                            jstring filename,
-                                            jlong renderContextRef) {
-    std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
-
-    const char *cStrFile = env->GetStringUTFChars(filename, NULL);
-    std::string file(cStrFile);
-    env->ReleaseStringUTFChars(filename, cStrFile);
-
-    std::shared_ptr<VROSound> sound = renderContext->getDriver()->newSound(file, VROSoundType::SoundField);
-    std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(sound);
     soundGvr->setDelegate(std::make_shared<SoundDelegate>(object));
 
     return SoundField::jptr(soundGvr);

@@ -42,7 +42,7 @@ JNI_METHOD(jlong, nativeCreateRendererGVR)(JNIEnv *env, jclass clazz,
                                            jlong native_gvr_api) {
     std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
     gvrAudio->Init(env, android_context, class_loader, GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
-    VROPlatformSetEnv(env, asset_mgr, platform_util);
+    VROPlatformSetEnv(env, android_context, asset_mgr, platform_util);
 
     gvr_context *gvrContext = reinterpret_cast<gvr_context *>(native_gvr_api);
     std::shared_ptr<VROSceneRenderer> renderer
@@ -59,7 +59,7 @@ JNI_METHOD(jlong, nativeCreateRendererOVR)(JNIEnv *env, jclass clazz,
                                            jobject platform_util) {
     std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
     gvrAudio->Init(env, android_context, class_loader, GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
-    VROPlatformSetEnv(env, asset_mgr, platform_util);
+    VROPlatformSetEnv(env, android_context, asset_mgr, platform_util);
 
     std::shared_ptr<VROSceneRenderer> renderer
             = std::make_shared<VROSceneRendererOVR>(gvrAudio, view, activity, env);

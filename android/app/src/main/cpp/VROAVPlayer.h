@@ -36,7 +36,7 @@ public:
     VROAVPlayer();
     virtual ~VROAVPlayer();
 
-    bool setDataSourceURL(const char *fileOrURL);
+    bool setDataSourceURL(const char *resourceOrUrl);
     bool setDataSourceAsset(const char *asset);
     void setSurface(GLuint textureId);
 

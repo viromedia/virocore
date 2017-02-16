@@ -33,6 +33,12 @@ std::string VROPlatformLoadFileAsString(std::string path);
 #pragma mark - Network and File Utilities
 
 /*
+ Copy the given resource into a temp file. Currently used for sound & obj in Android.
+ TODO: VIRO-767 for iOS sound.
+ */
+std::string VROPlatformCopyResourceToFile(std::string asset);
+
+/*
  Load the given URL to a file, and return the path to the file. If the file
  is temporary and must be deleted after its processed, temp will be set to true.
  */
@@ -82,7 +88,7 @@ NSURLSessionDataTask *downloadDataWithURL(NSURL *url, void (^completionBlock)(NS
 
 #if VRO_PLATFORM_ANDROID
 
-void VROPlatformSetEnv(JNIEnv *env, jobject assetManager, jobject platformUtil);
+void VROPlatformSetEnv(JNIEnv *env, jobject appContext, jobject assetManager, jobject platformUtil);
 
 // This function was added because VROPlatformConvertBitmap can be called before the renderer
 // is created and as a result, activity and assetManager hasn't been set yet. We should think
@@ -91,6 +97,7 @@ void VROPlatformSetEnv(JNIEnv *env);
 void VROPlatformReleaseEnv();
 
 JNIEnv *VROPlatformGetJNIEnv();
+jobject VROPlatformGetJavaAppContext();
 jobject VROPlatformGetJavaAssetManager();
 AAssetManager *VROPlatformGetAssetManager();
 

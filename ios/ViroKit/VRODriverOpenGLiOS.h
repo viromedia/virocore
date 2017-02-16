@@ -32,12 +32,11 @@ public:
         return new VROVideoTextureCacheOpenGL(_eaglContext);
     }
 
-    std::shared_ptr<VROSound> newSound(std::string path, VROSoundType type) {
-        // TODO: VIRO-756 make use of the local flag (assumes it's a webfile)
-        std::shared_ptr<VROSound> sound = VROSoundGVR::create(path, _gvrAudio, type, false);
+    std::shared_ptr<VROSound> newSound(std::string path, VROSoundType type, bool local) {
+        std::shared_ptr<VROSound> sound = VROSoundGVR::create(path, _gvrAudio, type, local);
         return sound;
     }
-    
+
     std::shared_ptr<VROSound> newSound(std::shared_ptr<VROSoundData> data, VROSoundType type) {
         std::shared_ptr<VROSound> sound = VROSoundGVR::create(data, _gvrAudio, type);
         return sound;

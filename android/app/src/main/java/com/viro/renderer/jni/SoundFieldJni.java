@@ -12,11 +12,9 @@ public class SoundFieldJni implements BaseSoundJni {
 
     public SoundFieldJni(String path, RenderContextJni renderContext,
                          SoundDelegate delegate, boolean local) {
-        if (local) {
-            mNativeRef = nativeCreateSoundFieldFromFile(path, renderContext.mNativeRef);
-        } else {
-            mNativeRef = nativeCreateSoundFieldFromUrl(path, renderContext.mNativeRef);
-        }
+
+        mNativeRef = nativeCreateSoundField(path, local, renderContext.mNativeRef);
+
         mDelegate = delegate;
     }
 
@@ -100,8 +98,7 @@ public class SoundFieldJni implements BaseSoundJni {
         }
     }
 
-    private native long nativeCreateSoundFieldFromFile(String filename, long renderContextRef);
-    private native long nativeCreateSoundFieldFromUrl(String url, long renderContextRef);
+    private native long nativeCreateSoundField(String url, boolean local, long renderContextRef);
     private native long nativeCreateSoundFieldWithData(long dataRef, long renderContextRef);
     private native void nativeDestroySoundField(long mNativeRef);
     private native void nativePlaySoundField(long nativeRef);

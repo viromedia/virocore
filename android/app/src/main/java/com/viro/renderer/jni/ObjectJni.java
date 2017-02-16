@@ -24,8 +24,8 @@ public class ObjectJni extends BaseGeometry {
 
     public ObjectJni(String pathOrUrl, AsyncObjListener asyncObjListener) {
         Uri tempUri = Uri.parse(pathOrUrl);
-        if (tempUri.getScheme() == null) {
-            // if the scheme is null, then it's a local resource
+        if (tempUri.getScheme().equals("res")) {
+            // if the scheme is equal to "res", then it's a local resource
             mObjectNodeRef = nativeLoadOBJFromFile(pathOrUrl);
         } else {
             mObjectNodeRef = nativeLoadOBJFromUrl(pathOrUrl);

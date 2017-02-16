@@ -21,7 +21,6 @@
 
 std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromURL(std::string url, std::string baseURL,
                                                       bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
-    
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
     
     if (async) {
@@ -62,7 +61,6 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromFile(std::string file, std::st
     if (async) {
         VROPlatformDispatchAsyncBackground([file, baseDir, node, onFinish] {
             std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseDir, false);
-
             VROPlatformDispatchAsyncRenderer([node, geometry, onFinish] {
                 injectOBJ(geometry, node, onFinish);
             });

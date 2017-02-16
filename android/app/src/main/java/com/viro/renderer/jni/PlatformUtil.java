@@ -5,11 +5,8 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
-import android.opengl.GLSurfaceView;
+import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.Surface;
 
 import com.viro.renderer.FrameListener;
@@ -24,7 +21,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,6 +113,33 @@ public class PlatformUtil {
         File file = File.createTempFile("Viro", "tmp");
         downloadURLSynchronous(url, file);
 
+        return file.getAbsolutePath();
+    }
+
+    // Accessed by Native code (VROPlatformUtil.cpp)
+    // Resource should be in the form res:/#######, where the id is in the path.
+    public String copyResourceToFile(String resource) throws IOException {
+        Uri uri = Uri.parse(resource);
+        File file = new File(mContext.getCacheDir(), uri.getPath());
+
+        InputStream in = null;
+        FileOutputStream out = null;
+
+        try {
+            // the path is /#######, we just want the #######
+            int id = Integer.valueOf(uri.getPath().substring(1));
+            in = mContext.getResources().openRawResource(id);
+            out = new FileOutputStream(file);
+
+            transfer(in, out);
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+            if (out != null) {
+                out.close();
+            }
+        }
         return file.getAbsolutePath();
     }
 

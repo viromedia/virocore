@@ -16,10 +16,9 @@ std::shared_ptr<VROSoundDataGVR> VROSoundDataGVR::create(std::string path, bool 
 }
 
 VROSoundDataGVR::VROSoundDataGVR(std::string path, bool local) :
-_path(path) {
-    if (local) {
-        _localPath = _path;
-    }
+_path(path),
+_local(local) {
+    // no-op
 }
 
 VROSoundDataGVR::~VROSoundDataGVR() {
@@ -31,15 +30,19 @@ VROSoundDataGVR::~VROSoundDataGVR() {
 
 void VROSoundDataGVR::setup() {
     // If we aren't read and the file isn't local, then load the sound
-    if (_path != _localPath && !_ready) {
+    if (!_ready) {
         std::weak_ptr<VROSoundDataGVR> weakPtr = shared_from_this();
-
-        loadSound(_path, [weakPtr](std::string fileName) {
+        std::function<void(std::string)> onFinish = [weakPtr](std::string fileName) {
             std::shared_ptr<VROSoundDataGVR> data = weakPtr.lock();
             if (data) {
                 data->ready(fileName);
             }
-        });
+        };
+        if (_local) {
+            loadSoundFromResource(_path, onFinish);
+        } else {
+            loadSoundFromURL(_path, onFinish);
+        }
     }
 }
 
@@ -65,10 +68,21 @@ void VROSoundDataGVR::notifyDelegateIfReady() {
     }
 }
 
-void VROSoundDataGVR::loadSound(std::string path, std::function<void(std::string)> onFinish) {
+void VROSoundDataGVR::loadSoundFromURL(std::string path,
+                                       std::function<void(std::string)> onFinish) {
     VROPlatformDispatchAsyncBackground([path, onFinish] {
         bool isTemp = false;
         std::string filename = VROPlatformDownloadURLToFile(path, &isTemp);
+
+        onFinish(filename);
+    });
+}
+
+void VROSoundDataGVR::loadSoundFromResource(std::string path,
+                                            std::function<void(std::string)> onFinish) {
+    VROPlatformDispatchAsyncBackground([path, onFinish] {
+        bool isTemp = false;
+        std::string filename = VROPlatformCopyResourceToFile(path);
 
         onFinish(filename);
     });

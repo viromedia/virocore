@@ -1,17 +1,18 @@
+/**
+ * Copyright © 2016 Viro Media. All rights reserved.
+ */
 package com.viro.renderer;
 
-/**
- * Created by radvani on 11/18/16.
- */
-
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.util.Log;
 import android.view.Surface;
 
-import java.io.FileDescriptor;
 import java.io.IOException;
 
 /**
@@ -44,16 +45,25 @@ public class AVPlayer {
         });
     }
 
-    public boolean setDataSourceURL(String pathOrURL) {
+    public boolean setDataSourceURL(String resourceOrURL, Context context) {
         try {
             reset();
-            _mediaPlayer.setDataSource(pathOrURL);
+            if (resourceOrURL.startsWith("res")) {
+                Uri uri = Uri.parse(resourceOrURL);
+                // The MediaPlayer doesn't like resources in the form res:/#######
+                // so we need to convert it to: android.resource://[package]/[res id]
+                Uri newUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
+                        + context.getPackageName() + uri.getPath());
+                _mediaPlayer.setDataSource(context, newUri);
+            } else {
+                _mediaPlayer.setDataSource(resourceOrURL);
+            }
             _mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             _mediaPlayer.prepare();
 
             return true;
         }catch(IOException e) {
-            Log.w("Viro", "Failed to load path [" + pathOrURL + "] in AV Player!");
+            Log.w("Viro", "Failed to load path [" + resourceOrURL + "] in AV Player!", e);
             return false;
         }
     }

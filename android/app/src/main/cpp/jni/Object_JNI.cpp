@@ -28,7 +28,7 @@ JNI_METHOD(jlong, nativeLoadOBJFromFile)(JNIEnv *env,
                                          jstring file) {
     const char *cStrFile = env->GetStringUTFChars(file, NULL);
     std::string strFile(cStrFile);
-    std::string objUrlPath = VROPlatformCopyAssetToFile(strFile);
+    std::string objUrlPath = VROPlatformCopyResourceToFile(strFile);
     std::string objUrlBase = objUrlPath.substr(0, objUrlPath.find_last_of('/'));
     env->ReleaseStringUTFChars(file, cStrFile);
     std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(object, env);

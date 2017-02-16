@@ -13,11 +13,7 @@ public class SpatialSoundJni implements BaseSoundJni {
 
     public SpatialSoundJni(String path, RenderContextJni renderContext,
                            SoundDelegate delegate, boolean local) {
-        if (local) {
-            mNativeRef = nativeCreateSpatialSoundFromFile(path, renderContext.mNativeRef);
-        } else {
-            mNativeRef = nativeCreateSpatialSoundFromUrl(path, renderContext.mNativeRef);
-        }
+        mNativeRef = nativeCreateSpatialSound(path, local, renderContext.mNativeRef);
         mDelegate = delegate;
     }
 
@@ -105,8 +101,7 @@ public class SpatialSoundJni implements BaseSoundJni {
         }
     }
 
-    private native long nativeCreateSpatialSoundFromFile(String filename, long renderContextRef);
-    private native long nativeCreateSpatialSoundFromUrl(String url, long renderContextRef);
+    private native long nativeCreateSpatialSound(String filename, boolean local, long renderContextRef);
     private native long nativeCreateSpatialSoundWithData(long nativeRef, long dataRef);
     private native void nativeDestroySpatialSound(long nativeRef);
     private native void nativeAttachToNode(long nativeRef, long nodeRef);

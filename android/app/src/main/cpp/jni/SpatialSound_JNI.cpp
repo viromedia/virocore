@@ -33,37 +33,20 @@ namespace SpatialSound {
 }
 
 extern "C" {
-JNI_METHOD(jlong, nativeCreateSpatialSoundFromFile)(JNIEnv *env,
-                                                    jobject object,
-                                                    jstring filename,
-                                                    jlong renderContextRef) {
+JNI_METHOD(jlong, nativeCreateSpatialSound)(JNIEnv *env,
+                                            jobject object,
+                                            jstring filename,
+                                            jboolean local,
+                                            jlong renderContextRef) {
     std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
 
     const char *cStrFile = env->GetStringUTFChars(filename, NULL);
     std::string file(cStrFile);
     env->ReleaseStringUTFChars(filename, cStrFile);
 
-    // TODO: VIRO-756 do something different for local files
-    std::shared_ptr<VROSound> soundEffect = renderContext->getDriver()->newSound(file, VROSoundType::Spatial);
+    std::shared_ptr<VROSound> soundEffect = renderContext->getDriver()->newSound(file, VROSoundType::Spatial, local);
     std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(soundEffect);
     soundGvr->setDelegate(std::make_shared<SoundDelegate>(object));
-    return SpatialSound::jptr(soundGvr);
-}
-
-JNI_METHOD(jlong, nativeCreateSpatialSoundFromUrl)(JNIEnv *env,
-                                                   jobject object,
-                                                   jstring filename,
-                                                   jlong renderContextRef) {
-    std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
-
-    const char *cStrFile = env->GetStringUTFChars(filename, NULL);
-    std::string file(cStrFile);
-    env->ReleaseStringUTFChars(filename, cStrFile);
-
-    std::shared_ptr<VROSound> soundEffect = renderContext->getDriver()->newSound(file, VROSoundType::Spatial);
-    std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(soundEffect);
-    soundGvr->setDelegate(std::make_shared<SoundDelegate>(object));
-
     return SpatialSound::jptr(soundGvr);
 }
 
