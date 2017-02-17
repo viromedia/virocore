@@ -63,7 +63,8 @@ public class EventDelegateJni {
         ON_MOVE(4),
         ON_CONTROLLER_STATUS(5),
         ON_SWIPE(6),
-        ON_SCROLL(7);
+        ON_SCROLL(7),
+        ON_DRAG(8);
 
         public final int mTypeId;
 
@@ -197,6 +198,7 @@ public class EventDelegateJni {
         void onControllerStatus(int source, ControllerStatus status);
         void onSwipe(int source, SwipeState swipeState);
         void onScroll(int source, float x, float y);
+        void onDrag(int source, float x, float y, float z);
     }
 
     /**
@@ -237,6 +239,12 @@ public class EventDelegateJni {
     void onScroll(int source, float x, float y){
         if (mDelegate != null){
             mDelegate.onScroll(source, x, y);
+        }
+    }
+
+    void onDrag(int source, float x, float y, float z){
+        if (mDelegate != null){
+            mDelegate.onDrag(source, x, y, z);
         }
     }
 }

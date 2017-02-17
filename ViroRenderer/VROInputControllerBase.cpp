@@ -43,52 +43,67 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
         }
 
         _lastClickedNode = nullptr;
+        _lastDraggedNode = nullptr;
     } else if (clickState == VROEventDelegate::ClickDown){
         _lastClickedNode = _hitResult->getNode();
+
+        // Identify if object is draggable.
+        std::shared_ptr<VRONode> draggableNode
+                = getNodeToHandleEvent(VROEventDelegate::EventAction::OnDrag,
+                                       _hitResult->getNode());
+
+        if (draggableNode == nullptr){
+            return;
+        }
+
+        /*
+         * Grab and save a reference to the draggedNode that we will be tracking.
+         * Grab and save the distance of the hit result from the controller.
+         * Grab and save the offset of the draggedNode from the controller's pointer.
+         * For each of the above, store them within _lastDraggedNode to be used later
+         * within onMove to calculate the new dragged location of the draggedNode
+         * in reference to the controller's movement.
+         */
+        std::shared_ptr<VRODraggedObject> draggedObject = std::make_shared<VRODraggedObject>();
+        draggedObject->_draggedDistanceFromController = _hitResult->getLocation().distanceAccurate(_lastKnownPosition);
+        draggedObject->_draggedOffsetFromPointer = draggableNode->getTransformedPosition() - _hitResult->getLocation();
+        draggedObject->_draggedNode = draggableNode;
+        _lastDraggedNode  = draggedObject;
     }
 }
 
 void VROInputControllerBase::onTouchpadEvent(int source, VROEventDelegate::TouchState touchState,
                                              float posX,
-                                             float posY){
+                                             float posY) {
     // Avoid spamming similar TouchDownMove events.
     VROVector3f currentTouchedPosition = VROVector3f(posX, posY, 0);
     if (touchState == VROEventDelegate::TouchState::TouchDownMove &&
-            _lastTouchedPosition.isEqual(currentTouchedPosition)){
+        _lastTouchedPosition.isEqual(currentTouchedPosition)) {
         return;
     }
     _lastTouchedPosition = currentTouchedPosition;
 
     // Notify internal delegates
-    for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
+    for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
         delegate->onTouch(source, touchState, posX, posY);
     }
 
     // Return if we have not focused on any node upon which to trigger events.
-    if (_hitResult == nullptr){
+    if (_hitResult == nullptr) {
         return;
     }
 
-    std::shared_ptr<VRONode> focusedNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnTouch, _hitResult->getNode());
-    if (focusedNode != nullptr){
+    std::shared_ptr<VRONode> focusedNode = getNodeToHandleEvent(
+            VROEventDelegate::EventAction::OnTouch, _hitResult->getNode());
+    if (focusedNode != nullptr) {
         focusedNode->getEventDelegate()->onTouch(source, touchState, posX, posY);
     }
 }
 
-void VROInputControllerBase::onRotate(int source, const VROQuaternion rotation){
-    if (_lastKnownRotation == rotation){
-        return;
-    }
-
-    _lastKnownForward = _lastKnownRotation.getMatrix().multiply(kBaseForward);
+void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuaternion rotation) {
     _lastKnownRotation = rotation;
-}
+    _lastKnownPosition = position;
 
-void VROInputControllerBase::onPosition(int source, VROVector3f position){
-     _lastKnownPosition = position;
-}
-
-void VROInputControllerBase::notifyOrientationDelegates(int source){
     // Trigger orientation delegate callbacks for non-scene elements.
     for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
         delegate->onGazeHit(source, _hitResult->getDistance(), _hitResult->getLocation());
@@ -109,6 +124,34 @@ void VROInputControllerBase::notifyOrientationDelegates(int source){
     if (movableNode != nullptr){
         movableNode->getEventDelegate()->onMove(source, _lastKnownRotation.toEuler(), _lastKnownPosition);
     }
+
+    // Update draggable objects if needed
+    if (_lastDraggedNode != nullptr){
+
+        // Calculate the new drag location
+        VROVector3f objectOffset = _lastDraggedNode->_draggedOffsetFromPointer;
+        VROVector3f objectDistanceFromController = _lastKnownForward * _lastDraggedNode->_draggedDistanceFromController;
+        VROVector3f draggedToLocation = _lastKnownPosition + objectDistanceFromController + objectOffset;
+
+        std::shared_ptr<VRONode> draggedNode = _lastDraggedNode->_draggedNode;
+        draggedNode->setPosition(draggedToLocation);
+
+        /*
+         * To avoid spamming the JNI / JS bridge, throttle the notification
+         * of onDrag delegates to a certain degree of accuracy.
+         */
+        float distance = draggedToLocation.distance(_lastDraggedNodePosition);
+        if (distance < ON_DRAG_DISTANCE_THRESHOLD){
+            return;
+        }
+
+        // Update last known dragged position and notify delegates
+        _lastDraggedNodePosition = draggedToLocation;
+        draggedNode->getEventDelegate()->onDrag(source, draggedToLocation);
+        for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
+            delegate->onDrag(source, draggedToLocation);
+        }
+    }
 }
 
 void VROInputControllerBase::updateHitNode(VROVector3f fromPosition, VROVector3f withDirection){
@@ -118,6 +161,7 @@ void VROInputControllerBase::updateHitNode(VROVector3f fromPosition, VROVector3f
 
     // Perform hit test re-calculate forward vectors as needed.
     _hitResult = std::make_shared<VROHitTestResult>(hitTest(withDirection, fromPosition, true));
+    _lastKnownForward = withDirection;
 }
 
 void VROInputControllerBase::onControllerStatus(int source, VROEventDelegate::ControllerStatus status){

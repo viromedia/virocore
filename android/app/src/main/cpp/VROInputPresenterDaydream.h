@@ -74,6 +74,8 @@ public:
             // Set the lighting on this material to be constant
             std::shared_ptr<VROMaterial> &material = node->getGeometry()->getMaterials().front();
             material->getDiffuse().setTexture(_controllerIdleTexture);
+            material->setWritesToDepthBuffer(false);
+            material->setReadsFromDepthBuffer(false);
         });
         _controllerNode->setSelectable(false);
 
@@ -101,6 +103,8 @@ public:
             std::shared_ptr<VROMaterial> &material = node->getGeometry()->getMaterials().front();
             material->setLightingModel(VROLightingModel::Constant);
             material->getDiffuse().setTexture(_laserTexture);
+            material->setWritesToDepthBuffer(false);
+            material->setReadsFromDepthBuffer(false);
         });
 
         _pointerNode->setPosition(_controllerNode->getPosition());
@@ -158,6 +162,10 @@ public:
     void onMove(int source, VROVector3f controllerRotation, VROVector3f controllerPosition){
         VROInputPresenter::onMove(source, controllerRotation, controllerPosition);
         _elbowNode->setRotation(controllerRotation);
+    }
+
+    virtual void onDrag(int source, VROVector3f newPosition) {
+        VROInputPresenter::onDrag(source, newPosition);
     }
 
     void onGazeHit(int source, float distance, VROVector3f hitLocation){

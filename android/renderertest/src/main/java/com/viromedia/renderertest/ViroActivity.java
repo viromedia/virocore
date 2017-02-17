@@ -85,6 +85,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         //nodes = testBox(getApplicationContext());
         //nodes = test3dObjectLoading(getApplicationContext());
 
+
         //nodes = testImageSurface(this);
         //nodes = testText(this);
 
@@ -257,6 +258,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         float[] position = {0, -1, -2};
         node3.setPosition(position);
         node3.setGeometry(textJni);
+        node3.setEventDelegateJni(getGenericDelegate("Text"));
 
         // Create a new material with a diffuseTexture set to the image "boba.png"
         ImageJni bobaImage = new ImageJni("boba.png");
@@ -312,10 +314,12 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     private EventDelegateJni getGenericDelegate(final String delegateTag){
         EventDelegateJni delegateJni = new EventDelegateJni();
         delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_HOVER, false);
-        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_CLICK, false);
+        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_CLICK, true);
         delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_SWIPE, false);
         delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_SCROLL, false);
-        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_TOUCH, true);
+        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_TOUCH, false);
+        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_DRAG, false);
+
         delegateJni.setEventDelegateCallback(new EventDelegateJni.EventDelegateCallback() {
             @Override
             public void onHover(int source, boolean isHovering) {
@@ -346,6 +350,11 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             public void onScroll(int source, float x, float y) {
                 Log.e(TAG, delegateTag + " onScroll " + x + "," +y);
 
+            }
+
+            @Override
+            public void onDrag(int source, float x, float y, float z) {
+                Log.e(TAG, delegateTag +"On drag: " + x + ", " + y + ", " + z);
             }
         });
 

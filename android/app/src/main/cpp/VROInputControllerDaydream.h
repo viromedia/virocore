@@ -56,6 +56,8 @@ private:
     void notifyButtonEventForType(gvr::ControllerButton button, ViroDayDream::InputSource source);
     void updateSwipeGesture(VROVector3f start, VROVector3f end);
     void updateScrollGesture(VROVector3f start, VROVector3f end);
+    VROVector3f getDaydreamForwardVector(const VROQuaternion rotation);
+    VROVector3f getDaydreamControllerPosition(const VROQuaternion rotation);
 
     std::unique_ptr<gvr::ControllerApi> _gvr_controller;
     gvr::ControllerState _controller_state;

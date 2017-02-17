@@ -147,3 +147,21 @@ void EventDelegate_JNI::onScroll(int source, float x, float y) {
         env->DeleteLocalRef(localObj);
     });
 }
+
+void EventDelegate_JNI::onDrag(int source, VROVector3f newPosition) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([source, newPosition] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj,
+                                    "onDrag", "(IFFF)V", source, newPosition.x, newPosition.y,
+                                    newPosition.z);
+        env->DeleteLocalRef(localObj);
+    });
+}
