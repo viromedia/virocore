@@ -23,16 +23,21 @@ public class AVPlayer {
     private MediaPlayer _mediaPlayer;
     private float _volume;
     private long mNativeReference;
+    private boolean _loop;
 
     public AVPlayer(long nativeReference) {
         _mediaPlayer = new MediaPlayer();
         _volume = 1.0f;
         mNativeReference = nativeReference;
+        _loop = false;
 
         // Attach listeners to be called back into native
         _mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
+                if (_loop){
+                    play();
+                }
                 nativeOnFinished(mNativeReference);
             }
         });
@@ -113,7 +118,7 @@ public class AVPlayer {
     }
 
     public void setLoop(boolean loop) {
-        _mediaPlayer.setLooping(loop);
+        _loop = loop;
     }
 
     public void setVolume(float volume) {
