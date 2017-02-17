@@ -9,10 +9,10 @@
 #import "VROSample.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneBox = 0,
+    VROSampleSceneText = 0,
     VROSampleSceneTorus,
     VROSampleSceneOBJ,
-    VROSampleSceneText,
+    VROSampleSceneBox,
     VROSampleSceneVideoSphere,
     VROSampleSceneNumScenes
 };
@@ -90,8 +90,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     self.videoTexture->play();
     
     scene->setBackgroundSphere(self.videoTexture);
-    self.view.reticle->setEnabled(true);
-    
     return sceneController;
 }
 
@@ -151,8 +149,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->addChildNode([self newTorusWithPosition:{ 0, -d, d}]);
     rootNode->addChildNode([self newTorusWithPosition:{-d,  d, d}]);
     rootNode->addChildNode([self newTorusWithPosition:{-d, -d, d}]);
-    
-    self.view.reticle->setEnabled(true);
     
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self] (VRONode *const node, float seconds) {
         self.torusAngle += .015;
@@ -333,8 +329,23 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     int width = 10;
     int height = 10;
     
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"card_main" ofType:@"ktx"];
+    NSURL *fileURL = [NSURL fileURLWithPath:filePath];
+    NSData *fileData = [NSData dataWithContentsOfURL:fileURL];
+    
+    VROTextureFormat format;
+    int texWidth;
+    int texHeight;
+    std::vector<uint32_t> mipSizes;
+    std::shared_ptr<VROData> texData = VROTextureUtil::readKTXHeader((uint8_t *)[fileData bytes], (uint32_t)[fileData length],
+                                                                     &format, &texWidth, &texHeight, &mipSizes);
+    
+    std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, format, texData, texWidth, texHeight,
+                                                                       self.driver);
+    
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height);
     surface->getMaterials().front()->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
+    surface->getMaterials().front()->getDiffuse().setTexture(texture);
     
     std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
     surfaceNode->setGeometry(surface);
@@ -368,8 +379,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     textNode->setPosition({0, 0, -10});
     
     rootNode->addChildNode(textNode);
-    
-    self.view.reticle->setEnabled(true);
     self.tapEnabled = YES;
 
     return sceneController;

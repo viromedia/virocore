@@ -14,9 +14,6 @@
 #include "VROLog.h"
 #include "VROImage.h"
 
-// Constants for ETC2 ripped from NDKr9 headers
-#define GL_COMPRESSED_RGB8_ETC2                          0x9274
-#define GL_COMPRESSED_RGBA8_ETC2_EAC                     0x9278
 
 VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, std::vector<std::shared_ptr<VROImage>> &images,
                                                      VRODriver &driver) :
@@ -97,7 +94,7 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type, VROTex
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    if (format == VROTextureFormat::ETC2) {
+    if (format == VROTextureFormat::ETC2_RGBA8_EAC) {
         if (type == VROTextureType::Texture2D) {
             glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA8_ETC2_EAC, width, height, 0, data->getDataLength(), data->getData());
         }

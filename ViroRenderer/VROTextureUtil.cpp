@@ -34,10 +34,6 @@ std::shared_ptr<VROTexture> VROTextureUtil::loadASTCTexture(const uint8_t *data,
     return std::make_shared<VROTexture>(type, format, stripped, width, height, driver);
 }
 
-/*
- Read a texture file with a PKM header. Read the width and height from the header then
- strip it out and return the raw texture data.
- */
 std::shared_ptr<VROData> VROTextureUtil::readASTCHeader(const uint8_t *data, int length, VROTextureFormat *outFormat,
                                                         int *outWidth, int *outHeight) {
     int blockDimX = data[kASTCBlockXOffset];
@@ -95,4 +91,59 @@ std::shared_ptr<VROData> VROTextureUtil::readASTCHeader(const uint8_t *data, int
     
     return std::make_shared<VROData>(((const char *) data) + kASTCHeaderLength,
                                      length - kASTCHeaderLength);
+}
+
+typedef struct {
+    uint8_t m_au8Identifier[12];
+    uint32_t m_u32Endianness;
+    uint32_t m_u32GlType;
+    uint32_t m_u32GlTypeSize;
+    uint32_t m_u32GlFormat;
+    uint32_t m_u32GlInternalFormat;
+    uint32_t m_u32GlBaseInternalFormat;
+    uint32_t m_u32PixelWidth;
+    uint32_t m_u32PixelHeight;
+    uint32_t m_u32PixelDepth;
+    uint32_t m_u32NumberOfArrayElements;
+    uint32_t m_u32NumberOfFaces;
+    uint32_t m_u32NumberOfMipmapLevels;
+    uint32_t m_u32BytesOfKeyValueData;
+} VROKTXData;
+
+std::shared_ptr<VROData> VROTextureUtil::readKTXHeader(const uint8_t *data, uint32_t length, VROTextureFormat *outFormat,
+                                                       int *outWidth, int *outHeight, std::vector<uint32_t> *outMipSizes) {
+    
+    VROKTXData ktxHeader;
+    memcpy(&ktxHeader, data, sizeof(VROKTXData));
+    
+    // We only support RGBA8 ETC2 currently
+    passert (ktxHeader.m_u32GlInternalFormat == GL_COMPRESSED_RGBA8_ETC2_EAC);
+    
+    *outFormat = VROTextureFormat::ETC2_RGBA8_EAC;
+    *outWidth  = ktxHeader.m_u32PixelWidth;
+    *outHeight = ktxHeader.m_u32PixelHeight;
+    
+    int numMipLevels = ktxHeader.m_u32NumberOfMipmapLevels;
+    
+    // Skip key value pairs
+    int mipStartIndex = sizeof(VROKTXData) + ktxHeader.m_u32BytesOfKeyValueData;
+    
+    VROByteBuffer buffer;
+    
+    for (int i = 0; i < numMipLevels; i++) {
+        uint32_t mipSize;
+        memcpy(&mipSize, ((const char *)data) + mipStartIndex, sizeof(uint32_t));
+        
+        outMipSizes->push_back(mipSize);
+        
+        mipStartIndex += sizeof(uint32_t);
+        buffer.grow(mipSize);
+        buffer.writeBytes(((const char *)data) + mipStartIndex, mipSize);
+        
+        uint32_t mipSizeRounded = (mipSize + 3) & ~(uint32_t)3;
+        mipStartIndex += mipSizeRounded;
+    }
+    
+    buffer.releaseBytes();
+    return std::make_shared<VROData>(buffer.getData(), buffer.getPosition(), VRODataOwnership::Move);
 }

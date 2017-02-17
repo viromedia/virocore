@@ -79,7 +79,6 @@ VROTexture::VROTexture(VROTextureType type, VROTextureFormat format,
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
-
 VROTexture::~VROTexture() {
     ALLOCATION_TRACKER_SUB(Textures, 1);
 }

@@ -13,6 +13,10 @@
 #include <vector>
 #include "VRODefines.h"
 
+// Constants for ETC2 ripped from NDKr9 headers
+#define GL_COMPRESSED_RGB8_ETC2                          0x9274
+#define GL_COMPRESSED_RGBA8_ETC2_EAC                     0x9278
+
 class VROTextureSubstrate;
 class VRODriver;
 class VROImage;
@@ -26,7 +30,7 @@ enum class VROTextureType {
 };
 
 enum class VROTextureFormat {
-    ETC2,
+    ETC2_RGBA8_EAC,
     ASTC_4x4_LDR,
     RGBA8,
 };
