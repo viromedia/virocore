@@ -329,7 +329,7 @@ std::shared_ptr<VROTexture> VROOBJLoader::loadTexture(std::string &name, std::st
             VROPlatformDeleteFile(textureFile);
         }
         
-        texture = std::make_shared<VROTexture>(image);
+        texture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::Runtime, image);
         cache.insert(std::make_pair(name, texture));
     }
     else {

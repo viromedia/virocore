@@ -64,7 +64,9 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
         }
 
         std::shared_ptr<VROMaterial> &material = node->getGeometry()->getMaterials().front();
-        material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("heart_d.jpg")));
+        material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
+                                                                       VROMipmapMode::Runtime,
+                                                                       VROPlatformLoadImageFromAsset("heart_d.jpg")));
         material->setLightingModel(VROLightingModel::Lambert);
     });
 
@@ -118,14 +120,46 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     _material = box->getMaterials()[0];
     _material->setLightingModel(VROLightingModel::Lambert);
     //_material->getDiffuse().setTexture(_videoA);
-    _material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("boba.png")));
-    _material->getSpecular().setTexture(std::make_shared<VROTexture>(VROPlatformLoadImageFromAsset("specular.png")));
+    _material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
+                                                                    VROMipmapMode::Runtime,
+                                                                    VROPlatformLoadImageFromAsset("boba.png")));
+    _material->getSpecular().setTexture(std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
+                                                                     VROMipmapMode::Runtime,
+                                                                     VROPlatformLoadImageFromAsset("specular.png")));
 
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
     boxNode->setPosition({0, 0, -15});
 
     rootNode->addChildNode(boxNode);
+
+    std::string texFile = VROPlatformCopyAssetToFile("card_main.ktx");
+    int texLength;
+    void *texBytes = VROPlatformLoadFile(texFile, &texLength);
+
+    VROTextureFormat format;
+    int texWidth;
+    int texHeight;
+    std::vector<uint32_t> mipSizes;
+    std::shared_ptr<VROData> texData = VROTextureUtil::readKTXHeader((uint8_t *)texBytes, (uint32_t)texLength,
+                                                                     &format, &texWidth, &texHeight, &mipSizes);
+    std::vector<std::shared_ptr<VROData>> dataVec = { texData };
+
+    std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, format,
+                                                                       VROTextureInternalFormat::RGBA8,
+                                                                       VROMipmapMode::Pregenerated,
+                                                                       dataVec, texWidth, texHeight, mipSizes,
+                                                                       &driver);
+
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(10, 10);
+    surface->getMaterials().front()->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
+    surface->getMaterials().front()->getDiffuse().setTexture(texture);
+
+    std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
+    surfaceNode->setGeometry(surface);
+    surfaceNode->setPosition({0, 0, -5});
+
+    rootNode->addChildNode(surfaceNode);
 
     std::string string = "In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
     std::shared_ptr<VROTypeface> typeface = driver.newTypeface("Roboto", 8);
@@ -154,7 +188,8 @@ std::shared_ptr<VROTexture> VROSample::getNiagaraTexture() {
             std::make_shared<VROImageAndroid>("nz.png")
     };
 
-    return std::make_shared<VROTexture>(cubeImages);
+    return std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
+                                        cubeImages);
 }
 
 void VROSample::reticleTapped(VROVector3f ray, const VRORenderContext *context) {

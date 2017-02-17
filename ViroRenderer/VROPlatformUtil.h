@@ -50,6 +50,11 @@ jobject VROPlatformLoadBitmapFromFile(std::string path);
 
 // Note the returned buffer *must* be freed by the caller!
 void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, int *height);
+
+// Load the file into a binary blob and return it. The returned buffer
+// *must* be freed by the caller!
+void *VROPlatformLoadFile(std::string filename, int *outLength);
+
 #endif
 
 #pragma mark - Threading

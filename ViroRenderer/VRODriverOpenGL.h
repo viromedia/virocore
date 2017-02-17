@@ -32,13 +32,15 @@ public:
         return new VROMaterialSubstrateOpenGL(material, *this);
     }
     
-    VROTextureSubstrate *newTextureSubstrate(VROTextureType type, std::vector<std::shared_ptr<VROImage>> &images) {
-        return new VROTextureSubstrateOpenGL(type, images, *this);
-    }
-    
-    VROTextureSubstrate *newTextureSubstrate(VROTextureType type, VROTextureFormat format, std::shared_ptr<VROData> data,
-                                             int width, int height) {
-        return new VROTextureSubstrateOpenGL(type, format, data, width, height, *this);
+    VROTextureSubstrate *newTextureSubstrate(VROTextureType type,
+                                             VROTextureFormat format,
+                                             VROTextureInternalFormat internalFormat,
+                                             VROMipmapMode mipmapMode,
+                                             std::vector<std::shared_ptr<VROData>> &data,
+                                             int width, int height,
+                                             std::vector<uint32_t> mipSizes) {
+        return new VROTextureSubstrateOpenGL(type, format, internalFormat, mipmapMode, data,
+                                             width, height, mipSizes, *this);
     }
     
     virtual VROVideoTextureCache *newVideoTextureCache() = 0;

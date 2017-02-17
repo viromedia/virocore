@@ -31,7 +31,10 @@ std::shared_ptr<VROTexture> VROTextureUtil::loadASTCTexture(const uint8_t *data,
     VROTextureFormat format;
     std::shared_ptr<VROData> stripped = readASTCHeader(data, length, &format, &width, &height);
     
-    return std::make_shared<VROTexture>(type, format, stripped, width, height, driver);
+    std::vector<uint32_t> sizes;
+    std::vector<std::shared_ptr<VROData>> dataVector = { stripped };
+    return std::make_shared<VROTexture>(type, format, VROTextureInternalFormat::RGBA8, VROMipmapMode::None,
+                                        dataVector, width, height, sizes, driver);
 }
 
 std::shared_ptr<VROData> VROTextureUtil::readASTCHeader(const uint8_t *data, int length, VROTextureFormat *outFormat,

@@ -27,7 +27,7 @@ void initBlankTexture(const VRORenderContext &context) {
     UIImage *image = [UIImage imageWithContentsOfFile:path];
     
     std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageiOS>(image);
-    staticBlankTexture = std::make_shared<VROTexture>(wrapper);
+    staticBlankTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::None, wrapper);
 }
 
 #elif VRO_PLATFORM_ANDROID

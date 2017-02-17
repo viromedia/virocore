@@ -8,6 +8,8 @@
 
 #include "VROPlatformUtil.h"
 #include "VROLog.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 #if VRO_PLATFORM_IOS
 
@@ -237,6 +239,19 @@ void VROPlatformDeleteFile(std::string filename) {
 
     env->DeleteLocalRef(jfilename);
     env->DeleteLocalRef(cls);
+}
+
+void *VROPlatformLoadFile(std::string filename, int *outLength) {
+    FILE *fl = fopen(filename.c_str(), "r");
+    fseek(fl, 0, SEEK_END);
+    *outLength = ftell(fl);
+
+    char *ret = (char *)malloc(*outLength);
+    fseek(fl, 0, SEEK_SET);
+    fread(ret, 1, *outLength, fl);
+    fclose(fl);
+
+    return ret;
 }
 
 std::string VROPlatformCopyAssetToFile(std::string asset) {

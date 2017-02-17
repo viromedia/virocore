@@ -13,6 +13,7 @@
 #include "VROLog.h"
 #include "VROAllocationTracker.h"
 #include "VROData.h"
+#include "VROImage.h"
 #include "VROMaterialVisual.h"
 #include <atomic>
 
@@ -21,7 +22,6 @@ static std::atomic_int sTextureId;
 VROTexture::VROTexture(VROTextureType type) :
     _textureId(sTextureId++),
     _type(type),
-    _image(nullptr),
     _substrate(nullptr) {
     
     ALLOCATION_TRACKER_ADD(Textures, 1);
@@ -30,16 +30,22 @@ VROTexture::VROTexture(VROTextureType type) :
 VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate) :
     _textureId(sTextureId++),
     _type(type),
-    _image(nullptr),
     _substrate(std::move(substrate)) {
     
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
-VROTexture::VROTexture(std::shared_ptr<VROImage> image, VRODriver *driver) :
+VROTexture::VROTexture(VROTextureInternalFormat internalFormat,
+                       VROMipmapMode mipmapMode,
+                       std::shared_ptr<VROImage> image, VRODriver *driver) :
     _textureId(sTextureId++),
     _type(VROTextureType::Texture2D),
-    _image(image),
+    _images( {image} ),
+    _format(VROTextureFormat::RGBA8),
+    _internalFormat(internalFormat),
+    _width(image->getWidth()),
+    _height(image->getHeight()),
+    _mipmapMode(mipmapMode),
     _substrate(nullptr) {
     
     if (driver) {
@@ -48,29 +54,41 @@ VROTexture::VROTexture(std::shared_ptr<VROImage> image, VRODriver *driver) :
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
-VROTexture::VROTexture(std::vector<std::shared_ptr<VROImage>> &images, VRODriver *driver) :
+VROTexture::VROTexture(VROTextureInternalFormat internalFormat,
+                       std::vector<std::shared_ptr<VROImage>> &images, VRODriver *driver) :
     _textureId(sTextureId++),
     _type(VROTextureType::TextureCube),
-    _image(nullptr),
+    _images(images),
+    _format(VROTextureFormat::RGBA8),
+    _internalFormat(internalFormat),
+    _width(images.front()->getWidth()),
+    _height(images.front()->getHeight()),
+    _mipmapMode(VROMipmapMode::None), // No mipmapping for cube textures
     _substrate(nullptr) {
     
-    _imagesCube = images;
     if (driver) {
         prewarm(*driver);
     }
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
-VROTexture::VROTexture(VROTextureType type, VROTextureFormat format,
-                       std::shared_ptr<VROData> data, int width, int height,
+VROTexture::VROTexture(VROTextureType type,
+                       VROTextureFormat format,
+                       VROTextureInternalFormat internalFormat,
+                       VROMipmapMode mipmapMode,
+                       std::vector<std::shared_ptr<VROData>> &data,
+                       int width, int height,
+                       std::vector<uint32_t> mipSizes,
                        VRODriver *driver) :
     _textureId(sTextureId++),
     _type(type),
-    _image(nullptr),
     _data(data),
     _format(format),
+    _internalFormat(internalFormat),
     _width(width),
     _height(height),
+    _mipmapMode(mipmapMode),
+    _mipSizes(mipSizes),
     _substrate(nullptr) {
     
     if (driver) {
@@ -100,32 +118,25 @@ void VROTexture::prewarm(VRODriver &driver) {
 }
 
 void VROTexture::hydrate(VRODriver &driver) {
-    if (_type == VROTextureType::Texture2D) {
-        if (_image) {
-            std::vector<std::shared_ptr<VROImage>> images = { _image };
-            _substrate = std::unique_ptr<VROTextureSubstrate>(driver.newTextureSubstrate(_type, images));
-            _image = nullptr;
-        }
-        else if (_data) {
-            _substrate = std::unique_ptr<VROTextureSubstrate>(driver.newTextureSubstrate(_type, _format, _data, _width, _height));
-            _data = nullptr;
-        }
-    }
+    passert (_images.empty() || _data.empty());
     
-    // VROTextureType::Cube with 6 separated images
-    else if (_type == VROTextureType::TextureCube && _imagesCube.size() == 6) {
-        _substrate = std::unique_ptr<VROTextureSubstrate>(driver.newTextureSubstrate(_type, _imagesCube));
-        _imagesCube.clear();
-    }
-    
-    // VROTextureType::Cube with a holistic cube image (not yet divided)
-    else if (_type == VROTextureType::TextureCube && _image){
+    if (!_images.empty()) {
+        std::vector<std::shared_ptr<VROData>> data;
+        for (std::shared_ptr<VROImage> &image : _images) {
+            size_t length;
+            void *bytes = image->extractRGBA8888(&length);
+            data.push_back(std::make_shared<VROData>(bytes, length, VRODataOwnership::Wrap));
+        }
         
-        _image = nullptr;
+        std::vector<uint32_t> mipSizes;
+        _substrate = std::unique_ptr<VROTextureSubstrate>(driver.newTextureSubstrate(_type, _format, _internalFormat, _mipmapMode,
+                                                                                     data, _width, _height, _mipSizes));
+        _images.clear();
     }
-    
-    else {
-        pinfo("Invalid texture format [type %d]", _type);
+    else if (!_data.empty()) {
+        _substrate = std::unique_ptr<VROTextureSubstrate>(driver.newTextureSubstrate(_type, _format, _internalFormat, _mipmapMode,
+                                                                                     _data, _width, _height, _mipSizes));
+        _data.clear();
     }
 }
 

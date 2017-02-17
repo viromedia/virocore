@@ -16,10 +16,11 @@
 #include "VROAllocationTracker.h"
 
 class VROData;
-class VROImage;
 class VRODriver;
 enum class VROTextureType;
 enum class VROTextureFormat;
+enum class VROTextureInternalFormat;
+enum class VROMipmapMode;
 
 class VROTextureSubstrateOpenGL : public VROTextureSubstrate {
     
@@ -39,16 +40,18 @@ public:
     }
     
     /*
-     Create a new Metal texture of the given type from the given images.
+     Create a new OpenGL texture from the given source data, which is of the given 
+     format. The generated texture will be stored on the GPU in the internalFormat
+     (unless the source data is of a compressed type, in which case the data is stored
+     as-is on the GPU).
      */
-    VROTextureSubstrateOpenGL(VROTextureType type, std::vector<std::shared_ptr<VROImage>> &images,
-                             VRODriver &driver);
-    
-    /*
-     Create a new Metal texture out of the given format, with the given width, and height.
-     */
-    VROTextureSubstrateOpenGL(VROTextureType type, VROTextureFormat format,
-                              std::shared_ptr<VROData> data, int width, int height,
+    VROTextureSubstrateOpenGL(VROTextureType type,
+                              VROTextureFormat format,
+                              VROTextureInternalFormat internalFormat,
+                              VROMipmapMode mipmapMode,
+                              std::vector<std::shared_ptr<VROData>> &data,
+                              int width, int height,
+                              const std::vector<uint32_t> &mipSizes,
                               VRODriver &driver);
     virtual ~VROTextureSubstrateOpenGL();
     
@@ -64,6 +67,22 @@ private:
     GLenum _target;
     GLuint _texture;
     bool _owned;
+    
+    void loadTexture(VROTextureType type,
+                     VROTextureFormat format,
+                     VROTextureInternalFormat internalFormat,
+                     VROMipmapMode mipmapMode,
+                     std::vector<std::shared_ptr<VROData>> &data,
+                     int width, int height,
+                     const std::vector<uint32_t> &mipSizes);
+    void loadFace(GLenum target,
+                  VROTextureFormat format,
+                  VROTextureInternalFormat internalFormat,
+                  VROMipmapMode mipmapMode,
+                  std::shared_ptr<VROData> &faceData,
+                  int width, int height,
+                  const std::vector<uint32_t> &mipSizes);
+    GLuint getInternalFormat(VROTextureInternalFormat format);
     
 };
 

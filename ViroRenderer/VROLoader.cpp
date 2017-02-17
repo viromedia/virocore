@@ -239,10 +239,9 @@ VROVector4f VROLoader::parseColor(CGColorRef colorRef) {
     return color;
 }
 
-
 std::shared_ptr<VROTexture> VROLoader::parseTexture(MDLTextureSampler *sampler) {
     UIImage *image = [UIImage imageWithCGImage:[sampler.texture imageFromTexture]];
-    return std::make_shared<VROTexture>(std::make_shared<VROImageiOS>(image));
+    return std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::None, std::make_shared<VROImageiOS>(image));
 }
 
 int VROLoader::getPrimitiveCount(int indexCount, VROGeometryPrimitiveType primitiveType) {

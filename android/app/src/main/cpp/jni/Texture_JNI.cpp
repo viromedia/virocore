@@ -26,12 +26,15 @@ JNI_METHOD(jlong, nativeCreateCubeTexture)(JNIEnv *env, jobject obj,
                                                          Image::native(ny),
                                                          Image::native(pz),
                                                          Image::native(nz)};
-    std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(cubeImages);
+    std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
+                                                                          cubeImages);
     return Texture::jptr(texturePtr);
 }
 
 JNI_METHOD(jlong, nativeCreateImageTexture)(JNIEnv *env, jobject obj, jlong image) {
-    std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(Image::native(image));
+    std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
+                                                                          VROMipmapMode::Runtime,
+                                                                          Image::native(image));
     return Texture::jptr(texturePtr);
 }
 
