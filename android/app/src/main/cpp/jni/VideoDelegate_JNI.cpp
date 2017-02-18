@@ -53,3 +53,20 @@ void VideoDelegate::onReady(jlong ref) {
         env->DeleteLocalRef(localObj);
     });
 }
+
+void VideoDelegate::onVideoUpdatedTime(int currentTimeInSeconds, int totalTimeInSeconds){
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj, currentTimeInSeconds, totalTimeInSeconds] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(weakObj, "onVideoUpdatedTime", "(II)V",
+                                    currentTimeInSeconds, totalTimeInSeconds);
+        env->DeleteLocalRef(localObj);
+    });
+}

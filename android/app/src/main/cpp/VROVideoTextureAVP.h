@@ -13,6 +13,7 @@
 #include "VROOpenGL.h"
 #include "VROAVPlayer.h"
 #include <android/native_window_jni.h>
+#include "VROFrameSynchronizer.h"
 
 /*
  Renders video to a texture and plays the associated audio.
@@ -48,7 +49,10 @@ public:
     void pause();
     void play();
     bool isPaused();
-    void seekToTime(float seconds);
+
+    void seekToTime(int seconds);
+    int getCurrentTimeInSeconds();
+    int getVideoDurationInSeconds();
 
     void setMuted(bool muted);
     void setVolume(float volume);

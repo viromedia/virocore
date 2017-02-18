@@ -173,14 +173,36 @@ bool VROAVPlayer::isPaused() {
     return paused;
 }
 
-void VROAVPlayer::seekToTime(float seconds) {
+void VROAVPlayer::seekToTime(int seconds) {
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     jclass cls = env->GetObjectClass(_javPlayer);
-    jmethodID jmethod = env->GetMethodID(cls, "seekToTime", "(F)V");
+    jmethodID jmethod = env->GetMethodID(cls, "seekToTime", "(I)V");
     env->CallVoidMethod(_javPlayer, jmethod, seconds);
 
     env->DeleteLocalRef(cls);
+}
+
+int VROAVPlayer::getCurrentTimeInSeconds() {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+
+    jclass cls = env->GetObjectClass(_javPlayer);
+    jmethodID jmethod = env->GetMethodID(cls, "getCurrentTimeInSeconds", "()I");
+    jint seconds = env->CallIntMethod(_javPlayer, jmethod);
+
+    env->DeleteLocalRef(cls);
+    return seconds;
+}
+
+int VROAVPlayer::getVideoDurationInSeconds() {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+
+    jclass cls = env->GetObjectClass(_javPlayer);
+    jmethodID jmethod = env->GetMethodID(cls, "getVideoDurationInSeconds", "()I");
+    jint seconds = env->CallIntMethod(_javPlayer, jmethod);
+
+    env->DeleteLocalRef(cls);
+    return seconds;
 }
 
 void VROAVPlayer::setMuted(bool muted) {

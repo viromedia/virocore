@@ -67,6 +67,7 @@ public class VideoTextureJni {
     public interface VideoDelegate{
         void onVideoFinish();
         void onReady();
+        void onVideoUpdatedTime(int seconds, int totalDuration);
     }
 
     public void setVideoDelegate(VideoDelegate delegate){
@@ -82,10 +83,16 @@ public class VideoTextureJni {
         }
     }
 
-    public void onReady(long ref){
+    public void onReady(long ref) {
         mNativeRef = ref;
-        if (mDelegate != null && mNativeRef != INVALID_REF){
+        if (mDelegate != null && mNativeRef != INVALID_REF) {
             mDelegate.onReady();
+        }
+    }
+
+    public void onVideoUpdatedTime(int currentTimeInSeconds, int totalTimeInSeconds) {
+        if (mDelegate != null){
+            mDelegate.onVideoUpdatedTime(currentTimeInSeconds, totalTimeInSeconds);
         }
     }
 }

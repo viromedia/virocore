@@ -135,8 +135,16 @@ public class AVPlayer {
         }
     }
 
-    public void seekToTime(float seconds) {
-        _mediaPlayer.seekTo((int) (seconds * 1000));
+    public void seekToTime(int seconds) {
+        _mediaPlayer.seekTo(seconds * 1000);
+    }
+
+    public int getCurrentTimeInSeconds(){
+        return _mediaPlayer.getCurrentPosition() / 1000;
+    }
+
+    public int getVideoDurationInSeconds(){
+        return _mediaPlayer.getDuration() / 1000;
     }
 
     /**

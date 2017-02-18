@@ -13,7 +13,6 @@
 VROVideoTextureAVP::VROVideoTextureAVP() :
     VROVideoTexture(VROTextureType::TextureEGLImage),
     _textureId(0) {
-
     _player = new VROAVPlayer();
     bindSurface();
 }
@@ -43,6 +42,7 @@ void VROVideoTextureAVP::loadVideo(std::string url,
                                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                    VRODriver &driver) {
     _player->setDataSourceURL(url.c_str());
+    frameSynchronizer->addFrameListener(shared_from_this());
 }
 
 void VROVideoTextureAVP::loadVideoFromURL(std::string url, VRODriver &driver) {
@@ -54,7 +54,9 @@ void VROVideoTextureAVP::loadVideoFromAsset(std::string asset, VRODriver &driver
 }
 
 void VROVideoTextureAVP::prewarm() { }
-void VROVideoTextureAVP::onFrameWillRender(const VRORenderContext &context) { }
+void VROVideoTextureAVP::onFrameWillRender(const VRORenderContext &context) {
+    VROVideoTexture::updateVideoTime();
+}
 void VROVideoTextureAVP::onFrameDidRender(const VRORenderContext &context) { }
 
 void VROVideoTextureAVP::play() {
@@ -69,8 +71,26 @@ bool VROVideoTextureAVP::isPaused() {
     return _player->isPaused();
 }
 
-void VROVideoTextureAVP::seekToTime(float seconds) {
+void VROVideoTextureAVP::seekToTime(int seconds) {
+    int seekTime = getCurrentTimeInSeconds() + seconds;
+    int totalDuration = getVideoDurationInSeconds();
+
+    // Clamp the seek time at a minimum of 0,
+    // and a maxiumum of the video's duration period.
+    if (seekTime > totalDuration){
+        seconds = totalDuration;
+    } else if (seekTime < 0){
+        seconds = 0;
+    }
     _player->seekToTime(seconds);
+}
+
+int VROVideoTextureAVP::getCurrentTimeInSeconds() {
+    return _player->getCurrentTimeInSeconds();
+}
+
+int VROVideoTextureAVP::getVideoDurationInSeconds() {
+    return _player->getVideoDurationInSeconds();
 }
 
 void VROVideoTextureAVP::setMuted(bool muted) {

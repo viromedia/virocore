@@ -32,6 +32,7 @@ class VideoDelegate : public VROVideoDelegateInternal {
      */
     virtual void videoDidFinish();
     virtual void onReady(jlong ref);
+    virtual void onVideoUpdatedTime(int seconds, int duration);
 
     private:
         jobject _javaObject;

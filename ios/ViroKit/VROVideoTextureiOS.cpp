@@ -55,9 +55,21 @@ void VROVideoTextureiOS::pause() {
     _paused = true;
 }
 
-void VROVideoTextureiOS::seekToTime(float seconds) {
+void VROVideoTextureiOS::seekToTime(int seconds) {
+    seconds = clamp(seconds, 0, getVideoDurationInSeconds());
     [_player seekToTime:CMTimeMakeWithSeconds(seconds, 1)];
 }
+
+int VROVideoTextureiOS::getCurrentTimeInSeconds() {
+    AVPlayerItem *currentItem = _player.currentItem;
+    return CMTimeGetSeconds(currentItem.currentTime);
+}
+
+int VROVideoTextureiOS::getVideoDurationInSeconds(){
+    AVPlayerItem *currentItem = _player.currentItem;
+    return CMTimeGetSeconds(currentItem.duration);
+}
+
 
 bool VROVideoTextureiOS::isPaused() {
     return _paused;
@@ -113,6 +125,7 @@ void VROVideoTextureiOS::loadVideo(std::string url,
 
 void VROVideoTextureiOS::onFrameWillRender(const VRORenderContext &context) {
     [_avPlayerDelegate renderFrame];
+    VROVideoTexture::updateVideoTime();
 }
 
 void VROVideoTextureiOS::onFrameDidRender(const VRORenderContext &context) {

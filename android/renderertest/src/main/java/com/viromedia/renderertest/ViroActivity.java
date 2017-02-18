@@ -161,6 +161,11 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
                 videoTexture.setLoop(false);
                 videoTexture.play();
             }
+
+            @Override
+            public void onVideoUpdatedTime(int seconds, int duration) {
+                Log.e(TAG,"onVideoUpdatedTime for Surface within ViroActivity:" + seconds);
+            }
         });
 
         node.setGeometry(surface);
@@ -183,6 +188,11 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
                 videoTexture.setLoop(false);
                 videoTexture.play();
             }
+
+            @Override
+            public void onVideoUpdatedTime(int seconds, int duration) {
+                Log.e(TAG,"onVideoUpdatedTime for Sphere within ViroActivity:" + seconds);
+            }
         });
         node.setGeometry(sphere);
         return Arrays.asList(node);
@@ -190,6 +200,10 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
     private void testBackgroundVideo(final SceneJni scene) {
         final VideoTextureJni videoTexture = new VideoTextureJni();
+        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
+        videoTexture.setVolume(0.1f);
+        videoTexture.setLoop(false);
+        videoTexture.play();
         videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
             @Override
             public void onVideoFinish() {
@@ -201,6 +215,11 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
                 videoTexture.setVolume(0.1f);
                 videoTexture.setLoop(false);
                 videoTexture.play();
+            }
+
+            @Override
+            public void onVideoUpdatedTime(int seconds, int duration) {
+                Log.e(TAG,"onVideoUpdatedTime for Background within ViroActivity:" + seconds);
             }
         });
     }
