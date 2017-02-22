@@ -8,23 +8,24 @@ public class TextureJni {
     protected long mNativeRef;
 
     public TextureJni(ImageJni px, ImageJni nx, ImageJni py,
-                      ImageJni ny, ImageJni pz, ImageJni nz) {
+                      ImageJni ny, ImageJni pz, ImageJni nz,
+                      String format) {
         mNativeRef = nativeCreateCubeTexture(px.mNativeRef, nx.mNativeRef,
                                              py.mNativeRef, ny.mNativeRef,
-                                             pz.mNativeRef, nz.mNativeRef);
+                                             pz.mNativeRef, nz.mNativeRef,
+                                             format);
     }
 
-    public TextureJni(ImageJni image) {
-        mNativeRef = nativeCreateImageTexture(image.mNativeRef);
+    public TextureJni(ImageJni image, String format, boolean mipmap) {
+        mNativeRef = nativeCreateImageTexture(image.mNativeRef, format, mipmap);
     }
-
-
 
     public void destroy() {
         nativeDestroyTexture(mNativeRef);
     }
     private native long nativeCreateCubeTexture(long px, long nx, long py,
-                                                long ny, long pz, long nz);
-    private native long nativeCreateImageTexture(long image);
+                                                long ny, long pz, long nz,
+                                                String format);
+    private native long nativeCreateImageTexture(long image, String format, boolean mipmap);
     private native void nativeDestroyTexture(long nativeRef);
 }

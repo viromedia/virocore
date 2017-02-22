@@ -226,7 +226,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
     private void testBackgroundImage(SceneJni scene) {
         ImageJni imageJni = new ImageJni("boba.png");
-        TextureJni videoTexture = new TextureJni(imageJni);
+        TextureJni videoTexture = new TextureJni(imageJni, "RGBA8", false);
         scene.setBackgroundImageTexture(videoTexture);
         float[] rotation = {90, 0, 0};
         scene.setBackgroundRotation(rotation);
@@ -241,7 +241,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         ImageJni nzimageJni = new ImageJni("nz.png");
 
         TextureJni cubeTexture = new TextureJni(pximageJni, nximageJni, pyimageJni, nyimageJni,
-                pzimageJni, nzimageJni);
+                pzimageJni, nzimageJni, "RGBA8");
 
         scene.setBackgroundCubeImageTexture(cubeTexture);
     }
@@ -261,7 +261,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         // Create a new material with a diffuseTexture set to the image "boba.png"
         ImageJni bobaImage = new ImageJni("boba.png");
 
-        TextureJni bobaTexture = new TextureJni(bobaImage);
+        TextureJni bobaTexture = new TextureJni(bobaImage, "RGBA8", true);
         MaterialJni material = new MaterialJni();
 //        material.setTexture(bobaTexture, "diffuseTexture");
         material.setColor(Color.WHITE, "whiteColor");
@@ -295,7 +295,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             public void onObjLoaded() {
                 // Create a new material with a diffuseTexture set to the image "heart_d.jpg"
                 ImageJni heartImage = new ImageJni("heart_d.jpg");
-                TextureJni heartTexture = new TextureJni(heartImage);
+                TextureJni heartTexture = new TextureJni(heartImage, "RGBA8", true);
                 MaterialJni material = new MaterialJni();
                 material.setTexture(heartTexture, "diffuseTexture");
                 material.setLightingModel("Constant");
@@ -356,7 +356,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         NodeJni node = new NodeJni(context);
         ImageJni bobaImage = new ImageJni("boba.png");
 
-        TextureJni bobaTexture = new TextureJni(bobaImage);
+        TextureJni bobaTexture = new TextureJni(bobaImage, "RGBA8", true);
         MaterialJni material = new MaterialJni();
 
         SurfaceJni surface = new SurfaceJni(1, 1);
