@@ -152,7 +152,7 @@ void EventDelegate_JNI::onDrag(int source, VROVector3f newPosition) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([source, newPosition] {
+    VROPlatformDispatchAsyncApplication([weakObj, source, newPosition] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
