@@ -16,7 +16,12 @@ class VROImageiOS : public VROImage {
     
 public:
     
-    VROImageiOS(UIImage *image);
+    /*
+     Construct a new VROImage from the given UIImage. The data will 
+     be extracted from the UIImage into a format compatible with the
+     given target internal format.
+     */
+    VROImageiOS(UIImage *image, VROTextureInternalFormat format);
     virtual ~VROImageiOS();
     
     int getWidth() const {
@@ -25,7 +30,7 @@ public:
     int getHeight() const {
         return _height;
     }
-    unsigned char *extractRGBA8888(size_t *length);
+    unsigned char *getData(size_t *length);
     
 private:
     

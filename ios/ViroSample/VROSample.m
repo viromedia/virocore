@@ -9,10 +9,10 @@
 #import "VROSample.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneText = 0,
+    VROSampleSceneBox = 0,
     VROSampleSceneTorus,
     VROSampleSceneOBJ,
-    VROSampleSceneBox,
+    VROSampleSceneText,
     VROSampleSceneVideoSphere,
     VROSampleSceneNumScenes
 };
@@ -33,34 +33,39 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 @implementation VROSample
 
 - (std::shared_ptr<VROTexture>) niagaraTexture {
+    VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
+    
     std::vector<std::shared_ptr<VROImage>> cubeImages =  {
-        std::make_shared<VROImageiOS>([UIImage imageNamed:@"px"]),
-        std::make_shared<VROImageiOS>([UIImage imageNamed:@"nx"]),
-        std::make_shared<VROImageiOS>([UIImage imageNamed:@"py"]),
-        std::make_shared<VROImageiOS>([UIImage imageNamed:@"ny"]),
-        std::make_shared<VROImageiOS>([UIImage imageNamed:@"pz"]),
-        std::make_shared<VROImageiOS>([UIImage imageNamed:@"nz"])
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"px"], format),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"nx"], format),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"py"], format),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"ny"], format),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"pz"], format),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"nz"], format)
     };
     
-    return std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, cubeImages);
+    return std::make_shared<VROTexture>(format, cubeImages);
 }
 
 - (std::shared_ptr<VROTexture>) cloudTexture {
+    VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
+    
     std::vector<std::shared_ptr<VROImage>> cubeImages =  {
-        std::make_shared<VROImageiOS>([UIImage imageNamed:@"px1.jpg"]),
-        std::make_shared<VROImageiOS>([UIImage imageNamed:@"nx1.jpg"]),
-        std::make_shared<VROImageiOS>([UIImage imageNamed:@"py1.jpg"]),
-        std::make_shared<VROImageiOS>([UIImage imageNamed:@"ny1.jpg"]),
-        std::make_shared<VROImageiOS>([UIImage imageNamed:@"pz1.jpg"]),
-        std::make_shared<VROImageiOS>([UIImage imageNamed:@"nz1.jpg"])
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"px1.jpg"], format),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"nx1.jpg"], format),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"py1.jpg"], format),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"ny1.jpg"], format),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"pz1.jpg"], format),
+        std::make_shared<VROImageiOS>([UIImage imageNamed:@"nz1.jpg"], format)
     };
     
-    return std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, cubeImages);
+    return std::make_shared<VROTexture>(format, cubeImages);
 }
 
 - (std::shared_ptr<VROTexture>) westlakeTexture {
     return std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::None,
-                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"360_westlake.jpg"]));
+                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"360_westlake.jpg"],
+                                                                      VROTextureInternalFormat::RGBA8));
 }
 
 - (std::shared_ptr<VROSceneController>)loadVideoSphereScene {
@@ -220,6 +225,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
     scene->addNode(rootNode);
     
+    VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
+    
     /*
      Create the box node.
      */
@@ -228,11 +235,11 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);
-    material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::None,
-                                                                   std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"])));
+    material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                   std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"], format)));
     material->getDiffuse().setColor({0.6, 0.3, 0.3, 1.0});
-    material->getSpecular().setTexture(std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::None,
-                                                                    std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"])));
+    material->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                    std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"], format)));
     
     std::vector<std::string> modifierCode =  { "uniform float testA;",
                                                "uniform float testB;",
@@ -261,10 +268,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROMaterial> material2 = box2->getMaterials()[0];
     material2->setLightingModel(VROLightingModel::Phong);
-    material2->getDiffuse().setTexture(std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::None,
-                                                                    std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"])));
-    material2->getSpecular().setTexture(std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::None,
-                                                                     std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"])));
+    material2->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                    std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"], format)));
+    material2->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                     std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"], format)));
     
     std::shared_ptr<VRONode> boxNode2 = std::make_shared<VRONode>();
     boxNode2->setGeometry(box2);
@@ -280,10 +287,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROMaterial> material3 = box3->getMaterials()[0];
     material3->setLightingModel(VROLightingModel::Blinn);
-    material3->getDiffuse().setTexture(std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::None,
-                                                                    std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"])));
-    material3->getSpecular().setTexture(std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::None,
-                                                                     std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"])));
+    material3->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                    std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"], format)));
+    material3->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                     std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"], format)));
     
     std::shared_ptr<VRONode> boxNode3 = std::make_shared<VRONode>();
     boxNode3->setGeometry(box3);

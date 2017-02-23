@@ -60,6 +60,7 @@
 		8F11B7C71C20CF200026D150 /* VRORenderParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C61C20C98E0026D150 /* VRORenderParameters.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F11B7CB1C20E7830026D150 /* VROAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C91C20E7830026D150 /* VROAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F140FCF1E56658700355A1E /* card_main.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 8F140FCE1E56658700355A1E /* card_main.ktx */; };
+		8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1664A51E5E43260062EBCE /* Accelerate.framework */; };
 		8F203F0A1DCD236500DC50F2 /* VRODefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF253B11DC9398A00C1C5C7 /* VRODefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F203F0B1DCD245200DC50F2 /* VROOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F53D3A11DCAB670001C91A8 /* VROOpenGL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */; };
@@ -479,6 +480,7 @@
 		8F152A7F1C121A0E00A211F8 /* VROTextureSubstrate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTextureSubstrate.h; sourceTree = "<group>"; };
 		8F152A821C121A5500A211F8 /* VROTextureSubstrateMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROTextureSubstrateMetal.cpp; sourceTree = "<group>"; };
 		8F152A831C121A5500A211F8 /* VROTextureSubstrateMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTextureSubstrateMetal.h; sourceTree = "<group>"; };
+		8F1664A51E5E43260062EBCE /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shanghai_tower_diffuse.jpg; path = ViroSample/shanghai_tower_diffuse.jpg; sourceTree = "<group>"; };
 		8F3B968C1C77D64200B4FEE0 /* shanghai_tower_specular.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shanghai_tower_specular.jpg; path = ViroSample/shanghai_tower_specular.jpg; sourceTree = "<group>"; };
 		8F3B968D1C77D64200B4FEE0 /* shanghai_tower.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = shanghai_tower.obj; path = ViroSample/shanghai_tower.obj; sourceTree = "<group>"; };
@@ -804,6 +806,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */,
 				8F56AEA61DE7682300DD65B6 /* libFreetype2.a in Frameworks */,
 				8FDDE2121CD00F2600674DE2 /* CoreText.framework in Frameworks */,
 				8FD1E1BA1C3F32D20005BE4E /* CoreMedia.framework in Frameworks */,
@@ -1491,6 +1494,7 @@
 		95E5BC90E51A0FC2C3AA4D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8F1664A51E5E43260062EBCE /* Accelerate.framework */,
 				8F56AE9B1DE6810800DD65B6 /* libFreetype2.a */,
 				8FDDE2111CD00F2600674DE2 /* CoreText.framework */,
 				6447C487DE6546AF514106CC /* libPods-ViroKit.a */,

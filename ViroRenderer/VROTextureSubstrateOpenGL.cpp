@@ -130,9 +130,21 @@ void VROTextureSubstrateOpenGL::loadFace(GLenum target,
     }
     else if (format == VROTextureFormat::RGBA8) {
         passert (mipmapMode != VROMipmapMode::Pregenerated);
+        passert_msg (internalFormat != VROTextureInternalFormat::RGB565,
+                     "RGB565 internal format requires RGB565 or RGB8 source data!");
         
         glTexImage2D(target, 0, getInternalFormat(internalFormat), width, height, 0,
                      GL_RGBA, GL_UNSIGNED_BYTE, faceData->getData());
+        if (mipmapMode == VROMipmapMode::Runtime) {
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+    }
+    else if (format == VROTextureFormat::RGB565) {
+        passert_msg (internalFormat == VROTextureInternalFormat::RGB565,
+                     "RGB565 source format is only compatible with RGB565 internal format!");
+
+        glTexImage2D(target, 0, getInternalFormat(internalFormat), width, height, 0,
+                         GL_RGB, GL_UNSIGNED_SHORT_5_6_5, faceData->getData());
         if (mipmapMode == VROMipmapMode::Runtime) {
             glGenerateMipmap(GL_TEXTURE_2D);
         }

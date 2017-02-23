@@ -15,22 +15,24 @@
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_renderer_jni_TextureJni_##method_name
 
-extern "C" {
+namespace Texture {
+    VROTextureInternalFormat getFormat(JNIEnv *env, jstring jformat) {
+        const char *format = env->GetStringUTFChars(jformat, 0);
+        std::string sformat(format);
 
-VROTextureInternalFormat getFormat(JNIEnv *env, jstring jformat) {
-    const char *format = env->GetStringUTFChars(jformat, 0);
-    std::string sformat(format);
-
-    VROTextureInternalFormat ret = VROTextureInternalFormat::RGBA8;
-    if (sformat == "RGBA4") {
-        ret = VROTextureInternalFormat::RGBA4;
+        VROTextureInternalFormat ret = VROTextureInternalFormat::RGBA8;
+        if (sformat == "RGBA4") {
+            ret = VROTextureInternalFormat::RGBA4;
+        }
+        else if (sformat == "RGB565") {
+            ret = VROTextureInternalFormat::RGB565;
+        }
+        env->ReleaseStringUTFChars(jformat, format);
+        return ret;
     }
-    else if (sformat == "RGB565") {
-        ret = VROTextureInternalFormat::RGB565;
-    }
-    env->ReleaseStringUTFChars(jformat, format);
-    return ret;
 }
+
+extern "C" {
 
 JNI_METHOD(jlong, nativeCreateCubeTexture)(JNIEnv *env, jobject obj,
                                            jlong px, jlong nx,
@@ -43,14 +45,14 @@ JNI_METHOD(jlong, nativeCreateCubeTexture)(JNIEnv *env, jobject obj,
                                                          Image::native(ny),
                                                          Image::native(pz),
                                                          Image::native(nz)};
-    std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(getFormat(env, format),
+    std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(Texture::getFormat(env, format),
                                                                           cubeImages);
     return Texture::jptr(texturePtr);
 }
 
 JNI_METHOD(jlong, nativeCreateImageTexture)(JNIEnv *env, jobject obj, jlong image,
                                             jstring format, jboolean mipmap) {
-    std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(getFormat(env, format),
+    std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(Texture::getFormat(env, format),
                                                                           mipmap ? VROMipmapMode::Runtime : VROMipmapMode::None,
                                                                           Image::native(image));
     return Texture::jptr(texturePtr);

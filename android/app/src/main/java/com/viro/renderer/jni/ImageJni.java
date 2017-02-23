@@ -9,12 +9,12 @@ import android.graphics.Bitmap;
 public class ImageJni {
     protected long mNativeRef;
 
-    public ImageJni(String resource) {
-        mNativeRef = nativeCreateImage(resource);
+    public ImageJni(String resource, TextureFormat format) {
+        mNativeRef = nativeCreateImage(resource, format.getID());
     }
 
-    public ImageJni(Bitmap bitmap) {
-        mNativeRef = nativeCreateImageFromBitmap(bitmap);
+    public ImageJni(Bitmap bitmap, TextureFormat format) {
+        mNativeRef = nativeCreateImageFromBitmap(bitmap, format.getID());
     }
 
     public long getWidth() {
@@ -29,8 +29,8 @@ public class ImageJni {
         nativeDestroyImage(mNativeRef);
     }
 
-    private native long nativeCreateImage(String resource);
-    private native long nativeCreateImageFromBitmap(Bitmap bitmap);
+    private native long nativeCreateImage(String resource, String format);
+    private native long nativeCreateImageFromBitmap(Bitmap bitmap, String format);
     private native long nativeGetWidth(long nativeRef);
     private native long nativeGetHeight(long nativeRef);
     private native void nativeDestroyImage(long nativeRef);

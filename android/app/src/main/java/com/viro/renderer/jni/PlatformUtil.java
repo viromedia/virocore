@@ -50,12 +50,15 @@ public class PlatformUtil {
     }
 
     // Accessed by Native code (VROPlatformUtil.cpp)
-    public Bitmap loadBitmapFromAsset(String assetPath) throws IOException {
+    public Bitmap loadBitmapFromAsset(String assetPath, boolean rgb565) throws IOException {
         InputStream in = null;
         Bitmap bitmap = null;
         try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = rgb565 ? Bitmap.Config.RGB_565 : Bitmap.Config.ARGB_8888;
+
             in = mAssetManager.open(assetPath);
-            bitmap = BitmapFactory.decodeStream(in);
+            bitmap = BitmapFactory.decodeStream(in, null, options);
         } finally {
             if (in != null) {
                 in.close();
@@ -66,12 +69,15 @@ public class PlatformUtil {
     }
 
     // Accessed by Native code (VROPlatformUtil.cpp)
-    public Bitmap loadBitmapFromFile(String path) throws IOException {
+    public Bitmap loadBitmapFromFile(String path, boolean rgb565) throws IOException {
         InputStream in = null;
         Bitmap bitmap = null;
         try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = rgb565 ? Bitmap.Config.RGB_565 : Bitmap.Config.ARGB_8888;
+
             in = new FileInputStream(path);
-            bitmap = BitmapFactory.decodeStream(in);
+            bitmap = BitmapFactory.decodeStream(in, null, options);
         } finally {
             if (in != null) {
                 in.close();

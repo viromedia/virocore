@@ -322,7 +322,8 @@ std::shared_ptr<VROTexture> VROOBJLoader::loadTexture(std::string &name, std::st
             textureFile = VROPlatformDownloadURLToFile(textureFile, &isTempTextureFile);
         }
         
-        std::shared_ptr<VROImage> image = VROPlatformLoadImageFromFile(textureFile);
+        std::shared_ptr<VROImage> image = VROPlatformLoadImageFromFile(textureFile,
+                                                                       VROTextureInternalFormat::RGBA8);
         if (isTempTextureFile) {
             VROPlatformDeleteFile(textureFile);
         }

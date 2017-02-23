@@ -7,34 +7,76 @@
 //
 
 #include "VROImageiOS.h"
+#import <Accelerate/Accelerate.h>
+#include "VROLog.h"
+#include "VROTime.h"
 
-VROImageiOS::VROImageiOS(UIImage *image) {
+VROImageiOS::VROImageiOS(UIImage *image, VROTextureInternalFormat internalFormat) {
+    
     CGImageRef imageRef = [image CGImage];
     _width = (int) CGImageGetWidth(imageRef);
     _height = (int) CGImageGetHeight(imageRef);
     
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    if (internalFormat == VROTextureInternalFormat::RGB565) {
+        NSUInteger bytesPerPixel = 2;
+        
+        vImage_Buffer srcBuffer;
+        srcBuffer.width = _width;
+        srcBuffer.height = _height;
+        srcBuffer.rowBytes = bytesPerPixel * _width;
+        srcBuffer.data = (unsigned char *) calloc(_height * srcBuffer.rowBytes, sizeof(unsigned char));
+
+        vImage_CGImageFormat format = {
+            .bitsPerComponent = 5,
+            .bitsPerPixel = 16,
+            .colorSpace = NULL,
+            .bitmapInfo = kCGImageAlphaNone | kCGBitmapByteOrder16Little,
+            .version = 0,
+            .decode = NULL,
+            .renderingIntent = kCGRenderingIntentDefault,
+        };
+        vImage_Error ret = vImageBuffer_InitWithCGImage(&srcBuffer, &format, NULL, imageRef, kvImageNoAllocate);
+        passert (ret == kvImageNoError);
+        
+        _dataLength = _height * _width * (int)bytesPerPixel * sizeof(unsigned char);
+        _data = (unsigned char *)srcBuffer.data;
+        _format = VROTextureFormat::RGB565;
+    }
     
-    _dataLength = (_height * _width * 4 * sizeof(unsigned char));
-    _data = (unsigned char *) calloc(_height * _width * 4, sizeof(unsigned char));
-    
-    NSUInteger bytesPerPixel = 4;
-    NSUInteger bytesPerRow = bytesPerPixel * _width;
-    NSUInteger bitsPerComponent = 8;
-    
-    CGContextRef context = CGBitmapContextCreate(_data, _width, _height,
-                                                 bitsPerComponent, bytesPerRow, colorSpace,
-                                                 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
-    CGColorSpaceRelease(colorSpace);
-    CGContextDrawImage(context, CGRectMake(0, 0, _width, _height), imageRef);
-    CGContextRelease(context);
+    // RGBA
+    else {
+        NSUInteger bytesPerPixel = 4;
+        
+        vImage_Buffer srcBuffer;
+        srcBuffer.width = _width;
+        srcBuffer.height = _height;
+        srcBuffer.rowBytes = bytesPerPixel * _width;
+        srcBuffer.data = (unsigned char *) calloc(_height * srcBuffer.rowBytes, sizeof(unsigned char));
+        
+        vImage_CGImageFormat format = {
+            .bitsPerComponent = 8,
+            .bitsPerPixel = 32,
+            .colorSpace = NULL,
+            .bitmapInfo = (CGBitmapInfo)kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big,
+            .version = 0,
+            .decode = NULL,
+            .renderingIntent = kCGRenderingIntentDefault,
+        };
+        
+        vImage_Error ret = vImageBuffer_InitWithCGImage(&srcBuffer, &format, NULL, imageRef, kvImageNoAllocate);
+        passert (ret == kvImageNoError);
+        
+        _dataLength = _height * _width * (int)bytesPerPixel * sizeof(unsigned char);
+        _data = (unsigned char *)srcBuffer.data;
+        _format = VROTextureFormat::RGBA8;
+    }
 }
 
 VROImageiOS::~VROImageiOS() {
     free (_data);
 }
 
-unsigned char *VROImageiOS::extractRGBA8888(size_t *length) {
+unsigned char *VROImageiOS::getData(size_t *length) {
     *length = _dataLength;
     return _data;
 }

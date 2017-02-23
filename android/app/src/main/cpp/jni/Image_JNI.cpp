@@ -9,6 +9,7 @@
 #include <VROPlatformUtil.h>
 
 #include "Image_JNI.h"
+#include "Texture_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -16,17 +17,21 @@
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateImage)(JNIEnv *env, jobject obj, jstring resource) {
+JNI_METHOD(jlong, nativeCreateImage)(JNIEnv *env, jobject obj, jstring resource, jstring format) {
     const char *cStrResource = env->GetStringUTFChars(resource, NULL);
     std::string strResource(cStrResource);
-    std::shared_ptr<VROImageAndroid> imagePtr = std::make_shared<VROImageAndroid>(strResource);
+
+    VROTextureInternalFormat internalFormat = Texture::getFormat(env, format);
+    std::shared_ptr<VROImageAndroid> imagePtr = std::make_shared<VROImageAndroid>(strResource, internalFormat);
+
     env->ReleaseStringUTFChars(resource, cStrResource);
     return Image::jptr(imagePtr);
 }
 
-JNI_METHOD(jlong, nativeCreateImageFromBitmap)(JNIEnv *env, jobject obj, jobject jbitmap) {
+JNI_METHOD(jlong, nativeCreateImageFromBitmap)(JNIEnv *env, jobject obj, jobject jbitmap, jstring format) {
     VROPlatformSetEnv(env);
-    std::shared_ptr<VROImageAndroid> imagePtr = std::make_shared<VROImageAndroid>(jbitmap);
+    VROTextureInternalFormat internalFormat = Texture::getFormat(env, format);
+    std::shared_ptr<VROImageAndroid> imagePtr = std::make_shared<VROImageAndroid>(jbitmap, internalFormat);
     return Image::jptr(imagePtr);
 }
 

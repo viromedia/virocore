@@ -41,7 +41,7 @@ VROTexture::VROTexture(VROTextureInternalFormat internalFormat,
     _textureId(sTextureId++),
     _type(VROTextureType::Texture2D),
     _images( {image} ),
-    _format(VROTextureFormat::RGBA8),
+    _format(image->getFormat()),
     _internalFormat(internalFormat),
     _width(image->getWidth()),
     _height(image->getHeight()),
@@ -59,7 +59,7 @@ VROTexture::VROTexture(VROTextureInternalFormat internalFormat,
     _textureId(sTextureId++),
     _type(VROTextureType::TextureCube),
     _images(images),
-    _format(VROTextureFormat::RGBA8),
+    _format(images.front()->getFormat()),
     _internalFormat(internalFormat),
     _width(images.front()->getWidth()),
     _height(images.front()->getHeight()),
@@ -123,8 +123,10 @@ void VROTexture::hydrate(VRODriver &driver) {
     if (!_images.empty()) {
         std::vector<std::shared_ptr<VROData>> data;
         for (std::shared_ptr<VROImage> &image : _images) {
+            passert (image->getFormat() == _format);
+            
             size_t length;
-            void *bytes = image->extractRGBA8888(&length);
+            void *bytes = image->getData(&length);
             data.push_back(std::make_shared<VROData>(bytes, length, VRODataOwnership::Wrap));
         }
         

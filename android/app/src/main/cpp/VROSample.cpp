@@ -54,19 +54,21 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
 
     scene->addNode(rootNode);
 
+    VROTextureInternalFormat format = VROTextureInternalFormat::RGB565;
+
     /*
      Create the obj node.
      */
     std::string heartPath = VROPlatformCopyAssetToFile("heart.obj");
-    std::shared_ptr<VRONode> heartNode = VROOBJLoader::loadOBJFromFile(heartPath, "", true, [](std::shared_ptr<VRONode> node, bool success) {
+    std::shared_ptr<VRONode> heartNode = VROOBJLoader::loadOBJFromFile(heartPath, "", true, [format](std::shared_ptr<VRONode> node, bool success) {
         if (!success) {
             return;
         }
 
         std::shared_ptr<VROMaterial> &material = node->getGeometry()->getMaterials().front();
-        material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
+        material->getDiffuse().setTexture(std::make_shared<VROTexture>(format,
                                                                        VROMipmapMode::Runtime,
-                                                                       VROPlatformLoadImageFromAsset("heart_d.jpg")));
+                                                                       VROPlatformLoadImageFromAsset("heart_d.jpg", format)));
         material->setLightingModel(VROLightingModel::Lambert);
     });
 
@@ -120,12 +122,12 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     _material = box->getMaterials()[0];
     _material->setLightingModel(VROLightingModel::Lambert);
     //_material->getDiffuse().setTexture(_videoA);
-    _material->getDiffuse().setTexture(std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
+    _material->getDiffuse().setTexture(std::make_shared<VROTexture>(format,
                                                                     VROMipmapMode::Runtime,
-                                                                    VROPlatformLoadImageFromAsset("boba.png")));
-    _material->getSpecular().setTexture(std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
+                                                                    VROPlatformLoadImageFromAsset("boba.png", format)));
+    _material->getSpecular().setTexture(std::make_shared<VROTexture>(format,
                                                                      VROMipmapMode::Runtime,
-                                                                     VROPlatformLoadImageFromAsset("specular.png")));
+                                                                     VROPlatformLoadImageFromAsset("specular.png", format)));
 
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
@@ -137,15 +139,15 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     int texLength;
     void *texBytes = VROPlatformLoadFile(texFile, &texLength);
 
-    VROTextureFormat format;
+    VROTextureFormat texFormat;
     int texWidth;
     int texHeight;
     std::vector<uint32_t> mipSizes;
     std::shared_ptr<VROData> texData = VROTextureUtil::readKTXHeader((uint8_t *)texBytes, (uint32_t)texLength,
-                                                                     &format, &texWidth, &texHeight, &mipSizes);
+                                                                     &texFormat, &texWidth, &texHeight, &mipSizes);
     std::vector<std::shared_ptr<VROData>> dataVec = { texData };
 
-    std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, format,
+    std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, texFormat,
                                                                        VROTextureInternalFormat::RGBA8,
                                                                        VROMipmapMode::Pregenerated,
                                                                        dataVec, texWidth, texHeight, mipSizes,
@@ -179,17 +181,17 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
 }
 
 std::shared_ptr<VROTexture> VROSample::getNiagaraTexture() {
+    VROTextureInternalFormat format = VROTextureInternalFormat::RGB565;
     std::vector<std::shared_ptr<VROImage>> cubeImages = {
-            std::make_shared<VROImageAndroid>("px.png"),
-            std::make_shared<VROImageAndroid>("nx.png"),
-            std::make_shared<VROImageAndroid>("py.png"),
-            std::make_shared<VROImageAndroid>("ny.png"),
-            std::make_shared<VROImageAndroid>("pz.png"),
-            std::make_shared<VROImageAndroid>("nz.png")
+            std::make_shared<VROImageAndroid>("px.png", format),
+            std::make_shared<VROImageAndroid>("nx.png", format),
+            std::make_shared<VROImageAndroid>("py.png", format),
+            std::make_shared<VROImageAndroid>("ny.png", format),
+            std::make_shared<VROImageAndroid>("pz.png", format),
+            std::make_shared<VROImageAndroid>("nz.png", format)
     };
 
-    return std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
-                                        cubeImages);
+    return std::make_shared<VROTexture>(format, cubeImages);
 }
 
 void VROSample::reticleTapped(VROVector3f ray, const VRORenderContext *context) {

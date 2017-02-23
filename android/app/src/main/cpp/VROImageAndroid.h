@@ -18,16 +18,16 @@ class VROImageAndroid : public VROImage {
 public:
 
     // This constructor can only really be used by the Renderer projects
-    VROImageAndroid(std::string asset);
+    VROImageAndroid(std::string asset, VROTextureInternalFormat internalFormat);
 
     // This is the constructor that should be called from JNI
-    VROImageAndroid(jobject jbitmap);
+    VROImageAndroid(jobject jbitmap, VROTextureInternalFormat internalFormat);
 
     virtual ~VROImageAndroid();
 
     int getWidth() const;
     int getHeight() const;
-    unsigned char *extractRGBA8888(size_t *length);
+    unsigned char *getData(size_t *length);
 
 private:
 

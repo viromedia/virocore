@@ -38,6 +38,7 @@ import com.viro.renderer.jni.SphereJni;
 import com.viro.renderer.jni.SpotLightJni;
 import com.viro.renderer.jni.SurfaceJni;
 import com.viro.renderer.jni.TextJni;
+import com.viro.renderer.jni.TextureFormat;
 import com.viro.renderer.jni.TextureJni;
 import com.viro.renderer.jni.VideoTextureJni;
 import com.viro.renderer.jni.ViroGvrLayout;
@@ -226,23 +227,25 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     }
 
     private void testBackgroundImage(SceneJni scene) {
-        ImageJni imageJni = new ImageJni("boba.png");
-        TextureJni videoTexture = new TextureJni(imageJni, "RGBA8", false);
+        ImageJni imageJni = new ImageJni("boba.png", TextureFormat.RGBA8);
+        TextureJni videoTexture = new TextureJni(imageJni, TextureFormat.RGBA8, false);
         scene.setBackgroundImageTexture(videoTexture);
         float[] rotation = {90, 0, 0};
         scene.setBackgroundRotation(rotation);
     }
 
     private void testSkyBoxImage(SceneJni scene) {
-        ImageJni pximageJni = new ImageJni("px.png");
-        ImageJni nximageJni = new ImageJni("nx.png");
-        ImageJni pyimageJni = new ImageJni("py.png");
-        ImageJni nyimageJni = new ImageJni("ny.png");
-        ImageJni pzimageJni = new ImageJni("pz.png");
-        ImageJni nzimageJni = new ImageJni("nz.png");
+        TextureFormat format = TextureFormat.RGBA8;
+
+        ImageJni pximageJni = new ImageJni("px.png", format);
+        ImageJni nximageJni = new ImageJni("nx.png", format);
+        ImageJni pyimageJni = new ImageJni("py.png", format);
+        ImageJni nyimageJni = new ImageJni("ny.png", format);
+        ImageJni pzimageJni = new ImageJni("pz.png", format);
+        ImageJni nzimageJni = new ImageJni("nz.png", format);
 
         TextureJni cubeTexture = new TextureJni(pximageJni, nximageJni, pyimageJni, nyimageJni,
-                pzimageJni, nzimageJni, "RGBA8");
+                pzimageJni, nzimageJni, format);
 
         scene.setBackgroundCubeImageTexture(cubeTexture);
     }
@@ -261,9 +264,9 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         node3.setEventDelegateJni(getGenericDelegate("Text"));
 
         // Create a new material with a diffuseTexture set to the image "boba.png"
-        ImageJni bobaImage = new ImageJni("boba.png");
+        ImageJni bobaImage = new ImageJni("boba.png", TextureFormat.RGBA8);
 
-        TextureJni bobaTexture = new TextureJni(bobaImage, "RGBA8", true);
+        TextureJni bobaTexture = new TextureJni(bobaImage, TextureFormat.RGBA8, true);
         MaterialJni material = new MaterialJni();
 //        material.setTexture(bobaTexture, "diffuseTexture");
         material.setColor(Color.WHITE, "whiteColor");
@@ -296,8 +299,8 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             @Override
             public void onObjLoaded() {
                 // Create a new material with a diffuseTexture set to the image "heart_d.jpg"
-                ImageJni heartImage = new ImageJni("heart_d.jpg");
-                TextureJni heartTexture = new TextureJni(heartImage, "RGBA8", true);
+                ImageJni heartImage = new ImageJni("heart_d.jpg", TextureFormat.RGBA8);
+                TextureJni heartTexture = new TextureJni(heartImage, TextureFormat.RGBA8, true);
                 MaterialJni material = new MaterialJni();
                 material.setTexture(heartTexture, "diffuseTexture");
                 material.setLightingModel("Constant");
@@ -363,9 +366,9 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
     private List<NodeJni> testImageSurface(Context context) {
         NodeJni node = new NodeJni(context);
-        ImageJni bobaImage = new ImageJni("boba.png");
+        ImageJni bobaImage = new ImageJni("boba.png", TextureFormat.RGBA8);
 
-        TextureJni bobaTexture = new TextureJni(bobaImage, "RGBA8", true);
+        TextureJni bobaTexture = new TextureJni(bobaImage, TextureFormat.RGBA8, true);
         MaterialJni material = new MaterialJni();
 
         SurfaceJni surface = new SurfaceJni(1, 1);

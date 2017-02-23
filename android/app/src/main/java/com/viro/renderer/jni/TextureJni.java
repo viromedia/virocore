@@ -3,21 +3,21 @@
  */
 package com.viro.renderer.jni;
 
-
 public class TextureJni {
+
     protected long mNativeRef;
 
     public TextureJni(ImageJni px, ImageJni nx, ImageJni py,
                       ImageJni ny, ImageJni pz, ImageJni nz,
-                      String format) {
+                      TextureFormat format) {
         mNativeRef = nativeCreateCubeTexture(px.mNativeRef, nx.mNativeRef,
                                              py.mNativeRef, ny.mNativeRef,
                                              pz.mNativeRef, nz.mNativeRef,
-                                             format);
+                                             format.getID());
     }
 
-    public TextureJni(ImageJni image, String format, boolean mipmap) {
-        mNativeRef = nativeCreateImageTexture(image.mNativeRef, format, mipmap);
+    public TextureJni(ImageJni image, TextureFormat format, boolean mipmap) {
+        mNativeRef = nativeCreateImageTexture(image.mNativeRef, format.getID(), mipmap);
     }
 
     public void destroy() {

@@ -26,7 +26,7 @@ void initBlankTexture(const VRORenderContext &context) {
     NSString *path = [bundle pathForResource:@"blank" ofType:@"png"];
     UIImage *image = [UIImage imageWithContentsOfFile:path];
     
-    std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageiOS>(image);
+    std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageiOS>(image, VROTextureInternalFormat::RGBA8);
     staticBlankTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::None, wrapper);
 }
 

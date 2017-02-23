@@ -9,13 +9,26 @@
 #include "VROImageAndroid.h"
 #include "VROPlatformUtil.h"
 
-VROImageAndroid::VROImageAndroid(std::string asset) {
-    jobject jbitmap = VROPlatformLoadBitmapFromAsset(asset);
+VROImageAndroid::VROImageAndroid(std::string asset, VROTextureInternalFormat internalFormat) {
+    jobject jbitmap = VROPlatformLoadBitmapFromAsset(asset, internalFormat);
     _data = (unsigned char *)VROPlatformConvertBitmap(jbitmap, &_dataLength, &_width, &_height);
+
+    if (internalFormat == VROTextureInternalFormat::RGB565) {
+        _format = VROTextureFormat::RGB565;
+    }
+    else {
+        _format = VROTextureFormat::RGBA8;
+    }
 }
 
-VROImageAndroid::VROImageAndroid(jobject jbitmap) {
+VROImageAndroid::VROImageAndroid(jobject jbitmap, VROTextureInternalFormat internalFormat) {
     _data = (unsigned char *)VROPlatformConvertBitmap(jbitmap, &_dataLength, &_width, &_height);
+    if (internalFormat == VROTextureInternalFormat::RGB565) {
+        _format = VROTextureFormat::RGB565;
+    }
+    else {
+        _format = VROTextureFormat::RGBA8;
+    }
 }
 
 VROImageAndroid::~VROImageAndroid() {
@@ -30,7 +43,7 @@ int VROImageAndroid::getHeight() const {
     return _height;
 }
 
-unsigned char *VROImageAndroid::extractRGBA8888(size_t *length) {
+unsigned char *VROImageAndroid::getData(size_t *length) {
     *length = _dataLength;
     return _data;
 }

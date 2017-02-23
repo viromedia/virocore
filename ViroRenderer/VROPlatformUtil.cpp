@@ -102,9 +102,10 @@ void VROPlatformDeleteFile(std::string filename) {
                                                error:&deleteError];
 }
 
-std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename) {
+std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
+                                                       VROTextureInternalFormat format) {
     UIImage *image = [UIImage imageNamed:[NSString stringWithUTF8String:filename.c_str()]];
-    return std::make_shared<VROImageiOS>(image);
+    return std::make_shared<VROImageiOS>(image, format);
 }
 
 void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
@@ -125,6 +126,7 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
 #include <mutex>
 #include <thread>
 #include <map>
+#include <android/bitmap.h>
 
 // We can hold a static reference to the JVM and to global references, but not to individual
 // JNIEnv objects, as those are thread-local. Access the JNIEnv object via getJNIEnv().
@@ -307,40 +309,44 @@ std::string VROPlatformCopyAssetToFile(std::string asset) {
     return spath;
 }
 
-std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename) {
-    jobject bitmap = VROPlatformLoadBitmapFromFile(filename);
-    return std::make_shared<VROImageAndroid>(bitmap);
+std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
+                                                       VROTextureInternalFormat format) {
+    jobject bitmap = VROPlatformLoadBitmapFromFile(filename, format);
+    return std::make_shared<VROImageAndroid>(bitmap, format);
 }
 
-std::shared_ptr<VROImage> VROPlatformLoadImageFromAsset(std::string asset) {
-    jobject bitmap = VROPlatformLoadBitmapFromAsset(asset);
-    return std::make_shared<VROImageAndroid>(bitmap);
+std::shared_ptr<VROImage> VROPlatformLoadImageFromAsset(std::string asset,
+                                                        VROTextureInternalFormat format) {
+    jobject bitmap = VROPlatformLoadBitmapFromAsset(asset, format);
+    return std::make_shared<VROImageAndroid>(bitmap, format);
 }
 
-jobject VROPlatformLoadBitmapFromAsset(std::string asset) {
+jobject VROPlatformLoadBitmapFromAsset(std::string asset, VROTextureInternalFormat format) {
     JNIEnv *env;
     getJNIEnv(&env);
 
     jclass cls = env->GetObjectClass(sPlatformUtil);
-    jmethodID jmethod = env->GetMethodID(cls, "loadBitmapFromAsset", "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
+    jmethodID jmethod = env->GetMethodID(cls, "loadBitmapFromAsset", "(Ljava/lang/String;Z)Landroid/graphics/Bitmap;");
 
     jstring string = env->NewStringUTF(asset.c_str());
-    jobject jbitmap = env->CallObjectMethod(sPlatformUtil, jmethod, string);
+    jobject jbitmap = env->CallObjectMethod(sPlatformUtil, jmethod, string,
+                                            format == VROTextureInternalFormat::RGB565);
 
     env->DeleteLocalRef(string);
     env->DeleteLocalRef(cls);
     return jbitmap;
 }
 
-jobject VROPlatformLoadBitmapFromFile(std::string path) {
+jobject VROPlatformLoadBitmapFromFile(std::string path, VROTextureInternalFormat format) {
     JNIEnv *env;
     getJNIEnv(&env);
 
     jclass cls = env->GetObjectClass(sPlatformUtil);
-    jmethodID jmethod = env->GetMethodID(cls, "loadBitmapFromFile", "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
+    jmethodID jmethod = env->GetMethodID(cls, "loadBitmapFromFile", "(Ljava/lang/String;Z)Landroid/graphics/Bitmap;");
 
     jstring string = env->NewStringUTF(path.c_str());
-    jobject jbitmap = env->CallObjectMethod(sPlatformUtil, jmethod, string);
+    jobject jbitmap = env->CallObjectMethod(sPlatformUtil, jmethod, string,
+                                            format == VROTextureInternalFormat::RGB565);
 
     env->DeleteLocalRef(string);
     env->DeleteLocalRef(cls);
@@ -353,8 +359,6 @@ void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, i
 
     AndroidBitmapInfo bitmapInfo;
     AndroidBitmap_getInfo(env, jbitmap, &bitmapInfo);
-
-    passert (bitmapInfo.format == ANDROID_BITMAP_FORMAT_RGBA_8888);
 
     *width = bitmapInfo.width;
     *height = bitmapInfo.height;

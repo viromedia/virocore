@@ -24,6 +24,7 @@
 #endif
 
 class VROImage;
+enum class VROTextureInternalFormat;
 
 #pragma mark - String Loading
 
@@ -47,12 +48,12 @@ void VROPlatformDeleteFile(std::string filename);
 
 #pragma mark - Image Loading
 
-std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename);
+std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename, VROTextureInternalFormat format);
 
 #if VRO_PLATFORM_ANDROID
-std::shared_ptr<VROImage> VROPlatformLoadImageFromAsset(std::string asset);
-jobject VROPlatformLoadBitmapFromAsset(std::string resource);
-jobject VROPlatformLoadBitmapFromFile(std::string path);
+std::shared_ptr<VROImage> VROPlatformLoadImageFromAsset(std::string asset, VROTextureInternalFormat format);
+jobject VROPlatformLoadBitmapFromAsset(std::string resource, VROTextureInternalFormat format);
+jobject VROPlatformLoadBitmapFromFile(std::string path, VROTextureInternalFormat format);
 
 // Note the returned buffer *must* be freed by the caller!
 void *VROPlatformConvertBitmap(jobject jbitmap, int *bitmapLength, int *width, int *height);

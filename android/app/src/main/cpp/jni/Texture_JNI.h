@@ -15,6 +15,9 @@
 #include "PersistentRef.h"
 
 namespace Texture {
+
+    VROTextureInternalFormat getFormat(JNIEnv *env, jstring jformat);
+
     inline jlong jptr(std::shared_ptr<VROTexture> ptr) {
         PersistentRef<VROTexture> *persistentRef = new PersistentRef<VROTexture>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
