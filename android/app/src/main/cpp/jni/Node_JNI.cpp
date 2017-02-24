@@ -106,7 +106,7 @@ JNI_METHOD(void, nativeSetHighAccuracyGaze)(JNIEnv *env,
     Node::native(native_node_ref)->setHighAccuracyGaze(enabled);
 }
 
-JNI_METHOD(void, nativeSetHighAccurac)(JNIEnv *env,
+JNI_METHOD(void, nativeSetVisible)(JNIEnv *env,
                                    jobject obj,
                                    jlong native_node_ref,
                                    jboolean visible) {
