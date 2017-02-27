@@ -39,10 +39,13 @@ public class ObjectJni extends BaseGeometry {
                 nativeDestroyNode(mObjectNodeRef);
                 mObjectNodeRef = 0;
             }
-            if (mNodeRef != 0) {
-                nativeDestroyNode(mNodeRef);
-                mNodeRef = 0;
-            }
+
+            // Do NOT destroy mNodeRef, as that belongs to the parent
+            // node; it's only temporarily stored here while we wait for
+            // the OBJ to load (if we destroy it, we'll get a crash if
+            // we attempt to access the node after this Object was removed
+            // from it)
+            mNodeRef = 0;
         } else {
             mDestroyOnObjNodeCreation = true;
         }
@@ -53,7 +56,7 @@ public class ObjectJni extends BaseGeometry {
         // Just save the node ref for now. We'll attach geometry to this node when it's ready
         mNodeRef = node.mNativeRef;
         // If node with obj ready
-        if (mObjectLoadingFinished) {
+        if (mObjectLoadingFinished && mObjectNodeRef != 0) {
             nativeAttachToNode(mObjectNodeRef, mNodeRef);
             // above we copied geometry from mObjectNodeRef to mNodeRef, don't need mObjectNodeRef
             nativeDestroyNode(mObjectNodeRef);

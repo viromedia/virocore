@@ -445,13 +445,11 @@ void VROPlatformRunTask(int taskId) {
 
     if (fcn) {
         fcn();
-        pinfo("Executed task %d [task queue size %d]", taskId, sTaskMap.size());
     }
 }
 
 void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     int task = VROPlatformGenerateTask(fcn);
-    pinfo("Generated async task %d for background [task queue size %d]", task, sTaskMap.size());
 
     JNIEnv *env;
     getJNIEnv(&env);
@@ -465,16 +463,12 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
 
 void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
     int task = VROPlatformGenerateTask(fcn);
-    pinfo("Generated async task %d for background [task queue size %d]", task, sTaskMap.size());
-
     VROPlatformCallJavaFunction(sPlatformUtil,
                                 "dispatchRenderer", "(I)V", task);
 }
 
 void VROPlatformDispatchAsyncApplication(std::function<void()> fcn){
     int task = VROPlatformGenerateTask(fcn);
-    pinfo("Generated async task %d for background [task queue size %d]", task, sTaskMap.size());
-
     VROPlatformCallJavaFunction(sPlatformUtil,
                                 "dispatchApplication", "(I)V", task);
 }
