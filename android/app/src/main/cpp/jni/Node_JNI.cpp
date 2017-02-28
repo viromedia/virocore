@@ -133,7 +133,10 @@ JNI_METHOD(void, nativeSetMaterials)(JNIEnv *env,
 
     std::vector<std::shared_ptr<VROMaterial>> tempMaterials;
     for (int i = 0; i < len; i++) {
-        tempMaterials.push_back(Material::native(longArray[i]));
+        // Always copy materials from the material manager, as they may be
+        // modified by animations, etc. and we don't want these changes to
+        // propagate to the reference material held by the material manager
+        tempMaterials.push_back(std::make_shared<VROMaterial>(Material::native(longArray[i])));
     }
     VROPlatformDispatchAsyncRenderer([nativeNodeRef, tempMaterials] {
         std::shared_ptr<VRONode> node = Node::native(nativeNodeRef);

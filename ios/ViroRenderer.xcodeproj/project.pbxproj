@@ -961,8 +961,6 @@
 				8F4DCE3B1BFBE54200061DD7 /* VROGeometryElement.cpp */,
 				8F4DCE3F1BFBE97600061DD7 /* VROGeometrySource.h */,
 				8F4DCE3E1BFBE97600061DD7 /* VROGeometrySource.cpp */,
-				8BDDA00B1E54F48500A42870 /* VROLazyMaterial.h */,
-				8BDDA00C1E54F4A300A42870 /* VROMaterialAnimation.h */,
 				8F4DCE331BFBCB5400061DD7 /* VROMaterial.h */,
 				8F4DCE321BFBCB5400061DD7 /* VROMaterial.cpp */,
 				8F4DCE391BFBD19B00061DD7 /* VROMaterialVisual.h */,
@@ -1304,6 +1302,8 @@
 		8FB2B58D1E1442A700EDB629 /* Execution API */ = {
 			isa = PBXGroup;
 			children = (
+				8BDDA00B1E54F48500A42870 /* VROLazyMaterial.h */,
+				8BDDA00C1E54F4A300A42870 /* VROMaterialAnimation.h */,
 				8FB2B58F1E1442EC00EDB629 /* VROPropertyAnimation.h */,
 				8FB2B58E1E1442EC00EDB629 /* VROPropertyAnimation.cpp */,
 				8FB2B5931E1445BB00EDB629 /* VROAnimationGroup.h */,
