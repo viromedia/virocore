@@ -228,6 +228,13 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp) {
     jmethodID jmethod = env->GetStaticMethodID(cls, "downloadURLToTempFile", "(Ljava/lang/String;)Ljava/lang/String;");
     jstring jpath = (jstring) env->CallStaticObjectMethod(cls, jmethod, jurl);
 
+    env->DeleteLocalRef(jurl);
+    env->DeleteLocalRef(cls);
+
+    if (jpath == nullptr) {
+        return "";
+    }
+
     const char *path = env->GetStringUTFChars(jpath, 0);
     std::string spath(path);
 
@@ -235,8 +242,6 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp) {
 
     env->ReleaseStringUTFChars(jpath, path);
     env->DeleteLocalRef(jpath);
-    env->DeleteLocalRef(jurl);
-    env->DeleteLocalRef(cls);
 
     *temp = true;
     return spath;

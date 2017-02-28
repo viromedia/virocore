@@ -1310,8 +1310,7 @@ bool MaterialFileReader::operator()(const std::string &matId,
   std::ifstream matIStream(filepath.c_str());
   if (!matIStream) {
     std::stringstream ss;
-    ss << "WARN: Material file [ " << filepath
-       << " ] not found." << std::endl;
+    ss << "WARN: path to material [" << matId + "] not found" << std::endl;
     if (err) {
       (*err) += ss.str();
     }

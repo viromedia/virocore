@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Surface;
 
 import com.viro.renderer.FrameListener;
@@ -17,6 +18,7 @@ import com.viro.renderer.VideoSink;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +34,8 @@ import java.util.Map;
  * functions. Primarily accessed via VROPlatformUtil.cpp.
  */
 public class PlatformUtil {
+
+    private static final String TAG = "Viro";
 
     private Context mContext;
     private RenderCommandQueue mRenderQueue;
@@ -121,7 +125,12 @@ public class PlatformUtil {
     // Accessed by Native code (VROPlatformUtil.cpp)
     public static String downloadURLToTempFile(String url) throws IOException {
         File file = File.createTempFile("Viro", "tmp");
-        downloadURLSynchronous(url, file);
+        try {
+            downloadURLSynchronous(url, file);
+        }catch(FileNotFoundException e) {
+            Log.w(TAG, "No file found at URL [" + url + "], not copying to temporary file");
+            return null;
+        }
 
         return file.getAbsolutePath();
     }
