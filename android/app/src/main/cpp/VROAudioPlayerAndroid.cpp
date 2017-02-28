@@ -51,6 +51,13 @@ void VROAudioPlayerAndroid::setMuted(bool muted) {
 }
 
 void VROAudioPlayerAndroid::seekToTime(float seconds) {
+    // this is just a generic duration from the Android MediaPlayer
+    int totalDuration = _player->getVideoDurationInSeconds();
+    if (seconds > totalDuration) {
+        seconds = totalDuration;
+    } else if (seconds < 0) {
+        seconds = 0;
+    }
     _player->seekToTime(seconds);
 }
 

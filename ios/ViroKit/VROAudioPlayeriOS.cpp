@@ -10,6 +10,7 @@
 #include "VROData.h"
 #include "VROLog.h"
 #include "VROPlatformUtil.h"
+#include "VROMath.h"
 
 VROAudioPlayeriOS::VROAudioPlayeriOS(std::string url, bool isLocalUrl) :
     _playVolume(1.0) {
@@ -66,6 +67,7 @@ void VROAudioPlayeriOS::setMuted(bool muted) {
 
 void VROAudioPlayeriOS::seekToTime(float seconds) {
     if (_player) {
+        seconds = clamp(seconds, 0, _player.duration);
         _player.currentTime = seconds;
     }
 }
