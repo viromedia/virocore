@@ -27,6 +27,7 @@ public abstract class LazyMaterialJni {
     public LazyMaterialJni() {
         mNativeRef = nativeCreateLazyMaterial();
     }
+    public abstract LazyMaterialJni copy();
 
     public void destroy() {
         nativeDestroyLazyMaterial(mNativeRef);

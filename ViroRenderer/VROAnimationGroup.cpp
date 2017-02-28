@@ -36,6 +36,11 @@ std::shared_ptr<VROAnimationGroup> VROAnimationGroup::parse(float durationSecond
                                                pAnimations, mAnimations);
 }
 
+std::shared_ptr<VROExecutableAnimation> VROAnimationGroup::copy() {
+    return std::make_shared<VROAnimationGroup>(_duration, _delay, _timingFunctionType,
+                                               _propertyAnimations, _materialAnimations);
+}
+
 VROTimingFunctionType VROAnimationGroup::parseTimingFunction(std::string &name) {
     if (VROStringUtil::strcmpinsensitive(name, "Linear")) {
         return VROTimingFunctionType::Linear;

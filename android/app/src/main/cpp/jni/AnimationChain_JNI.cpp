@@ -47,6 +47,11 @@ JNI_METHOD(jlong, nativeCreateAnimationChain)(JNIEnv *env, jclass clazz, jstring
     return AnimationChain::jptr(animationChain);
 }
 
+JNI_METHOD(jlong, nativeCopyAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
+    std::shared_ptr<VROAnimationChain> chain = AnimationChain::native(nativeRef);
+    return AnimationChain::jptr(std::dynamic_pointer_cast<VROAnimationChain>(chain->copy()));
+}
+
 JNI_METHOD(void, nativeAddAnimationChain)(JNIEnv *env, jobject obj, jlong nativeRef, jlong chainRef) {
     AnimationChain::native(nativeRef)->addAnimation(AnimationChain::native(chainRef));
 }

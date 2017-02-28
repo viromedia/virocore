@@ -70,6 +70,11 @@ JNI_METHOD(jlong, nativeCreateAnimationGroup)(JNIEnv *env, jclass clazz,
     return AnimationGroup::jptr(animationGroup);
 }
 
+JNI_METHOD(jlong, nativeCopyAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
+    std::shared_ptr<VROAnimationGroup> group = AnimationGroup::native(nativeRef);
+    return AnimationGroup::jptr(std::dynamic_pointer_cast<VROAnimationGroup>(group->copy()));
+}
+
 JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeRef, jlong nodeRef) {
     jweak weakObj = env->NewWeakGlobalRef(obj);
 

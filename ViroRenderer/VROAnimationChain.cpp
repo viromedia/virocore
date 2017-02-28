@@ -11,6 +11,15 @@
 #include <sstream>
 #include "VROLog.h"
 
+std::shared_ptr<VROExecutableAnimation> VROAnimationChain::copy() {
+    std::vector<std::shared_ptr<VROExecutableAnimation>> animations;
+    for (std::shared_ptr<VROExecutableAnimation> &animation : _animations) {
+        animations.push_back(animation->copy());
+    }
+    
+    return std::make_shared<VROAnimationChain>(animations, _execution);
+}
+
 void VROAnimationChain::execute(std::shared_ptr<VRONode> node,
                                 std::function<void()> onFinished) {
     

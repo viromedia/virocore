@@ -15,6 +15,7 @@ public abstract class BaseAnimation {
         execute(node);
     }
 
+    public abstract BaseAnimation copy();
     protected abstract void execute(NodeJni nodeJni);
     public abstract void pause();
     public abstract void resume();

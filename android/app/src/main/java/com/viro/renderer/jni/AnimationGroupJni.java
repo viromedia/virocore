@@ -27,6 +27,18 @@ public class AnimationGroupJni extends BaseAnimation {
                 durationSeconds, delaySeconds, functionType);
     }
 
+    private AnimationGroupJni(long nativeRef, LazyMaterialJni lazyMaterial) {
+        mNativeRef = nativeRef;
+        if (lazyMaterial != null) {
+            mLazyMaterial = lazyMaterial.copy();
+        }
+    }
+
+    @Override
+    public BaseAnimation copy() {
+        return new AnimationGroupJni(nativeCopyAnimation(mNativeRef), mLazyMaterial);
+    }
+
     @Override
     protected void execute(NodeJni node) {
         nativeExecuteAnimation(mNativeRef, node.mNativeRef);
@@ -59,6 +71,7 @@ public class AnimationGroupJni extends BaseAnimation {
                                                    String rotateX, String rotateY, String rotateZ,
                                                    String opacity, String color, long lazyMaterialRef,
                                                    float durationSeconds, float delaySeconds, String functionType);
+    private native long nativeCopyAnimation(long nativeRef);
     private native void nativeExecuteAnimation(long nativeRef, long nodeRef);
     private native void nativePauseAnimation(long nativeRef);
     private native void nativeResumeAnimation(long nativeRef);
