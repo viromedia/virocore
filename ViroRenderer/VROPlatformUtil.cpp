@@ -45,9 +45,16 @@ NSURLSessionDataTask *downloadDataWithURLSynchronous(NSURL *url,
     NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
     NSURLSessionDataTask * downloadTask = [downloadSession dataTaskWithURL:url
                                                          completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
-                                                             completionBlock(data, error);
-                                                             dispatch_semaphore_signal(semaphore);
-                                                         }];
+                                            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+                                            if (httpResponse.statusCode != 200) {
+                                                NSLog(@"HTTP request [%@] unsuccessful [status code %ld]", url, (long)httpResponse.statusCode);
+                                                completionBlock(nil, error);
+                                            }
+                                            else {
+                                                completionBlock(data, error);
+                                            }
+                                            dispatch_semaphore_signal(semaphore);
+                                          }];
     [downloadTask resume];
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     
@@ -61,8 +68,15 @@ NSURLSessionDataTask *downloadDataWithURL(NSURL *url, void (^completionBlock)(NS
     NSURLSession *downloadSession = [NSURLSession sessionWithConfiguration: sessionConfig];
     NSURLSessionDataTask * downloadTask = [downloadSession dataTaskWithURL:url
                                                          completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
-                                                             completionBlock(data, error);
-                                                         }];
+                                            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+                                            if (httpResponse.statusCode != 200) {
+                                                NSLog(@"HTTP request [%@] unsuccessful [status code %ld]", url, (long)httpResponse.statusCode);
+                                                completionBlock(nil, error);
+                                            }
+                                            else {
+                                                completionBlock(data, error);
+                                            }
+                                          }];
     [downloadTask resume];
     return downloadTask;
 }
@@ -77,7 +91,7 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp) {
             return;
         }
         
-        if (!error) {
+        if (data && !error) {
             NSString *fileName = [NSString stringWithFormat:@"%@.tmp", [[NSProcessInfo processInfo] globallyUniqueString]];
             NSURL *fileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:fileName]];
             
@@ -88,7 +102,12 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp) {
         }
     });
     
-    return std::string([tempFilePath UTF8String]);
+    if (tempFilePath) {
+        return std::string([tempFilePath UTF8String]);
+    }
+    else {
+        return "";
+    }
 }
 
 std::string VROPlatformCopyResourceToFile(std::string asset) {

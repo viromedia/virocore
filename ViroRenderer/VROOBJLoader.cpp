@@ -146,12 +146,22 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
         
         if (m.diffuse_texname.length() > 0) {
             std::shared_ptr<VROTexture> texture = loadTexture(m.diffuse_texname, base, isBaseURL, textures);
-            material->getDiffuse().setTexture(texture);
+            if (texture) {
+                material->getDiffuse().setTexture(texture);
+            }
+            else {
+                pinfo("Failed to load texture [%s] for OBJ", m.diffuse_texname.c_str());
+            }
         }
         
         if (m.specular_texname.length() > 0) {
             std::shared_ptr<VROTexture> texture = loadTexture(m.specular_texname, base, isBaseURL, textures);
-            material->getSpecular().setTexture(texture);
+            if (texture) {
+                material->getSpecular().setTexture(texture);
+            }
+            else {
+                pinfo("Failed to load texture [%s] for OBJ", m.specular_texname.c_str());
+            }
         }
         
         materialsIndexed.push_back(material);
@@ -311,7 +321,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
 }
 
 std::shared_ptr<VROTexture> VROOBJLoader::loadTexture(std::string &name, std::string &base, bool isBaseURL,
-                               std::map<std::string, std::shared_ptr<VROTexture>> &cache) {
+                                                      std::map<std::string, std::shared_ptr<VROTexture>> &cache) {
     std::shared_ptr<VROTexture> texture;
     
     auto it = cache.find(name);
@@ -320,6 +330,11 @@ std::shared_ptr<VROTexture> VROOBJLoader::loadTexture(std::string &name, std::st
         std::string textureFile = base + "/" + name;
         if (isBaseURL) {
             textureFile = VROPlatformDownloadURLToFile(textureFile, &isTempTextureFile);
+        }
+        
+        // Abort (return empty texture) if the file wasn't found
+        if (textureFile.length() == 0) {
+            return texture;
         }
         
         std::shared_ptr<VROImage> image = VROPlatformLoadImageFromFile(textureFile,
