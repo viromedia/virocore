@@ -9,30 +9,29 @@
 #include "VROPropertyAnimation.h"
 #include "VROStringUtil.h"
 #include <sstream>
+#include "VROLog.h"
+
+enum class PropertyAnimationType {
+    Additive,
+    Subtractive,
+    Assign,
+};
 
 std::shared_ptr<VROPropertyAnimation> VROPropertyAnimation::parse(const std::string &name, const std::string &value) {
-    const char firstChar = value.at(0);
-    
     int indexOfNumber = 0;
-    bool isAdditive = false;
+    PropertyAnimationType type = PropertyAnimationType::Assign;
     
-    // Detect if this is an additive value (e.g. +45)
-    if (firstChar == '+') {
-        indexOfNumber = 1;
-        isAdditive = true;
+    std::string additiveStr = "+=";
+    std::string subtractiveStr = "-=";
+    
+    std::string typeStr = value.substr(0, 2);
+    if (typeStr == additiveStr) {
+        type = PropertyAnimationType::Additive;
+        indexOfNumber = 2;
     }
-    
-    // Detect if this is a += additive value (e.g. +=45) (same behavior as +)
-    if (value.size() > 2) {
-        const char secondChar = value.at(1);
-        if (secondChar == '=') {
-            
-            // Ensures we have += and not something invalid like 0=
-            if (indexOfNumber == 1) {
-                indexOfNumber = 2;
-                isAdditive = true;
-            }
-        }
+    else if (typeStr == subtractiveStr) {
+        type = PropertyAnimationType::Subtractive;
+        indexOfNumber = 2;
     }
     
     VROAnimationValue animationValue;
@@ -45,9 +44,13 @@ std::shared_ptr<VROPropertyAnimation> VROPropertyAnimation::parse(const std::str
         std::string numberStr = value.substr(indexOfNumber);
         animationValue.type = VROValueType::Float;
         animationValue.valueFloat = VROStringUtil::toFloat(numberStr);
+     
+        if (type == PropertyAnimationType::Subtractive) {
+            animationValue.valueFloat *= -1;
+        }
     }
     
-    return std::make_shared<VROPropertyAnimation>(name, animationValue, isAdditive);
+    return std::make_shared<VROPropertyAnimation>(name, animationValue, type != PropertyAnimationType::Assign);
 }
 
 std::string VROPropertyAnimation::toString() const {
