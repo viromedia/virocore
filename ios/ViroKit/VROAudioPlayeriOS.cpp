@@ -24,6 +24,8 @@ VROAudioPlayeriOS::VROAudioPlayeriOS(std::string url, bool isLocalUrl) :
         NSURL *urlObj = [NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]];
         downloadDataWithURL(urlObj, ^(NSData *data, NSError *error) {
             _player = [[AVAudioPlayer alloc] initWithData:data error:NULL];
+            _audioDelegate = [[VROAudioPlayerDelegate alloc] initWithSoundDelegate:_delegate];
+            _player.delegate = _audioDelegate;
             _delegate->soundIsReady();
         });
     }
@@ -123,3 +125,25 @@ void VROAudioPlayeriOS::dataIsReady() {
         }
     }
 }
+
+#pragma mark - VROAudioPlayerDelegate implementation
+@implementation VROAudioPlayerDelegate {
+    std::weak_ptr<VROSoundDelegateInternal> _delegate;
+}
+
+- (id)initWithSoundDelegate:(std::shared_ptr<VROSoundDelegateInternal>)soundDelegate {
+    self = [super init];
+    if (self) {
+        _delegate = soundDelegate;
+    }
+    return self;
+}
+
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
+    std::shared_ptr<VROSoundDelegateInternal> soundDelegate = _delegate.lock();
+    if (soundDelegate) {
+        soundDelegate->soundDidFinish();
+    }
+}
+
+@end
