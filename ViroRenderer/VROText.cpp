@@ -346,7 +346,7 @@ std::vector<VROTextLine> VROText::wrapByWords(std::string &text, float maxWidth,
     
     size_t current = 0;
     while (true) {
-        if (current == text.size()) {
+        if (current == text.size() || current == std::string::npos) {
             break;
         }
         
