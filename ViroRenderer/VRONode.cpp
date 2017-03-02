@@ -180,17 +180,22 @@ void VRONode::computeTransform(const VRORenderContext &context, VROMatrix4f pare
     VROMatrix4f transform;
     transform.scale(_scale.x, _scale.y, _scale.z);
     transform = _rotation.getMatrix().multiply(transform);
-    
-    // The constraints may use the _computedPosition so we calculate that first
-    _computedPosition = parentTransforms.multiply(transform).multiply(_position);
-    for (const std::shared_ptr<VROConstraint> &constraint : _constraints) {
-        transform = constraint->getTransform(*this, context, transform);
-    }
-    
     transform.translate(_position.x, _position.y, _position.z);
     transform = unpivotMtx.multiply(transform).multiply(pivotMtx);
 
     _computedTransform = parentTransforms.multiply(transform);
+    _computedPosition = { _computedTransform[12], _computedTransform[13], _computedTransform[14] };
+    
+    for (const std::shared_ptr<VROConstraint> &constraint : _constraints) {
+        VROMatrix4f billboardRotation = constraint->getTransform(*this, context, _computedTransform);
+        
+        // To apply the billboard rotation, translate the object to the origin, apply
+        // the rotation, then translate back to its previously computed position
+        _computedTransform.translate(_computedPosition.scale(-1));
+        _computedTransform = billboardRotation.multiply(_computedTransform);
+        _computedTransform.translate(_computedPosition);
+    }
+    
     _computedInverseTransposeTransform = _computedTransform.invert().transpose();
 }
 

@@ -17,6 +17,17 @@ VROMatrix4f VROBillboardConstraint::getTransform(const VRONode &node,
                                                  const VRORenderContext &context,
                                                  VROMatrix4f transform) {
     
+    VROMatrix4f rotation = transform;
+    rotation[12] = 0;
+    rotation[13] = 0;
+    rotation[14] = 0;
+    
+    // The object is assumed to start facing in the positive Z
+    // direction; we rotate it by the transform to get the current
+    // lookAt vector
+    VROVector3f lookAt(0, 0, 1);
+    lookAt = rotation.multiply(lookAt).normalize();
+    
     const VROCamera &camera = context.getCamera();
     
     if (_freeAxis == VROBillboardAxis::All) {
@@ -27,7 +38,7 @@ VROMatrix4f VROBillboardConstraint::getTransform(const VRONode &node,
         objToCamProj.y = 0;
         objToCamProj = objToCamProj.normalize();
 
-        VROQuaternion quaternionY = computeAxisRotation({ 0, 1, 0 }, objToCamProj);
+        VROQuaternion quaternionY = computeAxisRotation(lookAt, { 0, 1, 0 }, objToCamProj);
         
         // Billboard again, with free X axis
         objToCam = objToCam.normalize();
@@ -53,7 +64,7 @@ VROMatrix4f VROBillboardConstraint::getTransform(const VRONode &node,
         }
         
         VROQuaternion composed = quaternionX * quaternionY;
-        return composed.getMatrix().multiply(transform);
+        return composed.getMatrix();
     }
     else {
         VROVector3f objToCamProj = camera.getPosition().subtract(node.getTransformedPosition());
@@ -73,15 +84,21 @@ VROMatrix4f VROBillboardConstraint::getTransform(const VRONode &node,
         }
         
         objToCamProj = objToCamProj.normalize();
-        return computeAxisRotation(defaultAxis, objToCamProj).getMatrix().multiply(transform);
+        
+        VROQuaternion composed = computeAxisRotation(lookAt, defaultAxis, objToCamProj);
+        return composed.getMatrix();
     }
 }
 
-VROQuaternion VROBillboardConstraint::computeAxisRotation(VROVector3f defaultAxis, VROVector3f objToCamProj) {
-    // The direction the object is assumed to be facing (positive Z)
-    VROVector3f lookAt(0, 0, 1);
+VROQuaternion VROBillboardConstraint::computeAxisRotation(VROVector3f lookAt, VROVector3f defaultAxis,
+                                                          VROVector3f objToCamProj) {
     
-    // Derives the axis and angle of billboard rotation
+    
+    // Derive the axis and angle of billboard rotation.
+    // The axis is the cross product of the vector from the object
+    // to the camera with the object's look-at vector, and the angle
+    // is derived from the dot product, since dot(A,B)=cos(angle) for
+    // normalized vectors.
     VROVector3f axis = lookAt.cross(objToCamProj).normalize();
     float angleCosine = lookAt.dot(objToCamProj);
     
