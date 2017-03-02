@@ -168,8 +168,6 @@ JNI_METHOD(void, nativeSetTransformBehaviors)(JNIEnv *env,
             tempConstraints.push_back(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::X));
         } else if (VROStringUtil::strcmpinsensitive(transformBehavior, "billboardY")) {
             tempConstraints.push_back(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::Y));
-        } else if (VROStringUtil::strcmpinsensitive(transformBehavior, "billboardZ")) {
-            tempConstraints.push_back(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::Z));
         }
         env->ReleaseStringUTFChars(string, rawString);
     }
