@@ -127,19 +127,16 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
 
         setPresentationView(glSurfaceView);
 
-        // Enable scan line racing.
-        // According to Google, we should only set this to true when we're in stereo mode which is
-        // okay to do here because its the default. See https://github.com/googlevr/gvr-android-sdk/issues/316
-        if(setAsyncReprojectionEnabled(true)) {
-
-            // Scanline racing decouples the app framerate from the display framerate,
-            // allowing immersive interaction even at the throttled clockrates set by
-            // sustained performance mode.
-            AndroidCompat.setSustainedPerformanceMode((Activity)activityContext, true);
-        }
+        // According to the GVR documentation, this only sets the activity to "VR mode" and is only
+        // supported on Android Nougat and up.
+        // We always want VR mode enabled.
+        AndroidCompat.setVrModeEnabled((Activity)getContext(), true);
+        setStereoModeEnabled(true);
 
         // Prevent screen from dimming/locking.
         ((Activity)activityContext).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        // Prevent screen from switching to portrait
+        ((Activity)activityContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         Application app = (Application)activityContext.getApplicationContext();
         app.registerActivityLifecycleCallbacks(this);
@@ -155,22 +152,26 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         mNativeRenderer.setScene(scene.mNativeRef, 1.0f);
     }
 
+    /**
+     * This function should only be called once.
+     *
+     * @param vrModeEnabled - whether or not to use VR or 360 mode.
+     */
     @Override
     public void setVrModeEnabled(boolean vrModeEnabled) {
-        // According to the GVR documentation, this only sets the activity to "VR mode" and is only
-        // supported on Android Nougat and up.
-        AndroidCompat.setVrModeEnabled((Activity)getContext(), vrModeEnabled);
 
-        // Note: GvrLayout.setStereoModeEnabled() is a hidden API.
-        setStereoModeEnabled(vrModeEnabled);
-        // Also set async reprojection because this is something that Google advised us to do.
-        // See https://github.com/googlevr/gvr-android-sdk/issues/316
-
-        if (setAsyncReprojectionEnabled(vrModeEnabled)) {
-            AndroidCompat.setSustainedPerformanceMode((Activity)getContext(), true);
+        if (vrModeEnabled) {
+            // Enable scan line racing.
+            // According to Google, we should only set this to true when we're in stereo mode which is
+            // okay to do here because its the default. See https://github.com/googlevr/gvr-android-sdk/issues/316
+            if (setAsyncReprojectionEnabled(true)) {
+                // Scanline racing decouples the app framerate from the display framerate,
+                // allowing immersive interaction even at the throttled clockrates set by
+                // sustained performance mode.
+                AndroidCompat.setSustainedPerformanceMode((Activity) getContext(), true);
+            }
         }
 
-        ((Activity)getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         mNativeRenderer.setVRModeEnabled(vrModeEnabled);
     }
 

@@ -14,12 +14,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.viro.renderer.*;
 import com.viro.renderer.jni.AmbientLightJni;
 import com.viro.renderer.jni.AsyncObjListener;
 import com.viro.renderer.jni.BoxJni;
 import com.viro.renderer.jni.DirectionalLightJni;
-import com.viro.renderer.jni.ControllerJni;
 import com.viro.renderer.jni.EventDelegateJni;
 import com.viro.renderer.jni.GlListener;
 import com.viro.renderer.jni.ImageJni;
@@ -92,7 +90,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
         //testBackgroundVideo(scene);
         //testBackgroundImage(scene);
-        //testSkyBoxImage(scene);
+        testSkyBoxImage(scene);
 
         // addNormalSound("http://www.kozco.com/tech/32.mp3");
         // addNormalSound("http://www.bensound.com/royalty-free-music?download=dubstep");
@@ -100,7 +98,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         // addSpatialSound("http://www.kozco.com/tech/32.mp3");
 
         final SoundDataJni data = new SoundDataJni("http://www.kozco.com/tech/32.mp3", false);
-        addSpatialSound(data);
+        //addSpatialSound(data);
         //addNormalSound(data);
 
         setSoundRoom(scene, mVrView.getRenderContextRef());
