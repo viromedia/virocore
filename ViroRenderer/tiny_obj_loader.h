@@ -181,6 +181,8 @@ typedef struct {
   int pad2;
 
   std::map<std::string, std::string> unknown_parameter;
+  
+  bool has_diffuse_color;
 } material_t;
 
 typedef struct {
@@ -872,6 +874,7 @@ static void InitMaterial(material_t *material) {
   material->emissive_texname = "";
   material->normal_texname = "";
 
+  material->has_diffuse_color = false;
   material->unknown_parameter.clear();
 }
 
@@ -1032,6 +1035,8 @@ void LoadMtl(std::map<std::string, int> *material_map,
       material.diffuse[0] = r;
       material.diffuse[1] = g;
       material.diffuse[2] = b;
+      
+      material.has_diffuse_color = true;
       continue;
     }
 

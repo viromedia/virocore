@@ -129,7 +129,10 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
     for (tinyobj::material_t &m : materials) {
         std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
         material->setName(m.name);
-        material->getDiffuse().setColor({ m.diffuse, 3 });
+      
+        if (m.has_diffuse_color) {
+            material->getDiffuse().setColor({ m.diffuse, 3 });
+        }
         material->setShininess(m.shininess);
         material->setTransparency(m.dissolve);
         
