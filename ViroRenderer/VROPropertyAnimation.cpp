@@ -11,27 +11,36 @@
 #include <sstream>
 #include "VROLog.h"
 
-enum class PropertyAnimationType {
-    Additive,
-    Subtractive,
-    Assign,
-};
-
 std::shared_ptr<VROPropertyAnimation> VROPropertyAnimation::parse(const std::string &name, const std::string &value) {
     int indexOfNumber = 0;
-    PropertyAnimationType type = PropertyAnimationType::Assign;
-    
-    std::string additiveStr = "+=";
-    std::string subtractiveStr = "-=";
+    VROAnimationOperation op = VROAnimationOperation::Assign;
+    bool inverseOp = false;
+  
+    std::string addStr = "+=";
+    std::string subtractStr = "-=";
+    std::string multiplyStr = "*=";
+    std::string divideStr = "/=";
     
     std::string typeStr = value.substr(0, 2);
-    if (typeStr == additiveStr) {
-        type = PropertyAnimationType::Additive;
+    if (typeStr == addStr) {
+        op = VROAnimationOperation::Add;
         indexOfNumber = 2;
+        inverseOp = false;
     }
-    else if (typeStr == subtractiveStr) {
-        type = PropertyAnimationType::Subtractive;
+    else if (typeStr == subtractStr) {
+        op = VROAnimationOperation::Add;
         indexOfNumber = 2;
+        inverseOp = true;
+    }
+    else if (typeStr == multiplyStr) {
+        op = VROAnimationOperation::Multiply;
+        indexOfNumber = 2;
+        inverseOp = false;
+    }
+    else if (typeStr == divideStr) {
+        op = VROAnimationOperation::Multiply;
+        indexOfNumber = 2;
+        inverseOp = true;
     }
     
     VROAnimationValue animationValue;
@@ -45,12 +54,17 @@ std::shared_ptr<VROPropertyAnimation> VROPropertyAnimation::parse(const std::str
         animationValue.type = VROValueType::Float;
         animationValue.valueFloat = VROStringUtil::toFloat(numberStr);
      
-        if (type == PropertyAnimationType::Subtractive) {
-            animationValue.valueFloat *= -1;
+        if (inverseOp) {
+            if (op == VROAnimationOperation::Add) {
+                animationValue.valueFloat *= -1;
+            }
+            if (op == VROAnimationOperation::Multiply) {
+                animationValue.valueFloat = 1 / animationValue.valueFloat;
+            }
         }
     }
     
-    return std::make_shared<VROPropertyAnimation>(name, animationValue, type != PropertyAnimationType::Assign);
+    return std::make_shared<VROPropertyAnimation>(name, animationValue, op);
 }
 
 std::string VROPropertyAnimation::toString() const {
