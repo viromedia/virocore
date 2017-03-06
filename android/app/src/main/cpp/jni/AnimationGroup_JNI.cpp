@@ -101,6 +101,7 @@ JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeR
                     perr("Exception encountered calling onFinish.");
                 }
                 env->DeleteLocalRef(javaClass);
+                env->DeleteLocalRef(obj);
             }
         });
     });
