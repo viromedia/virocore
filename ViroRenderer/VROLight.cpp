@@ -9,6 +9,8 @@
 #include "VROLight.h"
 #include "VROAnimationVector3f.h"
 #include "VROAnimationFloat.h"
+#include "VROLog.h"
+#include "VROLightingUBO.h"
 
 uint32_t VROLight::hashLights(const std::vector<std::shared_ptr<VROLight>> &lights) {
     uint32_t h = 0;
@@ -74,4 +76,17 @@ void VROLight::setSpotOuterAngle(float spotOuterAngle) {
                                                     ((VROLight *)animatable)->_spotOuterAngle = value;
                                                     ((VROLight *)animatable)->_updated = true;
                                                 }, _spotOuterAngle, spotOuterAngle));
+}
+
+void VROLight::propagateUpdates() {
+    if (!_updated) {
+        return;
+    }
+    for (std::weak_ptr<VROLightingUBO> ubo_weak : _ubos) {
+        std::shared_ptr<VROLightingUBO> ubo = ubo_weak.lock();
+        if (ubo) {
+            ubo->setNeedsUpdate();
+        }
+    }
+    _updated = false;
 }

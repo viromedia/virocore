@@ -13,19 +13,22 @@
 #include "VROShaderProgram.h"
 
 void VROLightingUBO::bind(std::shared_ptr<VROShaderProgram> &program) {
+    if (_needsUpdate) {
+        updateLights();
+    }
     if (program->hasLightingBlock()) {
         glUniformBlockBinding(program->getProgram(), program->getLightingBlockIndex(), _lightingUBOBindingPoint);
     }
 }
 
-void VROLightingUBO::writeLights(const std::vector<std::shared_ptr<VROLight>> &lights) {
+void VROLightingUBO::updateLights() {
     pglpush("Lights");
     VROVector3f ambientLight;
     
     VROLightingData data;
     data.num_lights = 0;
     
-    for (const std::shared_ptr<VROLight> &light : lights) {
+    for (const std::shared_ptr<VROLight> &light : _lights) {
         // Ambient lights have no diffuse color; instead they are added
         // to the aggregate ambient light color, which is passed as a single
         // value into the shader
@@ -47,9 +50,6 @@ void VROLightingUBO::writeLights(const std::vector<std::shared_ptr<VROLight>> &l
             
             data.num_lights++;
         }
-        
-        // Mark all light updated flags false now that the new UBO is being written
-        light->setIsUpdated(false);
     }
     
     ambientLight.toArray(data.ambient_light_color);
@@ -59,4 +59,5 @@ void VROLightingUBO::writeLights(const std::vector<std::shared_ptr<VROLight>> &l
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     
     pglpop();
+    _needsUpdate = false;
 }

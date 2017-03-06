@@ -19,6 +19,7 @@
 #include "VROLightingUBO.h"
 #include "VROShaderModifier.h"
 #include "VROGeometrySource.h"
+#include "VROLight.h"
 
 class VRODriverOpenGL : public VRODriver {
     
@@ -62,9 +63,13 @@ public:
         }
     }
     
-    std::shared_ptr<VROLightingUBO> createLightingUBO(int lightsHash) {
-        std::shared_ptr<VROLightingUBO> lightingUBO = std::make_shared<VROLightingUBO>();
+    std::shared_ptr<VROLightingUBO> createLightingUBO(int lightsHash, const std::vector<std::shared_ptr<VROLight>> &lights) {
+        std::shared_ptr<VROLightingUBO> lightingUBO = std::make_shared<VROLightingUBO>(lights);
         _lightingUBOs[lightsHash] = lightingUBO;
+        
+        for (const std::shared_ptr<VROLight> &light : lights) {
+            light->addUBO(lightingUBO);
+        }
         
         return lightingUBO;
     }

@@ -48,8 +48,10 @@ class VROLightingUBO {
     
 public:
     
-    VROLightingUBO() :
-        _lightingUBOBindingPoint(sUBOBindingPoint++) {
+    VROLightingUBO(const std::vector<std::shared_ptr<VROLight>> &lights) :
+        _lightingUBOBindingPoint(sUBOBindingPoint++),
+        _lights(lights),
+        _needsUpdate(false) {
         
         glGenBuffers(1, &_lightingUBO);
         glBindBuffer(GL_UNIFORM_BUFFER, _lightingUBO);
@@ -58,6 +60,7 @@ public:
         
         // Links the UBO and the binding point
         glBindBufferBase(GL_UNIFORM_BUFFER, _lightingUBOBindingPoint, _lightingUBO);
+        updateLights();
     }
     
     /*
@@ -66,9 +69,12 @@ public:
     void bind(std::shared_ptr<VROShaderProgram> &program);
     
     /*
-     Write the given lights into this UBO.
+     Invoke to indicate that a light in this UBO has changed. When this occurs
+     we have to rewrite the lights to the UBO.
      */
-    void writeLights(const std::vector<std::shared_ptr<VROLight>> &lights);
+    void setNeedsUpdate() {
+        _needsUpdate = true;
+    }
     
 private:
     
@@ -77,5 +83,20 @@ private:
      */
     GLuint _lightingUBO;
     const int _lightingUBOBindingPoint = 0;
+    
+    /*
+     The lights that are a part of this UBO.
+     */
+    std::vector<std::shared_ptr<VROLight>> _lights;
+    
+    /*
+     True if a light in this UBO has changed.
+     */
+    bool _needsUpdate;
+    
+    /*
+     Update the lights in this UBO, rewriting them to the buffer.
+     */
+    void updateLights();
     
 };
