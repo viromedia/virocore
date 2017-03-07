@@ -37,6 +37,7 @@ public:
     void onPause();
     void onResume();
     void onStop();
+    void onDestroy();
 
     /*
      Surface lifecycle.

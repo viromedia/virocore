@@ -57,6 +57,7 @@ public:
     virtual void onResume() = 0;
     virtual void onPause() = 0;
     virtual void onStop() = 0;
+    virtual void onDestroy() = 0;
 
     /*
      Surface lifecycle.

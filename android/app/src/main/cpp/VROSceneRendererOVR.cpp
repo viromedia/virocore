@@ -1402,9 +1402,11 @@ VROSceneRendererOVR::VROSceneRendererOVR(std::shared_ptr<gvr::AudioApi> gvrAudio
 }
 
 VROSceneRendererOVR::~VROSceneRendererOVR() {
+}
+
+void VROSceneRendererOVR::onDestroy(){
     ALOGV( "    GLES3JNILib::onDestroy()" );
     JNIEnv *env = VROPlatformGetJNIEnv();
-
     ovrAppThread * appThread = _appThread;
     ovrMessage message;
     ovrMessage_Init( &message, MESSAGE_ON_DESTROY, MQ_WAIT_PROCESSED );

@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import com.viro.renderer.FrameListener;
 import com.viro.renderer.RenderCommandQueue;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -61,6 +62,7 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     private List<FrameListener> mFrameListeners = new CopyOnWriteArrayList<FrameListener>();
     private GlListener mGlListener = null;
     private PlatformUtil mPlatformUtil;
+    private WeakReference<Activity> mWeakActivity;
 
     public ViroOvrView(Activity activity, GlListener glListener) {
         super(activity);
@@ -85,6 +87,7 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
         // Prevent screen from dimming/locking.
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        mWeakActivity = new WeakReference<Activity>((Activity)getContext());
         Application app = (Application)activityContext.getApplicationContext();
         app.registerActivityLifecycleCallbacks(this);
     }
@@ -134,20 +137,37 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
 
     @Override
     public void onActivityStarted(Activity activity) {
+        if (mWeakActivity.get() != activity){
+            return;
+        }
+
         mNativeRenderer.onStart();
     }
 
     @Override
     public void onActivityStopped(Activity activity) {
+        if (mWeakActivity.get() != activity){
+            return;
+        }
+
         mNativeRenderer.onStop();
     }
 
     @Override
     public void onActivityPaused(Activity activity) {
-        mNativeRenderer.onPause(); }
+        if (mWeakActivity.get() != activity){
+            return;
+        }
+
+        mNativeRenderer.onPause();
+    }
 
     @Override
     public void onActivityResumed(Activity activity) {
+        if (mWeakActivity.get() != activity){
+            return;
+        }
+
         mNativeRenderer.onResume();
 
         // Ensure fullscreen immersion.
@@ -169,8 +189,15 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
 
     @Override
     public void onActivityDestroyed(Activity activity) {
+        if (mWeakActivity.get() != activity){
+            return;
+        }
+
         mNativeRenderContext.delete();
         mNativeRenderer.destroy();
+
+        Application app = (Application)activity.getApplicationContext();
+        app.unregisterActivityLifecycleCallbacks(this);
     }
 
     @Override

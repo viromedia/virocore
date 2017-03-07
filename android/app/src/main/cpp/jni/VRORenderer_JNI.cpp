@@ -70,8 +70,12 @@ JNI_METHOD(jlong, nativeCreateRendererOVR)(JNIEnv *env, jclass clazz,
 JNI_METHOD(void, nativeDestroyRenderer)(JNIEnv *env,
                                         jclass clazz,
                                         jlong native_renderer) {
-    VROPlatformReleaseEnv();
-    delete reinterpret_cast<PersistentRef<VROSceneRenderer> *>(native_renderer);
+    Renderer::native(native_renderer)->onDestroy();
+
+    VROPlatformDispatchAsyncRenderer([native_renderer] {
+        delete reinterpret_cast<PersistentRef<VROSceneRenderer> *>(native_renderer);
+        VROPlatformReleaseEnv();
+    });
 }
 
 JNI_METHOD(void, nativeInitializeGl)(JNIEnv *env,

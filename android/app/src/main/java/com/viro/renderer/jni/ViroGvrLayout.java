@@ -24,6 +24,7 @@ import com.google.vr.ndk.base.GvrLayout;
 import com.viro.renderer.FrameListener;
 import com.viro.renderer.GLSurfaceViewQueue;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -48,6 +49,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     private List<FrameListener> mFrameListeners = new ArrayList();
     private GlListener mGlListener = null;
     private PlatformUtil mPlatformUtil;
+    private WeakReference<Activity> mWeakActivity;
 
     public ViroGvrLayout(Context context, GlListener glListener) {
         super(context);
@@ -138,6 +140,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         // Prevent screen from switching to portrait
         ((Activity)activityContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
+        mWeakActivity = new WeakReference<Activity>((Activity)getContext());
         Application app = (Application)activityContext.getApplicationContext();
         app.registerActivityLifecycleCallbacks(this);
     }
@@ -200,12 +203,20 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
 
     @Override
     public void onActivityPaused(Activity activity) {
+        if (mWeakActivity.get() != activity){
+            return;
+        }
+
         mNativeRenderer.onPause();
         super.onPause();
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
+        if (mWeakActivity.get() != activity){
+            return;
+        }
+
         mNativeRenderer.onResume();
 
         // Ensure fullscreen immersion.
@@ -228,9 +239,16 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
 
     @Override
     public void onActivityDestroyed(Activity activity) {
+        if (mWeakActivity.get() != activity){
+            return;
+        }
+
         super.shutdown();
         mNativeRenderContext.delete();
         mNativeRenderer.destroy();
+
+        Application app = (Application)activity.getApplicationContext();
+        app.unregisterActivityLifecycleCallbacks(this);
     }
 
     @Override
@@ -263,11 +281,19 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
 
     @Override
     public void onActivityStarted(Activity activity) {
+        if (mWeakActivity.get() != activity){
+            return;
+        }
+
         mNativeRenderer.onStart();
     }
 
     @Override
     public void onActivityStopped(Activity activity) {
+        if (mWeakActivity.get() != activity){
+            return;
+        }
+
         mNativeRenderer.onStop();
     }
 
