@@ -29,7 +29,7 @@ extern "C" {
 JNI_METHOD(jlong, nativeCreateScene)(JNIEnv *env,
                                         jobject object,
                                         jlong root_node_ref) {
-    VROSceneController *sceneController = new VROSceneController();
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
 
     PersistentRef<VRONode> *persistentNode = reinterpret_cast<PersistentRef<VRONode> *>(root_node_ref);
     std::shared_ptr<VRONode> rootNode = persistentNode->get();
@@ -46,7 +46,7 @@ JNI_METHOD(void, nativeDestroyScene)(JNIEnv *env,
                                         jclass clazz,
                                         jlong native_object_ref) {
     VROPlatformDispatchAsyncRenderer([native_object_ref] {
-        delete reinterpret_cast<PersistentRef<VROScene> *>(native_object_ref);
+        delete reinterpret_cast<PersistentRef<VROSceneController> *>(native_object_ref);
     });
 }
 
@@ -55,7 +55,7 @@ JNI_METHOD(void, nativeSetBackgroundVideoTexture)(JNIEnv *env,
                                      jlong sceneRef,
                                      jlong textureRef) {
     VROPlatformDispatchAsyncRenderer([sceneRef, textureRef] {
-        VROSceneController *sceneController = Scene::native(sceneRef);
+        std::shared_ptr<VROSceneController> sceneController = Scene::native(sceneRef);
         sceneController->getScene()->setBackgroundSphere(VideoTexture::native(textureRef));
     });
 }
@@ -66,7 +66,7 @@ JNI_METHOD(void, nativeSetBackgroundImageTexture)(JNIEnv *env,
                                                   jlong imageRef) {
     std::shared_ptr<VROTexture> image = Texture::native(imageRef);
     VROPlatformDispatchAsyncRenderer([sceneRef, image] {
-        VROSceneController *sceneController = Scene::native(sceneRef);
+        std::shared_ptr<VROSceneController> sceneController = Scene::native(sceneRef);
         sceneController->getScene()->setBackgroundSphere(image);
     });
 }
@@ -78,7 +78,7 @@ JNI_METHOD(void, nativeSetBackgroundRotation)(JNIEnv *env,
                                               jfloat rotationDegreeY,
                                               jfloat rotationDegreeZ) {
     VROPlatformDispatchAsyncRenderer([sceneRef, rotationDegreeX, rotationDegreeY, rotationDegreeZ] {
-        VROSceneController *sceneController = Scene::native(sceneRef);
+        std::shared_ptr<VROSceneController> sceneController = Scene::native(sceneRef);
         sceneController->getScene()->setBackgroundRotation({toRadians(rotationDegreeX),
                                                             toRadians(rotationDegreeY),
                                                             toRadians(rotationDegreeZ)});
@@ -90,7 +90,7 @@ JNI_METHOD(void, nativeSetBackgroundCubeImageTexture)(JNIEnv *env,
                                           jlong sceneRef,
                                           jlong textureRef) {
     VROPlatformDispatchAsyncRenderer([sceneRef, textureRef] {
-        VROSceneController *sceneController = Scene::native(sceneRef);
+        std::shared_ptr<VROSceneController> sceneController = Scene::native(sceneRef);
         sceneController->getScene()->setBackgroundCube(Texture::native(textureRef));
     });
 }
@@ -107,7 +107,7 @@ JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
         float b = (color & 0xFF) / 255.0;
 
         VROVector4f vecColor(r, g, b, a);
-        VROSceneController *sceneController = Scene::native(sceneRef);
+        std::shared_ptr<VROSceneController> sceneController = Scene::native(sceneRef);
         sceneController->getScene()->setBackgroundCube(vecColor);
     });
 }

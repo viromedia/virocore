@@ -11,12 +11,14 @@
 #include "PersistentRef.h"
 
 namespace Scene{
-    inline jlong jptr(VROSceneController *native_sceneController) {
-        return reinterpret_cast<intptr_t>(native_sceneController);
+    inline jlong jptr(std::shared_ptr<VROSceneController> ptr) {
+        PersistentRef<VROSceneController> *persistentRef = new PersistentRef<VROSceneController>(ptr);
+        return reinterpret_cast<intptr_t>(persistentRef);
     }
 
-    inline VROSceneController *native(jlong ptr) {
-        return reinterpret_cast<VROSceneController *>(ptr);
+    inline std::shared_ptr<VROSceneController> native(jlong ptr) {
+        PersistentRef<VROSceneController> *persistentRef = reinterpret_cast<PersistentRef<VROSceneController> *>(ptr);
+        return persistentRef->get();
     }
 }
 

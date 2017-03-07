@@ -21,6 +21,7 @@
 #include "VROSceneController.h"
 #include "VRORenderer_JNI.h"
 #include "VROReticle.h"
+#include "Scene_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -155,11 +156,9 @@ JNI_METHOD(void, nativeSetScene)(JNIEnv *env,
     if (kRunRendererTest) {
         return;
     }
-
     VROPlatformDispatchAsyncRenderer([native_renderer, native_scene_controller_ref] {
-        VROSceneController *scene_controller = reinterpret_cast<VROSceneController *>(native_scene_controller_ref);
-        std::shared_ptr<VROSceneController> shared_controller = std::shared_ptr<VROSceneController>(scene_controller);
-        Renderer::native(native_renderer)->setSceneController(shared_controller);
+        std::shared_ptr<VROSceneController> sceneController = Scene::native(native_scene_controller_ref);
+        Renderer::native(native_renderer)->setSceneController(sceneController);
     });
 }
 
@@ -173,10 +172,8 @@ JNI_METHOD(void, nativeSetSceneWithAnimation)(JNIEnv *env,
     }
 
     VROPlatformDispatchAsyncRenderer([native_renderer, native_scene_controller_ref, duration] {
-        VROSceneController *scene_controller = reinterpret_cast<VROSceneController *>(native_scene_controller_ref);
-        std::shared_ptr<VROSceneController> shared_controller = std::shared_ptr<VROSceneController>(
-                scene_controller);
-        Renderer::native(native_renderer)->setSceneController(shared_controller, duration,
+        std::shared_ptr<VROSceneController> sceneController = Scene::native(native_scene_controller_ref);
+        Renderer::native(native_renderer)->setSceneController(sceneController, duration,
                                                               VROTimingFunctionType::EaseOut);
     });
 }
