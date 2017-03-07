@@ -190,7 +190,7 @@ void VRORenderer::endFrame(VRODriver &driver) {
 
 void VRORenderer::renderEye(VROEyeType eyeType, VRODriver &driver) {
     if (_sceneController) {
-        if (_outgoingSceneController) {
+        if (_outgoingSceneController && _outgoingSceneController->hasActiveTransitionAnimation()) {
             _outgoingSceneController->sceneWillRender(_context.get());
             _sceneController->sceneWillRender(_context.get());
 
@@ -212,6 +212,7 @@ void VRORenderer::renderEye(VROEyeType eyeType, VRODriver &driver) {
 
 void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneController, VRODriver &driver) {
     std::shared_ptr<VROSceneController> outgoingSceneController = _sceneController;
+  
     _inputController->attachScene(sceneController->getScene());
     sceneController->onSceneWillAppear(_context.get(), driver);
     if (outgoingSceneController) {
