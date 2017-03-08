@@ -13,10 +13,11 @@ package com.viro.renderer.jni;
  */
 public class SceneJni {
     public long mNativeRef;
-
+    public long mNativeDelegateRef;
     public SceneJni(NodeJni node) {
         // Set the root node of this scene
         mNativeRef = nativeCreateScene(node.mNativeRef);
+        mNativeDelegateRef = nativeCreateSceneDelegate(mNativeRef);
     }
 
     public void setBackgroundVideoTexture(VideoTextureJni videoTexture) {
@@ -46,6 +47,7 @@ public class SceneJni {
     }
 
     public void destroy() {
+        nativeDestroySceneDelegate(mNativeDelegateRef);
         nativeDestroyScene(mNativeRef);
     }
 
@@ -53,7 +55,9 @@ public class SceneJni {
      * Native Functions called into JNI
      */
     private native long nativeCreateScene(long nodeRef);
+    private native long nativeCreateSceneDelegate(long sceneRef);
     private native void nativeDestroyScene(long sceneReference);
+    private native void nativeDestroySceneDelegate(long sceneDelegateRef);
     private native void nativeSetBackgroundVideoTexture(long sceneRef, long videoRef);
     private native void nativeSetBackgroundImageTexture(long sceneRef, long imageRef);
     private native void nativeSetBackgroundCubeImageTexture(long sceneRef, long textureRef);

@@ -35,11 +35,15 @@ JNI_METHOD(jlong, nativeCreateScene)(JNIEnv *env,
     std::shared_ptr<VRONode> rootNode = persistentNode->get();
 
     sceneController->getScene()->addNode(rootNode);
-
-    std::shared_ptr<SceneDelegate> delegate = std::make_shared<SceneDelegate>(object, env);
-    sceneController->setDelegate(delegate);
-
     return Scene::jptr(sceneController);
+}
+
+JNI_METHOD(jlong, nativeCreateSceneDelegate)(JNIEnv *env,
+                                            jobject object,
+                                            jlong native_object_ref) {
+    std::shared_ptr<SceneDelegate> delegate = std::make_shared<SceneDelegate>(object, env);
+    Scene::native(native_object_ref)->setDelegate(delegate);
+    return SceneDelegate::jptr(delegate);
 }
 
 JNI_METHOD(void, nativeDestroyScene)(JNIEnv *env,
@@ -47,6 +51,14 @@ JNI_METHOD(void, nativeDestroyScene)(JNIEnv *env,
                                         jlong native_object_ref) {
     VROPlatformDispatchAsyncRenderer([native_object_ref] {
         delete reinterpret_cast<PersistentRef<VROSceneController> *>(native_object_ref);
+    });
+}
+
+JNI_METHOD(void, nativeDestroySceneDelegate)(JNIEnv *env,
+                                     jclass clazz,
+                                     jlong native_delegate_object_ref) {
+    VROPlatformDispatchAsyncRenderer([native_delegate_object_ref] {
+        delete reinterpret_cast<PersistentRef<SceneDelegate> *>(native_delegate_object_ref);
     });
 }
 
