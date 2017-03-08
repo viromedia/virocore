@@ -59,7 +59,7 @@ float VROCamera::getWorldPerScreen(float distance) const {
      forward vector, and distance is in the direction of the camera's forward
      vector.
      */
-    float radians = _fov.getLeft();
+    float radians = toRadians((_fov.getLeft() + _fov.getRight())) / 2.0;
     float perp = distance * tan(radians);
     
     /*

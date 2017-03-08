@@ -29,7 +29,6 @@
 @property (nonatomic) IBInspectable BOOL testingMode;
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
 @property (readwrite, nonatomic) std::shared_ptr<VROSceneRendererCardboard> sceneRenderer;
-@property (readwrite, nonatomic) VROFieldOfView fov;
 @property (readwrite, nonatomic) VROViewport viewport;
 @property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
 
@@ -79,8 +78,6 @@
                                                object:nil];
     self.renderer = std::make_shared<VRORenderer>(std::make_shared<VROInputControllerCardboardiOS>());
     self.sceneRenderer = std::make_shared<VROSceneRendererCardboardOpenGL>(self.context, self.renderer);
-    // TODO Bug in Cardboard prevents [headTransform fieldOfViewForEye:] from working
-    self.fov = { 30.63, 40, 40, 34.178 };
 }
 
 - (void) setVrMode:(BOOL)enabled {
@@ -195,8 +192,11 @@
     
     CGRect rect = [headTransform viewportForEye:kGVRLeftEye];
     self.viewport = { (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height };
+   
+    GVRFieldOfView gvrFOV = [headTransform fieldOfViewForEye:kGVRLeftEye];
+    VROFieldOfView fov = { (float)gvrFOV.left, (float)gvrFOV.right, (float)gvrFOV.bottom, (float)gvrFOV.top };
     
-    self.sceneRenderer->prepareFrame(self.viewport, self.fov, headTransform);
+    self.sceneRenderer->prepareFrame(self.viewport, fov, headTransform);
 }
 
 - (void)cardboardView:(GVRCardboardView *)cardboardView
