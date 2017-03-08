@@ -35,7 +35,6 @@ JNI_METHOD(void, nativeDestroyNode)(JNIEnv *env,
 
     std::shared_ptr<VRONode> node = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node] {
-        pinfo("removing from parent xx1");
         node->removeFromParentNode();
     });
 
@@ -60,7 +59,6 @@ JNI_METHOD(void, nativeRemoveFromParent)(JNIEnv *env,
 
     std::shared_ptr<VRONode> node = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node] {
-        pinfo("removing from parent xx2");
         node->removeFromParentNode();
     });
 }
