@@ -13,17 +13,24 @@
 #include "VROMath.h"
 
 VROAudioPlayeriOS::VROAudioPlayeriOS(std::string url, bool isLocalUrl) :
-    _playVolume(1.0) {
+    _playVolume(1.0),
+    _muted(false),
+    _paused(false),
+    _loop(false) {
+        
     if (isLocalUrl) {
         _player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]]
                                                      error:NULL];
         [_player prepareToPlay];
         _delegate->soundIsReady();
-    } else {
+    }
+    else {
         // download to file
         NSURL *urlObj = [NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]];
         downloadDataWithURL(urlObj, ^(NSData *data, NSError *error) {
             _player = [[AVAudioPlayer alloc] initWithData:data error:NULL];
+            updatePlayerProperties();
+            
             _audioDelegate = [[VROAudioPlayerDelegate alloc] initWithSoundDelegate:_delegate];
             _player.delegate = _audioDelegate;
             _delegate->soundIsReady();
@@ -32,7 +39,10 @@ VROAudioPlayeriOS::VROAudioPlayeriOS(std::string url, bool isLocalUrl) :
 }
 
 VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROData> data) :
-    _playVolume(1.0) {
+    _playVolume(1.0),
+    _muted(false),
+    _paused(false),
+    _loop(false) {
     
     _player = [[AVAudioPlayer alloc] initWithData:[NSData dataWithBytes:data->getData() length:data->getDataLength()]
                                             error:NULL];
@@ -46,8 +56,18 @@ std::shared_ptr<VROAudioPlayeriOS> VROAudioPlayeriOS::create(std::shared_ptr<VRO
 }
 
 VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROSoundData> data) :
-_playVolume(1.0) {
+    _playVolume(1.0),
+    _muted(false),
+    _paused(false),
+    _loop(false) {
+        
     _data = data;
+}
+
+void VROAudioPlayeriOS::setup() {
+    if (_data) {
+        _data->setDelegate(shared_from_this());
+    }
 }
 
 VROAudioPlayeriOS::~VROAudioPlayeriOS() {
@@ -56,8 +76,26 @@ VROAudioPlayeriOS::~VROAudioPlayeriOS() {
     }
 }
 
+void VROAudioPlayeriOS::updatePlayerProperties() {
+    _player.numberOfLoops = _loop ? -1 : 0;
+    _player.volume = _muted ? 0 : _playVolume;
+}
+
 void VROAudioPlayeriOS::setLoop(bool loop) {
-    _player.numberOfLoops = loop ? -1 : 0;
+    if (_loop == loop) {
+        return;
+    }
+    
+    _loop = loop;
+    if (_player) {
+        _player.numberOfLoops = loop ? -1 : 0;
+        
+        // If we were not explicitly paused and loop was activated,
+        // play the sound (so it turns back on)
+        if (!_paused && _loop) {
+            [_player play];
+        }
+    }
 }
 
 void VROAudioPlayeriOS::setMuted(bool muted) {
@@ -96,12 +134,6 @@ void VROAudioPlayeriOS::pause() {
     }
 }
 
-void VROAudioPlayeriOS::setup() {
-    if (_data) {
-        _data->setDelegate(shared_from_this());
-    }
-}
-
 void VROAudioPlayeriOS::doFadeThenPause() {
     // Grab the shared_ptr to this, so that we retain this in the dispatch_after;
     // otherwise only 'this' is captured, so the ref-count can slip to zero and
@@ -124,8 +156,9 @@ void VROAudioPlayeriOS::dataIsReady() {
         _player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL URLWithString:[NSString stringWithUTF8String:_data->getLocalFilePath().c_str()]]
                                                          error:NULL];
         [_player prepareToPlay];
+        updatePlayerProperties();
+        
         if (!_paused) {
-            _player.volume = _muted ? 0 : _playVolume;
             [_player play];
         }
     }

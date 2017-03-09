@@ -68,12 +68,15 @@ void VROSoundGVR::play() {
 
     _gvrAudio->Resume();
 
+    // iOS does not support gvrAudio->IsSourceIdValid() yet
+#if VRO_PLATFORM_ANDROID
     // Check if a loaded sound has become invalid; if so, we need
     // to stop it (to destroy it), and reload it
     if (_audioId != -1 && !_gvrAudio->IsSourceIdValid(_audioId)) {
         _gvrAudio->StopSound(_audioId);
         _audioId = -1;
     }
+#endif
 
     // create the sound if it hasn't been created yet.
     if (_audioId == -1) {
