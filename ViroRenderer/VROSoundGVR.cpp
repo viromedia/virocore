@@ -66,6 +66,15 @@ void VROSoundGVR::play() {
         return;
     }
 
+    _gvrAudio->Resume();
+
+    // Check if a loaded sound has become invalid; if so, we need
+    // to stop it (to destroy it), and reload it
+    if (_audioId != -1 && !_gvrAudio->IsSourceIdValid(_audioId)) {
+        _gvrAudio->StopSound(_audioId);
+        _audioId = -1;
+    }
+
     // create the sound if it hasn't been created yet.
     if (_audioId == -1) {
         switch (_type) {
@@ -79,18 +88,21 @@ void VROSoundGVR::play() {
                 _audioId = _gvrAudio->CreateSoundfield(_data->getLocalFilePath());
                 break;
         }
-    }
-    passert (_audioId != -1); // kInvalidId (not in Google's headers, but should be)
-    // Set properties before we start playing because we *just* created the GVR Sound objects
-    setProperties();
 
-    _gvrAudio->Resume();
-    _gvrAudio->PlaySound(_audioId, _loop);
+        setProperties();
+        _gvrAudio->PlaySound(_audioId, _loop);
+    }
+    else {
+        _gvrAudio->ResumeSound(_audioId);
+    }
+
+    _paused = false;
 }
 
 void VROSoundGVR::pause() {
     if (_audioId != -1) {
         _gvrAudio->PauseSound(_audioId);
+        _paused = true;
     }
 }
 
@@ -115,11 +127,19 @@ void VROSoundGVR::setMuted(bool muted) {
 }
 
 void VROSoundGVR::setLoop(bool loop) {
-    _loop = loop;
-    if (_gvrAudio && _audioId != -1) {
-        _gvrAudio->PlaySound(_audioId, _loop);
+    if (loop == _loop) {
+        return;
     }
 
+    _loop = loop;
+    if (_gvrAudio && _audioId != -1) {
+        // We have to stop the sound and recreate it to change the
+        // _loop setting
+        _gvrAudio->StopSound(_audioId);
+        if (!_paused) {
+            play();
+        }
+    }
 }
 
 void VROSoundGVR::seekToTime(float seconds) {
@@ -197,7 +217,7 @@ void VROSoundGVR::setProperties() {
     if (_audioId == -1) {
         return;
     }
-    
+
     _gvrAudio->SetSoundVolume(_audioId, _muted ? 0 : _volume);
     
     if (_type == VROSoundType::Spatial) {
