@@ -52,6 +52,10 @@ void VROScene::render(const VRORenderContext &context,
     uint32_t boundShaderId = UINT32_MAX;
     std::vector<std::shared_ptr<VROLight>> boundLights;
     
+    if (kDebugSortOrder) {
+        pinfo("Rendering");
+    }
+    
     for (VROSortKey &key : _keys) {
         VRONode *node = (VRONode *)key.node;
         int elementIndex = key.elementIndex;
@@ -84,6 +88,11 @@ void VROScene::render(const VRORenderContext &context,
             // constant lighting. Non-constant materials do not render unless we have
             // at least one light.
             if (!boundLights.empty() || material->getLightingModel() == VROLightingModel::Constant) {
+                if (kDebugSortOrder) {
+                    if (node->getGeometry()) {
+                        pinfo("   Rendering node [%s], element %d", node->getGeometry()->getName().c_str(), elementIndex);
+                    }
+                }
                 node->render(elementIndex, material, context, driver);
             }
         }
@@ -91,12 +100,18 @@ void VROScene::render(const VRORenderContext &context,
 }
 
 void VROScene::updateSortKeys(const VRORenderContext &context, VRODriver &driver) {
+    if (kDebugSortOrder) {
+        pinfo("Updating sort keys");
+        VRONode::resetDebugSortIndex();
+    }
+    
     VROMatrix4f identity;
 
     VRORenderParameters renderParams;
     renderParams.transforms.push(identity);
     renderParams.opacities.push(1.0);
-    renderParams.hierarchical.push(false);
+    renderParams.hierarchical.push(-1);
+    renderParams.hierarchyId = 0;
     
     for (std::shared_ptr<VRONode> &node : _nodes) {
         node->updateSortKeys(0, renderParams, context, driver);

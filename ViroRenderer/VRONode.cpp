@@ -22,9 +22,14 @@
 #include "VROGeometryElement.h"
 #include "VROByteBuffer.h"
 #include "VROConstraint.h"
+#include "VROStringUtil.h"
 
 // Opacity below which a node is considered hidden
 static const float kHiddenOpacityThreshold = 0.02;
+
+// Set to true to debut the sort order
+bool kDebugSortOrder = false;
+static int sDebugSortIndex = 0;
 
 #pragma mark - Initialization
 
@@ -90,6 +95,10 @@ void VRONode::render(int elementIndex,
     }
 }
 
+void VRONode::resetDebugSortIndex() {
+    sDebugSortIndex = 0;
+}
+
 void VRONode::updateSortKeys(uint32_t depth, VRORenderParameters &params,
                              const VRORenderContext &context, VRODriver &driver) {
     processActions();
@@ -97,7 +106,7 @@ void VRONode::updateSortKeys(uint32_t depth, VRORenderParameters &params,
     std::stack<VROMatrix4f> &transforms = params.transforms;
     std::stack<float> &opacities = params.opacities;
     std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
-    std::stack<bool> &hierarchical = params.hierarchical;
+    std::stack<int> &hierarchical = params.hierarchical;
     
     /*
      Compute the specific parameters for this node.
@@ -123,10 +132,29 @@ void VRONode::updateSortKeys(uint32_t depth, VRORenderParameters &params,
      This node uses hierarchical rendering if its flag is set, or if its parent
      used hierarchical rendering.
      */
-    bool isHierarchical = _hierarchicalRendering | hierarchical.top();
-    hierarchical.push(isHierarchical);
+    int hierarchyDepth = 0;
+    int parentHierarchyDepth = hierarchical.top();
     
-    int graphDepth = isHierarchical ? depth : 0;
+    bool isParentHierarchical = (parentHierarchyDepth >= 0);
+    bool isHierarchical = _hierarchicalRendering || isParentHierarchical;
+    bool isTopOfHierarchy = _hierarchicalRendering && !isParentHierarchical;
+    
+    int hierarchyId = 0;
+    
+    if (isHierarchical) {
+        hierarchyDepth = parentHierarchyDepth + 1;
+        hierarchical.push(hierarchyDepth);
+        
+        if (isTopOfHierarchy) {
+            hierarchyId = ++params.hierarchyId;
+        }
+        else {
+            hierarchyId = params.hierarchyId;
+        }
+    }
+    else {
+        hierarchical.push(-1);
+    }
     
     /*
      Compute the sort key for this node's geometry elements.
@@ -134,9 +162,22 @@ void VRONode::updateSortKeys(uint32_t depth, VRORenderParameters &params,
     if (_geometry) {
         int lightsHash = VROLight::hashLights(lights);
         float distanceFromCamera = getTransformedPosition().distance(context.getCamera().getPosition());
-        _geometry->updateSortKeys(this, graphDepth, lightsHash, _computedOpacity, distanceFromCamera,
-                                  context.getZFar(), driver);
+        _geometry->updateSortKeys(this, hierarchyId, hierarchyDepth, lightsHash, _computedOpacity,
+                                  distanceFromCamera, context.getZFar(), driver);
+        
+        if (kDebugSortOrder) {
+            pinfo("   [%d] Pushed node with position [%f, %f, %f] hierarchy depth %d, distance to camera %f, actual depth %d, hierarchy ID %d",
+                  sDebugSortIndex, _computedPosition.x, _computedPosition.y, _computedPosition.z,
+                  hierarchyDepth, distanceFromCamera, depth, hierarchyId);
+            _geometry->setName(VROStringUtil::toString(sDebugSortIndex));
+        }
     }
+    else if (kDebugSortOrder) {
+        pinfo("   [%d] Ignored empty node with position [%f, %f, %f] hierarchy depth %d, distance to camera %f, actual depth %d, hierarchy ID %d",
+              sDebugSortIndex, _computedPosition.x, _computedPosition.y, _computedPosition.z,
+              hierarchyDepth, 0.0, depth, hierarchyId);
+    }
+    sDebugSortIndex++;
     
     /*
      Move down the tree.

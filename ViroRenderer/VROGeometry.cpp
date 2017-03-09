@@ -42,8 +42,8 @@ void VROGeometry::render(int elementIndex,
                        opacity, material, context, driver);
 }
 
-void VROGeometry::updateSortKeys(VRONode *node, uint32_t depth, uint32_t lightsHash,
-                                 float opacity, float distanceFromCamera, float zFar,
+void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t hierarchyDepth,
+                                 uint32_t lightsHash, float opacity, float distanceFromCamera, float zFar,
                                  VRODriver &driver) {
     _sortKeys.clear();
     
@@ -53,7 +53,8 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t depth, uint32_t lightsH
         
         VROSortKey key;
         key.renderingOrder = node->getRenderingOrder();
-        key.graphDepth = depth;
+        key.hierarchyId = hierarchyId;
+        key.hierarchyDepth = hierarchyDepth;
         key.lights = lightsHash;
         key.node = (uintptr_t) node;
         key.elementIndex = i;

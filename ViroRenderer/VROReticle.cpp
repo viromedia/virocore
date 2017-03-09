@@ -120,8 +120,13 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext *renderContext
         renderParams.transforms.push(renderContext->getHUDViewMatrix());
     }
     renderParams.opacities.push(1.0);
-    renderParams.hierarchical.push(false);
-
+    renderParams.hierarchical.push(-1);
+    renderParams.hierarchyId = 0;
+    
+    if (kDebugSortOrder) {
+        pinfo("Updating reticle key");
+    }
+    
     _node->updateSortKeys(0, renderParams, *renderContext, *driver);
 
     std::shared_ptr<VROMaterial> material = _node->getGeometry()->getMaterials().front();
