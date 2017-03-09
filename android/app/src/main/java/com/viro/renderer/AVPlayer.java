@@ -105,6 +105,12 @@ public class AVPlayer {
         _mediaPlayer.reset();
     }
 
+    public void destroy() {
+        reset();
+        _mediaPlayer.setOnCompletionListener(null);
+        _mediaPlayer.setOnPreparedListener(null);
+    }
+
     public void play() {
         _mediaPlayer.start();
     }

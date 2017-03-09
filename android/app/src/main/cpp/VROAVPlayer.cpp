@@ -65,6 +65,12 @@ VROAVPlayer::VROAVPlayer() :
 
 VROAVPlayer::~VROAVPlayer() {
     JNIEnv *env = VROPlatformGetJNIEnv();
+
+    jclass cls = env->GetObjectClass(_javPlayer);
+    jmethodID jmethod = env->GetMethodID(cls, "destroy", "()V");
+    env->CallVoidMethod(_javPlayer, jmethod);
+    env->DeleteLocalRef(cls);
+
     env->DeleteGlobalRef(_javPlayer);
 
     if (_jsurface) {

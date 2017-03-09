@@ -101,7 +101,7 @@ extern "C" {
     }
 
     JNI_METHOD(void, nativeDestroySound)(JNIEnv *env, jobject obj, jlong nativeRef) {
-        delete reinterpret_cast<PersistentRef<VROSoundGVR> *>(nativeRef);
+        delete reinterpret_cast<PersistentRef<VROAudioPlayerAndroid> *>(nativeRef);
     }
 
 }  // extern "C"
