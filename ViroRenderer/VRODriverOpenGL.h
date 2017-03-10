@@ -48,7 +48,7 @@ public:
     virtual std::shared_ptr<VROSound> newSound(std::shared_ptr<VROSoundData> data, VROSoundType type) = 0;
     virtual std::shared_ptr<VROSound> newSound(std::string fileName, VROSoundType type, bool local) = 0;
     virtual std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::shared_ptr<VROSoundData> data) = 0;
-    virtual std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::string fileName) = 0;
+    virtual std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::string fileName, bool isLocal) = 0;
     virtual std::shared_ptr<VROTypeface> newTypeface(std::string typeface, int size) = 0;
     virtual void setSoundRoom(float sizeX, float sizeY, float sizeZ, std::string wallMaterial,
                               std::string ceilingMaterial, std::string floorMaterial) = 0;

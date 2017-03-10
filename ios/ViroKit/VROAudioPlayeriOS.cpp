@@ -16,13 +16,13 @@ VROAudioPlayeriOS::VROAudioPlayeriOS(std::string url, bool isLocalUrl) :
     _playVolume(1.0),
     _muted(false),
     _paused(false),
-    _loop(false) {
+    _loop(false),
+    _isLocal(isLocalUrl) {
         
     if (isLocalUrl) {
-        _player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]]
-                                                     error:NULL];
-        [_player prepareToPlay];
-        _delegate->soundIsReady();
+      NSURL *localUrlObj =[NSURL fileURLWithPath:[NSString stringWithUTF8String:url.c_str()]];
+      _player = [[AVAudioPlayer alloc] initWithContentsOfURL:localUrlObj error:NULL];
+      [_player prepareToPlay];
     }
     else {
         // download to file
@@ -62,6 +62,14 @@ VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROSoundData> data) :
     _loop(false) {
         
     _data = data;
+}
+
+
+void VROAudioPlayeriOS::setDelegate(std::shared_ptr<VROSoundDelegateInternal> delegate) {
+  _delegate = delegate;
+  if(_isLocal) {
+    _delegate->soundIsReady();
+  }
 }
 
 void VROAudioPlayeriOS::setup() {
