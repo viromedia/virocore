@@ -43,7 +43,7 @@ public:
         return VROAudioPlayerAndroid::create(data);
     }
 
-    std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::string fileName) {
+    std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::string fileName, bool isLocal) {
         return std::make_shared<VROAudioPlayerAndroid>(fileName);
     }
 
