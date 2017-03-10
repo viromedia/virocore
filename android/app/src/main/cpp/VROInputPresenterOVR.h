@@ -32,8 +32,8 @@ public:
         }
     }
 
-    void onGazeHit(int source, float distance, VROVector3f hitLocation){
-        VROInputPresenter::onReticleGazeHit(distance, hitLocation);
+    void onGazeHit(int source, const VROHitTestResult &hit) {
+        VROInputPresenter::onReticleGazeHit(hit);
      }
 };
 #endif

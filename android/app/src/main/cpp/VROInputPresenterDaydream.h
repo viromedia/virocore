@@ -172,8 +172,8 @@ public:
         VROInputPresenter::onDrag(source, newPosition);
     }
 
-    void onGazeHit(int source, float distance, VROVector3f hitLocation){
-        VROInputPresenter::onReticleGazeHit(distance, hitLocation);
+    void onGazeHit(int source, const VROHitTestResult &hit) {
+        VROInputPresenter::onReticleGazeHit(hit);
      }
 
     std::shared_ptr<VRONode> getControllerPointerNode(){

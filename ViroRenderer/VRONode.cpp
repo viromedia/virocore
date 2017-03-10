@@ -430,7 +430,7 @@ void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsO
         VROVector3f intPt;
         if (bounds.intersectsRay(ray, origin, &intPt)) {
             if (boundsOnly || hitTestGeometry(ray, origin, transform)) {
-                results.push_back({std::static_pointer_cast<VRONode>(shared_from_this()), intPt, origin.distance(intPt)});
+                results.push_back({std::static_pointer_cast<VRONode>(shared_from_this()), intPt, origin.distance(intPt), false});
             }
         }
     }

@@ -7,6 +7,45 @@
 
 #include "VROInputControllerBase.h"
 
+static float kSceneBackgroundDistance = 8;
+static bool sSceneBackgroundAdd = true;
+
+void VROInputControllerBase::debugMoveReticle() {
+    if (sSceneBackgroundAdd) {
+        kSceneBackgroundDistance += 0.1;
+        if (kSceneBackgroundDistance > 20) {
+            sSceneBackgroundAdd = false;
+        }
+    }
+    else {
+        kSceneBackgroundDistance -= 0.1;
+        if (kSceneBackgroundDistance < 0) {
+            sSceneBackgroundAdd = true;
+        }
+    }
+
+#if VRO_PLATFORM_IOS
+    pinfo("Background distance is %f", kSceneBackgroundDistance);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        debugMoveReticle();
+    });
+#endif
+}
+
+void VROInputControllerBase::setContext(std::shared_ptr<VRORenderContext> context){
+    _context = context;
+    _controllerPresenter = createPresenter(context);
+    registerEventDelegate(_controllerPresenter);
+
+#if VRO_PLATFORM_IOS
+    if (kDebugSceneBackgroundDistance) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            debugMoveReticle();
+        });
+    }
+#endif
+}
+
 void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickState clickState){
     // Notify internal delegates
     for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
@@ -106,7 +145,7 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
 
     // Trigger orientation delegate callbacks for non-scene elements.
     for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
-        delegate->onGazeHit(source, _hitResult->getDistance(), _hitResult->getLocation());
+        delegate->onGazeHit(source, *_hitResult.get());
         delegate->onMove(source, _lastKnownRotation.toEuler(), _lastKnownPosition);
     }
 
@@ -239,13 +278,13 @@ void VROInputControllerBase::processGazeEvent(int source, std::shared_ptr<VRONod
     _lastHoveredNode = newNode;
 }
 
-VROHitTestResult VROInputControllerBase::hitTest(VROVector3f vector, VROVector3f hitFromPosition, bool boundsOnly) {
+VROHitTestResult VROInputControllerBase::hitTest(VROVector3f ray, VROVector3f hitFromPosition, bool boundsOnly) {
     std::vector<VROHitTestResult> results;
     std::vector<std::shared_ptr<VRONode>> sceneRootNodes = _scene->getRootNodes();
 
     // Grab all the nodes that were hit
     for (std::shared_ptr<VRONode> node: sceneRootNodes){
-        std::vector<VROHitTestResult> nodeResults = node->hitTest(vector, hitFromPosition, boundsOnly);
+        std::vector<VROHitTestResult> nodeResults = node->hitTest(ray, hitFromPosition, boundsOnly);
         results.insert(results.end(), nodeResults.begin(), nodeResults.end());
     }
 
@@ -259,8 +298,9 @@ VROHitTestResult VROInputControllerBase::hitTest(VROVector3f vector, VROVector3f
         return results[0];
     }
 
-    VROVector3f backgroundPosition =  hitFromPosition + (vector * SCENE_BACKGROUND_DIST);
-    VROHitTestResult sceneBackgroundHitResult = {_scene->getRootNodes()[0], backgroundPosition , SCENE_BACKGROUND_DIST};
+    VROVector3f backgroundPosition =  hitFromPosition + (ray * kSceneBackgroundDistance);
+    
+    VROHitTestResult sceneBackgroundHitResult = {_scene->getRootNodes()[0], backgroundPosition , kSceneBackgroundDistance, true};
     return sceneBackgroundHitResult;
 }
 
