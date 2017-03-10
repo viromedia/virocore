@@ -61,7 +61,7 @@ NSURLSessionDataTask *downloadDataWithURLSynchronous(NSURL *url,
     return downloadTask;
 }
 
-NSURLSessionDataTask *downloadDataWithURL(NSURL *url, void (^completionBlock)(NSData *data, NSError *error)) {
+NSURLSessionDataTask *VROPlatformDownloadDataWithURL(NSURL *url, void (^completionBlock)(NSData *data, NSError *error)) {
     NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
     sessionConfig.timeoutIntervalForRequest = 30;
     
@@ -141,13 +141,18 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     });
 }
 
+std::string VROPlatformFindValueInResourceMap(std::string key, std::map<std::string, std::string> resourceMap) {
+    return "";
+}
+
 #elif VRO_PLATFORM_ANDROID
 
 #include "VROImageAndroid.h"
+#include "VROStringUtil.h"
 #include <mutex>
 #include <thread>
-#include <map>
 #include <android/bitmap.h>
+#include <algorithm>
 
 // We can hold a static reference to the JVM and to global references, but not to individual
 // JNIEnv objects, as those are thread-local. Access the JNIEnv object via getJNIEnv().
@@ -316,6 +321,83 @@ std::string VROPlatformCopyResourceToFile(std::string asset) {
     env->DeleteLocalRef(cls);
 
     return spath;
+}
+
+std::map<std::string, std::string> VROPlatformCopyObjResourcesToFile(jobject resourceMap) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+
+    jclass cls = env->GetObjectClass(sPlatformUtil);
+    jmethodID jmethod = env->GetMethodID(cls, "copyResourceMap", "(Ljava/util/Map;)Ljava/util/Map;");
+    jobject jresourcemap = (jobject) env->CallObjectMethod(sPlatformUtil, jmethod, resourceMap);
+
+    env->DeleteLocalRef(cls);
+
+    return VROPlatformConvertFromJavaMap(jresourcemap);
+}
+
+std::map<std::string, std::string> VROPlatformConvertFromJavaMap(jobject javaMap) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    // get keyset
+    jclass mapClass = env->GetObjectClass(javaMap); // should be a Map (hashmap, etc)
+    jmethodID keySetMethod = env->GetMethodID(mapClass, "keySet", "()Ljava/util/Set;");
+    jobject keySet = (jobject) env->CallObjectMethod(javaMap, keySetMethod);
+    // get keysetLength
+    jclass setClass = env->GetObjectClass(keySet); // should be a Set
+    jmethodID sizeMethod = env->GetMethodID(setClass, "size", "()I");
+    jint setSize = (jint) env->CallIntMethod(keySet, sizeMethod);
+    // get keyset array
+    jmethodID toArrayMethod = env->GetMethodID(setClass, "toArray", "()[Ljava/lang/Object;");
+    jobjectArray keyArray = (jobjectArray) env->CallObjectMethod(keySet, toArrayMethod);
+
+    // create map to return.
+    std::map<std::string, std::string> toReturn;
+
+    // for int i, i < keyset length
+    for (int i = 0; i < setSize; i++) {
+        // get individual value for key
+        // get the key
+        jstring key = (jstring) env->GetObjectArrayElement(keyArray, i);
+        // convert to std::string
+        const char *cStrKey = env->GetStringUTFChars(key, NULL);
+        std::string strKey(cStrKey);
+        // get the value from the Map
+        jmethodID mapGetMethod = env->GetMethodID(mapClass, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
+        jstring value = (jstring) env->CallObjectMethod(javaMap, mapGetMethod, key);
+        // convert to std::string
+        const char *cStrValue = env->GetStringUTFChars(value, NULL);
+        std::string strValue(cStrValue);
+        // add to the map
+        toReturn.insert(std::make_pair(cStrKey, cStrValue));
+    }
+    return toReturn;
+}
+
+/**
+ * This is a helper function that takes a map of resources (from Android Release builds) that map
+ * the resource name (ie. js_res_male02) to their downloaded locations (ie. /data/.../cache/js_res_male02)
+ * and a "key" which is matches the suffix of one of the keys in the map minus the extension (ie. maleO2.obj).
+ *
+ * @param key - ie. male02.mtl
+ * @param resourceMap - ie {js_res_male02 : /data/.../cache/js_res_male02}
+ */
+std::string VROPlatformFindValueInResourceMap(std::string key, std::map<std::string, std::string> resourceMap) {
+    // The suffix of a key in the map is the given key minus the extension
+    std::string keySuffix = key.substr(0, key.find_last_of('.'));
+    // transform the string to lower case.
+    VROStringUtil::toLowerCase(keySuffix);
+
+    // remove any hyphens because android resources removes them.
+    // TODO: add any other characters that android resources remove...
+    keySuffix.erase(std::remove(keySuffix.begin(), keySuffix.end(), '-'), keySuffix.end());
+
+    // go through every key and if one ends with the suffix, then return that value.
+    std::map<std::string, std::string>::iterator it;
+    for (it = resourceMap.begin(); it != resourceMap.end(); it++) {
+        if (VROStringUtil::endsWith(it->first, keySuffix)) {
+            return it->second;
+        }
+    }
+    return ""; // if we can't find the given key, return the empty string.
 }
 
 std::string VROPlatformCopyAssetToFile(std::string asset) {

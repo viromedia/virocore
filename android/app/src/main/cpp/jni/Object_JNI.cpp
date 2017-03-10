@@ -28,6 +28,7 @@ JNI_METHOD(jlong, nativeLoadOBJFromFile)(JNIEnv *env,
                                          jstring file) {
     const char *cStrFile = env->GetStringUTFChars(file, NULL);
     std::string strFile(cStrFile);
+    // TODO: VIRO-924 Async copy OBJ file and assets
     std::string objUrlPath = VROPlatformCopyResourceToFile(strFile);
     std::string objUrlBase = objUrlPath.substr(0, objUrlPath.find_last_of('/'));
     env->ReleaseStringUTFChars(file, cStrFile);
@@ -38,6 +39,31 @@ JNI_METHOD(jlong, nativeLoadOBJFromFile)(JNIEnv *env,
         }
         delegateRef->objLoaded();
     });
+
+    return Node::jptr(objNode);
+}
+
+JNI_METHOD(jlong, nativeLoadOBJAndResourcesFromFile)(JNIEnv *env,
+                                                     jobject object,
+                                                     jstring file,
+                                                     jobject resourceMap) {
+    const char *cStrFile = env->GetStringUTFChars(file, NULL);
+    std::string strFile(cStrFile);
+    // TODO: VIRO-924 Async copy OBJ file and assets
+    std::string objUrlPath = VROPlatformCopyResourceToFile(strFile);
+    std::map<std::string, std::string> cResourceMap = VROPlatformCopyObjResourcesToFile(resourceMap);
+
+    std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(object, env);
+    env->ReleaseStringUTFChars(file, cStrFile);
+
+    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromFileWithResources(objUrlPath, cResourceMap, true,
+        [delegateRef](std::shared_ptr<VRONode> node, bool success) {
+            if (!success) {
+                return;
+            }
+            delegateRef->objLoaded();
+        }
+    );
 
     return Node::jptr(objNode);
 }

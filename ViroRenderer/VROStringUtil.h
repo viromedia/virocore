@@ -29,6 +29,10 @@ public:
     // characters and this function does a character-by-character comparison.
     static bool strcmpinsensitive(const std::string& a, const std::string& b);
 
+    static void toLowerCase(std::string &str);
+
+    static bool endsWith(const std::string& candidate, const std::string& ending);
+
 private:
     
 };

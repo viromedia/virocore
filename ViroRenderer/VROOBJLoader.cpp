@@ -59,7 +59,7 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromFile(std::string file, std::st
                                                        bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
 
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
-    
+
     if (async) {
         VROPlatformDispatchAsyncBackground([file, baseDir, node, onFinish] {
             std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseDir, false);
@@ -70,6 +70,27 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromFile(std::string file, std::st
     }
     else {
         std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseDir, false);
+        injectOBJ(geometry, node, onFinish);
+    }
+
+    return node;
+}
+
+std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromFileWithResources(std::string file, std::map<std::string, std::string> resourceMap,
+                                                       bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
+
+    std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
+    
+    if (async) {
+        VROPlatformDispatchAsyncBackground([file, resourceMap, node, onFinish] {
+            std::shared_ptr<VROGeometry> geometry = loadOBJ(file, resourceMap);
+            VROPlatformDispatchAsyncRenderer([node, geometry, onFinish] {
+                injectOBJ(geometry, node, onFinish);
+            });
+        });
+    }
+    else {
+        std::shared_ptr<VROGeometry> geometry = loadOBJ(file, resourceMap);
         injectOBJ(geometry, node, onFinish);
     }
     
@@ -96,23 +117,56 @@ void VROOBJLoader::injectOBJ(std::shared_ptr<VROGeometry> geometry,
 std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string base,
                                                    bool isBaseURL) {
     pinfo("Loading OBJ from file %s", file.c_str());
-    
+
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
-    
+
     std::string err;
     bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, file.c_str(),
                                 base.c_str(), isBaseURL);
     if (!err.empty()) {
         pinfo("OBJ loading warning [%s]", err.c_str());
     }
-    
+
     if (!ret) {
         pabort("Failed to load OBJ");
         return {};
     }
-    
+    return VROOBJLoader::processOBJ(attrib, shapes, materials, base, isBaseURL);
+}
+
+std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file,
+                                                   std::map<std::string, std::string> resourceMap) {
+    pinfo("Loading OBJ from file %s", file.c_str());
+
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+
+    std::string err;
+    // we don't have a base url, so just pass in empty string and false
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, file.c_str(),
+                                "", false, &resourceMap);
+    if (!err.empty()) {
+        pinfo("OBJ loading warning [%s]", err.c_str());
+    }
+
+    if (!ret) {
+        pabort("Failed to load OBJ");
+        return {};
+    }
+
+    // we don't have a base url, so just pass in empty string and false
+    return VROOBJLoader::processOBJ(attrib, shapes, materials, "", false, &resourceMap);
+}
+
+std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
+                                                      std::vector<tinyobj::shape_t> shapes,
+                                                      std::vector<tinyobj::material_t> materials,
+                                                      std::string base,
+                                                      bool isBaseURL,
+                                                      std::map<std::string, std::string> *resourceMap) {
     pinfo("OBJ # of vertices  = %d", (int)(attrib.vertices.size()) / 3);
     pinfo("OBJ # of normals   = %d", (int)(attrib.normals.size()) / 3);
     pinfo("OBJ # of texcoords = %d", (int)(attrib.texcoords.size()) / 2);
@@ -150,7 +204,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
         // Future, support additional illumination models: http://paulbourke.net/dataformats/mtl/
         
         if (m.diffuse_texname.length() > 0) {
-            std::shared_ptr<VROTexture> texture = loadTexture(m.diffuse_texname, base, isBaseURL, textures);
+            std::shared_ptr<VROTexture> texture = loadTexture(m.diffuse_texname, base, isBaseURL, resourceMap, textures);
             if (texture) {
                 material->getDiffuse().setTexture(texture);
             }
@@ -160,7 +214,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
         }
         
         if (m.specular_texname.length() > 0) {
-            std::shared_ptr<VROTexture> texture = loadTexture(m.specular_texname, base, isBaseURL, textures);
+            std::shared_ptr<VROTexture> texture = loadTexture(m.specular_texname, base, isBaseURL, resourceMap, textures);
             if (texture) {
                 material->getSpecular().setTexture(texture);
             }
@@ -326,13 +380,19 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
 }
 
 std::shared_ptr<VROTexture> VROOBJLoader::loadTexture(std::string &name, std::string &base, bool isBaseURL,
+                                                      std::map<std::string, std::string> *resourceMap,
                                                       std::map<std::string, std::shared_ptr<VROTexture>> &cache) {
     std::shared_ptr<VROTexture> texture;
     
     auto it = cache.find(name);
     if (it == cache.end()) {
         bool isTempTextureFile = false;
-        std::string textureFile = base + "/" + name;
+        std::string textureFile;
+        if (resourceMap == nullptr) {
+            textureFile = base + "/" + name;
+        } else {
+            textureFile = VROPlatformFindValueInResourceMap(name, *resourceMap);
+        }
         if (isBaseURL) {
             bool success = false;
             textureFile = VROPlatformDownloadURLToFile(textureFile, &isTempTextureFile, &success);

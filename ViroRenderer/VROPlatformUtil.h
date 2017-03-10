@@ -13,6 +13,7 @@
 #include <string>
 #include <memory>
 #include <functional>
+#include <map>
 
 #if VRO_PLATFORM_ANDROID
 
@@ -38,6 +39,14 @@ std::string VROPlatformLoadFileAsString(std::string path);
  TODO: VIRO-767 for iOS sound.
  */
 std::string VROPlatformCopyResourceToFile(std::string asset);
+
+/**
+ This function is used exclusively by Android (iOS is no-op) because it makes a few assumptions:
+ 1) key needs to have its extension removed
+ 2) key needs be lower case
+ 3) key needs sanitizing and have 'prohibited' character(s) removed
+ */
+std::string VROPlatformFindValueInResourceMap(std::string key, std::map<std::string, std::string> resourceMap);
 
 /*
  Load the given URL to a file, and return the path to the file. If the file
@@ -87,7 +96,7 @@ void VROPlatformDispatchAsyncApplication(std::function<void()> fcn);
 #if VRO_PLATFORM_IOS
 #import <UIKit/UIKit.h>
 
-NSURLSessionDataTask *downloadDataWithURL(NSURL *url, void (^completionBlock)(NSData *data, NSError *error));
+NSURLSessionDataTask *VROPlatformDownloadDataWithURL(NSURL *url, void (^completionBlock)(NSData *data, NSError *error));
 
 #endif
 
@@ -113,6 +122,20 @@ AAssetManager *VROPlatformGetAssetManager();
 // for testing purposes only. Not needed in prod because assets are not used
 // in prod.
 std::string VROPlatformCopyAssetToFile(std::string asset);
+
+/**
+ * This function takes a Java Map (java.util.Map) w/ String key and values and returns
+ * a C++ std::map w/ std::string key and values.
+ */
+std::map<std::string, std::string> VROPlatformConvertFromJavaMap(jobject javaMap);
+
+/**
+ * This function takes a java map of filename -> resource location and copies the resources
+ * to the Android cache w/ the given filename. It then returns a c++ map of filename -> download
+ * location.
+ */
+std::map<std::string, std::string> VROPlatformCopyObjResourcesToFile(jobject resourceMap);
+
 
 #pragma mark - JNI Utilities
 

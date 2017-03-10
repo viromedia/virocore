@@ -5,6 +5,8 @@ package com.viro.renderer.jni;
 
 import android.net.Uri;
 
+import java.util.Map;
+
 /**
  * Java JNI wrapper for linking the following classes below across the bridge
  *
@@ -22,13 +24,18 @@ public class ObjectJni extends BaseGeometry {
     private boolean mObjectLoadingFinished = false;
     private boolean mAttachOnObjLoadingFinish = false;
 
-    public ObjectJni(String pathOrUrl, AsyncObjListener asyncObjListener) {
-        Uri tempUri = Uri.parse(pathOrUrl);
-        if (tempUri.getScheme().equals("res")) {
-            // if the scheme is equal to "res", then it's a local resource
-            mObjectNodeRef = nativeLoadOBJFromFile(pathOrUrl);
+    public ObjectJni(Uri pathOrUrl, AsyncObjListener asyncObjListener) {
+        mObjectNodeRef = nativeLoadOBJFromUrl(pathOrUrl.toString());
+        mAsyncObjListener = asyncObjListener;
+    }
+
+    public ObjectJni(Uri pathOrUrl, AsyncObjListener asyncObjListener,
+                     Map<String, String> resourceNamesToUris) {
+        if (resourceNamesToUris == null) {
+            mObjectNodeRef = nativeLoadOBJFromFile(pathOrUrl.toString());
         } else {
-            mObjectNodeRef = nativeLoadOBJFromUrl(pathOrUrl);
+            mObjectNodeRef = nativeLoadOBJAndResourcesFromFile(pathOrUrl.toString(),
+                    resourceNamesToUris);
         }
         mAsyncObjListener = asyncObjListener;
     }
@@ -87,6 +94,8 @@ public class ObjectJni extends BaseGeometry {
     }
 
     private native long nativeLoadOBJFromFile(String fileName);
+    private native long nativeLoadOBJAndResourcesFromFile(String fileName,
+                                                          Map<String, String> resources);
     private native long nativeLoadOBJFromUrl(String url);
     private native void nativeDestroyNode(long nodeReference);
     private native void nativeAttachToNode(long boxReference, long nodeReference);

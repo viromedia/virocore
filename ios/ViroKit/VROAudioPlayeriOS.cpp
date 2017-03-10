@@ -27,7 +27,7 @@ VROAudioPlayeriOS::VROAudioPlayeriOS(std::string url, bool isLocalUrl) :
     else {
         // download to file
         NSURL *urlObj = [NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]];
-        downloadDataWithURL(urlObj, ^(NSData *data, NSError *error) {
+        VROPlatformDownloadDataWithURL(urlObj, ^(NSData *data, NSError *error) {
             _player = [[AVAudioPlayer alloc] initWithData:data error:NULL];
             updatePlayerProperties();
             

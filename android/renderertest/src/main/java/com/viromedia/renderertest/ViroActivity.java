@@ -10,6 +10,7 @@ package com.viromedia.renderertest;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -293,7 +294,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         final NodeJni node1 = new NodeJni(context);
 
         // Creation of ObjectJni to the right
-        ObjectJni objectJni = new ObjectJni("heart.obj", new AsyncObjListener() {
+        ObjectJni objectJni = new ObjectJni(Uri.parse("heart.obj"), new AsyncObjListener() {
             @Override
             public void onObjLoaded() {
                 // Create a new material with a diffuseTexture set to the image "heart_d.jpg"

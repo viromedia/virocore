@@ -10,6 +10,7 @@
 #include <sstream>
 #include <string>
 #include <cstdlib>
+#include <algorithm>
 #include "VRODefines.h"
 
 std::string VROStringUtil::toString(int i) {
@@ -63,4 +64,15 @@ bool VROStringUtil::strcmpinsensitive(const std::string& a, const std::string& b
         }
     }
     return true;
+}
+
+void VROStringUtil::toLowerCase(std::string &str) {
+    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+}
+
+bool VROStringUtil::endsWith(const std::string& candidate, const std::string& ending) {
+    if (candidate.length() < ending.length()) {
+        return false;
+    }
+    return 0 == candidate.compare(candidate.length() - ending.length(), ending.length(), ending);
 }

@@ -270,8 +270,11 @@ class MaterialReader {
 
 class MaterialFileReader : public MaterialReader {
  public:
+  explicit MaterialFileReader() {}
   explicit MaterialFileReader(const std::string &mtl_basedir, bool baseurl)
-      : m_mtlBaseDir(mtl_basedir), m_baseurl(baseurl) {}
+      : m_mtlBaseDir(mtl_basedir), m_baseurl(baseurl), m_resourceMap(nullptr) {}
+  explicit MaterialFileReader(std::map<std::string, std::string> *resourceMap)
+      : m_resourceMap(resourceMap) {}
   virtual ~MaterialFileReader() {}
   virtual bool operator()(const std::string &matId,
                           std::vector<material_t> *materials,
@@ -280,6 +283,7 @@ class MaterialFileReader : public MaterialReader {
  private:
   std::string m_mtlBaseDir;
   bool m_baseurl;
+  std::map<std::string, std::string> *m_resourceMap;
 };
 
 class MaterialStreamReader : public MaterialReader {
@@ -307,7 +311,9 @@ class MaterialStreamReader : public MaterialReader {
 bool LoadObj(attrib_t *attrib, std::vector<shape_t> *shapes,
              std::vector<material_t> *materials, std::string *err,
              const char *filename, const char *mtl_basedir,
-             bool baseurl, bool triangulate = true);
+             bool baseurl,
+             std::map<std::string, std::string> *resourceMap = nullptr,
+             bool triangulate = true);
 
 /// Loads .obj from a file with custom user callback.
 /// .mtl is loaded as usual and parsed material_t data will be passed to
@@ -1305,10 +1311,14 @@ bool MaterialFileReader::operator()(const std::string &matId,
   } else {
     filepath = matId;
   }
-  
-  // If the path is a URL, we have to download it to a temporary file
+
   bool tempFile = false;
-  if (m_baseurl) {
+  // If we have a resource map, attempt to find the location where the mtl was downloaded to
+  if (m_resourceMap != nullptr) {
+    filepath = VROPlatformFindValueInResourceMap(matId, *m_resourceMap);
+
+  // If the path is a URL, we have to download it to a temporary file
+  } else if (m_baseurl) {
     bool success = false;
     filepath = VROPlatformDownloadURLToFile(filepath, &tempFile, &success);
   }
@@ -1356,6 +1366,7 @@ bool MaterialStreamReader::operator()(const std::string &matId,
 bool LoadObj(attrib_t *attrib, std::vector<shape_t> *shapes,
              std::vector<material_t> *materials, std::string *err,
              const char *filename, const char *mtl_basedir, bool baseurl,
+             std::map<std::string, std::string> *resourceMap,
              bool trianglulate) {
   attrib->vertices.clear();
   attrib->normals.clear();
@@ -1377,7 +1388,14 @@ bool LoadObj(attrib_t *attrib, std::vector<shape_t> *shapes,
   if (mtl_basedir) {
     baseDir = mtl_basedir;
   }
-  MaterialFileReader matFileReader(baseDir, baseurl);
+
+  MaterialFileReader matFileReader;
+
+  if (resourceMap != nullptr) {
+    matFileReader = MaterialFileReader(resourceMap);
+  } else {
+    matFileReader = MaterialFileReader(baseDir, baseurl);
+  }
 
   return LoadObj(attrib, shapes, materials, err, &ifs, &matFileReader,
                  trianglulate);

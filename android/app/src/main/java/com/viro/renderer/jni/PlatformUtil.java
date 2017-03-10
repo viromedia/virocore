@@ -146,16 +146,38 @@ public class PlatformUtil {
     // Resource should be in the form res:/#######, where the id is in the path.
     public String copyResourceToFile(String resource) throws IOException {
         Uri uri = Uri.parse(resource);
-        File file = new File(mContext.getCacheDir(), uri.getPath());
+        File file = new File(mContext.getCacheDir(),  uri.getPath());
 
         InputStream in = null;
         FileOutputStream out = null;
 
-        try {
+        // the path is /#######, we just want the #######
+        writeResourceToFile(uri.getPath().substring(1), file);
+
+        return file.getAbsolutePath();
+    }
+
+    public Map<String, String> copyResourceMap(Map<String, String> resourceMap) throws IOException {
+        Map<String, String> toReturn = new HashMap<>();
+        for (String key: resourceMap.keySet()) {
+            File file = new File(mContext.getCacheDir(), key);
+            toReturn.put(key, file.getAbsolutePath());
+
+            Uri uri = Uri.parse(resourceMap.get(key));
             // the path is /#######, we just want the #######
-            int id = Integer.valueOf(uri.getPath().substring(1));
+            writeResourceToFile(uri.getPath().substring(1), file);
+        }
+        return toReturn;
+    }
+
+    public void writeResourceToFile(String resourceId, File outputFile) throws IOException {
+        InputStream in = null;
+        FileOutputStream out = null;
+
+        try {
+            int id = Integer.valueOf(resourceId);
             in = mContext.getResources().openRawResource(id);
-            out = new FileOutputStream(file);
+            out = new FileOutputStream(outputFile);
 
             transfer(in, out);
         } finally {
@@ -166,7 +188,6 @@ public class PlatformUtil {
                 out.close();
             }
         }
-        return file.getAbsolutePath();
     }
 
     // Accessed by Native code (VROPlatformUtil.cpp)

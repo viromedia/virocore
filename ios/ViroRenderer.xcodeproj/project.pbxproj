@@ -87,7 +87,7 @@
 		8F517BE21BCDA2BE0017C70B /* ViroRendererUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BE11BCDA2BE0017C70B /* ViroRendererUITests.m */; };
 		8F52EA301E1D643000F1AF9D /* VROExecutableAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F52EA2F1E1D643000F1AF9D /* VROExecutableAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F53C8F81E00F03E008314B4 /* tiny_obj_loader.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8F53C8F61E00F03E008314B4 /* tiny_obj_loader.cc */; };
-		8F53C8F91E00F03E008314B4 /* tiny_obj_loader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F53C8F71E00F03E008314B4 /* tiny_obj_loader.h */; };
+		8F53C8F91E00F03E008314B4 /* tiny_obj_loader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F53C8F71E00F03E008314B4 /* tiny_obj_loader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F53C9021E01A39E008314B4 /* VROOBJLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F53C8F41E00EE15008314B4 /* VROOBJLoader.cpp */; };
 		8F53C9031E01B5CB008314B4 /* VROOBJLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F53C8F31E00EE07008314B4 /* VROOBJLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F53D39E1DCA883A001C91A8 /* VROConvert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F53D39C1DCA883A001C91A8 /* VROConvert.cpp */; };
@@ -205,7 +205,7 @@
 		8FCB10081DD10EF300FE425C /* VROStringUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB10061DD10EF300FE425C /* VROStringUtil.cpp */; };
 		8FCB10091DD10EF300FE425C /* VROStringUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB10071DD10EF300FE425C /* VROStringUtil.h */; };
 		8FCB100B1DD12BDF00FE425C /* VRODriverOpenGLiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB100A1DD12BDF00FE425C /* VRODriverOpenGLiOS.h */; };
-		8FCB100D1DD131C900FE425C /* VROPlatformUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB100C1DD131C900FE425C /* VROPlatformUtil.h */; };
+		8FCB100D1DD131C900FE425C /* VROPlatformUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB100C1DD131C900FE425C /* VROPlatformUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCB100F1DD1325100FE425C /* VROPlatformUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB100E1DD1325100FE425C /* VROPlatformUtil.cpp */; };
 		8FCB101A1DD5449700FE425C /* VROVideoTextureiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB10181DD5449700FE425C /* VROVideoTextureiOS.cpp */; };
 		8FCB101B1DD5449700FE425C /* VROVideoTextureiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB10191DD5449700FE425C /* VROVideoTextureiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -554,7 +554,7 @@
 		8F53C8F31E00EE07008314B4 /* VROOBJLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROOBJLoader.h; sourceTree = "<group>"; };
 		8F53C8F41E00EE15008314B4 /* VROOBJLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROOBJLoader.cpp; sourceTree = "<group>"; };
 		8F53C8F61E00F03E008314B4 /* tiny_obj_loader.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = tiny_obj_loader.cc; sourceTree = "<group>"; };
-		8F53C8F71E00F03E008314B4 /* tiny_obj_loader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = tiny_obj_loader.h; sourceTree = "<group>"; };
+		8F53C8F71E00F03E008314B4 /* tiny_obj_loader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = tiny_obj_loader.h; sourceTree = "<group>"; };
 		8F53D39C1DCA883A001C91A8 /* VROConvert.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROConvert.cpp; sourceTree = "<group>"; };
 		8F53D39D1DCA883A001C91A8 /* VROConvert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROConvert.h; sourceTree = "<group>"; };
 		8F53D3A11DCAB670001C91A8 /* VROOpenGL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROOpenGL.h; sourceTree = "<group>"; };
