@@ -19,7 +19,7 @@ public:
     VROInputControllerCardboard(){}
     virtual ~VROInputControllerCardboard(){}
 
-    virtual void onProcess();
+    virtual void onProcess(const VROCamera &camera);
 
     virtual std::string getHeadset() {
         return "cardboard";
@@ -37,6 +37,6 @@ protected:
     }
 
 private:
-    void updateOrientation();
+    void updateOrientation(const VROCamera &camera);
 };
 #endif

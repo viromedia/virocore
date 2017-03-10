@@ -19,7 +19,7 @@ public:
     VROInputControllerOVR(){}
     virtual ~VROInputControllerOVR(){}
 
-    void onProcess();
+    void onProcess(const VROCamera &camera);
     void handleOVRKeyEvent(int keyCode, int action);
     void handleOVRTouchEvent(int touchAction, float posX, float posY);
     void updateSwipeGesture(VROVector3f start, VROVector3f end);

@@ -6,8 +6,8 @@
 //
 #include "VROInputControllerCardboard.h"
 
-void VROInputControllerCardboard::onProcess() {
-    updateOrientation();
+void VROInputControllerCardboard::onProcess(const VROCamera &camera) {
+    updateOrientation(camera);
 }
 
 void VROInputControllerCardboard::updateScreenTouch(int touchAction){
@@ -16,14 +16,14 @@ void VROInputControllerCardboard::updateScreenTouch(int touchAction){
     VROInputControllerBase::onButtonEvent(ViroCardBoard::InputSource::ViewerButton, state);
 }
 
-void VROInputControllerCardboard::updateOrientation(){
+void VROInputControllerCardboard::updateOrientation(const VROCamera &camera){
     // Grab controller orientation
     VROQuaternion rotation = _context->getCamera().getRotation();
     VROVector3f controllerForward = rotation.getMatrix().multiply(kBaseForward);
 
     // Perform hit test
-    VROInputControllerBase::updateHitNode(CONTROLLER_DEFAULT_POSITION, controllerForward);
+    VROInputControllerBase::updateHitNode(camera.getPosition(), controllerForward);
 
     // Process orientation and update delegates
-    VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, CONTROLLER_DEFAULT_POSITION, rotation);
+    VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, camera.getPosition(), rotation);
 }

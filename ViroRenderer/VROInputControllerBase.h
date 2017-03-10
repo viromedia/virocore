@@ -21,9 +21,10 @@
 #include "VROHitTestResult.h"
 #include "VRONode.h"
 #include "VROGeometry.h"
+
 static const float SCENE_BACKGROUND_DIST = 5.0f;
-static const VROVector3f CONTROLLER_DEFAULT_POSITION = {0,0,0};
 static const float ON_DRAG_DISTANCE_THRESHOLD = 0.01;
+
 /**
  * Responsible for mapping generalized input data from a controller, to a unified
  * set of VROEventDelegate.EventTypes. It then notifies corresponding VROEventDelegates
@@ -59,7 +60,7 @@ public:
      * onProcess is to be implemented by derived classes to drive the processing
      * of platform-specific input events and map them to viro-specific input events.
      */
-    virtual void onProcess(){
+    virtual void onProcess(const VROCamera &camera){
         //No-op
     }
 

@@ -29,7 +29,7 @@ public:
     VROInputControllerDaydream(gvr_context *gvr_context);
     virtual ~VROInputControllerDaydream();
 
-    void onProcess();
+    void onProcess(const VROCamera &camera);
     void onPause();
     void onResume();
 
@@ -50,7 +50,7 @@ protected:
 private:
     // Daydream-specific event update functions
     bool isControllerReady();
-    void updateOrientation();
+    void updateOrientation(const VROCamera &camera);
     void updateButtons();
     void updateTouchPad();
     void notifyButtonEventForType(gvr::ControllerButton button, ViroDayDream::InputSource source);

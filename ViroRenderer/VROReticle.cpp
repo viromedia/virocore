@@ -112,20 +112,22 @@ bool VROReticle::getPointerMode(){
 }
 
 void VROReticle::renderEye(VROEyeType eye, const VRORenderContext *renderContext, VRODriver *driver) {
-    VRORenderParameters renderParams;
-    if (_isPointerFixed){
-        VROMatrix4f identity;
-        renderParams.transforms.push(identity);
-    } else {
-        renderParams.transforms.push(renderContext->getHUDViewMatrix());
-    }
-    renderParams.opacities.push(1.0);
-    renderParams.hierarchical.push(-1);
-    renderParams.hierarchyId = 0;
-    
     if (kDebugSortOrder) {
         pinfo("Updating reticle key");
     }
+    
+    VRORenderParameters renderParams;
+    if (_isPointerFixed) {
+        VROMatrix4f identity;
+        renderParams.transforms.push(identity);
+    }
+    else {
+        renderParams.transforms.push(renderContext->getHUDViewMatrix());
+    }
+    
+    renderParams.opacities.push(1.0);
+    renderParams.hierarchical.push(-1);
+    renderParams.hierarchyId = 0;
     
     _node->updateSortKeys(0, renderParams, *renderContext, *driver);
 

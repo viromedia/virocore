@@ -141,7 +141,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
             _sceneController->getScene()->updateSortKeys(*_context.get(), driver);
         }
 
-        _inputController->onProcess();
+        _inputController->onProcess(camera);
     }
 }
 

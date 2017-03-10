@@ -6,8 +6,8 @@
 //
 #include "VROInputControllerCardboardiOS.h"
 
-void VROInputControllerCardboardiOS::onProcess() {
-    updateOrientation();
+void VROInputControllerCardboardiOS::onProcess(const VROCamera &camera) {
+    updateOrientation(camera);
 }
 
 void VROInputControllerCardboardiOS::onScreenClicked(){
@@ -25,18 +25,15 @@ std::string VROInputControllerCardboardiOS::getController() {
   return std::string("cardboard");
 }
 
-void VROInputControllerCardboardiOS::updateOrientation(){
+void VROInputControllerCardboardiOS::updateOrientation(const VROCamera &camera){
     // Grab controller orientation
     VROQuaternion rotation = _context->getCamera().getRotation();
     VROVector3f controllerForward = rotation.getMatrix().multiply(kBaseForward);
     
     // Perform hit test
-    VROInputControllerBase::updateHitNode(CONTROLLER_DEFAULT_POSITION, controllerForward);
+    VROInputControllerBase::updateHitNode(camera.getPosition(), controllerForward);
     
     // Process orientation and update delegates
-    VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, CONTROLLER_DEFAULT_POSITION, rotation);
-
-
-
+    VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, camera.getPosition(), rotation);
 }
 

@@ -18,7 +18,7 @@ VROInputControllerDaydream::VROInputControllerDaydream(gvr_context *gvr_context)
 
 VROInputControllerDaydream::~VROInputControllerDaydream() {}
 
-void VROInputControllerDaydream::onProcess() {
+void VROInputControllerDaydream::onProcess(const VROCamera &camera) {
     /**
      * Do not proceed in case of failure (calling other controller_api methods
      * without a successful Init will crash with an assert failure.
@@ -33,7 +33,7 @@ void VROInputControllerDaydream::onProcess() {
     }
 
     // Update all the controller input states
-    updateOrientation();
+    updateOrientation(camera);
     updateButtons();
     updateTouchPad();
 }
@@ -106,11 +106,12 @@ void VROInputControllerDaydream::updateScrollGesture(VROVector3f start, VROVecto
     VROInputControllerBase::onScroll(ViroDayDream::InputSource::TouchPad, diff.x, diff.y);
 }
 
-void VROInputControllerDaydream::updateOrientation() {
+void VROInputControllerDaydream::updateOrientation(const VROCamera &camera) {
     // Grab controller orientation
     gvr_quatf gvr_rotation = _controller_state.GetOrientation();
     VROQuaternion rotation = VROQuaternion(gvr_rotation.qx, gvr_rotation.qy, gvr_rotation.qz, gvr_rotation.qw);
-    VROVector3f position = getDaydreamControllerPosition(rotation);
+    VROVector3f position = getDaydreamControllerPosition(rotation) + camera.getPosition();
+
     VROVector3f forwardVector = getDaydreamForwardVector(rotation);
 
     // Perform hit test
@@ -129,8 +130,9 @@ VROVector3f VROInputControllerDaydream::getDaydreamForwardVector(const VROQuater
 
 VROVector3f VROInputControllerDaydream::getDaydreamControllerPosition(const VROQuaternion rotation) {
     // Apply the rotation to the ARM model within the presenter.
+    VROVector3f origin;
     _daydreamPresenter->onMove(ViroDayDream::InputSource::Controller,
-                               rotation.toEuler(), CONTROLLER_DEFAULT_POSITION);
+                               rotation.toEuler(), origin);
 
     // Grab the calculated pointerNode's position from the ARM Model. If the controller does not
     // have pointer node (laser-less), use the controller's body node position.
