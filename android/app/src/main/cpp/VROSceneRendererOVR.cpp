@@ -696,7 +696,7 @@ static void ovrRenderer_Destroy( ovrRenderer * renderer )
 
 static ovrFrameParms ovrRenderer_RenderFrame( ovrRenderer * rendererOVR, const ovrJava * java,
                                               std::shared_ptr<VRORenderer> renderer,
-                                              std::shared_ptr<VRODriver> driver,
+                                              std::shared_ptr<VRODriverOpenGLAndroid> driver,
                                               long long frameIndex, int minimumVsyncs, const ovrPerformanceParms * perfParms,
                                               const ovrTracking * tracking, ovrMobile * ovr )
 {
@@ -1219,7 +1219,7 @@ struct ovrAppThread
     ANativeWindow * NativeWindow;
 
     std::shared_ptr<VRORenderer> vroRenderer;
-    std::shared_ptr<VRODriver> driver;
+    std::shared_ptr<VRODriverOpenGLAndroid> driver;
     jobject view;
 };
 
@@ -1349,7 +1349,7 @@ void * AppThreadFunction( void * parm )
 }
 
 static void ovrAppThread_Create( ovrAppThread * appThread, JNIEnv * env, jobject activityObject, jobject viewObject,
-                                 std::shared_ptr<VRORenderer> renderer, std::shared_ptr<VRODriver> driver)
+                                 std::shared_ptr<VRORenderer> renderer, std::shared_ptr<VRODriverOpenGLAndroid> driver)
 {
     env->GetJavaVM( &appThread->JavaVm );
     appThread->ActivityObject = env->NewGlobalRef( activityObject );
