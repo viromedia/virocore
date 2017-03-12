@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,8 +128,14 @@ public class PlatformUtil {
         File file = File.createTempFile("Viro", "tmp");
         try {
             downloadURLSynchronous(url, file);
+        }catch(UnknownHostException e) {
+            Log.w(TAG, "Unknown host at URL [" + url + "], download failed");
+            return null;
         }catch(FileNotFoundException e) {
             Log.w(TAG, "No file found at URL [" + url + "], not copying to temporary file");
+            return null;
+        }catch(IOException e) {
+            Log.w(TAG, "IO error downloading file at URL [" + url + "], download failed");
             return null;
         }
 

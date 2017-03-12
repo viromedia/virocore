@@ -1309,7 +1309,8 @@ bool MaterialFileReader::operator()(const std::string &matId,
   // If the path is a URL, we have to download it to a temporary file
   bool tempFile = false;
   if (m_baseurl) {
-    filepath = VROPlatformDownloadURLToFile(filepath, &tempFile);
+    bool success = false;
+    filepath = VROPlatformDownloadURLToFile(filepath, &tempFile, &success);
   }
 
   std::ifstream matIStream(filepath.c_str());

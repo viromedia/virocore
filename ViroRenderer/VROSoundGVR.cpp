@@ -216,6 +216,10 @@ void VROSoundGVR::dataIsReady() {
     }
 }
 
+void VROSoundGVR::dataError() {
+    // TODO VIRO-902 bubble data loading errors up to JS
+}
+
 void VROSoundGVR::setProperties() {
     if (_audioId == -1) {
         return;

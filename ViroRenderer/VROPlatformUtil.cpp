@@ -81,7 +81,7 @@ NSURLSessionDataTask *downloadDataWithURL(NSURL *url, void (^completionBlock)(NS
     return downloadTask;
 }
 
-std::string VROPlatformDownloadURLToFile(std::string url, bool *temp) {
+std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *success) {
     NSURL *URL = [NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]];
     
     __block NSString *tempFilePath;
@@ -103,9 +103,11 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp) {
     });
     
     if (tempFilePath) {
+        *success = true;
         return std::string([tempFilePath UTF8String]);
     }
     else {
+        *success = false;
         return "";
     }
 }
@@ -239,7 +241,7 @@ std::string VROPlatformLoadResourceAsString(std::string resource, std::string ty
     return str;
 }
 
-std::string VROPlatformDownloadURLToFile(std::string url, bool *temp) {
+std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *success) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jstring jurl = env->NewStringUTF(url.c_str());
 
@@ -251,7 +253,11 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp) {
     env->DeleteLocalRef(cls);
 
     if (jpath == nullptr) {
+        *success = false;
         return "";
+    }
+    else {
+        *success = true;
     }
 
     const char *path = env->GetStringUTFChars(jpath, 0);

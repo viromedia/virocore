@@ -26,7 +26,8 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromURL(std::string url, std::stri
     if (async) {
         VROPlatformDispatchAsyncBackground([url, baseURL, node, onFinish] {
             bool isTemp = false;
-            std::string file = VROPlatformDownloadURLToFile(url, &isTemp);
+            bool success = false;
+            std::string file = VROPlatformDownloadURLToFile(url, &isTemp, &success);
             
             std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseURL, true);
             if (isTemp) {
@@ -40,7 +41,8 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromURL(std::string url, std::stri
     }
     else {
         bool isTemp = false;
-        std::string file = VROPlatformDownloadURLToFile(url, &isTemp);
+        bool success = false;
+        std::string file = VROPlatformDownloadURLToFile(url, &isTemp, &success);
         
         std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseURL, true);
         if (isTemp) {
@@ -332,7 +334,8 @@ std::shared_ptr<VROTexture> VROOBJLoader::loadTexture(std::string &name, std::st
         bool isTempTextureFile = false;
         std::string textureFile = base + "/" + name;
         if (isBaseURL) {
-            textureFile = VROPlatformDownloadURLToFile(textureFile, &isTempTextureFile);
+            bool success = false;
+            textureFile = VROPlatformDownloadURLToFile(textureFile, &isTempTextureFile, &success);
         }
         
         // Abort (return empty texture) if the file wasn't found

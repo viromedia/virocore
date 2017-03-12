@@ -159,6 +159,8 @@ void VROAudioPlayeriOS::doFadeThenPause() {
     }
 }
 
+#pragma mark VROSoundDataDelegate Implementation
+
 void VROAudioPlayeriOS::dataIsReady() {
     if (!_player) {
         _player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL URLWithString:[NSString stringWithUTF8String:_data->getLocalFilePath().c_str()]]
@@ -172,7 +174,12 @@ void VROAudioPlayeriOS::dataIsReady() {
     }
 }
 
+void VROAudioPlayeriOS::dataError() {
+    //TODO VIRO-902 bubble data errors up to JS
+}
+
 #pragma mark - VROAudioPlayerDelegate implementation
+
 @implementation VROAudioPlayerDelegate {
     std::weak_ptr<VROSoundDelegateInternal> _delegate;
 }

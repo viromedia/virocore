@@ -42,8 +42,9 @@ std::string VROPlatformCopyResourceToFile(std::string asset);
 /*
  Load the given URL to a file, and return the path to the file. If the file
  is temporary and must be deleted after its processed, temp will be set to true.
+ If the download fails, success will be set to false.
  */
-std::string VROPlatformDownloadURLToFile(std::string url, bool *temp);
+std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *success);
 void VROPlatformDeleteFile(std::string filename);
 
 #pragma mark - Image Loading

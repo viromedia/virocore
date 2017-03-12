@@ -88,8 +88,13 @@ void VROAudioPlayerAndroid::onFinished() {
 }
 
 #pragma mark - VROSoundDataDelegate
+
 void VROAudioPlayerAndroid::dataIsReady() {
     if (_player) {
         _player->setDataSourceURL(_data->getLocalFilePath().c_str());
     }
+}
+
+void VROAudioPlayerAndroid::dataError() {
+    // TODO VIRO-902 bubble data loading errors up to JS
 }
