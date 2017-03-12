@@ -42,6 +42,10 @@ public:
         _library = [device newLibraryWithFile:shaders error:nil];
     }
     
+    void onFrame(VRORenderContext &context) {
+        
+    }
+    
     void setRenderTarget(std::shared_ptr<VRORenderTarget> renderTarget) {
         _renderTarget = renderTarget;
     }

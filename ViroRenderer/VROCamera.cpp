@@ -40,8 +40,8 @@ void VROCamera::onRotationChanged() {
     _up = rotation.multiply(kBaseUp);
 }
 
-VROMatrix4f VROCamera::computeLookAtMatrix() const {
-    return VROMathComputeLookAtMatrix(_position, _forward, _up);
+void VROCamera::computeLookAtMatrix() {
+    _lookAtMatrix = VROMathComputeLookAtMatrix(_position, _forward, _up);
 }
 
 void VROCamera::setViewport(VROViewport viewport) {

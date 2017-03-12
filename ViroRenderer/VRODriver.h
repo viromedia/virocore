@@ -24,6 +24,7 @@ class VROVideoTextureCache;
 class VROSound;
 class VROAudioPlayer;
 class VROTypeface;
+class VRORenderContext;
 
 enum class VROSoundType;
 enum class VROTextureType;
@@ -40,6 +41,10 @@ class VRODriver {
 public:
     
     virtual ~VRODriver() {}
+    
+    // Provides the driver an opportunity to update any sub-components
+    // with per-frame state
+    virtual void onFrame(const VRORenderContext &context) = 0;
     
     virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) = 0;
     virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) = 0;

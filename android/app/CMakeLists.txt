@@ -104,6 +104,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROPlatformUtil.cpp
              ../../ViroRenderer/VROOBJLoader.cpp
              ../../ViroRenderer/tiny_obj_loader.cc
+             ../../ViroRenderer/VROGVRUtil.cpp
 
              # Renderer
              ../../ViroRenderer/VROScene.cpp

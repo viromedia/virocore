@@ -22,8 +22,12 @@
 #include "VROLight.h"
 
 class VRODriverOpenGL : public VRODriver {
-    
+
 public:
+
+    void onFrame(const VRORenderContext &context) {
+
+    }
     
     VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) {
         return new VROGeometrySubstrateOpenGL(geometry, *this);

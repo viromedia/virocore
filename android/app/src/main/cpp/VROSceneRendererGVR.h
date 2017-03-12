@@ -83,7 +83,6 @@ private:
                    VROFieldOfView fov);
 
     std::unique_ptr<gvr::GvrApi> _gvr;
-    std::shared_ptr<gvr::AudioApi> _gvrAudio;
     std::unique_ptr<gvr::BufferViewportList> _viewportList;
     std::unique_ptr<gvr::SwapChain> _swapchain;
     gvr::BufferViewport _scratchViewport;
@@ -100,7 +99,6 @@ private:
     gvr::Rectf modulateRect(const gvr::Rectf &rect, float width, float height);
     gvr::Recti calculatePixelSpaceRect(const gvr::Sizei &texture_size, const gvr::Rectf &texture_rect);
     gvr::Sizei halfPixelCount(const gvr::Sizei& in);
-    VROMatrix4f toMatrix4f(const gvr::Mat4f &glm);
     void extractViewParameters(gvr::BufferViewport &viewport, VROViewport *outViewport,
                                VROFieldOfView *outFov);
 

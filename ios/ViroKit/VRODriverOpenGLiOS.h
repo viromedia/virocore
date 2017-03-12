@@ -22,12 +22,16 @@ class VRODriverOpenGLiOS : public VRODriverOpenGL {
 public:
     
     VRODriverOpenGLiOS(EAGLContext *eaglContext, std::shared_ptr<gvr::AudioApi> gvrAudio) :
-    _eaglContext(eaglContext),
-    _gvrAudio(gvrAudio) {
+        _eaglContext(eaglContext),
+        _gvrAudio(gvrAudio) {
     }
     
     virtual ~VRODriverOpenGLiOS() { }
     
+    void onFrame(const VRORenderContext &context) {
+        // Set the head position into _gvrAudio when spatial sound is supported by iOS
+    }
+
     VROVideoTextureCache *newVideoTextureCache() {
         return new VROVideoTextureCacheOpenGL(_eaglContext);
     }

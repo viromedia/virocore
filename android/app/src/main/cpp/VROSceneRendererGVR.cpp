@@ -15,6 +15,7 @@
 #include <random>
 
 #include "VRODriverOpenGLAndroid.h"
+#include "VROGVRUtil.h"
 #include "VROMatrix4f.h"
 #include "VROViewport.h"
 #include "VRORenderer.h"
@@ -31,7 +32,6 @@ static const uint64_t kPredictionTimeWithoutVsyncNanos = 50000000;
 VROSceneRendererGVR::VROSceneRendererGVR(gvr_context* gvr_context,
                                                      std::shared_ptr<gvr::AudioApi> gvrAudio) :
     _gvr(gvr::GvrApi::WrapNonOwned(gvr_context)),
-    _gvrAudio(gvrAudio),
     _scratchViewport(_gvr->CreateBufferViewport()),
     _vrModeEnabled(true) {
 
@@ -100,7 +100,7 @@ void VROSceneRendererGVR::onDrawFrame() {
     target_time.monotonic_system_time_nanos += kPredictionTimeWithoutVsyncNanos;
 
     _headView = _gvr->GetHeadSpaceFromStartSpaceRotation(target_time);
-    VROMatrix4f headRotation = toMatrix4f(_headView).invert();
+    VROMatrix4f headRotation = VROGVRUtil::toMatrix4f(_headView).invert();
 
     if (_vrModeEnabled) {
         renderStereo(headRotation);
@@ -108,8 +108,7 @@ void VROSceneRendererGVR::onDrawFrame() {
     else {
         renderMono(headRotation);
     }
-    _gvrAudio->SetHeadPose(_headView);
-    _gvrAudio->Update();
+
     ++_frame;
 }
 
@@ -133,7 +132,7 @@ void VROSceneRendererGVR::renderStereo(VROMatrix4f &headRotation) {
 
     // Prepare the frame and render the left eye
     prepareFrame(leftViewport, leftFov, headRotation);
-    renderEye(VROEyeType::Left, toMatrix4f(_gvr->GetEyeFromHeadMatrix(GVR_LEFT_EYE)),
+    renderEye(VROEyeType::Left, VROGVRUtil::toMatrix4f(_gvr->GetEyeFromHeadMatrix(GVR_LEFT_EYE)),
               leftViewport, leftFov);
 
     // Extract the right viewport parameters
@@ -143,7 +142,7 @@ void VROSceneRendererGVR::renderStereo(VROMatrix4f &headRotation) {
     extractViewParameters(_scratchViewport, &rightViewport, &rightFov);
 
     // Render the right eye and end the frame
-    renderEye(VROEyeType::Right, toMatrix4f(_gvr->GetEyeFromHeadMatrix(GVR_RIGHT_EYE)),
+    renderEye(VROEyeType::Right, VROGVRUtil::toMatrix4f(_gvr->GetEyeFromHeadMatrix(GVR_RIGHT_EYE)),
               rightViewport, rightFov);
     _renderer->endFrame(*_driver.get());
 
@@ -183,14 +182,14 @@ void VROSceneRendererGVR::onTouchEvent(int action, float x, float y) {
 void VROSceneRendererGVR::onPause() {
     _renderer->getInputController()->onPause();
     _gvr->PauseTracking();
-    _gvrAudio->Pause();
+    _driver->onPause();
 }
 
 void VROSceneRendererGVR::onResume() {
     _renderer->getInputController()->onResume();
     _gvr->RefreshViewerProfile();
     _gvr->ResumeTracking();
-    _gvrAudio->Resume();
+    _driver->onResume();
 }
 
 void VROSceneRendererGVR::prepareFrame(VROViewport leftViewport, VROFieldOfView fov, VROMatrix4f headRotation) {
@@ -246,17 +245,6 @@ gvr::Sizei VROSceneRendererGVR::halfPixelCount(const gvr::Sizei& in) {
     out.width = (7 * in.width) / 10;
     out.height = (7 * in.height) / 10;
     return out;
-}
-
-VROMatrix4f VROSceneRendererGVR::toMatrix4f(const gvr::Mat4f &glm) {
-    float m[16] = {
-            glm.m[0][0], glm.m[1][0], glm.m[2][0], glm.m[3][0],
-            glm.m[0][1], glm.m[1][1], glm.m[2][1], glm.m[3][1],
-            glm.m[0][2], glm.m[1][2], glm.m[2][2], glm.m[3][2],
-            glm.m[0][3], glm.m[1][3], glm.m[2][3], glm.m[3][3],
-    };
-
-    return VROMatrix4f(m);
 }
 
 void VROSceneRendererGVR::extractViewParameters(gvr::BufferViewport &viewport,

@@ -842,7 +842,7 @@ typedef struct
     double				BackButtonDownStartTime;
     ovrRenderer			Renderer;
     std::shared_ptr<VRORenderer> vroRenderer;
-    std::shared_ptr<VRODriver> driver;
+    std::shared_ptr<VRODriverOpenGLAndroid> driver;
     bool				UseMultiview;
 } ovrApp;
 
@@ -1286,8 +1286,8 @@ void * AppThreadFunction( void * parm )
             {
                 case MESSAGE_ON_CREATE:				{ break; }
                 case MESSAGE_ON_START:				{ break; }
-                case MESSAGE_ON_RESUME:				{ appState.Resumed = true; break; }
-                case MESSAGE_ON_PAUSE:				{ appState.Resumed = false; break; }
+                case MESSAGE_ON_RESUME:				{ appState.driver->onResume(); appState.Resumed = true; break; }
+                case MESSAGE_ON_PAUSE:				{ appState.driver->onPause(); appState.Resumed = false; break; }
                 case MESSAGE_ON_STOP:				{ break; }
                 case MESSAGE_ON_DESTROY:			{ appState.NativeWindow = NULL; destroyed = true; break; }
                 case MESSAGE_ON_SURFACE_CREATED:	{ appState.NativeWindow = (ANativeWindow *)ovrMessage_GetPointerParm( &message, 0 ); break; }

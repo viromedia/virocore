@@ -12,6 +12,7 @@
 #include <VROSoundGVR.h>
 #include "VRODriverOpenGL.h"
 #include "VROLog.h"
+#include "VROGVRUtil.h"
 #include "VROAudioPlayerAndroid.h"
 #include "VROTypefaceAndroid.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
@@ -25,6 +26,19 @@ public:
         _gvrAudio(gvrAudio) {
     }
     virtual ~VRODriverOpenGLAndroid() { }
+
+    void onFrame(const VRORenderContext &context) {
+        _gvrAudio->SetHeadPose(VROGVRUtil::toGVRMat4f(context.getCamera().getLookAtMatrix()));
+        _gvrAudio->Update();
+    }
+
+    void onPause() {
+        _gvrAudio->Pause();
+    }
+
+    void onResume() {
+        _gvrAudio->Resume();
+    }
 
     VROVideoTextureCache *newVideoTextureCache() {
         pabort("Video texture caches not supported or required on Android");

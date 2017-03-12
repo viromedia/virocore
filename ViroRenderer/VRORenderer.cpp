@@ -122,6 +122,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         }
     }
 
+    camera.computeLookAtMatrix();
     _context->setCamera(camera);
 
     /*
@@ -143,6 +144,8 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
 
         _inputController->onProcess(camera);
     }
+
+    driver.onFrame(*_context.get());
 }
 
 void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
@@ -152,7 +155,7 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
         delegate->willRenderEye(eye, _context.get());
     }
 
-    VROMatrix4f cameraMatrix = _context->getCamera().computeLookAtMatrix();
+    VROMatrix4f cameraMatrix = _context->getCamera().getLookAtMatrix();
     VROMatrix4f eyeView = eyeFromHeadMatrix.multiply(cameraMatrix);
 
     _context->setHUDViewMatrix(eyeFromHeadMatrix.multiply(eyeView.invert()));
