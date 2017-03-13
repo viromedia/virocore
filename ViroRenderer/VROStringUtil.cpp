@@ -70,9 +70,18 @@ void VROStringUtil::toLowerCase(std::string &str) {
     std::transform(str.begin(), str.end(), str.begin(), ::tolower);
 }
 
+bool VROStringUtil::startsWith(const std::string &candidate, const std::string &prefix) {
+    if (candidate.length() < prefix.length()) {
+        return false;
+    }
+    return 0 == candidate.compare(0, prefix.length(), prefix, 0, prefix.length());
+}
+
 bool VROStringUtil::endsWith(const std::string& candidate, const std::string& ending) {
     if (candidate.length() < ending.length()) {
         return false;
     }
     return 0 == candidate.compare(candidate.length() - ending.length(), ending.length(), ending);
 }
+
+

@@ -8,6 +8,7 @@
 
 #include "VROPropertyAnimation.h"
 #include "VROStringUtil.h"
+#include "VROMath.h"
 #include <sstream>
 #include "VROLog.h"
 
@@ -62,6 +63,10 @@ std::shared_ptr<VROPropertyAnimation> VROPropertyAnimation::parse(const std::str
                 animationValue.valueFloat = 1 / animationValue.valueFloat;
             }
         }
+        
+        if (VROStringUtil::startsWith(name, "rotate")) {
+            animationValue.valueFloat = toRadians(animationValue.valueFloat);
+        }
     }
     
     return std::make_shared<VROPropertyAnimation>(name, animationValue, op);
@@ -69,6 +74,15 @@ std::shared_ptr<VROPropertyAnimation> VROPropertyAnimation::parse(const std::str
 
 std::string VROPropertyAnimation::toString() const {
     std::stringstream ss;
+    if (_op == VROAnimationOperation::Assign) {
+        ss << " assign ";
+    }
+    else if (_op == VROAnimationOperation::Add) {
+        ss << " add ";
+    }
+    else if (_op == VROAnimationOperation::Multiply) {
+        ss << " multiply ";
+    }
     ss << (_value.type == VROValueType::Float ? _value.valueFloat : _value.valueInt);
    
     return ss.str();
