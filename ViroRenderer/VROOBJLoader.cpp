@@ -162,8 +162,8 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file,
 }
 
 std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
-                                                      std::vector<tinyobj::shape_t> shapes,
-                                                      std::vector<tinyobj::material_t> materials,
+                                                      std::vector<tinyobj::shape_t> &shapes,
+                                                      std::vector<tinyobj::material_t> &materials,
                                                       std::string base,
                                                       bool isBaseURL,
                                                       std::map<std::string, std::string> *resourceMap) {
