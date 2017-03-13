@@ -80,6 +80,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     camera.setHeadRotation(headRotation);
     camera.setViewport(viewport);
     camera.setFOV(fov);
+    
     // Make a default camera if no point of view is set
     if (!_pointOfView) {
         camera.setPosition({0, 0, 0 });

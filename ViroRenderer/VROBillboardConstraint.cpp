@@ -109,6 +109,9 @@ VROQuaternion VROBillboardConstraint::computeAxisRotation(VROVector3f lookAt, VR
     else if (angleCosine < -0.99999999) {
         return VROQuaternion::fromAngleAxis(M_PI, defaultAxis);
     }
+    else if (isnan(axis.x) || isnan(axis.y) || isnan(axis.z)) {
+        return VROQuaternion::fromAngleAxis(0, defaultAxis);
+    }
     else {
         return VROQuaternion::fromAngleAxis(acos(angleCosine), axis);
     }
