@@ -72,10 +72,6 @@
     // Do not allow the display to go into sleep
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(orientationDidChange:)
-                                                 name:UIApplicationDidChangeStatusBarOrientationNotification
-                                               object:nil];
     self.renderer = std::make_shared<VRORenderer>(std::make_shared<VROInputControllerCardboardiOS>());
     self.sceneRenderer = std::make_shared<VROSceneRendererCardboardOpenGL>(self.context, self.renderer);
 }
@@ -122,11 +118,6 @@
 }
 
 #pragma mark - Settings
-
-- (void)orientationDidChange:(NSNotification *)notification {
-  // If the orientation changes, set the frame of the view to the asme as the screen.
-  self.frame = CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height);
-}
 
 - (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {
     _renderDelegateWrapper = std::make_shared<VRORenderDelegateiOS>(renderDelegate);
