@@ -20,22 +20,40 @@ import java.io.IOException;
  * via JNI.
  */
 public class AVPlayer {
+
+    private static final String TAG = "Viro";
+
+    /**
+     * These states mimic the underlying stats in the Android
+     * MediaPlayer. We need to ensure we don't violate any state
+     * in the Android MediaPlayer, else it becomes invalid.
+     */
+    private enum State {
+        IDLE,
+        PREPARED,
+        PAUSED,
+        STARTED,
+    }
+
     private MediaPlayer _mediaPlayer;
     private float _volume;
     private long mNativeReference;
     private boolean _loop;
+    private State _state;
 
     public AVPlayer(long nativeReference) {
         _mediaPlayer = new MediaPlayer();
         _volume = 1.0f;
         mNativeReference = nativeReference;
         _loop = false;
+        _state = State.IDLE;
 
         // Attach listeners to be called back into native
         _mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                if (_loop){
+                if (_loop) {
+                    _state = State.PAUSED;
                     play();
                 }
                 nativeOnFinished(mNativeReference);
@@ -46,6 +64,14 @@ public class AVPlayer {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 nativeOnPrepared(mNativeReference);
+            }
+        });
+
+        _mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
+                Log.w(TAG, "AVPlayer encountered error [" + what + ", extra: " + extra + "]");
+                return true;
             }
         });
     }
@@ -61,14 +87,20 @@ public class AVPlayer {
                         + context.getPackageName() + uri.getPath());
                 _mediaPlayer.setDataSource(context, newUri);
             } else {
+                Log.i(TAG, "AVPlayer setting URL to ["  + resourceOrURL + "]");
                 _mediaPlayer.setDataSource(resourceOrURL);
             }
             _mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             _mediaPlayer.prepare();
+            _state = State.PREPARED;
+
+            Log.i(TAG, "AVPlayer prepared for playback");
 
             return true;
         }catch(IOException e) {
-            Log.w("Viro", "Failed to load path [" + resourceOrURL + "] in AV Player!", e);
+            Log.w(TAG, "AVPlayer failed to load video at URI [" + resourceOrURL + "]", e);
+            _mediaPlayer.reset();
+
             return false;
         }
     }
@@ -83,13 +115,14 @@ public class AVPlayer {
                 _mediaPlayer.setDataSource(afd);
                 _mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 _mediaPlayer.prepare();
+                _state = State.PREPARED;
             } else {
                 // TODO: Figure out how to setDataSource for API Level < 24
             }
 
             return true;
         }catch(IOException e) {
-            Log.w("Viro", "Failed to load asset [" + asset + "] in AV Player!");
+            Log.w(TAG, "AVPlayer failed to load asset [" + asset + "]");
             return false;
         }
     }
@@ -103,20 +136,38 @@ public class AVPlayer {
             _mediaPlayer.stop();
         }
         _mediaPlayer.reset();
+        _state = State.IDLE;
+
+        Log.i(TAG, "AVPlayer reset");
     }
 
     public void destroy() {
         reset();
         _mediaPlayer.setOnCompletionListener(null);
         _mediaPlayer.setOnPreparedListener(null);
+        _mediaPlayer.release();
+
+        Log.i(TAG, "AV player destroyed");
     }
 
     public void play() {
-        _mediaPlayer.start();
+        if (_state == State.PREPARED || _state == State.PAUSED) {
+            _mediaPlayer.start();
+            _state = State.STARTED;
+        }
+        else {
+            Log.w(TAG, "AVPlayer could not play video in " + _state.toString() + " state");
+        }
     }
 
     public void pause() {
-        _mediaPlayer.pause();
+        if (_state == State.STARTED) {
+            _mediaPlayer.pause();
+            _state = State.PAUSED;
+        }
+        else {
+            Log.w(TAG, "AVPlayer could not pause video in " + _state.toString() + " state");
+        }
     }
 
     public boolean isPaused() {
@@ -142,6 +193,11 @@ public class AVPlayer {
     }
 
     public void seekToTime(int seconds) {
+        if (_state == State.IDLE) {
+            Log.w(TAG, "AVPlayer could not seek while in IDLE state");
+            return;
+        }
+
         _mediaPlayer.seekTo(seconds * 1000);
     }
 
@@ -150,6 +206,11 @@ public class AVPlayer {
     }
 
     public int getVideoDurationInSeconds(){
+        if (_state == State.IDLE) {
+            Log.w(TAG, "AVPlayer could not get video duration in IDLE state");
+            return 0;
+        }
+
         return _mediaPlayer.getDuration() / 1000;
     }
 
