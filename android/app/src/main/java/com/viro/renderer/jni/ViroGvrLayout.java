@@ -51,10 +51,23 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     private PlatformUtil mPlatformUtil;
     private WeakReference<Activity> mWeakActivity;
 
+    // Activity state to restore to before being modified by the renderer.
+    private int mSavedSystemUIVisbility;
+    private int mSavedOrientation;
+    private OnSystemUiVisibilityChangeListener mSystemVisibilityListener;
+
     public ViroGvrLayout(Context context, GlListener glListener) {
         super(context);
 
         final Context activityContext = getContext();
+        mSystemVisibilityListener = new OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                    setImmersiveSticky();
+                }
+            }
+        };
 
         // Initialize the native renderer.
         final GLSurfaceView glSurfaceView = new GLSurfaceView(activityContext.getApplicationContext());
@@ -135,12 +148,18 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         AndroidCompat.setVrModeEnabled((Activity)getContext(), true);
         setStereoModeEnabled(true);
 
-        // Prevent screen from dimming/locking.
-        ((Activity)activityContext).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        // Prevent screen from switching to portrait
-        ((Activity)activityContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        final Activity activity = (Activity)getContext();
+        mSavedSystemUIVisbility = activity.getWindow().getDecorView().getSystemUiVisibility();
+        mSavedOrientation = activity.getRequestedOrientation();
 
-        mWeakActivity = new WeakReference<Activity>((Activity)getContext());
+        // Prevent screen from dimming/locking.
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        // Prevent screen from switching to portrait
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        // Attach SystemUiVisibilityChangeListeners to enforce a full screen experience.
+        activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mSystemVisibilityListener);
+
+        mWeakActivity = new WeakReference<Activity>(activity);
         Application app = (Application)activityContext.getApplicationContext();
         app.registerActivityLifecycleCallbacks(this);
     }
@@ -221,19 +240,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
 
         // Ensure fullscreen immersion.
         setImmersiveSticky();
-        final Context activityContext = getContext();
-        ((Activity)activityContext)
-                .getWindow()
-                .getDecorView()
-                .setOnSystemUiVisibilityChangeListener(
-                        new OnSystemUiVisibilityChangeListener() {
-                            @Override
-                            public void onSystemUiVisibilityChange(int visibility) {
-                                if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                                    setImmersiveSticky();
-                                }
-                            }
-                        });
         super.onResume();
     }
 
@@ -246,6 +252,10 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         super.shutdown();
         mNativeRenderContext.delete();
         mNativeRenderer.destroy();
+        activity.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(null);
+        activity.setRequestedOrientation(mSavedOrientation);
+        unSetImmersiveSticky();
 
         Application app = (Application)activity.getApplicationContext();
         app.unregisterActivityLifecycleCallbacks(this);
@@ -272,6 +282,34 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
                                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        refreshActivityLayout();
+    }
+
+    public void unSetImmersiveSticky(){
+        ((Activity)getContext())
+                .getWindow()
+                .getDecorView()
+                .setSystemUiVisibility(mSavedSystemUIVisbility);
+        refreshActivityLayout();
+    }
+
+    private void refreshActivityLayout(){
+        Runnable myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                View view = ((Activity)getContext()).findViewById(android.R.id.content);
+                if (view != null){
+                    // The size of the activity's root view has changed since we have
+                    // manually removed the toolbar to enter full screen. Thus, call
+                    // requestLayout to re-measure the view sizes.
+                    view.requestLayout();
+
+                    // To be certain a relayout will result in a redraw, we call invalidate
+                    view.invalidate();
+                }
+            }
+        };
+        new Handler(Looper.getMainLooper()).post(myRunnable);
     }
 
     @Override
