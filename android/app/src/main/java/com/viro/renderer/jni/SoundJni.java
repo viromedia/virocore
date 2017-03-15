@@ -23,14 +23,14 @@ public class SoundJni implements BaseSoundJni {
                     SoundDelegate delegate, boolean local) {
         // we don't currently use local because the underlying player is Android's MediaPlayer, if/when
         // we move to GVR audio, we'll want to treat them differently.
-        mNativeRef = nativeCreateSound(path, renderContext.mNativeRef);
         mDelegate = delegate;
+        mNativeRef = nativeCreateSound(path, renderContext.mNativeRef);
     }
 
     public SoundJni(SoundDataJni data, RenderContextJni renderContext,
                     SoundDelegate delegate) {
-        mNativeRef = nativeCreateSoundWithData(data.mNativeRef, renderContext.mNativeRef);
         mDelegate = delegate;
+        mNativeRef = nativeCreateSoundWithData(data.mNativeRef, renderContext.mNativeRef);
     }
 
     @Override

@@ -7,17 +7,37 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
 import android.view.Surface;
 
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.audio.AudioRendererEventListener;
+import com.google.android.exoplayer2.decoder.DecoderCounters;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 
 /**
- * Wraps a {@link android.media.MediaPlayer} and can be controlled
- * via JNI.
+ * Wraps the Android ExoPlayer and can be controlled via JNI.
  */
 public class AVPlayer {
 
@@ -35,43 +55,73 @@ public class AVPlayer {
         STARTED,
     }
 
-    private MediaPlayer _mediaPlayer;
-    private float _volume;
+    private SimpleExoPlayer mExoPlayer;
+    private float mVolume;
     private long mNativeReference;
-    private boolean _loop;
-    private State _state;
+    private boolean mLoop;
+    private State mState;
 
-    public AVPlayer(long nativeReference) {
-        _mediaPlayer = new MediaPlayer();
-        _volume = 1.0f;
+    public AVPlayer(long nativeReference, Context context) {
+        mVolume = 1.0f;
         mNativeReference = nativeReference;
-        _loop = false;
-        _state = State.IDLE;
+        mLoop = false;
+        mState = State.IDLE;
 
-        // Attach listeners to be called back into native
-        _mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        TrackSelection.Factory trackSelectionFactory = new AdaptiveVideoTrackSelection.Factory(new DefaultBandwidthMeter());
+        DefaultTrackSelector trackSelector = new DefaultTrackSelector(trackSelectionFactory);
+        mExoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, new DefaultLoadControl());
+
+        mExoPlayer.setAudioDebugListener(new AudioRendererEventListener() {
             @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                if (_loop) {
-                    _state = State.PAUSED;
-                    play();
+            public void onAudioEnabled(DecoderCounters counters) {
+            }
+            @Override
+            public void onAudioSessionId(int audioSessionId) {
+            }
+            @Override
+            public void onAudioDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {
+                Log.i(TAG, "AVPlayer audio decoder initialized " + decoderName);
+            }
+            @Override
+            public void onAudioInputFormatChanged(Format format) {
+                Log.i(TAG, "AVPlayer audio input format changed to " + format);
+            }
+            @Override
+            public void onAudioTrackUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs) {
+            }
+            @Override
+            public void onAudioDisabled(DecoderCounters counters) {
+            }
+        });
+        mExoPlayer.addListener(new ExoPlayer.EventListener() {
+            @Override
+            public void onTimelineChanged(Timeline timeline, Object manifest) {
+            }
+            @Override
+            public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+            }
+            @Override
+            public void onLoadingChanged(boolean isLoading) {
+            }
+
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                if (playbackState == ExoPlayer.STATE_ENDED) {
+                    if (mLoop) {
+                        mState = State.PAUSED;
+                        mExoPlayer.seekToDefaultPosition();
+                        play();
+                    }
+                    nativeOnFinished(mNativeReference);
                 }
-                nativeOnFinished(mNativeReference);
             }
-        });
 
-        _mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
-            public void onPrepared(MediaPlayer mp) {
-                nativeOnPrepared(mNativeReference);
+            public void onPlayerError(ExoPlaybackException error) {
+                Log.w(TAG, "AVPlayer encountered error [" + error + "]", error);
             }
-        });
-
-        _mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
-            public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
-                Log.w(TAG, "AVPlayer encountered error [" + what + ", extra: " + extra + "]");
-                return true;
+            public void onPositionDiscontinuity() {
             }
         });
     }
@@ -79,27 +129,33 @@ public class AVPlayer {
     public boolean setDataSourceURL(String resourceOrURL, Context context) {
         try {
             reset();
+
+            Uri uri = Uri.parse(resourceOrURL);
             if (resourceOrURL.startsWith("res")) {
-                Uri uri = Uri.parse(resourceOrURL);
                 // The MediaPlayer doesn't like resources in the form res:/#######
                 // so we need to convert it to: android.resource://[package]/[res id]
-                Uri newUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
+                uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
                         + context.getPackageName() + uri.getPath());
-                _mediaPlayer.setDataSource(context, newUri);
-            } else {
-                Log.i(TAG, "AVPlayer setting URL to ["  + resourceOrURL + "]");
-                _mediaPlayer.setDataSource(resourceOrURL);
             }
-            _mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            _mediaPlayer.prepare();
-            _state = State.PREPARED;
+
+            Log.i(TAG, "AVPlayer setting URL to ["  + uri + "]");
+
+            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
+                    Util.getUserAgent(context, "ViroAVPlayer"), new DefaultBandwidthMeter());
+            ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+            MediaSource mediaSource = new ExtractorMediaSource(uri, dataSourceFactory, extractorsFactory,
+                    null, null);
+
+            mExoPlayer.prepare(mediaSource);
+            mState = State.PREPARED;
 
             Log.i(TAG, "AVPlayer prepared for playback");
+            nativeOnPrepared(mNativeReference);
 
             return true;
-        }catch(IOException e) {
+        }catch(Exception e) {
             Log.w(TAG, "AVPlayer failed to load video at URL [" + resourceOrURL + "]", e);
-            _mediaPlayer.reset();
+            reset();
 
             return false;
         }
@@ -112,10 +168,7 @@ public class AVPlayer {
 
             // MediaPlayer.setDataSource(AssetFileDescriptor) was introduced w/ API Level 24 (Nougat)
             if (android.os.Build.VERSION.SDK_INT >= 24) {
-                _mediaPlayer.setDataSource(afd);
-                _mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                _mediaPlayer.prepare();
-                _state = State.PREPARED;
+                // TODO: Restore Asset datasource for internal testing
             } else {
                 // TODO: Figure out how to setDataSource for API Level < 24
             }
@@ -128,95 +181,93 @@ public class AVPlayer {
     }
 
     public void setVideoSink(Surface videoSink) {
-        _mediaPlayer.setSurface(videoSink);
+        mExoPlayer.setVideoSurface(videoSink);
     }
 
     public void reset() {
-        if (_mediaPlayer.isPlaying()) {
-            _mediaPlayer.stop();
-        }
-        _mediaPlayer.reset();
-        _state = State.IDLE;
+        mExoPlayer.stop();
+        mExoPlayer.seekToDefaultPosition();
+        mState = State.IDLE;
 
         Log.i(TAG, "AVPlayer reset");
     }
 
     public void destroy() {
         reset();
-        _mediaPlayer.setOnCompletionListener(null);
-        _mediaPlayer.setOnPreparedListener(null);
-        _mediaPlayer.release();
+        mExoPlayer.release();
 
-        Log.i(TAG, "AV player destroyed");
+        Log.i(TAG, "AVPlayer destroyed");
     }
 
     public void play() {
-        if (_state == State.PREPARED || _state == State.PAUSED) {
-            _mediaPlayer.start();
-            _state = State.STARTED;
+        mExoPlayer.seekToDefaultPosition();
+
+        if (mState == State.PREPARED || mState == State.PAUSED) {
+            mExoPlayer.setPlayWhenReady(true);
+            mState = State.STARTED;
         }
         else {
-            Log.w(TAG, "AVPlayer could not play video in " + _state.toString() + " state");
+            Log.w(TAG, "AVPlayer could not play video in " + mState.toString() + " state");
         }
     }
 
     public void pause() {
-        if (_state == State.STARTED) {
-            _mediaPlayer.pause();
-            _state = State.PAUSED;
+        if (mState == State.STARTED) {
+            mExoPlayer.setPlayWhenReady(false);
+            mState = State.PAUSED;
         }
         else {
-            Log.w(TAG, "AVPlayer could not pause video in " + _state.toString() + " state");
+            Log.w(TAG, "AVPlayer could not pause video in " + mState.toString() + " state");
         }
     }
 
     public boolean isPaused() {
-        return !_mediaPlayer.isPlaying();
+        return mState != State.STARTED;
     }
 
     public void setLoop(boolean loop) {
-        _loop = loop;
+        mLoop = loop;
     }
 
     public void setVolume(float volume) {
-        _volume = volume;
-        _mediaPlayer.setVolume(_volume, _volume);
+        mVolume = volume;
+        mExoPlayer.setVolume(mVolume);
     }
 
     public void setMuted(boolean muted) {
         if (muted) {
-            _mediaPlayer.setVolume(0, 0);
+            mExoPlayer.setVolume(0);
         }
         else {
-            _mediaPlayer.setVolume(_volume, _volume);
+            mExoPlayer.setVolume(mVolume);
         }
     }
 
     public void seekToTime(int seconds) {
-        if (_state == State.IDLE) {
+        if (mState == State.IDLE) {
             Log.w(TAG, "AVPlayer could not seek while in IDLE state");
             return;
         }
 
-        _mediaPlayer.seekTo(seconds * 1000);
+        mExoPlayer.seekTo(seconds * 1000);
     }
 
     public int getCurrentTimeInSeconds() {
-        if (_state == State.IDLE) {
+        if (mState == State.IDLE) {
             Log.w(TAG, "AVPlayer " + this + " could not get current time in IDLE state");
             return 0;
         }
 
-        return _mediaPlayer.getCurrentPosition() / 1000;
+        return (int) (mExoPlayer.getCurrentPosition() / 1000);
     }
 
     public int getVideoDurationInSeconds(){
-        if (_state == State.IDLE) {
+        if (mState == State.IDLE) {
             Log.w(TAG, "AVPlayer could not get video duration in IDLE state");
             return 0;
         }
 
-        return _mediaPlayer.getDuration() / 1000;
+        return (int) (mExoPlayer.getDuration() / 1000);
     }
 
     /**

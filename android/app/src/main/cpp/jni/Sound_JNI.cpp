@@ -48,8 +48,10 @@ extern "C" {
         env->ReleaseStringUTFChars(filename, cStrFile);
 
         std::shared_ptr<VROAudioPlayer> player = renderContext->getDriver()->newAudioPlayer(file, false);
+
         std::shared_ptr<VROAudioPlayerAndroid> playerAndroid = std::dynamic_pointer_cast<VROAudioPlayerAndroid>(player);
         playerAndroid->setDelegate(std::make_shared<SoundDelegate>(object));
+        playerAndroid->setup();
 
         return Sound::jptr(playerAndroid);
     }
@@ -64,6 +66,7 @@ extern "C" {
         std::shared_ptr<VROAudioPlayer> player = renderContext->getDriver()->newAudioPlayer(data);
         std::shared_ptr<VROAudioPlayerAndroid> playerAndroid = std::dynamic_pointer_cast<VROAudioPlayerAndroid>(player);
         playerAndroid->setDelegate(std::make_shared<SoundDelegate>(object));
+        playerAndroid->setup();
 
         return Sound::jptr(playerAndroid);
     }

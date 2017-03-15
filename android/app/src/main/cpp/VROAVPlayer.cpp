@@ -50,14 +50,15 @@ VROAVPlayer::VROAVPlayer() :
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     jclass cls = env->FindClass(AVPlayerClass);
-    jmethodID jmethod = env->GetMethodID(cls, "<init>", "(J)V");
+    jobject jcontext = VROPlatformGetJavaAppContext();
+    jmethodID jmethod = env->GetMethodID(cls, "<init>", "(JLandroid/content/Context;)V");
 
     /**
      * Pass into AVPlayer a long address referencing it's corresponding
      * native object.
      */
     jlong myLongVal = jptr(this);
-    jobject javPlayer = env->NewObject(cls, jmethod, myLongVal);
+    jobject javPlayer = env->NewObject(cls, jmethod, myLongVal, jcontext);
 
     env->DeleteLocalRef(cls);
     _javPlayer = env->NewGlobalRef(javPlayer);

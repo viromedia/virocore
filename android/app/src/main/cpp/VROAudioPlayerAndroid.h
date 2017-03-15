@@ -22,12 +22,11 @@ class VROAudioPlayerAndroid : public VROAudioPlayer,
 
 public:
 
-    // If creating a VROAudioPlayerAndroid w/ data, use the static initializer.
-    static std::shared_ptr<VROAudioPlayerAndroid> create(std::shared_ptr<VROSoundData> data);
-
     VROAudioPlayerAndroid(std::string fileName);
     VROAudioPlayerAndroid(std::shared_ptr<VROSoundData> data);
     virtual ~VROAudioPlayerAndroid();
+
+    void setup();
 
     void setLoop(bool loop);
     void play();
@@ -47,10 +46,9 @@ public:
 
 private:
 
-    void setup();
-
     VROAVPlayer *_player;
     std::shared_ptr<VROSoundData> _data;
+    std::string _fileName;
 
 };
 
