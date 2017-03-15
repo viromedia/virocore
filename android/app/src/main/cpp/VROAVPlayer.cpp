@@ -140,11 +140,9 @@ void VROAVPlayer::bindVideoSink() {
 
 void VROAVPlayer::pause() {
     JNIEnv *env = VROPlatformGetJNIEnv();
-
     jclass cls = env->GetObjectClass(_javPlayer);
     jmethodID jmethod = env->GetMethodID(cls, "pause", "()V");
     env->CallVoidMethod(_javPlayer, jmethod);
-
     env->DeleteLocalRef(cls);
 }
 

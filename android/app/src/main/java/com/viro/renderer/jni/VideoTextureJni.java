@@ -13,14 +13,22 @@ package com.viro.renderer.jni;
 public class VideoTextureJni {
     private static long INVALID_REF = Long.MAX_VALUE;
     protected long mNativeRef = INVALID_REF;
+    protected long mNativeDelegateRef = INVALID_REF;
 
     public VideoTextureJni() {
-        nativeCreateVideoTexture();
+        mNativeRef = nativeCreateVideoTexture();
+        mNativeDelegateRef = nativeCreateVideoDelegate();
+        nativeAttachDelegate(mNativeRef, mNativeDelegateRef);
     }
+
     public void delete() {
         nativeDeleteVideoTexture(mNativeRef);
         mNativeRef = INVALID_REF;
+
+        nativeDeleteVideoDelegate(mNativeDelegateRef);
+        mNativeDelegateRef = INVALID_REF;
     }
+
     public void loadSource(String url, RenderContextJni renderContext){
         nativeLoadSource(mNativeRef, url, renderContext.mNativeRef);
     }
@@ -50,9 +58,12 @@ public class VideoTextureJni {
     /**
      * Native Functions called into JNI
      */
-    public native void nativeCreateVideoTexture();
+    public native long nativeCreateVideoTexture();
+    public native long nativeCreateVideoDelegate();
+    public native void nativeAttachDelegate(long nativeTexture, long nativeDelegate);
     public native void nativeDeleteVideoTexture(long nativeTexture);
-    private native void nativePause(long nativeRennativeTexturederer);
+    public native void nativeDeleteVideoDelegate(long nativeDelegate);
+    private native void nativePause(long nativeTexture);
     private native void nativePlay(long nativeTexture);
     private native void nativeSetMuted(long nativeTexture, boolean muted);
     private native void nativeSetVolume(long nativeTexture, float volume);
@@ -83,8 +94,7 @@ public class VideoTextureJni {
         }
     }
 
-    public void onReady(long ref) {
-        mNativeRef = ref;
+    public void onReady() {
         if (mDelegate != null && mNativeRef != INVALID_REF) {
             mDelegate.onReady();
         }

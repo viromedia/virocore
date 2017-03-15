@@ -101,6 +101,7 @@ void VROVideoTextureiOS::loadVideo(std::string url,
                                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                    VRODriver &driver) {
     
+    frameSynchronizer->removeFrameListener(shared_from_this());
     frameSynchronizer->addFrameListener(shared_from_this());
     
     _player = [AVPlayer playerWithURL:[NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]]];
@@ -120,7 +121,7 @@ void VROVideoTextureiOS::loadVideo(std::string url,
     
     _videoNotificationListener = [[VROVideoNotificationListener alloc] initWithVideoPlayer:_player
                                                                                       loop:_loop
-                                                                             videoDelegate:_delegate];
+                                                                             videoDelegate:_delegate.lock()];
 }
 
 void VROVideoTextureiOS::onFrameWillRender(const VRORenderContext &context) {

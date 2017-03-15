@@ -38,18 +38,18 @@ void VideoDelegate::videoDidFinish() {
     });
 }
 
-void VideoDelegate::onReady(jlong ref) {
+void VideoDelegate::onReady() {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj, ref] {
+    VROPlatformDispatchAsyncApplication([weakObj] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             return;
         }
 
-        VROPlatformCallJavaFunction(weakObj, "onReady", "(J)V", ref);
+        VROPlatformCallJavaFunction(weakObj, "onReady", "()V");
         env->DeleteLocalRef(localObj);
     });
 }

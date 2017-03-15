@@ -28,6 +28,11 @@ public:
     virtual ~VROVideoTextureAVP();
 
     /*
+     Must be invoked from the rendering thread after construction.
+     */
+    void bindSurface();
+
+    /*
      Standard load video function: loads from URL. Frame synchronizer is not
      required (inherited argument from superclass).
      */
@@ -68,8 +73,6 @@ private:
 
     VROAVPlayer *_player;
     GLuint _textureId;
-
-    void bindSurface();
 
 };
 

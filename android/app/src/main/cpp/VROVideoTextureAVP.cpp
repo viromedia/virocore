@@ -14,7 +14,6 @@ VROVideoTextureAVP::VROVideoTextureAVP() :
     VROVideoTexture(VROTextureType::TextureEGLImage),
     _textureId(0) {
     _player = new VROAVPlayer();
-    bindSurface();
 }
 
 VROVideoTextureAVP::~VROVideoTextureAVP() {
@@ -26,13 +25,6 @@ VROVideoTextureAVP::~VROVideoTextureAVP() {
 }
 
 void VROVideoTextureAVP::setDelegate(std::shared_ptr<VROVideoDelegateInternal> delegate) {
-    /*
-     * Store a strong delegate reference within VROVideoTextureAVP
-     * for keeping alive VROVideoDelegateInternal for triggering
-     * callbacks through the JNI bridge. Callbacks are triggered from
-     * within the AVPlayer of which stores a weak reference of
-     * the delegate.
-     */
     VROVideoTexture::setDelegate(delegate);
     std::shared_ptr<VROAVPlayerDelegate> avDelegate = std::dynamic_pointer_cast<VROAVPlayerDelegate>(shared_from_this());
     _player->setDelegate(avDelegate);
@@ -42,6 +34,8 @@ void VROVideoTextureAVP::loadVideo(std::string url,
                                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                    VRODriver &driver) {
     _player->setDataSourceURL(url.c_str());
+
+    frameSynchronizer->removeFrameListener(shared_from_this());
     frameSynchronizer->addFrameListener(shared_from_this());
 }
 
@@ -53,10 +47,14 @@ void VROVideoTextureAVP::loadVideoFromAsset(std::string asset, VRODriver &driver
     _player->setDataSourceAsset(asset.c_str());
 }
 
-void VROVideoTextureAVP::prewarm() { }
+void VROVideoTextureAVP::prewarm() {
+
+}
+
 void VROVideoTextureAVP::onFrameWillRender(const VRORenderContext &context) {
     VROVideoTexture::updateVideoTime();
 }
+
 void VROVideoTextureAVP::onFrameDidRender(const VRORenderContext &context) { }
 
 void VROVideoTextureAVP::play() {
@@ -127,7 +125,8 @@ void VROVideoTextureAVP::onPrepared() {
 }
 
 void VROVideoTextureAVP::onFinished() {
-    if (_delegate) {
-        _delegate->videoDidFinish();
+    std::shared_ptr<VROVideoDelegateInternal> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->videoDidFinish();
     }
 }

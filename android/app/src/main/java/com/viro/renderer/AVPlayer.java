@@ -98,7 +98,7 @@ public class AVPlayer {
 
             return true;
         }catch(IOException e) {
-            Log.w(TAG, "AVPlayer failed to load video at URI [" + resourceOrURL + "]", e);
+            Log.w(TAG, "AVPlayer failed to load video at URL [" + resourceOrURL + "]", e);
             _mediaPlayer.reset();
 
             return false;
@@ -201,7 +201,12 @@ public class AVPlayer {
         _mediaPlayer.seekTo(seconds * 1000);
     }
 
-    public int getCurrentTimeInSeconds(){
+    public int getCurrentTimeInSeconds() {
+        if (_state == State.IDLE) {
+            Log.w(TAG, "AVPlayer " + this + " could not get current time in IDLE state");
+            return 0;
+        }
+
         return _mediaPlayer.getCurrentPosition() / 1000;
     }
 
