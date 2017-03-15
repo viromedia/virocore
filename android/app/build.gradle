@@ -24,6 +24,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "COGNITO_IDENTITY_POOL_ID", "***REMOVED***"
+        }
+        debug {
+            buildConfigField "String", "COGNITO_IDENTITY_POOL_ID", "***REMOVED***"
         }
     }
     externalNativeBuild {
@@ -42,6 +46,12 @@ dependencies {
     compile 'com.google.android.exoplayer:exoplayer:r2.2.0'
     compile project(':libs:gvr')
     compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
+    compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
+    compile 'com.amazonaws:aws-android-sdk-ddb:2.2.+'
+    compile 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.+'
+    compile 'com.amazonaws:aws-android-sdk-cognito:2.2.+'
+    compile 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.2.+'
+
     testCompile 'junit:junit:4.12'
 }
 

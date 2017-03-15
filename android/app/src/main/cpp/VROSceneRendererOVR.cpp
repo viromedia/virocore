@@ -843,7 +843,8 @@ typedef struct
     ovrRenderer			Renderer;
     std::shared_ptr<VRORenderer> vroRenderer;
     std::shared_ptr<VRODriverOpenGLAndroid> driver;
-    bool				UseMultiview;
+    bool                UseMultiview;
+    bool                suspended;
 } ovrApp;
 
 static void ovrApp_Clear( ovrApp * app )
@@ -860,7 +861,7 @@ static void ovrApp_Clear( ovrApp * app )
     app->BackButtonDown = false;
     app->BackButtonDownStartTime = 0.0;
     app->UseMultiview = true;
-
+    app->suspended = false;
     ovrEgl_Clear( &app->Egl );
     ovrRenderer_Clear( &app->Renderer );
 }
@@ -1207,7 +1208,8 @@ enum
     MESSAGE_ON_SURFACE_CREATED,
     MESSAGE_ON_SURFACE_DESTROYED,
     MESSAGE_ON_KEY_EVENT,
-    MESSAGE_ON_TOUCH_EVENT
+    MESSAGE_ON_TOUCH_EVENT,
+    MESSAGE_SUSPEND
 };
 
 struct ovrAppThread
@@ -1299,6 +1301,7 @@ void * AppThreadFunction( void * parm )
                                                                                ovrMessage_GetIntegerParm( &message, 0 ),
                                                                                ovrMessage_GetFloatParm( &message, 1 ),
                                                                                ovrMessage_GetFloatParm( &message, 2 ) ); break; }
+                case MESSAGE_SUSPEND:               {appState.suspended = ovrMessage_GetIntegerParm( &message, 0); break; }
             }
 
             ovrApp_HandleVrModeChanges( &appState );
@@ -1311,6 +1314,10 @@ void * AppThreadFunction( void * parm )
             continue;
         }
 
+        if ( appState.suspended )
+        {
+            continue;
+        }
         // Invoke the frame listeners on the Java side
         java.Env->CallVoidMethod(appThread->view, drawFrameMethod);
 
@@ -1564,5 +1571,12 @@ void VROSceneRendererOVR::onTouchEvent(int action, float x, float y) {
     ovrMessage_SetIntegerParm( &message, 0, action );
     ovrMessage_SetFloatParm( &message, 1, x );
     ovrMessage_SetFloatParm( &message, 2, y );
+    ovrMessageQueue_PostMessage( &_appThread->MessageQueue, &message );
+}
+
+void VROSceneRendererOVR::setSuspended(bool suspendRenderer) {
+    ovrMessage message;
+    ovrMessage_Init( &message, MESSAGE_SUSPEND, MQ_WAIT_NONE );
+    ovrMessage_SetIntegerParm( &message, 0, suspendRenderer );
     ovrMessageQueue_PostMessage( &_appThread->MessageQueue, &message );
 }

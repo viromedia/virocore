@@ -79,7 +79,9 @@ public class RendererJni {
     public String getController() {
         return nativeGetController(mNativeRef);
     }
-
+    public void setSuspended(boolean suspend) {
+       nativeSetSuspended(mNativeRef, suspend);
+    }
     /* ----------     Native methods    ---------- */
 
     private native long nativeCreateRendererGVR(ClassLoader appClassLoader, Context context,
@@ -104,4 +106,5 @@ public class RendererJni {
     private native void nativeSetPointOfView(long nativeRenderer, long nodeRef);
     private native String nativeGetHeadset(long nativeRenderer);
     private native String nativeGetController(long nativeRenderer);
+    private native void nativeSetSuspended(long nativeRenderer, boolean suspendRenderer);
 }

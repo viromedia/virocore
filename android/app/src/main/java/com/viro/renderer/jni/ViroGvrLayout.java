@@ -13,6 +13,7 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,6 +24,8 @@ import com.google.vr.ndk.base.GvrApi;
 import com.google.vr.ndk.base.GvrLayout;
 import com.viro.renderer.FrameListener;
 import com.viro.renderer.GLSurfaceViewQueue;
+import com.viro.renderer.keys.KeyValidationListener;
+import com.viro.renderer.keys.KeyValidator;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -37,6 +40,8 @@ import javax.microedition.khronos.opengles.GL10;
  * the activity lifecycle.
  */
 public class ViroGvrLayout extends GvrLayout implements VrView {
+    private static final String TAG = "Viro";
+
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("gvr");
@@ -50,6 +55,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     private GlListener mGlListener = null;
     private PlatformUtil mPlatformUtil;
     private WeakReference<Activity> mWeakActivity;
+    private KeyValidator mKeyValidator;
 
     // Activity state to restore to before being modified by the renderer.
     private int mSavedSystemUIVisbility;
@@ -86,6 +92,8 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         mNativeRenderContext = new RenderContextJni(mNativeRenderer.mNativeRef);
 
         mGlListener = glListener;
+        mKeyValidator = new KeyValidator(activityContext);
+
         // Add the GLSurfaceView to the GvrLayout.
         glSurfaceView.setEGLContextClientVersion(3);
         glSurfaceView.setEGLConfigChooser(8, 8, 8, 0, 0, 0);
@@ -195,6 +203,16 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         }
 
         mNativeRenderer.setVRModeEnabled(vrModeEnabled);
+    }
+
+    @Override
+    public void validateApiKey(String apiKey) {
+        mKeyValidator.validateKey(apiKey, new KeyValidationListener() {
+            @Override
+            public void onResponse(boolean success) {
+                mNativeRenderer.setSuspended(!success);
+            }
+        });
     }
 
     @Override

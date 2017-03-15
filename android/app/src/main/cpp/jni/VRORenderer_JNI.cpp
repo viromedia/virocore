@@ -234,4 +234,11 @@ JNI_METHOD(jstring, nativeGetController)(JNIEnv *env, jobject obj, jlong nativeR
     return env->NewStringUTF(controller.c_str());
 }
 
+JNI_METHOD(jstring, nativeSetSuspended)(JNIEnv *env,
+                                        jobject obj,
+                                        jlong native_renderer,
+                                        jboolean suspend_renderer) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
+    renderer->setSuspended(suspend_renderer);
+}
 }  // extern "C"

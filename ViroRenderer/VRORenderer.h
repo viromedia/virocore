@@ -82,7 +82,7 @@ public:
 private:
 
     bool _rendererInitialized;
-    
+
     /*
      Manages per-frame listeners.
      */

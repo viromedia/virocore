@@ -34,6 +34,7 @@ VROSceneRendererGVR::VROSceneRendererGVR(gvr_context* gvr_context,
                                                      std::shared_ptr<gvr::AudioApi> gvrAudio) :
     _gvr(gvr::GvrApi::WrapNonOwned(gvr_context)),
     _scratchViewport(_gvr->CreateBufferViewport()),
+    _rendererSuspended(false),
     _vrModeEnabled(true) {
 
     // Create corresponding controllers - cardboard, or daydream if supported.
@@ -88,6 +89,7 @@ void VROSceneRendererGVR::initGL() {
 }
 
 void VROSceneRendererGVR::onDrawFrame() {
+
     // Because we are using 2X MSAA, we can render to half as many pixels and
     // achieve similar quality. If the size changed, resize the framebuffer
     gvr::Sizei recommended_size = halfPixelCount(_gvr->GetMaximumEffectiveRenderTargetSize());
@@ -103,11 +105,22 @@ void VROSceneRendererGVR::onDrawFrame() {
     _headView = _gvr->GetHeadSpaceFromStartSpaceRotation(target_time);
     VROMatrix4f headRotation = VROGVRUtil::toMatrix4f(_headView).invert();
 
-    if (_vrModeEnabled) {
-        renderStereo(headRotation);
-    }
-    else {
-        renderMono(headRotation);
+    if (!_rendererSuspended) {
+
+        if (_vrModeEnabled) {
+            renderStereo(headRotation);
+        }
+        else {
+            renderMono(headRotation);
+        }
+    } else {
+        _viewportList->SetToRecommendedBufferViewports();
+        gvr::Frame frame = _swapchain->AcquireFrame();
+        frame.BindBuffer(0);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        frame.Unbind();
+        frame.Submit(*_viewportList, _headView);
     }
 
     ++_frame;
@@ -263,6 +276,10 @@ void VROSceneRendererGVR::extractViewParameters(gvr::BufferViewport &viewport,
 
 void VROSceneRendererGVR::setVRModeEnabled(bool enabled) {
     _vrModeEnabled = enabled;
+}
+
+void VROSceneRendererGVR::setSuspended(bool suspendRenderer) {
+    _rendererSuspended = suspendRenderer;
 }
 
 

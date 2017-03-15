@@ -45,6 +45,7 @@ public:
     void onTouchEvent(int action, float x, float y);
     void onKeyEvent(int keyCode, int action) {} // Not Required
     void setVRModeEnabled(bool enabled);
+    void setSuspended(bool suspendRenderer);
 
     /*
      Activity lifecycle.
@@ -92,6 +93,7 @@ private:
     gvr::ViewerType _viewerType;
 
     bool _vrModeEnabled;
+    bool _rendererSuspended;
 
     /*
      Utility methods.

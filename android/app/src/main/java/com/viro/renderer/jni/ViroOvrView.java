@@ -8,6 +8,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -17,6 +18,8 @@ import android.view.WindowManager;
 
 import com.viro.renderer.FrameListener;
 import com.viro.renderer.RenderCommandQueue;
+import com.viro.renderer.keys.KeyValidationListener;
+import com.viro.renderer.keys.KeyValidator;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -63,6 +66,7 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     private GlListener mGlListener = null;
     private PlatformUtil mPlatformUtil;
     private WeakReference<Activity> mWeakActivity;
+    private KeyValidator mKeyValidator;
 
     public ViroOvrView(Activity activity, GlListener glListener) {
         super(activity);
@@ -83,6 +87,8 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
         mNativeRenderContext = new RenderContextJni(mNativeRenderer.mNativeRef);
 
         mGlListener = glListener;
+
+        mKeyValidator = new KeyValidator(activityContext);
 
         // Prevent screen from dimming/locking.
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -105,6 +111,17 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     @Override
     public void setVrModeEnabled(boolean vrModeEnabled) {
 
+    }
+
+    @Override
+    public void validateApiKey(String apiKey) {
+
+        mKeyValidator.validateKey(apiKey, new KeyValidationListener() {
+            @Override
+            public void onResponse(boolean success) {
+                mNativeRenderer.setSuspended(!success);
+            }
+        });
     }
 
     @Override

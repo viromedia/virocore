@@ -3,4 +3,13 @@
 /ios/ViroRenderer.xcworkspace/xcuserdata/**
 /ios/Pods/Pods.xcodeproj/xcuserdata/**
 .DS_Store
+
+# Gradle
 android/.idea/misc.xml
+android/.idea/gradle.xml
+android/app/.idea/
+android/app/gradle/
+android/app/local.properties
+android/renderertest/.idea/
+android/renderertest/gradle/
+android/renderertest/local.properties
