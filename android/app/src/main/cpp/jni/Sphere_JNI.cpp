@@ -51,18 +51,17 @@ JNI_METHOD(jlong, nativeCreateSphere)(JNIEnv *env,
 JNI_METHOD(void, nativeDestroySphere)(JNIEnv *env,
                                         jclass clazz,
                                         jlong nativeNode) {
-    VROPlatformDispatchAsyncRenderer([nativeNode] {
-        delete reinterpret_cast<PersistentRef<VRONode> *>(nativeNode);
-    });
+    delete reinterpret_cast<PersistentRef<VRONode> *>(nativeNode);
 }
 
 JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
                                      jclass clazz,
                                      jlong nativeSphere,
                                      jlong nativeNode) {
-    VROPlatformDispatchAsyncRenderer([nativeSphere, nativeNode] {
-        std::shared_ptr<VROSphere> sphereGeometry = Sphere::native(nativeSphere);
-        Node::native(nativeNode)->setGeometry(sphereGeometry);
+    std::shared_ptr<VROSphere> sphereGeometry = Sphere::native(nativeSphere);
+    std::shared_ptr<VRONode> node = Node::native(nativeNode);
+    VROPlatformDispatchAsyncRenderer([sphereGeometry, node] {
+        node->setGeometry(sphereGeometry);
     });
 }
 
@@ -70,9 +69,10 @@ JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
                              jobject obj,
                              jlong sphereRef,
                              jlong textureRef) {
-    VROPlatformDispatchAsyncRenderer([sphereRef, textureRef] {
-        std::shared_ptr<VROVideoTexture> videoTexture = VideoTexture::native(textureRef);
-        std::shared_ptr<VROSphere> sphere = Sphere::native(sphereRef);
+    std::shared_ptr<VROSphere> sphere = Sphere::native(sphereRef);
+    std::shared_ptr<VROVideoTexture> videoTexture = VideoTexture::native(textureRef);
+
+    VROPlatformDispatchAsyncRenderer([sphere, videoTexture] {
         std::shared_ptr<VROMaterial> material;
         if (sphere->getMaterials().size() > 0) {
             // If there's an existing material, make a copy of that so that

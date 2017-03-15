@@ -78,8 +78,11 @@ JNI_METHOD(jlong, nativeCopyAnimation)(JNIEnv *env, jobject obj, jlong nativeRef
 JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeRef, jlong nodeRef) {
     jweak weakObj = env->NewWeakGlobalRef(obj);
 
-    VROPlatformDispatchAsyncRenderer([nativeRef, nodeRef, weakObj] {
-        AnimationGroup::native(nativeRef)->execute(Node::native(nodeRef), [weakObj] {
+    std::shared_ptr<VROAnimationGroup> group = AnimationGroup::native(nativeRef);
+    std::shared_ptr<VRONode> node = Node::native(nodeRef);
+
+    VROPlatformDispatchAsyncRenderer([group, node, weakObj] {
+        group->execute(node, [weakObj] {
             JNIEnv *env = VROPlatformGetJNIEnv();
             jobject obj = env->NewLocalRef(weakObj);
 
@@ -108,27 +111,28 @@ JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeR
 }
 
 JNI_METHOD(void, nativePauseAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
-    VROPlatformDispatchAsyncRenderer([nativeRef] {
-        AnimationGroup::native(nativeRef)->pause();
+    std::shared_ptr<VROAnimationGroup> group = AnimationGroup::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([group] {
+        group->pause();
     });
 }
 
 JNI_METHOD(void, nativeResumeAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
-    VROPlatformDispatchAsyncRenderer([nativeRef] {
-        AnimationGroup::native(nativeRef)->resume();
+    std::shared_ptr<VROAnimationGroup> group = AnimationGroup::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([group] {
+        group->resume();
     });
 }
 
 JNI_METHOD(void, nativeTerminateAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
-    VROPlatformDispatchAsyncRenderer([nativeRef] {
-        AnimationGroup::native(nativeRef)->terminate();
+    std::shared_ptr<VROAnimationGroup> group = AnimationGroup::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([group] {
+        group->terminate();
     });
 }
 
 JNI_METHOD(void, nativeDestroyAnimationGroup)(JNIEnv *env, jobject obj, jlong nativeRef) {
-    VROPlatformDispatchAsyncRenderer([nativeRef] {
-        delete reinterpret_cast<PersistentRef<VROAnimationGroup> *>(nativeRef);
-    });
+    delete reinterpret_cast<PersistentRef<VROAnimationGroup> *>(nativeRef);
 }
 
 } // extern "C"

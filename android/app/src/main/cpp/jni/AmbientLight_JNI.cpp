@@ -47,18 +47,18 @@ JNI_METHOD(jlong, nativeCreateAmbientLight)(JNIEnv *env,
 JNI_METHOD(void, nativeDestroyAmbientLight)(JNIEnv *env,
                                    jclass clazz,
                                    jlong nativeLightRef) {
-    VROPlatformDispatchAsyncRenderer([nativeLightRef] {
-        delete reinterpret_cast<PersistentRef<VROLight> *>(nativeLightRef);
-    });
+    delete reinterpret_cast<PersistentRef<VROLight> *>(nativeLightRef);
 }
 
 JNI_METHOD(void, nativeAddToNode)(JNIEnv *env,
                                      jclass clazz,
                                      jlong native_light_ref,
                                      jlong native_node_ref) {
-    VROPlatformDispatchAsyncRenderer([native_light_ref, native_node_ref] {
-        std::shared_ptr<VROLight> light = AmbientLight::native(native_light_ref);
-        Node::native(native_node_ref)->addLight(light);
+
+    std::shared_ptr<VROLight> light = AmbientLight::native(native_light_ref);
+    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([light, node] {
+        node->addLight(light);
     });
 }
 
@@ -66,9 +66,10 @@ JNI_METHOD(void, nativeRemoveFromNode)(JNIEnv *env,
                                        jclass clazz,
                                        jlong native_light_ref,
                                        jlong native_node_ref) {
-    VROPlatformDispatchAsyncRenderer([native_light_ref, native_node_ref] {
-        std::shared_ptr<VROLight> light = AmbientLight::native(native_light_ref);
-        Node::native(native_node_ref)->removeLight(light);
+    std::shared_ptr<VROLight> light = AmbientLight::native(native_light_ref);
+    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node, light] {
+        node->removeLight(light);
     });
 }
 
@@ -76,9 +77,9 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env,
                                        jclass clazz,
                                        jlong native_light_ref,
                                        jlong color) {
-    VROPlatformDispatchAsyncRenderer([native_light_ref, color] {
-        std::shared_ptr<VROLight> light = AmbientLight::native(native_light_ref);
+    std::shared_ptr<VROLight> light = AmbientLight::native(native_light_ref);
 
+    VROPlatformDispatchAsyncRenderer([light, color] {
         // Get the color
         float r = ((color >> 16) & 0xFF) / 255.0;
         float g = ((color >> 8) & 0xFF) / 255.0;

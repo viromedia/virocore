@@ -28,9 +28,7 @@ JNI_METHOD(jlong, nativeCreateRenderContext)(JNIEnv *env,
 JNI_METHOD(void, nativeDeleteRenderContext)(JNIEnv *env,
                                             jobject obj,
                                             jlong native_render_context_ref) {
-    VROPlatformDispatchAsyncRenderer([native_render_context_ref] {
-        delete reinterpret_cast<PersistentRef<RenderContext> *>(native_render_context_ref);
-    });
+    delete reinterpret_cast<PersistentRef<RenderContext> *>(native_render_context_ref);
 }
 
 JNI_METHOD(void, nativeGetCameraPosition)(JNIEnv *env,
@@ -38,15 +36,15 @@ JNI_METHOD(void, nativeGetCameraPosition)(JNIEnv *env,
                                                  jlong native_render_context_ref,
                                                  jobject callback) {
     jweak weakCallback = env->NewWeakGlobalRef(callback);
+    std::shared_ptr<RenderContext> helperContext = RenderContext::native(native_render_context_ref);
 
-    VROPlatformDispatchAsyncRenderer([native_render_context_ref, weakCallback] {
+    VROPlatformDispatchAsyncRenderer([helperContext, weakCallback] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject jCallback = env->NewLocalRef(weakCallback);
         if (jCallback == NULL) {
             return;
         }
 
-        std::shared_ptr<RenderContext> helperContext = RenderContext::native(native_render_context_ref);
         std::shared_ptr<VRORenderContext> context = helperContext->getContext();
         VROVector3f position = context->getCamera().getPosition();
 

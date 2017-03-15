@@ -88,19 +88,19 @@ JNI_METHOD(jlong, nativeLoadOBJFromUrl)(JNIEnv *env,
 JNI_METHOD(void, nativeDestroyNode)(JNIEnv *env,
                                    jclass clazz,
                                    jlong native_node_ref) {
-    VROPlatformDispatchAsyncRenderer([native_node_ref] {
-        delete reinterpret_cast<PersistentRef<VRONode> *>(native_node_ref);
-    });
+    delete reinterpret_cast<PersistentRef<VRONode> *>(native_node_ref);
 }
 
 JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
                                      jclass clazz,
                                      jlong native_object_ref,
                                      jlong native_node_ref) {
-     VROPlatformDispatchAsyncRenderer([native_object_ref, native_node_ref] {
-         std::shared_ptr<VRONode> nodeWithObj = Node::native(native_object_ref);
+    std::shared_ptr<VRONode> nodeWithObj = Node::native(native_object_ref);
+    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
+
+    VROPlatformDispatchAsyncRenderer([nodeWithObj, node] {
          std::shared_ptr<VROGeometry> geometry = nodeWithObj->getGeometry();
-         Node::native(native_node_ref)->setGeometry(geometry);
+         node->setGeometry(geometry);
      });
 }
 

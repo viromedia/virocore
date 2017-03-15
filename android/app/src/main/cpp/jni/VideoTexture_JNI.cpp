@@ -59,18 +59,13 @@ JNI_METHOD(void, nativeAttachDelegate)(JNIEnv *env,
 JNI_METHOD(void, nativeDeleteVideoTexture)(JNIEnv *env,
                                             jclass clazz,
                                             jlong textureRef) {
-    VROPlatformDispatchAsyncRenderer([textureRef] {
-        std::shared_ptr<VROVideoTextureAVP> ptr = VideoTexture::native(textureRef);
-        delete reinterpret_cast<PersistentRef<VROVideoTextureAVP> *>(textureRef);
-    });
+    delete reinterpret_cast<PersistentRef<VROVideoTextureAVP> *>(textureRef);
 }
 
 JNI_METHOD(void, nativeDeleteVideoDelegate)(JNIEnv *env,
                                              jobject object,
                                              jlong delegateRef) {
-    VROPlatformDispatchAsyncRenderer([delegateRef] {
-        delete reinterpret_cast<PersistentRef<VideoDelegate> *>(delegateRef);
-    });
+    delete reinterpret_cast<PersistentRef<VideoDelegate> *>(delegateRef);
 }
 
 JNI_METHOD(void, nativePause)(JNIEnv *env,
@@ -146,9 +141,9 @@ JNI_METHOD(void, nativeLoadSource)(JNIEnv *env,
     std::string strVideoSource(cVideoSource);
 
     std::shared_ptr<VROVideoTextureAVP> videoTexture = VideoTexture::native(textureRef);
+    std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
 
-    VROPlatformDispatchAsyncRenderer([videoTexture, renderContextRef, strVideoSource] {
-        std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
+    VROPlatformDispatchAsyncRenderer([videoTexture, renderContext, strVideoSource] {
         std::shared_ptr<VROFrameSynchronizer> frameSynchronizer = renderContext->getFrameSynchronizer();
         std::shared_ptr<VRODriver> driver = renderContext->getDriver();
         videoTexture->loadVideo(strVideoSource, frameSynchronizer, *driver.get());

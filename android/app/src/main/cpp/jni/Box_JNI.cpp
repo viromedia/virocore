@@ -43,19 +43,18 @@ JNI_METHOD(jlong, nativeCreateBox)(JNIEnv *env,
 JNI_METHOD(void, nativeDestroyBox)(JNIEnv *env,
                                         jclass clazz,
                                         jlong nativeBoxRef) {
-    VROPlatformDispatchAsyncRenderer([nativeBoxRef] {
-        delete reinterpret_cast<PersistentRef<VROBox> *>(nativeBoxRef);
-    });
+    delete reinterpret_cast<PersistentRef<VROBox> *>(nativeBoxRef);
 }
 
 JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
                                      jclass clazz,
                                      jlong native_box_ref,
                                      jlong native_node_ref) {
-    VROPlatformDispatchAsyncRenderer([native_box_ref, native_node_ref] {
-        Node::native(native_node_ref)->setGeometry(Box::native(native_box_ref));
+    std::shared_ptr<VROBox> box = Box::native(native_box_ref);
+    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([box, node] {
+        node->setGeometry(box);
     });
-
 }
 
 }  // extern "C"

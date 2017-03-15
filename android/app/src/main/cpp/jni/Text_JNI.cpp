@@ -140,13 +140,15 @@ JNI_METHOD(void, nativeCreateText)(JNIEnv *env,
     std::string strFontFamilyName(cStrFontFamilyName);
     env->ReleaseStringUTFChars(fontFamilyName, cStrFontFamilyName);
 
+    std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
+    std::shared_ptr<VRONode> parentNode = Node::native(parentNodeRef);
+
     // create text on the renderer thread
-    VROPlatformDispatchAsyncRenderer([parentNodeRef, renderContextRef, delegateRef, strFontFamilyName, size,
+    VROPlatformDispatchAsyncRenderer([parentNode, renderContext, delegateRef, strFontFamilyName, size,
                                              strText, vecColor, width, height,
                                              horizontalAlignmentEnum, verticalAlignmentEnum,
                                              lineBreakModeEnum, clipModeEnum, maxLines] {
         // Grab driver from the RenderContext required for initializing typeface
-        std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
         std::shared_ptr<VRODriver> driver = renderContext->getDriver();
 
         // create typeface
@@ -157,7 +159,7 @@ JNI_METHOD(void, nativeCreateText)(JNIEnv *env,
                                                                verticalAlignmentEnum, lineBreakModeEnum,
                                                                clipModeEnum, maxLines);
 
-        Node::native(parentNodeRef)->setGeometry(vroText);
+        parentNode->setGeometry(vroText);
         delegateRef->textCreated(Text::jptr(vroText));
    });
 }
