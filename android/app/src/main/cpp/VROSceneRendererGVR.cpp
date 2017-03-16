@@ -24,6 +24,7 @@
 #include "VROReticle.h"
 #include "VROInputControllerDaydream.h"
 #include "VROInputControllerCardboard.h"
+#include "VROAllocationTracker.h"
 
 static const uint64_t kPredictionTimeWithoutVsyncNanos = 50000000;
 
@@ -110,6 +111,7 @@ void VROSceneRendererGVR::onDrawFrame() {
     }
 
     ++_frame;
+    ALLOCATION_TRACKER_PRINT();
 }
 
 // For stereo rendering we use GVR's swapchain, which provides async projection
