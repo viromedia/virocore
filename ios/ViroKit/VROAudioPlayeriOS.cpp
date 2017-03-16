@@ -17,25 +17,9 @@ VROAudioPlayeriOS::VROAudioPlayeriOS(std::string url, bool isLocalUrl) :
     _muted(false),
     _paused(false),
     _loop(false),
-    _isLocal(isLocalUrl) {
+    _isLocal(isLocalUrl),
+    _url(url) {
         
-    if (isLocalUrl) {
-      NSURL *localUrlObj =[NSURL fileURLWithPath:[NSString stringWithUTF8String:url.c_str()]];
-      _player = [[AVAudioPlayer alloc] initWithContentsOfURL:localUrlObj error:NULL];
-      [_player prepareToPlay];
-    }
-    else {
-        // download to file
-        NSURL *urlObj = [NSURL URLWithString:[NSString stringWithUTF8String:url.c_str()]];
-        VROPlatformDownloadDataWithURL(urlObj, ^(NSData *data, NSError *error) {
-            _player = [[AVAudioPlayer alloc] initWithData:data error:NULL];
-            updatePlayerProperties();
-            
-            _audioDelegate = [[VROAudioPlayerDelegate alloc] initWithSoundDelegate:_delegate];
-            _player.delegate = _audioDelegate;
-            _delegate->soundIsReady();
-        });
-    }
 }
 
 VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROData> data) :
@@ -49,12 +33,6 @@ VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROData> data) :
     [_player prepareToPlay];
 }
 
-std::shared_ptr<VROAudioPlayeriOS> VROAudioPlayeriOS::create(std::shared_ptr<VROSoundData> data) {
-    std::shared_ptr<VROAudioPlayeriOS> player = std::make_shared<VROAudioPlayeriOS>(data);
-    player->setup();
-    return player;
-}
-
 VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROSoundData> data) :
     _playVolume(1.0),
     _muted(false),
@@ -64,17 +42,38 @@ VROAudioPlayeriOS::VROAudioPlayeriOS(std::shared_ptr<VROSoundData> data) :
     _data = data;
 }
 
-
 void VROAudioPlayeriOS::setDelegate(std::shared_ptr<VROSoundDelegateInternal> delegate) {
-  _delegate = delegate;
-  if(_isLocal) {
-    _delegate->soundIsReady();
-  }
+    _delegate = delegate;
 }
 
 void VROAudioPlayeriOS::setup() {
     if (_data) {
         _data->setDelegate(shared_from_this());
+    }
+    else if (!_url.empty()) {
+        if (_isLocal) {
+            NSURL *localUrlObj =[NSURL fileURLWithPath:[NSString stringWithUTF8String:_url.c_str()]];
+            _player = [[AVAudioPlayer alloc] initWithContentsOfURL:localUrlObj error:NULL];
+            [_player prepareToPlay];
+        }
+        else {
+            // Need shared pointer to prevent this object from deleted underneath us
+            std::shared_ptr<VROAudioPlayeriOS> shared = shared_from_this();
+            
+            NSURL *urlObj = [NSURL URLWithString:[NSString stringWithUTF8String:_url.c_str()]];
+            VROPlatformDownloadDataWithURL(urlObj, ^(NSData *data, NSError *error) {
+                shared->_player = [[AVAudioPlayer alloc] initWithData:data error:NULL];
+                shared->updatePlayerProperties();
+                
+                shared->_audioDelegate = [[VROAudioPlayerDelegate alloc] initWithSoundDelegate:_delegate];
+                shared->_player.delegate = _audioDelegate;
+                shared->_delegate->soundIsReady();
+            });
+        }
+    }
+    
+    if(_isLocal) {
+        _delegate->soundIsReady();
     }
 }
 

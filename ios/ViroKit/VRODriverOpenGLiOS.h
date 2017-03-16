@@ -46,14 +46,13 @@ public:
         return sound;
     }
 
-    
     std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::string path, bool isLocal) {
         // TODO: VIRO-756 make use of local flag (always assumes it's a web file)
         return std::make_shared<VROAudioPlayeriOS>(path, isLocal);
     }
 
     std::shared_ptr<VROAudioPlayer> newAudioPlayer(std::shared_ptr<VROSoundData> data) {
-        return VROAudioPlayeriOS::create(data);
+        return std::make_shared<VROAudioPlayeriOS>(data);
     }
     
     std::shared_ptr<VROTypeface> newTypeface(std::string typefaceName, int size) {
