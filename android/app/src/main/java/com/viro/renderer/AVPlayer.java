@@ -3,7 +3,6 @@
  */
 package com.viro.renderer;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
@@ -32,6 +31,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 import java.io.IOException;
@@ -126,23 +126,30 @@ public class AVPlayer {
         });
     }
 
-    public boolean setDataSourceURL(String resourceOrURL, Context context) {
+    public boolean setDataSourceURL(String resourceOrURL, final Context context) {
         try {
             reset();
 
             Uri uri = Uri.parse(resourceOrURL);
-            if (resourceOrURL.startsWith("res")) {
-                // The MediaPlayer doesn't like resources in the form res:/#######
-                // so we need to convert it to: android.resource://[package]/[res id]
-                uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
-                        + context.getPackageName() + uri.getPath());
-            }
-
-            Log.i(TAG, "AVPlayer setting URL to ["  + uri + "]");
-
-            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
-                    Util.getUserAgent(context, "ViroAVPlayer"), new DefaultBandwidthMeter());
+            DataSource.Factory dataSourceFactory;
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+            if (resourceOrURL.startsWith("res")) {
+                // the uri we get is in the form res:/#######, so we want the path
+                // which is `/#######`, and the id is the path minus the first char
+                int id = Integer.parseInt(uri.getPath().substring(1));
+                uri = RawResourceDataSource.buildRawResourceUri(id);
+                dataSourceFactory = new DataSource.Factory() {
+                    @Override
+                    public DataSource createDataSource() {
+                        return new RawResourceDataSource(context, null);
+                    }
+                };
+            } else {
+                dataSourceFactory = new DefaultDataSourceFactory(context,
+                        Util.getUserAgent(context, "ViroAVPlayer"), new DefaultBandwidthMeter());
+            }
+            Log.i(TAG, "AVPlayer setting URL to [" + uri + "]");
+
             MediaSource mediaSource = new ExtractorMediaSource(uri, dataSourceFactory, extractorsFactory,
                     null, null);
 
