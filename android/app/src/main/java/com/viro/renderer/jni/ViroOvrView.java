@@ -8,7 +8,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -206,20 +207,12 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        if (mWeakActivity.get() != activity){
-            return;
-        }
-
-        Application app = (Application) activity.getApplicationContext();
-        app.unregisterActivityLifecycleCallbacks(this);
-
-        destroy();
+        //No-op
     }
 
     @Override
     public void destroy() {
-        mNativeRenderContext.delete();
-        mNativeRenderer.destroy();
+        //No-op
     }
 
     @Override
@@ -266,6 +259,16 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         mNativeRenderer.onSurfaceDestroyed(holder.getSurface());
+
+        mNativeRenderContext.delete();
+        mNativeRenderer.destroy();
+
+        final Activity activity = mWeakActivity.get();
+        if (activity != null){
+            return;
+        }
+        Application app = (Application)activity.getApplicationContext();
+        app.unregisterActivityLifecycleCallbacks(this);
     }
 
     // Accessed by Native code (VROSceneRendererOVR.cpp)
@@ -286,6 +289,26 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
                                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        refreshActivityLayout();
     }
 
+
+    private void refreshActivityLayout(){
+        Runnable myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                View view = ((Activity)getContext()).findViewById(android.R.id.content);
+                if (view != null){
+                    // The size of the activity's root view has changed since we have
+                    // manually removed the toolbar to enter full screen. Thus, call
+                    // requestLayout to re-measure the view sizes.
+                    view.requestLayout();
+
+                    // To be certain a relayout will result in a redraw, we call invalidate
+                    view.invalidate();
+                }
+            }
+        };
+        new Handler(Looper.getMainLooper()).post(myRunnable);
+    }
 }
