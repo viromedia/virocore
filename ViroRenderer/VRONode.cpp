@@ -106,7 +106,8 @@ void VRONode::updateSortKeys(uint32_t depth, VRORenderParameters &params,
     std::stack<VROMatrix4f> &transforms = params.transforms;
     std::stack<float> &opacities = params.opacities;
     std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
-    std::stack<int> &hierarchical = params.hierarchical;
+    std::stack<int> &hierarchyDepths = params.hierarchyDepths;
+    std::stack<float> &distancesFromCamera = params.distancesFromCamera;
     
     /*
      Compute the specific parameters for this node.
@@ -133,27 +134,33 @@ void VRONode::updateSortKeys(uint32_t depth, VRORenderParameters &params,
      used hierarchical rendering.
      */
     int hierarchyDepth = 0;
-    int parentHierarchyDepth = hierarchical.top();
+    int parentHierarchyDepth = hierarchyDepths.top();
+    float parentDistanceFromCamera = distancesFromCamera.top();
     
     bool isParentHierarchical = (parentHierarchyDepth >= 0);
     bool isHierarchical = _hierarchicalRendering || isParentHierarchical;
     bool isTopOfHierarchy = _hierarchicalRendering && !isParentHierarchical;
     
     int hierarchyId = 0;
+    float distanceFromCamera = 0;
     
     if (isHierarchical) {
         hierarchyDepth = parentHierarchyDepth + 1;
-        hierarchical.push(hierarchyDepth);
+        hierarchyDepths.push(hierarchyDepth);
         
         if (isTopOfHierarchy) {
             hierarchyId = ++params.hierarchyId;
         }
         else {
             hierarchyId = params.hierarchyId;
+
+            // All children of a hierarchy share the same distance from the camera.
+            // This ensures the sort remains stable.
+            distanceFromCamera = parentDistanceFromCamera;
         }
     }
     else {
-        hierarchical.push(-1);
+        hierarchyDepths.push(-1);
     }
     
     /*
@@ -161,7 +168,9 @@ void VRONode::updateSortKeys(uint32_t depth, VRORenderParameters &params,
      */
     if (_geometry) {
         int lightsHash = VROLight::hashLights(lights);
-        float distanceFromCamera = getTransformedPosition().distance(context.getCamera().getPosition());
+        if (!isHierarchical || isTopOfHierarchy) {
+            distanceFromCamera = getTransformedPosition().distance(context.getCamera().getPosition());
+        }
         _geometry->updateSortKeys(this, hierarchyId, hierarchyDepth, lightsHash, _computedOpacity,
                                   distanceFromCamera, context.getZFar(), driver);
         
@@ -177,6 +186,8 @@ void VRONode::updateSortKeys(uint32_t depth, VRORenderParameters &params,
               sDebugSortIndex, _computedPosition.x, _computedPosition.y, _computedPosition.z,
               hierarchyDepth, 0.0, depth, hierarchyId);
     }
+
+    distancesFromCamera.push(distanceFromCamera);
     sDebugSortIndex++;
     
     /*
@@ -191,7 +202,8 @@ void VRONode::updateSortKeys(uint32_t depth, VRORenderParameters &params,
     for (int i = 0; i < _lights.size(); i++) {
         lights.pop_back();
     }
-    hierarchical.pop();
+    hierarchyDepths.pop();
+    distancesFromCamera.pop();
 }
 
 void VRONode::getSortKeys(std::vector<VROSortKey> *outKeys) {

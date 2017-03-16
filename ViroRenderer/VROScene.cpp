@@ -110,8 +110,9 @@ void VROScene::updateSortKeys(const VRORenderContext &context, VRODriver &driver
     VRORenderParameters renderParams;
     renderParams.transforms.push(identity);
     renderParams.opacities.push(1.0);
-    renderParams.hierarchical.push(-1);
+    renderParams.hierarchyDepths.push(-1);
     renderParams.hierarchyId = 0;
+    renderParams.distancesFromCamera.push(0);
     
     for (std::shared_ptr<VRONode> &node : _nodes) {
         node->updateSortKeys(0, renderParams, context, driver);

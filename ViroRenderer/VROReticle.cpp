@@ -126,8 +126,9 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext *renderContext
     }
     
     renderParams.opacities.push(1.0);
-    renderParams.hierarchical.push(-1);
+    renderParams.hierarchyDepths.push(-1);
     renderParams.hierarchyId = 0;
+    renderParams.distancesFromCamera.push(0);
     
     _node->updateSortKeys(0, renderParams, *renderContext, *driver);
 
