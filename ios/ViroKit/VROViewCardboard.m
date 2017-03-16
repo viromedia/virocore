@@ -16,6 +16,7 @@
 #import "VROViewport.h"
 #import "VROReticle.h"
 #import "VROApiKeyValidatorDynamo.h"
+#import "VROAllocationTracker.h"
 #import "VRORenderDelegateiOS.h"
 #import "VROInputControllerCardboardiOS.h"
 
@@ -80,10 +81,6 @@
     self.vrModeEnabled = enabled;
 }
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
 - (void)willMoveToWindow:(UIWindow *)newWindow {
     if (newWindow) {
         /*
@@ -109,9 +106,18 @@
 - (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROViewValidApiKeyBlock)completionBlock {
     // If the user gives us a key, then let them use the API until we successfully checked the key.
     self.sceneRenderer->setSuspended(false);
+  
+    __weak typeof(self) weakSelf = self;
+  
     VROApiKeyValidatorBlock validatorCompletionBlock = ^(BOOL valid) {
-        self.sceneRenderer->setSuspended(!valid);
+        typeof(weakSelf) strongSelf = weakSelf;
+        if (!strongSelf) {
+          return;
+        }
+      
+        strongSelf.sceneRenderer->setSuspended(!valid);
         completionBlock(valid);
+      
         NSLog(@"[ApiKeyValidator] The key is %@!", valid ? @"valid" : @"invalid");
     };
     [self.keyValidator validateApiKey:apiKey withCompletionBlock:validatorCompletionBlock];
@@ -188,6 +194,7 @@
     VROFieldOfView fov = { (float)gvrFOV.left, (float)gvrFOV.right, (float)gvrFOV.bottom, (float)gvrFOV.top };
     
     self.sceneRenderer->prepareFrame(self.viewport, fov, headTransform);
+    ALLOCATION_TRACKER_PRINT();
 }
 
 - (void)cardboardView:(GVRCardboardView *)cardboardView

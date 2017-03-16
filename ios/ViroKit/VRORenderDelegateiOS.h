@@ -50,7 +50,7 @@ public:
 
 private:
     
-    id<VRORenderDelegate> _delegate;
+    __weak id<VRORenderDelegate> _delegate;
     
 };
 
