@@ -16,7 +16,6 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -25,16 +24,12 @@ import com.google.vr.ndk.base.GvrApi;
 import com.google.vr.ndk.base.GvrLayout;
 import com.viro.renderer.FrameListener;
 import com.viro.renderer.GLSurfaceViewQueue;
-import com.viro.renderer.RenderCommandQueue;
 import com.viro.renderer.keys.KeyValidationListener;
 import com.viro.renderer.keys.KeyValidator;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -65,8 +60,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     // Activity state to restore to before being modified by the renderer.
     private int mSavedSystemUIVisbility;
     private int mSavedOrientation;
-    private SurfaceHolderCallbackGVR lol = new SurfaceHolderCallbackGVR();
-    private View.OnSystemUiVisibilityChangeListener mSystemVisibilityListener;
+    private OnSystemUiVisibilityChangeListener mSystemVisibilityListener;
 
     private static class ViroSurfaceViewRenderer implements GLSurfaceView.Renderer {
 
@@ -142,25 +136,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         }
     }
 
-    static class SurfaceHolderCallbackGVR implements SurfaceHolder.Callback {
-
-        @Override
-        public void surfaceCreated(SurfaceHolder holder) {
-            Log.e("Daniel","surfaceCreated ");
-        }
-
-        @Override
-        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
-        }
-
-        @Override
-        public void surfaceDestroyed(SurfaceHolder holder) {
-            Log.e("Daniel","surfaceDestroyed ");
-        }
-    }
-
-
     private static class ViroOnTouchListener implements OnTouchListener {
 
         private WeakReference<ViroGvrLayout> mView;
@@ -223,7 +198,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         glSurfaceView.setPreserveEGLContextOnPause(true);
         glSurfaceView.setRenderer(new ViroSurfaceViewRenderer(this, glSurfaceView));
         glSurfaceView.setOnTouchListener(new ViroOnTouchListener(this));
-        glSurfaceView.getHolder().addCallback(lol);
 
         setPresentationView(glSurfaceView);
 
@@ -321,7 +295,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         if (mWeakActivity.get() != activity){
             return;
         }
-        Log.e("Daniel"," onActivityPaused");
 
         mNativeRenderer.onPause();
         super.onPause();
@@ -332,7 +305,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         if (mWeakActivity.get() != activity){
             return;
         }
-        Log.e("Daniel"," onActivityResumed");
 
         mNativeRenderer.onResume();
 
@@ -346,7 +318,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         if (mWeakActivity.get() != activity){
             return;
         }
-        Log.e("Daniel"," onActivityDestroyed");
 
         activity.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(null);
@@ -428,7 +399,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         if (mWeakActivity.get() != activity){
             return;
         }
-        Log.e("Daniel"," onActivityStarted");
 
         mNativeRenderer.onStart();
     }
@@ -438,7 +408,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         if (mWeakActivity.get() != activity){
             return;
         }
-        Log.e("Daniel"," onActivityStopped");
 
         mNativeRenderer.onStop();
     }
