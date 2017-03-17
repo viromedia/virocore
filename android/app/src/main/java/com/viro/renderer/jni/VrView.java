@@ -26,4 +26,7 @@ public interface VrView extends Application.ActivityLifecycleCallbacks {
     public String getController();
 
     public void validateApiKey(String apiKey);
+
+    public void destroy();
+    
 }

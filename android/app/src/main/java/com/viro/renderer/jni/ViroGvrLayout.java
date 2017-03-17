@@ -319,6 +319,11 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
             return;
         }
 
+        destroy();
+    }
+
+    @Override
+    public void destroy() {
         super.shutdown();
         mNativeRenderContext.delete();
         mNativeRenderer.destroy();
@@ -327,8 +332,11 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         activity.setRequestedOrientation(mSavedOrientation);
         unSetImmersiveSticky();
 
-        Application app = (Application)activity.getApplicationContext();
-        app.unregisterActivityLifecycleCallbacks(this);
+        Activity activity = mWeakActivity.get();
+        if (activity != null) {
+            Application app = (Application) activity.getApplicationContext();
+            app.unregisterActivityLifecycleCallbacks(this);
+        }
     }
 
     @Override
