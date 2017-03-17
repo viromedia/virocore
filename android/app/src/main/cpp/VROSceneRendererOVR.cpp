@@ -19,6 +19,7 @@
 #include <android/native_window_jni.h>	// for native window JNI
 #include <android/input.h>
 #include "VROPlatformUtil.h"
+#include "VROAllocationTracker.h"
 
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
@@ -800,6 +801,7 @@ static ovrFrameParms ovrRenderer_RenderFrame( ovrRenderer * rendererOVR, const o
     }
 
     renderer->endFrame(*driver.get());
+    ALLOCATION_TRACKER_PRINT();
 
     for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
     {
