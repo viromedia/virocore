@@ -69,10 +69,15 @@ JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
                                      jclass clazz,
                                      jlong surfaceRef,
                                      jlong nodeRef) {
-    std::shared_ptr<VROSurface> surface = Surface::native(surfaceRef);
-    std::shared_ptr<VRONode> node = Node::native(nodeRef);
-    VROPlatformDispatchAsyncRenderer([surface, node] {
-        node->setGeometry(surface);
+    std::weak_ptr<VROSurface> surface_w = Surface::native(surfaceRef);
+    std::weak_ptr<VRONode> node_w = Node::native(nodeRef);
+
+    VROPlatformDispatchAsyncRenderer([surface_w, node_w] {
+        std::shared_ptr<VROSurface> surface = surface_w.lock();
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && surface) {
+            node->setGeometry(surface);
+        }
     });
 }
 
@@ -80,10 +85,19 @@ JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
                                         jobject obj,
                                         jlong surfaceRef,
                                         jlong textureRef) {
-    std::shared_ptr<VROSurface> surface = Surface::native(surfaceRef);
-    std::shared_ptr<VROVideoTexture> videoTexture = VideoTexture::native(textureRef);
+    std::weak_ptr<VROSurface> surface_w = Surface::native(surfaceRef);
+    std::weak_ptr<VROVideoTexture> videoTexture_w = VideoTexture::native(textureRef);
 
-    VROPlatformDispatchAsyncRenderer([surface, videoTexture] {
+    VROPlatformDispatchAsyncRenderer([surface_w, videoTexture_w] {
+        std::shared_ptr<VROSurface> surface = surface_w.lock();
+        if (!surface) {
+            return;
+        }
+        std::shared_ptr<VROVideoTexture> videoTexture = videoTexture_w.lock();
+        if (!videoTexture) {
+            return;
+        }
+
         passert (!surface->getMaterials().empty());
 
         std::shared_ptr<VROMaterial> &material = surface->getMaterials().front();
@@ -95,10 +109,18 @@ JNI_METHOD(void, nativeSetImageTexture)(JNIEnv *env,
                                         jobject obj,
                                         jlong surfaceRef,
                                         jlong textureRef) {
-    std::shared_ptr<VROTexture> imageTexture = Texture::native(textureRef);
-    std::shared_ptr<VROSurface> surface = Surface::native(surfaceRef);
+    std::weak_ptr<VROTexture> imageTexture_w = Texture::native(textureRef);
+    std::weak_ptr<VROSurface> surface_w = Surface::native(surfaceRef);
 
-    VROPlatformDispatchAsyncRenderer([surface, imageTexture] {
+    VROPlatformDispatchAsyncRenderer([surface_w, imageTexture_w] {
+        std::shared_ptr<VROSurface> surface = surface_w.lock();
+        if (!surface) {
+            return;
+        }
+        std::shared_ptr<VROTexture> imageTexture = imageTexture_w.lock();
+        if (!imageTexture) {
+            return;
+        }
         passert (!surface->getMaterials().empty());
 
         std::shared_ptr<VROMaterial> &material = surface->getMaterials().front();
@@ -110,10 +132,19 @@ JNI_METHOD(void, nativeSetMaterial)(JNIEnv *env,
                                     jobject obj,
                                     jlong surfaceRef,
                                     jlong materialRef) {
-    std::shared_ptr<VROMaterial> mat = Material::native(materialRef);
-    std::shared_ptr<VROSurface> surface = Surface::native(surfaceRef);
+    std::weak_ptr<VROMaterial> mat_w = Material::native(materialRef);
+    std::weak_ptr<VROSurface> surface_w = Surface::native(surfaceRef);
 
-    VROPlatformDispatchAsyncRenderer([surface, mat] {
+    VROPlatformDispatchAsyncRenderer([surface_w, mat_w] {
+        std::shared_ptr<VROSurface> surface = surface_w.lock();
+        if (!surface) {
+            return;
+        }
+        std::shared_ptr<VROMaterial> mat = mat_w.lock();
+        if (!mat) {
+            return;
+        }
+
         // Copy the defined material into the surface material
         surface->getMaterials().front()->copyFrom(mat);
     });
@@ -122,8 +153,12 @@ JNI_METHOD(void, nativeSetMaterial)(JNIEnv *env,
 JNI_METHOD(void, nativeClearMaterial)(JNIEnv *env,
                                       jobject obj,
                                       jlong surfaceRef) {
-    std::shared_ptr<VROSurface> surface = Surface::native(surfaceRef);
-    VROPlatformDispatchAsyncRenderer([surface] {
+    std::weak_ptr<VROSurface> surface_w = Surface::native(surfaceRef);
+    VROPlatformDispatchAsyncRenderer([surface_w] {
+        std::shared_ptr<VROSurface> surface = surface_w.lock();
+        if (!surface) {
+            return;
+        }
         surface->getMaterials().clear();
     });
 }

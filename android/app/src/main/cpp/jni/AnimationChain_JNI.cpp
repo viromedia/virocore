@@ -61,58 +61,80 @@ JNI_METHOD(void, nativeAddAnimationGroup)(JNIEnv *env, jobject obj, jlong native
 }
 
 JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeRef, jlong nodeRef) {
-    std::shared_ptr<VROAnimationChain> chain = AnimationChain::native(nativeRef);
-    std::shared_ptr<VRONode> node = Node::native(nodeRef);
-
+    std::weak_ptr<VROAnimationChain> chain_w = AnimationChain::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = Node::native(nodeRef);
     jweak weakObj = env->NewWeakGlobalRef(obj);
 
-    VROPlatformDispatchAsyncRenderer([chain, node, weakObj] {
+    VROPlatformDispatchAsyncRenderer([chain_w, node_w, weakObj] {
+        std::shared_ptr<VROAnimationChain> chain = chain_w.lock();
+        if (!chain) {
+            return;
+        }
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (!node) {
+            return;
+        }
+
         chain->execute(node, [weakObj] {
             JNIEnv *env = VROPlatformGetJNIEnv();
             env->ExceptionClear();
 
             jobject obj = env->NewLocalRef(weakObj);
-            if (obj != NULL) {
-                jclass javaClass = VROPlatformFindClass(env, obj,
-                                                        "com/viro/renderer/jni/AnimationChainJni");
-                if (javaClass == nullptr) {
-                    perr("Unable to find AnimationChainJni class for onFinish callback.");
-                    return;
-                }
-
-                jmethodID method = env->GetMethodID(javaClass, "animationDidFinish", "()V");
-                if (method == nullptr) {
-                    perr("Unable to find animationDidFinish() method in AnimationChainJni");
-                }
-
-                env->CallVoidMethod(obj, method);
-                if (env->ExceptionOccurred()) {
-                    perr("Exception encountered calling onFinish.");
-                }
-                env->DeleteLocalRef(javaClass);
-                env->DeleteLocalRef(obj);
+            if (obj == NULL) {
+                return;
             }
+
+            jclass javaClass = VROPlatformFindClass(env, obj,
+                                                    "com/viro/renderer/jni/AnimationChainJni");
+            if (javaClass == nullptr) {
+                perr("Unable to find AnimationChainJni class for onFinish callback.");
+                return;
+            }
+
+            jmethodID method = env->GetMethodID(javaClass, "animationDidFinish", "()V");
+            if (method == nullptr) {
+                perr("Unable to find animationDidFinish() method in AnimationChainJni");
+            }
+
+            env->CallVoidMethod(obj, method);
+            if (env->ExceptionOccurred()) {
+                perr("Exception encountered calling onFinish.");
+            }
+            env->DeleteLocalRef(javaClass);
+            env->DeleteLocalRef(obj);
         });
     });
 }
 
 JNI_METHOD(void, nativePauseAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
-    std::shared_ptr<VROAnimationChain> chain = AnimationChain::native(nativeRef);
-    VROPlatformDispatchAsyncRenderer([chain] {
+    std::weak_ptr<VROAnimationChain> chain_w = AnimationChain::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([chain_w] {
+        std::shared_ptr<VROAnimationChain> chain = chain_w.lock();
+        if (!chain) {
+            return;
+        }
         chain->pause();
     });
 }
 
 JNI_METHOD(void, nativeResumeAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
-    std::shared_ptr<VROAnimationChain> chain = AnimationChain::native(nativeRef);
-    VROPlatformDispatchAsyncRenderer([chain] {
+    std::weak_ptr<VROAnimationChain> chain_w = AnimationChain::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([chain_w] {
+        std::shared_ptr<VROAnimationChain> chain = chain_w.lock();
+        if (!chain) {
+            return;
+        }
         chain->resume();
     });
 }
 
 JNI_METHOD(void, nativeTerminateAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
-    std::shared_ptr<VROAnimationChain> chain = AnimationChain::native(nativeRef);
-    VROPlatformDispatchAsyncRenderer([chain] {
+    std::weak_ptr<VROAnimationChain> chain_w = AnimationChain::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([chain_w] {
+        std::shared_ptr<VROAnimationChain> chain = chain_w.lock();
+        if (!chain) {
+            return;
+        }
         chain->terminate();
     });
 }

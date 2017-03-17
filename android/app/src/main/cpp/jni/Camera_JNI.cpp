@@ -38,20 +38,28 @@ JNI_METHOD(void, nativeAddToNode)(JNIEnv *env,
                                   jobject obj,
                                   jlong nativeCamera, jlong nativeNode) {
 
-    std::shared_ptr<VRONodeCamera> camera = Camera::native(nativeCamera);
-    std::shared_ptr<VRONode> node = Node::native(nativeNode);
-    VROPlatformDispatchAsyncRenderer([node, camera] {
-        node->setCamera(camera);
+    std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
+    std::weak_ptr<VRONode> node_w = Node::native(nativeNode);
+
+    VROPlatformDispatchAsyncRenderer([node_w, camera_w] {
+        std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && camera) {
+            node->setCamera(camera);
+        }
     });
 }
 
 JNI_METHOD(void, nativeRemoveFromNode)(JNIEnv *env,
                                        jobject obj,
                                        jlong nativeCamera, jlong nativeNode) {
-    std::shared_ptr<VRONodeCamera> camera = Camera::native(nativeCamera);
-    std::shared_ptr<VRONode> node = Node::native(nativeNode);
-    VROPlatformDispatchAsyncRenderer([node, camera] {
-        if (node->getCamera() == camera) {
+    std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
+    std::weak_ptr<VRONode> node_w = Node::native(nativeNode);
+
+    VROPlatformDispatchAsyncRenderer([node_w, camera_w] {
+        std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && (node->getCamera() == camera || !camera)) {
             node->setCamera(nullptr);
         }
     });
@@ -60,9 +68,12 @@ JNI_METHOD(void, nativeRemoveFromNode)(JNIEnv *env,
 JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
                                     jobject obj,
                                     jlong nativeCamera, jfloat x, jfloat y, jfloat z) {
-    std::shared_ptr<VRONodeCamera> camera = Camera::native(nativeCamera);
-    VROPlatformDispatchAsyncRenderer([camera, x, y, z] {
-       camera->setPosition(VROVector3f(x, y, z));
+    std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
+    VROPlatformDispatchAsyncRenderer([camera_w, x, y, z] {
+        std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
+        if (camera) {
+            camera->setPosition(VROVector3f(x, y, z));
+        }
     });
 }
 
@@ -83,18 +94,24 @@ JNI_METHOD(void, nativeSetRotationType)(JNIEnv *env,
     }
     env->ReleaseStringUTFChars(rotationType, cStrRotationType);
 
-    std::shared_ptr<VRONodeCamera> camera = Camera::native(nativeCamera);
-    VROPlatformDispatchAsyncRenderer([camera, type] {
-        camera->setRotationType(type);
+    std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
+    VROPlatformDispatchAsyncRenderer([camera_w, type] {
+        std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
+        if (camera) {
+            camera->setRotationType(type);
+        }
     });
 }
 
 JNI_METHOD(void, nativeSetOrbitFocalPoint)(JNIEnv *env,
                                            jobject obj,
                                            jlong nativeCamera, jfloat x, jfloat y, jfloat z) {
-    std::shared_ptr<VRONodeCamera> camera = Camera::native(nativeCamera);
-    VROPlatformDispatchAsyncRenderer([camera, x, y, z] {
-        camera->setOrbitFocalPoint(VROVector3f(x, y, z));
+    std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
+    VROPlatformDispatchAsyncRenderer([camera_w, x, y, z] {
+        std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
+        if (camera) {
+            camera->setOrbitFocalPoint(VROVector3f(x, y, z));
+        }
     });
 }
 

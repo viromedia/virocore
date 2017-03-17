@@ -55,10 +55,16 @@ JNI_METHOD(void, nativeAddToNode)(JNIEnv *env,
                                      jlong native_light_ref,
                                      jlong native_node_ref) {
 
-    std::shared_ptr<VROLight> light = AmbientLight::native(native_light_ref);
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([light, node] {
-        node->addLight(light);
+    std::weak_ptr<VROLight> light_w = AmbientLight::native(native_light_ref);
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+
+    VROPlatformDispatchAsyncRenderer([light_w, node_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        std::shared_ptr<VROLight> light = light_w.lock();
+
+        if (node && light) {
+            node->addLight(light);
+        }
     });
 }
 
@@ -66,10 +72,16 @@ JNI_METHOD(void, nativeRemoveFromNode)(JNIEnv *env,
                                        jclass clazz,
                                        jlong native_light_ref,
                                        jlong native_node_ref) {
-    std::shared_ptr<VROLight> light = AmbientLight::native(native_light_ref);
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node, light] {
-        node->removeLight(light);
+    std::weak_ptr<VROLight> light_w = AmbientLight::native(native_light_ref);
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+
+    VROPlatformDispatchAsyncRenderer([node_w, light_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        std::shared_ptr<VROLight> light = light_w.lock();
+
+        if (node && light) {
+            node->removeLight(light);
+        }
     });
 }
 

@@ -36,12 +36,16 @@ JNI_METHOD(void, nativeGetCameraPosition)(JNIEnv *env,
                                                  jlong native_render_context_ref,
                                                  jobject callback) {
     jweak weakCallback = env->NewWeakGlobalRef(callback);
-    std::shared_ptr<RenderContext> helperContext = RenderContext::native(native_render_context_ref);
+    std::weak_ptr<RenderContext> helperContext_w = RenderContext::native(native_render_context_ref);
 
-    VROPlatformDispatchAsyncRenderer([helperContext, weakCallback] {
+    VROPlatformDispatchAsyncRenderer([helperContext_w, weakCallback] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject jCallback = env->NewLocalRef(weakCallback);
         if (jCallback == NULL) {
+            return;
+        }
+        std::shared_ptr<RenderContext> helperContext = helperContext_w.lock();
+        if (!helperContext) {
             return;
         }
 

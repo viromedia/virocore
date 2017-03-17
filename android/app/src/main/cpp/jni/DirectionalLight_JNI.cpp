@@ -62,11 +62,15 @@ JNI_METHOD(void, nativeAddToNode)(JNIEnv *env,
                                   jclass clazz,
                                   jlong native_light_ref,
                                   jlong native_node_ref) {
-    std::shared_ptr<VROLight> light = DirectionalLight::native(native_light_ref);
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
+    std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
 
-    VROPlatformDispatchAsyncRenderer([light, node] {
-        node->addLight(light);
+    VROPlatformDispatchAsyncRenderer([light_w, node_w] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (light && node) {
+            node->addLight(light);
+        }
     });
 }
 
@@ -74,11 +78,15 @@ JNI_METHOD(void, nativeRemoveFromNode)(JNIEnv *env,
                                        jclass clazz,
                                        jlong native_light_ref,
                                        jlong native_node_ref) {
-    std::shared_ptr<VROLight> light = DirectionalLight::native(native_light_ref);
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
+    std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
 
-    VROPlatformDispatchAsyncRenderer([light, node] {
-        node->removeLight(light);
+    VROPlatformDispatchAsyncRenderer([light_w, node_w] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (light && node) {
+            node->removeLight(light);
+        }
     });
 }
 
@@ -88,9 +96,13 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env,
                                  jclass clazz,
                                  jlong native_light_ref,
                                  jlong color) {
-    std::shared_ptr<VROLight> light = DirectionalLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
 
-    VROPlatformDispatchAsyncRenderer([light, color] {
+    VROPlatformDispatchAsyncRenderer([light_w, color] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if (!light) {
+            return;
+        }
         // Get the color
         float r = ((color >> 16) & 0xFF) / 255.0;
         float g = ((color >> 8) & 0xFF) / 255.0;
@@ -108,9 +120,13 @@ JNI_METHOD(void, nativeSetDirection)(JNIEnv *env,
                                      jfloat directionX,
                                      jfloat directionY,
                                      jfloat directionZ) {
-    std::shared_ptr<VROLight> light = DirectionalLight::native(native_light_ref);
+    std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
 
-    VROPlatformDispatchAsyncRenderer([light, directionX, directionY, directionZ] {
+    VROPlatformDispatchAsyncRenderer([light_w, directionX, directionY, directionZ] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if (!light) {
+            return;
+        }
         VROVector3f vecDirection(directionX, directionY, directionZ);
         light->setDirection(vecDirection);
     });

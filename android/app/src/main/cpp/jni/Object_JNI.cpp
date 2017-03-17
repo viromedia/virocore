@@ -95,12 +95,17 @@ JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
                                      jclass clazz,
                                      jlong native_object_ref,
                                      jlong native_node_ref) {
-    std::shared_ptr<VRONode> nodeWithObj = Node::native(native_object_ref);
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> nodeWithObj_w = Node::native(native_object_ref);
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
 
-    VROPlatformDispatchAsyncRenderer([nodeWithObj, node] {
-         std::shared_ptr<VROGeometry> geometry = nodeWithObj->getGeometry();
-         node->setGeometry(geometry);
+    VROPlatformDispatchAsyncRenderer([nodeWithObj_w, node_w] {
+        std::shared_ptr<VRONode> nodeWithObj = nodeWithObj_w.lock();
+        std::shared_ptr<VRONode> node = node_w.lock();
+
+        if (nodeWithObj && node) {
+            std::shared_ptr<VROGeometry> geometry = nodeWithObj->getGeometry();
+            node->setGeometry(geometry);
+        }
      });
 }
 

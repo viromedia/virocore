@@ -33,9 +33,12 @@ JNI_METHOD(void, nativeDestroyNode)(JNIEnv *env,
                                     jclass clazz,
                                     jlong native_node_ref) {
 
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node] {
-        node->removeFromParentNode();
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->removeFromParentNode();
+        }
     });
 
     delete reinterpret_cast<PersistentRef<VRONode> *>(native_node_ref);
@@ -46,10 +49,13 @@ JNI_METHOD(void, nativeAddChildNode)(JNIEnv *env,
                                      jlong native_node_ref,
                                      jlong child_node_ref) {
 
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     std::shared_ptr<VRONode> childNode = Node::native(child_node_ref);
-    VROPlatformDispatchAsyncRenderer([node, childNode] {
-        node->addChildNode(childNode);
+    VROPlatformDispatchAsyncRenderer([node_w, childNode] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->addChildNode(childNode);
+        }
     });
 }
 
@@ -57,9 +63,12 @@ JNI_METHOD(void, nativeRemoveFromParent)(JNIEnv *env,
                                          jobject obj,
                                          jlong native_node_ref) {
 
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node] {
-        node->removeFromParentNode();
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->removeFromParentNode();
+        }
     });
 }
 
@@ -70,9 +79,12 @@ JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
                                     jfloat positionY,
                                     jfloat positionZ) {
 
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node, positionX, positionY, positionZ] {
-        node->setPosition({positionX, positionY, positionZ});
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w, positionX, positionY, positionZ] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setPosition({positionX, positionY, positionZ});
+        }
     });
 }
 
@@ -83,11 +95,14 @@ JNI_METHOD(void, nativeSetRotation)(JNIEnv *env,
                                     jfloat rotationDegreesY,
                                     jfloat rotationDegreesZ) {
 
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node, rotationDegreesX, rotationDegreesY, rotationDegreesZ] {
-        node->setRotation({toRadians(rotationDegreesX),
-                           toRadians(rotationDegreesY),
-                           toRadians(rotationDegreesZ)});
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w, rotationDegreesX, rotationDegreesY, rotationDegreesZ] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setRotation({toRadians(rotationDegreesX),
+                               toRadians(rotationDegreesY),
+                               toRadians(rotationDegreesZ)});
+        }
     });
 }
 
@@ -98,9 +113,12 @@ JNI_METHOD(void, nativeSetScale)(JNIEnv *env,
                                  jfloat scaleY,
                                  jfloat scaleZ) {
 
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node, scaleX, scaleY, scaleZ] {
-        node->setScale({scaleX, scaleY, scaleZ});
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w, scaleX, scaleY, scaleZ] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setScale({scaleX, scaleY, scaleZ});
+        }
     });
 }
 
@@ -109,9 +127,12 @@ JNI_METHOD(void, nativeSetOpacity)(JNIEnv *env,
                                    jlong native_node_ref,
                                    jfloat opacity) {
 
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node, opacity] {
-        node->setOpacity(opacity);
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w, opacity] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setOpacity(opacity);
+        }
     });
 }
 
@@ -127,9 +148,12 @@ JNI_METHOD(void, nativeSetVisible)(JNIEnv *env,
                                    jlong native_node_ref,
                                    jboolean visible) {
 
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node, visible] {
-        node->setHidden(!visible);
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w, visible] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setHidden(!visible);
+        }
     });
 }
 
@@ -138,9 +162,12 @@ JNI_METHOD(void, nativeSetHierarchicalRendering)(JNIEnv *env,
                                                  jlong native_node_ref,
                                                  jboolean hierarchicalRendering) {
 
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node, hierarchicalRendering] {
-        node->setHierarchicalRendering(hierarchicalRendering);
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w, hierarchicalRendering] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setHierarchicalRendering(hierarchicalRendering);
+        }
     });
 }
 
@@ -159,11 +186,14 @@ JNI_METHOD(void, nativeSetMaterials)(JNIEnv *env,
         tempMaterials.push_back(std::make_shared<VROMaterial>(Material::native(longArray[i])));
     }
 
-    std::shared_ptr<VRONode> node = Node::native(nativeNodeRef);
-    VROPlatformDispatchAsyncRenderer([node, tempMaterials] {
-        std::shared_ptr<VROGeometry> geometryPtr = node->getGeometry();
-        if (geometryPtr != nullptr) {
-            geometryPtr->getMaterials() = tempMaterials;
+    std::weak_ptr<VRONode> node_w = Node::native(nativeNodeRef);
+    VROPlatformDispatchAsyncRenderer([node_w, tempMaterials] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            std::shared_ptr<VROGeometry> geometryPtr = node->getGeometry();
+            if (geometryPtr != nullptr) {
+                geometryPtr->getMaterials() = tempMaterials;
+            }
         }
     });
 
@@ -198,11 +228,14 @@ JNI_METHOD(void, nativeSetTransformBehaviors)(JNIEnv *env,
     env->DeleteLocalRef(stringArrayRef);
 
     // Post set the constraints into the node
-    std::shared_ptr<VRONode> node = Node::native(nativeNodeRef);
-    VROPlatformDispatchAsyncRenderer([node, tempConstraints] {
-        node->removeAllConstraints();
-        for (std::shared_ptr<VROBillboardConstraint> constraint : tempConstraints) {
-            node->addConstraint(constraint);
+    std::weak_ptr<VRONode> node_w = Node::native(nativeNodeRef);
+    VROPlatformDispatchAsyncRenderer([node_w, tempConstraints] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->removeAllConstraints();
+            for (std::shared_ptr<VROBillboardConstraint> constraint : tempConstraints) {
+                node->addConstraint(constraint);
+            }
         }
     });
 }
@@ -212,10 +245,13 @@ JNI_METHOD(void, nativeSetEventDelegate)(JNIEnv *env,
                                          jlong nativeRef,
                                          jlong delegateRef) {
 
-    std::shared_ptr<VRONode> node = Node::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     std::shared_ptr<EventDelegate_JNI> delegate = EventDelegate::native(delegateRef);
-    VROPlatformDispatchAsyncRenderer([node, delegate] {
-        node->setEventDelegate(delegate);
+    VROPlatformDispatchAsyncRenderer([node_w, delegate] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setEventDelegate(delegate);
+        }
     });
 }
 

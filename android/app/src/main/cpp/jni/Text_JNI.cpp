@@ -140,14 +140,21 @@ JNI_METHOD(void, nativeCreateText)(JNIEnv *env,
     std::string strFontFamilyName(cStrFontFamilyName);
     env->ReleaseStringUTFChars(fontFamilyName, cStrFontFamilyName);
 
-    std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
-    std::shared_ptr<VRONode> parentNode = Node::native(parentNodeRef);
+    std::weak_ptr<RenderContext> renderContext_w = RenderContext::native(renderContextRef);
+    std::weak_ptr<VRONode> parentNode_w = Node::native(parentNodeRef);
 
     // create text on the renderer thread
-    VROPlatformDispatchAsyncRenderer([parentNode, renderContext, delegateRef, strFontFamilyName, size,
+    VROPlatformDispatchAsyncRenderer([parentNode_w, renderContext_w, delegateRef, strFontFamilyName, size,
                                              strText, vecColor, width, height,
                                              horizontalAlignmentEnum, verticalAlignmentEnum,
                                              lineBreakModeEnum, clipModeEnum, maxLines] {
+
+        std::shared_ptr<RenderContext> renderContext = renderContext_w.lock();
+        std::shared_ptr<VRONode> parentNode = parentNode_w.lock();
+        if (!renderContext || !parentNode) {
+            return;
+        }
+
         // Grab driver from the RenderContext required for initializing typeface
         std::shared_ptr<VRODriver> driver = renderContext->getDriver();
 
@@ -167,9 +174,7 @@ JNI_METHOD(void, nativeCreateText)(JNIEnv *env,
 JNI_METHOD(void, nativeDestroyText)(JNIEnv *env,
                                    jclass clazz,
                                    jlong native_text_ref) {
-    VROPlatformDispatchAsyncRenderer([native_text_ref] {
-        delete reinterpret_cast<PersistentRef<VROText> *>(native_text_ref);
-    });
+    delete reinterpret_cast<PersistentRef<VROText> *>(native_text_ref);
 }
 
 } // extern "C"

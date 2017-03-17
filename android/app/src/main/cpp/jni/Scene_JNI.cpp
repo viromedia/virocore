@@ -62,11 +62,16 @@ JNI_METHOD(void, nativeSetBackgroundVideoTexture)(JNIEnv *env,
                                      jclass clazz,
                                      jlong sceneRef,
                                      jlong textureRef) {
-    std::shared_ptr<VROSceneController> sceneController = Scene::native(sceneRef);
-    std::shared_ptr<VROVideoTextureAVP> videoTexture = VideoTexture::native(textureRef);
+    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
 
-    VROPlatformDispatchAsyncRenderer([sceneController, videoTexture] {
-        sceneController->getScene()->setBackgroundSphere(videoTexture);
+    VROPlatformDispatchAsyncRenderer([sceneController_w, videoTexture_w] {
+        std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
+        std::shared_ptr<VROVideoTextureAVP> videoTexture = videoTexture_w.lock();
+
+        if (sceneController && videoTexture) {
+            sceneController->getScene()->setBackgroundSphere(videoTexture);
+        }
     });
 }
 
@@ -74,11 +79,16 @@ JNI_METHOD(void, nativeSetBackgroundImageTexture)(JNIEnv *env,
                                                   jclass clazz,
                                                   jlong sceneRef,
                                                   jlong imageRef) {
-    std::shared_ptr<VROTexture> image = Texture::native(imageRef);
-    std::shared_ptr<VROSceneController> sceneController = Scene::native(sceneRef);
+    std::weak_ptr<VROTexture> image_w = Texture::native(imageRef);
+    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
 
-    VROPlatformDispatchAsyncRenderer([sceneController, image] {
-        sceneController->getScene()->setBackgroundSphere(image);
+    VROPlatformDispatchAsyncRenderer([sceneController_w, image_w] {
+        std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
+        std::shared_ptr<VROTexture> image = image_w.lock();
+
+        if (sceneController && image) {
+            sceneController->getScene()->setBackgroundSphere(image);
+        }
     });
 }
 
@@ -88,12 +98,15 @@ JNI_METHOD(void, nativeSetBackgroundRotation)(JNIEnv *env,
                                               jfloat rotationDegreeX,
                                               jfloat rotationDegreeY,
                                               jfloat rotationDegreeZ) {
-    std::shared_ptr<VROSceneController> sceneController = Scene::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
 
-    VROPlatformDispatchAsyncRenderer([sceneController, rotationDegreeX, rotationDegreeY, rotationDegreeZ] {
-        sceneController->getScene()->setBackgroundRotation({toRadians(rotationDegreeX),
-                                                            toRadians(rotationDegreeY),
-                                                            toRadians(rotationDegreeZ)});
+    VROPlatformDispatchAsyncRenderer([sceneController_w, rotationDegreeX, rotationDegreeY, rotationDegreeZ] {
+        std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
+        if (sceneController) {
+            sceneController->getScene()->setBackgroundRotation({toRadians(rotationDegreeX),
+                                                                toRadians(rotationDegreeY),
+                                                                toRadians(rotationDegreeZ)});
+        }
     });
 }
 
@@ -101,10 +114,15 @@ JNI_METHOD(void, nativeSetBackgroundCubeImageTexture)(JNIEnv *env,
                                           jclass clazz,
                                           jlong sceneRef,
                                           jlong textureRef) {
-    std::shared_ptr<VROSceneController> sceneController = Scene::native(sceneRef);
-    std::shared_ptr<VROTexture> texture = Texture::native(textureRef);
-    VROPlatformDispatchAsyncRenderer([sceneController, texture] {
-        sceneController->getScene()->setBackgroundCube(texture);
+    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    std::weak_ptr<VROTexture> texture_w = Texture::native(textureRef);
+
+    VROPlatformDispatchAsyncRenderer([sceneController_w, texture_w] {
+        std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
+        std::shared_ptr<VROTexture> texture = texture_w.lock();
+        if (sceneController && texture) {
+            sceneController->getScene()->setBackgroundCube(texture);
+        }
     });
 }
 
@@ -112,8 +130,12 @@ JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
                                                    jclass clazz,
                                                    jlong sceneRef,
                                                    jlong color) {
-    std::shared_ptr<VROSceneController> sceneController = Scene::native(sceneRef);
-    VROPlatformDispatchAsyncRenderer([sceneController, color] {
+    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    VROPlatformDispatchAsyncRenderer([sceneController_w, color] {
+        std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
+        if (!sceneController) {
+            return;
+        }
         // Get the color
         float a = ((color >> 24) & 0xFF) / 255.0;
         float r = ((color >> 16) & 0xFF) / 255.0;
@@ -136,13 +158,18 @@ JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, j
     std::string strCeilingMaterial(cCeilingMaterial);
     std::string strFloorMaterial(cFloorMaterial);
 
-    std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
+    std::weak_ptr<RenderContext> renderContext_w = RenderContext::native(renderContextRef);
 
-    VROPlatformDispatchAsyncRenderer([renderContext,
+    VROPlatformDispatchAsyncRenderer([renderContext_w,
                                              sizeX, sizeY, sizeZ,
                                              strWallMaterial,
                                              strCeilingMaterial,
                                              strFloorMaterial] {
+        std::shared_ptr<RenderContext> renderContext = renderContext_w.lock();
+        if (!renderContext) {
+            return;
+        }
+
         renderContext->getDriver()->setSoundRoom(sizeX, sizeY, sizeZ,
                                                  strWallMaterial,
                                                  strCeilingMaterial,

@@ -46,12 +46,20 @@ JNI_METHOD(void, nativeAttachDelegate)(JNIEnv *env,
                                       jobject object,
                                       jlong textureRef, jlong delegateRef) {
 
-    std::shared_ptr<VROVideoTextureAVP> videoTexture = VideoTexture::native(textureRef);
-    std::shared_ptr<VideoDelegate> videoDelegate = VideoDelegate::native(delegateRef);
+    std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
+    std::weak_ptr<VideoDelegate> videoDelegate_w = VideoDelegate::native(delegateRef);
 
-    VROPlatformDispatchAsyncRenderer([videoTexture, videoDelegate] {
+    VROPlatformDispatchAsyncRenderer([videoTexture_w, videoDelegate_w] {
+        std::shared_ptr<VROVideoTextureAVP> videoTexture = videoTexture_w.lock();
+        if (!videoTexture) {
+            return;
+        }
+        std::shared_ptr<VideoDelegate> videoDelegate = videoDelegate_w.lock();
+        if (!videoDelegate) {
+            return;
+        }
+
         videoTexture->setDelegate(videoDelegate);
-        // Notify delegates that the video texture is ready to be used.
         videoDelegate->onReady();
     });
 }
@@ -71,8 +79,12 @@ JNI_METHOD(void, nativeDeleteVideoDelegate)(JNIEnv *env,
 JNI_METHOD(void, nativePause)(JNIEnv *env,
                                         jclass clazz,
                                         jlong textureRef) {
-    std::shared_ptr<VROVideoTextureAVP> videoTexture = VideoTexture::native(textureRef);
-    VROPlatformDispatchAsyncRenderer([videoTexture] {
+    std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
+    VROPlatformDispatchAsyncRenderer([videoTexture_w] {
+        std::shared_ptr<VROVideoTextureAVP> videoTexture = videoTexture_w.lock();
+        if (!videoTexture) {
+            return;
+        }
         videoTexture->pause();
     });
 }
@@ -81,8 +93,12 @@ JNI_METHOD(void, nativePlay)(JNIEnv *env,
                                      jclass clazz,
                                      jlong textureRef) {
 
-    std::shared_ptr<VROVideoTextureAVP> videoTexture = VideoTexture::native(textureRef);
-    VROPlatformDispatchAsyncRenderer([videoTexture] {
+    std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
+    VROPlatformDispatchAsyncRenderer([videoTexture_w] {
+        std::shared_ptr<VROVideoTextureAVP> videoTexture = videoTexture_w.lock();
+        if (!videoTexture) {
+            return;
+        }
         videoTexture->play();
     });
 }
@@ -92,8 +108,12 @@ JNI_METHOD(void, nativeSetMuted)(JNIEnv *env,
                                      jlong textureRef,
                                      jboolean muted) {
 
-    std::shared_ptr<VROVideoTextureAVP> videoTexture = VideoTexture::native(textureRef);
-    VROPlatformDispatchAsyncRenderer([videoTexture, muted] {
+    std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
+    VROPlatformDispatchAsyncRenderer([videoTexture_w, muted] {
+        std::shared_ptr<VROVideoTextureAVP> videoTexture = videoTexture_w.lock();
+        if (!videoTexture) {
+            return;
+        }
         videoTexture->setMuted(muted);
     });
 }
@@ -103,8 +123,12 @@ JNI_METHOD(void, nativeSetVolume)(JNIEnv *env,
                                      jlong textureRef,
                                      jfloat volume) {
 
-    std::shared_ptr<VROVideoTextureAVP> videoTexture = VideoTexture::native(textureRef);
-    VROPlatformDispatchAsyncRenderer([videoTexture, volume] {
+    std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
+    VROPlatformDispatchAsyncRenderer([videoTexture_w, volume] {
+        std::shared_ptr<VROVideoTextureAVP> videoTexture = videoTexture_w.lock();
+        if (!videoTexture) {
+            return;
+        }
         videoTexture->setVolume(volume);
     });
 }
@@ -114,8 +138,12 @@ JNI_METHOD(void, nativeSetLoop)(JNIEnv *env,
                                      jlong textureRef,
                                      jboolean loop) {
 
-    std::shared_ptr<VROVideoTextureAVP> videoTexture = VideoTexture::native(textureRef);
-    VROPlatformDispatchAsyncRenderer([videoTexture, loop] {
+    std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
+    VROPlatformDispatchAsyncRenderer([videoTexture_w, loop] {
+        std::shared_ptr<VROVideoTextureAVP> videoTexture = videoTexture_w.lock();
+        if (!videoTexture) {
+            return;
+        }
         videoTexture->setLoop(loop);
     });
 }
@@ -125,8 +153,12 @@ JNI_METHOD(void, nativeSeekToTime)(JNIEnv *env,
                                      jlong textureRef,
                                      jint seconds) {
 
-    std::shared_ptr<VROVideoTextureAVP> videoTexture = VideoTexture::native(textureRef);
-    VROPlatformDispatchAsyncRenderer([videoTexture, seconds] {
+    std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
+    VROPlatformDispatchAsyncRenderer([videoTexture_w, seconds] {
+        std::shared_ptr<VROVideoTextureAVP> videoTexture = videoTexture_w.lock();
+        if (!videoTexture) {
+            return;
+        }
         videoTexture->seekToTime(seconds);
     });
 }
@@ -140,10 +172,19 @@ JNI_METHOD(void, nativeLoadSource)(JNIEnv *env,
     const char *cVideoSource = env->GetStringUTFChars(source, JNI_FALSE);
     std::string strVideoSource(cVideoSource);
 
-    std::shared_ptr<VROVideoTextureAVP> videoTexture = VideoTexture::native(textureRef);
-    std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
+    std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
+    std::weak_ptr<RenderContext> renderContext_w = RenderContext::native(renderContextRef);
 
-    VROPlatformDispatchAsyncRenderer([videoTexture, renderContext, strVideoSource] {
+    VROPlatformDispatchAsyncRenderer([videoTexture_w, renderContext_w, strVideoSource] {
+        std::shared_ptr<VROVideoTextureAVP> videoTexture = videoTexture_w.lock();
+        if (!videoTexture) {
+            return;
+        }
+        std::shared_ptr<RenderContext> renderContext = renderContext_w.lock();
+        if (!renderContext) {
+            return;
+        }
+
         std::shared_ptr<VROFrameSynchronizer> frameSynchronizer = renderContext->getFrameSynchronizer();
         std::shared_ptr<VRODriver> driver = renderContext->getDriver();
         videoTexture->loadVideo(strVideoSource, frameSynchronizer, *driver.get());

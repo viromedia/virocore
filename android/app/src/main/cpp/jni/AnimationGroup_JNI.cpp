@@ -78,10 +78,18 @@ JNI_METHOD(jlong, nativeCopyAnimation)(JNIEnv *env, jobject obj, jlong nativeRef
 JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeRef, jlong nodeRef) {
     jweak weakObj = env->NewWeakGlobalRef(obj);
 
-    std::shared_ptr<VROAnimationGroup> group = AnimationGroup::native(nativeRef);
-    std::shared_ptr<VRONode> node = Node::native(nodeRef);
+    std::weak_ptr<VROAnimationGroup> group_w = AnimationGroup::native(nativeRef);
+    std::weak_ptr<VRONode> node_w = Node::native(nodeRef);
 
-    VROPlatformDispatchAsyncRenderer([group, node, weakObj] {
+    VROPlatformDispatchAsyncRenderer([group_w, node_w, weakObj] {
+        std::shared_ptr<VROAnimationGroup> group = group_w.lock();
+        if (!group) {
+            return;
+        }
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (!node) {
+            return;
+        }
         group->execute(node, [weakObj] {
             JNIEnv *env = VROPlatformGetJNIEnv();
             jobject obj = env->NewLocalRef(weakObj);
@@ -111,22 +119,34 @@ JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeR
 }
 
 JNI_METHOD(void, nativePauseAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
-    std::shared_ptr<VROAnimationGroup> group = AnimationGroup::native(nativeRef);
-    VROPlatformDispatchAsyncRenderer([group] {
+    std::weak_ptr<VROAnimationGroup> group_w = AnimationGroup::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([group_w] {
+        std::shared_ptr<VROAnimationGroup> group = group_w.lock();
+        if (!group) {
+            return;
+        }
         group->pause();
     });
 }
 
 JNI_METHOD(void, nativeResumeAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
-    std::shared_ptr<VROAnimationGroup> group = AnimationGroup::native(nativeRef);
-    VROPlatformDispatchAsyncRenderer([group] {
+    std::weak_ptr<VROAnimationGroup> group_w = AnimationGroup::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([group_w] {
+        std::shared_ptr<VROAnimationGroup> group = group_w.lock();
+        if (!group) {
+            return;
+        }
         group->resume();
     });
 }
 
 JNI_METHOD(void, nativeTerminateAnimation)(JNIEnv *env, jobject obj, jlong nativeRef) {
-    std::shared_ptr<VROAnimationGroup> group = AnimationGroup::native(nativeRef);
-    VROPlatformDispatchAsyncRenderer([group] {
+    std::weak_ptr<VROAnimationGroup> group_w = AnimationGroup::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([group_w] {
+        std::shared_ptr<VROAnimationGroup> group = group_w.lock();
+        if (!group) {
+            return;
+        }
         group->terminate();
     });
 }

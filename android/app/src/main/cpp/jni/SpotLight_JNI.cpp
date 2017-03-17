@@ -77,10 +77,15 @@ JNI_METHOD(void, nativeAddToNode)(JNIEnv *env,
                                   jclass clazz,
                                   jlong native_light_ref,
                                   jlong native_node_ref) {
-    std::shared_ptr<VROLight> light = SpotLight::native(native_light_ref);
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([light, node] {
-        node->addLight(light);
+    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+
+    VROPlatformDispatchAsyncRenderer([light_w, node_w] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (light && node) {
+            node->addLight(light);
+        }
     });
 }
 
@@ -88,11 +93,15 @@ JNI_METHOD(void, nativeRemoveFromNode)(JNIEnv *env,
                                        jclass clazz,
                                        jlong native_light_ref,
                                        jlong native_node_ref) {
-    std::shared_ptr<VROLight> light = SpotLight::native(native_light_ref);
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
+    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
 
-    VROPlatformDispatchAsyncRenderer([light, node] {
-        node->removeLight(light);
+    VROPlatformDispatchAsyncRenderer([light_w, node_w] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (light && node) {
+            node->removeLight(light);
+        }
     });
 }
 
@@ -102,8 +111,13 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env,
                                  jclass clazz,
                                  jlong native_light_ref,
                                  jlong color) {
-    std::shared_ptr<VROLight> light = SpotLight::native(native_light_ref);
-    VROPlatformDispatchAsyncRenderer([light, color] {
+    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    VROPlatformDispatchAsyncRenderer([light_w, color] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if (!light) {
+            return;
+        }
+
         // Get the color
         float r = ((color >> 16) & 0xFF) / 255.0;
         float g = ((color >> 8) & 0xFF) / 255.0;
@@ -118,8 +132,12 @@ JNI_METHOD(void, nativeSetAttenuationStartDistance)(JNIEnv *env,
                                                     jclass clazz,
                                                     jlong native_light_ref,
                                                     jfloat attenuationStartDistance) {
-    std::shared_ptr<VROLight> light = SpotLight::native(native_light_ref);
-    VROPlatformDispatchAsyncRenderer([light, attenuationStartDistance] {
+    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    VROPlatformDispatchAsyncRenderer([light_w, attenuationStartDistance] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if (!light) {
+            return;
+        }
         light->setAttenuationStartDistance(attenuationStartDistance);
     });
 }
@@ -128,8 +146,12 @@ JNI_METHOD(void, nativeSetAttenuationEndDistance)(JNIEnv *env,
                                                     jclass clazz,
                                                     jlong native_light_ref,
                                                     jfloat attenuationEndDistance) {
-    std::shared_ptr<VROLight> light = SpotLight::native(native_light_ref);
-    VROPlatformDispatchAsyncRenderer([light, attenuationEndDistance] {
+    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    VROPlatformDispatchAsyncRenderer([light_w, attenuationEndDistance] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if (!light) {
+            return;
+        }
         light->setAttenuationEndDistance(attenuationEndDistance);
     });
 }
@@ -140,8 +162,12 @@ JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
                                                   jfloat positionX,
                                                   jfloat positionY,
                                                   jfloat positionZ) {
-    std::shared_ptr<VROLight> light = SpotLight::native(native_light_ref);
-    VROPlatformDispatchAsyncRenderer([light, positionX, positionY, positionZ] {
+    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    VROPlatformDispatchAsyncRenderer([light_w, positionX, positionY, positionZ] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if (!light) {
+            return;
+        }
         VROVector3f vecPosition(positionX, positionY, positionZ);
         light->setPosition(vecPosition);
     });
@@ -153,8 +179,12 @@ JNI_METHOD(void, nativeSetDirection)(JNIEnv *env,
                                     jfloat directionX,
                                     jfloat directionY,
                                     jfloat directionZ) {
-    std::shared_ptr<VROLight> light = SpotLight::native(native_light_ref);
-    VROPlatformDispatchAsyncRenderer([light, directionX, directionY, directionZ] {
+    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    VROPlatformDispatchAsyncRenderer([light_w, directionX, directionY, directionZ] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if (!light) {
+            return;
+        }
         VROVector3f vecDirection(directionX, directionY, directionZ);
         light->setDirection(vecDirection);
     });
@@ -164,8 +194,12 @@ JNI_METHOD(void, nativeSetInnerAngle)(JNIEnv *env,
                                                   jclass clazz,
                                                   jlong native_light_ref,
                                                   jfloat innerAngle) {
-    std::shared_ptr<VROLight> light = SpotLight::native(native_light_ref);
-    VROPlatformDispatchAsyncRenderer([light, innerAngle] {
+    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    VROPlatformDispatchAsyncRenderer([light_w, innerAngle] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if (!light) {
+            return;
+        }
         light->setSpotInnerAngle(innerAngle);
     });
 }
@@ -174,8 +208,12 @@ JNI_METHOD(void, nativeSetOuterAngle)(JNIEnv *env,
                                                   jclass clazz,
                                                   jlong native_light_ref,
                                                   jfloat outerAngle) {
-    std::shared_ptr<VROLight> light = SpotLight::native(native_light_ref);
-    VROPlatformDispatchAsyncRenderer([light, outerAngle] {
+    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
+    VROPlatformDispatchAsyncRenderer([light_w, outerAngle] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if (!light) {
+            return;
+        }
         light->setSpotOuterAngle(outerAngle);
     });
 }

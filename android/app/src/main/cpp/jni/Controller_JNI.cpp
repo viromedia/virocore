@@ -21,12 +21,18 @@ JNI_METHOD(void, nativeSetEventDelegate)(JNIEnv *env,
                                          jobject obj,
                                          jlong render_context_ref,
                                          jlong native_delegate_ref) {
-    std::shared_ptr<RenderContext> nativeContext = RenderContext::native(render_context_ref);
-    std::shared_ptr<EventDelegate_JNI> delegate = EventDelegate::native(native_delegate_ref);
-    VROPlatformDispatchAsyncRenderer([nativeContext, delegate] {
-        std::shared_ptr<VROInputPresenter> controllerPresenter
-                = nativeContext->getInputController()->getPresenter();
-        controllerPresenter->setEventDelegate(delegate);
+    std::weak_ptr<RenderContext> nativeContext_w = RenderContext::native(render_context_ref);
+    std::weak_ptr<EventDelegate_JNI> delegate_w = EventDelegate::native(native_delegate_ref);
+
+    VROPlatformDispatchAsyncRenderer([nativeContext_w, delegate_w] {
+        std::shared_ptr<RenderContext> nativeContext = nativeContext_w.lock();
+        std::shared_ptr<EventDelegate_JNI> delegate = delegate_w.lock();
+
+        if (nativeContext && delegate) {
+            std::shared_ptr<VROInputPresenter> controllerPresenter
+                    = nativeContext->getInputController()->getPresenter();
+            controllerPresenter->setEventDelegate(delegate);
+        }
     });
 }
 
@@ -34,9 +40,14 @@ JNI_METHOD(void, nativeEnableReticle)(JNIEnv *env,
                                       jobject obj,
                                       jlong render_context_ref,
                                       jboolean enable) {
-    std::shared_ptr<RenderContext> nativeContext = RenderContext::native(render_context_ref);
+    std::weak_ptr<RenderContext> nativeContext_w = RenderContext::native(render_context_ref);
 
-    VROPlatformDispatchAsyncRenderer([nativeContext, enable] {
+    VROPlatformDispatchAsyncRenderer([nativeContext_w, enable] {
+        std::shared_ptr<RenderContext> nativeContext = nativeContext_w.lock();
+        if (!nativeContext) {
+            return;
+        }
+
         std::shared_ptr<VROInputPresenter> controllerPresenter
                 = nativeContext->getInputController()->getPresenter();
         std::shared_ptr<VROReticle> reticle = controllerPresenter->getReticle();
@@ -50,9 +61,14 @@ JNI_METHOD(void, nativeEnableController)(JNIEnv *env,
                                       jobject obj,
                                       jlong render_context_ref,
                                       jboolean enable) {
-    std::shared_ptr<RenderContext> nativeContext = RenderContext::native(render_context_ref);
+    std::weak_ptr<RenderContext> nativeContext_w = RenderContext::native(render_context_ref);
 
-    VROPlatformDispatchAsyncRenderer([nativeContext, enable] {
+    VROPlatformDispatchAsyncRenderer([nativeContext_w, enable] {
+        std::shared_ptr<RenderContext> nativeContext = nativeContext_w.lock();
+        if (!nativeContext) {
+            return;
+        }
+
         std::shared_ptr<VROInputPresenter> controllerPresenter
                 = nativeContext->getInputController()->getPresenter();
         controllerPresenter->getRootNode()->setHidden(!enable);

@@ -32,8 +32,12 @@ JNI_METHOD(void, nativeEnableEvent)(JNIEnv *env,
                                         jint eventTypeId,
                                         jboolean enabled) {
 
-    std::shared_ptr<EventDelegate_JNI> delegate = EventDelegate::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([delegate, eventTypeId, enabled] {
+    std::weak_ptr<EventDelegate_JNI> delegate_w = EventDelegate::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([delegate_w, eventTypeId, enabled] {
+        std::shared_ptr<EventDelegate_JNI> delegate = delegate_w.lock();
+        if (!delegate) {
+            return;
+        }
         VROEventDelegate::EventAction eventType
                 = static_cast<VROEventDelegate::EventAction>(eventTypeId);
         delegate->setEnabledEvent(eventType, enabled);
