@@ -95,11 +95,14 @@ JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
                                      jclass clazz,
                                      jlong native_object_ref,
                                      jlong native_node_ref) {
-    std::weak_ptr<VRONode> nodeWithObj_w = Node::native(native_object_ref);
+
+    // Need a strong reference to this node since it is not attached
+    // to the scene graph, and is immediately destroyed (by Object3D
+    // in the bridge) after this functino returns
+    std::shared_ptr<VRONode> nodeWithObj = Node::native(native_object_ref);
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
 
-    VROPlatformDispatchAsyncRenderer([nodeWithObj_w, node_w] {
-        std::shared_ptr<VRONode> nodeWithObj = nodeWithObj_w.lock();
+    VROPlatformDispatchAsyncRenderer([nodeWithObj, node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
 
         if (nodeWithObj && node) {
