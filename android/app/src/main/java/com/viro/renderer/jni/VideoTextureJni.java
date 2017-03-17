@@ -3,6 +3,8 @@
  */
 package com.viro.renderer.jni;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Java JNI wrapper for linking the following classes below across the bridge.
  *
@@ -74,35 +76,35 @@ public class VideoTextureJni {
     /**
      * Delegate Callback functions called from JNI
      */
-    private VideoDelegate mDelegate = null;
+    private WeakReference<VideoDelegate> mDelegate = null;
     public interface VideoDelegate{
         void onVideoFinish();
         void onReady();
         void onVideoUpdatedTime(int seconds, int totalDuration);
     }
 
-    public void setVideoDelegate(VideoDelegate delegate){
-        mDelegate = delegate;
+    public void setVideoDelegate(VideoDelegate delegate) {
+        mDelegate = new WeakReference<VideoDelegate>(delegate);
         if (isReady()){
-            mDelegate.onReady();
+            delegate.onReady();
         }
     }
 
     public void playerDidFinishPlaying(){
-        if (mDelegate != null && mNativeRef != INVALID_REF){
-            mDelegate.onVideoFinish();
+        if (mDelegate != null && mDelegate.get() != null && mNativeRef != INVALID_REF){
+            mDelegate.get().onVideoFinish();
         }
     }
 
     public void onReady() {
-        if (mDelegate != null && mNativeRef != INVALID_REF) {
-            mDelegate.onReady();
+        if (mDelegate != null && mDelegate.get() != null && mNativeRef != INVALID_REF) {
+            mDelegate.get().onReady();
         }
     }
 
     public void onVideoUpdatedTime(int currentTimeInSeconds, int totalTimeInSeconds) {
-        if (mDelegate != null){
-            mDelegate.onVideoUpdatedTime(currentTimeInSeconds, totalTimeInSeconds);
+        if (mDelegate != null && mDelegate.get() != null){
+            mDelegate.get().onVideoUpdatedTime(currentTimeInSeconds, totalTimeInSeconds);
         }
     }
 }

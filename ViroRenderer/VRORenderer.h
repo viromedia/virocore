@@ -97,19 +97,10 @@ private:
      Controller used for handling all input events.
      */
     std::shared_ptr<VROInputControllerBase> _inputController;
-
-    /*
-<<<<<<< HEAD
-     The reticle.
-     */
-    std::shared_ptr<VROReticle> _reticle;
     
     /*
      The node that owns the VRONodeCamera that will determine the point of
      view from which we display the scene.
-=======
-     Internal representation of the camera.
->>>>>>> 139bdac... VIRO-696: DayDream Controller Integration Part 1
      */
     std::shared_ptr<VRONode> _pointOfView;
     

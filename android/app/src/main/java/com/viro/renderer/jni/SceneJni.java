@@ -3,6 +3,8 @@
  */
 package com.viro.renderer.jni;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Java JNI wrapper for linking the following classes across the bridge:
  *
@@ -68,7 +70,7 @@ public class SceneJni {
                                            float sizeY, float sizeZ, String wallMaterial,
                                            String ceilingMaterial, String floorMaterial);
 
-    private SceneDelegate mDelegate = null;
+    private WeakReference<SceneDelegate> mDelegate = null;
 
     public interface SceneDelegate {
         void onSceneWillAppear();
@@ -83,34 +85,34 @@ public class SceneJni {
      * called once.
      */
     public void registerDelegate(SceneDelegate delegate) {
-        mDelegate = delegate;
+        mDelegate = new WeakReference<SceneDelegate>(delegate);
     }
 
     /* Called by Native */
     public void onSceneWillAppear() {
-        if (mDelegate != null){
-            mDelegate.onSceneWillAppear();
+        if (mDelegate != null && mDelegate.get() != null) {
+            mDelegate.get().onSceneWillAppear();
         }
     }
 
     /* Called by Native */
     public void onSceneDidAppear() {
-        if (mDelegate != null) {
-            mDelegate.onSceneDidAppear();
+        if (mDelegate != null && mDelegate.get() != null) {
+            mDelegate.get().onSceneDidAppear();
         }
     }
 
     /* Called by Native */
     public void onSceneWillDisappear(){
-        if (mDelegate != null) {
-            mDelegate.onSceneWillDisappear();
+        if (mDelegate != null && mDelegate.get() != null) {
+            mDelegate.get().onSceneWillDisappear();
         }
     }
 
     /* Called by Native */
     public void onSceneDidDisappear() {
-        if (mDelegate != null) {
-            mDelegate.onSceneDidDisappear();
+        if (mDelegate != null && mDelegate.get() != null) {
+            mDelegate.get().onSceneDidDisappear();
         }
     }
 }

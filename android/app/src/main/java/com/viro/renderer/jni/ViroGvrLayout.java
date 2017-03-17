@@ -62,6 +62,104 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     private int mSavedOrientation;
     private OnSystemUiVisibilityChangeListener mSystemVisibilityListener;
 
+    private static class ViroSurfaceViewRenderer implements GLSurfaceView.Renderer {
+
+        private WeakReference<ViroGvrLayout> mView;
+        private WeakReference<GLSurfaceView> mSurface;
+
+        public ViroSurfaceViewRenderer(ViroGvrLayout view, GLSurfaceView surface) {
+            mView = new WeakReference<ViroGvrLayout>(view);
+            mSurface = new WeakReference<GLSurfaceView>(surface);
+        }
+
+        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+            ViroGvrLayout view = mView.get();
+            if (view == null) {
+                return;
+            }
+            GLSurfaceView surface = mSurface.get();
+            if (surface == null) {
+                return;
+            }
+
+            view.mNativeRenderer.onSurfaceCreated(surface.getHolder().getSurface());
+            view.mNativeRenderer.initalizeGl();
+            if (view.mGlListener != null) {
+                Runnable myRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        ViroGvrLayout view = mView.get();
+                        if (view == null) {
+                            return;
+                        }
+                        view.mGlListener.onGlInitialized();
+                    }
+                };
+                new Handler(Looper.getMainLooper()).post(myRunnable);
+            }
+        }
+
+        public void onSurfaceChanged(GL10 gl, int width, int height) {
+            ViroGvrLayout view = mView.get();
+            if (view == null) {
+                return;
+            }
+            GLSurfaceView surface = mSurface.get();
+            if (surface == null) {
+                return;
+            }
+
+            /**
+             * We have to manually notify the GVR surface presenter
+             * if the dimensions of the surface has changed (for example
+             * during a rotation).
+             */
+            final GvrApi gvr = view.getGvrApi();
+            if (gvr != null){
+                gvr.refreshDisplayMetrics();
+            }
+
+            view.mNativeRenderer.onSurfaceChanged(surface.getHolder().getSurface());
+        }
+
+        @Override
+        public void onDrawFrame(GL10 gl) {
+            ViroGvrLayout view = mView.get();
+            if (view == null) {
+                return;
+            }
+
+            for (FrameListener listener : view.mFrameListeners) {
+                listener.onDrawFrame();
+            }
+            view.mNativeRenderer.drawFrame();
+        }
+    }
+
+    private static class ViroOnTouchListener implements OnTouchListener {
+
+        private WeakReference<ViroGvrLayout> mView;
+
+        public ViroOnTouchListener(ViroGvrLayout view) {
+            mView = new WeakReference<ViroGvrLayout>(view);
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            ViroGvrLayout view = mView.get();
+            if (view == null) {
+                return false;
+            }
+
+            int action = event.getAction();
+            if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_UP) {
+                view.mNativeRenderer.onTouchEvent(action, event.getX(), event.getY());
+                return true;
+            }
+            return false;
+        }
+    }
+
     public ViroGvrLayout(Context context, GlListener glListener) {
         super(context);
 
@@ -98,55 +196,8 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         glSurfaceView.setEGLContextClientVersion(3);
         glSurfaceView.setEGLConfigChooser(8, 8, 8, 0, 0, 0);
         glSurfaceView.setPreserveEGLContextOnPause(true);
-        glSurfaceView.setRenderer(new Renderer() {
-            public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-                mNativeRenderer.onSurfaceCreated(glSurfaceView.getHolder().getSurface());
-                mNativeRenderer.initalizeGl();
-                if (mGlListener != null) {
-                    Runnable myRunnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            mGlListener.onGlInitialized();
-                        }
-                    };
-                    new Handler(Looper.getMainLooper()).post(myRunnable);
-                }
-            }
-
-            public void onSurfaceChanged(GL10 gl, int width, int height) {
-                /**
-                 * We have to manually notify the GVR surface presenter
-                 * if the dimensions of the surface has changed (for example
-                 * during a rotation).
-                 */
-                final GvrApi gvr = getGvrApi();
-                if (gvr != null){
-                    gvr.refreshDisplayMetrics();
-                }
-
-                mNativeRenderer.onSurfaceChanged(glSurfaceView.getHolder().getSurface());
-            }
-
-            @Override
-            public void onDrawFrame(GL10 gl) {
-                for (FrameListener listener : mFrameListeners) {
-                    listener.onDrawFrame();
-                }
-                mNativeRenderer.drawFrame();
-            }
-        });
-
-        glSurfaceView.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_UP) {
-                    mNativeRenderer.onTouchEvent(action, event.getX(), event.getY());
-                    return true;
-                }
-                return false;
-            }
-        });
+        glSurfaceView.setRenderer(new ViroSurfaceViewRenderer(this, glSurfaceView));
+        glSurfaceView.setOnTouchListener(new ViroOnTouchListener(this));
 
         setPresentationView(glSurfaceView);
 
