@@ -115,7 +115,7 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
 
     @Override
     public void validateApiKey(String apiKey) {
-
+        mNativeRenderer.setSuspended(false);
         mKeyValidator.validateKey(apiKey, new KeyValidationListener() {
             @Override
             public void onResponse(boolean success) {

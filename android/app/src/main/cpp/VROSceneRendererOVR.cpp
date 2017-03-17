@@ -861,7 +861,7 @@ static void ovrApp_Clear( ovrApp * app )
     app->BackButtonDown = false;
     app->BackButtonDownStartTime = 0.0;
     app->UseMultiview = true;
-    app->suspended = false;
+    app->suspended = true;
     ovrEgl_Clear( &app->Egl );
     ovrRenderer_Clear( &app->Renderer );
 }

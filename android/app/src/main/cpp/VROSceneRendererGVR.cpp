@@ -34,7 +34,7 @@ VROSceneRendererGVR::VROSceneRendererGVR(gvr_context* gvr_context,
                                                      std::shared_ptr<gvr::AudioApi> gvrAudio) :
     _gvr(gvr::GvrApi::WrapNonOwned(gvr_context)),
     _scratchViewport(_gvr->CreateBufferViewport()),
-    _rendererSuspended(false),
+    _rendererSuspended(true),
     _vrModeEnabled(true) {
 
     // Create corresponding controllers - cardboard, or daydream if supported.

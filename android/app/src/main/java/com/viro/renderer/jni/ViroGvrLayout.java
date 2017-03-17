@@ -207,6 +207,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
 
     @Override
     public void validateApiKey(String apiKey) {
+        mNativeRenderer.setSuspended(false);
         mKeyValidator.validateKey(apiKey, new KeyValidationListener() {
             @Override
             public void onResponse(boolean success) {
