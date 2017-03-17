@@ -210,6 +210,9 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
             return;
         }
 
+        Application app = (Application) activity.getApplicationContext();
+        app.unregisterActivityLifecycleCallbacks(this);
+
         destroy();
     }
 
@@ -217,12 +220,6 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     public void destroy() {
         mNativeRenderContext.delete();
         mNativeRenderer.destroy();
-
-        Activity activity = mWeakActivity.get();
-        if (activity != null) {
-            Application app = (Application) activity.getApplicationContext();
-            app.unregisterActivityLifecycleCallbacks(this);
-        }
     }
 
     @Override

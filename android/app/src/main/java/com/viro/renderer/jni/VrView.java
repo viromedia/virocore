@@ -28,5 +28,5 @@ public interface VrView extends Application.ActivityLifecycleCallbacks {
     public void validateApiKey(String apiKey);
 
     public void destroy();
-    
+
 }

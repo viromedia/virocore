@@ -319,24 +319,23 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
             return;
         }
 
+        activity.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(null);
+        activity.setRequestedOrientation(mSavedOrientation);
+        unSetImmersiveSticky();
+
+        Application app = (Application) activity.getApplicationContext();
+        app.unregisterActivityLifecycleCallbacks(this);
+
         destroy();
     }
 
     @Override
     public void destroy() {
         super.shutdown();
+
         mNativeRenderContext.delete();
         mNativeRenderer.destroy();
-        activity.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(null);
-        activity.setRequestedOrientation(mSavedOrientation);
-        unSetImmersiveSticky();
-
-        Activity activity = mWeakActivity.get();
-        if (activity != null) {
-            Application app = (Application) activity.getApplicationContext();
-            app.unregisterActivityLifecycleCallbacks(this);
-        }
     }
 
     @Override
