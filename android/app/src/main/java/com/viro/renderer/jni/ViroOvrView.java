@@ -201,18 +201,13 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        destroy();
+        // No-op
     }
 
     @Override
     public void destroy() {
         mNativeRenderContext.delete();
         mNativeRenderer.destroy();
-        
-        final Activity activity = mWeakActivity.get();
-        if (activity != null){
-            return;
-        }
     }
 
     @Override
