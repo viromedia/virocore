@@ -9,11 +9,9 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLSurfaceView.Renderer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -312,15 +310,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        if (mWeakActivity.get() != activity){
-            return;
-        }
-
-        activity.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(null);
-        activity.setRequestedOrientation(mSavedOrientation);
-        unSetImmersiveSticky();
-        destroy();
+        // no-op, the vrview destruction should be controlled by the SceneNavigator.
     }
 
     @Override
@@ -329,7 +319,18 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
 
         mNativeRenderContext.delete();
         mNativeRenderer.destroy();
+
+        Activity activity = mWeakActivity.get();
+        if (activity == null) {
+            return;
+        }
+
+        activity.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(null);
+        activity.setRequestedOrientation(mSavedOrientation);
+        unSetImmersiveSticky();
     }
+
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
