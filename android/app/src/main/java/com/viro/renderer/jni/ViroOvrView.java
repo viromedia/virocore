@@ -158,7 +158,6 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
         if (mWeakActivity.get() != activity){
             return;
         }
-
         mNativeRenderer.onStart();
     }
 
@@ -176,7 +175,6 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
         if (mWeakActivity.get() != activity){
             return;
         }
-
         mNativeRenderer.onPause();
     }
 
@@ -185,7 +183,6 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
         if (mWeakActivity.get() != activity){
             return;
         }
-
         mNativeRenderer.onResume();
 
         // Ensure fullscreen immersion.
@@ -207,12 +204,20 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        //No-op
+        destroy();
     }
 
     @Override
     public void destroy() {
-        //No-op
+        mNativeRenderContext.delete();
+        mNativeRenderer.destroy();
+
+        final Activity activity = mWeakActivity.get();
+        if (activity != null){
+            return;
+        }
+        Application app = (Application)activity.getApplicationContext();
+        app.unregisterActivityLifecycleCallbacks(this);
     }
 
     @Override
@@ -259,16 +264,6 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         mNativeRenderer.onSurfaceDestroyed(holder.getSurface());
-
-        mNativeRenderContext.delete();
-        mNativeRenderer.destroy();
-
-        final Activity activity = mWeakActivity.get();
-        if (activity != null){
-            return;
-        }
-        Application app = (Application)activity.getApplicationContext();
-        app.unregisterActivityLifecycleCallbacks(this);
     }
 
     // Accessed by Native code (VROSceneRendererOVR.cpp)
