@@ -82,6 +82,9 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
         }
 
         _lastClickedNode = nullptr;
+        if (_lastDraggedNode != nullptr) {
+            _lastDraggedNode->_draggedNode->setSelectable(true);
+        }
         _lastDraggedNode = nullptr;
     } else if (clickState == VROEventDelegate::ClickDown){
         _lastClickedNode = _hitResult->getNode();
@@ -95,17 +98,20 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
             return;
         }
 
+        draggableNode->setSelectable(false);
+
         /*
          * Grab and save a reference to the draggedNode that we will be tracking.
          * Grab and save the distance of the hit result from the controller.
-         * Grab and save the offset of the draggedNode from the controller's pointer.
+         * Grab and save the hit location from the hit test and original draggedNode position.
          * For each of the above, store them within _lastDraggedNode to be used later
          * within onMove to calculate the new dragged location of the draggedNode
          * in reference to the controller's movement.
          */
         std::shared_ptr<VRODraggedObject> draggedObject = std::make_shared<VRODraggedObject>();
         draggedObject->_draggedDistanceFromController = _hitResult->getLocation().distanceAccurate(_lastKnownPosition);
-        draggedObject->_draggedOffsetFromPointer = draggableNode->getTransformedPosition() - _hitResult->getLocation();
+        draggedObject->_originalHitLocation = _hitResult->getLocation();
+        draggedObject->_originalDraggedNodePosition = draggableNode->getPosition();
         draggedObject->_draggedNode = draggableNode;
         _lastDraggedNode  = draggedObject;
     }
@@ -168,10 +174,9 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
     if (_lastDraggedNode != nullptr){
 
         // Calculate the new drag location
-        VROVector3f objectOffset = _lastDraggedNode->_draggedOffsetFromPointer;
-        VROVector3f objectDistanceFromController = _lastKnownForward * _lastDraggedNode->_draggedDistanceFromController;
-        VROVector3f draggedToLocation = _lastKnownPosition + objectDistanceFromController + objectOffset;
-
+        VROVector3f newSimulatedHitPosition = _lastKnownForward * _lastDraggedNode->_draggedDistanceFromController;
+        VROVector3f draggedOffset = newSimulatedHitPosition - _lastDraggedNode->_originalHitLocation;
+        VROVector3f draggedToLocation = _lastDraggedNode->_originalDraggedNodePosition + draggedOffset;
         std::shared_ptr<VRONode> draggedNode = _lastDraggedNode->_draggedNode;
         draggedNode->setPosition(draggedToLocation);
 
@@ -299,7 +304,7 @@ VROHitTestResult VROInputControllerBase::hitTest(VROVector3f ray, VROVector3f hi
     }
 
     VROVector3f backgroundPosition =  hitFromPosition + (ray * kSceneBackgroundDistance);
-    
+
     VROHitTestResult sceneBackgroundHitResult = {_scene->getRootNodes()[0], backgroundPosition , kSceneBackgroundDistance, true};
     return sceneBackgroundHitResult;
 }
