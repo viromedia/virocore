@@ -217,10 +217,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         // Attach SystemUiVisibilityChangeListeners to enforce a full screen experience.
         activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mSystemVisibilityListener);
-
         mWeakActivity = new WeakReference<Activity>(activity);
-        Application app = (Application)activityContext.getApplicationContext();
-        app.registerActivityLifecycleCallbacks(this);
     }
 
     @Override
@@ -323,10 +320,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(null);
         activity.setRequestedOrientation(mSavedOrientation);
         unSetImmersiveSticky();
-
-        Application app = (Application) activity.getApplicationContext();
-        app.unregisterActivityLifecycleCallbacks(this);
-
         destroy();
     }
 

@@ -93,10 +93,7 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
 
         // Prevent screen from dimming/locking.
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         mWeakActivity = new WeakReference<Activity>((Activity)getContext());
-        Application app = (Application)activityContext.getApplicationContext();
-        app.registerActivityLifecycleCallbacks(this);
     }
 
     @Override
@@ -211,13 +208,11 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     public void destroy() {
         mNativeRenderContext.delete();
         mNativeRenderer.destroy();
-
+        
         final Activity activity = mWeakActivity.get();
         if (activity != null){
             return;
         }
-        Application app = (Application)activity.getApplicationContext();
-        app.unregisterActivityLifecycleCallbacks(this);
     }
 
     @Override
