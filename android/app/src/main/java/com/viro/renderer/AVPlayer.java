@@ -60,12 +60,14 @@ public class AVPlayer {
     private long mNativeReference;
     private boolean mLoop;
     private State mState;
+    private boolean mMute;
 
     public AVPlayer(long nativeReference, Context context) {
         mVolume = 1.0f;
         mNativeReference = nativeReference;
         mLoop = false;
         mState = State.IDLE;
+        mMute = false;
 
         TrackSelection.Factory trackSelectionFactory = new AdaptiveVideoTrackSelection.Factory(new DefaultBandwidthMeter());
         DefaultTrackSelector trackSelector = new DefaultTrackSelector(trackSelectionFactory);
@@ -108,9 +110,7 @@ public class AVPlayer {
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 if (playbackState == ExoPlayer.STATE_ENDED) {
                     if (mLoop) {
-                        mState = State.PAUSED;
                         mExoPlayer.seekToDefaultPosition();
-                        play();
                     }
                     nativeOnFinished(mNativeReference);
                 }
@@ -154,6 +154,7 @@ public class AVPlayer {
                     null, null);
 
             mExoPlayer.prepare(mediaSource);
+            mExoPlayer.seekToDefaultPosition();
             mState = State.PREPARED;
 
             Log.i(TAG, "AVPlayer prepared for playback");
@@ -207,8 +208,6 @@ public class AVPlayer {
     }
 
     public void play() {
-        mExoPlayer.seekToDefaultPosition();
-
         if (mState == State.PREPARED || mState == State.PAUSED) {
             mExoPlayer.setPlayWhenReady(true);
             mState = State.STARTED;
@@ -234,14 +233,20 @@ public class AVPlayer {
 
     public void setLoop(boolean loop) {
         mLoop = loop;
+        if (mExoPlayer.getPlaybackState() == ExoPlayer.STATE_ENDED){
+            mExoPlayer.seekToDefaultPosition();
+        }
     }
 
     public void setVolume(float volume) {
         mVolume = volume;
-        mExoPlayer.setVolume(mVolume);
+        if (!mMute){
+            mExoPlayer.setVolume(mVolume);
+        }
     }
 
     public void setMuted(boolean muted) {
+        mMute = muted;
         if (muted) {
             mExoPlayer.setVolume(0);
         }
