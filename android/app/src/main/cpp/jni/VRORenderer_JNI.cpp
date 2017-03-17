@@ -234,7 +234,7 @@ JNI_METHOD(jstring, nativeGetController)(JNIEnv *env, jobject obj, jlong nativeR
     return env->NewStringUTF(controller.c_str());
 }
 
-JNI_METHOD(jstring, nativeSetSuspended)(JNIEnv *env,
+JNI_METHOD(void, nativeSetSuspended)(JNIEnv *env,
                                         jobject obj,
                                         jlong native_renderer,
                                         jboolean suspend_renderer) {
