@@ -54,6 +54,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     private PlatformUtil mPlatformUtil;
     private WeakReference<Activity> mWeakActivity;
     private KeyValidator mKeyValidator;
+    private boolean mDestroyed = false;
 
     // Activity state to restore to before being modified by the renderer.
     private int mSavedSystemUIVisbility;
@@ -257,7 +258,9 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         mKeyValidator.validateKey(apiKey, new KeyValidationListener() {
             @Override
             public void onResponse(boolean success) {
-                mNativeRenderer.setSuspended(!success);
+                if (!mDestroyed) {
+                    mNativeRenderer.setSuspended(!success);
+                }
             }
         });
     }
@@ -316,6 +319,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     @Override
     public void destroy() {
         super.shutdown();
+        mDestroyed = true;
 
         mNativeRenderContext.delete();
         mNativeRenderer.destroy();

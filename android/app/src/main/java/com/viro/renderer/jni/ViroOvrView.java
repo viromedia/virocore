@@ -68,6 +68,7 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     private PlatformUtil mPlatformUtil;
     private WeakReference<Activity> mWeakActivity;
     private KeyValidator mKeyValidator;
+    private boolean mDestroyed = false;
 
     public ViroOvrView(Activity activity, GlListener glListener) {
         super(activity);
@@ -117,7 +118,9 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
         mKeyValidator.validateKey(apiKey, new KeyValidationListener() {
             @Override
             public void onResponse(boolean success) {
-                mNativeRenderer.setSuspended(!success);
+                if (!mDestroyed) {
+                    mNativeRenderer.setSuspended(!success);
+                }
             }
         });
     }
@@ -206,6 +209,7 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
 
     @Override
     public void destroy() {
+        mDestroyed = true;
         mNativeRenderContext.delete();
         mNativeRenderer.destroy();
     }
