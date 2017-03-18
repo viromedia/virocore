@@ -23,7 +23,7 @@
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "vr/gvr/capi/include/gvr_types.h"
 
-class VROSceneRendererGVR : public VROSceneRenderer {
+class VROSceneRendererGVR : public VROSceneRenderer, public std::enable_shared_from_this<VROSceneRendererGVR> {
 
 public:
 

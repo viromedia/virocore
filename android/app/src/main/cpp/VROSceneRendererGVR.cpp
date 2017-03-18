@@ -195,16 +195,24 @@ void VROSceneRendererGVR::onTouchEvent(int action, float x, float y) {
 }
 
 void VROSceneRendererGVR::onPause() {
-    _renderer->getInputController()->onPause();
-    _gvr->PauseTracking();
-    _driver->onPause();
+    std::shared_ptr<VROSceneRendererGVR> shared = shared_from_this();
+
+    VROPlatformDispatchAsyncRenderer([shared] {
+        shared->_renderer->getInputController()->onPause();
+        shared->_gvr->PauseTracking();
+        shared->_driver->onPause();
+    });
 }
 
 void VROSceneRendererGVR::onResume() {
-    _renderer->getInputController()->onResume();
-    _gvr->RefreshViewerProfile();
-    _gvr->ResumeTracking();
-    _driver->onResume();
+    std::shared_ptr<VROSceneRendererGVR> shared = shared_from_this();
+
+    VROPlatformDispatchAsyncRenderer([shared] {
+        shared->_renderer->getInputController()->onResume();
+        shared->_gvr->RefreshViewerProfile();
+        shared->_gvr->ResumeTracking();
+        shared->_driver->onResume();
+    });
 }
 
 void VROSceneRendererGVR::prepareFrame(VROViewport leftViewport, VROFieldOfView fov, VROMatrix4f headRotation) {
