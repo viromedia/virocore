@@ -6,6 +6,7 @@ package com.viro.renderer.jni;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -92,8 +93,12 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
 
         mKeyValidator = new KeyValidator(activityContext);
 
+        // Note: unlike GVR we don't have to worry about restoring these Activity settings because
+        // OVR apps aren't hybrid 2D -> VR applications.
         // Prevent screen from dimming/locking.
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        // Prevent screen from switching to portrait
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         mWeakActivity = new WeakReference<Activity>((Activity)getContext());
     }
 
