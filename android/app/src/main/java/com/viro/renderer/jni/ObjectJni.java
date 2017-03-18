@@ -76,20 +76,21 @@ public class ObjectJni extends BaseGeometry {
     // Called from JNI upon successful loading of OBJ file
     public void nodeDidFinishCreation() {
         mObjectLoadingFinished = true;
-        if (mAttachOnObjLoadingFinish) {
-            nativeAttachToNode(mObjectNodeRef, mNodeRef);
-            nativeDestroyNode(mObjectNodeRef);
-            mObjectNodeRef = 0;
-        }
-
-        if (mAsyncObjListener != null) {
-            // So that clients can override materials if they want to
-            mAsyncObjListener.onObjLoaded();
-        }
-
         // If destroy was called before obj was loaded
         if (mDestroyOnObjNodeCreation) {
             destroy();
+        }
+        else {
+            if (mAttachOnObjLoadingFinish) {
+                nativeAttachToNode(mObjectNodeRef, mNodeRef);
+                nativeDestroyNode(mObjectNodeRef);
+                mObjectNodeRef = 0;
+            }
+
+            if (mAsyncObjListener != null) {
+                // So that clients can override materials if they want to
+                mAsyncObjListener.onObjLoaded();
+            }
         }
     }
 
