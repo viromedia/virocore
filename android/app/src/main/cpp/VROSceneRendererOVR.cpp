@@ -1311,6 +1311,10 @@ void * AppThreadFunction( void * parm )
 
         ovrApp_BackButtonAction( &appState, &perfParms );
 
+
+        // Invoke the frame listeners on the Java side
+        java.Env->CallVoidMethod(appThread->view, drawFrameMethod);
+
         if ( appState.Ovr == NULL )
         {
             continue;
@@ -1320,8 +1324,6 @@ void * AppThreadFunction( void * parm )
         {
             continue;
         }
-        // Invoke the frame listeners on the Java side
-        java.Env->CallVoidMethod(appThread->view, drawFrameMethod);
 
         // This is the only place the frame index is incremented, right before
         // calling vrapi_GetPredictedDisplayTime().
