@@ -104,9 +104,11 @@ public class PlatformUtil {
     // Accessed by Native code (VROPlatformUtil.cpp)
     public void destroyVideoSink(int textureId) {
         VideoSink videoSink = mVideoSinks.remove(textureId);
-        mFrameListeners.remove(videoSink);
+        if (videoSink != null) {
+            mFrameListeners.remove(videoSink);
 
-        videoSink.releaseSurface();
+            videoSink.releaseSurface();
+        }
     }
 
     // Accessed by Native code (VROPlatformUtil.cpp)
