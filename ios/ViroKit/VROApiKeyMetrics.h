@@ -8,7 +8,7 @@
 
 #import <AWSDynamoDB/AWSDynamoDB.h>
 
-static NSString *const kVROApiKeyMetricsFormat = @"%@_%@_%@";
+static NSString *const kVROApiKeyMetricsFormat = @"%@_%@_%@_%@_%@";
 
 @interface VROApiKeyMetrics : AWSDynamoDBObjectModel <AWSDynamoDBModeling>
 

@@ -39,7 +39,8 @@
 #else
         NSString *buildType = @"release";
 #endif
-        _ApiKey_BundleId_BuildType = [NSString stringWithFormat:kVROApiKeyMetricsFormat, apiKey, bundleId, buildType];
+        // we care more about the actual headset than the platform
+        _ApiKey_BundleId_BuildType = [NSString stringWithFormat:kVROApiKeyMetricsFormat, apiKey, @"ios", @"cardboard", bundleId, buildType];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyyMMdd"];
         _Date = [dateFormatter stringFromDate:[NSDate date]];

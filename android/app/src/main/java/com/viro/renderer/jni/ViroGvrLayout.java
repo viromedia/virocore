@@ -256,7 +256,8 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     @Override
     public void validateApiKey(String apiKey) {
         mNativeRenderer.setSuspended(false);
-        mKeyValidator.validateKey(apiKey, new KeyValidationListener() {
+        // we actually care more about the headset than platform in this case.
+        mKeyValidator.validateKey(apiKey, getHeadset(), new KeyValidationListener() {
             @Override
             public void onResponse(boolean success) {
                 if (!mDestroyed) {

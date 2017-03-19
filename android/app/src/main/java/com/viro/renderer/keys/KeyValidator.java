@@ -22,6 +22,7 @@ public class KeyValidator {
     private static final String TAG = "Viro";
     private Context mContext;
     private DynamoDBMapper mDynamoDBMapper;
+    private AmazonDynamoDBClient mDynamoClient;
 
     private static int MAX_WAIT_INTERVAL_MILLIS = 64000;
 
@@ -33,9 +34,9 @@ public class KeyValidator {
                 Regions.US_WEST_2
         );
 
-        AmazonDynamoDBClient dynamoDBClient = new AmazonDynamoDBClient(credentialsProvider);
-        dynamoDBClient.setRegion(Region.getRegion(Regions.US_WEST_2));
-        mDynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        mDynamoClient = new AmazonDynamoDBClient(credentialsProvider);
+        mDynamoClient.setRegion(Region.getRegion(Regions.US_WEST_2));
+        mDynamoDBMapper = new DynamoDBMapper(mDynamoClient);
 
     }
 
@@ -45,7 +46,7 @@ public class KeyValidator {
      * @param apiKey
      * @param listener
      */
-    public void validateKey(final String apiKey, final KeyValidationListener listener) {
+    public void validateKey(final String apiKey, final String vrPlatform, final KeyValidationListener listener) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -58,6 +59,8 @@ public class KeyValidator {
                         // Our dynamodb table stores valid as String true or false. As a result, objectmapper loads it as String
                         if (keyFromDynamo != null && keyFromDynamo.getValid().equalsIgnoreCase("true")) {
                             listener.onResponse(true);
+                            KeyMetricsRecorder recorder = new KeyMetricsRecorder(mDynamoClient, mContext);
+                            recorder.record(apiKey, vrPlatform);
                         } else {
                             listener.onResponse(false);
                             Log.i(TAG, "The given API Key is either missing or invalid! If you " +
