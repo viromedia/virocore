@@ -34,6 +34,7 @@ VROGeometrySubstrateOpenGL::~VROGeometrySubstrateOpenGL() {
     }
     
     glDeleteBuffers((int) buffers.size(), buffers.data());
+    glDeleteVertexArrays((int) _vaos.size(), _vaos.data());
 }
 
 void VROGeometrySubstrateOpenGL::readGeometryElements(const std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
