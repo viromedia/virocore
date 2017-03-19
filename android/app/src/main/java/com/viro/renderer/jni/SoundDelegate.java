@@ -10,4 +10,5 @@ package com.viro.renderer.jni;
 public interface SoundDelegate {
     void onSoundReady();
     void onSoundFinish();
+    void onSoundFail(String error);
 }

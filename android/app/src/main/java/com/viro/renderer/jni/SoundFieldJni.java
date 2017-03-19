@@ -98,6 +98,13 @@ public class SoundFieldJni implements BaseSoundJni {
         }
     }
 
+    @Override
+    public void soundDidFail(String error) {
+        if (mDelegate != null) {
+            mDelegate.onSoundFail(error);
+        }
+    }
+
     private native long nativeCreateSoundField(String url, boolean local, long renderContextRef);
     private native long nativeCreateSoundFieldWithData(long dataRef, long renderContextRef);
     private native void nativeDestroySoundField(long mNativeRef);

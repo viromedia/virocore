@@ -43,7 +43,7 @@ public:
 
     #pragma mark VROSoundDataDelegate Implementation
     void dataIsReady();
-    void dataError();
+    void dataError(std::string error);
 
 private:
 

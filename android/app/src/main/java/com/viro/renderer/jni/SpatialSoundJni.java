@@ -101,6 +101,13 @@ public class SpatialSoundJni implements BaseSoundJni {
         }
     }
 
+    @Override
+    public void soundDidFail(String error) {
+        if (mDelegate != null) {
+            mDelegate.onSoundFail(error);
+        }
+    }
+
     private native long nativeCreateSpatialSound(String filename, boolean local, long renderContextRef);
     private native long nativeCreateSpatialSoundWithData(long nativeRef, long dataRef);
     private native void nativeDestroySpatialSound(long nativeRef);

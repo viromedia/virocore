@@ -418,6 +418,11 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             public void onSoundFinish() {
                 Log.i("NormalSound", "ViroActivity sound has finished!");
             }
+
+            @Override
+            public void onSoundFail(String error) {
+
+            }
         }, false));
     }
 
@@ -436,6 +441,11 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             @Override
             public void onSoundFinish() {
                 Log.i("NormalSound", "ViroActivity sound has finished!");
+            }
+
+            @Override
+            public void onSoundFail(String error) {
+
             }
         }));
     }
@@ -457,6 +467,11 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             @Override
             public void onSoundFinish() {
                 Log.i("SoundField", "ViroActivity sound has finished!");
+            }
+
+            @Override
+            public void onSoundFail(String error) {
+
             }
         }, false));
         float[] rotation = {0,0,90};
@@ -486,6 +501,11 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             public void onSoundFinish() {
                 Log.i("SpatialSound", "ViroActivity sound has finished!");
             }
+
+            @Override
+            public void onSoundFail(String error) {
+
+            }
         }, false));
     }
 
@@ -510,6 +530,11 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             @Override
             public void onSoundFinish() {
                 Log.i("SpatialSound", "ViroActivity sound has finished!");
+            }
+
+            @Override
+            public void onSoundFail(String error) {
+
             }
         }));
     }

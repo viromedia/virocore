@@ -85,7 +85,7 @@ void VROAudioPlayerAndroid::onFinished() {
 
 void VROAudioPlayerAndroid::onError(std::string error) {
     if (_delegate) {
-        // TODO VIRO-902 Error callbacks for sound
+        _delegate->soundDidFail(error);
     }
 }
 
@@ -97,6 +97,8 @@ void VROAudioPlayerAndroid::dataIsReady() {
     }
 }
 
-void VROAudioPlayerAndroid::dataError() {
-    // TODO VIRO-902 bubble data loading errors up to JS
+void VROAudioPlayerAndroid::dataError(std::string error) {
+    if (_delegate) {
+        _delegate->soundDidFail(error);
+    }
 }

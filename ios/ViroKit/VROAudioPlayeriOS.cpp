@@ -62,12 +62,17 @@ void VROAudioPlayeriOS::setup() {
             
             NSURL *urlObj = [NSURL URLWithString:[NSString stringWithUTF8String:_url.c_str()]];
             VROPlatformDownloadDataWithURL(urlObj, ^(NSData *data, NSError *error) {
-                shared->_player = [[AVAudioPlayer alloc] initWithData:data error:NULL];
-                shared->updatePlayerProperties();
-                
-                shared->_audioDelegate = [[VROAudioPlayerDelegate alloc] initWithSoundDelegate:_delegate];
-                shared->_player.delegate = _audioDelegate;
-                shared->_delegate->soundIsReady();
+                if (data && !error) {
+                    shared->_player = [[AVAudioPlayer alloc] initWithData:data error:NULL];
+                    shared->updatePlayerProperties();
+                    
+                    shared->_audioDelegate = [[VROAudioPlayerDelegate alloc] initWithSoundDelegate:_delegate];
+                    shared->_player.delegate = _audioDelegate;
+                    shared->_delegate->soundIsReady();
+                }
+                else {
+                    shared->_delegate->soundDidFail("Failed to load sound");
+                }
             });
         }
     }

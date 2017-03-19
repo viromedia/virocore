@@ -107,6 +107,13 @@ public class SoundJni implements BaseSoundJni {
         }
     }
 
+    @Override
+    public void soundDidFail(String error) {
+        if (mDelegate != null) {
+            mDelegate.onSoundFail(error);
+        }
+    }
+
     private native long nativeCreateSound(String filename, long renderContextRef);
     private native long nativeCreateSoundWithData(long dataRef, long renderContextRef);
     private native void nativeDestroySound(long mNativeRef);

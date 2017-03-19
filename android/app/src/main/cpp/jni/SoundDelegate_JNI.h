@@ -30,6 +30,7 @@ public:
     // VROSoundDelegateInternal
     virtual void soundIsReady();
     virtual void soundDidFinish();
+    virtual void soundDidFail(std::string error);
 
 private:
     jobject _javaObject;

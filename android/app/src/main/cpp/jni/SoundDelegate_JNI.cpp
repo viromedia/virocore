@@ -66,3 +66,30 @@ void SoundDelegate::soundDidFinish() {
     }
     env->DeleteLocalRef(javaClass);
 }
+
+void SoundDelegate::soundDidFail(std::string error) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    env->ExceptionClear();
+    jclass javaClass = env->FindClass("com/viro/renderer/jni/NativeSoundDelegate");
+
+    if (javaClass == nullptr) {
+        perr("Unable to find NativeSoundDelegate class for soundDidFail(String) callback");
+        return;
+    }
+
+    jmethodID method = env->GetMethodID(javaClass, "soundDidFail", "(Ljava/lang/String;)V");
+    if (method == nullptr) {
+        perr("Unable to find method soundIsFail(String)");
+        return;
+    }
+
+    jstring jerror = env->NewStringUTF(error.c_str());
+    env->CallVoidMethod(_javaObject, method, jerror);
+    if (env->ExceptionOccurred()) {
+        perr("Exception occurred while invoking soundDidFail(String)");
+        env->ExceptionClear();
+    }
+
+    env->DeleteLocalRef(jerror);
+    env->DeleteLocalRef(javaClass);
+}

@@ -41,10 +41,10 @@ void VROSoundDataGVR::setup() {
         if (_local) {
             loadSoundFromResource(_path, onFinish);
         } else {
-            std::function<void()> onError = [weakPtr]() {
+            std::function<void(std::string)> onError = [weakPtr](std::string error) {
                 std::shared_ptr<VROSoundDataGVR> data = weakPtr.lock();
                 if (data) {
-                    data->error();
+                    data->error(error);
                 }
             };
 
@@ -55,12 +55,16 @@ void VROSoundDataGVR::setup() {
 
 void VROSoundDataGVR::ready(std::string fileName) {
     _status = VROSoundDataStatus::Ready;
+    _error.clear();
     _localPath = fileName;
+
     notifyDelegateOfStatus();
 }
 
-void VROSoundDataGVR::error() {
+void VROSoundDataGVR::error(std::string err) {
     _status = VROSoundDataStatus::Error;
+    _error = err;
+
     notifyDelegateOfStatus();
 }
 
@@ -80,14 +84,14 @@ void VROSoundDataGVR::notifyDelegateOfStatus() {
             strongDelegate->dataIsReady();
         }
         else if (_status == VROSoundDataStatus::Error) {
-            strongDelegate->dataError();
+            strongDelegate->dataError(_error);
         }
     }
 }
 
 void VROSoundDataGVR::loadSoundFromURL(std::string path,
                                        std::function<void(std::string)> onFinish,
-                                       std::function<void()> onError) {
+                                       std::function<void(std::string)> onError) {
     VROPlatformDispatchAsyncBackground([path, onFinish, onError] {
         bool isTemp = false;
         bool success = false;
@@ -97,7 +101,7 @@ void VROSoundDataGVR::loadSoundFromURL(std::string path,
             onFinish(filename);
         }
         else {
-            onError();
+            onError("Failed to load sound from URL");
         }
     });
 }
