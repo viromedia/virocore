@@ -178,8 +178,10 @@ void VROAudioPlayeriOS::dataIsReady() {
     }
 }
 
-void VROAudioPlayeriOS::dataError() {
-    //TODO VIRO-902 bubble data errors up to JS
+void VROAudioPlayeriOS::dataError(std::string error) {
+    if (_delegate) {
+        _delegate->soundDidFail(error);
+    }
 }
 
 #pragma mark - VROAudioPlayerDelegate implementation
