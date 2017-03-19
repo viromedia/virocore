@@ -69,8 +69,8 @@ JNI_METHOD(jlong, nativeLoadOBJAndResourcesFromFile)(JNIEnv *env,
 }
 
 JNI_METHOD(jlong, nativeLoadOBJFromUrl)(JNIEnv *env,
-                                         jobject object,
-                                         jstring url) {
+                                        jobject object,
+                                        jstring url) {
     const char *cStrUrl = env->GetStringUTFChars(url, NULL);
     std::string objUrlPath(cStrUrl);
     std::string objUrlBase = objUrlPath.substr(0, objUrlPath.find_last_of('/'));
@@ -78,9 +78,11 @@ JNI_METHOD(jlong, nativeLoadOBJFromUrl)(JNIEnv *env,
     std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(object, env);
     std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(objUrlPath, objUrlBase, true, [delegateRef](std::shared_ptr<VRONode> node, bool success) {
         if (!success) {
-            return;
+            delegateRef->objFailed("Failed to load OBJ");
         }
-        delegateRef->objLoaded();
+        else {
+            delegateRef->objLoaded();
+        }
     });
 
     return Node::jptr(objNode);

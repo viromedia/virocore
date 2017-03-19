@@ -35,3 +35,21 @@ void OBJLoaderDelegate::objLoaded() {
         env->DeleteLocalRef(localObj);
     });
 }
+
+void OBJLoaderDelegate::objFailed(std::string error) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj, error] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        jstring jerror = env->NewStringUTF(error.c_str());
+        VROPlatformCallJavaFunction(localObj, "nodeDidFailOBJLoad", "(Ljava/lang/String;)V", jerror);
+        env->DeleteLocalRef(localObj);
+        env->DeleteLocalRef(jerror);
+    });
+}

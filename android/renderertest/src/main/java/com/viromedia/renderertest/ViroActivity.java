@@ -322,6 +322,11 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
                 material.setLightingModel("Constant");
                 node1.setMaterials(Arrays.asList(material));
             }
+
+            @Override
+            public void onObjFailed(String error) {
+
+            }
         });
         node1.setGeometry(objectJni);
 

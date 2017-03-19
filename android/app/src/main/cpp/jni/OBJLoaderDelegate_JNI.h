@@ -17,6 +17,7 @@ public:
     ~OBJLoaderDelegate();
 
     void objLoaded();
+    void objFailed(std::string error);
 
 private:
     jobject _javaObject;

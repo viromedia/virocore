@@ -94,6 +94,17 @@ public class ObjectJni extends BaseGeometry {
         }
     }
 
+    // Called from JNI upon OBJ failing to load
+    public void nodeDidFailOBJLoad(String error) {
+        mObjectLoadingFinished = true;
+        if (mDestroyOnObjNodeCreation) {
+            destroy();
+        }
+        else if (mAsyncObjListener != null) {
+            mAsyncObjListener.onObjFailed(error);
+        }
+    }
+
     private native long nativeLoadOBJFromFile(String fileName);
     private native long nativeLoadOBJAndResourcesFromFile(String fileName,
                                                           Map<String, String> resources);

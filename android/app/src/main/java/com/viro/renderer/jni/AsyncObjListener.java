@@ -5,4 +5,5 @@ package com.viro.renderer.jni;
 
 public interface AsyncObjListener {
     void onObjLoaded();
+    void onObjFailed(String error);
 }
