@@ -323,7 +323,9 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
     if (self.loop) {
         AVPlayerItem *playerItem = [notification object];
         [playerItem seekToTime:kCMTimeZero];
-    } else if (delegate) {
+    }
+    
+    if (delegate) {
         delegate->videoDidFinish();
     }
 }

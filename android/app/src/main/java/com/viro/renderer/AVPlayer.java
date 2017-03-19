@@ -119,7 +119,18 @@ public class AVPlayer {
             @Override
             public void onPlayerError(ExoPlaybackException error) {
                 Log.w(TAG, "AVPlayer encountered error [" + error + "]", error);
-                nativeOnError(mNativeReference, error.getLocalizedMessage());
+
+                String message = null;
+                if (error.type == ExoPlaybackException.TYPE_RENDERER) {
+                    message = error.getRendererException().getLocalizedMessage();
+                }
+                else if (error.type == ExoPlaybackException.TYPE_SOURCE) {
+                    message = error.getSourceException().getLocalizedMessage();
+                }
+                else if (error.type == ExoPlaybackException.TYPE_UNEXPECTED) {
+                    message = error.getUnexpectedException().getLocalizedMessage();
+                }
+                nativeOnError(mNativeReference, message);
             }
             @Override
             public void onPositionDiscontinuity() {

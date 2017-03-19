@@ -49,11 +49,17 @@ extern "C" {
         std::weak_ptr<VROAVPlayerDelegate> delegateWeak
             = native(nativePlayerRef)->getDelegate();
         if(auto tmp = delegateWeak.lock()){
-            const char *cError = env->GetStringUTFChars(error, NULL);
-            std::string sError(cError);
+            const char *cError = NULL;
+            std::string sError;
+            if (error != NULL) {
+                cError = env->GetStringUTFChars(error, NULL);
+                sError = std::string(cError);
+            }
 
             tmp->onError(sError);
-            env->ReleaseStringUTFChars(error, cError);
+            if (cError != NULL) {
+                env->ReleaseStringUTFChars(error, cError);
+            }
         }
     }
 }
