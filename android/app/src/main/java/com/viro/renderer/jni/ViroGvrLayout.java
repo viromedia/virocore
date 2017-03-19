@@ -236,6 +236,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
      */
     @Override
     public void setVrModeEnabled(boolean vrModeEnabled) {
+        getUiLayout().setEnabled(vrModeEnabled);
 
         if (vrModeEnabled) {
             // Enable scan line racing.
