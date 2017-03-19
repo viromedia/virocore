@@ -11,8 +11,8 @@
 #include <atomic>
 #include <memory>
 
-// Incrementing binding points
-static std::atomic_int sUBOBindingPoint;
+// Fixed binding point used for lighting
+static int sUBOBindingPoint = 0;
 
 // Grouped in 4N slots, matching lighting_general_functions.glsl
 typedef struct {
@@ -48,8 +48,9 @@ class VROLightingUBO {
     
 public:
     
-    VROLightingUBO(const std::vector<std::shared_ptr<VROLight>> &lights) :
-        _lightingUBOBindingPoint(sUBOBindingPoint++),
+    VROLightingUBO(int hash, const std::vector<std::shared_ptr<VROLight>> &lights) :
+        _hash(hash),
+        _lightingUBOBindingPoint(sUBOBindingPoint),
         _lights(lights),
         _needsUpdate(false) {
         
@@ -61,6 +62,10 @@ public:
         // Links the UBO and the binding point
         glBindBufferBase(GL_UNIFORM_BUFFER, _lightingUBOBindingPoint, _lightingUBO);
         updateLights();
+    }
+    
+    virtual ~VROLightingUBO() {
+        glDeleteBuffers(1, &_lightingUBO);
     }
     
     /*
@@ -76,7 +81,16 @@ public:
         _needsUpdate = true;
     }
     
+    /*
+     Hash which uniquely identifies the set of lights composing this UBO.
+     */
+    int getHash() const {
+        return _hash;
+    }
+    
 private:
+    
+    int _hash;
     
     /*
      The uniform buffer object ID and binding point for lighting parameters.

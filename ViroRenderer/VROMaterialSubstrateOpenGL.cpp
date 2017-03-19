@@ -344,13 +344,15 @@ void VROMaterialSubstrateOpenGL::bindLights(int lightsHash,
     for (const std::shared_ptr<VROLight> &light : lights) {
         light->propagateUpdates();
     }
-    
-    std::shared_ptr<VROLightingUBO> lightingUBO = glDriver.getLightingUBO(lightsHash);
-    if (!lightingUBO) {
-        lightingUBO = glDriver.createLightingUBO(lightsHash, lights);
+  
+    if (!_lightingUBO || _lightingUBO->getHash() != lightsHash) {
+        _lightingUBO = glDriver.getLightingUBO(lightsHash);
+        if (!_lightingUBO) {
+            _lightingUBO = glDriver.createLightingUBO(lightsHash, lights);
+        }
     }
-        
-    lightingUBO->bind(_program);
+    
+    _lightingUBO->bind(_program);
 }
 
 void VROMaterialSubstrateOpenGL::bindDepthSettings() {

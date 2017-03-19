@@ -21,6 +21,7 @@ class VROLight;
 class VROMatrix4f;
 class VROVector3f;
 class VROUniform;
+class VROLightingUBO;
 enum class VROEyeType;
 
 class VROMaterialSubstrateOpenGL : public VROMaterialSubstrate {
@@ -60,6 +61,7 @@ private:
     
     std::shared_ptr<VROShaderProgram> _program;
     std::vector<std::shared_ptr<VROTexture>> _textures;
+    std::shared_ptr<VROLightingUBO> _lightingUBO;
     
     VROUniform *_diffuseSurfaceColorUniform;
     VROUniform *_diffuseIntensityUniform;

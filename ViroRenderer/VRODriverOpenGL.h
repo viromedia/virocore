@@ -60,7 +60,13 @@ public:
     std::shared_ptr<VROLightingUBO> getLightingUBO(int lightsHash) {
         auto it = _lightingUBOs.find(lightsHash);
         if (it != _lightingUBOs.end()) {
-            return it->second;
+            std::shared_ptr<VROLightingUBO> light = it->second.lock();
+            if (light) {
+                return light;
+            }
+            else {
+                return {};
+            }
         }
         else {
             return {};
@@ -68,13 +74,12 @@ public:
     }
     
     std::shared_ptr<VROLightingUBO> createLightingUBO(int lightsHash, const std::vector<std::shared_ptr<VROLight>> &lights) {
-        std::shared_ptr<VROLightingUBO> lightingUBO = std::make_shared<VROLightingUBO>(lights);
+        std::shared_ptr<VROLightingUBO> lightingUBO = std::make_shared<VROLightingUBO>(lightsHash, lights);
         _lightingUBOs[lightsHash] = lightingUBO;
         
         for (const std::shared_ptr<VROLight> &light : lights) {
             light->addUBO(lightingUBO);
         }
-        
         return lightingUBO;
     }
     
@@ -104,7 +109,7 @@ private:
     /*
      Map of light hashes to corresponding lighting UBOs.
      */
-    std::map<int, std::shared_ptr<VROLightingUBO>> _lightingUBOs;
+    std::map<int, std::weak_ptr<VROLightingUBO>> _lightingUBOs;
     
     /*
      Shader programs are shared across the system.
