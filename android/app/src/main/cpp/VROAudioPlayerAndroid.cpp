@@ -70,6 +70,7 @@ void VROAudioPlayerAndroid::setup() {
 }
 
 #pragma mark - VROAVPlayerDelegate
+
 void VROAudioPlayerAndroid::onPrepared() {
     if (_delegate) {
         _delegate->soundIsReady();
@@ -79,6 +80,12 @@ void VROAudioPlayerAndroid::onPrepared() {
 void VROAudioPlayerAndroid::onFinished() {
     if (_delegate) {
         _delegate->soundDidFinish();
+    }
+}
+
+void VROAudioPlayerAndroid::onError(std::string error) {
+    if (_delegate) {
+        // TODO VIRO-902 Error callbacks for sound
     }
 }
 

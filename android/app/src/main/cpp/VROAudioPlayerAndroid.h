@@ -39,6 +39,7 @@ public:
     #pragma mark - VROAVPlayerDelegate
     virtual void onPrepared();
     virtual void onFinished();
+    virtual void onError(std::string error);
 
     #pragma mark VROSoundDataDelegate Implementation
     void dataIsReady();

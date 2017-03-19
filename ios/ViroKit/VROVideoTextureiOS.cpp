@@ -34,6 +34,7 @@ VROVideoTextureiOS::~VROVideoTextureiOS() {
     // Remove observers from the player's item when this is deallocated.
     [_player.currentItem removeObserver:_avPlayerDelegate forKeyPath:kStatusKey context:this];
     [_player.currentItem removeObserver:_avPlayerDelegate forKeyPath:kPlaybackKeepUpKey context:this];
+    [_player.currentItem removeObserver:_videoNotificationListener forKeyPath:kStatusKey context:this];
 }
 
 #pragma mark - Recorded Video Playback
@@ -69,7 +70,6 @@ int VROVideoTextureiOS::getVideoDurationInSeconds(){
     AVPlayerItem *currentItem = _player.currentItem;
     return CMTimeGetSeconds(currentItem.duration);
 }
-
 
 bool VROVideoTextureiOS::isPaused() {
     return _paused;
@@ -122,6 +122,11 @@ void VROVideoTextureiOS::loadVideo(std::string url,
     _videoNotificationListener = [[VROVideoNotificationListener alloc] initWithVideoPlayer:_player
                                                                                       loop:_loop
                                                                              videoDelegate:_delegate.lock()];
+    
+    [_player.currentItem addObserver:_videoNotificationListener
+                          forKeyPath:kStatusKey
+                             options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                             context:this];
 }
 
 void VROVideoTextureiOS::onFrameWillRender(const VRORenderContext &context) {
@@ -186,12 +191,10 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
 
 - (void)observeValueForKeyPath:(NSString *)path ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if (context == _texture) {
-        
         if (!self.playerReady &&
-            [path isEqualToString:@"status"] &&
+            [path isEqualToString:kStatusKey] &&
             self.player.status == AVPlayerStatusReadyToPlay &&
             self.player.currentItem.status == AVPlayerItemStatusReadyToPlay) {
-            
             self.playerReady = true;
             
             // It's unclear what thread we receive this notification on,
@@ -200,7 +203,7 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
                 [self attachVideoOutput];
             });
         }
-        else if ([path isEqualToString:@"playbackLikelyToKeepUp"]) {
+        else if ([path isEqualToString:kPlaybackKeepUpKey]) {
             if (!self.texture->isPaused()) {
                 [self.player play];
             }
@@ -261,6 +264,7 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
 @end
 
 #pragma mark - Video Notification Listener
+
 @interface VROVideoNotificationListener ()
 
 @property (nonatomic, weak, readonly) AVPlayer *player;
@@ -290,6 +294,7 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
 
 - (void)setDelegate:(std::shared_ptr<VROVideoDelegateInternal>)videoDelegate {
     _delegate = videoDelegate;
+    [self checkForErrorAndNotifyDelegate];
 }
 
 - (void)registerForPlayerFinish {
@@ -298,6 +303,11 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
                                                  selector:@selector(playerDidFinish:)
                                                      name:AVPlayerItemDidPlayToEndTimeNotification
                                                    object:[self.player currentItem]];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(playerDidFail:)
+                                                     name:AVPlayerItemFailedToPlayToEndTimeNotification
+                                                   object:[self.player currentItem]];
+        
     }
 }
 
@@ -315,6 +325,32 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
         [playerItem seekToTime:kCMTimeZero];
     } else if (delegate) {
         delegate->videoDidFinish();
+    }
+}
+
+- (void)playerDidFail:(NSNotification *)notification {
+    std::shared_ptr<VROVideoDelegateInternal> delegate = _delegate.lock();
+    
+    NSError *error = [notification.userInfo objectForKey:AVPlayerItemFailedToPlayToEndTimeErrorKey];
+    if (delegate) {
+        delegate->videoDidFail(std::string([error.localizedDescription UTF8String]));
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)path ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([path isEqualToString:kStatusKey]) {
+        [self checkForErrorAndNotifyDelegate];
+    }
+}
+
+- (void)checkForErrorAndNotifyDelegate {
+    if (self.player.currentItem.status == AVPlayerItemStatusFailed) {
+        std::shared_ptr<VROVideoDelegateInternal> delegate = _delegate.lock();
+        
+        NSError *error = self.player.currentItem.error;
+        if (delegate && error) {
+            delegate->videoDidFail(std::string([error.localizedDescription UTF8String]));
+        }
     }
 }
 

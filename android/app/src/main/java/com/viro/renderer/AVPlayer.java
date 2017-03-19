@@ -119,6 +119,7 @@ public class AVPlayer {
             @Override
             public void onPlayerError(ExoPlaybackException error) {
                 Log.w(TAG, "AVPlayer encountered error [" + error + "]", error);
+                nativeOnError(mNativeReference, error.getLocalizedMessage());
             }
             @Override
             public void onPositionDiscontinuity() {
@@ -287,5 +288,6 @@ public class AVPlayer {
      */
     private native void nativeOnFinished(long ref);
     private native void nativeOnPrepared(long ref);
+    private native void nativeOnError(long ref, String error);
 }
 

@@ -21,13 +21,15 @@ public:
     VROAVPlayerDelegate() {}
     virtual ~VROAVPlayerDelegate() {}
 
-    // this is called when the MediaPlayer has finished preparing the media
+    // this is called when the AVPlayer has finished preparing the media
     virtual void onPrepared() = 0;
 
-    // this is called when the MediaPlayer has finished playing the media
+    // this is called when the AVPlayer has finished playing the media
     virtual void onFinished() = 0;
-};
 
+    // this is called when the AVPlayer has encountered an error
+    virtual void onError(std::string error) = 0;
+};
 
 class VROAVPlayer {
 

@@ -66,8 +66,10 @@ public:
     void setDelegate(std::shared_ptr<VROVideoDelegateInternal> delegate);
 
     #pragma mark - VROAVPlayerDelegate
+
     virtual void onPrepared();
     virtual void onFinished();
+    virtual void onError(std::string error);
 
 private:
 

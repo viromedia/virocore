@@ -33,8 +33,9 @@ class VideoDelegate : public VROVideoDelegateInternal {
     virtual void videoDidFinish();
     virtual void onReady();
     virtual void onVideoUpdatedTime(int seconds, int duration);
+    virtual void videoDidFail(std::string error);
 
-    private:
+private:
         jobject _javaObject;
 };
 #endif

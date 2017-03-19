@@ -29,7 +29,10 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromURL(std::string url, std::stri
             bool success = false;
             std::string file = VROPlatformDownloadURLToFile(url, &isTemp, &success);
             
-            std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseURL, true);
+            std::shared_ptr<VROGeometry> geometry;
+            if (success) {
+                geometry = loadOBJ(file, baseURL, true);
+            }
             if (isTemp) {
                 VROPlatformDeleteFile(file);
             }
@@ -44,7 +47,10 @@ std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromURL(std::string url, std::stri
         bool success = false;
         std::string file = VROPlatformDownloadURLToFile(url, &isTemp, &success);
         
-        std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseURL, true);
+        std::shared_ptr<VROGeometry> geometry;
+        if (success) {
+            geometry = loadOBJ(file, baseURL, true);
+        }
         if (isTemp) {
             VROPlatformDeleteFile(file);
         }
@@ -130,7 +136,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
     }
 
     if (!ret) {
-        pabort("Failed to load OBJ");
+        // Error condition
         return {};
     }
     return VROOBJLoader::processOBJ(attrib, shapes, materials, base, isBaseURL);

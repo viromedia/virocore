@@ -41,6 +41,21 @@ extern "C" {
             tmp->onPrepared();
         }
     }
+
+    JNI_METHOD(void, nativeOnError)(JNIEnv *env,
+                                    jclass clazz,
+                                    jlong nativePlayerRef,
+                                    jstring error) {
+        std::weak_ptr<VROAVPlayerDelegate> delegateWeak
+            = native(nativePlayerRef)->getDelegate();
+        if(auto tmp = delegateWeak.lock()){
+            const char *cError = env->GetStringUTFChars(error, NULL);
+            std::string sError(cError);
+
+            tmp->onError(sError);
+            env->ReleaseStringUTFChars(error, cError);
+        }
+    }
 }
 
 static const char *AVPlayerClass = "com/viro/renderer/AVPlayer";

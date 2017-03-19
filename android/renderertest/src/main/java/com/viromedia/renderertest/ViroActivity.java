@@ -155,6 +155,11 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             }
 
             @Override
+            public void onVideoFailed(String error) {
+
+            }
+
+            @Override
             public void onReady() {
                 surface.setVideoTexture(videoTexture);
                 videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
@@ -181,6 +186,12 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             @Override
             public void onVideoFinish() {
             }
+
+            @Override
+            public void onVideoFailed(String error) {
+
+            }
+
             @Override
             public void onReady() {
                 sphere.setVideoTexture(videoTexture);
@@ -209,6 +220,12 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             @Override
             public void onVideoFinish() {
             }
+
+            @Override
+            public void onVideoFailed(String error) {
+
+            }
+
             @Override
             public void onReady() {
                 scene.setBackgroundVideoTexture(videoTexture);

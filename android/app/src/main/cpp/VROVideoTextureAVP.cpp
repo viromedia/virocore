@@ -120,6 +120,7 @@ void VROVideoTextureAVP::bindSurface() {
 }
 
 #pragma mark - VROAVPlayerDelegate
+
 void VROVideoTextureAVP::onPrepared() {
     // do nothing
 }
@@ -128,5 +129,12 @@ void VROVideoTextureAVP::onFinished() {
     std::shared_ptr<VROVideoDelegateInternal> delegate = _delegate.lock();
     if (delegate) {
         delegate->videoDidFinish();
+    }
+}
+
+void VROVideoTextureAVP::onError(std::string error) {
+    std::shared_ptr<VROVideoDelegateInternal> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->videoDidFail(error);
     }
 }

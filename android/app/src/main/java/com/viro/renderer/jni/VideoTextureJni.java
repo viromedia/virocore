@@ -80,6 +80,7 @@ public class VideoTextureJni {
     public interface VideoDelegate{
         void onVideoFinish();
         void onReady();
+        void onVideoFailed(String error);
         void onVideoUpdatedTime(int seconds, int totalDuration);
     }
 
@@ -90,9 +91,15 @@ public class VideoTextureJni {
         }
     }
 
-    public void playerDidFinishPlaying(){
+    public void playerDidFinishPlaying() {
         if (mDelegate != null && mDelegate.get() != null && mNativeRef != INVALID_REF){
             mDelegate.get().onVideoFinish();
+        }
+    }
+
+    public void onVideoFailed(String error) {
+        if (mDelegate != null && mDelegate.get() != null && mNativeRef != INVALID_REF) {
+            mDelegate.get().onVideoFailed(error);
         }
     }
 

@@ -38,6 +38,24 @@ void VideoDelegate::videoDidFinish() {
     });
 }
 
+void VideoDelegate::videoDidFail(std::string error) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj, error] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        jstring jerror = env->NewStringUTF(error.c_str());
+        VROPlatformCallJavaFunction(localObj, "onVideoFailed", "(Ljava/lang/String;)V", jerror);
+        env->DeleteLocalRef(localObj);
+        env->DeleteLocalRef(jerror);
+    });
+}
+
 void VideoDelegate::onReady() {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
