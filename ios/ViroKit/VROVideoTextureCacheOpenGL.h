@@ -11,13 +11,16 @@
 
 #include "VROVideoTextureCache.h"
 
+class VRODriverOpenGL;
+
 static const int kVideoTextureCacheOpenGLNumTextures = 3;
 
 class VROVideoTextureCacheOpenGL : public VROVideoTextureCache {
     
 public:
     
-    VROVideoTextureCacheOpenGL(CVEAGLContext eaglContext);
+    VROVideoTextureCacheOpenGL(CVEAGLContext eaglContext,
+                               std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VROVideoTextureCacheOpenGL();
     
     std::unique_ptr<VROTextureSubstrate> createTextureSubstrate(CMSampleBufferRef sampleBuffer);
@@ -29,6 +32,7 @@ private:
     CVOpenGLESTextureRef _textureRef[kVideoTextureCacheOpenGLNumTextures];
     
     int _currentTextureIndex;
+    std::shared_ptr<VRODriverOpenGL> _driver;
     
 };
 

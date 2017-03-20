@@ -15,7 +15,7 @@ std::shared_ptr<VROVideoSurface> VROVideoSurface::createVideoSurface(float width
                                                                      std::string url,
                                                                      std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                                                      std::shared_ptr<VROVideoTexture> texture,
-                                                                     VRODriver &driver) {
+                                                                     std::shared_ptr<VRODriver> driver) {
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
     VROSurface::buildGeometry(width, height, sources, elements);

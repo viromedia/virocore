@@ -14,6 +14,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+class VRODriver;
 class VROTexture;
 
 class VROGlyph {
@@ -28,7 +29,8 @@ public:
      fields will not be loaded, and only getAdvance() will be
      available.
      */
-    virtual bool load(FT_Face face, FT_ULong charCode, bool forRendering) = 0;
+    virtual bool load(FT_Face face, FT_ULong charCode, bool forRendering,
+                      std::shared_ptr<VRODriver> driver) = 0;
     
     std::shared_ptr<VROTexture> getTexture() const {
         return _texture;

@@ -60,12 +60,12 @@ void VRORenderer::updateRenderViewSize(float width, float height) {
 }
 
 void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView fov,
-                               VROMatrix4f headRotation, VRODriver &driver) {
+                               VROMatrix4f headRotation, std::shared_ptr<VRODriver> driver) {
 
     if (!_rendererInitialized) {
         std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
         if (delegate) {
-            delegate->setupRendererWithDriver(&driver);
+            delegate->setupRendererWithDriver(driver);
         }
         _rendererInitialized = true;
     }
@@ -136,21 +136,21 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
 
     if (_sceneController) {
         if (_outgoingSceneController) {
-            _outgoingSceneController->getScene()->updateSortKeys(*_context.get(), driver);
-            _sceneController->getScene()->updateSortKeys(*_context.get(), driver);
+            _outgoingSceneController->getScene()->updateSortKeys(*_context.get(), *driver.get());
+            _sceneController->getScene()->updateSortKeys(*_context.get(), *driver.get());
         }
         else {
-            _sceneController->getScene()->updateSortKeys(*_context.get(), driver);
+            _sceneController->getScene()->updateSortKeys(*_context.get(), *driver.get());
         }
 
         _inputController->onProcess(camera);
     }
 
-    driver.onFrame(*_context.get());
+    driver->onFrame(*_context.get());
 }
 
 void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
-                            VRODriver &driver) {
+                            std::shared_ptr<VRODriver> driver) {
     std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
     if (delegate) {
         delegate->willRenderEye(eye, _context.get());
@@ -173,7 +173,7 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
      */
     std::shared_ptr<VROReticle> reticle = _inputController->getPresenter()->getReticle();
     if (reticle != nullptr){
-        reticle->renderEye(eye, _context.get(), &driver);
+        reticle->renderEye(eye, _context.get(), driver.get());
     }
 
     if (delegate) {
@@ -181,7 +181,7 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     }
 }
 
-void VRORenderer::endFrame(VRODriver &driver) {
+void VRORenderer::endFrame(std::shared_ptr<VRODriver> driver) {
     if (_outgoingSceneController && !_outgoingSceneController->hasActiveTransitionAnimation()) {
         _sceneController->onSceneDidAppear(_context.get(), driver);
         _outgoingSceneController->onSceneDidDisappear(_context.get(), driver);
@@ -192,29 +192,30 @@ void VRORenderer::endFrame(VRODriver &driver) {
     VROTransaction::commitAll();
 }
 
-void VRORenderer::renderEye(VROEyeType eyeType, VRODriver &driver) {
+void VRORenderer::renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> driver) {
     if (_sceneController) {
         if (_outgoingSceneController && _outgoingSceneController->hasActiveTransitionAnimation()) {
             _outgoingSceneController->sceneWillRender(_context.get());
             _sceneController->sceneWillRender(_context.get());
 
-            _outgoingSceneController->getScene()->renderBackground(*_context.get(), driver);
-            _sceneController->getScene()->renderBackground(*_context.get(), driver);
+            _outgoingSceneController->getScene()->renderBackground(*_context.get(), *driver.get());
+            _sceneController->getScene()->renderBackground(*_context.get(), *driver.get());
 
-            _outgoingSceneController->getScene()->render(*_context.get(), driver);
-            _sceneController->getScene()->render(*_context.get(), driver);
+            _outgoingSceneController->getScene()->render(*_context.get(), *driver.get());
+            _sceneController->getScene()->render(*_context.get(), *driver.get());
         }
         else {
             _sceneController->sceneWillRender(_context.get());
-            _sceneController->getScene()->renderBackground(*_context.get(), driver);
-            _sceneController->getScene()->render(*_context.get(), driver);
+            _sceneController->getScene()->renderBackground(*_context.get(), *driver.get());
+            _sceneController->getScene()->render(*_context.get(), *driver.get());
         }
     }
 }
 
 #pragma mark - Scene Loading
 
-void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneController, VRODriver &driver) {
+void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneController,
+                                     std::shared_ptr<VRODriver> driver) {
     std::shared_ptr<VROSceneController> outgoingSceneController = _sceneController;
   
     _inputController->attachScene(sceneController->getScene());
@@ -232,7 +233,8 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneCo
 }
 
 void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
-                                     VROTimingFunctionType timingFunctionType, VRODriver &driver) {
+                                     VROTimingFunctionType timingFunctionType,
+                                     std::shared_ptr<VRODriver> driver) {
     passert (sceneController != nullptr);
 
     _outgoingSceneController = _sceneController;

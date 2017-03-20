@@ -62,7 +62,8 @@ public:
     }
 
     std::shared_ptr<VROTypeface> newTypeface(std::string typefaceName, int size) {
-        std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceAndroid>(typefaceName, size);
+        std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+        std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceAndroid>(typefaceName, size, driver);
         typeface->loadFace();
 
         return typeface;

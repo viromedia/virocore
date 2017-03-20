@@ -14,11 +14,13 @@
 #include "VROTypeface.h"
 #include <string>
 
+class VRODriver;
+
 class VROTypefaceiOS : public VROTypeface {
     
 public:
     
-    VROTypefaceiOS(std::string name, int size);
+    VROTypefaceiOS(std::string name, int size, std::shared_ptr<VRODriver> driver);
     virtual ~VROTypefaceiOS();
     
     float getLineHeight();
@@ -29,9 +31,10 @@ protected:
     FT_Face loadFace(std::string name, int size, FT_Library ft);
     
 private:
-    
+
+    std::weak_ptr<VRODriver> _driver;
     NSData *getFontData(CGFontRef cgFont);
-    
+  
 };
 
 #endif /* VROTypefaceiOS_h */

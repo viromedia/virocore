@@ -47,7 +47,7 @@ class VROGeometrySubstrateOpenGL : public VROGeometrySubstrate {
 public:
     
     VROGeometrySubstrateOpenGL(const VROGeometry &geometry,
-                               VRODriverOpenGL &driver);
+                               std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VROGeometrySubstrateOpenGL();
     
     void render(const VROGeometry &geometry,
@@ -91,6 +91,15 @@ private:
      Parse a GL primitive type from the given geometry VROGeometryPrimitiveType.
      */
     GLuint parsePrimitiveType(VROGeometryPrimitiveType primitive);
+
+    /*
+     Weak reference to the driver that created this substrate. The driver's lifecycle
+     is tied to the parent EGL context, so we only delete GL objects if the driver
+     is alive, to ensure we're deleting them under the correct context (e.g. to avoid
+     accidentally deleting objects in a new context that were created in an older
+     one).
+     */
+    std::weak_ptr<VRODriverOpenGL> _driver;
     
     void renderMaterial(VROMaterialSubstrateOpenGL *material,
                         VROGeometryElementOpenGL &element,

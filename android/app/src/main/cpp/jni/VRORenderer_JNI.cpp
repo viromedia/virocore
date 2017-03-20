@@ -86,7 +86,7 @@ JNI_METHOD(void, nativeInitializeGl)(JNIEnv *env,
         sceneRenderer->setRenderDelegate(sample);
         sceneRenderer->setSceneController(
                 sample->loadBoxScene(sceneRenderer->getFrameSynchronizer(),
-                                     *sceneRenderer->getDriver().get()));
+                                     sceneRenderer->getDriver()));
     }
     sceneRenderer->initGL();
 }

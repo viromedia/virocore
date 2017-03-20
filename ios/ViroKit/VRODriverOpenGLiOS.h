@@ -33,7 +33,8 @@ public:
     }
 
     VROVideoTextureCache *newVideoTextureCache() {
-        return new VROVideoTextureCacheOpenGL(_eaglContext);
+        std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+        return new VROVideoTextureCacheOpenGL(_eaglContext, driver);
     }
 
     std::shared_ptr<VROSound> newSound(std::string path, VROSoundType type, bool local) {
@@ -56,7 +57,8 @@ public:
     }
     
     std::shared_ptr<VROTypeface> newTypeface(std::string typefaceName, int size) {
-        std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceiOS>(typefaceName, size);
+        std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+        std::shared_ptr<VROTypeface> typeface = std::make_shared<VROTypefaceiOS>(typefaceName, size, driver);
         typeface->loadFace();
         
         return typeface;

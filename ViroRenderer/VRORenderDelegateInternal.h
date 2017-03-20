@@ -21,7 +21,7 @@ public:
     VRORenderDelegateInternal() {}
     virtual ~VRORenderDelegateInternal() {}
     
-    virtual void setupRendererWithDriver(VRODriver *driver) = 0;
+    virtual void setupRendererWithDriver(std::shared_ptr<VRODriver> driver) = 0;
     virtual void shutdownRenderer() = 0;
     virtual void renderViewDidChangeSize(float width, float height, VRORenderContext *context) = 0;
     

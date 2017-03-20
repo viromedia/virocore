@@ -49,17 +49,17 @@ public:
     
 #pragma mark - Scene Controllers
     
-    void setSceneController(std::shared_ptr<VROSceneController> sceneController, VRODriver &driver);
+    void setSceneController(std::shared_ptr<VROSceneController> sceneController, std::shared_ptr<VRODriver> driver);
     void setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
-                            VROTimingFunctionType timingFunctionType, VRODriver &driver);
+                            VROTimingFunctionType timingFunctionType, std::shared_ptr<VRODriver> driver);
     
 #pragma mark - Render Loop
     
     void prepareFrame(int frame, VROViewport viewport, VROFieldOfView fov,
-                      VROMatrix4f headRotation, VRODriver &driver);
+                      VROMatrix4f headRotation, std::shared_ptr<VRODriver> driver);
     void renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
-                   VRODriver &driver);
-    void endFrame(VRODriver &driver);
+                   std::shared_ptr<VRODriver> driver);
+    void endFrame(std::shared_ptr<VRODriver> driver);
     
 #pragma mark - Integration
     
@@ -115,7 +115,7 @@ private:
 
 #pragma mark - Scene Rendering
     
-    void renderEye(VROEyeType eyeType, VRODriver &driver);
+    void renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> driver);
     
 #pragma mark - Frame Listeners
     

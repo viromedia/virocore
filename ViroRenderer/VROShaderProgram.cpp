@@ -35,7 +35,8 @@ std::string loadTextAsset(std::string resource) {
 VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmentShader,
                                    const std::vector<std::string> &samplers,
                                    const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
-                                   const std::vector<VROGeometrySourceSemantic> attributes) :
+                                   const std::vector<VROGeometrySourceSemantic> attributes,
+                                   std::shared_ptr<VRODriverOpenGL> driver) :
     _shaderId(sMaterialId++),
     _lightingBlockIndex(GL_INVALID_INDEX),
     _capabilities(0),
@@ -43,7 +44,8 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
     _shaderName(fragmentShader),
     _program(0),
     _failedToLink(false),
-    _samplers(samplers) {
+    _samplers(samplers),
+    _driver(driver) {
 
     _vertexSource = loadTextAsset(vertexShader);
     inflateIncludes(_vertexSource);
@@ -97,8 +99,11 @@ VROShaderProgram::~VROShaderProgram() {
     for (VROUniform *uniform : _uniforms) {
         delete (uniform);
     }
-    
-    glDeleteShader(_program);
+
+    // Ensure we are deleting GL objects with the current GL context
+    if (_driver.lock()) {
+        glDeleteShader(_program);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +140,9 @@ bool VROShaderProgram::isHydrated() const {
 
 void VROShaderProgram::evict() {
     if (_program != 0) {
-        glDeleteProgram(_program);
+        if (_driver.lock()) {
+            glDeleteProgram(_program);
+        }
     }
 
     _uniformsNeedRebind = true;

@@ -15,6 +15,8 @@
 #include <android/native_window_jni.h>
 #include "VROFrameSynchronizer.h"
 
+class VRODriverOpenGL;
+
 /*
  Renders video to a texture and plays the associated audio.
  The VROVideoLooper is the underlying workhorse class for
@@ -30,7 +32,7 @@ public:
     /*
      Must be invoked from the rendering thread after construction.
      */
-    void bindSurface();
+    void bindSurface(std::shared_ptr<VRODriverOpenGL> driver);
 
     /*
      Standard load video function: loads from URL. Frame synchronizer is not
@@ -38,13 +40,13 @@ public:
      */
     virtual void loadVideo(std::string url,
                            std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                           VRODriver &driver);
+                           std::shared_ptr<VRODriver> driver);
 
     /*
      Load from a file at the given URL or an asset with the given name.
      */
-    void loadVideoFromURL(std::string url, VRODriver &driver);
-    void loadVideoFromAsset(std::string asset, VRODriver &driver);
+    void loadVideoFromURL(std::string url, std::shared_ptr<VRODriver> driver);
+    void loadVideoFromAsset(std::string asset, std::shared_ptr<VRODriver> driver);
 
     void prewarm();
 

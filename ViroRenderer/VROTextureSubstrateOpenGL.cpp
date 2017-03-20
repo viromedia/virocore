@@ -19,8 +19,9 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type,
                                                      std::vector<std::shared_ptr<VROData>> &data,
                                                      int width, int height,
                                                      const std::vector<uint32_t> &mipSizes,
-                                                     VRODriver &driver) :
-    _owned(true) {
+                                                     std::shared_ptr<VRODriverOpenGL> driver) :
+    _owned(true),
+    _driver(driver) {
     
     loadTexture(type, format, internalFormat, mipmapMode, data, width, height, mipSizes);
     ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
@@ -28,7 +29,7 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type,
 
 VROTextureSubstrateOpenGL::~VROTextureSubstrateOpenGL() {
     ALLOCATION_TRACKER_SUB(TextureSubstrates, 1);
-    if (_owned) {
+    if (_owned && _driver.lock()) {
         glDeleteTextures(1, &_texture);
     }
 }

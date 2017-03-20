@@ -17,8 +17,8 @@ public class VideoTextureJni {
     protected long mNativeRef = INVALID_REF;
     protected long mNativeDelegateRef = INVALID_REF;
 
-    public VideoTextureJni() {
-        mNativeRef = nativeCreateVideoTexture();
+    public VideoTextureJni(RenderContextJni renderContext) {
+        mNativeRef = nativeCreateVideoTexture(renderContext.mNativeRef);
         mNativeDelegateRef = nativeCreateVideoDelegate();
         nativeAttachDelegate(mNativeRef, mNativeDelegateRef);
     }
@@ -60,7 +60,7 @@ public class VideoTextureJni {
     /**
      * Native Functions called into JNI
      */
-    public native long nativeCreateVideoTexture();
+    public native long nativeCreateVideoTexture(long renderContext);
     public native long nativeCreateVideoDelegate();
     public native void nativeAttachDelegate(long nativeTexture, long nativeDelegate);
     public native void nativeDeleteVideoTexture(long nativeTexture);

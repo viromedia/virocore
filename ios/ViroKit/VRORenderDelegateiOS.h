@@ -20,7 +20,7 @@ public:
         _delegate(delegate) {}
     virtual ~VRORenderDelegateiOS() {}
     
-    void setupRendererWithDriver(VRODriver *driver) {
+    void setupRendererWithDriver(std::shared_ptr<VRODriver> driver) {
         [_delegate setupRendererWithDriver:driver];
     }
     

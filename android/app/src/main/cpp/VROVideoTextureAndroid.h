@@ -244,12 +244,12 @@ public:
      */
     virtual void loadVideo(std::string url,
                            std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                           VRODriver &driver);
+                           std::shared_ptr<VRODriver> driver);
 
     /*
      Load from an asset with the given name.
      */
-    void loadVideoFromAsset(std::string asset, VRODriver &driver);
+    void loadVideoFromAsset(std::string asset, std::shared_ptr<VRODriver> driver);
 
     void prewarm();
 
@@ -271,9 +271,9 @@ private:
     bool _paused;
 
     void killVideo();
-    void loadVideo( AMediaExtractor *extractor, VRODriver &driver);
+    void loadVideo( AMediaExtractor *extractor, std::shared_ptr<VRODriver> driver);
 
-    ANativeWindow *createVideoTexture(GLuint *textureId);
+    ANativeWindow *createVideoTexture(GLuint *textureId, std::shared_ptr<VRODriverOpenGL> driver);
 
 };
 

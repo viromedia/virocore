@@ -739,7 +739,7 @@ static ovrFrameParms ovrRenderer_RenderFrame( ovrRenderer * rendererOVR, const o
     VROFieldOfView fov(fovX / 2.0, fovX / 2.0, fovY / 2.0, fovY / 2.0);
     VROMatrix4f headRotation = toMatrix4f(centerEyeViewMatrix);
 
-    renderer->prepareFrame(frameIndex, leftViewport, fov, headRotation, *driver.get());
+    renderer->prepareFrame(frameIndex, leftViewport, fov, headRotation, driver);
 
     // Render the eye images.
     for ( int eye = 0; eye < rendererOVR->NumBuffers; eye++ )
@@ -771,7 +771,7 @@ static ovrFrameParms ovrRenderer_RenderFrame( ovrRenderer * rendererOVR, const o
         VROMatrix4f eyeFromHeadMatrix = toMatrix4f(eyeOffsetMatrix);
         VROMatrix4f projectionMatrix = fov.toPerspectiveMatrix(kZNear, kZFar);
 
-        renderer->renderEye(eyeType, eyeFromHeadMatrix, projectionMatrix, *driver.get());
+        renderer->renderEye(eyeType, eyeFromHeadMatrix, projectionMatrix, driver);
 
         // Explicitly clear the border texels to black because OpenGL-ES does not support GL_CLAMP_TO_BORDER.
         {
@@ -800,7 +800,7 @@ static ovrFrameParms ovrRenderer_RenderFrame( ovrRenderer * rendererOVR, const o
         ovrFramebuffer_Advance( frameBuffer );
     }
 
-    renderer->endFrame(*driver.get());
+    renderer->endFrame(driver);
     ALLOCATION_TRACKER_PRINT();
 
     for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )

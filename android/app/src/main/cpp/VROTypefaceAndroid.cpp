@@ -9,11 +9,14 @@
 #include "VROTypefaceAndroid.h"
 #include "VROLog.h"
 #include "VROGlyphOpenGL.h"
+#include "VRODriverOpenGL.h"
 
 static const std::string kSystemFont = "Roboto-Regular";
 
-VROTypefaceAndroid::VROTypefaceAndroid(std::string name, int size) :
-        VROTypeface(name, size) {
+VROTypefaceAndroid::VROTypefaceAndroid(std::string name, int size,
+                                       std::shared_ptr<VRODriver> driver) :
+        VROTypeface(name, size),
+        _driver(driver) {
 
 }
 
@@ -37,7 +40,7 @@ FT_Face VROTypefaceAndroid::loadFace(std::string name, int size, FT_Library ft) 
 
 std::unique_ptr<VROGlyph> VROTypefaceAndroid::loadGlyph(FT_ULong charCode, bool forRendering) {
     std::unique_ptr<VROGlyph> glyph = std::unique_ptr<VROGlyph>(new VROGlyphOpenGL());
-    glyph->load(_face, charCode, forRendering);
+    glyph->load(_face, charCode, forRendering, _driver.lock());
 
     return glyph;
 }

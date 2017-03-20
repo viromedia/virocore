@@ -11,6 +11,7 @@
 #include "VROTexture.h"
 #include "VROTextureSubstrateOpenGL.h"
 #include "VROMath.h"
+#include "VRODriverOpenGL.h"
 
 VROGlyphOpenGL::VROGlyphOpenGL() {
     
@@ -20,7 +21,8 @@ VROGlyphOpenGL::~VROGlyphOpenGL() {
     
 }
 
-bool VROGlyphOpenGL::load(FT_Face face, FT_ULong charCode, bool forRendering) {
+bool VROGlyphOpenGL::load(FT_Face face, FT_ULong charCode, bool forRendering,
+                          std::shared_ptr<VRODriver> driver) {
     /*
      Load the glyph from freetype.
      */
@@ -37,12 +39,16 @@ bool VROGlyphOpenGL::load(FT_Face face, FT_ULong charCode, bool forRendering) {
     _advance = glyph->advance.x >> 6;
     
     if (forRendering) {
-        loadTexture(face, glyph);
+        if (!driver) {
+            pabort();
+        }
+        loadTexture(face, glyph, std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
     }
     return true;
 }
 
-void VROGlyphOpenGL::loadTexture(FT_Face face, FT_GlyphSlot &glyph) {
+void VROGlyphOpenGL::loadTexture(FT_Face face, FT_GlyphSlot &glyph,
+                                 std::shared_ptr<VRODriverOpenGL> driver) {
     FT_Render_Glyph(glyph, FT_RENDER_MODE_LIGHT);
     FT_Bitmap &bitmap = glyph->bitmap;
 
@@ -91,7 +97,7 @@ void VROGlyphOpenGL::loadTexture(FT_Face face, FT_GlyphSlot &glyph) {
                      GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, luminanceAlphaBitmap) );
     
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(
-        new VROTextureSubstrateOpenGL(GL_TEXTURE_2D, texture, true));
+        new VROTextureSubstrateOpenGL(GL_TEXTURE_2D, texture, driver, true));
     
     _texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
     _bearing = VROVector3f(glyph->bitmap_left, glyph->bitmap_top);

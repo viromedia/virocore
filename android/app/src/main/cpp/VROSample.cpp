@@ -24,10 +24,10 @@ VROSample::~VROSample() {
 }
 
 std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                                            VRODriver &driver) {
+                                                            std::shared_ptr<VRODriver> driver) {
 
 
-    _driver = &driver;
+    _driver = driver;
     frameSynchronizer->addFrameListener(shared_from_this());
 
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
@@ -151,7 +151,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
                                                                        VROTextureInternalFormat::RGBA8,
                                                                        VROMipmapMode::Pregenerated,
                                                                        dataVec, texWidth, texHeight, mipSizes,
-                                                                       &driver);
+                                                                       driver.get());
 
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(10, 10);
     surface->getMaterials().front()->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
@@ -164,7 +164,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     rootNode->addChildNode(surfaceNode);
 
     std::string string = "In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
-    std::shared_ptr<VROTypeface> typeface = driver.newTypeface("Roboto", 8);
+    std::shared_ptr<VROTypeface> typeface = driver->newTypeface("Roboto", 8);
     std::shared_ptr<VROText> text = VROText::createText(string, typeface, {1.0, 1.0, 1.0, 1.0}, 10, 8,
                                                         VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Top,
                                                         VROLineBreakMode::Justify, VROTextClipMode::ClipToBounds);

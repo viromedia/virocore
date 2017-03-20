@@ -31,7 +31,8 @@ public:
     }
     
     VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) {
-        return new VROGeometrySubstrateOpenGL(geometry, *this);
+        std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+        return new VROGeometrySubstrateOpenGL(geometry, driver);
     }
     
     VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) {
@@ -45,8 +46,9 @@ public:
                                              std::vector<std::shared_ptr<VROData>> &data,
                                              int width, int height,
                                              std::vector<uint32_t> mipSizes) {
+        std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
         return new VROTextureSubstrateOpenGL(type, format, internalFormat, mipmapMode, data,
-                                             width, height, mipSizes, *this);
+                                             width, height, mipSizes, driver);
     }
     
     virtual VROVideoTextureCache *newVideoTextureCache() = 0;
@@ -84,6 +86,8 @@ public:
                                                       std::string fragmentShader,
                                                       const std::vector<std::string> &samplers,
                                                       const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers) {
+        std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+
         int modifiersHash = VROShaderModifier::hashShaderModifiers(modifiers);
         std::string name = vertexShader + "_" + fragmentShader + "_" + VROStringUtil::toString(modifiersHash);
         
@@ -92,7 +96,8 @@ public:
             const std::vector<VROGeometrySourceSemantic> attributes = { VROGeometrySourceSemantic::Texcoord,
                 VROGeometrySourceSemantic::Normal };
             std::shared_ptr<VROShaderProgram> program = std::make_shared<VROShaderProgram>(vertexShader, fragmentShader,
-                                                                                           samplers, modifiers, attributes);
+                                                                                           samplers, modifiers, attributes,
+                                                                                           driver);
             _sharedPrograms[name] = program;
             return program;
         }

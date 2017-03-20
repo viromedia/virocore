@@ -178,7 +178,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         final SurfaceJni surface = new SurfaceJni(4,4);
         float[] position = {0,0,-3};
         node.setPosition(position);
-        final VideoTextureJni videoTexture = new VideoTextureJni();
+        final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef());
         videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
             @Override
             public void onVideoFinish() {
@@ -211,7 +211,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     private List<NodeJni> testSphereVideo(Context context) {
         NodeJni node = new NodeJni(context);
         final SphereJni sphere = new SphereJni(2, 20, 20, false);
-        final VideoTextureJni videoTexture = new VideoTextureJni();
+        final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef());
         videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
             @Override
             public void onVideoFinish() {
@@ -241,7 +241,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     }
 
     private void testBackgroundVideo(final SceneJni scene) {
-        final VideoTextureJni videoTexture = new VideoTextureJni();
+        final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef());
         videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
         videoTexture.setVolume(0.1f);
         videoTexture.setLoop(false);

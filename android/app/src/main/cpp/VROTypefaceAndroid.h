@@ -13,11 +13,13 @@
 #include <memory>
 #include <string>
 
+class VRODriver;
+
 class VROTypefaceAndroid : public VROTypeface {
 
 public:
 
-    VROTypefaceAndroid(std::string name, int size);
+    VROTypefaceAndroid(std::string name, int size, std::shared_ptr<VRODriver> driver);
     virtual ~VROTypefaceAndroid();
 
     std::unique_ptr<VROGlyph> loadGlyph(FT_ULong charCode, bool forRendering);
@@ -28,6 +30,7 @@ protected:
 
 private:
 
+    std::weak_ptr<VRODriver> _driver;
     std::string getFontPath(std::string fontName);
 
 };

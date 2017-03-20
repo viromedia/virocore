@@ -99,7 +99,7 @@ void VROVideoTextureiOS::setDelegate(std::shared_ptr<VROVideoDelegateInternal> d
 
 void VROVideoTextureiOS::loadVideo(std::string url,
                                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                   VRODriver &driver) {
+                                   std::shared_ptr<VRODriver> driver) {
     
     frameSynchronizer->removeFrameListener(shared_from_this());
     frameSynchronizer->addFrameListener(shared_from_this());
@@ -167,7 +167,7 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
 
 - (id)initWithVideoTexture:(VROVideoTextureiOS *)texture
                     player:(AVPlayer *)player
-                    driver:(VRODriver &)driver {
+                    driver:(std::shared_ptr<VRODriver>)driver {
     
     self = [super init];
     if (self) {
@@ -178,7 +178,7 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
         _mediaReady = false;
         _playerReady = false;
         
-        _videoTextureCache = driver.newVideoTextureCache();
+        _videoTextureCache = driver->newVideoTextureCache();
         _videoQueue = dispatch_queue_create("video_output_queue", DISPATCH_QUEUE_SERIAL);
     }
     

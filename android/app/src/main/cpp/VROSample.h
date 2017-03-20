@@ -29,7 +29,7 @@ public:
     virtual ~VROSample();
 
     std::shared_ptr<VROSceneController> loadBoxScene(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                                     VRODriver &driver);
+                                                     std::shared_ptr<VRODriver> driver);
 
     void onFrameWillRender(const VRORenderContext &context);
     void onFrameDidRender(const VRORenderContext &context);
@@ -44,7 +44,7 @@ private:
     std::shared_ptr<VROMaterial> _material;
     std::shared_ptr<VROTexture> getNiagaraTexture();
 
-    VRODriver *_driver;
+    std::shared_ptr<VRODriver> _driver;
     float _objAngle;
 };
 

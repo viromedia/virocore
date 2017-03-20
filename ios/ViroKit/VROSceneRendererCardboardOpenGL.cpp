@@ -43,19 +43,19 @@ void VROSceneRendererCardboardOpenGL::initRenderer(GVRHeadTransform *headTransfo
 }
 
 void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROSceneController> sceneController) {
-    _renderer->setSceneController(sceneController, *_driver);
+    _renderer->setSceneController(sceneController, _driver);
 }
 
 void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
                                                          VROTimingFunctionType timingFunctionType) {
     
-    _renderer->setSceneController(sceneController, seconds, timingFunctionType, *_driver);
+    _renderer->setSceneController(sceneController, seconds, timingFunctionType, _driver);
 }
 
 void VROSceneRendererCardboardOpenGL::prepareFrame(VROViewport viewport, VROFieldOfView fov,
                                                    GVRHeadTransform *headTransform) {
     VROMatrix4f headRotation = VROConvert::toMatrix4f([headTransform headPoseInStartSpace]).invert();
-    _renderer->prepareFrame(_frame, viewport, fov, headRotation, *_driver.get());
+    _renderer->prepareFrame(_frame, viewport, fov, headRotation, _driver);
     
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE); // Must enable writes to clear depth buffer
@@ -93,11 +93,11 @@ void VROSceneRendererCardboardOpenGL::renderEye(GVREye eye, GVRHeadTransform *he
     glScissor(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     
     VROEyeType eyeType = (eye == kGVRLeftEye ? VROEyeType::Left : VROEyeType::Right);
-    _renderer->renderEye(eyeType, eyeMatrix, projectionMatrix, *_driver.get());
+    _renderer->renderEye(eyeType, eyeMatrix, projectionMatrix, _driver);
 }
 
 void VROSceneRendererCardboardOpenGL::endFrame() {
-    _renderer->endFrame(*_driver.get());
+    _renderer->endFrame(_driver);
     ++_frame;
 }
 

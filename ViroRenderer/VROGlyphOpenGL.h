@@ -12,6 +12,9 @@
 #include "VROGlyph.h"
 #include "VROOpenGL.h"
 
+class VRODriver;
+class VRODriverOpenGL;
+
 class VROGlyphOpenGL : public VROGlyph {
     
 public:
@@ -19,11 +22,13 @@ public:
     VROGlyphOpenGL();
     virtual ~VROGlyphOpenGL();
     
-    virtual bool load(FT_Face face, FT_ULong charCode, bool forRendering);
+    virtual bool load(FT_Face face, FT_ULong charCode, bool forRendering,
+                      std::shared_ptr<VRODriver> driver);
     
 private:
     
-    void loadTexture(FT_Face face, FT_GlyphSlot &glyph);
+    void loadTexture(FT_Face face, FT_GlyphSlot &glyph,
+                     std::shared_ptr<VRODriverOpenGL> driver);
     
 };
 

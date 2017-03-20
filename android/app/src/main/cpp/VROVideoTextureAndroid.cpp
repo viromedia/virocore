@@ -13,6 +13,7 @@
 #include "VROLog.h"
 #include "VROPlatformUtil.h"
 #include "VROPCMAudioPlayer.h"
+#include "VRODriverOpenGL.h"
 
 enum {
     kMsgCodecBuffer,
@@ -46,7 +47,8 @@ void VROVideoTextureAndroid::killVideo() {
     }
 }
 
-ANativeWindow *VROVideoTextureAndroid::createVideoTexture(GLuint *textureId) {
+ANativeWindow *VROVideoTextureAndroid::createVideoTexture(GLuint *textureId,
+                                                          std::shared_ptr<VRODriverOpenGL> driver) {
     glGenTextures(1, textureId);
     glBindTexture(GL_TEXTURE_EXTERNAL_OES, *textureId);
 
@@ -57,7 +59,7 @@ ANativeWindow *VROVideoTextureAndroid::createVideoTexture(GLuint *textureId) {
     glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(
-            new VROTextureSubstrateOpenGL(GL_TEXTURE_EXTERNAL_OES, *textureId, true));
+            new VROTextureSubstrateOpenGL(GL_TEXTURE_EXTERNAL_OES, *textureId, driver, true));
     setSubstrate(std::move(substrate));
 
     JNIEnv *env = VROPlatformGetJNIEnv();
@@ -68,7 +70,7 @@ ANativeWindow *VROVideoTextureAndroid::createVideoTexture(GLuint *textureId) {
 
 void VROVideoTextureAndroid::loadVideo(std::string url,
                                        std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                       VRODriver &driver) {
+                                       std::shared_ptr<VRODriver> driver) {
 
     // Note: the Android implementation does not need to be added as a frame listener
 
@@ -86,7 +88,8 @@ void VROVideoTextureAndroid::loadVideo(std::string url,
     loadVideo(extractor, driver);
 }
 
-void VROVideoTextureAndroid::loadVideoFromAsset(std::string asset, VRODriver &driver) {
+void VROVideoTextureAndroid::loadVideoFromAsset(std::string asset,
+                                                std::shared_ptr<VRODriver> driver) {
     killVideo();
     AAssetManager *assetMgr = VROPlatformGetAssetManager();
 
@@ -113,7 +116,7 @@ void VROVideoTextureAndroid::loadVideoFromAsset(std::string asset, VRODriver &dr
     loadVideo(extractor, driver);
 }
 
-void VROVideoTextureAndroid::loadVideo(AMediaExtractor *extractor, VRODriver &driver) {
+void VROVideoTextureAndroid::loadVideo(AMediaExtractor *extractor, std::shared_ptr<VRODriver> driver) {
     /*
      IMPORTANT: quit() must be invoked on the looper before deleting it,
      to perform necessary cleanup on the worker thread.
@@ -137,7 +140,8 @@ void VROVideoTextureAndroid::loadVideo(AMediaExtractor *extractor, VRODriver &dr
     mediaData.volume = 1.0;
     mediaData.muted = false;
     mediaData.extractor = extractor;
-    mediaData.window = createVideoTexture(&mediaData.textureId);
+    mediaData.window = createVideoTexture(&mediaData.textureId,
+                                          std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
 
     int numTracks = AMediaExtractor_getTrackCount(extractor);
 

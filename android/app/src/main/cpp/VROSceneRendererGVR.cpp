@@ -163,7 +163,7 @@ void VROSceneRendererGVR::renderStereo(VROMatrix4f &headRotation) {
     // Render the right eye and end the frame
     renderEye(VROEyeType::Right, VROGVRUtil::toMatrix4f(_gvr->GetEyeFromHeadMatrix(GVR_RIGHT_EYE)),
               rightViewport, rightFov);
-    _renderer->endFrame(*_driver.get());
+    _renderer->endFrame(_driver);
 
     frame.Unbind();
     frame.Submit(*_viewportList, _headView);
@@ -185,8 +185,8 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headRotation) {
     VROMatrix4f eyeFromHeadMatrix; // Identity
 
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-    _renderer->renderEye(VROEyeType::Monocular, eyeFromHeadMatrix, projectionMatrix, *_driver.get());
-    _renderer->endFrame(*_driver.get());
+    _renderer->renderEye(VROEyeType::Monocular, eyeFromHeadMatrix, projectionMatrix, _driver);
+    _renderer->endFrame(_driver);
 }
 
 /**
@@ -240,7 +240,7 @@ void VROSceneRendererGVR::prepareFrame(VROViewport leftViewport, VROFieldOfView 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    _renderer->prepareFrame(_frame, leftViewport, fov, headRotation, *_driver.get());
+    _renderer->prepareFrame(_frame, leftViewport, fov, headRotation, _driver);
 }
 
 void VROSceneRendererGVR::renderEye(VROEyeType eyeType,
@@ -251,7 +251,7 @@ void VROSceneRendererGVR::renderEye(VROEyeType eyeType,
     VROMatrix4f projectionMatrix = fov.toPerspectiveMatrix(kZNear, kZFar);
 
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-    _renderer->renderEye(eyeType, eyeFromHeadMatrix, projectionMatrix, *_driver.get());
+    _renderer->renderEye(eyeType, eyeFromHeadMatrix, projectionMatrix, _driver);
 }
 
 #pragma mark - Utility Methods

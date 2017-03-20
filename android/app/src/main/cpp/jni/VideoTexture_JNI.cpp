@@ -17,6 +17,7 @@
 #include "RenderContext_JNI.h"
 #include "VideoTexture_JNI.h"
 #include "VideoDelegate_JNI.h"
+#include "VRODriverOpenGL.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -25,11 +26,19 @@
 extern "C" {
 
 JNI_METHOD(jlong, nativeCreateVideoTexture)(JNIEnv *env,
-                                           jobject object) {
+                                            jobject object,
+                                            jlong renderContextRef) {
 
+    std::weak_ptr<RenderContext> renderContext_w = RenderContext::native(renderContextRef);
     std::shared_ptr<VROVideoTextureAVP> videoTexture = std::make_shared<VROVideoTextureAVP>();
-    VROPlatformDispatchAsyncRenderer([videoTexture] {
-        videoTexture->bindSurface();
+
+    VROPlatformDispatchAsyncRenderer([videoTexture, renderContext_w] {
+        std::shared_ptr<RenderContext> renderContext = renderContext_w.lock();
+        if (!renderContext) {
+            return;
+        }
+
+        videoTexture->bindSurface(std::dynamic_pointer_cast<VRODriverOpenGL>(renderContext->getDriver()));
     });
 
     return VideoTexture::jptr(videoTexture);
@@ -187,7 +196,7 @@ JNI_METHOD(void, nativeLoadSource)(JNIEnv *env,
 
         std::shared_ptr<VROFrameSynchronizer> frameSynchronizer = renderContext->getFrameSynchronizer();
         std::shared_ptr<VRODriver> driver = renderContext->getDriver();
-        videoTexture->loadVideo(strVideoSource, frameSynchronizer, *driver.get());
+        videoTexture->loadVideo(strVideoSource, frameSynchronizer, driver);
         videoTexture->prewarm();
     });
 

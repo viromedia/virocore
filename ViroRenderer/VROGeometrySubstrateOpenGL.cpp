@@ -17,7 +17,8 @@
 #include <map>
 
 VROGeometrySubstrateOpenGL::VROGeometrySubstrateOpenGL(const VROGeometry &geometry,
-                                                       VRODriverOpenGL &driver) {
+                                                       std::shared_ptr<VRODriverOpenGL> driver) :
+    _driver(driver) {
     
     readGeometryElements(geometry.getGeometryElements());
     readGeometrySources(geometry.getGeometrySources());
@@ -32,9 +33,12 @@ VROGeometrySubstrateOpenGL::~VROGeometrySubstrateOpenGL() {
     for (VROVertexDescriptorOpenGL &vd : _vertexDescriptors) {
         buffers.push_back(vd.buffer);
     }
-    
-    glDeleteBuffers((int) buffers.size(), buffers.data());
-    glDeleteVertexArrays((int) _vaos.size(), _vaos.data());
+
+    // Ensure we are deleting GL objects with the current GL context
+    if (_driver.lock()) {
+        glDeleteBuffers((int) buffers.size(), buffers.data());
+        glDeleteVertexArrays((int) _vaos.size(), _vaos.data());
+    }
 }
 
 void VROGeometrySubstrateOpenGL::readGeometryElements(const std::vector<std::shared_ptr<VROGeometryElement>> &elements) {

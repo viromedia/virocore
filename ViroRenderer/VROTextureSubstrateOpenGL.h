@@ -17,6 +17,7 @@
 
 class VROData;
 class VRODriver;
+class VRODriverOpenGL;
 enum class VROTextureType;
 enum class VROTextureFormat;
 enum class VROTextureInternalFormat;
@@ -31,10 +32,13 @@ public:
      and name. If owned is true, then the underlying texture will be deleted
      when this substrate is deleted.
      */
-    VROTextureSubstrateOpenGL(GLenum target, GLuint name, bool owned = true) :
+    VROTextureSubstrateOpenGL(GLenum target, GLuint name,
+                              std::shared_ptr<VRODriverOpenGL> driver,
+                              bool owned = true) :
         _target(target),
         _texture(name),
-        _owned(owned) {
+        _owned(owned),
+        _driver(driver) {
         
         ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
     }
@@ -52,7 +56,7 @@ public:
                               std::vector<std::shared_ptr<VROData>> &data,
                               int width, int height,
                               const std::vector<uint32_t> &mipSizes,
-                              VRODriver &driver);
+                              std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VROTextureSubstrateOpenGL();
     
     std::pair<GLenum, GLint> getTexture() const {
@@ -67,6 +71,13 @@ private:
     GLenum _target;
     GLuint _texture;
     bool _owned;
+
+    /*
+     Weak reference to the driver that created this program. The driver's lifecycle
+     is tied to the parent EGL context, so we only delete GL objects if the driver
+     is alive, to ensure we're deleting them under the correct context.
+    */
+    std::weak_ptr<VRODriverOpenGL> _driver;
     
     void loadTexture(VROTextureType type,
                      VROTextureFormat format,

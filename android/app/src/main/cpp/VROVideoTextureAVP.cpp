@@ -32,18 +32,18 @@ void VROVideoTextureAVP::setDelegate(std::shared_ptr<VROVideoDelegateInternal> d
 
 void VROVideoTextureAVP::loadVideo(std::string url,
                                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                   VRODriver &driver) {
+                                   std::shared_ptr<VRODriver> driver) {
     _player->setDataSourceURL(url.c_str());
 
     frameSynchronizer->removeFrameListener(shared_from_this());
     frameSynchronizer->addFrameListener(shared_from_this());
 }
 
-void VROVideoTextureAVP::loadVideoFromURL(std::string url, VRODriver &driver) {
+void VROVideoTextureAVP::loadVideoFromURL(std::string url, std::shared_ptr<VRODriver> driver) {
     _player->setDataSourceURL(url.c_str());
 }
 
-void VROVideoTextureAVP::loadVideoFromAsset(std::string asset, VRODriver &driver) {
+void VROVideoTextureAVP::loadVideoFromAsset(std::string asset, std::shared_ptr<VRODriver> driver) {
     _player->setDataSourceAsset(asset.c_str());
 }
 
@@ -102,7 +102,7 @@ void VROVideoTextureAVP::setLoop(bool loop) {
     _player->setLoop(loop);
 }
 
-void VROVideoTextureAVP::bindSurface() {
+void VROVideoTextureAVP::bindSurface(std::shared_ptr<VRODriverOpenGL> driver) {
     glGenTextures(1, &_textureId);
     glBindTexture(GL_TEXTURE_EXTERNAL_OES, _textureId);
 
@@ -113,7 +113,7 @@ void VROVideoTextureAVP::bindSurface() {
     glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(
-            new VROTextureSubstrateOpenGL(GL_TEXTURE_EXTERNAL_OES, _textureId, true));
+            new VROTextureSubstrateOpenGL(GL_TEXTURE_EXTERNAL_OES, _textureId, driver, true));
     setSubstrate(std::move(substrate));
 
     _player->setSurface(_textureId);

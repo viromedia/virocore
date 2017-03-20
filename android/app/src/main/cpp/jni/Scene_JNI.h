@@ -43,10 +43,10 @@ public:
         return persistentDelegate->get();
     }
 
-    void onSceneWillAppear(VRORenderContext * context, VRODriver *driver);
-    void onSceneDidAppear(VRORenderContext * context, VRODriver *driver);
-    void onSceneWillDisappear(VRORenderContext * context, VRODriver *driver);
-    void onSceneDidDisappear(VRORenderContext * context, VRODriver *driver);
+    void onSceneWillAppear(VRORenderContext * context, std::shared_ptr<VRODriver> driver);
+    void onSceneDidAppear(VRORenderContext * context, std::shared_ptr<VRODriver> driver);
+    void onSceneWillDisappear(VRORenderContext * context, std::shared_ptr<VRODriver> driver);
+    void onSceneDidDisappear(VRORenderContext * context, std::shared_ptr<VRODriver> driver);
 private:
     void callVoidFunctionWithName(std::string functionName);
     jobject _javaObject;

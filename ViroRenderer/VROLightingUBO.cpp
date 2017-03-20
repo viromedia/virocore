@@ -36,8 +36,8 @@ VROLightingUBO::~VROLightingUBO() {
     std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
     if (driver) {
         driver->internBindingPoint(_lightingUBOBindingPoint);
+        glDeleteBuffers(1, &_lightingUBO);
     }
-    glDeleteBuffers(1, &_lightingUBO);
 }
 
 void VROLightingUBO::unbind(std::shared_ptr<VROShaderProgram> &program) {

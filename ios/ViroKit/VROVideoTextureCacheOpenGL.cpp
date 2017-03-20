@@ -10,8 +10,10 @@
 #include "VROLog.h"
 #include "VROTextureSubstrateOpenGL.h"
 
-VROVideoTextureCacheOpenGL::VROVideoTextureCacheOpenGL(CVEAGLContext eaglContext)
-    : _currentTextureIndex(0) {
+VROVideoTextureCacheOpenGL::VROVideoTextureCacheOpenGL(CVEAGLContext eaglContext,
+                                                       std::shared_ptr<VRODriverOpenGL> driver)
+    : _currentTextureIndex(0),
+      _driver(driver) {
     CVReturn textureCacheError = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, NULL, eaglContext,
                                                               NULL, &_cache);
     if (textureCacheError) {
@@ -59,7 +61,7 @@ std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSu
         pabort();
     }
     
-    return std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(GL_TEXTURE_2D, texture, false));
+    return std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(GL_TEXTURE_2D, texture, _driver, false));
 }
 
 std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSubstrate(CVPixelBufferRef pixelBuffer) {
@@ -88,5 +90,5 @@ std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSu
         pabort();
     }
     
-    return std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(GL_TEXTURE_2D, texture, false));
+    return std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(GL_TEXTURE_2D, texture, _driver, false));
 }

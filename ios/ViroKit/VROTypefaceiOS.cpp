@@ -27,8 +27,10 @@ typedef struct TableEntry {
     uint32_t fLength;
 } TableEntry;
 
-VROTypefaceiOS::VROTypefaceiOS(std::string name, int size) :
-    VROTypeface(name, size) {
+VROTypefaceiOS::VROTypefaceiOS(std::string name, int size,
+                               std::shared_ptr<VRODriver> driver) :
+    VROTypeface(name, size),
+    _driver(driver) {
     
     
 }
@@ -59,7 +61,7 @@ FT_Face VROTypefaceiOS::loadFace(std::string name, int size, FT_Library ft) {
 
 std::unique_ptr<VROGlyph> VROTypefaceiOS::loadGlyph(FT_ULong charCode, bool forRendering) {
     std::unique_ptr<VROGlyph> glyph = std::unique_ptr<VROGlyph>(new VROGlyphOpenGL());
-    glyph->load(_face, charCode, forRendering);
+    glyph->load(_face, charCode, forRendering, _driver.lock());
     
     return glyph;
 }
