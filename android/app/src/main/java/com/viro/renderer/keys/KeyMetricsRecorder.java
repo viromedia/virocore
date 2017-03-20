@@ -14,6 +14,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeAction;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
+import com.viro.renderer.BuildInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -101,22 +102,10 @@ public class KeyMetricsRecorder {
         // Add the VR platform
         builder.append(vrPlatform).append(DELIMITER);
         // Add the Android package name
-        builder.append(mContext.getApplicationContext().getPackageName()).append(DELIMITER);
+        builder.append(BuildInfo.getPackageName(mContext)).append(DELIMITER);
         // Add the build type (debug|release);
-        builder.append(isDebug() ? "debug" : "release");
+        builder.append(BuildInfo.isDebug(mContext) ? "debug" : "release");
         return builder.toString();
-    }
-
-    private boolean isDebug() {
-        boolean debug = false;
-        try {
-            debug = (mContext.getPackageManager().getPackageInfo(
-                    mContext.getPackageName(), 0).applicationInfo.flags &
-                    ApplicationInfo.FLAG_DEBUGGABLE) != 0;
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.w(TAG, "Couldn't find the debuggable flag, assuming release");
-        }
-        return debug;
     }
 
     /**

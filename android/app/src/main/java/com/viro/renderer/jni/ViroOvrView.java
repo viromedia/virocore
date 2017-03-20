@@ -103,6 +103,11 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     }
 
     @Override
+    public void setDebug(boolean debug) {
+        // no-op here
+    }
+
+    @Override
     public RenderContextJni getRenderContextRef(){
         return mNativeRenderContext;
     }

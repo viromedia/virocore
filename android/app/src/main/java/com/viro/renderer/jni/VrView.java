@@ -29,4 +29,6 @@ public interface VrView extends Application.ActivityLifecycleCallbacks {
 
     public void destroy();
 
+    public void setDebug(boolean debug);
+
 }

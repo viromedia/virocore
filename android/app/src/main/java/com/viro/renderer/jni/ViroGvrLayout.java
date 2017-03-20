@@ -20,6 +20,7 @@ import android.view.WindowManager;
 import com.google.vr.ndk.base.AndroidCompat;
 import com.google.vr.ndk.base.GvrApi;
 import com.google.vr.ndk.base.GvrLayout;
+import com.viro.renderer.BuildInfo;
 import com.viro.renderer.FrameListener;
 import com.viro.renderer.GLSurfaceViewQueue;
 import com.viro.renderer.keys.KeyValidationListener;
@@ -200,10 +201,16 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
 
         setPresentationView(glSurfaceView);
 
-        // According to the GVR documentation, this only sets the activity to "VR mode" and is only
-        // supported on Android Nougat and up.
-        // We always want VR mode enabled.
-        AndroidCompat.setVrModeEnabled((Activity)getContext(), true);
+        /**
+         * Turn on VR mode if we're not in debug OR we're not cardboard (so we're in Daydream).
+         */
+        if (!BuildInfo.isDebug(context) || !getHeadset().equalsIgnoreCase("cardboard")) {
+            // According to the GVR documentation, this only sets the activity to "VR mode" and is only
+            // supported on Android Nougat and up.
+            // NOTE: this turns off "Draw over other apps" permissions that React Native needs in
+            // debug
+            AndroidCompat.setVrModeEnabled((Activity) getContext(), true);
+        }
         setStereoModeEnabled(true);
 
         final Activity activity = (Activity)getContext();
@@ -217,6 +224,17 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         // Attach SystemUiVisibilityChangeListeners to enforce a full screen experience.
         activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mSystemVisibilityListener);
         mWeakActivity = new WeakReference<Activity>(activity);
+    }
+
+    @Override
+    public void setDebug(boolean debug) {
+        /**
+         * Only override in the cardboard case because for Daydream it causes the
+         * controller to no longer work.
+         */
+        if (getHeadset().equalsIgnoreCase("cardboard")) {
+            AndroidCompat.setVrModeEnabled((Activity) getContext(), !debug);
+        }
     }
 
     @Override
