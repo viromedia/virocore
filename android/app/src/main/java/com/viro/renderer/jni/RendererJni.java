@@ -52,7 +52,7 @@ public class RendererJni {
     }
     public void onStop() { nativeOnStop(mNativeRef); }
     public void onSurfaceCreated(Surface surface) { nativeOnSurfaceCreated(surface, mNativeRef); }
-    public void onSurfaceChanged(Surface surface) { nativeOnSurfaceChanged(surface, mNativeRef); }
+    public void onSurfaceChanged(Surface surface, int width, int height) { nativeOnSurfaceChanged(surface, width, height, mNativeRef); }
 
     /* ----------     Common other methods   ---------- */
     public void onKeyEvent(int keyCode, int action) {
@@ -99,7 +99,7 @@ public class RendererJni {
     private native void nativeOnResume(long nativeRenderer);
     private native void nativeOnStop(long nativeRenderer);
     private native void nativeOnSurfaceCreated(Surface surface, long nativeRenderer);
-    private native void nativeOnSurfaceChanged(Surface surface, long nativeRenderer);
+    private native void nativeOnSurfaceChanged(Surface surface, int width, int height, long nativeRenderer);
     private native void nativeOnSurfaceDestroyed(long nativeRenderer);
     private native void nativeSetScene(long nativeRenderer, long nativeScene);
     private native void nativeSetSceneWithAnimation(long nativeRenderer, long nativeScene, float duration);

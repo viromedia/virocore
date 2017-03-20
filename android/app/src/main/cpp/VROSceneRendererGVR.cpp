@@ -25,7 +25,6 @@
 #include "VROInputControllerDaydream.h"
 #include "VROInputControllerCardboard.h"
 #include "VROAllocationTracker.h"
-
 static const uint64_t kPredictionTimeWithoutVsyncNanos = 50000000;
 
 #pragma mark - Setup
@@ -95,7 +94,12 @@ void VROSceneRendererGVR::onDrawFrame() {
     gvr::Sizei recommended_size = halfPixelCount(_gvr->GetMaximumEffectiveRenderTargetSize());
     if (_renderSize.width != recommended_size.width || _renderSize.height != recommended_size.height) {
         _swapchain->ResizeBuffer(0, recommended_size);
-        _renderSize = recommended_size;
+
+        // As we perform rendering ourselves in Mono mode, do not override
+        // _renderSize with gvr recommended sizes.
+        if (_vrModeEnabled) {
+            _renderSize = recommended_size;
+        }
     }
 
     // Obtain the latest, predicted head pose
@@ -183,6 +187,14 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headRotation) {
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     _renderer->renderEye(VROEyeType::Monocular, eyeFromHeadMatrix, projectionMatrix, *_driver.get());
     _renderer->endFrame(*_driver.get());
+}
+
+/**
+ * Update render sizes as the surface changes.
+ */
+void VROSceneRendererGVR::onSurfaceChanged(jobject surface, jint width, jint height) {
+    _renderSize.width = width;
+    _renderSize.height = height;
 }
 
 void VROSceneRendererGVR::onTouchEvent(int action, float x, float y) {

@@ -257,7 +257,7 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        mNativeRenderer.onSurfaceChanged(holder.getSurface());
+        mNativeRenderer.onSurfaceChanged(holder.getSurface(), width, height);
     }
 
     @Override

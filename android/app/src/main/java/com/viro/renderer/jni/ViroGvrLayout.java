@@ -118,7 +118,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
                 gvr.refreshDisplayMetrics();
             }
 
-            view.mNativeRenderer.onSurfaceChanged(surface.getHolder().getSurface());
+            view.mNativeRenderer.onSurfaceChanged(surface.getHolder().getSurface(), width, height);
         }
 
         @Override

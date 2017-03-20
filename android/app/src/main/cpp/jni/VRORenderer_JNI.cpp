@@ -249,8 +249,10 @@ JNI_METHOD(void, nativeOnSurfaceCreated)(JNIEnv *env,
 JNI_METHOD(void, nativeOnSurfaceChanged)(JNIEnv *env,
                                          jobject obj,
                                          jobject surface,
+                                         jint width,
+                                         jint height,
                                          jlong native_renderer) {
-    Renderer::native(native_renderer)->onSurfaceChanged(surface);
+    Renderer::native(native_renderer)->onSurfaceChanged(surface, width, height);
 }
 
 JNI_METHOD(void, nativeOnSurfaceDestroyed)(JNIEnv *env,

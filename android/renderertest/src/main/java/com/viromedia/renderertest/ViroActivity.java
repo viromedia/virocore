@@ -69,9 +69,39 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         }
 
         mVrView.setVrModeEnabled(true);
+        mVrView.validateApiKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
         setContentView(mVrView.getContentView());
     }
 
+    @Override
+    protected void onStart(){
+        super.onStart();
+        mVrView.onActivityStarted(this);
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        mVrView.onActivityResumed(this);
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        mVrView.onActivityPaused(this);
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        mVrView.onActivityStopped(this);
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        mVrView.onActivityDestroyed(this);
+    }
 
     @Override
     public void onGlInitialized() {

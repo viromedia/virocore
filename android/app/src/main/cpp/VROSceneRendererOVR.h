@@ -43,7 +43,7 @@ public:
      Surface lifecycle.
      */
     void onSurfaceCreated(jobject surface);
-    void onSurfaceChanged(jobject surface);
+    void onSurfaceChanged(jobject surface, jint width, jint height);
     void onSurfaceDestroyed();
 
 private:
