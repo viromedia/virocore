@@ -6,13 +6,13 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
+#ifndef VROLightingUBO_h
+#define VROLightingUBO_h
+
 #include "VROOpenGL.h"
 #include <vector>
 #include <atomic>
 #include <memory>
-
-// Fixed binding point used for lighting
-static int sUBOBindingPoint = 0;
 
 // Grouped in 4N slots, matching lighting_general_functions.glsl
 typedef struct {
@@ -43,30 +43,17 @@ typedef struct {
 
 class VROLight;
 class VROShaderProgram;
+class VRODriverOpenGL;
 
 class VROLightingUBO {
     
 public:
     
-    VROLightingUBO(int hash, const std::vector<std::shared_ptr<VROLight>> &lights) :
-        _hash(hash),
-        _lightingUBOBindingPoint(sUBOBindingPoint),
-        _lights(lights),
-        _needsUpdate(false) {
-        
-        glGenBuffers(1, &_lightingUBO);
-        glBindBuffer(GL_UNIFORM_BUFFER, _lightingUBO);
-        glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingData), NULL, GL_DYNAMIC_DRAW);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
-        
-        // Links the UBO and the binding point
-        glBindBufferBase(GL_UNIFORM_BUFFER, _lightingUBOBindingPoint, _lightingUBO);
-        updateLights();
-    }
+    static void unbind(std::shared_ptr<VROShaderProgram> &program);
     
-    virtual ~VROLightingUBO() {
-        glDeleteBuffers(1, &_lightingUBO);
-    }
+    VROLightingUBO(int hash, const std::vector<std::shared_ptr<VROLight>> &lights,
+                   std::shared_ptr<VRODriverOpenGL> driver);
+    virtual ~VROLightingUBO();
     
     /*
      Bind this lighting UBO into the "lighting" block for the given program.
@@ -96,12 +83,17 @@ private:
      The uniform buffer object ID and binding point for lighting parameters.
      */
     GLuint _lightingUBO;
-    const int _lightingUBOBindingPoint = 0;
+    int _lightingUBOBindingPoint = 0;
     
     /*
      The lights that are a part of this UBO.
      */
     std::vector<std::shared_ptr<VROLight>> _lights;
+    
+    /*
+     The driver that created this UBO.
+     */
+    std::weak_ptr<VRODriverOpenGL> _driver;
     
     /*
      True if a light in this UBO has changed.
@@ -114,3 +106,5 @@ private:
     void updateLights();
     
 };
+
+#endif

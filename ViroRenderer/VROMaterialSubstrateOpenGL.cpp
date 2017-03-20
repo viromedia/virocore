@@ -340,11 +340,17 @@ void VROMaterialSubstrateOpenGL::bindLights(int lightsHash,
                                             const VRORenderContext &context,
                                             VRODriver &driver) {
     
+    if (lights.empty()) {
+        VROLightingUBO::unbind(_program);
+        _lightingUBO.reset();
+        return;
+    }
+    
     VRODriverOpenGL &glDriver = (VRODriverOpenGL &)driver;
     for (const std::shared_ptr<VROLight> &light : lights) {
         light->propagateUpdates();
     }
-  
+
     if (!_lightingUBO || _lightingUBO->getHash() != lightsHash) {
         _lightingUBO = glDriver.getLightingUBO(lightsHash);
         if (!_lightingUBO) {

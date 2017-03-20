@@ -20,8 +20,9 @@
 #include "VROShaderModifier.h"
 #include "VROGeometrySource.h"
 #include "VROLight.h"
+#include <list>
 
-class VRODriverOpenGL : public VRODriver {
+class VRODriverOpenGL : public VRODriver, public std::enable_shared_from_this<VRODriverOpenGL> {
 
 public:
 
@@ -60,13 +61,7 @@ public:
     std::shared_ptr<VROLightingUBO> getLightingUBO(int lightsHash) {
         auto it = _lightingUBOs.find(lightsHash);
         if (it != _lightingUBOs.end()) {
-            std::shared_ptr<VROLightingUBO> light = it->second.lock();
-            if (light) {
-                return light;
-            }
-            else {
-                return {};
-            }
+            return it->second.lock();
         }
         else {
             return {};
@@ -74,7 +69,9 @@ public:
     }
     
     std::shared_ptr<VROLightingUBO> createLightingUBO(int lightsHash, const std::vector<std::shared_ptr<VROLight>> &lights) {
-        std::shared_ptr<VROLightingUBO> lightingUBO = std::make_shared<VROLightingUBO>(lightsHash, lights);
+        std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+        
+        std::shared_ptr<VROLightingUBO> lightingUBO = std::make_shared<VROLightingUBO>(lightsHash, lights, driver);
         _lightingUBOs[lightsHash] = lightingUBO;
         
         for (const std::shared_ptr<VROLight> &light : lights) {
@@ -104,7 +101,38 @@ public:
         }
     }
     
+    /*
+     Generate a new binding point for a UBO.
+     */
+    int generateBindingPoint() {
+        if (!_bindingPoints.empty()) {
+            int gen = _bindingPoints.back();
+            _bindingPoints.pop_back();
+            
+            return gen;
+        }
+        else {
+            return ++_bindingPointGenerator;
+        }
+    }
+
+    /*
+     Return a binding point that is no longer needed.
+     */
+    void internBindingPoint(int bindingPoint) {
+        _bindingPoints.push_back(bindingPoint);
+    }
+
+    
 private:
+    
+    /*
+     List of unused binding points. Binding points bind a UBO to the OpenGL context. 
+     They are shader program independent (are shared across programs). These are
+     generated incrementally, but returned to this list whenever a UBO is destroyed.
+     */
+    std::list<int> _bindingPoints;
+    int _bindingPointGenerator = 0;
 
     /*
      Map of light hashes to corresponding lighting UBOs.

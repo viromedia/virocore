@@ -11,6 +11,40 @@
 #include "VROLog.h"
 #include "VROMath.h"
 #include "VROShaderProgram.h"
+#include "VRODriverOpenGL.h"
+
+VROLightingUBO::VROLightingUBO(int hash, const std::vector<std::shared_ptr<VROLight>> &lights,
+                               std::shared_ptr<VRODriverOpenGL> driver) :
+    _hash(hash),
+    _lights(lights),
+    _driver(driver),
+    _needsUpdate(false) {
+    
+    _lightingUBOBindingPoint = driver->generateBindingPoint();
+    
+    glGenBuffers(1, &_lightingUBO);
+    glBindBuffer(GL_UNIFORM_BUFFER, _lightingUBO);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingData), NULL, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    
+    // Links the UBO and the binding point
+    glBindBufferBase(GL_UNIFORM_BUFFER, _lightingUBOBindingPoint, _lightingUBO);
+    updateLights();
+}
+
+VROLightingUBO::~VROLightingUBO() {
+    std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
+    if (driver) {
+        driver->internBindingPoint(_lightingUBOBindingPoint);
+    }
+    glDeleteBuffers(1, &_lightingUBO);
+}
+
+void VROLightingUBO::unbind(std::shared_ptr<VROShaderProgram> &program) {
+    if (program->hasLightingBlock()) {
+        glUniformBlockBinding(program->getProgram(), program->getLightingBlockIndex(), 0);
+    }
+}
 
 void VROLightingUBO::bind(std::shared_ptr<VROShaderProgram> &program) {
     if (_needsUpdate) {
