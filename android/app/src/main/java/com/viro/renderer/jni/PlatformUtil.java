@@ -54,6 +54,15 @@ public class PlatformUtil {
         mApplicationHandler = new Handler(Looper.getMainLooper());
     }
 
+    /**
+     * Set the {@link RenderCommandQueue} to a new value. All new
+     * events will be processed on this queue, and its associated
+     * thread.
+     */
+    public void setRenderCommandQueue(RenderCommandQueue queue) {
+        mRenderQueue = queue;
+    }
+
     // Accessed by Native code (VROPlatformUtil.cpp)
     public Bitmap loadBitmapFromAsset(String assetPath, boolean rgb565) throws IOException {
         InputStream in = null;

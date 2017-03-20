@@ -174,7 +174,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         };
 
         // Initialize the native renderer.
-        final GLSurfaceView glSurfaceView = new GLSurfaceView(activityContext.getApplicationContext());
+        GLSurfaceView glSurfaceView = createSurfaceView(true);
 
         mAssetManager = getResources().getAssets();
         mPlatformUtil = new PlatformUtil(
@@ -193,12 +193,6 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         mKeyValidator = new KeyValidator(activityContext);
 
         // Add the GLSurfaceView to the GvrLayout.
-        glSurfaceView.setEGLContextClientVersion(3);
-        glSurfaceView.setEGLConfigChooser(8, 8, 8, 0, 0, 0);
-        glSurfaceView.setPreserveEGLContextOnPause(true);
-        glSurfaceView.setRenderer(new ViroSurfaceViewRenderer(this, glSurfaceView));
-        glSurfaceView.setOnTouchListener(new ViroOnTouchListener(this));
-
         setPresentationView(glSurfaceView);
 
         /**
@@ -224,6 +218,28 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         // Attach SystemUiVisibilityChangeListeners to enforce a full screen experience.
         activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mSystemVisibilityListener);
         mWeakActivity = new WeakReference<Activity>(activity);
+    }
+
+    /**
+     * Create (or update) the {@link GLSurfaceView} to be used by GVR. This view's
+     * properties depend on whether or not we're in VR (stereo) mode.
+     *
+     * @param vrMode True if we are in VR mode.
+     */
+    private GLSurfaceView createSurfaceView(boolean vrMode) {
+        int colorBits = 8;
+        int alphaBits = 0;
+        int depthBits = vrMode ? 0 : 16;
+        int stencilBits = vrMode ? 0 : 8;
+
+        GLSurfaceView glSurfaceView = new GLSurfaceView(getContext().getApplicationContext());
+        glSurfaceView.setEGLContextClientVersion(3);
+        glSurfaceView.setEGLConfigChooser(colorBits, colorBits, colorBits, alphaBits, depthBits, stencilBits);
+        glSurfaceView.setPreserveEGLContextOnPause(true);
+        glSurfaceView.setRenderer(new ViroSurfaceViewRenderer(this, glSurfaceView));
+        glSurfaceView.setOnTouchListener(new ViroOnTouchListener(this));
+
+        return glSurfaceView;
     }
 
     @Override
@@ -266,6 +282,14 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
                 // sustained performance mode.
                 AndroidCompat.setSustainedPerformanceMode((Activity) getContext(), true);
             }
+        }
+        else {
+            // To turn on non-VR (mono) rendering, we have to swap out the
+            // GLSurfaceView with one that has a depth buffer and stencil,
+            // since we'll now be rendering diretly to that framebuffer.
+            GLSurfaceView glSurfaceView = createSurfaceView(false);
+            mPlatformUtil.setRenderCommandQueue(new GLSurfaceViewQueue(glSurfaceView));
+            setPresentationView(glSurfaceView);
         }
 
         mNativeRenderer.setVRModeEnabled(vrModeEnabled);
