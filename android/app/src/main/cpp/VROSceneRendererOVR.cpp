@@ -26,6 +26,7 @@
 #include <GLES3/gl3.h>
 #include <GLES3/gl3ext.h>
 #include <VrApi_Types.h>
+#include <VROTime.h>
 
 #pragma mark - OVR System
 
@@ -847,6 +848,7 @@ typedef struct
     std::shared_ptr<VRODriverOpenGLAndroid> driver;
     bool                UseMultiview;
     bool                suspended;
+    double              suspendedNotificationTime;
 } ovrApp;
 
 static void ovrApp_Clear( ovrApp * app )
@@ -864,6 +866,7 @@ static void ovrApp_Clear( ovrApp * app )
     app->BackButtonDownStartTime = 0.0;
     app->UseMultiview = true;
     app->suspended = true;
+    app->suspendedNotificationTime = VROTimeCurrentSeconds();
     ovrEgl_Clear( &app->Egl );
     ovrRenderer_Clear( &app->Renderer );
 }
@@ -1320,8 +1323,13 @@ void * AppThreadFunction( void * parm )
             continue;
         }
 
-        if ( appState.suspended )
-        {
+        if ( appState.suspended ) {
+            double newTime = VROTimeCurrentSeconds();
+            // notify the user about bad keys 5 times a second (every 200ms/.2s)
+            if (newTime - appState.suspendedNotificationTime > .2) {
+                perr("Renderer suspended! Do you have a valid key?");
+                appState.suspendedNotificationTime = newTime;
+            }
             continue;
         }
 

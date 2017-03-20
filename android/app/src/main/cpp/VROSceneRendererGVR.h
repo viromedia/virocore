@@ -94,6 +94,7 @@ private:
 
     bool _vrModeEnabled;
     bool _rendererSuspended;
+    double _suspendedNotificationTime;
 
     /*
      Utility methods.

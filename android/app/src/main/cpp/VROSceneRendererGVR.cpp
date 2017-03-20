@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <cmath>
 #include <random>
+#include <VROTime.h>
 
 #include "VRODriverOpenGLAndroid.h"
 #include "VROGVRUtil.h"
@@ -34,7 +35,8 @@ VROSceneRendererGVR::VROSceneRendererGVR(gvr_context* gvr_context,
     _gvr(gvr::GvrApi::WrapNonOwned(gvr_context)),
     _scratchViewport(_gvr->CreateBufferViewport()),
     _rendererSuspended(true),
-    _vrModeEnabled(true) {
+    _vrModeEnabled(true),
+    _suspendedNotificationTime(VROTimeCurrentSeconds()) {
 
     // Create corresponding controllers - cardboard, or daydream if supported.
     std::shared_ptr<VROInputControllerBase> controller;
@@ -125,6 +127,12 @@ void VROSceneRendererGVR::onDrawFrame() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         frame.Unbind();
         frame.Submit(*_viewportList, _headView);
+        double newTime = VROTimeCurrentSeconds();
+        // notify the user about bad keys 5 times a second (every 200ms/.2s)
+        if (newTime - _suspendedNotificationTime > .2) {
+            perr("Renderer suspended! Do you have a valid key?");
+            _suspendedNotificationTime = newTime;
+        }
     }
 
     ++_frame;
