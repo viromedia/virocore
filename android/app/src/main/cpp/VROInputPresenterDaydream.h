@@ -33,7 +33,7 @@ public:
         std::shared_ptr<VROTexture> reticleTexture
                 = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
                                                VROMipmapMode::Runtime,
-                                               VROPlatformLoadImageFromAsset("ddcursor_pointer.jpg", VROTextureInternalFormat::RGBA8));
+                                               VROPlatformLoadImageFromAsset("dd_reticle_large.png", VROTextureInternalFormat::RGBA8));
         std::shared_ptr<VROReticle> reticle = std::make_shared<VROReticle>(reticleTexture);
         reticle->setPointerMode(true);
         setReticle(reticle);
