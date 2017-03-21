@@ -99,8 +99,8 @@ JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
                                      jlong native_node_ref) {
 
     // Need a strong reference to this node since it is not attached
-    // to the scene graph, and is immediately destroyed (by Object3D
-    // in the bridge) after this functino returns
+    // to the scene graph, and is immediately destroyed (by ObjectJni)
+    // after this function returns
     std::shared_ptr<VRONode> nodeWithObj = Node::native(native_object_ref);
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
 

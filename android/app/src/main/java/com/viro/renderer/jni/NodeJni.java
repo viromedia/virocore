@@ -96,13 +96,18 @@ public class NodeJni {
         geometry.attachToNode(this);
     }
 
-    public void setMaterials(List<MaterialJni> materials) {
-        // create list of longs (refs)
+    public boolean setMaterials(List<MaterialJni> materials) {
+        // Create list of longs (refs) to all the materials. If any
+        // material has already been destroyed, return false
         long[] materialRefs = new long[materials.size()];
         for (int i = 0; i < materials.size(); i++) {
             materialRefs[i] = materials.get(i).mNativeRef;
+            if (materialRefs[i] == 0) {
+                return false;
+            }
         }
         nativeSetMaterials(mNativeRef, materialRefs);
+        return true;
     }
 
     public void setTransformBehaviors(String[] transformBehaviors) {

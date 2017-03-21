@@ -50,7 +50,10 @@ public class MaterialJni {
     }
 
     public void destroy() {
-        nativeDestroyMaterial(mNativeRef);
+        if (mNativeRef != 0) {
+            nativeDestroyMaterial(mNativeRef);
+        }
+        mNativeRef = 0;
     }
 
     private native long nativeCreateMaterial();
