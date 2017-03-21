@@ -246,9 +246,9 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneCo
         _outgoingSceneController->onSceneWillDisappear(_context.get(), driver);
     }
 
-    _sceneController->startIncomingTransition(seconds, timingFunctionType);
+    _sceneController->startIncomingTransition(seconds, timingFunctionType, _context.get());
     if (_outgoingSceneController) {
-        _outgoingSceneController->startOutgoingTransition(seconds, timingFunctionType);
+        _outgoingSceneController->startOutgoingTransition(seconds, timingFunctionType, _context.get());
     }
 }
 
