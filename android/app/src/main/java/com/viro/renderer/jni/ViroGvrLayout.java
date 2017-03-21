@@ -160,7 +160,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         }
     }
 
-    public ViroGvrLayout(Context context, GlListener glListener) {
+    public ViroGvrLayout(Context context, GlListener glListener, Runnable vrExitListener) {
         super(context);
 
         final Context activityContext = getContext();
@@ -218,6 +218,8 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         // Attach SystemUiVisibilityChangeListeners to enforce a full screen experience.
         activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mSystemVisibilityListener);
         mWeakActivity = new WeakReference<Activity>(activity);
+
+        getUiLayout().setCloseButtonListener(vrExitListener);
     }
 
     /**

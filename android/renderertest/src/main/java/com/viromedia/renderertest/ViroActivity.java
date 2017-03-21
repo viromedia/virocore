@@ -63,7 +63,12 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         super.onCreate(savedInstanceState);
 
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
-            mVrView = new ViroGvrLayout(this, this);
+            mVrView = new ViroGvrLayout(this, this, new Runnable(){
+                @Override
+                public void run() {
+                    Log.e(TAG, "On GVR userRequested exit");
+                }
+            });
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
             mVrView = new ViroOvrView(this, this);
         }
