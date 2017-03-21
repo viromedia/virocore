@@ -175,9 +175,8 @@ void VRONode::updateSortKeys(uint32_t depth, VRORenderParameters &params,
                                   distanceFromCamera, context.getZFar(), driver);
         
         if (kDebugSortOrder) {
-            pinfo("   [%d] Pushed node with position [%f, %f, %f] hierarchy depth %d, distance to camera %f, actual depth %d, hierarchy ID %d",
-                  sDebugSortIndex, _computedPosition.x, _computedPosition.y, _computedPosition.z,
-                  hierarchyDepth, distanceFromCamera, depth, hierarchyId);
+            pinfo("   [%d] Pushed node with position [%f, %f, %f], rendering order %d, hierarchy depth %d (actual depth %d), distance to camera %f, hierarchy ID %d, lights %d",
+                  sDebugSortIndex, _computedPosition.x, _computedPosition.y, _computedPosition.z, _renderingOrder, hierarchyDepth, depth, distanceFromCamera, hierarchyId, lightsHash);
             _geometry->setName(VROStringUtil::toString(sDebugSortIndex));
         }
     }

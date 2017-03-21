@@ -89,7 +89,7 @@ void VROScene::render(const VRORenderContext &context,
             // at least one light.
             if (!boundLights.empty() || material->getLightingModel() == VROLightingModel::Constant) {
                 if (kDebugSortOrder) {
-                    if (node->getGeometry()) {
+                    if (node->getGeometry() && elementIndex == 0) {
                         pinfo("   Rendering node [%s], element %d", node->getGeometry()->getName().c_str(), elementIndex);
                     }
                 }
