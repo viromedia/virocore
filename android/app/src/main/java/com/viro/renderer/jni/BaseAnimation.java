@@ -20,6 +20,7 @@ public abstract class BaseAnimation {
     public abstract void pause();
     public abstract void resume();
     public abstract void terminate();
+    public abstract void destroy();
 
     /**
      * AnimationDelegate logic
@@ -28,12 +29,12 @@ public abstract class BaseAnimation {
     protected AnimationDelegate mDelegate;
 
     public interface AnimationDelegate {
-        void onFinish();
+        void onFinish(BaseAnimation animation);
     }
 
     public void animationDidFinish() {
         if (mDelegate != null) {
-            mDelegate.onFinish();
+            mDelegate.onFinish(this);
         }
     }
 }

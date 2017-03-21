@@ -46,8 +46,12 @@ public class AnimationChainJni extends BaseAnimation {
         nativeTerminateAnimation(mNativeRef);
     }
 
+    @Override
     public void destroy() {
-        nativeDestroyAnimationChain(mNativeRef);
+        if (mNativeRef != 0) {
+            nativeDestroyAnimationChain(mNativeRef);
+        }
+        mNativeRef = 0;
     }
 
     private native long nativeCreateAnimationChain(String executionType);

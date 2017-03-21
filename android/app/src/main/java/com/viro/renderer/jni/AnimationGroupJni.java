@@ -59,11 +59,16 @@ public class AnimationGroupJni extends BaseAnimation {
         nativeTerminateAnimation(mNativeRef);
     }
 
+    @Override
     public void destroy() {
         if (mLazyMaterial != null) {
             mLazyMaterial.destroy();
         }
-        nativeDestroyAnimationGroup(mNativeRef);
+
+        if (mNativeRef != 0) {
+            nativeDestroyAnimationGroup(mNativeRef);
+            mNativeRef = 0;
+        }
     }
 
     private native long nativeCreateAnimationGroup(String positionX, String positionY, String positionZ,

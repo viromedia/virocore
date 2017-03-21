@@ -91,29 +91,31 @@ JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeR
             return;
         }
         group->execute(node, [weakObj] {
-            JNIEnv *env = VROPlatformGetJNIEnv();
-            jobject obj = env->NewLocalRef(weakObj);
+            VROPlatformDispatchAsyncApplication([weakObj] {
+                JNIEnv *env = VROPlatformGetJNIEnv();
+                jobject obj = env->NewLocalRef(weakObj);
 
-            if (obj != NULL) {
-                jclass javaClass = VROPlatformFindClass(env, obj,
-                                                        "com/viro/renderer/jni/AnimationGroupJni");
-                if (javaClass == nullptr) {
-                    perr("Unable to find AnimationGroupJni class for onFinish callback.");
-                    return;
-                }
+                if (obj != NULL) {
+                    jclass javaClass = VROPlatformFindClass(env, obj,
+                                                            "com/viro/renderer/jni/AnimationGroupJni");
+                    if (javaClass == nullptr) {
+                        perr("Unable to find AnimationGroupJni class for onFinish callback.");
+                        return;
+                    }
 
-                jmethodID method = env->GetMethodID(javaClass, "animationDidFinish", "()V");
-                if (method == nullptr) {
-                    perr("Unable to find animationDidFinish() method in AnimationGroupJni");
-                }
+                    jmethodID method = env->GetMethodID(javaClass, "animationDidFinish", "()V");
+                    if (method == nullptr) {
+                        perr("Unable to find animationDidFinish() method in AnimationGroupJni");
+                    }
 
-                env->CallVoidMethod(obj, method);
-                if (env->ExceptionOccurred()) {
-                    perr("Exception encountered calling onFinish.");
+                    env->CallVoidMethod(obj, method);
+                    if (env->ExceptionOccurred()) {
+                        perr("Exception encountered calling onFinish.");
+                    }
+                    env->DeleteLocalRef(javaClass);
+                    env->DeleteLocalRef(obj);
                 }
-                env->DeleteLocalRef(javaClass);
-                env->DeleteLocalRef(obj);
-            }
+            });
         });
     });
 }

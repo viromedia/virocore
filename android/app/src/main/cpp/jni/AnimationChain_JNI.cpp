@@ -76,32 +76,34 @@ JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeR
         }
 
         chain->execute(node, [weakObj] {
-            JNIEnv *env = VROPlatformGetJNIEnv();
-            env->ExceptionClear();
+            VROPlatformDispatchAsyncApplication([weakObj] {
+                JNIEnv *env = VROPlatformGetJNIEnv();
+                env->ExceptionClear();
 
-            jobject obj = env->NewLocalRef(weakObj);
-            if (obj == NULL) {
-                return;
-            }
+                jobject obj = env->NewLocalRef(weakObj);
+                if (obj == NULL) {
+                    return;
+                }
 
-            jclass javaClass = VROPlatformFindClass(env, obj,
-                                                    "com/viro/renderer/jni/AnimationChainJni");
-            if (javaClass == nullptr) {
-                perr("Unable to find AnimationChainJni class for onFinish callback.");
-                return;
-            }
+                jclass javaClass = VROPlatformFindClass(env, obj,
+                                                        "com/viro/renderer/jni/AnimationChainJni");
+                if (javaClass == nullptr) {
+                    perr("Unable to find AnimationChainJni class for onFinish callback.");
+                    return;
+                }
 
-            jmethodID method = env->GetMethodID(javaClass, "animationDidFinish", "()V");
-            if (method == nullptr) {
-                perr("Unable to find animationDidFinish() method in AnimationChainJni");
-            }
+                jmethodID method = env->GetMethodID(javaClass, "animationDidFinish", "()V");
+                if (method == nullptr) {
+                    perr("Unable to find animationDidFinish() method in AnimationChainJni");
+                }
 
-            env->CallVoidMethod(obj, method);
-            if (env->ExceptionOccurred()) {
-                perr("Exception encountered calling onFinish.");
-            }
-            env->DeleteLocalRef(javaClass);
-            env->DeleteLocalRef(obj);
+                env->CallVoidMethod(obj, method);
+                if (env->ExceptionOccurred()) {
+                    perr("Exception encountered calling onFinish.");
+                }
+                env->DeleteLocalRef(javaClass);
+                env->DeleteLocalRef(obj);
+            });
         });
     });
 }
