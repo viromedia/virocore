@@ -9,8 +9,9 @@
 #import "VROSample.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneBox = 0,
+    VROSampleSceneCamera = 0,
     VROSampleSceneTorus,
+    VROSampleSceneBox,
     VROSampleSceneOBJ,
     VROSampleSceneText,
     VROSampleSceneVideoSphere,
@@ -327,6 +328,48 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return sceneController;
 }
 
+- (std::shared_ptr<VROSceneController>)loadCameraScene {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
+    scene->setBackgroundCube([self cloudTexture]);
+    
+    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    rootNode->setPosition({0, 0, 0});
+    
+    scene->addNode(rootNode);
+    
+    /*
+     Create camera texture.
+     */
+    int width = 10;
+    int height = 10;
+
+    std::shared_ptr<VROCameraTextureiOS> texture = std::make_shared<VROCameraTextureiOS>(VROTextureType::Texture2D);
+    texture->initCamera(VROCameraPosition::Back, self.driver);
+    texture->play();
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        texture->pause();
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        texture->play();
+    });
+    
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height);
+    surface->getMaterials().front()->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
+    surface->getMaterials().front()->getDiffuse().setTexture(texture);
+    
+    std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
+    surfaceNode->setGeometry(surface);
+    surfaceNode->setPosition({0, 0, -5.01});
+    
+    rootNode->addChildNode(surfaceNode);
+    
+    self.tapEnabled = YES;
+    
+    return sceneController;
+}
+
 - (std::shared_ptr<VROSceneController>)loadTextScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
@@ -461,6 +504,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     switch (modulo) {
         case VROSampleSceneTorus:
             return [self loadTorusScene];
+        case VROSampleSceneCamera:
+            return [self loadCameraScene];
         case VROSampleSceneVideoSphere:
             return [self loadVideoSphereScene];
         case VROSampleSceneText:
