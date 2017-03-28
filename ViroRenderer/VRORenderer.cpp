@@ -201,13 +201,15 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
 
     renderEye(eye, driver);
 
-    /**
-     * Render the reticle with a HudViewMatrix instead.
+    /*
+     Render the reticle and debug HUD with a HUDViewMatrix, which shifts objects directly
+     in front of the eye (by canceling out the eyeView matrix).
      */
     std::shared_ptr<VROReticle> reticle = _inputController->getPresenter()->getReticle();
-    if (reticle != nullptr){
-        reticle->renderEye(eye, _context.get(), driver.get());
+    if (reticle) {
+        reticle->renderEye(eye, *_context.get(), *driver.get());
     }
+    // render debug hud
 
     if (delegate) {
         delegate->didRenderEye(eye, _context.get());

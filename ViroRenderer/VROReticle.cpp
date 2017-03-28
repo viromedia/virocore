@@ -24,28 +24,33 @@ VROReticle::VROReticle(std::shared_ptr<VROTexture> reticleTexture) :
     _enabled(true),
     _size(0.01),
     _thickness(0.005),
-    _endThickness(_thickness * kTriggerAnimationInnerCircleThicknessMultiple) {
+    _endThickness(_thickness * kTriggerAnimationInnerCircleThicknessMultiple),
+    _reticleIcon(nullptr) {
 
     _node = std::make_shared<VRONode>();
     _node->setHidden(!_enabled);
-    if (reticleTexture == nullptr){
-        // Polyline Reticle
+    
+    // Polyline Reticle
+    if (!reticleTexture) {
         std::vector<VROVector3f> path = createArc(_size, 32);
         _polyline = VROPolyline::createPolyline(path, _thickness);
         _polyline->setName("Reticle");
         _polyline->getMaterials().front()->setWritesToDepthBuffer(false);
         _polyline->getMaterials().front()->setReadsFromDepthBuffer(false);
         _polyline->getMaterials().front()->getDiffuse().setColor({0.33, 0.976, 0.968, 1.0});
+        
         _node->setGeometry(_polyline);
         _node->setPosition({0, 0, -2});
-        _reticleIcon = nullptr;
-    } else {
-        // Image Reticle
+    }
+        
+    // Image Reticle
+    else {
         _reticleIcon = VROSurface::createSurface(0.03,0.03);
         std::shared_ptr<VROMaterial> &material = _reticleIcon->getMaterials().front();
         material->getDiffuse().setTexture(reticleTexture);
         material->setWritesToDepthBuffer(false);
         material->setReadsFromDepthBuffer(false);
+        
         _node->setGeometry(_reticleIcon);
     }
 }
@@ -74,6 +79,7 @@ void VROReticle::trigger() {
 
         _polyline->setWidth(thickness);
     }, VROTimingFunctionType::Linear, kTriggerAnimationDuration);
+    
     _node->runAction(action);
     _endThickness = _thickness * kTriggerAnimationInnerCircleThicknessMultiple;
 }
@@ -111,7 +117,7 @@ bool VROReticle::getPointerMode(){
     return _isPointerFixed;
 }
 
-void VROReticle::renderEye(VROEyeType eye, const VRORenderContext *renderContext, VRODriver *driver) {
+void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext, VRODriver &driver) {
     if (kDebugSortOrder) {
         pinfo("Updating reticle key");
     }
@@ -122,7 +128,7 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext *renderContext
         renderParams.transforms.push(identity);
     }
     else {
-        renderParams.transforms.push(renderContext->getHUDViewMatrix());
+        renderParams.transforms.push(renderContext.getHUDViewMatrix());
     }
     
     renderParams.opacities.push(1.0);
@@ -130,12 +136,12 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext *renderContext
     renderParams.hierarchyId = 0;
     renderParams.distancesFromCamera.push(0);
     
-    _node->updateSortKeys(0, renderParams, *renderContext, *driver);
+    _node->updateSortKeys(0, renderParams, renderContext, driver);
 
     std::shared_ptr<VROMaterial> material = _node->getGeometry()->getMaterials().front();
-    material->bindShader(*driver);
+    material->bindShader(driver);
 
-    _node->render(0, material, *renderContext, *driver);
+    _node->render(0, material, renderContext, driver);
 }
 
 std::vector<VROVector3f> VROReticle::createArc(float radius, int numSegments) {
