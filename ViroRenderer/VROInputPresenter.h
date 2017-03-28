@@ -101,6 +101,23 @@ public:
         }
     }
 
+    virtual void onFuse(int source, float timeToFuseRatio) {
+        std::shared_ptr<VROEventDelegate> delegate = getDelegate();
+        if (delegate != nullptr && delegate->isEventEnabled(VROEventDelegate::EventAction::OnFuse)){
+            delegate->onFuse(source, timeToFuseRatio);
+        }
+
+        /**
+         * TODO VIRO-1109: UI animations to be triggered on the reticle as a result of
+         * changes in Fused States.
+         */
+        if (timeToFuseRatio == kOnFuseReset){
+            //_reticle->stopAnimateFuse
+        } else {
+            //_reticle->animateFuse(timeToFuseRatio);
+        }
+    }
+
     std::shared_ptr<VROReticle> getReticle() {
             return _reticle;
     }

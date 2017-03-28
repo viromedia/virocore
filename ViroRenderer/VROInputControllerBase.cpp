@@ -6,6 +6,7 @@
 //
 
 #include "VROInputControllerBase.h"
+#include "VROTime.h"
 
 static float kSceneBackgroundDistance = 8;
 static bool sSceneBackgroundAdd = true;
@@ -164,6 +165,8 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
     }
 
     // Trigger orientation delegate callbacks within the scene.
+    processOnFuseEvent(source, _hitResult->getNode());
+
     std::shared_ptr<VRONode> gazableNode
             = getNodeToHandleEvent(VROEventDelegate::EventAction::OnHover, _hitResult->getNode());
     processGazeEvent(source, gazableNode);
@@ -292,6 +295,50 @@ void VROInputControllerBase::processGazeEvent(int source, std::shared_ptr<VRONod
     }
 
     _lastHoveredNode = newNode;
+}
+
+void VROInputControllerBase::processOnFuseEvent(int source, std::shared_ptr<VRONode> newNode) {
+    std::shared_ptr<VRONode> focusedNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnFuse, newNode);
+    if (_currentFusedNode != focusedNode){
+        notifyOnFuseEvent(source, kOnFuseReset);
+        _fuseTriggerAtMillis = kOnFuseReset;
+        _haveNotifiedOnFuseTriggered = false;
+        _currentFusedNode = focusedNode;
+    }
+
+    // Do nothing if no onFuse node is found
+    if (!focusedNode){
+        return;
+    }
+
+    if (_fuseTriggerAtMillis == kOnFuseReset){
+        _fuseTriggerAtMillis
+                = VROTimeCurrentMillis() + _currentFusedNode->getEventDelegate()->getTimeToFuse();
+    }
+
+    // Compare the fuse time with the current time to get the timeToFuseRatio and notify delegates.
+    // When the timeToFuseRatio counts down to 0, it is an indication that the node has been "onFused".
+    if (!_haveNotifiedOnFuseTriggered){
+        float delta = _fuseTriggerAtMillis - VROTimeCurrentMillis();
+        float timeToFuseRatio = delta / _currentFusedNode->getEventDelegate()->getTimeToFuse();
+
+        if (timeToFuseRatio <= 0.0f){
+            timeToFuseRatio = 0.0f;
+            _haveNotifiedOnFuseTriggered = true;
+        }
+
+        notifyOnFuseEvent(source, timeToFuseRatio);
+    }
+}
+
+void VROInputControllerBase::notifyOnFuseEvent(int source, float timeToFuseRatio) {
+    for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
+        delegate->onFuse(source, timeToFuseRatio);
+    }
+
+    if (_currentFusedNode){
+        _currentFusedNode->getEventDelegate()->onFuse(source, timeToFuseRatio);
+    }
 }
 
 VROHitTestResult VROInputControllerBase::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray, bool boundsOnly) {

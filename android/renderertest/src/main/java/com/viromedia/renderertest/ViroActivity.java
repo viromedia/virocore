@@ -117,7 +117,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         List<NodeJni> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
         //nodes = testSphereVideo(this);
-        //nodes = testBox(getApplicationContext());
+        nodes = testBox(getApplicationContext());
         //nodes = test3dObjectLoading(getApplicationContext());
 
 
@@ -126,7 +126,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
         //testBackgroundVideo(scene);
         //testBackgroundImage(scene);
-        testSkyBoxImage(scene);
+        //testSkyBoxImage(scene);
 
         // addNormalSound("http://www.kozco.com/tech/32.mp3");
         // addNormalSound("http://www.bensound.com/royalty-free-music?download=dubstep");
@@ -373,11 +373,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     private EventDelegateJni getGenericDelegate(final String delegateTag){
         EventDelegateJni delegateJni = new EventDelegateJni();
         delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_HOVER, false);
-        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_CLICK, true);
-        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_SWIPE, false);
-        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_SCROLL, false);
-        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_TOUCH, false);
-        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_DRAG, false);
+        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_FUSE, true);
 
         delegateJni.setEventDelegateCallback(new EventDelegateJni.EventDelegateCallback() {
             @Override
@@ -413,7 +409,12 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
             @Override
             public void onDrag(int source, float x, float y, float z) {
-                Log.e(TAG, delegateTag +"On drag: " + x + ", " + y + ", " + z);
+                Log.e(TAG, delegateTag +" On drag: " + x + ", " + y + ", " + z);
+            }
+
+            @Override
+            public void onFuse(int source) {
+                Log.e(TAG, delegateTag + " On fuse");
             }
         });
 

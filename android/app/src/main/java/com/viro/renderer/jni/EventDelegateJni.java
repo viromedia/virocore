@@ -39,6 +39,9 @@ public class EventDelegateJni {
     public void setEventDelegateCallback(EventDelegateCallback delegate) {
         mDelegate = delegate;
     }
+    public void setTimeToFuse(float durationInMillis){
+        nativeSetTimeToFuse(mNativeRef, durationInMillis);
+    }
 
     /**
      * Native Functions called into JNI
@@ -46,7 +49,7 @@ public class EventDelegateJni {
     private native long nativeCreateDelegate();
     private native void nativeDestroyDelegate(long mNativeNodeRef);
     private native void nativeEnableEvent(long mNativeNodeRef, int eventType, boolean enabled);
-
+    private native void nativeSetTimeToFuse(long mNativeNodeRef, float durationInMillis);
     /**
      * EventAction types corresponding to VROEventDelegate.h, used for
      * describing EventSource types. For example, if a click event
@@ -64,7 +67,8 @@ public class EventDelegateJni {
         ON_CONTROLLER_STATUS(5),
         ON_SWIPE(6),
         ON_SCROLL(7),
-        ON_DRAG(8);
+        ON_DRAG(8),
+        ON_FUSE(9);
 
         public final int mTypeId;
 
@@ -181,6 +185,7 @@ public class EventDelegateJni {
             return map.get(id);
         }
     }
+
     /**
      * Delegate interface to be implemented by a java view component so as
      * to receive event callbacks triggered from native. Implemented delegates
@@ -199,6 +204,7 @@ public class EventDelegateJni {
         void onSwipe(int source, SwipeState swipeState);
         void onScroll(int source, float x, float y);
         void onDrag(int source, float x, float y, float z);
+        void onFuse(int source);
     }
 
     /**
@@ -245,6 +251,12 @@ public class EventDelegateJni {
     void onDrag(int source, float x, float y, float z){
         if (mDelegate != null){
             mDelegate.onDrag(source, x, y, z);
+        }
+    }
+
+    void onFuse(int source) {
+        if (mDelegate != null){
+            mDelegate.onFuse(source);
         }
     }
 }

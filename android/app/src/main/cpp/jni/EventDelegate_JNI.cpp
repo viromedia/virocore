@@ -44,6 +44,20 @@ JNI_METHOD(void, nativeEnableEvent)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetTimeToFuse)(JNIEnv *env,
+                                        jclass clazz,
+                                        jlong native_node_ref,
+                                      jfloat durationInMillis) {
+    std::weak_ptr<EventDelegate_JNI> delegate_w = EventDelegate::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([delegate_w, durationInMillis] {
+        std::shared_ptr<EventDelegate_JNI> delegate = delegate_w.lock();
+        if (!delegate) {
+            return;
+        }
+        delegate->setTimeToFuse(durationInMillis);
+    });
+}
+
 }  // extern "C"
 void EventDelegate_JNI::onHover(int source, bool isHovering) {
     JNIEnv *env = VROPlatformGetJNIEnv();
@@ -168,6 +182,32 @@ void EventDelegate_JNI::onDrag(int source, VROVector3f newPosition) {
         VROPlatformCallJavaFunction(localObj,
                                     "onDrag", "(IFFF)V", source, newPosition.x, newPosition.y,
                                     newPosition.z);
+        env->DeleteLocalRef(localObj);
+    });
+}
+
+void EventDelegate_JNI::onFuse(int source, float timeToFuseRatio){
+    /**
+     * As onFuse is also used by internal components to update ui based
+     * on timeToFuse ratio, we only want to notify our bridge components
+     * if we have successfully fused (if timeToFuseRatio has counted down to 0).
+     */
+    if (timeToFuseRatio > 0.0f){
+        return;
+    }
+
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj, source, timeToFuseRatio] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj,
+                                    "onFuse", "(I)V", source, timeToFuseRatio);
         env->DeleteLocalRef(localObj);
     });
 }

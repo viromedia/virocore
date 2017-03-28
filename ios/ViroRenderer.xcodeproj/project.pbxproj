@@ -216,7 +216,7 @@
 		8FCB100F1DD1325100FE425C /* VROPlatformUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB100E1DD1325100FE425C /* VROPlatformUtil.cpp */; };
 		8FCB101A1DD5449700FE425C /* VROVideoTextureiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB10181DD5449700FE425C /* VROVideoTextureiOS.cpp */; };
 		8FCB101B1DD5449700FE425C /* VROVideoTextureiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB10191DD5449700FE425C /* VROVideoTextureiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FCB10211DD544E800FE425C /* VROVideoTextureCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB101C1DD544E800FE425C /* VROVideoTextureCache.h */; };
+		8FCB10211DD544E800FE425C /* VROVideoTextureCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB101C1DD544E800FE425C /* VROVideoTextureCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCB10221DD544E800FE425C /* VROVideoTextureCacheMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB101D1DD544E800FE425C /* VROVideoTextureCacheMetal.cpp */; };
 		8FCB10231DD544E800FE425C /* VROVideoTextureCacheMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB101E1DD544E800FE425C /* VROVideoTextureCacheMetal.h */; };
 		8FCB10241DD544E800FE425C /* VROVideoTextureCacheOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB101F1DD544E800FE425C /* VROVideoTextureCacheOpenGL.cpp */; };
@@ -1540,6 +1540,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F660ABB1E9554B8006D063F /* VROFrameScheduler.h in Headers */,
+				8FCB10211DD544E800FE425C /* VROVideoTextureCache.h in Headers */,
 				A58697891E30887500191090 /* VROInputType.h in Headers */,
 				A586978C1E308BD300191090 /* VROInputPresenter.h in Headers */,
 				A566EB3D1E1B47B7008B4AE2 /* VROEventDelegateiOS.h in Headers */,
@@ -1640,7 +1641,6 @@
 				8FD4DF4A1C18F5EB003DC425 /* VROMath.h in Headers */,
 				8FD4DF4B1C18F5EB003DC425 /* VROBox.h in Headers */,
 				8FD4DF4C1C18F5EB003DC425 /* VROSurface.h in Headers */,
-				8FCB10211DD544E800FE425C /* VROVideoTextureCache.h in Headers */,
 				8FCB10021DD0060E00FE425C /* VRORenderDelegateiOS.h in Headers */,
 				8FCF396C1CB4242000A86CA3 /* VRORenderer.h in Headers */,
 				8ABD8F3D1DB7DF8F00BD9C83 /* VROApiKeyMetrics.h in Headers */,
