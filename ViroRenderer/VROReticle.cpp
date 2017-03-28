@@ -130,12 +130,6 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext
     else {
         renderParams.transforms.push(renderContext.getHUDViewMatrix());
     }
-    
-    renderParams.opacities.push(1.0);
-    renderParams.hierarchyDepths.push(-1);
-    renderParams.hierarchyId = 0;
-    renderParams.distancesFromCamera.push(0);
-    
     _node->updateSortKeys(0, renderParams, renderContext, driver);
 
     std::shared_ptr<VROMaterial> material = _node->getGeometry()->getMaterials().front();

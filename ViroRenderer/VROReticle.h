@@ -54,7 +54,6 @@ private:
     float _thickness;
     float _endThickness;
 
-    std::shared_ptr<VRORenderContext> _context;
     std::shared_ptr<VRONode> _node;
     std::shared_ptr<VROPolyline> _polyline;
     std::shared_ptr<VROSurface> _reticleIcon;
