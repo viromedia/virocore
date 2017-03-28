@@ -28,9 +28,14 @@ VRORenderer::VRORenderer(std::shared_ptr<VROInputControllerBase> inputController
     _rendererInitialized(false),
     _frameSynchronizer(std::make_shared<VROFrameSynchronizerInternal>()),
     _context(std::make_shared<VRORenderContext>(_frameSynchronizer)),
-    _inputController(inputController){
+    _inputController(inputController),
+    _fpsTickIndex(0),
+    _fpsTickSum(0) {
+        
     initBlankTexture(*_context);
     _inputController->setContext(_context);
+        
+    memset(_fpsTickArray, 0x0, sizeof(_fpsTickArray));
 }
 
 VRORenderer::~VRORenderer() {
@@ -50,6 +55,25 @@ void VRORenderer::setPointOfView(std::shared_ptr<VRONode> node) {
     _pointOfView = node;
 }
 
+#pragma mark - FPS Computation
+
+void VRORenderer::updateFPS(uint64_t newTick) {
+    // Simple moving average: subtract value falling off, and add new value
+    
+    _fpsTickSum -= _fpsTickArray[_fpsTickIndex];
+    _fpsTickSum += newTick;
+    _fpsTickArray[_fpsTickIndex] = newTick;
+    
+    if (++_fpsTickIndex == kFPSMaxSamples) {
+        _fpsTickIndex = 0;
+    }
+}
+
+double VRORenderer::getFPS() const {
+    double averageNanos = ((double) _fpsTickSum) / kFPSMaxSamples;
+    return 1.0 / (averageNanos / (double) 1e9);
+}
+
 #pragma mark - Stereo renderer methods
 
 void VRORenderer::updateRenderViewSize(float width, float height) {
@@ -67,7 +91,16 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         if (delegate) {
             delegate->setupRendererWithDriver(driver);
         }
+        
         _rendererInitialized = true;
+        _nanosecondsLastFrame = VRONanoTime();
+    }
+    else {
+        uint64_t nanosecondsThisFrame = VRONanoTime();
+        uint64_t tick = nanosecondsThisFrame - _nanosecondsLastFrame;
+        _nanosecondsLastFrame = nanosecondsThisFrame;
+        
+        updateFPS(tick);
     }
 
     VROTransaction::beginImplicitAnimation();

@@ -35,6 +35,7 @@ enum class VROTimingFunctionType;
 
 static const float kZNear = 0.25;
 static const float kZFar  = 50;
+static const int kFPSMaxSamples = 100;
 
 class VRORenderer {
     
@@ -46,6 +47,7 @@ public:
     void setPointOfView(std::shared_ptr<VRONode> node);
     void setDelegate(std::shared_ptr<VRORenderDelegateInternal> delegate);
     void updateRenderViewSize(float width, float height);
+    double getFPS() const;
     
 #pragma mark - Scene Controllers
     
@@ -74,6 +76,7 @@ public:
     std::shared_ptr<VRORenderContext> getRenderContext() {
         return _context;
     }
+    
 #pragma mark - VR Framework Specific
     
     // Some VR frameworks provide controls to allow the user to exit VR
@@ -108,8 +111,31 @@ private:
      Delegate receiving scene rendering updates.
      */
     std::weak_ptr<VRORenderDelegateInternal> _delegate;
+    
+#pragma mark - FPS Computation
+    
+    /*
+     Variables for FPS computation. Array of samples taken, index of
+     next sample, and sum of samples so far.
+     */
+    int _fpsTickIndex = 0;
+    uint64_t _fpsTickSum = 0;
+    uint64_t _fpsTickArray[kFPSMaxSamples];
+    
+    /*
+     FPS is measured in ticks, which are the number of nanoseconds
+     between consecurive calls to prepareFrame().
+     */
+    uint64_t _nanosecondsLastFrame;
+    
+    /*
+     FPS is computed via moving average. Updates the moving average
+     with the last tick.
+     */
+    void updateFPS(uint64_t newTick);
 
 #pragma mark - Scene and Scene Transitions
+    
     std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VROSceneController> _outgoingSceneController;
 
