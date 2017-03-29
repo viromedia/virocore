@@ -55,6 +55,7 @@ public class RendererJni {
     public void onSurfaceChanged(Surface surface, int width, int height) { nativeOnSurfaceChanged(surface, width, height, mNativeRef); }
 
     /* ----------     Common other methods   ---------- */
+
     public void onKeyEvent(int keyCode, int action) {
         nativeOnKeyEvent(mNativeRef, keyCode, action);
     }
@@ -82,6 +83,8 @@ public class RendererJni {
     public void setSuspended(boolean suspend) {
        nativeSetSuspended(mNativeRef, suspend);
     }
+    public void setDebugHUDEnabled(boolean enabled) { nativeSetDebugHUDEnabled(mNativeRef, enabled); }
+
     /* ----------     Native methods    ---------- */
 
     private native long nativeCreateRendererGVR(ClassLoader appClassLoader, Context context,
@@ -106,5 +109,6 @@ public class RendererJni {
     private native void nativeSetPointOfView(long nativeRenderer, long nodeRef);
     private native String nativeGetHeadset(long nativeRenderer);
     private native String nativeGetController(long nativeRenderer);
+    private native void nativeSetDebugHUDEnabled(long nativeRenderer, boolean enabled);
     private native void nativeSetSuspended(long nativeRenderer, boolean suspendRenderer);
 }

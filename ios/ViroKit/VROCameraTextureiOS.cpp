@@ -11,6 +11,7 @@
 #include "VROFrameSynchronizer.h"
 #include "VROTextureSubstrate.h"
 #include "VROLog.h"
+#include "VROVideoTextureCache.h"
 #include "VRODriver.h"
 
 VROCameraTextureiOS::VROCameraTextureiOS(VROTextureType type) :

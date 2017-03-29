@@ -10,10 +10,10 @@
 #define VROCameraTextureiOS_h
 
 #include "VROCameraTexture.h"
-#include "VROVideoTextureCache.h"
 #import <AVFoundation/AVFoundation.h>
 
 @class VROCameraCaptureDelegate;
+class VROVideoTextureCache;
 
 class VROCameraTextureiOS : public VROCameraTexture {
         

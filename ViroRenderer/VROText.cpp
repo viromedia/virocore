@@ -61,12 +61,12 @@ VROVector3f VROText::getTextSize(std::string text, std::shared_ptr<VROTypeface> 
                                  VROTextClipMode clipMode, int maxLines) {
     
     VROVector3f size;
-    std::map<FT_ULong, std::unique_ptr<VROGlyph>> glyphMap;
+    std::map<FT_ULong, std::shared_ptr<VROGlyph>> glyphMap;
     
     for (std::string::const_iterator c = text.begin(); c != text.end(); ++c) {
         FT_ULong charCode = *c;
         if (glyphMap.find(charCode) == glyphMap.end()) {
-            std::unique_ptr<VROGlyph> glyph = typeface->loadGlyph(charCode, false);
+            std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(charCode, false);
             glyphMap[charCode] = std::move(glyph);
         }
     }
@@ -100,7 +100,7 @@ VROVector3f VROText::getTextSize(std::string text, std::shared_ptr<VROTypeface> 
         float lineWidth = 0;
         for (std::string::const_iterator c = line.begin(); c != line.end(); ++c) {
             FT_ULong charCode = *c;
-            std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
+            std::shared_ptr<VROGlyph> &glyph = glyphMap[charCode];
             
             lineWidth += glyph->getAdvance() * kTextPointToWorldScale;
         }
@@ -132,13 +132,13 @@ void VROText::buildText(std::string &text,
      we can share the same glyph, material, and indices vector across them
      all.
      */
-    std::map<FT_ULong, std::unique_ptr<VROGlyph>> glyphMap;
+    std::map<FT_ULong, std::shared_ptr<VROGlyph>> glyphMap;
     std::map<FT_ULong, std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> materialMap;
     
     for (std::string::const_iterator c = text.begin(); c != text.end(); ++c) {
         FT_ULong charCode = *c;
         if (glyphMap.find(charCode) == glyphMap.end()) {
-            std::unique_ptr<VROGlyph> glyph = typeface->loadGlyph(charCode, true);
+            std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(charCode, true);
             
             std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
             material->getDiffuse().setColor(color);
@@ -149,7 +149,7 @@ void VROText::buildText(std::string &text,
             
             std::vector<int> indices;
             materialMap[charCode] = {material, indices};
-            glyphMap[charCode] = std::move(glyph);
+            glyphMap[charCode] = glyph;
         }
     }
     
@@ -207,7 +207,7 @@ void VROText::buildText(std::string &text,
         float lineWidth = 0;
         for (std::string::const_iterator c = line.begin(); c != line.end(); ++c) {
             FT_ULong charCode = *c;
-            std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
+            std::shared_ptr<VROGlyph> &glyph = glyphMap[charCode];
             
             lineWidth += glyph->getAdvance() * kTextPointToWorldScale;
         }
@@ -229,7 +229,7 @@ void VROText::buildText(std::string &text,
         
         for (std::string::const_iterator c = line.begin(); c != line.end(); ++c) {
             FT_ULong charCode = *c;
-            std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
+            std::shared_ptr<VROGlyph> &glyph = glyphMap[charCode];
             
             buildChar(glyph, x, y, var, materialMap[charCode].second);
             float advance = glyph->getAdvance() * kTextPointToWorldScale;
@@ -249,7 +249,7 @@ void VROText::buildText(std::string &text,
     *outRealizedHeight = totalHeight;
 }
 
-void VROText::buildChar(std::unique_ptr<VROGlyph> &glyph,
+void VROText::buildChar(std::shared_ptr<VROGlyph> &glyph,
                         float x, float y,
                         std::vector<VROShapeVertexLayout> &var,
                         std::vector<int> &indices) {
@@ -330,7 +330,7 @@ void VROText::buildGeometry(std::vector<VROShapeVertexLayout> &var,
 std::vector<VROTextLine> VROText::wrapByWords(std::string &text, float maxWidth, float maxHeight, int maxLines,
                                               std::shared_ptr<VROTypeface> &typeface,
                                               VROTextClipMode clipMode,
-                                              std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
+                                              std::map<FT_ULong, std::shared_ptr<VROGlyph>> &glyphMap) {
     
     /*
      NOTE: the greedy algorithm used here combines hard breaks with soft breaks, which
@@ -440,7 +440,7 @@ std::vector<VROTextLine> VROText::wrapByWords(std::string &text, float maxWidth,
 std::vector<VROTextLine> VROText::wrapByChars(std::string &text, float maxWidth, float maxHeight, int maxLines,
                                               std::shared_ptr<VROTypeface> &typeface,
                                               VROTextClipMode clipMode,
-                                              std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
+                                              std::map<FT_ULong, std::shared_ptr<VROGlyph>> &glyphMap) {
     
     std::vector<VROTextLine> lines;
     float lineWidth = 0;
@@ -448,7 +448,7 @@ std::vector<VROTextLine> VROText::wrapByChars(std::string &text, float maxWidth,
     
     for (std::string::const_iterator c = text.begin(); c != text.end(); ++c) {
         FT_ULong charCode = *c;
-        std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
+        std::shared_ptr<VROGlyph> &glyph = glyphMap[charCode];
         
         float charWidth = glyph->getAdvance() * kTextPointToWorldScale;
         if (lineWidth + charWidth > maxWidth || charCode == '\n') {
@@ -480,7 +480,7 @@ std::vector<VROTextLine> VROText::wrapByChars(std::string &text, float maxWidth,
 std::vector<VROTextLine> VROText::wrapByNewlines(std::string &text, float maxWidth, float maxHeight, int maxLines,
                                                  std::shared_ptr<VROTypeface> &typeface,
                                                  VROTextClipMode clipMode,
-                                                 std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
+                                                 std::map<FT_ULong, std::shared_ptr<VROGlyph>> &glyphMap) {
  
     std::vector<VROTextLine> lines;
     float lineWidth = 0;
@@ -488,7 +488,7 @@ std::vector<VROTextLine> VROText::wrapByNewlines(std::string &text, float maxWid
     
     for (std::string::const_iterator c = text.begin(); c != text.end(); ++c) {
         FT_ULong charCode = *c;
-        std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
+        std::shared_ptr<VROGlyph> &glyph = glyphMap[charCode];
         
         float charWidth = glyph->getAdvance() * kTextPointToWorldScale;
         /*
@@ -527,7 +527,7 @@ std::vector<VROTextLine> VROText::wrapByNewlines(std::string &text, float maxWid
 std::vector<VROTextLine> VROText::justify(std::string &text, float maxWidth, float maxHeight, int maxLines,
                                           std::shared_ptr<VROTypeface> &typeface,
                                           VROTextClipMode clipMode,
-                                          std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
+                                          std::map<FT_ULong, std::shared_ptr<VROGlyph>> &glyphMap) {
     std::vector<VROTextLine> lines;
     
     std::string space = " ";
@@ -675,11 +675,11 @@ std::vector<std::string> VROText::divideIntoParagraphs(std::string &text) {
     return VROStringUtil::split(text, delimeters, true);
 }
 
-float VROText::getLengthOfWord(const std::string &word, std::map<FT_ULong, std::unique_ptr<VROGlyph>> &glyphMap) {
+float VROText::getLengthOfWord(const std::string &word, std::map<FT_ULong, std::shared_ptr<VROGlyph>> &glyphMap) {
     float wordWidth = 0;
     for (std::string::const_iterator c = word.begin(); c != word.end(); ++c) {
         FT_ULong charCode = *c;
-        std::unique_ptr<VROGlyph> &glyph = glyphMap[charCode];
+        std::shared_ptr<VROGlyph> &glyph = glyphMap[charCode];
         
         wordWidth += glyph->getAdvance() * kTextPointToWorldScale;
     }

@@ -271,6 +271,14 @@ JNI_METHOD(jstring, nativeGetController)(JNIEnv *env, jobject obj, jlong nativeR
     return env->NewStringUTF(controller.c_str());
 }
 
+JNI_METHOD(void, nativeSetDebugHUDEnabled)(JNIEnv *env,
+                                           jobject obj,
+                                           jlong native_renderer,
+                                           jboolean enabled) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
+    renderer->getRenderer()->setDebugHUDEnabled(enabled);
+}
+
 JNI_METHOD(void, nativeSetSuspended)(JNIEnv *env,
                                         jobject obj,
                                         jlong native_renderer,

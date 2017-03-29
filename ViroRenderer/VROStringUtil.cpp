@@ -19,6 +19,15 @@ std::string VROStringUtil::toString(int i) {
     return ss.str();
 }
 
+std::string VROStringUtil::toString(double n, int precision) {
+    std::ostringstream ss;
+    ss.setf(std::ios::fixed, std::ios::floatfield);
+    ss.precision(precision);
+    
+    ss << n;
+    return ss.str();
+}
+
 int VROStringUtil::toInt(std::string s) {
     return atoi(s.c_str());
 }

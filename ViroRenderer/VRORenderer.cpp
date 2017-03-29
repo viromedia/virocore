@@ -21,6 +21,7 @@
 #include "VROImageUtil.h"
 #include "VRORenderContext.h"
 #include "VROCamera.h"
+#include "VRODebugHUD.h"
 
 #pragma mark - Initialization
 
@@ -34,7 +35,8 @@ VRORenderer::VRORenderer(std::shared_ptr<VROInputControllerBase> inputController
         
     initBlankTexture(*_context);
     _inputController->setContext(_context);
-        
+      
+    _debugHUD = std::unique_ptr<VRODebugHUD>(new VRODebugHUD());
     memset(_fpsTickArray, 0x0, sizeof(_fpsTickArray));
 }
 
@@ -47,6 +49,10 @@ VRORenderer::~VRORenderer() {
 
 void VRORenderer::setDelegate(std::shared_ptr<VRORenderDelegateInternal> delegate) {
     _delegate = delegate;
+}
+
+void VRORenderer::setDebugHUDEnabled(bool enabled) {
+    _debugHUD->setEnabled(enabled);
 }
 
 #pragma mark - Camera
@@ -91,7 +97,8 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         if (delegate) {
             delegate->setupRendererWithDriver(driver);
         }
-        
+        _debugHUD->initRenderer(driver);
+      
         _rendererInitialized = true;
         _nanosecondsLastFrame = VRONanoTime();
     }
@@ -107,6 +114,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     VROTransaction::update();
 
     _context->setFrame(frame);
+    _context->setFPS(getFPS());
     notifyFrameStart();
 
     VROCamera camera;
@@ -180,6 +188,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     }
 
     driver->onFrame(*_context.get());
+    _debugHUD->prepare(*_context.get());
 }
 
 void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
@@ -209,7 +218,7 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     if (reticle) {
         reticle->renderEye(eye, *_context.get(), *driver.get());
     }
-    // render debug hud
+    _debugHUD->renderEye(eye, *_context.get(), *driver.get());
 
     if (delegate) {
         delegate->didRenderEye(eye, _context.get());

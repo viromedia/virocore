@@ -24,7 +24,7 @@ public:
     virtual ~VROTypefaceiOS();
     
     float getLineHeight();
-    std::unique_ptr<VROGlyph> loadGlyph(FT_ULong charCode, bool forRendering);
+    std::shared_ptr<VROGlyph> loadGlyph(FT_ULong charCode, bool forRendering);
     
 protected:
     

@@ -22,7 +22,7 @@ public:
     VROTypefaceAndroid(std::string name, int size, std::shared_ptr<VRODriver> driver);
     virtual ~VROTypefaceAndroid();
 
-    std::unique_ptr<VROGlyph> loadGlyph(FT_ULong charCode, bool forRendering);
+    std::shared_ptr<VROGlyph> loadGlyph(FT_ULong charCode, bool forRendering);
 
 protected:
 

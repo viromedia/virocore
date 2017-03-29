@@ -31,4 +31,6 @@ public interface VrView extends Application.ActivityLifecycleCallbacks {
 
     public void setDebug(boolean debug);
 
+    public void setDebugHUDEnabled(boolean enabled);
+
 }

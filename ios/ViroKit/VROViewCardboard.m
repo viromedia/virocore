@@ -77,7 +77,11 @@
     self.sceneRenderer = std::make_shared<VROSceneRendererCardboardOpenGL>(self.context, self.renderer);
 }
 
-- (void) setVrMode:(BOOL)enabled {
+- (void)setDebugHUDEnabled:(BOOL)enabled {
+    self.renderer->setDebugHUDEnabled(enabled);
+}
+
+- (void)setVrMode:(BOOL)enabled {
     self.vrModeEnabled = enabled;
 }
 

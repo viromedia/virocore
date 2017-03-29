@@ -23,6 +23,7 @@
 class VROEye;
 class VRONode;
 class VRODriver;
+class VRODebugHUD;
 class VRONodeCamera;
 class VROTimingFunction;
 class VRORenderContext;
@@ -47,7 +48,7 @@ public:
     void setPointOfView(std::shared_ptr<VRONode> node);
     void setDelegate(std::shared_ptr<VRORenderDelegateInternal> delegate);
     void updateRenderViewSize(float width, float height);
-    double getFPS() const;
+    void setDebugHUDEnabled(bool enabled);
     
 #pragma mark - Scene Controllers
     
@@ -112,6 +113,11 @@ private:
      */
     std::weak_ptr<VRORenderDelegateInternal> _delegate;
     
+    /*
+     HUD for displaying debug information.
+     */
+    std::unique_ptr<VRODebugHUD> _debugHUD;
+    
 #pragma mark - FPS Computation
     
     /*
@@ -133,6 +139,7 @@ private:
      with the last tick.
      */
     void updateFPS(uint64_t newTick);
+    double getFPS() const;
 
 #pragma mark - Scene and Scene Transitions
     

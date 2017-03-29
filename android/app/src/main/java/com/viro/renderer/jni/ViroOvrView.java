@@ -108,6 +108,11 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     }
 
     @Override
+    public void setDebugHUDEnabled(boolean enabled) {
+        mNativeRenderer.setDebugHUDEnabled(enabled);
+    }
+
+    @Override
     public RenderContextJni getRenderContextRef(){
         return mNativeRenderContext;
     }

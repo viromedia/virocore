@@ -256,6 +256,11 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     }
 
     @Override
+    public void setDebugHUDEnabled(boolean enabled) {
+        mNativeRenderer.setDebugHUDEnabled(enabled);
+    }
+
+    @Override
     public RenderContextJni getRenderContextRef(){
         return mNativeRenderContext;
     }
