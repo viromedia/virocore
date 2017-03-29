@@ -9,9 +9,9 @@
 #import "VROSample.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
-    VROSampleSceneCamera = 0,
+    VROSampleSceneBox = 0,
     VROSampleSceneTorus,
-    VROSampleSceneBox,
+    VROSampleSceneCamera,
     VROSampleSceneOBJ,
     VROSampleSceneText,
     VROSampleSceneVideoSphere,
@@ -287,7 +287,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     box3->setName("Box 3");
     
     std::shared_ptr<VROMaterial> material3 = box3->getMaterials()[0];
-    material3->setLightingModel(VROLightingModel::Blinn);
+    material3->setLightingModel(VROLightingModel::Lambert);
     material3->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
                                                                     std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"], format)));
     material3->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,

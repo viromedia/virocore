@@ -23,7 +23,7 @@ typedef std::function<void(VROUniform *uniform, GLuint location)> VROUniformBind
 
 enum class VROShaderEntryPoint {
     Geometry, // Modify vertex shader
-    Surface   // Modify fragment shader
+    Surface,  // Modify fragment shader, surface properties before lighting computation
 };
 
 enum class VROShaderSection {
