@@ -424,7 +424,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                        dataVec, texWidth, texHeight, mipSizes,
                                                                        self.driver.get());
     
-    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height);
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height, 0.5, 0.5, 1, 1);
     surface->getMaterials().front()->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
     surface->getMaterials().front()->getDiffuse().setTexture(texture);
     

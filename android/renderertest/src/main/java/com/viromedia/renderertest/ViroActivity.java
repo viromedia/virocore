@@ -180,7 +180,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
     private List<NodeJni> testSurfaceVideo(Context context) {
         NodeJni node = new NodeJni(context);
-        final SurfaceJni surface = new SurfaceJni(4,4);
+        final SurfaceJni surface = new SurfaceJni(4, 4, 0, 0, 1, 1);
         float[] position = {0,0,-3};
         node.setPosition(position);
         final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef());
@@ -427,7 +427,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         TextureJni bobaTexture = new TextureJni(bobaImage, TextureFormat.RGBA8, true);
         MaterialJni material = new MaterialJni();
 
-        SurfaceJni surface = new SurfaceJni(1, 1);
+        SurfaceJni surface = new SurfaceJni(1, 1, 0, 0, 1, 1);
         surface.setMaterial(material);
         surface.setImageTexture(bobaTexture);
 

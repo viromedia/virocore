@@ -39,19 +39,23 @@ namespace Surface {
 extern "C" {
 
 JNI_METHOD(jlong, nativeCreateSurface)(JNIEnv *env,
-                                        jobject object,
-                                        jfloat width,
-                                        jfloat height) {
-    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height);
+                                       jobject object,
+                                       jfloat width,
+                                       jfloat height,
+                                       jfloat u0, jfloat v0,
+                                       jfloat u1, jfloat v1) {
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height, u0, v0, u1, v1);
     return Surface::jptr(surface);
 }
 
 JNI_METHOD(jlong, nativeCreateSurfaceFromSurface)(JNIEnv *env,
-                                       jobject object,
-                                       jfloat width,
-                                       jfloat height,
-                                       jlong oldSurface) {
-    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height);
+                                                  jobject object,
+                                                  jfloat width,
+                                                  jfloat height,
+                                                  jfloat u0, jfloat v0,
+                                                  jfloat u1, jfloat v1,
+                                                  jlong oldSurface) {
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height, u0, v0, u1, v1);
     std::vector<std::shared_ptr<VROMaterial>> materials = Surface::native(oldSurface)->getMaterials();
     if (materials.size() > 0) {
         surface->getMaterials().push_back(materials[0]);

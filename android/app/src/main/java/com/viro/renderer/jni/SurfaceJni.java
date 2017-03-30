@@ -11,12 +11,15 @@ package com.viro.renderer.jni;
  * Cpp Object           : VROSurface.cpp
  */
 public class SurfaceJni extends BaseGeometry {
-    public SurfaceJni(float width, float height) {
-        mNativeRef = nativeCreateSurface(width, height);
+
+    public SurfaceJni(float width, float height, float u0, float v0, float u1, float v1) {
+        mNativeRef = nativeCreateSurface(width, height, u0, v0, u1, v1);
     }
 
-    public SurfaceJni(float width, float height, SurfaceJni oldSurface) {
-        mNativeRef = nativeCreateSurfaceFromSurface(width, height, oldSurface.mNativeRef);
+    public SurfaceJni(float width, float height, float u0, float v0, float u1, float v1,
+                      SurfaceJni oldSurface) {
+        mNativeRef = nativeCreateSurfaceFromSurface(width, height, u0, v0, u1, v1,
+                oldSurface.mNativeRef);
     }
 
     public void destroy(){
@@ -42,8 +45,11 @@ public class SurfaceJni extends BaseGeometry {
     /**
      * Native Functions called into JNI
      */
-    private native long nativeCreateSurface(float width, float height);
-    private native long nativeCreateSurfaceFromSurface(float width, float height, long oldSurfaceRef);
+    private native long nativeCreateSurface(float width, float height,
+                                            float u0, float v0, float u1, float v1);
+    private native long nativeCreateSurfaceFromSurface(float width, float height,
+                                                       float u0, float v0, float u1, float v1,
+                                                       long oldSurfaceRef);
 
     private native void nativeDestroySurface(long surfaceRef);
 
