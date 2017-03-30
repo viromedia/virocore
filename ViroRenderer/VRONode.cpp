@@ -443,19 +443,20 @@ VROBoundingBox VRONode::getBoundingBox(const VRORenderContext &context) {
     return _geometry->getBoundingBox().transform(_computedTransform);
 }
 
-std::vector<VROHitTestResult> VRONode::hitTest(VROVector3f ray, VROVector3f origin,
+std::vector<VROHitTestResult> VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray,
                                                bool boundsOnly) {
     passert_thread();
     std::vector<VROHitTestResult> results;
 
     VROMatrix4f identity;
-    hitTest(ray, identity, boundsOnly, origin, results);
+    hitTest(camera, origin, ray, identity, boundsOnly, results);
 
     return results;
 }
 
-void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsOnly,
-                      VROVector3f origin, std::vector<VROHitTestResult> &results) {
+void VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray,
+                      VROMatrix4f parentTransform, bool boundsOnly,
+                      std::vector<VROHitTestResult> &results) {
     passert_thread();
     if (!_selectable) {
         return;
@@ -469,18 +470,21 @@ void VRONode::hitTest(VROVector3f ray, VROMatrix4f parentTransform, bool boundsO
         
         VROVector3f intPt;
         if (bounds.intersectsRay(ray, origin, &intPt)) {
-            if (boundsOnly || hitTestGeometry(ray, origin, transform)) {
-                results.push_back({std::static_pointer_cast<VRONode>(shared_from_this()), intPt, origin.distance(intPt), false});
+            if (boundsOnly || hitTestGeometry(origin, ray, transform)) {
+                results.push_back( {std::static_pointer_cast<VRONode>(shared_from_this()),
+                                    intPt,
+                                    origin.distance(intPt), false,
+                                    camera });
             }
         }
     }
     
     for (std::shared_ptr<VRONode> &subnode : _subnodes) {
-        subnode->hitTest(ray, transform, boundsOnly, origin, results);
+        subnode->hitTest(camera, origin, ray, transform, boundsOnly, results);
     }
 }
 
-bool VRONode::hitTestGeometry(VROVector3f ray, VROVector3f origin, VROMatrix4f transform) {
+bool VRONode::hitTestGeometry(VROVector3f origin, VROVector3f ray, VROMatrix4f transform) {
     passert_thread();
     std::shared_ptr<VROGeometrySource> vertexSource = _geometry->getGeometrySourcesForSemantic(VROGeometrySourceSemantic::Vertex).front();
     

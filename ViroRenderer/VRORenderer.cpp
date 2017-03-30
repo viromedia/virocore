@@ -33,9 +33,6 @@ VRORenderer::VRORenderer(std::shared_ptr<VROInputControllerBase> inputController
     _fpsTickIndex(0),
     _fpsTickSum(0) {
         
-    initBlankTexture(*_context);
-    _inputController->setContext(_context);
-      
     _debugHUD = std::unique_ptr<VRODebugHUD>(new VRODebugHUD());
     memset(_fpsTickArray, 0x0, sizeof(_fpsTickArray));
 }
@@ -45,6 +42,16 @@ VRORenderer::~VRORenderer() {
     if (delegate) {
         delegate->shutdownRenderer();
     }
+}
+
+void VRORenderer::initRenderer(std::shared_ptr<VRODriver> driver) {
+    initBlankTexture(*_context);
+
+    std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->setupRendererWithDriver(driver);
+    }
+    _debugHUD->initRenderer(driver);
 }
 
 void VRORenderer::setDelegate(std::shared_ptr<VRORenderDelegateInternal> delegate) {
@@ -93,11 +100,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
                                VROMatrix4f headRotation, std::shared_ptr<VRODriver> driver) {
 
     if (!_rendererInitialized) {
-        std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
-        if (delegate) {
-            delegate->setupRendererWithDriver(driver);
-        }
-        _debugHUD->initRenderer(driver);
+        initRenderer(driver);
       
         _rendererInitialized = true;
         _nanosecondsLastFrame = VRONanoTime();

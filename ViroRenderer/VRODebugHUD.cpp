@@ -19,8 +19,7 @@
 static const int kFPSRefreshRate = 60;
 
 VRODebugHUD::VRODebugHUD() :
-    _enabled(false),
-    _node(std::make_shared<VRONode>()) {
+    _enabled(false) {
     
 }
 
@@ -29,14 +28,16 @@ VRODebugHUD::~VRODebugHUD() {
 }
 
 void VRODebugHUD::initRenderer(std::shared_ptr<VRODriver> driver) {
-  /*
-   We have to preload all glyphs that will be used for displaying FPS
-   because VROTypeface cannot load new glyphs in the midst of a render-cycle
-   (loading glyphs modifies the OpenGL context).
-   */
-  _typeface = driver->newTypeface("Helvetica", 26);
-  _typeface->preloadGlyphs("0123456789.");
-  _node->setPosition({-1, 1, -2.5});
+    _node = std::make_shared<VRONode>();
+
+    /*
+     We have to preload all glyphs that will be used for displaying FPS
+     because VROTypeface cannot load new glyphs in the midst of a render-cycle
+     (loading glyphs modifies the OpenGL context).
+    */
+    _typeface = driver->newTypeface("Helvetica", 26);
+    _typeface->preloadGlyphs("0123456789.");
+    _node->setPosition({-1, 1, -2.5});
 }
 
 void VRODebugHUD::setEnabled(bool enabled) {

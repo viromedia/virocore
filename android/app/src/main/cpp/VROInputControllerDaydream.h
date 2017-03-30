@@ -42,8 +42,8 @@ public:
     }
 
 protected:
-    std::shared_ptr<VROInputPresenter> createPresenter(std::shared_ptr<VRORenderContext> context){
-        _daydreamPresenter = std::make_shared<VROInputPresenterDaydream>(context);
+    std::shared_ptr<VROInputPresenter> createPresenter(){
+        _daydreamPresenter = std::make_shared<VROInputPresenterDaydream>();
         return _daydreamPresenter;
     }
 

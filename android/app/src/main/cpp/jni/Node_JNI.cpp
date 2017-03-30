@@ -26,6 +26,15 @@ extern "C" {
 JNI_METHOD(jlong, nativeCreateNode)(JNIEnv *env,
                                     jclass clazz) {
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
+
+    std::weak_ptr<VRONode> node_w = node;
+    VROPlatformDispatchAsyncRenderer([node_w] {
+        std::shared_ptr<VRONode> node_s = node_w.lock();
+        if (node_s) {
+            node_s->setThreadRestriction(pthread_self());
+        }
+    });
+
     return Node::jptr(node);
 }
 

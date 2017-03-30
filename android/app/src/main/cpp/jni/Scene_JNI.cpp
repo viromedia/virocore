@@ -32,9 +32,21 @@ JNI_METHOD(jlong, nativeCreateScene)(JNIEnv *env,
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
 
     PersistentRef<VRONode> *persistentNode = reinterpret_cast<PersistentRef<VRONode> *>(root_node_ref);
-    std::shared_ptr<VRONode> rootNode = persistentNode->get();
+    std::weak_ptr<VRONode> node_w = persistentNode->get();
+    std::weak_ptr<VROScene> scene_w = sceneController->getScene();
 
-    sceneController->getScene()->addNode(rootNode);
+    VROPlatformDispatchAsyncRenderer([node_w, scene_w] {
+        std::shared_ptr<VROScene> scene = scene_w.lock();
+        if (scene) {
+            scene->setThreadRestriction(pthread_self());
+
+            std::shared_ptr<VRONode> node = node_w.lock();
+            if (node) {
+                scene->addNode(node);
+            }
+        }
+    });
+
     return Scene::jptr(sceneController);
 }
 

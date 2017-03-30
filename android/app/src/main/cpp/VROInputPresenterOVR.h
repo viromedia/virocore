@@ -19,7 +19,7 @@
 
 class VROInputPresenterOVR : public VROInputPresenter {
 public:
-    VROInputPresenterOVR(std::shared_ptr<VRORenderContext> context):VROInputPresenter(context) {
+    VROInputPresenterOVR() {
         setReticle(std::make_shared<VROReticle>(nullptr));
         getReticle()->setPointerMode(false);
     }

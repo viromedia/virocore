@@ -11,6 +11,10 @@
 
 #include <stdio.h>
 #include <pthread.h>
+#include <string>
+
+// Utility for printing out an ID for the given pthread
+std::string print_thread_id(pthread_t id);
 
 /*
  Subclasses of VROThreadRestricted may only be accessed from
@@ -32,6 +36,12 @@ public:
      */
     VROThreadRestricted(pthread_t thread);
     virtual ~VROThreadRestricted();
+    
+    /*
+     Set the thread to which this object is restricted. This 
+     is used when the thread is not available for the constructor.
+     */
+    void setThreadRestriction(pthread_t thread);
     
     /*
      Assert we are on the correct thread. If not, abort.

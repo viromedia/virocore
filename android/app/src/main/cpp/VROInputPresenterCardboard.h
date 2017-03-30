@@ -21,7 +21,7 @@
 
 class VROInputPresenterCardboard : public VROInputPresenter {
 public:
-    VROInputPresenterCardboard(std::shared_ptr<VRORenderContext> context):VROInputPresenter(context) {
+    VROInputPresenterCardboard() {
         setReticle(std::make_shared<VROReticle>(nullptr));
         getReticle()->setPointerMode(false);
     }

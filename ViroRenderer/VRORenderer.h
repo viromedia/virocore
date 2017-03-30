@@ -117,6 +117,11 @@ private:
      HUD for displaying debug information.
      */
     std::unique_ptr<VRODebugHUD> _debugHUD;
+
+    /*
+     Invoked on the rendering thread to perform thread-specific initialization.
+     */
+    void initRenderer(std::shared_ptr<VRODriver> driver);
     
 #pragma mark - FPS Computation
     

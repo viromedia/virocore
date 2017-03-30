@@ -112,7 +112,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     public void onGlInitialized() {
         Log.e("ViroActivity", "onGlInitialized called");
         // Creation of SceneJni within scene navigator
-        NodeJni rootNode = new NodeJni(getApplicationContext());
+        NodeJni rootNode = new NodeJni();
         SceneJni scene = new SceneJni(rootNode);
         List<NodeJni> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
@@ -149,7 +149,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     }
 
     private List<NodeJni> testText(Context context) {
-        NodeJni node = new NodeJni(context);
+        NodeJni node = new NodeJni();
         // Create text
         TextJni text = new TextJni(mVrView.getRenderContextRef(),
                 "Test Text Here", "Roboto", 25, Color.WHITE, 1f,
@@ -179,7 +179,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     }
 
     private List<NodeJni> testSurfaceVideo(Context context) {
-        NodeJni node = new NodeJni(context);
+        NodeJni node = new NodeJni();
         final SurfaceJni surface = new SurfaceJni(4, 4, 0, 0, 1, 1);
         float[] position = {0,0,-3};
         node.setPosition(position);
@@ -214,7 +214,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     }
 
     private List<NodeJni> testSphereVideo(Context context) {
-        NodeJni node = new NodeJni(context);
+        NodeJni node = new NodeJni();
         final SphereJni sphere = new SphereJni(2, 20, 20, false);
         final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef());
         videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
@@ -302,10 +302,10 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     }
 
     private List<NodeJni> testBox(Context context) {
-        NodeJni node1 = new NodeJni(context);
-        NodeJni node2 = new NodeJni(context);
+        NodeJni node1 = new NodeJni();
+        NodeJni node2 = new NodeJni();
 
-        NodeJni node3 = new NodeJni(context);
+        NodeJni node3 = new NodeJni();
         TextJni textJni = new TextJni(mVrView.getRenderContextRef(), "Test text 1 2 3", "Roboto", 24,
                 Color.WHITE, 10, 4, "Center", "Center", "None", "None", 1);
 
@@ -343,7 +343,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     }
 
     private List<NodeJni> test3dObjectLoading(Context context) {
-        final NodeJni node1 = new NodeJni(context);
+        final NodeJni node1 = new NodeJni();
 
         // Creation of ObjectJni to the right
         ObjectJni objectJni = new ObjectJni(Uri.parse("heart.obj"), new AsyncObjListener() {
@@ -421,7 +421,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     }
 
     private List<NodeJni> testImageSurface(Context context) {
-        NodeJni node = new NodeJni(context);
+        NodeJni node = new NodeJni();
         ImageJni bobaImage = new ImageJni("boba.png", TextureFormat.RGBA8);
 
         TextureJni bobaTexture = new TextureJni(bobaImage, TextureFormat.RGBA8, true);

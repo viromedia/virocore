@@ -33,8 +33,8 @@ public:
     }
 
 protected:
-    std::shared_ptr<VROInputPresenter> createPresenter(std::shared_ptr<VRORenderContext> context){
-        return std::make_shared<VROInputPresenterOVR>(context);
+    std::shared_ptr<VROInputPresenter> createPresenter(){
+        return std::make_shared<VROInputPresenterOVR>();
     }
 
 private:

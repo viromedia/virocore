@@ -43,7 +43,7 @@ public:
     static void resetDebugSortIndex();
     
     /*
-     Designated initializer for nodes in the model tree.
+     Default constructor.
      */
     VRONode();
     
@@ -282,7 +282,7 @@ public:
      Hit testing.
      */
     VROBoundingBox getBoundingBox(const VRORenderContext &context);
-    std::vector<VROHitTestResult> hitTest(VROVector3f ray, VROVector3f origin,
+    std::vector<VROHitTestResult> hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray,
                                           bool boundsOnly = false);
     
     void setSelectable(bool selectable) {
@@ -415,9 +415,9 @@ private:
     /*
      Hit test helper functions.
      */
-    void hitTest(VROVector3f ray,  VROMatrix4f parentTransform,  bool boundsOnly,
-                 VROVector3f origin, std::vector<VROHitTestResult> &results);
-    bool hitTestGeometry(VROVector3f ray, VROVector3f origin, VROMatrix4f transform);
+    void hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray, VROMatrix4f parentTransform,
+                 bool boundsOnly, std::vector<VROHitTestResult> &results);
+    bool hitTestGeometry(VROVector3f origin, VROVector3f ray, VROMatrix4f transform);
 
 };
 

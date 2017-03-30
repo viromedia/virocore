@@ -32,8 +32,8 @@ public:
     void updateScreenTouch(int touchAction);
 
 protected:
-    std::shared_ptr<VROInputPresenter> createPresenter(std::shared_ptr<VRORenderContext> context){
-        return std::make_shared<VROInputPresenterCardboard>(context);
+    std::shared_ptr<VROInputPresenter> createPresenter(){
+        return std::make_shared<VROInputPresenterCardboard>();
     }
 
 private:

@@ -19,7 +19,7 @@ public class NodeJni {
     protected boolean mDestroyed = false;
     private EventDelegateJni mEventDelegate = null;
 
-    public NodeJni(Context context) {
+    public NodeJni() {
         mNativeRef = nativeCreateNode();
     }
 

@@ -115,7 +115,7 @@ void VROInputControllerDaydream::updateOrientation(const VROCamera &camera) {
     VROVector3f forwardVector = getDaydreamForwardVector(rotation);
 
     // Perform hit test
-    VROInputControllerBase::updateHitNode(position, forwardVector);
+    VROInputControllerBase::updateHitNode(camera, position, forwardVector);
 
     // Process orientation and update delegates
     VROInputControllerBase::onMove(ViroDayDream::InputSource::Controller, position, rotation);

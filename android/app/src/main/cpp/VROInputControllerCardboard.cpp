@@ -18,11 +18,11 @@ void VROInputControllerCardboard::updateScreenTouch(int touchAction){
 
 void VROInputControllerCardboard::updateOrientation(const VROCamera &camera){
     // Grab controller orientation
-    VROQuaternion rotation = _context->getCamera().getRotation();
+    VROQuaternion rotation = camera.getRotation();
     VROVector3f controllerForward = rotation.getMatrix().multiply(kBaseForward);
 
     // Perform hit test
-    VROInputControllerBase::updateHitNode(camera.getPosition(), controllerForward);
+    VROInputControllerBase::updateHitNode(camera, camera.getPosition(), controllerForward);
 
     // Process orientation and update delegates
     VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, camera.getPosition(), rotation);

@@ -23,7 +23,7 @@
 
 class VROInputPresenterDaydream : public VROInputPresenter {
 public:
-    VROInputPresenterDaydream(std::shared_ptr<VRORenderContext> context):VROInputPresenter(context) {
+    VROInputPresenterDaydream() {
         // Initial values required for arm model
         _forwardVector = VROVector3f(0,0,-1);
         attachElbowNode();
