@@ -278,12 +278,19 @@ void VROInputControllerBase::processGazeEvent(int source, std::shared_ptr<VRONod
     }
 
     if (newNode) {
-        newNode->getEventDelegate()->onHover(source, true);
+        std::shared_ptr<VROEventDelegate> delegate = newNode->getEventDelegate();
+        if (delegate) {
+            delegate->onHover(source, true);
+        }
     }
 
-    if (_lastHoveredNode){
-        _lastHoveredNode->getEventDelegate()->onHover(source, false);
+    if (_lastHoveredNode) {
+        std::shared_ptr<VROEventDelegate> delegate = _lastHoveredNode->getEventDelegate();
+        if (delegate) {
+            delegate->onHover(source, false);
+        }
     }
+
     _lastHoveredNode = newNode;
 }
 
