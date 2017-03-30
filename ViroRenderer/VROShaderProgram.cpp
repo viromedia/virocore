@@ -471,7 +471,8 @@ void VROShaderProgram::inflateFragmentShaderModifiers(const std::vector<std::sha
             continue;
         }
         
-        // TODO Body and uniforms modifiers not yet supported, only replacements        
+        insertModifier(modifier->getBodySource(), modifier->getDirective(VROShaderSection::Body), source);
+        insertModifier(modifier->getUniformsSource(), modifier->getDirective(VROShaderSection::Uniforms), source);
         inflateReplacements(modifier->getReplacements(), source);
     }
 }

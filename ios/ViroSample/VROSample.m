@@ -200,7 +200,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->setPosition({0, 0, 0});
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
-    ambient->setColor({ 0.4, 0.4, 0.4 });
+    ambient->setColor({ 0.6, 0.6, 0.6 });
     
     std::shared_ptr<VROLight> spotRed = std::make_shared<VROLight>(VROLightType::Spot);
     spotRed->setColor({ 1.0, 0.0, 0.0 });
@@ -238,10 +238,13 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     material->setLightingModel(VROLightingModel::Blinn);
     material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
                                                                    std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"], format)));
-    material->getDiffuse().setColor({0.6, 0.3, 0.3, 1.0});
+    material->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
     material->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
                                                                     std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"], format)));
     
+    /*
+     This geometry modifier pushes the first box to the right slightly, by changing _geometry.position.
+     */
     std::vector<std::string> modifierCode =  { "uniform float testA;",
                                                "uniform float testB;",
                                                "_geometry.position.x = _geometry.position.x + testA;"
@@ -253,6 +256,23 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         uniform->setFloat(1.0);
     });
     material->addShaderModifier(modifier);
+    
+    /*
+     This surface modifier doubles the V tex-coord, making boba.png cover only the top half of the box.
+     It then shades the entire surface slightly blue.
+     */
+    std::vector<std::string> surfaceModifierCode =  {
+        "uniform lowp vec3 surface_color;",
+        "_surface.diffuse_texcoord.y = _surface.diffuse_texcoord.y * 2.0;"
+        "_surface.diffuse_color = vec4(surface_color.xyz, 1.0);"
+    };
+    std::shared_ptr<VROShaderModifier> surfaceModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
+                                                                                             surfaceModifierCode);
+    
+    surfaceModifier->setUniformBinder("surface_color", [](VROUniform *uniform, GLuint location) {
+        uniform->setVec3({0.6, 0.6, 1.0});
+    });
+    material->addShaderModifier(surfaceModifier);
     
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
@@ -320,7 +340,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         spotBlue->setPosition({-5, 0, 0});
         spotBlue->setDirection({1, 0, -1});
         
-        cameraNode->setPosition({0, 5, 0});
+        cameraNode->setPosition({0, 1, 0});
         
         VROTransaction::commit();
     });

@@ -94,10 +94,15 @@ std::string VROShaderModifier::getDirective(VROShaderSection section) const {
     }
     
     else if (_entryPoint == VROShaderEntryPoint::Surface) {
-        pabort(); // TODO Not yet supported, directives must be added to the shader files
+        if (section == VROShaderSection::Body) {
+            return "#pragma surface_modifier_body";
+        }
+        else {
+            return "#pragma surface_modifier_uniforms";
+        }
     }
 
-    // Fill in additional entry points directives as they are supported
+    // Fill in additional entry points' directives as they are supported
     else {
         pabort();
         return "";
