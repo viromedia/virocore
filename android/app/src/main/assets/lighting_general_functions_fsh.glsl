@@ -1,6 +1,8 @@
 #extension GL_OES_EGL_image_external : enable
 #extension GL_OES_EGL_image_external_essl3 : enable
 
+#include surface_functions_fsh
+
 // Grouped in 4N slots (int and float take 1N, vec3 takes 3N, vec4 takes 4N)
 struct VROLightUniforms {
     int type;

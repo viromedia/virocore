@@ -10,6 +10,8 @@ uniform lowp float material_shininess;
 uniform sampler2D diffuse_texture;
 uniform sampler2D specular_texture;
 
+#pragma surface_modifier_uniforms
+
 in lowp vec3 v_normal;
 in highp vec2 v_texcoord;
 in highp vec3 v_surface_position;
@@ -17,18 +19,17 @@ in highp vec3 v_surface_position;
 out lowp vec4 frag_color;
 
 void main() {
-    VROPhongLighting phong;
-    phong.normal = v_normal;
-    phong.texcoord = v_texcoord;
-    phong.surface_position = v_surface_position;
-    phong.camera_position = camera_position;
-    
-    phong.ambient_color = ambient_light_color.xyz;
-    phong.material_color = material_diffuse_surface_color;
-    phong.material_shininess = material_shininess;
-    phong.diffuse_intensity = material_diffuse_intensity;
-    phong.material_alpha = material_alpha;
+    _surface.diffuse_color = material_diffuse_surface_color;
+    _surface.diffuse_texcoord = v_texcoord;
+    _surface.diffuse_intensity = material_diffuse_intensity;
+    _surface.shininess = material_shininess;
+    _surface.specular_texcoord = v_texcoord;
+    _surface.alpha = material_alpha;
+    _surface.normal = v_normal;
+    _surface.position = v_surface_position;
 
-    lowp vec4 diffuse_texture_color = texture(diffuse_texture, phong.texcoord);
-    frag_color = phong_lighting_diffuse_texture(phong, diffuse_texture_color, specular_texture);
+#pragma surface_modifier_body
+
+    lowp vec4 diffuse_texture_color = texture(diffuse_texture, _surface.diffuse_texcoord);
+    frag_color = phong_lighting_diffuse_texture(_surface, camera_position, diffuse_texture_color, specular_texture);
 }

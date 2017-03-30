@@ -38,9 +38,6 @@ public:
 
 private:
 
-    std::shared_ptr<VROVideoTextureAVP> _videoA;
-    std::shared_ptr<VROVideoTextureAVP> _videoB;
-
     std::shared_ptr<VROMaterial> _material;
     std::shared_ptr<VROTexture> getNiagaraTexture();
 

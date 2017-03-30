@@ -38,14 +38,14 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     rootNode->setPosition({0, 0, 0});
 
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
-    ambient->setColor({ 0.9, 0.9, 0.9 });
+    ambient->setColor({ 0.3, 0.3, 0.3 });
 
     std::shared_ptr<VROLight> spot = std::make_shared<VROLight>(VROLightType::Spot);
     spot->setColor({ 1.0, 1.0, 1.0 });
     spot->setPosition( { 0, 0, 0 });
     spot->setDirection( { 0, 0, -1 });
-    spot->setAttenuationStartDistance(20);
-    spot->setAttenuationEndDistance(30);
+    spot->setAttenuationStartDistance(5);
+    spot->setAttenuationEndDistance(10);
     spot->setSpotInnerAngle(10.0);
     spot->setSpotOuterAngle(20.0);
 
@@ -68,8 +68,11 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
         std::shared_ptr<VROMaterial> &material = node->getGeometry()->getMaterials().front();
         material->getDiffuse().setTexture(std::make_shared<VROTexture>(format,
                                                                        VROMipmapMode::Runtime,
-                                                                       VROPlatformLoadImageFromAsset("heart_d.jpg", format)));
-        material->setLightingModel(VROLightingModel::Lambert);
+                                                                       VROPlatformLoadImageFromAsset("Heart_D4.jpg", format)));
+        material->getSpecular().setTexture(std::make_shared<VROTexture>(format,
+                                                                       VROMipmapMode::Runtime,
+                                                                       VROPlatformLoadImageFromAsset("Heart_S2.jpg", format)));
+        material->setLightingModel(VROLightingModel::Phong);
     });
 
     heartNode->setPosition({0, -5.25, -1});
@@ -113,11 +116,6 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     box->setName("Box 1");
 
     std::string videoPath = VROPlatformCopyAssetToFile("vest.mp4");
-
-    _videoA = std::make_shared<VROVideoTextureAVP>();
-    _videoA->loadVideoFromURL(videoPath, driver);
-    _videoA->setLoop(true);
-    //_videoA->play();
 
     _material = box->getMaterials()[0];
     _material->setLightingModel(VROLightingModel::Lambert);
