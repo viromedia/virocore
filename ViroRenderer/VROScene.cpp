@@ -33,6 +33,7 @@ VROScene::~VROScene() {
 
 void VROScene::renderBackground(const VRORenderContext &renderContext,
                                 VRODriver &driver) {
+    passert_thread();
     if (!_background) {
         return;
     }
@@ -48,6 +49,7 @@ void VROScene::renderBackground(const VRORenderContext &renderContext,
 
 void VROScene::render(const VRORenderContext &context,
                       VRODriver &driver) {
+    passert_thread();
     
     uint32_t boundShaderId = UINT32_MAX;
     std::vector<std::shared_ptr<VROLight>> boundLights;
@@ -100,6 +102,8 @@ void VROScene::render(const VRORenderContext &context,
 }
 
 void VROScene::updateSortKeys(const VRORenderContext &context, VRODriver &driver) {
+    passert_thread();
+    
     if (kDebugSortOrder) {
         pinfo("Updating sort keys");
         VRONode::resetDebugSortIndex();
@@ -123,20 +127,24 @@ void VROScene::updateSortKeys(const VRORenderContext &context, VRODriver &driver
 }
 
 void VROScene::addNode(std::shared_ptr<VRONode> node) {
+    passert_thread();
     _nodes.push_back(node);
 }
 
 void VROScene::setBackgroundCube(std::shared_ptr<VROTexture> textureCube) {
+    passert_thread();
     _background = VROSkybox::createSkybox(textureCube);
     _background->setName("Background");
 }
 
 void VROScene::setBackgroundCube(VROVector4f color) {
+    passert_thread();
     _background = VROSkybox::createSkybox(color);
     _background->setName("Background");
 }
 
 void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
+    passert_thread();
     _background = VROSphere::createSphere(kSphereBackgroundRadius,
                                           kSphereBackgroundNumSegments,
                                           kSphereBackgroundNumSegments,
@@ -152,6 +160,7 @@ void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
 }
 
 void VROScene::setControllerPresenter(std::shared_ptr<VROInputPresenter> presenter) {
+    passert_thread();
     std::shared_ptr<VRONode> node = presenter->getRootNode();
 
     // Add the controller presenter to the scene tree if we haven't already
@@ -170,5 +179,6 @@ std::shared_ptr<VROInputPresenter> VROScene::getControllerPresenter(){
 }
 
 void VROScene::setBackgroundRotation(VROQuaternion rotation) {
+    passert_thread();
     _backgroundRotation = rotation;
 }
