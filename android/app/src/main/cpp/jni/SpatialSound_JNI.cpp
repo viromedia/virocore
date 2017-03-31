@@ -69,16 +69,34 @@ JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
                                      jobject obj,
                                      jlong nativeSoundRef,
                                      jlong nativeNodeRef) {
-    std::shared_ptr<VROSound> sound = SpatialSound::native(nativeSoundRef);
-    Node::native(nativeNodeRef)->addSound(sound);
+    std::weak_ptr<VRONode> node_w = Node::native(nativeNodeRef);
+    std::weak_ptr<VROSound> sound_w = SpatialSound::native(nativeSoundRef);
+
+    VROPlatformDispatchAsyncRenderer([node_w, sound_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        std::shared_ptr<VROSound> sound = sound_w.lock();
+
+        if (node && sound) {
+            node->addSound(sound);
+        }
+    });
 }
 
 JNI_METHOD(void, nativeDetachFromNode)(JNIEnv *env,
                                        jobject obj,
                                        jlong nativeSoundRef,
                                        jlong nativeNodeRef) {
-    std::shared_ptr<VROSound> sound = SpatialSound::native(nativeSoundRef);
-    Node::native(nativeNodeRef)->removeSound(sound);
+    std::weak_ptr<VRONode> node_w = Node::native(nativeNodeRef);
+    std::weak_ptr<VROSound> sound_w = SpatialSound::native(nativeSoundRef);
+
+    VROPlatformDispatchAsyncRenderer([node_w, sound_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        std::shared_ptr<VROSound> sound = sound_w.lock();
+
+        if (node && sound) {
+            node->removeSound(sound);
+        }
+    });
 }
 
 JNI_METHOD(void, nativePlaySpatialSound)(JNIEnv *env, jobject obj, jlong nativeRef) {
