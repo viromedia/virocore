@@ -42,14 +42,6 @@ JNI_METHOD(void, nativeDestroyNode)(JNIEnv *env,
                                     jclass clazz,
                                     jlong native_node_ref) {
 
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node_w] {
-        std::shared_ptr<VRONode> node = node_w.lock();
-        if (node) {
-            node->removeFromParentNode();
-        }
-    });
-
     delete reinterpret_cast<PersistentRef<VRONode> *>(native_node_ref);
 }
 
