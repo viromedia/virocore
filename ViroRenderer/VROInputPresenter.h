@@ -107,14 +107,12 @@ public:
             delegate->onFuse(source, timeToFuseRatio);
         }
 
-        /**
-         * TODO VIRO-1109: UI animations to be triggered on the reticle as a result of
-         * changes in Fused States.
-         */
+        // TimeToFuseRatio is (time that has passed since fuse began) / (total time to fuse).
+        // When the timeToFuseRatio reaches 1, it is an indication that the node has been "onFused".
         if (timeToFuseRatio == kOnFuseReset){
-            //_reticle->stopAnimateFuse
+            _reticle->stopFuseAnimation();
         } else {
-            //_reticle->animateFuse(timeToFuseRatio);
+            _reticle->animateFuse(1 - timeToFuseRatio);
         }
     }
 

@@ -169,8 +169,8 @@ private:
 
     /**
      * Duration used to count down from for triggering onFuse events, in milliseconds.
-     * Defaults to 1000 milliseconds.
+     * Defaults to 2000 milliseconds.
      */
-    float _timeToFuseDuration = 1000;
+    float _timeToFuseDuration = 2000;
 };
 #endif
