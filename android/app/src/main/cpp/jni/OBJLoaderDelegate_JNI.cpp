@@ -10,6 +10,7 @@
 #include <memory>
 #include "VROPlatformUtil.h"
 #include "OBJLoaderDelegate_JNI.h"
+#include "Node_JNI.h"
 
 OBJLoaderDelegate::OBJLoaderDelegate(jobject nodeJavaObject, JNIEnv *env) {
     _javaObject = reinterpret_cast<jclass>(env->NewGlobalRef(nodeJavaObject));
@@ -20,19 +21,26 @@ OBJLoaderDelegate::~OBJLoaderDelegate() {
     env->DeleteGlobalRef(_javaObject);
 }
 
-void OBJLoaderDelegate::objLoaded() {
+void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj] {
+    VROPlatformDispatchAsyncApplication([weakObj, node] {
         JNIEnv *env = VROPlatformGetJNIEnv();
+
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(weakObj);
             return;
         }
 
-        VROPlatformCallJavaFunction(localObj, "nodeDidFinishCreation", "()V");
+        // Create a new persistent ref for the node so we can manipulate
+        // it on the Java side
+        jlong nodeRef = Node::jptr(node);
+
+        VROPlatformCallJavaFunction(localObj, "nodeDidFinishCreation", "(J)V", nodeRef);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
@@ -42,14 +50,18 @@ void OBJLoaderDelegate::objFailed(std::string error) {
 
     VROPlatformDispatchAsyncApplication([weakObj, error] {
         JNIEnv *env = VROPlatformGetJNIEnv();
+
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(weakObj);
             return;
         }
 
         jstring jerror = env->NewStringUTF(error.c_str());
         VROPlatformCallJavaFunction(localObj, "nodeDidFailOBJLoad", "(Ljava/lang/String;)V", jerror);
+
         env->DeleteLocalRef(localObj);
         env->DeleteLocalRef(jerror);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }

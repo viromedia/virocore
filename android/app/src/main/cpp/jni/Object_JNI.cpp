@@ -23,69 +23,127 @@
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeLoadOBJFromFile)(JNIEnv *env,
-                                         jobject object,
-                                         jstring file) {
+JNI_METHOD(void, nativeLoadOBJFromFile)(JNIEnv *env,
+                                        jobject object,
+                                        jstring file) {
     const char *cStrFile = env->GetStringUTFChars(file, NULL);
     std::string strFile(cStrFile);
-    // TODO: VIRO-924 Async copy OBJ file and assets
-    std::string objUrlPath = VROPlatformCopyResourceToFile(strFile);
-    std::string objUrlBase = objUrlPath.substr(0, objUrlPath.find_last_of('/'));
     env->ReleaseStringUTFChars(file, cStrFile);
-    std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(object, env);
-    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromFile(objUrlPath, objUrlBase, true, [delegateRef](std::shared_ptr<VRONode> node, bool success) {
-        if (!success) {
-            return;
-        }
-        delegateRef->objLoaded();
-    });
 
-    return Node::jptr(objNode);
+    jweak weakObj = env->NewWeakGlobalRef(object);
+
+    VROPlatformDispatchAsyncBackground([strFile, weakObj] {
+        std::string objUrlPath = VROPlatformCopyResourceToFile(strFile);
+        std::string objUrlBase = objUrlPath.substr(0, objUrlPath.find_last_of('/'));
+
+        VROPlatformDispatchAsyncRenderer([objUrlPath, objUrlBase, weakObj] {
+            JNIEnv *env = VROPlatformGetJNIEnv();
+
+            jobject localObj = env->NewLocalRef(weakObj);
+            if (localObj == NULL) {
+                env->DeleteWeakGlobalRef(weakObj);
+                return;
+            }
+
+            std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(localObj, env);
+            std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromFile(objUrlPath, objUrlBase, true, [delegateRef](std::shared_ptr<VRONode> node, bool success) {
+                if (!success) {
+                    return;
+                }
+                delegateRef->objLoaded(node);
+            });
+
+            env->DeleteLocalRef(localObj);
+            env->DeleteWeakGlobalRef(weakObj);
+        });
+    });
 }
 
-JNI_METHOD(jlong, nativeLoadOBJAndResourcesFromFile)(JNIEnv *env,
+JNI_METHOD(void, nativeLoadOBJAndResourcesFromFile)(JNIEnv *env,
                                                      jobject object,
                                                      jstring file,
                                                      jobject resourceMap) {
     const char *cStrFile = env->GetStringUTFChars(file, NULL);
     std::string strFile(cStrFile);
-    // TODO: VIRO-924 Async copy OBJ file and assets
-    std::string objUrlPath = VROPlatformCopyResourceToFile(strFile);
-    std::map<std::string, std::string> cResourceMap = VROPlatformCopyObjResourcesToFile(resourceMap);
-
-    std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(object, env);
     env->ReleaseStringUTFChars(file, cStrFile);
 
-    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromFileWithResources(objUrlPath, cResourceMap, true,
-        [delegateRef](std::shared_ptr<VRONode> node, bool success) {
-            if (!success) {
+    jweak weakObj = env->NewWeakGlobalRef(object);
+    jweak weakResourceMap = env->NewWeakGlobalRef(resourceMap);
+
+    VROPlatformDispatchAsyncBackground([strFile, weakResourceMap, weakObj] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+
+        jobject localResourceMap = env->NewLocalRef(weakResourceMap);
+        if (localResourceMap == NULL) {
+            env->DeleteWeakGlobalRef(weakResourceMap);
+            env->DeleteWeakGlobalRef(weakObj);
+
+            return;
+        }
+
+        std::string objUrlPath = VROPlatformCopyResourceToFile(strFile);
+        std::map<std::string, std::string> cResourceMap = VROPlatformCopyObjResourcesToFile(localResourceMap);
+
+        env->DeleteLocalRef(localResourceMap);
+        env->DeleteWeakGlobalRef(weakResourceMap);
+
+        VROPlatformDispatchAsyncRenderer([objUrlPath, cResourceMap, weakObj] {
+            JNIEnv *env = VROPlatformGetJNIEnv();
+
+            jobject localObj = env->NewLocalRef(weakObj);
+            if (localObj == NULL) {
+                env->DeleteWeakGlobalRef(weakObj);
                 return;
             }
-            delegateRef->objLoaded();
-        }
-    );
 
-    return Node::jptr(objNode);
+            std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(localObj, env);
+            std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromFileWithResources(objUrlPath, cResourceMap, true,
+                [delegateRef](std::shared_ptr<VRONode> node, bool success) {
+                    if (!success) {
+                        return;
+                    }
+                    delegateRef->objLoaded(node);
+                }
+            );
+
+            env->DeleteLocalRef(localObj);
+            env->DeleteWeakGlobalRef(weakObj);
+        });
+    });
 }
 
-JNI_METHOD(jlong, nativeLoadOBJFromUrl)(JNIEnv *env,
+JNI_METHOD(void, nativeLoadOBJFromUrl)(JNIEnv *env,
                                         jobject object,
                                         jstring url) {
     const char *cStrUrl = env->GetStringUTFChars(url, NULL);
     std::string objUrlPath(cStrUrl);
     std::string objUrlBase = objUrlPath.substr(0, objUrlPath.find_last_of('/'));
     env->ReleaseStringUTFChars(url, cStrUrl);
-    std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(object, env);
-    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(objUrlPath, objUrlBase, true, [delegateRef](std::shared_ptr<VRONode> node, bool success) {
-        if (!success) {
-            delegateRef->objFailed("Failed to load OBJ");
-        }
-        else {
-            delegateRef->objLoaded();
-        }
-    });
 
-    return Node::jptr(objNode);
+    jweak weakObj = env->NewWeakGlobalRef(object);
+
+    VROPlatformDispatchAsyncRenderer([objUrlPath, objUrlBase, weakObj] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(weakObj);
+            return;
+        }
+
+        std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(localObj, env);
+        std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(objUrlPath, objUrlBase, true, [delegateRef](std::shared_ptr<VRONode> node, bool success) {
+            if (!success) {
+                delegateRef->objFailed("Failed to load OBJ");
+            }
+            else {
+                delegateRef->objLoaded(node);
+            }
+        });
+
+        env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
+    });
 }
 JNI_METHOD(void, nativeDestroyNode)(JNIEnv *env,
                                    jclass clazz,

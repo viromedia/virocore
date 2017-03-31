@@ -21,70 +21,64 @@ public class ObjectJni extends BaseGeometry {
     private long mNodeRef;
     private AsyncObjListener mAsyncObjListener = null;
     private boolean mDestroyOnObjNodeCreation = false;
-    private boolean mObjectLoadingFinished = false;
-    private boolean mAttachOnObjLoadingFinish = false;
 
     public ObjectJni(Uri pathOrUrl, AsyncObjListener asyncObjListener) {
-        mObjectNodeRef = nativeLoadOBJFromUrl(pathOrUrl.toString());
+        nativeLoadOBJFromUrl(pathOrUrl.toString());
         mAsyncObjListener = asyncObjListener;
     }
 
     public ObjectJni(Uri pathOrUrl, AsyncObjListener asyncObjListener,
                      Map<String, String> resourceNamesToUris) {
         if (resourceNamesToUris == null) {
-            mObjectNodeRef = nativeLoadOBJFromFile(pathOrUrl.toString());
+            nativeLoadOBJFromFile(pathOrUrl.toString());
         } else {
-            mObjectNodeRef = nativeLoadOBJAndResourcesFromFile(pathOrUrl.toString(),
-                    resourceNamesToUris);
+            nativeLoadOBJAndResourcesFromFile(pathOrUrl.toString(), resourceNamesToUris);
         }
         mAsyncObjListener = asyncObjListener;
     }
 
     public void destroy() {
-        if (mObjectLoadingFinished) {
-            if (mObjectNodeRef != 0) {
-                nativeDestroyNode(mObjectNodeRef);
-                mObjectNodeRef = 0;
-            }
-
-            // Do NOT destroy mNodeRef, as that belongs to the parent
-            // node; it's only temporarily stored here while we wait for
-            // the OBJ to load (if we destroy it, we'll get a crash if
-            // we attempt to access the node after this Object was removed
-            // from it)
-            mNodeRef = 0;
-        } else {
+        if (mObjectNodeRef != 0) {
+            nativeDestroyNode(mObjectNodeRef);
+            mObjectNodeRef = 0;
+        }
+        else {
             mDestroyOnObjNodeCreation = true;
         }
+
+        // Do NOT destroy mNodeRef, as that belongs to the parent
+        // node; it's only temporarily stored here while we wait for
+        // the OBJ to load (if we destroy it, we'll get a crash if
+        // we attempt to access the node after this Object was removed
+        // from it)
+        mNodeRef = 0;
     }
 
     @Override
     public void attachToNode(NodeJni node) {
         // Just save the node ref for now. We'll attach geometry to this node when it's ready
         mNodeRef = node.mNativeRef;
+
         // If node with obj ready
-        if (mObjectLoadingFinished && mObjectNodeRef != 0) {
+        if (mObjectNodeRef != 0) {
             nativeAttachToNode(mObjectNodeRef, mNodeRef);
-            // above we copied geometry from mObjectNodeRef to mNodeRef, don't need mObjectNodeRef
-            nativeDestroyNode(mObjectNodeRef);
-            mObjectNodeRef = 0;
-        } else {
-            mAttachOnObjLoadingFinish = true;
+            // after copying geometry from mObjectNodeRef to mNodeRef, we're done here
+            destroy();
         }
     }
 
     // Called from JNI upon successful loading of OBJ file
-    public void nodeDidFinishCreation() {
-        mObjectLoadingFinished = true;
+    public void nodeDidFinishCreation(long objectNodeRef) {
+        mObjectNodeRef = objectNodeRef;
         // If destroy was called before obj was loaded
         if (mDestroyOnObjNodeCreation) {
             destroy();
         }
         else {
-            if (mAttachOnObjLoadingFinish) {
+            if (mNodeRef != 0) {
+                // after copying geometry to mNodeRef, we're done here
                 nativeAttachToNode(mObjectNodeRef, mNodeRef);
-                nativeDestroyNode(mObjectNodeRef);
-                mObjectNodeRef = 0;
+                destroy();
             }
 
             if (mAsyncObjListener != null) {
@@ -96,7 +90,6 @@ public class ObjectJni extends BaseGeometry {
 
     // Called from JNI upon OBJ failing to load
     public void nodeDidFailOBJLoad(String error) {
-        mObjectLoadingFinished = true;
         if (mDestroyOnObjNodeCreation) {
             destroy();
         }
@@ -105,10 +98,10 @@ public class ObjectJni extends BaseGeometry {
         }
     }
 
-    private native long nativeLoadOBJFromFile(String fileName);
-    private native long nativeLoadOBJAndResourcesFromFile(String fileName,
+    private native void nativeLoadOBJFromFile(String fileName);
+    private native void nativeLoadOBJAndResourcesFromFile(String fileName,
                                                           Map<String, String> resources);
-    private native long nativeLoadOBJFromUrl(String url);
+    private native void nativeLoadOBJFromUrl(String url);
     private native void nativeDestroyNode(long nodeReference);
     private native void nativeAttachToNode(long boxReference, long nodeReference);
 }

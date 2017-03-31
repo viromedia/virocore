@@ -11,12 +11,14 @@
 #include <jni.h>
 #include <PersistentRef.h>
 
+class VRONode;
+
 class OBJLoaderDelegate {
 public:
     OBJLoaderDelegate(jobject nodeJavaObject, JNIEnv *env);
     ~OBJLoaderDelegate();
 
-    void objLoaded();
+    void objLoaded(std::shared_ptr<VRONode> node);
     void objFailed(std::string error);
 
 private:
