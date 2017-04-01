@@ -51,7 +51,7 @@ public:
     void updateSortKey(VROSortKey &key) const;
     
 private:
-    
+        
     void addUniforms();
     void loadUniforms();
     void hydrateProgram(VRODriverOpenGL &driver);
@@ -81,6 +81,7 @@ private:
     void loadPhongLighting(const VROMaterial &material, VRODriverOpenGL &driver);
     void loadBlinnLighting(const VROMaterial &material, VRODriverOpenGL &driver);
     
+    std::shared_ptr<VROShaderModifier> createDiffuseTextureModifier();
     std::shared_ptr<VROShaderModifier> createEGLImageModifier();
     uint32_t hashTextures(const std::vector<std::shared_ptr<VROTexture>> &textures) const;
     

@@ -31,7 +31,7 @@ void main() {
 #pragma surface_modifier_body
     
     lowp vec4 reflective_color = compute_reflection(_surface.position, camera_position, _surface.normal, reflect_texture);
-    lowp vec4 lighting_color = blinn_lighting(_surface, camera_position, specular_texture);
+    lowp vec4 _lighting_color = blinn_lighting(_surface, camera_position, specular_texture);
     
-    frag_color = vec4(lighting_color.xyz + reflective_color.xyz, lighting_color.a);
+    frag_color = vec4(_lighting_color.xyz + reflective_color.xyz, _lighting_color.a);
 }

@@ -29,6 +29,13 @@ VROShaderModifier::VROShaderModifier(VROShaderEntryPoint entryPoint, std::vector
         _body = _body + source + "\n";
     }
     _uniforms = extractUniforms(&_body);
+    
+    /*
+     At the end of each section add the corresponding directive.
+     This way multiple shader modifiers can utilize the same entry point.
+     */
+    _uniforms = _uniforms + getDirective(VROShaderSection::Uniforms) + "\n";
+    _body = _body + getDirective(VROShaderSection::Body) + "\n";
 }
 
 VROShaderModifier::~VROShaderModifier() {
