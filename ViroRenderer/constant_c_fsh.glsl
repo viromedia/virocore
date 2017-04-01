@@ -20,9 +20,9 @@ void main() {
     _surface.alpha = material_alpha;
     _surface.normal = v_normal;
     _surface.position = v_surface_position;
-    
+
 #pragma surface_modifier_body
-    
+
     frag_color = vec4(_surface.diffuse_color.xyz,
                       _surface.alpha * _surface.diffuse_color.a);
 }

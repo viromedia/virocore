@@ -22,9 +22,9 @@ void main() {
     _surface.alpha = material_alpha;
     _surface.normal = v_normal;
     _surface.position = v_surface_position;
-    
+
 #pragma surface_modifier_body
-    
-    lowp vec4 diffuse_color = texture(diffuse_texture, _surface.diffuse_texcoord) * _surface.diffuse_color;
-    frag_color = vec4(diffuse_color.xyz, _surface.alpha * diffuse_color.a);
+
+    lowp vec4 diffuse_texture_color = texture(diffuse_texture, _surface.diffuse_texcoord) * _surface.diffuse_color;
+    frag_color = vec4(diffuse_texture_color.xyz, _surface.alpha * diffuse_texture_color.a);
 }

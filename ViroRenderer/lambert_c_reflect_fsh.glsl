@@ -26,8 +26,8 @@ void main() {
     
 #pragma surface_modifier_body
 
-    lowp vec4 reflective_color = compute_reflection(_surface.position, camera_position, v_normal, reflect_texture);
-    lowp vec4 lighting_color = lambert_lighting_diffuse_fixed(_surface, camera_position);
+    lowp vec4 reflective_color = compute_reflection(_surface.position, camera_position, _surface.normal, reflect_texture);
+    lowp vec4 lighting_color = lambert_lighting(_surface, camera_position);
 
     frag_color = vec4(lighting_color.xyz + reflective_color.xyz, lighting_color.a);
 }

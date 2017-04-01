@@ -24,11 +24,13 @@ void main() {
     _surface.alpha = material_alpha;
     _surface.normal = v_normal;
     _surface.position = v_surface_position;
-    
+
 #pragma surface_modifier_body
     
+    _surface.diffuse_color *= texture(diffuse_texture, _surface.diffuse_texcoord);
+
     float4 reflective_color = compute_reflection(_surface.position, camera_position, _surface.normal, reflect_texture);
-    float4 lighting_color = lambert_lighting_diffuse_texture(_surface, camera_position, diffuse_texture);
+    float4 lighting_color = lambert_lighting(_surface, camera_position);
     
     frag_color = vec4(lighting_color.xyz + reflective_color.xyz, lighting_color.a);
 }

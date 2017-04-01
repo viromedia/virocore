@@ -27,8 +27,9 @@ void main() {
     _surface.alpha = material_alpha;
     _surface.normal = v_normal;
     _surface.position = v_surface_position;
-    
+
 #pragma surface_modifier_body
-    
-    frag_color = phong_lighting_diffuse_texture(_surface, camera_position, diffuse_texture, specular_texture);
+
+    _surface.diffuse_color *= texture(diffuse_texture, _surface.diffuse_texcoord);
+    frag_color = phong_lighting(_surface, camera_position, specular_texture);
 }

@@ -27,11 +27,11 @@ void main() {
     _surface.alpha = material_alpha;
     _surface.normal = v_normal;
     _surface.position = v_surface_position;
-    
+
 #pragma surface_modifier_body
     
     lowp vec4 reflective_color = compute_reflection(_surface.position, camera_position, _surface.normal, reflect_texture);
-    lowp vec4 lighting_color = blinn_lighting_diffuse_fixed(_surface, camera_position, specular_texture);
+    lowp vec4 lighting_color = blinn_lighting(_surface, camera_position, specular_texture);
     
     frag_color = vec4(lighting_color.xyz + reflective_color.xyz, lighting_color.a);
 }

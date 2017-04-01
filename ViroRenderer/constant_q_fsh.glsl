@@ -22,9 +22,9 @@ void main() {
     _surface.alpha = material_alpha;
     _surface.normal = v_normal;
     _surface.position = v_surface_position;
-    
+
 #pragma surface_modifier_body
-    
+
     highp vec3 texcoord = vec3(_surface.position.x, _surface.position.y, -_surface.position.z);
     frag_color = _surface.diffuse_color * texture(diffuse_texture, texcoord) *
                  _surface.diffuse_intensity * vec4(1.0, 1.0, 1.0, _surface.alpha);

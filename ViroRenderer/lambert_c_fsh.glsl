@@ -21,8 +21,8 @@ void main() {
     _surface.alpha = material_alpha;
     _surface.normal = v_normal;
     _surface.position = v_surface_position;
-    
+
 #pragma surface_modifier_body
 
-    frag_color = lambert_lighting_diffuse_fixed(_surface, camera_position);
+    frag_color = lambert_lighting(_surface, camera_position);
 }
