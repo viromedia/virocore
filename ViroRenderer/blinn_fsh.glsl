@@ -10,6 +10,7 @@ uniform lowp float material_shininess;
 uniform sampler2D specular_texture;
 
 #pragma surface_modifier_uniforms
+#pragma fragment_modifier_uniforms
 
 in lowp vec3 v_normal;
 in highp vec2 v_texcoord;
@@ -28,7 +29,11 @@ void main() {
     _surface.position = v_surface_position;
 
 #pragma surface_modifier_body
-
-    frag_color = blinn_lighting(_surface, camera_position, specular_texture);
+    
+    lowp vec4 _output_color = blinn_lighting(_surface, camera_position, specular_texture);
+    
+#pragma fragment_modifier_body
+    
+    frag_color = _output_color;
 }
 

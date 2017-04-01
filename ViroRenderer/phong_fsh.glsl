@@ -10,6 +10,7 @@ uniform lowp float material_shininess;
 uniform sampler2D specular_texture;
 
 #pragma surface_modifier_uniforms
+#pragma fragment_modifier_uniforms
 
 in lowp vec3 v_normal;
 in highp vec2 v_texcoord;
@@ -29,6 +30,10 @@ void main() {
 
 #pragma surface_modifier_body
 
-    frag_color = phong_lighting(_surface, camera_position, specular_texture);
+    lowp vec4 _output_color = phong_lighting(_surface, camera_position, specular_texture);
+    
+#pragma fragment_modifier_body
+    
+    frag_color = _output_color;
 }
 

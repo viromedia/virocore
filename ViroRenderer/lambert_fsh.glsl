@@ -7,6 +7,7 @@ uniform lowp float material_diffuse_intensity;
 uniform lowp float material_alpha;
 
 #pragma surface_modifier_uniforms
+#pragma fragment_modifier_uniforms
 
 in lowp vec3 v_normal;
 in highp vec2 v_texcoord;
@@ -24,5 +25,9 @@ void main() {
 
 #pragma surface_modifier_body
 
-    frag_color = lambert_lighting(_surface, camera_position);
+    lowp vec4 _output_color = lambert_lighting(_surface, camera_position);
+    
+#pragma fragment_modifier_body
+    
+    frag_color = _output_color;
 }

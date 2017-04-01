@@ -101,10 +101,14 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (std::shared_ptr<VRONode>) newTorusWithPosition:(VROVector3f)position {
+    VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
+
     std::shared_ptr<VROTorusKnot> torus = VROTorusKnot::createTorusKnot(3, 8, 0.2, 256, 32);
     std::shared_ptr<VROMaterial> material = torus->getMaterials()[0];
-    material->setLightingModel(VROLightingModel::Blinn);
+    material->setLightingModel(VROLightingModel::Lambert);
     material->getReflective().setTexture([self cloudTexture]);
+    material->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                    std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"], format)));
 
     
     std::shared_ptr<VRONode> torusNode = std::make_shared<VRONode>();

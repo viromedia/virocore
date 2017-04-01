@@ -108,6 +108,15 @@ std::string VROShaderModifier::getDirective(VROShaderSection section) const {
             return "#pragma surface_modifier_uniforms";
         }
     }
+    
+    else if (_entryPoint == VROShaderEntryPoint::Fragment) {
+        if (section == VROShaderSection::Body) {
+            return "#pragma fragment_modifier_body";
+        }
+        else {
+            return "#pragma fragment_modifier_uniforms";
+        }
+    }
 
     // Fill in additional entry points' directives as they are supported
     else {

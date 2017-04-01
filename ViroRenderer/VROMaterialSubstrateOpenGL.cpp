@@ -17,6 +17,7 @@
 #include <sstream>
 
 static std::shared_ptr<VROShaderModifier> sDiffuseTextureModifier;
+static std::shared_ptr<VROShaderModifier> sReflectiveTextureModifier;
 
 void VROMaterialSubstrateOpenGL::hydrateProgram(VRODriverOpenGL &driver) {
     _program->hydrate();
@@ -111,7 +112,7 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
 
 void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
     std::string vertexShader = "standard_vsh";
-    std::string fragmentShader;
+    std::string fragmentShader = "lambert_fsh";
     
     std::vector<std::string> samplers;
     std::vector<std::shared_ptr<VROShaderModifier>> modifiers = material.getShaderModifiers();
@@ -119,34 +120,21 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
     VROMaterialVisual &diffuse = material.getDiffuse();
     VROMaterialVisual &reflective = material.getReflective();
     
-    if (diffuse.getTextureType() == VROTextureType::None) {
-        if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getTexture());
-            samplers.push_back("reflect_texture");
-
-            fragmentShader = "lambert_reflect_fsh";
-        }
-        else {
-            fragmentShader = "lambert_fsh";
-        }
-    }
-    else {
+    if (diffuse.getTextureType() != VROTextureType::None) {
         _textures.push_back(diffuse.getTexture());
         samplers.push_back("diffuse_texture");
         modifiers.push_back(createDiffuseTextureModifier());
         
-        if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getTexture());
-            samplers.push_back("reflect_texture");
-            
-            fragmentShader = "lambert_reflect_fsh";
+        // For Android video
+        if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
+            modifiers.push_back(createEGLImageModifier());
         }
-        else { //Texture2D or TextureEGLImage
-            fragmentShader = "lambert_fsh";
-            if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
-                modifiers.push_back(createEGLImageModifier());
-            }
-        }
+    }
+    
+    if (reflective.getTextureType() == VROTextureType::TextureCube) {
+        _textures.push_back(reflective.getTexture());
+        samplers.push_back("reflect_texture");
+        modifiers.push_back(createReflectiveTextureModifier());
     }
     
     _program = driver.getPooledShader(vertexShader, fragmentShader, samplers,
@@ -161,128 +149,65 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
 }
 
 void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
-    std::string vertexShader = "standard_vsh";
-    std::string fragmentShader;
-    
-    std::vector<std::string> samplers;
-    std::vector<std::shared_ptr<VROShaderModifier>> modifiers = material.getShaderModifiers();
-    
     /*
      If there's no specular map, then we fall back to Lambert lighting.
      */
     VROMaterialVisual &specular = material.getSpecular();
     if (specular.getTextureType() != VROTextureType::Texture2D) {
         loadLambertLighting(material, driver);
-        return;
-    }
-    
-    VROMaterialVisual &diffuse = material.getDiffuse();
-    VROMaterialVisual &reflective = material.getReflective();
-    
-    if (diffuse.getTextureType() == VROTextureType::None) {
-        _textures.push_back(specular.getTexture());
-        samplers.push_back("specular_texture");
-        
-        if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getTexture());
-            samplers.push_back("reflect_texture");
-            
-            fragmentShader = "phong_reflect_fsh";
-        }
-        else {
-            fragmentShader = "phong_fsh";
-        }
     }
     else {
-        _textures.push_back(diffuse.getTexture());
-        _textures.push_back(specular.getTexture());
+        std::string vertexShader = "standard_vsh";
+        std::string fragmentShader = "phong_fsh";
         
-        samplers.push_back("diffuse_texture");
-        samplers.push_back("specular_texture");
-        
-        modifiers.push_back(createDiffuseTextureModifier());
-        
-        if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getTexture());
-            samplers.push_back("reflect_texture");
-
-            fragmentShader = "phong_reflect_fsh";
-        }
-        else { //Texture2D or TextureEGLImage
-            fragmentShader = "phong_fsh";
-            if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
-                modifiers.push_back(createEGLImageModifier());
-            }
-        }
-    }
-
-    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers,
-                                      modifiers);
-    if (!_program->isHydrated()) {
-        addUniforms();
-        _shininessUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
-        hydrateProgram(driver);
-    }
-    else {
-        _shininessUniform = _program->getUniform("material_shininess");
-        loadUniforms();
+        configureSpecularShader(vertexShader, fragmentShader, material, driver);
     }
 }
 
 void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
-    std::string vertexShader = "standard_vsh";
-    std::string fragmentShader;
-    
-    std::vector<std::string> samplers;
-    std::vector<std::shared_ptr<VROShaderModifier>> modifiers = material.getShaderModifiers();
-    
     /*
      If there's no specular map, then we fall back to Lambert lighting.
      */
     VROMaterialVisual &specular = material.getSpecular();
     if (specular.getTextureType() != VROTextureType::Texture2D) {
         loadLambertLighting(material, driver);
-        return;
-    }
-    
-    VROMaterialVisual &diffuse = material.getDiffuse();
-    VROMaterialVisual &reflective = material.getReflective();
-    
-    if (diffuse.getTextureType() == VROTextureType::None) {
-        _textures.push_back(specular.getTexture());
-        samplers.push_back("specular_texture");
-
-        if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getTexture());
-            samplers.push_back("reflect_texture");
-            
-            fragmentShader = "blinn_reflect_fsh";
-        }
-        else {
-            fragmentShader = "blinn_fsh";
-        }
     }
     else {
+        std::string vertexShader = "standard_vsh";
+        std::string fragmentShader = "blinn_fsh";
+        
+        configureSpecularShader(vertexShader, fragmentShader, material, driver);
+    }
+}
+
+// Configures properties for both Blinn and Phong
+void VROMaterialSubstrateOpenGL::configureSpecularShader(std::string vertexShader, std::string fragmentShader,
+                                                         const VROMaterial &material, VRODriverOpenGL &driver) {
+    std::vector<std::string> samplers;
+    std::vector<std::shared_ptr<VROShaderModifier>> modifiers = material.getShaderModifiers();
+
+    VROMaterialVisual &diffuse = material.getDiffuse();
+    VROMaterialVisual &reflective = material.getReflective();
+    VROMaterialVisual &specular = material.getSpecular();
+    
+    if (diffuse.getTextureType() != VROTextureType::None) {
         _textures.push_back(diffuse.getTexture());
-        _textures.push_back(specular.getTexture());
-        
         samplers.push_back("diffuse_texture");
-        samplers.push_back("specular_texture");
-        
         modifiers.push_back(createDiffuseTextureModifier());
         
-        if (reflective.getTextureType() == VROTextureType::TextureCube) {
-            _textures.push_back(reflective.getTexture());
-            samplers.push_back("reflect_texture");
+        // For Android video
+        if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
+            modifiers.push_back(createEGLImageModifier());
+        }
+    }
+    
+    _textures.push_back(specular.getTexture());
+    samplers.push_back("specular_texture");
 
-            fragmentShader = "blinn_reflect_fsh";
-        }
-        else { //Texture2D or TextureEGLImage
-            fragmentShader = "blinn_fsh";
-            if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
-                modifiers.push_back(createEGLImageModifier());
-            }
-        }
+    if (reflective.getTextureType() == VROTextureType::TextureCube) {
+        _textures.push_back(reflective.getTexture());
+        samplers.push_back("reflect_texture");
+        modifiers.push_back(createReflectiveTextureModifier());
     }
     
     _program = driver.getPooledShader(vertexShader, fragmentShader, samplers,
@@ -452,7 +377,6 @@ std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createDiffuseText
      Modifier that multiplies the material's surface color by a diffuse texture.
      */
     if (!sDiffuseTextureModifier) {
-        std::vector<std::string> input;
         std::vector<std::string> modifierCode =  {
             "uniform sampler2D diffuse_texture;",
             "_surface.diffuse_color *= texture(diffuse_texture, _surface.diffuse_texcoord);"
@@ -462,6 +386,23 @@ std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createDiffuseText
     }
    
     return sDiffuseTextureModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createReflectiveTextureModifier() {
+    /*
+     Modifier that adds reflective color to the final light computation.
+     */
+    if (!sReflectiveTextureModifier) {
+        std::vector<std::string> modifierCode =  {
+            "uniform samplerCube reflect_texture;",
+            "lowp vec4 reflective_color = compute_reflection(_surface.position, camera_position, _surface.normal, reflect_texture);",
+            "_output_color.xyz += reflective_color.xyz;"
+        };
+        sReflectiveTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
+                                                                         modifierCode);
+    }
+    
+    return sReflectiveTextureModifier;
 }
 
 std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createEGLImageModifier() {
