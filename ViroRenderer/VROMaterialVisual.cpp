@@ -9,7 +9,10 @@
 #include "VROMaterialVisual.h"
 #include "VROAnimationFloat.h"
 #include "VROMaterial.h"
+#include "VROShaderModifier.h"
 #include "VROLog.h"
+#include "VROEye.h"
+#include "VROStringUtil.h"
 
 VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
  _material(visual._material),
@@ -67,9 +70,8 @@ void VROMaterialVisual::setTexture(std::shared_ptr<VROTexture> texture) {
         pabort("Material visual does not support texture of type %d", texture->getType());
         return;
     }
-    
+
     _material.fadeSnapshot();
-    
     _contentsTexture = texture;
     _material.updateSubstrate();
 }

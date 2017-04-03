@@ -210,7 +210,7 @@
 		8FCB10021DD0060E00FE425C /* VRORenderDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB10011DD0060900FE425C /* VRORenderDelegateiOS.h */; };
 		8FCB10031DD0062300FE425C /* VRORenderDelegateInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB10001DD0055400FE425C /* VRORenderDelegateInternal.h */; };
 		8FCB10081DD10EF300FE425C /* VROStringUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB10061DD10EF300FE425C /* VROStringUtil.cpp */; };
-		8FCB10091DD10EF300FE425C /* VROStringUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB10071DD10EF300FE425C /* VROStringUtil.h */; };
+		8FCB10091DD10EF300FE425C /* VROStringUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB10071DD10EF300FE425C /* VROStringUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCB100B1DD12BDF00FE425C /* VRODriverOpenGLiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB100A1DD12BDF00FE425C /* VRODriverOpenGLiOS.h */; };
 		8FCB100D1DD131C900FE425C /* VROPlatformUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB100C1DD131C900FE425C /* VROPlatformUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCB100F1DD1325100FE425C /* VROPlatformUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCB100E1DD1325100FE425C /* VROPlatformUtil.cpp */; };
@@ -351,6 +351,12 @@
 		A586978A1E308B4500191090 /* VROInputControllerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A586977F1E30843000191090 /* VROInputControllerBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A586978B1E308B5400191090 /* VROInputControllerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A586977E1E30843000191090 /* VROInputControllerBase.cpp */; };
 		A586978C1E308BD300191090 /* VROInputPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A58697801E30843000191090 /* VROInputPresenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5ABB1BA1E93300700E07EBC /* chillroots.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1B91E93300700E07EBC /* chillroots.mp4 */; };
+		A5ABB1CD1E95703200E07EBC /* stereo1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1C01E95703200E07EBC /* stereo1.jpg */; };
+		A5ABB1D61E95703200E07EBC /* stereo3601.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1C91E95703200E07EBC /* stereo3601.jpg */; };
+		A5ABB1D71E95703200E07EBC /* stereo3602.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CA1E95703200E07EBC /* stereo3602.jpg */; };
+		A5ABB1D81E95703200E07EBC /* stereoVid.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CB1E95703200E07EBC /* stereoVid.mp4 */; };
+		A5ABB1D91E95703200E07EBC /* stereoVid360.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CC1E95703200E07EBC /* stereoVid360.mp4 */; };
 		EC8D0A685CE2FA0BE80B7363 /* libPods-ViroSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF43BA975D626635F2D5584C /* libPods-ViroSample.a */; };
 /* End PBXBuildFile section */
 
@@ -791,6 +797,12 @@
 		A58697831E3084A400191090 /* VROInputControllerCardboardiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputControllerCardboardiOS.h; sourceTree = "<group>"; };
 		A58697841E3084A400191090 /* VROInputPresenterCardboardiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputPresenterCardboardiOS.h; sourceTree = "<group>"; };
 		A58697881E30887500191090 /* VROInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInputType.h; sourceTree = "<group>"; };
+		A5ABB1B91E93300700E07EBC /* chillroots.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = chillroots.mp4; path = ViroSample/chillroots.mp4; sourceTree = "<group>"; };
+		A5ABB1C01E95703200E07EBC /* stereo1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = stereo1.jpg; path = ViroSample/stereo1.jpg; sourceTree = "<group>"; };
+		A5ABB1C91E95703200E07EBC /* stereo3601.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = stereo3601.jpg; path = ViroSample/stereo3601.jpg; sourceTree = "<group>"; };
+		A5ABB1CA1E95703200E07EBC /* stereo3602.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = stereo3602.jpg; path = ViroSample/stereo3602.jpg; sourceTree = "<group>"; };
+		A5ABB1CB1E95703200E07EBC /* stereoVid.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = stereoVid.mp4; path = ViroSample/stereoVid.mp4; sourceTree = "<group>"; };
+		A5ABB1CC1E95703200E07EBC /* stereoVid360.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = stereoVid360.mp4; path = ViroSample/stereoVid360.mp4; sourceTree = "<group>"; };
 		B1049B08B869A86043674A7C /* Pods-ViroSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.release.xcconfig"; sourceTree = "<group>"; };
 		BF43BA975D626635F2D5584C /* libPods-ViroSample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroSample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3267984E31F54DDFDA5BFE7 /* Pods-ViroSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.debug.xcconfig"; sourceTree = "<group>"; };
@@ -1465,6 +1477,12 @@
 				8F660AAD1E931C6F006D063F /* 4096_night_lights.jpg */,
 				8F660AAE1E931C6F006D063F /* 4096_normal.jpg */,
 				8F660AAF1E931C6F006D063F /* earth.mtl */,
+				A5ABB1C01E95703200E07EBC /* stereo1.jpg */,
+				A5ABB1C91E95703200E07EBC /* stereo3601.jpg */,
+				A5ABB1CA1E95703200E07EBC /* stereo3602.jpg */,
+				A5ABB1CB1E95703200E07EBC /* stereoVid.mp4 */,
+				A5ABB1CC1E95703200E07EBC /* stereoVid360.mp4 */,
+				A5ABB1B91E93300700E07EBC /* chillroots.mp4 */,
 				8F705DF21E8F5D42008BE8F8 /* earth_normal.jpg */,
 				8F705DF31E8F5D42008BE8F8 /* earth.jpg */,
 				8F705DF41E8F5D42008BE8F8 /* earth.obj */,
@@ -1539,8 +1557,12 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+<<<<<<< 48031ad00a0ac07c5d09a2c90d702c6daaad647e
 				8F660ABB1E9554B8006D063F /* VROFrameScheduler.h in Headers */,
 				8FCB10211DD544E800FE425C /* VROVideoTextureCache.h in Headers */,
+=======
+				8FCB10091DD10EF300FE425C /* VROStringUtil.h in Headers */,
+>>>>>>> VIRO-25: Support Stereoscopic Photos / Videos (Renderer)
 				A58697891E30887500191090 /* VROInputType.h in Headers */,
 				A586978C1E308BD300191090 /* VROInputPresenter.h in Headers */,
 				A566EB3D1E1B47B7008B4AE2 /* VROEventDelegateiOS.h in Headers */,
@@ -1568,7 +1590,6 @@
 				8F83DEA21C4826F80089C31A /* VROTimingFunctionLinear.h in Headers */,
 				8FA2E1551C44AE340070DB26 /* VROTorusKnot.h in Headers */,
 				8F4AD9211D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h in Headers */,
-				8FCB10091DD10EF300FE425C /* VROStringUtil.h in Headers */,
 				8FCB10251DD544E800FE425C /* VROVideoTextureCacheOpenGL.h in Headers */,
 				8FD4DF341C18F500003DC425 /* VROGeometry.h in Headers */,
 				8FD4DF351C18F500003DC425 /* VROGeometryElement.h in Headers */,
@@ -1855,6 +1876,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5ABB1BA1E93300700E07EBC /* chillroots.mp4 in Resources */,
 				8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
 				8F660AB11E931C6F006D063F /* 4096_clouds.jpg in Resources */,
@@ -1866,6 +1888,7 @@
 				8F705DF51E8F5D42008BE8F8 /* earth_normal.jpg in Resources */,
 				8F9278011C66BD4500FF892A /* px1.jpg in Resources */,
 				8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
+				A5ABB1D91E95703200E07EBC /* stereoVid360.mp4 in Resources */,
 				8F9278001C66BD4500FF892A /* nz1.jpg in Resources */,
 				8FA2E14A1C445CAA0070DB26 /* nz.png in Resources */,
 				8F50FC891E0AF54F00A9B4B2 /* male-02-1noCulling.JPG in Resources */,
@@ -1878,14 +1901,17 @@
 				8FA2E14C1C445CAA0070DB26 /* py.png in Resources */,
 				8F660AB21E931C6F006D063F /* 4096_earth.jpg in Resources */,
 				8F660AB51E931C6F006D063F /* earth.mtl in Resources */,
+				A5ABB1D81E95703200E07EBC /* stereoVid.mp4 in Resources */,
 				8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */,
 				8F9277FE1C66BD4500FF892A /* nx1.jpg in Resources */,
 				8FA2E1481C445CAA0070DB26 /* nx.png in Resources */,
+				A5ABB1D61E95703200E07EBC /* stereo3601.jpg in Resources */,
 				8FA2E1411C4447D00070DB26 /* skybox.png in Resources */,
 				8F83DEB11C503EDF0089C31A /* beach.jpg in Resources */,
 				8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */,
 				8F9277FF1C66BD4500FF892A /* ny1.jpg in Resources */,
 				8FDD8FF31E3A9907006CF466 /* 360_westlake.jpg in Resources */,
+				A5ABB1D71E95703200E07EBC /* stereo3602.jpg in Resources */,
 				8F50FC8C1E0AF54F00A9B4B2 /* orig_02_-_Defaul1noCulling.JPG in Resources */,
 				8F50FC881E0AF54F00A9B4B2 /* 01_-_Default1noCulling.JPG in Resources */,
 				8F517BC71BCDA2BD0017C70B /* Main.storyboard in Resources */,
@@ -1896,6 +1922,7 @@
 				8F50FC8A1E0AF54F00A9B4B2 /* male02.mtl in Resources */,
 				8F705DF61E8F5D42008BE8F8 /* earth.jpg in Resources */,
 				8F83DEB31C5042240089C31A /* surfing.mp4 in Resources */,
+				A5ABB1CD1E95703200E07EBC /* stereo1.jpg in Resources */,
 				8FA2E1491C445CAA0070DB26 /* ny.png in Resources */,
 				8FD9B4651C33A933006CB698 /* bobaraj.png in Resources */,
 			);

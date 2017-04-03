@@ -9,6 +9,7 @@
 #include <memory>
 #include <VROVideoSurface.h>
 #include <VROVideoTextureAVP.h>
+#include <VROTextureUtil.h>
 #include "VRONode.h"
 #include "VROMaterial.h"
 #include "PersistentRef.h"
@@ -27,10 +28,19 @@ extern "C" {
 
 JNI_METHOD(jlong, nativeCreateVideoTexture)(JNIEnv *env,
                                             jobject object,
-                                            jlong renderContextRef) {
+                                            jlong renderContextRef,
+                                            jstring stereoMode) {
+
+    VROStereoMode mode = VROStereoMode::None;
+    if (stereoMode != NULL) {
+        const char *cStrStereoMode = env->GetStringUTFChars(stereoMode, NULL);
+        std::string strStereoMode(cStrStereoMode);
+        env->ReleaseStringUTFChars(stereoMode, cStrStereoMode);
+        mode = VROTextureUtil::getStereoModeForString(strStereoMode);
+    }
 
     std::weak_ptr<RenderContext> renderContext_w = RenderContext::native(renderContextRef);
-    std::shared_ptr<VROVideoTextureAVP> videoTexture = std::make_shared<VROVideoTextureAVP>();
+    std::shared_ptr<VROVideoTextureAVP> videoTexture = std::make_shared<VROVideoTextureAVP>(mode);
 
     VROPlatformDispatchAsyncRenderer([videoTexture, renderContext_w] {
         std::shared_ptr<RenderContext> renderContext = renderContext_w.lock();

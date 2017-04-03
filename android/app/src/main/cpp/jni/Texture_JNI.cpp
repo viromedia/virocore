@@ -6,6 +6,7 @@
 //
 #include <jni.h>
 #include <memory>
+#include <VROTextureUtil.h>
 
 #include "Image_JNI.h"
 #include "Texture_JNI.h"
@@ -51,10 +52,21 @@ JNI_METHOD(jlong, nativeCreateCubeTexture)(JNIEnv *env, jobject obj,
 }
 
 JNI_METHOD(jlong, nativeCreateImageTexture)(JNIEnv *env, jobject obj, jlong image,
-                                            jstring format, jboolean mipmap) {
+                                            jstring format, jboolean mipmap, jstring stereoMode) {
+
+    VROStereoMode mode = VROStereoMode::None;
+    if (stereoMode != NULL) {
+        const char *cStrStereoMode = env->GetStringUTFChars(stereoMode, NULL);
+        std::string strStereoMode(cStrStereoMode);
+        env->ReleaseStringUTFChars(stereoMode, cStrStereoMode);
+        mode = VROTextureUtil::getStereoModeForString(strStereoMode);
+    }
+
     std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(Texture::getFormat(env, format),
                                                                           mipmap ? VROMipmapMode::Runtime : VROMipmapMode::None,
-                                                                          Image::native(image));
+                                                                          Image::native(image),
+                                                                          nullptr,
+                                                                          mode);
     return Texture::jptr(texturePtr);
 }
 

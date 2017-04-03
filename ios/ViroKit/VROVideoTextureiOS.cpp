@@ -22,8 +22,8 @@
 static NSString *const kStatusKey = @"status";
 static NSString *const kPlaybackKeepUpKey = @"playbackLikelyToKeepUp";
 
-VROVideoTextureiOS::VROVideoTextureiOS() :
-    VROVideoTexture(VROTextureType::Texture2D),
+VROVideoTextureiOS::VROVideoTextureiOS(VROStereoMode stereoMode) :
+    VROVideoTexture(VROTextureType::Texture2D, stereoMode),
     _paused(true) {
     
     ALLOCATION_TRACKER_ADD(VideoTextures, 1);

@@ -26,7 +26,7 @@ class VROVideoTextureAVP : public VROVideoTexture, public VROAVPlayerDelegate {
 
 public:
 
-    VROVideoTextureAVP();
+    VROVideoTextureAVP(VROStereoMode state = VROStereoMode::None);
     virtual ~VROVideoTextureAVP();
 
     /*

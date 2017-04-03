@@ -21,17 +21,19 @@
 
 static std::atomic_int sTextureId;
 
-VROTexture::VROTexture(VROTextureType type) :
+VROTexture::VROTexture(VROTextureType type, VROStereoMode stereoMode) :
     _textureId(sTextureId++),
     _type(type),
+    _stereoMode(stereoMode),
     _substrate(nullptr) {
     
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
-VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate) :
+VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate, VROStereoMode stereoState) :
     _textureId(sTextureId++),
     _type(type),
+    _stereoMode(stereoState),
     _substrate(std::move(substrate)) {
     
     ALLOCATION_TRACKER_ADD(Textures, 1);
@@ -39,9 +41,11 @@ VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate>
 
 VROTexture::VROTexture(VROTextureInternalFormat internalFormat,
                        VROMipmapMode mipmapMode,
-                       std::shared_ptr<VROImage> image) :
+                       std::shared_ptr<VROImage> image,
+                       VROStereoMode stereoMode) :
     _textureId(sTextureId++),
     _type(VROTextureType::Texture2D),
+    _stereoMode(stereoMode),
     _images( {image} ),
     _format(image->getFormat()),
     _internalFormat(internalFormat),
@@ -54,9 +58,11 @@ VROTexture::VROTexture(VROTextureInternalFormat internalFormat,
 }
 
 VROTexture::VROTexture(VROTextureInternalFormat internalFormat,
-                       std::vector<std::shared_ptr<VROImage>> &images) :
+                       std::vector<std::shared_ptr<VROImage>> &images,
+                       VROStereoMode stereoMode) :
     _textureId(sTextureId++),
     _type(VROTextureType::TextureCube),
+    _stereoMode(stereoMode),
     _images(images),
     _format(images.front()->getFormat()),
     _internalFormat(internalFormat),
@@ -74,9 +80,11 @@ VROTexture::VROTexture(VROTextureType type,
                        VROMipmapMode mipmapMode,
                        std::vector<std::shared_ptr<VROData>> &data,
                        int width, int height,
-                       std::vector<uint32_t> mipSizes) :
+                       std::vector<uint32_t> mipSizes),
+                       VROStereoMode stereoMode) :
     _textureId(sTextureId++),
     _type(type),
+    _stereoMode(stereoMode),
     _data(data),
     _format(format),
     _internalFormat(internalFormat),

@@ -19,12 +19,13 @@
 static std::shared_ptr<VROShaderModifier> sDiffuseTextureModifier;
 static std::shared_ptr<VROShaderModifier> sNormalMapTextureModifier;
 static std::shared_ptr<VROShaderModifier> sReflectiveTextureModifier;
+static std::map<VROStereoMode ,std::shared_ptr<VROShaderModifier>> sStereoscopicTextureModifiers;
 
 void VROMaterialSubstrateOpenGL::hydrateProgram(VRODriverOpenGL &driver) {
     _program->hydrate();
 }
 
-VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &material, VRODriverOpenGL &driver) :
+VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(VROMaterial &material, VRODriverOpenGL &driver) :
     _material(material),
     _lightingModel(material.getLightingModel()),
     _program(nullptr),
@@ -36,7 +37,8 @@ VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(const VROMaterial &materi
     _modelMatrixUniform(nullptr),
     _modelViewMatrixUniform(nullptr),
     _modelViewProjectionMatrixUniform(nullptr),
-    _cameraPositionUniform(nullptr) {
+    _cameraPositionUniform(nullptr),
+    _eyeTypeUniform(nullptr){
 
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
@@ -79,13 +81,20 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
         fragmentShader = "constant_fsh";
     }
     else if (diffuse.getTextureType() == VROTextureType::Texture2D) {
+        if (diffuse.getTexture()->getStereoMode() != VROStereoMode::None){
+            modifiers.push_back(createStereoTextureModifier(diffuse.getTexture()->getStereoMode()));
+        }
+
         _textures.push_back(diffuse.getTexture());
         samplers.push_back("diffuse_texture");
         modifiers.push_back(createDiffuseTextureModifier());
-
         fragmentShader = "constant_fsh";
     }
     else if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
+        if (diffuse.getTexture()->getStereoMode() != VROStereoMode::None){
+            modifiers.push_back(createStereoTextureModifier(diffuse.getTexture()->getStereoMode()));
+        }
+
         _textures.push_back(diffuse.getTexture());
         samplers.push_back("diffuse_texture");
         modifiers.push_back(createDiffuseTextureModifier());
@@ -121,8 +130,12 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
     VROMaterialVisual &diffuse    = material.getDiffuse();
     VROMaterialVisual &normal     = material.getNormal();
     VROMaterialVisual &reflective = material.getReflective();
-    
+
     if (diffuse.getTextureType() != VROTextureType::None) {
+        if (diffuse.getTexture()->getStereoMode() != VROStereoMode::None){
+            modifiers.push_back(createStereoTextureModifier(diffuse.getTexture()->getStereoMode()));
+        }
+
         _textures.push_back(diffuse.getTexture());
         samplers.push_back("diffuse_texture");
         modifiers.push_back(createDiffuseTextureModifier());
@@ -198,8 +211,12 @@ void VROMaterialSubstrateOpenGL::configureSpecularShader(std::string vertexShade
     VROMaterialVisual &specular   = material.getSpecular();
     VROMaterialVisual &normal     = material.getNormal();
     VROMaterialVisual &reflective = material.getReflective();
-    
+
     if (diffuse.getTextureType() != VROTextureType::None) {
+        if (diffuse.getTexture()->getStereoMode() != VROStereoMode::None){
+            modifiers.push_back(createStereoTextureModifier(diffuse.getTexture()->getStereoMode()));
+        }
+
         _textures.push_back(diffuse.getTexture());
         samplers.push_back("diffuse_texture");
         modifiers.push_back(createDiffuseTextureModifier());
@@ -244,11 +261,12 @@ void VROMaterialSubstrateOpenGL::addUniforms() {
     _modelViewMatrixUniform = _program->addUniform(VROShaderProperty::Mat4, 1, "modelview_matrix");
     _modelViewProjectionMatrixUniform = _program->addUniform(VROShaderProperty::Mat4, 1, "modelview_projection_matrix");
     _cameraPositionUniform = _program->addUniform(VROShaderProperty::Vec3, 1, "camera_position");
-    
+    _eyeTypeUniform = _program->addUniform(VROShaderProperty::Int, 1, "eye_type");
+
     _diffuseSurfaceColorUniform = _program->addUniform(VROShaderProperty::Vec4, 1, "material_diffuse_surface_color");
     _diffuseIntensityUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_diffuse_intensity");
     _alphaUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_alpha");
-    
+
     for (const std::shared_ptr<VROShaderModifier> &modifier : _material.getShaderModifiers()) {
         std::vector<std::string> uniformNames = modifier->getUniforms();
         
@@ -269,6 +287,7 @@ void VROMaterialSubstrateOpenGL::loadUniforms() {
     _modelViewMatrixUniform = _program->getUniform("modelview_matrix");
     _modelViewProjectionMatrixUniform = _program->getUniform("modelview_projection_matrix");
     _cameraPositionUniform = _program->getUniform("camera_position");
+    _eyeTypeUniform = _program->getUniform("eye_type");
     
     for (const std::shared_ptr<VROShaderModifier> &modifier : _material.getShaderModifiers()) {
         std::vector<std::string> uniformNames = modifier->getUniforms();
@@ -344,8 +363,7 @@ void VROMaterialSubstrateOpenGL::bindCullingSettings() {
 
 void VROMaterialSubstrateOpenGL::bindViewUniforms(VROMatrix4f transform, VROMatrix4f modelview,
                                                   VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
-                                                  VROVector3f cameraPosition) {
-    
+                                                  VROVector3f cameraPosition, VROEyeType eyeType) {
     if (_normalMatrixUniform != nullptr) {
         _normalMatrixUniform->setMat4(normalMatrix);
     }
@@ -360,6 +378,9 @@ void VROMaterialSubstrateOpenGL::bindViewUniforms(VROMatrix4f transform, VROMatr
     }
     if (_cameraPositionUniform != nullptr) {
         _cameraPositionUniform->setVec3(cameraPosition);
+    }
+    if (_eyeTypeUniform != nullptr){
+        _eyeTypeUniform->setInt(static_cast<int>(eyeType));
     }
 }
 
@@ -435,6 +456,45 @@ std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createReflectiveT
     }
     
     return sReflectiveTextureModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createStereoTextureModifier(VROStereoMode currentStereoMode) {
+    /*
+     Modifier that renders half of the diffuse image for each eye for stereoscopic behavior.
+     */
+    std::shared_ptr<VROShaderModifier> modifier;
+    if (sStereoscopicTextureModifiers[currentStereoMode]){
+        modifier = sStereoscopicTextureModifiers[currentStereoMode];
+    } else {
+        // Assume leftRight stereoscopic image by default.
+        std::string stereoAxis = "x";
+        std::string eye_left = VROStringUtil::toString(static_cast<int>(VROEyeType::Left));
+        std::string eye_right = VROStringUtil::toString(static_cast<int>(VROEyeType::Right));
+
+        // If stereoscopic image is vertical, change stereoAxis to y
+        if (currentStereoMode == VROStereoMode::TopBottom || currentStereoMode == VROStereoMode::BottomTop){
+            stereoAxis = "y";
+        }
+
+        // For stereo modes where the eyes are switched, we flip them.
+        if (currentStereoMode == VROStereoMode::RightLeft || currentStereoMode == VROStereoMode::BottomTop){
+            std::string tmp = eye_left;
+            eye_left = eye_right;
+            eye_right = tmp;
+        }
+
+        // Create the shader modifier
+        std::vector<std::string> surfaceModifierCode =  {
+                "uniform int eye_type;",
+                "if (eye_type == "+eye_left+") {_surface.diffuse_texcoord."+stereoAxis+" = _surface.diffuse_texcoord."+stereoAxis+" * 0.5;}",
+                "else if (eye_type == "+eye_right+") {_surface.diffuse_texcoord."+stereoAxis+" = (_surface.diffuse_texcoord."+stereoAxis+" * 0.5) + 0.5;}"
+        };
+
+        modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface, surfaceModifierCode);
+        sStereoscopicTextureModifiers[currentStereoMode] = modifier;
+    }
+
+    return modifier;
 }
 
 std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createEGLImageModifier() {

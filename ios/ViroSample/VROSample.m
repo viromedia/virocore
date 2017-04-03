@@ -16,7 +16,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneText,
     VROSampleSceneVideoSphere,
     VROSampleSceneNormalMap,
-    VROSampleSceneNumScenes
+    VROSampleSceneNumScenes,
+    VROSampleStereoscopic
 };
 
 @interface VROSample ()
@@ -37,26 +38,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (std::shared_ptr<VROSceneController>)loadSceneWithIndex:(int)index {
     int modulo = index % VROSampleSceneNumScenes;
     
-    switch (modulo) {
-        case VROSampleSceneTorus:
-            return [self loadTorusScene];
-        case VROSampleSceneCamera:
-            return [self loadCameraScene];
-        case VROSampleSceneVideoSphere:
-            return [self loadVideoSphereScene];
-        case VROSampleSceneText:
-            return [self loadTextScene];
-        case VROSampleSceneOBJ:
-            return [self loadOBJScene];
-        case VROSampleSceneNormalMap:
-            return [self loadNormalMapScene];
-        case VROSampleSceneBox:
-            return [self loadBoxScene];
-        default:
-            break;
-    }
     
-    return [self loadTorusScene];
+    return [self loadStereoBackground];
 }
 
 - (std::shared_ptr<VROTexture>) niagaraTexture {
@@ -544,6 +527,86 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     });
     
     objNode->runAction(action);
+    return sceneController;
+}
+
+- (std::shared_ptr<VROSceneController>)loadStereoCard {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
+    scene->setBackgroundCube([self niagaraTexture]);
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(20, 20);
+
+    // Debug toggle between stereo image and stereo video cards
+    bool showImage = true;
+  
+    if (showImage){
+        std::shared_ptr<VROTexture> imgTexture
+        = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
+                                      VROMipmapMode::None, // Don't mipmap 360 images, wastes memory
+                                       std::make_shared<VROImageiOS>([UIImage imageNamed:@"stereo1.jpg"], VROTextureInternalFormat::RGBA8),
+                                       nil,
+                                       StereoState::Horizontal);
+        surface->getMaterials().front()->getDiffuse().setTexture(imgTexture);
+    } else {
+        // show video
+        NSString *objPath = [[NSBundle mainBundle] pathForResource:@"stereoVid" ofType:@"mp4"];
+        NSURL *objURL = [NSURL fileURLWithPath:objPath];
+        std::string url = std::string([[objURL description] UTF8String]);
+        
+        self.videoTexture = std::make_shared<VROVideoTextureiOS>(StereoState::Horizontal);
+        self.videoTexture->loadVideo(url, [self.view frameSynchronizer], self.driver);
+        self.videoTexture->play();
+        surface->getMaterials().front()->getDiffuse().setTexture(self.videoTexture);
+    }
+    
+    std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
+    surfaceNode->setGeometry(surface);
+    surfaceNode->setPosition({0, 0, -35.01});
+    
+    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
+    light->setColor({ 0.7, 0.7, 0.7 });
+    light->setPosition( { 0, 0, 0 });
+    light->setDirection( { 0, 0, -1.0 });
+    light->setAttenuationStartDistance(50);
+    light->setAttenuationEndDistance(75);
+    light->setSpotInnerAngle(45);
+    light->setSpotOuterAngle(90);
+    
+    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    rootNode->setPosition({0, 0, 0});
+    rootNode->addLight(light);
+    rootNode->addChildNode(surfaceNode);
+    scene->addNode(rootNode);
+    return sceneController;
+}
+
+- (std::shared_ptr<VROSceneController>)loadStereoBackground {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
+    scene->setBackgroundCube([self niagaraTexture]);
+    // Debug toggle between stereo image and stereo video background
+    bool showImage = false;
+
+    if (showImage){
+        std::shared_ptr<VROTexture> imgTexture
+        = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
+                                       VROMipmapMode::None, // Don't mipmap 360 images, wastes memory
+                                       std::make_shared<VROImageiOS>([UIImage imageNamed:@"stereo3601.jpg"], VROTextureInternalFormat::RGBA8),
+                                       nil,
+                                       StereoState::Vertical);
+        scene->setBackgroundSphere(imgTexture);
+    } else {
+        NSString *objPath = [[NSBundle mainBundle] pathForResource:@"stereoVid360" ofType:@"mp4"];
+        NSURL *objURL = [NSURL fileURLWithPath:objPath];
+        std::string url = std::string([[objURL description] UTF8String]);
+        
+        self.videoTexture = std::make_shared<VROVideoTextureiOS>(StereoState::Vertical);
+        self.videoTexture->loadVideo(url, [self.view frameSynchronizer], self.driver);
+        self.videoTexture->play();
+        scene->setBackgroundSphere(self.videoTexture);
+
+    }
+    
     return sceneController;
 }
 

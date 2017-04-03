@@ -10,9 +10,10 @@
 #include "VROTextureSubstrateOpenGL.h"
 #include "VROPlatformUtil.h"
 
-VROVideoTextureAVP::VROVideoTextureAVP() :
-    VROVideoTexture(VROTextureType::TextureEGLImage),
-    _textureId(0) {
+VROVideoTextureAVP::VROVideoTextureAVP(VROStereoMode stereoMode) :
+    VROVideoTexture(VROTextureType::TextureEGLImage, stereoMode),
+    _textureId(0)
+{
     _player = new VROAVPlayer();
 }
 

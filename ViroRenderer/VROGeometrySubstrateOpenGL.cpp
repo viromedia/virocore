@@ -248,7 +248,7 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     
     VROMatrix4f modelview = viewMatrix.multiply(transform);
     substrate->bindViewUniforms(transform, modelview, projectionMatrix, normalMatrix,
-                                context.getCamera().getPosition());
+                                context.getCamera().getPosition(), context.getEyeType());
    
     glBindVertexArray(_vaos[elementIndex]);
     renderMaterial(substrate, element, opacity, context, driver);

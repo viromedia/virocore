@@ -28,7 +28,7 @@ class VROMaterialSubstrateOpenGL : public VROMaterialSubstrate {
     
 public:
     
-    VROMaterialSubstrateOpenGL(const VROMaterial &material, VRODriverOpenGL &driver);
+    VROMaterialSubstrateOpenGL(VROMaterial &material, VRODriverOpenGL &driver);
     virtual ~VROMaterialSubstrateOpenGL();
     
     void bindShader();
@@ -41,7 +41,7 @@ public:
     void bindCullingSettings();
     void bindViewUniforms(VROMatrix4f transform, VROMatrix4f modelview,
                           VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
-                          VROVector3f cameraPosition);
+                          VROVector3f cameraPosition, VROEyeType eyeType);
     void bindMaterialUniforms(float opacity);
     
     const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
@@ -73,7 +73,8 @@ private:
     VROUniform *_modelViewMatrixUniform;
     VROUniform *_modelViewProjectionMatrixUniform;
     VROUniform *_cameraPositionUniform;
-    
+    VROUniform *_eyeTypeUniform;
+
     std::vector<VROUniform *> _shaderModifierUniforms;
     
     void loadConstantLighting(const VROMaterial &material, VRODriverOpenGL &driver);
@@ -88,7 +89,8 @@ private:
     std::shared_ptr<VROShaderModifier> createNormalMapTextureModifier();
     std::shared_ptr<VROShaderModifier> createReflectiveTextureModifier();
     std::shared_ptr<VROShaderModifier> createEGLImageModifier();
-    
+    std::shared_ptr<VROShaderModifier> createStereoTextureModifier(VROStereoMode currentStereoMode);
+
     uint32_t hashTextures(const std::vector<std::shared_ptr<VROTexture>> &textures) const;
     
 };

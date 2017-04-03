@@ -4,7 +4,6 @@
 package com.viro.renderer.jni;
 
 public class TextureJni {
-
     protected long mNativeRef;
 
     public TextureJni(ImageJni px, ImageJni nx, ImageJni py,
@@ -17,7 +16,11 @@ public class TextureJni {
     }
 
     public TextureJni(ImageJni image, TextureFormat format, boolean mipmap) {
-        mNativeRef = nativeCreateImageTexture(image.mNativeRef, format.getID(), mipmap);
+        mNativeRef = nativeCreateImageTexture(image.mNativeRef, format.getID(), mipmap, null);
+    }
+
+    public TextureJni(ImageJni image, TextureFormat format, boolean mipmap, String stereoMode) {
+        mNativeRef = nativeCreateImageTexture(image.mNativeRef, format.getID(), mipmap, stereoMode);
     }
 
     public void destroy() {
@@ -26,6 +29,6 @@ public class TextureJni {
     private native long nativeCreateCubeTexture(long px, long nx, long py,
                                                 long ny, long pz, long nz,
                                                 String format);
-    private native long nativeCreateImageTexture(long image, String format, boolean mipmap);
+    private native long nativeCreateImageTexture(long image, String format, boolean mipmap, String stereoMode);
     private native void nativeDestroyTexture(long nativeRef);
 }

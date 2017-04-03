@@ -137,3 +137,18 @@ std::shared_ptr<VROData> VROTextureUtil::readKTXHeader(const uint8_t *data, uint
     buffer.releaseBytes();
     return std::make_shared<VROData>(buffer.getData(), buffer.getPosition(), VRODataOwnership::Move);
 }
+
+VROStereoMode VROTextureUtil::getStereoModeForString(std::string stereoModeTag){
+    if (VROStringUtil::strcmpinsensitive(stereoModeTag, "leftRight")){
+        return VROStereoMode::LeftRight;
+    } else if (VROStringUtil::strcmpinsensitive(stereoModeTag, "rightLeft")){
+        return VROStereoMode::RightLeft;
+    } else if (VROStringUtil::strcmpinsensitive(stereoModeTag, "topBottom")){
+        return VROStereoMode::TopBottom;
+    } else if (VROStringUtil::strcmpinsensitive(stereoModeTag, "bottomTop")){
+        return VROStereoMode::BottomTop;
+    }
+
+    return VROStereoMode::None;
+}
+

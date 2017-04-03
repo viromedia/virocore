@@ -18,6 +18,7 @@ import android.util.Log;
 import com.viro.renderer.jni.AmbientLightJni;
 import com.viro.renderer.jni.AsyncObjListener;
 import com.viro.renderer.jni.BoxJni;
+import com.viro.renderer.jni.ControllerJni;
 import com.viro.renderer.jni.DirectionalLightJni;
 import com.viro.renderer.jni.EventDelegateJni;
 import com.viro.renderer.jni.GlListener;
@@ -120,13 +121,17 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         nodes = testBox(getApplicationContext());
         //nodes = test3dObjectLoading(getApplicationContext());
 
-
         //nodes = testImageSurface(this);
         //nodes = testText(this);
 
         //testBackgroundVideo(scene);
         //testBackgroundImage(scene);
         //testSkyBoxImage(scene);
+
+        //nodes = testStereoSurfaceVideo(this);
+        //nodes = testStereoImageSurface(this);
+        //testStereoBackgroundVideo(scene);
+        //testStereoBackgroundImage(scene);
 
         // addNormalSound("http://www.kozco.com/tech/32.mp3");
         // addNormalSound("http://www.bensound.com/royalty-free-music?download=dubstep");
@@ -146,6 +151,8 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
         // Updating the scene.
         mVrView.setScene(scene);
+        ControllerJni nativeController = new ControllerJni(mVrView.getRenderContextRef());
+        nativeController.setReticleVisibility(false);
     }
 
     private List<NodeJni> testText(Context context) {
@@ -436,6 +443,97 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         float[] position = {0, 0, -2};
         node.setPosition(position);
         return Arrays.asList(node);
+    }
+
+    private List<NodeJni> testStereoImageSurface(Context context) {
+        float[] position1 = {-1f, 1f, -3.3f};
+        NodeJni imageNode1 = getStereoImage(position1, "stereo1.jpg");
+        float[] position2 = {0, 1f, -3.3f};
+        NodeJni imageNode2 = getStereoImage(position2, "stereo2.jpg");
+
+        return Arrays.asList(imageNode1,
+                imageNode2);
+    }
+
+    private NodeJni getStereoImage(float[] pos, String img){
+        NodeJni node = new NodeJni();
+        ImageJni bobaImage = new ImageJni(img, TextureFormat.RGBA8);
+        TextureJni bobaTexture = new TextureJni(bobaImage,
+                TextureFormat.RGBA8, true, "LeftRight");
+        MaterialJni material = new MaterialJni();
+        SurfaceJni surface = new SurfaceJni(1, 1, 0, 0, 1, 1);
+        surface.setMaterial(material);
+        surface.setImageTexture(bobaTexture);
+        node.setGeometry(surface);
+        node.setPosition(pos);
+        return node;
+    }
+
+    private void testStereoBackgroundImage(SceneJni scene) {
+        ImageJni imageJni = new ImageJni("stereo3601.jpg", TextureFormat.RGBA4);
+        TextureJni videoTexture = new TextureJni(imageJni,
+                TextureFormat.RGBA8, false, "TopBottom");
+        scene.setBackgroundImageTexture(videoTexture);
+        float[] rotation = {0, 0, 0};
+        scene.setBackgroundRotation(rotation);
+    }
+
+
+    private List<NodeJni> testStereoSurfaceVideo(final Context context) {
+        NodeJni node = new NodeJni();
+        final SurfaceJni surface = new SurfaceJni(4, 4, 0, 0, 1, 1);
+        float[] position = {0,0,-5};
+        node.setPosition(position);
+        final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef(), "LeftRight");
+        videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
+            @Override
+            public void onVideoFinish() {}
+
+            @Override
+            public void onVideoFailed(String error) {}
+
+            @Override
+            public void onReady() {
+                videoTexture.loadSource("file:///android_asset/stereoVid.mp4", mVrView.getRenderContextRef());
+                videoTexture.setVolume(0.1f);
+                videoTexture.setLoop(true);
+                videoTexture.play();
+                surface.setVideoTexture(videoTexture);
+            }
+
+            @Override
+            public void onVideoUpdatedTime(int seconds, int duration) {
+                Log.e(TAG,"onVideoUpdatedTime for Surface within ViroActivity:" + seconds);
+            }
+        });
+
+        node.setGeometry(surface);
+        return Arrays.asList(node);
+    }
+
+    private void testStereoBackgroundVideo(final SceneJni scene) {
+        final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef(), "TopBottom");
+        videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
+            @Override
+            public void onVideoFinish() {}
+
+            @Override
+            public void onVideoFailed(String error) {}
+
+            @Override
+            public void onReady() {
+                scene.setBackgroundVideoTexture(videoTexture);
+                videoTexture.loadSource("file:///android_asset/stereoVid360.mp4", mVrView.getRenderContextRef());
+                videoTexture.setVolume(0.1f);
+                videoTexture.setLoop(false);
+                videoTexture.play();
+            }
+
+            @Override
+            public void onVideoUpdatedTime(int seconds, int duration) {
+                Log.e(TAG,"onVideoUpdatedTime for Background within ViroActivity:" + seconds);
+            }
+        });
     }
 
     private void addNormalSound(String path) {
