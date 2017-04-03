@@ -137,14 +137,16 @@ int VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic semantic) {
             return 2;
         case VROGeometrySourceSemantic::Texcoord:
             return 3;
-        case VROGeometrySourceSemantic::VertexCrease:
+        case VROGeometrySourceSemantic::Tangent:
             return 4;
-        case VROGeometrySourceSemantic::EdgeCrease:
+        case VROGeometrySourceSemantic::VertexCrease:
             return 5;
-        case VROGeometrySourceSemantic::BoneWeights:
+        case VROGeometrySourceSemantic::EdgeCrease:
             return 6;
-        case VROGeometrySourceSemantic::BoneIndices:
+        case VROGeometrySourceSemantic::BoneWeights:
             return 7;
+        case VROGeometrySourceSemantic::BoneIndices:
+            return 8;
         default:
             return 0;
     }

@@ -104,33 +104,12 @@ std::shared_ptr<VROSphere> VROSphere::createSphere(float radius, int widthSegmen
         }
     }
     
-    std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) var, varSizeBytes, VRODataOwnership::Move);
-    std::shared_ptr<VROGeometrySource> position = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                      VROGeometrySourceSemantic::Vertex,
-                                                                                      vertexCount,
-                                                                                      true, 3,
-                                                                                      sizeof(float),
-                                                                                      0,
-                                                                                      sizeof(VROShapeVertexLayout));
-    std::shared_ptr<VROGeometrySource> texcoord = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                      VROGeometrySourceSemantic::Texcoord,
-                                                                                      vertexCount,
-                                                                                      true, 2,
-                                                                                      sizeof(float),
-                                                                                      sizeof(float) * 3,
-                                                                                      sizeof(VROShapeVertexLayout));
-    std::shared_ptr<VROGeometrySource> normal = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                    VROGeometrySourceSemantic::Normal,
-                                                                                    vertexCount,
-                                                                                    true, 3,
-                                                                                    sizeof(float),
-                                                                                    sizeof(float) * 5,
-                                                                                    sizeof(VROShapeVertexLayout));
+    VROShapeUtilComputeTangents(var, vertexCount, indices.data(), indices.size());
     
-    std::vector<std::shared_ptr<VROGeometrySource>> sources = { position, texcoord, normal };
+    std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) var, varSizeBytes, VRODataOwnership::Move);
+    std::vector<std::shared_ptr<VROGeometrySource>> sources = VROShapeUtilBuildGeometrySources(vertexData, vertexCount);
     
     std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices.data(), sizeof(int) * indices.size());
-    
     std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(indexData,
                                                                                        VROGeometryPrimitiveType::Triangle,
                                                                                        indices.size() / 3,

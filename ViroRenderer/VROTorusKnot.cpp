@@ -103,34 +103,13 @@ std::shared_ptr<VROTorusKnot> VROTorusKnot::createTorusKnot(float p, float q, fl
         indices[i++] = vi + slices + 1;
     }
     
-    int stride = sizeof(VROShapeVertexLayout);
+    VROShapeUtilComputeTangents(vertices, vertexCount, indices, indexCount);
     
+    int stride = sizeof(VROShapeVertexLayout);
     std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) vertices, stride * vertexCount);
     free(vertices);
     
-    std::shared_ptr<VROGeometrySource> position = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                      VROGeometrySourceSemantic::Vertex,
-                                                                                      vertexCount,
-                                                                                      true, 3,
-                                                                                      sizeof(float),
-                                                                                      0,
-                                                                                      stride);
-    std::shared_ptr<VROGeometrySource> texcoords = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                       VROGeometrySourceSemantic::Texcoord,
-                                                                                       vertexCount,
-                                                                                       true, 2,
-                                                                                       sizeof(float),
-                                                                                       sizeof(float) * 3,
-                                                                                       stride);
-    std::shared_ptr<VROGeometrySource> normal = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                    VROGeometrySourceSemantic::Normal,
-                                                                                    vertexCount,
-                                                                                    true, 3,
-                                                                                    sizeof(float),
-                                                                                    sizeof(float) * 5,
-                                                                                    stride);
-    
-    std::vector<std::shared_ptr<VROGeometrySource>> sources = { position, texcoords, normal };
+    std::vector<std::shared_ptr<VROGeometrySource>> sources = VROShapeUtilBuildGeometrySources(vertexData, vertexCount);
     
     std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices, sizeof(int) * indexCount);
     free(indices);

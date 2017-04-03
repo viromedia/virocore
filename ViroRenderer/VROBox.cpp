@@ -22,38 +22,17 @@ std::shared_ptr<VROBox> VROBox::createBox(float width, float height, float lengt
     VROShapeVertexLayout var[varSizeBytes];
     
     VROBox::buildBox(var, width, height, length);
-    std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) var, varSizeBytes);
-    
-    std::shared_ptr<VROGeometrySource> position = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                      VROGeometrySourceSemantic::Vertex,
-                                                                                      numVertices,
-                                                                                      true, 3,
-                                                                                      sizeof(float),
-                                                                                      0,
-                                                                                      sizeof(VROShapeVertexLayout));
-    std::shared_ptr<VROGeometrySource> texcoord = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                      VROGeometrySourceSemantic::Texcoord,
-                                                                                      numVertices,
-                                                                                      true, 2,
-                                                                                      sizeof(float),
-                                                                                      sizeof(float) * 3,
-                                                                                      sizeof(VROShapeVertexLayout));
-    std::shared_ptr<VROGeometrySource> normal = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                    VROGeometrySourceSemantic::Normal,
-                                                                                    numVertices,
-                                                                                    true, 3,
-                                                                                    sizeof(float),
-                                                                                    sizeof(float) * 5,
-                                                                                    sizeof(VROShapeVertexLayout));
-    
-    std::vector<std::shared_ptr<VROGeometrySource>> sources = { position, texcoord, normal };
     
     int indices[kNumBoxVertices];
     for (int i = 0; i < kNumBoxVertices; i++) {
         indices[i] = i;
     }
-    std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices, sizeof(int) * kNumBoxVertices);
+    VROShapeUtilComputeTangents(var, numVertices, indices, numVertices);
     
+    std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices, sizeof(int) * kNumBoxVertices);
+    std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) var, varSizeBytes);
+    
+    std::vector<std::shared_ptr<VROGeometrySource>> sources = VROShapeUtilBuildGeometrySources(vertexData, numVertices);
     std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(indexData,
                                                                                        VROGeometryPrimitiveType::Triangle,
                                                                                        kNumBoxVertices / 3,

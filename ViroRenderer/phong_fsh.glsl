@@ -12,7 +12,7 @@ uniform sampler2D specular_texture;
 #pragma surface_modifier_uniforms
 #pragma fragment_modifier_uniforms
 
-in lowp vec3 v_normal;
+in lowp mat3 v_tbn;
 in highp vec2 v_texcoord;
 in highp vec3 v_surface_position;
 
@@ -25,7 +25,7 @@ void main() {
     _surface.shininess = material_shininess;
     _surface.specular_texcoord = v_texcoord;
     _surface.alpha = material_alpha;
-    _surface.normal = v_normal;
+    _surface.normal = v_tbn[2];
     _surface.position = v_surface_position;
 
 #pragma surface_modifier_body

@@ -17,6 +17,7 @@
 #include <sstream>
 
 static std::shared_ptr<VROShaderModifier> sDiffuseTextureModifier;
+static std::shared_ptr<VROShaderModifier> sNormalMapTextureModifier;
 static std::shared_ptr<VROShaderModifier> sReflectiveTextureModifier;
 
 void VROMaterialSubstrateOpenGL::hydrateProgram(VRODriverOpenGL &driver) {
@@ -117,7 +118,8 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
     std::vector<std::string> samplers;
     std::vector<std::shared_ptr<VROShaderModifier>> modifiers = material.getShaderModifiers();
     
-    VROMaterialVisual &diffuse = material.getDiffuse();
+    VROMaterialVisual &diffuse    = material.getDiffuse();
+    VROMaterialVisual &normal     = material.getNormal();
     VROMaterialVisual &reflective = material.getReflective();
     
     if (diffuse.getTextureType() != VROTextureType::None) {
@@ -129,6 +131,12 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
         if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
             modifiers.push_back(createEGLImageModifier());
         }
+    }
+    
+    if (normal.getTextureType() == VROTextureType::Texture2D) {
+        _textures.push_back(normal.getTexture());
+        samplers.push_back("normal_texture");
+        modifiers.push_back(createNormalMapTextureModifier());
     }
     
     if (reflective.getTextureType() == VROTextureType::TextureCube) {
@@ -186,9 +194,10 @@ void VROMaterialSubstrateOpenGL::configureSpecularShader(std::string vertexShade
     std::vector<std::string> samplers;
     std::vector<std::shared_ptr<VROShaderModifier>> modifiers = material.getShaderModifiers();
 
-    VROMaterialVisual &diffuse = material.getDiffuse();
+    VROMaterialVisual &diffuse    = material.getDiffuse();
+    VROMaterialVisual &specular   = material.getSpecular();
+    VROMaterialVisual &normal     = material.getNormal();
     VROMaterialVisual &reflective = material.getReflective();
-    VROMaterialVisual &specular = material.getSpecular();
     
     if (diffuse.getTextureType() != VROTextureType::None) {
         _textures.push_back(diffuse.getTexture());
@@ -203,6 +212,12 @@ void VROMaterialSubstrateOpenGL::configureSpecularShader(std::string vertexShade
     
     _textures.push_back(specular.getTexture());
     samplers.push_back("specular_texture");
+    
+    if (normal.getTextureType() == VROTextureType::Texture2D) {
+        _textures.push_back(normal.getTexture());
+        samplers.push_back("normal_texture");
+        modifiers.push_back(createNormalMapTextureModifier());
+    }
 
     if (reflective.getTextureType() == VROTextureType::TextureCube) {
         _textures.push_back(reflective.getTexture());
@@ -386,6 +401,23 @@ std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createDiffuseText
     }
    
     return sDiffuseTextureModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createNormalMapTextureModifier() {
+    /*
+     Modifier that samples a normal map to determine the direction of the normal to use at each
+     fragment.
+     */
+    if (!sNormalMapTextureModifier) {
+        std::vector<std::string> modifierCode =  {
+            "uniform sampler2D normal_texture;",
+            "_surface.normal = v_tbn * normalize( texture(normal_texture, _surface.diffuse_texcoord).xyz * 2.0 - 1.0 );"
+        };
+        sNormalMapTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
+                                                                        modifierCode);
+    }
+    
+    return sNormalMapTextureModifier;
 }
 
 std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createReflectiveTextureModifier() {

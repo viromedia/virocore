@@ -14,6 +14,7 @@
 #include "VROGeometrySource.h"
 #include "VROShaderModifier.h"
 #include "VROPlatformUtil.h"
+#include "VROGeometryUtil.h"
 #include <atomic>
 
 #define kDebugShaders 0
@@ -39,7 +40,7 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
                                    std::shared_ptr<VRODriverOpenGL> driver) :
     _shaderId(sMaterialId++),
     _lightingBlockIndex(GL_INVALID_INDEX),
-    _capabilities(0),
+    _attributes(0),
     _uniformsNeedRebind(true),
     _shaderName(fragmentShader),
     _program(0),
@@ -61,16 +62,19 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
     for (VROGeometrySourceSemantic attr : attributes) {
         switch (attr) {
             case VROGeometrySourceSemantic::Texcoord:
-                _capabilities |= (int)VROShaderMask::Tex;
+                _attributes |= (int)VROShaderMask::Tex;
                 break;
                 
             case VROGeometrySourceSemantic::Normal:
-                _capabilities |= (int)VROShaderMask::Norm;
+                _attributes |= (int)VROShaderMask::Norm;
                 break;
                 
             case VROGeometrySourceSemantic::Color:
-                _capabilities |= (int)VROShaderMask::Color;
+                _attributes |= (int)VROShaderMask::Color;
                 break;
+                
+            case VROGeometrySourceSemantic::Tangent:
+                _attributes |= (int)VROShaderMask::Tangent;
                 
             default:
                 break;
@@ -282,14 +286,17 @@ bool VROShaderProgram::compileAndLink() {
      */
     glBindAttribLocation(_program, (int)VROGeometrySourceSemantic::Vertex, "position");
 
-    if ((_capabilities & (int)VROShaderMask::Tex) != 0) {
-        glBindAttribLocation(_program, (int)VROGeometrySourceSemantic::Texcoord, "texcoord");
+    if ((_attributes & (int)VROShaderMask::Tex) != 0) {
+        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Texcoord), "texcoord");
     }
-    if ((_capabilities & (int)VROShaderMask::Color) != 0) {
-        glBindAttribLocation(_program, (int)VROGeometrySourceSemantic::Color, "color");
+    if ((_attributes & (int)VROShaderMask::Color) != 0) {
+        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Color), "color");
     }
-    if ((_capabilities & (int)VROShaderMask::Norm) != 0) {
-        glBindAttribLocation(_program, (int)VROGeometrySourceSemantic::Normal, "normal");
+    if ((_attributes & (int)VROShaderMask::Norm) != 0) {
+        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Normal), "normal");
+    }
+    if ((_attributes & (int)VROShaderMask::Tangent) != 0) {
+        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Tangent), "tangent");
     }
 
     /*

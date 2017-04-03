@@ -94,7 +94,8 @@ public:
         std::map<std::string, std::shared_ptr<VROShaderProgram>>::iterator it = _sharedPrograms.find(name);
         if (it == _sharedPrograms.end()) {
             const std::vector<VROGeometrySourceSemantic> attributes = { VROGeometrySourceSemantic::Texcoord,
-                VROGeometrySourceSemantic::Normal };
+                                                                        VROGeometrySourceSemantic::Normal,
+                                                                        VROGeometrySourceSemantic::Tangent};
             std::shared_ptr<VROShaderProgram> program = std::make_shared<VROShaderProgram>(vertexShader, fragmentShader,
                                                                                            samplers, modifiers, attributes,
                                                                                            driver);

@@ -288,30 +288,10 @@ void VROText::buildGeometry(std::vector<VROShapeVertexLayout> &var,
     int numVertices = (int) var.size();
     std::shared_ptr<VROData> vertexData = std::make_shared<VROData>(var.data(), var.size() * sizeof(VROShapeVertexLayout));
     
-    std::shared_ptr<VROGeometrySource> position = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                      VROGeometrySourceSemantic::Vertex,
-                                                                                      numVertices,
-                                                                                      true, 3,
-                                                                                      sizeof(float),
-                                                                                      0,
-                                                                                      sizeof(VROShapeVertexLayout));
-    std::shared_ptr<VROGeometrySource> texcoord = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                      VROGeometrySourceSemantic::Texcoord,
-                                                                                      numVertices,
-                                                                                      true, 2,
-                                                                                      sizeof(float),
-                                                                                      sizeof(float) * 3,
-                                                                                      sizeof(VROShapeVertexLayout));
-    std::shared_ptr<VROGeometrySource> normal = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                    VROGeometrySourceSemantic::Normal,
-                                                                                    numVertices,
-                                                                                    true, 3,
-                                                                                    sizeof(float),
-                                                                                    sizeof(float) * 5,
-                                                                                    sizeof(VROShapeVertexLayout));
-    sources.push_back(position);
-    sources.push_back(texcoord);
-    sources.push_back(normal);
+    std::vector<std::shared_ptr<VROGeometrySource>> genSources = VROShapeUtilBuildGeometrySources(vertexData, numVertices);
+    for (std::shared_ptr<VROGeometrySource> source : genSources) {
+        sources.push_back(source);
+    }
     
     for (auto &kv : materialMap) {
         std::shared_ptr<VROMaterial> &material = kv.second.first;

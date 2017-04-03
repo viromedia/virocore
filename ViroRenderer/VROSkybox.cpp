@@ -11,47 +11,48 @@
 #include "VROMaterial.h"
 #include "VROGeometrySource.h"
 #include "VROGeometryElement.h"
+#include "VROShapeUtils.h"
 
 static const int kNumSkyboxVertices = 24;
 static const int kNumSkyboxIndices = 36;
-static const int kSkyboxStride = 32;
+static const int kSkyboxStride = sizeof(VROShapeVertexLayout);
 
-static const float vertices[] = {
+static const VROShapeVertexLayout vertices[] = {
     // +Y
-    -0.5,  0.5,  0.5,  1.0, 0.0,  0.0, -1.0, 0.0,
-     0.5,  0.5,  0.5,  1.0, 0.0,  0.0, -1.0, 0.0,
-     0.5,  0.5, -0.5,  1.0, 0.0,  0.0, -1.0, 0.0,
-    -0.5,  0.5, -0.5,  1.0, 0.0,  0.0, -1.0, 0.0,
-    
+    { -0.5,  0.5,  0.5,  1.0, 0.0,  0.0, -1.0, 0.0,  0.0, 0.0, 0.0, 1.0 },
+    {  0.5,  0.5,  0.5,  1.0, 0.0,  0.0, -1.0, 0.0,  0.0, 0.0, 0.0, 1.0 },
+    {  0.5,  0.5, -0.5,  1.0, 0.0,  0.0, -1.0, 0.0,  0.0, 0.0, 0.0, 1.0 },
+    { -0.5,  0.5, -0.5,  1.0, 0.0,  0.0, -1.0, 0.0,  0.0, 0.0, 0.0, 1.0 },
+
     // -Y
-    -0.5, -0.5, -0.5,  1.0, 0.0,  0.0, 1.0, 0.0,
-     0.5, -0.5, -0.5,  1.0, 0.0,  0.0, 1.0, 0.0,
-     0.5, -0.5,  0.5,  1.0, 0.0,  0.0, 1.0, 0.0,
-    -0.5, -0.5,  0.5,  1.0, 0.0,  0.0, 1.0, 0.0,
+    { -0.5, -0.5, -0.5,  1.0, 0.0,  0.0,  1.0, 0.0,  0.0, 0.0, 0.0, 1.0 },
+    {  0.5, -0.5, -0.5,  1.0, 0.0,  0.0,  1.0, 0.0,  0.0, 0.0, 0.0, 1.0 },
+    {  0.5, -0.5,  0.5,  1.0, 0.0,  0.0,  1.0, 0.0,  0.0, 0.0, 0.0, 1.0 },
+    { -0.5, -0.5,  0.5,  1.0, 0.0,  0.0,  1.0, 0.0,  0.0, 0.0, 0.0, 1.0 },
     
     // +Z
-    -0.5, -0.5,  0.5,  1.0, 0.0,  0.0, 0.0, -1.0,
-     0.5, -0.5,  0.5,  1.0, 0.0,  0.0, 0.0, -1.0,
-     0.5,  0.5,  0.5,  1.0, 0.0,  0.0, 0.0, -1.0,
-    -0.5,  0.5,  0.5,  1.0, 0.0,  0.0, 0.0, -1.0,
+    { -0.5, -0.5,  0.5,  1.0, 0.0,  0.0, 0.0, -1.0,  0.0, 0.0, 0.0, 1.0 },
+    {  0.5, -0.5,  0.5,  1.0, 0.0,  0.0, 0.0, -1.0,  0.0, 0.0, 0.0, 1.0 },
+    {  0.5,  0.5,  0.5,  1.0, 0.0,  0.0, 0.0, -1.0,  0.0, 0.0, 0.0, 1.0 },
+    { -0.5,  0.5,  0.5,  1.0, 0.0,  0.0, 0.0, -1.0,  0.0, 0.0, 0.0, 1.0 },
     
     // -Z
-     0.5, -0.5, -0.5,  1.0, 0.0,  0.0, 0.0, 1.0,
-    -0.5, -0.5, -0.5,  1.0, 0.0,  0.0, 0.0, 1.0,
-    -0.5,  0.5, -0.5,  1.0, 0.0,  0.0, 0.0, 1.0,
-     0.5,  0.5, -0.5,  1.0, 0.0,  0.0, 0.0, 1.0,
+    {  0.5, -0.5, -0.5,  1.0, 0.0,  0.0, 0.0,  1.0,  0.0, 0.0, 0.0, 1.0 },
+    { -0.5, -0.5, -0.5,  1.0, 0.0,  0.0, 0.0,  1.0,  0.0, 0.0, 0.0, 1.0 },
+    { -0.5,  0.5, -0.5,  1.0, 0.0,  0.0, 0.0,  1.0,  0.0, 0.0, 0.0, 1.0 },
+    {  0.5,  0.5, -0.5,  1.0, 0.0,  0.0, 0.0,  1.0,  0.0, 0.0, 0.0, 1.0 },
 
     // -X
-    -0.5, -0.5, -0.5,  1.0, 0.0,  1.0, 0.0, 0.0,
-    -0.5, -0.5,  0.5,  1.0, 0.0,  1.0, 0.0, 0.0,
-    -0.5,  0.5,  0.5,  1.0, 0.0,  1.0, 0.0, 0.0,
-    -0.5,  0.5, -0.5,  1.0, 0.0,  1.0, 0.0, 0.0,
+    { -0.5, -0.5, -0.5,  1.0, 0.0,  1.0, 0.0,  0.0,  0.0, 0.0, 0.0, 1.0 },
+    { -0.5, -0.5,  0.5,  1.0, 0.0,  1.0, 0.0,  0.0,  0.0, 0.0, 0.0, 1.0 },
+    { -0.5,  0.5,  0.5,  1.0, 0.0,  1.0, 0.0,  0.0,  0.0, 0.0, 0.0, 1.0 },
+    { -0.5,  0.5, -0.5,  1.0, 0.0,  1.0, 0.0,  0.0,  0.0, 0.0, 0.0, 1.0 },
     
     // +X
-     0.5, -0.5,  0.5,  1.0, 0.0,  -1.0, 0.0, 0.0,
-     0.5, -0.5, -0.5,  1.0, 0.0,  -1.0, 0.0, 0.0,
-     0.5,  0.5, -0.5,  1.0, 0.0,  -1.0, 0.0, 0.0,
-     0.5,  0.5,  0.5,  1.0, 0.0,  -1.0, 0.0, 0.0,
+    {  0.5, -0.5,  0.5,  1.0, 0.0,  -1.0, 0.0, 0.0,  0.0, 0.0, 0.0, 1.0 },
+    {  0.5, -0.5, -0.5,  1.0, 0.0,  -1.0, 0.0, 0.0,  0.0, 0.0, 0.0, 1.0 },
+    {  0.5,  0.5, -0.5,  1.0, 0.0,  -1.0, 0.0, 0.0,  0.0, 0.0, 0.0, 1.0 },
+    {  0.5,  0.5,  0.5,  1.0, 0.0,  -1.0, 0.0, 0.0,  0.0, 0.0, 0.0, 1.0 }
 };
 
 static uint32_t indices[] = {
@@ -97,28 +98,7 @@ VROSkybox::~VROSkybox() {
 
 std::shared_ptr<VROSkybox> VROSkybox::buildSkyboxGeometry() {
     std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) vertices, kSkyboxStride * kNumSkyboxVertices);
-    std::shared_ptr<VROGeometrySource> position = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                      VROGeometrySourceSemantic::Vertex,
-                                                                                      kNumSkyboxVertices,
-                                                                                      true, 3,
-                                                                                      sizeof(float),
-                                                                                      0,
-                                                                                      kSkyboxStride);
-    std::shared_ptr<VROGeometrySource> texcoords = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                       VROGeometrySourceSemantic::Texcoord,
-                                                                                       kNumSkyboxVertices,
-                                                                                       true, 2,
-                                                                                       sizeof(float),
-                                                                                       sizeof(float) * 3,
-                                                                                       kSkyboxStride);
-    std::shared_ptr<VROGeometrySource> normal = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                    VROGeometrySourceSemantic::Normal,
-                                                                                    kNumSkyboxVertices,
-                                                                                    true, 3,
-                                                                                    sizeof(float),
-                                                                                    sizeof(float) * 5,
-                                                                                    kSkyboxStride);
-    std::vector<std::shared_ptr<VROGeometrySource>> sources = { position, texcoords, normal };
+    std::vector<std::shared_ptr<VROGeometrySource>> sources = VROShapeUtilBuildGeometrySources(vertexData, kNumSkyboxVertices);
     
     std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices, sizeof(int32_t) * kNumSkyboxIndices);
     std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(indexData,

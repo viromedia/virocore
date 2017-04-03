@@ -19,7 +19,7 @@ void VROGeometrySource::processVertices(std::function<void (int, VROVector3f)> f
     for (int i = 0; i < _vertexCount; i++) {
         buffer.setPosition(i * _dataStride + _dataOffset);
         
-        float x, y, z;
+        float x = 0, y = 0, z = 0;
         
         if (_floatComponents) {
             if (_bytesPerComponent == 2) {
@@ -29,6 +29,9 @@ void VROGeometrySource::processVertices(std::function<void (int, VROVector3f)> f
                         y = buffer.readHalf();
                         if (_componentsPerVertex > 2) {
                             z = buffer.readHalf();
+                            if (_componentsPerVertex > 3) {
+                                buffer.readHalf();
+                            }
                         }
                     }
                 }
@@ -40,6 +43,9 @@ void VROGeometrySource::processVertices(std::function<void (int, VROVector3f)> f
                         y = buffer.readFloat();
                         if (_componentsPerVertex > 2) {
                             z = buffer.readFloat();
+                            if (_componentsPerVertex > 3) {
+                                buffer.readFloat();
+                            }
                         }
                     }
                 }
@@ -56,6 +62,9 @@ void VROGeometrySource::processVertices(std::function<void (int, VROVector3f)> f
                         y = buffer.readByte();
                         if (_componentsPerVertex > 2) {
                             z = buffer.readByte();
+                            if (_componentsPerVertex > 3) {
+                                buffer.readByte();
+                            }
                         }
                     }
                 }
@@ -67,6 +76,9 @@ void VROGeometrySource::processVertices(std::function<void (int, VROVector3f)> f
                         y = buffer.readShort();
                         if (_componentsPerVertex > 2) {
                             z = buffer.readShort();
+                            if (_componentsPerVertex > 3) {
+                                buffer.readShort();
+                            }
                         }
                     }
                 }
@@ -78,6 +90,9 @@ void VROGeometrySource::processVertices(std::function<void (int, VROVector3f)> f
                         y = buffer.readInt();
                         if (_componentsPerVertex > 2) {
                             z = buffer.readInt();
+                            if (_componentsPerVertex > 3) {
+                                buffer.readInt();
+                            }
                         }
                     }
                 }
@@ -97,7 +112,7 @@ void VROGeometrySource::modifyVertices(std::function<VROVector3f(int index, VROV
     for (int i = 0; i < _vertexCount; i++) {
         buffer.setPosition(i * _dataStride + _dataOffset);
         
-        float x, y, z;
+        float x = 0, y = 0, z = 0, w = 0;
         
         if (_floatComponents) {
             if (_bytesPerComponent == 2) {
@@ -107,6 +122,9 @@ void VROGeometrySource::modifyVertices(std::function<VROVector3f(int index, VROV
                         y = buffer.readHalf();
                         if (_componentsPerVertex > 2) {
                             z = buffer.readHalf();
+                            if (_componentsPerVertex > 3) {
+                                w = buffer.readHalf();
+                            }
                         }
                     }
                 }
@@ -118,6 +136,9 @@ void VROGeometrySource::modifyVertices(std::function<VROVector3f(int index, VROV
                         y = buffer.readFloat();
                         if (_componentsPerVertex > 2) {
                             z = buffer.readFloat();
+                            if (_componentsPerVertex > 3) {
+                                w = buffer.readFloat();
+                            }
                         }
                     }
                 }
@@ -134,6 +155,9 @@ void VROGeometrySource::modifyVertices(std::function<VROVector3f(int index, VROV
                         y = buffer.readByte();
                         if (_componentsPerVertex > 2) {
                             z = buffer.readByte();
+                            if (_componentsPerVertex > 3) {
+                                w = buffer.readByte();
+                            }
                         }
                     }
                 }
@@ -145,6 +169,9 @@ void VROGeometrySource::modifyVertices(std::function<VROVector3f(int index, VROV
                         y = buffer.readShort();
                         if (_componentsPerVertex > 2) {
                             z = buffer.readShort();
+                            if (_componentsPerVertex > 3) {
+                                w = buffer.readShort();
+                            }
                         }
                     }
                 }
@@ -156,6 +183,9 @@ void VROGeometrySource::modifyVertices(std::function<VROVector3f(int index, VROV
                         y = buffer.readInt();
                         if (_componentsPerVertex > 2) {
                             z = buffer.readInt();
+                            if (_componentsPerVertex > 3) {
+                                w = buffer.readInt();
+                            }
                         }
                     }
                 }
@@ -176,6 +206,9 @@ void VROGeometrySource::modifyVertices(std::function<VROVector3f(int index, VROV
                         buffer.writeHalf(result.y);
                         if (_componentsPerVertex > 2) {
                             buffer.writeHalf(result.z);
+                            if (_componentsPerVertex > 3) {
+                                buffer.writeHalf(w);
+                            }
                         }
                     }
                 }
@@ -187,6 +220,9 @@ void VROGeometrySource::modifyVertices(std::function<VROVector3f(int index, VROV
                         buffer.writeFloat(result.y);
                         if (_componentsPerVertex > 2) {
                             buffer.writeFloat(result.z);
+                            if (_componentsPerVertex > 3) {
+                                buffer.writeFloat(w);
+                            }
                         }
                     }
                 }
@@ -203,6 +239,9 @@ void VROGeometrySource::modifyVertices(std::function<VROVector3f(int index, VROV
                         buffer.writeByte(result.y);
                         if (_componentsPerVertex > 2) {
                             buffer.writeByte(result.z);
+                            if (_componentsPerVertex > 3) {
+                                buffer.writeByte(w);
+                            }
                         }
                     }
                 }
@@ -214,6 +253,9 @@ void VROGeometrySource::modifyVertices(std::function<VROVector3f(int index, VROV
                         buffer.writeShort(result.y);
                         if (_componentsPerVertex > 2) {
                             buffer.writeShort(result.z);
+                            if (_componentsPerVertex > 3) {
+                                buffer.writeShort(w);
+                            }
                         }
                     }
                 }
@@ -225,6 +267,9 @@ void VROGeometrySource::modifyVertices(std::function<VROVector3f(int index, VROV
                         buffer.writeInt(result.y);
                         if (_componentsPerVertex > 2) {
                             buffer.writeInt(result.z);
+                            if (_componentsPerVertex > 3) {
+                                buffer.writeInt(w);
+                            }
                         }
                     }
                 }

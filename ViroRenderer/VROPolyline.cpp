@@ -55,33 +55,12 @@ void VROPolyline::buildGeometry(std::vector<VROVector3f> &path,
     
     VROByteBuffer buffer;
     size_t numVertices = encodeLine(path, buffer);
-    
     std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) buffer.getData(), buffer.getPosition());
-    std::shared_ptr<VROGeometrySource> position = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                      VROGeometrySourceSemantic::Vertex,
-                                                                                      numVertices,
-                                                                                      true, 3,
-                                                                                      sizeof(float),
-                                                                                      0,
-                                                                                      sizeof(VROShapeVertexLayout));
-    std::shared_ptr<VROGeometrySource> texcoord = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                      VROGeometrySourceSemantic::Texcoord,
-                                                                                      numVertices,
-                                                                                      true, 2,
-                                                                                      sizeof(float),
-                                                                                      sizeof(float) * 3,
-                                                                                      sizeof(VROShapeVertexLayout));
-    std::shared_ptr<VROGeometrySource> normal = std::make_shared<VROGeometrySource>(vertexData,
-                                                                                    VROGeometrySourceSemantic::Normal,
-                                                                                    numVertices,
-                                                                                    true, 3,
-                                                                                    sizeof(float),
-                                                                                    sizeof(float) * 5,
-                                                                                    sizeof(VROShapeVertexLayout));
     
-    sources.push_back(position);
-    sources.push_back(texcoord);
-    sources.push_back(normal);
+    std::vector<std::shared_ptr<VROGeometrySource>> genSources = VROShapeUtilBuildGeometrySources(vertexData, numVertices);
+    for (std::shared_ptr<VROGeometrySource> source : genSources) {
+        sources.push_back(source);
+    }
     
     // Each vertex is used exactly once in this strip
     int indices[numVertices];
@@ -206,6 +185,10 @@ void VROPolyline::writeCorner(VROVector3f position, VROVector3f normal, VROByteB
     buffer.writeFloat(normal.x); // nx
     buffer.writeFloat(normal.y); // ny
     buffer.writeFloat(normal.z); // nz
+    buffer.writeFloat(0); // tx
+    buffer.writeFloat(0); // ty
+    buffer.writeFloat(0); // tz
+    buffer.writeFloat(0); // tw
 }
 
 void VROPolyline::setWidth(float width) {

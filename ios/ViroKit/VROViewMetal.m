@@ -169,11 +169,6 @@
     _renderer->setSceneController(sceneController.internal, *_driver);
 }
 
-- (void)setSceneController:(VROSceneController *)sceneController animated:(BOOL)animated {
-    _sceneController = sceneController;
-    _renderer->setSceneController(sceneController.internal, animated, *_driver);
-}
-
 - (void)setSceneController:(VROSceneController *)sceneController duration:(float)seconds
             timingFunction:(VROTimingFunctionType)timingFunctionType {
     

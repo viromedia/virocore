@@ -34,6 +34,7 @@ typedef std::function<void(VROUniform *uniform, GLuint location)> VROUniformBind
    vec3 position;
    vec3 normal;
    vec2 texcoord;
+   vec4 tangent;
  } _geometry;
  
  The Geometry entry point enables modifiers to change vertex parameters in 

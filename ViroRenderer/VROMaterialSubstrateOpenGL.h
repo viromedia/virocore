@@ -85,6 +85,7 @@ private:
                                  const VROMaterial &material, VRODriverOpenGL &driver);
     
     std::shared_ptr<VROShaderModifier> createDiffuseTextureModifier();
+    std::shared_ptr<VROShaderModifier> createNormalMapTextureModifier();
     std::shared_ptr<VROShaderModifier> createReflectiveTextureModifier();
     std::shared_ptr<VROShaderModifier> createEGLImageModifier();
     

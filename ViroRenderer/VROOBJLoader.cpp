@@ -18,6 +18,7 @@
 #include "VRONode.h"
 #include "VROByteBuffer.h"
 #include "tiny_obj_loader.h"
+#include "VROShapeUtils.h"
 
 std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromURL(std::string url, std::string baseURL,
                                                       bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
@@ -179,9 +180,6 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
     pinfo("OBJ # of materials = %d", (int)materials.size());
     pinfo("OBJ # of shapes    = %d", (int)shapes.size());
     
-    std::vector<std::shared_ptr<VROGeometrySource>> sources;
-    std::vector<std::shared_ptr<VROGeometryElement>> elements;
-    
     /*
      Load materials, if provided, creating a VROMaterial for each OBJ material.
      */
@@ -250,45 +248,65 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
     
     std::vector<std::shared_ptr<VROMaterial>> elementMaterials;
     
-    int stride = 8 * sizeof(float);
-    VROByteBuffer interleaved;
+    /*
+     Count the number of vertices in the OBJ.
+     */
+    int numVertices = 0;
+    for (tinyobj::shape_t &shape : shapes) {
+        tinyobj::mesh_t &mesh = shape.mesh;
+        
+        for (int f = 0; f < mesh.num_face_vertices.size(); f++) {
+            numVertices += mesh.num_face_vertices[f];
+        }
+    }
+    
+    int stride = sizeof(VROShapeVertexLayout);
+    int varSizeBytes = numVertices * stride;
+    
+    // Will be moved to VROData so does not need to be explicitly freed!
+    VROShapeVertexLayout *var = (VROShapeVertexLayout *) malloc(varSizeBytes);
+    VROVector3f *tangents = VROShapeUtilStartTangents(var, numVertices);
 
+    std::vector<std::shared_ptr<VROGeometryElement>> elements;
+
+    int currentVertex = 0;
     int currentIndex = 0;
     for (tinyobj::shape_t &shape : shapes) {
         tinyobj::mesh_t &mesh = shape.mesh;
         
         /*
-         Write all the indices of this mesh into the interleaved
-         array.
+         Write all the indices of this mesh into the VAR layout.
          */
-        interleaved.grow(stride * mesh.indices.size());
-        
         for (int i = 0; i < mesh.indices.size(); i++) {
             tinyobj::index_t &index = mesh.indices[i];
             
-            interleaved.writeFloat(vertices[index.vertex_index * 3 + 0]);
-            interleaved.writeFloat(vertices[index.vertex_index * 3 + 1]);
-            interleaved.writeFloat(vertices[index.vertex_index * 3 + 2]);
+            VROShapeVertexLayout &v = var[currentVertex];
+            
+            v.x = vertices[index.vertex_index * 3 + 0];
+            v.y = vertices[index.vertex_index * 3 + 1];
+            v.z = vertices[index.vertex_index * 3 + 2];
             
             if (index.texcoord_index >= 0) {
-                interleaved.writeFloat(texcoords[index.texcoord_index * 2 + 0]);
-                interleaved.writeFloat(1 - texcoords[index.texcoord_index * 2 + 1]);
+                v.u = texcoords[index.texcoord_index * 2 + 0];
+                v.v = 1 - texcoords[index.texcoord_index * 2 + 1];
             }
             else {
-                interleaved.writeFloat(0);
-                interleaved.writeFloat(0);
+                v.u = 0;
+                v.v = 0;
             }
             
             if (index.normal_index >= 0) {
-                interleaved.writeFloat(normals[index.normal_index * 3 + 0]);
-                interleaved.writeFloat(normals[index.normal_index * 3 + 1]);
-                interleaved.writeFloat(normals[index.normal_index * 3 + 2]);
+                v.nx = normals[index.normal_index * 3 + 0];
+                v.ny = normals[index.normal_index * 3 + 1];
+                v.nz = normals[index.normal_index * 3 + 2];
             }
             else {
-                interleaved.writeFloat(0);
-                interleaved.writeFloat(0);
-                interleaved.writeFloat(0);
+                v.nx = 0;
+                v.ny = 0;
+                v.nz = 0;
             }
+            
+            ++currentVertex;
         }
 
         /*
@@ -336,47 +354,21 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
             else {
                 elementMaterials.push_back(defaultMaterial);
             }
+            
+            VROShapeUtilComputeTangentsForIndices(var, numVertices, indices.data(), indexCount, tangents);
         }
     }
+    VROShapeUtilEndTangents(var, numVertices, tangents);    
     
     /*
      Now turn the interleaved array into three sources.
      */
-    int numVertices = currentIndex;
-    passert (numVertices == interleaved.getPosition() / stride);
+    passert (numVertices == currentVertex);
+    passert (numVertices == currentIndex);
     
-    std::shared_ptr<VROData> data = std::make_shared<VROData>(interleaved.getData(), interleaved.getPosition());
+    std::shared_ptr<VROData> data = std::make_shared<VROData>((void *) var, sizeof(VROShapeVertexLayout) * numVertices, VRODataOwnership::Move);
+    std::vector<std::shared_ptr<VROGeometrySource>> sources = VROShapeUtilBuildGeometrySources(data, numVertices);
     
-    std::shared_ptr<VROGeometrySource> vertexSource = std::make_shared<VROGeometrySource>(data,
-                                                                                          VROGeometrySourceSemantic::Vertex,
-                                                                                          numVertices,
-                                                                                          true,
-                                                                                          3,
-                                                                                          sizeof(float),
-                                                                                          0,
-                                                                                          stride);
-    sources.push_back(vertexSource);
-    
-    std::shared_ptr<VROGeometrySource> texcoordSource = std::make_shared<VROGeometrySource>(data,
-                                                                                            VROGeometrySourceSemantic::Texcoord,
-                                                                                            numVertices,
-                                                                                            true,
-                                                                                            2,
-                                                                                            sizeof(float),
-                                                                                            sizeof(float) * 3,
-                                                                                            stride);
-    sources.push_back(texcoordSource);
-    
-    std::shared_ptr<VROGeometrySource> normalsSource = std::make_shared<VROGeometrySource>(data,
-                                                                                           VROGeometrySourceSemantic::Normal,
-                                                                                           numVertices,
-                                                                                           true,
-                                                                                           3,
-                                                                                           sizeof(float),
-                                                                                           sizeof(float) * 5,
-                                                                                           stride);
-    sources.push_back(normalsSource);
-
     std::shared_ptr<VROGeometry> geometry = std::make_shared<VROGeometry>(sources, elements);
     for (std::shared_ptr<VROMaterial> &material : elementMaterials) {
         geometry->getMaterials().push_back(material);
