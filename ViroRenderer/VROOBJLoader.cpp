@@ -196,16 +196,22 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
         material->setShininess(m.shininess);
         material->setTransparency(m.dissolve);
         
-        if (m.illum == 0) {
-            material->setLightingModel(VROLightingModel::Constant);
+        if (m.has_illum) {
+            if (m.illum == 0) {
+                material->setLightingModel(VROLightingModel::Constant);
+            }
+            else if (m.illum == 1) {
+                material->setLightingModel(VROLightingModel::Lambert);
+            }
+            else if (m.illum >= 2) {
+                material->setLightingModel(VROLightingModel::Blinn);
+            }
+            // Future, support additional illumination models: http://paulbourke.net/dataformats/mtl/
         }
-        else if (m.illum == 1) {
-            material->setLightingModel(VROLightingModel::Lambert);
-        }
-        else if (m.illum >= 2) {
+        else {
+            // If no illumination model given, default to Blinn
             material->setLightingModel(VROLightingModel::Blinn);
         }
-        // Future, support additional illumination models: http://paulbourke.net/dataformats/mtl/
         
         if (m.diffuse_texname.length() > 0) {
             std::shared_ptr<VROTexture> texture = loadTexture(m.diffuse_texname, base, isBaseURL, resourceMap, textures);
@@ -213,7 +219,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
                 material->getDiffuse().setTexture(texture);
             }
             else {
-                pinfo("Failed to load texture [%s] for OBJ", m.diffuse_texname.c_str());
+                pinfo("Failed to load diffuse texture [%s] for OBJ", m.diffuse_texname.c_str());
             }
         }
         
@@ -223,7 +229,17 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
                 material->getSpecular().setTexture(texture);
             }
             else {
-                pinfo("Failed to load texture [%s] for OBJ", m.specular_texname.c_str());
+                pinfo("Failed to load specular texture [%s] for OBJ", m.specular_texname.c_str());
+            }
+        }
+        
+        if (m.bump_texname.length() > 0) {
+            std::shared_ptr<VROTexture> texture = loadTexture(m.bump_texname, base, isBaseURL, resourceMap, textures);
+            if (texture) {
+                material->getNormal().setTexture(texture);
+            }
+            else {
+                pinfo("Failed to load normal map texture [%s] for OBJ", m.bump_texname.c_str());
             }
         }
         

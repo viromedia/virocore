@@ -531,18 +531,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
             
             node->setPosition({0, 0, -1.5});
             node->setScale({ 0.01, 0.01, 0.01 });
-            
-             VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
-             
-             std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-             material->setLightingModel(VROLightingModel::Blinn);
-             material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::Runtime,
-                                                                            std::make_shared<VROImageiOS>([UIImage imageNamed:@"earth.jpg"], format)));
-             material->getNormal().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::Runtime,
-                                                                           std::make_shared<VROImageiOS>([UIImage imageNamed:@"earth_normal.jpg"], format)));
-             
-             node->getGeometry()->getMaterials().clear();
-             node->getGeometry()->getMaterials().push_back(material);
     });
     
     
