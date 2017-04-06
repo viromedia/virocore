@@ -35,8 +35,8 @@ void VROVideoTextureAVP::loadVideo(std::string url,
                                    std::shared_ptr<VRODriver> driver) {
     _player->setDataSourceURL(url.c_str());
 
-    frameSynchronizer->removeFrameListener(shared_from_this());
-    frameSynchronizer->addFrameListener(shared_from_this());
+    frameSynchronizer->removeFrameListener(std::dynamic_pointer_cast<VROVideoTexture>(shared_from_this()));
+    frameSynchronizer->addFrameListener(std::dynamic_pointer_cast<VROVideoTexture>(shared_from_this()));
 }
 
 void VROVideoTextureAVP::loadVideoFromURL(std::string url, std::shared_ptr<VRODriver> driver) {

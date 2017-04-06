@@ -21,19 +21,28 @@
 #include "VROImageUtil.h"
 #include "VRORenderContext.h"
 #include "VROCamera.h"
+#include "VROFrameTimer.h"
+#include "VROFrameScheduler.h"
 #include "VRODebugHUD.h"
+
+// Target frames-per-second. Eventually this will be platform dependent,
+// but for now all of our platforms target 60.
+static const double kFPSTarget = 60;
 
 #pragma mark - Initialization
 
 VRORenderer::VRORenderer(std::shared_ptr<VROInputControllerBase> inputController) :
     _rendererInitialized(false),
     _frameSynchronizer(std::make_shared<VROFrameSynchronizerInternal>()),
-    _context(std::make_shared<VRORenderContext>(_frameSynchronizer)),
     _inputController(inputController),
     _fpsTickIndex(0),
     _fpsTickSum(0) {
         
     _debugHUD = std::unique_ptr<VRODebugHUD>(new VRODebugHUD());
+    _frameScheduler = std::make_shared<VROFrameScheduler>();
+    _mpfTarget = 1000.0 / kFPSTarget;
+
+    _context = std::make_shared<VRORenderContext>(_frameSynchronizer, _frameScheduler);
     memset(_fpsTickArray, 0x0, sizeof(_fpsTickArray));
 }
 
@@ -112,6 +121,8 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         
         updateFPS(tick);
     }
+    
+    _frameStartTime = VROTimeCurrentMillis();
 
     VROTransaction::beginImplicitAnimation();
     VROTransaction::update();
@@ -237,6 +248,12 @@ void VRORenderer::endFrame(std::shared_ptr<VRODriver> driver) {
 
     notifyFrameEnd();
     VROTransaction::commitAll();
+    
+     _frameEndTime = VROTimeCurrentMillis();
+    double timeForProcessing = _mpfTarget - (_frameEndTime - _frameStartTime);
+    
+    VROFrameTimer timer(VROFrameType::Normal, timeForProcessing, _frameEndTime);
+    _frameScheduler->processTasks(timer);
 }
 
 void VRORenderer::renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> driver) {

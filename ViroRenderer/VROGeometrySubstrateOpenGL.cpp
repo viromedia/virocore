@@ -267,12 +267,12 @@ void VROGeometrySubstrateOpenGL::renderMaterial(VROMaterialSubstrateOpenGL *mate
     
     const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();
     for (int j = 0; j < textures.size(); ++j) {
-        VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) textures[j]->getSubstrate(driver);
+        VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) textures[j]->getSubstrate(driver, context.getFrameScheduler().get());
         if (!substrate) {
             // Use a blank placeholder if a texture is not yet available (i.e.
             // during video texture loading)
             std::shared_ptr<VROTexture> blank = getBlankTexture();
-            substrate = (VROTextureSubstrateOpenGL *) blank->getSubstrate(driver);
+            substrate = (VROTextureSubstrateOpenGL *) blank->getSubstrate(driver, nullptr);
         }
         
         std::pair<GLenum, GLint> targetAndTexture = substrate->getTexture();

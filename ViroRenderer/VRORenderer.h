@@ -30,6 +30,7 @@ class VRORenderContext;
 class VROFrameListener;
 class VROReticle;
 class VRORenderDelegateInternal;
+class VROFrameScheduler;
 enum class VROCameraRotationType;
 enum class VROEyeType;
 enum class VROTimingFunctionType;
@@ -145,6 +146,25 @@ private:
      */
     void updateFPS(uint64_t newTick);
     double getFPS() const;
+    
+#pragma mark - Process scheduling
+    
+    /*
+     Milliseconds per frame target; derived from desired FPS.
+     */
+    double _mpfTarget;
+    
+    /*
+     The time the current frame started and ended its display functions.
+     */
+    double _frameStartTime;
+    double _frameEndTime;
+    
+    /*
+     Schedules tasks to be run on the rendering thread when remaining
+     frame time allows.
+     */
+    std::shared_ptr<VROFrameScheduler> _frameScheduler;
 
 #pragma mark - Scene and Scene Transitions
     

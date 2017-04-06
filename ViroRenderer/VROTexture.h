@@ -21,6 +21,7 @@ class VROTextureSubstrate;
 class VRODriver;
 class VROImage;
 class VROData;
+class VROFrameScheduler;
 
 enum class VROTextureType {
     None = 1,
@@ -52,7 +53,7 @@ enum class VROMipmapMode {
     Runtime,       // Build mipmaps at texture loading time
 };
 
-class VROTexture {
+class VROTexture : public std::enable_shared_from_this<VROTexture> {
     
 public:
     
@@ -102,7 +103,17 @@ public:
      */
     void prewarm(std::shared_ptr<VRODriver> driver);
     
-    VROTextureSubstrate *const getSubstrate(VRODriver &driver);
+    /*
+     Get the substrate for this texture, loading it if necessary. If a scheduler is provided,
+     then the substrate will be loaded asynchronously via the scheduler; otherwise, the 
+     substrate will be loaded immediately in a blocking fashion.
+     */
+    VROTextureSubstrate *const getSubstrate(std::shared_ptr<VRODriver> &driver, VROFrameScheduler *scheduler);
+    
+    /*
+     Textures may have their substrate set externally if they are created and
+     managed elsewhere.
+     */
     void setSubstrate(std::unique_ptr<VROTextureSubstrate> substrate);
     
 private:

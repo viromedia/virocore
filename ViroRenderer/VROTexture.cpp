@@ -15,6 +15,8 @@
 #include "VROData.h"
 #include "VROImage.h"
 #include "VROMaterialVisual.h"
+#include "VROFrameScheduler.h"
+#include "VROStringUtil.h"
 #include <atomic>
 
 static std::atomic_int sTextureId;
@@ -91,9 +93,29 @@ VROTexture::~VROTexture() {
     ALLOCATION_TRACKER_SUB(Textures, 1);
 }
 
-VROTextureSubstrate *const VROTexture::getSubstrate(VRODriver &driver) {
+VROTextureSubstrate *const VROTexture::getSubstrate(std::shared_ptr<VRODriver> &driver, VROFrameScheduler *scheduler) {
     if (!_substrate) {
-        hydrate(driver);
+        if (!scheduler) {
+            hydrate(driver);
+        }
+        else {
+            // Only hold weak pointers: we don't want queued hydration
+            // to prolong the lifetime of these objects
+            std::weak_ptr<VRODriver> driver_w = driver;
+            std::weak_ptr<VROTexture> texture_w = shared_from_this();
+            
+            std::function<void()> hydrationTask = [driver_w, texture_w]() {
+                std::shared_ptr<VROTexture> texture_s = texture_w.lock();
+                std::shared_ptr<VRODriver> driver_s = driver_w.lock();
+                
+                if (texture_s && driver_s) {
+                    texture_s->hydrate(driver_s);
+                }
+            };
+            
+            std::string key = "th_" + VROStringUtil::toString(_textureId);
+            scheduler->scheduleTask(key, hydrationTask);
+        }
     }
     
     return _substrate.get();
