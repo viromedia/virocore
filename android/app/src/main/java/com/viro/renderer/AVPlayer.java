@@ -181,25 +181,6 @@ public class AVPlayer {
         }
     }
 
-    public boolean setDataSourceAsset(String asset, AssetManager assetManager) {
-        try {
-            reset();
-            AssetFileDescriptor afd = assetManager.openFd(asset);
-
-            // MediaPlayer.setDataSource(AssetFileDescriptor) was introduced w/ API Level 24 (Nougat)
-            if (android.os.Build.VERSION.SDK_INT >= 24) {
-                // TODO: Restore Asset datasource for internal testing
-            } else {
-                // TODO: Figure out how to setDataSource for API Level < 24
-            }
-
-            return true;
-        }catch(IOException e) {
-            Log.w(TAG, "AVPlayer failed to load asset [" + asset + "]");
-            return false;
-        }
-    }
-
     public void setVideoSink(Surface videoSink) {
         mExoPlayer.setVideoSurface(videoSink);
     }

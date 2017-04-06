@@ -43,10 +43,6 @@ void VROVideoTextureAVP::loadVideoFromURL(std::string url, std::shared_ptr<VRODr
     _player->setDataSourceURL(url.c_str());
 }
 
-void VROVideoTextureAVP::loadVideoFromAsset(std::string asset, std::shared_ptr<VRODriver> driver) {
-    _player->setDataSourceAsset(asset.c_str());
-}
-
 void VROVideoTextureAVP::prewarm() {
 
 }

@@ -118,22 +118,6 @@ bool VROAVPlayer::setDataSourceURL(const char *resourceOrUrl) {
     return result;
 }
 
-bool VROAVPlayer::setDataSourceAsset(const char *assetName) {
-    JNIEnv *env = VROPlatformGetJNIEnv();
-    jobject jassetManager = VROPlatformGetJavaAssetManager();
-
-    jstring jstring = env->NewStringUTF(assetName);
-
-    jclass cls = env->GetObjectClass(_javPlayer);
-    jmethodID jmethod = env->GetMethodID(cls, "setDataSourceAsset", "(Ljava/lang/String;Landroid/content/res/AssetManager;)Z");
-    jboolean result = env->CallBooleanMethod(_javPlayer, jmethod, jstring, jassetManager);
-
-    env->DeleteLocalRef(jstring);
-    env->DeleteLocalRef(cls);
-
-    return result;
-}
-
 void VROAVPlayer::setSurface(GLuint textureId) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     if (_jsurface) {

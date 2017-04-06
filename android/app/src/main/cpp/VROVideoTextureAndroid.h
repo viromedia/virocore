@@ -246,11 +246,6 @@ public:
                            std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                            std::shared_ptr<VRODriver> driver);
 
-    /*
-     Load from an asset with the given name.
-     */
-    void loadVideoFromAsset(std::string asset, std::shared_ptr<VRODriver> driver);
-
     void prewarm();
 
     void onFrameWillRender(const VRORenderContext &context);

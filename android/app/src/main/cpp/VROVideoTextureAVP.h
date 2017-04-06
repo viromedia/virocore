@@ -46,8 +46,6 @@ public:
      Load from a file at the given URL or an asset with the given name.
      */
     void loadVideoFromURL(std::string url, std::shared_ptr<VRODriver> driver);
-    void loadVideoFromAsset(std::string asset, std::shared_ptr<VRODriver> driver);
-
     void prewarm();
 
     void onFrameWillRender(const VRORenderContext &context);

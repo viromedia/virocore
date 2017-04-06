@@ -88,34 +88,6 @@ void VROVideoTextureAndroid::loadVideo(std::string url,
     loadVideo(extractor, driver);
 }
 
-void VROVideoTextureAndroid::loadVideoFromAsset(std::string asset,
-                                                std::shared_ptr<VRODriver> driver) {
-    killVideo();
-    AAssetManager *assetMgr = VROPlatformGetAssetManager();
-
-    off_t outStart, outLen;
-    int fd = AAsset_openFileDescriptor(AAssetManager_open(assetMgr, asset.c_str(), 0),
-                                       &outStart, &outLen);
-    if (fd < 0) {
-        pinfo("[video] failed to open URL: %s %d (%s)", asset.c_str(), fd, strerror(errno));
-        return;
-    }
-
-    AMediaExtractor *extractor = AMediaExtractor_new();
-    media_status_t err = AMediaExtractor_setDataSourceFd(extractor, fd,
-                                                         static_cast<off64_t>(outStart),
-                                                         static_cast<off64_t>(outLen));
-    close(fd);
-    if (err != AMEDIA_OK) {
-        pinfo("[video] error loading video from asset [%s], error [%d]", asset.c_str(), err);
-        AMediaExtractor_delete(extractor);
-
-        return;
-    }
-
-    loadVideo(extractor, driver);
-}
-
 void VROVideoTextureAndroid::loadVideo(AMediaExtractor *extractor, std::shared_ptr<VRODriver> driver) {
     /*
      IMPORTANT: quit() must be invoked on the looper before deleting it,
