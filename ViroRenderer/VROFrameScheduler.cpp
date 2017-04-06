@@ -9,7 +9,12 @@
 #include "VROFrameScheduler.h"
 #include "VROLog.h"
 
-VROFrameScheduler::VROFrameScheduler() {
+// Block and process all tasks when we reach this number
+// of starvation frames
+static const int kStarvationPurgeFrameCount = 60;
+
+VROFrameScheduler::VROFrameScheduler() :
+    _starvationFrameCount(0) {
     
 }
 
@@ -30,6 +35,8 @@ void VROFrameScheduler::scheduleTask(std::string key, std::function<void()> task
 }
 
 void VROFrameScheduler::processTasks(const VROFrameTimer &timer) {
+    bool processedAnyTask = false;
+    
     while (!_taskQueue.empty()) {
         if (!timer.isTimeRemainingInFrame()) {
             break;
@@ -48,6 +55,30 @@ void VROFrameScheduler::processTasks(const VROFrameTimer &timer) {
         // Process the task outside of the lock
         if (task.functor) {
             task.functor();
+            processedAnyTask = true;
         }
+    }
+    
+    if (!_taskQueue.empty() && !processedAnyTask) {
+        _starvationFrameCount++;
+    }
+    
+    /*
+     If we've been unable to process tasks for this number of frames, 
+     block and process them all.
+     */
+    if (_starvationFrameCount >= kStarvationPurgeFrameCount) {
+        pinfo("Tasks starved for %d frames: processing all", _starvationFrameCount);
+        
+        std::lock_guard<std::recursive_mutex> lock(_taskQueueMutex);
+        while (!_taskQueue.empty()) {
+            VROFrameTask task = _taskQueue.front();
+            _taskQueue.pop();
+            
+            if (task.functor) {
+                task.functor();
+            }
+        }
+        _starvationFrameCount = 0;
     }
 }
