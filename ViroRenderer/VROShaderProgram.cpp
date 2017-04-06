@@ -165,7 +165,7 @@ bool VROShaderProgram::compileShader(GLuint *shader, GLenum type, const char *so
     glShaderSource(*shader, 1, &source, &len);
     glCompileShader(*shader);
 
-//#if kDebugShaders
+#if kDebugShaders
     GLint logLength;
     glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &logLength); // <-- This is broken in qcomm's drivers
 
@@ -176,7 +176,7 @@ bool VROShaderProgram::compileShader(GLuint *shader, GLenum type, const char *so
     if (logLength > 1) { // when there are no logs we have just a '\n', don't print that out
         perr("Shader compile log:\n%s", elog);
     }
-//#endif
+#endif
 
     glGetShaderiv(*shader, GL_COMPILE_STATUS, &status);
     if (status == 0) {

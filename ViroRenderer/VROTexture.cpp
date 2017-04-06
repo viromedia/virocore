@@ -93,7 +93,7 @@ VROTexture::~VROTexture() {
     ALLOCATION_TRACKER_SUB(Textures, 1);
 }
 
-VROTextureSubstrate *const VROTexture::getSubstrate(std::shared_ptr<VRODriver> &driver, VROFrameScheduler *scheduler) {
+VROTextureSubstrate *VROTexture::getSubstrate(std::shared_ptr<VRODriver> &driver, VROFrameScheduler *scheduler) {
     if (!_substrate) {
         if (!scheduler) {
             hydrate(driver);

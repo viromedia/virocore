@@ -32,8 +32,11 @@ void initBlankTexture(const VRORenderContext &context) {
 
 #elif VRO_PLATFORM_ANDROID
 
+#include "VROImageAndroid.h"
+
 void initBlankTexture(const VRORenderContext &context) {
-    //TODO Android
+    std::shared_ptr<VROImage> wrapper = std::make_shared<VROImageAndroid>("blank.png", VROTextureInternalFormat::RGBA8);
+    staticBlankTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::None, wrapper);
 }
 
 #endif
