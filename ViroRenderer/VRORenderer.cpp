@@ -180,11 +180,11 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
 
     if (_sceneController) {
         if (_outgoingSceneController) {
-            _outgoingSceneController->getScene()->updateSortKeys(*_context.get(), *driver.get());
-            _sceneController->getScene()->updateSortKeys(*_context.get(), *driver.get());
+            _outgoingSceneController->getScene()->updateSortKeys(*_context.get(), driver);
+            _sceneController->getScene()->updateSortKeys(*_context.get(), driver);
         }
         else {
-            _sceneController->getScene()->updateSortKeys(*_context.get(), *driver.get());
+            _sceneController->getScene()->updateSortKeys(*_context.get(), driver);
         }
 
         _inputController->onProcess(camera);
@@ -219,9 +219,9 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
      */
     std::shared_ptr<VROReticle> reticle = _inputController->getPresenter()->getReticle();
     if (reticle) {
-        reticle->renderEye(eye, *_context.get(), *driver.get());
+        reticle->renderEye(eye, *_context.get(), driver);
     }
-    _debugHUD->renderEye(eye, *_context.get(), *driver.get());
+    _debugHUD->renderEye(eye, *_context.get(), driver);
 
     if (delegate) {
         delegate->didRenderEye(eye, _context.get());
@@ -245,16 +245,16 @@ void VRORenderer::renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> drive
             _outgoingSceneController->sceneWillRender(_context.get());
             _sceneController->sceneWillRender(_context.get());
 
-            _outgoingSceneController->getScene()->renderBackground(*_context.get(), *driver.get());
-            _sceneController->getScene()->renderBackground(*_context.get(), *driver.get());
+            _outgoingSceneController->getScene()->renderBackground(*_context.get(), driver);
+            _sceneController->getScene()->renderBackground(*_context.get(), driver);
 
-            _outgoingSceneController->getScene()->render(*_context.get(), *driver.get());
-            _sceneController->getScene()->render(*_context.get(), *driver.get());
+            _outgoingSceneController->getScene()->render(*_context.get(), driver);
+            _sceneController->getScene()->render(*_context.get(), driver);
         }
         else {
             _sceneController->sceneWillRender(_context.get());
-            _sceneController->getScene()->renderBackground(*_context.get(), *driver.get());
-            _sceneController->getScene()->render(*_context.get(), *driver.get());
+            _sceneController->getScene()->renderBackground(*_context.get(), driver);
+            _sceneController->getScene()->render(*_context.get(), driver);
         }
     }
 }

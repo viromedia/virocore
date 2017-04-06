@@ -32,7 +32,7 @@ VROScene::~VROScene() {
 }
 
 void VROScene::renderBackground(const VRORenderContext &renderContext,
-                                VRODriver &driver) {
+                                std::shared_ptr<VRODriver> &driver) {
     passert_thread();
     if (!_background) {
         return;
@@ -48,7 +48,7 @@ void VROScene::renderBackground(const VRORenderContext &renderContext,
 }
 
 void VROScene::render(const VRORenderContext &context,
-                      VRODriver &driver) {
+                      std::shared_ptr<VRODriver> &driver) {
     passert_thread();
     
     uint32_t boundShaderId = UINT32_MAX;
@@ -101,7 +101,7 @@ void VROScene::render(const VRORenderContext &context,
     }
 }
 
-void VROScene::updateSortKeys(const VRORenderContext &context, VRODriver &driver) {
+void VROScene::updateSortKeys(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
     passert_thread();
     
     if (kDebugSortOrder) {

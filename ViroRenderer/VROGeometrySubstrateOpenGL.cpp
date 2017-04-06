@@ -221,7 +221,7 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
                                         float opacity,
                                         std::shared_ptr<VROMaterial> &material,
                                         const VRORenderContext &context,
-                                        VRODriver &driver) {
+                                        std::shared_ptr<VRODriver> &driver) {
     
     VROMatrix4f viewMatrix = context.getViewMatrix();
     VROMatrix4f projectionMatrix = context.getProjectionMatrix();
@@ -260,8 +260,8 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
 void VROGeometrySubstrateOpenGL::renderMaterial(VROMaterialSubstrateOpenGL *material,
                                                 VROGeometryElementOpenGL &element,
                                                 float opacity,
-                                                const VRORenderContext &renderContext,
-                                                VRODriver &driver) {
+                                                const VRORenderContext &context,
+                                                std::shared_ptr<VRODriver> &driver) {
     
     material->bindMaterialUniforms(opacity);
     

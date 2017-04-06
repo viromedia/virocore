@@ -148,8 +148,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, texFormat,
                                                                        VROTextureInternalFormat::RGBA8,
                                                                        VROMipmapMode::Pregenerated,
-                                                                       dataVec, texWidth, texHeight, mipSizes,
-                                                                       driver.get());
+                                                                       dataVec, texWidth, texHeight, mipSizes);
 
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(10, 10, 0, 0, 1, 1);
     surface->getMaterials().front()->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});

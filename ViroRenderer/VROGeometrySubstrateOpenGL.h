@@ -57,7 +57,7 @@ public:
                 float opacity,
                 std::shared_ptr<VROMaterial> &material,
                 const VRORenderContext &context,
-                VRODriver &driver);
+                std::shared_ptr<VRODriver> &driver);
     
 private:
     
@@ -105,7 +105,7 @@ private:
                         VROGeometryElementOpenGL &element,
                         float opacity,
                         const VRORenderContext &renderContext,
-                        VRODriver &driver);
+                        std::shared_ptr<VRODriver> &driver);
     
 };
 

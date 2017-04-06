@@ -41,14 +41,14 @@ public:
      Create a new Metal texture of the given type from the given images.
      */
     VROTextureSubstrateMetal(VROTextureType type, std::vector<std::shared_ptr<VROImage>> &images,
-                             VRODriver &driver);
+                             std::shared_ptr<VRODriver> &driver);
     
     /*
      Create a new Metal texture out of the given format, with the given width, and height.
      */
     VROTextureSubstrateMetal(VROTextureType type, VROTextureFormat format,
                              std::shared_ptr<VROData> data, int width, int height,
-                             VRODriver &driver);
+                             std::shared_ptr<VRODriver> &driver);
     virtual ~VROTextureSubstrateMetal();
     
     id <MTLTexture> getTexture() const {

@@ -287,7 +287,7 @@ void VROMaterialSubstrateOpenGL::bindShader() {
 void VROMaterialSubstrateOpenGL::bindLights(int lightsHash,
                                             const std::vector<std::shared_ptr<VROLight>> &lights,
                                             const VRORenderContext &context,
-                                            VRODriver &driver) {
+                                            std::shared_ptr<VRODriver> &driver) {
     
     if (lights.empty()) {
         VROLightingUBO::unbind(_program);
@@ -295,7 +295,7 @@ void VROMaterialSubstrateOpenGL::bindLights(int lightsHash,
         return;
     }
     
-    VRODriverOpenGL &glDriver = (VRODriverOpenGL &)driver;
+    VRODriverOpenGL &glDriver = (VRODriverOpenGL &)(*driver.get());
     for (const std::shared_ptr<VROLight> &light : lights) {
         light->propagateUpdates();
     }

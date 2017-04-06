@@ -68,16 +68,13 @@ public:
     VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate);
     
     /*
-     Create a new VROTexture from a VROImage. If a driver is supplied, then
-     the texture will be prewarmed.
+     Create a new VROTexture from a VROImage.
      */
     VROTexture(VROTextureInternalFormat internalFormat,
                VROMipmapMode mipmapMode,
-               std::shared_ptr<VROImage> image,
-               VRODriver *driver = nullptr);
+               std::shared_ptr<VROImage> image);
     VROTexture(VROTextureInternalFormat internalFormat,
-               std::vector<std::shared_ptr<VROImage>> &images,
-               VRODriver *driver = nullptr);
+               std::vector<std::shared_ptr<VROImage>> &images);
     
     /*
      Create a new VROTexture from the given raw data in the given format.
@@ -88,8 +85,7 @@ public:
                VROMipmapMode mipmapMode,
                std::vector<std::shared_ptr<VROData>> &data,
                int width, int height,
-               std::vector<uint32_t> mipSizes,
-               VRODriver *driver = nullptr);
+               std::vector<uint32_t> mipSizes);
     
     virtual ~VROTexture();
     
@@ -104,7 +100,7 @@ public:
      Get the texture ready for usage now, in advance of when it's visible. If not invoked,
      the texture will be initialized when it is made visible.
      */
-    void prewarm(VRODriver &driver);
+    void prewarm(std::shared_ptr<VRODriver> driver);
     
     VROTextureSubstrate *const getSubstrate(VRODriver &driver);
     void setSubstrate(std::unique_ptr<VROTextureSubstrate> substrate);
@@ -158,9 +154,9 @@ private:
     std::unique_ptr<VROTextureSubstrate> _substrate;
     
     /*
-     Converts the image(s) into a substrate.
+     Converts the image(s) into a substrate. May be asynchronously executed.
      */
-    void hydrate(VRODriver &driver);
+    void hydrate(std::shared_ptr<VRODriver> &driver);
     
 };
 

@@ -37,7 +37,7 @@ VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate>
 
 VROTexture::VROTexture(VROTextureInternalFormat internalFormat,
                        VROMipmapMode mipmapMode,
-                       std::shared_ptr<VROImage> image, VRODriver *driver) :
+                       std::shared_ptr<VROImage> image) :
     _textureId(sTextureId++),
     _type(VROTextureType::Texture2D),
     _images( {image} ),
@@ -48,14 +48,11 @@ VROTexture::VROTexture(VROTextureInternalFormat internalFormat,
     _mipmapMode(mipmapMode),
     _substrate(nullptr) {
     
-    if (driver) {
-        prewarm(*driver);
-    }
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
 VROTexture::VROTexture(VROTextureInternalFormat internalFormat,
-                       std::vector<std::shared_ptr<VROImage>> &images, VRODriver *driver) :
+                       std::vector<std::shared_ptr<VROImage>> &images) :
     _textureId(sTextureId++),
     _type(VROTextureType::TextureCube),
     _images(images),
@@ -66,9 +63,6 @@ VROTexture::VROTexture(VROTextureInternalFormat internalFormat,
     _mipmapMode(VROMipmapMode::None), // No mipmapping for cube textures
     _substrate(nullptr) {
     
-    if (driver) {
-        prewarm(*driver);
-    }
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
@@ -78,8 +72,7 @@ VROTexture::VROTexture(VROTextureType type,
                        VROMipmapMode mipmapMode,
                        std::vector<std::shared_ptr<VROData>> &data,
                        int width, int height,
-                       std::vector<uint32_t> mipSizes,
-                       VRODriver *driver) :
+                       std::vector<uint32_t> mipSizes) :
     _textureId(sTextureId++),
     _type(type),
     _data(data),
@@ -91,9 +84,6 @@ VROTexture::VROTexture(VROTextureType type,
     _mipSizes(mipSizes),
     _substrate(nullptr) {
     
-    if (driver) {
-        prewarm(*driver);
-    }
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
@@ -113,11 +103,11 @@ void VROTexture::setSubstrate(std::unique_ptr<VROTextureSubstrate> substrate) {
     _substrate = std::move(substrate);
 }
 
-void VROTexture::prewarm(VRODriver &driver) {
+void VROTexture::prewarm(std::shared_ptr<VRODriver> driver) {
     hydrate(driver);
 }
 
-void VROTexture::hydrate(VRODriver &driver) {
+void VROTexture::hydrate(std::shared_ptr<VRODriver> &driver) {
     passert (_images.empty() || _data.empty());
     
     if (!_images.empty()) {
@@ -131,13 +121,13 @@ void VROTexture::hydrate(VRODriver &driver) {
         }
         
         std::vector<uint32_t> mipSizes;
-        _substrate = std::unique_ptr<VROTextureSubstrate>(driver.newTextureSubstrate(_type, _format, _internalFormat, _mipmapMode,
-                                                                                     data, _width, _height, _mipSizes));
+        _substrate = std::unique_ptr<VROTextureSubstrate>(driver->newTextureSubstrate(_type, _format, _internalFormat, _mipmapMode,
+                                                                                      data, _width, _height, _mipSizes));
         _images.clear();
     }
     else if (!_data.empty()) {
-        _substrate = std::unique_ptr<VROTextureSubstrate>(driver.newTextureSubstrate(_type, _format, _internalFormat, _mipmapMode,
-                                                                                     _data, _width, _height, _mipSizes));
+        _substrate = std::unique_ptr<VROTextureSubstrate>(driver->newTextureSubstrate(_type, _format, _internalFormat, _mipmapMode,
+                                                                                      _data, _width, _height, _mipSizes));
         _data.clear();
     }
 }

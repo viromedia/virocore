@@ -117,7 +117,7 @@ bool VROReticle::getPointerMode(){
     return _isPointerFixed;
 }
 
-void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext, VRODriver &driver) {
+void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext, std::shared_ptr<VRODriver> &driver) {
     if (kDebugSortOrder) {
         pinfo("Updating reticle key");
     }

@@ -35,7 +35,7 @@ public:
     void bindLights(int lightsHash,
                     const std::vector<std::shared_ptr<VROLight>> &lights,
                     const VRORenderContext &context,
-                    VRODriver &driver);
+                    std::shared_ptr<VRODriver> &driver);
     
     void bindDepthSettings();
     void bindCullingSettings();

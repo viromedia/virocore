@@ -53,7 +53,7 @@ void VRODebugHUD::prepare(const VRORenderContext &context) {
     }
 }
 
-void VRODebugHUD::renderEye(VROEyeType eye, const VRORenderContext &context, VRODriver &driver) {
+void VRODebugHUD::renderEye(VROEyeType eye, const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
     if (!_enabled) {
         return;
     }

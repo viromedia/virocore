@@ -23,9 +23,9 @@ VROGeometry::~VROGeometry() {
     ALLOCATION_TRACKER_SUB(Geometry, 1);
 }
 
-void VROGeometry::prewarm(VRODriver &driver) {
+void VROGeometry::prewarm(std::shared_ptr<VRODriver> driver) {
     if (!_substrate) {
-        _substrate = driver.newGeometrySubstrate(*this);
+        _substrate = driver->newGeometrySubstrate(*this);
     }
 }
 
@@ -35,7 +35,7 @@ void VROGeometry::render(int elementIndex,
                          VROMatrix4f normalMatrix,
                          float opacity,
                          const VRORenderContext &context,
-                         VRODriver &driver) {
+                         std::shared_ptr<VRODriver> &driver) {
     
     prewarm(driver);
     _substrate->render(*this, elementIndex, transform, normalMatrix,
@@ -44,7 +44,7 @@ void VROGeometry::render(int elementIndex,
 
 void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t hierarchyDepth,
                                  uint32_t lightsHash, float opacity, float distanceFromCamera, float zFar,
-                                 VRODriver &driver) {
+                                 std::shared_ptr<VRODriver> &driver) {
     _sortKeys.clear();
     
     size_t numElements = _geometryElements.size();

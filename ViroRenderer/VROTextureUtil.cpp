@@ -24,19 +24,6 @@ static int read24BitInt(const uint8_t *buf) {
           (static_cast<int>(buf[2]) << 16);
 }
 
-std::shared_ptr<VROTexture> VROTextureUtil::loadASTCTexture(const uint8_t *data, int length, VROTextureType type,
-                                                            VRODriver *driver) {
-    int width;
-    int height;
-    VROTextureFormat format;
-    std::shared_ptr<VROData> stripped = readASTCHeader(data, length, &format, &width, &height);
-    
-    std::vector<uint32_t> sizes;
-    std::vector<std::shared_ptr<VROData>> dataVector = { stripped };
-    return std::make_shared<VROTexture>(type, format, VROTextureInternalFormat::RGBA8, VROMipmapMode::None,
-                                        dataVector, width, height, sizes, driver);
-}
-
 std::shared_ptr<VROData> VROTextureUtil::readASTCHeader(const uint8_t *data, int length, VROTextureFormat *outFormat,
                                                         int *outWidth, int *outHeight) {
     int blockDimX = data[kASTCBlockXOffset];

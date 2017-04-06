@@ -43,7 +43,7 @@ public:
     void bindLights(int lightsHash,
                     const std::vector<std::shared_ptr<VROLight>> &lights,
                     const VRORenderContext &context,
-                    VRODriver &driver);
+                    std::shared_ptr<VRODriver> &driver);
     
     /*
      Set the uniforms required to render this material, and return the buffer.

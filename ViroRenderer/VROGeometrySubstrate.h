@@ -36,7 +36,7 @@ public:
                         float opacity,
                         std::shared_ptr<VROMaterial> &material,
                         const VRORenderContext &context,
-                        VRODriver &driver) = 0;
+                        std::shared_ptr<VRODriver> &driver) = 0;
 };
 
 #endif /* VROGeometrySubstrate_h */

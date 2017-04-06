@@ -16,7 +16,7 @@
 #include "VROImage.h"
 
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vector<std::shared_ptr<VROImage>> &images,
-                                                   VRODriver &driver) {
+                                                   std::shared_ptr<VRODriver> &driver) {
     
     VRODriverMetal &metal = (VRODriverMetal &)driver;
     id <MTLDevice> device = metal.getDevice();
@@ -94,7 +94,7 @@ VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, std::vec
 
 VROTextureSubstrateMetal::VROTextureSubstrateMetal(VROTextureType type, VROTextureFormat format,
                                                    std::shared_ptr<VROData> data, int width, int height,
-                                                   VRODriver &driver) {
+                                                   std::shared_ptr<VRODriver> &driver) {
     
     if (format == VROTextureFormat::ETC2) {
         VRODriverMetal &metal = (VRODriverMetal &)driver;

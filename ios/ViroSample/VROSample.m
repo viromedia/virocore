@@ -451,8 +451,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, format,
                                                                        VROTextureInternalFormat::RGBA8,
                                                                        VROMipmapMode::Pregenerated,
-                                                                       dataVec, texWidth, texHeight, mipSizes,
-                                                                       self.driver.get());
+                                                                       dataVec, texWidth, texHeight, mipSizes);
+    texture->prewarm(self.driver);
     
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height, 0.5, 0.5, 1, 1);
     surface->getMaterials().front()->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
@@ -603,6 +603,15 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     self.sceneIndex = VROSampleSceneNormalMap;
     self.driver = driver;
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
+    
+    [self nextSceneAfterDelay];
+}
+
+- (void)nextSceneAfterDelay {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self nextScene:nullptr];
+        [self nextSceneAfterDelay];
+    });
 }
 
 - (IBAction)nextScene:(id)sender {

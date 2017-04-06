@@ -260,9 +260,9 @@ void VROMaterialSubstrateMetal::bindShader() {
 void VROMaterialSubstrateMetal::bindLights(int lightsHash,
                                            const std::vector<std::shared_ptr<VROLight>> &lights,
                                            const VRORenderContext &context,
-                                           VRODriver &driver) {
+                                           std::shared_ptr<VRODriver> &driver) {
     
-    VRODriverMetal &metal = (VRODriverMetal &)driver;
+    VRODriverMetal &metal = (VRODriverMetal &)(*driver.get());
     id <MTLRenderCommandEncoder> renderEncoder = metal.getRenderTarget()->getRenderEncoder();
     
     VROEyeType eyeType = context.getEyeType();

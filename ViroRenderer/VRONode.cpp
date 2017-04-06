@@ -86,7 +86,7 @@ std::shared_ptr<VRONode> VRONode::clone() {
 void VRONode::render(int elementIndex,
                      std::shared_ptr<VROMaterial> &material,
                      const VRORenderContext &context,
-                     VRODriver &driver) {
+                     std::shared_ptr<VRODriver> &driver) {
     passert_thread();
     
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
@@ -100,8 +100,10 @@ void VRONode::resetDebugSortIndex() {
     sDebugSortIndex = 0;
 }
 
-void VRONode::updateSortKeys(uint32_t depth, VRORenderParameters &params,
-                             const VRORenderContext &context, VRODriver &driver) {
+void VRONode::updateSortKeys(uint32_t depth,
+                             VRORenderParameters &params,
+                             const VRORenderContext &context,
+                             std::shared_ptr<VRODriver> &driver) {
     passert_thread();
     processActions();
     

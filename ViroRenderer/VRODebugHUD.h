@@ -39,7 +39,7 @@ public:
      Render-loop functions.
      */
     void prepare(const VRORenderContext &context);
-    void renderEye(VROEyeType eye, const VRORenderContext &context, VRODriver &driver);
+    void renderEye(VROEyeType eye, const VRORenderContext &context, std::shared_ptr<VRODriver> &driver);
     
 private:
     
