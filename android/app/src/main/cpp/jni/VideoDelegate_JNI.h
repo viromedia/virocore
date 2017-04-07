@@ -27,11 +27,17 @@ class VideoDelegate : public VROVideoDelegateInternal {
         return persistentSurface->get();
     }
 
+    /*
+     * Notification mechanism to let the bridge know that the surface has been created
+     */
+    virtual void onReady();
+
     /**
      * Video Delegate Callbacks
      */
+    virtual void videoWillBuffer();
+    virtual void videoDidBuffer();
     virtual void videoDidFinish();
-    virtual void onReady();
     virtual void onVideoUpdatedTime(int seconds, int duration);
     virtual void videoDidFail(std::string error);
 

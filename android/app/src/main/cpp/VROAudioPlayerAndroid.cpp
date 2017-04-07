@@ -71,6 +71,14 @@ void VROAudioPlayerAndroid::setup() {
 
 #pragma mark - VROAVPlayerDelegate
 
+void VROAudioPlayerAndroid::willBuffer() {
+    // no-op
+}
+
+void VROAudioPlayerAndroid::didBuffer() {
+    // no-op
+}
+
 void VROAudioPlayerAndroid::onPrepared() {
     if (_delegate) {
         _delegate->soundIsReady();

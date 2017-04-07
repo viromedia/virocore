@@ -97,6 +97,20 @@ void VROVideoTextureiOS::setDelegate(std::shared_ptr<VROVideoDelegateInternal> d
     }
 }
 
+void VROVideoTextureiOS::playerWillBuffer() {
+    std::shared_ptr<VROVideoDelegateInternal> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->videoWillBuffer();
+    }
+}
+
+void VROVideoTextureiOS::playerDidBuffer() {
+    std::shared_ptr<VROVideoDelegateInternal> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->videoDidBuffer();
+    }
+}
+
 void VROVideoTextureiOS::loadVideo(std::string url,
                                    std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                    std::shared_ptr<VRODriver> driver) {
@@ -158,6 +172,7 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
 @property (readwrite) AVPlayerItemVideoOutput *output;
 @property (readwrite) BOOL mediaReady;
 @property (readwrite) BOOL playerReady;
+@property (readwrite) BOOL buffering;
 
 @property (readwrite) id notificationToken;
 
@@ -175,8 +190,9 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
         _player = player;
         
         _currentTextureIndex = 0;
-        _mediaReady = false;
-        _playerReady = false;
+        _mediaReady = NO;
+        _playerReady = NO;
+        _buffering = NO;
         
         _videoTextureCache = driver->newVideoTextureCache();
         _videoQueue = dispatch_queue_create("video_output_queue", DISPATCH_QUEUE_SERIAL);
@@ -195,17 +211,36 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
             [path isEqualToString:kStatusKey] &&
             self.player.status == AVPlayerStatusReadyToPlay &&
             self.player.currentItem.status == AVPlayerItemStatusReadyToPlay) {
-            self.playerReady = true;
-            
+            self.playerReady = YES;
+
             // It's unclear what thread we receive this notification on,
             // so return to main
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self attachVideoOutput];
             });
+
         }
         else if ([path isEqualToString:kPlaybackKeepUpKey]) {
-            if (!self.texture->isPaused()) {
-                [self.player play];
+            if ([object isKindOfClass:[AVPlayerItem class]]) {
+                AVPlayerItem *item = object;
+                if (_buffering == !item.playbackLikelyToKeepUp) {
+                    // If the state didn't change, then do nothing!
+                    return;
+                }
+                _buffering = !item.playbackLikelyToKeepUp;
+                if (item.playbackLikelyToKeepUp) {
+                    if (!self.texture->isPaused()) {
+                        [self.player play];
+                    }
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        _texture->playerDidBuffer();
+                    });
+                } else {
+                    [self.player pause];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        _texture->playerWillBuffer();
+                    });
+                }
             }
         }
     }

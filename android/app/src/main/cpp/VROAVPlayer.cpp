@@ -42,6 +42,26 @@ extern "C" {
         }
     }
 
+    JNI_METHOD(void, nativeWillBuffer)(JNIEnv *env,
+                                      jclass clazz,
+                                      jlong nativePlayerRef) {
+        std::weak_ptr<VROAVPlayerDelegate> delegateWeak
+                = native(nativePlayerRef)->getDelegate();
+        if(auto tmp = delegateWeak.lock()){
+            tmp->willBuffer();
+        }
+    }
+
+    JNI_METHOD(void, nativeDidBuffer)(JNIEnv *env,
+                                       jclass clazz,
+                                       jlong nativePlayerRef) {
+        std::weak_ptr<VROAVPlayerDelegate> delegateWeak
+                = native(nativePlayerRef)->getDelegate();
+        if(auto tmp = delegateWeak.lock()){
+            tmp->didBuffer();
+        }
+    }
+
     JNI_METHOD(void, nativeOnError)(JNIEnv *env,
                                     jclass clazz,
                                     jlong nativePlayerRef,

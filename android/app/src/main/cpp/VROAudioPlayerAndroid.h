@@ -37,6 +37,8 @@ public:
     void setDelegate(std::shared_ptr<VROSoundDelegateInternal> delegate);
 
     #pragma mark - VROAVPlayerDelegate
+    virtual void willBuffer();
+    virtual void didBuffer();
     virtual void onPrepared();
     virtual void onFinished();
     virtual void onError(std::string error);

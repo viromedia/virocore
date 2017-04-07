@@ -22,6 +22,40 @@ VideoDelegate::~VideoDelegate() {
     VROPlatformGetJNIEnv()->DeleteGlobalRef(_javaObject);
 }
 
+void VideoDelegate::videoWillBuffer() {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj, "playerWillBuffer", "()V");
+        env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
+    });
+}
+
+void VideoDelegate::videoDidBuffer() {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj, "playerDidBuffer", "()V");
+        env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
+    });
+}
+
 void VideoDelegate::videoDidFinish() {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
@@ -35,6 +69,7 @@ void VideoDelegate::videoDidFinish() {
 
         VROPlatformCallJavaFunction(localObj, "playerDidFinishPlaying", "()V");
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
@@ -53,6 +88,7 @@ void VideoDelegate::videoDidFail(std::string error) {
         VROPlatformCallJavaFunction(localObj, "onVideoFailed", "(Ljava/lang/String;)V", jerror);
         env->DeleteLocalRef(localObj);
         env->DeleteLocalRef(jerror);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
@@ -69,6 +105,7 @@ void VideoDelegate::onReady() {
 
         VROPlatformCallJavaFunction(weakObj, "onReady", "()V");
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
@@ -86,5 +123,6 @@ void VideoDelegate::onVideoUpdatedTime(int currentTimeInSeconds, int totalTimeIn
         VROPlatformCallJavaFunction(weakObj, "onVideoUpdatedTime", "(II)V",
                                     currentTimeInSeconds, totalTimeInSeconds);
         env->DeleteLocalRef(localObj);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }

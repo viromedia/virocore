@@ -83,8 +83,11 @@ public class VideoTextureJni {
      * Delegate Callback functions called from JNI
      */
     private WeakReference<VideoDelegate> mDelegate = null;
-    public interface VideoDelegate{
+    public interface VideoDelegate {
+        void onVideoBufferStart();
+        void onVideoBufferEnd();
         void onVideoFinish();
+        // notification that the texture is ready to be loaded
         void onReady();
         void onVideoFailed(String error);
         void onVideoUpdatedTime(int seconds, int totalDuration);
@@ -97,8 +100,20 @@ public class VideoTextureJni {
         }
     }
 
+    public void playerWillBuffer() {
+        if (mDelegate != null && mDelegate.get() != null && mNativeRef != INVALID_REF) {
+            mDelegate.get().onVideoBufferStart();
+        }
+    }
+
+    public void playerDidBuffer() {
+        if (mDelegate != null && mDelegate.get() != null && mNativeRef != INVALID_REF) {
+            mDelegate.get().onVideoBufferEnd();
+        }
+    }
+
     public void playerDidFinishPlaying() {
-        if (mDelegate != null && mDelegate.get() != null && mNativeRef != INVALID_REF){
+        if (mDelegate != null && mDelegate.get() != null && mNativeRef != INVALID_REF) {
             mDelegate.get().onVideoFinish();
         }
     }

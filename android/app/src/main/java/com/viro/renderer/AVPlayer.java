@@ -61,6 +61,8 @@ public class AVPlayer {
     private boolean mLoop;
     private State mState;
     private boolean mMute;
+    private int mPrevExoPlayerState = -1;
+    private boolean mWasBuffering = false;
 
     public AVPlayer(long nativeReference, Context context) {
         mVolume = 1.0f;
@@ -108,11 +110,30 @@ public class AVPlayer {
 
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                if (playbackState == ExoPlayer.STATE_ENDED) {
-                    if (mLoop) {
-                        mExoPlayer.seekToDefaultPosition();
-                    }
-                    nativeOnFinished(mNativeReference);
+                // this function sometimes gets called back w/ the same playbackState.
+                if (mPrevExoPlayerState == playbackState) {
+                    return;
+                }
+                mPrevExoPlayerState = playbackState;
+                switch (playbackState) {
+                    case ExoPlayer.STATE_BUFFERING:
+                        if (!mWasBuffering) {
+                            nativeWillBuffer(mNativeReference);
+                            mWasBuffering = true;
+                        }
+                        break;
+                    case ExoPlayer.STATE_READY:
+                        if (mWasBuffering) {
+                            nativeDidBuffer(mNativeReference);
+                            mWasBuffering = false;
+                        }
+                        break;
+                    case ExoPlayer.STATE_ENDED:
+                        if (mLoop) {
+                            mExoPlayer.seekToDefaultPosition();
+                        }
+                        nativeOnFinished(mNativeReference);
+                        break;
                 }
             }
 
@@ -278,8 +299,10 @@ public class AVPlayer {
     /**
      * Native Callbacks
      */
-    private native void nativeOnFinished(long ref);
     private native void nativeOnPrepared(long ref);
+    private native void nativeOnFinished(long ref);
+    private native void nativeWillBuffer(long ref);
+    private native void nativeDidBuffer(long ref);
     private native void nativeOnError(long ref, String error);
 }
 

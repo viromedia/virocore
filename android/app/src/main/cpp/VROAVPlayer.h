@@ -21,6 +21,10 @@ public:
     VROAVPlayerDelegate() {}
     virtual ~VROAVPlayerDelegate() {}
 
+    virtual void willBuffer() = 0;
+
+    virtual void didBuffer() = 0;
+
     // this is called when the AVPlayer has finished preparing the media
     virtual void onPrepared() = 0;
 

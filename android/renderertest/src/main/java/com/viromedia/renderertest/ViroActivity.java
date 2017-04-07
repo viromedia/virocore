@@ -193,6 +193,16 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef());
         videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
             @Override
+            public void onVideoBufferStart() {
+
+            }
+
+            @Override
+            public void onVideoBufferEnd() {
+
+            }
+
+            @Override
             public void onVideoFinish() {
             }
 
@@ -225,6 +235,16 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         final SphereJni sphere = new SphereJni(2, 20, 20, false);
         final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef());
         videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
+            @Override
+            public void onVideoBufferStart() {
+
+            }
+
+            @Override
+            public void onVideoBufferEnd() {
+
+            }
+
             @Override
             public void onVideoFinish() {
             }
@@ -259,6 +279,16 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         videoTexture.setLoop(false);
         videoTexture.play();
         videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
+            @Override
+            public void onVideoBufferStart() {
+
+            }
+
+            @Override
+            public void onVideoBufferEnd() {
+
+            }
+
             @Override
             public void onVideoFinish() {
             }

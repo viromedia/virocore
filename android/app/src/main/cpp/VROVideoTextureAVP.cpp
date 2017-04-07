@@ -118,8 +118,22 @@ void VROVideoTextureAVP::bindSurface(std::shared_ptr<VRODriverOpenGL> driver) {
 
 #pragma mark - VROAVPlayerDelegate
 
+void VROVideoTextureAVP::willBuffer() {
+    std::shared_ptr<VROVideoDelegateInternal> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->videoWillBuffer();
+    }
+}
+
+void VROVideoTextureAVP::didBuffer() {
+    std::shared_ptr<VROVideoDelegateInternal> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->videoDidBuffer();
+    }
+}
+
 void VROVideoTextureAVP::onPrepared() {
-    // do nothing
+    // no-op
 }
 
 void VROVideoTextureAVP::onFinished() {
