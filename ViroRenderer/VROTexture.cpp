@@ -80,7 +80,7 @@ VROTexture::VROTexture(VROTextureType type,
                        VROMipmapMode mipmapMode,
                        std::vector<std::shared_ptr<VROData>> &data,
                        int width, int height,
-                       std::vector<uint32_t> mipSizes),
+                       std::vector<uint32_t> mipSizes,
                        VROStereoMode stereoMode) :
     _textureId(sTextureId++),
     _type(type),

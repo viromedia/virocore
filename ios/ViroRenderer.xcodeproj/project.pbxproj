@@ -1557,12 +1557,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-<<<<<<< 48031ad00a0ac07c5d09a2c90d702c6daaad647e
 				8F660ABB1E9554B8006D063F /* VROFrameScheduler.h in Headers */,
 				8FCB10211DD544E800FE425C /* VROVideoTextureCache.h in Headers */,
-=======
 				8FCB10091DD10EF300FE425C /* VROStringUtil.h in Headers */,
->>>>>>> VIRO-25: Support Stereoscopic Photos / Videos (Renderer)
 				A58697891E30887500191090 /* VROInputType.h in Headers */,
 				A586978C1E308BD300191090 /* VROInputPresenter.h in Headers */,
 				A566EB3D1E1B47B7008B4AE2 /* VROEventDelegateiOS.h in Headers */,

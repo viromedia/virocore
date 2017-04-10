@@ -191,12 +191,7 @@ private:
     /*
      Converts the image(s) into a substrate. May be asynchronously executed.
      */
-<<<<<<< 48031ad00a0ac07c5d09a2c90d702c6daaad647e
     void hydrate(std::shared_ptr<VRODriver> &driver);
-    
-=======
-    void hydrate(VRODriver &driver);
->>>>>>> VIRO-25: Support Stereoscopic Photos / Videos (Renderer)
 };
 
 #endif /* VROTexture_h */

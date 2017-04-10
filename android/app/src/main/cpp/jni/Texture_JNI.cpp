@@ -65,7 +65,6 @@ JNI_METHOD(jlong, nativeCreateImageTexture)(JNIEnv *env, jobject obj, jlong imag
     std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(Texture::getFormat(env, format),
                                                                           mipmap ? VROMipmapMode::Runtime : VROMipmapMode::None,
                                                                           Image::native(image),
-                                                                          nullptr,
                                                                           mode);
     return Texture::jptr(texturePtr);
 }

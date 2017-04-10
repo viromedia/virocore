@@ -118,7 +118,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         List<NodeJni> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
         //nodes = testSphereVideo(this);
-        nodes = testBox(getApplicationContext());
+        //nodes = testBox(getApplicationContext());
         //nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
