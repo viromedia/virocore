@@ -63,6 +63,11 @@ VROVector3f VROText::getTextSize(std::string text, std::shared_ptr<VROTypeface> 
     VROVector3f size;
     std::map<FT_ULong, std::shared_ptr<VROGlyph>> glyphMap;
     
+    // Always add the space ' ' to the glyphMap (used by justification)
+    std::string space = " ";
+    FT_ULong spaceCode = *space.begin();
+    glyphMap[spaceCode] = typeface->getGlyph(spaceCode, false);
+    
     for (std::string::const_iterator c = text.begin(); c != text.end(); ++c) {
         FT_ULong charCode = *c;
         if (glyphMap.find(charCode) == glyphMap.end()) {
@@ -135,7 +140,10 @@ void VROText::buildText(std::string &text,
     std::map<FT_ULong, std::shared_ptr<VROGlyph>> glyphMap;
     std::map<FT_ULong, std::pair<std::shared_ptr<VROMaterial>, std::vector<int>>> materialMap;
     
-    for (std::string::const_iterator c = text.begin(); c != text.end(); ++c) {
+    // Ensure the space character is always generated (used by justification)
+    std::string charsToGenerate = " " + text;
+    
+    for (std::string::const_iterator c = charsToGenerate.begin(); c != charsToGenerate.end(); ++c) {
         FT_ULong charCode = *c;
         if (glyphMap.find(charCode) == glyphMap.end()) {
             std::shared_ptr<VROGlyph> glyph = typeface->getGlyph(charCode, true);
