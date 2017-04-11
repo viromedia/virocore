@@ -325,6 +325,7 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
 
 - (void)shouldLoop:(BOOL)loop {
     _loop = loop;
+    _player.actionAtItemEnd = loop ? AVPlayerActionAtItemEndNone : AVPlayerActionAtItemEndPause;
 }
 
 - (void)setDelegate:(std::shared_ptr<VROVideoDelegateInternal>)videoDelegate {
