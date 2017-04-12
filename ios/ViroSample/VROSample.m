@@ -542,10 +542,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     if (showImage){
         std::shared_ptr<VROTexture> imgTexture
         = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
-                                      VROMipmapMode::None, // Don't mipmap 360 images, wastes memory
+                                       VROMipmapMode::None, // Don't mipmap 360 images, wastes memory
                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"stereo1.jpg"], VROTextureInternalFormat::RGBA8),
-                                       nil,
-                                       StereoState::Horizontal);
+                                       VROStereoMode::LeftRight);
         surface->getMaterials().front()->getDiffuse().setTexture(imgTexture);
     } else {
         // show video
@@ -553,7 +552,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         NSURL *objURL = [NSURL fileURLWithPath:objPath];
         std::string url = std::string([[objURL description] UTF8String]);
         
-        self.videoTexture = std::make_shared<VROVideoTextureiOS>(StereoState::Horizontal);
+        self.videoTexture = std::make_shared<VROVideoTextureiOS>(VROStereoMode::LeftRight);
         self.videoTexture->loadVideo(url, [self.view frameSynchronizer], self.driver);
         self.videoTexture->play();
         surface->getMaterials().front()->getDiffuse().setTexture(self.videoTexture);
@@ -592,15 +591,14 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
                                        VROMipmapMode::None, // Don't mipmap 360 images, wastes memory
                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"stereo3601.jpg"], VROTextureInternalFormat::RGBA8),
-                                       nil,
-                                       StereoState::Vertical);
+                                       VROStereoMode::BottomTop);
         scene->setBackgroundSphere(imgTexture);
     } else {
         NSString *objPath = [[NSBundle mainBundle] pathForResource:@"stereoVid360" ofType:@"mp4"];
         NSURL *objURL = [NSURL fileURLWithPath:objPath];
         std::string url = std::string([[objURL description] UTF8String]);
         
-        self.videoTexture = std::make_shared<VROVideoTextureiOS>(StereoState::Vertical);
+        self.videoTexture = std::make_shared<VROVideoTextureiOS>(VROStereoMode::BottomTop);
         self.videoTexture->loadVideo(url, [self.view frameSynchronizer], self.driver);
         self.videoTexture->play();
         scene->setBackgroundSphere(self.videoTexture);
