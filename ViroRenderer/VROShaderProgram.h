@@ -14,6 +14,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "VROLog.h"
 #include "VROUniform.h"
 #include "VROOpenGL.h"
@@ -117,6 +118,10 @@ public:
     GLuint getLightingBlockIndex() const {
         return _lightingBlockIndex;
     }
+    
+    bool hasModifier(std::shared_ptr<VROShaderModifier> modifier) {
+        return std::find(_modifiers.begin(), _modifiers.end(), modifier) != _modifiers.end();
+    }
 
 private:
     
@@ -169,6 +174,11 @@ private:
      List of the names of all samplers used by this shader.
      */
     std::vector<std::string> _samplers;
+    
+    /*
+     The modifiers used on this shader.
+     */
+    std::vector<std::shared_ptr<VROShaderModifier>> _modifiers;
 
     /*
      Weak reference to the driver that created this program. The driver's lifecycle

@@ -11,15 +11,23 @@
 #include "VROUniform.h"
 #include "VROAllocationTracker.h"
 #include <atomic>
+#include <algorithm>
+#include <sstream>
 
 static std::atomic_int sShaderModifierId;
 
-uint32_t VROShaderModifier::hashShaderModifiers(const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers) {
-    uint32_t h = 0;
+std::string VROShaderModifier::getShaderModifierKey(const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers) {
+    std::vector<int> modifierIds;
     for (const std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
-        h = 31 * h + modifier->getShaderModifierId();
+        modifierIds.push_back(modifier->getShaderModifierId());
     }
-    return h;
+    std::sort(modifierIds.begin(), modifierIds.end());
+    
+    std::stringstream ss;
+    for (int modifierId : modifierIds) {
+        ss << "-" << modifierId;
+    }
+    return ss.str();
 }
 
 VROShaderModifier::VROShaderModifier(VROShaderEntryPoint entryPoint, std::vector<std::string> input) :

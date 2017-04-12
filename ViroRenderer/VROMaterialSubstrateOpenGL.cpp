@@ -272,6 +272,9 @@ void VROMaterialSubstrateOpenGL::addUniforms() {
         
         for (std::string &uniformName : uniformNames) {
             VROUniform *uniform = _program->getUniform(uniformName);
+            passert_msg (uniform != nullptr, "Failed to find shader modifier uniform '%s' in program!",
+                         uniformName.c_str());
+            
             _shaderModifierUniforms.push_back(uniform);
         }
     }
@@ -294,6 +297,9 @@ void VROMaterialSubstrateOpenGL::loadUniforms() {
         
         for (std::string &uniformName : uniformNames) {
             VROUniform *uniform = _program->getUniform(uniformName);
+            passert_msg (uniform != nullptr, "Failed to find shader modifier uniform '%s' in program!",
+                         uniformName.c_str());
+            
             _shaderModifierUniforms.push_back(uniform);
         }
     }

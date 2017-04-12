@@ -88,8 +88,8 @@ public:
                                                       const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers) {
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
 
-        int modifiersHash = VROShaderModifier::hashShaderModifiers(modifiers);
-        std::string name = vertexShader + "_" + fragmentShader + "_" + VROStringUtil::toString(modifiersHash);
+        std::string modifiersKey = VROShaderModifier::getShaderModifierKey(modifiers);
+        std::string name = vertexShader + "_" + fragmentShader + "_" + modifiersKey;
         
         std::map<std::string, std::shared_ptr<VROShaderProgram>>::iterator it = _sharedPrograms.find(name);
         if (it == _sharedPrograms.end()) {
@@ -103,6 +103,14 @@ public:
             return program;
         }
         else {
+            std::shared_ptr<VROShaderProgram> program = it->second;
+            
+            // Sanity check: all modifiers should be present in the pooled shader
+            for (const std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
+                passert_msg(program->hasModifier(modifier), "Pooled program %s does not contain modifier %d",
+                            name.c_str(), modifier->getShaderModifierId());
+            }
+            
             return it->second;
         }
     }

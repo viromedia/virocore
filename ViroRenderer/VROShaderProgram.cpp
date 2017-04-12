@@ -90,6 +90,7 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
             _uniforms.push_back(uniform);
         }
     }
+    _modifiers = modifiers;
         
     ALLOCATION_TRACKER_ADD(Shaders, 1);
 }
