@@ -284,7 +284,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
                                                                                       modifierCode);
     
-    modifier->setUniformBinder("testA", [](VROUniform *uniform, GLuint location) {
+    modifier->setUniformBinder("testA", [](VROUniform *uniform, GLuint location, const VROGeometry &geometry) {
         uniform->setFloat(1.0);
     });
     material->addShaderModifier(modifier);
@@ -301,7 +301,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROShaderModifier> surfaceModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                                              surfaceModifierCode);
     
-    surfaceModifier->setUniformBinder("surface_color", [](VROUniform *uniform, GLuint location) {
+    surfaceModifier->setUniformBinder("surface_color", [](VROUniform *uniform, GLuint location, const VROGeometry &geometry) {
         uniform->setVec3({0.6, 0.6, 1.0});
     });
     material->addShaderModifier(surfaceModifier);

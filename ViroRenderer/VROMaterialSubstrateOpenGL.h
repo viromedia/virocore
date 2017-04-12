@@ -21,6 +21,7 @@ class VROLight;
 class VROMatrix4f;
 class VROVector3f;
 class VROUniform;
+class VROGeometry;
 class VROLightingUBO;
 enum class VROEyeType;
 
@@ -42,7 +43,7 @@ public:
     void bindViewUniforms(VROMatrix4f transform, VROMatrix4f modelview,
                           VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
                           VROVector3f cameraPosition, VROEyeType eyeType);
-    void bindMaterialUniforms(float opacity);
+    void bindMaterialUniforms(float opacity, const VROGeometry &geometry);
     
     const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
         return _textures;

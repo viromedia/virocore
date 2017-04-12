@@ -101,7 +101,8 @@ private:
      */
     std::weak_ptr<VRODriverOpenGL> _driver;
     
-    void renderMaterial(VROMaterialSubstrateOpenGL *material,
+    void renderMaterial(const VROGeometry &geometry,
+                        VROMaterialSubstrateOpenGL *material,
                         VROGeometryElementOpenGL &element,
                         float opacity,
                         const VRORenderContext &renderContext,

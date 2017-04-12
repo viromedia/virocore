@@ -9,10 +9,7 @@
 #include "VROMaterialVisual.h"
 #include "VROAnimationFloat.h"
 #include "VROMaterial.h"
-#include "VROShaderModifier.h"
 #include "VROLog.h"
-#include "VROEye.h"
-#include "VROStringUtil.h"
 
 VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
  _material(visual._material),

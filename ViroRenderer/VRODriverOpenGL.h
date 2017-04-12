@@ -24,7 +24,7 @@
 #include <list>
 
 static const int kResourcePurgeFrameInterval = 120;
-static const int kResourcePurgeForceFrameInterval = 240;
+static const int kResourcePurgeForceFrameInterval = 1200;
 
 class VRODriverOpenGL : public VRODriver, public std::enable_shared_from_this<VRODriverOpenGL> {
 

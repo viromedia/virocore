@@ -354,7 +354,7 @@ void VROMaterialSubstrateOpenGL::bindViewUniforms(VROMatrix4f transform, VROMatr
     }
 }
 
-void VROMaterialSubstrateOpenGL::bindMaterialUniforms(float opacity) {
+void VROMaterialSubstrateOpenGL::bindMaterialUniforms(float opacity, const VROGeometry &geometry) {
     if (_diffuseSurfaceColorUniform != nullptr) {
         _diffuseSurfaceColorUniform->setVec4(_material.getDiffuse().getColor());
     }
@@ -369,7 +369,7 @@ void VROMaterialSubstrateOpenGL::bindMaterialUniforms(float opacity) {
     }
     
     for (VROUniform *uniform : _shaderModifierUniforms) {
-        uniform->set(nullptr);
+        uniform->set(nullptr, geometry);
     }
 }
 
