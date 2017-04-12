@@ -16,8 +16,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneText,
     VROSampleSceneVideoSphere,
     VROSampleSceneNormalMap,
+    VROSampleSceneStereoscopic,
     VROSampleSceneNumScenes,
-    VROSampleStereoscopic
 };
 
 @interface VROSample ()
@@ -37,9 +37,28 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (std::shared_ptr<VROSceneController>)loadSceneWithIndex:(int)index {
     int modulo = index % VROSampleSceneNumScenes;
+    switch (modulo) {
+        case VROSampleSceneTorus:
+            return [self loadTorusScene];
+        case VROSampleSceneCamera:
+            return [self loadCameraScene];
+        case VROSampleSceneVideoSphere:
+            return [self loadVideoSphereScene];
+        case VROSampleSceneText:
+            return [self loadTextScene];
+        case VROSampleSceneOBJ:
+            return [self loadOBJScene];
+        case VROSampleSceneNormalMap:
+            return [self loadNormalMapScene];
+        case VROSampleSceneBox:
+            return [self loadBoxScene];
+        case VROSampleSceneStereoscopic:
+            return [self loadStereoBackground];
+        default:
+            break;
+    }
     
-    
-    return [self loadStereoBackground];
+    return [self loadTorusScene];
 }
 
 - (std::shared_ptr<VROTexture>) niagaraTexture {
@@ -664,8 +683,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     self.sceneIndex = VROSampleSceneNormalMap;
     self.driver = driver;
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
-    
-    [self nextSceneAfterDelay];
 }
 
 - (void)nextSceneAfterDelay {
