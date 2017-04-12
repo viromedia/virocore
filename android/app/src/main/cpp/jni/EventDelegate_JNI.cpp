@@ -110,7 +110,7 @@ void EventDelegate_JNI::onTouch(int source, TouchState touchState, float x, floa
     });
 }
 
-void EventDelegate_JNI::onMove(int source, VROVector3f rotation, VROVector3f position) {
+void EventDelegate_JNI::onMove(int source, VROVector3f rotation, VROVector3f position, VROVector3f forwardVec) {
     //No-op
 }
 void EventDelegate_JNI::onControllerStatus(int source, ControllerStatus status) {

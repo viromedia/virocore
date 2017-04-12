@@ -42,7 +42,7 @@ public:
     void onHover(int source, bool isHovering);
     void onClick(int source, ClickState clickState);
     void onTouch(int source, TouchState touchState, float x, float y);
-    void onMove(int source, VROVector3f rotation, VROVector3f position);
+    void onMove(int source, VROVector3f rotation, VROVector3f position, VROVector3f forwardVec);
     void onControllerStatus(int source, ControllerStatus status);
     void onGazeHit(int source, float distance, VROVector3f hitLocation);
     void onSwipe(int source, SwipeState swipeState);

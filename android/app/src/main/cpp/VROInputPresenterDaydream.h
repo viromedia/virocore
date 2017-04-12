@@ -163,8 +163,8 @@ public:
         }
     }
 
-    void onMove(int source, VROVector3f controllerRotation, VROVector3f controllerPosition){
-        VROInputPresenter::onMove(source, controllerRotation, controllerPosition);
+    void onMove(int source, VROVector3f controllerRotation, VROVector3f controllerPosition, VROVector3f forwardVec){
+        VROInputPresenter::onMove(source, controllerRotation, controllerPosition, forwardVec);
         _elbowNode->setRotation(controllerRotation);
     }
 

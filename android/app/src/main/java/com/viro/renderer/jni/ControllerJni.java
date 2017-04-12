@@ -29,7 +29,17 @@ public class ControllerJni {
         nativeEnableController(mRenderContext.mNativeRef, visible);
     }
 
+    public void getControllerForwardVectorAsync(ControllerJniCallback callback){
+        nativeGetControllerForwardVectorAsync(mRenderContext.mNativeRef, callback);
+    }
+
     private native void nativeSetEventDelegate(long contextRef, long delegateRef);
     private native void nativeEnableReticle(long contextRef, boolean enabled);
     private native void nativeEnableController(long contextRef, boolean enabled);
+    private native void nativeGetControllerForwardVectorAsync(long renderContextRef,
+                                                              ControllerJniCallback callback);
+
+    public interface ControllerJniCallback{
+        void onGetForwardVector(float x, float y, float z);
+    }
 }

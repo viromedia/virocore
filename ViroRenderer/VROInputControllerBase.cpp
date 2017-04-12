@@ -157,7 +157,7 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
     // Trigger orientation delegate callbacks for non-scene elements.
     for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
         delegate->onGazeHit(source, *_hitResult.get());
-        delegate->onMove(source, _lastKnownRotation.toEuler(), _lastKnownPosition);
+        delegate->onMove(source, _lastKnownRotation.toEuler(), _lastKnownPosition, _lastKnownForward);
     }
 
     if (_hitResult == nullptr){
@@ -174,7 +174,8 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
     std::shared_ptr<VRONode> movableNode
             = getNodeToHandleEvent(VROEventDelegate::EventAction::OnMove, _hitResult->getNode());
     if (movableNode != nullptr){
-        movableNode->getEventDelegate()->onMove(source, _lastKnownRotation.toEuler(), _lastKnownPosition);
+        movableNode->getEventDelegate()->onMove(source, _lastKnownRotation.toEuler(),
+                                                _lastKnownPosition, _lastKnownForward);
     }
 
     // Update draggable objects if needed
@@ -361,7 +362,7 @@ VROHitTestResult VROInputControllerBase::hitTest(const VROCamera &camera, VROVec
         return results[0];
     }
 
-    VROVector3f backgroundPosition = camera.getPosition() + (ray * kSceneBackgroundDistance);
+    VROVector3f backgroundPosition = origin + (ray * kSceneBackgroundDistance);
     VROHitTestResult sceneBackgroundHitResult = { _scene->getRootNodes()[0], backgroundPosition,
                                                   kSceneBackgroundDistance, true, camera };
     return sceneBackgroundHitResult;

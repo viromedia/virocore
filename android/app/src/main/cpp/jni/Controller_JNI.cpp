@@ -74,6 +74,31 @@ JNI_METHOD(void, nativeEnableController)(JNIEnv *env,
         controllerPresenter->getRootNode()->setHidden(!enable);
     });
 }
+
+JNI_METHOD(void, nativeGetControllerForwardVectorAsync)(JNIEnv *env,
+                                          jobject obj,
+                                          jlong native_render_context_ref,
+                                          jobject callback) {
+    jweak weakCallback = env->NewWeakGlobalRef(callback);
+    std::weak_ptr<RenderContext> helperContext_w = RenderContext::native(native_render_context_ref);
+
+    VROPlatformDispatchAsyncApplication([helperContext_w, weakCallback] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject jCallback = env->NewLocalRef(weakCallback);
+        if (jCallback == NULL) {
+            return;
+        }
+        std::shared_ptr<RenderContext> helperContext = helperContext_w.lock();
+        if (!helperContext) {
+            return;
+        }
+        VROVector3f position = helperContext->getInputController()->getPresenter()->getLastKnownForward();
+        VROPlatformCallJavaFunction(jCallback,
+                                    "onGetForwardVector", "(FFF)V", position.x, position.y, position.z);
+        env->DeleteLocalRef(jCallback);
+        env->DeleteWeakGlobalRef(weakCallback);
+    });
+}
 /**
  * TODO VIRO-704: Add APIs for custom controls - replacing Obj or adding tooltip support.
  */

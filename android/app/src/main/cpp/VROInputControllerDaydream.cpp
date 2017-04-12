@@ -110,9 +110,8 @@ void VROInputControllerDaydream::updateOrientation(const VROCamera &camera) {
     // Grab controller orientation
     gvr_quatf gvr_rotation = _controller_state.GetOrientation();
     VROQuaternion rotation = VROQuaternion(gvr_rotation.qx, gvr_rotation.qy, gvr_rotation.qz, gvr_rotation.qw);
-    VROVector3f position = getDaydreamControllerPosition(rotation) + camera.getPosition();
-
     VROVector3f forwardVector = getDaydreamForwardVector(rotation);
+    VROVector3f position = getDaydreamControllerPosition(rotation, forwardVector) + camera.getPosition();
 
     // Perform hit test
     VROInputControllerBase::updateHitNode(camera, position, forwardVector);
@@ -128,11 +127,10 @@ VROVector3f VROInputControllerDaydream::getDaydreamForwardVector(const VROQuater
     return controllerForward.rotateAboutAxis(leftward, {0,0,0}, 0.261799);
 }
 
-VROVector3f VROInputControllerDaydream::getDaydreamControllerPosition(const VROQuaternion rotation) {
+VROVector3f VROInputControllerDaydream::getDaydreamControllerPosition(const VROQuaternion rotation, const VROVector3f forwardVector) {
     // Apply the rotation to the ARM model within the presenter.
     VROVector3f origin;
-    _daydreamPresenter->onMove(ViroDayDream::InputSource::Controller,
-                               rotation.toEuler(), origin);
+    _daydreamPresenter->onMove(ViroDayDream::InputSource::Controller, rotation.toEuler(), origin, forwardVector);
 
     // Grab the calculated pointerNode's position from the ARM Model. If the controller does not
     // have pointer node (laser-less), use the controller's body node position.
