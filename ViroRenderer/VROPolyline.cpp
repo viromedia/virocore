@@ -40,8 +40,13 @@ std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f
                                             };
     std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
                                                                                       modifierCode);
-    modifier->setUniformBinder("width", [polyline](VROUniform *uniform, GLuint location) {
-        uniform->setFloat(polyline->getWidth());
+    
+    std::weak_ptr<VROPolyline> polyline_w = polyline;
+    modifier->setUniformBinder("width", [polyline_w](VROUniform *uniform, GLuint location) {
+        std::shared_ptr<VROPolyline> polyline_s = polyline_w.lock();
+        if (polyline_s) {
+            uniform->setFloat(polyline_s->getWidth());
+        }
     });
     
     material->addShaderModifier(modifier);
