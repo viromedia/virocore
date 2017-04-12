@@ -61,18 +61,17 @@ VROReticle::VROReticle(std::shared_ptr<VROTexture> reticleTexture) :
     // Create the semi-transparent fuse line Background
     _cachedCirclePoints = createArc(_size, kCircleSegments);
     _fuseBackgroundLine = VROPolyline::createPolyline(_cachedCirclePoints, _thickness);
-    _fuseBackgroundLine->setName("ReticleFuseBackground");
+    _fuseBackgroundLine->setName("Reticle_FuseBackground");
     _fuseBackgroundLine->getMaterials().front()->setTransparencyMode(VROTransparencyMode::AOne);
     _fuseBackgroundLine->getMaterials().front()->setTransparency(0.1);
     _fuseBackgroundLine->getMaterials().front()->setWritesToDepthBuffer(false);
     _fuseBackgroundLine->getMaterials().front()->setReadsFromDepthBuffer(false);
     _fuseBackgroundLine->getMaterials().front()->getDiffuse().setColor({0.33, 0.976, 0.968, 1.0});
     _fuseBackgroundNode->setGeometry(_fuseBackgroundLine);
-    _fuseNode->setGeometry(_fuseBackgroundLine);
 
     // Create UI lines needed for the fuseTriggered animation.
     _fuseTriggeredLine = VROPolyline::createPolyline(_cachedCirclePoints, _thickness * 3);
-    _fuseTriggeredLine->setName("ReticleFuseTriggered");
+    _fuseTriggeredLine->setName("Reticle_FuseTriggered");
     _fuseTriggeredLine->getMaterials().front()->setWritesToDepthBuffer(false);
     _fuseTriggeredLine->getMaterials().front()->setReadsFromDepthBuffer(false);
     _fuseTriggeredLine->getMaterials().front()->getDiffuse().setColor({1.0, 1.0, 1.0, 0.5});
@@ -261,10 +260,11 @@ void VROReticle::animateFuse(float ratio){
     std::vector<VROVector3f> points(_cachedCirclePoints.begin(),
                                     _cachedCirclePoints.begin() + circleRatio);
     _fuseLine = VROPolyline::createPolyline(points, _thickness);
-    _fuseLine->setName("FuseReticle");
+    _fuseLine->setName("Reticle_Fuse");
     _fuseLine->getMaterials().front()->setWritesToDepthBuffer(false);
     _fuseLine->getMaterials().front()->setReadsFromDepthBuffer(false);
     _fuseLine->getMaterials().front()->getDiffuse().setColor({1.0, 1.0, 0.968, 1.0});
+    
     _fuseNode->setGeometry(_fuseLine);
 }
 

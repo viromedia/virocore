@@ -35,7 +35,6 @@ static int sDebugSortIndex = 0;
 
 VRONode::VRONode() :
     _scale({1.0, 1.0, 1.0}),
-    _pivot({0.5f, 0.5f, 0.5f}),
     _euler({0, 0, 0}),
     _renderingOrder(0),
     _hidden(false),
@@ -56,7 +55,6 @@ VRONode::VRONode(const VRONode &node) :
     _position(node._position),
     _rotation(node._rotation),
     _euler(node._euler),
-    _pivot(node._pivot),
     _renderingOrder(node._renderingOrder),
     _hidden(node._hidden),
     _opacityFromHiddenFlag(node._opacityFromHiddenFlag),
@@ -222,25 +220,11 @@ void VRONode::getSortKeys(std::vector<VROSortKey> *outKeys) {
 
 void VRONode::computeTransform(const VRORenderContext &context, VROMatrix4f parentTransforms) {
     passert_thread();
-    VROMatrix4f pivotMtx, unpivotMtx;
-    
-    if (_geometry) {
-        VROBoundingBox bounds = _geometry->getBoundingBox();
-        VROVector3f extents = bounds.getExtents();
-        
-        VROVector3f pivotCoordinate(bounds.getMinX() * (1 - _pivot.x) + bounds.getMaxX() * _pivot.x,
-                                    bounds.getMinY() * (1 - _pivot.y) + bounds.getMaxY() * _pivot.y,
-                                    bounds.getMinZ() * (1 - _pivot.z) + bounds.getMaxZ() * _pivot.z);
-        
-        pivotMtx.translate(-pivotCoordinate.x, -pivotCoordinate.y, -pivotCoordinate.z);
-        unpivotMtx.translate(pivotCoordinate.x, pivotCoordinate.y, pivotCoordinate.z);
-    }
     
     VROMatrix4f transform;
     transform.scale(_scale.x, _scale.y, _scale.z);
     transform = _rotation.getMatrix().multiply(transform);
     transform.translate(_position.x, _position.y, _position.z);
-    transform = unpivotMtx.multiply(transform).multiply(pivotMtx);
 
     _computedTransform = parentTransforms.multiply(transform);
     _computedPosition = { _computedTransform[12], _computedTransform[13], _computedTransform[14] };
@@ -361,13 +345,6 @@ void VRONode::setRotationEulerZ(float radians) {
         euler.z = VROMathNormalizeAngle2PI(r);
         ((VRONode *)animatable)->_rotation = { euler.x, euler.y, euler.z };
     }, _euler.z, radians));
-}
-
-void VRONode::setPivot(VROVector3f pivot) {
-    passert_thread();
-    animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f s) {
-                                                        ((VRONode *)animatable)->_pivot = s;
-                                                   }, _pivot, pivot));
 }
 
 void VRONode::setOpacity(float opacity) {

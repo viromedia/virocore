@@ -30,6 +30,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 @property (readwrite, nonatomic) float objAngle;
 @property (readwrite, nonatomic) int sceneIndex;
 @property (readwrite, nonatomic) std::shared_ptr<VROVideoTexture> videoTexture;
+@property (readwrite, nonatomic) std::shared_ptr<VROEventDelegate> fuseDelegate;
 
 @end
 
@@ -142,7 +143,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VRONode> torusNode = std::make_shared<VRONode>();
     torusNode->setGeometry(torus);
     torusNode->setPosition(position);
-    torusNode->setPivot({1, 0.5, 0.5});
     
     return torusNode;
 }
@@ -661,7 +661,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                 return;
             }
             
-            node->setPosition({0, -100, -10});
+            node->setPosition({0, -10, -20});
             node->setScale({ 0.1, 0.1, 0.1 });
     });
     
@@ -676,11 +676,16 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     });
     
     objNode->runAction(action);
+    
+    self.fuseDelegate = std::make_shared<VROEventDelegate>();
+    self.fuseDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnFuse, true);
+    objNode->setEventDelegate(self.fuseDelegate);
+    
     return sceneController;
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleSceneNormalMap;
+    self.sceneIndex = VROSampleSceneTorus;
     self.driver = driver;
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
 }

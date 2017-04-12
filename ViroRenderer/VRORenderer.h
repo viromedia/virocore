@@ -28,7 +28,6 @@ class VRONodeCamera;
 class VROTimingFunction;
 class VRORenderContext;
 class VROFrameListener;
-class VROReticle;
 class VRORenderDelegateInternal;
 class VROFrameScheduler;
 enum class VROCameraRotationType;
