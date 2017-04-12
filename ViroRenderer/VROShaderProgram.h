@@ -119,6 +119,9 @@ public:
         return _lightingBlockIndex;
     }
     
+    const std::vector<std::shared_ptr<VROShaderModifier>> &getModifiers() const {
+        return _modifiers;
+    }
     bool hasModifier(std::shared_ptr<VROShaderModifier> modifier) {
         return std::find(_modifiers.begin(), _modifiers.end(), modifier) != _modifiers.end();
     }
@@ -200,6 +203,12 @@ private:
     bool compileShader(GLuint *shader, GLenum type, const char *source);
     bool linkProgram(GLuint prog);
     bool validateProgram(GLuint prog);
+    
+    /*
+     Loads the standard uniforms to this shader, and the uniforms used by the
+     modifiers.
+     */
+    void addStandardUniforms();
 
     /*
      Set the location of each uniform in the uniformMap and each sampler in the samplers

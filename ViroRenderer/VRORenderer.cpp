@@ -201,7 +201,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         _inputController->onProcess(camera);
     }
 
-    driver->onFrame(*_context.get());
+    driver->willRenderFrame(*_context.get());
     _debugHUD->prepare(*_context.get());
 }
 
@@ -254,6 +254,8 @@ void VRORenderer::endFrame(std::shared_ptr<VRODriver> driver) {
     
     VROFrameTimer timer(VROFrameType::Normal, timeForProcessing, _frameEndTime);
     _frameScheduler->processTasks(timer);
+    
+    driver->didRenderFrame(timer, *_context.get());
 }
 
 void VRORenderer::renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> driver) {

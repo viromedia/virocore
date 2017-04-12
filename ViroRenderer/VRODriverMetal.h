@@ -42,7 +42,10 @@ public:
         _library = [device newLibraryWithFile:shaders error:nil];
     }
     
-    void onFrame(VRORenderContext &context) {
+    void willRenderFrame(VRORenderContext &context) {
+        
+    }
+    void didRenderFrame(const VROFrameTimer &timer, const VRORenderContext &context) {
         
     }
     

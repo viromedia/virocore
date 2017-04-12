@@ -18,16 +18,51 @@
 #include "VROShaderProgram.h"
 #include "VROLightingUBO.h"
 #include "VROShaderModifier.h"
+#include "VRORenderContext.h"
 #include "VROGeometrySource.h"
 #include "VROLight.h"
 #include <list>
 
+static const int kResourcePurgeFrameInterval = 120;
+static const int kResourcePurgeForceFrameInterval = 240;
+
 class VRODriverOpenGL : public VRODriver, public std::enable_shared_from_this<VRODriverOpenGL> {
 
 public:
+    
+    VRODriverOpenGL() : _lastPurgeFrame(0) {
+        
+    }
 
-    void onFrame(const VRORenderContext &context) {
+    void willRenderFrame(const VRORenderContext &context) {
 
+    }
+    
+    void didRenderFrame(const VROFrameTimer &timer, const VRORenderContext &context) {
+        if (context.getFrame() - _lastPurgeFrame < kResourcePurgeFrameInterval) {
+            return;
+        }
+        
+        // If we haven't had a full purge in awhile, force it, irrespective of time
+        // remaining
+        bool forcePurge = context.getFrame() - _lastPurgeFrame > kResourcePurgeForceFrameInterval;
+        
+        // Delete shaders that are only held by the driver, if time provides
+        std::map<std::string, std::shared_ptr<VROShaderProgram>>::iterator it = _sharedPrograms.begin();
+        while (it != _sharedPrograms.end()) {
+            if (!forcePurge && timer.isTimeRemainingInFrame()) {
+                return;
+            }
+            
+            if (it->second.unique()) {
+                it = _sharedPrograms.erase(it);
+            }
+            else {
+                ++it;
+            }
+        }
+        
+        _lastPurgeFrame = context.getFrame();
     }
     
     VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) {
@@ -157,6 +192,11 @@ private:
      Shader programs are shared across the system.
      */
     std::map<std::string, std::shared_ptr<VROShaderProgram>> _sharedPrograms;
+    
+    /*
+     The frame during which we last purged resources.
+     */
+    int _lastPurgeFrame;
     
 };
 

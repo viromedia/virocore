@@ -28,7 +28,7 @@ public:
     
     virtual ~VRODriverOpenGLiOS() { }
     
-    void onFrame(const VRORenderContext &context) {
+    void willRenderFrame(const VRORenderContext &context) {
         // Set the head position into _gvrAudio when spatial sound is supported by iOS
     }
 

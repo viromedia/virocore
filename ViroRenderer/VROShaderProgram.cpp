@@ -81,16 +81,8 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
                 break;
         }
     }
-        
-    for (const std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
-        std::vector<std::string> uniformNames = modifier->getUniforms();
-            
-        for (std::string &uniformName : uniformNames) {
-            VROUniform *uniform = new VROUniformShaderModifier(uniformName, modifier);
-            _uniforms.push_back(uniform);
-        }
-    }
     _modifiers = modifiers;
+    addStandardUniforms();
         
     ALLOCATION_TRACKER_ADD(Shaders, 1);
 }
@@ -350,6 +342,28 @@ bool VROShaderProgram::compileAndLink() {
 #endif
 
     return true;
+}
+
+void VROShaderProgram::addStandardUniforms() {
+    addUniform(VROShaderProperty::Mat4, 1, "normal_matrix");
+    addUniform(VROShaderProperty::Mat4, 1, "model_matrix");
+    addUniform(VROShaderProperty::Mat4, 1, "modelview_matrix");
+    addUniform(VROShaderProperty::Mat4, 1, "modelview_projection_matrix");
+    addUniform(VROShaderProperty::Vec3, 1, "camera_position");
+    addUniform(VROShaderProperty::Int, 1, "eye_type");
+    
+    addUniform(VROShaderProperty::Vec4, 1, "material_diffuse_surface_color");
+    addUniform(VROShaderProperty::Float, 1, "material_diffuse_intensity");
+    addUniform(VROShaderProperty::Float, 1, "material_alpha");
+    
+    for (const std::shared_ptr<VROShaderModifier> &modifier : _modifiers) {
+        std::vector<std::string> uniformNames = modifier->getUniforms();
+        
+        for (std::string &uniformName : uniformNames) {
+            VROUniform *uniform = new VROUniformShaderModifier(uniformName, modifier);
+            _uniforms.push_back(uniform);
+        }
+    }
 }
 
 bool VROShaderProgram::bind() {

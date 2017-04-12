@@ -109,15 +109,11 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
         fragmentShader = "constant_q_fsh";
     }
     
-    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers,
-                                      modifiers);
+    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers, modifiers);
     if (!_program->isHydrated()) {
-        addUniforms();
         hydrateProgram(driver);
     }
-    else {
-        loadUniforms();
-    }
+    loadUniforms();
 }
 
 void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
@@ -158,15 +154,11 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
         modifiers.push_back(createReflectiveTextureModifier());
     }
     
-    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers,
-                                      modifiers);
+    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers, modifiers);
     if (!_program->isHydrated()) {
-        addUniforms();
         hydrateProgram(driver);
     }
-    else {
-        loadUniforms();
-    }
+    loadUniforms();
 }
 
 void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
@@ -242,42 +234,14 @@ void VROMaterialSubstrateOpenGL::configureSpecularShader(std::string vertexShade
         modifiers.push_back(createReflectiveTextureModifier());
     }
     
-    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers,
-                                      modifiers);
+    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers, modifiers);
     if (!_program->isHydrated()) {
-        addUniforms();
-        _shininessUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
+        _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
         hydrateProgram(driver);
     }
-    else {
-        _shininessUniform = _program->getUniform("material_shininess");
-        loadUniforms();
-    }
-}
-
-void VROMaterialSubstrateOpenGL::addUniforms() {
-    _normalMatrixUniform = _program->addUniform(VROShaderProperty::Mat4, 1, "normal_matrix");
-    _modelMatrixUniform = _program->addUniform(VROShaderProperty::Mat4, 1, "model_matrix");
-    _modelViewMatrixUniform = _program->addUniform(VROShaderProperty::Mat4, 1, "modelview_matrix");
-    _modelViewProjectionMatrixUniform = _program->addUniform(VROShaderProperty::Mat4, 1, "modelview_projection_matrix");
-    _cameraPositionUniform = _program->addUniform(VROShaderProperty::Vec3, 1, "camera_position");
-    _eyeTypeUniform = _program->addUniform(VROShaderProperty::Int, 1, "eye_type");
-
-    _diffuseSurfaceColorUniform = _program->addUniform(VROShaderProperty::Vec4, 1, "material_diffuse_surface_color");
-    _diffuseIntensityUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_diffuse_intensity");
-    _alphaUniform = _program->addUniform(VROShaderProperty::Float, 1, "material_alpha");
-
-    for (const std::shared_ptr<VROShaderModifier> &modifier : _material.getShaderModifiers()) {
-        std::vector<std::string> uniformNames = modifier->getUniforms();
-        
-        for (std::string &uniformName : uniformNames) {
-            VROUniform *uniform = _program->getUniform(uniformName);
-            passert_msg (uniform != nullptr, "Failed to find shader modifier uniform '%s' in program!",
-                         uniformName.c_str());
-            
-            _shaderModifierUniforms.push_back(uniform);
-        }
-    }
+    
+    _shininessUniform = _program->getUniform("material_shininess");
+    loadUniforms();
 }
 
 void VROMaterialSubstrateOpenGL::loadUniforms() {
@@ -292,7 +256,7 @@ void VROMaterialSubstrateOpenGL::loadUniforms() {
     _cameraPositionUniform = _program->getUniform("camera_position");
     _eyeTypeUniform = _program->getUniform("eye_type");
     
-    for (const std::shared_ptr<VROShaderModifier> &modifier : _material.getShaderModifiers()) {
+    for (const std::shared_ptr<VROShaderModifier> &modifier : _program->getModifiers()) {
         std::vector<std::string> uniformNames = modifier->getUniforms();
         
         for (std::string &uniformName : uniformNames) {
@@ -471,26 +435,27 @@ std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createStereoTextu
     std::shared_ptr<VROShaderModifier> modifier;
     if (sStereoscopicTextureModifiers[currentStereoMode]){
         modifier = sStereoscopicTextureModifiers[currentStereoMode];
-    } else {
+    }
+    else {
         // Assume leftRight stereoscopic image by default.
         std::string stereoAxis = "x";
         std::string eye_left = VROStringUtil::toString(static_cast<int>(VROEyeType::Left));
         std::string eye_right = VROStringUtil::toString(static_cast<int>(VROEyeType::Right));
 
         // If stereoscopic image is vertical, change stereoAxis to y
-        if (currentStereoMode == VROStereoMode::TopBottom || currentStereoMode == VROStereoMode::BottomTop){
+        if (currentStereoMode == VROStereoMode::TopBottom || currentStereoMode == VROStereoMode::BottomTop) {
             stereoAxis = "y";
         }
 
         // For stereo modes where the eyes are switched, we flip them.
-        if (currentStereoMode == VROStereoMode::RightLeft || currentStereoMode == VROStereoMode::BottomTop){
+        if (currentStereoMode == VROStereoMode::RightLeft || currentStereoMode == VROStereoMode::BottomTop) {
             std::string tmp = eye_left;
             eye_left = eye_right;
             eye_right = tmp;
         }
 
         // Create the shader modifier
-        std::vector<std::string> surfaceModifierCode =  {
+        std::vector<std::string> surfaceModifierCode = {
                 "uniform int eye_type;",
                 "if (eye_type == "+eye_left+") {_surface.diffuse_texcoord."+stereoAxis+" = _surface.diffuse_texcoord."+stereoAxis+" * 0.5;}",
                 "else if (eye_type == "+eye_right+") {_surface.diffuse_texcoord."+stereoAxis+" = (_surface.diffuse_texcoord."+stereoAxis+" * 0.5) + 0.5;}"

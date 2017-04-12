@@ -52,7 +52,6 @@ public:
     
 private:
         
-    void addUniforms();
     void loadUniforms();
     void hydrateProgram(VRODriverOpenGL &driver);
 
