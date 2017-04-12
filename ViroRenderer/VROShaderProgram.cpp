@@ -15,6 +15,7 @@
 #include "VROShaderModifier.h"
 #include "VROPlatformUtil.h"
 #include "VROGeometryUtil.h"
+#include "VROAllocationTracker.h"
 #include <atomic>
 
 #define kDebugShaders 0
@@ -89,6 +90,8 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
             _uniforms.push_back(uniform);
         }
     }
+        
+    ALLOCATION_TRACKER_ADD(Shaders, 1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -108,6 +111,8 @@ VROShaderProgram::~VROShaderProgram() {
     if (_driver.lock()) {
         glDeleteShader(_program);
     }
+    
+    ALLOCATION_TRACKER_SUB(Shaders, 1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////

@@ -9,6 +9,7 @@
 #include "VROShaderModifier.h"
 #include "VROLog.h"
 #include "VROUniform.h"
+#include "VROAllocationTracker.h"
 #include <atomic>
 
 static std::atomic_int sShaderModifierId;
@@ -36,10 +37,12 @@ VROShaderModifier::VROShaderModifier(VROShaderEntryPoint entryPoint, std::vector
      */
     _uniforms = _uniforms + getDirective(VROShaderSection::Uniforms) + "\n";
     _body = _body + getDirective(VROShaderSection::Body) + "\n";
+        
+    ALLOCATION_TRACKER_ADD(ShaderModifiers, 1);
 }
 
 VROShaderModifier::~VROShaderModifier() {
-    
+    ALLOCATION_TRACKER_SUB(ShaderModifiers, 1);
 }
 
 void VROShaderModifier::setUniformBinder(std::string uniform,
