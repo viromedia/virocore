@@ -517,6 +517,16 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef(), "LeftRight");
         videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
             @Override
+            public void onVideoBufferStart() {
+
+            }
+
+            @Override
+            public void onVideoBufferEnd() {
+
+            }
+
+            @Override
             public void onVideoFinish() {}
 
             @Override
@@ -544,6 +554,16 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     private void testStereoBackgroundVideo(final SceneJni scene) {
         final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef(), "TopBottom");
         videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
+            @Override
+            public void onVideoBufferStart() {
+
+            }
+
+            @Override
+            public void onVideoBufferEnd() {
+
+            }
+
             @Override
             public void onVideoFinish() {}
 
