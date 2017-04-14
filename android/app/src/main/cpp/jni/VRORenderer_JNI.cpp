@@ -79,6 +79,7 @@ JNI_METHOD(void, nativeInitializeGl)(JNIEnv *env,
                                      jobject obj,
                                      jlong native_renderer) {
 
+    VROThreadRestricted::setThread(VROThreadName::Renderer, pthread_self());
     std::shared_ptr<VROSceneRenderer> sceneRenderer = Renderer::native(native_renderer);
 
     if (kRunRendererTest) {
@@ -243,6 +244,7 @@ JNI_METHOD(void, nativeOnSurfaceCreated)(JNIEnv *env,
                                          jobject obj,
                                          jobject surface,
                                          jlong native_renderer) {
+
     Renderer::native(native_renderer)->onSurfaceCreated(surface);
 }
 

@@ -24,7 +24,7 @@
 static const float kSphereBackgroundRadius = 1;
 static const float kSphereBackgroundNumSegments = 60;
 
-VROScene::VROScene() {
+VROScene::VROScene() : VROThreadRestricted(VROThreadName::Renderer) {
     ALLOCATION_TRACKER_ADD(Scenes, 1);
 }
 

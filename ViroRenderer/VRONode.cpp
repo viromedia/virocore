@@ -33,7 +33,7 @@ static int sDebugSortIndex = 0;
 
 #pragma mark - Initialization
 
-VRONode::VRONode() :
+VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
     _scale({1.0, 1.0, 1.0}),
     _euler({0, 0, 0}),
     _renderingOrder(0),
@@ -47,7 +47,7 @@ VRONode::VRONode() :
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
 
-VRONode::VRONode(const VRONode &node) :
+VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Renderer),
     _geometry(node._geometry),
     _lights(node._lights),
     _sounds(node._sounds),

@@ -203,6 +203,8 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headRotation) {
  * Update render sizes as the surface changes.
  */
 void VROSceneRendererGVR::onSurfaceChanged(jobject surface, jint width, jint height) {
+    VROThreadRestricted::setThread(VROThreadName::Renderer, pthread_self());
+
     _renderSize.width = width;
     _renderSize.height = height;
 }
