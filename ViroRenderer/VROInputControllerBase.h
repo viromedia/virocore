@@ -67,7 +67,10 @@ public:
 
     void attachScene(std::shared_ptr<VROScene> scene) {
         _scene = scene;
-        _scene->setControllerPresenter(getPresenter());
+    }
+
+    void detachScene() {
+        _scene = nullptr;
     }
 
     /*

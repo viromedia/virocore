@@ -10,6 +10,7 @@
 #include "VRORenderContext.h"
 #include "VRONode.h"
 #include "VROGeometry.h"
+#include "VROInputControllerBase.h"
 #include "VROSkybox.h"
 #include "VROLight.h"
 #include "VROHitTestResult.h"
@@ -158,20 +159,34 @@ void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
     material->setWritesToDepthBuffer(false);
     material->setReadsFromDepthBuffer(false);
 }
-
-void VROScene::setControllerPresenter(std::shared_ptr<VROInputPresenter> presenter) {
+void VROScene::detachInputController(std::shared_ptr<VROInputControllerBase> controller){
     passert_thread();
-    std::shared_ptr<VRONode> node = presenter->getRootNode();
-
-    // Add the controller presenter to the scene tree if we haven't already
-    if (_controllerPresenter != presenter){
-        auto it = std::find(_nodes.begin(), _nodes.end(), node);
-        if (it != _nodes.end()){
-            _nodes.erase(it);
-        }
-        _nodes.push_back(node);
+    if (!_controllerPresenter){
+        return;
     }
+
+    std::shared_ptr<VRONode> node = _controllerPresenter->getRootNode();
+    auto it = std::find(_nodes.begin(), _nodes.end(), node);
+    if (it != _nodes.end()){
+        _nodes.erase(it);
+    }
+
+    controller->detachScene();
+    _controllerPresenter = nullptr;
+}
+void VROScene::attachInputController(std::shared_ptr<VROInputControllerBase> controller) {
+    passert_thread();
+
+    std::shared_ptr<VROInputPresenter> presenter = controller->getPresenter();
+    if (_controllerPresenter == presenter){
+        return;
+    }
+
+    std::shared_ptr<VRONode> node = presenter->getRootNode();
+    _nodes.push_back(node);
     _controllerPresenter = presenter;
+
+    controller->attachScene(shared_from_this());
 }
 
 std::shared_ptr<VROInputPresenter> VROScene::getControllerPresenter(){

@@ -305,7 +305,10 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneCo
 
     _outgoingSceneController = _sceneController;
     _sceneController = sceneController;
-    _inputController->attachScene(_sceneController->getScene());
+
+    if (_outgoingSceneController) {
+        _outgoingSceneController->getScene()->detachInputController(_inputController);
+    }
 
     _sceneController->onSceneWillAppear(_context.get(), driver);
     if (_outgoingSceneController) {
@@ -316,6 +319,8 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneCo
     if (_outgoingSceneController) {
         _outgoingSceneController->startOutgoingTransition(seconds, timingFunctionType, _context.get());
     }
+
+    _sceneController->getScene()->attachInputController(_inputController);
 }
 
 #pragma mark - Frame Listeners

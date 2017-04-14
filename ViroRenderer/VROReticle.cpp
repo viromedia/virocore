@@ -110,7 +110,6 @@ void VROReticle::trigger() {
         }
         // float whiteRadius = VROMathInterpolate(t, 0, 1.0, _size, _size * kTriggerAnimationWhiteCircleMultiple);
         // TODO Draw a filled circle with whiteRadius and whiteAlpha
-
         _reticleLine->setWidth(thickness);
         _fuseBackgroundLine->setWidth(thickness);
         if (_fuseLine){
@@ -200,7 +199,12 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext
 void VROReticle::renderNode(std::shared_ptr<VRONode> node, VRORenderParameters renderParams,
                             const VRORenderContext &renderContext, std::shared_ptr<VRODriver> &driver){
     node->updateSortKeys(0, renderParams, renderContext, driver);
-    std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
+    const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
+    if (!geometry){
+        return;
+    }
+
+    std::shared_ptr<VROMaterial> material = geometry->getMaterials().front();
     material->bindShader(driver);
     node->render(0, material, renderContext, driver);
 };
