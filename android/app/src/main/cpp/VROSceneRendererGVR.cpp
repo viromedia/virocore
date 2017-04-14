@@ -112,7 +112,6 @@ void VROSceneRendererGVR::onDrawFrame() {
     VROMatrix4f headRotation = VROGVRUtil::toMatrix4f(_headView).invert();
 
     if (!_rendererSuspended) {
-
         if (_vrModeEnabled) {
             renderStereo(headRotation);
         }
@@ -123,10 +122,13 @@ void VROSceneRendererGVR::onDrawFrame() {
         _viewportList->SetToRecommendedBufferViewports();
         gvr::Frame frame = _swapchain->AcquireFrame();
         frame.BindBuffer(0);
+
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         frame.Unbind();
         frame.Submit(*_viewportList, _headView);
+
         double newTime = VROTimeCurrentSeconds();
         // notify the user about bad keys 5 times a second (every 200ms/.2s)
         if (newTime - _suspendedNotificationTime > .2) {
@@ -186,7 +188,7 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headRotation) {
                          rect.right - rect.left,
                          rect.top   - rect.bottom);
 
-    VROFieldOfView fov(45, 45, 45, 45);
+    VROFieldOfView fov = _renderer->getMonoFOV(viewport.getWidth(), viewport.getHeight());
     prepareFrame(viewport, fov, headRotation);
 
     VROMatrix4f projectionMatrix = fov.toPerspectiveMatrix(kZNear, kZFar);

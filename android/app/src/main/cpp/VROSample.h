@@ -38,7 +38,6 @@ public:
 
 private:
 
-    std::shared_ptr<VROMaterial> _material;
     std::shared_ptr<VROTexture> getNiagaraTexture();
 
     std::shared_ptr<VRODriver> _driver;

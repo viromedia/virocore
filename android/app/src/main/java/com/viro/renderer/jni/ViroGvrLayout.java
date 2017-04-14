@@ -297,6 +297,14 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
             GLSurfaceView glSurfaceView = createSurfaceView(false);
             mPlatformUtil.setRenderCommandQueue(new GLSurfaceViewQueue(glSurfaceView));
             setPresentationView(glSurfaceView);
+
+            // When mono-rendering we use the full viewport, which is rectangular.
+            // Because of this, we have to detect orientation changes so we can
+            // respond by reconfiguring our surface width and height
+            Activity activity = mWeakActivity.get();
+            if (activity != null) {
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+            }
         }
 
         mNativeRenderer.setVRModeEnabled(vrModeEnabled);

@@ -29,6 +29,11 @@
 // but for now all of our platforms target 60.
 static const double kFPSTarget = 60;
 
+// The FOV we use for the smaller dimension of the viewport, when in
+// mono-rendering mode. This is similar to Hor+ scaling, in that one
+// dimension is fixed, and other is dependent on the viewport.
+static const double kFovY = 45;
+
 #pragma mark - Initialization
 
 VRORenderer::VRORenderer(std::shared_ptr<VROInputControllerBase> inputController) :
@@ -96,7 +101,22 @@ double VRORenderer::getFPS() const {
     return 1.0 / (averageNanos / (double) 1e9);
 }
 
-#pragma mark - Stereo renderer methods
+#pragma mark - Mono renderer methods
+
+VROFieldOfView VRORenderer::getMonoFOV(int viewportWidth, int viewportHeight) {
+    if (viewportWidth < viewportHeight) {
+        float fovX = kFovY;
+        float fovY = fovX * 2 * atan((tan(toRadians(fovX / 2)) / (double) viewportWidth) * (double) viewportHeight);
+
+        return { fovX, fovX, fovY, fovY };
+    }
+    else {
+        float fovY = kFovY;
+        float fovX = fovY * 2 * atan((tan(toRadians(fovY / 2)) / (double) viewportHeight) * (double) viewportWidth);
+
+        return { fovX, fovX, fovY, fovY };
+    }
+}
 
 void VRORenderer::updateRenderViewSize(float width, float height) {
     std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
@@ -104,6 +124,8 @@ void VRORenderer::updateRenderViewSize(float width, float height) {
         delegate->renderViewDidChangeSize(width, height, _context.get());
     }
 }
+
+#pragma mark - Stereo renderer methods
 
 void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView fov,
                                VROMatrix4f headRotation, std::shared_ptr<VRODriver> driver) {

@@ -44,12 +44,34 @@ public:
 
     VRORenderer(std::shared_ptr<VROInputControllerBase> inputController);
     virtual ~VRORenderer();
-    
+
+    /*
+     Set the node that contains the camera through which we will view the
+     scene.
+     */
     void setPointOfView(std::shared_ptr<VRONode> node);
+
+    /*
+     Set the delegate that can be used to respond to renderer state changes.
+     */
     void setDelegate(std::shared_ptr<VRORenderDelegateInternal> delegate);
-    void updateRenderViewSize(float width, float height);
+
+    /*
+     Set to true to enable the debug HUD, which draws frame data directly
+     to the screen.
+     */
     void setDebugHUDEnabled(bool enabled);
-    
+
+    /*
+     Get the field of view to use for a viewport of the given size. This function
+     is generally only used in mono-rendering mode (e.g. not VR). In VR, the
+     FOV is typically determined by the platform. In Mono, however, we have more
+     control and need to support a wider array of viewport sizes.
+     */
+    VROFieldOfView getMonoFOV(int viewportWidth, int viewportHeight);
+
+    void updateRenderViewSize(float width, float height);
+
 #pragma mark - Scene Controllers
     
     void setSceneController(std::shared_ptr<VROSceneController> sceneController, std::shared_ptr<VRODriver> driver);

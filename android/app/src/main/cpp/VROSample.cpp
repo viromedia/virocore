@@ -54,7 +54,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
 
     scene->addNode(rootNode);
 
-    VROTextureInternalFormat format = VROTextureInternalFormat::RGB565;
+    VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
 
     /*
      Create the obj node.
@@ -112,24 +112,18 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     /*
      Create the box node.
      */
-    std::shared_ptr<VROBox> box = VROBox::createBox(2, 4, 2);
+    std::shared_ptr<VROBox> box = VROBox::createBox(2, 2, 2);
     box->setName("Box 1");
 
-    std::string videoPath = VROPlatformCopyAssetToFile("vest.mp4");
-
-    _material = box->getMaterials()[0];
-    _material->setLightingModel(VROLightingModel::Lambert);
-    //_material->getDiffuse().setTexture(_videoA);
-    _material->getDiffuse().setTexture(std::make_shared<VROTexture>(format,
-                                                                    VROMipmapMode::Runtime,
-                                                                    VROPlatformLoadImageFromAsset("boba.png", format)));
-    _material->getSpecular().setTexture(std::make_shared<VROTexture>(format,
-                                                                     VROMipmapMode::Runtime,
-                                                                     VROPlatformLoadImageFromAsset("specular.png", format)));
+    std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
+    material->setLightingModel(VROLightingModel::Lambert);
+    material->getDiffuse().setTexture(std::make_shared<VROTexture>(format,
+                                                                   VROMipmapMode::Runtime,
+                                                                   VROPlatformLoadImageFromAsset("boba.png", format)));
 
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
-    boxNode->setPosition({0, 0, -15});
+    boxNode->setPosition({0, 0, -4});
 
     rootNode->addChildNode(boxNode);
 
