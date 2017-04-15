@@ -25,5 +25,5 @@ void VROInputControllerCardboard::updateOrientation(const VROCamera &camera){
     VROInputControllerBase::updateHitNode(camera, camera.getPosition(), controllerForward);
 
     // Process orientation and update delegates
-    VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, camera.getPosition(), rotation);
+    VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, camera.getPosition(), rotation, controllerForward);
 }

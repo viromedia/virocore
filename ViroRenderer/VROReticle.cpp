@@ -25,6 +25,7 @@ static const float kFuseRadiusMultiplier = 3;
 VROReticle::VROReticle(std::shared_ptr<VROTexture> reticleTexture) :
     _isPointerFixed(false),
     _enabled(true),
+    _isFusing(false),
     _size(0.01),
     _thickness(0.005),
     _endThickness(_thickness * kTriggerAnimationInnerCircleThicknessMultiple),
@@ -50,7 +51,7 @@ VROReticle::VROReticle(std::shared_ptr<VROTexture> reticleTexture) :
 
     // Image Reticle
     else {
-        _reticleIcon = VROSurface::createSurface(0.03, 0.03);
+        _reticleIcon = VROSurface::createSurface(0.02, 0.02);
         std::shared_ptr<VROMaterial> &material = _reticleIcon->getMaterials().front();
         material->getDiffuse().setTexture(reticleTexture);
         material->setWritesToDepthBuffer(false);

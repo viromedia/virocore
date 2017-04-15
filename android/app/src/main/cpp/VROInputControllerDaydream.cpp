@@ -111,13 +111,19 @@ void VROInputControllerDaydream::updateOrientation(const VROCamera &camera) {
     gvr_quatf gvr_rotation = _controller_state.GetOrientation();
     VROQuaternion rotation = VROQuaternion(gvr_rotation.qx, gvr_rotation.qy, gvr_rotation.qz, gvr_rotation.qw);
     VROVector3f forwardVector = getDaydreamForwardVector(rotation);
-    VROVector3f position = getDaydreamControllerPosition(rotation, forwardVector) + camera.getPosition();
+    VROVector3f controllerPosition = getDaydreamControllerPosition(rotation, forwardVector) + camera.getPosition();
+
+    // Project the controller's forward vector onto the scene's background.
+    VROVector3f backgroundHitLocation = controllerPosition + (forwardVector * kSceneBackgroundDistance);
+
+    // Get the new hit vector from the user's view point.
+    VROVector3f observerHitRay = backgroundHitLocation - camera.getPosition();
 
     // Perform hit test
-    VROInputControllerBase::updateHitNode(camera, position, forwardVector);
+    VROInputControllerBase::updateHitNode(camera, camera.getPosition(), observerHitRay.normalize());
 
     // Process orientation and update delegates
-    VROInputControllerBase::onMove(ViroDayDream::InputSource::Controller, position, rotation);
+    VROInputControllerBase::onMove(ViroDayDream::InputSource::Controller, controllerPosition, rotation, forwardVector);
 }
 
 // Tilt the controller forwards by 15 degrees as required by Daydream.

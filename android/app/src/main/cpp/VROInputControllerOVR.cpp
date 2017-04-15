@@ -63,5 +63,5 @@ void VROInputControllerOVR::onProcess(const VROCamera &camera) {
     VROInputControllerBase::updateHitNode(camera, camera.getPosition(), controllerForward);
 
     // Process orientation and update delegates
-    VROInputControllerBase::onMove(ViroOculus::InputSource::Controller, camera.getPosition(), rotation);
+    VROInputControllerBase::onMove(ViroOculus::InputSource::Controller, camera.getPosition(), rotation, controllerForward);
 }

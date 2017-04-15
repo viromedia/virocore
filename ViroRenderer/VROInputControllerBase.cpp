@@ -8,7 +8,6 @@
 #include "VROInputControllerBase.h"
 #include "VROTime.h"
 
-static float kSceneBackgroundDistance = 8;
 static bool sSceneBackgroundAdd = true;
 
 VROInputControllerBase::VROInputControllerBase() {
@@ -150,9 +149,10 @@ void VROInputControllerBase::onTouchpadEvent(int source, VROEventDelegate::Touch
     }
 }
 
-void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuaternion rotation) {
+void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuaternion rotation, VROVector3f forward) {
     _lastKnownRotation = rotation;
     _lastKnownPosition = position;
+    _lastKnownForward = forward;
 
     // Trigger orientation delegate callbacks for non-scene elements.
     for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
@@ -213,7 +213,6 @@ void VROInputControllerBase::updateHitNode(const VROCamera &camera, VROVector3f 
 
     // Perform hit test re-calculate forward vectors as needed.
     _hitResult = std::make_shared<VROHitTestResult>(hitTest(camera, origin, ray, true));
-    _lastKnownForward = ray;
 }
 
 void VROInputControllerBase::onControllerStatus(int source, VROEventDelegate::ControllerStatus status){

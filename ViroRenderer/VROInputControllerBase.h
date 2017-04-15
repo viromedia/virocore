@@ -23,6 +23,7 @@
 #include "VROGeometry.h"
 
 static const float ON_DRAG_DISTANCE_THRESHOLD = 0.01;
+static float kSceneBackgroundDistance = 8;
 
 /**
  * Responsible for mapping generalized input data from a controller, to a unified
@@ -108,7 +109,7 @@ public:
     void onControllerStatus(int source, VROEventDelegate::ControllerStatus status);
     void onButtonEvent(int source, VROEventDelegate::ClickState clickAction);
     void onTouchpadEvent(int source, VROEventDelegate::TouchState touchAction, float lastKnownX, float lastKnownY);
-    void onMove(int source, VROVector3f position, VROQuaternion rotation);
+    void onMove(int source, VROVector3f position, VROQuaternion rotation, VROVector3f forward);
     void onSwipe(int source, VROEventDelegate::SwipeState swipeState);
     void onScroll(int source, float x, float y);
     
