@@ -14,6 +14,7 @@ VROInputControllerDaydream::VROInputControllerDaydream(gvr_context *gvr_context)
     if (!_hasInitalized){
         perror("Error: Failure to initialize DayDream Controller!");
     }
+    _gvrContext = gvr_context;
 }
 
 VROInputControllerDaydream::~VROInputControllerDaydream() {}
@@ -134,6 +135,13 @@ VROVector3f VROInputControllerDaydream::getDaydreamForwardVector(const VROQuater
 }
 
 VROVector3f VROInputControllerDaydream::getDaydreamControllerPosition(const VROQuaternion rotation, const VROVector3f forwardVector) {
+    // Update the handedness of the controller if it had been changed
+    if (_gvrContext){
+        const gvr_user_prefs* prefs = gvr_get_user_prefs(_gvrContext);
+        int32_t handedness = gvr_user_prefs_get_controller_handedness(prefs);
+        _daydreamPresenter->updateHandedness(handedness == GVR_CONTROLLER_RIGHT_HANDED);
+    }
+
     // Apply the rotation to the ARM model within the presenter.
     VROVector3f origin;
     _daydreamPresenter->onMove(ViroDayDream::InputSource::Controller, rotation.toEuler(), origin, forwardVector);

@@ -64,5 +64,6 @@ private:
     std::shared_ptr<VROInputPresenterDaydream> _daydreamPresenter;
     bool _hasInitalized;
     VROVector3f _touchDownLocationStart;
+    gvr_context *_gvrContext;
 };
 #endif

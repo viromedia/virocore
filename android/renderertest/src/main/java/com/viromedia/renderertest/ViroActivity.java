@@ -152,7 +152,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         // Updating the scene.
         mVrView.setScene(scene);
         ControllerJni nativeController = new ControllerJni(mVrView.getRenderContextRef());
-        nativeController.setReticleVisibility(false);
+        //nativeController.setReticleVisibility(false);
     }
 
     private List<NodeJni> testText(Context context) {

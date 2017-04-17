@@ -24,6 +24,7 @@
 class VROInputPresenterDaydream : public VROInputPresenter {
 public:
     VROInputPresenterDaydream() {
+        _rightHanded = true;
         // Initial values required for arm model
         _forwardVector = VROVector3f(0,0,-1);
         attachElbowNode();
@@ -44,7 +45,7 @@ public:
         _elbowNode = std::make_shared<VRONode>();
         _elbowNode->setSelectable(false);
         _elbowNode->setScale(VROVector3f(.2,  .2,  .2));
-        _elbowNode->setPosition(VROVector3f(0.29,  -0.78,  .18));
+        _elbowNode->setPosition(_elbowNodePosition);
         getRootNode()->addChildNode(_elbowNode);
     }
 
@@ -124,6 +125,16 @@ public:
         material->setLightingModel(VROLightingModel::Constant);
     }
 
+    void updateHandedness(bool isRightHanded){
+        if (_rightHanded == isRightHanded){
+            return;
+        }
+
+        float flip = isRightHanded ? 1 : -1;
+        _elbowNode->setPosition(VROVector3f(_elbowNodePosition.x * flip,  _elbowNodePosition.y,  _elbowNodePosition.z));
+        _rightHanded = isRightHanded;
+    }
+
     void onClick(int source, ClickState clickState){
         VROInputPresenter::onClick(source, clickState);
 
@@ -185,6 +196,8 @@ public:
     }
 
 private:
+    const VROVector3f _elbowNodePosition = {0.29,  -0.78,  .18};
+    bool _rightHanded;
     const float _foreArmLength = 2;
     VROVector3f _forwardVector;
 
