@@ -37,7 +37,8 @@ enum class VROTimingFunctionType;
 // The (fixed) near clipping plane
 static const float kZNear = 0.25;
 
-// The far clipping plane to use if no scene is loaded
+// The far clipping plane to use if no scene is loaded; also serves as a
+// mininum far clipping plane
 static const float kZFar  = 50;
 
 // Multiplified by the furthest out object in the active scene to determine

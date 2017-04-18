@@ -120,7 +120,7 @@ VROFieldOfView VRORenderer::getMonoFOV(int viewportWidth, int viewportHeight) co
 
 float VRORenderer::getFarClippingPlane() const {
     if (_sceneController) {
-        return _sceneController->getScene()->getDistanceOfFurthestObjectFromCamera() * kZFarMultiplier;
+        return std::max(kZFar, _sceneController->getScene()->getDistanceOfFurthestObjectFromCamera() * kZFarMultiplier);
     }
     else {
         return kZFar;
