@@ -223,15 +223,16 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
         else if ([path isEqualToString:kPlaybackKeepUpKey]) {
             if ([object isKindOfClass:[AVPlayerItem class]]) {
                 AVPlayerItem *item = object;
+                // call play if playback is likely to keep up and video isn't paused.
+                if (item.playbackLikelyToKeepUp && !self.texture->isPaused()) {
+                    [self.player play];
+                }
                 if (_buffering == !item.playbackLikelyToKeepUp) {
                     // If the state didn't change, then do nothing!
                     return;
                 }
                 _buffering = !item.playbackLikelyToKeepUp;
                 if (item.playbackLikelyToKeepUp) {
-                    if (!self.texture->isPaused()) {
-                        [self.player play];
-                    }
                     dispatch_async(dispatch_get_main_queue(), ^{
                         _texture->playerDidBuffer();
                     });
