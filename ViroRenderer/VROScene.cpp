@@ -125,6 +125,7 @@ void VROScene::updateSortKeys(const VRORenderContext &context, std::shared_ptr<V
     }
     
     std::sort(_keys.begin(), _keys.end());
+    _distanceOfFurthestObjectFromCamera = renderParams.furthestDistanceFromCamera;
 }
 
 void VROScene::addNode(std::shared_ptr<VRONode> node) {

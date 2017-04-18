@@ -101,9 +101,9 @@ double VRORenderer::getFPS() const {
     return 1.0 / (averageNanos / (double) 1e9);
 }
 
-#pragma mark - Mono renderer methods
+#pragma mark - Accessors
 
-VROFieldOfView VRORenderer::getMonoFOV(int viewportWidth, int viewportHeight) {
+VROFieldOfView VRORenderer::getMonoFOV(int viewportWidth, int viewportHeight) const {
     if (viewportWidth < viewportHeight) {
         float fovX = kFovY;
         float fovY = fovX * 2 * atan((tan(toRadians(fovX / 2)) / (double) viewportWidth) * (double) viewportHeight);
@@ -115,6 +115,15 @@ VROFieldOfView VRORenderer::getMonoFOV(int viewportWidth, int viewportHeight) {
         float fovX = fovY * 2 * atan((tan(toRadians(fovY / 2)) / (double) viewportHeight) * (double) viewportWidth);
 
         return { fovX, fovX, fovY, fovY };
+    }
+}
+
+float VRORenderer::getFarClippingPlane() const {
+    if (_sceneController) {
+        return _sceneController->getScene()->getDistanceOfFurthestObjectFromCamera() * kZFarMultiplier;
+    }
+    else {
+        return kZFar;
     }
 }
 
@@ -242,7 +251,7 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     _context->setProjectionMatrix(projectionMatrix);
     _context->setEyeType(eye);
     _context->setZNear(kZNear);
-    _context->setZFar(kZFar);
+    _context->setZFar(getFarClippingPlane());
 
     renderEye(eye, driver);
 

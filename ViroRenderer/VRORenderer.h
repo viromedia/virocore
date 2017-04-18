@@ -34,8 +34,17 @@ enum class VROCameraRotationType;
 enum class VROEyeType;
 enum class VROTimingFunctionType;
 
+// The (fixed) near clipping plane
 static const float kZNear = 0.25;
+
+// The far clipping plane to use if no scene is loaded
 static const float kZFar  = 50;
+
+// Multiplified by the furthest out object in the active scene to determine
+// the FCP.
+static const float kZFarMultiplier = 1.15;
+
+// Number of samples to collect when computing FPS
 static const int kFPSMaxSamples = 100;
 
 class VRORenderer {
@@ -68,7 +77,12 @@ public:
      FOV is typically determined by the platform. In Mono, however, we have more
      control and need to support a wider array of viewport sizes.
      */
-    VROFieldOfView getMonoFOV(int viewportWidth, int viewportHeight);
+    VROFieldOfView getMonoFOV(int viewportWidth, int viewportHeight) const;
+    
+    /*
+     Get the far clipping plane, as computed during the last prepareFrame().
+     */
+    float getFarClippingPlane() const;
 
     void updateRenderViewSize(float width, float height);
 

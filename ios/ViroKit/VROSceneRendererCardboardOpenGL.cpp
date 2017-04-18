@@ -87,7 +87,7 @@ void VROSceneRendererCardboardOpenGL::renderEye(GVREye eye, GVRHeadTransform *he
     VROMatrix4f eyeMatrix = VROConvert::toMatrix4f([headTransform eyeFromHeadMatrix:eye]);
     VROMatrix4f projectionMatrix = VROConvert::toMatrix4f([headTransform projectionMatrixForEye:eye
                                                                                            near:kZNear
-                                                                                            far:kZFar]);
+                                                                                            far:_renderer->getFarClippingPlane()]);
 
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     glScissor(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());

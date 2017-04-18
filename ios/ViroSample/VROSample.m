@@ -531,7 +531,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                 return;
             }
             
-            node->setPosition({0, 0, -1.5});
+            node->setPosition({0, 0, -5.5});
             node->setScale({ 0.01, 0.01, 0.01 });
     });
     

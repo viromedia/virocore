@@ -191,7 +191,7 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headRotation) {
     VROFieldOfView fov = _renderer->getMonoFOV(viewport.getWidth(), viewport.getHeight());
     prepareFrame(viewport, fov, headRotation);
 
-    VROMatrix4f projectionMatrix = fov.toPerspectiveMatrix(kZNear, kZFar);
+    VROMatrix4f projectionMatrix = fov.toPerspectiveMatrix(kZNear, _renderer->getFarClippingPlane());
     VROMatrix4f eyeFromHeadMatrix; // Identity
 
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
@@ -260,7 +260,7 @@ void VROSceneRendererGVR::renderEye(VROEyeType eyeType,
                                           VROViewport viewport,
                                           VROFieldOfView fov) {
 
-    VROMatrix4f projectionMatrix = fov.toPerspectiveMatrix(kZNear, kZFar);
+    VROMatrix4f projectionMatrix = fov.toPerspectiveMatrix(kZNear, _renderer->getFarClippingPlane());
 
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     _renderer->renderEye(eyeType, eyeFromHeadMatrix, projectionMatrix, _driver);

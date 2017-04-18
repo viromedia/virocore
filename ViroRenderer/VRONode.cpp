@@ -149,6 +149,10 @@ void VRONode::updateSortKeys(uint32_t depth,
     // the camera, for sort order
     float distanceFromCamera = 0;
     
+    // The furthest distance from camera tracks the max distance between this node's
+    // bounding box to the camera, for FCP computation
+    float furthestDistanceFromCamera = 0;
+    
     if (isHierarchical) {
         hierarchyDepth = parentHierarchyDepth + 1;
         hierarchyDepths.push(hierarchyDepth);
@@ -175,6 +179,7 @@ void VRONode::updateSortKeys(uint32_t depth,
         int lightsHash = VROLight::hashLights(lights);
         if (!isHierarchical || isTopOfHierarchy) {
             distanceFromCamera = _computedBoundingBox.getDistanceToPoint(context.getCamera().getPosition());
+            furthestDistanceFromCamera = _computedBoundingBox.getFurthestDistanceToPoint(context.getCamera().getPosition());
         }
         _geometry->updateSortKeys(this, hierarchyId, hierarchyDepth, lightsHash, _computedOpacity,
                                   distanceFromCamera, context.getZFar(), driver);
@@ -192,6 +197,7 @@ void VRONode::updateSortKeys(uint32_t depth,
     }
 
     distancesFromCamera.push(distanceFromCamera);
+    params.furthestDistanceFromCamera = std::max(params.furthestDistanceFromCamera, furthestDistanceFromCamera);
     sDebugSortIndex++;
     
     /*
