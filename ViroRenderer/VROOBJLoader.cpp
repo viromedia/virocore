@@ -390,6 +390,12 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
         geometry->getMaterials().push_back(material);
     }
     
+    VROBoundingBox bounds = geometry->getBoundingBox();
+    pinfo("OBJ bounding box    =  x(%f %f) y(%f %f) z(%f %f)",
+          bounds.getMinX(), bounds.getMaxX(),
+          bounds.getMinY(), bounds.getMaxY(),
+          bounds.getMinZ(), bounds.getMaxZ());
+    
     return geometry;
 }
 

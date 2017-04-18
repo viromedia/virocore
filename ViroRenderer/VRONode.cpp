@@ -144,6 +144,9 @@ void VRONode::updateSortKeys(uint32_t depth,
     bool isTopOfHierarchy = _hierarchicalRendering && !isParentHierarchical;
     
     int hierarchyId = 0;
+    
+    // Distance to camera tracks the min distance between this node's bounding box to
+    // the camera, for sort order
     float distanceFromCamera = 0;
     
     if (isHierarchical) {
@@ -171,7 +174,7 @@ void VRONode::updateSortKeys(uint32_t depth,
     if (_geometry) {
         int lightsHash = VROLight::hashLights(lights);
         if (!isHierarchical || isTopOfHierarchy) {
-            distanceFromCamera = getTransformedPosition().distance(context.getCamera().getPosition());
+            distanceFromCamera = _computedBoundingBox.getDistanceToPoint(context.getCamera().getPosition());
         }
         _geometry->updateSortKeys(this, hierarchyId, hierarchyDepth, lightsHash, _computedOpacity,
                                   distanceFromCamera, context.getZFar(), driver);
@@ -228,6 +231,9 @@ void VRONode::computeTransform(const VRORenderContext &context, VROMatrix4f pare
 
     _computedTransform = parentTransforms.multiply(transform);
     _computedPosition = { _computedTransform[12], _computedTransform[13], _computedTransform[14] };
+    if (_geometry) {
+        _computedBoundingBox = _geometry->getBoundingBox().transform(_computedTransform);
+    }
     
     for (const std::shared_ptr<VROConstraint> &constraint : _constraints) {
         VROMatrix4f billboardRotation = constraint->getTransform(*this, context, _computedTransform);
@@ -417,9 +423,9 @@ void VRONode::removeAllActions() {
 
 #pragma mark - Hit Testing
 
-VROBoundingBox VRONode::getBoundingBox(const VRORenderContext &context) {
+VROBoundingBox VRONode::getBoundingBox() {
     passert_thread();
-    return _geometry->getBoundingBox().transform(_computedTransform);
+    return _computedBoundingBox;
 }
 
 std::vector<VROHitTestResult> VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray,
@@ -428,13 +434,12 @@ std::vector<VROHitTestResult> VRONode::hitTest(const VROCamera &camera, VROVecto
     std::vector<VROHitTestResult> results;
 
     VROMatrix4f identity;
-    hitTest(camera, origin, ray, identity, boundsOnly, results);
+    hitTest(camera, origin, ray, boundsOnly, results);
 
     return results;
 }
 
-void VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray,
-                      VROMatrix4f parentTransform, bool boundsOnly,
+void VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray, bool boundsOnly,
                       std::vector<VROHitTestResult> &results) {
     passert_thread();
     if (!_selectable) {
@@ -445,10 +450,8 @@ void VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f r
     boundsOnly = boundsOnly && !getHighAccuracyGaze();
     
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
-        VROBoundingBox bounds = _geometry->getBoundingBox().transform(transform);
-        
         VROVector3f intPt;
-        if (bounds.intersectsRay(ray, origin, &intPt)) {
+        if (_computedBoundingBox.intersectsRay(ray, origin, &intPt)) {
             if (boundsOnly || hitTestGeometry(origin, ray, transform)) {
                 results.push_back( {std::static_pointer_cast<VRONode>(shared_from_this()),
                                     intPt,
@@ -459,7 +462,7 @@ void VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f r
     }
     
     for (std::shared_ptr<VRONode> &subnode : _subnodes) {
-        subnode->hitTest(camera, origin, ray, transform, boundsOnly, results);
+        subnode->hitTest(camera, origin, ray, boundsOnly, results);
     }
 }
 

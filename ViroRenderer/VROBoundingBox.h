@@ -52,6 +52,16 @@ public:
     bool containsPointXY(const VROVector3f &point) const;
     bool containsPointXZ(const VROVector3f &point) const;
     bool containsPointYZ(const VROVector3f &point) const;
+    
+    /*
+     Distance from the point to the bounding box.
+     */
+    float getDistanceToPoint(VROVector3f p) const;
+    
+    /*
+     Distance from the point to the furthest point on the bounding box.
+     */
+    float getFurthestDistanceToPoint(VROVector3f p) const;
 
     /*
      Bounding-box to bounding-box containment and intersections.

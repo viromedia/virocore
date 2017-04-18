@@ -392,6 +392,22 @@ void VROBoundingBox::center(float *center) const {
     center[2] = (_planes[VROBoxPlaneMaxZ] + _planes[VROBoxPlaneMinZ]) / 2;
 }
 
+float VROBoundingBox::getDistanceToPoint(VROVector3f p) const {
+    float dx = std::max(std::max(getMinX() - p.x, 0.0f), p.x - getMaxX());
+    float dy = std::max(std::max(getMinY() - p.y, 0.0f), p.y - getMaxY());
+    float dz = std::max(std::max(getMinZ() - p.z, 0.0f), p.z - getMaxZ());
+
+    return sqrt(dx * dx + dy * dy + dz * dz);
+}
+
+float VROBoundingBox::getFurthestDistanceToPoint(VROVector3f p) const {
+    float dx = std::max(fabs(getMinX() - p.x), fabs(getMaxX() - p.x));
+    float dy = std::max(fabs(getMinY() - p.y), fabs(getMaxY() - p.y));
+    float dz = std::max(fabs(getMinZ() - p.z), fabs(getMaxZ() - p.z));
+    
+    return sqrt(dx * dx + dy * dy + dz * dz);
+}
+
 std::string VROBoundingBox::toString() const {
     std::stringstream ss;
     ss << std::fixed << "left: " << getMinX() << ", right: " << getMaxX() << ", bottom: " << getMinY() << ", top: " << getMaxY() << ", floor: " << getMinZ() << ", ceiling: " << getMaxZ();
