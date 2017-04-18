@@ -71,6 +71,7 @@ JNI_METHOD(void, nativeDestroyRenderer)(JNIEnv *env,
                                         jclass clazz,
                                         jlong native_renderer) {
     Renderer::native(native_renderer)->onDestroy();
+    VROThreadRestricted::unsetThread(VROThreadName::Renderer);
 
     delete reinterpret_cast<PersistentRef<VROSceneRenderer> *>(native_renderer);
 }

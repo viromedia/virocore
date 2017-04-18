@@ -27,6 +27,10 @@ void VROThreadRestricted::setThread(VROThreadName name, pthread_t thread) {
     sThreadMap[name] = thread;
 }
 
+void VROThreadRestricted::unsetThread(VROThreadName name) {
+    sThreadMap.erase(name);
+}
+
 pthread_t VROThreadRestricted::getThread(VROThreadName name, pthread_t ret_not_found) {
     auto it = sThreadMap.find(name);
     if (it == sThreadMap.end()) {
