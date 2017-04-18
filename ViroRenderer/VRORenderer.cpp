@@ -314,8 +314,12 @@ void VRORenderer::renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> drive
 void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneController,
                                      std::shared_ptr<VRODriver> driver) {
     std::shared_ptr<VROSceneController> outgoingSceneController = _sceneController;
+    // Detach the inputcontroller before performing scene transitions
+    if (_outgoingSceneController) {
+        _outgoingSceneController->getScene()->detachInputController(_inputController);
+    }
   
-    _inputController->attachScene(sceneController->getScene());
+    sceneController->getScene()->attachInputController(_inputController);
     sceneController->onSceneWillAppear(_context.get(), driver);
     if (outgoingSceneController) {
         outgoingSceneController->onSceneWillDisappear(_context.get(), driver);
@@ -337,10 +341,12 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneCo
     _outgoingSceneController = _sceneController;
     _sceneController = sceneController;
 
+    // Detach the inputcontroller before performing scene transitions
     if (_outgoingSceneController) {
         _outgoingSceneController->getScene()->detachInputController(_inputController);
     }
 
+    _sceneController->getScene()->attachInputController(_inputController);
     _sceneController->onSceneWillAppear(_context.get(), driver);
     if (_outgoingSceneController) {
         _outgoingSceneController->onSceneWillDisappear(_context.get(), driver);
@@ -350,8 +356,6 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneCo
     if (_outgoingSceneController) {
         _outgoingSceneController->startOutgoingTransition(seconds, timingFunctionType, _context.get());
     }
-
-    _sceneController->getScene()->attachInputController(_inputController);
 }
 
 #pragma mark - Frame Listeners
