@@ -152,25 +152,25 @@ void VROFrustum::fitToFrustum(const VROFrustum &source, const VROVector3f &dista
 #pragma mark -
 #pragma mark Intersection Testing
 
-VROFrustumResult VROFrustum::intersectTDFUnoptimized(VROBoundingBox *box) const {
+VROFrustumResult VROFrustum::intersectTDFUnoptimized(VROBoundingBox *box, VROFrustumBoxIntersectionMetadata *metadata) const {
     uint32_t frame = this->frame;
 
     const float *boxPlanes = box->getPlanes();
-    int startingPlane = box->getPlaneLastOutside();
+    int startingPlane = metadata->getPlaneLastOutside();
 
     /*
      As we perform intersection we record all distances here for use with the translation-coherency
      optimization.
      */
-    float *posDistances = box->getPositiveDistanceFromPlanes();
-    float *negDistances = box->getNegativeDistanceFromPlanes();
+    float *posDistances = metadata->getPositiveDistanceFromPlanes();
+    float *negDistances = metadata->getNegativeDistanceFromPlanes();
 
     /*
      Set the frame so that we know to what frustum the recorded positive and negative distances
      will apply.
      */
-    box->setDistanceFrame(frame);
-    box->setSourceFrustumForDistances(this);
+    metadata->setDistanceFrame(frame);
+    metadata->setSourceFrustumForDistances(this);
 
     bool intersect = false;
 
@@ -191,7 +191,7 @@ VROFrustumResult VROFrustum::intersectTDFUnoptimized(VROBoundingBox *box) const 
     posDistances[startingPlane] = distanceToInnerPoint;
 
     if (distanceToInnerPoint + planeDeltas[startingPlane] < 0) {
-        box->setFrustumDistanceValid(false);
+        metadata->setFrustumDistanceValid(false);
         return VROFrustumResult::Outside;
     }
 
@@ -229,8 +229,8 @@ VROFrustumResult VROFrustum::intersectTDFUnoptimized(VROBoundingBox *box) const 
                              + d;
         posDistances[i] = distanceToInnerPoint;
         if (distanceToInnerPoint + planeDeltas[i] < 0) {
-            box->setPlaneLastOutside(i);
-            box->setFrustumDistanceValid(false);
+            metadata->setPlaneLastOutside(i);
+            metadata->setFrustumDistanceValid(false);
 
             return VROFrustumResult::Outside;
         }
@@ -253,7 +253,7 @@ VROFrustumResult VROFrustum::intersectTDFUnoptimized(VROBoundingBox *box) const 
      If we made it here then the distances of the box from all six planes have been recorded, so mark
      this as true.
      */
-    box->setFrustumDistanceValid(true);
+    metadata->setFrustumDistanceValid(true);
 
     /*
      If any negative far point was outside the frustum, then we know we can't be inside.
@@ -266,22 +266,22 @@ VROFrustumResult VROFrustum::intersectTDFUnoptimized(VROBoundingBox *box) const 
     }
 }
 
-VROFrustumResult VROFrustum::intersectTDF(VROBoundingBox *box) const {
+VROFrustumResult VROFrustum::intersectTDF(VROBoundingBox *box, VROFrustumBoxIntersectionMetadata *metadata) const {
     const float *planeDeltas = this->planeDeltas;
     uint32_t frame = this->frame;
 
-    int startingPlane = box->getPlaneLastOutside();
-    float *posDistances = box->getPositiveDistanceFromPlanes();
-    float *negDistances = box->getNegativeDistanceFromPlanes();
+    int startingPlane = metadata->getPlaneLastOutside();
+    float *posDistances = metadata->getPositiveDistanceFromPlanes();
+    float *negDistances = metadata->getNegativeDistanceFromPlanes();
 
     /*
      If the box has distances recorded for a frustum other than the source of this frustum, then
      we have to fallback to intersectUnoptimized. First, however, set the box's distances as
      invalid (since it has old distances).
      */
-    if (box->getDistanceFrame() != frame || box->getSourceFrustumForDistances() != this) {
-        box->setFrustumDistanceValid(false);
-        return intersectTDFUnoptimized(box);
+    if (metadata->getDistanceFrame() != frame || metadata->getSourceFrustumForDistances() != this) {
+        metadata->setFrustumDistanceValid(false);
+        return intersectTDFUnoptimized(box, metadata);
     }
 
     bool intersect = false;
@@ -302,8 +302,8 @@ VROFrustumResult VROFrustum::intersectTDF(VROBoundingBox *box) const {
      We perform this check here instead of at the top of this function because the distance from the starting
      plane is ALWAYS recorded.
      */
-    if (!box->isFrustumDistanceValid()) {
-        return intersectTDFUnoptimized(box);
+    if (!metadata->isFrustumDistanceValid()) {
+        return intersectTDFUnoptimized(box, metadata);
     }
 
     if (negDistances[startingPlane] + planeDeltaStart < 0) {
@@ -327,7 +327,7 @@ VROFrustumResult VROFrustum::intersectTDF(VROBoundingBox *box) const {
              time.
              */
             if (posDistances[i] + planeDeltas[i] < 0) {
-                box->setPlaneLastOutside(i);
+                metadata->setPlaneLastOutside(i);
                 return VROFrustumResult::Outside;
             }
 
@@ -359,7 +359,7 @@ VROFrustumResult VROFrustum::intersectTDF(VROBoundingBox *box) const {
             }
 
             if (posDistances[i] + planeDeltas[i] < 0) {
-                box->setPlaneLastOutside(i);
+                metadata->setPlaneLastOutside(i);
                 return VROFrustumResult::Outside;
             }
         }
@@ -368,23 +368,23 @@ VROFrustumResult VROFrustum::intersectTDF(VROBoundingBox *box) const {
     }
 }
 
-VROFrustumResult VROFrustum::intersectGeneric(VROBoundingBox *box) const {
+VROFrustumResult VROFrustum::intersectGeneric(VROBoundingBox *box, VROFrustumBoxIntersectionMetadata *metadata) const {
     const float *boxPlanes = box->getPlanes();
-    int startingPlane = box->getPlaneLastOutside();
+    int startingPlane = metadata->getPlaneLastOutside();
 
     /*
      As we perform intersection we record all distances here for use with
      the translation-coherency optimization.
      */
-    float *posDistances = box->getPositiveDistanceFromPlanes();
-    float *negDistances = box->getNegativeDistanceFromPlanes();
+    float *posDistances = metadata->getPositiveDistanceFromPlanes();
+    float *negDistances = metadata->getNegativeDistanceFromPlanes();
 
     /*
      Set the frame so that we know to what frustum the recorded positive
      and negative distances will apply.
      */
-    box->setDistanceFrame(frame);
-    box->setSourceFrustumForDistances(this);
+    metadata->setDistanceFrame(frame);
+    metadata->setSourceFrustumForDistances(this);
 
     bool intersect = false;
 
@@ -405,7 +405,7 @@ VROFrustumResult VROFrustum::intersectGeneric(VROBoundingBox *box) const {
     posDistances[startingPlane] = distanceToInnerPoint;
 
     if (distanceToInnerPoint < 0) {
-        box->setFrustumDistanceValid(false);
+        metadata->setFrustumDistanceValid(false);
         return VROFrustumResult::Outside;
     }
 
@@ -443,8 +443,8 @@ VROFrustumResult VROFrustum::intersectGeneric(VROBoundingBox *box) const {
                              + d;
         posDistances[i] = distanceToInnerPoint;
         if (distanceToInnerPoint < 0) {
-            box->setPlaneLastOutside(i);
-            box->setFrustumDistanceValid(false);
+            metadata->setPlaneLastOutside(i);
+            metadata->setFrustumDistanceValid(false);
 
             return VROFrustumResult::Outside;
         }
@@ -468,7 +468,7 @@ VROFrustumResult VROFrustum::intersectGeneric(VROBoundingBox *box) const {
      If we made it here then the distances of the box from all six planes
      have been recorded, so mark this as true.
      */
-    box->setFrustumDistanceValid(true);
+    metadata->setFrustumDistanceValid(true);
 
     /*
      If any negative far point was outside the frustum, then we know we can't be inside.
@@ -481,7 +481,7 @@ VROFrustumResult VROFrustum::intersectGeneric(VROBoundingBox *box) const {
     }
 }
 
-VROFrustumResult VROFrustum::intersectWithFarPointsOpt(VROBoundingBox *box) const {
+VROFrustumResult VROFrustum::intersectWithFarPointsOpt(VROBoundingBox *box, VROFrustumBoxIntersectionMetadata *metadata) const {
     const float *boxPlanes = box->getPlanes();
 
     bool isInside = true;
@@ -649,11 +649,11 @@ float VROFrustum::distanceFromNCP(VROVector3f pt) const {
     }
 }
 
-VROFrustumResult VROFrustum::intersect(VROBoundingBox *box) const {
+VROFrustumResult VROFrustum::intersect(VROBoundingBox *box, VROFrustumBoxIntersectionMetadata *metadata) const {
     if (tdf) {
-        return intersectTDF(box);
+        return intersectTDF(box, metadata);
     }
     else {
-        return intersectGeneric(box);
+        return intersectGeneric(box, metadata);
     }
 }

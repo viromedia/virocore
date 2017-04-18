@@ -26,29 +26,17 @@
 #pragma mark Initialization
 
 VROBoundingBox::VROBoundingBox() :
-    _planes{0, 0, 0, 0, 0, 0},
-    _sourceFrustumForDistances(nullptr),
-    _distanceFrame(UINT32_MAX),
-    _planeLastOutside(0),
-    _distancesValid(false) {
+    _planes{0, 0, 0, 0, 0, 0} {
         
 }
 
 VROBoundingBox::VROBoundingBox(const VROBoundingBox &copy) :
-    _planes{copy.getMinX(), copy.getMaxX(), copy.getMinY(), copy.getMaxY(), copy.getMinZ(), copy.getMaxZ()},
-    _sourceFrustumForDistances(nullptr),
-    _distanceFrame(UINT32_MAX),
-    _planeLastOutside(0),
-    _distancesValid(false) {
+    _planes{copy.getMinX(), copy.getMaxX(), copy.getMinY(), copy.getMaxY(), copy.getMinZ(), copy.getMaxZ()} {
     
 }
 
 VROBoundingBox::VROBoundingBox(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax) :
-    _planes{xmin, xmax, ymin, ymax, zmin, zmax},
-    _sourceFrustumForDistances(nullptr),
-    _distanceFrame(UINT32_MAX),
-    _planeLastOutside(0),
-    _distancesValid(false) {
+    _planes{xmin, xmax, ymin, ymax, zmin, zmax} {
 
 }
 
@@ -356,8 +344,6 @@ void VROBoundingBox::unionDestructive(const VROBoundingBox &box) {
     _planes[VROBoxPlaneMaxY] = std::max(_planes[VROBoxPlaneMaxY], box._planes[VROBoxPlaneMaxY]);
     _planes[VROBoxPlaneMinZ] = std::min(_planes[VROBoxPlaneMinZ], box._planes[VROBoxPlaneMinZ]);
     _planes[VROBoxPlaneMaxZ] = std::max(_planes[VROBoxPlaneMaxZ], box._planes[VROBoxPlaneMaxZ]);
-
-    resetFrustumDistances();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -372,8 +358,6 @@ void VROBoundingBox::set(const float *dimensions) {
     for (int i = 0; i < 6; i++) {
         _planes[i] = dimensions[i];
     }
-
-    resetFrustumDistances();
 }
 
 void VROBoundingBox::set(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax) {
@@ -383,8 +367,6 @@ void VROBoundingBox::set(float xMin, float xMax, float yMin, float yMax, float z
     _planes[VROBoxPlaneMaxY] = yMax;
     _planes[VROBoxPlaneMinZ] = zMin;
     _planes[VROBoxPlaneMaxZ] = zMax;
-    
-    resetFrustumDistances();
 }
 
 void VROBoundingBox::copy(const VROBoundingBox &box) {
@@ -394,8 +376,6 @@ void VROBoundingBox::copy(const VROBoundingBox &box) {
     _planes[VROBoxPlaneMaxY] = box.getMaxY();
     _planes[VROBoxPlaneMinZ] = box.getMinZ();
     _planes[VROBoxPlaneMaxZ] = box.getMaxZ();
-
-    resetFrustumDistances();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -405,12 +385,6 @@ void VROBoundingBox::copy(const VROBoundingBox &box) {
 /////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark Utilities
-
-void VROBoundingBox::resetFrustumDistances() {
-    _distanceFrame = UINT32_MAX;
-    _sourceFrustumForDistances = nullptr;
-    _distancesValid = false;
-}
 
 void VROBoundingBox::center(float *center) const {
     center[0] = (_planes[VROBoxPlaneMinX] + _planes[VROBoxPlaneMaxX]) / 2;
