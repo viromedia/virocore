@@ -73,6 +73,7 @@ public:
     }
     
 private:
+    
     std::shared_ptr<gvr::AudioApi> _gvrAudio;
     EAGLContext *_eaglContext;
     

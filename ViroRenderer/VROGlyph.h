@@ -11,6 +11,7 @@
 
 #include <memory>
 #include "VROVector3f.h"
+#include "VROAllocationTracker.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -21,8 +22,12 @@ class VROGlyph {
     
 public:
     
-    VROGlyph() {}
-    virtual ~VROGlyph() {}
+    VROGlyph() {
+        ALLOCATION_TRACKER_ADD(Glyphs, 1);
+    }
+    virtual ~VROGlyph() {
+        ALLOCATION_TRACKER_SUB(Glyphs, 1);
+    }
     
     /*
      If forRendering is false, then the texture and all bitmap

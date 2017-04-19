@@ -63,4 +63,6 @@ void VROAllocationTracker::printNow() {
     pinfo("    Shaders:             %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Shaders)].load()));
     pinfo("    Shader Modifiers:    %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::ShaderModifiers)].load()));
     pinfo("    Video Textures:      %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::VideoTextures)].load()));
+    pinfo("    Typefaces:           %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Typefaces)].load()));
+    pinfo("    Glyphs:              %d", (sBytesAllocated[static_cast<int>(VROAllocationBucket::Glyphs)].load()));
 }
