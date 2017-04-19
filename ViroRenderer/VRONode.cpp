@@ -178,7 +178,12 @@ void VRONode::updateSortKeys(uint32_t depth,
     if (_geometry) {
         int lightsHash = VROLight::hashLights(lights);
         if (!isHierarchical || isTopOfHierarchy) {
-            distanceFromCamera = _computedBoundingBox.getDistanceToPoint(context.getCamera().getPosition());
+            distanceFromCamera = _computedPosition.distance(context.getCamera().getPosition());
+            
+            // TODO Using the bounding box may be preferred but currently leads to more
+            //      artifacts
+            // distanceFromCamera = _computedBoundingBox.getDistanceToPoint(context.getCamera().getPosition());
+            
             furthestDistanceFromCamera = _computedBoundingBox.getFurthestDistanceToPoint(context.getCamera().getPosition());
         }
         _geometry->updateSortKeys(this, hierarchyId, hierarchyDepth, lightsHash, _computedOpacity,
