@@ -206,13 +206,8 @@ void VROSoundGVR::setDelegate(std::shared_ptr<VROSoundDelegateInternal> delegate
 
 void VROSoundGVR::dataIsReady() {
     _ready = true;
-    if (_gvrAudio) {
-        bool result = _gvrAudio->PreloadSoundfile(_data->getLocalFilePath());
-        passert(result);
-
-        if (_delegate) {
-            _delegate->soundIsReady();
-        }
+    if (_gvrAudio && _delegate) {
+        _delegate->soundIsReady();
     }
 }
 
