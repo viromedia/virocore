@@ -117,6 +117,11 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
         draggedObject->_originalHitLocation = _hitResult->getLocation();
         draggedObject->_originalDraggedNodePosition = draggableNode->getPosition();
         draggedObject->_draggedNode = draggableNode;
+
+        // Grab the forwardOffset (delta from the controller's forward in reference to the user).
+        VROVector3f forwardOffsetDelta = (_hitResult->getLocation() - _lastKnownPosition).normalize() - _lastKnownForward;
+        draggedObject->_forwardOffset = forwardOffsetDelta;
+
         _lastDraggedNode  = draggedObject;
     }
 }
@@ -182,7 +187,8 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
     if (_lastDraggedNode != nullptr){
 
         // Calculate the new drag location
-        VROVector3f newSimulatedHitPosition = _lastKnownForward * _lastDraggedNode->_draggedDistanceFromController;
+        VROVector3f adjustedForward = _lastKnownForward + _lastDraggedNode->_forwardOffset;
+        VROVector3f newSimulatedHitPosition = _lastKnownPosition + (adjustedForward  * _lastDraggedNode->_draggedDistanceFromController);
         VROVector3f draggedOffset = newSimulatedHitPosition - _lastDraggedNode->_originalHitLocation;
         VROVector3f draggedToLocation = _lastDraggedNode->_originalDraggedNodePosition + draggedOffset;
         std::shared_ptr<VRONode> draggedNode = _lastDraggedNode->_draggedNode;
