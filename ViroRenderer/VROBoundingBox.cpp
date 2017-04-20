@@ -8,6 +8,7 @@
 
 #include "VROBoundingBox.h"
 #include <sstream>
+#include <limits>
 #include "VROVector3f.h"
 
 //Epsilon value for point containment to account for precision errors
