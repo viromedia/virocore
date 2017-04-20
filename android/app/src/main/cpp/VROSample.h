@@ -33,7 +33,9 @@ public:
 
     void onFrameWillRender(const VRORenderContext &context);
     void onFrameDidRender(const VRORenderContext &context);
-    
+
+    void setupRendererWithDriver(std::shared_ptr<VRODriver> driver);
+
 private:
 
     std::shared_ptr<VROTexture> getNiagaraTexture();

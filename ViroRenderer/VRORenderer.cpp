@@ -52,10 +52,7 @@ VRORenderer::VRORenderer(std::shared_ptr<VROInputControllerBase> inputController
 }
 
 VRORenderer::~VRORenderer() {
-    std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
-    if (delegate) {
-        delegate->shutdownRenderer();
-    }
+
 }
 
 void VRORenderer::initRenderer(std::shared_ptr<VRODriver> driver) {

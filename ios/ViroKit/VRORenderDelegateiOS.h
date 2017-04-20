@@ -24,10 +24,6 @@ public:
         [_delegate setupRendererWithDriver:driver];
     }
     
-    void shutdownRenderer() {
-        [_delegate shutdownRenderer];
-    }
-    
     void renderViewDidChangeSize(float width, float height, VRORenderContext *context) {
         [_delegate renderViewDidChangeSize:CGSizeMake(width, height) context:context];
     }

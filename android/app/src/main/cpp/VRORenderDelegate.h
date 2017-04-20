@@ -18,9 +18,7 @@ public:
     virtual ~VRORenderDelegate() {}
 
     virtual void setupRendererWithDriver(std::shared_ptr<VRODriver> driver) {}
-    virtual void shutdownRenderer() {}
     virtual void renderViewDidChangeSize(float width, float height, VRORenderContext *context) {}
-
     virtual void willRenderEye(VROEyeType eye, const VRORenderContext *context) {}
     virtual void didRenderEye(VROEyeType eye, const VRORenderContext *context) {}
 

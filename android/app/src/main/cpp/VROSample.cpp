@@ -23,6 +23,10 @@ VROSample::~VROSample() {
 
 }
 
+void VROSample::setupRendererWithDriver(std::shared_ptr<VRODriver> driver) {
+
+}
+
 std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                                             std::shared_ptr<VRODriver> driver) {
 

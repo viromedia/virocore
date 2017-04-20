@@ -704,10 +704,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     [self.view setSceneController:sceneController];
 }
 
-- (void)shutdownRenderer {
-    
-}
-
 - (void)willRenderEye:(VROEyeType)eye context:(const VRORenderContext *)renderContext {
 
 }
