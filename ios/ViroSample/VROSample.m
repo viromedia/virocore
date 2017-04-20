@@ -716,24 +716,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 }
 
-- (void)reticleTapped:(VROVector3f)ray context:(const VRORenderContext *)renderContext {
-    if (true) {
-        [self nextScene:nullptr];
-        return;
-    }
-    
-    if (self.videoTexture) {
-        if (self.videoTexture->isPaused()) {
-            self.videoTexture->play();
-        }
-        else {
-            self.videoTexture->pause();
-        }
-        
-        return;
-    }
-}
-
 - (void)renderViewDidChangeSize:(CGSize)size context:(VRORenderContext *)context {
 
 }

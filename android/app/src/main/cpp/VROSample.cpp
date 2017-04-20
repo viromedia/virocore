@@ -185,10 +185,6 @@ std::shared_ptr<VROTexture> VROSample::getNiagaraTexture() {
     return std::make_shared<VROTexture>(format, cubeImages);
 }
 
-void VROSample::reticleTapped(VROVector3f ray, const VRORenderContext *context) {
-
-}
-
 void VROSample::onFrameWillRender(const VRORenderContext &context) {
 
 }

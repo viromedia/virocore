@@ -40,10 +40,6 @@ public:
         [_delegate didRenderEye:eye context:context];
     }
     
-    void reticleTapped(VROVector3f ray, const VRORenderContext *context) {
-        [_delegate reticleTapped:ray context:context];
-    }
-    
     void userDidRequestExitVR() {
         [_delegate userDidRequestExitVR];
     }

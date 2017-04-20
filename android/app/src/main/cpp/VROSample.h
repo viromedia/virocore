@@ -33,9 +33,7 @@ public:
 
     void onFrameWillRender(const VRORenderContext &context);
     void onFrameDidRender(const VRORenderContext &context);
-
-    void reticleTapped(VROVector3f ray, const VRORenderContext *context);
-
+    
 private:
 
     std::shared_ptr<VROTexture> getNiagaraTexture();
