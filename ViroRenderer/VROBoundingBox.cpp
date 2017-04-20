@@ -110,9 +110,16 @@ VROBoundingBox VROBoundingBox::transform(VROMatrix4f transform) const {
 bool VROBoundingBox::intersectsRay(const VROVector3f &ray, const VROVector3f &origin, VROVector3f *intPt) {
     VROVector3f point;
     VROVector3f normal;
+    
+    /*
+     Check intersections against all planes, return the *closest* intersection.
+     */
+    bool foundIntersection = false;
+    float intersectionDistance = std::numeric_limits<float>::max();
+    VROVector3f pt;
 
     /*
-     Check the floor plane.
+     Check the back plane.
      */
     point.x = _planes[VROBoxPlaneMinX];
     point.y = _planes[VROBoxPlaneMinY];
@@ -120,21 +127,35 @@ bool VROBoundingBox::intersectsRay(const VROVector3f &ray, const VROVector3f &or
 
     normal.x = 0;
     normal.y = 0;
-    normal.z = 1;
-
-    if (ray.rayIntersectPlane(point, normal, origin, intPt)) {
-        if (containsPoint(*intPt)) {
-            return true;
+    normal.z = -1;
+    
+    if (ray.rayIntersectPlane(point, normal, origin, &pt)) {
+        if (containsPoint(pt)) {
+            foundIntersection = true;
+            
+            float distance = pt.distance(origin);
+            if (distance < intersectionDistance) {
+                intersectionDistance = distance;
+                *intPt = pt;
+            }
         }
     }
 
     /*
-     Check the ceiling plane.
+     Check the front plane.
      */
     point.z = _planes[VROBoxPlaneMaxZ];
-    if (ray.rayIntersectPlane(point, normal, origin, intPt)) {
-        if (containsPoint(*intPt)) {
-            return true;
+    normal.z = 1;
+    
+    if (ray.rayIntersectPlane(point, normal, origin, &pt)) {
+        if (containsPoint(pt)) {
+            foundIntersection = true;
+            
+            float distance = pt.distance(origin);
+            if (distance < intersectionDistance) {
+                intersectionDistance = distance;
+                *intPt = pt;
+            }
         }
     }
 
@@ -145,9 +166,15 @@ bool VROBoundingBox::intersectsRay(const VROVector3f &ray, const VROVector3f &or
     normal.y = 0;
     normal.z = 0;
 
-    if (ray.rayIntersectPlane(point, normal, origin, intPt)) {
-        if (containsPoint(*intPt)) {
-            return true;
+    if (ray.rayIntersectPlane(point, normal, origin, &pt)) {
+        if (containsPoint(pt)) {
+            foundIntersection = true;
+            
+            float distance = pt.distance(origin);
+            if (distance < intersectionDistance) {
+                intersectionDistance = distance;
+                *intPt = pt;
+            }
         }
     }
 
@@ -158,9 +185,15 @@ bool VROBoundingBox::intersectsRay(const VROVector3f &ray, const VROVector3f &or
     normal.y = -1;
     normal.z = 0;
 
-    if (ray.rayIntersectPlane(point, normal, origin, intPt)) {
-        if (containsPoint(*intPt)) {
-            return true;
+    if (ray.rayIntersectPlane(point, normal, origin, &pt)) {
+        if (containsPoint(pt)) {
+            foundIntersection = true;
+            
+            float distance = pt.distance(origin);
+            if (distance < intersectionDistance) {
+                intersectionDistance = distance;
+                *intPt = pt;
+            }
         }
     }
 
@@ -174,9 +207,15 @@ bool VROBoundingBox::intersectsRay(const VROVector3f &ray, const VROVector3f &or
     normal.y = 0;
     normal.z = 0;
 
-    if (ray.rayIntersectPlane(point, normal, origin, intPt)) {
-        if (containsPoint(*intPt)) {
-            return true;
+    if (ray.rayIntersectPlane(point, normal, origin, &pt)) {
+        if (containsPoint(pt)) {
+            foundIntersection = true;
+            
+            float distance = pt.distance(origin);
+            if (distance < intersectionDistance) {
+                intersectionDistance = distance;
+                *intPt = pt;
+            }
         }
     }
 
@@ -186,13 +225,19 @@ bool VROBoundingBox::intersectsRay(const VROVector3f &ray, const VROVector3f &or
     normal.x = 0;
     normal.y = 1;
 
-    if (ray.rayIntersectPlane(point, normal, origin, intPt)) {
-        if (containsPoint(*intPt)) {
-            return true;
+    if (ray.rayIntersectPlane(point, normal, origin, &pt)) {
+        if (containsPoint(pt)) {
+            foundIntersection = true;
+            
+            float distance = pt.distance(origin);
+            if (distance < intersectionDistance) {
+                intersectionDistance = distance;
+                *intPt = pt;
+            }
         }
     }
 
-    return false;
+    return foundIntersection;
 }
 
 bool VROBoundingBox::containsPoint(const VROVector3f &point) const {
