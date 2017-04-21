@@ -40,7 +40,7 @@ std::shared_ptr<VROText> VROText::createText(std::string text, std::shared_ptr<V
               &realizedWidth, &realizedHeight);
     
     std::shared_ptr<VROText> model = std::shared_ptr<VROText>(new VROText(sources, elements, realizedWidth, realizedHeight));
-    model->getMaterials().insert(model->getMaterials().end(), materials.begin(), materials.end());
+    model->setMaterials(materials);
     
     return model;
 }

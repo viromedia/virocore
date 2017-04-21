@@ -184,7 +184,7 @@ JNI_METHOD(void, nativeSetMaterials)(JNIEnv *env,
         if (node) {
             std::shared_ptr<VROGeometry> geometryPtr = node->getGeometry();
             if (geometryPtr != nullptr) {
-                geometryPtr->getMaterials() = tempMaterials;
+                geometryPtr->setMaterials(tempMaterials);
             }
         }
     });

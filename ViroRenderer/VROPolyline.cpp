@@ -36,7 +36,7 @@ std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f
     material->setCullMode(VROCullMode::None);
     material->addShaderModifier(createPolylineShaderModifier());
     
-    polyline->getMaterials().push_back(material);
+    polyline->setMaterials({ material });
     return polyline;
 }
 

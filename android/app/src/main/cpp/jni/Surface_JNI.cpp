@@ -58,7 +58,7 @@ JNI_METHOD(jlong, nativeCreateSurfaceFromSurface)(JNIEnv *env,
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(width, height, u0, v0, u1, v1);
     std::vector<std::shared_ptr<VROMaterial>> materials = Surface::native(oldSurface)->getMaterials();
     if (materials.size() > 0) {
-        surface->getMaterials().push_back(materials[0]);
+        surface->setMaterials(materials);
     }
     return Surface::jptr(surface);
 }
@@ -104,7 +104,7 @@ JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
 
         passert (!surface->getMaterials().empty());
 
-        std::shared_ptr<VROMaterial> &material = surface->getMaterials().front();
+        const std::shared_ptr<VROMaterial> &material = surface->getMaterials().front();
         material->getDiffuse().setTexture(videoTexture);
     });
 }
@@ -127,7 +127,7 @@ JNI_METHOD(void, nativeSetImageTexture)(JNIEnv *env,
         }
         passert (!surface->getMaterials().empty());
 
-        std::shared_ptr<VROMaterial> &material = surface->getMaterials().front();
+        const std::shared_ptr<VROMaterial> &material = surface->getMaterials().front();
         material->getDiffuse().setTexture(imageTexture);
     });
 }
@@ -163,7 +163,7 @@ JNI_METHOD(void, nativeClearMaterial)(JNIEnv *env,
         if (!surface) {
             return;
         }
-        surface->getMaterials().clear();
+        surface->setMaterials({ });
     });
 }
 

@@ -132,7 +132,7 @@ void VROGeometrySubstrateMetal::updatePipelineStates(const VROGeometry &geometry
                                                      VRODriverMetal &driver) {
     
     id <MTLDevice> device = driver.getDevice();
-    const std::vector<std::shared_ptr<VROMaterial>> &materials = geometry.getMaterials_const();
+    const std::vector<std::shared_ptr<VROMaterial>> &materials = geometry.getMaterials();
     
     for (int i = 0; i < _elements.size(); i++) {
         VROGeometryElementMetal element = _elements[i];

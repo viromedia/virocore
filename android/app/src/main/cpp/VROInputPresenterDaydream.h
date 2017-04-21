@@ -77,7 +77,7 @@ public:
             }
 
             // Set the lighting on this material to be constant
-            std::shared_ptr<VROMaterial> &material = node->getGeometry()->getMaterials().front();
+            const std::shared_ptr<VROMaterial> &material = node->getGeometry()->getMaterials().front();
             material->getDiffuse().setTexture(_controllerIdleTexture);
             material->setWritesToDepthBuffer(false);
             material->setReadsFromDepthBuffer(false);
@@ -105,7 +105,7 @@ public:
             }
 
             // Set the lighting on this material to be constant
-            std::shared_ptr<VROMaterial> &material = node->getGeometry()->getMaterials().front();
+            const std::shared_ptr<VROMaterial> &material = node->getGeometry()->getMaterials().front();
             material->setLightingModel(VROLightingModel::Constant);
             material->getDiffuse().setTexture(_laserTexture);
             material->setWritesToDepthBuffer(false);
@@ -119,7 +119,7 @@ public:
     }
 
     void setTextureOnController(std::shared_ptr<VROTexture> texture){
-        std::shared_ptr<VROMaterial> &material = _controllerNode->getGeometry()->getMaterials().front();
+        const std::shared_ptr<VROMaterial> &material = _controllerNode->getGeometry()->getMaterials().front();
         material->getDiffuse().clear();
         material->getDiffuse().setTexture(texture);
         material->setLightingModel(VROLightingModel::Constant);

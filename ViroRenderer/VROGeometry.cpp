@@ -30,7 +30,7 @@ void VROGeometry::prewarm(std::shared_ptr<VRODriver> driver) {
 }
 
 void VROGeometry::render(int elementIndex,
-                         std::shared_ptr<VROMaterial> &material,
+                         const std::shared_ptr<VROMaterial> &material,
                          VROMatrix4f transform,
                          VROMatrix4f normalMatrix,
                          float opacity,
@@ -114,5 +114,10 @@ std::vector<std::shared_ptr<VROGeometrySource>> VROGeometry::getGeometrySourcesF
     }
     
     return sources;
+}
+
+void VROGeometry::updateSubstrate() {
+    delete (_substrate);
+    _substrate = nullptr;
 }
 

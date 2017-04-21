@@ -39,7 +39,7 @@ void VROScene::renderBackground(const VRORenderContext &renderContext,
         return;
     }
     
-    std::shared_ptr<VROMaterial> &material = _background->getMaterials()[0];
+    const std::shared_ptr<VROMaterial> &material = _background->getMaterials()[0];
     material->bindShader(driver);
 
     VROMatrix4f transform;

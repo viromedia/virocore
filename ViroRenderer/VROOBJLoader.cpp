@@ -386,9 +386,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
     std::vector<std::shared_ptr<VROGeometrySource>> sources = VROShapeUtilBuildGeometrySources(data, numVertices);
     
     std::shared_ptr<VROGeometry> geometry = std::make_shared<VROGeometry>(sources, elements);
-    for (std::shared_ptr<VROMaterial> &material : elementMaterials) {
-        geometry->getMaterials().push_back(material);
-    }
+    geometry->setMaterials(elementMaterials);
     
     VROBoundingBox bounds = geometry->getBoundingBox();
     pinfo("OBJ bounding box    =  x(%f %f) y(%f %f) z(%f %f)",

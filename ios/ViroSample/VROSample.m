@@ -311,7 +311,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     boxNode->setPosition({0, 0, -5});
 
     rootNode->addChildNode(boxNode);
-    boxNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
+    // boxNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
     
     /*
      Create a second box node behind the first.
@@ -319,12 +319,34 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROBox> box2 = VROBox::createBox(2, 4, 2);
     box2->setName("Box 2");
     
-    std::shared_ptr<VROMaterial> material2 = box2->getMaterials()[0];
-    material2->setLightingModel(VROLightingModel::Phong);
-    material2->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
-                                                                    std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"], format)));
-    material2->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
-                                                                     std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"], format)));
+    std::vector<std::shared_ptr<VROMaterial>> boxMaterials;
+    for (int i = 0; i < 6; i ++) {
+        std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+        material->setLightingModel(VROLightingModel::Lambert);
+        
+        if (i == 0) {
+            material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                           std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"], format)));
+        }
+        else if (i == 1) {
+            material->getDiffuse().setColor({ 1.0, 0.0, 0.0, 1.0 });
+        }
+        else if (i == 2) {
+            material->getDiffuse().setColor({ 0.0, 1.0, 0.0, 1.0 });
+        }
+        else if (i == 3) {
+            material->getDiffuse().setColor({ 0.0, 0.0, 1.0, 1.0 });
+        }
+        else if (i == 4) {
+            material->getDiffuse().setColor({ 1.0, 0.0, 1.0, 1.0 });
+        }
+        else if (i == 5) {
+            material->getDiffuse().setColor({ 1.0, 1.0, 0.0, 1.0 });
+        }
+        
+        boxMaterials.push_back(material);
+    }
+    box2->setMaterials(boxMaterials);
     
     std::shared_ptr<VRONode> boxNode2 = std::make_shared<VRONode>();
     boxNode2->setGeometry(box2);
@@ -373,6 +395,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         spotBlue->setDirection({1, 0, -1});
         
         cameraNode->setPosition({0, 1, 0});
+        box->setWidth(5);
+        box->setLength(5);
         
         VROTransaction::commit();
     });
@@ -685,7 +709,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleSceneTorus;
+    self.sceneIndex = VROSampleSceneBox;
     self.driver = driver;
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
 }

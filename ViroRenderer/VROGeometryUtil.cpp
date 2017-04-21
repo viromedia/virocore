@@ -36,7 +36,7 @@ std::vector<std::shared_ptr<VRONode>> VROGeometryUtilSplitNodeByGeometryElements
         
         std::shared_ptr<VROMaterial> material = geometry->getMaterials()[i];
         std::shared_ptr<VROGeometry> geometry = std::make_shared<VROGeometry>(sources, elements);
-        geometry->getMaterials().push_back(material);
+        geometry->setMaterials({ material });
         
         std::shared_ptr<VRONode> splitNode = std::make_shared<VRONode>();
         splitNode->setGeometry(geometry);

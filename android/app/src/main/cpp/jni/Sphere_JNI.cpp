@@ -97,8 +97,7 @@ JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
         material->setWritesToDepthBuffer(false);
         material->setReadsFromDepthBuffer(false);
         material->getDiffuse().setTexture(videoTexture);
-        sphere->getMaterials().clear();
-        sphere->getMaterials().push_back(material);
+        sphere->setMaterials({ material });
     });
 }
 

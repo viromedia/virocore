@@ -52,7 +52,7 @@ VROReticle::VROReticle(std::shared_ptr<VROTexture> reticleTexture) :
     // Image Reticle
     else {
         _reticleIcon = VROSurface::createSurface(0.02, 0.02);
-        std::shared_ptr<VROMaterial> &material = _reticleIcon->getMaterials().front();
+        const std::shared_ptr<VROMaterial> &material = _reticleIcon->getMaterials().front();
         material->getDiffuse().setTexture(reticleTexture);
         material->setWritesToDepthBuffer(false);
         material->setReadsFromDepthBuffer(false);

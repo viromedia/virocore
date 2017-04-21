@@ -11,17 +11,39 @@
 #include "VROGeometrySource.h"
 #include "VROGeometryElement.h"
 #include "VROMaterial.h"
+#include "VROLog.h"
+#include "VROAnimationFloat.h"
 #include "stdlib.h"
 
 static const int kNumBoxVertices = 36;
 
 std::shared_ptr<VROBox> VROBox::createBox(float width, float height, float length) {
+    return std::shared_ptr<VROBox>(new VROBox(width, height, length));
+}
+
+VROBox::VROBox(float width, float height, float length) :
+    _width(width), _height(height), _length(length) {
+    
+    updateBox();
+}
+
+VROBox::~VROBox() {
+    
+}
+
+void VROBox::updateBox() {
+    // If there are no materials, set a default one
+    if (getMaterials().empty()) {
+        std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+        VROGeometry::setMaterials({ material });
+    }
+    
     int numVertices = kNumBoxVertices;
     
     int varSizeBytes = sizeof(VROShapeVertexLayout) * numVertices;
     VROShapeVertexLayout var[varSizeBytes];
-    
-    VROBox::buildBox(var, width, height, length);
+    pinfo("Updating box with width %f", _width);
+    buildBoxVAR(var);
     
     int indices[kNumBoxVertices];
     for (int i = 0; i < kNumBoxVertices; i++) {
@@ -29,50 +51,60 @@ std::shared_ptr<VROBox> VROBox::createBox(float width, float height, float lengt
     }
     VROShapeUtilComputeTangents(var, numVertices, indices, numVertices);
     
-    std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices, sizeof(int) * kNumBoxVertices);
     std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) var, varSizeBytes);
     
     std::vector<std::shared_ptr<VROGeometrySource>> sources = VROShapeUtilBuildGeometrySources(vertexData, numVertices);
-    std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(indexData,
-                                                                                       VROGeometryPrimitiveType::Triangle,
-                                                                                       kNumBoxVertices / 3,
-                                                                                       sizeof(int));
-    std::vector<std::shared_ptr<VROGeometryElement>> elements = { element };
+    setSources(sources);
     
-    std::shared_ptr<VROBox> box = std::shared_ptr<VROBox>(new VROBox(sources, elements));
-    
-    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    box->getMaterials().push_back(material);    
-    return box;
+    std::vector<std::shared_ptr<VROGeometryElement>> elements;
+    if (getMaterials().size() == 6) {
+        for (int i = 0; i < 6; i++) {
+            std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) (indices + i * 6), sizeof(int) * kNumBoxVertices / 6);
+            std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(indexData,
+                                                                                               VROGeometryPrimitiveType::Triangle,
+                                                                                               (kNumBoxVertices / 3) / 6,
+                                                                                               sizeof(int));
+            elements.push_back(element);
+        }
+    }
+    else {
+        std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices, sizeof(int) * kNumBoxVertices);
+        std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(indexData,
+                                                                                           VROGeometryPrimitiveType::Triangle,
+                                                                                           kNumBoxVertices / 3,
+                                                                                           sizeof(int));
+        elements.push_back(element);
+    }
+    setElements(elements);
 }
 
-void VROBox::buildBox(VROShapeVertexLayout *vertexLayout, float width, float height, float length) {
-    float w = width  / 2;
-    float h = height / 2;
-    float l = length / 2;
+void VROBox::buildBoxVAR(VROShapeVertexLayout *vertexLayout) {
+    float w = _width  / 2;
+    float h = _height / 2;
+    float l = _length / 2;
     
     const float cubeVertices[] = {
         // Front face
         -w,  h, l,
         -w, -h, l,
-         w,  h, l,
+        w,  h, l,
         -w, -h, l,
-         w, -h, l,
-         w,  h, l,
+        w, -h, l,
+        w,  h, l,
         
         // Right face
-         w,  h,  l,
-         w, -h,  l,
-         w,  h, -l,
-         w, -h,  l,
-         w, -h, -l,
-         w,  h, -l,
+        w,  h,  l,
+        w, -h,  l,
+        w,  h, -l,
+        w, -h,  l,
+        w, -h, -l,
+        w,  h, -l,
         
         // Back face
-         w,  h, -l,
-         w, -h, -l,
+        w,  h, -l,
+        w, -h, -l,
         -w,  h, -l,
-         w, -h, -l,
+        w, -h, -l,
         -w, -h, -l,
         -w,  h, -l,
         
@@ -87,16 +119,16 @@ void VROBox::buildBox(VROShapeVertexLayout *vertexLayout, float width, float hei
         // Top face
         -w, h, -l,
         -w, h,  l,
-         w, h, -l,
+        w, h, -l,
         -w, h,  l,
-         w, h,  l,
-         w, h, -l,
+        w, h,  l,
+        w, h, -l,
         
         // Bottom face
-         w, -h, -l,
-         w, -h,  l,
+        w, -h, -l,
+        w, -h,  l,
         -w, -h, -l,
-         w, -h,  l,
+        w, -h,  l,
         -w, -h,  l,
         -w, -h, -l,
     };
@@ -213,6 +245,36 @@ void VROBox::buildBox(VROShapeVertexLayout *vertexLayout, float width, float hei
     }
 }
 
-VROBox::~VROBox() {
-    
+void VROBox::setWidth(float width) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
+        ((VROBox *)animatable)->_width = v;
+        ((VROBox *)animatable)->updateBox();
+    }, _width, width));
 }
+
+void VROBox::setHeight(float height) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
+        ((VROBox *)animatable)->_height = v;
+        ((VROBox *)animatable)->updateBox();
+    }, _height, height));
+}
+
+void VROBox::setLength(float length) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
+        ((VROBox *)animatable)->_length = v;
+        ((VROBox *)animatable)->updateBox();
+    }, _length, length));
+}
+
+void VROBox::setMaterials(std::vector<std::shared_ptr<VROMaterial>> materials) {
+    if ((getMaterials().size() == 6 && materials.size() != 6) ||
+        (getMaterials().size() == 1 && materials.size() != 1)) {
+        
+        VROGeometry::setMaterials(materials);
+        updateBox();
+    }
+    else {
+        VROGeometry::setMaterials(materials);
+    }
+}
+

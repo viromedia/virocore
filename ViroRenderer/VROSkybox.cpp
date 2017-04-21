@@ -73,7 +73,7 @@ std::shared_ptr<VROSkybox> VROSkybox::createSkybox(std::shared_ptr<VROTexture> t
     material->getDiffuse().setTexture(textureCube);
     material->setLightingModel(VROLightingModel::Constant);
     
-    skybox->getMaterials().push_back(material);
+    skybox->setMaterials({ material });
     skybox->setCameraEnclosure(true);
     return skybox;
 }
@@ -87,7 +87,7 @@ std::shared_ptr<VROSkybox> VROSkybox::createSkybox(VROVector4f color) {
     material->getDiffuse().setColor(color);
     material->setLightingModel(VROLightingModel::Constant);
     
-    skybox->getMaterials().push_back(material);
+    skybox->setMaterials({ material });
     skybox->setCameraEnclosure(true);
     return skybox;
 }

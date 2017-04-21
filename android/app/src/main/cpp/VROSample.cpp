@@ -69,7 +69,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
             return;
         }
 
-        std::shared_ptr<VROMaterial> &material = node->getGeometry()->getMaterials().front();
+        const std::shared_ptr<VROMaterial> &material = node->getGeometry()->getMaterials().front();
         material->getDiffuse().setTexture(std::make_shared<VROTexture>(format,
                                                                        VROMipmapMode::Runtime,
                                                                        VROPlatformLoadImageFromAsset("Heart_D4.jpg", format)));

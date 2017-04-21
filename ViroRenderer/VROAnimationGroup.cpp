@@ -119,7 +119,7 @@ void VROAnimationGroup::animateMaterial(std::shared_ptr<VRONode> &node) {
     }
     
     for (std::shared_ptr<VROMaterialAnimation> &animation : _materialAnimations) {
-        std::vector<std::shared_ptr<VROMaterial>> &materials = node->getGeometry()->getMaterials();
+        const std::vector<std::shared_ptr<VROMaterial>> &materials = node->getGeometry()->getMaterials();
         if (animation->getIndex() >= materials.size()) {
             continue;
         }
@@ -209,7 +209,7 @@ void VROAnimationGroup::animateColor(std::shared_ptr<VRONode> &node) {
         if (node->getGeometry()) {
             std::shared_ptr<VROGeometry> geometry = node->getGeometry();
             
-            for (std::shared_ptr<VROMaterial> &material : geometry->getMaterials()) {
+            for (const std::shared_ptr<VROMaterial> &material : geometry->getMaterials()) {
                 material->getDiffuse().setColor(vecColor);
             }
         }

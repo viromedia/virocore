@@ -62,4 +62,43 @@ JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetWidth)(JNIEnv *env,
+                                 jclass clazz,
+                                 jlong native_box_ref,
+                                 jfloat width) {
+    std::weak_ptr<VROBox> box_w = Box::native(native_box_ref);
+    VROPlatformDispatchAsyncRenderer([box_w, width] {
+        std::shared_ptr<VROBox> box = box_w.lock();
+        if (box) {
+            box->setWidth(width);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetHeight)(JNIEnv *env,
+                                 jclass clazz,
+                                 jlong native_box_ref,
+                                 jfloat height) {
+    std::weak_ptr<VROBox> box_w = Box::native(native_box_ref);
+    VROPlatformDispatchAsyncRenderer([box_w, height] {
+        std::shared_ptr<VROBox> box = box_w.lock();
+        if (box) {
+            box->setHeight(height);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetLength)(JNIEnv *env,
+                                 jclass clazz,
+                                 jlong native_box_ref,
+                                 jfloat length) {
+    std::weak_ptr<VROBox> box_w = Box::native(native_box_ref);
+    VROPlatformDispatchAsyncRenderer([box_w, length] {
+        std::shared_ptr<VROBox> box = box_w.lock();
+        if (box) {
+            box->setLength(length);
+        }
+    });
+}
+
 }  // extern "C"

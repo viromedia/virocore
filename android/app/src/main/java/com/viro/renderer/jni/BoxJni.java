@@ -25,9 +25,14 @@ public class BoxJni extends BaseGeometry {
         nativeAttachToNode(mNativeRef, node.mNativeRef);
     }
 
+    public void setWidth(float width) { nativeSetWidth(mNativeRef, width); }
+    public void setHeight(float height) { nativeSetHeight(mNativeRef, height); }
+    public void setLength(float length) { nativeSetLength(mNativeRef, length); }
+
     private native long nativeCreateBox(float width, float height, float length);
-
     private native void nativeDestroyBox(long nodeReference);
-
     private native void nativeAttachToNode(long boxReference, long nodeReference);
+    private native void nativeSetWidth(long boxReference, float width);
+    private native void nativeSetHeight(long boxReference, float height);
+    private native void nativeSetLength(long boxReference, float length);
 }
