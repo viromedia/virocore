@@ -38,6 +38,7 @@
 @implementation VROViewCardboard
 
 @dynamic renderDelegate;
+@dynamic sceneController;
 
 #pragma mark - Initialization
 

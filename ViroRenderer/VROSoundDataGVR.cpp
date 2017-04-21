@@ -109,9 +109,7 @@ void VROSoundDataGVR::loadSoundFromURL(std::string path,
 void VROSoundDataGVR::loadSoundFromResource(std::string path,
                                             std::function<void(std::string)> onFinish) {
     VROPlatformDispatchAsyncBackground([path, onFinish] {
-        bool isTemp = false;
         std::string filename = VROPlatformCopyResourceToFile(path);
-
         onFinish(filename);
     });
 }
