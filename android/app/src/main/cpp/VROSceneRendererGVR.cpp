@@ -93,15 +93,15 @@ void VROSceneRendererGVR::onDrawFrame() {
 
     // Because we are using 2X MSAA, we can render to half as many pixels and
     // achieve similar quality. If the size changed, resize the framebuffer
-    gvr::Sizei recommended_size = halfPixelCount(_gvr->GetMaximumEffectiveRenderTargetSize());
+    gvr::Sizei recommended_size = _vrModeEnabled ?
+            halfPixelCount(_gvr->GetMaximumEffectiveRenderTargetSize()) : _surfaceSize;
     if (_renderSize.width != recommended_size.width || _renderSize.height != recommended_size.height) {
-        _swapchain->ResizeBuffer(0, recommended_size);
-
-        // As we perform rendering ourselves in Mono mode, do not override
-        // _renderSize with gvr recommended sizes.
         if (_vrModeEnabled) {
-            _renderSize = recommended_size;
+            // For some reason, Samsung phones won't work if this line is run when switching to
+            // Mono/360 mode (the Axon/Pixel work, so i wonder if it's a diff in Mali vs Adreno GPUs)
+            _swapchain->ResizeBuffer(0, recommended_size);
         }
+        _renderSize = recommended_size;
     }
 
     // Obtain the latest, predicted head pose
@@ -205,8 +205,8 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headRotation) {
 void VROSceneRendererGVR::onSurfaceChanged(jobject surface, jint width, jint height) {
     VROThreadRestricted::setThread(VROThreadName::Renderer, pthread_self());
 
-    _renderSize.width = width;
-    _renderSize.height = height;
+    _surfaceSize.width = width;
+    _surfaceSize.height = height;
 }
 
 void VROSceneRendererGVR::onTouchEvent(int action, float x, float y) {

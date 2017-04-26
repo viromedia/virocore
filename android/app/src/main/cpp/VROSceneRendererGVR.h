@@ -90,6 +90,7 @@ private:
 
     gvr::Mat4f _headView;
     gvr::Sizei _renderSize;
+    gvr::Sizei _surfaceSize;
     gvr::ViewerType _viewerType;
 
     bool _vrModeEnabled;

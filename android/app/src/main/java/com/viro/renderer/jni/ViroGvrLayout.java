@@ -4,7 +4,6 @@
 package com.viro.renderer.jni;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
@@ -174,7 +173,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         };
 
         // Initialize the native renderer.
-        GLSurfaceView glSurfaceView = createSurfaceView(true);
+        GLSurfaceView glSurfaceView = createSurfaceView();
 
         mAssetManager = getResources().getAssets();
         mPlatformUtil = new PlatformUtil(
@@ -195,17 +194,21 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         // Add the GLSurfaceView to the GvrLayout.
         setPresentationView(glSurfaceView);
 
-        /**
-         * Turn on VR mode if we're not in debug OR we're not cardboard (so we're in Daydream).
-         */
+        // We want Android's VR mode on as long as we're in either release or on Daydream.
         if (!BuildInfo.isDebug(context) || !getHeadset().equalsIgnoreCase("cardboard")) {
             // According to the GVR documentation, this only sets the activity to "VR mode" and is only
             // supported on Android Nougat and up.
-            // NOTE: this turns off "Draw over other apps" permissions that React Native needs in
-            // debug
+            // NOTE: this turns off "Draw over other apps" permissions that React Native needs in debug
             AndroidCompat.setVrModeEnabled((Activity) getContext(), true);
         }
-        setStereoModeEnabled(true);
+
+        // While this is for VR mode, there doesn't seem to be a negative impact in Mono mode.
+        if (setAsyncReprojectionEnabled(true)) {
+            // Scanline racing decouples the app framerate from the display framerate,
+            // allowing immersive interaction even at the throttled clockrates set by
+            // sustained performance mode.
+            AndroidCompat.setSustainedPerformanceMode((Activity) getContext(), true);
+        }
 
         final Activity activity = (Activity)getContext();
         mSavedSystemUIVisbility = activity.getWindow().getDecorView().getSystemUiVisibility();
@@ -213,26 +216,24 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
 
         // Prevent screen from dimming/locking.
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        // Prevent screen from switching to portrait
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         // Attach SystemUiVisibilityChangeListeners to enforce a full screen experience.
         activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mSystemVisibilityListener);
         mWeakActivity = new WeakReference<Activity>(activity);
 
         getUiLayout().setCloseButtonListener(vrExitListener);
+        // default the mode to VR
+        setVrModeEnabled(true);
     }
 
     /**
-     * Create (or update) the {@link GLSurfaceView} to be used by GVR. This view's
-     * properties depend on whether or not we're in VR (stereo) mode.
-     *
-     * @param vrMode True if we are in VR mode.
+     * Create (or update) the {@link GLSurfaceView} to be used by GVR. This view will be shared
+     * between both VR and 360 modes.
      */
-    private GLSurfaceView createSurfaceView(boolean vrMode) {
+    private GLSurfaceView createSurfaceView() {
         int colorBits = 8;
         int alphaBits = 0;
-        int depthBits = vrMode ? 0 : 16;
-        int stencilBits = vrMode ? 0 : 8;
+        int depthBits = 16;
+        int stencilBits = 8;
 
         GLSurfaceView glSurfaceView = new GLSurfaceView(getContext().getApplicationContext());
         glSurfaceView.setEGLContextClientVersion(3);
@@ -271,42 +272,20 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     }
 
     /**
-     * This function should only be called once.
+     * This function sets up the view for whichever mode is desired.
      *
      * @param vrModeEnabled - whether or not to use VR or 360 mode.
      */
     @Override
     public void setVrModeEnabled(boolean vrModeEnabled) {
+        Activity activity = mWeakActivity.get();
+        if (activity != null) {
+            activity.setRequestedOrientation(vrModeEnabled ?
+                    ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        }
+
+        setStereoModeEnabled(vrModeEnabled);
         getUiLayout().setEnabled(vrModeEnabled);
-
-        if (vrModeEnabled) {
-            // Enable scan line racing.
-            // According to Google, we should only set this to true when we're in stereo mode which is
-            // okay to do here because its the default. See https://github.com/googlevr/gvr-android-sdk/issues/316
-            if (setAsyncReprojectionEnabled(true)) {
-                // Scanline racing decouples the app framerate from the display framerate,
-                // allowing immersive interaction even at the throttled clockrates set by
-                // sustained performance mode.
-                AndroidCompat.setSustainedPerformanceMode((Activity) getContext(), true);
-            }
-        }
-        else {
-            // To turn on non-VR (mono) rendering, we have to swap out the
-            // GLSurfaceView with one that has a depth buffer and stencil,
-            // since we'll now be rendering diretly to that framebuffer.
-            GLSurfaceView glSurfaceView = createSurfaceView(false);
-            mPlatformUtil.setRenderCommandQueue(new GLSurfaceViewQueue(glSurfaceView));
-            setPresentationView(glSurfaceView);
-
-            // When mono-rendering we use the full viewport, which is rectangular.
-            // Because of this, we have to detect orientation changes so we can
-            // respond by reconfiguring our surface width and height
-            Activity activity = mWeakActivity.get();
-            if (activity != null) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-            }
-        }
-
         mNativeRenderer.setVRModeEnabled(vrModeEnabled);
     }
 
