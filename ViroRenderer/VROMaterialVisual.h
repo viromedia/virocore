@@ -52,8 +52,7 @@ public:
         _wrapT(VROWrapMode::Clamp),
         _minificationFilter(VROFilterMode::Linear),
         _magnificationFilter(VROFilterMode::Linear),
-        _mipFilter(VROFilterMode::None),
-        _borderColor( { 1.0, 1.0, 1.0, 1.0 })
+        _mipFilter(VROFilterMode::None)
     {}
     
     /*
@@ -142,8 +141,6 @@ private:
      */
     VROWrapMode _wrapS, _wrapT;
     VROFilterMode _minificationFilter, _magnificationFilter, _mipFilter;
-    
-    VROVector4f _borderColor;
     
 };
 

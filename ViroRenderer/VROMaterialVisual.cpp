@@ -23,8 +23,7 @@ VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
  _wrapT(visual._wrapT),
  _minificationFilter(visual._minificationFilter),
  _magnificationFilter(visual._magnificationFilter),
- _mipFilter(visual._mipFilter),
- _borderColor(visual._borderColor)
+ _mipFilter(visual._mipFilter)
 {}
 
 void VROMaterialVisual::copyFrom(const VROMaterialVisual &visual) {
@@ -38,7 +37,6 @@ void VROMaterialVisual::copyFrom(const VROMaterialVisual &visual) {
     _minificationFilter = visual._minificationFilter;
     _magnificationFilter = visual._magnificationFilter;
     _mipFilter = visual._mipFilter;
-    _borderColor = visual._borderColor;
 }
 
 void VROMaterialVisual::clear() {
