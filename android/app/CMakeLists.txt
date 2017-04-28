@@ -9,7 +9,8 @@ include_directories(../../ViroRenderer
                     ../libs/gvr/include
                     ../libs/ovr/include
                     ../libs/freetype/include
-                    ../libs/protobuf/include)
+                    ../libs/protobuf/include
+                    ../libs/bullet/include)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -211,6 +212,32 @@ set_target_properties( lib-protobuf
                        PROPERTIES IMPORTED_LOCATION
                        ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libprotobuf-lite.so )
 
+add_library( lib-BulletCollision
+             SHARED
+             IMPORTED )
+set_target_properties( lib-BulletCollision
+                       PROPERTIES IMPORTED_LOCATION
+                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libBulletCollision.so )
+add_library( lib-BulletDynamics
+             SHARED
+             IMPORTED )
+set_target_properties( lib-BulletDynamics
+                       PROPERTIES IMPORTED_LOCATION
+                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libBulletDynamics.so )
+
+add_library( lib-BulletSoftBody
+             SHARED
+             IMPORTED )
+set_target_properties( lib-BulletSoftBody
+                       PROPERTIES IMPORTED_LOCATION
+                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libBulletSoftBody.so )
+
+add_library( lib-LinearMath
+             SHARED
+             IMPORTED )
+set_target_properties( lib-LinearMath
+                       PROPERTIES IMPORTED_LOCATION
+                       ../../../../../app/src/main/jniLibs/${ANDROID_ABI}/libLinearMath.so )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because system libraries are included in the search path by
@@ -249,4 +276,9 @@ target_link_libraries( # Specifies the target library.
                        lib-gvr-audio
                        lib-ovr
                        lib-freetype
-                       lib-protobuf)
+                       lib-protobuf
+                       lib-freetype
+                       lib-BulletCollision
+                       lib-BulletDynamics
+                       lib-BulletSoftBody
+                       lib-LinearMath)

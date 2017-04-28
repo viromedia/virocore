@@ -396,6 +396,10 @@
 		A5ABB1D71E95703200E07EBC /* stereo3602.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CA1E95703200E07EBC /* stereo3602.jpg */; };
 		A5ABB1D81E95703200E07EBC /* stereoVid.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CB1E95703200E07EBC /* stereoVid.mp4 */; };
 		A5ABB1D91E95703200E07EBC /* stereoVid360.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CC1E95703200E07EBC /* stereoVid360.mp4 */; };
+		A5EC65861EB3ECE200FE220E /* libBulletCollision.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65821EB3ECE200FE220E /* libBulletCollision.a */; };
+		A5EC65871EB3ECE200FE220E /* libBulletDynamics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */; };
+		A5EC65881EB3ECE200FE220E /* libBulletSoftBody.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */; };
+		A5EC65891EB3ECE200FE220E /* libLinearMath.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65851EB3ECE200FE220E /* libLinearMath.a */; };
 		EC8D0A685CE2FA0BE80B7363 /* libPods-ViroSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF43BA975D626635F2D5584C /* libPods-ViroSample.a */; };
 /* End PBXBuildFile section */
 
@@ -883,6 +887,10 @@
 		A5ABB1CA1E95703200E07EBC /* stereo3602.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = stereo3602.jpg; path = ViroSample/stereo3602.jpg; sourceTree = "<group>"; };
 		A5ABB1CB1E95703200E07EBC /* stereoVid.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = stereoVid.mp4; path = ViroSample/stereoVid.mp4; sourceTree = "<group>"; };
 		A5ABB1CC1E95703200E07EBC /* stereoVid360.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = stereoVid360.mp4; path = ViroSample/stereoVid360.mp4; sourceTree = "<group>"; };
+		A5EC65821EB3ECE200FE220E /* libBulletCollision.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletCollision.a; path = Libraries/bullet/libBulletCollision.a; sourceTree = "<group>"; };
+		A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletDynamics.a; path = Libraries/bullet/libBulletDynamics.a; sourceTree = "<group>"; };
+		A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletSoftBody.a; path = Libraries/bullet/libBulletSoftBody.a; sourceTree = "<group>"; };
+		A5EC65851EB3ECE200FE220E /* libLinearMath.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLinearMath.a; path = Libraries/bullet/libLinearMath.a; sourceTree = "<group>"; };
 		B1049B08B869A86043674A7C /* Pods-ViroSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.release.xcconfig"; sourceTree = "<group>"; };
 		BF43BA975D626635F2D5584C /* libPods-ViroSample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroSample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3267984E31F54DDFDA5BFE7 /* Pods-ViroSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.debug.xcconfig"; sourceTree = "<group>"; };
@@ -916,7 +924,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+<<<<<<< HEAD
 				8F618E331EB980E70020B33B /* libprotobuf-lite.a in Frameworks */,
+=======
+				A5EC65861EB3ECE200FE220E /* libBulletCollision.a in Frameworks */,
+				A5EC65871EB3ECE200FE220E /* libBulletDynamics.a in Frameworks */,
+				A5EC65881EB3ECE200FE220E /* libBulletSoftBody.a in Frameworks */,
+				A5EC65891EB3ECE200FE220E /* libLinearMath.a in Frameworks */,
+>>>>>>> Added Physics Bullet Engine
 				8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */,
 				8F56AEA61DE7682300DD65B6 /* libFreetype2.a in Frameworks */,
 				8FDDE2121CD00F2600674DE2 /* CoreText.framework in Frameworks */,
@@ -1668,8 +1683,15 @@
 		95E5BC90E51A0FC2C3AA4D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+<<<<<<< HEAD
 				8F618E301EB935A40020B33B /* libprotobuf.a */,
 				8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */,
+=======
+				A5EC65821EB3ECE200FE220E /* libBulletCollision.a */,
+				A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */,
+				A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */,
+				A5EC65851EB3ECE200FE220E /* libLinearMath.a */,
+>>>>>>> Added Physics Bullet Engine
 				8F1664A51E5E43260062EBCE /* Accelerate.framework */,
 				8F56AE9B1DE6810800DD65B6 /* libFreetype2.a */,
 				8FDDE2111CD00F2600674DE2 /* CoreText.framework */,
@@ -2458,7 +2480,11 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/Libraries/freetype/include",
+<<<<<<< HEAD
 					"$(SRCROOT)/Libraries/protobuf/include",
+=======
+					"$(SRCROOT)/Libraries/bullet/include",
+>>>>>>> Added Physics Bullet Engine
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -2504,7 +2530,11 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/Libraries/freetype/include",
+<<<<<<< HEAD
 					"$(SRCROOT)/Libraries/protobuf/include",
+=======
+					"$(SRCROOT)/Libraries/bullet/include",
+>>>>>>> Added Physics Bullet Engine
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -2627,7 +2657,11 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/freetype",
+<<<<<<< HEAD
 					"$(PROJECT_DIR)/Libraries/protobuf",
+=======
+					"$(PROJECT_DIR)/Libraries/bullet",
+>>>>>>> Added Physics Bullet Engine
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroKit;
@@ -2657,7 +2691,11 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/freetype",
+<<<<<<< HEAD
 					"$(PROJECT_DIR)/Libraries/protobuf",
+=======
+					"$(PROJECT_DIR)/Libraries/bullet",
+>>>>>>> Added Physics Bullet Engine
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
