@@ -33,7 +33,7 @@ void VROCamera::setBaseRotation(VROMatrix4f baseRotation) {
 }
 
 void VROCamera::onRotationChanged() {
-    VROMatrix4f rotation = _headRotation.multiply(_baseRotation);
+    VROMatrix4f rotation = _baseRotation.multiply(_headRotation);
     _rotation = { rotation };
     
     _forward = rotation.multiply(kBaseForward);
