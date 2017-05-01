@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.view.Surface;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -280,16 +281,18 @@ public class AVPlayer {
 
     public int getCurrentTimeInSeconds() {
         if (mState == State.IDLE) {
-            Log.w(TAG, "AVPlayer " + this + " could not get current time in IDLE state");
+            Log.w(TAG, "AVPlayer could not get current time in IDLE state");
             return 0;
         }
 
         return (int) (mExoPlayer.getCurrentPosition() / 1000);
     }
 
-    public int getVideoDurationInSeconds(){
+    public int getVideoDurationInSeconds() {
         if (mState == State.IDLE) {
             Log.w(TAG, "AVPlayer could not get video duration in IDLE state");
+            return 0;
+        } else if (mExoPlayer.getDuration() == C.TIME_UNSET) {
             return 0;
         }
 

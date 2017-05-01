@@ -222,7 +222,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
             @Override
             public void onVideoUpdatedTime(int seconds, int duration) {
-                Log.e(TAG,"onVideoUpdatedTime for Surface within ViroActivity:" + seconds);
+                Log.e(TAG,"onVideoUpdatedTime for Surface within ViroActivity:" + seconds + "/" + duration);
             }
         });
 
