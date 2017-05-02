@@ -125,7 +125,7 @@
 #define GOOGLE_PROTOBUF_HAS_ONEOF
 #define GOOGLE_PROTOBUF_HAS_ARENAS
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 // Defined in this file.
@@ -191,7 +191,7 @@ class LIBPROTOBUF_EXPORT Message : public MessageLite {
   // Construct a new instance on the arena. Ownership is passed to the caller
   // if arena is a NULL. Default implementation allows for API compatibility
   // during the Arena transition.
-  virtual Message* New(::google::protobuf::Arena* arena) const {
+  virtual Message* New(::google_public::protobuf::Arena* arena) const {
     Message* message = New();
     if (arena != NULL) {
       arena->Own(message);
@@ -315,7 +315,7 @@ class LIBPROTOBUF_EXPORT Message : public MessageLite {
   // Introspection ---------------------------------------------------
 
   // Typedef for backwards-compatibility.
-  typedef google::protobuf::Reflection Reflection;
+  typedef google_public::protobuf::Reflection Reflection;
 
   // Get a Descriptor for this message's type.  This describes what
   // fields the message contains, the types of those fields, etc.
@@ -759,7 +759,7 @@ class LIBPROTOBUF_EXPORT Reflection {
   //   CPPTYPE_BOOL         bool
   //   CPPTYPE_ENUM         generated enum type or int32
   //   CPPTYPE_STRING       string
-  //   CPPTYPE_MESSAGE      generated message type or google::protobuf::Message
+  //   CPPTYPE_MESSAGE      generated message type or google_public::protobuf::Message
   //
   // A RepeatedFieldRef object can be copied and the resulted object will point
   // to the same repeated field in the same message. The object can be used as
@@ -808,16 +808,16 @@ class LIBPROTOBUF_EXPORT Reflection {
 
   // DEPRECATED. Please use GetRepeatedFieldRef().
   //
-  // for T = string, google::protobuf::internal::StringPieceField
-  //         google::protobuf::Message & descendants.
+  // for T = string, google_public::protobuf::internal::StringPieceField
+  //         google_public::protobuf::Message & descendants.
   template<typename T>
   const RepeatedPtrField<T>& GetRepeatedPtrField(
       const Message&, const FieldDescriptor*) const;
 
   // DEPRECATED. Please use GetMutableRepeatedFieldRef().
   //
-  // for T = string, google::protobuf::internal::StringPieceField
-  //         google::protobuf::Message & descendants.
+  // for T = string, google_public::protobuf::internal::StringPieceField
+  //         google_public::protobuf::Message & descendants.
   template<typename T>
   RepeatedPtrField<T>* MutableRepeatedPtrField(
       Message*, const FieldDescriptor*) const;
@@ -870,7 +870,7 @@ class LIBPROTOBUF_EXPORT Reflection {
   // useful for determining if a message is a generated message or not, for
   // example:
   //   if (message->GetReflection()->GetMessageFactory() ==
-  //       google::protobuf::MessageFactory::generated_factory()) {
+  //       google_public::protobuf::MessageFactory::generated_factory()) {
   //     // This is a generated message.
   //   }
   // It can also be used to create more messages of this type, though
@@ -929,7 +929,7 @@ class LIBPROTOBUF_EXPORT Reflection {
   friend class RepeatedFieldRef;
   template<typename T, typename Enable>
   friend class MutableRepeatedFieldRef;
-  friend class ::google::protobuf::python::MapReflectionFriend;
+  friend class ::google_public::protobuf::python::MapReflectionFriend;
 
   // Special version for specialized implementations of string.  We can't call
   // MutableRawRepeatedField directly here because we don't have access to
@@ -1088,8 +1088,8 @@ DECLARE_GET_REPEATED_FIELD(bool)
 // Implementation details for {Get,Mutable}RawRepeatedPtrField.  We provide
 // specializations for <string>, <StringPieceField> and <Message> and handle
 // everything else with the default template which will match any type having
-// a method with signature "static const google::protobuf::Descriptor* descriptor()".
-// Such a type presumably is a descendant of google::protobuf::Message.
+// a method with signature "static const google_public::protobuf::Descriptor* descriptor()".
+// Such a type presumably is a descendant of google_public::protobuf::Message.
 
 template<>
 inline const RepeatedPtrField<string>& Reflection::GetRepeatedPtrField<string>(

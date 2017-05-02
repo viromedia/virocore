@@ -35,7 +35,7 @@
 #include <google/protobuf/map_type_handler.h>
 #include <google/protobuf/wire_format_lite_inl.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 class Arena;
 namespace internal {
@@ -156,10 +156,10 @@ class MapEntryLite : public MessageLite {
   string GetTypeName() const { return ""; }
 
   void CheckTypeAndMergeFrom(const MessageLite& other) {
-    MergeFrom(*::google::protobuf::down_cast<const MapEntryLite*>(&other));
+    MergeFrom(*::google_public::protobuf::down_cast<const MapEntryLite*>(&other));
   }
 
-  bool MergePartialFromCodedStream(::google::protobuf::io::CodedInputStream* input) {
+  bool MergePartialFromCodedStream(::google_public::protobuf::io::CodedInputStream* input) {
     uint32 tag;
 
     for (;;) {
@@ -208,13 +208,13 @@ class MapEntryLite : public MessageLite {
     return size;
   }
 
-  void SerializeWithCachedSizes(::google::protobuf::io::CodedOutputStream* output) const {
+  void SerializeWithCachedSizes(::google_public::protobuf::io::CodedOutputStream* output) const {
     KeyTypeHandler::Write(kKeyFieldNumber, key(), output);
     ValueTypeHandler::Write(kValueFieldNumber, value(), output);
   }
 
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(bool deterministic,
-                                                   ::google::protobuf::uint8* output) const {
+  ::google_public::protobuf::uint8* InternalSerializeWithCachedSizesToArray(bool deterministic,
+                                                   ::google_public::protobuf::uint8* output) const {
     output = KeyTypeHandler::InternalWriteToArray(kKeyFieldNumber, key(),
                                                   deterministic, output);
     output = ValueTypeHandler::InternalWriteToArray(kValueFieldNumber, value(),
@@ -289,10 +289,10 @@ class MapEntryLite : public MessageLite {
     return GetArenaNoVirtual();
   }
 
-  // Create a MapEntryLite for given key and value from google::protobuf::Map in
+  // Create a MapEntryLite for given key and value from google_public::protobuf::Map in
   // serialization. This function is only called when value is enum. Enum is
   // treated differently because its type in MapEntry is int and its type in
-  // google::protobuf::Map is enum. We cannot create a reference to int from an enum.
+  // google_public::protobuf::Map is enum. We cannot create a reference to int from an enum.
   static MapEntryLite* EnumWrap(const Key& key, const Value value,
                                 Arena* arena) {
     return Arena::CreateMessage<MapEnumEntryWrapper<
@@ -301,7 +301,7 @@ class MapEntryLite : public MessageLite {
   }
 
   // Like above, but for all the other types. This avoids value copy to create
-  // MapEntryLite from google::protobuf::Map in serialization.
+  // MapEntryLite from google_public::protobuf::Map in serialization.
   static MapEntryLite* Wrap(const Key& key, const Value& value, Arena* arena) {
     return Arena::CreateMessage<MapEntryWrapper<Key, Value, kKeyFieldType,
                                                 kValueFieldType,
@@ -319,7 +319,7 @@ class MapEntryLite : public MessageLite {
     // This does what the typical MergePartialFromCodedStream() is expected to
     // do, with the additional side-effect that if successful (i.e., if true is
     // going to be its return value) it inserts the key-value pair into map_.
-    bool MergePartialFromCodedStream(::google::protobuf::io::CodedInputStream* input) {
+    bool MergePartialFromCodedStream(::google_public::protobuf::io::CodedInputStream* input) {
       // Look for the expected thing: a key and then a value.  If it fails,
       // invoke the enclosing class's MergePartialFromCodedStream, or return
       // false if that would be pointless.
@@ -383,7 +383,7 @@ class MapEntryLite : public MessageLite {
     // After reading a key and value successfully, and inserting that data
     // into map_, we are not at the end of the input.  This is unusual, but
     // allowed by the spec.
-    bool ReadBeyondKeyValuePair(::google::protobuf::io::CodedInputStream* input)
+    bool ReadBeyondKeyValuePair(::google_public::protobuf::io::CodedInputStream* input)
         GOOGLE_ATTRIBUTE_COLD {
       typedef MoveHelper<KeyTypeHandler::kIsEnum,
                          KeyTypeHandler::kIsMessage,
@@ -411,7 +411,7 @@ class MapEntryLite : public MessageLite {
     Value* value_ptr_;
     // On the fast path entry_ is not used.  And, when entry_ is used, it's set
     // to mf_->NewEntry(), so in the arena case we must call entry_.release.
-    google::protobuf::scoped_ptr<MapEntryLite> entry_;
+    google_public::protobuf::scoped_ptr<MapEntryLite> entry_;
   };
 
  protected:
@@ -424,9 +424,9 @@ class MapEntryLite : public MessageLite {
 
  private:
   // Serializing a generated message containing map field involves serializing
-  // key-value pairs from google::protobuf::Map. The wire format of each key-value pair
+  // key-value pairs from google_public::protobuf::Map. The wire format of each key-value pair
   // after serialization should be the same as that of a MapEntry message
-  // containing the same key and value inside it.  However, google::protobuf::Map doesn't
+  // containing the same key and value inside it.  However, google_public::protobuf::Map doesn't
   // store key and value as MapEntry message, which disables us to use existing
   // code to serialize message. In order to use existing code to serialize
   // message, we need to construct a MapEntry from key-value pair. But it
@@ -456,7 +456,7 @@ class MapEntryLite : public MessageLite {
     const Key& key_;
     const Value& value_;
 
-    friend class ::google::protobuf::Arena;
+    friend class ::google_public::protobuf::Arena;
     typedef void InternalArenaConstructable_;
     typedef void DestructorSkippable_;
   };
@@ -490,7 +490,7 @@ class MapEntryLite : public MessageLite {
     const KeyMapEntryAccessorType& key_;
     const ValueMapEntryAccessorType value_;
 
-    friend class google::protobuf::Arena;
+    friend class google_public::protobuf::Arena;
     typedef void DestructorSkippable_;
   };
 
@@ -524,7 +524,7 @@ class MapEntryLite : public MessageLite {
   Arena* arena_;
   uint32 _has_bits_[1];
 
-  friend class ::google::protobuf::Arena;
+  friend class ::google_public::protobuf::Arena;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   template <typename K, typename V, WireFormatLite::FieldType,

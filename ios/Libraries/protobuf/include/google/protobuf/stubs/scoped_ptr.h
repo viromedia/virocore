@@ -33,7 +33,7 @@
 
 #include <google/protobuf/stubs/port.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 // ===================================================================

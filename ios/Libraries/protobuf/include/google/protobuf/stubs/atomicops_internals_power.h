@@ -31,7 +31,7 @@
 #ifndef GOOGLE_PROTOBUF_ATOMICOPS_INTERNALS_AIX_H_
 #define GOOGLE_PROTOBUF_ATOMICOPS_INTERNALS_AIX_H_
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 

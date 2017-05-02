@@ -37,7 +37,7 @@
 // ===================================================================
 // emulates google3/base/logging.h
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 enum LogLevel {
@@ -87,7 +87,7 @@ class LIBPROTOBUF_EXPORT LogMessage {
   LogMessage& operator<<(double value);
   LogMessage& operator<<(void* value);
   LogMessage& operator<<(const StringPiece& value);
-  LogMessage& operator<<(const ::google::protobuf::util::Status& status);
+  LogMessage& operator<<(const ::google_public::protobuf::util::Status& status);
   LogMessage& operator<<(const uint128& value);
 
  private:
@@ -142,15 +142,15 @@ inline bool IsOk(bool status) { return status; }
 #undef GOOGLE_DCHECK_GE
 
 #define GOOGLE_LOG(LEVEL)                                                 \
-  ::google::protobuf::internal::LogFinisher() =                           \
-    ::google::protobuf::internal::LogMessage(                             \
-      ::google::protobuf::LOGLEVEL_##LEVEL, __FILE__, __LINE__)
+  ::google_public::protobuf::internal::LogFinisher() =                           \
+    ::google_public::protobuf::internal::LogMessage(                             \
+      ::google_public::protobuf::LOGLEVEL_##LEVEL, __FILE__, __LINE__)
 #define GOOGLE_LOG_IF(LEVEL, CONDITION) \
   !(CONDITION) ? (void)0 : GOOGLE_LOG(LEVEL)
 
 #define GOOGLE_CHECK(EXPRESSION) \
   GOOGLE_LOG_IF(FATAL, !(EXPRESSION)) << "CHECK failed: " #EXPRESSION ": "
-#define GOOGLE_CHECK_OK(A) GOOGLE_CHECK(::google::protobuf::internal::IsOk(A))
+#define GOOGLE_CHECK_OK(A) GOOGLE_CHECK(::google_public::protobuf::internal::IsOk(A))
 #define GOOGLE_CHECK_EQ(A, B) GOOGLE_CHECK((A) == (B))
 #define GOOGLE_CHECK_NE(A, B) GOOGLE_CHECK((A) != (B))
 #define GOOGLE_CHECK_LT(A, B) GOOGLE_CHECK((A) <  (B))
@@ -169,7 +169,7 @@ T* CheckNotNull(const char* /* file */, int /* line */,
 }
 }  // namespace internal
 #define GOOGLE_CHECK_NOTNULL(A) \
-  ::google::protobuf::internal::CheckNotNull(\
+  ::google_public::protobuf::internal::CheckNotNull(\
       __FILE__, __LINE__, "'" #A "' must not be NULL", (A))
 
 #ifdef NDEBUG
@@ -177,7 +177,7 @@ T* CheckNotNull(const char* /* file */, int /* line */,
 #define GOOGLE_DLOG(LEVEL) GOOGLE_LOG_IF(LEVEL, false)
 
 #define GOOGLE_DCHECK(EXPRESSION) while(false) GOOGLE_CHECK(EXPRESSION)
-#define GOOGLE_DCHECK_OK(E) GOOGLE_DCHECK(::google::protobuf::internal::IsOk(E))
+#define GOOGLE_DCHECK_OK(E) GOOGLE_DCHECK(::google_public::protobuf::internal::IsOk(E))
 #define GOOGLE_DCHECK_EQ(A, B) GOOGLE_DCHECK((A) == (B))
 #define GOOGLE_DCHECK_NE(A, B) GOOGLE_DCHECK((A) != (B))
 #define GOOGLE_DCHECK_LT(A, B) GOOGLE_DCHECK((A) <  (B))

@@ -35,7 +35,7 @@
 
 #include <libkern/OSAtomic.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 

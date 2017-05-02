@@ -41,7 +41,7 @@
 #include <google/protobuf/stubs/mutex.h>
 #include <google/protobuf/stubs/common.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 class Descriptor;

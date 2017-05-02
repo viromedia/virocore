@@ -34,7 +34,7 @@
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/stubs/type_traits.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 // Use implicit_cast as a safe version of static_cast or const_cast

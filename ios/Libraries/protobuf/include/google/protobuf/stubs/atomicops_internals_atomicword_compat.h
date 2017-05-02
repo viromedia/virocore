@@ -46,7 +46,7 @@
 
 #if !defined(GOOGLE_PROTOBUF_ARCH_64_BIT)
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 

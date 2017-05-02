@@ -34,7 +34,7 @@
 #include <google/protobuf/map.h>
 #include <google/protobuf/map_entry_lite.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 
@@ -79,7 +79,7 @@ class MapFieldLite {
   EntryType* NewEntryWrapper(const Key& key, const T& t) const;
 
  protected:
-  // Convenient methods to get internal google::protobuf::Map
+  // Convenient methods to get internal google_public::protobuf::Map
   virtual const Map<Key, T>& GetInternalMap() const;
   virtual Map<Key, T>* MutableInternalMap();
 
@@ -89,7 +89,7 @@ class MapFieldLite {
   Arena* arena_;
   Map<Key, T>* map_;
 
-  friend class ::google::protobuf::Arena;
+  friend class ::google_public::protobuf::Arena;
 };
 
 template <typename Key, typename T,

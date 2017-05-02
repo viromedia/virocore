@@ -37,7 +37,7 @@
 #include <google/protobuf/util/type_resolver.h>
 #include <google/protobuf/stubs/bytestream.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace io {
 class ZeroCopyInputStream;

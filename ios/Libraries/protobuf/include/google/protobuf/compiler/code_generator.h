@@ -43,7 +43,7 @@
 #include <vector>
 #include <utility>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 namespace io { class ZeroCopyOutputStream; }

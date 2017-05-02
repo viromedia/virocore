@@ -40,7 +40,7 @@
 
 #include <string>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 class Descriptor;

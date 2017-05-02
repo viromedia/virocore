@@ -44,7 +44,7 @@
 #include <google/protobuf/unknown_field_set.h>
 
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 class DynamicMessage;
 class MapKey;
@@ -78,7 +78,7 @@ class LIBPROTOBUF_EXPORT MapFieldBase {
   virtual ~MapFieldBase();
 
   // Returns reference to internal repeated field. Data written using
-  // google::protobuf::Map's api prior to calling this function is guarantted to be
+  // google_public::protobuf::Map's api prior to calling this function is guarantted to be
   // included in repeated field.
   const RepeatedPtrFieldBase& GetRepeatedField() const;
 
@@ -155,13 +155,13 @@ class LIBPROTOBUF_EXPORT MapFieldBase {
   friend class ContendedMapCleanTest;
   friend class GeneratedMessageReflection;
   friend class MapFieldAccessor;
-  friend class ::google::protobuf::DynamicMessage;
+  friend class ::google_public::protobuf::DynamicMessage;
 
   // Virtual helper methods for MapIterator. MapIterator doesn't have the
   // type helper for key and value. Call these help methods to deal with
   // different types. Real helper methods are implemented in
   // TypeDefinedMapFieldBase.
-  friend class ::google::protobuf::MapIterator;
+  friend class ::google_public::protobuf::MapIterator;
   // Allocate map<...>::iterator for MapIterator.
   virtual void InitializeIterator(MapIterator* map_iter) const = 0;
 
@@ -234,7 +234,7 @@ class MapField : public TypeDefinedMapFieldBase<Key, T>,
                        default_enum_value> MapFieldLiteType;
 
   // Enum needs to be handled differently from other types because it has
-  // different exposed type in google::protobuf::Map's api and repeated field's api. For
+  // different exposed type in google_public::protobuf::Map's api and repeated field's api. For
   // details see the comment in the implementation of
   // SyncMapWithRepeatedFieldNoLock.
   static const bool kIsValueEnum = ValueTypeHandler::kIsEnum;
@@ -279,7 +279,7 @@ class MapField : public TypeDefinedMapFieldBase<Key, T>,
   // Manually set default entry instance. For test only.
   void SetDefaultEntryOnce(const EntryType* default_entry) const;
 
-  // Convenient methods to get internal google::protobuf::Map
+  // Convenient methods to get internal google_public::protobuf::Map
   const Map<Key, T>& GetInternalMap() const;
   Map<Key, T>* MutableInternalMap();
 
@@ -292,7 +292,7 @@ class MapField : public TypeDefinedMapFieldBase<Key, T>,
 
   mutable const EntryType* default_entry_;
 
-  friend class ::google::protobuf::Arena;
+  friend class ::google_public::protobuf::Arena;
 };
 
 class LIBPROTOBUF_EXPORT DynamicMapField: public TypeDefinedMapFieldBase<MapKey, MapValueRef> {

@@ -32,7 +32,7 @@
 
 #include <google/protobuf/stubs/atomicops.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 

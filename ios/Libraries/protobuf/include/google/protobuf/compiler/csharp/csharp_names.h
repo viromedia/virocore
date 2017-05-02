@@ -41,7 +41,7 @@
 #include <string>
 #include <google/protobuf/stubs/port.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 class Descriptor;
@@ -90,7 +90,7 @@ string LIBPROTOC_EXPORT GetReflectionClassName(const FileDescriptor* descriptor)
 //    of failure, this function will return empty string and error parameter
 //    will contain the error message.
 string LIBPROTOC_EXPORT GetOutputFile(
-    const google::protobuf::FileDescriptor* descriptor,
+    const google_public::protobuf::FileDescriptor* descriptor,
     const string file_extension,
     const bool generate_directories,
     const string base_namespace,

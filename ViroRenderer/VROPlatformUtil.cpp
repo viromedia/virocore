@@ -10,6 +10,22 @@
 #include "VROLog.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <fstream>
+
+std::string VROPlatformLoadFileAsString(std::string path) {
+    std::ifstream input(path, std::ios::in | std::ios::binary);
+    if (input) {
+        std::string contents;
+        input.seekg(0, std::ios::end);
+        contents.resize(input.tellg());
+        input.seekg(0, std::ios::beg);
+        input.read(&contents[0], contents.size());
+        input.close();
+        
+        return(contents);
+    }
+    pabort();
+}
 
 #if VRO_PLATFORM_IOS
 
@@ -22,12 +38,6 @@ std::string VROPlatformGetPathForResource(std::string resource, std::string type
                                       ofType:[NSString stringWithUTF8String:type.c_str()]];
     
     return std::string([path UTF8String]);
-}
-
-std::string VROPlatformLoadFileAsString(std::string path) {
-    return std::string([[NSString stringWithContentsOfFile:[NSString stringWithUTF8String:path.c_str()]
-                                                  encoding:NSUTF8StringEncoding
-                                                     error:nil] UTF8String]);
 }
 
 std::string VROPlatformLoadResourceAsString(std::string resource, std::string type) {
@@ -222,11 +232,6 @@ void VROPlatformReleaseEnv() {
 
     sJavaAssetMgr = nullptr;
     sAssetMgr = nullptr;
-}
-
-std::string VROPlatformLoadFileAsString(std::string path) {
-    pabort();
-    return "";
 }
 
 std::string VROPlatformLoadResourceAsString(std::string resource, std::string type) {

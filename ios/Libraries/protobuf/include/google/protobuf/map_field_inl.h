@@ -40,7 +40,7 @@
 #include <google/protobuf/map_field.h>
 #include <google/protobuf/map_type_handler.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 // UnwrapMapKey template

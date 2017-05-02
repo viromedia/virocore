@@ -36,7 +36,7 @@
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/stubs/stringpiece.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace util {
 namespace error {

@@ -45,7 +45,7 @@
 #include <google/protobuf/descriptor_database.h>
 #include <google/protobuf/compiler/parser.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 namespace io { class ZeroCopyInputStream; }

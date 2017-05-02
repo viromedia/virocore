@@ -50,7 +50,7 @@
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 namespace io {
@@ -302,7 +302,7 @@ class LIBPROTOBUF_EXPORT TextFormat {
 
     int64 truncate_string_field_longer_than_;
 
-    google::protobuf::scoped_ptr<const FieldValuePrinter> default_field_value_printer_;
+    google_public::protobuf::scoped_ptr<const FieldValuePrinter> default_field_value_printer_;
     typedef std::map<const FieldDescriptor*,
                      const FieldValuePrinter*> CustomPrinterMap;
     CustomPrinterMap custom_printers_;
@@ -316,13 +316,13 @@ class LIBPROTOBUF_EXPORT TextFormat {
   // Example input: "user {\n id: 123 extra { gender: MALE language: 'en' }\n}"
   //
   // One use for this function is parsing handwritten strings in test code.
-  // Another use is to parse the output from google::protobuf::Message::DebugString()
+  // Another use is to parse the output from google_public::protobuf::Message::DebugString()
   // (or ShortDebugString()), because these functions output using
-  // google::protobuf::TextFormat::Print().
+  // google_public::protobuf::TextFormat::Print().
   //
   // If you would like to read a protocol buffer serialized in the
   // (non-human-readable) binary wire format, see
-  // google::protobuf::MessageLite::ParseFromString().
+  // google_public::protobuf::MessageLite::ParseFromString().
   static bool Parse(io::ZeroCopyInputStream* input, Message* output);
   // Like Parse(), but reads directly from a string.
   static bool ParseFromString(const string& input, Message* output);

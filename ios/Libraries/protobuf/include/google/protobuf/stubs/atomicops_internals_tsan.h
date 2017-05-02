@@ -39,7 +39,7 @@
 
 #include <sanitizer/tsan_interface_atomic.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 

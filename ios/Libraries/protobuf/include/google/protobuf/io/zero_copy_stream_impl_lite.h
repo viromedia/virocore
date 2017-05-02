@@ -56,7 +56,7 @@
 #include <google/protobuf/stubs/stl_util.h>
 
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace io {
 
@@ -174,7 +174,7 @@ class LIBPROTOBUF_EXPORT LazyStringOutputStream : public StringOutputStream {
   int64 ByteCount() const;
 
  private:
-  const google::protobuf::scoped_ptr<ResultCallback<string*> > callback_;
+  const google_public::protobuf::scoped_ptr<ResultCallback<string*> > callback_;
   bool string_is_set_;
 
   GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(LazyStringOutputStream);
@@ -263,7 +263,7 @@ class LIBPROTOBUF_EXPORT CopyingInputStreamAdaptor : public ZeroCopyInputStream 
 
   // Data is read into this buffer.  It may be NULL if no buffer is currently
   // in use.  Otherwise, it points to an array of size buffer_size_.
-  google::protobuf::scoped_array<uint8> buffer_;
+  google_public::protobuf::scoped_array<uint8> buffer_;
   const int buffer_size_;
 
   // Number of valid bytes currently in the buffer (i.e. the size last
@@ -352,7 +352,7 @@ class LIBPROTOBUF_EXPORT CopyingOutputStreamAdaptor : public ZeroCopyOutputStrea
 
   // Data is written from this buffer.  It may be NULL if no buffer is
   // currently in use.  Otherwise, it points to an array of size buffer_size_.
-  google::protobuf::scoped_array<uint8> buffer_;
+  google_public::protobuf::scoped_array<uint8> buffer_;
   const int buffer_size_;
 
   // Number of valid bytes currently in the buffer (i.e. the size last

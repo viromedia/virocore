@@ -39,7 +39,7 @@
 #include <stddef.h>
 #include <memory>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 

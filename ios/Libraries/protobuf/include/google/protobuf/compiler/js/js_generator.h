@@ -40,7 +40,7 @@
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/compiler/code_generator.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 class Descriptor;

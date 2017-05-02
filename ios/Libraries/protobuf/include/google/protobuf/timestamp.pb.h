@@ -29,7 +29,7 @@
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/unknown_field_set.h>
 // @@protoc_insertion_point(includes)
-namespace google {
+namespace google_public {
 namespace protobuf {
 class Timestamp;
 class TimestampDefaultTypeInternal;
@@ -37,13 +37,13 @@ LIBPROTOBUF_EXPORT extern TimestampDefaultTypeInternal _Timestamp_default_instan
 }  // namespace protobuf
 }  // namespace google
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 namespace protobuf_google_2fprotobuf_2ftimestamp_2eproto {
 // Internal implementation detail -- do not call these.
 struct LIBPROTOBUF_EXPORT TableStruct {
-  static const ::google::protobuf::uint32 offsets[];
+  static const ::google_public::protobuf::uint32 offsets[];
   static void InitDefaultsImpl();
   static void Shutdown();
 };
@@ -53,7 +53,7 @@ void LIBPROTOBUF_EXPORT InitDefaults();
 
 // ===================================================================
 
-class LIBPROTOBUF_EXPORT Timestamp : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:google.protobuf.Timestamp) */ {
+class LIBPROTOBUF_EXPORT Timestamp : public ::google_public::protobuf::Message /* @@protoc_insertion_point(class_definition:google.protobuf.Timestamp) */ {
  public:
   Timestamp();
   virtual ~Timestamp();
@@ -65,13 +65,13 @@ class LIBPROTOBUF_EXPORT Timestamp : public ::google::protobuf::Message /* @@pro
     return *this;
   }
 
-  inline ::google::protobuf::Arena* GetArena() const PROTOBUF_FINAL {
+  inline ::google_public::protobuf::Arena* GetArena() const PROTOBUF_FINAL {
     return GetArenaNoVirtual();
   }
   inline void* GetMaybeArenaPointer() const PROTOBUF_FINAL {
     return MaybeArenaPtr();
   }
-  static const ::google::protobuf::Descriptor* descriptor();
+  static const ::google_public::protobuf::Descriptor* descriptor();
   static const Timestamp& default_instance();
 
   static inline const Timestamp* internal_default_instance() {
@@ -86,9 +86,9 @@ class LIBPROTOBUF_EXPORT Timestamp : public ::google::protobuf::Message /* @@pro
 
   inline Timestamp* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  Timestamp* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
-  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  Timestamp* New(::google_public::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google_public::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google_public::protobuf::Message& from) PROTOBUF_FINAL;
   void CopyFrom(const Timestamp& from);
   void MergeFrom(const Timestamp& from);
   void Clear() PROTOBUF_FINAL;
@@ -96,15 +96,15 @@ class LIBPROTOBUF_EXPORT Timestamp : public ::google::protobuf::Message /* @@pro
 
   size_t ByteSizeLong() const PROTOBUF_FINAL;
   bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+      ::google_public::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
   void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      ::google_public::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google_public::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google_public::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google_public::protobuf::uint8* SerializeWithCachedSizesToArray(::google_public::protobuf::uint8* output)
       const PROTOBUF_FINAL {
     return InternalSerializeWithCachedSizesToArray(
-        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+        ::google_public::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
   }
   int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
   private:
@@ -113,12 +113,12 @@ class LIBPROTOBUF_EXPORT Timestamp : public ::google::protobuf::Message /* @@pro
   void SetCachedSize(int size) const PROTOBUF_FINAL;
   void InternalSwap(Timestamp* other);
   protected:
-  explicit Timestamp(::google::protobuf::Arena* arena);
+  explicit Timestamp(::google_public::protobuf::Arena* arena);
   private:
   static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::google::protobuf::Arena* arena);
+  inline void RegisterArenaDtor(::google_public::protobuf::Arena* arena);
   private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+  inline ::google_public::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
   }
   inline void* MaybeArenaPtr() const {
@@ -126,7 +126,7 @@ class LIBPROTOBUF_EXPORT Timestamp : public ::google::protobuf::Message /* @@pro
   }
   public:
 
-  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+  ::google_public::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
 
   // nested types ----------------------------------------------------
 
@@ -135,24 +135,24 @@ class LIBPROTOBUF_EXPORT Timestamp : public ::google::protobuf::Message /* @@pro
   // int64 seconds = 1;
   void clear_seconds();
   static const int kSecondsFieldNumber = 1;
-  ::google::protobuf::int64 seconds() const;
-  void set_seconds(::google::protobuf::int64 value);
+  ::google_public::protobuf::int64 seconds() const;
+  void set_seconds(::google_public::protobuf::int64 value);
 
   // int32 nanos = 2;
   void clear_nanos();
   static const int kNanosFieldNumber = 2;
-  ::google::protobuf::int32 nanos() const;
-  void set_nanos(::google::protobuf::int32 value);
+  ::google_public::protobuf::int32 nanos() const;
+  void set_nanos(::google_public::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:google.protobuf.Timestamp)
  private:
 
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  friend class ::google::protobuf::Arena;
+  ::google_public::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  friend class ::google_public::protobuf::Arena;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::int64 seconds_;
-  ::google::protobuf::int32 nanos_;
+  ::google_public::protobuf::int64 seconds_;
+  ::google_public::protobuf::int32 nanos_;
   mutable int _cached_size_;
   friend struct LIBPROTOBUF_EXPORT protobuf_google_2fprotobuf_2ftimestamp_2eproto::TableStruct;
 };
@@ -168,11 +168,11 @@ class LIBPROTOBUF_EXPORT Timestamp : public ::google::protobuf::Message /* @@pro
 inline void Timestamp::clear_seconds() {
   seconds_ = GOOGLE_LONGLONG(0);
 }
-inline ::google::protobuf::int64 Timestamp::seconds() const {
+inline ::google_public::protobuf::int64 Timestamp::seconds() const {
   // @@protoc_insertion_point(field_get:google.protobuf.Timestamp.seconds)
   return seconds_;
 }
-inline void Timestamp::set_seconds(::google::protobuf::int64 value) {
+inline void Timestamp::set_seconds(::google_public::protobuf::int64 value) {
   
   seconds_ = value;
   // @@protoc_insertion_point(field_set:google.protobuf.Timestamp.seconds)
@@ -182,11 +182,11 @@ inline void Timestamp::set_seconds(::google::protobuf::int64 value) {
 inline void Timestamp::clear_nanos() {
   nanos_ = 0;
 }
-inline ::google::protobuf::int32 Timestamp::nanos() const {
+inline ::google_public::protobuf::int32 Timestamp::nanos() const {
   // @@protoc_insertion_point(field_get:google.protobuf.Timestamp.nanos)
   return nanos_;
 }
-inline void Timestamp::set_nanos(::google::protobuf::int32 value) {
+inline void Timestamp::set_nanos(::google_public::protobuf::int32 value) {
   
   nanos_ = value;
   // @@protoc_insertion_point(field_set:google.protobuf.Timestamp.nanos)

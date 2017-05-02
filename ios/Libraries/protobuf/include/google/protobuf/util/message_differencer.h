@@ -51,7 +51,7 @@
 #include <google/protobuf/unknown_field_set.h>
 #include <google/protobuf/util/field_comparator.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 class DynamicMessageFactory;
@@ -677,8 +677,8 @@ class LIBPROTOBUF_EXPORT MessageDifferencer {
 
   // Compares all the unknown fields in two messages.
   bool CompareUnknownFields(const Message& message1, const Message& message2,
-                            const google::protobuf::UnknownFieldSet&,
-                            const google::protobuf::UnknownFieldSet&,
+                            const google_public::protobuf::UnknownFieldSet&,
+                            const google_public::protobuf::UnknownFieldSet&,
                             std::vector<SpecificField>* parent_fields);
 
   // Compares the specified messages for the requested field lists. The field
@@ -786,7 +786,7 @@ class LIBPROTOBUF_EXPORT MessageDifferencer {
 
   // If "any" is of type google.protobuf.Any, extract its payload using
   // DynamicMessageFactory and store in "data".
-  bool UnpackAny(const Message& any, google::protobuf::scoped_ptr<Message>* data);
+  bool UnpackAny(const Message& any, google_public::protobuf::scoped_ptr<Message>* data);
 
   // Checks if index is equal to new_index in all the specific fields.
   static bool CheckPathChanged(const std::vector<SpecificField>& parent_fields);
@@ -825,7 +825,7 @@ class LIBPROTOBUF_EXPORT MessageDifferencer {
 
   string* output_string_;
 
-  google::protobuf::scoped_ptr<DynamicMessageFactory> dynamic_message_factory_;
+  google_public::protobuf::scoped_ptr<DynamicMessageFactory> dynamic_message_factory_;
   GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(MessageDifferencer);
 };
 

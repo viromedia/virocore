@@ -151,7 +151,7 @@
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/stubs/hash.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 // StringPiece has *two* size types.
 // StringPiece::size_type

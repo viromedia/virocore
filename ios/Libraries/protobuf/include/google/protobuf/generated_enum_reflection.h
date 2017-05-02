@@ -44,7 +44,7 @@
 #include <google/protobuf/stubs/template_util.h>
 #include <google/protobuf/generated_enum_util.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
   class EnumDescriptor;
 }  // namespace protobuf

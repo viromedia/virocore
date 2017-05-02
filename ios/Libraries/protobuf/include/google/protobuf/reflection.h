@@ -41,7 +41,7 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/generated_enum_util.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 template<typename T, typename Enable = void>
@@ -336,8 +336,8 @@ namespace internal {
 //   CPPTYPE_BOOL         bool                    bool
 //   CPPTYPE_ENUM         generated enum type     int32
 //   CPPTYPE_STRING       string                  string
-//   CPPTYPE_MESSAGE      generated message type  google::protobuf::Message
-//                        or google::protobuf::Message
+//   CPPTYPE_MESSAGE      generated message type  google_public::protobuf::Message
+//                        or google_public::protobuf::Message
 //
 // Note that for enums we use int32 in the interface.
 //
@@ -508,7 +508,7 @@ class RepeatedFieldRefIterator
   const void* data_;
   const RepeatedFieldAccessor* accessor_;
   void* iterator_;
-  google::protobuf::scoped_ptr<AccessorValueType> scratch_space_;
+  google_public::protobuf::scoped_ptr<AccessorValueType> scratch_space_;
 };
 
 // TypeTraits that maps the type parameter T of RepeatedFieldRef or
@@ -566,7 +566,7 @@ struct RefTypeTraits<
 
 template<typename T>
 struct RefTypeTraits<
-    T, typename internal::enable_if< ::google::protobuf::internal::is_same<string, T>::value>::type> {
+    T, typename internal::enable_if< ::google_public::protobuf::internal::is_same<string, T>::value>::type> {
   typedef RepeatedFieldRefIterator<T> iterator;
   typedef RepeatedFieldAccessor AccessorType;
   typedef string AccessorValueType;

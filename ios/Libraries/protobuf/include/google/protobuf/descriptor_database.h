@@ -44,7 +44,7 @@
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/descriptor.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 // Defined in this file.

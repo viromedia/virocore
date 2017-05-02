@@ -17,6 +17,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneVideoSphere,
     VROSampleSceneNormalMap,
     VROSampleSceneStereoscopic,
+    VROSampleSceneFBX,
     VROSampleSceneNumScenes,
 };
 
@@ -55,6 +56,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
             return [self loadBoxScene];
         case VROSampleSceneStereoscopic:
             return [self loadStereoBackground];
+        case VROSampleSceneFBX:
+            return [self loadFBXScene];
         default:
             break;
     }
@@ -708,8 +711,65 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return sceneController;
 }
 
+- (std::shared_ptr<VROSceneController>)loadFBXScene {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
+    scene->setBackgroundCube([self niagaraTexture]);
+    
+    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"heart" ofType:@"proto"];
+    NSURL *fbxURL = [NSURL fileURLWithPath:fbxPath];
+    std::string url = std::string([[fbxURL description] UTF8String]);
+    
+    NSString *basePath = [fbxPath stringByDeletingLastPathComponent];
+    NSURL *baseURL = [NSURL fileURLWithPath:basePath];
+    std::string base = std::string([[baseURL description] UTF8String]);
+    
+    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
+    light->setColor({ 0.7, 0.7, 0.7 });
+    light->setPosition( { 0, 0, 0 });
+    light->setDirection( { 0, 0, -1.0 });
+    light->setAttenuationStartDistance(50);
+    light->setAttenuationEndDistance(75);
+    light->setSpotInnerAngle(45);
+    light->setSpotOuterAngle(90);
+    
+    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    rootNode->setPosition({0, 0, 0});
+    rootNode->addLight(light);
+    
+    scene->addNode(rootNode);
+    
+    std::shared_ptr<VRONode> fbxNode = VROFBXLoader::loadFBXFromURL(url, base, true,
+                                                                    [](std::shared_ptr<VRONode> node, bool success) {
+                                                                        if (!success) {
+                                                                            return;
+                                                                        }
+                                                                        
+                                                                        node->setPosition({0, 0, 0});
+                                                                        node->setScale({ 0.1, 0.1, 0.1 });
+                                                                    });
+    
+    
+    rootNode->addChildNode(fbxNode);
+    
+    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self](VRONode *const node, float seconds) {
+        self.objAngle += .015;
+        node->setRotation({ 0, self.objAngle, 0});
+        
+        return true;
+    });
+    
+    fbxNode->runAction(action);
+    
+    self.fuseDelegate = std::make_shared<VROEventDelegate>();
+    self.fuseDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnFuse, true);
+    fbxNode->setEventDelegate(self.fuseDelegate);
+    
+    return sceneController;
+}
+
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleSceneBox;
+    self.sceneIndex = VROSampleSceneFBX;
     self.driver = driver;
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
 }

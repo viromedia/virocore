@@ -53,7 +53,7 @@
 #include <random>
 #endif
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 template <typename Key, typename T>
@@ -441,7 +441,7 @@ class LIBPROTOBUF_EXPORT MapValueRef {
   void DeleteData() {
     switch (type_) {
 #define HANDLE_TYPE(CPPTYPE, TYPE)                              \
-      case google::protobuf::FieldDescriptor::CPPTYPE_##CPPTYPE: {        \
+      case google_public::protobuf::FieldDescriptor::CPPTYPE_##CPPTYPE: {        \
         delete reinterpret_cast<TYPE*>(data_);                  \
         break;                                                  \
       }
@@ -467,7 +467,7 @@ class LIBPROTOBUF_EXPORT MapValueRef {
 
 #undef TYPE_CHECK
 
-// This is the class for google::protobuf::Map's internal value_type. Instead of using
+// This is the class for google_public::protobuf::Map's internal value_type. Instead of using
 // std::pair as value_type, we use this class which provides us more control of
 // its process of construction and destruction.
 template <typename Key, typename T>
@@ -494,11 +494,11 @@ class MapPair {
   T second;
 
  private:
-  friend class ::google::protobuf::Arena;
+  friend class ::google_public::protobuf::Arena;
   friend class Map<Key, T>;
 };
 
-// google::protobuf::Map is an associative container type used to store protobuf map
+// google_public::protobuf::Map is an associative container type used to store protobuf map
 // fields.  Each Map instance may or may not use a different hash function, a
 // different iteration order, and so on.  E.g., please don't examine
 // implementation details to decide if the following would work:
@@ -573,7 +573,7 @@ class Map {
   }
 
   // re-implement std::allocator to use arena allocator for memory allocation.
-  // Used for google::protobuf::Map implementation. Users should not use this class
+  // Used for google_public::protobuf::Map implementation. Users should not use this class
   // directly.
   template <typename U>
   class MapAllocator {
@@ -1514,7 +1514,7 @@ class Map {
         old_style_ ? &(*deprecated_elements_)[key] : &(*elements_)[key];
     if (*value == NULL) {
       *value = CreateValueTypeInternal(key);
-      internal::MapValueInitializer<google::protobuf::is_proto_enum<T>::value,
+      internal::MapValueInitializer<google_public::protobuf::is_proto_enum<T>::value,
                                     T>::Initialize((*value)->second,
                                                    default_enum_value_);
     }
@@ -1699,7 +1699,7 @@ class Map {
     DeprecatedInnerMap* deprecated_elements_;
   };
 
-  friend class ::google::protobuf::Arena;
+  friend class ::google_public::protobuf::Arena;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   template <typename K, typename V,
@@ -1714,35 +1714,35 @@ class Map {
 
 GOOGLE_PROTOBUF_HASH_NAMESPACE_DECLARATION_START
 template<>
-struct hash<google::protobuf::MapKey> {
+struct hash<google_public::protobuf::MapKey> {
   size_t
-  operator()(const google::protobuf::MapKey& map_key) const {
+  operator()(const google_public::protobuf::MapKey& map_key) const {
     switch (map_key.type()) {
-      case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
-      case google::protobuf::FieldDescriptor::CPPTYPE_FLOAT:
-      case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
-      case google::protobuf::FieldDescriptor::CPPTYPE_MESSAGE:
+      case google_public::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
+      case google_public::protobuf::FieldDescriptor::CPPTYPE_FLOAT:
+      case google_public::protobuf::FieldDescriptor::CPPTYPE_ENUM:
+      case google_public::protobuf::FieldDescriptor::CPPTYPE_MESSAGE:
         GOOGLE_LOG(FATAL) << "Unsupported";
         break;
-      case google::protobuf::FieldDescriptor::CPPTYPE_STRING:
+      case google_public::protobuf::FieldDescriptor::CPPTYPE_STRING:
         return hash<string>()(map_key.GetStringValue());
-      case google::protobuf::FieldDescriptor::CPPTYPE_INT64:
-        return hash< ::google::protobuf::int64>()(map_key.GetInt64Value());
-      case google::protobuf::FieldDescriptor::CPPTYPE_INT32:
-        return hash< ::google::protobuf::int32>()(map_key.GetInt32Value());
-      case google::protobuf::FieldDescriptor::CPPTYPE_UINT64:
-        return hash< ::google::protobuf::uint64>()(map_key.GetUInt64Value());
-      case google::protobuf::FieldDescriptor::CPPTYPE_UINT32:
-        return hash< ::google::protobuf::uint32>()(map_key.GetUInt32Value());
-      case google::protobuf::FieldDescriptor::CPPTYPE_BOOL:
+      case google_public::protobuf::FieldDescriptor::CPPTYPE_INT64:
+        return hash< ::google_public::protobuf::int64>()(map_key.GetInt64Value());
+      case google_public::protobuf::FieldDescriptor::CPPTYPE_INT32:
+        return hash< ::google_public::protobuf::int32>()(map_key.GetInt32Value());
+      case google_public::protobuf::FieldDescriptor::CPPTYPE_UINT64:
+        return hash< ::google_public::protobuf::uint64>()(map_key.GetUInt64Value());
+      case google_public::protobuf::FieldDescriptor::CPPTYPE_UINT32:
+        return hash< ::google_public::protobuf::uint32>()(map_key.GetUInt32Value());
+      case google_public::protobuf::FieldDescriptor::CPPTYPE_BOOL:
         return hash<bool>()(map_key.GetBoolValue());
     }
     GOOGLE_LOG(FATAL) << "Can't get here.";
     return 0;
   }
   bool
-  operator()(const google::protobuf::MapKey& map_key1,
-             const google::protobuf::MapKey& map_key2) const {
+  operator()(const google_public::protobuf::MapKey& map_key1,
+             const google_public::protobuf::MapKey& map_key2) const {
     return map_key1 < map_key2;
   }
 };

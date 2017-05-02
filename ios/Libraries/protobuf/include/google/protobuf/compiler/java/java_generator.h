@@ -40,7 +40,7 @@
 #include <string>
 #include <google/protobuf/compiler/code_generator.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace compiler {
 namespace java {

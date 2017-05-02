@@ -44,7 +44,7 @@
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/stubs/logging.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
   namespace io {
     class CodedInputStream;         // coded_stream.h

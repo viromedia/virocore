@@ -35,7 +35,7 @@
 #ifndef GOOGLE_PROTOBUF_IO_STRTOD_H__
 #define GOOGLE_PROTOBUF_IO_STRTOD_H__
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace io {
 

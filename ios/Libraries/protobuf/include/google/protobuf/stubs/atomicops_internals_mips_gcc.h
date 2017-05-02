@@ -35,7 +35,7 @@
 
 #define ATOMICOPS_COMPILER_BARRIER() __asm__ __volatile__("" : : : "memory")
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 

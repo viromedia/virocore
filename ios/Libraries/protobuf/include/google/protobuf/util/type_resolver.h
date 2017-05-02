@@ -39,7 +39,7 @@
 #include <google/protobuf/stubs/status.h>
 
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 class Type;
 class Enum;
@@ -60,11 +60,11 @@ class LIBPROTOBUF_EXPORT TypeResolver {
 
   // Resolves a type url for a message type.
   virtual util::Status ResolveMessageType(
-      const string& type_url, google::protobuf::Type* message_type) = 0;
+      const string& type_url, google_public::protobuf::Type* message_type) = 0;
 
   // Resolves a type url for an enum type.
   virtual util::Status ResolveEnumType(const string& type_url,
-                                         google::protobuf::Enum* enum_type) = 0;
+                                         google_public::protobuf::Enum* enum_type) = 0;
 
  private:
   GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(TypeResolver);

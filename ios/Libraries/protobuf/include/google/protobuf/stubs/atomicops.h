@@ -59,7 +59,7 @@
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/stubs/platform_macros.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 

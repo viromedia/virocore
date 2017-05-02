@@ -47,7 +47,7 @@
 #include <google/protobuf/io/zero_copy_stream.h>
 #include <zlib.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace io {
 

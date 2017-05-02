@@ -35,13 +35,13 @@
 
 #include <string>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace compiler {
 namespace php {
 
 class LIBPROTOC_EXPORT Generator
-    : public google::protobuf::compiler::CodeGenerator {
+    : public google_public::protobuf::compiler::CodeGenerator {
   virtual bool Generate(
       const FileDescriptor* file,
       const string& parameter,

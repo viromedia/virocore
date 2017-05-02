@@ -29,7 +29,7 @@
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/unknown_field_set.h>
 // @@protoc_insertion_point(includes)
-namespace google {
+namespace google_public {
 namespace protobuf {
 class FieldMask;
 class FieldMaskDefaultTypeInternal;
@@ -37,13 +37,13 @@ LIBPROTOBUF_EXPORT extern FieldMaskDefaultTypeInternal _FieldMask_default_instan
 }  // namespace protobuf
 }  // namespace google
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 namespace protobuf_google_2fprotobuf_2ffield_5fmask_2eproto {
 // Internal implementation detail -- do not call these.
 struct LIBPROTOBUF_EXPORT TableStruct {
-  static const ::google::protobuf::uint32 offsets[];
+  static const ::google_public::protobuf::uint32 offsets[];
   static void InitDefaultsImpl();
   static void Shutdown();
 };
@@ -53,7 +53,7 @@ void LIBPROTOBUF_EXPORT InitDefaults();
 
 // ===================================================================
 
-class LIBPROTOBUF_EXPORT FieldMask : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:google.protobuf.FieldMask) */ {
+class LIBPROTOBUF_EXPORT FieldMask : public ::google_public::protobuf::Message /* @@protoc_insertion_point(class_definition:google.protobuf.FieldMask) */ {
  public:
   FieldMask();
   virtual ~FieldMask();
@@ -65,7 +65,7 @@ class LIBPROTOBUF_EXPORT FieldMask : public ::google::protobuf::Message /* @@pro
     return *this;
   }
 
-  static const ::google::protobuf::Descriptor* descriptor();
+  static const ::google_public::protobuf::Descriptor* descriptor();
   static const FieldMask& default_instance();
 
   static inline const FieldMask* internal_default_instance() {
@@ -79,9 +79,9 @@ class LIBPROTOBUF_EXPORT FieldMask : public ::google::protobuf::Message /* @@pro
 
   inline FieldMask* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  FieldMask* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
-  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  FieldMask* New(::google_public::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google_public::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google_public::protobuf::Message& from) PROTOBUF_FINAL;
   void CopyFrom(const FieldMask& from);
   void MergeFrom(const FieldMask& from);
   void Clear() PROTOBUF_FINAL;
@@ -89,15 +89,15 @@ class LIBPROTOBUF_EXPORT FieldMask : public ::google::protobuf::Message /* @@pro
 
   size_t ByteSizeLong() const PROTOBUF_FINAL;
   bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+      ::google_public::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
   void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      ::google_public::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google_public::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google_public::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google_public::protobuf::uint8* SerializeWithCachedSizesToArray(::google_public::protobuf::uint8* output)
       const PROTOBUF_FINAL {
     return InternalSerializeWithCachedSizesToArray(
-        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+        ::google_public::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
   }
   int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
   private:
@@ -106,7 +106,7 @@ class LIBPROTOBUF_EXPORT FieldMask : public ::google::protobuf::Message /* @@pro
   void SetCachedSize(int size) const PROTOBUF_FINAL;
   void InternalSwap(FieldMask* other);
   private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+  inline ::google_public::protobuf::Arena* GetArenaNoVirtual() const {
     return NULL;
   }
   inline void* MaybeArenaPtr() const {
@@ -114,7 +114,7 @@ class LIBPROTOBUF_EXPORT FieldMask : public ::google::protobuf::Message /* @@pro
   }
   public:
 
-  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+  ::google_public::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
 
   // nested types ----------------------------------------------------
 
@@ -133,14 +133,14 @@ class LIBPROTOBUF_EXPORT FieldMask : public ::google::protobuf::Message /* @@pro
   void add_paths(const ::std::string& value);
   void add_paths(const char* value);
   void add_paths(const char* value, size_t size);
-  const ::google::protobuf::RepeatedPtrField< ::std::string>& paths() const;
-  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_paths();
+  const ::google_public::protobuf::RepeatedPtrField< ::std::string>& paths() const;
+  ::google_public::protobuf::RepeatedPtrField< ::std::string>* mutable_paths();
 
   // @@protoc_insertion_point(class_scope:google.protobuf.FieldMask)
  private:
 
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedPtrField< ::std::string> paths_;
+  ::google_public::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google_public::protobuf::RepeatedPtrField< ::std::string> paths_;
   mutable int _cached_size_;
   friend struct LIBPROTOBUF_EXPORT protobuf_google_2fprotobuf_2ffield_5fmask_2eproto::TableStruct;
 };
@@ -196,12 +196,12 @@ inline void FieldMask::add_paths(const char* value, size_t size) {
   paths_.Add()->assign(reinterpret_cast<const char*>(value), size);
   // @@protoc_insertion_point(field_add_pointer:google.protobuf.FieldMask.paths)
 }
-inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+inline const ::google_public::protobuf::RepeatedPtrField< ::std::string>&
 FieldMask::paths() const {
   // @@protoc_insertion_point(field_list:google.protobuf.FieldMask.paths)
   return paths_;
 }
-inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+inline ::google_public::protobuf::RepeatedPtrField< ::std::string>*
 FieldMask::mutable_paths() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.FieldMask.paths)
   return &paths_;

@@ -34,7 +34,7 @@
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/stubs/once.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 template<typename T>

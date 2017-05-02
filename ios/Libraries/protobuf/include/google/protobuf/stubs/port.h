@@ -106,7 +106,7 @@
 #define LANG_CXX11 1
 #endif
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 typedef unsigned int uint;

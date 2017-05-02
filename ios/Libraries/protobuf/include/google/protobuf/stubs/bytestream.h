@@ -59,7 +59,7 @@
 class CordByteSink;
 class MemBlock;
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace strings {
 

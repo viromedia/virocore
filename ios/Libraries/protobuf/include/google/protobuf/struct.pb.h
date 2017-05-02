@@ -32,7 +32,7 @@
 #include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
 // @@protoc_insertion_point(includes)
-namespace google {
+namespace google_public {
 namespace protobuf {
 class ListValue;
 class ListValueDefaultTypeInternal;
@@ -46,13 +46,13 @@ LIBPROTOBUF_EXPORT extern ValueDefaultTypeInternal _Value_default_instance_;
 }  // namespace protobuf
 }  // namespace google
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 namespace protobuf_google_2fprotobuf_2fstruct_2eproto {
 // Internal implementation detail -- do not call these.
 struct LIBPROTOBUF_EXPORT TableStruct {
-  static const ::google::protobuf::uint32 offsets[];
+  static const ::google_public::protobuf::uint32 offsets[];
   static void InitDefaultsImpl();
   static void Shutdown();
 };
@@ -62,22 +62,22 @@ void LIBPROTOBUF_EXPORT InitDefaults();
 
 enum NullValue {
   NULL_VALUE = 0,
-  NullValue_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
-  NullValue_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+  NullValue_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google_public::protobuf::kint32min,
+  NullValue_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google_public::protobuf::kint32max
 };
 LIBPROTOBUF_EXPORT bool NullValue_IsValid(int value);
 const NullValue NullValue_MIN = NULL_VALUE;
 const NullValue NullValue_MAX = NULL_VALUE;
 const int NullValue_ARRAYSIZE = NullValue_MAX + 1;
 
-LIBPROTOBUF_EXPORT const ::google::protobuf::EnumDescriptor* NullValue_descriptor();
+LIBPROTOBUF_EXPORT const ::google_public::protobuf::EnumDescriptor* NullValue_descriptor();
 inline const ::std::string& NullValue_Name(NullValue value) {
-  return ::google::protobuf::internal::NameOfEnum(
+  return ::google_public::protobuf::internal::NameOfEnum(
     NullValue_descriptor(), value);
 }
 inline bool NullValue_Parse(
     const ::std::string& name, NullValue* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<NullValue>(
+  return ::google_public::protobuf::internal::ParseNamedEnum<NullValue>(
     NullValue_descriptor(), name, value);
 }
 // ===================================================================
@@ -85,7 +85,7 @@ inline bool NullValue_Parse(
 
 // -------------------------------------------------------------------
 
-class LIBPROTOBUF_EXPORT Struct : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:google.protobuf.Struct) */ {
+class LIBPROTOBUF_EXPORT Struct : public ::google_public::protobuf::Message /* @@protoc_insertion_point(class_definition:google.protobuf.Struct) */ {
  public:
   Struct();
   virtual ~Struct();
@@ -97,13 +97,13 @@ class LIBPROTOBUF_EXPORT Struct : public ::google::protobuf::Message /* @@protoc
     return *this;
   }
 
-  inline ::google::protobuf::Arena* GetArena() const PROTOBUF_FINAL {
+  inline ::google_public::protobuf::Arena* GetArena() const PROTOBUF_FINAL {
     return GetArenaNoVirtual();
   }
   inline void* GetMaybeArenaPointer() const PROTOBUF_FINAL {
     return MaybeArenaPtr();
   }
-  static const ::google::protobuf::Descriptor* descriptor();
+  static const ::google_public::protobuf::Descriptor* descriptor();
   static const Struct& default_instance();
 
   static inline const Struct* internal_default_instance() {
@@ -118,9 +118,9 @@ class LIBPROTOBUF_EXPORT Struct : public ::google::protobuf::Message /* @@protoc
 
   inline Struct* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  Struct* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
-  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  Struct* New(::google_public::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google_public::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google_public::protobuf::Message& from) PROTOBUF_FINAL;
   void CopyFrom(const Struct& from);
   void MergeFrom(const Struct& from);
   void Clear() PROTOBUF_FINAL;
@@ -128,15 +128,15 @@ class LIBPROTOBUF_EXPORT Struct : public ::google::protobuf::Message /* @@protoc
 
   size_t ByteSizeLong() const PROTOBUF_FINAL;
   bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+      ::google_public::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
   void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      ::google_public::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google_public::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google_public::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google_public::protobuf::uint8* SerializeWithCachedSizesToArray(::google_public::protobuf::uint8* output)
       const PROTOBUF_FINAL {
     return InternalSerializeWithCachedSizesToArray(
-        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+        ::google_public::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
   }
   int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
   private:
@@ -145,12 +145,12 @@ class LIBPROTOBUF_EXPORT Struct : public ::google::protobuf::Message /* @@protoc
   void SetCachedSize(int size) const PROTOBUF_FINAL;
   void InternalSwap(Struct* other);
   protected:
-  explicit Struct(::google::protobuf::Arena* arena);
+  explicit Struct(::google_public::protobuf::Arena* arena);
   private:
   static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::google::protobuf::Arena* arena);
+  inline void RegisterArenaDtor(::google_public::protobuf::Arena* arena);
   private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+  inline ::google_public::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
   }
   inline void* MaybeArenaPtr() const {
@@ -158,7 +158,7 @@ class LIBPROTOBUF_EXPORT Struct : public ::google::protobuf::Message /* @@protoc
   }
   public:
 
-  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+  ::google_public::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
 
   // nested types ----------------------------------------------------
 
@@ -169,35 +169,35 @@ class LIBPROTOBUF_EXPORT Struct : public ::google::protobuf::Message /* @@protoc
   int fields_size() const;
   void clear_fields();
   static const int kFieldsFieldNumber = 1;
-  const ::google::protobuf::Map< ::std::string, ::google::protobuf::Value >&
+  const ::google_public::protobuf::Map< ::std::string, ::google_public::protobuf::Value >&
       fields() const;
-  ::google::protobuf::Map< ::std::string, ::google::protobuf::Value >*
+  ::google_public::protobuf::Map< ::std::string, ::google_public::protobuf::Value >*
       mutable_fields();
 
   // @@protoc_insertion_point(class_scope:google.protobuf.Struct)
  private:
 
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  friend class ::google::protobuf::Arena;
+  ::google_public::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  friend class ::google_public::protobuf::Arena;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  typedef ::google::protobuf::internal::MapEntryLite<
-      ::std::string, ::google::protobuf::Value,
-      ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
-      ::google::protobuf::internal::WireFormatLite::TYPE_MESSAGE,
+  typedef ::google_public::protobuf::internal::MapEntryLite<
+      ::std::string, ::google_public::protobuf::Value,
+      ::google_public::protobuf::internal::WireFormatLite::TYPE_STRING,
+      ::google_public::protobuf::internal::WireFormatLite::TYPE_MESSAGE,
       0 >
       Struct_FieldsEntry;
-  ::google::protobuf::internal::MapField<
-      ::std::string, ::google::protobuf::Value,
-      ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
-      ::google::protobuf::internal::WireFormatLite::TYPE_MESSAGE,
+  ::google_public::protobuf::internal::MapField<
+      ::std::string, ::google_public::protobuf::Value,
+      ::google_public::protobuf::internal::WireFormatLite::TYPE_STRING,
+      ::google_public::protobuf::internal::WireFormatLite::TYPE_MESSAGE,
       0 > fields_;
   mutable int _cached_size_;
   friend struct LIBPROTOBUF_EXPORT protobuf_google_2fprotobuf_2fstruct_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
 
-class LIBPROTOBUF_EXPORT Value : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:google.protobuf.Value) */ {
+class LIBPROTOBUF_EXPORT Value : public ::google_public::protobuf::Message /* @@protoc_insertion_point(class_definition:google.protobuf.Value) */ {
  public:
   Value();
   virtual ~Value();
@@ -209,13 +209,13 @@ class LIBPROTOBUF_EXPORT Value : public ::google::protobuf::Message /* @@protoc_
     return *this;
   }
 
-  inline ::google::protobuf::Arena* GetArena() const PROTOBUF_FINAL {
+  inline ::google_public::protobuf::Arena* GetArena() const PROTOBUF_FINAL {
     return GetArenaNoVirtual();
   }
   inline void* GetMaybeArenaPointer() const PROTOBUF_FINAL {
     return MaybeArenaPtr();
   }
-  static const ::google::protobuf::Descriptor* descriptor();
+  static const ::google_public::protobuf::Descriptor* descriptor();
   static const Value& default_instance();
 
   enum KindCase {
@@ -240,9 +240,9 @@ class LIBPROTOBUF_EXPORT Value : public ::google::protobuf::Message /* @@protoc_
 
   inline Value* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  Value* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
-  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  Value* New(::google_public::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google_public::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google_public::protobuf::Message& from) PROTOBUF_FINAL;
   void CopyFrom(const Value& from);
   void MergeFrom(const Value& from);
   void Clear() PROTOBUF_FINAL;
@@ -250,15 +250,15 @@ class LIBPROTOBUF_EXPORT Value : public ::google::protobuf::Message /* @@protoc_
 
   size_t ByteSizeLong() const PROTOBUF_FINAL;
   bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+      ::google_public::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
   void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      ::google_public::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google_public::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google_public::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google_public::protobuf::uint8* SerializeWithCachedSizesToArray(::google_public::protobuf::uint8* output)
       const PROTOBUF_FINAL {
     return InternalSerializeWithCachedSizesToArray(
-        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+        ::google_public::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
   }
   int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
   private:
@@ -267,12 +267,12 @@ class LIBPROTOBUF_EXPORT Value : public ::google::protobuf::Message /* @@protoc_
   void SetCachedSize(int size) const PROTOBUF_FINAL;
   void InternalSwap(Value* other);
   protected:
-  explicit Value(::google::protobuf::Arena* arena);
+  explicit Value(::google_public::protobuf::Arena* arena);
   private:
   static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::google::protobuf::Arena* arena);
+  inline void RegisterArenaDtor(::google_public::protobuf::Arena* arena);
   private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+  inline ::google_public::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
   }
   inline void* MaybeArenaPtr() const {
@@ -280,7 +280,7 @@ class LIBPROTOBUF_EXPORT Value : public ::google::protobuf::Message /* @@protoc_
   }
   public:
 
-  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+  ::google_public::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
 
   // nested types ----------------------------------------------------
 
@@ -292,8 +292,8 @@ class LIBPROTOBUF_EXPORT Value : public ::google::protobuf::Message /* @@protoc_
   public:
   void clear_null_value();
   static const int kNullValueFieldNumber = 1;
-  ::google::protobuf::NullValue null_value() const;
-  void set_null_value(::google::protobuf::NullValue value);
+  ::google_public::protobuf::NullValue null_value() const;
+  void set_null_value(::google_public::protobuf::NullValue value);
 
   // double number_value = 2;
   private:
@@ -337,16 +337,16 @@ class LIBPROTOBUF_EXPORT Value : public ::google::protobuf::Message /* @@protoc_
   private:
   void _slow_mutable_struct_value();
   void _slow_set_allocated_struct_value(
-      ::google::protobuf::Arena* message_arena, ::google::protobuf::Struct** struct_value);
-  ::google::protobuf::Struct* _slow_release_struct_value();
+      ::google_public::protobuf::Arena* message_arena, ::google_public::protobuf::Struct** struct_value);
+  ::google_public::protobuf::Struct* _slow_release_struct_value();
   public:
-  const ::google::protobuf::Struct& struct_value() const;
-  ::google::protobuf::Struct* mutable_struct_value();
-  ::google::protobuf::Struct* release_struct_value();
-  void set_allocated_struct_value(::google::protobuf::Struct* struct_value);
-  ::google::protobuf::Struct* unsafe_arena_release_struct_value();
+  const ::google_public::protobuf::Struct& struct_value() const;
+  ::google_public::protobuf::Struct* mutable_struct_value();
+  ::google_public::protobuf::Struct* release_struct_value();
+  void set_allocated_struct_value(::google_public::protobuf::Struct* struct_value);
+  ::google_public::protobuf::Struct* unsafe_arena_release_struct_value();
   void unsafe_arena_set_allocated_struct_value(
-      ::google::protobuf::Struct* struct_value);
+      ::google_public::protobuf::Struct* struct_value);
 
   // .google.protobuf.ListValue list_value = 6;
   bool has_list_value() const;
@@ -355,16 +355,16 @@ class LIBPROTOBUF_EXPORT Value : public ::google::protobuf::Message /* @@protoc_
   private:
   void _slow_mutable_list_value();
   void _slow_set_allocated_list_value(
-      ::google::protobuf::Arena* message_arena, ::google::protobuf::ListValue** list_value);
-  ::google::protobuf::ListValue* _slow_release_list_value();
+      ::google_public::protobuf::Arena* message_arena, ::google_public::protobuf::ListValue** list_value);
+  ::google_public::protobuf::ListValue* _slow_release_list_value();
   public:
-  const ::google::protobuf::ListValue& list_value() const;
-  ::google::protobuf::ListValue* mutable_list_value();
-  ::google::protobuf::ListValue* release_list_value();
-  void set_allocated_list_value(::google::protobuf::ListValue* list_value);
-  ::google::protobuf::ListValue* unsafe_arena_release_list_value();
+  const ::google_public::protobuf::ListValue& list_value() const;
+  ::google_public::protobuf::ListValue* mutable_list_value();
+  ::google_public::protobuf::ListValue* release_list_value();
+  void set_allocated_list_value(::google_public::protobuf::ListValue* list_value);
+  ::google_public::protobuf::ListValue* unsafe_arena_release_list_value();
   void unsafe_arena_set_allocated_list_value(
-      ::google::protobuf::ListValue* list_value);
+      ::google_public::protobuf::ListValue* list_value);
 
   KindCase kind_case() const;
   // @@protoc_insertion_point(class_scope:google.protobuf.Value)
@@ -380,27 +380,27 @@ class LIBPROTOBUF_EXPORT Value : public ::google::protobuf::Message /* @@protoc_
   void clear_kind();
   inline void clear_has_kind();
 
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  friend class ::google::protobuf::Arena;
+  ::google_public::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  friend class ::google_public::protobuf::Arena;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   union KindUnion {
     KindUnion() {}
     int null_value_;
     double number_value_;
-    ::google::protobuf::internal::ArenaStringPtr string_value_;
+    ::google_public::protobuf::internal::ArenaStringPtr string_value_;
     bool bool_value_;
-    ::google::protobuf::Struct* struct_value_;
-    ::google::protobuf::ListValue* list_value_;
+    ::google_public::protobuf::Struct* struct_value_;
+    ::google_public::protobuf::ListValue* list_value_;
   } kind_;
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _oneof_case_[1];
+  ::google_public::protobuf::uint32 _oneof_case_[1];
 
   friend struct LIBPROTOBUF_EXPORT protobuf_google_2fprotobuf_2fstruct_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
 
-class LIBPROTOBUF_EXPORT ListValue : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:google.protobuf.ListValue) */ {
+class LIBPROTOBUF_EXPORT ListValue : public ::google_public::protobuf::Message /* @@protoc_insertion_point(class_definition:google.protobuf.ListValue) */ {
  public:
   ListValue();
   virtual ~ListValue();
@@ -412,13 +412,13 @@ class LIBPROTOBUF_EXPORT ListValue : public ::google::protobuf::Message /* @@pro
     return *this;
   }
 
-  inline ::google::protobuf::Arena* GetArena() const PROTOBUF_FINAL {
+  inline ::google_public::protobuf::Arena* GetArena() const PROTOBUF_FINAL {
     return GetArenaNoVirtual();
   }
   inline void* GetMaybeArenaPointer() const PROTOBUF_FINAL {
     return MaybeArenaPtr();
   }
-  static const ::google::protobuf::Descriptor* descriptor();
+  static const ::google_public::protobuf::Descriptor* descriptor();
   static const ListValue& default_instance();
 
   static inline const ListValue* internal_default_instance() {
@@ -433,9 +433,9 @@ class LIBPROTOBUF_EXPORT ListValue : public ::google::protobuf::Message /* @@pro
 
   inline ListValue* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  ListValue* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
-  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  ListValue* New(::google_public::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google_public::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google_public::protobuf::Message& from) PROTOBUF_FINAL;
   void CopyFrom(const ListValue& from);
   void MergeFrom(const ListValue& from);
   void Clear() PROTOBUF_FINAL;
@@ -443,15 +443,15 @@ class LIBPROTOBUF_EXPORT ListValue : public ::google::protobuf::Message /* @@pro
 
   size_t ByteSizeLong() const PROTOBUF_FINAL;
   bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+      ::google_public::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
   void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      ::google_public::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google_public::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google_public::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google_public::protobuf::uint8* SerializeWithCachedSizesToArray(::google_public::protobuf::uint8* output)
       const PROTOBUF_FINAL {
     return InternalSerializeWithCachedSizesToArray(
-        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+        ::google_public::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
   }
   int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
   private:
@@ -460,12 +460,12 @@ class LIBPROTOBUF_EXPORT ListValue : public ::google::protobuf::Message /* @@pro
   void SetCachedSize(int size) const PROTOBUF_FINAL;
   void InternalSwap(ListValue* other);
   protected:
-  explicit ListValue(::google::protobuf::Arena* arena);
+  explicit ListValue(::google_public::protobuf::Arena* arena);
   private:
   static void ArenaDtor(void* object);
-  inline void RegisterArenaDtor(::google::protobuf::Arena* arena);
+  inline void RegisterArenaDtor(::google_public::protobuf::Arena* arena);
   private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+  inline ::google_public::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
   }
   inline void* MaybeArenaPtr() const {
@@ -473,7 +473,7 @@ class LIBPROTOBUF_EXPORT ListValue : public ::google::protobuf::Message /* @@pro
   }
   public:
 
-  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+  ::google_public::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
 
   // nested types ----------------------------------------------------
 
@@ -483,22 +483,22 @@ class LIBPROTOBUF_EXPORT ListValue : public ::google::protobuf::Message /* @@pro
   int values_size() const;
   void clear_values();
   static const int kValuesFieldNumber = 1;
-  const ::google::protobuf::Value& values(int index) const;
-  ::google::protobuf::Value* mutable_values(int index);
-  ::google::protobuf::Value* add_values();
-  ::google::protobuf::RepeatedPtrField< ::google::protobuf::Value >*
+  const ::google_public::protobuf::Value& values(int index) const;
+  ::google_public::protobuf::Value* mutable_values(int index);
+  ::google_public::protobuf::Value* add_values();
+  ::google_public::protobuf::RepeatedPtrField< ::google_public::protobuf::Value >*
       mutable_values();
-  const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Value >&
+  const ::google_public::protobuf::RepeatedPtrField< ::google_public::protobuf::Value >&
       values() const;
 
   // @@protoc_insertion_point(class_scope:google.protobuf.ListValue)
  private:
 
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  friend class ::google::protobuf::Arena;
+  ::google_public::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  friend class ::google_public::protobuf::Arena;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::google::protobuf::Value > values_;
+  ::google_public::protobuf::RepeatedPtrField< ::google_public::protobuf::Value > values_;
   mutable int _cached_size_;
   friend struct LIBPROTOBUF_EXPORT protobuf_google_2fprotobuf_2fstruct_2eproto::TableStruct;
 };
@@ -519,12 +519,12 @@ inline int Struct::fields_size() const {
 inline void Struct::clear_fields() {
   fields_.Clear();
 }
-inline const ::google::protobuf::Map< ::std::string, ::google::protobuf::Value >&
+inline const ::google_public::protobuf::Map< ::std::string, ::google_public::protobuf::Value >&
 Struct::fields() const {
   // @@protoc_insertion_point(field_map:google.protobuf.Struct.fields)
   return fields_.GetMap();
 }
-inline ::google::protobuf::Map< ::std::string, ::google::protobuf::Value >*
+inline ::google_public::protobuf::Map< ::std::string, ::google_public::protobuf::Value >*
 Struct::mutable_fields() {
   // @@protoc_insertion_point(field_mutable_map:google.protobuf.Struct.fields)
   return fields_.MutableMap();
@@ -547,14 +547,14 @@ inline void Value::clear_null_value() {
     clear_has_kind();
   }
 }
-inline ::google::protobuf::NullValue Value::null_value() const {
+inline ::google_public::protobuf::NullValue Value::null_value() const {
   // @@protoc_insertion_point(field_get:google.protobuf.Value.null_value)
   if (has_null_value()) {
-    return static_cast< ::google::protobuf::NullValue >(kind_.null_value_);
+    return static_cast< ::google_public::protobuf::NullValue >(kind_.null_value_);
   }
-  return static_cast< ::google::protobuf::NullValue >(0);
+  return static_cast< ::google_public::protobuf::NullValue >(0);
 }
-inline void Value::set_null_value(::google::protobuf::NullValue value) {
+inline void Value::set_null_value(::google_public::protobuf::NullValue value) {
   if (!has_null_value()) {
     clear_kind();
     set_has_null_value();
@@ -601,7 +601,7 @@ inline void Value::set_has_string_value() {
 }
 inline void Value::clear_string_value() {
   if (has_string_value()) {
-    kind_.string_value_.Destroy(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    kind_.string_value_.Destroy(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited(),
         GetArenaNoVirtual());
     clear_has_kind();
   }
@@ -611,15 +611,15 @@ inline const ::std::string& Value::string_value() const {
   if (has_string_value()) {
     return kind_.string_value_.Get();
   }
-  return *&::google::protobuf::internal::GetEmptyStringAlreadyInited();
+  return *&::google_public::protobuf::internal::GetEmptyStringAlreadyInited();
 }
 inline void Value::set_string_value(const ::std::string& value) {
   if (!has_string_value()) {
     clear_kind();
     set_has_string_value();
-    kind_.string_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    kind_.string_value_.UnsafeSetDefault(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited());
   }
-  kind_.string_value_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value,
+  kind_.string_value_.Set(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited(), value,
       GetArenaNoVirtual());
   // @@protoc_insertion_point(field_set:google.protobuf.Value.string_value)
 }
@@ -627,9 +627,9 @@ inline void Value::set_string_value(const char* value) {
   if (!has_string_value()) {
     clear_kind();
     set_has_string_value();
-    kind_.string_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    kind_.string_value_.UnsafeSetDefault(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited());
   }
-  kind_.string_value_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  kind_.string_value_.Set(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(value), GetArenaNoVirtual());
   // @@protoc_insertion_point(field_set_char:google.protobuf.Value.string_value)
 }
@@ -638,9 +638,9 @@ inline void Value::set_string_value(const char* value,
   if (!has_string_value()) {
     clear_kind();
     set_has_string_value();
-    kind_.string_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    kind_.string_value_.UnsafeSetDefault(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited());
   }
-  kind_.string_value_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
+  kind_.string_value_.Set(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size),
       GetArenaNoVirtual());
   // @@protoc_insertion_point(field_set_pointer:google.protobuf.Value.string_value)
@@ -649,9 +649,9 @@ inline ::std::string* Value::mutable_string_value() {
   if (!has_string_value()) {
     clear_kind();
     set_has_string_value();
-    kind_.string_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    kind_.string_value_.UnsafeSetDefault(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited());
   }
-  return kind_.string_value_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  return kind_.string_value_.Mutable(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited(),
       GetArenaNoVirtual());
   // @@protoc_insertion_point(field_mutable:google.protobuf.Value.string_value)
 }
@@ -659,7 +659,7 @@ inline ::std::string* Value::release_string_value() {
   // @@protoc_insertion_point(field_release:google.protobuf.Value.string_value)
   if (has_string_value()) {
     clear_has_kind();
-    return kind_.string_value_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    return kind_.string_value_.Release(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited(),
         GetArenaNoVirtual());
   } else {
     return NULL;
@@ -671,19 +671,19 @@ inline ::std::string* Value::unsafe_arena_release_string_value() {
   if (has_string_value()) {
     clear_has_kind();
     return kind_.string_value_.UnsafeArenaRelease(
-        &::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
+        &::google_public::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
   } else {
     return NULL;
   }
 }
 inline void Value::set_allocated_string_value(::std::string* string_value) {
   if (!has_string_value()) {
-    kind_.string_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    kind_.string_value_.UnsafeSetDefault(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited());
   }
   clear_kind();
   if (string_value != NULL) {
     set_has_string_value();
-    kind_.string_value_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), string_value,
+    kind_.string_value_.SetAllocated(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited(), string_value,
         GetArenaNoVirtual());
   }
   // @@protoc_insertion_point(field_set_allocated:google.protobuf.Value.string_value)
@@ -691,12 +691,12 @@ inline void Value::set_allocated_string_value(::std::string* string_value) {
 inline void Value::unsafe_arena_set_allocated_string_value(::std::string* string_value) {
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   if (!has_string_value()) {
-    kind_.string_value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    kind_.string_value_.UnsafeSetDefault(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited());
   }
   clear_kind();
   if (string_value) {
     set_has_string_value();
-    kind_.string_value_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), string_value, GetArenaNoVirtual());
+    kind_.string_value_.UnsafeArenaSetAllocated(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited(), string_value, GetArenaNoVirtual());
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:google.protobuf.Value.string_value)
 }
@@ -745,33 +745,33 @@ inline void Value::clear_struct_value() {
     clear_has_kind();
   }
 }
-inline  const ::google::protobuf::Struct& Value::struct_value() const {
+inline  const ::google_public::protobuf::Struct& Value::struct_value() const {
   // @@protoc_insertion_point(field_get:google.protobuf.Value.struct_value)
   return has_struct_value()
       ? *kind_.struct_value_
-      : ::google::protobuf::Struct::default_instance();
+      : ::google_public::protobuf::Struct::default_instance();
 }
-inline ::google::protobuf::Struct* Value::mutable_struct_value() {
+inline ::google_public::protobuf::Struct* Value::mutable_struct_value() {
   if (!has_struct_value()) {
     clear_kind();
     set_has_struct_value();
     kind_.struct_value_ = 
-      ::google::protobuf::Arena::CreateMessage< ::google::protobuf::Struct >(
+      ::google_public::protobuf::Arena::CreateMessage< ::google_public::protobuf::Struct >(
       GetArenaNoVirtual());
   }
   // @@protoc_insertion_point(field_mutable:google.protobuf.Value.struct_value)
   return kind_.struct_value_;
 }
-inline ::google::protobuf::Struct* Value::release_struct_value() {
+inline ::google_public::protobuf::Struct* Value::release_struct_value() {
   // @@protoc_insertion_point(field_release:google.protobuf.Value.struct_value)
   if (has_struct_value()) {
     clear_has_kind();
     if (GetArenaNoVirtual() != NULL) {
-      ::google::protobuf::Struct* temp = new ::google::protobuf::Struct(*kind_.struct_value_);
+      ::google_public::protobuf::Struct* temp = new ::google_public::protobuf::Struct(*kind_.struct_value_);
       kind_.struct_value_ = NULL;
       return temp;
     } else {
-      ::google::protobuf::Struct* temp = kind_.struct_value_;
+      ::google_public::protobuf::Struct* temp = kind_.struct_value_;
       kind_.struct_value_ = NULL;
       return temp;
     }
@@ -779,16 +779,16 @@ inline ::google::protobuf::Struct* Value::release_struct_value() {
     return NULL;
   }
 }
-inline void Value::set_allocated_struct_value(::google::protobuf::Struct* struct_value) {
+inline void Value::set_allocated_struct_value(::google_public::protobuf::Struct* struct_value) {
   clear_kind();
   if (struct_value) {
     if (GetArenaNoVirtual() != NULL &&
-        ::google::protobuf::Arena::GetArena(struct_value) == NULL) {
+        ::google_public::protobuf::Arena::GetArena(struct_value) == NULL) {
       GetArenaNoVirtual()->Own(struct_value);
     } else if (GetArenaNoVirtual() !=
-               ::google::protobuf::Arena::GetArena(struct_value)) {
-      ::google::protobuf::Struct* new_struct_value = 
-          ::google::protobuf::Arena::CreateMessage< ::google::protobuf::Struct >(
+               ::google_public::protobuf::Arena::GetArena(struct_value)) {
+      ::google_public::protobuf::Struct* new_struct_value = 
+          ::google_public::protobuf::Arena::CreateMessage< ::google_public::protobuf::Struct >(
           GetArenaNoVirtual());
       new_struct_value->CopyFrom(*struct_value);
       struct_value = new_struct_value;
@@ -798,18 +798,18 @@ inline void Value::set_allocated_struct_value(::google::protobuf::Struct* struct
   }
   // @@protoc_insertion_point(field_set_allocated:google.protobuf.Value.struct_value)
 }
-inline  ::google::protobuf::Struct* Value::unsafe_arena_release_struct_value() {
+inline  ::google_public::protobuf::Struct* Value::unsafe_arena_release_struct_value() {
   // @@protoc_insertion_point(field_unsafe_arena_release:google.protobuf.Value.struct_value)
   if (has_struct_value()) {
     clear_has_kind();
-    ::google::protobuf::Struct* temp = kind_.struct_value_;
+    ::google_public::protobuf::Struct* temp = kind_.struct_value_;
     kind_.struct_value_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline  void Value::unsafe_arena_set_allocated_struct_value(::google::protobuf::Struct* struct_value) {
+inline  void Value::unsafe_arena_set_allocated_struct_value(::google_public::protobuf::Struct* struct_value) {
   clear_kind();
   if (struct_value) {
     set_has_struct_value();
@@ -833,33 +833,33 @@ inline void Value::clear_list_value() {
     clear_has_kind();
   }
 }
-inline  const ::google::protobuf::ListValue& Value::list_value() const {
+inline  const ::google_public::protobuf::ListValue& Value::list_value() const {
   // @@protoc_insertion_point(field_get:google.protobuf.Value.list_value)
   return has_list_value()
       ? *kind_.list_value_
-      : ::google::protobuf::ListValue::default_instance();
+      : ::google_public::protobuf::ListValue::default_instance();
 }
-inline ::google::protobuf::ListValue* Value::mutable_list_value() {
+inline ::google_public::protobuf::ListValue* Value::mutable_list_value() {
   if (!has_list_value()) {
     clear_kind();
     set_has_list_value();
     kind_.list_value_ = 
-      ::google::protobuf::Arena::CreateMessage< ::google::protobuf::ListValue >(
+      ::google_public::protobuf::Arena::CreateMessage< ::google_public::protobuf::ListValue >(
       GetArenaNoVirtual());
   }
   // @@protoc_insertion_point(field_mutable:google.protobuf.Value.list_value)
   return kind_.list_value_;
 }
-inline ::google::protobuf::ListValue* Value::release_list_value() {
+inline ::google_public::protobuf::ListValue* Value::release_list_value() {
   // @@protoc_insertion_point(field_release:google.protobuf.Value.list_value)
   if (has_list_value()) {
     clear_has_kind();
     if (GetArenaNoVirtual() != NULL) {
-      ::google::protobuf::ListValue* temp = new ::google::protobuf::ListValue(*kind_.list_value_);
+      ::google_public::protobuf::ListValue* temp = new ::google_public::protobuf::ListValue(*kind_.list_value_);
       kind_.list_value_ = NULL;
       return temp;
     } else {
-      ::google::protobuf::ListValue* temp = kind_.list_value_;
+      ::google_public::protobuf::ListValue* temp = kind_.list_value_;
       kind_.list_value_ = NULL;
       return temp;
     }
@@ -867,16 +867,16 @@ inline ::google::protobuf::ListValue* Value::release_list_value() {
     return NULL;
   }
 }
-inline void Value::set_allocated_list_value(::google::protobuf::ListValue* list_value) {
+inline void Value::set_allocated_list_value(::google_public::protobuf::ListValue* list_value) {
   clear_kind();
   if (list_value) {
     if (GetArenaNoVirtual() != NULL &&
-        ::google::protobuf::Arena::GetArena(list_value) == NULL) {
+        ::google_public::protobuf::Arena::GetArena(list_value) == NULL) {
       GetArenaNoVirtual()->Own(list_value);
     } else if (GetArenaNoVirtual() !=
-               ::google::protobuf::Arena::GetArena(list_value)) {
-      ::google::protobuf::ListValue* new_list_value = 
-          ::google::protobuf::Arena::CreateMessage< ::google::protobuf::ListValue >(
+               ::google_public::protobuf::Arena::GetArena(list_value)) {
+      ::google_public::protobuf::ListValue* new_list_value = 
+          ::google_public::protobuf::Arena::CreateMessage< ::google_public::protobuf::ListValue >(
           GetArenaNoVirtual());
       new_list_value->CopyFrom(*list_value);
       list_value = new_list_value;
@@ -886,18 +886,18 @@ inline void Value::set_allocated_list_value(::google::protobuf::ListValue* list_
   }
   // @@protoc_insertion_point(field_set_allocated:google.protobuf.Value.list_value)
 }
-inline  ::google::protobuf::ListValue* Value::unsafe_arena_release_list_value() {
+inline  ::google_public::protobuf::ListValue* Value::unsafe_arena_release_list_value() {
   // @@protoc_insertion_point(field_unsafe_arena_release:google.protobuf.Value.list_value)
   if (has_list_value()) {
     clear_has_kind();
-    ::google::protobuf::ListValue* temp = kind_.list_value_;
+    ::google_public::protobuf::ListValue* temp = kind_.list_value_;
     kind_.list_value_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline  void Value::unsafe_arena_set_allocated_list_value(::google::protobuf::ListValue* list_value) {
+inline  void Value::unsafe_arena_set_allocated_list_value(::google_public::protobuf::ListValue* list_value) {
   clear_kind();
   if (list_value) {
     set_has_list_value();
@@ -926,24 +926,24 @@ inline int ListValue::values_size() const {
 inline void ListValue::clear_values() {
   values_.Clear();
 }
-inline const ::google::protobuf::Value& ListValue::values(int index) const {
+inline const ::google_public::protobuf::Value& ListValue::values(int index) const {
   // @@protoc_insertion_point(field_get:google.protobuf.ListValue.values)
   return values_.Get(index);
 }
-inline ::google::protobuf::Value* ListValue::mutable_values(int index) {
+inline ::google_public::protobuf::Value* ListValue::mutable_values(int index) {
   // @@protoc_insertion_point(field_mutable:google.protobuf.ListValue.values)
   return values_.Mutable(index);
 }
-inline ::google::protobuf::Value* ListValue::add_values() {
+inline ::google_public::protobuf::Value* ListValue::add_values() {
   // @@protoc_insertion_point(field_add:google.protobuf.ListValue.values)
   return values_.Add();
 }
-inline ::google::protobuf::RepeatedPtrField< ::google::protobuf::Value >*
+inline ::google_public::protobuf::RepeatedPtrField< ::google_public::protobuf::Value >*
 ListValue::mutable_values() {
   // @@protoc_insertion_point(field_mutable_list:google.protobuf.ListValue.values)
   return &values_;
 }
-inline const ::google::protobuf::RepeatedPtrField< ::google::protobuf::Value >&
+inline const ::google_public::protobuf::RepeatedPtrField< ::google_public::protobuf::Value >&
 ListValue::values() const {
   // @@protoc_insertion_point(field_list:google.protobuf.ListValue.values)
   return values_;
@@ -964,13 +964,13 @@ ListValue::values() const {
 }  // namespace google
 
 #ifndef SWIG
-namespace google {
+namespace google_public {
 namespace protobuf {
 
-template <> struct is_proto_enum< ::google::protobuf::NullValue> : ::google::protobuf::internal::true_type {};
+template <> struct is_proto_enum< ::google_public::protobuf::NullValue> : ::google_public::protobuf::internal::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::google::protobuf::NullValue>() {
-  return ::google::protobuf::NullValue_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::google_public::protobuf::NullValue>() {
+  return ::google_public::protobuf::NullValue_descriptor();
 }
 
 }  // namespace protobuf

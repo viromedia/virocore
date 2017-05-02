@@ -51,7 +51,7 @@
 #include <google/protobuf/unknown_field_set.h>
 
 
-namespace google {
+namespace google_public {
 namespace upb {
 namespace google_opensource {
 class GMR_Handlers;
@@ -116,7 +116,7 @@ class ExtensionSet;             // extension_set.h
 //                  the arena, it must have a direct pointer to the arena.
 struct ReflectionSchema {
  public:
-  // Size of a google::protobuf::Message object of this type.
+  // Size of a google_public::protobuf::Message object of this type.
   uint32 GetObjectSize() const { return object_size_; }
 
   // Offset of a non-oneof field.  Getting a field offset is slightly more
@@ -637,14 +637,14 @@ class LIBPROTOBUF_EXPORT GeneratedMessageReflection PROTOBUF_FINAL
 // choose 16 rather than some other number just in case the compiler would
 // be confused by an unaligned pointer.
 #define GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TYPE, FIELD)    \
-  static_cast< ::google::protobuf::uint32>(                            \
+  static_cast< ::google_public::protobuf::uint32>(                            \
       reinterpret_cast<const char*>(                                   \
           &reinterpret_cast<const TYPE*>(16)->FIELD) -                 \
       reinterpret_cast<const char*>(16))
 #endif
 
 #define PROTO2_GENERATED_DEFAULT_ONEOF_FIELD_OFFSET(ONEOF, FIELD)     \
-  static_cast< ::google::protobuf::uint32>(                           \
+  static_cast< ::google_public::protobuf::uint32>(                           \
       reinterpret_cast<const char*>(&(ONEOF->FIELD))                  \
       - reinterpret_cast<const char*>(ONEOF))
 
@@ -695,7 +695,7 @@ T* DynamicCastToGenerated(const Message* from) {
   const T&(*get_default_instance)() = &T::default_instance;
   (void)get_default_instance;
 
-  // Compile-time assert that T is a subclass of google::protobuf::Message.
+  // Compile-time assert that T is a subclass of google_public::protobuf::Message.
   const Message* unused = static_cast<T*>(NULL);
   (void)unused;
 

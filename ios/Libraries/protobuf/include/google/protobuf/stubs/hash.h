@@ -149,7 +149,7 @@
 #endif
 
 # define GOOGLE_PROTOBUF_HASH_NAMESPACE_DECLARATION_START \
-  namespace google {                                      \
+  namespace google_public {                                      \
   namespace protobuf {
 # define GOOGLE_PROTOBUF_HASH_NAMESPACE_DECLARATION_END }}
 
@@ -164,7 +164,7 @@
 #include <set>
 #endif
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 #ifdef GOOGLE_PROTOBUF_MISSING_HASH

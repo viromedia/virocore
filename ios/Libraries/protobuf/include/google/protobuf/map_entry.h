@@ -39,7 +39,7 @@
 #include <google/protobuf/unknown_field_set.h>
 #include <google/protobuf/wire_format_lite_inl.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 class Arena;
 namespace internal {
@@ -63,8 +63,8 @@ void LIBPROTOBUF_EXPORT RegisterMapEntryDefaultInstance(
 // reflection api, in which the static type of key and value is unknown.
 class LIBPROTOBUF_EXPORT MapEntryBase : public Message {
  public:
-  ::google::protobuf::Metadata GetMetadata() const {
-    ::google::protobuf::Metadata metadata;
+  ::google_public::protobuf::Metadata GetMetadata() const {
+    ::google_public::protobuf::Metadata metadata;
     metadata.descriptor = descriptor_;
     metadata.reflection = reflection_;
     return metadata;
@@ -78,8 +78,8 @@ class LIBPROTOBUF_EXPORT MapEntryBase : public Message {
   const Reflection* reflection_;
 };
 
-// MapEntry is the returned google::protobuf::Message when calling AddMessage of
-// google::protobuf::Reflection. In order to let it work with generated message
+// MapEntry is the returned google_public::protobuf::Message when calling AddMessage of
+// google_public::protobuf::Reflection. In order to let it work with generated message
 // reflection, its in-memory type is the same as generated message with the same
 // fields. However, in order to decide the in-memory type of key/value, we need
 // to know both their cpp type in generated api and proto type. In
@@ -122,11 +122,11 @@ class MapEntry : public MapEntryBase {
       ValueMapEntryAccessorType;
 
   // Abbreviation for MapEntry
-  typedef typename google::protobuf::internal::MapEntry<
+  typedef typename google_public::protobuf::internal::MapEntry<
       Key, Value, kKeyFieldType, kValueFieldType, default_enum_value> EntryType;
 
   // Abbreviation for MapEntryLite
-  typedef typename google::protobuf::internal::MapEntryLite<
+  typedef typename google_public::protobuf::internal::MapEntryLite<
       Key, Value, kKeyFieldType, kValueFieldType, default_enum_value>
       EntryLiteType;
 
@@ -154,7 +154,7 @@ class MapEntry : public MapEntryBase {
 
   // implements Message =============================================
 
-  bool MergePartialFromCodedStream(::google::protobuf::io::CodedInputStream* input) {
+  bool MergePartialFromCodedStream(::google_public::protobuf::io::CodedInputStream* input) {
     return entry_lite_.MergePartialFromCodedStream(input);
   }
 
@@ -162,12 +162,12 @@ class MapEntry : public MapEntryBase {
     return entry_lite_.ByteSizeLong();
   }
 
-  void SerializeWithCachedSizes(::google::protobuf::io::CodedOutputStream* output) const {
+  void SerializeWithCachedSizes(::google_public::protobuf::io::CodedOutputStream* output) const {
     entry_lite_.SerializeWithCachedSizes(output);
   }
 
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(bool deterministic,
-                                                   ::google::protobuf::uint8* output) const {
+  ::google_public::protobuf::uint8* InternalSerializeWithCachedSizesToArray(bool deterministic,
+                                                   ::google_public::protobuf::uint8* output) const {
     return entry_lite_.InternalSerializeWithCachedSizesToArray(deterministic,
                                                                output);
   }
@@ -202,12 +202,12 @@ class MapEntry : public MapEntryBase {
     return size;
   }
 
-  void CopyFrom(const ::google::protobuf::Message& from) {
+  void CopyFrom(const ::google_public::protobuf::Message& from) {
     Clear();
     MergeFrom(from);
   }
 
-  void MergeFrom(const ::google::protobuf::Message& from) {
+  void MergeFrom(const ::google_public::protobuf::Message& from) {
     GOOGLE_CHECK_NE(&from, this);
     const MapEntry* source = dynamic_cast_if_available<const MapEntry*>(&from);
     if (source == NULL) {
@@ -288,7 +288,7 @@ class MapEntry : public MapEntryBase {
   MapEntry* default_instance_;
   EntryLiteType entry_lite_;
 
-  friend class ::google::protobuf::Arena;
+  friend class ::google_public::protobuf::Arena;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   template <typename K, typename V, WireFormatLite::FieldType k_wire_type,

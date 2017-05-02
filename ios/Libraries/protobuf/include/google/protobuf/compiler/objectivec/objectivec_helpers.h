@@ -39,7 +39,7 @@
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/descriptor.pb.h>
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace compiler {
 namespace objectivec {

@@ -51,7 +51,7 @@
 #include <google/protobuf/arenastring.h>
 
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 

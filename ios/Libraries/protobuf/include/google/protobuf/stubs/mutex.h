@@ -38,7 +38,7 @@
 
 // ===================================================================
 // emulates google3/base/mutex.h
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 

@@ -50,7 +50,7 @@
 #ifndef GOOGLE_PROTOBUF_TEMPLATE_UTIL_H_
 #define GOOGLE_PROTOBUF_TEMPLATE_UTIL_H_
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 namespace internal {
 

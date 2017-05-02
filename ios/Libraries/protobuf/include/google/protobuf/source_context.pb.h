@@ -29,7 +29,7 @@
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/unknown_field_set.h>
 // @@protoc_insertion_point(includes)
-namespace google {
+namespace google_public {
 namespace protobuf {
 class SourceContext;
 class SourceContextDefaultTypeInternal;
@@ -37,13 +37,13 @@ LIBPROTOBUF_EXPORT extern SourceContextDefaultTypeInternal _SourceContext_defaul
 }  // namespace protobuf
 }  // namespace google
 
-namespace google {
+namespace google_public {
 namespace protobuf {
 
 namespace protobuf_google_2fprotobuf_2fsource_5fcontext_2eproto {
 // Internal implementation detail -- do not call these.
 struct LIBPROTOBUF_EXPORT TableStruct {
-  static const ::google::protobuf::uint32 offsets[];
+  static const ::google_public::protobuf::uint32 offsets[];
   static void InitDefaultsImpl();
   static void Shutdown();
 };
@@ -53,7 +53,7 @@ void LIBPROTOBUF_EXPORT InitDefaults();
 
 // ===================================================================
 
-class LIBPROTOBUF_EXPORT SourceContext : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:google.protobuf.SourceContext) */ {
+class LIBPROTOBUF_EXPORT SourceContext : public ::google_public::protobuf::Message /* @@protoc_insertion_point(class_definition:google.protobuf.SourceContext) */ {
  public:
   SourceContext();
   virtual ~SourceContext();
@@ -65,7 +65,7 @@ class LIBPROTOBUF_EXPORT SourceContext : public ::google::protobuf::Message /* @
     return *this;
   }
 
-  static const ::google::protobuf::Descriptor* descriptor();
+  static const ::google_public::protobuf::Descriptor* descriptor();
   static const SourceContext& default_instance();
 
   static inline const SourceContext* internal_default_instance() {
@@ -79,9 +79,9 @@ class LIBPROTOBUF_EXPORT SourceContext : public ::google::protobuf::Message /* @
 
   inline SourceContext* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  SourceContext* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
-  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  SourceContext* New(::google_public::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google_public::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google_public::protobuf::Message& from) PROTOBUF_FINAL;
   void CopyFrom(const SourceContext& from);
   void MergeFrom(const SourceContext& from);
   void Clear() PROTOBUF_FINAL;
@@ -89,15 +89,15 @@ class LIBPROTOBUF_EXPORT SourceContext : public ::google::protobuf::Message /* @
 
   size_t ByteSizeLong() const PROTOBUF_FINAL;
   bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+      ::google_public::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
   void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      ::google_public::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google_public::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google_public::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google_public::protobuf::uint8* SerializeWithCachedSizesToArray(::google_public::protobuf::uint8* output)
       const PROTOBUF_FINAL {
     return InternalSerializeWithCachedSizesToArray(
-        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+        ::google_public::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
   }
   int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
   private:
@@ -106,7 +106,7 @@ class LIBPROTOBUF_EXPORT SourceContext : public ::google::protobuf::Message /* @
   void SetCachedSize(int size) const PROTOBUF_FINAL;
   void InternalSwap(SourceContext* other);
   private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+  inline ::google_public::protobuf::Arena* GetArenaNoVirtual() const {
     return NULL;
   }
   inline void* MaybeArenaPtr() const {
@@ -114,7 +114,7 @@ class LIBPROTOBUF_EXPORT SourceContext : public ::google::protobuf::Message /* @
   }
   public:
 
-  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+  ::google_public::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
 
   // nested types ----------------------------------------------------
 
@@ -137,8 +137,8 @@ class LIBPROTOBUF_EXPORT SourceContext : public ::google::protobuf::Message /* @
   // @@protoc_insertion_point(class_scope:google.protobuf.SourceContext)
  private:
 
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::ArenaStringPtr file_name_;
+  ::google_public::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google_public::protobuf::internal::ArenaStringPtr file_name_;
   mutable int _cached_size_;
   friend struct LIBPROTOBUF_EXPORT protobuf_google_2fprotobuf_2fsource_5fcontext_2eproto::TableStruct;
 };
@@ -152,7 +152,7 @@ class LIBPROTOBUF_EXPORT SourceContext : public ::google::protobuf::Message /* @
 
 // string file_name = 1;
 inline void SourceContext::clear_file_name() {
-  file_name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  file_name_.ClearToEmptyNoArena(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline const ::std::string& SourceContext::file_name() const {
   // @@protoc_insertion_point(field_get:google.protobuf.SourceContext.file_name)
@@ -160,37 +160,37 @@ inline const ::std::string& SourceContext::file_name() const {
 }
 inline void SourceContext::set_file_name(const ::std::string& value) {
   
-  file_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  file_name_.SetNoArena(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited(), value);
   // @@protoc_insertion_point(field_set:google.protobuf.SourceContext.file_name)
 }
 #if LANG_CXX11
 inline void SourceContext::set_file_name(::std::string&& value) {
   
   file_name_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+    &::google_public::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
   // @@protoc_insertion_point(field_set_rvalue:google.protobuf.SourceContext.file_name)
 }
 #endif
 inline void SourceContext::set_file_name(const char* value) {
   
-  file_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  file_name_.SetNoArena(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
   // @@protoc_insertion_point(field_set_char:google.protobuf.SourceContext.file_name)
 }
 inline void SourceContext::set_file_name(const char* value, size_t size) {
   
-  file_name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  file_name_.SetNoArena(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
   // @@protoc_insertion_point(field_set_pointer:google.protobuf.SourceContext.file_name)
 }
 inline ::std::string* SourceContext::mutable_file_name() {
   
   // @@protoc_insertion_point(field_mutable:google.protobuf.SourceContext.file_name)
-  return file_name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return file_name_.MutableNoArena(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline ::std::string* SourceContext::release_file_name() {
   // @@protoc_insertion_point(field_release:google.protobuf.SourceContext.file_name)
   
-  return file_name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return file_name_.ReleaseNoArena(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline void SourceContext::set_allocated_file_name(::std::string* file_name) {
   if (file_name != NULL) {
@@ -198,7 +198,7 @@ inline void SourceContext::set_allocated_file_name(::std::string* file_name) {
   } else {
     
   }
-  file_name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), file_name);
+  file_name_.SetAllocatedNoArena(&::google_public::protobuf::internal::GetEmptyStringAlreadyInited(), file_name);
   // @@protoc_insertion_point(field_set_allocated:google.protobuf.SourceContext.file_name)
 }
 

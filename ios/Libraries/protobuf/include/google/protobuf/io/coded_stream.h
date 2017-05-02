@@ -133,7 +133,7 @@
 #endif
 #include <google/protobuf/stubs/common.h>
 
-namespace google {
+namespace google_public {
 
 namespace protobuf {
 
@@ -907,7 +907,7 @@ class LIBPROTOBUF_EXPORT CodedOutputStream {
 
   // See above.  Other projects may use "friend" to allow them to call this.
   // Requires: no protocol buffer serialization in progress.
-  friend void ::google::protobuf::internal::MapTestForceDeterministic();
+  friend void ::google_public::protobuf::internal::MapTestForceDeterministic();
   static void SetDefaultSerializationDeterministic() {
     default_serialization_deterministic_ = true;
   }

@@ -53,7 +53,7 @@
 #endif
 #endif  // !PROTOBUF_FINAL
 
-namespace google {
+namespace google_public {
 
 namespace protobuf {
 
@@ -135,7 +135,7 @@ LIBPROTOBUF_EXPORT inline const ::std::string& GetEmptyStringAlreadyInited() {
 }
 
 LIBPROTOBUF_EXPORT inline const ::std::string& GetEmptyString() {
-  ::google::protobuf::GoogleOnceInit(&empty_string_once_init_, &InitEmptyString);
+  ::google_public::protobuf::GoogleOnceInit(&empty_string_once_init_, &InitEmptyString);
   return GetEmptyStringAlreadyInited();
 }
 

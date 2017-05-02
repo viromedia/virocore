@@ -19,6 +19,7 @@
 #include "VROByteBuffer.h"
 #include "tiny_obj_loader.h"
 #include "VROShapeUtils.h"
+#include "VROModelIOUtil.h"
 
 std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromURL(std::string url, std::string baseURL,
                                                       bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
@@ -214,7 +215,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
         }
         
         if (m.diffuse_texname.length() > 0) {
-            std::shared_ptr<VROTexture> texture = loadTexture(m.diffuse_texname, base, isBaseURL, resourceMap, textures);
+            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.diffuse_texname, base, isBaseURL, resourceMap, textures);
             if (texture) {
                 material->getDiffuse().setTexture(texture);
             }
@@ -224,7 +225,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
         }
         
         if (m.specular_texname.length() > 0) {
-            std::shared_ptr<VROTexture> texture = loadTexture(m.specular_texname, base, isBaseURL, resourceMap, textures);
+            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.specular_texname, base, isBaseURL, resourceMap, textures);
             if (texture) {
                 material->getSpecular().setTexture(texture);
             }
@@ -234,7 +235,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
         }
         
         if (m.bump_texname.length() > 0) {
-            std::shared_ptr<VROTexture> texture = loadTexture(m.bump_texname, base, isBaseURL, resourceMap, textures);
+            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.bump_texname, base, isBaseURL, resourceMap, textures);
             if (texture) {
                 material->getNormal().setTexture(texture);
             }
@@ -395,44 +396,4 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
           bounds.getMinZ(), bounds.getMaxZ());
     
     return geometry;
-}
-
-std::shared_ptr<VROTexture> VROOBJLoader::loadTexture(std::string &name, std::string &base, bool isBaseURL,
-                                                      std::map<std::string, std::string> *resourceMap,
-                                                      std::map<std::string, std::shared_ptr<VROTexture>> &cache) {
-    std::shared_ptr<VROTexture> texture;
-    
-    auto it = cache.find(name);
-    if (it == cache.end()) {
-        bool isTempTextureFile = false;
-        std::string textureFile;
-        if (resourceMap == nullptr) {
-            textureFile = base + "/" + name;
-        } else {
-            textureFile = VROPlatformFindValueInResourceMap(name, *resourceMap);
-        }
-        if (isBaseURL) {
-            bool success = false;
-            textureFile = VROPlatformDownloadURLToFile(textureFile, &isTempTextureFile, &success);
-        }
-        
-        // Abort (return empty texture) if the file wasn't found
-        if (textureFile.length() == 0) {
-            return texture;
-        }
-        
-        std::shared_ptr<VROImage> image = VROPlatformLoadImageFromFile(textureFile,
-                                                                       VROTextureInternalFormat::RGBA8);
-        if (isTempTextureFile) {
-            VROPlatformDeleteFile(textureFile);
-        }
-        
-        texture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::Runtime, image);
-        cache.insert(std::make_pair(name, texture));
-    }
-    else {
-        texture = it->second;
-    }
-    
-    return texture;
 }
