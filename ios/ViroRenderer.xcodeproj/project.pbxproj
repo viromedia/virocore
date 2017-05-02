@@ -187,6 +187,12 @@
 		8FB2B5951E1445BB00EDB629 /* VROAnimationGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB2B5931E1445BB00EDB629 /* VROAnimationGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FB2B5981E1445EE00EDB629 /* VROAnimationChain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2B5961E1445EE00EDB629 /* VROAnimationChain.cpp */; };
 		8FB2B5991E1445EE00EDB629 /* VROAnimationChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB2B5971E1445EE00EDB629 /* VROAnimationChain.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FB535191EB8500000E8E1A6 /* VROFBXLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB535171EB8500000E8E1A6 /* VROFBXLoader.cpp */; };
+		8FB5351A1EB8500000E8E1A6 /* VROFBXLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB535181EB8500000E8E1A6 /* VROFBXLoader.h */; };
+		8FB5351E1EB85A7C00E8E1A6 /* Nodes.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8FB5351C1EB85A7C00E8E1A6 /* Nodes.pb.cc */; };
+		8FB5351F1EB85A7C00E8E1A6 /* Nodes.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB5351D1EB85A7C00E8E1A6 /* Nodes.pb.h */; };
+		8FB535211EB85AD200E8E1A6 /* libprotobuf-lite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */; };
+		8FB535221EB85AE700E8E1A6 /* libprotobuf-lite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */; };
 		8FB6590C1CD82FD200D036EB /* VROSceneRendererCardboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */; };
 		8FB6590F1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6590D1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp */; };
 		8FB659101CD8301000D036EB /* VROSceneRendererCardboardMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB6590E1CD8301000D036EB /* VROSceneRendererCardboardMetal.h */; };
@@ -683,6 +689,11 @@
 		8FB2B5931E1445BB00EDB629 /* VROAnimationGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationGroup.h; sourceTree = "<group>"; };
 		8FB2B5961E1445EE00EDB629 /* VROAnimationChain.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROAnimationChain.cpp; sourceTree = "<group>"; };
 		8FB2B5971E1445EE00EDB629 /* VROAnimationChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationChain.h; sourceTree = "<group>"; };
+		8FB535171EB8500000E8E1A6 /* VROFBXLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROFBXLoader.cpp; sourceTree = "<group>"; };
+		8FB535181EB8500000E8E1A6 /* VROFBXLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFBXLoader.h; sourceTree = "<group>"; };
+		8FB5351C1EB85A7C00E8E1A6 /* Nodes.pb.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Nodes.pb.cc; sourceTree = "<group>"; };
+		8FB5351D1EB85A7C00E8E1A6 /* Nodes.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nodes.pb.h; sourceTree = "<group>"; };
+		8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libprotobuf-lite.a"; path = "Libraries/protobuf/libprotobuf-lite.a"; sourceTree = "<group>"; };
 		8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneRendererCardboard.h; sourceTree = "<group>"; };
 		8FB6590D1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSceneRendererCardboardMetal.cpp; sourceTree = "<group>"; };
 		8FB6590E1CD8301000D036EB /* VROSceneRendererCardboardMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneRendererCardboardMetal.h; sourceTree = "<group>"; };
@@ -817,6 +828,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FB535221EB85AE700E8E1A6 /* libprotobuf-lite.a in Frameworks */,
 				8FD4DEE21C18ECD4003DC425 /* ViroKit.framework in Frameworks */,
 				EC8D0A685CE2FA0BE80B7363 /* libPods-ViroSample.a in Frameworks */,
 				8F56AE9C1DE6810800DD65B6 /* libFreetype2.a in Frameworks */,
@@ -841,6 +853,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FB535211EB85AD200E8E1A6 /* libprotobuf-lite.a in Frameworks */,
 				8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */,
 				8F56AEA61DE7682300DD65B6 /* libFreetype2.a in Frameworks */,
 				8FDDE2121CD00F2600674DE2 /* CoreText.framework in Frameworks */,
@@ -1120,6 +1133,7 @@
 		8F517BB81BCDA2BD0017C70B /* ViroRenderer */ = {
 			isa = PBXGroup;
 			children = (
+				8FB5351B1EB85A7100E8E1A6 /* Protobuf */,
 				8F0FE6601CD25A2300A4C297 /* Drivers */,
 				8F5C414B1BD825A9006D7A77 /* Util */,
 				8F517C441BD0472C0017C70B /* Math */,
@@ -1359,6 +1373,15 @@
 			name = "Execution API";
 			sourceTree = "<group>";
 		};
+		8FB5351B1EB85A7100E8E1A6 /* Protobuf */ = {
+			isa = PBXGroup;
+			children = (
+				8FB5351C1EB85A7C00E8E1A6 /* Nodes.pb.cc */,
+				8FB5351D1EB85A7C00E8E1A6 /* Nodes.pb.h */,
+			);
+			name = Protobuf;
+			sourceTree = "<group>";
+		};
 		8FB659241CD9082000D036EB /* Platforms */ = {
 			isa = PBXGroup;
 			children = (
@@ -1431,6 +1454,8 @@
 				8F53C8F61E00F03E008314B4 /* tiny_obj_loader.cc */,
 				8F53C8F31E00EE07008314B4 /* VROOBJLoader.h */,
 				8F53C8F41E00EE15008314B4 /* VROOBJLoader.cpp */,
+				8FB535181EB8500000E8E1A6 /* VROFBXLoader.h */,
+				8FB535171EB8500000E8E1A6 /* VROFBXLoader.cpp */,
 			);
 			name = IO;
 			sourceTree = "<group>";
@@ -1547,6 +1572,7 @@
 		95E5BC90E51A0FC2C3AA4D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */,
 				8F1664A51E5E43260062EBCE /* Accelerate.framework */,
 				8F56AE9B1DE6810800DD65B6 /* libFreetype2.a */,
 				8FDDE2111CD00F2600674DE2 /* CoreText.framework */,
@@ -1632,6 +1658,7 @@
 				8FCB0FFB1DCFF68E00FE425C /* VROAudioPlayeriOS.h in Headers */,
 				8F83DE9D1C4826F80089C31A /* VROTimingFunctionBounce.h in Headers */,
 				8FD06F1E1E831E81003D3BC4 /* VROCameraTexture.h in Headers */,
+				8FB5351F1EB85A7C00E8E1A6 /* Nodes.pb.h in Headers */,
 				8F50FC801E0AEC0A00A9B4B2 /* VROFieldOfView.h in Headers */,
 				8FCB101B1DD5449700FE425C /* VROVideoTextureiOS.h in Headers */,
 				8F65F82B1CA19A9A00415115 /* VROAudioPlayer.h in Headers */,
@@ -1651,6 +1678,7 @@
 				8FD4DF421C18F5EB003DC425 /* VROFrustum.h in Headers */,
 				8FD4DF4D1C18F5EB003DC425 /* VROShapeUtils.h in Headers */,
 				8FD4DF431C18F5EB003DC425 /* VROFrustumPlane.h in Headers */,
+				8FB5351A1EB8500000E8E1A6 /* VROFBXLoader.h in Headers */,
 				8FD4DF441C18F5EB003DC425 /* VROBoundingBox.h in Headers */,
 				8FD4DF461C18F5EB003DC425 /* VROVector3f.h in Headers */,
 				8F52EA301E1D643000F1AF9D /* VROExecutableAnimation.h in Headers */,
@@ -2163,6 +2191,7 @@
 				8F83DEA71C4830DC0089C31A /* VROTimingFunction.cpp in Sources */,
 				8FD4DF1A1C18ED4C003DC425 /* VROScreen.cpp in Sources */,
 				8ABD8F421DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m in Sources */,
+				8FB535191EB8500000E8E1A6 /* VROFBXLoader.cpp in Sources */,
 				8FD4DEFD1C18ED22003DC425 /* VROSurface.cpp in Sources */,
 				8F548E521C2378D500556688 /* VROAnimatable.cpp in Sources */,
 				8F83DE911C474A800089C31A /* VROProjector.cpp in Sources */,
@@ -2181,6 +2210,7 @@
 				8FCB101A1DD5449700FE425C /* VROVideoTextureiOS.cpp in Sources */,
 				8F0FE66C1CD289FD00A4C297 /* VRORenderLoopCardboard.m in Sources */,
 				8ABD8F371DB72CDD00BD9C83 /* VROApiKey.m in Sources */,
+				8FB5351E1EB85A7C00E8E1A6 /* Nodes.pb.cc in Sources */,
 				8FB2B5981E1445EE00EDB629 /* VROAnimationChain.cpp in Sources */,
 				8F0FE67E1CD3E12F00A4C297 /* VROShaderProgram.cpp in Sources */,
 				8FA2E1501C4463D00070DB26 /* VROSkybox.cpp in Sources */,
@@ -2296,7 +2326,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/Libraries/freetype/include";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/Libraries/freetype/include",
+					"$(SRCROOT)/Libraries/protobuf/include",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2339,7 +2372,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/Libraries/freetype/include";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/Libraries/freetype/include",
+					"$(SRCROOT)/Libraries/protobuf/include",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = "-ferror-limit=50";
@@ -2362,6 +2398,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/freetype",
+					"$(PROJECT_DIR)/Libraries/protobuf",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2382,6 +2419,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/freetype",
+					"$(PROJECT_DIR)/Libraries/protobuf",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2459,6 +2497,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/freetype",
+					"$(PROJECT_DIR)/Libraries/protobuf",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroKit;
@@ -2488,6 +2527,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/freetype",
+					"$(PROJECT_DIR)/Libraries/protobuf",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
