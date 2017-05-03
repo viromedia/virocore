@@ -129,22 +129,10 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
     std::map<std::string, std::shared_ptr<VROTexture>> textureCache;
 
     pinfo("Loading FBX from file %s", file.c_str());
-    
-    
-    /*
-     std::fstream input(file.c_str(), std::ios::in | std::ios::binary);
+    std::string data_pb = VROPlatformLoadFileAsString(file);
     
     viro::Node node_pb;
-    if (!node_pb.ParseFromIstream(&input)) {
-        pinfo("Failed to parse FBX protobuf");
-        return {};
-    }
-    */
-
-    std::string data = VROPlatformLoadFileAsString(file);
-    
-    viro::Node node_pb;
-    if (!node_pb.ParseFromString(data)) {
+    if (!node_pb.ParseFromString(data_pb)) {
         pinfo("Failed to parse FBX protobuf");
         return {};
     }
