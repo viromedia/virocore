@@ -695,7 +695,7 @@
 		8FB2B5971E1445EE00EDB629 /* VROAnimationChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationChain.h; sourceTree = "<group>"; };
 		8FB535171EB8500000E8E1A6 /* VROFBXLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROFBXLoader.cpp; sourceTree = "<group>"; };
 		8FB535181EB8500000E8E1A6 /* VROFBXLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFBXLoader.h; sourceTree = "<group>"; };
-		8FB5351C1EB85A7C00E8E1A6 /* Nodes.pb.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Nodes.pb.cc; sourceTree = "<group>"; };
+		8FB5351C1EB85A7C00E8E1A6 /* Nodes.pb.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Nodes.pb.cc; sourceTree = "<group>"; };
 		8FB5351D1EB85A7C00E8E1A6 /* Nodes.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nodes.pb.h; sourceTree = "<group>"; };
 		8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libprotobuf-lite.a"; path = "Libraries/protobuf/libprotobuf-lite.a"; sourceTree = "<group>"; };
 		8FB535231EB8DCCC00E8E1A6 /* heart.proto */ = {isa = PBXFileReference; lastKnownFileType = file; name = heart.proto; path = ViroSample/heart.proto; sourceTree = "<group>"; };

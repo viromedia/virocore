@@ -3,9 +3,13 @@
 
 #ifndef PROTOBUF_Nodes_2eproto__INCLUDED
 #define PROTOBUF_Nodes_2eproto__INCLUDED
-#define google google_public
-#include <string>
 
+#include "VRODefines.h"
+#if VRO_PLATFORM_IOS
+#define google google_public
+#endif
+
+#include <string>
 #include <google/protobuf/stubs/common.h>
 
 #if GOOGLE_PROTOBUF_VERSION < 3002000
