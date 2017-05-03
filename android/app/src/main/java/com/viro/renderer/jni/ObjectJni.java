@@ -22,17 +22,17 @@ public class ObjectJni extends BaseGeometry {
     private AsyncObjListener mAsyncObjListener = null;
     private boolean mDestroyOnObjNodeCreation = false;
 
-    public ObjectJni(Uri pathOrUrl, AsyncObjListener asyncObjListener) {
-        nativeLoadOBJFromUrl(pathOrUrl.toString());
+    public ObjectJni(Uri pathOrUrl, boolean isFBX, AsyncObjListener asyncObjListener) {
+        nativeLoadModelFromUrl(pathOrUrl.toString(), isFBX);
         mAsyncObjListener = asyncObjListener;
     }
 
-    public ObjectJni(Uri pathOrUrl, AsyncObjListener asyncObjListener,
+    public ObjectJni(Uri pathOrUrl, boolean isFBX, AsyncObjListener asyncObjListener,
                      Map<String, String> resourceNamesToUris) {
         if (resourceNamesToUris == null) {
-            nativeLoadOBJFromFile(pathOrUrl.toString());
+            nativeLoadModelFromFile(pathOrUrl.toString(), isFBX);
         } else {
-            nativeLoadOBJAndResourcesFromFile(pathOrUrl.toString(), resourceNamesToUris);
+            nativeLoadModelAndResourcesFromFile(pathOrUrl.toString(), resourceNamesToUris, isFBX);
         }
         mAsyncObjListener = asyncObjListener;
     }
@@ -98,10 +98,10 @@ public class ObjectJni extends BaseGeometry {
         }
     }
 
-    private native void nativeLoadOBJFromFile(String fileName);
-    private native void nativeLoadOBJAndResourcesFromFile(String fileName,
-                                                          Map<String, String> resources);
-    private native void nativeLoadOBJFromUrl(String url);
+    private native void nativeLoadModelFromFile(String fileName, boolean isFBX);
+    private native void nativeLoadModelAndResourcesFromFile(String fileName,
+                                                            Map<String, String> resources, boolean isFBX);
+    private native void nativeLoadModelFromUrl(String url, boolean isFBX);
     private native void nativeDestroyNode(long nodeReference);
     private native void nativeAttachToNode(long boxReference, long nodeReference);
 }

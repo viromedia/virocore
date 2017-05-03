@@ -383,7 +383,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         final NodeJni node1 = new NodeJni();
 
         // Creation of ObjectJni to the right
-        ObjectJni objectJni = new ObjectJni(Uri.parse("heart.obj"), new AsyncObjListener() {
+        ObjectJni objectJni = new ObjectJni(Uri.parse("heart.obj"), false, new AsyncObjListener() {
             @Override
             public void onObjLoaded() {
                 // Create a new material with a diffuseTexture set to the image "heart_d.jpg"

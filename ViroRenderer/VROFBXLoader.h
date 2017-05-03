@@ -17,7 +17,6 @@
 #include "VROGeometrySource.h"
 #include "VROGeometryElement.h"
 #include "VROMaterial.h"
-#include "Nodes.pb.h"
 
 class VRONode;
 class VROTexture;
@@ -49,10 +48,6 @@ private:
                           std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish);
     static std::shared_ptr<VRONode> loadFBX(std::string file, std::string base, bool isBaseURL,
                                             const std::map<std::string, std::string> *resourceMap);
-    
-    static VROGeometrySourceSemantic convert(viro::Node_Geometry_Source_Semantic semantic);
-    static VROGeometryPrimitiveType  convert(viro::Node_Geometry_Element_Primitive primitive);
-    static VROLightingModel          convert(viro::Node_Geometry_Material_LightingModel lightingModel);
     
 };
 

@@ -7,7 +7,7 @@
 #include <jni.h>
 #include <memory>
 #include "VROOBJLoader.h"
-
+#include "VROFBXLoader.h"
 #include "VROMaterial.h"
 #include "VROGeometry.h"
 #include "VROPlatformUtil.h"
@@ -23,20 +23,21 @@
 
 extern "C" {
 
-JNI_METHOD(void, nativeLoadOBJFromFile)(JNIEnv *env,
+JNI_METHOD(void, nativeLoadModelFromFile)(JNIEnv *env,
                                         jobject object,
-                                        jstring file) {
+                                        jstring file,
+                                        jboolean isFBX) {
     const char *cStrFile = env->GetStringUTFChars(file, NULL);
     std::string strFile(cStrFile);
     env->ReleaseStringUTFChars(file, cStrFile);
 
     jweak weakObj = env->NewWeakGlobalRef(object);
 
-    VROPlatformDispatchAsyncBackground([strFile, weakObj] {
+    VROPlatformDispatchAsyncBackground([strFile, weakObj, isFBX] {
         std::string objUrlPath = VROPlatformCopyResourceToFile(strFile);
         std::string objUrlBase = objUrlPath.substr(0, objUrlPath.find_last_of('/'));
 
-        VROPlatformDispatchAsyncRenderer([objUrlPath, objUrlBase, weakObj] {
+        VROPlatformDispatchAsyncRenderer([objUrlPath, objUrlBase, weakObj, isFBX] {
             JNIEnv *env = VROPlatformGetJNIEnv();
 
             jobject localObj = env->NewLocalRef(weakObj);
@@ -46,12 +47,20 @@ JNI_METHOD(void, nativeLoadOBJFromFile)(JNIEnv *env,
             }
 
             std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(localObj, env);
-            std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromFile(objUrlPath, objUrlBase, true, [delegateRef](std::shared_ptr<VRONode> node, bool success) {
-                if (!success) {
-                    return;
-                }
-                delegateRef->objLoaded(node);
-            });
+            std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish =
+                    [delegateRef](std::shared_ptr<VRONode> node, bool success) {
+                        if (!success) {
+                            return;
+                        }
+                        delegateRef->objLoaded(node);
+                    };
+
+            if (isFBX) {
+                VROFBXLoader::loadFBXFromFile(objUrlPath, objUrlBase, true, onFinish);
+            }
+            else {
+                VROOBJLoader::loadOBJFromFile(objUrlPath, objUrlBase, true, onFinish);
+            }
 
             env->DeleteLocalRef(localObj);
             env->DeleteWeakGlobalRef(weakObj);
@@ -59,10 +68,11 @@ JNI_METHOD(void, nativeLoadOBJFromFile)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeLoadOBJAndResourcesFromFile)(JNIEnv *env,
+JNI_METHOD(void, nativeLoadModelAndResourcesFromFile)(JNIEnv *env,
                                                      jobject object,
                                                      jstring file,
-                                                     jobject resourceMap) {
+                                                     jobject resourceMap,
+                                                     jboolean isFBX) {
     const char *cStrFile = env->GetStringUTFChars(file, NULL);
     std::string strFile(cStrFile);
     env->ReleaseStringUTFChars(file, cStrFile);
@@ -70,7 +80,7 @@ JNI_METHOD(void, nativeLoadOBJAndResourcesFromFile)(JNIEnv *env,
     jweak weakObj = env->NewWeakGlobalRef(object);
     jweak weakResourceMap = env->NewWeakGlobalRef(resourceMap);
 
-    VROPlatformDispatchAsyncBackground([strFile, weakResourceMap, weakObj] {
+    VROPlatformDispatchAsyncBackground([strFile, weakResourceMap, weakObj, isFBX] {
         JNIEnv *env = VROPlatformGetJNIEnv();
 
         jobject localResourceMap = env->NewLocalRef(weakResourceMap);
@@ -87,7 +97,7 @@ JNI_METHOD(void, nativeLoadOBJAndResourcesFromFile)(JNIEnv *env,
         env->DeleteLocalRef(localResourceMap);
         env->DeleteWeakGlobalRef(weakResourceMap);
 
-        VROPlatformDispatchAsyncRenderer([objUrlPath, cResourceMap, weakObj] {
+        VROPlatformDispatchAsyncRenderer([objUrlPath, cResourceMap, weakObj, isFBX] {
             JNIEnv *env = VROPlatformGetJNIEnv();
 
             jobject localObj = env->NewLocalRef(weakObj);
@@ -97,14 +107,20 @@ JNI_METHOD(void, nativeLoadOBJAndResourcesFromFile)(JNIEnv *env,
             }
 
             std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(localObj, env);
-            std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromFileWithResources(objUrlPath, cResourceMap, true,
-                [delegateRef](std::shared_ptr<VRONode> node, bool success) {
-                    if (!success) {
-                        return;
-                    }
-                    delegateRef->objLoaded(node);
-                }
-            );
+            std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish =
+                    [delegateRef](std::shared_ptr<VRONode> node, bool success) {
+                        if (!success) {
+                            return;
+                        }
+                        delegateRef->objLoaded(node);
+                    };
+
+            if (isFBX) {
+                VROFBXLoader::loadFBXFromFileWithResources(objUrlPath, cResourceMap, true, onFinish);
+            }
+            else {
+                VROOBJLoader::loadOBJFromFileWithResources(objUrlPath, cResourceMap, true, onFinish);
+            }
 
             env->DeleteLocalRef(localObj);
             env->DeleteWeakGlobalRef(weakObj);
@@ -112,9 +128,10 @@ JNI_METHOD(void, nativeLoadOBJAndResourcesFromFile)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeLoadOBJFromUrl)(JNIEnv *env,
+JNI_METHOD(void, nativeLoadModelFromUrl)(JNIEnv *env,
                                         jobject object,
-                                        jstring url) {
+                                        jstring url,
+                                        jboolean isFBX) {
     const char *cStrUrl = env->GetStringUTFChars(url, NULL);
     std::string objUrlPath(cStrUrl);
     std::string objUrlBase = objUrlPath.substr(0, objUrlPath.find_last_of('/'));
@@ -122,7 +139,7 @@ JNI_METHOD(void, nativeLoadOBJFromUrl)(JNIEnv *env,
 
     jweak weakObj = env->NewWeakGlobalRef(object);
 
-    VROPlatformDispatchAsyncRenderer([objUrlPath, objUrlBase, weakObj] {
+    VROPlatformDispatchAsyncRenderer([objUrlPath, objUrlBase, weakObj, isFBX] {
         JNIEnv *env = VROPlatformGetJNIEnv();
 
         jobject localObj = env->NewLocalRef(weakObj);
@@ -132,14 +149,22 @@ JNI_METHOD(void, nativeLoadOBJFromUrl)(JNIEnv *env,
         }
 
         std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(localObj, env);
-        std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(objUrlPath, objUrlBase, true, [delegateRef](std::shared_ptr<VRONode> node, bool success) {
-            if (!success) {
-                delegateRef->objFailed("Failed to load OBJ");
-            }
-            else {
-                delegateRef->objLoaded(node);
-            }
-        });
+        std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish =
+                [delegateRef](std::shared_ptr<VRONode> node, bool success) {
+                    if (!success) {
+                        delegateRef->objFailed("Failed to load OBJ");
+                    }
+                    else {
+                        delegateRef->objLoaded(node);
+                    }
+                };
+
+        if (isFBX) {
+            VROFBXLoader::loadFBXFromURL(objUrlPath, objUrlBase, true, onFinish);
+        }
+        else {
+            VROOBJLoader::loadOBJFromURL(objUrlPath, objUrlBase, true, onFinish);
+        }
 
         env->DeleteLocalRef(localObj);
         env->DeleteWeakGlobalRef(weakObj);

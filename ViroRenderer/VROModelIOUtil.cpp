@@ -16,7 +16,7 @@ std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name,
                                                         const std::map<std::string, std::string> *resourceMap,
                                                         std::map<std::string, std::shared_ptr<VROTexture>> &cache) {
     std::shared_ptr<VROTexture> texture;
-    
+
     auto it = cache.find(name);
     if (it == cache.end()) {
         bool isTempTextureFile = false;
