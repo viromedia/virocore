@@ -31,13 +31,6 @@ enum class VROFilterMode {
 
 class VROMaterial;
 
-/*
- Used by the animation system, which requires shared pointers.
- */
-class VROMaterialVisualHeartbeat : public VROAnimatable {
-    
-};
-
 class VROMaterialVisual {
     
 public:
@@ -45,7 +38,6 @@ public:
     VROMaterialVisual(VROMaterial &material, int permissibleContentsMask) :
         _material(material),
         _permissibleContentsMask(permissibleContentsMask),
-        _heartbeat(std::make_shared<VROMaterialVisualHeartbeat>()),
         _contentsColor({ 1.0, 1.0, 1.0, 1.0 }),
         _intensity(1.0),
         _wrapS(VROWrapMode::Clamp),
@@ -109,11 +101,6 @@ private:
      permissible to be set for this visual.
      */
     int _permissibleContentsMask;
-    
-    /*
-     Shared pointer scoped to this material, for use by the animation system.
-     */
-    std::shared_ptr<VROMaterialVisualHeartbeat> _heartbeat;
     
     /*
      The color component of the visual.

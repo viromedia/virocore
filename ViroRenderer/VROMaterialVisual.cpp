@@ -14,7 +14,6 @@
 VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
  _material(visual._material),
  _permissibleContentsMask(visual._permissibleContentsMask),
- _heartbeat(std::make_shared<VROMaterialVisualHeartbeat>()),
  _contentsColor(visual._contentsColor),
  _contentsTexture(visual._contentsTexture),
  _intensity(visual._intensity),
@@ -72,9 +71,7 @@ void VROMaterialVisual::setTexture(std::shared_ptr<VROTexture> texture) {
 }
 
 void VROMaterialVisual::setIntensity(float intensity) {
-    // TODO Migrate this to the snapshot system
-    
-    _heartbeat->animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float value) {
-                                                                ((VROMaterialVisual *)animatable)->_intensity = value;
-                                                            }, _intensity, intensity));
+    _material.fadeSnapshot();
+    _intensity = intensity;
+    _material.updateSubstrate();
 }
