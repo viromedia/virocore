@@ -14,6 +14,7 @@
 #include "VROText.h"
 #include "VROPlatformUtil.h"
 #include "VROOBJLoader.h"
+#include "VROFBXLoader.h"
 
 VROSample::VROSample() {
 
@@ -63,23 +64,18 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     /*
      Create the obj node.
      */
-    std::string heartPath = VROPlatformCopyAssetToFile("heart.obj");
-    std::shared_ptr<VRONode> heartNode = VROOBJLoader::loadOBJFromFile(heartPath, "", true, [format](std::shared_ptr<VRONode> node, bool success) {
+    std::string heartPath = VROPlatformCopyAssetToFile("heart.proto");
+    std::string heartBase = heartPath.substr(0, heartPath.find_last_of('/'));
+
+    VROPlatformCopyAssetToFile("Heart_D2.jpg");
+    std::shared_ptr<VRONode> heartNode = VROFBXLoader::loadFBXFromFile(heartPath, heartBase, true, [format](std::shared_ptr<VRONode> node, bool success) {
         if (!success) {
             return;
         }
 
-        const std::shared_ptr<VROMaterial> &material = node->getGeometry()->getMaterials().front();
-        material->getDiffuse().setTexture(std::make_shared<VROTexture>(format,
-                                                                       VROMipmapMode::Runtime,
-                                                                       VROPlatformLoadImageFromAsset("Heart_D4.jpg", format)));
-        material->getSpecular().setTexture(std::make_shared<VROTexture>(format,
-                                                                       VROMipmapMode::Runtime,
-                                                                       VROPlatformLoadImageFromAsset("Heart_S2.jpg", format)));
-        material->setLightingModel(VROLightingModel::Phong);
+        node->setPosition({0, 0, -0.50});
     });
 
-    heartNode->setPosition({0, -5.25, -1});
     _objAngle = 0;
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([this](VRONode *const node, float seconds) {
         _objAngle += .01;
@@ -105,13 +101,13 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     std::shared_ptr<VRONode> maleNode = VROOBJLoader::loadOBJFromFile(malePath, base, true);
     maleNode->setPosition({-10, -100, -10});
     maleNode->setScale({ 0.1, 0.1, 0.1 });
-    rootNode->addChildNode(maleNode);
+    //rootNode->addChildNode(maleNode);
 
     std::shared_ptr<VROAction> maleAction = VROAction::perpetualPerFrameAction([this](VRONode *const node, float seconds) {
         node->setRotation({ 0, _objAngle, 0});
         return true;
     });
-    maleNode->runAction(maleAction);
+    //maleNode->runAction(maleAction);
 
     /*
      Create the box node.
@@ -129,7 +125,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     boxNode->setGeometry(box);
     boxNode->setPosition({0, 0, -4});
 
-    rootNode->addChildNode(boxNode);
+    //rootNode->addChildNode(boxNode);
 
     std::string texFile = VROPlatformCopyAssetToFile("card_main.ktx");
     int texLength;
@@ -156,7 +152,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     surfaceNode->setGeometry(surface);
     surfaceNode->setPosition({0, 0, -5});
 
-    rootNode->addChildNode(surfaceNode);
+    //rootNode->addChildNode(surfaceNode);
 
     std::string string = "In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
     std::shared_ptr<VROTypeface> typeface = driver->newTypeface("Roboto", 8);

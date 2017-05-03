@@ -43,18 +43,21 @@ pthread_t VROThreadRestricted::getThread(VROThreadName name, pthread_t ret_not_f
 
 VROThreadRestricted::VROThreadRestricted() :
     _restricted_thread_name(VROThreadName::Undefined),
-    _restricted_thread(pthread_self()) {
+    _restricted_thread(pthread_self()),
+    _enabled(true) {
     
 }
 
 VROThreadRestricted::VROThreadRestricted(pthread_t thread) :
     _restricted_thread_name(VROThreadName::Undefined),
-    _restricted_thread(thread) {
+    _restricted_thread(thread),
+    _enabled(true) {
     
 }
 
 VROThreadRestricted::VROThreadRestricted(VROThreadName name) :
-    _restricted_thread_name(name) {
+    _restricted_thread_name(name),
+    _enabled(true) {
 }
 
 
@@ -69,6 +72,10 @@ void VROThreadRestricted::setThreadRestriction(pthread_t thread) {
 
 
 void VROThreadRestricted::passert_thread() {
+    if (!_enabled) {
+        return;
+    }
+    
     pthread_t restricted_thread = _restricted_thread;
     if (_restricted_thread_name != VROThreadName::Undefined) {
         restricted_thread = getThread(_restricted_thread_name, pthread_self());

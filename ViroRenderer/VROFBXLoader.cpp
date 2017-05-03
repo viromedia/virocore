@@ -124,7 +124,7 @@ void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode, std::shared_ptr<V
 }
 
 std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string base, bool isBaseURL,
-                                                   const std::map<std::string, std::string> *resourceMap) {
+                                               const std::map<std::string, std::string> *resourceMap) {
     
     std::map<std::string, std::shared_ptr<VROTexture>> textureCache;
 
@@ -140,6 +140,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
     pinfo("Read FBX protobuf");
     
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
+    node->setThreadRestrictionEnabled(false);
     node->setPosition({ node_pb.position(0), node_pb.position(1), node_pb.position(2) });
     node->setScale({ node_pb.scale(0), node_pb.scale(1), node_pb.scale(2) });
     node->setRotation({ node_pb.rotation(0), node_pb.rotation(1), node_pb.rotation(2) });

@@ -429,12 +429,19 @@ std::string VROPlatformCopyAssetToFile(std::string asset) {
 std::shared_ptr<VROImage> VROPlatformLoadImageFromFile(std::string filename,
                                                        VROTextureInternalFormat format) {
     jobject bitmap = VROPlatformLoadBitmapFromFile(filename, format);
+    if (bitmap == nullptr) {
+        return {};
+    }
+
     return std::make_shared<VROImageAndroid>(bitmap, format);
 }
 
 std::shared_ptr<VROImage> VROPlatformLoadImageFromAsset(std::string asset,
                                                         VROTextureInternalFormat format) {
     jobject bitmap = VROPlatformLoadBitmapFromAsset(asset, format);
+    if (bitmap == nullptr) {
+        return {};
+    }
     return std::make_shared<VROImageAndroid>(bitmap, format);
 }
 

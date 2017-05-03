@@ -745,7 +745,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                             return;
                                                                         }
                                                                         
-                                                                        node->setPosition({0, -5, -0.50});
+                                                                        node->setPosition({0, 0, -0.50});
                                                                     });
     
     
