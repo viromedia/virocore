@@ -58,6 +58,18 @@ void TableStruct::InitDefaultsImpl() {
   _Node_Light_default_instance_.DefaultConstruct();
   _Node_Camera_default_instance_.DefaultConstruct();
   _Node_default_instance_.DefaultConstruct();
+  _Node_Geometry_Material_default_instance_.get_mutable()->diffuse_ = const_cast< ::viro::Node_Geometry_Material_Visual*>(
+      ::viro::Node_Geometry_Material_Visual::internal_default_instance());
+  _Node_Geometry_Material_default_instance_.get_mutable()->specular_ = const_cast< ::viro::Node_Geometry_Material_Visual*>(
+      ::viro::Node_Geometry_Material_Visual::internal_default_instance());
+  _Node_Geometry_Material_default_instance_.get_mutable()->normal_ = const_cast< ::viro::Node_Geometry_Material_Visual*>(
+      ::viro::Node_Geometry_Material_Visual::internal_default_instance());
+  _Node_Geometry_Material_default_instance_.get_mutable()->reflective_ = const_cast< ::viro::Node_Geometry_Material_Visual*>(
+      ::viro::Node_Geometry_Material_Visual::internal_default_instance());
+  _Node_Geometry_Material_default_instance_.get_mutable()->emission_ = const_cast< ::viro::Node_Geometry_Material_Visual*>(
+      ::viro::Node_Geometry_Material_Visual::internal_default_instance());
+  _Node_Geometry_Material_default_instance_.get_mutable()->multiply_ = const_cast< ::viro::Node_Geometry_Material_Visual*>(
+      ::viro::Node_Geometry_Material_Visual::internal_default_instance());
   _Node_default_instance_.get_mutable()->geometry_ = const_cast< ::viro::Node_Geometry*>(
       ::viro::Node_Geometry::internal_default_instance());
   _Node_default_instance_.get_mutable()->camera_ = const_cast< ::viro::Node_Camera*>(
@@ -270,7 +282,6 @@ const int Node_Light::LightType_ARRAYSIZE;
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int Node_Geometry_Source::kDataFieldNumber;
 const int Node_Geometry_Source::kSemanticFieldNumber;
 const int Node_Geometry_Source::kVertexCountFieldNumber;
 const int Node_Geometry_Source::kFloatComponentsFieldNumber;
@@ -293,10 +304,6 @@ Node_Geometry_Source::Node_Geometry_Source(const Node_Geometry_Source& from)
       _internal_metadata_(NULL),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  data_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.data().size() > 0) {
-    data_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_);
-  }
   ::memcpy(&semantic_, &from.semantic_,
     reinterpret_cast<char*>(&data_stride_) -
     reinterpret_cast<char*>(&semantic_) + sizeof(data_stride_));
@@ -304,7 +311,6 @@ Node_Geometry_Source::Node_Geometry_Source(const Node_Geometry_Source& from)
 }
 
 void Node_Geometry_Source::SharedCtor() {
-  data_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&semantic_, 0, reinterpret_cast<char*>(&data_stride_) -
     reinterpret_cast<char*>(&semantic_) + sizeof(data_stride_));
   _cached_size_ = 0;
@@ -316,7 +322,6 @@ Node_Geometry_Source::~Node_Geometry_Source() {
 }
 
 void Node_Geometry_Source::SharedDtor() {
-  data_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void Node_Geometry_Source::SetCachedSize(int size) const {
@@ -339,7 +344,6 @@ Node_Geometry_Source* Node_Geometry_Source::New(::google::protobuf::Arena* arena
 
 void Node_Geometry_Source::Clear() {
 // @@protoc_insertion_point(message_clear_start:viro.Node.Geometry.Source)
-  data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&semantic_, 0, reinterpret_cast<char*>(&data_stride_) -
     reinterpret_cast<char*>(&semantic_) + sizeof(data_stride_));
 }
@@ -354,20 +358,9 @@ bool Node_Geometry_Source::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // bytes data = 1;
+      // .viro.Node.Geometry.Source.Semantic semantic = 1;
       case 1: {
-        if (tag == 10u) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
-                input, this->mutable_data()));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // .viro.Node.Geometry.Source.Semantic semantic = 2;
-      case 2: {
-        if (tag == 16u) {
+        if (tag == 8u) {
           int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
@@ -379,9 +372,9 @@ bool Node_Geometry_Source::MergePartialFromCodedStream(
         break;
       }
 
-      // uint32 vertex_count = 3;
-      case 3: {
-        if (tag == 24u) {
+      // uint32 vertex_count = 2;
+      case 2: {
+        if (tag == 16u) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
@@ -392,9 +385,9 @@ bool Node_Geometry_Source::MergePartialFromCodedStream(
         break;
       }
 
-      // bool float_components = 4;
-      case 4: {
-        if (tag == 32u) {
+      // bool float_components = 3;
+      case 3: {
+        if (tag == 24u) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
@@ -405,9 +398,9 @@ bool Node_Geometry_Source::MergePartialFromCodedStream(
         break;
       }
 
-      // uint32 components_per_vertex = 5;
-      case 5: {
-        if (tag == 40u) {
+      // uint32 components_per_vertex = 4;
+      case 4: {
+        if (tag == 32u) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
@@ -418,9 +411,9 @@ bool Node_Geometry_Source::MergePartialFromCodedStream(
         break;
       }
 
-      // uint32 bytes_per_component = 6;
-      case 6: {
-        if (tag == 48u) {
+      // uint32 bytes_per_component = 5;
+      case 5: {
+        if (tag == 40u) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
@@ -431,9 +424,9 @@ bool Node_Geometry_Source::MergePartialFromCodedStream(
         break;
       }
 
-      // uint32 data_offset = 7;
-      case 7: {
-        if (tag == 56u) {
+      // uint32 data_offset = 6;
+      case 6: {
+        if (tag == 48u) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
@@ -444,9 +437,9 @@ bool Node_Geometry_Source::MergePartialFromCodedStream(
         break;
       }
 
-      // uint32 data_stride = 8;
-      case 8: {
-        if (tag == 64u) {
+      // uint32 data_stride = 7;
+      case 7: {
+        if (tag == 56u) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
@@ -481,46 +474,40 @@ failure:
 void Node_Geometry_Source::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:viro.Node.Geometry.Source)
-  // bytes data = 1;
-  if (this->data().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      1, this->data(), output);
-  }
-
-  // .viro.Node.Geometry.Source.Semantic semantic = 2;
+  // .viro.Node.Geometry.Source.Semantic semantic = 1;
   if (this->semantic() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      2, this->semantic(), output);
+      1, this->semantic(), output);
   }
 
-  // uint32 vertex_count = 3;
+  // uint32 vertex_count = 2;
   if (this->vertex_count() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->vertex_count(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->vertex_count(), output);
   }
 
-  // bool float_components = 4;
+  // bool float_components = 3;
   if (this->float_components() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->float_components(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->float_components(), output);
   }
 
-  // uint32 components_per_vertex = 5;
+  // uint32 components_per_vertex = 4;
   if (this->components_per_vertex() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(5, this->components_per_vertex(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->components_per_vertex(), output);
   }
 
-  // uint32 bytes_per_component = 6;
+  // uint32 bytes_per_component = 5;
   if (this->bytes_per_component() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(6, this->bytes_per_component(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(5, this->bytes_per_component(), output);
   }
 
-  // uint32 data_offset = 7;
+  // uint32 data_offset = 6;
   if (this->data_offset() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(7, this->data_offset(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(6, this->data_offset(), output);
   }
 
-  // uint32 data_stride = 8;
+  // uint32 data_stride = 7;
   if (this->data_stride() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(8, this->data_stride(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(7, this->data_stride(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:viro.Node.Geometry.Source)
@@ -530,53 +517,46 @@ size_t Node_Geometry_Source::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:viro.Node.Geometry.Source)
   size_t total_size = 0;
 
-  // bytes data = 1;
-  if (this->data().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::BytesSize(
-        this->data());
-  }
-
-  // .viro.Node.Geometry.Source.Semantic semantic = 2;
+  // .viro.Node.Geometry.Source.Semantic semantic = 1;
   if (this->semantic() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->semantic());
   }
 
-  // uint32 vertex_count = 3;
+  // uint32 vertex_count = 2;
   if (this->vertex_count() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->vertex_count());
   }
 
-  // bool float_components = 4;
+  // bool float_components = 3;
   if (this->float_components() != 0) {
     total_size += 1 + 1;
   }
 
-  // uint32 components_per_vertex = 5;
+  // uint32 components_per_vertex = 4;
   if (this->components_per_vertex() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->components_per_vertex());
   }
 
-  // uint32 bytes_per_component = 6;
+  // uint32 bytes_per_component = 5;
   if (this->bytes_per_component() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->bytes_per_component());
   }
 
-  // uint32 data_offset = 7;
+  // uint32 data_offset = 6;
   if (this->data_offset() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->data_offset());
   }
 
-  // uint32 data_stride = 8;
+  // uint32 data_stride = 7;
   if (this->data_stride() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
@@ -599,10 +579,6 @@ void Node_Geometry_Source::MergeFrom(const Node_Geometry_Source& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:viro.Node.Geometry.Source)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  if (from.data().size() > 0) {
-
-    data_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_);
-  }
   if (from.semantic() != 0) {
     set_semantic(from.semantic());
   }
@@ -642,7 +618,6 @@ void Node_Geometry_Source::Swap(Node_Geometry_Source* other) {
   InternalSwap(other);
 }
 void Node_Geometry_Source::InternalSwap(Node_Geometry_Source* other) {
-  data_.Swap(&other->data_);
   std::swap(semantic_, other->semantic_);
   std::swap(vertex_count_, other->vertex_count_);
   std::swap(float_components_, other->float_components_);
@@ -660,59 +635,7 @@ void Node_Geometry_Source::InternalSwap(Node_Geometry_Source* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // Node_Geometry_Source
 
-// bytes data = 1;
-void Node_Geometry_Source::clear_data() {
-  data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-const ::std::string& Node_Geometry_Source::data() const {
-  // @@protoc_insertion_point(field_get:viro.Node.Geometry.Source.data)
-  return data_.GetNoArena();
-}
-void Node_Geometry_Source::set_data(const ::std::string& value) {
-  
-  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:viro.Node.Geometry.Source.data)
-}
-#if LANG_CXX11
-void Node_Geometry_Source::set_data(::std::string&& value) {
-  
-  data_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:viro.Node.Geometry.Source.data)
-}
-#endif
-void Node_Geometry_Source::set_data(const char* value) {
-  
-  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:viro.Node.Geometry.Source.data)
-}
-void Node_Geometry_Source::set_data(const void* value, size_t size) {
-  
-  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:viro.Node.Geometry.Source.data)
-}
-::std::string* Node_Geometry_Source::mutable_data() {
-  
-  // @@protoc_insertion_point(field_mutable:viro.Node.Geometry.Source.data)
-  return data_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-::std::string* Node_Geometry_Source::release_data() {
-  // @@protoc_insertion_point(field_release:viro.Node.Geometry.Source.data)
-  
-  return data_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-void Node_Geometry_Source::set_allocated_data(::std::string* data) {
-  if (data != NULL) {
-    
-  } else {
-    
-  }
-  data_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), data);
-  // @@protoc_insertion_point(field_set_allocated:viro.Node.Geometry.Source.data)
-}
-
-// .viro.Node.Geometry.Source.Semantic semantic = 2;
+// .viro.Node.Geometry.Source.Semantic semantic = 1;
 void Node_Geometry_Source::clear_semantic() {
   semantic_ = 0;
 }
@@ -726,7 +649,7 @@ void Node_Geometry_Source::set_semantic(::viro::Node_Geometry_Source_Semantic va
   // @@protoc_insertion_point(field_set:viro.Node.Geometry.Source.semantic)
 }
 
-// uint32 vertex_count = 3;
+// uint32 vertex_count = 2;
 void Node_Geometry_Source::clear_vertex_count() {
   vertex_count_ = 0u;
 }
@@ -740,7 +663,7 @@ void Node_Geometry_Source::set_vertex_count(::google::protobuf::uint32 value) {
   // @@protoc_insertion_point(field_set:viro.Node.Geometry.Source.vertex_count)
 }
 
-// bool float_components = 4;
+// bool float_components = 3;
 void Node_Geometry_Source::clear_float_components() {
   float_components_ = false;
 }
@@ -754,7 +677,7 @@ void Node_Geometry_Source::set_float_components(bool value) {
   // @@protoc_insertion_point(field_set:viro.Node.Geometry.Source.float_components)
 }
 
-// uint32 components_per_vertex = 5;
+// uint32 components_per_vertex = 4;
 void Node_Geometry_Source::clear_components_per_vertex() {
   components_per_vertex_ = 0u;
 }
@@ -768,7 +691,7 @@ void Node_Geometry_Source::set_components_per_vertex(::google::protobuf::uint32 
   // @@protoc_insertion_point(field_set:viro.Node.Geometry.Source.components_per_vertex)
 }
 
-// uint32 bytes_per_component = 6;
+// uint32 bytes_per_component = 5;
 void Node_Geometry_Source::clear_bytes_per_component() {
   bytes_per_component_ = 0u;
 }
@@ -782,7 +705,7 @@ void Node_Geometry_Source::set_bytes_per_component(::google::protobuf::uint32 va
   // @@protoc_insertion_point(field_set:viro.Node.Geometry.Source.bytes_per_component)
 }
 
-// uint32 data_offset = 7;
+// uint32 data_offset = 6;
 void Node_Geometry_Source::clear_data_offset() {
   data_offset_ = 0u;
 }
@@ -796,7 +719,7 @@ void Node_Geometry_Source::set_data_offset(::google::protobuf::uint32 value) {
   // @@protoc_insertion_point(field_set:viro.Node.Geometry.Source.data_offset)
 }
 
-// uint32 data_stride = 8;
+// uint32 data_stride = 7;
 void Node_Geometry_Source::clear_data_stride() {
   data_stride_ = 0u;
 }
@@ -1857,7 +1780,12 @@ const int Node_Geometry_Material::kCullModeFieldNumber;
 const int Node_Geometry_Material::kBlendModeFieldNumber;
 const int Node_Geometry_Material::kReadsFromDepthBufferFieldNumber;
 const int Node_Geometry_Material::kWritesToDepthBufferFieldNumber;
-const int Node_Geometry_Material::kVisualFieldNumber;
+const int Node_Geometry_Material::kDiffuseFieldNumber;
+const int Node_Geometry_Material::kSpecularFieldNumber;
+const int Node_Geometry_Material::kNormalFieldNumber;
+const int Node_Geometry_Material::kReflectiveFieldNumber;
+const int Node_Geometry_Material::kEmissionFieldNumber;
+const int Node_Geometry_Material::kMultiplyFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Node_Geometry_Material::Node_Geometry_Material()
@@ -1871,12 +1799,41 @@ Node_Geometry_Material::Node_Geometry_Material()
 Node_Geometry_Material::Node_Geometry_Material(const Node_Geometry_Material& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL),
-      visual_(from.visual_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.name().size() > 0) {
     name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+  }
+  if (from.has_diffuse()) {
+    diffuse_ = new ::viro::Node_Geometry_Material_Visual(*from.diffuse_);
+  } else {
+    diffuse_ = NULL;
+  }
+  if (from.has_specular()) {
+    specular_ = new ::viro::Node_Geometry_Material_Visual(*from.specular_);
+  } else {
+    specular_ = NULL;
+  }
+  if (from.has_normal()) {
+    normal_ = new ::viro::Node_Geometry_Material_Visual(*from.normal_);
+  } else {
+    normal_ = NULL;
+  }
+  if (from.has_reflective()) {
+    reflective_ = new ::viro::Node_Geometry_Material_Visual(*from.reflective_);
+  } else {
+    reflective_ = NULL;
+  }
+  if (from.has_emission()) {
+    emission_ = new ::viro::Node_Geometry_Material_Visual(*from.emission_);
+  } else {
+    emission_ = NULL;
+  }
+  if (from.has_multiply()) {
+    multiply_ = new ::viro::Node_Geometry_Material_Visual(*from.multiply_);
+  } else {
+    multiply_ = NULL;
   }
   ::memcpy(&shininess_, &from.shininess_,
     reinterpret_cast<char*>(&writes_to_depth_buffer_) -
@@ -1886,8 +1843,8 @@ Node_Geometry_Material::Node_Geometry_Material(const Node_Geometry_Material& fro
 
 void Node_Geometry_Material::SharedCtor() {
   name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&shininess_, 0, reinterpret_cast<char*>(&writes_to_depth_buffer_) -
-    reinterpret_cast<char*>(&shininess_) + sizeof(writes_to_depth_buffer_));
+  ::memset(&diffuse_, 0, reinterpret_cast<char*>(&writes_to_depth_buffer_) -
+    reinterpret_cast<char*>(&diffuse_) + sizeof(writes_to_depth_buffer_));
   _cached_size_ = 0;
 }
 
@@ -1898,6 +1855,24 @@ Node_Geometry_Material::~Node_Geometry_Material() {
 
 void Node_Geometry_Material::SharedDtor() {
   name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) {
+    delete diffuse_;
+  }
+  if (this != internal_default_instance()) {
+    delete specular_;
+  }
+  if (this != internal_default_instance()) {
+    delete normal_;
+  }
+  if (this != internal_default_instance()) {
+    delete reflective_;
+  }
+  if (this != internal_default_instance()) {
+    delete emission_;
+  }
+  if (this != internal_default_instance()) {
+    delete multiply_;
+  }
 }
 
 void Node_Geometry_Material::SetCachedSize(int size) const {
@@ -1920,8 +1895,31 @@ Node_Geometry_Material* Node_Geometry_Material::New(::google::protobuf::Arena* a
 
 void Node_Geometry_Material::Clear() {
 // @@protoc_insertion_point(message_clear_start:viro.Node.Geometry.Material)
-  visual_.Clear();
   name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == NULL && diffuse_ != NULL) {
+    delete diffuse_;
+  }
+  diffuse_ = NULL;
+  if (GetArenaNoVirtual() == NULL && specular_ != NULL) {
+    delete specular_;
+  }
+  specular_ = NULL;
+  if (GetArenaNoVirtual() == NULL && normal_ != NULL) {
+    delete normal_;
+  }
+  normal_ = NULL;
+  if (GetArenaNoVirtual() == NULL && reflective_ != NULL) {
+    delete reflective_;
+  }
+  reflective_ = NULL;
+  if (GetArenaNoVirtual() == NULL && emission_ != NULL) {
+    delete emission_;
+  }
+  emission_ = NULL;
+  if (GetArenaNoVirtual() == NULL && multiply_ != NULL) {
+    delete multiply_;
+  }
+  multiply_ = NULL;
   ::memset(&shininess_, 0, reinterpret_cast<char*>(&writes_to_depth_buffer_) -
     reinterpret_cast<char*>(&shininess_) + sizeof(writes_to_depth_buffer_));
 }
@@ -1932,7 +1930,7 @@ bool Node_Geometry_Material::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:viro.Node.Geometry.Material)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(16383u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -2071,16 +2069,69 @@ bool Node_Geometry_Material::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .viro.Node.Geometry.Material.Visual visual = 11;
+      // .viro.Node.Geometry.Material.Visual diffuse = 11;
       case 11: {
         if (tag == 90u) {
-          DO_(input->IncrementRecursionDepth());
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
-                input, add_visual()));
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_diffuse()));
         } else {
           goto handle_unusual;
         }
-        input->UnsafeDecrementRecursionDepth();
+        break;
+      }
+
+      // .viro.Node.Geometry.Material.Visual specular = 12;
+      case 12: {
+        if (tag == 98u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_specular()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .viro.Node.Geometry.Material.Visual normal = 13;
+      case 13: {
+        if (tag == 106u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_normal()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .viro.Node.Geometry.Material.Visual reflective = 14;
+      case 14: {
+        if (tag == 114u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_reflective()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .viro.Node.Geometry.Material.Visual emission = 15;
+      case 15: {
+        if (tag == 122u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_emission()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .viro.Node.Geometry.Material.Visual multiply = 16;
+      case 16: {
+        if (tag == 130u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_multiply()));
+        } else {
+          goto handle_unusual;
+        }
         break;
       }
 
@@ -2166,10 +2217,40 @@ void Node_Geometry_Material::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(10, this->writes_to_depth_buffer(), output);
   }
 
-  // repeated .viro.Node.Geometry.Material.Visual visual = 11;
-  for (unsigned int i = 0, n = this->visual_size(); i < n; i++) {
+  // .viro.Node.Geometry.Material.Visual diffuse = 11;
+  if (this->has_diffuse()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
-      11, this->visual(i), output);
+      11, *this->diffuse_, output);
+  }
+
+  // .viro.Node.Geometry.Material.Visual specular = 12;
+  if (this->has_specular()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      12, *this->specular_, output);
+  }
+
+  // .viro.Node.Geometry.Material.Visual normal = 13;
+  if (this->has_normal()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      13, *this->normal_, output);
+  }
+
+  // .viro.Node.Geometry.Material.Visual reflective = 14;
+  if (this->has_reflective()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      14, *this->reflective_, output);
+  }
+
+  // .viro.Node.Geometry.Material.Visual emission = 15;
+  if (this->has_emission()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      15, *this->emission_, output);
+  }
+
+  // .viro.Node.Geometry.Material.Visual multiply = 16;
+  if (this->has_multiply()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      16, *this->multiply_, output);
   }
 
   // @@protoc_insertion_point(serialize_end:viro.Node.Geometry.Material)
@@ -2179,22 +2260,53 @@ size_t Node_Geometry_Material::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:viro.Node.Geometry.Material)
   size_t total_size = 0;
 
-  // repeated .viro.Node.Geometry.Material.Visual visual = 11;
-  {
-    unsigned int count = this->visual_size();
-    total_size += 1UL * count;
-    for (unsigned int i = 0; i < count; i++) {
-      total_size +=
-        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-          this->visual(i));
-    }
-  }
-
   // string name = 1;
   if (this->name().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->name());
+  }
+
+  // .viro.Node.Geometry.Material.Visual diffuse = 11;
+  if (this->has_diffuse()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->diffuse_);
+  }
+
+  // .viro.Node.Geometry.Material.Visual specular = 12;
+  if (this->has_specular()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->specular_);
+  }
+
+  // .viro.Node.Geometry.Material.Visual normal = 13;
+  if (this->has_normal()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->normal_);
+  }
+
+  // .viro.Node.Geometry.Material.Visual reflective = 14;
+  if (this->has_reflective()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->reflective_);
+  }
+
+  // .viro.Node.Geometry.Material.Visual emission = 15;
+  if (this->has_emission()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->emission_);
+  }
+
+  // .viro.Node.Geometry.Material.Visual multiply = 16;
+  if (this->has_multiply()) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->multiply_);
   }
 
   // float shininess = 2;
@@ -2261,10 +2373,27 @@ void Node_Geometry_Material::MergeFrom(const Node_Geometry_Material& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:viro.Node.Geometry.Material)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  visual_.MergeFrom(from.visual_);
   if (from.name().size() > 0) {
 
     name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+  }
+  if (from.has_diffuse()) {
+    mutable_diffuse()->::viro::Node_Geometry_Material_Visual::MergeFrom(from.diffuse());
+  }
+  if (from.has_specular()) {
+    mutable_specular()->::viro::Node_Geometry_Material_Visual::MergeFrom(from.specular());
+  }
+  if (from.has_normal()) {
+    mutable_normal()->::viro::Node_Geometry_Material_Visual::MergeFrom(from.normal());
+  }
+  if (from.has_reflective()) {
+    mutable_reflective()->::viro::Node_Geometry_Material_Visual::MergeFrom(from.reflective());
+  }
+  if (from.has_emission()) {
+    mutable_emission()->::viro::Node_Geometry_Material_Visual::MergeFrom(from.emission());
+  }
+  if (from.has_multiply()) {
+    mutable_multiply()->::viro::Node_Geometry_Material_Visual::MergeFrom(from.multiply());
   }
   if (from.shininess() != 0) {
     set_shininess(from.shininess());
@@ -2311,8 +2440,13 @@ void Node_Geometry_Material::Swap(Node_Geometry_Material* other) {
   InternalSwap(other);
 }
 void Node_Geometry_Material::InternalSwap(Node_Geometry_Material* other) {
-  visual_.UnsafeArenaSwap(&other->visual_);
   name_.Swap(&other->name_);
+  std::swap(diffuse_, other->diffuse_);
+  std::swap(specular_, other->specular_);
+  std::swap(normal_, other->normal_);
+  std::swap(reflective_, other->reflective_);
+  std::swap(emission_, other->emission_);
+  std::swap(multiply_, other->multiply_);
   std::swap(shininess_, other->shininess_);
   std::swap(fresnel_exponent_, other->fresnel_exponent_);
   std::swap(transparency_, other->transparency_);
@@ -2510,34 +2644,238 @@ void Node_Geometry_Material::set_writes_to_depth_buffer(bool value) {
   // @@protoc_insertion_point(field_set:viro.Node.Geometry.Material.writes_to_depth_buffer)
 }
 
-// repeated .viro.Node.Geometry.Material.Visual visual = 11;
-int Node_Geometry_Material::visual_size() const {
-  return visual_.size();
+// .viro.Node.Geometry.Material.Visual diffuse = 11;
+bool Node_Geometry_Material::has_diffuse() const {
+  return this != internal_default_instance() && diffuse_ != NULL;
 }
-void Node_Geometry_Material::clear_visual() {
-  visual_.Clear();
+void Node_Geometry_Material::clear_diffuse() {
+  if (GetArenaNoVirtual() == NULL && diffuse_ != NULL) delete diffuse_;
+  diffuse_ = NULL;
 }
-const ::viro::Node_Geometry_Material_Visual& Node_Geometry_Material::visual(int index) const {
-  // @@protoc_insertion_point(field_get:viro.Node.Geometry.Material.visual)
-  return visual_.Get(index);
+const ::viro::Node_Geometry_Material_Visual& Node_Geometry_Material::diffuse() const {
+  // @@protoc_insertion_point(field_get:viro.Node.Geometry.Material.diffuse)
+  return diffuse_ != NULL ? *diffuse_
+                         : *::viro::Node_Geometry_Material_Visual::internal_default_instance();
 }
-::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::mutable_visual(int index) {
-  // @@protoc_insertion_point(field_mutable:viro.Node.Geometry.Material.visual)
-  return visual_.Mutable(index);
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::mutable_diffuse() {
+  
+  if (diffuse_ == NULL) {
+    diffuse_ = new ::viro::Node_Geometry_Material_Visual;
+  }
+  // @@protoc_insertion_point(field_mutable:viro.Node.Geometry.Material.diffuse)
+  return diffuse_;
 }
-::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::add_visual() {
-  // @@protoc_insertion_point(field_add:viro.Node.Geometry.Material.visual)
-  return visual_.Add();
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::release_diffuse() {
+  // @@protoc_insertion_point(field_release:viro.Node.Geometry.Material.diffuse)
+  
+  ::viro::Node_Geometry_Material_Visual* temp = diffuse_;
+  diffuse_ = NULL;
+  return temp;
 }
-::google::protobuf::RepeatedPtrField< ::viro::Node_Geometry_Material_Visual >*
-Node_Geometry_Material::mutable_visual() {
-  // @@protoc_insertion_point(field_mutable_list:viro.Node.Geometry.Material.visual)
-  return &visual_;
+void Node_Geometry_Material::set_allocated_diffuse(::viro::Node_Geometry_Material_Visual* diffuse) {
+  delete diffuse_;
+  diffuse_ = diffuse;
+  if (diffuse) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.Geometry.Material.diffuse)
 }
-const ::google::protobuf::RepeatedPtrField< ::viro::Node_Geometry_Material_Visual >&
-Node_Geometry_Material::visual() const {
-  // @@protoc_insertion_point(field_list:viro.Node.Geometry.Material.visual)
-  return visual_;
+
+// .viro.Node.Geometry.Material.Visual specular = 12;
+bool Node_Geometry_Material::has_specular() const {
+  return this != internal_default_instance() && specular_ != NULL;
+}
+void Node_Geometry_Material::clear_specular() {
+  if (GetArenaNoVirtual() == NULL && specular_ != NULL) delete specular_;
+  specular_ = NULL;
+}
+const ::viro::Node_Geometry_Material_Visual& Node_Geometry_Material::specular() const {
+  // @@protoc_insertion_point(field_get:viro.Node.Geometry.Material.specular)
+  return specular_ != NULL ? *specular_
+                         : *::viro::Node_Geometry_Material_Visual::internal_default_instance();
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::mutable_specular() {
+  
+  if (specular_ == NULL) {
+    specular_ = new ::viro::Node_Geometry_Material_Visual;
+  }
+  // @@protoc_insertion_point(field_mutable:viro.Node.Geometry.Material.specular)
+  return specular_;
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::release_specular() {
+  // @@protoc_insertion_point(field_release:viro.Node.Geometry.Material.specular)
+  
+  ::viro::Node_Geometry_Material_Visual* temp = specular_;
+  specular_ = NULL;
+  return temp;
+}
+void Node_Geometry_Material::set_allocated_specular(::viro::Node_Geometry_Material_Visual* specular) {
+  delete specular_;
+  specular_ = specular;
+  if (specular) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.Geometry.Material.specular)
+}
+
+// .viro.Node.Geometry.Material.Visual normal = 13;
+bool Node_Geometry_Material::has_normal() const {
+  return this != internal_default_instance() && normal_ != NULL;
+}
+void Node_Geometry_Material::clear_normal() {
+  if (GetArenaNoVirtual() == NULL && normal_ != NULL) delete normal_;
+  normal_ = NULL;
+}
+const ::viro::Node_Geometry_Material_Visual& Node_Geometry_Material::normal() const {
+  // @@protoc_insertion_point(field_get:viro.Node.Geometry.Material.normal)
+  return normal_ != NULL ? *normal_
+                         : *::viro::Node_Geometry_Material_Visual::internal_default_instance();
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::mutable_normal() {
+  
+  if (normal_ == NULL) {
+    normal_ = new ::viro::Node_Geometry_Material_Visual;
+  }
+  // @@protoc_insertion_point(field_mutable:viro.Node.Geometry.Material.normal)
+  return normal_;
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::release_normal() {
+  // @@protoc_insertion_point(field_release:viro.Node.Geometry.Material.normal)
+  
+  ::viro::Node_Geometry_Material_Visual* temp = normal_;
+  normal_ = NULL;
+  return temp;
+}
+void Node_Geometry_Material::set_allocated_normal(::viro::Node_Geometry_Material_Visual* normal) {
+  delete normal_;
+  normal_ = normal;
+  if (normal) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.Geometry.Material.normal)
+}
+
+// .viro.Node.Geometry.Material.Visual reflective = 14;
+bool Node_Geometry_Material::has_reflective() const {
+  return this != internal_default_instance() && reflective_ != NULL;
+}
+void Node_Geometry_Material::clear_reflective() {
+  if (GetArenaNoVirtual() == NULL && reflective_ != NULL) delete reflective_;
+  reflective_ = NULL;
+}
+const ::viro::Node_Geometry_Material_Visual& Node_Geometry_Material::reflective() const {
+  // @@protoc_insertion_point(field_get:viro.Node.Geometry.Material.reflective)
+  return reflective_ != NULL ? *reflective_
+                         : *::viro::Node_Geometry_Material_Visual::internal_default_instance();
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::mutable_reflective() {
+  
+  if (reflective_ == NULL) {
+    reflective_ = new ::viro::Node_Geometry_Material_Visual;
+  }
+  // @@protoc_insertion_point(field_mutable:viro.Node.Geometry.Material.reflective)
+  return reflective_;
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::release_reflective() {
+  // @@protoc_insertion_point(field_release:viro.Node.Geometry.Material.reflective)
+  
+  ::viro::Node_Geometry_Material_Visual* temp = reflective_;
+  reflective_ = NULL;
+  return temp;
+}
+void Node_Geometry_Material::set_allocated_reflective(::viro::Node_Geometry_Material_Visual* reflective) {
+  delete reflective_;
+  reflective_ = reflective;
+  if (reflective) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.Geometry.Material.reflective)
+}
+
+// .viro.Node.Geometry.Material.Visual emission = 15;
+bool Node_Geometry_Material::has_emission() const {
+  return this != internal_default_instance() && emission_ != NULL;
+}
+void Node_Geometry_Material::clear_emission() {
+  if (GetArenaNoVirtual() == NULL && emission_ != NULL) delete emission_;
+  emission_ = NULL;
+}
+const ::viro::Node_Geometry_Material_Visual& Node_Geometry_Material::emission() const {
+  // @@protoc_insertion_point(field_get:viro.Node.Geometry.Material.emission)
+  return emission_ != NULL ? *emission_
+                         : *::viro::Node_Geometry_Material_Visual::internal_default_instance();
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::mutable_emission() {
+  
+  if (emission_ == NULL) {
+    emission_ = new ::viro::Node_Geometry_Material_Visual;
+  }
+  // @@protoc_insertion_point(field_mutable:viro.Node.Geometry.Material.emission)
+  return emission_;
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::release_emission() {
+  // @@protoc_insertion_point(field_release:viro.Node.Geometry.Material.emission)
+  
+  ::viro::Node_Geometry_Material_Visual* temp = emission_;
+  emission_ = NULL;
+  return temp;
+}
+void Node_Geometry_Material::set_allocated_emission(::viro::Node_Geometry_Material_Visual* emission) {
+  delete emission_;
+  emission_ = emission;
+  if (emission) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.Geometry.Material.emission)
+}
+
+// .viro.Node.Geometry.Material.Visual multiply = 16;
+bool Node_Geometry_Material::has_multiply() const {
+  return this != internal_default_instance() && multiply_ != NULL;
+}
+void Node_Geometry_Material::clear_multiply() {
+  if (GetArenaNoVirtual() == NULL && multiply_ != NULL) delete multiply_;
+  multiply_ = NULL;
+}
+const ::viro::Node_Geometry_Material_Visual& Node_Geometry_Material::multiply() const {
+  // @@protoc_insertion_point(field_get:viro.Node.Geometry.Material.multiply)
+  return multiply_ != NULL ? *multiply_
+                         : *::viro::Node_Geometry_Material_Visual::internal_default_instance();
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::mutable_multiply() {
+  
+  if (multiply_ == NULL) {
+    multiply_ = new ::viro::Node_Geometry_Material_Visual;
+  }
+  // @@protoc_insertion_point(field_mutable:viro.Node.Geometry.Material.multiply)
+  return multiply_;
+}
+::viro::Node_Geometry_Material_Visual* Node_Geometry_Material::release_multiply() {
+  // @@protoc_insertion_point(field_release:viro.Node.Geometry.Material.multiply)
+  
+  ::viro::Node_Geometry_Material_Visual* temp = multiply_;
+  multiply_ = NULL;
+  return temp;
+}
+void Node_Geometry_Material::set_allocated_multiply(::viro::Node_Geometry_Material_Visual* multiply) {
+  delete multiply_;
+  multiply_ = multiply;
+  if (multiply) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.Geometry.Material.multiply)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2546,6 +2884,7 @@ Node_Geometry_Material::visual() const {
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Node_Geometry::kNameFieldNumber;
+const int Node_Geometry::kDataFieldNumber;
 const int Node_Geometry::kSourceFieldNumber;
 const int Node_Geometry::kElementFieldNumber;
 const int Node_Geometry::kMaterialFieldNumber;
@@ -2571,11 +2910,16 @@ Node_Geometry::Node_Geometry(const Node_Geometry& from)
   if (from.name().size() > 0) {
     name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
   }
+  data_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.data().size() > 0) {
+    data_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_);
+  }
   // @@protoc_insertion_point(copy_constructor:viro.Node.Geometry)
 }
 
 void Node_Geometry::SharedCtor() {
   name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  data_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   _cached_size_ = 0;
 }
 
@@ -2586,6 +2930,7 @@ Node_Geometry::~Node_Geometry() {
 
 void Node_Geometry::SharedDtor() {
   name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  data_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void Node_Geometry::SetCachedSize(int size) const {
@@ -2612,6 +2957,7 @@ void Node_Geometry::Clear() {
   element_.Clear();
   material_.Clear();
   name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 bool Node_Geometry::MergePartialFromCodedStream(
@@ -2639,9 +2985,20 @@ bool Node_Geometry::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .viro.Node.Geometry.Source source = 2;
+      // bytes data = 2;
       case 2: {
         if (tag == 18u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_data()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .viro.Node.Geometry.Source source = 3;
+      case 3: {
+        if (tag == 26u) {
           DO_(input->IncrementRecursionDepth());
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
                 input, add_source()));
@@ -2652,9 +3009,9 @@ bool Node_Geometry::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .viro.Node.Geometry.Element element = 3;
-      case 3: {
-        if (tag == 26u) {
+      // repeated .viro.Node.Geometry.Element element = 4;
+      case 4: {
+        if (tag == 34u) {
           DO_(input->IncrementRecursionDepth());
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
                 input, add_element()));
@@ -2665,9 +3022,9 @@ bool Node_Geometry::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .viro.Node.Geometry.Material material = 4;
-      case 4: {
-        if (tag == 34u) {
+      // repeated .viro.Node.Geometry.Material material = 5;
+      case 5: {
+        if (tag == 42u) {
           DO_(input->IncrementRecursionDepth());
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
                 input, add_material()));
@@ -2712,22 +3069,28 @@ void Node_Geometry::SerializeWithCachedSizes(
       1, this->name(), output);
   }
 
-  // repeated .viro.Node.Geometry.Source source = 2;
+  // bytes data = 2;
+  if (this->data().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      2, this->data(), output);
+  }
+
+  // repeated .viro.Node.Geometry.Source source = 3;
   for (unsigned int i = 0, n = this->source_size(); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
-      2, this->source(i), output);
+      3, this->source(i), output);
   }
 
-  // repeated .viro.Node.Geometry.Element element = 3;
+  // repeated .viro.Node.Geometry.Element element = 4;
   for (unsigned int i = 0, n = this->element_size(); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
-      3, this->element(i), output);
+      4, this->element(i), output);
   }
 
-  // repeated .viro.Node.Geometry.Material material = 4;
+  // repeated .viro.Node.Geometry.Material material = 5;
   for (unsigned int i = 0, n = this->material_size(); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
-      4, this->material(i), output);
+      5, this->material(i), output);
   }
 
   // @@protoc_insertion_point(serialize_end:viro.Node.Geometry)
@@ -2737,7 +3100,7 @@ size_t Node_Geometry::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:viro.Node.Geometry)
   size_t total_size = 0;
 
-  // repeated .viro.Node.Geometry.Source source = 2;
+  // repeated .viro.Node.Geometry.Source source = 3;
   {
     unsigned int count = this->source_size();
     total_size += 1UL * count;
@@ -2748,7 +3111,7 @@ size_t Node_Geometry::ByteSizeLong() const {
     }
   }
 
-  // repeated .viro.Node.Geometry.Element element = 3;
+  // repeated .viro.Node.Geometry.Element element = 4;
   {
     unsigned int count = this->element_size();
     total_size += 1UL * count;
@@ -2759,7 +3122,7 @@ size_t Node_Geometry::ByteSizeLong() const {
     }
   }
 
-  // repeated .viro.Node.Geometry.Material material = 4;
+  // repeated .viro.Node.Geometry.Material material = 5;
   {
     unsigned int count = this->material_size();
     total_size += 1UL * count;
@@ -2775,6 +3138,13 @@ size_t Node_Geometry::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->name());
+  }
+
+  // bytes data = 2;
+  if (this->data().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->data());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -2800,6 +3170,10 @@ void Node_Geometry::MergeFrom(const Node_Geometry& from) {
 
     name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
   }
+  if (from.data().size() > 0) {
+
+    data_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_);
+  }
 }
 
 void Node_Geometry::CopyFrom(const Node_Geometry& from) {
@@ -2822,6 +3196,7 @@ void Node_Geometry::InternalSwap(Node_Geometry* other) {
   element_.UnsafeArenaSwap(&other->element_);
   material_.UnsafeArenaSwap(&other->material_);
   name_.Swap(&other->name_);
+  data_.Swap(&other->data_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
@@ -2884,7 +3259,59 @@ void Node_Geometry::set_allocated_name(::std::string* name) {
   // @@protoc_insertion_point(field_set_allocated:viro.Node.Geometry.name)
 }
 
-// repeated .viro.Node.Geometry.Source source = 2;
+// bytes data = 2;
+void Node_Geometry::clear_data() {
+  data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& Node_Geometry::data() const {
+  // @@protoc_insertion_point(field_get:viro.Node.Geometry.data)
+  return data_.GetNoArena();
+}
+void Node_Geometry::set_data(const ::std::string& value) {
+  
+  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:viro.Node.Geometry.data)
+}
+#if LANG_CXX11
+void Node_Geometry::set_data(::std::string&& value) {
+  
+  data_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:viro.Node.Geometry.data)
+}
+#endif
+void Node_Geometry::set_data(const char* value) {
+  
+  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:viro.Node.Geometry.data)
+}
+void Node_Geometry::set_data(const void* value, size_t size) {
+  
+  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:viro.Node.Geometry.data)
+}
+::std::string* Node_Geometry::mutable_data() {
+  
+  // @@protoc_insertion_point(field_mutable:viro.Node.Geometry.data)
+  return data_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* Node_Geometry::release_data() {
+  // @@protoc_insertion_point(field_release:viro.Node.Geometry.data)
+  
+  return data_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void Node_Geometry::set_allocated_data(::std::string* data) {
+  if (data != NULL) {
+    
+  } else {
+    
+  }
+  data_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), data);
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.Geometry.data)
+}
+
+// repeated .viro.Node.Geometry.Source source = 3;
 int Node_Geometry::source_size() const {
   return source_.size();
 }
@@ -2914,7 +3341,7 @@ Node_Geometry::source() const {
   return source_;
 }
 
-// repeated .viro.Node.Geometry.Element element = 3;
+// repeated .viro.Node.Geometry.Element element = 4;
 int Node_Geometry::element_size() const {
   return element_.size();
 }
@@ -2944,7 +3371,7 @@ Node_Geometry::element() const {
   return element_;
 }
 
-// repeated .viro.Node.Geometry.Material material = 4;
+// repeated .viro.Node.Geometry.Material material = 5;
 int Node_Geometry::material_size() const {
   return material_.size();
 }

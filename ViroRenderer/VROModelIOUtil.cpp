@@ -11,7 +11,7 @@
 #include "VROImage.h"
 #include "VROTexture.h"
 
-std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(std::string &name, std::string &base, bool isBaseURL,
+std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name, std::string &base, bool isBaseURL,
                                                         const std::map<std::string, std::string> *resourceMap,
                                                         std::map<std::string, std::shared_ptr<VROTexture>> &cache) {
     std::shared_ptr<VROTexture> texture;

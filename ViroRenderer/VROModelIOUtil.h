@@ -22,7 +22,7 @@ class VROModelIOUtil {
     
 public:
     
-    static std::shared_ptr<VROTexture> loadTexture(std::string &name, std::string &base, bool isBaseURL,
+    static std::shared_ptr<VROTexture> loadTexture(const std::string &name, std::string &base, bool isBaseURL,
                                                    const std::map<std::string, std::string> *resourceMap,
                                                    std::map<std::string, std::shared_ptr<VROTexture>> &cache);
     

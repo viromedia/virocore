@@ -16,6 +16,7 @@
 #include <functional>
 #include "VROGeometrySource.h"
 #include "VROGeometryElement.h"
+#include "VROMaterial.h"
 #include "Nodes.pb.h"
 
 class VRONode;
@@ -44,10 +45,14 @@ public:
                                                                  bool async = false, std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish = nullptr);
 private:
     
-    static void injectFBX(std::shared_ptr<VROGeometry> geometry, std::shared_ptr<VRONode> node,
+    static void injectFBX(std::shared_ptr<VRONode> fbxNode, std::shared_ptr<VRONode> node,
                           std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish);
-    static std::shared_ptr<VROGeometry> loadFBX(std::string file, std::string base, bool isBaseURL,
-                                                const std::map<std::string, std::string> *resourceMap);
+    static std::shared_ptr<VRONode> loadFBX(std::string file, std::string base, bool isBaseURL,
+                                            const std::map<std::string, std::string> *resourceMap);
+    
+    static VROGeometrySourceSemantic convert(viro::Node_Geometry_Source_Semantic semantic);
+    static VROGeometryPrimitiveType  convert(viro::Node_Geometry_Element_Primitive primitive);
+    static VROLightingModel          convert(viro::Node_Geometry_Material_LightingModel lightingModel);
     
 };
 
