@@ -23,7 +23,6 @@ class VRORenderParameters {
     
 public:
     
-    VROMatrix4f parentTransform;
     float parentOpacity;
     std::vector<std::shared_ptr<VROLight>> lights;
     std::stack<int> hierarchyDepths;

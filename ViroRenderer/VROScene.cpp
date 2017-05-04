@@ -102,6 +102,12 @@ void VROScene::render(const VRORenderContext &context,
     }
 }
 
+void VROScene::computeTransforms(const VRORenderContext &context) {
+    for (std::shared_ptr<VRONode> &node : _nodes) {
+        node->computeTransforms(context, {}, {});
+    }
+}
+
 void VROScene::updateSortKeys(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
     passert_thread();
     

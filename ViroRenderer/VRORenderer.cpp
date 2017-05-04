@@ -219,13 +219,13 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
 
     if (_sceneController) {
         if (_outgoingSceneController) {
+            _outgoingSceneController->getScene()->computeTransforms(*_context.get());
             _outgoingSceneController->getScene()->updateSortKeys(*_context.get(), driver);
-            _sceneController->getScene()->updateSortKeys(*_context.get(), driver);
         }
-        else {
-            _sceneController->getScene()->updateSortKeys(*_context.get(), driver);
-        }
-
+        
+        _sceneController->getScene()->computeTransforms(*_context.get());
+        _sceneController->getScene()->updateSortKeys(*_context.get(), driver);
+        
         _inputController->onProcess(camera);
     }
 

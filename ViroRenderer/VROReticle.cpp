@@ -179,22 +179,25 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext
         pinfo("Updating reticle key");
     }
     
-    VRORenderParameters renderParams;
+    VROMatrix4f parentTransform;
     if (!_isPointerFixed) {
-        renderParams.parentTransform = renderContext.getHUDViewMatrix();
+        parentTransform = renderContext.getHUDViewMatrix();
     }
 
     if (_isFusing){
-        renderNode(_fuseBackgroundNode, renderParams, renderContext, driver);
-        renderNode(_fuseNode, renderParams, renderContext, driver);
-        renderNode(_fuseTriggeredNode, renderParams, renderContext, driver);
-    } else {
-        renderNode(_reticleBaseNode, renderParams, renderContext, driver);
+        renderNode(_fuseBackgroundNode, parentTransform, renderContext, driver);
+        renderNode(_fuseNode, parentTransform, renderContext, driver);
+        renderNode(_fuseTriggeredNode, parentTransform, renderContext, driver);
+    }
+    else {
+        renderNode(_reticleBaseNode, parentTransform, renderContext, driver);
     }
 }
 
-void VROReticle::renderNode(std::shared_ptr<VRONode> node, VRORenderParameters renderParams,
+void VROReticle::renderNode(std::shared_ptr<VRONode> node, VROMatrix4f parentTransform,
                             const VRORenderContext &renderContext, std::shared_ptr<VRODriver> &driver){
+    VRORenderParameters renderParams;
+    node->computeTransforms(renderContext, parentTransform, {});
     node->updateSortKeys(0, renderParams, renderContext, driver);
     const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
     if (!geometry){

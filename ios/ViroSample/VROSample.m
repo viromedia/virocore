@@ -309,12 +309,16 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     });
     material->addShaderModifier(surfaceModifier);
     
+    std::shared_ptr<VRONode> boxParentNode = std::make_shared<VRONode>();
+    boxParentNode->setRotationEulerZ(M_PI_4);
+    
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
     boxNode->setPosition({0, 0, -5});
 
-    rootNode->addChildNode(boxNode);
-    // boxNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
+    boxParentNode->addChildNode(boxNode);
+    rootNode->addChildNode(boxParentNode);
+    boxNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
     
     /*
      Create a second box node behind the first.
@@ -768,7 +772,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleSceneFBX;
+    self.sceneIndex = VROSampleSceneBox;
     self.driver = driver;
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
 }

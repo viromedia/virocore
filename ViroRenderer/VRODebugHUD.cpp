@@ -62,8 +62,7 @@ void VRODebugHUD::renderEye(VROEyeType eye, const VRORenderContext &context, std
     }
     
     VRORenderParameters renderParams;
-    renderParams.parentTransform = context.getHUDViewMatrix();
-    
+    _node->computeTransforms(context, context.getHUDViewMatrix(), {});
     _node->updateSortKeys(0, renderParams, context, driver);
     
     for (int i = 0; i < _node->getGeometry()->getGeometryElements().size(); i++) {

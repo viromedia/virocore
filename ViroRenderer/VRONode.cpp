@@ -105,18 +105,16 @@ void VRONode::updateSortKeys(uint32_t depth,
     passert_thread();
     processActions();
     
-    VROMatrix4f parentTransform = params.parentTransform;
     float parentOpacity = params.parentOpacity;
     std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
     std::stack<int> &hierarchyDepths = params.hierarchyDepths;
     std::stack<float> &distancesFromCamera = params.distancesFromCamera;
     
     /*
-     Compute the specific parameters for this node.
+     Compute specific parameters for this node.
      */
-    computeTransform(context, parentTransform);
-    params.parentTransform = _computedTransform;
-    
+    applyConstraints(context);
+    _computedInverseTransposeTransform = _computedTransform.invert().transpose();
     _computedOpacity = parentOpacity * _opacity * _opacityFromHiddenFlag;
     params.parentOpacity = _computedOpacity;
     
@@ -230,20 +228,37 @@ void VRONode::getSortKeys(std::vector<VROSortKey> *outKeys) {
     }
 }
 
-void VRONode::computeTransform(const VRORenderContext &context, VROMatrix4f parentTransforms) {
+void VRONode::computeTransforms(const VRORenderContext &context, VROMatrix4f parentTransform, VROMatrix4f parentRotation) {
     passert_thread();
     
+    /*
+     Compute the transform for this node.
+     */
     VROMatrix4f transform;
     transform.scale(_scale.x, _scale.y, _scale.z);
     transform = _rotation.getMatrix().multiply(transform);
     transform.translate(_position.x, _position.y, _position.z);
 
-    _computedTransform = parentTransforms.multiply(transform);
+    _computedTransform = parentTransform.multiply(transform);
     _computedPosition = { _computedTransform[12], _computedTransform[13], _computedTransform[14] };
     if (_geometry) {
         _computedBoundingBox = _geometry->getBoundingBox().transform(_computedTransform);
     }
     
+    /*
+     Compute the rotation for this node.
+     */
+    _computedRotation = parentRotation.multiply(_rotation.getMatrix());
+    
+    /*
+     Move down the tree.
+     */
+    for (std::shared_ptr<VRONode> childNode : _subnodes) {
+        childNode->computeTransforms(context, _computedTransform, _computedRotation);
+    }
+}
+
+void VRONode::applyConstraints(const VRORenderContext &context) {
     for (const std::shared_ptr<VROConstraint> &constraint : _constraints) {
         VROMatrix4f billboardRotation = constraint->getTransform(*this, context, _computedTransform);
         
@@ -253,8 +268,6 @@ void VRONode::computeTransform(const VRORenderContext &context, VROMatrix4f pare
         _computedTransform = billboardRotation.multiply(_computedTransform);
         _computedTransform.translate(_computedPosition);
     }
-    
-    _computedInverseTransposeTransform = _computedTransform.invert().transpose();
 }
 
 VROVector3f VRONode::getTransformedPosition() const {

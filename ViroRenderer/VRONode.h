@@ -64,16 +64,35 @@ public:
      */
     std::shared_ptr<VRONode> clone();
 
-    void render(int elementIndex,
-                std::shared_ptr<VROMaterial> &material,
-                const VRORenderContext &context,
-                std::shared_ptr<VRODriver> &driver);
+    /*
+     Recursive function that recomputes the transforms of this node. This includes:
+     
+     _computedTransform,
+     _computedRotation,
+     _computedPosition,
+     _computedBoundingBox
+     */
+    void computeTransforms(const VRORenderContext &context, VROMatrix4f parentTransform,
+                           VROMatrix4f parentRotation);
     
+    /*
+     Recursively updates the sort keys of this node, preparing it and its children
+     for rendering. This method applies constrains and computes non-transform-related
+     parameters for each node (opacity, lights, etc.) that are required prior to render.
+     */
     void updateSortKeys(uint32_t depth,
                         VRORenderParameters &params,
                         const VRORenderContext &context,
                         std::shared_ptr<VRODriver> &driver);
     void getSortKeys(std::vector<VROSortKey> *outKeys);
+    
+    /*
+     Render the given element of this node's geometry, using its latest computed transforms.
+     */
+    void render(int elementIndex,
+                std::shared_ptr<VROMaterial> &material,
+                const VRORenderContext &context,
+                std::shared_ptr<VRODriver> &driver);
     
     std::vector<std::shared_ptr<VROLight>> &getComputedLights() {
         return _computedLights;
@@ -99,9 +118,8 @@ public:
     }
     
     /*
-     Transforms.
+     Transform getters.
      */
-    void computeTransform(const VRORenderContext &context, VROMatrix4f parentTransforms);
     VROVector3f getTransformedPosition() const;
     
     VROVector3f getPosition() const {
@@ -333,10 +351,16 @@ private:
     
     /*
      Parameters computed by descending down the tree. These are updated whenever
-     any parent or this node itself is updated.
+     any parent or this node itself is updated. For example, computedOpacity is
+     the opacity of this node multiplied by the opacities of all this node's
+     ancestors. Similarly, computedTransform is the full cascaded transformation 
+     matrix for the node. 
+     
+     computedRotation only takes into account rotations (not scale or translation).
      */
     VROMatrix4f _computedTransform;
     VROMatrix4f _computedInverseTransposeTransform;
+    VROMatrix4f _computedRotation;
     float _computedOpacity;
     std::vector<std::shared_ptr<VROLight>> _computedLights;
     VROVector3f _computedPosition;
@@ -391,6 +415,12 @@ private:
      2D layouts like flexbox views. Defaults to false.
      */
      bool _hierarchicalRendering;
+    
+    /*
+     Apply the transform constraints to this node. Should only be invoked when all 
+     transforms are complete.
+     */
+    void applyConstraints(const VRORenderContext &context);
     
     /*
      Action processing: execute all current actions and remove those that are
