@@ -229,6 +229,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         if (_outgoingSceneController) {
             std::shared_ptr<VROScene> outgoingScene = _outgoingSceneController->getScene();
             outgoingScene->computeTransforms(context);
+            outgoingScene->computePhysics();
             outgoingScene->applyConstraints(context);
             outgoingScene->updateVisibility(context);
             outgoingScene->updateSortKeys(context, driver);
@@ -236,10 +237,10 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         
         std::shared_ptr<VROScene> scene = _sceneController->getScene();
         scene->computeTransforms(context);
+        scene->computePhysics();
         scene->applyConstraints(context);
         scene->updateVisibility(context);
         scene->updateSortKeys(context, driver);
-        
         _inputController->onProcess(camera);
     }
 

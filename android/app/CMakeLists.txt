@@ -174,6 +174,11 @@ add_library( # Sets the name of the library.
              # GVR Audio
              ../../ViroRenderer/VROSoundGVR.cpp
              ../../ViroRenderer/VROSoundDataGVR.cpp
+
+             # Physics
+             ../../ViroRenderer/VROPhysicsWorld.cpp
+             ../../ViroRenderer/VROPhysicsBody.cpp
+             ../../ViroRenderer/VROPhysicsShape.cpp
              )
 
 # Add pre-built libraries

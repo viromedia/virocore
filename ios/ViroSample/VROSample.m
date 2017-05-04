@@ -21,7 +21,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneNumScenes,
 };
 
-@interface VROSample ()
+@interface VROSample () <VROEventDelegateProtocol>
 
 @property (readwrite, nonatomic) std::shared_ptr<VRODriver> driver;
 @property (readwrite, nonatomic) BOOL tapEnabled;
@@ -31,11 +31,18 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 @property (readwrite, nonatomic) float objAngle;
 @property (readwrite, nonatomic) int sceneIndex;
 @property (readwrite, nonatomic) std::shared_ptr<VROVideoTexture> videoTexture;
-@property (readwrite, nonatomic) std::shared_ptr<VROEventDelegate> fuseDelegate;
+@property (readwrite, nonatomic) std::shared_ptr<VROEventDelegateiOS> delegate;
 
+@property (nonatomic, copy) id clickBlock;
+
+// VROEventDelegateProtocol
+- (void) onHover:(int)source isHovering:(bool)isHovering;
+- (void) onClick:(int)source clickState:(VROEventDelegate::ClickState)clickState;
+- (void) onFuse:(int)source;
 @end
 
 @implementation VROSample
+
 
 - (std::shared_ptr<VROSceneController>)loadSceneWithIndex:(int)index {
     int modulo = index % VROSampleSceneNumScenes;
@@ -62,7 +69,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
             break;
     }
     
-    return [self loadTorusScene];
+    return [self loadPhysicsScene];
 }
 
 - (std::shared_ptr<VROTexture>) niagaraTexture {
@@ -224,6 +231,85 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     material->getDiffuse().setColor( {1.0, 1.0, 1.0, 1.0 } );
     material->getReflective().clear();
     VROTransaction::commit();
+}
+
+- (std::shared_ptr<VROSceneController>)loadPhysicsScene {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
+    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    rootNode->setPosition({0, 0, 0});
+    scene->addNode(rootNode);
+    
+    std::shared_ptr<VROBox> groundBox = VROBox::createBox(40, 1, 40);
+    groundBox->setName("Box 2");
+    std::shared_ptr<VROMaterial> materialGround = groundBox->getMaterials()[0];
+    materialGround->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
+    materialGround->setLightingModel(VROLightingModel::Constant);
+    materialGround->setCullMode(VROCullMode::None);
+
+    std::shared_ptr<VRONode> groundNode = std::make_shared<VRONode>();
+    groundNode->setGeometry(groundBox);
+    groundNode->setPosition({0, -10, -5});
+    rootNode->addChildNode(groundNode);
+    self.delegate = std::make_shared<VROEventDelegateiOS>(self);
+    self.delegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
+    groundNode->setEventDelegate(self.delegate);
+    
+    std::shared_ptr<VROPhysicsBody> physicsGround = groundNode->initPhysicsBody(VROPhysicsBody::VROPhysicsBodyType::Static, 0, nullptr);
+    std::shared_ptr<VROPhysicsWorld> physicsWorld = scene->getPhysicsWorld();
+    physicsWorld->setGravity({0,-9.81f,0});
+    physicsWorld->addPhysicsBody(physicsGround);
+    
+    __weak VROSample *w_sample = self;
+    self.clickBlock =^ {
+        if (w_sample){
+            [w_sample createPhysicsBoxAt:{0,10,-5} withWorld:physicsWorld withRoot:rootNode];
+        }
+    };
+    
+    [self createPhysicsBoxAt:{0,20,-5} withWorld:physicsWorld withRoot:rootNode];
+    [self createPhysicsBoxAt:{0,20,-5} withWorld:physicsWorld withRoot:rootNode];
+    [self createPhysicsBoxAt:{0.3,25,-5} withWorld:physicsWorld withRoot:rootNode];
+    [self createPhysicsBoxAt:{0.6,35,-5} withWorld:physicsWorld withRoot:rootNode];
+    [self createPhysicsBoxAt:{0.4,50,-5} withWorld:physicsWorld withRoot:rootNode];
+
+    return sceneController;
+}
+
+- (void)createPhysicsBoxAt:(VROVector3f)position
+                 withWorld:(std::shared_ptr<VROPhysicsWorld>)physicsWorld
+                  withRoot:(std::shared_ptr<VRONode>) rootNode{
+    
+    std::shared_ptr<VROBox> box = VROBox::createBox(1, 1, 1);
+    box->setName("Box 1");
+    std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
+    material->getDiffuse().setColor({0.6, 0.3, 0.3, 0.5});
+    material->setLightingModel(VROLightingModel::Constant);
+    material->setCullMode(VROCullMode::None);
+    
+    std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
+    boxNode->setGeometry(box);
+    boxNode->setPosition(position);
+    rootNode->addChildNode(boxNode);
+    std::shared_ptr<VROPhysicsBody> physicsBody
+        = boxNode->initPhysicsBody(VROPhysicsBody::VROPhysicsBodyType::Dynamic, 0.5, nullptr);
+
+    physicsWorld->addPhysicsBody(physicsBody);
+}
+
+#pragma mark default implementations for VRTEventDelegateProtocol
+-(void)onHover:(int)source isHovering:(bool)isHovering {
+    //No-op
+}
+
+-(void)onClick:(int)source clickState:(VROEventDelegate::ClickState)clickState{
+    if (clickState == VROEventDelegate::ClickState::Clicked){
+        [self.clickBlock invoke];
+    }
+}
+
+-(void)onFuse:(int)source{
+    //No-op
 }
 
 - (std::shared_ptr<VROSceneController>)loadBoxScene {
@@ -707,9 +793,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     objNode->runAction(action);
     
-    self.fuseDelegate = std::make_shared<VROEventDelegate>();
-    self.fuseDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnFuse, true);
-    objNode->setEventDelegate(self.fuseDelegate);
+    self.delegate = std::make_shared<VROEventDelegateiOS>(self);
+    self.delegate->setEnabledEvent(VROEventDelegate::EventAction::OnFuse, true);
+    objNode->setEventDelegate(self.delegate);
     
     return sceneController;
 }
@@ -764,9 +850,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     fbxNode->runAction(action);
     
-    self.fuseDelegate = std::make_shared<VROEventDelegate>();
-    self.fuseDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnFuse, true);
-    fbxNode->setEventDelegate(self.fuseDelegate);
+    self.delegate = std::make_shared<VROEventDelegateiOS>(self);
+    self.delegate->setEnabledEvent(VROEventDelegate::EventAction::OnFuse, true);
+    fbxNode->setEventDelegate(self.delegate);
     
     return sceneController;
 }

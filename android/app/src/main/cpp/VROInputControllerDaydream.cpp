@@ -154,7 +154,7 @@ VROVector3f VROInputControllerDaydream::getDaydreamControllerPosition(const VROQ
     }
 
     // Use the calculated arm pointer position as our controller's position
-    return hitFromNode->getTransformedPosition();
+    return hitFromNode->getComputedPosition();
 }
 
 bool VROInputControllerDaydream::isControllerReady(){

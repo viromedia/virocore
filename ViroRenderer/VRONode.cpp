@@ -23,6 +23,7 @@
 #include "VROByteBuffer.h"
 #include "VROConstraint.h"
 #include "VROStringUtil.h"
+#include "VROPhysicsBody.h"
 
 // Opacity below which a node is considered hidden
 static const float kHiddenOpacityThreshold = 0.02;
@@ -237,24 +238,24 @@ void VRONode::getSortKeysForVisibleNodes(std::vector<VROSortKey> *outKeys) {
     }
 }
 
-void VRONode::computeTransforms(const VRORenderContext &context, VROMatrix4f parentTransform, VROMatrix4f parentRotation) {
+void VRONode::computeTransforms(VROMatrix4f parentTransform, VROMatrix4f parentRotation) {
     passert_thread();
     
     /*
      Compute the transform for this node.
      */
     doComputeTransform(parentTransform);
-    
+
     /*
      Compute the rotation for this node.
      */
     _computedRotation = parentRotation.multiply(_rotation.getMatrix());
-    
+
     /*
      Move down the tree.
      */
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {
-        childNode->computeTransforms(context, _computedTransform, _computedRotation);
+        childNode->computeTransforms(_computedTransform, _computedRotation);
     }
 }
 
@@ -309,8 +310,13 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
     }
 }
 
-VROVector3f VRONode::getTransformedPosition() const {
-    return _computedPosition;
+void VRONode::setWorldTransform(VROVector3f worldPosition, VROQuaternion worldRotation){
+    std::shared_ptr<VRONode> parentNode = getParentNode();
+    VROVector3f parentComputedPosition = parentNode->getComputedPosition();
+    VROQuaternion parentComputedRot = parentNode->getComputedRotation();
+    _position = worldPosition - parentComputedPosition;
+    _rotation = worldRotation * parentComputedRot.makeInverse();
+    computeTransforms(parentNode->getComputedTransform(), parentNode->getComputedRotation());
 }
 
 #pragma mark - Visibility
@@ -357,6 +363,18 @@ int VRONode::countVisibleNodes() const {
         count += childNode->countVisibleNodes();
     }
     return count;
+}
+
+VROVector3f VRONode::getComputedPosition() const {
+    return _computedPosition;
+}
+
+VROMatrix4f VRONode::getComputedRotation() const {
+    return _computedRotation;
+}
+
+VROMatrix4f VRONode::getComputedTransform() const {
+    return _computedTransform;
 }
 
 #pragma mark - Setters
@@ -613,4 +631,18 @@ void VRONode::removeAllConstraints() {
     _constraints.clear();
 }
 
+#pragma mark - Physics
+std::shared_ptr<VROPhysicsBody> VRONode::initPhysicsBody(VROPhysicsBody::VROPhysicsBodyType type,
+                                                         float mass,
+                                                         std::shared_ptr<VROPhysicsShape> shape) {
+    std::shared_ptr<VRONode> node = std::static_pointer_cast<VRONode>(shared_from_this());
+    return std::make_shared<VROPhysicsBody>(node, type, mass, shape);
+}
 
+std::shared_ptr<VROPhysicsBody> VRONode::getPhysicsBody() const {
+    return _physicsBody;
+}
+
+void VRONode::clearPhysicsBody(){
+    _physicsBody = nullptr;
+}

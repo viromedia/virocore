@@ -32,7 +32,7 @@ VROMatrix4f VROBillboardConstraint::getTransform(const VRONode &node,
     
     if (_freeAxis == VROBillboardAxis::All) {
         // Billboard with free Y axis
-        VROVector3f objToCam = camera.getPosition().subtract(node.getTransformedPosition());
+        VROVector3f objToCam = camera.getPosition().subtract(node.getComputedPosition());
         
         VROVector3f objToCamProj = objToCam;
         objToCamProj.y = 0;
@@ -67,7 +67,7 @@ VROMatrix4f VROBillboardConstraint::getTransform(const VRONode &node,
         return composed.getMatrix();
     }
     else {
-        VROVector3f objToCamProj = camera.getPosition().subtract(node.getTransformedPosition());
+        VROVector3f objToCamProj = camera.getPosition().subtract(node.getComputedPosition());
         VROVector3f defaultAxis;
 
         if (_freeAxis == VROBillboardAxis::X) {

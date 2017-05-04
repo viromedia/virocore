@@ -400,6 +400,12 @@
 		A5EC65871EB3ECE200FE220E /* libBulletDynamics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */; };
 		A5EC65881EB3ECE200FE220E /* libBulletSoftBody.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */; };
 		A5EC65891EB3ECE200FE220E /* libLinearMath.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65851EB3ECE200FE220E /* libLinearMath.a */; };
+		A5EC659C1EBD34C000FE220E /* VROPhysicsShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5EC65931EBD16F000FE220E /* VROPhysicsShape.cpp */; };
+		A5EC659E1EBD34C000FE220E /* VROPhysicsWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5EC65951EBD16F000FE220E /* VROPhysicsWorld.cpp */; };
+		A5EC659F1EBD34C000FE220E /* VROPhysicsWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EC65961EBD16F000FE220E /* VROPhysicsWorld.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EC65B61EBFF57B00FE220E /* VROPhysicsBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5EC65B31EBFF42100FE220E /* VROPhysicsBody.cpp */; };
+		A5EC65B71EBFF5A100FE220E /* VROPhysicsBody.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EC65B41EBFF42100FE220E /* VROPhysicsBody.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5EC65B81EC004E100FE220E /* VROPhysicsShape.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EC65941EBD16F000FE220E /* VROPhysicsShape.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EC8D0A685CE2FA0BE80B7363 /* libPods-ViroSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF43BA975D626635F2D5584C /* libPods-ViroSample.a */; };
 /* End PBXBuildFile section */
 
@@ -891,6 +897,12 @@
 		A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletDynamics.a; path = Libraries/bullet/libBulletDynamics.a; sourceTree = "<group>"; };
 		A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletSoftBody.a; path = Libraries/bullet/libBulletSoftBody.a; sourceTree = "<group>"; };
 		A5EC65851EB3ECE200FE220E /* libLinearMath.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libLinearMath.a; path = Libraries/bullet/libLinearMath.a; sourceTree = "<group>"; };
+		A5EC65931EBD16F000FE220E /* VROPhysicsShape.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPhysicsShape.cpp; sourceTree = "<group>"; };
+		A5EC65941EBD16F000FE220E /* VROPhysicsShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsShape.h; sourceTree = "<group>"; };
+		A5EC65951EBD16F000FE220E /* VROPhysicsWorld.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPhysicsWorld.cpp; sourceTree = "<group>"; };
+		A5EC65961EBD16F000FE220E /* VROPhysicsWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsWorld.h; sourceTree = "<group>"; };
+		A5EC65B31EBFF42100FE220E /* VROPhysicsBody.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPhysicsBody.cpp; sourceTree = "<group>"; };
+		A5EC65B41EBFF42100FE220E /* VROPhysicsBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsBody.h; sourceTree = "<group>"; };
 		B1049B08B869A86043674A7C /* Pods-ViroSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.release.xcconfig"; sourceTree = "<group>"; };
 		BF43BA975D626635F2D5584C /* libPods-ViroSample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroSample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3267984E31F54DDFDA5BFE7 /* Pods-ViroSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroSample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroSample/Pods-ViroSample.debug.xcconfig"; sourceTree = "<group>"; };
@@ -924,14 +936,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-<<<<<<< HEAD
 				8F618E331EB980E70020B33B /* libprotobuf-lite.a in Frameworks */,
-=======
 				A5EC65861EB3ECE200FE220E /* libBulletCollision.a in Frameworks */,
 				A5EC65871EB3ECE200FE220E /* libBulletDynamics.a in Frameworks */,
 				A5EC65881EB3ECE200FE220E /* libBulletSoftBody.a in Frameworks */,
 				A5EC65891EB3ECE200FE220E /* libLinearMath.a in Frameworks */,
->>>>>>> Added Physics Bullet Engine
 				8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */,
 				8F56AEA61DE7682300DD65B6 /* libFreetype2.a in Frameworks */,
 				8FDDE2121CD00F2600674DE2 /* CoreText.framework in Frameworks */,
@@ -1056,6 +1065,7 @@
 		8F1071D81BF67EF7003B3C3F /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
+				A5EC65901EBD16D800FE220E /* Physics */,
 				8F56AE9A1DE67BCF00DD65B6 /* Text */,
 				8F65F8271CA19A8100415115 /* Audio */,
 				8F203F121DCD2EBA00DC50F2 /* Video */,
@@ -1683,15 +1693,12 @@
 		95E5BC90E51A0FC2C3AA4D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-<<<<<<< HEAD
 				8F618E301EB935A40020B33B /* libprotobuf.a */,
 				8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */,
-=======
 				A5EC65821EB3ECE200FE220E /* libBulletCollision.a */,
 				A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */,
 				A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */,
 				A5EC65851EB3ECE200FE220E /* libLinearMath.a */,
->>>>>>> Added Physics Bullet Engine
 				8F1664A51E5E43260062EBCE /* Accelerate.framework */,
 				8F56AE9B1DE6810800DD65B6 /* libFreetype2.a */,
 				8FDDE2111CD00F2600674DE2 /* CoreText.framework */,
@@ -1699,6 +1706,19 @@
 				BF43BA975D626635F2D5584C /* libPods-ViroSample.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A5EC65901EBD16D800FE220E /* Physics */ = {
+			isa = PBXGroup;
+			children = (
+				A5EC65B31EBFF42100FE220E /* VROPhysicsBody.cpp */,
+				A5EC65B41EBFF42100FE220E /* VROPhysicsBody.h */,
+				A5EC65931EBD16F000FE220E /* VROPhysicsShape.cpp */,
+				A5EC65941EBD16F000FE220E /* VROPhysicsShape.h */,
+				A5EC65951EBD16F000FE220E /* VROPhysicsWorld.cpp */,
+				A5EC65961EBD16F000FE220E /* VROPhysicsWorld.h */,
+			);
+			name = Physics;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1710,6 +1730,7 @@
 			files = (
 				8F660ABB1E9554B8006D063F /* VROFrameScheduler.h in Headers */,
 				8FCB10211DD544E800FE425C /* VROVideoTextureCache.h in Headers */,
+				A5EC65B71EBFF5A100FE220E /* VROPhysicsBody.h in Headers */,
 				8FCB10091DD10EF300FE425C /* VROStringUtil.h in Headers */,
 				A58697891E30887500191090 /* VROInputType.h in Headers */,
 				A586978C1E308BD300191090 /* VROInputPresenter.h in Headers */,
@@ -1747,6 +1768,7 @@
 				8F83DEA01C4826F80089C31A /* VROTimingFunctionEaseInEaseOut.h in Headers */,
 				8BDDA00D1E54F6B200A42870 /* VROLazyMaterial.h in Headers */,
 				8BDDA00E1E54F6B200A42870 /* VROMaterialAnimation.h in Headers */,
+				A5EC65B81EC004E100FE220E /* VROPhysicsShape.h in Headers */,
 				8F0FE65F1CD129FF00A4C297 /* VROFrameSynchronizer.h in Headers */,
 				8A130DA51E40187F0050D83B /* VROSoundData.h in Headers */,
 				8FB2B5951E1445BB00EDB629 /* VROAnimationGroup.h in Headers */,
@@ -1758,6 +1780,7 @@
 				8F56AEB21DE7873E00DD65B6 /* VROTypefaceiOS.h in Headers */,
 				8F65F7861C90CD0B00415115 /* VROConstraint.h in Headers */,
 				8F660AB71E95528F006D063F /* VROFrameTimer.h in Headers */,
+				A5EC659F1EBD34C000FE220E /* VROPhysicsWorld.h in Headers */,
 				8FC908871CA458EB00069C89 /* VRONodeCamera.h in Headers */,
 				8FD4DF381C18F500003DC425 /* VROMaterialVisual.h in Headers */,
 				8FD4DF391C18F500003DC425 /* VROTexture.h in Headers */,
@@ -2316,6 +2339,7 @@
 				8FD4DF0F1C18ED3C003DC425 /* VROMaterialVisual.cpp in Sources */,
 				8FD4DEF21C18ED19003DC425 /* VROPlane.cpp in Sources */,
 				8F83DEAE1C50278C0089C31A /* VROSphere.cpp in Sources */,
+				A5EC65B61EBFF57B00FE220E /* VROPhysicsBody.cpp in Sources */,
 				8F67B59F1DF1DC930096C26F /* VROKnuthPlassFormatter.cpp in Sources */,
 				8F56AEA41DE764A700DD65B6 /* VROGlyphOpenGL.cpp in Sources */,
 				8FD4DF151C18ED44003DC425 /* Vector3d.mm in Sources */,
@@ -2331,6 +2355,7 @@
 				8FCB10081DD10EF300FE425C /* VROStringUtil.cpp in Sources */,
 				8FD4DEF81C18ED19003DC425 /* VROVector4f.cpp in Sources */,
 				8FD4DF101C18ED3C003DC425 /* VROTexture.cpp in Sources */,
+				A5EC659E1EBD34C000FE220E /* VROPhysicsWorld.cpp in Sources */,
 				8FCF396B1CB4242000A86CA3 /* VRORenderer.cpp in Sources */,
 				8FD4DEF71C18ED19003DC425 /* VROVector3f.cpp in Sources */,
 				8FD4DF0C1C18ED3C003DC425 /* VROGeometryElement.cpp in Sources */,
@@ -2361,6 +2386,7 @@
 				8FD4DF141C18ED44003DC425 /* SO3Util.mm in Sources */,
 				8FCB101A1DD5449700FE425C /* VROVideoTextureiOS.cpp in Sources */,
 				8F0FE66C1CD289FD00A4C297 /* VRORenderLoopCardboard.m in Sources */,
+				A5EC659C1EBD34C000FE220E /* VROPhysicsShape.cpp in Sources */,
 				8ABD8F371DB72CDD00BD9C83 /* VROApiKey.m in Sources */,
 				8FB5351E1EB85A7C00E8E1A6 /* Nodes.pb.cc in Sources */,
 				8FB2B5981E1445EE00EDB629 /* VROAnimationChain.cpp in Sources */,
@@ -2480,11 +2506,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/Libraries/freetype/include",
-<<<<<<< HEAD
 					"$(SRCROOT)/Libraries/protobuf/include",
-=======
 					"$(SRCROOT)/Libraries/bullet/include",
->>>>>>> Added Physics Bullet Engine
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -2530,11 +2553,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/Libraries/freetype/include",
-<<<<<<< HEAD
 					"$(SRCROOT)/Libraries/protobuf/include",
-=======
 					"$(SRCROOT)/Libraries/bullet/include",
->>>>>>> Added Physics Bullet Engine
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -2657,11 +2677,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/freetype",
-<<<<<<< HEAD
 					"$(PROJECT_DIR)/Libraries/protobuf",
-=======
 					"$(PROJECT_DIR)/Libraries/bullet",
->>>>>>> Added Physics Bullet Engine
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroKit;
@@ -2691,11 +2708,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Libraries/freetype",
-<<<<<<< HEAD
 					"$(PROJECT_DIR)/Libraries/protobuf",
-=======
 					"$(PROJECT_DIR)/Libraries/bullet",
->>>>>>> Added Physics Bullet Engine
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.viro.ViroKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";

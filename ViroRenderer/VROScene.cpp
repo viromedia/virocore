@@ -104,7 +104,7 @@ void VROScene::render(const VRORenderContext &context,
 
 void VROScene::computeTransforms(const VRORenderContext &context) {
     for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->computeTransforms(context, {}, {});
+        node->computeTransforms({}, {});
     }
 }
 

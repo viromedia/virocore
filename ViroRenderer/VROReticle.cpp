@@ -197,7 +197,7 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext
 void VROReticle::renderNode(std::shared_ptr<VRONode> node, VROMatrix4f parentTransform,
                             const VRORenderContext &renderContext, std::shared_ptr<VRODriver> &driver){
     VRORenderParameters renderParams;
-    node->computeTransforms(renderContext, parentTransform, {});
+    node->computeTransforms(parentTransform, {});
     node->applyConstraints(renderContext, parentTransform, false);
     node->updateSortKeys(0, renderParams, renderContext, driver);
     const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
