@@ -198,6 +198,7 @@ void VROReticle::renderNode(std::shared_ptr<VRONode> node, VROMatrix4f parentTra
                             const VRORenderContext &renderContext, std::shared_ptr<VRODriver> &driver){
     VRORenderParameters renderParams;
     node->computeTransforms(renderContext, parentTransform, {});
+    node->applyConstraints(renderContext, parentTransform, false);
     node->updateSortKeys(0, renderParams, renderContext, driver);
     const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
     if (!geometry){

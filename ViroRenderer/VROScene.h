@@ -56,6 +56,12 @@ public:
     void computeTransforms(const VRORenderContext &context);
     
     /*
+     Apply transformation constraints (e.g. billboarding) to all nodes in
+     the scene.
+     */
+    void applyConstraints(const VRORenderContext &context);
+    
+    /*
      Update the sort keys for all nodes in this scene.
      */
     void updateSortKeys(const VRORenderContext &context,

@@ -310,15 +310,14 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     material->addShaderModifier(surfaceModifier);
     
     std::shared_ptr<VRONode> boxParentNode = std::make_shared<VRONode>();
-    boxParentNode->setRotationEulerZ(M_PI_4);
+    boxParentNode->setPosition({0, 0, -5});
     
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
-    boxNode->setPosition({0, 0, -5});
 
     boxParentNode->addChildNode(boxNode);
     rootNode->addChildNode(boxParentNode);
-    boxNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
+    boxParentNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
     
     /*
      Create a second box node behind the first.

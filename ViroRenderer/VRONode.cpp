@@ -113,7 +113,6 @@ void VRONode::updateSortKeys(uint32_t depth,
     /*
      Compute specific parameters for this node.
      */
-    applyConstraints(context);
     _computedInverseTransposeTransform = _computedTransform.invert().transpose();
     _computedOpacity = parentOpacity * _opacity * _opacityFromHiddenFlag;
     params.parentOpacity = _computedOpacity;
@@ -234,16 +233,7 @@ void VRONode::computeTransforms(const VRORenderContext &context, VROMatrix4f par
     /*
      Compute the transform for this node.
      */
-    VROMatrix4f transform;
-    transform.scale(_scale.x, _scale.y, _scale.z);
-    transform = _rotation.getMatrix().multiply(transform);
-    transform.translate(_position.x, _position.y, _position.z);
-
-    _computedTransform = parentTransform.multiply(transform);
-    _computedPosition = { _computedTransform[12], _computedTransform[13], _computedTransform[14] };
-    if (_geometry) {
-        _computedBoundingBox = _geometry->getBoundingBox().transform(_computedTransform);
-    }
+    doComputeTransform(parentTransform);
     
     /*
      Compute the rotation for this node.
@@ -258,7 +248,24 @@ void VRONode::computeTransforms(const VRORenderContext &context, VROMatrix4f par
     }
 }
 
-void VRONode::applyConstraints(const VRORenderContext &context) {
+void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f parentTransform,
+                               bool parentUpdated) {
+    
+    bool updated = false;
+    
+    /*
+     If a parent's _computedTransform was updated by constraints, we have to recompute
+     the transform for this node as well.
+     */
+    if (parentUpdated) {
+        doComputeTransform(parentTransform);
+        updated = true;
+    }
+    
+    /*
+     Compute constraints for this node. Do not update _computedRotation as it isn't
+     necessary after the afterConstraints() phase.
+     */
     for (const std::shared_ptr<VROConstraint> &constraint : _constraints) {
         VROMatrix4f billboardRotation = constraint->getTransform(*this, context, _computedTransform);
         
@@ -267,6 +274,28 @@ void VRONode::applyConstraints(const VRORenderContext &context) {
         _computedTransform.translate(_computedPosition.scale(-1));
         _computedTransform = billboardRotation.multiply(_computedTransform);
         _computedTransform.translate(_computedPosition);
+        
+        updated = true;
+    }
+    
+    /*
+     Move down the tree.
+     */
+    for (std::shared_ptr<VRONode> childNode : _subnodes) {
+        childNode->applyConstraints(context, _computedTransform, updated);
+    }
+}
+
+void VRONode::doComputeTransform(VROMatrix4f parentTransform) {
+    VROMatrix4f transform;
+    transform.scale(_scale.x, _scale.y, _scale.z);
+    transform = _rotation.getMatrix().multiply(transform);
+    transform.translate(_position.x, _position.y, _position.z);
+    
+    _computedTransform = parentTransform.multiply(transform);
+    _computedPosition = { _computedTransform[12], _computedTransform[13], _computedTransform[14] };
+    if (_geometry) {
+        _computedBoundingBox = _geometry->getBoundingBox().transform(_computedTransform);
     }
 }
 

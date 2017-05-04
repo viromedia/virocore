@@ -76,9 +76,16 @@ public:
                            VROMatrix4f parentRotation);
     
     /*
+     Recursively applies transformation constraints (e.g. billboarding) to this node
+     and its children.
+     */
+    void applyConstraints(const VRORenderContext &context, VROMatrix4f parentTransform,
+                          bool parentUpdated);
+    
+    /*
      Recursively updates the sort keys of this node, preparing it and its children
-     for rendering. This method applies constrains and computes non-transform-related
-     parameters for each node (opacity, lights, etc.) that are required prior to render.
+     for rendering. This method also computes non-transform-related parameters for each
+     node (opacity, lights, etc.) that are required prior to render.
      */
     void updateSortKeys(uint32_t depth,
                         VRORenderParameters &params,
@@ -414,13 +421,17 @@ private:
      should be rendered by order of their scene graph depth. Useful when rendering
      2D layouts like flexbox views. Defaults to false.
      */
-     bool _hierarchicalRendering;
+    bool _hierarchicalRendering;
     
     /*
-     Apply the transform constraints to this node. Should only be invoked when all 
-     transforms are complete.
+     Compute the transform for this node, taking into the account the parent's transform.
+     Updates all related variables:
+     
+     _computedTransform
+     _computedPosition
+     _computedBoundingBox
      */
-    void applyConstraints(const VRORenderContext &context);
+    void doComputeTransform(VROMatrix4f parentTransform);
     
     /*
      Action processing: execute all current actions and remove those that are

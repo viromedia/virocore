@@ -219,12 +219,16 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
 
     if (_sceneController) {
         if (_outgoingSceneController) {
-            _outgoingSceneController->getScene()->computeTransforms(*_context.get());
-            _outgoingSceneController->getScene()->updateSortKeys(*_context.get(), driver);
+            std::shared_ptr<VROScene> outgoingScene = _outgoingSceneController->getScene();
+            outgoingScene->computeTransforms(*_context.get());
+            outgoingScene->applyConstraints(*_context.get());
+            outgoingScene->updateSortKeys(*_context.get(), driver);
         }
         
-        _sceneController->getScene()->computeTransforms(*_context.get());
-        _sceneController->getScene()->updateSortKeys(*_context.get(), driver);
+        std::shared_ptr<VROScene> scene = _sceneController->getScene();
+        scene->computeTransforms(*_context.get());
+        scene->applyConstraints(*_context.get());
+        scene->updateSortKeys(*_context.get(), driver);
         
         _inputController->onProcess(camera);
     }
