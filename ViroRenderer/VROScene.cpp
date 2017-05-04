@@ -113,8 +113,6 @@ void VROScene::updateSortKeys(const VRORenderContext &context, std::shared_ptr<V
     VROMatrix4f identity;
 
     VRORenderParameters renderParams;
-    renderParams.transforms.push(identity);
-    
     for (std::shared_ptr<VRONode> &node : _nodes) {
         node->updateSortKeys(0, renderParams, context, driver);
     }

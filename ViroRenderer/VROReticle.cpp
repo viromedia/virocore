@@ -180,12 +180,8 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext
     }
     
     VRORenderParameters renderParams;
-    if (_isPointerFixed) {
-        VROMatrix4f identity;
-        renderParams.transforms.push(identity);
-    }
-    else {
-        renderParams.transforms.push(renderContext.getHUDViewMatrix());
+    if (!_isPointerFixed) {
+        renderParams.parentTransform = renderContext.getHUDViewMatrix();
     }
 
     if (_isFusing){
