@@ -4437,6 +4437,7 @@ const int Node::kOpacityFieldNumber;
 const int Node::kGeometryFieldNumber;
 const int Node::kLightFieldNumber;
 const int Node::kCameraFieldNumber;
+const int Node::kSubnodeFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Node::Node()
@@ -4454,6 +4455,7 @@ Node::Node(const Node& from)
       scale_(from.scale_),
       rotation_(from.rotation_),
       light_(from.light_),
+      subnode_(from.subnode_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_geometry()) {
@@ -4516,6 +4518,7 @@ void Node::Clear() {
   scale_.Clear();
   rotation_.Clear();
   light_.Clear();
+  subnode_.Clear();
   if (GetArenaNoVirtual() == NULL && geometry_ != NULL) {
     delete geometry_;
   }
@@ -4647,6 +4650,19 @@ bool Node::MergePartialFromCodedStream(
         break;
       }
 
+      // repeated .viro.Node subnode = 9;
+      case 9: {
+        if (tag == 74u) {
+          DO_(input->IncrementRecursionDepth());
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_subnode()));
+        } else {
+          goto handle_unusual;
+        }
+        input->UnsafeDecrementRecursionDepth();
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0 ||
@@ -4723,6 +4739,12 @@ void Node::SerializeWithCachedSizes(
       8, *this->camera_, output);
   }
 
+  // repeated .viro.Node subnode = 9;
+  for (unsigned int i = 0, n = this->subnode_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      9, this->subnode(i), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:viro.Node)
 }
 
@@ -4786,6 +4808,17 @@ size_t Node::ByteSizeLong() const {
     }
   }
 
+  // repeated .viro.Node subnode = 9;
+  {
+    unsigned int count = this->subnode_size();
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->subnode(i));
+    }
+  }
+
   // .viro.Node.Geometry geometry = 6;
   if (this->has_geometry()) {
     total_size += 1 +
@@ -4832,6 +4865,7 @@ void Node::MergeFrom(const Node& from) {
   scale_.MergeFrom(from.scale_);
   rotation_.MergeFrom(from.rotation_);
   light_.MergeFrom(from.light_);
+  subnode_.MergeFrom(from.subnode_);
   if (from.has_geometry()) {
     mutable_geometry()->::viro::Node_Geometry::MergeFrom(from.geometry());
   }
@@ -4866,6 +4900,7 @@ void Node::InternalSwap(Node* other) {
   scale_.UnsafeArenaSwap(&other->scale_);
   rotation_.UnsafeArenaSwap(&other->rotation_);
   light_.UnsafeArenaSwap(&other->light_);
+  subnode_.UnsafeArenaSwap(&other->subnode_);
   std::swap(geometry_, other->geometry_);
   std::swap(camera_, other->camera_);
   std::swap(rendering_order_, other->rendering_order_);
@@ -5104,6 +5139,36 @@ void Node::set_allocated_camera(::viro::Node_Camera* camera) {
     
   }
   // @@protoc_insertion_point(field_set_allocated:viro.Node.camera)
+}
+
+// repeated .viro.Node subnode = 9;
+int Node::subnode_size() const {
+  return subnode_.size();
+}
+void Node::clear_subnode() {
+  subnode_.Clear();
+}
+const ::viro::Node& Node::subnode(int index) const {
+  // @@protoc_insertion_point(field_get:viro.Node.subnode)
+  return subnode_.Get(index);
+}
+::viro::Node* Node::mutable_subnode(int index) {
+  // @@protoc_insertion_point(field_mutable:viro.Node.subnode)
+  return subnode_.Mutable(index);
+}
+::viro::Node* Node::add_subnode() {
+  // @@protoc_insertion_point(field_add:viro.Node.subnode)
+  return subnode_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::viro::Node >*
+Node::mutable_subnode() {
+  // @@protoc_insertion_point(field_mutable_list:viro.Node.subnode)
+  return &subnode_;
+}
+const ::google::protobuf::RepeatedPtrField< ::viro::Node >&
+Node::subnode() const {
+  // @@protoc_insertion_point(field_list:viro.Node.subnode)
+  return subnode_;
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

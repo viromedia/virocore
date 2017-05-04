@@ -235,6 +235,35 @@
 		8FCB102B1DD5489E00FE425C /* VROVideoDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB10291DD5489E00FE425C /* VROVideoDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCB102D1DD548C900FE425C /* VROVideoDelegateInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB102C1DD548C900FE425C /* VROVideoDelegateInternal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCB6C8A1C3C83EB00C14158 /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517C421BCF1CBE0017C70B /* ModelIO.framework */; };
+		8FCED04D1EBBBACF00C19BCA /* minion.proto in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED04C1EBBBACF00C19BCA /* minion.proto */; };
+		8FCED0571EBBCFCF00C19BCA /* Global_Illumination.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED04E1EBBCFCF00C19BCA /* Global_Illumination.png */; };
+		8FCED0581EBBCFCF00C19BCA /* MinionSuitA_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED04F1EBBCFCF00C19BCA /* MinionSuitA_Color.png */; };
+		8FCED0591EBBCFCF00C19BCA /* MinionSuitA_Glow.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0501EBBCFCF00C19BCA /* MinionSuitA_Glow.png */; };
+		8FCED05A1EBBCFCF00C19BCA /* MinionSuitA_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0511EBBCFCF00C19BCA /* MinionSuitA_Normal.png */; };
+		8FCED05B1EBBCFCF00C19BCA /* MinionSuitA_Spec.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0521EBBCFCF00C19BCA /* MinionSuitA_Spec.png */; };
+		8FCED05C1EBBCFCF00C19BCA /* Reflection.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0531EBBCFCF00C19BCA /* Reflection.png */; };
+		8FCED05D1EBBCFCF00C19BCA /* Squid_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0541EBBCFCF00C19BCA /* Squid_Color.png */; };
+		8FCED05E1EBBCFCF00C19BCA /* Squid_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0551EBBCFCF00C19BCA /* Squid_Normal.png */; };
+		8FCED05F1EBBCFCF00C19BCA /* Squid_Specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0561EBBCFCF00C19BCA /* Squid_Specular.png */; };
+		8FCED0611EBBD2F900C19BCA /* sven.proto in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0601EBBD2F900C19BCA /* sven.proto */; };
+		8FCED0741EBBD35200C19BCA /* Jetpack_Glow.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0621EBBD35200C19BCA /* Jetpack_Glow.png */; };
+		8FCED0751EBBD35200C19BCA /* Jetpack_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0631EBBD35200C19BCA /* Jetpack_Normal.png */; };
+		8FCED0761EBBD35200C19BCA /* Jetpack_Spec.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0641EBBD35200C19BCA /* Jetpack_Spec.png */; };
+		8FCED0771EBBD35200C19BCA /* ramp_inc2.tga in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0651EBBD35200C19BCA /* ramp_inc2.tga */; };
+		8FCED0781EBBD35200C19BCA /* Sven_Body_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0661EBBD35200C19BCA /* Sven_Body_Color.png */; };
+		8FCED0791EBBD35200C19BCA /* Sven_Body_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0671EBBD35200C19BCA /* Sven_Body_Normal.png */; };
+		8FCED07A1EBBD35200C19BCA /* Sven_Body_Specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0681EBBD35200C19BCA /* Sven_Body_Specular.png */; };
+		8FCED07B1EBBD35200C19BCA /* Sven_Eye_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0691EBBD35200C19BCA /* Sven_Eye_Color.png */; };
+		8FCED07C1EBBD35200C19BCA /* Sven_Face_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED06A1EBBD35200C19BCA /* Sven_Face_Color.png */; };
+		8FCED07D1EBBD35200C19BCA /* Sven_Face_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED06B1EBBD35200C19BCA /* Sven_Face_Normal.png */; };
+		8FCED07E1EBBD35200C19BCA /* Sven_Face_Specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED06C1EBBD35200C19BCA /* Sven_Face_Specular.png */; };
+		8FCED07F1EBBD35200C19BCA /* Sven_Hair_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED06D1EBBD35200C19BCA /* Sven_Hair_Color.png */; };
+		8FCED0801EBBD35200C19BCA /* Sven_Hair_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED06E1EBBD35200C19BCA /* Sven_Hair_Normal.png */; };
+		8FCED0811EBBD35200C19BCA /* Sven_Hair_Specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED06F1EBBD35200C19BCA /* Sven_Hair_Specular.png */; };
+		8FCED0821EBBD35200C19BCA /* SvenArmor_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0701EBBD35200C19BCA /* SvenArmor_Color.png */; };
+		8FCED0831EBBD35200C19BCA /* SvenArmor_Glow.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0711EBBD35200C19BCA /* SvenArmor_Glow.png */; };
+		8FCED0841EBBD35200C19BCA /* SvenArmor_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0721EBBD35200C19BCA /* SvenArmor_Normal.png */; };
+		8FCED0851EBBD35200C19BCA /* SvenArmor_Spec.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0731EBBD35200C19BCA /* SvenArmor_Spec.png */; };
 		8FCF39641CAEE26F00A86CA3 /* VROHoverDistanceListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF39621CAEE26F00A86CA3 /* VROHoverDistanceListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCF396B1CB4242000A86CA3 /* VRORenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCF39691CB4242000A86CA3 /* VRORenderer.cpp */; };
 		8FCF396C1CB4242000A86CA3 /* VRORenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCF396A1CB4242000A86CA3 /* VRORenderer.h */; };
@@ -741,6 +770,35 @@
 		8FCB10261DD544FF00FE425C /* VROVideoDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoDelegate.h; sourceTree = "<group>"; };
 		8FCB10291DD5489E00FE425C /* VROVideoDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoDelegateiOS.h; sourceTree = "<group>"; };
 		8FCB102C1DD548C900FE425C /* VROVideoDelegateInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoDelegateInternal.h; sourceTree = "<group>"; };
+		8FCED04C1EBBBACF00C19BCA /* minion.proto */ = {isa = PBXFileReference; lastKnownFileType = file; name = minion.proto; path = ViroSample/minion.proto; sourceTree = "<group>"; };
+		8FCED04E1EBBCFCF00C19BCA /* Global_Illumination.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Global_Illumination.png; path = ViroSample/Global_Illumination.png; sourceTree = "<group>"; };
+		8FCED04F1EBBCFCF00C19BCA /* MinionSuitA_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = MinionSuitA_Color.png; path = ViroSample/MinionSuitA_Color.png; sourceTree = "<group>"; };
+		8FCED0501EBBCFCF00C19BCA /* MinionSuitA_Glow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = MinionSuitA_Glow.png; path = ViroSample/MinionSuitA_Glow.png; sourceTree = "<group>"; };
+		8FCED0511EBBCFCF00C19BCA /* MinionSuitA_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = MinionSuitA_Normal.png; path = ViroSample/MinionSuitA_Normal.png; sourceTree = "<group>"; };
+		8FCED0521EBBCFCF00C19BCA /* MinionSuitA_Spec.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = MinionSuitA_Spec.png; path = ViroSample/MinionSuitA_Spec.png; sourceTree = "<group>"; };
+		8FCED0531EBBCFCF00C19BCA /* Reflection.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Reflection.png; path = ViroSample/Reflection.png; sourceTree = "<group>"; };
+		8FCED0541EBBCFCF00C19BCA /* Squid_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Squid_Color.png; path = ViroSample/Squid_Color.png; sourceTree = "<group>"; };
+		8FCED0551EBBCFCF00C19BCA /* Squid_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Squid_Normal.png; path = ViroSample/Squid_Normal.png; sourceTree = "<group>"; };
+		8FCED0561EBBCFCF00C19BCA /* Squid_Specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Squid_Specular.png; path = ViroSample/Squid_Specular.png; sourceTree = "<group>"; };
+		8FCED0601EBBD2F900C19BCA /* sven.proto */ = {isa = PBXFileReference; lastKnownFileType = file; name = sven.proto; path = ViroSample/sven.proto; sourceTree = "<group>"; };
+		8FCED0621EBBD35200C19BCA /* Jetpack_Glow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Jetpack_Glow.png; path = ViroSample/Jetpack_Glow.png; sourceTree = "<group>"; };
+		8FCED0631EBBD35200C19BCA /* Jetpack_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Jetpack_Normal.png; path = ViroSample/Jetpack_Normal.png; sourceTree = "<group>"; };
+		8FCED0641EBBD35200C19BCA /* Jetpack_Spec.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Jetpack_Spec.png; path = ViroSample/Jetpack_Spec.png; sourceTree = "<group>"; };
+		8FCED0651EBBD35200C19BCA /* ramp_inc2.tga */ = {isa = PBXFileReference; lastKnownFileType = file; name = ramp_inc2.tga; path = ViroSample/ramp_inc2.tga; sourceTree = "<group>"; };
+		8FCED0661EBBD35200C19BCA /* Sven_Body_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Sven_Body_Color.png; path = ViroSample/Sven_Body_Color.png; sourceTree = "<group>"; };
+		8FCED0671EBBD35200C19BCA /* Sven_Body_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Sven_Body_Normal.png; path = ViroSample/Sven_Body_Normal.png; sourceTree = "<group>"; };
+		8FCED0681EBBD35200C19BCA /* Sven_Body_Specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Sven_Body_Specular.png; path = ViroSample/Sven_Body_Specular.png; sourceTree = "<group>"; };
+		8FCED0691EBBD35200C19BCA /* Sven_Eye_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Sven_Eye_Color.png; path = ViroSample/Sven_Eye_Color.png; sourceTree = "<group>"; };
+		8FCED06A1EBBD35200C19BCA /* Sven_Face_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Sven_Face_Color.png; path = ViroSample/Sven_Face_Color.png; sourceTree = "<group>"; };
+		8FCED06B1EBBD35200C19BCA /* Sven_Face_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Sven_Face_Normal.png; path = ViroSample/Sven_Face_Normal.png; sourceTree = "<group>"; };
+		8FCED06C1EBBD35200C19BCA /* Sven_Face_Specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Sven_Face_Specular.png; path = ViroSample/Sven_Face_Specular.png; sourceTree = "<group>"; };
+		8FCED06D1EBBD35200C19BCA /* Sven_Hair_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Sven_Hair_Color.png; path = ViroSample/Sven_Hair_Color.png; sourceTree = "<group>"; };
+		8FCED06E1EBBD35200C19BCA /* Sven_Hair_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Sven_Hair_Normal.png; path = ViroSample/Sven_Hair_Normal.png; sourceTree = "<group>"; };
+		8FCED06F1EBBD35200C19BCA /* Sven_Hair_Specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Sven_Hair_Specular.png; path = ViroSample/Sven_Hair_Specular.png; sourceTree = "<group>"; };
+		8FCED0701EBBD35200C19BCA /* SvenArmor_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = SvenArmor_Color.png; path = ViroSample/SvenArmor_Color.png; sourceTree = "<group>"; };
+		8FCED0711EBBD35200C19BCA /* SvenArmor_Glow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = SvenArmor_Glow.png; path = ViroSample/SvenArmor_Glow.png; sourceTree = "<group>"; };
+		8FCED0721EBBD35200C19BCA /* SvenArmor_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = SvenArmor_Normal.png; path = ViroSample/SvenArmor_Normal.png; sourceTree = "<group>"; };
+		8FCED0731EBBD35200C19BCA /* SvenArmor_Spec.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = SvenArmor_Spec.png; path = ViroSample/SvenArmor_Spec.png; sourceTree = "<group>"; };
 		8FCF39621CAEE26F00A86CA3 /* VROHoverDistanceListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROHoverDistanceListener.h; sourceTree = "<group>"; };
 		8FCF39691CB4242000A86CA3 /* VRORenderer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRORenderer.cpp; sourceTree = "<group>"; };
 		8FCF396A1CB4242000A86CA3 /* VRORenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORenderer.h; sourceTree = "<group>"; };
@@ -1509,6 +1567,35 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8FCED0621EBBD35200C19BCA /* Jetpack_Glow.png */,
+				8FCED0631EBBD35200C19BCA /* Jetpack_Normal.png */,
+				8FCED0641EBBD35200C19BCA /* Jetpack_Spec.png */,
+				8FCED0651EBBD35200C19BCA /* ramp_inc2.tga */,
+				8FCED0661EBBD35200C19BCA /* Sven_Body_Color.png */,
+				8FCED0671EBBD35200C19BCA /* Sven_Body_Normal.png */,
+				8FCED0681EBBD35200C19BCA /* Sven_Body_Specular.png */,
+				8FCED0691EBBD35200C19BCA /* Sven_Eye_Color.png */,
+				8FCED06A1EBBD35200C19BCA /* Sven_Face_Color.png */,
+				8FCED06B1EBBD35200C19BCA /* Sven_Face_Normal.png */,
+				8FCED06C1EBBD35200C19BCA /* Sven_Face_Specular.png */,
+				8FCED06D1EBBD35200C19BCA /* Sven_Hair_Color.png */,
+				8FCED06E1EBBD35200C19BCA /* Sven_Hair_Normal.png */,
+				8FCED06F1EBBD35200C19BCA /* Sven_Hair_Specular.png */,
+				8FCED0701EBBD35200C19BCA /* SvenArmor_Color.png */,
+				8FCED0711EBBD35200C19BCA /* SvenArmor_Glow.png */,
+				8FCED0721EBBD35200C19BCA /* SvenArmor_Normal.png */,
+				8FCED0731EBBD35200C19BCA /* SvenArmor_Spec.png */,
+				8FCED0601EBBD2F900C19BCA /* sven.proto */,
+				8FCED04E1EBBCFCF00C19BCA /* Global_Illumination.png */,
+				8FCED04F1EBBCFCF00C19BCA /* MinionSuitA_Color.png */,
+				8FCED0501EBBCFCF00C19BCA /* MinionSuitA_Glow.png */,
+				8FCED0511EBBCFCF00C19BCA /* MinionSuitA_Normal.png */,
+				8FCED0521EBBCFCF00C19BCA /* MinionSuitA_Spec.png */,
+				8FCED0531EBBCFCF00C19BCA /* Reflection.png */,
+				8FCED0541EBBCFCF00C19BCA /* Squid_Color.png */,
+				8FCED0551EBBCFCF00C19BCA /* Squid_Normal.png */,
+				8FCED0561EBBCFCF00C19BCA /* Squid_Specular.png */,
+				8FCED04C1EBBBACF00C19BCA /* minion.proto */,
 				8F618E2A1EB926B60020B33B /* Heart_D2.jpg */,
 				8FB535231EB8DCCC00E8E1A6 /* heart.proto */,
 				8F660AAA1E931C6F006D063F /* 4096_bump.jpg */,
@@ -1920,10 +2007,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5ABB1BA1E93300700E07EBC /* chillroots.mp4 in Resources */,
+				8FCED07C1EBBD35200C19BCA /* Sven_Face_Color.png in Resources */,
+				8FCED07A1EBBD35200C19BCA /* Sven_Body_Specular.png in Resources */,
+				8FCED05E1EBBCFCF00C19BCA /* Squid_Normal.png in Resources */,
 				8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
+				8FCED0791EBBD35200C19BCA /* Sven_Body_Normal.png in Resources */,
 				8F660AB11E931C6F006D063F /* 4096_clouds.jpg in Resources */,
+				8FCED0581EBBCFCF00C19BCA /* MinionSuitA_Color.png in Resources */,
+				8FCED07F1EBBD35200C19BCA /* Sven_Hair_Color.png in Resources */,
+				8FCED04D1EBBBACF00C19BCA /* minion.proto in Resources */,
 				8F660AB31E931C6F006D063F /* 4096_night_lights.jpg in Resources */,
+				8FCED0851EBBD35200C19BCA /* SvenArmor_Spec.png in Resources */,
 				8FA2E14B1C445CAA0070DB26 /* px.png in Resources */,
 				8F140FCF1E56658700355A1E /* card_main.ktx in Resources */,
 				8F618E2B1EB926B60020B33B /* Heart_D2.jpg in Resources */,
@@ -1931,8 +2026,10 @@
 				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
 				8F705DF51E8F5D42008BE8F8 /* earth_normal.jpg in Resources */,
 				8F9278011C66BD4500FF892A /* px1.jpg in Resources */,
+				8FCED0751EBBD35200C19BCA /* Jetpack_Normal.png in Resources */,
 				8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
 				A5ABB1D91E95703200E07EBC /* stereoVid360.mp4 in Resources */,
+				8FCED0591EBBCFCF00C19BCA /* MinionSuitA_Glow.png in Resources */,
 				8F9278001C66BD4500FF892A /* nz1.jpg in Resources */,
 				8FA2E14A1C445CAA0070DB26 /* nz.png in Resources */,
 				8F50FC891E0AF54F00A9B4B2 /* male-02-1noCulling.JPG in Resources */,
@@ -1940,35 +2037,54 @@
 				8FB535241EB8DCCC00E8E1A6 /* heart.proto in Resources */,
 				8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */,
 				8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */,
+				8FCED05C1EBBCFCF00C19BCA /* Reflection.png in Resources */,
+				8FCED0611EBBD2F900C19BCA /* sven.proto in Resources */,
 				8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */,
+				8FCED0821EBBD35200C19BCA /* SvenArmor_Color.png in Resources */,
 				8F9278031C66BD4500FF892A /* pz1.jpg in Resources */,
 				8F660AB41E931C6F006D063F /* 4096_normal.jpg in Resources */,
 				8FA2E14C1C445CAA0070DB26 /* py.png in Resources */,
 				8F660AB21E931C6F006D063F /* 4096_earth.jpg in Resources */,
+				8FCED0831EBBD35200C19BCA /* SvenArmor_Glow.png in Resources */,
 				8F660AB51E931C6F006D063F /* earth.mtl in Resources */,
 				A5ABB1D81E95703200E07EBC /* stereoVid.mp4 in Resources */,
+				8FCED0571EBBCFCF00C19BCA /* Global_Illumination.png in Resources */,
 				8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */,
 				8F9277FE1C66BD4500FF892A /* nx1.jpg in Resources */,
+				8FCED07D1EBBD35200C19BCA /* Sven_Face_Normal.png in Resources */,
+				8FCED0771EBBD35200C19BCA /* ramp_inc2.tga in Resources */,
 				8FA2E1481C445CAA0070DB26 /* nx.png in Resources */,
 				A5ABB1D61E95703200E07EBC /* stereo3601.jpg in Resources */,
+				8FCED0801EBBD35200C19BCA /* Sven_Hair_Normal.png in Resources */,
+				8FCED07B1EBBD35200C19BCA /* Sven_Eye_Color.png in Resources */,
 				8FA2E1411C4447D00070DB26 /* skybox.png in Resources */,
 				8F83DEB11C503EDF0089C31A /* beach.jpg in Resources */,
+				8FCED07E1EBBD35200C19BCA /* Sven_Face_Specular.png in Resources */,
+				8FCED0741EBBD35200C19BCA /* Jetpack_Glow.png in Resources */,
 				8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */,
 				8F9277FF1C66BD4500FF892A /* ny1.jpg in Resources */,
 				8FDD8FF31E3A9907006CF466 /* 360_westlake.jpg in Resources */,
+				8FCED05A1EBBCFCF00C19BCA /* MinionSuitA_Normal.png in Resources */,
 				A5ABB1D71E95703200E07EBC /* stereo3602.jpg in Resources */,
 				8F50FC8C1E0AF54F00A9B4B2 /* orig_02_-_Defaul1noCulling.JPG in Resources */,
+				8FCED0781EBBD35200C19BCA /* Sven_Body_Color.png in Resources */,
+				8FCED05D1EBBCFCF00C19BCA /* Squid_Color.png in Resources */,
 				8F50FC881E0AF54F00A9B4B2 /* 01_-_Default1noCulling.JPG in Resources */,
 				8F517BC71BCDA2BD0017C70B /* Main.storyboard in Resources */,
 				8F705DF71E8F5D42008BE8F8 /* earth.obj in Resources */,
 				8F660AB01E931C6F006D063F /* 4096_bump.jpg in Resources */,
+				8FCED05F1EBBCFCF00C19BCA /* Squid_Specular.png in Resources */,
+				8FCED0761EBBD35200C19BCA /* Jetpack_Spec.png in Resources */,
 				8F50FC8B1E0AF54F00A9B4B2 /* male02.obj in Resources */,
 				8F5C41551BD82C1B006D7A77 /* boba.png in Resources */,
 				8F50FC8A1E0AF54F00A9B4B2 /* male02.mtl in Resources */,
+				8FCED0841EBBD35200C19BCA /* SvenArmor_Normal.png in Resources */,
 				8F705DF61E8F5D42008BE8F8 /* earth.jpg in Resources */,
 				8F83DEB31C5042240089C31A /* surfing.mp4 in Resources */,
+				8FCED05B1EBBCFCF00C19BCA /* MinionSuitA_Spec.png in Resources */,
 				A5ABB1CD1E95703200E07EBC /* stereo1.jpg in Resources */,
 				8FA2E1491C445CAA0070DB26 /* ny.png in Resources */,
+				8FCED0811EBBD35200C19BCA /* Sven_Hair_Specular.png in Resources */,
 				8FD9B4651C33A933006CB698 /* bobaraj.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

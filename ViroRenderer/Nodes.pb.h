@@ -3,13 +3,12 @@
 
 #ifndef PROTOBUF_Nodes_2eproto__INCLUDED
 #define PROTOBUF_Nodes_2eproto__INCLUDED
-
 #include "VRODefines.h"
 #if VRO_PLATFORM_IOS
 #define google google_public
 #endif
-
 #include <string>
+
 #include <google/protobuf/stubs/common.h>
 
 #if GOOGLE_PROTOBUF_VERSION < 3002000
@@ -1451,6 +1450,18 @@ class Node : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(
   const ::google::protobuf::RepeatedPtrField< ::viro::Node_Light >&
       light() const;
 
+  // repeated .viro.Node subnode = 9;
+  int subnode_size() const;
+  void clear_subnode();
+  static const int kSubnodeFieldNumber = 9;
+  const ::viro::Node& subnode(int index) const;
+  ::viro::Node* mutable_subnode(int index);
+  ::viro::Node* add_subnode();
+  ::google::protobuf::RepeatedPtrField< ::viro::Node >*
+      mutable_subnode();
+  const ::google::protobuf::RepeatedPtrField< ::viro::Node >&
+      subnode() const;
+
   // .viro.Node.Geometry geometry = 6;
   bool has_geometry() const;
   void clear_geometry();
@@ -1492,6 +1503,7 @@ class Node : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(
   ::google::protobuf::RepeatedField< float > rotation_;
   mutable int _rotation_cached_byte_size_;
   ::google::protobuf::RepeatedPtrField< ::viro::Node_Light > light_;
+  ::google::protobuf::RepeatedPtrField< ::viro::Node > subnode_;
   ::viro::Node_Geometry* geometry_;
   ::viro::Node_Camera* camera_;
   ::google::protobuf::int32 rendering_order_;
@@ -3037,6 +3049,36 @@ inline void Node::set_allocated_camera(::viro::Node_Camera* camera) {
     
   }
   // @@protoc_insertion_point(field_set_allocated:viro.Node.camera)
+}
+
+// repeated .viro.Node subnode = 9;
+inline int Node::subnode_size() const {
+  return subnode_.size();
+}
+inline void Node::clear_subnode() {
+  subnode_.Clear();
+}
+inline const ::viro::Node& Node::subnode(int index) const {
+  // @@protoc_insertion_point(field_get:viro.Node.subnode)
+  return subnode_.Get(index);
+}
+inline ::viro::Node* Node::mutable_subnode(int index) {
+  // @@protoc_insertion_point(field_mutable:viro.Node.subnode)
+  return subnode_.Mutable(index);
+}
+inline ::viro::Node* Node::add_subnode() {
+  // @@protoc_insertion_point(field_add:viro.Node.subnode)
+  return subnode_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::viro::Node >*
+Node::mutable_subnode() {
+  // @@protoc_insertion_point(field_mutable_list:viro.Node.subnode)
+  return &subnode_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::viro::Node >&
+Node::subnode() const {
+  // @@protoc_insertion_point(field_list:viro.Node.subnode)
+  return subnode_;
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS

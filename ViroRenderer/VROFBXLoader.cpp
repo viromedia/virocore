@@ -157,17 +157,11 @@ void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode, std::shared_ptr<V
                              std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish) {
     
     if (fbxNode) {
-        node->setPosition(fbxNode->getPosition());
-        node->setScale(fbxNode->getScale());
-        node->setRotation(fbxNode->getRotation());
-        node->setRenderingOrder(fbxNode->getRenderingOrder());
-        node->setOpacity(fbxNode->getOpacity());
-        
-        node->setGeometry(fbxNode->getGeometry());
+        // The top-level fbxNode is a dummy; all of the data is stored in the children, so we
+        // simply transfer those children over to the destination node
         for (std::shared_ptr<VRONode> child : fbxNode->getSubnodes()) {
             node->addChildNode(child);
         }
-        
         if (onFinish) {
             onFinish(node, true);
         }
@@ -195,6 +189,23 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
     
     pinfo("Read FBX protobuf");
     
+    // The outer node of the protobuf is just a container. It has no data.
+    // We use our outer VRONode for the same purpose, to contain the root
+    // nodes of the FBX file
+    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    for (int i = 0; i < node_pb.subnode_size(); i++) {
+        std::shared_ptr<VRONode> node = loadFBXNode(node_pb.subnode(i), base, isBaseURL, resourceMap, textureCache);
+        rootNode->addChildNode(node);
+    }
+    
+    return rootNode;
+}
+
+std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
+                                                   std::string base, bool isBaseURL,
+                                                   const std::map<std::string, std::string> *resourceMap,
+                                                   std::map<std::string, std::shared_ptr<VROTexture>> &textureCache) {
+    
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
     node->setThreadRestrictionEnabled(false);
     node->setPosition({ node_pb.position(0), node_pb.position(1), node_pb.position(2) });
@@ -203,7 +214,23 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
     node->setRenderingOrder(node_pb.rendering_order());
     node->setOpacity(node_pb.opacity());
     
-    const viro::Node::Geometry &geo_pb = node_pb.geometry();
+    if (node_pb.has_geometry()) {
+        std::shared_ptr<VROGeometry> geo = loadFBXGeometry(node_pb.geometry(), base, isBaseURL, resourceMap, textureCache);
+        node->setGeometry(geo);
+    }
+    
+    for (int i = 0; i < node_pb.subnode_size(); i++) {
+        std::shared_ptr<VRONode> subnode = loadFBXNode(node_pb.subnode(i), base, isBaseURL, resourceMap, textureCache);
+        node->addChildNode(subnode);
+    }
+    
+    return node;
+}
+
+std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geometry &geo_pb,
+                                                           std::string base, bool isBaseURL,
+                                                           const std::map<std::string, std::string> *resourceMap,
+                                                           std::map<std::string, std::shared_ptr<VROTexture>> &textureCache) {
     std::shared_ptr<VROData> varData = std::make_shared<VROData>(geo_pb.data().c_str(), geo_pb.data().length());
     
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
@@ -251,8 +278,10 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
         if (material_pb.has_diffuse()) {
             const viro::Node::Geometry::Material::Visual &diffuse_pb = material_pb.diffuse();
             VROMaterialVisual &diffuse = material->getDiffuse();
-
-            diffuse.setColor({ diffuse_pb.color(0), diffuse_pb.color(1), diffuse_pb.color(2), 1.0 });
+            
+            if (diffuse_pb.color_size() >= 2) {
+                diffuse.setColor({ diffuse_pb.color(0), diffuse_pb.color(1), diffuse_pb.color(2), 1.0 });
+            }
             diffuse.setIntensity(diffuse_pb.intensity());
             
             if (!diffuse_pb.texture().empty()) {
@@ -268,7 +297,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
         if (material_pb.has_specular()) {
             const viro::Node::Geometry::Material::Visual &specular_pb = material_pb.specular();
             VROMaterialVisual &specular = material->getSpecular();
-
+            
             specular.setIntensity(specular_pb.intensity());
             
             if (!specular_pb.texture().empty()) {
@@ -284,7 +313,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
         if (material_pb.has_normal()) {
             const viro::Node::Geometry::Material::Visual &normal_pb = material_pb.normal();
             VROMaterialVisual &normal = material->getNormal();
-
+            
             normal.setIntensity(normal_pb.intensity());
             
             if (!normal_pb.texture().empty()) {
@@ -308,6 +337,5 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
           bounds.getMinY(), bounds.getMaxY(),
           bounds.getMinZ(), bounds.getMaxZ());
     
-    node->setGeometry(geo);
-    return node;
+    return geo;
 }
