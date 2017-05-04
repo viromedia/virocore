@@ -193,6 +193,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
     // We use our outer VRONode for the same purpose, to contain the root
     // nodes of the FBX file
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    rootNode->setThreadRestrictionEnabled(false);
     for (int i = 0; i < node_pb.subnode_size(); i++) {
         std::shared_ptr<VRONode> node = loadFBXNode(node_pb.subnode(i), base, isBaseURL, resourceMap, textureCache);
         rootNode->addChildNode(node);
