@@ -321,7 +321,7 @@ void VRONode::updateVisibility(const VRORenderContext &context) {
     _umbrellaBoundingBox = VROBoundingBox();
     computeUmbrellaBounds(&_umbrellaBoundingBox);
     
-    VROFrustumResult result = frustum.intersectWithFarPointsOpt(_umbrellaBoundingBox);
+    VROFrustumResult result = frustum.intersectAllOpt(_umbrellaBoundingBox, &_umbrellaBoxMetadata);
     if (result == VROFrustumResult::Inside) {
         setVisibilityRecursive(true);
     }

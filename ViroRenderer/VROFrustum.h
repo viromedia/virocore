@@ -40,7 +40,7 @@ public:
     /*
      Create a new frustum.
      */
-    explicit VROFrustum(bool tdf);
+    explicit VROFrustum();
     virtual ~VROFrustum();
 
     /*
@@ -48,11 +48,6 @@ public:
      */
     void fitToModelView(const float *view, const float *projection,
                         const float bufferSides, const float bufferNear, const float bufferFar);
-
-    /*
-     TDF initialization.
-     */
-    void fitToFrustum(const VROFrustum &source, const VROVector3f &distance);
 
     /*
      Intersection testing (automatically chooses best method).
@@ -63,14 +58,7 @@ public:
      Intersect this frustum with a bounding box, utilizing the far points optimization and
      temporal coherency optimizations.
      */
-    VROFrustumResult intersectGeneric(const VROBoundingBox &box, VROFrustumBoxIntersectionMetadata *metadata) const;
-
-    /*
-     Intersect this frustum with a bounding box, utilization the far points optimization in
-     conjuction with temporal and translation coherency optimizations.
-     */
-    VROFrustumResult intersectTDF(const VROBoundingBox &box, VROFrustumBoxIntersectionMetadata *metadata) const;
-    VROFrustumResult intersectTDFUnoptimized(const VROBoundingBox &box, VROFrustumBoxIntersectionMetadata *metadata) const;
+    VROFrustumResult intersectAllOpt(const VROBoundingBox &box, VROFrustumBoxIntersectionMetadata *metadata) const;
 
     /*
      Frustum intersection using the "far point" optimization. The far point optimization enables us
@@ -101,35 +89,8 @@ private:
     /*
      The planes composing this frustum: left, right, bottom, top, near, far.
      */
-    VROFrustumPlane planes[6];
-
-    /*
-     TDF frustum only
-
-     The distance of any point in this frustum from the corresponding point in
-     the source non-translation frustum.
-     */
-    VROVector3f delta;
-
-    /*
-     TDF frustum only
-
-     The distance, in the direction of each plane's normal, between the planes
-     in this frustum and the planes in the source non-translation frustum.
-     */
-    float planeDeltas[6];
+    VROFrustumPlane _planes[6];
     
-    /*
-     The frame during which this camera frustum was created.
-     */
-    uint32_t frame;
-    
-    /*
-     True if this is a translation-delta frustum (a frustum derived from another
-     by pure translation). These frustums provide faster intersection testing.
-     */
-    bool tdf;
-
 };
 
 #endif /* VROFRUSTUM_H_ */

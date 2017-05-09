@@ -9,19 +9,10 @@
 #include "VROFrustumBoxIntersectionMetadata.h"
 
 VROFrustumBoxIntersectionMetadata::VROFrustumBoxIntersectionMetadata() :
-    _sourceFrustumForDistances(nullptr),
-    _distanceFrame(UINT32_MAX),
-    _planeLastOutside(0),
-    _distancesValid(false) {
+    _planeLastOutside(0) {
     
 }
 
 VROFrustumBoxIntersectionMetadata::~VROFrustumBoxIntersectionMetadata() {
     
-}
-
-void VROFrustumBoxIntersectionMetadata::reset() {
-    _distanceFrame = UINT32_MAX;
-    _sourceFrustumForDistances = nullptr;
-    _distancesValid = false;
 }

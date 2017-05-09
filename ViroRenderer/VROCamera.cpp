@@ -10,7 +10,7 @@
 #include "VROLog.h"
 #include "VROMath.h"
 
-VROCamera::VROCamera() : _frustum(false) {
+VROCamera::VROCamera() : _frustum() {
     
 }
 
@@ -46,7 +46,6 @@ void VROCamera::computeLookAtMatrix() {
 
 void VROCamera::computeFrustum(float ncp, float fcp) {
     _projectionMatrix = _fov.toPerspectiveMatrix(ncp, fcp);
-    _frustum = VROFrustum(false);
     _frustum.fitToModelView(_lookAtMatrix.getArray(), _projectionMatrix.getArray(), 0, 0, 0);
 }
 

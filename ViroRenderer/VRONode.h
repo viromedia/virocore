@@ -25,6 +25,7 @@
 #include "VROLog.h"
 #include "VROEventDelegate.h"
 #include "VROSound.h"
+#include "VROFrustumBoxIntersectionMetadata.h"
 #include "VROThreadRestricted.h"
 
 class VROGeometry;
@@ -405,6 +406,7 @@ private:
      */
     VROBoundingBox _computedBoundingBox;
     VROBoundingBox _umbrellaBoundingBox;
+    VROFrustumBoxIntersectionMetadata _umbrellaBoxMetadata;
     
     /*
      True if this node is hidden. Hidden nodes are not rendered, and do not 
