@@ -123,11 +123,6 @@ public:
 private:
 
     bool _rendererInitialized;
-
-    /*
-     Manages per-frame listeners.
-     */
-    std::shared_ptr<VROFrameSynchronizer> _frameSynchronizer;
     
     /*
      Maintains parameters used for scene rendering.
@@ -138,12 +133,6 @@ private:
      Controller used for handling all input events.
      */
     std::shared_ptr<VROInputControllerBase> _inputController;
-    
-    /*
-     The node that owns the VRONodeCamera that will determine the point of
-     view from which we display the scene.
-     */
-    std::shared_ptr<VRONode> _pointOfView;
     
     /*
      Delegate receiving scene rendering updates.
@@ -159,8 +148,19 @@ private:
      Invoked on the rendering thread to perform thread-specific initialization.
      */
     void initRenderer(std::shared_ptr<VRODriver> driver);
+  
+#pragma mark - [Private] Camera and Visibility
     
-#pragma mark - FPS Computation
+    /*
+     The node that owns the VRONodeCamera that will determine the point of
+     view from which we display the scene.
+     */
+    std::shared_ptr<VRONode> _pointOfView;
+  
+    VROCamera updateCamera(const VROViewport &viewport, const VROFieldOfView &fov,
+                           const VROMatrix4f &headRotation);
+    
+#pragma mark - [Private] FPS Computation
     
     /*
      Variables for FPS computation. Array of samples taken, index of
@@ -183,7 +183,7 @@ private:
     void updateFPS(uint64_t newTick);
     double getFPS() const;
     
-#pragma mark - Process scheduling
+#pragma mark - [Private] Process scheduling
     
     /*
      Milliseconds per frame target; derived from desired FPS.
@@ -202,16 +202,21 @@ private:
      */
     std::shared_ptr<VROFrameScheduler> _frameScheduler;
 
-#pragma mark - Scene and Scene Transitions
+#pragma mark - [Private] Scene and Scene Transitions
     
     std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VROSceneController> _outgoingSceneController;
 
-#pragma mark - Scene Rendering
+#pragma mark - [Private] Scene Rendering
     
     void renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> driver);
     
-#pragma mark - Frame Listeners
+#pragma mark - [Private] Frame Listeners
+    
+    /*
+     Manages per-frame listeners.
+     */
+    std::shared_ptr<VROFrameSynchronizer> _frameSynchronizer;
     
     void notifyFrameStart();
     void notifyFrameEnd();

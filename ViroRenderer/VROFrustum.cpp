@@ -27,11 +27,11 @@ VROFrustum::~VROFrustum() {
 
 }
 
-void VROFrustum::fitToModelView(const double *view, const float *projection,
-        const float bufferSides, const float bufferNear, const float bufferFar) {
+void VROFrustum::fitToModelView(const float *view, const float *projection,
+                                const float bufferSides, const float bufferNear, const float bufferFar) {
 
-    double mtx[16];
-    VROMathMultMatrices_dfd(view, projection, mtx);
+    float mtx[16];
+    VROMathMultMatrices(view, projection, mtx);
 
     /* Left plane */
     VROFrustumPlane &left = planes[(int)VROFrustumSide::Left];
@@ -94,7 +94,7 @@ void VROFrustum::fitToModelView(const double *view, const float *projection,
     far.refreshFarPoints();
 
     /*
-     * Expand the frustum slightly to mitigate popping. Make negative to contract.
+     Expand the frustum slightly to mitigate popping. Make negative to contract.
      */
     planes[(int)VROFrustumSide::Right].d += bufferSides;
     planes[(int)VROFrustumSide::Left].d += bufferSides;
@@ -152,10 +152,10 @@ void VROFrustum::fitToFrustum(const VROFrustum &source, const VROVector3f &dista
 #pragma mark -
 #pragma mark Intersection Testing
 
-VROFrustumResult VROFrustum::intersectTDFUnoptimized(VROBoundingBox *box, VROFrustumBoxIntersectionMetadata *metadata) const {
+VROFrustumResult VROFrustum::intersectTDFUnoptimized(const VROBoundingBox &box, VROFrustumBoxIntersectionMetadata *metadata) const {
     uint32_t frame = this->frame;
 
-    const float *boxPlanes = box->getPlanes();
+    const float *boxPlanes = box.getPlanes();
     int startingPlane = metadata->getPlaneLastOutside();
 
     /*
@@ -266,7 +266,7 @@ VROFrustumResult VROFrustum::intersectTDFUnoptimized(VROBoundingBox *box, VROFru
     }
 }
 
-VROFrustumResult VROFrustum::intersectTDF(VROBoundingBox *box, VROFrustumBoxIntersectionMetadata *metadata) const {
+VROFrustumResult VROFrustum::intersectTDF(const VROBoundingBox &box, VROFrustumBoxIntersectionMetadata *metadata) const {
     const float *planeDeltas = this->planeDeltas;
     uint32_t frame = this->frame;
 
@@ -368,8 +368,8 @@ VROFrustumResult VROFrustum::intersectTDF(VROBoundingBox *box, VROFrustumBoxInte
     }
 }
 
-VROFrustumResult VROFrustum::intersectGeneric(VROBoundingBox *box, VROFrustumBoxIntersectionMetadata *metadata) const {
-    const float *boxPlanes = box->getPlanes();
+VROFrustumResult VROFrustum::intersectGeneric(const VROBoundingBox &box, VROFrustumBoxIntersectionMetadata *metadata) const {
+    const float *boxPlanes = box.getPlanes();
     int startingPlane = metadata->getPlaneLastOutside();
 
     /*
@@ -481,12 +481,12 @@ VROFrustumResult VROFrustum::intersectGeneric(VROBoundingBox *box, VROFrustumBox
     }
 }
 
-VROFrustumResult VROFrustum::intersectWithFarPointsOpt(VROBoundingBox *box, VROFrustumBoxIntersectionMetadata *metadata) const {
-    const float *boxPlanes = box->getPlanes();
+VROFrustumResult VROFrustum::intersectWithFarPointsOpt(const VROBoundingBox &box) const {
+    const float *boxPlanes = box.getPlanes();
 
     bool isInside = true;
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 6; i++) {
         const VROVector3f &normal = planes[i].normal;
         float d = planes[i].d;
 
@@ -529,18 +529,18 @@ VROFrustumResult VROFrustum::intersectWithFarPointsOpt(VROBoundingBox *box, VROF
     }
 }
 
-VROFrustumResult VROFrustum::intersectNoOpt(VROBoundingBox *box) const {
+VROFrustumResult VROFrustum::intersectNoOpt(const VROBoundingBox &box) const {
     int numPointsContained = 0;
 
     std::vector<VROVector3f> points {
-        {box->getMinX(), box->getMinY(), box->getMinZ()},
-        {box->getMaxX(), box->getMinY(), box->getMinZ()},
-        {box->getMinX(), box->getMaxY(), box->getMinZ()},
-        {box->getMaxX(), box->getMaxY(), box->getMinZ()},
-        {box->getMinX(), box->getMinY(), box->getMaxZ()},
-        {box->getMaxX(), box->getMinY(), box->getMaxZ()},
-        {box->getMinX(), box->getMaxY(), box->getMaxZ()},
-        {box->getMaxX(), box->getMaxY(), box->getMaxZ()}
+        {box.getMinX(), box.getMinY(), box.getMinZ()},
+        {box.getMaxX(), box.getMinY(), box.getMinZ()},
+        {box.getMinX(), box.getMaxY(), box.getMinZ()},
+        {box.getMaxX(), box.getMaxY(), box.getMinZ()},
+        {box.getMinX(), box.getMinY(), box.getMaxZ()},
+        {box.getMaxX(), box.getMinY(), box.getMaxZ()},
+        {box.getMinX(), box.getMaxY(), box.getMaxZ()},
+        {box.getMaxX(), box.getMaxY(), box.getMaxZ()}
     };
 
     for (size_t j = 0; j < points.size(); j++) {
@@ -569,44 +569,6 @@ VROFrustumResult VROFrustum::intersectNoOpt(VROBoundingBox *box) const {
     }
     else {
         return VROFrustumResult::Intersects;
-    }
-}
-
-VROFrustumResult VROFrustum::intersectSlow(VROBoundingBox *box) const {
-    std::vector<VROVector3f> points {
-        {box->getMinX(), box->getMinY(), box->getMinZ()},
-        {box->getMaxX(), box->getMinY(), box->getMinZ()},
-        {box->getMinX(), box->getMaxY(), box->getMinZ()},
-        {box->getMaxX(), box->getMaxY(), box->getMinZ()},
-        {box->getMinX(), box->getMinY(), box->getMaxZ()},
-        {box->getMaxX(), box->getMinY(), box->getMaxZ()},
-        {box->getMinX(), box->getMaxY(), box->getMaxZ()},
-        {box->getMaxX(), box->getMaxY(), box->getMaxZ()}
-    };
-
-    bool intersects = false;
-    bool contains = true;
-
-    for (size_t i = 0; i < points.size(); i++) {
-        if (containsPoint(points[i])) {
-            intersects = true;
-        }
-        else {
-            contains = false;
-        }
-    }
-
-    /*
-     If any negative far point was outside the frustum, then we know we can't be inside.
-     */
-    if (contains) {
-        return VROFrustumResult::Inside;
-    }
-    else if (intersects) {
-        return VROFrustumResult::Intersects;
-    }
-    else {
-        return VROFrustumResult::Outside;
     }
 }
 
@@ -649,8 +611,11 @@ float VROFrustum::distanceFromNCP(VROVector3f pt) const {
     }
 }
 
-VROFrustumResult VROFrustum::intersect(VROBoundingBox *box, VROFrustumBoxIntersectionMetadata *metadata) const {
-    if (tdf) {
+VROFrustumResult VROFrustum::intersect(const VROBoundingBox &box, VROFrustumBoxIntersectionMetadata *metadata) const {
+    if (!metadata) {
+        return intersectWithFarPointsOpt(box);
+    }
+    else if (tdf) {
         return intersectTDF(box, metadata);
     }
     else {

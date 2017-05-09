@@ -46,7 +46,7 @@ public:
     /*
      Generic initialization.
      */
-    void fitToModelView(const double *view, const float *projection,
+    void fitToModelView(const float *view, const float *projection,
                         const float bufferSides, const float bufferNear, const float bufferFar);
 
     /*
@@ -57,37 +57,32 @@ public:
     /*
      Intersection testing (automatically chooses best method).
      */
-    VROFrustumResult intersect(VROBoundingBox *box, VROFrustumBoxIntersectionMetadata *metadata) const;
+    VROFrustumResult intersect(const VROBoundingBox &box, VROFrustumBoxIntersectionMetadata *metadata) const;
 
     /*
      Intersect this frustum with a bounding box, utilizing the far points optimization and
      temporal coherency optimizations.
      */
-    VROFrustumResult intersectGeneric(VROBoundingBox *box, VROFrustumBoxIntersectionMetadata *metadata) const;
+    VROFrustumResult intersectGeneric(const VROBoundingBox &box, VROFrustumBoxIntersectionMetadata *metadata) const;
 
     /*
      Intersect this frustum with a bounding box, utilization the far points optimization in
      conjuction with temporal and translation coherency optimizations.
      */
-    VROFrustumResult intersectTDF(VROBoundingBox *box, VROFrustumBoxIntersectionMetadata *metadata) const;
-    VROFrustumResult intersectTDFUnoptimized(VROBoundingBox *box, VROFrustumBoxIntersectionMetadata *metadata) const;
+    VROFrustumResult intersectTDF(const VROBoundingBox &box, VROFrustumBoxIntersectionMetadata *metadata) const;
+    VROFrustumResult intersectTDFUnoptimized(const VROBoundingBox &box, VROFrustumBoxIntersectionMetadata *metadata) const;
 
     /*
      Frustum intersection using the "far point" optimization. The far point optimization enables us
      to determine if there's an intersection between a frustum and an AABB using only two plane->point
      distance calculations per frustum plane.
      */
-    VROFrustumResult intersectWithFarPointsOpt(VROBoundingBox *box, VROFrustumBoxIntersectionMetadata *metadata) const;
+    VROFrustumResult intersectWithFarPointsOpt(const VROBoundingBox &box) const;
 
     /*
-     Robust frustum intersection, using no optimizations. Faster than intersectSlow, but barely.
+     Robust frustum intersection, using no optimizations.
      */
-    VROFrustumResult intersectNoOpt(VROBoundingBox *box) const;
-
-    /*
-     Robust, slow frustum interesction routine that leverages containsPoint().
-     */
-    VROFrustumResult intersectSlow(VROBoundingBox *box) const;
+    VROFrustumResult intersectNoOpt(const VROBoundingBox &box) const;
 
     /*
      Check if the given point is contained by this frustum.

@@ -108,6 +108,12 @@ void VROScene::computeTransforms(const VRORenderContext &context) {
     }
 }
 
+void VROScene::updateVisibility(const VRORenderContext &context) {
+    for (std::shared_ptr<VRONode> &node : _nodes) {
+        node->updateVisibility(context);
+    }
+}
+
 void VROScene::applyConstraints(const VRORenderContext &context) {
     for (std::shared_ptr<VRONode> &node : _nodes) {
         node->applyConstraints(context, {}, false);
@@ -131,7 +137,7 @@ void VROScene::updateSortKeys(const VRORenderContext &context, std::shared_ptr<V
     
     _keys.clear();
     for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->getSortKeys(&_keys);
+        node->getSortKeysForVisibleNodes(&_keys);
     }
     
     std::sort(_keys.begin(), _keys.end());

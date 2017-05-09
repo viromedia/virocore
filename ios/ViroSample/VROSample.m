@@ -290,7 +290,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     modifier->setUniformBinder("testA", [](VROUniform *uniform, GLuint location, const VROGeometry &geometry) {
         uniform->setFloat(1.0);
     });
-    material->addShaderModifier(modifier);
+    //material->addShaderModifier(modifier);
     
     /*
      This surface modifier doubles the V tex-coord, making boba.png cover only the top half of the box.
@@ -401,8 +401,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         spotBlue->setDirection({1, 0, -1});
         
         cameraNode->setPosition({0, 1, 0});
-        box->setWidth(5);
-        box->setLength(5);
+        //box->setWidth(5);
+        //box->setLength(5);
         
         VROTransaction::commit();
     });
@@ -719,7 +719,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundCube([self niagaraTexture]);
     
-    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"sven" ofType:@"proto"];
+    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"minion" ofType:@"proto"];
     NSURL *fbxURL = [NSURL fileURLWithPath:fbxPath];
     std::string url = std::string([[fbxURL description] UTF8String]);
     

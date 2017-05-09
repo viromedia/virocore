@@ -73,12 +73,6 @@ void VRORenderer::setDebugHUDEnabled(bool enabled) {
     _debugHUD->setEnabled(enabled);
 }
 
-#pragma mark - Camera
-
-void VRORenderer::setPointOfView(std::shared_ptr<VRONode> node) {
-    _pointOfView = node;
-}
-
 #pragma mark - FPS Computation
 
 void VRORenderer::updateFPS(uint64_t newTick) {
@@ -131,34 +125,14 @@ void VRORenderer::updateRenderViewSize(float width, float height) {
     }
 }
 
-#pragma mark - Stereo renderer methods
+#pragma mark - Camera and Visibility
 
-void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView fov,
-                               VROMatrix4f headRotation, std::shared_ptr<VRODriver> driver) {
+void VRORenderer::setPointOfView(std::shared_ptr<VRONode> node) {
+    _pointOfView = node;
+}
 
-    if (!_rendererInitialized) {
-        initRenderer(driver);
-      
-        _rendererInitialized = true;
-        _nanosecondsLastFrame = VRONanoTime();
-    }
-    else {
-        uint64_t nanosecondsThisFrame = VRONanoTime();
-        uint64_t tick = nanosecondsThisFrame - _nanosecondsLastFrame;
-        _nanosecondsLastFrame = nanosecondsThisFrame;
-        
-        updateFPS(tick);
-    }
-    
-    _frameStartTime = VROTimeCurrentMillis();
-
-    VROTransaction::beginImplicitAnimation();
-    VROTransaction::update();
-
-    _context->setFrame(frame);
-    _context->setFPS(getFPS());
-    notifyFrameStart();
-
+VROCamera VRORenderer::updateCamera(const VROViewport &viewport, const VROFieldOfView &fov,
+                                    const VROMatrix4f &headRotation) {
     VROCamera camera;
     camera.setHeadRotation(headRotation);
     camera.setViewport(viewport);
@@ -205,8 +179,41 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
             }
         }
     }
-
+    
     camera.computeLookAtMatrix();
+    camera.computeFrustum(kZNear, getFarClippingPlane());
+    return camera;
+}
+
+#pragma mark - Rendering
+
+void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView fov,
+                               VROMatrix4f headRotation, std::shared_ptr<VRODriver> driver) {
+
+    if (!_rendererInitialized) {
+        initRenderer(driver);
+      
+        _rendererInitialized = true;
+        _nanosecondsLastFrame = VRONanoTime();
+    }
+    else {
+        uint64_t nanosecondsThisFrame = VRONanoTime();
+        uint64_t tick = nanosecondsThisFrame - _nanosecondsLastFrame;
+        _nanosecondsLastFrame = nanosecondsThisFrame;
+        
+        updateFPS(tick);
+    }
+    
+    _frameStartTime = VROTimeCurrentMillis();
+
+    VROTransaction::beginImplicitAnimation();
+    VROTransaction::update();
+
+    _context->setFrame(frame);
+    _context->setFPS(getFPS());
+    notifyFrameStart();
+
+    VROCamera camera = updateCamera(viewport, fov, headRotation);
     _context->setCamera(camera);
 
     /*
@@ -217,24 +224,27 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     VROMatrix4f enclosureMatrix = VROMathComputeLookAtMatrix({ 0, 0, 0 }, camera.getForward(), camera.getUp());
     _context->setEnclosureViewMatrix(enclosureMatrix);
 
+    const VRORenderContext &context = *_context.get();
     if (_sceneController) {
         if (_outgoingSceneController) {
             std::shared_ptr<VROScene> outgoingScene = _outgoingSceneController->getScene();
-            outgoingScene->computeTransforms(*_context.get());
-            outgoingScene->applyConstraints(*_context.get());
-            outgoingScene->updateSortKeys(*_context.get(), driver);
+            outgoingScene->computeTransforms(context);
+            outgoingScene->applyConstraints(context);
+            outgoingScene->updateVisibility(context);
+            outgoingScene->updateSortKeys(context, driver);
         }
         
         std::shared_ptr<VROScene> scene = _sceneController->getScene();
-        scene->computeTransforms(*_context.get());
-        scene->applyConstraints(*_context.get());
-        scene->updateSortKeys(*_context.get(), driver);
+        scene->computeTransforms(context);
+        scene->applyConstraints(context);
+        scene->updateVisibility(context);
+        scene->updateSortKeys(context, driver);
         
         _inputController->onProcess(camera);
     }
 
-    driver->willRenderFrame(*_context.get());
-    _debugHUD->prepare(*_context.get());
+    driver->willRenderFrame(context);
+    _debugHUD->prepare(context);
 }
 
 void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,

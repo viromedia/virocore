@@ -43,7 +43,8 @@ VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
     _computedOpacity(1.0),
     _selectable(true),
     _highAccuracyGaze(false),
-    _hierarchicalRendering(false) {
+    _hierarchicalRendering(false),
+    _visible(false) {
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
 
@@ -72,7 +73,7 @@ VRONode::~VRONode() {
 
 std::shared_ptr<VRONode> VRONode::clone() {
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>(*this);
-    for (std::shared_ptr<VRONode> subnode : _subnodes) {
+    for (std::shared_ptr<VRONode> &subnode : _subnodes) {
         node->addChildNode(subnode->clone());
     }
     
@@ -104,6 +105,15 @@ void VRONode::updateSortKeys(uint32_t depth,
                              std::shared_ptr<VRODriver> &driver) {
     passert_thread();
     processActions();
+    
+    /*
+     If a node is not visible, that means none of its children are visible
+     either (we use the umbrella bounding box for visibility tests), so we do
+     not have to recurse down.
+     */
+    if (!_visible) {
+        return;
+    }
     
     float parentOpacity = params.parentOpacity;
     std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
@@ -205,7 +215,7 @@ void VRONode::updateSortKeys(uint32_t depth,
     /*
      Move down the tree.
      */
-    for (std::shared_ptr<VRONode> childNode : _subnodes) {
+    for (std::shared_ptr<VRONode> &childNode : _subnodes) {
         childNode->updateSortKeys(depth + 1, params, context, driver);
     }
     
@@ -216,14 +226,14 @@ void VRONode::updateSortKeys(uint32_t depth,
     distancesFromCamera.pop();
 }
 
-void VRONode::getSortKeys(std::vector<VROSortKey> *outKeys) {
+void VRONode::getSortKeysForVisibleNodes(std::vector<VROSortKey> *outKeys) {
     passert_thread();
     
-    if (_geometry) {
+    if (_visible && _geometry) {
         _geometry->getSortKeys(outKeys);
     }
-    for (std::shared_ptr<VRONode> childNode : _subnodes) {
-        childNode->getSortKeys(outKeys);
+    for (std::shared_ptr<VRONode> &childNode : _subnodes) {
+        childNode->getSortKeysForVisibleNodes(outKeys);
     }
 }
 
@@ -243,8 +253,21 @@ void VRONode::computeTransforms(const VRORenderContext &context, VROMatrix4f par
     /*
      Move down the tree.
      */
-    for (std::shared_ptr<VRONode> childNode : _subnodes) {
+    for (std::shared_ptr<VRONode> &childNode : _subnodes) {
         childNode->computeTransforms(context, _computedTransform, _computedRotation);
+    }
+}
+
+void VRONode::doComputeTransform(VROMatrix4f parentTransform) {
+    VROMatrix4f transform;
+    transform.scale(_scale.x, _scale.y, _scale.z);
+    transform = _rotation.getMatrix().multiply(transform);
+    transform.translate(_position.x, _position.y, _position.z);
+    
+    _computedTransform = parentTransform.multiply(transform);
+    _computedPosition = { _computedTransform[12], _computedTransform[13], _computedTransform[14] };
+    if (_geometry) {
+        _computedBoundingBox = _geometry->getBoundingBox().transform(_computedTransform);
     }
 }
 
@@ -281,26 +304,59 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
     /*
      Move down the tree.
      */
-    for (std::shared_ptr<VRONode> childNode : _subnodes) {
+    for (std::shared_ptr<VRONode> &childNode : _subnodes) {
         childNode->applyConstraints(context, _computedTransform, updated);
-    }
-}
-
-void VRONode::doComputeTransform(VROMatrix4f parentTransform) {
-    VROMatrix4f transform;
-    transform.scale(_scale.x, _scale.y, _scale.z);
-    transform = _rotation.getMatrix().multiply(transform);
-    transform.translate(_position.x, _position.y, _position.z);
-    
-    _computedTransform = parentTransform.multiply(transform);
-    _computedPosition = { _computedTransform[12], _computedTransform[13], _computedTransform[14] };
-    if (_geometry) {
-        _computedBoundingBox = _geometry->getBoundingBox().transform(_computedTransform);
     }
 }
 
 VROVector3f VRONode::getTransformedPosition() const {
     return _computedPosition;
+}
+
+#pragma mark - Visibility
+
+void VRONode::updateVisibility(const VRORenderContext &context) {
+    const VROFrustum &frustum = context.getCamera().getFrustum();
+    
+    _umbrellaBoundingBox = VROBoundingBox();
+    computeUmbrellaBounds(&_umbrellaBoundingBox);
+    
+    VROFrustumResult result = frustum.intersectWithFarPointsOpt(_umbrellaBoundingBox);
+    if (result == VROFrustumResult::Inside) {
+        setVisibilityRecursive(true);
+    }
+    else if (result == VROFrustumResult::Intersects) {
+        _visible = true;
+        for (std::shared_ptr<VRONode> &childNode : _subnodes) {
+            childNode->updateVisibility(context);
+        }
+    }
+    else {
+        setVisibilityRecursive(false);
+    }
+}
+
+void VRONode::setVisibilityRecursive(bool visible) {
+    _visible = visible;
+    
+    for (std::shared_ptr<VRONode> &childNode : _subnodes) {
+        childNode->setVisibilityRecursive(visible);
+    }
+}
+
+void VRONode::computeUmbrellaBounds(VROBoundingBox *bounds) const {
+    bounds->unionDestructive(_computedBoundingBox);
+    for (const std::shared_ptr<VRONode> &childNode : _subnodes) {
+        childNode->computeUmbrellaBounds(bounds);
+    }
+}
+
+int VRONode::countVisibleNodes() const {
+    int count = _visible ? 1 : 0;
+    for (const std::shared_ptr<VRONode> &childNode : _subnodes) {
+        count += childNode->countVisibleNodes();
+    }
+    return count;
 }
 
 #pragma mark - Setters
