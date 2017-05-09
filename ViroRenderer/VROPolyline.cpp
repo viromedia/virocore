@@ -24,18 +24,17 @@
 static const int kNumJointSegments = 16;
 static std::shared_ptr<VROShaderModifier> sPolylineShaderModifier;
 
-std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f> &path, float width) {
+std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f> &path, float thickness) {
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
     buildGeometry(path, sources, elements);
     
-    std::shared_ptr<VROPolyline> polyline = std::shared_ptr<VROPolyline>(new VROPolyline(sources, elements, width));
+    std::shared_ptr<VROPolyline> polyline = std::shared_ptr<VROPolyline>(new VROPolyline(sources, elements, thickness));
     
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     material->getDiffuse().setColor({ 1.0, 1.0, 1.0, 1.0 });
     material->setCullMode(VROCullMode::None);
-    material->addShaderModifier(createPolylineShaderModifier());
-    
+
     polyline->setMaterials({ material });
     return polyline;
 }
@@ -182,26 +181,31 @@ void VROPolyline::writeCorner(VROVector3f position, VROVector3f normal, VROByteB
     buffer.writeFloat(0); // tw
 }
 
-void VROPolyline::setWidth(float width) {
+void VROPolyline::setThickness(float thickness) {
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
-        ((VROPolyline *)animatable)->_width = v;
-    }, _width, width));
+        ((VROPolyline *)animatable)->_thickness = v;
+    }, _thickness, thickness));
+}
+
+void VROPolyline::setMaterials(std::vector<std::shared_ptr<VROMaterial>> materials) {
+    materials.front()->addShaderModifier(createPolylineShaderModifier());
+    VROGeometry::setMaterials(materials);
 }
 
 std::shared_ptr<VROShaderModifier> VROPolyline::createPolylineShaderModifier() {
     /*
-     Modifier that sets the polyline width.
+     Modifier that sets the polyline thickness.
      */
     if (!sPolylineShaderModifier) {
-        std::vector<std::string> modifierCode = { "uniform float width;",
-            "vec3 normal_offset = (width / 2.0) * normal;",
+        std::vector<std::string> modifierCode = { "uniform float thickness;",
+            "vec3 normal_offset = (thickness / 2.0) * normal;",
             "_geometry.position = _geometry.position + normal_offset;"
         };
 
         sPolylineShaderModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry, modifierCode);
-        sPolylineShaderModifier->setUniformBinder("width", [](VROUniform *uniform, GLuint location, const VROGeometry &geometry) {
+        sPolylineShaderModifier->setUniformBinder("thickness", [](VROUniform *uniform, GLuint location, const VROGeometry &geometry) {
             const VROPolyline &polyline = dynamic_cast<const VROPolyline &>(geometry);
-            uniform->setFloat(polyline.getWidth());
+            uniform->setFloat(polyline.getThickness());
         });
     }
     

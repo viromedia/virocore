@@ -111,10 +111,10 @@ void VROReticle::trigger() {
         }
         // float whiteRadius = VROMathInterpolate(t, 0, 1.0, _size, _size * kTriggerAnimationWhiteCircleMultiple);
         // TODO Draw a filled circle with whiteRadius and whiteAlpha
-        _reticleLine->setWidth(thickness);
-        _fuseBackgroundLine->setWidth(thickness);
+        _reticleLine->setThickness(thickness);
+        _fuseBackgroundLine->setThickness(thickness);
         if (_fuseLine){
-            _fuseLine->setWidth(thickness);
+            _fuseLine->setThickness(thickness);
         }
     }, VROTimingFunctionType::Linear, kTriggerAnimationDuration);
 

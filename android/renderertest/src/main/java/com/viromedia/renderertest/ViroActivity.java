@@ -27,6 +27,7 @@ import com.viro.renderer.jni.MaterialJni;
 import com.viro.renderer.jni.NodeJni;
 import com.viro.renderer.jni.ObjectJni;
 import com.viro.renderer.jni.OmniLightJni;
+import com.viro.renderer.jni.PolylineJni;
 import com.viro.renderer.jni.RenderContextJni;
 import com.viro.renderer.jni.SceneJni;
 import com.viro.renderer.jni.SoundDataJni;
@@ -130,6 +131,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
         //nodes = testStereoSurfaceVideo(this);
         //nodes = testStereoImageSurface(this);
+        nodes.add(testLine(this));
         //testStereoBackgroundVideo(scene);
         //testStereoBackgroundImage(scene);
 
@@ -357,7 +359,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         TextureJni bobaTexture = new TextureJni(bobaImage, TextureFormat.RGBA8, true);
         MaterialJni material = new MaterialJni();
 //        material.setTexture(bobaTexture, "diffuseTexture");
-        material.setColor(Color.WHITE, "whiteColor");
+        material.setColor(Color.BLUE, "diffuseColor");
         material.setLightingModel("Blinn");
 
         // Creation of ViroBox to the right and billboarded
@@ -726,5 +728,23 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     private void setSoundRoom(SceneJni scene, RenderContextJni renderContextJni) {
         float[] size = {2, 2, 2};
         scene.setSoundRoom(renderContextJni, size, "transparent", "wood_panel", "thin_glass");
+    }
+
+    private NodeJni testLine(Context scene) {
+        MaterialJni material = new MaterialJni();
+        material.setColor(Color.RED, "diffuseColor");
+        material.setLightingModel("Constant");
+        material.setCullMode("None");
+
+        float[] linePos = {0,0,-1};
+        float[][] points = {{0,0}, {.5f,.5f}, {1,0}};
+        PolylineJni polyline = new PolylineJni(points, 0.1f);
+        NodeJni node1 = new NodeJni();
+
+        node1.setPosition(linePos);
+        node1.setGeometry(polyline);
+        node1.setMaterials(Arrays.asList(material));
+        node1.setEventDelegateJni(getGenericDelegate("Line"));
+        return node1;
     }
 }
