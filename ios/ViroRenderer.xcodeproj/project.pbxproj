@@ -190,7 +190,7 @@
 		8FB2B5991E1445EE00EDB629 /* VROAnimationChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB2B5971E1445EE00EDB629 /* VROAnimationChain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FB535191EB8500000E8E1A6 /* VROFBXLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB535171EB8500000E8E1A6 /* VROFBXLoader.cpp */; };
 		8FB5351A1EB8500000E8E1A6 /* VROFBXLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB535181EB8500000E8E1A6 /* VROFBXLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FB5351E1EB85A7C00E8E1A6 /* Nodes.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8FB5351C1EB85A7C00E8E1A6 /* Nodes.pb.cc */; };
+		8FB5351E1EB85A7C00E8E1A6 /* Nodes.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8FB5351C1EB85A7C00E8E1A6 /* Nodes.pb.cc */; settings = {COMPILER_FLAGS = "-w"; }; };
 		8FB5351F1EB85A7C00E8E1A6 /* Nodes.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB5351D1EB85A7C00E8E1A6 /* Nodes.pb.h */; };
 		8FB535241EB8DCCC00E8E1A6 /* heart.proto in Resources */ = {isa = PBXBuildFile; fileRef = 8FB535231EB8DCCC00E8E1A6 /* heart.proto */; };
 		8FB535271EB8DDBE00E8E1A6 /* VROModelIOUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB535251EB8DDBE00E8E1A6 /* VROModelIOUtil.cpp */; };
