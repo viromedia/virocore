@@ -87,6 +87,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROFrustum.cpp
              ../../ViroRenderer/VROFrustumPlane.cpp
              ../../ViroRenderer/VROBoundingBox.cpp
+             ../../ViroRenderer/VROFrustumBoxIntersectionMetadata.cpp
              ../../ViroRenderer/VROVector3f.cpp
              ../../ViroRenderer/VROVector4f.cpp
              ../../ViroRenderer/VROMatrix4f.cpp
@@ -133,7 +134,6 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VRONodeCamera.cpp
              ../../ViroRenderer/VROInputControllerBase.cpp
              ../../ViroRenderer/VROFrameScheduler.cpp
-             ../../ViroRenderer/VROFrustumBoxIntersectionMetadata.cpp
 
              # Animation
              ../../ViroRenderer/VROTimingFunction.cpp
