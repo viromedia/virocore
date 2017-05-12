@@ -194,7 +194,9 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         // Add the GLSurfaceView to the GvrLayout.
         setPresentationView(glSurfaceView);
 
-        // We want Android's VR mode on as long as we're in either release or on Daydream.
+        // We want Android's VR mode on as long as the app is in either release or the device
+        // is using Daydream. The renderer (library) is always in release, so we use BuildInfo to
+        // check the debug status of the app we're compiled into.
         if (!BuildInfo.isDebug(context) || !getHeadset().equalsIgnoreCase("cardboard")) {
             // According to the GVR documentation, this only sets the activity to "VR mode" and is only
             // supported on Android Nougat and up.
