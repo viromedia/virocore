@@ -33,7 +33,8 @@ public:
                             VROTimingFunctionType timingFunctionType);
     
     void setSuspended(bool suspended);
-    
+    void recenterTracking();
+
 private:
     
     int _frame;
@@ -41,7 +42,9 @@ private:
     std::shared_ptr<VRODriverOpenGL> _driver;
     std::shared_ptr<gvr::AudioApi> _gvrAudio;
     bool _suspended;
-    
+    bool _recenterTracking;
+    VROMatrix4f _baseRotation;
+
 };
 
 #endif /* VROSceneRendererCardboardOpenGL_h */

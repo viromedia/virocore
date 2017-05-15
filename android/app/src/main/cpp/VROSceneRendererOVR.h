@@ -30,6 +30,8 @@ public:
     void onKeyEvent(int keyCode, int action);
     void setVRModeEnabled(bool enabled) {} // Not supported
     void setSuspended(bool suspendRenderer);
+    void recenterTracking();
+
     /*
      Activity lifecycle.
      */

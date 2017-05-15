@@ -23,6 +23,8 @@ VROSceneRendererCardboardOpenGL::VROSceneRendererCardboardOpenGL(EAGLContext *co
     _gvrAudio = std::make_shared<gvr::AudioApi>();
     _gvrAudio->Init(GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
     _driver = std::make_shared<VRODriverOpenGLiOS>(context, _gvrAudio);
+    _baseRotation = VROMatrix4f();
+    _baseRotation.toIdentity();
       
         /*
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord
@@ -56,9 +58,27 @@ void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROScen
 
 void VROSceneRendererCardboardOpenGL::prepareFrame(VROViewport viewport, VROFieldOfView fov,
                                                    GVRHeadTransform *headTransform) {
+
     VROMatrix4f headRotation = VROConvert::toMatrix4f([headTransform headPoseInStartSpace]).invert();
+
+    // TODO: VIRO-1235, the below code works, but GVR should expose a recenterTracking function in their SDK which does the same thing.
+    if (_recenterTracking) {
+        // get the current head rotation's forward vector
+        VROVector3f forward = headRotation.multiply(kBaseForward);
+        // zero out the y value/project line onto XZ plane
+        forward.y = 0;
+        // get the angle in the XZ plane between the base forward and the camera forward
+        float theta = kBaseForward.angleWithVector(forward);
+        // create a new base rotation with the correct Y rotation to zero out the user's Y rotation
+        _baseRotation.toIdentity();
+        _baseRotation.rotateY(forward.x < 0 ? -theta : theta);
+        // reset _recenterTracking as we only want to do this once until the next time recenterTracking() is called
+        _recenterTracking = false;
+    }
+    headRotation = _baseRotation.multiply(headRotation);
+
     _renderer->prepareFrame(_frame, viewport, fov, headRotation, _driver);
-    
+
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE); // Must enable writes to clear depth buffer
     
@@ -105,4 +125,8 @@ void VROSceneRendererCardboardOpenGL::endFrame() {
 
 void VROSceneRendererCardboardOpenGL::setSuspended(bool suspended) {
     _suspended = suspended;
+}
+
+void VROSceneRendererCardboardOpenGL::recenterTracking() {
+    _recenterTracking = true;
 }

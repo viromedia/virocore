@@ -128,6 +128,10 @@
     [self.keyValidator validateApiKey:apiKey withCompletionBlock:validatorCompletionBlock];
 }
 
+- (void)recenterTracking {
+    _sceneRenderer->recenterTracking();
+}
+
 #pragma mark - Settings
 
 - (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {

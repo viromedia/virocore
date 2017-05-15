@@ -33,4 +33,6 @@ public interface VrView extends Application.ActivityLifecycleCallbacks {
 
     public void setDebugHUDEnabled(boolean enabled);
 
+    public void recenterTracking();
+
 }

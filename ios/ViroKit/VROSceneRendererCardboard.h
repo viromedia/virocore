@@ -52,7 +52,11 @@ public:
      Suspend the renderer, displaying only a black screen.
      */
     virtual void setSuspended(bool suspended) = 0;
-    
+
+    /*
+     Recenters the head tracking.
+     */
+    virtual void recenterTracking() = 0;
 };
 
 #endif /* VROSceneRendererCardboard_h */

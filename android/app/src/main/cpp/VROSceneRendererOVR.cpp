@@ -25,6 +25,7 @@
 #include <EGL/eglext.h>
 #include <GLES3/gl3.h>
 #include <GLES3/gl3ext.h>
+#include <VrApi.h>
 #include <VrApi_Types.h>
 #include <VROTime.h>
 
@@ -1214,7 +1215,8 @@ enum
     MESSAGE_ON_SURFACE_DESTROYED,
     MESSAGE_ON_KEY_EVENT,
     MESSAGE_ON_TOUCH_EVENT,
-    MESSAGE_SUSPEND
+    MESSAGE_SUSPEND,
+    MESSAGE_RECENTER_TRACKING
 };
 
 struct ovrAppThread
@@ -1307,6 +1309,7 @@ void * AppThreadFunction( void * parm )
                                                                                ovrMessage_GetFloatParm( &message, 1 ),
                                                                                ovrMessage_GetFloatParm( &message, 2 ) ); break; }
                 case MESSAGE_SUSPEND:               {appState.suspended = ovrMessage_GetIntegerParm( &message, 0); break; }
+                case MESSAGE_RECENTER_TRACKING:     {if (appState.Ovr) vrapi_RecenterPose(appState.Ovr); break;}
             }
 
             ovrApp_HandleVrModeChanges( &appState );
@@ -1592,3 +1595,9 @@ void VROSceneRendererOVR::setSuspended(bool suspendRenderer) {
     ovrMessage_SetIntegerParm( &message, 0, suspendRenderer );
     ovrMessageQueue_PostMessage( &_appThread->MessageQueue, &message );
 }
+
+void VROSceneRendererOVR::recenterTracking() {
+    ovrMessage message;
+    ovrMessage_Init(&message, MESSAGE_RECENTER_TRACKING, MQ_WAIT_NONE);
+    ovrMessageQueue_PostMessage( &_appThread->MessageQueue, &message );
+};

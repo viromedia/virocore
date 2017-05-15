@@ -113,6 +113,11 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     }
 
     @Override
+    public void recenterTracking() {
+        mNativeRenderer.recenterTracking();
+    }
+
+    @Override
     public RenderContextJni getRenderContextRef(){
         return mNativeRenderContext;
     }

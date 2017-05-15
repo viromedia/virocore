@@ -264,6 +264,11 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     }
 
     @Override
+    public void recenterTracking() {
+        getGvrApi().recenterTracking();
+    }
+
+    @Override
     public RenderContextJni getRenderContextRef(){
         return mNativeRenderContext;
     }

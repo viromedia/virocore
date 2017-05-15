@@ -289,4 +289,14 @@ JNI_METHOD(void, nativeSetSuspended)(JNIEnv *env,
     std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
     renderer->setSuspended(suspend_renderer);
 }
+
+// This function is OVR only!
+JNI_METHOD(void, nativeRecenterTracking)(JNIEnv *env,
+                                         jobject obj,
+                                         jlong native_renderer) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
+    std::shared_ptr<VROSceneRendererOVR> ovrRenderer = std::dynamic_pointer_cast<VROSceneRendererOVR>(renderer);
+    ovrRenderer->recenterTracking();
+}
+
 }  // extern "C"

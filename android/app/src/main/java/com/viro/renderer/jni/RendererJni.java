@@ -38,6 +38,8 @@ public class RendererJni {
 
     public void onSurfaceDestroyed(Surface surface) { nativeOnSurfaceDestroyed(mNativeRef); }
 
+    public void recenterTracking() { nativeRecenterTracking(mNativeRef); }
+
     /* ----------     Common lifecycle methods    ---------- */
 
     public void destroy() { nativeDestroyRenderer(mNativeRef); }
@@ -111,4 +113,5 @@ public class RendererJni {
     private native String nativeGetController(long nativeRenderer);
     private native void nativeSetDebugHUDEnabled(long nativeRenderer, boolean enabled);
     private native void nativeSetSuspended(long nativeRenderer, boolean suspendRenderer);
+    private native void nativeRecenterTracking(long nativeRenderer);
 }
