@@ -12,6 +12,10 @@
 #include "VROGeometry.h"
 #include "VROData.h"
 #include "VROModelIOUtil.h"
+#include "VROSkinner.h"
+#include "VROSkeleton.h"
+#include "VROBone.h"
+#include "VROSkeletalAnimation.h"
 #include "Nodes.pb.h"
 
 VROGeometrySourceSemantic convert(viro::Node_Geometry_Source_Semantic semantic) {
@@ -189,13 +193,21 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
     
     pinfo("Read FBX protobuf");
     
-    // The outer node of the protobuf is just a container. It has no data.
-    // We use our outer VRONode for the same purpose, to contain the root
-    // nodes of the FBX file
+    // The root node contains the skeleton, if any
+    std::shared_ptr<VROSkeleton> skeleton;
+    if (node_pb.has_skeleton()) {
+        skeleton = loadFBXSkeleton(node_pb.skeleton());
+    }
+    
+    // The outer node of the protobuf has no mesh data, it contains
+    // metadata (like the skeleton) and holds the root nodes of the
+    // FBX mesh. We use our outer VRONode for the same purpose, to
+    // contain the root nodes of the FBX file
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setThreadRestrictionEnabled(false);
     for (int i = 0; i < node_pb.subnode_size(); i++) {
-        std::shared_ptr<VRONode> node = loadFBXNode(node_pb.subnode(i), base, isBaseURL, resourceMap, textureCache);
+        std::shared_ptr<VRONode> node = loadFBXNode(node_pb.subnode(i), skeleton, base, isBaseURL,
+                                                    resourceMap, textureCache);
         rootNode->addChildNode(node);
     }
     
@@ -203,6 +215,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
 }
 
 std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
+                                                   std::shared_ptr<VROSkeleton> skeleton,
                                                    std::string base, bool isBaseURL,
                                                    const std::map<std::string, std::string> *resourceMap,
                                                    std::map<std::string, std::shared_ptr<VROTexture>> &textureCache) {
@@ -216,12 +229,22 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
     node->setOpacity(node_pb.opacity());
     
     if (node_pb.has_geometry()) {
-        std::shared_ptr<VROGeometry> geo = loadFBXGeometry(node_pb.geometry(), base, isBaseURL, resourceMap, textureCache);
+        const viro::Node_Geometry &geo_pb = node_pb.geometry();
+        std::shared_ptr<VROGeometry> geo = loadFBXGeometry(geo_pb, base, isBaseURL, resourceMap, textureCache);
+        
+        if (geo_pb.has_skin() && skeleton) {
+            geo->setSkinner(loadFBXSkinner(geo_pb.skin(), skeleton));
+            
+            // TODO VIRO-57 (continued): store the loaded animations somewhere
+            
+        }
+        
         node->setGeometry(geo);
     }
     
     for (int i = 0; i < node_pb.subnode_size(); i++) {
-        std::shared_ptr<VRONode> subnode = loadFBXNode(node_pb.subnode(i), base, isBaseURL, resourceMap, textureCache);
+        std::shared_ptr<VRONode> subnode = loadFBXNode(node_pb.subnode(i), skeleton, base, isBaseURL,
+                                                       resourceMap, textureCache);
         node->addChildNode(subnode);
     }
     
@@ -339,4 +362,82 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
           bounds.getMinZ(), bounds.getMaxZ());
     
     return geo;
+}
+
+std::shared_ptr<VROSkeleton> VROFBXLoader::loadFBXSkeleton(const viro::Node_Skeleton &skeleton_pb) {
+    std::vector<std::shared_ptr<VROBone>> bones;
+    for (int i = 0; i < skeleton_pb.bone_size(); i++) {
+        std::shared_ptr<VROBone> bone = std::make_shared<VROBone>(skeleton_pb.bone(i).parent_index());
+        bones.push_back(bone);
+    }
+    
+    return std::make_shared<VROSkeleton>(bones);
+}
+
+std::unique_ptr<VROSkinner> VROFBXLoader::loadFBXSkinner(const viro::Node_Geometry_Skin &skin_pb,
+                                                         std::shared_ptr<VROSkeleton> skeleton) {
+    std::vector<VROMatrix4f> bindTransforms;
+    for (int i = 0; i < skin_pb.bind_transform_size(); i++) {
+        float mtx[16];
+        for (int j = 0; j < 16; j++) {
+            mtx[j] = skin_pb.bind_transform(i).value(j);
+        }
+        bindTransforms.push_back({ mtx });
+    }
+    
+    const viro::Node::Geometry::Source &bone_indices_pb = skin_pb.bone_indices();
+    std::shared_ptr<VROData> boneIndicesData = std::make_shared<VROData>(bone_indices_pb.data().c_str(), bone_indices_pb.data().length());
+    std::shared_ptr<VROGeometrySource> boneIndices = std::make_shared<VROGeometrySource>(boneIndicesData,
+                                                                                         convert(bone_indices_pb.semantic()),
+                                                                                         bone_indices_pb.vertex_count(),
+                                                                                         bone_indices_pb.float_components(),
+                                                                                         bone_indices_pb.components_per_vertex(),
+                                                                                         bone_indices_pb.bytes_per_component(),
+                                                                                         bone_indices_pb.data_offset(),
+                                                                                         bone_indices_pb.data_stride());
+    
+    const viro::Node::Geometry::Source &bone_weights_pb = skin_pb.bone_weights();
+    std::shared_ptr<VROData> boneWeightsData = std::make_shared<VROData>(bone_weights_pb.data().c_str(), bone_weights_pb.data().length());
+    std::shared_ptr<VROGeometrySource> boneWeights = std::make_shared<VROGeometrySource>(boneWeightsData,
+                                                                                         convert(bone_weights_pb.semantic()),
+                                                                                         bone_weights_pb.vertex_count(),
+                                                                                         bone_weights_pb.float_components(),
+                                                                                         bone_weights_pb.components_per_vertex(),
+                                                                                         bone_weights_pb.bytes_per_component(),
+                                                                                         bone_weights_pb.data_offset(),
+                                                                                         bone_weights_pb.data_stride());
+    
+    
+    
+    return std::unique_ptr<VROSkinner>(new VROSkinner(skeleton, bindTransforms, boneIndices, boneWeights));
+}
+
+std::shared_ptr<VROSkeletalAnimation> VROFBXLoader::loadFBXSkeletalAnimation(const viro::Node_SkeletalAnimation &animation_pb,
+                                                                             std::shared_ptr<VROSkeleton> skeleton) {
+    
+    std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> frames;
+    for (int f = 0; f < animation_pb.frame_size(); f++) {
+        const viro::Node::SkeletalAnimation::Frame &frame_pb = animation_pb.frame(f);
+        
+        std::unique_ptr<VROSkeletalAnimationFrame> frame = std::unique_ptr<VROSkeletalAnimationFrame>(new VROSkeletalAnimationFrame());
+        frame->time = frame_pb.time();
+        
+        passert (frame_pb.bone_index_size() == frame_pb.transform_size());
+        for (int b = 0; b < frame_pb.bone_index_size(); b++) {
+            frame->boneIndices.push_back(frame_pb.bone_index(b));
+            
+            float mtx[16];
+            for (int i = 0; i < 16; i++) {
+                mtx[i] = frame_pb.transform(b).value(i);
+            }
+            frame->boneTransforms.push_back({ mtx });
+        }
+        
+        frames.push_back(std::move(frame));
+    }
+    
+    std::shared_ptr<VROSkeletalAnimation> animation = std::make_shared<VROSkeletalAnimation>(skeleton, frames);
+    animation->setName(animation_pb.name());
+    
+    return animation;
 }
