@@ -246,7 +246,7 @@ VROVector3f VROVector3f::scale(float factor) const {
     return result;
 }
 
-VROVector3f VROVector3f::interpolate(VROVector3f other, float t) {
+VROVector3f VROVector3f::interpolate(VROVector3f other, float t) const {
     VROVector3f result;
     result.x = x + (other.x - x) * t;
     result.y = y + (other.y - y) * t;

@@ -1,36 +1,35 @@
 //
-//  VROAnimationVector3f.h
+//  VROAnimationMatrix4f.hpp
 //  ViroRenderer
 //
-//  Created by Raj Advani on 12/17/15.
-//  Copyright © 2015 Viro Media. All rights reserved.
+//  Created by Raj Advani on 5/10/17.
+//  Copyright © 2017 Viro Media. All rights reserved.
 //
 
-#ifndef VROAnimationVector3f_h
-#define VROAnimationVector3f_h
+#ifndef VROAnimationMatrix4f_h
+#define VROAnimationMatrix4f_h
 
-#include <stdio.h>
-#include "VROVector3f.h"
+#include "VROMatrix4f.h"
 #include "VROAnimation.h"
 #include "VROAnimatable.h"
 #include "VROMath.h"
 
-class VROAnimationVector3f : public VROAnimation {
+class VROAnimationMatrix4f : public VROAnimation {
     
 public:
     
-    VROAnimationVector3f(std::function<void(VROAnimatable *const, VROVector3f)> method,
-                         VROVector3f start,
-                         VROVector3f end) :
+    VROAnimationMatrix4f(std::function<void(VROAnimatable *const, VROMatrix4f)> method,
+                         VROMatrix4f start,
+                         VROMatrix4f end) :
         VROAnimation(),
         _keyTimes({ 0, 1 }),
         _keyValues({ start, end }),
         _method(method)
     {}
     
-    VROAnimationVector3f(std::function<void(VROAnimatable *const, VROVector3f)> method,
-                         VROVector3f start,
-                         VROVector3f end,
+    VROAnimationMatrix4f(std::function<void(VROAnimatable *const, VROMatrix4f)> method,
+                         VROMatrix4f start,
+                         VROMatrix4f end,
                          std::function<void(VROAnimatable *const)> finishCallback) :
         VROAnimation(finishCallback),
         _keyTimes({ 0, 1 }),
@@ -38,18 +37,18 @@ public:
         _method(method)
     {}
     
-    VROAnimationVector3f(std::function<void(VROAnimatable *const, VROVector3f)> method,
+    VROAnimationMatrix4f(std::function<void(VROAnimatable *const, VROMatrix4f)> method,
                          std::vector<float> keyTimes,
-                         std::vector<VROVector3f> keyValues) :
+                         std::vector<VROMatrix4f> keyValues) :
         VROAnimation(),
         _keyTimes(keyTimes),
         _keyValues(keyValues),
         _method(method)
     {}
     
-    VROAnimationVector3f(std::function<void(VROAnimatable *const, VROVector3f)> method,
+    VROAnimationMatrix4f(std::function<void(VROAnimatable *const, VROMatrix4f)> method,
                          std::vector<float> keyTimes,
-                         std::vector<VROVector3f> keyValues,
+                         std::vector<VROMatrix4f> keyValues,
                          std::function<void(VROAnimatable *const)> finishCallback) :
         VROAnimation(finishCallback),
         _keyTimes(keyTimes),
@@ -58,7 +57,7 @@ public:
     {}
     
     void processAnimationFrame(float t) {
-        VROVector3f value = VROMathInterpolateKeyFrameVector3f(t, _keyTimes, _keyValues);
+        VROMatrix4f value = VROMathInterpolateKeyFrameMatrix4f(t, _keyTimes, _keyValues);
         
         std::shared_ptr<VROAnimatable> animatable = _animatable.lock();
         if (animatable) {
@@ -76,9 +75,9 @@ public:
 private:
     
     std::vector<float> _keyTimes;
-    std::vector<VROVector3f> _keyValues;
-    std::function<void(VROAnimatable *const, VROVector3f)> _method;
+    std::vector<VROMatrix4f> _keyValues;
+    std::function<void(VROAnimatable *const, VROMatrix4f)> _method;
     
 };
 
-#endif /* VROAnimationVector3f_h */
+#endif /* VROAnimationMatrix4f_h */

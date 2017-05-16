@@ -541,6 +541,7 @@
 		8F1664A51E5E43260062EBCE /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		8F1770191E74C01900235C21 /* VROGVRUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROGVRUtil.cpp; sourceTree = "<group>"; };
 		8F17701A1E74C01900235C21 /* VROGVRUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGVRUtil.h; sourceTree = "<group>"; };
+		8F2D1BB61EC379C000E7BF44 /* VROAnimationMatrix4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationMatrix4f.h; sourceTree = "<group>"; };
 		8F39A31A1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROFrustumBoxIntersectionMetadata.cpp; sourceTree = "<group>"; };
 		8F39A31B1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFrustumBoxIntersectionMetadata.h; sourceTree = "<group>"; };
 		8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shanghai_tower_diffuse.jpg; path = ViroSample/shanghai_tower_diffuse.jpg; sourceTree = "<group>"; };
@@ -1439,6 +1440,7 @@
 				8F548E441C23654E00556688 /* VROAnimationFloat.h */,
 				8F548E481C23656000556688 /* VROAnimationVector3f.h */,
 				8FD9B45C1C31E9D9006CB698 /* VROAnimationQuaternion.h */,
+				8F2D1BB61EC379C000E7BF44 /* VROAnimationMatrix4f.h */,
 				8FA2E1621C460C600070DB26 /* VROAction.h */,
 				8FA2E1611C460C600070DB26 /* VROAction.cpp */,
 			);
@@ -1789,6 +1791,7 @@
 				8FD4DF3B1C18F5EA003DC425 /* VROTime.h in Headers */,
 				8F705DE31E8ACFD0008BE8F8 /* VRODebugHUD.h in Headers */,
 				8FCB10271DD544FF00FE425C /* VROVideoDelegate.h in Headers */,
+				8F2D1BB81EC379C000E7BF44 /* VROAnimationMatrix4f.h in Headers */,
 				8FB2B5911E1442EC00EDB629 /* VROPropertyAnimation.h in Headers */,
 				8FD4DF3C1C18F5EA003DC425 /* VROLog.h in Headers */,
 				8FB659171CD839A000D036EB /* VRODriverOpenGL.h in Headers */,

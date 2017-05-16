@@ -7,6 +7,7 @@
 //
 
 #include "VROQuaternion.h"
+#include "VROMath.h"
 
 // Constructor which converts euler angles to a quaternion
 VROQuaternion::VROQuaternion(float x, float y, float z) {

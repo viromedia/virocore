@@ -7,6 +7,7 @@
 //
 
 #include "VROMath.h"
+#include "VROLog.h"
 #include <algorithm>
 #include <limits>
 
@@ -784,23 +785,84 @@ double VROMathInterpolate_d(double input, double inMin, double inMax, double out
     return outMin + position;
 }
 
-float VROMathInterpolateMultistage(float input, int numStages, const float *inputs, float *outputs) {
-    if (input < inputs[0]) {
-        return outputs[0];
+float VROMathInterpolateKeyFrame(float input, const std::vector<float> &inputs, const std::vector<float> &outputs) {
+    passert (inputs.size() == outputs.size());
+    if (input < inputs.front()) {
+        return outputs.front();
     }
-    if (input >= inputs[numStages - 1]) {
-        return outputs[numStages - 1];
+    if (input >= inputs.back()) {
+        return outputs.back();
     }
     
-    float output = 1;
-    for (int i = 1; i < numStages; i++) {
+    for (int i = 1; i < inputs.size(); i++) {
         if (input < inputs[i]) {
-            output = VROMathInterpolate(input, inputs[i - 1], inputs[i], outputs[i - 1], outputs[i]);
-            break;
+            return VROMathInterpolate(input, inputs[i - 1], inputs[i], outputs[i - 1], outputs[i]);
         }
     }
     
-    return output;
+    pabort();
+    return 0;
+}
+
+VROVector3f VROMathInterpolateKeyFrameVector3f(float input, const std::vector<float> &inputs, const std::vector<VROVector3f> &outputs) {
+    passert (inputs.size() == outputs.size());
+    if (input < inputs.front()) {
+        return outputs.front();
+    }
+    if (input >= inputs.back()) {
+        return outputs.back();
+    }
+    
+    for (int i = 1; i < inputs.size(); i++) {
+        if (input < inputs[i]) {
+            return outputs[i - 1].interpolate(outputs[i], (input - inputs[i - 1]) / (inputs[i] - inputs[i - 1]));
+        }
+    }
+    
+    pabort();
+    return {};
+}
+
+VROQuaternion VROMathInterpolateKeyFrameQuaternion(float input, const std::vector<float> &inputs, const std::vector<VROQuaternion> &outputs) {
+    passert (inputs.size() == outputs.size());
+    if (input < inputs.front()) {
+        return outputs.front();
+    }
+    if (input >= inputs.back()) {
+        return outputs.back();
+    }
+    
+    for (int i = 1; i < inputs.size(); i++) {
+        if (input < inputs[i]) {
+            return VROQuaternion::slerp(outputs[i - 1], outputs[i], (input - inputs[i - 1]) / (inputs[i] - inputs[i - 1]));
+        }
+    }
+    
+    pabort();
+    return {};
+}
+
+VROMatrix4f VROMathInterpolateKeyFrameMatrix4f(float input, const std::vector<float> &inputs, const std::vector<VROMatrix4f> &outputs) {
+    passert (inputs.size() == outputs.size());
+    if (input < inputs.front()) {
+        return outputs.front();
+    }
+    if (input >= inputs.back()) {
+        return outputs.back();
+    }
+    
+    for (int i = 1; i < inputs.size(); i++) {
+        if (input < inputs[i]) {
+            float interp[16];
+            for (int j = 0; j < 16; j++) {
+                interp[i] = VROMathInterpolate(input, inputs[i - 1], inputs[i], outputs[i - 1][j], outputs[i][j]);
+            }
+            return { interp };
+        }
+    }
+    
+    pabort();
+    return {};
 }
 
 void VROMathInterpolatePoint(const float *bottom, const float *top, float amount, int size, float *result) {

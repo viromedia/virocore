@@ -42,7 +42,6 @@ void VROBox::updateBox() {
     
     int varSizeBytes = sizeof(VROShapeVertexLayout) * numVertices;
     VROShapeVertexLayout var[varSizeBytes];
-    pinfo("Updating box with width %f", _width);
     buildBoxVAR(var);
     
     int indices[kNumBoxVertices];

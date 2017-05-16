@@ -11,7 +11,8 @@
 
 #include "VROVector3f.h"
 #include "VROMatrix4f.h"
-#include "VROMath.h"
+
+static float kRoundingErrorQuatFloat = 0.00001;
 
 //! Quaternion class for representing rotations.
 /** It provides cheap combinations and avoids gimbal locks.
@@ -85,7 +86,7 @@ class VROQuaternion {
 
 		//! returns if this quaternion equals the other one, taking floating point rounding errors into account
 		inline bool equals(const VROQuaternion &other,
-                           const float tolerance = kRoundingErrorFloat ) const;
+                           const float tolerance = kRoundingErrorQuatFloat ) const;
 
 		//! Normalizes the quaternion
 		inline VROQuaternion &normalize();
