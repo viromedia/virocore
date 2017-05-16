@@ -233,9 +233,9 @@ JNI_METHOD(void, nativeSetTransformBehaviors)(JNIEnv *env,
 }
 
 JNI_METHOD(void, nativeSetEventDelegate)(JNIEnv *env,
-                                         jobject obj,
-                                         jlong nativeRef,
-                                         jlong delegateRef) {
+                                          jobject obj,
+                                          jlong nativeRef,
+                                          jlong delegateRef) {
 
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     std::shared_ptr<EventDelegate_JNI> delegate = EventDelegate::native(delegateRef);
@@ -245,6 +245,228 @@ JNI_METHOD(void, nativeSetEventDelegate)(JNIEnv *env,
             node->setEventDelegate(delegate);
         }
     });
+}
+
+JNI_METHOD(void, nativeInitPhysicsBody)(JNIEnv *env,
+                                         jobject obj,
+                                         jlong nativeRef,
+                                         jstring bodyTypeStr,
+                                         jfloat mass,
+                                         jstring shapeTypeStr,
+                                         jfloatArray shapeParams) {
+    // Get Physics Body type
+    const char *cStrBodyType = env->GetStringUTFChars(bodyTypeStr, NULL);
+    std::string strBodyType(cStrBodyType);
+    VROPhysicsBody::VROPhysicsBodyType bodyType = VROPhysicsBody::getBodyTypeForString(strBodyType);
+    env->ReleaseStringUTFChars(bodyTypeStr, cStrBodyType);
+
+    // Build a VROPhysicsShape if possible
+    std::shared_ptr<VROPhysicsShape> propPhysicsShape = nullptr;
+    if (shapeTypeStr != NULL) {
+        const char *cStrShapeType = env->GetStringUTFChars(shapeTypeStr, NULL);
+        std::string strShapeType(cStrShapeType);
+        VROPhysicsShape::VROShapeType shapeType = VROPhysicsShape::getTypeForString(strShapeType);
+        env->ReleaseStringUTFChars(shapeTypeStr, cStrShapeType);
+
+        int paramsLength = env->GetArrayLength(shapeParams);
+        jfloat *pointArray = env->GetFloatArrayElements(shapeParams, 0);
+        std::vector<float> params;
+        for (int i = 0; i < paramsLength; i ++) {
+            params.push_back(pointArray[i]);
+        }
+        env->ReleaseFloatArrayElements(shapeParams, pointArray, 0);
+        propPhysicsShape = propPhysicsShape = std::make_shared<VROPhysicsShape>(shapeType, params);
+    }
+
+    // Create a VROPhysicsBody within VRONode.
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([node_w, bodyType, mass, propPhysicsShape] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->initPhysicsBody(bodyType, mass, propPhysicsShape);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeClearPhysicsBody)(JNIEnv *env,
+                                 jobject obj,
+                                 jlong nativeRef) {
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([node_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->clearPhysicsBody();
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetPhysicsShape)(JNIEnv *env,
+                                   jobject obj,
+                                   jlong nativeRef,
+                                   jstring shapeTypeStr,
+                                   jfloatArray shapeParams) {
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+
+    // Build a VROPhysicsShape if possible
+    std::shared_ptr<VROPhysicsShape> propPhysicsShape = nullptr;
+    if (shapeTypeStr != NULL){
+        // Get the shape type
+        const char *cStrShapeType = env->GetStringUTFChars(shapeTypeStr, NULL);
+        std::string strShapeType(cStrShapeType);
+        VROPhysicsShape::VROShapeType shapeType = VROPhysicsShape::getTypeForString(strShapeType);
+        env->ReleaseStringUTFChars(shapeTypeStr, cStrShapeType);
+
+        // Get the shape params
+        int paramsLength = env->GetArrayLength(shapeParams);
+        jfloat *pointArray = env->GetFloatArrayElements(shapeParams, 0);
+        std::vector<float> params;
+        for (int i = 0; i < paramsLength; i ++) {
+            params.push_back(pointArray[i]);
+        }
+        env->ReleaseFloatArrayElements(shapeParams, pointArray, 0);
+
+        // Construct a VROPhysicsShape
+        propPhysicsShape = propPhysicsShape = std::make_shared<VROPhysicsShape>(shapeType, params);
+    }
+
+    // Set the built VROPhysicsShape on the node's physics body
+    VROPlatformDispatchAsyncRenderer([node_w, propPhysicsShape] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody()) {
+            node->getPhysicsBody()->setPhysicsShape(propPhysicsShape);
+        }
+    });
+}
+
+
+JNI_METHOD(void, nativeSetPhysicsMass)(JNIEnv *env,
+                                   jobject obj,
+                                   jlong nativeRef,
+                                   jfloat mass) {
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([node_w, mass] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody()) {
+            node->getPhysicsBody()->setMass(mass);
+        }
+    });
+}
+
+
+JNI_METHOD(void, nativeSetPhysicsInertia)(JNIEnv *env,
+                                 jobject obj,
+                                 jlong nativeRef,
+                                 jfloatArray inertiaArray) {
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    jfloat *inertia = env->GetFloatArrayElements(inertiaArray, 0);
+    VROVector3f vectorInertia = VROVector3f(inertia[0], inertia[1], inertia[2]);
+
+    VROPlatformDispatchAsyncRenderer([node_w, vectorInertia] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody()) {
+            node->getPhysicsBody()->setInertia(vectorInertia);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetPhysicsFriction)(JNIEnv *env,
+                                 jobject obj,
+                                 jlong nativeRef,
+                                 jfloat friction) {
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([node_w, friction] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody()) {
+            node->getPhysicsBody()->setFriction(friction);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetPhysicsRestitution)(JNIEnv *env,
+                                        jobject obj,
+                                        jlong nativeRef,
+                                        jfloat restitution) {
+
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([node_w, restitution] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody()) {
+            node->getPhysicsBody()->setRestitution(restitution);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetPhysicsEnabled)(JNIEnv *env,
+                                        jobject obj,
+                                        jlong nativeRef,
+                                        jboolean enabled) {
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([node_w, enabled] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody()) {
+            node->getPhysicsBody()->setIsSimulated(enabled);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetPhsyicsUseGravity)(JNIEnv *env,
+                                              jobject obj,
+                                              jlong nativeRef,
+                                              jboolean useGravity) {
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([node_w, useGravity] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody()) {
+            node->getPhysicsBody()->setUseGravity(useGravity);
+        }
+    });
+}
+
+JNI_METHOD(jstring, nativeIsValidBodyType)(JNIEnv *env,
+                                             jobject obj,
+                                             jstring bodyType,
+                                             jfloat mass) {
+    // Grab the physics body type
+    const char *cStrBodyType = env->GetStringUTFChars(bodyType, NULL);
+    std::string strBodyType(cStrBodyType);
+    env->ReleaseStringUTFChars(bodyType, cStrBodyType);
+
+    // Verify if the physics body type is valid and return
+    std::string errorMsg;
+    bool isValid = VROPhysicsBody::isValidType(strBodyType, mass, errorMsg);
+    if (isValid) {
+        return nullptr;
+    } else {
+        return env->NewStringUTF(errorMsg.c_str());
+    }
+}
+
+JNI_METHOD(jstring, nativeIsValidShapeType)(JNIEnv *env,
+                                             jobject obj,
+                                             jstring shapeType,
+                                             jfloatArray shapeParams) {
+    // Grab the shape type
+    const char *cStrShapeType = env->GetStringUTFChars(shapeType, NULL);
+    std::string strShapeType(cStrShapeType);
+    env->ReleaseStringUTFChars(shapeType, cStrShapeType);
+
+    // Grab the shape params
+    int paramsLength = env->GetArrayLength(shapeParams);
+    jfloat *pointArray = env->GetFloatArrayElements(shapeParams, 0);
+    std::vector<float> params;
+    for (int i = 0; i < paramsLength; i ++) {
+        params.push_back(pointArray[i]);
+    }
+    env->ReleaseFloatArrayElements(shapeParams, pointArray, 0);
+
+    // Verify if the shape type and params are valid and return
+    std::string errorMsg;
+    bool isValid = VROPhysicsShape::isValidShape(strShapeType, params, errorMsg);
+    if (isValid) {
+        return nullptr;
+    } else {
+        return env->NewStringUTF(errorMsg.c_str());
+    }
 }
 
 }  // extern "C"

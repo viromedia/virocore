@@ -7,9 +7,15 @@
 
 #ifndef VROPhysicsWorld_h
 #define VROPhysicsWorld_h
-#include <btBulletDynamicsCommon.h>
 #include <memory>
 #include "VROPhysicsBody.h"
+
+class btBulletDynamicsCommon;
+class btDiscreteDynamicsWorld;
+class btBroadphaseInterface;
+class btDefaultCollisionConfiguration;
+class btCollisionDispatcher;
+class btSequentialImpulseConstraintSolver;
 
 /*
  VROPhysicsWorld is a simulated physics environment that contains and processes

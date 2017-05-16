@@ -7,13 +7,18 @@
 
 #include "VROPhysicsBody.h"
 #include "VRONode.h"
+#include "VROPhysicsMotionState.h"
+#include <btBulletDynamicsCommon.h>
+const std::string VROPhysicsBody::kDynamicTag = "dynamic";
+const std::string VROPhysicsBody::kKinematicTag = "kinematic";
+const std::string VROPhysicsBody::kStaticTag = "static";
 
 VROPhysicsBody::VROPhysicsBody(std::shared_ptr<VRONode> node, VROPhysicsBody::VROPhysicsBodyType type,
-                                         float mass, std::shared_ptr<VROPhysicsShape> shape){
-    if (type == VROPhysicsBody::VROPhysicsBodyType::Dynamic && mass == 0){
+                                         float mass, std::shared_ptr<VROPhysicsShape> shape) {
+    if (type == VROPhysicsBody::VROPhysicsBodyType::Dynamic && mass == 0) {
         pwarn("Attempted to incorrectly set 0 mass for a Dynamic body type! Defaulting to 1kg mass.");
         mass = 1;
-    } else if (type != VROPhysicsBody::VROPhysicsBodyType::Dynamic && mass !=0){
+    } else if (type != VROPhysicsBody::VROPhysicsBodyType::Dynamic && mass !=0) {
         pwarn("Attempted to incorrectly set mass for a static or kinematic body type! Defaulting to 0kg mass.");
         mass = 0;
     }
@@ -22,25 +27,35 @@ VROPhysicsBody::VROPhysicsBody(std::shared_ptr<VRONode> node, VROPhysicsBody::VR
     // If no VROPhysicsShape is provided, one is inferred during a computePhysics pass.
     btVector3 uniformInertia = btVector3(1,1,1);
     btCollisionShape *collisionShape = shape == nullptr ? nullptr : shape->getBulletShape();
-    btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(mass , this, collisionShape, uniformInertia);
+    btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(mass , nullptr, collisionShape, uniformInertia);
 
     // Notify renderer (primarily the physics world) that this VROPhysicsBody has changed.
     _needsBulletUpdate = true;
-
-    _w_node = node;
-    _shape = shape;
     _rigidBody = new btRigidBody(groundRigidBodyCI);
 
     // Set appropriate collision flags for the corresponding VROPhysicsBodyType
-    if (type == VROPhysicsBody::VROPhysicsBodyType::Kinematic){
+    if (type == VROPhysicsBody::VROPhysicsBodyType::Kinematic) {
         _rigidBody->setCollisionFlags(_rigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
         _rigidBody->setActivationState(DISABLE_DEACTIVATION);
-    } else if (type == VROPhysicsBody::VROPhysicsBodyType::Static){
+    } else if (type == VROPhysicsBody::VROPhysicsBodyType::Static) {
         _rigidBody->setCollisionFlags(_rigidBody->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
     }
+
+    // Default physics properties
+    _enableSimulation = true;
+    _useGravity = true;
+    _w_node = node;
+    _shape = shape;
+    _type = type;
+    _mass = mass;
+    _inertia = VROVector3f({uniformInertia.x(), uniformInertia.y(), uniformInertia.z()});
 }
 
 VROPhysicsBody::~VROPhysicsBody() {
+    btMotionState *state = _rigidBody->getMotionState();
+    if (state != nullptr) {
+        delete state;
+    }
     delete _rigidBody;
 }
 
@@ -49,14 +64,61 @@ btRigidBody* VROPhysicsBody::getBulletRigidBody() {
 }
 
 #pragma mark - RigidBody properties
-void VROPhysicsBody::setMass(float mass, VROVector3f inertia) {
-    if (_type != VROPhysicsBody::VROPhysicsBodyType::Dynamic){
+void VROPhysicsBody::setMass(float mass) {
+    if (_type != VROPhysicsBody::VROPhysicsBodyType::Dynamic) {
         pwarn("Attempted to incorrectly set mass for a static or kinematic body type!");
         return;
     }
+    _mass = mass;
+    _rigidBody->setMassProps(mass, {_inertia.x, _inertia.y, _inertia.z});
+}
 
-    _rigidBody->setMassProps(mass, {inertia.x, inertia.y, inertia.z});
+void VROPhysicsBody::setInertia(VROVector3f inertia) {
+    if (_type != VROPhysicsBody::VROPhysicsBodyType::Dynamic) {
+        pwarn("Attempted to incorrectly set inertia for a static or kinematic body type!");
+        return;
+    }
+    _inertia = inertia;
+    _rigidBody->setMassProps(_mass, {inertia.x, inertia.y, inertia.z});
+}
+
+
+void VROPhysicsBody::setRestitution(float restitution) {
+    _rigidBody->setRestitution(restitution);
+}
+
+void VROPhysicsBody::setFriction(float friction) {
+    _rigidBody->setFriction(friction);
+}
+
+void VROPhysicsBody::setUseGravity(bool useGravity) {
+    _useGravity = useGravity;
+}
+
+bool VROPhysicsBody::getUseGravity() {
+    return _useGravity;
+}
+
+void VROPhysicsBody::setPhysicsShape(std::shared_ptr<VROPhysicsShape> shape) {
+    if (_shape == shape) {
+        return;
+    }
+    _shape = shape;
+
+    // Bullet needs to refresh it's underlying object when changing its physics shape.
     _needsBulletUpdate = true;
+}
+
+void VROPhysicsBody::setIsSimulated(bool enabled) {
+    if (_enableSimulation == enabled){
+        return;
+    }
+    _enableSimulation = enabled;
+    _needsBulletUpdate = true;
+}
+
+bool VROPhysicsBody::getIsSimulated() {
+    return _enableSimulation;
 }
 
 #pragma mark - Transfomation Updates
@@ -64,7 +126,7 @@ bool VROPhysicsBody::needsBulletUpdate() {
     return _needsBulletUpdate;
 }
 
-void VROPhysicsBody::updateBulletRigidBody(){
+void VROPhysicsBody::updateBulletRigidBody() {
     if (!_needsBulletUpdate){
         return;
     }
@@ -72,6 +134,11 @@ void VROPhysicsBody::updateBulletRigidBody(){
     // Update the rigid body to the latest world transform.
     std::shared_ptr<VRONode> node = _w_node.lock();
     if (node){
+        if (_rigidBody->getMotionState() == nullptr) {
+            VROPhysicsMotionState *motionState = new VROPhysicsMotionState(shared_from_this());
+            _rigidBody->setMotionState(motionState);
+        }
+
         btTransform transform;
         getWorldTransform(transform);
         _rigidBody->setWorldTransform(transform);

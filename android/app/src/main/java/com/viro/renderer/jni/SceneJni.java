@@ -48,6 +48,18 @@ public class SceneJni {
                 wallMaterial, ceilingMaterial, floorMaterial);
     }
 
+    public void setPhysicsWorldGravity(float gravity[]){
+        nativeSetPhysicsWorldGravity(mNativeRef, gravity);
+    }
+
+    public void attachBodyToPhysicsWorld(NodeJni node){
+        nativeAttachToPhysicsWorld(mNativeRef, node.mNativeRef);
+    }
+
+    public void detachBodyFromPhysicsWorld(NodeJni node){
+        nativeDetachFromPhysicsWorld(mNativeRef, node.mNativeRef);
+    }
+
     public void destroy() {
         nativeDestroySceneDelegate(mNativeDelegateRef);
         nativeDestroyScene(mNativeRef);
@@ -115,4 +127,11 @@ public class SceneJni {
             mDelegate.get().onSceneDidDisappear();
         }
     }
+
+    /**
+     * Native Viro Phsyics JNI Functions
+     */
+    private native void nativeSetPhysicsWorldGravity(long sceneRef, float gravity[]);
+    private native void nativeAttachToPhysicsWorld(long sceneRef, long nodeRef);
+    private native void nativeDetachFromPhysicsWorld(long sceneRef, long nodeRef);
 }

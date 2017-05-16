@@ -7,19 +7,23 @@
 
 #ifndef VROPhysicsBody_h
 #define VROPhysicsBody_h
-#include <btBulletDynamicsCommon.h>
+
 #include "VROVector3f.h"
 #include "VROPhysicsShape.h"
 #include "VROLog.h"
 
 class VRONode;
+class btTransform;
+class btMotionState;
+class btRigidBody;
+class btVector3;
 
 /*
  VROPhysicsBody contains all the physics properties and forces that are associated with and/or
  applied to a given node. After construction, it is given to and processed within a simulated
  VROPhysicsWorld.
  */
-class VROPhysicsBody : public btMotionState {
+class VROPhysicsBody : public std::enable_shared_from_this<VROPhysicsBody> {
 public:
     enum class VROPhysicsBodyType {
         /*
@@ -31,7 +35,7 @@ public:
         /*
          Kinematic bodies can be moved via animations, and has 0 mass.
          It can only collide with dynamic bodies (but cannot be influenced by them).
-         */
+        */
         Kinematic = 1,
 
         /*
@@ -40,15 +44,57 @@ public:
          */
         Dynamic = 2
     };
+    static const std::string kDynamicTag;
+    static const std::string kKinematicTag;
+    static const std::string kStaticTag;
+
+    /*
+     Returns true if the given string and mass represents a valid representation of
+     VROPhysicsBodyType. Else, false is returned and the errorMsg is populated
+     with the reason for failure.
+     */
+    static bool isValidType(std::string strType, float mass, std::string &errorMsg) {
+        if (strType != kKinematicTag && strType != kDynamicTag && strType != kStaticTag) {
+            errorMsg = "Provided invalid physicsBody of type: " + strType;
+            return false;
+        } else if ((strType == kKinematicTag || strType == kStaticTag) && mass !=0) {
+            errorMsg = "Mass must be 0 for kinematic or static bodies.";
+            return false;
+        } else if (strType == kDynamicTag && mass <=0) {
+            errorMsg = "Mass must be > 0 for dynamic bodies.";
+            return false;
+        }
+
+        return true;
+    }
+
+    /*
+     Returns a VROPhysicsBodyType for a given string.
+     */
+    static VROPhysicsBody::VROPhysicsBodyType getBodyTypeForString(std::string strType) {
+        if (!strType.compare(kKinematicTag)) {
+            return VROPhysicsBody::VROPhysicsBodyType::Kinematic;
+        } else if (!strType.compare(kDynamicTag)) {
+            return VROPhysicsBody::VROPhysicsBodyType::Dynamic;
+        }
+        return VROPhysicsBody::VROPhysicsBodyType::Static;
+    }
 
     VROPhysicsBody(std::shared_ptr<VRONode> node, VROPhysicsBody::VROPhysicsBodyType type,
                    float mass, std::shared_ptr<VROPhysicsShape> shape);
     virtual ~VROPhysicsBody();
 
     /*
-     Sets the mass and associated inertia for this VROPhysicsBody.
+     Setters and getters for physics properties associated with this VROPhysicsBody.
      */
-    void setMass(float mass, VROVector3f inertia);
+    void setMass(float mass);
+    void setInertia(VROVector3f inertia);
+    void setIsSimulated(bool enabled);
+    bool getIsSimulated();
+    void setRestitution(float restitution);
+    void setUseGravity(bool useGravity);
+    bool getUseGravity();
+    void setFriction(float friction);
 
     /*
      Sets the given VROPhysicsShape that will be used to process collisions.
@@ -97,9 +143,15 @@ public:
 
 private:
     std::weak_ptr<VRONode> _w_node;
-    std::shared_ptr<VROPhysicsShape> _shape;
-    VROPhysicsBody::VROPhysicsBodyType _type;
     bool _needsBulletUpdate;
     btRigidBody* _rigidBody;
+
+    // Physics Properties
+    std::shared_ptr<VROPhysicsShape> _shape;
+    VROPhysicsBody::VROPhysicsBodyType _type;
+    bool _enableSimulation;
+    float _mass;
+    VROVector3f _inertia;
+    bool _useGravity;
 };
 #endif

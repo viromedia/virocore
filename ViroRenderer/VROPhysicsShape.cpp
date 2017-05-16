@@ -9,6 +9,9 @@
 #include "VROBox.h"
 #include "VROSphere.h"
 #include "VROLog.h"
+#include <btBulletDynamicsCommon.h>
+const std::string VROPhysicsShape::kSphereTag = "sphere";
+const std::string VROPhysicsShape::kBoxTag = "box";
 
 VROPhysicsShape::VROPhysicsShape(VROShapeType type,std::vector<float> params) {
     if (type != VROShapeType::Sphere || VROShapeType::Box){

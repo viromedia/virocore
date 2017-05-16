@@ -6,6 +6,7 @@
 //
 
 #include "VROPhysicsWorld.h"
+#include <btBulletDynamicsCommon.h>
 
 static const float kPhysicsStepTime = 1 / 60.f;
 static const float kPhysicsMaxSteps = 10;
@@ -21,6 +22,9 @@ VROPhysicsWorld::VROPhysicsWorld() {
 
     // Finally, we create the physics world with the prepared configurations.
     _dynamicsWorld = new btDiscreteDynamicsWorld(_collisionDispatcher, _broadphase, _constraintSolver, _collisionConfiguration);
+
+    // Default to Earth's gravity if none is set.
+    _dynamicsWorld->setGravity({0,-9.81f,0});
 }
 
 VROPhysicsWorld::~VROPhysicsWorld() {
@@ -52,14 +56,14 @@ void VROPhysicsWorld::addPhysicsBody(std::shared_ptr<VROPhysicsBody> body) {
 
 void VROPhysicsWorld::removePhysicsBody(std::shared_ptr<VROPhysicsBody> body) {
     if (_activePhysicsBodies.find(body) == _activePhysicsBodies.end()){
-        pwarn("Attempted to remove a VROPhsyicsBody that does not exist in this phsyics world!");
+        pwarn("Attempted to remove a VROPhysicsBody that does not exist in this physics world!");
         return;
     }
 
+    _activePhysicsBodies.erase(body);
     btRigidBody* bulletBody = body->getBulletRigidBody();
-    if (bulletBody){
+    if (bulletBody && body->getIsSimulated()){
         _dynamicsWorld->removeRigidBody(bulletBody);
-        _activePhysicsBodies.erase(body);
     } else {
         perror("Attempted to remove a VROPhysics body with a mis-configured bulletBody!");
     }
@@ -71,13 +75,23 @@ void VROPhysicsWorld::computePhysics() {
         std::shared_ptr<VROPhysicsBody> physicsBody = *it;
 
         // To update a bullet physics object, it must be removed and added back into the world.
-        if (physicsBody->needsBulletUpdate()){
+        if (physicsBody->needsBulletUpdate()) {
             btRigidBody *oldBulletBody = physicsBody->getBulletRigidBody();
             _dynamicsWorld->removeRigidBody(oldBulletBody);
 
             physicsBody->updateBulletRigidBody();
-            btRigidBody *newBulletBody = physicsBody->getBulletRigidBody();
-            _dynamicsWorld->addRigidBody(newBulletBody);
+
+            if (physicsBody->getIsSimulated()) {
+                btRigidBody *newBulletBody = physicsBody->getBulletRigidBody();
+                _dynamicsWorld->addRigidBody(newBulletBody);
+            }
+        }
+
+        // Update gravity states for physics bodies
+        if (!physicsBody->getUseGravity()){
+            physicsBody->getBulletRigidBody()->setGravity({0,0,0});
+        } else {
+            physicsBody->getBulletRigidBody()->setGravity(_dynamicsWorld->getGravity());
         }
     }
 

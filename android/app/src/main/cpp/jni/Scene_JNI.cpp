@@ -19,6 +19,7 @@
 #include "Scene_JNI.h"
 #include "Texture_JNI.h"
 #include "RenderContext_JNI.h"
+#include "Node_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -190,6 +191,52 @@ JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, j
     env->ReleaseStringUTFChars(ceilingMaterial, cCeilingMaterial);
     env->ReleaseStringUTFChars(floorMaterial, cFloorMaterial);
 
+}
+
+JNI_METHOD(void, nativeSetPhysicsWorldGravity)(JNIEnv *env,
+                                     jclass clazz,
+                                     jlong sceneRef,
+                                     jfloatArray gravityArray) {
+    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    jfloat *gravityArrayf = env->GetFloatArrayElements(gravityArray, 0);
+    VROVector3f gravity = VROVector3f(gravityArrayf[0], gravityArrayf[1], gravityArrayf[2]);
+
+    VROPlatformDispatchAsyncRenderer([sceneController_w, gravity] {
+        std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
+        if (sceneController){
+            sceneController->getScene()->getPhysicsWorld()->setGravity(gravity);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeAttachToPhysicsWorld)(JNIEnv *env,
+                                     jclass clazz,
+                                     jlong sceneRef,
+                                     jlong nodeRef) {
+    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    std::weak_ptr<VRONode> node_w = Node::native(nodeRef);
+    VROPlatformDispatchAsyncRenderer([sceneController_w, node_w] {
+        std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody() && sceneController) {
+            sceneController->getScene()->getPhysicsWorld()->addPhysicsBody(node->getPhysicsBody());
+        }
+    });
+}
+
+JNI_METHOD(void, nativeDetachFromPhysicsWorld)(JNIEnv *env,
+                                     jclass clazz,
+                                     jlong sceneRef,
+                                     jlong nodeRef) {
+    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    std::weak_ptr<VRONode> node_w = Node::native(nodeRef);
+    VROPlatformDispatchAsyncRenderer([sceneController_w, node_w] {
+        std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody() && sceneController) {
+            sceneController->getScene()->getPhysicsWorld()->removePhysicsBody(node->getPhysicsBody());
+        }
+    });
 }
 
 }  // extern "C"

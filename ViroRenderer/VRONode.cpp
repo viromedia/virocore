@@ -736,7 +736,8 @@ std::shared_ptr<VROPhysicsBody> VRONode::initPhysicsBody(VROPhysicsBody::VROPhys
                                                          float mass,
                                                          std::shared_ptr<VROPhysicsShape> shape) {
     std::shared_ptr<VRONode> node = std::static_pointer_cast<VRONode>(shared_from_this());
-    return std::make_shared<VROPhysicsBody>(node, type, mass, shape);
+    _physicsBody = std::make_shared<VROPhysicsBody>(node, type, mass, shape);
+    return _physicsBody;
 }
 
 std::shared_ptr<VROPhysicsBody> VRONode::getPhysicsBody() const {
