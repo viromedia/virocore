@@ -35,6 +35,7 @@ class VROAction;
 class VRONodeCamera;
 class VROHitTestResult;
 class VROConstraint;
+class VROExecutableAnimation;
 
 extern bool kDebugSortOrder;
 
@@ -314,11 +315,33 @@ public:
         return _supernode.lock();
     }
     
-#pragma mark - Actions
+#pragma mark - Actions and Animations
     
+    /*
+     Actions enable open-ended and fully customizable manipulation of nodes over successive
+     frames.
+     */
     void runAction(std::shared_ptr<VROAction> action);
     void removeAction(std::shared_ptr<VROAction> action);
     void removeAllActions();
+    
+    /*
+     Animations enable structured manipulation of nodes over successive frames. They can
+     be as simple interpolating batches of properties over time, or as complex as full
+     skeletal animation.
+     
+     These methods all take a name parameter. If addAnimation is invoked with a name that
+     already exists, the old animation is replaced with the new one. For the remaining methods,
+     if an animation with the given name is not present, the method will have no effect.
+     
+     If recursive is set to true, then all nodes in the sub-hierarchy will run/pause their
+     own respective animation with the same name, if present.
+     */
+    void addAnimation(std::string name, std::shared_ptr<VROExecutableAnimation> animation);
+    void removeAnimation(std::string name);
+    void runAnimation(std::string name, bool recursive = false);
+    void pauseAnimation(std::string name, bool recursive = false);
+    void removeAllAnimations();
     
 #pragma mark - Events 
     
@@ -461,6 +484,11 @@ private:
      Active actions on this node.
      */
     std::vector<std::shared_ptr<VROAction>> _actions;
+    
+    /*
+     Animations stored with this node.
+     */
+    std::map<std::string, std::shared_ptr<VROExecutableAnimation>> _animations;
     
     /*
      Constraints on the node, which can modify the node's transformation matrix.

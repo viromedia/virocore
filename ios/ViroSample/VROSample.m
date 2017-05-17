@@ -834,6 +834,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                         
                                                                         node->setPosition({0, -2, -12});
                                                                         node->setScale({0.1, 0.1, 0.1});
+                                                                        
+                                                                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                                                            node->runAnimation("Take 001", true);
+                                                                        });
                                                                     });
     
     

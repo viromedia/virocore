@@ -10,7 +10,5 @@
 #include "VROAnimationMatrix4f.h"
 
 void VROBone::setTransform(VROMatrix4f transform) {
-    animate(std::make_shared<VROAnimationMatrix4f>([](VROAnimatable *const animatable, VROMatrix4f p) {
-        ((VROBone *)animatable)->_transform = p;
-    }, _transform, transform));
+    _transform = transform;
 }

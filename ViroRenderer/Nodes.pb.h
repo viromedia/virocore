@@ -3,12 +3,12 @@
 
 #ifndef PROTOBUF_Nodes_2eproto__INCLUDED
 #define PROTOBUF_Nodes_2eproto__INCLUDED
+
+#include <string>
 #include "VRODefines.h"
 #if VRO_PLATFORM_IOS
 #define google google_public
 #endif
-#include <string>
-
 #include <google/protobuf/stubs/common.h>
 
 #if GOOGLE_PROTOBUF_VERSION < 3002000
@@ -1542,11 +1542,11 @@ class Node_SkeletalAnimation_Frame : public ::google::protobuf::MessageLite /* @
   const ::google::protobuf::RepeatedPtrField< ::viro::Node_Matrix >&
       transform() const;
 
-  // int64 time = 1;
+  // float time = 1;
   void clear_time();
   static const int kTimeFieldNumber = 1;
-  ::google::protobuf::int64 time() const;
-  void set_time(::google::protobuf::int64 value);
+  float time() const;
+  void set_time(float value);
 
   // @@protoc_insertion_point(class_scope:viro.Node.SkeletalAnimation.Frame)
  private:
@@ -1555,7 +1555,7 @@ class Node_SkeletalAnimation_Frame : public ::google::protobuf::MessageLite /* @
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > bone_index_;
   mutable int _bone_index_cached_byte_size_;
   ::google::protobuf::RepeatedPtrField< ::viro::Node_Matrix > transform_;
-  ::google::protobuf::int64 time_;
+  float time_;
   mutable int _cached_size_;
   friend struct  protobuf_Nodes_2eproto::TableStruct;
 };
@@ -1649,12 +1649,19 @@ class Node_SkeletalAnimation : public ::google::protobuf::MessageLite /* @@proto
   ::std::string* release_name();
   void set_allocated_name(::std::string* name);
 
+  // int64 duration = 3;
+  void clear_duration();
+  static const int kDurationFieldNumber = 3;
+  ::google::protobuf::int64 duration() const;
+  void set_duration(::google::protobuf::int64 value);
+
   // @@protoc_insertion_point(class_scope:viro.Node.SkeletalAnimation)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::viro::Node_SkeletalAnimation_Frame > frame_;
   ::google::protobuf::internal::ArenaStringPtr name_;
+  ::google::protobuf::int64 duration_;
   mutable int _cached_size_;
   friend struct  protobuf_Nodes_2eproto::TableStruct;
 };
@@ -2011,10 +2018,10 @@ class Node : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(
 
   // accessors -------------------------------------------------------
 
-  // repeated float position = 1;
+  // repeated float position = 2;
   int position_size() const;
   void clear_position();
-  static const int kPositionFieldNumber = 1;
+  static const int kPositionFieldNumber = 2;
   float position(int index) const;
   void set_position(int index, float value);
   void add_position(float value);
@@ -2023,10 +2030,10 @@ class Node : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(
   ::google::protobuf::RepeatedField< float >*
       mutable_position();
 
-  // repeated float scale = 2;
+  // repeated float scale = 3;
   int scale_size() const;
   void clear_scale();
-  static const int kScaleFieldNumber = 2;
+  static const int kScaleFieldNumber = 3;
   float scale(int index) const;
   void set_scale(int index, float value);
   void add_scale(float value);
@@ -2035,10 +2042,10 @@ class Node : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(
   ::google::protobuf::RepeatedField< float >*
       mutable_scale();
 
-  // repeated float rotation = 3;
+  // repeated float rotation = 4;
   int rotation_size() const;
   void clear_rotation();
-  static const int kRotationFieldNumber = 3;
+  static const int kRotationFieldNumber = 4;
   float rotation(int index) const;
   void set_rotation(int index, float value);
   void add_rotation(float value);
@@ -2047,10 +2054,10 @@ class Node : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(
   ::google::protobuf::RepeatedField< float >*
       mutable_rotation();
 
-  // repeated .viro.Node.SkeletalAnimation skeletal_animation = 8;
+  // repeated .viro.Node.SkeletalAnimation skeletal_animation = 9;
   int skeletal_animation_size() const;
   void clear_skeletal_animation();
-  static const int kSkeletalAnimationFieldNumber = 8;
+  static const int kSkeletalAnimationFieldNumber = 9;
   const ::viro::Node_SkeletalAnimation& skeletal_animation(int index) const;
   ::viro::Node_SkeletalAnimation* mutable_skeletal_animation(int index);
   ::viro::Node_SkeletalAnimation* add_skeletal_animation();
@@ -2059,10 +2066,10 @@ class Node : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(
   const ::google::protobuf::RepeatedPtrField< ::viro::Node_SkeletalAnimation >&
       skeletal_animation() const;
 
-  // repeated .viro.Node.Light light = 9;
+  // repeated .viro.Node.Light light = 10;
   int light_size() const;
   void clear_light();
-  static const int kLightFieldNumber = 9;
+  static const int kLightFieldNumber = 10;
   const ::viro::Node_Light& light(int index) const;
   ::viro::Node_Light* mutable_light(int index);
   ::viro::Node_Light* add_light();
@@ -2071,10 +2078,10 @@ class Node : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(
   const ::google::protobuf::RepeatedPtrField< ::viro::Node_Light >&
       light() const;
 
-  // repeated .viro.Node subnode = 11;
+  // repeated .viro.Node subnode = 12;
   int subnode_size() const;
   void clear_subnode();
-  static const int kSubnodeFieldNumber = 11;
+  static const int kSubnodeFieldNumber = 12;
   const ::viro::Node& subnode(int index) const;
   ::viro::Node* mutable_subnode(int index);
   ::viro::Node* add_subnode();
@@ -2083,42 +2090,56 @@ class Node : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(
   const ::google::protobuf::RepeatedPtrField< ::viro::Node >&
       subnode() const;
 
-  // .viro.Node.Geometry geometry = 6;
+  // string name = 1;
+  void clear_name();
+  static const int kNameFieldNumber = 1;
+  const ::std::string& name() const;
+  void set_name(const ::std::string& value);
+  #if LANG_CXX11
+  void set_name(::std::string&& value);
+  #endif
+  void set_name(const char* value);
+  void set_name(const char* value, size_t size);
+  ::std::string* mutable_name();
+  ::std::string* release_name();
+  void set_allocated_name(::std::string* name);
+
+  // .viro.Node.Geometry geometry = 7;
   bool has_geometry() const;
   void clear_geometry();
-  static const int kGeometryFieldNumber = 6;
+  static const int kGeometryFieldNumber = 7;
   const ::viro::Node_Geometry& geometry() const;
   ::viro::Node_Geometry* mutable_geometry();
   ::viro::Node_Geometry* release_geometry();
   void set_allocated_geometry(::viro::Node_Geometry* geometry);
 
-  // .viro.Node.Skeleton skeleton = 7;
+  // .viro.Node.Skeleton skeleton = 8;
   bool has_skeleton() const;
   void clear_skeleton();
-  static const int kSkeletonFieldNumber = 7;
+  static const int kSkeletonFieldNumber = 8;
   const ::viro::Node_Skeleton& skeleton() const;
   ::viro::Node_Skeleton* mutable_skeleton();
   ::viro::Node_Skeleton* release_skeleton();
   void set_allocated_skeleton(::viro::Node_Skeleton* skeleton);
 
-  // .viro.Node.Camera camera = 10;
+  // .viro.Node.Camera camera = 11;
   bool has_camera() const;
   void clear_camera();
-  static const int kCameraFieldNumber = 10;
+  static const int kCameraFieldNumber = 11;
   const ::viro::Node_Camera& camera() const;
   ::viro::Node_Camera* mutable_camera();
   ::viro::Node_Camera* release_camera();
   void set_allocated_camera(::viro::Node_Camera* camera);
 
-  // int32 rendering_order = 4;
+  // int32 rendering_order = 5;
   void clear_rendering_order();
-  static const int kRenderingOrderFieldNumber = 4;
+  static const int kRenderingOrderFieldNumber = 5;
   ::google::protobuf::int32 rendering_order() const;
   void set_rendering_order(::google::protobuf::int32 value);
 
-  // float opacity = 5;
+  // float opacity = 6;
   void clear_opacity();
-  static const int kOpacityFieldNumber = 5;
+  static const int kOpacityFieldNumber = 6;
   float opacity() const;
   void set_opacity(float value);
 
@@ -2135,6 +2156,7 @@ class Node : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(
   ::google::protobuf::RepeatedPtrField< ::viro::Node_SkeletalAnimation > skeletal_animation_;
   ::google::protobuf::RepeatedPtrField< ::viro::Node_Light > light_;
   ::google::protobuf::RepeatedPtrField< ::viro::Node > subnode_;
+  ::google::protobuf::internal::ArenaStringPtr name_;
   ::viro::Node_Geometry* geometry_;
   ::viro::Node_Skeleton* skeleton_;
   ::viro::Node_Camera* camera_;
@@ -3506,15 +3528,15 @@ Node_Skeleton::bone() const {
 
 // Node_SkeletalAnimation_Frame
 
-// int64 time = 1;
+// float time = 1;
 inline void Node_SkeletalAnimation_Frame::clear_time() {
-  time_ = GOOGLE_LONGLONG(0);
+  time_ = 0;
 }
-inline ::google::protobuf::int64 Node_SkeletalAnimation_Frame::time() const {
+inline float Node_SkeletalAnimation_Frame::time() const {
   // @@protoc_insertion_point(field_get:viro.Node.SkeletalAnimation.Frame.time)
   return time_;
 }
-inline void Node_SkeletalAnimation_Frame::set_time(::google::protobuf::int64 value) {
+inline void Node_SkeletalAnimation_Frame::set_time(float value) {
   
   time_ = value;
   // @@protoc_insertion_point(field_set:viro.Node.SkeletalAnimation.Frame.time)
@@ -3664,6 +3686,20 @@ inline const ::google::protobuf::RepeatedPtrField< ::viro::Node_SkeletalAnimatio
 Node_SkeletalAnimation::frame() const {
   // @@protoc_insertion_point(field_list:viro.Node.SkeletalAnimation.frame)
   return frame_;
+}
+
+// int64 duration = 3;
+inline void Node_SkeletalAnimation::clear_duration() {
+  duration_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 Node_SkeletalAnimation::duration() const {
+  // @@protoc_insertion_point(field_get:viro.Node.SkeletalAnimation.duration)
+  return duration_;
+}
+inline void Node_SkeletalAnimation::set_duration(::google::protobuf::int64 value) {
+  
+  duration_ = value;
+  // @@protoc_insertion_point(field_set:viro.Node.SkeletalAnimation.duration)
 }
 
 // -------------------------------------------------------------------
@@ -3962,7 +3998,59 @@ Node_Camera::mutable_position() {
 
 // Node
 
-// repeated float position = 1;
+// string name = 1;
+inline void Node::clear_name() {
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Node::name() const {
+  // @@protoc_insertion_point(field_get:viro.Node.name)
+  return name_.GetNoArena();
+}
+inline void Node::set_name(const ::std::string& value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:viro.Node.name)
+}
+#if LANG_CXX11
+inline void Node::set_name(::std::string&& value) {
+  
+  name_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:viro.Node.name)
+}
+#endif
+inline void Node::set_name(const char* value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:viro.Node.name)
+}
+inline void Node::set_name(const char* value, size_t size) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:viro.Node.name)
+}
+inline ::std::string* Node::mutable_name() {
+  
+  // @@protoc_insertion_point(field_mutable:viro.Node.name)
+  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Node::release_name() {
+  // @@protoc_insertion_point(field_release:viro.Node.name)
+  
+  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Node::set_allocated_name(::std::string* name) {
+  if (name != NULL) {
+    
+  } else {
+    
+  }
+  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.name)
+}
+
+// repeated float position = 2;
 inline int Node::position_size() const {
   return position_.size();
 }
@@ -3992,7 +4080,7 @@ Node::mutable_position() {
   return &position_;
 }
 
-// repeated float scale = 2;
+// repeated float scale = 3;
 inline int Node::scale_size() const {
   return scale_.size();
 }
@@ -4022,7 +4110,7 @@ Node::mutable_scale() {
   return &scale_;
 }
 
-// repeated float rotation = 3;
+// repeated float rotation = 4;
 inline int Node::rotation_size() const {
   return rotation_.size();
 }
@@ -4052,7 +4140,7 @@ Node::mutable_rotation() {
   return &rotation_;
 }
 
-// int32 rendering_order = 4;
+// int32 rendering_order = 5;
 inline void Node::clear_rendering_order() {
   rendering_order_ = 0;
 }
@@ -4066,7 +4154,7 @@ inline void Node::set_rendering_order(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:viro.Node.rendering_order)
 }
 
-// float opacity = 5;
+// float opacity = 6;
 inline void Node::clear_opacity() {
   opacity_ = 0;
 }
@@ -4080,7 +4168,7 @@ inline void Node::set_opacity(float value) {
   // @@protoc_insertion_point(field_set:viro.Node.opacity)
 }
 
-// .viro.Node.Geometry geometry = 6;
+// .viro.Node.Geometry geometry = 7;
 inline bool Node::has_geometry() const {
   return this != internal_default_instance() && geometry_ != NULL;
 }
@@ -4119,7 +4207,7 @@ inline void Node::set_allocated_geometry(::viro::Node_Geometry* geometry) {
   // @@protoc_insertion_point(field_set_allocated:viro.Node.geometry)
 }
 
-// .viro.Node.Skeleton skeleton = 7;
+// .viro.Node.Skeleton skeleton = 8;
 inline bool Node::has_skeleton() const {
   return this != internal_default_instance() && skeleton_ != NULL;
 }
@@ -4158,7 +4246,7 @@ inline void Node::set_allocated_skeleton(::viro::Node_Skeleton* skeleton) {
   // @@protoc_insertion_point(field_set_allocated:viro.Node.skeleton)
 }
 
-// repeated .viro.Node.SkeletalAnimation skeletal_animation = 8;
+// repeated .viro.Node.SkeletalAnimation skeletal_animation = 9;
 inline int Node::skeletal_animation_size() const {
   return skeletal_animation_.size();
 }
@@ -4188,7 +4276,7 @@ Node::skeletal_animation() const {
   return skeletal_animation_;
 }
 
-// repeated .viro.Node.Light light = 9;
+// repeated .viro.Node.Light light = 10;
 inline int Node::light_size() const {
   return light_.size();
 }
@@ -4218,7 +4306,7 @@ Node::light() const {
   return light_;
 }
 
-// .viro.Node.Camera camera = 10;
+// .viro.Node.Camera camera = 11;
 inline bool Node::has_camera() const {
   return this != internal_default_instance() && camera_ != NULL;
 }
@@ -4257,7 +4345,7 @@ inline void Node::set_allocated_camera(::viro::Node_Camera* camera) {
   // @@protoc_insertion_point(field_set_allocated:viro.Node.camera)
 }
 
-// repeated .viro.Node subnode = 11;
+// repeated .viro.Node subnode = 12;
 inline int Node::subnode_size() const {
   return subnode_.size();
 }

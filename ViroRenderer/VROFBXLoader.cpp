@@ -11,6 +11,7 @@
 #include "VROPlatformUtil.h"
 #include "VROGeometry.h"
 #include "VROData.h"
+#include "VROStringUtil.h"
 #include "VROModelIOUtil.h"
 #include "VROSkinner.h"
 #include "VROSkeleton.h"
@@ -220,6 +221,8 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
                                                    const std::map<std::string, std::string> *resourceMap,
                                                    std::map<std::string, std::shared_ptr<VROTexture>> &textureCache) {
     
+    pinfo("   Loading node %s", node_pb.name().c_str());
+    
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
     node->setThreadRestrictionEnabled(false);
     node->setPosition({ node_pb.position(0), node_pb.position(1), node_pb.position(2) });
@@ -235,10 +238,17 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
         if (geo_pb.has_skin() && skeleton) {
             geo->setSkinner(loadFBXSkinner(geo_pb.skin(), skeleton));
             
-            // TODO VIRO-57 (continued): store the loaded animations somewhere
-            
+            for (int i = 0; i < node_pb.skeletal_animation_size(); i++) {
+                const viro::Node::SkeletalAnimation &animation_pb = node_pb.skeletal_animation(i);
+                
+                std::shared_ptr<VROSkeletalAnimation> animation = loadFBXSkeletalAnimation(animation_pb, skeleton);
+                if (animation->getName().empty()) {
+                    animation->setName("fbx_animation_" + VROStringUtil::toString(i));
+                }
+                
+                node->addAnimation(animation->getName(), animation);
+            }
         }
-        
         node->setGeometry(geo);
     }
     
@@ -436,7 +446,9 @@ std::shared_ptr<VROSkeletalAnimation> VROFBXLoader::loadFBXSkeletalAnimation(con
         frames.push_back(std::move(frame));
     }
     
-    std::shared_ptr<VROSkeletalAnimation> animation = std::make_shared<VROSkeletalAnimation>(skeleton, frames);
+    float duration = animation_pb.duration();
+    
+    std::shared_ptr<VROSkeletalAnimation> animation = std::make_shared<VROSkeletalAnimation>(skeleton, frames, duration);
     animation->setName(animation_pb.name());
     
     return animation;

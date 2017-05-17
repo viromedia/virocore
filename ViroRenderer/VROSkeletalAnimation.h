@@ -23,10 +23,10 @@ class VROSkeleton;
 struct VROSkeletalAnimationFrame {
     
     /*
-     Start time of this frame. Defined as milliseconds after
-     the animation start time.
+     Start time of this frame. Defined between [0, 1], where 0
+     is the start of the animation and 1.0 is the end.
      */
-    double time;
+    float time;
     
     /*
      The indices of the bones that are animated this frame,
@@ -47,14 +47,16 @@ struct VROSkeletalAnimationFrame {
  a VROSkeleton. The VROSkinners associated with the skeleton 
  propagate these bone animations to geometries.
  */
-class VROSkeletalAnimation : public VROExecutableAnimation {
+class VROSkeletalAnimation : public VROExecutableAnimation, public std::enable_shared_from_this<VROSkeletalAnimation> {
     
 public:
     
     VROSkeletalAnimation(std::shared_ptr<VROSkeleton> skeleton,
-                         std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> &frames) :
+                         std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> &frames,
+                         float duration) :
         _skeleton(skeleton),
-        _frames(std::move(frames)) {}
+        _frames(std::move(frames)),
+        _duration(duration) {}
     virtual ~VROSkeletalAnimation() { }
     
     void setName(std::string name) {
@@ -99,6 +101,11 @@ private:
      The animation frames, in order of time.
      */
     std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> _frames;
+    
+    /*
+     The duration of this animation in milliseconds.
+     */
+    float _duration;
     
     /*
      If the animation is running, this is its associated transaction.

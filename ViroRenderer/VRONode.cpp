@@ -24,6 +24,7 @@
 #include "VROConstraint.h"
 #include "VROStringUtil.h"
 #include "VROPhysicsBody.h"
+#include "VROExecutableAnimation.h"
 
 // Opacity below which a node is considered hidden
 static const float kHiddenOpacityThreshold = 0.02;
@@ -500,7 +501,7 @@ void VRONode::setHighAccuracyGaze(bool enabled) {
     _highAccuracyGaze = enabled;
 }
 
-#pragma mark - Actions
+#pragma mark - Actions and Animations
 
 void VRONode::processActions() {
     passert_thread();
@@ -544,6 +545,61 @@ void VRONode::removeAction(std::shared_ptr<VROAction> action) {
 void VRONode::removeAllActions() {
     passert_thread();
     _actions.clear();
+}
+
+void VRONode::addAnimation(std::string name, std::shared_ptr<VROExecutableAnimation> animation) {
+    passert_thread();
+    removeAnimation(name);
+    _animations[name] = animation;
+    
+    pinfo("Added animation %s", name.c_str());
+}
+
+void VRONode::removeAnimation(std::string name) {
+    passert_thread();
+    auto kv = _animations.find(name);
+    if (kv == _animations.end()) {
+        return;
+    }
+    
+    kv->second->terminate();
+    _animations.erase(kv);
+}
+
+void VRONode::runAnimation(std::string name, bool recursive) {
+    passert_thread();
+    auto kv = _animations.find(name);
+    if (kv != _animations.end()) {
+        kv->second->execute(std::static_pointer_cast<VRONode>(shared_from_this()), {});
+    }
+    
+    if (recursive) {
+        for (std::shared_ptr<VRONode> &subnode : _subnodes) {
+            subnode->runAnimation(name, recursive);
+        }
+    }
+}
+
+void VRONode::pauseAnimation(std::string name, bool recursive) {
+    passert_thread();
+    auto kv = _animations.find(name);
+    if (kv != _animations.end()) {
+        kv->second->pause();
+    }
+    
+    if (recursive) {
+        for (std::shared_ptr<VRONode> &subnode : _subnodes) {
+            subnode->pauseAnimation(name, recursive);
+        }
+    }
+}
+
+void VRONode::removeAllAnimations() {
+    passert_thread();
+    for (auto kv : _animations) {
+        kv.second->terminate();
+    }
+    _animations.clear();
 }
 
 #pragma mark - Hit Testing
@@ -632,6 +688,7 @@ void VRONode::removeAllConstraints() {
 }
 
 #pragma mark - Physics
+
 std::shared_ptr<VROPhysicsBody> VRONode::initPhysicsBody(VROPhysicsBody::VROPhysicsBodyType type,
                                                          float mass,
                                                          std::shared_ptr<VROPhysicsShape> shape) {
