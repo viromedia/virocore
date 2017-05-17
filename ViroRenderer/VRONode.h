@@ -44,6 +44,8 @@ public:
     
     static void resetDebugSortIndex();
     
+#pragma mark - Initialization
+    
     /*
      Default constructor.
      */
@@ -65,6 +67,8 @@ public:
      are shared by reference with the copied node.
      */
     std::shared_ptr<VRONode> clone();
+    
+#pragma mark - Render Cycle
 
     /*
      Recursive function that recomputes the transforms of this node. This includes:
@@ -118,9 +122,7 @@ public:
                 const VRORenderContext &context,
                 std::shared_ptr<VRODriver> &driver);
     
-    std::vector<std::shared_ptr<VROLight>> &getComputedLights() {
-        return _computedLights;
-    }
+#pragma mark - Geometry
     
     void setGeometry(std::shared_ptr<VROGeometry> geometry) {
         passert_thread();
@@ -130,9 +132,8 @@ public:
         return _geometry;
     }
     
-    /*
-     Camera.
-     */
+#pragma mark - Camera
+    
     void setCamera(std::shared_ptr<VRONodeCamera> camera) {
         passert_thread();
         _camera = camera;
@@ -141,9 +142,8 @@ public:
         return _camera;
     }
     
-    /*
-     Transform getters.
-     */
+#pragma mark - Transforms
+    
     VROVector3f getComputedPosition() const;
     VROMatrix4f getComputedRotation() const;
     VROMatrix4f getComputedTransform() const;
@@ -191,16 +191,12 @@ public:
     void setRotationEulerY(float radians);
     void setRotationEulerZ(float radians);
     
+#pragma mark - Render Settings
+    
     float getOpacity() const {
         return _opacity;
     }
     void setOpacity(float opacity);
-
-    void setHighAccuracyGaze(bool enabled);
-
-    bool getHighAccuracyGaze() const {
-        return _highAccuracyGaze;
-    }
 
     bool isHidden() const {
         return _hidden;
@@ -238,9 +234,8 @@ public:
      */
     int countVisibleNodes() const;
     
-    /*
-     Lights.
-     */
+#pragma mark - Lights
+    
     void addLight(std::shared_ptr<VROLight> light) {
         passert_thread();
         _lights.push_back(light);
@@ -260,10 +255,12 @@ public:
     std::vector<std::shared_ptr<VROLight>> &getLights() {
         return _lights;
     }
+    std::vector<std::shared_ptr<VROLight>> &getComputedLights() {
+        return _computedLights;
+    }
 
-    /*
-     Sounds.
-     */
+#pragma mark - Sounds
+    
     void addSound(std::shared_ptr<VROSound> sound) {
         passert_thread();
         if (sound->getType() == VROSoundType::Spatial) {
@@ -279,9 +276,8 @@ public:
                                }), _sounds.end());
     }
 
-    /*
-     Child management.
-     */
+#pragma mark - Scene Graph
+    
     void addChildNode(std::shared_ptr<VRONode> node) {
         passert_thread();
         passert (node);
@@ -318,16 +314,14 @@ public:
         return _supernode.lock();
     }
     
-    /*
-     Action management.
-     */
+#pragma mark - Actions
+    
     void runAction(std::shared_ptr<VROAction> action);
     void removeAction(std::shared_ptr<VROAction> action);
     void removeAllActions();
     
-    /*
-     Hit testing.
-     */
+#pragma mark - Events 
+    
     VROBoundingBox getBoundingBox();
     std::vector<VROHitTestResult> hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray,
                                           bool boundsOnly = false);
@@ -354,21 +348,26 @@ public:
         return _selectable;
     }
     
-    /*
-     Constraints.
-     */
+    void setHighAccuracyGaze(bool enabled);
+    
+    bool getHighAccuracyGaze() const {
+        return _highAccuracyGaze;
+    }
+    
+#pragma mark - Constraints
+    
     void addConstraint(std::shared_ptr<VROConstraint> constraint);
     void removeConstraint(std::shared_ptr<VROConstraint> constraint);
     void removeAllConstraints();
 
-    /*
-     Physics
-     */
+#pragma mark - Physics
+    
     std::shared_ptr<VROPhysicsBody> initPhysicsBody(VROPhysicsBody::VROPhysicsBodyType type,
                                                     float mass,
                                                     std::shared_ptr<VROPhysicsShape> shape);
     std::shared_ptr<VROPhysicsBody> getPhysicsBody() const;
     void clearPhysicsBody();
+    
 protected:
     
     /*
@@ -479,6 +478,8 @@ private:
      True if this node was found visible during the last call to computeVisibility().
      */
     bool _visible;
+    
+#pragma mark - Private
     
     /*
      Recursively set the visibility of this node and all of its children to the 
