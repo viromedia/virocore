@@ -248,6 +248,10 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
                 
                 node->addAnimation(animation->getName(), animation);
             }
+            
+            for (const std::shared_ptr<VROMaterial> &material : geo->getMaterials()) {
+                material->addShaderModifier(VROSkeletalAnimation::createSkeletalAnimationShaderModifier());
+            }
         }
         node->setGeometry(geo);
     }

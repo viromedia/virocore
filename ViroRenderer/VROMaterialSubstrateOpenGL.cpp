@@ -14,6 +14,7 @@
 #include "VROEye.h"
 #include "VROLight.h"
 #include "VROSortKey.h"
+#include "VROBoneUBO.h"
 #include <sstream>
 
 static std::shared_ptr<VROShaderModifier> sDiffuseTextureModifier;
@@ -371,6 +372,10 @@ void VROMaterialSubstrateOpenGL::bindMaterialUniforms(float opacity, const VROGe
     for (VROUniform *uniform : _shaderModifierUniforms) {
         uniform->set(nullptr, geometry);
     }
+}
+
+void VROMaterialSubstrateOpenGL::bindBoneUBO(const std::unique_ptr<VROBoneUBO> &boneUBO) {
+    boneUBO->bind(_program);
 }
 
 void VROMaterialSubstrateOpenGL::updateSortKey(VROSortKey &key) const {

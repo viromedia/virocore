@@ -11,9 +11,32 @@
 #include "VROLog.h"
 #include "VROAnimationMatrix4f.h"
 #include "VROSkeleton.h"
+#include "VROShaderModifier.h"
 #include "VROBone.h"
 #include <sstream>
 #include <map>
+
+static std::shared_ptr<VROShaderModifier> sSkeletalAnimationShaderModifier;
+
+std::shared_ptr<VROShaderModifier> VROSkeletalAnimation::createSkeletalAnimationShaderModifier() {
+    /*
+     Modifier that performs skeletal animation in the vertex shader.
+     */
+    if (!sSkeletalAnimationShaderModifier) {
+        std::vector<std::string> modifierCode =  {
+            "vec4 pos_h = vec4(_geometry.position, 1.0);",
+            "vec4 pos_blended = (bone_matrices[_geometry.bone_indices.x] * pos_h) * _geometry.bone_weights.x + "
+                               "(bone_matrices[_geometry.bone_indices.y] * pos_h) * _geometry.bone_weights.y + "
+                               "(bone_matrices[_geometry.bone_indices.z] * pos_h) * _geometry.bone_weights.z + "
+                               "(bone_matrices[_geometry.bone_indices.w] * pos_h) * _geometry.bone_weights.w;",
+            "_geometry.position = pos_blended.xyz;"
+        };
+        sSkeletalAnimationShaderModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
+                                                                               modifierCode);
+    }
+    
+    return sSkeletalAnimationShaderModifier;
+}
 
 std::shared_ptr<VROExecutableAnimation> VROSkeletalAnimation::copy() {
     pabort("Skeletal animations may not be copied");
@@ -50,7 +73,7 @@ void VROSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<
         
         std::vector<float> &keyTimes = kv.second;
         std::vector<VROMatrix4f> &keyValues = boneKeyValues[boneIndex];
-        std::shared_ptr<VROAnimation> animation = std::make_shared<VROAnimationMatrix4f>([shared_w](VROAnimatable *const animatable, VROMatrix4f m) {
+        std::shared_ptr<VROAnimation> animation = std::make_shared<VROAnimationMatrix4f>([shared_w, boneIndex](VROAnimatable *const animatable, VROMatrix4f m) {
             std::shared_ptr<VROSkeletalAnimation> shared = shared_w.lock();
             if (!shared) {
                 return;

@@ -26,11 +26,12 @@ class VROSkeleton {
 public:
     
     VROSkeleton(std::vector<std::shared_ptr<VROBone>> bones) :
-        _bones(bones) {
-        
-    }
+        _bones(bones) {}
     virtual ~VROSkeleton() {}
     
+    int getNumBones() const {
+        return _bones.size();
+    }
     const std::shared_ptr<VROBone> getBone(int index) const {
         return _bones[index];
     }

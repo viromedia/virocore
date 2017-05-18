@@ -23,6 +23,7 @@ class VROVector3f;
 class VROUniform;
 class VROGeometry;
 class VROLightingUBO;
+class VROBoneUBO;
 enum class VROEyeType;
 
 class VROMaterialSubstrateOpenGL : public VROMaterialSubstrate {
@@ -44,6 +45,7 @@ public:
                           VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
                           VROVector3f cameraPosition, VROEyeType eyeType);
     void bindMaterialUniforms(float opacity, const VROGeometry &geometry);
+    void bindBoneUBO(const std::unique_ptr<VROBoneUBO> &boneUBO);
     
     const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
         return _textures;

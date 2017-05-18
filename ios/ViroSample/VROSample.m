@@ -827,7 +827,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     scene->addNode(rootNode);
     
     std::shared_ptr<VRONode> fbxNode = VROFBXLoader::loadFBXFromURL(url, base, true,
-                                                                    [](std::shared_ptr<VRONode> node, bool success) {
+                                                                    [self](std::shared_ptr<VRONode> node, bool success) {
                                                                         if (!success) {
                                                                             return;
                                                                         }
@@ -836,7 +836,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                         node->setScale({0.1, 0.1, 0.1});
                                                                         
                                                                         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                                                                            node->runAnimation("Take 001", true);
+                                                                            [self animateTake:node];
                                                                         });
                                                                     });
     
@@ -857,6 +857,13 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     fbxNode->setEventDelegate(self.delegate);
     
     return sceneController;
+}
+
+- (void)animateTake:(std::shared_ptr<VRONode>)node {
+    node->runAnimation("Take 001", true);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self animateTake:node];
+    });
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {

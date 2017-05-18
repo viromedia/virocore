@@ -46,6 +46,10 @@ public:
      */
     VROMatrix4f getModelTransform(int boneIndex);
     
+    std::shared_ptr<VROSkeleton> getSkeleton() {
+        return _skeleton;
+    }
+    
     const std::shared_ptr<VROGeometrySource> getBoneIndices() const {
         return _boneIndices;
     }

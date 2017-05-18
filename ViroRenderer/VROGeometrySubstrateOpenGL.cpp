@@ -13,6 +13,7 @@
 #include "VROGeometrySource.h"
 #include "VROGeometryUtil.h"
 #include "VROLog.h"
+#include "VROBoneUBO.h"
 #include "VROShaderProgram.h"
 #include <map>
 
@@ -21,7 +22,16 @@ VROGeometrySubstrateOpenGL::VROGeometrySubstrateOpenGL(const VROGeometry &geomet
     _driver(driver) {
     
     readGeometryElements(geometry.getGeometryElements());
-    readGeometrySources(geometry.getGeometrySources());
+        
+    std::vector<std::shared_ptr<VROGeometrySource>> sources = geometry.getGeometrySources();
+    if (geometry.getSkinner()) {
+        sources.push_back(geometry.getSkinner()->getBoneIndices());
+        sources.push_back(geometry.getSkinner()->getBoneWeights());
+        
+        _boneUBO = std::unique_ptr<VROBoneUBO>(new VROBoneUBO(driver));
+    }
+    readGeometrySources(sources);
+        
     createVAO();
 }
 
@@ -62,7 +72,6 @@ void VROGeometrySubstrateOpenGL::readGeometryElements(const std::vector<std::sha
 }
 
 void VROGeometrySubstrateOpenGL::readGeometrySources(const std::vector<std::shared_ptr<VROGeometrySource>> &sources) {
-    
     std::shared_ptr<VROGeometrySource> source = sources.front();
     std::map<std::shared_ptr<VROData>, std::vector<std::shared_ptr<VROGeometrySource>>> dataMap;
     
@@ -135,7 +144,14 @@ void VROGeometrySubstrateOpenGL::createVAO() {
             glBindBuffer(GL_ARRAY_BUFFER, vd.buffer);
             
             for (int i = 0; i < vd.numAttributes; i++) {
-                glVertexAttribPointer(vd.attributes[i].index, vd.attributes[i].size, vd.attributes[i].type, GL_FALSE, vd.stride, (GLvoid *) vd.attributes[i].offset);
+                if (vd.attributes[i].type == GL_INT || vd.attributes[i].type == GL_SHORT) {
+                    glVertexAttribIPointer(vd.attributes[i].index, vd.attributes[i].size, vd.attributes[i].type, vd.stride,
+                                           (GLvoid *) vd.attributes[i].offset);
+                }
+                else {
+                    glVertexAttribPointer(vd.attributes[i].index, vd.attributes[i].size, vd.attributes[i].type, GL_FALSE, vd.stride,
+                                          (GLvoid *) vd.attributes[i].offset);
+                }
                 glEnableVertexAttribArray(vd.attributes[i].index);
             }
         }
@@ -149,49 +165,95 @@ void VROGeometrySubstrateOpenGL::createVAO() {
 }
 
 std::pair<GLuint, int> VROGeometrySubstrateOpenGL::parseVertexFormat(std::shared_ptr<VROGeometrySource> &source) {
-    // Currently assuming floats
-    switch (source->getBytesPerComponent()) {
-        case 2:
-            switch (source->getComponentsPerVertex()) {
-                case 1:
-                    return { GL_FLOAT, 1 };
-                    
-                case 2:
-                    return { GL_FLOAT, 2 };
-                    
-                case 3:
-                    return { GL_FLOAT, 3 };
-                    
-                case 4:
-                    return { GL_FLOAT, 4 };
-                    
-                default:
-                    pabort();
-                    return { GL_FLOAT, 1 };
-            }
-            
-        case 4:
-            switch (source->getComponentsPerVertex()) {
-                case 1:
-                    return { GL_FLOAT, 1 };
-                    
-                case 2:
-                    return { GL_FLOAT, 2 };
-                    
-                case 3:
-                    return { GL_FLOAT, 3 };
-                    
-                case 4:
-                    return { GL_FLOAT, 4 };
-                    
-                default:
-                    pabort();
-                    return { GL_FLOAT, 1 };
-            }
-            
-        default:
-            pabort();
-            return { GL_FLOAT, 1 };
+    if (source->isFloatComponents()) {
+        switch (source->getBytesPerComponent()) {
+            case 2:
+                switch (source->getComponentsPerVertex()) {
+                    case 1:
+                        return { GL_HALF_FLOAT, 1 };
+                        
+                    case 2:
+                        return { GL_HALF_FLOAT, 2 };
+                        
+                    case 3:
+                        return { GL_HALF_FLOAT, 3 };
+                        
+                    case 4:
+                        return { GL_HALF_FLOAT, 4 };
+                        
+                    default:
+                        pabort();
+                        return { GL_HALF_FLOAT, 1 };
+                }
+                
+            case 4:
+                switch (source->getComponentsPerVertex()) {
+                    case 1:
+                        return { GL_FLOAT, 1 };
+                        
+                    case 2:
+                        return { GL_FLOAT, 2 };
+                        
+                    case 3:
+                        return { GL_FLOAT, 3 };
+                        
+                    case 4:
+                        return { GL_FLOAT, 4 };
+                        
+                    default:
+                        pabort();
+                        return { GL_FLOAT, 1 };
+                }
+                
+            default:
+                pabort();
+                return { GL_FLOAT, 1 };
+        }
+    }
+    else {
+        switch (source->getBytesPerComponent()) {
+            case 2:
+                switch (source->getComponentsPerVertex()) {
+                    case 1:
+                        return { GL_SHORT, 1 };
+                        
+                    case 2:
+                        return { GL_SHORT, 2 };
+                        
+                    case 3:
+                        return { GL_SHORT, 3 };
+                        
+                    case 4:
+                        return { GL_SHORT, 4 };
+                        
+                    default:
+                        pabort();
+                        return { GL_SHORT, 1 };
+                }
+                
+            case 4:
+                switch (source->getComponentsPerVertex()) {
+                    case 1:
+                        return { GL_INT, 1 };
+                        
+                    case 2:
+                        return { GL_INT, 2 };
+                        
+                    case 3:
+                        return { GL_INT, 3 };
+                        
+                    case 4:
+                        return { GL_INT, 4 };
+                        
+                    default:
+                        pabort();
+                        return { GL_INT, 1 };
+                }
+                
+            default:
+                pabort();
+                return { GL_INT, 1 };
+        }
     }
 }
 
@@ -245,6 +307,10 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
     substrate->bindDepthSettings();
     substrate->bindCullingSettings();
+    if (_boneUBO) {
+        _boneUBO->update(geometry.getSkinner());
+        substrate->bindBoneUBO(_boneUBO);
+    }
     
     VROMatrix4f modelview = viewMatrix.multiply(transform);
     substrate->bindViewUniforms(transform, modelview, projectionMatrix, normalMatrix,

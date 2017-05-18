@@ -55,6 +55,8 @@
 		8F11B7CB1C20E7830026D150 /* VROAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F11B7C91C20E7830026D150 /* VROAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F129F951ECB41EE00341D83 /* VROSkeletalAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F129F931ECB41EE00341D83 /* VROSkeletalAnimation.cpp */; };
 		8F129F961ECB41EE00341D83 /* VROSkeletalAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F129F941ECB41EE00341D83 /* VROSkeletalAnimation.h */; };
+		8F129F9B1ECCD70C00341D83 /* VROBoneUBO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F129F991ECCD70C00341D83 /* VROBoneUBO.cpp */; };
+		8F129F9C1ECCD70C00341D83 /* VROBoneUBO.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F129F9A1ECCD70C00341D83 /* VROBoneUBO.h */; };
 		8F140FCF1E56658700355A1E /* card_main.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 8F140FCE1E56658700355A1E /* card_main.ktx */; };
 		8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1664A51E5E43260062EBCE /* Accelerate.framework */; };
 		8F17701B1E74C01900235C21 /* VROGVRUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1770191E74C01900235C21 /* VROGVRUtil.cpp */; };
@@ -535,6 +537,8 @@
 		8F11B7C91C20E7830026D150 /* VROAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimation.h; sourceTree = "<group>"; };
 		8F129F931ECB41EE00341D83 /* VROSkeletalAnimation.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSkeletalAnimation.cpp; sourceTree = "<group>"; };
 		8F129F941ECB41EE00341D83 /* VROSkeletalAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSkeletalAnimation.h; sourceTree = "<group>"; };
+		8F129F991ECCD70C00341D83 /* VROBoneUBO.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROBoneUBO.cpp; sourceTree = "<group>"; };
+		8F129F9A1ECCD70C00341D83 /* VROBoneUBO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROBoneUBO.h; sourceTree = "<group>"; };
 		8F140FCE1E56658700355A1E /* card_main.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; name = card_main.ktx; path = ViroSample/card_main.ktx; sourceTree = "<group>"; };
 		8F152A6D1C0D77AA00A211F8 /* VROVector4f.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVector4f.cpp; sourceTree = "<group>"; };
 		8F152A6E1C0D77AA00A211F8 /* VROVector4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVector4f.h; sourceTree = "<group>"; };
@@ -1547,6 +1551,8 @@
 				8F53D3A11DCAB670001C91A8 /* VROOpenGL.h */,
 				8F56AEA31DE764A700DD65B6 /* VROGlyphOpenGL.h */,
 				8F56AEA21DE764A700DD65B6 /* VROGlyphOpenGL.cpp */,
+				8F129F9A1ECCD70C00341D83 /* VROBoneUBO.h */,
+				8F129F991ECCD70C00341D83 /* VROBoneUBO.cpp */,
 			);
 			name = OpenGL;
 			sourceTree = "<group>";
@@ -1911,6 +1917,7 @@
 				8F203F0A1DCD236500DC50F2 /* VRODefines.h in Headers */,
 				8FB6590C1CD82FD200D036EB /* VROSceneRendererCardboard.h in Headers */,
 				8F56AEA11DE7619000DD65B6 /* VROGlyph.h in Headers */,
+				8F129F9C1ECCD70C00341D83 /* VROBoneUBO.h in Headers */,
 				8FCB100B1DD12BDF00FE425C /* VRODriverOpenGLiOS.h in Headers */,
 				8FCB10031DD0062300FE425C /* VRORenderDelegateInternal.h in Headers */,
 				8ABD8F381DB72CE000BD9C83 /* VROApiKey.h in Headers */,
@@ -2436,6 +2443,7 @@
 				8F0FE67E1CD3E12F00A4C297 /* VROShaderProgram.cpp in Sources */,
 				8FA2E1501C4463D00070DB26 /* VROSkybox.cpp in Sources */,
 				8F56AEB11DE7873E00DD65B6 /* VROTypefaceiOS.cpp in Sources */,
+				8F129F9B1ECCD70C00341D83 /* VROBoneUBO.cpp in Sources */,
 				8F39A31C1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp in Sources */,
 				8FC908861CA458EB00069C89 /* VRONodeCamera.cpp in Sources */,
 				8FCB0FFA1DCFF68E00FE425C /* VROAudioPlayeriOS.cpp in Sources */,

@@ -130,7 +130,9 @@ public:
         if (it == _sharedPrograms.end()) {
             const std::vector<VROGeometrySourceSemantic> attributes = { VROGeometrySourceSemantic::Texcoord,
                                                                         VROGeometrySourceSemantic::Normal,
-                                                                        VROGeometrySourceSemantic::Tangent};
+                                                                        VROGeometrySourceSemantic::Tangent,
+                                                                        VROGeometrySourceSemantic::BoneIndices,
+                                                                        VROGeometrySourceSemantic::BoneWeights};
             std::shared_ptr<VROShaderProgram> program = std::make_shared<VROShaderProgram>(vertexShader, fragmentShader,
                                                                                            samplers, modifiers, attributes,
                                                                                            driver);

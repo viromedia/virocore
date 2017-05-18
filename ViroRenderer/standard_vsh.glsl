@@ -1,16 +1,26 @@
 #version 300 es
 
+layout (std140) uniform bones {
+    int num_bones;
+    lowp float padding0, padding1, padding2;
+    mat4 bone_matrices[32];
+};
+
 struct VROShaderGeometry {
     vec3 position;
     vec3 normal;
     vec2 texcoord;
     vec4 tangent;
+    vec4 bone_weights;
+    ivec4 bone_indices;
 } _geometry;
 
 in vec3 position;
 in vec3 normal;
 in vec2 texcoord;
 in vec4 tangent;
+in vec4 bone_weights;
+in ivec4 bone_indices;
 
 uniform mat4 normal_matrix;
 uniform mat4 model_matrix;
@@ -27,6 +37,8 @@ void main() {
     _geometry.normal = normal;
     _geometry.texcoord = texcoord;
     _geometry.tangent = tangent;
+    _geometry.bone_weights = bone_weights;
+    _geometry.bone_indices = bone_indices;
     
 #pragma geometry_modifier_body
     

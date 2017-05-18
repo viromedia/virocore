@@ -45,6 +45,54 @@ class VROLight;
 class VROShaderProgram;
 class VRODriverOpenGL;
 
+/*
+ Manages the UBOs (Uniform Buffer Objects) that link lights to shaders.
+ UBOs enable us to share data among shaders, so we only have to bind 
+ the new light settings when the lights themselves change, or when we 
+ change what lights we're rendering. We do not have to rebind every time
+ the shader changes.
+ 
+ UBOs have three components: the UBO itself (_lightingUBO), a binding
+ point (_lightingUBOBindingPoint), and a block index (_lightingBlockIndex).
+ 
+ The _lightingUBO is similar to a VBO: it's essentially a block of GPU
+ memory. Unlike a VBO, however, it can be read in GLSL shaders as 
+ structured data. The VROLightingData struct, above, matches the lighting
+ layout in lighting_general_functions.glsl. We write into _lightingUBO
+ whenever the lights change, updating the fields.
+ 
+ The _lightingUBOBindingPoint is similar to a texture unit. It is independent
+ of shaders, and there are fixed number of these in our EGL context.
+ Every time we create a new UBO, we have to create a new binding point, 
+ and bind the UBO to said binding point via glBindBufferBase.
+ 
+ Finally, the _lightingBlockIndex is *shader-specific*; it's found in 
+ VROShaderProgram. It's similar to a shader's uniform location. When we
+ compile a shader with a layout in it, that layout is given an index in 
+ the shader, much like any uniform. We retrieve this location via 
+ glGetUniformBlockIndex. Once we have this location, we can bind it to a
+ specific UBO by invoking glUniformBlockBinding. This binds a shader's 
+ uniform layout to a specific UBO binding point. The binding point, in 
+ turn, was earlier bound to a specific UBO.
+ 
+ What does all of this enable?
+ 
+ 1. We can have multiple batches of lights, each represented by their 
+    own UBO. To switch from one batch to another, we just have to call 
+    glUniformBlockBinding, and the shader will now point to a new batch.
+ 
+ 2. When we update lights, we don't have to update every shader. We just 
+    glBufferSubData into the _lightingUBO for each batch that uses those
+    lights.
+ 
+ Finally, quick note on why binding points exist. Why not directly bind 
+ uniform blocks in shaders to UBOs? Why do we need this extra level of 
+ indirection? The answer is the same reason texture units exist: hardware
+ limitations. It's the same reason we don't directly map shader texture 
+ uniforms to texture IDs; we instead map them to texture units. This is 
+ because there can only be so many units of memory on the GPU used 
+ simultaneously for these things. Binding points enforce the limit.
+ */
 class VROLightingUBO {
     
 public:

@@ -41,6 +41,7 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
                                    std::shared_ptr<VRODriverOpenGL> driver) :
     _shaderId(sMaterialId++),
     _lightingBlockIndex(GL_INVALID_INDEX),
+    _bonesBlockIndex(GL_INVALID_INDEX),
     _attributes(0),
     _uniformsNeedRebind(true),
     _shaderName(fragmentShader),
@@ -76,6 +77,15 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
                 
             case VROGeometrySourceSemantic::Tangent:
                 _attributes |= (int)VROShaderMask::Tangent;
+                break;
+                
+            case VROGeometrySourceSemantic::BoneIndices:
+                _attributes |= (int)VROShaderMask::BoneIndex;
+                break;
+                
+            case VROGeometrySourceSemantic::BoneWeights:
+                _attributes |= (int)VROShaderMask::BoneWeight;
+                break;
                 
             default:
                 break;
@@ -121,10 +131,10 @@ bool VROShaderProgram::hydrate() {
 
 #if kDebugShaders
     if (!_shaderName.empty()) {
-        pinfo("Compiling [%s], ID %d", _shaderName.c_str(), shaderId);
+        pinfo("Compiling shader [%s]", _shaderName.c_str());
     }
     else {
-        pinfo("Compiling anonymous shader with ID %d", shaderId);
+        pinfo("Compiling anonymous shader");
     }
 #endif
 
@@ -251,10 +261,10 @@ bool VROShaderProgram::compileAndLink() {
 
 #if kDebugShaders
     if (!_shaderName.empty()) {
-        pinfo("Compiling and linking shader with name %s, ID %d into GL object %d", _shaderName.c_str(), shaderId, program);
+        pinfo("Compiling and linking shader with name %s into GL object %d", _shaderName.c_str(), _program);
     }
     else {
-        pinfo("Compiling and linking anonymous shader with ID %d into GL object %d", shaderId, program);
+        pinfo("Compiling and linking anonymous shader into GL object %d", _program);
     }
 #endif
 
@@ -296,6 +306,12 @@ bool VROShaderProgram::compileAndLink() {
     if ((_attributes & (int)VROShaderMask::Tangent) != 0) {
         glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Tangent), "tangent");
     }
+    if ((_attributes & (int)VROShaderMask::BoneIndex) != 0) {
+        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::BoneIndices), "bone_indices");
+    }
+    if ((_attributes & (int)VROShaderMask::BoneWeight) != 0) {
+        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::BoneWeights), "bone_weights");
+    }
 
     /*
      Link the program.
@@ -319,6 +335,7 @@ bool VROShaderProgram::compileAndLink() {
     }
     
     _lightingBlockIndex = glGetUniformBlockIndex(_program, "lighting");
+    _bonesBlockIndex = glGetUniformBlockIndex(_program, "bones");
 
     /*
      Release vertex and fragment shaders.
@@ -516,7 +533,6 @@ void VROShaderProgram::inflateReplacements(const std::map<std::string, std::stri
         }
     }
 }
-
 
 void VROShaderProgram::insertModifier(std::string modifierSource, std::string directive,
                                       std::string &source) const {

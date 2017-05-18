@@ -18,6 +18,7 @@ class VROMaterial;
 class VROGeometrySource;
 class VROGeometryElement;
 class VROMaterialSubstrateOpenGL;
+class VROBoneUBO;
 enum class VROGeometryPrimitiveType;
 
 struct VROGeometryElementOpenGL {
@@ -100,6 +101,12 @@ private:
      one).
      */
     std::weak_ptr<VRODriverOpenGL> _driver;
+    
+    /*
+     The UBO to which we write the latest bone tranforms (if this geometry has a skinner),
+     so that they are readable by the GPU.
+     */
+    std::unique_ptr<VROBoneUBO> _boneUBO;
     
     void renderMaterial(const VROGeometry &geometry,
                         VROMaterialSubstrateOpenGL *material,
