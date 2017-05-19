@@ -3,7 +3,6 @@
  */
 package com.viro.renderer.jni;
 
-import android.content.Context;
 import java.util.List;
 
 /**
@@ -176,6 +175,26 @@ public class NodeJni {
         return nativeIsValidShapeType(shapeType, params);
     }
 
+    public void clearPhysicsForce(){
+        nativeClearPhysicsForce(mNativeRef);
+    }
+
+    public void applyPhysicsForce(float[] force, float[] position){
+        nativeApplyPhysicsForce(mNativeRef, force, position);
+    }
+
+    public void applyPhysicsTorque(float[] torque){
+        nativeApplyPhysicsTorque(mNativeRef, torque);
+    }
+
+    public void applyPhysicsImpulse(float[] force, float[] position){
+        nativeApplyPhysicsImpulse(mNativeRef, force, position);
+    }
+
+    public void applyPhysicsTorqueImpulse(float[] torque){
+        nativeApplyPhysicsTorqueImpulse(mNativeRef, torque);
+    }
+
     private native long nativeCreateNode();
     private native void nativeDestroyNode(long nodeReference);
     private native void nativeAddChildNode(long nodeReference, long childNodeReference);
@@ -208,4 +227,11 @@ public class NodeJni {
     private native void nativeSetPhsyicsUseGravity(long nodeReference, boolean useGravity);
     private native String nativeIsValidBodyType(String bodyType, float mass);
     private native String nativeIsValidShapeType(String shapeType, float[] shapeParams);
+    private native void nativeApplyPhysicsForce(long nodeReference, float[] force,
+                                                float[] position);
+    private native void nativeApplyPhysicsTorque(long nodeReference, float[] torque);
+    private native void nativeApplyPhysicsImpulse(long nodeReference, float[] force,
+                                                       float[] position);
+    private native void nativeApplyPhysicsTorqueImpulse(long nodeReference, float[] torque);
+    private native void nativeClearPhysicsForce(long nodeReference);
 }

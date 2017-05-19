@@ -93,6 +93,8 @@ void VROPhysicsWorld::computePhysics() {
         } else {
             physicsBody->getBulletRigidBody()->setGravity(_dynamicsWorld->getGravity());
         }
+
+        physicsBody->updateBulletForces();
     }
 
     // Step through the physics simulation

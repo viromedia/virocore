@@ -396,6 +396,7 @@ JNI_METHOD(void, nativeSetPhysicsInertia)(JNIEnv *env,
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     jfloat *inertia = env->GetFloatArrayElements(inertiaArray, 0);
     VROVector3f vectorInertia = VROVector3f(inertia[0], inertia[1], inertia[2]);
+    env->ReleaseFloatArrayElements(inertiaArray, inertia, 0);
 
     VROPlatformDispatchAsyncRenderer([node_w, vectorInertia] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -454,6 +455,103 @@ JNI_METHOD(void, nativeSetPhsyicsUseGravity)(JNIEnv *env,
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node && node->getPhysicsBody()) {
             node->getPhysicsBody()->setUseGravity(useGravity);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeClearPhysicsForce)(JNIEnv *env,
+                                             jobject obj,
+                                             jlong nativeRef) {
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([node_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody()) {
+            node->getPhysicsBody()->clearForces();
+        }
+    });
+}
+
+JNI_METHOD(void, nativeApplyPhysicsForce)(JNIEnv *env,
+                                       jobject obj,
+                                       jlong nativeRef,
+                                       jfloatArray forceArray,
+                                       jfloatArray positionArray) {
+    // Grab the physics force to be applied
+    jfloat *force = env->GetFloatArrayElements(forceArray, 0);
+    VROVector3f vectorForce = VROVector3f(force[0], force[1], force[2]);
+    env->ReleaseFloatArrayElements(forceArray, force, 0);
+
+    // Grab the position at which to apply the force at
+    jfloat *position = env->GetFloatArrayElements(positionArray, 0);
+    VROVector3f vectorPosition = VROVector3f(position[0], position[1], position[2]);
+    env->ReleaseFloatArrayElements(positionArray, force, 0);
+
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([node_w, vectorForce, vectorPosition] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody()) {
+            node->getPhysicsBody()->applyForce(vectorForce, vectorPosition);
+        }
+    });
+}
+
+
+JNI_METHOD(void, nativeApplyPhysicsTorque)(JNIEnv *env,
+                                       jobject obj,
+                                       jlong nativeRef,
+                                       jfloatArray torqueArray) {
+    jfloat *torque = env->GetFloatArrayElements(torqueArray, 0);
+    VROVector3f vectorTorque = VROVector3f(torque[0], torque[1], torque[2]);
+    env->ReleaseFloatArrayElements(torqueArray, torque, 0);
+
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([node_w, vectorTorque] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody()) {
+            node->getPhysicsBody()->applyTorque(vectorTorque);
+        }
+    });
+}
+
+
+JNI_METHOD(void, nativeApplyPhysicsImpulse)(JNIEnv *env,
+                                       jobject obj,
+                                       jlong nativeRef,
+                                       jfloatArray forceArray,
+                                       jfloatArray positionArray) {
+    // Grab the physics impulse to be applied
+    jfloat *force = env->GetFloatArrayElements(forceArray, 0);
+    VROVector3f vectorForce = VROVector3f(force[0], force[1], force[2]);
+    env->ReleaseFloatArrayElements(forceArray, force, 0);
+
+    // Grab the position at which to apply the impulse at
+    jfloat *jPos = env->GetFloatArrayElements(positionArray, 0);
+    VROVector3f vectorPos = VROVector3f(jPos[0], jPos[1], jPos[2]);
+    env->ReleaseFloatArrayElements(positionArray, jPos, 0);
+
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([node_w, vectorForce, vectorPos] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody()) {
+            node->getPhysicsBody()->applyImpulse(vectorForce, vectorPos);
+        }
+    });
+}
+
+
+JNI_METHOD(void, nativeApplyPhysicsTorqueImpulse)(JNIEnv *env,
+                                       jobject obj,
+                                       jlong nativeRef,
+                                       jfloatArray torqueArray) {
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    jfloat *torque = env->GetFloatArrayElements(torqueArray, 0);
+    VROVector3f vectorTorque = VROVector3f(torque[0], torque[1], torque[2]);
+    env->ReleaseFloatArrayElements(torqueArray, torque, 0);
+
+    VROPlatformDispatchAsyncRenderer([node_w, vectorTorque] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody()) {
+            node->getPhysicsBody()->applyTorqueImpulse(vectorTorque);
         }
     });
 }

@@ -184,18 +184,42 @@ void VROPhysicsBody::setWorldTransform(const btTransform& centerOfMassWorldTrans
 }
 
 #pragma mark - Forces
-void VROPhysicsBody::applyCenteralForce(VROVector3f force) {
-    _rigidBody->applyCentralForce(btVector3(force.x, force.y, force.z));
-}
-
-void VROPhysicsBody::applyCenteralImpulse(VROVector3f impulse) {
-    _rigidBody->applyCentralImpulse(btVector3(impulse.x, impulse.y, impulse.z));
-}
-
-void VROPhysicsBody::applyTorque(VROVector3f torque) {
-    _rigidBody->applyTorque(btVector3(torque.x, torque.y, torque.z));
+void VROPhysicsBody::applyImpulse(VROVector3f impulse, VROVector3f offset) {
+    _rigidBody->activate(true);
+    _rigidBody->applyImpulse(btVector3(impulse.x, impulse.y, impulse.z),
+                            btVector3(offset.x, offset.y, offset.z));
 }
 
 void VROPhysicsBody::applyTorqueImpulse(VROVector3f impulse) {
+    _rigidBody->activate(true);
     _rigidBody->applyTorqueImpulse(btVector3(impulse.x, impulse.y, impulse.z));
+}
+
+void VROPhysicsBody::applyForce(VROVector3f power, VROVector3f position) {
+    BulletForce bulletForce;
+    bulletForce.force = power;
+    bulletForce.location = position;
+    _forces.push_back(bulletForce);
+}
+
+void VROPhysicsBody::applyTorque(VROVector3f torque) {
+    _torques.push_back(torque);
+}
+
+void VROPhysicsBody::clearForces() {
+    _forces.clear();
+    _torques.clear();
+}
+
+void VROPhysicsBody::updateBulletForces() {
+    for (BulletForce bulletForce: _forces) {
+        btVector3 force = btVector3(bulletForce.force.x, bulletForce.force.y, bulletForce.force.z);
+        btVector3 atPosition
+                = btVector3(bulletForce.location.x, bulletForce.location.y, bulletForce.location.z);
+        _rigidBody->applyForce(force, atPosition);
+    }
+
+    for (VROVector3f torque: _torques) {
+        _rigidBody->applyTorque(btVector3(torque.x, torque.y, torque.z));
+    }
 }

@@ -104,14 +104,15 @@ public:
     /*
      Functions for applying forces on this VROPhysicsBody.
      */
-    void applyCenteralForce(VROVector3f force);
-    void applyCenteralImpulse(VROVector3f impulse);
+    void applyForce(VROVector3f power, VROVector3f position);
+    void applyImpulse(VROVector3f impulse, VROVector3f position);
 
     /*
      Functions for applying torque on this VROPhysicsBody.
      */
     void applyTorque(VROVector3f torque);
     void applyTorqueImpulse(VROVector3f impulse);
+    void clearForces();
 
     /*
      Returns the underlying bullet rigid body that represents this VROPhysicsBody.
@@ -141,6 +142,12 @@ public:
      */
     bool needsBulletUpdate();
 
+    /*
+     Updates the forces applied on the underlying bullet physics body. This is called and re-applied
+     in each simulated physics step, as required by bullet.
+     */
+    void updateBulletForces();
+
 private:
     std::weak_ptr<VRONode> _w_node;
     bool _needsBulletUpdate;
@@ -153,5 +160,17 @@ private:
     float _mass;
     VROVector3f _inertia;
     bool _useGravity;
+
+    /*
+     Simple force struct containing a force vector
+     and the location that it is applied at.
+     */
+    struct BulletForce {
+        VROVector3f force;
+        VROVector3f location;
+    };
+
+    std::vector<BulletForce> _forces;
+    std::vector<VROVector3f> _torques;
 };
 #endif
