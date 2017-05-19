@@ -24,19 +24,72 @@ class VROSkeleton;
  A single VROSkeleton can be used by multiple VROGeometries; each geometry using
  the VROSkeleton will have its own VROSkinner that maps the geometry to the 
  skeleton.
+ 
+ Brief explanation of coordinate transformations
+ ------
+ 
+ Skeletal animation works by associating a geometry with a skeleton. The geometry
+ is transformed first so that it aligns with the skeleton, via the _bindTransforms.
+ Next, we associate each vertex in the geometry with the set of bones that will
+ 'influence' it, via _boneWeights and _boneIndices. Then we animate the
+ skeleton, specifically by animating each of the bone's transforms. And finally, we 
+ deform the mesh to follow the movement of the skeleton.
+ 
+ The steps, in more detail:
+ 
+ 1. Bind the geometry to the skeleton.
+ 
+ The position in which our model is encoded in its vertex array is called its
+ 'original position'. Initially, our model is in its original position, in model
+ space. For each vertex we animate, we need to transform it from its original 
+ position, model space, to the bind position for the bone that's influencing it,
+ in bone local space. Note we do this for every bone that influences the vertex.
+ This is the purpose of the geometryBindTransform and the bindTransform for each bone:
+ 
+ Model space, original position  --> [bindTransform] --> Bone space, bind position
+ 
+ 2. Animate the skeleton locally
+ 
+ Once we have a vertex in the bind position, bone local space, it can follow the
+ animations of the skeleton. To animate, we multiply by the boneTransform. The 
+ boneTransform (retrieved via skeleton->getTransform(i) for bone 'i'), transforms
+ from the bind position, bone local space to the animated position, bone local
+ space.
+ 
+ Bone space, bind position --> [boneTransform] --> Bone space, animated position
+ 
+ 3. Return to model space
+ 
+ We have to return to the model space of the geometry with a final transform. These
+ transforms are concatenated together by VROSkinner::getModelTransform.
+ 
+ Bone space, animated position  --> [inverseBindTransform] --> Model space, animated position
+ 
+ 4. Deform the mesh
+
+ All the final bone transforms are then written to the vertex shader via the VROBoneUBO.
+ For each vertex of the geometry, we deform by all connected bone transforms. These
+ connections are determined by the _boneWeights and _boneIndices. The latter indexes
+ into the correct bone transform; the former determines how much influence said bone has
+ on the vertex.
  */
 class VROSkinner {
     
 public:
     
+    /*
+     The geometryBindTransform passed in here transforms from the geometry's 
+     original encoded position, in model space, to the bind position in world space.
+     The bindTransforms move from the bind position in world space, to the bind
+     position in bone local space, for each bone. We use these two parameters to 
+     construct the _bindTransforms and _inverseBindTransforms fields, then discard
+     them.
+     */
     VROSkinner(std::shared_ptr<VROSkeleton> skeleton,
+               VROMatrix4f geometryBindTransform,
                std::vector<VROMatrix4f> bindTransforms,
                std::shared_ptr<VROGeometrySource> boneIndices,
-               std::shared_ptr<VROGeometrySource> boneWeights) :
-        _skeleton(skeleton),
-        _bindTransforms(bindTransforms),
-        _boneIndices(boneIndices),
-        _boneWeights(boneWeights) {}
+               std::shared_ptr<VROGeometrySource> boneWeights);
     virtual ~VROSkinner() {}
     
     /*
@@ -70,26 +123,28 @@ private:
     std::shared_ptr<VROSkeleton> _skeleton;
     
     /*
-     The transforms from model space (the coordinate space of _geometry) to the
-     "joint local space" of the given bone, in the bind position. In other words,
-     this tranforms a vertex in _geometry to its position relative to the given
-     bone.
+     These transforms move vertices from from their original position in model space,
+     to the bind position in the local space of the bone at index 'i'.
      
-     These transforms serve two purposes:
+     The purpose of these transforms is two-fold:
      
-     1. They place the geometry into the bind pose, the pose at which the geometry
+     1. To place the geometry into the bind pose, the pose at which the geometry
      aligns with the skeleton, and from which its vertices can therefore be animated
      alongside the skeleton's bones.
      
-     2. They transform from model space into the coordinate system of a given bone.
-     This way we can animate vertices hierarchically: e.g. a finger vertex can animate
-     around the finger bone, then the elbow, then the shoulder, etc. See VROBone.h
-     and getWorldTransform() for more details.
+     2. To transform from model space into the coordinate system of a given bone. 
+     This way we can animate vertices hierarchically: e.g. a finger vertex can 
+     animate around the finger bone, then the elbow, then the shoulder, etc. See
+     VROBone.h and getModelTransform() for more details.
      
      Finally, note that the transform at _bindTransforms[i] is for the bone in
      _skeleton.bones[i].
+     
+     The inverse bindTransforms go the other direction, from bone local 
+     space back to model space.
      */
     std::vector<VROMatrix4f> _bindTransforms;
+    std::vector<VROMatrix4f> _inverseBindTransforms;
     
     /*
      Vertex data that maps each vertex to the bones that influence its position

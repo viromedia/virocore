@@ -94,6 +94,8 @@ void TableStruct::InitDefaultsImpl() {
       ::viro::Node_Geometry_Material_Visual::internal_default_instance());
   _Node_Geometry_Material_default_instance_.get_mutable()->multiply_ = const_cast< ::viro::Node_Geometry_Material_Visual*>(
       ::viro::Node_Geometry_Material_Visual::internal_default_instance());
+  _Node_Geometry_Skin_default_instance_.get_mutable()->geometry_bind_transform_ = const_cast< ::viro::Node_Matrix*>(
+      ::viro::Node_Matrix::internal_default_instance());
   _Node_Geometry_Skin_default_instance_.get_mutable()->bone_indices_ = const_cast< ::viro::Node_Geometry_Source*>(
       ::viro::Node_Geometry_Source::internal_default_instance());
   _Node_Geometry_Skin_default_instance_.get_mutable()->bone_weights_ = const_cast< ::viro::Node_Geometry_Source*>(
@@ -3220,6 +3222,7 @@ void Node_Geometry_Material::set_allocated_multiply(::viro::Node_Geometry_Materi
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Node_Geometry_Skin::kGeometryBindTransformFieldNumber;
 const int Node_Geometry_Skin::kBindTransformFieldNumber;
 const int Node_Geometry_Skin::kBoneIndicesFieldNumber;
 const int Node_Geometry_Skin::kBoneWeightsFieldNumber;
@@ -3239,6 +3242,11 @@ Node_Geometry_Skin::Node_Geometry_Skin(const Node_Geometry_Skin& from)
       bind_transform_(from.bind_transform_),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.has_geometry_bind_transform()) {
+    geometry_bind_transform_ = new ::viro::Node_Matrix(*from.geometry_bind_transform_);
+  } else {
+    geometry_bind_transform_ = NULL;
+  }
   if (from.has_bone_indices()) {
     bone_indices_ = new ::viro::Node_Geometry_Source(*from.bone_indices_);
   } else {
@@ -3253,8 +3261,8 @@ Node_Geometry_Skin::Node_Geometry_Skin(const Node_Geometry_Skin& from)
 }
 
 void Node_Geometry_Skin::SharedCtor() {
-  ::memset(&bone_indices_, 0, reinterpret_cast<char*>(&bone_weights_) -
-    reinterpret_cast<char*>(&bone_indices_) + sizeof(bone_weights_));
+  ::memset(&geometry_bind_transform_, 0, reinterpret_cast<char*>(&bone_weights_) -
+    reinterpret_cast<char*>(&geometry_bind_transform_) + sizeof(bone_weights_));
   _cached_size_ = 0;
 }
 
@@ -3264,6 +3272,9 @@ Node_Geometry_Skin::~Node_Geometry_Skin() {
 }
 
 void Node_Geometry_Skin::SharedDtor() {
+  if (this != internal_default_instance()) {
+    delete geometry_bind_transform_;
+  }
   if (this != internal_default_instance()) {
     delete bone_indices_;
   }
@@ -3293,6 +3304,10 @@ Node_Geometry_Skin* Node_Geometry_Skin::New(::google::protobuf::Arena* arena) co
 void Node_Geometry_Skin::Clear() {
 // @@protoc_insertion_point(message_clear_start:viro.Node.Geometry.Skin)
   bind_transform_.Clear();
+  if (GetArenaNoVirtual() == NULL && geometry_bind_transform_ != NULL) {
+    delete geometry_bind_transform_;
+  }
+  geometry_bind_transform_ = NULL;
   if (GetArenaNoVirtual() == NULL && bone_indices_ != NULL) {
     delete bone_indices_;
   }
@@ -3313,9 +3328,20 @@ bool Node_Geometry_Skin::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .viro.Node.Matrix bind_transform = 1;
+      // .viro.Node.Matrix geometry_bind_transform = 1;
       case 1: {
         if (tag == 10u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_geometry_bind_transform()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .viro.Node.Matrix bind_transform = 2;
+      case 2: {
+        if (tag == 18u) {
           DO_(input->IncrementRecursionDepth());
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
                 input, add_bind_transform()));
@@ -3326,9 +3352,9 @@ bool Node_Geometry_Skin::MergePartialFromCodedStream(
         break;
       }
 
-      // .viro.Node.Geometry.Source bone_indices = 2;
-      case 2: {
-        if (tag == 18u) {
+      // .viro.Node.Geometry.Source bone_indices = 3;
+      case 3: {
+        if (tag == 26u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_bone_indices()));
         } else {
@@ -3337,9 +3363,9 @@ bool Node_Geometry_Skin::MergePartialFromCodedStream(
         break;
       }
 
-      // .viro.Node.Geometry.Source bone_weights = 3;
-      case 3: {
-        if (tag == 26u) {
+      // .viro.Node.Geometry.Source bone_weights = 4;
+      case 4: {
+        if (tag == 34u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_bone_weights()));
         } else {
@@ -3372,22 +3398,28 @@ failure:
 void Node_Geometry_Skin::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:viro.Node.Geometry.Skin)
-  // repeated .viro.Node.Matrix bind_transform = 1;
+  // .viro.Node.Matrix geometry_bind_transform = 1;
+  if (this->has_geometry_bind_transform()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      1, *this->geometry_bind_transform_, output);
+  }
+
+  // repeated .viro.Node.Matrix bind_transform = 2;
   for (unsigned int i = 0, n = this->bind_transform_size(); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
-      1, this->bind_transform(i), output);
+      2, this->bind_transform(i), output);
   }
 
-  // .viro.Node.Geometry.Source bone_indices = 2;
+  // .viro.Node.Geometry.Source bone_indices = 3;
   if (this->has_bone_indices()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
-      2, *this->bone_indices_, output);
+      3, *this->bone_indices_, output);
   }
 
-  // .viro.Node.Geometry.Source bone_weights = 3;
+  // .viro.Node.Geometry.Source bone_weights = 4;
   if (this->has_bone_weights()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
-      3, *this->bone_weights_, output);
+      4, *this->bone_weights_, output);
   }
 
   // @@protoc_insertion_point(serialize_end:viro.Node.Geometry.Skin)
@@ -3397,7 +3429,7 @@ size_t Node_Geometry_Skin::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:viro.Node.Geometry.Skin)
   size_t total_size = 0;
 
-  // repeated .viro.Node.Matrix bind_transform = 1;
+  // repeated .viro.Node.Matrix bind_transform = 2;
   {
     unsigned int count = this->bind_transform_size();
     total_size += 1UL * count;
@@ -3408,14 +3440,21 @@ size_t Node_Geometry_Skin::ByteSizeLong() const {
     }
   }
 
-  // .viro.Node.Geometry.Source bone_indices = 2;
+  // .viro.Node.Matrix geometry_bind_transform = 1;
+  if (this->has_geometry_bind_transform()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->geometry_bind_transform_);
+  }
+
+  // .viro.Node.Geometry.Source bone_indices = 3;
   if (this->has_bone_indices()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->bone_indices_);
   }
 
-  // .viro.Node.Geometry.Source bone_weights = 3;
+  // .viro.Node.Geometry.Source bone_weights = 4;
   if (this->has_bone_weights()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -3439,6 +3478,9 @@ void Node_Geometry_Skin::MergeFrom(const Node_Geometry_Skin& from) {
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   bind_transform_.MergeFrom(from.bind_transform_);
+  if (from.has_geometry_bind_transform()) {
+    mutable_geometry_bind_transform()->::viro::Node_Matrix::MergeFrom(from.geometry_bind_transform());
+  }
   if (from.has_bone_indices()) {
     mutable_bone_indices()->::viro::Node_Geometry_Source::MergeFrom(from.bone_indices());
   }
@@ -3464,6 +3506,7 @@ void Node_Geometry_Skin::Swap(Node_Geometry_Skin* other) {
 }
 void Node_Geometry_Skin::InternalSwap(Node_Geometry_Skin* other) {
   bind_transform_.UnsafeArenaSwap(&other->bind_transform_);
+  std::swap(geometry_bind_transform_, other->geometry_bind_transform_);
   std::swap(bone_indices_, other->bone_indices_);
   std::swap(bone_weights_, other->bone_weights_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -3476,7 +3519,46 @@ void Node_Geometry_Skin::InternalSwap(Node_Geometry_Skin* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // Node_Geometry_Skin
 
-// repeated .viro.Node.Matrix bind_transform = 1;
+// .viro.Node.Matrix geometry_bind_transform = 1;
+bool Node_Geometry_Skin::has_geometry_bind_transform() const {
+  return this != internal_default_instance() && geometry_bind_transform_ != NULL;
+}
+void Node_Geometry_Skin::clear_geometry_bind_transform() {
+  if (GetArenaNoVirtual() == NULL && geometry_bind_transform_ != NULL) delete geometry_bind_transform_;
+  geometry_bind_transform_ = NULL;
+}
+const ::viro::Node_Matrix& Node_Geometry_Skin::geometry_bind_transform() const {
+  // @@protoc_insertion_point(field_get:viro.Node.Geometry.Skin.geometry_bind_transform)
+  return geometry_bind_transform_ != NULL ? *geometry_bind_transform_
+                         : *::viro::Node_Matrix::internal_default_instance();
+}
+::viro::Node_Matrix* Node_Geometry_Skin::mutable_geometry_bind_transform() {
+  
+  if (geometry_bind_transform_ == NULL) {
+    geometry_bind_transform_ = new ::viro::Node_Matrix;
+  }
+  // @@protoc_insertion_point(field_mutable:viro.Node.Geometry.Skin.geometry_bind_transform)
+  return geometry_bind_transform_;
+}
+::viro::Node_Matrix* Node_Geometry_Skin::release_geometry_bind_transform() {
+  // @@protoc_insertion_point(field_release:viro.Node.Geometry.Skin.geometry_bind_transform)
+  
+  ::viro::Node_Matrix* temp = geometry_bind_transform_;
+  geometry_bind_transform_ = NULL;
+  return temp;
+}
+void Node_Geometry_Skin::set_allocated_geometry_bind_transform(::viro::Node_Matrix* geometry_bind_transform) {
+  delete geometry_bind_transform_;
+  geometry_bind_transform_ = geometry_bind_transform;
+  if (geometry_bind_transform) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.Geometry.Skin.geometry_bind_transform)
+}
+
+// repeated .viro.Node.Matrix bind_transform = 2;
 int Node_Geometry_Skin::bind_transform_size() const {
   return bind_transform_.size();
 }
@@ -3506,7 +3588,7 @@ Node_Geometry_Skin::bind_transform() const {
   return bind_transform_;
 }
 
-// .viro.Node.Geometry.Source bone_indices = 2;
+// .viro.Node.Geometry.Source bone_indices = 3;
 bool Node_Geometry_Skin::has_bone_indices() const {
   return this != internal_default_instance() && bone_indices_ != NULL;
 }
@@ -3545,7 +3627,7 @@ void Node_Geometry_Skin::set_allocated_bone_indices(::viro::Node_Geometry_Source
   // @@protoc_insertion_point(field_set_allocated:viro.Node.Geometry.Skin.bone_indices)
 }
 
-// .viro.Node.Geometry.Source bone_weights = 3;
+// .viro.Node.Geometry.Source bone_weights = 4;
 bool Node_Geometry_Skin::has_bone_weights() const {
   return this != internal_default_instance() && bone_weights_ != NULL;
 }

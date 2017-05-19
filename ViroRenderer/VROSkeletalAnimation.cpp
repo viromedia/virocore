@@ -50,7 +50,7 @@ void VROSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<
      */
     std::map<int, std::vector<float>> boneKeyTimes;
     std::map<int, std::vector<VROMatrix4f>> boneKeyValues;
-    
+
     for (std::unique_ptr<VROSkeletalAnimationFrame> &frame : _frames) {
         passert (frame->boneIndices.size() == frame->boneTransforms.size());
         
@@ -64,7 +64,7 @@ void VROSkeletalAnimation::execute(std::shared_ptr<VRONode> node, std::function<
     }
     
     VROTransaction::begin();
-    VROTransaction::setAnimationDuration(_duration);
+    VROTransaction::setAnimationDuration(_duration / 1000);
     VROTransaction::setTimingFunction(VROTimingFunctionType::Linear);
     
     for (auto kv : boneKeyTimes) {

@@ -855,7 +855,7 @@ VROMatrix4f VROMathInterpolateKeyFrameMatrix4f(float input, const std::vector<fl
         if (input < inputs[i]) {
             float interp[16];
             for (int j = 0; j < 16; j++) {
-                interp[i] = VROMathInterpolate(input, inputs[i - 1], inputs[i], outputs[i - 1][j], outputs[i][j]);
+                interp[j] = VROMathInterpolate(input, inputs[i - 1], inputs[i], outputs[i - 1][j], outputs[i][j]);
             }
             return { interp };
         }

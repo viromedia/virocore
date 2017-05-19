@@ -13,7 +13,7 @@
 #include <vector>
 #include <memory>
 
-static const int kMaxBones = 256;
+static const int kMaxBones = 48;
 static const int kFloatsPerBone = 16;
 
 // Grouped in 4N slots, matching standard_vsh.glsl

@@ -30,7 +30,7 @@ public:
     virtual ~VROSkeleton() {}
     
     int getNumBones() const {
-        return _bones.size();
+        return (int)_bones.size();
     }
     const std::shared_ptr<VROBone> getBone(int index) const {
         return _bones[index];

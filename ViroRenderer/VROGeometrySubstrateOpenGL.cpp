@@ -168,43 +168,9 @@ std::pair<GLuint, int> VROGeometrySubstrateOpenGL::parseVertexFormat(std::shared
     if (source->isFloatComponents()) {
         switch (source->getBytesPerComponent()) {
             case 2:
-                switch (source->getComponentsPerVertex()) {
-                    case 1:
-                        return { GL_HALF_FLOAT, 1 };
-                        
-                    case 2:
-                        return { GL_HALF_FLOAT, 2 };
-                        
-                    case 3:
-                        return { GL_HALF_FLOAT, 3 };
-                        
-                    case 4:
-                        return { GL_HALF_FLOAT, 4 };
-                        
-                    default:
-                        pabort();
-                        return { GL_HALF_FLOAT, 1 };
-                }
-                
+                return { GL_HALF_FLOAT, source->getComponentsPerVertex() };
             case 4:
-                switch (source->getComponentsPerVertex()) {
-                    case 1:
-                        return { GL_FLOAT, 1 };
-                        
-                    case 2:
-                        return { GL_FLOAT, 2 };
-                        
-                    case 3:
-                        return { GL_FLOAT, 3 };
-                        
-                    case 4:
-                        return { GL_FLOAT, 4 };
-                        
-                    default:
-                        pabort();
-                        return { GL_FLOAT, 1 };
-                }
-                
+                return { GL_FLOAT, source->getComponentsPerVertex() };
             default:
                 pabort();
                 return { GL_FLOAT, 1 };
@@ -213,43 +179,9 @@ std::pair<GLuint, int> VROGeometrySubstrateOpenGL::parseVertexFormat(std::shared
     else {
         switch (source->getBytesPerComponent()) {
             case 2:
-                switch (source->getComponentsPerVertex()) {
-                    case 1:
-                        return { GL_SHORT, 1 };
-                        
-                    case 2:
-                        return { GL_SHORT, 2 };
-                        
-                    case 3:
-                        return { GL_SHORT, 3 };
-                        
-                    case 4:
-                        return { GL_SHORT, 4 };
-                        
-                    default:
-                        pabort();
-                        return { GL_SHORT, 1 };
-                }
-                
+                return { GL_SHORT, source->getComponentsPerVertex() };
             case 4:
-                switch (source->getComponentsPerVertex()) {
-                    case 1:
-                        return { GL_INT, 1 };
-                        
-                    case 2:
-                        return { GL_INT, 2 };
-                        
-                    case 3:
-                        return { GL_INT, 3 };
-                        
-                    case 4:
-                        return { GL_INT, 4 };
-                        
-                    default:
-                        pabort();
-                        return { GL_INT, 1 };
-                }
-                
+                return { GL_INT, source->getComponentsPerVertex() };
             default:
                 pabort();
                 return { GL_INT, 1 };

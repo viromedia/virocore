@@ -3,7 +3,7 @@
 layout (std140) uniform bones {
     int num_bones;
     lowp float padding0, padding1, padding2;
-    mat4 bone_matrices[32];
+    mat4 bone_matrices[48];
 };
 
 struct VROShaderGeometry {

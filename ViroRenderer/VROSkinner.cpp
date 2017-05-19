@@ -10,32 +10,35 @@
 #include "VROSkeleton.h"
 #include "VROBone.h"
 #include "VROMatrix4f.h"
+#include "VROMath.h"
+
+VROSkinner::VROSkinner(std::shared_ptr<VROSkeleton> skeleton,
+                       VROMatrix4f geometryBindTransform,
+                       std::vector<VROMatrix4f> bindTransforms,
+                       std::shared_ptr<VROGeometrySource> boneIndices,
+                       std::shared_ptr<VROGeometrySource> boneWeights) :
+    _skeleton(skeleton),
+    _boneIndices(boneIndices),
+    _boneWeights(boneWeights) {
+    
+    VROMatrix4f inverseGeometryBindTransform = geometryBindTransform.invert();
+        
+    for (VROMatrix4f &transform : bindTransforms) {
+        VROMatrix4f boneBindTransform = transform.multiply(geometryBindTransform);
+        _bindTransforms.push_back(boneBindTransform);
+        _inverseBindTransforms.push_back(boneBindTransform.invert());
+    }
+}
 
 VROMatrix4f VROSkinner::getModelTransform(int boneIndex) {
     /*
-     To transform from a vertex from its encoded position in model space to its
-     animated position in model space, we must:
+     This carries out the series of transforms described in the top-notes
+     of the header:
      
-     1. Transform the vertex into the bind position of the skeleton.
-     2. Transform the vertex into the joint local coordinate space of the bone.
-        (steps 1 and 2 are both acheived via the _bindTransform)
-     3. Transform the vertex by bone transform[i], which moves it into
-        the animated position of bone[i] and the coordinate space of bone[i]'s
-        parent.
-     4. Repeat step 3 for bone[i]'s parent, until we reach the root of the skeleton.
-        Upon reaching the root, we are back in model space, and in the animated
-        position.
+     Model space, original position --> [bindTransform]                 --> Bone space, bind position
+     Bone space, bind position      --> [boneTransform]                 --> Bone space, animated position
+     Bone space, animated position  --> [inverseBindTransform]          --> Model space, animated position
      */
     const std::shared_ptr<VROBone> &bone = _skeleton->getBone(boneIndex);
-    int parentIndex = bone->getParentIndex();
-    
-    VROMatrix4f result = bone->getTransform().multiply(_bindTransforms[boneIndex]);
-    while (parentIndex >= 0) {
-        const std::shared_ptr<VROBone> &parent = _skeleton->getBone(parentIndex);
-        
-        result = parent->getTransform().multiply(result);
-        parentIndex = parent->getParentIndex();
-    }
-    
-    return result;
+    return _inverseBindTransforms[boneIndex].multiply(bone->getTransform()).multiply(_bindTransforms[boneIndex]);
 }

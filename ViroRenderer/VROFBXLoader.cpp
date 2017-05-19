@@ -221,13 +221,15 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
                                                    const std::map<std::string, std::string> *resourceMap,
                                                    std::map<std::string, std::shared_ptr<VROTexture>> &textureCache) {
     
-    pinfo("   Loading node %s", node_pb.name().c_str());
+    pinfo("Loading node [%s]", node_pb.name().c_str());
     
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
     node->setThreadRestrictionEnabled(false);
     node->setPosition({ node_pb.position(0), node_pb.position(1), node_pb.position(2) });
     node->setScale({ node_pb.scale(0), node_pb.scale(1), node_pb.scale(2) });
-    node->setRotation({ node_pb.rotation(0), node_pb.rotation(1), node_pb.rotation(2) });
+    node->setRotation({ (float) degrees_to_radians(node_pb.rotation(0)),
+                        (float) degrees_to_radians(node_pb.rotation(1)),
+                        (float) degrees_to_radians(node_pb.rotation(2)) });
     node->setRenderingOrder(node_pb.rendering_order());
     node->setOpacity(node_pb.opacity());
     
@@ -247,6 +249,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
                 }
                 
                 node->addAnimation(animation->getName(), animation);
+                pinfo("   Added animation [%s]", animation->getName().c_str());
             }
             
             for (const std::shared_ptr<VROMaterial> &material : geo->getMaterials()) {
@@ -370,10 +373,9 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
     geo->setMaterials(materials);
     
     VROBoundingBox bounds = geo->getBoundingBox();
-    pinfo("FBX bounding box    =  x(%f %f) y(%f %f) z(%f %f)",
-          bounds.getMinX(), bounds.getMaxX(),
-          bounds.getMinY(), bounds.getMaxY(),
-          bounds.getMinZ(), bounds.getMaxZ());
+    pinfo("   Bounds x(%f %f)", bounds.getMinX(), bounds.getMaxX());
+    pinfo("          y(%f %f)", bounds.getMinY(), bounds.getMaxY());
+    pinfo("          z(%f %f)", bounds.getMinZ(), bounds.getMaxZ());
     
     return geo;
 }
@@ -390,13 +392,27 @@ std::shared_ptr<VROSkeleton> VROFBXLoader::loadFBXSkeleton(const viro::Node_Skel
 
 std::unique_ptr<VROSkinner> VROFBXLoader::loadFBXSkinner(const viro::Node_Geometry_Skin &skin_pb,
                                                          std::shared_ptr<VROSkeleton> skeleton) {
+    
+    float geometryBindMtx[16];
+    for (int j = 0; j < 16; j++) {
+        geometryBindMtx[j] = skin_pb.geometry_bind_transform().value(j);
+    }
+    VROMatrix4f geometryBindTransform(geometryBindMtx);
+    
     std::vector<VROMatrix4f> bindTransforms;
     for (int i = 0; i < skin_pb.bind_transform_size(); i++) {
-        float mtx[16];
-        for (int j = 0; j < 16; j++) {
-            mtx[j] = skin_pb.bind_transform(i).value(j);
+        
+        if (skin_pb.bind_transform(i).value_size() != 16) {
+            // Push identity if we don't have a bind transform for this bone
+            bindTransforms.push_back({});
         }
-        bindTransforms.push_back({ mtx });
+        else {
+            float mtx[16];
+            for (int j = 0; j < 16; j++) {
+                mtx[j] = skin_pb.bind_transform(i).value(j);
+            }
+            bindTransforms.push_back({ mtx });
+        }
     }
     
     const viro::Node::Geometry::Source &bone_indices_pb = skin_pb.bone_indices();
@@ -423,7 +439,7 @@ std::unique_ptr<VROSkinner> VROFBXLoader::loadFBXSkinner(const viro::Node_Geomet
     
     
     
-    return std::unique_ptr<VROSkinner>(new VROSkinner(skeleton, bindTransforms, boneIndices, boneWeights));
+    return std::unique_ptr<VROSkinner>(new VROSkinner(skeleton, geometryBindTransform, bindTransforms, boneIndices, boneWeights));
 }
 
 std::shared_ptr<VROSkeletalAnimation> VROFBXLoader::loadFBXSkeletalAnimation(const viro::Node_SkeletalAnimation &animation_pb,

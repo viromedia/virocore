@@ -803,7 +803,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundCube([self niagaraTexture]);
     
-    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"minion" ofType:@"proto"];
+    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"fox" ofType:@"proto"];
     NSURL *fbxURL = [NSURL fileURLWithPath:fbxPath];
     std::string url = std::string([[fbxURL description] UTF8String]);
     
@@ -812,13 +812,13 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::string base = std::string([[baseURL description] UTF8String]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
-    light->setColor({ 0.7, 0.7, 0.7 });
+    light->setColor({ 1.0, 1.0, 1.0 });
     light->setPosition( { 0, 0, 0 });
     light->setDirection( { 0, 0, -1.0 });
     light->setAttenuationStartDistance(50);
     light->setAttenuationEndDistance(75);
-    light->setSpotInnerAngle(45);
-    light->setSpotOuterAngle(90);
+    light->setSpotInnerAngle(70);
+    light->setSpotOuterAngle(120);
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
@@ -832,8 +832,11 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                             return;
                                                                         }
                                                                         
-                                                                        node->setPosition({0, -2, -12});
+                                                                        node->setPosition({0, -4, -20});
+                                                                        
+                                                                        //node->setPosition({0, -8, -12});
                                                                         node->setScale({0.1, 0.1, 0.1});
+                                                                        node->setRotation({ 0, M_PI_2, M_PI_2});
                                                                         
                                                                         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                                                                             [self animateTake:node];
@@ -845,15 +848,25 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self](VRONode *const node, float seconds) {
         self.objAngle += .015;
-        node->setRotation({ 0, self.objAngle, 0});
+        //node->setRotation({ 0, self.objAngle, 0});
         
         return true;
     });
     
     fbxNode->runAction(action);
     
+    std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();
+    camera->setPosition({0, 0, 0});
+    camera->setOrbitFocalPoint({0, 0, -20});
+    camera->setRotationType(VROCameraRotationType::Orbit);
+    
+    std::shared_ptr<VRONode> cameraNode = std::make_shared<VRONode>();
+    cameraNode->setCamera(camera);
+    rootNode->addChildNode(cameraNode);
+    
+    [self.view setPointOfView:cameraNode];
+    
     self.delegate = std::make_shared<VROEventDelegateiOS>(self);
-    self.delegate->setEnabledEvent(VROEventDelegate::EventAction::OnFuse, true);
     fbxNode->setEventDelegate(self.delegate);
     
     return sceneController;
@@ -861,7 +874,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (void)animateTake:(std::shared_ptr<VRONode>)node {
     node->runAnimation("Take 001", true);
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self animateTake:node];
     });
 }

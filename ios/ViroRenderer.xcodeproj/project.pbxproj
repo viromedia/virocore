@@ -57,6 +57,11 @@
 		8F129F961ECB41EE00341D83 /* VROSkeletalAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F129F941ECB41EE00341D83 /* VROSkeletalAnimation.h */; };
 		8F129F9B1ECCD70C00341D83 /* VROBoneUBO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F129F991ECCD70C00341D83 /* VROBoneUBO.cpp */; };
 		8F129F9C1ECCD70C00341D83 /* VROBoneUBO.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F129F9A1ECCD70C00341D83 /* VROBoneUBO.h */; };
+		8F129F9F1ECE2C5C00341D83 /* worm.proto in Resources */ = {isa = PBXBuildFile; fileRef = 8F129F9E1ECE2C5C00341D83 /* worm.proto */; };
+		8F129FA11ECE94BE00341D83 /* fox.proto in Resources */ = {isa = PBXBuildFile; fileRef = 8F129FA01ECE94BE00341D83 /* fox.proto */; };
+		8F129FA31ECEC0A100341D83 /* texture.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F129FA21ECEC0A100341D83 /* texture.png */; };
+		8F129FA61ECF323300341D83 /* ViroKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; };
+		8F129FA71ECF323300341D83 /* ViroKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8F140FCF1E56658700355A1E /* card_main.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 8F140FCE1E56658700355A1E /* card_main.ktx */; };
 		8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1664A51E5E43260062EBCE /* Accelerate.framework */; };
 		8F17701B1E74C01900235C21 /* VROGVRUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1770191E74C01900235C21 /* VROGVRUtil.cpp */; };
@@ -292,8 +297,6 @@
 		8FD4DED01C18ECD4003DC425 /* ViroKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD4DECF1C18ECD4003DC425 /* ViroKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DED71C18ECD4003DC425 /* ViroKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; };
 		8FD4DEDE1C18ECD4003DC425 /* ViroKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD4DEDD1C18ECD4003DC425 /* ViroKitTests.m */; };
-		8FD4DEE21C18ECD4003DC425 /* ViroKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; };
-		8FD4DEE31C18ECD4003DC425 /* ViroKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8FD4DEEC1C18ED0B003DC425 /* VROTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F63186B1BD95EA6000A75DF /* VROTime.cpp */; };
 		8FD4DEED1C18ED0B003DC425 /* VROLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C414F1BD8262D006D7A77 /* VROLog.cpp */; };
 		8FD4DEEE1C18ED0B003DC425 /* VROByteBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5C414C1BD825B1006D7A77 /* VROByteBuffer.cpp */; };
@@ -417,10 +420,16 @@
 		A5EC65B61EBFF57B00FE220E /* VROPhysicsBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5EC65B31EBFF42100FE220E /* VROPhysicsBody.cpp */; };
 		A5EC65B71EBFF5A100FE220E /* VROPhysicsBody.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EC65B41EBFF42100FE220E /* VROPhysicsBody.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5EC65B81EC004E100FE220E /* VROPhysicsShape.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EC65941EBD16F000FE220E /* VROPhysicsShape.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		EC8D0A685CE2FA0BE80B7363 /* libPods-ViroSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF43BA975D626635F2D5584C /* libPods-ViroSample.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		8F129FA81ECF323300341D83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F517BAE1BCDA2BD0017C70B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8FD4DECC1C18ECD4003DC425;
+			remoteInfo = ViroKit;
+		};
 		8F517BD31BCDA2BD0017C70B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8F517BAE1BCDA2BD0017C70B /* Project object */;
@@ -449,16 +458,20 @@
 			remoteGlobalIDString = 8F517BB51BCDA2BD0017C70B;
 			remoteInfo = ViroRenderer;
 		};
-		8FD4DEE01C18ECD4003DC425 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8F517BAE1BCDA2BD0017C70B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8FD4DECC1C18ECD4003DC425;
-			remoteInfo = ViroKit;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		8F129FAA1ECF323300341D83 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				8F129FA71ECF323300341D83 /* ViroKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8F4AD8FF1D42BD220044B3F0 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -467,17 +480,6 @@
 			files = (
 				8F4AD9001D42BD710044B3F0 /* ViroKit.framework in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8FD4DEE71C18ECD4003DC425 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				8FD4DEE31C18ECD4003DC425 /* ViroKit.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -539,6 +541,9 @@
 		8F129F941ECB41EE00341D83 /* VROSkeletalAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSkeletalAnimation.h; sourceTree = "<group>"; };
 		8F129F991ECCD70C00341D83 /* VROBoneUBO.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROBoneUBO.cpp; sourceTree = "<group>"; };
 		8F129F9A1ECCD70C00341D83 /* VROBoneUBO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROBoneUBO.h; sourceTree = "<group>"; };
+		8F129F9E1ECE2C5C00341D83 /* worm.proto */ = {isa = PBXFileReference; lastKnownFileType = file; name = worm.proto; path = ViroSample/worm.proto; sourceTree = "<group>"; };
+		8F129FA01ECE94BE00341D83 /* fox.proto */ = {isa = PBXFileReference; lastKnownFileType = file; name = fox.proto; path = ViroSample/fox.proto; sourceTree = "<group>"; };
+		8F129FA21ECEC0A100341D83 /* texture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = texture.png; path = ViroSample/texture.png; sourceTree = "<group>"; };
 		8F140FCE1E56658700355A1E /* card_main.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; name = card_main.ktx; path = ViroSample/card_main.ktx; sourceTree = "<group>"; };
 		8F152A6D1C0D77AA00A211F8 /* VROVector4f.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVector4f.cpp; sourceTree = "<group>"; };
 		8F152A6E1C0D77AA00A211F8 /* VROVector4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVector4f.h; sourceTree = "<group>"; };
@@ -935,8 +940,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8FD4DEE21C18ECD4003DC425 /* ViroKit.framework in Frameworks */,
-				EC8D0A685CE2FA0BE80B7363 /* libPods-ViroSample.a in Frameworks */,
+				8F129FA61ECF323300341D83 /* ViroKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1633,6 +1637,9 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F129FA21ECEC0A100341D83 /* texture.png */,
+				8F129FA01ECE94BE00341D83 /* fox.proto */,
+				8F129F9E1ECE2C5C00341D83 /* worm.proto */,
 				8FCED0621EBBD35200C19BCA /* Jetpack_Glow.png */,
 				8FCED0631EBBD35200C19BCA /* Jetpack_Normal.png */,
 				8FCED0641EBBD35200C19BCA /* Jetpack_Spec.png */,
@@ -1950,14 +1957,14 @@
 				8F517BB21BCDA2BD0017C70B /* Sources */,
 				8F517BB31BCDA2BD0017C70B /* Frameworks */,
 				8F517BB41BCDA2BD0017C70B /* Resources */,
-				8FD4DEE71C18ECD4003DC425 /* Embed Frameworks */,
 				62F405512A8B0011924043F4 /* [CP] Embed Pods Frameworks */,
 				1D59E3A97053F06F0060A165 /* [CP] Copy Pods Resources */,
+				8F129FAA1ECF323300341D83 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				8FD4DEE11C18ECD4003DC425 /* PBXTargetDependency */,
+				8F129FA91ECF323300341D83 /* PBXTargetDependency */,
 			);
 			name = ViroSample;
 			productName = ViroRenderer;
@@ -2098,6 +2105,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F129FA11ECE94BE00341D83 /* fox.proto in Resources */,
 				A5ABB1BA1E93300700E07EBC /* chillroots.mp4 in Resources */,
 				8FCED07C1EBBD35200C19BCA /* Sven_Face_Color.png in Resources */,
 				8FCED07A1EBBD35200C19BCA /* Sven_Body_Specular.png in Resources */,
@@ -2141,6 +2149,7 @@
 				8F660AB51E931C6F006D063F /* earth.mtl in Resources */,
 				A5ABB1D81E95703200E07EBC /* stereoVid.mp4 in Resources */,
 				8FCED0571EBBCFCF00C19BCA /* Global_Illumination.png in Resources */,
+				8F129FA31ECEC0A100341D83 /* texture.png in Resources */,
 				8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */,
 				8F9277FE1C66BD4500FF892A /* nx1.jpg in Resources */,
 				8FCED07D1EBBD35200C19BCA /* Sven_Face_Normal.png in Resources */,
@@ -2162,6 +2171,7 @@
 				8FCED0781EBBD35200C19BCA /* Sven_Body_Color.png in Resources */,
 				8FCED05D1EBBCFCF00C19BCA /* Squid_Color.png in Resources */,
 				8F50FC881E0AF54F00A9B4B2 /* 01_-_Default1noCulling.JPG in Resources */,
+				8F129F9F1ECE2C5C00341D83 /* worm.proto in Resources */,
 				8F517BC71BCDA2BD0017C70B /* Main.storyboard in Resources */,
 				8F705DF71E8F5D42008BE8F8 /* earth.obj in Resources */,
 				8F660AB01E931C6F006D063F /* 4096_bump.jpg in Resources */,
@@ -2469,6 +2479,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		8F129FA91ECF323300341D83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8FD4DECC1C18ECD4003DC425 /* ViroKit */;
+			targetProxy = 8F129FA81ECF323300341D83 /* PBXContainerItemProxy */;
+		};
 		8F517BD41BCDA2BD0017C70B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8F517BB51BCDA2BD0017C70B /* ViroSample */;
@@ -2488,11 +2503,6 @@
 			isa = PBXTargetDependency;
 			target = 8F517BB51BCDA2BD0017C70B /* ViroSample */;
 			targetProxy = 8FD4DEDA1C18ECD4003DC425 /* PBXContainerItemProxy */;
-		};
-		8FD4DEE11C18ECD4003DC425 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8FD4DECC1C18ECD4003DC425 /* ViroKit */;
-			targetProxy = 8FD4DEE01C18ECD4003DC425 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2713,11 +2723,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6E1141125FCC9320616556D8 /* Pods-ViroKit.debug.xcconfig */;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = UN8MD7234Y;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2745,10 +2755,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 710AAB43C4650092845EAD81 /* Pods-ViroKit.release.xcconfig */;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = UN8MD7234Y;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
