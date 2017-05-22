@@ -60,6 +60,16 @@ public class SceneJni {
         nativeDetachFromPhysicsWorld(mNativeRef, node.mNativeRef);
     }
 
+    public void findCollisionsWithRayAsync(float[] fromPos, float toPos[], boolean closest,
+                                           String tag, PhysicsWorldHitTestCallback callback){
+        findCollisionsWithRayAsync(mNativeRef, fromPos, toPos, closest, tag, callback);
+    }
+
+    public void findCollisionsWithShapeAsync(float[] from, float[] to, String shapeType, float[] params,
+                                             String tag, PhysicsWorldHitTestCallback callback){
+        findCollisionsWithShapeAsync(mNativeRef, from,to, shapeType, params, tag, callback);
+    }
+
     public void destroy() {
         nativeDestroySceneDelegate(mNativeDelegateRef);
         nativeDestroyScene(mNativeRef);
@@ -134,4 +144,17 @@ public class SceneJni {
     private native void nativeSetPhysicsWorldGravity(long sceneRef, float gravity[]);
     private native void nativeAttachToPhysicsWorld(long sceneRef, long nodeRef);
     private native void nativeDetachFromPhysicsWorld(long sceneRef, long nodeRef);
+    private native void findCollisionsWithRayAsync(long sceneRef, float[] from, float[] to,
+                                           boolean closest, String tag,
+                                           PhysicsWorldHitTestCallback callback);
+    private native void findCollisionsWithShapeAsync(long sceneRef, float[] from, float[] to,
+                                           String shapeType, float[] params, String tag,
+                                           PhysicsWorldHitTestCallback callback);
+    /**
+     * Callback used to notify the bridge when the requested hit test
+     * (with ray/shapes) with this given implemented callback have completed.
+     */
+    public interface PhysicsWorldHitTestCallback{
+        void onComplete(boolean hasHit);
+    }
 }

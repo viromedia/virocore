@@ -40,6 +40,7 @@ class VROConstraint;
 class VROExecutableAnimation;
 
 extern bool kDebugSortOrder;
+extern const std::string kDefaultNodeTag;
 
 class VRONode : public VROAnimatable, public VROThreadRestricted {
     
@@ -397,6 +398,14 @@ public:
     bool isSelectable() const {
         return _selectable;
     }
+
+    void setTag(std::string tag) {
+        _tag = tag;
+    }
+
+    std::string getTag() const {
+        return _tag;
+    }
     
     void setHighAccuracyGaze(bool enabled);
     
@@ -596,6 +605,11 @@ private:
      Physics rigid body that if defined, drives and sets the transformations of this node.
      */
     std::shared_ptr<VROPhysicsBody> _physicsBody;
+
+    /*
+     Non-unique tag identifier representing this node. Defaults to kDefaultNodeTag.
+     */
+    std::string _tag = kDefaultNodeTag;
 };
 
 #endif /* VRONode_h */

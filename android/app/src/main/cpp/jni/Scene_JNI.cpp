@@ -239,6 +239,141 @@ JNI_METHOD(void, nativeDetachFromPhysicsWorld)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, findCollisionsWithRayAsync)(JNIEnv *env,
+                                     jobject obj,
+                                     jlong sceneRef,
+                                     jfloatArray fromPos,
+                                     jfloatArray toPos,
+                                     jboolean closest,
+                                     jstring tag,
+                                     jobject callback) {
+
+    // Grab start position from which to perform the collision test
+    jfloat *fromPosf = env->GetFloatArrayElements(fromPos, 0);
+    VROVector3f from = VROVector3f(fromPosf[0], fromPosf[1], fromPosf[2]);
+    env->ReleaseFloatArrayElements(fromPos, fromPosf, 0);
+
+    // Grab end position to which to perform the test to.
+    jfloat *toPosf = env->GetFloatArrayElements(toPos, 0);
+    VROVector3f to = VROVector3f(toPosf[0], toPosf[1], toPosf[2]);
+    env->ReleaseFloatArrayElements(toPos, toPosf, 0);
+
+    // Get the ray tag used to notify collided objects with.
+    const char *cStrTag = env->GetStringUTFChars(tag, NULL);
+    std::string strTag(cStrTag);
+    env->ReleaseStringUTFChars(tag, cStrTag);
+
+    // If no ray tag is given, set it to the default tag.
+    if (strTag.empty()) {
+        strTag = kDefaultNodeTag;
+    }
+
+    jweak weakCallback = env->NewWeakGlobalRef(callback);
+    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+
+    // Perform the collision ray test asynchronously.
+    VROPlatformDispatchAsyncRenderer([sceneController_w, weakCallback, from, to, closest, strTag] {
+        std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
+        if (!sceneController) {
+            return;
+        }
+
+        bool hitSomething = sceneController->getScene()->getPhysicsWorld()->findCollisionsWithRay(
+                from,
+                to,
+                closest,
+                strTag);
+
+        // Notify the bridge after collision tests are complete
+        VROPlatformDispatchAsyncApplication([hitSomething, weakCallback] {
+            JNIEnv *env = VROPlatformGetJNIEnv();
+            jobject jCallback = env->NewLocalRef(weakCallback);
+            if (jCallback == NULL) {
+                return;
+            }
+
+            VROPlatformCallJavaFunction(jCallback, "onComplete", "(Z)V", hitSomething);
+            env->DeleteLocalRef(jCallback);
+            env->DeleteWeakGlobalRef(weakCallback);
+        });
+    });
+}
+
+JNI_METHOD(void, findCollisionsWithShapeAsync)(JNIEnv *env,
+                                       jobject obj,
+                                       jlong sceneRef,
+                                       jfloatArray posStart,
+                                       jfloatArray posEnd,
+                                       jstring shapeType,
+                                       jfloatArray shapeParams,
+                                       jstring tag,
+                                       jobject callback) {
+
+    // Grab start position from which to perform the collision test
+    jfloat *posStartf = env->GetFloatArrayElements(posStart, 0);
+    VROVector3f from = VROVector3f(posStartf[0], posStartf[1], posStartf[2]);
+    env->ReleaseFloatArrayElements(posStart, posStartf, 0);
+
+    // Grab end position to which to perform the test to.
+    jfloat *posEndf = env->GetFloatArrayElements(posEnd, 0);
+    VROVector3f to = VROVector3f(posEndf[0], posEndf[1], posEndf[2]);
+    env->ReleaseFloatArrayElements(posStart, posEndf, 0);
+
+    // Grab the shape type
+    const char *cStrShapeType = env->GetStringUTFChars(shapeType, NULL);
+    std::string strShapeType(cStrShapeType);
+    env->ReleaseStringUTFChars(shapeType, cStrShapeType);
+
+    // Grab the shape params
+    int paramsLength = env->GetArrayLength(shapeParams);
+    jfloat *pointArray = env->GetFloatArrayElements(shapeParams, 0);
+    std::vector<float> params;
+    for (int i = 0; i < paramsLength; i ++) {
+        params.push_back(pointArray[i]);
+    }
+    env->ReleaseFloatArrayElements(shapeParams, pointArray, 0);
+
+    // Get the ray tag used to notify collided objects with.
+    const char *cStrTag = env->GetStringUTFChars(tag, NULL);
+    std::string strTag(cStrTag);
+    env->ReleaseStringUTFChars(tag, cStrTag);
+
+    // If no ray tag is given, set it to the default tag.
+    if (strTag.empty()) {
+        strTag = kDefaultNodeTag;
+    }
+
+    jweak weakCallback = env->NewWeakGlobalRef(callback);
+    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+
+    // Perform the collision shape test asynchronously.
+    VROPlatformDispatchAsyncRenderer([sceneController_w, weakCallback, from, to, strShapeType, params, strTag] {
+        std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
+        if (!sceneController) {
+            return;
+        }
+
+        // Create a VROPhysicsShape and perform collision tests.
+        VROPhysicsShape::VROShapeType propShapeType = VROPhysicsShape::getTypeForString(strShapeType);
+        std::shared_ptr<VROPhysicsShape> shape = std::make_shared<VROPhysicsShape>(propShapeType, params);
+        bool hitSomething = sceneController->getScene()->getPhysicsWorld()->findCollisionsWithShape(
+                from, to, shape, strTag);
+
+        // Notify the bridge after collision tests are complete
+        VROPlatformDispatchAsyncApplication([hitSomething, weakCallback] {
+            JNIEnv *env = VROPlatformGetJNIEnv();
+            jobject jCallback = env->NewLocalRef(weakCallback);
+            if (jCallback == NULL) {
+                return;
+            }
+
+            VROPlatformCallJavaFunction(jCallback, "onComplete", "(Z)V", hitSomething);
+            env->DeleteLocalRef(jCallback);
+            env->DeleteWeakGlobalRef(weakCallback);
+        });
+    });
+}
+
 }  // extern "C"
 
 /*

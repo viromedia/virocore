@@ -8,6 +8,7 @@
 #ifndef VROPhysicsBody_h
 #define VROPhysicsBody_h
 
+#include <atomic>
 #include "VROVector3f.h"
 #include "VROPhysicsShape.h"
 #include "VROLog.h"
@@ -17,6 +18,10 @@ class btTransform;
 class btMotionState;
 class btRigidBody;
 class btVector3;
+class VROPhysicsBodyDelegate;
+
+//Atomic counter used to grab a unique Id to represent a VROPhysicsBody.
+static std::atomic_int sPhysicsBodyIdCounter;
 
 /*
  VROPhysicsBody contains all the physics properties and forces that are associated with and/or
@@ -85,6 +90,16 @@ public:
     virtual ~VROPhysicsBody();
 
     /*
+     Unique key identifier that the VROPhysicsWorld uses to track this VROPhysicsBody.
+     */
+    std::string getKey();
+
+    /*
+     Returns a non-unique tag identifier stored in VRONode for referring to this VROPhysicsbody.
+     */
+    std::string getTag();
+    
+    /*
      Setters and getters for physics properties associated with this VROPhysicsBody.
      */
     void setMass(float mass);
@@ -148,7 +163,33 @@ public:
      */
     void updateBulletForces();
 
+    /*
+     Delegates attached to this VROPhysicsBody to be notified of collision events.
+     */
+    void setPhysicsDelegate(std::shared_ptr<VROPhysicsBodyDelegate> delegate);
+    std::shared_ptr<VROPhysicsBodyDelegate> getPhysicsDelegate();
+
+    /*
+     Collision struct encapsulating all collision properties representing
+     a collided event.
+    */
+    struct VROCollision {
+        VROCollision(): penetrationDistance(1) { }
+        VROVector3f collidedPoint;
+        VROVector3f collidedNormal;
+        std::string collidedBodyTag;
+
+        /*
+         Penetration depth given by bullet will be some negative number
+         if they are colliding. VROCollision defaults penetrationDistance
+         to a positive number (1) to ensure that it is set / re-evaulated
+         in a computeCollision pass.
+         */
+        float penetrationDistance;
+    };
+    
 private:
+    std::string _key;
     std::weak_ptr<VRONode> _w_node;
     bool _needsBulletUpdate;
     btRigidBody* _rigidBody;
@@ -160,6 +201,7 @@ private:
     float _mass;
     VROVector3f _inertia;
     bool _useGravity;
+    std::weak_ptr<VROPhysicsBodyDelegate> _w_physicsDelegate;
 
     /*
      Simple force struct containing a force vector

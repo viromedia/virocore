@@ -8,13 +8,14 @@
 #include "VROPhysicsBody.h"
 #include "VRONode.h"
 #include "VROPhysicsMotionState.h"
+#include "VROStringUtil.h"
 #include <btBulletDynamicsCommon.h>
 const std::string VROPhysicsBody::kDynamicTag = "dynamic";
 const std::string VROPhysicsBody::kKinematicTag = "kinematic";
 const std::string VROPhysicsBody::kStaticTag = "static";
 
 VROPhysicsBody::VROPhysicsBody(std::shared_ptr<VRONode> node, VROPhysicsBody::VROPhysicsBodyType type,
-                                         float mass, std::shared_ptr<VROPhysicsShape> shape) {
+                               float mass, std::shared_ptr<VROPhysicsShape> shape) {
     if (type == VROPhysicsBody::VROPhysicsBodyType::Dynamic && mass == 0) {
         pwarn("Attempted to incorrectly set 0 mass for a Dynamic body type! Defaulting to 1kg mass.");
         mass = 1;
@@ -32,6 +33,7 @@ VROPhysicsBody::VROPhysicsBody(std::shared_ptr<VRONode> node, VROPhysicsBody::VR
     // Notify renderer (primarily the physics world) that this VROPhysicsBody has changed.
     _needsBulletUpdate = true;
     _rigidBody = new btRigidBody(groundRigidBodyCI);
+    _rigidBody->setUserPointer(this);
 
     // Set appropriate collision flags for the corresponding VROPhysicsBodyType
     if (type == VROPhysicsBody::VROPhysicsBodyType::Kinematic) {
@@ -49,9 +51,13 @@ VROPhysicsBody::VROPhysicsBody(std::shared_ptr<VRONode> node, VROPhysicsBody::VR
     _type = type;
     _mass = mass;
     _inertia = VROVector3f({uniformInertia.x(), uniformInertia.y(), uniformInertia.z()});
+
+    ++sPhysicsBodyIdCounter;
+    _key = VROStringUtil::toString(sPhysicsBodyIdCounter);
 }
 
 VROPhysicsBody::~VROPhysicsBody() {
+    _rigidBody->setUserPointer(nullptr);
     btMotionState *state = _rigidBody->getMotionState();
     if (state != nullptr) {
         delete state;
@@ -64,6 +70,18 @@ btRigidBody* VROPhysicsBody::getBulletRigidBody() {
 }
 
 #pragma mark - RigidBody properties
+std::string VROPhysicsBody::getKey() {
+    return _key;
+}
+
+std::string VROPhysicsBody::getTag() {
+    std::shared_ptr<VRONode> node = _w_node.lock();
+    if (node) {
+        return node->getTag();
+    }
+    return kDefaultNodeTag;
+}
+
 void VROPhysicsBody::setMass(float mass) {
     if (_type != VROPhysicsBody::VROPhysicsBodyType::Dynamic) {
         pwarn("Attempted to incorrectly set mass for a static or kinematic body type!");
@@ -119,6 +137,14 @@ void VROPhysicsBody::setIsSimulated(bool enabled) {
 
 bool VROPhysicsBody::getIsSimulated() {
     return _enableSimulation;
+}
+
+void VROPhysicsBody::setPhysicsDelegate(std::shared_ptr<VROPhysicsBodyDelegate> delegate) {
+    _w_physicsDelegate = delegate;
+}
+
+std::shared_ptr<VROPhysicsBodyDelegate> VROPhysicsBody::getPhysicsDelegate() {
+    return _w_physicsDelegate.lock();
 }
 
 #pragma mark - Transfomation Updates

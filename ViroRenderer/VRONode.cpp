@@ -33,6 +33,7 @@ static const float kHiddenOpacityThreshold = 0.02;
 // Set to true to debut the sort order
 bool kDebugSortOrder = false;
 static int sDebugSortIndex = 0;
+const std::string kDefaultNodeTag = "undefined";
 
 #pragma mark - Initialization
 

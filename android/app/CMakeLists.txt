@@ -83,6 +83,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/OpenCV_JNI.cpp
              src/main/cpp/jni/ImageTracker_JNI.cpp
              src/main/cpp/jni/ImageTrackerOutput_JNI.cpp
+             src/main/cpp/jni/PhysicsDelegate_JNI.cpp
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp

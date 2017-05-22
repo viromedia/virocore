@@ -408,6 +408,9 @@
 		8FDDB4B61DB1389300DE0968 /* VROUniform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB4B51DB1389300DE0968 /* VROUniform.cpp */; };
 		8FDDE2091CCFD6A100674DE2 /* VROViewMetal.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDE2071CCFD69D00674DE2 /* VROViewMetal.m */; };
 		8FDDE2121CD00F2600674DE2 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FDDE2111CD00F2600674DE2 /* CoreText.framework */; };
+		A50F2A281ED135CC00D964D5 /* VROPhysicsBodyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A50F2A291ED135D800D964D5 /* VROPhysicsBodyDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A52B272B1ED8DAAA0089F9A2 /* VROPhysicsContactResultCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A52B272A1ED8DA960089F9A2 /* VROPhysicsContactResultCallback.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A538C5AD1EC63EEF00A724F0 /* VROPhysicsMotionState.h in Headers */ = {isa = PBXBuildFile; fileRef = A538C5AC1EC63EDD00A724F0 /* VROPhysicsMotionState.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB1D1E1AEB0D008B4AE2 /* VROEventDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB131E1AE11D008B4AE2 /* VROEventDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB301E1B129E008B4AE2 /* VROSceneController.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB251E1AF448008B4AE2 /* VROSceneController.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -939,6 +942,9 @@
 		8FF253B11DC9398A00C1C5C7 /* VRODefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODefines.h; sourceTree = "<group>"; };
 		8FF4D7A71C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROMaterialSubstrateMetal.cpp; sourceTree = "<group>"; };
 		8FF4D7A81C0D45DA006D6157 /* VROMaterialSubstrateMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialSubstrateMetal.h; sourceTree = "<group>"; };
+		A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VROPhysicsBodyDelegateiOS.h; path = ViroKit/VROPhysicsBodyDelegateiOS.h; sourceTree = SOURCE_ROOT; };
+		A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsBodyDelegate.h; sourceTree = "<group>"; };
+		A52B272A1ED8DA960089F9A2 /* VROPhysicsContactResultCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsContactResultCallback.h; sourceTree = "<group>"; };
 		A538C5AC1EC63EDD00A724F0 /* VROPhysicsMotionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsMotionState.h; sourceTree = "<group>"; };
 		A566EB131E1AE11D008B4AE2 /* VROEventDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROEventDelegate.h; sourceTree = "<group>"; };
 		A566EB251E1AF448008B4AE2 /* VROSceneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneController.h; sourceTree = "<group>"; };
@@ -1827,6 +1833,9 @@
 		A5EC65901EBD16D800FE220E /* Physics */ = {
 			isa = PBXGroup;
 			children = (
+				A52B272A1ED8DA960089F9A2 /* VROPhysicsContactResultCallback.h */,
+				A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */,
+				A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */,
 				A538C5AC1EC63EDD00A724F0 /* VROPhysicsMotionState.h */,
 				A5EC65B31EBFF42100FE220E /* VROPhysicsBody.cpp */,
 				A5EC65B41EBFF42100FE220E /* VROPhysicsBody.h */,
@@ -1852,6 +1861,7 @@
 				A5EC659F1EBD34C000FE220E /* VROPhysicsWorld.h in Headers */,
 				A5EC65B81EC004E100FE220E /* VROPhysicsShape.h in Headers */,
 				8F660ABB1E9554B8006D063F /* VROFrameScheduler.h in Headers */,
+				A50F2A281ED135CC00D964D5 /* VROPhysicsBodyDelegate.h in Headers */,
 				8FCB10211DD544E800FE425C /* VROVideoTextureCache.h in Headers */,
 				8FCB10091DD10EF300FE425C /* VROStringUtil.h in Headers */,
 				A58697891E30887500191090 /* VROInputType.h in Headers */,
@@ -1958,6 +1968,7 @@
 				8FB659231CD83A2200D036EB /* VROTextureSubstrateOpenGL.h in Headers */,
 				8F50FC6E1E09C99900A9B4B2 /* VROViewport.h in Headers */,
 				8FD06F221E832760003D3BC4 /* VROCameraTextureiOS.h in Headers */,
+				A52B272B1ED8DAAA0089F9A2 /* VROPhysicsContactResultCallback.h in Headers */,
 				8FD4DF4A1C18F5EB003DC425 /* VROMath.h in Headers */,
 				8FD4DF4B1C18F5EB003DC425 /* VROBox.h in Headers */,
 				8FD4DF4C1C18F5EB003DC425 /* VROSurface.h in Headers */,
@@ -1983,6 +1994,7 @@
 				8F11B7C21C20B0530026D150 /* VROView.h in Headers */,
 				8F56AEA51DE764A700DD65B6 /* VROGlyphOpenGL.h in Headers */,
 				8F83DEAF1C50278C0089C31A /* VROSphere.h in Headers */,
+				A50F2A291ED135D800D964D5 /* VROPhysicsBodyDelegateiOS.h in Headers */,
 				8F65F8161CA073C100415115 /* VROTextureUtil.h in Headers */,
 				8A130DA71E401B910050D83B /* VROSoundDataDelegate.h in Headers */,
 				8FDDB4A81DAF134300DE0968 /* VROLineSegment.h in Headers */,

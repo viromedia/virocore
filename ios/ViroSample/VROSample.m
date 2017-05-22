@@ -24,7 +24,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneNumScenes,
 };
 
-@interface VROSample () <VROEventDelegateProtocol>
+@interface VROSample () <VROEventDelegateProtocol, VROPhysicsBodyDelegateProtocol>
 
 @property (readwrite, nonatomic) std::shared_ptr<VRODriver> driver;
 @property (readwrite, nonatomic) BOOL tapEnabled;
@@ -35,16 +35,22 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 @property (readwrite, nonatomic) int sceneIndex;
 @property (readwrite, nonatomic) std::shared_ptr<VROVideoTexture> videoTexture;
 @property (readwrite, nonatomic) std::shared_ptr<VROEventDelegateiOS> delegate;
-
 @property (nonatomic, copy) id clickBlock;
 
 // VROEventDelegateProtocol
 - (void) onHover:(int)source isHovering:(bool)isHovering;
 - (void) onClick:(int)source clickState:(VROEventDelegate::ClickState)clickState;
 - (void) onFuse:(int)source;
+
+// VROPhysicsBodyDelegateProtocol
+- (void)onCollided:(std::string) bodyTagB
+         collision:(VROPhysicsBody::VROCollision) collision;
 @end
 
-@implementation VROSample
+@implementation VROSample  {
+    std::vector<std::shared_ptr<VROPhysicsBodyDelegateiOS>> _physicsDeelgates;
+}
+
 
 
 - (std::shared_ptr<VROSceneController>)loadSceneWithIndex:(int)index {
@@ -288,36 +294,41 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VRONode> groundNode = std::make_shared<VRONode>();
     groundNode->setGeometry(groundBox);
     groundNode->setPosition({0, -10, -5});
+    groundNode->setTag("GROUND");
     rootNode->addChildNode(groundNode);
+
     self.delegate = std::make_shared<VROEventDelegateiOS>(self);
     self.delegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
     groundNode->setEventDelegate(self.delegate);
     
-    std::shared_ptr<VROPhysicsBody> physicsGround = groundNode->initPhysicsBody(VROPhysicsBody::VROPhysicsBodyType::Static, 0, nullptr);
+    std::shared_ptr<VROPhysicsBody> physicsGround = groundNode->initPhysicsBody(VROPhysicsBody::VROPhysicsBodyType::Static,
+                                                                                0, nullptr);
     std::shared_ptr<VROPhysicsWorld> physicsWorld = scene->getPhysicsWorld();
     physicsWorld->setGravity({0,-9.81f,0});
     physicsWorld->addPhysicsBody(physicsGround);
+     physicsGround->setRestitution(0);
     
     __weak VROSample *w_sample = self;
     self.clickBlock =^ {
         if (w_sample){
-            [w_sample createPhysicsBoxAt:{0,10,-5} withWorld:physicsWorld withRoot:rootNode];
+            std::vector<float> params = {0.1,0.1, 0.1};
+            std::shared_ptr<VROPhysicsShape> shape = std::make_shared<VROPhysicsShape>(VROPhysicsShape::VROShapeType::Box, params);
+            //physicsWorld->findCollisionsWithRay({0,0,0}, {0,0,-10}, false, "test2");
+            //physicsWorld->findCollisionsWithShape({0,0, -7}, {0,0, -7}, shape, "test3");
+            [w_sample createPhysicsBoxAt:{0,10,-4} withWorld:physicsWorld withRoot:rootNode withTag:"box3"];
         }
     };
     
-    [self createPhysicsBoxAt:{0,20,-5} withWorld:physicsWorld withRoot:rootNode];
-    [self createPhysicsBoxAt:{0,20,-5} withWorld:physicsWorld withRoot:rootNode];
-    [self createPhysicsBoxAt:{0.3,25,-5} withWorld:physicsWorld withRoot:rootNode];
-    [self createPhysicsBoxAt:{0.6,35,-5} withWorld:physicsWorld withRoot:rootNode];
-    [self createPhysicsBoxAt:{0.4,50,-5} withWorld:physicsWorld withRoot:rootNode];
-
+    //[self createPhysicsBoxAt:{0,0,-6} withWorld:physicsWorld withRoot:rootNode withTag:"box1"];
+    //[self createPhysicsBoxAt:{0,0,-8} withWorld:physicsWorld withRoot:rootNode withTag:"box2"];
     return sceneController;
 }
 
 - (void)createPhysicsBoxAt:(VROVector3f)position
                  withWorld:(std::shared_ptr<VROPhysicsWorld>)physicsWorld
-                  withRoot:(std::shared_ptr<VRONode>) rootNode{
-    
+                  withRoot:(std::shared_ptr<VRONode>) rootNode
+                   withTag:(std::string)tag{
+        
     std::shared_ptr<VROBox> box = VROBox::createBox(1, 1, 1);
     box->setName("Box 1");
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
@@ -327,12 +338,24 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
+    boxNode->setTag(tag);
     boxNode->setPosition(position);
     rootNode->addChildNode(boxNode);
     std::shared_ptr<VROPhysicsBody> physicsBody
-        = boxNode->initPhysicsBody(VROPhysicsBody::VROPhysicsBodyType::Dynamic, 0.5, nullptr);
-
+        = boxNode->initPhysicsBody(VROPhysicsBody::VROPhysicsBodyType::Dynamic, 5, nullptr);
+    
+    std::shared_ptr<VROPhysicsBodyDelegateiOS> delegate = std::make_shared<VROPhysicsBodyDelegateiOS>(self);
+    _physicsDeelgates.push_back(delegate);
+    physicsBody->setPhysicsDelegate(delegate);
+    physicsBody->setRestitution(0);
+    physicsBody->setUseGravity(true);
     physicsWorld->addPhysicsBody(physicsBody);
+}
+
+- (void)onCollided:(std::string) bodyKey
+         collision:(VROPhysicsBody::VROCollision) collision{
+    NSLog(@"Viro on box collided! key: %s tag: %s norm %f, %f, %f", bodyKey.c_str(), collision.collidedBodyTag.c_str(),
+          collision.collidedPoint.x, collision.collidedPoint.y, collision.collidedPoint.z);
 }
 
 #pragma mark default implementations for VRTEventDelegateProtocol

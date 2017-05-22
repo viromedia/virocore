@@ -3,6 +3,7 @@
  */
 package com.viro.renderer.jni;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
@@ -127,6 +128,30 @@ public class NodeJni {
         nativeSetTransformBehaviors(mNativeRef, transformBehaviors);
     }
 
+    public void setTag(String tag){
+        nativeSetTag(mNativeRef, tag);
+    }
+
+    /**
+     * JNI functions for view properties.
+     */
+    private native long nativeCreateNode();
+    private native void nativeDestroyNode(long nodeReference);
+    private native void nativeAddChildNode(long nodeReference, long childNodeReference);
+    private native void nativeRemoveFromParent(long nodeReference);
+    private native void nativeSetHierarchicalRendering(long nodeReference, boolean hierarchicalRendering);
+    private native void nativeSetPosition(long nodeReference, float x, float y, float z);
+    private native void nativeSetRotation(long nodeReference, float x, float y, float z);
+    private native void nativeSetScale(long nodeReference, float x, float y, float z);
+    private native void nativeSetRotationPivot(long nodeReference, float x, float y, float z);
+    private native void nativeSetScalePivot(long nodeReference, float x, float y, float z);
+    private native void nativeSetOpacity(long nodeReference, float opacity);
+    private native void nativeSetVisible(long nodeReference, boolean visible);
+    private native void nativeSetHighAccuracyGaze(long nodeReference, boolean enabled);
+    private native void nativeSetMaterials(long nodeReference, long[] materials);
+    private native void nativeSetTransformBehaviors(long nodeReference, String[] transformBehaviors);
+    private native void nativeSetEventDelegate(long nodeReference, long eventDelegateRef);
+
     /**
      * Physics properties
      */
@@ -167,11 +192,11 @@ public class NodeJni {
         nativeSetPhsyicsUseGravity(mNativeRef, useGravity);
     }
 
-    public String checkIsValidBodyType(String bodyType, float mass){
+    public static String checkIsValidBodyType(String bodyType, float mass){
         return nativeIsValidBodyType(bodyType, mass);
     }
 
-    public String checkIsValidShapeType(String shapeType, float params[]){
+    public static String checkIsValidShapeType(String shapeType, float params[]){
         return nativeIsValidShapeType(shapeType, params);
     }
 
@@ -194,27 +219,43 @@ public class NodeJni {
     public void applyPhysicsTorqueImpulse(float[] torque){
         nativeApplyPhysicsTorqueImpulse(mNativeRef, torque);
     }
+    
+    /**
+     * Physics Delegate callback.
+     */
+    private WeakReference<PhysicsDelegate> mPhysicsDelegate = null;
+    private static long INVALID_REF = Long.MAX_VALUE;
+    private long mNativePhysicsDelegate = INVALID_REF;
 
-    private native long nativeCreateNode();
-    private native void nativeDestroyNode(long nodeReference);
-    private native void nativeAddChildNode(long nodeReference, long childNodeReference);
-    private native void nativeRemoveFromParent(long nodeReference);
-    private native void nativeSetHierarchicalRendering(long nodeReference, boolean hierarchicalRendering);
-    private native void nativeSetPosition(long nodeReference, float x, float y, float z);
-    private native void nativeSetRotation(long nodeReference, float x, float y, float z);
-    private native void nativeSetScale(long nodeReference, float x, float y, float z);
-    private native void nativeSetRotationPivot(long nodeReference, float x, float y, float z);
-    private native void nativeSetScalePivot(long nodeReference, float x, float y, float z);
-    private native void nativeSetOpacity(long nodeReference, float opacity);
-    private native void nativeSetVisible(long nodeReference, boolean visible);
-    private native void nativeSetHighAccuracyGaze(long nodeReference, boolean enabled);
-    private native void nativeSetMaterials(long nodeReference, long[] materials);
-    private native void nativeSetTransformBehaviors(long nodeReference, String[] transformBehaviors);
-    private native void nativeSetEventDelegate(long nodeReference, long eventDelegateRef);
+    public void setPhysicsDelegate(PhysicsDelegate delegate){
+        if (delegate != null && mNativePhysicsDelegate == INVALID_REF) {
+            mPhysicsDelegate = new WeakReference<PhysicsDelegate>(delegate);
+            mNativePhysicsDelegate = nativeSetPhysicsDelegate(mNativeRef);
+        } else if (delegate == null && mNativePhysicsDelegate != INVALID_REF){
+            nativeClearPhysicsDelegate(mNativeRef, mNativePhysicsDelegate);
+            mNativePhysicsDelegate = INVALID_REF;
+            mPhysicsDelegate = null;
+        }
+    }
+
+    public interface PhysicsDelegate {
+        void onCollided(String tag, float[] position, float[] t);
+    }
+
+    public void onCollided(String collidedTag,
+                           float posX, float posY, float posZ,
+                           float normX, float normY, float normZ) {
+        if (mPhysicsDelegate != null && mPhysicsDelegate.get() != null
+                && mNativePhysicsDelegate != INVALID_REF) {
+            float[] pos = {posX, posY, posZ};
+            float[] norm = {normX, normY, normZ};
+            mPhysicsDelegate.get().onCollided(collidedTag, pos, norm);
+        }
+    }
 
     /**
-     * Native JNI Functions for physics
-     */
+      * Native JNI Functions for physics
+      */
     private native void nativeInitPhysicsBody(long nodeReference, String rigidBodyType,
                                               float mass, String shapeType, float shapeParams[]);
     private native void nativeClearPhysicsBody(long nodeReference);
@@ -225,8 +266,8 @@ public class NodeJni {
     private native void nativeSetPhysicsRestitution(long nodeReference, float restitution);
     private native void nativeSetPhysicsEnabled(long nodeReference, boolean enabled);
     private native void nativeSetPhsyicsUseGravity(long nodeReference, boolean useGravity);
-    private native String nativeIsValidBodyType(String bodyType, float mass);
-    private native String nativeIsValidShapeType(String shapeType, float[] shapeParams);
+    private native static String nativeIsValidBodyType(String bodyType, float mass);
+    private native static String nativeIsValidShapeType(String shapeType, float[] shapeParams);
     private native void nativeApplyPhysicsForce(long nodeReference, float[] force,
                                                 float[] position);
     private native void nativeApplyPhysicsTorque(long nodeReference, float[] torque);
@@ -234,4 +275,6 @@ public class NodeJni {
                                                        float[] position);
     private native void nativeApplyPhysicsTorqueImpulse(long nodeReference, float[] torque);
     private native void nativeClearPhysicsForce(long nodeReference);
+    public native long nativeSetPhysicsDelegate(long nodeReference);
+    public native void nativeClearPhysicsDelegate(long nodeReference, long delegateRef);
 }

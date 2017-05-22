@@ -16,6 +16,7 @@
 #include "Material_JNI.h"
 #include "VROStringUtil.h"
 #include "EventDelegate_JNI.h"
+#include "PhysicsDelegate_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -64,6 +65,23 @@ JNI_METHOD(void, nativeRemoveFromParent)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetTag)(JNIEnv *env,
+                                    jobject obj,
+                                    jlong native_node_ref,
+                                    jstring tag) {
+    const char *cStrTag = env->GetStringUTFChars(tag, NULL);
+    std::string strBodyType(cStrTag);
+    env->ReleaseStringUTFChars(tag, cStrTag);
+
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w, strBodyType] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setTag(strBodyType);
+        }
+    });
+}
+
 JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
                                     jobject obj,
                                     jlong native_node_ref,
@@ -86,7 +104,6 @@ JNI_METHOD(void, nativeSetRotation)(JNIEnv *env,
                                     jfloat rotationDegreesX,
                                     jfloat rotationDegreesY,
                                     jfloat rotationDegreesZ) {
-
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, rotationDegreesX, rotationDegreesY, rotationDegreesZ] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -601,6 +618,36 @@ JNI_METHOD(jstring, nativeIsValidShapeType)(JNIEnv *env,
     } else {
         return env->NewStringUTF(errorMsg.c_str());
     }
+}
+
+JNI_METHOD(jlong, nativeSetPhysicsDelegate)(JNIEnv *env,
+                                             jobject obj,
+                                             jlong nativeRef) {
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::shared_ptr<PhysicsDelegate_JNI> delegate = std::make_shared<PhysicsDelegate_JNI>(obj);
+
+    VROPlatformDispatchAsyncRenderer([node_w, delegate] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody()) {
+            node->getPhysicsBody()->setPhysicsDelegate(delegate);
+        }
+    });
+
+    return PhysicsDelegate_JNI::jptr(delegate);
+}
+
+JNI_METHOD(jlong, nativeClearPhysicsDelegate)(JNIEnv *env,
+                                            jobject obj,
+                                            jlong nativeRef,
+                                            jlong delegateRef) {
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([node_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody()) {
+            node->getPhysicsBody()->setPhysicsDelegate(nullptr);
+        }
+    });
+    delete reinterpret_cast<PersistentRef<PhysicsDelegate_JNI> *>(delegateRef);
 }
 
 }  // extern "C"
