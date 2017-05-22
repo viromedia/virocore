@@ -14,19 +14,17 @@
 
 VROSkinner::VROSkinner(std::shared_ptr<VROSkeleton> skeleton,
                        VROMatrix4f geometryBindTransform,
-                       std::vector<VROMatrix4f> bindTransforms,
+                       std::vector<VROMatrix4f> boneSpaceTransforms,
                        std::shared_ptr<VROGeometrySource> boneIndices,
                        std::shared_ptr<VROGeometrySource> boneWeights) :
     _skeleton(skeleton),
     _boneIndices(boneIndices),
     _boneWeights(boneWeights) {
-    
-    VROMatrix4f inverseGeometryBindTransform = geometryBindTransform.invert();
         
-    for (VROMatrix4f &transform : bindTransforms) {
-        VROMatrix4f boneBindTransform = transform.multiply(geometryBindTransform);
-        _bindTransforms.push_back(boneBindTransform);
-        _inverseBindTransforms.push_back(boneBindTransform.invert());
+    for (VROMatrix4f &boneSpaceTransform : boneSpaceTransforms) {
+        VROMatrix4f bindTransform = boneSpaceTransform.multiply(geometryBindTransform);
+        _bindTransforms.push_back(bindTransform);
+        _inverseBindTransforms.push_back(bindTransform.invert());
     }
 }
 

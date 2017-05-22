@@ -80,14 +80,14 @@ public:
     /*
      The geometryBindTransform passed in here transforms from the geometry's 
      original encoded position, in model space, to the bind position in world space.
-     The bindTransforms move from the bind position in world space, to the bind
+     The boneSpaceTransforms move from the bind position in world space, to the bind
      position in bone local space, for each bone. We use these two parameters to 
      construct the _bindTransforms and _inverseBindTransforms fields, then discard
      them.
      */
     VROSkinner(std::shared_ptr<VROSkeleton> skeleton,
                VROMatrix4f geometryBindTransform,
-               std::vector<VROMatrix4f> bindTransforms,
+               std::vector<VROMatrix4f> boneSpaceTransforms,
                std::shared_ptr<VROGeometrySource> boneIndices,
                std::shared_ptr<VROGeometrySource> boneWeights);
     virtual ~VROSkinner() {}
