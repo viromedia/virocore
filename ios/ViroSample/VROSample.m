@@ -352,7 +352,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     /*
      Create the box node.
      */
-    std::shared_ptr<VROBox> box = VROBox::createBox(2, 4, 2);
+    std::shared_ptr<VROBox> box = VROBox::createBox(2, 2, 2);
     box->setName("Box 1");
     
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
@@ -393,17 +393,25 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     surfaceModifier->setUniformBinder("surface_color", [](VROUniform *uniform, GLuint location, const VROGeometry &geometry) {
         uniform->setVec3({0.6, 0.6, 1.0});
     });
-    material->addShaderModifier(surfaceModifier);
+    //material->addShaderModifier(surfaceModifier);
     
     std::shared_ptr<VRONode> boxParentNode = std::make_shared<VRONode>();
     boxParentNode->setPosition({0, 0, -5});
+    
+    VROMatrix4f scalePivot;
+    scalePivot.translate(1, 1, 0);
+    boxParentNode->setScalePivot(scalePivot);
+    
+    VROMatrix4f rotationPivot;
+    rotationPivot.translate(-1, 1, 0);
+    //boxParentNode->setRotationPivot(rotationPivot);
     
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
 
     boxParentNode->addChildNode(boxNode);
     rootNode->addChildNode(boxParentNode);
-    boxParentNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
+    //boxParentNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
     
     /*
      Create a second box node behind the first.
@@ -466,7 +474,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->addChildNode(boxNode3);
     
     std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();
-    camera->setPosition({0, -5, 0});
+    //camera->setPosition({0, -5, 0});
     
     std::shared_ptr<VRONode> cameraNode = std::make_shared<VRONode>();
     cameraNode->setCamera(camera);
@@ -484,9 +492,12 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         spotBlue->setPosition({-5, 0, 0});
         spotBlue->setDirection({1, 0, -1});
         
-        cameraNode->setPosition({0, 1, 0});
+        //cameraNode->setPosition({0, 1, 0});
         //box->setWidth(5);
         //box->setLength(5);
+        
+        //boxParentNode->setScale({8, 8, 1});
+        boxParentNode->setRotationEulerZ(M_PI_2);
         
         VROTransaction::commit();
     });
@@ -836,7 +847,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                         
                                                                         //node->setPosition({0, -8, -12});
                                                                         node->setScale({0.1, 0.1, 0.1});
-                                                                        node->setRotation({ 0, M_PI_2, M_PI_2});
+                                                                        //node->setRotation({ 0, M_PI_2, M_PI_2});
                                                                         
                                                                         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                                                                             [self animateTake:node];
@@ -880,7 +891,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleSceneFBX;
+    self.sceneIndex = VROSampleSceneBox;
     self.driver = driver;
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
 }

@@ -261,12 +261,43 @@ void VRONode::computeTransforms(VROMatrix4f parentTransform, VROMatrix4f parentR
 }
 
 void VRONode::doComputeTransform(VROMatrix4f parentTransform) {
-    VROMatrix4f transform;
-    transform.scale(_scale.x, _scale.y, _scale.z);
-    transform = _rotation.getMatrix().multiply(transform);
-    transform.translate(_position.x, _position.y, _position.z);
+    /*
+     Compute the world transform for this node. The full formula is:
+     _computedTransform = parentTransform * T * Rpiv * R * Rpiv -1 * Spiv * S * Spiv-1
+     */
+    _computedTransform.toIdentity();
     
-    _computedTransform = parentTransform.multiply(transform);
+    /*
+     Scale.
+     */
+    if (_scalePivot) {
+        VROMatrix4f scale;
+        scale.scale(_scale.x, _scale.y, _scale.z);
+        _computedTransform = *_scalePivot * scale * *_scalePivotInverse;
+    }
+    else {
+        _computedTransform.scale(_scale.x, _scale.y, _scale.z);
+    }
+    
+    /*
+     Rotation.
+     */
+    if (_rotationPivot) {
+        _computedTransform = *_rotationPivotInverse * _computedTransform;
+    }
+    _computedTransform = _rotation.getMatrix() * _computedTransform;
+    if (_rotationPivot) {
+        _computedTransform = *_rotationPivot * _computedTransform;
+    }
+    
+    /*
+     Translation.
+     */
+    VROMatrix4f translate;
+    translate.translate(_position.x, _position.y, _position.z);
+    _computedTransform = translate * _computedTransform;
+    
+    _computedTransform = parentTransform * _computedTransform;
     _computedPosition = { _computedTransform[12], _computedTransform[13], _computedTransform[14] };
     if (_geometry) {
         _computedBoundingBox = _geometry->getBoundingBox().transform(_computedTransform);
@@ -477,6 +508,18 @@ void VRONode::setRotationEulerZ(float radians) {
         euler.z = VROMathNormalizeAngle2PI(r);
         ((VRONode *)animatable)->_rotation = { euler.x, euler.y, euler.z };
     }, _euler.z, radians));
+}
+
+void VRONode::setRotationPivot(VROMatrix4f pivot) {
+    passert_thread();
+    _rotationPivot = pivot;
+    _rotationPivotInverse = pivot.invert();
+}
+
+void VRONode::setScalePivot(VROMatrix4f pivot) {
+    passert_thread();
+    _scalePivot = pivot;
+    _scalePivotInverse = pivot.invert();
 }
 
 void VRONode::setOpacity(float opacity) {

@@ -14,6 +14,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include "optional.hpp"
 #include "VROMatrix4f.h"
 #include "VROQuaternion.h"
 #include "VRORenderContext.h"
@@ -191,6 +192,16 @@ public:
     void setRotationEulerX(float radians);
     void setRotationEulerY(float radians);
     void setRotationEulerZ(float radians);
+    
+    /*
+     Pivot points define the center for rotation and scale. For example, 
+     by translating the rotation pivot, you can use rotation to rotate an
+     object about a faraway point. By translating the scale pivot, you can 
+     scale an object relative to its corner, instead of its center. Not
+     animatable.
+     */
+    void setRotationPivot(VROMatrix4f pivot);
+    void setScalePivot(VROMatrix4f pivot);
     
 #pragma mark - Render Settings
     
@@ -416,6 +427,16 @@ private:
      */
     VROQuaternion _rotation;
     VROVector3f _euler;
+    
+    /*
+     Pivots define the center of the rotation and scale operations. 
+     Declared optional becuase they are not always used, and we can optimize 
+     them away when not used.
+     */
+    std::experimental::optional<VROMatrix4f> _rotationPivot;
+    std::experimental::optional<VROMatrix4f> _rotationPivotInverse;
+    std::experimental::optional<VROMatrix4f> _scalePivot;
+    std::experimental::optional<VROMatrix4f> _scalePivotInverse;
     
     /*
      User-defined rendering order for this node.

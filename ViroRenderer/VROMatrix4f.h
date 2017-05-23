@@ -78,4 +78,8 @@ private:
     
 };
 
+inline VROMatrix4f operator*(const VROMatrix4f &lhs, const VROMatrix4f &rhs) {
+    return lhs.multiply(rhs);
+}
+
 #endif /* VROMATRIX_H_ */
