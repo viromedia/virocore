@@ -1,6 +1,6 @@
 layout (std140) uniform bones {
     int num_bones;
-    lowp float padding0, padding1, padding2;
+    lowp float bones_padding0, bones_padding1, bones_padding2;
     vec4 bone_transforms[192 * 2];
 };
 
