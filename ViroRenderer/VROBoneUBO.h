@@ -13,6 +13,7 @@
 #include <vector>
 #include <memory>
 
+// Keep in sync with ViroFBX::VROFBXExporter.h and skinning_vsh.glsl
 static const int kMaxBones = 192;
 static const int kFloatsPerBone = 8;
 
