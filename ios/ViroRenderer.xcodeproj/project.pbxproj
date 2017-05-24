@@ -74,7 +74,7 @@
 		8F203F0A1DCD236500DC50F2 /* VRODefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF253B11DC9398A00C1C5C7 /* VRODefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F203F0B1DCD245200DC50F2 /* VROOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F53D3A11DCAB670001C91A8 /* VROOpenGL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F2D1BAF1EC288F700E7BF44 /* VROSkinner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BAD1EC288F700E7BF44 /* VROSkinner.cpp */; };
-		8F2D1BB01EC288F700E7BF44 /* VROSkinner.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BAE1EC288F700E7BF44 /* VROSkinner.h */; };
+		8F2D1BB01EC288F700E7BF44 /* VROSkinner.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BAE1EC288F700E7BF44 /* VROSkinner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F2D1BB31EC3785C00E7BF44 /* VROBone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BB11EC3785C00E7BF44 /* VROBone.cpp */; };
 		8F2D1BB41EC3785C00E7BF44 /* VROBone.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BB21EC3785C00E7BF44 /* VROBone.h */; };
 		8F2D1BB81EC379C000E7BF44 /* VROAnimationMatrix4f.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BB61EC379C000E7BF44 /* VROAnimationMatrix4f.h */; };
@@ -203,7 +203,7 @@
 		8FA9D0A41CC947DD00B00B93 /* VRODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D0A21CC947DD00B00B93 /* VRODriver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FAE23C71CE3F61300E98B47 /* VROGeometrySubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB659181CD839DC00D036EB /* VROGeometrySubstrateOpenGL.cpp */; };
 		8FAE23C81CE3F61700E98B47 /* VROMaterialSubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6591C1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.cpp */; };
-		8FB2B58C1E143F7900EDB629 /* optional.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8FB2B58B1E143F7900EDB629 /* optional.hpp */; };
+		8FB2B58C1E143F7900EDB629 /* optional.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8FB2B58B1E143F7900EDB629 /* optional.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FB2B5901E1442EC00EDB629 /* VROPropertyAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2B58E1E1442EC00EDB629 /* VROPropertyAnimation.cpp */; };
 		8FB2B5911E1442EC00EDB629 /* VROPropertyAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB2B58F1E1442EC00EDB629 /* VROPropertyAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FB2B5941E1445BB00EDB629 /* VROAnimationGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2B5921E1445BB00EDB629 /* VROAnimationGroup.cpp */; };
@@ -1788,6 +1788,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FB2B58C1E143F7900EDB629 /* optional.hpp in Headers */,
+				8F2D1BB01EC288F700E7BF44 /* VROSkinner.h in Headers */,
 				A5EC65B71EBFF5A100FE220E /* VROPhysicsBody.h in Headers */,
 				A538C5AD1EC63EEF00A724F0 /* VROPhysicsMotionState.h in Headers */,
 				A5EC659F1EBD34C000FE220E /* VROPhysicsWorld.h in Headers */,
@@ -1858,9 +1860,7 @@
 				8FB659171CD839A000D036EB /* VRODriverOpenGL.h in Headers */,
 				8F83DE9C1C4826F80089C31A /* VROTimingFunction.h in Headers */,
 				8F53C8F91E00F03E008314B4 /* tiny_obj_loader.h in Headers */,
-				8F2D1BB01EC288F700E7BF44 /* VROSkinner.h in Headers */,
 				8F53D3AA1DCBA06A001C91A8 /* VROImageiOS.h in Headers */,
-				8FB2B58C1E143F7900EDB629 /* optional.hpp in Headers */,
 				8FD4DF3D1C18F5EA003DC425 /* VROByteBuffer.h in Headers */,
 				8FCB0FFB1DCFF68E00FE425C /* VROAudioPlayeriOS.h in Headers */,
 				8F83DE9D1C4826F80089C31A /* VROTimingFunctionBounce.h in Headers */,
