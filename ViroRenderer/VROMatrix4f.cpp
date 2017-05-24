@@ -9,6 +9,7 @@
 #include "VROMatrix4f.h"
 #include "VROMath.h"
 #include "VROLog.h"
+#include "VROQuaternion.h"
 #include <sstream>
 
 VROMatrix4f::VROMatrix4f() {
@@ -184,6 +185,74 @@ VROMatrix4f VROMatrix4f::invert() const {
     VROMathInvertMatrix(_mtx, inverted);
     
     return VROMatrix4f(inverted);
+}
+
+VROVector3f VROMatrix4f::extractScale() {
+    VROVector3f s0(_mtx[0], _mtx[1], _mtx[2]);
+    VROVector3f s1(_mtx[4], _mtx[5], _mtx[6]);
+    VROVector3f s2(_mtx[8], _mtx[9], _mtx[10]);
+    
+    return { s0.magnitude(), s1.magnitude(), s2.magnitude() };
+}
+
+VROQuaternion VROMatrix4f::extractRotation(VROVector3f scale) {    
+    float mtx[16] = { _mtx[0] / scale.x,
+                      _mtx[1] / scale.x,
+                      _mtx[2] / scale.x,
+                      0,
+                      _mtx[4] / scale.y,
+                      _mtx[5] / scale.y,
+                      _mtx[6] / scale.y,
+                      0,
+                      _mtx[8] / scale.z,
+                      _mtx[9] / scale.z,
+                      _mtx[10] / scale.z,
+                      0,
+                      0, 0, 0, 1 };
+        
+    
+    VROQuaternion result;
+    if (mtx[0] + mtx[5] + mtx[10] > 0.0f) {
+        float t = + mtx[0] + mtx[5] + mtx[10] + 1.0f;
+        float s = 1.f / sqrt(t) * 0.5f;
+        
+        result.W = s * t;
+        result.Z = ( mtx[4] - mtx[1] ) * s;
+        result.Y = ( mtx[2] - mtx[8] ) * s;
+        result.X = ( mtx[9] - mtx[6] ) * s;
+    }
+    else if (mtx[0] > mtx[5] && mtx[0] > mtx[10]) {
+        float t = + mtx[0] - mtx[5] - mtx[10] + 1.0f;
+        float s = 1.0f / sqrt( t ) * 0.5f;
+        
+        result.X = s * t;
+        result.Y = ( mtx[4] + mtx[1] ) * s;
+        result.Z = ( mtx[2] + mtx[8] ) * s;
+        result.W = ( mtx[9] - mtx[6] ) * s;
+    }
+    else if (mtx[5] > mtx[10]) {
+        float t = - mtx[0] + mtx[5] - mtx[10] + 1.0f;
+        float s = 1.0f / sqrt( t ) * 0.5f;
+        result.Y = s * t;
+        result.X = ( mtx[4] + mtx[1] ) * s;
+        result.W = ( mtx[2] - mtx[8] ) * s;
+        result.Z = ( mtx[9] + mtx[6] ) * s;
+    }
+    else {
+        float t = - mtx[0] - mtx[5] + mtx[10] + 1.0f;
+        float s = 1.0f / sqrt( t ) * 0.5f;
+        
+        result.Z = s * t;
+        result.W = ( mtx[4] - mtx[1] ) * s;
+        result.X = ( mtx[2] + mtx[8] ) * s;
+        result.Y = ( mtx[9] + mtx[6] ) * s;
+    }
+    
+    return result.normalize();
+}
+
+VROVector3f VROMatrix4f::extractTranslation() {
+    return { _mtx[12], _mtx[13], _mtx[14] };
 }
 
 std::string VROMatrix4f::toString() const {

@@ -136,6 +136,10 @@ VROQuaternion VROQuaternion::operator+(const VROQuaternion &b) const {
     return VROQuaternion(X + b.X, Y + b.Y, Z + b.Z, W + b.W);
 }
 
+VROQuaternion VROQuaternion::operator-(const VROQuaternion &b) const {
+    return VROQuaternion(X - b.X, Y - b.Y, Z - b.Z, W - b.W );
+}
+
 // Creates a matrix from this quaternion
 VROMatrix4f VROQuaternion::getMatrix() const {
     VROMatrix4f m;
@@ -305,6 +309,9 @@ VROQuaternion &VROQuaternion::normalize() {
     return (*this *= VROMathReciprocalSquareRoot(n));
 }
 
+float VROQuaternion::getNorm() {
+    return sqrt(dotProduct(*this));
+}
 
 // set this quaternion to the result of the linear interpolation between two quaternions
 VROQuaternion VROQuaternion::lerp(VROQuaternion q1, VROQuaternion q2, float time) {

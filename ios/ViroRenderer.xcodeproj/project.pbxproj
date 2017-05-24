@@ -62,6 +62,9 @@
 		8F129FA31ECEC0A100341D83 /* texture.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F129FA21ECEC0A100341D83 /* texture.png */; };
 		8F129FA61ECF323300341D83 /* ViroKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; };
 		8F129FA71ECF323300341D83 /* ViroKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8F129FAD1ED4A38600341D83 /* VRODualQuaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F129FAB1ED4A38600341D83 /* VRODualQuaternion.cpp */; };
+		8F129FAE1ED4A38600341D83 /* VRODualQuaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F129FAC1ED4A38600341D83 /* VRODualQuaternion.h */; };
+		8F129FB01ED4D56300341D83 /* skinning_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F129FAF1ED4D56300341D83 /* skinning_vsh.glsl */; };
 		8F140FCF1E56658700355A1E /* card_main.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 8F140FCE1E56658700355A1E /* card_main.ktx */; };
 		8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1664A51E5E43260062EBCE /* Accelerate.framework */; };
 		8F17701B1E74C01900235C21 /* VROGVRUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1770191E74C01900235C21 /* VROGVRUtil.cpp */; };
@@ -544,6 +547,9 @@
 		8F129F9E1ECE2C5C00341D83 /* worm.proto */ = {isa = PBXFileReference; lastKnownFileType = file; name = worm.proto; path = ViroSample/worm.proto; sourceTree = "<group>"; };
 		8F129FA01ECE94BE00341D83 /* fox.proto */ = {isa = PBXFileReference; lastKnownFileType = file; name = fox.proto; path = ViroSample/fox.proto; sourceTree = "<group>"; };
 		8F129FA21ECEC0A100341D83 /* texture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = texture.png; path = ViroSample/texture.png; sourceTree = "<group>"; };
+		8F129FAB1ED4A38600341D83 /* VRODualQuaternion.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODualQuaternion.cpp; sourceTree = "<group>"; };
+		8F129FAC1ED4A38600341D83 /* VRODualQuaternion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODualQuaternion.h; sourceTree = "<group>"; };
+		8F129FAF1ED4D56300341D83 /* skinning_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = skinning_vsh.glsl; sourceTree = "<group>"; };
 		8F140FCE1E56658700355A1E /* card_main.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; name = card_main.ktx; path = ViroSample/card_main.ktx; sourceTree = "<group>"; };
 		8F152A6D1C0D77AA00A211F8 /* VROVector4f.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVector4f.cpp; sourceTree = "<group>"; };
 		8F152A6E1C0D77AA00A211F8 /* VROVector4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVector4f.h; sourceTree = "<group>"; };
@@ -1081,6 +1087,7 @@
 				8F03BCD31CECC25E00D071F8 /* Blinn */,
 				8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */,
 				8F705DEC1E8C7375008BE8F8 /* surface_functions_fsh.glsl */,
+				8F129FAF1ED4D56300341D83 /* skinning_vsh.glsl */,
 				8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */,
 				8F0FE6781CD3DFF800A4C297 /* blit_fsh.glsl */,
 				8F0FE6791CD3DFF800A4C297 /* blit_vsh.glsl */,
@@ -1325,6 +1332,8 @@
 				8F9278041C670B0300FF892A /* VROTriangle.cpp */,
 				8F4DCE2E1BFA8D5D00061DD7 /* VROQuaternion.h */,
 				8FD4DEA21C178CF9003DC425 /* VROQuaternion.cpp */,
+				8F129FAC1ED4A38600341D83 /* VRODualQuaternion.h */,
+				8F129FAB1ED4A38600341D83 /* VRODualQuaternion.cpp */,
 				8F4DCE201BF7EAF900061DD7 /* VROPlane.h */,
 				8F4DCE1F1BF7EAF900061DD7 /* VROPlane.cpp */,
 				8F4DCE291BF8318100061DD7 /* VROFrustum.h */,
@@ -1798,6 +1807,7 @@
 				8FD4DF311C18F47F003DC425 /* VROScene.h in Headers */,
 				8FD4DF321C18F500003DC425 /* VROCamera.h in Headers */,
 				8FD4DF331C18F500003DC425 /* VRONode.h in Headers */,
+				8F129FAE1ED4A38600341D83 /* VRODualQuaternion.h in Headers */,
 				8F0FE6761CD2D47900A4C297 /* VROViewCardboard.h in Headers */,
 				8F83DEAB1C49B0540089C31A /* VROAllocationTracker.h in Headers */,
 				8ABD8F3A1DB739E000BD9C83 /* VROApiKeyValidatorDynamo.h in Headers */,
@@ -2211,6 +2221,7 @@
 			files = (
 				8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */,
 				8F03BCE11CECC92300D071F8 /* blinn_functions_fsh.glsl in Resources */,
+				8F129FB01ED4D56300341D83 /* skinning_vsh.glsl in Resources */,
 				8F03BCE21CECC92300D071F8 /* blinn_fsh.glsl in Resources */,
 				8F03BCF51CECCADF00D071F8 /* phong_functions_fsh.glsl in Resources */,
 				8F705DED1E8C7376008BE8F8 /* surface_functions_fsh.glsl in Resources */,
@@ -2448,6 +2459,7 @@
 				8F0FE66C1CD289FD00A4C297 /* VRORenderLoopCardboard.m in Sources */,
 				A5EC659C1EBD34C000FE220E /* VROPhysicsShape.cpp in Sources */,
 				8ABD8F371DB72CDD00BD9C83 /* VROApiKey.m in Sources */,
+				8F129FAD1ED4A38600341D83 /* VRODualQuaternion.cpp in Sources */,
 				8FB5351E1EB85A7C00E8E1A6 /* Nodes.pb.cc in Sources */,
 				8FB2B5981E1445EE00EDB629 /* VROAnimationChain.cpp in Sources */,
 				8F0FE67E1CD3E12F00A4C297 /* VROShaderProgram.cpp in Sources */,

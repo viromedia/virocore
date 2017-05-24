@@ -13,14 +13,14 @@
 #include <vector>
 #include <memory>
 
-static const int kMaxBones = 48;
-static const int kFloatsPerBone = 16;
+static const int kMaxBones = 192;
+static const int kFloatsPerBone = 8;
 
-// Grouped in 4N slots, matching standard_vsh.glsl
+// Grouped in 4N slots, matching skinning_vsh.glsl
 typedef struct {
     int num_bones;
     float padding0, padding1, padding2;
-    float bone_matrices[kMaxBones * kFloatsPerBone];
+    float bone_transforms[kMaxBones * kFloatsPerBone];
 } VROBonesData;
 
 class VROShaderProgram;

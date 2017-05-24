@@ -1,11 +1,5 @@
 #version 300 es
 
-layout (std140) uniform bones {
-    int num_bones;
-    lowp float padding0, padding1, padding2;
-    mat4 bone_matrices[48];
-};
-
 struct VROShaderGeometry {
     vec3 position;
     vec3 normal;
@@ -31,6 +25,8 @@ uniform mat4 modelview_projection_matrix;
 out mat3 v_tbn;
 out vec2 v_texcoord;
 out vec3 v_surface_position;
+
+#include skinning_vsh
 
 void main() {
     _geometry.position = position;

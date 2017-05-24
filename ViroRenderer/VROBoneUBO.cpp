@@ -14,6 +14,7 @@
 #include "VROSkeleton.h"
 #include "VROShaderProgram.h"
 #include "VRODriverOpenGL.h"
+#include "VRODualQuaternion.h"
 
 VROBoneUBO::VROBoneUBO(std::shared_ptr<VRODriverOpenGL> driver) :
     _driver(driver) {
@@ -62,7 +63,22 @@ void VROBoneUBO::update(const std::unique_ptr<VROSkinner> &skinner) {
         }
         
         VROMatrix4f transform = skinner->getModelTransform(i);
-        memcpy(&data.bone_matrices[i * kFloatsPerBone], transform.getArray(), kFloatsPerBone * sizeof(float));
+        
+        /*
+         Convert the skinner transform to a dual quaternion and load into the UBO.
+         */
+        VRODualQuaternion dq(transform);
+        VROQuaternion real = dq.getReal();
+        VROQuaternion dual = dq.getDual();
+        
+        data.bone_transforms[i * kFloatsPerBone + 0] = real.X;
+        data.bone_transforms[i * kFloatsPerBone + 1] = real.Y;
+        data.bone_transforms[i * kFloatsPerBone + 2] = real.Z;
+        data.bone_transforms[i * kFloatsPerBone + 3] = real.W;
+        data.bone_transforms[i * kFloatsPerBone + 4] = dual.X;
+        data.bone_transforms[i * kFloatsPerBone + 5] = dual.Y;
+        data.bone_transforms[i * kFloatsPerBone + 6] = dual.Z;
+        data.bone_transforms[i * kFloatsPerBone + 7] = dual.W;
         data.num_bones++;
     }
     

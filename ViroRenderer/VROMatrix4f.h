@@ -14,6 +14,7 @@
 #include <string>
 
 class VROVector3f;
+class VROQuaternion;
 
 class VROMatrix4f {
 public:
@@ -57,6 +58,14 @@ public:
      */
     VROMatrix4f multiply(const VROMatrix4f &matrix) const;
     VROVector3f multiply(const VROVector3f &vector) const;
+    
+    /*
+     Decomposition into affine transforms. These methods only work on affine 
+     matrices. To extract rotation, the scale factors are required.
+     */
+    VROVector3f   extractScale();
+    VROQuaternion extractRotation(VROVector3f scale);
+    VROVector3f   extractTranslation();
     
     /*
      Other operations.
