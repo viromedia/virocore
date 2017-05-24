@@ -814,7 +814,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundCube([self niagaraTexture]);
     
-    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"minion" ofType:@"vrx"];
+    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"heart" ofType:@"vrx"];
     NSURL *fbxURL = [NSURL fileURLWithPath:fbxPath];
     std::string url = std::string([[fbxURL description] UTF8String]);
     
@@ -846,7 +846,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                         node->setPosition({0, -4, -20});
                                                                         
                                                                         //node->setPosition({0, -8, -12});
-                                                                        node->setScale({0.1, 0.1, 0.1});
+                                                                        //node->setScale({0.1, 0.1, 0.1});
                                                                         //node->setRotation({ 0, M_PI_2, M_PI_2});
                                                                         
                                                                         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

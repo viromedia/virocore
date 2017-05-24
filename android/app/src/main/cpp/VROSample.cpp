@@ -116,8 +116,11 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     box->setName("Box 1");
 
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
-    material->setLightingModel(VROLightingModel::Lambert);
+    material->setLightingModel(VROLightingModel::Blinn);
     material->getDiffuse().setTexture(std::make_shared<VROTexture>(format,
+                                                                   VROMipmapMode::Runtime,
+                                                                   VROPlatformLoadImageFromAsset("boba.png", format)));
+    material->getSpecular().setTexture(std::make_shared<VROTexture>(format,
                                                                    VROMipmapMode::Runtime,
                                                                    VROPlatformLoadImageFromAsset("boba.png", format)));
 
@@ -125,7 +128,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     boxNode->setGeometry(box);
     boxNode->setPosition({0, 0, -4});
 
-    //rootNode->addChildNode(boxNode);
+    rootNode->addChildNode(boxNode);
 
     std::string texFile = VROPlatformCopyAssetToFile("card_main.ktx");
     int texLength;
@@ -152,7 +155,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     surfaceNode->setGeometry(surface);
     surfaceNode->setPosition({0, 0, -5});
 
-    //rootNode->addChildNode(surfaceNode);
+    rootNode->addChildNode(surfaceNode);
 
     std::string string = "In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
     std::shared_ptr<VROTypeface> typeface = driver->newTypeface("Roboto", 8);
@@ -166,7 +169,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     textNode->setGeometry(text);
     textNode->setPosition({10, 0, -10});
 
-    //rootNode->addChildNode(textNode);
+    rootNode->addChildNode(textNode);
 
     return sceneController;
 }
