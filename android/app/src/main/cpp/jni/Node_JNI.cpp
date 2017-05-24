@@ -114,6 +114,42 @@ JNI_METHOD(void, nativeSetScale)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetRotationPivot)(JNIEnv *env,
+                                         jobject obj,
+                                         jlong native_node_ref,
+                                         jfloat pivotX,
+                                         jfloat pivotY,
+                                         jfloat pivotZ) {
+
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w, pivotX, pivotY, pivotZ] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            VROMatrix4f pivotMatrix;
+            pivotMatrix.translate(pivotX, pivotY, pivotZ);
+            node->setRotationPivot(pivotMatrix);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetScalePivot)(JNIEnv *env,
+                                      jobject obj,
+                                      jlong native_node_ref,
+                                      jfloat pivotX,
+                                      jfloat pivotY,
+                                      jfloat pivotZ) {
+
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w, pivotX, pivotY, pivotZ] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            VROMatrix4f pivotMatrix;
+            pivotMatrix.translate(pivotX, pivotY, pivotZ);
+            node->setScalePivot(pivotMatrix);
+        }
+    });
+}
+
 JNI_METHOD(void, nativeSetOpacity)(JNIEnv *env,
                                    jobject obj,
                                    jlong native_node_ref,

@@ -70,6 +70,20 @@ public class NodeJni {
         nativeSetScale(mNativeRef, scale[0], scale[1], scale[2]);
     }
 
+    public void setRotationPivot(float[] pivot){
+        if (pivot.length != 3){
+            throw new IllegalArgumentException("Missing a pivot coordinate: All three coordinates are needed [x,y,z]");
+        }
+        nativeSetRotationPivot(mNativeRef, pivot[0], pivot[1], pivot[2]);
+    }
+
+    public void setScalePivot(float[] pivot){
+        if (pivot.length != 3){
+            throw new IllegalArgumentException("Missing a pivot coordinate: All three coordinates are needed [x,y,z]");
+        }
+        nativeSetScalePivot(mNativeRef, pivot[0], pivot[1], pivot[2]);
+    }
+
     public void setOpacity(float opacity){
         nativeSetOpacity(mNativeRef, opacity);
     }
@@ -170,6 +184,8 @@ public class NodeJni {
     private native void nativeSetPosition(long nodeReference, float x, float y, float z);
     private native void nativeSetRotation(long nodeReference, float x, float y, float z);
     private native void nativeSetScale(long nodeReference, float x, float y, float z);
+    private native void nativeSetRotationPivot(long nodeReference, float x, float y, float z);
+    private native void nativeSetScalePivot(long nodeReference, float x, float y, float z);
     private native void nativeSetOpacity(long nodeReference, float opacity);
     private native void nativeSetVisible(long nodeReference, boolean visible);
     private native void nativeSetHighAccuracyGaze(long nodeReference, boolean enabled);
