@@ -26,6 +26,7 @@ typedef struct {
 class VROShaderProgram;
 class VRODriverOpenGL;
 class VROSkinner;
+class VROShaderModifier;
 
 /*
  Bones transformation matrices are written into UBOs. This way we 
@@ -43,6 +44,7 @@ class VROBoneUBO {
     
 public:
     
+    static std::shared_ptr<VROShaderModifier> createSkinningShaderModifier();
     static void unbind(std::shared_ptr<VROShaderProgram> &program);
     
     VROBoneUBO(std::shared_ptr<VRODriverOpenGL> driver);

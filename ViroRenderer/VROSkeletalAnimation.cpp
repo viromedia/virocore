@@ -16,25 +16,6 @@
 #include <sstream>
 #include <map>
 
-static std::shared_ptr<VROShaderModifier> sSkeletalAnimationShaderModifier;
-
-std::shared_ptr<VROShaderModifier> VROSkeletalAnimation::createSkeletalAnimationShaderModifier() {
-    /*
-     Modifier that performs skeletal animation in the vertex shader.
-     */
-    if (!sSkeletalAnimationShaderModifier) {        
-        std::vector<std::string> modifierCode =  {
-            "mat2x4 blended_dq = get_blended_dual_quaternion(_geometry.bone_indices, _geometry.bone_weights);",
-            "_geometry.position = dual_quat_transform_point(_geometry.position.xyz, blended_dq[0], blended_dq[1]);",
-            "_geometry.normal = quat_rotate_vector(_geometry.normal.xyz, blended_dq[0]);"
-        };
-        sSkeletalAnimationShaderModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
-                                                                               modifierCode);
-    }
-    
-    return sSkeletalAnimationShaderModifier;
-}
-
 std::shared_ptr<VROExecutableAnimation> VROSkeletalAnimation::copy() {
     pabort("Skeletal animations may not be copied");
 }

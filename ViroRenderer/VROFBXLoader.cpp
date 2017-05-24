@@ -17,6 +17,7 @@
 #include "VROSkeleton.h"
 #include "VROBone.h"
 #include "VROSkeletalAnimation.h"
+#include "VROBoneUBO.h"
 #include "Nodes.pb.h"
 
 VROGeometrySourceSemantic convert(viro::Node_Geometry_Source_Semantic semantic) {
@@ -253,7 +254,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
             }
             
             for (const std::shared_ptr<VROMaterial> &material : geo->getMaterials()) {
-                material->addShaderModifier(VROSkeletalAnimation::createSkeletalAnimationShaderModifier());
+                material->addShaderModifier(VROBoneUBO::createSkinningShaderModifier());
             }
         }
         node->setGeometry(geo);

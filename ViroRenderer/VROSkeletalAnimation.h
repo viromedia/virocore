@@ -51,9 +51,7 @@ struct VROSkeletalAnimationFrame {
 class VROSkeletalAnimation : public VROExecutableAnimation, public std::enable_shared_from_this<VROSkeletalAnimation> {
     
 public:
-    
-    static std::shared_ptr<VROShaderModifier> createSkeletalAnimationShaderModifier();
-    
+        
     VROSkeletalAnimation(std::shared_ptr<VROSkeleton> skeleton,
                          std::vector<std::unique_ptr<VROSkeletalAnimationFrame>> &frames,
                          float duration) :
