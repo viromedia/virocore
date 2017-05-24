@@ -814,7 +814,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundCube([self niagaraTexture]);
     
-    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"fox" ofType:@"proto"];
+    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"sven" ofType:@"proto"];
     NSURL *fbxURL = [NSURL fileURLWithPath:fbxPath];
     std::string url = std::string([[fbxURL description] UTF8String]);
     
@@ -891,7 +891,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleSceneBox;
+    self.sceneIndex = VROSampleSceneFBX;
     self.driver = driver;
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
 }

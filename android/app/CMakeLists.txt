@@ -94,6 +94,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROMatrix4f.cpp
              ../../ViroRenderer/VROMath.cpp
              ../../ViroRenderer/VROProjector.cpp
+             ../../ViroRenderer/VRODualQuaternion.cpp
 
              # Util
              ../../ViroRenderer/VROAllocationTracker.cpp

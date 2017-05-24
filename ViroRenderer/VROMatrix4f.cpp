@@ -195,7 +195,7 @@ VROVector3f VROMatrix4f::extractScale() {
     return { s0.magnitude(), s1.magnitude(), s2.magnitude() };
 }
 
-VROQuaternion VROMatrix4f::extractRotation(VROVector3f scale) {    
+VROQuaternion VROMatrix4f::extractRotation(VROVector3f scale) {
     float mtx[16] = { _mtx[0] / scale.x,
                       _mtx[1] / scale.x,
                       _mtx[2] / scale.x,
