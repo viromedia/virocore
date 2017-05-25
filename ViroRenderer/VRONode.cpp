@@ -117,7 +117,7 @@ void VRONode::updateSortKeys(uint32_t depth,
         return;
     }
     
-    float parentOpacity = params.parentOpacity;
+    std::stack<float> &opacities = params.opacities;
     std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
     std::stack<int> &hierarchyDepths = params.hierarchyDepths;
     std::stack<float> &distancesFromCamera = params.distancesFromCamera;
@@ -126,8 +126,8 @@ void VRONode::updateSortKeys(uint32_t depth,
      Compute specific parameters for this node.
      */
     _computedInverseTransposeTransform = _computedTransform.invert().transpose();
-    _computedOpacity = parentOpacity * _opacity * _opacityFromHiddenFlag;
-    params.parentOpacity = _computedOpacity;
+    _computedOpacity = opacities.top() * _opacity * _opacityFromHiddenFlag;
+    opacities.push(_computedOpacity);
     
     for (std::shared_ptr<VROLight> &light : _lights) {
         light->setTransformedPosition(_computedTransform.multiply(light->getPosition()));
@@ -221,6 +221,7 @@ void VRONode::updateSortKeys(uint32_t depth,
         childNode->updateSortKeys(depth + 1, params, context, driver);
     }
     
+    opacities.pop();
     for (int i = 0; i < _lights.size(); i++) {
         lights.pop_back();
     }
