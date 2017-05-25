@@ -128,7 +128,7 @@
 		8F56AEB21DE7873E00DD65B6 /* VROTypefaceiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F56AEB01DE7873E00DD65B6 /* VROTypefaceiOS.h */; };
 		8F57664E1D14429A0051AB0A /* VROMetalShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F57664D1D14429A0051AB0A /* VROMetalShader.h */; };
 		8F5C41551BD82C1B006D7A77 /* boba.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5C41541BD82C1B006D7A77 /* boba.png */; };
-		8F618E2B1EB926B60020B33B /* Heart_D2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F618E2A1EB926B60020B33B /* Heart_D2.jpg */; };
+		8F618E2B1EB926B60020B33B /* Heart_Diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F618E2A1EB926B60020B33B /* Heart_Diffuse.jpg */; };
 		8F618E331EB980E70020B33B /* libprotobuf-lite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */; };
 		8F65F7861C90CD0B00415115 /* VROConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F65F7841C90CD0B00415115 /* VROConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F65F7891C90CD4700415115 /* VROBillboardConstraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F65F7871C90CD4700415115 /* VROBillboardConstraint.cpp */; };
@@ -680,7 +680,7 @@
 		8F5C41541BD82C1B006D7A77 /* boba.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = boba.png; path = ViroSample/boba.png; sourceTree = "<group>"; };
 		8F5C41561BD8300E006D7A77 /* VROImageUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROImageUtil.cpp; sourceTree = "<group>"; };
 		8F5C41571BD8300E006D7A77 /* VROImageUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROImageUtil.h; sourceTree = "<group>"; };
-		8F618E2A1EB926B60020B33B /* Heart_D2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Heart_D2.jpg; path = ViroSample/Heart_D2.jpg; sourceTree = "<group>"; };
+		8F618E2A1EB926B60020B33B /* Heart_Diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Heart_Diffuse.jpg; path = ViroSample/Heart_Diffuse.jpg; sourceTree = "<group>"; };
 		8F618E301EB935A40020B33B /* libprotobuf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libprotobuf.a; path = Libraries/protobuf/libprotobuf.a; sourceTree = "<group>"; };
 		8F6248311BDAB44B000755E5 /* VRODevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODevice.h; sourceTree = "<group>"; };
 		8F6248341BDAB970000755E5 /* VRODistortion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODistortion.h; sourceTree = "<group>"; };
@@ -1681,7 +1681,7 @@
 				8FCED0541EBBCFCF00C19BCA /* Squid_Color.png */,
 				8FCED0551EBBCFCF00C19BCA /* Squid_Normal.png */,
 				8FCED0561EBBCFCF00C19BCA /* Squid_Specular.png */,
-				8F618E2A1EB926B60020B33B /* Heart_D2.jpg */,
+				8F618E2A1EB926B60020B33B /* Heart_Diffuse.jpg */,
 				8F660AAA1E931C6F006D063F /* 4096_bump.jpg */,
 				8F660AAB1E931C6F006D063F /* 4096_clouds.jpg */,
 				8F660AAC1E931C6F006D063F /* 4096_earth.jpg */,
@@ -2135,7 +2135,7 @@
 				8F129FBE1ED603BE00341D83 /* sven.vrx in Resources */,
 				8FA2E14B1C445CAA0070DB26 /* px.png in Resources */,
 				8F140FCF1E56658700355A1E /* card_main.ktx in Resources */,
-				8F618E2B1EB926B60020B33B /* Heart_D2.jpg in Resources */,
+				8F618E2B1EB926B60020B33B /* Heart_Diffuse.jpg in Resources */,
 				8F9278021C66BD4500FF892A /* py1.jpg in Resources */,
 				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
 				8F705DF51E8F5D42008BE8F8 /* earth_normal.jpg in Resources */,

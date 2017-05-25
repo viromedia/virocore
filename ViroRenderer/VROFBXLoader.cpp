@@ -241,8 +241,12 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
         if (geo_pb.has_skin() && skeleton) {
             geo->setSkinner(loadFBXSkinner(geo_pb.skin(), skeleton));
             
+            bool hasScaling = false;
             for (int i = 0; i < node_pb.skeletal_animation_size(); i++) {
                 const viro::Node::SkeletalAnimation &animation_pb = node_pb.skeletal_animation(i);
+                if (animation_pb.has_scaling()) {
+                    hasScaling = true;
+                }
                 
                 std::shared_ptr<VROSkeletalAnimation> animation = loadFBXSkeletalAnimation(animation_pb, skeleton);
                 if (animation->getName().empty()) {
@@ -253,8 +257,12 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
                 pinfo("   Added animation [%s]", animation->getName().c_str());
             }
             
+            if (hasScaling) {
+                pinfo("   At least 1 animation has scaling: using DQ+S modifier");
+            }
+            
             for (const std::shared_ptr<VROMaterial> &material : geo->getMaterials()) {
-                material->addShaderModifier(VROBoneUBO::createSkinningShaderModifier());
+                material->addShaderModifier(VROBoneUBO::createSkinningShaderModifier(hasScaling));
             }
         }
         node->setGeometry(geo);

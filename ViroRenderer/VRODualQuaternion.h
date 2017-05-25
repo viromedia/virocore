@@ -18,8 +18,7 @@ public:
     
     VRODualQuaternion();
     VRODualQuaternion(VROQuaternion real, VROQuaternion dual);
-    VRODualQuaternion(VROMatrix4f matrix);
-    VRODualQuaternion(VROVector3f translation, VROQuaternion rotation, VROVector3f scale);
+    VRODualQuaternion(VROVector3f translation, VROQuaternion rotation);
     
     VRODualQuaternion operator* (const VRODualQuaternion& right) const;
     VRODualQuaternion operator* (float c) const;

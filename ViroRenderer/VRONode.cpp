@@ -637,6 +637,24 @@ void VRONode::pauseAnimation(std::string name, bool recursive) {
     }
 }
 
+std::set<std::string> VRONode::getAnimations(bool recursive) {
+    std::set<std::string> animations;
+    getAnimations(animations, recursive);
+    
+    return animations;
+}
+
+void VRONode::getAnimations(std::set<std::string> &animations, bool recursive) {
+    for (auto kv : _animations) {
+        animations.insert(kv.first);
+    }
+    if (recursive) {
+        for (std::shared_ptr<VRONode> &subnode : _subnodes) {
+            subnode->getAnimations(animations, recursive);
+        }
+    }
+}
+
 void VRONode::removeAllAnimations() {
     passert_thread();
     for (auto kv : _animations) {

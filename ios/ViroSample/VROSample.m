@@ -831,9 +831,14 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     light->setSpotInnerAngle(70);
     light->setSpotOuterAngle(120);
     
+    std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
+    ambient->setColor({ 0.5, 0.5, 0.5 });
+
+    
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
+    rootNode->addLight(ambient);
     
     scene->addNode(rootNode);
     
@@ -843,11 +848,15 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                             return;
                                                                         }
                                                                         
-                                                                        node->setPosition({0, -4, -20});
+                                                                       // node->setPosition({0, -4, -4});
                                                                         
-                                                                        //node->setPosition({0, -8, -12});
+                                                                        node->setPosition({0, 0, -0.75});
                                                                         //node->setScale({0.1, 0.1, 0.1});
-                                                                        //node->setRotation({ 0, M_PI_2, M_PI_2});
+                                                                        
+                                                                        std::set<std::string> animations = node->getAnimations(true);
+                                                                        for (std::string animation : animations) {
+                                                                            pinfo("Loaded animation [%s]", animation.c_str());
+                                                                        }
                                                                         
                                                                         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                                                                             [self animateTake:node];
@@ -868,7 +877,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();
     camera->setPosition({0, 0, 0});
-    camera->setOrbitFocalPoint({0, 0, -20});
+    camera->setOrbitFocalPoint({0, 0, -0.75});
     camera->setRotationType(VROCameraRotationType::Orbit);
     
     std::shared_ptr<VRONode> cameraNode = std::make_shared<VRONode>();
@@ -885,7 +894,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (void)animateTake:(std::shared_ptr<VRONode>)node {
     node->runAnimation("Take 001", true);
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self animateTake:node];
     });
 }

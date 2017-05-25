@@ -1665,6 +1665,12 @@ class Node_SkeletalAnimation : public ::google::protobuf::MessageLite /* @@proto
   ::google::protobuf::int64 duration() const;
   void set_duration(::google::protobuf::int64 value);
 
+  // bool has_scaling = 4;
+  void clear_has_scaling();
+  static const int kHasScalingFieldNumber = 4;
+  bool has_scaling() const;
+  void set_has_scaling(bool value);
+
   // @@protoc_insertion_point(class_scope:viro.Node.SkeletalAnimation)
  private:
 
@@ -1672,6 +1678,7 @@ class Node_SkeletalAnimation : public ::google::protobuf::MessageLite /* @@proto
   ::google::protobuf::RepeatedPtrField< ::viro::Node_SkeletalAnimation_Frame > frame_;
   ::google::protobuf::internal::ArenaStringPtr name_;
   ::google::protobuf::int64 duration_;
+  bool has_scaling_;
   mutable int _cached_size_;
   friend struct  protobuf_Nodes_2eproto::TableStruct;
 };
@@ -3749,6 +3756,20 @@ inline void Node_SkeletalAnimation::set_duration(::google::protobuf::int64 value
   
   duration_ = value;
   // @@protoc_insertion_point(field_set:viro.Node.SkeletalAnimation.duration)
+}
+
+// bool has_scaling = 4;
+inline void Node_SkeletalAnimation::clear_has_scaling() {
+  has_scaling_ = false;
+}
+inline bool Node_SkeletalAnimation::has_scaling() const {
+  // @@protoc_insertion_point(field_get:viro.Node.SkeletalAnimation.has_scaling)
+  return has_scaling_;
+}
+inline void Node_SkeletalAnimation::set_has_scaling(bool value) {
+  
+  has_scaling_ = value;
+  // @@protoc_insertion_point(field_set:viro.Node.SkeletalAnimation.has_scaling)
 }
 
 // -------------------------------------------------------------------

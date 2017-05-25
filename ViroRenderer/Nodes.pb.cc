@@ -5099,6 +5099,7 @@ Node_SkeletalAnimation_Frame::transform() const {
 const int Node_SkeletalAnimation::kNameFieldNumber;
 const int Node_SkeletalAnimation::kFrameFieldNumber;
 const int Node_SkeletalAnimation::kDurationFieldNumber;
+const int Node_SkeletalAnimation::kHasScalingFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Node_SkeletalAnimation::Node_SkeletalAnimation()
@@ -5119,13 +5120,16 @@ Node_SkeletalAnimation::Node_SkeletalAnimation(const Node_SkeletalAnimation& fro
   if (from.name().size() > 0) {
     name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
   }
-  duration_ = from.duration_;
+  ::memcpy(&duration_, &from.duration_,
+    reinterpret_cast<char*>(&has_scaling_) -
+    reinterpret_cast<char*>(&duration_) + sizeof(has_scaling_));
   // @@protoc_insertion_point(copy_constructor:viro.Node.SkeletalAnimation)
 }
 
 void Node_SkeletalAnimation::SharedCtor() {
   name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  duration_ = GOOGLE_LONGLONG(0);
+  ::memset(&duration_, 0, reinterpret_cast<char*>(&has_scaling_) -
+    reinterpret_cast<char*>(&duration_) + sizeof(has_scaling_));
   _cached_size_ = 0;
 }
 
@@ -5160,7 +5164,8 @@ void Node_SkeletalAnimation::Clear() {
 // @@protoc_insertion_point(message_clear_start:viro.Node.SkeletalAnimation)
   frame_.Clear();
   name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  duration_ = GOOGLE_LONGLONG(0);
+  ::memset(&duration_, 0, reinterpret_cast<char*>(&has_scaling_) -
+    reinterpret_cast<char*>(&duration_) + sizeof(has_scaling_));
 }
 
 bool Node_SkeletalAnimation::MergePartialFromCodedStream(
@@ -5214,6 +5219,19 @@ bool Node_SkeletalAnimation::MergePartialFromCodedStream(
         break;
       }
 
+      // bool has_scaling = 4;
+      case 4: {
+        if (tag == 32u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &has_scaling_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0 ||
@@ -5259,6 +5277,11 @@ void Node_SkeletalAnimation::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->duration(), output);
   }
 
+  // bool has_scaling = 4;
+  if (this->has_scaling() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->has_scaling(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:viro.Node.SkeletalAnimation)
 }
 
@@ -5291,6 +5314,11 @@ size_t Node_SkeletalAnimation::ByteSizeLong() const {
         this->duration());
   }
 
+  // bool has_scaling = 4;
+  if (this->has_scaling() != 0) {
+    total_size += 1 + 1;
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = cached_size;
@@ -5315,6 +5343,9 @@ void Node_SkeletalAnimation::MergeFrom(const Node_SkeletalAnimation& from) {
   if (from.duration() != 0) {
     set_duration(from.duration());
   }
+  if (from.has_scaling() != 0) {
+    set_has_scaling(from.has_scaling());
+  }
 }
 
 void Node_SkeletalAnimation::CopyFrom(const Node_SkeletalAnimation& from) {
@@ -5336,6 +5367,7 @@ void Node_SkeletalAnimation::InternalSwap(Node_SkeletalAnimation* other) {
   frame_.UnsafeArenaSwap(&other->frame_);
   name_.Swap(&other->name_);
   std::swap(duration_, other->duration_);
+  std::swap(has_scaling_, other->has_scaling_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
@@ -5440,6 +5472,20 @@ void Node_SkeletalAnimation::set_duration(::google::protobuf::int64 value) {
   
   duration_ = value;
   // @@protoc_insertion_point(field_set:viro.Node.SkeletalAnimation.duration)
+}
+
+// bool has_scaling = 4;
+void Node_SkeletalAnimation::clear_has_scaling() {
+  has_scaling_ = false;
+}
+bool Node_SkeletalAnimation::has_scaling() const {
+  // @@protoc_insertion_point(field_get:viro.Node.SkeletalAnimation.has_scaling)
+  return has_scaling_;
+}
+void Node_SkeletalAnimation::set_has_scaling(bool value) {
+  
+  has_scaling_ = value;
+  // @@protoc_insertion_point(field_set:viro.Node.SkeletalAnimation.has_scaling)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

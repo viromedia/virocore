@@ -18,22 +18,44 @@
 #include "VRODualQuaternion.h"
 
 static std::shared_ptr<VROShaderModifier> sSkinningShaderModifier;
+static std::shared_ptr<VROShaderModifier> sSkinningShaderModifierWithScale;
 
-std::shared_ptr<VROShaderModifier> VROBoneUBO::createSkinningShaderModifier() {
+std::shared_ptr<VROShaderModifier> VROBoneUBO::createSkinningShaderModifier(bool hasScale) {
     /*
-     Modifier that performs skeletal animation in the vertex shader.
+     Modifier that performs skeletal animation in the vertex shader. Uses dual-quaternion
+     skinning, with functions provided in skinning_vsh.glsl. We have an optimized path if 
+     there are no scale transforms.
      */
-    if (!sSkinningShaderModifier) {
-        std::vector<std::string> modifierCode =  {
-            "mat2x4 blended_dq = get_blended_dual_quaternion(_geometry.bone_indices, _geometry.bone_weights);",
-            "_geometry.position = dual_quat_transform_point(_geometry.position.xyz, blended_dq[0], blended_dq[1]);",
-            "_geometry.normal = quat_rotate_vector(_geometry.normal.xyz, blended_dq[0]);"
-        };
-        sSkinningShaderModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
-                                                                      modifierCode);
+    if (hasScale) {
+        if (!sSkinningShaderModifierWithScale) {
+            std::vector<std::string> modifierCode =  {
+                "vec4 blended_s = get_blended_scale(_geometry.bone_indices, _geometry.bone_weights);",
+                "_geometry.position = _geometry.position * blended_s.xyz;",
+                "_geometry.normal = _geometry.normal / blended_s.xyz;", // Equivalent to multiplying by inverse-transpose of scale matrix
+
+                "mat2x4 blended_dq = get_blended_dual_quaternion(_geometry.bone_indices, _geometry.bone_weights);",
+                "_geometry.position = dual_quat_transform_point(_geometry.position.xyz, blended_dq[0], blended_dq[1]);",
+                "_geometry.normal = quat_rotate_vector(_geometry.normal.xyz, blended_dq[0]);"
+            };
+            sSkinningShaderModifierWithScale = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
+                                                                                   modifierCode);
+        }
+        
+        return sSkinningShaderModifierWithScale;
     }
-    
-    return sSkinningShaderModifier;
+    else {
+        if (!sSkinningShaderModifier) {
+            std::vector<std::string> modifierCode =  {
+                "mat2x4 blended_dq = get_blended_dual_quaternion(_geometry.bone_indices, _geometry.bone_weights);",
+                "_geometry.position = dual_quat_transform_point(_geometry.position.xyz, blended_dq[0], blended_dq[1]);",
+                "_geometry.normal = quat_rotate_vector(_geometry.normal.xyz, blended_dq[0]);"
+            };
+            sSkinningShaderModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
+                                                                          modifierCode);
+        }
+        
+        return sSkinningShaderModifier;
+    }
 }
 
 VROBoneUBO::VROBoneUBO(std::shared_ptr<VRODriverOpenGL> driver) :
@@ -84,21 +106,32 @@ void VROBoneUBO::update(const std::unique_ptr<VROSkinner> &skinner) {
         
         VROMatrix4f transform = skinner->getModelTransform(i);
         
+        VROVector3f   translation = transform.extractTranslation();
+        VROVector3f   scale = transform.extractScale();
+        VROQuaternion rotation = transform.extractRotation(scale);
+        
         /*
-         Convert the skinner transform to a dual quaternion and load into the UBO.
+         Convert the rotation and translation to a dual quaternion. The scale
+         is included separately. Load all into the UBO.
          */
-        VRODualQuaternion dq(transform);
+        VRODualQuaternion dq(translation, rotation);
         VROQuaternion real = dq.getReal();
         VROQuaternion dual = dq.getDual();
         
-        data.bone_transforms[i * kFloatsPerBone + 0] = real.X;
-        data.bone_transforms[i * kFloatsPerBone + 1] = real.Y;
-        data.bone_transforms[i * kFloatsPerBone + 2] = real.Z;
-        data.bone_transforms[i * kFloatsPerBone + 3] = real.W;
-        data.bone_transforms[i * kFloatsPerBone + 4] = dual.X;
-        data.bone_transforms[i * kFloatsPerBone + 5] = dual.Y;
-        data.bone_transforms[i * kFloatsPerBone + 6] = dual.Z;
-        data.bone_transforms[i * kFloatsPerBone + 7] = dual.W;
+        int floatsPerBone = kFloatsPerBone;
+        data.bone_transforms[i * floatsPerBone + 0] = real.X;
+        data.bone_transforms[i * floatsPerBone + 1] = real.Y;
+        data.bone_transforms[i * floatsPerBone + 2] = real.Z;
+        data.bone_transforms[i * floatsPerBone + 3] = real.W;
+        data.bone_transforms[i * floatsPerBone + 4] = dual.X;
+        data.bone_transforms[i * floatsPerBone + 5] = dual.Y;
+        data.bone_transforms[i * floatsPerBone + 6] = dual.Z;
+        data.bone_transforms[i * floatsPerBone + 7] = dual.W;
+        data.bone_transforms[i * floatsPerBone + 8] = scale.x;
+        data.bone_transforms[i * floatsPerBone + 9] = scale.y;
+        data.bone_transforms[i * floatsPerBone + 10] = scale.z;
+        data.bone_transforms[i * floatsPerBone + 11] = 1.0;
+        
         data.num_bones++;
     }
     

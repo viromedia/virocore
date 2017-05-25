@@ -15,7 +15,9 @@
 
 // Keep in sync with ViroFBX::VROFBXExporter.h and skinning_vsh.glsl
 static const int kMaxBones = 192;
-static const int kFloatsPerBone = 8;
+
+// 8 floats for dual quaternions, 4 for scale
+static const int kFloatsPerBone = 12;
 
 // Grouped in 4N slots, matching skinning_vsh.glsl
 typedef struct {
@@ -45,7 +47,7 @@ class VROBoneUBO {
     
 public:
     
-    static std::shared_ptr<VROShaderModifier> createSkinningShaderModifier();
+    static std::shared_ptr<VROShaderModifier> createSkinningShaderModifier(bool hasScaling);
     static void unbind(std::shared_ptr<VROShaderProgram> &program);
     
     VROBoneUBO(std::shared_ptr<VRODriverOpenGL> driver);
