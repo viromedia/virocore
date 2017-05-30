@@ -442,6 +442,12 @@ void VRONode::setScale(VROVector3f scale) {
     animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f s) {
                                                        ((VRONode *)animatable)->_scale = s;
                                                    }, _scale, scale));
+
+    // Refresh the node's physics body if possible to accommodate scale changes.
+    std::shared_ptr<VROPhysicsBody> body = getPhysicsBody();
+    if (body){
+        body->refreshBody();
+    }
 }
 
 void VRONode::setPositionX(float x) {

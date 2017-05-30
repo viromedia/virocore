@@ -127,6 +127,10 @@ void VROPhysicsBody::setPhysicsShape(std::shared_ptr<VROPhysicsShape> shape) {
     _needsBulletUpdate = true;
 }
 
+void VROPhysicsBody::refreshBody() {
+    _needsBulletUpdate = true;
+}
+
 void VROPhysicsBody::setIsSimulated(bool enabled) {
     if (_enableSimulation == enabled){
         return;
@@ -172,8 +176,8 @@ void VROPhysicsBody::updateBulletRigidBody() {
 
     // Update the rigid body to reflect the latest VROPhysicsShape.
     // If shape is not defined, we attempt to infer the shape from the node's geometry.
-    if (_shape == nullptr && node && node->getGeometry()){
-        _shape = std::make_shared<VROPhysicsShape>(node->getGeometry());
+    if ((_shape == nullptr || _shape->getIsGeneratedFromGeometry()) && node && node->getGeometry()){
+        _shape = std::make_shared<VROPhysicsShape>(node);
     } else if (_shape == nullptr) {
         pwarn("No collision shape detected for this rigidbody... defaulting to basic box shape.");
         std::vector<float> params = {1, 1, 1};

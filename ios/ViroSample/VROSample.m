@@ -49,6 +49,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 @implementation VROSample  {
     std::vector<std::shared_ptr<VROPhysicsBodyDelegateiOS>> _physicsDeelgates;
+    std::shared_ptr<VRONode> _testPhysicsNode;
 }
 
 
@@ -315,16 +316,20 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
             std::shared_ptr<VROPhysicsShape> shape = std::make_shared<VROPhysicsShape>(VROPhysicsShape::VROShapeType::Box, params);
             //physicsWorld->findCollisionsWithRay({0,0,0}, {0,0,-10}, false, "test2");
             //physicsWorld->findCollisionsWithShape({0,0, -7}, {0,0, -7}, shape, "test3");
+            //[w_sample modifyPhysicsNodeTest];
             [w_sample createPhysicsBoxAt:{0,10,-4} withWorld:physicsWorld withRoot:rootNode withTag:"box3"];
         }
     };
     
-    //[self createPhysicsBoxAt:{0,0,-6} withWorld:physicsWorld withRoot:rootNode withTag:"box1"];
-    //[self createPhysicsBoxAt:{0,0,-8} withWorld:physicsWorld withRoot:rootNode withTag:"box2"];
+    //_testPhysicsNode = [self createPhysicsBoxAt:{0,90,-6} withWorld:physicsWorld withRoot:rootNode withTag:"box test scale"];
     return sceneController;
 }
 
-- (void)createPhysicsBoxAt:(VROVector3f)position
+- (void)modifyPhysicsNodeTest{
+    _testPhysicsNode->setScale(VROVector3f(3,3,3));
+}
+
+- (std::shared_ptr<VRONode>)createPhysicsBoxAt:(VROVector3f)position
                  withWorld:(std::shared_ptr<VROPhysicsWorld>)physicsWorld
                   withRoot:(std::shared_ptr<VRONode>) rootNode
                    withTag:(std::string)tag{
@@ -350,6 +355,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     physicsBody->setRestitution(0);
     physicsBody->setUseGravity(true);
     physicsWorld->addPhysicsBody(physicsBody);
+    return boxNode;
 }
 
 - (void)onCollided:(std::string) bodyKey

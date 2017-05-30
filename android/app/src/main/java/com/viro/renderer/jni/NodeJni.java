@@ -219,7 +219,7 @@ public class NodeJni {
     public void applyPhysicsTorqueImpulse(float[] torque){
         nativeApplyPhysicsTorqueImpulse(mNativeRef, torque);
     }
-    
+
     /**
      * Physics Delegate callback.
      */
@@ -277,4 +277,5 @@ public class NodeJni {
     private native void nativeClearPhysicsForce(long nodeReference);
     public native long nativeSetPhysicsDelegate(long nodeReference);
     public native void nativeClearPhysicsDelegate(long nodeReference, long delegateRef);
+    public native void nativeSetTag(long nodeReference, String tag);
 }

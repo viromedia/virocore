@@ -117,6 +117,12 @@ public:
     void setPhysicsShape(std::shared_ptr<VROPhysicsShape> shape);
 
     /*
+     Schedules an update that re-invalidates the properties of this
+     physics body on the next compute physics step.
+     */
+    void refreshBody();
+
+    /*
      Functions for applying forces on this VROPhysicsBody.
      */
     void applyForce(VROVector3f power, VROVector3f position);
