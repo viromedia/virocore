@@ -7,6 +7,9 @@
 //
 
 #import "VROSample.h"
+#import <ViroARKit/ViroARKit.h>
+#import "opencv2/imgcodecs/ios.h"
+#import "opencv2/imgproc/imgproc.hpp"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneOBJ = 0,
@@ -45,6 +48,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 
 - (std::shared_ptr<VROSceneController>)loadSceneWithIndex:(int)index {
+    // uncomment the below lines to test the AR library
+    // [self runEdgeDetect];
+    // [self.view setVrMode:NO];
+
     int modulo = index % VROSampleSceneNumScenes;
     switch (modulo) {
         case VROSampleSceneTorus:
@@ -106,6 +113,44 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::None,
                                         std::make_shared<VROImageiOS>([UIImage imageNamed:@"360_westlake.jpg"],
                                                                       VROTextureInternalFormat::RGBA8));
+}
+
+- (void) runEdgeDetect {
+    NSString* imagePath = [[NSBundle mainBundle] pathForResource:@"boba"
+                                                          ofType:@"png"];
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSError *error;
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    
+    NSString *inputPath = [documentsDirectory stringByAppendingPathComponent:@"boba.png"];
+    
+    [fileManager copyItemAtPath:imagePath toPath:inputPath error:&error];
+    
+    UIImage *inputImage = [[UIImage alloc] initWithContentsOfFile:inputPath];
+    
+    cv::Mat inputMat = cv::Mat();
+    UIImageToMat(inputImage, inputMat);
+    
+    cv::Mat grayMat = cv::Mat(inputMat.rows, inputMat.cols, CV_8UC1);
+    cv::cvtColor(inputMat, grayMat, cv::COLOR_BGR2GRAY);
+    
+    cv::Mat outputMat = cv::Mat(inputMat.rows, inputMat.cols, CV_8UC1);
+    
+    NSString *outputPath = [documentsDirectory stringByAppendingPathComponent:@"edge_boba.png"];
+    
+    VROOpenCV::runEdgeDetection(inputMat, outputMat);
+    
+    [self.view setVrMode:NO];
+    
+    UIImage *image = MatToUIImage(outputMat);
+
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+    imageView.frame = UIScreen.mainScreen.bounds;
+    
+    [[[UIApplication sharedApplication] keyWindow] addSubview:imageView];
+    [[[UIApplication sharedApplication] keyWindow] bringSubviewToFront:imageView];
 }
 
 - (std::shared_ptr<VROSceneController>)loadVideoSphereScene {

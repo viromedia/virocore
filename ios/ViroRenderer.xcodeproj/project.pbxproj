@@ -18,6 +18,10 @@
 		8A130DA41E4018550050D83B /* VROSoundDataGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A130DA21E4018540050D83B /* VROSoundDataGVR.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A130DA51E40187F0050D83B /* VROSoundData.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A130DA01E4018250050D83B /* VROSoundData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A130DA71E401B910050D83B /* VROSoundDataDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A130DA61E401B910050D83B /* VROSoundDataDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8A3517291EDE035300B6E786 /* VROOpenCV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A3517271EDE035300B6E786 /* VROOpenCV.cpp */; };
+		8A35172A1EDE035300B6E786 /* VROOpenCV.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A3517281EDE035300B6E786 /* VROOpenCV.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8A35172B1EDE04A500B6E786 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1821ED8D5EA00757C29 /* opencv2.framework */; };
+		8A35172C1EDE04B500B6E786 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */; };
 		8ABD8F301DB6970600BD9C83 /* VROApiKeyValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F2E1DB6970600BD9C83 /* VROApiKeyValidator.h */; };
 		8ABD8F311DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD8F2F1DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m */; };
 		8ABD8F371DB72CDD00BD9C83 /* VROApiKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD8F351DB70CE400BD9C83 /* VROApiKey.m */; };
@@ -28,6 +32,8 @@
 		8ABD8F411DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F3F1DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h */; };
 		8ABD8F421DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD8F401DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m */; };
 		8ABD8F541DB957C900BD9C83 /* VROCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F531DB957C900BD9C83 /* VROCredentials.h */; };
+		8AD0122B1ED8F38900DEB959 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1821ED8D5EA00757C29 /* opencv2.framework */; };
+		8AD0122C1ED8F38F00DEB959 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */; };
 		8BDDA00D1E54F6B200A42870 /* VROLazyMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDDA00B1E54F48500A42870 /* VROLazyMaterial.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8BDDA00E1E54F6B200A42870 /* VROMaterialAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDDA00C1E54F4A300A42870 /* VROMaterialAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */; };
@@ -424,6 +430,7 @@
 		A5EC65B61EBFF57B00FE220E /* VROPhysicsBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5EC65B31EBFF42100FE220E /* VROPhysicsBody.cpp */; };
 		A5EC65B71EBFF5A100FE220E /* VROPhysicsBody.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EC65B41EBFF42100FE220E /* VROPhysicsBody.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5EC65B81EC004E100FE220E /* VROPhysicsShape.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EC65941EBD16F000FE220E /* VROPhysicsShape.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD2F0F4558B2F839A3161E08 /* libPods-ViroSample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF43BA975D626635F2D5584C /* libPods-ViroSample.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -489,9 +496,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2D50EA9016C5481FBEA660D5 /* Pods-ViroARKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroARKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroARKit/Pods-ViroARKit.release.xcconfig"; sourceTree = "<group>"; };
+		48567375A658D093284ACEDD /* libPods-ViroARKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroARKit.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6447C487DE6546AF514106CC /* libPods-ViroKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ViroKit.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		69FBDCF89ECBB5500043C227 /* Pods-ViroARKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroARKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroARKit/Pods-ViroARKit.debug.xcconfig"; sourceTree = "<group>"; };
 		6E1141125FCC9320616556D8 /* Pods-ViroKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.debug.xcconfig"; sourceTree = "<group>"; };
 		710AAB43C4650092845EAD81 /* Pods-ViroKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.release.xcconfig"; sourceTree = "<group>"; };
+		8A07C1821ED8D5EA00757C29 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Libraries/opencv/opencv2.framework; sourceTree = "<group>"; };
+		8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		8A130D731E3A93720050D83B /* VROSound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSound.h; sourceTree = "<group>"; };
 		8A130D741E3A93720050D83B /* VROSoundDelegateInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSoundDelegateInternal.h; sourceTree = "<group>"; };
 		8A130D771E3AA1E10050D83B /* VROSoundGVR.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSoundGVR.cpp; sourceTree = "<group>"; };
@@ -502,6 +514,8 @@
 		8A130DA11E4018540050D83B /* VROSoundDataGVR.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSoundDataGVR.cpp; sourceTree = "<group>"; };
 		8A130DA21E4018540050D83B /* VROSoundDataGVR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSoundDataGVR.h; sourceTree = "<group>"; };
 		8A130DA61E401B910050D83B /* VROSoundDataDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSoundDataDelegate.h; sourceTree = "<group>"; };
+		8A3517271EDE035300B6E786 /* VROOpenCV.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROOpenCV.cpp; sourceTree = "<group>"; };
+		8A3517281EDE035300B6E786 /* VROOpenCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROOpenCV.h; sourceTree = "<group>"; };
 		8ABD8F2E1DB6970600BD9C83 /* VROApiKeyValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROApiKeyValidator.h; sourceTree = "<group>"; };
 		8ABD8F2F1DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VROApiKeyValidatorDynamo.m; sourceTree = "<group>"; };
 		8ABD8F341DB70CE400BD9C83 /* VROApiKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROApiKey.h; sourceTree = "<group>"; };
@@ -948,7 +962,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8AD0122C1ED8F38F00DEB959 /* AssetsLibrary.framework in Frameworks */,
+				8AD0122B1ED8F38900DEB959 /* opencv2.framework in Frameworks */,
 				8F129FA61ECF323300341D83 /* ViroKit.framework in Frameworks */,
+				FD2F0F4558B2F839A3161E08 /* libPods-ViroSample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -970,6 +987,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A35172C1EDE04B500B6E786 /* AssetsLibrary.framework in Frameworks */,
+				8A35172B1EDE04A500B6E786 /* opencv2.framework in Frameworks */,
 				8F618E331EB980E70020B33B /* libprotobuf-lite.a in Frameworks */,
 				A5EC65861EB3ECE200FE220E /* libBulletCollision.a in Frameworks */,
 				A5EC65871EB3ECE200FE220E /* libBulletDynamics.a in Frameworks */,
@@ -1009,6 +1028,8 @@
 				710AAB43C4650092845EAD81 /* Pods-ViroKit.release.xcconfig */,
 				D3267984E31F54DDFDA5BFE7 /* Pods-ViroSample.debug.xcconfig */,
 				B1049B08B869A86043674A7C /* Pods-ViroSample.release.xcconfig */,
+				69FBDCF89ECBB5500043C227 /* Pods-ViroARKit.debug.xcconfig */,
+				2D50EA9016C5481FBEA660D5 /* Pods-ViroARKit.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -1613,6 +1634,8 @@
 				8F53D3A01DCAB4F0001C91A8 /* Key Validation */,
 				8FB659241CD9082000D036EB /* Platforms */,
 				8FD4DECF1C18ECD4003DC425 /* ViroKit.h */,
+				8A3517281EDE035300B6E786 /* VROOpenCV.h */,
+				8A3517271EDE035300B6E786 /* VROOpenCV.cpp */,
 				8F11B7C01C20B0530026D150 /* VROView.h */,
 				8F11B7C41C20B2A20026D150 /* VRORenderDelegate.h */,
 				8FD4DED11C18ECD4003DC425 /* Info.plist */,
@@ -1752,6 +1775,8 @@
 		95E5BC90E51A0FC2C3AA4D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */,
+				8A07C1821ED8D5EA00757C29 /* opencv2.framework */,
 				8F618E301EB935A40020B33B /* libprotobuf.a */,
 				8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */,
 				A5EC65821EB3ECE200FE220E /* libBulletCollision.a */,
@@ -1763,6 +1788,7 @@
 				8FDDE2111CD00F2600674DE2 /* CoreText.framework */,
 				6447C487DE6546AF514106CC /* libPods-ViroKit.a */,
 				BF43BA975D626635F2D5584C /* libPods-ViroSample.a */,
+				48567375A658D093284ACEDD /* libPods-ViroARKit.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1877,6 +1903,7 @@
 				8FD4DF401C18F5EA003DC425 /* VROQuaternion.h in Headers */,
 				8A130D761E3A93820050D83B /* VROSound.h in Headers */,
 				8FD1E1B01C3F20C70005BE4E /* VROVideoSurface.h in Headers */,
+				8A35172A1EDE035300B6E786 /* VROOpenCV.h in Headers */,
 				8F53C9031E01B5CB008314B4 /* VROOBJLoader.h in Headers */,
 				8FD4DF411C18F5EB003DC425 /* VROPlane.h in Headers */,
 				8FCF39641CAEE26F00A86CA3 /* VROHoverDistanceListener.h in Headers */,
@@ -2386,6 +2413,7 @@
 				8FA2E1601C45DD270070DB26 /* VROReticle.cpp in Sources */,
 				8FDDB4B01DB055A700DE0968 /* VROShaderModifier.cpp in Sources */,
 				8FD06F211E832760003D3BC4 /* VROCameraTextureiOS.cpp in Sources */,
+				8A3517291EDE035300B6E786 /* VROOpenCV.cpp in Sources */,
 				8F705DF01E8D5337008BE8F8 /* VROThreadRestricted.cpp in Sources */,
 				8FD4DF031C18ED30003DC425 /* VROGeometrySubstrate.cpp in Sources */,
 				8FB2B5901E1442EC00EDB629 /* VROPropertyAnimation.cpp in Sources */,
@@ -2568,6 +2596,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/Libraries/opencv";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2620,6 +2649,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/Libraries/opencv";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2651,6 +2681,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				INFOPLIST_FILE = ViroSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -2672,6 +2706,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				INFOPLIST_FILE = ViroSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -2748,6 +2786,10 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				INFOPLIST_FILE = ViroKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
@@ -2779,6 +2821,10 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/opencv",
+				);
 				INFOPLIST_FILE = ViroKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.1;

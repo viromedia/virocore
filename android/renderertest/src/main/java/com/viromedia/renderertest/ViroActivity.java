@@ -9,11 +9,13 @@
 package com.viromedia.renderertest;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.viro.renderer.jni.AmbientLightJni;
 import com.viro.renderer.jni.AsyncObjListener;
@@ -27,6 +29,7 @@ import com.viro.renderer.jni.MaterialJni;
 import com.viro.renderer.jni.NodeJni;
 import com.viro.renderer.jni.ObjectJni;
 import com.viro.renderer.jni.OmniLightJni;
+import com.viro.renderer.jni.OpenCVJni;
 import com.viro.renderer.jni.PolylineJni;
 import com.viro.renderer.jni.RenderContextJni;
 import com.viro.renderer.jni.SceneJni;
@@ -78,6 +81,9 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         mVrView.setVrModeEnabled(true);
         mVrView.validateApiKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
         setContentView(mVrView.getContentView());
+
+        // uncomment the below line to test the AR library.
+        // testEdgeDetect();
     }
 
     @Override
@@ -155,6 +161,14 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         mVrView.setScene(scene);
         ControllerJni nativeController = new ControllerJni(mVrView.getRenderContextRef());
         //nativeController.setReticleVisibility(false);
+    }
+
+    private void testEdgeDetect() {
+        OpenCVJni cv = new OpenCVJni(this);
+        Bitmap bm = cv.edgeDetectImage("boba.png");
+        ImageView image = new ImageView(this);
+        image.setImageBitmap(bm);
+        setContentView(image);
     }
 
     private List<NodeJni> testText(Context context) {
