@@ -24,6 +24,7 @@
 #include "VROConstraint.h"
 #include "VROStringUtil.h"
 #include "VROPhysicsBody.h"
+#include "VROAnimationChain.h"
 #include "VROExecutableAnimation.h"
 
 // Opacity below which a node is considered hidden
@@ -591,17 +592,15 @@ void VRONode::removeAllActions() {
     _actions.clear();
 }
 
-void VRONode::addAnimation(std::string name, std::shared_ptr<VROExecutableAnimation> animation) {
+void VRONode::addAnimation(std::string key, std::shared_ptr<VROExecutableAnimation> animation) {
     passert_thread();
-    removeAnimation(name);
-    _animations[name] = animation;
-    
-    pinfo("Added animation %s", name.c_str());
+    removeAnimation(key);
+    _animations[key] = animation;
 }
 
-void VRONode::removeAnimation(std::string name) {
+void VRONode::removeAnimation(std::string key) {
     passert_thread();
-    auto kv = _animations.find(name);
+    auto kv = _animations.find(key);
     if (kv == _animations.end()) {
         return;
     }
@@ -610,48 +609,44 @@ void VRONode::removeAnimation(std::string name) {
     _animations.erase(kv);
 }
 
-void VRONode::runAnimation(std::string name, bool recursive) {
+std::shared_ptr<VROExecutableAnimation> VRONode::getAnimation(std::string key, bool recursive) {
     passert_thread();
-    auto kv = _animations.find(name);
+    std::vector<std::shared_ptr<VROExecutableAnimation>> animations;
+    getAnimations(animations, key, recursive);
+    
+    return std::make_shared<VROAnimationChain>(animations, VROAnimationChainExecution::Parallel);
+}
+
+void VRONode::getAnimations(std::vector<std::shared_ptr<VROExecutableAnimation>> &animations,
+                            std::string key, bool recursive) {
+    auto kv = _animations.find(key);
     if (kv != _animations.end()) {
-        kv->second->execute(std::static_pointer_cast<VRONode>(shared_from_this()), {});
+        animations.push_back(kv->second);
     }
     
     if (recursive) {
         for (std::shared_ptr<VRONode> &subnode : _subnodes) {
-            subnode->runAnimation(name, recursive);
+            subnode->getAnimations(animations, key, recursive);
         }
     }
 }
 
-void VRONode::pauseAnimation(std::string name, bool recursive) {
+
+std::set<std::string> VRONode::getAnimationKeys(bool recursive) {
     passert_thread();
-    auto kv = _animations.find(name);
-    if (kv != _animations.end()) {
-        kv->second->pause();
-    }
-    
-    if (recursive) {
-        for (std::shared_ptr<VRONode> &subnode : _subnodes) {
-            subnode->pauseAnimation(name, recursive);
-        }
-    }
-}
-
-std::set<std::string> VRONode::getAnimations(bool recursive) {
     std::set<std::string> animations;
-    getAnimations(animations, recursive);
+    getAnimationKeys(animations, recursive);
     
     return animations;
 }
 
-void VRONode::getAnimations(std::set<std::string> &animations, bool recursive) {
+void VRONode::getAnimationKeys(std::set<std::string> &keys, bool recursive) {
     for (auto kv : _animations) {
-        animations.insert(kv.first);
+        keys.insert(kv.first);
     }
     if (recursive) {
         for (std::shared_ptr<VRONode> &subnode : _subnodes) {
-            subnode->getAnimations(animations, recursive);
+            subnode->getAnimationKeys(keys, recursive);
         }
     }
 }

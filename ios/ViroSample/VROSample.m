@@ -853,7 +853,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                         node->setPosition({0, 0, -0.75});
                                                                         //node->setScale({0.1, 0.1, 0.1});
                                                                         
-                                                                        std::set<std::string> animations = node->getAnimations(true);
+                                                                        std::set<std::string> animations = node->getAnimationKeys(true);
                                                                         for (std::string animation : animations) {
                                                                             pinfo("Loaded animation [%s]", animation.c_str());
                                                                         }
@@ -893,7 +893,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (void)animateTake:(std::shared_ptr<VRONode>)node {
-    node->runAnimation("Take 001", true);
+    node->getAnimation("Take 001", true)->execute(node, {});
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self animateTake:node];
     });
