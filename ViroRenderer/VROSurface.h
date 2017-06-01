@@ -19,6 +19,8 @@ public:
     
     static std::shared_ptr<VROSurface> createSurface(float width, float height,
                                                      float u0 = 0, float v0 = 0, float u1 = 1, float v1 = 1);
+    static std::shared_ptr<VROSurface> createSurface(float left, float bottom, float right, float top,
+                                                     float u0, float v0, float u1, float v1);
     virtual ~VROSurface();
     
 protected:
@@ -28,11 +30,12 @@ protected:
         VROGeometry(sources, elements)
     {}
     
-    static void buildGeometry(float width, float height,
+    static void buildGeometry(float left, float bottom, float right, float top,
                               float u0, float v0, float u1, float v1,
                               std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                               std::vector<std::shared_ptr<VROGeometryElement>> &elements);
-    static void buildSurface(VROShapeVertexLayout *vertexLayout, float width, float height,
+    static void buildSurface(VROShapeVertexLayout *vertexLayout,
+                             float left, float bottom, float right, float top,
                              float u0, float v0, float u1, float v1);
     
 };
