@@ -7,7 +7,6 @@
 //
 
 #import "VROSample.h"
-#import <ViroARKit/ViroARKit.h>
 #import "opencv2/imgcodecs/ios.h"
 #import "opencv2/imgproc/imgproc.hpp"
 
