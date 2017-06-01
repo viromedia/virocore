@@ -223,6 +223,15 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     if (geometry.isCameraEnclosure()) {
         viewMatrix = context.getEnclosureViewMatrix();
     }
+    if (geometry.isScreenSpace()) {
+        /*
+         Screen space geometries are specified in viepwort (screen) coordinates.
+         Therefore they do not respond to the camera (identity view matrix), and
+         they use an orthographic projection.
+         */
+        viewMatrix = VROMatrix4f();
+        projectionMatrix = context.getOrthographicMatrix();
+    }
     
     std::string geoName = geometry.getName();
     std::string materialName = material->getName();

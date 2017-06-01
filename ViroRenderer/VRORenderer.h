@@ -71,6 +71,10 @@ public:
      to the screen.
      */
     void setDebugHUDEnabled(bool enabled);
+    
+    void updateRenderViewSize(float width, float height);
+    
+#pragma mark - Renderer properties
 
     /*
      Get the field of view to use for a viewport of the given size. This function
@@ -85,8 +89,6 @@ public:
      Get the far clipping plane, as computed during the last prepareFrame().
      */
     float getFarClippingPlane() const;
-
-    void updateRenderViewSize(float width, float height);
 
 #pragma mark - Scene Controllers
     

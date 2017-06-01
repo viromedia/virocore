@@ -217,12 +217,19 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     _context->setCamera(camera);
 
     /*
-     This matrix is used for rendering objects that follow the camera, such
+     Enclosure matrix is used for rendering objects that follow the camera, such
      as skyboxes. To get them to follow the camera, we do not include the
      camera's translation component in the view matrix.
      */
     VROMatrix4f enclosureMatrix = VROMathComputeLookAtMatrix({ 0, 0, 0 }, camera.getForward(), camera.getUp());
     _context->setEnclosureViewMatrix(enclosureMatrix);
+    
+    /*
+     Orthographic matrix is used for objects that are rendered in screen coordinates. 
+     We use zero for the NCP since typically orthographic objects will have no Z
+     coordinate (e.g., Z=0).
+     */
+    _context->setOrthographicMatrix(viewport.getOrthographicProjection(0, kZFar));
 
     const VRORenderContext &context = *_context.get();
     if (_sceneController) {
@@ -255,9 +262,22 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
         delegate->willRenderEye(eye, _context.get());
     }
 
-    VROMatrix4f cameraMatrix = _context->getCamera().getLookAtMatrix();
-    VROMatrix4f eyeView = eyeFromHeadMatrix.multiply(cameraMatrix);
-
+    /*
+     The eyeView matrix is the camera look-at matrix followed by the eye shift
+     matrix.
+     */
+    VROMatrix4f cameraLookAtMatrix = _context->getCamera().getLookAtMatrix();
+    VROMatrix4f eyeView = eyeFromHeadMatrix.multiply(cameraLookAtMatrix);
+    
+    /*
+     The HUD matrix is set as the *model transform* for objects that we want
+     glued to the HUD. It is meant to undo the eyeView matrix, but keep the
+     eye translation. In other words, we want HUDMatrix defined such that:
+     
+     eyeView * HUDMatrix = eyeFromHeadMatrix
+     
+     Therefore, we set HUDMatrix = eyeFromHeadMatrix * eyeView-1
+     */
     _context->setHUDViewMatrix(eyeFromHeadMatrix.multiply(eyeView.invert()));
     _context->setViewMatrix(eyeView);
     _context->setProjectionMatrix(projectionMatrix);
