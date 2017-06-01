@@ -7,8 +7,6 @@
 //
 
 #include "VROHeadTracker.h"
-#if VRO_METAL
-
 #include "VROMath.h"
 #include "VROQuaternion.h"
 #include "VROConvert.h"
@@ -241,6 +239,7 @@ void VROHeadTracker::updateDeviceOrientation(UIInterfaceOrientation orientation)
     else if (orientation == UIInterfaceOrientationLandscapeRight) {
         _worldToDeviceMatrix = GetRotateEulerMatrix(0.f, 0.f, -90.f);
     }
+    else {
+        _worldToDeviceMatrix = GLKMatrix4Identity;
+    }
 }
-
-#endif

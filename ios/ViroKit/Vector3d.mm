@@ -4,8 +4,6 @@
 //
 
 #include "Vector3d.h"
-#if VRO_METAL
-
 #include <cmath>
 
 Vector3d::Vector3d()
@@ -133,5 +131,3 @@ int Vector3d::largestAbsComponent(Vector3d *v)
     }
     return 2;
 }
-
-#endif

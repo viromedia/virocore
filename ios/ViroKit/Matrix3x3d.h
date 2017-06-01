@@ -6,9 +6,6 @@
 #ifndef __CardboardSDK_iOS__Matrix3x3d__
 #define __CardboardSDK_iOS__Matrix3x3d__
 
-#include "VRODefines.h"
-#if VRO_METAL
-
 #include "Vector3d.h"
 #import <GLKit/GLKit.h>
 
@@ -58,5 +55,4 @@ class Matrix3x3d
     double _m[9];
 };
 
-#endif
 #endif

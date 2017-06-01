@@ -74,9 +74,10 @@ public:
 
     /*
      Get the field of view to use for a viewport of the given size. This function
-     is generally only used in mono-rendering mode (e.g. not VR). In VR, the
-     FOV is typically determined by the platform. In Mono, however, we have more
-     control and need to support a wider array of viewport sizes.
+     is generally only used in AR or mono-rendering VR (e.g. not stereo VR). In 
+     stereo VR, the FOV is typically determined by the platform. In AR / MonoVR,
+     however, we have more control and need to support a wider array of viewport 
+     sizes.
      */
     VROFieldOfView getMonoFOV(int viewportWidth, int viewportHeight) const;
     

@@ -74,6 +74,8 @@
 		8F129FBD1ED603BE00341D83 /* minion.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F129FB31ED6032D00341D83 /* minion.vrx */; };
 		8F129FBE1ED603BE00341D83 /* sven.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F129FB41ED6032D00341D83 /* sven.vrx */; };
 		8F129FBF1ED603BE00341D83 /* worm.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F129FB51ED6032E00341D83 /* worm.vrx */; };
+		8F129FC61EDF6AE500341D83 /* VROViewAR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F129FC41EDF6AE500341D83 /* VROViewAR.h */; };
+		8F129FC71EDF6AE500341D83 /* VROViewAR.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8F129FC51EDF6AE500341D83 /* VROViewAR.mm */; };
 		8F140FCF1E56658700355A1E /* card_main.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 8F140FCE1E56658700355A1E /* card_main.ktx */; };
 		8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1664A51E5E43260062EBCE /* Accelerate.framework */; };
 		8F17701B1E74C01900235C21 /* VROGVRUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1770191E74C01900235C21 /* VROGVRUtil.cpp */; };
@@ -568,6 +570,8 @@
 		8F129FB31ED6032D00341D83 /* minion.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = minion.vrx; path = ViroSample/minion.vrx; sourceTree = "<group>"; };
 		8F129FB41ED6032D00341D83 /* sven.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = sven.vrx; path = ViroSample/sven.vrx; sourceTree = "<group>"; };
 		8F129FB51ED6032E00341D83 /* worm.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = worm.vrx; path = ViroSample/worm.vrx; sourceTree = "<group>"; };
+		8F129FC41EDF6AE500341D83 /* VROViewAR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROViewAR.h; sourceTree = "<group>"; };
+		8F129FC51EDF6AE500341D83 /* VROViewAR.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROViewAR.mm; sourceTree = "<group>"; };
 		8F140FCE1E56658700355A1E /* card_main.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; name = card_main.ktx; path = ViroSample/card_main.ktx; sourceTree = "<group>"; };
 		8F152A6D1C0D77AA00A211F8 /* VROVector4f.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROVector4f.cpp; sourceTree = "<group>"; };
 		8F152A6E1C0D77AA00A211F8 /* VROVector4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVector4f.h; sourceTree = "<group>"; };
@@ -1188,6 +1192,16 @@
 			name = Renderer;
 			sourceTree = "<group>";
 		};
+		8F129FC11EDF6A8700341D83 /* AR */ = {
+			isa = PBXGroup;
+			children = (
+				8FDFA8971BDB031800883EC0 /* Sensors */,
+				8F129FC41EDF6AE500341D83 /* VROViewAR.h */,
+				8F129FC51EDF6AE500341D83 /* VROViewAR.mm */,
+			);
+			name = AR;
+			sourceTree = "<group>";
+		};
 		8F203F121DCD2EBA00DC50F2 /* Video */ = {
 			isa = PBXGroup;
 			children = (
@@ -1548,6 +1562,7 @@
 		8FB659241CD9082000D036EB /* Platforms */ = {
 			isa = PBXGroup;
 			children = (
+				8F129FC11EDF6A8700341D83 /* AR */,
 				8FB659251CD9083800D036EB /* Metal */,
 				8F0FE6621CD25A3500A4C297 /* Cardboard */,
 			);
@@ -1557,7 +1572,6 @@
 		8FB659251CD9083800D036EB /* Metal */ = {
 			isa = PBXGroup;
 			children = (
-				8FDFA8971BDB031800883EC0 /* Sensors */,
 				8F517BF31BCDBBA80017C70B /* VR Distortion */,
 				8FDDE2061CCFD69D00674DE2 /* VROViewMetal.h */,
 				8FDDE2071CCFD69D00674DE2 /* VROViewMetal.m */,
@@ -1933,6 +1947,7 @@
 				8FCF396C1CB4242000A86CA3 /* VRORenderer.h in Headers */,
 				8ABD8F3D1DB7DF8F00BD9C83 /* VROApiKeyMetrics.h in Headers */,
 				8FB535281EB8DDBE00E8E1A6 /* VROModelIOUtil.h in Headers */,
+				8F129FC61EDF6AE500341D83 /* VROViewAR.h in Headers */,
 				8FCB102B1DD5489E00FE425C /* VROVideoDelegateiOS.h in Headers */,
 				8F83DEA51C4830360089C31A /* VROTimingFunctionEaseIn.h in Headers */,
 				8F83DE8E1C4728A30089C31A /* VROHitTestResult.h in Headers */,
@@ -2473,6 +2488,7 @@
 				8ABD8F421DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m in Sources */,
 				8FB535191EB8500000E8E1A6 /* VROFBXLoader.cpp in Sources */,
 				8FD4DEFD1C18ED22003DC425 /* VROSurface.cpp in Sources */,
+				8F129FC71EDF6AE500341D83 /* VROViewAR.mm in Sources */,
 				8F548E521C2378D500556688 /* VROAnimatable.cpp in Sources */,
 				8F83DE911C474A800089C31A /* VROProjector.cpp in Sources */,
 				A58697851E3084A400191090 /* VROInputControllerCardboardiOS.cpp in Sources */,

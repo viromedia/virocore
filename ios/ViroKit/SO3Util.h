@@ -6,9 +6,6 @@
 #ifndef __CardboardSDK_iOS__So3Util__
 #define __CardboardSDK_iOS__So3Util__
 
-#include "VRODefines.h"
-#if VRO_METAL
-
 #include "Vector3d.h"
 #include "Matrix3x3d.h"
 
@@ -24,5 +21,4 @@ class SO3Util {
     
 };
 
-#endif
 #endif
