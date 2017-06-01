@@ -12,12 +12,13 @@
 #import "VRORenderDelegateiOS.h"
 #import "VROTime.h"
 #import "VROEye.h"
+#import "VROCameraTextureiOS.h"
 #import "VRODriverOpenGLiOS.h"
 #import "VROHeadTracker.h"
 #import "VROApiKeyValidator.h"
 #import "VROApiKeyValidatorDynamo.h"
 #import "VROInputControllerCardboardiOS.h"
-#include "vr/gvr/capi/include/gvr_audio.h"
+#import "vr/gvr/capi/include/gvr_audio.h"
 
 @interface VROViewAR () {
     std::shared_ptr<VRORenderer> _renderer;
@@ -27,6 +28,8 @@
     std::shared_ptr<gvr::AudioApi> _gvrAudio;
     std::unique_ptr<VROHeadTracker> _headTracker;
     std::unique_ptr<VROEye> _eye;
+    std::shared_ptr<VROCameraTextureiOS> _cameraBackground;
+    
     CADisplayLink *_displayLink;
     int _frame;
     
@@ -43,7 +46,6 @@
 @dynamic sceneController;
 
 #pragma mark - Initialization
-
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
@@ -191,6 +193,9 @@
 - (void)setSceneController:(std::shared_ptr<VROSceneController>) sceneController {
     _sceneController = sceneController;
     _renderer->setSceneController(sceneController, _driver);
+    
+    // Reset the camera background for the new scene
+    _cameraBackground.reset();
 }
 
 - (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController
@@ -198,6 +203,9 @@
             timingFunction:(VROTimingFunctionType)timingFunctionType {
     _sceneController = sceneController;
     _renderer->setSceneController(sceneController, seconds, timingFunctionType, _driver);
+    
+    // Reset the camera background for the new scene
+    _cameraBackground.reset();
 }
 
 #pragma mark - Frame Listeners
@@ -231,6 +239,9 @@
                                self.bounds.size.height * self.contentScaleFactor);
     VROFieldOfView fov = _renderer->getMonoFOV(viewport.getWidth(), viewport.getHeight());
     
+    /*
+     Setup GL state.
+     */
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE); // Must enable writes to clear depth buffer
     
@@ -243,6 +254,13 @@
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     
+    if (_sceneController && !_cameraBackground) {
+        [self initCameraBackgroundWithViewport:viewport forScene:_sceneController->getScene()];
+    }
+    
+    /*
+     Render the 3D scene.
+     */
     VROMatrix4f headRotation = _headTracker->getHeadRotation().invert();
     _renderer->prepareFrame(_frame, viewport, fov, headRotation, _driver);
     
@@ -264,6 +282,14 @@
         perr("Renderer suspended! Do you have a valid key?");
         _suspendedNotificationTime = newTime;
     }
+}
+
+- (void)initCameraBackgroundWithViewport:(VROViewport)viewport forScene:(std::shared_ptr<VROScene>)scene {
+    _cameraBackground = std::make_shared<VROCameraTextureiOS>(VROTextureType::Texture2D);
+    _cameraBackground->initCamera(VROCameraPosition::Back, _driver);
+    _cameraBackground->play();
+    
+    scene->setBackgroundOrthographicTexture(_cameraBackground, viewport.getWidth(), viewport.getHeight());
 }
 
 - (void)recenterTracking {

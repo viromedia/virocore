@@ -75,7 +75,6 @@
 		8F129FBE1ED603BE00341D83 /* sven.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F129FB41ED6032D00341D83 /* sven.vrx */; };
 		8F129FBF1ED603BE00341D83 /* worm.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F129FB51ED6032E00341D83 /* worm.vrx */; };
 		8F129FC61EDF6AE500341D83 /* VROViewAR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F129FC41EDF6AE500341D83 /* VROViewAR.h */; };
-		8F129FC71EDF6AE500341D83 /* VROViewAR.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8F129FC51EDF6AE500341D83 /* VROViewAR.mm */; };
 		8F140FCF1E56658700355A1E /* card_main.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 8F140FCE1E56658700355A1E /* card_main.ktx */; };
 		8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1664A51E5E43260062EBCE /* Accelerate.framework */; };
 		8F17701B1E74C01900235C21 /* VROGVRUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1770191E74C01900235C21 /* VROGVRUtil.cpp */; };
@@ -88,6 +87,7 @@
 		8F2D1BB81EC379C000E7BF44 /* VROAnimationMatrix4f.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BB61EC379C000E7BF44 /* VROAnimationMatrix4f.h */; };
 		8F2D1BBB1EC37E1900E7BF44 /* VROSkeleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BB91EC37E1900E7BF44 /* VROSkeleton.cpp */; };
 		8F2D1BBC1EC37E1900E7BF44 /* VROSkeleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BBA1EC37E1900E7BF44 /* VROSkeleton.h */; };
+		8F36F3A91EE0CE10003F92D4 /* VROViewAR.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8F129FC51EDF6AE500341D83 /* VROViewAR.mm */; };
 		8F39A31C1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F39A31A1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp */; };
 		8F39A31D1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F39A31B1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */; };
@@ -2405,6 +2405,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A586978B1E308B5400191090 /* VROInputControllerBase.cpp in Sources */,
+				8F36F3A91EE0CE10003F92D4 /* VROViewAR.mm in Sources */,
 				8F705DE21E8ACFD0008BE8F8 /* VRODebugHUD.cpp in Sources */,
 				8F0FE6701CD29BF900A4C297 /* VROViewCardboard.m in Sources */,
 				8FD4DEFB1C18ED19003DC425 /* VROMath.cpp in Sources */,
@@ -2488,7 +2489,6 @@
 				8ABD8F421DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m in Sources */,
 				8FB535191EB8500000E8E1A6 /* VROFBXLoader.cpp in Sources */,
 				8FD4DEFD1C18ED22003DC425 /* VROSurface.cpp in Sources */,
-				8F129FC71EDF6AE500341D83 /* VROViewAR.mm in Sources */,
 				8F548E521C2378D500556688 /* VROAnimatable.cpp in Sources */,
 				8F83DE911C474A800089C31A /* VROProjector.cpp in Sources */,
 				A58697851E3084A400191090 /* VROInputControllerCardboardiOS.cpp in Sources */,

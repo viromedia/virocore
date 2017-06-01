@@ -856,7 +856,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (std::shared_ptr<VROSceneController>)loadFBXScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
-    scene->setBackgroundCube([self niagaraTexture]);
+    //scene->setBackgroundCube([self niagaraTexture]);
     
     NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"heart" ofType:@"vrx"];
     NSURL *fbxURL = [NSURL fileURLWithPath:fbxPath];
@@ -877,7 +877,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 0.5, 0.5, 0.5 });
-
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});

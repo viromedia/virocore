@@ -103,13 +103,25 @@ public:
 
     /*
      Set the background of the scene to a cube-map defined by
-     the given cube texture or color, or a sphere defined by the given
-     spherical image.
+     the given cube texture or color.
      */
     void setBackgroundCube(std::shared_ptr<VROTexture> textureCube);
     void setBackgroundCube(VROVector4f color);
+    
+    /*
+     Set the background of the scene to textured sphere. Its rotation
+     about the Y axis can be set as well.
+     */
     void setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere);
     void setBackgroundRotation(VROQuaternion rotation);
+    
+    /*
+     Set the background of the scene to the given texture, to be rendered
+     orthographically across the screen.
+     */
+    void setBackgroundOrthographicTexture(std::shared_ptr<VROTexture> texture,
+                                          float viewportWidth, float viewportHeight);
+    
     std::shared_ptr<VROGeometry> getBackground() const {
         return _background;
     }
@@ -139,7 +151,7 @@ private:
     std::shared_ptr<VROInputPresenter> _controllerPresenter;
     
     /*
-     The rotation to apply to the background geometry
+     The rotation to apply to the background geometry.
      */
     VROQuaternion _backgroundRotation;
     

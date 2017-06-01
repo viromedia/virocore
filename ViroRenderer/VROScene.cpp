@@ -18,6 +18,7 @@
 #include "VROMaterial.h"
 #include "VROLog.h"
 #include "VROAudioPlayer.h"
+#include "VROSurface.h"
 #include <stack>
 #include <algorithm>
 
@@ -176,6 +177,21 @@ void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
     material->setWritesToDepthBuffer(false);
     material->setReadsFromDepthBuffer(false);
 }
+
+void VROScene::setBackgroundOrthographicTexture(std::shared_ptr<VROTexture> texture,
+                                                float viewportWidth, float viewportHeight) {
+    passert_thread();
+    _background = VROSurface::createSurface(0, 0, viewportWidth, viewportHeight, 0, 0, 1, 1);
+    _background->setScreenSpace(true);
+    _background->setName("Background");
+ 
+    std::shared_ptr<VROMaterial> material = _background->getMaterials()[0];
+    material->setLightingModel(VROLightingModel::Constant);
+    material->getDiffuse().setTexture(texture);
+    material->setWritesToDepthBuffer(false);
+    material->setReadsFromDepthBuffer(false);
+}
+
 void VROScene::detachInputController(std::shared_ptr<VROInputControllerBase> controller){
     passert_thread();
     if (!_controllerPresenter){
@@ -191,6 +207,7 @@ void VROScene::detachInputController(std::shared_ptr<VROInputControllerBase> con
     controller->detachScene();
     _controllerPresenter = nullptr;
 }
+
 void VROScene::attachInputController(std::shared_ptr<VROInputControllerBase> controller) {
     passert_thread();
 

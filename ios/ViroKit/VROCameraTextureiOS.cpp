@@ -39,7 +39,7 @@ bool VROCameraTextureiOS::initCamera(VROCameraPosition position, std::shared_ptr
     }
     
     [_captureSession beginConfiguration];
-    [_captureSession setSessionPreset:AVCaptureSessionPresetLow];
+    [_captureSession setSessionPreset:AVCaptureSessionPresetHigh];
     
     // Get the a video device with the requested camera
     AVCaptureDevice *videoDevice = nil;
@@ -83,6 +83,10 @@ bool VROCameraTextureiOS::initCamera(VROCameraPosition position, std::shared_ptr
     [dataOutput setSampleBufferDelegate:_delegate queue:dispatch_get_main_queue()];
     
     [_captureSession addOutput:dataOutput];
+    
+    AVCaptureConnection *connection = [dataOutput connectionWithMediaType:AVMediaTypeVideo];
+    [connection setVideoOrientation:AVCaptureVideoOrientationPortrait];
+    
     [_captureSession commitConfiguration];
     return true;
 }
