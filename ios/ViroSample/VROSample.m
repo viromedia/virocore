@@ -920,8 +920,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();
     camera->setPosition({0, 0, 0});
-    camera->setOrbitFocalPoint({0, 0, -0.75});
-    camera->setRotationType(VROCameraRotationType::Orbit);
+    //camera->setOrbitFocalPoint({0, 0, -0.75});
+    //camera->setRotationType(VROCameraRotationType::Orbit);
     
     std::shared_ptr<VRONode> cameraNode = std::make_shared<VRONode>();
     cameraNode->setCamera(camera);

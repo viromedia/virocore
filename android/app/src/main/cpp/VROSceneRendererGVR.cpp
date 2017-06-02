@@ -188,7 +188,7 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headRotation) {
                          rect.right - rect.left,
                          rect.top   - rect.bottom);
 
-    VROFieldOfView fov = _renderer->getMonoFOV(viewport.getWidth(), viewport.getHeight());
+    VROFieldOfView fov = _renderer->computeMonoFOV(viewport.getWidth(), viewport.getHeight());
     prepareFrame(viewport, fov, headRotation);
 
     VROMatrix4f projectionMatrix = fov.toPerspectiveMatrix(kZNear, _renderer->getFarClippingPlane());

@@ -246,7 +246,19 @@
 - (void)renderFrame {
     VROViewport viewport(0, 0, self.bounds.size.width  * self.contentScaleFactor,
                                self.bounds.size.height * self.contentScaleFactor);
-    VROFieldOfView fov = _renderer->getMonoFOV(viewport.getWidth(), viewport.getHeight());
+    VROFieldOfView fov;
+    
+    if (_sceneController && !_cameraBackground) {
+        [self initCameraBackgroundWithViewport:viewport forScene:_sceneController->getScene()];
+    }
+    
+    if (_cameraTexture) {
+        fov = _renderer->computeFOV(_cameraTexture->getHorizontalFOV(),
+                                    viewport.getWidth(), viewport.getHeight());
+    }
+    else {
+        fov = _renderer->computeMonoFOV(viewport.getWidth(), viewport.getHeight());
+    }
     
     /*
      Setup GL state.
@@ -262,10 +274,6 @@
     
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-    
-    if (_sceneController && !_cameraBackground) {
-        [self initCameraBackgroundWithViewport:viewport forScene:_sceneController->getScene()];
-    }
     
     /*
      Render the 3D scene.

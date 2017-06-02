@@ -77,6 +77,8 @@ bool VROCameraTextureiOS::initCamera(VROCameraPosition position, VROCameraOrient
         return false;
     }
     
+    NSLog(@"Camera FOV [%f]", videoDevice.activeFormat.videoFieldOfView);
+    
     NSError *error;
     
     // Device input
@@ -108,6 +110,11 @@ bool VROCameraTextureiOS::initCamera(VROCameraPosition position, VROCameraOrient
                                                  name:UIApplicationDidChangeStatusBarOrientationNotification
                                                object:nil];
     return true;
+}
+
+float VROCameraTextureiOS::getHorizontalFOV() const {
+    AVCaptureDeviceInput *input = [_captureSession.inputs firstObject];
+    return input.device.activeFormat.videoFieldOfView;
 }
 
 void VROCameraTextureiOS::updateOrientation(VROCameraOrientation orientation) {

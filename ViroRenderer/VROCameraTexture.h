@@ -51,6 +51,12 @@ public:
     virtual void play() = 0;
     virtual bool isPaused() = 0;
     
+    /*
+     Get the horizontal FOV used by the camera. This should return the
+     FOV from edge to edge, in degrees.
+     */
+    virtual float getHorizontalFOV() const = 0;
+    
 };
 
 #endif /* VROCameraTexture_hpp */

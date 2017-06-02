@@ -31,6 +31,8 @@ public:
     void play();
     bool isPaused();
     
+    float getHorizontalFOV() const;
+    
     void displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> substrate);
     void updateOrientation(VROCameraOrientation orientation);
     

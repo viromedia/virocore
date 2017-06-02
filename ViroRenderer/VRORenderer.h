@@ -78,12 +78,24 @@ public:
 
     /*
      Get the field of view to use for a viewport of the given size. This function
-     is generally only used in AR or mono-rendering VR (e.g. not stereo VR). In 
-     stereo VR, the FOV is typically determined by the platform. In AR / MonoVR,
+     is generally only used in mono-rendering VR (e.g. not stereo VR). In
+     stereo VR, the FOV is typically determined by the platform. In MonoVR,
      however, we have more control and need to support a wider array of viewport 
-     sizes.
+     sizes. We use a default horizontal FOV for this method to determine the 
+     vertical FOV.
      */
-    VROFieldOfView getMonoFOV(int viewportWidth, int viewportHeight) const;
+    VROFieldOfView computeMonoFOV(int viewportWidth, int viewportHeight) const;
+    
+    /*
+     Get the field of view (vertical and horizontal) to use to render a viewport
+     of the given size, given a horizontal FOV of the given degrees. This function
+     is generally only used in AR, where we are given a camera horizontal FOV and
+     need to create a rendering horizontal and vertical FOV to match said camera.
+     
+     Note the given horizontalFOVDegrees is the degrees from edge to edge of the 
+     frustum.
+     */
+    VROFieldOfView computeFOV(float horizontalFOVDegrees, int viewportWidth, int viewportHeight) const;
     
     /*
      Get the far clipping plane, as computed during the last prepareFrame().
