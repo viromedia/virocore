@@ -11,28 +11,79 @@
 #include "VROGeometrySource.h"
 #include "VROGeometryElement.h"
 #include "VROMaterial.h"
+#include "VROAnimationFloat.h"
 #include "stdlib.h"
 
 std::shared_ptr<VROSurface> VROSurface::createSurface(float width, float height,
                                                       float u0, float v0, float u1, float v1) {
-    return createSurface(-width / 2.0, -height / 2.0, width / 2.0, height / 2.0,
-                         u0, v0, u1, v1);
+    return createSurface(0, 0, width, height, u0, v0, u1, v1);
 }
 
-std::shared_ptr<VROSurface> VROSurface::createSurface(float left, float bottom, float right, float top,
+std::shared_ptr<VROSurface> VROSurface::createSurface(float x, float y, float width, float height,
                                                       float u0, float v0, float u1, float v1) {
-    std::vector<std::shared_ptr<VROGeometrySource>> sources;
-    std::vector<std::shared_ptr<VROGeometryElement>> elements;
-    buildGeometry(left, bottom, right, top, u0, v0, u1, v1, sources, elements);
-    
-    std::shared_ptr<VROSurface> surface = std::shared_ptr<VROSurface>(new VROSurface(sources, elements));
+    std::shared_ptr<VROSurface> surface = std::shared_ptr<VROSurface>(new VROSurface(x, y, width, height, u0, v0, u1, v1));
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     surface->setMaterials({ material });
     
     return surface;
 }
 
-void VROSurface::buildGeometry(float left, float bottom, float right, float top,
+VROSurface::VROSurface(float x, float y, float width, float height,
+                       float u0, float v0, float u1, float v1) :
+    _x(x),
+    _y(y),
+    _width(width),
+    _height(height),
+    _u0(u0),
+    _v0(v0),
+    _u1(u1),
+    _v1(v1) {
+    
+    updateSurface();
+}
+
+VROSurface::~VROSurface() {
+    
+}
+
+void VROSurface::updateSurface() {
+    std::vector<std::shared_ptr<VROGeometrySource>> sources;
+    std::vector<std::shared_ptr<VROGeometryElement>> elements;
+    buildGeometry(_x, _y, _width, _height, _u0, _v0, _u1, _v1, sources, elements);
+    
+    setSources(sources);
+    setElements(elements);
+}
+
+void VROSurface::setWidth(float width) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
+        ((VROSurface *)animatable)->_width = v;
+        ((VROSurface *)animatable)->updateSurface();
+    }, _width, width));
+}
+
+void VROSurface::setHeight(float height) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
+        ((VROSurface *)animatable)->_height = v;
+        ((VROSurface *)animatable)->updateSurface();
+    }, _height, height));
+}
+
+void VROSurface::setX(float x) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
+        ((VROSurface *)animatable)->_x = v;
+        ((VROSurface *)animatable)->updateSurface();
+    }, _x, x));
+}
+
+void VROSurface::setY(float y) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
+        ((VROSurface *)animatable)->_y = v;
+        ((VROSurface *)animatable)->updateSurface();
+    }, _y, y));
+}
+
+void VROSurface::buildGeometry(float x, float y, float width, float height,
                                float u0, float v0, float u1, float v1,
                                std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                                std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
@@ -42,7 +93,8 @@ void VROSurface::buildGeometry(float left, float bottom, float right, float top,
     int varSizeBytes = sizeof(VROShapeVertexLayout) * numVertices;
     VROShapeVertexLayout var[varSizeBytes];
     
-    VROSurface::buildSurface(var, left, bottom, right, top, u0, v0, u1, v1);
+    VROSurface::buildSurface(var, x - width / 2.0, y - height / 2.0, x + width / 2.0, y + height / 2.0,
+                             u0, v0, u1, v1);
     int indices[numIndices] = { 0, 1, 3, 2, 3, 1 };
     
     VROShapeUtilComputeTangents(var, numVertices, indices, numIndices);
@@ -102,9 +154,4 @@ void VROSurface::buildSurface(VROShapeVertexLayout *vertexLayout,
     vertexLayout[3].ny = 0;
     vertexLayout[3].nz = 1;
 }
-
-VROSurface::~VROSurface() {
-    
-}
-
 

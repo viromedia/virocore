@@ -16,9 +16,6 @@ std::shared_ptr<VROVideoSurface> VROVideoSurface::createVideoSurface(float width
                                                                      std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                                                      std::shared_ptr<VROVideoTexture> texture,
                                                                      std::shared_ptr<VRODriver> driver) {
-    std::vector<std::shared_ptr<VROGeometrySource>> sources;
-    std::vector<std::shared_ptr<VROGeometryElement>> elements;
-    VROSurface::buildGeometry(-width / 2.0, -height / 2.0, width /2.0, height / 2.0, 0, 0, 1, 1, sources, elements);
     
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     texture->loadVideo(url, frameSynchronizer, driver);
@@ -26,17 +23,15 @@ std::shared_ptr<VROVideoSurface> VROVideoSurface::createVideoSurface(float width
 
     material->getDiffuse().setTexture(texture);
     
-    std::shared_ptr<VROVideoSurface> surface = std::shared_ptr<VROVideoSurface>(new VROVideoSurface(sources, elements, texture));
+    std::shared_ptr<VROVideoSurface> surface = std::shared_ptr<VROVideoSurface>(new VROVideoSurface(width, height, texture));
     surface->setMaterials({ material });
     return surface;
 }
 
-VROVideoSurface::VROVideoSurface(std::vector<std::shared_ptr<VROGeometrySource>> &sources,
-                                 std::vector<std::shared_ptr<VROGeometryElement>> &elements,
-                                 std::shared_ptr<VROVideoTexture> texture) :
-    VROSurface(sources, elements),
+VROVideoSurface::VROVideoSurface(float width, float height, std::shared_ptr<VROVideoTexture> texture) :
+    VROSurface(0, 0, width, height, 0, 0, 1, 1),
     _texture(texture) {
-        
+
 }
 
 VROVideoSurface::~VROVideoSurface() {

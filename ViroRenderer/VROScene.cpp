@@ -181,7 +181,8 @@ void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
 void VROScene::setBackgroundOrthographicTexture(std::shared_ptr<VROTexture> texture,
                                                 float viewportWidth, float viewportHeight) {
     passert_thread();
-    _background = VROSurface::createSurface(0, 0, viewportWidth, viewportHeight, 0, 0, 1, 1);
+    _background = VROSurface::createSurface(viewportWidth / 2.0, viewportHeight / 2.0, viewportWidth, viewportHeight,
+                                            0, 0, 1, 1);
     _background->setScreenSpace(true);
     _background->setName("Background");
  

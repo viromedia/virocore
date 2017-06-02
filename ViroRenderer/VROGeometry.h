@@ -132,7 +132,7 @@ public:
         return _screenSpace;
     }
     void setScreenSpace(bool screenSpace) {
-        _screenSpace = screenSpace;;
+        _screenSpace = screenSpace;
     }
     
     std::string getName() const {
