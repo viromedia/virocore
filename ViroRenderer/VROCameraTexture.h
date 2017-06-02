@@ -21,6 +21,13 @@ enum class VROCameraPosition {
     Back
 };
 
+enum class VROCameraOrientation {
+    Portrait,
+    PortraitUpsideDown,
+    LandscapeLeft,
+    LandscapeRight,
+};
+
 class VROCameraTexture : public VROTexture {
     
 public:
@@ -34,7 +41,8 @@ public:
      The texture will not display until play() is invoked. Returns
      true if successful, false on failure.
      */
-    virtual bool initCamera(VROCameraPosition position, std::shared_ptr<VRODriver> driver) = 0;
+    virtual bool initCamera(VROCameraPosition position, VROCameraOrientation orientation,
+                            std::shared_ptr<VRODriver> driver) = 0;
     
     /*
      Play and pause.

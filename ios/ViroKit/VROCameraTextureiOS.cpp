@@ -14,6 +14,21 @@
 #include "VROVideoTextureCache.h"
 #include "VRODriver.h"
 
+VROCameraOrientation VROCameraTextureiOS::toCameraOrientation(UIInterfaceOrientation orientation) {
+    if (orientation == UIInterfaceOrientationPortrait) {
+        return VROCameraOrientation::Portrait;
+    }
+    else if (orientation == UIInterfaceOrientationLandscapeLeft) {
+        return VROCameraOrientation::LandscapeLeft;
+    }
+    else if (orientation == UIInterfaceOrientationLandscapeRight) {
+        return VROCameraOrientation::LandscapeRight;
+    }
+    else {
+        return VROCameraOrientation::PortraitUpsideDown;
+    }
+}
+
 VROCameraTextureiOS::VROCameraTextureiOS(VROTextureType type) :
     VROCameraTexture(type),
     _paused(true) {
@@ -24,7 +39,8 @@ VROCameraTextureiOS::~VROCameraTextureiOS() {
     
 }
 
-bool VROCameraTextureiOS::initCamera(VROCameraPosition position, std::shared_ptr<VRODriver> driver) {
+bool VROCameraTextureiOS::initCamera(VROCameraPosition position, VROCameraOrientation orientation,
+                                     std::shared_ptr<VRODriver> driver) {
     pause();
     std::shared_ptr<VROCameraTextureiOS> shared = std::dynamic_pointer_cast<VROCameraTextureiOS>(shared_from_this());
     
@@ -83,12 +99,33 @@ bool VROCameraTextureiOS::initCamera(VROCameraPosition position, std::shared_ptr
     [dataOutput setSampleBufferDelegate:_delegate queue:dispatch_get_main_queue()];
     
     [_captureSession addOutput:dataOutput];
-    
-    AVCaptureConnection *connection = [dataOutput connectionWithMediaType:AVMediaTypeVideo];
-    [connection setVideoOrientation:AVCaptureVideoOrientationPortrait];
-    
+    updateOrientation(orientation);
     [_captureSession commitConfiguration];
+    
+    _orientationListener = [[VROCameraOrientationListener alloc] initWithCameraTexture:shared];
+    [[NSNotificationCenter defaultCenter] addObserver:_orientationListener
+                                             selector:@selector(orientationDidChange:)
+                                                 name:UIApplicationDidChangeStatusBarOrientationNotification
+                                               object:nil];
     return true;
+}
+
+void VROCameraTextureiOS::updateOrientation(VROCameraOrientation orientation) {
+    AVCaptureVideoDataOutput *output = [[_captureSession outputs] objectAtIndex:0];
+    
+    AVCaptureConnection *connection = [output connectionWithMediaType:AVMediaTypeVideo];
+    if (orientation == VROCameraOrientation::Portrait) {
+        [connection setVideoOrientation:AVCaptureVideoOrientationPortrait];
+    }
+    else if (orientation == VROCameraOrientation::LandscapeLeft) {
+        [connection setVideoOrientation:AVCaptureVideoOrientationLandscapeLeft];
+    }
+    else if (orientation == VROCameraOrientation::LandscapeRight) {
+        [connection setVideoOrientation:AVCaptureVideoOrientationLandscapeRight];
+    }
+    else {
+        [connection setVideoOrientation:AVCaptureVideoOrientationPortraitUpsideDown];
+    }
 }
 
 void VROCameraTextureiOS::pause() {
@@ -144,6 +181,34 @@ void VROCameraTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didDropSampleBuffer:(CMSampleBufferRef)sampleBuffer
        fromConnection:(AVCaptureConnection *)connection {
     
+}
+
+@end
+
+@interface VROCameraOrientationListener ()
+
+@property (readwrite, nonatomic) std::weak_ptr<VROCameraTextureiOS> texture;
+
+@end
+
+@implementation VROCameraOrientationListener
+
+- (id)initWithCameraTexture:(std::shared_ptr<VROCameraTextureiOS>)texture {
+    self = [super init];;
+    if (self) {
+        self.texture = texture;
+    }
+    return self;
+}
+
+- (void)orientationDidChange:(NSNotification *)notification {
+    std::shared_ptr<VROCameraTextureiOS> texture = self.texture.lock();
+    if (!texture) {
+        return;
+    }
+    
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    texture->updateOrientation(VROCameraTextureiOS::toCameraOrientation(orientation));
 }
 
 @end

@@ -116,11 +116,13 @@ public:
     void setBackgroundRotation(VROQuaternion rotation);
     
     /*
-     Set the background of the scene to the given texture, to be rendered
-     orthographically across the screen.
+     Set the background of the scene to an arbitrary geometry. All this
+     guarantees is that the given object will be rendered first. No
+     properties will be set on this geometry, but typically background
+     geometries are screen-space, and do not read or write to teh depth
+     buffer.
      */
-    void setBackgroundOrthographicTexture(std::shared_ptr<VROTexture> texture,
-                                          float viewportWidth, float viewportHeight);
+    void setBackground(std::shared_ptr<VROGeometry> geometry);
     
     std::shared_ptr<VROGeometry> getBackground() const {
         return _background;

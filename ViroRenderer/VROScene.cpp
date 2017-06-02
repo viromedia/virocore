@@ -178,19 +178,9 @@ void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
     material->setReadsFromDepthBuffer(false);
 }
 
-void VROScene::setBackgroundOrthographicTexture(std::shared_ptr<VROTexture> texture,
-                                                float viewportWidth, float viewportHeight) {
+void VROScene::setBackground(std::shared_ptr<VROGeometry> background) {
     passert_thread();
-    _background = VROSurface::createSurface(viewportWidth / 2.0, viewportHeight / 2.0, viewportWidth, viewportHeight,
-                                            0, 0, 1, 1);
-    _background->setScreenSpace(true);
-    _background->setName("Background");
- 
-    std::shared_ptr<VROMaterial> material = _background->getMaterials()[0];
-    material->setLightingModel(VROLightingModel::Constant);
-    material->getDiffuse().setTexture(texture);
-    material->setWritesToDepthBuffer(false);
-    material->setReadsFromDepthBuffer(false);
+    _background = background;
 }
 
 void VROScene::detachInputController(std::shared_ptr<VROInputControllerBase> controller){

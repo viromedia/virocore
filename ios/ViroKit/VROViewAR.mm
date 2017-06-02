@@ -28,7 +28,8 @@
     std::shared_ptr<gvr::AudioApi> _gvrAudio;
     std::unique_ptr<VROHeadTracker> _headTracker;
     std::unique_ptr<VROEye> _eye;
-    std::shared_ptr<VROCameraTextureiOS> _cameraBackground;
+    std::shared_ptr<VROSurface> _cameraBackground;
+    std::shared_ptr<VROCameraTextureiOS> _cameraTexture;
     
     CADisplayLink *_displayLink;
     int _frame;
@@ -131,7 +132,15 @@
 #pragma mark - Settings and Notifications
 
 - (void)orientationDidChange:(NSNotification *)notification {
-    _headTracker->updateDeviceOrientation([UIApplication sharedApplication].statusBarOrientation);
+    UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+    _headTracker->updateDeviceOrientation(orientation);
+    
+    if (_cameraBackground) {
+        _cameraBackground->setX(self.bounds.size.width * self.contentScaleFactor / 2.0);
+        _cameraBackground->setY(self.bounds.size.height * self.contentScaleFactor / 2.0);
+        _cameraBackground->setWidth(self.bounds.size.width * self.contentScaleFactor);
+        _cameraBackground->setHeight(self.bounds.size.height * self.contentScaleFactor);
+    }
 }
 
 - (void)applicationWillResignActive:(NSNotification *)notification {
@@ -285,11 +294,26 @@
 }
 
 - (void)initCameraBackgroundWithViewport:(VROViewport)viewport forScene:(std::shared_ptr<VROScene>)scene {
-    _cameraBackground = std::make_shared<VROCameraTextureiOS>(VROTextureType::Texture2D);
-    _cameraBackground->initCamera(VROCameraPosition::Back, _driver);
-    _cameraBackground->play();
+    VROCameraOrientation orientation = VROCameraTextureiOS::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]);
     
-    scene->setBackgroundOrthographicTexture(_cameraBackground, viewport.getWidth(), viewport.getHeight());
+    _cameraTexture = std::make_shared<VROCameraTextureiOS>(VROTextureType::Texture2D);
+    _cameraTexture->initCamera(VROCameraPosition::Back, orientation, _driver);
+    _cameraTexture->play();
+    
+    _cameraBackground = VROSurface::createSurface(viewport.getX() + viewport.getWidth()  / 2.0,
+                                                  viewport.getY() + viewport.getHeight() / 2.0,
+                                                  viewport.getWidth(), viewport.getHeight(),
+                                                  0, 0, 1, 1);
+    _cameraBackground->setScreenSpace(true);
+    _cameraBackground->setName("Camera");
+    
+    std::shared_ptr<VROMaterial> material = _cameraBackground->getMaterials()[0];
+    material->setLightingModel(VROLightingModel::Constant);
+    material->getDiffuse().setTexture(_cameraTexture);
+    material->setWritesToDepthBuffer(false);
+    material->setReadsFromDepthBuffer(false);
+
+    scene->setBackground(_cameraBackground);
 }
 
 - (void)recenterTracking {

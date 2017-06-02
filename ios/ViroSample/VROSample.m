@@ -566,7 +566,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     int height = 10;
 
     std::shared_ptr<VROCameraTextureiOS> texture = std::make_shared<VROCameraTextureiOS>(VROTextureType::Texture2D);
-    texture->initCamera(VROCameraPosition::Back, self.driver);
+    texture->initCamera(VROCameraPosition::Back, VROCameraOrientation::Portrait, self.driver);
     texture->play();
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
