@@ -3,7 +3,6 @@
  */
 package com.viro.renderer.jni;
 
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,6 +38,15 @@ public class OpenCVJni {
         return BitmapFactory.decodeFile(imgFile.getAbsolutePath());
     }
 
+    public Bitmap readAndWriteBitmap() {
+        String inputFilePath = writeAssetImageToCache("ben.jpg");
+        String outputFilePath = mContext.getCacheDir().getAbsolutePath() + File.separator + OUTPUT_PREFIX + "foobario.png";
+
+        nativeReadWriteBitmap(inputFilePath, outputFilePath);
+
+        return BitmapFactory.decodeFile(new File(outputFilePath).getAbsolutePath());
+    }
+
     private String writeAssetImageToCache(String inputName) {
         return writeAssetImageToCache(inputName, inputName);
     }
@@ -58,7 +66,7 @@ public class OpenCVJni {
             FileOutputStream fos = new FileOutputStream(new File(outputFilePath));
             fos.write(buffer);
             fos.close();
-        } catch(Exception e) {
+        } catch (Exception e) {
             Log.e("OpenCVJni", "oops! failed to write image [" + inputName + "] to output[" + outputName + "]", e);
             return null; // return null if we errored writing it out!
         }
@@ -66,4 +74,6 @@ public class OpenCVJni {
     }
 
     private native void nativeRunEdgeDetection(String input, String output);
+
+    private native void nativeReadWriteBitmap(String in, String out);
 }

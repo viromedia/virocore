@@ -9,6 +9,7 @@
 #import "VROSample.h"
 #import "opencv2/imgcodecs/ios.h"
 #import "opencv2/imgproc/imgproc.hpp"
+#import "VROImageTracker.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneOBJ = 0,
@@ -47,9 +48,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 
 - (std::shared_ptr<VROSceneController>)loadSceneWithIndex:(int)index {
-    // uncomment the below lines to test the AR library
-    // [self runEdgeDetect];
-    // [self.view setVrMode:NO];
+    // uncomment the below line to test the AR library, look for logs "Found corner".
+    //[self runImageDetection];
 
     int modulo = index % VROSampleSceneNumScenes;
     switch (modulo) {
@@ -114,42 +114,36 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                       VROTextureInternalFormat::RGBA8));
 }
 
-- (void) runEdgeDetect {
-    NSString* imagePath = [[NSBundle mainBundle] pathForResource:@"boba"
-                                                          ofType:@"png"];
-    
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSError *error;
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    
-    NSString *inputPath = [documentsDirectory stringByAppendingPathComponent:@"boba.png"];
-    
-    [fileManager copyItemAtPath:imagePath toPath:inputPath error:&error];
-    
-    UIImage *inputImage = [[UIImage alloc] initWithContentsOfFile:inputPath];
-    
-    cv::Mat inputMat = cv::Mat();
-    UIImageToMat(inputImage, inputMat);
-    
-    cv::Mat grayMat = cv::Mat(inputMat.rows, inputMat.cols, CV_8UC1);
-    cv::cvtColor(inputMat, grayMat, cv::COLOR_BGR2GRAY);
-    
-    cv::Mat outputMat = cv::Mat(inputMat.rows, inputMat.cols, CV_8UC1);
-    
-    NSString *outputPath = [documentsDirectory stringByAppendingPathComponent:@"edge_boba.png"];
-    
-    VROOpenCV::runEdgeDetection(inputMat, outputMat);
-    
-    [self.view setVrMode:NO];
-    
-    UIImage *image = MatToUIImage(outputMat);
+- (void) runImageDetection {
 
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
-    imageView.frame = UIScreen.mainScreen.bounds;
+    // fetch the target image to find
+    UIImage *targetImage = [UIImage imageNamed:@"ben.jpg"];
+
+    cv::Mat targetMat = cv::Mat();
+    UIImageToMat(targetImage, targetMat);
     
-    [[[UIApplication sharedApplication] keyWindow] addSubview:imageView];
-    [[[UIApplication sharedApplication] keyWindow] bringSubviewToFront:imageView];
+    // convert it to grayscale
+    cv::Mat grayTargetMat = cv::Mat(targetMat.rows, targetMat.cols, CV_8UC1);
+    cv::cvtColor(targetMat, grayTargetMat, cv::COLOR_BGR2GRAY);
+
+    // initialize the tracker with the gray target image
+    std::shared_ptr<VROImageTracker> tracker = VROImageTracker::createImageTracker(grayTargetMat);
+
+    // fetch the scene image (the "camera" feed)
+    cv::Mat sceneMat;
+    UIImage *sceneImage = [UIImage imageNamed:@"screenshot.png"];
+    UIImageToMat(sceneImage, sceneMat);
+
+    // find the target.
+    std::shared_ptr<VROImageTrackerOutput> output = tracker->findTarget(sceneMat);
+
+    if (output->found) {
+        for (int i = 0; i < output->corners.size(); i++) {
+            NSLog(@"Found corner point: %f %f", output->corners[i].x, output->corners[i].y);
+        }
+    } else {
+        NSLog(@"Couldn't find target in given image");
+    }
 }
 
 - (std::shared_ptr<VROSceneController>)loadVideoSphereScene {

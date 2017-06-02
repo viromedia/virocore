@@ -10,6 +10,7 @@ package com.viromedia.renderertest;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,7 @@ import com.viro.renderer.jni.DirectionalLightJni;
 import com.viro.renderer.jni.EventDelegateJni;
 import com.viro.renderer.jni.GlListener;
 import com.viro.renderer.jni.ImageJni;
+import com.viro.renderer.jni.ImageTrackerJni;
 import com.viro.renderer.jni.MaterialJni;
 import com.viro.renderer.jni.NodeJni;
 import com.viro.renderer.jni.ObjectJni;
@@ -49,6 +51,8 @@ import com.viro.renderer.jni.ViroGvrLayout;
 import com.viro.renderer.jni.ViroOvrView;
 import com.viro.renderer.jni.VrView;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -82,8 +86,9 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         mVrView.validateApiKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
         setContentView(mVrView.getContentView());
 
-        // uncomment the below line to test the AR library.
-        // testEdgeDetect();
+        // uncomment the below line to test AR.
+        //testEdgeDetect();
+        //testFindTarget();
     }
 
     @Override
@@ -169,6 +174,27 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         ImageView image = new ImageView(this);
         image.setImageBitmap(bm);
         setContentView(image);
+    }
+
+    private void testFindTarget() {
+        Bitmap targetImage = getBitmapFromAssets("ben.jpg");
+        Bitmap screenshot = getBitmapFromAssets("screenshot.png");
+        if (targetImage != null && screenshot != null) {
+            ImageTrackerJni tracker = new ImageTrackerJni(this, targetImage);
+            tracker.findTarget(screenshot);
+        }
+    }
+
+    private Bitmap getBitmapFromAssets(String assetName) {
+        InputStream istr;
+        Bitmap bitmap = null;
+        try {
+            istr = getAssets().open(assetName);
+            bitmap = BitmapFactory.decodeStream(istr);
+        } catch (IOException e) {
+            return null;
+        }
+        return bitmap;
     }
 
     private List<NodeJni> testText(Context context) {

@@ -81,6 +81,8 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/LazyMaterial_JNI.cpp
              src/main/cpp/jni/Polyline_JNI.cpp
              src/main/cpp/jni/OpenCV_JNI.cpp
+             src/main/cpp/jni/ImageTracker_JNI.cpp
+             src/main/cpp/jni/ImageTrackerOutput_JNI.cpp
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp
@@ -187,6 +189,10 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROPhysicsWorld.cpp
              ../../ViroRenderer/VROPhysicsBody.cpp
              ../../ViroRenderer/VROPhysicsShape.cpp
+
+             # Image Tracking
+             ../../ViroRenderer/VROImageTracker.cpp
+             ../../ViroRenderer/VROImageTrackerOutput.cpp
              )
 
 # Add pre-built libraries

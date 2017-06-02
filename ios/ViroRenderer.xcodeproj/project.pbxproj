@@ -22,6 +22,11 @@
 		8A35172A1EDE035300B6E786 /* VROOpenCV.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A3517281EDE035300B6E786 /* VROOpenCV.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A35172B1EDE04A500B6E786 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1821ED8D5EA00757C29 /* opencv2.framework */; };
 		8A35172C1EDE04B500B6E786 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */; };
+		8A35172F1EE09E3F00B6E786 /* VROImageTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A35172D1EE09E3F00B6E786 /* VROImageTracker.cpp */; };
+		8A3517321EE0A50A00B6E786 /* screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A3517301EE0A50A00B6E786 /* screenshot.png */; };
+		8A3517331EE0A50A00B6E786 /* ben.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A3517311EE0A50A00B6E786 /* ben.jpg */; };
+		8A3517361EE0B55400B6E786 /* VROImageTrackerOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A3517341EE0B55400B6E786 /* VROImageTrackerOutput.cpp */; };
+		8A3517371EE0B55400B6E786 /* VROImageTrackerOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A3517351EE0B55400B6E786 /* VROImageTrackerOutput.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8ABD8F301DB6970600BD9C83 /* VROApiKeyValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F2E1DB6970600BD9C83 /* VROApiKeyValidator.h */; };
 		8ABD8F311DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD8F2F1DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m */; };
 		8ABD8F371DB72CDD00BD9C83 /* VROApiKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD8F351DB70CE400BD9C83 /* VROApiKey.m */; };
@@ -518,6 +523,12 @@
 		8A130DA61E401B910050D83B /* VROSoundDataDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSoundDataDelegate.h; sourceTree = "<group>"; };
 		8A3517271EDE035300B6E786 /* VROOpenCV.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROOpenCV.cpp; sourceTree = "<group>"; };
 		8A3517281EDE035300B6E786 /* VROOpenCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROOpenCV.h; sourceTree = "<group>"; };
+		8A35172D1EE09E3F00B6E786 /* VROImageTracker.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROImageTracker.cpp; sourceTree = "<group>"; };
+		8A35172E1EE09E3F00B6E786 /* VROImageTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROImageTracker.h; sourceTree = "<group>"; };
+		8A3517301EE0A50A00B6E786 /* screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = screenshot.png; path = ViroSample/screenshot.png; sourceTree = "<group>"; };
+		8A3517311EE0A50A00B6E786 /* ben.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = ben.jpg; path = ViroSample/ben.jpg; sourceTree = "<group>"; };
+		8A3517341EE0B55400B6E786 /* VROImageTrackerOutput.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROImageTrackerOutput.cpp; sourceTree = "<group>"; };
+		8A3517351EE0B55400B6E786 /* VROImageTrackerOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROImageTrackerOutput.h; sourceTree = "<group>"; };
 		8ABD8F2E1DB6970600BD9C83 /* VROApiKeyValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROApiKeyValidator.h; sourceTree = "<group>"; };
 		8ABD8F2F1DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VROApiKeyValidatorDynamo.m; sourceTree = "<group>"; };
 		8ABD8F341DB70CE400BD9C83 /* VROApiKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROApiKey.h; sourceTree = "<group>"; };
@@ -1158,6 +1169,10 @@
 				8F4DCE381BFBD19B00061DD7 /* VROMaterialVisual.cpp */,
 				8F4DCE361BFBCB8200061DD7 /* VROTexture.h */,
 				8F4DCE351BFBCB8200061DD7 /* VROTexture.cpp */,
+				8A35172E1EE09E3F00B6E786 /* VROImageTracker.h */,
+				8A35172D1EE09E3F00B6E786 /* VROImageTracker.cpp */,
+				8A3517351EE0B55400B6E786 /* VROImageTrackerOutput.h */,
+				8A3517341EE0B55400B6E786 /* VROImageTrackerOutput.cpp */,
 				8FD4DE9D1C16432B003DC425 /* VROLight.h */,
 				8FD4DE9C1C16432B003DC425 /* VROLight.cpp */,
 				8F517BF91BCDC8C20017C70B /* VRORenderContext.h */,
@@ -1765,6 +1780,8 @@
 				8F1071D21BF40FAF003B3C3F /* momentslogo.png */,
 				8FD4DF971C1CD67B003DC425 /* specular.png */,
 				8F5C41541BD82C1B006D7A77 /* boba.png */,
+				8A3517301EE0A50A00B6E786 /* screenshot.png */,
+				8A3517311EE0A50A00B6E786 /* ben.jpg */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1878,6 +1895,7 @@
 				8A130DA51E40187F0050D83B /* VROSoundData.h in Headers */,
 				8FB2B5951E1445BB00EDB629 /* VROAnimationGroup.h in Headers */,
 				8A130D751E3A937D0050D83B /* VROSoundDelegateInternal.h in Headers */,
+				8A3517371EE0B55400B6E786 /* VROImageTrackerOutput.h in Headers */,
 				8F2D1BB41EC3785C00E7BF44 /* VROBone.h in Headers */,
 				8FDDB49D1DADB8C200DE0968 /* VROLightingUBO.h in Headers */,
 				8F0FE67F1CD3E12F00A4C297 /* VROShaderProgram.h in Headers */,
@@ -2180,6 +2198,7 @@
 				8F618E2B1EB926B60020B33B /* Heart_Diffuse.jpg in Resources */,
 				8F9278021C66BD4500FF892A /* py1.jpg in Resources */,
 				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
+				8A3517321EE0A50A00B6E786 /* screenshot.png in Resources */,
 				8F705DF51E8F5D42008BE8F8 /* earth_normal.jpg in Resources */,
 				8F9278011C66BD4500FF892A /* px1.jpg in Resources */,
 				8FCED0751EBBD35200C19BCA /* Jetpack_Normal.png in Resources */,
@@ -2232,6 +2251,7 @@
 				8F660AB01E931C6F006D063F /* 4096_bump.jpg in Resources */,
 				8FCED05F1EBBCFCF00C19BCA /* Squid_Specular.png in Resources */,
 				8FCED0761EBBD35200C19BCA /* Jetpack_Spec.png in Resources */,
+				8A3517331EE0A50A00B6E786 /* ben.jpg in Resources */,
 				8F50FC8B1E0AF54F00A9B4B2 /* male02.obj in Resources */,
 				8F5C41551BD82C1B006D7A77 /* boba.png in Resources */,
 				8F50FC8A1E0AF54F00A9B4B2 /* male02.mtl in Resources */,
@@ -2378,6 +2398,7 @@
 			files = (
 				8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */,
 				A58697811E30843000191090 /* VROInputControllerBase.cpp in Sources */,
+				8A35172F1EE09E3F00B6E786 /* VROImageTracker.cpp in Sources */,
 				8F517BC11BCDA2BD0017C70B /* VROSample.m in Sources */,
 				8F517BBB1BCDA2BD0017C70B /* main.m in Sources */,
 				8F17701B1E74C01900235C21 /* VROGVRUtil.cpp in Sources */,
@@ -2517,6 +2538,7 @@
 				8F39A31C1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp in Sources */,
 				8FC908861CA458EB00069C89 /* VRONodeCamera.cpp in Sources */,
 				8FCB0FFA1DCFF68E00FE425C /* VROAudioPlayeriOS.cpp in Sources */,
+				8A3517361EE0B55400B6E786 /* VROImageTrackerOutput.cpp in Sources */,
 				8FD4DEEF1C18ED0B003DC425 /* VROImageUtil.cpp in Sources */,
 				8ABD8F311DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m in Sources */,
 				8F0856581C87960900E66709 /* VROGeometryUtil.cpp in Sources */,
