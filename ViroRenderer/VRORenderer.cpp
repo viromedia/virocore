@@ -33,7 +33,7 @@ static const double kFPSTarget = 60;
 // mono-rendering mode. This is similar to Hor+ scaling, in that one
 // dimension is fixed, and other is dependent on the viewport. Note
 // this value is degrees from edge to edge of the frustum.
-static const double kFovMonoHorizontal = 45;
+static const double kFovMonoHorizontal = 90;
 
 #pragma mark - Initialization
 
@@ -93,7 +93,7 @@ double VRORenderer::getFPS() const {
     return 1.0 / (averageNanos / (double) 1e9);
 }
 
-#pragma mark - Accessors
+#pragma mark - Viewport and FOV
 
 VROFieldOfView VRORenderer::computeMonoFOV(int viewportWidth, int viewportHeight) const {
     return computeFOV(kFovMonoHorizontal, viewportWidth, viewportHeight);
@@ -102,13 +102,13 @@ VROFieldOfView VRORenderer::computeMonoFOV(int viewportWidth, int viewportHeight
 VROFieldOfView VRORenderer::computeFOV(float horizontalFOVDegrees, int viewportWidth, int viewportHeight) const {
     if (viewportWidth < viewportHeight) {
         float fovX = horizontalFOVDegrees;
-        float fovY = fovX * 2 * atan((tan(toRadians(fovX / 2.0)) / (double) viewportWidth) * (double) viewportHeight);
+        float fovY = toDegrees(2 * atan(tan(toRadians(fovX / 2.0)) * viewportHeight / viewportWidth));
         
         return { fovX / 2.0f, fovX / 2.0f, fovY / 2.0f, fovY / 2.0f };
     }
     else {
         float fovY = horizontalFOVDegrees;
-        float fovX = fovY * 2 * atan((tan(toRadians(fovY / 2.0)) / (double) viewportHeight) * (double) viewportWidth);
+        float fovX = toDegrees(2 * atan(tan(toRadians(fovY / 2.0)) * viewportWidth / viewportHeight));
         
         return { fovX / 2.0f, fovX / 2.0f, fovY / 2.0f, fovY / 2.0f };
     }

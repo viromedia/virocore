@@ -82,8 +82,7 @@ GLKMatrix4 GLMatrixFromRotationMatrix(CMRotationMatrix rotationMatrix) {
 #endif
 
 VROHeadTracker::VROHeadTracker() :
-    // this assumes the device is landscape with the home button on the right (UIInterfaceOrientationLandscapeRight)
-    _worldToDeviceMatrix(GetRotateEulerMatrix(0.f, 0.f, -90.f)),
+    _worldToDeviceMatrix(GetRotateEulerMatrix(0.f, 0.f, 0.f)),
 
     // the inertial reference frame has z up and x forward, while the world has -z forward and x right
     _IRFToWorldMatrix(GetRotateEulerMatrix(-90.f, 0.f, 90.f)),

@@ -74,7 +74,7 @@ public:
     
     void updateRenderViewSize(float width, float height);
     
-#pragma mark - Renderer properties
+#pragma mark - Viewport and FOV
 
     /*
      Get the field of view to use for a viewport of the given size. This function
