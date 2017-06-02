@@ -62,6 +62,7 @@ public:
      */
     VROGeometry() :
         _cameraEnclosure(false),
+        _screenSpace(false),
         _bounds(nullptr),
         _substrate(nullptr) {
         
