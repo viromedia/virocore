@@ -52,6 +52,10 @@ public class SceneJni {
         nativeSetPhysicsWorldGravity(mNativeRef, gravity);
     }
 
+    public void setPhysicsDebugDraw(boolean debugDraw){
+        nativeSetPhysicsWorldDebugDraw(mNativeRef, debugDraw);
+    }
+
     public void attachBodyToPhysicsWorld(NodeJni node){
         nativeAttachToPhysicsWorld(mNativeRef, node.mNativeRef);
     }
@@ -150,6 +154,7 @@ public class SceneJni {
     private native void findCollisionsWithShapeAsync(long sceneRef, float[] from, float[] to,
                                            String shapeType, float[] params, String tag,
                                            PhysicsWorldHitTestCallback callback);
+    private native void nativeSetPhysicsWorldDebugDraw(long sceneRef, boolean debugDraw);
     /**
      * Callback used to notify the bridge when the requested hit test
      * (with ray/shapes) with this given implemented callback have completed.

@@ -49,6 +49,7 @@ VRORenderer::VRORenderer(std::shared_ptr<VROInputControllerBase> inputController
     _mpfTarget = 1000.0 / kFPSTarget;
 
     _context = std::make_shared<VRORenderContext>(_frameSynchronizer, _frameScheduler);
+    _context->setPencil(std::make_shared<VROPencil>());
     memset(_fpsTickArray, 0x0, sizeof(_fpsTickArray));
 }
 
@@ -236,21 +237,22 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
      coordinate (e.g., Z=0).
      */
     _context->setOrthographicMatrix(viewport.getOrthographicProjection(0, kZFar));
+    _context->getPencil()->clear();
 
     const VRORenderContext &context = *_context.get();
     if (_sceneController) {
         if (_outgoingSceneController) {
             std::shared_ptr<VROScene> outgoingScene = _outgoingSceneController->getScene();
             outgoingScene->computeTransforms(context);
-            outgoingScene->computePhysics();
+            outgoingScene->computePhysics(context);
             outgoingScene->applyConstraints(context);
             outgoingScene->updateVisibility(context);
             outgoingScene->updateSortKeys(context, driver);
         }
-        
+
         std::shared_ptr<VROScene> scene = _sceneController->getScene();
         scene->computeTransforms(context);
-        scene->computePhysics();
+        scene->computePhysics(context);
         scene->applyConstraints(context);
         scene->updateVisibility(context);
         scene->updateSortKeys(context, driver);
@@ -306,6 +308,8 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     if (delegate) {
         delegate->didRenderEye(eye, _context.get());
     }
+
+    _context->getPencil()->render(*_context.get(), driver);
 }
 
 void VRORenderer::endFrame(std::shared_ptr<VRODriver> driver) {

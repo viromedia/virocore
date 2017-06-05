@@ -9,6 +9,7 @@
 #include "VROPhysicsBodyDelegate.h"
 #include <btBulletDynamicsCommon.h>
 #include "VROPhysicsContactResultCallback.h"
+#include "VROPhysicsDebugDraw.h"
 
 static const float kPhysicsStepTime = 1 / 60.f;
 static const float kPhysicsMaxSteps = 10;
@@ -28,6 +29,9 @@ VROPhysicsWorld::VROPhysicsWorld() {
 
     // Default to Earth's gravity if none is set.
     _dynamicsWorld->setGravity({0,-9.81f,0});
+
+    _debugDrawVisible = false;
+    _debugDraw = nullptr;
 }
 
 VROPhysicsWorld::~VROPhysicsWorld() {
@@ -37,6 +41,14 @@ VROPhysicsWorld::~VROPhysicsWorld() {
     delete _collisionDispatcher;
     delete _collisionConfiguration;
     delete _broadphase;
+
+    if (_debugDraw != nullptr) {
+        delete _debugDraw;
+    }
+}
+
+void VROPhysicsWorld::setDebugDrawVisible(bool isVisible) {
+    _debugDrawVisible = isVisible;
 }
 
 void VROPhysicsWorld::setGravity(VROVector3f gravity){
@@ -73,7 +85,7 @@ void VROPhysicsWorld::removePhysicsBody(std::shared_ptr<VROPhysicsBody> body) {
     }
 }
 
-void VROPhysicsWorld::computePhysics() {
+void VROPhysicsWorld::computePhysics(const VRORenderContext &context) {
     // Update all VROPhysicsBodies as need be before the physics step.
     std::map<std::string, std::shared_ptr<VROPhysicsBody>>::iterator it;
     for (it = _activePhysicsBodies.begin(); it != _activePhysicsBodies.end(); ++it) {
@@ -107,6 +119,17 @@ void VROPhysicsWorld::computePhysics() {
 
     // Cycle through collisions that has resulted from the step.
     computeCollisions();
+
+    // If debug draw is true, render a set of lines that represents the collision mesh of
+    // every physics body contained within this world.
+    if (_debugDrawVisible) {
+        if (_debugDraw == nullptr) {
+            _debugDraw = new VROPhysicsDebugDraw(context.getPencil());
+            _debugDraw->setDebugMode(btIDebugDraw::DebugDrawModes::DBG_DrawWireframe);
+            _dynamicsWorld->setDebugDrawer(_debugDraw);
+        }
+        _dynamicsWorld->debugDrawWorld();
+    }
 }
 
 void VROPhysicsWorld::computeCollisions() {

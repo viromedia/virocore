@@ -25,12 +25,18 @@ static const int kNumJointSegments = 16;
 static std::shared_ptr<VROShaderModifier> sPolylineShaderModifier;
 
 std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f> &path, float thickness) {
+    std::vector<std::vector<VROVector3f>> paths;
+    paths.push_back(path);
+    return createPolyline(paths, thickness);
+}
+
+std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<std::vector<VROVector3f>> &paths, float thickness) {
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
-    buildGeometry(path, sources, elements);
-    
+    buildGeometry(paths, sources, elements);
+
     std::shared_ptr<VROPolyline> polyline = std::shared_ptr<VROPolyline>(new VROPolyline(sources, elements, thickness));
-    
+
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     material->getDiffuse().setColor({ 1.0, 1.0, 1.0, 1.0 });
     material->setCullMode(VROCullMode::None);
@@ -38,26 +44,28 @@ std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<VROVector3f
     polyline->setMaterials({ material });
     return polyline;
 }
-
-void VROPolyline::buildGeometry(std::vector<VROVector3f> &path,
+void VROPolyline::buildGeometry(std::vector<std::vector<VROVector3f>> &paths,
                                 std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                                 std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
-    
+
     VROByteBuffer buffer;
-    size_t numVertices = encodeLine(path, buffer);
+    size_t numVertices = 0;
+    for (std::vector<VROVector3f> path : paths){
+        numVertices = numVertices + encodeLine(path, buffer);
+    }
     std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) buffer.getData(), buffer.getPosition());
-    
+
     std::vector<std::shared_ptr<VROGeometrySource>> genSources = VROShapeUtilBuildGeometrySources(vertexData, numVertices);
     for (std::shared_ptr<VROGeometrySource> source : genSources) {
         sources.push_back(source);
     }
-    
+
     // Each vertex is used exactly once in this strip
     int indices[numVertices];
     for (int i = 0; i < numVertices; i++) {
         indices[i] = i;
     }
-    
+
     std::shared_ptr<VROData> indexData = std::make_shared<VROData>((void *) indices, sizeof(int) * numVertices);
     std::shared_ptr<VROGeometryElement> element = std::make_shared<VROGeometryElement>(indexData,
                                                                                        VROGeometryPrimitiveType::TriangleStrip,
@@ -76,7 +84,7 @@ size_t VROPolyline::encodeLine(const std::vector<VROVector3f> path,
         const VROVector3f &previousCoord = path[i - 1];
         const VROVector3f &currentCoord = path[i];
         
-        VROLineSegment segment({previousCoord.x, previousCoord.y}, {currentCoord.x, currentCoord.y});
+        VROLineSegment segment({previousCoord.x, previousCoord.y, previousCoord.z}, {currentCoord.x, currentCoord.y, currentCoord.z});
         numCorners += encodeCircularEndcap(previousCoord, true, true, outBuffer);
         numCorners += encodeQuad(segment, true, true, outBuffer);
     }

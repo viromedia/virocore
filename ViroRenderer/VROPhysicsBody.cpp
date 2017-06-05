@@ -24,25 +24,6 @@ VROPhysicsBody::VROPhysicsBody(std::shared_ptr<VRONode> node, VROPhysicsBody::VR
         mass = 0;
     }
 
-    // Create the underlying Bullet Rigid body with a bullet shape if possible.
-    // If no VROPhysicsShape is provided, one is inferred during a computePhysics pass.
-    btVector3 uniformInertia = btVector3(1,1,1);
-    btCollisionShape *collisionShape = shape == nullptr ? nullptr : shape->getBulletShape();
-    btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(mass , nullptr, collisionShape, uniformInertia);
-
-    // Notify renderer (primarily the physics world) that this VROPhysicsBody has changed.
-    _needsBulletUpdate = true;
-    _rigidBody = new btRigidBody(groundRigidBodyCI);
-    _rigidBody->setUserPointer(this);
-
-    // Set appropriate collision flags for the corresponding VROPhysicsBodyType
-    if (type == VROPhysicsBody::VROPhysicsBodyType::Kinematic) {
-        _rigidBody->setCollisionFlags(_rigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
-        _rigidBody->setActivationState(DISABLE_DEACTIVATION);
-    } else if (type == VROPhysicsBody::VROPhysicsBodyType::Static) {
-        _rigidBody->setCollisionFlags(_rigidBody->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
-    }
-
     // Default physics properties
     _enableSimulation = true;
     _useGravity = true;
@@ -50,13 +31,40 @@ VROPhysicsBody::VROPhysicsBody(std::shared_ptr<VRONode> node, VROPhysicsBody::VR
     _shape = shape;
     _type = type;
     _mass = mass;
-    _inertia = VROVector3f({uniformInertia.x(), uniformInertia.y(), uniformInertia.z()});
+    _inertia = VROVector3f(1,1,1);
 
     ++sPhysicsBodyIdCounter;
     _key = VROStringUtil::toString(sPhysicsBodyIdCounter);
+    createBulletBody();
+
+    // Schedule this physics body for an update in the computePhysics pass.
+    _needsBulletUpdate = true;
 }
 
 VROPhysicsBody::~VROPhysicsBody() {
+    releaseBulletBody();
+}
+
+void VROPhysicsBody::createBulletBody() {
+    // Create the underlying Bullet Rigid body with a bullet shape if possible.
+    // If no VROPhysicsShape is provided, one is inferred during a computePhysics pass.
+    btVector3 uniformInertia = btVector3(1,1,1);
+    btCollisionShape *collisionShape = _shape == nullptr ? nullptr : _shape->getBulletShape();
+    btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(_mass , nullptr, collisionShape, uniformInertia);
+
+    _rigidBody = new btRigidBody(groundRigidBodyCI);
+    _rigidBody->setUserPointer(this);
+
+    // Set appropriate collision flags for the corresponding VROPhysicsBodyType
+    if (_type == VROPhysicsBody::VROPhysicsBodyType::Kinematic) {
+        _rigidBody->setCollisionFlags(_rigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+        _rigidBody->setActivationState(DISABLE_DEACTIVATION);
+    } else if (_type == VROPhysicsBody::VROPhysicsBodyType::Static) {
+        _rigidBody->setCollisionFlags(_rigidBody->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
+    }
+}
+
+void VROPhysicsBody::releaseBulletBody() {
     _rigidBody->setUserPointer(nullptr);
     btMotionState *state = _rigidBody->getMotionState();
     if (state != nullptr) {
@@ -157,26 +165,19 @@ bool VROPhysicsBody::needsBulletUpdate() {
 }
 
 void VROPhysicsBody::updateBulletRigidBody() {
-    if (!_needsBulletUpdate){
+    if (!_needsBulletUpdate) {
         return;
     }
 
-    // Update the rigid body to the latest world transform.
     std::shared_ptr<VRONode> node = _w_node.lock();
-    if (node){
-        if (_rigidBody->getMotionState() == nullptr) {
-            VROPhysicsMotionState *motionState = new VROPhysicsMotionState(shared_from_this());
-            _rigidBody->setMotionState(motionState);
-        }
-
-        btTransform transform;
-        getWorldTransform(transform);
-        _rigidBody->setWorldTransform(transform);
+    if (node == nullptr) {
+        pwarn("Mis-configured VROPhysicsBody is missing an attached node required for updating!");
+        return;
     }
 
     // Update the rigid body to reflect the latest VROPhysicsShape.
     // If shape is not defined, we attempt to infer the shape from the node's geometry.
-    if ((_shape == nullptr || _shape->getIsGeneratedFromGeometry()) && node && node->getGeometry()){
+    if ((_shape == nullptr || _shape->getIsGeneratedFromGeometry()) && node->getGeometry()) {
         _shape = std::make_shared<VROPhysicsShape>(node);
     } else if (_shape == nullptr) {
         pwarn("No collision shape detected for this rigidbody... defaulting to basic box shape.");
@@ -184,6 +185,17 @@ void VROPhysicsBody::updateBulletRigidBody() {
         _shape = std::make_shared<VROPhysicsShape>(VROPhysicsShape::VROShapeType::Box, params);
     }
     _rigidBody->setCollisionShape(_shape->getBulletShape());
+
+    // Update Motion states as necessary.
+    if (_rigidBody->getMotionState() == nullptr) {
+        VROPhysicsMotionState *motionState = new VROPhysicsMotionState(shared_from_this());
+        _rigidBody->setMotionState(motionState);
+    }
+
+    // Update the rigid body to the latest world transform.
+    btTransform transform;
+    getWorldTransform(transform);
+    _rigidBody->setWorldTransform(transform);
 
     // Set flag to false indicating that the modifications has applied to the bullet rigid body.
     _needsBulletUpdate = false;

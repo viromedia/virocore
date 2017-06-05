@@ -165,6 +165,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROSphere.cpp
              ../../ViroRenderer/VROPolyline.cpp
              ../../ViroRenderer/VROVideoSurface.cpp
+             ../../ViroRenderer/VROPencil.cpp
 
              # UI
              ../../ViroRenderer/VROReticle.cpp

@@ -209,6 +209,19 @@ JNI_METHOD(void, nativeSetPhysicsWorldGravity)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetPhysicsWorldDebugDraw)(JNIEnv *env,
+                                               jclass clazz,
+                                               jlong sceneRef,
+                                               jboolean debugDraw) {
+    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    VROPlatformDispatchAsyncRenderer([sceneController_w, debugDraw] {
+        std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
+        if (sceneController) {
+            sceneController->getScene()->getPhysicsWorld()->setDebugDrawVisible(debugDraw);
+        }
+    });
+}
+
 JNI_METHOD(void, nativeAttachToPhysicsWorld)(JNIEnv *env,
                                      jclass clazz,
                                      jlong sceneRef,

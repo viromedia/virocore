@@ -220,5 +220,11 @@ private:
 
     std::vector<BulletForce> _forces;
     std::vector<VROVector3f> _torques;
+
+    /*
+     Creates / destroys the underlying bullet object representing this VROPhysicsBody.
+     */
+    void createBulletBody();
+    void releaseBulletBody();
 };
 #endif
