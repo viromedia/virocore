@@ -88,7 +88,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
         // uncomment the below line to test AR.
         //testEdgeDetect();
-        //testFindTarget();
+        testFindTarget();
     }
 
     @Override

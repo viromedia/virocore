@@ -61,8 +61,6 @@ JNI_METHOD(jlong, nativeCreateImageTracker)(JNIEnv *env,
                                             jclass clazz,
                                             jobject bitmapImage) {
     cv::Mat image = parseBitmapImage(env, bitmapImage);
-    cv::Mat grayImageMat;
-    cv::cvtColor(image, grayImageMat, CV_RGBA2GRAY);
 
     std::shared_ptr<VROImageTracker> tracker = VROImageTracker::createImageTracker(image);
 
@@ -75,10 +73,8 @@ JNI_METHOD(jlong, nativeFindTarget)(JNIEnv *env,
                                     jlong nativeRef,
                                     jobject bitmapImage) {
     cv::Mat imageMat = parseBitmapImage(env, bitmapImage);
-    cv::Mat grayImageMat;
-    cv::cvtColor(imageMat, grayImageMat, CV_RGBA2GRAY);
 
-    std::shared_ptr<VROImageTrackerOutput> output = ImageTracker::native(nativeRef)->findTarget(grayImageMat);
+    std::shared_ptr<VROImageTrackerOutput> output = ImageTracker::native(nativeRef)->findTarget(imageMat);
 
     return ImageTrackerOutput::jptr(output);
 }

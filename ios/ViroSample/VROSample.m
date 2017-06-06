@@ -128,13 +128,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
     cv::Mat targetMat = cv::Mat();
     UIImageToMat(targetImage, targetMat);
-    
-    // convert it to grayscale
-    cv::Mat grayTargetMat = cv::Mat(targetMat.rows, targetMat.cols, CV_8UC1);
-    cv::cvtColor(targetMat, grayTargetMat, cv::COLOR_BGR2GRAY);
 
-    // initialize the tracker with the gray target image
-    std::shared_ptr<VROImageTracker> tracker = VROImageTracker::createImageTracker(grayTargetMat);
+    // initialize the tracker with the target image
+    std::shared_ptr<VROImageTracker> tracker = VROImageTracker::createImageTracker(targetMat);
 
     // fetch the scene image (the "camera" feed)
     cv::Mat sceneMat;
