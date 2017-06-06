@@ -771,7 +771,7 @@ static ovrFrameParms ovrRenderer_RenderFrame( ovrRenderer * rendererOVR, const o
         const float eyeOffset = (eye == VRAPI_FRAME_LAYER_EYE_LEFT ? -0.5f : 0.5f) * headModelParms.InterpupillaryDistance;
         const ovrMatrix4f eyeOffsetMatrix = ovrMatrix4f_CreateTranslation( eyeOffset, 0.0f, 0.0f );
         VROMatrix4f eyeFromHeadMatrix = toMatrix4f(eyeOffsetMatrix);
-        VROMatrix4f projectionMatrix = fov.toPerspectiveMatrix(kZNear, renderer->getFarClippingPlane());
+        VROMatrix4f projectionMatrix = fov.toPerspectiveProjection(kZNear, renderer->getFarClippingPlane());
 
         renderer->renderEye(eyeType, eyeFromHeadMatrix, projectionMatrix, driver);
 

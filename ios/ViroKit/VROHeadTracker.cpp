@@ -10,11 +10,7 @@
 #include "VROMath.h"
 #include "VROQuaternion.h"
 #include "VROConvert.h"
-
-#define HEAD_TRACKER_MODE_CORE_MOTION 1
-#define HEAD_TRACKER_MODE_CORE_MOTION_EKF 2
-    
-#define HEAD_TRACKER_MODE HEAD_TRACKER_MODE_CORE_MOTION_EKF
+#include "VROLog.h"
 
 #define radiansToDegrees(x) (180/M_PI)*x
 
@@ -53,7 +49,6 @@ GLKMatrix4 GetRotateEulerMatrix(float x, float y, float z) {
     return matrix;
 }
 
-#if HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION
 GLKMatrix4 GLMatrixFromRotationMatrix(CMRotationMatrix rotationMatrix) {
     GLKMatrix4 glRotationMatrix;
     
@@ -79,7 +74,6 @@ GLKMatrix4 GLMatrixFromRotationMatrix(CMRotationMatrix rotationMatrix) {
     
     return glRotationMatrix;
 }
-#endif
 
 VROHeadTracker::VROHeadTracker() :
     _worldToDeviceMatrix(GetRotateEulerMatrix(0.f, 0.f, 0.f)),
@@ -107,31 +101,10 @@ void VROHeadTracker::startTracking(UIInterfaceOrientation orientation) {
     _headingCorrectionComputed = false;
     _sampleCount = 0; // used to skip bad data when core motion starts
     
-  #if HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION
     if (_motionManager.isDeviceMotionAvailable) {
         [_motionManager startDeviceMotionUpdatesUsingReferenceFrame:CMAttitudeReferenceFrameXArbitraryZVertical];
         _sampleCount = kInitialSamplesToSkip + 1;
     }
-    
-  #elif HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION_EKF
-    NSOperationQueue *deviceMotionQueue = [[NSOperationQueue alloc] init];
-    _motionManager.deviceMotionUpdateInterval = 1.0/100.0;
-    [_motionManager startDeviceMotionUpdatesUsingReferenceFrame:CMAttitudeReferenceFrameXArbitraryZVertical toQueue:deviceMotionQueue withHandler:^(CMDeviceMotion *motion, NSError *error) {
-        ++_sampleCount;
-        if (_sampleCount <= kInitialSamplesToSkip) { return; }
-        CMAcceleration acceleration = motion.gravity;
-        CMRotationRate rotationRate = motion.rotationRate;
-        
-        //NSLog(@"Acceleration %f, %f, %f", acceleration.x, acceleration.y, acceleration.z);
-        //NSLog(@"Rotation %f, %f, %f", rotationRate.x, rotationRate.y, rotationRate.z);
-        // note core motion uses units of G while the EKF uses ms^-2
-        const float kG = 9.81f;
-        _tracker->processAcceleration(GLKVector3Make(kG*acceleration.x, kG*acceleration.y, kG*acceleration.z), motion.timestamp);
-        _tracker->processGyro(GLKVector3Make(rotationRate.x, rotationRate.y, rotationRate.z), motion.timestamp);
-        _lastGyroEventTimestamp = motion.timestamp;
-    }];
-  #endif
-    
 }
 
 void VROHeadTracker::stopTracking() {
@@ -140,26 +113,10 @@ void VROHeadTracker::stopTracking() {
 
 bool VROHeadTracker::isReady() {
     bool isTrackerReady = (_sampleCount > kInitialSamplesToSkip);
-  #if HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION_EKF
-    isTrackerReady = isTrackerReady && _tracker->isReady();
-  #endif
     return isTrackerReady;
 }
 
 VROMatrix4f VROHeadTracker::getHeadRotation() {
-#if HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION_EKF
-    
-    NSTimeInterval currentTimestamp = CACurrentMediaTime();
-    double secondsSinceLastGyroEvent = currentTimestamp - _lastGyroEventTimestamp;
-    
-    // 1/30 of a second prediction (shoud it be 1/60?)
-    double secondsToPredictForward = secondsSinceLastGyroEvent + 1.0 / 30;
-    GLKMatrix4 rotationMatrix_IRF = _tracker->getPredictedGLMatrix(secondsToPredictForward);
-    
-    VROQuaternion quatOld(_lastHeadRotation);
-    
-#elif HEAD_TRACKER_MODE == HEAD_TRACKER_MODE_CORE_MOTION
-    
     /*
      Get the tranpose (inverse) of the CoreMotion rotation matrix. This is what we'll
      rotate by. The CoreMotion matrix is in the "inertial reference frame" (IRF).
@@ -171,8 +128,6 @@ VROMatrix4f VROHeadTracker::getHeadRotation() {
         return _lastHeadRotation;
     }
     
-#endif
-  
     if (!isReady()) {
         return _lastHeadRotation;
     }
@@ -226,8 +181,6 @@ VROMatrix4f VROHeadTracker::getHeadRotation() {
     GLKMatrix4 rotationMatrix_display = GLKMatrix4Multiply(_worldToDeviceMatrix, rotationMatrix_world);
     
     _lastHeadRotation = VROConvert::toMatrix4f(rotationMatrix_display);
-    VROQuaternion quatNew(_lastHeadRotation);
-
     return _lastHeadRotation;
 }
 

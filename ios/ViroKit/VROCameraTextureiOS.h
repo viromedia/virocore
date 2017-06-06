@@ -32,6 +32,7 @@ public:
     bool isPaused();
     
     float getHorizontalFOV() const;
+    VROVector3f getImageSize() const;
     
     void displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> substrate);
     void updateOrientation(VROCameraOrientation orientation);

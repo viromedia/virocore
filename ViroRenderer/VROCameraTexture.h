@@ -15,6 +15,7 @@
 class VRORenderContext;
 class VROFrameSynchronizer;
 class VRODriver;
+class VROVector3f;
 
 enum class VROCameraPosition {
     Front,
@@ -56,6 +57,12 @@ public:
      FOV from edge to edge, in degrees.
      */
     virtual float getHorizontalFOV() const = 0;
+    
+    /*
+     Get the image size (width, height) for the camera. Stored in the
+     vector's x and y components.
+     */
+    virtual VROVector3f getImageSize() const = 0;
     
 };
 

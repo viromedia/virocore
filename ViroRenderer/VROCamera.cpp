@@ -45,7 +45,7 @@ void VROCamera::computeLookAtMatrix() {
 }
 
 void VROCamera::computeFrustum(float ncp, float fcp) {
-    _projectionMatrix = _fov.toPerspectiveMatrix(ncp, fcp);
+    _projectionMatrix = _fov.toPerspectiveProjection(ncp, fcp);
     _frustum.fitToModelView(_lookAtMatrix.getArray(), _projectionMatrix.getArray(), 0, 0, 0);
 }
 

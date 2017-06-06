@@ -117,6 +117,21 @@ float VROCameraTextureiOS::getHorizontalFOV() const {
     return input.device.activeFormat.videoFieldOfView;
 }
 
+VROVector3f VROCameraTextureiOS::getImageSize() const {
+    AVCaptureDeviceInput *input = [_captureSession.inputs firstObject];
+    
+    CMFormatDescriptionRef desc = input.device.activeFormat.formatDescription;
+    CGSize dim = CMVideoFormatDescriptionGetPresentationDimensions(desc, true, true);
+
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    if (UIInterfaceOrientationIsPortrait(orientation)) {
+        return { (float)dim.height, (float)dim.width,  0 };
+    }
+    else {
+        return { (float)dim.width,  (float)dim.height, 0 };
+    }
+}
+
 void VROCameraTextureiOS::updateOrientation(VROCameraOrientation orientation) {
     AVCaptureVideoDataOutput *output = [[_captureSession outputs] objectAtIndex:0];
     

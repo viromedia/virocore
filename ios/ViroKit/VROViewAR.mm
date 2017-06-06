@@ -247,6 +247,7 @@
     VROViewport viewport(0, 0, self.bounds.size.width  * self.contentScaleFactor,
                                self.bounds.size.height * self.contentScaleFactor);
     VROFieldOfView fov;
+    VROMatrix4f projection;
     
     if (_sceneController && !_cameraBackground) {
         [self initCameraBackgroundWithViewport:viewport forScene:_sceneController->getScene()];
@@ -255,9 +256,13 @@
     if (_cameraTexture) {
         fov = _renderer->computeFOV(_cameraTexture->getHorizontalFOV(),
                                     viewport.getWidth(), viewport.getHeight());
+        VROVector3f cameraImageSize = _cameraTexture->getImageSize();
+        projection = fov.toCameraIntrinsicProjection(cameraImageSize.x, cameraImageSize.y, viewport,
+                                                     kZNear, _renderer->getFarClippingPlane());
     }
     else {
         fov = _renderer->computeMonoFOV(viewport.getWidth(), viewport.getHeight());
+        projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
     }
     
     /*
@@ -281,11 +286,11 @@
     VROMatrix4f headRotation = _headTracker->getHeadRotation().invert();
     _renderer->prepareFrame(_frame, viewport, fov, headRotation, _driver);
     
-    VROMatrix4f projectionMatrix = fov.toPerspectiveMatrix(kZNear, _renderer->getFarClippingPlane());
+
     VROMatrix4f eyeFromHeadMatrix; // Identity
     
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-    _renderer->renderEye(VROEyeType::Monocular, eyeFromHeadMatrix, projectionMatrix, _driver);
+    _renderer->renderEye(VROEyeType::Monocular, eyeFromHeadMatrix, projection, _driver);
     _renderer->endFrame(_driver);
 }
 

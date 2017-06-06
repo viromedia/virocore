@@ -56,7 +56,7 @@ public:
         _fov.setRight(right);
         _fov.setBottom(bottom);
         _fov.setTop(top);
-        _perspective = _fov.toPerspectiveMatrix(zNear, zFar);
+        _perspective = _fov.toPerspectiveProjection(zNear, zFar);
     }
     
     const VROFieldOfView &getFOV() const {
