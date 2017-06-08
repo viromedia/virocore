@@ -12,10 +12,12 @@
 #include "VROConvert.h"
 #include "VROViewport.h"
 #include "VROLog.h"
+#include "VROCameraTexture.h"
 #include "VROVector3f.h"
 
-VROARCameraiOS::VROARCameraiOS(ARCamera *camera) :
-    _camera(camera) {
+VROARCameraiOS::VROARCameraiOS(ARCamera *camera, VROCameraOrientation orientation) :
+    _camera(camera),
+    _orientation(orientation) {
     
 }
 
@@ -51,13 +53,10 @@ VROARTrackingStateReason VROARCameraiOS::getLimitedTrackingStateReason() const {
 
 VROMatrix4f VROARCameraiOS::getRotation() const {
     VROMatrix4f matrix = VROConvert::toMatrix4f(_camera.transform);
-    
     // Remove the translation; this is returned via getPosition()
     matrix[12] = 0;
     matrix[13] = 0;
     matrix[14] = 0;
-    
-    pinfo("Rotation matrix %s", matrix.toString().c_str());
     
     return matrix;
 }
@@ -71,7 +70,7 @@ VROMatrix4f VROARCameraiOS::getProjection(VROViewport viewport, float near, floa
     // TODO Output the FOV!
     return VROConvert::toMatrix4f([_camera projectionMatrixWithViewportSize:CGSizeMake(viewport.getWidth() / viewport.getContentScaleFactor(),
                                                                                        viewport.getHeight() / viewport.getContentScaleFactor())
-                                                                orientation:[[UIApplication sharedApplication] statusBarOrientation]
+                                                                orientation:VROConvert::toDeviceOrientation(_orientation)
                                                                       zNear:near
                                                                        zFar:far]);
 }

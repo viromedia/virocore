@@ -21,7 +21,7 @@ VROARFrameiOS::VROARFrameiOS(ARFrame *frame, VROViewport viewport, VROCameraOrie
     _viewport(viewport),
     _orientation(orientation) {
         
-    _camera = std::make_shared<VROARCameraiOS>(frame.camera);
+    _camera = std::make_shared<VROARCameraiOS>(frame.camera, orientation);
     for (ARAnchor *anchor in frame.anchors) {
         _anchors.push_back(std::make_shared<VROARAnchoriOS>(anchor));
     }

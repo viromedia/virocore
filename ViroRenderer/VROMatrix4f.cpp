@@ -12,6 +12,11 @@
 #include "VROQuaternion.h"
 #include <sstream>
 
+VROMatrix4f VROMatrix4f::identity() {
+    VROMatrix4f identity;
+    return identity;
+}
+
 VROMatrix4f::VROMatrix4f() {
     toIdentity();
 }

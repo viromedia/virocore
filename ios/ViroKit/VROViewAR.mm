@@ -248,35 +248,6 @@
 }
 
 - (void)renderFrame {
-    VROViewport viewport(0, 0, self.bounds.size.width  * self.contentScaleFactor,
-                               self.bounds.size.height * self.contentScaleFactor);
-    
-    VROFieldOfView fov = VRORenderer::computeMonoFOV(viewport.getWidth(), viewport.getHeight());
-    VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
-    VROMatrix4f rotation;
-    
-    /*
-     Retrieve transforms from the AR session.
-     */
-    if (_sceneController) {
-        if (!_cameraBackground) {
-            [self initCameraBackgroundWithViewport:viewport forScene:_sceneController->getScene()];
-        }
-    
-        if (_arSession->isReady()) {
-            _arSession->setViewport(viewport);
-            
-            std::unique_ptr<VROARFrame> &frame = _arSession->updateFrame();
-            
-            const std::shared_ptr<VROARCamera> camera = frame->getCamera();
-            rotation = camera->getRotation();
-            projection = camera->getProjection(viewport, kZNear, _renderer->getFarClippingPlane(), &fov);
-            
-            VROMatrix4f backgroundTransform = frame->getBackgroundTexcoordTransform();
-            _cameraBackground->setTexcoordTransform(backgroundTransform);
-        }
-    }
-    
     /*
      Setup GL state.
      */
@@ -292,16 +263,50 @@
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     
-    /*
-     Render the 3D scene.
-     */
-    _renderer->prepareFrame(_frame, viewport, fov, rotation, projection, _driver);
+    VROViewport viewport(0, 0, self.bounds.size.width  * self.contentScaleFactor,
+                               self.bounds.size.height * self.contentScaleFactor);
     
-    VROMatrix4f eyeFromHeadMatrix; // Identity
-    
-    glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-    _renderer->renderEye(VROEyeType::Monocular, eyeFromHeadMatrix, projection, _driver);
-    _renderer->endFrame(_driver);
+    if (_arSession->isReady() && _sceneController) {
+        _arSession->setViewport(viewport);
+        
+        /*
+         Retrieve transforms from the AR session.
+         */
+        if (!_cameraBackground) {
+            [self initCameraBackgroundWithViewport:viewport forScene:_sceneController->getScene()];
+        }
+        
+        std::unique_ptr<VROARFrame> &frame = _arSession->updateFrame();
+        const std::shared_ptr<VROARCamera> camera = frame->getCamera();
+        
+        VROFieldOfView fov;
+        VROMatrix4f projection = camera->getProjection(viewport, kZNear, _renderer->getFarClippingPlane(), &fov);
+        VROMatrix4f rotation = camera->getRotation();
+        
+        VROMatrix4f backgroundTransform = frame->getBackgroundTexcoordTransform();
+        _cameraBackground->setTexcoordTransform(backgroundTransform);
+        
+        /*
+         Render the 3D scene.
+         */
+        _renderer->prepareFrame(_frame, viewport, fov, rotation, projection, _driver);
+        
+        glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
+        _renderer->renderEye(VROEyeType::Monocular, VROMatrix4f::identity(), projection, _driver);
+        _renderer->endFrame(_driver);
+    }
+    else {
+        /*
+         Render black while waiting for the AR session to initialize.
+         */
+        VROFieldOfView fov = _renderer->computeMonoFOV(viewport.getWidth(), viewport.getHeight());
+        VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
+        
+        _renderer->prepareFrame(_frame, viewport, fov, VROMatrix4f::identity(), projection, _driver);
+        glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
+        _renderer->renderEye(VROEyeType::Monocular, VROMatrix4f::identity(), projection, _driver);
+        _renderer->endFrame(_driver);
+    }
 }
 
 - (void)renderSuspended {

@@ -13,10 +13,12 @@
 #include "VROARCamera.h"
 #include <ARKit/ARKit.h>
 
+enum class VROCameraOrientation;
+
 class VROARCameraiOS : public VROARCamera {
 public:
     
-    VROARCameraiOS(ARCamera *camera);
+    VROARCameraiOS(ARCamera *camera, VROCameraOrientation orientation);
     virtual ~VROARCameraiOS();
     
     VROARTrackingState getTrackingState() const;
@@ -31,6 +33,7 @@ public:
 private:
     
     ARCamera *_camera;
+    VROCameraOrientation _orientation;
     
 };
 

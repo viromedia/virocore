@@ -19,6 +19,8 @@ class VROQuaternion;
 class VROMatrix4f {
 public:
     
+    static VROMatrix4f identity();
+    
     float &operator[] (const int index) {
         return _mtx[index];
     }
