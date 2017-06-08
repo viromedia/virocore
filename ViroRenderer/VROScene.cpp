@@ -44,7 +44,7 @@ void VROScene::renderBackground(const VRORenderContext &renderContext,
     material->bindShader(driver);
 
     VROMatrix4f transform;
-    transform = _backgroundRotation.getMatrix().multiply(transform);
+    transform = _backgroundTransform.multiply(transform);
 
     _background->render(0, material, transform, {}, 1.0, renderContext, driver);
 }
@@ -218,7 +218,11 @@ std::shared_ptr<VROInputPresenter> VROScene::getControllerPresenter(){
     return _controllerPresenter;
 }
 
+void VROScene::setBackgroundTransform(VROMatrix4f transform) {
+    _backgroundTransform = transform;
+}
+
 void VROScene::setBackgroundRotation(VROQuaternion rotation) {
     passert_thread();
-    _backgroundRotation = rotation;
+    _backgroundTransform = rotation.getMatrix();
 }
