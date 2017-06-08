@@ -13,8 +13,7 @@
 #include "VROARCameraiOS.h"
 #include "VROVideoTextureCache.h"
 #include "VROTextureSubstrate.h"
-#include "VROCameraTextureiOS.h"
-#include "VROMath.h"
+#include "VROConvert.h"
 #include "VROLog.h"
 
 VROARFrameiOS::VROARFrameiOS(ARFrame *frame, VROViewport viewport, VROCameraOrientation orientation) :
@@ -47,7 +46,7 @@ const std::shared_ptr<VROARCamera> &VROARFrameiOS::getCamera() const {
 VROMatrix4f VROARFrameiOS::getBackgroundTexcoordTransform() {
     CGSize viewportSize = CGSizeMake(_viewport.getWidth()  / _viewport.getContentScaleFactor(),
                                      _viewport.getHeight() / _viewport.getContentScaleFactor());
-    UIInterfaceOrientation orientation = VROCameraTextureiOS::toDeviceOrientation(_orientation);
+    UIInterfaceOrientation orientation = VROConvert::toDeviceOrientation(_orientation);
     CGAffineTransform transform = CGAffineTransformInvert([_frame displayTransformWithViewportSize:viewportSize
                                                                                        orientation:orientation]);
     

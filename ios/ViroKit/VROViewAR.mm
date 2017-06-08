@@ -21,7 +21,7 @@
 #import "VROARCamera.h"
 #import "VROARAnchor.h"
 #import "VROARFrame.h"
-#import "VROCameraTextureiOS.h"
+#import "VROConvert.h"
 #import "vr/gvr/capi/include/gvr_audio.h"
 
 @interface VROViewAR () {
@@ -127,7 +127,7 @@
 #else
         _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::DOF3, _driver);
 #endif
-    _arSession->setOrientation(VROCameraTextureiOS::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
+    _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
     _arSession->run();
     
     self.keyValidator = [[VROApiKeyValidatorDynamo alloc] init];
@@ -146,7 +146,7 @@
         _cameraBackground->setWidth(self.bounds.size.width * self.contentScaleFactor);
         _cameraBackground->setHeight(self.bounds.size.height * self.contentScaleFactor);
     }
-    _arSession->setOrientation(VROCameraTextureiOS::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
+    _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
 }
 
 - (void)applicationWillResignActive:(NSNotification *)notification {

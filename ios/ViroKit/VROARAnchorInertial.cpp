@@ -7,7 +7,6 @@
 //
 
 #include "VROARAnchorInertial.h"
-#include "VROMath.h"
 
 VROARAnchorInertial::VROARAnchorInertial() {
         

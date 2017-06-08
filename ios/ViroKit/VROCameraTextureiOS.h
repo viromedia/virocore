@@ -20,9 +20,6 @@ class VROVideoTextureCache;
 class VROCameraTextureiOS : public VROCameraTexture {
         
 public:
-    
-    static VROCameraOrientation toCameraOrientation(UIInterfaceOrientation orientation);
-    static UIInterfaceOrientation toDeviceOrientation(VROCameraOrientation orientation);
         
     VROCameraTextureiOS(VROTextureType type);
     virtual ~VROCameraTextureiOS();

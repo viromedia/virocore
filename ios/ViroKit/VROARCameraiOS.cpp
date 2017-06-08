@@ -9,9 +9,10 @@
 #include "Availability.h"
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 #include "VROARCameraiOS.h"
-#include "VROMath.h"
+#include "VROConvert.h"
 #include "VROViewport.h"
 #include "VROLog.h"
+#include "VROVector3f.h"
 
 VROARCameraiOS::VROARCameraiOS(ARCamera *camera) :
     _camera(camera) {
@@ -49,7 +50,7 @@ VROARTrackingStateReason VROARCameraiOS::getLimitedTrackingStateReason() const {
 }
 
 VROMatrix4f VROARCameraiOS::getRotation() const {
-    VROMatrix4f matrix = toMatrix4f(_camera.transform);
+    VROMatrix4f matrix = VROConvert::toMatrix4f(_camera.transform);
     
     // Remove the translation; this is returned via getPosition()
     matrix[12] = 0;
@@ -62,18 +63,17 @@ VROMatrix4f VROARCameraiOS::getRotation() const {
 }
 
 VROVector3f VROARCameraiOS::getPosition() const {
-    VROMatrix4f matrix = toMatrix4f(_camera.transform);
+    VROMatrix4f matrix = VROConvert::toMatrix4f(_camera.transform);
     return { matrix[12], matrix[13], matrix[14] };
 }
 
 VROMatrix4f VROARCameraiOS::getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV) const {
-    // TODO Do we need to pass in an interface orientation here?
     // TODO Output the FOV!
-    return toMatrix4f([_camera projectionMatrixWithViewportSize:CGSizeMake(viewport.getWidth() / viewport.getContentScaleFactor(),
-                                                                           viewport.getHeight() / viewport.getContentScaleFactor())
-                                                    orientation:[[UIApplication sharedApplication] statusBarOrientation]
-                                                          zNear:near
-                                                           zFar:far]);
+    return VROConvert::toMatrix4f([_camera projectionMatrixWithViewportSize:CGSizeMake(viewport.getWidth() / viewport.getContentScaleFactor(),
+                                                                                       viewport.getHeight() / viewport.getContentScaleFactor())
+                                                                orientation:[[UIApplication sharedApplication] statusBarOrientation]
+                                                                      zNear:near
+                                                                       zFar:far]);
 }
 
 VROVector3f VROARCameraiOS::getImageSize() const {

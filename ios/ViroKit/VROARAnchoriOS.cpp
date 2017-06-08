@@ -9,7 +9,7 @@
 #include "Availability.h"
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 #include "VROARAnchoriOS.h"
-#include "VROMath.h"
+#include "VROConvert.h"
 
 VROARAnchoriOS::VROARAnchoriOS(ARAnchor *anchor) :
     _anchor(anchor) {
@@ -21,7 +21,7 @@ VROARAnchoriOS::~VROARAnchoriOS() {
 }
 
 VROMatrix4f VROARAnchoriOS::getTransform() const {
-    return toMatrix4f(_anchor.transform);
+    return VROConvert::toMatrix4f(_anchor.transform);
 }
 
 #endif

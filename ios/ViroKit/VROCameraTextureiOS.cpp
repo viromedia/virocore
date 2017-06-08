@@ -13,36 +13,7 @@
 #include "VROLog.h"
 #include "VROVideoTextureCache.h"
 #include "VRODriver.h"
-
-VROCameraOrientation VROCameraTextureiOS::toCameraOrientation(UIInterfaceOrientation orientation) {
-    if (orientation == UIInterfaceOrientationPortrait) {
-        return VROCameraOrientation::Portrait;
-    }
-    else if (orientation == UIInterfaceOrientationLandscapeLeft) {
-        return VROCameraOrientation::LandscapeLeft;
-    }
-    else if (orientation == UIInterfaceOrientationLandscapeRight) {
-        return VROCameraOrientation::LandscapeRight;
-    }
-    else {
-        return VROCameraOrientation::PortraitUpsideDown;
-    }
-}
-
-UIInterfaceOrientation VROCameraTextureiOS::toDeviceOrientation(VROCameraOrientation orientation) {
-    if (orientation == VROCameraOrientation::Portrait) {
-        return UIInterfaceOrientationPortrait;
-    }
-    else if (orientation == VROCameraOrientation::LandscapeLeft) {
-        return UIInterfaceOrientationLandscapeLeft;
-    }
-    else if (orientation == VROCameraOrientation::LandscapeRight) {
-        return UIInterfaceOrientationLandscapeRight;
-    }
-    else {
-        return UIInterfaceOrientationPortraitUpsideDown;
-    }
-}
+#include "VROConvert.h"
 
 VROCameraTextureiOS::VROCameraTextureiOS(VROTextureType type) :
     VROCameraTexture(type),
@@ -245,7 +216,7 @@ void VROCameraTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate
     }
     
     UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    texture->updateOrientation(VROCameraTextureiOS::toCameraOrientation(orientation));
+    texture->updateOrientation(VROConvert::toCameraOrientation(orientation));
 }
 
 @end

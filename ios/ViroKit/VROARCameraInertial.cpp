@@ -7,7 +7,7 @@
 //
 
 #include "VROARCameraInertial.h"
-#include "VROMath.h"
+#include "VROConvert.h"
 #include "VROViewport.h"
 #include "VROHeadTracker.h"
 #include "VRORenderer.h"
@@ -16,7 +16,7 @@
 VROARCameraInertial::VROARCameraInertial(std::shared_ptr<VRODriver> driver) {
     _headTracker = std::unique_ptr<VROHeadTracker>(new VROHeadTracker());
     
-    VROCameraOrientation orientation = VROCameraTextureiOS::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]);
+    VROCameraOrientation orientation = VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]);
     _cameraTexture = std::make_shared<VROCameraTextureiOS>(VROTextureType::Texture2D);
     _cameraTexture->initCamera(VROCameraPosition::Back, orientation, driver);
 }
@@ -78,7 +78,7 @@ VROVector3f VROARCameraInertial::getImageSize() const {
 }
 
 void VROARCameraInertial::updateCameraOrientation(VROCameraOrientation orientation) {
-    UIInterfaceOrientation deviceOrientation = VROCameraTextureiOS::toDeviceOrientation(orientation);
+    UIInterfaceOrientation deviceOrientation = VROConvert::toDeviceOrientation(orientation);
     _headTracker->updateDeviceOrientation(deviceOrientation);
 }
 
