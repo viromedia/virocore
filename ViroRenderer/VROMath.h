@@ -13,12 +13,29 @@
 #include <vector>
 #include <cstdlib>
 #include "VROVector3f.h"
+#include "VROVector4f.h"
 #include "VROMatrix4f.h"
 #include "VROQuaternion.h"
 #include "VROBoundingBox.h"
+#include "VRODefines.h"
 
 static float kRoundingErrorFloat = 0.00001;
 static float kEpsilon = 0.00000001;
+
+#if VRO_PLATFORM_IOS
+#import <simd/simd.h>
+
+class VROVector3f;
+class VROVector4f;
+class VROMatrix4f;
+
+vector_float3 toVectorFloat3(VROVector3f v);
+vector_float4 toVectorFloat4(VROVector3f v, float w);
+vector_float4 toVectorFloat4(VROVector4f v);
+matrix_float4x4 toMatrixFloat4x4(VROMatrix4f m);
+VROMatrix4f toMatrix4f(matrix_float4x4 m);
+
+#endif
 
 VROMatrix4f matrix_from_scale(float sx, float sy, float sz);
 VROMatrix4f matrix_from_translation(float x, float y, float z);
