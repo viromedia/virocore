@@ -24,10 +24,13 @@ public:
     
     std::unique_ptr<VROTextureSubstrate> createTextureSubstrate(CMSampleBufferRef sampleBuffer);
     std::unique_ptr<VROTextureSubstrate> createTextureSubstrate(CVPixelBufferRef pixelBuffer);
+    std::vector<std::unique_ptr<VROTextureSubstrate>> createYCbCrTextureSubstrates(CVPixelBufferRef pixelBuffer);
     
 private:
     
     CVMetalTextureCacheRef _cache;
+    std::unique_ptr<VROTextureSubstrate> createTextureSubstrate(CVPixelBufferRef pixelBuffer, MTLPixelFormat pixelFormat,
+                                                                int planeIndex);
     
 };
 

@@ -76,4 +76,42 @@ std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheMetal::createTextureSub
     return std::unique_ptr<VROTextureSubstrateMetal>(new VROTextureSubstrateMetal(videoTexture));
 }
 
+std::vector<std::unique_ptr<VROTextureSubstrate>> VROVideoTextureCacheMetal::createYCbCrTextureSubstrates(CVPixelBufferRef pixelBuffer) {
+    std::unique_ptr<VROTextureSubstrate> textureY = createTextureSubstrate(pixelBuffer, MTLPixelFormatR8Unorm, 0);
+    std::unique_ptr<VROTextureSubstrate> textureCbCr = createTextureSubstrate(pixelBuffer, MTLPixelFormatRG8Unorm, 1);
+    
+    std::vector<std::unique_ptr<VROTextureSubstrate>> substrates;
+    substrates.push_back(std::move(textureY));
+    substrates.push_back(std::move(textureCbCr));
+    
+    return substrates;
+}
+
+std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheMetal::createTextureSubstrate(CVPixelBufferRef pixelBuffer, MTLPixelFormat pixelFormat,
+                                                                                       int planeIndex) {
+    CVReturn error;
+    
+    size_t width = CVPixelBufferGetWidthOfPlane(pixelBuffer, planeIndex);
+    size_t height = CVPixelBufferGetHeightOfPlane(pixelBuffer, planeIndex);
+    
+    CVMetalTextureRef textureRef;
+    error = CVMetalTextureCacheCreateTextureFromImage(kCFAllocatorDefault, _cache, pixelBuffer,
+                                                      NULL, pixelFormat, width, height, planeIndex, &textureRef);
+    
+    if (error) {
+        pinfo("ERROR: Couldnt create texture from image");
+        pabort();
+    }
+    
+    id <MTLTexture> videoTexture = CVMetalTextureGetTexture(textureRef);
+    if (!videoTexture) {
+        pinfo("ERROR: Couldn't get texture from texture ref");
+        pabort();
+    }
+    
+    CVBufferRelease(textureRef);
+    return std::unique_ptr<VROTextureSubstrateMetal>(new VROTextureSubstrateMetal(videoTexture));
+    
+}
+
 #endif
