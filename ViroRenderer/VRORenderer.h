@@ -84,7 +84,7 @@ public:
      sizes. We use a default horizontal FOV for this method to determine the 
      vertical FOV.
      */
-    VROFieldOfView computeMonoFOV(int viewportWidth, int viewportHeight) const;
+    static VROFieldOfView computeMonoFOV(int viewportWidth, int viewportHeight);
     
     /*
      Get the field of view (vertical and horizontal) to use to render a viewport
@@ -95,7 +95,7 @@ public:
      Note the given horizontalFOVDegrees is the degrees from edge to edge of the 
      frustum.
      */
-    VROFieldOfView computeFOV(float horizontalFOVDegrees, int viewportWidth, int viewportHeight) const;
+    static VROFieldOfView computeFOV(float horizontalFOVDegrees, int viewportWidth, int viewportHeight);
     
     /*
      Get the far clipping plane, as computed during the last prepareFrame().
@@ -110,10 +110,26 @@ public:
     
 #pragma mark - Render Loop
     
+    /*
+     Prepare to render the next frame. This computes transforms and physics, processes
+     animations, updates visibility, and sorts visible objects so they can be rendered
+     swiftly for each eye.
+     
+     Note the projection matrix used here is used to construct the visibility frustum,
+     not for rendering.
+     */
     void prepareFrame(int frame, VROViewport viewport, VROFieldOfView fov,
-                      VROMatrix4f headRotation, std::shared_ptr<VRODriver> driver);
-    void renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
+                      VROMatrix4f headRotation, VROMatrix4f projection, std::shared_ptr<VRODriver> driver);
+    
+    /*
+     Render the designated eye.
+     */
+    void renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projection,
                    std::shared_ptr<VRODriver> driver);
+     
+    /*
+     Performs end-frame cleanup.
+     */
     void endFrame(std::shared_ptr<VRODriver> driver);
     
 #pragma mark - Integration
@@ -173,7 +189,7 @@ private:
     std::shared_ptr<VRONode> _pointOfView;
   
     VROCamera updateCamera(const VROViewport &viewport, const VROFieldOfView &fov,
-                           const VROMatrix4f &headRotation);
+                           const VROMatrix4f &headRotation, const VROMatrix4f &projection);
     
 #pragma mark - [Private] FPS Computation
     

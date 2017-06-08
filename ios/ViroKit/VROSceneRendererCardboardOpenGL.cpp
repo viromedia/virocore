@@ -76,8 +76,9 @@ void VROSceneRendererCardboardOpenGL::prepareFrame(VROViewport viewport, VROFiel
         _recenterTracking = false;
     }
     headRotation = _baseRotation.multiply(headRotation);
-
-    _renderer->prepareFrame(_frame, viewport, fov, headRotation, _driver);
+    
+    VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
+    _renderer->prepareFrame(_frame, viewport, fov, projection, headRotation, _driver);
 
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE); // Must enable writes to clear depth buffer

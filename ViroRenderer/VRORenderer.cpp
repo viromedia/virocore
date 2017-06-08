@@ -95,11 +95,11 @@ double VRORenderer::getFPS() const {
 
 #pragma mark - Viewport and FOV
 
-VROFieldOfView VRORenderer::computeMonoFOV(int viewportWidth, int viewportHeight) const {
-    return computeFOV(kFovMonoHorizontal, viewportWidth, viewportHeight);
+VROFieldOfView VRORenderer::computeMonoFOV(int viewportWidth, int viewportHeight) {
+    return VRORenderer::computeFOV(kFovMonoHorizontal, viewportWidth, viewportHeight);
 }
 
-VROFieldOfView VRORenderer::computeFOV(float horizontalFOVDegrees, int viewportWidth, int viewportHeight) const {
+VROFieldOfView VRORenderer::computeFOV(float horizontalFOVDegrees, int viewportWidth, int viewportHeight) {
     if (viewportWidth < viewportHeight) {
         float fovX = horizontalFOVDegrees;
         float fovY = toDegrees(2 * atan(tan(toRadians(fovX / 2.0)) * viewportHeight / viewportWidth));
@@ -137,11 +137,12 @@ void VRORenderer::setPointOfView(std::shared_ptr<VRONode> node) {
 }
 
 VROCamera VRORenderer::updateCamera(const VROViewport &viewport, const VROFieldOfView &fov,
-                                    const VROMatrix4f &headRotation) {
+                                    const VROMatrix4f &headRotation, const VROMatrix4f &projection) {
     VROCamera camera;
     camera.setHeadRotation(headRotation);
     camera.setViewport(viewport);
     camera.setFOV(fov);
+    camera.setProjection(projection);
     
     // Make a default camera if no point of view is set
     if (!_pointOfView) {
@@ -186,14 +187,14 @@ VROCamera VRORenderer::updateCamera(const VROViewport &viewport, const VROFieldO
     }
     
     camera.computeLookAtMatrix();
-    camera.computeFrustum(kZNear, getFarClippingPlane());
+    camera.computeFrustum();
     return camera;
 }
 
 #pragma mark - Rendering
 
 void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView fov,
-                               VROMatrix4f headRotation, std::shared_ptr<VRODriver> driver) {
+                               VROMatrix4f headRotation, VROMatrix4f projection, std::shared_ptr<VRODriver> driver) {
 
     if (!_rendererInitialized) {
         initRenderer(driver);
@@ -218,7 +219,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     _context->setFPS(getFPS());
     notifyFrameStart();
 
-    VROCamera camera = updateCamera(viewport, fov, headRotation);
+    VROCamera camera = updateCamera(viewport, fov, headRotation, projection);
     _context->setCamera(camera);
 
     /*

@@ -741,7 +741,8 @@ static ovrFrameParms ovrRenderer_RenderFrame( ovrRenderer * rendererOVR, const o
     VROFieldOfView fov(fovX / 2.0, fovX / 2.0, fovY / 2.0, fovY / 2.0);
     VROMatrix4f headRotation = toMatrix4f(centerEyeViewMatrix);
 
-    renderer->prepareFrame(frameIndex, leftViewport, fov, headRotation, driver);
+    VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, renderer->getFarClippingPlane());
+    renderer->prepareFrame(frameIndex, leftViewport, fov, headRotation, projection, driver);
 
     // Render the eye images.
     for ( int eye = 0; eye < rendererOVR->NumBuffers; eye++ )
@@ -771,9 +772,8 @@ static ovrFrameParms ovrRenderer_RenderFrame( ovrRenderer * rendererOVR, const o
         const float eyeOffset = (eye == VRAPI_FRAME_LAYER_EYE_LEFT ? -0.5f : 0.5f) * headModelParms.InterpupillaryDistance;
         const ovrMatrix4f eyeOffsetMatrix = ovrMatrix4f_CreateTranslation( eyeOffset, 0.0f, 0.0f );
         VROMatrix4f eyeFromHeadMatrix = toMatrix4f(eyeOffsetMatrix);
-        VROMatrix4f projectionMatrix = fov.toPerspectiveProjection(kZNear, renderer->getFarClippingPlane());
 
-        renderer->renderEye(eyeType, eyeFromHeadMatrix, projectionMatrix, driver);
+        renderer->renderEye(eyeType, eyeFromHeadMatrix, projection, driver);
 
         // Explicitly clear the border texels to black because OpenGL-ES does not support GL_CLAMP_TO_BORDER.
         {

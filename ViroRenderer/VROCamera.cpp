@@ -44,9 +44,8 @@ void VROCamera::computeLookAtMatrix() {
     _lookAtMatrix = VROMathComputeLookAtMatrix(_position, _forward, _up);
 }
 
-void VROCamera::computeFrustum(float ncp, float fcp) {
-    _projectionMatrix = _fov.toPerspectiveProjection(ncp, fcp);
-    _frustum.fitToModelView(_lookAtMatrix.getArray(), _projectionMatrix.getArray(), 0, 0, 0);
+void VROCamera::computeFrustum() {
+    _frustum.fitToModelView(_lookAtMatrix.getArray(), _projection.getArray(), 0, 0, 0);
 }
 
 void VROCamera::setViewport(VROViewport viewport) {
@@ -55,6 +54,10 @@ void VROCamera::setViewport(VROViewport viewport) {
 
 void VROCamera::setFOV(VROFieldOfView fov) {
     _fov = fov;
+}
+
+void VROCamera::setProjection(VROMatrix4f projection) {
+    _projection = projection;
 }
 
 float VROCamera::getWorldPerScreen(float distance) const {

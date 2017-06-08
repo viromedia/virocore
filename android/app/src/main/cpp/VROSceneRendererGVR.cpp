@@ -188,7 +188,7 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headRotation) {
                          rect.right - rect.left,
                          rect.top   - rect.bottom);
 
-    VROFieldOfView fov = _renderer->computeMonoFOV(viewport.getWidth(), viewport.getHeight());
+    VROFieldOfView fov = VRORenderer::computeMonoFOV(viewport.getWidth(), viewport.getHeight());
     prepareFrame(viewport, fov, headRotation);
 
     VROMatrix4f projectionMatrix = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
@@ -252,13 +252,14 @@ void VROSceneRendererGVR::prepareFrame(VROViewport leftViewport, VROFieldOfView 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    _renderer->prepareFrame(_frame, leftViewport, fov, headRotation, _driver);
+    VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
+    _renderer->prepareFrame(_frame, leftViewport, fov, headRotation, projection, _driver);
 }
 
 void VROSceneRendererGVR::renderEye(VROEyeType eyeType,
-                                          VROMatrix4f eyeFromHeadMatrix,
-                                          VROViewport viewport,
-                                          VROFieldOfView fov) {
+                                    VROMatrix4f eyeFromHeadMatrix,
+                                    VROViewport viewport,
+                                    VROFieldOfView fov) {
 
     VROMatrix4f projectionMatrix = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
 
