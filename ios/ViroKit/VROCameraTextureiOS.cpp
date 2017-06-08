@@ -29,6 +29,21 @@ VROCameraOrientation VROCameraTextureiOS::toCameraOrientation(UIInterfaceOrienta
     }
 }
 
+UIInterfaceOrientation VROCameraTextureiOS::toDeviceOrientation(VROCameraOrientation orientation) {
+    if (orientation == VROCameraOrientation::Portrait) {
+        return UIInterfaceOrientationPortrait;
+    }
+    else if (orientation == VROCameraOrientation::LandscapeLeft) {
+        return UIInterfaceOrientationLandscapeLeft;
+    }
+    else if (orientation == VROCameraOrientation::LandscapeRight) {
+        return UIInterfaceOrientationLandscapeRight;
+    }
+    else {
+        return UIInterfaceOrientationPortraitUpsideDown;
+    }
+}
+
 VROCameraTextureiOS::VROCameraTextureiOS(VROTextureType type) :
     VROCameraTexture(type),
     _paused(true) {
@@ -36,7 +51,7 @@ VROCameraTextureiOS::VROCameraTextureiOS(VROTextureType type) :
 }
 
 VROCameraTextureiOS::~VROCameraTextureiOS() {
-    
+    [[NSNotificationCenter defaultCenter] removeObserver:_orientationListener];
 }
 
 bool VROCameraTextureiOS::initCamera(VROCameraPosition position, VROCameraOrientation orientation,

@@ -12,12 +12,16 @@
 #import "VRORenderDelegateiOS.h"
 #import "VROTime.h"
 #import "VROEye.h"
-#import "VROCameraTextureiOS.h"
 #import "VRODriverOpenGLiOS.h"
-#import "VROHeadTracker.h"
 #import "VROApiKeyValidator.h"
 #import "VROApiKeyValidatorDynamo.h"
 #import "VROInputControllerCardboardiOS.h"
+#import "VROARSessioniOS.h"
+#import "VROARSessionInertial.h"
+#import "VROARCamera.h"
+#import "VROARAnchor.h"
+#import "VROARFrame.h"
+#import "VROCameraTextureiOS.h"
 #import "vr/gvr/capi/include/gvr_audio.h"
 
 @interface VROViewAR () {
@@ -26,10 +30,8 @@
     std::shared_ptr<VRORenderDelegateiOS> _renderDelegateWrapper;
     std::shared_ptr<VRODriverOpenGL> _driver;
     std::shared_ptr<gvr::AudioApi> _gvrAudio;
-    std::unique_ptr<VROHeadTracker> _headTracker;
-    std::unique_ptr<VROEye> _eye;
     std::shared_ptr<VROSurface> _cameraBackground;
-    std::shared_ptr<VROCameraTextureiOS> _cameraTexture;
+    std::shared_ptr<VROARSession> _arSession;
     
     CADisplayLink *_displayLink;
     int _frame;
@@ -114,13 +116,19 @@
     _gvrAudio = std::make_shared<gvr::AudioApi>();
     _gvrAudio->Init(GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
     _driver = std::make_shared<VRODriverOpenGLiOS>(self.context, _gvrAudio);
-    
-    _eye = std::unique_ptr<VROEye>(new VROEye(VROEyeType::Monocular));
-    _headTracker = std::unique_ptr<VROHeadTracker>(new VROHeadTracker());
-    _headTracker->startTracking([UIApplication sharedApplication].statusBarOrientation);
-    
     _suspendedNotificationTime = VROTimeCurrentSeconds();
     _renderer = std::make_shared<VRORenderer>(std::make_shared<VROInputControllerCardboardiOS>());
+    
+    /*
+     Create AR session.
+     */
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+        _arSession = std::make_shared<VROARSessioniOS>(VROTrackingType::DOF6, _driver);
+#else
+        _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::DOF3, _driver);
+#endif
+    _arSession->setOrientation(VROCameraTextureiOS::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
+    _arSession->run();
     
     self.keyValidator = [[VROApiKeyValidatorDynamo alloc] init];
 }
@@ -132,23 +140,23 @@
 #pragma mark - Settings and Notifications
 
 - (void)orientationDidChange:(NSNotification *)notification {
-    UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
-    _headTracker->updateDeviceOrientation(orientation);
-    
     if (_cameraBackground) {
         _cameraBackground->setX(self.bounds.size.width * self.contentScaleFactor / 2.0);
         _cameraBackground->setY(self.bounds.size.height * self.contentScaleFactor / 2.0);
         _cameraBackground->setWidth(self.bounds.size.width * self.contentScaleFactor);
         _cameraBackground->setHeight(self.bounds.size.height * self.contentScaleFactor);
     }
+    _arSession->setOrientation(VROCameraTextureiOS::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
 }
 
 - (void)applicationWillResignActive:(NSNotification *)notification {
     _displayLink.paused = YES;
+    _arSession->pause();
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)notification {
     _displayLink.paused = NO;
+    _arSession->run(); 
 }
 
 - (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {
@@ -226,10 +234,6 @@
 #pragma mark - Rendering
 
 - (void)drawRect:(CGRect)rect {
-    if (!_headTracker->isReady()) {
-        return;
-    }
-    
     @autoreleasepool {
         if (self.suspended) {
             [self renderSuspended];
@@ -246,23 +250,31 @@
 - (void)renderFrame {
     VROViewport viewport(0, 0, self.bounds.size.width  * self.contentScaleFactor,
                                self.bounds.size.height * self.contentScaleFactor);
-    VROFieldOfView fov;
-    VROMatrix4f projection;
     
-    if (_sceneController && !_cameraBackground) {
-        [self initCameraBackgroundWithViewport:viewport forScene:_sceneController->getScene()];
-    }
+    VROFieldOfView fov = VRORenderer::computeMonoFOV(viewport.getWidth(), viewport.getHeight());
+    VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
+    VROMatrix4f rotation;
     
-    if (_cameraTexture) {
-        fov = _renderer->computeFOV(_cameraTexture->getHorizontalFOV(),
-                                    viewport.getWidth(), viewport.getHeight());
-        VROVector3f cameraImageSize = _cameraTexture->getImageSize();
-        projection = fov.toCameraIntrinsicProjection(cameraImageSize.x, cameraImageSize.y, viewport,
-                                                     kZNear, _renderer->getFarClippingPlane());
-    }
-    else {
-        fov = _renderer->computeMonoFOV(viewport.getWidth(), viewport.getHeight());
-        projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
+    /*
+     Retrieve transforms from the AR session.
+     */
+    if (_sceneController) {
+        if (!_cameraBackground) {
+            [self initCameraBackgroundWithViewport:viewport forScene:_sceneController->getScene()];
+        }
+    
+        if (_arSession->isReady()) {
+            _arSession->setViewport(viewport);
+            
+            std::unique_ptr<VROARFrame> &frame = _arSession->updateFrame();
+            
+            const std::shared_ptr<VROARCamera> camera = frame->getCamera();
+            rotation = camera->getRotation();
+            projection = camera->getProjection(viewport, kZNear, _renderer->getFarClippingPlane(), &fov);
+            
+            VROMatrix4f backgroundTransform = frame->getBackgroundTexcoordTransform();
+            _cameraBackground->setTexcoordTransform(backgroundTransform);
+        }
     }
     
     /*
@@ -283,10 +295,8 @@
     /*
      Render the 3D scene.
      */
-    VROMatrix4f headRotation = _headTracker->getHeadRotation().invert();
-    _renderer->prepareFrame(_frame, viewport, fov, headRotation, _driver);
+    _renderer->prepareFrame(_frame, viewport, fov, rotation, projection, _driver);
     
-
     VROMatrix4f eyeFromHeadMatrix; // Identity
     
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
@@ -307,12 +317,6 @@
 }
 
 - (void)initCameraBackgroundWithViewport:(VROViewport)viewport forScene:(std::shared_ptr<VROScene>)scene {
-    VROCameraOrientation orientation = VROCameraTextureiOS::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]);
-    
-    _cameraTexture = std::make_shared<VROCameraTextureiOS>(VROTextureType::Texture2D);
-    _cameraTexture->initCamera(VROCameraPosition::Back, orientation, _driver);
-    _cameraTexture->play();
-    
     _cameraBackground = VROSurface::createSurface(viewport.getX() + viewport.getWidth()  / 2.0,
                                                   viewport.getY() + viewport.getHeight() / 2.0,
                                                   viewport.getWidth(), viewport.getHeight(),
@@ -322,7 +326,7 @@
     
     std::shared_ptr<VROMaterial> material = _cameraBackground->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Constant);
-    material->getDiffuse().setTexture(_cameraTexture);
+    material->getDiffuse().setTexture(_arSession->getCameraBackgroundTexture());
     material->setWritesToDepthBuffer(false);
     material->setReadsFromDepthBuffer(false);
 

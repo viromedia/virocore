@@ -92,6 +92,14 @@
 		8F2D1BB81EC379C000E7BF44 /* VROAnimationMatrix4f.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BB61EC379C000E7BF44 /* VROAnimationMatrix4f.h */; };
 		8F2D1BBB1EC37E1900E7BF44 /* VROSkeleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BB91EC37E1900E7BF44 /* VROSkeleton.cpp */; };
 		8F2D1BBC1EC37E1900E7BF44 /* VROSkeleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BBA1EC37E1900E7BF44 /* VROSkeleton.h */; };
+		8F3488AC1EE83DD3008917CB /* VROARAnchorInertial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3488A41EE83DD3008917CB /* VROARAnchorInertial.cpp */; };
+		8F3488AD1EE83DD3008917CB /* VROARAnchorInertial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3488A51EE83DD3008917CB /* VROARAnchorInertial.h */; };
+		8F3488AE1EE83DD3008917CB /* VROARCameraInertial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3488A61EE83DD3008917CB /* VROARCameraInertial.cpp */; };
+		8F3488AF1EE83DD3008917CB /* VROARCameraInertial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3488A71EE83DD3008917CB /* VROARCameraInertial.h */; };
+		8F3488B01EE83DD3008917CB /* VROARFrameInertial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3488A81EE83DD3008917CB /* VROARFrameInertial.cpp */; };
+		8F3488B11EE83DD3008917CB /* VROARFrameInertial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3488A91EE83DD3008917CB /* VROARFrameInertial.h */; };
+		8F3488B21EE83DD3008917CB /* VROARSessionInertial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3488AA1EE83DD3008917CB /* VROARSessionInertial.cpp */; };
+		8F3488B31EE83DD3008917CB /* VROARSessionInertial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3488AB1EE83DD3008917CB /* VROARSessionInertial.h */; };
 		8F36F3A91EE0CE10003F92D4 /* VROViewAR.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8F129FC51EDF6AE500341D83 /* VROViewAR.mm */; };
 		8F39A31C1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F39A31A1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp */; };
 		8F39A31D1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F39A31B1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -218,6 +226,14 @@
 		8FA2E1631C460C600070DB26 /* VROAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FA2E1611C460C600070DB26 /* VROAction.cpp */; };
 		8FA2E1641C460C600070DB26 /* VROAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA2E1621C460C600070DB26 /* VROAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FA9D0A41CC947DD00B00B93 /* VRODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FA9D0A21CC947DD00B00B93 /* VRODriver.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FAE18BF1EE79D230021C7BB /* VROARAnchoriOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */; };
+		8FAE18C01EE79D230021C7BB /* VROARAnchoriOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */; };
+		8FAE18C31EE79D470021C7BB /* VROARSessioniOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18C11EE79D470021C7BB /* VROARSessioniOS.cpp */; };
+		8FAE18C41EE79D470021C7BB /* VROARSessioniOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18C21EE79D470021C7BB /* VROARSessioniOS.h */; };
+		8FAE18C71EE79D6D0021C7BB /* VROARFrameiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18C51EE79D6D0021C7BB /* VROARFrameiOS.cpp */; };
+		8FAE18C81EE79D6D0021C7BB /* VROARFrameiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18C61EE79D6D0021C7BB /* VROARFrameiOS.h */; };
+		8FAE18CB1EE79D880021C7BB /* VROARCameraiOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FAE18C91EE79D880021C7BB /* VROARCameraiOS.cpp */; };
+		8FAE18CC1EE79D880021C7BB /* VROARCameraiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FAE18CA1EE79D880021C7BB /* VROARCameraiOS.h */; };
 		8FAE23C71CE3F61300E98B47 /* VROGeometrySubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB659181CD839DC00D036EB /* VROGeometrySubstrateOpenGL.cpp */; };
 		8FAE23C81CE3F61700E98B47 /* VROMaterialSubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6591C1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.cpp */; };
 		8FB2B58C1E143F7900EDB629 /* optional.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8FB2B58B1E143F7900EDB629 /* optional.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -611,6 +627,14 @@
 		8F2D1BB61EC379C000E7BF44 /* VROAnimationMatrix4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationMatrix4f.h; sourceTree = "<group>"; };
 		8F2D1BB91EC37E1900E7BF44 /* VROSkeleton.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSkeleton.cpp; sourceTree = "<group>"; };
 		8F2D1BBA1EC37E1900E7BF44 /* VROSkeleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSkeleton.h; sourceTree = "<group>"; };
+		8F3488A41EE83DD3008917CB /* VROARAnchorInertial.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARAnchorInertial.cpp; sourceTree = "<group>"; };
+		8F3488A51EE83DD3008917CB /* VROARAnchorInertial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARAnchorInertial.h; sourceTree = "<group>"; };
+		8F3488A61EE83DD3008917CB /* VROARCameraInertial.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARCameraInertial.cpp; sourceTree = "<group>"; };
+		8F3488A71EE83DD3008917CB /* VROARCameraInertial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARCameraInertial.h; sourceTree = "<group>"; };
+		8F3488A81EE83DD3008917CB /* VROARFrameInertial.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARFrameInertial.cpp; sourceTree = "<group>"; };
+		8F3488A91EE83DD3008917CB /* VROARFrameInertial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARFrameInertial.h; sourceTree = "<group>"; };
+		8F3488AA1EE83DD3008917CB /* VROARSessionInertial.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARSessionInertial.cpp; sourceTree = "<group>"; };
+		8F3488AB1EE83DD3008917CB /* VROARSessionInertial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARSessionInertial.h; sourceTree = "<group>"; };
 		8F39A31A1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROFrustumBoxIntersectionMetadata.cpp; sourceTree = "<group>"; };
 		8F39A31B1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFrustumBoxIntersectionMetadata.h; sourceTree = "<group>"; };
 		8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shanghai_tower_diffuse.jpg; path = ViroSample/shanghai_tower_diffuse.jpg; sourceTree = "<group>"; };
@@ -799,6 +823,14 @@
 		8FA2E1611C460C600070DB26 /* VROAction.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROAction.cpp; sourceTree = "<group>"; };
 		8FA2E1621C460C600070DB26 /* VROAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAction.h; sourceTree = "<group>"; };
 		8FA9D0A21CC947DD00B00B93 /* VRODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODriver.h; sourceTree = "<group>"; };
+		8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARAnchoriOS.cpp; sourceTree = "<group>"; };
+		8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARAnchoriOS.h; sourceTree = "<group>"; };
+		8FAE18C11EE79D470021C7BB /* VROARSessioniOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARSessioniOS.cpp; sourceTree = "<group>"; };
+		8FAE18C21EE79D470021C7BB /* VROARSessioniOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARSessioniOS.h; sourceTree = "<group>"; };
+		8FAE18C51EE79D6D0021C7BB /* VROARFrameiOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARFrameiOS.cpp; sourceTree = "<group>"; };
+		8FAE18C61EE79D6D0021C7BB /* VROARFrameiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARFrameiOS.h; sourceTree = "<group>"; };
+		8FAE18C91EE79D880021C7BB /* VROARCameraiOS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARCameraiOS.cpp; sourceTree = "<group>"; };
+		8FAE18CA1EE79D880021C7BB /* VROARCameraiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARCameraiOS.h; sourceTree = "<group>"; };
 		8FB2B58B1E143F7900EDB629 /* optional.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = optional.hpp; sourceTree = "<group>"; };
 		8FB2B58E1E1442EC00EDB629 /* VROPropertyAnimation.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPropertyAnimation.cpp; sourceTree = "<group>"; };
 		8FB2B58F1E1442EC00EDB629 /* VROPropertyAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPropertyAnimation.h; sourceTree = "<group>"; };
@@ -1571,6 +1603,37 @@
 			name = Animation;
 			sourceTree = "<group>";
 		};
+		8FAE18BB1EE79C5B0021C7BB /* ARKit */ = {
+			isa = PBXGroup;
+			children = (
+				8FAE18C21EE79D470021C7BB /* VROARSessioniOS.h */,
+				8FAE18C11EE79D470021C7BB /* VROARSessioniOS.cpp */,
+				8FAE18C61EE79D6D0021C7BB /* VROARFrameiOS.h */,
+				8FAE18C51EE79D6D0021C7BB /* VROARFrameiOS.cpp */,
+				8FAE18CA1EE79D880021C7BB /* VROARCameraiOS.h */,
+				8FAE18C91EE79D880021C7BB /* VROARCameraiOS.cpp */,
+				8FAE18BE1EE79D230021C7BB /* VROARAnchoriOS.h */,
+				8FAE18BD1EE79D230021C7BB /* VROARAnchoriOS.cpp */,
+			);
+			name = ARKit;
+			sourceTree = "<group>";
+		};
+		8FAE18BC1EE79C650021C7BB /* Inertial */ = {
+			isa = PBXGroup;
+			children = (
+				8FDFA8971BDB031800883EC0 /* Sensors */,
+				8F3488AB1EE83DD3008917CB /* VROARSessionInertial.h */,
+				8F3488AA1EE83DD3008917CB /* VROARSessionInertial.cpp */,
+				8F3488A91EE83DD3008917CB /* VROARFrameInertial.h */,
+				8F3488A81EE83DD3008917CB /* VROARFrameInertial.cpp */,
+				8F3488A71EE83DD3008917CB /* VROARCameraInertial.h */,
+				8F3488A61EE83DD3008917CB /* VROARCameraInertial.cpp */,
+				8F3488A51EE83DD3008917CB /* VROARAnchorInertial.h */,
+				8F3488A41EE83DD3008917CB /* VROARAnchorInertial.cpp */,
+			);
+			name = Inertial;
+			sourceTree = "<group>";
+		};
 		8FB2B58D1E1442A700EDB629 /* Execution API */ = {
 			isa = PBXGroup;
 			children = (
@@ -1901,6 +1964,7 @@
 				8F129FAE1ED4A38600341D83 /* VRODualQuaternion.h in Headers */,
 				8F0FE6761CD2D47900A4C297 /* VROViewCardboard.h in Headers */,
 				8F83DEAB1C49B0540089C31A /* VROAllocationTracker.h in Headers */,
+				8F3488B11EE83DD3008917CB /* VROARFrameInertial.h in Headers */,
 				8ABD8F3A1DB739E000BD9C83 /* VROApiKeyValidatorDynamo.h in Headers */,
 				8FB659151CD8389300D036EB /* VROSceneRendererCardboardOpenGL.h in Headers */,
 				8FA9D0A41CC947DD00B00B93 /* VRODriver.h in Headers */,
@@ -1925,15 +1989,18 @@
 				8F2D1BB41EC3785C00E7BF44 /* VROBone.h in Headers */,
 				8FDDB49D1DADB8C200DE0968 /* VROLightingUBO.h in Headers */,
 				8F0FE67F1CD3E12F00A4C297 /* VROShaderProgram.h in Headers */,
+				8FAE18C41EE79D470021C7BB /* VROARSessioniOS.h in Headers */,
 				8F83DEA31C4826F80089C31A /* VROTimingFunctionPowerDeceleration.h in Headers */,
 				8FB6591B1CD839DC00D036EB /* VROGeometrySubstrateOpenGL.h in Headers */,
 				8F56AEB21DE7873E00DD65B6 /* VROTypefaceiOS.h in Headers */,
 				8F65F7861C90CD0B00415115 /* VROConstraint.h in Headers */,
 				8F660AB71E95528F006D063F /* VROFrameTimer.h in Headers */,
+				8FAE18C01EE79D230021C7BB /* VROARAnchoriOS.h in Headers */,
 				8FC908871CA458EB00069C89 /* VRONodeCamera.h in Headers */,
 				8FD4DF381C18F500003DC425 /* VROMaterialVisual.h in Headers */,
 				8FD4DF391C18F500003DC425 /* VROTexture.h in Headers */,
 				8FDDB4B31DB1316700DE0968 /* VROUniform.h in Headers */,
+				8F3488B31EE83DD3008917CB /* VROARSessionInertial.h in Headers */,
 				8FD4DF3A1C18F500003DC425 /* VROLight.h in Headers */,
 				8FD4DF3B1C18F5EA003DC425 /* VROTime.h in Headers */,
 				8F705DE31E8ACFD0008BE8F8 /* VRODebugHUD.h in Headers */,
@@ -1994,6 +2061,7 @@
 				8ABD8F3D1DB7DF8F00BD9C83 /* VROApiKeyMetrics.h in Headers */,
 				8FB535281EB8DDBE00E8E1A6 /* VROModelIOUtil.h in Headers */,
 				8F129FC61EDF6AE500341D83 /* VROViewAR.h in Headers */,
+				8F3488AD1EE83DD3008917CB /* VROARAnchorInertial.h in Headers */,
 				8FCB102B1DD5489E00FE425C /* VROVideoDelegateiOS.h in Headers */,
 				8F83DEA51C4830360089C31A /* VROTimingFunctionEaseIn.h in Headers */,
 				8F83DE8E1C4728A30089C31A /* VROHitTestResult.h in Headers */,
@@ -2007,6 +2075,7 @@
 				8FD1E1B41C3F27190005BE4E /* VROFrameListener.h in Headers */,
 				8F0FE6751CD2D3FD00A4C297 /* VROViewMetal.h in Headers */,
 				8F83DEA11C4826F80089C31A /* VROTimingFunctionEaseOut.h in Headers */,
+				8F3488AF1EE83DD3008917CB /* VROARCameraInertial.h in Headers */,
 				8A130D8C1E3BBEA90050D83B /* VROSoundDelegate.h in Headers */,
 				8F3E406D1EE7731B004CDE01 /* VROARCamera.h in Headers */,
 				8F11B7C21C20B0530026D150 /* VROView.h in Headers */,
@@ -2025,6 +2094,7 @@
 				8F548E4A1C23656000556688 /* VROAnimationVector3f.h in Headers */,
 				8FB6591F1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.h in Headers */,
 				8A130DA41E4018550050D83B /* VROSoundDataGVR.h in Headers */,
+				8FAE18CC1EE79D880021C7BB /* VROARCameraiOS.h in Headers */,
 				8A130D8D1E3BBEAE0050D83B /* VROSoundDelegateiOS.h in Headers */,
 				8F203F0A1DCD236500DC50F2 /* VRODefines.h in Headers */,
 				8FB6590C1CD82FD200D036EB /* VROSceneRendererCardboard.h in Headers */,
@@ -2037,6 +2107,7 @@
 				8F2D1BBC1EC37E1900E7BF44 /* VROSkeleton.h in Headers */,
 				8FBDBE2B1D01EE5E00801B59 /* VROSortKey.h in Headers */,
 				8F65F78A1C90CD4700415115 /* VROBillboardConstraint.h in Headers */,
+				8FAE18C81EE79D6D0021C7BB /* VROARFrameiOS.h in Headers */,
 				8FCB102D1DD548C900FE425C /* VROVideoDelegateInternal.h in Headers */,
 				8FB2B5991E1445EE00EDB629 /* VROAnimationChain.h in Headers */,
 				8FCB100D1DD131C900FE425C /* VROPlatformUtil.h in Headers */,
@@ -2459,8 +2530,10 @@
 			files = (
 				A586978B1E308B5400191090 /* VROInputControllerBase.cpp in Sources */,
 				8F36F3A91EE0CE10003F92D4 /* VROViewAR.mm in Sources */,
+				8FAE18C71EE79D6D0021C7BB /* VROARFrameiOS.cpp in Sources */,
 				8F705DE21E8ACFD0008BE8F8 /* VRODebugHUD.cpp in Sources */,
 				8F0FE6701CD29BF900A4C297 /* VROViewCardboard.m in Sources */,
+				8FAE18BF1EE79D230021C7BB /* VROARAnchoriOS.cpp in Sources */,
 				8FD4DEFB1C18ED19003DC425 /* VROMath.cpp in Sources */,
 				8FD4DEEC1C18ED0B003DC425 /* VROTime.cpp in Sources */,
 				8FD4DF061C18ED3C003DC425 /* VROCamera.cpp in Sources */,
@@ -2473,6 +2546,7 @@
 				8FD4DEF01C18ED0B003DC425 /* VROData.cpp in Sources */,
 				8FD4DF191C18ED4C003DC425 /* VRODistortionMesh.cpp in Sources */,
 				8F65F8151CA073C100415115 /* VROTextureUtil.cpp in Sources */,
+				8FAE18CB1EE79D880021C7BB /* VROARCameraiOS.cpp in Sources */,
 				8F2D1BBB1EC37E1900E7BF44 /* VROSkeleton.cpp in Sources */,
 				8A130D791E3AA1E10050D83B /* VROSoundGVR.cpp in Sources */,
 				8FB659221CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp in Sources */,
@@ -2537,6 +2611,7 @@
 				8F9277A51C62DBDF00FF892A /* VROConcurrentBuffer.cpp in Sources */,
 				8FD4DF0B1C18ED3C003DC425 /* VROGeometry.cpp in Sources */,
 				8F83DEA71C4830DC0089C31A /* VROTimingFunction.cpp in Sources */,
+				8F3488AE1EE83DD3008917CB /* VROARCameraInertial.cpp in Sources */,
 				8FD4DF1A1C18ED4C003DC425 /* VROScreen.cpp in Sources */,
 				8ABD8F421DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m in Sources */,
 				8FB535191EB8500000E8E1A6 /* VROFBXLoader.cpp in Sources */,
@@ -2559,6 +2634,7 @@
 				8F0FE66C1CD289FD00A4C297 /* VRORenderLoopCardboard.m in Sources */,
 				A5EC659C1EBD34C000FE220E /* VROPhysicsShape.cpp in Sources */,
 				8ABD8F371DB72CDD00BD9C83 /* VROApiKey.m in Sources */,
+				8F3488B21EE83DD3008917CB /* VROARSessionInertial.cpp in Sources */,
 				8F129FAD1ED4A38600341D83 /* VRODualQuaternion.cpp in Sources */,
 				8FB5351E1EB85A7C00E8E1A6 /* Nodes.pb.cc in Sources */,
 				8FB2B5981E1445EE00EDB629 /* VROAnimationChain.cpp in Sources */,
@@ -2569,6 +2645,8 @@
 				8F39A31C1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp in Sources */,
 				8FC908861CA458EB00069C89 /* VRONodeCamera.cpp in Sources */,
 				8FCB0FFA1DCFF68E00FE425C /* VROAudioPlayeriOS.cpp in Sources */,
+				8F3488B01EE83DD3008917CB /* VROARFrameInertial.cpp in Sources */,
+				8F3488AC1EE83DD3008917CB /* VROARAnchorInertial.cpp in Sources */,
 				8A3517361EE0B55400B6E786 /* VROImageTrackerOutput.cpp in Sources */,
 				8FD4DEEF1C18ED0B003DC425 /* VROImageUtil.cpp in Sources */,
 				8ABD8F311DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m in Sources */,
@@ -2576,6 +2654,7 @@
 				8FA2E1561C44BAB70070DB26 /* VROTorusKnot.cpp in Sources */,
 				8F53C8F81E00F03E008314B4 /* tiny_obj_loader.cc in Sources */,
 				8F129F951ECB41EE00341D83 /* VROSkeletalAnimation.cpp in Sources */,
+				8FAE18C31EE79D470021C7BB /* VROARSessioniOS.cpp in Sources */,
 				8FDDB4A71DAF134300DE0968 /* VROLineSegment.cpp in Sources */,
 				8FD4DEFE1C18ED22003DC425 /* VROShapeUtils.cpp in Sources */,
 			);
