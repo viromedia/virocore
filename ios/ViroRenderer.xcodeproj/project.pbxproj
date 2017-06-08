@@ -98,6 +98,10 @@
 		8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */; };
 		8F3B968F1C77D64200B4FEE0 /* shanghai_tower_specular.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968C1C77D64200B4FEE0 /* shanghai_tower_specular.jpg */; };
 		8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968D1C77D64200B4FEE0 /* shanghai_tower.obj */; };
+		8F3E40611EE7727D004CDE01 /* VROARSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3E405F1EE7727D004CDE01 /* VROARSession.h */; };
+		8F3E40651EE772AF004CDE01 /* VROARAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3E40631EE772AF004CDE01 /* VROARAnchor.h */; };
+		8F3E40691EE772D1004CDE01 /* VROARFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3E40671EE772D1004CDE01 /* VROARFrame.h */; };
+		8F3E406D1EE7731B004CDE01 /* VROARCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3E406B1EE7731B004CDE01 /* VROARCamera.h */; };
 		8F4AD9001D42BD710044B3F0 /* ViroKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; };
 		8F4AD9201D42D60C0044B3F0 /* VROFrameSynchronizerInternal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4AD91E1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.cpp */; };
 		8F4AD9211D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4AD91F1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h */; };
@@ -612,6 +616,10 @@
 		8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shanghai_tower_diffuse.jpg; path = ViroSample/shanghai_tower_diffuse.jpg; sourceTree = "<group>"; };
 		8F3B968C1C77D64200B4FEE0 /* shanghai_tower_specular.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shanghai_tower_specular.jpg; path = ViroSample/shanghai_tower_specular.jpg; sourceTree = "<group>"; };
 		8F3B968D1C77D64200B4FEE0 /* shanghai_tower.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = shanghai_tower.obj; path = ViroSample/shanghai_tower.obj; sourceTree = "<group>"; };
+		8F3E405F1EE7727D004CDE01 /* VROARSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARSession.h; sourceTree = "<group>"; };
+		8F3E40631EE772AF004CDE01 /* VROARAnchor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARAnchor.h; sourceTree = "<group>"; };
+		8F3E40671EE772D1004CDE01 /* VROARFrame.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARFrame.h; sourceTree = "<group>"; };
+		8F3E406B1EE7731B004CDE01 /* VROARCamera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARCamera.h; sourceTree = "<group>"; };
 		8F4AD91E1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROFrameSynchronizerInternal.cpp; sourceTree = "<group>"; };
 		8F4AD91F1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFrameSynchronizerInternal.h; sourceTree = "<group>"; };
 		8F4C9FFF1BDAE06A00177B8F /* VROScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROScreen.h; sourceTree = "<group>"; };
@@ -1211,7 +1219,8 @@
 		8F129FC11EDF6A8700341D83 /* AR */ = {
 			isa = PBXGroup;
 			children = (
-				8FDFA8971BDB031800883EC0 /* Sensors */,
+				8FAE18BC1EE79C650021C7BB /* Inertial */,
+				8FAE18BB1EE79C5B0021C7BB /* ARKit */,
 				8F129FC41EDF6AE500341D83 /* VROViewAR.h */,
 				8F129FC51EDF6AE500341D83 /* VROViewAR.mm */,
 			);
@@ -1243,6 +1252,17 @@
 				8F129F931ECB41EE00341D83 /* VROSkeletalAnimation.cpp */,
 			);
 			name = Skeletal;
+			sourceTree = "<group>";
+		};
+		8F3E405B1EE76E2E004CDE01 /* AR */ = {
+			isa = PBXGroup;
+			children = (
+				8F3E405F1EE7727D004CDE01 /* VROARSession.h */,
+				8F3E40671EE772D1004CDE01 /* VROARFrame.h */,
+				8F3E406B1EE7731B004CDE01 /* VROARCamera.h */,
+				8F3E40631EE772AF004CDE01 /* VROARAnchor.h */,
+			);
+			path = AR;
 			sourceTree = "<group>";
 		};
 		8F4DCE441BFBF3A800061DD7 /* Shapes */ = {
@@ -1327,6 +1347,7 @@
 				8F5C414B1BD825A9006D7A77 /* Util */,
 				8F517C441BD0472C0017C70B /* Math */,
 				8F1071D81BF67EF7003B3C3F /* Renderer */,
+				8F3E405B1EE76E2E004CDE01 /* AR */,
 				8FF253B11DC9398A00C1C5C7 /* VRODefines.h */,
 				8F517BB91BCDA2BD0017C70B /* Supporting Files */,
 			);
@@ -1957,6 +1978,7 @@
 				8F83DE9E1C4826F80089C31A /* VROTimingFunctionCubicBezier.h in Headers */,
 				8FD4DF471C18F5EB003DC425 /* VROVector4f.h in Headers */,
 				8F53D3A51DCB9B2A001C91A8 /* VROImage.h in Headers */,
+				8F3E40691EE772D1004CDE01 /* VROARFrame.h in Headers */,
 				8FD4DF491C18F5EB003DC425 /* VROMatrix4f.h in Headers */,
 				8F548E4E1C23665100556688 /* VROAnimatable.h in Headers */,
 				8F129F961ECB41EE00341D83 /* VROSkeletalAnimation.h in Headers */,
@@ -1986,12 +2008,14 @@
 				8F0FE6751CD2D3FD00A4C297 /* VROViewMetal.h in Headers */,
 				8F83DEA11C4826F80089C31A /* VROTimingFunctionEaseOut.h in Headers */,
 				8A130D8C1E3BBEA90050D83B /* VROSoundDelegate.h in Headers */,
+				8F3E406D1EE7731B004CDE01 /* VROARCamera.h in Headers */,
 				8F11B7C21C20B0530026D150 /* VROView.h in Headers */,
 				8F56AEA51DE764A700DD65B6 /* VROGlyphOpenGL.h in Headers */,
 				8F83DEAF1C50278C0089C31A /* VROSphere.h in Headers */,
 				A50F2A291ED135D800D964D5 /* VROPhysicsBodyDelegateiOS.h in Headers */,
 				8F65F8161CA073C100415115 /* VROTextureUtil.h in Headers */,
 				8A130DA71E401B910050D83B /* VROSoundDataDelegate.h in Headers */,
+				8F3E40651EE772AF004CDE01 /* VROARAnchor.h in Headers */,
 				8FDDB4A81DAF134300DE0968 /* VROLineSegment.h in Headers */,
 				8FA2E1511C4463D00070DB26 /* VROSkybox.h in Headers */,
 				8F56AEAE1DE77B2700DD65B6 /* VROTypeface.h in Headers */,
@@ -2006,6 +2030,7 @@
 				8FB6590C1CD82FD200D036EB /* VROSceneRendererCardboard.h in Headers */,
 				8F56AEA11DE7619000DD65B6 /* VROGlyph.h in Headers */,
 				8F129F9C1ECCD70C00341D83 /* VROBoneUBO.h in Headers */,
+				8F3E40611EE7727D004CDE01 /* VROARSession.h in Headers */,
 				8FCB100B1DD12BDF00FE425C /* VRODriverOpenGLiOS.h in Headers */,
 				8FCB10031DD0062300FE425C /* VRORenderDelegateInternal.h in Headers */,
 				8ABD8F381DB72CE000BD9C83 /* VROApiKey.h in Headers */,
@@ -2724,6 +2749,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = UN8MD7234Y;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2749,6 +2775,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = UN8MD7234Y;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2826,6 +2853,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = UN8MD7234Y;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2861,6 +2889,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = UN8MD7234Y;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
