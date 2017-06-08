@@ -48,9 +48,9 @@ VROPhysicsBody::~VROPhysicsBody() {
 void VROPhysicsBody::createBulletBody() {
     // Create the underlying Bullet Rigid body with a bullet shape if possible.
     // If no VROPhysicsShape is provided, one is inferred during a computePhysics pass.
-    btVector3 uniformInertia = btVector3(1,1,1);
+    btVector3 inertia = btVector3(_inertia.x, _inertia.y, _inertia.z);
     btCollisionShape *collisionShape = _shape == nullptr ? nullptr : _shape->getBulletShape();
-    btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(_mass , nullptr, collisionShape, uniformInertia);
+    btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(_mass , nullptr, collisionShape, inertia);
 
     _rigidBody = new btRigidBody(groundRigidBodyCI);
     _rigidBody->setUserPointer(this);
@@ -177,17 +177,43 @@ void VROPhysicsBody::updateBulletRigidBody() {
 
     // Update the rigid body to reflect the latest VROPhysicsShape.
     // If shape is not defined, we attempt to infer the shape from the node's geometry.
-    if ((_shape == nullptr || _shape->getIsGeneratedFromGeometry()) && node->getGeometry()) {
-        _shape = std::make_shared<VROPhysicsShape>(node);
+    if (_shape == nullptr && node->getGeometry()) {
+        _shape = std::make_shared<VROPhysicsShape>(node, false);
+    } else if (_shape && _shape->getIsGeneratedFromGeometry()) {
+        _shape = std::make_shared<VROPhysicsShape>(node, _shape->getIsCompoundShape());
     } else if (_shape == nullptr) {
         pwarn("No collision shape detected for this rigidbody... defaulting to basic box shape.");
         std::vector<float> params = {1, 1, 1};
         _shape = std::make_shared<VROPhysicsShape>(VROPhysicsShape::VROShapeType::Box, params);
     }
-    _rigidBody->setCollisionShape(_shape->getBulletShape());
 
-    // Update Motion states as necessary.
-    if (_rigidBody->getMotionState() == nullptr) {
+    // If the physics body contains a compounded shape, we recalculate it's inertia.
+    if (_shape->getIsCompoundShape()) {
+        btCompoundShape *compoundShape = (btCompoundShape *)_shape->getBulletShape();
+        btTransform principal;
+        btVector3 principalInertia;
+        btScalar* masses = new btScalar[compoundShape->getNumChildShapes()];
+
+        // Evenly distribute mass for this compound body
+        for (int j=0; j<compoundShape->getNumChildShapes(); j++) {
+            if (_mass > 0) {
+                masses[j] = _mass / compoundShape->getNumChildShapes();
+            } else {
+                masses[j] = 0;
+            }
+        }
+
+        // Recalculate the inertia of the compounded body
+        compoundShape->calculatePrincipalAxisTransform(masses, principal, principalInertia);
+        _inertia = VROVector3f(principalInertia.x(), principalInertia.y(), principalInertia.z());
+        _rigidBody->setMassProps(_mass, principalInertia);
+        _rigidBody->setCollisionShape(compoundShape);
+    } else {
+        _rigidBody->setCollisionShape(_shape->getBulletShape());
+    }
+
+    // Update Motion states as neccessary.
+    if (_rigidBody->getMotionState() == nullptr){
         VROPhysicsMotionState *motionState = new VROPhysicsMotionState(shared_from_this());
         _rigidBody->setMotionState(motionState);
     }
