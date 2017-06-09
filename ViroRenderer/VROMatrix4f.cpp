@@ -262,6 +262,7 @@ VROVector3f VROMatrix4f::extractTranslation() {
 
 std::string VROMatrix4f::toString() const {
     std::ostringstream ss;
+    ss << "\n";
     ss << _mtx[0] << ", " << _mtx[4] << ", " << _mtx[8] << ", " << _mtx[12] << "\n";
     ss << _mtx[1] << ", " << _mtx[5] << ", " << _mtx[9] << ", " << _mtx[13] << "\n";
     ss << _mtx[2] << ", " << _mtx[6] << ", " << _mtx[10] << ", " << _mtx[14] << "\n";

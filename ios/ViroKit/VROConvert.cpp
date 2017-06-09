@@ -78,11 +78,19 @@ matrix_float4x4 VROConvert::toMatrixFloat4x4(VROMatrix4f m) {
     return m4x4;
 }
 
+VROMatrix4f VROConvert::toMatrix4f(matrix_float3x3 m) {
+    float mtx[16] = { m.columns[0][0], m.columns[0][1], m.columns[0][2], 0,
+                      m.columns[1][0], m.columns[1][1], m.columns[1][2], 0,
+                      m.columns[2][0], m.columns[2][1], m.columns[2][2], 0,
+                      0, 0, 0, 1 };
+    return VROMatrix4f(mtx);
+}
+
 VROMatrix4f VROConvert::toMatrix4f(matrix_float4x4 m) {
     float mtx[16] = { m.columns[0][0], m.columns[0][1], m.columns[0][2], m.columns[0][3],
-        m.columns[1][0], m.columns[1][1], m.columns[1][2], m.columns[1][3],
-        m.columns[2][0], m.columns[2][1], m.columns[2][2], m.columns[2][3],
-        m.columns[3][0], m.columns[3][1], m.columns[3][2], m.columns[3][3] };
+                      m.columns[1][0], m.columns[1][1], m.columns[1][2], m.columns[1][3],
+                      m.columns[2][0], m.columns[2][1], m.columns[2][2], m.columns[2][3],
+                      m.columns[3][0], m.columns[3][1], m.columns[3][2], m.columns[3][3] };
     return VROMatrix4f(mtx);
 }
 

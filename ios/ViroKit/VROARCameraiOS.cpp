@@ -58,7 +58,20 @@ VROMatrix4f VROARCameraiOS::getRotation() const {
     matrix[13] = 0;
     matrix[14] = 0;
     
-    return matrix;
+    // We have to compensate for the fact that our Viro axes rotate when the device
+    // orientation changes, while the "real" axes used by ARKit do not.
+    VROMatrix4f rotation;
+    if (_orientation == VROCameraOrientation::Portrait) {
+        rotation.rotateZ(M_PI / 2);
+    }
+    else if (_orientation == VROCameraOrientation::LandscapeLeft) {
+        rotation.rotateZ(M_PI);
+    }
+    else if (_orientation == VROCameraOrientation::PortraitUpsideDown) {
+        rotation.rotateZ(3 * M_PI / 2);
+    }
+    
+    return matrix * rotation;
 }
 
 VROVector3f VROARCameraiOS::getPosition() const {
