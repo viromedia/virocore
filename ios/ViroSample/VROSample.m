@@ -916,8 +916,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                         
                                                                        // node->setPosition({0, -4, -4});
                                                                         
-                                                                        node->setPosition({0, 0, -0.75});
-                                                                        //node->setScale({0.1, 0.1, 0.1});
+                                                                        node->setPosition({0, 0, -1});
+                                                                        node->setScale({0.5, 0.5, 0.5});
                                                                         
                                                                         std::set<std::string> animations = node->getAnimationKeys(true);
                                                                         for (std::string animation : animations) {
@@ -940,17 +940,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     });
     
     fbxNode->runAction(action);
-    
-    std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();
-    camera->setPosition({0, 0, 0});
-    //camera->setOrbitFocalPoint({0, 0, -0.75});
-    //camera->setRotationType(VROCameraRotationType::Orbit);
-    
-    std::shared_ptr<VRONode> cameraNode = std::make_shared<VRONode>();
-    cameraNode->setCamera(camera);
-    rootNode->addChildNode(cameraNode);
-    
-    [self.view setPointOfView:cameraNode];
     
     self.delegate = std::make_shared<VROEventDelegateiOS>(self);
     fbxNode->setEventDelegate(self.delegate);

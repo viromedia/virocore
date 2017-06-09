@@ -22,6 +22,7 @@
 #import "VROARAnchor.h"
 #import "VROARFrame.h"
 #import "VROConvert.h"
+#import "VRONodeCamera.h"
 #import "vr/gvr/capi/include/gvr_audio.h"
 
 @interface VROViewAR () {
@@ -32,6 +33,7 @@
     std::shared_ptr<gvr::AudioApi> _gvrAudio;
     std::shared_ptr<VROSurface> _cameraBackground;
     std::shared_ptr<VROARSession> _arSession;
+    std::shared_ptr<VRONode> _pointOfView;
     
     CADisplayLink *_displayLink;
     int _frame;
@@ -130,6 +132,14 @@
     _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
     _arSession->run();
     
+    /*
+     Set the point of view to a special node that will follow the user's
+     real position.
+     */
+    _pointOfView = std::make_shared<VRONode>();
+    _pointOfView->setCamera(std::make_shared<VRONodeCamera>());
+    _renderer->setPointOfView(_pointOfView);
+    
     self.keyValidator = [[VROApiKeyValidatorDynamo alloc] init];
 }
 
@@ -197,7 +207,7 @@
 #pragma mark - Camera
 
 - (void)setPointOfView:(std::shared_ptr<VRONode>)node {
-    _renderer->setPointOfView(node);
+    pabort("May not set POV in AR mode");
 }
 
 - (void)layoutSubviews {
@@ -282,6 +292,7 @@
         VROFieldOfView fov;
         VROMatrix4f projection = camera->getProjection(viewport, kZNear, _renderer->getFarClippingPlane(), &fov);
         VROMatrix4f rotation = camera->getRotation();
+        VROVector3f position = camera->getPosition();
         
         VROMatrix4f backgroundTransform = frame->getBackgroundTexcoordTransform();
         _cameraBackground->setTexcoordTransform(backgroundTransform);
@@ -289,6 +300,7 @@
         /*
          Render the 3D scene.
          */
+        _pointOfView->getCamera()->setPosition(position);
         _renderer->prepareFrame(_frame, viewport, fov, rotation, projection, _driver);
         
         glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
