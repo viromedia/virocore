@@ -25,7 +25,7 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, std::shared_ptr<V
     else {
         pabort("ARKit not available on this OS");
     }
-    _background = std::make_shared<VROTexture>(VROTextureType::Texture2D);
+    _background = std::make_shared<VROTexture>(VROTextureType::Texture2D, VROTextureInternalFormat::YCBCR);
     _videoTextureCache = std::shared_ptr<VROVideoTextureCacheOpenGL>((VROVideoTextureCacheOpenGL *)driver->newVideoTextureCache());
 }
 
@@ -80,7 +80,8 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
      Update the background image.
      */
     std::vector<std::unique_ptr<VROTextureSubstrate>> substrates = _videoTextureCache->createYCbCrTextureSubstrates(frameiOS->getImage());
-    _background->setSubstrate(std::move(substrates.front()));
+    _background->setSubstrate(0, std::move(substrates[0]));
+    _background->setSubstrate(1, std::move(substrates[1]));
     
     return _currentFrame;
 }

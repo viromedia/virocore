@@ -273,20 +273,27 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
     
     material->bindMaterialUniforms(opacity, geometry);
     
+    int activeTexture = 0;
     const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();
     for (int j = 0; j < textures.size(); ++j) {
-        VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) textures[j]->getSubstrate(driver, context.getFrameScheduler().get());
-        if (!substrate) {
-            // Use a blank placeholder if a texture is not yet available (i.e.
-            // during video texture loading)
-            std::shared_ptr<VROTexture> blank = getBlankTexture();
-            substrate = (VROTextureSubstrateOpenGL *) blank->getSubstrate(driver, nullptr);
+        const std::shared_ptr<VROTexture> &texture = textures[j];
+        
+        for (int s = 0; s < texture->getNumSubstrates(); s++) {
+            VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) texture->getSubstrate(s, driver, context.getFrameScheduler().get());
+            if (!substrate) {
+                // Use a blank placeholder if a texture is not yet available (i.e.
+                // during video texture loading)
+                std::shared_ptr<VROTexture> blank = getBlankTexture();
+                substrate = (VROTextureSubstrateOpenGL *) blank->getSubstrate(0, driver, nullptr);
+            }
+            
+            std::pair<GLenum, GLint> targetAndTexture = substrate->getTexture();
+            
+            glActiveTexture(GL_TEXTURE0 + activeTexture);
+            glBindTexture(targetAndTexture.first, targetAndTexture.second);
+            
+            ++activeTexture;
         }
-        
-        std::pair<GLenum, GLint> targetAndTexture = substrate->getTexture();
-        
-        glActiveTexture(GL_TEXTURE0 + j);
-        glBindTexture(targetAndTexture.first, targetAndTexture.second);
     }
     
     glDrawElements(element.primitiveType, element.indexCount, element.indexType, 0);

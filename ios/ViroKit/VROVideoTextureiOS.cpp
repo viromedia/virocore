@@ -155,7 +155,7 @@ void VROVideoTextureiOS::onFrameDidRender(const VRORenderContext &context) {
 }
 
 void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> substrate) {
-    setSubstrate(std::move(substrate));
+    setSubstrate(0, std::move(substrate));
 }
 
 #pragma mark - AVPlayer Video Playback Delegate

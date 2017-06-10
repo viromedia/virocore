@@ -21,21 +21,22 @@
 
 static std::atomic_int sTextureId;
 
-VROTexture::VROTexture(VROTextureType type, VROStereoMode stereoMode) :
+VROTexture::VROTexture(VROTextureType type, VROTextureInternalFormat internalFormat, VROStereoMode stereoMode) :
     _textureId(sTextureId++),
     _type(type),
-    _stereoMode(stereoMode),
-    _substrate(nullptr) {
+    _internalFormat(internalFormat),
+    _stereoMode(stereoMode) {
     
+    setNumSubstrates(getNumSubstratesForFormat(internalFormat));
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
 VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate, VROStereoMode stereoState) :
     _textureId(sTextureId++),
     _type(type),
-    _stereoMode(stereoState),
-    _substrate(std::move(substrate)) {
+    _stereoMode(stereoState) {
     
+    _substrates.push_back(std::move(substrate));
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
@@ -51,9 +52,9 @@ VROTexture::VROTexture(VROTextureInternalFormat internalFormat,
     _internalFormat(internalFormat),
     _width(image->getWidth()),
     _height(image->getHeight()),
-    _mipmapMode(mipmapMode),
-    _substrate(nullptr) {
+    _mipmapMode(mipmapMode)  {
     
+    setNumSubstrates(getNumSubstratesForFormat(internalFormat));
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
@@ -68,9 +69,9 @@ VROTexture::VROTexture(VROTextureInternalFormat internalFormat,
     _internalFormat(internalFormat),
     _width(images.front()->getWidth()),
     _height(images.front()->getHeight()),
-    _mipmapMode(VROMipmapMode::None), // No mipmapping for cube textures
-    _substrate(nullptr) {
+    _mipmapMode(VROMipmapMode::None) { // No mipmapping for cube textures
     
+    setNumSubstrates(getNumSubstratesForFormat(internalFormat));
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
@@ -91,9 +92,9 @@ VROTexture::VROTexture(VROTextureType type,
     _width(width),
     _height(height),
     _mipmapMode(mipmapMode),
-    _mipSizes(mipSizes),
-    _substrate(nullptr) {
+    _mipSizes(mipSizes) {
     
+    setNumSubstrates(getNumSubstratesForFormat(internalFormat));
     ALLOCATION_TRACKER_ADD(Textures, 1);
 }
 
@@ -101,8 +102,16 @@ VROTexture::~VROTexture() {
     ALLOCATION_TRACKER_SUB(Textures, 1);
 }
 
-VROTextureSubstrate *VROTexture::getSubstrate(std::shared_ptr<VRODriver> &driver, VROFrameScheduler *scheduler) {
-    if (!_substrate) {
+int VROTexture::getNumSubstrates() const {
+    return (int)_substrates.size();
+}
+
+VROTextureSubstrate *VROTexture::getSubstrate(int index, std::shared_ptr<VRODriver> &driver, VROFrameScheduler *scheduler) {
+    passert (index <= _substrates.size());
+    if (!_substrates[index]) {
+        // Hydration only works for single-substrate textures. Multi-substrate
+        // textures need to inject the substrates manually via setSubstrate().
+        passert (index == 0);
         if (!scheduler) {
             hydrate(driver);
         }
@@ -126,11 +135,17 @@ VROTextureSubstrate *VROTexture::getSubstrate(std::shared_ptr<VRODriver> &driver
         }
     }
     
-    return _substrate.get();
+    return _substrates[index].get();
 }
 
-void VROTexture::setSubstrate(std::unique_ptr<VROTextureSubstrate> substrate) {
-    _substrate = std::move(substrate);
+void VROTexture::setNumSubstrates(int numSubstrates) {
+    _substrates.resize(numSubstrates);
+}
+
+void VROTexture::setSubstrate(int index, std::unique_ptr<VROTextureSubstrate> substrate) {
+    passert_msg(index < _substrates.size(), "Cannot set substrate %d, numSubstrates only %lu",
+                index, _substrates.size());
+    _substrates[index] = std::move(substrate);
 }
 
 void VROTexture::prewarm(std::shared_ptr<VRODriver> driver) {
@@ -151,14 +166,24 @@ void VROTexture::hydrate(std::shared_ptr<VRODriver> &driver) {
         }
         
         std::vector<uint32_t> mipSizes;
-        _substrate = std::unique_ptr<VROTextureSubstrate>(driver->newTextureSubstrate(_type, _format, _internalFormat, _mipmapMode,
+        _substrates[0] = std::unique_ptr<VROTextureSubstrate>(driver->newTextureSubstrate(_type, _format, _internalFormat, _mipmapMode,
                                                                                       data, _width, _height, _mipSizes));
         _images.clear();
     }
     else if (!_data.empty()) {
-        _substrate = std::unique_ptr<VROTextureSubstrate>(driver->newTextureSubstrate(_type, _format, _internalFormat, _mipmapMode,
+        _substrates[0] = std::unique_ptr<VROTextureSubstrate>(driver->newTextureSubstrate(_type, _format, _internalFormat, _mipmapMode,
                                                                                       _data, _width, _height, _mipSizes));
         _data.clear();
     }
 }
+
+int VROTexture::getNumSubstratesForFormat(VROTextureInternalFormat format) const {
+    if (format == VROTextureInternalFormat::YCBCR) {
+        return 2;
+    }
+    else {
+        return 1;
+    }
+}
+
 

@@ -151,7 +151,7 @@ bool VROCameraTextureiOS::isPaused() {
 }
 
 void VROCameraTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate> substrate) {
-    setSubstrate(std::move(substrate));
+    setSubstrate(0, std::move(substrate));
 }
 
 #pragma mark - VROCameraCaptureDelegate
