@@ -111,7 +111,7 @@ void VROVideoTextureAVP::bindSurface(std::shared_ptr<VRODriverOpenGL> driver) {
 
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(
             new VROTextureSubstrateOpenGL(GL_TEXTURE_EXTERNAL_OES, _textureId, driver, true));
-    setSubstrate(std::move(substrate));
+    setSubstrate(0, std::move(substrate));
 
     _player->setSurface(_textureId);
 }

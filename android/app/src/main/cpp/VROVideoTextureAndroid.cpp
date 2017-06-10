@@ -60,7 +60,7 @@ ANativeWindow *VROVideoTextureAndroid::createVideoTexture(GLuint *textureId,
 
     std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(
             new VROTextureSubstrateOpenGL(GL_TEXTURE_EXTERNAL_OES, *textureId, driver, true));
-    setSubstrate(std::move(substrate));
+    setSubstrate(0, std::move(substrate));
 
     JNIEnv *env = VROPlatformGetJNIEnv();
     jobject jsurface = VROPlatformCreateVideoSink(*textureId);
