@@ -90,6 +90,7 @@ private:
     std::shared_ptr<VROShaderModifier> createDiffuseTextureModifier();
     std::shared_ptr<VROShaderModifier> createNormalMapTextureModifier();
     std::shared_ptr<VROShaderModifier> createReflectiveTextureModifier();
+    std::shared_ptr<VROShaderModifier> createYCbCrTextureModifier();
     std::shared_ptr<VROShaderModifier> createEGLImageModifier();
     std::shared_ptr<VROShaderModifier> createStereoTextureModifier(VROStereoMode currentStereoMode);
 

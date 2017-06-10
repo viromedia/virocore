@@ -20,6 +20,7 @@
 static std::shared_ptr<VROShaderModifier> sDiffuseTextureModifier;
 static std::shared_ptr<VROShaderModifier> sNormalMapTextureModifier;
 static std::shared_ptr<VROShaderModifier> sReflectiveTextureModifier;
+static std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
 static std::map<VROStereoMode ,std::shared_ptr<VROShaderModifier>> sStereoscopicTextureModifiers;
 
 void VROMaterialSubstrateOpenGL::hydrateProgram(VRODriverOpenGL &driver) {
@@ -87,8 +88,15 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
         }
 
         _textures.push_back(diffuse.getTexture());
-        samplers.push_back("diffuse_texture");
-        modifiers.push_back(createDiffuseTextureModifier());
+        if (diffuse.getTexture()->getInternalFormat() == VROTextureInternalFormat::YCBCR) {
+            samplers.push_back("diffuse_texture_y");
+            samplers.push_back("diffuse_texture_cbcr");
+            modifiers.push_back(createYCbCrTextureModifier());
+        }
+        else {
+            samplers.push_back("diffuse_texture");
+            modifiers.push_back(createDiffuseTextureModifier());
+        }
         fragmentShader = "constant_fsh";
     }
     else if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
@@ -134,8 +142,15 @@ void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material
         }
 
         _textures.push_back(diffuse.getTexture());
-        samplers.push_back("diffuse_texture");
-        modifiers.push_back(createDiffuseTextureModifier());
+        if (diffuse.getTexture()->getInternalFormat() == VROTextureInternalFormat::YCBCR) {
+            samplers.push_back("diffuse_texture_y");
+            samplers.push_back("diffuse_texture_cbcr");
+            modifiers.push_back(createYCbCrTextureModifier());
+        }
+        else {
+            samplers.push_back("diffuse_texture");
+            modifiers.push_back(createDiffuseTextureModifier());
+        }
         
         // For Android video
         if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
@@ -211,8 +226,15 @@ void VROMaterialSubstrateOpenGL::configureSpecularShader(std::string vertexShade
         }
 
         _textures.push_back(diffuse.getTexture());
-        samplers.push_back("diffuse_texture");
-        modifiers.push_back(createDiffuseTextureModifier());
+        if (diffuse.getTexture()->getInternalFormat() == VROTextureInternalFormat::YCBCR) {
+            samplers.push_back("diffuse_texture_y");
+            samplers.push_back("diffuse_texture_cbcr");
+            modifiers.push_back(createYCbCrTextureModifier());
+        }
+        else {
+            samplers.push_back("diffuse_texture");
+            modifiers.push_back(createDiffuseTextureModifier());
+        }
         
         // For Android video
         if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
@@ -471,6 +493,33 @@ std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createStereoTextu
     }
 
     return modifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createYCbCrTextureModifier() {
+    /*
+     Modifier that converts a YCbCr image (encoded in two textures) into an RGB color.
+     Note the cbcr texture luminance_alpha, which is why we access the B and A coordinates
+     (in luminance_alpha R, G, and B are all equal).
+     */
+    if (!sYCbCrTextureModifier) {
+        std::vector<std::string> modifierCode =  {
+            "uniform sampler2D diffuse_texture_y;",
+            "uniform sampler2D diffuse_texture_cbcr;",
+            "const lowp mat4x4 ycbcrToRGBTransform = mat4x4(",
+            "   vec4(+1.0000f, +1.0000f, +1.0000f, +0.0000f),",
+            "   vec4(+0.0000f, -0.3441f, +1.7720f, +0.0000f),",
+            "   vec4(+1.4020f, -0.7141f, +0.0000f, +0.0000f),",
+            "   vec4(-0.7010f, +0.5291f, -0.8860f, +1.0000f)",
+            ");",
+            "lowp vec4 ycbcr = vec4(texture(diffuse_texture_y, _surface.diffuse_texcoord).r,",
+            "                       texture(diffuse_texture_cbcr, _surface.diffuse_texcoord).ba, 1.0);",
+            "_surface.diffuse_color *= (ycbcrToRGBTransform * ycbcr);"
+        };
+        sYCbCrTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
+                                                                    modifierCode);
+    }
+    
+    return sYCbCrTextureModifier;
 }
 
 std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createEGLImageModifier() {
