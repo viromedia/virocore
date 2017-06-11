@@ -10,6 +10,7 @@
 #import "opencv2/imgcodecs/ios.h"
 #import "opencv2/imgproc/imgproc.hpp"
 #import "VROImageTracker.h"
+#import "VROSampleARDelegate.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneOBJ = 0,
@@ -35,6 +36,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 @property (readwrite, nonatomic) int sceneIndex;
 @property (readwrite, nonatomic) std::shared_ptr<VROVideoTexture> videoTexture;
 @property (readwrite, nonatomic) std::shared_ptr<VROEventDelegateiOS> delegate;
+@property (readwrite, nonatomic) std::shared_ptr<VROSampleARDelegate> sessionARDelegate;
 @property (nonatomic, copy) id clickBlock;
 
 // VROEventDelegateProtocol
@@ -926,7 +928,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                     });
     
     
-    rootNode->addChildNode(fbxNode);
+   // rootNode->addChildNode(fbxNode);
     
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self](VRONode *const node, float seconds) {
         self.objAngle += .015;
@@ -939,6 +941,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     self.delegate = std::make_shared<VROEventDelegateiOS>(self);
     fbxNode->setEventDelegate(self.delegate);
+    
+    std::shared_ptr<VROSampleARDelegate> delegate = std::make_shared<VROSampleARDelegate>();
+    
     
     return sceneController;
 }
@@ -953,6 +958,11 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
     self.sceneIndex = VROSampleSceneFBX;
     self.driver = driver;
+    
+    if ([self.view isKindOfClass:[VROViewAR class]]) {
+        self.sessionARDelegate = std::make_shared<VROSampleARDelegate>();
+        [((VROViewAR *) self.view) setARSessionDelegate:self.sessionARDelegate];
+    }
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
 }
 

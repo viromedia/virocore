@@ -65,9 +65,9 @@ public:
      Decomposition into affine transforms. These methods only work on affine 
      matrices. To extract rotation, the scale factors are required.
      */
-    VROVector3f   extractScale();
-    VROQuaternion extractRotation(VROVector3f scale);
-    VROVector3f   extractTranslation();
+    VROVector3f   extractScale() const;
+    VROQuaternion extractRotation(VROVector3f scale) const;
+    VROVector3f   extractTranslation() const;
     
     /*
      Other operations.

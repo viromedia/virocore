@@ -10,11 +10,16 @@
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 #include "VROARSessioniOS.h"
 #include "VROARFrameiOS.h"
+#include "VROARAnchor.h"
+#include "VROARPlaneAnchor.h"
 #include "VROVideoTextureCacheOpenGL.h"
 #include "VROTexture.h"
 #include "VRODriver.h"
+#include "VROConvert.h"
+#include "VROScene.h"
 #include "VROTextureSubstrate.h"
 #include "VROLog.h"
+#include <algorithm>
 
 VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver) :
     VROARSession(trackingType) {
@@ -27,30 +32,34 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, std::shared_ptr<V
     }
     _background = std::make_shared<VROTexture>(VROTextureType::Texture2D, VROTextureInternalFormat::YCBCR);
     _videoTextureCache = std::shared_ptr<VROVideoTextureCacheOpenGL>((VROVideoTextureCacheOpenGL *)driver->newVideoTextureCache());
-}
-
-VROARSessioniOS::~VROARSessioniOS() {
- 
-}
-
-void VROARSessioniOS::run() {
-    std::shared_ptr<VROARSessioniOS> shared = shared_from_this();
-    _delegate = [[VROARSessionDelegate alloc] initWithSession:shared];
-    _session.delegate = _delegate;
-    
-    if (getTrackingType() == VROTrackingType::DOF3) {
-        ARSessionConfiguration *config = [[ARSessionConfiguration alloc] init];
-        config.lightEstimationEnabled = YES;
         
-        [_session runWithConfiguration:config];
+    if (getTrackingType() == VROTrackingType::DOF3) {
+        _sessionConfiguration = [[ARSessionConfiguration alloc] init];
+        _sessionConfiguration.lightEstimationEnabled = YES;
     }
     else { // DOF6
         ARWorldTrackingSessionConfiguration *config = [[ARWorldTrackingSessionConfiguration alloc] init];
         config.planeDetection = NO;
         config.lightEstimationEnabled = YES;
         
-        [_session runWithConfiguration:config];
+        _sessionConfiguration = config;
     }
+        
+    _anchorParentNode = std::make_shared<VRONode>();
+}
+
+VROARSessioniOS::~VROARSessioniOS() {
+ 
+}
+
+#pragma mark - VROARSession implementation
+
+void VROARSessioniOS::run() {
+    std::shared_ptr<VROARSessioniOS> shared = shared_from_this();
+    _delegateAR = [[VROARKitSessionDelegate alloc] initWithSession:shared];
+    _session.delegate = _delegateAR;
+    
+    [_session runWithConfiguration:_sessionConfiguration];
 }
 
 void VROARSessioniOS::pause() {
@@ -58,15 +67,81 @@ void VROARSessioniOS::pause() {
 }
 
 bool VROARSessioniOS::isReady() const {
-    return _currentFrame.get() != nullptr;
+    return getScene() != nullptr && _currentFrame.get() != nullptr;
+}
+
+void VROARSessioniOS::setAnchorDetection(std::set<VROAnchorDetection> types) {
+    if (types.find(VROAnchorDetection::PlanesHorizontal) != types.end()) {
+        if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingSessionConfiguration class]]) {
+            ((ARWorldTrackingSessionConfiguration *) _sessionConfiguration).planeDetection = YES;
+        }
+    }
+    else {
+        if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingSessionConfiguration class]]) {
+            ((ARWorldTrackingSessionConfiguration *) _sessionConfiguration).planeDetection = NO;
+        }
+    }
+}
+
+void VROARSessioniOS::setScene(std::shared_ptr<VROScene> scene) {
+    VROARSession::setScene(scene);
+    
+    // TODO VIRO-1352: We currently add the anchorParentNode to the rootNode,
+    //      instead of making it a root node itself, so that it receives any
+    //      VROLight that are attached to the rootNode. This should change once
+    //      we fix lights so that they impact all nodes, and not just children.
+    scene->getRootNodes().front()->addChildNode(_anchorParentNode);
 }
 
 void VROARSessioniOS::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
-    // TODO implement
+    std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
+    if (!delegate) {
+        return;
+    }
+    
+    std::shared_ptr<VRONode> node = delegate->anchorWasDetected(anchor);
+    if (!node) {
+        return;
+    }
+    anchor->setNode(node);    
+    updateNodeTransform(anchor);
+
+    _anchors.push_back(anchor);
+    _anchorParentNode->addChildNode(anchor->getNode());
 }
 
 void VROARSessioniOS::removeAnchor(std::shared_ptr<VROARAnchor> anchor) {
-    // TODO implement
+    anchor->getNode()->removeFromParentNode();
+    _anchors.erase(std::remove_if(_anchors.begin(), _anchors.end(),
+                                 [anchor](std::shared_ptr<VROARAnchor> candidate) {
+                                     return candidate == anchor;
+                                 }), _anchors.end());
+    
+    for (auto it = _nativeAnchorMap.begin(); it != _nativeAnchorMap.end();) {
+        if (it->second == anchor) {
+            [_session removeAnchor:it->first];
+            it = _nativeAnchorMap.erase(it);
+        }
+        else {
+            ++it;
+        }
+    }
+    
+    std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
+    if (delegate) {
+        delegate->anchorWasRemoved(anchor);
+    }
+}
+
+void VROARSessioniOS::updateAnchor(std::shared_ptr<VROARAnchor> anchor) {
+    std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
+    if (delegate) {
+        delegate->anchorWillUpdate(anchor);
+    }
+    updateNodeTransform(anchor);
+    if (delegate) {
+        delegate->anchorDidUpdate(anchor);
+    }
 }
 
 std::shared_ptr<VROTexture> VROARSessioniOS::getCameraBackgroundTexture() {
@@ -94,19 +169,73 @@ void VROARSessioniOS::setOrientation(VROCameraOrientation orientation) {
     _orientation = orientation;
 }
 
+#pragma mark - Internal Methods
+
+void VROARSessioniOS::updateNodeTransform(std::shared_ptr<VROARAnchor> anchor) {
+    const VROMatrix4f &transform = anchor->getTransform();
+    VROVector3f scale = transform.extractScale();
+    VROQuaternion rotation = transform.extractRotation(scale);
+    VROVector3f position = transform.extractTranslation();
+    
+    std::shared_ptr<VRONode> node = anchor->getNode();
+    node->setScale(scale);
+    node->setRotation(rotation);
+    node->setPosition(position);
+}
+
 void VROARSessioniOS::setFrame(ARFrame *frame) {
     _currentFrame = std::unique_ptr<VROARFrame>(new VROARFrameiOS(frame, _viewport, _orientation));
 }
 
-#pragma mark - VROARSessionDelegate
+void VROARSessioniOS::addAnchor(ARAnchor *anchor) {
+    std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
+    if (!delegate) {
+        return;
+    }
+    
+    std::shared_ptr<VROARAnchor> vAnchor;
+    if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
+        ARPlaneAnchor *planeAnchor = (ARPlaneAnchor *)anchor;
+        
+        std::shared_ptr<VROARPlaneAnchor> pAnchor = std::make_shared<VROARPlaneAnchor>();
+        pAnchor->setAlignment(VROARPlaneAlignment::Horizontal);
+        pAnchor->setCenter(VROConvert::toVector3f(planeAnchor.center));
+        pAnchor->setExtent(VROConvert::toVector3f(planeAnchor.extent));
+        
+        vAnchor = std::dynamic_pointer_cast<VROARAnchor>(pAnchor);
+    }
+    else {
+        vAnchor = std::make_shared<VROARAnchor>();
+    }
+    vAnchor->setTransform(VROConvert::toMatrix4f(anchor.transform));
+    
+    addAnchor(vAnchor);
+    _nativeAnchorMap[anchor] = vAnchor;
+}
 
-@interface VROARSessionDelegate ()
+void VROARSessioniOS::updateAnchor(ARAnchor *anchor) {
+    auto it = _nativeAnchorMap.find(anchor);
+    if (it != _nativeAnchorMap.end()) {
+        updateAnchor(it->second);
+    }
+}
+
+void VROARSessioniOS::removeAnchor(ARAnchor *anchor) {
+    auto it = _nativeAnchorMap.find(anchor);
+    if (it != _nativeAnchorMap.end()) {
+        removeAnchor(it->second);
+    }
+}
+
+#pragma mark - VROARKitSessionDelegate
+
+@interface VROARKitSessionDelegate ()
 
 @property (readwrite, nonatomic) std::weak_ptr<VROARSessioniOS> session;
 
 @end
 
-@implementation VROARSessionDelegate
+@implementation VROARKitSessionDelegate
 
 - (id)initWithSession:(std::shared_ptr<VROARSessioniOS>)session {
     self = [super init];
@@ -124,15 +253,30 @@ void VROARSessioniOS::setFrame(ARFrame *frame) {
 }
 
 - (void)session:(ARSession *)session didAddAnchors:(NSArray<ARAnchor*>*)anchors {
-    
+    std::shared_ptr<VROARSessioniOS> vSession = self.session.lock();
+    if (vSession) {
+        for (ARAnchor *anchor in anchors) {
+            vSession->addAnchor(anchor);
+        }
+    }
 }
 
 - (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors {
-    
+    std::shared_ptr<VROARSessioniOS> vSession = self.session.lock();
+    if (vSession) {
+        for (ARAnchor *anchor in anchors) {
+            vSession->updateAnchor(anchor);
+        }
+    }
 }
 
 - (void)session:(ARSession *)session didRemoveAnchors:(NSArray<ARAnchor*>*)anchors {
-    
+    std::shared_ptr<VROARSessioniOS> vSession = self.session.lock();
+    if (vSession) {
+        for (ARAnchor *anchor in anchors) {
+            vSession->removeAnchor(anchor);
+        }
+    }
 }
 
 @end

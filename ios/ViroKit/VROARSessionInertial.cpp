@@ -38,15 +38,23 @@ void VROARSessionInertial::pause() {
 }
 
 bool VROARSessionInertial::isReady() const {
-    return true;
+    return getScene() != nullptr;
+}
+
+void VROARSessionInertial::setAnchorDetection(std::set<VROAnchorDetection> types) {
+    // Unsupported
 }
 
 void VROARSessionInertial::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
-    // TODO implement
+    // Unsupported
 }
 
 void VROARSessionInertial::removeAnchor(std::shared_ptr<VROARAnchor> anchor) {
-    // TODO implement
+    // Unsupported
+}
+
+void VROARSessionInertial::updateAnchor(std::shared_ptr<VROARAnchor> anchor) {
+    // Unsupported
 }
 
 std::shared_ptr<VROTexture> VROARSessionInertial::getCameraBackgroundTexture() {

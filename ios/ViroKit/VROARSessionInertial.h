@@ -24,8 +24,10 @@ public:
     void pause();
     bool isReady() const;
     
+    void setAnchorDetection(std::set<VROAnchorDetection> types);
     void addAnchor(std::shared_ptr<VROARAnchor> anchor);
     void removeAnchor(std::shared_ptr<VROARAnchor> anchor);
+    void updateAnchor(std::shared_ptr<VROARAnchor> anchor);
     
     std::unique_ptr<VROARFrame> &updateFrame();
     std::shared_ptr<VROTexture> getCameraBackgroundTexture();

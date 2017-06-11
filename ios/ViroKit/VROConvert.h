@@ -38,6 +38,7 @@ public:
     static vector_float4 toVectorFloat4(VROVector3f v, float w);
     static vector_float4 toVectorFloat4(VROVector4f v);
     static matrix_float4x4 toMatrixFloat4x4(VROMatrix4f m);
+    static VROVector3f toVector3f(vector_float3 v);
     static VROMatrix4f toMatrix4f(matrix_float3x3 m);
     static VROMatrix4f toMatrix4f(matrix_float4x4 m);
 #endif

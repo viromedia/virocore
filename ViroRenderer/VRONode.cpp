@@ -30,6 +30,9 @@
 // Opacity below which a node is considered hidden
 static const float kHiddenOpacityThreshold = 0.02;
 
+// Set to false to disable visibility testing
+static const bool kEnableVisibilityFrustumTest = true;
+
 // Set to true to debut the sort order
 bool kDebugSortOrder = false;
 static int sDebugSortIndex = 0;
@@ -363,7 +366,7 @@ void VRONode::updateVisibility(const VRORenderContext &context) {
     computeUmbrellaBounds(&_umbrellaBoundingBox);
     
     VROFrustumResult result = frustum.intersectAllOpt(_umbrellaBoundingBox, &_umbrellaBoxMetadata);
-    if (result == VROFrustumResult::Inside) {
+    if (result == VROFrustumResult::Inside || !kEnableVisibilityFrustumTest) {
         setVisibilityRecursive(true);
     }
     else if (result == VROFrustumResult::Intersects) {

@@ -130,7 +130,6 @@
         _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::DOF3, _driver);
 #endif
     _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
-    _arSession->run();
     
     /*
      Set the point of view to a special node that will follow the user's
@@ -172,6 +171,10 @@
 - (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {
     _renderDelegateWrapper = std::make_shared<VRORenderDelegateiOS>(renderDelegate);
     _renderer->setDelegate(_renderDelegateWrapper);
+}
+
+- (void)setARSessionDelegate:(std::shared_ptr<VROARSessionDelegate>)delegate {
+    _arSession->setDelegate(delegate);
 }
 
 - (void)setVrMode:(BOOL)enabled {
@@ -276,16 +279,22 @@
     VROViewport viewport(0, 0, self.bounds.size.width  * self.contentScaleFactor,
                                self.bounds.size.height * self.contentScaleFactor);
     
-    if (_arSession->isReady() && _sceneController) {
+    if (_sceneController) {
+        if (!_cameraBackground) {
+            [self initARSessionWithViewport:viewport scene:_sceneController->getScene()];
+        }
+    }
+    
+    if (_arSession->isReady()) {
+        // TODO Only on viewport change
         _arSession->setViewport(viewport);
         
+        // TODO Only on first run of isReady()
+        _sceneController->getScene()->setBackground(_cameraBackground);
+
         /*
          Retrieve transforms from the AR session.
          */
-        if (!_cameraBackground) {
-            [self initCameraBackgroundWithViewport:viewport forScene:_sceneController->getScene()];
-        }
-        
         std::unique_ptr<VROARFrame> &frame = _arSession->updateFrame();
         const std::shared_ptr<VROARCamera> camera = frame->getCamera();
         
@@ -294,6 +303,7 @@
         VROMatrix4f rotation = camera->getRotation();
         VROVector3f position = camera->getPosition();
         
+        // TODO Only on orientation change
         VROMatrix4f backgroundTransform = frame->getBackgroundTexcoordTransform();
         _cameraBackground->setTexcoordTransform(backgroundTransform);
         
@@ -333,7 +343,7 @@
     }
 }
 
-- (void)initCameraBackgroundWithViewport:(VROViewport)viewport forScene:(std::shared_ptr<VROScene>)scene {
+- (void)initARSessionWithViewport:(VROViewport)viewport scene:(std::shared_ptr<VROScene>)scene {
     _cameraBackground = VROSurface::createSurface(viewport.getX() + viewport.getWidth()  / 2.0,
                                                   viewport.getY() + viewport.getHeight() / 2.0,
                                                   viewport.getWidth(), viewport.getHeight(),
@@ -346,8 +356,11 @@
     material->getDiffuse().setTexture(_arSession->getCameraBackgroundTexture());
     material->setWritesToDepthBuffer(false);
     material->setReadsFromDepthBuffer(false);
-
-    scene->setBackground(_cameraBackground);
+    
+    _arSession->setScene(scene);
+    _arSession->setViewport(viewport);
+    _arSession->setAnchorDetection({ VROAnchorDetection::PlanesHorizontal });
+    _arSession->run();
 }
 
 - (void)recenterTracking {

@@ -192,7 +192,7 @@ VROMatrix4f VROMatrix4f::invert() const {
     return VROMatrix4f(inverted);
 }
 
-VROVector3f VROMatrix4f::extractScale() {
+VROVector3f VROMatrix4f::extractScale() const {
     VROVector3f s0(_mtx[0], _mtx[1], _mtx[2]);
     VROVector3f s1(_mtx[4], _mtx[5], _mtx[6]);
     VROVector3f s2(_mtx[8], _mtx[9], _mtx[10]);
@@ -200,7 +200,7 @@ VROVector3f VROMatrix4f::extractScale() {
     return { s0.magnitude(), s1.magnitude(), s2.magnitude() };
 }
 
-VROQuaternion VROMatrix4f::extractRotation(VROVector3f scale) {
+VROQuaternion VROMatrix4f::extractRotation(VROVector3f scale) const {
     float mtx[16] = { _mtx[0] / scale.x,
                       _mtx[1] / scale.x,
                       _mtx[2] / scale.x,
@@ -256,7 +256,7 @@ VROQuaternion VROMatrix4f::extractRotation(VROVector3f scale) {
     return result.normalize();
 }
 
-VROVector3f VROMatrix4f::extractTranslation() {
+VROVector3f VROMatrix4f::extractTranslation() const {
     return { _mtx[12], _mtx[13], _mtx[14] };
 }
 

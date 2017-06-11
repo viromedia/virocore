@@ -78,6 +78,10 @@ matrix_float4x4 VROConvert::toMatrixFloat4x4(VROMatrix4f m) {
     return m4x4;
 }
 
+VROVector3f VROConvert::toVector3f(vector_float3 v) {
+    return { v.x, v.y, v.z };
+}
+
 VROMatrix4f VROConvert::toMatrix4f(matrix_float3x3 m) {
     float mtx[16] = { m.columns[0][0], m.columns[0][1], m.columns[0][2], 0,
                       m.columns[1][0], m.columns[1][1], m.columns[1][2], 0,

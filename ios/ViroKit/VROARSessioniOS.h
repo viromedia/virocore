@@ -13,10 +13,12 @@
 #include "VROARSession.h"
 #include "VROViewport.h"
 #include <ARKit/ARKit.h>
+#include <map>
+#include <vector>
 
 class VRODriver;
 class VROVideoTextureCacheOpenGL;
-@class VROARSessionDelegate;
+@class VROARKitSessionDelegate;
 
 class VROARSessioniOS : public VROARSession, public std::enable_shared_from_this<VROARSessioniOS> {
 public:
@@ -28,6 +30,8 @@ public:
     void pause();
     bool isReady() const;
     
+    void setScene(std::shared_ptr<VROScene> scene);
+    void setAnchorDetection(std::set<VROAnchorDetection> types);
     void addAnchor(std::shared_ptr<VROARAnchor> anchor);
     void removeAnchor(std::shared_ptr<VROARAnchor> anchor);
     
@@ -41,14 +45,20 @@ public:
      Internal methods.
      */
     void setFrame(ARFrame *frame);
+    void updateAnchor(std::shared_ptr<VROARAnchor> anchor);
+
+    void addAnchor(ARAnchor *anchor);
+    void updateAnchor(ARAnchor *anchor);
+    void removeAnchor(ARAnchor *anchor);
     
 private:
     
     /*
-     The ARKit session and its delegate.
+     The ARKit session, configuration, and delegate.
      */
     ARSession *_session;
-    VROARSessionDelegate *_delegate;
+    ARSessionConfiguration *_sessionConfiguration;
+    VROARKitSessionDelegate *_delegateAR;
     
     /*
      The last computed ARFrame.
@@ -62,6 +72,25 @@ private:
     VROCameraOrientation _orientation;
     
     /*
+     Root node for the VROScene under which all anchor-mapped nodes are
+     added.
+     */
+    std::shared_ptr<VRONode> _anchorParentNode;
+    
+    /*
+     Vector of all anchors that have been added to this session.
+     */
+    std::vector<std::shared_ptr<VROARAnchor>> _anchors;
+    
+    /*
+     Map of ARKit anchors ("native" anchors) to their Viro representation. 
+     Required so we can update VROARAnchors when their ARKit counterparts are
+     updated. Note that not all VROARAnchors have an ARKit counterpart (e.g. 
+     they may be added and maintained by other tracking software).
+     */
+    std::map<ARAnchor *, std::shared_ptr<VROARAnchor>> _nativeAnchorMap;
+    
+    /*
      Background to be assigned to the VROScene.
      */
     std::shared_ptr<VROTexture> _background;
@@ -71,12 +100,17 @@ private:
      */
     std::shared_ptr<VROVideoTextureCacheOpenGL> _videoTextureCache;
     
+    /*
+     Update the anchor's node's transforms given the data in the anchor.
+     */
+    void updateNodeTransform(std::shared_ptr<VROARAnchor> anchor);
+    
 };
 
 /*
  Delegate for ARKit's ARSession.
  */
-@interface VROARSessionDelegate : NSObject<ARSessionDelegate>
+@interface VROARKitSessionDelegate : NSObject<ARSessionDelegate>
 
 - (id)initWithSession:(std::shared_ptr<VROARSessioniOS>)session;
 

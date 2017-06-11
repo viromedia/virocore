@@ -10,8 +10,12 @@
 #import <GLKit/GLKit.h>
 #import "VROView.h"
 
+class VROARSessionDelegate;
+
 @interface VROViewAR : GLKView <VROView>
 
 @property (readwrite, nonatomic) BOOL suspended;
+
+- (void)setARSessionDelegate:(std::shared_ptr<VROARSessionDelegate>)delegate;
 
 @end
