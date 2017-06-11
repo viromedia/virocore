@@ -8,7 +8,7 @@
 #ifndef VROPhysicsBodyDelegate_h
 #define VROPhysicsBodyDelegate_h
 #include "VROPhysicsBody.h"
-
+#include "VROTime.h"
 /*
  VROPhysicsBodyDelegate contains all callbacks delegate events pertaining to
  the physicsBody that it is attached to (like collisions).
@@ -19,6 +19,9 @@ class VROPhysicsBodyDelegate {
      so that delegates are only notify with collided-enter events.
      */
     std::map<std::string, VROPhysicsBody::VROCollision> _lastKnownCollidedObjects;
+    std::map<std::string, VROPhysicsBody::VROCollision> _currentCollidedObjects;
+    double _lastSampledTime = 0;
+
 public:
     VROPhysicsBodyDelegate(){}
     virtual ~VROPhysicsBodyDelegate() {}
@@ -34,13 +37,23 @@ public:
      new collisions.
      */
     void onEngineCollisionUpdate(std::string currentObject, const std::map<std::string, VROPhysicsBody::VROCollision> &latestCollidedObjects) {
-        for (auto const &it: latestCollidedObjects) {
+        _currentCollidedObjects.insert(latestCollidedObjects.begin(), latestCollidedObjects.end());
+
+        // Sample at a rate of every 10 frames
+        double collidedTime = VROTimeCurrentMillis();
+        if (_lastSampledTime + 160 > collidedTime) {
+            return;
+        }
+
+        _lastSampledTime = collidedTime;
+        for (auto &it: _currentCollidedObjects) {
             if (_lastKnownCollidedObjects.find(it.first) == _lastKnownCollidedObjects.end()) {
                 onCollided(it.first, it.second);
             }
         }
-
-        _lastKnownCollidedObjects = latestCollidedObjects;
+        
+        _lastKnownCollidedObjects = _currentCollidedObjects;
+        _currentCollidedObjects.clear();
     }
 };
 

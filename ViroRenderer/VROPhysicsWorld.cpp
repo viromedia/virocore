@@ -171,15 +171,14 @@ void VROPhysicsWorld::computeCollisions() {
 
             btManifoldPoint *pt = &contactManifold->getContactPoint(j);
             float distance = pt->getDistance();
-
-            if (distance < 0.f && distance > minPenetrationDistance && pt->getLifeTime() > 10) {
+            if (distance < 0.1f && distance > minPenetrationDistance && pt->getLifeTime() > 10) {
                 minPenetrationDistance = distance;
                 bulletPoint = pt;
             }
         }
 
         // If there are no collided contact points for the given manifold, skip.
-        if (minPenetrationDistance > 0.f) {
+        if (minPenetrationDistance > 0.1f) {
             continue;
         }
 
