@@ -943,6 +943,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     fbxNode->setEventDelegate(self.delegate);
     
     std::shared_ptr<VROSampleARDelegate> delegate = std::make_shared<VROSampleARDelegate>();
+    [((VROViewAR *)self.view) setTapHandler:^(VROARHitTestResult result, std::shared_ptr<VROARSession> session, std::shared_ptr<VROScene> scene){
+        delegate->onHitResult(result, session, scene);
+    }];
     
     
     return sceneController;

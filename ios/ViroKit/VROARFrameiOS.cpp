@@ -113,7 +113,8 @@ std::vector<VROARHitTestResult> VROARFrameiOS::hitTest(int x, int y, std::set<VR
         }
         
         VROARHitTestResult vResult(convertResultType(result.type), vAnchor, result.distance,
-                                   VROConvert::toMatrix4f(result.worldTransform));
+                                   VROConvert::toMatrix4f(result.worldTransform),
+                                   VROConvert::toMatrix4f(result.localTransform));
         vResults.push_back(vResult);
     }
     

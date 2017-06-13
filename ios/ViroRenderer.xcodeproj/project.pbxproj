@@ -335,7 +335,10 @@
 		8FD1E1B81C3F32B00005BE4E /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B71C3F32B00005BE4E /* CoreVideo.framework */; };
 		8FD1E1BA1C3F32D20005BE4E /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B91C3F32D20005BE4E /* CoreMedia.framework */; };
 		8FD1E1C01C4093790005BE4E /* VROVideoTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD1E1BE1C4093790005BE4E /* VROVideoTexture.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FD4D0BB1EEEF28300077AD7 /* VROARHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD4D0B91EEEF28300077AD7 /* VROARHitTestResult.h */; };
+		8FD4D0BB1EEEF28300077AD7 /* VROARHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD4D0B91EEEF28300077AD7 /* VROARHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FD4D0BF1EF0695F00077AD7 /* coffee_mug_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4D0BC1EF0695F00077AD7 /* coffee_mug_specular.png */; };
+		8FD4D0C01EF0695F00077AD7 /* coffee_mug.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4D0BD1EF0695F00077AD7 /* coffee_mug.obj */; };
+		8FD4D0C11EF0695F00077AD7 /* coffee_mug.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4D0BE1EF0695F00077AD7 /* coffee_mug.png */; };
 		8FD4DED01C18ECD4003DC425 /* ViroKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD4DECF1C18ECD4003DC425 /* ViroKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DED71C18ECD4003DC425 /* ViroKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; };
 		8FD4DEDE1C18ECD4003DC425 /* ViroKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD4DEDD1C18ECD4003DC425 /* ViroKitTests.m */; };
@@ -938,6 +941,9 @@
 		8FD1E1B91C3F32D20005BE4E /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		8FD1E1BE1C4093790005BE4E /* VROVideoTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoTexture.h; sourceTree = "<group>"; };
 		8FD4D0B91EEEF28300077AD7 /* VROARHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARHitTestResult.h; sourceTree = "<group>"; };
+		8FD4D0BC1EF0695F00077AD7 /* coffee_mug_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = coffee_mug_specular.png; path = ViroSample/coffee_mug_specular.png; sourceTree = "<group>"; };
+		8FD4D0BD1EF0695F00077AD7 /* coffee_mug.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = coffee_mug.obj; path = ViroSample/coffee_mug.obj; sourceTree = "<group>"; };
+		8FD4D0BE1EF0695F00077AD7 /* coffee_mug.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = coffee_mug.png; path = ViroSample/coffee_mug.png; sourceTree = "<group>"; };
 		8FD4DE9C1C16432B003DC425 /* VROLight.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLight.cpp; sourceTree = "<group>"; };
 		8FD4DE9D1C16432B003DC425 /* VROLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLight.h; sourceTree = "<group>"; };
 		8FD4DE9F1C169D71003DC425 /* VROBox.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROBox.cpp; sourceTree = "<group>"; };
@@ -1803,6 +1809,9 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8FD4D0BC1EF0695F00077AD7 /* coffee_mug_specular.png */,
+				8FD4D0BD1EF0695F00077AD7 /* coffee_mug.obj */,
+				8FD4D0BE1EF0695F00077AD7 /* coffee_mug.png */,
 				8F129FB11ED6032D00341D83 /* fox.vrx */,
 				8F129FB21ED6032D00341D83 /* heart.vrx */,
 				8F129FB31ED6032D00341D83 /* minion.vrx */,
@@ -2325,7 +2334,9 @@
 				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
 				8A3517321EE0A50A00B6E786 /* screenshot.png in Resources */,
 				8F705DF51E8F5D42008BE8F8 /* earth_normal.jpg in Resources */,
+				8FD4D0C01EF0695F00077AD7 /* coffee_mug.obj in Resources */,
 				8F9278011C66BD4500FF892A /* px1.jpg in Resources */,
+				8FD4D0BF1EF0695F00077AD7 /* coffee_mug_specular.png in Resources */,
 				8FCED0751EBBD35200C19BCA /* Jetpack_Normal.png in Resources */,
 				8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
 				A5ABB1D91E95703200E07EBC /* stereoVid360.mp4 in Resources */,
@@ -2335,6 +2346,7 @@
 				8F50FC891E0AF54F00A9B4B2 /* male-02-1noCulling.JPG in Resources */,
 				8F3B968F1C77D64200B4FEE0 /* shanghai_tower_specular.jpg in Resources */,
 				8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */,
+				8FD4D0C11EF0695F00077AD7 /* coffee_mug.png in Resources */,
 				8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */,
 				8FCED05C1EBBCFCF00C19BCA /* Reflection.png in Resources */,
 				8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */,

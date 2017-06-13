@@ -19,9 +19,12 @@ public:
     void anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor);
     void anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor);
     
+    void onHitResult(VROARHitTestResult result, std::shared_ptr<VROARSession> session, std::shared_ptr<VROScene> scene);
+    
 private:
     
-    std::shared_ptr<VRONode> loadFBXNode(VROVector3f center);
+    std::shared_ptr<VRONode> loadHeart();
+    std::shared_ptr<VRONode> loadCoffeeMug();
     void animateTake(std::shared_ptr<VRONode> node);
     
 };

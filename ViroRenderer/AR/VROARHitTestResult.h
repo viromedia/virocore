@@ -1,13 +1,13 @@
 //
-//  VROARHitTestResult.hpp
+//  VROARHitTestResult.h
 //  ViroRenderer
 //
 //  Created by Raj Advani on 6/12/17.
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
-#ifndef VROARHitTestResult_hpp
-#define VROARHitTestResult_hpp
+#ifndef VROARHitTestResult_h
+#define VROARHitTestResult_h
 
 #include <stdio.h>
 
@@ -39,8 +39,9 @@ enum class VROARHitTestResultType {
 class VROARHitTestResult {
 public:
     
-    VROARHitTestResult(VROARHitTestResultType type, std::shared_ptr<VROARAnchor> anchor, float distance, VROMatrix4f transform) :
-        _type(type), _anchor(anchor), _distance(distance), _transform(transform) {}
+    VROARHitTestResult(VROARHitTestResultType type, std::shared_ptr<VROARAnchor> anchor, float distance,
+                       VROMatrix4f worldTransform, VROMatrix4f localTransform) :
+        _type(type), _anchor(anchor), _distance(distance), _worldTransform(worldTransform), _localTransform(localTransform) {}
     
     /*
      Get the type of hit test result.
@@ -58,17 +59,24 @@ public:
     float getDistance() const { return _distance; }
     
     /*
-     Get the position and orientation of the hit test result surface, in matrix form.
+     Get the position and orientation of the hit test result surface, in world coordinates.
      */
-    VROMatrix4f getTransform() const { return _transform; }
+    VROMatrix4f getWorldTransform() const { return _worldTransform; }
+    
+    /*
+     Get the position and orientation of the hit test result surface, in the coordinate
+     space of the anchor. Undefined if there is no anchor associated with this result.
+     */
+    VROMatrix4f getLocalTransform() const { return _localTransform; }
     
 private:
     
     VROARHitTestResultType _type;
     std::shared_ptr<VROARAnchor> _anchor;
     float _distance;
-    VROMatrix4f _transform;
+    VROMatrix4f _worldTransform;
+    VROMatrix4f _localTransform;
     
 };
 
-#endif /* VROARHitTestResult_hpp */
+#endif /* VROARHitTestResult_h */

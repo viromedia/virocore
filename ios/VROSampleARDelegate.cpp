@@ -21,20 +21,32 @@ std::shared_ptr<VRONode> VROSampleARDelegate::anchorWasDetected(std::shared_ptr<
         VROMatrix4f transform = anchor->getTransform();
         pinfo("Position %f, %f, %f", transform[12], transform[13], transform[14]);
         
-        std::shared_ptr<VRONode> fbxNode = loadFBXNode(pAnchor->getCenter());
-        
-        /*
-         We return a parent anchor node instead of the FBX node directly, because
-         the ARSession will set transforms in the parent anchor node, and want to
-         maintain our ability to set our own transforms directly in the FBX node.
-         */
         std::shared_ptr<VRONode> anchorNode = std::make_shared<VRONode>();
-        anchorNode->addChildNode(fbxNode);
-        
         return anchorNode;
     }
     else {
         return {};
+    }
+}
+
+void VROSampleARDelegate::onHitResult(VROARHitTestResult result, std::shared_ptr<VROARSession> session, std::shared_ptr<VROScene> scene) {
+    if (result.getType() == VROARHitTestResultType::ExistingPlaneUsingExtent) {
+        std::shared_ptr<VRONode> fbxNode = loadCoffeeMug();
+        fbxNode->setPosition(result.getLocalTransform().extractTranslation());
+
+        std::shared_ptr<VROARAnchor> anchor = result.getAnchor();
+        anchor->getNode()->addChildNode(fbxNode);
+        
+        pinfo("Adding FBX to *anchored* plane at local position %f, %f, %f",
+              fbxNode->getPosition().x, fbxNode->getPosition().y, fbxNode->getPosition().z);
+    }
+    else {
+        std::shared_ptr<VRONode> fbxNode = loadCoffeeMug();
+        fbxNode->setPosition(result.getWorldTransform().extractTranslation());
+        
+        scene->getRootNodes().front()->addChildNode(fbxNode);
+        pinfo("Adding FBX to unanchored plane at position %f, %f, %f",
+              fbxNode->getPosition().x, fbxNode->getPosition().y, fbxNode->getPosition().z);
     }
 }
 
@@ -50,7 +62,38 @@ void VROSampleARDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor) 
     pinfo("Anchor removed");
 }
 
-std::shared_ptr<VRONode> VROSampleARDelegate::loadFBXNode(VROVector3f center) {
+std::shared_ptr<VRONode> VROSampleARDelegate::loadCoffeeMug() {
+    NSString *objPath = [[NSBundle mainBundle] pathForResource:@"coffee_mug" ofType:@"obj"];
+    NSURL *objURL = [NSURL fileURLWithPath:objPath];
+    std::string url = std::string([[objURL description] UTF8String]);
+    
+    NSString *basePath = [objPath stringByDeletingLastPathComponent];
+    NSURL *baseURL = [NSURL fileURLWithPath:basePath];
+    std::string base = std::string([[baseURL description] UTF8String]);
+    
+    
+    
+    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(url, base, true,
+                                                                    [this](std::shared_ptr<VRONode> node, bool success) {
+                                                                        if (!success) {
+                                                                            return;
+                                                                        }
+                                                                        node->setScale({0.01, 0.01, 0.01});
+                                                                        
+                                                                        VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
+                                                                        
+                                                                        
+                                                                        
+                                                                        std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
+                                                                        material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                                                                                       std::make_shared<VROImageiOS>([UIImage imageNamed:@"coffee_mug"], format)));
+                                                                        material->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                                                                                                                     std::make_shared<VROImageiOS>([UIImage imageNamed:@"coffee_mug_specular"], format)));
+                                                                    });
+    return objNode;
+}
+
+std::shared_ptr<VRONode> VROSampleARDelegate::loadHeart() {
     NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"heart" ofType:@"vrx"];
     NSURL *fbxURL = [NSURL fileURLWithPath:fbxPath];
     std::string url = std::string([[fbxURL description] UTF8String]);
@@ -60,7 +103,7 @@ std::shared_ptr<VRONode> VROSampleARDelegate::loadFBXNode(VROVector3f center) {
     std::string base = std::string([[baseURL description] UTF8String]);
     
     std::shared_ptr<VRONode> fbxNode = VROFBXLoader::loadFBXFromURL(url, base, true,
-                                                                    [this, center](std::shared_ptr<VRONode> node, bool success) {
+                                                                    [this](std::shared_ptr<VRONode> node, bool success) {
                                                                         if (!success) {
                                                                             return;
                                                                         }

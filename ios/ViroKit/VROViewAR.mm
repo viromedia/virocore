@@ -163,7 +163,9 @@
                          VROARHitTestResultType::FeaturePoint });
         
         for (VROARHitTestResult &result : results) {
-            pinfo("Found hit test result");
+            if (self.tapHandler) {
+                self.tapHandler(result, _arSession, _sceneController->getScene());
+            }
         }
     }
 }
