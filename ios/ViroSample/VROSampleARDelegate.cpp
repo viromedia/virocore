@@ -30,7 +30,8 @@ std::shared_ptr<VRONode> VROSampleARDelegate::anchorWasDetected(std::shared_ptr<
 }
 
 void VROSampleARDelegate::onHitResult(VROARHitTestResult result, std::shared_ptr<VROARSession> session, std::shared_ptr<VROScene> scene) {
-    if (result.getType() == VROARHitTestResultType::ExistingPlaneUsingExtent) {
+    if (result.getType() == VROARHitTestResultType::ExistingPlaneUsingExtent ||
+        result.getType() == VROARHitTestResultType::ExistingPlane) {
         std::shared_ptr<VRONode> fbxNode = loadCoffeeMug();
         fbxNode->setPosition(result.getLocalTransform().extractTranslation());
 
@@ -40,7 +41,7 @@ void VROSampleARDelegate::onHitResult(VROARHitTestResult result, std::shared_ptr
         pinfo("Adding FBX to *anchored* plane at local position %f, %f, %f",
               fbxNode->getPosition().x, fbxNode->getPosition().y, fbxNode->getPosition().z);
     }
-    else {
+    else if (false) {
         std::shared_ptr<VRONode> fbxNode = loadCoffeeMug();
         fbxNode->setPosition(result.getWorldTransform().extractTranslation());
         
