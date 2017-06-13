@@ -119,7 +119,10 @@ void VROARSessioniOS::removeAnchor(std::shared_ptr<VROARAnchor> anchor) {
     
     for (auto it = _nativeAnchorMap.begin(); it != _nativeAnchorMap.end();) {
         if (it->second == anchor) {
-            [_session removeAnchor:it->first];
+            // TODO We should remove the anchor from the ARKit session, but unclear
+            //      how to do this given just the identifier. Do we create a dummy
+            //      ARAnchor and set its identifier?
+            //[_session removeAnchor:it->first];
             it = _nativeAnchorMap.erase(it);
         }
         else {
@@ -171,6 +174,16 @@ void VROARSessioniOS::setOrientation(VROCameraOrientation orientation) {
 
 #pragma mark - Internal Methods
 
+std::shared_ptr<VROARAnchor> VROARSessioniOS::getAnchorForNative(ARAnchor *anchor) {
+    auto kv = _nativeAnchorMap.find(std::string([anchor.identifier.UUIDString UTF8String]));
+    if (kv != _nativeAnchorMap.end()) {
+        return kv->second;
+    }
+    else {
+        return nullptr;
+    }
+}
+
 void VROARSessioniOS::updateNodeTransform(std::shared_ptr<VROARAnchor> anchor) {
     const VROMatrix4f &transform = anchor->getTransform();
     VROVector3f scale = transform.extractScale();
@@ -185,6 +198,16 @@ void VROARSessioniOS::updateNodeTransform(std::shared_ptr<VROARAnchor> anchor) {
 
 void VROARSessioniOS::setFrame(ARFrame *frame) {
     _currentFrame = std::unique_ptr<VROARFrame>(new VROARFrameiOS(frame, _viewport, _orientation));
+void VROARSessioniOS::updateAnchorFromNative(std::shared_ptr<VROARAnchor> vAnchor, ARAnchor *anchor) {
+    if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
+        ARPlaneAnchor *planeAnchor = (ARPlaneAnchor *)anchor;
+        
+        std::shared_ptr<VROARPlaneAnchor> pAnchor = std::dynamic_pointer_cast<VROARPlaneAnchor>(vAnchor);
+        pAnchor->setAlignment(VROARPlaneAlignment::Horizontal);
+        pAnchor->setCenter(VROConvert::toVector3f(planeAnchor.center));
+        pAnchor->setExtent(VROConvert::toVector3f(planeAnchor.extent));
+    }
+    vAnchor->setTransform(VROConvert::toMatrix4f(anchor.transform));
 }
 
 void VROARSessioniOS::addAnchor(ARAnchor *anchor) {
@@ -195,33 +218,31 @@ void VROARSessioniOS::addAnchor(ARAnchor *anchor) {
     
     std::shared_ptr<VROARAnchor> vAnchor;
     if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
-        ARPlaneAnchor *planeAnchor = (ARPlaneAnchor *)anchor;
-        
-        std::shared_ptr<VROARPlaneAnchor> pAnchor = std::make_shared<VROARPlaneAnchor>();
-        pAnchor->setAlignment(VROARPlaneAlignment::Horizontal);
-        pAnchor->setCenter(VROConvert::toVector3f(planeAnchor.center));
-        pAnchor->setExtent(VROConvert::toVector3f(planeAnchor.extent));
-        
-        vAnchor = std::dynamic_pointer_cast<VROARAnchor>(pAnchor);
+        vAnchor = std::make_shared<VROARPlaneAnchor>();
     }
     else {
         vAnchor = std::make_shared<VROARAnchor>();
     }
-    vAnchor->setTransform(VROConvert::toMatrix4f(anchor.transform));
+    updateAnchorFromNative(vAnchor, anchor);
     
     addAnchor(vAnchor);
-    _nativeAnchorMap[anchor] = vAnchor;
+    _nativeAnchorMap[std::string([anchor.identifier.UUIDString UTF8String])] = vAnchor;
 }
 
 void VROARSessioniOS::updateAnchor(ARAnchor *anchor) {
-    auto it = _nativeAnchorMap.find(anchor);
+    auto it = _nativeAnchorMap.find(std::string([anchor.identifier.UUIDString UTF8String]));
     if (it != _nativeAnchorMap.end()) {
+        std::shared_ptr<VROARAnchor> vAnchor = it->second;
+        updateAnchorFromNative(vAnchor, anchor);
         updateAnchor(it->second);
+    }
+    else {
+        pinfo("Anchor %@ not found!", anchor.identifier);
     }
 }
 
 void VROARSessioniOS::removeAnchor(ARAnchor *anchor) {
-    auto it = _nativeAnchorMap.find(anchor);
+    auto it = _nativeAnchorMap.find(std::string([anchor.identifier.UUIDString UTF8String]));
     if (it != _nativeAnchorMap.end()) {
         removeAnchor(it->second);
     }

@@ -16,6 +16,9 @@ enum class VROARPlaneAlignment {
     Horizontal
 };
 
+/*
+ Anchor representing a planar surface.
+ */
 class VROARPlaneAnchor : public VROARAnchor {
     
 public:
@@ -51,7 +54,7 @@ public:
         return _extent;
     }
     void setExtent(VROVector3f extent) {
-        _extent = _extent;
+        _extent = extent;
     }
     
 private:

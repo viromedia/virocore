@@ -45,6 +45,7 @@ public:
      Internal methods.
      */
     void setFrame(ARFrame *frame);
+    std::shared_ptr<VROARAnchor> getAnchorForNative(ARAnchor *anchor);
     void updateAnchor(std::shared_ptr<VROARAnchor> anchor);
 
     void addAnchor(ARAnchor *anchor);
@@ -88,7 +89,7 @@ private:
      updated. Note that not all VROARAnchors have an ARKit counterpart (e.g. 
      they may be added and maintained by other tracking software).
      */
-    std::map<ARAnchor *, std::shared_ptr<VROARAnchor>> _nativeAnchorMap;
+    std::map<std::string, std::shared_ptr<VROARAnchor>> _nativeAnchorMap;
     
     /*
      Background to be assigned to the VROScene.
@@ -104,6 +105,11 @@ private:
      Update the anchor's node's transforms given the data in the anchor.
      */
     void updateNodeTransform(std::shared_ptr<VROARAnchor> anchor);
+    
+    /*
+     Update the VROARAnchor with the transforms in the given ARAnchor.
+     */
+    void updateAnchorFromNative(std::shared_ptr<VROARAnchor> vAnchor, ARAnchor *anchor);
     
 };
 

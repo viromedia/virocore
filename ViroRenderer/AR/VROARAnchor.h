@@ -19,10 +19,15 @@ class VRONode;
  create a VRONode with virtual content to attach to that anchor. The
  ARSession will thereafter ensure that the virtual content is fused with
  the real-world anchor, thereby enabling applications to 'augment'
- reality with virtual content. 
+ reality with virtual content.
  
  For example, if a plane anchor is detected, the can use its corresponding 
  VRONode to place virtual objects for a table-top game.
+ 
+ Anchors are regularly updated by the AR engine as the characteristics of 
+ the anchor are further refined: for example, the AR engine may start with
+ an approximation of a surface, and later determine the surface's width and
+ height.
  
  VROARAnchor is subclassed by specific anchor types; planes, image targets, 
  etc.
