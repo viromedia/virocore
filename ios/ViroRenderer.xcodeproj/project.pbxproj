@@ -335,6 +335,7 @@
 		8FD1E1B81C3F32B00005BE4E /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B71C3F32B00005BE4E /* CoreVideo.framework */; };
 		8FD1E1BA1C3F32D20005BE4E /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B91C3F32D20005BE4E /* CoreMedia.framework */; };
 		8FD1E1C01C4093790005BE4E /* VROVideoTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD1E1BE1C4093790005BE4E /* VROVideoTexture.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FD4D0BB1EEEF28300077AD7 /* VROARHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD4D0B91EEEF28300077AD7 /* VROARHitTestResult.h */; };
 		8FD4DED01C18ECD4003DC425 /* ViroKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD4DECF1C18ECD4003DC425 /* ViroKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD4DED71C18ECD4003DC425 /* ViroKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; };
 		8FD4DEDE1C18ECD4003DC425 /* ViroKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD4DEDD1C18ECD4003DC425 /* ViroKitTests.m */; };
@@ -936,6 +937,7 @@
 		8FD1E1B71C3F32B00005BE4E /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		8FD1E1B91C3F32D20005BE4E /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		8FD1E1BE1C4093790005BE4E /* VROVideoTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoTexture.h; sourceTree = "<group>"; };
+		8FD4D0B91EEEF28300077AD7 /* VROARHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARHitTestResult.h; sourceTree = "<group>"; };
 		8FD4DE9C1C16432B003DC425 /* VROLight.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROLight.cpp; sourceTree = "<group>"; };
 		8FD4DE9D1C16432B003DC425 /* VROLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLight.h; sourceTree = "<group>"; };
 		8FD4DE9F1C169D71003DC425 /* VROBox.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROBox.cpp; sourceTree = "<group>"; };
@@ -1306,6 +1308,7 @@
 				8F3E406B1EE7731B004CDE01 /* VROARCamera.h */,
 				8F3E40631EE772AF004CDE01 /* VROARAnchor.h */,
 				8F1AB9611EEDDC12006D76B6 /* VROARPlaneAnchor.h */,
+				8FD4D0B91EEEF28300077AD7 /* VROARHitTestResult.h */,
 			);
 			path = AR;
 			sourceTree = "<group>";
@@ -2088,6 +2091,7 @@
 				8F11B7BD1C1F8F1E0026D150 /* VRORenderContext.h in Headers */,
 				8FD1E1C01C4093790005BE4E /* VROVideoTexture.h in Headers */,
 				8F83DE921C474A800089C31A /* VROProjector.h in Headers */,
+				8FD4D0BB1EEEF28300077AD7 /* VROARHitTestResult.h in Headers */,
 				8FD1E1B41C3F27190005BE4E /* VROFrameListener.h in Headers */,
 				8F0FE6751CD2D3FD00A4C297 /* VROViewMetal.h in Headers */,
 				8F83DEA11C4826F80089C31A /* VROTimingFunctionEaseOut.h in Headers */,

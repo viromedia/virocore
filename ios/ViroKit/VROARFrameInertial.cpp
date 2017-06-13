@@ -10,6 +10,7 @@
 #include "VROARAnchorInertial.h"
 #include "VROARCameraInertial.h"
 #include "VROTextureSubstrate.h"
+#include "VROARHitTestResult.h"
 #include "VROTime.h"
 #include "VROViewport.h"
 
@@ -30,7 +31,12 @@ const std::shared_ptr<VROARCamera> &VROARFrameInertial::getCamera() const {
     return _camera;
 }
 
-VROMatrix4f VROARFrameInertial::getBackgroundTexcoordTransform() {
+std::vector<VROARHitTestResult> VROARFrameInertial::hitTest(int x, int y, std::set<VROARHitTestResultType> types) {
+    // Unsupported
+    return {};
+}
+
+VROMatrix4f VROARFrameInertial::getViewportToCameraImageTransform() {
     return {}; // Identity
 }
 

@@ -66,6 +66,10 @@ std::unique_ptr<VROARFrame> &VROARSessionInertial::updateFrame() {
     return _currentFrame;
 }
 
+std::unique_ptr<VROARFrame> &VROARSessionInertial::getLastFrame() {
+    return _currentFrame;
+}
+
 void VROARSessionInertial::setViewport(VROViewport viewport) {
     
 }

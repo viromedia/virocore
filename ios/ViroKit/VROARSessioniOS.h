@@ -36,6 +36,7 @@ public:
     void removeAnchor(std::shared_ptr<VROARAnchor> anchor);
     
     std::unique_ptr<VROARFrame> &updateFrame();
+    std::unique_ptr<VROARFrame> &getLastFrame();
     std::shared_ptr<VROTexture> getCameraBackgroundTexture();
     
     void setViewport(VROViewport viewport);

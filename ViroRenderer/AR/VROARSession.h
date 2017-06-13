@@ -119,6 +119,11 @@ public:
     virtual std::unique_ptr<VROARFrame> &updateFrame() = 0;
     
     /*
+     Get the last frame that was generated via updateFrame().
+     */
+    virtual std::unique_ptr<VROARFrame> &getLastFrame() = 0;
+    
+    /*
      Get the background texture for this AR session. The contents of this
      texture are updated after each call to updateFrame().
      */
@@ -135,10 +140,6 @@ public:
      necessary adjustments.
      */
     virtual void setOrientation(VROCameraOrientation orientation) = 0;
-    
-protected:
-    
-    
     
 private:
     

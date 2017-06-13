@@ -164,6 +164,10 @@ std::unique_ptr<VROARFrame> &VROARSessioniOS::updateFrame() {
     return _currentFrame;
 }
 
+std::unique_ptr<VROARFrame> &VROARSessioniOS::getLastFrame() {
+    return _currentFrame;
+}
+
 void VROARSessioniOS::setViewport(VROViewport viewport) {
     _viewport = viewport;
 }
@@ -197,7 +201,9 @@ void VROARSessioniOS::updateNodeTransform(std::shared_ptr<VROARAnchor> anchor) {
 }
 
 void VROARSessioniOS::setFrame(ARFrame *frame) {
-    _currentFrame = std::unique_ptr<VROARFrame>(new VROARFrameiOS(frame, _viewport, _orientation));
+    _currentFrame = std::unique_ptr<VROARFrame>(new VROARFrameiOS(frame, _viewport, _orientation, shared_from_this()));
+}
+
 void VROARSessioniOS::updateAnchorFromNative(std::shared_ptr<VROARAnchor> vAnchor, ARAnchor *anchor) {
     if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
         ARPlaneAnchor *planeAnchor = (ARPlaneAnchor *)anchor;

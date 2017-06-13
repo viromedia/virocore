@@ -20,7 +20,8 @@ public:
     double getTimestamp() const;
     
     const std::shared_ptr<VROARCamera> &getCamera() const;
-    VROMatrix4f getBackgroundTexcoordTransform();
+    std::vector<VROARHitTestResult> hitTest(int x, int y, std::set<VROARHitTestResultType> types);
+    VROMatrix4f getViewportToCameraImageTransform();
     const std::vector<std::shared_ptr<VROARAnchor>> &getAnchors() const;
     
     float getAmbientLightIntensity() const;

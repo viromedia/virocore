@@ -22,6 +22,7 @@
 #import "VROARAnchor.h"
 #import "VROARFrame.h"
 #import "VROConvert.h"
+#import "VROARHitTestResult.h"
 #import "VRONodeCamera.h"
 #import "vr/gvr/capi/include/gvr_audio.h"
 
@@ -140,7 +141,33 @@
     _renderer->setPointOfView(_pointOfView);
     
     self.keyValidator = [[VROApiKeyValidatorDynamo alloc] init];
+    
+    // TODO VIRO-1355: replace this with proper integration of event system
+    UITapGestureRecognizer *singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                      action:@selector(handleSingleTap:)];
+    [self addGestureRecognizer:singleFingerTap];
+    // End TODO
 }
+
+// TODO VIRO-1355: replace this with proper integration of event system
+- (void)handleSingleTap:(UITapGestureRecognizer *)recognizer {
+    CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+    
+    if (_arSession && _arSession->isReady()) {
+        std::unique_ptr<VROARFrame> &frame = _arSession->getLastFrame();
+        std::vector<VROARHitTestResult> results = frame->hitTest(location.x * self.contentScaleFactor,
+                                                                 location.y * self.contentScaleFactor,
+                       { VROARHitTestResultType::ExistingPlaneUsingExtent,
+                         VROARHitTestResultType::ExistingPlane,
+                         VROARHitTestResultType::EstimatedHorizontalPlane,
+                         VROARHitTestResultType::FeaturePoint });
+        
+        for (VROARHitTestResult &result : results) {
+            pinfo("Found hit test result");
+        }
+    }
+}
+// End TODO
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -304,7 +331,7 @@
         VROVector3f position = camera->getPosition();
         
         // TODO Only on orientation change
-        VROMatrix4f backgroundTransform = frame->getBackgroundTexcoordTransform();
+        VROMatrix4f backgroundTransform = frame->getViewportToCameraImageTransform();
         _cameraBackground->setTexcoordTransform(backgroundTransform);
         
         /*
