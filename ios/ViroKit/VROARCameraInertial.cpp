@@ -57,7 +57,7 @@ VROMatrix4f VROARCameraInertial::getProjection(VROViewport viewport, float near,
     
     VROVector3f cameraImageSize = getImageSize();
     float fx = fabs((float)cameraImageSize.x / (2 * tan(toRadians(outFOV->getLeft() + outFOV->getRight()) / 2.0)));
-    float fy = fabs((float)cameraImageSize.y / (2 * tan(toRadians(outFOV->getBottom() + outFOV->getTop()) / 2.0)));
+    float fy = fx;
     
     float s = 0;
     float x0 = viewport.getWidth() / 2.0;

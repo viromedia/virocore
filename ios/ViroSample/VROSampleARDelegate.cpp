@@ -79,7 +79,7 @@ std::shared_ptr<VRONode> VROSampleARDelegate::loadCoffeeMug() {
                                                                         if (!success) {
                                                                             return;
                                                                         }
-                                                                        node->setScale({0.01, 0.01, 0.01});
+                                                                        node->setScale({0.007, 0.007, 0.007});
                                                                         
                                                                         VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
                                                                         
