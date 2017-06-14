@@ -87,7 +87,7 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
 
         _lastClickedNode = nullptr;
         if (_lastDraggedNode != nullptr) {
-            _lastDraggedNode->_draggedNode->setSelectable(true);
+            _lastDraggedNode->_draggedNode->setIsBeingDragged(false);
         }
         _lastDraggedNode = nullptr;
     } else if (clickState == VROEventDelegate::ClickDown){
@@ -102,7 +102,7 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
             return;
         }
 
-        draggableNode->setSelectable(false);
+        draggableNode->setIsBeingDragged(true);
 
         /*
          * Grab and save a reference to the draggedNode that we will be tracking.

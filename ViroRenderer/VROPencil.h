@@ -32,7 +32,7 @@ public:
     /*
      Adds a line to be drawn starting and ending at the provided world coordinates.
      */
-    void draw(const VROVector3f from, const VROVector3f to);
+    void draw(VROVector3f from, VROVector3f to);
 
     /*
      Renders the geometry of all lines added with VROPencil.draw(), called in VRORenderer.renderEye(),

@@ -108,6 +108,43 @@ void VROPhysicsBody::setInertia(VROVector3f inertia) {
     _rigidBody->setMassProps(_mass, {inertia.x, inertia.y, inertia.z});
 }
 
+void VROPhysicsBody::setType(VROPhysicsBodyType type, float mass) {
+    if (type == VROPhysicsBodyType::Kinematic && mass != 0){
+        perror("Attempted to change body to a kinematic type with incorrect mass!");
+        return;
+    } else if (type != VROPhysicsBodyType::Kinematic && mass == 0){
+        perror("Attempted to change body to a non-kinematic type with incorrect mass!");
+        return;
+    }
+
+    if (type == VROPhysicsBody::VROPhysicsBodyType::Kinematic) {
+        _rigidBody->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+        _rigidBody->setActivationState(DISABLE_DEACTIVATION);
+    } else if (type == VROPhysicsBody::VROPhysicsBodyType::Static) {
+        _rigidBody->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
+        _rigidBody->setActivationState(ACTIVE_TAG);
+    } else {
+        _rigidBody->setActivationState(ACTIVE_TAG);
+        _rigidBody->setCollisionFlags(0);
+    }
+
+    _type = type;
+    setMass(mass);
+    _needsBulletUpdate = true;
+}
+
+void VROPhysicsBody::setKinematicDrag(bool isDragging){
+    if (isDragging) {
+        _preservedDraggedMass = _mass;
+        _preservedType = _type;
+        setType(VROPhysicsBody::VROPhysicsBodyType::Kinematic, 0);
+    } else {
+        setType(_preservedType, _preservedDraggedMass);
+    }
+
+    // Refresh the motion state.
+    _rigidBody->setMotionState(nullptr);
+}
 
 void VROPhysicsBody::setRestitution(float restitution) {
     _rigidBody->setRestitution(restitution);

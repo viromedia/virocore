@@ -14,7 +14,7 @@ VROPencil::~VROPencil() {
     _paths.clear();
 }
 
-void VROPencil::draw(const VROVector3f from, const VROVector3f to) {
+void VROPencil::draw(VROVector3f from, VROVector3f to) {
     std::vector<VROVector3f> pathTot;
     pathTot.push_back(from);
     pathTot.push_back(to);

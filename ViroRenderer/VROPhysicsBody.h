@@ -110,6 +110,13 @@ public:
     void setUseGravity(bool useGravity);
     bool getUseGravity();
     void setFriction(float friction);
+    void setType(VROPhysicsBodyType type, float mass);
+
+    /*
+     Sets this physics body in a kinematic drag mode, where we momentarily treat the body as
+     a draggable kinematic object.
+     */
+    void setKinematicDrag(bool isDragging);
 
     /*
      Sets the given VROPhysicsShape that will be used to process collisions.
@@ -193,7 +200,7 @@ public:
          */
         float penetrationDistance;
     };
-    
+
 private:
     std::string _key;
     std::weak_ptr<VRONode> _w_node;
@@ -208,6 +215,12 @@ private:
     VROVector3f _inertia;
     bool _useGravity;
     std::weak_ptr<VROPhysicsBodyDelegate> _w_physicsDelegate;
+
+    /*
+     * Preserved physics properties when in kinematic drag mode.
+     */
+    float _preservedDraggedMass;
+    VROPhysicsBodyType _preservedType;
 
     /*
      Simple force struct containing a force vector
