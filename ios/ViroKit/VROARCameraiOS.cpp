@@ -11,9 +11,11 @@
 #include "VROARCameraiOS.h"
 #include "VROConvert.h"
 #include "VROViewport.h"
+#include "VROMath.h"
 #include "VROLog.h"
 #include "VROCameraTexture.h"
 #include "VROVector3f.h"
+#include "VROFieldOfView.h"
 
 VROARCameraiOS::VROARCameraiOS(ARCamera *camera, VROCameraOrientation orientation) :
     _camera(camera),
@@ -80,12 +82,18 @@ VROVector3f VROARCameraiOS::getPosition() const {
 }
 
 VROMatrix4f VROARCameraiOS::getProjection(VROViewport viewport, float near, float far, VROFieldOfView *outFOV) const {
-    // TODO Output the FOV!
-    return VROConvert::toMatrix4f([_camera projectionMatrixWithViewportSize:CGSizeMake(viewport.getWidth() / viewport.getContentScaleFactor(),
+    VROMatrix4f projection = VROConvert::toMatrix4f([_camera projectionMatrixWithViewportSize:CGSizeMake(viewport.getWidth() / viewport.getContentScaleFactor(),
                                                                                        viewport.getHeight() / viewport.getContentScaleFactor())
                                                                 orientation:VROConvert::toDeviceOrientation(_orientation)
                                                                       zNear:near
                                                                        zFar:far]);
+        
+        
+    float fovX = toDegrees(atan(1.0f / projection[0]) * 2.0);
+    float fovY = toDegrees(atan(1.0f / projection[5]) * 2.0);
+    *outFOV = VROFieldOfView(fovX / 2.0, fovX / 2.0, fovY / 2.0, fovY / 2.0);
+    
+    return projection;
 }
 
 VROVector3f VROARCameraiOS::getImageSize() const {
