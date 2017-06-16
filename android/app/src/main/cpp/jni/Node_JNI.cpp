@@ -650,4 +650,23 @@ JNI_METHOD(jlong, nativeClearPhysicsDelegate)(JNIEnv *env,
     delete reinterpret_cast<PersistentRef<PhysicsDelegate_JNI> *>(delegateRef);
 }
 
+
+JNI_METHOD(void, nativeSetPhysicsVelocity)(JNIEnv *env,
+                                           jobject obj,
+                                           jlong nativeRef,
+                                           jfloatArray velocityArray,
+                                           jboolean isConstant) {
+    jfloat *jVelocity = env->GetFloatArrayElements(velocityArray, 0);
+    VROVector3f velocity = VROVector3f(jVelocity[0], jVelocity[1], jVelocity[2]);
+    env->ReleaseFloatArrayElements(velocityArray, jVelocity, 0);
+
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([node_w, velocity, isConstant] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node && node->getPhysicsBody()) {
+            node->getPhysicsBody()->setVelocity(velocity, isConstant);
+        }
+    });
+}
+
 }  // extern "C"

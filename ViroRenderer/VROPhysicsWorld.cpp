@@ -112,6 +112,7 @@ void VROPhysicsWorld::computePhysics(const VRORenderContext &context) {
         }
 
         physicsBody->updateBulletForces();
+        physicsBody->applyPresetVelocity();
     }
 
     // Step through the physics simulation

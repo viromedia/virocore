@@ -220,6 +220,10 @@ public class NodeJni {
         nativeApplyPhysicsTorqueImpulse(mNativeRef, torque);
     }
 
+    public void setPhysicsVelocity(float[] velocity, boolean isConstant){
+        nativeSetPhysicsVelocity(mNativeRef, velocity, isConstant);
+    }
+
     /**
      * Physics Delegate callback.
      */
@@ -275,7 +279,8 @@ public class NodeJni {
                                                        float[] position);
     private native void nativeApplyPhysicsTorqueImpulse(long nodeReference, float[] torque);
     private native void nativeClearPhysicsForce(long nodeReference);
-    public native long nativeSetPhysicsDelegate(long nodeReference);
-    public native void nativeClearPhysicsDelegate(long nodeReference, long delegateRef);
-    public native void nativeSetTag(long nodeReference, String tag);
+    private native long nativeSetPhysicsDelegate(long nodeReference);
+    private native void nativeClearPhysicsDelegate(long nodeReference, long delegateRef);
+    private native void nativeSetTag(long nodeReference, String tag);
+    private native void nativeSetPhysicsVelocity(long nodeReference, float[] velocity, boolean isConstant);
 }

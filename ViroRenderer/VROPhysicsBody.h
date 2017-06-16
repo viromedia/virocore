@@ -143,6 +143,12 @@ public:
     void clearForces();
 
     /*
+     Sets a velocity on this VROPhysicsBody to be applied when VROPhysicsWorld calls
+     applyPresetVelocity on this physics body.
+     */
+    void setVelocity(VROVector3f velocity, bool isConstant);
+
+    /*
      Returns the underlying bullet rigid body that represents this VROPhysicsBody.
      */
     btRigidBody* getBulletRigidBody();
@@ -175,6 +181,12 @@ public:
      in each simulated physics step, as required by bullet.
      */
     void updateBulletForces();
+
+    /*
+     Applies the set velocity on this VROPhysicsBody at every physics step if isConstant was true,
+     simulating constant velocity. Else, an instantaneous velocity is applied only once.
+     */
+    void applyPresetVelocity();
 
     /*
      Delegates attached to this VROPhysicsBody to be notified of collision events.
@@ -215,6 +227,8 @@ private:
     VROVector3f _inertia;
     bool _useGravity;
     std::weak_ptr<VROPhysicsBodyDelegate> _w_physicsDelegate;
+    VROVector3f _constantVelocity;
+    VROVector3f _instantVelocity;
 
     /*
      * Preserved physics properties when in kinematic drag mode.

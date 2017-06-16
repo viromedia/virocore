@@ -328,3 +328,27 @@ void VROPhysicsBody::updateBulletForces() {
         _rigidBody->applyTorque(btVector3(torque.x, torque.y, torque.z));
     }
 }
+
+void VROPhysicsBody::setVelocity(VROVector3f velocity, bool isConstant) {
+    if (isConstant){
+        _constantVelocity = velocity;
+    } else {
+        _instantVelocity = velocity;
+    }
+}
+
+void VROPhysicsBody::applyPresetVelocity() {
+    if (_instantVelocity.magnitude() > 0) {
+        _rigidBody->activate(true);
+        _rigidBody->setLinearVelocity(btVector3(_instantVelocity.x,
+                                                _instantVelocity.y,
+                                                _instantVelocity.z));
+
+        _instantVelocity = VROVector3f(0,0,0);
+    } else if (_constantVelocity.magnitude() > 0) {
+        _rigidBody->activate(true);
+        _rigidBody->setLinearVelocity(btVector3(_constantVelocity.x,
+                                                _constantVelocity.y,
+                                                _constantVelocity.z));
+    }
+}
