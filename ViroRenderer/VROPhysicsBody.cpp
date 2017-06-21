@@ -156,6 +156,9 @@ void VROPhysicsBody::setFriction(float friction) {
 
 void VROPhysicsBody::setUseGravity(bool useGravity) {
     _useGravity = useGravity;
+    if (useGravity){
+        _rigidBody->activate(true);
+    }
 }
 
 bool VROPhysicsBody::getUseGravity() {
@@ -317,6 +320,10 @@ void VROPhysicsBody::clearForces() {
 }
 
 void VROPhysicsBody::updateBulletForces() {
+    if (_forces.size() > 0 || _torques.size() > 0){
+        _rigidBody->activate(true);
+    }
+
     for (BulletForce bulletForce: _forces) {
         btVector3 force = btVector3(bulletForce.force.x, bulletForce.force.y, bulletForce.force.z);
         btVector3 atPosition
