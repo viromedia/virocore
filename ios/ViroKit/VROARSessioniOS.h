@@ -53,6 +53,9 @@ public:
     void updateAnchor(ARAnchor *anchor);
     void removeAnchor(ARAnchor *anchor);
     
+    // TODO: remove this when we refactor VROARAnchor
+    void addAnchorNode(std::shared_ptr<VRONode> node);
+    
 private:
     
     /*
@@ -101,11 +104,6 @@ private:
      Video texture cache used for transferring camera content to OpenGL.
      */
     std::shared_ptr<VROVideoTextureCacheOpenGL> _videoTextureCache;
-    
-    /*
-     Update the anchor's node's transforms given the data in the anchor.
-     */
-    void updateNodeTransform(std::shared_ptr<VROARAnchor> anchor);
     
     /*
      Update the VROARAnchor with the transforms in the given ARAnchor.

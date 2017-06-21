@@ -78,4 +78,8 @@ void VROARSessionInertial::setOrientation(VROCameraOrientation orientation) {
     _camera->updateCameraOrientation(orientation);
 }
 
+void VROARSessionInertial::addAnchorNode(std::shared_ptr<VRONode> node) {
+    // Unsupported
+}
+
 

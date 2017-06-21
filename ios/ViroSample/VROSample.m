@@ -947,7 +947,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         delegate->onHitResult(result, session, scene);
     }];
     
-    
     return sceneController;
 }
 

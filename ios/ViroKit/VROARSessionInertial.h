@@ -35,6 +35,9 @@ public:
     
     void setViewport(VROViewport viewport);
     void setOrientation(VROCameraOrientation orientation);
+
+    void addAnchorNode(std::shared_ptr<VRONode> node);
+
     
 private:
     

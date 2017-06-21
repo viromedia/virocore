@@ -25,6 +25,8 @@
 #import "VROARHitTestResult.h"
 #import "VRONodeCamera.h"
 #import "vr/gvr/capi/include/gvr_audio.h"
+#import "VROARScene.h"
+#import "VROARComponentManager.h"
 
 @interface VROViewAR () {
     std::shared_ptr<VRORenderer> _renderer;
@@ -35,6 +37,7 @@
     std::shared_ptr<VROSurface> _cameraBackground;
     std::shared_ptr<VROARSession> _arSession;
     std::shared_ptr<VRONode> _pointOfView;
+    std::shared_ptr<VROARComponentManager> _arComponentManager;
     
     CADisplayLink *_displayLink;
     int _frame;
@@ -131,6 +134,14 @@
         _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::DOF3, _driver);
 #endif
     _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
+    
+    /*
+     Create AR component manager and set it as the delegate to the AR session.
+     */
+    _arComponentManager = std::make_shared<VROARComponentManager>();
+    _arSession->setDelegate(_arComponentManager);
+    // TODO: remove the following line when we refactor VROARAnchor
+    _arComponentManager->setSession(_arSession);
     
     /*
      Set the point of view to a special node that will follow the user's
@@ -390,6 +401,10 @@
     _arSession->setViewport(viewport);
     _arSession->setAnchorDetection({ VROAnchorDetection::PlanesHorizontal });
     _arSession->run();
+    
+    // TODO: change the scene to VROARScene in this this class?
+    std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(scene);
+    arScene->setARComponentManager(_arComponentManager);
 }
 
 - (void)recenterTracking {

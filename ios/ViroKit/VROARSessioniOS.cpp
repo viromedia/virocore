@@ -19,6 +19,7 @@
 #include "VROScene.h"
 #include "VROTextureSubstrate.h"
 #include "VROLog.h"
+#include "VRONode.h"
 #include <algorithm>
 
 VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver) :
@@ -99,19 +100,18 @@ void VROARSessioniOS::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
         return;
     }
     
-    std::shared_ptr<VRONode> node = delegate->anchorWasDetected(anchor);
+    std::shared_ptr<VROARNode> node = delegate->anchorWasDetected(anchor);
     if (!node) {
         return;
     }
-    anchor->setNode(node);    
-    updateNodeTransform(anchor);
-
+    anchor->setARNode(node);
+    
     _anchors.push_back(anchor);
-    _anchorParentNode->addChildNode(anchor->getNode());
+    _anchorParentNode->addChildNode(anchor->getARNode());
 }
 
 void VROARSessioniOS::removeAnchor(std::shared_ptr<VROARAnchor> anchor) {
-    anchor->getNode()->removeFromParentNode();
+    anchor->getARNode()->removeFromParentNode();
     _anchors.erase(std::remove_if(_anchors.begin(), _anchors.end(),
                                  [anchor](std::shared_ptr<VROARAnchor> candidate) {
                                      return candidate == anchor;
@@ -141,7 +141,7 @@ void VROARSessioniOS::updateAnchor(std::shared_ptr<VROARAnchor> anchor) {
     if (delegate) {
         delegate->anchorWillUpdate(anchor);
     }
-    updateNodeTransform(anchor);
+    anchor->updateNodeTransform();
     if (delegate) {
         delegate->anchorDidUpdate(anchor);
     }
@@ -186,18 +186,6 @@ std::shared_ptr<VROARAnchor> VROARSessioniOS::getAnchorForNative(ARAnchor *ancho
     else {
         return nullptr;
     }
-}
-
-void VROARSessioniOS::updateNodeTransform(std::shared_ptr<VROARAnchor> anchor) {
-    const VROMatrix4f &transform = anchor->getTransform();
-    VROVector3f scale = transform.extractScale();
-    VROQuaternion rotation = transform.extractRotation(scale);
-    VROVector3f position = transform.extractTranslation();
-    
-    std::shared_ptr<VRONode> node = anchor->getNode();
-    node->setScale(scale);
-    node->setRotation(rotation);
-    node->setPosition(position);
 }
 
 void VROARSessioniOS::setFrame(ARFrame *frame) {
@@ -252,6 +240,10 @@ void VROARSessioniOS::removeAnchor(ARAnchor *anchor) {
     if (it != _nativeAnchorMap.end()) {
         removeAnchor(it->second);
     }
+}
+
+void VROARSessioniOS::addAnchorNode(std::shared_ptr<VRONode> node) {
+    _anchorParentNode->addChildNode(node);
 }
 
 #pragma mark - VROARKitSessionDelegate
