@@ -17,6 +17,7 @@
 #include "VROStringUtil.h"
 #include "EventDelegate_JNI.h"
 #include "PhysicsDelegate_JNI.h"
+#include "TransformDelegate_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -667,6 +668,33 @@ JNI_METHOD(void, nativeSetPhysicsVelocity)(JNIEnv *env,
             node->getPhysicsBody()->setVelocity(velocity, isConstant);
         }
     });
+}
+
+JNI_METHOD(jlong, nativeSetTransformDelegate)(JNIEnv *env,
+                                           jobject obj,
+                                           jlong nativeRef,
+                                           jdouble distanceFilter) {
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    std::shared_ptr<TransformDelegate_JNI> delegate
+            = std::make_shared<TransformDelegate_JNI>(obj , distanceFilter);
+    VROPlatformDispatchAsyncRenderer([node_w, delegate] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        node->setTransformDelegate(delegate);
+    });
+    return TransformDelegate_JNI::jptr(delegate);
+}
+
+JNI_METHOD(void, nativeRemoveTransformDelegate)(JNIEnv *env,
+                                           jobject obj,
+                                           jlong nativeRef,
+                                           jlong delegateRef) {
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([node_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        node->setTransformDelegate(nullptr);
+    });
+
+    delete reinterpret_cast<PersistentRef<TransformDelegate_JNI> *>(delegateRef);
 }
 
 }  // extern "C"

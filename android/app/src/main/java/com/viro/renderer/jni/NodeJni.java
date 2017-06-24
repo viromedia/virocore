@@ -25,6 +25,7 @@ public class NodeJni {
 
     public void destroy() {
         mDestroyed = true;
+        removeTransformDelegate();
         nativeDestroyNode(mNativeRef);
     }
 
@@ -49,7 +50,7 @@ public class NodeJni {
     }
 
     public void setPosition(float[] position){
-        if (position.length != 3){
+        if (position.length < 3){
             throw new IllegalArgumentException("Missing a position coordinate: All three coordinates are needed [x,y,z]");
         }
 
@@ -151,6 +152,38 @@ public class NodeJni {
     private native void nativeSetMaterials(long nodeReference, long[] materials);
     private native void nativeSetTransformBehaviors(long nodeReference, String[] transformBehaviors);
     private native void nativeSetEventDelegate(long nodeReference, long eventDelegateRef);
+    private native long nativeSetTransformDelegate(long nodeReference, double throttlingWindow);
+    private native void nativeRemoveTransformDelegate(long nodeReference, long mNativeTransformDelegate);
+
+    /**
+     * TransformDelegate Callback functions called from JNI
+     */
+    private WeakReference<TransformDelegate> mTransformDelegate = null;
+    private long mNativeTransformDelegate = INVALID_REF;
+    public interface TransformDelegate{
+        void onPositionUpdate(float[] position);
+    }
+
+    public void onPositionUpdate(float x, float y, float z){
+        if (mTransformDelegate.get() != null){
+            mTransformDelegate.get().onPositionUpdate(new float[]{x,y,z});
+        }
+    }
+
+    public void setTransformDelegate(TransformDelegate transformDelegate, double distanceFilter){
+        if (mNativeTransformDelegate == INVALID_REF){
+            mNativeTransformDelegate = nativeSetTransformDelegate(mNativeRef, distanceFilter);
+        }
+        mTransformDelegate = new WeakReference<TransformDelegate>(transformDelegate);
+    }
+
+    public void removeTransformDelegate(){
+        if (mNativeTransformDelegate != INVALID_REF){
+            mTransformDelegate = null;
+            nativeRemoveTransformDelegate(mNativeRef, mNativeTransformDelegate);
+            mNativeTransformDelegate = INVALID_REF;
+        }
+    }
 
     /**
      * Physics properties

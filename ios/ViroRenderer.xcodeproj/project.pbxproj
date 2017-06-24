@@ -454,6 +454,9 @@
 		8FE382151EF06FED005038CB /* VROARHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065B1EF06FBB006FC8C2 /* VROARHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A50F2A281ED135CC00D964D5 /* VROPhysicsBodyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A50F2A291ED135D800D964D5 /* VROPhysicsBodyDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A526F5B91EFD855E00A8A7A3 /* VROTransformDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A526F5C21EFD997A00A8A7A3 /* VROPencil.h in Headers */ = {isa = PBXBuildFile; fileRef = A527C7061EE76876006D3F24 /* VROPencil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A526F5C31EFD9B5600A8A7A3 /* VROTransformDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A56529A41EFD8051008097D7 /* VROTransformDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A527C7081EE76876006D3F24 /* VROPencil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A527C7071EE76876006D3F24 /* VROPencil.cpp */; };
 		A527C7091EE7692F006D3F24 /* VROPencil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A527C7071EE76876006D3F24 /* VROPencil.cpp */; };
 		A527C70A1EE76935006D3F24 /* VROPencil.h in Headers */ = {isa = PBXBuildFile; fileRef = A527C7061EE76876006D3F24 /* VROPencil.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1035,10 +1038,12 @@
 		8FF4D7A81C0D45DA006D6157 /* VROMaterialSubstrateMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialSubstrateMetal.h; sourceTree = "<group>"; };
 		A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VROPhysicsBodyDelegateiOS.h; path = ViroKit/VROPhysicsBodyDelegateiOS.h; sourceTree = SOURCE_ROOT; };
 		A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsBodyDelegate.h; sourceTree = "<group>"; };
+		A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTransformDelegateiOS.h; sourceTree = "<group>"; };
 		A527C7061EE76876006D3F24 /* VROPencil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPencil.h; sourceTree = "<group>"; };
 		A527C7071EE76876006D3F24 /* VROPencil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPencil.cpp; sourceTree = "<group>"; };
 		A52B272A1ED8DA960089F9A2 /* VROPhysicsContactResultCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsContactResultCallback.h; sourceTree = "<group>"; };
 		A538C5AC1EC63EDD00A724F0 /* VROPhysicsMotionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsMotionState.h; sourceTree = "<group>"; };
+		A56529A41EFD8051008097D7 /* VROTransformDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTransformDelegate.h; sourceTree = "<group>"; };
 		A566EB131E1AE11D008B4AE2 /* VROEventDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROEventDelegate.h; sourceTree = "<group>"; };
 		A566EB251E1AF448008B4AE2 /* VROSceneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneController.h; sourceTree = "<group>"; };
 		A566EB381E1B38A3008B4AE2 /* VROSceneDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneDelegateiOS.h; sourceTree = "<group>"; };
@@ -1233,6 +1238,7 @@
 		8F1071D81BF67EF7003B3C3F /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
+				A56529A41EFD8051008097D7 /* VROTransformDelegate.h */,
 				A5EC65901EBD16D800FE220E /* Physics */,
 				8F56AE9A1DE67BCF00DD65B6 /* Text */,
 				8F65F8271CA19A8100415115 /* Audio */,
@@ -1559,6 +1565,7 @@
 		8F53D3A61DCBA041001C91A8 /* iOS Impl */ = {
 			isa = PBXGroup;
 			children = (
+				A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */,
 				A566EB3C1E1B47B7008B4AE2 /* VROEventDelegateiOS.h */,
 				A566EB381E1B38A3008B4AE2 /* VROSceneDelegateiOS.h */,
 				8FD06F201E832760003D3BC4 /* VROCameraTextureiOS.h */,
@@ -2017,7 +2024,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A527C70A1EE76935006D3F24 /* VROPencil.h in Headers */,
+				A526F5C21EFD997A00A8A7A3 /* VROPencil.h in Headers */,
+				A526F5B91EFD855E00A8A7A3 /* VROTransformDelegateiOS.h in Headers */,
+				A526F5C31EFD9B5600A8A7A3 /* VROTransformDelegate.h in Headers */,
 				8FB2B58C1E143F7900EDB629 /* optional.hpp in Headers */,
 				8FE382141EF06FED005038CB /* VROARPlaneAnchor.h in Headers */,
 				8F2D1BB01EC288F700E7BF44 /* VROSkinner.h in Headers */,

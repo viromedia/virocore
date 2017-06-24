@@ -26,6 +26,7 @@
 #include "VROPhysicsBody.h"
 #include "VROAnimationChain.h"
 #include "VROExecutableAnimation.h"
+#include "VROTransformDelegate.h"
 
 // Opacity below which a node is considered hidden
 static const float kHiddenOpacityThreshold = 0.02;
@@ -453,7 +454,9 @@ void VRONode::setRotationEuler(VROVector3f euler) {
 void VRONode::setPosition(VROVector3f position) {
     passert_thread();
     animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f p) {
-                                                       ((VRONode *)animatable)->_position = p;
+                                                        VRONode *node = ((VRONode *)animatable);
+                                                        node->_position = p;
+                                                        node->notifyTransformUpdate(false);
                                                    }, _position, position));
     // Refresh the node's physics body if possible to accommodate scale changes.
     std::shared_ptr<VROPhysicsBody> body = getPhysicsBody();
@@ -475,24 +478,44 @@ void VRONode::setScale(VROVector3f scale) {
     }
 }
 
+void VRONode::setTransformDelegate(std::shared_ptr<VROTransformDelegate> delegate) {
+    _transformDelegate = delegate;
+
+    // Refresh the delegate with the latest position data as it is attached.
+    notifyTransformUpdate(true);
+}
+
+void VRONode::notifyTransformUpdate(bool forced) {
+    std::shared_ptr<VROTransformDelegate> delegate = _transformDelegate.lock();
+    if (delegate != nullptr){
+        delegate->processPositionUpdate(_position, forced);
+    }
+}
+
 void VRONode::setPositionX(float x) {
     passert_thread();
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float p) {
-        ((VRONode *)animatable)->_position.x = p;
+        VRONode *node = ((VRONode *)animatable);
+        node->_position.x = p;
+        node->notifyTransformUpdate(false);
     }, _position.x, x));
 }
 
 void VRONode::setPositionY(float y) {
     passert_thread();
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float p) {
-        ((VRONode *)animatable)->_position.y = p;
+        VRONode *node = ((VRONode *)animatable);
+        node->_position.y = p;
+        node->notifyTransformUpdate(false);
     }, _position.y, y));
 }
 
 void VRONode::setPositionZ(float z) {
     passert_thread();
     animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float p) {
-        ((VRONode *)animatable)->_position.z = p;
+        VRONode *node = ((VRONode *)animatable);
+        node->_position.z = p;
+        node->notifyTransformUpdate(false);
     }, _position.z, z));
 }
 
@@ -689,6 +712,10 @@ void VRONode::removeAllAnimations() {
         kv.second->terminate();
     }
     _animations.clear();
+}
+
+void VRONode::onAnimationFinished(){
+    notifyTransformUpdate(true);
 }
 
 #pragma mark - Hit Testing
