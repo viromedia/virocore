@@ -440,7 +440,7 @@
 		A50F2A291ED135D800D964D5 /* VROPhysicsBodyDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A527C7081EE76876006D3F24 /* VROPencil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A527C7071EE76876006D3F24 /* VROPencil.cpp */; };
 		A527C7091EE7692F006D3F24 /* VROPencil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A527C7071EE76876006D3F24 /* VROPencil.cpp */; };
-		A527C70A1EE76935006D3F24 /* VROPencil.h in Headers */ = {isa = PBXBuildFile; fileRef = A527C7061EE76876006D3F24 /* VROPencil.h */; };
+		A527C70A1EE76935006D3F24 /* VROPencil.h in Headers */ = {isa = PBXBuildFile; fileRef = A527C7061EE76876006D3F24 /* VROPencil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A52B272B1ED8DAAA0089F9A2 /* VROPhysicsContactResultCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A52B272A1ED8DA960089F9A2 /* VROPhysicsContactResultCallback.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A538C5AD1EC63EEF00A724F0 /* VROPhysicsMotionState.h in Headers */ = {isa = PBXBuildFile; fileRef = A538C5AC1EC63EDD00A724F0 /* VROPhysicsMotionState.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB1D1E1AEB0D008B4AE2 /* VROEventDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB131E1AE11D008B4AE2 /* VROEventDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1967,6 +1967,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A527C70A1EE76935006D3F24 /* VROPencil.h in Headers */,
 				8FB2B58C1E143F7900EDB629 /* optional.hpp in Headers */,
 				8FE382141EF06FED005038CB /* VROARPlaneAnchor.h in Headers */,
 				8F2D1BB01EC288F700E7BF44 /* VROSkinner.h in Headers */,
@@ -2111,7 +2112,6 @@
 				8F83DE921C474A800089C31A /* VROProjector.h in Headers */,
 				8FD1E1B41C3F27190005BE4E /* VROFrameListener.h in Headers */,
 				8F0FE6751CD2D3FD00A4C297 /* VROViewMetal.h in Headers */,
-				A527C70A1EE76935006D3F24 /* VROPencil.h in Headers */,
 				8F83DEA11C4826F80089C31A /* VROTimingFunctionEaseOut.h in Headers */,
 				8F3488AF1EE83DD3008917CB /* VROARCameraInertial.h in Headers */,
 				8A130D8C1E3BBEA90050D83B /* VROSoundDelegate.h in Headers */,
@@ -2543,7 +2543,6 @@
 			files = (
 				8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */,
 				A58697811E30843000191090 /* VROInputControllerBase.cpp in Sources */,
-				8A35172F1EE09E3F00B6E786 /* VROImageTracker.cpp in Sources */,
 				A527C7081EE76876006D3F24 /* VROPencil.cpp in Sources */,
 				8F517BC11BCDA2BD0017C70B /* VROSample.m in Sources */,
 				8F517BBB1BCDA2BD0017C70B /* main.m in Sources */,
