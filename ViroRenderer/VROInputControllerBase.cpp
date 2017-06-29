@@ -50,17 +50,17 @@ void VROInputControllerBase::debugMoveReticle() {
 #endif
 }
 
-void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickState clickState){
+void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickState clickState) {
     // Notify internal delegates
     for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
         delegate->onClick(source, clickState);
     }
-
+    
     // Return if we have not focused on any node upon which to trigger events.
-    if (_hitResult == nullptr){
+    if (_hitResult == nullptr) {
         return;
     }
-
+    
     std::shared_ptr<VRONode> focusedNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnClick, _hitResult->getNode());
     if (focusedNode != nullptr){
         focusedNode->getEventDelegate()->onClick(source, clickState);
@@ -84,7 +84,6 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
                                                          VROEventDelegate::ClickState::Clicked);
             }
         }
-
         _lastClickedNode = nullptr;
         if (_lastDraggedNode != nullptr) {
             _lastDraggedNode->_draggedNode->setIsBeingDragged(false);
@@ -97,11 +96,11 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
         std::shared_ptr<VRONode> draggableNode
                 = getNodeToHandleEvent(VROEventDelegate::EventAction::OnDrag,
                                        _hitResult->getNode());
-
+        
         if (draggableNode == nullptr){
             return;
         }
-
+        
         draggableNode->setIsBeingDragged(true);
 
         /*
@@ -119,8 +118,7 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
         draggedObject->_draggedNode = draggableNode;
 
         // Grab the forwardOffset (delta from the controller's forward in reference to the user).
-        VROVector3f forwardOffsetDelta = (_hitResult->getLocation() - _lastKnownPosition).normalize() - _lastKnownForward;
-        draggedObject->_forwardOffset = forwardOffsetDelta;
+        draggedObject->_forwardOffset = getDragForwardOffset();
 
         _lastDraggedNode  = draggedObject;
     }
@@ -182,10 +180,10 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
         movableNode->getEventDelegate()->onMove(source, _lastKnownRotation.toEuler(),
                                                 _lastKnownPosition, _lastKnownForward);
     }
-
+    
     // Update draggable objects if needed
     if (_lastDraggedNode != nullptr){
-
+        
         // Calculate the new drag location
         VROVector3f adjustedForward = _lastKnownForward + _lastDraggedNode->_forwardOffset;
         VROVector3f newSimulatedHitPosition = _lastKnownPosition + (adjustedForward  * _lastDraggedNode->_draggedDistanceFromController);
@@ -375,6 +373,7 @@ VROHitTestResult VROInputControllerBase::hitTest(const VROCamera &camera, VROVec
 
 std::shared_ptr<VRONode> VROInputControllerBase::getNodeToHandleEvent(VROEventDelegate::EventAction action,
                                                                       std::shared_ptr<VRONode> node){
+    bool drag = action == VROEventDelegate::EventAction::OnDrag;
     // Base condition, we are asking for the scene's root node's parent, return.
     if (node == nullptr){
         return nullptr;

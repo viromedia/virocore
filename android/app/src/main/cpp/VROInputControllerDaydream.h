@@ -29,6 +29,8 @@ public:
     VROInputControllerDaydream(gvr_context *gvr_context);
     virtual ~VROInputControllerDaydream();
 
+    virtual VROVector3f getDragForwardOffset();
+
     void onProcess(const VROCamera &camera);
     void onPause();
     void onResume();

@@ -6,6 +6,12 @@
 //
 #include "VROInputControllerCardboardiOS.h"
 
+VROVector3f VROInputControllerCardboardiOS::getDragForwardOffset() {
+    // on iOS Cardboard 1) we don't have drag 2) since forward vector of
+    // the camera matches the "controller" there's no offset anyways.
+    return VROVector3f();
+}
+
 void VROInputControllerCardboardiOS::onProcess(const VROCamera &camera) {
     updateOrientation(camera);
 }

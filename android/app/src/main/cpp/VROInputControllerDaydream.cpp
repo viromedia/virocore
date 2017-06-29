@@ -19,6 +19,10 @@ VROInputControllerDaydream::VROInputControllerDaydream(gvr_context *gvr_context)
 
 VROInputControllerDaydream::~VROInputControllerDaydream() {}
 
+VROVector3f VROInputControllerDaydream::getDragForwardOffset() {
+    return (_hitResult->getLocation() - _lastKnownPosition).normalize() - _lastKnownForward;
+}
+
 void VROInputControllerDaydream::onProcess(const VROCamera &camera) {
     /**
      * Do not proceed in case of failure (calling other controller_api methods

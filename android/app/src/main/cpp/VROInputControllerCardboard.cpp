@@ -6,6 +6,11 @@
 //
 #include "VROInputControllerCardboard.h"
 
+VROVector3f VROInputControllerCardboard::getDragForwardOffset() {
+    // since the controller is the same as the camera, there's no offset.
+    return VROVector3f();
+}
+
 void VROInputControllerCardboard::onProcess(const VROCamera &camera) {
     updateOrientation(camera);
 }

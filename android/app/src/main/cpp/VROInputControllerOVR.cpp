@@ -54,6 +54,10 @@ void VROInputControllerOVR::handleOVRKeyEvent(int keyCode, int action){
     }
 }
 
+VROVector3f VROInputControllerOVR::getDragForwardOffset() {
+    return (_hitResult->getLocation() - _lastKnownPosition).normalize() - _lastKnownForward;
+}
+
 void VROInputControllerOVR::onProcess(const VROCamera &camera) {
     // Grab controller orientation
     VROQuaternion rotation = camera.getRotation();

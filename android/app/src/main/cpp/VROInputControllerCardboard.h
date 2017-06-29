@@ -19,6 +19,8 @@ public:
     VROInputControllerCardboard(){}
     virtual ~VROInputControllerCardboard(){}
 
+    virtual VROVector3f getDragForwardOffset();
+
     virtual void onProcess(const VROCamera &camera);
 
     virtual std::string getHeadset() {

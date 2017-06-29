@@ -19,6 +19,7 @@ public:
     VROInputControllerOVR(){}
     virtual ~VROInputControllerOVR(){}
 
+    virtual VROVector3f getDragForwardOffset();
     void onProcess(const VROCamera &camera);
     void handleOVRKeyEvent(int keyCode, int action);
     void handleOVRTouchEvent(int touchAction, float posX, float posY);

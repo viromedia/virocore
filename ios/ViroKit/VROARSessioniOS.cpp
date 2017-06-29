@@ -21,6 +21,7 @@
 #include "VROLog.h"
 #include "VRONode.h"
 #include <algorithm>
+#include "VROPlatformUtil.h"
 
 VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver) :
     VROARSession(trackingType) {
@@ -267,34 +268,42 @@ void VROARSessioniOS::addAnchorNode(std::shared_ptr<VRONode> node) {
 - (void)session:(ARSession *)session didUpdateFrame:(ARFrame *)frame {
     std::shared_ptr<VROARSessioniOS> vSession = self.session.lock();
     if (vSession) {
-        vSession->setFrame(frame);
+        VROPlatformDispatchAsyncRenderer([vSession, frame] {
+            vSession->setFrame(frame);
+        });
     }
 }
 
 - (void)session:(ARSession *)session didAddAnchors:(NSArray<ARAnchor*>*)anchors {
     std::shared_ptr<VROARSessioniOS> vSession = self.session.lock();
     if (vSession) {
-        for (ARAnchor *anchor in anchors) {
-            vSession->addAnchor(anchor);
-        }
+        VROPlatformDispatchAsyncRenderer([vSession, anchors] {
+            for (ARAnchor *anchor in anchors) {
+                vSession->addAnchor(anchor);
+            }
+        });
     }
 }
 
 - (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors {
     std::shared_ptr<VROARSessioniOS> vSession = self.session.lock();
     if (vSession) {
-        for (ARAnchor *anchor in anchors) {
-            vSession->updateAnchor(anchor);
-        }
+        VROPlatformDispatchAsyncRenderer([vSession, anchors] {
+            for (ARAnchor *anchor in anchors) {
+                vSession->updateAnchor(anchor);
+            }
+        });
     }
 }
 
 - (void)session:(ARSession *)session didRemoveAnchors:(NSArray<ARAnchor*>*)anchors {
     std::shared_ptr<VROARSessioniOS> vSession = self.session.lock();
     if (vSession) {
-        for (ARAnchor *anchor in anchors) {
-            vSession->removeAnchor(anchor);
-        }
+        VROPlatformDispatchAsyncRenderer([vSession, anchors] {
+            for (ARAnchor *anchor in anchors) {
+                vSession->removeAnchor(anchor);
+            }
+        });
     }
 }
 

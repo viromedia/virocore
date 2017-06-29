@@ -15,7 +15,6 @@
 #import "VRODriverOpenGLiOS.h"
 #import "VROApiKeyValidator.h"
 #import "VROApiKeyValidatorDynamo.h"
-#import "VROInputControllerCardboardiOS.h"
 #import "VROARSessioniOS.h"
 #import "VROARSessionInertial.h"
 #import "VROARCamera.h"
@@ -27,6 +26,8 @@
 #import "vr/gvr/capi/include/gvr_audio.h"
 #import "VROARScene.h"
 #import "VROARComponentManager.h"
+#import "VROInputControllerARiOS.h"
+#import "VROProjector.h"
 
 @interface VROViewAR () {
     std::shared_ptr<VRORenderer> _renderer;
@@ -38,6 +39,7 @@
     std::shared_ptr<VROARSession> _arSession;
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROARComponentManager> _arComponentManager;
+    std::shared_ptr<VROInputControllerARiOS> _inputController;
     
     CADisplayLink *_displayLink;
     int _frame;
@@ -123,7 +125,10 @@
     _gvrAudio->Init(GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
     _driver = std::make_shared<VRODriverOpenGLiOS>(self.context, _gvrAudio);
     _suspendedNotificationTime = VROTimeCurrentSeconds();
-    _renderer = std::make_shared<VRORenderer>(std::make_shared<VROInputControllerCardboardiOS>());
+    _inputController = std::make_shared<VROInputControllerARiOS>(self.bounds.size.width * self.contentScaleFactor,
+                                                                 self.bounds.size.height * self.contentScaleFactor);
+    _renderer = std::make_shared<VRORenderer>(_inputController);
+    _inputController->setRenderer(_renderer);
     
     /*
      Create AR session.
@@ -153,16 +158,25 @@
     
     self.keyValidator = [[VROApiKeyValidatorDynamo alloc] init];
     
-    // TODO VIRO-1355: replace this with proper integration of event system
-    UITapGestureRecognizer *singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self
-                                                                                      action:@selector(handleSingleTap:)];
-    [self addGestureRecognizer:singleFingerTap];
-    // End TODO
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self
+                                                                                    action:@selector(handleLongPress:)];
+    longPress.minimumPressDuration = 0;
+    [self addGestureRecognizer:longPress];
 }
 
-// TODO VIRO-1355: replace this with proper integration of event system
-- (void)handleSingleTap:(UITapGestureRecognizer *)recognizer {
+- (void)handleLongPress:(UILongPressGestureRecognizer *)recognizer {
     CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+    
+    VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
+    
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        _inputController->onScreenTouchDown(viewportTouchPos);
+    } else if (recognizer.state == UIGestureRecognizerStateEnded) {
+        _inputController->onScreenTouchUp(viewportTouchPos);
+    } else {
+        _inputController->onScreenTouchMove(viewportTouchPos);
+        return;
+    }
     
     if (_arSession && _arSession->isReady()) {
         std::unique_ptr<VROARFrame> &frame = _arSession->getLastFrame();
