@@ -27,6 +27,13 @@ void VROLight::setColor(VROVector3f color) {
                                                    }, _color, color));
 }
 
+void VROLight::setIntensity(float intensity) {
+    animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float i) {
+        ((VROLight *)animatable)->_intensity = i;
+        ((VROLight *)animatable)->_updated = true;
+    }, _intensity, intensity));
+}
+
 void VROLight::setPosition(VROVector3f position) {
     animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f p) {
                                                        ((VROLight *)animatable)->_position = p;

@@ -897,7 +897,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     light->setSpotOuterAngle(120);
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
-    ambient->setColor({ 0.5, 0.5, 0.5 });
+    ambient->setColor({ 1.0, 1.0, 1.0 });
+    ambient->setIntensity(500);
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
