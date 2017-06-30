@@ -81,6 +81,8 @@ void VROBox::buildBoxVAR(VROShapeVertexLayout *vertexLayout) {
     float w = _width  / 2;
     float h = _height / 2;
     float l = _length / 2;
+    float u = 1;
+    float v = 1;
     
     const float cubeVertices[] = {
         // Front face
@@ -135,51 +137,51 @@ void VROBox::buildBoxVAR(VROShapeVertexLayout *vertexLayout) {
     const float cubeTex[] = {
         // Front face
         0, 0,
-        0, 1,
-        1, 0,
-        0, 1,
-        1, 1,
-        1, 0,
+        0, v,
+        u, 0,
+        0, v,
+        u, v,
+        u, 0,
         
         // Right face
         0, 0,
-        0, 1,
-        1, 0,
-        0, 1,
-        1, 1,
-        1, 0,
+        0, v,
+        u, 0,
+        0, v,
+        u, v,
+        u, 0,
         
         // Back face
         0, 0,
-        0, 1,
-        1, 0,
-        0, 1,
-        1, 1,
-        1, 0,
+        0, v,
+        u, 0,
+        0, v,
+        u, v,
+        u, 0,
         
         // Left face
         0, 0,
-        0, 1,
-        1, 0,
-        0, 1,
-        1, 1,
-        1, 0,
+        0, v,
+        u, 0,
+        0, v,
+        u, v,
+        u, 0,
         
         // Top face
         0, 0,
-        0, 1,
-        1, 0,
-        0, 1,
-        1, 1,
-        1, 0,
+        0, v,
+        u, 0,
+        0, v,
+        u, v,
+        u, 0,
         
         // Bottom face
         0, 0,
-        0, 1,
-        1, 0,
-        0, 1,
-        1, 1,
-        1, 0,
+        0, v,
+        u, 0,
+        0, v,
+        u, v,
+        u, 0,
     };
     
     const float cubeNormals[] = {

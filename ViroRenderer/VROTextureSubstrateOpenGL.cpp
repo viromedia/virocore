@@ -19,11 +19,14 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type,
                                                      std::vector<std::shared_ptr<VROData>> &data,
                                                      int width, int height,
                                                      const std::vector<uint32_t> &mipSizes,
+                                                     VROWrapMode wrapS, VROWrapMode wrapT,
+                                                     VROFilterMode minFilter, VROFilterMode magFilter, VROFilterMode mipFilter,
                                                      std::shared_ptr<VRODriverOpenGL> driver) :
     _owned(true),
     _driver(driver) {
     
-    loadTexture(type, format, internalFormat, mipmapMode, data, width, height, mipSizes);
+    loadTexture(type, format, internalFormat, mipmapMode, data, width, height, mipSizes,
+                wrapS, wrapT, minFilter, magFilter, mipFilter);
     ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
 }
 
@@ -40,7 +43,9 @@ void VROTextureSubstrateOpenGL::loadTexture(VROTextureType type,
                                             VROMipmapMode mipmapMode,
                                             std::vector<std::shared_ptr<VROData>> &data,
                                             int width, int height,
-                                            const std::vector<uint32_t> &mipSizes) {
+                                            const std::vector<uint32_t> &mipSizes,
+                                            VROWrapMode wrapS, VROWrapMode wrapT,
+                                            VROFilterMode minFilter, VROFilterMode magFilter, VROFilterMode mipFilter) {
  
     _target = GL_TEXTURE_2D;
     
@@ -50,16 +55,10 @@ void VROTextureSubstrateOpenGL::loadTexture(VROTextureType type,
     if (type == VROTextureType::Texture2D) {
         glBindTexture(GL_TEXTURE_2D, _texture);
         
-        if (mipmapMode != VROMipmapMode::None) {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        }
-        else {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        }
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, convert(mipmapMode, minFilter, mipFilter));
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, convert(mipmapMode, magFilter, mipFilter));
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, convert(wrapS));
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, convert(wrapT));
         
         loadFace(GL_TEXTURE_2D, format, internalFormat,
                  mipmapMode, data.front(), width, height, mipSizes);
@@ -73,8 +72,8 @@ void VROTextureSubstrateOpenGL::loadTexture(VROTextureType type,
         _target = GL_TEXTURE_CUBE_MAP;
         
         glBindTexture(GL_TEXTURE_CUBE_MAP, _texture);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, convert(mipmapMode, minFilter, mipFilter));
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, convert(mipmapMode, minFilter, mipFilter));
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -168,5 +167,55 @@ GLuint VROTextureSubstrateOpenGL::getInternalFormat(VROTextureInternalFormat for
             
         default:
             return GL_RGBA;
+    }
+}
+
+GLenum VROTextureSubstrateOpenGL::convert(VROWrapMode wrapMode) {
+    switch (wrapMode) {
+        case VROWrapMode::Clamp:
+        case VROWrapMode::ClampToBorder:
+            return GL_CLAMP_TO_EDGE;
+        case VROWrapMode::Mirror:
+            return GL_MIRRORED_REPEAT;
+        default:
+            return GL_REPEAT;
+    }
+}
+
+GLenum VROTextureSubstrateOpenGL::convert(VROMipmapMode mipmapMode, VROFilterMode minmagFilter, VROFilterMode mipFilter) {
+    if (minmagFilter == VROFilterMode::Nearest || minmagFilter == VROFilterMode::None) {
+        if (mipmapMode != VROMipmapMode::None) {
+            if (mipFilter == VROFilterMode::Linear) {
+                return GL_NEAREST_MIPMAP_LINEAR;
+            }
+            else if (mipFilter == VROFilterMode::Nearest) {
+                return GL_NEAREST_MIPMAP_NEAREST;
+            }
+            else {
+                return GL_NEAREST;
+            }
+        }
+        else {
+            return GL_NEAREST;
+        }
+    }
+    else if (minmagFilter == VROFilterMode::Linear) {
+        if (mipmapMode != VROMipmapMode::None) {
+            if (mipFilter == VROFilterMode::Linear) {
+                return GL_LINEAR_MIPMAP_LINEAR;
+            }
+            else if (mipFilter == VROFilterMode::Nearest) {
+                return GL_LINEAR_MIPMAP_NEAREST;
+            }
+            else {
+                return GL_LINEAR;
+            }
+        }
+        else {
+            return GL_LINEAR;
+        }
+    }
+    else {
+        return GL_NEAREST;
     }
 }

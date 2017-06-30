@@ -21,58 +21,94 @@
 #include "Nodes.pb.h"
 
 VROGeometrySourceSemantic convert(viro::Node_Geometry_Source_Semantic semantic) {
-  switch (semantic) {
-    case viro::Node_Geometry_Source_Semantic_Vertex:
-      return VROGeometrySourceSemantic::Vertex;
-    case viro::Node_Geometry_Source_Semantic_Normal:
-      return VROGeometrySourceSemantic::Normal;
-    case viro::Node_Geometry_Source_Semantic_Color:
-      return VROGeometrySourceSemantic::Color;
-    case viro::Node_Geometry_Source_Semantic_Texcoord:
-      return VROGeometrySourceSemantic::Texcoord;
-    case viro::Node_Geometry_Source_Semantic_Tangent:
-      return VROGeometrySourceSemantic::Tangent;
-    case viro::Node_Geometry_Source_Semantic_VertexCrease:
-      return VROGeometrySourceSemantic::VertexCrease;
-    case viro::Node_Geometry_Source_Semantic_EdgeCrease:
-      return VROGeometrySourceSemantic::EdgeCrease;
-    case viro::Node_Geometry_Source_Semantic_BoneWeights:
-      return VROGeometrySourceSemantic::BoneWeights;
-    case viro::Node_Geometry_Source_Semantic_BoneIndices:
-      return VROGeometrySourceSemantic::BoneIndices;
-    default:
-      pabort();
-  }
+    switch (semantic) {
+        case viro::Node_Geometry_Source_Semantic_Vertex:
+            return VROGeometrySourceSemantic::Vertex;
+        case viro::Node_Geometry_Source_Semantic_Normal:
+            return VROGeometrySourceSemantic::Normal;
+        case viro::Node_Geometry_Source_Semantic_Color:
+            return VROGeometrySourceSemantic::Color;
+        case viro::Node_Geometry_Source_Semantic_Texcoord:
+            return VROGeometrySourceSemantic::Texcoord;
+        case viro::Node_Geometry_Source_Semantic_Tangent:
+            return VROGeometrySourceSemantic::Tangent;
+        case viro::Node_Geometry_Source_Semantic_VertexCrease:
+            return VROGeometrySourceSemantic::VertexCrease;
+        case viro::Node_Geometry_Source_Semantic_EdgeCrease:
+            return VROGeometrySourceSemantic::EdgeCrease;
+        case viro::Node_Geometry_Source_Semantic_BoneWeights:
+            return VROGeometrySourceSemantic::BoneWeights;
+        case viro::Node_Geometry_Source_Semantic_BoneIndices:
+            return VROGeometrySourceSemantic::BoneIndices;
+        default:
+            pabort();
+    }
 }
 
 VROGeometryPrimitiveType convert(viro::Node_Geometry_Element_Primitive primitive) {
-  switch (primitive) {
-    case viro::Node_Geometry_Element_Primitive_Triangle:
-      return VROGeometryPrimitiveType::Triangle;
-    case viro::Node_Geometry_Element_Primitive_TriangleStrip:
-      return VROGeometryPrimitiveType::TriangleStrip;
-    case viro::Node_Geometry_Element_Primitive_Line:
-      return VROGeometryPrimitiveType::Line;
-    case viro::Node_Geometry_Element_Primitive_Point:
-      return VROGeometryPrimitiveType::Point;
-    default:
-      pabort();
-  }
+    switch (primitive) {
+        case viro::Node_Geometry_Element_Primitive_Triangle:
+            return VROGeometryPrimitiveType::Triangle;
+        case viro::Node_Geometry_Element_Primitive_TriangleStrip:
+            return VROGeometryPrimitiveType::TriangleStrip;
+        case viro::Node_Geometry_Element_Primitive_Line:
+            return VROGeometryPrimitiveType::Line;
+        case viro::Node_Geometry_Element_Primitive_Point:
+            return VROGeometryPrimitiveType::Point;
+        default:
+            pabort();
+    }
 }
 
 VROLightingModel convert(viro::Node_Geometry_Material_LightingModel lightingModel) {
-  switch (lightingModel) {
-    case viro::Node_Geometry_Material_LightingModel_Constant:
-      return VROLightingModel::Constant;
-    case viro::Node_Geometry_Material_LightingModel_Lambert:
-      return VROLightingModel::Lambert;
-    case viro::Node_Geometry_Material_LightingModel_Blinn:
-      return VROLightingModel::Blinn;
-    case viro::Node_Geometry_Material_LightingModel_Phong:
-      return VROLightingModel::Phong;
-    default:
-      pabort();
-  }
+    switch (lightingModel) {
+        case viro::Node_Geometry_Material_LightingModel_Constant:
+            return VROLightingModel::Constant;
+        case viro::Node_Geometry_Material_LightingModel_Lambert:
+            return VROLightingModel::Lambert;
+        case viro::Node_Geometry_Material_LightingModel_Blinn:
+            return VROLightingModel::Blinn;
+        case viro::Node_Geometry_Material_LightingModel_Phong:
+            return VROLightingModel::Phong;
+        default:
+            pabort();
+    }
+}
+
+VROWrapMode convert(viro::Node_Geometry_Material_Visual_WrapMode wrapMode) {
+    switch (wrapMode) {
+        case viro::Node_Geometry_Material_Visual_WrapMode_Clamp:
+            return VROWrapMode::Clamp;
+        case viro::Node_Geometry_Material_Visual_WrapMode_ClampToBorder:
+            return VROWrapMode::ClampToBorder;
+        case viro::Node_Geometry_Material_Visual_WrapMode_Mirror:
+            return VROWrapMode::Mirror;
+        case viro::Node_Geometry_Material_Visual_WrapMode_Repeat:
+            return VROWrapMode::Repeat;
+        default:
+            pabort();
+    }
+}
+
+VROFilterMode convert(viro::Node_Geometry_Material_Visual_FilterMode filterMode) {
+    switch (filterMode) {
+        case viro::Node_Geometry_Material_Visual_FilterMode_Linear:
+            return VROFilterMode::Linear;
+        case viro::Node_Geometry_Material_Visual_FilterMode_Nearest:
+            return VROFilterMode::Nearest;
+        case viro::Node_Geometry_Material_Visual_FilterMode_None:
+            return VROFilterMode::None;
+        default:
+            pabort();
+    }
+}
+
+void setTextureProperties(const viro::Node::Geometry::Material::Visual &pb, std::shared_ptr<VROTexture> &texture) {
+    texture->setMinificationFilter(convert(pb.minification_filter()));
+    texture->setMagnificationFilter(convert(pb.magnification_filter()));
+    texture->setMipFilter(convert(pb.mip_filter()));
+    texture->setWrapS(convert(pb.wrap_mode_s()));
+    texture->setWrapT(convert(pb.wrap_mode_t()));
 }
 
 std::shared_ptr<VRONode> VROFBXLoader::loadFBXFromURL(std::string url, std::string baseURL,
@@ -338,6 +374,7 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
                 std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(diffuse_pb.texture(), base, isBaseURL, resourceMap, textureCache);
                 if (texture) {
                     diffuse.setTexture(texture);
+                    setTextureProperties(diffuse_pb, texture);
                 }
                 else {
                     pinfo("FBX failed to load diffuse texture [%s]", diffuse_pb.texture().c_str());
@@ -354,6 +391,7 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
                 std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(specular_pb.texture(), base, isBaseURL, resourceMap, textureCache);
                 if (texture) {
                     specular.setTexture(texture);
+                    setTextureProperties(specular_pb, texture);
                 }
                 else {
                     pinfo("FBX failed to load specular texture [%s]", specular_pb.texture().c_str());
@@ -370,6 +408,7 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
                 std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(normal_pb.texture(), base, isBaseURL, resourceMap, textureCache);
                 if (texture) {
                     normal.setTexture(texture);
+                    setTextureProperties(normal_pb, texture);
                 }
                 else {
                     pinfo("FBX failed to load normal texture [%s]", normal_pb.texture().c_str());

@@ -414,6 +414,14 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
     
+    std::shared_ptr<VROTexture> bobaTexture = std::make_shared<VROTexture>(format, VROMipmapMode::Runtime,
+                                                                           std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"], format));
+    bobaTexture->setWrapS(VROWrapMode::Repeat);
+    bobaTexture->setWrapT(VROWrapMode::Repeat);
+    bobaTexture->setMinificationFilter(VROFilterMode::Linear);
+    bobaTexture->setMagnificationFilter(VROFilterMode::Linear);
+    bobaTexture->setMipFilter(VROFilterMode::Linear);
+    
     /*
      Create the box node.
      */
@@ -422,8 +430,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);
-    material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
-                                                                   std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"], format)));
+    material->getDiffuse().setTexture(bobaTexture);
     material->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
     material->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
                                                                     std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"], format)));

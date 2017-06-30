@@ -25,7 +25,12 @@ VROTexture::VROTexture(VROTextureType type, VROTextureInternalFormat internalFor
     _textureId(sTextureId++),
     _type(type),
     _internalFormat(internalFormat),
-    _stereoMode(stereoMode) {
+    _stereoMode(stereoMode),
+    _wrapS(VROWrapMode::Clamp),
+    _wrapT(VROWrapMode::Clamp),
+    _minificationFilter(VROFilterMode::Linear),
+    _magnificationFilter(VROFilterMode::Linear),
+    _mipFilter(VROFilterMode::Linear) {
     
     setNumSubstrates(getNumSubstratesForFormat(internalFormat));
     ALLOCATION_TRACKER_ADD(Textures, 1);
@@ -34,7 +39,12 @@ VROTexture::VROTexture(VROTextureType type, VROTextureInternalFormat internalFor
 VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate, VROStereoMode stereoState) :
     _textureId(sTextureId++),
     _type(type),
-    _stereoMode(stereoState) {
+    _stereoMode(stereoState),
+    _wrapS(VROWrapMode::Clamp),
+    _wrapT(VROWrapMode::Clamp),
+    _minificationFilter(VROFilterMode::Linear),
+    _magnificationFilter(VROFilterMode::Linear),
+    _mipFilter(VROFilterMode::Linear){
     
     _substrates.push_back(std::move(substrate));
     ALLOCATION_TRACKER_ADD(Textures, 1);
@@ -46,13 +56,18 @@ VROTexture::VROTexture(VROTextureInternalFormat internalFormat,
                        VROStereoMode stereoMode) :
     _textureId(sTextureId++),
     _type(VROTextureType::Texture2D),
-    _stereoMode(stereoMode),
     _images( {image} ),
     _format(image->getFormat()),
     _internalFormat(internalFormat),
     _width(image->getWidth()),
     _height(image->getHeight()),
-    _mipmapMode(mipmapMode)  {
+    _mipmapMode(mipmapMode),
+    _stereoMode(stereoMode),
+    _wrapS(VROWrapMode::Clamp),
+    _wrapT(VROWrapMode::Clamp),
+    _minificationFilter(VROFilterMode::Linear),
+    _magnificationFilter(VROFilterMode::Linear),
+    _mipFilter(VROFilterMode::Linear) {
     
     setNumSubstrates(getNumSubstratesForFormat(internalFormat));
     ALLOCATION_TRACKER_ADD(Textures, 1);
@@ -63,13 +78,18 @@ VROTexture::VROTexture(VROTextureInternalFormat internalFormat,
                        VROStereoMode stereoMode) :
     _textureId(sTextureId++),
     _type(VROTextureType::TextureCube),
-    _stereoMode(stereoMode),
     _images(images),
     _format(images.front()->getFormat()),
     _internalFormat(internalFormat),
     _width(images.front()->getWidth()),
     _height(images.front()->getHeight()),
-    _mipmapMode(VROMipmapMode::None) { // No mipmapping for cube textures
+    _mipmapMode(VROMipmapMode::None), // No mipmapping for cube textures
+    _stereoMode(stereoMode),
+    _wrapS(VROWrapMode::Clamp),
+    _wrapT(VROWrapMode::Clamp),
+    _minificationFilter(VROFilterMode::Linear),
+    _magnificationFilter(VROFilterMode::Linear),
+    _mipFilter(VROFilterMode::Linear) {
     
     setNumSubstrates(getNumSubstratesForFormat(internalFormat));
     ALLOCATION_TRACKER_ADD(Textures, 1);
@@ -85,14 +105,19 @@ VROTexture::VROTexture(VROTextureType type,
                        VROStereoMode stereoMode) :
     _textureId(sTextureId++),
     _type(type),
-    _stereoMode(stereoMode),
     _data(data),
     _format(format),
     _internalFormat(internalFormat),
     _width(width),
     _height(height),
     _mipmapMode(mipmapMode),
-    _mipSizes(mipSizes) {
+    _mipSizes(mipSizes),
+    _stereoMode(stereoMode),
+    _wrapS(VROWrapMode::Clamp),
+    _wrapT(VROWrapMode::Clamp),
+    _minificationFilter(VROFilterMode::Linear),
+    _magnificationFilter(VROFilterMode::Linear),
+    _mipFilter(VROFilterMode::Linear) {
     
     setNumSubstrates(getNumSubstratesForFormat(internalFormat));
     ALLOCATION_TRACKER_ADD(Textures, 1);
@@ -167,12 +192,14 @@ void VROTexture::hydrate(std::shared_ptr<VRODriver> &driver) {
         
         std::vector<uint32_t> mipSizes;
         _substrates[0] = std::unique_ptr<VROTextureSubstrate>(driver->newTextureSubstrate(_type, _format, _internalFormat, _mipmapMode,
-                                                                                      data, _width, _height, _mipSizes));
+                                                                                          data, _width, _height, _mipSizes, _wrapS, _wrapT,
+                                                                                          _minificationFilter, _magnificationFilter, _mipFilter));
         _images.clear();
     }
     else if (!_data.empty()) {
         _substrates[0] = std::unique_ptr<VROTextureSubstrate>(driver->newTextureSubstrate(_type, _format, _internalFormat, _mipmapMode,
-                                                                                      _data, _width, _height, _mipSizes));
+                                                                                          _data, _width, _height, _mipSizes, _wrapS, _wrapT,
+                                                                                          _minificationFilter, _magnificationFilter, _mipFilter));
         _data.clear();
     }
 }

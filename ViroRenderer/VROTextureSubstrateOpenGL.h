@@ -22,6 +22,8 @@ enum class VROTextureType;
 enum class VROTextureFormat;
 enum class VROTextureInternalFormat;
 enum class VROMipmapMode;
+enum class VROWrapMode;
+enum class VROFilterMode;
 
 class VROTextureSubstrateOpenGL : public VROTextureSubstrate {
     
@@ -56,6 +58,8 @@ public:
                               std::vector<std::shared_ptr<VROData>> &data,
                               int width, int height,
                               const std::vector<uint32_t> &mipSizes,
+                              VROWrapMode wrapS, VROWrapMode wrapT,
+                              VROFilterMode minFilter, VROFilterMode magFilter, VROFilterMode mipFilter,
                               std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VROTextureSubstrateOpenGL();
     
@@ -85,7 +89,9 @@ private:
                      VROMipmapMode mipmapMode,
                      std::vector<std::shared_ptr<VROData>> &data,
                      int width, int height,
-                     const std::vector<uint32_t> &mipSizes);
+                     const std::vector<uint32_t> &mipSizes,
+                     VROWrapMode wrapS, VROWrapMode wrapT,
+                     VROFilterMode minFilter, VROFilterMode magFilter, VROFilterMode mipFilter);
     void loadFace(GLenum target,
                   VROTextureFormat format,
                   VROTextureInternalFormat internalFormat,
@@ -93,7 +99,10 @@ private:
                   std::shared_ptr<VROData> &faceData,
                   int width, int height,
                   const std::vector<uint32_t> &mipSizes);
+    
     GLuint getInternalFormat(VROTextureInternalFormat format);
+    GLenum convert(VROWrapMode wrapMode);
+    GLenum convert(VROMipmapMode mipmapMode, VROFilterMode minmagFilter, VROFilterMode mipFilter);
     
 };
 

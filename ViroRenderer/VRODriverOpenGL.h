@@ -80,10 +80,13 @@ public:
                                              VROMipmapMode mipmapMode,
                                              std::vector<std::shared_ptr<VROData>> &data,
                                              int width, int height,
-                                             std::vector<uint32_t> mipSizes) {
+                                             std::vector<uint32_t> mipSizes,
+                                             VROWrapMode wrapS, VROWrapMode wrapT,
+                                             VROFilterMode minFilter, VROFilterMode magFilter, VROFilterMode mipFilter) {
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
         return new VROTextureSubstrateOpenGL(type, format, internalFormat, mipmapMode, data,
-                                             width, height, mipSizes, driver);
+                                             width, height, mipSizes, wrapS, wrapT, minFilter, magFilter, mipFilter,
+                                             driver);
     }
     
     virtual VROVideoTextureCache *newVideoTextureCache() = 0;
