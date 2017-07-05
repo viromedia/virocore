@@ -52,6 +52,8 @@
 		8ABD8F541DB957C900BD9C83 /* VROCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F531DB957C900BD9C83 /* VROCredentials.h */; };
 		8AD0122B1ED8F38900DEB959 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1821ED8D5EA00757C29 /* opencv2.framework */; };
 		8AD0122C1ED8F38F00DEB959 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */; };
+		8ADC38D51F0AFAF2006DD653 /* VROARNodeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ADC38D41F0AFAF2006DD653 /* VROARNodeDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8ADC38D71F0AFD0A006DD653 /* VROARNodeDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8BDDA00D1E54F6B200A42870 /* VROLazyMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDDA00B1E54F48500A42870 /* VROLazyMaterial.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8BDDA00E1E54F6B200A42870 /* VROMaterialAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDDA00C1E54F4A300A42870 /* VROMaterialAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */; };
@@ -596,6 +598,8 @@
 		8ABD8F3F1DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROApiMetricsIncrementRequest.h; sourceTree = "<group>"; };
 		8ABD8F401DB86AD700BD9C83 /* VROApiMetricsIncrementRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VROApiMetricsIncrementRequest.m; sourceTree = "<group>"; };
 		8ABD8F531DB957C900BD9C83 /* VROCredentials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCredentials.h; sourceTree = "<group>"; };
+		8ADC38D41F0AFAF2006DD653 /* VROARNodeDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARNodeDelegate.h; sourceTree = "<group>"; };
+		8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARNodeDelegateiOS.h; sourceTree = "<group>"; };
 		8BDDA00B1E54F48500A42870 /* VROLazyMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLazyMaterial.h; sourceTree = "<group>"; };
 		8BDDA00C1E54F4A300A42870 /* VROMaterialAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialAnimation.h; sourceTree = "<group>"; };
 		8F03BCD41CECC30E00D071F8 /* blinn_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_fsh.glsl; sourceTree = "<group>"; };
@@ -1304,6 +1308,7 @@
 				8F129FC51EDF6AE500341D83 /* VROViewAR.mm */,
 				8A35173A1EE11C4800B6E786 /* VROTrackingHelper.h */,
 				8A35173B1EE11C4800B6E786 /* VROTrackingHelper.mm */,
+				8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */,
 			);
 			name = AR;
 			sourceTree = "<group>";
@@ -1351,6 +1356,7 @@
 				8A99E6CE1EF1B95800712D79 /* VROARScene.cpp */,
 				8A99E6CF1EF1B95800712D79 /* VROARScene.h */,
 				8A99E6C21EF1B76F00712D79 /* VROARSceneController.h */,
+				8ADC38D41F0AFAF2006DD653 /* VROARNodeDelegate.h */,
 			);
 			name = AR;
 			sourceTree = "<group>";
@@ -2125,10 +2131,12 @@
 				8F548E4E1C23665100556688 /* VROAnimatable.h in Headers */,
 				8F129F961ECB41EE00341D83 /* VROSkeletalAnimation.h in Headers */,
 				8FB659231CD83A2200D036EB /* VROTextureSubstrateOpenGL.h in Headers */,
+				8ADC38D51F0AFAF2006DD653 /* VROARNodeDelegate.h in Headers */,
 				8F50FC6E1E09C99900A9B4B2 /* VROViewport.h in Headers */,
 				8FD06F221E832760003D3BC4 /* VROCameraTextureiOS.h in Headers */,
 				A52B272B1ED8DAAA0089F9A2 /* VROPhysicsContactResultCallback.h in Headers */,
 				8FD4DF4A1C18F5EB003DC425 /* VROMath.h in Headers */,
+				8ADC38D71F0AFD0A006DD653 /* VROARNodeDelegateiOS.h in Headers */,
 				8FD4DF4B1C18F5EB003DC425 /* VROBox.h in Headers */,
 				8FD4DF4C1C18F5EB003DC425 /* VROSurface.h in Headers */,
 				8FCB10021DD0060E00FE425C /* VRORenderDelegateiOS.h in Headers */,
