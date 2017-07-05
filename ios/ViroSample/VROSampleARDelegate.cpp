@@ -9,7 +9,7 @@
 #include "VROSampleARDelegate.h"
 #include "VROLog.h"
 
-std::shared_ptr<VRONode> VROSampleARDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
+std::shared_ptr<VROARNode> VROSampleARDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
     pinfo("Anchor detected!");
     
     std::shared_ptr<VROARPlaneAnchor> pAnchor = std::dynamic_pointer_cast<VROARPlaneAnchor>(anchor);
@@ -21,8 +21,8 @@ std::shared_ptr<VRONode> VROSampleARDelegate::anchorWasDetected(std::shared_ptr<
         VROMatrix4f transform = anchor->getTransform();
         pinfo("Position %f, %f, %f", transform[12], transform[13], transform[14]);
         
-        std::shared_ptr<VRONode> anchorNode = std::make_shared<VRONode>();
-        return anchorNode;
+        std::shared_ptr<VROARNode> anchorNode = std::make_shared<VROARNode>();
+        return anchorNode; 
     }
     else {
         return {};
@@ -36,7 +36,7 @@ void VROSampleARDelegate::onHitResult(VROARHitTestResult result, std::shared_ptr
         fbxNode->setPosition(result.getLocalTransform().extractTranslation());
 
         std::shared_ptr<VROARAnchor> anchor = result.getAnchor();
-        anchor->getNode()->addChildNode(fbxNode);
+        anchor->getARNode()->addChildNode(fbxNode);
         
         pinfo("Adding FBX to *anchored* plane at local position %f, %f, %f",
               fbxNode->getPosition().x, fbxNode->getPosition().y, fbxNode->getPosition().z);
