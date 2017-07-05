@@ -23,6 +23,26 @@ public class TextureJni {
         mNativeRef = nativeCreateImageTexture(image.mNativeRef, format.getID(), mipmap, stereoMode);
     }
 
+    public void setWrapS(String wrapS) {
+        nativeSetWrapS(mNativeRef, wrapS);
+    }
+
+    public void setWrapT(String wrapT) {
+        nativeSetWrapT(mNativeRef, wrapT);
+    }
+
+    public void setMinificationFilter(String minificationFilter) {
+        nativeSetMinificationFilter(mNativeRef, minificationFilter);
+    }
+
+    public void setMagnificationFilter(String magnificationFilter) {
+        nativeSetMagnificationFilter(mNativeRef, magnificationFilter);
+    }
+
+    public void setMipFilter(String mipFilter) {
+        nativeSetMipFilter(mNativeRef, mipFilter);
+    }
+
     public void destroy() {
         nativeDestroyTexture(mNativeRef);
     }
@@ -30,5 +50,10 @@ public class TextureJni {
                                                 long ny, long pz, long nz,
                                                 String format);
     private native long nativeCreateImageTexture(long image, String format, boolean mipmap, String stereoMode);
+    private native void nativeSetWrapS(long nativeRef, String wrapS);
+    private native void nativeSetWrapT(long nativeRef, String wrapT);
+    private native void nativeSetMinificationFilter(long nativeRef, String minificationFilter);
+    private native void nativeSetMagnificationFilter(long nativeRef, String magnificationFilter);
+    private native void nativeSetMipFilter(long nativeRef, String mipFilter);
     private native void nativeDestroyTexture(long nativeRef);
 }

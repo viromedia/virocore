@@ -55,10 +55,10 @@ void VROTextureSubstrateOpenGL::loadTexture(VROTextureType type,
     if (type == VROTextureType::Texture2D) {
         glBindTexture(GL_TEXTURE_2D, _texture);
         
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, convert(mipmapMode, minFilter, mipFilter));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, convert(mipmapMode, magFilter, mipFilter));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, convert(wrapS));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, convert(wrapT));
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, convertMinFilter(mipmapMode, minFilter, mipFilter));
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, convertMagFilter(magFilter));
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, convertWrapMode(wrapS));
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, convertWrapMode(wrapT));
         
         loadFace(GL_TEXTURE_2D, format, internalFormat,
                  mipmapMode, data.front(), width, height, mipSizes);
@@ -72,8 +72,8 @@ void VROTextureSubstrateOpenGL::loadTexture(VROTextureType type,
         _target = GL_TEXTURE_CUBE_MAP;
         
         glBindTexture(GL_TEXTURE_CUBE_MAP, _texture);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, convert(mipmapMode, minFilter, mipFilter));
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, convert(mipmapMode, minFilter, mipFilter));
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, convertMinFilter(mipmapMode, minFilter, mipFilter));
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, convertMagFilter(magFilter));
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -170,7 +170,7 @@ GLuint VROTextureSubstrateOpenGL::getInternalFormat(VROTextureInternalFormat for
     }
 }
 
-GLenum VROTextureSubstrateOpenGL::convert(VROWrapMode wrapMode) {
+GLenum VROTextureSubstrateOpenGL::convertWrapMode(VROWrapMode wrapMode) {
     switch (wrapMode) {
         case VROWrapMode::Clamp:
         case VROWrapMode::ClampToBorder:
@@ -182,8 +182,18 @@ GLenum VROTextureSubstrateOpenGL::convert(VROWrapMode wrapMode) {
     }
 }
 
-GLenum VROTextureSubstrateOpenGL::convert(VROMipmapMode mipmapMode, VROFilterMode minmagFilter, VROFilterMode mipFilter) {
-    if (minmagFilter == VROFilterMode::Nearest || minmagFilter == VROFilterMode::None) {
+GLenum VROTextureSubstrateOpenGL::convertMagFilter(VROFilterMode magFilter) {
+  switch (magFilter) {
+    case VROFilterMode::Nearest:
+    case VROFilterMode::None:
+      return GL_NEAREST;
+    default:
+      return GL_LINEAR;
+  }
+}
+
+GLenum VROTextureSubstrateOpenGL::convertMinFilter(VROMipmapMode mipmapMode, VROFilterMode minFilter, VROFilterMode mipFilter) {
+    if (minFilter == VROFilterMode::Nearest || minFilter == VROFilterMode::None) {
         if (mipmapMode != VROMipmapMode::None) {
             if (mipFilter == VROFilterMode::Linear) {
                 return GL_NEAREST_MIPMAP_LINEAR;
@@ -199,7 +209,7 @@ GLenum VROTextureSubstrateOpenGL::convert(VROMipmapMode mipmapMode, VROFilterMod
             return GL_NEAREST;
         }
     }
-    else if (minmagFilter == VROFilterMode::Linear) {
+    else if (minFilter == VROFilterMode::Linear) {
         if (mipmapMode != VROMipmapMode::None) {
             if (mipFilter == VROFilterMode::Linear) {
                 return GL_LINEAR_MIPMAP_LINEAR;

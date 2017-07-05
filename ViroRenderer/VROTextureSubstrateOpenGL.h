@@ -101,8 +101,9 @@ private:
                   const std::vector<uint32_t> &mipSizes);
     
     GLuint getInternalFormat(VROTextureInternalFormat format);
-    GLenum convert(VROWrapMode wrapMode);
-    GLenum convert(VROMipmapMode mipmapMode, VROFilterMode minmagFilter, VROFilterMode mipFilter);
+    GLenum convertWrapMode(VROWrapMode wrapMode);
+    GLenum convertMagFilter(VROFilterMode magFilter);
+    GLenum convertMinFilter(VROMipmapMode mipmapMode, VROFilterMode minFilter, VROFilterMode mipFilter);
     
 };
 
