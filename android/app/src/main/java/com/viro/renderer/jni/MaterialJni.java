@@ -45,6 +45,8 @@ public class MaterialJni {
         nativeSetTransparencyMode(mNativeRef, transparencyModeName);
     }
 
+    public void setDiffuseIntensity(float diffuseIntensity) { nativeSetDiffuseIntensity(mNativeRef, diffuseIntensity); }
+
     public void setCullMode(String cullModeName) {
         nativeSetCullMode(mNativeRef, cullModeName);
     }
@@ -66,5 +68,6 @@ public class MaterialJni {
     private native void nativeSetLightingModel(long nativeRef, String lightingModelName);
     private native void nativeSetTransparencyMode(long nativeRef, String transparencyModeName);
     private native void nativeSetCullMode(long nativeRef, String cullModeName);
+    private native void nativeSetDiffuseIntensity(long nativeRef, float diffuseIntensity);
     private native void nativeDestroyMaterial(long nativeRef);
 }

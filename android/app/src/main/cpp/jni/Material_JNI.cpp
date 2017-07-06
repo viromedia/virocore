@@ -173,6 +173,10 @@ JNI_METHOD(void, nativeSetCullMode)(JNIEnv *env,
     env->ReleaseStringUTFChars(cullModeName, cStrName);
 }
 
+JNI_METHOD(void, nativeSetDiffuseIntensity)(JNIEnv *env, jobject obj, jlong nativeRef, jfloat diffuseIntensity) {
+    Material::native(nativeRef)->getDiffuse().setIntensity(diffuseIntensity);
+}
+
 JNI_METHOD(void, nativeDestroyMaterial)(JNIEnv *env,
                                         jobject obj,
                                         jlong nativeRef) {
