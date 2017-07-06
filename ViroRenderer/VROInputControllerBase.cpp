@@ -373,7 +373,6 @@ VROHitTestResult VROInputControllerBase::hitTest(const VROCamera &camera, VROVec
 
 std::shared_ptr<VRONode> VROInputControllerBase::getNodeToHandleEvent(VROEventDelegate::EventAction action,
                                                                       std::shared_ptr<VRONode> node){
-    bool drag = action == VROEventDelegate::EventAction::OnDrag;
     // Base condition, we are asking for the scene's root node's parent, return.
     if (node == nullptr){
         return nullptr;

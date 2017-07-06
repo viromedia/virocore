@@ -57,7 +57,7 @@ void VROInputControllerARiOS::processTouchMovement() {
     if (_isTouchOngoing) {
         VROVector3f rayFromCamera = calculateCameraRay(_latestTouchPos);
         VROInputControllerBase::updateHitNode(_latestCamera, _latestCamera.getPosition(), rayFromCamera);
-        VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, _latestCamera.getPosition(), VROQuaternion(), rayFromCamera);
+        VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, _latestCamera.getPosition(), _latestCamera.getRotation(), rayFromCamera);
     }
 }
 
