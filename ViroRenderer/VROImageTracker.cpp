@@ -15,7 +15,7 @@
 #if ENABLE_DETECT_LOGGING && VRO_PLATFORM_IOS
     #define LOG_DETECT_TIME(message) pinfo("[Viro] [%ld ms] %@", getCurrentTimeMs() - _startTime, @#message);
 #elif ENABLE_DETECT_LOGGING && VRO_PLATFORM_ANDROID
-    #define LOG_DETECT_TIME(message) pinfo("[Viro] [%ld ms] %@", getCurrentTimeMs() - _startTime, #message);
+    #define LOG_DETECT_TIME(message) pinfo("[Viro] [%ld ms] %s", getCurrentTimeMs() - _startTime, #message);
 #else
     #define LOG_DETECT_TIME(message) ((void)0);
 #endif

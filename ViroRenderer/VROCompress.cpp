@@ -16,8 +16,9 @@ std::string VROCompress::compress(const std::string &str, int compressionlevel) 
     z_stream zs;
     memset(&zs, 0, sizeof(zs));
     
-    if (deflateInit(&zs, compressionlevel) != Z_OK)
-        throw(std::runtime_error("deflateInit failed while compressing."));
+    if (deflateInit(&zs, compressionlevel) != Z_OK) {
+        pabort("deflateInit failed while compressing.");
+    }
     
     zs.next_in = (Bytef*)str.data();
     zs.avail_in = (unsigned int)str.size();
@@ -43,7 +44,7 @@ std::string VROCompress::compress(const std::string &str, int compressionlevel) 
     if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
         std::ostringstream oss;
         oss << "Exception during zlib compression: (" << ret << ") " << zs.msg;
-        pabort(oss.str().c_str());
+        pabort();
     }
     
     return outstring;
@@ -53,8 +54,9 @@ std::string VROCompress::decompress(const std::string &str) {
     z_stream zs;
     memset(&zs, 0, sizeof(zs));
     
-    if (inflateInit(&zs) != Z_OK)
-        throw(std::runtime_error("inflateInit failed while decompressing."));
+    if (inflateInit(&zs) != Z_OK) {
+        pabort("inflateInit failed while decompressing.");
+    }
     
     zs.next_in = (Bytef*)str.data();
     zs.avail_in = (unsigned int)str.size();
@@ -81,7 +83,7 @@ std::string VROCompress::decompress(const std::string &str) {
     if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
         std::ostringstream oss;
         oss << "Exception during zlib decompression: (" << ret << ") " << zs.msg;
-        pabort(oss.str().c_str());
+        pabort();
     }
     
     return outstring;
