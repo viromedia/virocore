@@ -128,10 +128,11 @@ void VROScene::updateSortKeys(const VRORenderContext &context, std::shared_ptr<V
         pinfo("Updating sort keys");
         VRONode::resetDebugSortIndex();
     }
-    
-    VROMatrix4f identity;
 
     VRORenderParameters renderParams;
+    for (std::shared_ptr<VRONode> &node : _nodes) {
+        node->collectLights(&renderParams.lights);
+    }
     for (std::shared_ptr<VRONode> &node : _nodes) {
         node->updateSortKeys(0, renderParams, context, driver);
     }

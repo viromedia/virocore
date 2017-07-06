@@ -106,6 +106,16 @@ void VRONode::resetDebugSortIndex() {
     sDebugSortIndex = 0;
 }
 
+void VRONode::collectLights(std::vector<std::shared_ptr<VROLight>> *outLights) {
+    for (std::shared_ptr<VROLight> &light : _lights) {
+        light->setTransformedPosition(_computedTransform.multiply(light->getPosition()));
+        outLights->push_back(light);
+    }
+    for (std::shared_ptr<VRONode> &childNode : _subnodes) {
+        childNode->collectLights(outLights);
+    }
+}
+
 void VRONode::updateSortKeys(uint32_t depth,
                              VRORenderParameters &params,
                              const VRORenderContext &context,
@@ -134,12 +144,12 @@ void VRONode::updateSortKeys(uint32_t depth,
     _computedOpacity = opacities.top() * _opacity * _opacityFromHiddenFlag;
     opacities.push(_computedOpacity);
     
-    for (std::shared_ptr<VROLight> &light : _lights) {
-        light->setTransformedPosition(_computedTransform.multiply(light->getPosition()));
-        lights.push_back(light);
-    }
     _computedLights.clear();
-    _computedLights.insert(_computedLights.begin(), lights.begin(), lights.end());
+    for (std::shared_ptr<VROLight> &light : lights) {
+        if (_computedBoundingBox.getDistanceToPoint(light->getTransformedPosition()) < light->getAttenuationEndDistance()) {
+            _computedLights.push_back(light);
+        }
+    }
 
     for (std::shared_ptr<VROSound> &sound : _sounds) {
         sound->setTransformedPosition(_computedTransform.multiply(sound->getPosition()));
@@ -190,7 +200,7 @@ void VRONode::updateSortKeys(uint32_t depth,
      Compute the sort key for this node's geometry elements.
      */
     if (_geometry) {
-        int lightsHash = VROLight::hashLights(lights);
+        int lightsHash = VROLight::hashLights(_computedLights);
         if (!isHierarchical || isTopOfHierarchy) {
             distanceFromCamera = _computedPosition.distance(context.getCamera().getPosition());
             
@@ -227,9 +237,6 @@ void VRONode::updateSortKeys(uint32_t depth,
     }
     
     opacities.pop();
-    for (int i = 0; i < _lights.size(); i++) {
-        lights.pop_back();
-    }
     hierarchyDepths.pop();
     distancesFromCamera.pop();
 }
