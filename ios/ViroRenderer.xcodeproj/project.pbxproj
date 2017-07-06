@@ -101,6 +101,9 @@
 		8F1AB9661EEE1F8F006D76B6 /* VROSampleARDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1AB9641EEE1F8F006D76B6 /* VROSampleARDelegate.cpp */; };
 		8F203F0A1DCD236500DC50F2 /* VRODefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF253B11DC9398A00C1C5C7 /* VRODefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F203F0B1DCD245200DC50F2 /* VROOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F53D3A11DCAB670001C91A8 /* VROOpenGL.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F26573E1F0E7D5D0031DE17 /* gorilla.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F26573D1F0E7D5D0031DE17 /* gorilla.vrx */; };
+		8F2657461F0E808C0031DE17 /* VROCompress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2657441F0E808C0031DE17 /* VROCompress.cpp */; };
+		8F2657471F0E808C0031DE17 /* VROCompress.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2657451F0E808C0031DE17 /* VROCompress.h */; };
 		8F2D1BAF1EC288F700E7BF44 /* VROSkinner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BAD1EC288F700E7BF44 /* VROSkinner.cpp */; };
 		8F2D1BB01EC288F700E7BF44 /* VROSkinner.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BAE1EC288F700E7BF44 /* VROSkinner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F2D1BB31EC3785C00E7BF44 /* VROBone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BB11EC3785C00E7BF44 /* VROBone.cpp */; };
@@ -667,6 +670,9 @@
 		8F1F065B1EF06FBB006FC8C2 /* VROARHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARHitTestResult.h; sourceTree = "<group>"; };
 		8F1F065C1EF06FBB006FC8C2 /* VROARPlaneAnchor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARPlaneAnchor.h; sourceTree = "<group>"; };
 		8F1F065D1EF06FBB006FC8C2 /* VROARSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARSession.h; sourceTree = "<group>"; };
+		8F26573D1F0E7D5D0031DE17 /* gorilla.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = gorilla.vrx; path = ViroSample/gorilla.vrx; sourceTree = "<group>"; };
+		8F2657441F0E808C0031DE17 /* VROCompress.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROCompress.cpp; sourceTree = "<group>"; };
+		8F2657451F0E808C0031DE17 /* VROCompress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCompress.h; sourceTree = "<group>"; };
 		8F2D1BAD1EC288F700E7BF44 /* VROSkinner.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSkinner.cpp; sourceTree = "<group>"; };
 		8F2D1BAE1EC288F700E7BF44 /* VROSkinner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSkinner.h; sourceTree = "<group>"; };
 		8F2D1BB11EC3785C00E7BF44 /* VROBone.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROBone.cpp; sourceTree = "<group>"; };
@@ -1620,6 +1626,8 @@
 				8FCB100E1DD1325100FE425C /* VROPlatformUtil.cpp */,
 				8F705DEF1E8D5337008BE8F8 /* VROThreadRestricted.h */,
 				8F705DEE1E8D5337008BE8F8 /* VROThreadRestricted.cpp */,
+				8F2657451F0E808C0031DE17 /* VROCompress.h */,
+				8F2657441F0E808C0031DE17 /* VROCompress.cpp */,
 			);
 			name = Util;
 			sourceTree = "<group>";
@@ -1853,6 +1861,7 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F26573D1F0E7D5D0031DE17 /* gorilla.vrx */,
 				8FD4D0BC1EF0695F00077AD7 /* coffee_mug_specular.png */,
 				8FD4D0BD1EF0695F00077AD7 /* coffee_mug.obj */,
 				8FD4D0BE1EF0695F00077AD7 /* coffee_mug.png */,
@@ -2134,6 +2143,7 @@
 				8ADC38D51F0AFAF2006DD653 /* VROARNodeDelegate.h in Headers */,
 				8F50FC6E1E09C99900A9B4B2 /* VROViewport.h in Headers */,
 				8FD06F221E832760003D3BC4 /* VROCameraTextureiOS.h in Headers */,
+				8F2657471F0E808C0031DE17 /* VROCompress.h in Headers */,
 				A52B272B1ED8DAAA0089F9A2 /* VROPhysicsContactResultCallback.h in Headers */,
 				8FD4DF4A1C18F5EB003DC425 /* VROMath.h in Headers */,
 				8ADC38D71F0AFD0A006DD653 /* VROARNodeDelegateiOS.h in Headers */,
@@ -2388,6 +2398,7 @@
 				8F9278021C66BD4500FF892A /* py1.jpg in Resources */,
 				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
 				8A3517321EE0A50A00B6E786 /* screenshot.png in Resources */,
+				8F26573E1F0E7D5D0031DE17 /* gorilla.vrx in Resources */,
 				8F705DF51E8F5D42008BE8F8 /* earth_normal.jpg in Resources */,
 				8FD4D0C01EF0695F00077AD7 /* coffee_mug.obj in Resources */,
 				8F9278011C66BD4500FF892A /* px1.jpg in Resources */,
@@ -2661,6 +2672,7 @@
 				A527C7091EE7692F006D3F24 /* VROPencil.cpp in Sources */,
 				8F53D39E1DCA883A001C91A8 /* VROConvert.cpp in Sources */,
 				8FDDB49E1DADB8C200DE0968 /* VROLightingUBO.cpp in Sources */,
+				8F2657461F0E808C0031DE17 /* VROCompress.cpp in Sources */,
 				8FAE23C81CE3F61700E98B47 /* VROMaterialSubstrateOpenGL.cpp in Sources */,
 				8FD4DF001C18ED2C003DC425 /* VROGeometrySubstrateMetal.cpp in Sources */,
 				8F660ABA1E9554B8006D063F /* VROFrameScheduler.cpp in Sources */,

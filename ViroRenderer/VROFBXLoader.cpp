@@ -18,6 +18,7 @@
 #include "VROBone.h"
 #include "VROSkeletalAnimation.h"
 #include "VROBoneUBO.h"
+#include "VROCompress.h"
 #include "Nodes.pb.h"
 
 VROGeometrySourceSemantic convert(viro::Node_Geometry_Source_Semantic semantic) {
@@ -221,7 +222,8 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
     std::map<std::string, std::shared_ptr<VROTexture>> textureCache;
 
     pinfo("Loading FBX from file %s", file.c_str());
-    std::string data_pb = VROPlatformLoadFileAsString(file);
+    std::string data_pb_gzip = VROPlatformLoadFileAsString(file);
+    std::string data_pb = VROCompress::decompress(data_pb_gzip);
     
     viro::Node node_pb;
     if (!node_pb.ParseFromString(data_pb)) {
