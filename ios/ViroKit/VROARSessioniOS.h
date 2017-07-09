@@ -53,9 +53,6 @@ public:
     void updateAnchor(ARAnchor *anchor);
     void removeAnchor(ARAnchor *anchor);
     
-    // TODO: remove this when we refactor VROARAnchor
-    void addAnchorNode(std::shared_ptr<VRONode> node);
-    
 private:
     
     /*
@@ -75,12 +72,6 @@ private:
      */
     VROViewport _viewport;
     VROCameraOrientation _orientation;
-    
-    /*
-     Root node for the VROScene under which all anchor-mapped nodes are
-     added.
-     */
-    std::shared_ptr<VRONode> _anchorParentNode;
     
     /*
      Vector of all anchors that have been added to this session.

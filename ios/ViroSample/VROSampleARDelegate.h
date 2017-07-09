@@ -14,7 +14,7 @@
 class VROSampleARDelegate : public VROARSessionDelegate {
 public:
     
-    std::shared_ptr<VROARNode> anchorWasDetected(std::shared_ptr<VROARAnchor> anchor);
+    void anchorWasDetected(std::shared_ptr<VROARAnchor> anchor);
     void anchorWillUpdate(std::shared_ptr<VROARAnchor> anchor);
     void anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor);
     void anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor);

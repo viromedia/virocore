@@ -218,10 +218,10 @@ public:
     }
     void setOpacity(float opacity);
 
-    bool isHidden() const {
+    virtual bool isHidden() const {
         return _hidden;
     }
-    void setHidden(bool hidden);
+    virtual void setHidden(bool hidden);
     
     int getRenderingOrder() const {
         return _renderingOrder;

@@ -145,8 +145,6 @@
      */
     _arComponentManager = std::make_shared<VROARComponentManager>();
     _arSession->setDelegate(_arComponentManager);
-    // TODO: remove the following line when we refactor VROARAnchor
-    _arComponentManager->setSession(_arSession);
     
     /*
      Set the point of view to a special node that will follow the user's

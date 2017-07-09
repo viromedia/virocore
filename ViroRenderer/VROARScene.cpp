@@ -21,7 +21,25 @@ void VROARScene::setARComponentManager(std::shared_ptr<VROARComponentManager> ar
     }
 }
 
+void VROARScene::willAppear() {
+    if (_arComponentManager) {
+        std::vector<std::shared_ptr<VROARPlane>>::iterator it;
+        for (it = _planes.begin(); it < _planes.end(); it++) {
+            _arComponentManager->addARPlane(*it);
+        }
+    }
+}
+
+void VROARScene::willDisappear() {
+    if (_arComponentManager) {
+        _arComponentManager->clearAllPlanes(_planes);
+    }
+}
+
 void VROARScene::addARPlane(std::shared_ptr<VROARPlane> plane) {
+    // TODO: figure out a way to make ARNode simply not be visible at start.
+    // call this once, because when it planes are first added they should not be visible.
+    plane->setIsAttached(false);
     _planes.push_back(plane);
     if (_arComponentManager) {
         _arComponentManager->addARPlane(plane);
@@ -29,6 +47,7 @@ void VROARScene::addARPlane(std::shared_ptr<VROARPlane> plane) {
 }
 
 void VROARScene::removeARPlane(std::shared_ptr<VROARPlane> plane) {
+    plane->setIsAttached(false);
     if (_arComponentManager) {
         _arComponentManager->removeARPlane(plane);
     }
@@ -40,7 +59,6 @@ void VROARScene::removeARPlane(std::shared_ptr<VROARPlane> plane) {
 }
 
 void VROARScene::updateARPlane(std::shared_ptr<VROARPlane> plane) {
-    // TODO: call this function somehow.
     if (_arComponentManager) {
         _arComponentManager->updateARPlane(plane);
     }

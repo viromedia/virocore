@@ -36,9 +36,24 @@ void VROARComponentManager::updateARPlane(std::shared_ptr<VROARPlane> plane) {
         }
         plane->onARAnchorRemoved();
         handleDetachedAnchor(anchor);
-        addAnchorToSession(anchor);
     }
     handleDetachedPlane(plane);
+}
+
+void VROARComponentManager::clearAllPlanes(std::vector<std::shared_ptr<VROARPlane>> planes) {
+    std::vector<std::shared_ptr<VROARPlane>>::iterator it;
+    for (it = planes.begin(); it < planes.end(); it++) {
+        std::shared_ptr<VROARPlane> plane = *it;
+        // notify plane that anchor was removed
+        plane->onARAnchorRemoved();
+        
+        // if the plane had an anchor, then add it back to _detachedAnchors
+        std::shared_ptr<VROARAnchor> anchor = plane->getAnchor();
+        if (anchor) {
+            anchor->setARNode(nullptr);
+            _detachedAnchors.push_back(anchor);
+        }
+    }
 }
 
 std::shared_ptr<VROARAnchor> VROARComponentManager::findDetachedAnchor(std::shared_ptr<VROARPlane> plane) {
@@ -72,8 +87,6 @@ void VROARComponentManager::handleDetachedPlane(std::shared_ptr<VROARPlane> plan
                                               }), _detachedAnchors.end());
         plane->setAnchor(anchor);
         anchor->setARNode(plane);
-        // call "addAnchorToSession" because we've attached this anchor to a node, so the session should render it.
-        addAnchorToSession(anchor);
         plane->onARAnchorAttached();
     } else {
         _detachedPlanes.push_back(plane);
@@ -90,10 +103,9 @@ void VROARComponentManager::handleDetachedAnchor(std::shared_ptr<VROARAnchor> an
                                              [plane](std::shared_ptr<VROARPlane> candidate) {
                                                  return candidate == plane;
                                              }), _detachedPlanes.end());
-        plane->setAnchor(anchor);
         anchor->setARNode(plane);
+        plane->setAnchor(anchor);
         plane->onARAnchorAttached();
-        // don't call "addAnchorToSession" because currently the Session does that on the anchorWasDetected callback
     } else {
         _detachedAnchors.push_back(anchor);
         // since this anchor is "detached" we should set its ARNode to null.
@@ -101,23 +113,13 @@ void VROARComponentManager::handleDetachedAnchor(std::shared_ptr<VROARAnchor> an
     }
 }
 
-void VROARComponentManager::addAnchorToSession(std::shared_ptr<VROARAnchor> anchor) {
-    std::shared_ptr<VROARSession> session = _session.lock();
-    std::shared_ptr<VROARNode> arNode = anchor->getARNode();
-    if (session && arNode) {
-        session->addAnchorNode(arNode);
-    }
-}
-
 // VROARSessionDelegate functions
-std::shared_ptr<VROARNode> VROARComponentManager::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
+void VROARComponentManager::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
     handleDetachedAnchor(anchor);
-    std::shared_ptr<VROARNode> arNode = anchor->getARNode();
-    return arNode ? arNode : std::make_shared<VROARNode>();
 }
 
 void VROARComponentManager::anchorWillUpdate(std::shared_ptr<VROARAnchor> anchor) {
-    
+    // no-op
 }
 
 void VROARComponentManager::anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor) {
@@ -127,16 +129,17 @@ void VROARComponentManager::anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor)
             arPlane->onARAnchorUpdated();
             return;
         }
+        // if the updated anchor doesn't fulfill the plane's requirement, notify that it was removed
+        // before attempting to reattach it to another anchor.
         arPlane->onARAnchorRemoved();
         handleDetachedPlane(arPlane);
     }
     handleDetachedAnchor(anchor);
-    addAnchorToSession(anchor);
 }
 
 void VROARComponentManager::anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor) {
     std::shared_ptr<VROARPlane> plane = std::dynamic_pointer_cast<VROARPlane>(anchor->getARNode());
-    // if anchor was attached to a plane, then "handle" the detached plane.
+    // if anchor was attached to a plane, notify the plane that anchor was removed then "handle" the detached plane.
     if (plane) {
         plane->onARAnchorRemoved();
         handleDetachedPlane(plane);

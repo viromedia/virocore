@@ -19,7 +19,6 @@
 #include "VROScene.h"
 #include "VROTextureSubstrate.h"
 #include "VROLog.h"
-#include "VRONode.h"
 #include <algorithm>
 #include "VROPlatformUtil.h"
 
@@ -46,8 +45,6 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, std::shared_ptr<V
         
         _sessionConfiguration = config;
     }
-        
-    _anchorParentNode = std::make_shared<VRONode>();
 }
 
 VROARSessioniOS::~VROARSessioniOS() {
@@ -87,12 +84,6 @@ void VROARSessioniOS::setAnchorDetection(std::set<VROAnchorDetection> types) {
 
 void VROARSessioniOS::setScene(std::shared_ptr<VROScene> scene) {
     VROARSession::setScene(scene);
-    
-    // TODO VIRO-1352: We currently add the anchorParentNode to the rootNode,
-    //      instead of making it a root node itself, so that it receives any
-    //      VROLight that are attached to the rootNode. This should change once
-    //      we fix lights so that they impact all nodes, and not just children.
-    scene->getRootNodes().front()->addChildNode(_anchorParentNode);
 }
 
 void VROARSessioniOS::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
@@ -101,18 +92,11 @@ void VROARSessioniOS::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
         return;
     }
     
-    std::shared_ptr<VROARNode> node = delegate->anchorWasDetected(anchor);
-    if (!node) {
-        return;
-    }
-    anchor->setARNode(node);
-    
+    delegate->anchorWasDetected(anchor);
     _anchors.push_back(anchor);
-    _anchorParentNode->addChildNode(anchor->getARNode());
 }
 
 void VROARSessioniOS::removeAnchor(std::shared_ptr<VROARAnchor> anchor) {
-    anchor->getARNode()->removeFromParentNode();
     _anchors.erase(std::remove_if(_anchors.begin(), _anchors.end(),
                                  [anchor](std::shared_ptr<VROARAnchor> candidate) {
                                      return candidate == anchor;
@@ -241,10 +225,6 @@ void VROARSessioniOS::removeAnchor(ARAnchor *anchor) {
     if (it != _nativeAnchorMap.end()) {
         removeAnchor(it->second);
     }
-}
-
-void VROARSessioniOS::addAnchorNode(std::shared_ptr<VRONode> node) {
-    _anchorParentNode->addChildNode(node);
 }
 
 #pragma mark - VROARKitSessionDelegate

@@ -23,7 +23,12 @@ public:
     virtual void addNode(std::shared_ptr<VRONode> node);
     
     void setARComponentManager(std::shared_ptr<VROARComponentManager> arComponentManager);
-
+    
+    void willAppear();
+    void willDisappear();
+    
+    // TODO: see if renaming these to addARNode would work. Also see if we even need to call
+    // this independent of addNode... I don't think so.
     void addARPlane(std::shared_ptr<VROARPlane> plane);
     void removeARPlane(std::shared_ptr<VROARPlane> plane);
     void updateARPlane(std::shared_ptr<VROARPlane> plane);

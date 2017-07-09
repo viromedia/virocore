@@ -9,7 +9,7 @@
 #include "VROSampleARDelegate.h"
 #include "VROLog.h"
 
-std::shared_ptr<VROARNode> VROSampleARDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
+void VROSampleARDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
     pinfo("Anchor detected!");
     
     std::shared_ptr<VROARPlaneAnchor> pAnchor = std::dynamic_pointer_cast<VROARPlaneAnchor>(anchor);
@@ -22,10 +22,7 @@ std::shared_ptr<VROARNode> VROSampleARDelegate::anchorWasDetected(std::shared_pt
         pinfo("Position %f, %f, %f", transform[12], transform[13], transform[14]);
         
         std::shared_ptr<VROARNode> anchorNode = std::make_shared<VROARNode>();
-        return anchorNode; 
-    }
-    else {
-        return {};
+        pAnchor->setARNode(anchorNode);
     }
 }
 

@@ -22,6 +22,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneNormalMap,
     VROSampleSceneStereoscopic,
     VROSampleSceneFBX,
+    VROSampleSceneAR,
     VROSampleSceneNumScenes,
 };
 
@@ -43,6 +44,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (void) onHover:(int)source isHovering:(bool)isHovering;
 - (void) onClick:(int)source clickState:(VROEventDelegate::ClickState)clickState;
 - (void) onFuse:(int)source;
+- (void) onDrag:(int)source posX:(float)x posY:(float)y posZ:(float)y;
 
 // VROPhysicsBodyDelegateProtocol
 - (void)onCollided:(std::string) bodyTagB
@@ -80,6 +82,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
             return [self loadStereoBackground];
         case VROSampleSceneFBX:
             return [self loadFBXScene];
+        case VROSampleSceneAR:
+            return [self loadARScene];
         default:
             break;
     }
@@ -377,6 +381,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     //No-op
 }
 
+- (void) onDrag:(int)source posX:(float)x posY:(float)y posZ:(float)y {
+    // No-op
+}
+
 - (std::shared_ptr<VROSceneController>)loadBoxScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
@@ -385,15 +393,13 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
     
-    std::shared_ptr<VRONode> parentLightNode = std::make_shared<VRONode>();
-    std::shared_ptr<VRONode> lightNode = std::make_shared<VRONode>();
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
-    ambient->setColor({ 0.3, 0.3, 0.3 });
+    ambient->setColor({ 0.6, 0.6, 0.6 });
     
     std::shared_ptr<VROLight> spotRed = std::make_shared<VROLight>(VROLightType::Spot);
     spotRed->setColor({ 1.0, 0.0, 0.0 });
-    spotRed->setPosition( { -0.5, 0, 0 });
-    spotRed->setDirection( { 0, 0, -1.0 });
+    spotRed->setPosition( { -5, 0, 0 });
+    spotRed->setDirection( { 1.0, 0, -1.0 });
     spotRed->setAttenuationStartDistance(20);
     spotRed->setAttenuationEndDistance(30);
     spotRed->setSpotInnerAngle(2.5);
@@ -401,19 +407,16 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROLight> spotBlue = std::make_shared<VROLight>(VROLightType::Spot);
     spotBlue->setColor({ 0.0, 0.0, 1.0 });
-    spotBlue->setPosition( { 0.5, 0, 0 });
-    spotBlue->setDirection( { 0, 0, -1.0 });
+    spotBlue->setPosition( { 5, 0, 0 });
+    spotBlue->setDirection( { -1.0, 0, -1.0 });
     spotBlue->setAttenuationStartDistance(20);
     spotBlue->setAttenuationEndDistance(30);
     spotBlue->setSpotInnerAngle(2.5);
     spotBlue->setSpotOuterAngle(5.0);
     
-    lightNode->addLight(ambient);
-    lightNode->addLight(spotRed);
-    lightNode->addLight(spotBlue);
-    
-    parentLightNode->addChildNode(lightNode);
-    rootNode->addChildNode(parentLightNode);
+    rootNode->addLight(ambient);
+    rootNode->addLight(spotRed);
+    rootNode->addLight(spotBlue);
 
     scene->addNode(rootNode);
     
@@ -563,10 +566,19 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(6);
         
-        spotRed->setPosition({0, 0, 30});
-        spotBlue->setPosition({0, 0, 30});
-    
+        spotRed->setPosition({5, 0, 0});
+        spotRed->setDirection({-1, 0, -1});
+        
+        spotBlue->setPosition({-5, 0, 0});
+        spotBlue->setDirection({1, 0, -1});
+        
+        //cameraNode->setPosition({0, 1, 0});
+        //box->setWidth(5);
+        //box->setLength(5);
+        
+        //boxParentNode->setScale({8, 8, 1});
         boxParentNode->setRotationEulerZ(M_PI_2);
+        
         VROTransaction::commit();
     });
 
@@ -900,16 +912,13 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     light->setSpotOuterAngle(120);
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
-    ambient->setColor({ 1.0, 0.0, 0.0 });
+    ambient->setColor({ 1.0, 1.0, 1.0 });
     ambient->setIntensity(500);
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
-    
-    std::shared_ptr<VRONode> lightsNode = std::make_shared<VRONode>();
-    lightsNode->setPosition({0, 0, 0});
-    lightsNode->addLight(light);
-    lightsNode->addLight(ambient);
-    rootNode->addChildNode(lightsNode);
+    rootNode->setPosition({0, 0, 0});
+    rootNode->addLight(light);
+    rootNode->addLight(ambient);
     
     scene->addNode(rootNode);
     
@@ -957,6 +966,48 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return sceneController;
 }
 
+- (std::shared_ptr<VROSceneController>)loadARScene {
+    std::shared_ptr<VROARSceneController> sceneController = std::make_shared<VROARSceneController>();
+    std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(sceneController->getScene());
+    std::shared_ptr<VRONode> sceneNode = std::make_shared<VRONode>();
+    std::shared_ptr<VROARPlane> arPlane = std::make_shared<VROARPlane>(0, 0);
+    
+    
+    NSString *objPath = [[NSBundle mainBundle] pathForResource:@"coffee_mug" ofType:@"obj"];
+    NSURL *objURL = [NSURL fileURLWithPath:objPath];
+    std::string url = std::string([[objURL description] UTF8String]);
+    
+    NSString *basePath = [objPath stringByDeletingLastPathComponent];
+    NSURL *baseURL = [NSURL fileURLWithPath:basePath];
+    std::string base = std::string([[baseURL description] UTF8String]);
+    
+    
+    
+    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(url, base, true,
+                                                                    [self](std::shared_ptr<VRONode> node, bool success) {
+                                                                        if (!success) {
+                                                                            return;
+                                                                        }
+                                                                        node->setScale({0.007, 0.007, 0.007});
+                                                                        
+                                                                        VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
+                                                                        
+                                                                        
+                                                                        
+                                                                        std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
+                                                                        material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                                                                                       std::make_shared<VROImageiOS>([UIImage imageNamed:@"coffee_mug"], format)));
+                                                                        material->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                                                                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"coffee_mug_specular"], format)));
+                                                                    });
+    
+    sceneNode->addChildNode(arPlane);
+    arPlane->addChildNode(objNode);
+    arScene->addARPlane(arPlane);
+    arScene->addNode(sceneNode);
+    return sceneController;
+}
+
 - (void)animateTake:(std::shared_ptr<VRONode>)node {
     node->getAnimation("Take 001", true)->execute(node, {});
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -965,13 +1016,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleSceneFBX;
+    self.sceneIndex = VROSampleSceneAR;
     self.driver = driver;
     
-    if ([self.view isKindOfClass:[VROViewAR class]]) {
-        self.sessionARDelegate = std::make_shared<VROSampleARDelegate>();
-        [((VROViewAR *) self.view) setARSessionDelegate:self.sessionARDelegate];
-    }
     self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
 }
 
