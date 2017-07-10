@@ -17,7 +17,8 @@ class VROARAnchor;
 class VROARNode : public VRONode {
 public:
     VROARNode() :
-        _isAttached(false) {}
+        _isAttached(false),
+        _internalHidden(false) {}
 
     virtual ~VROARNode() {}
     

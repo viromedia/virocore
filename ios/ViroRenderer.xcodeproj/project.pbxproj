@@ -54,6 +54,7 @@
 		8AD0122C1ED8F38F00DEB959 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */; };
 		8ADC38D51F0AFAF2006DD653 /* VROARNodeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ADC38D41F0AFAF2006DD653 /* VROARNodeDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8ADC38D71F0AFD0A006DD653 /* VROARNodeDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8ADF360B1F14237B002BF73D /* VROARSceneDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ADF360A1F14237B002BF73D /* VROARSceneDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8BDDA00D1E54F6B200A42870 /* VROLazyMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDDA00B1E54F48500A42870 /* VROLazyMaterial.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8BDDA00E1E54F6B200A42870 /* VROMaterialAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDDA00C1E54F4A300A42870 /* VROMaterialAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */; };
@@ -603,6 +604,7 @@
 		8ABD8F531DB957C900BD9C83 /* VROCredentials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCredentials.h; sourceTree = "<group>"; };
 		8ADC38D41F0AFAF2006DD653 /* VROARNodeDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARNodeDelegate.h; sourceTree = "<group>"; };
 		8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARNodeDelegateiOS.h; sourceTree = "<group>"; };
+		8ADF360A1F14237B002BF73D /* VROARSceneDelegateiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARSceneDelegateiOS.h; sourceTree = "<group>"; };
 		8BDDA00B1E54F48500A42870 /* VROLazyMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLazyMaterial.h; sourceTree = "<group>"; };
 		8BDDA00C1E54F4A300A42870 /* VROMaterialAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialAnimation.h; sourceTree = "<group>"; };
 		8F03BCD41CECC30E00D071F8 /* blinn_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_fsh.glsl; sourceTree = "<group>"; };
@@ -641,9 +643,9 @@
 		8F129FAC1ED4A38600341D83 /* VRODualQuaternion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODualQuaternion.h; sourceTree = "<group>"; };
 		8F129FAF1ED4D56300341D83 /* skinning_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = skinning_vsh.glsl; sourceTree = "<group>"; };
 		8F129FB11ED6032D00341D83 /* fox.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = fox.vrx; path = ViroSample/fox.vrx; sourceTree = "<group>"; };
-		8F129FB21ED6032D00341D83 /* heart.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = heart.vrx; path = ViroSample/heart.vrx; sourceTree = "<group>"; };
+		8F129FB21ED6032D00341D83 /* heart.vrx */ = {isa = PBXFileReference; lastKnownFileType = text; name = heart.vrx; path = ViroSample/heart.vrx; sourceTree = "<group>"; };
 		8F129FB31ED6032D00341D83 /* minion.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = minion.vrx; path = ViroSample/minion.vrx; sourceTree = "<group>"; };
-		8F129FB41ED6032D00341D83 /* sven.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = sven.vrx; path = ViroSample/sven.vrx; sourceTree = "<group>"; };
+		8F129FB41ED6032D00341D83 /* sven.vrx */ = {isa = PBXFileReference; lastKnownFileType = text; name = sven.vrx; path = ViroSample/sven.vrx; sourceTree = "<group>"; };
 		8F129FB51ED6032E00341D83 /* worm.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = worm.vrx; path = ViroSample/worm.vrx; sourceTree = "<group>"; };
 		8F129FC41EDF6AE500341D83 /* VROViewAR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROViewAR.h; sourceTree = "<group>"; };
 		8F129FC51EDF6AE500341D83 /* VROViewAR.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROViewAR.mm; sourceTree = "<group>"; };
@@ -670,7 +672,7 @@
 		8F1F065B1EF06FBB006FC8C2 /* VROARHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARHitTestResult.h; sourceTree = "<group>"; };
 		8F1F065C1EF06FBB006FC8C2 /* VROARPlaneAnchor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARPlaneAnchor.h; sourceTree = "<group>"; };
 		8F1F065D1EF06FBB006FC8C2 /* VROARSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARSession.h; sourceTree = "<group>"; };
-		8F26573D1F0E7D5D0031DE17 /* gorilla.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = gorilla.vrx; path = ViroSample/gorilla.vrx; sourceTree = "<group>"; };
+		8F26573D1F0E7D5D0031DE17 /* gorilla.vrx */ = {isa = PBXFileReference; lastKnownFileType = text; name = gorilla.vrx; path = ViroSample/gorilla.vrx; sourceTree = "<group>"; };
 		8F2657441F0E808C0031DE17 /* VROCompress.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROCompress.cpp; sourceTree = "<group>"; };
 		8F2657451F0E808C0031DE17 /* VROCompress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROCompress.h; sourceTree = "<group>"; };
 		8F2D1BAD1EC288F700E7BF44 /* VROSkinner.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSkinner.cpp; sourceTree = "<group>"; };
@@ -1315,6 +1317,7 @@
 				8A35173A1EE11C4800B6E786 /* VROTrackingHelper.h */,
 				8A35173B1EE11C4800B6E786 /* VROTrackingHelper.mm */,
 				8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */,
+				8ADF360A1F14237B002BF73D /* VROARSceneDelegateiOS.h */,
 			);
 			name = AR;
 			sourceTree = "<group>";
@@ -2184,6 +2187,7 @@
 				8F56AEAE1DE77B2700DD65B6 /* VROTypeface.h in Headers */,
 				8F11B7C51C20B6180026D150 /* VRORenderDelegate.h in Headers */,
 				8F9277A61C62DBDF00FF892A /* VROConcurrentBuffer.h in Headers */,
+				8ADF360B1F14237B002BF73D /* VROARSceneDelegateiOS.h in Headers */,
 				8F548E461C23654E00556688 /* VROAnimationFloat.h in Headers */,
 				8F548E4A1C23656000556688 /* VROAnimationVector3f.h in Headers */,
 				8FB6591F1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.h in Headers */,

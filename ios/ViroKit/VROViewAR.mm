@@ -29,6 +29,8 @@
 #import "VROInputControllerARiOS.h"
 #import "VROProjector.h"
 
+static VROVector3f const kZeroVector = VROVector3f();
+
 @interface VROViewAR () {
     std::shared_ptr<VRORenderer> _renderer;
     std::shared_ptr<VROSceneController> _sceneController;
@@ -45,6 +47,7 @@
     int _frame;
     
     double _suspendedNotificationTime;
+    bool _hasTrackingInitialized;
 }
 
 @property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
@@ -129,14 +132,17 @@
                                                                  self.bounds.size.height * self.contentScaleFactor);
     _renderer = std::make_shared<VRORenderer>(_inputController);
     _inputController->setRenderer(_renderer);
+    _hasTrackingInitialized = false;
     
     /*
      Create AR session.
      */
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
-        _arSession = std::make_shared<VROARSessioniOS>(VROTrackingType::DOF6, _driver);
+    _arSession = std::make_shared<VROARSessioniOS>(VROTrackingType::DOF6, _driver);
 #else
-        _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::DOF3, _driver);
+    _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::DOF3, _driver);
+    // in the 3DOF case, tracking doesn't take time to initialize, but the sceneController hasn't yet been set.
+    _hasTrackingInitialized = true;
 #endif
     _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
     
@@ -276,6 +282,11 @@
     _sceneController = sceneController;
     _renderer->setSceneController(sceneController, _driver);
     
+    if (_hasTrackingInitialized) {
+        std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
+        arScene->trackingHasInitialized();
+    }
+    
     // Reset the camera background for the new scene
     _cameraBackground.reset();
 }
@@ -354,6 +365,14 @@
         VROMatrix4f projection = camera->getProjection(viewport, kZNear, _renderer->getFarClippingPlane(), &fov);
         VROMatrix4f rotation = camera->getRotation();
         VROVector3f position = camera->getPosition();
+        
+        if (_sceneController && !_hasTrackingInitialized) {
+            if (position != kZeroVector) {
+                _hasTrackingInitialized = true;
+                std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
+                arScene->trackingHasInitialized();
+            }
+        }
         
         // TODO Only on orientation change
         VROMatrix4f backgroundTransform = frame->getViewportToCameraImageTransform();

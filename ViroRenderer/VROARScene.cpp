@@ -21,6 +21,31 @@ void VROARScene::setARComponentManager(std::shared_ptr<VROARComponentManager> ar
     }
 }
 
+void VROARScene::setDelegate(std::shared_ptr<VROARSceneDelegate> delegate) {
+    _delegate = delegate;
+    if (delegate && _hasTrackingInitialized) {
+        delegate->onTrackingInitialized();
+    }
+}
+
+void VROARScene::trackingHasInitialized() {
+    std::shared_ptr<VROARSceneDelegate> delegate = _delegate.lock();
+    
+    // if delegate hasn't yet been set, then just store that tracking was initialized.
+    if (!delegate) {
+        _hasTrackingInitialized = true;
+        return;
+    }
+    
+    // if delegate was initialized, then only notify if tracking hasn't yet been initialized
+    if(!_hasTrackingInitialized) {
+        _hasTrackingInitialized = true;
+        if (delegate) {
+            delegate->onTrackingInitialized();
+        }
+    }
+}
+
 void VROARScene::willAppear() {
     if (_arComponentManager) {
         std::vector<std::shared_ptr<VROARPlane>>::iterator it;

@@ -14,15 +14,23 @@
 #include "VROARSession.h"
 #include "VROARComponentManager.h"
 
+class VROARSceneDelegate {
+public:
+    virtual void onTrackingInitialized() = 0;
+};
 
 class VROARScene : public VROScene {
 public:
-    VROARScene() {};
+    VROARScene() :
+        _hasTrackingInitialized(false) {};
     virtual ~VROARScene() {};
     
     virtual void addNode(std::shared_ptr<VRONode> node);
     
     void setARComponentManager(std::shared_ptr<VROARComponentManager> arComponentManager);
+    
+    void setDelegate(std::shared_ptr<VROARSceneDelegate> delegate);
+    void trackingHasInitialized();
     
     void willAppear();
     void willDisappear();
@@ -36,6 +44,8 @@ public:
 private:
     std::shared_ptr<VROARComponentManager> _arComponentManager;
     std::vector<std::shared_ptr<VROARPlane>> _planes;
+    std::weak_ptr<VROARSceneDelegate> _delegate;
+    bool _hasTrackingInitialized;
 };
 
 #endif /* VROARScene_h */
