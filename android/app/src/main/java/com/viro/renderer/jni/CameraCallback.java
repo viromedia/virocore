@@ -8,5 +8,6 @@ package com.viro.renderer.jni;
  * renderer asynchronously.
  */
 public interface CameraCallback {
-    void onGetCameraPosition(float x, float y, float z);
+    void onGetCameraOrientation(float posX, float posY, float posZ,
+                                float rotEulerX, float rotEulerY, float rotEulerZ);
 }

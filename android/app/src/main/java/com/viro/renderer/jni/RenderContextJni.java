@@ -21,11 +21,11 @@ public class RenderContextJni {
         nativeDeleteRenderContext(mNativeRef);
     }
 
-    public void getCameraPosition(CameraCallback callback) {
-        nativeGetCameraPosition(mNativeRef, callback);
+    public void getCameraOrientation(CameraCallback callback) {
+        nativeGetCameraOrientation(mNativeRef, callback);
     }
 
     private native long nativeCreateRenderContext(long mNativeRenderer);
     private native void nativeDeleteRenderContext(long mNativeContextRef);
-    private native void nativeGetCameraPosition(long mNativecontextRef, CameraCallback callback);
+    private native void nativeGetCameraOrientation(long mNativecontextRef, CameraCallback callback);
 }

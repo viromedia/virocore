@@ -31,7 +31,7 @@ JNI_METHOD(void, nativeDeleteRenderContext)(JNIEnv *env,
     delete reinterpret_cast<PersistentRef<RenderContext> *>(native_render_context_ref);
 }
 
-JNI_METHOD(void, nativeGetCameraPosition)(JNIEnv *env,
+JNI_METHOD(void, nativeGetCameraOrientation)(JNIEnv *env,
                                                  jobject obj,
                                                  jlong native_render_context_ref,
                                                  jobject callback) {
@@ -51,9 +51,12 @@ JNI_METHOD(void, nativeGetCameraPosition)(JNIEnv *env,
 
         std::shared_ptr<VRORenderContext> context = helperContext->getContext();
         VROVector3f position = context->getCamera().getPosition();
+        VROVector3f rotation = context->getCamera().getRotation().toEuler();
 
         VROPlatformCallJavaFunction(jCallback,
-                                    "onGetCameraPosition", "(FFF)V", position.x, position.y, position.z);
+                                    "onGetCameraOrientation", "(FFFFFF)V",
+                                    position.x, position.y, position.z,
+                                    toDegrees(rotation.x), toDegrees(rotation.y), toDegrees(rotation.z));
         env->DeleteLocalRef(jCallback);
     });
 }
