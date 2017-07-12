@@ -29,7 +29,7 @@ void VROPencil::render(const VRORenderContext &renderContext, std::shared_ptr<VR
     if (_paths.size() == 0) {
         return;
     }
-
+    
     // Creates a single VROPolyline that represents a vector of paths
     // with a preset width and color.
     std::shared_ptr<VROPolyline> line = VROPolyline::createPolyline(_paths, 0.05f);
@@ -37,6 +37,7 @@ void VROPencil::render(const VRORenderContext &renderContext, std::shared_ptr<VR
     material->getDiffuse().setColor({255, 0, 0, 1.0});
     material->setCullMode(VROCullMode::None);
     line->setMaterials({ material });
+    material->bindShader(driver);
 
     VROMatrix4f parentTransform;
     line->render(0, material, parentTransform,
