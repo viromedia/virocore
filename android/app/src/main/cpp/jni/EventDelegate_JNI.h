@@ -39,8 +39,8 @@ public:
     /**
      * Java event delegates to be triggered across the JNI bridge.
      */
-    void onHover(int source, bool isHovering);
-    void onClick(int source, ClickState clickState);
+    void onHover(int source, bool isHovering, std::vector<float> position);
+    void onClick(int source, ClickState clickState, std::vector<float> position);
     void onTouch(int source, TouchState touchState, float x, float y);
     void onMove(int source, VROVector3f rotation, VROVector3f position, VROVector3f forwardVec);
     void onControllerStatus(int source, ControllerStatus status);

@@ -59,36 +59,62 @@ JNI_METHOD(void, nativeSetTimeToFuse)(JNIEnv *env,
 }
 
 }  // extern "C"
-void EventDelegate_JNI::onHover(int source, bool isHovering) {
+void EventDelegate_JNI::onHover(int source, bool isHovering, std::vector<float> position) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj, source, isHovering]{
+    VROPlatformDispatchAsyncApplication([weakObj, source, isHovering, position] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             return;
         }
 
+        jfloatArray positionArray;
+        if (position.size() == 3) {
+            int returnLength = 3;
+            positionArray = env->NewFloatArray(returnLength);
+
+            jfloat tempArr[returnLength];
+            tempArr[0] = position.at(0);
+            tempArr[1] = position.at(1);
+            tempArr[2] = position.at(2);
+            env->SetFloatArrayRegion(positionArray, 0, 3, tempArr);
+        } else {
+            positionArray = nullptr;
+        }
+
         VROPlatformCallJavaFunction(localObj,
-                                    "onHover", "(IZ)V", source, isHovering);
+                                    "onHover", "(IZ[F)V", source, isHovering, positionArray);
         env->DeleteLocalRef(localObj);
     });
 }
 
-void EventDelegate_JNI::onClick(int source, ClickState clickState) {
+void EventDelegate_JNI::onClick(int source, ClickState clickState, std::vector<float> position) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj, source, clickState] {
+    VROPlatformDispatchAsyncApplication([weakObj, source, clickState, position] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             return;
         }
 
+        jfloatArray positionArray;
+        if (position.size() == 3) {
+            int returnLength = 3;
+            positionArray = env->NewFloatArray(returnLength);
+            jfloat tempArr[returnLength];
+            tempArr[0] = position.at(0);
+            tempArr[1] = position.at(1);
+            tempArr[2] = position.at(2);
+            env->SetFloatArrayRegion(positionArray, 0, 3, tempArr);
+        } else {
+            positionArray = nullptr;
+        }
         VROPlatformCallJavaFunction(localObj,
-                                    "onClick", "(II)V", source, clickState);
+                                    "onClick", "(II[F)V", source, clickState, positionArray);
         env->DeleteLocalRef(localObj);
     });
 }
@@ -113,6 +139,7 @@ void EventDelegate_JNI::onTouch(int source, TouchState touchState, float x, floa
 void EventDelegate_JNI::onMove(int source, VROVector3f rotation, VROVector3f position, VROVector3f forwardVec) {
     //No-op
 }
+
 void EventDelegate_JNI::onControllerStatus(int source, ControllerStatus status) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);

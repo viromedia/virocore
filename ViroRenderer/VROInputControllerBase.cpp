@@ -50,20 +50,28 @@ void VROInputControllerBase::debugMoveReticle() {
 #endif
 }
 
-void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickState clickState) {
-    // Notify internal delegates
-    for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
-        delegate->onClick(source, clickState);
-    }
-    
+
+void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickState clickState){
     // Return if we have not focused on any node upon which to trigger events.
     if (_hitResult == nullptr) {
         return;
     }
-    
+
+
+    VROVector3f hitLoc = _hitResult->getLocation();
+    std::vector<float> pos = {hitLoc.x, hitLoc.y, hitLoc.z};
+    if (_hitResult->isBackgroundHit()) {
+        pos.clear();
+    }
+
+    // Notify internal delegates
+    for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
+        delegate->onClick(source, clickState, pos);
+    }
+
     std::shared_ptr<VRONode> focusedNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnClick, _hitResult->getNode());
-    if (focusedNode != nullptr){
-        focusedNode->getEventDelegate()->onClick(source, clickState);
+    if (focusedNode != nullptr) {
+        focusedNode->getEventDelegate()->onClick(source, clickState, pos);
     }
 
     /*
@@ -77,11 +85,12 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
     if (clickState == VROEventDelegate::ClickUp) {
         if (_hitResult->getNode() == _lastClickedNode) {
             for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
-                delegate->onClick(source, VROEventDelegate::ClickState::Clicked);
+                delegate->onClick(source, VROEventDelegate::ClickState::Clicked, pos);
             }
             if (focusedNode != nullptr && _lastClickedNode != nullptr) {
                 focusedNode->getEventDelegate()->onClick(source,
-                                                         VROEventDelegate::ClickState::Clicked);
+                                                         VROEventDelegate::ClickState::Clicked,
+                                                         pos);
             }
         }
         _lastClickedNode = nullptr;
@@ -156,15 +165,14 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
     _lastKnownRotation = rotation;
     _lastKnownPosition = position;
     _lastKnownForward = forward;
-
-    // Trigger orientation delegate callbacks for non-scene elements.
-    for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
-        delegate->onGazeHit(source, *_hitResult.get());
-        delegate->onMove(source, _lastKnownRotation.toEuler(), _lastKnownPosition, _lastKnownForward);
+    if (_hitResult == nullptr) {
+        return;
     }
 
-    if (_hitResult == nullptr){
-        return;
+    // Trigger orientation delegate callbacks for non-scene elements.
+    for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
+        delegate->onGazeHit(source, *_hitResult.get());
+        delegate->onMove(source, _lastKnownRotation.toEuler(), _lastKnownPosition, _lastKnownForward);
     }
 
     // Trigger orientation delegate callbacks within the scene.
@@ -176,14 +184,13 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
 
     std::shared_ptr<VRONode> movableNode
             = getNodeToHandleEvent(VROEventDelegate::EventAction::OnMove, _hitResult->getNode());
-    if (movableNode != nullptr){
+    if (movableNode != nullptr) {
         movableNode->getEventDelegate()->onMove(source, _lastKnownRotation.toEuler(),
                                                 _lastKnownPosition, _lastKnownForward);
     }
     
     // Update draggable objects if needed
     if (_lastDraggedNode != nullptr){
-        
         // Calculate the new drag location
         VROVector3f adjustedForward = _lastKnownForward + _lastDraggedNode->_forwardOffset;
         VROVector3f newSimulatedHitPosition = _lastKnownPosition + (adjustedForward  * _lastDraggedNode->_draggedDistanceFromController);
@@ -197,7 +204,7 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
          * of onDrag delegates to a certain degree of accuracy.
          */
         float distance = draggedToLocation.distance(_lastDraggedNodePosition);
-        if (distance < ON_DRAG_DISTANCE_THRESHOLD){
+        if (distance < ON_DRAG_DISTANCE_THRESHOLD) {
             return;
         }
 
@@ -280,21 +287,27 @@ void VROInputControllerBase::onScroll(int source, float x, float y) {
 }
 
 void VROInputControllerBase::processGazeEvent(int source, std::shared_ptr<VRONode> newNode) {
-    if (_lastHoveredNode == newNode){
+    if (_lastHoveredNode == newNode) {
         return;
     }
 
+    VROVector3f hitLoc = _hitResult->getLocation();
+    std::vector<float> pos = {hitLoc.x, hitLoc.y, hitLoc.z};
+    if (_hitResult->isBackgroundHit()) {
+        pos.clear();
+    }
+    
     if (newNode) {
         std::shared_ptr<VROEventDelegate> delegate = newNode->getEventDelegate();
         if (delegate) {
-            delegate->onHover(source, true);
+            delegate->onHover(source, true, pos);
         }
     }
 
     if (_lastHoveredNode) {
         std::shared_ptr<VROEventDelegate> delegate = _lastHoveredNode->getEventDelegate();
         if (delegate) {
-            delegate->onHover(source, false);
+            delegate->onHover(source, false, pos);
         }
     }
 

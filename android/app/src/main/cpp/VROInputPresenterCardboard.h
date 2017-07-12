@@ -27,12 +27,12 @@ public:
     }
     ~VROInputPresenterCardboard() {}
 
-    void onClick(int source, ClickState clickState){
+    void onClick(int source, ClickState clickState, std::vector<float> position) {
         if (source==ViroCardBoard::InputSource::ViewerButton && clickState==ClickState::ClickUp){
             getReticle()->trigger();
         }
 
-        VROInputPresenter::onClick(source, clickState);
+        VROInputPresenter::onClick(source, clickState, position);
     }
 
     void onGazeHit(int source, const VROHitTestResult &hit) {

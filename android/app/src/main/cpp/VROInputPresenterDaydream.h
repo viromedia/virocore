@@ -135,8 +135,8 @@ public:
         _rightHanded = isRightHanded;
     }
 
-    void onClick(int source, ClickState clickState){
-        VROInputPresenter::onClick(source, clickState);
+    void onClick(int source, ClickState clickState, std::vector<float> position) {
+        VROInputPresenter::onClick(source, clickState, position);
 
         if (source ==ViroDayDream::InputSource::TouchPad && clickState == ClickState::ClickUp){
             getReticle()->trigger();

@@ -197,8 +197,8 @@ public class EventDelegateJni {
      * be needed or useful for Java views or components).
      */
     public interface EventDelegateCallback {
-        void onHover(int source, boolean isHovering);
-        void onClick(int source, ClickState clickState);
+        void onHover(int source, boolean isHovering, float hitLoc[]);
+        void onClick(int source, ClickState clickState, float hitLoc[]);
         void onTouch(int source, TouchState touchState, float touchPadPos[]);
         void onControllerStatus(int source, ControllerStatus status);
         void onSwipe(int source, SwipeState swipeState);
@@ -212,15 +212,15 @@ public class EventDelegateJni {
      * that then triggers the corresponding EventDelegateCallback (mDelegate)
      * that has been set through setEventDelegateCallback().
      */
-    void onHover(int source, boolean isHovering) {
+    void onHover(int source, boolean isHovering, float[] position) {
         if (mDelegate != null){
-            mDelegate.onHover(source, isHovering);
+            mDelegate.onHover(source, isHovering, position);
         }
     }
 
-    void onClick(int source, int clickState) {
+    void onClick(int source, int clickState, float[] position) {
         if (mDelegate != null){
-            mDelegate.onClick(source, ClickState.valueOf(clickState));
+            mDelegate.onClick(source, ClickState.valueOf(clickState), position);
         }
     }
 
