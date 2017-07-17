@@ -30,7 +30,7 @@ bool VROCameraTextureiOS::initCamera(VROCameraPosition position, VROCameraOrient
     pause();
     std::shared_ptr<VROCameraTextureiOS> shared = std::dynamic_pointer_cast<VROCameraTextureiOS>(shared_from_this());
     
-    _videoTextureCache = std::shared_ptr<VROVideoTextureCache>(driver->newVideoTextureCache());
+    _videoTextureCache = driver->newVideoTextureCache();
     _delegate = [[VROCameraCaptureDelegate alloc] initWithCameraTexture:shared cache:_videoTextureCache];
     
     // Create a capture session

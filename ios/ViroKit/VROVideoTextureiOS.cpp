@@ -164,7 +164,7 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
     
     dispatch_queue_t _videoQueue;
     int _currentTextureIndex;
-    VROVideoTextureCache *_videoTextureCache;
+    std::shared_ptr<VROVideoTextureCache> _videoTextureCache;
     
 }
 

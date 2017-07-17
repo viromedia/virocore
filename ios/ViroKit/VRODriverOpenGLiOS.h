@@ -32,9 +32,9 @@ public:
         // Set the head position into _gvrAudio when spatial sound is supported by iOS
     }
 
-    VROVideoTextureCache *newVideoTextureCache() {
+    std::shared_ptr<VROVideoTextureCache> newVideoTextureCache() {
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
-        return new VROVideoTextureCacheOpenGL(_eaglContext, driver);
+        return std::make_shared<VROVideoTextureCacheOpenGL>(_eaglContext, driver);
     }
 
     std::shared_ptr<VROSound> newSound(std::string path, VROSoundType type, bool local) {

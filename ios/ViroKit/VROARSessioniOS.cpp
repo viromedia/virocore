@@ -32,7 +32,7 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, std::shared_ptr<V
         pabort("ARKit not available on this OS");
     }
     _background = std::make_shared<VROTexture>(VROTextureType::Texture2D, VROTextureInternalFormat::YCBCR);
-    _videoTextureCache = std::shared_ptr<VROVideoTextureCacheOpenGL>((VROVideoTextureCacheOpenGL *)driver->newVideoTextureCache());
+    _videoTextureCache = std::dynamic_pointer_cast<VROVideoTextureCacheOpenGL>(driver->newVideoTextureCache());
         
     if (getTrackingType() == VROTrackingType::DOF3) {
         _sessionConfiguration = [[ARSessionConfiguration alloc] init];

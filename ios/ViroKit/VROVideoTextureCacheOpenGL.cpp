@@ -20,10 +20,10 @@ VROVideoTextureCacheOpenGL::VROVideoTextureCacheOpenGL(CVEAGLContext eaglContext
         pinfo("ERROR: Couldnt create a texture cache");
         pabort();
     }
-        
     for (int i = 0; i < kVideoTextureCacheOpenGLNumTextures; i++) {
         _textureRef[i] = NULL;
     }
+    ALLOCATION_TRACKER_ADD(VideoTextureCaches, 1);
 }
 
 VROVideoTextureCacheOpenGL::~VROVideoTextureCacheOpenGL() {
@@ -32,6 +32,8 @@ VROVideoTextureCacheOpenGL::~VROVideoTextureCacheOpenGL() {
             CVBufferRelease(_textureRef[i]);
         }
     }
+    CFRelease(_cache);
+    ALLOCATION_TRACKER_SUB(VideoTextureCaches, 1);
 }
 
 std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSubstrate(CMSampleBufferRef sampleBuffer) {

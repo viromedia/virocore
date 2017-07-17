@@ -83,7 +83,7 @@ public:
         return new VROTextureSubstrateMetal(type, format, data, width, height, *this);
     }
     
-    VROVideoTextureCache *newVideoTextureCache() {
+    std::shared_ptr<VROVideoTextureCache> newVideoTextureCache() {
         return new VROVideoTextureCacheMetal(_device);
     }
     
