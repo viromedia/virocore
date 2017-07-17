@@ -39,6 +39,10 @@ VROPhysicsShape::VROPhysicsShape(std::shared_ptr<VRONode> node, bool hasCompound
         _bulletShape = generateBasicBulletShape(node);
         _type = VROShapeType::Auto;
     }
+
+    VROMatrix4f computedTransform = node->getComputedTransform();
+    VROVector3f scale = computedTransform.extractScale();
+    _bulletShape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
 }
 
 VROPhysicsShape::~VROPhysicsShape() {
@@ -70,19 +74,19 @@ btCollisionShape* VROPhysicsShape::generateBasicBulletShape(std::shared_ptr<VRON
     VROPhysicsShape::VROShapeType type;
     if (dynamic_cast<VROSphere*>(geometry.get()) != nullptr) {
         type = VROPhysicsShape::VROShapeType::Sphere;
-
         // Grab the max span to account for skewed spheres - we simply
         // assume a perfect sphere for these situations.
-        VROBoundingBox bb = node->getBoundingBox();
+        VROBoundingBox bb = geometry->getBoundingBox();
         float maxSpan = std::max(std::max(bb.getSpanX(), bb.getSpanY()), bb.getSpanZ());
         params.push_back(maxSpan/2);
     } else {
         type = VROPhysicsShape::VROShapeType::Box;
-        VROBoundingBox bb = node->getBoundingBox();
+        VROBoundingBox bb = geometry->getBoundingBox();
         params.push_back(bb.getSpanX() / 2);
         params.push_back(bb.getSpanY() / 2);
         params.push_back(bb.getSpanZ() / 2);
     }
+
     return generateBasicBulletShape(type, params);
 }
 

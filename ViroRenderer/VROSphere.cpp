@@ -120,5 +120,6 @@ std::shared_ptr<VROSphere> VROSphere::createSphere(float radius, int widthSegmen
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     
     sphere->setMaterials({ material} );
+    sphere->updateBoundingBox();
     return sphere;
 }

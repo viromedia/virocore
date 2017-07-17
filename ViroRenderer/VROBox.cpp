@@ -75,6 +75,7 @@ void VROBox::updateBox() {
         elements.push_back(element);
     }
     setElements(elements);
+    updateBoundingBox();
 }
 
 void VROBox::buildBoxVAR(VROShapeVertexLayout *vertexLayout) {

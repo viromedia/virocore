@@ -10,6 +10,7 @@
 #include <sstream>
 #include <limits>
 #include "VROVector3f.h"
+#include <float.h>
 
 //Epsilon value for point containment to account for precision errors
 #define kContainsPointEpsilon 0.01
@@ -28,12 +29,12 @@
 
 VROBoundingBox::VROBoundingBox() :
     _planes{0, 0, 0, 0, 0, 0} {
-        
+
 }
 
 VROBoundingBox::VROBoundingBox(const VROBoundingBox &copy) :
     _planes{copy.getMinX(), copy.getMaxX(), copy.getMinY(), copy.getMaxY(), copy.getMinZ(), copy.getMaxZ()} {
-    
+
 }
 
 VROBoundingBox::VROBoundingBox(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax) :
@@ -86,18 +87,28 @@ void VROBoundingBox::scaleBy(float scale) {
 }
 
 VROBoundingBox VROBoundingBox::transform(VROMatrix4f transform) const {
-    VROVector3f min(getMinX(), getMinY(), getMinZ());
-    VROVector3f max(getMaxX(), getMaxY(), getMaxZ());
-    
-    VROVector3f xMin = transform.multiply(min);
-    VROVector3f xMax = transform.multiply(max);
-    
-    return VROBoundingBox(fmin(xMin.x, xMax.x),
-                          fmax(xMin.x, xMax.x),
-                          fmin(xMin.y, xMax.y),
-                          fmax(xMin.y, xMax.y),
-                          fmin(xMin.z, xMax.z),
-                          fmax(xMin.z, xMax.z));
+    const float *t = transform.getArray();
+    VROVector3f xa = VROVector3f(t[0], t[1], t[2]) * getMinX();
+    VROVector3f xb = VROVector3f(t[0], t[1], t[2]) * getMaxX();
+
+    VROVector3f ya = VROVector3f(t[4], t[5], t[6]) * getMinY();
+    VROVector3f yb = VROVector3f(t[4], t[5], t[6]) * getMaxY();
+
+    VROVector3f za = VROVector3f(t[8], t[9], t[10]) * getMinZ();
+    VROVector3f zb = VROVector3f(t[8], t[9], t[10]) * getMaxZ();
+
+    VROVector3f xMin(fmin(xa.x, xb.x), fmin(xa.y, xb.y), fmin(xa.z, xb.z));
+    VROVector3f yMin(fmin(ya.x, yb.x), fmin(ya.y, yb.y), fmin(ya.z, yb.z));
+    VROVector3f zMin(fmin(za.x, zb.x), fmin(za.y, zb.y), fmin(za.z, zb.z));
+
+    VROVector3f xMax(fmax(xa.x, xb.x), fmax(xa.y, xb.y), fmax(xa.z, xb.z));
+    VROVector3f yMax(fmax(ya.x, yb.x), fmax(ya.y, yb.y), fmax(ya.z, yb.z));
+    VROVector3f zMax(fmax(za.x, zb.x), fmax(za.y, zb.y), fmax(za.z, zb.z));
+
+    VROVector3f min = xMin + yMin + zMin +  transform.extractTranslation();
+    VROVector3f max = xMax + yMax + zMax +  transform.extractTranslation();
+
+    return VROBoundingBox(min.x, max.x, min.y, max.y, min.z, max.z);
 }
 
 /////////////////////////////////////////////////////////////////////////////////

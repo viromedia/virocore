@@ -42,6 +42,7 @@ std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<std::vector
     material->setCullMode(VROCullMode::None);
 
     polyline->setMaterials({ material });
+    polyline->updateBoundingBox();
     return polyline;
 }
 void VROPolyline::buildGeometry(std::vector<std::vector<VROVector3f>> &paths,

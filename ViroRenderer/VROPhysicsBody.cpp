@@ -70,7 +70,11 @@ void VROPhysicsBody::releaseBulletBody() {
     if (state != nullptr) {
         delete state;
     }
-    delete _rigidBody;
+    
+    if (_rigidBody != nullptr){
+        delete _rigidBody;
+        _rigidBody = nullptr;
+    }
 }
 
 btRigidBody* VROPhysicsBody::getBulletRigidBody() {

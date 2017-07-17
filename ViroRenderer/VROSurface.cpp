@@ -54,6 +54,7 @@ void VROSurface::updateSurface() {
     
     setSources(sources);
     setElements(elements);
+    updateBoundingBox();
 }
 
 void VROSurface::setWidth(float width) {

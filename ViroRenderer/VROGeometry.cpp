@@ -121,3 +121,7 @@ void VROGeometry::updateSubstrate() {
     _substrate = nullptr;
 }
 
+void VROGeometry::updateBoundingBox(){
+    delete(_bounds);
+    _bounds = nullptr;
+}

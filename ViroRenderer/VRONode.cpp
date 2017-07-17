@@ -432,11 +432,6 @@ void VRONode::setRotation(VROQuaternion rotation) {
                                                          ((VRONode *)animatable)->_rotation = r;
                                                          ((VRONode *)animatable)->_euler = r.toEuler();
                                                      }, _rotation, rotation));
-    // Refresh the node's physics body if possible to accommodate scale changes.
-    std::shared_ptr<VROPhysicsBody> body = getPhysicsBody();
-    if (body){
-        body->refreshBody();
-    }
 }
 
 void VRONode::setRotationEuler(VROVector3f euler) {
@@ -445,11 +440,6 @@ void VRONode::setRotationEuler(VROVector3f euler) {
                                                         ((VRONode *)animatable)->_euler = VROMathNormalizeAngles2PI(r);
                                                         ((VRONode *)animatable)->_rotation = { r.x, r.y, r.z };
                                                      }, _euler, euler));
-    // Refresh the node's physics body if possible to accommodate scale changes.
-    std::shared_ptr<VROPhysicsBody> body = getPhysicsBody();
-    if (body){
-        body->refreshBody();
-    }
 }
 
 void VRONode::setPosition(VROVector3f position) {
@@ -459,11 +449,6 @@ void VRONode::setPosition(VROVector3f position) {
                                                         node->_position = p;
                                                         node->notifyTransformUpdate(false);
                                                    }, _position, position));
-    // Refresh the node's physics body if possible to accommodate scale changes.
-    std::shared_ptr<VROPhysicsBody> body = getPhysicsBody();
-    if (body){
-        body->refreshBody();
-    }
 }
 
 void VRONode::setScale(VROVector3f scale) {
@@ -471,12 +456,6 @@ void VRONode::setScale(VROVector3f scale) {
     animate(std::make_shared<VROAnimationVector3f>([](VROAnimatable *const animatable, VROVector3f s) {
                                                        ((VRONode *)animatable)->_scale = s;
                                                    }, _scale, scale));
-
-    // Refresh the node's physics body if possible to accommodate scale changes.
-    std::shared_ptr<VROPhysicsBody> body = getPhysicsBody();
-    if (body){
-        body->refreshBody();
-    }
 }
 
 void VRONode::setTransformDelegate(std::shared_ptr<VROTransformDelegate> delegate) {
@@ -723,6 +702,11 @@ void VRONode::removeAllAnimations() {
 
 void VRONode::onAnimationFinished(){
     notifyTransformUpdate(true);
+
+    std::shared_ptr<VROPhysicsBody> body = getPhysicsBody();
+    if (body){
+        body->refreshBody();
+    }
 }
 
 #pragma mark - Hit Testing
