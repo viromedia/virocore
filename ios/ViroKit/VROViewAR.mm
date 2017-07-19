@@ -78,6 +78,18 @@ static VROVector3f const kZeroVector = VROVector3f();
     return self;
 }
 
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    
+    // If the frame changes, then update the _camera background to match
+    if (_cameraBackground) {
+        _cameraBackground->setX(self.frame.size.width * self.contentScaleFactor / 2.0);
+        _cameraBackground->setY(self.frame.size.height * self.contentScaleFactor / 2.0);
+        _cameraBackground->setWidth(self.frame.size.width * self.contentScaleFactor);
+        _cameraBackground->setHeight(self.frame.size.height * self.contentScaleFactor);
+    }
+}
+
 - (void)initRenderer {
     if (!self.context) {
         EAGLContext *context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
@@ -209,12 +221,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 #pragma mark - Settings and Notifications
 
 - (void)orientationDidChange:(NSNotification *)notification {
-    if (_cameraBackground) {
-        _cameraBackground->setX(self.bounds.size.width * self.contentScaleFactor / 2.0);
-        _cameraBackground->setY(self.bounds.size.height * self.contentScaleFactor / 2.0);
-        _cameraBackground->setWidth(self.bounds.size.width * self.contentScaleFactor);
-        _cameraBackground->setHeight(self.bounds.size.height * self.contentScaleFactor);
-    }
+    // the _cameraBackground will be updated if/when the frame is actually set.
     _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
 }
 
