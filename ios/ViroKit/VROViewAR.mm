@@ -28,6 +28,7 @@
 #import "VROARComponentManager.h"
 #import "VROInputControllerARiOS.h"
 #import "VROProjector.h"
+#import "VROWeakProxy.h"
 
 static VROVector3f const kZeroVector = VROVector3f();
 
@@ -78,9 +79,6 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 - (void)initRenderer {
-    // TODO DisplayLink maintains a strong reference to its target, we have to
-    //      create a weak proxy or something similar!
-    
     if (!self.context) {
         EAGLContext *context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
         self.context = context;
@@ -89,7 +87,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     /*
      Setup the animation loop for the GLKView.
      */
-    _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(display)];
+    VROWeakProxy *proxy = [VROWeakProxy weakProxyForObject:self];
+    _displayLink = [CADisplayLink displayLinkWithTarget:proxy selector:@selector(display)];
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     
     /*
@@ -202,6 +201,9 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    if (_displayLink) {
+        [_displayLink invalidate];
+    }
 }
 
 #pragma mark - Settings and Notifications
