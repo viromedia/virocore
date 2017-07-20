@@ -37,6 +37,10 @@ class Node_SkeletalAnimation_FrameDefaultTypeInternal : public ::google::protobu
 } _Node_SkeletalAnimation_Frame_default_instance_;
 class Node_SkeletalAnimationDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Node_SkeletalAnimation> {
 } _Node_SkeletalAnimation_default_instance_;
+class Node_KeyframeAnimation_FrameDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Node_KeyframeAnimation_Frame> {
+} _Node_KeyframeAnimation_Frame_default_instance_;
+class Node_KeyframeAnimationDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Node_KeyframeAnimation> {
+} _Node_KeyframeAnimation_default_instance_;
 class Node_LightDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Node_Light> {
 } _Node_Light_default_instance_;
 class Node_CameraDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Node_Camera> {
@@ -59,6 +63,8 @@ void TableStruct::Shutdown() {
   _Node_Skeleton_default_instance_.Shutdown();
   _Node_SkeletalAnimation_Frame_default_instance_.Shutdown();
   _Node_SkeletalAnimation_default_instance_.Shutdown();
+  _Node_KeyframeAnimation_Frame_default_instance_.Shutdown();
+  _Node_KeyframeAnimation_default_instance_.Shutdown();
   _Node_Light_default_instance_.Shutdown();
   _Node_Camera_default_instance_.Shutdown();
   _Node_default_instance_.Shutdown();
@@ -79,6 +85,8 @@ void TableStruct::InitDefaultsImpl() {
   _Node_Skeleton_default_instance_.DefaultConstruct();
   _Node_SkeletalAnimation_Frame_default_instance_.DefaultConstruct();
   _Node_SkeletalAnimation_default_instance_.DefaultConstruct();
+  _Node_KeyframeAnimation_Frame_default_instance_.DefaultConstruct();
+  _Node_KeyframeAnimation_default_instance_.DefaultConstruct();
   _Node_Light_default_instance_.DefaultConstruct();
   _Node_Camera_default_instance_.DefaultConstruct();
   _Node_default_instance_.DefaultConstruct();
@@ -5493,6 +5501,766 @@ void Node_SkeletalAnimation::set_has_scaling(bool value) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Node_KeyframeAnimation_Frame::kTimeFieldNumber;
+const int Node_KeyframeAnimation_Frame::kTranslationFieldNumber;
+const int Node_KeyframeAnimation_Frame::kRotationFieldNumber;
+const int Node_KeyframeAnimation_Frame::kScaleFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Node_KeyframeAnimation_Frame::Node_KeyframeAnimation_Frame()
+  : ::google::protobuf::MessageLite(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_Nodes_2eproto::InitDefaults();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:viro.Node.KeyframeAnimation.Frame)
+}
+Node_KeyframeAnimation_Frame::Node_KeyframeAnimation_Frame(const Node_KeyframeAnimation_Frame& from)
+  : ::google::protobuf::MessageLite(),
+      _internal_metadata_(NULL),
+      translation_(from.translation_),
+      rotation_(from.rotation_),
+      scale_(from.scale_),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  time_ = from.time_;
+  // @@protoc_insertion_point(copy_constructor:viro.Node.KeyframeAnimation.Frame)
+}
+
+void Node_KeyframeAnimation_Frame::SharedCtor() {
+  time_ = 0;
+  _cached_size_ = 0;
+}
+
+Node_KeyframeAnimation_Frame::~Node_KeyframeAnimation_Frame() {
+  // @@protoc_insertion_point(destructor:viro.Node.KeyframeAnimation.Frame)
+  SharedDtor();
+}
+
+void Node_KeyframeAnimation_Frame::SharedDtor() {
+}
+
+void Node_KeyframeAnimation_Frame::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const Node_KeyframeAnimation_Frame& Node_KeyframeAnimation_Frame::default_instance() {
+  protobuf_Nodes_2eproto::InitDefaults();
+  return *internal_default_instance();
+}
+
+Node_KeyframeAnimation_Frame* Node_KeyframeAnimation_Frame::New(::google::protobuf::Arena* arena) const {
+  Node_KeyframeAnimation_Frame* n = new Node_KeyframeAnimation_Frame;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Node_KeyframeAnimation_Frame::Clear() {
+// @@protoc_insertion_point(message_clear_start:viro.Node.KeyframeAnimation.Frame)
+  translation_.Clear();
+  rotation_.Clear();
+  scale_.Clear();
+  time_ = 0;
+}
+
+bool Node_KeyframeAnimation_Frame::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:viro.Node.KeyframeAnimation.Frame)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // float time = 1;
+      case 1: {
+        if (tag == 13u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &time_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated float translation = 2;
+      case 2: {
+        if (tag == 18u) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_translation())));
+        } else if (tag == 21u) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 1, 18u, input, this->mutable_translation())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated float rotation = 3;
+      case 3: {
+        if (tag == 26u) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_rotation())));
+        } else if (tag == 29u) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 1, 26u, input, this->mutable_rotation())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated float scale = 4;
+      case 4: {
+        if (tag == 34u) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_scale())));
+        } else if (tag == 37u) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 1, 34u, input, this->mutable_scale())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:viro.Node.KeyframeAnimation.Frame)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:viro.Node.KeyframeAnimation.Frame)
+  return false;
+#undef DO_
+}
+
+void Node_KeyframeAnimation_Frame::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:viro.Node.KeyframeAnimation.Frame)
+  // float time = 1;
+  if (this->time() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(1, this->time(), output);
+  }
+
+  // repeated float translation = 2;
+  if (this->translation_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(2, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(_translation_cached_byte_size_);
+    ::google::protobuf::internal::WireFormatLite::WriteFloatArray(
+      this->translation().data(), this->translation_size(), output);
+  }
+
+  // repeated float rotation = 3;
+  if (this->rotation_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(3, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(_rotation_cached_byte_size_);
+    ::google::protobuf::internal::WireFormatLite::WriteFloatArray(
+      this->rotation().data(), this->rotation_size(), output);
+  }
+
+  // repeated float scale = 4;
+  if (this->scale_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(4, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(_scale_cached_byte_size_);
+    ::google::protobuf::internal::WireFormatLite::WriteFloatArray(
+      this->scale().data(), this->scale_size(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:viro.Node.KeyframeAnimation.Frame)
+}
+
+size_t Node_KeyframeAnimation_Frame::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:viro.Node.KeyframeAnimation.Frame)
+  size_t total_size = 0;
+
+  // repeated float translation = 2;
+  {
+    unsigned int count = this->translation_size();
+    size_t data_size = 4UL * count;
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
+    }
+    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _translation_cached_byte_size_ = cached_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  // repeated float rotation = 3;
+  {
+    unsigned int count = this->rotation_size();
+    size_t data_size = 4UL * count;
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
+    }
+    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _rotation_cached_byte_size_ = cached_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  // repeated float scale = 4;
+  {
+    unsigned int count = this->scale_size();
+    size_t data_size = 4UL * count;
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
+    }
+    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _scale_cached_byte_size_ = cached_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  // float time = 1;
+  if (this->time() != 0) {
+    total_size += 1 + 4;
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Node_KeyframeAnimation_Frame::CheckTypeAndMergeFrom(
+    const ::google::protobuf::MessageLite& from) {
+  MergeFrom(*::google::protobuf::down_cast<const Node_KeyframeAnimation_Frame*>(&from));
+}
+
+void Node_KeyframeAnimation_Frame::MergeFrom(const Node_KeyframeAnimation_Frame& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:viro.Node.KeyframeAnimation.Frame)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  translation_.MergeFrom(from.translation_);
+  rotation_.MergeFrom(from.rotation_);
+  scale_.MergeFrom(from.scale_);
+  if (from.time() != 0) {
+    set_time(from.time());
+  }
+}
+
+void Node_KeyframeAnimation_Frame::CopyFrom(const Node_KeyframeAnimation_Frame& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:viro.Node.KeyframeAnimation.Frame)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Node_KeyframeAnimation_Frame::IsInitialized() const {
+  return true;
+}
+
+void Node_KeyframeAnimation_Frame::Swap(Node_KeyframeAnimation_Frame* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Node_KeyframeAnimation_Frame::InternalSwap(Node_KeyframeAnimation_Frame* other) {
+  translation_.UnsafeArenaSwap(&other->translation_);
+  rotation_.UnsafeArenaSwap(&other->rotation_);
+  scale_.UnsafeArenaSwap(&other->scale_);
+  std::swap(time_, other->time_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::std::string Node_KeyframeAnimation_Frame::GetTypeName() const {
+  return "viro.Node.KeyframeAnimation.Frame";
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Node_KeyframeAnimation_Frame
+
+// float time = 1;
+void Node_KeyframeAnimation_Frame::clear_time() {
+  time_ = 0;
+}
+float Node_KeyframeAnimation_Frame::time() const {
+  // @@protoc_insertion_point(field_get:viro.Node.KeyframeAnimation.Frame.time)
+  return time_;
+}
+void Node_KeyframeAnimation_Frame::set_time(float value) {
+  
+  time_ = value;
+  // @@protoc_insertion_point(field_set:viro.Node.KeyframeAnimation.Frame.time)
+}
+
+// repeated float translation = 2;
+int Node_KeyframeAnimation_Frame::translation_size() const {
+  return translation_.size();
+}
+void Node_KeyframeAnimation_Frame::clear_translation() {
+  translation_.Clear();
+}
+float Node_KeyframeAnimation_Frame::translation(int index) const {
+  // @@protoc_insertion_point(field_get:viro.Node.KeyframeAnimation.Frame.translation)
+  return translation_.Get(index);
+}
+void Node_KeyframeAnimation_Frame::set_translation(int index, float value) {
+  translation_.Set(index, value);
+  // @@protoc_insertion_point(field_set:viro.Node.KeyframeAnimation.Frame.translation)
+}
+void Node_KeyframeAnimation_Frame::add_translation(float value) {
+  translation_.Add(value);
+  // @@protoc_insertion_point(field_add:viro.Node.KeyframeAnimation.Frame.translation)
+}
+const ::google::protobuf::RepeatedField< float >&
+Node_KeyframeAnimation_Frame::translation() const {
+  // @@protoc_insertion_point(field_list:viro.Node.KeyframeAnimation.Frame.translation)
+  return translation_;
+}
+::google::protobuf::RepeatedField< float >*
+Node_KeyframeAnimation_Frame::mutable_translation() {
+  // @@protoc_insertion_point(field_mutable_list:viro.Node.KeyframeAnimation.Frame.translation)
+  return &translation_;
+}
+
+// repeated float rotation = 3;
+int Node_KeyframeAnimation_Frame::rotation_size() const {
+  return rotation_.size();
+}
+void Node_KeyframeAnimation_Frame::clear_rotation() {
+  rotation_.Clear();
+}
+float Node_KeyframeAnimation_Frame::rotation(int index) const {
+  // @@protoc_insertion_point(field_get:viro.Node.KeyframeAnimation.Frame.rotation)
+  return rotation_.Get(index);
+}
+void Node_KeyframeAnimation_Frame::set_rotation(int index, float value) {
+  rotation_.Set(index, value);
+  // @@protoc_insertion_point(field_set:viro.Node.KeyframeAnimation.Frame.rotation)
+}
+void Node_KeyframeAnimation_Frame::add_rotation(float value) {
+  rotation_.Add(value);
+  // @@protoc_insertion_point(field_add:viro.Node.KeyframeAnimation.Frame.rotation)
+}
+const ::google::protobuf::RepeatedField< float >&
+Node_KeyframeAnimation_Frame::rotation() const {
+  // @@protoc_insertion_point(field_list:viro.Node.KeyframeAnimation.Frame.rotation)
+  return rotation_;
+}
+::google::protobuf::RepeatedField< float >*
+Node_KeyframeAnimation_Frame::mutable_rotation() {
+  // @@protoc_insertion_point(field_mutable_list:viro.Node.KeyframeAnimation.Frame.rotation)
+  return &rotation_;
+}
+
+// repeated float scale = 4;
+int Node_KeyframeAnimation_Frame::scale_size() const {
+  return scale_.size();
+}
+void Node_KeyframeAnimation_Frame::clear_scale() {
+  scale_.Clear();
+}
+float Node_KeyframeAnimation_Frame::scale(int index) const {
+  // @@protoc_insertion_point(field_get:viro.Node.KeyframeAnimation.Frame.scale)
+  return scale_.Get(index);
+}
+void Node_KeyframeAnimation_Frame::set_scale(int index, float value) {
+  scale_.Set(index, value);
+  // @@protoc_insertion_point(field_set:viro.Node.KeyframeAnimation.Frame.scale)
+}
+void Node_KeyframeAnimation_Frame::add_scale(float value) {
+  scale_.Add(value);
+  // @@protoc_insertion_point(field_add:viro.Node.KeyframeAnimation.Frame.scale)
+}
+const ::google::protobuf::RepeatedField< float >&
+Node_KeyframeAnimation_Frame::scale() const {
+  // @@protoc_insertion_point(field_list:viro.Node.KeyframeAnimation.Frame.scale)
+  return scale_;
+}
+::google::protobuf::RepeatedField< float >*
+Node_KeyframeAnimation_Frame::mutable_scale() {
+  // @@protoc_insertion_point(field_mutable_list:viro.Node.KeyframeAnimation.Frame.scale)
+  return &scale_;
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Node_KeyframeAnimation::kNameFieldNumber;
+const int Node_KeyframeAnimation::kFrameFieldNumber;
+const int Node_KeyframeAnimation::kDurationFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Node_KeyframeAnimation::Node_KeyframeAnimation()
+  : ::google::protobuf::MessageLite(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_Nodes_2eproto::InitDefaults();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:viro.Node.KeyframeAnimation)
+}
+Node_KeyframeAnimation::Node_KeyframeAnimation(const Node_KeyframeAnimation& from)
+  : ::google::protobuf::MessageLite(),
+      _internal_metadata_(NULL),
+      frame_(from.frame_),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.name().size() > 0) {
+    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+  }
+  duration_ = from.duration_;
+  // @@protoc_insertion_point(copy_constructor:viro.Node.KeyframeAnimation)
+}
+
+void Node_KeyframeAnimation::SharedCtor() {
+  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  duration_ = GOOGLE_LONGLONG(0);
+  _cached_size_ = 0;
+}
+
+Node_KeyframeAnimation::~Node_KeyframeAnimation() {
+  // @@protoc_insertion_point(destructor:viro.Node.KeyframeAnimation)
+  SharedDtor();
+}
+
+void Node_KeyframeAnimation::SharedDtor() {
+  name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void Node_KeyframeAnimation::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const Node_KeyframeAnimation& Node_KeyframeAnimation::default_instance() {
+  protobuf_Nodes_2eproto::InitDefaults();
+  return *internal_default_instance();
+}
+
+Node_KeyframeAnimation* Node_KeyframeAnimation::New(::google::protobuf::Arena* arena) const {
+  Node_KeyframeAnimation* n = new Node_KeyframeAnimation;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Node_KeyframeAnimation::Clear() {
+// @@protoc_insertion_point(message_clear_start:viro.Node.KeyframeAnimation)
+  frame_.Clear();
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  duration_ = GOOGLE_LONGLONG(0);
+}
+
+bool Node_KeyframeAnimation::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:viro.Node.KeyframeAnimation)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string name = 1;
+      case 1: {
+        if (tag == 10u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_name()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->name().data(), this->name().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "viro.Node.KeyframeAnimation.name"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .viro.Node.KeyframeAnimation.Frame frame = 2;
+      case 2: {
+        if (tag == 18u) {
+          DO_(input->IncrementRecursionDepth());
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_frame()));
+        } else {
+          goto handle_unusual;
+        }
+        input->UnsafeDecrementRecursionDepth();
+        break;
+      }
+
+      // int64 duration = 3;
+      case 3: {
+        if (tag == 24u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &duration_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:viro.Node.KeyframeAnimation)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:viro.Node.KeyframeAnimation)
+  return false;
+#undef DO_
+}
+
+void Node_KeyframeAnimation::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:viro.Node.KeyframeAnimation)
+  // string name = 1;
+  if (this->name().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->name().data(), this->name().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "viro.Node.KeyframeAnimation.name");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->name(), output);
+  }
+
+  // repeated .viro.Node.KeyframeAnimation.Frame frame = 2;
+  for (unsigned int i = 0, n = this->frame_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      2, this->frame(i), output);
+  }
+
+  // int64 duration = 3;
+  if (this->duration() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->duration(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:viro.Node.KeyframeAnimation)
+}
+
+size_t Node_KeyframeAnimation::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:viro.Node.KeyframeAnimation)
+  size_t total_size = 0;
+
+  // repeated .viro.Node.KeyframeAnimation.Frame frame = 2;
+  {
+    unsigned int count = this->frame_size();
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->frame(i));
+    }
+  }
+
+  // string name = 1;
+  if (this->name().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->name());
+  }
+
+  // int64 duration = 3;
+  if (this->duration() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->duration());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Node_KeyframeAnimation::CheckTypeAndMergeFrom(
+    const ::google::protobuf::MessageLite& from) {
+  MergeFrom(*::google::protobuf::down_cast<const Node_KeyframeAnimation*>(&from));
+}
+
+void Node_KeyframeAnimation::MergeFrom(const Node_KeyframeAnimation& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:viro.Node.KeyframeAnimation)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  frame_.MergeFrom(from.frame_);
+  if (from.name().size() > 0) {
+
+    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
+  }
+  if (from.duration() != 0) {
+    set_duration(from.duration());
+  }
+}
+
+void Node_KeyframeAnimation::CopyFrom(const Node_KeyframeAnimation& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:viro.Node.KeyframeAnimation)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Node_KeyframeAnimation::IsInitialized() const {
+  return true;
+}
+
+void Node_KeyframeAnimation::Swap(Node_KeyframeAnimation* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Node_KeyframeAnimation::InternalSwap(Node_KeyframeAnimation* other) {
+  frame_.UnsafeArenaSwap(&other->frame_);
+  name_.Swap(&other->name_);
+  std::swap(duration_, other->duration_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::std::string Node_KeyframeAnimation::GetTypeName() const {
+  return "viro.Node.KeyframeAnimation";
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Node_KeyframeAnimation
+
+// string name = 1;
+void Node_KeyframeAnimation::clear_name() {
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& Node_KeyframeAnimation::name() const {
+  // @@protoc_insertion_point(field_get:viro.Node.KeyframeAnimation.name)
+  return name_.GetNoArena();
+}
+void Node_KeyframeAnimation::set_name(const ::std::string& value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:viro.Node.KeyframeAnimation.name)
+}
+#if LANG_CXX11
+void Node_KeyframeAnimation::set_name(::std::string&& value) {
+  
+  name_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:viro.Node.KeyframeAnimation.name)
+}
+#endif
+void Node_KeyframeAnimation::set_name(const char* value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:viro.Node.KeyframeAnimation.name)
+}
+void Node_KeyframeAnimation::set_name(const char* value, size_t size) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:viro.Node.KeyframeAnimation.name)
+}
+::std::string* Node_KeyframeAnimation::mutable_name() {
+  
+  // @@protoc_insertion_point(field_mutable:viro.Node.KeyframeAnimation.name)
+  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* Node_KeyframeAnimation::release_name() {
+  // @@protoc_insertion_point(field_release:viro.Node.KeyframeAnimation.name)
+  
+  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void Node_KeyframeAnimation::set_allocated_name(::std::string* name) {
+  if (name != NULL) {
+    
+  } else {
+    
+  }
+  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.KeyframeAnimation.name)
+}
+
+// repeated .viro.Node.KeyframeAnimation.Frame frame = 2;
+int Node_KeyframeAnimation::frame_size() const {
+  return frame_.size();
+}
+void Node_KeyframeAnimation::clear_frame() {
+  frame_.Clear();
+}
+const ::viro::Node_KeyframeAnimation_Frame& Node_KeyframeAnimation::frame(int index) const {
+  // @@protoc_insertion_point(field_get:viro.Node.KeyframeAnimation.frame)
+  return frame_.Get(index);
+}
+::viro::Node_KeyframeAnimation_Frame* Node_KeyframeAnimation::mutable_frame(int index) {
+  // @@protoc_insertion_point(field_mutable:viro.Node.KeyframeAnimation.frame)
+  return frame_.Mutable(index);
+}
+::viro::Node_KeyframeAnimation_Frame* Node_KeyframeAnimation::add_frame() {
+  // @@protoc_insertion_point(field_add:viro.Node.KeyframeAnimation.frame)
+  return frame_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::viro::Node_KeyframeAnimation_Frame >*
+Node_KeyframeAnimation::mutable_frame() {
+  // @@protoc_insertion_point(field_mutable_list:viro.Node.KeyframeAnimation.frame)
+  return &frame_;
+}
+const ::google::protobuf::RepeatedPtrField< ::viro::Node_KeyframeAnimation_Frame >&
+Node_KeyframeAnimation::frame() const {
+  // @@protoc_insertion_point(field_list:viro.Node.KeyframeAnimation.frame)
+  return frame_;
+}
+
+// int64 duration = 3;
+void Node_KeyframeAnimation::clear_duration() {
+  duration_ = GOOGLE_LONGLONG(0);
+}
+::google::protobuf::int64 Node_KeyframeAnimation::duration() const {
+  // @@protoc_insertion_point(field_get:viro.Node.KeyframeAnimation.duration)
+  return duration_;
+}
+void Node_KeyframeAnimation::set_duration(::google::protobuf::int64 value) {
+  
+  duration_ = value;
+  // @@protoc_insertion_point(field_set:viro.Node.KeyframeAnimation.duration)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Node_Light::kNameFieldNumber;
 const int Node_Light::kLightTypeFieldNumber;
 const int Node_Light::kColorFieldNumber;
@@ -6525,6 +7293,7 @@ const int Node::kOpacityFieldNumber;
 const int Node::kGeometryFieldNumber;
 const int Node::kSkeletonFieldNumber;
 const int Node::kSkeletalAnimationFieldNumber;
+const int Node::kKeyframeAnimationFieldNumber;
 const int Node::kLightFieldNumber;
 const int Node::kCameraFieldNumber;
 const int Node::kSubnodeFieldNumber;
@@ -6545,6 +7314,7 @@ Node::Node(const Node& from)
       scale_(from.scale_),
       rotation_(from.rotation_),
       skeletal_animation_(from.skeletal_animation_),
+      keyframe_animation_(from.keyframe_animation_),
       light_(from.light_),
       subnode_(from.subnode_),
       _cached_size_(0) {
@@ -6623,6 +7393,7 @@ void Node::Clear() {
   scale_.Clear();
   rotation_.Clear();
   skeletal_animation_.Clear();
+  keyframe_animation_.Clear();
   light_.Clear();
   subnode_.Clear();
   name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
@@ -6776,9 +7547,22 @@ bool Node::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .viro.Node.Light light = 10;
+      // repeated .viro.Node.KeyframeAnimation keyframe_animation = 10;
       case 10: {
         if (tag == 82u) {
+          DO_(input->IncrementRecursionDepth());
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_keyframe_animation()));
+        } else {
+          goto handle_unusual;
+        }
+        input->UnsafeDecrementRecursionDepth();
+        break;
+      }
+
+      // repeated .viro.Node.Light light = 11;
+      case 11: {
+        if (tag == 90u) {
           DO_(input->IncrementRecursionDepth());
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
                 input, add_light()));
@@ -6789,9 +7573,9 @@ bool Node::MergePartialFromCodedStream(
         break;
       }
 
-      // .viro.Node.Camera camera = 11;
-      case 11: {
-        if (tag == 90u) {
+      // .viro.Node.Camera camera = 12;
+      case 12: {
+        if (tag == 98u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_camera()));
         } else {
@@ -6800,9 +7584,9 @@ bool Node::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .viro.Node subnode = 12;
-      case 12: {
-        if (tag == 98u) {
+      // repeated .viro.Node subnode = 13;
+      case 13: {
+        if (tag == 106u) {
           DO_(input->IncrementRecursionDepth());
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
                 input, add_subnode()));
@@ -6899,22 +7683,28 @@ void Node::SerializeWithCachedSizes(
       9, this->skeletal_animation(i), output);
   }
 
-  // repeated .viro.Node.Light light = 10;
+  // repeated .viro.Node.KeyframeAnimation keyframe_animation = 10;
+  for (unsigned int i = 0, n = this->keyframe_animation_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessage(
+      10, this->keyframe_animation(i), output);
+  }
+
+  // repeated .viro.Node.Light light = 11;
   for (unsigned int i = 0, n = this->light_size(); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
-      10, this->light(i), output);
+      11, this->light(i), output);
   }
 
-  // .viro.Node.Camera camera = 11;
+  // .viro.Node.Camera camera = 12;
   if (this->has_camera()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
-      11, *this->camera_, output);
+      12, *this->camera_, output);
   }
 
-  // repeated .viro.Node subnode = 12;
+  // repeated .viro.Node subnode = 13;
   for (unsigned int i = 0, n = this->subnode_size(); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
-      12, this->subnode(i), output);
+      13, this->subnode(i), output);
   }
 
   // @@protoc_insertion_point(serialize_end:viro.Node)
@@ -6980,7 +7770,18 @@ size_t Node::ByteSizeLong() const {
     }
   }
 
-  // repeated .viro.Node.Light light = 10;
+  // repeated .viro.Node.KeyframeAnimation keyframe_animation = 10;
+  {
+    unsigned int count = this->keyframe_animation_size();
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->keyframe_animation(i));
+    }
+  }
+
+  // repeated .viro.Node.Light light = 11;
   {
     unsigned int count = this->light_size();
     total_size += 1UL * count;
@@ -6991,7 +7792,7 @@ size_t Node::ByteSizeLong() const {
     }
   }
 
-  // repeated .viro.Node subnode = 12;
+  // repeated .viro.Node subnode = 13;
   {
     unsigned int count = this->subnode_size();
     total_size += 1UL * count;
@@ -7023,7 +7824,7 @@ size_t Node::ByteSizeLong() const {
         *this->skeleton_);
   }
 
-  // .viro.Node.Camera camera = 11;
+  // .viro.Node.Camera camera = 12;
   if (this->has_camera()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -7062,6 +7863,7 @@ void Node::MergeFrom(const Node& from) {
   scale_.MergeFrom(from.scale_);
   rotation_.MergeFrom(from.rotation_);
   skeletal_animation_.MergeFrom(from.skeletal_animation_);
+  keyframe_animation_.MergeFrom(from.keyframe_animation_);
   light_.MergeFrom(from.light_);
   subnode_.MergeFrom(from.subnode_);
   if (from.name().size() > 0) {
@@ -7105,6 +7907,7 @@ void Node::InternalSwap(Node* other) {
   scale_.UnsafeArenaSwap(&other->scale_);
   rotation_.UnsafeArenaSwap(&other->rotation_);
   skeletal_animation_.UnsafeArenaSwap(&other->skeletal_animation_);
+  keyframe_animation_.UnsafeArenaSwap(&other->keyframe_animation_);
   light_.UnsafeArenaSwap(&other->light_);
   subnode_.UnsafeArenaSwap(&other->subnode_);
   name_.Swap(&other->name_);
@@ -7401,7 +8204,37 @@ Node::skeletal_animation() const {
   return skeletal_animation_;
 }
 
-// repeated .viro.Node.Light light = 10;
+// repeated .viro.Node.KeyframeAnimation keyframe_animation = 10;
+int Node::keyframe_animation_size() const {
+  return keyframe_animation_.size();
+}
+void Node::clear_keyframe_animation() {
+  keyframe_animation_.Clear();
+}
+const ::viro::Node_KeyframeAnimation& Node::keyframe_animation(int index) const {
+  // @@protoc_insertion_point(field_get:viro.Node.keyframe_animation)
+  return keyframe_animation_.Get(index);
+}
+::viro::Node_KeyframeAnimation* Node::mutable_keyframe_animation(int index) {
+  // @@protoc_insertion_point(field_mutable:viro.Node.keyframe_animation)
+  return keyframe_animation_.Mutable(index);
+}
+::viro::Node_KeyframeAnimation* Node::add_keyframe_animation() {
+  // @@protoc_insertion_point(field_add:viro.Node.keyframe_animation)
+  return keyframe_animation_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::viro::Node_KeyframeAnimation >*
+Node::mutable_keyframe_animation() {
+  // @@protoc_insertion_point(field_mutable_list:viro.Node.keyframe_animation)
+  return &keyframe_animation_;
+}
+const ::google::protobuf::RepeatedPtrField< ::viro::Node_KeyframeAnimation >&
+Node::keyframe_animation() const {
+  // @@protoc_insertion_point(field_list:viro.Node.keyframe_animation)
+  return keyframe_animation_;
+}
+
+// repeated .viro.Node.Light light = 11;
 int Node::light_size() const {
   return light_.size();
 }
@@ -7431,7 +8264,7 @@ Node::light() const {
   return light_;
 }
 
-// .viro.Node.Camera camera = 11;
+// .viro.Node.Camera camera = 12;
 bool Node::has_camera() const {
   return this != internal_default_instance() && camera_ != NULL;
 }
@@ -7470,7 +8303,7 @@ void Node::set_allocated_camera(::viro::Node_Camera* camera) {
   // @@protoc_insertion_point(field_set_allocated:viro.Node.camera)
 }
 
-// repeated .viro.Node subnode = 12;
+// repeated .viro.Node subnode = 13;
 int Node::subnode_size() const {
   return subnode_.size();
 }

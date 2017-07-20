@@ -78,6 +78,10 @@ public:
      Execute this animation. The onFinished() callback will be invoked when the
      animation is fully executed (if it has children, this is when the last child
      finishes executing).
+     
+     For skeletal animations, the input node parameter is ignored. Skeletal 
+     animations are associated with a specific skeleton, and will animate all nodes
+     connected to that skeleton.
      */
     void execute(std::shared_ptr<VRONode> node, std::function<void()> onFinished);
     void pause();

@@ -38,6 +38,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 @property (readwrite, nonatomic) std::shared_ptr<VROVideoTexture> videoTexture;
 @property (readwrite, nonatomic) std::shared_ptr<VROEventDelegateiOS> delegate;
 @property (readwrite, nonatomic) std::shared_ptr<VROSampleARDelegate> sessionARDelegate;
+@property (readwrite, nonatomic) std::shared_ptr<VROSceneController> sceneController;
 @property (nonatomic, copy) id clickBlock;
 
 // VROEventDelegateProtocol
@@ -892,9 +893,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (std::shared_ptr<VROSceneController>)loadFBXScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
-    //scene->setBackgroundCube([self niagaraTexture]);
+    scene->setBackgroundCube([self niagaraTexture]);
     
-    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"heart" ofType:@"vrx"];
+    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"sven" ofType:@"vrx"];
     NSURL *fbxURL = [NSURL fileURLWithPath:fbxPath];
     std::string url = std::string([[fbxURL description] UTF8String]);
     
@@ -913,7 +914,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 1.0, 1.0, 1.0 });
-    ambient->setIntensity(500);
+    ambient->setIntensity(1000);
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
@@ -928,10 +929,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                             return;
                                                                         }
                                                                         
-                                                                       // node->setPosition({0, -4, -4});
-                                                                        
-                                                                        node->setPosition({0, 0, -1});
-                                                                        node->setScale({0.5, 0.5, 0.5});
+                                                                        node->setScale({0.05, 0.05, 0.05});
+                                                                        node->setPosition({0, 0, -6});
                                                                         
                                                                         std::set<std::string> animations = node->getAnimationKeys(true);
                                                                         for (std::string animation : animations) {
@@ -944,7 +943,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                     });
     
     
-   // rootNode->addChildNode(fbxNode);
+    rootNode->addChildNode(fbxNode);
     
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self](VRONode *const node, float seconds) {
         self.objAngle += .015;
@@ -957,11 +956,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     self.delegate = std::make_shared<VROEventDelegateiOS>(self);
     fbxNode->setEventDelegate(self.delegate);
-    
-    std::shared_ptr<VROSampleARDelegate> delegate = std::make_shared<VROSampleARDelegate>();
-    [((VROViewAR *)self.view) setTapHandler:^(VROARHitTestResult result, std::shared_ptr<VROARSession> session, std::shared_ptr<VROScene> scene){
-        delegate->onHitResult(result, session, scene);
-    }];
     
     return sceneController;
 }
@@ -1010,16 +1004,17 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
 - (void)animateTake:(std::shared_ptr<VRONode>)node {
     node->getAnimation("Take 001", true)->execute(node, {});
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self animateTake:node];
     });
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleSceneAR;
+    self.sceneIndex = VROSampleSceneFBX;
     self.driver = driver;
     
-    self.view.sceneController = [self loadSceneWithIndex:self.sceneIndex];
+    self.sceneController = [self loadSceneWithIndex:self.sceneIndex];
+    self.view.sceneController = self.sceneController;
 }
 
 - (void)nextSceneAfterDelay {

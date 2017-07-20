@@ -169,6 +169,13 @@
 		8F56AEB21DE7873E00DD65B6 /* VROTypefaceiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F56AEB01DE7873E00DD65B6 /* VROTypefaceiOS.h */; };
 		8F57664E1D14429A0051AB0A /* VROMetalShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F57664D1D14429A0051AB0A /* VROMetalShader.h */; };
 		8F5C41551BD82C1B006D7A77 /* boba.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5C41541BD82C1B006D7A77 /* boba.png */; };
+		8F5CAA181F1FAD5800FEEC7E /* VROKeyframeAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5CAA161F1FAD5800FEEC7E /* VROKeyframeAnimation.cpp */; };
+		8F5CAA191F1FAD5800FEEC7E /* VROKeyframeAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F5CAA171F1FAD5800FEEC7E /* VROKeyframeAnimation.h */; };
+		8F5CAA1C1F202B5000FEEC7E /* bball.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F5CAA1A1F202AE100FEEC7E /* bball.vrx */; };
+		8F5CAA201F202BC900FEEC7E /* bball_SPEC_NRM.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5CAA1D1F202BC900FEEC7E /* bball_SPEC_NRM.png */; };
+		8F5CAA211F202BC900FEEC7E /* bball_SPEC.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5CAA1E1F202BC900FEEC7E /* bball_SPEC.png */; };
+		8F5CAA221F202BC900FEEC7E /* bball.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F5CAA1F1F202BC900FEEC7E /* bball.jpg */; };
+		8F5CAA261F20532B00FEEC7E /* VROExecutableNodeAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F5CAA241F20532B00FEEC7E /* VROExecutableNodeAnimation.h */; };
 		8F618E2B1EB926B60020B33B /* Heart_Diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F618E2A1EB926B60020B33B /* Heart_Diffuse.jpg */; };
 		8F618E331EB980E70020B33B /* libprotobuf-lite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */; };
 		8F65F7861C90CD0B00415115 /* VROConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F65F7841C90CD0B00415115 /* VROConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -795,6 +802,13 @@
 		8F5C41541BD82C1B006D7A77 /* boba.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = boba.png; path = ViroSample/boba.png; sourceTree = "<group>"; };
 		8F5C41561BD8300E006D7A77 /* VROImageUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROImageUtil.cpp; sourceTree = "<group>"; };
 		8F5C41571BD8300E006D7A77 /* VROImageUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROImageUtil.h; sourceTree = "<group>"; };
+		8F5CAA161F1FAD5800FEEC7E /* VROKeyframeAnimation.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROKeyframeAnimation.cpp; sourceTree = "<group>"; };
+		8F5CAA171F1FAD5800FEEC7E /* VROKeyframeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROKeyframeAnimation.h; sourceTree = "<group>"; };
+		8F5CAA1A1F202AE100FEEC7E /* bball.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = bball.vrx; path = ViroSample/bball.vrx; sourceTree = "<group>"; };
+		8F5CAA1D1F202BC900FEEC7E /* bball_SPEC_NRM.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bball_SPEC_NRM.png; path = ../../../Downloads/bball_anim/bball_SPEC_NRM.png; sourceTree = "<group>"; };
+		8F5CAA1E1F202BC900FEEC7E /* bball_SPEC.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bball_SPEC.png; path = ../../../Downloads/bball_anim/bball_SPEC.png; sourceTree = "<group>"; };
+		8F5CAA1F1F202BC900FEEC7E /* bball.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = bball.jpg; path = ../../../Downloads/bball_anim/bball.jpg; sourceTree = "<group>"; };
+		8F5CAA241F20532B00FEEC7E /* VROExecutableNodeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROExecutableNodeAnimation.h; sourceTree = "<group>"; };
 		8F618E2A1EB926B60020B33B /* Heart_Diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Heart_Diffuse.jpg; path = ViroSample/Heart_Diffuse.jpg; sourceTree = "<group>"; };
 		8F618E301EB935A40020B33B /* libprotobuf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libprotobuf.a; path = Libraries/protobuf/libprotobuf.a; sourceTree = "<group>"; };
 		8F6248311BDAB44B000755E5 /* VRODevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODevice.h; sourceTree = "<group>"; };
@@ -1238,7 +1252,6 @@
 		8F1071D81BF67EF7003B3C3F /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
-				A56529A41EFD8051008097D7 /* VROTransformDelegate.h */,
 				A5EC65901EBD16D800FE220E /* Physics */,
 				8F56AE9A1DE67BCF00DD65B6 /* Text */,
 				8F65F8271CA19A8100415115 /* Audio */,
@@ -1286,6 +1299,7 @@
 				8F65F7881C90CD4700415115 /* VROBillboardConstraint.h */,
 				8F65F7871C90CD4700415115 /* VROBillboardConstraint.cpp */,
 				A566EB131E1AE11D008B4AE2 /* VROEventDelegate.h */,
+				A56529A41EFD8051008097D7 /* VROTransformDelegate.h */,
 				8F65F78C1C90D83600415115 /* VROTransformConstraint.h */,
 				8F65F78B1C90D83600415115 /* VROTransformConstraint.cpp */,
 				8FCF396A1CB4242000A86CA3 /* VRORenderer.h */,
@@ -1730,6 +1744,9 @@
 				8FB2B5971E1445EE00EDB629 /* VROAnimationChain.h */,
 				8FB2B5961E1445EE00EDB629 /* VROAnimationChain.cpp */,
 				8F52EA2F1E1D643000F1AF9D /* VROExecutableAnimation.h */,
+				8F5CAA171F1FAD5800FEEC7E /* VROKeyframeAnimation.h */,
+				8F5CAA161F1FAD5800FEEC7E /* VROKeyframeAnimation.cpp */,
+				8F5CAA241F20532B00FEEC7E /* VROExecutableNodeAnimation.h */,
 			);
 			name = "Execution API";
 			sourceTree = "<group>";
@@ -1871,6 +1888,10 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F5CAA1A1F202AE100FEEC7E /* bball.vrx */,
+				8F5CAA1D1F202BC900FEEC7E /* bball_SPEC_NRM.png */,
+				8F5CAA1E1F202BC900FEEC7E /* bball_SPEC.png */,
+				8F5CAA1F1F202BC900FEEC7E /* bball.jpg */,
 				8F26573D1F0E7D5D0031DE17 /* gorilla.vrx */,
 				8FD4D0BC1EF0695F00077AD7 /* coffee_mug_specular.png */,
 				8FD4D0BD1EF0695F00077AD7 /* coffee_mug.obj */,
@@ -2199,6 +2220,7 @@
 				8ADF360B1F14237B002BF73D /* VROARSceneDelegateiOS.h in Headers */,
 				8F548E461C23654E00556688 /* VROAnimationFloat.h in Headers */,
 				8F548E4A1C23656000556688 /* VROAnimationVector3f.h in Headers */,
+				8F5CAA191F1FAD5800FEEC7E /* VROKeyframeAnimation.h in Headers */,
 				8FB6591F1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.h in Headers */,
 				8A130DA41E4018550050D83B /* VROSoundDataGVR.h in Headers */,
 				8FE382111EF06FED005038CB /* VROARFrame.h in Headers */,
@@ -2228,6 +2250,7 @@
 				8ABD8F541DB957C900BD9C83 /* VROCredentials.h in Headers */,
 				8FA2E1641C460C600070DB26 /* VROAction.h in Headers */,
 				8FB659101CD8301000D036EB /* VROSceneRendererCardboardMetal.h in Headers */,
+				8F5CAA261F20532B00FEEC7E /* VROExecutableNodeAnimation.h in Headers */,
 				8F67B5A01DF1DC930096C26F /* VROKnuthPlassFormatter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2391,13 +2414,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F5CAA1C1F202B5000FEEC7E /* bball.vrx in Resources */,
 				A5ABB1BA1E93300700E07EBC /* chillroots.mp4 in Resources */,
 				8FCED07C1EBBD35200C19BCA /* Sven_Face_Color.png in Resources */,
 				8FCED07A1EBBD35200C19BCA /* Sven_Body_Specular.png in Resources */,
 				8F129FBF1ED603BE00341D83 /* worm.vrx in Resources */,
 				8FCED05E1EBBCFCF00C19BCA /* Squid_Normal.png in Resources */,
+				8F5CAA221F202BC900FEEC7E /* bball.jpg in Resources */,
 				8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
+				8F5CAA211F202BC900FEEC7E /* bball_SPEC.png in Resources */,
 				8FCED0791EBBD35200C19BCA /* Sven_Body_Normal.png in Resources */,
 				8F660AB11E931C6F006D063F /* 4096_clouds.jpg in Resources */,
 				8FCED0581EBBCFCF00C19BCA /* MinionSuitA_Color.png in Resources */,
@@ -2419,6 +2445,7 @@
 				8FCED0751EBBD35200C19BCA /* Jetpack_Normal.png in Resources */,
 				8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
 				A5ABB1D91E95703200E07EBC /* stereoVid360.mp4 in Resources */,
+				8F5CAA201F202BC900FEEC7E /* bball_SPEC_NRM.png in Resources */,
 				8FCED0591EBBCFCF00C19BCA /* MinionSuitA_Glow.png in Resources */,
 				8F9278001C66BD4500FF892A /* nz1.jpg in Resources */,
 				8FA2E14A1C445CAA0070DB26 /* nz.png in Resources */,
@@ -2712,6 +2739,7 @@
 				8FD4DF041C18ED30003DC425 /* VROTextureSubstrate.cpp in Sources */,
 				8FAE23C71CE3F61300E98B47 /* VROGeometrySubstrateOpenGL.cpp in Sources */,
 				8FD4DF011C18ED2C003DC425 /* VROMaterialSubstrateMetal.cpp in Sources */,
+				8F5CAA181F1FAD5800FEEC7E /* VROKeyframeAnimation.cpp in Sources */,
 				8F9278071C670FC100FF892A /* VROTriangle.cpp in Sources */,
 				8FD4DEF31C18ED19003DC425 /* VROFrustum.cpp in Sources */,
 				8A35173D1EE11C4800B6E786 /* VROTrackingHelper.mm in Sources */,

@@ -18,6 +18,7 @@
 #include "VROBone.h"
 #include "VROSkeletalAnimation.h"
 #include "VROBoneUBO.h"
+#include "VROKeyframeAnimation.h"
 #include "VROCompress.h"
 #include "Nodes.pb.h"
 
@@ -288,11 +289,11 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
                 
                 std::shared_ptr<VROSkeletalAnimation> animation = loadFBXSkeletalAnimation(animation_pb, skeleton);
                 if (animation->getName().empty()) {
-                    animation->setName("fbx_animation_" + VROStringUtil::toString(i));
+                    animation->setName("fbx_skel_animation_" + VROStringUtil::toString(i));
                 }
                 
                 node->addAnimation(animation->getName(), animation);
-                pinfo("   Added animation [%s]", animation->getName().c_str());
+                pinfo("   Added skeletal animation [%s]", animation->getName().c_str());
             }
             
             if (hasScaling) {
@@ -303,6 +304,19 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
                 material->addShaderModifier(VROBoneUBO::createSkinningShaderModifier(hasScaling));
             }
         }
+        
+        for (int i = 0; i < node_pb.keyframe_animation_size(); i++) {
+            const viro::Node::KeyframeAnimation &animation_pb = node_pb.keyframe_animation(i);
+            std::shared_ptr<VROKeyframeAnimation> animation = loadFBXKeyframeAnimation(animation_pb);
+            
+            if (animation->getName().empty()) {
+                animation->setName("fbx_kf_animation_" + VROStringUtil::toString(i));
+            }
+            
+            node->addAnimation(animation->getName(), animation);
+            pinfo("   Added keyframe animation [%s]", animation->getName().c_str());
+        }
+        
         node->setGeometry(geo);
     }
     
@@ -519,6 +533,41 @@ std::shared_ptr<VROSkeletalAnimation> VROFBXLoader::loadFBXSkeletalAnimation(con
     float duration = animation_pb.duration();
     
     std::shared_ptr<VROSkeletalAnimation> animation = std::make_shared<VROSkeletalAnimation>(skeleton, frames, duration);
+    animation->setName(animation_pb.name());
+    
+    return animation;
+}
+
+std::shared_ptr<VROKeyframeAnimation> VROFBXLoader::loadFBXKeyframeAnimation(const viro::Node_KeyframeAnimation &animation_pb) {
+    std::vector<std::unique_ptr<VROKeyframeAnimationFrame>> frames;
+    bool hasTranslation = false;
+    bool hasRotation = false;
+    bool hasScale = false;
+    
+    for (int f = 0; f < animation_pb.frame_size(); f++) {
+        const viro::Node::KeyframeAnimation::Frame &frame_pb = animation_pb.frame(f);
+        
+        std::unique_ptr<VROKeyframeAnimationFrame> frame = std::unique_ptr<VROKeyframeAnimationFrame>(new VROKeyframeAnimationFrame());
+        frame->time = frame_pb.time();
+        
+        if (frame_pb.translation_size() >= 2) {
+            hasTranslation = true;
+            frame->translation = { frame_pb.translation(0), frame_pb.translation(1), frame_pb.translation(2) };
+        }
+        if (frame_pb.scale_size() >= 2) {
+            hasScale = true;
+            frame->scale = { frame_pb.scale(0), frame_pb.scale(1), frame_pb.scale(2) };
+        }
+        if (frame_pb.rotation_size() >= 3) {
+            hasRotation = true;
+            frame->rotation = { frame_pb.rotation(0), frame_pb.rotation(1), frame_pb.rotation(2), frame_pb.rotation(3) };
+        }
+        frames.push_back(std::move(frame));
+    }
+    
+    float duration = animation_pb.duration();
+    
+    std::shared_ptr<VROKeyframeAnimation> animation = std::make_shared<VROKeyframeAnimation>(frames, duration, hasTranslation, hasRotation, hasScale);
     animation->setName(animation_pb.name());
     
     return animation;

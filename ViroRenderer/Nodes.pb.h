@@ -9,6 +9,7 @@
 #if VRO_PLATFORM_IOS
 #define google google_public
 #endif
+
 #include <google/protobuf/stubs/common.h>
 
 #if GOOGLE_PROTOBUF_VERSION < 3002000
@@ -57,6 +58,12 @@ extern Node_Geometry_SkinDefaultTypeInternal _Node_Geometry_Skin_default_instanc
 class Node_Geometry_Source;
 class Node_Geometry_SourceDefaultTypeInternal;
 extern Node_Geometry_SourceDefaultTypeInternal _Node_Geometry_Source_default_instance_;
+class Node_KeyframeAnimation;
+class Node_KeyframeAnimationDefaultTypeInternal;
+extern Node_KeyframeAnimationDefaultTypeInternal _Node_KeyframeAnimation_default_instance_;
+class Node_KeyframeAnimation_Frame;
+class Node_KeyframeAnimation_FrameDefaultTypeInternal;
+extern Node_KeyframeAnimation_FrameDefaultTypeInternal _Node_KeyframeAnimation_Frame_default_instance_;
 class Node_Light;
 class Node_LightDefaultTypeInternal;
 extern Node_LightDefaultTypeInternal _Node_Light_default_instance_;
@@ -1684,6 +1691,230 @@ class Node_SkeletalAnimation : public ::google::protobuf::MessageLite /* @@proto
 };
 // -------------------------------------------------------------------
 
+class Node_KeyframeAnimation_Frame : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:viro.Node.KeyframeAnimation.Frame) */ {
+ public:
+  Node_KeyframeAnimation_Frame();
+  virtual ~Node_KeyframeAnimation_Frame();
+
+  Node_KeyframeAnimation_Frame(const Node_KeyframeAnimation_Frame& from);
+
+  inline Node_KeyframeAnimation_Frame& operator=(const Node_KeyframeAnimation_Frame& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const Node_KeyframeAnimation_Frame& default_instance();
+
+  static inline const Node_KeyframeAnimation_Frame* internal_default_instance() {
+    return reinterpret_cast<const Node_KeyframeAnimation_Frame*>(
+               &_Node_KeyframeAnimation_Frame_default_instance_);
+  }
+
+  void Swap(Node_KeyframeAnimation_Frame* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Node_KeyframeAnimation_Frame* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  Node_KeyframeAnimation_Frame* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from)
+    PROTOBUF_FINAL;
+  void CopyFrom(const Node_KeyframeAnimation_Frame& from);
+  void MergeFrom(const Node_KeyframeAnimation_Frame& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  void DiscardUnknownFields();
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Node_KeyframeAnimation_Frame* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::std::string GetTypeName() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated float translation = 2;
+  int translation_size() const;
+  void clear_translation();
+  static const int kTranslationFieldNumber = 2;
+  float translation(int index) const;
+  void set_translation(int index, float value);
+  void add_translation(float value);
+  const ::google::protobuf::RepeatedField< float >&
+      translation() const;
+  ::google::protobuf::RepeatedField< float >*
+      mutable_translation();
+
+  // repeated float rotation = 3;
+  int rotation_size() const;
+  void clear_rotation();
+  static const int kRotationFieldNumber = 3;
+  float rotation(int index) const;
+  void set_rotation(int index, float value);
+  void add_rotation(float value);
+  const ::google::protobuf::RepeatedField< float >&
+      rotation() const;
+  ::google::protobuf::RepeatedField< float >*
+      mutable_rotation();
+
+  // repeated float scale = 4;
+  int scale_size() const;
+  void clear_scale();
+  static const int kScaleFieldNumber = 4;
+  float scale(int index) const;
+  void set_scale(int index, float value);
+  void add_scale(float value);
+  const ::google::protobuf::RepeatedField< float >&
+      scale() const;
+  ::google::protobuf::RepeatedField< float >*
+      mutable_scale();
+
+  // float time = 1;
+  void clear_time();
+  static const int kTimeFieldNumber = 1;
+  float time() const;
+  void set_time(float value);
+
+  // @@protoc_insertion_point(class_scope:viro.Node.KeyframeAnimation.Frame)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
+  ::google::protobuf::RepeatedField< float > translation_;
+  mutable int _translation_cached_byte_size_;
+  ::google::protobuf::RepeatedField< float > rotation_;
+  mutable int _rotation_cached_byte_size_;
+  ::google::protobuf::RepeatedField< float > scale_;
+  mutable int _scale_cached_byte_size_;
+  float time_;
+  mutable int _cached_size_;
+  friend struct  protobuf_Nodes_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class Node_KeyframeAnimation : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:viro.Node.KeyframeAnimation) */ {
+ public:
+  Node_KeyframeAnimation();
+  virtual ~Node_KeyframeAnimation();
+
+  Node_KeyframeAnimation(const Node_KeyframeAnimation& from);
+
+  inline Node_KeyframeAnimation& operator=(const Node_KeyframeAnimation& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const Node_KeyframeAnimation& default_instance();
+
+  static inline const Node_KeyframeAnimation* internal_default_instance() {
+    return reinterpret_cast<const Node_KeyframeAnimation*>(
+               &_Node_KeyframeAnimation_default_instance_);
+  }
+
+  void Swap(Node_KeyframeAnimation* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Node_KeyframeAnimation* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  Node_KeyframeAnimation* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from)
+    PROTOBUF_FINAL;
+  void CopyFrom(const Node_KeyframeAnimation& from);
+  void MergeFrom(const Node_KeyframeAnimation& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  void DiscardUnknownFields();
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Node_KeyframeAnimation* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::std::string GetTypeName() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  typedef Node_KeyframeAnimation_Frame Frame;
+
+  // accessors -------------------------------------------------------
+
+  // repeated .viro.Node.KeyframeAnimation.Frame frame = 2;
+  int frame_size() const;
+  void clear_frame();
+  static const int kFrameFieldNumber = 2;
+  const ::viro::Node_KeyframeAnimation_Frame& frame(int index) const;
+  ::viro::Node_KeyframeAnimation_Frame* mutable_frame(int index);
+  ::viro::Node_KeyframeAnimation_Frame* add_frame();
+  ::google::protobuf::RepeatedPtrField< ::viro::Node_KeyframeAnimation_Frame >*
+      mutable_frame();
+  const ::google::protobuf::RepeatedPtrField< ::viro::Node_KeyframeAnimation_Frame >&
+      frame() const;
+
+  // string name = 1;
+  void clear_name();
+  static const int kNameFieldNumber = 1;
+  const ::std::string& name() const;
+  void set_name(const ::std::string& value);
+  #if LANG_CXX11
+  void set_name(::std::string&& value);
+  #endif
+  void set_name(const char* value);
+  void set_name(const char* value, size_t size);
+  ::std::string* mutable_name();
+  ::std::string* release_name();
+  void set_allocated_name(::std::string* name);
+
+  // int64 duration = 3;
+  void clear_duration();
+  static const int kDurationFieldNumber = 3;
+  ::google::protobuf::int64 duration() const;
+  void set_duration(::google::protobuf::int64 value);
+
+  // @@protoc_insertion_point(class_scope:viro.Node.KeyframeAnimation)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::viro::Node_KeyframeAnimation_Frame > frame_;
+  ::google::protobuf::internal::ArenaStringPtr name_;
+  ::google::protobuf::int64 duration_;
+  mutable int _cached_size_;
+  friend struct  protobuf_Nodes_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
 class Node_Light : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:viro.Node.Light) */ {
  public:
   Node_Light();
@@ -2030,6 +2261,7 @@ class Node : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(
   typedef Node_Geometry Geometry;
   typedef Node_Skeleton Skeleton;
   typedef Node_SkeletalAnimation SkeletalAnimation;
+  typedef Node_KeyframeAnimation KeyframeAnimation;
   typedef Node_Light Light;
   typedef Node_Camera Camera;
 
@@ -2083,10 +2315,22 @@ class Node : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(
   const ::google::protobuf::RepeatedPtrField< ::viro::Node_SkeletalAnimation >&
       skeletal_animation() const;
 
-  // repeated .viro.Node.Light light = 10;
+  // repeated .viro.Node.KeyframeAnimation keyframe_animation = 10;
+  int keyframe_animation_size() const;
+  void clear_keyframe_animation();
+  static const int kKeyframeAnimationFieldNumber = 10;
+  const ::viro::Node_KeyframeAnimation& keyframe_animation(int index) const;
+  ::viro::Node_KeyframeAnimation* mutable_keyframe_animation(int index);
+  ::viro::Node_KeyframeAnimation* add_keyframe_animation();
+  ::google::protobuf::RepeatedPtrField< ::viro::Node_KeyframeAnimation >*
+      mutable_keyframe_animation();
+  const ::google::protobuf::RepeatedPtrField< ::viro::Node_KeyframeAnimation >&
+      keyframe_animation() const;
+
+  // repeated .viro.Node.Light light = 11;
   int light_size() const;
   void clear_light();
-  static const int kLightFieldNumber = 10;
+  static const int kLightFieldNumber = 11;
   const ::viro::Node_Light& light(int index) const;
   ::viro::Node_Light* mutable_light(int index);
   ::viro::Node_Light* add_light();
@@ -2095,10 +2339,10 @@ class Node : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(
   const ::google::protobuf::RepeatedPtrField< ::viro::Node_Light >&
       light() const;
 
-  // repeated .viro.Node subnode = 12;
+  // repeated .viro.Node subnode = 13;
   int subnode_size() const;
   void clear_subnode();
-  static const int kSubnodeFieldNumber = 12;
+  static const int kSubnodeFieldNumber = 13;
   const ::viro::Node& subnode(int index) const;
   ::viro::Node* mutable_subnode(int index);
   ::viro::Node* add_subnode();
@@ -2139,10 +2383,10 @@ class Node : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(
   ::viro::Node_Skeleton* release_skeleton();
   void set_allocated_skeleton(::viro::Node_Skeleton* skeleton);
 
-  // .viro.Node.Camera camera = 11;
+  // .viro.Node.Camera camera = 12;
   bool has_camera() const;
   void clear_camera();
-  static const int kCameraFieldNumber = 11;
+  static const int kCameraFieldNumber = 12;
   const ::viro::Node_Camera& camera() const;
   ::viro::Node_Camera* mutable_camera();
   ::viro::Node_Camera* release_camera();
@@ -2171,6 +2415,7 @@ class Node : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(
   ::google::protobuf::RepeatedField< float > rotation_;
   mutable int _rotation_cached_byte_size_;
   ::google::protobuf::RepeatedPtrField< ::viro::Node_SkeletalAnimation > skeletal_animation_;
+  ::google::protobuf::RepeatedPtrField< ::viro::Node_KeyframeAnimation > keyframe_animation_;
   ::google::protobuf::RepeatedPtrField< ::viro::Node_Light > light_;
   ::google::protobuf::RepeatedPtrField< ::viro::Node > subnode_;
   ::google::protobuf::internal::ArenaStringPtr name_;
@@ -3774,6 +4019,214 @@ inline void Node_SkeletalAnimation::set_has_scaling(bool value) {
 
 // -------------------------------------------------------------------
 
+// Node_KeyframeAnimation_Frame
+
+// float time = 1;
+inline void Node_KeyframeAnimation_Frame::clear_time() {
+  time_ = 0;
+}
+inline float Node_KeyframeAnimation_Frame::time() const {
+  // @@protoc_insertion_point(field_get:viro.Node.KeyframeAnimation.Frame.time)
+  return time_;
+}
+inline void Node_KeyframeAnimation_Frame::set_time(float value) {
+  
+  time_ = value;
+  // @@protoc_insertion_point(field_set:viro.Node.KeyframeAnimation.Frame.time)
+}
+
+// repeated float translation = 2;
+inline int Node_KeyframeAnimation_Frame::translation_size() const {
+  return translation_.size();
+}
+inline void Node_KeyframeAnimation_Frame::clear_translation() {
+  translation_.Clear();
+}
+inline float Node_KeyframeAnimation_Frame::translation(int index) const {
+  // @@protoc_insertion_point(field_get:viro.Node.KeyframeAnimation.Frame.translation)
+  return translation_.Get(index);
+}
+inline void Node_KeyframeAnimation_Frame::set_translation(int index, float value) {
+  translation_.Set(index, value);
+  // @@protoc_insertion_point(field_set:viro.Node.KeyframeAnimation.Frame.translation)
+}
+inline void Node_KeyframeAnimation_Frame::add_translation(float value) {
+  translation_.Add(value);
+  // @@protoc_insertion_point(field_add:viro.Node.KeyframeAnimation.Frame.translation)
+}
+inline const ::google::protobuf::RepeatedField< float >&
+Node_KeyframeAnimation_Frame::translation() const {
+  // @@protoc_insertion_point(field_list:viro.Node.KeyframeAnimation.Frame.translation)
+  return translation_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+Node_KeyframeAnimation_Frame::mutable_translation() {
+  // @@protoc_insertion_point(field_mutable_list:viro.Node.KeyframeAnimation.Frame.translation)
+  return &translation_;
+}
+
+// repeated float rotation = 3;
+inline int Node_KeyframeAnimation_Frame::rotation_size() const {
+  return rotation_.size();
+}
+inline void Node_KeyframeAnimation_Frame::clear_rotation() {
+  rotation_.Clear();
+}
+inline float Node_KeyframeAnimation_Frame::rotation(int index) const {
+  // @@protoc_insertion_point(field_get:viro.Node.KeyframeAnimation.Frame.rotation)
+  return rotation_.Get(index);
+}
+inline void Node_KeyframeAnimation_Frame::set_rotation(int index, float value) {
+  rotation_.Set(index, value);
+  // @@protoc_insertion_point(field_set:viro.Node.KeyframeAnimation.Frame.rotation)
+}
+inline void Node_KeyframeAnimation_Frame::add_rotation(float value) {
+  rotation_.Add(value);
+  // @@protoc_insertion_point(field_add:viro.Node.KeyframeAnimation.Frame.rotation)
+}
+inline const ::google::protobuf::RepeatedField< float >&
+Node_KeyframeAnimation_Frame::rotation() const {
+  // @@protoc_insertion_point(field_list:viro.Node.KeyframeAnimation.Frame.rotation)
+  return rotation_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+Node_KeyframeAnimation_Frame::mutable_rotation() {
+  // @@protoc_insertion_point(field_mutable_list:viro.Node.KeyframeAnimation.Frame.rotation)
+  return &rotation_;
+}
+
+// repeated float scale = 4;
+inline int Node_KeyframeAnimation_Frame::scale_size() const {
+  return scale_.size();
+}
+inline void Node_KeyframeAnimation_Frame::clear_scale() {
+  scale_.Clear();
+}
+inline float Node_KeyframeAnimation_Frame::scale(int index) const {
+  // @@protoc_insertion_point(field_get:viro.Node.KeyframeAnimation.Frame.scale)
+  return scale_.Get(index);
+}
+inline void Node_KeyframeAnimation_Frame::set_scale(int index, float value) {
+  scale_.Set(index, value);
+  // @@protoc_insertion_point(field_set:viro.Node.KeyframeAnimation.Frame.scale)
+}
+inline void Node_KeyframeAnimation_Frame::add_scale(float value) {
+  scale_.Add(value);
+  // @@protoc_insertion_point(field_add:viro.Node.KeyframeAnimation.Frame.scale)
+}
+inline const ::google::protobuf::RepeatedField< float >&
+Node_KeyframeAnimation_Frame::scale() const {
+  // @@protoc_insertion_point(field_list:viro.Node.KeyframeAnimation.Frame.scale)
+  return scale_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+Node_KeyframeAnimation_Frame::mutable_scale() {
+  // @@protoc_insertion_point(field_mutable_list:viro.Node.KeyframeAnimation.Frame.scale)
+  return &scale_;
+}
+
+// -------------------------------------------------------------------
+
+// Node_KeyframeAnimation
+
+// string name = 1;
+inline void Node_KeyframeAnimation::clear_name() {
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Node_KeyframeAnimation::name() const {
+  // @@protoc_insertion_point(field_get:viro.Node.KeyframeAnimation.name)
+  return name_.GetNoArena();
+}
+inline void Node_KeyframeAnimation::set_name(const ::std::string& value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:viro.Node.KeyframeAnimation.name)
+}
+#if LANG_CXX11
+inline void Node_KeyframeAnimation::set_name(::std::string&& value) {
+  
+  name_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:viro.Node.KeyframeAnimation.name)
+}
+#endif
+inline void Node_KeyframeAnimation::set_name(const char* value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:viro.Node.KeyframeAnimation.name)
+}
+inline void Node_KeyframeAnimation::set_name(const char* value, size_t size) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:viro.Node.KeyframeAnimation.name)
+}
+inline ::std::string* Node_KeyframeAnimation::mutable_name() {
+  
+  // @@protoc_insertion_point(field_mutable:viro.Node.KeyframeAnimation.name)
+  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Node_KeyframeAnimation::release_name() {
+  // @@protoc_insertion_point(field_release:viro.Node.KeyframeAnimation.name)
+  
+  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Node_KeyframeAnimation::set_allocated_name(::std::string* name) {
+  if (name != NULL) {
+    
+  } else {
+    
+  }
+  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
+  // @@protoc_insertion_point(field_set_allocated:viro.Node.KeyframeAnimation.name)
+}
+
+// repeated .viro.Node.KeyframeAnimation.Frame frame = 2;
+inline int Node_KeyframeAnimation::frame_size() const {
+  return frame_.size();
+}
+inline void Node_KeyframeAnimation::clear_frame() {
+  frame_.Clear();
+}
+inline const ::viro::Node_KeyframeAnimation_Frame& Node_KeyframeAnimation::frame(int index) const {
+  // @@protoc_insertion_point(field_get:viro.Node.KeyframeAnimation.frame)
+  return frame_.Get(index);
+}
+inline ::viro::Node_KeyframeAnimation_Frame* Node_KeyframeAnimation::mutable_frame(int index) {
+  // @@protoc_insertion_point(field_mutable:viro.Node.KeyframeAnimation.frame)
+  return frame_.Mutable(index);
+}
+inline ::viro::Node_KeyframeAnimation_Frame* Node_KeyframeAnimation::add_frame() {
+  // @@protoc_insertion_point(field_add:viro.Node.KeyframeAnimation.frame)
+  return frame_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::viro::Node_KeyframeAnimation_Frame >*
+Node_KeyframeAnimation::mutable_frame() {
+  // @@protoc_insertion_point(field_mutable_list:viro.Node.KeyframeAnimation.frame)
+  return &frame_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::viro::Node_KeyframeAnimation_Frame >&
+Node_KeyframeAnimation::frame() const {
+  // @@protoc_insertion_point(field_list:viro.Node.KeyframeAnimation.frame)
+  return frame_;
+}
+
+// int64 duration = 3;
+inline void Node_KeyframeAnimation::clear_duration() {
+  duration_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 Node_KeyframeAnimation::duration() const {
+  // @@protoc_insertion_point(field_get:viro.Node.KeyframeAnimation.duration)
+  return duration_;
+}
+inline void Node_KeyframeAnimation::set_duration(::google::protobuf::int64 value) {
+  
+  duration_ = value;
+  // @@protoc_insertion_point(field_set:viro.Node.KeyframeAnimation.duration)
+}
+
+// -------------------------------------------------------------------
+
 // Node_Light
 
 // string name = 1;
@@ -4346,7 +4799,37 @@ Node::skeletal_animation() const {
   return skeletal_animation_;
 }
 
-// repeated .viro.Node.Light light = 10;
+// repeated .viro.Node.KeyframeAnimation keyframe_animation = 10;
+inline int Node::keyframe_animation_size() const {
+  return keyframe_animation_.size();
+}
+inline void Node::clear_keyframe_animation() {
+  keyframe_animation_.Clear();
+}
+inline const ::viro::Node_KeyframeAnimation& Node::keyframe_animation(int index) const {
+  // @@protoc_insertion_point(field_get:viro.Node.keyframe_animation)
+  return keyframe_animation_.Get(index);
+}
+inline ::viro::Node_KeyframeAnimation* Node::mutable_keyframe_animation(int index) {
+  // @@protoc_insertion_point(field_mutable:viro.Node.keyframe_animation)
+  return keyframe_animation_.Mutable(index);
+}
+inline ::viro::Node_KeyframeAnimation* Node::add_keyframe_animation() {
+  // @@protoc_insertion_point(field_add:viro.Node.keyframe_animation)
+  return keyframe_animation_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::viro::Node_KeyframeAnimation >*
+Node::mutable_keyframe_animation() {
+  // @@protoc_insertion_point(field_mutable_list:viro.Node.keyframe_animation)
+  return &keyframe_animation_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::viro::Node_KeyframeAnimation >&
+Node::keyframe_animation() const {
+  // @@protoc_insertion_point(field_list:viro.Node.keyframe_animation)
+  return keyframe_animation_;
+}
+
+// repeated .viro.Node.Light light = 11;
 inline int Node::light_size() const {
   return light_.size();
 }
@@ -4376,7 +4859,7 @@ Node::light() const {
   return light_;
 }
 
-// .viro.Node.Camera camera = 11;
+// .viro.Node.Camera camera = 12;
 inline bool Node::has_camera() const {
   return this != internal_default_instance() && camera_ != NULL;
 }
@@ -4415,7 +4898,7 @@ inline void Node::set_allocated_camera(::viro::Node_Camera* camera) {
   // @@protoc_insertion_point(field_set_allocated:viro.Node.camera)
 }
 
-// repeated .viro.Node subnode = 12;
+// repeated .viro.Node subnode = 13;
 inline int Node::subnode_size() const {
   return subnode_.size();
 }
@@ -4446,6 +4929,10 @@ Node::subnode() const {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
