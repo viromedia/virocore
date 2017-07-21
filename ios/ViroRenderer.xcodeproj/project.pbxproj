@@ -466,7 +466,6 @@
 		A526F5C31EFD9B5600A8A7A3 /* VROTransformDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A56529A41EFD8051008097D7 /* VROTransformDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A527C7081EE76876006D3F24 /* VROPencil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A527C7071EE76876006D3F24 /* VROPencil.cpp */; };
 		A527C7091EE7692F006D3F24 /* VROPencil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A527C7071EE76876006D3F24 /* VROPencil.cpp */; };
-		A527C70A1EE76935006D3F24 /* VROPencil.h in Headers */ = {isa = PBXBuildFile; fileRef = A527C7061EE76876006D3F24 /* VROPencil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A52B272B1ED8DAAA0089F9A2 /* VROPhysicsContactResultCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A52B272A1ED8DA960089F9A2 /* VROPhysicsContactResultCallback.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A538C5AD1EC63EEF00A724F0 /* VROPhysicsMotionState.h in Headers */ = {isa = PBXBuildFile; fileRef = A538C5AC1EC63EDD00A724F0 /* VROPhysicsMotionState.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB1D1E1AEB0D008B4AE2 /* VROEventDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB131E1AE11D008B4AE2 /* VROEventDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -487,6 +486,8 @@
 		A5ABB1D71E95703200E07EBC /* stereo3602.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CA1E95703200E07EBC /* stereo3602.jpg */; };
 		A5ABB1D81E95703200E07EBC /* stereoVid.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CB1E95703200E07EBC /* stereoVid.mp4 */; };
 		A5ABB1D91E95703200E07EBC /* stereoVid360.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CC1E95703200E07EBC /* stereoVid360.mp4 */; };
+		A5E4E37E1F22A1F90010A087 /* VROWeakProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A5E4E37C1F22A1F90010A087 /* VROWeakProxy.h */; };
+		A5E4E37F1F22A1F90010A087 /* VROWeakProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5E4E37D1F22A1F90010A087 /* VROWeakProxy.mm */; };
 		A5EC65861EB3ECE200FE220E /* libBulletCollision.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65821EB3ECE200FE220E /* libBulletCollision.a */; };
 		A5EC65871EB3ECE200FE220E /* libBulletDynamics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */; };
 		A5EC65881EB3ECE200FE220E /* libBulletSoftBody.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */; };
@@ -804,7 +805,7 @@
 		8F5C41571BD8300E006D7A77 /* VROImageUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROImageUtil.h; sourceTree = "<group>"; };
 		8F5CAA161F1FAD5800FEEC7E /* VROKeyframeAnimation.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROKeyframeAnimation.cpp; sourceTree = "<group>"; };
 		8F5CAA171F1FAD5800FEEC7E /* VROKeyframeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROKeyframeAnimation.h; sourceTree = "<group>"; };
-		8F5CAA1A1F202AE100FEEC7E /* bball.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = bball.vrx; path = ViroSample/bball.vrx; sourceTree = "<group>"; };
+		8F5CAA1A1F202AE100FEEC7E /* bball.vrx */ = {isa = PBXFileReference; lastKnownFileType = text; name = bball.vrx; path = ViroSample/bball.vrx; sourceTree = "<group>"; };
 		8F5CAA1D1F202BC900FEEC7E /* bball_SPEC_NRM.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bball_SPEC_NRM.png; path = ../../../Downloads/bball_anim/bball_SPEC_NRM.png; sourceTree = "<group>"; };
 		8F5CAA1E1F202BC900FEEC7E /* bball_SPEC.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bball_SPEC.png; path = ../../../Downloads/bball_anim/bball_SPEC.png; sourceTree = "<group>"; };
 		8F5CAA1F1F202BC900FEEC7E /* bball.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = bball.jpg; path = ../../../Downloads/bball_anim/bball.jpg; sourceTree = "<group>"; };
@@ -1075,6 +1076,8 @@
 		A5ABB1CA1E95703200E07EBC /* stereo3602.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = stereo3602.jpg; path = ViroSample/stereo3602.jpg; sourceTree = "<group>"; };
 		A5ABB1CB1E95703200E07EBC /* stereoVid.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = stereoVid.mp4; path = ViroSample/stereoVid.mp4; sourceTree = "<group>"; };
 		A5ABB1CC1E95703200E07EBC /* stereoVid360.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = stereoVid360.mp4; path = ViroSample/stereoVid360.mp4; sourceTree = "<group>"; };
+		A5E4E37C1F22A1F90010A087 /* VROWeakProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROWeakProxy.h; sourceTree = "<group>"; };
+		A5E4E37D1F22A1F90010A087 /* VROWeakProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROWeakProxy.mm; sourceTree = "<group>"; };
 		A5EC65821EB3ECE200FE220E /* libBulletCollision.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletCollision.a; path = Libraries/bullet/libBulletCollision.a; sourceTree = "<group>"; };
 		A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletDynamics.a; path = Libraries/bullet/libBulletDynamics.a; sourceTree = "<group>"; };
 		A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletSoftBody.a; path = Libraries/bullet/libBulletSoftBody.a; sourceTree = "<group>"; };
@@ -1327,17 +1330,19 @@
 		8F129FC11EDF6A8700341D83 /* AR */ = {
 			isa = PBXGroup;
 			children = (
-				8FAE18BC1EE79C650021C7BB /* Inertial */,
 				8FAE18BB1EE79C5B0021C7BB /* ARKit */,
+				8FAE18BC1EE79C650021C7BB /* Inertial */,
+				8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */,
+				8ADF360A1F14237B002BF73D /* VROARSceneDelegateiOS.h */,
 				8A77FD2A1EFB30F2000920F9 /* VROInputControllerARiOS.cpp */,
 				8A77FD2B1EFB30F2000920F9 /* VROInputControllerARiOS.h */,
 				8A06EFDD1F021D3B00C396F4 /* VROInputPresenterARiOS.h */,
-				8F129FC41EDF6AE500341D83 /* VROViewAR.h */,
-				8F129FC51EDF6AE500341D83 /* VROViewAR.mm */,
 				8A35173A1EE11C4800B6E786 /* VROTrackingHelper.h */,
 				8A35173B1EE11C4800B6E786 /* VROTrackingHelper.mm */,
-				8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */,
-				8ADF360A1F14237B002BF73D /* VROARSceneDelegateiOS.h */,
+				8F129FC41EDF6AE500341D83 /* VROViewAR.h */,
+				8F129FC51EDF6AE500341D83 /* VROViewAR.mm */,
+				A5E4E37C1F22A1F90010A087 /* VROWeakProxy.h */,
+				A5E4E37D1F22A1F90010A087 /* VROWeakProxy.mm */,
 			);
 			name = AR;
 			sourceTree = "<group>";
@@ -2210,6 +2215,7 @@
 				8F83DEAF1C50278C0089C31A /* VROSphere.h in Headers */,
 				A50F2A291ED135D800D964D5 /* VROPhysicsBodyDelegateiOS.h in Headers */,
 				8F65F8161CA073C100415115 /* VROTextureUtil.h in Headers */,
+				A5E4E37E1F22A1F90010A087 /* VROWeakProxy.h in Headers */,
 				8A130DA71E401B910050D83B /* VROSoundDataDelegate.h in Headers */,
 				8FE382131EF06FED005038CB /* VROARAnchor.h in Headers */,
 				8FDDB4A81DAF134300DE0968 /* VROLineSegment.h in Headers */,
@@ -2747,6 +2753,7 @@
 				8FCB10081DD10EF300FE425C /* VROStringUtil.cpp in Sources */,
 				8FD4DEF81C18ED19003DC425 /* VROVector4f.cpp in Sources */,
 				8FD4DF101C18ED3C003DC425 /* VROTexture.cpp in Sources */,
+				A5E4E37F1F22A1F90010A087 /* VROWeakProxy.mm in Sources */,
 				A5EC659E1EBD34C000FE220E /* VROPhysicsWorld.cpp in Sources */,
 				8FCF396B1CB4242000A86CA3 /* VRORenderer.cpp in Sources */,
 				8FD4DEF71C18ED19003DC425 /* VROVector3f.cpp in Sources */,
