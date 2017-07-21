@@ -6,6 +6,9 @@
 //
 
 #include "VROPhysicsBody.h"
+#include "VROMatrix4f.h"
+#include "VROGeometry.h"
+#include <LinearMath/btTransform.h>
 #include "VRONode.h"
 #include "VROPhysicsMotionState.h"
 #include "VROStringUtil.h"
@@ -231,10 +234,15 @@ void VROPhysicsBody::updateBulletRigidBody() {
         _shape = std::make_shared<VROPhysicsShape>(VROPhysicsShape::VROShapeType::Box, params);
     }
 
-    // If the physics body contains a compounded shape, we recalculate it's inertia.
+    /*
+     As Bullet's physicBody transform is placed at the center of mass of a physics object,
+     it does not necessarily align with Viro's geometric transform that is placed at the position
+     of a node's geometry. Thus, we will need to calculate geometricTransform-To-physicsTransform
+     offset here to be stored in VROPhysicsMotionState.
+     */
+    btTransform physicsBodyTransformOffset = btTransform::getIdentity();
     if (_shape->getIsCompoundShape()) {
         btCompoundShape *compoundShape = (btCompoundShape *)_shape->getBulletShape();
-        btTransform principal;
         btVector3 principalInertia;
         btScalar* masses = new btScalar[compoundShape->getNumChildShapes()];
 
@@ -247,24 +255,68 @@ void VROPhysicsBody::updateBulletRigidBody() {
             }
         }
 
-        // Recalculate the inertia of the compounded body
-        compoundShape->calculatePrincipalAxisTransform(masses, principal, principalInertia);
-        _inertia = VROVector3f(principalInertia.x(), principalInertia.y(), principalInertia.z());
-        _rigidBody->setMassProps(_mass, principalInertia);
+        // Recalculate the inertia and the center of mass offset of the compounded body
+        compoundShape->calculatePrincipalAxisTransform(masses, physicsBodyTransformOffset, principalInertia);
+
+        // Transform each sub-shape such that they are oriented in relation to the
+        // calculated center of mass for this physics object. We then treat the center of
+        // mass as the physicsBodyTransform offset.
+        for (int i=0; i < compoundShape->getNumChildShapes(); i++) {
+            btTransform newChildTransform = physicsBodyTransformOffset.inverse()*compoundShape->getChildTransform(i);
+            compoundShape->updateChildTransform(i,newChildTransform);
+        }
+
+        // Update the inertia of the compound physics shape
         _rigidBody->setCollisionShape(compoundShape);
-    } else {
-         btVector3 principalInertia;
-        _shape->getBulletShape()->calculateLocalInertia(_mass, principalInertia);
         _inertia = VROVector3f(principalInertia.x(), principalInertia.y(), principalInertia.z());
         _rigidBody->setMassProps(_mass, principalInertia);
+        _rigidBody->updateInertiaTensor();
+    } else {
+        // If a physics shape was generated from geometric non-compound control, we then
+        // place the physics shape at the center of the geometric bounding box associated
+        // with this control and calculate the physicsBodyTransform offset. Note: the
+        // only transformation that occurs here between the node and it's geometry
+        // is a translation.
+        if (_shape->getIsGeneratedFromGeometry()){
+            // Grab the computed geometric transform contained within this node
+            VROVector3f nodePosition = node->getComputedTransform().extractTranslation();
+            VROVector3f geometryPosition = node->getBoundingBox().getCenter();
+            VROVector3f geometryOffset = geometryPosition - nodePosition;
+            VROMatrix4f geometryComputedTransform = node->getComputedTransform();
+            geometryComputedTransform.translate(geometryOffset);
+
+            // Calculate an offset transform between the geometry's compute transform,
+            // and the node's compute transform. For example in VROText, the text geometry
+            // is placed at a distance from the node's origin.
+            VROMatrix4f computedTransformInvert = node->getComputedTransform().invert();
+            VROMatrix4f offsetTransform = computedTransformInvert* geometryComputedTransform;
+
+            // Finally save the re-computed transform as physicsBodyTransformOffset.
+            VROVector3f pos = offsetTransform.extractTranslation();
+            VROQuaternion rot = offsetTransform.extractRotation(offsetTransform.extractScale());
+            VROVector3f nodeScale = node->getComputedTransform().extractScale();
+
+            btTransform offsetTransformBullet = btTransform::getIdentity();
+            offsetTransformBullet.setOrigin(btVector3({pos.x * nodeScale.x, pos.y * nodeScale.y, pos.z * nodeScale.z}));
+            offsetTransformBullet.setRotation(btQuaternion({rot.X, rot.Y, rot.Z, rot.W}));
+            physicsBodyTransformOffset = offsetTransformBullet;
+        }
         _rigidBody->setCollisionShape(_shape->getBulletShape());
+
+        // Update the inertia of the compound physics shape
+        btVector3 principalInertia;
+        _inertia = VROVector3f(principalInertia.x(), principalInertia.y(), principalInertia.z());
+        _shape->getBulletShape()->calculateLocalInertia(_mass, principalInertia);
+        _rigidBody->setMassProps(_mass, principalInertia);
+        _rigidBody->updateInertiaTensor();
     }
 
-    // Update Motion states as neccessary.
-    if (_rigidBody->getMotionState() == nullptr){
-        VROPhysicsMotionState *motionState = new VROPhysicsMotionState(shared_from_this());
-        _rigidBody->setMotionState(motionState);
+    btMotionState *state = _rigidBody->getMotionState();
+    if (state != nullptr) {
+        delete state;
     }
+    VROPhysicsMotionState *motionState = new VROPhysicsMotionState(shared_from_this(), physicsBodyTransformOffset);
+    _rigidBody->setMotionState(motionState);
 
     // Update the rigid body to the latest world transform.
     btTransform transform;
@@ -275,27 +327,34 @@ void VROPhysicsBody::updateBulletRigidBody() {
     _needsBulletUpdate = false;
 }
 
-void VROPhysicsBody::getWorldTransform(btTransform& centerOfMassWorldTrans ) const {
+void VROPhysicsBody::getWorldTransform(btTransform& centerOfMassWorldTrans) const {
     std::shared_ptr<VRONode> node = _w_node.lock();
-    if (!node){
+    if (!node) {
         return;
     }
 
     VROVector3f pos = node->getComputedPosition();
     VROQuaternion rot = VROQuaternion(node->getComputedRotation());
-    centerOfMassWorldTrans =
-            btTransform(btQuaternion(rot.X, rot.Y, rot.Z, rot.W), btVector3(pos.x, pos.y, pos.z));
+    btTransform graphicsWorldTrans
+            = btTransform(btQuaternion(rot.X, rot.Y, rot.Z, rot.W), btVector3(pos.x, pos.y, pos.z));
+
+    VROPhysicsMotionState *state = (VROPhysicsMotionState *) _rigidBody->getMotionState();
+    btTransform physicsTransformOffset = state->getPhysicsTransformOffset();
+    centerOfMassWorldTrans = graphicsWorldTrans * physicsTransformOffset;
 }
 
 void VROPhysicsBody::setWorldTransform(const btTransform& centerOfMassWorldTrans) {
     std::shared_ptr<VRONode> node = _w_node.lock();
-    if (!node){
+    if (!node) {
         return;
     }
+    VROPhysicsMotionState *state = (VROPhysicsMotionState *) _rigidBody->getMotionState();
+    btTransform physicsTransformOffset = state->getPhysicsTransformOffset();
+    btTransform graphicsWorldTrans = centerOfMassWorldTrans * physicsTransformOffset.inverse();
 
-    btQuaternion rot = centerOfMassWorldTrans.getRotation();
-    btVector3 pos = centerOfMassWorldTrans.getOrigin();
-    node->setWorldTransform({pos.getX(), pos.getY(), pos.getZ()},
+    btQuaternion rot = graphicsWorldTrans.getRotation();
+    btVector3 pos = graphicsWorldTrans.getOrigin();
+    node->setWorldTransform({pos.getX() , pos.getY() , pos.getZ() },
                             VROQuaternion(rot.x(), rot.y(), rot.z(), rot.w()));
 }
 

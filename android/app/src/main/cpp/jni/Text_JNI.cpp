@@ -165,7 +165,7 @@ JNI_METHOD(void, nativeCreateText)(JNIEnv *env,
                                                                height, horizontalAlignmentEnum,
                                                                verticalAlignmentEnum, lineBreakModeEnum,
                                                                clipModeEnum, maxLines);
-
+        vroText->updateBoundingBox();
         parentNode->setGeometry(vroText);
         delegateRef->textCreated(Text::jptr(vroText));
    });

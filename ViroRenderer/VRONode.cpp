@@ -381,7 +381,7 @@ void VRONode::doComputeTransform(VROMatrix4f parentTransform) {
     VROMatrix4f translate;
     translate.translate(_position.x, _position.y, _position.z);
     _computedTransform = translate * _computedTransform;
-    
+
     _computedTransform = parentTransform * _computedTransform;
     _computedPosition = { _computedTransform[12], _computedTransform[13], _computedTransform[14] };
     if (_geometry) {
@@ -427,13 +427,27 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
     }
 }
 
-void VRONode::setWorldTransform(VROVector3f worldPosition, VROQuaternion worldRotation){
-    std::shared_ptr<VRONode> parentNode = getParentNode();
-    VROVector3f parentComputedPosition = parentNode->getComputedPosition();
-    VROQuaternion parentComputedRot = parentNode->getComputedRotation();
-    _position = worldPosition - parentComputedPosition;
-    _rotation = worldRotation * parentComputedRot.makeInverse();
-    computeTransforms(parentNode->getComputedTransform(), parentNode->getComputedRotation());
+void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRotation){
+    // Create a final compute transform representing the desired, final world position and rotation.
+    VROVector3f worldScale = getComputedTransform().extractScale();
+    VROMatrix4f finalComputedTransform;
+    finalComputedTransform.toIdentity();
+    finalComputedTransform.scale(worldScale.x, worldScale.y, worldScale.z);
+    finalComputedTransform = finalRotation.makeInverse().getMatrix() * finalComputedTransform;
+    finalComputedTransform.translate(finalPosition);
+
+    // Calculate local transformations needed to achieve the desired final compute transform
+    // by applying: FinalCompute_Inv_Trans * Parent_Trans = Local_Trans
+    VROMatrix4f parentTransform = getParentNode()->getComputedTransform();
+    VROMatrix4f currentTransformInverted = finalComputedTransform.invert() * parentTransform;
+    VROMatrix4f currentTransform = currentTransformInverted.invert();
+    _scale = currentTransform.extractScale();
+    _position = currentTransform.extractTranslation();
+    _rotation = currentTransform.extractRotation(_scale);
+
+    // Trigger a computeTransform pass to update the node's bounding boxes and as well as its
+    // child's node transforms recursively.
+    computeTransforms(getParentNode()->getComputedTransform(), getParentNode()->getComputedRotation());
 }
 
 #pragma mark - Visibility

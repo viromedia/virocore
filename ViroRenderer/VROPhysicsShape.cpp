@@ -38,11 +38,11 @@ VROPhysicsShape::VROPhysicsShape(std::shared_ptr<VRONode> node, bool hasCompound
     } else {
         _bulletShape = generateBasicBulletShape(node);
         _type = VROShapeType::Auto;
-    }
 
-    VROMatrix4f computedTransform = node->getComputedTransform();
-    VROVector3f scale = computedTransform.extractScale();
-    _bulletShape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
+        VROMatrix4f computedTransform = node->getComputedTransform();
+        VROVector3f scale = computedTransform.extractScale();
+        _bulletShape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
+    }
 }
 
 VROPhysicsShape::~VROPhysicsShape() {
@@ -107,22 +107,37 @@ void VROPhysicsShape::generateCompoundBulletShape(btCompoundShape &compoundShape
                                                   const std::shared_ptr<VRONode> &rootNode,
                                                   const std::shared_ptr<VRONode> &currentNode) {
     btCollisionShape* shape = generateBasicBulletShape(currentNode);
-    // For each sub shape, bullet requires both rotational / translational offsets.
     if (shape != nullptr) {
-        VROVector3f worldPosRoot = rootNode->getComputedPosition();
-        VROVector3f worldPosCurrent =  currentNode->getBoundingBox().getCenter();
-        VROVector3f offset = worldPosCurrent - worldPosRoot;
+        // Bullet requires a flat structure when creating a compoundShape.
+        // To achieve this, we transform each node such that they are oriented in
+        // relation to the rootNode (as if the rootNode is were the origin).
+        VROMatrix4f rootTransformInverted = rootNode->getComputedTransform().invert();
+        VROMatrix4f currentNodeTransform = currentNode->getComputedTransform();
+        VROMatrix4f currentShapeTransform = rootTransformInverted * currentNodeTransform;
 
-        VROQuaternion worldRotCurrent = currentNode->getComputedRotation();
-        VROQuaternion worldRotRoot = rootNode->getComputedRotation();
-        VROQuaternion offsetRot = worldRotCurrent * worldRotRoot.makeInverse();
+        VROVector3f pos = currentShapeTransform.extractTranslation();
+        VROVector3f scale = currentShapeTransform.extractScale();
+        VROQuaternion rot = currentShapeTransform.extractRotation(scale);
 
-        btTransform transform;
-        transform.setIdentity();
-        transform.setOrigin({offset.x, offset.y, offset.z});
-        transform.setRotation({offsetRot.X, offsetRot.Y, offsetRot.Z, offsetRot.W});
+        btTransform curentShapeTransformBullet;
+        curentShapeTransformBullet.setIdentity();
+        curentShapeTransformBullet.setOrigin({pos.x, pos.y, pos.z});
+        curentShapeTransformBullet.setRotation({rot.X, rot.Y, rot.Z, rot.W});
 
-        compoundShape.addChildShape(transform, shape);
+        // Note: manually apply the scale of the rootNode (compound node) across
+        // the list of sub shapes that we add. This is because there is a bug
+        // in the function call of bulletShape->setLocalScaling.
+        VROVector3f compoundScale = rootNode->getComputedTransform().extractScale();
+        btVector3 compoundScaleBullet = btVector3({compoundScale.x, compoundScale.y , compoundScale.z});
+        btVector3 currentShapeScaleBullet = btVector3({scale.x, scale.y , scale.z});
+        btMatrix3x3 transformBasis = curentShapeTransformBullet.getBasis();
+        currentShapeScaleBullet = currentShapeScaleBullet * (transformBasis * compoundScaleBullet);
+        shape->setLocalScaling(currentShapeScaleBullet);
+        curentShapeTransformBullet.setOrigin({pos.x * compoundScale.x ,
+                                              pos.y * compoundScale.y ,
+                                              pos.z * compoundScale.z });
+
+        compoundShape.addChildShape(curentShapeTransformBullet, shape);
     }
 
     // Recurse for all child nodes.
