@@ -253,6 +253,10 @@ void VROPhysicsBody::updateBulletRigidBody() {
         _rigidBody->setMassProps(_mass, principalInertia);
         _rigidBody->setCollisionShape(compoundShape);
     } else {
+         btVector3 principalInertia;
+        _shape->getBulletShape()->calculateLocalInertia(_mass, principalInertia);
+        _inertia = VROVector3f(principalInertia.x(), principalInertia.y(), principalInertia.z());
+        _rigidBody->setMassProps(_mass, principalInertia);
         _rigidBody->setCollisionShape(_shape->getBulletShape());
     }
 
