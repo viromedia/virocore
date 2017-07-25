@@ -307,10 +307,10 @@ JNI_METHOD(jobjectArray, nativeGetAnimationKeys)(JNIEnv *env,
     return array;
 }
 
-JNI_METHOD(jobject, nativeSetEventDelegate)(JNIEnv *env,
-                                            jobject obj,
-                                            jlong nativeRef,
-                                            jlong delegateRef) {
+JNI_METHOD(void, nativeSetEventDelegate)(JNIEnv *env,
+                                         jobject obj,
+                                         jlong nativeRef,
+                                         jlong delegateRef) {
 
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     std::shared_ptr<EventDelegate_JNI> delegate = EventDelegate::native(delegateRef);
