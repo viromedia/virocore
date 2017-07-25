@@ -286,10 +286,31 @@ JNI_METHOD(void, nativeSetTransformBehaviors)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetEventDelegate)(JNIEnv *env,
-                                          jobject obj,
-                                          jlong nativeRef,
-                                          jlong delegateRef) {
+JNI_METHOD(jobjectArray, nativeGetAnimationKeys)(JNIEnv *env,
+                                                 jobject obj,
+                                                 jlong nativeRef) {
+
+    std::shared_ptr<VRONode> node = Node::native(nativeRef);
+    std::set<std::string> keys = node->getAnimationKeys(true);
+    jobjectArray array = (jobjectArray) env->NewObjectArray(keys.size(),
+                                                            env->FindClass("java/lang/String"),
+                                                            env->NewStringUTF(""));
+
+    int i = 0;
+    for (const std::string &key : keys) {
+        jstring jkey = env->NewStringUTF(key.c_str());
+        env->SetObjectArrayElement(array, i, jkey);
+        ++i;
+
+        env->DeleteLocalRef(jkey);
+    }
+    return array;
+}
+
+JNI_METHOD(jobject, nativeSetEventDelegate)(JNIEnv *env,
+                                            jobject obj,
+                                            jlong nativeRef,
+                                            jlong delegateRef) {
 
     std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
     std::shared_ptr<EventDelegate_JNI> delegate = EventDelegate::native(delegateRef);

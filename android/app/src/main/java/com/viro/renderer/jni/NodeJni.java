@@ -4,7 +4,10 @@
 package com.viro.renderer.jni;
 
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Java JNI wrapper for linking the following classes below across the bridge.
@@ -133,6 +136,10 @@ public class NodeJni {
         nativeSetTag(mNativeRef, tag);
     }
 
+    public Set<String> getAnimationKeys() {
+        return new HashSet<String>(Arrays.asList(nativeGetAnimationKeys(mNativeRef)));
+    }
+
     /**
      * JNI functions for view properties.
      */
@@ -154,6 +161,7 @@ public class NodeJni {
     private native void nativeSetEventDelegate(long nodeReference, long eventDelegateRef);
     private native long nativeSetTransformDelegate(long nodeReference, double throttlingWindow);
     private native void nativeRemoveTransformDelegate(long nodeReference, long mNativeTransformDelegate);
+    private native String[] nativeGetAnimationKeys(long nodeReference);
 
     /**
      * TransformDelegate Callback functions called from JNI

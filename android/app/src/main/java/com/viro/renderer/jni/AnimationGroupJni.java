@@ -3,7 +3,7 @@
  */
 package com.viro.renderer.jni;
 
-public class AnimationGroupJni extends BaseAnimation {
+public class AnimationGroupJni extends ExecutableAnimationJni {
 
     private LazyMaterialJni mLazyMaterial;
 
@@ -35,28 +35,8 @@ public class AnimationGroupJni extends BaseAnimation {
     }
 
     @Override
-    public BaseAnimation copy() {
+    public ExecutableAnimationJni copy() {
         return new AnimationGroupJni(nativeCopyAnimation(mNativeRef), mLazyMaterial);
-    }
-
-    @Override
-    protected void execute(NodeJni node) {
-        nativeExecuteAnimation(mNativeRef, node.mNativeRef);
-    }
-
-    @Override
-    public void pause() {
-        nativePauseAnimation(mNativeRef);
-    }
-
-    @Override
-    public void resume() {
-        nativeResumeAnimation(mNativeRef);
-    }
-
-    @Override
-    public void terminate() {
-        nativeTerminateAnimation(mNativeRef);
     }
 
     @Override
@@ -77,9 +57,5 @@ public class AnimationGroupJni extends BaseAnimation {
                                                    String opacity, String color, long lazyMaterialRef,
                                                    float durationSeconds, float delaySeconds, String functionType);
     private native long nativeCopyAnimation(long nativeRef);
-    private native void nativeExecuteAnimation(long nativeRef, long nodeRef);
-    private native void nativePauseAnimation(long nativeRef);
-    private native void nativeResumeAnimation(long nativeRef);
-    private native void nativeTerminateAnimation(long nativeRef);
     private native void nativeDestroyAnimationGroup(long nativeRef);
 }
