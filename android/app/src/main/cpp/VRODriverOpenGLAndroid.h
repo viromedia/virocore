@@ -40,7 +40,7 @@ public:
         _gvrAudio->Resume();
     }
 
-    VROVideoTextureCache *newVideoTextureCache() {
+    std::shared_ptr<VROVideoTextureCache> newVideoTextureCache() {
         pabort("Video texture caches not supported or required on Android");
         return nullptr;
     }

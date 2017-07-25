@@ -157,6 +157,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROBone.cpp
              ../../ViroRenderer/VROBoneUBO.cpp
              ../../ViroRenderer/VROSkeletalAnimation.cpp
+             ../../ViroRenderer/VROKeyframeAnimation.cpp
 
              # Shapes
              ../../ViroRenderer/VROBox.cpp

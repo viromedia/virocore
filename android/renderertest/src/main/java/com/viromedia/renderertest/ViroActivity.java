@@ -456,12 +456,12 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
         delegateJni.setEventDelegateCallback(new EventDelegateJni.EventDelegateCallback() {
             @Override
-            public void onHover(int source, boolean isHovering) {
+            public void onHover(int source, boolean isHovering, float[] hitLoc) {
                 Log.e(TAG, delegateTag + " onHover " + isHovering);
             }
 
             @Override
-            public void onClick(int source, EventDelegateJni.ClickState clickState) {
+            public void onClick(int source, EventDelegateJni.ClickState clickState, float[] hitLoc) {
                 Log.e(TAG, delegateTag + " onClick " + clickState.toString());
             }
 
