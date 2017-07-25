@@ -88,6 +88,15 @@ void VROKeyframeAnimation::execute(std::shared_ptr<VRONode> node, std::function<
         node->animate(animation);
     }
     
+    std::weak_ptr<VROKeyframeAnimation> weakSelf = shared_from_this();
+    VROTransaction::setFinishCallback([weakSelf, onFinished]{
+        std::shared_ptr<VROKeyframeAnimation> keyframeAnim = weakSelf.lock();
+        if (keyframeAnim) {
+            keyframeAnim->_transaction.reset();
+        }
+        onFinished();
+    });
+    
     _transaction = VROTransaction::commit();
 }
 

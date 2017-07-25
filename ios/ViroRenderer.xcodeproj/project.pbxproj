@@ -112,6 +112,9 @@
 		8F2D1BB81EC379C000E7BF44 /* VROAnimationMatrix4f.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BB61EC379C000E7BF44 /* VROAnimationMatrix4f.h */; };
 		8F2D1BBB1EC37E1900E7BF44 /* VROSkeleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BB91EC37E1900E7BF44 /* VROSkeleton.cpp */; };
 		8F2D1BBC1EC37E1900E7BF44 /* VROSkeleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BBA1EC37E1900E7BF44 /* VROSkeleton.h */; };
+		8F346B271F23AF39000D16B9 /* bball_SPEC_NRM.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F346B241F23AF39000D16B9 /* bball_SPEC_NRM.png */; };
+		8F346B281F23AF39000D16B9 /* bball_SPEC.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F346B251F23AF39000D16B9 /* bball_SPEC.png */; };
+		8F346B291F23AF39000D16B9 /* bball.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F346B261F23AF39000D16B9 /* bball.jpg */; };
 		8F3488AC1EE83DD3008917CB /* VROARAnchorInertial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3488A41EE83DD3008917CB /* VROARAnchorInertial.cpp */; };
 		8F3488AD1EE83DD3008917CB /* VROARAnchorInertial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3488A51EE83DD3008917CB /* VROARAnchorInertial.h */; };
 		8F3488AE1EE83DD3008917CB /* VROARCameraInertial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3488A61EE83DD3008917CB /* VROARCameraInertial.cpp */; };
@@ -172,9 +175,6 @@
 		8F5CAA181F1FAD5800FEEC7E /* VROKeyframeAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F5CAA161F1FAD5800FEEC7E /* VROKeyframeAnimation.cpp */; };
 		8F5CAA191F1FAD5800FEEC7E /* VROKeyframeAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F5CAA171F1FAD5800FEEC7E /* VROKeyframeAnimation.h */; };
 		8F5CAA1C1F202B5000FEEC7E /* bball.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F5CAA1A1F202AE100FEEC7E /* bball.vrx */; };
-		8F5CAA201F202BC900FEEC7E /* bball_SPEC_NRM.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5CAA1D1F202BC900FEEC7E /* bball_SPEC_NRM.png */; };
-		8F5CAA211F202BC900FEEC7E /* bball_SPEC.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F5CAA1E1F202BC900FEEC7E /* bball_SPEC.png */; };
-		8F5CAA221F202BC900FEEC7E /* bball.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F5CAA1F1F202BC900FEEC7E /* bball.jpg */; };
 		8F5CAA261F20532B00FEEC7E /* VROExecutableNodeAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F5CAA241F20532B00FEEC7E /* VROExecutableNodeAnimation.h */; };
 		8F618E2B1EB926B60020B33B /* Heart_Diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F618E2A1EB926B60020B33B /* Heart_Diffuse.jpg */; };
 		8F618E331EB980E70020B33B /* libprotobuf-lite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FB535201EB85AD200E8E1A6 /* libprotobuf-lite.a */; };
@@ -693,6 +693,9 @@
 		8F2D1BB61EC379C000E7BF44 /* VROAnimationMatrix4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationMatrix4f.h; sourceTree = "<group>"; };
 		8F2D1BB91EC37E1900E7BF44 /* VROSkeleton.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSkeleton.cpp; sourceTree = "<group>"; };
 		8F2D1BBA1EC37E1900E7BF44 /* VROSkeleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSkeleton.h; sourceTree = "<group>"; };
+		8F346B241F23AF39000D16B9 /* bball_SPEC_NRM.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bball_SPEC_NRM.png; path = ViroSample/bball_SPEC_NRM.png; sourceTree = "<group>"; };
+		8F346B251F23AF39000D16B9 /* bball_SPEC.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bball_SPEC.png; path = ViroSample/bball_SPEC.png; sourceTree = "<group>"; };
+		8F346B261F23AF39000D16B9 /* bball.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = bball.jpg; path = ViroSample/bball.jpg; sourceTree = "<group>"; };
 		8F3488A41EE83DD3008917CB /* VROARAnchorInertial.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARAnchorInertial.cpp; sourceTree = "<group>"; };
 		8F3488A51EE83DD3008917CB /* VROARAnchorInertial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARAnchorInertial.h; sourceTree = "<group>"; };
 		8F3488A61EE83DD3008917CB /* VROARCameraInertial.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARCameraInertial.cpp; sourceTree = "<group>"; };
@@ -806,9 +809,6 @@
 		8F5CAA161F1FAD5800FEEC7E /* VROKeyframeAnimation.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROKeyframeAnimation.cpp; sourceTree = "<group>"; };
 		8F5CAA171F1FAD5800FEEC7E /* VROKeyframeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROKeyframeAnimation.h; sourceTree = "<group>"; };
 		8F5CAA1A1F202AE100FEEC7E /* bball.vrx */ = {isa = PBXFileReference; lastKnownFileType = text; name = bball.vrx; path = ViroSample/bball.vrx; sourceTree = "<group>"; };
-		8F5CAA1D1F202BC900FEEC7E /* bball_SPEC_NRM.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bball_SPEC_NRM.png; path = ../../../Downloads/bball_anim/bball_SPEC_NRM.png; sourceTree = "<group>"; };
-		8F5CAA1E1F202BC900FEEC7E /* bball_SPEC.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bball_SPEC.png; path = ../../../Downloads/bball_anim/bball_SPEC.png; sourceTree = "<group>"; };
-		8F5CAA1F1F202BC900FEEC7E /* bball.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = bball.jpg; path = ../../../Downloads/bball_anim/bball.jpg; sourceTree = "<group>"; };
 		8F5CAA241F20532B00FEEC7E /* VROExecutableNodeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROExecutableNodeAnimation.h; sourceTree = "<group>"; };
 		8F618E2A1EB926B60020B33B /* Heart_Diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Heart_Diffuse.jpg; path = ViroSample/Heart_Diffuse.jpg; sourceTree = "<group>"; };
 		8F618E301EB935A40020B33B /* libprotobuf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libprotobuf.a; path = Libraries/protobuf/libprotobuf.a; sourceTree = "<group>"; };
@@ -1893,10 +1893,10 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F346B241F23AF39000D16B9 /* bball_SPEC_NRM.png */,
+				8F346B251F23AF39000D16B9 /* bball_SPEC.png */,
+				8F346B261F23AF39000D16B9 /* bball.jpg */,
 				8F5CAA1A1F202AE100FEEC7E /* bball.vrx */,
-				8F5CAA1D1F202BC900FEEC7E /* bball_SPEC_NRM.png */,
-				8F5CAA1E1F202BC900FEEC7E /* bball_SPEC.png */,
-				8F5CAA1F1F202BC900FEEC7E /* bball.jpg */,
 				8F26573D1F0E7D5D0031DE17 /* gorilla.vrx */,
 				8FD4D0BC1EF0695F00077AD7 /* coffee_mug_specular.png */,
 				8FD4D0BD1EF0695F00077AD7 /* coffee_mug.obj */,
@@ -2426,10 +2426,10 @@
 				8FCED07A1EBBD35200C19BCA /* Sven_Body_Specular.png in Resources */,
 				8F129FBF1ED603BE00341D83 /* worm.vrx in Resources */,
 				8FCED05E1EBBCFCF00C19BCA /* Squid_Normal.png in Resources */,
-				8F5CAA221F202BC900FEEC7E /* bball.jpg in Resources */,
+				8F346B291F23AF39000D16B9 /* bball.jpg in Resources */,
 				8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
-				8F5CAA211F202BC900FEEC7E /* bball_SPEC.png in Resources */,
+				8F346B281F23AF39000D16B9 /* bball_SPEC.png in Resources */,
 				8FCED0791EBBD35200C19BCA /* Sven_Body_Normal.png in Resources */,
 				8F660AB11E931C6F006D063F /* 4096_clouds.jpg in Resources */,
 				8FCED0581EBBCFCF00C19BCA /* MinionSuitA_Color.png in Resources */,
@@ -2451,7 +2451,7 @@
 				8FCED0751EBBD35200C19BCA /* Jetpack_Normal.png in Resources */,
 				8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
 				A5ABB1D91E95703200E07EBC /* stereoVid360.mp4 in Resources */,
-				8F5CAA201F202BC900FEEC7E /* bball_SPEC_NRM.png in Resources */,
+				8F346B271F23AF39000D16B9 /* bball_SPEC_NRM.png in Resources */,
 				8FCED0591EBBCFCF00C19BCA /* MinionSuitA_Glow.png in Resources */,
 				8F9278001C66BD4500FF892A /* nz1.jpg in Resources */,
 				8FA2E14A1C445CAA0070DB26 /* nz.png in Resources */,
