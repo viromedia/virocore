@@ -265,6 +265,12 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     NSURL *filePath = [self getTempFileURL:fileName];
     
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    // if the given fileName exists, then just remove it because we'll overwrite it.
+    if ([fileManager fileExistsAtPath:[filePath path]]) {
+        [fileManager removeItemAtURL:filePath error:nil];
+    }
+    
     [UIImagePNGRepresentation(self.snapshot) writeToFile:[filePath path] atomically:YES];
     
     if (saveToCamera) {
