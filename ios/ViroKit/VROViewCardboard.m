@@ -132,6 +132,22 @@
     _sceneRenderer->recenterTracking();
 }
 
+#pragma mark - Recording (Video/Image)
+
+- (void)startVideoRecording:(NSString *)filename saveToCameraRoll:(BOOL)saveToCamera {
+    // no-op
+}
+
+- (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler {
+    // no-op
+}
+
+- (void)takeScreenshot:(NSString *)fileName
+      saveToCameraRoll:(BOOL)saveToCamera
+ withCompletionHandler:(VROViewWriteMediaFinishBlock)completionHandler {
+    // no-op
+}
+
 #pragma mark - Settings
 
 - (void)setRenderDelegate:(id<VRORenderDelegate>)renderDelegate {

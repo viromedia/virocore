@@ -6,6 +6,8 @@
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
+#import <AVFoundation/AVFoundation.h>
+#import <Photos/Photos.h>
 #import "VROViewAR.h"
 #import "VRORenderer.h"
 #import "VROSceneController.h"
@@ -49,6 +51,13 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     double _suspendedNotificationTime;
     bool _hasTrackingInitialized;
+    bool _isRecording;
+    bool _saveToCameraRoll;
+    NSURL *_videoFilePath;
+    AVAssetWriter *_videoWriter;
+    AVAssetWriterInput *_videoWriterInput;
+    AVAssetWriterInputPixelBufferAdaptor *_videoWriterPixelBufferAdaptor;
+    double _startTimeMillis;
 }
 
 @property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
@@ -216,6 +225,186 @@ static VROVector3f const kZeroVector = VROVector3f();
     if (_displayLink) {
         [_displayLink invalidate];
     }
+}
+
+#pragma mark - Recording and Screen Capture
+
+- (void)startVideoRecording:(NSString *)fileName saveToCameraRoll:(BOOL)saveToCamera {
+    if (_isRecording) {
+        return;
+    }
+    _saveToCameraRoll = saveToCamera;
+    _videoFilePath = [self getTempFileURL:fileName];
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    // if the given fileName exists, then just remove it because we'll overwrite it.
+    if ([fileManager fileExistsAtPath:[_videoFilePath path]]) {
+        [fileManager removeItemAtURL:_videoFilePath error:nil];
+    }
+    
+    [self startRecordingV1:_videoFilePath];
+}
+
+- (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler {
+    // this block will be called once the video writer in stopRecordingV1 finishes writing the vid
+    VROViewWriteMediaFinishBlock wrappedCompleteHandler = ^(NSURL *filepath) {
+        if (_saveToCameraRoll) {
+            [self writeMediaToCameraRoll:filepath isPhoto:NO withCompletionHandler:completionHandler];
+        } else {
+            completionHandler(filepath);
+        }
+        _saveToCameraRoll = NO;
+        _isRecording = NO;
+    };
+    [self stopRecordingV1:wrappedCompleteHandler];
+}
+
+- (void)takeScreenshot:(NSString *)fileName
+      saveToCameraRoll:(BOOL)saveToCamera
+ withCompletionHandler:(VROViewWriteMediaFinishBlock)completionHandler {
+    
+    NSURL *filePath = [self getTempFileURL:fileName];
+    
+    [UIImagePNGRepresentation(self.snapshot) writeToFile:[filePath path] atomically:YES];
+    
+    if (saveToCamera) {
+        [self writeMediaToCameraRoll:filePath isPhoto:YES withCompletionHandler:completionHandler];
+    } else {
+        completionHandler(filePath);
+    }
+}
+
+- (void)writeMediaToCameraRoll:(NSURL *)filePath
+                       isPhoto:(BOOL)isPhoto
+         withCompletionHandler:(VROViewWriteMediaFinishBlock)completionHandler {
+    PHAssetResourceType type = isPhoto ? PHAssetResourceTypePhoto : PHAssetResourceTypeVideo;
+    [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+        [[PHAssetCreationRequest creationRequestForAsset] addResourceWithType:type fileURL:filePath options:nil];
+    } completionHandler:^(BOOL success, NSError *error) {
+        if (success) {
+            NSLog(@"[Recording] saving media worked!");
+            completionHandler(filePath);
+        } else {
+            NSLog(@"[Recording] saving media failed w/ error: %@", error.localizedDescription);
+            completionHandler(NULL);
+        }
+    }];
+}
+
+// TODO: use kVROViewTempMediaDirectory. We can't write to a file if the directory it lives in doesn't exist.
+- (NSURL *)getTempFileURL:(NSString *)filename {
+    NSURL *filepath = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:filename]];
+    return filepath;
+}
+
+#pragma mark - Video Recording V1
+/*
+ The below code is the "V1" version of video recording which fetches each video frame by extracting a
+ UIImage from this GLKView which is slow and uses recursion w/ GCD to loop.
+ */
+
+- (void)startRecordingV1:(NSURL *)filePath {
+    if (_isRecording) {
+        return; // do nothing if we're already recording...
+    }
+    
+    NSError *error = nil;
+    _videoWriter = [[AVAssetWriter alloc] initWithURL:filePath fileType:AVFileTypeMPEG4 error:&error];
+    
+    NSDictionary *videoSetting = @{
+                                   AVVideoCodecKey : AVVideoCodecH264,
+                                   AVVideoWidthKey : @(self.frame.size.width * self.contentScaleFactor / 2.0),
+                                   AVVideoHeightKey : @(self.frame.size.height * self.contentScaleFactor / 2.0)
+                                   };
+    
+    _videoWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:videoSetting];
+    
+    _videoWriterPixelBufferAdaptor = [AVAssetWriterInputPixelBufferAdaptor
+                                                     assetWriterInputPixelBufferAdaptorWithAssetWriterInput:_videoWriterInput
+                                                     sourcePixelBufferAttributes:nil];
+    
+    [_videoWriter addInput:_videoWriterInput];
+    
+    [_videoWriter startWriting];
+    [_videoWriter startSessionAtSourceTime:kCMTimeZero];
+    _startTimeMillis = VROTimeCurrentMillis();
+    _isRecording = YES;
+    
+    // we have to run this on the main thread because self.snapshot seems to access some UIView properties that require it.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0), dispatch_get_main_queue(), ^{
+        [self recordFrameV1];
+    });
+}
+
+/*
+ This function should initially be run on the UI thread as it requires calling self.snapshot which
+ accesses some UIView properties.
+ */
+- (void)recordFrameV1 {
+    double currentTime = VROTimeCurrentMillis() - _startTimeMillis;
+    NSLog(@"[Recording] record frame at currentTime %f", currentTime);
+    if (_isRecording) {
+        CGImageRef image = self.snapshot.CGImage;
+        CVPixelBufferRef ref = [VROViewAR pixelBufferFromCGImage:image];
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            
+            BOOL success = [_videoWriterPixelBufferAdaptor appendPixelBuffer:ref withPresentationTime:CMTimeMake(currentTime, 1000)];
+            CVPixelBufferRelease(ref);
+            
+            if (!success) {
+                NSString *errorStr = _videoWriter.status == AVAssetWriterStatusFailed ? [_videoWriter.error localizedDescription] : @"unknown issue";
+                NSLog(@"[Recording] record frame failed: %@", errorStr);
+                // stop recording/looping
+                // TODO: clean up? or rather, assume that the "record loop" actually stops recording. But this is V1 (throw away) code.
+                return;
+            }
+            
+            // loop again, but on the main thread! There's no delay because getting snapshot takes too long right now.
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0*NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                [self recordFrameV1];
+            });
+        });
+    }
+}
+
+- (void)stopRecordingV1:(VROViewWriteMediaFinishBlock)completionHandler {
+    [_videoWriterInput markAsFinished];
+    // CMTime is set up to be value / timescale = seconds, so since we're in millis, timescape is 1000.
+    [_videoWriter endSessionAtSourceTime:CMTimeMake(VROTimeCurrentMillis() - _startTimeMillis, 1000)];
+    [_videoWriter finishWritingWithCompletionHandler:^(void) {
+        NSLog(@"[Recording] finished writing video");
+        completionHandler(_videoFilePath);
+    }];
+}
+
++ (CVPixelBufferRef)pixelBufferFromCGImage:(CGImageRef)image {
+    CGSize frameSize = CGSizeMake(CGImageGetWidth(image), CGImageGetHeight(image));
+    NSDictionary *options = @{
+                              (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey: @(YES),
+                              (__bridge NSString *)kCVPixelBufferCGBitmapContextCompatibilityKey: @(YES)
+                              };
+    CVPixelBufferRef pixelBuffer;
+    CVReturn status = CVPixelBufferCreate(kCFAllocatorDefault, frameSize.width,
+                                          frameSize.height,  kCVPixelFormatType_32BGRA, (__bridge CFDictionaryRef) options,
+                                          &pixelBuffer);
+    if (status != kCVReturnSuccess) {
+        return NULL;
+    }
+    
+    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+    void *data = CVPixelBufferGetBaseAddress(pixelBuffer);
+    CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = CGBitmapContextCreate(data, frameSize.width, frameSize.height,
+                                                 8, CVPixelBufferGetBytesPerRow(pixelBuffer), rgbColorSpace,
+                                                 (CGBitmapInfo) kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+    CGContextDrawImage(context, CGRectMake(0, 0, CGImageGetWidth(image),
+                                           CGImageGetHeight(image)), image);
+    CGColorSpaceRelease(rgbColorSpace);
+    CGContextRelease(context);
+    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+    
+    return pixelBuffer;
 }
 
 #pragma mark - Settings and Notifications

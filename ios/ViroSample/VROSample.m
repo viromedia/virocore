@@ -6,6 +6,7 @@
 //  Copyright © 2015 Raj Advani. All rights reserved.
 //
 
+#import <Photos/Photos.h>
 #import "VROSample.h"
 #import "opencv2/imgcodecs/ios.h"
 #import "opencv2/imgproc/imgproc.hpp"
@@ -999,6 +1000,41 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     arPlane->addChildNode(objNode);
     arScene->addARPlane(arPlane);
     arScene->addNode(sceneNode);
+    
+    VROViewAR *arView = (VROViewAR *)self.view;
+    
+    int rand = arc4random_uniform(1000);
+    
+    // takeVideo if YES, else takePhoto if NO
+    BOOL takeVideo = YES;
+    if (takeVideo) {
+        NSString *filename = [NSString stringWithFormat:@"testvideo%d.mp4", rand];
+        
+        NSLog(@"[VROSample] started recording");
+        [arView startVideoRecording:filename saveToCameraRoll:YES];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            NSLog(@"[VROSample] stopped recording");
+            [arView stopVideoRecordingWithBlock:^(NSURL *url) {
+                if (url) {
+                    [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
+                }
+            }];
+        });
+    } else {
+        NSString *filename = [NSString stringWithFormat:@"testimage%d.png", rand];
+        
+        NSLog(@"[VROSample] taking screenshot in 5 seconds");
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            [arView takeScreenshot:filename saveToCameraRoll:YES withCompletionBlock:^(NSURL *url) {
+                if (url) {
+                    [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
+                }
+            }];
+        });
+    }
+    
     return sceneController;
 }
 

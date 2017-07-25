@@ -40,6 +40,9 @@
 		8A99E6C31EF1B76F00712D79 /* VROARSceneController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A99E6C21EF1B76F00712D79 /* VROARSceneController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A99E6D01EF1B95800712D79 /* VROARScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A99E6CE1EF1B95800712D79 /* VROARScene.cpp */; };
 		8A99E6D11EF1B95800712D79 /* VROARScene.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A99E6CF1EF1B95800712D79 /* VROARScene.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8A9EEC6F1F26BE9700EB2228 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AF39AB51F2295F700229AC0 /* Photos.framework */; };
+		8AABB6FC1F1ECD4E00D48D5C /* VROWeakProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AABB6FA1F1ECD4E00D48D5C /* VROWeakProxy.h */; };
+		8AABB6FD1F1ECD4E00D48D5C /* VROWeakProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8AABB6FB1F1ECD4E00D48D5C /* VROWeakProxy.mm */; };
 		8ABD8F301DB6970600BD9C83 /* VROApiKeyValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABD8F2E1DB6970600BD9C83 /* VROApiKeyValidator.h */; };
 		8ABD8F311DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD8F2F1DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m */; };
 		8ABD8F371DB72CDD00BD9C83 /* VROApiKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD8F351DB70CE400BD9C83 /* VROApiKey.m */; };
@@ -486,8 +489,6 @@
 		A5ABB1D71E95703200E07EBC /* stereo3602.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CA1E95703200E07EBC /* stereo3602.jpg */; };
 		A5ABB1D81E95703200E07EBC /* stereoVid.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CB1E95703200E07EBC /* stereoVid.mp4 */; };
 		A5ABB1D91E95703200E07EBC /* stereoVid360.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A5ABB1CC1E95703200E07EBC /* stereoVid360.mp4 */; };
-		A5E4E37E1F22A1F90010A087 /* VROWeakProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A5E4E37C1F22A1F90010A087 /* VROWeakProxy.h */; };
-		A5E4E37F1F22A1F90010A087 /* VROWeakProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5E4E37D1F22A1F90010A087 /* VROWeakProxy.mm */; };
 		A5EC65861EB3ECE200FE220E /* libBulletCollision.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65821EB3ECE200FE220E /* libBulletCollision.a */; };
 		A5EC65871EB3ECE200FE220E /* libBulletDynamics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */; };
 		A5EC65881EB3ECE200FE220E /* libBulletSoftBody.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */; };
@@ -603,6 +604,8 @@
 		8A99E6C41EF1B7B300712D79 /* ARKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ARKit.framework; path = System/Library/Frameworks/ARKit.framework; sourceTree = SDKROOT; };
 		8A99E6CE1EF1B95800712D79 /* VROARScene.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARScene.cpp; sourceTree = "<group>"; };
 		8A99E6CF1EF1B95800712D79 /* VROARScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARScene.h; sourceTree = "<group>"; };
+		8AABB6FA1F1ECD4E00D48D5C /* VROWeakProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROWeakProxy.h; sourceTree = "<group>"; };
+		8AABB6FB1F1ECD4E00D48D5C /* VROWeakProxy.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROWeakProxy.mm; sourceTree = "<group>"; };
 		8ABD8F2E1DB6970600BD9C83 /* VROApiKeyValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROApiKeyValidator.h; sourceTree = "<group>"; };
 		8ABD8F2F1DB6970600BD9C83 /* VROApiKeyValidatorDynamo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VROApiKeyValidatorDynamo.m; sourceTree = "<group>"; };
 		8ABD8F341DB70CE400BD9C83 /* VROApiKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROApiKey.h; sourceTree = "<group>"; };
@@ -616,6 +619,7 @@
 		8ADC38D41F0AFAF2006DD653 /* VROARNodeDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARNodeDelegate.h; sourceTree = "<group>"; };
 		8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARNodeDelegateiOS.h; sourceTree = "<group>"; };
 		8ADF360A1F14237B002BF73D /* VROARSceneDelegateiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARSceneDelegateiOS.h; sourceTree = "<group>"; };
+		8AF39AB51F2295F700229AC0 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		8BDDA00B1E54F48500A42870 /* VROLazyMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROLazyMaterial.h; sourceTree = "<group>"; };
 		8BDDA00C1E54F4A300A42870 /* VROMaterialAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialAnimation.h; sourceTree = "<group>"; };
 		8F03BCD41CECC30E00D071F8 /* blinn_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = blinn_fsh.glsl; sourceTree = "<group>"; };
@@ -1076,8 +1080,6 @@
 		A5ABB1CA1E95703200E07EBC /* stereo3602.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = stereo3602.jpg; path = ViroSample/stereo3602.jpg; sourceTree = "<group>"; };
 		A5ABB1CB1E95703200E07EBC /* stereoVid.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = stereoVid.mp4; path = ViroSample/stereoVid.mp4; sourceTree = "<group>"; };
 		A5ABB1CC1E95703200E07EBC /* stereoVid360.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = stereoVid360.mp4; path = ViroSample/stereoVid360.mp4; sourceTree = "<group>"; };
-		A5E4E37C1F22A1F90010A087 /* VROWeakProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROWeakProxy.h; sourceTree = "<group>"; };
-		A5E4E37D1F22A1F90010A087 /* VROWeakProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VROWeakProxy.mm; sourceTree = "<group>"; };
 		A5EC65821EB3ECE200FE220E /* libBulletCollision.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletCollision.a; path = Libraries/bullet/libBulletCollision.a; sourceTree = "<group>"; };
 		A5EC65831EB3ECE200FE220E /* libBulletDynamics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletDynamics.a; path = Libraries/bullet/libBulletDynamics.a; sourceTree = "<group>"; };
 		A5EC65841EB3ECE200FE220E /* libBulletSoftBody.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBulletSoftBody.a; path = Libraries/bullet/libBulletSoftBody.a; sourceTree = "<group>"; };
@@ -1123,6 +1125,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A9EEC6F1F26BE9700EB2228 /* Photos.framework in Frameworks */,
 				8A35172C1EDE04B500B6E786 /* AssetsLibrary.framework in Frameworks */,
 				8A35172B1EDE04A500B6E786 /* opencv2.framework in Frameworks */,
 				8F618E331EB980E70020B33B /* libprotobuf-lite.a in Frameworks */,
@@ -1341,8 +1344,10 @@
 				8A35173B1EE11C4800B6E786 /* VROTrackingHelper.mm */,
 				8F129FC41EDF6AE500341D83 /* VROViewAR.h */,
 				8F129FC51EDF6AE500341D83 /* VROViewAR.mm */,
-				A5E4E37C1F22A1F90010A087 /* VROWeakProxy.h */,
-				A5E4E37D1F22A1F90010A087 /* VROWeakProxy.mm */,
+				8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */,
+				8ADF360A1F14237B002BF73D /* VROARSceneDelegateiOS.h */,
+				8AABB6FA1F1ECD4E00D48D5C /* VROWeakProxy.h */,
+				8AABB6FB1F1ECD4E00D48D5C /* VROWeakProxy.mm */,
 			);
 			name = AR;
 			sourceTree = "<group>";
@@ -2007,6 +2012,7 @@
 		95E5BC90E51A0FC2C3AA4D42 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8AF39AB51F2295F700229AC0 /* Photos.framework */,
 				8A99E6C41EF1B7B300712D79 /* ARKit.framework */,
 				8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */,
 				8A07C1821ED8D5EA00757C29 /* opencv2.framework */,
@@ -2111,6 +2117,7 @@
 				8BDDA00E1E54F6B200A42870 /* VROMaterialAnimation.h in Headers */,
 				8F0FE65F1CD129FF00A4C297 /* VROFrameSynchronizer.h in Headers */,
 				8A130DA51E40187F0050D83B /* VROSoundData.h in Headers */,
+				8AABB6FC1F1ECD4E00D48D5C /* VROWeakProxy.h in Headers */,
 				8FB2B5951E1445BB00EDB629 /* VROAnimationGroup.h in Headers */,
 				8A130D751E3A937D0050D83B /* VROSoundDelegateInternal.h in Headers */,
 				8A3517371EE0B55400B6E786 /* VROImageTrackerOutput.h in Headers */,
@@ -2724,6 +2731,7 @@
 				8F660ABA1E9554B8006D063F /* VROFrameScheduler.cpp in Sources */,
 				8FD4DF0D1C18ED3C003DC425 /* VROGeometrySource.cpp in Sources */,
 				8FA2E1631C460C600070DB26 /* VROAction.cpp in Sources */,
+				8AABB6FD1F1ECD4E00D48D5C /* VROWeakProxy.mm in Sources */,
 				8FD4DEFC1C18ED22003DC425 /* VROBox.cpp in Sources */,
 				8F83DEAA1C49B0540089C31A /* VROAllocationTracker.cpp in Sources */,
 				8FD4DEF11C18ED19003DC425 /* VROQuaternion.cpp in Sources */,
@@ -2753,7 +2761,6 @@
 				8FCB10081DD10EF300FE425C /* VROStringUtil.cpp in Sources */,
 				8FD4DEF81C18ED19003DC425 /* VROVector4f.cpp in Sources */,
 				8FD4DF101C18ED3C003DC425 /* VROTexture.cpp in Sources */,
-				A5E4E37F1F22A1F90010A087 /* VROWeakProxy.mm in Sources */,
 				A5EC659E1EBD34C000FE220E /* VROPhysicsWorld.cpp in Sources */,
 				8FCF396B1CB4242000A86CA3 /* VRORenderer.cpp in Sources */,
 				8FD4DEF71C18ED19003DC425 /* VROVector3f.cpp in Sources */,
