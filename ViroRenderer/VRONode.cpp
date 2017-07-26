@@ -647,7 +647,6 @@ void VRONode::removeAnimation(std::string key) {
 }
 
 std::shared_ptr<VROExecutableAnimation> VRONode::getAnimation(std::string key, bool recursive) {
-    passert_thread();
     std::vector<std::shared_ptr<VROExecutableAnimation>> animations;
     getAnimations(animations, key, recursive);
     
@@ -669,7 +668,6 @@ void VRONode::getAnimations(std::vector<std::shared_ptr<VROExecutableAnimation>>
 }
 
 std::set<std::string> VRONode::getAnimationKeys(bool recursive) {
-    passert_thread();
     std::set<std::string> animations;
     getAnimationKeys(animations, recursive);
     

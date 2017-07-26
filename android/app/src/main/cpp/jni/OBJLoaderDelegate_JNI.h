@@ -19,6 +19,7 @@ public:
     ~OBJLoaderDelegate();
 
     void objLoaded(std::shared_ptr<VRONode> node);
+    void objAttached();
     void objFailed(std::string error);
 
 private:

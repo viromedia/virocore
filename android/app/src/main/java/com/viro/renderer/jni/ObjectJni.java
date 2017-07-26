@@ -98,6 +98,13 @@ public class ObjectJni extends BaseGeometry {
         }
     }
 
+    // Called from JNI after OBJ added to scene
+    public void nodeDidAttachOBJ() {
+        if (mAsyncObjListener != null) {
+            mAsyncObjListener.onObjAttached();
+        }
+    }
+
     private native void nativeLoadModelFromFile(String fileName, boolean isFBX);
     private native void nativeLoadModelAndResourcesFromFile(String fileName,
                                                             Map<String, String> resources, boolean isFBX);

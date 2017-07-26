@@ -177,7 +177,7 @@ JNI_METHOD(void, nativeDestroyNode)(JNIEnv *env,
 }
 
 JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
-                                     jclass clazz,
+                                     jobject object,
                                      jlong native_object_ref,
                                      jlong native_node_ref) {
 
@@ -186,8 +186,9 @@ JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
     // after this function returns
     std::shared_ptr<VRONode> nodeWithObj = Node::native(native_object_ref);
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    jweak weakObj = env->NewWeakGlobalRef(object);
 
-    VROPlatformDispatchAsyncRenderer([nodeWithObj, node_w] {
+    VROPlatformDispatchAsyncRenderer([nodeWithObj, node_w, weakObj] {
         std::shared_ptr<VRONode> node = node_w.lock();
 
         if (nodeWithObj && node) {
@@ -199,6 +200,15 @@ JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
             for (std::shared_ptr<VRONode> child : nodeWithObj->getSubnodes()) {
                 node->addChildNode(child);
             }
+
+            JNIEnv *env = VROPlatformGetJNIEnv();
+            jobject localObj = env->NewLocalRef(weakObj);
+            if (localObj != NULL) {
+                std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(localObj, env);
+                delegateRef->objAttached();
+                env->DeleteLocalRef(localObj);
+            }
+            env->DeleteWeakGlobalRef(weakObj);
         }
      });
 }

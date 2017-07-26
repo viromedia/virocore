@@ -438,6 +438,11 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             }
 
             @Override
+            public void onObjAttached() {
+
+            }
+
+            @Override
             public void onObjFailed(String error) {
 
             }

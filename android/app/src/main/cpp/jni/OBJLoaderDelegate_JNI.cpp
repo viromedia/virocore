@@ -44,6 +44,11 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node) {
     });
 }
 
+void OBJLoaderDelegate::objAttached() {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    VROPlatformCallJavaFunction(_javaObject, "nodeDidAttachOBJ", "()V");
+}
+
 void OBJLoaderDelegate::objFailed(std::string error) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
