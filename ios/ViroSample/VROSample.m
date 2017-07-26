@@ -1015,7 +1015,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
             NSLog(@"[VROSample] stopped recording");
-            [arView stopVideoRecordingWithBlock:^(NSURL *url) {
+            [arView stopVideoRecordingWithHandler:^(NSURL *url) {
                 if (url) {
                     [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
                 }
@@ -1027,7 +1027,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         NSLog(@"[VROSample] taking screenshot in 5 seconds");
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            [arView takeScreenshot:filename saveToCameraRoll:YES withCompletionBlock:^(NSURL *url) {
+            [arView takeScreenshot:filename saveToCameraRoll:YES withCompletionHandler:^(NSURL *url) {
                 if (url) {
                     [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
                 }
