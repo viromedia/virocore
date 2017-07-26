@@ -462,6 +462,12 @@
 		8FE382131EF06FED005038CB /* VROARAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F06581EF06FBB006FC8C2 /* VROARAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382141EF06FED005038CB /* VROARPlaneAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065C1EF06FBB006FC8C2 /* VROARPlaneAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382151EF06FED005038CB /* VROARHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065B1EF06FBB006FC8C2 /* VROARHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FF5CCB51F28F5BA007C7F52 /* porsche911.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB31F28F5BA007C7F52 /* porsche911.vrx */; };
+		8FF5CCB61F28F5BA007C7F52 /* Porsche911turboS_diff.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB41F28F5BA007C7F52 /* Porsche911turboS_diff.jpg */; };
+		8FF5CCBB1F290364007C7F52 /* aliengirl_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB71F290364007C7F52 /* aliengirl_diffuse.png */; };
+		8FF5CCBC1F290364007C7F52 /* aliengirl_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB81F290364007C7F52 /* aliengirl_normal.png */; };
+		8FF5CCBD1F290364007C7F52 /* aliengirl_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB91F290364007C7F52 /* aliengirl_specular.png */; };
+		8FF5CCBE1F290364007C7F52 /* aliengirl.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCBA1F290364007C7F52 /* aliengirl.vrx */; };
 		A50F2A281ED135CC00D964D5 /* VROPhysicsBodyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A50F2A291ED135D800D964D5 /* VROPhysicsBodyDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A526F5B91EFD855E00A8A7A3 /* VROTransformDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1055,6 +1061,12 @@
 		8FF253B11DC9398A00C1C5C7 /* VRODefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODefines.h; sourceTree = "<group>"; };
 		8FF4D7A71C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROMaterialSubstrateMetal.cpp; sourceTree = "<group>"; };
 		8FF4D7A81C0D45DA006D6157 /* VROMaterialSubstrateMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialSubstrateMetal.h; sourceTree = "<group>"; };
+		8FF5CCB31F28F5BA007C7F52 /* porsche911.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = porsche911.vrx; path = ViroSample/porsche911.vrx; sourceTree = "<group>"; };
+		8FF5CCB41F28F5BA007C7F52 /* Porsche911turboS_diff.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Porsche911turboS_diff.jpg; path = ViroSample/Porsche911turboS_diff.jpg; sourceTree = "<group>"; };
+		8FF5CCB71F290364007C7F52 /* aliengirl_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = aliengirl_diffuse.png; path = ViroSample/aliengirl_diffuse.png; sourceTree = "<group>"; };
+		8FF5CCB81F290364007C7F52 /* aliengirl_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = aliengirl_normal.png; path = ViroSample/aliengirl_normal.png; sourceTree = "<group>"; };
+		8FF5CCB91F290364007C7F52 /* aliengirl_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = aliengirl_specular.png; path = ViroSample/aliengirl_specular.png; sourceTree = "<group>"; };
+		8FF5CCBA1F290364007C7F52 /* aliengirl.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = aliengirl.vrx; path = ViroSample/aliengirl.vrx; sourceTree = "<group>"; };
 		A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VROPhysicsBodyDelegateiOS.h; path = ViroKit/VROPhysicsBodyDelegateiOS.h; sourceTree = SOURCE_ROOT; };
 		A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsBodyDelegate.h; sourceTree = "<group>"; };
 		A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTransformDelegateiOS.h; sourceTree = "<group>"; };
@@ -1335,8 +1347,6 @@
 			children = (
 				8FAE18BB1EE79C5B0021C7BB /* ARKit */,
 				8FAE18BC1EE79C650021C7BB /* Inertial */,
-				8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */,
-				8ADF360A1F14237B002BF73D /* VROARSceneDelegateiOS.h */,
 				8A77FD2A1EFB30F2000920F9 /* VROInputControllerARiOS.cpp */,
 				8A77FD2B1EFB30F2000920F9 /* VROInputControllerARiOS.h */,
 				8A06EFDD1F021D3B00C396F4 /* VROInputPresenterARiOS.h */,
@@ -1898,6 +1908,12 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8FF5CCB71F290364007C7F52 /* aliengirl_diffuse.png */,
+				8FF5CCB81F290364007C7F52 /* aliengirl_normal.png */,
+				8FF5CCB91F290364007C7F52 /* aliengirl_specular.png */,
+				8FF5CCBA1F290364007C7F52 /* aliengirl.vrx */,
+				8FF5CCB31F28F5BA007C7F52 /* porsche911.vrx */,
+				8FF5CCB41F28F5BA007C7F52 /* Porsche911turboS_diff.jpg */,
 				8F346B241F23AF39000D16B9 /* bball_SPEC_NRM.png */,
 				8F346B251F23AF39000D16B9 /* bball_SPEC.png */,
 				8F346B261F23AF39000D16B9 /* bball.jpg */,
@@ -2222,7 +2238,6 @@
 				8F83DEAF1C50278C0089C31A /* VROSphere.h in Headers */,
 				A50F2A291ED135D800D964D5 /* VROPhysicsBodyDelegateiOS.h in Headers */,
 				8F65F8161CA073C100415115 /* VROTextureUtil.h in Headers */,
-				A5E4E37E1F22A1F90010A087 /* VROWeakProxy.h in Headers */,
 				8A130DA71E401B910050D83B /* VROSoundDataDelegate.h in Headers */,
 				8FE382131EF06FED005038CB /* VROARAnchor.h in Headers */,
 				8FDDB4A81DAF134300DE0968 /* VROLineSegment.h in Headers */,
@@ -2432,8 +2447,10 @@
 				8FCED07C1EBBD35200C19BCA /* Sven_Face_Color.png in Resources */,
 				8FCED07A1EBBD35200C19BCA /* Sven_Body_Specular.png in Resources */,
 				8F129FBF1ED603BE00341D83 /* worm.vrx in Resources */,
+				8FF5CCB51F28F5BA007C7F52 /* porsche911.vrx in Resources */,
 				8FCED05E1EBBCFCF00C19BCA /* Squid_Normal.png in Resources */,
 				8F346B291F23AF39000D16B9 /* bball.jpg in Resources */,
+				8FF5CCBD1F290364007C7F52 /* aliengirl_specular.png in Resources */,
 				8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
 				8F346B281F23AF39000D16B9 /* bball_SPEC.png in Resources */,
@@ -2494,6 +2511,9 @@
 				8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */,
 				8F9277FF1C66BD4500FF892A /* ny1.jpg in Resources */,
 				8FDD8FF31E3A9907006CF466 /* 360_westlake.jpg in Resources */,
+				8FF5CCBB1F290364007C7F52 /* aliengirl_diffuse.png in Resources */,
+				8FF5CCBE1F290364007C7F52 /* aliengirl.vrx in Resources */,
+				8FF5CCB61F28F5BA007C7F52 /* Porsche911turboS_diff.jpg in Resources */,
 				8FCED05A1EBBCFCF00C19BCA /* MinionSuitA_Normal.png in Resources */,
 				A5ABB1D71E95703200E07EBC /* stereo3602.jpg in Resources */,
 				8F50FC8C1E0AF54F00A9B4B2 /* orig_02_-_Defaul1noCulling.JPG in Resources */,
@@ -2506,6 +2526,7 @@
 				8F705DF71E8F5D42008BE8F8 /* earth.obj in Resources */,
 				8F660AB01E931C6F006D063F /* 4096_bump.jpg in Resources */,
 				8FCED05F1EBBCFCF00C19BCA /* Squid_Specular.png in Resources */,
+				8FF5CCBC1F290364007C7F52 /* aliengirl_normal.png in Resources */,
 				8FCED0761EBBD35200C19BCA /* Jetpack_Spec.png in Resources */,
 				8A3517331EE0A50A00B6E786 /* ben.jpg in Resources */,
 				8F50FC8B1E0AF54F00A9B4B2 /* male02.obj in Resources */,

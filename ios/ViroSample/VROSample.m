@@ -896,7 +896,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     scene->setBackgroundCube([self niagaraTexture]);
     
-    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"sven" ofType:@"vrx"];
+    NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"aliengirl" ofType:@"vrx"];
     NSURL *fbxURL = [NSURL fileURLWithPath:fbxPath];
     std::string url = std::string([[fbxURL description] UTF8String]);
     
