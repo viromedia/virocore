@@ -532,13 +532,9 @@ static VROVector3f const kZeroVector = VROVector3f();
      Setup GL state.
      */
     glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE); // Must enable writes to clear depth buffer
     
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -556,7 +552,6 @@ static VROVector3f const kZeroVector = VROVector3f();
         // TODO Only on viewport change
         _arSession->setViewport(viewport);
         
-        // TODO Only on first run of isReady()
         _pointOfView->setBackground(_cameraBackground);
 
         /*
@@ -640,6 +635,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     // TODO: change the scene to VROARScene in this this class?
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(scene);
     arScene->setARComponentManager(_arComponentManager);
+    arScene->addNode(_pointOfView);
 }
 
 - (void)recenterTracking {

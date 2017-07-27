@@ -60,7 +60,9 @@ VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
     _selectable(true),
     _highAccuracyGaze(false),
     _hierarchicalRendering(false),
-    _visible(false) {
+    _visible(false),
+    _portalStencilBits(0),
+    _lastStencilRenderingFrame(-1) {
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
 
@@ -78,7 +80,9 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _opacity(node._opacity),
     _selectable(node._selectable),
     _highAccuracyGaze(node._highAccuracyGaze),
-    _hierarchicalRendering(node._hierarchicalRendering) {
+    _hierarchicalRendering(node._hierarchicalRendering),
+    _portalStencilBits(node._portalStencilBits),
+    _lastStencilRenderingFrame(-1) {
         
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -102,6 +106,7 @@ void VRONode::renderBackground(const VRORenderContext &renderContext,
                                std::shared_ptr<VRODriver> &driver) {
     if (_background) {
         passert_thread();
+        driver->setPortalStencilRefBits(_portalStencilBits);
         
         const std::shared_ptr<VROMaterial> &material = _background->getMaterials()[0];
         material->bindShader(driver);
@@ -126,6 +131,33 @@ void VRONode::render(int elementIndex,
         _geometry->render(elementIndex, material,
                           _computedTransform, _computedInverseTransposeTransform, _computedOpacity,
                           context, driver);
+    }
+}
+
+void VRONode::renderStencil(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
+    if (_lastStencilRenderingFrame >= context.getFrame()) {
+        return;
+    }
+    _lastStencilRenderingFrame = context.getFrame();
+    
+    // Write the portal to the stencil buffer, but none of the child geometry -- only the
+    // portal geometry itself, which represent the "window" into the next area
+    if (_portalStencilBits > 0 && _geometry) {
+        driver->setPortalStencilWriteBits(_portalStencilBits);
+        
+        int numElements = (int) _geometry->getGeometryElements().size();
+        for (int i = 0; i < numElements; i++) {
+            _geometry->render(i, _geometry->getMaterialForElement(i),
+                              _computedTransform, _computedInverseTransposeTransform, 1.0, context, driver);
+        }
+    }
+    
+    std::shared_ptr<VRONode> parent = _supernode.lock();
+    if (parent) {
+        parent->renderStencil(context, driver);
+    }
+    for (std::shared_ptr<VRONode> &childNode : _subnodes) {
+        childNode->renderStencil(context, driver);
     }
 }
 
@@ -163,6 +195,7 @@ void VRONode::updateSortKeys(uint32_t depth,
     std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
     std::stack<int> &hierarchyDepths = params.hierarchyDepths;
     std::stack<float> &distancesFromCamera = params.distancesFromCamera;
+    std::stack<int> &portalStencilBits = params.portalStencilBits;
     
     /*
      Compute specific parameters for this node.
@@ -224,6 +257,14 @@ void VRONode::updateSortKeys(uint32_t depth,
     }
     
     /*
+     If this node has portal stencil bits, set them in the sort key. They will apply
+     to this node and all of its children, until new bits are encountered.
+     */
+    if (_portalStencilBits > 0) {
+        portalStencilBits.push(_portalStencilBits);
+    }
+    
+    /*
      Compute the sort key for this node's geometry elements.
      */
     if (_geometry) {
@@ -238,7 +279,7 @@ void VRONode::updateSortKeys(uint32_t depth,
             furthestDistanceFromCamera = _computedBoundingBox.getFurthestDistanceToPoint(context.getCamera().getPosition());
         }
         _geometry->updateSortKeys(this, hierarchyId, hierarchyDepth, lightsHash, _computedOpacity,
-                                  distanceFromCamera, context.getZFar(), driver);
+                                  distanceFromCamera, context.getZFar(), portalStencilBits.top(), driver);
         
         if (kDebugSortOrder) {
             pinfo("   [%d] Pushed node with position [%f, %f, %f], rendering order %d, hierarchy depth %d (actual depth %d), distance to camera %f, hierarchy ID %d, lights %d",
@@ -266,6 +307,10 @@ void VRONode::updateSortKeys(uint32_t depth,
     opacities.pop();
     hierarchyDepths.pop();
     distancesFromCamera.pop();
+    
+    if (_portalStencilBits > 0) {
+        portalStencilBits.pop();
+    }
 }
 
 void VRONode::getSortKeysForVisibleNodes(std::vector<VROSortKey> *outKeys) {

@@ -24,6 +24,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneStereoscopic,
     VROSampleSceneFBX,
     VROSampleSceneAR,
+    VROSampleScenePortal,
     VROSampleSceneNumScenes,
 };
 
@@ -86,6 +87,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
             return [self loadFBXScene];
         case VROSampleSceneAR:
             return [self loadARScene];
+        case VROSampleScenePortal:
+            return [self loadPortalScene];
         default:
             break;
     }
@@ -155,6 +158,52 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     } else {
         NSLog(@"Couldn't find target in given image");
     }
+}
+
+- (std::shared_ptr<VROSceneController>)loadPortalScene {
+    std::shared_ptr<VROARSceneController> sceneController = std::make_shared<VROARSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
+    
+    std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
+    light->setColor({ 1.0, 1.0, 1.0 });
+    light->setPosition( { 0, 0, 0 });
+    light->setDirection( { 0, 0, -1.0 });
+    light->setAttenuationStartDistance(50);
+    light->setAttenuationEndDistance(75);
+    light->setSpotInnerAngle(70);
+    light->setSpotOuterAngle(120);
+    
+    std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
+    ambient->setColor({ 1.0, 1.0, 1.0 });
+    ambient->setIntensity(1000);
+    
+    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    rootNode->setPosition({0, 0, 0});
+    
+    scene->addNode(rootNode);
+    
+    /*
+     Create the portal surface.
+     */
+    int width = 1;
+    int height = 1;
+    
+    std::shared_ptr<VROSurface> portal = VROSurface::createSurface(width, height, 0.5, 0.5, 1, 1);
+    portal->getMaterials().front()->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
+    portal->getMaterials().front()->setTransparency(0.0);
+    portal->setName("Portal");
+    
+    std::shared_ptr<VRONode> portalNode = std::make_shared<VRONode>();
+    portalNode->setGeometry(portal);
+    portalNode->setPosition({0, 0, -2});
+    portalNode->setPortalStencilBits(0x1);
+    portalNode->setBackgroundCube([self cloudTexture]);
+    portalNode->addLight(light);
+    portalNode->addLight(ambient);
+    portalNode->addChildNode([self loadFBXModel]);
+    
+    rootNode->addChildNode(portalNode);
+    return sceneController;
 }
 
 - (std::shared_ptr<VROSceneController>)loadVideoSphereScene {
@@ -897,10 +946,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return sceneController;
 }
 
-- (std::shared_ptr<VROSceneController>)loadFBXScene {
-    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
-    std::shared_ptr<VROScene> scene = sceneController->getScene();
-    
+- (std::shared_ptr<VRONode>)loadFBXModel {
     NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"aliengirl" ofType:@"vrx"];
     NSURL *fbxURL = [NSURL fileURLWithPath:fbxPath];
     std::string url = std::string([[fbxURL description] UTF8String]);
@@ -908,6 +954,39 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     NSString *basePath = [fbxPath stringByDeletingLastPathComponent];
     NSURL *baseURL = [NSURL fileURLWithPath:basePath];
     std::string base = std::string([[baseURL description] UTF8String]);
+    
+    return VROFBXLoader::loadFBXFromURL(url, base, true,
+                                        [self](std::shared_ptr<VRONode> node, bool success) {
+                                            if (!success) {
+                                                return;
+                                            }
+                                            
+                                            node->setScale({0.01, 0.01, 0.01});
+                                            node->setPosition({0, -2, -2});
+                                            
+                                            if (node->getGeometry()) {
+                                                node->getGeometry()->setName("FBX Root Geometry");
+                                            }
+                                            for (std::shared_ptr<VRONode> &child : node->getSubnodes()) {
+                                                if (child->getGeometry()) {
+                                                    child->getGeometry()->setName("FBX Geometry");
+                                                }
+                                            }
+                                            
+                                            std::set<std::string> animations = node->getAnimationKeys(true);
+                                            for (std::string animation : animations) {
+                                                pinfo("Loaded animation [%s]", animation.c_str());
+                                            }
+                                            
+                                            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                                [self animateTake:node];
+                                            });
+                                        });
+}
+
+- (std::shared_ptr<VROSceneController>)loadFBXScene {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 1.0, 1.0 });
@@ -929,41 +1008,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->setBackgroundCube([self niagaraTexture]);
     
     scene->addNode(rootNode);
-    
-    std::shared_ptr<VRONode> fbxNode = VROFBXLoader::loadFBXFromURL(url, base, true,
-                                                                    [self](std::shared_ptr<VRONode> node, bool success) {
-                                                                        if (!success) {
-                                                                            return;
-                                                                        }
-                                                                        
-                                                                        node->setScale({0.05, 0.05, 0.05});
-                                                                        node->setPosition({0, 0, -6});
-                                                                        
-                                                                        std::set<std::string> animations = node->getAnimationKeys(true);
-                                                                        for (std::string animation : animations) {
-                                                                            pinfo("Loaded animation [%s]", animation.c_str());
-                                                                        }
-                                                                        
-                                                                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                                                                            [self animateTake:node];
-                                                                        });
-                                                                    });
-    
-    
-    rootNode->addChildNode(fbxNode);
-    
-    std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self](VRONode *const node, float seconds) {
-        self.objAngle += .015;
-        //node->setRotation({ 0, self.objAngle, 0});
-        
-        return true;
-    });
-    
-    fbxNode->runAction(action);
+    rootNode->addChildNode([self loadFBXModel]);
     
     self.delegate = std::make_shared<VROEventDelegateiOS>(self);
-    fbxNode->setEventDelegate(self.delegate);
-    
     return sceneController;
 }
 
@@ -1045,14 +1092,13 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (void)animateTake:(std::shared_ptr<VRONode>)node {
-    node->getAnimation("Take 001", true)->execute(node, {});
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    node->getAnimation("Take 001", true)->execute(node, [node, self] {
         [self animateTake:node];
     });
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleSceneFBX;
+    self.sceneIndex = VROSampleScenePortal;
     self.driver = driver;
     
     self.sceneController = [self loadSceneWithIndex:self.sceneIndex];

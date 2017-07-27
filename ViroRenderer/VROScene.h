@@ -73,6 +73,13 @@ public:
      */
     void updateSortKeys(const VRORenderContext &context,
                         std::shared_ptr<VRODriver> &driver);
+    
+    /*
+     Render all portals in the tree (nodes with a portal bits that have 
+     geometries) to the stencil buffer.
+     */
+    void renderStencil(const VRORenderContext &context,
+                       std::shared_ptr<VRODriver> &driver);
 
     /*
      Add a new root node to the scene.

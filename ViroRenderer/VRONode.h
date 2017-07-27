@@ -127,6 +127,14 @@ public:
     void getSortKeysForVisibleNodes(std::vector<VROSortKey> *outKeys);
     
     /*
+     Render this node's geometry to the stencil buffer, if it has any portal stencil bits.
+     Recurses from this node *outward*: both up the tree and down. Note we use graph traversal
+     because stencil rendering begins at the 'active' node, not necesarily at the root
+     node.
+     */
+    void renderStencil(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver);
+    
+    /*
      Render this node's background. Recurses down the tree.
      */
     void renderBackground(const VRORenderContext &renderContext,
@@ -460,6 +468,25 @@ public:
     std::shared_ptr<VROPhysicsBody> getPhysicsBody() const;
     void clearPhysicsBody();
     
+#pragma mark - Portals
+    
+    /*
+     The portal stencil bits enable the drawing of portals on the screen. This 
+     field determines:
+     
+     1. What bit is written to the stencil buffer when rendering this node's 
+     geometry during the stencil pass, and
+     
+     2. What bit this node and its *children* must match in the stencil buffer
+     in order to render their geometry to screen during the render pass.
+     
+     If the bits are zero, then this node will skip the stencil pass, and use its
+     nearest parent's bits during the render pass.
+     */
+    void setPortalStencilBits(int bits) {
+        _portalStencilBits = bits;
+    }
+    
 #pragma mark - Backgrounds
     
     /*
@@ -638,6 +665,16 @@ private:
      Transform to apply to the background geometry.
      */
     VROMatrix4f _backgroundTransform;
+    
+    /*
+     See setPortalStencilBits() for description.
+     */
+    int _portalStencilBits;
+    
+    /*
+     Last frame that the stencil was written for this node. Used for graph traversal.
+     */
+    int _lastStencilRenderingFrame;
     
 #pragma mark - Private
     

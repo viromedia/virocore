@@ -84,6 +84,7 @@ void VROScene::render(const VRORenderContext &context,
                         pinfo("   Rendering node [%s], element %d", node->getGeometry()->getName().c_str(), elementIndex);
                     }
                 }
+                driver->setPortalStencilRefBits(key.portalStencilBits);
                 node->render(elementIndex, material, context, driver);
             }
         }
@@ -131,6 +132,19 @@ void VROScene::updateSortKeys(const VRORenderContext &context, std::shared_ptr<V
     
     std::sort(_keys.begin(), _keys.end());
     _distanceOfFurthestObjectFromCamera = renderParams.furthestDistanceFromCamera;
+}
+
+void VROScene::renderStencil(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
+    driver->initRenderPass(VRORenderPass::PortalStencil);
+    
+    // TODO VIRO-1400 Clear the stencil to the active node's portalStencilBits value
+    driver->clearStencil(0);
+    
+    // TODO VIRO-1400 Begin at the active node, not at the roots!
+    for (std::shared_ptr<VRONode> &node : _nodes) {
+        node->renderStencil(context, driver);
+    }
+    driver->initRenderPass(VRORenderPass::Normal);
 }
 
 void VROScene::addNode(std::shared_ptr<VRONode> node) {
