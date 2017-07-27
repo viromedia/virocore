@@ -134,7 +134,9 @@
 
 #pragma mark - Recording (Video/Image)
 
-- (void)startVideoRecording:(NSString *)filename saveToCameraRoll:(BOOL)saveToCamera {
+- (void)startVideoRecording:(NSString *)filename
+           saveToCameraRoll:(BOOL)saveToCamera
+                 errorBlock:(VROViewRecordingErrorBlock)errorBlock {
     // no-op
 }
 

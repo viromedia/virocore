@@ -1061,26 +1061,26 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     // takeVideo if YES, else takePhoto if NO
     BOOL takeVideo = YES;
     if (takeVideo) {
-        NSString *filename = [NSString stringWithFormat:@"testvideo%d.mp4", rand];
+        NSString *filename = [NSString stringWithFormat:@"testvideo%d", rand];
         
         NSLog(@"[VROSample] started recording");
-        [arView startVideoRecording:filename saveToCameraRoll:YES];
+        [arView startVideoRecording:filename saveToCameraRoll:YES errorBlock:nil];
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 20 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
             NSLog(@"[VROSample] stopped recording");
-            [arView stopVideoRecordingWithHandler:^(NSURL *url) {
+            [arView stopVideoRecordingWithHandler:^(BOOL success, NSURL *url, NSInteger errorCode) {
                 if (url) {
                     [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
                 }
             }];
         });
     } else {
-        NSString *filename = [NSString stringWithFormat:@"testimage%d.png", rand];
+        NSString *filename = [NSString stringWithFormat:@"testimage%d", rand];
         
         NSLog(@"[VROSample] taking screenshot in 5 seconds");
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            [arView takeScreenshot:filename saveToCameraRoll:YES withCompletionHandler:^(NSURL *url) {
+            [arView takeScreenshot:filename saveToCameraRoll:YES withCompletionHandler:^(BOOL success, NSURL *url, NSInteger errorCode) {
                 if (url) {
                     [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
                 }
@@ -1098,7 +1098,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleScenePortal;
+    self.sceneIndex = VROSampleSceneAR;
     self.driver = driver;
     
     self.sceneController = [self loadSceneWithIndex:self.sceneIndex];

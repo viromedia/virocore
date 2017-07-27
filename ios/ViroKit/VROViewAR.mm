@@ -51,13 +51,22 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     double _suspendedNotificationTime;
     bool _hasTrackingInitialized;
+
+    /*
+     Video Recording/Screenshot variables
+     */
+    VROViewRecordingErrorBlock _errorBlock;
     bool _isRecording;
     bool _saveToCameraRoll;
-    NSURL *_videoFilePath;
+    NSString *_videoFileName;
+    NSURL *_tempVideoFilePath;
     AVAssetWriter *_videoWriter;
     AVAssetWriterInput *_videoWriterInput;
     AVAssetWriterInputPixelBufferAdaptor *_videoWriterPixelBufferAdaptor;
+    AVAudioRecorder *_audioRecorder;
     double _startTimeMillis;
+    NSURL *_audioFilePath;
+    NSTimer *_videoLoopTimer;
 }
 
 @property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
@@ -106,13 +115,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     }
     
     /*
-     Setup the animation loop for the GLKView.
-     */
-    VROWeakProxy *proxy = [VROWeakProxy weakProxyForObject:self];
-    _displayLink = [CADisplayLink displayLinkWithTarget:proxy selector:@selector(display)];
-    [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-    
-    /*
      Setup the GLKView.
      */
     self.enableSetNeedsDisplay = NO;
@@ -123,6 +125,13 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     [EAGLContext setCurrentContext:self.context];
     
+    /*
+     Setup the animation loop for the GLKView.
+     */
+    VROWeakProxy *proxy = [VROWeakProxy weakProxyForObject:self];
+    _displayLink = [CADisplayLink displayLinkWithTarget:proxy selector:@selector(display)];
+    [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+
     /*
      Disable going to sleep, and setup notifications.
      */
@@ -153,6 +162,14 @@ static VROVector3f const kZeroVector = VROVector3f();
     _renderer = std::make_shared<VRORenderer>(_inputController);
     _inputController->setRenderer(_renderer);
     _hasTrackingInitialized = false;
+    
+    /*
+     Set up the Audio Session properly for recording and playing back audio. We need
+     to do this *AFTER* we init _gvrAudio, because it resets some setting, else audio
+     recording won't work.
+     */
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     
     /*
      Create AR session.
@@ -229,91 +246,296 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 #pragma mark - Recording and Screen Capture
 
-- (void)startVideoRecording:(NSString *)fileName saveToCameraRoll:(BOOL)saveToCamera {
+// TODO: not a huge fan of the current implementation because
+//   1) code will attempt to ask for permission before recording, "delaying" the actual recording
+//   2) developer doesn't get any status updates other than complete failures (no delay notification)
+//   3) developer doesn't get any "time" information.
+// On the flip side, if the developer requests permissions FIRST, then recording starts immediately,
+// so the developer can track recording time themselves and the only status will be "running", "error" and "done"
+- (void)startVideoRecording:(NSString *)fileName
+           saveToCameraRoll:(BOOL)saveToCamera
+                 errorBlock:(VROViewRecordingErrorBlock)errorBlock {
+
     if (_isRecording) {
+        NSLog(@"[Recording] Video is already being recorded, aborting...");
+        if (errorBlock) {
+            errorBlock(kVROViewErrorAlreadyRunning);
+        }
         return;
     }
+
+    // we MUST first check if a recording session is ongoing BEFORE we override state variables.
+    _errorBlock = errorBlock;
     _saveToCameraRoll = saveToCamera;
-    _videoFilePath = [self getTempFileURL:fileName];
+
+    // Note, we don't need to ask for camera permissions here because
+    //  1) we're grabbing image from the renderer
+    //  2) in AR, the renderer accesses the camera and so it should ask for permission
     
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    // if the given fileName exists, then just remove it because we'll overwrite it.
-    if ([fileManager fileExistsAtPath:[_videoFilePath path]]) {
-        [fileManager removeItemAtURL:_videoFilePath error:nil];
+    switch([[AVAudioSession sharedInstance] recordPermission]) {
+        // continue executing if we have permissions
+        case AVAudioSessionRecordPermissionGranted:
+            NSLog(@"[Recording] Microphone permission granted.");
+            break;
+        // notify permission error and exit if we don't have permission
+        case AVAudioSessionRecordPermissionDenied:
+            NSLog(@"[Recording] Microphone permission denied.");
+            if (_errorBlock) {
+                _errorBlock(kVROViewErrorNoPermissions);
+            }
+            return;
+        // if we dont have permissions, then attempt to get it
+        case AVAudioSessionRecordPermissionUndetermined:
+            NSLog(@"[Recording] Microphone permission undetermined.");
+            [[AVAudioSession sharedInstance] requestRecordPermission:^(BOOL granted) {
+                // just call this function again because we'll check for permission state again.
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self startVideoRecording:fileName saveToCameraRoll:saveToCamera errorBlock:_errorBlock];
+                });
+            }];
+            return;
+    }
+
+    // if we're saving this file to camera roll, then also check for that permission before we start
+    if (saveToCamera) {
+        switch ([PHPhotoLibrary authorizationStatus]) {
+            case PHAuthorizationStatusAuthorized:
+                break;
+            case PHAuthorizationStatusDenied:
+            case PHAuthorizationStatusRestricted:
+                if (_errorBlock) {
+                    NSLog(@"[Recording] Photo library permission denied.");
+                    _errorBlock(kVROViewErrorNoPermissions);
+                }
+                return;
+            case PHAuthorizationStatusNotDetermined:
+                [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self startVideoRecording:fileName saveToCameraRoll:saveToCamera errorBlock:_errorBlock];
+                    });
+                }];
+                return;
+        }
     }
     
-    [self startRecordingV1:_videoFilePath];
+    _videoFileName = fileName;
+    _tempVideoFilePath = [self checkAndGetTempFileURL:[fileName stringByAppendingString:kVROViewTempVideoSuffix]];
+    
+    _audioFilePath = [self startAudioRecordingInternal:fileName];
+    [self startVideoRecordingInternal:_tempVideoFilePath];
 }
 
 - (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler {
+    if (!_isRecording) {
+        completionHandler(NO, nil, kVROViewErrorAlreadyStopped);
+    }
     // this block will be called once the video writer in stopRecordingV1 finishes writing the vid
-    VROViewWriteMediaFinishBlock wrappedCompleteHandler = ^(NSURL *filepath) {
-        if (_saveToCameraRoll) {
-            [self writeMediaToCameraRoll:filepath isPhoto:NO withCompletionHandler:completionHandler];
-        } else {
-            completionHandler(filepath);
-        }
-        _saveToCameraRoll = NO;
-        _isRecording = NO;
+    VROViewWriteMediaFinishBlock wrappedCompleteHandler = ^(BOOL success, NSURL *filepath, NSInteger errorCode) {
+        NSURL *videoURL = [self checkAndGetTempFileURL:[_videoFileName stringByAppendingString:kVROViewVideoSuffix]];
+        
+        // once the video finishes writing, then we need to merge the video w/ audio
+        [self mergeAudio:_audioFilePath withVideo:filepath outputPath:videoURL completionHandler:^(BOOL success) {
+            
+            // delete the temp audio/video files.
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            [fileManager removeItemAtPath:[_tempVideoFilePath path] error:nil];
+            [fileManager removeItemAtPath:[_audioFilePath path] error:nil];
+            
+            if (success) {
+                if (_saveToCameraRoll) {
+                    [self writeMediaToCameraRoll:videoURL isPhoto:NO withCompletionHandler:completionHandler];
+                } else {
+                    completionHandler(YES, videoURL, kVROViewErrorNone);
+                }
+            } else {
+                completionHandler(NO, nil, kVROViewErrorUnknown);
+            }
+            _saveToCameraRoll = NO;
+            _isRecording = NO;
+        }];
     };
-    [self stopRecordingV1:wrappedCompleteHandler];
+    [self stopAudioRecordingInternal];
+    [self stopVideoRecordingInternal:wrappedCompleteHandler];
+}
+
+- (void)stopVideoRecordingWithError:(NSInteger)errorCode {
+    if (_errorBlock) {
+        _errorBlock(errorCode);
+    }
+
+    // stop all recording if error
+    [self stopAudioRecordingInternal];
+    [self stopVideoRecordingInternal:nil];
+
+    // clean up the temp files
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if (_tempVideoFilePath) [fileManager removeItemAtPath:[_tempVideoFilePath path] error:nil];
+    if (_audioFilePath) [fileManager removeItemAtPath:[_audioFilePath path] error:nil];
 }
 
 - (void)takeScreenshot:(NSString *)fileName
       saveToCameraRoll:(BOOL)saveToCamera
  withCompletionHandler:(VROViewWriteMediaFinishBlock)completionHandler {
     
-    NSURL *filePath = [self getTempFileURL:fileName];
-    
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    // if the given fileName exists, then just remove it because we'll overwrite it.
-    if ([fileManager fileExistsAtPath:[filePath path]]) {
-        [fileManager removeItemAtURL:filePath error:nil];
+    // if we're saving this file to camera roll, then also check for that permission before we start
+    if (saveToCamera) {
+        switch ([PHPhotoLibrary authorizationStatus]) {
+            case PHAuthorizationStatusAuthorized:
+                break;
+            case PHAuthorizationStatusDenied:
+            case PHAuthorizationStatusRestricted:
+                if (completionHandler) {
+                    NSLog(@"[Recording] Photo library permission denied.");
+                    completionHandler(NO, nil, kVROViewErrorNoPermissions);
+                }
+                return;
+            case PHAuthorizationStatusNotDetermined:
+                [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+                    [self takeScreenshot:fileName saveToCameraRoll:saveToCamera withCompletionHandler:completionHandler];
+                }];
+                return;
+        }
     }
+    
+    NSURL *filePath = [self checkAndGetTempFileURL:[fileName stringByAppendingString:kVROViewImageSuffix]];
     
     [UIImagePNGRepresentation(self.snapshot) writeToFile:[filePath path] atomically:YES];
     
     if (saveToCamera) {
         [self writeMediaToCameraRoll:filePath isPhoto:YES withCompletionHandler:completionHandler];
     } else {
-        completionHandler(filePath);
+        completionHandler(YES, filePath, kVROViewErrorNone);
     }
 }
 
 - (void)writeMediaToCameraRoll:(NSURL *)filePath
                        isPhoto:(BOOL)isPhoto
          withCompletionHandler:(VROViewWriteMediaFinishBlock)completionHandler {
+    
     PHAssetResourceType type = isPhoto ? PHAssetResourceTypePhoto : PHAssetResourceTypeVideo;
     [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
         [[PHAssetCreationRequest creationRequestForAsset] addResourceWithType:type fileURL:filePath options:nil];
     } completionHandler:^(BOOL success, NSError *error) {
         if (success) {
             NSLog(@"[Recording] saving media worked!");
-            completionHandler(filePath);
+            completionHandler(YES, filePath, kVROViewErrorNone);
         } else {
             NSLog(@"[Recording] saving media failed w/ error: %@", error.localizedDescription);
-            completionHandler(NULL);
+            completionHandler(NO, filePath, kVROViewErrorWriteToFile);
         }
     }];
 }
 
-// TODO: use kVROViewTempMediaDirectory. We can't write to a file if the directory it lives in doesn't exist.
-- (NSURL *)getTempFileURL:(NSString *)filename {
-    NSURL *filepath = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:filename]];
-    return filepath;
+- (BOOL)hasPhotoLibraryPermission {
+    return [PHPhotoLibrary authorizationStatus] == PHAuthorizationStatusAuthorized;
 }
 
-#pragma mark - Video Recording V1
-/*
- The below code is the "V1" version of video recording which fetches each video frame by extracting a
- UIImage from this GLKView which is slow and uses recursion w/ GCD to loop.
- */
+- (void)mergeAudio:(NSURL *)audioPath withVideo:(NSURL *)videoPath outputPath:(NSURL *)outputPath completionHandler:(void (^)(BOOL))handler {
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if (![fileManager fileExistsAtPath:[audioPath path]] || ![fileManager fileExistsAtPath:[videoPath path]]) {
+        NSLog(@"[Recording] Audio/Video merge failed because file does not exist.");
+        handler(NO);
+        return;
+    }
+    AVURLAsset *audioAsset = [[AVURLAsset alloc] initWithURL:audioPath options:nil];
+    AVURLAsset *videoAsset = [[AVURLAsset alloc] initWithURL:videoPath options:nil];
 
-- (void)startRecordingV1:(NSURL *)filePath {
-    if (_isRecording) {
-        return; // do nothing if we're already recording...
+    if (![audioAsset isPlayable] || ![videoAsset isPlayable]) {
+        NSLog(@"[Recording] Audio/Video merge failed because a file is not playable.");
+        handler(NO);
+        return;
     }
     
+    AVMutableComposition *mergedComposition = [AVMutableComposition composition];
+    
+    AVMutableCompositionTrack *compositionAudioTrack = [mergedComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+    [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, audioAsset.duration) ofTrack:[[audioAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0] atTime:kCMTimeZero error:nil];
+    
+    AVMutableCompositionTrack *compositionVideoTrack = [mergedComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+    [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, audioAsset.duration) ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0] atTime:kCMTimeZero error:nil];
+    
+    AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:mergedComposition presetName:AVAssetExportPresetPassthrough];
+    
+    exportSession.outputFileType = AVFileTypeMPEG4;
+    exportSession.outputURL = outputPath;
+    
+    [exportSession exportAsynchronouslyWithCompletionHandler:^(void) {
+        // let the handler know that the merge was successful if the status is completed
+        handler(exportSession.status == AVAssetExportSessionStatusCompleted);
+    }];
+}
+
+/*
+ This function gets the temp file url for the given filename guaranteeing that it's a valid url. The given
+ filename should already be suffixed with an extension.
+ */
+- (NSURL *)checkAndGetTempFileURL:(NSString *)fileName {
+    // first check if the temp media directory exists
+    BOOL isDirectory = NO;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL *filePath = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingString:kVROViewTempMediaDirectory]];
+    BOOL exists = [fileManager fileExistsAtPath:[filePath path] isDirectory:&isDirectory];
+    
+    // if it doesn't exist or isn't a directory, then turn it into a directory.
+    if (!exists || !isDirectory) {
+        if (!isDirectory) {
+            [fileManager removeItemAtURL:filePath error:nil];
+        }
+        NSError *error;
+        BOOL success = [fileManager createDirectoryAtURL:filePath withIntermediateDirectories:YES attributes:nil error:&error];
+        if (!success) {
+            NSLog(@"[Recording] failed to create directory w/ error: %@", [error localizedDescription]);
+            return nil;
+        }
+    }
+    
+    filePath = [filePath URLByAppendingPathComponent:fileName];
+    if ([fileManager fileExistsAtPath:[filePath path]]) {
+        [fileManager removeItemAtURL:filePath error:nil];
+    }
+    
+    return filePath;
+}
+
+#pragma mark - Audio Recording
+
+- (NSURL *)startAudioRecordingInternal:(NSString *)fileName {
+    
+    NSDictionary *audioRecordSettings = @{
+                                          AVFormatIDKey : @(kAudioFormatMPEG4AAC),
+                                          AVSampleRateKey : @(16000), // 44.1k is CD (high) quality, we don't need that high, so 16kHz should be enough.
+                                          AVNumberOfChannelsKey : @(1), // only 1 because 1 mic = mono sound
+                                          };
+    
+    NSURL *url = [self checkAndGetTempFileURL:[fileName stringByAppendingString:kVROViewAudioSuffix]];
+    
+    NSError *error;
+    _audioRecorder = [[AVAudioRecorder alloc] initWithURL:url settings:audioRecordSettings error:&error];
+    if ([_audioRecorder prepareToRecord]) {
+        [_audioRecorder record];
+    } else {
+        NSLog(@"[Recording] preparing to record audio failed with error: %@", [error localizedDescription]);
+        [self stopVideoRecordingWithError:kVROViewErrorUnknown];
+    }
+    return url;
+}
+
+- (void)stopAudioRecordingInternal {
+    if (_audioRecorder) {
+        [_audioRecorder stop];
+    }
+    _audioRecorder = nil;
+}
+
+#pragma mark - Video Recording
+
+/*
+ The following functions encapsulate all the logic to grab and record the rendered frames to a file
+ at the given filepath. Audio recording is done separately and will be merged with the video later.
+ */
+
+- (void)startVideoRecordingInternal:(NSURL *)filePath {
     NSError *error = nil;
     _videoWriter = [[AVAssetWriter alloc] initWithURL:filePath fileType:AVFileTypeMPEG4 error:&error];
     
@@ -326,8 +548,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     _videoWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:videoSetting];
     
     _videoWriterPixelBufferAdaptor = [AVAssetWriterInputPixelBufferAdaptor
-                                                     assetWriterInputPixelBufferAdaptorWithAssetWriterInput:_videoWriterInput
-                                                     sourcePixelBufferAttributes:nil];
+                                      assetWriterInputPixelBufferAdaptorWithAssetWriterInput:_videoWriterInput
+                                      sourcePixelBufferAttributes:nil];
     
     [_videoWriter addInput:_videoWriterInput];
     
@@ -336,51 +558,51 @@ static VROVector3f const kZeroVector = VROVector3f();
     _startTimeMillis = VROTimeCurrentMillis();
     _isRecording = YES;
     
-    // we have to run this on the main thread because self.snapshot seems to access some UIView properties that require it.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0), dispatch_get_main_queue(), ^{
-        [self recordFrameV1];
-    });
+    _videoLoopTimer = [NSTimer timerWithTimeInterval:0.03 target:self selector:@selector(recordFrame) userInfo:nil repeats:YES];
+    // TODO: move this off the mainRunLoop. We do this because the recordFrame function currently requires running on the main thread.
+    [[NSRunLoop mainRunLoop] addTimer:_videoLoopTimer forMode:NSRunLoopCommonModes];
 }
 
-/*
- This function should initially be run on the UI thread as it requires calling self.snapshot which
- accesses some UIView properties.
- */
-- (void)recordFrameV1 {
-    double currentTime = VROTimeCurrentMillis() - _startTimeMillis;
-    NSLog(@"[Recording] record frame at currentTime %f", currentTime);
+- (void)recordFrame {
     if (_isRecording) {
-        CGImageRef image = self.snapshot.CGImage;
-        CVPixelBufferRef ref = [VROViewAR pixelBufferFromCGImage:image];
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            
+        if ([_videoWriterInput isReadyForMoreMediaData]) {
+            double currentTime = VROTimeCurrentMillis() - _startTimeMillis;
+            // Uncomment below if you want to spam the logs...
+            // NSLog(@"[Recording] record frame at currentTime %f", currentTime);
+
+            // grab the image, convert it to a pixel buffer and append it to the output pixel buffer before releasing the pixel buffer.
+            // TODO: grab this image from a FBO. Grabbing the snapshot restricts us to running on the main thread (and it's slow)
+            CGImageRef image = self.snapshot.CGImage;
+            CVPixelBufferRef ref = [VROViewAR pixelBufferFromCGImage:image];
             BOOL success = [_videoWriterPixelBufferAdaptor appendPixelBuffer:ref withPresentationTime:CMTimeMake(currentTime, 1000)];
             CVPixelBufferRelease(ref);
             
             if (!success) {
-                NSString *errorStr = _videoWriter.status == AVAssetWriterStatusFailed ? [_videoWriter.error localizedDescription] : @"unknown issue";
+                NSString *errorStr = _videoWriter.status == AVAssetWriterStatusFailed ? [_videoWriter.error localizedDescription] : @"unknown error";
                 NSLog(@"[Recording] record frame failed: %@", errorStr);
-                // stop recording/looping
-                // TODO: clean up? or rather, assume that the "record loop" actually stops recording. But this is V1 (throw away) code.
-                return;
+                [self stopVideoRecordingWithError:kVROViewErrorUnknown];
             }
-            
-            // loop again, but on the main thread! There's no delay because getting snapshot takes too long right now.
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0*NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-                [self recordFrameV1];
-            });
-        });
+        } else {
+            NSLog(@"[Recording] videoWriterInput is not ready for data. It's either finished or we are writing data too fast!");
+            // Note: this is not an error, because we'll just skip this frame.
+        }
     }
 }
 
-- (void)stopRecordingV1:(VROViewWriteMediaFinishBlock)completionHandler {
+- (void)stopVideoRecordingInternal:(VROViewWriteMediaFinishBlock)completionHandler {
+    // stop the loop that grabs each frame.
+    [_videoLoopTimer invalidate];
+
     [_videoWriterInput markAsFinished];
     // CMTime is set up to be value / timescale = seconds, so since we're in millis, timescape is 1000.
     [_videoWriter endSessionAtSourceTime:CMTimeMake(VROTimeCurrentMillis() - _startTimeMillis, 1000)];
     [_videoWriter finishWritingWithCompletionHandler:^(void) {
-        NSLog(@"[Recording] finished writing video");
-        completionHandler(_videoFilePath);
+        if (_videoWriter.status == AVAssetWriterStatusCompleted) {
+            completionHandler(YES, _tempVideoFilePath, kVROViewErrorNone);
+        } else {
+            NSLog(@"[Recording] Failed writing to file: %@", _videoWriter.error ? [_videoWriter.error localizedDescription] : @"Unknown error");
+            completionHandler(NO, _tempVideoFilePath, kVROViewErrorWriteToFile);
+        }
     }];
 }
 
