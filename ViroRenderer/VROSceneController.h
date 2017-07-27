@@ -103,8 +103,9 @@ public:
             root->setPosition(root->getPosition() + forward);
         }
 
-        if (_scene->getBackground() != nullptr) {
-            _scene->getBackground()->getMaterials().front()->setTransparency(0.0);
+        std::vector<std::shared_ptr<VROGeometry>> backgrounds = _scene->getBackgrounds();
+        for (std::shared_ptr<VROGeometry> &background : backgrounds) {
+            background->getMaterials().front()->setTransparency(0.0);
         }
 
         // Construct and commit fade-in/pull-in animation for the scene
@@ -117,8 +118,8 @@ public:
             root->setPosition(root->getPosition() - forward);
         }
 
-        if (_scene->getBackground() != nullptr) {
-            _scene->getBackground()->getMaterials().front()->setTransparency(1.0);
+        for (std::shared_ptr<VROGeometry> &background : backgrounds) {
+            background->getMaterials().front()->setTransparency(1.0);
         }
 
         // Set callback delegates
@@ -157,8 +158,9 @@ public:
             root->setPosition(root->getPosition() + forward);
         }
 
-        if (_scene->getBackground() != nullptr) {
-            _scene->getBackground()->getMaterials().front()->setTransparency(0.0);
+        std::vector<std::shared_ptr<VROGeometry>> backgrounds = _scene->getBackgrounds();
+        for (std::shared_ptr<VROGeometry> &background : backgrounds) {
+            background->getMaterials().front()->setTransparency(0.0);
         }
         
         // At the end of the animation, restore the opacity and position of the

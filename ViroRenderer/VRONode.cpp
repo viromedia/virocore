@@ -26,6 +26,9 @@
 #include "VROPhysicsBody.h"
 #include "VROAnimationChain.h"
 #include "VROExecutableAnimation.h"
+#include "VROMaterial.h"
+#include "VROSkybox.h"
+#include "VROSphere.h"
 #include "VROExecutableNodeAnimation.h"
 #include "VROTransformDelegate.h"
 
@@ -39,6 +42,10 @@ static const bool kEnableVisibilityFrustumTest = true;
 bool kDebugSortOrder = false;
 static int sDebugSortIndex = 0;
 const std::string kDefaultNodeTag = "undefined";
+
+// Parameters for sphere backgrounds
+static const float kSphereBackgroundRadius = 1;
+static const float kSphereBackgroundNumSegments = 60;
 
 #pragma mark - Initialization
 
@@ -90,6 +97,24 @@ std::shared_ptr<VRONode> VRONode::clone() {
 }
 
 #pragma mark - Rendering
+
+void VRONode::renderBackground(const VRORenderContext &renderContext,
+                               std::shared_ptr<VRODriver> &driver) {
+    if (_background) {
+        passert_thread();
+        
+        const std::shared_ptr<VROMaterial> &material = _background->getMaterials()[0];
+        material->bindShader(driver);
+        
+        VROMatrix4f transform;
+        transform = _backgroundTransform.multiply(transform);
+        _background->render(0, material, transform, {}, 1.0, renderContext, driver);
+    }
+    
+    for (std::shared_ptr<VRONode> &childNode : _subnodes) {
+        childNode->renderBackground(renderContext, driver);
+    }
+}
 
 void VRONode::render(int elementIndex,
                      std::shared_ptr<VROMaterial> &material,
@@ -808,4 +833,48 @@ std::shared_ptr<VROPhysicsBody> VRONode::getPhysicsBody() const {
 
 void VRONode::clearPhysicsBody(){
     _physicsBody = nullptr;
+}
+
+#pragma mark - Backgrounds
+
+void VRONode::setBackgroundCube(std::shared_ptr<VROTexture> textureCube) {
+    passert_thread();
+    _background = VROSkybox::createSkybox(textureCube);
+    _background->setName("Background");
+}
+
+void VRONode::setBackgroundCube(VROVector4f color) {
+    passert_thread();
+    _background = VROSkybox::createSkybox(color);
+    _background->setName("Background");
+}
+
+void VRONode::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
+    passert_thread();
+    _background = VROSphere::createSphere(kSphereBackgroundRadius,
+                                          kSphereBackgroundNumSegments,
+                                          kSphereBackgroundNumSegments,
+                                          false);
+    _background->setCameraEnclosure(true);
+    _background->setName("Background");
+    
+    std::shared_ptr<VROMaterial> material = _background->getMaterials()[0];
+    material->setLightingModel(VROLightingModel::Constant);
+    material->getDiffuse().setTexture(textureSphere);
+    material->setWritesToDepthBuffer(false);
+    material->setReadsFromDepthBuffer(false);
+}
+
+void VRONode::setBackground(std::shared_ptr<VROGeometry> background) {
+    passert_thread();
+    _background = background;
+}
+
+void VRONode::setBackgroundTransform(VROMatrix4f transform) {
+    _backgroundTransform = transform;
+}
+
+void VRONode::setBackgroundRotation(VROQuaternion rotation) {
+    passert_thread();
+    _backgroundTransform = rotation.getMatrix();
 }

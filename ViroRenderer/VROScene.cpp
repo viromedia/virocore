@@ -11,19 +11,14 @@
 #include "VRONode.h"
 #include "VROGeometry.h"
 #include "VROInputControllerBase.h"
-#include "VROSkybox.h"
 #include "VROLight.h"
 #include "VROHitTestResult.h"
-#include "VROSphere.h"
 #include "VROMaterial.h"
 #include "VROLog.h"
 #include "VROAudioPlayer.h"
 #include "VROSurface.h"
 #include <stack>
 #include <algorithm>
-
-static const float kSphereBackgroundRadius = 1;
-static const float kSphereBackgroundNumSegments = 60;
 
 VROScene::VROScene() : VROThreadRestricted(VROThreadName::Renderer) {
     ALLOCATION_TRACKER_ADD(Scenes, 1);
@@ -36,17 +31,9 @@ VROScene::~VROScene() {
 void VROScene::renderBackground(const VRORenderContext &renderContext,
                                 std::shared_ptr<VRODriver> &driver) {
     passert_thread();
-    if (!_background) {
-        return;
+    for (std::shared_ptr<VRONode> &node : _nodes) {
+        node->renderBackground(renderContext, driver);
     }
-    
-    const std::shared_ptr<VROMaterial> &material = _background->getMaterials()[0];
-    material->bindShader(driver);
-
-    VROMatrix4f transform;
-    transform = _backgroundTransform.multiply(transform);
-
-    _background->render(0, material, transform, {}, 1.0, renderContext, driver);
 }
 
 void VROScene::render(const VRORenderContext &context,
@@ -151,39 +138,6 @@ void VROScene::addNode(std::shared_ptr<VRONode> node) {
     _nodes.push_back(node);
 }
 
-void VROScene::setBackgroundCube(std::shared_ptr<VROTexture> textureCube) {
-    passert_thread();
-    _background = VROSkybox::createSkybox(textureCube);
-    _background->setName("Background");
-}
-
-void VROScene::setBackgroundCube(VROVector4f color) {
-    passert_thread();
-    _background = VROSkybox::createSkybox(color);
-    _background->setName("Background");
-}
-
-void VROScene::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
-    passert_thread();
-    _background = VROSphere::createSphere(kSphereBackgroundRadius,
-                                          kSphereBackgroundNumSegments,
-                                          kSphereBackgroundNumSegments,
-                                          false);
-    _background->setCameraEnclosure(true);
-    _background->setName("Background");
-
-    std::shared_ptr<VROMaterial> material = _background->getMaterials()[0];
-    material->setLightingModel(VROLightingModel::Constant);
-    material->getDiffuse().setTexture(textureSphere);
-    material->setWritesToDepthBuffer(false);
-    material->setReadsFromDepthBuffer(false);
-}
-
-void VROScene::setBackground(std::shared_ptr<VROGeometry> background) {
-    passert_thread();
-    _background = background;
-}
-
 void VROScene::detachInputController(std::shared_ptr<VROInputControllerBase> controller){
     passert_thread();
     if (!_controllerPresenter){
@@ -219,11 +173,21 @@ std::shared_ptr<VROInputPresenter> VROScene::getControllerPresenter(){
     return _controllerPresenter;
 }
 
-void VROScene::setBackgroundTransform(VROMatrix4f transform) {
-    _backgroundTransform = transform;
+std::vector<std::shared_ptr<VROGeometry>> VROScene::getBackgrounds() {
+    std::vector<std::shared_ptr<VROGeometry>> backgrounds;
+    for (std::shared_ptr<VRONode> &node : _nodes) {
+        getBackgrounds(node, backgrounds);
+    }
+    return backgrounds;
 }
 
-void VROScene::setBackgroundRotation(VROQuaternion rotation) {
-    passert_thread();
-    _backgroundTransform = rotation.getMatrix();
+void VROScene::getBackgrounds(std::shared_ptr<VRONode> node, std::vector<std::shared_ptr<VROGeometry>> &backgrounds) {
+    if (node->getBackground() != nullptr) {
+        backgrounds.push_back(node->getBackground());
+    }
+    
+    for (std::shared_ptr<VRONode> &child : node->getSubnodes()) {
+        getBackgrounds(child, backgrounds);
+    }
 }
+

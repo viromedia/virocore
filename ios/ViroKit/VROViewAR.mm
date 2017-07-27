@@ -557,7 +557,7 @@ static VROVector3f const kZeroVector = VROVector3f();
         _arSession->setViewport(viewport);
         
         // TODO Only on first run of isReady()
-        _sceneController->getScene()->setBackground(_cameraBackground);
+        _pointOfView->setBackground(_cameraBackground);
 
         /*
          Retrieve transforms from the AR session.

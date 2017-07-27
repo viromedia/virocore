@@ -34,6 +34,7 @@
 class VROGeometry;
 class VROLight;
 class VROAction;
+class VROTexture;
 class VRONodeCamera;
 class VROHitTestResult;
 class VROConstraint;
@@ -124,6 +125,12 @@ public:
                         const VRORenderContext &context,
                         std::shared_ptr<VRODriver> &driver);
     void getSortKeysForVisibleNodes(std::vector<VROSortKey> *outKeys);
+    
+    /*
+     Render this node's background. Recurses down the tree.
+     */
+    void renderBackground(const VRORenderContext &renderContext,
+                          std::shared_ptr<VRODriver> &driver);
     
     /*
      Render the given element of this node's geometry, using its latest computed transforms.
@@ -452,6 +459,44 @@ public:
                                                     std::shared_ptr<VROPhysicsShape> shape);
     std::shared_ptr<VROPhysicsBody> getPhysicsBody() const;
     void clearPhysicsBody();
+    
+#pragma mark - Backgrounds
+    
+    /*
+     Note: the scene renders all backgrounds in its tree before rendering
+     any content.
+     */
+    
+    /*
+     Set the background to a cube-map defined by the given cube texture or
+     color.
+     */
+    void setBackgroundCube(std::shared_ptr<VROTexture> textureCube);
+    void setBackgroundCube(VROVector4f color);
+    
+    /*
+     Set the background to a textured sphere.
+     */
+    void setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere);
+    
+    /*
+     Set the background to an arbitrary geometry. All this guarantees is that
+     the given object will be rendered first. No properties will be set on
+     this geometry, but typically background geometries are screen-space, and
+     do not read or write to the depth buffer.
+     */
+    void setBackground(std::shared_ptr<VROGeometry> geometry);
+    
+    /*
+     Set an arbitrary transform to apply to the background. The transform
+     may also be set as a quaternion (rotation).
+     */
+    void setBackgroundTransform(VROMatrix4f transform);
+    void setBackgroundRotation(VROQuaternion rotation);
+    
+    std::shared_ptr<VROGeometry> getBackground() const {
+        return _background;
+    }
 
 protected:
     
@@ -582,6 +627,17 @@ private:
      True if this node was found visible during the last call to computeVisibility().
      */
     bool _visible;
+    
+    /*
+     The background visual to display. All backgrounds in the scene are rendered before 
+     node content.
+     */
+    std::shared_ptr<VROGeometry> _background;
+    
+    /*
+     Transform to apply to the background geometry.
+     */
+    VROMatrix4f _backgroundTransform;
     
 #pragma mark - Private
     

@@ -184,7 +184,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     self.videoTexture->loadVideo(url, [self.view frameSynchronizer], self.driver);
     self.videoTexture->play();
     
-    scene->setBackgroundSphere(self.videoTexture);
+    rootNode->setBackgroundSphere(self.videoTexture);
     return sceneController;
 }
 
@@ -209,7 +209,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (std::shared_ptr<VROSceneController>)loadTorusScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
-    scene->setBackgroundCube([self cloudTexture]);
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
     light->setColor({ 1.0, 0.3, 0.3 });
@@ -223,6 +222,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
+    rootNode->setBackgroundCube([self cloudTexture]);
     
     scene->addNode(rootNode);
     
@@ -390,10 +390,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (std::shared_ptr<VROSceneController>)loadBoxScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
-    scene->setBackgroundSphere([self westlakeTexture]);
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
+    rootNode->setBackgroundSphere([self westlakeTexture]);
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 0.6, 0.6, 0.6 });
@@ -590,10 +590,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (std::shared_ptr<VROSceneController>)loadCameraScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
-    scene->setBackgroundCube([self cloudTexture]);
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
+    rootNode->setBackgroundCube([self cloudTexture]);
     
     scene->addNode(rootNode);
     
@@ -632,10 +632,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (std::shared_ptr<VROSceneController>)loadTextScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
-    scene->setBackgroundCube([self cloudTexture]);
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
+    rootNode->setBackgroundCube([self cloudTexture]);
     
     scene->addNode(rootNode);
     
@@ -707,7 +707,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (std::shared_ptr<VROSceneController>)loadNormalMapScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
-    scene->setBackgroundCube([self niagaraTexture]);
     
     NSString *objPath = [[NSBundle mainBundle] pathForResource:@"earth" ofType:@"obj"];
     NSURL *objURL = [NSURL fileURLWithPath:objPath];
@@ -729,6 +728,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
+    rootNode->setBackgroundCube([self niagaraTexture]);
     
     scene->addNode(rootNode);
     
@@ -759,7 +759,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (std::shared_ptr<VROSceneController>)loadStereoCard {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
-    scene->setBackgroundCube([self niagaraTexture]);
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(20, 20);
 
     // Debug toggle between stereo image and stereo video cards
@@ -801,6 +800,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
     rootNode->addChildNode(surfaceNode);
+    rootNode->setBackgroundCube([self niagaraTexture]);
+
     scene->addNode(rootNode);
     return sceneController;
 }
@@ -808,7 +809,11 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (std::shared_ptr<VROSceneController>)loadStereoBackground {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
-    scene->setBackgroundCube([self niagaraTexture]);
+    
+    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    scene->addNode(rootNode);
+    
+    rootNode->setBackgroundCube([self niagaraTexture]);
     // Debug toggle between stereo image and stereo video background
     bool showImage = false;
 
@@ -818,8 +823,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                        VROMipmapMode::None, // Don't mipmap 360 images, wastes memory
                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"stereo3601.jpg"], VROTextureInternalFormat::RGBA8),
                                        VROStereoMode::BottomTop);
-        scene->setBackgroundSphere(imgTexture);
-    } else {
+        rootNode->setBackgroundSphere(imgTexture);
+    }
+    else {
         NSString *objPath = [[NSBundle mainBundle] pathForResource:@"stereoVid360" ofType:@"mp4"];
         NSURL *objURL = [NSURL fileURLWithPath:objPath];
         std::string url = std::string([[objURL description] UTF8String]);
@@ -827,7 +833,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         self.videoTexture = std::make_shared<VROVideoTextureiOS>(VROStereoMode::BottomTop);
         self.videoTexture->loadVideo(url, [self.view frameSynchronizer], self.driver);
         self.videoTexture->play();
-        scene->setBackgroundSphere(self.videoTexture);
+        rootNode->setBackgroundSphere(self.videoTexture);
 
     }
     
@@ -837,7 +843,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (std::shared_ptr<VROSceneController>)loadOBJScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
-    scene->setBackgroundCube([self niagaraTexture]);
     
     NSString *objPath = [[NSBundle mainBundle] pathForResource:@"male02" ofType:@"obj"];
     NSURL *objURL = [NSURL fileURLWithPath:objPath];
@@ -859,6 +864,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
+    rootNode->setBackgroundCube([self niagaraTexture]);
     
     scene->addNode(rootNode);
     
@@ -894,7 +900,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (std::shared_ptr<VROSceneController>)loadFBXScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
-    scene->setBackgroundCube([self niagaraTexture]);
     
     NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"aliengirl" ofType:@"vrx"];
     NSURL *fbxURL = [NSURL fileURLWithPath:fbxPath];
@@ -921,6 +926,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
     rootNode->addLight(ambient);
+    rootNode->setBackgroundCube([self niagaraTexture]);
     
     scene->addNode(rootNode);
     
