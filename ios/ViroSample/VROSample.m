@@ -180,7 +180,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
     
-    scene->addNode(rootNode);
+    scene->getRootNode()->addChildNode(rootNode);
     
     /*
      Create the portal surface.
@@ -223,7 +223,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
     
-    scene->addNode(rootNode);
+    scene->getRootNode()->addChildNode(rootNode);
     
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"surfing" ofType:@"mp4"];
     NSURL *fileURL = [NSURL fileURLWithPath:filePath];
@@ -273,7 +273,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->addLight(light);
     rootNode->setBackgroundCube([self cloudTexture]);
     
-    scene->addNode(rootNode);
+    scene->getRootNode()->addChildNode(rootNode);
     
     float d = 5;
     
@@ -299,7 +299,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self] (VRONode *const node, float seconds) {
         self.torusAngle += .015;
-        for (std::shared_ptr<VRONode> &torusNode : node->getSubnodes()) {
+        for (std::shared_ptr<VRONode> &torusNode : node->getChildNodes()) {
             torusNode->setRotation({ 0, self.torusAngle, 0});
         }
         
@@ -336,7 +336,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
-    scene->addNode(rootNode);
+    scene->getRootNode()->addChildNode(rootNode);
     
     std::shared_ptr<VROBox> groundBox = VROBox::createBox(40, 1, 40);
     groundBox->setName("Box 2");
@@ -469,7 +469,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->addLight(spotRed);
     rootNode->addLight(spotBlue);
 
-    scene->addNode(rootNode);
+    scene->getRootNode()->addChildNode(rootNode);
     
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
     
@@ -644,7 +644,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->setPosition({0, 0, 0});
     rootNode->setBackgroundCube([self cloudTexture]);
     
-    scene->addNode(rootNode);
+    scene->getRootNode()->addChildNode(rootNode);
     
     /*
      Create camera texture.
@@ -686,7 +686,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->setPosition({0, 0, 0});
     rootNode->setBackgroundCube([self cloudTexture]);
     
-    scene->addNode(rootNode);
+    scene->getRootNode()->addChildNode(rootNode);
     
     /*
      Create background for text.
@@ -779,7 +779,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->addLight(light);
     rootNode->setBackgroundCube([self niagaraTexture]);
     
-    scene->addNode(rootNode);
+    scene->getRootNode()->addChildNode(rootNode);
     
     std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(url, base, true,
         [](std::shared_ptr<VRONode> node, bool success) {
@@ -851,7 +851,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->addChildNode(surfaceNode);
     rootNode->setBackgroundCube([self niagaraTexture]);
 
-    scene->addNode(rootNode);
+    scene->getRootNode()->addChildNode(rootNode);
     return sceneController;
 }
 
@@ -860,7 +860,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
-    scene->addNode(rootNode);
+    scene->getRootNode()->addChildNode(rootNode);
     
     rootNode->setBackgroundCube([self niagaraTexture]);
     // Debug toggle between stereo image and stereo video background
@@ -915,7 +915,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->addLight(light);
     rootNode->setBackgroundCube([self niagaraTexture]);
     
-    scene->addNode(rootNode);
+    scene->getRootNode()->addChildNode(rootNode);
     
     std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(url, base, true,
         [](std::shared_ptr<VRONode> node, bool success) {
@@ -967,7 +967,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                             if (node->getGeometry()) {
                                                 node->getGeometry()->setName("FBX Root Geometry");
                                             }
-                                            for (std::shared_ptr<VRONode> &child : node->getSubnodes()) {
+                                            for (std::shared_ptr<VRONode> &child : node->getChildNodes()) {
                                                 if (child->getGeometry()) {
                                                     child->getGeometry()->setName("FBX Geometry");
                                                 }
@@ -1007,7 +1007,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->addLight(ambient);
     rootNode->setBackgroundCube([self niagaraTexture]);
     
-    scene->addNode(rootNode);
+    scene->getRootNode()->addChildNode(rootNode);
     rootNode->addChildNode([self loadFBXModel]);
     
     self.delegate = std::make_shared<VROEventDelegateiOS>(self);

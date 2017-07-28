@@ -345,7 +345,7 @@ public:
     /*
      Return a copy of the subnode list.
      */
-    std::vector<std::shared_ptr<VRONode>> getSubnodes() const {
+    std::vector<std::shared_ptr<VRONode>> getChildNodes() const {
         return _subnodes;
     }
     

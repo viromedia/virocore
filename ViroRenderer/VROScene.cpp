@@ -21,6 +21,7 @@
 #include <algorithm>
 
 VROScene::VROScene() : VROThreadRestricted(VROThreadName::Renderer) {
+    _rootNode = std::make_shared<VRONode>();
     ALLOCATION_TRACKER_ADD(Scenes, 1);
 }
 
@@ -31,9 +32,7 @@ VROScene::~VROScene() {
 void VROScene::renderBackground(const VRORenderContext &renderContext,
                                 std::shared_ptr<VRODriver> &driver) {
     passert_thread();
-    for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->renderBackground(renderContext, driver);
-    }
+    _rootNode->renderBackground(renderContext, driver);
 }
 
 void VROScene::render(const VRORenderContext &context,
@@ -92,21 +91,15 @@ void VROScene::render(const VRORenderContext &context,
 }
 
 void VROScene::computeTransforms(const VRORenderContext &context) {
-    for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->computeTransforms({}, {});
-    }
+    _rootNode->computeTransforms({}, {});
 }
 
 void VROScene::updateVisibility(const VRORenderContext &context) {
-    for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->updateVisibility(context);
-    }
+    _rootNode->updateVisibility(context);
 }
 
 void VROScene::applyConstraints(const VRORenderContext &context) {
-    for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->applyConstraints(context, {}, false);
-    }
+    _rootNode->applyConstraints(context, {}, false);
 }
 
 void VROScene::updateSortKeys(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
@@ -118,17 +111,11 @@ void VROScene::updateSortKeys(const VRORenderContext &context, std::shared_ptr<V
     }
 
     VRORenderParameters renderParams;
-    for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->collectLights(&renderParams.lights);
-    }
-    for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->updateSortKeys(0, renderParams, context, driver);
-    }
+    _rootNode->collectLights(&renderParams.lights);
+    _rootNode->updateSortKeys(0, renderParams, context, driver);
     
     _keys.clear();
-    for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->getSortKeysForVisibleNodes(&_keys);
-    }
+    _rootNode->getSortKeysForVisibleNodes(&_keys);
     
     std::sort(_keys.begin(), _keys.end());
     _distanceOfFurthestObjectFromCamera = renderParams.furthestDistanceFromCamera;
@@ -141,15 +128,8 @@ void VROScene::renderStencil(const VRORenderContext &context, std::shared_ptr<VR
     driver->clearStencil(0);
     
     // TODO VIRO-1400 Begin at the active node, not at the roots!
-    for (std::shared_ptr<VRONode> &node : _nodes) {
-        node->renderStencil(context, driver);
-    }
     driver->initRenderPass(VRORenderPass::Normal);
-}
-
-void VROScene::addNode(std::shared_ptr<VRONode> node) {
-    passert_thread();
-    _nodes.push_back(node);
+    _rootNode->renderStencil(context, driver);
 }
 
 void VROScene::detachInputController(std::shared_ptr<VROInputControllerBase> controller){
@@ -159,11 +139,8 @@ void VROScene::detachInputController(std::shared_ptr<VROInputControllerBase> con
     }
 
     std::shared_ptr<VRONode> node = _controllerPresenter->getRootNode();
-    auto it = std::find(_nodes.begin(), _nodes.end(), node);
-    if (it != _nodes.end()){
-        _nodes.erase(it);
-    }
-
+    node->removeFromParentNode();
+    
     controller->detachScene();
     _controllerPresenter = nullptr;
 }
@@ -172,12 +149,12 @@ void VROScene::attachInputController(std::shared_ptr<VROInputControllerBase> con
     passert_thread();
 
     std::shared_ptr<VROInputPresenter> presenter = controller->getPresenter();
-    if (_controllerPresenter == presenter){
+    if (_controllerPresenter == presenter) {
         return;
     }
 
     std::shared_ptr<VRONode> node = presenter->getRootNode();
-    _nodes.push_back(node);
+    _rootNode->addChildNode(node);
     _controllerPresenter = presenter;
 
     controller->attachScene(shared_from_this());
@@ -189,9 +166,8 @@ std::shared_ptr<VROInputPresenter> VROScene::getControllerPresenter(){
 
 std::vector<std::shared_ptr<VROGeometry>> VROScene::getBackgrounds() {
     std::vector<std::shared_ptr<VROGeometry>> backgrounds;
-    for (std::shared_ptr<VRONode> &node : _nodes) {
-        getBackgrounds(node, backgrounds);
-    }
+    getBackgrounds(_rootNode, backgrounds);
+
     return backgrounds;
 }
 
@@ -200,7 +176,7 @@ void VROScene::getBackgrounds(std::shared_ptr<VRONode> node, std::vector<std::sh
         backgrounds.push_back(node->getBackground());
     }
     
-    for (std::shared_ptr<VRONode> &child : node->getSubnodes()) {
+    for (std::shared_ptr<VRONode> &child : node->getChildNodes()) {
         getBackgrounds(child, backgrounds);
     }
 }

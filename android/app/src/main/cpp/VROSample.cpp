@@ -37,7 +37,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
 
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
-    scene->setBackgroundCube(getNiagaraTexture());
+    scene->getRootNode()->setBackgroundCube(getNiagaraTexture());
 
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setPosition({0, 0, 0});
@@ -57,7 +57,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     rootNode->addLight(ambient);
     rootNode->addLight(spot);
 
-    scene->addNode(rootNode);
+    scene->getRootNode()->addChildNode(rootNode);
 
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
 

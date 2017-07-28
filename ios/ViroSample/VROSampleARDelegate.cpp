@@ -42,7 +42,7 @@ void VROSampleARDelegate::onHitResult(VROARHitTestResult result, std::shared_ptr
         std::shared_ptr<VRONode> fbxNode = loadCoffeeMug();
         fbxNode->setPosition(result.getWorldTransform().extractTranslation());
         
-        scene->getRootNodes().front()->addChildNode(fbxNode);
+        scene->getRootNode()->addChildNode(fbxNode);
         pinfo("Adding FBX to unanchored plane at position %f, %f, %f",
               fbxNode->getPosition().x, fbxNode->getPosition().y, fbxNode->getPosition().z);
     }

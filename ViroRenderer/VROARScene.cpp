@@ -10,7 +10,7 @@
 #include "VROARAnchor.h"
 
 void VROARScene::addNode(std::shared_ptr<VRONode> node) {
-    VROScene::addNode(node);
+    getRootNode()->addChildNode(node);
 }
 
 void VROARScene::setARComponentManager(std::shared_ptr<VROARComponentManager> arComponentManager) {

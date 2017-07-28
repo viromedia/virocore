@@ -203,7 +203,7 @@ void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode, std::shared_ptr<V
     if (fbxNode) {
         // The top-level fbxNode is a dummy; all of the data is stored in the children, so we
         // simply transfer those children over to the destination node
-        for (std::shared_ptr<VRONode> child : fbxNode->getSubnodes()) {
+        for (std::shared_ptr<VRONode> child : fbxNode->getChildNodes()) {
             node->addChildNode(child);
         }
         if (onFinish) {

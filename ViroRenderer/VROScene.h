@@ -81,12 +81,12 @@ public:
     void renderStencil(const VRORenderContext &context,
                        std::shared_ptr<VRODriver> &driver);
 
+    
     /*
-     Add a new root node to the scene.
+     Retrieve the root node of the scene.
      */
-    virtual void addNode(std::shared_ptr<VRONode> node);
-    std::vector<std::shared_ptr<VRONode>> &getRootNodes() {
-        return _nodes;
+    std::shared_ptr<VRONode> &getRootNode() {
+        return _rootNode;
     }
     
     /*
@@ -128,9 +128,9 @@ public:
 protected:
     
     /*
-     The root nodes of the scene.
+     The root node of the scene.
      */
-    std::vector<std::shared_ptr<VRONode>> _nodes;
+    std::shared_ptr<VRONode> _rootNode;
 
     /*
      UI representation of the underlying controller

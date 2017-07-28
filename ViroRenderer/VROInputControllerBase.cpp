@@ -360,13 +360,11 @@ void VROInputControllerBase::notifyOnFuseEvent(int source, float timeToFuseRatio
 
 VROHitTestResult VROInputControllerBase::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray, bool boundsOnly) {
     std::vector<VROHitTestResult> results;
-    std::vector<std::shared_ptr<VRONode>> sceneRootNodes = _scene->getRootNodes();
+    std::shared_ptr<VRONode> sceneRootNode = _scene->getRootNode();
 
     // Grab all the nodes that were hit
-    for (std::shared_ptr<VRONode> node: sceneRootNodes){
-        std::vector<VROHitTestResult> nodeResults = node->hitTest(camera, origin, ray, boundsOnly);
-        results.insert(results.end(), nodeResults.begin(), nodeResults.end());
-    }
+    std::vector<VROHitTestResult> nodeResults = sceneRootNode->hitTest(camera, origin, ray, boundsOnly);
+    results.insert(results.end(), nodeResults.begin(), nodeResults.end());
 
     // Sort and get the closest node
     std::sort(results.begin(), results.end(), [](VROHitTestResult a, VROHitTestResult b) {
@@ -379,7 +377,7 @@ VROHitTestResult VROInputControllerBase::hitTest(const VROCamera &camera, VROVec
     }
 
     VROVector3f backgroundPosition = origin + (ray * kSceneBackgroundDistance);
-    VROHitTestResult sceneBackgroundHitResult = { _scene->getRootNodes()[0], backgroundPosition,
+    VROHitTestResult sceneBackgroundHitResult = { sceneRootNode, backgroundPosition,
                                                   kSceneBackgroundDistance, true, camera };
     return sceneBackgroundHitResult;
 }

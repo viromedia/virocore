@@ -197,7 +197,7 @@ JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
             node->setGeometry(geometry);
 
             // The children are set for FBX models (in FBX, the root node is a dummy node)
-            for (std::shared_ptr<VRONode> child : nodeWithObj->getSubnodes()) {
+            for (std::shared_ptr<VRONode> child : nodeWithObj->getChildNodes()) {
                 node->addChildNode(child);
             }
 

@@ -126,7 +126,7 @@ void VROPhysicsShape::generateCompoundBulletShape(btCompoundShape &compoundShape
     }
 
     // Recurse for all child nodes.
-    const std::vector<std::shared_ptr<VRONode>> subNodes = currentNode->getSubnodes();
+    const std::vector<std::shared_ptr<VRONode>> subNodes = currentNode->getChildNodes();
     for(std::shared_ptr<VRONode> node: subNodes) {
         generateCompoundBulletShape(compoundShape, rootNode, node);
     }

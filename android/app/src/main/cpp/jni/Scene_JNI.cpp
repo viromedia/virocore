@@ -28,8 +28,8 @@
 extern "C" {
 
 JNI_METHOD(jlong, nativeCreateScene)(JNIEnv *env,
-                                        jobject object,
-                                        jlong root_node_ref) {
+                                     jobject object,
+                                     jlong root_node_ref) {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
 
     PersistentRef<VRONode> *persistentNode = reinterpret_cast<PersistentRef<VRONode> *>(root_node_ref);
@@ -41,7 +41,7 @@ JNI_METHOD(jlong, nativeCreateScene)(JNIEnv *env,
         if (scene) {
             std::shared_ptr<VRONode> node = node_w.lock();
             if (node) {
-                scene->addNode(node);
+                scene->getRootNode()->addChildNode(node);
             }
         }
     });
@@ -81,7 +81,7 @@ JNI_METHOD(void, nativeSetBackgroundVideoTexture)(JNIEnv *env,
         std::shared_ptr<VROVideoTextureAVP> videoTexture = videoTexture_w.lock();
 
         if (sceneController && videoTexture) {
-            sceneController->getScene()->setBackgroundSphere(videoTexture);
+            sceneController->getScene()->getRootNode()->setBackgroundSphere(videoTexture);
         }
     });
 }
@@ -98,7 +98,7 @@ JNI_METHOD(void, nativeSetBackgroundImageTexture)(JNIEnv *env,
         std::shared_ptr<VROTexture> image = image_w.lock();
 
         if (sceneController && image) {
-            sceneController->getScene()->setBackgroundSphere(image);
+            sceneController->getScene()->getRootNode()->setBackgroundSphere(image);
         }
     });
 }
@@ -114,9 +114,9 @@ JNI_METHOD(void, nativeSetBackgroundRotation)(JNIEnv *env,
     VROPlatformDispatchAsyncRenderer([sceneController_w, rotationDegreeX, rotationDegreeY, rotationDegreeZ] {
         std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
         if (sceneController) {
-            sceneController->getScene()->setBackgroundRotation({toRadians(rotationDegreeX),
-                                                                toRadians(rotationDegreeY),
-                                                                toRadians(rotationDegreeZ)});
+            sceneController->getScene()->getRootNode()->setBackgroundRotation({toRadians(rotationDegreeX),
+                                                                               toRadians(rotationDegreeY),
+                                                                               toRadians(rotationDegreeZ)});
         }
     });
 }
@@ -132,7 +132,7 @@ JNI_METHOD(void, nativeSetBackgroundCubeImageTexture)(JNIEnv *env,
         std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
         std::shared_ptr<VROTexture> texture = texture_w.lock();
         if (sceneController && texture) {
-            sceneController->getScene()->setBackgroundCube(texture);
+            sceneController->getScene()->getRootNode()->setBackgroundCube(texture);
         }
     });
 }
@@ -154,7 +154,7 @@ JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
         float b = (color & 0xFF) / 255.0;
 
         VROVector4f vecColor(r, g, b, a);
-        sceneController->getScene()->setBackgroundCube(vecColor);
+        sceneController->getScene()->getRootNode()->setBackgroundCube(vecColor);
     });
 }
 
