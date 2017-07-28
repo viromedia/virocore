@@ -337,17 +337,23 @@ void VRORenderer::renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> drive
             _outgoingSceneController->sceneWillRender(_context.get());
             _sceneController->sceneWillRender(_context.get());
 
+            driver->initRenderPass(VRORenderPass::Stencil);
             _outgoingSceneController->getScene()->renderStencil(*_context.get(), driver);
             _sceneController->getScene()->renderStencil(*_context.get(), driver);
+            
+            driver->initRenderPass(VRORenderPass::Normal);
             _outgoingSceneController->getScene()->renderBackground(*_context.get(), driver);
             _sceneController->getScene()->renderBackground(*_context.get(), driver);
-
             _outgoingSceneController->getScene()->render(*_context.get(), driver);
             _sceneController->getScene()->render(*_context.get(), driver);
         }
         else {
             _sceneController->sceneWillRender(_context.get());
+            
+            driver->initRenderPass(VRORenderPass::Stencil);
             _sceneController->getScene()->renderStencil(*_context, driver);
+            
+            driver->initRenderPass(VRORenderPass::Normal);
             _sceneController->getScene()->renderBackground(*_context.get(), driver);
             _sceneController->getScene()->render(*_context.get(), driver);
         }

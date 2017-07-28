@@ -240,6 +240,7 @@ void VROSceneRendererGVR::onResume() {
 }
 
 void VROSceneRendererGVR::prepareFrame(VROViewport leftViewport, VROFieldOfView fov, VROMatrix4f headRotation) {
+    glEnable(GL_SCISSOR_TEST); // Must enable to ensure glClear only clears active 'eye'
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE); // Must enable writes to clear depth buffer
 
@@ -264,6 +265,7 @@ void VROSceneRendererGVR::renderEye(VROEyeType eyeType,
     VROMatrix4f projectionMatrix = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
 
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
+    glScissor(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     _renderer->renderEye(eyeType, eyeFromHeadMatrix, projectionMatrix, _driver);
 }
 

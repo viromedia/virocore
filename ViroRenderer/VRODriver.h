@@ -37,7 +37,7 @@ enum class VROMipmapMode;
 
 enum class VRORenderPass {
     Normal,
-    PortalStencil
+    Stencil
 };
 
 /*

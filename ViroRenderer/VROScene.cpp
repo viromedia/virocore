@@ -122,13 +122,9 @@ void VROScene::updateSortKeys(const VRORenderContext &context, std::shared_ptr<V
 }
 
 void VROScene::renderStencil(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    driver->initRenderPass(VRORenderPass::PortalStencil);
-    
     // TODO VIRO-1400 Clear the stencil to the active node's portalStencilBits value
     driver->clearStencil(0);
-    
-    // TODO VIRO-1400 Begin at the active node, not at the roots!
-    driver->initRenderPass(VRORenderPass::Normal);
+    // TODO VIRO-1400 Begin at the active node, not at the root!
     _rootNode->renderStencil(context, driver);
 }
 

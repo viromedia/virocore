@@ -80,14 +80,12 @@ void VROSceneRendererCardboardOpenGL::prepareFrame(VROViewport viewport, VROFiel
     VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
     _renderer->prepareFrame(_frame, viewport, fov, headRotation, projection, _driver);
 
+    glEnable(GL_SCISSOR_TEST); // Ensures we only clear scissored area when using glClear
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE); // Must enable writes to clear depth buffer
     
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -111,9 +109,6 @@ void VROSceneRendererCardboardOpenGL::renderEye(GVREye eye, GVRHeadTransform *he
     VROMatrix4f projectionMatrix = VROConvert::toMatrix4f([headTransform projectionMatrixForEye:eye
                                                                                            near:kZNear
                                                                                             far:_renderer->getFarClippingPlane()]);
-
-    glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-    glScissor(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     
     VROEyeType eyeType = (eye == kGVRLeftEye ? VROEyeType::Left : VROEyeType::Right);
     _renderer->renderEye(eyeType, eyeMatrix, projectionMatrix, _driver);
