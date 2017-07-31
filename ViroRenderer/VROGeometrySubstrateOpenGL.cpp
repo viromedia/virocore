@@ -246,16 +246,14 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     VROGeometryElementOpenGL element = _elements[elementIndex];
     
     VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
-    substrate->bindDepthSettings();
-    substrate->bindCullingSettings();
     if (_boneUBO) {
         _boneUBO->update(geometry.getSkinner());
         substrate->bindBoneUBO(_boneUBO);
     }
     
     VROMatrix4f modelview = viewMatrix.multiply(transform);
-    substrate->bindViewUniforms(transform, modelview, projectionMatrix, normalMatrix,
-                                context.getCamera().getPosition(), context.getEyeType());
+    substrate->bindView(transform, modelview, projectionMatrix, normalMatrix,
+                        context.getCamera().getPosition(), context.getEyeType());
    
     glBindVertexArray(_vaos[elementIndex]);
     renderMaterial(geometry, substrate, element, opacity, context, driver);
@@ -271,7 +269,7 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
                                                 const VRORenderContext &context,
                                                 std::shared_ptr<VRODriver> &driver) {
     
-    material->bindMaterialUniforms(opacity, geometry);
+    material->bindGeometry(opacity, geometry);
     
     int activeTexture = 0;
     const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();

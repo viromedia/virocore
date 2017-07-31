@@ -69,6 +69,7 @@ void VRODebugHUD::renderEye(VROEyeType eye, const VRORenderContext &context, std
     for (int i = 0; i < _node->getGeometry()->getGeometryElements().size(); i++) {
         std::shared_ptr<VROMaterial> &material = _node->getGeometry()->getMaterialForElement(i);
         material->bindShader(driver);
+        material->bindProperties(driver);
         
         _node->render(i, material, context, driver);
     }

@@ -207,6 +207,7 @@ void VROReticle::renderNode(std::shared_ptr<VRONode> node, VROMatrix4f parentTra
 
     std::shared_ptr<VROMaterial> material = geometry->getMaterials().front();
     material->bindShader(driver);
+    material->bindProperties(driver);
     node->render(0, material, renderContext, driver);
 };
 

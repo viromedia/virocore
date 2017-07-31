@@ -33,18 +33,44 @@ public:
     VROMaterialSubstrateOpenGL(VROMaterial &material, VRODriverOpenGL &driver);
     virtual ~VROMaterialSubstrateOpenGL();
     
+    /*
+     Bind the shader used in this material to the active rendering context.
+     This is kept independent of the bind() function because shader changes
+     are expensive, so we want to manage them independent of materials in the
+     render loop.
+     */
     void bindShader();
+    
+    /*
+     Bind the properties of this material to the active rendering context.
+     These properties should be node and geometry independent. The shader
+     should always be bound first (via bindShader()).
+     */
+    void bindProperties();
+    
+    /*
+     Bind the properties of the given geometry to the active rendering context.
+     These are material properties (e.g. shader uniforms) that are dependent
+     on properties of the geometry.
+     */
+    void bindGeometry(float opacity, const VROGeometry &geometry);
+    
+    /*
+     Bind the properties of the given lights to the active rendering context.
+     */
     void bindLights(int lightsHash,
                     const std::vector<std::shared_ptr<VROLight>> &lights,
                     const VRORenderContext &context,
                     std::shared_ptr<VRODriver> &driver);
     
-    void bindDepthSettings();
-    void bindCullingSettings();
-    void bindViewUniforms(VROMatrix4f transform, VROMatrix4f modelview,
-                          VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
-                          VROVector3f cameraPosition, VROEyeType eyeType);
-    void bindMaterialUniforms(float opacity, const VROGeometry &geometry);
+    /*
+     Bind the properties of the view and projection to the active rendering
+     context.
+     */
+    void bindView(VROMatrix4f transform, VROMatrix4f modelview,
+                  VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
+                  VROVector3f cameraPosition, VROEyeType eyeType);
+    
     void bindBoneUBO(const std::unique_ptr<VROBoneUBO> &boneUBO);
     
     const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
@@ -78,6 +104,11 @@ private:
     VROUniform *_eyeTypeUniform;
 
     std::vector<VROUniform *> _shaderModifierUniforms;
+    
+    void bindDepthSettings();
+    void bindCullingSettings();
+    void bindMaterialUniforms();
+    void bindGeometryUniforms(float opacity, const VROGeometry &geometry);
     
     void loadConstantLighting(const VROMaterial &material, VRODriverOpenGL &driver);
     void loadLambertLighting(const VROMaterial &material, VRODriverOpenGL &driver);

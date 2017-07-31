@@ -23,6 +23,8 @@ static std::shared_ptr<VROShaderModifier> sReflectiveTextureModifier;
 static std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
 static std::map<VROStereoMode ,std::shared_ptr<VROShaderModifier>> sStereoscopicTextureModifiers;
 
+#pragma mark - Loading Materials
+
 void VROMaterialSubstrateOpenGL::hydrateProgram(VRODriverOpenGL &driver) {
     _program->hydrate();
 }
@@ -292,6 +294,18 @@ void VROMaterialSubstrateOpenGL::loadUniforms() {
     }
 }
 
+#pragma mark - Binding Materials
+
+void VROMaterialSubstrateOpenGL::bindProperties() {
+    bindDepthSettings();
+    bindCullingSettings();
+    bindMaterialUniforms();
+}
+
+void VROMaterialSubstrateOpenGL::bindGeometry(float opacity, const VROGeometry &geometry){
+    bindGeometryUniforms(opacity, geometry);
+}
+
 void VROMaterialSubstrateOpenGL::bindShader() {
     _program->bind();
 }
@@ -354,9 +368,9 @@ void VROMaterialSubstrateOpenGL::bindCullingSettings() {
     }
 }
 
-void VROMaterialSubstrateOpenGL::bindViewUniforms(VROMatrix4f transform, VROMatrix4f modelview,
-                                                  VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
-                                                  VROVector3f cameraPosition, VROEyeType eyeType) {
+void VROMaterialSubstrateOpenGL::bindView(VROMatrix4f transform, VROMatrix4f modelview,
+                                          VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
+                                          VROVector3f cameraPosition, VROEyeType eyeType) {
     if (_normalMatrixUniform != nullptr) {
         _normalMatrixUniform->setMat4(normalMatrix);
     }
@@ -377,20 +391,22 @@ void VROMaterialSubstrateOpenGL::bindViewUniforms(VROMatrix4f transform, VROMatr
     }
 }
 
-void VROMaterialSubstrateOpenGL::bindMaterialUniforms(float opacity, const VROGeometry &geometry) {
+void VROMaterialSubstrateOpenGL::bindMaterialUniforms() {
     if (_diffuseSurfaceColorUniform != nullptr) {
         _diffuseSurfaceColorUniform->setVec4(_material.getDiffuse().getColor());
     }
     if (_diffuseIntensityUniform != nullptr) {
         _diffuseIntensityUniform->setFloat(_material.getDiffuse().getIntensity());
     }
-    if (_alphaUniform != nullptr) {
-        _alphaUniform->setFloat(_material.getTransparency() * opacity);
-    }
     if (_shininessUniform != nullptr) {
         _shininessUniform->setFloat(_material.getShininess());
     }
-    
+}
+
+void VROMaterialSubstrateOpenGL::bindGeometryUniforms(float opacity, const VROGeometry &geometry) {
+    if (_alphaUniform != nullptr) {
+        _alphaUniform->setFloat(_material.getTransparency() * opacity);
+    }
     for (VROUniform *uniform : _shaderModifierUniforms) {
         uniform->set(nullptr, geometry);
     }
@@ -404,6 +420,8 @@ void VROMaterialSubstrateOpenGL::updateSortKey(VROSortKey &key) const {
     key.shader = _program->getShaderId();
     key.textures = hashTextures(_textures);
 }
+
+#pragma mark - Shader Modifiers
 
 std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createDiffuseTextureModifier() {
     /*

@@ -38,6 +38,7 @@ void VROPencil::render(const VRORenderContext &renderContext, std::shared_ptr<VR
     material->setCullMode(VROCullMode::None);
     line->setMaterials({ material });
     material->bindShader(driver);
+    material->bindProperties(driver);
 
     VROMatrix4f parentTransform;
     line->render(0, material, parentTransform,

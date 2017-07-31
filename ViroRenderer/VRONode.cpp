@@ -110,6 +110,7 @@ void VRONode::renderBackground(const VRORenderContext &renderContext,
         
         const std::shared_ptr<VROMaterial> &material = _background->getMaterials()[0];
         material->bindShader(driver);
+        material->bindProperties(driver);
         
         VROMatrix4f transform;
         transform = _backgroundTransform.multiply(transform);

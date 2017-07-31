@@ -205,6 +205,10 @@ void VROMaterial::updateSortKey(VROSortKey &key, std::shared_ptr<VRODriver> &dri
     getSubstrate(driver)->updateSortKey(key);
 }
 
+void VROMaterial::bindProperties(std::shared_ptr<VRODriver> &driver) {
+    getSubstrate(driver)->bindProperties();
+}
+
 void VROMaterial::bindShader(std::shared_ptr<VRODriver> &driver) {
     getSubstrate(driver)->bindShader();
 }

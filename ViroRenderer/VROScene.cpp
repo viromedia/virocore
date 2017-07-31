@@ -17,6 +17,7 @@
 #include "VROLog.h"
 #include "VROAudioPlayer.h"
 #include "VROSurface.h"
+#include "VROOpenGL.h" // For logging pglpush only
 #include <stack>
 #include <algorithm>
 
@@ -31,15 +32,19 @@ VROScene::~VROScene() {
 
 void VROScene::renderBackground(const VRORenderContext &renderContext,
                                 std::shared_ptr<VRODriver> &driver) {
+    pglpush("Render Background");
     passert_thread();
     _rootNode->renderBackground(renderContext, driver);
+    pglpop();
 }
 
 void VROScene::render(const VRORenderContext &context,
                       std::shared_ptr<VRODriver> &driver) {
+    pglpush("Render Scene");
     passert_thread();
     
     uint32_t boundShaderId = UINT32_MAX;
+    uint32_t boundMaterialId = UINT32_MAX;
     std::vector<std::shared_ptr<VROLight>> boundLights;
     
     if (kDebugSortOrder) {
@@ -57,6 +62,7 @@ void VROScene::render(const VRORenderContext &context,
                 material = material->getOutgoing();
             }
             
+            // Bind the new shader if it changed
             if (key.shader != boundShaderId) {
                 material->bindShader(driver);
                 boundShaderId = key.shader;
@@ -74,6 +80,12 @@ void VROScene::render(const VRORenderContext &context,
                 }
             }
             
+            // Bind material properties if they changed
+            if (key.material != boundMaterialId) {
+                material->bindProperties(driver);
+                boundMaterialId = key.material;
+            }
+            
             // Only render the material if there are lights, or if the material uses
             // constant lighting. Non-constant materials do not render unless we have
             // at least one light.
@@ -88,6 +100,7 @@ void VROScene::render(const VRORenderContext &context,
             }
         }
     }
+    pglpop();
 }
 
 void VROScene::computeTransforms(const VRORenderContext &context) {
