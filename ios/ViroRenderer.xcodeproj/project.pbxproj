@@ -494,6 +494,11 @@
 		8FF5CCBE1F290364007C7F52 /* aliengirl.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCBA1F290364007C7F52 /* aliengirl.vrx */; };
 		A50F2A281ED135CC00D964D5 /* VROPhysicsBodyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A50F2A291ED135D800D964D5 /* VROPhysicsBodyDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A513473F1F3544A200FF3726 /* VROParticleEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51347311F329B0B00FF3726 /* VROParticleEmitter.cpp */; };
+		A51347401F3544A600FF3726 /* VROParticleUBO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A513473C1F35420300FF3726 /* VROParticleUBO.cpp */; };
+		A51347411F3544A800FF3726 /* VROParticleUBO.h in Headers */ = {isa = PBXBuildFile; fileRef = A513473D1F35420300FF3726 /* VROParticleUBO.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A51347421F3544AC00FF3726 /* VROParticleEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = A51347321F329B0B00FF3726 /* VROParticleEmitter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A517D2CC1F41A16400A22219 /* cloud.png in Resources */ = {isa = PBXBuildFile; fileRef = A517D2CB1F41A16400A22219 /* cloud.png */; };
 		A526F5B91EFD855E00A8A7A3 /* VROTransformDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A526F5C21EFD997A00A8A7A3 /* VROPencil.h in Headers */ = {isa = PBXBuildFile; fileRef = A527C7061EE76876006D3F24 /* VROPencil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A526F5C31EFD9B5600A8A7A3 /* VROTransformDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A56529A41EFD8051008097D7 /* VROTransformDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -501,6 +506,10 @@
 		A527C7091EE7692F006D3F24 /* VROPencil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A527C7071EE76876006D3F24 /* VROPencil.cpp */; };
 		A52B272B1ED8DAAA0089F9A2 /* VROPhysicsContactResultCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = A52B272A1ED8DA960089F9A2 /* VROPhysicsContactResultCallback.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A538C5AD1EC63EEF00A724F0 /* VROPhysicsMotionState.h in Headers */ = {isa = PBXBuildFile; fileRef = A538C5AC1EC63EDD00A724F0 /* VROPhysicsMotionState.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A540C5C41F3E7190007986E6 /* particles_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A540C5C31F3E7190007986E6 /* particles_vsh.glsl */; };
+		A540C5C51F3E72BF007986E6 /* particles_vsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A540C5C31F3E7190007986E6 /* particles_vsh.glsl */; };
+		A540C5C71F3E73FA007986E6 /* particles_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A540C5C61F3E73FA007986E6 /* particles_fsh.glsl */; };
+		A540C5C81F3E7403007986E6 /* particles_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A540C5C61F3E73FA007986E6 /* particles_fsh.glsl */; };
 		A566EB1D1E1AEB0D008B4AE2 /* VROEventDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB131E1AE11D008B4AE2 /* VROEventDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB301E1B129E008B4AE2 /* VROSceneController.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB251E1AF448008B4AE2 /* VROSceneController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A566EB391E1B38A3008B4AE2 /* VROSceneDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A566EB381E1B38A3008B4AE2 /* VROSceneDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1117,11 +1126,19 @@
 		8FF5CCBA1F290364007C7F52 /* aliengirl.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = aliengirl.vrx; path = ViroSample/aliengirl.vrx; sourceTree = "<group>"; };
 		A50F2A261ED135A100D964D5 /* VROPhysicsBodyDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VROPhysicsBodyDelegateiOS.h; path = ViroKit/VROPhysicsBodyDelegateiOS.h; sourceTree = SOURCE_ROOT; };
 		A50F2A271ED135B100D964D5 /* VROPhysicsBodyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsBodyDelegate.h; sourceTree = "<group>"; };
+		A51347311F329B0B00FF3726 /* VROParticleEmitter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROParticleEmitter.cpp; sourceTree = "<group>"; };
+		A51347321F329B0B00FF3726 /* VROParticleEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROParticleEmitter.h; sourceTree = "<group>"; };
+		A513473C1F35420300FF3726 /* VROParticleUBO.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROParticleUBO.cpp; sourceTree = "<group>"; };
+		A513473D1F35420300FF3726 /* VROParticleUBO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROParticleUBO.h; sourceTree = "<group>"; };
+		A517D2CB1F41A16400A22219 /* cloud.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cloud.png; path = ViroSample/cloud.png; sourceTree = "<group>"; };
 		A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTransformDelegateiOS.h; sourceTree = "<group>"; };
 		A527C7061EE76876006D3F24 /* VROPencil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPencil.h; sourceTree = "<group>"; };
 		A527C7071EE76876006D3F24 /* VROPencil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPencil.cpp; sourceTree = "<group>"; };
 		A52B272A1ED8DA960089F9A2 /* VROPhysicsContactResultCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsContactResultCallback.h; sourceTree = "<group>"; };
 		A538C5AC1EC63EDD00A724F0 /* VROPhysicsMotionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsMotionState.h; sourceTree = "<group>"; };
+		A540C5C21F3D8711007986E6 /* VROInstancedUBO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROInstancedUBO.h; sourceTree = "<group>"; };
+		A540C5C31F3E7190007986E6 /* particles_vsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = particles_vsh.glsl; sourceTree = "<group>"; };
+		A540C5C61F3E73FA007986E6 /* particles_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = particles_fsh.glsl; sourceTree = "<group>"; };
 		A56529A41EFD8051008097D7 /* VROTransformDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTransformDelegate.h; sourceTree = "<group>"; };
 		A566EB131E1AE11D008B4AE2 /* VROEventDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROEventDelegate.h; sourceTree = "<group>"; };
 		A566EB251E1AF448008B4AE2 /* VROSceneController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSceneController.h; sourceTree = "<group>"; };
@@ -1287,6 +1304,8 @@
 				8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */,
 				8F705DEC1E8C7375008BE8F8 /* surface_functions_fsh.glsl */,
 				8F129FAF1ED4D56300341D83 /* skinning_vsh.glsl */,
+				A540C5C31F3E7190007986E6 /* particles_vsh.glsl */,
+				A540C5C61F3E73FA007986E6 /* particles_fsh.glsl */,
 				8F03BCD91CECC30E00D071F8 /* standard_vsh.glsl */,
 				8F03BCD41CECC30E00D071F8 /* standard_fsh.glsl */,
 				8F0FE6781CD3DFF800A4C297 /* image_fsh.glsl */,
@@ -1308,6 +1327,11 @@
 				8F4DCE4B1BFD617200061DD7 /* Private */,
 				A586977F1E30843000191090 /* VROInputControllerBase.h */,
 				A586977E1E30843000191090 /* VROInputControllerBase.cpp */,
+				A51347311F329B0B00FF3726 /* VROParticleEmitter.cpp */,
+				A540C5C21F3D8711007986E6 /* VROInstancedUBO.h */,
+				A513473C1F35420300FF3726 /* VROParticleUBO.cpp */,
+				A513473D1F35420300FF3726 /* VROParticleUBO.h */,
+				A51347321F329B0B00FF3726 /* VROParticleEmitter.h */,
 				A58697881E30887500191090 /* VROInputType.h */,
 				A58697801E30843000191090 /* VROInputPresenter.h */,
 				8F5C413D1BD56F98006D7A77 /* VROScene.h */,
@@ -1950,6 +1974,7 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				A517D2CB1F41A16400A22219 /* cloud.png */,
 				8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.jpg */,
 				8F727F651F39EDAD00CDBBFC /* pug_body_normal.png */,
 				8F727F631F39EDAD00CDBBFC /* pug.vrx */,
@@ -2135,6 +2160,8 @@
 				8F660ABB1E9554B8006D063F /* VROFrameScheduler.h in Headers */,
 				8A99E6C31EF1B76F00712D79 /* VROARSceneController.h in Headers */,
 				A50F2A281ED135CC00D964D5 /* VROPhysicsBodyDelegate.h in Headers */,
+				A51347411F3544A800FF3726 /* VROParticleUBO.h in Headers */,
+				A51347421F3544AC00FF3726 /* VROParticleEmitter.h in Headers */,
 				8FCB10211DD544E800FE425C /* VROVideoTextureCache.h in Headers */,
 				8FCB10091DD10EF300FE425C /* VROStringUtil.h in Headers */,
 				A58697891E30887500191090 /* VROInputType.h in Headers */,
@@ -2531,6 +2558,7 @@
 				8F618E2B1EB926B60020B33B /* Heart_Diffuse.jpg in Resources */,
 				8F9278021C66BD4500FF892A /* py1.jpg in Resources */,
 				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
+				A517D2CC1F41A16400A22219 /* cloud.png in Resources */,
 				8A3517321EE0A50A00B6E786 /* screenshot.png in Resources */,
 				8F26573E1F0E7D5D0031DE17 /* gorilla.vrx in Resources */,
 				8F705DF51E8F5D42008BE8F8 /* earth_normal.jpg in Resources */,
@@ -2566,6 +2594,7 @@
 				8F9277FE1C66BD4500FF892A /* nx1.jpg in Resources */,
 				8FCED07D1EBBD35200C19BCA /* Sven_Face_Normal.png in Resources */,
 				8FCED0771EBBD35200C19BCA /* ramp_inc2.tga in Resources */,
+				A540C5C41F3E7190007986E6 /* particles_vsh.glsl in Resources */,
 				8FA2E1481C445CAA0070DB26 /* nx.png in Resources */,
 				A5ABB1D61E95703200E07EBC /* stereo3601.jpg in Resources */,
 				8FCED0801EBBD35200C19BCA /* Sven_Hair_Normal.png in Resources */,
@@ -2593,6 +2622,7 @@
 				8F660AB01E931C6F006D063F /* 4096_bump.jpg in Resources */,
 				8FCED05F1EBBCFCF00C19BCA /* Squid_Specular.png in Resources */,
 				8FF5CCBC1F290364007C7F52 /* aliengirl_normal.png in Resources */,
+				A540C5C71F3E73FA007986E6 /* particles_fsh.glsl in Resources */,
 				8FCED0761EBBD35200C19BCA /* Jetpack_Spec.png in Resources */,
 				8A3517331EE0A50A00B6E786 /* ben.jpg in Resources */,
 				8F50FC8B1E0AF54F00A9B4B2 /* male02.obj in Resources */,
@@ -2630,6 +2660,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A540C5C81F3E7403007986E6 /* particles_fsh.glsl in Resources */,
+				A540C5C51F3E72BF007986E6 /* particles_vsh.glsl in Resources */,
 				8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */,
 				8F129FB01ED4D56300341D83 /* skinning_vsh.glsl in Resources */,
 				8F03BCE21CECC92300D071F8 /* standard_fsh.glsl in Resources */,
@@ -2768,6 +2800,7 @@
 			files = (
 				A586978B1E308B5400191090 /* VROInputControllerBase.cpp in Sources */,
 				8F31CCB21F2FA8CA003EFB4B /* VROPortal.cpp in Sources */,
+				A513473F1F3544A200FF3726 /* VROParticleEmitter.cpp in Sources */,
 				8F36F3A91EE0CE10003F92D4 /* VROViewAR.mm in Sources */,
 				8FAE18C71EE79D6D0021C7BB /* VROARFrameiOS.cpp in Sources */,
 				8F705DE21E8ACFD0008BE8F8 /* VRODebugHUD.cpp in Sources */,
@@ -2819,6 +2852,7 @@
 				8FAE23C81CE3F61700E98B47 /* VROMaterialSubstrateOpenGL.cpp in Sources */,
 				8FD4DF001C18ED2C003DC425 /* VROGeometrySubstrateMetal.cpp in Sources */,
 				8F660ABA1E9554B8006D063F /* VROFrameScheduler.cpp in Sources */,
+				A51347401F3544A600FF3726 /* VROParticleUBO.cpp in Sources */,
 				8FD4DF0D1C18ED3C003DC425 /* VROGeometrySource.cpp in Sources */,
 				8FA2E1631C460C600070DB26 /* VROAction.cpp in Sources */,
 				8F9209141F3CAF72003305C8 /* VROImageShaderProgram.cpp in Sources */,

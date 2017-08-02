@@ -394,7 +394,7 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
      necessary after the afterConstraints() phase.
      */
     for (const std::shared_ptr<VROConstraint> &constraint : _constraints) {
-        VROMatrix4f billboardRotation = constraint->getTransform(*this, context, _computedTransform);
+        VROMatrix4f billboardRotation = constraint->getTransform(context, _computedTransform);
         
         // To apply the billboard rotation, translate the object to the origin, apply
         // the rotation, then translate back to its previously computed position

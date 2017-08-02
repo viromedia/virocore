@@ -43,6 +43,8 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
     _shaderId(sMaterialId++),
     _lightingBlockIndex(GL_INVALID_INDEX),
     _bonesBlockIndex(GL_INVALID_INDEX),
+    _particlesVertexBlockIndex(GL_INVALID_INDEX),
+    _particlesFragmentBlockIndex(GL_INVALID_INDEX),
     _attributes(0),
     _uniformsNeedRebind(true),
     _shaderName(fragmentShader),
@@ -95,7 +97,7 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
     _modifiers = modifiers;
     addStandardUniforms();
     addModifierUniforms();
-        
+
     ALLOCATION_TRACKER_ADD(Shaders, 1);
 }
 
@@ -316,7 +318,6 @@ bool VROShaderProgram::compileAndLink() {
         pabort("Failed to link program %d, name %s", _program, _shaderName.c_str());
         return false;
     }
-    
     bindUniformBlocks();
 
     /*
@@ -463,16 +464,18 @@ void VROShaderProgram::bindAttributes() {
 void VROShaderProgram::bindUniformBlocks() {
     _lightingBlockIndex = glGetUniformBlockIndex(_program, "lighting");
     _bonesBlockIndex = glGetUniformBlockIndex(_program, kDualQuaternionEnabled ? "bones_dq" : "bones");
+    _particlesVertexBlockIndex = glGetUniformBlockIndex(_program, "particles_vertex_data");
+    _particlesFragmentBlockIndex = glGetUniformBlockIndex(_program, "particles_fragment_data");
 }
 
 void VROShaderProgram::addStandardUniforms() {
     addUniform(VROShaderProperty::Mat4, 1, "normal_matrix");
     addUniform(VROShaderProperty::Mat4, 1, "model_matrix");
-    addUniform(VROShaderProperty::Mat4, 1, "modelview_matrix");
-    addUniform(VROShaderProperty::Mat4, 1, "modelview_projection_matrix");
+    addUniform(VROShaderProperty::Mat4, 1, "view_matrix");
+    addUniform(VROShaderProperty::Mat4, 1, "projection_matrix");
     addUniform(VROShaderProperty::Vec3, 1, "camera_position");
     addUniform(VROShaderProperty::Int, 1, "eye_type");
-    
+
     addUniform(VROShaderProperty::Vec4, 1, "material_diffuse_surface_color");
     addUniform(VROShaderProperty::Float, 1, "material_diffuse_intensity");
     addUniform(VROShaderProperty::Float, 1, "material_alpha");

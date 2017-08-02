@@ -13,26 +13,25 @@
 #include "VROCamera.h"
 #include "VRONode.h"
 
-VROMatrix4f VROBillboardConstraint::getTransform(const VRONode &node,
-                                                 const VRORenderContext &context,
+VROMatrix4f VROBillboardConstraint::getTransform(const VRORenderContext &context,
                                                  VROMatrix4f transform) {
-    
+
     VROMatrix4f rotation = transform;
     rotation[12] = 0;
     rotation[13] = 0;
     rotation[14] = 0;
-    
+
     // The object is assumed to start facing in the positive Z
     // direction; we rotate it by the transform to get the current
     // lookAt vector
     VROVector3f lookAt(0, 0, 1);
     lookAt = rotation.multiply(lookAt).normalize();
-    
+
     const VROCamera &camera = context.getCamera();
-    
+
     if (_freeAxis == VROBillboardAxis::All) {
         // Billboard with free Y axis
-        VROVector3f objToCam = camera.getPosition().subtract(node.getComputedPosition());
+        VROVector3f objToCam = camera.getPosition().subtract(transform.extractTranslation());
         
         VROVector3f objToCamProj = objToCam;
         objToCamProj.y = 0;
@@ -67,7 +66,7 @@ VROMatrix4f VROBillboardConstraint::getTransform(const VRONode &node,
         return composed.getMatrix();
     }
     else {
-        VROVector3f objToCamProj = camera.getPosition().subtract(node.getComputedPosition());
+        VROVector3f objToCamProj = camera.getPosition().subtract(transform.extractTranslation());
         VROVector3f defaultAxis;
 
         if (_freeAxis == VROBillboardAxis::X) {

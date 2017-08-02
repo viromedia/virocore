@@ -15,6 +15,7 @@
 #include "VROLight.h"
 #include "VROSortKey.h"
 #include "VROBoneUBO.h"
+#include "VROInstancedUBO.h"
 #include <sstream>
 
 static std::shared_ptr<VROShaderModifier> sDiffuseTextureModifier;
@@ -44,8 +45,8 @@ VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(VROMaterial &material, VR
     _shininessUniform(nullptr),
     _normalMatrixUniform(nullptr),
     _modelMatrixUniform(nullptr),
-    _modelViewMatrixUniform(nullptr),
-    _modelViewProjectionMatrixUniform(nullptr),
+    _viewMatrixUniform(nullptr),
+    _projectionMatrixUniform(nullptr),
     _cameraPositionUniform(nullptr),
     _eyeTypeUniform(nullptr){
 
@@ -222,8 +223,8 @@ void VROMaterialSubstrateOpenGL::loadUniforms() {
     
     _normalMatrixUniform = _program->getUniform("normal_matrix");
     _modelMatrixUniform = _program->getUniform("model_matrix");
-    _modelViewMatrixUniform = _program->getUniform("modelview_matrix");
-    _modelViewProjectionMatrixUniform = _program->getUniform("modelview_projection_matrix");
+    _projectionMatrixUniform = _program->getUniform("projection_matrix");
+    _viewMatrixUniform = _program->getUniform("view_matrix");
     _cameraPositionUniform = _program->getUniform("camera_position");
     _eyeTypeUniform = _program->getUniform("eye_type");
     
@@ -280,7 +281,7 @@ void VROMaterialSubstrateOpenGL::bindLights(int lightsHash,
     _lightingUBO->bind(_program);
 }
 
-void VROMaterialSubstrateOpenGL::bindView(VROMatrix4f transform, VROMatrix4f modelview,
+void VROMaterialSubstrateOpenGL::bindView(VROMatrix4f transform, VROMatrix4f viewMatrix,
                                           VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
                                           VROVector3f cameraPosition, VROEyeType eyeType) {
     if (_normalMatrixUniform != nullptr) {
@@ -289,11 +290,11 @@ void VROMaterialSubstrateOpenGL::bindView(VROMatrix4f transform, VROMatrix4f mod
     if (_modelMatrixUniform != nullptr) {
         _modelMatrixUniform->setMat4(transform);
     }
-    if (_modelViewMatrixUniform != nullptr) {
-        _modelViewMatrixUniform->setMat4(modelview);
+    if (_projectionMatrixUniform != nullptr) {
+        _projectionMatrixUniform->setMat4(projectionMatrix);
     }
-    if (_modelViewProjectionMatrixUniform != nullptr) {
-        _modelViewProjectionMatrixUniform->setMat4(projectionMatrix.multiply(modelview));
+    if (_viewMatrixUniform != nullptr) {
+        _viewMatrixUniform->setMat4(viewMatrix);
     }
     if (_cameraPositionUniform != nullptr) {
         _cameraPositionUniform->setVec3(cameraPosition);
@@ -326,6 +327,10 @@ void VROMaterialSubstrateOpenGL::bindGeometryUniforms(float opacity, const VROGe
 
 void VROMaterialSubstrateOpenGL::bindBoneUBO(const std::unique_ptr<VROBoneUBO> &boneUBO) {
     boneUBO->bind(_program);
+}
+
+void VROMaterialSubstrateOpenGL::bindInstanceUBO(const std::shared_ptr<VROInstancedUBO> &instanceUBO) {
+    instanceUBO->bind(_program);
 }
 
 void VROMaterialSubstrateOpenGL::updateSortKey(VROSortKey &key) const {

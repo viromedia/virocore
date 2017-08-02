@@ -57,7 +57,21 @@ typedef std::function<void(VROUniform *uniform, GLuint location, const VROGeomet
  The input and output (_vertex.position) is in normalized device coordinates.
  
  ----------------
- 
+
+ Transforms entry point. The code may declare uniforms and read/write
+ to the following structure:
+
+ struct VROTransforms {
+   mat4 model_matrix;
+   mat4 view_matrix;
+   mat4 projection_matrix;
+ } _transforms;
+
+ The Transforms entry point enables modifiers to change Model, View and Projection
+ transformation matrices in the vertex shader, prior to the final output computation of
+ _vertex.position.
+
+ ----------------
  Surface entry point. The code may declare uniforms and read/write
  to the following structure:
  

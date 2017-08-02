@@ -14,6 +14,7 @@
 #include "VROGeometryUtil.h"
 #include "VROLog.h"
 #include "VROBoneUBO.h"
+#include "VROInstancedUBO.h"
 #include "VROShaderProgram.h"
 #include <map>
 
@@ -250,9 +251,13 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
         _boneUBO->update(geometry.getSkinner());
         substrate->bindBoneUBO(_boneUBO);
     }
-    
-    VROMatrix4f modelview = viewMatrix.multiply(transform);
-    substrate->bindView(transform, modelview, projectionMatrix, normalMatrix,
+
+    const std::shared_ptr<VROInstancedUBO> &instancedUBO = geometry.getInstancedUBO();
+    if (instancedUBO != nullptr) {
+        substrate->bindInstanceUBO(instancedUBO);
+    }
+
+    substrate->bindView(transform, viewMatrix, projectionMatrix, normalMatrix,
                         context.getCamera().getPosition(), context.getEyeType());
    
     glBindVertexArray(_vaos[elementIndex]);
@@ -268,9 +273,8 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
                                                 float opacity,
                                                 const VRORenderContext &context,
                                                 std::shared_ptr<VRODriver> &driver) {
-    
     material->bindGeometry(opacity, geometry);
-    
+
     int activeTexture = 0;
     const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();
     for (int j = 0; j < textures.size(); ++j) {
@@ -293,8 +297,17 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
             ++activeTexture;
         }
     }
-    
-    glDrawElements(element.primitiveType, element.indexCount, element.indexType, 0);
+
+    const std::shared_ptr<VROInstancedUBO> &instancedUBO = geometry.getInstancedUBO();
+    if (instancedUBO != nullptr) {
+        int numberOfDraws = instancedUBO->getNumberOfDrawCalls();
+        for (int i = 0; i < numberOfDraws; i ++) {
+            int instances = instancedUBO->bindDrawData(i);
+            glDrawElementsInstanced(element.primitiveType, element.indexCount, element.indexType, 0, instances);
+        }
+    } else {
+        glDrawElements(element.primitiveType, element.indexCount, element.indexType, 0);
+    }
 }
 
 void VROGeometrySubstrateOpenGL::renderSilhouette(const VROGeometry &geometry,

@@ -547,6 +547,43 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     // No-op
 }
 
+
+- (std::shared_ptr<VROSceneController>)loadParticlesScene {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
+    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    rootNode->setPosition({0, 0, 0});
+    scene->getRootNode()->addChildNode(rootNode);
+    
+    std::shared_ptr<VRONode> particleNode = std::make_shared<VRONode>();
+    particleNode->setPosition({0, -10, -15});
+    particleNode->setTag("Particles");
+    
+    std::shared_ptr<VROTexture> imgTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
+                                                                          VROMipmapMode::None,
+                                                                          std::make_shared<VROImageiOS>([UIImage imageNamed:@"cloud"], VROTextureInternalFormat::RGBA8),
+                                                                          VROStereoMode::None);
+    std::shared_ptr<VROParticleEmitter> particleEmitter = std::make_shared<VROParticleEmitter>(self.driver,
+                                                                                               particleNode,
+                                                                                               imgTexture,
+                                                                                               2, 2);
+    scene->addParticleEmitter(particleEmitter);
+    rootNode->addChildNode(particleNode);
+    
+    /* 
+     // Uncomment to test animating a particle emitter.
+     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+     VROTransaction::begin();
+     VROTransaction::setAnimationDuration(64);
+     particleNode->setRotationEulerY(96);
+     VROTransaction::commit();
+     });
+     */
+    
+    return sceneController;
+}
+
+
 - (std::shared_ptr<VROSceneController>)loadBoxScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
