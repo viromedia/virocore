@@ -13,7 +13,8 @@
 VROInputControllerARiOS::VROInputControllerARiOS(float viewportWidth, float viewportHeight) :
     _viewportWidth(viewportWidth),
     _viewportHeight(viewportHeight),
-    _isTouchOngoing(false) {
+    _isTouchOngoing(false),
+    _isPinchOngoing(false) {
 }
 
 VROVector3f VROInputControllerARiOS::getDragForwardOffset() {
@@ -23,6 +24,23 @@ VROVector3f VROInputControllerARiOS::getDragForwardOffset() {
 void VROInputControllerARiOS::onProcess(const VROCamera &camera) {
     _latestCamera = camera;
     processTouchMovement();
+}
+
+void VROInputControllerARiOS::onPinchStart(VROVector3f touchPos) {
+    _isPinchOngoing = true;
+    VROVector3f rayFromCamera = calculateCameraRay(touchPos);
+    VROInputControllerBase::updateHitNode(_latestCamera, _latestCamera.getPosition(), rayFromCamera);
+    VROInputControllerBase::onPinch(ViroCardBoard::InputSource::Controller, 1.0, VROEventDelegate::PinchState::PinchStart);
+}
+
+
+void VROInputControllerARiOS::onPinchScale(float scale) {
+    _latestScale = scale;
+}
+
+void VROInputControllerARiOS::onPinchEnd() {
+    _isPinchOngoing = false;
+    VROInputControllerBase::onPinch(ViroCardBoard::InputSource::Controller, _latestScale, VROEventDelegate::PinchState::PinchEnd);
 }
 
 void VROInputControllerARiOS::onScreenTouchDown(VROVector3f touchPos) {
@@ -54,10 +72,12 @@ std::string VROInputControllerARiOS::getController() {
 }
 
 void VROInputControllerARiOS::processTouchMovement() {
-    if (_isTouchOngoing) {
-        VROVector3f rayFromCamera = calculateCameraRay(_latestTouchPos);
-        VROInputControllerBase::updateHitNode(_latestCamera, _latestCamera.getPosition(), rayFromCamera);
-        VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, _latestCamera.getPosition(), _latestCamera.getRotation(), rayFromCamera);
+  if(_isPinchOngoing) {
+      VROInputControllerBase::onPinch(ViroCardBoard::InputSource::Controller, _latestScale, VROEventDelegate::PinchState::PinchMove);
+  }else if (_isTouchOngoing) {
+      VROVector3f rayFromCamera = calculateCameraRay(_latestTouchPos);
+      VROInputControllerBase::updateHitNode(_latestCamera, _latestCamera.getPosition(), rayFromCamera);
+      VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, _latestCamera.getPosition(), _latestCamera.getRotation(), rayFromCamera);
     }
 }
 

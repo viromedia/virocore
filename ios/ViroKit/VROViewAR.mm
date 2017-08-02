@@ -203,6 +203,22 @@ static VROVector3f const kZeroVector = VROVector3f();
                                                                                     action:@selector(handleLongPress:)];
     longPress.minimumPressDuration = 0;
     [self addGestureRecognizer:longPress];
+  
+    UIPinchGestureRecognizer *twoFingerPinch = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
+    [self addGestureRecognizer:twoFingerPinch];
+}
+
+- (void)handlePinch:(UIPinchGestureRecognizer *)recognizer {
+    CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+     VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
+  
+    if(recognizer.state == UIGestureRecognizerStateBegan) {
+      _inputController->onPinchStart(viewportTouchPos);
+    } else if(recognizer.state == UIGestureRecognizerStateChanged) {
+      _inputController->onPinchScale(recognizer.scale);
+    } else if(recognizer.state == UIGestureRecognizerStateEnded) {
+      _inputController->onPinchEnd();
+    }
 }
 
 - (void)handleLongPress:(UILongPressGestureRecognizer *)recognizer {

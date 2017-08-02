@@ -16,6 +16,7 @@ VROInputControllerBase::VROInputControllerBase() {
     _lastClickedNode = nullptr;
     _lastHoveredNode = nullptr;
     _lastDraggedNode = nullptr;
+    _currentPinchedNode = nullptr;
     _scene = nullptr;
     _currentControllerStatus = VROEventDelegate::ControllerStatus::Unknown;
     
@@ -189,8 +190,11 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
                                                 _lastKnownPosition, _lastKnownForward);
     }
     
-    // Update draggable objects if needed
-    if (_lastDraggedNode != nullptr){
+    
+
+    // Update draggable objects if needed unless we have a pinch motion.
+    if (_lastDraggedNode != nullptr && _currentPinchedNode == nullptr) {
+
         // Calculate the new drag location
         VROVector3f adjustedForward = _lastKnownForward + _lastDraggedNode->_forwardOffset;
         VROVector3f newSimulatedHitPosition = _lastKnownPosition + (adjustedForward  * _lastDraggedNode->_draggedDistanceFromController);
@@ -213,6 +217,29 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
         draggedNode->getEventDelegate()->onDrag(source, draggedToLocation);
         for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
             delegate->onDrag(source, draggedToLocation);
+        }
+    }
+}
+
+void VROInputControllerBase::onPinch(int source, float scaleFactor, VROEventDelegate::PinchState pinchState) {
+    if(pinchState == VROEventDelegate::PinchState::PinchStart) {
+        if(_hitResult == nullptr) {
+            return;
+        }
+        _lastPinchScale = scaleFactor;
+        _currentPinchedNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnPinch, _hitResult->getNode());
+    }
+    
+    if(_currentPinchedNode && pinchState == VROEventDelegate::PinchState::PinchMove) {
+        if(fabs(scaleFactor - _lastPinchScale) < ON_PINCH_SCALE_THRESHOLD) {
+            return;
+        }
+    }
+
+    if(_currentPinchedNode) {
+        _currentPinchedNode->getEventDelegate()->onPinch(source, scaleFactor, pinchState);
+        if(pinchState == VROEventDelegate::PinchState::PinchEnd) {
+            _currentPinchedNode = nullptr;
         }
     }
 }

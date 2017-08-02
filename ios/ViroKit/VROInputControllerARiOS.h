@@ -45,6 +45,21 @@ public:
      Call this function when the screen is touched up w/ the given ray
      */
     void onScreenTouchUp(VROVector3f tapRay);
+  
+    /*
+     Call this function when a pinch gesture has begun.
+     */
+    void onPinchStart(VROVector3f pinchCenter);
+  
+    /*
+     Call this function when a pinch gesture has ended.
+     */
+    void onPinchEnd();
+  
+    /*
+     Call this function when a pinch gesture is scaling(after start, before end).
+     */
+    void onPinchScale(float scale);
     
     std::string getHeadset();
     std::string getController();
@@ -57,7 +72,9 @@ protected:
 private:
     float _viewportWidth;
     float _viewportHeight;
+    float _latestScale;
     bool _isTouchOngoing;
+    bool _isPinchOngoing;
     
     std::weak_ptr<VRORenderer> _weakRenderer;
     VROCamera _latestCamera;

@@ -23,6 +23,7 @@
 #include "VROGeometry.h"
 
 static const float ON_DRAG_DISTANCE_THRESHOLD = 0.01;
+static const float ON_PINCH_SCALE_THRESHOLD = 0.02;
 static float kSceneBackgroundDistance = 8;
 
 /**
@@ -48,21 +49,21 @@ public:
      * onProcess is to be implemented by derived classes to drive the processing
      * of platform-specific input events and map them to viro-specific input events.
      */
-    virtual void onProcess(const VROCamera &camera){
+    virtual void onProcess(const VROCamera &camera) {
         //No-op
     }
 
     /**
      * Called when the renderer is about to be backgrounded within Android's lifecycle.
      */
-    virtual void onPause(){
+    virtual void onPause() {
         // No-op
     }
 
     /**
      * Called when the renderer is about to be foregrounded within Android's lifecycle.
      */
-    virtual void onResume(){
+    virtual void onResume() {
         // No-op
     }
 
@@ -117,6 +118,13 @@ public:
     void onSwipe(int source, VROEventDelegate::SwipeState swipeState);
     void onScroll(int source, float x, float y);
     
+    /*
+     * Pinch event that passes scale factor indicting the change in the pinch ratio
+     * since the pinch started. Scale factor begins at 1 when pinch starts with
+     * PinchState::PinchStart.
+     */
+    void onPinch(int source, float scaleFactor, VROEventDelegate::PinchState pinchState);
+
 protected:
     
     virtual std::shared_ptr<VROInputPresenter> createPresenter(){
@@ -155,6 +163,11 @@ protected:
      * is pointing.
      */
     VROVector3f _lastKnownForward;
+
+    /*
+     * Last known pinch scale value.
+     */
+    float _lastPinchScale;
     
 
 private:
@@ -233,6 +246,11 @@ private:
      * Current node that we are fusing on.
      */
     std::shared_ptr<VRONode> _currentFusedNode;
+    
+    /*
+     * Current node that we are pinching on.
+     */
+    std::shared_ptr<VRONode> _currentPinchedNode;
 
     /**
      * Time at which the onFuse event is triggered, in milliseconds.
