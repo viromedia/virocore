@@ -497,7 +497,8 @@ void VROShaderProgram::inflateVertexShaderModifiers(const std::vector<std::share
                                                     std::string &source) const {
     
     for (const std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
-        if (modifier->getEntryPoint() != VROShaderEntryPoint::Geometry) {
+        if (modifier->getEntryPoint() != VROShaderEntryPoint::Geometry &&
+            modifier->getEntryPoint() != VROShaderEntryPoint::Vertex) {
             continue;
         }
         
@@ -511,7 +512,8 @@ void VROShaderProgram::inflateFragmentShaderModifiers(const std::vector<std::sha
                                                       std::string &source) const {
     
     for (const std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
-        if (modifier->getEntryPoint() == VROShaderEntryPoint::Geometry) {
+        if (modifier->getEntryPoint() != VROShaderEntryPoint::Surface &&
+            modifier->getEntryPoint() != VROShaderEntryPoint::Fragment) {
             continue;
         }
         

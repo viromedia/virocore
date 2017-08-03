@@ -111,6 +111,15 @@ std::string VROShaderModifier::getDirective(VROShaderSection section) const {
         }
     }
     
+    else if (_entryPoint == VROShaderEntryPoint::Vertex) {
+        if (section == VROShaderSection::Body) {
+            return "#pragma vertex_modifier_body";
+        }
+        else {
+            return "#pragma vertex_modifier_uniforms";
+        }
+    }
+    
     else if (_entryPoint == VROShaderEntryPoint::Surface) {
         if (section == VROShaderSection::Body) {
             return "#pragma surface_modifier_body";
