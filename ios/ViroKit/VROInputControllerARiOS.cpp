@@ -9,6 +9,8 @@
 #include "VROInputControllerARiOS.h"
 #include "VRORenderer.h"
 #include "VROProjector.h"
+#include "VROARFrame.h"
+#include "VROARDraggableNode.h"
 
 VROInputControllerARiOS::VROInputControllerARiOS(float viewportWidth, float viewportHeight) :
     _viewportWidth(viewportWidth),
@@ -61,6 +63,54 @@ void VROInputControllerARiOS::onScreenTouchUp(VROVector3f touchPos) {
     VROVector3f rayFromCamera = calculateCameraRay(_latestTouchPos);
     VROInputControllerBase::updateHitNode(_latestCamera, _latestCamera.getPosition(), rayFromCamera);
     VROInputControllerBase::onButtonEvent(ViroCardBoard::ViewerButton, VROEventDelegate::ClickState::ClickUp);
+}
+
+void VROInputControllerARiOS::didUpdateDraggedObject() {
+    std::shared_ptr<VROARDraggableNode> arDraggableNode = std::dynamic_pointer_cast<VROARDraggableNode>(_lastDraggedNode->_draggedNode);
+    std::shared_ptr<VROARSessioniOS> session = _weakSession.lock();
+    if (session && arDraggableNode) {
+        std::unique_ptr<VROARFrame> &frame = session->getLastFrame();
+        std::vector<VROARHitTestResult> results = frame->hitTest(_latestTouchPos.x,
+                                                                 _latestTouchPos.y,
+                                                                 { VROARHitTestResultType::ExistingPlaneUsingExtent,
+                                                                     VROARHitTestResultType::ExistingPlane,
+                                                                     VROARHitTestResultType::EstimatedHorizontalPlane,
+                                                                     VROARHitTestResultType::FeaturePoint });
+        
+        if (results.size() > 0) {
+            VROARHitTestResult result = findBestHitTestResult(results);
+            VROVector3f position = result.getWorldTransform().extractTranslation();
+            arDraggableNode->setPosition(position);
+        }
+    }
+}
+
+VROARHitTestResult VROInputControllerARiOS::findBestHitTestResult(std::vector<VROARHitTestResult> results) {
+    VROARHitTestResult toReturn = results[0];
+    for (int i = 1; i < results.size(); i++) {
+        VROARHitTestResult candidate = results[i];
+        if (valueForHitTestResultType(candidate.getType()) > valueForHitTestResultType(toReturn.getType())) {
+            toReturn = candidate;
+        }
+    }
+    return toReturn;
+}
+
+/*
+ This function takes a VROARHitTestResultType and assigns an int value to them where
+ larger int values are "preferred" over smaller ones.
+ */
+int VROInputControllerARiOS::valueForHitTestResultType(VROARHitTestResultType type) {
+    switch(type) {
+        case VROARHitTestResultType::ExistingPlaneUsingExtent:
+            return 3;
+        case VROARHitTestResultType::ExistingPlane:
+            return 1;
+        case VROARHitTestResultType::EstimatedHorizontalPlane:
+            return 0;
+        case VROARHitTestResultType::FeaturePoint:
+            return 2;
+    }
 }
 
 std::string VROInputControllerARiOS::getHeadset() {

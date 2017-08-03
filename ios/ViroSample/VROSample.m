@@ -12,6 +12,7 @@
 #import "opencv2/imgproc/imgproc.hpp"
 #import "VROImageTracker.h"
 #import "VROSampleARDelegate.h"
+#import "VROARDraggableNode.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneOBJ = 0,
@@ -23,7 +24,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneNormalMap,
     VROSampleSceneStereoscopic,
     VROSampleSceneFBX,
-    VROSampleSceneAR,
+    VROSampleSceneARPlane,
+    VROSampleSceneARDraggableNode,
     VROSampleScenePortal,
     VROSampleSceneNumScenes,
 };
@@ -85,8 +87,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
             return [self loadStereoBackground];
         case VROSampleSceneFBX:
             return [self loadFBXScene];
-        case VROSampleSceneAR:
-            return [self loadARScene];
+        case VROSampleSceneARPlane:
+            return [self loadARPlaneScene];
+        case VROSampleSceneARDraggableNode:
+            return [self loadARDraggableNodeScene];
         case VROSampleScenePortal:
             return [self loadPortalScene];
         default:
@@ -1089,7 +1093,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return sceneController;
 }
 
-- (std::shared_ptr<VROSceneController>)loadARScene {
+- (std::shared_ptr<VROSceneController>)loadARPlaneScene {
     std::shared_ptr<VROARSceneController> sceneController = std::make_shared<VROARSceneController>();
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(sceneController->getScene());
     std::shared_ptr<VRONode> sceneNode = std::make_shared<VRONode>();
@@ -1115,8 +1119,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                         
                                                                         VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
                                                                         
-                                                                        
-                                                                        
                                                                         std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
                                                                         material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
                                                                                                                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"coffee_mug"], format)));
@@ -1129,12 +1131,13 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     arScene->addARPlane(arPlane);
     arScene->addNode(sceneNode);
     
+    // Taking screenshot/video logic:
+
     VROViewAR *arView = (VROViewAR *)self.view;
-    
     int rand = arc4random_uniform(1000);
     
     // takeVideo if YES, else takePhoto if NO
-    BOOL takeVideo = YES;
+    BOOL takeVideo = NO;
     if (takeVideo) {
         NSString *filename = [NSString stringWithFormat:@"testvideo%d", rand];
         
@@ -1166,6 +1169,69 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return sceneController;
 }
 
+- (std::shared_ptr<VROSceneController>)loadARDraggableNodeScene {
+    std::shared_ptr<VROARSceneController> sceneController = std::make_shared<VROARSceneController>();
+    std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(sceneController->getScene());
+    std::shared_ptr<VRONode> sceneNode = std::make_shared<VRONode>();
+    
+    NSString *objPath = [[NSBundle mainBundle] pathForResource:@"coffee_mug" ofType:@"obj"];
+    NSURL *objURL = [NSURL fileURLWithPath:objPath];
+    std::string url = std::string([[objURL description] UTF8String]);
+    
+    NSString *basePath = [objPath stringByDeletingLastPathComponent];
+    NSURL *baseURL = [NSURL fileURLWithPath:basePath];
+    std::string base = std::string([[baseURL description] UTF8String]);
+    
+    
+    
+    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(url, base, true,
+                                                                    [self](std::shared_ptr<VRONode> node, bool success) {
+                                                                        if (!success) {
+                                                                            return;
+                                                                        }
+                                                                        node->setScale({0.007, 0.007, 0.007});
+                                                                        
+                                                                        VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
+                                                                        
+                                                                        std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
+                                                                        material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                                                                                       std::make_shared<VROImageiOS>([UIImage imageNamed:@"coffee_mug"], format)));
+                                                                        material->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                                                                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"coffee_mug_specular"], format)));
+                                                                    });
+    
+    std::shared_ptr<VROBox> box = VROBox::createBox(.2, .2, .2);
+    std::shared_ptr<VROARDraggableNode> draggableNode = std::make_shared<VROARDraggableNode>();
+    
+    self.delegate = std::make_shared<VROEventDelegateiOS>(self);
+    self.delegate->setEnabledEvent(VROEventDelegate::EventAction::OnDrag, true);
+    
+    draggableNode->setEventDelegate(self.delegate);
+    
+    draggableNode->setPosition(VROVector3f(0,0,-1));
+    std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
+    boxNode->setGeometry(box);
+    boxNode->setPosition(VROVector3f(0, .13, 0));
+    draggableNode->addChildNode(boxNode);
+    sceneNode->addChildNode(draggableNode);
+    arScene->addNode(sceneNode);
+    
+    // add a shadow under the box.
+    VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
+    std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(format, VROMipmapMode::Runtime,
+                                                                       std::make_shared<VROImageiOS>([UIImage imageNamed:@"dark_circle_shadow"], format));
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(.3, .3);
+    surface->getMaterials().front()->getDiffuse().setTexture(texture);
+    
+    std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
+    surfaceNode->setGeometry(surface);
+    surfaceNode->setRotationEulerX(-1.570795); // rotate it so it's facing "up" (-PI/2)
+    
+    draggableNode->addChildNode(surfaceNode);
+    
+    return sceneController;
+}
+
 - (void)animateTake:(std::shared_ptr<VRONode>)node {
     node->getAnimation("Take 001", true)->execute(node, [node, self] {
         [self animateTake:node];
@@ -1173,7 +1239,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleSceneAR;
+    self.sceneIndex = VROSampleSceneARDraggableNode;
     self.driver = driver;
     
     self.sceneController = [self loadSceneWithIndex:self.sceneIndex];

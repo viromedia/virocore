@@ -256,3 +256,13 @@ void VROScene::getBackgrounds(std::shared_ptr<VRONode> node, std::vector<std::sh
     }
 }
 
+void VROScene::drawBoundingBoxCorners(std::shared_ptr<VRONode> node,
+                                      const VRORenderContext &context,
+                                      std::shared_ptr<VRODriver> &driver) {
+    std::shared_ptr<VROPencil> pencil = std::make_shared<VROPencil>();
+    VROVector3f minPoint = VROVector3f(node->getBoundingBox().getMinX(), node->getBoundingBox().getMinY(), node->getBoundingBox().getMinZ());
+    VROVector3f maxPoint = VROVector3f(node->getBoundingBox().getMaxX(), node->getBoundingBox().getMaxY(), node->getBoundingBox().getMaxZ());
+    pencil->draw(minPoint, maxPoint);
+    pencil->render(context, driver);
+}
+

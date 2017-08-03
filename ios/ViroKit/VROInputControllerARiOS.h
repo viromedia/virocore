@@ -13,6 +13,8 @@
 #include "VROInputPresenterARiOS.h"
 #include "VROLog.h"
 #include "VRORenderer.h"
+#include "VROARSessioniOS.h"
+#include "VROARHitTestResult.h"
 
 class VROInputControllerARiOS : public VROInputControllerBase {
 public:
@@ -21,6 +23,10 @@ public:
     
     void setRenderer(std::shared_ptr<VRORenderer> renderer) {
         _weakRenderer = renderer;
+    }
+
+    void setSession(std::shared_ptr<VROARSessioniOS> session) {
+        _weakSession = session;
     }
     
     virtual VROVector3f getDragForwardOffset();
@@ -68,6 +74,12 @@ protected:
     std::shared_ptr<VROInputPresenter> createPresenter() {
         return std::make_shared<VROInputPresenterARiOS>();
     }
+
+    /*
+     If the current dragged object is a VROARDraggableNode, then we'll want to "drag" it along
+     the real-world surfaces by performing AR hit tests.
+     */
+    virtual void didUpdateDraggedObject();
     
 private:
     float _viewportWidth;
@@ -77,11 +89,15 @@ private:
     bool _isPinchOngoing;
     
     std::weak_ptr<VRORenderer> _weakRenderer;
+    std::weak_ptr<VROARSessioniOS> _weakSession;
     VROCamera _latestCamera;
     VROVector3f _latestTouchPos;
     
     VROVector3f calculateCameraRay(VROVector3f touchPos);
     void processTouchMovement();
+
+    VROARHitTestResult findBestHitTestResult(std::vector<VROARHitTestResult> results);
+    int valueForHitTestResultType(VROARHitTestResultType type);
 };
 
 #endif /* VROInputControllerARiOS_h */

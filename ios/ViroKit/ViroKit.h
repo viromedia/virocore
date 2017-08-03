@@ -159,6 +159,7 @@ FOUNDATION_EXPORT const unsigned char ViroKitVersionString[];
 #import <ViroKit/VROARPlane.h>
 #import <ViroKit/VROARNodeDelegateiOS.h>
 #import <ViroKit/VROARSceneDelegateiOS.h>
+#import <ViroKit/VROARDraggableNode.h>
 
 // OpenCV
 #import <ViroKit/VROOpenCV.h>

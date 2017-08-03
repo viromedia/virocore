@@ -188,6 +188,15 @@ protected:
      Retrieve all background textures in the scene.
      */
     void getBackgrounds(std::shared_ptr<VRONode> node, std::vector<std::shared_ptr<VROGeometry>> &backgrounds);
+
+private:
+    /*
+     A helper method that draws a line from the max to min points of the given node's bounding box. Call
+     from the render function if you want to see the lines
+     */
+    void drawBoundingBoxCorners(std::shared_ptr<VRONode> node,
+                                const VRORenderContext &context,
+                                std::shared_ptr<VRODriver> &driver);
 };
 
 #endif /* VROScene_h */

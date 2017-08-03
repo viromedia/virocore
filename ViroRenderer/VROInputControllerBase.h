@@ -147,6 +147,30 @@ protected:
      toward the given direction.
      */
     void updateHitNode(const VROCamera &camera, VROVector3f origin, VROVector3f ray);
+
+    /**
+     * VRODraggedObject encapsulates all the information that needs to be tracked
+     * and processed for onDrag events for a given dragged node.
+     */
+    struct VRODraggedObject{
+        std::shared_ptr<VRONode> _draggedNode;
+        VROVector3f _originalHitLocation;
+        VROVector3f _originalDraggedNodePosition;
+        VROVector3f _forwardOffset;
+        float _draggedDistanceFromController;
+    };
+    
+    /*
+     * Last hit result that we are performing a drag event on.
+     */
+    std::shared_ptr<VRODraggedObject> _lastDraggedNode;
+
+    /*
+     * Allows child classes to run additional logic after a VRODraggedObject was updated
+     */
+    virtual void didUpdateDraggedObject() {
+        // no-op
+    };
     
     /*
      * Last result that was returned from the hit test.
@@ -169,7 +193,6 @@ protected:
      */
     float _lastPinchScale;
     
-
 private:
     
     /*
@@ -224,23 +247,6 @@ private:
                                                   std::shared_ptr<VRONode> startingNode);
 
     void processGazeEvent(int source, std::shared_ptr<VRONode> node);
-
-    /**
-     * VRODraggedObject encapsulates all the information that needs to be tracked
-     * and processed for onDrag events for a given dragged node.
-     */
-    struct VRODraggedObject{
-        std::shared_ptr<VRONode> _draggedNode;
-        VROVector3f _originalHitLocation;
-        VROVector3f _originalDraggedNodePosition;
-        VROVector3f _forwardOffset;
-        float _draggedDistanceFromController;
-    };
-
-    /*
-     * Last hit result that we are performing a drag event on.
-     */
-    std::shared_ptr<VRODraggedObject> _lastDraggedNode;
 
     /*
      * Current node that we are fusing on.

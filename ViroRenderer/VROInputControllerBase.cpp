@@ -191,8 +191,6 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
                                                 _lastKnownPosition, _lastKnownForward);
     }
     
-    
-
     // Update draggable objects if needed unless we have a pinch motion.
     if (_lastDraggedNode != nullptr && _currentPinchedNode == nullptr) {
 
@@ -203,6 +201,8 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
         VROVector3f draggedToLocation = _lastDraggedNode->_originalDraggedNodePosition + draggedOffset;
         std::shared_ptr<VRONode> draggedNode = _lastDraggedNode->_draggedNode;
         draggedNode->setPosition(draggedToLocation);
+
+        didUpdateDraggedObject();
 
         /*
          * To avoid spamming the JNI / JS bridge, throttle the notification
