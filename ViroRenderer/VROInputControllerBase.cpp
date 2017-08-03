@@ -7,6 +7,7 @@
 
 #include "VROInputControllerBase.h"
 #include "VROTime.h"
+#include "VROPortal.h"
 
 static bool sSceneBackgroundAdd = true;
 
@@ -387,7 +388,7 @@ void VROInputControllerBase::notifyOnFuseEvent(int source, float timeToFuseRatio
 
 VROHitTestResult VROInputControllerBase::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray, bool boundsOnly) {
     std::vector<VROHitTestResult> results;
-    std::shared_ptr<VRONode> sceneRootNode = _scene->getRootNode();
+    std::shared_ptr<VROPortal> sceneRootNode = _scene->getRootNode();
 
     // Grab all the nodes that were hit
     std::vector<VROHitTestResult> nodeResults = sceneRootNode->hitTest(camera, origin, ray, boundsOnly);

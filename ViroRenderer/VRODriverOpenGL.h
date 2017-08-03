@@ -65,44 +65,57 @@ public:
         _lastPurgeFrame = context.getFrame();
     }
     
-    void initRenderPass(VRORenderPass pass) {
-        if (pass == VRORenderPass::Normal) {
-            glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE); // Write to color buffer
-            glDepthMask(GL_TRUE);                            // Write to depth buffer
-            
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            
-            glEnable(GL_STENCIL_TEST);
-            glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);  // Do not write to stencil buffer
-            glStencilFunc(GL_EQUAL, 0, 0xFF);        // Used in conjunction with setPortalStencilRefBits
-            glStencilMask(0x00);                     // Do not write to stencil buffer
-        }
-        else {
-            glDepthMask(GL_TRUE);                            // Enable for clearing to work
-            glClear(GL_DEPTH_BUFFER_BIT);
-            
-            glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);  // Do not write to color buffer
-            glDepthMask(GL_FALSE);                                // Do not write to depth buffer
-            
-            glEnable(GL_STENCIL_TEST);
-            glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); // Write to stencil buffer
-            glStencilFunc(GL_ALWAYS, 0, 0xFF);         // Used in conjunction with setPortalStencilWriteBits
-            glStencilMask(0xFF);                       // Write to stencil buffer
-        }
-    }
-    
     void clearStencil(int bits)  {
         glClearStencil(bits);
         glClear(GL_STENCIL_BUFFER_BIT);
     }
     
-    void setPortalStencilWriteBits(int bits) {
-        glStencilFunc(GL_ALWAYS, bits, 0xFF); // Always pass stencil test, write bits to buffer
+    void clearDepth() {
+        glDepthMask(GL_TRUE);
+        glClear(GL_DEPTH_BUFFER_BIT);
     }
     
-    void setPortalStencilRefBits(int bits) {
-        glStencilFunc(GL_EQUAL, bits, 0xFF);
+    void clearColor() {
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+    
+    void clearDepthAndColor() {
+        glDepthMask(GL_TRUE);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+    
+    void enableColorBuffer() {
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    }
+    
+    void disableColorBuffer() {
+        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    }
+
+    void enablePortalStencilWriting() {
+        glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);               // Increment stencil buffer when pass
+        glStencilMask(0xFF);                                  // Allow writing to all bits in stencil buffer
+    }
+    
+    void enablePortalStencilRemoval() {
+        glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);               // Decrement stencil buffer when pass
+        glStencilMask(0xFF);                                  // Allow writing to all bits in stencil buffer
+    }
+    
+    void enablePortalStencilReading() {
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);          // Do not write to stencil buffer
+        glStencilMask(0x00);                             // Protect all stencil bits from writing
+    }
+    
+    void setStencilPassBits(int bits, bool passIfLess) {
+        if (passIfLess) {
+            glStencilFunc(GL_LEQUAL, bits, 0xFF);      // Only pass stencil test if bits <= stencil buffer
+        }
+        else {
+            glStencilFunc(GL_EQUAL, bits, 0xFF);       // Only pass stencil test if bits == stencil buffer
+        }
     }
     
     VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) {

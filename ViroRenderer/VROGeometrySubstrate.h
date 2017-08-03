@@ -29,6 +29,11 @@ public:
     
     virtual ~VROGeometrySubstrate() {}
     
+    /*
+     Render the given element of the geometry with full texturing and
+     lighting. Assumes the material's shader and geometry-independent
+     properties have already been bound.
+     */
     virtual void render(const VROGeometry &geometry,
                         int elementIndex,
                         VROMatrix4f transform,
@@ -37,6 +42,18 @@ public:
                         const std::shared_ptr<VROMaterial> &material,
                         const VRORenderContext &context,
                         std::shared_ptr<VRODriver> &driver) = 0;
+    
+    /*
+     Render the silhouette of the entire geometry (all elements). Renders
+     using the given material, which is assumed to already be bound, ignoring
+     texturing and lighting. Typically this is used for rendering to a stencil
+     buffer or shadow map.
+     */
+    virtual void renderSilhouette(const VROGeometry &geometry,
+                                  VROMatrix4f transform,
+                                  std::shared_ptr<VROMaterial> &material,
+                                  const VRORenderContext &context,
+                                  std::shared_ptr<VRODriver> &driver) = 0;
 };
 
 #endif /* VROGeometrySubstrate_h */

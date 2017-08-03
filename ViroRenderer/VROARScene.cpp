@@ -8,6 +8,7 @@
 
 #include "VROARScene.h"
 #include "VROARAnchor.h"
+#include "VROPortal.h"
 
 void VROARScene::addNode(std::shared_ptr<VRONode> node) {
     getRootNode()->addChildNode(node);

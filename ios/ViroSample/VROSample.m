@@ -165,7 +165,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     
     std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Spot);
-    light->setColor({ 1.0, 1.0, 1.0 });
+    light->setColor({ 1.0, 0.5, 0.5 });
     light->setPosition( { 0, 0, 0 });
     light->setDirection( { 0, 0, -1.0 });
     light->setAttenuationStartDistance(50);
@@ -175,34 +175,98 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 1.0, 1.0, 1.0 });
-    ambient->setIntensity(1000);
+    ambient->setIntensity(250);
     
-    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
+    rootNode->addLight(light);
+    rootNode->addLight(ambient);
     
-    scene->getRootNode()->addChildNode(rootNode);
-    
-    /*
-     Create the portal surface.
-     */
-    int width = 1;
-    int height = 1;
-    
-    std::shared_ptr<VROSurface> portal = VROSurface::createSurface(width, height, 0.5, 0.5, 1, 1);
-    portal->getMaterials().front()->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
-    portal->getMaterials().front()->setTransparency(0.0);
-    portal->setName("Portal");
-    
-    std::shared_ptr<VRONode> portalNode = std::make_shared<VRONode>();
-    portalNode->setGeometry(portal);
+    std::shared_ptr<VROPortal> portalNode = [self loadOBJPortal];
     portalNode->setPosition({0, 0, -2});
-    portalNode->setPortalStencilBits(0x1);
     portalNode->setBackgroundCube([self cloudTexture]);
-    portalNode->addLight(light);
-    portalNode->addLight(ambient);
     portalNode->addChildNode([self loadFBXModel]);
+    portalNode->setOpacity(0);
     
     rootNode->addChildNode(portalNode);
+    
+    std::shared_ptr<VRONode> occludingInnerSurface = std::make_shared<VRONode>();
+    occludingInnerSurface->setGeometry(VROSurface::createSurface(15, 15));
+    occludingInnerSurface->setPosition({0, 0, -1});
+    
+    // Uncomment to test a large surface inside the portal; it should clip against the
+    // portal edges
+    //portalNode->addChildNode(occludingInnerSurface);
+    
+    std::shared_ptr<VRONode> occludingBox = std::make_shared<VRONode>();
+    occludingBox->setGeometry(VROBox::createBox(0.3, 0.3, 0.3));
+    occludingBox->setPosition({0.2, 0, -1});
+    occludingBox->getGeometry()->getMaterials().front()->setLightingModel(VROLightingModel::Lambert);
+    occludingBox->getGeometry()->getMaterials().front()->getDiffuse().setColor({1.0, 0.0, 0.0, 1.0});
+    
+    rootNode->addChildNode(occludingBox);
+    
+    std::vector<VROVector3f> positions;
+    positions.push_back({0, 6, -8});
+    positions.push_back({0, -3, -2});
+    positions.push_back({0, -8, -2});
+    
+    for (VROVector3f position : positions) {
+        std::shared_ptr<VROPortal> innerPortalNode = [self loadOBJPortal];
+        innerPortalNode->setPosition(position);
+        innerPortalNode->setBackgroundSphere([self westlakeTexture]);
+        innerPortalNode->setScale({0.25, 0.25, 0.25});
+        innerPortalNode->setOpacity(1);
+        
+        std::shared_ptr<VRONode> innerPortalNodeContent = std::make_shared<VRONode>();
+        innerPortalNodeContent->setGeometry(VROBox::createBox(3, 3, 3));
+        innerPortalNodeContent->getGeometry()->getMaterials().front()->getDiffuse().setColor({0.0, 0.0, 1.0, 1.0});
+        innerPortalNodeContent->setPosition({0.2, 0, -1});
+        innerPortalNode->addChildNode(innerPortalNodeContent);
+        
+        std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self] (VRONode *const node, float seconds) {
+            node->setRotation({ 0, (float)(node->getRotationEuler().y + 0.15), 0});
+            return true;
+        });
+        innerPortalNodeContent->runAction(action);
+        
+        portalNode->addChildNode(innerPortalNode);
+    }
+    
+    std::vector<VROVector3f> sidePositions;
+    sidePositions.push_back({-0.5, -1, -2.2});
+    sidePositions.push_back({-0.5, 1, -4});
+    
+    for (VROVector3f sidePosition : sidePositions) {
+        std::shared_ptr<VROPortal> sidePortalNode = [self loadOBJPortal];
+        sidePortalNode->setPosition(sidePosition);
+        sidePortalNode->setBackgroundCube([self niagaraTexture]);
+        sidePortalNode->setOpacity(1);
+        sidePortalNode->setScale({0.06, 0.06, 0.06});
+        sidePortalNode->setRotationEuler({0, M_PI_4, 0});
+        
+        std::shared_ptr<VRONode> sidePortalNodeContent = std::make_shared<VRONode>();
+        sidePortalNodeContent->setGeometry(VROBox::createBox(0.6, 0.6, 0.6));
+        sidePortalNodeContent->setPosition({0.2, 0, -1});
+        sidePortalNode->addChildNode(sidePortalNodeContent);
+        
+        rootNode->addChildNode(sidePortalNode);
+    }
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        VROTransaction::begin();
+        VROTransaction::setAnimationDuration(2.5);
+        VROTransaction::setTimingFunction(VROTimingFunctionType::Bounce);
+        
+        portalNode->setScale({0.1, 0.1, 0.1});
+        portalNode->setOpacity(1);
+        
+        VROTransaction::commit();
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    //    scene->setActivePortal(portalNode);
+    });
     return sceneController;
 }
 
@@ -219,11 +283,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     light->setSpotInnerAngle(0);
     light->setSpotOuterAngle(20);
     
-    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
-    
-    scene->getRootNode()->addChildNode(rootNode);
     
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"surfing" ofType:@"mp4"];
     NSURL *fileURL = [NSURL fileURLWithPath:filePath];
@@ -268,12 +330,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     light->setSpotInnerAngle(0);
     light->setSpotOuterAngle(20);
     
-    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
     rootNode->setBackgroundCube([self cloudTexture]);
-    
-    scene->getRootNode()->addChildNode(rootNode);
     
     float d = 5;
     
@@ -334,9 +394,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (std::shared_ptr<VROSceneController>)loadPhysicsScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
-    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
-    scene->getRootNode()->addChildNode(rootNode);
     
     std::shared_ptr<VROBox> groundBox = VROBox::createBox(40, 1, 40);
     groundBox->setName("Box 2");
@@ -440,7 +499,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     
-    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
     rootNode->setBackgroundSphere([self westlakeTexture]);
     
@@ -468,8 +527,6 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->addLight(ambient);
     rootNode->addLight(spotRed);
     rootNode->addLight(spotBlue);
-
-    scene->getRootNode()->addChildNode(rootNode);
     
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
     
@@ -640,11 +697,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     
-    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
-    rootNode->setPosition({0, 0, 0});
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setBackgroundCube([self cloudTexture]);
-    
-    scene->getRootNode()->addChildNode(rootNode);
     
     /*
      Create camera texture.
@@ -682,11 +736,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     
-    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
     rootNode->setBackgroundCube([self cloudTexture]);
-    
-    scene->getRootNode()->addChildNode(rootNode);
     
     /*
      Create background for text.
@@ -774,12 +826,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     light->setSpotInnerAngle(45);
     light->setSpotOuterAngle(90);
     
-    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
     rootNode->setBackgroundCube([self niagaraTexture]);
-    
-    scene->getRootNode()->addChildNode(rootNode);
     
     std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(url, base, true,
         [](std::shared_ptr<VRONode> node, bool success) {
@@ -845,13 +895,12 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     light->setSpotInnerAngle(45);
     light->setSpotOuterAngle(90);
     
-    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
     rootNode->addChildNode(surfaceNode);
     rootNode->setBackgroundCube([self niagaraTexture]);
 
-    scene->getRootNode()->addChildNode(rootNode);
     return sceneController;
 }
 
@@ -859,8 +908,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
     
-    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
-    scene->getRootNode()->addChildNode(rootNode);
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     
     rootNode->setBackgroundCube([self niagaraTexture]);
     // Debug toggle between stereo image and stereo video background
@@ -910,12 +958,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     light->setSpotInnerAngle(45);
     light->setSpotOuterAngle(90);
     
-    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
     rootNode->setBackgroundCube([self niagaraTexture]);
-    
-    scene->getRootNode()->addChildNode(rootNode);
     
     std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(url, base, true,
         [](std::shared_ptr<VRONode> node, bool success) {
@@ -946,6 +992,37 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return sceneController;
 }
 
+- (std::shared_ptr<VROPortal>)loadOBJPortal {
+    NSString *objPath = [[NSBundle mainBundle] pathForResource:@"portal_ring" ofType:@"obj"];
+    NSURL *objURL = [NSURL fileURLWithPath:objPath];
+    std::string url = std::string([[objURL description] UTF8String]);
+    
+    NSString *basePath = [objPath stringByDeletingLastPathComponent];
+    NSURL *baseURL = [NSURL fileURLWithPath:basePath];
+    std::string base = std::string([[baseURL description] UTF8String]);
+    
+    std::shared_ptr<VROPortal> portal = std::make_shared<VROPortal>();
+    portal->setScale({ 0, 0, 0 });
+
+    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(url, base, true,
+                                                                    [portal](std::shared_ptr<VRONode> node, bool success) {
+                                                                        if (!success) {
+                                                                            return;
+                                                                        }
+                                                                        
+                                                                        VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
+                                                                        std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
+                                                                        //material->setCullMode(VROCullMode::None);
+                                                                        material->setLightingModel(VROLightingModel::Lambert);
+                                                                        material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                                                                                       std::make_shared<VROImageiOS>([UIImage imageNamed:@"portal_ring"], format)));
+                                                                        portal->setGeometry(node->getGeometry());
+                                                                    });
+    
+    
+    return portal;
+}
+
 - (std::shared_ptr<VRONode>)loadFBXModel {
     NSString *fbxPath = [[NSBundle mainBundle] pathForResource:@"aliengirl" ofType:@"vrx"];
     NSURL *fbxURL = [NSURL fileURLWithPath:fbxPath];
@@ -961,8 +1038,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                 return;
                                             }
                                             
-                                            node->setScale({0.01, 0.01, 0.01});
-                                            node->setPosition({0, -2, -2});
+                                            node->setScale({0.04, 0.04, 0.04});
+                                            node->setPosition({0, -2, -6});
                                             
                                             if (node->getGeometry()) {
                                                 node->getGeometry()->setName("FBX Root Geometry");
@@ -1001,13 +1078,11 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     ambient->setColor({ 1.0, 1.0, 1.0 });
     ambient->setIntensity(1000);
     
-    std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
     rootNode->addLight(ambient);
     rootNode->setBackgroundCube([self niagaraTexture]);
-    
-    scene->getRootNode()->addChildNode(rootNode);
     rootNode->addChildNode([self loadFBXModel]);
     
     self.delegate = std::make_shared<VROEventDelegateiOS>(self);

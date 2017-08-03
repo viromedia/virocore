@@ -60,6 +60,12 @@ public:
                 const VRORenderContext &context,
                 std::shared_ptr<VRODriver> &driver);
     
+    void renderSilhouette(const VROGeometry &geometry,
+                          VROMatrix4f transform,
+                          std::shared_ptr<VROMaterial> &material,
+                          const VRORenderContext &context,
+                          std::shared_ptr<VRODriver> &driver);
+    
 private:
     
     std::vector<GLuint> _vaos;

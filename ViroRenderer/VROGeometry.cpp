@@ -42,9 +42,17 @@ void VROGeometry::render(int elementIndex,
                        opacity, material, context, driver);
 }
 
+void VROGeometry::renderSilhouette(VROMatrix4f transform,
+                                   std::shared_ptr<VROMaterial> &material,
+                                   const VRORenderContext &context,
+                                   std::shared_ptr<VRODriver> &driver) {
+    prewarm(driver);
+    _substrate->renderSilhouette(*this, transform, material, context, driver);
+}
+
 void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t hierarchyDepth,
                                  uint32_t lightsHash, float opacity, float distanceFromCamera, float zFar,
-                                 int portalStencilBits, std::shared_ptr<VRODriver> &driver) {
+                                 std::shared_ptr<VRODriver> &driver) {
     _sortKeys.clear();
     
     size_t numElements = _geometryElements.size();
@@ -57,7 +65,6 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t h
         key.hierarchyDepth = hierarchyDepth;
         key.lights = lightsHash;
         key.node = (uintptr_t) node;
-        key.portalStencilBits = portalStencilBits;
         key.elementIndex = i;
         key.distanceFromCamera = zFar - distanceFromCamera;
         

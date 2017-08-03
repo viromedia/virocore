@@ -296,3 +296,43 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
     
     glDrawElements(element.primitiveType, element.indexCount, element.indexType, 0);
 }
+
+void VROGeometrySubstrateOpenGL::renderSilhouette(const VROGeometry &geometry,
+                                                  VROMatrix4f transform,
+                                                  std::shared_ptr<VROMaterial> &material,
+                                                  const VRORenderContext &context,
+                                                  std::shared_ptr<VRODriver> &driver) {
+    
+    VROMatrix4f viewMatrix = context.getViewMatrix();
+    VROMatrix4f projectionMatrix = context.getProjectionMatrix();
+    VROMatrix4f normalMatrix; // Silhouettes ignore lighting so normal matrix can be identity
+
+    if (geometry.isCameraEnclosure()) {
+        viewMatrix = context.getEnclosureViewMatrix();
+    }
+    if (geometry.isScreenSpace()) {
+        viewMatrix = VROMatrix4f();
+        projectionMatrix = context.getOrthographicMatrix();
+    }
+    VROMatrix4f modelview = viewMatrix.multiply(transform);
+    
+    pglpush("Silhouette [%s]", geometry.getName().c_str());
+    for (int i = 0; i < geometry.getGeometryElements().size(); i++) {
+        VROGeometryElementOpenGL &element = _elements[i];
+        
+        VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
+        if (_boneUBO) {
+            _boneUBO->update(geometry.getSkinner());
+            substrate->bindBoneUBO(_boneUBO);
+        }
+        
+        substrate->bindView(transform, modelview, projectionMatrix, normalMatrix,
+                            context.getCamera().getPosition(), context.getEyeType());
+        
+        glBindVertexArray(_vaos[i]);
+        substrate->bindGeometry(1.0, geometry);
+        glDrawElements(element.primitiveType, element.indexCount, element.indexType, 0);
+        glBindVertexArray(0);
+    }
+    pglpop();
+}

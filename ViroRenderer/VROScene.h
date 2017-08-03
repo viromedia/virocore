@@ -18,12 +18,15 @@
 #include "VROQuaternion.h"
 #include "VROThreadRestricted.h"
 #include "VROPhysicsWorld.h"
+#include "VROTree.h"
 
 class VRONode;
+class VROPortal;
 class VRORenderContext;
 class VRODriver;
 class VROTexture;
 class VROGeometry;
+class VROMaterial;
 class VROHitTestResult;
 class VROVector3f;
 class VROVector4f;
@@ -36,13 +39,6 @@ public:
     
     VROScene();
     virtual ~VROScene();
-    
-    /*
-     Render the backgrounds of the scene. This renders the background
-     for each node in the scene that has one.
-     */
-    void renderBackground(const VRORenderContext &context,
-                          std::shared_ptr<VRODriver> &driver);
     
     /*
      Render the visible nodes in this scene's graph, using their
@@ -73,21 +69,11 @@ public:
      */
     void updateSortKeys(const VRORenderContext &context,
                         std::shared_ptr<VRODriver> &driver);
-    
-    /*
-     Render all portals in the tree (nodes with a portal bits that have 
-     geometries) to the stencil buffer.
-     */
-    void renderStencil(const VRORenderContext &context,
-                       std::shared_ptr<VRODriver> &driver);
-
-    
+        
     /*
      Retrieve the root node of the scene.
      */
-    std::shared_ptr<VRONode> &getRootNode() {
-        return _rootNode;
-    }
+    std::shared_ptr<VROPortal> getRootNode();
     
     /*
      Returns the associated physics world with this scene. If there's none
@@ -121,6 +107,13 @@ public:
     }
     
     /*
+     Set the 'active', or present portal. This is the portal the user is
+     in, and determines the render-order of the stenciling, which in turn
+     creates the illusion of being in the specified portal.
+     */
+    void setActivePortal(std::shared_ptr<VROPortal> node);
+    
+    /*
      Get all backgrounds in the scene.
      */
     std::vector<std::shared_ptr<VROGeometry>> getBackgrounds();
@@ -130,7 +123,7 @@ protected:
     /*
      The root node of the scene.
      */
-    std::shared_ptr<VRONode> _rootNode;
+    std::shared_ptr<VROPortal> _rootNode;
 
     /*
      UI representation of the underlying controller
@@ -138,9 +131,9 @@ protected:
     std::shared_ptr<VROInputPresenter> _controllerPresenter;
     
     /*
-     The nodes ordered for rendering by their sort keys.
+     The portals in tree form, with the active portal at the root.
      */
-    std::vector<VROSortKey> _keys;
+    tree<std::shared_ptr<VROPortal>> _portals;
     
     /*
      The distance from the camera of the furthest away object, since the last
@@ -149,8 +142,51 @@ protected:
      */
     float _distanceOfFurthestObjectFromCamera;
 
+    /*
+     Manages the physics in the scene.
+     */
     std::shared_ptr<VROPhysicsWorld> _physicsWorld = nullptr;
     
+    /*
+     The active portal; the scene is rendered as though the camera is in this
+     portal. Defaults to the root node.
+     */
+    std::shared_ptr<VROPortal> _activePortal;
+    
+    /*
+     Material used to render silhouettes of objects to the scene.
+     */
+    std::shared_ptr<VROMaterial> _silhouetteMaterial;
+    
+    /*
+     Create a tree of portals in the scene graph, with the active portal at the
+     root of the tree. Note we use graph traversal because portal stencil rendering
+     begins at the 'active' node, not necesarily at the root node.
+     */
+    void createPortalTree(const VRORenderContext &context);
+    
+    /*
+     Helper function, sorts portals at each recursion level by distance from camera.
+     */
+    void sortSiblingPortals(tree<std::shared_ptr<VROPortal>> &tree, const VRORenderContext &context);
+
+    /*
+     Helper function for rendering. Performs depth-first rendering of portals, rendering
+     the silhouettes to the stencil buffer on the way down, and the portal's geometry
+     and content on the way up.
+     */
+    void render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes, const VRORenderContext &context,
+                std::shared_ptr<VRODriver> &driver);
+    
+    /*
+     Returns true if the given node is present in this scene.
+     */
+    bool hasNode(std::shared_ptr<VRONode> node) const;
+    bool hasNode_helper(const std::shared_ptr<VRONode> &candidate, const std::shared_ptr<VRONode> &node) const;
+    
+    /*
+     Retrieve all background textures in the scene.
+     */
     void getBackgrounds(std::shared_ptr<VRONode> node, std::vector<std::shared_ptr<VROGeometry>> &backgrounds);
 };
 

@@ -115,6 +115,9 @@
 		8F2D1BB81EC379C000E7BF44 /* VROAnimationMatrix4f.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BB61EC379C000E7BF44 /* VROAnimationMatrix4f.h */; };
 		8F2D1BBB1EC37E1900E7BF44 /* VROSkeleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BB91EC37E1900E7BF44 /* VROSkeleton.cpp */; };
 		8F2D1BBC1EC37E1900E7BF44 /* VROSkeleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BBA1EC37E1900E7BF44 /* VROSkeleton.h */; };
+		8F31CCAF1F2B9ABD003EFB4B /* ARKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A99E6C41EF1B7B300712D79 /* ARKit.framework */; };
+		8F31CCB21F2FA8CA003EFB4B /* VROPortal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F31CCB01F2FA8CA003EFB4B /* VROPortal.cpp */; };
+		8F31CCB31F2FA8CA003EFB4B /* VROPortal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F31CCB11F2FA8CA003EFB4B /* VROPortal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F346B271F23AF39000D16B9 /* bball_SPEC_NRM.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F346B241F23AF39000D16B9 /* bball_SPEC_NRM.png */; };
 		8F346B281F23AF39000D16B9 /* bball_SPEC.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F346B251F23AF39000D16B9 /* bball_SPEC.png */; };
 		8F346B291F23AF39000D16B9 /* bball.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F346B261F23AF39000D16B9 /* bball.jpg */; };
@@ -132,6 +135,8 @@
 		8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */; };
 		8F3B968F1C77D64200B4FEE0 /* shanghai_tower_specular.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968C1C77D64200B4FEE0 /* shanghai_tower_specular.jpg */; };
 		8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968D1C77D64200B4FEE0 /* shanghai_tower.obj */; };
+		8F432E8D1F2B994C00B1B2DC /* portal_ring.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F432E8B1F2B994C00B1B2DC /* portal_ring.obj */; };
+		8F432E8E1F2B994C00B1B2DC /* portal_ring.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F432E8C1F2B994C00B1B2DC /* portal_ring.png */; };
 		8F4AD9001D42BD710044B3F0 /* ViroKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8FD4DECD1C18ECD4003DC425 /* ViroKit.framework */; };
 		8F4AD9201D42D60C0044B3F0 /* VROFrameSynchronizerInternal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F4AD91E1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.cpp */; };
 		8F4AD9211D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F4AD91F1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h */; };
@@ -462,6 +467,7 @@
 		8FE382131EF06FED005038CB /* VROARAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F06581EF06FBB006FC8C2 /* VROARAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382141EF06FED005038CB /* VROARPlaneAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065C1EF06FBB006FC8C2 /* VROARPlaneAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382151EF06FED005038CB /* VROARHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065B1EF06FBB006FC8C2 /* VROARHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FF214111F314E0E005ACA96 /* VROTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF214101F314E0E005ACA96 /* VROTree.h */; };
 		8FF5CCB51F28F5BA007C7F52 /* porsche911.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB31F28F5BA007C7F52 /* porsche911.vrx */; };
 		8FF5CCB61F28F5BA007C7F52 /* Porsche911turboS_diff.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB41F28F5BA007C7F52 /* Porsche911turboS_diff.jpg */; };
 		8FF5CCBB1F290364007C7F52 /* aliengirl_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB71F290364007C7F52 /* aliengirl_diffuse.png */; };
@@ -703,6 +709,8 @@
 		8F2D1BB61EC379C000E7BF44 /* VROAnimationMatrix4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationMatrix4f.h; sourceTree = "<group>"; };
 		8F2D1BB91EC37E1900E7BF44 /* VROSkeleton.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSkeleton.cpp; sourceTree = "<group>"; };
 		8F2D1BBA1EC37E1900E7BF44 /* VROSkeleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSkeleton.h; sourceTree = "<group>"; };
+		8F31CCB01F2FA8CA003EFB4B /* VROPortal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPortal.cpp; sourceTree = "<group>"; };
+		8F31CCB11F2FA8CA003EFB4B /* VROPortal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortal.h; sourceTree = "<group>"; };
 		8F346B241F23AF39000D16B9 /* bball_SPEC_NRM.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bball_SPEC_NRM.png; path = ViroSample/bball_SPEC_NRM.png; sourceTree = "<group>"; };
 		8F346B251F23AF39000D16B9 /* bball_SPEC.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bball_SPEC.png; path = ViroSample/bball_SPEC.png; sourceTree = "<group>"; };
 		8F346B261F23AF39000D16B9 /* bball.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = bball.jpg; path = ViroSample/bball.jpg; sourceTree = "<group>"; };
@@ -719,6 +727,8 @@
 		8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shanghai_tower_diffuse.jpg; path = ViroSample/shanghai_tower_diffuse.jpg; sourceTree = "<group>"; };
 		8F3B968C1C77D64200B4FEE0 /* shanghai_tower_specular.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shanghai_tower_specular.jpg; path = ViroSample/shanghai_tower_specular.jpg; sourceTree = "<group>"; };
 		8F3B968D1C77D64200B4FEE0 /* shanghai_tower.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = shanghai_tower.obj; path = ViroSample/shanghai_tower.obj; sourceTree = "<group>"; };
+		8F432E8B1F2B994C00B1B2DC /* portal_ring.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = portal_ring.obj; path = ViroSample/portal_ring.obj; sourceTree = "<group>"; };
+		8F432E8C1F2B994C00B1B2DC /* portal_ring.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_ring.png; path = ViroSample/portal_ring.png; sourceTree = "<group>"; };
 		8F4AD91E1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROFrameSynchronizerInternal.cpp; sourceTree = "<group>"; };
 		8F4AD91F1D42D60C0044B3F0 /* VROFrameSynchronizerInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFrameSynchronizerInternal.h; sourceTree = "<group>"; };
 		8F4C9FFF1BDAE06A00177B8F /* VROScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROScreen.h; sourceTree = "<group>"; };
@@ -1058,6 +1068,7 @@
 		8FEA6C981BE2BA7700C2CD0F /* VRODistortionMesh.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VRODistortionMesh.cpp; sourceTree = "<group>"; };
 		8FEA6C991BE2BA7700C2CD0F /* VRODistortionMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRODistortionMesh.h; sourceTree = "<group>"; };
 		8FEA6C9C1BE3DC7100C2CD0F /* VRORenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VRORenderTarget.h; sourceTree = "<group>"; };
+		8FF214101F314E0E005ACA96 /* VROTree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROTree.h; sourceTree = "<group>"; };
 		8FF253B11DC9398A00C1C5C7 /* VRODefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRODefines.h; sourceTree = "<group>"; };
 		8FF4D7A71C0D45DA006D6157 /* VROMaterialSubstrateMetal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROMaterialSubstrateMetal.cpp; sourceTree = "<group>"; };
 		8FF4D7A81C0D45DA006D6157 /* VROMaterialSubstrateMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialSubstrateMetal.h; sourceTree = "<group>"; };
@@ -1137,6 +1148,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F31CCAF1F2B9ABD003EFB4B /* ARKit.framework in Frameworks */,
 				8A9EEC6F1F26BE9700EB2228 /* Photos.framework in Frameworks */,
 				8A35172C1EDE04B500B6E786 /* AssetsLibrary.framework in Frameworks */,
 				8A35172B1EDE04A500B6E786 /* opencv2.framework in Frameworks */,
@@ -1338,6 +1350,8 @@
 				8F53D3A31DCB9B29001C91A8 /* VROImage.h */,
 				8F705DE11E8ACFD0008BE8F8 /* VRODebugHUD.h */,
 				8F705DE01E8ACFD0008BE8F8 /* VRODebugHUD.cpp */,
+				8F31CCB11F2FA8CA003EFB4B /* VROPortal.h */,
+				8F31CCB01F2FA8CA003EFB4B /* VROPortal.cpp */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";
@@ -1648,6 +1662,7 @@
 				8F17701A1E74C01900235C21 /* VROGVRUtil.h */,
 				8F1770191E74C01900235C21 /* VROGVRUtil.cpp */,
 				8FB2B58B1E143F7900EDB629 /* optional.hpp */,
+				8FF214101F314E0E005ACA96 /* VROTree.h */,
 				8F83DEA91C49B0540089C31A /* VROAllocationTracker.h */,
 				8F83DEA81C49B0530089C31A /* VROAllocationTracker.cpp */,
 				8F63186C1BD95EA6000A75DF /* VROTime.h */,
@@ -1908,6 +1923,8 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F432E8B1F2B994C00B1B2DC /* portal_ring.obj */,
+				8F432E8C1F2B994C00B1B2DC /* portal_ring.png */,
 				8FF5CCB71F290364007C7F52 /* aliengirl_diffuse.png */,
 				8FF5CCB81F290364007C7F52 /* aliengirl_normal.png */,
 				8FF5CCB91F290364007C7F52 /* aliengirl_specular.png */,
@@ -2231,6 +2248,7 @@
 				8A5C055A1EF6416900F94CB9 /* VROARNode.h in Headers */,
 				8F0FE6751CD2D3FD00A4C297 /* VROViewMetal.h in Headers */,
 				8F83DEA11C4826F80089C31A /* VROTimingFunctionEaseOut.h in Headers */,
+				8FF214111F314E0E005ACA96 /* VROTree.h in Headers */,
 				8F3488AF1EE83DD3008917CB /* VROARCameraInertial.h in Headers */,
 				8A130D8C1E3BBEA90050D83B /* VROSoundDelegate.h in Headers */,
 				8F11B7C21C20B0530026D150 /* VROView.h in Headers */,
@@ -2259,6 +2277,7 @@
 				8A35173C1EE11C4800B6E786 /* VROTrackingHelper.h in Headers */,
 				8F56AEA11DE7619000DD65B6 /* VROGlyph.h in Headers */,
 				8F129F9C1ECCD70C00341D83 /* VROBoneUBO.h in Headers */,
+				8F31CCB31F2FA8CA003EFB4B /* VROPortal.h in Headers */,
 				8FCB100B1DD12BDF00FE425C /* VRODriverOpenGLiOS.h in Headers */,
 				8FCB10031DD0062300FE425C /* VRORenderDelegateInternal.h in Headers */,
 				8FE382121EF06FED005038CB /* VROARCamera.h in Headers */,
@@ -2460,6 +2479,7 @@
 				8FCED07F1EBBD35200C19BCA /* Sven_Hair_Color.png in Resources */,
 				8F660AB31E931C6F006D063F /* 4096_night_lights.jpg in Resources */,
 				8FCED0851EBBD35200C19BCA /* SvenArmor_Spec.png in Resources */,
+				8F432E8E1F2B994C00B1B2DC /* portal_ring.png in Resources */,
 				8F129FBE1ED603BE00341D83 /* sven.vrx in Resources */,
 				8FA2E14B1C445CAA0070DB26 /* px.png in Resources */,
 				8F140FCF1E56658700355A1E /* card_main.ktx in Resources */,
@@ -2531,6 +2551,7 @@
 				8A3517331EE0A50A00B6E786 /* ben.jpg in Resources */,
 				8F50FC8B1E0AF54F00A9B4B2 /* male02.obj in Resources */,
 				8F5C41551BD82C1B006D7A77 /* boba.png in Resources */,
+				8F432E8D1F2B994C00B1B2DC /* portal_ring.obj in Resources */,
 				8F50FC8A1E0AF54F00A9B4B2 /* male02.mtl in Resources */,
 				8FCED0841EBBD35200C19BCA /* SvenArmor_Normal.png in Resources */,
 				8F705DF61E8F5D42008BE8F8 /* earth.jpg in Resources */,
@@ -2704,6 +2725,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A586978B1E308B5400191090 /* VROInputControllerBase.cpp in Sources */,
+				8F31CCB21F2FA8CA003EFB4B /* VROPortal.cpp in Sources */,
 				8F36F3A91EE0CE10003F92D4 /* VROViewAR.mm in Sources */,
 				8FAE18C71EE79D6D0021C7BB /* VROARFrameiOS.cpp in Sources */,
 				8F705DE21E8ACFD0008BE8F8 /* VRODebugHUD.cpp in Sources */,

@@ -23,12 +23,10 @@
 #include "VROByteBuffer.h"
 #include "VROConstraint.h"
 #include "VROStringUtil.h"
+#include "VROPortal.h"
 #include "VROPhysicsBody.h"
 #include "VROAnimationChain.h"
 #include "VROExecutableAnimation.h"
-#include "VROMaterial.h"
-#include "VROSkybox.h"
-#include "VROSphere.h"
 #include "VROExecutableNodeAnimation.h"
 #include "VROTransformDelegate.h"
 
@@ -43,13 +41,12 @@ bool kDebugSortOrder = false;
 static int sDebugSortIndex = 0;
 const std::string kDefaultNodeTag = "undefined";
 
-// Parameters for sphere backgrounds
-static const float kSphereBackgroundRadius = 1;
-static const float kSphereBackgroundNumSegments = 60;
-
 #pragma mark - Initialization
 
 VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
+    _isPortal(false),
+    _visible(false),
+    _lastVisitedRenderingFrame(-1),
     _scale({1.0, 1.0, 1.0}),
     _euler({0, 0, 0}),
     _renderingOrder(0),
@@ -60,13 +57,14 @@ VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
     _selectable(true),
     _highAccuracyGaze(false),
     _hierarchicalRendering(false),
-    _visible(false),
-    _portalStencilBits(0),
-    _lastStencilRenderingFrame(-1) {
+    _portalInsideOut(false) {
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
 
 VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Renderer),
+    _isPortal(node._isPortal),
+    _visible(false),
+    _lastVisitedRenderingFrame(-1),
     _geometry(node._geometry),
     _lights(node._lights),
     _sounds(node._sounds),
@@ -81,8 +79,7 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _selectable(node._selectable),
     _highAccuracyGaze(node._highAccuracyGaze),
     _hierarchicalRendering(node._hierarchicalRendering),
-    _portalStencilBits(node._portalStencilBits),
-    _lastStencilRenderingFrame(-1) {
+    _portalInsideOut(false) {
         
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -102,26 +99,6 @@ std::shared_ptr<VRONode> VRONode::clone() {
 
 #pragma mark - Rendering
 
-void VRONode::renderBackground(const VRORenderContext &renderContext,
-                               std::shared_ptr<VRODriver> &driver) {
-    if (_background) {
-        passert_thread();
-        driver->setPortalStencilRefBits(_portalStencilBits);
-        
-        const std::shared_ptr<VROMaterial> &material = _background->getMaterials()[0];
-        material->bindShader(driver);
-        material->bindProperties(driver);
-        
-        VROMatrix4f transform;
-        transform = _backgroundTransform.multiply(transform);
-        _background->render(0, material, transform, {}, 1.0, renderContext, driver);
-    }
-    
-    for (std::shared_ptr<VRONode> &childNode : _subnodes) {
-        childNode->renderBackground(renderContext, driver);
-    }
-}
-
 void VRONode::render(int elementIndex,
                      std::shared_ptr<VROMaterial> &material,
                      const VRORenderContext &context,
@@ -132,33 +109,6 @@ void VRONode::render(int elementIndex,
         _geometry->render(elementIndex, material,
                           _computedTransform, _computedInverseTransposeTransform, _computedOpacity,
                           context, driver);
-    }
-}
-
-void VRONode::renderStencil(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    if (_lastStencilRenderingFrame >= context.getFrame()) {
-        return;
-    }
-    _lastStencilRenderingFrame = context.getFrame();
-    
-    // Write the portal to the stencil buffer, but none of the child geometry -- only the
-    // portal geometry itself, which represent the "window" into the next area
-    if (_portalStencilBits > 0 && _geometry) {
-        driver->setPortalStencilWriteBits(_portalStencilBits);
-        
-        int numElements = (int) _geometry->getGeometryElements().size();
-        for (int i = 0; i < numElements; i++) {
-            _geometry->render(i, _geometry->getMaterialForElement(i),
-                              _computedTransform, _computedInverseTransposeTransform, 1.0, context, driver);
-        }
-    }
-    
-    std::shared_ptr<VRONode> parent = _supernode.lock();
-    if (parent) {
-        parent->renderStencil(context, driver);
-    }
-    for (std::shared_ptr<VRONode> &childNode : _subnodes) {
-        childNode->renderStencil(context, driver);
     }
 }
 
@@ -196,7 +146,6 @@ void VRONode::updateSortKeys(uint32_t depth,
     std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
     std::stack<int> &hierarchyDepths = params.hierarchyDepths;
     std::stack<float> &distancesFromCamera = params.distancesFromCamera;
-    std::stack<int> &portalStencilBits = params.portalStencilBits;
     
     /*
      Compute specific parameters for this node.
@@ -211,6 +160,7 @@ void VRONode::updateSortKeys(uint32_t depth,
             _computedLights.push_back(light);
         }
     }
+    _computedLightsHash = VROLight::hashLights(_computedLights);
 
     for (std::shared_ptr<VROSound> &sound : _sounds) {
         sound->setTransformedPosition(_computedTransform.multiply(sound->getPosition()));
@@ -258,18 +208,9 @@ void VRONode::updateSortKeys(uint32_t depth,
     }
     
     /*
-     If this node has portal stencil bits, set them in the sort key. They will apply
-     to this node and all of its children, until new bits are encountered.
-     */
-    if (_portalStencilBits > 0) {
-        portalStencilBits.push(_portalStencilBits);
-    }
-    
-    /*
      Compute the sort key for this node's geometry elements.
      */
     if (_geometry) {
-        int lightsHash = VROLight::hashLights(_computedLights);
         if (!isHierarchical || isTopOfHierarchy) {
             distanceFromCamera = _computedPosition.distance(context.getCamera().getPosition());
             
@@ -279,12 +220,12 @@ void VRONode::updateSortKeys(uint32_t depth,
             
             furthestDistanceFromCamera = _computedBoundingBox.getFurthestDistanceToPoint(context.getCamera().getPosition());
         }
-        _geometry->updateSortKeys(this, hierarchyId, hierarchyDepth, lightsHash, _computedOpacity,
-                                  distanceFromCamera, context.getZFar(), portalStencilBits.top(), driver);
+        _geometry->updateSortKeys(this, hierarchyId, hierarchyDepth, _computedLightsHash, _computedOpacity,
+                                  distanceFromCamera, context.getZFar(), driver);
         
         if (kDebugSortOrder) {
             pinfo("   [%d] Pushed node with position [%f, %f, %f], rendering order %d, hierarchy depth %d (actual depth %d), distance to camera %f, hierarchy ID %d, lights %d",
-                  sDebugSortIndex, _computedPosition.x, _computedPosition.y, _computedPosition.z, _renderingOrder, hierarchyDepth, depth, distanceFromCamera, hierarchyId, lightsHash);
+                  sDebugSortIndex, _computedPosition.x, _computedPosition.y, _computedPosition.z, _renderingOrder, hierarchyDepth, depth, distanceFromCamera, hierarchyId, _computedLightsHash);
             _geometry->setName(VROStringUtil::toString(sDebugSortIndex));
         }
     }
@@ -308,20 +249,21 @@ void VRONode::updateSortKeys(uint32_t depth,
     opacities.pop();
     hierarchyDepths.pop();
     distancesFromCamera.pop();
-    
-    if (_portalStencilBits > 0) {
-        portalStencilBits.pop();
-    }
 }
 
 void VRONode::getSortKeysForVisibleNodes(std::vector<VROSortKey> *outKeys) {
     passert_thread();
     
-    if (_visible && _geometry) {
+    // Add the geometry of this node, if available
+    if (_visible && _geometry && !isPortal()) {
         _geometry->getSortKeys(outKeys);
     }
+    
+    // Search down the scene graph. If a child is a portal, stop the search.
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {
-        childNode->getSortKeysForVisibleNodes(outKeys);
+        if (!childNode->isPortal()) {
+            childNode->getSortKeysForVisibleNodes(outKeys);
+        }
     }
 }
 
@@ -507,6 +449,33 @@ VROMatrix4f VRONode::getComputedRotation() const {
 
 VROMatrix4f VRONode::getComputedTransform() const {
     return _computedTransform;
+}
+
+#pragma mark - Portals
+
+const std::shared_ptr<VROPortal> VRONode::getParentPortal() const {
+    const std::shared_ptr<VRONode> parent = _supernode.lock();
+    if (!parent) {
+        return nullptr;
+    }
+    
+    if (parent->_isPortal) {
+        return std::dynamic_pointer_cast<VROPortal>(parent);
+    }
+    else {
+        return parent->getParentPortal();
+    }
+}
+
+void VRONode::getChildPortals(std::vector<std::shared_ptr<VROPortal>> *outPortals) const {
+    for (const std::shared_ptr<VRONode> &childNode : _subnodes) {
+        if (childNode->isPortal()) {
+            outPortals->push_back(std::dynamic_pointer_cast<VROPortal>(childNode));
+        }
+        else {
+            childNode->getChildPortals(outPortals);
+        }
+    }
 }
 
 #pragma mark - Setters
@@ -893,48 +862,4 @@ std::shared_ptr<VROPhysicsBody> VRONode::getPhysicsBody() const {
 
 void VRONode::clearPhysicsBody(){
     _physicsBody = nullptr;
-}
-
-#pragma mark - Backgrounds
-
-void VRONode::setBackgroundCube(std::shared_ptr<VROTexture> textureCube) {
-    passert_thread();
-    _background = VROSkybox::createSkybox(textureCube);
-    _background->setName("Background");
-}
-
-void VRONode::setBackgroundCube(VROVector4f color) {
-    passert_thread();
-    _background = VROSkybox::createSkybox(color);
-    _background->setName("Background");
-}
-
-void VRONode::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
-    passert_thread();
-    _background = VROSphere::createSphere(kSphereBackgroundRadius,
-                                          kSphereBackgroundNumSegments,
-                                          kSphereBackgroundNumSegments,
-                                          false);
-    _background->setCameraEnclosure(true);
-    _background->setName("Background");
-    
-    std::shared_ptr<VROMaterial> material = _background->getMaterials()[0];
-    material->setLightingModel(VROLightingModel::Constant);
-    material->getDiffuse().setTexture(textureSphere);
-    material->setWritesToDepthBuffer(false);
-    material->setReadsFromDepthBuffer(false);
-}
-
-void VRONode::setBackground(std::shared_ptr<VROGeometry> background) {
-    passert_thread();
-    _background = background;
-}
-
-void VRONode::setBackgroundTransform(VROMatrix4f transform) {
-    _backgroundTransform = transform;
-}
-
-void VRONode::setBackgroundRotation(VROQuaternion rotation) {
-    passert_thread();
-    _backgroundTransform = rotation.getMatrix();
 }

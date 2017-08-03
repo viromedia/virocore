@@ -9,6 +9,7 @@
 #include "VROScene.h"
 #include "VRORenderContext.h"
 #include "VRONode.h"
+#include "VROPortal.h"
 #include "VROGeometry.h"
 #include "VROInputControllerBase.h"
 #include "VROLight.h"
@@ -17,12 +18,18 @@
 #include "VROLog.h"
 #include "VROAudioPlayer.h"
 #include "VROSurface.h"
+#include "VROMaterial.h"
 #include "VROOpenGL.h" // For logging pglpush only
 #include <stack>
 #include <algorithm>
 
 VROScene::VROScene() : VROThreadRestricted(VROThreadName::Renderer) {
-    _rootNode = std::make_shared<VRONode>();
+    _rootNode = std::make_shared<VROPortal>();
+    _activePortal = _rootNode;
+    _silhouetteMaterial = std::make_shared<VROMaterial>();
+    _silhouetteMaterial->setWritesToDepthBuffer(false);
+    _silhouetteMaterial->setReadsFromDepthBuffer(false);
+    
     ALLOCATION_TRACKER_ADD(Scenes, 1);
 }
 
@@ -30,77 +37,93 @@ VROScene::~VROScene() {
     ALLOCATION_TRACKER_SUB(Scenes, 1);
 }
 
-void VROScene::renderBackground(const VRORenderContext &renderContext,
-                                std::shared_ptr<VRODriver> &driver) {
-    pglpush("Render Background");
-    passert_thread();
-    _rootNode->renderBackground(renderContext, driver);
-    pglpop();
+std::shared_ptr<VROPortal> VROScene::getRootNode() {
+    return _rootNode;
 }
 
-void VROScene::render(const VRORenderContext &context,
-                      std::shared_ptr<VRODriver> &driver) {
-    pglpush("Render Scene");
+void VROScene::render(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
     passert_thread();
     
-    uint32_t boundShaderId = UINT32_MAX;
-    uint32_t boundMaterialId = UINT32_MAX;
-    std::vector<std::shared_ptr<VROLight>> boundLights;
+    driver->enableColorBuffer();
+    driver->clearDepthAndColor();
     
-    if (kDebugSortOrder) {
-        pinfo("Rendering");
-    }
+    std::vector<tree<std::shared_ptr<VROPortal>>> treeNodes;
+    treeNodes.push_back(_portals);
+    render(treeNodes, context, driver);
+}
+
+void VROScene::render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes, const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
+    // The key to this algorithm is we render depth-first. That is, we funnel down
+    // the tree, rendering portal silhouettes to the stencil buffer; then we unwind
+    // back up the tree, rendering the portal content. Only *then* do we move
+    // adjacently to the next sibling portal. Because we erase the stencil (via DECR
+    // commands) as we unwind the tree, each time we move to a sibling portal, all
+    // traces of the prior sibling should be gone. This ensures siblings don't bleed
+    // into each other (e.g. that an over-size object from one portal doesn't appear
+    // in any of its sibling).
     
-    for (VROSortKey &key : _keys) {
-        VRONode *node = (VRONode *)key.node;
-        int elementIndex = key.elementIndex;
+    // Iterate through each sibling at this recursion level. The siblings should be ordered
+    // front to back. Ensures that the transparent sheens (or 'windows') of each
+    // portal are written to the depth buffer *before* the portals behind them are
+    // rendered. Otherwise blending would cause portals on the same recursion level
+    // to appear through one another.
+    int i = 0;
+    
+    for (tree<std::shared_ptr<VROPortal>> &treeNode : treeNodes) {
+        std::shared_ptr<VROPortal> &portal = treeNode.value;
+        pglpush("Recursion Level %d, Portal %d", portal->getRecursionLevel(), i);
         
-        const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
-        if (geometry) {
-            std::shared_ptr<VROMaterial> material = geometry->getMaterialForElement(elementIndex);
-            if (!key.incoming) {
-                material = material->getOutgoing();
-            }
-            
-            // Bind the new shader if it changed
-            if (key.shader != boundShaderId) {
-                material->bindShader(driver);
-                boundShaderId = key.shader;
-                
-                // If the shader changes, we have to rebind the lights so they attach
-                // to the new shader
-                material->bindLights(key.lights, node->getComputedLights(), context, driver);
-                boundLights = node->getComputedLights();
-            }
-            else {
-                // Otherwise we only rebind lights if the lights themselves have changed
-                if (boundLights != node->getComputedLights()) {
-                    material->bindLights(key.lights, node->getComputedLights(), context, driver);
-                    boundLights = node->getComputedLights();
-                }
-            }
-            
-            // Bind material properties if they changed
-            if (key.material != boundMaterialId) {
-                material->bindProperties(driver);
-                boundMaterialId = key.material;
-            }
-            
-            // Only render the material if there are lights, or if the material uses
-            // constant lighting. Non-constant materials do not render unless we have
-            // at least one light.
-            if (!boundLights.empty() || material->getLightingModel() == VROLightingModel::Constant) {
-                if (kDebugSortOrder) {
-                    if (node->getGeometry() && elementIndex == 0) {
-                        pinfo("   Rendering node [%s], element %d", node->getGeometry()->getName().c_str(), elementIndex);
-                    }
-                }
-                driver->setPortalStencilRefBits(key.portalStencilBits);
-                node->render(elementIndex, material, context, driver);
-            }
-        }
+        // Render the portal silhouette first, to the stencil buffer only.
+        pglpush("Stencil");
+        driver->disableColorBuffer();
+        driver->enablePortalStencilWriting();
+        _silhouetteMaterial->bindShader(driver);
+        _silhouetteMaterial->bindProperties(driver);
+        
+        // Only render the portal silhouette over the area covered
+        // by the parent portal. Clip the rest (we don't want a portal
+        // within a portal to bleed outside of its parent).
+        driver->setStencilPassBits(portal->getRecursionLevel() - 1, false);
+        portal->renderPortalSilhouette(_silhouetteMaterial, context, driver);
+        pglpop();
+        
+        // Recurse down to children. This way we continue rendering portal
+        // silhouettes (of children, not siblings) before moving on to rendering
+        // actual content.
+        render(treeNode.children, context, driver);
+        
+        // Now we're unwinding from recursion, prepare for scene rendering.
+        pglpush("Contents");
+        driver->enableColorBuffer();
+        driver->enablePortalStencilReading();
+        
+        // Draw wherever the stencil buffer value is greater than or equal
+        // to the recursion level of this portal. This has two effects:
+        //
+        // 1. It means we draw over areas belonging to this recursion level
+        //    *and* over areas belonging to deeper recursion levels. This
+        //    enables an object at level 1 to occlude a portal into level 2,
+        //    for example.
+        // 2. It ensures that no objects at this level are drawn into any upper
+        //    levels. An object at level 2 will not be drawn into an area
+        //    belonging to level 1.
+        driver->setStencilPassBits(portal->getRecursionLevel(), true);
+        portal->renderBackground(context, driver);
+        portal->renderContents(context, driver);
+        pglpop();
+        
+        // Remove the stencil for this portal (decrement its number). Ensures
+        // side-by-side portals (portals with same recursion level) work correctly;
+        // otherwise objects in one portal can "bleed" into the other portal.
+        pglpush("Portal");
+        driver->enablePortalStencilRemoval();
+        driver->setStencilPassBits(portal->getRecursionLevel(), true);
+        portal->renderPortal(context, driver);
+        pglpop();
+        
+        ++i;
+        pglpop();
     }
-    pglpop();
 }
 
 void VROScene::computeTransforms(const VRORenderContext &context) {
@@ -127,18 +150,58 @@ void VROScene::updateSortKeys(const VRORenderContext &context, std::shared_ptr<V
     _rootNode->collectLights(&renderParams.lights);
     _rootNode->updateSortKeys(0, renderParams, context, driver);
     
-    _keys.clear();
-    _rootNode->getSortKeysForVisibleNodes(&_keys);
+    createPortalTree(context);
+    _portals.walkTree([] (std::shared_ptr<VROPortal> portal) {
+        portal->sortNodesBySortKeys();
+    });
     
-    std::sort(_keys.begin(), _keys.end());
     _distanceOfFurthestObjectFromCamera = renderParams.furthestDistanceFromCamera;
 }
 
-void VROScene::renderStencil(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    // TODO VIRO-1400 Clear the stencil to the active node's portalStencilBits value
-    driver->clearStencil(0);
-    // TODO VIRO-1400 Begin at the active node, not at the root!
-    _rootNode->renderStencil(context, driver);
+void VROScene::setActivePortal(const std::shared_ptr<VROPortal> portal) {
+    passert (hasNode(std::dynamic_pointer_cast<VRONode>(portal)));
+    _activePortal = portal;
+}
+
+void VROScene::createPortalTree(const VRORenderContext &context) {
+    _portals.children.clear();
+    _portals.value.reset();
+    _activePortal->traversePortals(context.getFrame(), 0, &_portals);
+    
+    // Sort each recursion level by distance from camera, so that we render
+    // sibling portals (portals on same recursion level) front to back
+    sortSiblingPortals(_portals, context);
+}
+
+void VROScene::sortSiblingPortals(tree<std::shared_ptr<VROPortal>> &node, const VRORenderContext &context) {
+    std::vector<tree<std::shared_ptr<VROPortal>>> &portals = node.children;
+    std::sort(portals.begin(), portals.end(), [context](tree<std::shared_ptr<VROPortal>> &a, tree<std::shared_ptr<VROPortal>> &b) {
+        passert (a.value->getRecursionLevel() == b.value->getRecursionLevel());
+        return a.value->getComputedPosition().distance(context.getCamera().getPosition()) <
+               b.value->getComputedPosition().distance(context.getCamera().getPosition());
+    });
+    
+    for (tree<std::shared_ptr<VROPortal>> &child : portals) {
+        sortSiblingPortals(child, context);
+    }
+}
+
+bool VROScene::hasNode(std::shared_ptr<VRONode> node) const {
+    return hasNode_helper(_rootNode, node);
+}
+
+bool VROScene::hasNode_helper(const std::shared_ptr<VRONode> &candidate, const std::shared_ptr<VRONode> &node) const {
+    if (candidate == node) {
+        return true;
+    }
+    else {
+        for (std::shared_ptr<VRONode> &child : candidate->getChildNodes()) {
+            if (hasNode_helper(child, node)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 void VROScene::detachInputController(std::shared_ptr<VROInputControllerBase> controller){
@@ -181,8 +244,11 @@ std::vector<std::shared_ptr<VROGeometry>> VROScene::getBackgrounds() {
 }
 
 void VROScene::getBackgrounds(std::shared_ptr<VRONode> node, std::vector<std::shared_ptr<VROGeometry>> &backgrounds) {
-    if (node->getBackground() != nullptr) {
-        backgrounds.push_back(node->getBackground());
+    if (node->isPortal()) {
+        std::shared_ptr<VROPortal> portal = std::dynamic_pointer_cast<VROPortal>(node);
+        if (portal->getBackground() != nullptr) {
+            backgrounds.push_back(portal->getBackground());
+        }
     }
     
     for (std::shared_ptr<VRONode> &child : node->getChildNodes()) {

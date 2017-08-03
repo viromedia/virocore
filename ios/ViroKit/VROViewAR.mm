@@ -770,6 +770,7 @@ static VROVector3f const kZeroVector = VROVector3f();
      Setup GL state.
      */
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_STENCIL_TEST);
     
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -790,7 +791,7 @@ static VROVector3f const kZeroVector = VROVector3f();
         // TODO Only on viewport change
         _arSession->setViewport(viewport);
         
-        _pointOfView->setBackground(_cameraBackground);
+        _sceneController->getScene()->getRootNode()->setBackground(_cameraBackground);
 
         /*
          Retrieve transforms from the AR session.
@@ -863,7 +864,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     material->setLightingModel(VROLightingModel::Constant);
     material->getDiffuse().setTexture(_arSession->getCameraBackgroundTexture());
     material->setWritesToDepthBuffer(false);
-    material->setReadsFromDepthBuffer(false);
     
     _arSession->setScene(scene);
     _arSession->setViewport(viewport);
