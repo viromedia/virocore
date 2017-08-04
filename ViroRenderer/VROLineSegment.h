@@ -58,15 +58,21 @@ public:
     /*
      Test if this segment intersects the given 2D segment or 2D box.
      */
-    bool intersectsSegment(VROLineSegment other) const;
-    bool intersectsSegment(VROLineSegment other, VROVector3f *result) const;
-    bool intersectsBox(float left, float right, float bottom, float top) const;
+    bool intersectsSegment2D(VROLineSegment other) const;
+    bool intersectsSegment2D(VROLineSegment other, VROVector3f *result) const;
+    bool intersectsBox2D(float left, float right, float bottom, float top) const;
 
     /*
      Test if the line represented by this segment intersects the line represented by the
      given segment. This function treats both segments as infinitely extending lines.
      */
     bool intersectsLine(VROLineSegment other, VROVector3f *result) const;
+    
+    /*
+     Test if this line segment intersects plane defined by the given point and normal.
+     Return true if so, storing the intersection point in the given out vector.
+     */
+    bool intersectsPlane(VROVector3f point, VROVector3f normal, VROVector3f *outIntersectionPoint) const;
 
     /*
      Get the angle this segment makes with the given other line-segment,

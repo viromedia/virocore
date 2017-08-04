@@ -302,13 +302,13 @@ VROVector3f VROLineSegment::traverseFromEnd(float distance) const {
 #pragma mark -
 #pragma mark Segment / Box Intersection
 
-bool VROLineSegment::intersectsBox(float left, float right, float top, float bottom) const {
+bool VROLineSegment::intersectsBox2D(float left, float right, float top, float bottom) const {
     VROLineSegment T({left, top}, {right, top});
     VROLineSegment R({right, top}, {right, bottom});
     VROLineSegment B({right, bottom}, {left, bottom});
     VROLineSegment L({left, bottom}, {left, top});
 
-    bool result = intersectsSegment(T) || intersectsSegment(R) || intersectsSegment(L) || intersectsSegment(B);
+    bool result = intersectsSegment2D(T) || intersectsSegment2D(R) || intersectsSegment2D(L) || intersectsSegment2D(B);
     return result;
 }
 
@@ -320,7 +320,7 @@ bool VROLineSegment::intersectsBox(float left, float right, float top, float bot
 #pragma mark -
 #pragma mark Segment / Segment Intersection
 
-bool VROLineSegment::intersectsSegment(VROLineSegment other) const {
+bool VROLineSegment::intersectsSegment2D(VROLineSegment other) const {
     const VROVector3f *p0 = &__A;
     const VROVector3f *p1 = &__B;
     const VROVector3f *q0 = &other.__A;
@@ -342,7 +342,7 @@ bool VROLineSegment::intersectsSegment(VROLineSegment other) const {
     return (s >= 0 && s <= 1 && t >= 0 && t <= 1);
 }
 
-bool VROLineSegment::intersectsSegment(VROLineSegment other, VROVector3f *result) const {
+bool VROLineSegment::intersectsSegment2D(VROLineSegment other, VROVector3f *result) const {
     const VROVector3f *p0 = &__A;
     const VROVector3f *p1 = &__B;
     VROVector3f *q0 = &other.__A;
@@ -369,6 +369,25 @@ bool VROLineSegment::intersectsSegment(VROLineSegment other, VROVector3f *result
         return true;
     }
     return false;
+}
+
+bool VROLineSegment::intersectsPlane(VROVector3f point, VROVector3f normal, VROVector3f *outIntersectionPoint) const {
+    VROVector3f r = __B - __A;
+    float denom = r.dot(normal);
+    if (denom == 0) {
+        return false;
+    }
+    
+    float c = normal.dot(point);
+    float t = (c - normal.dot(__A)) / denom;
+    if (t < 0 || t > 1) {
+        return false;
+    }
+    
+    outIntersectionPoint->x = __A.x + r.x * t;
+    outIntersectionPoint->y = __A.y + r.y * t;
+    outIntersectionPoint->z = __A.z + r.z * t;
+    return true;
 }
 
 bool VROLineSegment::intersectsLine(VROLineSegment other, VROVector3f *result) const {
