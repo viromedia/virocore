@@ -456,7 +456,7 @@
 		8FDDB49D1DADB8C200DE0968 /* VROLightingUBO.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB49B1DADB8C200DE0968 /* VROLightingUBO.h */; };
 		8FDDB49E1DADB8C200DE0968 /* VROLightingUBO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB49C1DADB8C200DE0968 /* VROLightingUBO.cpp */; };
 		8FDDB4A71DAF134300DE0968 /* VROLineSegment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB4A51DAF134300DE0968 /* VROLineSegment.cpp */; };
-		8FDDB4A81DAF134300DE0968 /* VROLineSegment.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB4A61DAF134300DE0968 /* VROLineSegment.h */; };
+		8FDDB4A81DAF134300DE0968 /* VROLineSegment.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB4A61DAF134300DE0968 /* VROLineSegment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FDDB4A91DAF2A3E00DE0968 /* VROPolyline.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB4A11DAF0BC300DE0968 /* VROPolyline.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FDDB4AA1DAF2A4000DE0968 /* VROPolyline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDB4A21DAF0BC300DE0968 /* VROPolyline.cpp */; };
 		8FDDB4AF1DB055A700DE0968 /* VROShaderModifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FDDB4AD1DB055A700DE0968 /* VROShaderModifier.h */; settings = {ATTRIBUTES = (Public, ); }; };

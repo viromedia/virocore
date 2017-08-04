@@ -63,12 +63,29 @@ void VROInputControllerARiOS::onScreenTouchUp(VROVector3f touchPos) {
     VROVector3f rayFromCamera = calculateCameraRay(_latestTouchPos);
     VROInputControllerBase::updateHitNode(_latestCamera, _latestCamera.getPosition(), rayFromCamera);
     VROInputControllerBase::onButtonEvent(ViroCardBoard::ViewerButton, VROEventDelegate::ClickState::ClickUp);
+    
+    // on touch up, we should invoke processDragging once more in case
+    if (_lastDraggedNode) {
+        // in AR, source is always the controller.
+        processDragging(ViroCardBoard::InputSource::Controller, true);
+    }
 }
 
-void VROInputControllerARiOS::didUpdateDraggedObject() {
+void VROInputControllerARiOS::processDragging(int source) {
+    processDragging(source, false);
+}
+
+void VROInputControllerARiOS::processDragging(int source, bool alwaysRun) {
     std::shared_ptr<VROARDraggableNode> arDraggableNode = std::dynamic_pointer_cast<VROARDraggableNode>(_lastDraggedNode->_draggedNode);
+    if (!arDraggableNode) {
+        VROInputControllerBase::processDragging(source);
+        return;
+    }
+    
     std::shared_ptr<VROARSessioniOS> session = _weakSession.lock();
-    if (session && arDraggableNode) {
+    // only process AR drag if we have a session and we've waited long enough since the last time we processed drag OR
+    // if alwaysRun is true.
+    if ((session && (VROTimeCurrentMillis() - _lastProcessDragTimeMillis > kARProcessDragInterval)) || alwaysRun) {
         std::unique_ptr<VROARFrame> &frame = session->getLastFrame();
         std::vector<VROARHitTestResult> results = frame->hitTest(_latestTouchPos.x,
                                                                  _latestTouchPos.y,
@@ -80,7 +97,44 @@ void VROInputControllerARiOS::didUpdateDraggedObject() {
         if (results.size() > 0) {
             VROARHitTestResult result = findBestHitTestResult(results);
             VROVector3f position = result.getWorldTransform().extractTranslation();
+            
+            // TODO: since we're animating position... the position passed back below won't necessarily
+            // reflect its real position.
+            /*
+             * To avoid spamming the JNI / JS bridge, throttle the notification
+             * of onDrag delegates to a certain degree of accuracy.
+             */
+            float distance = position.distance(_lastDraggedNodePosition);
+            if (distance < ON_DRAG_DISTANCE_THRESHOLD) {
+                return;
+            }
+            
+            // if we're already animating, then "cancel" it at the current position vs terminating
+            // which causes the object to "jump" to the end.
+            if (arDraggableNode->isAnimating() && arDraggableNode->getAnimationTransaction()) {
+                VROTransaction::cancel(arDraggableNode->getAnimationTransaction());
+                arDraggableNode->setAnimating(false);
+            }
+            
+            // create new transaction to the new location
+            VROTransaction::begin();
+            VROTransaction::setAnimationDuration(.075);
             arDraggableNode->setPosition(position);
+            std::weak_ptr<VROARDraggableNode> weakNode = arDraggableNode;
+            VROTransaction::setFinishCallback([weakNode]() {
+                std::shared_ptr<VROARDraggableNode> strongNode = weakNode.lock();
+                if (strongNode) {
+                    strongNode->setAnimating(false);
+                }
+            });
+            
+            // Update last known dragged position and notify delegates
+            _lastDraggedNodePosition = position;
+            
+            arDraggableNode->getEventDelegate()->onDrag(source, position);
+            for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
+                delegate->onDrag(source, position);
+            }
         }
     }
 }

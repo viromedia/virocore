@@ -115,6 +115,15 @@ void VROTransaction::pause(std::shared_ptr<VROTransaction> transaction){
     transaction->_paused = true;
 }
 
+void VROTransaction::cancel(std::shared_ptr<VROTransaction> transaction) {
+    std::vector<std::shared_ptr<VROTransaction>>::iterator transactionToCancel =  std::find(committedTransactions.begin(), committedTransactions.end(), transaction);
+    if (transactionToCancel == committedTransactions.end()){
+        pinfo("WARN: Can't cancel terminated/cancelled transaction!");
+        return;
+    }
+    committedTransactions.erase(transactionToCancel);
+}
+
 void VROTransaction::terminate(std::shared_ptr<VROTransaction> transaction){
     std::vector<std::shared_ptr<VROTransaction>>::iterator transactionToTerminate =  std::find(committedTransactions.begin(), committedTransactions.end(), transaction);
     if (transactionToTerminate == committedTransactions.end()){

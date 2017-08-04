@@ -16,6 +16,8 @@
 #include "VROARSessioniOS.h"
 #include "VROARHitTestResult.h"
 
+const double kARProcessDragInterval = 75; //ms
+
 class VROInputControllerARiOS : public VROInputControllerBase {
 public:
     VROInputControllerARiOS(float viewportWidth, float viewportHeight);
@@ -28,7 +30,7 @@ public:
     void setSession(std::shared_ptr<VROARSessioniOS> session) {
         _weakSession = session;
     }
-    
+
     virtual VROVector3f getDragForwardOffset();
 
     /*
@@ -76,10 +78,10 @@ protected:
     }
 
     /*
-     If the current dragged object is a VROARDraggableNode, then we'll want to "drag" it along
-     the real-world surfaces by performing AR hit tests.
+     Override parent logic for handling drag logic. In this case, we fire an AR hit test
+     to determine where the object should go based on the real world.
      */
-    virtual void didUpdateDraggedObject();
+    virtual void processDragging(int source);
     
 private:
     float _viewportWidth;
@@ -87,7 +89,8 @@ private:
     float _latestScale;
     bool _isTouchOngoing;
     bool _isPinchOngoing;
-    
+    double _lastProcessDragTimeMillis;
+
     std::weak_ptr<VRORenderer> _weakRenderer;
     std::weak_ptr<VROARSessioniOS> _weakSession;
     VROCamera _latestCamera;
@@ -95,8 +98,21 @@ private:
     
     VROVector3f calculateCameraRay(VROVector3f touchPos);
     void processTouchMovement();
+    
+    /*
+     Helper function to the overridden processDragging that adds a parameter to determine
+     if we should always run it (vs optimizing).
+     */
+    void processDragging(int source, bool alwaysRun);
 
+    /*
+     Given a vector of VROARHitTestResults, returns the "best" one based on valueForHitTestResultType.
+     */
     VROARHitTestResult findBestHitTestResult(std::vector<VROARHitTestResult> results);
+
+    /*
+     Returns an int value for the given VROARHitTestResultType where larger values are better.
+     */
     int valueForHitTestResultType(VROARHitTestResultType type);
 };
 

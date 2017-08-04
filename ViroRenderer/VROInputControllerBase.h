@@ -166,11 +166,10 @@ protected:
     std::shared_ptr<VRODraggedObject> _lastDraggedNode;
 
     /*
-     * Allows child classes to run additional logic after a VRODraggedObject was updated
+     * This function is meant to be called to run the dragging logic after onMove
+     * deals with other events, etc. This allows for the dragging logic to be overridden.
      */
-    virtual void didUpdateDraggedObject() {
-        // no-op
-    };
+    virtual void processDragging(int source);
     
     /*
      * Last result that was returned from the hit test.
@@ -183,6 +182,11 @@ protected:
     VROVector3f _lastKnownPosition;
     
     /*
+     * Last known position of the node that was dragged previously by this controller.
+     */
+    VROVector3f _lastDraggedNodePosition;
+    
+    /*
      * The pointer's normalized forward vector indicating where the controller
      * is pointing.
      */
@@ -192,6 +196,12 @@ protected:
      * Last known pinch scale value.
      */
     float _lastPinchScale;
+
+    /**
+     * Delegates registered within the manager to be notified of events
+     * to an element that is outside the scene tree.
+     */
+    std::set<std::shared_ptr<VROEventDelegate>> _delegates;
     
 private:
     
@@ -210,11 +220,6 @@ private:
      * achieve the controller's current orientation.
      */
     VROQuaternion _lastKnownRotation;
-    
-    /*
-     * Last known position of the node that was dragged previously by this controller.
-     */
-    VROVector3f _lastDraggedNodePosition;
 
     std::shared_ptr<VROScene> _scene;
 
@@ -227,12 +232,6 @@ private:
      * Last known that was successfully hovered upon.
      */
     std::shared_ptr<VRONode> _lastHoveredNode;
-
-    /**
-     * Delegates registered within the manager to be notified of events
-     * to an element that is outside the scene tree.
-     */
-    std::set<std::shared_ptr<VROEventDelegate>> _delegates;
 
     /**
      * Returns the hit test result for the closest node that was hit.

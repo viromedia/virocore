@@ -193,32 +193,33 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
     
     // Update draggable objects if needed unless we have a pinch motion.
     if (_lastDraggedNode != nullptr && _currentPinchedNode == nullptr) {
+        processDragging(source);
+    }
+}
 
-        // Calculate the new drag location
-        VROVector3f adjustedForward = _lastKnownForward + _lastDraggedNode->_forwardOffset;
-        VROVector3f newSimulatedHitPosition = _lastKnownPosition + (adjustedForward  * _lastDraggedNode->_draggedDistanceFromController);
-        VROVector3f draggedOffset = newSimulatedHitPosition - _lastDraggedNode->_originalHitLocation;
-        VROVector3f draggedToLocation = _lastDraggedNode->_originalDraggedNodePosition + draggedOffset;
-        std::shared_ptr<VRONode> draggedNode = _lastDraggedNode->_draggedNode;
-        draggedNode->setPosition(draggedToLocation);
-
-        didUpdateDraggedObject();
-
-        /*
-         * To avoid spamming the JNI / JS bridge, throttle the notification
-         * of onDrag delegates to a certain degree of accuracy.
-         */
-        float distance = draggedToLocation.distance(_lastDraggedNodePosition);
-        if (distance < ON_DRAG_DISTANCE_THRESHOLD) {
-            return;
-        }
-
-        // Update last known dragged position and notify delegates
-        _lastDraggedNodePosition = draggedToLocation;
-        draggedNode->getEventDelegate()->onDrag(source, draggedToLocation);
-        for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
-            delegate->onDrag(source, draggedToLocation);
-        }
+void VROInputControllerBase::processDragging(int source) {
+    // Calculate the new drag location
+    VROVector3f adjustedForward = _lastKnownForward + _lastDraggedNode->_forwardOffset;
+    VROVector3f newSimulatedHitPosition = _lastKnownPosition + (adjustedForward  * _lastDraggedNode->_draggedDistanceFromController);
+    VROVector3f draggedOffset = newSimulatedHitPosition - _lastDraggedNode->_originalHitLocation;
+    VROVector3f draggedToLocation = _lastDraggedNode->_originalDraggedNodePosition + draggedOffset;
+    std::shared_ptr<VRONode> draggedNode = _lastDraggedNode->_draggedNode;
+    draggedNode->setPosition(draggedToLocation);
+    
+    /*
+     * To avoid spamming the JNI / JS bridge, throttle the notification
+     * of onDrag delegates to a certain degree of accuracy.
+     */
+    float distance = draggedToLocation.distance(_lastDraggedNodePosition);
+    if (distance < ON_DRAG_DISTANCE_THRESHOLD) {
+        return;
+    }
+    
+    // Update last known dragged position and notify delegates
+    _lastDraggedNodePosition = draggedToLocation;
+    draggedNode->getEventDelegate()->onDrag(source, draggedToLocation);
+    for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
+        delegate->onDrag(source, draggedToLocation);
     }
 }
 
