@@ -469,7 +469,7 @@
 		8FE382131EF06FED005038CB /* VROARAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F06581EF06FBB006FC8C2 /* VROARAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382141EF06FED005038CB /* VROARPlaneAnchor.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065C1EF06FBB006FC8C2 /* VROARPlaneAnchor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FE382151EF06FED005038CB /* VROARHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1F065B1EF06FBB006FC8C2 /* VROARHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8FF214111F314E0E005ACA96 /* VROTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF214101F314E0E005ACA96 /* VROTree.h */; };
+		8FF214111F314E0E005ACA96 /* VROTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF214101F314E0E005ACA96 /* VROTree.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FF5CCB51F28F5BA007C7F52 /* porsche911.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB31F28F5BA007C7F52 /* porsche911.vrx */; };
 		8FF5CCB61F28F5BA007C7F52 /* Porsche911turboS_diff.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB41F28F5BA007C7F52 /* Porsche911turboS_diff.jpg */; };
 		8FF5CCBB1F290364007C7F52 /* aliengirl_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FF5CCB71F290364007C7F52 /* aliengirl_diffuse.png */; };
