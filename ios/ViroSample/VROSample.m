@@ -257,7 +257,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         rootNode->addChildNode(sidePortalNode);
     }
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(2.5);
         VROTransaction::setTimingFunction(VROTimingFunctionType::Bounce);
@@ -269,7 +269,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     });
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-    //    scene->setActivePortal(portalNode);
+        scene->setActivePortal(portalNode);
     });
     return sceneController;
 }

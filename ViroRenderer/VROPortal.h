@@ -14,13 +14,9 @@
 
 /*
  Portals are nodes that partition subgraphs of the overall scene
- graph. They are usedto simulate "teleportation" between two
+ graph. They are used to simulate "teleportation" between two
  different scenes, and can also be used for more efficient visibility
  determination.
- 
- Scenes are rendered one portal at a time. That is, we render a portal
- and its subgraph *up to* the next portals we find in the graph, then
- we render those sub-portals and their graphs, and so on.
  */
 class VROPortal : public VRONode {
     
@@ -54,45 +50,27 @@ public:
     
     /*
      Iterate up and down the scene graph, starting at the active portal.
-     Fill in the provided distance of each portal (defined as steps to
-     reach from the active portal), and return all portals reached in the given
-     out vector.
+     Fill in the recursion level of each portal (defined as steps to
+     reach from the active portal), and return a graph of all portals reached.
      
      This is the recursive helper for VROScene::sortPortalsByDistance().
      
      The frame number if used as a 'visited' flag, as this function searches
      both up and down the graph and is expected to only be invoked once
      per frame as part of the render-cycle.
+     
+     The portalToRender flag is used to determine what portal geometry a portal
+     should render. See the discussion under _portalToRender for more detail.
      */
-    void traversePortals(int frame, int recursionLevel, tree<std::shared_ptr<VROPortal>> *outPortals);
+    void traversePortals(int frame, int recursionLevel,
+                         std::shared_ptr<VROPortal> portalToRender,
+                         tree<std::shared_ptr<VROPortal>> *outPortals);
     
     /*
      Sort the visible nodes in this portal's sub-graph by their sort-keys, and fill
      the internal _keys vector with the results.
      */
     void sortNodesBySortKeys();
-        
-    /*
-     The portal stencil bits enable the drawing of portals on the screen. This
-     field determines:
-     
-     1. What bit is written to the stencil buffer when rendering this portal's
-     direct geometry.
-     
-     2. What bit this node's *child geometries* must match in the stencil buffer
-     in order to pass the stencil test.
-     
-     In other words, this is the bit that is written to the stencil buffer over
-     the area of the portal, and the sub-scene inside the portal will only render
-     to the screen where it matches this bit, thereby ensuring we only render the
-     subscene over the area of the portal.
-     */
-    void setStencilBits(int bits) {
-        _stencilBits = bits;
-    }
-    int getStencilBits() const {
-        return _stencilBits;
-    }
     
     /*
      Represents how how many levels deep this portal is: for example, the active portal
@@ -148,11 +126,6 @@ public:
 private:
     
     /*
-     See setStencilBits() for description.
-     */
-    int _stencilBits;
-    
-    /*
      The number of steps to reach this portal from the active portal.
      */
     int _recursionLevel;
@@ -162,6 +135,20 @@ private:
      sort keys.
      */
     std::vector<VROSortKey> _keys;
+    
+    /*
+     The VROPortal that contains the actual *geometry* we should render for
+     this portal's window. This is typically this portal's own geometry,
+     except when rendering a portal that leads to a destination 'up' the tree.
+     In those cases, we want the parent portal (the destination) to use the
+     child portal's geometry for the window.
+     
+     That is, a portal's own geometry is only ever used as an entrance to
+     that portal's content. However, when we step through a portal (when we've
+     'entered' the portal), we need to render an exit back out to the parent.
+     The parent renders the exit as the child portal's geometry.
+     */
+    std::shared_ptr<VROPortal> _portalToRender;
     
     /*
      The background visual to display. All backgrounds in the scene are rendered before

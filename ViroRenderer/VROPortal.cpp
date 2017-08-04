@@ -19,8 +19,7 @@ static const float kSphereBackgroundRadius = 1;
 static const float kSphereBackgroundNumSegments = 60;
 
 VROPortal::VROPortal() :
-    VRONode(),
-    _stencilBits(0) {
+    VRONode() {
     _isPortal = true;
 }
 
@@ -30,12 +29,21 @@ VROPortal::~VROPortal() {
 
 #pragma mark - Scene Preparation
 
-void VROPortal::traversePortals(int frame, int recursionLevel, tree<std::shared_ptr<VROPortal>> *outPortals) {
+void VROPortal::traversePortals(int frame, int recursionLevel,
+                                std::shared_ptr<VROPortal> portalToRender,
+                                tree<std::shared_ptr<VROPortal>> *outPortals) {
     passert (isPortal());
     passert (_lastVisitedRenderingFrame < frame);
     
     _lastVisitedRenderingFrame = frame;
     _recursionLevel = recursionLevel;
+    
+    // Assign the geometry that will be used to render this portal
+    // We use our own geometry when rendering this portal as an entrance
+    // (e.g. down the tree) and the parent's geometry when rendering as
+    // an exit (e.g. up the tree).
+    _portalToRender = portalToRender;
+    
     outPortals->value = std::dynamic_pointer_cast<VROPortal>(shared_from_this());
     
     // Search down the scene graph
@@ -45,7 +53,8 @@ void VROPortal::traversePortals(int frame, int recursionLevel, tree<std::shared_
         if (childPortal->_lastVisitedRenderingFrame < frame) {
             outPortals->children.push_back({});
             tree<std::shared_ptr<VROPortal>> *node = &outPortals->children.back();
-            childPortal->traversePortals(frame, recursionLevel + 1, node);
+            
+            childPortal->traversePortals(frame, recursionLevel + 1, childPortal, node);
         }
     }
     
@@ -55,7 +64,8 @@ void VROPortal::traversePortals(int frame, int recursionLevel, tree<std::shared_
          if (parentPortal->_lastVisitedRenderingFrame < frame) {
              outPortals->children.push_back({});
              tree<std::shared_ptr<VROPortal>> *node = &outPortals->children.back();
-             traversePortals(frame, recursionLevel + 1, node);
+             parentPortal->traversePortals(frame, recursionLevel + 1,
+                                           std::dynamic_pointer_cast<VROPortal>(shared_from_this()), node);
          }
     }
 }
@@ -71,20 +81,20 @@ void VROPortal::sortNodesBySortKeys() {
 
 void VROPortal::renderPortalSilhouette(std::shared_ptr<VROMaterial> &material,
                               const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    if (_geometry) {
-        _geometry->renderSilhouette(getComputedTransform(), material, context, driver);
+    if (_portalToRender && _portalToRender->getGeometry()) {
+        _portalToRender->getGeometry()->renderSilhouette(_portalToRender->getComputedTransform(), material, context, driver);
     }
 }
 
 void VROPortal::renderPortal(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    if (_geometry) {
-        for (int i = 0; i < _geometry->getGeometryElements().size(); i++) {
-            std::shared_ptr<VROMaterial> &material = _geometry->getMaterialForElement(i);
+    if (_portalToRender && _portalToRender->getGeometry()) {
+        for (int i = 0; i < _portalToRender->getGeometry()->getGeometryElements().size(); i++) {
+            std::shared_ptr<VROMaterial> &material = _portalToRender->getGeometry()->getMaterialForElement(i);
             material->bindShader(driver);
             material->bindProperties(driver);
             material->bindLights(getComputedLightsHash(), getComputedLights(), context, driver);
 
-            VRONode::render(i, material, context, driver);
+            _portalToRender->render(i, material, context, driver);
         }
     }
 }

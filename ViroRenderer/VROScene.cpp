@@ -46,29 +46,30 @@ void VROScene::render(const VRORenderContext &context, std::shared_ptr<VRODriver
     
     driver->enableColorBuffer();
     driver->clearDepthAndColor();
+    driver->clearStencil(0);
     
     std::vector<tree<std::shared_ptr<VROPortal>>> treeNodes;
     treeNodes.push_back(_portals);
     render(treeNodes, context, driver);
 }
 
-void VROScene::render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes, const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    // The key to this algorithm is we render depth-first. That is, we funnel down
-    // the tree, rendering portal silhouettes to the stencil buffer; then we unwind
-    // back up the tree, rendering the portal content. Only *then* do we move
-    // adjacently to the next sibling portal. Because we erase the stencil (via DECR
-    // commands) as we unwind the tree, each time we move to a sibling portal, all
-    // traces of the prior sibling should be gone. This ensures siblings don't bleed
-    // into each other (e.g. that an over-size object from one portal doesn't appear
-    // in any of its sibling).
-    
+// The key to this algorithm is we render depth-first. That is, we funnel down
+// the tree, rendering portal silhouettes to the stencil buffer; then we unwind
+// back up the tree, rendering the portal content. Only *then* do we move
+// adjacently to the next sibling portal. Because we erase the stencil (via DECR
+// commands) as we unwind the tree, each time we move to a sibling portal, all
+// traces of the prior sibling should be gone. This ensures siblings don't bleed
+// into each other (e.g. that an over-size object from one portal doesn't appear
+// in any of its siblings).
+void VROScene::render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes, const VRORenderContext &context,
+                      std::shared_ptr<VRODriver> &driver) {
+
     // Iterate through each sibling at this recursion level. The siblings should be ordered
     // front to back. Ensures that the transparent sheens (or 'windows') of each
     // portal are written to the depth buffer *before* the portals behind them are
     // rendered. Otherwise blending would cause portals on the same recursion level
     // to appear through one another.
     int i = 0;
-    
     for (tree<std::shared_ptr<VROPortal>> &treeNode : treeNodes) {
         std::shared_ptr<VROPortal> &portal = treeNode.value;
         pglpush("Recursion Level %d, Portal %d", portal->getRecursionLevel(), i);
@@ -166,7 +167,7 @@ void VROScene::setActivePortal(const std::shared_ptr<VROPortal> portal) {
 void VROScene::createPortalTree(const VRORenderContext &context) {
     _portals.children.clear();
     _portals.value.reset();
-    _activePortal->traversePortals(context.getFrame(), 0, &_portals);
+    _activePortal->traversePortals(context.getFrame(), 0, nullptr, &_portals);
     
     // Sort each recursion level by distance from camera, so that we render
     // sibling portals (portals on same recursion level) front to back
