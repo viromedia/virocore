@@ -793,8 +793,9 @@ static VROVector3f const kZeroVector = VROVector3f();
     if (_arSession->isReady()) {
         // TODO Only on viewport change
         _arSession->setViewport(viewport);
-        
-        _sceneController->getScene()->getRootNode()->setBackground(_cameraBackground);
+        if (!_sceneController->getScene()->getRootNode()->getBackground()) {
+            _sceneController->getScene()->getRootNode()->setBackground(_cameraBackground);
+        }
 
         /*
          Retrieve transforms from the AR session.

@@ -45,6 +45,9 @@ void VRODebugHUD::setEnabled(bool enabled) {
 }
 
 void VRODebugHUD::prepare(const VRORenderContext &context) {
+    if (!_enabled) {
+        return;
+    }
     if (context.getFrame() % kFPSRefreshRate == 0 || !_text) {
         _text = VROText::createSingleLineText(VROStringUtil::toString(context.getFPS(), 2),
                                               _typeface,
