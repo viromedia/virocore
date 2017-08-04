@@ -29,6 +29,7 @@ VROScene::VROScene() : VROThreadRestricted(VROThreadName::Renderer) {
     _silhouetteMaterial = std::make_shared<VROMaterial>();
     _silhouetteMaterial->setWritesToDepthBuffer(false);
     _silhouetteMaterial->setReadsFromDepthBuffer(false);
+    _silhouetteMaterial->setCullMode(VROCullMode::None);
     
     ALLOCATION_TRACKER_ADD(Scenes, 1);
 }
@@ -37,9 +38,7 @@ VROScene::~VROScene() {
     ALLOCATION_TRACKER_SUB(Scenes, 1);
 }
 
-std::shared_ptr<VROPortal> VROScene::getRootNode() {
-    return _rootNode;
-}
+#pragma mark - Rendering
 
 void VROScene::render(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
     passert_thread();
@@ -159,6 +158,12 @@ void VROScene::updateSortKeys(const VRORenderContext &context, std::shared_ptr<V
     _distanceOfFurthestObjectFromCamera = renderParams.furthestDistanceFromCamera;
 }
 
+#pragma mark - Portals
+
+std::shared_ptr<VROPortal> VROScene::getRootNode() {
+    return _rootNode;
+}
+
 void VROScene::setActivePortal(const std::shared_ptr<VROPortal> portal) {
     passert (hasNode(std::dynamic_pointer_cast<VRONode>(portal)));
     _activePortal = portal;
@@ -205,6 +210,12 @@ bool VROScene::hasNode_helper(const std::shared_ptr<VRONode> &candidate, const s
     }
 }
 
+const tree<std::shared_ptr<VROPortal>> VROScene::getPortalTree() const {
+    return _portals;
+}
+
+#pragma mark - Input Controllers
+
 void VROScene::detachInputController(std::shared_ptr<VROInputControllerBase> controller){
     passert_thread();
     if (!_controllerPresenter){
@@ -237,14 +248,14 @@ std::shared_ptr<VROInputPresenter> VROScene::getControllerPresenter(){
     return _controllerPresenter;
 }
 
-std::vector<std::shared_ptr<VROGeometry>> VROScene::getBackgrounds() {
+std::vector<std::shared_ptr<VROGeometry>> VROScene::getBackgrounds() const {
     std::vector<std::shared_ptr<VROGeometry>> backgrounds;
     getBackgrounds(_rootNode, backgrounds);
 
     return backgrounds;
 }
 
-void VROScene::getBackgrounds(std::shared_ptr<VRONode> node, std::vector<std::shared_ptr<VROGeometry>> &backgrounds) {
+void VROScene::getBackgrounds(std::shared_ptr<VRONode> node, std::vector<std::shared_ptr<VROGeometry>> &backgrounds) const {
     if (node->isPortal()) {
         std::shared_ptr<VROPortal> portal = std::dynamic_pointer_cast<VROPortal>(node);
         if (portal->getBackground() != nullptr) {

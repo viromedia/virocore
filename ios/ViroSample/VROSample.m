@@ -1016,7 +1016,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                         
                                                                         VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
                                                                         std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
-                                                                        //material->setCullMode(VROCullMode::None);
+                                                                        material->setCullMode(VROCullMode::None);
                                                                         material->setLightingModel(VROLightingModel::Lambert);
                                                                         material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
                                                                                                                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"portal_ring"], format)));

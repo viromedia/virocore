@@ -116,7 +116,12 @@ public:
     /*
      Get all backgrounds in the scene.
      */
-    std::vector<std::shared_ptr<VROGeometry>> getBackgrounds();
+    std::vector<std::shared_ptr<VROGeometry>> getBackgrounds() const;
+    
+    /*
+     Get the portal tree. Reconstructed each frame.
+     */
+    const tree<std::shared_ptr<VROPortal>> getPortalTree() const;
 
 protected:
     
@@ -172,7 +177,7 @@ protected:
 
     /*
      Helper function for rendering. Performs depth-first rendering of portals, rendering
-     the silhouettes to the stencil buffer on the way down, and the portal's geometry
+     the portal silhouettes to the stencil buffer on the way down, and the portal geometry
      and content on the way up.
      */
     void render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes, const VRORenderContext &context,
@@ -187,7 +192,7 @@ protected:
     /*
      Retrieve all background textures in the scene.
      */
-    void getBackgrounds(std::shared_ptr<VRONode> node, std::vector<std::shared_ptr<VROGeometry>> &backgrounds);
+    void getBackgrounds(std::shared_ptr<VRONode> node, std::vector<std::shared_ptr<VROGeometry>> &backgrounds) const;
 
 private:
     /*
