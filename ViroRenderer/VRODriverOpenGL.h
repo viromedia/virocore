@@ -93,28 +93,39 @@ public:
     void disableColorBuffer() {
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     }
+    
+    GLenum toGL(VROFace face) {
+        switch (face) {
+            case VROFace::Front:
+                return GL_FRONT;
+            case VROFace::Back:
+                return GL_BACK;
+            default:
+                return GL_FRONT_AND_BACK;
+        }
+    }
 
-    void enablePortalStencilWriting() {
-        glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);               // Increment stencil buffer when pass
-        glStencilMask(0xFF);                                  // Allow writing to all bits in stencil buffer
+    void enablePortalStencilWriting(VROFace face) {
+        glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_INCR);   // Increment stencil buffer when pass
+        glStencilMaskSeparate(toGL(face), 0xFF);                      // Allow writing to all bits in stencil buffer
     }
     
-    void enablePortalStencilRemoval() {
-        glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);               // Decrement stencil buffer when pass
-        glStencilMask(0xFF);                                  // Allow writing to all bits in stencil buffer
+    void enablePortalStencilRemoval(VROFace face) {
+        glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_DECR);   // Decrement stencil buffer when pass
+        glStencilMaskSeparate(toGL(face), 0xFF);                      // Allow writing to all bits in stencil buffer
     }
     
-    void enablePortalStencilReading() {
-        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);          // Do not write to stencil buffer
-        glStencilMask(0x00);                             // Protect all stencil bits from writing
+    void disablePortalStencilWriting(VROFace face) {
+        glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_KEEP);   // Do not write to stencil buffer
+        glStencilMaskSeparate(toGL(face), 0x00);                      // Protect all stencil bits from writing
     }
     
-    void setStencilPassBits(int bits, bool passIfLess) {
+    void setStencilPassBits(VROFace face, int bits, bool passIfLess) {
         if (passIfLess) {
-            glStencilFunc(GL_LEQUAL, bits, 0xFF);      // Only pass stencil test if bits <= stencil buffer
+            glStencilFuncSeparate(toGL(face), GL_LEQUAL, bits, 0xFF);      // Only pass stencil test if bits <= stencil buffer
         }
         else {
-            glStencilFunc(GL_EQUAL, bits, 0xFF);       // Only pass stencil test if bits == stencil buffer
+            glStencilFuncSeparate(toGL(face), GL_EQUAL, bits, 0xFF);       // Only pass stencil test if bits == stencil buffer
         }
     }
     

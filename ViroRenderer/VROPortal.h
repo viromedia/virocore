@@ -85,6 +85,67 @@ public:
     }
     
     /*
+     If using a two-sided portal (see _twoSided below) this returns the face that we
+     should currently be rendering to the stencil buffer. The other face (the inactive)
+     face, will not render to the stencil buffer. This achieves the desired effect of
+     creating a two-sided portal (the active face will display one world, the inactive
+     face the other).
+     */
+    VROFace getActiveFace() {
+        // Defer to the rendered portal if we have one set
+        if (_portalToRender && _portalToRender.get() != this) {
+            if (_portalToRender->isTwoSided()) {
+                return VROFace::Back;
+            }
+            else {
+                return VROFace::FrontAndBack;
+            }
+        }
+        // If there's no rendered portal then we're rendering the front face anyway
+        else {
+            if (_twoSided) {
+                return VROFace::Front;
+            }
+            else {
+                return VROFace::FrontAndBack;
+            }
+        }
+    }
+    VROFace getInactiveFace() {
+        VROFace active = getActiveFace();
+        switch (active) {
+            case VROFace::Front:
+                return VROFace::Back;
+            case VROFace::Back:
+                return VROFace::Front;
+            default:
+                return VROFace::FrontAndBack;
+        }
+    }
+    
+    /*
+     Return true if this portal is two-sided. See _twoSided below for discussion.
+     */
+    bool isTwoSided() const {
+        return _twoSided;
+    }
+    void setTwoSided(bool twoSided) {
+        _twoSided = twoSided;
+    }
+    
+    /*
+     If a portal is passable then it reprsents an entry-point into another navigable world,
+     meaning it can be set as the active portal. Non-passable portals can be AR elements overlaid
+     on the real world like picture frames, that are meant to be viewed from outside only.
+     */
+    void setPassable(bool passable) {
+        _passable = passable;
+    }
+    bool isPassable() const {
+        return _passable;
+    }
+    
+    /*
      Return true if the given line segment intersects the portal geometry.
      */
     bool intersectsLineSegment(VROLineSegment segment) const;
@@ -127,8 +188,6 @@ public:
         return _background;
     }
     
-    void installBackgroundModifier();
-    
 private:
     
     /*
@@ -141,6 +200,12 @@ private:
      sort keys.
      */
     std::vector<VROSortKey> _keys;
+    
+    /*
+     True if this portal can be entered; e.g, if it can be made into an
+     active portal.
+     */
+    bool _passable;
     
     /*
      The VROPortal that contains the actual *geometry* we should render for
@@ -157,6 +222,21 @@ private:
     std::shared_ptr<VROPortal> _portalToRender;
     
     /*
+     Normally, both sides of a portal are windows into the same scene. So if
+     you are in an AR world and you're looking through a portal into a VR world,
+     you can walk around the portal and see the VR world from both sides of the
+     portal. However, it's also useful to sometimes have 2-sided portals: that is,
+     a portal which on one side shows the VR world and the other side the AR world.
+     This is particularly useful when we're about to pass through a portal. In such
+     cases, we want the portal to show different worlds on each side in order to make
+     the transition not flicker.
+     
+     Two-sided portals are enabled under the hood by using the front/back stencil
+     buffer operations.
+     */
+    bool _twoSided;
+    
+    /*
      The background visual to display. All backgrounds in the scene are rendered before
      node content.
      */
@@ -166,6 +246,11 @@ private:
      Transform to apply to the background geometry.
      */
     VROMatrix4f _backgroundTransform;
+    
+    /*
+     Installs required shader modifiers on the background.
+     */
+    void installBackgroundModifier();
     
 };
 

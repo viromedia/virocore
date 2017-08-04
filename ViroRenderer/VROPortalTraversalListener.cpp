@@ -13,6 +13,7 @@
 #include "VROPortal.h"
 #include "VROCamera.h"
 #include "VROScene.h"
+#include "VRORenderer.h"
 #include "VROLog.h"
 
 VROPortalTraversalListener::VROPortalTraversalListener(std::shared_ptr<VROScene> scene) :
@@ -32,16 +33,17 @@ void VROPortalTraversalListener::onFrameWillRender(const VRORenderContext &conte
     
     VROVector3f diff = context.getCamera().getPosition() - context.getPreviousCamera().getPosition();
     if (diff.magnitude() > 0) {
+        // Take the camera diff and extend it by the NCP plus some epsilon margin. We need
+        // to transition *before* the portal gets clipped, otherwise we get a flicker.
         VROLineSegment segment(context.getPreviousCamera().getPosition(), context.getCamera().getPosition());
+        segment = segment.extend(kZNear * 1.25);
         
         const tree<std::shared_ptr<VROPortal>> &portalTree = scene->getPortalTree();
         std::shared_ptr<VROPortal> portal = findPortalTraversal(segment, portalTree);
         if (portal) {
+            portal->setTwoSided(true);
             scene->setActivePortal(portal);
         }
-        
-        // VIRO-1400 TODO: remove this log statement
-        pinfo("Diff %f, %f, %f", diff.x, diff.y, diff.z);
     }
 }
 
@@ -52,7 +54,8 @@ void VROPortalTraversalListener::onFrameDidRender(const VRORenderContext &contex
 std::shared_ptr<VROPortal> VROPortalTraversalListener::findPortalTraversal(const VROLineSegment &segment,
                                                                            const tree<std::shared_ptr<VROPortal>> &portalTree) {
     const std::shared_ptr<VROPortal> &portal = portalTree.value;
-    if (portal->intersectsLineSegment(segment)) {
+    
+    if (portal->isPassable() && portal->intersectsLineSegment(segment)) {
         return portal;
     }
     else {

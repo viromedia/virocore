@@ -20,7 +20,9 @@ static const float kSphereBackgroundRadius = 1;
 static const float kSphereBackgroundNumSegments = 60;
 
 VROPortal::VROPortal() :
-    VRONode() {
+    VRONode(),
+    _passable(false),
+    _twoSided(false) {
     _isPortal = true;
 }
 

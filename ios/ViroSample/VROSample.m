@@ -193,6 +193,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     portalNode->setBackgroundCube([self cloudTexture]);
     portalNode->addChildNode([self loadFBXModel]);
     portalNode->setOpacity(0);
+    portalNode->setPassable(true);
     
     rootNode->addChildNode(portalNode);
     
