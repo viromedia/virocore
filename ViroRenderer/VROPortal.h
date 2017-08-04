@@ -60,11 +60,11 @@ public:
      both up and down the graph and is expected to only be invoked once
      per frame as part of the render-cycle.
      
-     The portalToRender flag is used to determine what portal geometry a portal
-     should render. See the discussion under _portalToRender for more detail.
+     The portalWindowToRender flag is used to determine what portal geometry a portal
+     should render. See the discussion under _portalWindowToRender for more detail.
      */
     void traversePortals(int frame, int recursionLevel,
-                         std::shared_ptr<VROPortal> portalToRender,
+                         std::shared_ptr<VROPortal> portalWindowToRender,
                          tree<std::shared_ptr<VROPortal>> *outPortals);
     
     /*
@@ -92,16 +92,14 @@ public:
      face the other).
      */
     VROFace getActiveFace() {
-        // Defer to the rendered portal if we have one set
-        if (_portalToRender && _portalToRender.get() != this) {
-            if (_portalToRender->isTwoSided()) {
+        if (isWindowEgress()) {
+            if (_portalWindowToRender->isTwoSided()) {
                 return VROFace::Back;
             }
             else {
                 return VROFace::FrontAndBack;
             }
         }
-        // If there's no rendered portal then we're rendering the front face anyway
         else {
             if (_twoSided) {
                 return VROFace::Front;
@@ -121,6 +119,14 @@ public:
             default:
                 return VROFace::FrontAndBack;
         }
+    }
+    
+    /*
+     Return true if the portal window rendered by this portal is an exit into
+     a parent portal, as opposed to this portal's own 'entrance' portal.
+     */
+    bool isWindowEgress() const {
+        return _portalWindowToRender != nullptr && _portalWindowToRender.get() != this;
     }
     
     /*
@@ -219,7 +225,7 @@ private:
      'entered' the portal), we need to render an exit back out to the parent.
      The parent renders the exit as the child portal's geometry.
      */
-    std::shared_ptr<VROPortal> _portalToRender;
+    std::shared_ptr<VROPortal> _portalWindowToRender;
     
     /*
      Normally, both sides of a portal are windows into the same scene. So if

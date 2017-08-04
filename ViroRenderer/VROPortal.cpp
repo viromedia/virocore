@@ -33,7 +33,7 @@ VROPortal::~VROPortal() {
 #pragma mark - Scene Preparation
 
 void VROPortal::traversePortals(int frame, int recursionLevel,
-                                std::shared_ptr<VROPortal> portalToRender,
+                                std::shared_ptr<VROPortal> portalWindowToRender,
                                 tree<std::shared_ptr<VROPortal>> *outPortals) {
     passert (isPortal());
     passert (_lastVisitedRenderingFrame < frame);
@@ -45,7 +45,7 @@ void VROPortal::traversePortals(int frame, int recursionLevel,
     // We use our own geometry when rendering this portal as an entrance
     // (e.g. down the tree) and the parent's geometry when rendering as
     // an exit (e.g. up the tree).
-    _portalToRender = portalToRender;
+    _portalWindowToRender = portalWindowToRender;
     
     outPortals->value = std::dynamic_pointer_cast<VROPortal>(shared_from_this());
     
@@ -84,20 +84,20 @@ void VROPortal::sortNodesBySortKeys() {
 
 void VROPortal::renderPortalSilhouette(std::shared_ptr<VROMaterial> &material,
                               const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    if (_portalToRender && _portalToRender->getGeometry()) {
-        _portalToRender->getGeometry()->renderSilhouette(_portalToRender->getComputedTransform(), material, context, driver);
+    if (_portalWindowToRender && _portalWindowToRender->getGeometry()) {
+        _portalWindowToRender->getGeometry()->renderSilhouette(_portalWindowToRender->getComputedTransform(), material, context, driver);
     }
 }
 
 void VROPortal::renderPortal(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    if (_portalToRender && _portalToRender->getGeometry()) {
-        for (int i = 0; i < _portalToRender->getGeometry()->getGeometryElements().size(); i++) {
-            std::shared_ptr<VROMaterial> &material = _portalToRender->getGeometry()->getMaterialForElement(i);
+    if (_portalWindowToRender && _portalWindowToRender->getGeometry()) {
+        for (int i = 0; i < _portalWindowToRender->getGeometry()->getGeometryElements().size(); i++) {
+            std::shared_ptr<VROMaterial> &material = _portalWindowToRender->getGeometry()->getMaterialForElement(i);
             material->bindShader(driver);
             material->bindProperties(driver);
             material->bindLights(getComputedLightsHash(), getComputedLights(), context, driver);
 
-            _portalToRender->render(i, material, context, driver);
+            _portalWindowToRender->render(i, material, context, driver);
         }
     }
 }
@@ -236,9 +236,10 @@ void VROPortal::installBackgroundModifier() {
 #pragma mark - Intersection
 
 bool VROPortal::intersectsLineSegment(VROLineSegment segment) const {
-    if (_portalToRender && _portalToRender->getGeometry()) {
-        // VIRO-1400 TODO: make the intersection test work
-        return false;
+    if (_portalWindowToRender && _portalWindowToRender->getGeometry()) {
+        // VIRO-1400 TODO: make the intersection test check geometry boundary...
+        VROVector3f intersectionPt;
+        return segment.intersectsPlane(_portalWindowToRender->getComputedPosition(), { 0, 0, 1 }, &intersectionPt);
     }
     else {
         return false;

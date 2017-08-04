@@ -16,6 +16,8 @@
 #include "VRORenderer.h"
 #include "VROLog.h"
 
+static const float kDistanceToRestoreTwoSidedPortal = 1.0;
+
 VROPortalTraversalListener::VROPortalTraversalListener(std::shared_ptr<VROScene> scene) :
     _scene(scene) {
     
@@ -44,6 +46,8 @@ void VROPortalTraversalListener::onFrameWillRender(const VRORenderContext &conte
             portal->setTwoSided(true);
             scene->setActivePortal(portal);
         }
+        
+        restorePortalFaces(context.getCamera().getPosition(), portalTree);
     }
 }
 
@@ -54,7 +58,6 @@ void VROPortalTraversalListener::onFrameDidRender(const VRORenderContext &contex
 std::shared_ptr<VROPortal> VROPortalTraversalListener::findPortalTraversal(const VROLineSegment &segment,
                                                                            const tree<std::shared_ptr<VROPortal>> &portalTree) {
     const std::shared_ptr<VROPortal> &portal = portalTree.value;
-    
     if (portal->isPassable() && portal->intersectsLineSegment(segment)) {
         return portal;
     }
@@ -69,5 +72,16 @@ std::shared_ptr<VROPortal> VROPortalTraversalListener::findPortalTraversal(const
         
         // Return null if no portal traversed
         return nullptr;
+    }
+}
+
+void VROPortalTraversalListener::restorePortalFaces(const VROVector3f &cameraPosition,
+                                                    const tree<std::shared_ptr<VROPortal>> &portalTree) {
+    const std::shared_ptr<VROPortal> &portal = portalTree.value;
+    if (portal->isPassable() && portal->isTwoSided() && portal->getComputedPosition().distance(cameraPosition) > kDistanceToRestoreTwoSidedPortal) {
+        portal->setTwoSided(false);
+    }
+    for (tree<std::shared_ptr<VROPortal>> child : portalTree.children) {
+        restorePortalFaces(cameraPosition, child);
     }
 }
