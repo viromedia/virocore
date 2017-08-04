@@ -215,6 +215,8 @@
 		8F705DF51E8F5D42008BE8F8 /* earth_normal.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F705DF21E8F5D42008BE8F8 /* earth_normal.jpg */; };
 		8F705DF61E8F5D42008BE8F8 /* earth.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F705DF31E8F5D42008BE8F8 /* earth.jpg */; };
 		8F705DF71E8F5D42008BE8F8 /* earth.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F705DF41E8F5D42008BE8F8 /* earth.obj */; };
+		8F790CB41F3419C4009A2020 /* VROPortalTraversalListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F790CB21F3419C4009A2020 /* VROPortalTraversalListener.cpp */; };
+		8F790CB51F3419C4009A2020 /* VROPortalTraversalListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F790CB31F3419C4009A2020 /* VROPortalTraversalListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F83DE8E1C4728A30089C31A /* VROHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DE8C1C4728A30089C31A /* VROHitTestResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F83DE911C474A800089C31A /* VROProjector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F83DE8F1C474A800089C31A /* VROProjector.cpp */; };
 		8F83DE921C474A800089C31A /* VROProjector.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F83DE901C474A800089C31A /* VROProjector.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -873,6 +875,8 @@
 		8F705DF21E8F5D42008BE8F8 /* earth_normal.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = earth_normal.jpg; path = ViroSample/earth_normal.jpg; sourceTree = "<group>"; };
 		8F705DF31E8F5D42008BE8F8 /* earth.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = earth.jpg; path = ViroSample/earth.jpg; sourceTree = "<group>"; };
 		8F705DF41E8F5D42008BE8F8 /* earth.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = earth.obj; path = ViroSample/earth.obj; sourceTree = "<group>"; };
+		8F790CB21F3419C4009A2020 /* VROPortalTraversalListener.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPortalTraversalListener.cpp; sourceTree = "<group>"; };
+		8F790CB31F3419C4009A2020 /* VROPortalTraversalListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalTraversalListener.h; sourceTree = "<group>"; };
 		8F83DE8C1C4728A30089C31A /* VROHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROHitTestResult.h; sourceTree = "<group>"; };
 		8F83DE8F1C474A800089C31A /* VROProjector.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROProjector.cpp; sourceTree = "<group>"; };
 		8F83DE901C474A800089C31A /* VROProjector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROProjector.h; sourceTree = "<group>"; };
@@ -1356,6 +1360,8 @@
 				8F705DE01E8ACFD0008BE8F8 /* VRODebugHUD.cpp */,
 				8F31CCB11F2FA8CA003EFB4B /* VROPortal.h */,
 				8F31CCB01F2FA8CA003EFB4B /* VROPortal.cpp */,
+				8F790CB31F3419C4009A2020 /* VROPortalTraversalListener.h */,
+				8F790CB21F3419C4009A2020 /* VROPortalTraversalListener.cpp */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";
@@ -2271,6 +2277,7 @@
 				8F56AEAE1DE77B2700DD65B6 /* VROTypeface.h in Headers */,
 				8F11B7C51C20B6180026D150 /* VRORenderDelegate.h in Headers */,
 				8F9277A61C62DBDF00FF892A /* VROConcurrentBuffer.h in Headers */,
+				8F790CB51F3419C4009A2020 /* VROPortalTraversalListener.h in Headers */,
 				8ADF360B1F14237B002BF73D /* VROARSceneDelegateiOS.h in Headers */,
 				8F548E461C23654E00556688 /* VROAnimationFloat.h in Headers */,
 				8F548E4A1C23656000556688 /* VROAnimationVector3f.h in Headers */,
@@ -2759,6 +2766,7 @@
 				8FB659221CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp in Sources */,
 				8FD4DEED1C18ED0B003DC425 /* VROLog.cpp in Sources */,
 				8FD4DF161C18ED44003DC425 /* VROHeadTracker.cpp in Sources */,
+				8F790CB41F3419C4009A2020 /* VROPortalTraversalListener.cpp in Sources */,
 				8FA2E1601C45DD270070DB26 /* VROReticle.cpp in Sources */,
 				8A1462DE1F33E55B00643EF4 /* VROARDraggableNode.cpp in Sources */,
 				8FDDB4B01DB055A700DE0968 /* VROShaderModifier.cpp in Sources */,

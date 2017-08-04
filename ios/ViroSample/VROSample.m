@@ -14,6 +14,7 @@
 #import "VROSampleARDelegate.h"
 #import "VROARDraggableNode.h"
 
+
 typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneOBJ = 0,
     VROSampleSceneTorus,
@@ -43,6 +44,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 @property (readwrite, nonatomic) std::shared_ptr<VROEventDelegateiOS> delegate;
 @property (readwrite, nonatomic) std::shared_ptr<VROSampleARDelegate> sessionARDelegate;
 @property (readwrite, nonatomic) std::shared_ptr<VROSceneController> sceneController;
+@property (readwrite, nonatomic) std::shared_ptr<VROPortalTraversalListener> portalTraversalListener;
 @property (nonatomic, copy) id clickBlock;
 
 // VROEventDelegateProtocol
@@ -268,7 +270,21 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         VROTransaction::commit();
     });
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    self.portalTraversalListener = std::make_shared<VROPortalTraversalListener>(scene);
+    self.view.frameSynchronizer->addFrameListener(self.portalTraversalListener);
+    
+    std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();
+    scene->getRootNode()->setCamera(camera);
+    [self.view setPointOfView:scene->getRootNode()];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        VROTransaction::begin();
+        VROTransaction::setAnimationDuration(15);
+        camera->setPosition({0, 0, -5});
+        VROTransaction::commit();
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         scene->setActivePortal(portalNode);
     });
     return sceneController;

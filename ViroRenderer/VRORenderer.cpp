@@ -221,6 +221,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     notifyFrameStart();
 
     VROCamera camera = updateCamera(viewport, fov, headRotation, projection);
+    _context->setPreviousCamera(_context->getCamera());
     _context->setCamera(camera);
 
     /*

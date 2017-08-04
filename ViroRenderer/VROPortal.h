@@ -11,6 +11,7 @@
 
 #include "VRONode.h"
 #include "VROTree.h"
+#include "VROLineSegment.h"
 
 /*
  Portals are nodes that partition subgraphs of the overall scene
@@ -82,6 +83,11 @@ public:
     int getRecursionLevel() const {
         return _recursionLevel;
     }
+    
+    /*
+     Return true if the given line segment intersects the portal geometry.
+     */
+    bool intersectsLineSegment(VROLineSegment segment) const;
     
 #pragma mark - Backgrounds
     

@@ -12,6 +12,7 @@
 #include "VROMaterial.h"
 #include "VROSkybox.h"
 #include "VROSphere.h"
+#include "VROBoundingBox.h"
 #include "VROShaderModifier.h"
 
 // Parameters for sphere backgrounds
@@ -228,4 +229,16 @@ void VROPortal::installBackgroundModifier() {
     std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Vertex,
                                                                                       modifierCode);
     _background->getMaterials().front()->addShaderModifier(modifier);
+}
+
+#pragma mark - Intersection
+
+bool VROPortal::intersectsLineSegment(VROLineSegment segment) const {
+    if (_portalToRender && _portalToRender->getGeometry()) {
+        // VIRO-1400 TODO: make the intersection test work
+        return false;
+    }
+    else {
+        return false;
+    }
 }
