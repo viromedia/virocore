@@ -13,7 +13,7 @@
 #include "VROInputPresenterARiOS.h"
 #include "VROLog.h"
 #include "VRORenderer.h"
-#include "VROARSessioniOS.h"
+#include "VROARSession.h"
 #include "VROARHitTestResult.h"
 
 const double kARProcessDragInterval = 75; //ms
@@ -27,7 +27,7 @@ public:
         _weakRenderer = renderer;
     }
 
-    void setSession(std::shared_ptr<VROARSessioniOS> session) {
+    void setSession(std::shared_ptr<VROARSession> session) {
         _weakSession = session;
     }
 
@@ -92,7 +92,7 @@ private:
     double _lastProcessDragTimeMillis;
 
     std::weak_ptr<VRORenderer> _weakRenderer;
-    std::weak_ptr<VROARSessioniOS> _weakSession;
+    std::weak_ptr<VROARSession> _weakSession;
     VROCamera _latestCamera;
     VROVector3f _latestTouchPos;
     

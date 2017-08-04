@@ -190,7 +190,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     _arSession->setDelegate(_arComponentManager);
     
     // set session on input controller!
-    _inputController->setSession(std::dynamic_pointer_cast<VROARSessioniOS>(_arSession));
+    _inputController->setSession(std::dynamic_pointer_cast<VROARSession>(_arSession));
     
     /*
      Set the point of view to a special node that will follow the user's

@@ -82,7 +82,7 @@ void VROInputControllerARiOS::processDragging(int source, bool alwaysRun) {
         return;
     }
     
-    std::shared_ptr<VROARSessioniOS> session = _weakSession.lock();
+    std::shared_ptr<VROARSession> session = _weakSession.lock();
     // only process AR drag if we have a session and we've waited long enough since the last time we processed drag OR
     // if alwaysRun is true.
     if ((session && (VROTimeCurrentMillis() - _lastProcessDragTimeMillis > kARProcessDragInterval)) || alwaysRun) {
