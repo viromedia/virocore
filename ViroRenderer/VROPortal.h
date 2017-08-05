@@ -13,6 +13,8 @@
 #include "VROTree.h"
 #include "VROLineSegment.h"
 
+class VROPortalFrame;
+
 /*
  Portals are nodes that partition subgraphs of the overall scene
  graph. They are used to simulate "teleportation" between two
@@ -20,7 +22,6 @@
  determination.
  */
 class VROPortal : public VRONode {
-    
 public:
     
     VROPortal();
@@ -60,11 +61,11 @@ public:
      both up and down the graph and is expected to only be invoked once
      per frame as part of the render-cycle.
      
-     The portalWindowToRender flag is used to determine what portal geometry a portal
-     should render. See the discussion under _portalWindowToRender for more detail.
+     The activeFrame node is used to assign an entrance frame geometry to this
+     portal. See the discussion under _activePortalFrame for more detail.
      */
     void traversePortals(int frame, int recursionLevel,
-                         std::shared_ptr<VROPortal> portalWindowToRender,
+                         std::shared_ptr<VROPortalFrame> activeFrame,
                          tree<std::shared_ptr<VROPortal>> *outPortals);
     
     /*
@@ -85,58 +86,28 @@ public:
     }
     
     /*
-     If using a two-sided portal (see _twoSided below) this returns the face that we
-     should currently be rendering to the stencil buffer. The other face (the inactive)
-     face, will not render to the stencil buffer. This achieves the desired effect of
-     creating a two-sided portal (the active face will display one world, the inactive
-     face the other).
+     Set the node (with geometry) to render for the entrance to this portal. This
+     geometry will double as the 'exit' back to this portal from children.
      */
-    VROFace getActiveFace() {
-        if (isWindowEgress()) {
-            if (_portalWindowToRender->isTwoSided()) {
-                return VROFace::Back;
-            }
-            else {
-                return VROFace::FrontAndBack;
-            }
-        }
-        else {
-            if (_twoSided) {
-                return VROFace::Front;
-            }
-            else {
-                return VROFace::FrontAndBack;
-            }
-        }
-    }
-    VROFace getInactiveFace() {
-        VROFace active = getActiveFace();
-        switch (active) {
-            case VROFace::Front:
-                return VROFace::Back;
-            case VROFace::Back:
-                return VROFace::Front;
-            default:
-                return VROFace::FrontAndBack;
-        }
+    void setPortalEntrance(std::shared_ptr<VROPortalFrame> entrance);
+    const std::shared_ptr<VROPortalFrame> getPortalEntrance() {
+        return _portalEntrance;
     }
     
     /*
-     Return true if the portal window rendered by this portal is an exit into
+     Return the portal frame being rendered for this portal; either an exit or an
+     entrance.
+     */
+    const std::shared_ptr<VROPortalFrame> getActivePortalFrame() const {
+        return _activePortalFrame;
+    }
+    
+    /*
+     Return true if the portal frame rendered by this portal is an exit into
      a parent portal, as opposed to this portal's own 'entrance' portal.
      */
-    bool isWindowEgress() const {
-        return _portalWindowToRender != nullptr && _portalWindowToRender.get() != this;
-    }
-    
-    /*
-     Return true if this portal is two-sided. See _twoSided below for discussion.
-     */
-    bool isTwoSided() const {
-        return _twoSided;
-    }
-    void setTwoSided(bool twoSided) {
-        _twoSided = twoSided;
+    bool isRenderingExitFrame() const {
+        return _activePortalFrame != _portalEntrance;
     }
     
     /*
@@ -214,33 +185,38 @@ private:
     bool _passable;
     
     /*
-     The VROPortal that contains the actual *geometry* we should render for
-     this portal's window. This is typically this portal's own geometry,
-     except when rendering a portal that leads to a destination 'up' the tree.
-     In those cases, we want the parent portal (the destination) to use the
-     child portal's geometry for the window.
-     
-     That is, a portal's own geometry is only ever used as an entrance to
-     that portal's content. However, when we step through a portal (when we've
-     'entered' the portal), we need to render an exit back out to the parent.
-     The parent renders the exit as the child portal's geometry.
+     Portals have an entrance node that strictly defines the *geometry*
+     (the frame, or window) that delineates the entrance into, or exit from,
+     the portal.
      */
-    std::shared_ptr<VROPortal> _portalWindowToRender;
+    std::shared_ptr<VROPortalFrame> _portalEntrance;
     
     /*
-     Normally, both sides of a portal are windows into the same scene. So if
-     you are in an AR world and you're looking through a portal into a VR world,
-     you can walk around the portal and see the VR world from both sides of the
-     portal. However, it's also useful to sometimes have 2-sided portals: that is,
-     a portal which on one side shows the VR world and the other side the AR world.
-     This is particularly useful when we're about to pass through a portal. In such
-     cases, we want the portal to show different worlds on each side in order to make
-     the transition not flicker.
+     The _activePortalFrame is the frame this portal should render as its
+     entrance.
      
-     Two-sided portals are enabled under the hood by using the front/back stencil
-     buffer operations.
+     When moving down the portal tree, this is set to the portal's own
+     entrance: _portalEntrance. However, when moving up the tree, this is
+     set to the active child portal's entrance.
+     
+     For example, if we have the following portal tree:
+     
+         A
+       B   E
+     C   D
+     
+     If A is the active portal, then B would render its own entrance (as an
+     entrance from A into B), C would render its own entrance (as an entrance
+     from B into C) and so on for every portal in the tree.
+     
+     However, if D is the active portal, then B will render D's entrance (as
+     an exit from D into B), B will render A's entrance (as an exit from B into
+     A), and the remaining portals (C and E) would simply render their own
+     entrances.
+     
+     These portals frames are assigned during traversePortals.
      */
-    bool _twoSided;
+    std::shared_ptr<VROPortalFrame> _activePortalFrame;
     
     /*
      The background visual to display. All backgrounds in the scene are rendered before

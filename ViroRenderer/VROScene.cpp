@@ -10,6 +10,7 @@
 #include "VRORenderContext.h"
 #include "VRONode.h"
 #include "VROPortal.h"
+#include "VROPortalFrame.h"
 #include "VROGeometry.h"
 #include "VROInputControllerBase.h"
 #include "VROLight.h"
@@ -26,6 +27,8 @@
 VROScene::VROScene() : VROThreadRestricted(VROThreadName::Renderer) {
     _rootNode = std::make_shared<VROPortal>();
     _activePortal = _rootNode;
+    _activePortal->setPassable(true);
+    
     _silhouetteMaterial = std::make_shared<VROMaterial>();
     _silhouetteMaterial->setWritesToDepthBuffer(false);
     _silhouetteMaterial->setReadsFromDepthBuffer(false);
@@ -71,26 +74,32 @@ void VROScene::render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes, 
     int i = 0;
     for (tree<std::shared_ptr<VROPortal>> &treeNode : treeNodes) {
         std::shared_ptr<VROPortal> &portal = treeNode.value;
+        
+        const std::shared_ptr<VROPortalFrame> &portalFrame = portal->getActivePortalFrame();
+        bool isExit = portal->isRenderingExitFrame();
+        
         pglpush("Recursion Level %d, Portal %d", portal->getRecursionLevel(), i);
         
         // Render the portal silhouette first, to the stencil buffer only.
-        pglpush("Stencil");
-        driver->disableColorBuffer();
-        if (portal->isTwoSided()) {
-            driver->disablePortalStencilWriting(portal->getInactiveFace());
+        if (portalFrame) {
+            pglpush("Stencil");
+            driver->disableColorBuffer();
+            if (portalFrame->isTwoSided()) {
+                driver->disablePortalStencilWriting(portalFrame->getInactiveFace(isExit));
+            }
+            driver->enablePortalStencilWriting(portalFrame->getActiveFace(isExit));
+            driver->setStencilPassBits(portalFrame->getActiveFace(isExit), portal->getRecursionLevel() - 1, false);
+            
+            _silhouetteMaterial->bindShader(driver);
+            _silhouetteMaterial->bindProperties(driver);
+            
+            // Only render the portal silhouette over the area covered
+            // by the parent portal. Clip the rest (we don't want a portal
+            // within a portal to bleed outside of its parent).
+            driver->setStencilPassBits(portalFrame->getActiveFace(isExit), portal->getRecursionLevel() - 1, false);
+            portal->renderPortalSilhouette(_silhouetteMaterial, context, driver);
+            pglpop();
         }
-        driver->enablePortalStencilWriting(portal->getActiveFace());
-        driver->setStencilPassBits(portal->getActiveFace(), portal->getRecursionLevel() - 1, false);
-
-        _silhouetteMaterial->bindShader(driver);
-        _silhouetteMaterial->bindProperties(driver);
-        
-        // Only render the portal silhouette over the area covered
-        // by the parent portal. Clip the rest (we don't want a portal
-        // within a portal to bleed outside of its parent).
-        driver->setStencilPassBits(portal->getActiveFace(), portal->getRecursionLevel() - 1, false);
-        portal->renderPortalSilhouette(_silhouetteMaterial, context, driver);
-        pglpop();
         
         // Recurse down to children. This way we continue rendering portal
         // silhouettes (of children, not siblings) before moving on to rendering
@@ -120,11 +129,13 @@ void VROScene::render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes, 
         // Remove the stencil for this portal (decrement its number). Ensures
         // side-by-side portals (portals with same recursion level) work correctly;
         // otherwise objects in one portal can "bleed" into the other portal.
-        pglpush("Portal");
-        driver->enablePortalStencilRemoval(portal->getActiveFace());
-        driver->setStencilPassBits(portal->getActiveFace(), portal->getRecursionLevel(), true);
-        portal->renderPortal(context, driver);
-        pglpop();
+        if (portalFrame) {
+            pglpush("Portal");
+            driver->enablePortalStencilRemoval(portalFrame->getActiveFace(isExit));
+            driver->setStencilPassBits(portalFrame->getActiveFace(isExit), portal->getRecursionLevel(), true);
+            portal->renderPortal(context, driver);
+            pglpop();
+        }
         
         ++i;
         pglpop();
@@ -261,7 +272,7 @@ std::vector<std::shared_ptr<VROGeometry>> VROScene::getBackgrounds() const {
 }
 
 void VROScene::getBackgrounds(std::shared_ptr<VRONode> node, std::vector<std::shared_ptr<VROGeometry>> &backgrounds) const {
-    if (node->isPortal()) {
+    if (node->getType() == VRONodeType::Portal) {
         std::shared_ptr<VROPortal> portal = std::dynamic_pointer_cast<VROPortal>(node);
         if (portal->getBackground() != nullptr) {
             backgrounds.push_back(portal->getBackground());

@@ -13,6 +13,7 @@
 #include "VROSkybox.h"
 #include "VROSphere.h"
 #include "VROBoundingBox.h"
+#include "VROPortalFrame.h"
 #include "VROShaderModifier.h"
 
 // Parameters for sphere backgrounds
@@ -21,9 +22,8 @@ static const float kSphereBackgroundNumSegments = 60;
 
 VROPortal::VROPortal() :
     VRONode(),
-    _passable(false),
-    _twoSided(false) {
-    _isPortal = true;
+    _passable(false) {
+    _type = VRONodeType::Portal;
 }
 
 VROPortal::~VROPortal() {
@@ -33,19 +33,14 @@ VROPortal::~VROPortal() {
 #pragma mark - Scene Preparation
 
 void VROPortal::traversePortals(int frame, int recursionLevel,
-                                std::shared_ptr<VROPortal> portalWindowToRender,
+                                std::shared_ptr<VROPortalFrame> activeFrame,
                                 tree<std::shared_ptr<VROPortal>> *outPortals) {
-    passert (isPortal());
+    passert (_type == VRONodeType::Portal);
     passert (_lastVisitedRenderingFrame < frame);
     
     _lastVisitedRenderingFrame = frame;
     _recursionLevel = recursionLevel;
-    
-    // Assign the geometry that will be used to render this portal
-    // We use our own geometry when rendering this portal as an entrance
-    // (e.g. down the tree) and the parent's geometry when rendering as
-    // an exit (e.g. up the tree).
-    _portalWindowToRender = portalWindowToRender;
+    _activePortalFrame = activeFrame;
     
     outPortals->value = std::dynamic_pointer_cast<VROPortal>(shared_from_this());
     
@@ -57,7 +52,10 @@ void VROPortal::traversePortals(int frame, int recursionLevel,
             outPortals->children.push_back({});
             tree<std::shared_ptr<VROPortal>> *node = &outPortals->children.back();
             
-            childPortal->traversePortals(frame, recursionLevel + 1, childPortal, node);
+            // When moving down the tree, we assign the child's own frame
+            // as its frame to render.
+            childPortal->traversePortals(frame, recursionLevel + 1,
+                                         childPortal->getPortalEntrance(), node);
         }
     }
     
@@ -67,8 +65,12 @@ void VROPortal::traversePortals(int frame, int recursionLevel,
          if (parentPortal->_lastVisitedRenderingFrame < frame) {
              outPortals->children.push_back({});
              tree<std::shared_ptr<VROPortal>> *node = &outPortals->children.back();
-             parentPortal->traversePortals(frame, recursionLevel + 1,
-                                           std::dynamic_pointer_cast<VROPortal>(shared_from_this()), node);
+             
+             // When moving up the tree, we assign *this* portal's entrance as the
+             // portal above's frame to render. That way, the parent will render
+             // this portal's entrance, which will make it appear like an exit from
+             // this portal into the parent.
+             parentPortal->traversePortals(frame, recursionLevel + 1, _portalEntrance, node);
          }
     }
 }
@@ -80,27 +82,7 @@ void VROPortal::sortNodesBySortKeys() {
     std::sort(_keys.begin(), _keys.end());
 }
 
-#pragma mark - Rendering
-
-void VROPortal::renderPortalSilhouette(std::shared_ptr<VROMaterial> &material,
-                              const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    if (_portalWindowToRender && _portalWindowToRender->getGeometry()) {
-        _portalWindowToRender->getGeometry()->renderSilhouette(_portalWindowToRender->getComputedTransform(), material, context, driver);
-    }
-}
-
-void VROPortal::renderPortal(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    if (_portalWindowToRender && _portalWindowToRender->getGeometry()) {
-        for (int i = 0; i < _portalWindowToRender->getGeometry()->getGeometryElements().size(); i++) {
-            std::shared_ptr<VROMaterial> &material = _portalWindowToRender->getGeometry()->getMaterialForElement(i);
-            material->bindShader(driver);
-            material->bindProperties(driver);
-            material->bindLights(getComputedLightsHash(), getComputedLights(), context, driver);
-
-            _portalWindowToRender->render(i, material, context, driver);
-        }
-    }
-}
+#pragma mark - Rendering Contents
 
 void VROPortal::renderBackground(const VRORenderContext &renderContext,
                                  std::shared_ptr<VRODriver> &driver) {
@@ -125,52 +107,93 @@ void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<
         pinfo("Rendering");
     }
     
+    std::shared_ptr<VROGeometry> portalFrame;
+    if (_portalEntrance) {
+        portalFrame = _portalEntrance->getGeometry();
+    }
+    
     for (VROSortKey &key : _keys) {
         VRONode *node = (VRONode *)key.node;
         int elementIndex = key.elementIndex;
         
         const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
-        if (geometry) {
-            std::shared_ptr<VROMaterial> material = geometry->getMaterialForElement(elementIndex);
-            if (!key.incoming) {
-                material = material->getOutgoing();
-            }
+        if (!geometry) {
+            continue;
+        }
+        // The portal frame is rendered separately
+        if (geometry == portalFrame) {
+            continue;
+        }
+        
+        std::shared_ptr<VROMaterial> material = geometry->getMaterialForElement(elementIndex);
+        if (!key.incoming) {
+            material = material->getOutgoing();
+        }
+        
+        // Bind the new shader if it changed
+        if (key.shader != boundShaderId) {
+            material->bindShader(driver);
+            boundShaderId = key.shader;
             
-            // Bind the new shader if it changed
-            if (key.shader != boundShaderId) {
-                material->bindShader(driver);
-                boundShaderId = key.shader;
-                
-                // If the shader changes, we have to rebind the lights so they attach
-                // to the new shader
+            // If the shader changes, we have to rebind the lights so they attach
+            // to the new shader
+            material->bindLights(key.lights, node->getComputedLights(), context, driver);
+            boundLights = node->getComputedLights();
+        }
+        else {
+            // Otherwise we only rebind lights if the lights themselves have changed
+            if (boundLights != node->getComputedLights()) {
                 material->bindLights(key.lights, node->getComputedLights(), context, driver);
                 boundLights = node->getComputedLights();
             }
-            else {
-                // Otherwise we only rebind lights if the lights themselves have changed
-                if (boundLights != node->getComputedLights()) {
-                    material->bindLights(key.lights, node->getComputedLights(), context, driver);
-                    boundLights = node->getComputedLights();
+        }
+        
+        // Bind material properties if they changed
+        if (key.material != boundMaterialId) {
+            material->bindProperties(driver);
+            boundMaterialId = key.material;
+        }
+        
+        // Only render the material if there are lights, or if the material uses
+        // constant lighting. Non-constant materials do not render unless we have
+        // at least one light.
+        if (!boundLights.empty() || material->getLightingModel() == VROLightingModel::Constant) {
+            if (kDebugSortOrder) {
+                if (node->getGeometry() && elementIndex == 0) {
+                    pinfo("   Rendering node [%s], element %d", node->getGeometry()->getName().c_str(), elementIndex);
                 }
             }
+            node->render(elementIndex, material, context, driver);
+        }
+    }
+}
+
+#pragma mark - Portal Entrance
+
+void VROPortal::setPortalEntrance(std::shared_ptr<VROPortalFrame> entrance) {
+    if (_portalEntrance) {
+        _portalEntrance->removeFromParentNode();
+    }
+    _portalEntrance = entrance;
+    addChildNode(_portalEntrance);
+}
+
+void VROPortal::renderPortalSilhouette(std::shared_ptr<VROMaterial> &material,
+                                       const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
+    if (_activePortalFrame && _activePortalFrame->getGeometry()) {
+        _activePortalFrame->getGeometry()->renderSilhouette(_activePortalFrame->getComputedTransform(), material, context, driver);
+    }
+}
+
+void VROPortal::renderPortal(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
+    if (_activePortalFrame && _activePortalFrame->getGeometry()) {
+        for (int i = 0; i < _activePortalFrame->getGeometry()->getGeometryElements().size(); i++) {
+            std::shared_ptr<VROMaterial> &material = _activePortalFrame->getGeometry()->getMaterialForElement(i);
+            material->bindShader(driver);
+            material->bindProperties(driver);
+            material->bindLights(getComputedLightsHash(), getComputedLights(), context, driver);
             
-            // Bind material properties if they changed
-            if (key.material != boundMaterialId) {
-                material->bindProperties(driver);
-                boundMaterialId = key.material;
-            }
-            
-            // Only render the material if there are lights, or if the material uses
-            // constant lighting. Non-constant materials do not render unless we have
-            // at least one light.
-            if (!boundLights.empty() || material->getLightingModel() == VROLightingModel::Constant) {
-                if (kDebugSortOrder) {
-                    if (node->getGeometry() && elementIndex == 0) {
-                        pinfo("   Rendering node [%s], element %d", node->getGeometry()->getName().c_str(), elementIndex);
-                    }
-                }
-                node->render(elementIndex, material, context, driver);
-            }
+            _activePortalFrame->render(i, material, context, driver);
         }
     }
 }
@@ -235,11 +258,49 @@ void VROPortal::installBackgroundModifier() {
 
 #pragma mark - Intersection
 
+// VIRO-1400 TODO: this does more than intersect, rename
+
 bool VROPortal::intersectsLineSegment(VROLineSegment segment) const {
-    if (_portalWindowToRender && _portalWindowToRender->getGeometry()) {
-        // VIRO-1400 TODO: make the intersection test check geometry boundary...
-        VROVector3f intersectionPt;
-        return segment.intersectsPlane(_portalWindowToRender->getComputedPosition(), { 0, 0, 1 }, &intersectionPt);
+    if (!_activePortalFrame || !_activePortalFrame->getGeometry()) {
+        return false;
+    }
+    
+    // VIRO-1400 TODO: orient the plane correctly baesd on rotation
+    
+    /*
+     Perform a line-segment intersection with the plane.
+     */
+    VROVector3f planeNormal(0, 0, 1);
+    VROVector3f pointOnPlane = _activePortalFrame->getComputedPosition();
+    VROVector3f intersectionPt;
+    bool intersection = segment.intersectsPlane(pointOnPlane, planeNormal, &intersectionPt);
+    
+    // VIRO-1400 TODO: check the sub-section of the plane we're intersecting
+
+    if (intersection) {
+        
+        // VIRO-1400 TODO: this actually doesn't work because we can enter a portal on
+        //                 either end if we walk around it
+
+        // If the portal is two-sided, then we have to determine if we pierced the
+        // portal in the correct direction
+        VROVector3f normal(0, 0, 1);
+        if (isRenderingExitFrame()) {
+            normal = normal.scale(-1);
+        }
+        
+        if (_activePortalFrame->isTwoSided()) {
+            VROPlane plane(planeNormal, pointOnPlane);
+            if (plane.getHalfSpaceOfPoint(segment.getB()) == VROPlaneHalfSpace::Negative) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return true;
+        }
     }
     else {
         return false;

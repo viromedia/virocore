@@ -44,7 +44,7 @@ const std::string kDefaultNodeTag = "undefined";
 #pragma mark - Initialization
 
 VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
-    _isPortal(false),
+    _type(VRONodeType::Normal),
     _visible(false),
     _lastVisitedRenderingFrame(-1),
     _scale({1.0, 1.0, 1.0}),
@@ -62,7 +62,7 @@ VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
 }
 
 VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Renderer),
-    _isPortal(node._isPortal),
+    _type(node._type),
     _visible(false),
     _lastVisitedRenderingFrame(-1),
     _geometry(node._geometry),
@@ -255,13 +255,13 @@ void VRONode::getSortKeysForVisibleNodes(std::vector<VROSortKey> *outKeys) {
     passert_thread();
     
     // Add the geometry of this node, if available
-    if (_visible && _geometry && !isPortal()) {
+    if (_visible && _geometry && getType() == VRONodeType::Normal) {
         _geometry->getSortKeys(outKeys);
     }
     
     // Search down the scene graph. If a child is a portal, stop the search.
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {
-        if (!childNode->isPortal()) {
+        if (childNode->getType() == VRONodeType::Normal) {
             childNode->getSortKeysForVisibleNodes(outKeys);
         }
     }
@@ -459,7 +459,7 @@ const std::shared_ptr<VROPortal> VRONode::getParentPortal() const {
         return nullptr;
     }
     
-    if (parent->_isPortal) {
+    if (parent->getType() == VRONodeType::Portal) {
         return std::dynamic_pointer_cast<VROPortal>(parent);
     }
     else {
@@ -469,7 +469,7 @@ const std::shared_ptr<VROPortal> VRONode::getParentPortal() const {
 
 void VRONode::getChildPortals(std::vector<std::shared_ptr<VROPortal>> *outPortals) const {
     for (const std::shared_ptr<VRONode> &childNode : _subnodes) {
-        if (childNode->isPortal()) {
+        if (childNode->getType() == VRONodeType::Portal) {
             outPortals->push_back(std::dynamic_pointer_cast<VROPortal>(childNode));
         }
         else {

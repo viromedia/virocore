@@ -45,6 +45,11 @@ class VROTransformDelegate;
 extern bool kDebugSortOrder;
 extern const std::string kDefaultNodeTag;
 
+enum class VRONodeType {
+    Normal,
+    Portal,
+};
+
 class VRONode : public VROAnimatable, public VROThreadRestricted {
     
 public:
@@ -352,11 +357,10 @@ public:
     }
     
     /*
-     Returns true if this node is a portal, of type VROPortal. Faster than
-     dynamic_cast.
+     Returns the type of this node. Faster then dynamic_cast.
      */
-    bool isPortal() const {
-        return _isPortal;
+    VRONodeType getType() const {
+        return _type;
     }
     
     /*
@@ -485,7 +489,7 @@ public:
 
 protected:
     
-    bool _isPortal;
+    VRONodeType _type;
     
     /*
      The node's parent and children.
