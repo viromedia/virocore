@@ -198,6 +198,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROPortalFrame> portalNodeEntrance = [self loadPortalEntrance];
     portalNodeEntrance->setOpacity(0);
     portalNodeEntrance->setScale({0, 0, 0});
+    portalNodeEntrance->setRotationEuler({ 0, 0, 0 });
     portalNode->setPortalEntrance(portalNodeEntrance);
     
     rootNode->addChildNode(portalNode);
@@ -290,7 +291,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(10);
-        camera->setPosition({0, 0, -5});
+        camera->setPosition({2, 0, -5});
         VROTransaction::commit();
     });
     

@@ -258,49 +258,26 @@ void VROPortal::installBackgroundModifier() {
 
 #pragma mark - Intersection
 
-// VIRO-1400 TODO: this does more than intersect, rename
-
 bool VROPortal::intersectsLineSegment(VROLineSegment segment) const {
     if (!_activePortalFrame || !_activePortalFrame->getGeometry()) {
         return false;
     }
     
-    // VIRO-1400 TODO: orient the plane correctly baesd on rotation
-    
     /*
      Perform a line-segment intersection with the plane.
      */
     VROVector3f planeNormal(0, 0, 1);
+    planeNormal = _activePortalFrame->getComputedRotation().multiply(planeNormal);
+    
     VROVector3f pointOnPlane = _activePortalFrame->getComputedPosition();
     VROVector3f intersectionPt;
     bool intersection = segment.intersectsPlane(pointOnPlane, planeNormal, &intersectionPt);
     
-    // VIRO-1400 TODO: check the sub-section of the plane we're intersecting
-
+    /*
+     Check if our portal contains the intersection point.
+     */
     if (intersection) {
-        
-        // VIRO-1400 TODO: this actually doesn't work because we can enter a portal on
-        //                 either end if we walk around it
-
-        // If the portal is two-sided, then we have to determine if we pierced the
-        // portal in the correct direction
-        VROVector3f normal(0, 0, 1);
-        if (isRenderingExitFrame()) {
-            normal = normal.scale(-1);
-        }
-        
-        if (_activePortalFrame->isTwoSided()) {
-            VROPlane plane(planeNormal, pointOnPlane);
-            if (plane.getHalfSpaceOfPoint(segment.getB()) == VROPlaneHalfSpace::Negative) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        else {
-            return true;
-        }
+        return _activePortalFrame->getBoundingBox().containsPoint(intersectionPt);
     }
     else {
         return false;

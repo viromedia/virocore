@@ -294,6 +294,11 @@ VROVector3f VROLineSegment::traverseFromEnd(float distance) const {
     return __B.add(ray().scale(distance));
 }
 
+VROLineSegment VROLineSegment::shift(float amount) const {
+    VROVector3f r = ray().scale(amount);
+    return { __A.add(r), __B.add(r) };
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 //
 //  Segment / Box Intersection

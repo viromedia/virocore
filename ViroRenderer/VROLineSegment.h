@@ -142,6 +142,12 @@ public:
     VROLineSegment extend(float amount) const;
     VROLineSegment extendBackwards(float amount) const;
     VROLineSegment extendForwardAndBackward(float amount) const;
+    
+    /*
+     Shift the line segment by the given amount. This pushes out the A
+     and B endpoints in the direction of the segment.
+     */
+    VROLineSegment shift(float amount) const;
 
     /*
      Traverse the line-segment by the given distance from the start-point and
