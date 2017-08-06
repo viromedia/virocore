@@ -194,6 +194,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     portalNode->setPassable(true);
     portalNode->setScale({0.1, 0.1, 0.1});
     portalNode->setPosition({0, 0, -2});
+    portalNode->setName("Portal");
 
     std::shared_ptr<VROPortalFrame> portalNodeEntrance = [self loadPortalEntrance];
     portalNodeEntrance->setOpacity(0);
@@ -223,6 +224,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     positions.push_back({0, 6, -8});
     positions.push_back({0, -3, -2});
     positions.push_back({0, -8, -2});
+    positions.push_back({-5, 0, -2});
     
     for (VROVector3f position : positions) {
         std::shared_ptr<VROPortal> innerPortalNode = std::make_shared<VROPortal>();
@@ -238,6 +240,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         innerPortalNodeContent->getGeometry()->getMaterials().front()->getDiffuse().setColor({0.0, 0.0, 1.0, 1.0});
         innerPortalNodeContent->setPosition({0.2, 0, -1});
         innerPortalNode->addChildNode(innerPortalNodeContent);
+        innerPortalNode->setPassable(true);
         
         std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self] (VRONode *const node, float seconds) {
             node->setRotation({ 0, (float)(node->getRotationEuler().y + 0.15), 0});
@@ -286,27 +289,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();
     scene->getRootNode()->setCamera(camera);
-    [self.view setPointOfView:scene->getRootNode()];
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        VROTransaction::begin();
-        VROTransaction::setAnimationDuration(10);
-        camera->setPosition({2, 0, -5});
-        VROTransaction::commit();
-    });
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        VROTransaction::begin();
-        VROTransaction::setAnimationDuration(10);
-        camera->setPosition({0, 0, 0});
-        VROTransaction::commit();
-    });
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        //portalNode->getActivePortalFrame()->setTwoSided(true);
-        //scene->setActivePortal(portalNode);
-        
-    });
     return sceneController;
 }
 

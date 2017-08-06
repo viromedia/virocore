@@ -36,11 +36,11 @@ void VROPortalTraversalListener::onFrameWillRender(const VRORenderContext &conte
     
     VROVector3f diff = context.getCamera().getPosition() - context.getPreviousCamera().getPosition();
     if (diff.magnitude() > 0) {
-        // Take the camera diff and shift it by the NCP plus some epsilon margin. We need
-        // to transition *before* the portal gets clipped, otherwise we get a flicker.
-        // Not this may cause an artifact if we walk *backwards* through a portal.
+        // Take the camera diff and shift it forward by the NCP plus some epsilon
+        // margin. We need to transition *before* the portal gets clipped, otherwise
+        // we get a flicker.
         VROLineSegment segment(context.getPreviousCamera().getPosition(), context.getCamera().getPosition());
-        segment = segment.shift(kZNear * 1.25);
+        segment = segment.translate(context.getCamera().getForward().scale(kZNear * 2.0));
         
         const tree<std::shared_ptr<VROPortal>> &portalTree = scene->getPortalTree();
         std::shared_ptr<VROPortal> portal = findPortalTraversal(segment, portalTree);

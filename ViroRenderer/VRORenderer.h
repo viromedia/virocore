@@ -35,7 +35,7 @@ enum class VROEyeType;
 enum class VROTimingFunctionType;
 
 // The (fixed) near clipping plane
-static const float kZNear = 0.25;
+static const float kZNear = 0.01;
 
 // The far clipping plane to use if no scene is loaded; also serves as a
 // mininum far clipping plane

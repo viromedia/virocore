@@ -137,6 +137,10 @@ VROVector3f VROLineSegment::normal2DUnitVector(bool positive) const {
 #pragma mark -
 #pragma mark Basic Transforms
 
+VROLineSegment VROLineSegment::translate(VROVector3f translation) const {
+    return { __A.add(translation), __B.add(translation) };
+}
+
 VROLineSegment VROLineSegment::pivot(float radians) const {
     VROVector3f zAxis(0, 0, 1);
 

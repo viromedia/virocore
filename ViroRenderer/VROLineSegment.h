@@ -102,6 +102,11 @@ public:
      segment makes with the given ray.
      */
     float directedAngleWithRay(VROVector3f ray) const;
+    
+    /*
+     Translate the segment by the given amount.
+     */
+    VROLineSegment translate(VROVector3f translation) const;
 
     /*
      Rotate this line segment counter-clockwise about its center by the given

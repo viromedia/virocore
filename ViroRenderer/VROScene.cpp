@@ -26,6 +26,7 @@
 
 VROScene::VROScene() : VROThreadRestricted(VROThreadName::Renderer) {
     _rootNode = std::make_shared<VROPortal>();
+    _rootNode->setName("Root");
     _activePortal = _rootNode;
     _activePortal->setPassable(true);
     
@@ -78,7 +79,7 @@ void VROScene::render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes, 
         const std::shared_ptr<VROPortalFrame> &portalFrame = portal->getActivePortalFrame();
         bool isExit = portal->isRenderingExitFrame();
         
-        pglpush("Recursion Level %d, Portal %d", portal->getRecursionLevel(), i);
+        pglpush("Recursion Level %d, Portal %d [%s]", portal->getRecursionLevel(), i, portal->getName().c_str());
         
         // Render the portal silhouette first, to the stencil buffer only.
         if (portalFrame) {
