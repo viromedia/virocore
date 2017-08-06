@@ -127,6 +127,8 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROScene.cpp
              ../../ViroRenderer/VROCamera.cpp
              ../../ViroRenderer/VRONode.cpp
+             ../../ViroRenderer/VROPortal.cpp
+             ../../ViroRenderer/VROPortalFrame.cpp
              ../../ViroRenderer/VROGeometry.cpp
              ../../ViroRenderer/VROGeometryElement.cpp
              ../../ViroRenderer/VROGeometrySource.cpp
@@ -138,6 +140,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROTransformConstraint.cpp
              ../../ViroRenderer/VRORenderer.cpp
              ../../ViroRenderer/VROFrameSynchronizerInternal.cpp
+             ../../ViroRenderer/VROPortalTraversalListener.cpp
              ../../ViroRenderer/VROGeometrySubstrate.cpp
              ../../ViroRenderer/VROTextureSubstrate.cpp
              ../../ViroRenderer/VROMaterialSubstrate.cpp
