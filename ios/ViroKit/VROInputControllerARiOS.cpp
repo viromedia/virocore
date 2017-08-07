@@ -185,6 +185,16 @@ void VROInputControllerARiOS::processTouchMovement() {
     }
 }
 
+/* TODO: VIRO-1465 fix this function to work properly.
+ 
+ This is slightly unconventional because what I'm doing is "unprojecting" the
+ touch position back into camera space. Then the ray out is simply that unprojected
+ point minus the camera position (which is 0,0,0 in camera space). Then I just take
+ that ray and "rotate" it by the camera's rotation back into world coordinates with
+ the assumed origin at the camera's position. This does give the same value as if I
+ calculate far - near and use that, but the values are off (more obviously wrong?) on
+ tablets, so I suspect an issue with a matrix or something.
+ 
 VROVector3f VROInputControllerARiOS::calculateCameraRay(VROVector3f touchPos) {
     std::shared_ptr<VRORenderer> renderer = _weakRenderer.lock();
     if (!renderer) {
@@ -208,4 +218,34 @@ VROVector3f VROInputControllerARiOS::calculateCameraRay(VROVector3f touchPos) {
     
     // since we want the ray "from" the camera position in the world, rotate it back to world coordinates (but don't translate).
     return _latestCamera.getRotation().getMatrix().multiply(resultNear).normalize();
+}
+ */
+
+/*
+ This is a stop-gap measure while we fix the above function which leverages ARKit's hitTest to
+ give us some point based on tap location from which we simply normalize and present that as the
+ forward camera ray.
+ */
+VROVector3f VROInputControllerARiOS::calculateCameraRay(VROVector3f touchPos) {
+    std::shared_ptr<VROARSession> session = _weakSession.lock();
+    if (session) {
+        std::unique_ptr<VROARFrame> &frame = session->getLastFrame();
+        std::vector<VROARHitTestResult> results = frame->hitTest(_latestTouchPos.x,
+                                                                 _latestTouchPos.y,
+                                                                 { VROARHitTestResultType::ExistingPlaneUsingExtent,
+                                                                     VROARHitTestResultType::ExistingPlane,
+                                                                     VROARHitTestResultType::EstimatedHorizontalPlane,
+                                                                     VROARHitTestResultType::FeaturePoint });
+        
+        if (results.size() > 0) {
+            // just grab the first result, we don't care about accuracy because all points returned are
+            // along the same line.
+            VROARHitTestResult result = results[0];
+            VROVector3f position = result.getWorldTransform().extractTranslation();
+            VROVector3f ray = (position - _latestCamera.getPosition()).normalize();
+            
+            return ray;
+        }
+    }
+    return VROVector3f();
 }
