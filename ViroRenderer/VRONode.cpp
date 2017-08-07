@@ -24,6 +24,7 @@
 #include "VROConstraint.h"
 #include "VROStringUtil.h"
 #include "VROPortal.h"
+#include "VROMaterial.h"
 #include "VROPhysicsBody.h"
 #include "VROAnimationChain.h"
 #include "VROExecutableAnimation.h"
@@ -111,6 +112,35 @@ void VRONode::render(int elementIndex,
                           context, driver);
     }
 }
+
+void VRONode::render(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
+    if (_geometry) {
+        for (int i = 0; i < _geometry->getGeometryElements().size(); i++) {
+            std::shared_ptr<VROMaterial> &material = _geometry->getMaterialForElement(i);
+            material->bindShader(driver);
+            material->bindProperties(driver);
+            material->bindLights(_computedLightsHash, _computedLights, context, driver);
+            
+            render(i, material, context, driver);
+        }
+    }
+    
+    for (std::shared_ptr<VRONode> &child : _subnodes) {
+        child->render(context, driver);
+    }
+}
+
+void VRONode::renderSilhouette(std::shared_ptr<VROMaterial> &material, const VRORenderContext &context,
+                               std::shared_ptr<VRODriver> &driver) {
+    if (_geometry) {
+        _geometry->renderSilhouette(_computedTransform, material, context, driver);
+    }
+    for (std::shared_ptr<VRONode> &child : _subnodes) {
+        child->renderSilhouette(material, context, driver);
+    }
+}
+
+#pragma mark - Sorting and Transforms
 
 void VRONode::resetDebugSortIndex() {
     sDebugSortIndex = 0;
@@ -259,7 +289,8 @@ void VRONode::getSortKeysForVisibleNodes(std::vector<VROSortKey> *outKeys) {
         _geometry->getSortKeys(outKeys);
     }
     
-    // Search down the scene graph. If a child is a portal, stop the search.
+    // Search down the scene graph. If a child is a portal or portal frame,
+    // stop the search.
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {
         if (childNode->getType() == VRONodeType::Normal) {
             childNode->getSortKeysForVisibleNodes(outKeys);
@@ -763,9 +794,12 @@ void VRONode::onAnimationFinished(){
 
 #pragma mark - Hit Testing
 
-VROBoundingBox VRONode::getBoundingBox() {
-    passert_thread();
+VROBoundingBox VRONode::getBoundingBox() const {
     return _computedBoundingBox;
+}
+
+VROBoundingBox VRONode::getUmbrellaBoundingBox() const {
+    return _umbrellaBoundingBox;
 }
 
 std::vector<VROHitTestResult> VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f ray,

@@ -7,14 +7,38 @@
 //
 
 #include "VROPortalFrame.h"
+#include "VROLineSegment.h"
 
 VROPortalFrame::VROPortalFrame() :
     _twoSided(false) {
+    _type = VRONodeType::PortalFrame;
     
 }
 
 VROPortalFrame::~VROPortalFrame() {
     
+}
+
+bool VROPortalFrame::intersectsLineSegment(VROLineSegment segment) const {
+    /*
+     Perform a line-segment intersection with the plane.
+     */
+    VROVector3f planeNormal(0, 0, 1);
+    planeNormal = getComputedRotation().multiply(planeNormal);
+    
+    VROVector3f pointOnPlane = getComputedPosition();
+    VROVector3f intersectionPt;
+    bool intersection = segment.intersectsPlane(pointOnPlane, planeNormal, &intersectionPt);
+    
+    /*
+     Check if our portal contains the intersection point.
+     */
+    if (intersection) {
+        return getUmbrellaBoundingBox().containsPoint(intersectionPt);
+    }
+    else {
+        return false;
+    }
 }
 
 VROFace VROPortalFrame::getActiveFace(bool isExit) const {

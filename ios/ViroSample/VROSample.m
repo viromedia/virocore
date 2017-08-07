@@ -240,7 +240,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         innerPortalNodeContent->getGeometry()->getMaterials().front()->getDiffuse().setColor({0.0, 0.0, 1.0, 1.0});
         innerPortalNodeContent->setPosition({0.2, 0, -1});
         innerPortalNode->addChildNode(innerPortalNodeContent);
-        innerPortalNode->setPassable(true);
+        //innerPortalNode->setPassable(true);
         
         std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self] (VRONode *const node, float seconds) {
             node->setRotation({ 0, (float)(node->getRotationEuler().y + 0.15), 0});
@@ -289,6 +289,21 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();
     scene->getRootNode()->setCamera(camera);
+    [self.view setPointOfView:scene->getRootNode()];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        VROTransaction::begin();
+        VROTransaction::setAnimationDuration(10);
+        camera->setPosition({0, 0, -5});
+        VROTransaction::commit();
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        VROTransaction::begin();
+        VROTransaction::setAnimationDuration(10);
+        //camera->setPosition({0, 0, 0});
+        VROTransaction::commit();
+    });
     
     return sceneController;
 }
@@ -1025,8 +1040,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::string base = std::string([[baseURL description] UTF8String]);
     
     std::shared_ptr<VROPortalFrame> frame = std::make_shared<VROPortalFrame>();
-    VROOBJLoader::loadOBJFromURL(url, base, true,
-                                                                    [frame](std::shared_ptr<VRONode> node, bool success) {
+    std::shared_ptr<VRONode> node = VROOBJLoader::loadOBJFromURL(url, base, true,
+                                                                    [](std::shared_ptr<VRONode> node, bool success) {
                                                                         if (!success) {
                                                                             return;
                                                                         }
@@ -1037,10 +1052,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                         material->setLightingModel(VROLightingModel::Lambert);
                                                                         material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
                                                                                                                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"portal_ring"], format)));
-                                                                        
-                                                                        frame->setGeometry(node->getGeometry());
                                                                     });
     
+    frame->addChildNode(node);
     return frame;
 }
 

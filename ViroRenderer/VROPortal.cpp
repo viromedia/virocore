@@ -107,21 +107,14 @@ void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<
         pinfo("Rendering");
     }
     
-    std::shared_ptr<VROGeometry> portalFrame;
-    if (_portalEntrance) {
-        portalFrame = _portalEntrance->getGeometry();
-    }
-    
+    // Note that since portals and portal frames are not returned in _keys,
+    // they will not be rendered here
     for (VROSortKey &key : _keys) {
         VRONode *node = (VRONode *)key.node;
         int elementIndex = key.elementIndex;
         
         const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
         if (!geometry) {
-            continue;
-        }
-        // The portal frame is rendered separately
-        if (geometry == portalFrame) {
             continue;
         }
         
@@ -180,21 +173,14 @@ void VROPortal::setPortalEntrance(std::shared_ptr<VROPortalFrame> entrance) {
 
 void VROPortal::renderPortalSilhouette(std::shared_ptr<VROMaterial> &material,
                                        const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    if (_activePortalFrame && _activePortalFrame->getGeometry()) {
-        _activePortalFrame->getGeometry()->renderSilhouette(_activePortalFrame->getComputedTransform(), material, context, driver);
+    if (_activePortalFrame) {
+        _activePortalFrame->renderSilhouette(material, context, driver);
     }
 }
 
 void VROPortal::renderPortal(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    if (_activePortalFrame && _activePortalFrame->getGeometry()) {
-        for (int i = 0; i < _activePortalFrame->getGeometry()->getGeometryElements().size(); i++) {
-            std::shared_ptr<VROMaterial> &material = _activePortalFrame->getGeometry()->getMaterialForElement(i);
-            material->bindShader(driver);
-            material->bindProperties(driver);
-            material->bindLights(getComputedLightsHash(), getComputedLights(), context, driver);
-            
-            _activePortalFrame->render(i, material, context, driver);
-        }
+    if (_activePortalFrame) {
+        _activePortalFrame->render(context, driver);
     }
 }
 
@@ -272,27 +258,8 @@ void VROPortal::removeBackground() {
 #pragma mark - Intersection
 
 bool VROPortal::intersectsLineSegment(VROLineSegment segment) const {
-    if (!_activePortalFrame || !_activePortalFrame->getGeometry()) {
+    if (!_activePortalFrame) {
         return false;
     }
-    
-    /*
-     Perform a line-segment intersection with the plane.
-     */
-    VROVector3f planeNormal(0, 0, 1);
-    planeNormal = _activePortalFrame->getComputedRotation().multiply(planeNormal);
-    
-    VROVector3f pointOnPlane = _activePortalFrame->getComputedPosition();
-    VROVector3f intersectionPt;
-    bool intersection = segment.intersectsPlane(pointOnPlane, planeNormal, &intersectionPt);
-    
-    /*
-     Check if our portal contains the intersection point.
-     */
-    if (intersection) {
-        return _activePortalFrame->getBoundingBox().containsPoint(intersectionPt);
-    }
-    else {
-        return false;
-    }
+    return _activePortalFrame->intersectsLineSegment(segment);
 }
