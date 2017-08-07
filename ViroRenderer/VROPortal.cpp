@@ -200,12 +200,26 @@ void VROPortal::renderPortal(const VRORenderContext &context, std::shared_ptr<VR
 
 #pragma mark - Backgrounds
 
+static std::shared_ptr<VROShaderModifier> sBackgroundShaderModifier;
+
+void VROPortal::installBackgroundShaderModifier() {
+    /*
+     Modifier that pushes backgrounds to the back of the depth buffer.
+     */
+    if (!sBackgroundShaderModifier) {
+        std::vector<std::string> modifierCode =  { "_vertex.position = _vertex.position.xyww;"};
+        sBackgroundShaderModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Vertex,
+                                                                        modifierCode);
+    }
+    _background->getMaterials().front()->addShaderModifier(sBackgroundShaderModifier);
+}
+
 void VROPortal::setBackgroundCube(std::shared_ptr<VROTexture> textureCube) {
     passert_thread();
     _background = VROSkybox::createSkybox(textureCube);
     _background->setName("Background");
     
-    installBackgroundModifier();
+    installBackgroundShaderModifier();
 }
 
 void VROPortal::setBackgroundCube(VROVector4f color) {
@@ -213,7 +227,7 @@ void VROPortal::setBackgroundCube(VROVector4f color) {
     _background = VROSkybox::createSkybox(color);
     _background->setName("Background");
     
-    installBackgroundModifier();
+    installBackgroundShaderModifier();
 }
 
 void VROPortal::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
@@ -230,14 +244,14 @@ void VROPortal::setBackgroundSphere(std::shared_ptr<VROTexture> textureSphere) {
     material->getDiffuse().setTexture(textureSphere);
     material->setWritesToDepthBuffer(false);
     
-    installBackgroundModifier();
+    installBackgroundShaderModifier();
 }
 
 void VROPortal::setBackground(std::shared_ptr<VROGeometry> background) {
     passert_thread();
     _background = background;
     
-    installBackgroundModifier();
+    installBackgroundShaderModifier();
 }
 
 void VROPortal::setBackgroundTransform(VROMatrix4f transform) {
@@ -249,11 +263,10 @@ void VROPortal::setBackgroundRotation(VROQuaternion rotation) {
     _backgroundTransform = rotation.getMatrix();
 }
 
-void VROPortal::installBackgroundModifier() {
-    std::vector<std::string> modifierCode =  { "_vertex.position = _vertex.position.xyww;"};
-    std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Vertex,
-                                                                                      modifierCode);
-    _background->getMaterials().front()->addShaderModifier(modifier);
+void VROPortal::removeBackground() {
+    passert_thread();
+    _background->getMaterials().front()->removeShaderModifier(sBackgroundShaderModifier);
+    _background.reset();
 }
 
 #pragma mark - Intersection
