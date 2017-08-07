@@ -50,6 +50,15 @@ void VROGeometry::renderSilhouette(VROMatrix4f transform,
     _substrate->renderSilhouette(*this, transform, material, context, driver);
 }
 
+void VROGeometry::renderSilhouetteTextured(int element,
+                                           VROMatrix4f transform,
+                                           std::shared_ptr<VROMaterial> &material,
+                                           const VRORenderContext &context,
+                                           std::shared_ptr<VRODriver> &driver) {
+    prewarm(driver);
+    _substrate->renderSilhouetteTextured(*this, element, transform, material, context, driver);
+}
+
 void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t hierarchyDepth,
                                  uint32_t lightsHash, float opacity, float distanceFromCamera, float zFar,
                                  std::shared_ptr<VRODriver> &driver) {

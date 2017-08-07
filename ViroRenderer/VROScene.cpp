@@ -34,6 +34,7 @@ VROScene::VROScene() : VROThreadRestricted(VROThreadName::Renderer) {
     _silhouetteMaterial->setWritesToDepthBuffer(false);
     _silhouetteMaterial->setReadsFromDepthBuffer(false);
     _silhouetteMaterial->setCullMode(VROCullMode::None);
+    _silhouetteMaterial->addShaderModifier(VROPortalFrame::getAlphaDiscardModifier());
     
     ALLOCATION_TRACKER_ADD(Scenes, 1);
 }
@@ -81,24 +82,26 @@ void VROScene::render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes, 
         
         pglpush("Recursion Level %d, Portal %d [%s]", portal->getRecursionLevel(), i, portal->getName().c_str());
         
-        // Render the portal silhouette first, to the stencil buffer only.
+        // Render the portal first to the stencil buffer only. We have to render
+        // with textures, because the texture's alpha portions determine where
+        // we discard fragments (we only write the transparent sections to the stencil
+        // buffer).
         if (portalFrame) {
-            pglpush("Stencil");
-            driver->disableColorBuffer();
+            pglpush("(+) Stencil");
+            _silhouetteMaterial->bindShader(driver);
+            _silhouetteMaterial->bindProperties(driver);
+            
             if (portalFrame->isTwoSided()) {
                 driver->disablePortalStencilWriting(portalFrame->getInactiveFace(isExit));
             }
+            driver->disableColorBuffer();
             driver->enablePortalStencilWriting(portalFrame->getActiveFace(isExit));
-            driver->setStencilPassBits(portalFrame->getActiveFace(isExit), portal->getRecursionLevel() - 1, false);
-            
-            _silhouetteMaterial->bindShader(driver);
-            _silhouetteMaterial->bindProperties(driver);
             
             // Only render the portal silhouette over the area covered
             // by the parent portal. Clip the rest (we don't want a portal
             // within a portal to bleed outside of its parent).
             driver->setStencilPassBits(portalFrame->getActiveFace(isExit), portal->getRecursionLevel() - 1, false);
-            portal->renderPortalSilhouette(_silhouetteMaterial, context, driver);
+            portal->renderPortalSilhouette(_silhouetteMaterial, VROSilhouetteMode::Textured, context, driver);
             pglpop();
         }
         
@@ -127,13 +130,25 @@ void VROScene::render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes, 
         portal->renderContents(context, driver);
         pglpop();
         
-        // Remove the stencil for this portal (decrement its number). Ensures
-        // side-by-side portals (portals with same recursion level) work correctly;
-        // otherwise objects in one portal can "bleed" into the other portal.
         if (portalFrame) {
-            pglpush("Portal");
+            // Remove the stencil for this portal (decrement its number). Ensures
+            // side-by-side portals (portals with same recursion level) work correctly;
+            // otherwise objects in one portal can "bleed" into the other portal.
+            pglpush("(-) Stencil");
+            _silhouetteMaterial->bindShader(driver);
+            _silhouetteMaterial->bindProperties(driver);
+            
+            driver->disableColorBuffer();
             driver->enablePortalStencilRemoval(portalFrame->getActiveFace(isExit));
             driver->setStencilPassBits(portalFrame->getActiveFace(isExit), portal->getRecursionLevel(), true);
+            portal->renderPortalSilhouette(_silhouetteMaterial, VROSilhouetteMode::Textured, context, driver);
+            pglpop();
+            
+            // Finally, render the portal frame to the color and depth buffers.
+            pglpush("Portal Frame");
+            driver->enableColorBuffer();
+            driver->disablePortalStencilWriting(VROFace::FrontAndBack);
+            driver->setStencilPassBits(portalFrame->getActiveFace(isExit), portal->getRecursionLevel() - 1, true);
             portal->renderPortal(context, driver);
             pglpop();
         }

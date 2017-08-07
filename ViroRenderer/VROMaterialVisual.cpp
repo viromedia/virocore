@@ -60,6 +60,17 @@ void VROMaterialVisual::setTexture(std::shared_ptr<VROTexture> texture) {
     _material.updateSubstrate();
 }
 
+void VROMaterialVisual::swapTexture(std::shared_ptr<VROTexture> texture) {
+    // If this is the first time a texture is assigned, we have to replace the substrate
+    if (!_contentsTexture) {
+        setTexture(texture);
+    }
+    // Otherwise we can hot-swap
+    else {
+        _contentsTexture = texture;
+    }
+}
+
 void VROMaterialVisual::setIntensity(float intensity) {
     _material.fadeSnapshot();
     _intensity = intensity;

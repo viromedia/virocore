@@ -8,6 +8,20 @@
 
 #include "VROPortalFrame.h"
 #include "VROLineSegment.h"
+#include "VROShaderModifier.h"
+
+// Shader modifier used for alpha discard
+static std::shared_ptr<VROShaderModifier> sAlphaTestModifier;
+
+std::shared_ptr<VROShaderModifier> VROPortalFrame::getAlphaDiscardModifier() {
+    if (!sAlphaTestModifier) {
+        std::vector<std::string> modifierCode =  {
+            "if (_output_color.a > 0.1) discard;",
+        };
+        sAlphaTestModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment, modifierCode);
+    }
+    return sAlphaTestModifier;
+}
 
 VROPortalFrame::VROPortalFrame() :
     _twoSided(false) {

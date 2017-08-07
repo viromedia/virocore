@@ -66,6 +66,7 @@ public:
     }
     
     void clearStencil(int bits)  {
+        glStencilMask(0xFF);
         glClearStencil(bits);
         glClear(GL_STENCIL_BUFFER_BIT);
     }

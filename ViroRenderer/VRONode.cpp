@@ -132,13 +132,23 @@ void VRONode::render(const VRORenderContext &context, std::shared_ptr<VRODriver>
     }
 }
 
-void VRONode::renderSilhouette(std::shared_ptr<VROMaterial> &material, const VRORenderContext &context,
-                               std::shared_ptr<VRODriver> &driver) {
+void VRONode::renderSilhouette(std::shared_ptr<VROMaterial> &material, VROSilhouetteMode mode,
+                               const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
     if (_geometry) {
-        _geometry->renderSilhouette(_computedTransform, material, context, driver);
+        if (mode == VROSilhouetteMode::Flat) {
+            _geometry->renderSilhouette(_computedTransform, material, context, driver);
+        }
+        else {
+            for (int i = 0; i < _geometry->getGeometryElements().size(); i++) {
+                std::shared_ptr<VROTexture> texture = _geometry->getMaterialForElement(i)->getDiffuse().getTexture();
+                material->getDiffuse().swapTexture(texture);
+                _geometry->renderSilhouetteTextured(i, _computedTransform, material, context, driver);
+            }
+        }
     }
+    
     for (std::shared_ptr<VRONode> &child : _subnodes) {
-        child->renderSilhouette(material, context, driver);
+        child->renderSilhouette(material, mode, context, driver);
     }
 }
 

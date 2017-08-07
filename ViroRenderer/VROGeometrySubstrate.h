@@ -19,6 +19,8 @@ class VRODriver;
 class VROMatrix4f;
 class VROMaterial;
 class VROGeometry;
+class VROMaterial;
+class VROTexture;
 
 /*
  Represents the geometry in the underlying graphics hardware.
@@ -54,6 +56,18 @@ public:
                                   std::shared_ptr<VROMaterial> &material,
                                   const VRORenderContext &context,
                                   std::shared_ptr<VRODriver> &driver) = 0;
+    
+    /*
+     Render the silhouette of the given element of the given geometry.
+     Renders using the provided material, which is assumed to already be
+     bound, and binds its associated diffuse texture.
+     */
+    virtual void renderSilhouetteTextured(const VROGeometry &geometry,
+                                          int element,
+                                          VROMatrix4f transform,
+                                          std::shared_ptr<VROMaterial> &material,
+                                          const VRORenderContext &context,
+                                          std::shared_ptr<VRODriver> &driver) = 0;
 };
 
 #endif /* VROGeometrySubstrate_h */

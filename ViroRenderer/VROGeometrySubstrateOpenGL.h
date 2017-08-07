@@ -66,6 +66,13 @@ public:
                           const VRORenderContext &context,
                           std::shared_ptr<VRODriver> &driver);
     
+    void renderSilhouetteTextured(const VROGeometry &geometry,
+                                  int element,
+                                  VROMatrix4f transform,
+                                  std::shared_ptr<VROMaterial> &material,
+                                  const VRORenderContext &context,
+                                  std::shared_ptr<VRODriver> &driver);
+    
 private:
     
     std::vector<GLuint> _vaos;

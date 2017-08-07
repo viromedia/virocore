@@ -294,14 +294,28 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(10);
-        camera->setPosition({0, 0, -5});
+        camera->setPosition({3, 0, -5});
         VROTransaction::commit();
     });
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
+        VROTransaction::setAnimationDuration(5);
+        camera->setPosition({-3, 0, -5});
+        VROTransaction::commit();
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        VROTransaction::begin();
         VROTransaction::setAnimationDuration(10);
-        //camera->setPosition({0, 0, 0});
+        camera->setPosition({0, 0, 0});
+        VROTransaction::commit();
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(30 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        VROTransaction::begin();
+        VROTransaction::setAnimationDuration(10);
+        camera->setPosition({0, 0, -5});
         VROTransaction::commit();
     });
     
