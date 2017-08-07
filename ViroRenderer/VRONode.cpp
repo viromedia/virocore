@@ -121,7 +121,9 @@ void VRONode::render(const VRORenderContext &context, std::shared_ptr<VRODriver>
             material->bindProperties(driver);
             material->bindLights(_computedLightsHash, _computedLights, context, driver);
             
-            render(i, material, context, driver);
+            if (!_computedLights.empty() || material->getLightingModel() == VROLightingModel::Constant) {
+                render(i, material, context, driver);
+            }
         }
     }
     
