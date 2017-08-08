@@ -16,6 +16,7 @@
 #include "VROPlatformUtil.h"
 #include "VROGeometryUtil.h"
 #include "VROAllocationTracker.h"
+#include "VROBoneUBO.h"
 #include <atomic>
 
 #define kDebugShaders 0
@@ -335,7 +336,7 @@ bool VROShaderProgram::compileAndLink() {
     }
     
     _lightingBlockIndex = glGetUniformBlockIndex(_program, "lighting");
-    _bonesBlockIndex = glGetUniformBlockIndex(_program, "bones");
+    _bonesBlockIndex = glGetUniformBlockIndex(_program, kDualQuaternionEnabled ? "bones_dq" : "bones");
 
     /*
      Release vertex and fragment shaders.

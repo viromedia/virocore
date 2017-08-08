@@ -13,16 +13,17 @@
 #include <vector>
 #include <memory>
 
+// True to use dual-quaternion skinning, which is faster and uses less memory
+static const bool kDualQuaternionEnabled = false;
+
 // Keep in sync with ViroFBX::VROFBXExporter.h and skinning_vsh.glsl
-static const int kMaxBones = 192;
+static const int kMaxBones = kDualQuaternionEnabled ? 192 : 192;
 
 // 8 floats for dual quaternions, 4 for scale
-static const int kFloatsPerBone = 12;
+static const int kFloatsPerBone = kDualQuaternionEnabled ? 12 : 16;
 
 // Grouped in 4N slots, matching skinning_vsh.glsl
 typedef struct {
-    int num_bones;
-    float padding0, padding1, padding2;
     float bone_transforms[kMaxBones * kFloatsPerBone];
 } VROBonesData;
 

@@ -264,6 +264,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
     pinfo("Loading node [%s]", node_pb.name().c_str());
     
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
+    node->setName(node_pb.name());
     node->setThreadRestrictionEnabled(false);
     node->setPosition({ node_pb.position(0), node_pb.position(1), node_pb.position(2) });
     node->setScale({ node_pb.scale(0), node_pb.scale(1), node_pb.scale(2) });
@@ -276,6 +277,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
     if (node_pb.has_geometry()) {
         const viro::Node_Geometry &geo_pb = node_pb.geometry();
         std::shared_ptr<VROGeometry> geo = loadFBXGeometry(geo_pb, base, isBaseURL, resourceMap, textureCache);
+        geo->setName(node_pb.name());
         
         if (geo_pb.has_skin() && skeleton) {
             geo->setSkinner(loadFBXSkinner(geo_pb.skin(), skeleton));
