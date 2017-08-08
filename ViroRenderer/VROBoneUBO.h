@@ -13,7 +13,8 @@
 #include <vector>
 #include <memory>
 
-// True to use dual-quaternion skinning, which is faster and uses less memory
+// True to use dual-quaternion skinning, which has more realistic movement and uses less memory
+// TODO VIRO-1472: DQS skinning is malforming meshes during animation
 static const bool kDualQuaternionEnabled = false;
 
 // Keep in sync with ViroFBX::VROFBXExporter.h and skinning_vsh.glsl

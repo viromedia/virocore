@@ -120,10 +120,6 @@ void VROBoneUBO::update(const std::unique_ptr<VROSkinner> &skinner) {
             break;
         }
         
-        //GLint size;
-        //glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &size);
-        //pinfo("GL_MAX_SHADER_STORAGE_BLOCK_SIZE is %d bytes", size);
-        
         VROMatrix4f transform = skinner->getModelTransform(i);
         if (kDualQuaternionEnabled) {
             VROVector3f   translation = transform.extractTranslation();
