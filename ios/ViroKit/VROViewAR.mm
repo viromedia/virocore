@@ -347,6 +347,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (void)stopVideoRecordingWithHandler:(VROViewWriteMediaFinishBlock)completionHandler {
     if (!_isRecording) {
         completionHandler(NO, nil, kVROViewErrorAlreadyStopped);
+        return;
     }
     // this block will be called once the video writer in stopRecordingV1 finishes writing the vid
     VROViewWriteMediaFinishBlock wrappedCompleteHandler = ^(BOOL success, NSURL *filepath, NSInteger errorCode) {
@@ -541,7 +542,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 - (void)stopAudioRecordingInternal {
-    if (_audioRecorder) {
+    if (_audioRecorder && [_audioRecorder isRecording]) {
         [_audioRecorder stop];
     }
     _audioRecorder = nil;
@@ -613,16 +614,20 @@ static VROVector3f const kZeroVector = VROVector3f();
     [_videoLoopTimer invalidate];
 
     [_videoWriterInput markAsFinished];
-    // CMTime is set up to be value / timescale = seconds, so since we're in millis, timescape is 1000.
-    [_videoWriter endSessionAtSourceTime:CMTimeMake(VROTimeCurrentMillis() - _startTimeMillis, 1000)];
-    [_videoWriter finishWritingWithCompletionHandler:^(void) {
-        if (_videoWriter.status == AVAssetWriterStatusCompleted) {
-            completionHandler(YES, _tempVideoFilePath, kVROViewErrorNone);
-        } else {
-            NSLog(@"[Recording] Failed writing to file: %@", _videoWriter.error ? [_videoWriter.error localizedDescription] : @"Unknown error");
-            completionHandler(NO, _tempVideoFilePath, kVROViewErrorWriteToFile);
-        }
-    }];
+    if (_videoWriter.status == AVAssetWriterStatusWriting) {
+        // CMTime is set up to be value / timescale = seconds, so since we're in millis, timescape is 1000.
+        [_videoWriter endSessionAtSourceTime:CMTimeMake(VROTimeCurrentMillis() - _startTimeMillis, 1000)];
+        [_videoWriter finishWritingWithCompletionHandler:^(void) {
+            if (_videoWriter.status == AVAssetWriterStatusCompleted) {
+                completionHandler(YES, _tempVideoFilePath, kVROViewErrorNone);
+            } else {
+                NSLog(@"[Recording] Failed writing to file: %@", _videoWriter.error ? [_videoWriter.error localizedDescription] : @"Unknown error");
+                completionHandler(NO, _tempVideoFilePath, kVROViewErrorWriteToFile);
+            }
+        }];
+    } else {
+        completionHandler(NO, nil, kVROViewErrorAlreadyStopped);
+    }
 }
 
 + (CVPixelBufferRef)pixelBufferFromCGImage:(CGImageRef)image {
