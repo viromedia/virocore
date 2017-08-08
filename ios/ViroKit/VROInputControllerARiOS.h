@@ -16,7 +16,11 @@
 #include "VROARSession.h"
 #include "VROARHitTestResult.h"
 
-const double kARProcessDragInterval = 75; //ms
+const double kARProcessDragInterval = 75; // milliseconds
+const double kARDragAnimationDuration = .075; // seconds
+const double kARMinDragDistance = .33; // meters
+const double kARMaxDragDistance = 5; // meters
+
 
 class VROInputControllerARiOS : public VROInputControllerBase {
 public:
@@ -105,16 +109,17 @@ private:
      if we should always run it (vs optimizing).
      */
     void processDragging(int source, bool alwaysRun);
+    
+    /*
+     Given a vector a VROARHitTestResults, returns the next position we should move the object to.
+     */
+    VROVector3f getNextDragPosition(std::vector<VROARHitTestResult> results);
 
     /*
-     Given a vector of VROARHitTestResults, returns the "best" one based on valueForHitTestResultType.
+     True/false if distance between the two points are > kARMinDragDistance and < kARMaxDragDistance
      */
-    VROARHitTestResult findBestHitTestResult(std::vector<VROARHitTestResult> results);
+    bool isDistanceWithinBounds(VROVector3f point1, VROVector3f point2);
 
-    /*
-     Returns an int value for the given VROARHitTestResultType where larger values are better.
-     */
-    int valueForHitTestResultType(VROARHitTestResultType type);
 };
 
 #endif /* VROInputControllerARiOS_h */

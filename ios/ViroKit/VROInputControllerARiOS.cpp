@@ -95,8 +95,7 @@ void VROInputControllerARiOS::processDragging(int source, bool alwaysRun) {
                                                                      VROARHitTestResultType::FeaturePoint });
         
         if (results.size() > 0) {
-            VROARHitTestResult result = findBestHitTestResult(results);
-            VROVector3f position = result.getWorldTransform().extractTranslation();
+            VROVector3f position = getNextDragPosition(results);
             
             // TODO: since we're animating position... the position passed back below won't necessarily
             // reflect its real position.
@@ -118,7 +117,7 @@ void VROInputControllerARiOS::processDragging(int source, bool alwaysRun) {
             
             // create new transaction to the new location
             VROTransaction::begin();
-            VROTransaction::setAnimationDuration(.075);
+            VROTransaction::setAnimationDuration(.1);
             arDraggableNode->setPosition(position);
             std::weak_ptr<VROARDraggableNode> weakNode = arDraggableNode;
             VROTransaction::setFinishCallback([weakNode]() {
@@ -128,8 +127,9 @@ void VROInputControllerARiOS::processDragging(int source, bool alwaysRun) {
                 }
             });
             
-            // Update last known dragged position and notify delegates
+            // Update last known dragged position, distance to controller and notify delegates
             _lastDraggedNodePosition = position;
+            _lastDraggedNode->_draggedDistanceFromController = position.distanceAccurate(_latestCamera.getPosition());
             
             arDraggableNode->getEventDelegate()->onDrag(source, position);
             for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
@@ -139,32 +139,92 @@ void VROInputControllerARiOS::processDragging(int source, bool alwaysRun) {
     }
 }
 
-VROARHitTestResult VROInputControllerARiOS::findBestHitTestResult(std::vector<VROARHitTestResult> results) {
-    VROARHitTestResult toReturn = results[0];
-    for (int i = 1; i < results.size(); i++) {
-        VROARHitTestResult candidate = results[i];
-        if (valueForHitTestResultType(candidate.getType()) > valueForHitTestResultType(toReturn.getType())) {
-            toReturn = candidate;
+/*
+ Things we're doing to select the next drag position:
+ - picking plane with extent if possible
+ - looking at all feature points
+     - picking the feature point that changed the least from the last position
+     - ensuring that minDist < feature point < maxDist
+     - ensuring that feature point is in same general direction as forward (in front of the camera)
+ - picking plane without extent if no feature points
+     - ensuring that plane without extent also is between minDist and maxDist
+ - finally, if all else fails, we should always get at least something back from ARKit
+     - grab that hit result, normalize it and multiply it by the last distance we used
+
+ Things we aren't doing but could:
+ - ignoring ExistingPlaneUsingExtent because it causes us to miss smaller objects (think
+   trashcans/chairs) when a plane extends under the objects.
+ - Smoothing the position - this might not be ideal in certain cases where we're certain of
+   the position because if you drag an object from the table to the floor, there's no intermediary position.
+ - Parse the point cloud ourselves to more directly influence the estimates.
+ - "Shotgun" the area with hit tests to find the best position.
+ */
+VROVector3f VROInputControllerARiOS::getNextDragPosition(std::vector<VROARHitTestResult> results) {
+    VROVector3f cameraPos = _latestCamera.getPosition();
+    
+    // first, filter the points, if we find an ExistingPlaneUsingExtent, then return that (highest confidence)
+    std::vector<VROARHitTestResult> featurePoints;
+    std::shared_ptr<VROARHitTestResult> existingPlaneWithoutExtent = nullptr;
+    for (VROARHitTestResult result : results) {
+        switch (result.getType()) {
+            case VROARHitTestResultType::ExistingPlaneUsingExtent:
+                if (isDistanceWithinBounds(cameraPos, result.getWorldTransform().extractTranslation())) {
+                    return result.getWorldTransform().extractTranslation();
+                }
+                break;
+            case VROARHitTestResultType::ExistingPlane:
+                existingPlaneWithoutExtent = std::make_shared<VROARHitTestResult>(result);
+                break;
+            case VROARHitTestResultType::FeaturePoint:
+                featurePoints.push_back(result);
+                break;
+            }
+    }
+    
+    // Take the given feature points and find the one that changed the least from the last point.
+    if (featurePoints.size() > 0) {
+        std::sort(featurePoints.begin(), featurePoints.end(), [this](VROARHitTestResult a, VROARHitTestResult b) {
+            VROVector3f posA = a.getWorldTransform().extractTranslation();
+            VROVector3f posB = b.getWorldTransform().extractTranslation();
+            float distALast = posA.distance(this->_lastDraggedNodePosition);
+            float distBLast = posB.distance(this->_lastDraggedNodePosition);
+            return distALast < distBLast;
+        });
+
+        for (VROARHitTestResult featurePoint : featurePoints) {
+            VROVector3f featurePointPos = featurePoint.getWorldTransform().extractTranslation();
+            VROVector3f ray = featurePointPos - _latestCamera.getPosition();
+            if (isDistanceWithinBounds(cameraPos, featurePointPos) && _latestCamera.getForward().dot(ray) > 0) {
+                return featurePointPos;
+            }
         }
     }
-    return toReturn;
+
+    // if we don't trust/have any feature points, then use the existingPlaneWithoutExtent.
+    if (existingPlaneWithoutExtent) {
+        VROVector3f planePos = existingPlaneWithoutExtent->getWorldTransform().extractTranslation();
+        if (isDistanceWithinBounds(cameraPos, planePos)) {
+            return planePos;
+        }
+    }
+
+    float distance = _lastDraggedNode->_draggedDistanceFromController;
+    distance = fmin(distance, kARMaxDragDistance);
+    distance = fmax(distance, kARMinDragDistance);
+    VROVector3f touchForward = (results[0].getWorldTransform().extractTranslation() - cameraPos).normalize();
+    
+    // sometimes the touch ray is calculated "behind" the camera forward, so just flip it.
+    float projection = _latestCamera.getForward().dot(touchForward);
+    if (projection < 0) {
+        touchForward = touchForward * -1;
+    }
+    
+    return cameraPos + (touchForward * distance);
 }
 
-/*
- This function takes a VROARHitTestResultType and assigns an int value to them where
- larger int values are "preferred" over smaller ones.
- */
-int VROInputControllerARiOS::valueForHitTestResultType(VROARHitTestResultType type) {
-    switch(type) {
-        case VROARHitTestResultType::ExistingPlaneUsingExtent:
-            return 3;
-        case VROARHitTestResultType::ExistingPlane:
-            return 1;
-        case VROARHitTestResultType::EstimatedHorizontalPlane:
-            return 0;
-        case VROARHitTestResultType::FeaturePoint:
-            return 2;
-    }
+bool VROInputControllerARiOS::isDistanceWithinBounds(VROVector3f point1, VROVector3f point2) {
+    float distance = point1.distance(point2);
+    return distance > kARMinDragDistance && distance < kARMaxDragDistance;
 }
 
 std::string VROInputControllerARiOS::getHeadset() {
@@ -176,12 +236,12 @@ std::string VROInputControllerARiOS::getController() {
 }
 
 void VROInputControllerARiOS::processTouchMovement() {
-  if(_isPinchOngoing) {
-      VROInputControllerBase::onPinch(ViroCardBoard::InputSource::Controller, _latestScale, VROEventDelegate::PinchState::PinchMove);
-  }else if (_isTouchOngoing) {
-      VROVector3f rayFromCamera = calculateCameraRay(_latestTouchPos);
-      VROInputControllerBase::updateHitNode(_latestCamera, _latestCamera.getPosition(), rayFromCamera);
-      VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, _latestCamera.getPosition(), _latestCamera.getRotation(), rayFromCamera);
+    if (_isPinchOngoing) {
+        VROInputControllerBase::onPinch(ViroCardBoard::InputSource::Controller, _latestScale, VROEventDelegate::PinchState::PinchMove);
+    } else if (_isTouchOngoing) {
+        VROVector3f rayFromCamera = calculateCameraRay(_latestTouchPos);
+        VROInputControllerBase::updateHitNode(_latestCamera, _latestCamera.getPosition(), rayFromCamera);
+        VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, _latestCamera.getPosition(), _latestCamera.getRotation(), rayFromCamera);
     }
 }
 
@@ -230,21 +290,23 @@ VROVector3f VROInputControllerARiOS::calculateCameraRay(VROVector3f touchPos) {
     std::shared_ptr<VROARSession> session = _weakSession.lock();
     if (session) {
         std::unique_ptr<VROARFrame> &frame = session->getLastFrame();
-        std::vector<VROARHitTestResult> results = frame->hitTest(_latestTouchPos.x,
-                                                                 _latestTouchPos.y,
-                                                                 { VROARHitTestResultType::ExistingPlaneUsingExtent,
-                                                                     VROARHitTestResultType::ExistingPlane,
-                                                                     VROARHitTestResultType::EstimatedHorizontalPlane,
-                                                                     VROARHitTestResultType::FeaturePoint });
-        
-        if (results.size() > 0) {
-            // just grab the first result, we don't care about accuracy because all points returned are
-            // along the same line.
-            VROARHitTestResult result = results[0];
-            VROVector3f position = result.getWorldTransform().extractTranslation();
-            VROVector3f ray = (position - _latestCamera.getPosition()).normalize();
+        if (frame) {
+            std::vector<VROARHitTestResult> results = frame->hitTest(_latestTouchPos.x,
+                                                                     _latestTouchPos.y,
+                                                                     { VROARHitTestResultType::ExistingPlaneUsingExtent,
+                                                                         VROARHitTestResultType::ExistingPlane,
+                                                                         VROARHitTestResultType::EstimatedHorizontalPlane,
+                                                                         VROARHitTestResultType::FeaturePoint });
             
-            return ray;
+            if (results.size() > 0) {
+                // just grab the first result, we don't care about accuracy because all points returned are
+                // along the same line.
+                VROARHitTestResult result = results[0];
+                VROVector3f position = result.getWorldTransform().extractTranslation();
+                VROVector3f ray = (position - _latestCamera.getPosition()).normalize();
+                
+                return ray;
+            }
         }
     }
     return VROVector3f();

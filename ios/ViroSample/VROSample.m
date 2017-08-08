@@ -1245,7 +1245,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                                                                                         std::make_shared<VROImageiOS>([UIImage imageNamed:@"coffee_mug_specular"], format)));
                                                                     });
     
-    std::shared_ptr<VROBox> box = VROBox::createBox(.2, .2, .2);
+    std::shared_ptr<VROBox> box = VROBox::createBox(.15, .15, .15);
     std::shared_ptr<VROARDraggableNode> draggableNode = std::make_shared<VROARDraggableNode>();
     
     self.delegate = std::make_shared<VROEventDelegateiOS>(self);
@@ -1256,7 +1256,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     draggableNode->setPosition(VROVector3f(0,0,-1));
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
-    boxNode->setPosition(VROVector3f(0, .13, 0));
+    boxNode->setPosition(VROVector3f(0, .10, 0));
     draggableNode->addChildNode(boxNode);
     sceneNode->addChildNode(draggableNode);
     arScene->addNode(sceneNode);
@@ -1284,7 +1284,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleScenePortal;
+    self.sceneIndex = VROSampleSceneARDraggableNode;
     self.driver = driver;
     
     self.sceneController = [self loadSceneWithIndex:self.sceneIndex];
