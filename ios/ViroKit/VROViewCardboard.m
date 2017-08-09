@@ -86,6 +86,18 @@
     self.vrModeEnabled = enabled;
 }
 
+- (NSString *)getPlatform {
+    return @"gvr";
+}
+
+- (NSString *)getHeadset {
+    return @"cardboard";
+}
+
+- (NSString *)getController {
+    return @"cardboard";
+}
+
 - (void)willMoveToWindow:(UIWindow *)newWindow {
     if (newWindow) {
         /*

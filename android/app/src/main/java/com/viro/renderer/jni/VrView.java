@@ -19,7 +19,7 @@ public interface VrView extends Application.ActivityLifecycleCallbacks {
 
     public View getContentView();
 
-    public String getVRPlatform();
+    public String getPlatform();
 
     public String getHeadset();
 

@@ -319,7 +319,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     public View getContentView() { return this; }
 
     @Override
-    public String getVRPlatform() {
+    public String getPlatform() {
         return "gvr";
     }
 

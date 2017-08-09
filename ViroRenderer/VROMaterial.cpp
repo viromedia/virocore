@@ -15,6 +15,7 @@
 #include "VROSortKey.h"
 #include "VROLog.h"
 #include <atomic>
+#include <algorithm>
 
 static std::atomic_int sMaterialId;
 

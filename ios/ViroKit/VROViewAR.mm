@@ -693,6 +693,18 @@ static VROVector3f const kZeroVector = VROVector3f();
     _renderer->setDebugHUDEnabled(enabled);
 }
 
+- (NSString *)getPlatform {
+    return @"ar";
+}
+
+- (NSString *)getHeadset {
+    return @"mobile";
+}
+
+- (NSString *)getController {
+    return @"screen";
+}
+
 #pragma mark - Key Validation
 
 - (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROViewValidApiKeyBlock)completionBlock {
