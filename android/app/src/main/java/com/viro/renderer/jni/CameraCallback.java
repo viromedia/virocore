@@ -9,5 +9,7 @@ package com.viro.renderer.jni;
  */
 public interface CameraCallback {
     void onGetCameraOrientation(float posX, float posY, float posZ,
-                                float rotEulerX, float rotEulerY, float rotEulerZ);
+                                float rotEulerX, float rotEulerY, float rotEulerZ,
+                                float forwardX, float forwardY, float forwardZ,
+                                float upX, float upY, float upZ);
 }
