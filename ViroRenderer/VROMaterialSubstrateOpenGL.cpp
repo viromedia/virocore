@@ -297,8 +297,6 @@ void VROMaterialSubstrateOpenGL::loadUniforms() {
 #pragma mark - Binding Materials
 
 void VROMaterialSubstrateOpenGL::bindProperties() {
-    bindDepthSettings();
-    bindCullingSettings();
     bindMaterialUniforms();
 }
 
@@ -334,38 +332,6 @@ void VROMaterialSubstrateOpenGL::bindLights(int lightsHash,
     }
     
     _lightingUBO->bind(_program);
-}
-
-void VROMaterialSubstrateOpenGL::bindDepthSettings() {
-    if (_material.getWritesToDepthBuffer()) {
-        glDepthMask(GL_TRUE);
-    }
-    else {
-        glDepthMask(GL_FALSE);
-    }
-    
-    if (_material.getReadsFromDepthBuffer()) {
-        glDepthFunc(GL_LEQUAL);
-    }
-    else {
-        glDepthFunc(GL_ALWAYS);
-    }
-}
-
-void VROMaterialSubstrateOpenGL::bindCullingSettings() {
-    VROCullMode cullMode = _material.getCullMode();
-    
-    if (cullMode == VROCullMode::None) {
-        glDisable(GL_CULL_FACE);
-    }
-    else if (cullMode == VROCullMode::Back) {
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-    }
-    else if (cullMode == VROCullMode::Front) {
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT);
-    }
 }
 
 void VROMaterialSubstrateOpenGL::bindView(VROMatrix4f transform, VROMatrix4f modelview,

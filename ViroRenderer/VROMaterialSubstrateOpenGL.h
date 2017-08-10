@@ -105,8 +105,6 @@ private:
 
     std::vector<VROUniform *> _shaderModifierUniforms;
     
-    void bindDepthSettings();
-    void bindCullingSettings();
     void bindMaterialUniforms();
     void bindGeometryUniforms(float opacity, const VROGeometry &geometry);
     

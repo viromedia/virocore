@@ -52,8 +52,6 @@ public:
     void clearDepth();
     void clearColor();
     void clearDepthAndColor();
-    void enableColorBuffer();
-    void disableColorBuffer();
     void enablePortalStencilWriting(VROFace face);
     void enablePortalStencilRemoval(VROFace face);
     void disablePortalStencilWriting(VROFace face);

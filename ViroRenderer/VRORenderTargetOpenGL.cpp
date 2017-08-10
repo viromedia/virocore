@@ -11,6 +11,7 @@
 #include "VROTexture.h"
 #include "VROTextureSubstrateOpenGL.h"
 #include "VRODriverOpenGL.h"
+#include "VROMaterial.h"
 
 #ifdef VRO_PLATFORM_ANDROID
 #define GL_COMPARE_REF_TO_TEXTURE                        0x884E
@@ -349,27 +350,30 @@ void VRORenderTargetOpenGL::clearStencil(int bits)  {
 }
 
 void VRORenderTargetOpenGL::clearDepth() {
-    glDepthMask(GL_TRUE);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    std::shared_ptr<VRODriver> driver = _driver.lock();
+    if (driver) {
+        driver->setDepthWritingEnabled(true);
+        glClear(GL_DEPTH_BUFFER_BIT);
+    }
 }
 
 void VRORenderTargetOpenGL::clearColor() {
-    glClearColor(_clearColor.x, _clearColor.y, _clearColor.z, _clearColor.w);
-    glClear(GL_COLOR_BUFFER_BIT);
+    std::shared_ptr<VRODriver> driver = _driver.lock();
+    if (driver) {
+        driver->setColorWritingEnabled(true);
+        glClearColor(_clearColor.x, _clearColor.y, _clearColor.z, _clearColor.w);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
 }
 
 void VRORenderTargetOpenGL::clearDepthAndColor() {
-    glDepthMask(GL_TRUE);
-    glClearColor(_clearColor.x, _clearColor.y, _clearColor.z, _clearColor.w);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void VRORenderTargetOpenGL::enableColorBuffer() {
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-}
-
-void VRORenderTargetOpenGL::disableColorBuffer() {
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    std::shared_ptr<VRODriver> driver = _driver.lock();
+    if (driver) {
+        driver->setDepthWritingEnabled(true);
+        driver->setColorWritingEnabled(true);
+        glClearColor(_clearColor.x, _clearColor.y, _clearColor.z, _clearColor.w);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 }
 
 GLenum toGL(VROFace face) {

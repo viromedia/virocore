@@ -23,6 +23,6 @@ void VROChoreographer::render(std::shared_ptr<VROScene> scene, VRORenderContext 
     
     VRORenderPassInputOutput inputs;
     inputs[kRenderTargetSingleOutput] = driver->getDisplay();
-    _baseRenderPass->render(scene, inputs, *context, driver);
+    _baseRenderPass->render(scene, inputs, context, driver);
 }
 

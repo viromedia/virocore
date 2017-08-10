@@ -32,8 +32,16 @@ class VRODriverOpenGL : public VRODriver, public std::enable_shared_from_this<VR
 
 public:
     
-    VRODriverOpenGL() : _lastPurgeFrame(0) {
-        
+    VRODriverOpenGL() :
+        _lastPurgeFrame(0),
+        _depthWritingEnabled(true),
+        _depthReadingEnabled(true),
+        _colorWritingEnabled(true),
+        _cullMode(VROCullMode::None) {
+        // Initialize actual OpenGL state to match our CPU state
+        glDepthMask(GL_TRUE);
+        glDepthFunc(GL_LEQUAL);
+        glDisable(GL_CULL_FACE);
     }
 
     void willRenderFrame(const VRORenderContext &context) {
@@ -67,6 +75,67 @@ public:
         _lastPurgeFrame = context.getFrame();
     }
     
+    void setDepthWritingEnabled(bool enabled) {
+        if (_depthWritingEnabled == enabled) {
+            return;
+        }
+        
+        _depthWritingEnabled = enabled;
+        if (enabled) {
+            glDepthMask(GL_TRUE);
+        }
+        else {
+            glDepthMask(GL_FALSE);
+        }
+    }
+    
+    void setDepthReadingEnabled(bool enabled) {
+        if (_depthReadingEnabled == enabled) {
+            return;
+        }
+        
+        _depthReadingEnabled = enabled;
+        if (_depthReadingEnabled) {
+            glDepthFunc(GL_LEQUAL);
+        }
+        else {
+            glDepthFunc(GL_ALWAYS);
+        }
+    }
+    
+    void setCullMode(VROCullMode cullMode) {
+        if (_cullMode == cullMode) {
+            return;
+        }
+        
+        _cullMode = cullMode;
+        if (cullMode == VROCullMode::None) {
+            glDisable(GL_CULL_FACE);
+        }
+        else if (cullMode == VROCullMode::Back) {
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
+        }
+        else if (cullMode == VROCullMode::Front) {
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_FRONT);
+        }
+    }
+    
+    void setColorWritingEnabled(bool enabled) {
+        if (_colorWritingEnabled == enabled) {
+            return;
+        }
+        
+        _colorWritingEnabled = enabled;
+        if (_colorWritingEnabled) {
+            glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        }
+        else {
+            glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+        }
+    }
+
     VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) {
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
         return new VROGeometrySubstrateOpenGL(geometry, driver);
@@ -227,6 +296,13 @@ private:
      The frame during which we last purged resources.
      */
     int _lastPurgeFrame;
+    
+    /*
+     Current context-wide state.
+     */
+    bool _colorWritingEnabled;
+    bool _depthWritingEnabled, _depthReadingEnabled;
+    VROCullMode _cullMode;
     
 };
 

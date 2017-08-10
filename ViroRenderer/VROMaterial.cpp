@@ -215,6 +215,9 @@ void VROMaterial::updateSortKey(VROSortKey &key, std::shared_ptr<VRODriver> &dri
 }
 
 void VROMaterial::bindProperties(std::shared_ptr<VRODriver> &driver) {
+    driver->setCullMode(_cullMode);
+    driver->setDepthReadingEnabled(_readsFromDepthBuffer);
+    driver->setDepthWritingEnabled(_writesToDepthBuffer);
     getSubstrate(driver)->bindProperties();
 }
 

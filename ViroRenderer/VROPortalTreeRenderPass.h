@@ -23,7 +23,7 @@ public:
     virtual ~VROPortalTreeRenderPass();
     
     VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
-                                    const VRORenderContext &context, std::shared_ptr<VRODriver> &driver);
+                                    VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
     
 private:
     

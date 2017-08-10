@@ -757,12 +757,8 @@ static ovrFrameParms ovrRenderer_RenderFrame( ovrRenderer * rendererOVR, const o
         GL( glViewport( 0, 0, frameBuffer->Width, frameBuffer->Height ) );
 
         GL( glEnable( GL_DEPTH_TEST ) );
-        GL( glDepthMask( GL_TRUE ) );
-        GL( glDepthFunc( GL_LEQUAL ) );
         GL( glEnable(GL_BLEND) );
         GL( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
-        GL( glEnable( GL_CULL_FACE ) );
-        GL( glCullFace( GL_BACK ) );
 
         GL( glClearColor( 0.0f, 0.0f, 0.0f, 1.0f ) );
         GL( glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ) );

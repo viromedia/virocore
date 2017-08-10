@@ -60,7 +60,7 @@ public:
      each frame.
      */
     virtual VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
-                                            const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) = 0;
+                                            VRORenderContext *context, std::shared_ptr<VRODriver> &driver) = 0;
     
 };
 

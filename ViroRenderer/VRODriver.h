@@ -36,6 +36,8 @@ enum class VROWrapMode;
 enum class VROFilterMode;
 enum class VROMipmapMode;
 enum class VRORenderTargetType;
+enum class VROFace;
+enum class VROCullMode;
 
 /*
  The driver is used to interface with the rendering subsystem (OpenGL,
@@ -47,13 +49,25 @@ public:
     
     virtual ~VRODriver() {}
     
-    // Provides the driver an opportunity to update any sub-components
-    // with per-frame state. The willRenderFrame method is invoked just
-    // prior to rendering, and didRenderFrame is invoked afterward. The
-    // VROFrameTimer can be used by the driver to timebox its tasks so
-    // as not to overrun frame time.
+    /*
+     Provides the driver an opportunity to update any sub-components
+     with per-frame state. The willRenderFrame method is invoked just
+     prior to rendering, and didRenderFrame is invoked afterward. The
+     VROFrameTimer can be used by the driver to timebox its tasks so
+     as not to overrun frame time.
+     */
     virtual void willRenderFrame(const VRORenderContext &context) = 0;
     virtual void didRenderFrame(const VROFrameTimer &timer, const VRORenderContext &context) = 0;
+    
+    /*
+     The driver controls context-wide state change. The implementation
+     should store a CPU copy of current state to avoid sending unnecessary
+     instructions to the GPU.
+     */
+    virtual void setDepthWritingEnabled(bool enabled) = 0;
+    virtual void setDepthReadingEnabled(bool enabled) = 0;
+    virtual void setCullMode(VROCullMode cullMode) = 0;
+    virtual void setColorWritingEnabled(bool enabled) = 0;
     
     virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) = 0;
     virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) = 0;

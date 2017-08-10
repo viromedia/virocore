@@ -360,7 +360,6 @@ void VROGeometrySubstrateOpenGL::renderSilhouetteTextured(const VROGeometry &geo
     pglpush("Silhouette [%s]", geometry.getName().c_str());
     
     VROGeometryElementOpenGL &element = _elements[elementIndex];
-    
     VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
     if (_boneUBO) {
         _boneUBO->update(geometry.getSkinner());
@@ -373,4 +372,6 @@ void VROGeometrySubstrateOpenGL::renderSilhouetteTextured(const VROGeometry &geo
     glBindVertexArray(_vaos[elementIndex]);
     renderMaterial(geometry, substrate, element, 1.0, context, driver);
     glBindVertexArray(0);
+    
+    pglpop();
 }

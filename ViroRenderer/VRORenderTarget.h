@@ -13,6 +13,7 @@
 #include "VROVector4f.h"
 
 class VROTexture;
+enum class VROFace;
 
 /*
  Renderbuffers should be used when we do *not* need to sample the output of a
@@ -23,12 +24,6 @@ enum class VRORenderTargetType {
     Renderbuffer,  // Uses depth and color renderbuffers
     ColorTexture,  // Uses a color texture and a depth renderbuffer
     DepthTexture   // Uses a depth texture and a color renderbuffer
-};
-
-enum class VROFace {
-    Front,
-    Back,
-    FrontAndBack
 };
 
 /*
@@ -135,16 +130,6 @@ public:
      Clear both depth and color at the same time.
      */
     virtual void clearDepthAndColor() = 0;
-    
-    /*
-     Enable the color buffer for writing.
-     */
-    virtual void enableColorBuffer() = 0;
-    
-    /*
-     Disable the color buffer from writing.
-     */
-    virtual void disableColorBuffer() = 0;
     
     /*
      Enable portal stencil functions. When writing, we INCR the stencil
