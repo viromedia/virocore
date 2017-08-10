@@ -8,6 +8,7 @@
 
 #include "VROPortalFrame.h"
 #include "VROLineSegment.h"
+#include "VRORenderTarget.h"
 #include "VROShaderModifier.h"
 
 // Shader modifier used for alpha discard

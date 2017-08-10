@@ -30,6 +30,7 @@ class VRORenderContext;
 class VROFrameListener;
 class VRORenderDelegateInternal;
 class VROFrameScheduler;
+class VROChoreographer;
 enum class VROCameraRotationType;
 enum class VROEyeType;
 enum class VROTimingFunctionType;
@@ -159,6 +160,12 @@ private:
      Maintains parameters used for scene rendering.
      */
     std::shared_ptr<VRORenderContext> _context;
+    
+    /*
+     Sequences the render passes and targets. Defines the overall rendering
+     technique.
+     */
+    std::shared_ptr<VROChoreographer> _choreographer;
 
     /*
      Controller used for handling all input events.

@@ -23,6 +23,8 @@
 #include "VROCamera.h"
 #include "VROFrameTimer.h"
 #include "VROFrameScheduler.h"
+#include "VROChoreographer.h"
+#include "VROPortalTreeRenderPass.h"
 #include "VRODebugHUD.h"
 
 // Target frames-per-second. Eventually this will be platform dependent,
@@ -51,6 +53,9 @@ VRORenderer::VRORenderer(std::shared_ptr<VROInputControllerBase> inputController
     _context = std::make_shared<VRORenderContext>(_frameSynchronizer, _frameScheduler);
     _context->setPencil(std::make_shared<VROPencil>());
     memset(_fpsTickArray, 0x0, sizeof(_fpsTickArray));
+        
+    _choreographer = std::make_shared<VROChoreographer>();
+    _choreographer->setBaseRenderPass(std::make_shared<VROPortalTreeRenderPass>());
 }
 
 VRORenderer::~VRORenderer() {
@@ -338,12 +343,12 @@ void VRORenderer::renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> drive
             _outgoingSceneController->sceneWillRender(_context.get());
             _sceneController->sceneWillRender(_context.get());
 
-            _outgoingSceneController->getScene()->render(*_context.get(), driver);
-            _sceneController->getScene()->render(*_context.get(), driver);
+            _choreographer->render(_outgoingSceneController->getScene(), _context.get(), driver);
+            _choreographer->render(_sceneController->getScene(), _context.get(), driver);
         }
         else {
             _sceneController->sceneWillRender(_context.get());
-            _sceneController->getScene()->render(*_context.get(), driver);
+            _choreographer->render(_sceneController->getScene(), _context.get(), driver);
         }
     }
 }

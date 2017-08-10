@@ -13,6 +13,7 @@
 
 class VROShaderModifier;
 class VROLineSegment;
+enum class VROFace;
 
 /*
  Portal frames are nodes that contain the geometry representing the

@@ -63,8 +63,8 @@ public:
                               std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VROTextureSubstrateOpenGL();
     
-    std::pair<GLenum, GLint> getTexture() const {
-        return std::pair<GLenum, GLint>(_target, _texture);
+    std::pair<GLenum, GLuint> getTexture() const {
+        return std::pair<GLenum, GLuint>(_target, _texture);
     }
     void setTexture(GLuint texture) {
         _texture = texture;

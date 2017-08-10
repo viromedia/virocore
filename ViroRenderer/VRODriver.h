@@ -25,6 +25,7 @@ class VROSound;
 class VROAudioPlayer;
 class VROTypeface;
 class VROFrameTimer;
+class VRORenderTarget;
 class VRORenderContext;
 
 enum class VROSoundType;
@@ -34,12 +35,7 @@ enum class VROTextureInternalFormat;
 enum class VROWrapMode;
 enum class VROFilterMode;
 enum class VROMipmapMode;
-
-enum class VROFace {
-    Front,
-    Back,
-    FrontAndBack
-};
+enum class VRORenderTargetType;
 
 /*
  The driver is used to interface with the rendering subsystem (OpenGL,
@@ -59,37 +55,6 @@ public:
     virtual void willRenderFrame(const VRORenderContext &context) = 0;
     virtual void didRenderFrame(const VROFrameTimer &timer, const VRORenderContext &context) = 0;
     
-    // Clear the stencil buffer with the given clear value
-    virtual void clearStencil(int bits) = 0;
-    
-    // Clear the depth buffer
-    virtual void clearDepth() = 0;
-    
-    // Clear the color buffer
-    virtual void clearColor() = 0;
-    
-    // Clear both depth and color at the same time
-    virtual void clearDepthAndColor() = 0;
-    
-    // Enable the color buffer for writing
-    virtual void enableColorBuffer() = 0;
-    
-    // Disable the color buffer from writing
-    virtual void disableColorBuffer() = 0;
-    
-    // Enable portal stencil functions. When writing, we INCR the stencil
-    // buffer. When removing, we DECR the buffer. Finally when reading, we
-    // make the stencil buffer read-only.
-    virtual void enablePortalStencilWriting(VROFace face) = 0;
-    virtual void enablePortalStencilRemoval(VROFace face) = 0;
-    virtual void disablePortalStencilWriting(VROFace face) = 0;
-    
-    // Set the reference bits for the stencil test. If passIfLess is
-    // false, we pass the stencil test if ref equals the value in the
-    // stencil buffer. If passIsLess is true, we pass the stencil test
-    // if ref <= value in stencil buffer.
-    virtual void setStencilPassBits(VROFace face, int bits, bool passIfLess) = 0;
-    
     virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) = 0;
     virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) = 0;
     virtual VROTextureSubstrate *newTextureSubstrate(VROTextureType type,
@@ -100,6 +65,8 @@ public:
                                                      int width, int height, std::vector<uint32_t> mipSizes,
                                                      VROWrapMode wrapS, VROWrapMode wrapT,
                                                      VROFilterMode minFilter, VROFilterMode magFilter, VROFilterMode mipFilter) = 0;
+    virtual std::shared_ptr<VRORenderTarget> newRenderTarget(int width, int height, VRORenderTargetType type) = 0;
+    virtual std::shared_ptr<VRORenderTarget> getDisplay() = 0;
     virtual std::shared_ptr<VROVideoTextureCache> newVideoTextureCache() = 0;
     virtual std::shared_ptr<VROSound> newSound(std::shared_ptr<VROSoundData> data, VROSoundType type) = 0;
     virtual std::shared_ptr<VROSound> newSound(std::string path, VROSoundType type, bool local) = 0;

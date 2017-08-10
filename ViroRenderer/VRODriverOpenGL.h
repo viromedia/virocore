@@ -15,6 +15,8 @@
 #include "VROGeometrySubstrateOpenGL.h"
 #include "VROMaterialSubstrateOpenGL.h"
 #include "VROTextureSubstrateOpenGL.h"
+#include "VRORenderTargetOpenGL.h"
+#include "VRODisplayOpenGL.h"
 #include "VROShaderProgram.h"
 #include "VROLightingUBO.h"
 #include "VROShaderModifier.h"
@@ -65,71 +67,6 @@ public:
         _lastPurgeFrame = context.getFrame();
     }
     
-    void clearStencil(int bits)  {
-        glStencilMask(0xFF);
-        glClearStencil(bits);
-        glClear(GL_STENCIL_BUFFER_BIT);
-    }
-    
-    void clearDepth() {
-        glDepthMask(GL_TRUE);
-        glClear(GL_DEPTH_BUFFER_BIT);
-    }
-    
-    void clearColor() {
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-    }
-    
-    void clearDepthAndColor() {
-        glDepthMask(GL_TRUE);
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-    
-    void enableColorBuffer() {
-        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    }
-    
-    void disableColorBuffer() {
-        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    }
-    
-    GLenum toGL(VROFace face) {
-        switch (face) {
-            case VROFace::Front:
-                return GL_FRONT;
-            case VROFace::Back:
-                return GL_BACK;
-            default:
-                return GL_FRONT_AND_BACK;
-        }
-    }
-
-    void enablePortalStencilWriting(VROFace face) {
-        glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_INCR);   // Increment stencil buffer when pass
-        glStencilMaskSeparate(toGL(face), 0xFF);                      // Allow writing to all bits in stencil buffer
-    }
-    
-    void enablePortalStencilRemoval(VROFace face) {
-        glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_DECR);   // Decrement stencil buffer when pass
-        glStencilMaskSeparate(toGL(face), 0xFF);                      // Allow writing to all bits in stencil buffer
-    }
-    
-    void disablePortalStencilWriting(VROFace face) {
-        glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_KEEP);   // Do not write to stencil buffer
-        glStencilMaskSeparate(toGL(face), 0x00);                      // Protect all stencil bits from writing
-    }
-    
-    void setStencilPassBits(VROFace face, int bits, bool passIfLess) {
-        if (passIfLess) {
-            glStencilFuncSeparate(toGL(face), GL_LEQUAL, bits, 0xFF);      // Only pass stencil test if bits <= stencil buffer
-        }
-        else {
-            glStencilFuncSeparate(toGL(face), GL_EQUAL, bits, 0xFF);       // Only pass stencil test if bits == stencil buffer
-        }
-    }
-    
     VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) {
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
         return new VROGeometrySubstrateOpenGL(geometry, driver);
@@ -152,6 +89,25 @@ public:
         return new VROTextureSubstrateOpenGL(type, format, internalFormat, mipmapMode, data,
                                              width, height, mipSizes, wrapS, wrapT, minFilter, magFilter, mipFilter,
                                              driver);
+    }
+    
+    std::shared_ptr<VRORenderTarget> newRenderTarget(int width, int height, VRORenderTargetType type) {
+        std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+        std::shared_ptr<VRORenderTarget> target = std::make_shared<VRORenderTargetOpenGL>(type, driver);
+        target->setSize(width, height);
+        return target;
+    }
+    
+    std::shared_ptr<VRORenderTarget> getDisplay() {
+        if (!_display) {
+            std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+            
+            GLint displayFramebuffer;
+            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &displayFramebuffer);
+            _display = std::make_shared<VRODisplayOpenGL>(displayFramebuffer, driver);
+        }
+        
+        return _display;
     }
     
     virtual std::shared_ptr<VROVideoTextureCache> newVideoTextureCache() = 0;
@@ -242,7 +198,6 @@ public:
         _bindingPoints.push_back(bindingPoint);
     }
 
-    
 private:
     
     /*
@@ -252,6 +207,11 @@ private:
      */
     std::list<int> _bindingPoints;
     int _bindingPointGenerator = 0;
+    
+    /*
+     The backbuffer render target.
+     */
+    std::shared_ptr<VRORenderTarget> _display;
 
     /*
      Map of light hashes to corresponding lighting UBOs.
