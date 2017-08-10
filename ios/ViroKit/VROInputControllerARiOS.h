@@ -24,8 +24,13 @@ const double kARMaxDragDistance = 5; // meters
 
 class VROInputControllerARiOS : public VROInputControllerBase {
 public:
-    VROInputControllerARiOS(float viewportWidth, float viewportHeight);
+    VROInputControllerARiOS();
     virtual ~VROInputControllerARiOS() {}
+    
+    void setViewportSize(float width, float height) {
+        _viewportWidth = width;
+        _viewportHeight = height;
+    }
     
     void setRenderer(std::shared_ptr<VRORenderer> renderer) {
         _weakRenderer = renderer;

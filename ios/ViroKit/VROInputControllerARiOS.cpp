@@ -12,9 +12,9 @@
 #include "VROARFrame.h"
 #include "VROARDraggableNode.h"
 
-VROInputControllerARiOS::VROInputControllerARiOS(float viewportWidth, float viewportHeight) :
-    _viewportWidth(viewportWidth),
-    _viewportHeight(viewportHeight),
+VROInputControllerARiOS::VROInputControllerARiOS() :
+    _viewportHeight(0),
+    _viewportWidth(0),
     _isTouchOngoing(false),
     _isPinchOngoing(false) {
 }
@@ -244,16 +244,6 @@ void VROInputControllerARiOS::processTouchMovement() {
         VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, _latestCamera.getPosition(), _latestCamera.getRotation(), rayFromCamera);
     }
 }
-
-/* TODO: VIRO-1465 fix this function to work properly.
- 
- This is slightly unconventional because what I'm doing is "unprojecting" the
- touch position back into camera space. Then the ray out is simply that unprojected
- point minus the camera position (which is 0,0,0 in camera space). Then I just take
- that ray and "rotate" it by the camera's rotation back into world coordinates with
- the assumed origin at the camera's position. This does give the same value as if I
- calculate far - near and use that, but the values are off (more obviously wrong?) on
- tablets, so I suspect an issue with a matrix or something.
  
 VROVector3f VROInputControllerARiOS::calculateCameraRay(VROVector3f touchPos) {
     std::shared_ptr<VRORenderer> renderer = _weakRenderer.lock();
@@ -266,48 +256,17 @@ VROVector3f VROInputControllerARiOS::calculateCameraRay(VROVector3f touchPos) {
     // calculate the mvp matrix
     VROMatrix4f projectionMat = renderer->getRenderContext()->getProjectionMatrix();
     VROMatrix4f viewMat = renderer->getRenderContext()->getViewMatrix();
-    VROMatrix4f modelMat = _latestCamera.getRotation().getMatrix();
-    modelMat.translate(_latestCamera.getPosition());
     
-    VROMatrix4f mvp = modelMat.multiply(viewMat).multiply(projectionMat);
+    VROMatrix4f mvp = projectionMat.multiply(viewMat);
     
-    // unproject the touchPos vector (w/ z = 0) from viewport coords to camera coords
+    // unproject the touchPos vector at z = 0 and z = 1
     VROVector3f resultNear;
+    VROVector3f resultFar;
     
-    VROProjector::unproject(VROVector3f(touchPos.x, touchPos.y), mvp.getArray(), viewportArr, &resultNear);
+    VROProjector::unproject(VROVector3f(touchPos.x, touchPos.y, 0), mvp.getArray(), viewportArr, &resultNear);
+    VROProjector::unproject(VROVector3f(touchPos.x, touchPos.y, 1), mvp.getArray(), viewportArr, &resultFar);
     
-    // since we want the ray "from" the camera position in the world, rotate it back to world coordinates (but don't translate).
-    return _latestCamera.getRotation().getMatrix().multiply(resultNear).normalize();
+    // minus resultNear from resultFar to get the vector.
+    return (resultFar - resultNear).normalize();
 }
- */
 
-/*
- This is a stop-gap measure while we fix the above function which leverages ARKit's hitTest to
- give us some point based on tap location from which we simply normalize and present that as the
- forward camera ray.
- */
-VROVector3f VROInputControllerARiOS::calculateCameraRay(VROVector3f touchPos) {
-    std::shared_ptr<VROARSession> session = _weakSession.lock();
-    if (session) {
-        std::unique_ptr<VROARFrame> &frame = session->getLastFrame();
-        if (frame) {
-            std::vector<VROARHitTestResult> results = frame->hitTest(_latestTouchPos.x,
-                                                                     _latestTouchPos.y,
-                                                                     { VROARHitTestResultType::ExistingPlaneUsingExtent,
-                                                                         VROARHitTestResultType::ExistingPlane,
-                                                                         VROARHitTestResultType::EstimatedHorizontalPlane,
-                                                                         VROARHitTestResultType::FeaturePoint });
-            
-            if (results.size() > 0) {
-                // just grab the first result, we don't care about accuracy because all points returned are
-                // along the same line.
-                VROARHitTestResult result = results[0];
-                VROVector3f position = result.getWorldTransform().extractTranslation();
-                VROVector3f ray = (position - _latestCamera.getPosition()).normalize();
-                
-                return ray;
-            }
-        }
-    }
-    return VROVector3f();
-}

@@ -106,6 +106,10 @@ static VROVector3f const kZeroVector = VROVector3f();
         _cameraBackground->setWidth(self.frame.size.width * self.contentScaleFactor);
         _cameraBackground->setHeight(self.frame.size.height * self.contentScaleFactor);
     }
+
+    if (_inputController) {
+        _inputController->setViewportSize(self.frame.size.width * self.contentScaleFactor, self.frame.size.height * self.contentScaleFactor);
+    }
 }
 
 - (void)initRenderer {
@@ -157,8 +161,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     _gvrAudio->Init(GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
     _driver = std::make_shared<VRODriverOpenGLiOS>(self.context, _gvrAudio);
     _suspendedNotificationTime = VROTimeCurrentSeconds();
-    _inputController = std::make_shared<VROInputControllerARiOS>(self.bounds.size.width * self.contentScaleFactor,
-                                                                 self.bounds.size.height * self.contentScaleFactor);
+
+    _inputController = std::make_shared<VROInputControllerARiOS>();
     _renderer = std::make_shared<VRORenderer>(_inputController);
     _inputController->setRenderer(_renderer);
     _hasTrackingInitialized = false;
@@ -237,7 +241,7 @@ static VROVector3f const kZeroVector = VROVector3f();
         _inputController->onScreenTouchMove(viewportTouchPos);
         return;
     }
-    
+
     if (_arSession && _arSession->isReady()) {
         std::unique_ptr<VROARFrame> &frame = _arSession->getLastFrame();
         std::vector<VROARHitTestResult> results = frame->hitTest(location.x * self.contentScaleFactor,
