@@ -22,10 +22,10 @@
 
 VRORenderTargetOpenGL::VRORenderTargetOpenGL(VRORenderTargetType type, std::shared_ptr<VRODriverOpenGL> driver) :
     VRORenderTarget(type),
-    _width(0),
-    _height(0),
     _framebuffer(0),
     _depthStencilbuffer(0),
+    _width(0),
+    _height(0),
     _colorbuffer(0),
     _driver(driver) {
     

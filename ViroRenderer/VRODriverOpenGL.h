@@ -22,6 +22,7 @@
 #include "VROShaderModifier.h"
 #include "VRORenderContext.h"
 #include "VROGeometrySource.h"
+#include "VROImagePostProcessOpenGL.h"
 #include "VROLight.h"
 #include <list>
 
@@ -38,6 +39,7 @@ public:
         _depthReadingEnabled(true),
         _colorWritingEnabled(true),
         _cullMode(VROCullMode::None) {
+            
         // Initialize actual OpenGL state to match our CPU state
         glDepthMask(GL_TRUE);
         glDepthFunc(GL_LEQUAL);
@@ -160,22 +162,25 @@ public:
                                              driver);
     }
     
-    std::shared_ptr<VRORenderTarget> newRenderTarget(int width, int height, VRORenderTargetType type) {
+    std::shared_ptr<VRORenderTarget> newRenderTarget(VRORenderTargetType type) {
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
         std::shared_ptr<VRORenderTarget> target = std::make_shared<VRORenderTargetOpenGL>(type, driver);
-        target->setSize(width, height);
         return target;
     }
     
+    std::shared_ptr<VROImagePostProcess> newImagePostProcess(std::shared_ptr<VROShaderProgram> shader) {
+        return std::make_shared<VROImagePostProcessOpenGL>(shader);
+    }
+    
+    void readDisplayFramebuffer() {
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_displayFramebuffer);
+    }
+
     std::shared_ptr<VRORenderTarget> getDisplay() {
         if (!_display) {
             std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
-            
-            GLint displayFramebuffer;
-            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &displayFramebuffer);
-            _display = std::make_shared<VRODisplayOpenGL>(displayFramebuffer, driver);
+            _display = std::make_shared<VRODisplayOpenGL>(_displayFramebuffer, driver);
         }
-        
         return _display;
     }
     
@@ -303,6 +308,11 @@ private:
     bool _colorWritingEnabled;
     bool _depthWritingEnabled, _depthReadingEnabled;
     VROCullMode _cullMode;
+    
+    /*
+     ID of the backbuffer.
+     */
+    GLint _displayFramebuffer;
     
 };
 

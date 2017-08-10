@@ -59,7 +59,7 @@ void VROShaderModifier::setUniformBinder(std::string uniform,
     _uniformBinders[uniform] = bindingBlock;
 }
 
-void VROShaderModifier::bindUniform(VROUniform *uniform, GLuint location, const VROGeometry &geometry) {
+void VROShaderModifier::bindUniform(VROUniform *uniform, GLuint location, const VROGeometry *geometry) {
     auto it = _uniformBinders.find(uniform->getName());
     if (it == _uniformBinders.end()) {
         pabort("No binder was found for uniform %s", uniform->getName().c_str());
@@ -135,6 +135,15 @@ std::string VROShaderModifier::getDirective(VROShaderSection section) const {
         }
         else {
             return "#pragma fragment_modifier_uniforms";
+        }
+    }
+    
+    else if (_entryPoint == VROShaderEntryPoint::Image) {
+        if (section == VROShaderSection::Body) {
+            return "#pragma image_modifier_body";
+        }
+        else {
+            return "#pragma image_modifier_uniforms";
         }
     }
 

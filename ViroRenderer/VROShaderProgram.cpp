@@ -94,6 +94,7 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
     }
     _modifiers = modifiers;
     addStandardUniforms();
+    addModifierUniforms();
         
     ALLOCATION_TRACKER_ADD(Shaders, 1);
 }
@@ -293,26 +294,7 @@ bool VROShaderProgram::compileAndLink() {
     /*
      Bind attribute locations.
      */
-    glBindAttribLocation(_program, (int)VROGeometrySourceSemantic::Vertex, "position");
-
-    if ((_attributes & (int)VROShaderMask::Tex) != 0) {
-        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Texcoord), "texcoord");
-    }
-    if ((_attributes & (int)VROShaderMask::Color) != 0) {
-        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Color), "color");
-    }
-    if ((_attributes & (int)VROShaderMask::Norm) != 0) {
-        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Normal), "normal");
-    }
-    if ((_attributes & (int)VROShaderMask::Tangent) != 0) {
-        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Tangent), "tangent");
-    }
-    if ((_attributes & (int)VROShaderMask::BoneIndex) != 0) {
-        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::BoneIndices), "bone_indices");
-    }
-    if ((_attributes & (int)VROShaderMask::BoneWeight) != 0) {
-        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::BoneWeights), "bone_weights");
-    }
+    bindAttributes();
 
     /*
      Link the program.
@@ -335,8 +317,7 @@ bool VROShaderProgram::compileAndLink() {
         return false;
     }
     
-    _lightingBlockIndex = glGetUniformBlockIndex(_program, "lighting");
-    _bonesBlockIndex = glGetUniformBlockIndex(_program, kDualQuaternionEnabled ? "bones_dq" : "bones");
+    bindUniformBlocks();
 
     /*
      Release vertex and fragment shaders.
@@ -362,28 +343,6 @@ bool VROShaderProgram::compileAndLink() {
     return true;
 }
 
-void VROShaderProgram::addStandardUniforms() {
-    addUniform(VROShaderProperty::Mat4, 1, "normal_matrix");
-    addUniform(VROShaderProperty::Mat4, 1, "model_matrix");
-    addUniform(VROShaderProperty::Mat4, 1, "modelview_matrix");
-    addUniform(VROShaderProperty::Mat4, 1, "modelview_projection_matrix");
-    addUniform(VROShaderProperty::Vec3, 1, "camera_position");
-    addUniform(VROShaderProperty::Int, 1, "eye_type");
-    
-    addUniform(VROShaderProperty::Vec4, 1, "material_diffuse_surface_color");
-    addUniform(VROShaderProperty::Float, 1, "material_diffuse_intensity");
-    addUniform(VROShaderProperty::Float, 1, "material_alpha");
-    
-    for (const std::shared_ptr<VROShaderModifier> &modifier : _modifiers) {
-        std::vector<std::string> uniformNames = modifier->getUniforms();
-        
-        for (std::string &uniformName : uniformNames) {
-            VROUniform *uniform = new VROUniformShaderModifier(uniformName, modifier);
-            _uniforms.push_back(uniform);
-        }
-    }
-}
-
 bool VROShaderProgram::bind() {
     if (_failedToLink) {
         return false;
@@ -392,7 +351,7 @@ bool VROShaderProgram::bind() {
     passert (isHydrated());
     glUseProgram(_program);
 
-    // Bind uniforms locations here, if required.
+    // Bind uniform locations here, if required.
     if (_uniformsNeedRebind) {
         findUniformLocations();
         _uniformsNeedRebind = false;
@@ -465,6 +424,60 @@ void VROShaderProgram::findUniformLocations() {
     }
 }
 
+void VROShaderProgram::addModifierUniforms() {
+    for (const std::shared_ptr<VROShaderModifier> &modifier : _modifiers) {
+        std::vector<std::string> uniformNames = modifier->getUniforms();
+        
+        for (std::string &uniformName : uniformNames) {
+            VROUniform *uniform = new VROUniformShaderModifier(uniformName, modifier);
+            _uniforms.push_back(uniform);
+        }
+    }
+}
+
+#pragma mark - Standard 3D Shader
+
+void VROShaderProgram::bindAttributes() {
+    glBindAttribLocation(_program, (int)VROGeometrySourceSemantic::Vertex, "position");
+    
+    if ((_attributes & (int)VROShaderMask::Tex) != 0) {
+        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Texcoord), "texcoord");
+    }
+    if ((_attributes & (int)VROShaderMask::Color) != 0) {
+        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Color), "color");
+    }
+    if ((_attributes & (int)VROShaderMask::Norm) != 0) {
+        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Normal), "normal");
+    }
+    if ((_attributes & (int)VROShaderMask::Tangent) != 0) {
+        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Tangent), "tangent");
+    }
+    if ((_attributes & (int)VROShaderMask::BoneIndex) != 0) {
+        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::BoneIndices), "bone_indices");
+    }
+    if ((_attributes & (int)VROShaderMask::BoneWeight) != 0) {
+        glBindAttribLocation(_program, VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::BoneWeights), "bone_weights");
+    }
+}
+
+void VROShaderProgram::bindUniformBlocks() {
+    _lightingBlockIndex = glGetUniformBlockIndex(_program, "lighting");
+    _bonesBlockIndex = glGetUniformBlockIndex(_program, kDualQuaternionEnabled ? "bones_dq" : "bones");
+}
+
+void VROShaderProgram::addStandardUniforms() {
+    addUniform(VROShaderProperty::Mat4, 1, "normal_matrix");
+    addUniform(VROShaderProperty::Mat4, 1, "model_matrix");
+    addUniform(VROShaderProperty::Mat4, 1, "modelview_matrix");
+    addUniform(VROShaderProperty::Mat4, 1, "modelview_projection_matrix");
+    addUniform(VROShaderProperty::Vec3, 1, "camera_position");
+    addUniform(VROShaderProperty::Int, 1, "eye_type");
+    
+    addUniform(VROShaderProperty::Vec4, 1, "material_diffuse_surface_color");
+    addUniform(VROShaderProperty::Float, 1, "material_diffuse_intensity");
+    addUniform(VROShaderProperty::Float, 1, "material_alpha");
+}
+
 #pragma mark - Source Inflation and Shader Modifiers
 
 const std::string &VROShaderProgram::getVertexSource() const {
@@ -514,7 +527,8 @@ void VROShaderProgram::inflateFragmentShaderModifiers(const std::vector<std::sha
     
     for (const std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
         if (modifier->getEntryPoint() != VROShaderEntryPoint::Surface &&
-            modifier->getEntryPoint() != VROShaderEntryPoint::Fragment) {
+            modifier->getEntryPoint() != VROShaderEntryPoint::Fragment &&
+            modifier->getEntryPoint() != VROShaderEntryPoint::Image) {
             continue;
         }
         

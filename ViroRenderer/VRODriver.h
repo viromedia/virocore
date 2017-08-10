@@ -27,6 +27,8 @@ class VROTypeface;
 class VROFrameTimer;
 class VRORenderTarget;
 class VRORenderContext;
+class VROShaderProgram;
+class VROImagePostProcess;
 
 enum class VROSoundType;
 enum class VROTextureType;
@@ -60,6 +62,13 @@ public:
     virtual void didRenderFrame(const VROFrameTimer &timer, const VRORenderContext &context) = 0;
     
     /*
+     Read the ID of the display's framebuffer. May not be required on all
+     platforms. This way we're able to re-bind to the display during a multi-pass
+     alogrithm.
+     */
+    virtual void readDisplayFramebuffer() = 0;
+    
+    /*
      The driver controls context-wide state change. The implementation
      should store a CPU copy of current state to avoid sending unnecessary
      instructions to the GPU.
@@ -79,8 +88,9 @@ public:
                                                      int width, int height, std::vector<uint32_t> mipSizes,
                                                      VROWrapMode wrapS, VROWrapMode wrapT,
                                                      VROFilterMode minFilter, VROFilterMode magFilter, VROFilterMode mipFilter) = 0;
-    virtual std::shared_ptr<VRORenderTarget> newRenderTarget(int width, int height, VRORenderTargetType type) = 0;
+    virtual std::shared_ptr<VRORenderTarget> newRenderTarget(VRORenderTargetType type) = 0;
     virtual std::shared_ptr<VRORenderTarget> getDisplay() = 0;
+    virtual std::shared_ptr<VROImagePostProcess> newImagePostProcess(std::shared_ptr<VROShaderProgram> shader) = 0;
     virtual std::shared_ptr<VROVideoTextureCache> newVideoTextureCache() = 0;
     virtual std::shared_ptr<VROSound> newSound(std::shared_ptr<VROSoundData> data, VROSoundType type) = 0;
     virtual std::shared_ptr<VROSound> newSound(std::string path, VROSoundType type, bool local) = 0;

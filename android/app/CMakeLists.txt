@@ -148,9 +148,10 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROInputControllerBase.cpp
              ../../ViroRenderer/VROFrameScheduler.cpp
              ../../ViroRenderer/VROChoreographer.cpp
-             ../../ViroRenderer/VRORenderPass.cpp
              ../../ViroRenderer/VROPortalTreeRenderPass.cpp
              ../../ViroRenderer/VRORenderTargetOpenGL.cpp
+             ../../ViroRenderer/VROImageShaderProgram.cpp
+             ../../ViroRenderer/VROImagePostProcessOpenGL.cpp
 
              # Animation
              ../../ViroRenderer/VROTimingFunction.cpp

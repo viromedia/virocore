@@ -374,7 +374,7 @@ void VROMaterialSubstrateOpenGL::bindGeometryUniforms(float opacity, const VROGe
         _alphaUniform->setFloat(_material.getTransparency() * opacity);
     }
     for (VROUniform *uniform : _shaderModifierUniforms) {
-        uniform->set(nullptr, geometry);
+        uniform->set(nullptr, &geometry);
     }
 }
 

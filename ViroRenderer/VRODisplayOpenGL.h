@@ -18,8 +18,9 @@ class VRODisplayOpenGL : public VRORenderTargetOpenGL {
 public:
     
     VRODisplayOpenGL(GLint framebuffer, std::shared_ptr<VRODriverOpenGL> driver) :
-        VRORenderTargetOpenGL(VRORenderTargetType::Display, driver),
-        _framebuffer(framebuffer) {}
+        VRORenderTargetOpenGL(VRORenderTargetType::Display, driver) {
+        _framebuffer = framebuffer;
+    }
     virtual ~VRODisplayOpenGL() {}
     
 #pragma mark - Unsupported by Displays
@@ -31,10 +32,6 @@ public:
     const std::shared_ptr<VROTexture> getTexture() const { pabort(); return nullptr; }
     void discardFramebuffers() { pabort(); }
     void restoreFramebuffers() { pabort(); }
-    
-private:
-    
-    GLint _framebuffer;
     
 };
 

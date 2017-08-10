@@ -65,7 +65,7 @@ VROUniform *VROUniform::newUniformForType(const std::string &name, VROShaderProp
     return uniform;
 }
 
-void VROUniformShaderModifier::set(const void *value, const VROGeometry &geometry) {
+void VROUniformShaderModifier::set(const void *value, const VROGeometry *geometry) {
     if (_location == -1) {
         return;
     }

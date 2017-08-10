@@ -53,9 +53,6 @@ VRORenderer::VRORenderer(std::shared_ptr<VROInputControllerBase> inputController
     _context = std::make_shared<VRORenderContext>(_frameSynchronizer, _frameScheduler);
     _context->setPencil(std::make_shared<VROPencil>());
     memset(_fpsTickArray, 0x0, sizeof(_fpsTickArray));
-        
-    _choreographer = std::make_shared<VROChoreographer>();
-    _choreographer->setBaseRenderPass(std::make_shared<VROPortalTreeRenderPass>());
 }
 
 VRORenderer::~VRORenderer() {
@@ -64,12 +61,16 @@ VRORenderer::~VRORenderer() {
 
 void VRORenderer::initRenderer(std::shared_ptr<VRODriver> driver) {
     initBlankTexture(*_context);
+    driver->readDisplayFramebuffer();
 
     std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
     if (delegate) {
         delegate->setupRendererWithDriver(driver);
     }
     _debugHUD->initRenderer(driver);
+    
+    _choreographer = std::make_shared<VROChoreographer>(driver);
+    _choreographer->setBaseRenderPass(std::make_shared<VROPortalTreeRenderPass>());
 }
 
 void VRORenderer::setDelegate(std::shared_ptr<VRORenderDelegateInternal> delegate) {
@@ -144,6 +145,9 @@ void VRORenderer::setPointOfView(std::shared_ptr<VRONode> node) {
 
 VROCamera VRORenderer::updateCamera(const VROViewport &viewport, const VROFieldOfView &fov,
                                     const VROMatrix4f &headRotation, const VROMatrix4f &projection) {
+    
+    _choreographer->setViewportSize(viewport.getWidth(), viewport.getHeight());
+    
     VROCamera camera;
     camera.setHeadRotation(headRotation);
     camera.setViewport(viewport);

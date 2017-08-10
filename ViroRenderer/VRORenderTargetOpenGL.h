@@ -57,6 +57,14 @@ public:
     void disablePortalStencilWriting(VROFace face);
     void setStencilPassBits(VROFace face, int bits, bool passIfLess);
     
+protected:
+    
+    /*
+     The OpenGL ES names for the framebuffer and depth/stencil buffer(s) used to render to
+     this render-target. 0 for those that are not used.
+     */
+    GLuint _framebuffer, _depthStencilbuffer;
+    
 private:
     
 #pragma mark - Private
@@ -66,12 +74,6 @@ private:
      */
     int _width;
     int _height;
-    
-    /*
-     The OpenGL ES names for the framebuffer and depth/stencil buffer(s) used to render to
-     this render-target. 0 for those that are not used.
-     */
-    GLuint _framebuffer, _depthStencilbuffer;
     
     /*
      The colorbuffer is used for pure offscreen rendering and for MSAA texture rendering.

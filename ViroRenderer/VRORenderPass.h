@@ -18,7 +18,6 @@
 class VROScene;
 class VRODriver;
 class VRODisplay;
-class VROShaderProgram;
 class VRORenderContext;
 class VRORenderTarget;
 
@@ -50,8 +49,8 @@ typedef std::map<std::string, std::shared_ptr<VRORenderTarget>> VRORenderPassInp
 class VRORenderPass {
 public:
     
-    VRORenderPass();
-    virtual ~VRORenderPass();
+    VRORenderPass() {}
+    virtual ~VRORenderPass() {}
     
     /*
      Perform the render pass. This is implemented by the subclasses.
