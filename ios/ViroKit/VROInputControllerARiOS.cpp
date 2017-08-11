@@ -12,9 +12,9 @@
 #include "VROARFrame.h"
 #include "VROARDraggableNode.h"
 
-VROInputControllerARiOS::VROInputControllerARiOS() :
-    _viewportHeight(0),
-    _viewportWidth(0),
+VROInputControllerARiOS::VROInputControllerARiOS(float viewportWidth, float viewportHeight) :
+    _viewportWidth(viewportWidth),
+    _viewportHeight(viewportHeight),
     _isTouchOngoing(false),
     _isPinchOngoing(false) {
 }

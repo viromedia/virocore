@@ -108,7 +108,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     }
 
     if (_inputController) {
-        _inputController->setViewportSize(self.frame.size.width * self.contentScaleFactor, self.frame.size.height * self.contentScaleFactor);
+        _inputController->setViewportSize(self.frame.size.width * self.contentScaleFactor,
+                                          self.frame.size.height * self.contentScaleFactor);
     }
 }
 
@@ -162,7 +163,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     _driver = std::make_shared<VRODriverOpenGLiOS>(self.context, _gvrAudio);
     _suspendedNotificationTime = VROTimeCurrentSeconds();
 
-    _inputController = std::make_shared<VROInputControllerARiOS>();
+    _inputController = std::make_shared<VROInputControllerARiOS>(self.frame.size.width * self.contentScaleFactor,
+                                                                 self.frame.size.height * self.contentScaleFactor);
     _renderer = std::make_shared<VRORenderer>(_inputController);
     _inputController->setRenderer(_renderer);
     _hasTrackingInitialized = false;
@@ -661,6 +663,41 @@ static VROVector3f const kZeroVector = VROVector3f();
     CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
     
     return pixelBuffer;
+}
+
+#pragma mark - AR Functions
+- (std::vector<VROARHitTestResult>)performARHitTest:(VROVector3f)ray {
+    // check that the ray is in front of the camera
+    VROVector3f cameraForward = _renderer->getRenderContext()->getCamera().getForward();
+    if (cameraForward.dot(ray) <= 0) {
+        return std::vector<VROARHitTestResult>();
+    }
+
+    int viewportArr[4] = {0, 0,
+        (int) (self.bounds.size.width  * self.contentScaleFactor),
+        (int) (self.bounds.size.height * self.contentScaleFactor)};
+
+    // create the mvp (in this case, the model mat is identity).
+    VROMatrix4f projectionMat = _renderer->getRenderContext()->getProjectionMatrix();
+    VROMatrix4f viewMat = _renderer->getRenderContext()->getViewMatrix();
+    VROMatrix4f vpMat = projectionMat.multiply(viewMat);
+
+    // get the 2D point
+    VROVector3f point;
+    VROProjector::project(ray, vpMat.getArray(), viewportArr, &point);
+
+    // check the 2D point, perform and return the results from the AR hit test
+    std::unique_ptr<VROARFrame> &frame = _arSession->getLastFrame();
+    if (frame && point.x >= 0 && point.x <= viewportArr[2] && point.y >= 0 && point.y <= viewportArr[3]) {
+        std::vector<VROARHitTestResult> results = frame->hitTest(point.x,
+                                                                 point.y,
+                                                                 { VROARHitTestResultType::ExistingPlaneUsingExtent,
+                                                                   VROARHitTestResultType::ExistingPlane,
+                                                                   VROARHitTestResultType::EstimatedHorizontalPlane,
+                                                                   VROARHitTestResultType::FeaturePoint });
+        return results;
+    }
+    return std::vector<VROARHitTestResult>();
 }
 
 #pragma mark - Settings and Notifications

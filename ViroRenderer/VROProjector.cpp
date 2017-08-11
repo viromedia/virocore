@@ -16,7 +16,7 @@ bool VROProjector::project(const VROVector3f pos, const float *mvp, const int *v
     tin[0] = pos.x;
     tin[1] = pos.y;
     tin[2] = pos.z;
-    tin[3] = 1.0;
+    tin[3] = 0;
     
     VROMathMultVectorByMatrix(mvp, tin, tout);
     if (tout[3] == 0.0) {
