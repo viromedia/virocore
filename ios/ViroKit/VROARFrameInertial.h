@@ -25,6 +25,8 @@ public:
     const std::vector<std::shared_ptr<VROARAnchor>> &getAnchors() const;
     
     float getAmbientLightIntensity() const;
+    float getAmbientLightColorTemperature() const;
+
     
 private:
     

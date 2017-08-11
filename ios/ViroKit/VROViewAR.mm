@@ -912,6 +912,12 @@ static VROVector3f const kZeroVector = VROVector3f();
         glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
         _renderer->renderEye(VROEyeType::Monocular, VROMatrix4f::identity(), projection, _driver);
         _renderer->endFrame(_driver);
+
+        /*
+         notify scene of the updated ambient light estimates
+         */
+        std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(_arSession->getScene());
+        scene->updateAmbientLight(frame->getAmbientLightIntensity(), frame->getAmbientLightColorTemperature());
     }
     else {
         /*

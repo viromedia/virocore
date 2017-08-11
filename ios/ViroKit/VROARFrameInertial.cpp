@@ -48,3 +48,8 @@ float VROARFrameInertial::getAmbientLightIntensity() const {
     // Light intensity is not supported by the Inertial AR engine
     return 1.0;
 }
+
+float VROARFrameInertial::getAmbientLightColorTemperature() const {
+    // Light color temperature is not supported by the Inertial AR engine
+    return 1.0;
+}

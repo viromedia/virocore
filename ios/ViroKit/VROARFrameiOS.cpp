@@ -155,4 +155,8 @@ float VROARFrameiOS::getAmbientLightIntensity() const {
     return _frame.lightEstimate.ambientIntensity;
 }
 
+float VROARFrameiOS::getAmbientLightColorTemperature() const {
+    return _frame.lightEstimate.ambientColorTemperature;
+}
+
 #endif

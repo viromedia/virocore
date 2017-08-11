@@ -47,6 +47,13 @@ void VROARScene::trackingHasInitialized() {
     }
 }
 
+void VROARScene::updateAmbientLight(float intensity, float colorTemperature) {
+    std::shared_ptr<VROARSceneDelegate> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->onAmbientLightUpdate(intensity, colorTemperature);
+    }
+}
+
 void VROARScene::willAppear() {
     if (_arComponentManager) {
         std::vector<std::shared_ptr<VROARPlane>>::iterator it;
