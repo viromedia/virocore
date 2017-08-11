@@ -21,6 +21,8 @@ public:
     VROImagePostProcessOpenGL(std::shared_ptr<VROShaderProgram> shader);
     virtual ~VROImagePostProcessOpenGL();
     
+    void setVerticalFlip(bool flip);
+    
     bool bindTexture(int unit, const std::shared_ptr<VROTexture> &texture,
                      std::shared_ptr<VRODriver> &driver) const;
 
@@ -64,7 +66,7 @@ private:
     /*
      Build the full-screen quad VAR.
      */
-    void buildQuadFSVAR();
+    void buildQuadFSVAR(bool flipped);
     
     /*
      Bind (unbind) the parameters and shader required for rendering a full

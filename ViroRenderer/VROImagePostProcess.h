@@ -22,6 +22,11 @@ public:
     virtual ~VROImagePostProcess() {}
     
     /*
+     Set to true to flip the result image vertically.
+     */
+    virtual void setVerticalFlip(bool flip) = 0;
+    
+    /*
      Bind the given texture to the given unit. It is assumed the shader used with
      this post-process has a sampler set for the unit. Returns false is the texture
      has no substrate and could not be bound.

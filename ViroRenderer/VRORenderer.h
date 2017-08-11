@@ -73,6 +73,12 @@ public:
      */
     void setDebugHUDEnabled(bool enabled);
     
+    /*
+     Get the VROChoreographer, which can be used to customize the rendering
+     technique.
+     */
+    const std::shared_ptr<VROChoreographer> getChoreographer() const;
+    
     void updateRenderViewSize(float width, float height);
     
 #pragma mark - Viewport and FOV

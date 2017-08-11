@@ -89,6 +89,11 @@ private:
     GLint getTextureName() const;
     
     /*
+     Get the attachment type used by the texture (e.g. GL_COLOR_ATTACHMENT0, etc.).
+     */
+    GLenum getTextureAttachmentType() const;
+    
+    /*
      The driver that created this render target.
      */
     std::weak_ptr<VRODriverOpenGL> _driver;

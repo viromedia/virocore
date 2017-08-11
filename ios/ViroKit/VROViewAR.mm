@@ -28,6 +28,8 @@
 #import "vr/gvr/capi/include/gvr_audio.h"
 #import "VROARScene.h"
 #import "VROARComponentManager.h"
+#import "VROChoreographer.h"
+#import "VROVideoTextureCache.h"
 #import "VROInputControllerARiOS.h"
 #import "VROProjector.h"
 #import "VROWeakProxy.h"
@@ -67,6 +69,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     double _startTimeMillis;
     NSURL *_audioFilePath;
     NSTimer *_videoLoopTimer;
+    CVPixelBufferRef _videoPixelBuffer;
+    std::shared_ptr<VROVideoTextureCache> _videoTextureCache;
 }
 
 @property (readwrite, nonatomic) id <VROApiKeyValidator> keyValidator;
@@ -565,27 +569,51 @@ static VROVector3f const kZeroVector = VROVector3f();
     NSError *error = nil;
     _videoWriter = [[AVAssetWriter alloc] initWithURL:filePath fileType:AVFileTypeMPEG4 error:&error];
     
+    int width  = self.frame.size.width  * self.contentScaleFactor;
+    int height = self.frame.size.height * self.contentScaleFactor;
+    
     NSDictionary *videoSetting = @{
                                    AVVideoCodecKey : AVVideoCodecH264,
-                                   AVVideoWidthKey : @(self.frame.size.width * self.contentScaleFactor / 2.0),
-                                   AVVideoHeightKey : @(self.frame.size.height * self.contentScaleFactor / 2.0)
+                                   AVVideoWidthKey : @(width),
+                                   AVVideoHeightKey : @(height)
                                    };
     
     _videoWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:videoSetting];
     
+    NSDictionary *pixelBufferAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                           @(kCVPixelFormatType_32BGRA), kCVPixelBufferPixelFormatTypeKey,
+                                           @(width), kCVPixelBufferWidthKey,
+                                           @(height), kCVPixelBufferHeightKey,
+                                           nil];
     _videoWriterPixelBufferAdaptor = [AVAssetWriterInputPixelBufferAdaptor
                                       assetWriterInputPixelBufferAdaptorWithAssetWriterInput:_videoWriterInput
-                                      sourcePixelBufferAttributes:nil];
-    
+                                      sourcePixelBufferAttributes:pixelBufferAttributes];
     [_videoWriter addInput:_videoWriterInput];
-    
     [_videoWriter startWriting];
     [_videoWriter startSessionAtSourceTime:kCMTimeZero];
+    
+    CVPixelBufferPoolRef pixelBufferPool = [_videoWriterPixelBufferAdaptor pixelBufferPool];
+    CVPixelBufferPoolCreatePixelBuffer(NULL, pixelBufferPool, &_videoPixelBuffer);
+    
+    if (!_videoTextureCache) {
+        _videoTextureCache = _driver->newVideoTextureCache();
+    }
+    std::unique_ptr<VROTextureSubstrate> substrate = _videoTextureCache->createTextureSubstrate(_videoPixelBuffer);
+    std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
+    _renderer->getChoreographer()->setRenderToTextureEnabled(true);
+    _renderer->getChoreographer()->setRenderTexture(texture);
+    
+    __weak VROViewAR *weakSelf = self;
+    _renderer->getChoreographer()->setRenderToTextureCallback([weakSelf] {
+        VROViewAR *strongSelf = weakSelf;
+        if (strongSelf) {
+            CVPixelBufferLockBaseAddress(strongSelf->_videoPixelBuffer, 0);
+        }
+    });
+    
     _startTimeMillis = VROTimeCurrentMillis();
     _isRecording = YES;
-    
     _videoLoopTimer = [NSTimer timerWithTimeInterval:0.03 target:self selector:@selector(recordFrame) userInfo:nil repeats:YES];
-    // TODO: move this off the mainRunLoop. We do this because the recordFrame function currently requires running on the main thread.
     [[NSRunLoop mainRunLoop] addTimer:_videoLoopTimer forMode:NSRunLoopCommonModes];
 }
 
@@ -593,15 +621,10 @@ static VROVector3f const kZeroVector = VROVector3f();
     if (_isRecording) {
         if ([_videoWriterInput isReadyForMoreMediaData]) {
             double currentTime = VROTimeCurrentMillis() - _startTimeMillis;
-            // Uncomment below if you want to spam the logs...
-            // NSLog(@"[Recording] record frame at currentTime %f", currentTime);
-
-            // grab the image, convert it to a pixel buffer and append it to the output pixel buffer before releasing the pixel buffer.
-            // TODO: grab this image from a FBO. Grabbing the snapshot restricts us to running on the main thread (and it's slow)
-            CGImageRef image = self.snapshot.CGImage;
-            CVPixelBufferRef ref = [VROViewAR pixelBufferFromCGImage:image];
-            BOOL success = [_videoWriterPixelBufferAdaptor appendPixelBuffer:ref withPresentationTime:CMTimeMake(currentTime, 1000)];
-            CVPixelBufferRelease(ref);
+            
+            BOOL success = [_videoWriterPixelBufferAdaptor appendPixelBuffer:_videoPixelBuffer
+                                                        withPresentationTime:CMTimeMake(currentTime, 1000)];
+            CVPixelBufferUnlockBaseAddress(_videoPixelBuffer, 0);
             
             if (!success) {
                 NSString *errorStr = _videoWriter.status == AVAssetWriterStatusFailed ? [_videoWriter.error localizedDescription] : @"unknown error";
@@ -618,6 +641,9 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (void)stopVideoRecordingInternal:(VROViewWriteMediaFinishBlock)completionHandler {
     // stop the loop that grabs each frame.
     [_videoLoopTimer invalidate];
+    
+    // Turn off RTT in the choreographer
+    _renderer->getChoreographer()->setRenderToTextureEnabled(false);
 
     [_videoWriterInput markAsFinished];
     if (_videoWriter.status == AVAssetWriterStatusWriting) {

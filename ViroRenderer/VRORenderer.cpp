@@ -81,6 +81,10 @@ void VRORenderer::setDebugHUDEnabled(bool enabled) {
     _debugHUD->setEnabled(enabled);
 }
 
+const std::shared_ptr<VROChoreographer> VRORenderer::getChoreographer() const {
+    return _choreographer;
+}
+
 #pragma mark - FPS Computation
 
 void VRORenderer::updateFPS(uint64_t newTick) {

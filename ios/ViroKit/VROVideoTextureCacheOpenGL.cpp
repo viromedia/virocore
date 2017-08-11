@@ -51,16 +51,13 @@ std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSu
     error = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, _cache, sourceImageBuffer,
                                                          NULL, GL_TEXTURE_2D, GL_RGBA, width, height, GL_BGRA, GL_UNSIGNED_BYTE, 0,
                                                          &_textureRef[_currentTextureIndex]);
-    
     if (error) {
-        pinfo("ERROR: Couldnt create texture from image");
-        pabort();
+        pabort("Failed to create texture from image");
     }
     
     GLuint texture = CVOpenGLESTextureGetName(_textureRef[_currentTextureIndex]);
     if (texture == 0) {
-        pinfo("ERROR: Couldn't get texture from texture ref");
-        pabort();
+        pabort("Failed to retreive texture from texture ref");
     }
     
     return std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(GL_TEXTURE_2D, texture, _driver, false));
@@ -80,16 +77,12 @@ std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSu
     error = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, _cache, pixelBuffer,
                                                          NULL, GL_TEXTURE_2D, GL_RGBA, width, height, GL_BGRA, GL_UNSIGNED_BYTE, 0,
                                                          &_textureRef[_currentTextureIndex]);
-    
     if (error) {
-        pinfo("ERROR: Couldnt create texture from image");
-        pabort();
+        pabort("Failed to create texture from image");
     }
-    
     GLuint texture = CVOpenGLESTextureGetName(_textureRef[_currentTextureIndex]);
     if (texture == 0) {
-        pinfo("ERROR: Couldn't get texture from texture ref");
-        pabort();
+        pabort("Failed to retreive texture from texture ref");
     }
     
     return std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(GL_TEXTURE_2D, texture, _driver, false));

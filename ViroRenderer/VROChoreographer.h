@@ -11,9 +11,11 @@
 
 #include <memory>
 #include <vector>
+#include <functional>
 
 class VROScene;
 class VRODriver;
+class VROTexture;
 class VRORenderPass;
 class VRORenderTarget;
 class VRORenderContext;
@@ -33,10 +35,18 @@ public:
         _baseRenderPass = pass;
     }
     
-    // This is only for testing currently
-    void setUseBlitPass(bool useBlitPass) {
-        _useBlit = useBlitPass;
-    }
+    /*
+     Enable or disable RTT. When RTT is enabled, the scene is rendered first
+     to an offscreen buffer. Then it is flipped and blitted over to the provided
+     texture. This enables other systems to process the rendered scene. The RTT
+     callback is invoked each time a frame is rendered.
+     
+     Note the flip is required so that the texture appears right-side-up in the
+     RTT texture.
+     */
+    void setRenderToTextureEnabled(bool enabled);
+    void setRenderTexture(std::shared_ptr<VROTexture> texture);
+    void setRenderToTextureCallback(std::function<void()> callback);
     
     /*
      Render targets need to be recreated when the viewport size is changed.
@@ -45,7 +55,13 @@ public:
     
 private:
     
-    bool _useBlit;
+    /*
+     RTT variables.
+     */
+    bool _renderToTexture;
+    std::shared_ptr<VRORenderTarget> _renderToTextureTarget;
+    std::shared_ptr<VROImagePostProcess> _renderToTexturePostProcess;
+    std::function<void()> _renderToTextureCallback;
     
     /*
      The last recorded viewport size.

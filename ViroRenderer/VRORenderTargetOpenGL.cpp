@@ -53,17 +53,21 @@ const std::shared_ptr<VROTexture> VRORenderTargetOpenGL::getTexture() const {
 
 void VRORenderTargetOpenGL::clearTexture() {
     _texture.reset();
+    GLenum attachment = getTextureAttachmentType();
+    passert (attachment != 0);
     
     glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, 0, 0);
 }
 
 void VRORenderTargetOpenGL::attachTexture(std::shared_ptr<VROTexture> texture) {
     _texture = texture;
     GLint name = getTextureName();
+    GLenum attachment = getTextureAttachmentType();
+    passert (attachment != 0);
     
     glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, name, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, name, 0);
 }
 
 void VRORenderTargetOpenGL::attachNewTexture() {
@@ -152,6 +156,17 @@ GLint VRORenderTargetOpenGL::getTextureName() const {
     std::pair<GLenum, GLuint> target_name = oglSubstrate->getTexture();
     passert (target_name.first == GL_TEXTURE_2D);
     return target_name.second;
+}
+
+GLenum VRORenderTargetOpenGL::getTextureAttachmentType() const {
+    switch (_type) {
+        case VRORenderTargetType::ColorTexture:
+            return GL_COLOR_ATTACHMENT0;
+        case VRORenderTargetType::DepthTexture:
+            return GL_DEPTH_ATTACHMENT;
+        default:
+            return 0;
+    }
 }
 
 #pragma mark - Lifecycle

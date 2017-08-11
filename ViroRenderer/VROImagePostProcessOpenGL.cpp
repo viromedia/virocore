@@ -20,8 +20,7 @@
 
 VROImagePostProcessOpenGL::VROImagePostProcessOpenGL(std::shared_ptr<VROShaderProgram> shader) :
     _shader(shader) {
-        
-    buildQuadFSVAR();
+    buildQuadFSVAR(false);
         
     /*
      Collect all the shader modifiers so we can bind them whenever this
@@ -41,6 +40,10 @@ VROImagePostProcessOpenGL::VROImagePostProcessOpenGL(std::shared_ptr<VROShaderPr
 
 VROImagePostProcessOpenGL::~VROImagePostProcessOpenGL() {
     
+}
+
+void VROImagePostProcessOpenGL::setVerticalFlip(bool flip) {
+    buildQuadFSVAR(flip);
 }
 
 bool VROImagePostProcessOpenGL::bindTexture(int unit, const std::shared_ptr<VROTexture> &texture,
@@ -118,9 +121,9 @@ void VROImagePostProcessOpenGL::drawScreenSpaceVAR() const {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void VROImagePostProcessOpenGL::buildQuadFSVAR() {
-    float qstartV = 0.0f;
-    float qendV = 1.0f;
+void VROImagePostProcessOpenGL::buildQuadFSVAR(bool flipped) {
+    float qstartV = flipped ? 1.0 : 0.0f;
+    float qendV = flipped ? 0.0 : 1.0f;
     float qendU = 1.0f;
     
     float qleft = -1;
