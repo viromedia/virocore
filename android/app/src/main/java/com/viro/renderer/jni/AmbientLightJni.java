@@ -5,8 +5,8 @@ package com.viro.renderer.jni;
 
 public class AmbientLightJni extends BaseLight {
 
-    public AmbientLightJni(long color) {
-        mNativeRef = nativeCreateAmbientLight(color);
+    public AmbientLightJni(long color, float intensity) {
+        mNativeRef = nativeCreateAmbientLight(color, intensity);
     }
 
     public void destroy() {
@@ -29,7 +29,11 @@ public class AmbientLightJni extends BaseLight {
         nativeSetColor(mNativeRef, color);
     }
 
-    private native long nativeCreateAmbientLight(long color);
+    public void setIntensity(float intensity) {
+        nativeSetIntensity(mNativeRef, intensity);
+    }
+
+    private native long nativeCreateAmbientLight(long color, float intensity);
 
     private native void nativeDestroyAmbientLight(long lightRef);
 
@@ -38,4 +42,6 @@ public class AmbientLightJni extends BaseLight {
     private native void nativeRemoveFromNode(long lightRef, long nodeRef);
 
     private native void nativeSetColor(long lightRef, long color);
+
+    private native void nativeSetIntensity(long lightRef, float intensity);
 }

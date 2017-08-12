@@ -33,6 +33,7 @@ extern "C" {
 JNI_METHOD(jlong, nativeCreateOmniLight)(JNIEnv *env,
                                          jclass clazz,
                                          jlong color,
+                                         jfloat intensity,
                                          jfloat attenuationStartDistance,
                                          jfloat attenuationEndDistance,
                                          jfloat positionX,
@@ -48,6 +49,7 @@ JNI_METHOD(jlong, nativeCreateOmniLight)(JNIEnv *env,
 
     VROVector3f vecColor(r, g, b);
     omniLight->setColor(vecColor);
+    omniLight->setIntensity(intensity);
     omniLight->setAttenuationStartDistance(attenuationStartDistance);
     omniLight->setAttenuationEndDistance(attenuationEndDistance);
 
@@ -119,6 +121,17 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env,
 
         VROVector3f vecColor(r, g, b);
         light->setColor(vecColor);
+    });
+}
+
+JNI_METHOD(void, nativeSetIntensity)(JNIEnv *env,
+                                     jclass clazz,
+                                     jlong native_light_ref,
+                                     jfloat intensity) {
+    std::shared_ptr<VROLight> light = OmniLight::native(native_light_ref);
+
+    VROPlatformDispatchAsyncRenderer([light, intensity] {
+        light->setIntensity(intensity);
     });
 }
 

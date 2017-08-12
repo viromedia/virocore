@@ -30,8 +30,9 @@ namespace AmbientLight {
 extern "C" {
 
 JNI_METHOD(jlong, nativeCreateAmbientLight)(JNIEnv *env,
-                                                jclass clazz,
-                                                jlong color) {
+                                            jclass clazz,
+                                            jlong color,
+                                            jfloat intensity) {
     std::shared_ptr<VROLight> ambientLight = std::make_shared<VROLight>(VROLightType::Ambient);
 
     // Get the color
@@ -41,6 +42,7 @@ JNI_METHOD(jlong, nativeCreateAmbientLight)(JNIEnv *env,
 
     VROVector3f vecColor(r, g, b);
     ambientLight->setColor(vecColor);
+    ambientLight->setIntensity(intensity);
     return AmbientLight::jptr(ambientLight);
 }
 
@@ -100,6 +102,17 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env,
         VROVector3f vecColor(r, g, b);
 
         light->setColor(vecColor);
+    });
+}
+
+JNI_METHOD(void, nativeSetIntensity)(JNIEnv *env,
+                                    jclass clazz,
+                                    jlong native_light_ref,
+                                    jfloat intensity) {
+    std::shared_ptr<VROLight> light = AmbientLight::native(native_light_ref);
+
+    VROPlatformDispatchAsyncRenderer([light, intensity] {
+        light->setIntensity(intensity);
     });
 }
 

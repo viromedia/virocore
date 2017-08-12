@@ -211,18 +211,18 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
     private void testSceneLighting(NodeJni node) {
         float[] lightDirection = {0, 0, -1};
-        AmbientLightJni ambientLightJni = new AmbientLightJni(Color.BLACK);
+        AmbientLightJni ambientLightJni = new AmbientLightJni(Color.BLACK, 1000.0f);
         ambientLightJni.addToNode(node);
 
-        DirectionalLightJni directionalLightJni = new DirectionalLightJni(Color.BLUE, lightDirection);
+        DirectionalLightJni directionalLightJni = new DirectionalLightJni(Color.BLUE, 1000.0f, lightDirection);
         directionalLightJni.addToNode(node);
 
         float[] omniLightPosition = {1,0,0};
-        OmniLightJni omniLightJni = new OmniLightJni(Color.RED, 1, 10, omniLightPosition);
+        OmniLightJni omniLightJni = new OmniLightJni(Color.RED, 1000.0f, 1, 10, omniLightPosition);
         omniLightJni.addToNode(node);
 
         float[] spotLightPosition = {-2, 0, 3};
-        SpotLightJni spotLightJni = new SpotLightJni(Color.YELLOW, 1, 10, spotLightPosition,
+        SpotLightJni spotLightJni = new SpotLightJni(Color.YELLOW, 1000.0f, 1, 10, spotLightPosition,
                 lightDirection, 2, 10);
         spotLightJni.addToNode(node);
     }

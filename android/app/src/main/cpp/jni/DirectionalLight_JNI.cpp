@@ -30,11 +30,12 @@ namespace DirectionalLight {
 extern "C" {
 
 JNI_METHOD(jlong, nativeCreateDirectionalLight)(JNIEnv *env,
-                                         jclass clazz,
-                                         jlong color,
-                                         jfloat directionX,
-                                         jfloat directionY,
-                                         jfloat directionZ) {
+                                                jclass clazz,
+                                                jlong color,
+                                                jfloat intensity,
+                                                jfloat directionX,
+                                                jfloat directionY,
+                                                jfloat directionZ) {
 
     std::shared_ptr<VROLight> directionalLight = std::make_shared<VROLight>(VROLightType::Directional);
 
@@ -45,6 +46,7 @@ JNI_METHOD(jlong, nativeCreateDirectionalLight)(JNIEnv *env,
 
     VROVector3f vecColor(r, g, b);
     directionalLight->setColor(vecColor);
+    directionalLight->setIntensity(intensity);
 
     VROVector3f vecDirection(directionX, directionY, directionZ);
     directionalLight->setDirection(vecDirection);
@@ -111,6 +113,17 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env,
         VROVector3f vecColor(r, g, b);
 
         light->setColor(vecColor);
+    });
+}
+
+JNI_METHOD(void, nativeSetIntensity)(JNIEnv *env,
+                                     jclass clazz,
+                                     jlong native_light_ref,
+                                     jfloat intensity) {
+    std::shared_ptr<VROLight> light = DirectionalLight::native(native_light_ref);
+
+    VROPlatformDispatchAsyncRenderer([light, intensity] {
+        light->setIntensity(intensity);
     });
 }
 

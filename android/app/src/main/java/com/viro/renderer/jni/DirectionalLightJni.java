@@ -5,8 +5,8 @@ package com.viro.renderer.jni;
 
 public class DirectionalLightJni extends BaseLight {
 
-    public DirectionalLightJni(long color, float[] direction) {
-        mNativeRef = nativeCreateDirectionalLight(color, direction[0], direction[1], direction[2]);
+    public DirectionalLightJni(long color, float intensity, float[] direction) {
+        mNativeRef = nativeCreateDirectionalLight(color, intensity, direction[0], direction[1], direction[2]);
     }
 
     public void destroy() {
@@ -28,16 +28,21 @@ public class DirectionalLightJni extends BaseLight {
         nativeSetColor(mNativeRef, color);
     }
 
+    public void setIntensity(float intensity) {
+        nativeSetIntensity(mNativeRef, intensity);
+    }
+
     public void setDirection(float[] direction) {
 
         nativeSetDirection(mNativeRef, direction[0], direction[1], direction[2]);
     }
 
-    private native long nativeCreateDirectionalLight(long color, float directionX, float directionY,
-                                                     float directionZ);
+    private native long nativeCreateDirectionalLight(long color, float intensity,
+                                                     float directionX, float directionY, float directionZ);
     private native void nativeDestroyDirectionalLight(long lightRef);
     private native void nativeAddToNode(long lightRef, long nodeRef);
     private native void nativeRemoveFromNode(long lightRef, long nodeRef);
     private native void nativeSetColor(long lightRef, long color);
+    private native void nativeSetIntensity(long lightRef, float intensity);
     private native void nativeSetDirection(long lightRef, float directionX, float directionY, float directionZ);
 }

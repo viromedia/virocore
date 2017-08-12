@@ -5,8 +5,10 @@ package com.viro.renderer.jni;
 
 public class OmniLightJni extends BaseLight {
 
-    public OmniLightJni(long color, float attenuationStartDistance, float attenuationEndDistance, float[] position) {
-        mNativeRef = nativeCreateOmniLight(color, attenuationStartDistance, attenuationEndDistance, position[0], position[1], position[2]);
+    public OmniLightJni(long color, float intensity, float attenuationStartDistance,
+                        float attenuationEndDistance, float[] position) {
+        mNativeRef = nativeCreateOmniLight(color, intensity, attenuationStartDistance,
+                attenuationEndDistance, position[0], position[1], position[2]);
     }
 
     public void destroy() {
@@ -28,6 +30,10 @@ public class OmniLightJni extends BaseLight {
         nativeSetColor(mNativeRef, color);
     }
 
+    public void setIntensity(float intensity) {
+        nativeSetIntensity(mNativeRef, intensity);
+    }
+
     public void setAttenuationStartDistance(float attenuationStartDistance) {
 
         nativeSetAttenuationStartDistance(mNativeRef, attenuationStartDistance);
@@ -43,13 +49,15 @@ public class OmniLightJni extends BaseLight {
         nativeSetPosition(mNativeRef, position[0], position[1], position[2]);
     }
 
-    private native long nativeCreateOmniLight(long color, float attenuationStartDistance,
+    private native long nativeCreateOmniLight(long color, float intensity,
+                                              float attenuationStartDistance,
                                               float attenuationEndDistance,
                                               float positionX, float positionY, float positionZ);
     private native void nativeDestroyOmniLight(long lightRef);
     private native void nativeAddToNode(long lightRef, long nodeRef);
     private native void nativeRemoveFromNode(long lightRef, long nodeRef);
     private native void nativeSetColor(long lightRef, long color);
+    private native void nativeSetIntensity(long lightRef, float intensity);
     private native void nativeSetAttenuationStartDistance(long lightRef, float attenuationStartDistance);
     private native void nativeSetAttenuationEndDistance(long lightRef, float attenuationEndDistance);
     private native void nativeSetPosition(long lightRef, float positionX, float positionY, float positionZ);

@@ -30,18 +30,19 @@ namespace SpotLight {
 extern "C" {
 
 JNI_METHOD(jlong, nativeCreateSpotLight)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong color,
-                                     jfloat attenuationStartDistance,
-                                     jfloat attenuationEndDistance,
-                                     jfloat positionX,
-                                     jfloat positionY,
-                                     jfloat positionZ,
-                                     jfloat directionX,
-                                     jfloat directionY,
-                                     jfloat directionZ,
-                                     jfloat innerAngle,
-                                     jfloat outerAngle) {
+                                         jclass clazz,
+                                         jlong color,
+                                         jfloat intensity,
+                                         jfloat attenuationStartDistance,
+                                         jfloat attenuationEndDistance,
+                                         jfloat positionX,
+                                         jfloat positionY,
+                                         jfloat positionZ,
+                                         jfloat directionX,
+                                         jfloat directionY,
+                                         jfloat directionZ,
+                                         jfloat innerAngle,
+                                         jfloat outerAngle) {
 
     std::shared_ptr<VROLight> spotLight = std::make_shared<VROLight>(VROLightType::Spot);
 
@@ -52,6 +53,7 @@ JNI_METHOD(jlong, nativeCreateSpotLight)(JNIEnv *env,
 
     VROVector3f vecColor(r, g, b);
     spotLight->setColor(vecColor);
+    spotLight->setIntensity(intensity);
     spotLight->setAttenuationStartDistance(attenuationStartDistance);
     spotLight->setAttenuationEndDistance(attenuationEndDistance);
 
@@ -125,6 +127,17 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env,
 
         VROVector3f vecColor(r, g, b);
         light->setColor(vecColor);
+    });
+}
+
+JNI_METHOD(void, nativeSetIntensity)(JNIEnv *env,
+                                     jclass clazz,
+                                     jlong native_light_ref,
+                                     jfloat intensity) {
+    std::shared_ptr<VROLight> light = SpotLight::native(native_light_ref);
+
+    VROPlatformDispatchAsyncRenderer([light, intensity] {
+        light->setIntensity(intensity);
     });
 }
 
