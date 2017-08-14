@@ -289,6 +289,10 @@ static VROVector3f const kZeroVector = VROVector3f();
     }
 }
 
+- (void)setPaused:(BOOL)paused {
+    [_displayLink setPaused:paused];
+}
+
 #pragma mark - Recording and Screen Capture
 
 // TODO: not a huge fan of the current implementation because
