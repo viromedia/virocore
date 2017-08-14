@@ -109,16 +109,15 @@ private:
     void bindGeometryUniforms(float opacity, const VROGeometry &geometry);
     
     void loadConstantLighting(const VROMaterial &material, VRODriverOpenGL &driver);
-    void loadLambertLighting(const VROMaterial &material, VRODriverOpenGL &driver);
-    void loadPhongLighting(const VROMaterial &material, VRODriverOpenGL &driver);
-    void loadBlinnLighting(const VROMaterial &material, VRODriverOpenGL &driver);
-    
-    void configureSpecularShader(std::string vertexShader, std::string fragmentShader,
-                                 const VROMaterial &material, VRODriverOpenGL &driver);
+    void configureStandardShader(const VROMaterial &material, VRODriverOpenGL &driver);
     
     std::shared_ptr<VROShaderModifier> createDiffuseTextureModifier();
+    std::shared_ptr<VROShaderModifier> createSpecularTextureModifier();
     std::shared_ptr<VROShaderModifier> createNormalMapTextureModifier();
     std::shared_ptr<VROShaderModifier> createReflectiveTextureModifier();
+    std::shared_ptr<VROShaderModifier> createLambertLightingModifier();
+    std::shared_ptr<VROShaderModifier> createPhongLightingModifier();
+    std::shared_ptr<VROShaderModifier> createBlinnLightingModifier();
     std::shared_ptr<VROShaderModifier> createYCbCrTextureModifier();
     std::shared_ptr<VROShaderModifier> createEGLImageModifier();
     std::shared_ptr<VROShaderModifier> createStereoTextureModifier(VROStereoMode currentStereoMode);

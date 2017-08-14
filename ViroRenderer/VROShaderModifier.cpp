@@ -129,6 +129,15 @@ std::string VROShaderModifier::getDirective(VROShaderSection section) const {
         }
     }
     
+    else if (_entryPoint == VROShaderEntryPoint::LightingModel) {
+        if (section == VROShaderSection::Body) {
+            return "#pragma lighting_model_modifier_body";
+        }
+        else {
+            return "#pragma lighting_model_modifier_uniforms";
+        }
+    }
+    
     else if (_entryPoint == VROShaderEntryPoint::Fragment) {
         if (section == VROShaderSection::Body) {
             return "#pragma fragment_modifier_body";

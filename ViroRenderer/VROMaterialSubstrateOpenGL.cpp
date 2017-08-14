@@ -18,9 +18,14 @@
 #include <sstream>
 
 static std::shared_ptr<VROShaderModifier> sDiffuseTextureModifier;
+static std::shared_ptr<VROShaderModifier> sSpecularTextureModifier;
 static std::shared_ptr<VROShaderModifier> sNormalMapTextureModifier;
 static std::shared_ptr<VROShaderModifier> sReflectiveTextureModifier;
+static std::shared_ptr<VROShaderModifier> sLambertLightingModifier;
+static std::shared_ptr<VROShaderModifier> sPhongLightingModifier;
+static std::shared_ptr<VROShaderModifier> sBlinnLightingModifier;
 static std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
+static std::shared_ptr<VROShaderModifier> sShadowMapLightModifier;
 static std::map<VROStereoMode ,std::shared_ptr<VROShaderModifier>> sStereoscopicTextureModifiers;
 
 #pragma mark - Loading Materials
@@ -49,16 +54,10 @@ VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(VROMaterial &material, VR
             loadConstantLighting(material, driver);
             break;
                 
-        case VROLightingModel::Blinn:
-            loadBlinnLighting(material, driver);
-            break;
-                
         case VROLightingModel::Lambert:
-            loadLambertLighting(material, driver);
-            break;
-                
+        case VROLightingModel::Blinn:
         case VROLightingModel::Phong:
-            loadPhongLighting(material, driver);
+            configureStandardShader(material, driver);
             break;
                 
         default:
@@ -127,93 +126,11 @@ void VROMaterialSubstrateOpenGL::loadConstantLighting(const VROMaterial &materia
     loadUniforms();
 }
 
-void VROMaterialSubstrateOpenGL::loadLambertLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
+void VROMaterialSubstrateOpenGL::configureStandardShader(const VROMaterial &material, VRODriverOpenGL &driver) {
+    VROLightingModel lightingModel = material.getLightingModel();
     std::string vertexShader = "standard_vsh";
-    std::string fragmentShader = "lambert_fsh";
+    std::string fragmentShader = "standard_fsh";
     
-    std::vector<std::string> samplers;
-    std::vector<std::shared_ptr<VROShaderModifier>> modifiers = material.getShaderModifiers();
-    
-    VROMaterialVisual &diffuse    = material.getDiffuse();
-    VROMaterialVisual &normal     = material.getNormal();
-    VROMaterialVisual &reflective = material.getReflective();
-
-    if (diffuse.getTextureType() != VROTextureType::None) {
-        if (diffuse.getTexture()->getStereoMode() != VROStereoMode::None){
-            modifiers.push_back(createStereoTextureModifier(diffuse.getTexture()->getStereoMode()));
-        }
-
-        _textures.push_back(diffuse.getTexture());
-        if (diffuse.getTexture()->getInternalFormat() == VROTextureInternalFormat::YCBCR) {
-            samplers.push_back("diffuse_texture_y");
-            samplers.push_back("diffuse_texture_cbcr");
-            modifiers.push_back(createYCbCrTextureModifier());
-        }
-        else {
-            samplers.push_back("diffuse_texture");
-            modifiers.push_back(createDiffuseTextureModifier());
-        }
-        
-        // For Android video
-        if (diffuse.getTextureType() == VROTextureType::TextureEGLImage) {
-            modifiers.push_back(createEGLImageModifier());
-        }
-    }
-    
-    if (normal.getTextureType() == VROTextureType::Texture2D) {
-        _textures.push_back(normal.getTexture());
-        samplers.push_back("normal_texture");
-        modifiers.push_back(createNormalMapTextureModifier());
-    }
-    
-    if (reflective.getTextureType() == VROTextureType::TextureCube) {
-        _textures.push_back(reflective.getTexture());
-        samplers.push_back("reflect_texture");
-        modifiers.push_back(createReflectiveTextureModifier());
-    }
-    
-    _program = driver.getPooledShader(vertexShader, fragmentShader, samplers, modifiers);
-    if (!_program->isHydrated()) {
-        hydrateProgram(driver);
-    }
-    loadUniforms();
-}
-
-void VROMaterialSubstrateOpenGL::loadPhongLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
-    /*
-     If there's no specular map, then we fall back to Lambert lighting.
-     */
-    VROMaterialVisual &specular = material.getSpecular();
-    if (specular.getTextureType() != VROTextureType::Texture2D) {
-        loadLambertLighting(material, driver);
-    }
-    else {
-        std::string vertexShader = "standard_vsh";
-        std::string fragmentShader = "phong_fsh";
-        
-        configureSpecularShader(vertexShader, fragmentShader, material, driver);
-    }
-}
-
-void VROMaterialSubstrateOpenGL::loadBlinnLighting(const VROMaterial &material, VRODriverOpenGL &driver) {
-    /*
-     If there's no specular map, then we fall back to Lambert lighting.
-     */
-    VROMaterialVisual &specular = material.getSpecular();
-    if (specular.getTextureType() != VROTextureType::Texture2D) {
-        loadLambertLighting(material, driver);
-    }
-    else {
-        std::string vertexShader = "standard_vsh";
-        std::string fragmentShader = "blinn_fsh";
-        
-        configureSpecularShader(vertexShader, fragmentShader, material, driver);
-    }
-}
-
-// Configures properties for both Blinn and Phong
-void VROMaterialSubstrateOpenGL::configureSpecularShader(std::string vertexShader, std::string fragmentShader,
-                                                         const VROMaterial &material, VRODriverOpenGL &driver) {
     std::vector<std::string> samplers;
     std::vector<std::shared_ptr<VROShaderModifier>> modifiers = material.getShaderModifiers();
 
@@ -222,6 +139,7 @@ void VROMaterialSubstrateOpenGL::configureSpecularShader(std::string vertexShade
     VROMaterialVisual &normal     = material.getNormal();
     VROMaterialVisual &reflective = material.getReflective();
 
+    // Diffuse Map
     if (diffuse.getTextureType() != VROTextureType::None) {
         if (diffuse.getTexture()->getStereoMode() != VROStereoMode::None){
             modifiers.push_back(createStereoTextureModifier(diffuse.getTexture()->getStereoMode()));
@@ -244,19 +162,47 @@ void VROMaterialSubstrateOpenGL::configureSpecularShader(std::string vertexShade
         }
     }
     
-    _textures.push_back(specular.getTexture());
-    samplers.push_back("specular_texture");
+    // Specular Map
+    if (specular.getTextureType() == VROTextureType::Texture2D &&
+        (lightingModel == VROLightingModel::Blinn || lightingModel == VROLightingModel::Phong)) {
+        _textures.push_back(specular.getTexture());
+        samplers.push_back("specular_texture");
+        modifiers.push_back(createSpecularTextureModifier());
+    }
     
+    // Normal Map
     if (normal.getTextureType() == VROTextureType::Texture2D) {
         _textures.push_back(normal.getTexture());
         samplers.push_back("normal_texture");
         modifiers.push_back(createNormalMapTextureModifier());
     }
 
+    // Reflective Map
     if (reflective.getTextureType() == VROTextureType::TextureCube) {
         _textures.push_back(reflective.getTexture());
         samplers.push_back("reflect_texture");
         modifiers.push_back(createReflectiveTextureModifier());
+    }
+    
+    // Lighting Model. If we don't have a specular texture then we fall back to Lambert
+    if (lightingModel == VROLightingModel::Lambert) {
+        modifiers.push_back(createLambertLightingModifier());
+    }
+    else if (lightingModel == VROLightingModel::Blinn) {
+        if (specular.getTextureType() != VROTextureType::Texture2D) {
+            modifiers.push_back(createLambertLightingModifier());
+        }
+        else {
+            modifiers.push_back(createBlinnLightingModifier());
+        }
+    }
+    else if (lightingModel == VROLightingModel::Phong) {
+        if (specular.getTextureType() != VROTextureType::Texture2D) {
+            modifiers.push_back(createLambertLightingModifier());
+        }
+        else {
+            modifiers.push_back(createPhongLightingModifier());
+        }
     }
     
     _program = driver.getPooledShader(vertexShader, fragmentShader, samplers, modifiers);
@@ -405,6 +351,22 @@ std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createDiffuseText
     return sDiffuseTextureModifier;
 }
 
+std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createSpecularTextureModifier() {
+    /*
+     Modifier that multiplies the material's specular color by a specular texture.
+     */
+    if (!sSpecularTextureModifier) {
+        std::vector<std::string> modifierCode =  {
+            "uniform sampler2D specular_texture;",
+            "_surface.specular_color = texture(specular_texture, _surface.specular_texcoord).xyz;"
+        };
+        sSpecularTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
+                                                                       modifierCode);
+    }
+    
+    return sSpecularTextureModifier;
+}
+
 std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createNormalMapTextureModifier() {
     /*
      Modifier that samples a normal map to determine the direction of the normal to use at each
@@ -437,6 +399,68 @@ std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createReflectiveT
     }
     
     return sReflectiveTextureModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createLambertLightingModifier() {
+    /*
+     Modifier that implements the Lambert lighting model.
+     */
+    if (!sLambertLightingModifier) {
+        std::vector<std::string> modifierCode = {
+            "highp float diffuse_coeff = max(0.0, dot(-_surface.normal, _light.surface_to_light));",
+            "_lightingContribution.diffuse += (_light.attenuation * diffuse_coeff * _light.color);",
+        };
+        
+        sLambertLightingModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::LightingModel,
+                                                                       modifierCode);
+    }
+    return sLambertLightingModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createPhongLightingModifier() {
+    /*
+     Modifier that implements the Phong lighting model.
+     */
+    if (!sPhongLightingModifier) {
+        std::vector<std::string> modifierCode = {
+            "highp float diffuse_coeff = max(0.0, dot(-_surface.normal, _light.surface_to_light));",
+            "_lightingContribution.diffuse += (_light.attenuation * diffuse_coeff * _light.color);",
+            "lowp float specular_coeff = 0.0;",
+            "if (diffuse_coeff > 0.0) {",
+            "    specular_coeff = pow(max(0.0, dot(_surface.view,",
+            "                                      reflect(_light.surface_to_light, -_surface.normal))),",
+            "                         _surface.shininess);",
+            "}",
+            "_lightingContribution.specular += (_light.attenuation * specular_coeff * _light.color);",
+        };
+        
+        sPhongLightingModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::LightingModel,
+                                                                     modifierCode);
+    }
+    return sPhongLightingModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createBlinnLightingModifier() {
+    /*
+     Modifier that implements the Blinn lighting model.
+     */
+    if (!sBlinnLightingModifier) {
+        std::vector<std::string> modifierCode = {
+            "highp float diffuse_coeff = max(0.0, dot(-_surface.normal, _light.surface_to_light));",
+            "_lightingContribution.diffuse += (_light.attenuation * diffuse_coeff * _light.color);",
+            "lowp float specular_coeff = 0.0;",
+            "if (diffuse_coeff > 0.0) {",
+            "    specular_coeff = pow(max(0.0, dot(normalize(-_surface.view + _light.surface_to_light),",
+            "                                      -_surface.normal)),",
+            "                         _surface.shininess);",
+            "}",
+            "_lightingContribution.specular += (_light.attenuation * specular_coeff * _light.color);",
+        };
+        
+        sBlinnLightingModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::LightingModel,
+                                                                     modifierCode);
+    }
+    return sBlinnLightingModifier;
 }
 
 std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createStereoTextureModifier(VROStereoMode currentStereoMode) {

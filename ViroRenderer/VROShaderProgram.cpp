@@ -527,6 +527,7 @@ void VROShaderProgram::inflateFragmentShaderModifiers(const std::vector<std::sha
     
     for (const std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
         if (modifier->getEntryPoint() != VROShaderEntryPoint::Surface &&
+            modifier->getEntryPoint() != VROShaderEntryPoint::LightingModel && 
             modifier->getEntryPoint() != VROShaderEntryPoint::Fragment &&
             modifier->getEntryPoint() != VROShaderEntryPoint::Image) {
             continue;
