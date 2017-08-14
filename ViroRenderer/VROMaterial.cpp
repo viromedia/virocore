@@ -219,6 +219,7 @@ void VROMaterial::bindProperties(std::shared_ptr<VRODriver> &driver) {
     driver->setCullMode(_cullMode);
     driver->setDepthReadingEnabled(_readsFromDepthBuffer);
     driver->setDepthWritingEnabled(_writesToDepthBuffer);
+    driver->setBlendingMode(_blendMode);
     getSubstrate(driver)->bindProperties();
 }
 

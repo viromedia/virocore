@@ -36,7 +36,8 @@ VROParticleEmitter::VROParticleEmitter(std::shared_ptr<VRODriver> driver,
         material->addShaderModifier(modifier);
     }
     material->setWritesToDepthBuffer(false);
-    material->setReadsFromDepthBuffer(false);
+    material->setReadsFromDepthBuffer(true);
+    material->setBlendMode(VROBlendMode::Add);
 
     // Apply the particle texture, if given.
     if (texture) {

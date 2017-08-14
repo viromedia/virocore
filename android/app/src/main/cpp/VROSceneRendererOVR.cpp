@@ -760,9 +760,6 @@ static ovrFrameParms ovrRenderer_RenderFrame( ovrRenderer * rendererOVR, const o
 
         GL( glEnable(GL_DEPTH_TEST) );
         GL( glEnable(GL_STENCIL_TEST) );
-        GL( glEnable(GL_BLEND) );
-        GL( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
-
         GL( glClearColor( 0.0f, 0.0f, 0.0f, 1.0f ) );
         GL( glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT ) );
 

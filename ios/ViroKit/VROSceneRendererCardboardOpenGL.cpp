@@ -40,9 +40,6 @@ VROSceneRendererCardboardOpenGL::~VROSceneRendererCardboardOpenGL() {
 void VROSceneRendererCardboardOpenGL::initRenderer(GVRHeadTransform *headTransform) {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_STENCIL_TEST);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROSceneController> sceneController) {
@@ -81,11 +78,7 @@ void VROSceneRendererCardboardOpenGL::prepareFrame(VROViewport viewport, VROFiel
 
     glEnable(GL_SCISSOR_TEST); // Ensures we only clear scissored area when using glClear
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
     _driver->setCullMode(VROCullMode::Back);
-
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);    
-
     // GLKMatrix is a float[16] array, whereas gvr::Mat4f is a float[4][4] array, this is just converting one to the other.
     GLKMatrix4 glkmatrix = [headTransform headPoseInStartSpace];
     gvr::Mat4f matrix = {glkmatrix.m[0], glkmatrix.m[4], glkmatrix.m[8], glkmatrix.m[12]};

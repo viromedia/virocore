@@ -39,13 +39,15 @@ public:
         _depthWritingEnabled(true),
         _depthReadingEnabled(true),
         _colorWritingEnabled(true),
-        _cullMode(VROCullMode::None) {
-            
+        _cullMode(VROCullMode::None),
+        _blendMode(VROBlendMode::Alpha){
+        
         // Initialize actual OpenGL state to match our CPU state
         glDepthMask(GL_TRUE);
         glDepthFunc(GL_LEQUAL);
         glDisable(GL_CULL_FACE);
-            
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         _shaderFactory = std::unique_ptr<VROShaderFactory>(new VROShaderFactory());
     }
 
@@ -110,6 +112,28 @@ public:
         else if (cullMode == VROCullMode::Front) {
             glEnable(GL_CULL_FACE);
             glCullFace(GL_FRONT);
+        }
+    }
+
+    void setBlendingMode(VROBlendMode mode) {
+        if (_blendMode == mode) {
+            return;
+        }
+
+        _blendMode = mode;
+        if (_blendMode != VROBlendMode::None && mode == VROBlendMode::None) {
+            glDisable(GL_BLEND);
+            return;
+        } else if (_blendMode == VROBlendMode::None && mode != VROBlendMode::None) {
+            glEnable(GL_BLEND);
+        }
+
+        if (mode == VROBlendMode::Alpha) {
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        } else if (mode == VROBlendMode::Add) {
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        } else {
+            pwarn("Warn: Attempted to use an unsupported blend mode. No blending is applied.");
         }
     }
     
@@ -299,8 +323,10 @@ private:
     bool _colorWritingEnabled;
     bool _depthWritingEnabled, _depthReadingEnabled;
     VROCullMode _cullMode;
+    VROBlendMode _blendMode;
+
     std::shared_ptr<VROShaderProgram> _boundShader;
-    
+
     /*
      ID of the backbuffer.
      */

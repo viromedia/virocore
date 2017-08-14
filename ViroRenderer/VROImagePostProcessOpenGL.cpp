@@ -9,7 +9,7 @@
 #include "VROImagePostProcessOpenGL.h"
 #include "VROShaderProgram.h"
 #include "VRORenderTarget.h"
-#include "VRODriver.h"
+#include "VRODriverOpenGL.h"
 #include "VROOpenGL.h"
 #include "VROGeometrySource.h"
 #include "VROGeometryUtil.h"
@@ -76,7 +76,7 @@ void VROImagePostProcessOpenGL::accumulate(std::shared_ptr<VRORenderTarget> sour
     }
     glBlendFunc(GL_ONE, GL_ONE);
     drawScreenSpaceVAR();
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    driver->setBlendingMode(VROBlendMode::Alpha);
 }
 
 bool VROImagePostProcessOpenGL::bind(std::shared_ptr<VRORenderTarget> source,

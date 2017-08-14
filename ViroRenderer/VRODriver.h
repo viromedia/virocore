@@ -40,6 +40,7 @@ enum class VROMipmapMode;
 enum class VRORenderTargetType;
 enum class VROFace;
 enum class VROCullMode;
+enum class VROBlendMode;
 
 /*
  The driver is used to interface with the rendering subsystem (OpenGL,
@@ -108,7 +109,7 @@ public:
     virtual std::shared_ptr<VROTypeface> newTypeface(std::string typeface, int size) = 0;
     virtual void setSoundRoom(float sizeX, float sizeY, float sizeZ, std::string wallMaterial,
                               std::string ceilingMaterial, std::string floorMaterial) = 0;
-
+    virtual void setBlendingMode(VROBlendMode mode) = 0;
 };
 
 #endif /* VRODriver_hpp */

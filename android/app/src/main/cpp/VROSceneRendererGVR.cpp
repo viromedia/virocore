@@ -83,8 +83,6 @@ void VROSceneRendererGVR::initGL() {
 
     glEnable(GL_STENCIL_TEST);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void VROSceneRendererGVR::onDrawFrame() {
@@ -243,10 +241,7 @@ void VROSceneRendererGVR::prepareFrame(VROViewport leftViewport, VROFieldOfView 
     glEnable(GL_SCISSOR_TEST); // Must enable to ensure glClear only clears active 'eye'
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE); // Must enable writes to clear depth buffer
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+    _driver->setBlendingMode(VROBlendMode::Alpha);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 

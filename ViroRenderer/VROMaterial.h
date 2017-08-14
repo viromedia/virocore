@@ -26,12 +26,13 @@ enum class VROCullMode {
 };
 
 enum class VROBlendMode {
+    None,
     Alpha,
     Add,
-    Subtract,
-    Multiply,
-    Screen,
-    Replace
+    Multiply,   // Note: Unimplemented mode
+    Subtract,   // Note: Unimplemented mode
+    Screen,     // Note: Unimplemented mode
+    Replace     // Note: Unimplemented mode
 };
 
 enum class VROTransparencyMode {
@@ -175,6 +176,10 @@ public:
     VROBlendMode getBlendMode() const {
         return _blendMode;
     }
+    void setBlendMode(VROBlendMode mode){
+        _blendMode = mode;
+    }
+
     bool getWritesToDepthBuffer() const {
         return _writesToDepthBuffer;
     }
