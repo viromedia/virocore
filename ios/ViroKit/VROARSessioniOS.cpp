@@ -35,11 +35,11 @@ VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, std::shared_ptr<V
     _videoTextureCache = std::dynamic_pointer_cast<VROVideoTextureCacheOpenGL>(driver->newVideoTextureCache());
         
     if (getTrackingType() == VROTrackingType::DOF3) {
-        _sessionConfiguration = [[ARSessionConfiguration alloc] init];
+        _sessionConfiguration = [[AROrientationTrackingConfiguration alloc] init];
         _sessionConfiguration.lightEstimationEnabled = YES;
     }
     else { // DOF6
-        ARWorldTrackingSessionConfiguration *config = [[ARWorldTrackingSessionConfiguration alloc] init];
+        ARWorldTrackingConfiguration *config = [[ARWorldTrackingConfiguration alloc] init];
         config.planeDetection = NO;
         config.lightEstimationEnabled = YES;
         
@@ -71,13 +71,13 @@ bool VROARSessioniOS::isReady() const {
 
 void VROARSessioniOS::setAnchorDetection(std::set<VROAnchorDetection> types) {
     if (types.find(VROAnchorDetection::PlanesHorizontal) != types.end()) {
-        if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingSessionConfiguration class]]) {
-            ((ARWorldTrackingSessionConfiguration *) _sessionConfiguration).planeDetection = YES;
+        if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
+            ((ARWorldTrackingConfiguration *) _sessionConfiguration).planeDetection = YES;
         }
     }
     else {
-        if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingSessionConfiguration class]]) {
-            ((ARWorldTrackingSessionConfiguration *) _sessionConfiguration).planeDetection = NO;
+        if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
+            ((ARWorldTrackingConfiguration *) _sessionConfiguration).planeDetection = NO;
         }
     }
 }

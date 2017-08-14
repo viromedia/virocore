@@ -59,7 +59,7 @@ private:
      The ARKit session, configuration, and delegate.
      */
     ARSession *_session;
-    ARSessionConfiguration *_sessionConfiguration;
+    ARConfiguration *_sessionConfiguration;
     VROARKitSessionDelegate *_delegateAR;
     
     /*

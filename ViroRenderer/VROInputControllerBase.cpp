@@ -18,6 +18,7 @@ VROInputControllerBase::VROInputControllerBase() {
     _lastHoveredNode = nullptr;
     _lastDraggedNode = nullptr;
     _currentPinchedNode = nullptr;
+    _currentRotateNode = nullptr;
     _scene = nullptr;
     _currentControllerStatus = VROEventDelegate::ControllerStatus::Unknown;
     
@@ -192,7 +193,7 @@ void VROInputControllerBase::onMove(int source, VROVector3f position, VROQuatern
     }
     
     // Update draggable objects if needed unless we have a pinch motion.
-    if (_lastDraggedNode != nullptr && _currentPinchedNode == nullptr) {
+    if (_lastDraggedNode != nullptr && ((_currentPinchedNode == nullptr) && (_currentRotateNode == nullptr))) {
         processDragging(source);
     }
 }
@@ -242,6 +243,30 @@ void VROInputControllerBase::onPinch(int source, float scaleFactor, VROEventDele
         _currentPinchedNode->getEventDelegate()->onPinch(source, scaleFactor, pinchState);
         if(pinchState == VROEventDelegate::PinchState::PinchEnd) {
             _currentPinchedNode = nullptr;
+        }
+    }
+}
+
+
+void VROInputControllerBase::onRotate(int source, float rotationFactor, VROEventDelegate::RotateState rotateState) {
+    if(rotateState == VROEventDelegate::RotateState::RotateStart) {
+        if(_hitResult == nullptr) {
+            return;
+        }
+        _lastRotation = rotationFactor;
+        _currentRotateNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnRotate, _hitResult->getNode());
+    }
+    
+    if(_currentRotateNode && rotateState == VROEventDelegate::RotateState::RotateMove) {
+        if(fabs(rotationFactor - _lastRotation) < ON_ROTATE_THRESHOLD) {
+            return;
+        }
+    }
+    
+    if(_currentRotateNode) {
+        _currentRotateNode->getEventDelegate()->onRotate(source, rotationFactor, rotateState);
+        if(rotateState == VROEventDelegate::RotateState::RotateEnd) {
+            _currentRotateNode = nullptr;
         }
     }
 }

@@ -134,8 +134,7 @@ VROMatrix4f VROARFrameiOS::getViewportToCameraImageTransform() {
      two are equivalent. We do the latter, since our camera background uses a fixed orthogonal
      projection.
      */
-    CGAffineTransform transform = CGAffineTransformInvert([_frame displayTransformWithViewportSize:viewportSize
-                                                                                       orientation:orientation]);
+    CGAffineTransform transform = CGAffineTransformInvert([_frame displayTransformForOrientation:orientation viewportSize:viewportSize]);
     
     VROMatrix4f matrix;
     matrix[0] = transform.a;

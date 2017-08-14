@@ -78,6 +78,22 @@ public:
      */
     void onPinchScale(float scale);
     
+    
+    /*
+     Call this function when a rotate gesture has begun.
+     */
+    void onRotateStart(VROVector3f center);
+    
+    /*
+     Call this function when a rotate gesture has ended.
+     */
+    void onRotateEnd();
+    
+    /*
+     Call this function when a rotate gesture is scaling(after start, before end).
+     */
+    void onRotate(float rotation);
+    
     std::string getHeadset();
     std::string getController();
     
@@ -96,8 +112,10 @@ private:
     float _viewportWidth;
     float _viewportHeight;
     float _latestScale;
+    float _latestRotation;
     bool _isTouchOngoing;
     bool _isPinchOngoing;
+    bool _isRotateOngoing;
     double _lastProcessDragTimeMillis;
 
     std::weak_ptr<VRORenderer> _weakRenderer;

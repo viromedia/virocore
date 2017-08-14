@@ -219,11 +219,27 @@ static VROVector3f const kZeroVector = VROVector3f();
   
     UIPinchGestureRecognizer *twoFingerPinch = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
     [self addGestureRecognizer:twoFingerPinch];
+    
+    UIRotationGestureRecognizer *rotateRotatePinch = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotate:)];
+    [self addGestureRecognizer:rotateRotatePinch];
+}
+
+- (void)handleRotate:(UIRotationGestureRecognizer *)recognizer {
+    CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+    VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
+    
+    if(recognizer.state == UIGestureRecognizerStateBegan) {
+        _inputController->onRotateStart(viewportTouchPos);
+    } else if(recognizer.state == UIGestureRecognizerStateChanged) {
+        _inputController->onRotate(recognizer.rotation);
+    } else if(recognizer.state == UIGestureRecognizerStateEnded) {
+        _inputController->onRotateEnd();
+    }
 }
 
 - (void)handlePinch:(UIPinchGestureRecognizer *)recognizer {
     CGPoint location = [recognizer locationInView:[recognizer.view superview]];
-     VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
+    VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
   
     if(recognizer.state == UIGestureRecognizerStateBegan) {
       _inputController->onPinchStart(viewportTouchPos);
