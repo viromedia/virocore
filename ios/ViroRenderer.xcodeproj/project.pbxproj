@@ -140,6 +140,8 @@
 		8F3488B21EE83DD3008917CB /* VROARSessionInertial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3488AA1EE83DD3008917CB /* VROARSessionInertial.cpp */; };
 		8F3488B31EE83DD3008917CB /* VROARSessionInertial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3488AB1EE83DD3008917CB /* VROARSessionInertial.h */; };
 		8F36F3A91EE0CE10003F92D4 /* VROViewAR.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8F129FC51EDF6AE500341D83 /* VROViewAR.mm */; };
+		8F383B611F43546C006AB301 /* VROShadowMapRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F383B5F1F43546C006AB301 /* VROShadowMapRenderPass.cpp */; };
+		8F383B621F43546C006AB301 /* VROShadowMapRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F383B601F43546C006AB301 /* VROShadowMapRenderPass.h */; };
 		8F39A31C1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F39A31A1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp */; };
 		8F39A31D1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F39A31B1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */; };
@@ -760,6 +762,8 @@
 		8F3488A91EE83DD3008917CB /* VROARFrameInertial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARFrameInertial.h; sourceTree = "<group>"; };
 		8F3488AA1EE83DD3008917CB /* VROARSessionInertial.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARSessionInertial.cpp; sourceTree = "<group>"; };
 		8F3488AB1EE83DD3008917CB /* VROARSessionInertial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARSessionInertial.h; sourceTree = "<group>"; };
+		8F383B5F1F43546C006AB301 /* VROShadowMapRenderPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROShadowMapRenderPass.cpp; sourceTree = "<group>"; };
+		8F383B601F43546C006AB301 /* VROShadowMapRenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROShadowMapRenderPass.h; sourceTree = "<group>"; };
 		8F39A31A1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROFrustumBoxIntersectionMetadata.cpp; sourceTree = "<group>"; };
 		8F39A31B1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFrustumBoxIntersectionMetadata.h; sourceTree = "<group>"; };
 		8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shanghai_tower_diffuse.jpg; path = ViroSample/shanghai_tower_diffuse.jpg; sourceTree = "<group>"; };
@@ -1403,6 +1407,8 @@
 				8F0E5EAB1F3C080E0007AD03 /* VROPortalTreeRenderPass.h */,
 				8F0E5EAA1F3C080E0007AD03 /* VROPortalTreeRenderPass.cpp */,
 				8F9209171F3CCF9D003305C8 /* VROImagePostProcess.h */,
+				8F383B601F43546C006AB301 /* VROShadowMapRenderPass.h */,
+				8F383B5F1F43546C006AB301 /* VROShadowMapRenderPass.cpp */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";
@@ -2255,6 +2261,7 @@
 				8F92091D1F3CE241003305C8 /* VROImagePostProcessOpenGL.h in Headers */,
 				8A99E6D11EF1B95800712D79 /* VROARScene.h in Headers */,
 				8F50FC801E0AEC0A00A9B4B2 /* VROFieldOfView.h in Headers */,
+				8F383B621F43546C006AB301 /* VROShadowMapRenderPass.h in Headers */,
 				8FCB101B1DD5449700FE425C /* VROVideoTextureiOS.h in Headers */,
 				8F65F82B1CA19A9A00415115 /* VROAudioPlayer.h in Headers */,
 				8F0856591C87960900E66709 /* VROGeometryUtil.h in Headers */,
@@ -2911,6 +2918,7 @@
 				8FD4DF181C18ED4C003DC425 /* VRODistortionRenderer.cpp in Sources */,
 				8FD4DF2A1C18EE7F003DC425 /* Shaders.metal in Sources */,
 				8F1DF5A91F36408700886805 /* VROPortalFrame.cpp in Sources */,
+				8F383B611F43546C006AB301 /* VROShadowMapRenderPass.cpp in Sources */,
 				8FD4DF0A1C18ED3C003DC425 /* VRONode.cpp in Sources */,
 				8FD4DEF41C18ED19003DC425 /* VROFrustumPlane.cpp in Sources */,
 				8FD4DEEE1C18ED0B003DC425 /* VROByteBuffer.cpp in Sources */,

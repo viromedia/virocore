@@ -359,9 +359,12 @@ void VRORenderTargetOpenGL::createDepthTextureTarget() {
 #pragma mark - Rendering Operations
 
 void VRORenderTargetOpenGL::clearStencil(int bits)  {
-    glStencilMask(0xFF);
-    glClearStencil(bits);
-    glClear(GL_STENCIL_BUFFER_BIT);
+    std::shared_ptr<VRODriver> driver = _driver.lock();
+    if (driver) {
+        glStencilMask(0xFF);
+        glClearStencil(bits);
+        glClear(GL_STENCIL_BUFFER_BIT);
+    }
 }
 
 void VRORenderTargetOpenGL::clearDepth() {
