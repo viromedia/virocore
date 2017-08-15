@@ -6,6 +6,7 @@
 //
 
 #include <vector>
+#include "VROParticle.h"
 #include "VROParticleUBO.h"
 #include "VROMath.h"
 #include "VROShaderProgram.h"

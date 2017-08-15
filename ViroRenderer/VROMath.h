@@ -50,6 +50,8 @@ double degrees_to_radians(double degrees);
 double radians_to_degrees(double radians);
 
 float clamp(float val, float min, float max);
+float random(float min, float max);
+VROVector3f random(VROVector3f min, VROVector3f max);
 
 /*
  4x4 column-major matrix operations.

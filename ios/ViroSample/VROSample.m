@@ -570,6 +570,25 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                                                particleNode,
                                                                                                imgTexture,
                                                                                                2, 2);
+    // Vec of intervals to interpolate this modifier along.
+    std::vector<VROParticleModifier::VROModifierInterval> intervals;
+    VROParticleModifier::VROModifierInterval interval1;
+    interval1.startFactor = 0;
+    interval1.endFactor = 1000;
+    interval1.targetedValue = VROVector3f(0,0,0);
+    intervals.push_back(interval1);
+    
+    // Modifier's starting configuration. Provide different numbers to randomize.
+    VROVector3f sizeMinStart = VROVector3f(2,2,2);
+    VROVector3f sizeMaxStart = VROVector3f(2,2,2);
+    
+    std::shared_ptr<VROParticleModifier> mod = std::make_shared<VROParticleModifier>(sizeMinStart,
+                                                                                     sizeMaxStart,
+                                                                                     VROParticleModifier::VROModifierFactor::Time,
+                                                                                     intervals);
+    // Finally set this modifier.
+    particleEmitter->setScaleModifier(mod);
+    
     scene->addParticleEmitter(particleEmitter);
     rootNode->addChildNode(particleNode);
     

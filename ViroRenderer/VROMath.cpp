@@ -137,6 +137,27 @@ float clamp(float val, float min, float max) {
     return std::max(min, std::min(max, val));
 }
 
+float random(float min, float max) {
+    if (min == max){
+        return max;
+    }
+
+    float random = ((float) rand()) / (float) RAND_MAX;
+    float range = max - min;
+    return (random * range) + min;
+}
+
+VROVector3f random(VROVector3f min, VROVector3f max) {
+    if (min == max){
+        return max;
+    }
+
+    float x = random(min.x, max.x);
+    float y = random(min.y, max.y);
+    float z = random(min.z, max.z);
+    return VROVector3f(x, y, z);
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 //
 //  Angle Computation

@@ -1141,6 +1141,8 @@
 		A513473C1F35420300FF3726 /* VROParticleUBO.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROParticleUBO.cpp; sourceTree = "<group>"; };
 		A513473D1F35420300FF3726 /* VROParticleUBO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROParticleUBO.h; sourceTree = "<group>"; };
 		A517D2CB1F41A16400A22219 /* cloud.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = cloud.png; path = ViroSample/cloud.png; sourceTree = "<group>"; };
+		A517D2D51F44AC5500A22219 /* VROParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROParticle.h; sourceTree = "<group>"; };
+		A517D2D61F44AC5E00A22219 /* VROParticleModifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROParticleModifier.h; sourceTree = "<group>"; };
 		A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTransformDelegateiOS.h; sourceTree = "<group>"; };
 		A527C7061EE76876006D3F24 /* VROPencil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPencil.h; sourceTree = "<group>"; };
 		A527C7071EE76876006D3F24 /* VROPencil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPencil.cpp; sourceTree = "<group>"; };
@@ -1337,6 +1339,8 @@
 				8F4DCE4B1BFD617200061DD7 /* Private */,
 				A586977F1E30843000191090 /* VROInputControllerBase.h */,
 				A586977E1E30843000191090 /* VROInputControllerBase.cpp */,
+				A517D2D51F44AC5500A22219 /* VROParticle.h */,
+				A517D2D61F44AC5E00A22219 /* VROParticleModifier.h */,
 				A51347311F329B0B00FF3726 /* VROParticleEmitter.cpp */,
 				A540C5C21F3D8711007986E6 /* VROInstancedUBO.h */,
 				A513473C1F35420300FF3726 /* VROParticleUBO.cpp */,
