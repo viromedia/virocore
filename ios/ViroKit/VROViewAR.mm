@@ -833,6 +833,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     if (_hasTrackingInitialized) {
         std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
+        passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
+        
         arScene->trackingHasInitialized();
     }
     
@@ -914,7 +916,9 @@ static VROVector3f const kZeroVector = VROVector3f();
         if (_sceneController && !_hasTrackingInitialized) {
             if (position != kZeroVector) {
                 _hasTrackingInitialized = true;
+                
                 std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
+                passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
                 arScene->trackingHasInitialized();
             }
         }
@@ -985,6 +989,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     // TODO: change the scene to VROARScene in this this class?
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(scene);
+    passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
+    
     arScene->setARComponentManager(_arComponentManager);
     arScene->addNode(_pointOfView);
 }
