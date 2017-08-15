@@ -101,9 +101,7 @@ void VROInputControllerARiOS::processDragging(int source, bool alwaysRun) {
     }
     
     std::shared_ptr<VROARSession> session = _weakSession.lock();
-    // only process AR drag if we have a session and we've waited long enough since the last time we processed drag OR
-    // if alwaysRun is true.
-    if ((session && (VROTimeCurrentMillis() - _lastProcessDragTimeMillis > kARProcessDragInterval)) || alwaysRun) {
+    if (session) {
         std::unique_ptr<VROARFrame> &frame = session->getLastFrame();
         std::vector<VROARHitTestResult> results = frame->hitTest(_latestTouchPos.x,
                                                                  _latestTouchPos.y,
@@ -112,7 +110,16 @@ void VROInputControllerARiOS::processDragging(int source, bool alwaysRun) {
                                                                      VROARHitTestResultType::EstimatedHorizontalPlane,
                                                                      VROARHitTestResultType::FeaturePoint });
         
-        if (results.size() > 0) {
+        // If there are no AR results, then simply fallback to the base input controller's dragging logic.
+        if (results.size() == 0) {
+            VROInputControllerBase::processDragging(source);
+            return;
+        }
+    
+        // only process AR drag if we have a session and we've waited long enough since the last time we processed drag OR
+        // if alwaysRun is true.
+        if ((VROTimeCurrentMillis() - _lastProcessDragTimeMillis > kARProcessDragInterval) || alwaysRun) {
+
             VROVector3f position = getNextDragPosition(results);
             
             // TODO: since we're animating position... the position passed back below won't necessarily
@@ -158,16 +165,10 @@ void VROInputControllerARiOS::processDragging(int source, bool alwaysRun) {
 }
 
 /*
- Things we're doing to select the next drag position:
+ Things we're doing to select the next drag position (comments in the code below are more descriptive):
  - picking plane with extent if possible
- - looking at all feature points
-     - picking the feature point that changed the least from the last position
-     - ensuring that minDist < feature point < maxDist
-     - ensuring that feature point is in same general direction as forward (in front of the camera)
- - picking plane without extent if no feature points
-     - ensuring that plane without extent also is between minDist and maxDist
- - finally, if all else fails, we should always get at least something back from ARKit
-     - grab that hit result, normalize it and multiply it by the last distance we used
+ - looking at all feature points and filtering them (look in code to see what else we do)
+ - finally, if all else fails, just move the object while maintaining the old distance.
 
  Things we aren't doing but could:
  - ignoring ExistingPlaneUsingExtent because it causes us to miss smaller objects (think
@@ -180,7 +181,7 @@ void VROInputControllerARiOS::processDragging(int source, bool alwaysRun) {
 VROVector3f VROInputControllerARiOS::getNextDragPosition(std::vector<VROARHitTestResult> results) {
     VROVector3f cameraPos = _latestCamera.getPosition();
     
-    // first, filter the points, if we find an ExistingPlaneUsingExtent, then return that (highest confidence)
+    // first, bucket the points, if we find an ExistingPlaneUsingExtent, then just return that (highest confidence)
     std::vector<VROARHitTestResult> featurePoints;
     std::shared_ptr<VROARHitTestResult> existingPlaneWithoutExtent = nullptr;
     for (VROARHitTestResult result : results) {
@@ -199,8 +200,16 @@ VROVector3f VROInputControllerARiOS::getNextDragPosition(std::vector<VROARHitTes
             }
     }
     
-    // Take the given feature points and find the one that changed the least from the last point.
+    // Handle feature points. The most obnoxious thing we need to handle is the fact that ARKit likes to return
+    // points REALLY close to the user or sometimes very far when it's unsure of things. This causes dragged
+    // objects to ping-pong really close to really far from the user. We get around this by:
+    // - preferring positions closest to the previous position
+    // - having a min/max distance
+    // - ensuring the point is in front of the user (sometimes it's actually behind the user ><)
+    // - accepting new positions if they're far enough away, if they're moving away or if they're
+    //   moving close to the user, but not by a large amount.
     if (featurePoints.size() > 0) {
+        // Sort them by distance from the last dragged point.
         std::sort(featurePoints.begin(), featurePoints.end(), [this](VROARHitTestResult a, VROARHitTestResult b) {
             VROVector3f posA = a.getWorldTransform().extractTranslation();
             VROVector3f posB = b.getWorldTransform().extractTranslation();
@@ -212,20 +221,28 @@ VROVector3f VROInputControllerARiOS::getNextDragPosition(std::vector<VROARHitTes
         for (VROARHitTestResult featurePoint : featurePoints) {
             VROVector3f featurePointPos = featurePoint.getWorldTransform().extractTranslation();
             VROVector3f ray = featurePointPos - _latestCamera.getPosition();
+            // ensure the position is within bounds and is foward wrt the camera forward
             if (isDistanceWithinBounds(cameraPos, featurePointPos) && _latestCamera.getForward().dot(ray) > 0) {
-                return featurePointPos;
+                float candDistance = _latestCamera.getPosition().distance(featurePointPos);
+                float distanceDiff = abs(_lastDraggedNode->_draggedDistanceFromController - candDistance);
+                if (candDistance > 2 || distanceDiff > _lastDraggedNode->_draggedDistanceFromController
+                    || distanceDiff / _lastDraggedNode->_draggedDistanceFromController < .33) {
+                    return featurePointPos;
+                }
             }
         }
     }
 
+    // TODO: remove this once we're more confident this doesn't help.
     // if we don't trust/have any feature points, then use the existingPlaneWithoutExtent.
-    if (existingPlaneWithoutExtent) {
-        VROVector3f planePos = existingPlaneWithoutExtent->getWorldTransform().extractTranslation();
-        if (isDistanceWithinBounds(cameraPos, planePos)) {
-            return planePos;
-        }
-    }
+//    if (existingPlaneWithoutExtent) {
+//        VROVector3f planePos = existingPlaneWithoutExtent->getWorldTransform().extractTranslation();
+//        if (isDistanceWithinBounds(cameraPos, planePos)) {
+//            return planePos;
+//        }
+//    }
 
+    // base case is to simply take the last dragged distance and keep the object that distance away from the controller.
     float distance = _lastDraggedNode->_draggedDistanceFromController;
     distance = fmin(distance, kARMaxDragDistance);
     distance = fmax(distance, kARMinDragDistance);
@@ -236,7 +253,6 @@ VROVector3f VROInputControllerARiOS::getNextDragPosition(std::vector<VROARHitTes
     if (projection < 0) {
         touchForward = touchForward * -1;
     }
-    
     return cameraPos + (touchForward * distance);
 }
 
