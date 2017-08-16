@@ -12,6 +12,7 @@
 #include "VROTextureSubstrateOpenGL.h"
 #include "VRODriverOpenGL.h"
 #include "VROMaterial.h"
+#include "VROViewport.h"
 
 #ifdef VRO_PLATFORM_ANDROID
 #define GL_COMPARE_REF_TO_TEXTURE                        0x884E
@@ -24,8 +25,6 @@ VRORenderTargetOpenGL::VRORenderTargetOpenGL(VRORenderTargetType type, std::shar
     VRORenderTarget(type),
     _framebuffer(0),
     _depthStencilbuffer(0),
-    _width(0),
-    _height(0),
     _colorbuffer(0),
     _driver(driver) {
     
@@ -39,6 +38,52 @@ VRORenderTargetOpenGL::~VRORenderTargetOpenGL() {
 
 void VRORenderTargetOpenGL::bind() {
     glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
+    
+    /*
+     Bind the viewport and scissor when the render target changes. The scissor
+     ensures we only clear (e.g. glClear) over the designated area; this is
+     particularly important in VR mode where we have two 'eyes' each with a
+     different viewport over the same framebuffer.
+     */
+    glViewport(_viewport.getX(), _viewport.getY(), _viewport.getWidth(), _viewport.getHeight());
+    glScissor(_viewport.getX(), _viewport.getY(), _viewport.getWidth(), _viewport.getHeight());
+}
+
+void VRORenderTargetOpenGL::setViewport(VROViewport viewport) {
+    float previousWidth = _viewport.getWidth();
+    float previousHeight = _viewport.getHeight();
+    
+    _viewport = viewport;
+
+    // If size changed, recreate the target
+    if (previousWidth  != viewport.getWidth() ||
+        previousHeight != viewport.getHeight()) {
+        discardFramebuffers();
+        switch (_type) {
+            case VRORenderTargetType::Renderbuffer:
+                createColorDepthRenderbuffers();
+                break;
+                
+            case VRORenderTargetType::ColorTexture:
+                createColorTextureTarget();
+                break;
+                
+            case VRORenderTargetType::DepthTexture:
+                createDepthTextureTarget();
+                break;
+                
+            default:
+                pabort("Invalid render target");
+        }
+    }
+}
+
+int VRORenderTargetOpenGL::getWidth() const {
+    return _viewport.getWidth();
+}
+
+int VRORenderTargetOpenGL::getHeight() const {
+    return _viewport.getHeight();
 }
 
 #pragma mark - Texture Attachments
@@ -75,7 +120,8 @@ void VRORenderTargetOpenGL::attachNewTexture() {
     if (!driver) {
         return;
     }
-    passert_msg(_width > 0 && _height > 0, "Must invoke setSize before using a render target");
+    passert_msg(_viewport.getWidth() > 0 && _viewport.getHeight() > 0,
+                "Must invoke setViewport before using a render target");
     
     GLuint texName;
     if (_type == VRORenderTargetType::ColorTexture) {
@@ -88,7 +134,7 @@ void VRORenderTargetOpenGL::attachNewTexture() {
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _viewport.getWidth(), _viewport.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
         
         glBindTexture(GL_TEXTURE_2D, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texName, 0);
@@ -100,7 +146,7 @@ void VRORenderTargetOpenGL::attachNewTexture() {
         if (_depthStencilbuffer == 0) {
             glGenRenderbuffers(1, &_depthStencilbuffer);
             glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, _width, _height);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, _viewport.getWidth(), _viewport.getHeight());
             
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
@@ -126,7 +172,7 @@ void VRORenderTargetOpenGL::attachNewTexture() {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
         
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, _width, _height, 0,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, _viewport.getWidth(), _viewport.getHeight(), 0,
                      GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
         glBindTexture(GL_TEXTURE_2D, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texName, 0);
@@ -207,34 +253,11 @@ void VRORenderTargetOpenGL::discardFramebuffers() {
     _texture.reset();
 }
 
-void VRORenderTargetOpenGL::setSize(int width, int height) {
-    discardFramebuffers();
-    _width = width;
-    _height = height;
-    
-    switch (_type) {
-        case VRORenderTargetType::Renderbuffer:
-            createColorDepthRenderbuffers();
-            break;
-            
-        case VRORenderTargetType::ColorTexture:
-            createColorTextureTarget();
-            break;
-            
-        case VRORenderTargetType::DepthTexture:
-            createDepthTextureTarget();
-            break;
-            
-        default:
-            pabort("Invalid render target");
-    }
-}
-
 #pragma mark - Render Target Creation
 
 void VRORenderTargetOpenGL::createColorDepthRenderbuffers() {
-    passert_msg(_width > 0 && _height > 0, "Must invoke setSize before using a render target");
-
+    passert_msg(_viewport.getWidth() > 0 && _viewport.getHeight() > 0,
+                "Must invoke setViewport before using a render target");
     /*
      Create framebuffer.
      */
@@ -248,7 +271,7 @@ void VRORenderTargetOpenGL::createColorDepthRenderbuffers() {
     GLuint colorRenderbuffer;
     glGenRenderbuffers(1, &colorRenderbuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, _width, _height);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, _viewport.getWidth(), _viewport.getHeight());
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
     
     /*
@@ -257,7 +280,7 @@ void VRORenderTargetOpenGL::createColorDepthRenderbuffers() {
      */
     glGenRenderbuffers(1, &_depthStencilbuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, _width, _height);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, _viewport.getWidth(), _viewport.getHeight());
     
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
@@ -283,8 +306,8 @@ void VRORenderTargetOpenGL::createColorDepthRenderbuffers() {
 }
 
 void VRORenderTargetOpenGL::createColorTextureTarget() {
-    passert_msg(_width > 0 && _height > 0, "Must invoke setSize before using a render target");
-
+    passert_msg(_viewport.getWidth() > 0 && _viewport.getHeight() > 0,
+                "Must invoke setViewport before using a render target");
     /*
      Create framebuffer.
      */
@@ -312,8 +335,8 @@ void VRORenderTargetOpenGL::createColorTextureTarget() {
 }
 
 void VRORenderTargetOpenGL::createDepthTextureTarget() {
-    passert_msg(_width > 0 && _height > 0, "Must invoke setSize before using a render target");
-
+    passert_msg(_viewport.getWidth() > 0 && _viewport.getHeight() > 0,
+                "Must invoke setViewport before using a render target");
     /*
      Create the framebuffer.
      */
@@ -333,7 +356,7 @@ void VRORenderTargetOpenGL::createDepthTextureTarget() {
     GLuint colorRenderbuffer;
     glGenRenderbuffers(1, &colorRenderbuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, _width, _height);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, _viewport.getWidth(), _viewport.getHeight());
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
     
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {

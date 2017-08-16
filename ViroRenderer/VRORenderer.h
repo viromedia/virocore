@@ -132,7 +132,7 @@ public:
      Render the designated eye.
      */
     void renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projection,
-                   std::shared_ptr<VRODriver> driver);
+                   VROViewport viewport, std::shared_ptr<VRODriver> driver);
      
     /*
      Performs end-frame cleanup.

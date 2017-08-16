@@ -11,6 +11,7 @@
 
 #include <memory>
 #include "VROVector4f.h"
+#include "VROViewport.h"
 
 class VROTexture;
 enum class VROFace;
@@ -44,11 +45,13 @@ public:
     virtual ~VRORenderTarget() {}
     
     /*
-     Initialize or resize this render target to the given width and height. This
-     may invalidate the current texture. This must be invoked before using the
-     render target.
+     Set the viewport of this render target. The viewport will be automatically
+     bound when this render target is bound.
+     
+     If the viewport size is changed, this may invalidate the current texture.
+     This must be invoked before using the render target.
      */
-    virtual void setSize(int width, int height) = 0;
+    virtual void setViewport(VROViewport viewport) = 0;
     
     /*
      Get the dimensions of this render target.

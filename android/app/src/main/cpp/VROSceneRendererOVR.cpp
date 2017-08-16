@@ -768,8 +768,9 @@ static ovrFrameParms ovrRenderer_RenderFrame( ovrRenderer * rendererOVR, const o
         const float eyeOffset = (eye == VRAPI_FRAME_LAYER_EYE_LEFT ? -0.5f : 0.5f) * headModelParms.InterpupillaryDistance;
         const ovrMatrix4f eyeOffsetMatrix = ovrMatrix4f_CreateTranslation( eyeOffset, 0.0f, 0.0f );
         VROMatrix4f eyeFromHeadMatrix = toMatrix4f(eyeOffsetMatrix);
+        VROViewport viewport = { 0, 0, frameBuffer->Width, frameBuffer->Height };
 
-        renderer->renderEye(eyeType, eyeFromHeadMatrix, projection, driver);
+        renderer->renderEye(eyeType, eyeFromHeadMatrix, projection, viewport, driver);
 
         // Explicitly clear the border texels to black because OpenGL-ES does not support GL_CLAMP_TO_BORDER.
         {

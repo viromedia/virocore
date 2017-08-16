@@ -107,7 +107,7 @@ void VROSceneRendererCardboardOpenGL::renderEye(GVREye eye, GVRHeadTransform *he
                                                                                             far:_renderer->getFarClippingPlane()]);
     
     VROEyeType eyeType = (eye == kGVRLeftEye ? VROEyeType::Left : VROEyeType::Right);
-    _renderer->renderEye(eyeType, eyeMatrix, projectionMatrix, _driver);
+    _renderer->renderEye(eyeType, eyeMatrix, projectionMatrix, viewport, _driver);
 }
 
 void VROSceneRendererCardboardOpenGL::endFrame() {

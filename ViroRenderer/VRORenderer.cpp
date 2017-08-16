@@ -150,8 +150,6 @@ void VRORenderer::setPointOfView(std::shared_ptr<VRONode> node) {
 VROCamera VRORenderer::updateCamera(const VROViewport &viewport, const VROFieldOfView &fov,
                                     const VROMatrix4f &headRotation, const VROMatrix4f &projection) {
     
-    _choreographer->setViewportSize(viewport.getWidth(), viewport.getHeight());
-    
     VROCamera camera;
     camera.setHeadRotation(headRotation);
     camera.setViewport(viewport);
@@ -280,7 +278,10 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
 }
 
 void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
-                            std::shared_ptr<VRODriver> driver) {
+                            VROViewport viewport, std::shared_ptr<VRODriver> driver) {
+    
+    _choreographer->setViewport(viewport, driver);
+
     std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
     if (delegate) {
         delegate->willRenderEye(eye, _context.get());
@@ -353,12 +354,12 @@ void VRORenderer::renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> drive
             _outgoingSceneController->sceneWillRender(_context.get());
             _sceneController->sceneWillRender(_context.get());
 
-            _choreographer->render(_outgoingSceneController->getScene(), _context.get(), driver);
-            _choreographer->render(_sceneController->getScene(), _context.get(), driver);
+            _choreographer->render(eyeType, _outgoingSceneController->getScene(), _context.get(), driver);
+            _choreographer->render(eyeType, _sceneController->getScene(), _context.get(), driver);
         }
         else {
             _sceneController->sceneWillRender(_context.get());
-            _choreographer->render(_sceneController->getScene(), _context.get(), driver);
+            _choreographer->render(eyeType, _sceneController->getScene(), _context.get(), driver);
         }
     }
 }

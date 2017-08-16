@@ -22,10 +22,10 @@ public:
         _framebuffer = framebuffer;
     }
     virtual ~VRODisplayOpenGL() {}
+    void setViewport(VROViewport viewport) { _viewport = viewport; }
     
 #pragma mark - Unsupported by Displays
     
-    void setSize(int width, int height) { pabort(); }
     void clearTexture() { pabort(); }
     void attachNewTexture() { pabort(); }
     void attachTexture(std::shared_ptr<VROTexture> texture) { pabort(); }

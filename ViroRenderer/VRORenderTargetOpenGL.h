@@ -28,13 +28,9 @@ public:
     
     void bind();
     
-    virtual void setSize(int width, int height);
-    int getWidth() const {
-        return _width;
-    };
-    int getHeight() const {
-        return _height;
-    };
+    virtual void setViewport(VROViewport viewport);
+    int getWidth() const;
+    int getHeight() const;
     
 #pragma mark - Render Target Setup
     
@@ -65,15 +61,14 @@ protected:
      */
     GLuint _framebuffer, _depthStencilbuffer;
     
+    /*
+     The viewport of this target.
+     */
+    VROViewport _viewport;
+    
 private:
     
 #pragma mark - Private
-    
-    /*
-     The dimensions of this target.
-     */
-    int _width;
-    int _height;
     
     /*
      The colorbuffer is used for pure offscreen rendering and for MSAA texture rendering.

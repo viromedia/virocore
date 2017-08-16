@@ -15,12 +15,14 @@
 
 class VROScene;
 class VRODriver;
+class VROViewport;
 class VROTexture;
 class VRORenderPass;
 class VRORenderTarget;
 class VRORenderContext;
 class VROImagePostProcess;
 class VROShaderProgram;
+enum class VROEyeType;
 
 class VROChoreographer {
 public:
@@ -28,7 +30,7 @@ public:
     VROChoreographer(std::shared_ptr<VRODriver> driver);
     virtual ~VROChoreographer();
     
-    virtual void render(std::shared_ptr<VROScene> scene, VRORenderContext *context,
+    virtual void render(VROEyeType eye, std::shared_ptr<VROScene> scene, VRORenderContext *context,
                         std::shared_ptr<VRODriver> &driver);
     
     void setBaseRenderPass(std::shared_ptr<VRORenderPass> pass) {
@@ -49,9 +51,10 @@ public:
     void setRenderToTextureCallback(std::function<void()> callback);
     
     /*
-     Render targets need to be recreated when the viewport size is changed.
+     Render targets need to be recreated when the viewport size is changed. They
+     also need to be able to set their viewport when bound.
      */
-    void setViewportSize(int width, int height);
+    void setViewport(VROViewport viewport, std::shared_ptr<VRODriver> &driver);
     
 private:
     
@@ -62,11 +65,6 @@ private:
     std::shared_ptr<VRORenderTarget> _renderToTextureTarget;
     std::shared_ptr<VROImagePostProcess> _renderToTexturePostProcess;
     std::function<void()> _renderToTextureCallback;
-    
-    /*
-     The last recorded viewport size.
-     */
-    int _width, _height;
     
     /*
      Pass that renders the 3D scene to a render target.

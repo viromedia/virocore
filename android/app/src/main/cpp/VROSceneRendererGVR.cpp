@@ -192,7 +192,7 @@ void VROSceneRendererGVR::renderMono(VROMatrix4f &headRotation) {
     VROMatrix4f eyeFromHeadMatrix; // Identity
 
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-    _renderer->renderEye(VROEyeType::Monocular, eyeFromHeadMatrix, projectionMatrix, _driver);
+    _renderer->renderEye(VROEyeType::Monocular, eyeFromHeadMatrix, projectionMatrix, viewport,  _driver);
     _renderer->endFrame(_driver);
 }
 
@@ -260,7 +260,7 @@ void VROSceneRendererGVR::renderEye(VROEyeType eyeType,
 
     glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
     glScissor(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-    _renderer->renderEye(eyeType, eyeFromHeadMatrix, projectionMatrix, _driver);
+    _renderer->renderEye(eyeType, eyeFromHeadMatrix, projectionMatrix, viewport, _driver);
 }
 
 #pragma mark - Utility Methods
