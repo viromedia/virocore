@@ -31,7 +31,7 @@ class VROMaterialSubstrateOpenGL : public VROMaterialSubstrate {
     
 public:
     
-    VROMaterialSubstrateOpenGL(VROMaterial &material, VRODriverOpenGL &driver);
+    VROMaterialSubstrateOpenGL(VROMaterial &material, std::shared_ptr<VRODriverOpenGL> &driver);
     virtual ~VROMaterialSubstrateOpenGL();
     
     /*
@@ -85,7 +85,8 @@ public:
 private:
         
     void loadUniforms();
-    void hydrateProgram(VRODriverOpenGL &driver);
+    void loadSamplers();
+    void hydrateProgram(std::shared_ptr<VRODriverOpenGL> &driver);
 
     const VROMaterial &_material;
     VROLightingModel _lightingModel;
@@ -114,22 +115,6 @@ private:
     
     void bindMaterialUniforms();
     void bindGeometryUniforms(float opacity, const VROGeometry &geometry);
-    
-    void loadConstantLighting(const VROMaterial &material, VRODriverOpenGL &driver);
-    void configureStandardShader(const VROMaterial &material, VRODriverOpenGL &driver);
-    
-    std::shared_ptr<VROShaderModifier> createDiffuseTextureModifier();
-    std::shared_ptr<VROShaderModifier> createSpecularTextureModifier();
-    std::shared_ptr<VROShaderModifier> createNormalMapTextureModifier();
-    std::shared_ptr<VROShaderModifier> createReflectiveTextureModifier();
-    std::shared_ptr<VROShaderModifier> createLambertLightingModifier();
-    std::shared_ptr<VROShaderModifier> createPhongLightingModifier();
-    std::shared_ptr<VROShaderModifier> createBlinnLightingModifier();
-    std::shared_ptr<VROShaderModifier> createYCbCrTextureModifier();
-    std::shared_ptr<VROShaderModifier> createEGLImageModifier();
-    std::shared_ptr<VROShaderModifier> createShadowMapGeometryModifier();
-    std::shared_ptr<VROShaderModifier> createShadowMapLightModifier();
-    std::shared_ptr<VROShaderModifier> createStereoTextureModifier(VROStereoMode currentStereoMode);
 
     uint32_t hashTextures(const std::vector<std::shared_ptr<VROTexture>> &textures) const;
     

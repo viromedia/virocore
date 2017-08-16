@@ -105,6 +105,10 @@ public:
     const std::vector<VROUniform *> &getUniforms() const {
         return _uniforms;
     }
+    
+    const std::vector<std::string> &getSamplers() const {
+        return _samplers;
+    }
 
     const std::string &getName() const {
         return _shaderName;

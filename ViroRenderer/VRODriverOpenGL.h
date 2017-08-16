@@ -24,6 +24,7 @@
 #include "VROGeometrySource.h"
 #include "VROImagePostProcessOpenGL.h"
 #include "VROLight.h"
+#include "VROShaderFactory.h"
 #include <list>
 
 static const int kResourcePurgeFrameInterval = 120;
@@ -44,6 +45,8 @@ public:
         glDepthMask(GL_TRUE);
         glDepthFunc(GL_LEQUAL);
         glDisable(GL_CULL_FACE);
+            
+        _shaderFactory = std::unique_ptr<VROShaderFactory>(new VROShaderFactory());
     }
 
     void willRenderFrame(const VRORenderContext &context) {
@@ -58,21 +61,7 @@ public:
         // If we haven't had a full purge in awhile, force it, irrespective of time
         // remaining
         bool forcePurge = context.getFrame() - _lastPurgeFrame > kResourcePurgeForceFrameInterval;
-        
-        // Delete shaders that are only held by the driver, if time provides
-        std::map<std::string, std::shared_ptr<VROShaderProgram>>::iterator it = _sharedPrograms.begin();
-        while (it != _sharedPrograms.end()) {
-            if (!forcePurge && timer.isTimeRemainingInFrame()) {
-                return;
-            }
-            
-            if (it->second.unique()) {
-                it = _sharedPrograms.erase(it);
-            }
-            else {
-                ++it;
-            }
-        }
+        _shaderFactory->purgeUnusedShaders(timer, forcePurge);
         
         _lastPurgeFrame = context.getFrame();
     }
@@ -144,7 +133,8 @@ public:
     }
     
     VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) {
-        return new VROMaterialSubstrateOpenGL(material, *this);
+        std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+        return new VROMaterialSubstrateOpenGL(material, driver);
     }
     
     VROTextureSubstrate *newTextureSubstrate(VROTextureType type,
@@ -215,41 +205,6 @@ public:
         return lightingUBO;
     }
     
-    std::shared_ptr<VROShaderProgram> getPooledShader(std::string vertexShader,
-                                                      std::string fragmentShader,
-                                                      const std::vector<std::string> &samplers,
-                                                      const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers) {
-        std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
-
-        std::string modifiersKey = VROShaderModifier::getShaderModifierKey(modifiers);
-        std::string name = vertexShader + "_" + fragmentShader + "_" + modifiersKey;
-        
-        std::map<std::string, std::shared_ptr<VROShaderProgram>>::iterator it = _sharedPrograms.find(name);
-        if (it == _sharedPrograms.end()) {
-            const std::vector<VROGeometrySourceSemantic> attributes = { VROGeometrySourceSemantic::Texcoord,
-                                                                        VROGeometrySourceSemantic::Normal,
-                                                                        VROGeometrySourceSemantic::Tangent,
-                                                                        VROGeometrySourceSemantic::BoneIndices,
-                                                                        VROGeometrySourceSemantic::BoneWeights};
-            std::shared_ptr<VROShaderProgram> program = std::make_shared<VROShaderProgram>(vertexShader, fragmentShader,
-                                                                                           samplers, modifiers, attributes,
-                                                                                           driver);
-            _sharedPrograms[name] = program;
-            return program;
-        }
-        else {
-            std::shared_ptr<VROShaderProgram> program = it->second;
-            
-            // Sanity check: all modifiers should be present in the pooled shader
-            for (const std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
-                passert_msg(program->hasModifier(modifier), "Pooled program %s does not contain modifier %d",
-                            name.c_str(), modifier->getShaderModifierId());
-            }
-            
-            return it->second;
-        }
-    }
-    
     /*
      Generate a new binding point for a UBO.
      */
@@ -270,6 +225,10 @@ public:
      */
     void internBindingPoint(int bindingPoint) {
         _bindingPoints.push_back(bindingPoint);
+    }
+    
+    std::unique_ptr<VROShaderFactory> &getShaderFactory() {
+        return _shaderFactory;
     }
 
 private:
@@ -293,10 +252,10 @@ private:
     std::map<int, std::weak_ptr<VROLightingUBO>> _lightingUBOs;
     
     /*
-     Shader programs are shared across the system.
+     Creates and caches shaders.
      */
-    std::map<std::string, std::shared_ptr<VROShaderProgram>> _sharedPrograms;
-    
+    std::unique_ptr<VROShaderFactory> _shaderFactory;
+        
     /*
      The frame during which we last purged resources.
      */

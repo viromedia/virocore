@@ -482,6 +482,7 @@ void VROShaderProgram::addStandardUniforms() {
     addUniform(VROShaderProperty::Vec4, 1, "material_diffuse_surface_color");
     addUniform(VROShaderProperty::Float, 1, "material_diffuse_intensity");
     addUniform(VROShaderProperty::Float, 1, "material_alpha");
+    addUniform(VROShaderProperty::Float, 1, "material_shininess");
 }
 
 #pragma mark - Source Inflation and Shader Modifiers

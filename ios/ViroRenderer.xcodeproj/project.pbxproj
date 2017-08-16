@@ -340,6 +340,8 @@
 		8FCB102B1DD5489E00FE425C /* VROVideoDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB10291DD5489E00FE425C /* VROVideoDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCB102D1DD548C900FE425C /* VROVideoDelegateInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCB102C1DD548C900FE425C /* VROVideoDelegateInternal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FCB6C8A1C3C83EB00C14158 /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F517C421BCF1CBE0017C70B /* ModelIO.framework */; };
+		8FCE921F1F44E99900C699D5 /* VROShaderFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FCE921D1F44E99900C699D5 /* VROShaderFactory.cpp */; };
+		8FCE92201F44E99900C699D5 /* VROShaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FCE921E1F44E99900C699D5 /* VROShaderFactory.h */; };
 		8FCED0571EBBCFCF00C19BCA /* Global_Illumination.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED04E1EBBCFCF00C19BCA /* Global_Illumination.png */; };
 		8FCED0581EBBCFCF00C19BCA /* MinionSuitA_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED04F1EBBCFCF00C19BCA /* MinionSuitA_Color.png */; };
 		8FCED0591EBBCFCF00C19BCA /* MinionSuitA_Glow.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FCED0501EBBCFCF00C19BCA /* MinionSuitA_Glow.png */; };
@@ -1024,6 +1026,8 @@
 		8FCB10261DD544FF00FE425C /* VROVideoDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoDelegate.h; sourceTree = "<group>"; };
 		8FCB10291DD5489E00FE425C /* VROVideoDelegateiOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoDelegateiOS.h; sourceTree = "<group>"; };
 		8FCB102C1DD548C900FE425C /* VROVideoDelegateInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoDelegateInternal.h; sourceTree = "<group>"; };
+		8FCE921D1F44E99900C699D5 /* VROShaderFactory.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROShaderFactory.cpp; sourceTree = "<group>"; };
+		8FCE921E1F44E99900C699D5 /* VROShaderFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROShaderFactory.h; sourceTree = "<group>"; };
 		8FCED04E1EBBCFCF00C19BCA /* Global_Illumination.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Global_Illumination.png; path = ViroSample/Global_Illumination.png; sourceTree = "<group>"; };
 		8FCED04F1EBBCFCF00C19BCA /* MinionSuitA_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = MinionSuitA_Color.png; path = ViroSample/MinionSuitA_Color.png; sourceTree = "<group>"; };
 		8FCED0501EBBCFCF00C19BCA /* MinionSuitA_Glow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = MinionSuitA_Glow.png; path = ViroSample/MinionSuitA_Glow.png; sourceTree = "<group>"; };
@@ -1891,6 +1895,8 @@
 				8F0FE67C1CD3E12F00A4C297 /* VROShaderProgram.cpp */,
 				8FDDB4AD1DB055A700DE0968 /* VROShaderModifier.h */,
 				8FDDB4AE1DB055A700DE0968 /* VROShaderModifier.cpp */,
+				8FCE921E1F44E99900C699D5 /* VROShaderFactory.h */,
+				8FCE921D1F44E99900C699D5 /* VROShaderFactory.cpp */,
 				8F9209131F3CAF72003305C8 /* VROImageShaderProgram.h */,
 				8F9209121F3CAF72003305C8 /* VROImageShaderProgram.cpp */,
 				8FDDB49B1DADB8C200DE0968 /* VROLightingUBO.h */,
@@ -2193,6 +2199,7 @@
 				8FD4DF321C18F500003DC425 /* VROCamera.h in Headers */,
 				8F0E5EAD1F3C080E0007AD03 /* VROPortalTreeRenderPass.h in Headers */,
 				8FD4DF331C18F500003DC425 /* VRONode.h in Headers */,
+				8FCE92201F44E99900C699D5 /* VROShaderFactory.h in Headers */,
 				8F129FAE1ED4A38600341D83 /* VRODualQuaternion.h in Headers */,
 				8F0FE6761CD2D47900A4C297 /* VROViewCardboard.h in Headers */,
 				8F83DEAB1C49B0540089C31A /* VROAllocationTracker.h in Headers */,
@@ -2847,6 +2854,7 @@
 				8FD1E1AF1C3F20C70005BE4E /* VROVideoSurface.cpp in Sources */,
 				8FCB10221DD544E800FE425C /* VROVideoTextureCacheMetal.cpp in Sources */,
 				8FD4DF021C18ED2C003DC425 /* VROTextureSubstrateMetal.cpp in Sources */,
+				8FCE921F1F44E99900C699D5 /* VROShaderFactory.cpp in Sources */,
 				8A99E6D01EF1B95800712D79 /* VROARScene.cpp in Sources */,
 				8FCB10241DD544E800FE425C /* VROVideoTextureCacheOpenGL.cpp in Sources */,
 				8FD4DF0E1C18ED3C003DC425 /* VROMaterial.cpp in Sources */,
