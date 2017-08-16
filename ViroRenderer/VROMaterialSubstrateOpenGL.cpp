@@ -26,6 +26,7 @@ static std::shared_ptr<VROShaderModifier> sLambertLightingModifier;
 static std::shared_ptr<VROShaderModifier> sPhongLightingModifier;
 static std::shared_ptr<VROShaderModifier> sBlinnLightingModifier;
 static std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
+static std::shared_ptr<VROShaderModifier> sShadowMapGeometryModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapLightModifier;
 static std::map<VROStereoMode ,std::shared_ptr<VROShaderModifier>> sStereoscopicTextureModifiers;
 
@@ -48,7 +49,9 @@ VROMaterialSubstrateOpenGL::VROMaterialSubstrateOpenGL(VROMaterial &material, VR
     _viewMatrixUniform(nullptr),
     _projectionMatrixUniform(nullptr),
     _cameraPositionUniform(nullptr),
-    _eyeTypeUniform(nullptr){
+    _eyeTypeUniform(nullptr),
+    _shadowViewMatrixUniform(nullptr),
+    _shadowProjectionMatrixUniform(nullptr) {
 
     switch (material.getLightingModel()) {
         case VROLightingModel::Constant:
@@ -206,6 +209,11 @@ void VROMaterialSubstrateOpenGL::configureStandardShader(const VROMaterial &mate
         }
     }
     
+    // Shadow maps
+    modifiers.push_back(createShadowMapGeometryModifier());
+    modifiers.push_back(createShadowMapLightModifier());
+    samplers.push_back("shadow_map");
+    
     _program = driver.getPooledShader(vertexShader, fragmentShader, samplers, modifiers);
     if (!_program->isHydrated()) {
         _program->addUniform(VROShaderProperty::Float, 1, "material_shininess");
@@ -227,6 +235,8 @@ void VROMaterialSubstrateOpenGL::loadUniforms() {
     _viewMatrixUniform = _program->getUniform("view_matrix");
     _cameraPositionUniform = _program->getUniform("camera_position");
     _eyeTypeUniform = _program->getUniform("eye_type");
+    _shadowViewMatrixUniform = _program->getUniform("shadow_view_matrix");
+    _shadowProjectionMatrixUniform = _program->getUniform("shadow_projection_matrix");
     
     for (const std::shared_ptr<VROShaderModifier> &modifier : _program->getModifiers()) {
         std::vector<std::string> uniformNames = modifier->getUniforms();
@@ -281,14 +291,15 @@ void VROMaterialSubstrateOpenGL::bindLights(int lightsHash,
     _lightingUBO->bind(_program);
 }
 
-void VROMaterialSubstrateOpenGL::bindView(VROMatrix4f transform, VROMatrix4f viewMatrix,
+void VROMaterialSubstrateOpenGL::bindView(VROMatrix4f modelMatrix, VROMatrix4f viewMatrix,
                                           VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
-                                          VROVector3f cameraPosition, VROEyeType eyeType) {
+                                          VROVector3f cameraPosition, VROEyeType eyeType,
+                                          VROMatrix4f shadowViewMatrix, VROMatrix4f shadowProjectionMatrix) {
     if (_normalMatrixUniform != nullptr) {
         _normalMatrixUniform->setMat4(normalMatrix);
     }
     if (_modelMatrixUniform != nullptr) {
-        _modelMatrixUniform->setMat4(transform);
+        _modelMatrixUniform->setMat4(modelMatrix);
     }
     if (_projectionMatrixUniform != nullptr) {
         _projectionMatrixUniform->setMat4(projectionMatrix);
@@ -301,6 +312,12 @@ void VROMaterialSubstrateOpenGL::bindView(VROMatrix4f transform, VROMatrix4f vie
     }
     if (_eyeTypeUniform != nullptr){
         _eyeTypeUniform->setInt(static_cast<int>(eyeType));
+    }
+    if (_shadowViewMatrixUniform != nullptr) {
+        _shadowViewMatrixUniform->setMat4(shadowViewMatrix);
+    }
+    if (_shadowProjectionMatrixUniform != nullptr) {
+        _shadowProjectionMatrixUniform->setMat4(shadowProjectionMatrix);
     }
 }
 
@@ -387,6 +404,59 @@ std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createNormalMapTe
     }
     
     return sNormalMapTextureModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createShadowMapGeometryModifier() {
+    /*
+     Modifier that outputs shadow map texture coordinates for the fragment shader.
+     */
+    if (!sShadowMapGeometryModifier) {
+        std::vector<std::string> modifierCode = {
+            "uniform mat4 shadow_view_matrix;",
+            "uniform mat4 shadow_projection_matrix;",
+            "out lowp vec4 shadow_coord;",
+            "shadow_coord = shadow_projection_matrix * shadow_view_matrix * _transforms.model_matrix * vec4(_geometry.position.xyz, 1.0);",
+            "shadow_coord.x = shadow_coord.x * 0.5 + 0.5;",
+            "shadow_coord.y = shadow_coord.y * 0.5 + 0.5;",
+            "shadow_coord.z = shadow_coord.z * 0.5 + 0.5;",
+        };
+        
+        sShadowMapGeometryModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
+                                                                         modifierCode);
+    }
+    return sShadowMapGeometryModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createShadowMapLightModifier() {
+    /*
+     Modifier that samples a shadow map to determine if the fragment is in light.
+     */
+    if (!sShadowMapLightModifier) {
+        /*
+        std::vector<std::string> modifierCode = {
+            "in lowp vec4 shadow_coord;",
+            "_output_color = vec4(0.0, shadow_coord.y, 0.0, 1.0);",
+        };
+        
+        sShadowMapLightModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
+                                                                      modifierCode);
+        */
+        
+        std::vector<std::string> modifierCode = {
+            "uniform highp sampler2DShadow shadow_map;",
+            "in lowp vec4 shadow_coord;",
+            "lowp vec3 comparison = vec3(shadow_coord.xy, shadow_coord.z - 0.005);",
+            "if (shadow_coord.x < 0.0 || shadow_coord.y < 0.0 || shadow_coord.x > 1.0 || shadow_coord.y > 1.0) {",
+            "    _lightingContribution.visibility = 1.0;",
+            "} else {",
+            "    _lightingContribution.visibility = texture(shadow_map, comparison);",
+            "}",
+        };
+        
+        sShadowMapLightModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::LightingModel,
+                                                                      modifierCode);
+    }
+    return sShadowMapLightModifier;
 }
 
 std::shared_ptr<VROShaderModifier> VROMaterialSubstrateOpenGL::createReflectiveTextureModifier() {

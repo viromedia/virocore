@@ -256,10 +256,10 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     if (instancedUBO != nullptr) {
         substrate->bindInstanceUBO(instancedUBO);
     }
-
     substrate->bindView(transform, viewMatrix, projectionMatrix, normalMatrix,
-                        context.getCamera().getPosition(), context.getEyeType());
-   
+                        context.getCamera().getPosition(), context.getEyeType(),
+                        context.getShadowViewMatrix(), context.getShadowProjectionMatrix());
+    
     glBindVertexArray(_vaos[elementIndex]);
     renderMaterial(geometry, substrate, element, opacity, context, driver);
     glBindVertexArray(0);
@@ -298,6 +298,14 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
         }
     }
 
+    if (context.getShadowMap()) {
+        VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) context.getShadowMap()->getSubstrate(0, driver, nullptr);
+        std::pair<GLenum, GLuint> targetAndTexture = substrate->getTexture();
+        
+        glActiveTexture(GL_TEXTURE0 + activeTexture);
+        glBindTexture(targetAndTexture.first, targetAndTexture.second);
+    }
+
     const std::shared_ptr<VROInstancedUBO> &instancedUBO = geometry.getInstancedUBO();
     if (instancedUBO != nullptr) {
         int numberOfDraws = instancedUBO->getNumberOfDrawCalls();
@@ -305,7 +313,8 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
             int instances = instancedUBO->bindDrawData(i);
             glDrawElementsInstanced(element.primitiveType, element.indexCount, element.indexType, 0, instances);
         }
-    } else {
+    }
+    else {
         glDrawElements(element.primitiveType, element.indexCount, element.indexType, 0);
     }
 }
@@ -327,7 +336,6 @@ void VROGeometrySubstrateOpenGL::renderSilhouette(const VROGeometry &geometry,
         viewMatrix = VROMatrix4f();
         projectionMatrix = context.getOrthographicMatrix();
     }
-    VROMatrix4f modelview = viewMatrix.multiply(transform);
     
     pglpush("Silhouette [%s]", geometry.getName().c_str());
     for (int i = 0; i < geometry.getGeometryElements().size(); i++) {
@@ -339,8 +347,9 @@ void VROGeometrySubstrateOpenGL::renderSilhouette(const VROGeometry &geometry,
             substrate->bindBoneUBO(_boneUBO);
         }
         
-        substrate->bindView(transform, modelview, projectionMatrix, normalMatrix,
-                            context.getCamera().getPosition(), context.getEyeType());
+        substrate->bindView(transform, viewMatrix, projectionMatrix, normalMatrix,
+                            context.getCamera().getPosition(), context.getEyeType(),
+                            context.getShadowViewMatrix(), context.getShadowProjectionMatrix());
         
         glBindVertexArray(_vaos[i]);
         substrate->bindGeometry(1.0, geometry);
@@ -368,7 +377,6 @@ void VROGeometrySubstrateOpenGL::renderSilhouetteTextured(const VROGeometry &geo
         viewMatrix = VROMatrix4f();
         projectionMatrix = context.getOrthographicMatrix();
     }
-    VROMatrix4f modelview = viewMatrix.multiply(transform);
     
     pglpush("Silhouette [%s]", geometry.getName().c_str());
     
@@ -379,8 +387,9 @@ void VROGeometrySubstrateOpenGL::renderSilhouetteTextured(const VROGeometry &geo
         substrate->bindBoneUBO(_boneUBO);
     }
     
-    substrate->bindView(transform, modelview, projectionMatrix, normalMatrix,
-                        context.getCamera().getPosition(), context.getEyeType());
+    substrate->bindView(transform, viewMatrix, projectionMatrix, normalMatrix,
+                        context.getCamera().getPosition(), context.getEyeType(),
+                        context.getShadowViewMatrix(), context.getShadowProjectionMatrix());
     
     glBindVertexArray(_vaos[elementIndex]);
     renderMaterial(geometry, substrate, element, 1.0, context, driver);

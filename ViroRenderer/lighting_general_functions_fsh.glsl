@@ -34,6 +34,7 @@ struct VROLightingContribution {
     lowp vec3 ambient;
     lowp vec3 diffuse;
     lowp vec3 specular;
+    highp float visibility; // Fades light, e.g. due to shadows
 } _lightingContribution;
 
 struct VROShaderLight {

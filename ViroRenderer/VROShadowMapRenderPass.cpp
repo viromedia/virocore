@@ -53,8 +53,11 @@ VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene
     VROMatrix4f previousProjection = context->getProjectionMatrix();
     VROMatrix4f previousView = context->getViewMatrix();
     
-    context->setProjectionMatrix(computeLightProjectionMatrix());
-    context->setViewMatrix(computeLightViewMatrix());
+    _shadowProjection = computeLightProjectionMatrix();
+    _shadowView = computeLightViewMatrix();
+    
+    context->setProjectionMatrix(_shadowProjection);
+    context->setViewMatrix(_shadowView);
     
     driver->setDepthWritingEnabled(true);
     driver->setColorWritingEnabled(false);
@@ -109,10 +112,10 @@ void VROShadowMapRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>>
 }
 
 VROMatrix4f VROShadowMapRenderPass::computeLightProjectionMatrix() const {
-    float far  = -20;  // TODO VIRO-1185 This will be set by zFar parameter in VROLight
-    float near = -far; // TODO VIRO-1185 This will be set by zNear parameter in VROLight
+    float far  = 20;//-20;  // TODO VIRO-1185 This will be set by zFar parameter in VROLight
+    float near = -10;//-far; // TODO VIRO-1185 This will be set by zNear parameter in VROLight
     
-    float orthographicScale = 10; // TODO VIRO-1185 Set by scale parameter in VROLight
+    float orthographicScale = 5; // TODO VIRO-1185 Set by scale parameter in VROLight
     float left   = -orthographicScale;
     float right  =  orthographicScale;
     float bottom = -orthographicScale;
@@ -130,10 +133,10 @@ VROMatrix4f VROShadowMapRenderPass::computeLightProjectionMatrix() const {
 }
 
 VROMatrix4f VROShadowMapRenderPass::computeLightViewMatrix() const {
-    VROVector3f lightForward(1, -1, -1);
-    lightForward = lightForward.normalize();
+    VROVector3f lightForward(0.25, -1, 0);
+    lightForward = lightForward.scale(-1).normalize();
     
-    VROVector3f lightUp(1, 1, -1);
+    VROVector3f lightUp(.25, 1, 0);
     lightUp = lightUp.normalize();
     
     VROVector3f lightEye(0, 0, 0);

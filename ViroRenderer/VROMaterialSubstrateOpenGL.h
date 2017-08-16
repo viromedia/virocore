@@ -68,9 +68,10 @@ public:
      Bind the properties of the view and projection to the active rendering
      context.
      */
-    void bindView(VROMatrix4f transform, VROMatrix4f modelview,
+    void bindView(VROMatrix4f modelMatrix, VROMatrix4f viewMatrix,
                   VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
-                  VROVector3f cameraPosition, VROEyeType eyeType);
+                  VROVector3f cameraPosition, VROEyeType eyeType,
+                  VROMatrix4f shadowViewMatrix, VROMatrix4f shadowProjectionMatrix);
     
     void bindBoneUBO(const std::unique_ptr<VROBoneUBO> &boneUBO);
     void bindInstanceUBO(const std::shared_ptr<VROInstancedUBO> &instancedUBO);
@@ -106,6 +107,8 @@ private:
 
     VROUniform *_cameraPositionUniform;
     VROUniform *_eyeTypeUniform;
+    VROUniform *_shadowViewMatrixUniform;
+    VROUniform *_shadowProjectionMatrixUniform;
 
     std::vector<VROUniform *> _shaderModifierUniforms;
     
@@ -124,6 +127,8 @@ private:
     std::shared_ptr<VROShaderModifier> createBlinnLightingModifier();
     std::shared_ptr<VROShaderModifier> createYCbCrTextureModifier();
     std::shared_ptr<VROShaderModifier> createEGLImageModifier();
+    std::shared_ptr<VROShaderModifier> createShadowMapGeometryModifier();
+    std::shared_ptr<VROShaderModifier> createShadowMapLightModifier();
     std::shared_ptr<VROShaderModifier> createStereoTextureModifier(VROStereoMode currentStereoMode);
 
     uint32_t hashTextures(const std::vector<std::shared_ptr<VROTexture>> &textures) const;

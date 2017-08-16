@@ -10,6 +10,7 @@
 #include "VROLog.h"
 #include "VROUniform.h"
 #include "VROAllocationTracker.h"
+#include "VROStringUtil.h"
 #include <atomic>
 #include <algorithm>
 #include <sstream>
@@ -35,9 +36,13 @@ VROShaderModifier::VROShaderModifier(VROShaderEntryPoint entryPoint, std::vector
     _entryPoint(entryPoint) {
     
     for (std::string source : input) {
-        _body = _body + source + "\n";
+        if (isVariableDeclaration(source)) {
+            _uniforms = _uniforms + source + "\n";
+        }
+        else {
+            _body = _body + source + "\n";
+        }
     }
-    _uniforms = extractUniforms(&_body);
     
     /*
      At the end of each section add the corresponding directive.
@@ -79,26 +84,10 @@ std::vector<std::string> VROShaderModifier::getUniforms() const {
     return keys;
 }
 
-std::string VROShaderModifier::extractUniforms(std::string *source) const {
-    std::string uniforms;
-    extractNextUniform(&uniforms, source);
-    
-    return uniforms;
-}
-
-void VROShaderModifier::extractNextUniform(std::string *uniforms, std::string *body) const {
-    size_t start = body->find("uniform");
-    if (start == std::string::npos) {
-        return;
-    }
-    
-    size_t end = body->find("\n", start);
-    std::string uniform = body->substr(start, end - start + 1);
-
-    uniforms->append(uniform);
-    body->replace(start, end - start, "");
-    
-    return extractNextUniform(uniforms, body);
+bool VROShaderModifier::isVariableDeclaration(std::string &line) {
+    return VROStringUtil::startsWith(line, "uniform ") ||
+           VROStringUtil::startsWith(line, "in ") ||
+           VROStringUtil::startsWith(line, "out ");
 }
 
 std::string VROShaderModifier::getDirective(VROShaderSection section) const {

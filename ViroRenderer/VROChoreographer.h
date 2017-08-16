@@ -22,6 +22,7 @@ class VRORenderTarget;
 class VRORenderContext;
 class VROImagePostProcess;
 class VROShaderProgram;
+class VROShadowMapRenderPass;
 enum class VROEyeType;
 
 class VROChoreographer {
@@ -90,7 +91,7 @@ private:
     /*
      The shadow pass for creating the depth maps.
      */
-    std::shared_ptr<VRORenderPass> _shadowPass;
+    std::shared_ptr<VROShadowMapRenderPass> _shadowPass;
     
     /*
      True if shadow maps are enabled.

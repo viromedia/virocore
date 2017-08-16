@@ -79,7 +79,10 @@ void VROChoreographer::renderShadowPass(std::shared_ptr<VROScene> scene, VRORend
     VRORenderPassInputOutput inputs;
     inputs[kRenderTargetSingleOutput] = _shadowTarget;
     _shadowPass->render(scene, inputs, context, driver);
+    
     context->setShadowMap(_shadowTarget->getTexture());
+    context->setShadowViewMatrix(_shadowPass->getShadowViewMatrix());
+    context->setShadowProjectionMatrix(_shadowPass->getShadowProjectionMatrix());
 }
 
 void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORenderContext *context,

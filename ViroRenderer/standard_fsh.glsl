@@ -32,6 +32,7 @@ void main() {
     _lightingContribution.ambient  = ambient_light_color.xyz;
     _lightingContribution.diffuse  = vec3(0, 0, 0);
     _lightingContribution.specular = vec3(0, 0, 0);
+    _lightingContribution.visibility = 1.0;
 
 #pragma surface_modifier_body
   
@@ -43,8 +44,8 @@ void main() {
     }
     
     lowp vec4 _output_color = vec4(_lightingContribution.ambient  * _surface.diffuse_color.xyz +
-                                   _lightingContribution.diffuse  * _surface.diffuse_color.xyz * _surface.diffuse_intensity +
-                                   _lightingContribution.specular * _surface.specular_color,
+                                   _lightingContribution.diffuse  * _surface.diffuse_color.xyz * _surface.diffuse_intensity * _lightingContribution.visibility +
+                                   _lightingContribution.specular * _surface.specular_color * _lightingContribution.visibility,
                                    _surface.alpha * _surface.diffuse_color.a);
     
 #pragma fragment_modifier_body
