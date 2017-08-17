@@ -51,7 +51,6 @@ void VROMaterialSubstrateOpenGL::bindShader(int lightsHash,
     
     _activeBinding = getShaderBindingForLights(lights, driver);
     _activeBinding->program->bind();
-    _activeBinding->bindShadowUniforms(lights);
 
     if (lights.empty()) {
         VROLightingUBO::unbind(_activeBinding->program);
@@ -206,19 +205,6 @@ void VROMaterialShaderBinding::loadSamplers(const VROMaterial &material) {
         else if (sampler == "reflect_texture") {
             _textures.push_back(material.getReflective().getTexture());
         }
-    }
-}
-
-void VROMaterialShaderBinding::bindShadowUniforms(const std::vector<std::shared_ptr<VROLight>> &lights) {
-    _shadowMap.reset();
-    for (const std::shared_ptr<VROLight> &light : lights) {
-        if (!light->getCastsShadow()) {
-            continue;
-        }
-    
-        _shadowMap = light->getShadowMap();
-        // VIRO-1185 Support more than one shadow-casting light
-        break;
     }
 }
 

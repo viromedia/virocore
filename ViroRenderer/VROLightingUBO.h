@@ -31,7 +31,7 @@ typedef struct {
     float spot_inner_angle;
     
     float spot_outer_angle;
-    float padding3;
+    int   shadow_map_index;
     float padding4;
     float padding5;
 } VROLightData;

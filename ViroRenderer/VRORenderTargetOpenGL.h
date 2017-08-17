@@ -19,9 +19,10 @@ class VRORenderTargetOpenGL : public VRORenderTarget {
 public:
     
     /*
-     Create a new render-target of the given type, with the given dimensions.
+     Create a new render-target of the given type. The number of images is only
+     required for array types.
      */
-    VRORenderTargetOpenGL(VRORenderTargetType type, std::shared_ptr<VRODriverOpenGL> driver);
+    VRORenderTargetOpenGL(VRORenderTargetType type, int numImages, std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VRORenderTargetOpenGL();
     
 #pragma mark - VRORenderTarget Implementation
@@ -38,6 +39,7 @@ public:
     virtual void clearTexture();
     virtual void attachNewTexture();
     virtual void attachTexture(std::shared_ptr<VROTexture> texture);
+    virtual void setTextureImageIndex(int index);
     virtual const std::shared_ptr<VROTexture> getTexture() const;
     virtual void discardFramebuffers();
     virtual void restoreFramebuffers();
@@ -76,6 +78,11 @@ private:
      */
     GLuint _colorbuffer;
     std::shared_ptr<VROTexture> _texture;
+    
+    /*
+     If this is an array type, indicates the number of images in the texture.
+     */
+    int _numImages;
     
     /*
      Get the underlying OpenGL target and texture name for the currently attached

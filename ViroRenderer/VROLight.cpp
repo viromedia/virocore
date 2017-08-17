@@ -87,7 +87,7 @@ void VROLight::setSpotOuterAngle(float spotOuterAngle) {
 
 void VROLight::setCastsShadow(bool castsShadow) {
     if (!castsShadow) {
-        _shadowMap.reset();
+        _shadowMapIndex = -1;
     }
     _castsShadow = castsShadow;
 }

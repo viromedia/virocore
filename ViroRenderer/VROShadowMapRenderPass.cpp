@@ -42,9 +42,6 @@ VROShadowMapRenderPass::VROShadowMapRenderPass(const std::shared_ptr<VROLight> l
     _silhouetteMaterial->setReadsFromDepthBuffer(true);
     _silhouetteMaterial->setCullMode(VROCullMode::None);
     _silhouetteMaterial->addShaderModifier(getShadowDepthWritingModifier());
-        
-    _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTexture);
-    _shadowTarget->setViewport({ 0, 0, _light->getShadowMapSize(), _light->getShadowMapSize() });
 }
 
 VROShadowMapRenderPass::~VROShadowMapRenderPass() {
@@ -53,11 +50,7 @@ VROShadowMapRenderPass::~VROShadowMapRenderPass() {
 
 VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
                                                         VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
-    
-    // Adjust in case the shadow map size changed
-    _shadowTarget->setViewport({ 0, 0, _light->getShadowMapSize(), _light->getShadowMapSize() });
-
-    std::shared_ptr<VRORenderTarget> target = _shadowTarget;
+    std::shared_ptr<VRORenderTarget> target = inputs[kRenderTargetSingleOutput];
     VROMatrix4f previousProjection = context->getProjectionMatrix();
     VROMatrix4f previousView = context->getViewMatrix();
     
@@ -70,13 +63,12 @@ VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene
     driver->setDepthWritingEnabled(true);
     driver->setColorWritingEnabled(false);
     target->bind();
-    target->attachNewTexture();
     target->clearDepth();
     
     // A bit of polygon offset helps combat shadow acne. The first value is slope-dependent, so
     // that we get more polygon offset for pixels that represent a large depth range.
     // In addition to polygon offsetting, we also bias the depth compare in the shaders that
-    // read from the map, and use normal/light dot products to special-case surfaces parallel to the light.
+    // read from the map.
     
     // TODO VIRO-1185 control polygon offset through the driver
     glEnable(GL_POLYGON_OFFSET_FILL);
@@ -90,7 +82,6 @@ VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene
     render(treeNodes, target, *context, driver);
     
     // Store generated shadow map properties in the VROLight
-    _light->setShadowMap(target->getTexture());
     _light->setShadowViewMatrix(shadowView);
     _light->setShadowProjectionMatrix(shadowProjection);
     

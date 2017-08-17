@@ -38,11 +38,6 @@ private:
     std::shared_ptr<VROMaterial> _silhouetteMaterial;
     
     /*
-     The render target to which we write the shadow map.
-     */
-    std::shared_ptr<VRORenderTarget> _shadowTarget;
-    
-    /*
      The light casting the shadow.
      */
     const std::shared_ptr<VROLight> _light;

@@ -21,10 +21,11 @@ enum class VROFace;
  render target. Textures should be used when we do need to read back the output.
  */
 enum class VRORenderTargetType {
-    Display,       // The actual backbuffer
-    Renderbuffer,  // Uses depth and color renderbuffers
-    ColorTexture,  // Uses a color texture and a depth renderbuffer
-    DepthTexture   // Uses a depth texture and a color renderbuffer
+    Display,           // The actual backbuffer
+    Renderbuffer,      // Uses depth and color renderbuffers
+    ColorTexture,      // Uses a color texture and a depth renderbuffer
+    DepthTexture,      // Uses a depth texture and a color renderbuffer
+    DepthTextureArray  // Uses a depth texture array and a color renderbuffer
 };
 
 /*
@@ -97,12 +98,24 @@ public:
      Create and attach a new texture to this render-target. The texture will be
      sized to fit the render target. The old texture is not deleted, but this
      render-target's reference to it is released.
+     
+     Note if this render target type is a texture array, the image at index 0
+     will be bound.
      */
     virtual void attachNewTexture() = 0;
     
     /*
-     Attach the given texture to this render-target. The width and height of the texture
-     must match that of the render-target.
+     Set the index of the image to write to via this FBO. This is only valid if
+     this render target is of array type.
+     */
+    virtual void setTextureImageIndex(int index) = 0;
+    
+    /*
+     Attach the given texture to this render-target. The width and height of
+     the texture must match that of the render-target.
+     
+     Note if this render target type is a texture array, then the image at
+     index 0 will be initially bound.
      */
     virtual void attachTexture(std::shared_ptr<VROTexture> texture) = 0;
     

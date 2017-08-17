@@ -87,8 +87,8 @@ typedef std::function<void(VROUniform *uniform, GLuint location, const VROGeomet
  ----------------
  
  Lighting Model entry point. The code runs once per light. It reads from the
- _surface structure and the _light structure below, and accumulates (+=) the
- results to the _lightingContribution structure:
+ _surface structure and the _light structure below, and sets the results in
+ the _lightingContribution structure:
  
  struct VROLightingContribution {
      lowp vec3 ambient;
@@ -104,13 +104,13 @@ typedef std::function<void(VROUniform *uniform, GLuint location, const VROGeomet
  } _light;
 
  The Lighting Model entry point enables modifiers to define the impact of each
- light on a given material. After being invoked on each light, the accumulated
- lighting computations are combined with material surface properties to generate
- the final color. The visibility value (which defaults to 1.0) is multiplied by
- the diffuse and specular components; it can be used to simulate the impact of
- shadow.
+ light on a given material. After being invoked on each light, the lighting
+ contributions from each light are accumulated and combined with material surface
+ properties to generate the final color. The visibility value (which defaults to
+ 1.0) is multiplied by the diffuse and specular components; it can be used to
+ simulate the impact of shadow.
  
- Note, as an optimization, VROLightingContribution is initialized to the sum
+ Note, as an optimization, total ambient light is initialized to the sum
  of all ambient lights. Therefore, in general lighting models will not need to
  add anything to _lightingContribution.ambient.
  

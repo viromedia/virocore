@@ -297,8 +297,8 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
         }
     }
 
-    if (material->getShadowMap()) {
-        VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) material->getShadowMap()->getSubstrate(0, driver, nullptr);
+    if (context.getShadowMap()) {
+        VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) context.getShadowMap()->getSubstrate(0, driver, nullptr);
         std::pair<GLenum, GLuint> targetAndTexture = substrate->getTexture();
         
         glActiveTexture(GL_TEXTURE0 + activeTexture);

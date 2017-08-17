@@ -61,7 +61,8 @@ public:
         _shadowBias(0.005),
         _shadowOrthographicScale(10),
         _shadowNearZ(-10),
-        _shadowFarZ(20)
+        _shadowFarZ(20),
+        _shadowMapIndex(-1)
     {}
     
     ~VROLight()
@@ -198,14 +199,12 @@ public:
     
 #pragma mark - Shadow Implementation
 
-    // VIRO-1185 This will likely be removed in favor of a centralized
-    //           sampler2DShadowArray
-    std::shared_ptr<VROTexture> getShadowMap() const {
-        return _shadowMap;
+    int getShadowMapIndex() const {
+        return _shadowMapIndex;
     }
-    void setShadowMap(std::shared_ptr<VROTexture> shadowMap) {
-        _updatedVertexData = true;
-        _shadowMap = shadowMap;
+    void setShadowMapIndex(int shadowMapIndex) {
+        _updatedFragmentData = true;
+        _shadowMapIndex = shadowMapIndex;
     }
     
     VROMatrix4f getShadowViewMatrix() const {
@@ -316,9 +315,10 @@ private:
     float _shadowNearZ, _shadowFarZ;
     
     /*
-     The shadow map rendered during the last cycle for this light.
+     The index into the shadow render target's texture array where we can find this
+     light's shadow map.
      */
-    std::shared_ptr<VROTexture> _shadowMap;
+    int _shadowMapIndex;
     
     /*
      The view and projection matrices used to transform any point in world

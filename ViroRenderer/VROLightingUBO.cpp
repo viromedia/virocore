@@ -96,6 +96,7 @@ void VROLightingUBO::updateLightsFragment() {
             int index = data.num_lights;
             
             data.lights[index].type = (int) light->getType();
+            data.lights[index].shadow_map_index = light->getShadowMapIndex();
             light->getTransformedPosition().toArray(data.lights[index].position);
             light->getDirection().toArray(data.lights[index].direction);
             light->getColor().scale(light->getIntensity() / 1000.0).toArray(data.lights[index].color);

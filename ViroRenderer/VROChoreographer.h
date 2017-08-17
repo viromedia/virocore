@@ -86,6 +86,12 @@ private:
     std::shared_ptr<VRORenderTarget> _blitTarget;
     
     /*
+     The render target for the shadow passes. This target uses a depth texture array
+     to capture shadow maps for all lights.
+     */
+    std::shared_ptr<VRORenderTarget> _shadowTarget;
+    
+    /*
      The shadow passes for creating the depth maps for each light.
      */
     std::map<std::shared_ptr<VROLight>, std::shared_ptr<VROShadowMapRenderPass>> _shadowPasses;

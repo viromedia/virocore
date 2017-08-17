@@ -15,6 +15,7 @@
 #include "VRORenderContext.h"
 #include "VROMatrix4f.h"
 #include "VROScene.h"
+#include "VROLightingUBO.h"
 #include "VROEye.h"
 #include "VROShadowMapRenderPass.h"
 #include <vector>
@@ -36,12 +37,16 @@ void VROChoreographer::initTargets(std::shared_ptr<VRODriver> driver) {
     };
     std::shared_ptr<VROShaderProgram> blitShader = VROImageShaderProgram::create(blitSamplers, blitCode, driver);
     
-    _blitTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture);
+    _blitTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1);
     _blitPostProcess = driver->newImagePostProcess(blitShader);
     
-    _renderToTextureTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture);
+    _renderToTextureTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1);
     _renderToTexturePostProcess = driver->newImagePostProcess(blitShader);
     _renderToTexturePostProcess->setVerticalFlip(true);
+    
+    if (_renderShadows) {
+        _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTextureArray, kMaxLights);
+    }
 }
         
 void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriver> &driver) {
@@ -68,13 +73,26 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
                                         std::shared_ptr<VRODriver> &driver) {
     
     const std::vector<std::shared_ptr<VROLight>> &lights = scene->getLights();
+    
+    // Get the max requested shadow map size; use that for our render target
+    int maxSize = 0;
+    for (const std::shared_ptr<VROLight> &light : lights) {
+        maxSize = std::max(maxSize, light->getShadowMapSize());
+    }
+    _shadowTarget->setViewport({ 0, 0, maxSize, maxSize });
+    
     std::map<std::shared_ptr<VROLight>, std::shared_ptr<VROShadowMapRenderPass>> activeShadowPasses;
     
+    int i = 0;
     for (const std::shared_ptr<VROLight> &light : lights) {
+        if (!light->getCastsShadow()) {
+            continue;
+        }
+        
         std::shared_ptr<VROShadowMapRenderPass> shadowPass;
         
         // Get the shadow pass for this light if we already have one from the last frame;
-        // otherwise, create a new one.
+        // otherwise, create a new one
         auto it = _shadowPasses.find(light);
         if (it == _shadowPasses.end()) {
             shadowPass = std::make_shared<VROShadowMapRenderPass>(light, driver);
@@ -84,13 +102,27 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
         }
         activeShadowPasses[light] = shadowPass;
         
+        _shadowTarget->setTextureImageIndex(i);
+        light->setShadowMapIndex(i);
         
         VRORenderPassInputOutput inputs;
+        inputs[kRenderTargetSingleOutput] = _shadowTarget;
         shadowPass->render(scene, inputs, context, driver);
+        
+        ++i;
+    }
+    
+    // If any shadow was rendered, set the shadow map in the context; otherwise
+    // make it null
+    if (i > 0) {
+        context->setShadowMap(_shadowTarget->getTexture());
+    }
+    else {
+        context->setShadowMap(nullptr);
     }
     
     // Shadow passes that weren't used this frame (e.g. are not in activeShadowPasses),
-    // are removed.
+    // are removed
     _shadowPasses = activeShadowPasses;
 }
 

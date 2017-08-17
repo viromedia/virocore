@@ -799,15 +799,26 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROLight> spotRed = std::make_shared<VROLight>(VROLightType::Directional);
     spotRed->setColor({ 1.0, 0.0, 0.0 });
     spotRed->setPosition( { 0, 0, 0 });
-    spotRed->setDirection( { .25, -1.0, 0 });
+    spotRed->setDirection( { -.25, -1.0, 0 });
     spotRed->setAttenuationStartDistance(20);
     spotRed->setAttenuationEndDistance(30);
-    spotRed->setSpotInnerAngle(30);
-    spotRed->setSpotOuterAngle(60);
+    spotRed->setSpotInnerAngle(5);
+    spotRed->setSpotOuterAngle(10);
     spotRed->setCastsShadow(true);
+    
+    std::shared_ptr<VROLight> spotBlue = std::make_shared<VROLight>(VROLightType::Directional);
+    spotBlue->setColor({ 0.0, 0.0, 1.0 });
+    spotBlue->setPosition( { 0, 0, 0 });
+    spotBlue->setDirection( { 0.25, -1.0, 0 });
+    spotBlue->setAttenuationStartDistance(20);
+    spotBlue->setAttenuationEndDistance(30);
+    spotBlue->setSpotInnerAngle(5);
+    spotBlue->setSpotOuterAngle(10);
+    spotBlue->setCastsShadow(true);
     
     rootNode->addLight(ambient);
     rootNode->addLight(spotRed);
+    rootNode->addLight(spotBlue);
     
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
     
@@ -862,6 +873,13 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(12 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         spotRed->setCastsShadow(false);
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(14 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        spotBlue->setCastsShadow(false);
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(16 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        spotRed->setCastsShadow(true);
+        spotBlue->setCastsShadow(true);
     });
     
     return sceneController;

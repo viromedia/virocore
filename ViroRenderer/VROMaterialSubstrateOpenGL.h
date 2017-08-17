@@ -52,15 +52,9 @@ public:
                           VROVector3f &cameraPosition, VROEyeType &eyeType);
     void bindMaterialUniforms(const VROMaterial &material);
     void bindGeometryUniforms(float opacity, const VROGeometry &geometry, const VROMaterial &material);
-    void bindShadowUniforms(const std::vector<std::shared_ptr<VROLight>> &lights);
     
     const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
         return _textures;
-    }
-    
-    // TODO VIRO-1185 Remove in favor of shadow texture array
-    const std::shared_ptr<VROTexture> getShadowMap() const {
-        return _shadowMap;
     }
     
 private:
@@ -88,7 +82,6 @@ private:
      shader program.
      */
     std::vector<std::shared_ptr<VROTexture>> _textures;
-    std::shared_ptr<VROTexture> _shadowMap;
     
     void loadUniforms();
     void loadSamplers(const VROMaterial &material);
@@ -143,11 +136,6 @@ public:
     const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
         passert (_activeBinding != nullptr);
         return _activeBinding->getTextures();
-    }
-    
-    // TODO VIRO-1185 Remove in favor of shadow texture array
-    const std::shared_ptr<VROTexture> getShadowMap() const {
-        return _activeBinding->getShadowMap();
     }
     
     void updateSortKey(VROSortKey &key, const std::vector<std::shared_ptr<VROLight>> &lights,

@@ -17,7 +17,7 @@ struct VROLightUniforms {
     highp float spot_inner_angle;
     
     highp float spot_outer_angle;
-    lowp float padding3;
+    int shadow_map_index;
     lowp float padding4;
     lowp float padding5;
 };

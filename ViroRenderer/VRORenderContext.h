@@ -110,6 +110,13 @@ public:
         return _orthographicMatrix;
     }
     
+    std::shared_ptr<VROTexture> getShadowMap() const {
+        return _shadowMap;
+    }
+    void setShadowMap(std::shared_ptr<VROTexture> shadowMap) {
+        _shadowMap = shadowMap;
+    }
+    
     const VROCamera &getCamera() const {
         return _camera;
     }
@@ -206,6 +213,11 @@ private:
      Scheduler used for queueing and executing rendering thread tasks.
      */
     std::shared_ptr<VROFrameScheduler> _frameScheduler;
+    
+    /*
+     The texture containing shadow maps for all lights. This is a depth texture array.
+     */
+    std::shared_ptr<VROTexture> _shadowMap;
 
     /*
      VROPencil is used for drawing a list of VROPolylines in a separate render pass,

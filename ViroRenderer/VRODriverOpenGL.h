@@ -152,9 +152,9 @@ public:
                                              driver);
     }
     
-    std::shared_ptr<VRORenderTarget> newRenderTarget(VRORenderTargetType type) {
+    std::shared_ptr<VRORenderTarget> newRenderTarget(VRORenderTargetType type, int numImages) {
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
-        std::shared_ptr<VRORenderTarget> target = std::make_shared<VRORenderTargetOpenGL>(type, driver);
+        std::shared_ptr<VRORenderTarget> target = std::make_shared<VRORenderTargetOpenGL>(type, numImages, driver);
         return target;
     }
     
