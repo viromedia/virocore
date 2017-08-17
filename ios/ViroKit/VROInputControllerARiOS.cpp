@@ -31,6 +31,7 @@ void VROInputControllerARiOS::onProcess(const VROCamera &camera) {
 
 void VROInputControllerARiOS::onRotateStart(VROVector3f touchPos) {
     _isRotateOngoing = true;
+    _latestRotation = 1.0; // reset latestRotation!
     VROVector3f rayFromCamera = calculateCameraRay(touchPos);
     VROInputControllerBase::updateHitNode(_latestCamera, _latestCamera.getPosition(), rayFromCamera);
     VROInputControllerBase::onRotate(ViroCardBoard::InputSource::Controller, 1.0, VROEventDelegate::RotateState::RotateStart);
@@ -48,6 +49,7 @@ void VROInputControllerARiOS::onRotateEnd() {
 
 void VROInputControllerARiOS::onPinchStart(VROVector3f touchPos) {
     _isPinchOngoing = true;
+    _latestScale = 1.0; // reset latestScale!
     VROVector3f rayFromCamera = calculateCameraRay(touchPos);
     VROInputControllerBase::updateHitNode(_latestCamera, _latestCamera.getPosition(), rayFromCamera);
     VROInputControllerBase::onPinch(ViroCardBoard::InputSource::Controller, 1.0, VROEventDelegate::PinchState::PinchStart);
@@ -270,16 +272,17 @@ std::string VROInputControllerARiOS::getController() {
 }
 
 void VROInputControllerARiOS::processTouchMovement() {
-    if (_isPinchOngoing || _isRotateOngoing) {
-        if(_isPinchOngoing) {
-            VROInputControllerBase::onPinch(ViroCardBoard::InputSource::Controller, _latestScale, VROEventDelegate::PinchState::PinchMove);
-        } else {
-             VROInputControllerBase::onRotate(ViroCardBoard::InputSource::Controller, _latestRotation, VROEventDelegate::RotateState::RotateMove);
-        }
-    } else if (_isTouchOngoing) {
+    if (_isTouchOngoing) {
         VROVector3f rayFromCamera = calculateCameraRay(_latestTouchPos);
         VROInputControllerBase::updateHitNode(_latestCamera, _latestCamera.getPosition(), rayFromCamera);
         VROInputControllerBase::onMove(ViroCardBoard::InputSource::Controller, _latestCamera.getPosition(), _latestCamera.getRotation(), rayFromCamera);
+    } else {
+        if (_isPinchOngoing) {
+            VROInputControllerBase::onPinch(ViroCardBoard::InputSource::Controller, _latestScale, VROEventDelegate::PinchState::PinchMove);
+        }
+        if (_isRotateOngoing) {
+             VROInputControllerBase::onRotate(ViroCardBoard::InputSource::Controller, _latestRotation, VROEventDelegate::RotateState::RotateMove);
+        }
     }
 }
  

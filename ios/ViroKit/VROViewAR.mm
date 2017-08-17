@@ -211,17 +211,31 @@ static VROVector3f const kZeroVector = VROVector3f();
     _renderer->setPointOfView(_pointOfView);
     
     self.keyValidator = [[VROApiKeyValidatorDynamo alloc] init];
-    
-    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self
-                                                                                    action:@selector(handleLongPress:)];
-    longPress.minimumPressDuration = 0;
-    [self addGestureRecognizer:longPress];
-  
-    UIPinchGestureRecognizer *twoFingerPinch = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
-    [self addGestureRecognizer:twoFingerPinch];
-    
-    UIRotationGestureRecognizer *rotateRotatePinch = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotate:)];
-    [self addGestureRecognizer:rotateRotatePinch];
+
+    UIRotationGestureRecognizer *rotateGesture = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(handleRotate:)];
+    [rotateGesture setDelegate:self];
+    [self addGestureRecognizer:rotateGesture];
+
+    UIPinchGestureRecognizer *pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
+    [rotateGesture setDelegate:self];
+    [self addGestureRecognizer:pinchGesture];
+
+    /*
+     Use a pan gesture instead of a 0 second long press gesture recoginizer because
+     it seems to play better with the other two recoginizers
+     */
+    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self
+                                                                                 action:@selector(handleLongPress:)];
+    [self addGestureRecognizer:panGesture];
+}
+
+#pragma mark Gesture handlers
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] || [otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+        return NO;
+    }
+    return YES;
 }
 
 - (void)handleRotate:(UIRotationGestureRecognizer *)recognizer {
@@ -242,15 +256,15 @@ static VROVector3f const kZeroVector = VROVector3f();
     VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
   
     if(recognizer.state == UIGestureRecognizerStateBegan) {
-      _inputController->onPinchStart(viewportTouchPos);
+        _inputController->onPinchStart(viewportTouchPos);
     } else if(recognizer.state == UIGestureRecognizerStateChanged) {
-      _inputController->onPinchScale(recognizer.scale);
+        _inputController->onPinchScale(recognizer.scale);
     } else if(recognizer.state == UIGestureRecognizerStateEnded) {
-      _inputController->onPinchEnd();
+        _inputController->onPinchEnd();
     }
 }
 
-- (void)handleLongPress:(UILongPressGestureRecognizer *)recognizer {
+- (void)handleLongPress:(UIPanGestureRecognizer *)recognizer {
     CGPoint location = [recognizer locationInView:[recognizer.view superview]];
     
     VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
@@ -264,6 +278,7 @@ static VROVector3f const kZeroVector = VROVector3f();
         return;
     }
 
+    // TODO : remove this code.
     if (_arSession && _arSession->isReady()) {
         std::unique_ptr<VROARFrame> &frame = _arSession->getLastFrame();
         std::vector<VROARHitTestResult> results = frame->hitTest(location.x * self.contentScaleFactor,
