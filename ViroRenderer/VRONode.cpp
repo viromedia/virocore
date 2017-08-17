@@ -117,9 +117,8 @@ void VRONode::render(const VRORenderContext &context, std::shared_ptr<VRODriver>
     if (_geometry) {
         for (int i = 0; i < _geometry->getGeometryElements().size(); i++) {
             std::shared_ptr<VROMaterial> &material = _geometry->getMaterialForElement(i);
-            material->bindShader(driver);
+            material->bindShader(_computedLightsHash, _computedLights, driver);
             material->bindProperties(driver);
-            material->bindLights(_computedLightsHash, _computedLights, context, driver);
             
             if (!_computedLights.empty() || material->getLightingModel() == VROLightingModel::Constant) {
                 render(i, material, context, driver);
@@ -262,7 +261,7 @@ void VRONode::updateSortKeys(uint32_t depth,
             
             furthestDistanceFromCamera = _computedBoundingBox.getFurthestDistanceToPoint(context.getCamera().getPosition());
         }
-        _geometry->updateSortKeys(this, hierarchyId, hierarchyDepth, _computedLightsHash, _computedOpacity,
+        _geometry->updateSortKeys(this, hierarchyId, hierarchyDepth, _computedLightsHash, _computedLights, _computedOpacity,
                                   distanceFromCamera, context.getZFar(), driver);
         
         if (kDebugSortOrder) {

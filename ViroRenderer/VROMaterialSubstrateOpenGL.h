@@ -14,6 +14,7 @@
 #include <map>
 #include <memory>
 #include "VROOpenGL.h"
+#include "VROShaderCapabilities.h"
 
 class VROShaderProgram;
 class VRODriverOpenGL;
@@ -27,6 +28,70 @@ class VROInstancedUBO;
 class VROBoneUBO;
 enum class VROEyeType;
 
+/*
+ The association between this material and a given shader program. Contains
+ all the uniforms that we need to set each time we bind the shader with
+ the properties of this material.
+ */
+class VROMaterialShaderBinding {
+public:
+    
+    VROMaterialShaderBinding(std::shared_ptr<VROShaderProgram> program, VROLightingShaderCapabilities capabilities,
+                             const VROMaterial &material);
+    virtual ~VROMaterialShaderBinding();
+    
+    /*
+     The program associated with this binding, and its lighting
+     capabilities.
+     */
+    std::shared_ptr<VROShaderProgram> program;
+    VROLightingShaderCapabilities lightingShaderCapabilities;
+    
+    void bindViewUniforms(VROMatrix4f &modelMatrix, VROMatrix4f &viewMatrix,
+                          VROMatrix4f &projectionMatrix, VROMatrix4f &normalMatrix,
+                          VROVector3f &cameraPosition, VROEyeType &eyeType,
+                          VROMatrix4f &shadowViewMatrix, VROMatrix4f &shadowProjectionMatrix);
+    void bindMaterialUniforms(const VROMaterial &material);
+    void bindGeometryUniforms(float opacity, const VROGeometry &geometry, const VROMaterial &material);
+    
+    const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
+        return _textures;
+    }
+    
+private:
+    
+    /*
+     The various uniforms are owned by the active VROShaderProgram.
+     */
+    VROUniform *_diffuseSurfaceColorUniform;
+    VROUniform *_diffuseIntensityUniform;
+    VROUniform *_alphaUniform;
+    VROUniform *_shininessUniform;
+    
+    VROUniform *_normalMatrixUniform;
+    VROUniform *_modelMatrixUniform;
+    VROUniform *_modelViewMatrixUniform;
+    VROUniform *_viewMatrixUniform;
+    VROUniform *_projectionMatrixUniform;
+    
+    VROUniform *_cameraPositionUniform;
+    VROUniform *_eyeTypeUniform;
+    VROUniform *_shadowViewMatrixUniform;
+    VROUniform *_shadowProjectionMatrixUniform;
+    
+    std::vector<VROUniform *> _shaderModifierUniforms;
+    
+    /*
+     The textures of the material, in order of the samplers in the
+     shader program.
+     */
+    std::vector<std::shared_ptr<VROTexture>> _textures;
+    
+    void loadUniforms();
+    void loadSamplers(const VROMaterial &material);
+
+};
+
 class VROMaterialSubstrateOpenGL : public VROMaterialSubstrate {
     
 public:
@@ -36,11 +101,16 @@ public:
     
     /*
      Bind the shader used in this material to the active rendering context.
-     This is kept independent of the bind() function because shader changes
+     This is kept independent of the bindProperties() function because shader changes
      are expensive, so we want to manage them independent of materials in the
      render loop.
+     
+     The shader used is a function both of the underlying material properties
+     and of the desired lighting configuration.
      */
-    void bindShader();
+    void bindShader(int lightsHash,
+                    const std::vector<std::shared_ptr<VROLight>> &lights,
+                    std::shared_ptr<VRODriver> &driver);
     
     /*
      Bind the properties of this material to the active rendering context.
@@ -57,14 +127,6 @@ public:
     void bindGeometry(float opacity, const VROGeometry &geometry);
     
     /*
-     Bind the properties of the given lights to the active rendering context.
-     */
-    void bindLights(int lightsHash,
-                    const std::vector<std::shared_ptr<VROLight>> &lights,
-                    const VRORenderContext &context,
-                    std::shared_ptr<VRODriver> &driver);
-    
-    /*
      Bind the properties of the view and projection to the active rendering
      context.
      */
@@ -77,44 +139,41 @@ public:
     void bindInstanceUBO(const std::shared_ptr<VROInstancedUBO> &instancedUBO);
 
     const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
-        return _textures;
+        passert (_activeBinding != nullptr);
+        return _activeBinding->getTextures();
     }
     
-    void updateSortKey(VROSortKey &key) const;
-    
+    void updateSortKey(VROSortKey &key, const std::vector<std::shared_ptr<VROLight>> &lights,
+                       std::shared_ptr<VRODriver> driver);
+
 private:
-        
-    void loadUniforms();
-    void loadSamplers();
-    void hydrateProgram(std::shared_ptr<VRODriverOpenGL> &driver);
 
     const VROMaterial &_material;
-    VROLightingModel _lightingModel;
+    VROMaterialShaderCapabilities _materialShaderCapabilities;
     
-    std::shared_ptr<VROShaderProgram> _program;
-    std::vector<std::shared_ptr<VROTexture>> _textures;
+    /*
+     The last used program's binding and its lighting capabilities. This is cached
+     to reduce lookups into the _programs map.
+     */
+    VROMaterialShaderBinding *_activeBinding;
     std::shared_ptr<VROLightingUBO> _lightingUBO;
     
-    VROUniform *_diffuseSurfaceColorUniform;
-    VROUniform *_diffuseIntensityUniform;
-    VROUniform *_alphaUniform;
-    VROUniform *_shininessUniform;
+    /*
+     The programs that have been used by this material. Each program here is
+     capable of rendering materials with _materialShaderCapabilities; what makes
+     them unique is they render differing lighting shader capabilities (e.g. a
+     material can have one shader program it uses when not rendering shadows, and
+     another when it is rendering shadows).
+     */
+    std::map<VROLightingShaderCapabilities, std::unique_ptr<VROMaterialShaderBinding>> _programs;
     
-    VROUniform *_normalMatrixUniform;
-    VROUniform *_modelMatrixUniform;
-    VROUniform *_modelViewMatrixUniform;
-    VROUniform *_viewMatrixUniform;
-    VROUniform *_projectionMatrixUniform;
-
-    VROUniform *_cameraPositionUniform;
-    VROUniform *_eyeTypeUniform;
-    VROUniform *_shadowViewMatrixUniform;
-    VROUniform *_shadowProjectionMatrixUniform;
-
-    std::vector<VROUniform *> _shaderModifierUniforms;
-    
-    void bindMaterialUniforms();
-    void bindGeometryUniforms(float opacity, const VROGeometry &geometry);
+    /*
+     Get the shader program that should be used for the given light configuration.
+     Returned as a material-shader binding. If no such binding exists, it is created
+     and cached here.
+     */
+    VROMaterialShaderBinding *getShaderBindingForLights(const std::vector<std::shared_ptr<VROLight>> &lights,
+                                                        std::shared_ptr<VRODriver> driver);
 
     uint32_t hashTextures(const std::vector<std::shared_ptr<VROTexture>> &textures) const;
     

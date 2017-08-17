@@ -88,7 +88,7 @@ void VROPortal::renderBackground(const VRORenderContext &renderContext,
                                  std::shared_ptr<VRODriver> &driver) {
     if (_background) {
         const std::shared_ptr<VROMaterial> &material = _background->getMaterials()[0];
-        material->bindShader(driver);
+        material->bindShader(0, {}, driver);
         material->bindProperties(driver);
         
         VROMatrix4f transform;
@@ -125,18 +125,14 @@ void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<
         
         // Bind the new shader if it changed
         if (key.shader != boundShaderId) {
-            material->bindShader(driver);
-            boundShaderId = key.shader;
-            
-            // If the shader changes, we have to rebind the lights so they attach
-            // to the new shader
-            material->bindLights(key.lights, node->getComputedLights(), context, driver);
+            material->bindShader(key.lights, node->getComputedLights(), driver);
             boundLights = node->getComputedLights();
+            boundShaderId = key.shader;
         }
         else {
-            // Otherwise we only rebind lights if the lights themselves have changed
+            // If the lights changed, they are updated by rebinding the shader
             if (boundLights != node->getComputedLights()) {
-                material->bindLights(key.lights, node->getComputedLights(), context, driver);
+                material->bindShader(key.lights, node->getComputedLights(), driver);
                 boundLights = node->getComputedLights();
             }
         }

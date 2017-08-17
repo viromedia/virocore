@@ -32,6 +32,21 @@ struct VROShaderCapabilities;
 class VROShaderFactory {
 public:
     
+    /*
+     Derive a key that comprehensively identifies the *capabilities* that the shader
+     rendering these lights need. For example, a set of lights that require shadow
+     map support will differ from a set of lights that do not.
+     */
+    static VROLightingShaderCapabilities deriveLightingCapabilitiesKey(const std::vector<std::shared_ptr<VROLight>> &lights);
+    
+    /*
+     Derive a key that comprehensively identifies the *capabilities* that the shader
+     rendering this material would need. For example, a material that requires
+     stereo rendering, or a material that requires textures, will have a key that
+     differs from materials that do not.
+     */
+    static VROMaterialShaderCapabilities deriveMaterialCapabilitiesKey(const VROMaterial &material);
+    
     VROShaderFactory();
     virtual ~VROShaderFactory();
     
@@ -43,14 +58,14 @@ public:
     void purgeUnusedShaders(const VROFrameTimer &timer, bool force);
     
     /*
-     Retrieve a shader that is capable of rendering the given material with
-     the given light configuration.
-     
-     This will first check if such a shader is cached.
+     Retrieve a shader that has the given material and lighting capabilities.
+     If the shader is not cached, it will be created. The modifiers are required
+     so that we can build them into the shader if it needs to be constructed.
      */
-    std::shared_ptr<VROShaderProgram> getShader(const VROMaterial &material,
-                                                const std::vector<std::shared_ptr<VROLight>> &lights,
-                                                std::shared_ptr<VRODriverOpenGL> driver);
+    std::shared_ptr<VROShaderProgram> getShader(VROMaterialShaderCapabilities materialCapabilities,
+                                                VROLightingShaderCapabilities lightingCapabilities,
+                                                const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
+                                                std::shared_ptr<VRODriverOpenGL> &driver);
     
 private:
     
@@ -60,26 +75,11 @@ private:
     std::map<VROShaderCapabilities, std::shared_ptr<VROShaderProgram>> _cachedPrograms;
     
     /*
-     Derive a key that uniquely identifies the *capabilities* that the shader
-     rendering these lights need. For example, a set of lights that require shadow
-     map support will differ from a set of lights that do not.
-     */
-    VROLightingShaderCapabilities deriveLightingCapabilitiesKey(const std::vector<std::shared_ptr<VROLight>> &lights);
-    
-    /*
-     Derive a key that uniquely identifies the *capabilities* that the shader
-     rendering this material would need. For example, a material that requires
-     stereo rendering, or a material that requires textures, will have a key that
-     differs from materials that do not.
-     */
-    VROMaterialShaderCapabilities deriveMaterialCapabilitiesKey(const VROMaterial &material);
-    
-    /*
      Build and return a shader with the given capabilities and additional modifiers.
      */
     std::shared_ptr<VROShaderProgram> buildShader(VROShaderCapabilities capabilities,
                                                   const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
-                                                  std::shared_ptr<VRODriverOpenGL> driver);
+                                                  std::shared_ptr<VRODriverOpenGL> &driver);
     
     std::shared_ptr<VROShaderModifier> createDiffuseTextureModifier();
     std::shared_ptr<VROShaderModifier> createSpecularTextureModifier();

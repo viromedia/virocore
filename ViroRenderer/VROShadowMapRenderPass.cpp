@@ -74,7 +74,7 @@ VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(1.0f, 2.0f);
     
-    _silhouetteMaterial->bindShader(driver);
+    _silhouetteMaterial->bindShader(0, {}, driver);
     _silhouetteMaterial->bindProperties(driver);
     
     std::vector<tree<std::shared_ptr<VROPortal>>> treeNodes;

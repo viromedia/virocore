@@ -804,6 +804,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     spotRed->setAttenuationEndDistance(30);
     spotRed->setSpotInnerAngle(30);
     spotRed->setSpotOuterAngle(60);
+    spotRed->setCastsShadow(true);
     
     rootNode->addLight(ambient);
     rootNode->addLight(spotRed);
@@ -857,6 +858,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         boxNode->setRotationEulerX(M_PI_2);
 
         VROTransaction::commit();
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(12 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        spotRed->setCastsShadow(false);
     });
     
     return sceneController;

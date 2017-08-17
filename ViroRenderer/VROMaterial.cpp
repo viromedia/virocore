@@ -209,9 +209,10 @@ VROMaterialSubstrate *const VROMaterial::getSubstrate(std::shared_ptr<VRODriver>
     return _substrate;
 }
 
-void VROMaterial::updateSortKey(VROSortKey &key, std::shared_ptr<VRODriver> &driver) {
+void VROMaterial::updateSortKey(VROSortKey &key, const std::vector<std::shared_ptr<VROLight>> &lights,
+                                std::shared_ptr<VRODriver> &driver) {
     key.material = _materialId;
-    getSubstrate(driver)->updateSortKey(key);
+    getSubstrate(driver)->updateSortKey(key, lights, driver);
 }
 
 void VROMaterial::bindProperties(std::shared_ptr<VRODriver> &driver) {
@@ -221,13 +222,8 @@ void VROMaterial::bindProperties(std::shared_ptr<VRODriver> &driver) {
     getSubstrate(driver)->bindProperties();
 }
 
-void VROMaterial::bindShader(std::shared_ptr<VRODriver> &driver) {
-    getSubstrate(driver)->bindShader();
-}
-
-void VROMaterial::bindLights(int lightsHash,
+void VROMaterial::bindShader(int lightsHash,
                              const std::vector<std::shared_ptr<VROLight>> &lights,
-                             const VRORenderContext &context,
                              std::shared_ptr<VRODriver> &driver) {
-    getSubstrate(driver)->bindLights(lightsHash, lights, context, driver);
+    getSubstrate(driver)->bindShader(lightsHash, lights, driver);
 }

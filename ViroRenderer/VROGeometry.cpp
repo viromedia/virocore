@@ -60,7 +60,8 @@ void VROGeometry::renderSilhouetteTextured(int element,
 }
 
 void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t hierarchyDepth,
-                                 uint32_t lightsHash, float opacity, float distanceFromCamera, float zFar,
+                                 uint32_t lightsHash, const std::vector<std::shared_ptr<VROLight>> &lights,
+                                 float opacity, float distanceFromCamera, float zFar,
                                  std::shared_ptr<VRODriver> &driver) {
     _sortKeys.clear();
     
@@ -78,14 +79,14 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t h
         key.distanceFromCamera = zFar - distanceFromCamera;
         
         std::shared_ptr<VROMaterial> &material = _materials[materialIndex];
-        material->updateSortKey(key, driver);
+        material->updateSortKey(key, lights, driver);
         key.incoming = true;
         
         _sortKeys.push_back(key);
         
         const std::shared_ptr<VROMaterial> &outgoing = material->getOutgoing();
         if (outgoing) {
-            outgoing->updateSortKey(key, driver);
+            outgoing->updateSortKey(key, lights, driver);
             key.incoming = false;
             
             _sortKeys.push_back(key);

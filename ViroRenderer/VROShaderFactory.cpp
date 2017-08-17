@@ -16,6 +16,7 @@
 #include "VROMaterial.h"
 #include "VROEye.h"
 #include "VROStringUtil.h"
+#include "VROShaderCapabilities.h"
 #include <tuple>
 
 static std::shared_ptr<VROShaderModifier> sDiffuseTextureModifier;
@@ -30,47 +31,6 @@ static std::shared_ptr<VROShaderModifier> sShadowMapGeometryModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapLightModifier;
 static std::map<VROStereoMode, std::shared_ptr<VROShaderModifier>> sStereoscopicTextureModifiers;
 
-enum class VRODiffuseTextureType {
-    None,
-    YCbCr,
-    Normal,
-    Cube
-};
-
-struct VROMaterialShaderCapabilities {
-    VROLightingModel lightingModel;
-    VRODiffuseTextureType diffuseTexture;
-    VROStereoMode diffuseTextureStereoMode;
-    bool diffuseEGLModifier;
-    bool specularTexture;
-    bool normalTexture;
-    bool reflectiveTexture;
-    
-    bool operator< (const VROMaterialShaderCapabilities& r) const {
-        return std::tie(lightingModel, diffuseTexture, diffuseTextureStereoMode, diffuseEGLModifier, specularTexture, normalTexture, reflectiveTexture) <
-               std::tie(r.lightingModel, r.diffuseTexture, r.diffuseTextureStereoMode, r.diffuseEGLModifier, r.specularTexture, r.normalTexture, r.reflectiveTexture);
-    }
-};
-
-struct VROLightingShaderCapabilities {
-    bool shadows;
-    
-    bool operator< (const VROLightingShaderCapabilities& r) const {
-        return std::tie(shadows) < std::tie(r.shadows);
-    }
-};
-
-struct VROShaderCapabilities {
-    VROMaterialShaderCapabilities materialCapabilities;
-    VROLightingShaderCapabilities lightingCapabilities;
-    std::string additionalModifierKeys;
-    
-    bool operator< (const VROShaderCapabilities& r) const {
-        return std::tie(materialCapabilities, lightingCapabilities, additionalModifierKeys) <
-               std::tie(r.materialCapabilities, r.lightingCapabilities, r.additionalModifierKeys);
-    }
-};
-
 VROShaderFactory::VROShaderFactory() {
     
 }
@@ -81,18 +41,18 @@ VROShaderFactory::~VROShaderFactory() {
 
 #pragma mark - Shader Caching
 
-std::shared_ptr<VROShaderProgram> VROShaderFactory::getShader(const VROMaterial &material,
-                                                              const std::vector<std::shared_ptr<VROLight>> &lights,
-                                                              std::shared_ptr<VRODriverOpenGL> driver) {
+std::shared_ptr<VROShaderProgram> VROShaderFactory::getShader(VROMaterialShaderCapabilities materialCapabilities,
+                                                              VROLightingShaderCapabilities lightingCapabilities,
+                                                              const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
+                                                              std::shared_ptr<VRODriverOpenGL> &driver) {
     
     VROShaderCapabilities capabilities;
-    capabilities.materialCapabilities = deriveMaterialCapabilitiesKey(material);
-    capabilities.lightingCapabilities = deriveLightingCapabilitiesKey(lights);
-    capabilities.additionalModifierKeys = VROShaderModifier::getShaderModifierKey(material.getShaderModifiers());
+    capabilities.materialCapabilities = materialCapabilities;
+    capabilities.lightingCapabilities = lightingCapabilities;
     
     auto it = _cachedPrograms.find(capabilities);
     if (it == _cachedPrograms.end()) {
-        std::shared_ptr<VROShaderProgram> program = buildShader(capabilities, material.getShaderModifiers(), driver);
+        std::shared_ptr<VROShaderProgram> program = buildShader(capabilities, modifiers, driver);
         _cachedPrograms[capabilities] = program;
         
         return program;
@@ -122,6 +82,7 @@ void VROShaderFactory::purgeUnusedShaders(const VROFrameTimer &timer, bool force
 
 VROMaterialShaderCapabilities VROShaderFactory::deriveMaterialCapabilitiesKey(const VROMaterial &material) {
     VROMaterialShaderCapabilities cap;
+    cap.additionalModifierKeys = VROShaderModifier::getShaderModifierKey(material.getShaderModifiers());
     
     VROLightingModel lightingModel = material.getLightingModel();
     std::string vertexShader = "standard_vsh";
@@ -204,15 +165,16 @@ VROLightingShaderCapabilities VROShaderFactory::deriveLightingCapabilitiesKey(co
     cap.shadows = false;
     
     for (const std::shared_ptr<VROLight> &light : lights) {
-        // TODO VIRO-1499 Flip cap.shadows to true if any light casts shadows
+        if (light->getCastsShadow()) {
+            cap.shadows = true;
+        }
     }
-    
     return cap;
 }
 
 std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabilities capabilities,
                                                                 const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers_in,
-                                                                std::shared_ptr<VRODriverOpenGL> driver) {
+                                                                std::shared_ptr<VRODriverOpenGL> &driver) {
     
     VROMaterialShaderCapabilities &materialCapabilities = capabilities.materialCapabilities;
     VROLightingShaderCapabilities &lightingCapabilities = capabilities.lightingCapabilities;

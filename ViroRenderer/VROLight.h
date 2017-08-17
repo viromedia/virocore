@@ -51,7 +51,8 @@ public:
         _attenuationFalloffExponent(2.0),
         _direction( { 0, 0, -1.0} ),
         _spotInnerAngle(0),
-        _spotOuterAngle(45)
+        _spotOuterAngle(45),
+        _castsShadow(false)
     {}
     
     ~VROLight()
@@ -124,6 +125,13 @@ public:
         return _spotOuterAngle;
     }
     
+    void setCastsShadow(bool castsShadow) {
+        _castsShadow = castsShadow;
+    }
+    bool getCastsShadow() const {
+        return _castsShadow;
+    }
+    
     /*
      Lights hold onto their UBOs so that they can propagate their
      updates to them. Each time a light is updated, it pushes the
@@ -184,6 +192,11 @@ private:
      update.
      */
     std::vector<std::weak_ptr<VROLightingUBO>> _ubos;
+    
+    /*
+     Shadow parameters.
+     */
+    bool _castsShadow;
     
 };
 
