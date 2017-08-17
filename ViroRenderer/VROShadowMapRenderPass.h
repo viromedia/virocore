@@ -14,31 +14,19 @@
 #include "VROTree.h"
 
 class VROPortal;
+class VROLight;
 class VROMaterial;
+class VRORenderTarget;
 class VROShaderModifier;
 
 class VROShadowMapRenderPass : public VRORenderPass {
 public:
     
-    // TODO Each pass should be associated with a light
-    VROShadowMapRenderPass();
+    VROShadowMapRenderPass(const std::shared_ptr<VROLight> light, std::shared_ptr<VRODriver> driver);
     virtual ~VROShadowMapRenderPass();
     
     VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
                                     VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
-    
-    /*
-     Get the view, projection, and bias matrices used to transform any point in world
-     space into its corresponding texcoord in the light's shadow depth map.
-     This includes the 'bias' matrix that translates the coordinates from
-     homogenuous coordinates [-1,1] into texture sampling coords [0,1].
-     */
-    VROMatrix4f getShadowViewMatrix() const {
-        return _shadowView;
-    }
-    VROMatrix4f getShadowProjectionMatrix() const {
-        return _shadowProjection;
-    }
     
 private:
     
@@ -50,11 +38,14 @@ private:
     std::shared_ptr<VROMaterial> _silhouetteMaterial;
     
     /*
-     The projection and view matrices computed during the last render of
-     the shadow map.
+     The render target to which we write the shadow map.
      */
-    VROMatrix4f _shadowView;
-    VROMatrix4f _shadowProjection;
+    std::shared_ptr<VRORenderTarget> _shadowTarget;
+    
+    /*
+     The light casting the shadow.
+     */
+    const std::shared_ptr<VROLight> _light;
     
     /*
      Helper function for rendering. Performs depth-first rendering of portals, rendering

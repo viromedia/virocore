@@ -14,6 +14,9 @@
 #include <atomic>
 #include <memory>
 
+static const int kMaxLights = 8;
+static const int kFloatsPerMatrix = 16;
+
 // Grouped in 4N slots, matching lighting_general_functions.glsl
 typedef struct {
     int type;
@@ -33,13 +36,23 @@ typedef struct {
     float padding5;
 } VROLightData;
 
+// Must match lighting_functions lighting_fragment layout
 typedef struct {
     int num_lights;
     float padding0, padding1, padding2;
     
     float ambient_light_color[4];
-    VROLightData lights[8];
-} VROLightingData;
+    VROLightData lights[kMaxLights];
+} VROLightingFragmentData;
+
+// Must match standard_vsh lighting_vertex layout
+typedef struct {
+    int num_lights;
+    float padding0, padding1, padding2;
+    
+    float shadow_view_matrices[kFloatsPerMatrix * kMaxLights];
+    float shadow_projection_matrices[kFloatsPerMatrix * kMaxLights];
+} VROLightingVertexData;
 
 class VROLight;
 class VROShaderProgram;
@@ -112,8 +125,11 @@ public:
      Invoke to indicate that a light in this UBO has changed. When this occurs
      we have to rewrite the lights to the UBO.
      */
-    void setNeedsUpdate() {
-        _needsUpdate = true;
+    void setNeedsFragmentUpdate() {
+        _needsFragmentUpdate = true;
+    }
+    void setNeedsVertexUpdate() {
+        _needsVertexUpdate = true;
     }
     
     /*
@@ -128,10 +144,13 @@ private:
     int _hash;
     
     /*
-     The uniform buffer object ID and binding point for lighting parameters.
+     The uniform buffer object ID and binding point for lighting parameters
+     in the vertex and fragment shaders.
      */
-    GLuint _lightingUBO;
-    int _lightingUBOBindingPoint = 0;
+    GLuint _lightingFragmentUBO;
+    int _lightingFragmentUBOBindingPoint = 0;
+    GLuint _lightingVertexUBO;
+    int _lightingVertexUBOBindingPoint = 0;
     
     /*
      The lights that are a part of this UBO.
@@ -144,14 +163,16 @@ private:
     std::weak_ptr<VRODriverOpenGL> _driver;
     
     /*
-     True if a light in this UBO has changed.
+     True if a light in this UBO has changed. Will trigger a fragment
+     or vertex UBO update.
      */
-    bool _needsUpdate;
+    bool _needsFragmentUpdate, _needsVertexUpdate;
     
     /*
      Update the lights in this UBO, rewriting them to the buffer.
      */
-    void updateLights();
+    void updateLightsFragment();
+    void updateLightsVertex();
     
 };
 

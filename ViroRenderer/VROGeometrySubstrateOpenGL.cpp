@@ -257,8 +257,7 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
         substrate->bindInstanceUBO(instancedUBO);
     }
     substrate->bindView(transform, viewMatrix, projectionMatrix, normalMatrix,
-                        context.getCamera().getPosition(), context.getEyeType(),
-                        context.getShadowViewMatrix(), context.getShadowProjectionMatrix());
+                        context.getCamera().getPosition(), context.getEyeType());
     
     glBindVertexArray(_vaos[elementIndex]);
     renderMaterial(geometry, substrate, element, opacity, context, driver);
@@ -298,8 +297,8 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
         }
     }
 
-    if (context.getShadowMap()) {
-        VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) context.getShadowMap()->getSubstrate(0, driver, nullptr);
+    if (material->getShadowMap()) {
+        VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) material->getShadowMap()->getSubstrate(0, driver, nullptr);
         std::pair<GLenum, GLuint> targetAndTexture = substrate->getTexture();
         
         glActiveTexture(GL_TEXTURE0 + activeTexture);
@@ -348,8 +347,7 @@ void VROGeometrySubstrateOpenGL::renderSilhouette(const VROGeometry &geometry,
         }
         
         substrate->bindView(transform, viewMatrix, projectionMatrix, normalMatrix,
-                            context.getCamera().getPosition(), context.getEyeType(),
-                            context.getShadowViewMatrix(), context.getShadowProjectionMatrix());
+                            context.getCamera().getPosition(), context.getEyeType());
         
         glBindVertexArray(_vaos[i]);
         substrate->bindGeometry(1.0, geometry);
@@ -388,8 +386,7 @@ void VROGeometrySubstrateOpenGL::renderSilhouetteTextured(const VROGeometry &geo
     }
     
     substrate->bindView(transform, viewMatrix, projectionMatrix, normalMatrix,
-                        context.getCamera().getPosition(), context.getEyeType(),
-                        context.getShadowViewMatrix(), context.getShadowProjectionMatrix());
+                        context.getCamera().getPosition(), context.getEyeType());
     
     glBindVertexArray(_vaos[elementIndex]);
     renderMaterial(geometry, substrate, element, 1.0, context, driver);

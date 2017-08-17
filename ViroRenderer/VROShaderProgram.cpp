@@ -41,7 +41,8 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
                                    const std::vector<VROGeometrySourceSemantic> attributes,
                                    std::shared_ptr<VRODriverOpenGL> driver) :
     _shaderId(sMaterialId++),
-    _lightingBlockIndex(GL_INVALID_INDEX),
+    _lightingFragmentBlockIndex(GL_INVALID_INDEX),
+    _lightingVertexBlockIndex(GL_INVALID_INDEX),
     _bonesBlockIndex(GL_INVALID_INDEX),
     _particlesVertexBlockIndex(GL_INVALID_INDEX),
     _particlesFragmentBlockIndex(GL_INVALID_INDEX),
@@ -462,7 +463,8 @@ void VROShaderProgram::bindAttributes() {
 }
 
 void VROShaderProgram::bindUniformBlocks() {
-    _lightingBlockIndex = glGetUniformBlockIndex(_program, "lighting");
+    _lightingFragmentBlockIndex = glGetUniformBlockIndex(_program, "lighting_fragment");
+    _lightingVertexBlockIndex = glGetUniformBlockIndex(_program, "lighting_vertex");
     _bonesBlockIndex = glGetUniformBlockIndex(_program, kDualQuaternionEnabled ? "bones_dq" : "bones");
     _particlesVertexBlockIndex = glGetUniformBlockIndex(_program, "particles_vertex_data");
     _particlesFragmentBlockIndex = glGetUniformBlockIndex(_program, "particles_fragment_data");
@@ -475,9 +477,6 @@ void VROShaderProgram::addStandardUniforms() {
     addUniform(VROShaderProperty::Mat4, 1, "projection_matrix");
     addUniform(VROShaderProperty::Vec3, 1, "camera_position");
     addUniform(VROShaderProperty::Int, 1, "eye_type");
-
-    addUniform(VROShaderProperty::Mat4, 1, "shadow_projection_matrix");
-    addUniform(VROShaderProperty::Mat4, 1, "shadow_view_matrix");
 
     addUniform(VROShaderProperty::Vec4, 1, "material_diffuse_surface_color");
     addUniform(VROShaderProperty::Float, 1, "material_diffuse_intensity");

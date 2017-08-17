@@ -10,11 +10,13 @@
 #define VROChoreographer_h
 
 #include <memory>
+#include <map>
 #include <vector>
 #include <functional>
 
 class VROScene;
 class VRODriver;
+class VROLight;
 class VROViewport;
 class VROTexture;
 class VRORenderPass;
@@ -84,14 +86,9 @@ private:
     std::shared_ptr<VRORenderTarget> _blitTarget;
     
     /*
-     Depth target to which the shadow map for the scene is rendered.
+     The shadow passes for creating the depth maps for each light.
      */
-    std::shared_ptr<VRORenderTarget> _shadowTarget;
-    
-    /*
-     The shadow pass for creating the depth maps.
-     */
-    std::shared_ptr<VROShadowMapRenderPass> _shadowPass;
+    std::map<std::shared_ptr<VROLight>, std::shared_ptr<VROShadowMapRenderPass>> _shadowPasses;
     
     /*
      True if shadow maps are enabled.
@@ -104,10 +101,10 @@ private:
     void initTargets(std::shared_ptr<VRODriver> driver);
     
     /*
-     Render shadows to the shadow map.
+     Render shadows to the shadow maps for each shadow casting light.
      */
-    void renderShadowPass(std::shared_ptr<VROScene> scene, VRORenderContext *context,
-                          std::shared_ptr<VRODriver> &driver);
+    void renderShadowPasses(std::shared_ptr<VROScene> scene, VRORenderContext *context,
+                            std::shared_ptr<VRODriver> &driver);
     
     /*
      Render the base pass, which renders the 3D scene to the first render target.

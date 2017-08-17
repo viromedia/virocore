@@ -66,8 +66,7 @@ public:
      */
     virtual void bindView(VROMatrix4f modelMatrix, VROMatrix4f viewMatrix,
                           VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
-                          VROVector3f cameraPosition, VROEyeType eyeType,
-                          VROMatrix4f shadowViewMatrix, VROMatrix4f shadowProjectionMatrix) = 0;
+                          VROVector3f cameraPosition, VROEyeType eyeType) = 0;
     
 };
 

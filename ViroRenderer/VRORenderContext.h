@@ -110,30 +110,6 @@ public:
         return _orthographicMatrix;
     }
     
-    // TODO VIRO-1185 Move to VROLight
-    std::shared_ptr<VROTexture> getShadowMap() const {
-        return _shadowMap;
-    }
-    void setShadowMap(std::shared_ptr<VROTexture> shadowMap) {
-        _shadowMap = shadowMap;
-    }
-    
-    // TODO VIRO-1185 Move to VROLight
-    VROMatrix4f getShadowViewMatrix() const {
-        return _shadowViewMatrix;
-    }
-    VROMatrix4f getShadowProjectionMatrix() const {
-        return _shadowProjectionMatrix;
-    }
-    
-    // TODO VIRO-1185 Move to VROLight
-    void setShadowViewMatrix(VROMatrix4f shadowViewMatrix) {
-        _shadowViewMatrix = shadowViewMatrix;
-    }
-    void setShadowProjectionMatrix(VROMatrix4f shadowProjectionMatrix) {
-        _shadowProjectionMatrix = shadowProjectionMatrix;
-    }
-    
     const VROCamera &getCamera() const {
         return _camera;
     }
@@ -230,22 +206,6 @@ private:
      Scheduler used for queueing and executing rendering thread tasks.
      */
     std::shared_ptr<VROFrameScheduler> _frameScheduler;
-    
-    /*
-     The shadow map to bind for all objects being rendered in this pass.
-     
-     TODO VIRO-1185 Move to VROLight
-     */
-    std::shared_ptr<VROTexture> _shadowMap;
-    
-    /*
-     The view and projection matrices used to transform any point in world
-     space into its corresponding texcoord in the light's shadow depth map.
-     
-     TODO VIRO-1185 Move to VROLight
-     */
-    VROMatrix4f _shadowViewMatrix;
-    VROMatrix4f _shadowProjectionMatrix;
 
     /*
      VROPencil is used for drawing a list of VROPolylines in a separate render pass,

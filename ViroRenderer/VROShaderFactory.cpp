@@ -326,11 +326,13 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createShadowMapGeometryModi
         std::vector<std::string> modifierCode = {
             "uniform mat4 shadow_view_matrix;",
             "uniform mat4 shadow_projection_matrix;",
-            "out lowp vec4 shadow_coord;",
-            "shadow_coord = shadow_projection_matrix * shadow_view_matrix * _transforms.model_matrix * vec4(_geometry.position.xyz, 1.0);",
-            "shadow_coord.x = shadow_coord.x * 0.5 + 0.5;",
-            "shadow_coord.y = shadow_coord.y * 0.5 + 0.5;",
-            "shadow_coord.z = shadow_coord.z * 0.5 + 0.5;",
+            "out lowp vec4 shadow_coords[8];",
+            "for (int i = 0; i < num_lights; i++) {",
+            "   shadow_coords[i] = shadow_projection_matrices[i] * shadow_view_matrices[i] * _transforms.model_matrix * vec4(_geometry.position.xyz, 1.0);",
+            "   shadow_coords[i].x = shadow_coords[i].x * 0.5 + 0.5;",
+            "   shadow_coords[i].y = shadow_coords[i].y * 0.5 + 0.5;",
+            "   shadow_coords[i].z = shadow_coords[i].z * 0.5 + 0.5;",
+            "}",
         };
         
         sShadowMapGeometryModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
@@ -344,21 +346,11 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createShadowMapLightModifie
      Modifier that samples a shadow map to determine if the fragment is in light.
      */
     if (!sShadowMapLightModifier) {
-        /*
-         std::vector<std::string> modifierCode = {
-         "in lowp vec4 shadow_coord;",
-         "_output_color = vec4(0.0, shadow_coord.y, 0.0, 1.0);",
-         };
-         
-         sShadowMapLightModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
-         modifierCode);
-         */
-        
         std::vector<std::string> modifierCode = {
             "uniform highp sampler2DShadow shadow_map;",
-            "in lowp vec4 shadow_coord;",
-            "lowp vec3 comparison = vec3(shadow_coord.xy, shadow_coord.z - 0.005);",
-            "if (shadow_coord.x < 0.0 || shadow_coord.y < 0.0 || shadow_coord.x > 1.0 || shadow_coord.y > 1.0) {",
+            "in lowp vec4 shadow_coords[8];",
+            "lowp vec3 comparison = vec3(shadow_coords[i].xy, shadow_coords[i].z - 0.005);",
+            "if (shadow_coords[i].x < 0.0 || shadow_coords[i].y < 0.0 || shadow_coords[i].x > 1.0 || shadow_coords[i].y > 1.0) {",
             "    _lightingContribution.visibility = 1.0;",
             "} else {",
             "    _lightingContribution.visibility = texture(shadow_map, comparison);",

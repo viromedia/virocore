@@ -51,6 +51,7 @@ void VROMaterialSubstrateOpenGL::bindShader(int lightsHash,
     
     _activeBinding = getShaderBindingForLights(lights, driver);
     _activeBinding->program->bind();
+    _activeBinding->bindShadowUniforms(lights);
 
     if (lights.empty()) {
         VROLightingUBO::unbind(_activeBinding->program);
@@ -60,7 +61,8 @@ void VROMaterialSubstrateOpenGL::bindShader(int lightsHash,
     
     VRODriverOpenGL &glDriver = (VRODriverOpenGL &)(*driver.get());
     for (const std::shared_ptr<VROLight> &light : lights) {
-        light->propagateUpdates();
+        light->propagateFragmentUpdates();
+        light->propagateVertexUpdates();
     }
 
     if (!_lightingUBO || _lightingUBO->getHash() != lightsHash) {
@@ -75,11 +77,10 @@ void VROMaterialSubstrateOpenGL::bindShader(int lightsHash,
 
 void VROMaterialSubstrateOpenGL::bindView(VROMatrix4f modelMatrix, VROMatrix4f viewMatrix,
                                           VROMatrix4f projectionMatrix, VROMatrix4f normalMatrix,
-                                          VROVector3f cameraPosition, VROEyeType eyeType,
-                                          VROMatrix4f shadowViewMatrix, VROMatrix4f shadowProjectionMatrix) {
+                                          VROVector3f cameraPosition, VROEyeType eyeType) {
     passert(_activeBinding != nullptr);
     _activeBinding->bindViewUniforms(modelMatrix, viewMatrix, projectionMatrix, normalMatrix,
-                                     cameraPosition, eyeType, shadowViewMatrix, shadowProjectionMatrix);
+                                     cameraPosition, eyeType);
 }
 
 void VROMaterialSubstrateOpenGL::bindBoneUBO(const std::unique_ptr<VROBoneUBO> &boneUBO) {
@@ -154,9 +155,7 @@ VROMaterialShaderBinding::VROMaterialShaderBinding(std::shared_ptr<VROShaderProg
     _viewMatrixUniform(nullptr),
     _projectionMatrixUniform(nullptr),
     _cameraPositionUniform(nullptr),
-    _eyeTypeUniform(nullptr),
-    _shadowViewMatrixUniform(nullptr),
-    _shadowProjectionMatrixUniform(nullptr) {
+    _eyeTypeUniform(nullptr) {
     
     loadUniforms();
     loadSamplers(material);
@@ -178,8 +177,6 @@ void VROMaterialShaderBinding::loadUniforms() {
     _viewMatrixUniform = program->getUniform("view_matrix");
     _cameraPositionUniform = program->getUniform("camera_position");
     _eyeTypeUniform = program->getUniform("eye_type");
-    _shadowViewMatrixUniform = program->getUniform("shadow_view_matrix");
-    _shadowProjectionMatrixUniform = program->getUniform("shadow_projection_matrix");
     
     for (const std::shared_ptr<VROShaderModifier> &modifier : program->getModifiers()) {
         std::vector<std::string> uniformNames = modifier->getUniforms();
@@ -212,10 +209,22 @@ void VROMaterialShaderBinding::loadSamplers(const VROMaterial &material) {
     }
 }
 
+void VROMaterialShaderBinding::bindShadowUniforms(const std::vector<std::shared_ptr<VROLight>> &lights) {
+    _shadowMap.reset();
+    for (const std::shared_ptr<VROLight> &light : lights) {
+        if (!light->getCastsShadow()) {
+            continue;
+        }
+    
+        _shadowMap = light->getShadowMap();
+        // VIRO-1185 Support more than one shadow-casting light
+        break;
+    }
+}
+
 void VROMaterialShaderBinding::bindViewUniforms(VROMatrix4f &modelMatrix, VROMatrix4f &viewMatrix,
                                                 VROMatrix4f &projectionMatrix, VROMatrix4f &normalMatrix,
-                                                VROVector3f &cameraPosition, VROEyeType &eyeType,
-                                                VROMatrix4f &shadowViewMatrix, VROMatrix4f &shadowProjectionMatrix) {
+                                                VROVector3f &cameraPosition, VROEyeType &eyeType) {
     if (_normalMatrixUniform != nullptr) {
         _normalMatrixUniform->setMat4(normalMatrix);
     }
@@ -233,12 +242,6 @@ void VROMaterialShaderBinding::bindViewUniforms(VROMatrix4f &modelMatrix, VROMat
     }
     if (_eyeTypeUniform != nullptr){
         _eyeTypeUniform->setInt(static_cast<int>(eyeType));
-    }
-    if (_shadowViewMatrixUniform != nullptr) {
-        _shadowViewMatrixUniform->setMat4(shadowViewMatrix);
-    }
-    if (_shadowProjectionMatrixUniform != nullptr) {
-        _shadowProjectionMatrixUniform->setMat4(shadowProjectionMatrix);
     }
 }
 

@@ -118,11 +118,18 @@ public:
         return _program;
     }
     
-    bool hasLightingBlock() const {
-        return _lightingBlockIndex != GL_INVALID_INDEX;
+    bool hasLightingFragmentBlock() const {
+        return _lightingFragmentBlockIndex != GL_INVALID_INDEX;
     }
-    GLuint getLightingBlockIndex() const {
-        return _lightingBlockIndex;
+    GLuint getLightingFragmentBlockIndex() const {
+        return _lightingFragmentBlockIndex;
+    }
+    
+    bool hasLightingVertexBlock() const {
+        return _lightingVertexBlockIndex != GL_INVALID_INDEX;
+    }
+    GLuint getLightingVertexBlockIndex() const {
+        return _lightingVertexBlockIndex;
     }
     
     bool hasBonesBlock() const {
@@ -182,7 +189,8 @@ private:
      The uniform block indices used by this shader to refer to the lighting block and the 
      bones block, if supported.
      */
-    GLuint _lightingBlockIndex;
+    GLuint _lightingFragmentBlockIndex;
+    GLuint _lightingVertexBlockIndex;
     GLuint _bonesBlockIndex;
 
     /*

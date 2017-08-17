@@ -8,6 +8,7 @@
 
 #include "VROShadowMapRenderPass.h"
 #include "VROLog.h"
+#include "VROLight.h"
 #include "VROOpenGL.h" // For logging pglpush only
 #include "VROMaterial.h"
 #include "VRORenderTarget.h"
@@ -32,12 +33,18 @@ std::shared_ptr<VROShaderModifier> VROShadowMapRenderPass::getShadowDepthWriting
     return sShadowDepthWritingModifier;
 }
 
-VROShadowMapRenderPass::VROShadowMapRenderPass() {
+VROShadowMapRenderPass::VROShadowMapRenderPass(const std::shared_ptr<VROLight> light,
+                                               std::shared_ptr<VRODriver> driver) :
+
+    _light(light) {
     _silhouetteMaterial = std::make_shared<VROMaterial>();
     _silhouetteMaterial->setWritesToDepthBuffer(true);
     _silhouetteMaterial->setReadsFromDepthBuffer(true);
     _silhouetteMaterial->setCullMode(VROCullMode::None);
     _silhouetteMaterial->addShaderModifier(getShadowDepthWritingModifier());
+        
+    _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTexture);
+    _shadowTarget->setViewport({ 0, 0, _light->getShadowMapSize(), _light->getShadowMapSize() });
 }
 
 VROShadowMapRenderPass::~VROShadowMapRenderPass() {
@@ -47,17 +54,18 @@ VROShadowMapRenderPass::~VROShadowMapRenderPass() {
 VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
                                                         VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     
-    std::shared_ptr<VRORenderTarget> target = inputs[kRenderTargetSingleOutput];
-    passert (target);
-    
+    // Adjust in case the shadow map size changed
+    _shadowTarget->setViewport({ 0, 0, _light->getShadowMapSize(), _light->getShadowMapSize() });
+
+    std::shared_ptr<VRORenderTarget> target = _shadowTarget;
     VROMatrix4f previousProjection = context->getProjectionMatrix();
     VROMatrix4f previousView = context->getViewMatrix();
     
-    _shadowProjection = computeLightProjectionMatrix();
-    _shadowView = computeLightViewMatrix();
+    VROMatrix4f shadowProjection = computeLightProjectionMatrix();
+    VROMatrix4f shadowView = computeLightViewMatrix();
     
-    context->setProjectionMatrix(_shadowProjection);
-    context->setViewMatrix(_shadowView);
+    context->setProjectionMatrix(shadowProjection);
+    context->setViewMatrix(shadowView);
     
     driver->setDepthWritingEnabled(true);
     driver->setColorWritingEnabled(false);
@@ -80,6 +88,11 @@ VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene
     std::vector<tree<std::shared_ptr<VROPortal>>> treeNodes;
     treeNodes.push_back(scene->getPortalTree());
     render(treeNodes, target, *context, driver);
+    
+    // Store generated shadow map properties in the VROLight
+    _light->setShadowMap(target->getTexture());
+    _light->setShadowViewMatrix(shadowView);
+    _light->setShadowProjectionMatrix(shadowProjection);
     
     // Restore state
     glDisable(GL_POLYGON_OFFSET_FILL);
@@ -112,10 +125,10 @@ void VROShadowMapRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>>
 }
 
 VROMatrix4f VROShadowMapRenderPass::computeLightProjectionMatrix() const {
-    float far  = 20;//-20;  // TODO VIRO-1185 This will be set by zFar parameter in VROLight
-    float near = -10;//-far; // TODO VIRO-1185 This will be set by zNear parameter in VROLight
+    float far  = _light->getShadowFarZ();
+    float near = _light->getShadowNearZ();
     
-    float orthographicScale = 5; // TODO VIRO-1185 Set by scale parameter in VROLight
+    float orthographicScale = _light->getShadowOrthographicScale();
     float left   = -orthographicScale;
     float right  =  orthographicScale;
     float bottom = -orthographicScale;
@@ -133,11 +146,12 @@ VROMatrix4f VROShadowMapRenderPass::computeLightProjectionMatrix() const {
 }
 
 VROMatrix4f VROShadowMapRenderPass::computeLightViewMatrix() const {
-    VROVector3f lightForward(0.25, -1, 0);
+    VROVector3f lightForward = _light->getDirection();
     lightForward = lightForward.scale(-1).normalize();
     
-    VROVector3f lightUp(.25, 1, 0);
-    lightUp = lightUp.normalize();
+    VROMatrix4f rotateX;
+    rotateX.rotateX(M_PI_2);
+    VROVector3f lightUp = rotateX.multiply(lightForward);
     
     VROVector3f lightEye(0, 0, 0);
     return VROMathComputeLookAtMatrix(lightEye, lightForward, lightUp);

@@ -22,7 +22,7 @@ struct VROLightUniforms {
     lowp float padding5;
 };
 
-layout (std140) uniform lighting {
+layout (std140) uniform lighting_fragment {
     int num_lights;
     lowp float padding0, padding1, padding2;
     

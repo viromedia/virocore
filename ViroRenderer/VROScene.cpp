@@ -53,8 +53,11 @@ void VROScene::updateSortKeys(const VRORenderContext &context, std::shared_ptr<V
         VRONode::resetDebugSortIndex();
     }
 
+    _lights.clear();
+    _rootNode->collectLights(&_lights);
+
     VRORenderParameters renderParams;
-    _rootNode->collectLights(&renderParams.lights);
+    renderParams.lights = _lights;
     _rootNode->updateSortKeys(0, renderParams, context, driver);
     
     createPortalTree(context);

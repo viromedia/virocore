@@ -16,9 +16,11 @@
 #include <limits>
 #include "VROVector3f.h"
 #include "VROVector4f.h"
+#include "VROMatrix4f.h"
 #include "VROAnimatable.h"
 
 static std::atomic_int sLightId;
+class VROTexture;
 class VROLightingUBO;
 
 enum class VROLightType {
@@ -45,14 +47,21 @@ public:
         _type(type),
         _color({ 1.0, 1.0, 1.0 }),
         _intensity(1000.0),
-        _updated(true),
+        _updatedFragmentData(true),
+        _updatedVertexData(true),
         _attenuationStartDistance(2.0),
         _attenuationEndDistance(std::numeric_limits<float>::max()),
         _attenuationFalloffExponent(2.0),
         _direction( { 0, 0, -1.0} ),
         _spotInnerAngle(0),
         _spotOuterAngle(45),
-        _castsShadow(false)
+        _castsShadow(false),
+        _shadowOpacity(1.0),
+        _shadowMapSize(1024),
+        _shadowBias(0.005),
+        _shadowOrthographicScale(10),
+        _shadowNearZ(-10),
+        _shadowFarZ(20)
     {}
     
     ~VROLight()
@@ -65,6 +74,8 @@ public:
     VROLightType getType() const {
         return _type;
     }
+    
+#pragma mark - Light Properties
     
     void setColor(VROVector3f color);
     VROVector3f getColor() const {
@@ -86,13 +97,6 @@ public:
     void setPosition(VROVector3f position);
     VROVector3f getPosition() const {
         return _position;
-    }
-    
-    void setTransformedPosition(VROVector3f position) {
-        _transformedPosition = position;
-    }
-    VROVector3f getTransformedPosition() const {
-        return _transformedPosition;
     }
     
     void setDirection(VROVector3f direction);
@@ -125,12 +129,54 @@ public:
         return _spotOuterAngle;
     }
     
-    void setCastsShadow(bool castsShadow) {
-        _castsShadow = castsShadow;
-    }
+#pragma mark - Shadow Properties
+    
+    void setCastsShadow(bool castsShadow);
     bool getCastsShadow() const {
         return _castsShadow;
     }
+    
+    void setShadowOpacity(float shadowOpacity);
+    float getShadowOpacity() const {
+        return _shadowOpacity;
+    }
+    
+    void setShadowMapSize(int shadowMapSize) {
+        _shadowMapSize = shadowMapSize;
+    }
+    int getShadowMapSize() const {
+        return _shadowMapSize;
+    }
+    
+    void setShadowBias(float shadowBias) {
+        _shadowBias = shadowBias;
+    }
+    float getShadowBias() const {
+        return _shadowBias;
+    }
+    
+    void setShadowOrthographicScale(float scale) {
+        _shadowOrthographicScale = scale;
+    }
+    float getShadowOrthographicScale() const {
+        return _shadowOrthographicScale;
+    }
+
+    void setShadowNearZ(float nearZ) {
+        _shadowNearZ = nearZ;
+    }
+    float getShadowNearZ() const {
+        return _shadowNearZ;
+    }
+    
+    void setShadowFarZ(float farZ) {
+        _shadowFarZ = farZ;
+    }
+    float getShadowFarZ() const {
+        return _shadowFarZ;
+    }
+    
+#pragma mark - Light Implementation
     
     /*
      Lights hold onto their UBOs so that they can propagate their
@@ -140,7 +186,43 @@ public:
     void addUBO(std::shared_ptr<VROLightingUBO> ubo) {
         _ubos.push_back(ubo);
     }
-    void propagateUpdates();
+    void propagateFragmentUpdates();
+    void propagateVertexUpdates();
+    
+    void setTransformedPosition(VROVector3f position) {
+        _transformedPosition = position;
+    }
+    VROVector3f getTransformedPosition() const {
+        return _transformedPosition;
+    }
+    
+#pragma mark - Shadow Implementation
+
+    // VIRO-1185 This will likely be removed in favor of a centralized
+    //           sampler2DShadowArray
+    std::shared_ptr<VROTexture> getShadowMap() const {
+        return _shadowMap;
+    }
+    void setShadowMap(std::shared_ptr<VROTexture> shadowMap) {
+        _updatedVertexData = true;
+        _shadowMap = shadowMap;
+    }
+    
+    VROMatrix4f getShadowViewMatrix() const {
+        return _shadowViewMatrix;
+    }
+    VROMatrix4f getShadowProjectionMatrix() const {
+        return _shadowProjectionMatrix;
+    }
+    
+    void setShadowViewMatrix(VROMatrix4f shadowViewMatrix) {
+        _updatedVertexData = true;
+        _shadowViewMatrix = shadowViewMatrix;
+    }
+    void setShadowProjectionMatrix(VROMatrix4f shadowProjectionMatrix) {
+        _updatedVertexData = true;
+        _shadowProjectionMatrix = shadowProjectionMatrix;
+    }
     
 private:
     
@@ -159,7 +241,8 @@ private:
     float _intensity;
     
     std::string _name;
-    bool _updated;
+    bool _updatedFragmentData;
+    bool _updatedVertexData;
     
     /*
      Omni and Spot parameters.
@@ -194,9 +277,55 @@ private:
     std::vector<std::weak_ptr<VROLightingUBO>> _ubos;
     
     /*
-     Shadow parameters.
+     True if this light casts shadows.
      */
     bool _castsShadow;
+    
+    /*
+     The opacity of the shadow. 1.0 implies a pitch black shadow.
+     */
+    float _shadowOpacity;
+    
+    /*
+     The size of the depth map to use to render shadows. Larger sizes produce
+     more detailed shadows at higher cost to rendering performance. Lower sizes
+     are faster but result in pixelation at the edges.
+     */
+    int _shadowMapSize;
+    
+    /*
+     The amount of bias to apply to the Z coordinate when performing the shadow
+     depth comparison. This reduces shadow acne, but large biases can increase
+     "peter panning".
+     */
+    float _shadowBias;
+    
+    /*
+     This property only applies to directional lights, where an orthographic
+     projection is used to render the shadow map. The orthographic scale determines
+     the extent of the screen that's visible to the light when rendering the
+     shadow map. A larger value means more of the scene will be shadowed, but
+     at lower resolution.
+     */
+    float _shadowOrthographicScale;
+    
+    /*
+     The near and far clipping planes to use when rendering shadows. Shadows are
+     only cast by surfaces within these planes.
+     */
+    float _shadowNearZ, _shadowFarZ;
+    
+    /*
+     The shadow map rendered during the last cycle for this light.
+     */
+    std::shared_ptr<VROTexture> _shadowMap;
+    
+    /*
+     The view and projection matrices used to transform any point in world
+     space into its corresponding texcoord in the light's shadow depth map.
+     */
+    VROMatrix4f _shadowViewMatrix;
+    VROMatrix4f _shadowProjectionMatrix;
     
 };
 
