@@ -17,12 +17,12 @@ struct VROLightUniforms {
     highp float spot_inner_angle;
     
     highp float spot_outer_angle;
-    lowp float padding3;
-    lowp float padding4;
-    lowp float padding5;
+    int shadow_map_index;
+    lowp float shadow_bias;
+    lowp float shadow_opacity;
 };
 
-layout (std140) uniform lighting {
+layout (std140) uniform lighting_fragment {
     int num_lights;
     lowp float padding0, padding1, padding2;
     
@@ -34,6 +34,7 @@ struct VROLightingContribution {
     lowp vec3 ambient;
     lowp vec3 diffuse;
     lowp vec3 specular;
+    highp float visibility; // Fades light, e.g. due to shadows
 } _lightingContribution;
 
 struct VROShaderLight {
