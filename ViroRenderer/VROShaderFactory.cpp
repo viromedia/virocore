@@ -352,8 +352,9 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createShadowMapLightModifie
             "if (lights[i].shadow_map_index < 0 || shadow_coords[i].x < 0.0 || shadow_coords[i].y < 0.0 || shadow_coords[i].x > 1.0 || shadow_coords[i].y > 1.0) {",
             "    _lightingContribution.visibility = 1.0;",
             "} else {",
-            "    lowp vec4 comparison = vec4(shadow_coords[i].xy, lights[i].shadow_map_index, shadow_coords[i].z - 0.005);",
-            "    _lightingContribution.visibility = texture(shadow_map, comparison);",
+            "    lowp vec4 comparison = vec4(shadow_coords[i].xy, lights[i].shadow_map_index, shadow_coords[i].z - lights[i].shadow_bias);",
+            "    lowp float shadow_intensity = lights[i].shadow_opacity * (1.0 - texture(shadow_map, comparison));",
+            "    _lightingContribution.visibility = 1.0 - shadow_intensity;",
             "}",
         };
         

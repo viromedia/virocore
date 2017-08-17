@@ -18,8 +18,8 @@ struct VROLightUniforms {
     
     highp float spot_outer_angle;
     int shadow_map_index;
-    lowp float padding4;
-    lowp float padding5;
+    lowp float shadow_bias;
+    lowp float shadow_opacity;
 };
 
 layout (std140) uniform lighting_fragment {

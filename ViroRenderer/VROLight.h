@@ -150,6 +150,7 @@ public:
     }
     
     void setShadowBias(float shadowBias) {
+        _updatedFragmentData = true;
         _shadowBias = shadowBias;
     }
     float getShadowBias() const {

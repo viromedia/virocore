@@ -867,18 +867,22 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         
         boxNode->setPositionZ(-2.0);
         boxNode->setRotationEulerX(M_PI_2);
+        
+        spotRed->setShadowOpacity(0.0);
 
         VROTransaction::commit();
     });
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(12 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        spotRed->setCastsShadow(false);
+        VROTransaction::begin();
+        VROTransaction::setAnimationDuration(10);
+        spotRed->setShadowOpacity(1.0);
+        VROTransaction::commit();
     });
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(14 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         spotBlue->setCastsShadow(false);
     });
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(16 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        spotRed->setCastsShadow(true);
         spotBlue->setCastsShadow(true);
     });
     

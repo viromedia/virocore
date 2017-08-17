@@ -32,8 +32,8 @@ typedef struct {
     
     float spot_outer_angle;
     int   shadow_map_index;
-    float padding4;
-    float padding5;
+    float shadow_bias;
+    float shadow_opacity;
 } VROLightData;
 
 // Must match lighting_functions lighting_fragment layout
