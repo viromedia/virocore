@@ -17,6 +17,7 @@
 #include "VROScene.h"
 #include "VROLightingUBO.h"
 #include "VROEye.h"
+#include "VROLight.h"
 #include "VROShadowMapRenderPass.h"
 #include <vector>
 

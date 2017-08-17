@@ -65,15 +65,6 @@ VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene
     target->bind();
     target->clearDepth();
     
-    // A bit of polygon offset helps combat shadow acne. The first value is slope-dependent, so
-    // that we get more polygon offset for pixels that represent a large depth range.
-    // In addition to polygon offsetting, we also bias the depth compare in the shaders that
-    // read from the map.
-    
-    // TODO VIRO-1185 control polygon offset through the driver
-    glEnable(GL_POLYGON_OFFSET_FILL);
-    glPolygonOffset(1.0f, 2.0f);
-    
     _silhouetteMaterial->bindShader(0, {}, driver);
     _silhouetteMaterial->bindProperties(driver);
     
@@ -86,7 +77,6 @@ VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene
     _light->setShadowProjectionMatrix(shadowProjection);
     
     // Restore state
-    glDisable(GL_POLYGON_OFFSET_FILL);
     driver->setColorWritingEnabled(true);
     context->setProjectionMatrix(previousProjection);
     context->setViewMatrix(previousView);
