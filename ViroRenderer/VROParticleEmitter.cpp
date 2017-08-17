@@ -10,6 +10,7 @@
 #include "VRONode.h"
 #include "VROBillboardConstraint.h"
 #include "VROParticleUBO.h"
+#include "VROMaterial.h"
 
 VROParticleEmitter::VROParticleEmitter(std::shared_ptr<VRODriver> driver,
                                        std::shared_ptr<VRONode> emitterNode,

@@ -8,9 +8,19 @@
 #ifndef VROParticleEmitter_h
 #define VROParticleEmitter_h
 
-#include "VRODriverOpenGL.h"
+#include "VROMatrix4f.h"
+#include "VROVector3f.h"
+#include "VROVector4f.h"
+#include <memory>
+#include <vector>
+
+class VRODriver;
+class VROTexture;
+class VRORenderContext;
+class VRONode;
 class VROSurface;
 class VROParticleUBO;
+class VROParticle;
 
 /*
  Struct containing all properties relating to a single particle, such as
