@@ -791,29 +791,34 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
-    rootNode->setBackgroundCube([self cloudTexture]);
+    //rootNode->setBackgroundCube([self cloudTexture]);
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
-    ambient->setColor({ 0.6, 0.6, 0.6 });
+    ambient->setColor({ 0.3, 0.3, 0.3 });
     
-    std::shared_ptr<VROLight> spotRed = std::make_shared<VROLight>(VROLightType::Directional);
-    spotRed->setColor({ 1.0, 0.0, 0.0 });
-    spotRed->setPosition( { 0, 0, 0 });
+    std::shared_ptr<VROLight> spotRed = std::make_shared<VROLight>(VROLightType::Spot);
+    spotRed->setColor({ 1.0, 0.2, 0.2 });
+    spotRed->setPosition( { 5, 5, -3 });
     spotRed->setDirection( { -.25, -1.0, 0 });
     spotRed->setAttenuationStartDistance(20);
     spotRed->setAttenuationEndDistance(30);
-    spotRed->setSpotInnerAngle(5);
+    spotRed->setSpotInnerAngle(15);
     spotRed->setSpotOuterAngle(10);
+    spotRed->setShadowNearZ(1);
+    spotRed->setShadowFarZ(10);
     spotRed->setCastsShadow(true);
     
-    std::shared_ptr<VROLight> spotBlue = std::make_shared<VROLight>(VROLightType::Directional);
-    spotBlue->setColor({ 0.0, 0.0, 1.0 });
-    spotBlue->setPosition( { 0, 0, 0 });
+    std::shared_ptr<VROLight> spotBlue = std::make_shared<VROLight>(VROLightType::Spot);
+    spotBlue->setColor({ 0.2, 0.2, 1.0 });
+    spotBlue->setPosition( { -3, 5, -5 });
     spotBlue->setDirection( { 0.25, -1.0, 0 });
+    spotBlue->setShadowNearZ(1);
+    spotBlue->setShadowFarZ(10);
+    
     spotBlue->setAttenuationStartDistance(20);
     spotBlue->setAttenuationEndDistance(30);
-    spotBlue->setSpotInnerAngle(5);
-    spotBlue->setSpotOuterAngle(10);
+    spotBlue->setSpotInnerAngle(30);
+    spotBlue->setSpotOuterAngle(15);
     spotBlue->setCastsShadow(true);
     
     rootNode->addLight(ambient);
@@ -851,7 +856,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     /*
      Create a surface behind the box.
      */
-    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(10, 10);
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(40, 40);
     surface->setName("Surface");
     surface->getMaterials().front()->setLightingModel(VROLightingModel::Lambert);
     
@@ -859,31 +864,30 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     surfaceNode->setGeometry(surface);
     surfaceNode->setRotationEuler({ -M_PI_2, 0, 0 });
     surfaceNode->setPosition({0, -3, -6});
+    surfaceNode->setOpacity(0.8);
     rootNode->addChildNode(surfaceNode);
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(10);
-        
-        boxNode->setPositionZ(-2.0);
+    
+        boxNode->setPositionX(2);
+        boxNode->setPositionZ(-2.75);
+        boxNode->setPositionY(-2.75);
         boxNode->setRotationEulerX(M_PI_2);
         
-        spotRed->setShadowOpacity(0.0);
-
         VROTransaction::commit();
     });
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(12 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(10);
-        spotRed->setShadowOpacity(1.0);
+        
+        boxNode->setPositionX(8);
+        boxNode->setPositionY(3);
+        boxNode->setRotationEulerX(0);
+        
         VROTransaction::commit();
-    });
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(14 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        spotBlue->setCastsShadow(false);
-    });
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(16 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        spotBlue->setCastsShadow(true);
     });
     
     return sceneController;
@@ -1428,7 +1432,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleSceneARDraggableNode;
+    self.sceneIndex = VROSampleSceneShadow;
     self.driver = driver;
     
     self.sceneController = [self loadSceneWithIndex:self.sceneIndex];
