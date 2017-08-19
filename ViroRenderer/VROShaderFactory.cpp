@@ -328,17 +328,19 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createNormalMapTextureModif
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createShadowMapGeometryModifier() {
     /*
      Modifier that outputs shadow map texture coordinates for the fragment shader.
+     
+     Note it's VERY important to ensure the w coordinate gets influenced by the
+     bias matrix (which shifts us from [-1,1] to [0,1]). We have to add 0.5w because
+     we're shifting to [-1, 1] *before* the perspective divide.
      */
     if (!sShadowMapGeometryModifier) {
         std::vector<std::string> modifierCode = {
-            "uniform mat4 shadow_view_matrix;",
-            "uniform mat4 shadow_projection_matrix;",
-            "out lowp vec4 shadow_coords[8];",
+            "out highp vec4 shadow_coords[8];",
             "for (int i = 0; i < num_lights; i++) {",
             "   shadow_coords[i] = shadow_projection_matrices[i] * shadow_view_matrices[i] * _transforms.model_matrix * vec4(_geometry.position.xyz, 1.0);",
-            "   shadow_coords[i].x = shadow_coords[i].x * 0.5 + 0.5;",
-            "   shadow_coords[i].y = shadow_coords[i].y * 0.5 + 0.5;",
-            "   shadow_coords[i].z = shadow_coords[i].z * 0.5 + 0.5;",
+            "   shadow_coords[i].x = shadow_coords[i].x * 0.5 + shadow_coords[i].w * 0.5;",
+            "   shadow_coords[i].y = shadow_coords[i].y * 0.5 + shadow_coords[i].w * 0.5;",
+            "   shadow_coords[i].z = shadow_coords[i].z * 0.5 + shadow_coords[i].w * 0.5;",
             "}",
         };
         
@@ -353,17 +355,56 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createShadowMapLightModifie
      Modifier that samples a shadow map to determine if the fragment is in light.
      */
     if (!sShadowMapLightModifier) {
-        std::vector<std::string> modifierCode = {
-            "uniform highp sampler2DArrayShadow shadow_map;",
-            "in lowp vec4 shadow_coords[8];",
-            "if (lights[i].shadow_map_index < 0 || shadow_coords[i].x < 0.0 || shadow_coords[i].y < 0.0 || shadow_coords[i].x > 1.0 || shadow_coords[i].y > 1.0) {",
-            "    _lightingContribution.visibility = 1.0;",
-            "} else {",
-            "    lowp vec4 comparison = vec4(shadow_coords[i].xy, lights[i].shadow_map_index, shadow_coords[i].z - lights[i].shadow_bias);",
-            "    lowp float shadow_intensity = lights[i].shadow_opacity * (1.0 - texture(shadow_map, comparison));",
-            "    _lightingContribution.visibility = 1.0 - shadow_intensity;",
-            "}",
-        };
+        std::vector<std::string> modifierCode;
+        
+        // This block is run when we're in Shadow Maps debugging mode. It operates
+        // on a single shadow map.
+        if (kDebugShadowMaps) {
+            modifierCode = {
+                "uniform highp sampler2DShadow shadow_map;",
+                "in highp vec4 shadow_coords[8];",
+        
+                // Build the comparison vector. The x and y coordinates are the texture lookup, and require
+                // perspective divide. The z coordinate is the depth value of the current fragment; it also
+                // needs the perspective divide and must be adjusted by bias to prevent z-fighting (acne).
+                "highp vec3 comparison = vec3(shadow_coords[i].xy / shadow_coords[i].w, (shadow_coords[i].z - lights[i].shadow_bias) / shadow_coords[i].w);",
+                
+                // Boundary condition to keep the area outside the texture map white.
+                "if (lights[i].shadow_map_index < 0 || comparison.x < 0.0 || comparison.y < 0.0 || comparison.x > 1.0 || comparison.y > 1.0) {",
+                "    _lightingContribution.visibility = 1.0;",
+                
+                // Perform the shadow test: the texture() command compares the occluder depth (the depth in
+                // the map) to the current fragment depth with PCF. We modify this by our shadow opacity param.
+                "} else {",
+                "    lowp float shadow_intensity = lights[i].shadow_opacity * (1.0 - texture(shadow_map, comparison));",
+                "    _lightingContribution.visibility = 1.0 - shadow_intensity;",
+                "}"
+            };
+        }
+        
+        else {
+            modifierCode = {
+                "uniform highp sampler2DArrayShadow shadow_map;",
+                "in highp vec4 shadow_coords[8];",
+                
+                // Build the comparison vector. The x and y coordinates are the texture lookup, and require
+                // perspective divide. The w coordinate is the depth value of the current fragment; it also
+                // needs the perspective divide and must be adjusted by bias to prevent z-fighting (acne).
+                // Finally, the z coordinate is the index into the texture array that we are checking.
+                "highp vec4 comparison = vec4(shadow_coords[i].xy / shadow_coords[i].w, lights[i].shadow_map_index, (shadow_coords[i].z - lights[i].shadow_bias) / shadow_coords[i].w);",
+
+                // Boundary condition to keep the area outside the texture map white.
+                "if (lights[i].shadow_map_index < 0 || comparison.x < 0.0 || comparison.y < 0.0 || comparison.x > 1.0 || comparison.y > 1.0) {",
+                "    _lightingContribution.visibility = 1.0;",
+
+                // Perform the shadow test: the texture() command compares the occluder depth (the depth in
+                // the map) to the current fragment depth with PCF. We modify this by our shadow opacity param.
+                "} else {",
+                "    lowp float shadow_intensity = lights[i].shadow_opacity * (1.0 - texture(shadow_map, comparison));",
+                "    _lightingContribution.visibility = 1.0 - shadow_intensity;",
+                "}",
+            };
+        }
         
         sShadowMapLightModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::LightingModel,
                                                                       modifierCode);
