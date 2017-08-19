@@ -42,6 +42,12 @@ private:
                 const VRORenderContext &context,
                 std::shared_ptr<VRODriver> &driver);
     
+    /*
+     Debug function to draw the light frustra.
+     */
+    void drawLightFrustra(std::shared_ptr<VROScene> scene, VRORenderContext *context,
+                          std::shared_ptr<VRODriver> &driver);
+    
 };
 
 #endif /* VROPortalTreeRenderPass_h */

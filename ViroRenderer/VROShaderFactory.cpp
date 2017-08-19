@@ -16,6 +16,7 @@
 #include "VROMaterial.h"
 #include "VROEye.h"
 #include "VROStringUtil.h"
+#include "VROShadowMapRenderPass.h"
 #include "VROShaderCapabilities.h"
 #include <tuple>
 
@@ -30,6 +31,9 @@ static std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapGeometryModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapLightModifier;
 static std::map<VROStereoMode, std::shared_ptr<VROShaderModifier>> sStereoscopicTextureModifiers;
+
+// Debugging
+static std::shared_ptr<VROShaderModifier> sShadowMapFragmentModifier;
 
 VROShaderFactory::VROShaderFactory() {
     
@@ -255,6 +259,9 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     if (lightingCapabilities.shadows) {
         modifiers.push_back(createShadowMapGeometryModifier());
         modifiers.push_back(createShadowMapLightModifier());
+        if (kDebugShadowMaps) {
+            modifiers.push_back(createShadowMapFragmentModifier());
+        }
         samplers.push_back("shadow_map");
     }
     
@@ -362,6 +369,21 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createShadowMapLightModifie
                                                                       modifierCode);
     }
     return sShadowMapLightModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createShadowMapFragmentModifier() {
+    /*
+     Modifier that can change the _output_color. For shadow map debugging. Left
+     checked-in because may be useful when working on Cascaded Shadow Maps.
+     */
+    if (!sShadowMapFragmentModifier) {
+        std::vector<std::string> modifierCode=  {
+            //"_output_color = vec4(?, ?, ?, ?);
+        };
+        sShadowMapFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
+                                                                         modifierCode);
+    }
+    return sShadowMapFragmentModifier;
 }
 
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createReflectiveTextureModifier() {

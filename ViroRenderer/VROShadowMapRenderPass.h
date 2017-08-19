@@ -17,7 +17,19 @@ class VROPortal;
 class VROLight;
 class VROMaterial;
 class VRORenderTarget;
+class VRORenderContext;
 class VROShaderModifier;
+
+/*
+ Setting this to true enable shadow map debug mode. This will:
+ 
+ 1. Disable using texture arrays, which limits us to one shadow but
+    enables us to use the Xcode OpenGL snapshot (the snapshot crashes if
+    used with texture arrays).
+ 
+ 2. Draw the shadow frustum using the VROPencil.
+ */
+const bool kDebugShadowMaps = false;
 
 class VROShadowMapRenderPass : public VRORenderPass {
 public:

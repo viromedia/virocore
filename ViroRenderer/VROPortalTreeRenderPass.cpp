@@ -15,7 +15,9 @@
 #include "VROPortal.h"
 #include "VROScene.h"
 #include "VRORenderContext.h"
+#include "VROLight.h"
 #include "VROPortalFrame.h"
+#include "VROShadowMapRenderPass.h" // For drawing light frustra
 
 VROPortalTreeRenderPass::VROPortalTreeRenderPass() {
     _silhouetteMaterial = std::make_shared<VROMaterial>();
@@ -39,6 +41,10 @@ VRORenderPassInputOutput VROPortalTreeRenderPass::render(std::shared_ptr<VROScen
     driver->setColorWritingEnabled(true);
     target->clearDepthAndColor();
     target->clearStencil(0);
+    
+    if (kDebugShadowMaps) {
+        drawLightFrustra(scene, context, driver);
+    }
     
     std::vector<tree<std::shared_ptr<VROPortal>>> treeNodes;
     treeNodes.push_back(scene->getPortalTree());
@@ -151,4 +157,17 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
         ++i;
         pglpop();
     }
+}
+
+void VROPortalTreeRenderPass::drawLightFrustra(std::shared_ptr<VROScene> scene, VRORenderContext *context,
+                                               std::shared_ptr<VRODriver> &driver) {
+    const std::vector<std::shared_ptr<VROLight>> &lights = scene->getLights();
+    for (const std::shared_ptr<VROLight> &light : lights) {
+        if (!light->getCastsShadow()) {
+            continue;
+        }
+        light->drawLightFrustum(context->getPencil());
+    }
+    context->getPencil()->render(*context, driver);
+    context->getPencil()->clear();
 }

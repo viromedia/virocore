@@ -46,7 +46,12 @@ void VROChoreographer::initTargets(std::shared_ptr<VRODriver> driver) {
     _renderToTexturePostProcess->setVerticalFlip(true);
     
     if (_renderShadows) {
-        _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTextureArray, kMaxLights);
+        if (kDebugShadowMaps) {
+            _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTexture, kMaxLights);
+        }
+        else {
+            _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTextureArray, kMaxLights);
+        }
     }
 }
         
@@ -66,6 +71,7 @@ void VROChoreographer::render(VROEyeType eye, std::shared_ptr<VROScene> scene, V
         if (eye == VROEyeType::Left || eye == VROEyeType::Monocular) {
             renderShadowPasses(scene, context, driver);
         }
+        
         renderBasePass(scene, context, driver);
     }
 }
@@ -103,7 +109,9 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
         }
         activeShadowPasses[light] = shadowPass;
         
-        _shadowTarget->setTextureImageIndex(i);
+        if (!kDebugShadowMaps) {
+            _shadowTarget->setTextureImageIndex(i);
+        }
         light->setShadowMapIndex(i);
         
         VRORenderPassInputOutput inputs;

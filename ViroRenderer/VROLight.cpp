@@ -11,6 +11,32 @@
 #include "VROAnimationFloat.h"
 #include "VROLog.h"
 #include "VROLightingUBO.h"
+#include "VRORenderer.h" // for kZNear and kZFar
+#include "VROPencil.h"
+
+VROLight::VROLight(VROLightType type) :
+    _lightId(++sLightId),
+    _type(type),
+    _color({ 1.0, 1.0, 1.0 }),
+    _intensity(1000.0),
+    _updatedFragmentData(true),
+    _updatedVertexData(true),
+    _attenuationStartDistance(2.0),
+    _attenuationEndDistance(std::numeric_limits<float>::max()),
+    _attenuationFalloffExponent(2.0),
+    _direction( { 0, 0, -1.0} ),
+    _spotInnerAngle(0),
+    _spotOuterAngle(45),
+    _castsShadow(false),
+    _shadowOpacity(1.0),
+    _shadowMapSize(1024),
+    _shadowBias(0.005),
+    _shadowOrthographicScale(10),
+    _shadowNearZ(0.1),
+    _shadowFarZ(20),
+    _shadowMapIndex(-1) {
+    
+}
 
 uint32_t VROLight::hashLights(const std::vector<std::shared_ptr<VROLight>> &lights) {
     uint32_t h = 0;
@@ -123,4 +149,70 @@ void VROLight::propagateVertexUpdates() {
         }
     }
     _updatedVertexData = false;
+}
+
+void VROLight::drawLightFrustum(std::shared_ptr<VROPencil> pencil) {
+    // The coordinates of the frustum in NDC space
+    VROVector4f nearBL(-1, -1, -1,  1);
+    VROVector4f farBL (-1, -1,  1,  1);
+    VROVector4f nearBR( 1, -1, -1,  1);
+    VROVector4f farBR ( 1, -1,  1,  1);
+    VROVector4f nearTL(-1,  1, -1,  1);
+    VROVector4f farTL (-1,  1,  1,  1);
+    VROVector4f nearTR( 1,  1, -1,  1);
+    VROVector4f farTR ( 1,  1,  1,  1);
+    
+    VROVector4f frustumNDC[8] = { nearBL, farBL, nearBR, farBR, nearTL, farTL, nearTR, farTR };
+    
+    /*
+    VROMatrix4f inverseProjection = _shadowProjectionMatrix.invert();
+    VROVector4f frustumEye[8];
+    for (int i = 0; i < 8; i++) {
+        frustumEye[i] = inverseProjection.multiply(frustumNDC[i]);
+        frustumEye[i].x /= frustumEye[i].w;
+        frustumEye[i].y /= frustumEye[i].w;
+        frustumEye[i].z /= frustumEye[i].w;
+        frustumEye[i].w /= frustumEye[i].w;
+        
+    }
+    
+    VROMatrix4f inverseView = _shadowViewMatrix.invert();
+    for (int i = 0; i < 8; i++) {
+        frustum[i] = inverseView.multiply(frustumEye[i]);
+    }
+    */
+    
+    VROVector4f frustum[8];
+    VROMatrix4f inverseLightMVP = (getShadowProjectionMatrix().multiply(getShadowViewMatrix())).invert();
+    for (int i = 0; i < 8; i++) {
+        frustum[i] = inverseLightMVP.multiply(frustumNDC[i]);
+        frustum[i].x = frustum[i].x / frustum[i].w;
+        frustum[i].y = frustum[i].y / frustum[i].w;
+        frustum[i].z = frustum[i].z / frustum[i].w;
+        frustum[i].w = 1.0;
+    }
+    
+    VROVector3f nBL(frustum[0].x, frustum[0].y, frustum[0].z);
+    VROVector3f fBL(frustum[1].x, frustum[1].y, frustum[1].z);
+    VROVector3f nBR(frustum[2].x, frustum[2].y, frustum[2].z);
+    VROVector3f fBR(frustum[3].x, frustum[3].y, frustum[3].z);
+    VROVector3f nTL(frustum[4].x, frustum[4].y, frustum[4].z);
+    VROVector3f fTL(frustum[5].x, frustum[5].y, frustum[5].z);
+    VROVector3f nTR(frustum[6].x, frustum[6].y, frustum[6].z);
+    VROVector3f fTR(frustum[7].x, frustum[7].y, frustum[7].z);
+    
+    pencil->draw(nBL, fBL);
+    pencil->draw(nBR, fBR);
+    pencil->draw(nTL, fTL);
+    pencil->draw(nTR, fTR);
+    
+    pencil->draw(fTL, fTR);
+    pencil->draw(fTR, fBR);
+    pencil->draw(fBR, fBL);
+    pencil->draw(fBL, fTL);
+    
+    pencil->draw(nTL, nTR);
+    pencil->draw(nTR, nBR);
+    pencil->draw(nBR, nBL);
+    pencil->draw(nBL, nTL);
 }

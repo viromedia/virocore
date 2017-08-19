@@ -21,6 +21,7 @@
 
 static std::atomic_int sLightId;
 class VROTexture;
+class VROPencil;
 class VROLightingUBO;
 
 enum class VROLightType {
@@ -42,31 +43,8 @@ public:
     
     static uint32_t hashLights(const std::vector<std::shared_ptr<VROLight>> &lights);
     
-    VROLight(VROLightType type) :
-        _lightId(++sLightId),
-        _type(type),
-        _color({ 1.0, 1.0, 1.0 }),
-        _intensity(1000.0),
-        _updatedFragmentData(true),
-        _updatedVertexData(true),
-        _attenuationStartDistance(2.0),
-        _attenuationEndDistance(std::numeric_limits<float>::max()),
-        _attenuationFalloffExponent(2.0),
-        _direction( { 0, 0, -1.0} ),
-        _spotInnerAngle(0),
-        _spotOuterAngle(45),
-        _castsShadow(false),
-        _shadowOpacity(1.0),
-        _shadowMapSize(1024),
-        _shadowBias(0.005),
-        _shadowOrthographicScale(10),
-        _shadowNearZ(-10),
-        _shadowFarZ(20),
-        _shadowMapIndex(-1)
-    {}
-    
-    ~VROLight()
-    {}
+    VROLight(VROLightType type);
+    ~VROLight() {}
     
     uint32_t getLightId() const {
         return _lightId;
@@ -224,6 +202,10 @@ public:
         _shadowProjectionMatrix = shadowProjectionMatrix;
     }
     
+#pragma mark - Debugging
+    
+    void drawLightFrustum(std::shared_ptr<VROPencil> pencil);
+    
 private:
     
     uint32_t _lightId;
@@ -258,7 +240,15 @@ private:
     VROVector3f _direction;
     
     /*
-     Spot parameters.
+     Spot parameters. The inner angle is the angle from the axis of the
+     of the light cone to the surface of the light cone. It is half the
+     angle from one hard cone edge to the other.
+     
+     The outer angle is the angle from the hard edge of the cone to the
+     soft edge of the cone. If the outer angle is zero, then the entirety
+     of the cone will have full intensity.
+     
+     Both of these are specified in degrees.
      */
     float _spotInnerAngle;
     float _spotOuterAngle;
