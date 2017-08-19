@@ -192,10 +192,9 @@ void VRORenderTargetOpenGL::attachNewTexture() {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, _viewport.getWidth(), _viewport.getHeight(), 0,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, _viewport.getWidth(), _viewport.getHeight(), 0,
                      GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
         glBindTexture(GL_TEXTURE_2D, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texName, 0);
@@ -219,10 +218,9 @@ void VRORenderTargetOpenGL::attachNewTexture() {
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BASE_LEVEL, 0);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 1);
-        
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-        glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT16, _viewport.getWidth(), _viewport.getHeight(),
+        glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT24, _viewport.getWidth(), _viewport.getHeight(),
                      _numImages, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
         glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texName, 0, 0);
@@ -391,27 +389,12 @@ void VRORenderTargetOpenGL::createColorTextureTarget() {
 void VRORenderTargetOpenGL::createDepthTextureTarget() {
     passert_msg(_viewport.getWidth() > 0 && _viewport.getHeight() > 0,
                 "Must invoke setViewport before using a render target");
-    /*
-     Create the framebuffer.
-     */
+
     glGenFramebuffers(1, &_framebuffer);
-    attachNewTexture();
-    
-    /*
-     If OpenGL ES 3.0 is supported, then use glDrawBuffers instead of attaching a
-     dummy color buffer.
-     
-     For now not doing this, but when the time comes, use these three commands:
-     
-     GLenum none[] = { GL_NONE };
-     glDrawBuffers(1, none);
-     glReadBuffer(GL_NONE);
-     */
-    GLuint colorRenderbuffer;
-    glGenRenderbuffers(1, &colorRenderbuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, _viewport.getWidth(), _viewport.getHeight());
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
+    attachNewTexture();    
+    GLenum none[] = { GL_NONE };
+    glDrawBuffers(1, none);
+    glReadBuffer(GL_NONE);
     
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         pinfo("Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
@@ -428,7 +411,6 @@ void VRORenderTargetOpenGL::createDepthTextureTarget() {
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_UNSUPPORTED) {
             pinfo("   Unsupported");
         }
-        
         pabort("Failed to create depth texture render target");
     }
 }
