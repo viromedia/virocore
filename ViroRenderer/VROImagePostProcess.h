@@ -32,7 +32,7 @@ public:
      has no substrate and could not be bound.
      */
     virtual bool bindTexture(int unit, const std::shared_ptr<VROTexture> &texture,
-                             std::shared_ptr<VRODriver> &driver) const = 0;
+                             std::shared_ptr<VRODriver> &driver) = 0;
     
     /*
      Blit the given source render target to the destination render target, using the
@@ -41,7 +41,7 @@ public:
      */
     virtual void blit(std::shared_ptr<VRORenderTarget> source,
                       std::shared_ptr<VRORenderTarget> destination,
-                      std::shared_ptr<VRODriver> &driver) const = 0;
+                      std::shared_ptr<VRODriver> &driver) = 0;
     
     /*
      Accumulate the contents of the given source render target onto the given destination
@@ -49,7 +49,7 @@ public:
      */
     virtual void accumulate(std::shared_ptr<VRORenderTarget> source,
                             std::shared_ptr<VRORenderTarget> destination,
-                            std::shared_ptr<VRODriver> &driver) const = 0;
+                            std::shared_ptr<VRODriver> &driver) = 0;
     
     
 };

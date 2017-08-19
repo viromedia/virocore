@@ -126,6 +126,24 @@ public:
             glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         }
     }
+    
+    void bindShader(std::shared_ptr<VROShaderProgram> program) {
+        if (_boundShader == program) {
+            return;
+        }
+        if (_boundShader != nullptr) {
+            pglpop();
+        }
+        
+        if (program != nullptr) {
+            pglpush("Shader [%s-%d]", program->getName().c_str(), (int)program->getProgram());
+            program->bind();
+        }
+        else {
+            VROShaderProgram::unbind();
+        }
+        _boundShader = program;
+    }
 
     VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) {
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
@@ -267,6 +285,7 @@ private:
     bool _colorWritingEnabled;
     bool _depthWritingEnabled, _depthReadingEnabled;
     VROCullMode _cullMode;
+    std::shared_ptr<VROShaderProgram> _boundShader;
     
     /*
      ID of the backbuffer.

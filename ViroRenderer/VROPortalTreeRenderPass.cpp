@@ -8,7 +8,6 @@
 
 #include "VROPortalTreeRenderPass.h"
 #include "VROLog.h"
-#include "VROOpenGL.h" // For logging pglpush only
 #include "VROMaterial.h"
 #include "VRORenderTarget.h"
 #include "VRODriver.h"

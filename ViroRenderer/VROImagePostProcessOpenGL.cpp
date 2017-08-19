@@ -47,7 +47,7 @@ void VROImagePostProcessOpenGL::setVerticalFlip(bool flip) {
 }
 
 bool VROImagePostProcessOpenGL::bindTexture(int unit, const std::shared_ptr<VROTexture> &texture,
-                                            std::shared_ptr<VRODriver> &driver) const {
+                                            std::shared_ptr<VRODriver> &driver) {
     VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) texture->getSubstrate(0, driver, nullptr);
     if (!substrate) {
         return false;
@@ -61,7 +61,7 @@ bool VROImagePostProcessOpenGL::bindTexture(int unit, const std::shared_ptr<VROT
 
 void VROImagePostProcessOpenGL::blit(std::shared_ptr<VRORenderTarget> source,
                                      std::shared_ptr<VRORenderTarget> destination,
-                                     std::shared_ptr<VRODriver> &driver) const {
+                                     std::shared_ptr<VRODriver> &driver) {
     if (!bind(source, destination, driver)) {
         return;
     }
@@ -70,7 +70,7 @@ void VROImagePostProcessOpenGL::blit(std::shared_ptr<VRORenderTarget> source,
 
 void VROImagePostProcessOpenGL::accumulate(std::shared_ptr<VRORenderTarget> source,
                                            std::shared_ptr<VRORenderTarget> destination,
-                                           std::shared_ptr<VRODriver> &driver) const {
+                                           std::shared_ptr<VRODriver> &driver) {
     if (!bind(source, destination, driver)) {
         return;
     }
@@ -81,7 +81,7 @@ void VROImagePostProcessOpenGL::accumulate(std::shared_ptr<VRORenderTarget> sour
 
 bool VROImagePostProcessOpenGL::bind(std::shared_ptr<VRORenderTarget> source,
                                      std::shared_ptr<VRORenderTarget> destination,
-                                     std::shared_ptr<VRODriver> &driver) const {
+                                     std::shared_ptr<VRODriver> &driver) {
     
     // Bind the source target to texture unit 0
     const std::shared_ptr<VROTexture> &texture = source->getTexture();
@@ -98,7 +98,7 @@ bool VROImagePostProcessOpenGL::bind(std::shared_ptr<VRORenderTarget> source,
     if (!_shader->isHydrated()) {
         _shader->hydrate();
     }
-    _shader->bind();
+    driver->bindShader(_shader);
     for (VROUniform *uniform : _shaderModifierUniforms) {
         uniform->set(nullptr, nullptr);
     }

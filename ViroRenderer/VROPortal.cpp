@@ -99,7 +99,6 @@ void VROPortal::renderBackground(const VRORenderContext &renderContext,
 }
 
 void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    uint32_t boundShaderId = UINT32_MAX;
     uint32_t boundMaterialId = UINT32_MAX;
     std::vector<std::shared_ptr<VROLight>> boundLights;
     
@@ -123,24 +122,19 @@ void VROPortal::renderContents(const VRORenderContext &context, std::shared_ptr<
             material = material->getOutgoing();
         }
         
-        // Bind the new shader if it changed
-        if (key.shader != boundShaderId) {
+        // Rebind if materials or lights changed. We always have to rebind material
+        // properties even if only the lights changed, because new lights imply
+        // a potential change of shader -- and we have to upload our material's uniforms
+        // to any new shader.
+        if (key.material != boundMaterialId || boundLights != node->getComputedLights()) {
+            // TODO Perhaps we can check if the shader changed, and if so bind
+            //      properties? We could also meld these two methods into one, simplifying
+            //      the API?
             material->bindShader(key.lights, node->getComputedLights(), driver);
-            boundLights = node->getComputedLights();
-            boundShaderId = key.shader;
-        }
-        else {
-            // If the lights changed, they are updated by rebinding the shader
-            if (boundLights != node->getComputedLights()) {
-                material->bindShader(key.lights, node->getComputedLights(), driver);
-                boundLights = node->getComputedLights();
-            }
-        }
-        
-        // Bind material properties if they changed
-        if (key.material != boundMaterialId) {
             material->bindProperties(driver);
+
             boundMaterialId = key.material;
+            boundLights = node->getComputedLights();
         }
         
         // Only render the material if there are lights, or if the material uses

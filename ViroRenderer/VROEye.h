@@ -25,14 +25,22 @@ enum class VROEyeType {
  field of view. These completely define the "camera" of an eye.
  */
 class VROEye {
-    
 public:
+    
+    static std::string toString(VROEyeType type) {
+        switch (type) {
+            case VROEyeType::Left:
+                return "Left";
+            case VROEyeType::Right:
+                return "Right";
+            default:
+                return "Monocular";
+        }
+    }
     
     VROEye(const VROEyeType type) :
         _type(type) {
-        
     }
-    
     ~VROEye() {}
     
     VROEyeType getType() const {

@@ -9,7 +9,6 @@
 #include "VROShadowMapRenderPass.h"
 #include "VROLog.h"
 #include "VROLight.h"
-#include "VROOpenGL.h" // For logging pglpush only
 #include "VROMaterial.h"
 #include "VRORenderTarget.h"
 #include "VRODriver.h"

@@ -24,15 +24,15 @@ public:
     void setVerticalFlip(bool flip);
     
     bool bindTexture(int unit, const std::shared_ptr<VROTexture> &texture,
-                     std::shared_ptr<VRODriver> &driver) const;
+                     std::shared_ptr<VRODriver> &driver);
 
     void blit(std::shared_ptr<VRORenderTarget> source,
               std::shared_ptr<VRORenderTarget> destination,
-              std::shared_ptr<VRODriver> &driver) const;
+              std::shared_ptr<VRODriver> &driver);
     
     void accumulate(std::shared_ptr<VRORenderTarget> source,
                     std::shared_ptr<VRORenderTarget> destination,
-                    std::shared_ptr<VRODriver> &driver) const;
+                    std::shared_ptr<VRODriver> &driver);
     
 private:
     
@@ -61,7 +61,7 @@ private:
      */
     bool bind(std::shared_ptr<VRORenderTarget> source,
               std::shared_ptr<VRORenderTarget> destination,
-              std::shared_ptr<VRODriver> &driver) const;
+              std::shared_ptr<VRODriver> &driver);
     
     /*
      Build the full-screen quad VAR.

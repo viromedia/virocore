@@ -208,6 +208,7 @@ VROCamera VRORenderer::updateCamera(const VROViewport &viewport, const VROFieldO
 void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView fov,
                                VROMatrix4f headRotation, VROMatrix4f projection, std::shared_ptr<VRODriver> driver) {
 
+    pglpush("Viro Start Frame %d", frame);
     if (!_rendererInitialized) {
         initRenderer(driver);
       
@@ -275,11 +276,12 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
 
     driver->willRenderFrame(context);
     _debugHUD->prepare(context);
+    pglpop();
 }
 
 void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
                             VROViewport viewport, std::shared_ptr<VRODriver> driver) {
-    
+    pglpush("Viro Render Eye [%s]", VROEye::toString(eye).c_str());
     _choreographer->setViewport(viewport, driver);
 
     std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
@@ -327,9 +329,15 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     }
 
     _context->getPencil()->render(*_context.get(), driver);
+    
+    // This unbinds the last shader to even out our pglpush and pops
+    driver->bindShader(nullptr);
+    pglpop();
 }
 
 void VRORenderer::endFrame(std::shared_ptr<VRODriver> driver) {
+    pglpush("Viro End Frame");
+
     if (_outgoingSceneController && !_outgoingSceneController->hasActiveTransitionAnimation()) {
         _sceneController->onSceneDidAppear(_context.get(), driver);
         _outgoingSceneController->onSceneDidDisappear(_context.get(), driver);
@@ -346,6 +354,7 @@ void VRORenderer::endFrame(std::shared_ptr<VRODriver> driver) {
     _frameScheduler->processTasks(timer);
     
     driver->didRenderFrame(timer, *_context.get());
+    pglpop();
 }
 
 void VRORenderer::renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> driver) {

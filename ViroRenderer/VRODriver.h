@@ -77,6 +77,7 @@ public:
     virtual void setDepthReadingEnabled(bool enabled) = 0;
     virtual void setCullMode(VROCullMode cullMode) = 0;
     virtual void setColorWritingEnabled(bool enabled) = 0;
+    virtual void bindShader(std::shared_ptr<VROShaderProgram> program) = 0;
     
     virtual VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) = 0;
     virtual VROMaterialSubstrate *newMaterialSubstrate(VROMaterial &material) = 0;
