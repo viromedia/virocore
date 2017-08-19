@@ -287,6 +287,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createDiffuseTextureModifie
         };
         sDiffuseTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                       modifierCode);
+        sDiffuseTextureModifier->setName("diffuse");
     }
     
     return sDiffuseTextureModifier;
@@ -303,6 +304,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createSpecularTextureModifi
         };
         sSpecularTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                        modifierCode);
+        sSpecularTextureModifier->setName("spec");
     }
     
     return sSpecularTextureModifier;
@@ -320,6 +322,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createNormalMapTextureModif
         };
         sNormalMapTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                         modifierCode);
+        sNormalMapTextureModifier->setName("normal");
     }
     
     return sNormalMapTextureModifier;
@@ -346,6 +349,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createShadowMapGeometryModi
         
         sShadowMapGeometryModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
                                                                          modifierCode);
+        sShadowMapGeometryModifier->setName("shadow");
     }
     return sShadowMapGeometryModifier;
 }
@@ -408,6 +412,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createShadowMapLightModifie
         
         sShadowMapLightModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::LightingModel,
                                                                       modifierCode);
+        // No name added to the modifier because the vertex modifier has one
     }
     return sShadowMapLightModifier;
 }
@@ -423,6 +428,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createShadowMapFragmentModi
         };
         sShadowMapFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
                                                                          modifierCode);
+        sShadowMapFragmentModifier->setName("shadowdebug");
     }
     return sShadowMapFragmentModifier;
 }
@@ -439,6 +445,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createReflectiveTextureModi
         };
         sReflectiveTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
                                                                          modifierCode);
+        sReflectiveTextureModifier->setName("reflect");
     }
     
     return sReflectiveTextureModifier;
@@ -456,6 +463,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createLambertLightingModifi
         
         sLambertLightingModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::LightingModel,
                                                                        modifierCode);
+        sLambertLightingModifier->setName("lambert");
     }
     return sLambertLightingModifier;
 }
@@ -479,6 +487,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPhongLightingModifier
         
         sPhongLightingModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::LightingModel,
                                                                      modifierCode);
+        sPhongLightingModifier->setName("phong");
     }
     return sPhongLightingModifier;
 }
@@ -502,6 +511,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createBlinnLightingModifier
         
         sBlinnLightingModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::LightingModel,
                                                                      modifierCode);
+        sBlinnLightingModifier->setName("blinn");
     }
     return sBlinnLightingModifier;
 }
@@ -540,6 +550,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createStereoTextureModifier
         };
         
         modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface, surfaceModifierCode);
+        modifier->setName("stereo");
         sStereoscopicTextureModifiers[currentStereoMode] = modifier;
     }
     
@@ -568,6 +579,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createYCbCrTextureModifier(
         };
         sYCbCrTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                     modifierCode);
+        sYCbCrTextureModifier->setName("ycbcr");
     }
     
     return sYCbCrTextureModifier;

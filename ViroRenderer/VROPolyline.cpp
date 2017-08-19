@@ -217,6 +217,7 @@ std::shared_ptr<VROShaderModifier> VROPolyline::createPolylineShaderModifier() {
             const VROPolyline *polyline = dynamic_cast<const VROPolyline *>(geometry);
             uniform->setFloat(polyline->getThickness());
         });
+        sPolylineShaderModifier->setName("line");
     }
     
     return sPolylineShaderModifier;

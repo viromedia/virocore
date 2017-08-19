@@ -17,6 +17,7 @@
 #include "VROGeometryUtil.h"
 #include "VROAllocationTracker.h"
 #include "VROBoneUBO.h"
+#include "VROStringUtil.h"
 #include <atomic>
 
 #define kDebugShaders 0
@@ -53,7 +54,10 @@ VROShaderProgram::VROShaderProgram(std::string vertexShader, std::string fragmen
     _failedToLink(false),
     _samplers(samplers),
     _driver(driver) {
-
+    
+    if (VROStringUtil::endsWith(fragmentShader, "_fsh")) {
+        _shaderName = fragmentShader.substr(0, fragmentShader.length() - 4);
+    }
     _vertexSource = loadTextAsset(vertexShader);
     inflateIncludes(_vertexSource);
 
@@ -514,7 +518,7 @@ void VROShaderProgram::inflateIncludes(std::string &source) const {
 }
 
 void VROShaderProgram::inflateVertexShaderModifiers(const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
-                                                    std::string &source) const {
+                                                    std::string &source) {
     
     for (const std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
         if (modifier->getEntryPoint() != VROShaderEntryPoint::Geometry &&
@@ -525,11 +529,15 @@ void VROShaderProgram::inflateVertexShaderModifiers(const std::vector<std::share
         insertModifier(modifier->getBodySource(), modifier->getDirective(VROShaderSection::Body), source);
         insertModifier(modifier->getUniformsSource(), modifier->getDirective(VROShaderSection::Uniforms), source);
         inflateReplacements(modifier->getReplacements(), source);
+        
+        if (!modifier->getName().empty()) {
+            _shaderName.append("_").append(modifier->getName());
+        }
     }
 }
 
 void VROShaderProgram::inflateFragmentShaderModifiers(const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
-                                                      std::string &source) const {
+                                                      std::string &source) {
     
     for (const std::shared_ptr<VROShaderModifier> &modifier : modifiers) {
         if (modifier->getEntryPoint() != VROShaderEntryPoint::Surface &&
@@ -542,6 +550,10 @@ void VROShaderProgram::inflateFragmentShaderModifiers(const std::vector<std::sha
         insertModifier(modifier->getBodySource(), modifier->getDirective(VROShaderSection::Body), source);
         insertModifier(modifier->getUniformsSource(), modifier->getDirective(VROShaderSection::Uniforms), source);
         inflateReplacements(modifier->getReplacements(), source);
+        
+        if (!modifier->getName().empty()) {
+            _shaderName.append("_").append(modifier->getName());
+        }
     }
 }
 

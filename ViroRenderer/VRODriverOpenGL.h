@@ -136,7 +136,7 @@ public:
         }
         
         if (program != nullptr) {
-            pglpush("Shader [%s-%d]", program->getName().c_str(), (int)program->getProgram());
+            pglpush("Shader %d [%s]", (int)program->getProgram(), program->getName().c_str());
             program->bind();
         }
         else {

@@ -284,9 +284,9 @@ private:
      Inflate the shader modifiers into the shader source.
      */
     void inflateVertexShaderModifiers(const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
-                                      std::string &source) const;
+                                      std::string &source);
     void inflateFragmentShaderModifiers(const std::vector<std::shared_ptr<VROShaderModifier>> &modifiers,
-                                      std::string &source) const;
+                                      std::string &source);
     void inflateReplacements(const std::map<std::string, std::string> &replacements, std::string &source) const;
     void insertModifier(std::string modifierSource, std::string directive, std::string &source) const;
 

@@ -20,6 +20,7 @@ std::shared_ptr<VROShaderModifier> VROPortalFrame::getAlphaDiscardModifier() {
             "if (_output_color.a > 0.1) discard;",
         };
         sAlphaTestModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment, modifierCode);
+        sAlphaTestModifier->setName("alpha-test");
     }
     return sAlphaTestModifier;
 }

@@ -186,6 +186,7 @@ void VROPortal::installBackgroundShaderModifier() {
         std::vector<std::string> modifierCode =  { "_vertex.position = _vertex.position.xyww;"};
         sBackgroundShaderModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Vertex,
                                                                         modifierCode);
+        sBackgroundShaderModifier->setName("background");
     }
     _background->getMaterials().front()->addShaderModifier(sBackgroundShaderModifier);
 }

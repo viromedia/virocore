@@ -180,6 +180,17 @@ public:
     }
     
     /*
+     Names can be added to shader modifiers, for debugging only. Will be appended
+     to the parent shader name.
+     */
+    void setName(std::string name) {
+        _name = name;
+    }
+    std::string getName() const {
+        return _name;
+    }
+    
+    /*
      Add a string of text and what it should be replaced with. This will perform
      a find and replace on the modified shader.
      */
@@ -237,6 +248,7 @@ public:
 private:
     
     int _shaderModifierId;
+    std::string _name;
     
     /*
      The new uniforms this shader modifier will add. Single string containing

@@ -109,6 +109,7 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
         }
         activeShadowPasses[light] = shadowPass;
         
+        pglpush("Shadow Pass");
         if (!kDebugShadowMaps) {
             _shadowTarget->setTextureImageIndex(i);
         }
@@ -117,6 +118,9 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
         VRORenderPassInputOutput inputs;
         inputs[kRenderTargetSingleOutput] = _shadowTarget;
         shadowPass->render(scene, inputs, context, driver);
+        
+        driver->bindShader(nullptr);
+        pglpop();
         
         ++i;
     }
@@ -141,6 +145,8 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
     if (_renderToTexture) {
         inputs[kRenderTargetSingleOutput] = _blitTarget;
         _baseRenderPass->render(scene, inputs, context, driver);
+        driver->bindShader(nullptr);
+
         
         // The rendered image is now upside-down in the blitTarget. The back-buffer
         // actually wants it this way, but for RTT we want it flipped right side up.
@@ -156,6 +162,7 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
     else {
         inputs[kRenderTargetSingleOutput] = driver->getDisplay();
         _baseRenderPass->render(scene, inputs, context, driver);
+        driver->bindShader(nullptr);
     }
 }
 
