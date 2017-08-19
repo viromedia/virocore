@@ -26,11 +26,25 @@ VROMatrix4f matrix_from_scale(float sx, float sy, float sz);
 VROMatrix4f matrix_from_translation(float x, float y, float z);
 VROMatrix4f matrix_from_perspective_fov_aspectLH(const float fovY, const float aspect,
                                                      const float nearZ, const float farZ);
-VROMatrix4f matrix_for_frustum(const float left, const float right,
-                               const float bottom, const float top,
-                               const float znear, const float zfar);
 
+/*
+ Compute a look-at matrix for a right handed coordinate system.
+ */
 VROMatrix4f VROMathComputeLookAtMatrix(VROVector3f eye, VROVector3f forward, VROVector3f up);
+
+/*
+ Compute a frustum or perspective projection for a right handed coordinate system.
+ */
+VROMatrix4f VROMathComputeFrustum(float left, float right, float bottom, float top,
+                                  float znear, float zfar);
+VROMatrix4f VROMathComputePerspectiveProjection(float fovyInDegrees, float aspectRatio,
+                                                float znear, float zfar);
+
+/*
+ Compute an orthographic projection for a right handed coordinate system.
+ */
+VROMatrix4f VROMathComputeOrthographicProjection(float left, float right, float bottom, float top,
+                                                 float near, float far);
 
 double degrees_to_radians(double degrees);
 double radians_to_degrees(double radians);

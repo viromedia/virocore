@@ -19,6 +19,8 @@
 #include "VRORenderContext.h"
 #include "VROPortalFrame.h"
 #include "VROShaderModifier.h"
+#include "VROPencil.h"
+#include "VROFieldOfView.h"
 
 // Shader modifier used for writing to depth buffer
 static std::shared_ptr<VROShaderModifier> sShadowDepthWritingModifier;
@@ -106,34 +108,33 @@ void VROShadowMapRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>>
 }
 
 VROMatrix4f VROShadowMapRenderPass::computeLightProjectionMatrix() const {
-    float far  = _light->getShadowFarZ();
     float near = _light->getShadowNearZ();
+    float far  = _light->getShadowFarZ();
     
-    float orthographicScale = _light->getShadowOrthographicScale();
-    float left   = -orthographicScale;
-    float right  =  orthographicScale;
-    float bottom = -orthographicScale;
-    float top    =  orthographicScale;
-    
-    VROMatrix4f lightProjection;
-    lightProjection[0]  =  2.0 / (right - left);
-    lightProjection[5]  =  2.0 / (top - bottom);
-    lightProjection[10] =  2.0 / (far - near);
-    lightProjection[12] = -(right + left) / (right - left);
-    lightProjection[13] = -(top + bottom) / (top - bottom);
-    lightProjection[14] = -(far + near) / (far - near);
-    
-    return lightProjection;
+    if (_light->getType() == VROLightType::Directional) {
+        float orthographicScale = _light->getShadowOrthographicScale();
+        float left   = -orthographicScale;
+        float right  =  orthographicScale;
+        float bottom = -orthographicScale;
+        float top    =  orthographicScale;
+        
+        return VROMathComputeOrthographicProjection(left, right, bottom, top, near, far);
+    }
+    else if (_light->getType() == VROLightType::Spot) {
+        return VROMathComputePerspectiveProjection((_light->getSpotOuterAngle() + _light->getSpotInnerAngle()) * 2.0,
+                                                   1, near, far);
+    }
+    else {
+        pabort("Light of type %d may not cast shadows", (int)_light->getType());
+    }
 }
 
 VROMatrix4f VROShadowMapRenderPass::computeLightViewMatrix() const {
-    VROVector3f lightForward = _light->getDirection();
-    lightForward = lightForward.scale(-1).normalize();
+    VROVector3f lightForward = _light->getDirection().normalize();
     
     VROMatrix4f rotateX;
     rotateX.rotateX(M_PI_2);
     VROVector3f lightUp = rotateX.multiply(lightForward);
     
-    VROVector3f lightEye(0, 0, 0);
-    return VROMathComputeLookAtMatrix(lightEye, lightForward, lightUp);
+    return VROMathComputeLookAtMatrix(_light->getTransformedPosition(), lightForward, lightUp);
 }

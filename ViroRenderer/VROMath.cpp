@@ -44,58 +44,85 @@ VROMatrix4f matrix_from_perspective_fov_aspectLH(const float fovY, const float a
     return m;
 }
 
-VROMatrix4f matrix_for_frustum(const float left, const float right,
-                                   const float bottom, const float top,
-                                   const float znear, const float zfar) {
-    const float x_2n = znear + znear;
-    const float x_2nf = 2 * znear * zfar;
+VROMatrix4f VROMathComputeFrustum(float left, float right, float bottom, float top,
+                                  float znear, float zfar) {
+    float temp, temp2, temp3, temp4;
+    temp = 2.0 * znear;
+    temp2 = right - left;
+    temp3 = top - bottom;
+    temp4 = zfar - znear;
     
-    const float p_fn = zfar + znear;
-    const float m_nf = znear - zfar;
+    VROMatrix4f matrix;
+    matrix[0] = temp / temp2;
+    matrix[1] = 0.0;
+    matrix[2] = 0.0;
+    matrix[3] = 0.0;
+    matrix[4] = 0.0;
+    matrix[5] = temp / temp3;
+    matrix[6] = 0.0;
+    matrix[7] = 0.0;
+    matrix[8] = (right + left) / temp2;
+    matrix[9] = (top + bottom) / temp3;
+    matrix[10] = (-zfar - znear) / temp4;
+    matrix[11] = -1.0;
+    matrix[12] = 0.0;
+    matrix[13] = 0.0;
+    matrix[14] = (-temp * zfar) / temp4;
+    matrix[15] = 0.0;
     
-    const float p_rl = right + left;
-    const float m_rl = right - left;
-    const float p_tb = top + bottom;
-    const float m_tb = top - bottom;
-    
-    float m[16] = {
-           x_2n / m_rl, 0, 0, 0,
-           0, x_2n / m_tb, 0, 0,
-           p_rl / m_rl, p_tb / m_tb, p_fn / m_nf, -1,
-           0, 0, x_2nf / m_nf, 0
-    };
+    return matrix;
+}
 
-    return VROMatrix4f(m);
+VROMatrix4f VROMathComputePerspectiveProjection(float fovyInDegrees, float aspect,
+                                                float zNear, float zFar) {
+    
+    float rad = degrees_to_radians(fovyInDegrees);
+    float tanHalfFovy = tan(rad / 2);
+    
+    VROMatrix4f result;
+    result[0] = 1 / (aspect * tanHalfFovy);
+    result[5] = 1 / (tanHalfFovy);
+    result[11] = -1;
+
+    result[10] = -(zFar + zNear) / (zFar - zNear);
+    result[14] = -(2 * zFar * zNear) / (zFar - zNear);
+    result[15] = 0;
+    
+    return result;
+}
+
+VROMatrix4f VROMathComputeOrthographicProjection(float left, float right, float bottom, float top,
+                                                 float near, float far) {
+    VROMatrix4f projection;
+    projection[0]  =  2.0 / (right - left);
+    projection[5]  =  2.0 / (top - bottom);
+    projection[10] = -2.0 / (far - near);
+    projection[12] = -(right + left) / (right - left);
+    projection[13] = -(top + bottom) / (top - bottom);
+    projection[14] = -(far + near) / (far - near);
+    
+    return projection;
 }
 
 VROMatrix4f VROMathComputeLookAtMatrix(VROVector3f eye, VROVector3f forward, VROVector3f up) {
-    VROVector3f side = forward.cross(up);
-    side.normalize();
+    VROVector3f f = forward.normalize();
+    VROVector3f s = f.cross(up).normalize();
+    VROVector3f u = s.cross(f);
     
-    VROVector3f txUp = side.cross(forward);
-    
-    VROMatrix4f matrix;
-    matrix[0]  = side.x;
-    matrix[4]  = side.y;
-    matrix[8]  = side.z;
-    matrix[12] = side.x * -eye.x + side.y * -eye.y + side.z * -eye.z;
-    
-    matrix[1]  = txUp.x;
-    matrix[5]  = txUp.y;
-    matrix[9]  = txUp.z;
-    matrix[13] = txUp.x * -eye.x + txUp.y * -eye.y + txUp.z * -eye.z;
-    
-    matrix[2]  = -forward.x;
-    matrix[6]  = -forward.y;
-    matrix[10] = -forward.z;
-    matrix[14] = forward.x * eye.x + forward.y * eye.y + forward.z * eye.z;
-    
-    matrix[3] = 0;
-    matrix[7] = 0;
-    matrix[11] = 0;
-    matrix[15] = 1;
-    
-    return matrix;
+    VROMatrix4f m;
+    m[0]  = s.x;
+    m[4]  = s.y;
+    m[8]  = s.z;
+    m[1]  = u.x;
+    m[5]  = u.y;
+    m[9]  = u.z;
+    m[2]  = -f.x;
+    m[6]  = -f.y;
+    m[10] = -f.z;
+    m[12] = -s.dot(eye);
+    m[13] = -u.dot(eye);
+    m[14] =  f.dot(eye);;
+    return m;
 }
 
 double degrees_to_radians(double degrees) {

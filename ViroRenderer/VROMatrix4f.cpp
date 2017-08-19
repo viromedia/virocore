@@ -157,10 +157,20 @@ void VROMatrix4f::scale(float x, float y, float z) {
 
 VROVector3f VROMatrix4f::multiply(const VROVector3f &vector) const {
     VROVector3f result;
-    result.x = vector.x * _mtx[0] + vector.y * _mtx[4] + vector.z * _mtx[8] + _mtx[12];
-    result.y = vector.x * _mtx[1] + vector.y * _mtx[5] + vector.z * _mtx[9] + _mtx[13];
+    result.x = vector.x * _mtx[0] + vector.y * _mtx[4] + vector.z * _mtx[8]  + _mtx[12];
+    result.y = vector.x * _mtx[1] + vector.y * _mtx[5] + vector.z * _mtx[9]  + _mtx[13];
     result.z = vector.x * _mtx[2] + vector.y * _mtx[6] + vector.z * _mtx[10] + _mtx[14];
     
+    return result;
+}
+
+VROVector4f VROMatrix4f::multiply(const VROVector4f &vector) const {
+    VROVector4f result;
+    result.x = vector.x * _mtx[0] + vector.y * _mtx[4] + vector.z * _mtx[8]  + vector.w * _mtx[12];
+    result.y = vector.x * _mtx[1] + vector.y * _mtx[5] + vector.z * _mtx[9]  + vector.w * _mtx[13];
+    result.z = vector.x * _mtx[2] + vector.y * _mtx[6] + vector.z * _mtx[10] + vector.w * _mtx[14];
+    result.w = vector.x * _mtx[3] + vector.y * _mtx[7] + vector.z * _mtx[11] + vector.w * _mtx[15];
+
     return result;
 }
 
