@@ -131,7 +131,7 @@ VROMatrix4f VROARFrameiOS::getViewportToCameraImageTransform() {
      viewport space for the given orientation and viewport. We can either apply this transform
      to *vertices* of the camera background (by modifying its projection matrix) or apply the
      *inverse* of this transform to the *texture coordinates* of the camera background. The
-     two are equivalent. We do the latter, since our camera background uses a fixed orthogonal
+     two are equivalent. We do the latter, since our camera background uses a fixed orthographic
      projection.
      */
     CGAffineTransform transform = CGAffineTransformInvert([_frame displayTransformForOrientation:orientation viewportSize:viewportSize]);

@@ -45,13 +45,14 @@ std::shared_ptr<VROPolyline> VROPolyline::createPolyline(std::vector<std::vector
     polyline->updateBoundingBox();
     return polyline;
 }
+
 void VROPolyline::buildGeometry(std::vector<std::vector<VROVector3f>> &paths,
                                 std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                                 std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
 
     VROByteBuffer buffer;
     size_t numVertices = 0;
-    for (std::vector<VROVector3f> path : paths){
+    for (std::vector<VROVector3f> &path : paths){
         numVertices = numVertices + encodeLine(path, buffer);
     }
     std::shared_ptr<VROData> vertexData = std::make_shared<VROData>((void *) buffer.getData(), buffer.getPosition());
@@ -75,7 +76,7 @@ void VROPolyline::buildGeometry(std::vector<std::vector<VROVector3f>> &paths,
     elements.push_back(element);
 }
 
-size_t VROPolyline::encodeLine(const std::vector<VROVector3f> path,
+size_t VROPolyline::encodeLine(const std::vector<VROVector3f> &path,
                                VROByteBuffer &outBuffer) {
     
     size_t numCorners = 0;

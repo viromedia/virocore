@@ -34,7 +34,7 @@ void VROPencil::render(const VRORenderContext &renderContext, std::shared_ptr<VR
     // with a preset width and color.
     std::shared_ptr<VROPolyline> line = VROPolyline::createPolyline(_paths, 0.05f);
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
-    material->getDiffuse().setColor({255, 0, 0, 1.0});
+    material->getDiffuse().setColor({1.0, 0, 0, 1.0});
     material->setCullMode(VROCullMode::None);
     line->setMaterials({ material });
     material->bindShader(0, {}, driver);
