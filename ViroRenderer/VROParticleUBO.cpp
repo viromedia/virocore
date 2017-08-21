@@ -107,6 +107,10 @@ int VROParticleUBO::getNumberOfDrawCalls() {
 }
 
 int VROParticleUBO::bindDrawData(int currentDrawCallIndex) {
+    if (_lastKnownParticles.size() == 0) {
+        return 0;
+    }
+    
     // Grab the window of particles that corresponds to this currentDrawCallIndex to be bounded.
     int start = currentDrawCallIndex * kMaxParticlesPerUBO;
     int end = (currentDrawCallIndex + 1) * kMaxParticlesPerUBO;
@@ -145,9 +149,5 @@ int VROParticleUBO::bindDrawData(int currentDrawCallIndex) {
 }
 
 void VROParticleUBO::update(std::vector<VROParticle> &particles) {
-    if (particles.size() == 0) {
-        return;
-    }
-
     _lastKnownParticles = particles;
 }

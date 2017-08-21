@@ -61,18 +61,22 @@ void VROParticleEmitter::initEmitter() {
     _alphaModifier = std::make_shared<VROParticleModifier>(VROVector3f(1,0,0));
     _velocityModifier = std::make_shared<VROParticleModifier>(VROVector3f(-2,6,0),
                                                               VROVector3f(2,6,0));
-    _accelerationModifier = std::make_shared<VROParticleModifier>(VROVector3f(0,0,0),
-                                                                  VROVector3f(0,0,0));
+    _accelerationModifier = std::make_shared<VROParticleModifier>(VROVector3f(0,0,0));
 
     // Default Emitter settings
     _duration = 2000;
     _maxParticles = 500;
-    _particlesEmittedPerMeter = std::pair<int, int>(2, 2);
+    _particlesEmittedPerMeter = std::pair<int, int>(0, 0);
     _particlesEmittedPerSecond = std::pair<int, int>(10, 10);
     _particleLifeTime= std::pair<int, int>(2000,2000);
     _loop = true;
     _run = false;
     _requestRun = false;
+    _fixToEmitter = true;
+
+    VROParticleSpawnVolume defaultVol;
+    defaultVol.shape = VROParticleSpawnVolume::Shape::Point;
+    _currentVolume = defaultVol;
 }
 
 void VROParticleEmitter::update(const VRORenderContext &context) {
@@ -410,7 +414,7 @@ void VROParticleEmitter::resetParticle(VROParticle &particle, double currentTime
     VROMatrix4f startTransform;
     startTransform.toIdentity();
     startTransform.scale(1, 1, 1);
-    startTransform.translate({0, 0, 0});
+    startTransform.translate(getPointInSpawnVolume());
     particle.spawnedLocalTransform = startTransform;
     particle.currentLocalTransform = startTransform;
 
@@ -418,9 +422,15 @@ void VROParticleEmitter::resetParticle(VROParticle &particle, double currentTime
     particle.initialColor = _colorModifier->getInitialValue();
     particle.initialScale = _scaleModifier->getInitialValue();
     particle.initialRotation = _rotationModifier->getInitialValue();
-    particle.initialVelocity = _velocityModifier->getInitialValue();
     particle.initialAccel = _accelerationModifier->getInitialValue();
     particle.initialAlpha = _alphaModifier->getInitialValue();
+
+    if (_impulseExplosionMagnitude == -1){
+        particle.initialVelocity = _velocityModifier->getInitialValue();
+    } else {
+        particle.initialVelocity = getExplosionInitialVel(startTransform.extractTranslation());
+    }
+
 
     // Set distance modifiers.
     particle.timeSinceSpawnedInMs = 0;
@@ -429,4 +439,119 @@ void VROParticleEmitter::resetParticle(VROParticle &particle, double currentTime
 
     particle.isZombie = false;
     particle.fixedToEmitter = _fixToEmitter;
+}
+
+VROVector3f VROParticleEmitter::getPointInSpawnVolume() {
+    if (_currentVolume.shape == VROParticleSpawnVolume::Shape::Box) {
+        double width = 1 ,height = 1 ,length = 1;
+        if (_currentVolume.shapeParams.size() != 3) {
+            pwarn("Error: Provided incorrect parameters, defaulting to 1x1x1 Box.");
+        } else {
+            width = _currentVolume.shapeParams[0];
+            height = _currentVolume.shapeParams[1];
+            length = _currentVolume.shapeParams[2];
+        }
+
+        if (! _currentVolume.spawnOnSurface) {
+            return VROVector3f(random(-width/2, width/2),
+                               random(-height/2, height/2),
+                               random(-length/2, length/2));
+        } else {
+            // Determine weighted distribution of each side
+            double weightedSides[6];
+            weightedSides[0] = width * height;
+            weightedSides[1] = height * length;
+            weightedSides[2] = length * width;
+            weightedSides[3] = width * height;
+            weightedSides[4] = height * length;
+            weightedSides[5] = length * width;
+
+            // Calculate total weight to randomize against to attain uniform distribution.
+            double totalWeight = 0;
+            for (double side : weightedSides) {
+                totalWeight += side;
+            }
+
+            // Determine which side was picked
+            double randomWeight = random(0,totalWeight);
+            double weightSoFar = 0;
+            int side = 0;
+            for (side =0; side < 6; side ++) {
+                weightSoFar += weightedSides[side];
+                if (randomWeight <= weightSoFar) {
+                    break;
+                }
+            }
+
+            // Grab a point in the picked side and return that.
+            int oneOfThree = side % 3;
+            double x = 0, y = 0, z = 0;
+            if (oneOfThree == 0) {
+                x = random(-width/2, width/2);
+                y = random(-height/2, height/2);
+                z = side == 0 ? length/2 : -length/2;
+            } else if (oneOfThree == 1) {
+                x = side == 1 ? width/2 : -width/2;
+                y = random(-height/2, height/2);
+                z = random(-length/2, length/2);
+            } else if (oneOfThree == 2) {
+                x = random(-width/2, width/2);
+                y = side == 2 ? height/2 : -height/2;
+                z = random(-length/2, length/2);
+            }
+            return VROVector3f(x,y,z);
+        }
+    } else if (_currentVolume.shape == VROParticleSpawnVolume::Shape::Sphere) {
+        double a = 1,b = 1,c = 1;
+        if (_currentVolume.shapeParams.size() == 1) {
+            // If ony defining radius, create a perfect sphere
+            a = _currentVolume.shapeParams[0];
+            b = _currentVolume.shapeParams[0];
+            c = _currentVolume.shapeParams[0];
+        } else if (_currentVolume.shapeParams.size() == 3) {
+            // Else, set parameters for an ellipsoid
+            a = _currentVolume.shapeParams[0];
+            b = _currentVolume.shapeParams[1];
+            c = _currentVolume.shapeParams[2];
+        } else {
+            pwarn("Unable to create sphere with incorrect params, defaulting to 1x1x1 sphere.");
+        }
+
+        // Grab a random x,y,z point from the ellipsoid, assuming a uniform distribution.
+        float theta = 6.282 * random(0,1);
+        float phi = acos (2 * random(0,1) - 1.0);
+        float width = random(_currentVolume.spawnOnSurface? a : 0, a);
+        float length = random(_currentVolume.spawnOnSurface? b : 0, b);
+        float height = random(_currentVolume.spawnOnSurface? c : 0, c);
+
+        double x = (width) * cos(theta) *sin(phi);
+        double y = (length) * sin(theta)*sin(phi);
+        double z = (height) * cos(phi);
+
+        return VROVector3f(x,y,z);
+    } else {
+        // Default to a point.
+        if (_currentVolume.shapeParams.size() == 3) {
+            std::vector<double> p = _currentVolume.shapeParams;
+            return VROVector3f(p[0], p[1], p[2]);
+        }
+    }
+    return VROVector3f(0,0,0);
+}
+
+VROVector3f VROParticleEmitter::getExplosionInitialVel(VROVector3f particlePosition){
+    if (_impulseExplosionMagnitude < 0){
+        return VROVector3f(0,0,0);
+    }
+
+    VROVector3f blastDir = particlePosition - _explosionCenter;
+
+    // Calculate applied impulse, that has an inverse square relationship to distance.
+    float distance = particlePosition.distance(_explosionCenter);
+    float invDistance = 1.0f / distance;
+    float impulseMag = _impulseExplosionMagnitude * invDistance * invDistance;
+
+    // Impulse equals to changes in momentum: Impulse = mass * DeltaVelocity
+    VROVector3f impulse = blastDir * impulseMag;
+    return impulse / kAssumedParticleMass;
 }
