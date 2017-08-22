@@ -125,6 +125,11 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     /*
      Setup the GLKView.
+     
+     TODO VIRO-1521: When iOS Cardboard starts supporting sRGB backbuffers, set the drawableColorFormat
+                     here to GLKViewDrawableColorFormatSRGBA8888, and remove the manual gamma correction
+                     we're currently doing in the VROChoreographer. We can achieve this in Cardboard by
+                     using the new iOS NDK.
      */
     self.enableSetNeedsDisplay = NO;
     self.drawableColorFormat = GLKViewDrawableColorFormatRGB565;
@@ -161,10 +166,10 @@ static VROVector3f const kZeroVector = VROVector3f();
     /*
      Create Viro renderer objects.
      */
-    _frame = 0;
     _gvrAudio = std::make_shared<gvr::AudioApi>();
     _gvrAudio->Init(GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
-    _driver = std::make_shared<VRODriverOpenGLiOS>(self.context, _gvrAudio);
+    _driver = std::make_shared<VRODriverOpenGLiOS>(self, self.context, _gvrAudio);
+    _frame = 0;
     _suspendedNotificationTime = VROTimeCurrentSeconds();
 
     _inputController = std::make_shared<VROInputControllerARiOS>(self.frame.size.width * self.contentScaleFactor,

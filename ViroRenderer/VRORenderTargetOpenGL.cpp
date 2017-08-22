@@ -157,7 +157,6 @@ void VRORenderTargetOpenGL::attachNewTexture() {
         GLenum texType = GL_UNSIGNED_BYTE;
 
         if (_type == VRORenderTargetType::ColorTextureSRGB) {
-            //internalFormat = GL_SRGB8_ALPHA8;
             internalFormat = GL_SRGB8_ALPHA8;
         }
         else if (_type == VRORenderTargetType::ColorTextureHDR16) {
@@ -463,6 +462,9 @@ void VRORenderTargetOpenGL::clearStencil(int bits)  {
         glClearStencil(bits);
         glClear(GL_STENCIL_BUFFER_BIT);
     }
+    else {
+        pabort();
+    }
 }
 
 void VRORenderTargetOpenGL::clearDepth() {
@@ -470,6 +472,9 @@ void VRORenderTargetOpenGL::clearDepth() {
     if (driver) {
         driver->setDepthWritingEnabled(true);
         glClear(GL_DEPTH_BUFFER_BIT);
+    }
+    else {
+        pabort();
     }
 }
 
@@ -480,6 +485,9 @@ void VRORenderTargetOpenGL::clearColor() {
         glClearColor(_clearColor.x, _clearColor.y, _clearColor.z, _clearColor.w);
         glClear(GL_COLOR_BUFFER_BIT);
     }
+    else {
+        pabort();
+    }
 }
 
 void VRORenderTargetOpenGL::clearDepthAndColor() {
@@ -489,6 +497,9 @@ void VRORenderTargetOpenGL::clearDepthAndColor() {
         driver->setColorWritingEnabled(true);
         glClearColor(_clearColor.x, _clearColor.y, _clearColor.z, _clearColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+    else {
+        pabort();
     }
 }
 

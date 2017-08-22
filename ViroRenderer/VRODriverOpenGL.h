@@ -188,7 +188,7 @@ public:
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_displayFramebuffer);
     }
 
-    std::shared_ptr<VRORenderTarget> getDisplay() {
+    virtual std::shared_ptr<VRORenderTarget> getDisplay() {
         if (!_display) {
             std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
             _display = std::make_shared<VRODisplayOpenGL>(_displayFramebuffer, driver);
@@ -252,6 +252,13 @@ public:
     std::unique_ptr<VROShaderFactory> &getShaderFactory() {
         return _shaderFactory;
     }
+    
+protected:
+    
+    /*
+     The backbuffer render target.
+     */
+    std::shared_ptr<VRORenderTarget> _display;
 
 private:
     
@@ -262,11 +269,6 @@ private:
      */
     std::list<int> _bindingPoints;
     int _bindingPointGenerator = 0;
-    
-    /*
-     The backbuffer render target.
-     */
-    std::shared_ptr<VRORenderTarget> _display;
 
     /*
      Map of light hashes to corresponding lighting UBOs.

@@ -14,6 +14,7 @@
 #include "VROAudioPlayeriOS.h"
 #include "VROVideoTextureCacheOpenGL.h"
 #include "VROTypefaceiOS.h"
+#include "VRODisplayOpenGLiOS.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "VROPlatformUtil.h"
 
@@ -21,7 +22,13 @@ class VRODriverOpenGLiOS : public VRODriverOpenGL {
     
 public:
     
-    VRODriverOpenGLiOS(EAGLContext *eaglContext, std::shared_ptr<gvr::AudioApi> gvrAudio) :
+    /*
+     If the driver is based off a GLKView, pass that in so we can create the
+     display render target with it; otherwise, the display render target will
+     be derived from the active framebuffer ID.
+     */
+    VRODriverOpenGLiOS(GLKView *viewGL, EAGLContext *eaglContext, std::shared_ptr<gvr::AudioApi> gvrAudio) :
+        _viewGL(viewGL),
         _eaglContext(eaglContext),
         _gvrAudio(gvrAudio) {
     }
@@ -72,8 +79,23 @@ public:
                                      VROPlatformParseGVRAudioMaterial(floorMaterial));
     }
     
+    std::shared_ptr<VRORenderTarget> getDisplay() {
+        if (!_display) {
+            GLKView *viewGL = _viewGL;
+            if (!viewGL) {
+                return VRODriverOpenGL::getDisplay();
+            }
+            else {
+                std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+                _display = std::make_shared<VRODisplayOpenGLiOS>(viewGL, driver);
+            }
+        }
+        return _display;
+    }
+    
 private:
     
+    __weak GLKView *_viewGL;
     std::shared_ptr<gvr::AudioApi> _gvrAudio;
     EAGLContext *_eaglContext;
     

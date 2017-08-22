@@ -22,7 +22,7 @@ VROSceneRendererCardboardOpenGL::VROSceneRendererCardboardOpenGL(EAGLContext *co
     
     _gvrAudio = std::make_shared<gvr::AudioApi>();
     _gvrAudio->Init(GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
-    _driver = std::make_shared<VRODriverOpenGLiOS>(context, _gvrAudio);
+    _driver = std::make_shared<VRODriverOpenGLiOS>(nil, context, _gvrAudio);
     _baseRotation = VROMatrix4f();
     _baseRotation.toIdentity();
       
