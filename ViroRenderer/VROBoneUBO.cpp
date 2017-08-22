@@ -72,7 +72,7 @@ std::shared_ptr<VROShaderModifier> VROBoneUBO::createSkinningShaderModifier(bool
             };
             sSkinningShaderModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
                                                                           modifierCode);
-            sSkinningShaderModifierWithScale->setName("skin");
+            sSkinningShaderModifier->setName("skin");
         }
         
         return sSkinningShaderModifier;
