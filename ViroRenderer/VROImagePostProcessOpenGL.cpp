@@ -85,6 +85,8 @@ bool VROImagePostProcessOpenGL::bind(std::shared_ptr<VRORenderTarget> source,
     
     // Bind the source target to texture unit 0
     const std::shared_ptr<VROTexture> &texture = source->getTexture();
+    passert_msg(texture != nullptr, "Render target had no texture: was a viewport set?");
+    
     if (!bindTexture(0, texture, driver)) {
         return false;
     }

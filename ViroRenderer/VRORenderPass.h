@@ -22,10 +22,10 @@ class VRORenderContext;
 class VRORenderTarget;
 
 /*
- Key to use for render passes that output a single render target.
- This key may also be used in the input map to indicate what input buffer
- to write to and return as an output.
+ Keys to use for render passes that take a single render target as input
+ and ond output a single render target.
  */
+const std::string kRenderTargetSingleInput = "RT_Input";
 const std::string kRenderTargetSingleOutput = "RT_Output";
 
 /*

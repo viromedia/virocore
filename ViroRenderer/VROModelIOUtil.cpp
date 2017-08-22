@@ -12,7 +12,7 @@
 #include "VROTexture.h"
 #include "VROLog.h"
 
-std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name, std::string &base, bool isBaseURL,
+std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name, std::string &base, bool isBaseURL, bool sRGB,
                                                         const std::map<std::string, std::string> *resourceMap,
                                                         std::map<std::string, std::shared_ptr<VROTexture>> &cache) {
     std::shared_ptr<VROTexture> texture;
@@ -48,7 +48,7 @@ std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name,
             return {};
         }
 
-        texture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::Runtime, image);
+        texture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, sRGB, VROMipmapMode::Runtime, image);
         cache.insert(std::make_pair(name, texture));
     }
     else {

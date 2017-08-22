@@ -25,6 +25,7 @@ class VRORenderContext;
 class VROImagePostProcess;
 class VROShaderProgram;
 class VROShadowMapRenderPass;
+class VROToneMappingRenderPass;
 enum class VROEyeType;
 
 class VROChoreographer {
@@ -39,6 +40,14 @@ public:
     void setBaseRenderPass(std::shared_ptr<VRORenderPass> pass) {
         _baseRenderPass = pass;
     }
+    
+    /*
+     Enable or disable HDR rendering. When HDR rendering is enabled, the scene
+     is rendered to a floating point texture, then a tone-mapping algorithm is
+     applied to preserve details in both bright and dark regions of the
+     scene.
+     */
+    void setRenderHDR(bool renderHDR);
     
     /*
      Enable or disable RTT. When RTT is enabled, the scene is rendered first
@@ -59,15 +68,16 @@ public:
      */
     void setViewport(VROViewport viewport, std::shared_ptr<VRODriver> &driver);
     
+    /*
+     Retrieve the configurable tone mapping pass.
+     */
+    std::shared_ptr<VROToneMappingRenderPass> getToneMapping();
+    
 private:
     
-    /*
-     RTT variables.
-     */
-    bool _renderToTexture;
-    std::shared_ptr<VRORenderTarget> _renderToTextureTarget;
-    std::shared_ptr<VROImagePostProcess> _renderToTexturePostProcess;
-    std::function<void()> _renderToTextureCallback;
+    std::weak_ptr<VRODriver> _driver;
+    
+#pragma mark - Render Scene
     
     /*
      Pass that renders the 3D scene to a render target.
@@ -80,10 +90,38 @@ private:
     std::shared_ptr<VROImagePostProcess> _blitPostProcess;
     
     /*
-     Intermediate render target used when we are recording video or using post-process
-     effects.
+     Intermediate render target used for recording video, and other
+     post processes.
      */
     std::shared_ptr<VRORenderTarget> _blitTarget;
+    
+    /*
+     Initialize the various render targets.
+     */
+    void initTargets(std::shared_ptr<VRODriver> driver);
+    
+    /*
+     Render the base pass, which renders the 3D scene to the first render target.
+     */
+    void renderBasePass(std::shared_ptr<VROScene> scene, VRORenderContext *context,
+                        std::shared_ptr<VRODriver> &driver);
+    
+#pragma mark - Render to Texture
+    
+    /*
+     RTT variables.
+     */
+    bool _renderToTexture;
+    std::shared_ptr<VRORenderTarget> _renderToTextureTarget;
+    std::shared_ptr<VROImagePostProcess> _renderToTexturePostProcess;
+    std::function<void()> _renderToTextureCallback;
+    
+#pragma mark - Shadows
+    
+    /*
+     True if shadow maps are enabled.
+     */
+    bool _renderShadows;
     
     /*
      The render target for the shadow passes. This target uses a depth texture array
@@ -97,26 +135,32 @@ private:
     std::map<std::shared_ptr<VROLight>, std::shared_ptr<VROShadowMapRenderPass>> _shadowPasses;
     
     /*
-     True if shadow maps are enabled.
-     */
-    bool _renderShadows;
-    
-    /*
-     Initialize the various render targets.
-     */
-    void initTargets(std::shared_ptr<VRODriver> driver);
-    
-    /*
      Render shadows to the shadow maps for each shadow casting light.
      */
     void renderShadowPasses(std::shared_ptr<VROScene> scene, VRORenderContext *context,
                             std::shared_ptr<VRODriver> &driver);
     
+#pragma mark - HDR
+    
     /*
-     Render the base pass, which renders the 3D scene to the first render target.
+     True if HDR rendering (render to floating point texture + tone mapping) are enabled.
      */
-    void renderBasePass(std::shared_ptr<VROScene> scene, VRORenderContext *context,
-                        std::shared_ptr<VRODriver> &driver);
+    bool _renderHDR;
+    
+    /*
+     Floating point target for initially rendering the scene.
+     */
+    std::shared_ptr<VRORenderTarget> _hdrTarget;
+    
+    /*
+     Tone mapping render pass to render the floating point scene in RGB.
+     */
+    std::shared_ptr<VROToneMappingRenderPass> _toneMappingPass;
+    
+    /*
+     Initialize the render pass and targets for HDR rendering.
+     */
+    void initHDR(std::shared_ptr<VRODriver> driver);
     
 };
 

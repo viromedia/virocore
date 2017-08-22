@@ -13,7 +13,9 @@
 #import "VROImageTracker.h"
 #import "VROSampleARDelegate.h"
 #import "VROARDraggableNode.h"
-
+#import "VROChoreographer.h"
+#import "VRORenderer.h"
+#import "VROToneMappingRenderPass.h"
 
 typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneOBJ = 0,
@@ -29,6 +31,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     VROSampleSceneARDraggableNode,
     VROSampleScenePortal,
     VROSampleSceneShadow,
+    VROSampleSceneHDR,
     VROSampleSceneNumScenes,
 };
 
@@ -98,6 +101,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
             return [self loadPortalScene];
         case VROSampleSceneShadow:
             return [self loadShadowScene];
+        case VROSampleSceneHDR:
+            return [self loadHDRScene];
         default:
             break;
     }
@@ -117,7 +122,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         std::make_shared<VROImageiOS>([UIImage imageNamed:@"nz"], format)
     };
     
-    return std::make_shared<VROTexture>(format, cubeImages);
+    return std::make_shared<VROTexture>(format, true, cubeImages);
 }
 
 - (std::shared_ptr<VROTexture>) cloudTexture {
@@ -132,11 +137,11 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         std::make_shared<VROImageiOS>([UIImage imageNamed:@"nz1.jpg"], format)
     };
     
-    return std::make_shared<VROTexture>(format, cubeImages);
+    return std::make_shared<VROTexture>(format, true, cubeImages);
 }
 
 - (std::shared_ptr<VROTexture>) westlakeTexture {
-    return std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, VROMipmapMode::None,
+    return std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true, VROMipmapMode::None,
                                         std::make_shared<VROImageiOS>([UIImage imageNamed:@"360_westlake.jpg"],
                                                                       VROTextureInternalFormat::RGBA8));
 }
@@ -325,6 +330,80 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return sceneController;
 }
 
+- (std::shared_ptr<VROSceneController>)loadHDRScene {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
+    
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
+    rootNode->setPosition({0, 0, 0});
+    
+    VROVector3f lightPositions[4] = {
+        {  0.0,  0.0, -49.5 },
+        { -1.4, -1.9, -9.0 },
+        {  0.0, -1.8, -4.0 },
+        {  0.8, -1.7, -6.0 },
+    };
+    VROVector3f lightColors[4] = {
+        { 200, 200, 200 },
+        { 0.1, 0.0, 0.0 },
+        { 0.0, 0.0, 0.2 },
+        { 0.0, 0.1, 0.0 },
+    };
+    
+    for (int i = 0; i < 4; i++) {
+        std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Omni);
+        light->setColor(lightColors[i]);
+        light->setPosition(lightPositions[i]);
+        light->setAttenuationStartDistance(0);
+        light->setAttenuationEndDistance(40);
+        rootNode->addLight(light);
+    }
+    
+    VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
+    std::shared_ptr<VROTexture> woodTexture = std::make_shared<VROTexture>(format, true, VROMipmapMode::Runtime,
+                                                                           std::make_shared<VROImageiOS>([UIImage imageNamed:@"wood"], format));
+    woodTexture->setWrapS(VROWrapMode::Repeat);
+    woodTexture->setWrapT(VROWrapMode::Repeat);
+    woodTexture->setMinificationFilter(VROFilterMode::Linear);
+    woodTexture->setMagnificationFilter(VROFilterMode::Linear);
+    woodTexture->setMipFilter(VROFilterMode::Linear);
+    
+    /*
+     Create 5 surfaces surrounding the user.
+     */
+    VROVector3f surfaceRotation[5] = {
+        { 0, M_PI_2, 0},
+        { 0, -M_PI_2, 0 },
+        { M_PI_2, 0, 0},
+        { -M_PI_2, 0, 0},
+        { 0, 0, 0 },
+    };
+    
+    float width = 2.5;
+    VROVector3f surfacePosition[5] = {
+        { -width, 0, 0 },
+        {  width, 0, 0 },
+        {  0, width, 0 },
+        {  0, -width, 0},
+        { 0, 0, -52.5 }
+    };
+    
+    for (int i = 0; i < 5; i++) {
+        std::shared_ptr<VROSurface> surface = VROSurface::createSurface(40, 40);
+        surface->setName("Surface");
+        surface->getMaterials().front()->setLightingModel(VROLightingModel::Lambert);
+        surface->getMaterials().front()->getDiffuse().setTexture(woodTexture);
+        
+        std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
+        surfaceNode->setGeometry(surface);
+        surfaceNode->setRotationEuler(surfaceRotation[i]);
+        surfaceNode->setPosition(surfacePosition[i]);
+        surfaceNode->setOpacity(1.0);
+        rootNode->addChildNode(surfaceNode);
+    }
+    return sceneController;
+}
+
 - (std::shared_ptr<VROSceneController>)loadVideoSphereScene {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
@@ -361,7 +440,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROMaterial> material = torus->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Lambert);
     material->getReflective().setTexture([self cloudTexture]);
-    material->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+    material->getSpecular().setTexture(std::make_shared<VROTexture>(format, false, VROMipmapMode::None,
                                                                     std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"], format)));
 
     
@@ -562,9 +641,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     particleNode->setPosition({0, -10, -15});
     particleNode->setTag("Particles");
     
-    std::shared_ptr<VROTexture> imgTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
+    std::shared_ptr<VROTexture> imgTexture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true,
                                                                           VROMipmapMode::None,
-                                                                          std::make_shared<VROImageiOS>([UIImage imageNamed:@"cloud"], VROTextureInternalFormat::RGBA8),
+                                                                          std::make_shared<VROImageiOS>([UIImage imageNamed:@"cloud"], VROTextureInternalFormat::RGBA8), 
                                                                           VROStereoMode::None);
     std::shared_ptr<VROParticleEmitter> particleEmitter = std::make_shared<VROParticleEmitter>(self.driver,
                                                                                                particleNode,
@@ -641,7 +720,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
     
-    std::shared_ptr<VROTexture> bobaTexture = std::make_shared<VROTexture>(format, VROMipmapMode::Runtime,
+    std::shared_ptr<VROTexture> bobaTexture = std::make_shared<VROTexture>(format, true, VROMipmapMode::Runtime,
                                                                            std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"], format));
     bobaTexture->setWrapS(VROWrapMode::Repeat);
     bobaTexture->setWrapT(VROWrapMode::Repeat);
@@ -659,7 +738,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     material->setLightingModel(VROLightingModel::Blinn);
     material->getDiffuse().setTexture(bobaTexture);
     material->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
-    material->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+    material->getSpecular().setTexture(std::make_shared<VROTexture>(format, false, VROMipmapMode::None,
                                                                     std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"], format)));
     
     /*
@@ -724,7 +803,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         material->setLightingModel(VROLightingModel::Lambert);
         
         if (i == 0) {
-            material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+            material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, true, VROMipmapMode::None,
                                                                            std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"], format)));
         }
         else if (i == 1) {
@@ -761,9 +840,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VROMaterial> material3 = box3->getMaterials()[0];
     material3->setLightingModel(VROLightingModel::Lambert);
-    material3->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+    material3->getDiffuse().setTexture(std::make_shared<VROTexture>(format, true, VROMipmapMode::None,
                                                                     std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"], format)));
-    material3->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+    material3->getSpecular().setTexture(std::make_shared<VROTexture>(format, false, VROMipmapMode::None,
                                                                      std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"], format)));
     
     std::shared_ptr<VRONode> boxNode3 = std::make_shared<VRONode>();
@@ -846,7 +925,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
     
-    std::shared_ptr<VROTexture> bobaTexture = std::make_shared<VROTexture>(format, VROMipmapMode::Runtime,
+    std::shared_ptr<VROTexture> bobaTexture = std::make_shared<VROTexture>(format, true, VROMipmapMode::Runtime,
                                                                            std::make_shared<VROImageiOS>([UIImage imageNamed:@"boba"], format));
     bobaTexture->setWrapS(VROWrapMode::Repeat);
     bobaTexture->setWrapT(VROWrapMode::Repeat);
@@ -864,7 +943,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     material->setLightingModel(VROLightingModel::Blinn);
     material->getDiffuse().setTexture(bobaTexture);
     material->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
-    material->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+    material->getSpecular().setTexture(std::make_shared<VROTexture>(format, false, VROMipmapMode::None,
                                                                     std::make_shared<VROImageiOS>([UIImage imageNamed:@"specular"], format)));
     
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
@@ -978,7 +1057,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::vector<std::shared_ptr<VROData>> dataVec = { texData };
     
     std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, format,
-                                                                       VROTextureInternalFormat::RGBA8,
+                                                                       VROTextureInternalFormat::RGBA8, true,
                                                                        VROMipmapMode::Pregenerated,
                                                                        dataVec, texWidth, texHeight, mipSizes);
     texture->prewarm(self.driver);
@@ -1084,7 +1163,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
   
     if (showImage){
         std::shared_ptr<VROTexture> imgTexture
-        = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
+        = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true,
                                        VROMipmapMode::None, // Don't mipmap 360 images, wastes memory
                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"stereo1.jpg"], VROTextureInternalFormat::RGBA8),
                                        VROStereoMode::LeftRight);
@@ -1135,7 +1214,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 
     if (showImage){
         std::shared_ptr<VROTexture> imgTexture
-        = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8,
+        = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, true,
                                        VROMipmapMode::None, // Don't mipmap 360 images, wastes memory
                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"stereo3601.jpg"], VROTextureInternalFormat::RGBA8),
                                        VROStereoMode::BottomTop);
@@ -1231,7 +1310,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                         std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
                                                                         material->setCullMode(VROCullMode::None);
                                                                         material->setLightingModel(VROLightingModel::Lambert);
-                                                                        material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                        material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, true, VROMipmapMode::None,
                                                                                                                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"portal_ring"], format)));
                                                                     });
     
@@ -1332,9 +1411,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                         VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
                                                                         
                                                                         std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
-                                                                        material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                        material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, true, VROMipmapMode::None,
                                                                                                                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"coffee_mug"], format)));
-                                                                        material->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                        material->getSpecular().setTexture(std::make_shared<VROTexture>(format, false, VROMipmapMode::None,
                                                                                                                                         std::make_shared<VROImageiOS>([UIImage imageNamed:@"coffee_mug_specular"], format)));
                                                                     });
     
@@ -1406,9 +1485,9 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                         VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
                                                                         
                                                                         std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
-                                                                        material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                        material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, true, VROMipmapMode::None,
                                                                                                                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"coffee_mug"], format)));
-                                                                        material->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                        material->getSpecular().setTexture(std::make_shared<VROTexture>(format, false, VROMipmapMode::None,
                                                                                                                                         std::make_shared<VROImageiOS>([UIImage imageNamed:@"coffee_mug_specular"], format)));
                                                                     });
     
@@ -1430,7 +1509,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     // add a shadow under the box.
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
-    std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(format, VROMipmapMode::Runtime,
+    std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(format, true, VROMipmapMode::Runtime,
                                                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"dark_circle_shadow"], format));
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(.3, .3);
     surface->getMaterials().front()->getDiffuse().setTexture(texture);
@@ -1451,7 +1530,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleSceneShadow;
+    self.sceneIndex = VROSampleSceneVideoSphere;
     self.driver = driver;
     
     self.sceneController = [self loadSceneWithIndex:self.sceneIndex];

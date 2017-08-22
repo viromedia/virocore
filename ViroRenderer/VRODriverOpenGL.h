@@ -144,6 +144,10 @@ public:
         }
         _boundShader = program;
     }
+    
+    bool isGammaCorrectionEnabled() {
+        return true;
+    }
 
     VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) {
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
@@ -157,7 +161,7 @@ public:
     
     VROTextureSubstrate *newTextureSubstrate(VROTextureType type,
                                              VROTextureFormat format,
-                                             VROTextureInternalFormat internalFormat,
+                                             VROTextureInternalFormat internalFormat, bool sRGB,
                                              VROMipmapMode mipmapMode,
                                              std::vector<std::shared_ptr<VROData>> &data,
                                              int width, int height,
@@ -165,7 +169,7 @@ public:
                                              VROWrapMode wrapS, VROWrapMode wrapT,
                                              VROFilterMode minFilter, VROFilterMode magFilter, VROFilterMode mipFilter) {
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
-        return new VROTextureSubstrateOpenGL(type, format, internalFormat, mipmapMode, data,
+        return new VROTextureSubstrateOpenGL(type, format, internalFormat, sRGB, mipmapMode, data,
                                              width, height, mipSizes, wrapS, wrapT, minFilter, magFilter, mipFilter,
                                              driver);
     }

@@ -215,7 +215,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
         }
         
         if (m.diffuse_texname.length() > 0) {
-            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.diffuse_texname, base, isBaseURL, resourceMap, textures);
+            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.diffuse_texname, base, isBaseURL, true, resourceMap, textures);
             if (texture) {
                 material->getDiffuse().setTexture(texture);
             }
@@ -225,7 +225,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
         }
         
         if (m.specular_texname.length() > 0) {
-            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.specular_texname, base, isBaseURL, resourceMap, textures);
+            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.specular_texname, base, isBaseURL, false, resourceMap, textures);
             if (texture) {
                 material->getSpecular().setTexture(texture);
             }
@@ -235,7 +235,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
         }
         
         if (m.bump_texname.length() > 0) {
-            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.bump_texname, base, isBaseURL, resourceMap, textures);
+            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.bump_texname, base, isBaseURL, false, resourceMap, textures);
             if (texture) {
                 material->getNormal().setTexture(texture);
             }

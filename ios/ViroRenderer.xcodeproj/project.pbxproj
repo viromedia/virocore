@@ -140,6 +140,9 @@
 		8F3488B21EE83DD3008917CB /* VROARSessionInertial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3488AA1EE83DD3008917CB /* VROARSessionInertial.cpp */; };
 		8F3488B31EE83DD3008917CB /* VROARSessionInertial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3488AB1EE83DD3008917CB /* VROARSessionInertial.h */; };
 		8F36F3A91EE0CE10003F92D4 /* VROViewAR.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8F129FC51EDF6AE500341D83 /* VROViewAR.mm */; };
+		8F37D9EC1F4B18800029D23E /* wood.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F37D9EB1F4B187F0029D23E /* wood.png */; };
+		8F37D9EF1F4B21A80029D23E /* VROToneMappingRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F37D9ED1F4B21A80029D23E /* VROToneMappingRenderPass.cpp */; };
+		8F37D9F01F4B21A80029D23E /* VROToneMappingRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F37D9EE1F4B21A80029D23E /* VROToneMappingRenderPass.h */; };
 		8F383B611F43546C006AB301 /* VROShadowMapRenderPass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F383B5F1F43546C006AB301 /* VROShadowMapRenderPass.cpp */; };
 		8F383B621F43546C006AB301 /* VROShadowMapRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F383B601F43546C006AB301 /* VROShadowMapRenderPass.h */; };
 		8F39A31C1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F39A31A1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp */; };
@@ -767,6 +770,9 @@
 		8F3488A91EE83DD3008917CB /* VROARFrameInertial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARFrameInertial.h; sourceTree = "<group>"; };
 		8F3488AA1EE83DD3008917CB /* VROARSessionInertial.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROARSessionInertial.cpp; sourceTree = "<group>"; };
 		8F3488AB1EE83DD3008917CB /* VROARSessionInertial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARSessionInertial.h; sourceTree = "<group>"; };
+		8F37D9EB1F4B187F0029D23E /* wood.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = wood.png; path = ViroSample/wood.png; sourceTree = "<group>"; };
+		8F37D9ED1F4B21A80029D23E /* VROToneMappingRenderPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROToneMappingRenderPass.cpp; sourceTree = "<group>"; };
+		8F37D9EE1F4B21A80029D23E /* VROToneMappingRenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROToneMappingRenderPass.h; sourceTree = "<group>"; };
 		8F383B5F1F43546C006AB301 /* VROShadowMapRenderPass.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROShadowMapRenderPass.cpp; sourceTree = "<group>"; };
 		8F383B601F43546C006AB301 /* VROShadowMapRenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROShadowMapRenderPass.h; sourceTree = "<group>"; };
 		8F39A31A1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROFrustumBoxIntersectionMetadata.cpp; sourceTree = "<group>"; };
@@ -1421,6 +1427,8 @@
 				8F9209171F3CCF9D003305C8 /* VROImagePostProcess.h */,
 				8F383B601F43546C006AB301 /* VROShadowMapRenderPass.h */,
 				8F383B5F1F43546C006AB301 /* VROShadowMapRenderPass.cpp */,
+				8F37D9EE1F4B21A80029D23E /* VROToneMappingRenderPass.h */,
+				8F37D9ED1F4B21A80029D23E /* VROToneMappingRenderPass.cpp */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";
@@ -1995,6 +2003,7 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F37D9EB1F4B187F0029D23E /* wood.png */,
 				A517D2CB1F41A16400A22219 /* cloud.png */,
 				8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.jpg */,
 				8F727F651F39EDAD00CDBBFC /* pug_body_normal.png */,
@@ -2197,6 +2206,7 @@
 				A58697861E3084A400191090 /* VROInputControllerCardboardiOS.h in Headers */,
 				A566EB301E1B129E008B4AE2 /* VROSceneController.h in Headers */,
 				8FE382101EF06FED005038CB /* VROARSession.h in Headers */,
+				8F37D9F01F4B21A80029D23E /* VROToneMappingRenderPass.h in Headers */,
 				A566EB1D1E1AEB0D008B4AE2 /* VROEventDelegate.h in Headers */,
 				8ABD8F301DB6970600BD9C83 /* VROApiKeyValidator.h in Headers */,
 				8F9278081C670FD900FF892A /* VROTriangle.h in Headers */,
@@ -2618,6 +2628,7 @@
 				8F129FA31ECEC0A100341D83 /* texture.png in Resources */,
 				8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */,
 				8F9277FE1C66BD4500FF892A /* nx1.jpg in Resources */,
+				8F37D9EC1F4B18800029D23E /* wood.png in Resources */,
 				8FCED07D1EBBD35200C19BCA /* Sven_Face_Normal.png in Resources */,
 				8FCED0771EBBD35200C19BCA /* ramp_inc2.tga in Resources */,
 				A540C5C41F3E7190007986E6 /* particles_vsh.glsl in Resources */,
@@ -2852,6 +2863,7 @@
 				8FB659221CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp in Sources */,
 				8FD4DEED1C18ED0B003DC425 /* VROLog.cpp in Sources */,
 				8FD4DF161C18ED44003DC425 /* VROHeadTracker.cpp in Sources */,
+				8F37D9EF1F4B21A80029D23E /* VROToneMappingRenderPass.cpp in Sources */,
 				8F790CB41F3419C4009A2020 /* VROPortalTraversalListener.cpp in Sources */,
 				8FA2E1601C45DD270070DB26 /* VROReticle.cpp in Sources */,
 				8A1462DE1F33E55B00643EF4 /* VROARDraggableNode.cpp in Sources */,

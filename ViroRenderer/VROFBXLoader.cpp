@@ -389,7 +389,7 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
             diffuse.setIntensity(diffuse_pb.intensity());
             
             if (!diffuse_pb.texture().empty()) {
-                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(diffuse_pb.texture(), base, isBaseURL, resourceMap, textureCache);
+                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(diffuse_pb.texture(), base, isBaseURL, true, resourceMap, textureCache);
                 if (texture) {
                     diffuse.setTexture(texture);
                     setTextureProperties(diffuse_pb, texture);
@@ -406,7 +406,7 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
             specular.setIntensity(specular_pb.intensity());
             
             if (!specular_pb.texture().empty()) {
-                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(specular_pb.texture(), base, isBaseURL, resourceMap, textureCache);
+                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(specular_pb.texture(), base, isBaseURL, false, resourceMap, textureCache);
                 if (texture) {
                     specular.setTexture(texture);
                     setTextureProperties(specular_pb, texture);
@@ -423,7 +423,7 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
             normal.setIntensity(normal_pb.intensity());
             
             if (!normal_pb.texture().empty()) {
-                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(normal_pb.texture(), base, isBaseURL, resourceMap, textureCache);
+                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(normal_pb.texture(), base, isBaseURL, false, resourceMap, textureCache);
                 if (texture) {
                     normal.setTexture(texture);
                     setTextureProperties(normal_pb, texture);

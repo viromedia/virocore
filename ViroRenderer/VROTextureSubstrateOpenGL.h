@@ -53,7 +53,7 @@ public:
      */
     VROTextureSubstrateOpenGL(VROTextureType type,
                               VROTextureFormat format,
-                              VROTextureInternalFormat internalFormat,
+                              VROTextureInternalFormat internalFormat, bool sRGB,
                               VROMipmapMode mipmapMode,
                               std::vector<std::shared_ptr<VROData>> &data,
                               int width, int height,
@@ -85,7 +85,7 @@ private:
     
     void loadTexture(VROTextureType type,
                      VROTextureFormat format,
-                     VROTextureInternalFormat internalFormat,
+                     VROTextureInternalFormat internalFormat, bool sRGB,
                      VROMipmapMode mipmapMode,
                      std::vector<std::shared_ptr<VROData>> &data,
                      int width, int height,
@@ -94,13 +94,13 @@ private:
                      VROFilterMode minFilter, VROFilterMode magFilter, VROFilterMode mipFilter);
     void loadFace(GLenum target,
                   VROTextureFormat format,
-                  VROTextureInternalFormat internalFormat,
+                  VROTextureInternalFormat internalFormat, bool sRGB,
                   VROMipmapMode mipmapMode,
                   std::shared_ptr<VROData> &faceData,
                   int width, int height,
                   const std::vector<uint32_t> &mipSizes);
     
-    GLuint getInternalFormat(VROTextureInternalFormat format);
+    GLuint getInternalFormat(VROTextureInternalFormat format, bool sRGB);
     GLenum convertWrapMode(VROWrapMode wrapMode);
     GLenum convertMagFilter(VROFilterMode magFilter);
     GLenum convertMinFilter(VROMipmapMode mipmapMode, VROFilterMode minFilter, VROFilterMode mipFilter);

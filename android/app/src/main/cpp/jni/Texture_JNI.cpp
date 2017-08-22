@@ -73,13 +73,13 @@ JNI_METHOD(jlong, nativeCreateCubeTexture)(JNIEnv *env, jobject obj,
                                                          Image::native(ny),
                                                          Image::native(pz),
                                                          Image::native(nz)};
-    std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(Texture::getFormat(env, format),
+    std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(Texture::getFormat(env, format), true,
                                                                           cubeImages);
     return Texture::jptr(texturePtr);
 }
 
 JNI_METHOD(jlong, nativeCreateImageTexture)(JNIEnv *env, jobject obj, jlong image,
-                                            jstring format, jboolean mipmap, jstring stereoMode) {
+                                            jstring format, jboolean sRGB, jboolean mipmap, jstring stereoMode) {
 
     VROStereoMode mode = VROStereoMode::None;
     if (stereoMode != NULL) {
@@ -89,7 +89,7 @@ JNI_METHOD(jlong, nativeCreateImageTexture)(JNIEnv *env, jobject obj, jlong imag
         mode = VROTextureUtil::getStereoModeForString(strStereoMode);
     }
 
-    std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(Texture::getFormat(env, format),
+    std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(Texture::getFormat(env, format), sRGB,
                                                                           mipmap ? VROMipmapMode::Runtime : VROMipmapMode::None,
                                                                           Image::native(image),
                                                                           mode);

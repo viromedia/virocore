@@ -83,9 +83,9 @@ std::shared_ptr<VRONode> VROSampleARDelegate::loadCoffeeMug() {
                                                                         
                                                                         
                                                                         std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
-                                                                        material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                        material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, true, VROMipmapMode::None,
                                                                                                                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"coffee_mug"], format)));
-                                                                        material->getSpecular().setTexture(std::make_shared<VROTexture>(format, VROMipmapMode::None,
+                                                                        material->getSpecular().setTexture(std::make_shared<VROTexture>(format, false, VROMipmapMode::None,
                                                                                                                                                                      std::make_shared<VROImageiOS>([UIImage imageNamed:@"coffee_mug_specular"], format)));
                                                                     });
     return objNode;

@@ -117,10 +117,10 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
 
     std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
     material->setLightingModel(VROLightingModel::Blinn);
-    material->getDiffuse().setTexture(std::make_shared<VROTexture>(format,
+    material->getDiffuse().setTexture(std::make_shared<VROTexture>(format, true,
                                                                    VROMipmapMode::Runtime,
                                                                    VROPlatformLoadImageFromAsset("boba.png", format)));
-    material->getSpecular().setTexture(std::make_shared<VROTexture>(format,
+    material->getSpecular().setTexture(std::make_shared<VROTexture>(format, false,
                                                                    VROMipmapMode::Runtime,
                                                                    VROPlatformLoadImageFromAsset("boba.png", format)));
 
@@ -143,7 +143,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     std::vector<std::shared_ptr<VROData>> dataVec = { texData };
 
     std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, texFormat,
-                                                                       VROTextureInternalFormat::RGBA8,
+                                                                       VROTextureInternalFormat::RGBA8, true,
                                                                        VROMipmapMode::Pregenerated,
                                                                        dataVec, texWidth, texHeight, mipSizes);
 
@@ -185,7 +185,7 @@ std::shared_ptr<VROTexture> VROSample::getNiagaraTexture() {
             std::make_shared<VROImageAndroid>("nz.png", format)
     };
 
-    return std::make_shared<VROTexture>(format, cubeImages);
+    return std::make_shared<VROTexture>(format, true, cubeImages);
 }
 
 void VROSample::onFrameWillRender(const VRORenderContext &context) {

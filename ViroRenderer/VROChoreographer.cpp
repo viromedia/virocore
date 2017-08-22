@@ -18,13 +18,20 @@
 #include "VROLightingUBO.h"
 #include "VROEye.h"
 #include "VROLight.h"
+#include "VROToneMappingRenderPass.h"
 #include "VROShadowMapRenderPass.h"
 #include <vector>
 
 VROChoreographer::VROChoreographer(std::shared_ptr<VRODriver> driver) :
+    _driver(driver),
     _renderToTexture(false),
     _renderShadows(true) {
+        
     initTargets(driver);
+        
+    // We use HDR if gamma correction is enabled; this way we can
+    // bottle up the gamma correction with the HDR shader
+    setRenderHDR(driver->isGammaCorrectionEnabled());
 }
 
 VROChoreographer::~VROChoreographer() {
@@ -54,10 +61,18 @@ void VROChoreographer::initTargets(std::shared_ptr<VRODriver> driver) {
         }
     }
 }
+
+void VROChoreographer::initHDR(std::shared_ptr<VRODriver> driver) {
+    _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1);
+    _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingType::Reinhard, driver);
+}
         
 void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriver> &driver) {
     _blitTarget->setViewport(viewport);
     _renderToTextureTarget->setViewport(viewport);
+    if (_hdrTarget) {
+        _hdrTarget->setViewport(viewport);
+    }
     driver->getDisplay()->setViewport(viewport);
 }
 
@@ -71,7 +86,6 @@ void VROChoreographer::render(VROEyeType eye, std::shared_ptr<VROScene> scene, V
         if (eye == VROEyeType::Left || eye == VROEyeType::Monocular) {
             renderShadowPasses(scene, context, driver);
         }
-        
         renderBasePass(scene, context, driver);
     }
 }
@@ -141,15 +155,32 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
 
 void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORenderContext *context,
                                       std::shared_ptr<VRODriver> &driver) {
+    
     VRORenderPassInputOutput inputs;
-    if (_renderToTexture) {
+    if (_renderHDR) {
+        // Render the scene to the floating point HDR target
+        inputs[kRenderTargetSingleOutput] = _hdrTarget;
+        _baseRenderPass->render(scene, inputs, context, driver);
+        driver->bindShader(nullptr);
+        
+        if (_renderToTexture) {
+            // TODO Support RTT with HDR
+        }
+        else {
+            // Perform tone-mapping and gamma-correction
+            inputs[kRenderTargetSingleInput] = _hdrTarget;
+            inputs[kRenderTargetSingleOutput] = driver->getDisplay();
+            _toneMappingPass->render(scene, inputs, context, driver);
+        }
+    }
+    else if (_renderToTexture) {
         inputs[kRenderTargetSingleOutput] = _blitTarget;
         _baseRenderPass->render(scene, inputs, context, driver);
         driver->bindShader(nullptr);
 
-        
-        // The rendered image is now upside-down in the blitTarget. The back-buffer
-        // actually wants it this way, but for RTT we want it flipped right side up.
+        // The rendered image is now upside-down and gamma-corrected in the
+        // gammaTarget. The back-buffer actually wants it this way, but for RTT
+        // we want it flipped right side up.
         _renderToTexturePostProcess->blit(_blitTarget, _renderToTextureTarget, driver);
         
         // Finally, blit it over to the display
@@ -160,6 +191,7 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
         }
     }
     else {
+        // Render to the display directly
         inputs[kRenderTargetSingleOutput] = driver->getDisplay();
         _baseRenderPass->render(scene, inputs, context, driver);
         driver->bindShader(nullptr);
@@ -177,4 +209,19 @@ void VROChoreographer::setRenderToTextureCallback(std::function<void()> callback
 void VROChoreographer::setRenderTexture(std::shared_ptr<VROTexture> texture) {
     _renderToTextureTarget->attachTexture(texture);
 }
+
+void VROChoreographer::setRenderHDR(bool renderHDR) {
+    _renderHDR = renderHDR;
+    if (_renderHDR) {
+        std::shared_ptr<VRODriver> driver = _driver.lock();
+        if (driver) {
+            initHDR(driver);
+        }
+    }
+}
+
+std::shared_ptr<VROToneMappingRenderPass> VROChoreographer::getToneMapping() {
+    return _toneMappingPass;
+}
+
 
