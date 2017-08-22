@@ -21,7 +21,8 @@
 #define GL_TEXTURE_COMPARE_FUNC                          0x884D
 #endif
 
-VRORenderTargetOpenGL::VRORenderTargetOpenGL(VRORenderTargetType type, int numImages, std::shared_ptr<VRODriverOpenGL> driver) :
+VRORenderTargetOpenGL::VRORenderTargetOpenGL(VRORenderTargetType type, int numImages,
+                                             std ::shared_ptr<VRODriverOpenGL> driver) :
     VRORenderTarget(type),
     _framebuffer(0),
     _depthStencilbuffer(0),
@@ -50,6 +51,18 @@ void VRORenderTargetOpenGL::bind() {
     glScissor(_viewport.getX(), _viewport.getY(), _viewport.getWidth(), _viewport.getHeight());
 }
 
+void VRORenderTargetOpenGL::blitColor(std::shared_ptr<VRORenderTarget> destination) {
+    passert (_viewport.getWidth() == destination->getWidth());
+    passert (_viewport.getHeight() == destination->getHeight());
+    
+    VRORenderTargetOpenGL *t = (VRORenderTargetOpenGL *) destination.get();
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, _framebuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, t->_framebuffer);
+    glBlitFramebuffer(   _viewport.getX(),    _viewport.getY(),    _viewport.getX() +    _viewport.getWidth(),    _viewport.getY() +    _viewport.getHeight(),
+                      t->_viewport.getX(), t->_viewport.getY(), t->_viewport.getX() + t->_viewport.getWidth(), t->_viewport.getY() + t->_viewport.getHeight(),
+                      GL_COLOR_BUFFER_BIT, GL_LINEAR);
+}
+
 void VRORenderTargetOpenGL::setViewport(VROViewport viewport) {
     float previousWidth = _viewport.getWidth();
     float previousHeight = _viewport.getHeight();
@@ -60,23 +73,7 @@ void VRORenderTargetOpenGL::setViewport(VROViewport viewport) {
     if (previousWidth  != viewport.getWidth() ||
         previousHeight != viewport.getHeight()) {
         discardFramebuffers();
-        switch (_type) {
-            case VRORenderTargetType::Renderbuffer:
-                createColorDepthRenderbuffers();
-                break;
-                
-            case VRORenderTargetType::ColorTexture:
-                createColorTextureTarget();
-                break;
-                
-            case VRORenderTargetType::DepthTexture:
-            case VRORenderTargetType::DepthTextureArray:
-                createDepthTextureTarget();
-                break;
-                
-            default:
-                pabort("Invalid render target");
-        }
+        restoreFramebuffers();
     }
 }
 
@@ -114,7 +111,10 @@ void VRORenderTargetOpenGL::attachTexture(std::shared_ptr<VROTexture> texture) {
     passert (attachment != 0);
     
     glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
-    if (_type == VRORenderTargetType::ColorTexture || _type == VRORenderTargetType::DepthTexture) {
+    if (_type == VRORenderTargetType::ColorTexture ||
+        _type == VRORenderTargetType::ColorTextureHDR16 ||
+        _type == VRORenderTargetType::ColorTextureHDR32 ||
+        _type == VRORenderTargetType::DepthTexture) {
         glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, name, 0);
     }
     else if (_type == VRORenderTargetType::DepthTextureArray) {
@@ -146,10 +146,30 @@ void VRORenderTargetOpenGL::attachNewTexture() {
     GLuint texName;
     GLenum target;
     
-    if (_type == VRORenderTargetType::ColorTexture) {
-        target = GL_TEXTURE_2D;
-        glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
+    if (_type == VRORenderTargetType::ColorTexture ||
+        _type == VRORenderTargetType::ColorTextureSRGB ||
+        _type == VRORenderTargetType::ColorTextureHDR16 ||
+        _type == VRORenderTargetType::ColorTextureHDR32) {
         
+        target = GL_TEXTURE_2D;
+        GLint internalFormat = GL_RGBA;
+        GLint format = GL_RGBA;
+        GLenum texType = GL_UNSIGNED_BYTE;
+
+        if (_type == VRORenderTargetType::ColorTextureSRGB) {
+            //internalFormat = GL_SRGB8_ALPHA8;
+            internalFormat = GL_SRGB8_ALPHA8;
+        }
+        else if (_type == VRORenderTargetType::ColorTextureHDR16) {
+            internalFormat = GL_RGBA16F;
+            texType = GL_FLOAT;
+        }
+        else if (_type == VRORenderTargetType::ColorTextureHDR32) {
+            internalFormat = GL_RGBA32F;
+            texType = GL_FLOAT;
+        }
+        
+        glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
         glGenTextures(1, &texName);
         glBindTexture(GL_TEXTURE_2D, texName);
         
@@ -157,7 +177,7 @@ void VRORenderTargetOpenGL::attachNewTexture() {
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _viewport.getWidth(), _viewport.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, _viewport.getWidth(), _viewport.getHeight(), 0, format, texType, nullptr);
         
         glBindTexture(GL_TEXTURE_2D, 0);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texName, 0);
@@ -169,14 +189,27 @@ void VRORenderTargetOpenGL::attachNewTexture() {
         if (_depthStencilbuffer == 0) {
             glGenRenderbuffers(1, &_depthStencilbuffer);
             glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, _viewport.getWidth(), _viewport.getHeight());
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _viewport.getWidth(), _viewport.getHeight());
             
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
         }
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            pabort("Failed to make complete resolve framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            pinfo("Failed to make complete resolve framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
+                pinfo("   Incomplete attachment");
+            }
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS) {
+                pinfo("   Incomplete dimensions");
+            }
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
+                pinfo("   Missing attachment");
+            }
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_UNSUPPORTED) {
+                pinfo("   Unsupported");
+            }
+            pabort();
         }
     }
     else if (_type == VRORenderTargetType::DepthTexture) {
@@ -257,6 +290,9 @@ GLint VRORenderTargetOpenGL::getTextureName() const {
 GLenum VRORenderTargetOpenGL::getTextureAttachmentType() const {
     switch (_type) {
         case VRORenderTargetType::ColorTexture:
+        case VRORenderTargetType::ColorTextureSRGB:
+        case VRORenderTargetType::ColorTextureHDR16:
+        case VRORenderTargetType::ColorTextureHDR32:
             return GL_COLOR_ATTACHMENT0;
         case VRORenderTargetType::DepthTexture:
         case VRORenderTargetType::DepthTextureArray:
@@ -275,6 +311,9 @@ void VRORenderTargetOpenGL::restoreFramebuffers() {
             break;
             
         case VRORenderTargetType::ColorTexture:
+        case VRORenderTargetType::ColorTextureSRGB:
+        case VRORenderTargetType::ColorTextureHDR16:
+        case VRORenderTargetType::ColorTextureHDR32:
             createColorTextureTarget();
             break;
             
@@ -323,7 +362,7 @@ void VRORenderTargetOpenGL::createColorDepthRenderbuffers() {
     GLuint colorRenderbuffer;
     glGenRenderbuffers(1, &colorRenderbuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8_OES, _viewport.getWidth(), _viewport.getHeight());
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, _viewport.getWidth(), _viewport.getHeight());
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
     
     /*
@@ -332,7 +371,7 @@ void VRORenderTargetOpenGL::createColorDepthRenderbuffers() {
      */
     glGenRenderbuffers(1, &_depthStencilbuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilbuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, _viewport.getWidth(), _viewport.getHeight());
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _viewport.getWidth(), _viewport.getHeight());
     
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);

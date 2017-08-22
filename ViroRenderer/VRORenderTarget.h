@@ -19,13 +19,23 @@ enum class VROFace;
 /*
  Renderbuffers should be used when we do *not* need to sample the output of a
  render target. Textures should be used when we do need to read back the output.
+ 
+ The sRGB formats will make the framebuffer convert from linear RGB to sRGB
+ (gamma 2.0) on all writes. This typically is only necessary on the final render pass,
+ since we want most color operations to occur in linear space.
+ 
+ Note: on iOS the sRGB render targets do not appear to be properly handling the
+       encoding
  */
 enum class VRORenderTargetType {
     Display,           // The actual backbuffer
     Renderbuffer,      // Uses depth and color renderbuffers
     ColorTexture,      // Uses a color texture and a depth renderbuffer
-    DepthTexture,      // Uses a depth texture and a color renderbuffer
-    DepthTextureArray  // Uses a depth texture array and a color renderbuffer
+    ColorTextureSRGB,  // Uses a color texture and converts to sRGB space on write
+    ColorTextureHDR16, // Uses a Float16 color texture and a depth renderbuffer
+    ColorTextureHDR32,  // Uses a Float32 color texture and a depth renderbuffer
+    DepthTexture,      // Uses a depth texture and no color buffer
+    DepthTextureArray // Uses a depth texture array no color buffer
 };
 
 /*
@@ -71,6 +81,12 @@ public:
      Bind this render-target.
      */
     virtual void bind() = 0;
+    
+    /*
+     Blit the color attachment of this framebuffer over to the given destination buffer's
+     color attachment. This should be implemented as a driver-level fast operation.
+     */
+    virtual void blitColor(std::shared_ptr<VRORenderTarget> destination) = 0;
     
     /*
      Discard all existing framebuffers.

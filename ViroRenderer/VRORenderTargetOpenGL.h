@@ -19,8 +19,8 @@ class VRORenderTargetOpenGL : public VRORenderTarget {
 public:
     
     /*
-     Create a new render-target of the given type. The number of images is only
-     required for array types.
+     Create a new render-target of the given type. The number of images is only required
+     for array types.
      */
     VRORenderTargetOpenGL(VRORenderTargetType type, int numImages, std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VRORenderTargetOpenGL();
@@ -28,6 +28,7 @@ public:
 #pragma mark - VRORenderTarget Implementation
     
     void bind();
+    void blitColor(std::shared_ptr<VRORenderTarget> destination);
     
     virtual void setViewport(VROViewport viewport);
     int getWidth() const;
