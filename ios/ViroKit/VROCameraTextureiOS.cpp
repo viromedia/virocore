@@ -31,7 +31,7 @@ bool VROCameraTextureiOS::initCamera(VROCameraPosition position, VROCameraOrient
     std::shared_ptr<VROCameraTextureiOS> shared = std::dynamic_pointer_cast<VROCameraTextureiOS>(shared_from_this());
     
     _videoTextureCache = driver->newVideoTextureCache();
-    _delegate = [[VROCameraCaptureDelegate alloc] initWithCameraTexture:shared cache:_videoTextureCache];
+    _delegate = [[VROCameraCaptureDelegate alloc] initWithCameraTexture:shared cache:_videoTextureCache driver:driver];
     
     // Create a capture session
     _captureSession = [[AVCaptureSession alloc] init];
@@ -160,17 +160,20 @@ void VROCameraTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate
 
 @property (readwrite, nonatomic) std::weak_ptr<VROCameraTextureiOS> texture;
 @property (readwrite, nonatomic) std::weak_ptr<VROVideoTextureCache> cache;
+@property (readwrite, nonatomic) std::weak_ptr<VRODriver> driver;
 
 @end
 
 @implementation VROCameraCaptureDelegate
 
 - (id)initWithCameraTexture:(std::shared_ptr<VROCameraTextureiOS>)texture
-                      cache:(std::shared_ptr<VROVideoTextureCache>)cache {
+                      cache:(std::shared_ptr<VROVideoTextureCache>)cache
+                     driver:(std::shared_ptr<VRODriver>)driver {
     self = [super init];
     if (self) {
         self.texture = texture;
         self.cache = cache;
+        self.driver = driver;
         self.trackingHelper = [[VROTrackingHelper alloc] init];
     }
     
@@ -182,8 +185,9 @@ void VROCameraTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate
     
     std::shared_ptr<VROCameraTextureiOS> texture = self.texture.lock();
     std::shared_ptr<VROVideoTextureCache> cache = self.cache.lock();
-    if (texture && cache) {
-        texture->displayPixelBuffer(cache->createTextureSubstrate(sampleBuffer));
+    std::shared_ptr<VRODriver> driver = self.driver.lock();
+    if (texture && cache && driver) {
+        texture->displayPixelBuffer(cache->createTextureSubstrate(sampleBuffer, driver->isGammaCorrectionEnabled()));
     }
 
     // Uncomment this line to enable image detection

@@ -36,7 +36,7 @@ VROVideoTextureCacheOpenGL::~VROVideoTextureCacheOpenGL() {
     ALLOCATION_TRACKER_SUB(VideoTextureCaches, 1);
 }
 
-std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSubstrate(CMSampleBufferRef sampleBuffer) {
+std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSubstrate(CMSampleBufferRef sampleBuffer, bool sRGB) {
     CVBufferRelease(_textureRef[_currentTextureIndex]);
     _textureRef[_currentTextureIndex] = NULL;
     
@@ -49,7 +49,7 @@ std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSu
     
     CVReturn error;
     error = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, _cache, sourceImageBuffer,
-                                                         NULL, GL_TEXTURE_2D, GL_RGBA, width, height, GL_BGRA, GL_UNSIGNED_BYTE, 0,
+                                                         NULL, GL_TEXTURE_2D, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, width, height, GL_BGRA, GL_UNSIGNED_BYTE, 0,
                                                          &_textureRef[_currentTextureIndex]);
     if (error) {
         pabort("Failed to create texture from image");
@@ -63,7 +63,7 @@ std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSu
     return std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(GL_TEXTURE_2D, texture, _driver, false));
 }
 
-std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSubstrate(CVPixelBufferRef pixelBuffer) {
+std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSubstrate(CVPixelBufferRef pixelBuffer, bool sRGB) {
     CVBufferRelease(_textureRef[_currentTextureIndex]);
     _textureRef[_currentTextureIndex] = NULL;
     
@@ -75,7 +75,7 @@ std::unique_ptr<VROTextureSubstrate> VROVideoTextureCacheOpenGL::createTextureSu
     
     CVReturn error;
     error = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, _cache, pixelBuffer,
-                                                         NULL, GL_TEXTURE_2D, GL_RGBA, width, height, GL_BGRA, GL_UNSIGNED_BYTE, 0,
+                                                         NULL, GL_TEXTURE_2D, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, width, height, GL_BGRA, GL_UNSIGNED_BYTE, 0,
                                                          &_textureRef[_currentTextureIndex]);
     if (error) {
         pabort("Failed to create texture from image");

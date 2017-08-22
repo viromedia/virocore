@@ -164,13 +164,13 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
     
     dispatch_queue_t _videoQueue;
     int _currentTextureIndex;
+    std::weak_ptr<VRODriver> _driver;
     std::shared_ptr<VROVideoTextureCache> _videoTextureCache;
     
 }
 
 @property (readonly) VROVideoTextureiOS *texture;
 @property (readonly) AVPlayer *player;
-
 @property (readwrite) AVPlayerItemVideoOutput *output;
 @property (readwrite) BOOL mediaReady;
 @property (readwrite) BOOL playerReady;
@@ -190,7 +190,7 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
     if (self) {
         _texture = texture;
         _player = player;
-        
+        _driver = driver;
         _currentTextureIndex = 0;
         _mediaReady = NO;
         _playerReady = NO;
@@ -288,11 +288,11 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
         CVPixelBufferRef pixelBuffer = [_output copyPixelBufferForItemTime:outputItemTime
                                                         itemTimeForDisplay:&presentationTime];
         
-        if (pixelBuffer != nullptr) {
+        std::shared_ptr<VRODriver> driver = _driver.lock();
+        if (pixelBuffer && driver) {
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
-            
-            self.texture->displayPixelBuffer(std::move(_videoTextureCache->createTextureSubstrate(pixelBuffer)));
-            
+            self.texture->displayPixelBuffer(std::move(_videoTextureCache->createTextureSubstrate(pixelBuffer,
+                                                                                                  driver->isGammaCorrectionEnabled())));
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
             CFRelease(pixelBuffer);
         }

@@ -633,7 +633,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     if (!_videoTextureCache) {
         _videoTextureCache = _driver->newVideoTextureCache();
     }
-    std::unique_ptr<VROTextureSubstrate> substrate = _videoTextureCache->createTextureSubstrate(_videoPixelBuffer);
+    std::unique_ptr<VROTextureSubstrate> substrate = _videoTextureCache->createTextureSubstrate(_videoPixelBuffer,
+                                                                                                _driver->isGammaCorrectionEnabled());
     std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
     _renderer->getChoreographer()->setRenderToTextureEnabled(true);
     _renderer->getChoreographer()->setRenderTexture(texture);
