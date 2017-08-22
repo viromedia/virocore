@@ -8,12 +8,14 @@
 #ifndef VROParticleEmitter_h
 #define VROParticleEmitter_h
 
-#include "VRODriverOpenGL.h"
+#include "VRODriver.h"
 #include "VROParticleModifier.h"
 
 class VROSurface;
 class VROParticleUBO;
 class VROParticle;
+class VRONode;
+class VROTexture;
 
 /*
  VROParticleEmitter handles the behavior of quad particles emitted in the scene in terms of

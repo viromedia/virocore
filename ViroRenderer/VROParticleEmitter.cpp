@@ -13,6 +13,7 @@
 #include "VROBillboardConstraint.h"
 #include "VROParticleUBO.h"
 #include "VROMaterial.h"
+#include "VRODriverOpenGL.h"
 
 VROParticleEmitter::VROParticleEmitter(std::shared_ptr<VRODriver> driver,
                                        std::shared_ptr<VRONode> emitterNode,

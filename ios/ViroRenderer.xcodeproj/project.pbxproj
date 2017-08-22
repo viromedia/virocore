@@ -504,6 +504,8 @@
 		A51347411F3544A800FF3726 /* VROParticleUBO.h in Headers */ = {isa = PBXBuildFile; fileRef = A513473D1F35420300FF3726 /* VROParticleUBO.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A51347421F3544AC00FF3726 /* VROParticleEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = A51347321F329B0B00FF3726 /* VROParticleEmitter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A517D2CC1F41A16400A22219 /* cloud.png in Resources */ = {isa = PBXBuildFile; fileRef = A517D2CB1F41A16400A22219 /* cloud.png */; };
+		A517D2DE1F4CB1B400A22219 /* VROParticle.h in Headers */ = {isa = PBXBuildFile; fileRef = A517D2D51F44AC5500A22219 /* VROParticle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A517D2DF1F4CB1CA00A22219 /* VROParticleModifier.h in Headers */ = {isa = PBXBuildFile; fileRef = A517D2D61F44AC5E00A22219 /* VROParticleModifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A526F5B91EFD855E00A8A7A3 /* VROTransformDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A526F5B81EFD855E00A8A7A3 /* VROTransformDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A526F5C21EFD997A00A8A7A3 /* VROPencil.h in Headers */ = {isa = PBXBuildFile; fileRef = A527C7061EE76876006D3F24 /* VROPencil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A526F5C31EFD9B5600A8A7A3 /* VROTransformDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A56529A41EFD8051008097D7 /* VROTransformDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2166,6 +2168,8 @@
 			files = (
 				A526F5C21EFD997A00A8A7A3 /* VROPencil.h in Headers */,
 				8F0E5E951F3B4E170007AD03 /* VRORenderTarget.h in Headers */,
+				A517D2DE1F4CB1B400A22219 /* VROParticle.h in Headers */,
+				A517D2DF1F4CB1CA00A22219 /* VROParticleModifier.h in Headers */,
 				A526F5B91EFD855E00A8A7A3 /* VROTransformDelegateiOS.h in Headers */,
 				A526F5C31EFD9B5600A8A7A3 /* VROTransformDelegate.h in Headers */,
 				8FB2B58C1E143F7900EDB629 /* optional.hpp in Headers */,
