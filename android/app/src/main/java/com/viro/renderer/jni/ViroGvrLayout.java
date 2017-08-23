@@ -7,10 +7,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
+import android.opengl.EGLSurface;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,7 +30,10 @@ import com.viro.renderer.keys.KeyValidator;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
@@ -60,6 +65,37 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     private int mSavedSystemUIVisbility;
     private int mSavedOrientation;
     private OnSystemUiVisibilityChangeListener mSystemVisibilityListener;
+
+    private static class ViroEGLWindowSurfaceFactory implements GLSurfaceView.EGLWindowSurfaceFactory {
+        public javax.microedition.khronos.egl.EGLSurface createWindowSurface(EGL10 egl, EGLDisplay display,
+                                                                             EGLConfig config, Object nativeWindow) {
+            javax.microedition.khronos.egl.EGLSurface result = null;
+            try {
+                final int EGL_GL_COLORSPACE_KHR = 0x309D;
+                final int EGL_GL_COLORSPACE_SRGB_KHR = 0x3089;
+                final int[] surfaceAttribs = {
+                        EGL_GL_COLORSPACE_KHR, EGL_GL_COLORSPACE_SRGB_KHR,
+                        EGL10.EGL_NONE
+                };
+
+                result = egl.eglCreateWindowSurface(display, config, nativeWindow, surfaceAttribs);
+            } catch (IllegalArgumentException e) {
+                // This exception indicates that the surface flinger surface
+                // is not valid. This can happen if the surface flinger surface has
+                // been torn down, but the application has not yet been
+                // notified via SurfaceHolder.Callback.surfaceDestroyed.
+                // In theory the application should be notified first,
+                // but in practice sometimes it is not. See b/4588890
+                Log.e(TAG, "eglCreateWindowSurface", e);
+            }
+            return result;
+        }
+
+        public void destroySurface(EGL10 egl, EGLDisplay display,
+                                   javax.microedition.khronos.egl.EGLSurface surface) {
+            egl.eglDestroySurface(display, surface);
+        }
+    }
 
     private static class ViroSurfaceViewRenderer implements GLSurfaceView.Renderer {
 
@@ -241,6 +277,10 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         glSurfaceView.setEGLContextClientVersion(3);
         glSurfaceView.setEGLConfigChooser(colorBits, colorBits, colorBits, alphaBits, depthBits, stencilBits);
         glSurfaceView.setPreserveEGLContextOnPause(true);
+
+        // TODO JIRA-1555 Uncomment this to test creating an SRGB framebuffer
+        //glSurfaceView.setEGLWindowSurfaceFactory(new ViroEGLWindowSurfaceFactory());
+
         glSurfaceView.setRenderer(new ViroSurfaceViewRenderer(this, glSurfaceView));
         glSurfaceView.setOnTouchListener(new ViroOnTouchListener(this));
 

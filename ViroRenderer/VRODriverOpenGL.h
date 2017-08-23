@@ -145,7 +145,7 @@ public:
         _boundShader = program;
     }
     
-    bool isGammaCorrectionEnabled() {
+    virtual bool isGammaCorrectionEnabled() {
         return true;
     }
 

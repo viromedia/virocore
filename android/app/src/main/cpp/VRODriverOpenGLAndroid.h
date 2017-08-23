@@ -27,6 +27,11 @@ public:
     }
     virtual ~VRODriverOpenGLAndroid() { }
 
+    // TODO JIRA-1555 Enable HDR and gamma correction on Android once SRGB is working
+    virtual bool isGammaCorrectionEnabled() {
+        return false;
+    }
+
     void onFrame(const VRORenderContext &context) {
         _gvrAudio->SetHeadPose(VROGVRUtil::toGVRMat4f(context.getCamera().getLookAtMatrix()));
         _gvrAudio->Update();

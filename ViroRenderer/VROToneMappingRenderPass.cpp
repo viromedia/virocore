@@ -32,6 +32,10 @@ void VROToneMappingRenderPass::initPostProcess(std::shared_ptr<VRODriver> driver
      TODO VIRO-1521: When iOS Cardboard starts supporting sRGB backbuffers, we will no longer
                      need the gamma correction step in this shader, as the native backbuffer can
                      perform the gamma correction for free.
+
+     TODO VIRO-1555 On Android GVR, we may have to eliminate the manual gamma correction here
+                    in favor of using an Android generated SRGB buffer in ViroGVRLayout. We'll do
+                    the same for iOS once VIRO-1521 is completed
      */
     std::vector<std::string> code;
     if (_type == VROToneMappingType::Reinhard) {
