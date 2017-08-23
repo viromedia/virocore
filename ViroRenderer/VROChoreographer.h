@@ -116,6 +116,12 @@ private:
     std::shared_ptr<VROImagePostProcess> _renderToTexturePostProcess;
     std::function<void()> _renderToTextureCallback;
     
+    /*
+     Render the image stored in the _blitTarget to the RTT target
+     and display.
+     */
+    void renderToTextureAndDisplay(std::shared_ptr<VRODriver> driver);
+    
 #pragma mark - Shadows
     
     /*
