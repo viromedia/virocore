@@ -88,7 +88,7 @@ private:
     std::shared_ptr<VROShaderModifier> createLambertLightingModifier();
     std::shared_ptr<VROShaderModifier> createPhongLightingModifier();
     std::shared_ptr<VROShaderModifier> createBlinnLightingModifier();
-    std::shared_ptr<VROShaderModifier> createYCbCrTextureModifier();
+    std::shared_ptr<VROShaderModifier> createYCbCrTextureModifier(bool isGammaCorrectionEnabled);
     std::shared_ptr<VROShaderModifier> createEGLImageModifier();
     std::shared_ptr<VROShaderModifier> createShadowMapGeometryModifier();
     std::shared_ptr<VROShaderModifier> createShadowMapLightModifier();

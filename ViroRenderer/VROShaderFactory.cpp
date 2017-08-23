@@ -18,6 +18,7 @@
 #include "VROStringUtil.h"
 #include "VROShadowMapRenderPass.h"
 #include "VROShaderCapabilities.h"
+#include "VRODriverOpenGL.h"
 #include <tuple>
 
 static std::shared_ptr<VROShaderModifier> sDiffuseTextureModifier;
@@ -209,7 +210,7 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     else if (materialCapabilities.diffuseTexture == VRODiffuseTextureType::YCbCr) {
         samplers.push_back("diffuse_texture_y");
         samplers.push_back("diffuse_texture_cbcr");
-        modifiers.push_back(createYCbCrTextureModifier());
+        modifiers.push_back(createYCbCrTextureModifier(driver->isGammaCorrectionEnabled()));
     }
     else if (materialCapabilities.diffuseTexture == VRODiffuseTextureType::Cube) {
         samplers.push_back("diffuse_texture");
@@ -557,7 +558,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createStereoTextureModifier
     return modifier;
 }
 
-std::shared_ptr<VROShaderModifier> VROShaderFactory::createYCbCrTextureModifier() {
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createYCbCrTextureModifier(bool isGammaCorrectionEnabled) {
     /*
      Modifier that converts a YCbCr image (encoded in two textures) into an RGB color.
      Note the cbcr texture luminance_alpha, which is why we access the B and A coordinates
@@ -577,6 +578,14 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createYCbCrTextureModifier(
             "                       texture(diffuse_texture_cbcr, _surface.diffuse_texcoord).ba, 1.0);",
             "_surface.diffuse_color *= (ycbcrToRGBTransform * ycbcr);"
         };
+        
+        /*
+         Manually linearize the color if we're using gamma correction.
+         */
+        if (isGammaCorrectionEnabled) {
+            modifierCode.push_back("highp float gamma = 2.2;");
+            modifierCode.push_back("_surface.diffuse_color.rgb = pow(_surface.diffuse_color.rgb, vec3(gamma));");
+        }
         sYCbCrTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                     modifierCode);
         sYCbCrTextureModifier->setName("ycbcr");
