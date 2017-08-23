@@ -337,13 +337,6 @@ bool VROShaderProgram::compileAndLink() {
 
 #if kDebugShaders
     pinfo("Finished compiling shader %s", _shaderName.c_str());
-
-     if (_vertexSource.c_str() != nullptr) {
-         pinfo("Shader vertex source %s", _vertexSource.c_str());
-     }
-     if (_fragmentSource.c_str() != nullptr) {
-         pinfo("Shader frag source %s", _fragmentSource.c_str());
-     }
 #endif
 
     return true;

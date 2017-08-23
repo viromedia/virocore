@@ -15,6 +15,7 @@
 #include "VROPlatformUtil.h"
 #include "VROOBJLoader.h"
 #include "VROFBXLoader.h"
+#include "VROExecutableAnimation.h"
 
 VROSample::VROSample() {
 
@@ -64,16 +65,20 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     /*
      Create the obj node.
      */
-    std::string heartPath = VROPlatformCopyAssetToFile("heart.proto");
+    std::string heartPath = VROPlatformCopyAssetToFile("aliengirl.vrx");
     std::string heartBase = heartPath.substr(0, heartPath.find_last_of('/'));
 
-    VROPlatformCopyAssetToFile("Heart_D2.jpg");
+    VROPlatformCopyAssetToFile("aliengirl_diffuse.png");
+    VROPlatformCopyAssetToFile("aliengirl_normal.png");
+    VROPlatformCopyAssetToFile("aliengirl_specular.png");
+
     std::shared_ptr<VRONode> heartNode = VROFBXLoader::loadFBXFromFile(heartPath, heartBase, true, [format](std::shared_ptr<VRONode> node, bool success) {
         if (!success) {
             return;
         }
 
-        node->setPosition({0, 0, -0.50});
+        node->setScale({.04, .04, .04});
+        node->setPosition({0, 2, -6});
     });
 
     _objAngle = 0;
@@ -84,6 +89,8 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
         return true;
     });
     heartNode->runAction(action);
+    animateTake(heartNode);
+
     rootNode->addChildNode(heartNode);
 
     /*
@@ -172,6 +179,12 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     rootNode->addChildNode(textNode);
 
     return sceneController;
+}
+
+void VROSample::animateTake(std::shared_ptr<VRONode> node) {
+    node->getAnimation("Take 001", true)->execute(node, [node, this] {
+        animateTake(node);
+    });
 }
 
 std::shared_ptr<VROTexture> VROSample::getNiagaraTexture() {

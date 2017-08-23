@@ -340,7 +340,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createShadowMapGeometryModi
     if (!sShadowMapGeometryModifier) {
         std::vector<std::string> modifierCode = {
             "out highp vec4 shadow_coords[8];",
-            "for (int i = 0; i < num_lights; i++) {",
+            "for (int i = 0; i < lv_num_lights; i++) {",
             "   shadow_coords[i] = shadow_projection_matrices[i] * shadow_view_matrices[i] * _transforms.model_matrix * vec4(_geometry.position.xyz, 1.0);",
             "   shadow_coords[i].x = shadow_coords[i].x * 0.5 + shadow_coords[i].w * 0.5;",
             "   shadow_coords[i].y = shadow_coords[i].y * 0.5 + shadow_coords[i].w * 0.5;",

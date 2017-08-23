@@ -39,6 +39,7 @@ public:
 private:
 
     std::shared_ptr<VROTexture> getNiagaraTexture();
+    void animateTake(std::shared_ptr<VRONode> node);
 
     std::shared_ptr<VRODriver> _driver;
     float _objAngle;
