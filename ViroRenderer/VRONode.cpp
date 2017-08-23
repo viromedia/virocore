@@ -140,7 +140,10 @@ void VRONode::renderSilhouettes(std::shared_ptr<VROMaterial> &material, VROSilho
         else {
             for (int i = 0; i < _geometry->getGeometryElements().size(); i++) {
                 std::shared_ptr<VROTexture> texture = _geometry->getMaterialForElement(i)->getDiffuse().getTexture();
-                material->getDiffuse().swapTexture(texture);
+                if (material->getDiffuse().swapTexture(texture)) {
+                    material->bindShader(0, {}, driver);
+                    material->bindProperties(driver);
+                }
                 _geometry->renderSilhouetteTextured(i, _computedTransform, material, context, driver);
             }
         }
