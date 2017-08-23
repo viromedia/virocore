@@ -15,7 +15,7 @@
 #include <random>
 #include <VROTime.h>
 
-#include "VRODriverOpenGLAndroid.h"
+#include "VRODriverOpenGLAndroidGVR.h"
 #include "VROGVRUtil.h"
 #include "VROMatrix4f.h"
 #include "VROViewport.h"
@@ -53,7 +53,7 @@ VROSceneRendererGVR::VROSceneRendererGVR(gvr_context* gvr_context,
 
     // Create renderer and attach the controller to it.
     _renderer = std::make_shared<VRORenderer>(controller);
-    _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
+    _driver = std::make_shared<VRODriverOpenGLAndroidGVR>(gvrAudio);
 }
 
 VROSceneRendererGVR::~VROSceneRendererGVR() {
@@ -63,27 +63,28 @@ VROSceneRendererGVR::~VROSceneRendererGVR() {
 #pragma mark - Rendering
 
 void VROSceneRendererGVR::initGL() {
-  _gvr->InitializeGl();
+    _gvr->InitializeGl();
 
-  // Because we are using 2X MSAA, we can render to half as many pixels and
-  // achieve similar quality.
-  _renderSize = halfPixelCount(_gvr->GetMaximumEffectiveRenderTargetSize());
+    // Because we are using 2X MSAA, we can render to half as many pixels and
+    // achieve similar quality.
+    _renderSize = halfPixelCount(_gvr->GetMaximumEffectiveRenderTargetSize());
 
-  std::vector<gvr::BufferSpec> specs;
-  specs.push_back(_gvr->CreateBufferSpec());
+    std::vector<gvr::BufferSpec> specs;
+    specs.push_back(_gvr->CreateBufferSpec());
 
-  specs[0].SetColorFormat(GVR_COLOR_FORMAT_RGBA_8888);
-  specs[0].SetDepthStencilFormat(GVR_DEPTH_STENCIL_FORMAT_DEPTH_24);
-  specs[0].SetSize(_renderSize);
-  specs[0].SetSamples(2);
-  _swapchain.reset(new gvr::SwapChain(_gvr->CreateSwapChain(specs)));
+    specs[0].SetColorFormat(GVR_COLOR_FORMAT_RGBA_8888);
+    specs[0].SetDepthStencilFormat(GVR_DEPTH_STENCIL_FORMAT_DEPTH_24);
+    specs[0].SetSize(_renderSize);
+    specs[0].SetSamples(2);
+    _swapchain.reset(new gvr::SwapChain(_gvr->CreateSwapChain(specs)));
 
-  _viewportList.reset(new gvr::BufferViewportList(
-          _gvr->CreateEmptyBufferViewportList()));
+    _viewportList.reset(new gvr::BufferViewportList(
+            _gvr->CreateEmptyBufferViewportList()));
 
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_STENCIL_TEST);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void VROSceneRendererGVR::onDrawFrame() {
@@ -118,10 +119,11 @@ void VROSceneRendererGVR::onDrawFrame() {
     } else {
         _viewportList->SetToRecommendedBufferViewports();
         gvr::Frame frame = _swapchain->AcquireFrame();
+        std::dynamic_pointer_cast<VRODisplayOpenGLGVR>(_driver->getDisplay())->setFrame(frame);
         frame.BindBuffer(0);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         frame.Unbind();
         frame.Submit(*_viewportList, _headView);
@@ -148,6 +150,7 @@ void VROSceneRendererGVR::renderStereo(VROMatrix4f &headRotation) {
 
     // Acquire a frame from the swap chain
     gvr::Frame frame = _swapchain->AcquireFrame();
+    std::dynamic_pointer_cast<VRODisplayOpenGLGVR>(_driver->getDisplay())->setFrame(frame);
     frame.BindBuffer(0);
 
     // Extract the left viewport parameters
@@ -245,7 +248,7 @@ void VROSceneRendererGVR::prepareFrame(VROViewport leftViewport, VROFieldOfView 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
     _renderer->prepareFrame(_frame, leftViewport, fov, headRotation, projection, _driver);

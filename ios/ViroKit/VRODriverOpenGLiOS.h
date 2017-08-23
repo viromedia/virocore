@@ -35,6 +35,24 @@ public:
     
     virtual ~VRODriverOpenGLiOS() { }
     
+    /*
+     On iOS the primary framebuffer (display) may be tied to a GLKView. To
+     bind the display we have to go through the GLKView.
+     */
+    std::shared_ptr<VRORenderTarget> getDisplay() {
+        if (!_display) {
+            GLKView *viewGL = _viewGL;
+            if (!viewGL) {
+                return VRODriverOpenGL::getDisplay();
+            }
+            else {
+                std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
+                _display = std::make_shared<VRODisplayOpenGLiOS>(viewGL, driver);
+            }
+        }
+        return _display;
+    }
+    
     void willRenderFrame(const VRORenderContext &context) {
         // Set the head position into _gvrAudio when spatial sound is supported by iOS
     }
@@ -77,20 +95,6 @@ public:
                                      VROPlatformParseGVRAudioMaterial(wallMaterial),
                                      VROPlatformParseGVRAudioMaterial(ceilingMaterial),
                                      VROPlatformParseGVRAudioMaterial(floorMaterial));
-    }
-    
-    std::shared_ptr<VRORenderTarget> getDisplay() {
-        if (!_display) {
-            GLKView *viewGL = _viewGL;
-            if (!viewGL) {
-                return VRODriverOpenGL::getDisplay();
-            }
-            else {
-                std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
-                _display = std::make_shared<VRODisplayOpenGLiOS>(viewGL, driver);
-            }
-        }
-        return _display;
     }
     
 private:

@@ -32,12 +32,15 @@ public:
          */
         glViewport(_viewport.getX(), _viewport.getY(), _viewport.getWidth(), _viewport.getHeight());
         glScissor(_viewport.getX(), _viewport.getY(), _viewport.getWidth(), _viewport.getHeight());
+        
+        /*
+         Prevent logical buffer loads.
+         */
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
     
 private:
-    
     __weak GLKView *_view;
-    
     
 };
 
