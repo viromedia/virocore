@@ -358,7 +358,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
     private void testBackgroundImage(SceneJni scene) {
         ImageJni imageJni = new ImageJni("boba.png", TextureFormat.RGBA8);
-        TextureJni videoTexture = new TextureJni(imageJni, TextureFormat.RGBA8, false);
+        TextureJni videoTexture = new TextureJni(imageJni, TextureFormat.RGBA8, true, false);
         scene.setBackgroundImageTexture(videoTexture);
         float[] rotation = {90, 0, 0};
         scene.setBackgroundRotation(rotation);
@@ -396,7 +396,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         // Create a new material with a diffuseTexture set to the image "boba.png"
         ImageJni bobaImage = new ImageJni("boba.png", TextureFormat.RGBA8);
 
-        TextureJni bobaTexture = new TextureJni(bobaImage, TextureFormat.RGBA8, true);
+        TextureJni bobaTexture = new TextureJni(bobaImage, TextureFormat.RGBA8, true, true);
         MaterialJni material = new MaterialJni();
 //        material.setTexture(bobaTexture, "diffuseTexture");
         material.setColor(Color.BLUE, "diffuseColor");
@@ -430,7 +430,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             public void onObjLoaded() {
                 // Create a new material with a diffuseTexture set to the image "heart_d.jpg"
                 ImageJni heartImage = new ImageJni("heart_d.jpg", TextureFormat.RGBA8);
-                TextureJni heartTexture = new TextureJni(heartImage, TextureFormat.RGBA8, true);
+                TextureJni heartTexture = new TextureJni(heartImage, TextureFormat.RGBA8, true, true);
                 MaterialJni material = new MaterialJni();
                 material.setTexture(heartTexture, "diffuseTexture");
                 material.setLightingModel("Constant");
@@ -509,7 +509,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         NodeJni node = new NodeJni();
         ImageJni bobaImage = new ImageJni("boba.png", TextureFormat.RGBA8);
 
-        TextureJni bobaTexture = new TextureJni(bobaImage, TextureFormat.RGBA8, true);
+        TextureJni bobaTexture = new TextureJni(bobaImage, TextureFormat.RGBA8, true, true);
         MaterialJni material = new MaterialJni();
 
         SurfaceJni surface = new SurfaceJni(1, 1, 0, 0, 1, 1);
@@ -536,7 +536,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         NodeJni node = new NodeJni();
         ImageJni bobaImage = new ImageJni(img, TextureFormat.RGBA8);
         TextureJni bobaTexture = new TextureJni(bobaImage,
-                TextureFormat.RGBA8, true, "LeftRight");
+                TextureFormat.RGBA8, true, true, "LeftRight");
         MaterialJni material = new MaterialJni();
         SurfaceJni surface = new SurfaceJni(1, 1, 0, 0, 1, 1);
         surface.setMaterial(material);
@@ -549,7 +549,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     private void testStereoBackgroundImage(SceneJni scene) {
         ImageJni imageJni = new ImageJni("stereo3601.jpg", TextureFormat.RGBA4);
         TextureJni videoTexture = new TextureJni(imageJni,
-                TextureFormat.RGBA8, false, "TopBottom");
+                TextureFormat.RGBA8, true, false, "TopBottom");
         scene.setBackgroundImageTexture(videoTexture);
         float[] rotation = {0, 0, 0};
         scene.setBackgroundRotation(rotation);
