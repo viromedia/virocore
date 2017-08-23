@@ -40,13 +40,22 @@ public:
      */
     void setExposure(float exposure);
     
+    /*
+     Set to true to manually gamma correct the image during tone-mapping.
+     */
+    void setGammaCorrectionEnabled(bool enabled);
+    
 private:
 
     VROToneMappingType _type;
     float _exposure;
-    std::shared_ptr<VROImagePostProcess> _postProcess;
+    bool _gammaCorrectionEnabled;
     
-    void initPostProcess(std::shared_ptr<VRODriver> driver);
+    std::shared_ptr<VROImagePostProcess> _postProcessHDR;
+    std::shared_ptr<VROImagePostProcess> _postProcessHDRAndGamma;
+    
+    std::shared_ptr<VROImagePostProcess> createPostProcess(std::shared_ptr<VRODriver> driver,
+                                                           bool gammaCorrect);
     
 };
 

@@ -1433,9 +1433,11 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         NSString *filename = [NSString stringWithFormat:@"testvideo%d", rand];
         
         NSLog(@"[VROSample] started recording");
-        [arView startVideoRecording:filename saveToCameraRoll:YES errorBlock:nil];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [arView startVideoRecording:filename saveToCameraRoll:YES errorBlock:nil];
+        });
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 20 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
             NSLog(@"[VROSample] stopped recording");
             [arView stopVideoRecordingWithHandler:^(BOOL success, NSURL *url, NSInteger errorCode) {
                 if (url) {

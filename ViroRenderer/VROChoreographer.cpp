@@ -172,12 +172,19 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
         driver->bindShader(nullptr);
         
         if (_renderToTexture) {
-            // Perform tone-mapping and gamma-correction, store in _blitTarget
-            inputs[kRenderTargetSingleInput] = _hdrTarget;
+            // Perform tone-mapping with gamma correction, store in _blitTarget
+            inputs[kRenderTargetSingleInput]  = _hdrTarget;
             inputs[kRenderTargetSingleOutput] = _blitTarget;
             _toneMappingPass->render(scene, inputs, context, driver);
             
-            renderToTextureAndDisplay(driver);
+            // Flip/render the image to the RTT target
+            _renderToTexturePostProcess->blit(_blitTarget, _renderToTextureTarget, driver);
+            
+            // Blit direct to the display
+            _blitPostProcess->blit(_blitTarget, driver->getDisplay(), driver);
+            if (_renderToTextureCallback) {
+                _renderToTextureCallback();
+            }
         }
         else {
             // Perform tone-mapping and gamma-correction
@@ -190,27 +197,24 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
         inputs[kRenderTargetSingleOutput] = _blitTarget;
         _baseRenderPass->render(scene, inputs, context, driver);
         driver->bindShader(nullptr);
-        renderToTextureAndDisplay(driver);
+        
+        // The rendered image is upside-down and gamma-corrected in the
+        // blitTarget. The back-buffer actually wants it upside-down, but for RTT
+        // we want it flipped right side up.
+        _renderToTexturePostProcess->blit(_blitTarget, _renderToTextureTarget, driver);
+        
+        // Finally, blit it over to the display
+        _blitPostProcess->blit(_blitTarget, driver->getDisplay(), driver);
+        
+        if (_renderToTextureCallback) {
+            _renderToTextureCallback();
+        }
     }
     else {
         // Render to the display directly
         inputs[kRenderTargetSingleOutput] = driver->getDisplay();
         _baseRenderPass->render(scene, inputs, context, driver);
         driver->bindShader(nullptr);
-    }
-}
-
-void VROChoreographer::renderToTextureAndDisplay(std::shared_ptr<VRODriver> driver) {
-    // The rendered image is upside-down and gamma-corrected in the
-    // blitTarget. The back-buffer actually wants it upside-down, but for RTT
-    // we want it flipped right side up.
-    _renderToTexturePostProcess->blit(_blitTarget, _renderToTextureTarget, driver);
-    
-    // Finally, blit it over to the display
-    _blitPostProcess->blit(_blitTarget, driver->getDisplay(), driver);
-    
-    if (_renderToTextureCallback) {
-        _renderToTextureCallback();
     }
 }
 

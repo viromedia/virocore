@@ -17,7 +17,8 @@
 
 VROToneMappingRenderPass::VROToneMappingRenderPass(VROToneMappingType type, std::shared_ptr<VRODriver> driver) :
     _type(type),
-    _exposure(1.0) {
+    _exposure(1.0),
+    _gammaCorrectionEnabled(true) {
    
 }
 
@@ -25,7 +26,8 @@ VROToneMappingRenderPass::~VROToneMappingRenderPass() {
     
 }
 
-void VROToneMappingRenderPass::initPostProcess(std::shared_ptr<VRODriver> driver) {
+std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess(std::shared_ptr<VRODriver> driver,
+                                                                                 bool gammaCorrect) {
     std::vector<std::string> samplers = { "hdr_texture" };
     
     /*
@@ -43,11 +45,8 @@ void VROToneMappingRenderPass::initPostProcess(std::shared_ptr<VRODriver> driver
             "uniform sampler2D hdr_texture;",
             "uniform lowp float exposure;",
             
-            "const highp float gamma = 2.2;",
             "highp vec3 hdr_color = texture(hdr_texture, v_texcoord).rgb;",
             "highp vec3 mapped = hdr_color / (hdr_color + vec3(1.0));",
-            "mapped = pow(mapped, vec3(1.0 / gamma));",                       // gamma correction
-            "frag_color = vec4(mapped, 1.0);"
         };
     }
     else {
@@ -55,12 +54,18 @@ void VROToneMappingRenderPass::initPostProcess(std::shared_ptr<VRODriver> driver
             "uniform sampler2D hdr_texture;",
             "uniform lowp float exposure;",
             
-            "const highp float gamma = 2.2;",
             "highp vec3 hdr_color = texture(hdr_texture, v_texcoord).rgb;",
-            "highp vec3 mapped = vec3(1.0) - exp(-hdr_color * exposure);",  // tone mapping
-            "mapped = pow(mapped, vec3(1.0 / gamma));",                       // gamma correction
-            "frag_color = vec4(mapped, 1.0);"
+            "highp vec3 mapped = vec3(1.0) - exp(-hdr_color * exposure);",
         };
+    }
+    
+    if (_gammaCorrectionEnabled) {
+        code.push_back("const highp float gamma = 2.2;");
+        code.push_back("mapped = pow(mapped, vec3(1.0 / gamma));");
+        code.push_back("frag_color = vec4(mapped, 1.0);");
+    }
+    else {
+        code.push_back("frag_color = vec4(mapped, 1.0);");
     }
     
     std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Image, code);
@@ -78,23 +83,35 @@ void VROToneMappingRenderPass::initPostProcess(std::shared_ptr<VRODriver> driver
     std::vector<std::shared_ptr<VROShaderModifier>> modifiers = { modifier };
     std::shared_ptr<VROImageShaderProgram> shader = std::make_shared<VROImageShaderProgram>(samplers, modifiers, driver);
     
-    _postProcess = driver->newImagePostProcess(shader);
+    return driver->newImagePostProcess(shader);
 }
 
 VRORenderPassInputOutput VROToneMappingRenderPass::render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
                                                           VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     
-    if (!_postProcess) {
-        initPostProcess(driver);
+    if (!_postProcessHDR) {
+        _postProcessHDR = createPostProcess(driver, false);
+        _postProcessHDRAndGamma = createPostProcess(driver, true);
     }
+    
     std::shared_ptr<VRORenderTarget> hdrInput = inputs[kRenderTargetSingleInput];
     std::shared_ptr<VRORenderTarget> target = inputs[kRenderTargetSingleOutput];
-    _postProcess->blit(hdrInput, target, driver);
+    
+    if (_gammaCorrectionEnabled) {
+        _postProcessHDRAndGamma->blit(hdrInput, target, driver);
+    }
+    else {
+        _postProcessHDR->blit(hdrInput, target, driver);
+    }
     
     VRORenderPassInputOutput output;
     output[kRenderTargetSingleOutput] = target;
     
     return output;
+}
+
+void VROToneMappingRenderPass::setGammaCorrectionEnabled(bool enabled) {
+    _gammaCorrectionEnabled = enabled;
 }
 
 void VROToneMappingRenderPass::setExposure(float exposure) {
