@@ -98,7 +98,15 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
     // Get the max requested shadow map size; use that for our render target
     int maxSize = 0;
     for (const std::shared_ptr<VROLight> &light : lights) {
+        if (!light->getCastsShadow()) {
+            continue;
+        }
         maxSize = std::max(maxSize, light->getShadowMapSize());
+    }
+
+    if (maxSize == 0) {
+        // No lights are casting a shadow
+        return;
     }
     _shadowTarget->setViewport({ 0, 0, maxSize, maxSize });
     
