@@ -65,6 +65,8 @@ void VROParticleEmitter::initEmitter() {
     _accelerationModifier = std::make_shared<VROParticleModifier>(VROVector3f(0,0,0));
 
     // Default Emitter settings
+    _emitterDelayDuration = -1;
+    _emitterDelayStartTime = -1;
     _duration = 2000;
     _maxParticles = 500;
     _particlesEmittedPerMeter = std::pair<int, int>(0, 0);
@@ -80,19 +82,51 @@ void VROParticleEmitter::initEmitter() {
     _currentVolume = defaultVol;
 }
 
+bool VROParticleEmitter::processDelay(double currentTime) {
+    // If no delay duration has been set, return immediately.
+    if (_emitterDelayDuration == -1){
+        return false;
+    }
+
+    // Set the delayStartTime for tracking delay status.
+    if (_requestRun && _emitterDelayStartTime == -1) {
+        _emitterDelayStartTime = currentTime;
+        _emitterDelayTimePassedSoFar = _emitterDelayDuration;
+    }
+    // If pausing the emitter while still in the delay period, calculate and save the
+    // processed delay time thus far, to be used for re-setting the delayStartTime when
+    // resuming the emitter afterward.
+    else if (!_requestRun && _emitterDelayStartTime != -1 &&
+            _emitterDelayStartTime + _emitterDelayTimePassedSoFar > currentTime) {
+        _emitterDelayStartTime = -1;
+        _emitterDelayTimePassedSoFar = _emitterDelayStartTime - currentTime;
+        return true;
+    }
+
+    // Return true if we are still in the delay period, false otherwise.
+    if (_emitterDelayStartTime + _emitterDelayTimePassedSoFar > currentTime){
+        return true;
+    }
+
+    return false;
+}
 void VROParticleEmitter::update(const VRORenderContext &context) {
     std::shared_ptr<VRONode> emitterNode = _particleEmitterNodeWeak.lock();
     if (emitterNode == nullptr) {
         return;
     }
-
     double currentTime = VROTimeCurrentMillis();
-    updateEmitter(currentTime, emitterNode);
-    updateParticles(currentTime, context, emitterNode);
+
+    bool isCurrentlyDelayed = processDelay(currentTime);
+    if (!isCurrentlyDelayed){
+        updateEmitter(currentTime, emitterNode);
+    }
+
+    updateParticles(currentTime, context, emitterNode, isCurrentlyDelayed);
 }
 
 void VROParticleEmitter::updateEmitter(double currentTime, std::shared_ptr<VRONode> emitterNode) {
-    if (_run != _requestRun) {
+    if (_run != _requestRun || _emitterStartTimeMs == -1) {
         _run = _requestRun;
 
         if (_run) {
@@ -116,7 +150,7 @@ void VROParticleEmitter::updateEmitter(double currentTime, std::shared_ptr<VRONo
                                   + _emitterPassedDistanceSoFar;
 
     if (_emitterTotalPassedTime > _duration && _loop) {
-        resetEmissionCycle(false, currentLoc);
+        resetEmissionCycle(false);
     }
 }
 
@@ -124,37 +158,49 @@ bool VROParticleEmitter::finishedEmissionCycle() {
     return _emitterTotalPassedTime > _duration && !_loop;
 }
 
-void VROParticleEmitter::resetEmissionCycle(bool resetParticles, VROVector3f currentLocation) {
+void VROParticleEmitter::resetEmissionCycle(bool resetParticles) {
+    std::shared_ptr<VRONode> emitterNode = _particleEmitterNodeWeak.lock();
+    if (emitterNode == nullptr) {
+        return;
+    }
+
     if (resetParticles) {
         _particles.clear();
         _zombieParticles.clear();
     }
 
+    // Restart delay times
+    _emitterStartTimeMs = -1;
+    _emitterDelayStartTime = -1;
+
     // Restart emitter times
-    _emitterStartTimeMs = VROTimeCurrentMillis();
     _emitterTotalPassedTime = 0;
     _emitterPassedTimeSoFar = 0;
 
     // Restart location references for this emitter.
     _emitterTotalPassedDistance = 0;
     _emitterPassedDistanceSoFar = 0;
-    _emitterStartLocation = currentLocation;
+    _emitterStartLocation = emitterNode->getComputedPosition();
 
     // Restart this emitter's scheduled particle burst animation.
     std::vector<VROParticleBurst> copyBurst(_bursts);
     _scheduledBurst = copyBurst;
-
 }
 
 void VROParticleEmitter::updateParticles(double currentTime,
                                          const VRORenderContext &context,
-                                         std::shared_ptr<VRONode> emitterNode) {
+                                         std::shared_ptr<VRONode> emitterNode,
+                                            bool isCurrentlyDelayed) {
     updateParticlePhysics(currentTime);
     updateParticleAppearance(currentTime);
     updateParticlesToBeKilled(currentTime);
-    if (!finishedEmissionCycle()) {
+
+    // Do not spawn if the emitter is in delay mode, or if !_run, or if we have finished
+    // an emission cycle.
+    if (!isCurrentlyDelayed && _run && !finishedEmissionCycle()) {
         updateParticleSpawn(currentTime, emitterNode->getComputedTransform().extractTranslation());
     }
+
     updateZombieParticles(currentTime);
 
     // Finally calculate and billboard the updated particle's world transform before rendering.

@@ -114,6 +114,10 @@ private:
      Sets a list of VROModifierInterval values that will be used by this VROParticleModifier.
      */
     void setInterpolatedPoints(std::vector<VROModifierInterval> values) {
+        if (values.size() == 0 ){
+            return;
+        }
+
         std::sort(values.begin(), values.end());
         for (int i = 0; i < values.size() - 1; i ++) {
             if (values[i].endFactor > values[i + 1].startFactor

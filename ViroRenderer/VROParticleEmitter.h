@@ -66,6 +66,10 @@ public:
         _duration = duration;
     }
 
+    void setDelay(double delay) {
+        _emitterDelayDuration = delay;
+    }
+
     void setLoop(bool loop) {
         _loop = loop;
     }
@@ -98,7 +102,7 @@ public:
     /*
      Reset back to the beginning of the emission cycle for this emitter.
      */
-    void resetEmissionCycle(bool resetParticles, VROVector3f currentPos);
+    void resetEmissionCycle(bool resetParticles);
 
     /*
      Used for constructing the behavior of how bursts of particles spawn.
@@ -252,6 +256,24 @@ private:
 
 #pragma mark - Emitter Attributes
     /*
+     Length of time in milliseconds this emitter delays before emitting particles.
+     Note that this will not be include in _duration.
+     */
+    double _emitterDelayDuration = -1;
+
+    /*
+     Time at which we have started the delay, used for tracking the delay status by
+     checking against: _emitterDelayStartTime + _emitterDelayTimePassedSoFar > currentTime.
+     */
+    double _emitterDelayStartTime = -1;
+
+    /*
+     Length of delay time left before emitting particles. This is reset to _emitterDelayDuration
+     but is manipulated / subtracted to track remaining delay time as the emitter is paused/resumed.
+     */
+    double _emitterDelayTimePassedSoFar = 0;
+
+    /*
      Total time that has passed since the beginning of this emitter's emission cycle.
      */
     double _emitterTotalPassedTime = 0;
@@ -333,6 +355,12 @@ private:
      */
     void updateEmitter(double currentTime, std::shared_ptr<VRONode> emitterNode);
 
+    /*
+     Processes any delay period left on this particle emitter's current emit cycle.
+     Returns true if any delay was processed, false otherwise.
+     */
+    bool processDelay(double currentTime);
+
 #pragma mark - Particle Attributes
 
     /*
@@ -340,7 +368,7 @@ private:
      of the particle.
      */
     void updateParticles(double currentTime, const VRORenderContext &context,
-                         std::shared_ptr<VRONode> emitterNode);
+                         std::shared_ptr<VRONode> emitterNode, bool isCurrentlyDelayed);
     void updateParticlePhysics(double currentTime);
     void updateParticleAppearance(double currentTime);
     void updateParticlesToBeKilled(double currentTime);
