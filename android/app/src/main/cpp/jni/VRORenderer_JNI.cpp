@@ -87,8 +87,7 @@ JNI_METHOD(void, nativeInitializeGl)(JNIEnv *env,
         sample = std::make_shared<VROSample>();
         sceneRenderer->setRenderDelegate(sample);
         sceneRenderer->setSceneController(
-                sample->loadBoxScene(sceneRenderer->getFrameSynchronizer(),
-                                     sceneRenderer->getDriver()));
+                sample->loadShadowScene(sceneRenderer->getDriver()));
     }
     sceneRenderer->initGL();
 }

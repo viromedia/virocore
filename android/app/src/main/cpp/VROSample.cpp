@@ -29,12 +29,168 @@ void VROSample::setupRendererWithDriver(std::shared_ptr<VRODriver> driver) {
 
 }
 
-std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
-                                                            std::shared_ptr<VRODriver> driver) {
+std::shared_ptr<VROSceneController> VROSample::loadShadowScene(std::shared_ptr<VRODriver> driver) {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
 
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
+    rootNode->setPosition({0, 0, 0});
 
+    std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
+    ambient->setColor({0.3, 0.3, 0.3});
+
+    std::shared_ptr<VROLight> spotRed = std::make_shared<VROLight>(VROLightType::Spot);
+    spotRed->setColor({1.0, 0.2, 0.2});
+    spotRed->setPosition({5, 5, -3});
+    spotRed->setDirection({-.25, -1.0, 0});
+    spotRed->setAttenuationStartDistance(20);
+    spotRed->setAttenuationEndDistance(30);
+    spotRed->setSpotInnerAngle(15);
+    spotRed->setSpotOuterAngle(10);
+    spotRed->setShadowNearZ(1);
+    spotRed->setShadowFarZ(10);
+    spotRed->setCastsShadow(true);
+
+    std::shared_ptr<VROLight> spotBlue = std::make_shared<VROLight>(VROLightType::Spot);
+    spotBlue->setColor({0.2, 0.2, 1.0});
+    spotBlue->setPosition({-3, 5, -5});
+    spotBlue->setDirection({0.25, -1.0, 0});
+    spotBlue->setShadowNearZ(1);
+    spotBlue->setShadowFarZ(10);
+
+    spotBlue->setAttenuationStartDistance(20);
+    spotBlue->setAttenuationEndDistance(30);
+    spotBlue->setSpotInnerAngle(30);
+    spotBlue->setSpotOuterAngle(15);
+    spotBlue->setCastsShadow(true);
+
+    rootNode->addLight(ambient);
+    rootNode->addLight(spotRed);
+    rootNode->addLight(spotBlue);
+
+    VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
+
+    std::shared_ptr<VROTexture> bobaTexture = std::make_shared<VROTexture>(format, true,
+                                                                           VROMipmapMode::Runtime,
+                                                                           VROPlatformLoadImageFromAsset("boba.png", format));
+    bobaTexture->setWrapS(VROWrapMode::Repeat);
+    bobaTexture->setWrapT(VROWrapMode::Repeat);
+    bobaTexture->setMinificationFilter(VROFilterMode::Linear);
+    bobaTexture->setMagnificationFilter(VROFilterMode::Linear);
+    bobaTexture->setMipFilter(VROFilterMode::Linear);
+
+    std::shared_ptr<VROBox> box = VROBox::createBox(0.5, 1.0, 0.5);
+    box->setName("Box 1");
+
+    std::shared_ptr<VROMaterial> material = box->getMaterials()[0];
+    material->setLightingModel(VROLightingModel::Blinn);
+    material->getDiffuse().setTexture(bobaTexture);
+    material->getDiffuse().setColor({1.0, 1.0, 1.0, 1.0});
+
+    std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
+    boxNode->setGeometry(box);
+    boxNode->setPosition({0, 0, -6});
+    rootNode->addChildNode(boxNode);
+
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(40, 40);
+    surface->setName("Surface");
+    surface->getMaterials().front()->setLightingModel(VROLightingModel::Lambert);
+
+    std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
+    surfaceNode->setGeometry(surface);
+    surfaceNode->setRotationEuler({-M_PI_2, 0, 0});
+    surfaceNode->setPosition({0, -3, -6});
+    surfaceNode->setOpacity(0.8);
+    rootNode->addChildNode(surfaceNode);
+
+    VROTransaction::begin();
+    VROTransaction::setAnimationDuration(10);
+
+    boxNode->setPositionX(2);
+    boxNode->setPositionZ(-2.75);
+    boxNode->setPositionY(-2.75);
+    boxNode->setRotationEulerX(M_PI_2);
+
+    VROTransaction::commit();
+    return sceneController;
+}
+
+std::shared_ptr<VROSceneController> VROSample::loadHDRScene(std::shared_ptr<VRODriver> driver) {
+    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROScene> scene = sceneController->getScene();
+
+    std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
+    rootNode->setPosition({0, 0, 0});
+
+    VROVector3f lightPositions[4] = {
+            {  0.0,  0.0, -49.5 },
+            { -1.4, -1.9, -9.0 },
+            {  0.0, -1.8, -4.0 },
+            {  0.8, -1.7, -6.0 },
+    };
+    VROVector3f lightColors[4] = {
+            { 200, 200, 200 },
+            { 0.1, 0.0, 0.0 },
+            { 0.0, 0.0, 0.2 },
+            { 0.0, 0.1, 0.0 },
+    };
+
+    for (int i = 0; i < 4; i++) {
+        std::shared_ptr<VROLight> light = std::make_shared<VROLight>(VROLightType::Omni);
+        light->setColor(lightColors[i]);
+        light->setPosition(lightPositions[i]);
+        light->setAttenuationStartDistance(0);
+        light->setAttenuationEndDistance(40);
+        rootNode->addLight(light);
+    }
+
+    VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
+    std::shared_ptr<VROTexture> woodTexture = std::make_shared<VROTexture>(format, true, VROMipmapMode::Runtime,
+                                                                           VROPlatformLoadImageFromAsset("wood.png", format));
+    woodTexture->setWrapS(VROWrapMode::Repeat);
+    woodTexture->setWrapT(VROWrapMode::Repeat);
+    woodTexture->setMinificationFilter(VROFilterMode::Linear);
+    woodTexture->setMagnificationFilter(VROFilterMode::Linear);
+    woodTexture->setMipFilter(VROFilterMode::Linear);
+
+    /*
+     Create 5 surfaces surrounding the user.
+     */
+    VROVector3f surfaceRotation[5] = {
+            { 0, M_PI_2, 0},
+            { 0, -M_PI_2, 0 },
+            { M_PI_2, 0, 0},
+            { -M_PI_2, 0, 0},
+            { 0, 0, 0 },
+    };
+
+    float width = 2.5;
+    VROVector3f surfacePosition[5] = {
+            { -width, 0, 0 },
+            {  width, 0, 0 },
+            {  0, width, 0 },
+            {  0, -width, 0},
+            { 0, 0, -52.5 }
+    };
+
+    for (int i = 0; i < 5; i++) {
+        std::shared_ptr<VROSurface> surface = VROSurface::createSurface(40, 40);
+        surface->setName("Surface");
+        surface->getMaterials().front()->setLightingModel(VROLightingModel::Lambert);
+        surface->getMaterials().front()->getDiffuse().setTexture(woodTexture);
+
+        std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
+        surfaceNode->setGeometry(surface);
+        surfaceNode->setRotationEuler(surfaceRotation[i]);
+        surfaceNode->setPosition(surfacePosition[i]);
+        surfaceNode->setOpacity(1.0);
+        rootNode->addChildNode(surfaceNode);
+    }
+    return sceneController;
+}
+
+std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VRODriver> driver) {
     _driver = driver;
-    frameSynchronizer->addFrameListener(shared_from_this());
 
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
@@ -72,13 +228,14 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
     VROPlatformCopyAssetToFile("aliengirl_normal.png");
     VROPlatformCopyAssetToFile("aliengirl_specular.png");
 
-    std::shared_ptr<VRONode> heartNode = VROFBXLoader::loadFBXFromFile(heartPath, heartBase, true, [format](std::shared_ptr<VRONode> node, bool success) {
+    std::shared_ptr<VRONode> heartNode = VROFBXLoader::loadFBXFromFile(heartPath, heartBase, true, [format, this](std::shared_ptr<VRONode> node, bool success) {
         if (!success) {
             return;
         }
 
         node->setScale({.04, .04, .04});
-        node->setPosition({0, 2, -6});
+        node->setPosition({-6, -2, 0});
+        animateTake(node);
     });
 
     _objAngle = 0;
@@ -89,7 +246,6 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROF
         return true;
     });
     heartNode->runAction(action);
-    animateTake(heartNode);
 
     rootNode->addChildNode(heartNode);
 
@@ -199,12 +355,4 @@ std::shared_ptr<VROTexture> VROSample::getNiagaraTexture() {
     };
 
     return std::make_shared<VROTexture>(format, true, cubeImages);
-}
-
-void VROSample::onFrameWillRender(const VRORenderContext &context) {
-
-}
-
-void VROSample::onFrameDidRender(const VRORenderContext &context) {
-
 }
