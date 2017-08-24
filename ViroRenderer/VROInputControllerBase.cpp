@@ -60,7 +60,6 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
         return;
     }
 
-
     VROVector3f hitLoc = _hitResult->getLocation();
     std::vector<float> pos = {hitLoc.x, hitLoc.y, hitLoc.z};
     if (_hitResult->isBackgroundHit()) {
@@ -132,7 +131,7 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
         // Grab the forwardOffset (delta from the controller's forward in reference to the user).
         draggedObject->_forwardOffset = getDragForwardOffset();
 
-        _lastDraggedNode  = draggedObject;
+        _lastDraggedNode = draggedObject;
     }
 }
 
@@ -272,7 +271,7 @@ void VROInputControllerBase::onRotate(int source, float rotationFactor, VROEvent
 }
 
 void VROInputControllerBase::updateHitNode(const VROCamera &camera, VROVector3f origin, VROVector3f ray) {
-    if (_scene == nullptr) {
+    if (_scene == nullptr || _lastDraggedNode != nullptr) {
         return;
     }
 

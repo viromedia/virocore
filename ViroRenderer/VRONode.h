@@ -508,7 +508,6 @@ public:
     }
 
     void setIsBeingDragged(bool isDragging) {
-        _selectable = !isDragging;
         std::shared_ptr<VROPhysicsBody> physicsBody = getPhysicsBody();
         if (physicsBody != nullptr) {
             physicsBody->setKinematicDrag(isDragging);
