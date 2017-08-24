@@ -337,6 +337,20 @@ public:
     uint32_t getComputedLightsHash() const {
         return _computedLightsHash;
     }
+    
+    void setLightBitMask(int bitMask) {
+        _lightBitMask = bitMask;
+    }
+    int getLightBitMask() const {
+        return _lightBitMask;
+    }
+    
+    void setShadowCastingBitMask(int bitMask) {
+        _shadowCastingBitMask = bitMask;
+    }
+    int getShadowCastingBitMask() const {
+        return _shadowCastingBitMask;
+    }
 
 #pragma mark - Sounds
     
@@ -726,10 +740,21 @@ private:
     bool hitTestGeometry(VROVector3f origin, VROVector3f ray, VROMatrix4f transform);
     
     /*
-     If the portal is inside-out, meaning during the last renderStencil() we wrote its parent's
-     stencil bits, then this is true.
+     The light and shadow bit masks. These are logically ANDed with each light's
+     influence bit mask.
+     
+     If the result is non-zero for the light bit mask, then the light will illuminate
+     the node. If the result is zero, then this node will be excluded from the light's
+     illumination, including receipt of that light's shadows.
+     
+     If the AND result is non-zero for the shadow casting bit map, then the node
+     will be cast shadows from the light (e.g. it will be rendered to that light's
+     shadow map). If the result is zero, it will not cast shadows from said light.
+     
+     These both default to 1.
      */
-    bool _portalInsideOut;
+    int _lightBitMask;
+    int _shadowCastingBitMask;
 
     /*
      Physics rigid body that if defined, drives and sets the transformations of this node.

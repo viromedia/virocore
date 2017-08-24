@@ -1506,6 +1506,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();
     boxNode->setGeometry(box);
     boxNode->setPosition({ 0, 0, -3 });
+    boxNode->setShadowCastingBitMask(2);
     rootNode->addChildNode(boxNode);
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -1536,12 +1537,14 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
      */
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(80, 80);
     surface->setName("Surface");
+    //surface->getMaterials().front()->setLightingModel(VROLightingModel::Lambert);
     VROARShadow::apply(surface->getMaterials().front());
     
     std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
     surfaceNode->setGeometry(surface);
     surfaceNode->setRotationEuler({ -M_PI_2, 0, 0 });
     surfaceNode->setPosition({0, -3, -6});
+    surfaceNode->setLightBitMask(1);
     rootNode->addChildNode(surfaceNode);
     
     self.delegate = std::make_shared<VROEventDelegateiOS>(self);

@@ -58,7 +58,8 @@ VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
     _selectable(true),
     _highAccuracyGaze(false),
     _hierarchicalRendering(false),
-    _portalInsideOut(false) {
+    _lightBitMask(1),
+    _shadowCastingBitMask(1) {
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
 
@@ -80,7 +81,8 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _selectable(node._selectable),
     _highAccuracyGaze(node._highAccuracyGaze),
     _hierarchicalRendering(node._hierarchicalRendering),
-    _portalInsideOut(false) {
+    _lightBitMask(node._lightBitMask),
+    _shadowCastingBitMask(node._shadowCastingBitMask) {
         
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -203,7 +205,8 @@ void VRONode::updateSortKeys(uint32_t depth,
     
     _computedLights.clear();
     for (std::shared_ptr<VROLight> &light : lights) {
-        if (_computedBoundingBox.getDistanceToPoint(light->getTransformedPosition()) < light->getAttenuationEndDistance()) {
+        if ((light->getInfluenceBitMask() & _lightBitMask) != 0 &&
+            _computedBoundingBox.getDistanceToPoint(light->getTransformedPosition()) < light->getAttenuationEndDistance()) {
             _computedLights.push_back(light);
         }
     }

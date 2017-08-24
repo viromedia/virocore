@@ -34,7 +34,8 @@ VROLight::VROLight(VROLightType type) :
     _shadowOrthographicScale(10),
     _shadowNearZ(0.1),
     _shadowFarZ(20),
-    _shadowMapIndex(-1) {
+    _shadowMapIndex(-1),
+    _influenceBitMask(1) {
     
 }
 

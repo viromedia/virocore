@@ -80,15 +80,17 @@ VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene
     // Render static objects
     _silhouetteStaticMaterial->bindShader(0, {}, driver);
     _silhouetteStaticMaterial->bindProperties(driver);
-    render(treeNodes, target, _silhouetteStaticMaterial, [](const VRONode &node)->bool {
-        return node.getGeometry() != nullptr && node.getGeometry()->getSkinner().get() == nullptr;
+    render(treeNodes, target, _silhouetteStaticMaterial, [this](const VRONode &node)->bool {
+        return (_light->getInfluenceBitMask() & node.getShadowCastingBitMask()) != 0 &&
+                node.getGeometry() != nullptr && node.getGeometry()->getSkinner().get() == nullptr;
     }, *context, driver);
     
     // Render skeletal animation objects
     _silhouetteSkeletalMaterial->bindShader(0, {}, driver);
     _silhouetteSkeletalMaterial->bindProperties(driver);
-    render(treeNodes, target, _silhouetteSkeletalMaterial, [](const VRONode &node)->bool {
-        return node.getGeometry() != nullptr && node.getGeometry()->getSkinner().get() != nullptr;
+    render(treeNodes, target, _silhouetteSkeletalMaterial, [this](const VRONode &node)->bool {
+        return (_light->getInfluenceBitMask() & node.getShadowCastingBitMask()) != 0 &&
+                node.getGeometry() != nullptr && node.getGeometry()->getSkinner().get() != nullptr;
     }, *context, driver);
     
     // Store generated shadow map properties in the VROLight
