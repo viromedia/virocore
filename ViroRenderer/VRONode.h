@@ -200,6 +200,7 @@ public:
     VROVector3f getComputedPosition() const;
     VROMatrix4f getComputedRotation() const;
     VROMatrix4f getComputedTransform() const;
+    VROMatrix4f getLastComputedTransform() const;
 
     VROVector3f getPosition() const {
         return _position;
@@ -626,6 +627,12 @@ private:
     uint32_t _computedLightsHash;
     VROVector3f _computedPosition;
     std::weak_ptr<VROTransformDelegate> _transformDelegate;
+
+    /*
+     Because _computedTransform is computed multiple times during a single render, storing
+     the last fully computed transform is necessary to retrieve a "valid" computedTransform.
+     */
+    VROMatrix4f _lastComputedTransform;
 
     /*
      The transformed bounding box containing this node's geometry. The 

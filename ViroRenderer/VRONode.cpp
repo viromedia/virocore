@@ -59,7 +59,8 @@ VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
     _highAccuracyGaze(false),
     _hierarchicalRendering(false),
     _lightBitMask(1),
-    _shadowCastingBitMask(1) {
+    _shadowCastingBitMask(1),
+    _lastComputedTransform(VROMatrix4f()) {
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
 
@@ -82,7 +83,8 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _highAccuracyGaze(node._highAccuracyGaze),
     _hierarchicalRendering(node._hierarchicalRendering),
     _lightBitMask(node._lightBitMask),
-    _shadowCastingBitMask(node._shadowCastingBitMask) {
+    _shadowCastingBitMask(node._shadowCastingBitMask),
+    _lastComputedTransform(VROMatrix4f()) {
         
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -414,6 +416,12 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
     }
     
     /*
+     Now that _computedTransform has finished computing, save it so that others outside can query for it.
+     */
+    _lastComputedTransform.copy(_computedTransform);
+    VROVector3f rotation = _lastComputedTransform.extractRotation(_lastComputedTransform.extractScale()).toEuler();
+
+    /*
      Move down the tree.
      */
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {
@@ -500,6 +508,10 @@ VROMatrix4f VRONode::getComputedRotation() const {
 
 VROMatrix4f VRONode::getComputedTransform() const {
     return _computedTransform;
+}
+
+VROMatrix4f VRONode::getLastComputedTransform() const {
+    return _lastComputedTransform;
 }
 
 #pragma mark - Portals
