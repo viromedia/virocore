@@ -15,6 +15,7 @@
 #include <string>
 #include <set>
 #include <algorithm>
+#include <functional>
 #include "optional.hpp"
 #include "VROMatrix4f.h"
 #include "VROQuaternion.h"
@@ -54,12 +55,6 @@ enum class VRONodeType {
 enum class VROSilhouetteMode {
     Flat,             // Render silhouettes with constant lighting, no textures
     Textured,         // Render silhouettes with constant lighting and textures
-};
-
-enum class VROSilhouetteFilter {
-    Static,           // Render silhouettes of static objects only
-    Skeletal,         // Render silhouettes of objects with skeletal animation only
-    None              // Render all silhouettes
 };
 
 class VRONode : public VROAnimatable, public VROThreadRestricted {
@@ -172,11 +167,12 @@ public:
      If mode is set to Textured, then textures will be bound. This method is typically
      used to render to the stencil or depth buffers only.
      
-     The VROSilhouetteFilter is used to only render the silhouettes of specific objects.
-     If we filter to render objects with skeletal animation, we should provide a material
-     with the appropriate skeletal animation modifiers.
+     The filter is used to only render the silhouettes of specific objects. Returns
+     true on each node to render, false to not. Either way we continue down the tree
+     recursively.
      */
-    void renderSilhouettes(std::shared_ptr<VROMaterial> &material, VROSilhouetteMode mode, VROSilhouetteFilter filter,
+    void renderSilhouettes(std::shared_ptr<VROMaterial> &material, VROSilhouetteMode mode,
+                           std::function<bool(const VRONode&)> filter,
                            const VRORenderContext &context, std::shared_ptr<VRODriver> &driver);
     
 #pragma mark - Geometry

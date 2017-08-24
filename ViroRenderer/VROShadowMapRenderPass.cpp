@@ -80,12 +80,16 @@ VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene
     // Render static objects
     _silhouetteStaticMaterial->bindShader(0, {}, driver);
     _silhouetteStaticMaterial->bindProperties(driver);
-    render(treeNodes, target, _silhouetteStaticMaterial, VROSilhouetteFilter::Static, *context, driver);
+    render(treeNodes, target, _silhouetteStaticMaterial, [](const VRONode &node)->bool {
+        return node.getGeometry() != nullptr && node.getGeometry()->getSkinner().get() == nullptr;
+    }, *context, driver);
     
     // Render skeletal animation objects
     _silhouetteSkeletalMaterial->bindShader(0, {}, driver);
     _silhouetteSkeletalMaterial->bindProperties(driver);
-    render(treeNodes, target, _silhouetteSkeletalMaterial, VROSilhouetteFilter::Skeletal, *context, driver);
+    render(treeNodes, target, _silhouetteSkeletalMaterial, [](const VRONode &node)->bool {
+        return node.getGeometry() != nullptr && node.getGeometry()->getSkinner().get() != nullptr;
+    }, *context, driver);
     
     // Store generated shadow map properties in the VROLight
     _light->setShadowViewMatrix(shadowView);
@@ -105,7 +109,7 @@ VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene
 void VROShadowMapRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes,
                                     std::shared_ptr<VRORenderTarget> &target,
                                     std::shared_ptr<VROMaterial> material,
-                                    VROSilhouetteFilter filter,
+                                    std::function<bool(const VRONode&)> filter,
                                     const VRORenderContext &context,
                                     std::shared_ptr<VRODriver> &driver) {
     

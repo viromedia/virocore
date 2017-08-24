@@ -12,7 +12,10 @@
 #include "VRORenderPass.h"
 #include "VROMatrix4f.h"
 #include "VROTree.h"
+#include <functional>
+#include <memory>
 
+class VRONode;
 class VROPortal;
 class VROLight;
 class VROMaterial;
@@ -64,7 +67,7 @@ private:
     void render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes,
                 std::shared_ptr<VRORenderTarget> &target,
                 std::shared_ptr<VROMaterial> material,
-                VROSilhouetteFilter filter,
+                std::function<bool(const VRONode &)> filter,
                 const VRORenderContext &context,
                 std::shared_ptr<VRODriver> &driver);
     

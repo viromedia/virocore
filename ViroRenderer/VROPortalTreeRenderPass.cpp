@@ -101,7 +101,7 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
             // by the parent portal. Clip the rest (we don't want a portal
             // within a portal to bleed outside of its parent).
             target->setStencilPassBits(portalFrame->getActiveFace(isExit), portal->getRecursionLevel() - 1, false);
-            portal->renderPortalSilhouette(_silhouetteMaterial, VROSilhouetteMode::Textured, VROSilhouetteFilter::None,
+            portal->renderPortalSilhouette(_silhouetteMaterial, VROSilhouetteMode::Textured, nullptr,
                                            context, driver);
             
             driver->unbindShader();
@@ -145,7 +145,7 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
             driver->setColorWritingEnabled(false);
             target->enablePortalStencilRemoval(portalFrame->getActiveFace(isExit));
             target->setStencilPassBits(portalFrame->getActiveFace(isExit), portal->getRecursionLevel(), true);
-            portal->renderPortalSilhouette(_silhouetteMaterial, VROSilhouetteMode::Textured, VROSilhouetteFilter::None,
+            portal->renderPortalSilhouette(_silhouetteMaterial, VROSilhouetteMode::Textured, nullptr,
                                            context, driver);
             driver->unbindShader();
             pglpop();

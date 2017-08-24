@@ -132,13 +132,10 @@ void VRONode::render(const VRORenderContext &context, std::shared_ptr<VRODriver>
 }
 
 void VRONode::renderSilhouettes(std::shared_ptr<VROMaterial> &material,
-                                VROSilhouetteMode mode, VROSilhouetteFilter filter,
+                                VROSilhouetteMode mode, std::function<bool(const VRONode&)> filter,
                                 const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
     if (_geometry) {
-        if ((filter == VROSilhouetteFilter::None) ||
-            (filter == VROSilhouetteFilter::Static && _geometry->getSkinner().get() == nullptr) ||
-            (filter == VROSilhouetteFilter::Skeletal && _geometry->getSkinner().get() != nullptr)) {
-
+        if (!filter || filter(*this)) {
             if (mode == VROSilhouetteMode::Flat) {
                 _geometry->renderSilhouette(_computedTransform, material, context, driver);
             }
