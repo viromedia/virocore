@@ -19,6 +19,7 @@
 #include <android/native_window_jni.h>	// for native window JNI
 #include <android/input.h>
 #include "VROPlatformUtil.h"
+#include "VRODriverOpenGLAndroidOVR.h"
 #include "VROAllocationTracker.h"
 
 #include <EGL/egl.h>
@@ -359,7 +360,7 @@ ovrFramebuffer
 ================================================================================
 */
 
-typedef struct
+struct ovrFramebuffer
 {
     int						Width;
     int						Height;
@@ -370,7 +371,7 @@ typedef struct
     ovrTextureSwapChain *	ColorTextureSwapChain;
     GLuint *				DepthBuffers;
     GLuint *				FrameBuffers;
-} ovrFramebuffer;
+};
 
 static void ovrFramebuffer_Clear( ovrFramebuffer * frameBuffer )
 {
@@ -751,17 +752,19 @@ static ovrFrameParms ovrRenderer_RenderFrame( ovrRenderer * rendererOVR, const o
         // for each eye (updates orientation, not position)
         ovrFramebuffer * frameBuffer = &rendererOVR->FrameBuffer[eye];
         ovrFramebuffer_SetCurrent( frameBuffer );
+        std::dynamic_pointer_cast<VRODisplayOpenGLOVR>(driver->getDisplay())->setFrameBuffer(frameBuffer);
 
         GL( glEnable( GL_SCISSOR_TEST ) );
         GL( glScissor(  0, 0, frameBuffer->Width, frameBuffer->Height ) );
         GL( glViewport( 0, 0, frameBuffer->Width, frameBuffer->Height ) );
 
-        GL( glEnable( GL_DEPTH_TEST ) );
+        GL( glEnable(GL_DEPTH_TEST) );
+        GL( glEnable(GL_STENCIL_TEST) );
         GL( glEnable(GL_BLEND) );
         GL( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
 
         GL( glClearColor( 0.0f, 0.0f, 0.0f, 1.0f ) );
-        GL( glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ) );
+        GL( glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT ) );
 
         VROEyeType eyeType = (eye == VRAPI_FRAME_LAYER_EYE_LEFT) ? VROEyeType::Left : VROEyeType::Right;
 
@@ -1407,7 +1410,7 @@ Activity lifecycle
 VROSceneRendererOVR::VROSceneRendererOVR(std::shared_ptr<gvr::AudioApi> gvrAudio,
                                          jobject view, jobject activity, JNIEnv *env) {
     _renderer = std::make_shared<VRORenderer>(std::make_shared<VROInputControllerOVR>());
-    _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
+    _driver = std::make_shared<VRODriverOpenGLAndroidOVR>(gvrAudio);
 
     ALOGV( "    GLES3JNILib::onCreate()" );
 

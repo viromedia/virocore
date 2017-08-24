@@ -12,6 +12,12 @@
 #include <memory>
 
 struct ovrAppThread;
+struct ovrFramebuffer;
+
+/*
+ Externally invoked by VRODisplayOpenGLOVR to bind OVR framebuffers.
+ */
+static void ovrFramebuffer_SetCurrent(ovrFramebuffer *frameBuffer);
 
 class VROSceneRendererOVR : public VROSceneRenderer {
 
