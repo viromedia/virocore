@@ -145,6 +145,14 @@ public:
         _boundShader = program;
     }
     
+    void unbindShader() {
+        if (_boundShader != nullptr) {
+            _boundShader.reset();
+            pglpop();
+            VROShaderProgram::unbind();
+        }
+    }
+    
     virtual bool isGammaCorrectionEnabled() {
         return true;
     }

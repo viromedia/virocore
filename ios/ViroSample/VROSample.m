@@ -1696,7 +1696,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleSceneFBX;
+    self.sceneIndex = VROSampleScenePortal;
     self.driver = driver;
     
     self.sceneController = [self loadSceneWithIndex:self.sceneIndex];

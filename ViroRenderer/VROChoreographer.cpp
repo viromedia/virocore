@@ -141,7 +141,7 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
         inputs[kRenderTargetSingleOutput] = _shadowTarget;
         shadowPass->render(scene, inputs, context, driver);
         
-        driver->bindShader(nullptr);
+        driver->unbindShader();
         pglpop();
         
         ++i;
@@ -169,7 +169,6 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
         // Render the scene to the floating point HDR target
         inputs[kRenderTargetSingleOutput] = _hdrTarget;
         _baseRenderPass->render(scene, inputs, context, driver);
-        driver->bindShader(nullptr);
         
         if (_renderToTexture) {
             // Perform tone-mapping with gamma correction, store in _blitTarget
@@ -196,7 +195,6 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
     else if (_renderToTexture) {
         inputs[kRenderTargetSingleOutput] = _blitTarget;
         _baseRenderPass->render(scene, inputs, context, driver);
-        driver->bindShader(nullptr);
         
         // The rendered image is upside-down and gamma-corrected in the
         // blitTarget. The back-buffer actually wants it upside-down, but for RTT
@@ -214,7 +212,6 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
         // Render to the display directly
         inputs[kRenderTargetSingleOutput] = driver->getDisplay();
         _baseRenderPass->render(scene, inputs, context, driver);
-        driver->bindShader(nullptr);
     }
 }
 

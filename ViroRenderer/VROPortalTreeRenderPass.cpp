@@ -103,6 +103,8 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
             target->setStencilPassBits(portalFrame->getActiveFace(isExit), portal->getRecursionLevel() - 1, false);
             portal->renderPortalSilhouette(_silhouetteMaterial, VROSilhouetteMode::Textured, VROSilhouetteFilter::None,
                                            context, driver);
+            
+            driver->unbindShader();
             pglpop();
         }
         
@@ -129,6 +131,7 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
         target->setStencilPassBits(VROFace::FrontAndBack, portal->getRecursionLevel(), true);
         portal->renderBackground(context, driver);
         portal->renderContents(context, driver);
+        driver->unbindShader();
         pglpop();
         
         if (portalFrame) {
@@ -144,6 +147,7 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
             target->setStencilPassBits(portalFrame->getActiveFace(isExit), portal->getRecursionLevel(), true);
             portal->renderPortalSilhouette(_silhouetteMaterial, VROSilhouetteMode::Textured, VROSilhouetteFilter::None,
                                            context, driver);
+            driver->unbindShader();
             pglpop();
             
             // Finally, render the portal frame to the color and depth buffers.
@@ -152,6 +156,7 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
             target->disablePortalStencilWriting(VROFace::FrontAndBack);
             target->setStencilPassBits(portalFrame->getActiveFace(isExit), portal->getRecursionLevel() - 1, true);
             portal->renderPortal(context, driver);
+            driver->unbindShader();
             pglpop();
         }
         
