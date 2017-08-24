@@ -87,6 +87,12 @@ void VROShaderFactory::purgeUnusedShaders(const VROFrameTimer &timer, bool force
 
 VROMaterialShaderCapabilities VROShaderFactory::deriveMaterialCapabilitiesKey(const VROMaterial &material) {
     VROMaterialShaderCapabilities cap;
+    cap.diffuseEGLModifier = false;
+    cap.specularTexture = false;
+    cap.normalTexture = false;
+    cap.reflectiveTexture = false;
+    cap.diffuseTextureStereoMode = VROStereoMode::None;
+    
     cap.additionalModifierKeys = VROShaderModifier::getShaderModifierKey(material.getShaderModifiers());
     
     VROLightingModel lightingModel = material.getLightingModel();
@@ -462,7 +468,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createLambertLightingModifi
      */
     if (!sLambertLightingModifier) {
         std::vector<std::string> modifierCode = {
-            "highp float diffuse_coeff = max(0.0, dot(-_surface.normal, _light.surface_to_light));",
+            "highp float diffuse_coeff = max(0.0, dot(_surface.normal, _light.surface_to_light));",
             "_lightingContribution.diffuse += (_light.attenuation * diffuse_coeff * _light.color);",
         };
         
@@ -479,12 +485,12 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createPhongLightingModifier
      */
     if (!sPhongLightingModifier) {
         std::vector<std::string> modifierCode = {
-            "highp float diffuse_coeff = max(0.0, dot(-_surface.normal, _light.surface_to_light));",
+            "highp float diffuse_coeff = max(0.0, dot(_surface.normal, _light.surface_to_light));",
             "_lightingContribution.diffuse += (_light.attenuation * diffuse_coeff * _light.color);",
             "lowp float specular_coeff = 0.0;",
             "if (diffuse_coeff > 0.0) {",
             "    specular_coeff = pow(max(0.0, dot(_surface.view,",
-            "                                      reflect(_light.surface_to_light, -_surface.normal))),",
+            "                                      reflect(-_light.surface_to_light, _surface.normal))),",
             "                         _surface.shininess);",
             "}",
             "_lightingContribution.specular += (_light.attenuation * specular_coeff * _light.color);",
@@ -503,12 +509,12 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createBlinnLightingModifier
      */
     if (!sBlinnLightingModifier) {
         std::vector<std::string> modifierCode = {
-            "highp float diffuse_coeff = max(0.0, dot(-_surface.normal, _light.surface_to_light));",
+            "highp float diffuse_coeff = max(0.0, dot(_surface.normal, _light.surface_to_light));",
             "_lightingContribution.diffuse += (_light.attenuation * diffuse_coeff * _light.color);",
             "lowp float specular_coeff = 0.0;",
             "if (diffuse_coeff > 0.0) {",
-            "    specular_coeff = pow(max(0.0, dot(normalize(-_surface.view + _light.surface_to_light),",
-            "                                      -_surface.normal)),",
+            "    specular_coeff = pow(max(0.0, dot(normalize(_surface.view + _light.surface_to_light),",
+            "                                      _surface.normal)),",
             "                         _surface.shininess);",
             "}",
             "_lightingContribution.specular += (_light.attenuation * specular_coeff * _light.color);",
