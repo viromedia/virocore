@@ -19,6 +19,7 @@ class VROMaterial;
 class VRORenderTarget;
 class VRORenderContext;
 class VROShaderModifier;
+enum class VROSilhouetteFilter;
 
 /*
  Setting this to true enable shadow map debug mode. This will:
@@ -47,7 +48,8 @@ private:
     /*
      Material used to render silhouettes of objects to the scene.
      */
-    std::shared_ptr<VROMaterial> _silhouetteMaterial;
+    std::shared_ptr<VROMaterial> _silhouetteStaticMaterial;
+    std::shared_ptr<VROMaterial> _silhouetteSkeletalMaterial;
     
     /*
      The light casting the shadow.
@@ -61,6 +63,8 @@ private:
      */
     void render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes,
                 std::shared_ptr<VRORenderTarget> &target,
+                std::shared_ptr<VROMaterial> material,
+                VROSilhouetteFilter filter,
                 const VRORenderContext &context,
                 std::shared_ptr<VRODriver> &driver);
     

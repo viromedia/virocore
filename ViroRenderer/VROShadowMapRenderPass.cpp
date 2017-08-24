@@ -19,6 +19,7 @@
 #include "VROPortalFrame.h"
 #include "VROShaderModifier.h"
 #include "VROPencil.h"
+#include "VROBoneUBO.h"
 #include "VROFieldOfView.h"
 
 // Shader modifier used for writing to depth buffer
@@ -38,11 +39,18 @@ VROShadowMapRenderPass::VROShadowMapRenderPass(const std::shared_ptr<VROLight> l
                                                std::shared_ptr<VRODriver> driver) :
 
     _light(light) {
-    _silhouetteMaterial = std::make_shared<VROMaterial>();
-    _silhouetteMaterial->setWritesToDepthBuffer(true);
-    _silhouetteMaterial->setReadsFromDepthBuffer(true);
-    _silhouetteMaterial->setCullMode(VROCullMode::None);
-    _silhouetteMaterial->addShaderModifier(getShadowDepthWritingModifier());
+    _silhouetteStaticMaterial = std::make_shared<VROMaterial>();
+    _silhouetteStaticMaterial->setWritesToDepthBuffer(true);
+    _silhouetteStaticMaterial->setReadsFromDepthBuffer(true);
+    _silhouetteStaticMaterial->setCullMode(VROCullMode::None);
+    _silhouetteStaticMaterial->addShaderModifier(getShadowDepthWritingModifier());
+        
+    _silhouetteSkeletalMaterial = std::make_shared<VROMaterial>();
+    _silhouetteSkeletalMaterial->setWritesToDepthBuffer(true);
+    _silhouetteSkeletalMaterial->setReadsFromDepthBuffer(true);
+    _silhouetteSkeletalMaterial->setCullMode(VROCullMode::None);
+    _silhouetteSkeletalMaterial->addShaderModifier(getShadowDepthWritingModifier());
+    _silhouetteSkeletalMaterial->addShaderModifier(VROBoneUBO::createSkinningShaderModifier(true));
 }
 
 VROShadowMapRenderPass::~VROShadowMapRenderPass() {
@@ -66,12 +74,18 @@ VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene
     target->bind();
     target->clearDepth();
     
-    _silhouetteMaterial->bindShader(0, {}, driver);
-    _silhouetteMaterial->bindProperties(driver);
-    
     std::vector<tree<std::shared_ptr<VROPortal>>> treeNodes;
     treeNodes.push_back(scene->getPortalTree());
-    render(treeNodes, target, *context, driver);
+    
+    // Render static objects
+    _silhouetteStaticMaterial->bindShader(0, {}, driver);
+    _silhouetteStaticMaterial->bindProperties(driver);
+    render(treeNodes, target, _silhouetteStaticMaterial, VROSilhouetteFilter::Static, *context, driver);
+    
+    // Render skeletal animation objects
+    _silhouetteSkeletalMaterial->bindShader(0, {}, driver);
+    _silhouetteSkeletalMaterial->bindProperties(driver);
+    render(treeNodes, target, _silhouetteSkeletalMaterial, VROSilhouetteFilter::Skeletal, *context, driver);
     
     // Store generated shadow map properties in the VROLight
     _light->setShadowViewMatrix(shadowView);
@@ -90,6 +104,8 @@ VRORenderPassInputOutput VROShadowMapRenderPass::render(std::shared_ptr<VROScene
 
 void VROShadowMapRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>>> &treeNodes,
                                     std::shared_ptr<VRORenderTarget> &target,
+                                    std::shared_ptr<VROMaterial> material,
+                                    VROSilhouetteFilter filter,
                                     const VRORenderContext &context,
                                     std::shared_ptr<VRODriver> &driver) {
     
@@ -98,8 +114,8 @@ void VROShadowMapRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>>
         std::shared_ptr<VROPortal> &portal = treeNode.value;
         pglpush("Shadow Recursion Level %d, Portal %d [%s]", portal->getRecursionLevel(), i, portal->getName().c_str());
         
-        portal->renderSilhouettes(_silhouetteMaterial, VROSilhouetteMode::Flat, context, driver);
-        render(treeNode.children, target, context, driver);
+        portal->renderSilhouettes(material, VROSilhouetteMode::Flat, filter, context, driver);
+        render(treeNode.children, target, material, filter, context, driver);
         
         ++i;
         pglpop();

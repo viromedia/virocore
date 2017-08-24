@@ -41,7 +41,8 @@ public:
      Render this portal's silhouette. The geometry is rendered using the provided material. This
      method is typically used to render into the stencil or depth buffers only.
      */
-    void renderPortalSilhouette(std::shared_ptr<VROMaterial> &material, VROSilhouetteMode mode,
+    void renderPortalSilhouette(std::shared_ptr<VROMaterial> &material,
+                                VROSilhouetteMode mode, VROSilhouetteFilter filter,
                                 const VRORenderContext &context, std::shared_ptr<VRODriver> &driver);
     
     /*

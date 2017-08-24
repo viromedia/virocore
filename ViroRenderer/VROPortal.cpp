@@ -161,10 +161,11 @@ void VROPortal::setPortalEntrance(std::shared_ptr<VROPortalFrame> entrance) {
     addChildNode(_portalEntrance);
 }
 
-void VROPortal::renderPortalSilhouette(std::shared_ptr<VROMaterial> &material, VROSilhouetteMode mode,
+void VROPortal::renderPortalSilhouette(std::shared_ptr<VROMaterial> &material,
+                                       VROSilhouetteMode mode, VROSilhouetteFilter filter,
                                        const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
     if (_activePortalFrame) {
-        _activePortalFrame->renderSilhouettes(material, mode, context, driver);
+        _activePortalFrame->renderSilhouettes(material, mode, filter, context, driver);
     }
 }
 

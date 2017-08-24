@@ -131,26 +131,32 @@ void VRONode::render(const VRORenderContext &context, std::shared_ptr<VRODriver>
     }
 }
 
-void VRONode::renderSilhouettes(std::shared_ptr<VROMaterial> &material, VROSilhouetteMode mode,
+void VRONode::renderSilhouettes(std::shared_ptr<VROMaterial> &material,
+                                VROSilhouetteMode mode, VROSilhouetteFilter filter,
                                 const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
     if (_geometry) {
-        if (mode == VROSilhouetteMode::Flat) {
-            _geometry->renderSilhouette(_computedTransform, material, context, driver);
-        }
-        else {
-            for (int i = 0; i < _geometry->getGeometryElements().size(); i++) {
-                std::shared_ptr<VROTexture> texture = _geometry->getMaterialForElement(i)->getDiffuse().getTexture();
-                if (material->getDiffuse().swapTexture(texture)) {
-                    material->bindShader(0, {}, driver);
-                    material->bindProperties(driver);
+        if ((filter == VROSilhouetteFilter::None) ||
+            (filter == VROSilhouetteFilter::Static && _geometry->getSkinner().get() == nullptr) ||
+            (filter == VROSilhouetteFilter::Skeletal && _geometry->getSkinner().get() != nullptr)) {
+
+            if (mode == VROSilhouetteMode::Flat) {
+                _geometry->renderSilhouette(_computedTransform, material, context, driver);
+            }
+            else {
+                for (int i = 0; i < _geometry->getGeometryElements().size(); i++) {
+                    std::shared_ptr<VROTexture> texture = _geometry->getMaterialForElement(i)->getDiffuse().getTexture();
+                    if (material->getDiffuse().swapTexture(texture)) {
+                        material->bindShader(0, {}, driver);
+                        material->bindProperties(driver);
+                    }
+                    _geometry->renderSilhouetteTextured(i, _computedTransform, material, context, driver);
                 }
-                _geometry->renderSilhouetteTextured(i, _computedTransform, material, context, driver);
             }
         }
     }
     
     for (std::shared_ptr<VRONode> &child : _subnodes) {
-        child->renderSilhouettes(material, mode, context, driver);
+        child->renderSilhouettes(material, mode, filter, context, driver);
     }
 }
 
