@@ -236,6 +236,12 @@ private:
      */
     void installBackgroundShaderModifier();
     
+    /*
+     Deactivates culling on every geometry in the given node, recursively down the
+     tree. Needed to ensure culling is off on portal frames.
+     */
+    void deactivateCulling(std::shared_ptr<VRONode> node);
+    
 };
 
 #endif /* VROPortal_h */

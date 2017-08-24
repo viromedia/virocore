@@ -171,7 +171,19 @@ void VROPortal::renderPortalSilhouette(std::shared_ptr<VROMaterial> &material,
 
 void VROPortal::renderPortal(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
     if (_activePortalFrame) {
+        deactivateCulling(_activePortalFrame);
         _activePortalFrame->render(context, driver);
+    }
+}
+
+void VROPortal::deactivateCulling(std::shared_ptr<VRONode> node) {
+    if (node->getGeometry()) {
+        for (const std::shared_ptr<VROMaterial> &material : node->getGeometry()->getMaterials()) {
+            material->setCullMode(VROCullMode::None);
+        }
+    }
+    for (std::shared_ptr<VRONode> &child : node->getChildNodes()) {
+        deactivateCulling(child);
     }
 }
 

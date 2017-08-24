@@ -150,7 +150,11 @@ void VROPortalTreeRenderPass::render(std::vector<tree<std::shared_ptr<VROPortal>
             driver->unbindShader();
             pglpop();
             
-            // Finally, render the portal frame to the color and depth buffers.
+            // Finally, render the portal frame to the color and depth buffers. Note
+            // we need to render the transparent section of the portal to the depth
+            // buffer in order to prevent inner portal backgrounds from covering it up.
+            // (so culling *must* be disabled on the portal frame, in case we're looking
+            // at the transparent section from behind).
             pglpush("Portal Frame");
             driver->setColorWritingEnabled(true);
             target->disablePortalStencilWriting(VROFace::FrontAndBack);
