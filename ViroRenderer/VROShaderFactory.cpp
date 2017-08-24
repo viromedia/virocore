@@ -200,7 +200,7 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     }
     
     std::vector<std::string> samplers;
-    std::vector<std::shared_ptr<VROShaderModifier>> modifiers = modifiers_in;
+    std::vector<std::shared_ptr<VROShaderModifier>> modifiers;
     
     // Diffuse Map
     if (materialCapabilities.diffuseTexture == VRODiffuseTextureType::Normal) {
@@ -265,6 +265,10 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         }
         samplers.push_back("shadow_map");
     }
+    
+    // Custom material modifiers. These are added to the back of the modifiers list
+    // so that they can build off the standard modifiers.
+    modifiers.insert(modifiers.end(), modifiers_in.begin(), modifiers_in.end());
     
     const std::vector<VROGeometrySourceSemantic> attributes = { VROGeometrySourceSemantic::Texcoord,
         VROGeometrySourceSemantic::Normal,

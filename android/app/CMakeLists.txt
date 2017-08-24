@@ -158,6 +158,9 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROShaderFactory.cpp
              ../../ViroRenderer/VROToneMappingRenderPass.cpp
 
+             # AR
+             ../../ViroRenderer/VROARShadow.cpp
+
              # Animation
              ../../ViroRenderer/VROTimingFunction.cpp
              ../../ViroRenderer/VROTransaction.cpp

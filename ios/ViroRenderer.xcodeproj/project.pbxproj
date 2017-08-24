@@ -126,6 +126,8 @@
 		8F2D1BB81EC379C000E7BF44 /* VROAnimationMatrix4f.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BB61EC379C000E7BF44 /* VROAnimationMatrix4f.h */; };
 		8F2D1BBB1EC37E1900E7BF44 /* VROSkeleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D1BB91EC37E1900E7BF44 /* VROSkeleton.cpp */; };
 		8F2D1BBC1EC37E1900E7BF44 /* VROSkeleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2D1BBA1EC37E1900E7BF44 /* VROSkeleton.h */; };
+		8F2F82F71F4E627C00D1CBFA /* VROARShadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2F82F51F4E627C00D1CBFA /* VROARShadow.cpp */; };
+		8F2F82F81F4E627C00D1CBFA /* VROARShadow.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F2F82F61F4E627C00D1CBFA /* VROARShadow.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F31CCB21F2FA8CA003EFB4B /* VROPortal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F31CCB01F2FA8CA003EFB4B /* VROPortal.cpp */; };
 		8F31CCB31F2FA8CA003EFB4B /* VROPortal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F31CCB11F2FA8CA003EFB4B /* VROPortal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F346B271F23AF39000D16B9 /* bball_SPEC_NRM.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F346B241F23AF39000D16B9 /* bball_SPEC_NRM.png */; };
@@ -758,6 +760,8 @@
 		8F2D1BB61EC379C000E7BF44 /* VROAnimationMatrix4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationMatrix4f.h; sourceTree = "<group>"; };
 		8F2D1BB91EC37E1900E7BF44 /* VROSkeleton.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROSkeleton.cpp; sourceTree = "<group>"; };
 		8F2D1BBA1EC37E1900E7BF44 /* VROSkeleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSkeleton.h; sourceTree = "<group>"; };
+		8F2F82F51F4E627C00D1CBFA /* VROARShadow.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARShadow.cpp; sourceTree = "<group>"; };
+		8F2F82F61F4E627C00D1CBFA /* VROARShadow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARShadow.h; sourceTree = "<group>"; };
 		8F31CCB01F2FA8CA003EFB4B /* VROPortal.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPortal.cpp; sourceTree = "<group>"; };
 		8F31CCB11F2FA8CA003EFB4B /* VROPortal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortal.h; sourceTree = "<group>"; };
 		8F346B241F23AF39000D16B9 /* bball_SPEC_NRM.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bball_SPEC_NRM.png; path = ViroSample/bball_SPEC_NRM.png; sourceTree = "<group>"; };
@@ -1501,6 +1505,8 @@
 				8A99E6CF1EF1B95800712D79 /* VROARScene.h */,
 				8A99E6C21EF1B76F00712D79 /* VROARSceneController.h */,
 				8ADC38D41F0AFAF2006DD653 /* VROARNodeDelegate.h */,
+				8F2F82F61F4E627C00D1CBFA /* VROARShadow.h */,
+				8F2F82F51F4E627C00D1CBFA /* VROARShadow.cpp */,
 			);
 			name = AR;
 			sourceTree = "<group>";
@@ -2367,6 +2373,7 @@
 				8F65F8161CA073C100415115 /* VROTextureUtil.h in Headers */,
 				8A130DA71E401B910050D83B /* VROSoundDataDelegate.h in Headers */,
 				8FE382131EF06FED005038CB /* VROARAnchor.h in Headers */,
+				8F2F82F81F4E627C00D1CBFA /* VROARShadow.h in Headers */,
 				8FDDB4A81DAF134300DE0968 /* VROLineSegment.h in Headers */,
 				8FA2E1511C4463D00070DB26 /* VROSkybox.h in Headers */,
 				8F56AEAE1DE77B2700DD65B6 /* VROTypeface.h in Headers */,
@@ -2857,6 +2864,7 @@
 				8F2D1BAF1EC288F700E7BF44 /* VROSkinner.cpp in Sources */,
 				8F65F78D1C90D83600415115 /* VROTransformConstraint.cpp in Sources */,
 				8FCB100F1DD1325100FE425C /* VROPlatformUtil.cpp in Sources */,
+				8F2F82F71F4E627C00D1CBFA /* VROARShadow.cpp in Sources */,
 				8FD4DF051C18ED3C003DC425 /* VROScene.cpp in Sources */,
 				8FD4DEF01C18ED0B003DC425 /* VROData.cpp in Sources */,
 				8FD4DF191C18ED4C003DC425 /* VRODistortionMesh.cpp in Sources */,
