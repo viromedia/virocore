@@ -14,6 +14,7 @@
 #include "VROVector4f.h"
 #include "VROOpenGL.h"
 #include "VROVector3f.h"
+#include "VROBoundingBox.h"
 
 class VROShaderProgram;
 class VRODriver;
@@ -55,6 +56,11 @@ public:
      that the renderer may draw them.
      */
     virtual int bindDrawData(int currentDrawCallIndex) = 0;
+
+    /*
+     Bounding box representing the region of space encapsulating all instanced drawn objects.
+     */
+    virtual VROBoundingBox getInstancedBoundingBox() = 0;
 };
 
 #endif /* VROInstancedUBO_h */

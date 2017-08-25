@@ -43,6 +43,8 @@ VROParticleUBO::VROParticleUBO(std::shared_ptr<VRODriver> driver) {
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROParticlesUBOFragmentData), NULL, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glBindBufferBase(GL_UNIFORM_BUFFER, sUBOFragmentBindingPoint, sUBOFragmentBufferID);
+
+    _lastKnownBoundingBox = VROBoundingBox(0,0,0,0,0,0);
 }
 
 VROParticleUBO::~VROParticleUBO() {
@@ -148,6 +150,11 @@ int VROParticleUBO::bindDrawData(int currentDrawCallIndex) {
     return end - start;
 }
 
-void VROParticleUBO::update(std::vector<VROParticle> &particles) {
+void VROParticleUBO::update(std::vector<VROParticle> &particles, VROBoundingBox &particleBox) {
     _lastKnownParticles = particles;
+    _lastKnownBoundingBox = particleBox;
+}
+
+VROBoundingBox VROParticleUBO::getInstancedBoundingBox(){
+    return _lastKnownBoundingBox;
 }

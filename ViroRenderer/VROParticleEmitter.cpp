@@ -208,6 +208,7 @@ void VROParticleEmitter::updateParticles(double currentTime,
     std::shared_ptr<VROBillboardConstraint> constraint
             = std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All);
 
+    float minX = FLT_MAX, maxX = -FLT_MAX, minY = FLT_MAX, maxY = -FLT_MAX, minZ = FLT_MAX, maxZ = -FLT_MAX;
     for (int i = 0; i < _particles.size(); i ++) {
         if (_particles[i].fixedToEmitter) {
             // If the particle is fixedToEmitter, position the particle in referenceFactor to the
@@ -223,10 +224,21 @@ void VROParticleEmitter::updateParticles(double currentTime,
         _particles[i].currentWorldTransform.translate(computedPos.scale(-1));
         _particles[i].currentWorldTransform = billboardRotation.multiply(_particles[i].currentWorldTransform);
         _particles[i].currentWorldTransform.translate(computedPos);
+
+        minX = std::min(minX, computedPos.x);
+        minY = std::min(minY, computedPos.y);
+        minZ = std::min(minZ, computedPos.z);
+        maxX = std::max(maxX, computedPos.x);
+        maxY = std::max(maxY, computedPos.y);
+        maxZ = std::max(maxZ, computedPos.z);
     }
 
+    VROBoundingBox box =  VROBoundingBox(minX, maxX, minY, maxY, minZ, maxZ);
+    if (_particles.size() == 0){
+        box = VROBoundingBox(0,0,0,0,0,0);
+    }
     std::shared_ptr<VROInstancedUBO> instancedUBO = emitterNode->getGeometry()->getInstancedUBO();
-    std::static_pointer_cast<VROParticleUBO>(instancedUBO)->update(_particles);
+    std::static_pointer_cast<VROParticleUBO>(instancedUBO)->update(_particles, box);
 }
 
 void VROParticleEmitter::updateParticlePhysics(double currentTime) {

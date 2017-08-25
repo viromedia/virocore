@@ -30,6 +30,7 @@
 #include "VROExecutableAnimation.h"
 #include "VROExecutableNodeAnimation.h"
 #include "VROTransformDelegate.h"
+#include "VROInstancedUBO.h";
 
 // Opacity below which a node is considered hidden
 static const float kHiddenOpacityThreshold = 0.02;
@@ -208,7 +209,7 @@ void VRONode::updateSortKeys(uint32_t depth,
     _computedLights.clear();
     for (std::shared_ptr<VROLight> &light : lights) {
         if ((light->getInfluenceBitMask() & _lightBitMask) != 0 &&
-            _computedBoundingBox.getDistanceToPoint(light->getTransformedPosition()) < light->getAttenuationEndDistance()) {
+            getBoundingBox().getDistanceToPoint(light->getTransformedPosition()) < light->getAttenuationEndDistance()) {
             _computedLights.push_back(light);
         }
     }
@@ -270,7 +271,7 @@ void VRONode::updateSortKeys(uint32_t depth,
             //      artifacts
             // distanceFromCamera = _computedBoundingBox.getDistanceToPoint(context.getCamera().getPosition());
             
-            furthestDistanceFromCamera = _computedBoundingBox.getFurthestDistanceToPoint(context.getCamera().getPosition());
+            furthestDistanceFromCamera = getBoundingBox().getFurthestDistanceToPoint(context.getCamera().getPosition());
         }
         _geometry->updateSortKeys(this, hierarchyId, hierarchyDepth, _computedLightsHash, _computedLights, _computedOpacity,
                                   distanceFromCamera, context.getZFar(), driver);
@@ -484,7 +485,7 @@ void VRONode::setVisibilityRecursive(bool visible) {
 }
 
 void VRONode::computeUmbrellaBounds(VROBoundingBox *bounds) const {
-    bounds->unionDestructive(_computedBoundingBox);
+    bounds->unionDestructive(getBoundingBox());
     for (const std::shared_ptr<VRONode> &childNode : _subnodes) {
         childNode->computeUmbrellaBounds(bounds);
     }
@@ -827,6 +828,9 @@ void VRONode::onAnimationFinished(){
 #pragma mark - Hit Testing
 
 VROBoundingBox VRONode::getBoundingBox() const {
+    if (_geometry && _geometry->getInstancedUBO() != nullptr){
+        return _geometry->getInstancedUBO()->getInstancedBoundingBox();
+    }
     return _computedBoundingBox;
 }
 
@@ -857,7 +861,7 @@ void VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f r
     
     if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
         VROVector3f intPt;
-        if (_computedBoundingBox.intersectsRay(ray, origin, &intPt)) {
+        if (getBoundingBox().intersectsRay(ray, origin, &intPt)) {
             if (boundsOnly || hitTestGeometry(origin, ray, transform)) {
                 results.push_back( {std::static_pointer_cast<VRONode>(shared_from_this()),
                                     intPt,
