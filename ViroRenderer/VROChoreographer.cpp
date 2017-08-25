@@ -26,7 +26,8 @@
 VROChoreographer::VROChoreographer(std::shared_ptr<VRODriver> driver) :
     _driver(driver),
     _renderToTexture(false),
-    _renderShadows(true) {
+    _renderShadows(true),
+    _blurScaling(0.5) {
         
     initTargets(driver);
         
@@ -91,10 +92,12 @@ void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriv
         _hdrTarget->setViewport(viewport);
     }
     if (_blurTargetA) {
-        _blurTargetA->setViewport(viewport);
+        _blurTargetA->setViewport({ viewport.getX(), viewport.getY(), (int)(viewport.getWidth()  * _blurScaling),
+                                                                      (int)(viewport.getHeight() * _blurScaling) });
     }
     if (_blurTargetB) {
-        _blurTargetB->setViewport(viewport);
+        _blurTargetB->setViewport({ viewport.getX(), viewport.getY(), (int)(viewport.getWidth()  * _blurScaling),
+                                                                      (int)(viewport.getHeight() * _blurScaling) });
     }
     driver->getDisplay()->setViewport(viewport);
 }

@@ -120,6 +120,7 @@ VRORenderPassInputOutput VROToneMappingRenderPass::render(std::shared_ptr<VROSce
     std::shared_ptr<VRORenderTarget> hdrInput = inputs[kToneMappingHDRInput];
     std::shared_ptr<VRORenderTarget> target = inputs[kToneMappingOutput];
     
+    pglpush("Tone Mapping");
     if (_bloomEnabled) {
         std::shared_ptr<VRORenderTarget> bloomInput = inputs[kToneMappingBloomInput];
         if (_gammaCorrectionEnabled) {
@@ -137,6 +138,7 @@ VRORenderPassInputOutput VROToneMappingRenderPass::render(std::shared_ptr<VROSce
             _postProcessHDR->blit(hdrInput, 0, target, {}, driver);
         }
     }
+    pglpop();
     
     VRORenderPassInputOutput output;
     output[kToneMappingOutput] = target;

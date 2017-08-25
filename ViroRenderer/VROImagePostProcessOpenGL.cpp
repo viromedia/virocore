@@ -67,6 +67,7 @@ void VROImagePostProcessOpenGL::blit(std::shared_ptr<VRORenderTarget> source, in
         return;
     }
     drawScreenSpaceVAR();
+    driver->unbindShader();
 }
 
 void VROImagePostProcessOpenGL::accumulate(std::shared_ptr<VRORenderTarget> source, int attachment,
@@ -79,6 +80,7 @@ void VROImagePostProcessOpenGL::accumulate(std::shared_ptr<VRORenderTarget> sour
     glBlendFunc(GL_ONE, GL_ONE);
     drawScreenSpaceVAR();
     driver->setBlendingMode(VROBlendMode::Alpha);
+    driver->unbindShader();
 }
 
 bool VROImagePostProcessOpenGL::bind(std::shared_ptr<VRORenderTarget> source, int attachment,

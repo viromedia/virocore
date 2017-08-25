@@ -182,7 +182,7 @@ public:
     }
     
     virtual bool isBloomEnabled() {
-        return false;
+        return true;
     }
 
     VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) {

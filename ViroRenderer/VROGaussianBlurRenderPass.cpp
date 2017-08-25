@@ -30,27 +30,27 @@ void VROGaussianBlurRenderPass::initPostProcess(std::shared_ptr<VRODriver> drive
     std::vector<std::string> code = {
         "uniform sampler2D image;",
         "uniform bool horizontal;",
-        "const highp float weight[5] = float[] (0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216);",
+        "const highp float offset[3] = float[] (0.0, 1.3846153846, 3.2307692308);",
+        "const highp float weight[3] = float[] (0.2270270270, 0.3162162162, 0.0702702703);",
         
-        "highp vec2 tex_offset;",
         "ivec2 tex_size = textureSize(image, 0);",
-        "tex_offset.x = 1.0 / float(tex_size.x);",
-        "tex_offset.y = 1.0 / float(tex_size.y);",
+        "highp vec2 tex_offset = vec2(1.0 / float(tex_size.x), 1.0 / float(tex_size.y));",
+        
         "highp vec3 result = texture(image, v_texcoord).rgb * weight[0];",
         "if (horizontal)",
         "{",
-        "   for(int i = 1; i < 5; ++i)",
+        "   for(int i = 1; i < 3; ++i)",
         "   {",
-        "       result += texture(image, v_texcoord + vec2(tex_offset.x * float(i), 0.0)).rgb * weight[i];",
-        "       result += texture(image, v_texcoord - vec2(tex_offset.x * float(i), 0.0)).rgb * weight[i];",
+        "       result += texture(image, v_texcoord + vec2(tex_offset.x * offset[i], 0.0)).rgb * weight[i];",
+        "       result += texture(image, v_texcoord - vec2(tex_offset.x * offset[i], 0.0)).rgb * weight[i];",
         "   }",
         "}",
         "else",
         "{",
-        "   for(int i = 1; i < 5; ++i)",
+        "   for(int i = 1; i < 3; ++i)",
         "   {",
-        "       result += texture(image, v_texcoord + vec2(0.0, tex_offset.y * float(i))).rgb * weight[i];",
-        "       result += texture(image, v_texcoord - vec2(0.0, tex_offset.y * float(i))).rgb * weight[i];",
+        "       result += texture(image, v_texcoord + vec2(0.0, tex_offset.y * offset[i])).rgb * weight[i];",
+        "       result += texture(image, v_texcoord - vec2(0.0, tex_offset.y * offset[i])).rgb * weight[i];",
         "   }",
         "}",
         "frag_color = vec4(result, 1.0);",
@@ -92,11 +92,10 @@ VRORenderPassInputOutput VROGaussianBlurRenderPass::render(std::shared_ptr<VROSc
     std::shared_ptr<VRORenderTarget> bufferB = inputs[kGaussianPingPongB];
     
     _horizontal = true;
-    int numIterations = 10;
-    passert (numIterations % 2 == 0);
+    passert (_numBlurIterations % 2 == 0);
     
     pglpush("Bloom");
-    for (int i = 0; i < numIterations; i++) {
+    for (int i = 0; i < _numBlurIterations; i++) {
         if (i == 0) {
             _gaussianBlur->blit(input, 1, bufferA, {}, driver);
         }

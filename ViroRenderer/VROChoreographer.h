@@ -181,6 +181,12 @@ private:
     std::shared_ptr<VRORenderTarget> _blurTargetB;
     
     /*
+     The size of the blur targets relative to the display. Smaller scale leads to
+     less accurate but faster blur.
+     */
+    float _blurScaling;
+    
+    /*
      Render pass that iteratively performs Gaussian blur on the two blur targets.
      */
     std::shared_ptr<VROGaussianBlurRenderPass> _gaussianBlurPass;
