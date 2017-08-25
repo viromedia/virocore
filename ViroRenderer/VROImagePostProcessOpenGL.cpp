@@ -111,7 +111,7 @@ bool VROImagePostProcessOpenGL::bind(std::shared_ptr<VRORenderTarget> source, in
     }
     driver->bindShader(_shader);
     for (VROUniform *uniform : _shaderModifierUniforms) {
-        uniform->set(nullptr, nullptr);
+        uniform->set(nullptr, nullptr, nullptr);
     }
     
     return true;

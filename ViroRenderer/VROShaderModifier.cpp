@@ -64,14 +64,15 @@ void VROShaderModifier::setUniformBinder(std::string uniform,
     _uniformBinders[uniform] = bindingBlock;
 }
 
-void VROShaderModifier::bindUniform(VROUniform *uniform, GLuint location, const VROGeometry *geometry) {
+void VROShaderModifier::bindUniform(VROUniform *uniform, GLuint location,
+                                    const VROGeometry *geometry, const VROMaterial *material) {
     auto it = _uniformBinders.find(uniform->getName());
     if (it == _uniformBinders.end()) {
         pabort("No binder was found for uniform %s", uniform->getName().c_str());
     }
     
     VROUniformBindingBlock block = it->second;
-    block(uniform, location, geometry);
+    block(uniform, location, geometry, material);
 }
 
 std::vector<std::string> VROShaderModifier::getUniforms() const {

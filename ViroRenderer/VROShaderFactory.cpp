@@ -14,6 +14,7 @@
 #include "VROLight.h"
 #include "VROGeometrySource.h"
 #include "VROMaterial.h"
+#include "VROGeometry.h"
 #include "VROEye.h"
 #include "VROStringUtil.h"
 #include "VROShadowMapRenderPass.h"
@@ -623,11 +624,15 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createBloomModifier() {
             "uniform highp float bloom_threshold;",
             
             "highp float brightness = dot(_output_color.rgb, vec3(0.2126, 0.7152, 0.0722));",
-            "if (brightness > 1.0) {",
+            "if (brightness > bloom_threshold) {",
             "   _bright_color = vec4(_output_color.rgb, 1.0);",
             "}",
         };
         sBloomModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment, modifierCode);
+        sBloomModifier->setUniformBinder("bloom_threshold", [](VROUniform *uniform, GLuint location,
+                                                               const VROGeometry *geometry, const VROMaterial *material) {
+            uniform->setFloat(material->getBloomThreshold());
+        });
         sBloomModifier->setName("bloom");
     }
     return sBloomModifier;

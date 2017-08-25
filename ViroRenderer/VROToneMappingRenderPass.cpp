@@ -94,7 +94,8 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     
     if (_type == VROToneMappingType::Exposure) {
         std::weak_ptr<VROToneMappingRenderPass> weakSelf = std::dynamic_pointer_cast<VROToneMappingRenderPass>(shared_from_this());
-        modifier->setUniformBinder("exposure", [weakSelf] (VROUniform *uniform, GLuint location, const VROGeometry *geometry) {
+        modifier->setUniformBinder("exposure", [weakSelf] (VROUniform *uniform, GLuint location,
+                                                           const VROGeometry *geometry, const VROMaterial *material) {
             std::shared_ptr<VROToneMappingRenderPass> strongSelf = weakSelf.lock();
             if (strongSelf) {
                 uniform->setFloat(strongSelf->_exposure);

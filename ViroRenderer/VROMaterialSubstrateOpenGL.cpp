@@ -248,6 +248,6 @@ void VROMaterialShaderBinding::bindGeometryUniforms(float opacity, const VROGeom
         _alphaUniform->setFloat(material.getTransparency() * opacity);
     }
     for (VROUniform *uniform : _shaderModifierUniforms) {
-        uniform->set(nullptr, &geometry);
+        uniform->set(nullptr, &geometry, &material);
     }
 }

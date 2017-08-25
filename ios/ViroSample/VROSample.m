@@ -757,7 +757,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Geometry,
                                                                                       modifierCode);
     
-    modifier->setUniformBinder("testA", [](VROUniform *uniform, GLuint location, const VROGeometry *geometry) {
+    modifier->setUniformBinder("testA", [](VROUniform *uniform, GLuint location,
+                                           const VROGeometry *geometry, const VROMaterial *material) {
         uniform->setFloat(1.0);
     });
     //material->addShaderModifier(modifier);
@@ -774,7 +775,8 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     std::shared_ptr<VROShaderModifier> surfaceModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                                              surfaceModifierCode);
     
-    surfaceModifier->setUniformBinder("surface_color", [](VROUniform *uniform, GLuint location, const VROGeometry *geometry) {
+    surfaceModifier->setUniformBinder("surface_color", [](VROUniform *uniform, GLuint location,
+                                                          const VROGeometry *geometry, const VROMaterial *material) {
         uniform->setVec3({0.6, 0.6, 1.0});
     });
     //material->addShaderModifier(surfaceModifier);
@@ -1803,7 +1805,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleSceneShadow;
+    self.sceneIndex = VROSampleSceneBloom;
     self.driver = driver;
     
     self.sceneController = [self loadSceneWithIndex:self.sceneIndex];

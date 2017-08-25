@@ -59,7 +59,8 @@ void VROGaussianBlurRenderPass::initPostProcess(std::shared_ptr<VRODriver> drive
     std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Image, code);
     
     std::weak_ptr<VROGaussianBlurRenderPass> weakSelf = std::dynamic_pointer_cast<VROGaussianBlurRenderPass>(shared_from_this());
-    modifier->setUniformBinder("horizontal", [weakSelf] (VROUniform *uniform, GLuint location, const VROGeometry *geometry) {
+    modifier->setUniformBinder("horizontal", [weakSelf] (VROUniform *uniform, GLuint location,
+                                                         const VROGeometry *geometry, const VROMaterial *material) {
         std::shared_ptr<VROGaussianBlurRenderPass> strongSelf = weakSelf.lock();
         if (strongSelf) {
             uniform->setFloat(strongSelf->_horizontal);
