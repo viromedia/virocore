@@ -17,7 +17,8 @@ VROInputControllerARiOS::VROInputControllerARiOS(float viewportWidth, float view
     _viewportHeight(viewportHeight),
     _isTouchOngoing(false),
     _isPinchOngoing(false),
-    _isRotateOngoing(false) {
+    _isRotateOngoing(false),
+    _lastProcessDragTimeMillis(0) {
 }
 
 VROVector3f VROInputControllerARiOS::getDragForwardOffset() {
