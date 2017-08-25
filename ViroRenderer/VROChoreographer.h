@@ -109,6 +109,13 @@ private:
     std::shared_ptr<VROImagePostProcess> _renderToTexturePostProcess;
     std::function<void()> _renderToTextureCallback;
     
+    /*
+     Render the given tone-mapped and gamma-corrected input to the
+     video texture and display.
+     */
+    void renderToTextureAndDisplay(std::shared_ptr<VRORenderTarget> input,
+                                   std::shared_ptr<VRODriver> driver);
+    
 #pragma mark - Shadows
     
     /*

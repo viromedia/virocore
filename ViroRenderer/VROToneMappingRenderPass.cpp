@@ -14,9 +14,12 @@
 #include "VROShaderModifier.h"
 #include "VROAnimationFloat.h"
 #include "VROOpenGL.h"
+#include "VRORenderTarget.h"
 
-VROToneMappingRenderPass::VROToneMappingRenderPass(VROToneMappingType type, std::shared_ptr<VRODriver> driver) :
+VROToneMappingRenderPass::VROToneMappingRenderPass(VROToneMappingType type, bool bloomEnabled,
+                                                   std::shared_ptr<VRODriver> driver) :
     _type(type),
+    _bloomEnabled(bloomEnabled),
     _exposure(1.0),
     _gammaCorrectionEnabled(true) {
    
@@ -29,8 +32,29 @@ VROToneMappingRenderPass::~VROToneMappingRenderPass() {
 std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess(std::shared_ptr<VRODriver> driver,
                                                                                  bool gammaCorrect) {
     std::vector<std::string> samplers = { "hdr_texture" };
+    std::vector<std::string> code = {
+        "uniform sampler2D hdr_texture;",
+        "highp vec3 hdr_color = texture(hdr_texture, v_texcoord).rgb;",
+    };
     
     /*
+     First additively blend the bloom texture if bloom is enabled.
+     */
+    if (_bloomEnabled) {
+        samplers.push_back("bloom_texture");
+        
+        std::vector<std::string> bloomCode = {
+            "uniform sampler2D bloom_texture;",
+            "highp vec3 bloom_color = texture(bloom_texture, v_texcoord).rgb;",
+            "hdr_color += bloom_color;",
+        };
+        
+        code.insert(code.end(), bloomCode.begin(), bloomCode.end());
+    }
+    
+    /*
+     Next perform tone-mapping.
+     
      TODO VIRO-1521: When iOS Cardboard starts supporting sRGB backbuffers, we will no longer
                      need the gamma correction step in this shader, as the native backbuffer can
                      perform the gamma correction for free.
@@ -39,26 +63,24 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
                     in favor of using an Android generated SRGB buffer in ViroGVRLayout. We'll do
                     the same for iOS once VIRO-1521 is completed
      */
-    std::vector<std::string> code;
+    std::vector<std::string> toneMappingCode;
     if (_type == VROToneMappingType::Reinhard) {
-        code = {
-            "uniform sampler2D hdr_texture;",
+        toneMappingCode = {
             "uniform lowp float exposure;",
-            
-            "highp vec3 hdr_color = texture(hdr_texture, v_texcoord).rgb;",
             "highp vec3 mapped = hdr_color / (hdr_color + vec3(1.0));",
         };
     }
     else {
-        code = {
-            "uniform sampler2D hdr_texture;",
+        toneMappingCode = {
             "uniform lowp float exposure;",
-            
-            "highp vec3 hdr_color = texture(hdr_texture, v_texcoord).rgb;",
             "highp vec3 mapped = vec3(1.0) - exp(-hdr_color * exposure);",
         };
     }
+    code.insert(code.end(), toneMappingCode.begin(), toneMappingCode.end());
     
+    /*
+     Finally, gamma [;/correct.
+     */
     if (_gammaCorrectionEnabled) {
         code.push_back("const highp float gamma = 2.2;");
         code.push_back("mapped = pow(mapped, vec3(1.0 / gamma));");
@@ -94,18 +116,29 @@ VRORenderPassInputOutput VROToneMappingRenderPass::render(std::shared_ptr<VROSce
         _postProcessHDRAndGamma = createPostProcess(driver, true);
     }
     
-    std::shared_ptr<VRORenderTarget> hdrInput = inputs[kRenderTargetSingleInput];
-    std::shared_ptr<VRORenderTarget> target = inputs[kRenderTargetSingleOutput];
+    std::shared_ptr<VRORenderTarget> hdrInput = inputs[kToneMappingHDRInput];
+    std::shared_ptr<VRORenderTarget> target = inputs[kToneMappingOutput];
     
-    if (_gammaCorrectionEnabled) {
-        _postProcessHDRAndGamma->blit(hdrInput, target, driver);
+    if (_bloomEnabled) {
+        std::shared_ptr<VRORenderTarget> bloomInput = inputs[kToneMappingBloomInput];
+        if (_gammaCorrectionEnabled) {
+            _postProcessHDRAndGamma->blit(hdrInput, 0, target, { bloomInput->getTexture(0) }, driver);
+        }
+        else {
+            _postProcessHDR->blit(hdrInput, 0, target, { bloomInput->getTexture(0) }, driver);
+        }
     }
     else {
-        _postProcessHDR->blit(hdrInput, target, driver);
+        if (_gammaCorrectionEnabled) {
+            _postProcessHDRAndGamma->blit(hdrInput, 0, target, {}, driver);
+        }
+        else {
+            _postProcessHDR->blit(hdrInput, 0, target, {}, driver);
+        }
     }
     
     VRORenderPassInputOutput output;
-    output[kRenderTargetSingleOutput] = target;
+    output[kToneMappingOutput] = target;
     
     return output;
 }

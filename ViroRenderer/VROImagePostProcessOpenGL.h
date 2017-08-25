@@ -26,12 +26,14 @@ public:
     bool bindTexture(int unit, const std::shared_ptr<VROTexture> &texture,
                      std::shared_ptr<VRODriver> &driver);
 
-    void blit(std::shared_ptr<VRORenderTarget> source,
+    void blit(std::shared_ptr<VRORenderTarget> source, int attachment,
               std::shared_ptr<VRORenderTarget> destination,
+              std::vector<std::shared_ptr<VROTexture>> textures,
               std::shared_ptr<VRODriver> &driver);
     
-    void accumulate(std::shared_ptr<VRORenderTarget> source,
+    void accumulate(std::shared_ptr<VRORenderTarget> source, int attachment,
                     std::shared_ptr<VRORenderTarget> destination,
+                    std::vector<std::shared_ptr<VROTexture>> textures,
                     std::shared_ptr<VRODriver> &driver);
     
 private:
@@ -59,8 +61,9 @@ private:
      Perform common operations before running the post process. Returns true
      if the bind was successful.
      */
-    bool bind(std::shared_ptr<VRORenderTarget> source,
+    bool bind(std::shared_ptr<VRORenderTarget> source, int attachment,
               std::shared_ptr<VRORenderTarget> destination,
+              std::vector<std::shared_ptr<VROTexture>> textures,
               std::shared_ptr<VRODriver> &driver);
     
     /*

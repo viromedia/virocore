@@ -33,14 +33,16 @@ public:
     
     VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
                                     VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
-    
-    void setHorizontal(bool horizontal) {
-        _horizontal = horizontal;
-    }
+
+    /*
+     The more iterations, the more blur. Must be an even number.
+     */
+    void setNumBlurIterations(int numIterations);
     
 private:
     
     std::shared_ptr<VROImagePostProcess> _gaussianBlur;
+    int _numBlurIterations;
     bool _horizontal;
     void initPostProcess(std::shared_ptr<VRODriver> driver);
     

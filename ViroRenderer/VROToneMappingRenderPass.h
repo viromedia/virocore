@@ -15,6 +15,10 @@
 class VRODriver;
 class VROImagePostProcess;
 
+const std::string kToneMappingHDRInput = "TM_Input";
+const std::string kToneMappingBloomInput = "TM_Bloom";
+const std::string kToneMappingOutput = "TM_Output";
+
 enum class VROToneMappingType {
     Reinhard,
     Exposure
@@ -29,7 +33,8 @@ enum class VROToneMappingType {
 class VROToneMappingRenderPass : public VRORenderPass, public VROAnimatable {
 public:
     
-    VROToneMappingRenderPass(VROToneMappingType type, std::shared_ptr<VRODriver> driver);
+    VROToneMappingRenderPass(VROToneMappingType type, bool bloomEnabled,
+                             std::shared_ptr<VRODriver> driver);
     virtual ~VROToneMappingRenderPass();
     
     VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
@@ -48,6 +53,7 @@ public:
 private:
 
     VROToneMappingType _type;
+    bool _bloomEnabled;
     float _exposure;
     bool _gammaCorrectionEnabled;
     

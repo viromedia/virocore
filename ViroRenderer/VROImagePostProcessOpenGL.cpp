@@ -59,19 +59,21 @@ bool VROImagePostProcessOpenGL::bindTexture(int unit, const std::shared_ptr<VROT
     return true;
 }
 
-void VROImagePostProcessOpenGL::blit(std::shared_ptr<VRORenderTarget> source,
+void VROImagePostProcessOpenGL::blit(std::shared_ptr<VRORenderTarget> source, int attachment,
                                      std::shared_ptr<VRORenderTarget> destination,
+                                     std::vector<std::shared_ptr<VROTexture>> textures,
                                      std::shared_ptr<VRODriver> &driver) {
-    if (!bind(source, destination, driver)) {
+    if (!bind(source, attachment, destination, textures, driver)) {
         return;
     }
     drawScreenSpaceVAR();
 }
 
-void VROImagePostProcessOpenGL::accumulate(std::shared_ptr<VRORenderTarget> source,
+void VROImagePostProcessOpenGL::accumulate(std::shared_ptr<VRORenderTarget> source, int attachment,
                                            std::shared_ptr<VRORenderTarget> destination,
+                                           std::vector<std::shared_ptr<VROTexture>> textures,
                                            std::shared_ptr<VRODriver> &driver) {
-    if (!bind(source, destination, driver)) {
+    if (!bind(source, attachment, destination, textures, driver)) {
         return;
     }
     glBlendFunc(GL_ONE, GL_ONE);
@@ -79,16 +81,23 @@ void VROImagePostProcessOpenGL::accumulate(std::shared_ptr<VRORenderTarget> sour
     driver->setBlendingMode(VROBlendMode::Alpha);
 }
 
-bool VROImagePostProcessOpenGL::bind(std::shared_ptr<VRORenderTarget> source,
+bool VROImagePostProcessOpenGL::bind(std::shared_ptr<VRORenderTarget> source, int attachment,
                                      std::shared_ptr<VRORenderTarget> destination,
+                                     std::vector<std::shared_ptr<VROTexture>> textures,
                                      std::shared_ptr<VRODriver> &driver) {
     
     // Bind the source target to texture unit 0
-    const std::shared_ptr<VROTexture> &texture = source->getTexture(0);
+    const std::shared_ptr<VROTexture> &texture = source->getTexture(attachment);
     passert_msg(texture != nullptr, "Render target had no texture: was a viewport set?");
     
     if (!bindTexture(0, texture, driver)) {
         return false;
+    }
+    
+    // Bind remaining textures to their units
+    int unit = 1;
+    for (std::shared_ptr<VROTexture> &texture : textures) {
+        bindTexture(unit, texture, driver);
     }
     
     // Bind the destination render target and disable depth testing

@@ -81,7 +81,7 @@ void VROChoreographer::initHDR(std::shared_ptr<VRODriver> driver) {
     else {
         _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1);
     }
-    _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingType::Reinhard, driver);
+    _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingType::Reinhard, _renderBloom, driver);
 }
         
 void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriver> &driver) {
@@ -189,6 +189,8 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
     
     VRORenderPassInputOutput inputs;
     if (_renderHDR) {
+        std::shared_ptr<VRORenderTarget> toneMappedTarget;
+        
         if (_renderBloom) {
             // Render the scene + bloom to the floating point HDR MRT target
             inputs[kRenderTargetSingleOutput] = _hdrTarget;
@@ -199,56 +201,59 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
             inputs[kGaussianPingPongB] = _blurTargetB;
             _gaussianBlurPass->render(scene, inputs, context, driver);
             
-            // TODO Apply bloom prior to tone mapping
+            // The blurred image is in _blurTargetB. Blend, tone map, and gamma correct
+            inputs[kToneMappingHDRInput] = _hdrTarget;
+            inputs[kToneMappingBloomInput] = _blurTargetB;
+            
+            if (_renderToTexture) {
+                inputs[kToneMappingOutput] = _blitTarget;
+                _toneMappingPass->render(scene, inputs, context, driver);
+                renderToTextureAndDisplay(_blitTarget, driver);
+            }
+            else {
+                inputs[kToneMappingOutput] = driver->getDisplay();
+                _toneMappingPass->render(scene, inputs, context, driver);
+            }
         }
         else {
             // Render the scene to the floating point HDR target
             inputs[kRenderTargetSingleOutput] = _hdrTarget;
             _baseRenderPass->render(scene, inputs, context, driver);
-        }
-        
-        if (_renderToTexture) {
-            // Perform tone-mapping with gamma correction, store in _blitTarget
-            inputs[kRenderTargetSingleInput]  = _hdrTarget;
-            inputs[kRenderTargetSingleOutput] = _blitTarget;
-            _toneMappingPass->render(scene, inputs, context, driver);
             
-            // Flip/render the image to the RTT target
-            _renderToTexturePostProcess->blit(_blitTarget, _renderToTextureTarget, driver);
-            
-            // Blit direct to the display
-            _blitPostProcess->blit(_blitTarget, driver->getDisplay(), driver);
-            if (_renderToTextureCallback) {
-                _renderToTextureCallback();
+            // Perform tone-mapping with gamma correction
+             inputs[kToneMappingHDRInput]  = _hdrTarget;
+            if (_renderToTexture) {
+                inputs[kToneMappingOutput] = _blitTarget;
+                _toneMappingPass->render(scene, inputs, context, driver);
+                renderToTextureAndDisplay(_blitTarget, driver);
             }
-        }
-        else {
-            // Perform tone-mapping and gamma-correction
-            inputs[kRenderTargetSingleInput] = _hdrTarget;
-            inputs[kRenderTargetSingleOutput] = driver->getDisplay();
-            _toneMappingPass->render(scene, inputs, context, driver);
+            else {
+                inputs[kToneMappingOutput] = driver->getDisplay();
+                _toneMappingPass->render(scene, inputs, context, driver);
+            }
         }
     }
     else if (_renderToTexture) {
         inputs[kRenderTargetSingleOutput] = _blitTarget;
         _baseRenderPass->render(scene, inputs, context, driver);
-        
-        // The rendered image is upside-down and gamma-corrected in the
-        // blitTarget. The back-buffer actually wants it upside-down, but for RTT
-        // we want it flipped right side up.
-        _renderToTexturePostProcess->blit(_blitTarget, _renderToTextureTarget, driver);
-        
-        // Finally, blit it over to the display
-        _blitPostProcess->blit(_blitTarget, driver->getDisplay(), driver);
-        
-        if (_renderToTextureCallback) {
-            _renderToTextureCallback();
-        }
+        renderToTextureAndDisplay(_blitTarget, driver);
     }
     else {
         // Render to the display directly
         inputs[kRenderTargetSingleOutput] = driver->getDisplay();
         _baseRenderPass->render(scene, inputs, context, driver);
+    }
+}
+
+void VROChoreographer::renderToTextureAndDisplay(std::shared_ptr<VRORenderTarget> input,
+                                                 std::shared_ptr<VRODriver> driver) {
+    // Flip/render the image to the RTT target
+    _renderToTexturePostProcess->blit(input, 0, _renderToTextureTarget, {}, driver);
+    
+    // Blit direct to the display
+    _blitPostProcess->blit(input, 0, driver->getDisplay(), {}, driver);
+    if (_renderToTextureCallback) {
+        _renderToTextureCallback();
     }
 }
 

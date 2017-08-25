@@ -35,20 +35,28 @@ public:
                              std::shared_ptr<VRODriver> &driver) = 0;
     
     /*
-     Blit the given source render target to the destination render target, using the
-     the post process shader. This assumes the source render target is a render-to-texture
-     target.
+     Blit the given attachment of the source render target to the destination
+     render target, using the the post process shader. This assumes the source
+     render target is a render-to-texture target.
+     
+     The provided textures will be bound to samplers (texture units) 1 to N.
+     Texture unit 0 (sampler 0) will receive the source render target's texture.
      */
-    virtual void blit(std::shared_ptr<VRORenderTarget> source,
+    virtual void blit(std::shared_ptr<VRORenderTarget> source, int attachment,
                       std::shared_ptr<VRORenderTarget> destination,
+                      std::vector<std::shared_ptr<VROTexture>> textures,
                       std::shared_ptr<VRODriver> &driver) = 0;
     
     /*
-     Accumulate the contents of the given source render target onto the given destination
-     render target, additively.
+     Accumulate the contents of the given attachment of the source render target
+     onto the given destination render target, additively.
+     
+     The provided textures will be bound to samplers (texture units) 1 to N.
+     Texture unit 0 (sampler 0) will receive the source render target's texture.
      */
-    virtual void accumulate(std::shared_ptr<VRORenderTarget> source,
+    virtual void accumulate(std::shared_ptr<VRORenderTarget> source, int attachment,
                             std::shared_ptr<VRORenderTarget> destination,
+                            std::vector<std::shared_ptr<VROTexture>> textures,
                             std::shared_ptr<VRODriver> &driver) = 0;
     
     

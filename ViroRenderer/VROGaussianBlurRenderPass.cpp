@@ -15,6 +15,7 @@
 #include "VROOpenGL.h"
 
 VROGaussianBlurRenderPass::VROGaussianBlurRenderPass() :
+    _numBlurIterations(10),
     _horizontal(false) {
     
 }
@@ -71,6 +72,13 @@ void VROGaussianBlurRenderPass::initPostProcess(std::shared_ptr<VRODriver> drive
     _gaussianBlur = driver->newImagePostProcess(shader);
 }
 
+void VROGaussianBlurRenderPass::setNumBlurIterations(int numIterations) {
+    _numBlurIterations = numIterations;
+    if (_numBlurIterations % 2 != 0) {
+        ++_numBlurIterations;
+    }
+}
+
 VRORenderPassInputOutput VROGaussianBlurRenderPass::render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
                                                           VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     
@@ -86,18 +94,20 @@ VRORenderPassInputOutput VROGaussianBlurRenderPass::render(std::shared_ptr<VROSc
     int numIterations = 10;
     passert (numIterations % 2 == 0);
     
+    pglpush("Bloom");
     for (int i = 0; i < numIterations; i++) {
         if (i == 0) {
-            _gaussianBlur->blit(input, bufferA, driver);
+            _gaussianBlur->blit(input, 1, bufferA, {}, driver);
         }
         else if (i % 2 == 1) {
-            _gaussianBlur->blit(bufferB, bufferA, driver);
+            _gaussianBlur->blit(bufferA, 0, bufferB, {}, driver);
         }
         else {
-            _gaussianBlur->blit(bufferA, bufferB, driver);
+            _gaussianBlur->blit(bufferB, 0, bufferA, {}, driver);
         }
         _horizontal = !_horizontal;
     }
+    pglpop();
     
     VRORenderPassInputOutput renderPassOutput;
     renderPassOutput[kRenderTargetSingleOutput] = bufferB;
