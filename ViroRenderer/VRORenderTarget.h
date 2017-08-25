@@ -12,6 +12,7 @@
 #include <memory>
 #include "VROVector4f.h"
 #include "VROViewport.h"
+#include "VROLog.h"
 
 class VROTexture;
 enum class VROFace;
@@ -28,14 +29,14 @@ enum class VROFace;
        encoding
  */
 enum class VRORenderTargetType {
-    Display,           // The actual backbuffer
-    Renderbuffer,      // Uses depth and color renderbuffers
-    ColorTexture,      // Uses a color texture and a depth renderbuffer
-    ColorTextureSRGB,  // Uses a color texture and converts to sRGB space on write
-    ColorTextureHDR16, // Uses a Float16 color texture and a depth renderbuffer
+    Display,            // The actual backbuffer
+    Renderbuffer,       // Uses depth and color renderbuffers
+    ColorTexture,       // Uses a color texture and a depth renderbuffer
+    ColorTextureSRGB,   // Uses a color texture and converts to sRGB space on write
+    ColorTextureHDR16,  // Uses a Float16 color texture and a depth renderbuffer
     ColorTextureHDR32,  // Uses a Float32 color texture and a depth renderbuffer
-    DepthTexture,      // Uses a depth texture and no color buffer
-    DepthTextureArray // Uses a depth texture array no color buffer
+    DepthTexture,       // Uses a depth texture and no color buffer
+    DepthTextureArray   // Uses a depth texture array no color buffer
 };
 
 /*
@@ -50,8 +51,14 @@ public:
     /*
      Create a new render-target of the given type.
      */
-    VRORenderTarget(VRORenderTargetType type) :
-        _type(type) {
+    VRORenderTarget(VRORenderTargetType type, int numAttachments) :
+        _type(type),
+        _numAttachments(numAttachments) {
+            
+        if (numAttachments > 1 &&
+            (type == VRORenderTargetType::DepthTexture || type == VRORenderTargetType::DepthTextureArray)) {
+            pabort("Only one attachment is supported for depth render targets!");
+        }
     }
     virtual ~VRORenderTarget() {}
     
@@ -101,14 +108,15 @@ public:
 #pragma mark - Render to Texture Setup
     
     /*
-     Check if this render target has a texture attached.
+     Check if this render target has a texture attached at the given
+     attachment point.
      */
-    virtual bool hasTextureAttached() = 0;
+    virtual bool hasTextureAttached(int attachment) = 0;
     
     /*
-     Clear the texture in this render target. The texture will not be deleted.
+     Clear the textures in this render target, across all attachments.
      */
-    virtual void clearTexture() = 0;
+    virtual void clearTextures() = 0;
     
     /*
      Create and attach a new texture to this render-target. The texture will be
@@ -117,14 +125,16 @@ public:
      
      Note if this render target type is a texture array, the image at index 0
      will be bound.
+     
+     New textures will be created for all attachment points.
      */
-    virtual void attachNewTexture() = 0;
+    virtual void attachNewTextures() = 0;
     
     /*
      Set the index of the image to write to via this FBO. This is only valid if
      this render target is of array type.
      */
-    virtual void setTextureImageIndex(int index) = 0;
+    virtual void setTextureImageIndex(int index, int attachment) = 0;
     
     /*
      Attach the given texture to this render-target. The width and height of
@@ -132,14 +142,17 @@ public:
      
      Note if this render target type is a texture array, then the image at
      index 0 will be initially bound.
+     
+     The attachment parameter indicates the attachment point in which to
+     set the texture.
      */
-    virtual void attachTexture(std::shared_ptr<VROTexture> texture) = 0;
+    virtual void attachTexture(std::shared_ptr<VROTexture> texture, int attachment) = 0;
     
     /*
      Get the texture to which this render-target is rendering. Returns nullptr if
      this is not a render-to-texture target.
      */
-    virtual const std::shared_ptr<VROTexture> getTexture() const = 0;
+    virtual const std::shared_ptr<VROTexture> getTexture(int attachment) const = 0;
     
 #pragma mark - Rendering Operations
     
@@ -186,6 +199,12 @@ protected:
      The type of render target (to texture, or offscreen).
      */
     VRORenderTargetType _type;
+    
+    /*
+     The number of attachments in this render target. Each attachment is
+     off the same type.
+     */
+    int _numAttachments;
     
     /*
      The clear color of this render target.

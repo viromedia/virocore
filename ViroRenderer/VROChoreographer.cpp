@@ -20,6 +20,7 @@
 #include "VROLight.h"
 #include "VROToneMappingRenderPass.h"
 #include "VROShadowMapRenderPass.h"
+#include "VROGaussianBlurRenderPass.h"
 #include <vector>
 
 VROChoreographer::VROChoreographer(std::shared_ptr<VRODriver> driver) :
@@ -31,7 +32,9 @@ VROChoreographer::VROChoreographer(std::shared_ptr<VRODriver> driver) :
         
     // We use HDR if gamma correction is enabled; this way we can
     // bottle up the gamma correction with the HDR shader
-    setRenderHDR(driver->isGammaCorrectionEnabled());
+    _renderHDR = driver->isGammaCorrectionEnabled();
+    _renderBloom = driver->isBloomEnabled();
+    initHDR(driver);
 }
 
 VROChoreographer::~VROChoreographer() {
@@ -40,30 +43,44 @@ VROChoreographer::~VROChoreographer() {
 
 void VROChoreographer::initTargets(std::shared_ptr<VRODriver> driver) {
     std::vector<std::string> blitSamplers = { "source_texture" };
-    std::vector<std::string> blitCode = { "uniform sampler2D source_texture;",
+    std::vector<std::string> blitCode = {
+        "uniform sampler2D source_texture;",
         "frag_color = texture(source_texture, v_texcoord);"
     };
     std::shared_ptr<VROShaderProgram> blitShader = VROImageShaderProgram::create(blitSamplers, blitCode, driver);
     
-    _blitTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1);
+    _blitTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1);
     _blitPostProcess = driver->newImagePostProcess(blitShader);
     
-    _renderToTextureTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1);
+    _renderToTextureTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1);
     _renderToTexturePostProcess = driver->newImagePostProcess(blitShader);
     _renderToTexturePostProcess->setVerticalFlip(true);
     
     if (_renderShadows) {
         if (kDebugShadowMaps) {
-            _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTexture, kMaxLights);
+            _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTexture, 1, kMaxLights);
         }
         else {
-            _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTextureArray, kMaxLights);
+            _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTextureArray, 1, kMaxLights);
         }
     }
 }
 
 void VROChoreographer::initHDR(std::shared_ptr<VRODriver> driver) {
-    _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1);
+    if (!_renderHDR) {
+        return;
+    }
+    
+    if (_renderBloom) {
+        _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 2, 1);
+        _blurTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1);
+        _blurTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1);
+        
+        _gaussianBlurPass = std::make_shared<VROGaussianBlurRenderPass>();
+    }
+    else {
+        _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1);
+    }
     _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingType::Reinhard, driver);
 }
         
@@ -72,6 +89,12 @@ void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriv
     _renderToTextureTarget->setViewport(viewport);
     if (_hdrTarget) {
         _hdrTarget->setViewport(viewport);
+    }
+    if (_blurTargetA) {
+        _blurTargetA->setViewport(viewport);
+    }
+    if (_blurTargetB) {
+        _blurTargetB->setViewport(viewport);
     }
     driver->getDisplay()->setViewport(viewport);
 }
@@ -133,7 +156,7 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
         
         pglpush("Shadow Pass");
         if (!kDebugShadowMaps) {
-            _shadowTarget->setTextureImageIndex(i);
+            _shadowTarget->setTextureImageIndex(i, 0);
         }
         light->setShadowMapIndex(i);
         
@@ -150,7 +173,7 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
     // If any shadow was rendered, set the shadow map in the context; otherwise
     // make it null
     if (i > 0) {
-        context->setShadowMap(_shadowTarget->getTexture());
+        context->setShadowMap(_shadowTarget->getTexture(0));
     }
     else {
         context->setShadowMap(nullptr);
@@ -166,9 +189,23 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
     
     VRORenderPassInputOutput inputs;
     if (_renderHDR) {
-        // Render the scene to the floating point HDR target
-        inputs[kRenderTargetSingleOutput] = _hdrTarget;
-        _baseRenderPass->render(scene, inputs, context, driver);
+        if (_renderBloom) {
+            // Render the scene + bloom to the floating point HDR MRT target
+            inputs[kRenderTargetSingleOutput] = _hdrTarget;
+            _baseRenderPass->render(scene, inputs, context, driver);
+            
+            inputs[kGaussianInput] = _hdrTarget;
+            inputs[kGaussianPingPongA] = _blurTargetA;
+            inputs[kGaussianPingPongB] = _blurTargetB;
+            _gaussianBlurPass->render(scene, inputs, context, driver);
+            
+            // TODO Apply bloom prior to tone mapping
+        }
+        else {
+            // Render the scene to the floating point HDR target
+            inputs[kRenderTargetSingleOutput] = _hdrTarget;
+            _baseRenderPass->render(scene, inputs, context, driver);
+        }
         
         if (_renderToTexture) {
             // Perform tone-mapping with gamma correction, store in _blitTarget
@@ -224,17 +261,7 @@ void VROChoreographer::setRenderToTextureCallback(std::function<void()> callback
 }
 
 void VROChoreographer::setRenderTexture(std::shared_ptr<VROTexture> texture) {
-    _renderToTextureTarget->attachTexture(texture);
-}
-
-void VROChoreographer::setRenderHDR(bool renderHDR) {
-    _renderHDR = renderHDR;
-    if (_renderHDR) {
-        std::shared_ptr<VRODriver> driver = _driver.lock();
-        if (driver) {
-            initHDR(driver);
-        }
-    }
+    _renderToTextureTarget->attachTexture(texture, 0);
 }
 
 std::shared_ptr<VROToneMappingRenderPass> VROChoreographer::getToneMapping() {

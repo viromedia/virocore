@@ -93,6 +93,7 @@ private:
     std::shared_ptr<VROShaderModifier> createShadowMapGeometryModifier();
     std::shared_ptr<VROShaderModifier> createShadowMapLightModifier();
     std::shared_ptr<VROShaderModifier> createStereoTextureModifier(VROStereoMode currentStereoMode);
+    std::shared_ptr<VROShaderModifier> createBloomModifier();
     
     std::shared_ptr<VROShaderModifier> createShadowMapFragmentModifier();
 

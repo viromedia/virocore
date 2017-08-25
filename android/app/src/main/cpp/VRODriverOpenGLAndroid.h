@@ -32,6 +32,10 @@ public:
         return false;
     }
 
+    virtual bool isBloomEnabled() {
+        return false;
+    }
+
     void onFrame(const VRORenderContext &context) {
         _gvrAudio->SetHeadPose(VROGVRUtil::toGVRMat4f(context.getCamera().getLookAtMatrix()));
         _gvrAudio->Update();

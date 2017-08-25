@@ -15,7 +15,7 @@ in lowp mat3 v_tbn;
 in highp vec2 v_texcoord;
 in highp vec3 v_surface_position;
 
-out lowp vec4 frag_color;
+layout (location = 0) out highp vec4 frag_color;
 
 void main() {
     _surface.diffuse_color = material_diffuse_surface_color;
@@ -51,10 +51,10 @@ void main() {
         _specular += _lightingContribution.specular * _lightingContribution.visibility;
     }
     
-    lowp vec4 _output_color = vec4(_ambient  * _surface.diffuse_color.xyz +
-                                   _diffuse  * _surface.diffuse_color.xyz * _surface.diffuse_intensity +
-                                   _specular * _surface.specular_color,
-                                   _surface.alpha * _surface.diffuse_color.a);
+    highp vec4 _output_color = vec4(_ambient  * _surface.diffuse_color.xyz +
+                                    _diffuse  * _surface.diffuse_color.xyz * _surface.diffuse_intensity +
+                                    _specular * _surface.specular_color,
+                                    _surface.alpha * _surface.diffuse_color.a);
     
 #pragma fragment_modifier_body
     

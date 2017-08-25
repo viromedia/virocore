@@ -180,6 +180,10 @@ public:
     virtual bool isGammaCorrectionEnabled() {
         return true;
     }
+    
+    virtual bool isBloomEnabled() {
+        return false;
+    }
 
     VROGeometrySubstrate *newGeometrySubstrate(const VROGeometry &geometry) {
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
@@ -206,9 +210,9 @@ public:
                                              driver);
     }
     
-    std::shared_ptr<VRORenderTarget> newRenderTarget(VRORenderTargetType type, int numImages) {
+    std::shared_ptr<VRORenderTarget> newRenderTarget(VRORenderTargetType type, int numAttachments, int numImages) {
         std::shared_ptr<VRODriverOpenGL> driver = shared_from_this();
-        std::shared_ptr<VRORenderTarget> target = std::make_shared<VRORenderTargetOpenGL>(type, numImages, driver);
+        std::shared_ptr<VRORenderTarget> target = std::make_shared<VRORenderTargetOpenGL>(type, numAttachments, numImages, driver);
         return target;
     }
     

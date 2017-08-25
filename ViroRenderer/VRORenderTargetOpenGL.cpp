@@ -21,15 +21,18 @@
 #define GL_TEXTURE_COMPARE_FUNC                          0x884D
 #endif
 
-VRORenderTargetOpenGL::VRORenderTargetOpenGL(VRORenderTargetType type, int numImages,
-                                             std ::shared_ptr<VRODriverOpenGL> driver) :
-    VRORenderTarget(type),
+VRORenderTargetOpenGL::VRORenderTargetOpenGL(VRORenderTargetType type, int numAttachments, int numImages,
+                                             std::shared_ptr<VRODriverOpenGL> driver) :
+    VRORenderTarget(type, numAttachments),
     _framebuffer(0),
     _depthStencilbuffer(0),
     _colorbuffer(0),
     _numImages(numImages),
     _driver(driver) {
     
+    for (int i = 0; i < numAttachments; i++) {
+        _textures.push_back({});
+    }
     ALLOCATION_TRACKER_ADD(RenderTargets, 1);
 }
 
@@ -92,27 +95,31 @@ int VRORenderTargetOpenGL::getHeight() const {
 
 #pragma mark - Texture Attachments
 
-bool VRORenderTargetOpenGL::hasTextureAttached() {
-    return _texture != nullptr;
+bool VRORenderTargetOpenGL::hasTextureAttached(int attachment) {
+    return _textures.size() > attachment && _textures[attachment] != nullptr;
 }
 
-const std::shared_ptr<VROTexture> VRORenderTargetOpenGL::getTexture() const {
-    return _texture;
+const std::shared_ptr<VROTexture> VRORenderTargetOpenGL::getTexture(int attachment) const {
+    return _textures[attachment];
 }
 
-void VRORenderTargetOpenGL::clearTexture() {
-    _texture.reset();
-    GLenum attachment = getTextureAttachmentType();
-    passert (attachment != 0);
-    
-    glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, 0, 0);
+void VRORenderTargetOpenGL::clearTextures() {
+    for (int i = 0; i < _textures.size(); i++) {
+        GLenum attachment = getTextureAttachmentType(i);
+        passert (attachment != 0);
+        
+        glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, 0, 0);
+    }
+    for (std::shared_ptr<VROTexture> &texture : _textures) {
+        texture.reset();
+    }
 }
 
-void VRORenderTargetOpenGL::attachTexture(std::shared_ptr<VROTexture> texture) {
-    _texture = texture;
-    GLint name = getTextureName();
-    GLenum attachment = getTextureAttachmentType();
+void VRORenderTargetOpenGL::attachTexture(std::shared_ptr<VROTexture> texture, int attachmentIndex) {
+    _textures[attachmentIndex] = texture;
+    GLint name = getTextureName(attachmentIndex);
+    GLenum attachment = getTextureAttachmentType(attachmentIndex);
     passert (attachment != 0);
     
     glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
@@ -130,9 +137,9 @@ void VRORenderTargetOpenGL::attachTexture(std::shared_ptr<VROTexture> texture) {
     }
 }
 
-void VRORenderTargetOpenGL::setTextureImageIndex(int index) {
-    GLint name = getTextureName();
-    GLenum attachment = getTextureAttachmentType();
+void VRORenderTargetOpenGL::setTextureImageIndex(int index, int attachmentIndex) {
+    GLint name = getTextureName(attachmentIndex);
+    GLenum attachment = getTextureAttachmentType(attachmentIndex);
     passert (attachment != 0);
     passert (_type == VRORenderTargetType::DepthTextureArray);
     
@@ -140,7 +147,7 @@ void VRORenderTargetOpenGL::setTextureImageIndex(int index) {
     glFramebufferTextureLayer(GL_FRAMEBUFFER, attachment, name, 0, index);
 }
 
-void VRORenderTargetOpenGL::attachNewTexture() {
+void VRORenderTargetOpenGL::attachNewTextures() {
     std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
     if (!driver) {
         return;
@@ -148,19 +155,16 @@ void VRORenderTargetOpenGL::attachNewTexture() {
     passert_msg(_viewport.getWidth() > 0 && _viewport.getHeight() > 0,
                 "Must invoke setViewport before using a render target");
     
-    GLuint texName;
-    GLenum target;
-    
     if (_type == VRORenderTargetType::ColorTexture ||
         _type == VRORenderTargetType::ColorTextureSRGB ||
         _type == VRORenderTargetType::ColorTextureHDR16 ||
         _type == VRORenderTargetType::ColorTextureHDR32) {
         
-        target = GL_TEXTURE_2D;
+        GLenum target = GL_TEXTURE_2D;
         GLint internalFormat = GL_RGBA;
         GLint format = GL_RGBA;
         GLenum texType = GL_UNSIGNED_BYTE;
-
+        
         if (_type == VRORenderTargetType::ColorTextureSRGB) {
             internalFormat = GL_SRGB8_ALPHA8;
         }
@@ -174,17 +178,25 @@ void VRORenderTargetOpenGL::attachNewTexture() {
         }
         
         glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
-        glGenTextures(1, &texName);
-        glBindTexture(GL_TEXTURE_2D, texName);
+        GLuint texNames[_numAttachments];
+        glGenTextures(_numAttachments, texNames);
         
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, _viewport.getWidth(), _viewport.getHeight(), 0, format, texType, nullptr);
-        
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texName, 0);
+        for (int i = 0 ; i < _numAttachments; i++) {
+            glBindTexture(GL_TEXTURE_2D, texNames[i]);
+            GLenum attachment = getTextureAttachmentType(i);
+            
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, _viewport.getWidth(), _viewport.getHeight(), 0, format, texType, nullptr);
+            
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texNames[i], 0);
+            
+            std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(target, texNames[i], driver));
+            _textures[i] = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
+        }
         
         /*
          Create a depth or depth/stencil renderbuffer, allocate storage for it, and attach it to
@@ -198,6 +210,15 @@ void VRORenderTargetOpenGL::attachNewTexture() {
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _depthStencilbuffer);
         }
+        
+        /*
+         Tell the system we're drawing to all attached color buffers.
+         */
+        GLuint attachments[_numAttachments];
+        for (int i = 0; i < _numAttachments; i++) {
+            attachments[i] = GL_COLOR_ATTACHMENT0 + i;
+        }
+        glDrawBuffers(_numAttachments, attachments);
         
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             pinfo("Failed to make complete resolve framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
@@ -217,9 +238,10 @@ void VRORenderTargetOpenGL::attachNewTexture() {
         }
     }
     else if (_type == VRORenderTargetType::DepthTexture) {
-        target = GL_TEXTURE_2D;
+        GLenum target = GL_TEXTURE_2D;
         glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
         
+        GLuint texName;
         glGenTextures(1, &texName);
         glBindTexture(GL_TEXTURE_2D, texName);
         
@@ -239,11 +261,15 @@ void VRORenderTargetOpenGL::attachNewTexture() {
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             pabort("Failed to make complete resolve depth framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
         }
+        
+        std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(target, texName, driver));
+        _textures[0] = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
     }
     else if (_type == VRORenderTargetType::DepthTextureArray) {
-        target = GL_TEXTURE_2D_ARRAY;
+        GLenum target = GL_TEXTURE_2D_ARRAY;
         glBindFramebuffer(GL_FRAMEBUFFER, _framebuffer);
         
+        GLuint texName;
         glGenTextures(1, &texName);
         glBindTexture(GL_TEXTURE_2D_ARRAY, texName);
         
@@ -265,25 +291,25 @@ void VRORenderTargetOpenGL::attachNewTexture() {
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             pabort("Failed to make complete resolve depth framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
         }
+        
+        std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(target, texName, driver));
+        _textures[0] = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
     }
     else {
         pabort("FBO does not have a texture type, cannot create texture");
     }
-    
-    std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(new VROTextureSubstrateOpenGL(target, texName, driver));
-    _texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
 }
 
-GLint VRORenderTargetOpenGL::getTextureName() const {
+GLint VRORenderTargetOpenGL::getTextureName(int attachment) const {
     std::shared_ptr<VRODriver> driver = _driver.lock();
     if (!driver) {
         return 0;
     }
-    if (!_texture) {
+    if (!_textures[attachment]) {
         return 0;
     }
     
-    VROTextureSubstrate *substrate = _texture->getSubstrate(0, driver, nullptr);
+    VROTextureSubstrate *substrate = _textures[attachment]->getSubstrate(0, driver, nullptr);
     VROTextureSubstrateOpenGL *oglSubstrate = dynamic_cast<VROTextureSubstrateOpenGL *>(substrate);
     passert (oglSubstrate != nullptr);
     
@@ -291,13 +317,13 @@ GLint VRORenderTargetOpenGL::getTextureName() const {
     return target_name.second;
 }
 
-GLenum VRORenderTargetOpenGL::getTextureAttachmentType() const {
+GLenum VRORenderTargetOpenGL::getTextureAttachmentType(int attachment) const {
     switch (_type) {
         case VRORenderTargetType::ColorTexture:
         case VRORenderTargetType::ColorTextureSRGB:
         case VRORenderTargetType::ColorTextureHDR16:
         case VRORenderTargetType::ColorTextureHDR32:
-            return GL_COLOR_ATTACHMENT0;
+            return GL_COLOR_ATTACHMENT0 + attachment;
         case VRORenderTargetType::DepthTexture:
         case VRORenderTargetType::DepthTextureArray:
             return GL_DEPTH_ATTACHMENT;
@@ -345,7 +371,9 @@ void VRORenderTargetOpenGL::discardFramebuffers() {
         _depthStencilbuffer = 0;
     }
     
-    _texture.reset();
+    for (std::shared_ptr<VROTexture> &texture : _textures) {
+        texture.reset();
+    }
 }
 
 #pragma mark - Render Target Creation
@@ -407,7 +435,7 @@ void VRORenderTargetOpenGL::createColorTextureTarget() {
      Create framebuffer.
      */
     glGenFramebuffers(1, &_framebuffer);
-    attachNewTexture();
+    attachNewTextures();
     
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         pinfo("Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
@@ -434,7 +462,7 @@ void VRORenderTargetOpenGL::createDepthTextureTarget() {
                 "Must invoke setViewport before using a render target");
 
     glGenFramebuffers(1, &_framebuffer);
-    attachNewTexture();    
+    attachNewTextures();
     GLenum none[] = { GL_NONE };
     glDrawBuffers(1, none);
     glReadBuffer(GL_NONE);

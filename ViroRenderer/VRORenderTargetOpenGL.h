@@ -22,7 +22,8 @@ public:
      Create a new render-target of the given type. The number of images is only required
      for array types.
      */
-    VRORenderTargetOpenGL(VRORenderTargetType type, int numImages, std::shared_ptr<VRODriverOpenGL> driver);
+    VRORenderTargetOpenGL(VRORenderTargetType type, int numAttachments, int numImages,
+                          std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VRORenderTargetOpenGL();
     
 #pragma mark - VRORenderTarget Implementation
@@ -36,12 +37,12 @@ public:
     
 #pragma mark - Render Target Setup
     
-    virtual bool hasTextureAttached();
-    virtual void clearTexture();
-    virtual void attachNewTexture();
-    virtual void attachTexture(std::shared_ptr<VROTexture> texture);
-    virtual void setTextureImageIndex(int index);
-    virtual const std::shared_ptr<VROTexture> getTexture() const;
+    virtual bool hasTextureAttached(int attachment);
+    virtual void clearTextures();
+    virtual void attachNewTextures();
+    virtual void attachTexture(std::shared_ptr<VROTexture> texture, int attachment);
+    virtual void setTextureImageIndex(int index, int attachment);
+    virtual const std::shared_ptr<VROTexture> getTexture(int attachment) const;
     virtual void discardFramebuffers();
     virtual void restoreFramebuffers();
     
@@ -74,11 +75,11 @@ private:
 #pragma mark - Private
     
     /*
-     The colorbuffer is used for pure offscreen rendering and for MSAA texture rendering.
-     The texture is used for render-to-texture targets. 0 for those not used.
+     The colorbuffers are used for pure offscreen rendering and for MSAA texture rendering.
+     The textures are used for render-to-texture targets. 0 for those not used.
      */
     GLuint _colorbuffer;
-    std::shared_ptr<VROTexture> _texture;
+    std::vector<std::shared_ptr<VROTexture>> _textures;
     
     /*
      If this is an array type, indicates the number of images in the texture.
@@ -89,12 +90,12 @@ private:
      Get the underlying OpenGL target and texture name for the currently attached
      texture.
      */
-    GLint getTextureName() const;
+    GLint getTextureName(int attachment) const;
     
     /*
      Get the attachment type used by the texture (e.g. GL_COLOR_ATTACHMENT0, etc.).
      */
-    GLenum getTextureAttachmentType() const;
+    GLenum getTextureAttachmentType(int attachment) const;
     
     /*
      The driver that created this render target.

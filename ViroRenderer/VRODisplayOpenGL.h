@@ -18,7 +18,7 @@ class VRODisplayOpenGL : public VRORenderTargetOpenGL {
 public:
     
     VRODisplayOpenGL(GLint framebuffer, std::shared_ptr<VRODriverOpenGL> driver) :
-        VRORenderTargetOpenGL(VRORenderTargetType::Display, 1, driver) {
+        VRORenderTargetOpenGL(VRORenderTargetType::Display, 1, 1, driver) {
         _framebuffer = framebuffer;
     }
     virtual ~VRODisplayOpenGL() {}
@@ -26,11 +26,11 @@ public:
     
 #pragma mark - Unsupported by Displays
     
-    void clearTexture() { pabort(); }
-    void attachNewTexture() { pabort(); }
-    void setTextureImageIndex(int index) { pabort(); }
-    void attachTexture(std::shared_ptr<VROTexture> texture) { pabort(); }
-    const std::shared_ptr<VROTexture> getTexture() const { pabort(); return nullptr; }
+    void clearTextures() { pabort(); }
+    void attachNewTextures() { pabort(); }
+    void setTextureImageIndex(int index, int attachment) { pabort(); }
+    void attachTexture(std::shared_ptr<VROTexture> texture, int attachment) { pabort(); }
+    const std::shared_ptr<VROTexture> getTexture(int attachment) const { pabort(); return nullptr; }
     void discardFramebuffers() { pabort(); }
     void restoreFramebuffers() { pabort(); }
     

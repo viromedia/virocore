@@ -26,6 +26,7 @@ class VROImagePostProcess;
 class VROShaderProgram;
 class VROShadowMapRenderPass;
 class VROToneMappingRenderPass;
+class VROGaussianBlurRenderPass;
 enum class VROEyeType;
 
 class VROChoreographer {
@@ -40,14 +41,6 @@ public:
     void setBaseRenderPass(std::shared_ptr<VRORenderPass> pass) {
         _baseRenderPass = pass;
     }
-    
-    /*
-     Enable or disable HDR rendering. When HDR rendering is enabled, the scene
-     is rendered to a floating point texture, then a tone-mapping algorithm is
-     applied to preserve details in both bright and dark regions of the
-     scene.
-     */
-    void setRenderHDR(bool renderHDR);
     
     /*
      Enable or disable RTT. When RTT is enabled, the scene is rendered first
@@ -143,7 +136,10 @@ private:
 #pragma mark - HDR
     
     /*
-     True if HDR rendering (render to floating point texture + tone mapping) are enabled.
+     True if HDR rendering is enabled. When HDR rendering is enabled, the scene
+     is rendered to a floating point texture, then a tone-mapping algorithm is
+     applied to preserve details in both bright and dark regions of the
+     scene.
      */
     bool _renderHDR;
     
@@ -161,6 +157,26 @@ private:
      Initialize the render pass and targets for HDR rendering.
      */
     void initHDR(std::shared_ptr<VRODriver> driver);
+    
+#pragma mark - Bloom
+    
+    /*
+     Enable or disable bloom rendering. When Bloom is enabled, an additional
+     color buffer is bound that receives bright colors via a special bloom shader
+     modifier. This buffer is blurred and added back to the scene.
+     */
+    bool _renderBloom;
+    
+    /*
+     Render targets for ping-ponging the blur operation.
+     */
+    std::shared_ptr<VRORenderTarget> _blurTargetA;
+    std::shared_ptr<VRORenderTarget> _blurTargetB;
+    
+    /*
+     Render pass that iteratively performs Gaussian blur on the two blur targets.
+     */
+    std::shared_ptr<VROGaussianBlurRenderPass> _gaussianBlurPass;
     
 };
 

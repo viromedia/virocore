@@ -195,6 +195,13 @@ public:
         _readsFromDepthBuffer = readsFromDepthBuffer;
         updateSubstrate();
     }
+    
+    void setBloomThreshold(float threshold) {
+        _bloomThreshold = threshold;
+    }
+    float getBloomThreshold() const {
+        return _bloomThreshold;
+    }
 
     void addShaderModifier(std::shared_ptr<VROShaderModifier> modifier);
     void removeShaderModifier(std::shared_ptr<VROShaderModifier> modifier);
@@ -317,6 +324,12 @@ private:
      Modifiers to alter the shader code.
      */
     std::vector<std::shared_ptr<VROShaderModifier>> _shaderModifiers;
+    
+    /*
+     If fragments of this material exceed this value, then those fragments will
+     glow. If less than 0, bloom will be disabled. Defaults to -1.
+     */
+    float _bloomThreshold;
     
     /*
      Representation of this material in the underlying graphics hardware.

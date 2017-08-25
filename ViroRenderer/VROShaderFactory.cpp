@@ -31,6 +31,7 @@ static std::shared_ptr<VROShaderModifier> sBlinnLightingModifier;
 static std::shared_ptr<VROShaderModifier> sYCbCrTextureModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapGeometryModifier;
 static std::shared_ptr<VROShaderModifier> sShadowMapLightModifier;
+static std::shared_ptr<VROShaderModifier> sBloomModifier;
 static std::map<VROStereoMode, std::shared_ptr<VROShaderModifier>> sStereoscopicTextureModifiers;
 
 // Debugging
@@ -92,6 +93,7 @@ VROMaterialShaderCapabilities VROShaderFactory::deriveMaterialCapabilitiesKey(co
     cap.normalTexture = false;
     cap.reflectiveTexture = false;
     cap.diffuseTextureStereoMode = VROStereoMode::None;
+    cap.bloom = false;
     
     cap.additionalModifierKeys = VROShaderModifier::getShaderModifierKey(material.getShaderModifiers());
     
@@ -168,6 +170,8 @@ VROMaterialShaderCapabilities VROShaderFactory::deriveMaterialCapabilitiesKey(co
         }
     }
     
+    // Bloom
+    cap.bloom = material.getBloomThreshold() >= 0;
     return cap;
 }
 
@@ -270,6 +274,11 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
             modifiers.push_back(createShadowMapFragmentModifier());
         }
         samplers.push_back("shadow_map");
+    }
+    
+    // Bloom
+    if (materialCapabilities.bloom && driver->isBloomEnabled()) {
+        modifiers.push_back(createBloomModifier());
     }
     
     // Custom material modifiers. These are added to the back of the modifiers list
@@ -602,6 +611,26 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createYCbCrTextureModifier(
     }
     
     return sYCbCrTextureModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createBloomModifier() {
+    /*
+     Modifier that writes bloom regions to an output variable _bright_color.
+     */
+    if (!sBloomModifier) {
+        std::vector<std::string> modifierCode =  {
+            "layout (location = 1) out highp vec4 _bright_color;",
+            "uniform highp float bloom_threshold;",
+            
+            "highp float brightness = dot(_output_color.rgb, vec3(0.2126, 0.7152, 0.0722));",
+            "if (brightness > 1.0) {",
+            "   _bright_color = vec4(_output_color.rgb, 1.0);",
+            "}",
+        };
+        sBloomModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment, modifierCode);
+        sBloomModifier->setName("bloom");
+    }
+    return sBloomModifier;
 }
 
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createEGLImageModifier() {
