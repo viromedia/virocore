@@ -191,6 +191,42 @@ private:
      */
     std::shared_ptr<VROGaussianBlurRenderPass> _gaussianBlurPass;
     
+    /*
+     Additive blending post process for mapping the blur texture back onto the
+     main texture.
+     */
+    std::shared_ptr<VROImagePostProcess> _additiveBlendPostProcess;
+    
+#pragma mark - Additional Post-Process Effects
+    
+    /*
+     Intermediate target used for post-processing effects.
+     */
+    std::shared_ptr<VRORenderTarget> _postProcessTarget;
+    
+    /*
+     This method is invoked by the main render cycle, *after* the scene is
+     rendered to an HDR target, but before tone-mapping and gamma. It is here
+     that we should perform all post-processing effects. The *final* output of
+     post processing should be rendered into the given target.
+     
+     Return true if anything was written to the destination. False if there was
+     no post-processing done.
+     */
+    bool handlePostProcessing(std::shared_ptr<VRORenderTarget> source,
+                              std::shared_ptr<VRORenderTarget> destination,
+                              std::shared_ptr<VRODriver> driver);
+    
+    /*
+     Sample grayscale effect.
+     */
+    std::shared_ptr<VROImagePostProcess> _grayScalePostProcess;
+    
+    void initGrayScalePass(std::shared_ptr<VRODriver> driver);
+    void renderGrayScalePass(std::shared_ptr<VRORenderTarget> input,
+                             std::shared_ptr<VRORenderTarget> output,
+                             std::shared_ptr<VRODriver> driver);
+    
 };
 
 #endif /* VROChoreographer_h */

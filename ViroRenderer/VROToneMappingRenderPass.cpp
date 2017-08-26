@@ -16,10 +16,8 @@
 #include "VROOpenGL.h"
 #include "VRORenderTarget.h"
 
-VROToneMappingRenderPass::VROToneMappingRenderPass(VROToneMappingType type, bool bloomEnabled,
-                                                   std::shared_ptr<VRODriver> driver) :
+VROToneMappingRenderPass::VROToneMappingRenderPass(VROToneMappingType type, std::shared_ptr<VRODriver> driver) :
     _type(type),
-    _bloomEnabled(bloomEnabled),
     _exposure(1.0),
     _gammaCorrectionEnabled(true) {
    
@@ -38,22 +36,7 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     };
     
     /*
-     First additively blend the bloom texture if bloom is enabled.
-     */
-    if (_bloomEnabled) {
-        samplers.push_back("bloom_texture");
-        
-        std::vector<std::string> bloomCode = {
-            "uniform sampler2D bloom_texture;",
-            "highp vec3 bloom_color = texture(bloom_texture, v_texcoord).rgb;",
-            "hdr_color += bloom_color;",
-        };
-        
-        code.insert(code.end(), bloomCode.begin(), bloomCode.end());
-    }
-    
-    /*
-     Next perform tone-mapping.
+     Perform tone-mapping.
      
      TODO VIRO-1521: When iOS Cardboard starts supporting sRGB backbuffers, we will no longer
                      need the gamma correction step in this shader, as the native backbuffer can
@@ -79,7 +62,7 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     code.insert(code.end(), toneMappingCode.begin(), toneMappingCode.end());
     
     /*
-     Finally, gamma [;/correct.
+     Finally, gamma correct.
      */
     if (_gammaCorrectionEnabled) {
         code.push_back("const highp float gamma = 2.2;");
@@ -121,22 +104,11 @@ VRORenderPassInputOutput VROToneMappingRenderPass::render(std::shared_ptr<VROSce
     std::shared_ptr<VRORenderTarget> target = inputs[kToneMappingOutput];
     
     pglpush("Tone Mapping");
-    if (_bloomEnabled) {
-        std::shared_ptr<VRORenderTarget> bloomInput = inputs[kToneMappingBloomInput];
-        if (_gammaCorrectionEnabled) {
-            _postProcessHDRAndGamma->blit(hdrInput, 0, target, { bloomInput->getTexture(0) }, driver);
-        }
-        else {
-            _postProcessHDR->blit(hdrInput, 0, target, { bloomInput->getTexture(0) }, driver);
-        }
+    if (_gammaCorrectionEnabled) {
+        _postProcessHDRAndGamma->blit(hdrInput, 0, target, {}, driver);
     }
     else {
-        if (_gammaCorrectionEnabled) {
-            _postProcessHDRAndGamma->blit(hdrInput, 0, target, {}, driver);
-        }
-        else {
-            _postProcessHDR->blit(hdrInput, 0, target, {}, driver);
-        }
+        _postProcessHDR->blit(hdrInput, 0, target, {}, driver);
     }
     pglpop();
     

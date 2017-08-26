@@ -23,6 +23,10 @@
 #include "VROGaussianBlurRenderPass.h"
 #include <vector>
 
+const bool kGrayScaleDemo = false;
+
+#pragma mark - Initialization
+
 VROChoreographer::VROChoreographer(std::shared_ptr<VRODriver> driver) :
     _driver(driver),
     _renderToTexture(false),
@@ -36,6 +40,10 @@ VROChoreographer::VROChoreographer(std::shared_ptr<VRODriver> driver) :
     _renderHDR = driver->isGammaCorrectionEnabled();
     _renderBloom = driver->isBloomEnabled();
     initHDR(driver);
+        
+    if (kGrayScaleDemo) {
+        initGrayScalePass(driver);
+    }
 }
 
 VROChoreographer::~VROChoreographer() {
@@ -49,14 +57,15 @@ void VROChoreographer::initTargets(std::shared_ptr<VRODriver> driver) {
         "frag_color = texture(source_texture, v_texcoord);"
     };
     std::shared_ptr<VROShaderProgram> blitShader = VROImageShaderProgram::create(blitSamplers, blitCode, driver);
-    
-    _blitTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1);
     _blitPostProcess = driver->newImagePostProcess(blitShader);
+    _blitTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1);
     
     _renderToTextureTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1);
     _renderToTexturePostProcess = driver->newImagePostProcess(blitShader);
     _renderToTexturePostProcess->setVerticalFlip(true);
     
+    _postProcessTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1);
+
     if (_renderShadows) {
         if (kDebugShadowMaps) {
             _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTexture, 1, kMaxLights);
@@ -76,17 +85,27 @@ void VROChoreographer::initHDR(std::shared_ptr<VRODriver> driver) {
         _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 2, 1);
         _blurTargetA = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1);
         _blurTargetB = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1);
-        
         _gaussianBlurPass = std::make_shared<VROGaussianBlurRenderPass>();
+        
+        std::vector<std::string> samplers = { "hdr_texture", "bloom_texture" };
+        std::vector<std::string> code = {
+            "uniform sampler2D hdr_texture;",
+            "uniform sampler2D bloom_texture;",
+            "highp vec3 hdr_color = texture(hdr_texture, v_texcoord).rgb;",
+            "highp vec3 bloom_color = texture(bloom_texture, v_texcoord).rgb;",
+            "frag_color = vec4(hdr_color + bloom_color, 1.0);",
+        };
+        _additiveBlendPostProcess = driver->newImagePostProcess(VROImageShaderProgram::create(samplers, code, driver));
     }
     else {
         _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1);
     }
-    _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingType::Reinhard, _renderBloom, driver);
+    _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingType::Reinhard, driver);
 }
         
 void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriver> &driver) {
     _blitTarget->setViewport(viewport);
+    _postProcessTarget->setViewport(viewport);
     _renderToTextureTarget->setViewport(viewport);
     if (_hdrTarget) {
         _hdrTarget->setViewport(viewport);
@@ -101,6 +120,8 @@ void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriv
     }
     driver->getDisplay()->setViewport(viewport);
 }
+
+#pragma mark - Main Render Cycle
 
 void VROChoreographer::render(VROEyeType eye, std::shared_ptr<VROScene> scene, VRORenderContext *context,
                               std::shared_ptr<VRODriver> &driver) {
@@ -199,15 +220,20 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
             inputs[kRenderTargetSingleOutput] = _hdrTarget;
             _baseRenderPass->render(scene, inputs, context, driver);
             
+            // Blur the image. The finished result will reside in _blurTargetB.
             inputs[kGaussianInput] = _hdrTarget;
             inputs[kGaussianPingPongA] = _blurTargetA;
             inputs[kGaussianPingPongB] = _blurTargetB;
             _gaussianBlurPass->render(scene, inputs, context, driver);
             
-            // The blurred image is in _blurTargetB. Blend, tone map, and gamma correct
-            inputs[kToneMappingHDRInput] = _hdrTarget;
-            inputs[kToneMappingBloomInput] = _blurTargetB;
+            // Additively blend the bloom back into the image, store in _postProcessTarget
+            _additiveBlendPostProcess->blit(_hdrTarget, 0, _postProcessTarget, { _blurTargetB->getTexture(0) }, driver);
             
+            // Run additional post-processing on the normal HDR image
+            bool postProcessed = handlePostProcessing(_postProcessTarget, _hdrTarget, driver);
+            
+            // Blend, tone map, and gamma correct
+            inputs[kToneMappingHDRInput] = postProcessed ? _hdrTarget: _postProcessTarget;
             if (_renderToTexture) {
                 inputs[kToneMappingOutput] = _blitTarget;
                 _toneMappingPass->render(scene, inputs, context, driver);
@@ -223,8 +249,11 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
             inputs[kRenderTargetSingleOutput] = _hdrTarget;
             _baseRenderPass->render(scene, inputs, context, driver);
             
+            // Run additional post-processing on the HDR image
+            bool postProcessed = handlePostProcessing(_hdrTarget, _postProcessTarget, driver);
+            
             // Perform tone-mapping with gamma correction
-             inputs[kToneMappingHDRInput]  = _hdrTarget;
+            inputs[kToneMappingHDRInput]  = postProcessed ? _postProcessTarget : _hdrTarget;
             if (_renderToTexture) {
                 inputs[kToneMappingOutput] = _blitTarget;
                 _toneMappingPass->render(scene, inputs, context, driver);
@@ -247,6 +276,8 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
         _baseRenderPass->render(scene, inputs, context, driver);
     }
 }
+
+#pragma mark - Render to Texture
 
 void VROChoreographer::renderToTextureAndDisplay(std::shared_ptr<VRORenderTarget> input,
                                                  std::shared_ptr<VRODriver> driver) {
@@ -276,4 +307,35 @@ std::shared_ptr<VROToneMappingRenderPass> VROChoreographer::getToneMapping() {
     return _toneMappingPass;
 }
 
+#pragma mark - Additional Post-Process Effects
 
+bool VROChoreographer::handlePostProcessing(std::shared_ptr<VRORenderTarget> source,
+                                            std::shared_ptr<VRORenderTarget> destination,
+                                            std::shared_ptr<VRODriver> driver) {
+    if (kGrayScaleDemo) {
+        renderGrayScalePass(source, destination, driver);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+void VROChoreographer::initGrayScalePass(std::shared_ptr<VRODriver> driver) {
+    std::vector<std::string> samplers = { "source_texture" };
+    std::vector<std::string> code = {
+        "uniform sampler2D source_texture;",
+        "frag_color = texture(source_texture, v_texcoord);",
+        "highp float average = 0.2126 * frag_color.r + 0.7152 * frag_color.g + 0.0722 * frag_color.b;",
+        "frag_color = vec4(average, average, average, 1.0);",
+    };
+    std::shared_ptr<VROShaderProgram> shader = VROImageShaderProgram::create(samplers, code, driver);
+    
+    _grayScalePostProcess = driver->newImagePostProcess(shader);
+}
+
+void VROChoreographer::renderGrayScalePass(std::shared_ptr<VRORenderTarget> input,
+                                           std::shared_ptr<VRORenderTarget> output,
+                                           std::shared_ptr<VRODriver> driver) {
+    _grayScalePostProcess->blit(input, 0, output, {}, driver);
+}
