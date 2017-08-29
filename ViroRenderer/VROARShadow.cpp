@@ -50,7 +50,11 @@ std::shared_ptr<VROShaderModifier> VROARShadow::createFragmentModifier() {
         // comes from normal shadows when increasing ambient light. This does not
         // cover the softness that comes from other shadow-casting lights.
         std::vector<std::string> modifierCode = {
-            "_output_color = vec4(0, 0, 0, totalShadow - _ambient.r);",
+            "if (totalShadow != 0.0) {\n",
+            "  _output_color = vec4(0, 0, 0, totalShadow - _ambient.r);\n",
+            "} else {\n",
+            "  _output_color = vec4(0, 0, 0, 0);\n",
+            "}",
         };
         sShadowARFragmentModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment,
                                                                        modifierCode);
