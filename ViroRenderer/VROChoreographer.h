@@ -27,6 +27,8 @@ class VROShaderProgram;
 class VROShadowMapRenderPass;
 class VROToneMappingRenderPass;
 class VROGaussianBlurRenderPass;
+class VROPostProcessEffectFactory;
+enum class VROPostProcessEffect;
 enum class VROEyeType;
 
 class VROChoreographer {
@@ -65,7 +67,13 @@ public:
      Retrieve the configurable tone mapping pass.
      */
     std::shared_ptr<VROToneMappingRenderPass> getToneMapping();
-    
+
+    /*
+     Retrieves the factory from which to enable/disable post processing effects applied
+     in VROChoreographer::renderBasePass().
+     */
+    std::shared_ptr<VROPostProcessEffectFactory> getPostProcessEffectFactory();
+
 private:
     
     std::weak_ptr<VRODriver> _driver;
@@ -76,7 +84,7 @@ private:
      Pass that renders the 3D scene to a render target.
      */
     std::shared_ptr<VRORenderPass> _baseRenderPass;
-    
+
     /*
      Simple blitting post process.
      */
@@ -196,37 +204,18 @@ private:
      main texture.
      */
     std::shared_ptr<VROImagePostProcess> _additiveBlendPostProcess;
-    
+
 #pragma mark - Additional Post-Process Effects
-    
+
+    /*
+     Factory that coordinates the creation and application of post processing effects.
+     */
+    std::shared_ptr<VROPostProcessEffectFactory> _postProcessEffectFactory;
+
     /*
      Intermediate target used for post-processing effects.
      */
     std::shared_ptr<VRORenderTarget> _postProcessTarget;
-    
-    /*
-     This method is invoked by the main render cycle, *after* the scene is
-     rendered to an HDR target, but before tone-mapping and gamma. It is here
-     that we should perform all post-processing effects. The *final* output of
-     post processing should be rendered into the given target.
-     
-     Return true if anything was written to the destination. False if there was
-     no post-processing done.
-     */
-    bool handlePostProcessing(std::shared_ptr<VRORenderTarget> source,
-                              std::shared_ptr<VRORenderTarget> destination,
-                              std::shared_ptr<VRODriver> driver);
-    
-    /*
-     Sample grayscale effect.
-     */
-    std::shared_ptr<VROImagePostProcess> _grayScalePostProcess;
-    
-    void initGrayScalePass(std::shared_ptr<VRODriver> driver);
-    void renderGrayScalePass(std::shared_ptr<VRORenderTarget> input,
-                             std::shared_ptr<VRORenderTarget> output,
-                             std::shared_ptr<VRODriver> driver);
-    
 };
 
 #endif /* VROChoreographer_h */

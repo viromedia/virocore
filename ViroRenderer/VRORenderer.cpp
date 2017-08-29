@@ -272,6 +272,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         scene->updateVisibility(context);
         scene->updateSortKeys(context, driver);
         _inputController->onProcess(camera);
+        updateSceneEffects(driver, scene);
     }
 
     driver->willRenderFrame(context);
@@ -419,6 +420,26 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneCo
     _sceneController->startIncomingTransition(seconds, timingFunctionType, _context.get());
     if (_outgoingSceneController) {
         _outgoingSceneController->startOutgoingTransition(seconds, timingFunctionType, _context.get());
+    }
+}
+
+void VRORenderer::updateSceneEffects(std::shared_ptr<VRODriver> driver,
+                                     std::shared_ptr<VROScene> scene) {
+    // Return if the effects for this scene had already been applied and had not changed.
+    std::vector<std::string> effects;
+    if (!scene->processSceneEffect(effects)){
+        return;
+    }
+
+    std::shared_ptr<VROPostProcessEffectFactory> postProcess
+            = _choreographer->getPostProcessEffectFactory();
+    _choreographer-> getPostProcessEffectFactory() -> clearAllEffects();
+
+    for (std::string strEffect: effects){
+        VROPostProcessEffect effect = postProcess->getEffectForString(strEffect);
+        if (effect != VROPostProcessEffect::None) {
+            _choreographer->getPostProcessEffectFactory()->enableEffect(effect, driver);
+        }
     }
 }
 

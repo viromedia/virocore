@@ -21,9 +21,8 @@
 #include "VROToneMappingRenderPass.h"
 #include "VROShadowMapRenderPass.h"
 #include "VROGaussianBlurRenderPass.h"
+#include "VROPostProcessEffectFactory.h"
 #include <vector>
-
-const bool kGrayScaleDemo = false;
 
 #pragma mark - Initialization
 
@@ -40,10 +39,8 @@ VROChoreographer::VROChoreographer(std::shared_ptr<VRODriver> driver) :
     _renderHDR = driver->isGammaCorrectionEnabled();
     _renderBloom = driver->isBloomEnabled();
     initHDR(driver);
-        
-    if (kGrayScaleDemo) {
-        initGrayScalePass(driver);
-    }
+
+    _postProcessEffectFactory = std::make_shared<VROPostProcessEffectFactory>();
 }
 
 VROChoreographer::~VROChoreographer() {
@@ -210,11 +207,10 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
 
 void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORenderContext *context,
                                       std::shared_ptr<VRODriver> &driver) {
-    
     VRORenderPassInputOutput inputs;
     if (_renderHDR) {
         std::shared_ptr<VRORenderTarget> toneMappedTarget;
-        
+
         if (_renderBloom) {
             // Render the scene + bloom to the floating point HDR MRT target
             inputs[kRenderTargetSingleOutput] = _hdrTarget;
@@ -230,7 +226,7 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
             _additiveBlendPostProcess->blit(_hdrTarget, 0, _postProcessTarget, { _blurTargetB->getTexture(0) }, driver);
             
             // Run additional post-processing on the normal HDR image
-            bool postProcessed = handlePostProcessing(_postProcessTarget, _hdrTarget, driver);
+            bool postProcessed = _postProcessEffectFactory->handlePostProcessing(_postProcessTarget, _hdrTarget, driver);
             
             // Blend, tone map, and gamma correct
             inputs[kToneMappingHDRInput] = postProcessed ? _hdrTarget: _postProcessTarget;
@@ -250,7 +246,7 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
             _baseRenderPass->render(scene, inputs, context, driver);
             
             // Run additional post-processing on the HDR image
-            bool postProcessed = handlePostProcessing(_hdrTarget, _postProcessTarget, driver);
+            bool postProcessed = _postProcessEffectFactory->handlePostProcessing(_hdrTarget, _postProcessTarget, driver);
             
             // Perform tone-mapping with gamma correction
             inputs[kToneMappingHDRInput]  = postProcessed ? _postProcessTarget : _hdrTarget;
@@ -307,35 +303,6 @@ std::shared_ptr<VROToneMappingRenderPass> VROChoreographer::getToneMapping() {
     return _toneMappingPass;
 }
 
-#pragma mark - Additional Post-Process Effects
-
-bool VROChoreographer::handlePostProcessing(std::shared_ptr<VRORenderTarget> source,
-                                            std::shared_ptr<VRORenderTarget> destination,
-                                            std::shared_ptr<VRODriver> driver) {
-    if (kGrayScaleDemo) {
-        renderGrayScalePass(source, destination, driver);
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
-void VROChoreographer::initGrayScalePass(std::shared_ptr<VRODriver> driver) {
-    std::vector<std::string> samplers = { "source_texture" };
-    std::vector<std::string> code = {
-        "uniform sampler2D source_texture;",
-        "frag_color = texture(source_texture, v_texcoord);",
-        "highp float average = 0.2126 * frag_color.r + 0.7152 * frag_color.g + 0.0722 * frag_color.b;",
-        "frag_color = vec4(average, average, average, 1.0);",
-    };
-    std::shared_ptr<VROShaderProgram> shader = VROImageShaderProgram::create(samplers, code, driver);
-    
-    _grayScalePostProcess = driver->newImagePostProcess(shader);
-}
-
-void VROChoreographer::renderGrayScalePass(std::shared_ptr<VRORenderTarget> input,
-                                           std::shared_ptr<VRORenderTarget> output,
-                                           std::shared_ptr<VRODriver> driver) {
-    _grayScalePostProcess->blit(input, 0, output, {}, driver);
+std::shared_ptr<VROPostProcessEffectFactory> VROChoreographer::getPostProcessEffectFactory(){
+    return _postProcessEffectFactory;
 }

@@ -19,6 +19,7 @@
 #include "VROFieldOfView.h"
 #include "VROFrameSynchronizer.h"
 #include "VROInputControllerBase.h"
+#include "VROPostProcessEffectFactory.h"
 
 class VROEye;
 class VRONode;
@@ -50,10 +51,11 @@ static const float kZFarMultiplier = 1.15;
 static const int kFPSMaxSamples = 100;
 
 class VRORenderer {
-    
+
 public:
 
     VRORenderer(std::shared_ptr<VROInputControllerBase> inputController);
+
     virtual ~VRORenderer();
 
     /*
@@ -72,15 +74,15 @@ public:
      to the screen.
      */
     void setDebugHUDEnabled(bool enabled);
-    
+
     /*
      Get the VROChoreographer, which can be used to customize the rendering
      technique.
      */
     const std::shared_ptr<VROChoreographer> getChoreographer() const;
-    
+
     void updateRenderViewSize(float width, float height);
-    
+
 #pragma mark - Viewport and FOV
 
     /*
@@ -92,7 +94,7 @@ public:
      vertical FOV.
      */
     static VROFieldOfView computeMonoFOV(int viewportWidth, int viewportHeight);
-    
+
     /*
      Get the field of view (vertical and horizontal) to use to render a viewport
      of the given size, given a horizontal FOV of the given degrees. This function
@@ -102,19 +104,28 @@ public:
      Note the given horizontalFOVDegrees is the degrees from edge to edge of the 
      frustum.
      */
-    static VROFieldOfView computeFOV(float horizontalFOVDegrees, int viewportWidth, int viewportHeight);
-    
+    static VROFieldOfView computeFOV(float horizontalFOVDegrees, int viewportWidth,
+                                     int viewportHeight);
+
     /*
      Get the far clipping plane, as computed during the last prepareFrame().
      */
     float getFarClippingPlane() const;
 
 #pragma mark - Scene Controllers
-    
-    void setSceneController(std::shared_ptr<VROSceneController> sceneController, std::shared_ptr<VRODriver> driver);
+
+    void setSceneController(std::shared_ptr<VROSceneController> sceneController,
+                            std::shared_ptr<VRODriver> driver);
+
     void setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
-                            VROTimingFunctionType timingFunctionType, std::shared_ptr<VRODriver> driver);
-    
+                            VROTimingFunctionType timingFunctionType,
+                            std::shared_ptr<VRODriver> driver);
+
+    /*
+     Applies scene specific post processing configuration effects to the renderer if we
+     haven't yet done so already (since the scene had appeared), or if it had changed.
+     */
+    void updateSceneEffects(std::shared_ptr<VRODriver> driver, std::shared_ptr<VROScene> scene);
 #pragma mark - Render Loop
     
     /*
@@ -138,7 +149,7 @@ public:
      Performs end-frame cleanup.
      */
     void endFrame(std::shared_ptr<VRODriver> driver);
-    
+
 #pragma mark - Integration
     
     std::shared_ptr<VROFrameSynchronizer> getFrameSynchronizer() {
@@ -254,7 +265,7 @@ private:
 #pragma mark - [Private] Scene Rendering
     
     void renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> driver);
-    
+
 #pragma mark - [Private] Frame Listeners
     
     /*
