@@ -625,7 +625,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createBloomModifier() {
             
             "highp float brightness = dot(_output_color.rgb, vec3(0.2126, 0.7152, 0.0722));",
             "if (brightness > bloom_threshold) {",
-            "   _bright_color = vec4(_output_color.rgb, 1.0);",
+            "   _bright_color = vec4(_output_color.rgb, _output_color.a);",
             "}",
         };
         sBloomModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Fragment, modifierCode);
