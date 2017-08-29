@@ -10,6 +10,7 @@
 #define VROImagePostProcess_h
 
 #include <memory>
+#include <vector>
 
 class VRORenderTarget;
 class VRODriver;
