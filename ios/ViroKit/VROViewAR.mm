@@ -231,7 +231,12 @@ static VROVector3f const kZeroVector = VROVector3f();
      */
     UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self
                                                                                  action:@selector(handleLongPress:)];
+    [panGesture setDelegate:self];
     [self addGestureRecognizer:panGesture];
+
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+    [tapGesture setDelegate:self];
+    [self addGestureRecognizer:tapGesture];
 }
 
 #pragma mark Gesture handlers
@@ -280,27 +285,20 @@ static VROVector3f const kZeroVector = VROVector3f();
         _inputController->onScreenTouchUp(viewportTouchPos);
     } else {
         _inputController->onScreenTouchMove(viewportTouchPos);
-        return;
-    }
-
-    // TODO : remove this code.
-    if (_arSession && _arSession->isReady()) {
-        std::unique_ptr<VROARFrame> &frame = _arSession->getLastFrame();
-        std::vector<VROARHitTestResult> results = frame->hitTest(location.x * self.contentScaleFactor,
-                                                                 location.y * self.contentScaleFactor,
-                       { VROARHitTestResultType::ExistingPlaneUsingExtent,
-                         VROARHitTestResultType::ExistingPlane,
-                         VROARHitTestResultType::EstimatedHorizontalPlane,
-                         VROARHitTestResultType::FeaturePoint });
-        
-        for (VROARHitTestResult &result : results) {
-            if (self.tapHandler) {
-                self.tapHandler(result, _arSession, _sceneController->getScene());
-            }
-        }
     }
 }
-// End TODO
+
+- (void)handleTap:(UITapGestureRecognizer *)recognizer {
+    CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+    
+    VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
+    
+    if (recognizer.state == UIGestureRecognizerStateRecognized) {
+        NSLog(@"kirby tap gesture ended");
+        _inputController->onScreenTouchDown(viewportTouchPos);
+        _inputController->onScreenTouchUp(viewportTouchPos);
+    }
+}
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
