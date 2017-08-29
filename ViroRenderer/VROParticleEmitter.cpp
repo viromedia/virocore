@@ -250,9 +250,12 @@ void VROParticleEmitter::updateParticlePhysics(double currentTime) {
         VROVector3f accel
                 = _accelerationModifier->applyModifier(_particles[i],_particles[i].initialAccel);
 
-
         // Apply Velocity equation. NOTE: We are assuming a constant rate of acceleration and velocity.
         float tSec = _particles[i].timeSinceSpawnedInMs / 1000;
+        if (_impulseDeaccelerationExplosionPeriod != -1 && tSec > _impulseDeaccelerationExplosionPeriod){
+            tSec = _impulseDeaccelerationExplosionPeriod;
+        }
+
         VROVector3f displacement = velocity * tSec + accel * 0.5 * tSec * tSec;
         VROMatrix4f transform = _particles[i].spawnedLocalTransform;
         VROVector3f velocityFinal = velocity + accel * tSec;
@@ -481,13 +484,20 @@ void VROParticleEmitter::resetParticle(VROParticle &particle, double currentTime
     particle.initialColor = _colorModifier->getInitialValue();
     particle.initialScale = _scaleModifier->getInitialValue();
     particle.initialRotation = _rotationModifier->getInitialValue();
-    particle.initialAccel = _accelerationModifier->getInitialValue();
     particle.initialAlpha = _alphaModifier->getInitialValue();
 
     if (_impulseExplosionMagnitude == -1){
         particle.initialVelocity = _velocityModifier->getInitialValue();
     } else {
         particle.initialVelocity = getExplosionInitialVel(startTransform.extractTranslation());
+    }
+
+    if (_impulseDeaccelerationExplosionPeriod == -1){
+        particle.initialAccel = _accelerationModifier->getInitialValue();
+    } else {
+        _accelerationModifier
+                = std::make_shared<VROParticleModifier>(getExplosionAccel(particle.initialVelocity));
+        particle.initialAccel = _accelerationModifier->getInitialValue();
     }
 
 
@@ -613,4 +623,10 @@ VROVector3f VROParticleEmitter::getExplosionInitialVel(VROVector3f particlePosit
     // Impulse equals to changes in momentum: Impulse = mass * DeltaVelocity
     VROVector3f impulse = blastDir * impulseMag;
     return impulse / kAssumedParticleMass;
+}
+
+VROVector3f VROParticleEmitter::getExplosionAccel(VROVector3f intialVelocity){
+    // If we want an explosion with a de-accelerated force applied over time propotional
+    // to where it had started from.
+    return (intialVelocity / _impulseDeaccelerationExplosionPeriod) * -1.0;
 }
