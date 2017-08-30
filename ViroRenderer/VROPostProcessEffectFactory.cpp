@@ -23,7 +23,19 @@ static std::shared_ptr<VROImagePostProcess> sCrossHatch;
 static std::shared_ptr<VROImagePostProcess> sEmptyEffect;
 
 VROPostProcessEffectFactory::VROPostProcessEffectFactory() {}
-VROPostProcessEffectFactory::~VROPostProcessEffectFactory() {}
+VROPostProcessEffectFactory::~VROPostProcessEffectFactory() {
+    sGrayScale = nullptr;
+    sSepia = nullptr;
+    sSinCity = nullptr;
+    sBarallel = nullptr;
+    sPincushion = nullptr;
+    sToonify = nullptr;
+    sInverted = nullptr;
+    sThermalVision = nullptr;
+    sPixellated = nullptr;
+    sCrossHatch = nullptr;
+    sEmptyEffect = nullptr;
+}
 
 void VROPostProcessEffectFactory::enableEffect(VROPostProcessEffect effect, std::shared_ptr<VRODriver> driver){
     // Check and return if effect has already been applied.
@@ -137,7 +149,7 @@ std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createSepia(st
         std::vector<std::string> samplers = { "source_texture" };
         std::vector<std::string> code = {
                 "uniform sampler2D source_texture;",
-                "highp float adjust = 1.0;",
+                "highp float adjust = 0.9;",
                 "highp vec4 color = texture(source_texture, v_texcoord);",
                 "highp vec4 outputColor;",
                 "outputColor.r = min(1.0,(color.r * (1.0 - (0.607 * adjust))) + (color.g * 0.769 * adjust) + (color.b * 0.189 * adjust));",
