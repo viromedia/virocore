@@ -176,9 +176,12 @@ std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createSinCity(
                 "highp vec4 luma = vec4(average);",
                 "highp vec4 sat = vec4((color.r - (luma.r/3.)), (color.g - (luma.g/3.)), (color.b - (luma.b/3.)), 1.0);",
                 "highp float mixamount = (thresh >= sat.r || sat.b >= thresh || sat.g >= thresh) ? thresh : sat.r;",
-                "highp vec4 result = mix(luma, sat, mixamount);",
-                "frag_color = vec4(result.rgb,1.0);",
+                "frag_color = mix(luma, sat, mixamount);",
         };
+
+        std::vector<std::string> darkerScene = getHBCSModification(0, .45, .55 , .45);
+        code.insert(code.end(), darkerScene.begin(), darkerScene.end());
+
         std::shared_ptr<VROShaderProgram> shader = VROImageShaderProgram::create(samplers, code, driver);
         sSinCity = driver->newImagePostProcess(shader);
     }
@@ -354,6 +357,35 @@ std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createCrossHat
         sCrossHatch = driver->newImagePostProcess(shader);
     }
     return sCrossHatch;
+}
+
+std::vector<std::string> VROPostProcessEffectFactory::getHBCSModification(float hue, float brightness, float contrast, float saturation){
+    std::string strHue = VROStringUtil::toString(hue, 2);
+    std::string strBrightness = VROStringUtil::toString(brightness, 2);
+    std::string strContrast = VROStringUtil::toString(contrast, 2);
+    std::string strSaturation = VROStringUtil::toString(saturation, 2);
+
+    return {
+            "highp vec4 hbcs = vec4(" + strHue + "," + strBrightness + "," +  strContrast + " , " + strSaturation + ");",
+            "highp float _Hue = 360. * hbcs.r;",
+            "highp float _Brightness = hbcs.g * 2. - 1.;",
+            "highp float _Contrast = hbcs.b * 2.;",
+            "highp float _Saturation = hbcs.a * 2.;",
+
+            "highp vec4 outputColor = frag_color;",
+            "highp vec3 aColor = outputColor.rgb;",
+            "highp float angle = radians(_Hue);",
+            "highp vec3 k = vec3(0.57735, 0.57735, 0.57735);",
+            "highp float cosAngle = cos(angle);",
+            "outputColor.rgb = aColor * cosAngle + cross(k, aColor) * sin(angle) + k * dot(k, aColor) * (1. - cosAngle);",
+
+            "outputColor.rgb = (outputColor.rgb - 0.5f) * (_Contrast) + 0.5f;",
+            "outputColor.rgb = outputColor.rgb + _Brightness;",
+            "highp float intensity = dot(outputColor.rgb, vec3(0.22, 0.707, 0.0714));",
+            "highp vec3 intens = vec3(intensity, intensity, intensity);",
+            "outputColor.rgb = mix(intens, outputColor.rgb, _Saturation);",
+            "frag_color = outputColor;"
+    };
 }
 
 std::shared_ptr<VROImagePostProcess> VROPostProcessEffectFactory::createEmptyEffect(std::shared_ptr<VRODriver> driver) {
