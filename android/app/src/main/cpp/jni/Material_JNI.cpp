@@ -177,6 +177,10 @@ JNI_METHOD(void, nativeSetDiffuseIntensity)(JNIEnv *env, jobject obj, jlong nati
     Material::native(nativeRef)->getDiffuse().setIntensity(diffuseIntensity);
 }
 
+JNI_METHOD(void, nativeSetBloomThreshold)(JNIEnv *env, jobject obj, jlong nativeRef, jfloat bloomThreshold) {
+    Material::native(nativeRef)->setBloomThreshold(bloomThreshold);
+}
+
 JNI_METHOD(void, nativeDestroyMaterial)(JNIEnv *env,
                                         jobject obj,
                                         jlong nativeRef) {

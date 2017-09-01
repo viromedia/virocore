@@ -47,6 +47,8 @@ public class MaterialJni {
 
     public void setDiffuseIntensity(float diffuseIntensity) { nativeSetDiffuseIntensity(mNativeRef, diffuseIntensity); }
 
+    public void setBloomThreshold(float bloomThreshold) { nativeSetBloomThreshold(mNativeRef, bloomThreshold); }
+
     public void setCullMode(String cullModeName) {
         nativeSetCullMode(mNativeRef, cullModeName);
     }
@@ -70,4 +72,5 @@ public class MaterialJni {
     private native void nativeSetCullMode(long nativeRef, String cullModeName);
     private native void nativeSetDiffuseIntensity(long nativeRef, float diffuseIntensity);
     private native void nativeDestroyMaterial(long nativeRef);
+    private native void nativeSetBloomThreshold(long nativeRef, float bloomThreshold);
 }
