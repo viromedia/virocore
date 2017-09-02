@@ -203,6 +203,20 @@ JNI_METHOD(void, nativeSetVisible)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetIgnoreEventHandling)(JNIEnv *env,
+                                   jobject obj,
+                                   jlong native_node_ref,
+                                   jboolean ignoreEventHandling) {
+
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w, ignoreEventHandling] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setIgnoreEventHandling(ignoreEventHandling);
+        }
+    });
+}
+
 JNI_METHOD(void, nativeSetHierarchicalRendering)(JNIEnv *env,
                                                  jobject obj,
                                                  jlong native_node_ref,

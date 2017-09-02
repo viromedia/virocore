@@ -49,6 +49,7 @@ VROParticleEmitter::VROParticleEmitter(std::shared_ptr<VRODriver> driver,
 
     // Finally, bind the particle geometry to the emitter node.
     emitterNode->setGeometry(particleGeometry);
+    emitterNode->setIgnoreEventHandling(true);
     _particleEmitterNodeWeak = emitterNode;
 }
 

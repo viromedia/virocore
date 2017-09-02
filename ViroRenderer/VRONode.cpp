@@ -61,6 +61,7 @@ VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
     _hierarchicalRendering(false),
     _lightBitMask(1),
     _shadowCastingBitMask(1),
+    _ignoreEventHandling(false),
     _lastComputedTransform(VROMatrix4f()) {
     ALLOCATION_TRACKER_ADD(Nodes, 1);
 }
@@ -85,6 +86,7 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _hierarchicalRendering(node._hierarchicalRendering),
     _lightBitMask(node._lightBitMask),
     _shadowCastingBitMask(node._shadowCastingBitMask),
+    _ignoreEventHandling(node._ignoreEventHandling),
     _lastComputedTransform(VROMatrix4f()) {
         
     ALLOCATION_TRACKER_ADD(Nodes, 1);

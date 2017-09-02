@@ -504,6 +504,14 @@ public:
         return _selectable;
     }
 
+    void setIgnoreEventHandling(bool canHandle) {
+        _ignoreEventHandling = canHandle;
+    }
+
+    bool getIgnoreEventHandling() const {
+        return _ignoreEventHandling;
+    }
+
     void setTag(std::string tag) {
         _tag = tag;
     }
@@ -664,6 +672,11 @@ private:
      True if this node is selectable by hit testing. Defaults to true.
      */
     bool _selectable;
+
+    /*
+     True if this node is set to ignore all events fired from VROBaseInputController.
+     */
+    bool _ignoreEventHandling;
 
     /*
      Delegate through which events are notified from the VROEventManager.

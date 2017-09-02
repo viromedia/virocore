@@ -425,10 +425,12 @@ VROHitTestResult VROInputControllerBase::hitTest(const VROCamera &camera, VROVec
     });
 
     // Return the closest hit element, if any.
-    if (results.size() > 0) {
-        return results[0];
+    for (int i = 0; i < results.size(); i ++) {
+        if (!results[i].getNode()->getIgnoreEventHandling()) {
+            return results[i];
+        }
     }
-
+    
     VROVector3f backgroundPosition = origin + (ray * kSceneBackgroundDistance);
     VROHitTestResult sceneBackgroundHitResult = { sceneRootNode, backgroundPosition,
                                                   kSceneBackgroundDistance, true, camera };
