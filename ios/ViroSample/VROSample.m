@@ -234,35 +234,76 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     //rootNode->addChildNode(occludingBox);
     
-    std::vector<VROVector3f> positions;
-    positions.push_back({0, 6, -8});
-    positions.push_back({0, -3, -2});
-    positions.push_back({0, -8, -2});
-    positions.push_back({-5, 0, -2});
+    bool testFbxPortals = true;
     
-    for (VROVector3f position : positions) {
-        std::shared_ptr<VROPortal> innerPortalNode = std::make_shared<VROPortal>();
-        innerPortalNode->setPosition(position);
-        innerPortalNode->setBackgroundSphere([self westlakeTexture]);
-        
-        std::shared_ptr<VROPortalFrame> innerPortalFrame = [self loadPortalEntrance];
-        innerPortalFrame->setScale({0.25, 0.25, 0.25});
-        innerPortalNode->setPortalEntrance(innerPortalFrame);
-        
-        std::shared_ptr<VRONode> innerPortalNodeContent = std::make_shared<VRONode>();
-        innerPortalNodeContent->setGeometry(VROBox::createBox(0.5, 0.5, 0.5));
-        innerPortalNodeContent->getGeometry()->getMaterials().front()->getDiffuse().setColor({0.0, 0.0, 1.0, 1.0});
-        innerPortalNodeContent->setPosition({0.2, 0, -1});
-        innerPortalNode->addChildNode(innerPortalNodeContent);
-        //innerPortalNode->setPassable(true);
-        
-        std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self] (VRONode *const node, float seconds) {
-            node->setRotation({ 0, (float)(node->getRotationEuler().y + 0.15), 0});
-            return true;
-        });
-        innerPortalNodeContent->runAction(action);
-        
-        portalNode->addChildNode(innerPortalNode);
+    if (!testFbxPortals) {
+        std::vector<VROVector3f> positions;
+        positions.push_back({0, 6, -8});
+        positions.push_back({0, -3, -2});
+        positions.push_back({0, -8, -2});
+        positions.push_back({-5, 0, -2});
+
+        for (VROVector3f position : positions) {
+            std::shared_ptr<VROPortal> innerPortalNode = std::make_shared<VROPortal>();
+            innerPortalNode->setPosition(position);
+            innerPortalNode->setBackgroundSphere([self westlakeTexture]);
+            
+            std::shared_ptr<VROPortalFrame> innerPortalFrame = [self loadPortalEntrance];
+            innerPortalFrame->setScale({0.25, 0.25, 0.25});
+            innerPortalNode->setPortalEntrance(innerPortalFrame);
+            
+            std::shared_ptr<VRONode> innerPortalNodeContent = std::make_shared<VRONode>();
+            innerPortalNodeContent->setGeometry(VROBox::createBox(0.5, 0.5, 0.5));
+            innerPortalNodeContent->getGeometry()->getMaterials().front()->getDiffuse().setColor({0.0, 0.0, 1.0, 1.0});
+            innerPortalNodeContent->setPosition({0.2, 0, -1});
+            innerPortalNode->addChildNode(innerPortalNodeContent);
+            //innerPortalNode->setPassable(true);
+            
+            std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self] (VRONode *const node, float seconds) {
+                node->setRotation({ 0, (float)(node->getRotationEuler().y + 0.15), 0});
+                return true;
+            });
+            innerPortalNodeContent->runAction(action);
+            
+            portalNode->addChildNode(innerPortalNode);
+        }
+    } else {
+        std::vector<VROVector3f> positions;
+        positions.push_back({2, 0, -2});
+        positions.push_back({0, -3, -2});
+        positions.push_back({-2, 0, -2});
+        positions.push_back({0, 2, -2});
+
+        NSMutableArray<NSString *> *fbxPortals = [[NSMutableArray alloc] initWithCapacity:4];
+        [fbxPortals addObject:[[NSBundle mainBundle] pathForResource:@"portal_window_frame" ofType:@"vrx"]];
+        [fbxPortals addObject:[[NSBundle mainBundle] pathForResource:@"portal_ship" ofType:@"vrx"]];
+        [fbxPortals addObject:[[NSBundle mainBundle] pathForResource:@"portal_archway" ofType:@"vrx"]];
+        [fbxPortals addObject:[[NSBundle mainBundle] pathForResource:@"portal_wood_frame" ofType:@"vrx"]];
+
+        for (int i = 0; i < positions.size(); i++) {
+            VROVector3f position = positions[i];
+            std::shared_ptr<VROPortal> innerPortalNode = std::make_shared<VROPortal>();
+            innerPortalNode->setPosition(position);
+            innerPortalNode->setBackgroundSphere([self westlakeTexture]);
+            
+            std::shared_ptr<VROPortalFrame> innerPortalFrame = [self loadFbxPortalEntrance:[fbxPortals objectAtIndex:i] withScale:0.5];
+            innerPortalNode->setPortalEntrance(innerPortalFrame);
+            
+            std::shared_ptr<VRONode> innerPortalNodeContent = std::make_shared<VRONode>();
+            innerPortalNodeContent->setGeometry(VROBox::createBox(0.5, 0.5, 0.5));
+            innerPortalNodeContent->getGeometry()->getMaterials().front()->getDiffuse().setColor({0.0, 0.0, 1.0, 1.0});
+            innerPortalNodeContent->setPosition({0.2, 0, -1});
+            innerPortalNode->addChildNode(innerPortalNodeContent);
+            //innerPortalNode->setPassable(true);
+            
+            std::shared_ptr<VROAction> action = VROAction::perpetualPerFrameAction([self] (VRONode *const node, float seconds) {
+                node->setRotation({ 0, (float)(node->getRotationEuler().y + 0.15), 0});
+                return true;
+            });
+            innerPortalNodeContent->runAction(action);
+            
+            rootNode->addChildNode(innerPortalNode);
+        }
     }
     
     std::vector<VROVector3f> sidePositions;
@@ -303,7 +344,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     
     std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();
     scene->getRootNode()->setCamera(camera);
-    [self.view setPointOfView:scene->getRootNode()];
+    
+    if (![self.view isKindOfClass:[VROViewAR class]]) {
+        [self.view setPointOfView:scene->getRootNode()];
+    }
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         VROTransaction::begin();
@@ -1431,6 +1475,29 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                                                                                        std::make_shared<VROImageiOS>([UIImage imageNamed:@"portal_ring"], format)));
                                                                     });
     
+    frame->addChildNode(node);
+    return frame;
+}
+
+- (std::shared_ptr<VROPortalFrame>)loadFbxPortalEntrance:(NSString *)fbxPath withScale:(float)scale {
+    
+    NSURL *fbxURL = [NSURL fileURLWithPath:fbxPath];
+    std::string url = std::string([[fbxURL description] UTF8String]);
+    
+    NSString *basePath = [fbxPath stringByDeletingLastPathComponent];
+    NSURL *baseURL = [NSURL fileURLWithPath:basePath];
+    std::string base = std::string([[baseURL description] UTF8String]);
+    
+    std::shared_ptr<VROPortalFrame> frame = std::make_shared<VROPortalFrame>();
+    std::shared_ptr<VRONode> node = VROFBXLoader::loadFBXFromURL(url, base, true,
+                                                                 [self, scale](std::shared_ptr<VRONode> node, bool success) {
+                                                                     if (!success) {
+                                                                         return;
+                                                                     }
+                                                                     
+                                                                     node->setScale({scale, scale, scale});
+                                                                     node->setPosition({0,0,0});
+                                                                 });
     frame->addChildNode(node);
     return frame;
 }

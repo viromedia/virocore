@@ -8,6 +8,23 @@
 
 /* Begin PBXBuildFile section */
 		6386C3B94B3E92D246F8F9EB /* libPods-ViroKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6447C487DE6546AF514106CC /* libPods-ViroKit.a */; };
+		8A06E3411F59D16C00C51902 /* portal_wood_frame_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E33D1F59CF2A00C51902 /* portal_wood_frame_specular.png */; };
+		8A06E3421F59D16C00C51902 /* portal_wood_frame_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E33E1F59CF2B00C51902 /* portal_wood_frame_diffuse.png */; };
+		8A06E3431F59D16C00C51902 /* portal_wood_frame_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E33F1F59CF2C00C51902 /* portal_wood_frame_normal.png */; };
+		8A06E3441F59D16C00C51902 /* portal_wood_frame.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3401F59CF2C00C51902 /* portal_wood_frame.vrx */; };
+		8A06E3451F59D16C00C51902 /* portal_window_frame_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3391F59CE6E00C51902 /* portal_window_frame_diffuse.png */; };
+		8A06E3461F59D16C00C51902 /* portal_window_frame_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E33A1F59CE6E00C51902 /* portal_window_frame_normal.png */; };
+		8A06E3471F59D16C00C51902 /* portal_window_frame_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E33C1F59CE6F00C51902 /* portal_window_frame_specular.png */; };
+		8A06E3481F59D16C00C51902 /* portal_window_frame.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E33B1F59CE6E00C51902 /* portal_window_frame.vrx */; };
+		8A06E3491F59D16C00C51902 /* portal_ship_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3361F59CCCB00C51902 /* portal_ship_diffuse.png */; };
+		8A06E34A1F59D16C00C51902 /* portal_ship_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3381F59CCCC00C51902 /* portal_ship_normal.png */; };
+		8A06E34B1F59D16C00C51902 /* portal_ship_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3371F59CCCC00C51902 /* portal_ship_specular.png */; };
+		8A06E34C1F59D16C00C51902 /* portal_ship.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3351F59CCCB00C51902 /* portal_ship.vrx */; };
+		8A06E34D1F59D16C00C51902 /* portal_archway_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3331F59CCBB00C51902 /* portal_archway_diffuse.png */; };
+		8A06E34E1F59D16C00C51902 /* portal_archway_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3341F59CCBC00C51902 /* portal_archway_normal.png */; };
+		8A06E34F1F59D16C00C51902 /* portal_archway_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3311F59CCBA00C51902 /* portal_archway_specular.png */; };
+		8A06E3501F59D16C00C51902 /* portal_archway.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3301F59CCB900C51902 /* portal_archway.vrx */; };
+		8A06E3511F59D16C00C51902 /* portal_entry.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3321F59CCBB00C51902 /* portal_entry.png */; };
 		8A06EFDE1F021D3B00C396F4 /* VROInputPresenterARiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A06EFDD1F021D3B00C396F4 /* VROInputPresenterARiOS.h */; };
 		8A11C8F51EF5AB9D0003E829 /* VROARPlane.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A11C8F41EF5A8E30003E829 /* VROARPlane.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A11C8F81EF5B2270003E829 /* VROARComponentManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A11C8F61EF5B2270003E829 /* VROARComponentManager.cpp */; };
@@ -628,6 +645,23 @@
 		69FBDCF89ECBB5500043C227 /* Pods-ViroARKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroARKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroARKit/Pods-ViroARKit.debug.xcconfig"; sourceTree = "<group>"; };
 		6E1141125FCC9320616556D8 /* Pods-ViroKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.debug.xcconfig"; sourceTree = "<group>"; };
 		710AAB43C4650092845EAD81 /* Pods-ViroKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.release.xcconfig"; sourceTree = "<group>"; };
+		8A06E3301F59CCB900C51902 /* portal_archway.vrx */ = {isa = PBXFileReference; lastKnownFileType = text; path = portal_archway.vrx; sourceTree = "<group>"; };
+		8A06E3311F59CCBA00C51902 /* portal_archway_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_archway_specular.png; sourceTree = "<group>"; };
+		8A06E3321F59CCBB00C51902 /* portal_entry.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_entry.png; sourceTree = "<group>"; };
+		8A06E3331F59CCBB00C51902 /* portal_archway_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_archway_diffuse.png; sourceTree = "<group>"; };
+		8A06E3341F59CCBC00C51902 /* portal_archway_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_archway_normal.png; sourceTree = "<group>"; };
+		8A06E3351F59CCCB00C51902 /* portal_ship.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; path = portal_ship.vrx; sourceTree = "<group>"; };
+		8A06E3361F59CCCB00C51902 /* portal_ship_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_ship_diffuse.png; sourceTree = "<group>"; };
+		8A06E3371F59CCCC00C51902 /* portal_ship_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_ship_specular.png; sourceTree = "<group>"; };
+		8A06E3381F59CCCC00C51902 /* portal_ship_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_ship_normal.png; sourceTree = "<group>"; };
+		8A06E3391F59CE6E00C51902 /* portal_window_frame_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_window_frame_diffuse.png; sourceTree = "<group>"; };
+		8A06E33A1F59CE6E00C51902 /* portal_window_frame_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_window_frame_normal.png; sourceTree = "<group>"; };
+		8A06E33B1F59CE6E00C51902 /* portal_window_frame.vrx */ = {isa = PBXFileReference; lastKnownFileType = text; path = portal_window_frame.vrx; sourceTree = "<group>"; };
+		8A06E33C1F59CE6F00C51902 /* portal_window_frame_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_window_frame_specular.png; sourceTree = "<group>"; };
+		8A06E33D1F59CF2A00C51902 /* portal_wood_frame_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_wood_frame_specular.png; sourceTree = "<group>"; };
+		8A06E33E1F59CF2B00C51902 /* portal_wood_frame_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_wood_frame_diffuse.png; sourceTree = "<group>"; };
+		8A06E33F1F59CF2C00C51902 /* portal_wood_frame_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_wood_frame_normal.png; sourceTree = "<group>"; };
+		8A06E3401F59CF2C00C51902 /* portal_wood_frame.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; path = portal_wood_frame.vrx; sourceTree = "<group>"; };
 		8A06EFDD1F021D3B00C396F4 /* VROInputPresenterARiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROInputPresenterARiOS.h; sourceTree = "<group>"; };
 		8A07C1821ED8D5EA00757C29 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Libraries/opencv/opencv2.framework; sourceTree = "<group>"; };
 		8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
@@ -2032,6 +2066,23 @@
 				8F727F631F39EDAD00CDBBFC /* pug.vrx */,
 				8F432E8B1F2B994C00B1B2DC /* portal_ring.obj */,
 				8F432E8C1F2B994C00B1B2DC /* portal_ring.png */,
+				8A06E33D1F59CF2A00C51902 /* portal_wood_frame_specular.png */,
+				8A06E33E1F59CF2B00C51902 /* portal_wood_frame_diffuse.png */,
+				8A06E33F1F59CF2C00C51902 /* portal_wood_frame_normal.png */,
+				8A06E3401F59CF2C00C51902 /* portal_wood_frame.vrx */,
+				8A06E3391F59CE6E00C51902 /* portal_window_frame_diffuse.png */,
+				8A06E33A1F59CE6E00C51902 /* portal_window_frame_normal.png */,
+				8A06E33C1F59CE6F00C51902 /* portal_window_frame_specular.png */,
+				8A06E33B1F59CE6E00C51902 /* portal_window_frame.vrx */,
+				8A06E3361F59CCCB00C51902 /* portal_ship_diffuse.png */,
+				8A06E3381F59CCCC00C51902 /* portal_ship_normal.png */,
+				8A06E3371F59CCCC00C51902 /* portal_ship_specular.png */,
+				8A06E3351F59CCCB00C51902 /* portal_ship.vrx */,
+				8A06E3331F59CCBB00C51902 /* portal_archway_diffuse.png */,
+				8A06E3341F59CCBC00C51902 /* portal_archway_normal.png */,
+				8A06E3311F59CCBA00C51902 /* portal_archway_specular.png */,
+				8A06E3301F59CCB900C51902 /* portal_archway.vrx */,
+				8A06E3321F59CCBB00C51902 /* portal_entry.png */,
 				8FF5CCB71F290364007C7F52 /* aliengirl_diffuse.png */,
 				8FF5CCB81F290364007C7F52 /* aliengirl_normal.png */,
 				8FF5CCB91F290364007C7F52 /* aliengirl_specular.png */,
@@ -2655,6 +2706,23 @@
 				8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */,
 				8F9277FE1C66BD4500FF892A /* nx1.jpg in Resources */,
 				8F37D9EC1F4B18800029D23E /* wood.png in Resources */,
+				8A06E3411F59D16C00C51902 /* portal_wood_frame_specular.png in Resources */,
+				8A06E3421F59D16C00C51902 /* portal_wood_frame_diffuse.png in Resources */,
+				8A06E3431F59D16C00C51902 /* portal_wood_frame_normal.png in Resources */,
+				8A06E3441F59D16C00C51902 /* portal_wood_frame.vrx in Resources */,
+				8A06E3451F59D16C00C51902 /* portal_window_frame_diffuse.png in Resources */,
+				8A06E3461F59D16C00C51902 /* portal_window_frame_normal.png in Resources */,
+				8A06E3471F59D16C00C51902 /* portal_window_frame_specular.png in Resources */,
+				8A06E3481F59D16C00C51902 /* portal_window_frame.vrx in Resources */,
+				8A06E3491F59D16C00C51902 /* portal_ship_diffuse.png in Resources */,
+				8A06E34A1F59D16C00C51902 /* portal_ship_normal.png in Resources */,
+				8A06E34B1F59D16C00C51902 /* portal_ship_specular.png in Resources */,
+				8A06E34C1F59D16C00C51902 /* portal_ship.vrx in Resources */,
+				8A06E34D1F59D16C00C51902 /* portal_archway_diffuse.png in Resources */,
+				8A06E34E1F59D16C00C51902 /* portal_archway_normal.png in Resources */,
+				8A06E34F1F59D16C00C51902 /* portal_archway_specular.png in Resources */,
+				8A06E3501F59D16C00C51902 /* portal_archway.vrx in Resources */,
+				8A06E3511F59D16C00C51902 /* portal_entry.png in Resources */,
 				8FCED07D1EBBD35200C19BCA /* Sven_Face_Normal.png in Resources */,
 				8FCED0771EBBD35200C19BCA /* ramp_inc2.tga in Resources */,
 				A540C5C41F3E7190007986E6 /* particles_vsh.glsl in Resources */,
