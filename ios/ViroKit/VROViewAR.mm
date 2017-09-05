@@ -187,15 +187,17 @@ static VROVector3f const kZeroVector = VROVector3f();
     [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     
     /*
-     Create AR session.
+     Create AR session checking if an ARKit class and one of our classes have been defined. If not, then load VROARSessionInertial,
+     otherwise create a VROARSessioniOS w/ 6DOF tracking.
      */
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
-    _arSession = std::make_shared<VROARSessioniOS>(VROTrackingType::DOF6, _driver);
-#else
-    _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::DOF3, _driver);
-    // in the 3DOF case, tracking doesn't take time to initialize, but the sceneController hasn't yet been set.
-    _hasTrackingInitialized = true;
-#endif
+    if (NSClassFromString(@"ARWorldTrackingSessionConfiguration") == nil || NSClassFromString(@"VROARSessioniOS") == nil) {
+        _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::DOF3, _driver);
+        // in the 3DOF case, tracking doesn't take time to initialize, but the sceneController hasn't yet been set.
+        _hasTrackingInitialized = true;
+    } else {
+        _arSession = std::make_shared<VROARSessioniOS>(VROTrackingType::DOF6, _driver);
+    }
+
     _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
     
     /*
