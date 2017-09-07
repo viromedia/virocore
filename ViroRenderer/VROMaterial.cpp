@@ -199,6 +199,12 @@ void VROMaterial::removeOutgoingMaterial() {
     _outgoing.reset();
 }
 
+void VROMaterial::updateSubstrateTextures() {
+    if (_substrate) {
+        _substrate->updateTextures();
+    }
+}
+
 void VROMaterial::updateSubstrate() {
     delete (_substrate);
     _substrate = nullptr;

@@ -29,9 +29,13 @@ class VROBoneUBO;
 enum class VROEyeType;
 
 /*
- The association between this material and a given shader program. Contains
+ The association between a material and a given shader program. Contains
  all the uniforms that we need to set each time we bind the shader with
  the properties of this material.
+ 
+ The shader used, and therefore the uniforms that need to be bound, is a function
+ of the material and the lighting configuration. These bindings are created
+ by VROMaterial::getShaderBindingForLights().
  */
 class VROMaterialShaderBinding {
 public:
@@ -39,12 +43,11 @@ public:
     VROMaterialShaderBinding(std::shared_ptr<VROShaderProgram> program, VROLightingShaderCapabilities capabilities,
                              const VROMaterial &material);
     virtual ~VROMaterialShaderBinding();
-    
+
     /*
-     The program associated with this binding, and its lighting
-     capabilities.
+     The binding's lighting capabilities: indicates what lights are compatible with this
+     shader and material combination.
      */
-    std::shared_ptr<VROShaderProgram> program;
     VROLightingShaderCapabilities lightingShaderCapabilities;
     
     void bindViewUniforms(VROMatrix4f &modelMatrix, VROMatrix4f &viewMatrix,
@@ -53,11 +56,27 @@ public:
     void bindMaterialUniforms(const VROMaterial &material);
     void bindGeometryUniforms(float opacity, const VROGeometry &geometry, const VROMaterial &material);
     
+    std::shared_ptr<VROShaderProgram> &getProgram() {
+        return _program;
+    }
     const std::vector<std::shared_ptr<VROTexture>> &getTextures() const {
         return _textures;
     }
     
+    /*
+     Load the textures used by the material into this binding. Uses the samplers
+     from the shader to determine the texture order. This should be invoked whenever
+     the material's textures change.
+     */
+    void loadTextures();
+    
 private:
+    
+    /*
+     The program and material associated with this binding.
+     */
+    std::shared_ptr<VROShaderProgram> _program;
+    const VROMaterial &_material;
     
     /*
      The various uniforms are owned by the active VROShaderProgram.
@@ -84,7 +103,6 @@ private:
     std::vector<std::shared_ptr<VROTexture>> _textures;
     
     void loadUniforms();
-    void loadSamplers(const VROMaterial &material);
 
 };
 
@@ -138,6 +156,7 @@ public:
         return _activeBinding->getTextures();
     }
     
+    void updateTextures();
     void updateSortKey(VROSortKey &key, const std::vector<std::shared_ptr<VROLight>> &lights,
                        std::shared_ptr<VRODriver> driver);
 
@@ -159,13 +178,15 @@ private:
     std::shared_ptr<VROTexture> _shadowMap;
     
     /*
-     The programs that have been used by this material. Each program here is
-     capable of rendering materials with _materialShaderCapabilities; what makes
-     them unique is they render differing lighting shader capabilities (e.g. a
+     The shader programs that have been used by this material, each represented as a
+     VROMaterialShaderBinding, a binding between this material and a program.
+     
+     Each program here is capable of rendering materials with _materialShaderCapabilities;
+     what makes them unique is they render different lighting configurations (e.g. a
      material can have one shader program it uses when not rendering shadows, and
      another when it is rendering shadows).
      */
-    std::map<VROLightingShaderCapabilities, std::unique_ptr<VROMaterialShaderBinding>> _programs;
+    std::map<VROLightingShaderCapabilities, std::unique_ptr<VROMaterialShaderBinding>> _shaderBindings;
     
     /*
      Get the shader program that should be used for the given light configuration.

@@ -50,10 +50,10 @@ void VROMaterialSubstrateOpenGL::bindShader(int lightsHash,
                                             std::shared_ptr<VRODriver> &driver) {
     
     _activeBinding = getShaderBindingForLights(lights, driver);
-    driver->bindShader(_activeBinding->program);
+    driver->bindShader(_activeBinding->getProgram());
 
     if (lights.empty()) {
-        VROLightingUBO::unbind(_activeBinding->program);
+        VROLightingUBO::unbind(_activeBinding->getProgram());
         _lightingUBO.reset();
         return;
     }
@@ -70,8 +70,7 @@ void VROMaterialSubstrateOpenGL::bindShader(int lightsHash,
             _lightingUBO = glDriver.createLightingUBO(lightsHash, lights);
         }
     }
-    
-    _lightingUBO->bind(_activeBinding->program);
+    _lightingUBO->bind(_activeBinding->getProgram());
 }
 
 void VROMaterialSubstrateOpenGL::bindView(VROMatrix4f modelMatrix, VROMatrix4f viewMatrix,
@@ -84,22 +83,28 @@ void VROMaterialSubstrateOpenGL::bindView(VROMatrix4f modelMatrix, VROMatrix4f v
 
 void VROMaterialSubstrateOpenGL::bindBoneUBO(const std::unique_ptr<VROBoneUBO> &boneUBO) {
     passert(_activeBinding != nullptr);
-    boneUBO->bind(_activeBinding->program);
+    boneUBO->bind(_activeBinding->getProgram());
 }
 
 void VROMaterialSubstrateOpenGL::bindInstanceUBO(const std::shared_ptr<VROInstancedUBO> &instanceUBO) {
     passert(_activeBinding != nullptr);
-    instanceUBO->bind(_activeBinding->program);
+    instanceUBO->bind(_activeBinding->getProgram());
 }
 
-#pragma mark - Updating Sort Key
+#pragma mark - Updating Sort Key and Textures
+
+void VROMaterialSubstrateOpenGL::updateTextures() {
+    for (auto &kv : _shaderBindings) {
+        kv.second->loadTextures();
+    }
+}
 
 void VROMaterialSubstrateOpenGL::updateSortKey(VROSortKey &key, const std::vector<std::shared_ptr<VROLight>> &lights,
                                                std::shared_ptr<VRODriver> driver) {
     VROMaterialShaderBinding *binding = getShaderBindingForLights(lights, driver);
     passert (binding != nullptr);
     
-    key.shader = binding->program->getShaderId();
+    key.shader = binding->getProgram()->getShaderId();
     key.textures = hashTextures(binding->getTextures());
 }
 
@@ -114,8 +119,8 @@ VROMaterialShaderBinding *VROMaterialSubstrateOpenGL::getShaderBindingForLights(
     }
     
     // Next check our installed bindings
-    auto it = _programs.find(capabilities);
-    if (it != _programs.end()) {
+    auto it = _shaderBindings.find(capabilities);
+    if (it != _shaderBindings.end()) {
         return it->second.get();
     }
     
@@ -126,7 +131,7 @@ VROMaterialShaderBinding *VROMaterialSubstrateOpenGL::getShaderBindingForLights(
         shader->hydrate();
     }
     VROMaterialShaderBinding *binding = new VROMaterialShaderBinding(shader, capabilities, _material);
-    _programs[capabilities] = std::unique_ptr<VROMaterialShaderBinding>(binding);
+    _shaderBindings[capabilities] = std::unique_ptr<VROMaterialShaderBinding>(binding);
     return binding;
 }
 
@@ -140,10 +145,11 @@ uint32_t VROMaterialSubstrateOpenGL::hashTextures(const std::vector<std::shared_
 
 #pragma mark - Material <-> Shader Binding
 
-VROMaterialShaderBinding::VROMaterialShaderBinding(std::shared_ptr<VROShaderProgram> program_in,
+VROMaterialShaderBinding::VROMaterialShaderBinding(std::shared_ptr<VROShaderProgram> program,
                                                    VROLightingShaderCapabilities capabilities,
                                                    const VROMaterial &material) :
-    program(program_in),
+    _program(program),
+    _material(material),
     lightingShaderCapabilities(capabilities),
     _diffuseSurfaceColorUniform(nullptr),
     _diffuseIntensityUniform(nullptr),
@@ -157,7 +163,7 @@ VROMaterialShaderBinding::VROMaterialShaderBinding(std::shared_ptr<VROShaderProg
     _eyeTypeUniform(nullptr) {
     
     loadUniforms();
-    loadSamplers(material);
+    loadTextures();
 }
 
 VROMaterialShaderBinding::~VROMaterialShaderBinding() {
@@ -165,6 +171,8 @@ VROMaterialShaderBinding::~VROMaterialShaderBinding() {
 }
 
 void VROMaterialShaderBinding::loadUniforms() {
+    std::shared_ptr<VROShaderProgram> program = _program;
+    
     _diffuseSurfaceColorUniform = program->getUniform("material_diffuse_surface_color");
     _diffuseIntensityUniform = program->getUniform("material_diffuse_intensity");
     _alphaUniform = program->getUniform("material_alpha");
@@ -190,20 +198,22 @@ void VROMaterialShaderBinding::loadUniforms() {
     }
 }
 
-void VROMaterialShaderBinding::loadSamplers(const VROMaterial &material) {
-    const std::vector<std::string> &samplers = program->getSamplers();
+void VROMaterialShaderBinding::loadTextures() {
+    _textures.clear();
+
+    const std::vector<std::string> &samplers = _program->getSamplers();
     for (const std::string &sampler : samplers) {
         if (sampler == "diffuse_texture" || sampler == "diffuse_texture_y") {
-            _textures.push_back(material.getDiffuse().getTexture());
+            _textures.push_back(_material.getDiffuse().getTexture());
         }
         else if (sampler == "specular_texture") {
-            _textures.push_back(material.getSpecular().getTexture());
+            _textures.push_back(_material.getSpecular().getTexture());
         }
         else if (sampler == "normal_texture") {
-            _textures.push_back(material.getNormal().getTexture());
+            _textures.push_back(_material.getNormal().getTexture());
         }
         else if (sampler == "reflect_texture") {
-            _textures.push_back(material.getReflective().getTexture());
+            _textures.push_back(_material.getReflective().getTexture());
         }
     }
 }

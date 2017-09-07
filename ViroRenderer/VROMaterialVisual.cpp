@@ -69,6 +69,7 @@ bool VROMaterialVisual::swapTexture(std::shared_ptr<VROTexture> texture) {
     // Otherwise we can hot-swap
     else {
         _contentsTexture = texture;
+        _material.updateSubstrateTextures();
         return false;
     }
 }
