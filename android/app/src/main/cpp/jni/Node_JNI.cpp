@@ -249,10 +249,16 @@ JNI_METHOD(void, nativeSetMaterials)(JNIEnv *env,
     std::weak_ptr<VRONode> node_w = Node::native(nativeNodeRef);
     VROPlatformDispatchAsyncRenderer([node_w, tempMaterials] {
         std::shared_ptr<VRONode> node = node_w.lock();
+
+        std::vector<std::shared_ptr<VROMaterial>> nonConstMaterials = tempMaterials;
+        // If there was no materials given, just create an empty one and set that.
+        if (tempMaterials.size() == 0) {
+            nonConstMaterials.push_back(std::make_shared<VROMaterial>());
+        }
         if (node) {
             std::shared_ptr<VROGeometry> geometryPtr = node->getGeometry();
             if (geometryPtr != nullptr) {
-                geometryPtr->setMaterials(tempMaterials);
+                geometryPtr->setMaterials(nonConstMaterials);
             }
         }
     });
