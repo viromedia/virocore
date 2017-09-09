@@ -59,7 +59,7 @@ public class VideoTextureJni {
     public void setLoop(boolean loop) {
         nativeSetLoop(mNativeRef, loop);
     }
-    public void seekToTime(int seconds){
+    public void seekToTime(float seconds){
         nativeSeekToTime(mNativeRef, seconds);
     }
 
@@ -76,7 +76,7 @@ public class VideoTextureJni {
     private native void nativeSetMuted(long nativeTexture, boolean muted);
     private native void nativeSetVolume(long nativeTexture, float volume);
     private native void nativeSetLoop(long nativeTexture, boolean loop);
-    private native void nativeSeekToTime(long nativeTexture, int seconds);
+    private native void nativeSeekToTime(long nativeTexture, float seconds);
     private native void nativeLoadSource(long nativeTexture, String url, long renderContext);
 
     /**
@@ -90,7 +90,7 @@ public class VideoTextureJni {
         // notification that the texture is ready to be loaded
         void onReady();
         void onVideoFailed(String error);
-        void onVideoUpdatedTime(int seconds, int totalDuration);
+        void onVideoUpdatedTime(float seconds, float totalDuration);
     }
 
     public void setVideoDelegate(VideoDelegate delegate) {
@@ -130,7 +130,7 @@ public class VideoTextureJni {
         }
     }
 
-    public void onVideoUpdatedTime(int currentTimeInSeconds, int totalTimeInSeconds) {
+    public void onVideoUpdatedTime(float currentTimeInSeconds, float totalTimeInSeconds) {
         if (mDelegate != null && mDelegate.get() != null){
             mDelegate.get().onVideoUpdatedTime(currentTimeInSeconds, totalTimeInSeconds);
         }

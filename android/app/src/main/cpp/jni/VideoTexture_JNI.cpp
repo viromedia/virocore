@@ -170,7 +170,7 @@ JNI_METHOD(void, nativeSetLoop)(JNIEnv *env,
 JNI_METHOD(void, nativeSeekToTime)(JNIEnv *env,
                                      jclass clazz,
                                      jlong textureRef,
-                                     jint seconds) {
+                                     jfloat seconds) {
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     VROPlatformDispatchAsyncRenderer([videoTexture_w, seconds] {

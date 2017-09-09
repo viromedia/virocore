@@ -270,25 +270,27 @@ public class AVPlayer {
         }
     }
 
-    public void seekToTime(int seconds) {
+    public void seekToTime(float seconds) {
         if (mState == State.IDLE) {
             Log.w(TAG, "AVPlayer could not seek while in IDLE state");
             return;
         }
 
-        mExoPlayer.seekTo(seconds * 1000);
+        Log.d("kirby", "seeking to " + ((long) (seconds * 1000)));
+
+        mExoPlayer.seekTo((long) (seconds * 1000));
     }
 
-    public int getCurrentTimeInSeconds() {
+    public float getCurrentTimeInSeconds() {
         if (mState == State.IDLE) {
             Log.w(TAG, "AVPlayer could not get current time in IDLE state");
             return 0;
         }
 
-        return (int) (mExoPlayer.getCurrentPosition() / 1000);
+        return mExoPlayer.getCurrentPosition() / 1000.0f;
     }
 
-    public int getVideoDurationInSeconds() {
+    public float getVideoDurationInSeconds() {
         if (mState == State.IDLE) {
             Log.w(TAG, "AVPlayer could not get video duration in IDLE state");
             return 0;
@@ -296,7 +298,7 @@ public class AVPlayer {
             return 0;
         }
 
-        return (int) (mExoPlayer.getDuration() / 1000);
+        return mExoPlayer.getDuration() / 1000.0f;
     }
 
     /**

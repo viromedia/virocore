@@ -109,7 +109,7 @@ void VideoDelegate::onReady() {
     });
 }
 
-void VideoDelegate::onVideoUpdatedTime(int currentTimeInSeconds, int totalTimeInSeconds){
+void VideoDelegate::onVideoUpdatedTime(float currentTimeInSeconds, float totalTimeInSeconds){
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
@@ -120,7 +120,7 @@ void VideoDelegate::onVideoUpdatedTime(int currentTimeInSeconds, int totalTimeIn
             return;
         }
 
-        VROPlatformCallJavaFunction(weakObj, "onVideoUpdatedTime", "(II)V",
+        VROPlatformCallJavaFunction(weakObj, "onVideoUpdatedTime", "(FF)V",
                                     currentTimeInSeconds, totalTimeInSeconds);
         env->DeleteLocalRef(localObj);
         env->DeleteWeakGlobalRef(weakObj);

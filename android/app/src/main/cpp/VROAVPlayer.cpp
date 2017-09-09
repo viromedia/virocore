@@ -203,33 +203,33 @@ bool VROAVPlayer::isPaused() {
     return paused;
 }
 
-void VROAVPlayer::seekToTime(int seconds) {
+void VROAVPlayer::seekToTime(float seconds) {
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     jclass cls = env->GetObjectClass(_javPlayer);
-    jmethodID jmethod = env->GetMethodID(cls, "seekToTime", "(I)V");
+    jmethodID jmethod = env->GetMethodID(cls, "seekToTime", "(F)V");
     env->CallVoidMethod(_javPlayer, jmethod, seconds);
 
     env->DeleteLocalRef(cls);
 }
 
-int VROAVPlayer::getCurrentTimeInSeconds() {
+float VROAVPlayer::getCurrentTimeInSeconds() {
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     jclass cls = env->GetObjectClass(_javPlayer);
-    jmethodID jmethod = env->GetMethodID(cls, "getCurrentTimeInSeconds", "()I");
-    jint seconds = env->CallIntMethod(_javPlayer, jmethod);
+    jmethodID jmethod = env->GetMethodID(cls, "getCurrentTimeInSeconds", "()F");
+    jfloat seconds = env->CallFloatMethod(_javPlayer, jmethod);
 
     env->DeleteLocalRef(cls);
     return seconds;
 }
 
-int VROAVPlayer::getVideoDurationInSeconds() {
+float VROAVPlayer::getVideoDurationInSeconds() {
     JNIEnv *env = VROPlatformGetJNIEnv();
 
     jclass cls = env->GetObjectClass(_javPlayer);
-    jmethodID jmethod = env->GetMethodID(cls, "getVideoDurationInSeconds", "()I");
-    jint seconds = env->CallIntMethod(_javPlayer, jmethod);
+    jmethodID jmethod = env->GetMethodID(cls, "getVideoDurationInSeconds", "()F");
+    jfloat seconds = env->CallFloatMethod(_javPlayer, jmethod);
 
     env->DeleteLocalRef(cls);
     return seconds;

@@ -38,7 +38,7 @@ class VideoDelegate : public VROVideoDelegateInternal {
     virtual void videoWillBuffer();
     virtual void videoDidBuffer();
     virtual void videoDidFinish();
-    virtual void onVideoUpdatedTime(int seconds, int duration);
+    virtual void onVideoUpdatedTime(float seconds, float duration);
     virtual void videoDidFail(std::string error);
 
 private:

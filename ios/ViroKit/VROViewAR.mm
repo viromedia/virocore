@@ -296,7 +296,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     VROVector3f viewportTouchPos = VROVector3f(location.x * self.contentScaleFactor, location.y * self.contentScaleFactor);
     
     if (recognizer.state == UIGestureRecognizerStateRecognized) {
-        NSLog(@"kirby tap gesture ended");
         _inputController->onScreenTouchDown(viewportTouchPos);
         _inputController->onScreenTouchUp(viewportTouchPos);
     }

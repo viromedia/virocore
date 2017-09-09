@@ -263,7 +263,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             }
 
             @Override
-            public void onVideoUpdatedTime(int seconds, int duration) {
+            public void onVideoUpdatedTime(float seconds, float duration) {
                 Log.e(TAG,"onVideoUpdatedTime for Surface within ViroActivity:" + seconds + "/" + duration);
             }
         });
@@ -306,7 +306,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             }
 
             @Override
-            public void onVideoUpdatedTime(int seconds, int duration) {
+            public void onVideoUpdatedTime(float seconds, float duration) {
                 Log.e(TAG,"onVideoUpdatedTime for Sphere within ViroActivity:" + seconds);
             }
         });
@@ -350,7 +350,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             }
 
             @Override
-            public void onVideoUpdatedTime(int seconds, int duration) {
+            public void onVideoUpdatedTime(float seconds, float duration) {
                 Log.e(TAG,"onVideoUpdatedTime for Background within ViroActivity:" + seconds);
             }
         });
@@ -589,7 +589,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             }
 
             @Override
-            public void onVideoUpdatedTime(int seconds, int duration) {
+            public void onVideoUpdatedTime(float seconds, float duration) {
                 Log.e(TAG,"onVideoUpdatedTime for Surface within ViroActivity:" + seconds);
             }
         });
@@ -627,7 +627,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             }
 
             @Override
-            public void onVideoUpdatedTime(int seconds, int duration) {
+            public void onVideoUpdatedTime(float seconds, float duration) {
                 Log.e(TAG,"onVideoUpdatedTime for Background within ViroActivity:" + seconds);
             }
         });

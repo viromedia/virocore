@@ -58,17 +58,18 @@ void VROVideoTextureiOS::pause() {
     _paused = true;
 }
 
-void VROVideoTextureiOS::seekToTime(int seconds) {
+void VROVideoTextureiOS::seekToTime(float seconds) {
     seconds = clamp(seconds, 0, getVideoDurationInSeconds());
-    [_player seekToTime:CMTimeMakeWithSeconds(seconds, 1)];
+    // need to use toleranceBefore/After or we lose some precision, ie. 2.5 seconds become 0 seconds for a 147s video.
+    [_player seekToTime:CMTimeMakeWithSeconds(seconds, 1000) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
 }
 
-int VROVideoTextureiOS::getCurrentTimeInSeconds() {
+float VROVideoTextureiOS::getCurrentTimeInSeconds() {
     AVPlayerItem *currentItem = _player.currentItem;
     return CMTimeGetSeconds(currentItem.currentTime);
 }
 
-int VROVideoTextureiOS::getVideoDurationInSeconds(){
+float VROVideoTextureiOS::getVideoDurationInSeconds(){
     AVPlayerItem *currentItem = _player.currentItem;
     return CMTimeGetSeconds(currentItem.duration);
 }

@@ -46,7 +46,7 @@ void VROVideoSurface::pause() {
     _texture->pause();
 }
 
-void VROVideoSurface::seekToTime(int seconds) {
+void VROVideoSurface::seekToTime(float seconds) {
     _texture->seekToTime(seconds);
 }
 

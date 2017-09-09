@@ -66,8 +66,8 @@ bool VROVideoTextureAVP::isPaused() {
     return _player->isPaused();
 }
 
-void VROVideoTextureAVP::seekToTime(int seconds) {
-    int totalDuration = getVideoDurationInSeconds();
+void VROVideoTextureAVP::seekToTime(float seconds) {
+    float totalDuration = getVideoDurationInSeconds();
 
     // Clamp the seek time at a minimum of 0,
     // and a maxiumum of the video's duration period.
@@ -79,11 +79,11 @@ void VROVideoTextureAVP::seekToTime(int seconds) {
     _player->seekToTime(seconds);
 }
 
-int VROVideoTextureAVP::getCurrentTimeInSeconds() {
+float VROVideoTextureAVP::getCurrentTimeInSeconds() {
     return _player->getCurrentTimeInSeconds();
 }
 
-int VROVideoTextureAVP::getVideoDurationInSeconds() {
+float VROVideoTextureAVP::getVideoDurationInSeconds() {
     return _player->getVideoDurationInSeconds();
 }
 
