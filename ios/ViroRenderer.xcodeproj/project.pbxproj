@@ -8,23 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		6386C3B94B3E92D246F8F9EB /* libPods-ViroKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6447C487DE6546AF514106CC /* libPods-ViroKit.a */; };
-		8A06E3411F59D16C00C51902 /* portal_wood_frame_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E33D1F59CF2A00C51902 /* portal_wood_frame_specular.png */; };
-		8A06E3421F59D16C00C51902 /* portal_wood_frame_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E33E1F59CF2B00C51902 /* portal_wood_frame_diffuse.png */; };
-		8A06E3431F59D16C00C51902 /* portal_wood_frame_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E33F1F59CF2C00C51902 /* portal_wood_frame_normal.png */; };
-		8A06E3441F59D16C00C51902 /* portal_wood_frame.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3401F59CF2C00C51902 /* portal_wood_frame.vrx */; };
-		8A06E3451F59D16C00C51902 /* portal_window_frame_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3391F59CE6E00C51902 /* portal_window_frame_diffuse.png */; };
-		8A06E3461F59D16C00C51902 /* portal_window_frame_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E33A1F59CE6E00C51902 /* portal_window_frame_normal.png */; };
-		8A06E3471F59D16C00C51902 /* portal_window_frame_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E33C1F59CE6F00C51902 /* portal_window_frame_specular.png */; };
-		8A06E3481F59D16C00C51902 /* portal_window_frame.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E33B1F59CE6E00C51902 /* portal_window_frame.vrx */; };
-		8A06E3491F59D16C00C51902 /* portal_ship_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3361F59CCCB00C51902 /* portal_ship_diffuse.png */; };
-		8A06E34A1F59D16C00C51902 /* portal_ship_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3381F59CCCC00C51902 /* portal_ship_normal.png */; };
-		8A06E34B1F59D16C00C51902 /* portal_ship_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3371F59CCCC00C51902 /* portal_ship_specular.png */; };
-		8A06E34C1F59D16C00C51902 /* portal_ship.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3351F59CCCB00C51902 /* portal_ship.vrx */; };
-		8A06E34D1F59D16C00C51902 /* portal_archway_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3331F59CCBB00C51902 /* portal_archway_diffuse.png */; };
-		8A06E34E1F59D16C00C51902 /* portal_archway_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3341F59CCBC00C51902 /* portal_archway_normal.png */; };
-		8A06E34F1F59D16C00C51902 /* portal_archway_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3311F59CCBA00C51902 /* portal_archway_specular.png */; };
-		8A06E3501F59D16C00C51902 /* portal_archway.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3301F59CCB900C51902 /* portal_archway.vrx */; };
-		8A06E3511F59D16C00C51902 /* portal_entry.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A06E3321F59CCBB00C51902 /* portal_entry.png */; };
 		8A06EFDE1F021D3B00C396F4 /* VROInputPresenterARiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A06EFDD1F021D3B00C396F4 /* VROInputPresenterARiOS.h */; };
 		8A11C8F51EF5AB9D0003E829 /* VROARPlane.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A11C8F41EF5A8E30003E829 /* VROARPlane.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A11C8F81EF5B2270003E829 /* VROARComponentManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A11C8F61EF5B2270003E829 /* VROARComponentManager.cpp */; };
@@ -129,6 +112,27 @@
 		8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1664A51E5E43260062EBCE /* Accelerate.framework */; };
 		8F17701B1E74C01900235C21 /* VROGVRUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1770191E74C01900235C21 /* VROGVRUtil.cpp */; };
 		8F1AB9661EEE1F8F006D76B6 /* VROSampleARDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1AB9641EEE1F8F006D76B6 /* VROSampleARDelegate.cpp */; };
+		8F1B4A121F64B61E00156809 /* portal_ship_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A011F64B61A00156809 /* portal_ship_specular.png */; };
+		8F1B4A131F64B61E00156809 /* portal_ship.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A021F64B61B00156809 /* portal_ship.vrx */; };
+		8F1B4A141F64B61E00156809 /* portal_window_frame_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A031F64B61B00156809 /* portal_window_frame_diffuse.png */; };
+		8F1B4A151F64B61E00156809 /* portal_wood_frame.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A041F64B61B00156809 /* portal_wood_frame.vrx */; };
+		8F1B4A161F64B61E00156809 /* portal_entry.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A051F64B61B00156809 /* portal_entry.png */; };
+		8F1B4A171F64B61E00156809 /* portal_ship_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A061F64B61C00156809 /* portal_ship_normal.png */; };
+		8F1B4A181F64B61E00156809 /* portal_wood_frame_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A071F64B61C00156809 /* portal_wood_frame_specular.png */; };
+		8F1B4A191F64B61E00156809 /* portal_archway_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A081F64B61C00156809 /* portal_archway_diffuse.png */; };
+		8F1B4A1A1F64B61E00156809 /* portal_window_frame.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A091F64B61C00156809 /* portal_window_frame.vrx */; };
+		8F1B4A1B1F64B61E00156809 /* portal_ship_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A0A1F64B61C00156809 /* portal_ship_diffuse.png */; };
+		8F1B4A1C1F64B61E00156809 /* portal_archway_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A0B1F64B61C00156809 /* portal_archway_specular.png */; };
+		8F1B4A1D1F64B61E00156809 /* portal_wood_frame_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A0C1F64B61D00156809 /* portal_wood_frame_normal.png */; };
+		8F1B4A1E1F64B61E00156809 /* portal_window_frame_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A0D1F64B61D00156809 /* portal_window_frame_specular.png */; };
+		8F1B4A1F1F64B61E00156809 /* portal_archway_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A0E1F64B61D00156809 /* portal_archway_normal.png */; };
+		8F1B4A201F64B61E00156809 /* portal_window_frame_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A0F1F64B61D00156809 /* portal_window_frame_normal.png */; };
+		8F1B4A211F64B61E00156809 /* portal_wood_frame_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A101F64B61D00156809 /* portal_wood_frame_diffuse.png */; };
+		8F1B4A221F64B61E00156809 /* portal_archway.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A111F64B61E00156809 /* portal_archway.vrx */; };
+		8F1B4A271F64B6E000156809 /* emoji_smile_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A231F64B6DF00156809 /* emoji_smile_normal.png */; };
+		8F1B4A281F64B6E000156809 /* emoji_smile_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A241F64B6E000156809 /* emoji_smile_specular.png */; };
+		8F1B4A291F64B6E000156809 /* emoji_smile_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A251F64B6E000156809 /* emoji_smile_diffuse.png */; };
+		8F1B4A2A1F64B6E000156809 /* emoji_smile.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A261F64B6E000156809 /* emoji_smile.vrx */; };
 		8F1DF5A91F36408700886805 /* VROPortalFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1DF5A71F36408700886805 /* VROPortalFrame.cpp */; };
 		8F1DF5AA1F36408700886805 /* VROPortalFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1DF5A81F36408700886805 /* VROPortalFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F203F0A1DCD236500DC50F2 /* VRODefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF253B11DC9398A00C1C5C7 /* VRODefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -645,23 +649,6 @@
 		69FBDCF89ECBB5500043C227 /* Pods-ViroARKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroARKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroARKit/Pods-ViroARKit.debug.xcconfig"; sourceTree = "<group>"; };
 		6E1141125FCC9320616556D8 /* Pods-ViroKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.debug.xcconfig"; sourceTree = "<group>"; };
 		710AAB43C4650092845EAD81 /* Pods-ViroKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.release.xcconfig"; sourceTree = "<group>"; };
-		8A06E3301F59CCB900C51902 /* portal_archway.vrx */ = {isa = PBXFileReference; lastKnownFileType = text; path = portal_archway.vrx; sourceTree = "<group>"; };
-		8A06E3311F59CCBA00C51902 /* portal_archway_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_archway_specular.png; sourceTree = "<group>"; };
-		8A06E3321F59CCBB00C51902 /* portal_entry.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_entry.png; sourceTree = "<group>"; };
-		8A06E3331F59CCBB00C51902 /* portal_archway_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_archway_diffuse.png; sourceTree = "<group>"; };
-		8A06E3341F59CCBC00C51902 /* portal_archway_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_archway_normal.png; sourceTree = "<group>"; };
-		8A06E3351F59CCCB00C51902 /* portal_ship.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; path = portal_ship.vrx; sourceTree = "<group>"; };
-		8A06E3361F59CCCB00C51902 /* portal_ship_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_ship_diffuse.png; sourceTree = "<group>"; };
-		8A06E3371F59CCCC00C51902 /* portal_ship_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_ship_specular.png; sourceTree = "<group>"; };
-		8A06E3381F59CCCC00C51902 /* portal_ship_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_ship_normal.png; sourceTree = "<group>"; };
-		8A06E3391F59CE6E00C51902 /* portal_window_frame_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_window_frame_diffuse.png; sourceTree = "<group>"; };
-		8A06E33A1F59CE6E00C51902 /* portal_window_frame_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_window_frame_normal.png; sourceTree = "<group>"; };
-		8A06E33B1F59CE6E00C51902 /* portal_window_frame.vrx */ = {isa = PBXFileReference; lastKnownFileType = text; path = portal_window_frame.vrx; sourceTree = "<group>"; };
-		8A06E33C1F59CE6F00C51902 /* portal_window_frame_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_window_frame_specular.png; sourceTree = "<group>"; };
-		8A06E33D1F59CF2A00C51902 /* portal_wood_frame_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_wood_frame_specular.png; sourceTree = "<group>"; };
-		8A06E33E1F59CF2B00C51902 /* portal_wood_frame_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_wood_frame_diffuse.png; sourceTree = "<group>"; };
-		8A06E33F1F59CF2C00C51902 /* portal_wood_frame_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = portal_wood_frame_normal.png; sourceTree = "<group>"; };
-		8A06E3401F59CF2C00C51902 /* portal_wood_frame.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; path = portal_wood_frame.vrx; sourceTree = "<group>"; };
 		8A06EFDD1F021D3B00C396F4 /* VROInputPresenterARiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROInputPresenterARiOS.h; sourceTree = "<group>"; };
 		8A07C1821ED8D5EA00757C29 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Libraries/opencv/opencv2.framework; sourceTree = "<group>"; };
 		8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
@@ -781,6 +768,27 @@
 		8F17701A1E74C01900235C21 /* VROGVRUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGVRUtil.h; sourceTree = "<group>"; };
 		8F1AB9641EEE1F8F006D76B6 /* VROSampleARDelegate.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = VROSampleARDelegate.cpp; path = ViroSample/VROSampleARDelegate.cpp; sourceTree = "<group>"; };
 		8F1AB9651EEE1F8F006D76B6 /* VROSampleARDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VROSampleARDelegate.h; path = ViroSample/VROSampleARDelegate.h; sourceTree = "<group>"; };
+		8F1B4A011F64B61A00156809 /* portal_ship_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_ship_specular.png; path = ViroSample/portal_ship_specular.png; sourceTree = "<group>"; };
+		8F1B4A021F64B61B00156809 /* portal_ship.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = portal_ship.vrx; path = ViroSample/portal_ship.vrx; sourceTree = "<group>"; };
+		8F1B4A031F64B61B00156809 /* portal_window_frame_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_window_frame_diffuse.png; path = ViroSample/portal_window_frame_diffuse.png; sourceTree = "<group>"; };
+		8F1B4A041F64B61B00156809 /* portal_wood_frame.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = portal_wood_frame.vrx; path = ViroSample/portal_wood_frame.vrx; sourceTree = "<group>"; };
+		8F1B4A051F64B61B00156809 /* portal_entry.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_entry.png; path = ViroSample/portal_entry.png; sourceTree = "<group>"; };
+		8F1B4A061F64B61C00156809 /* portal_ship_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_ship_normal.png; path = ViroSample/portal_ship_normal.png; sourceTree = "<group>"; };
+		8F1B4A071F64B61C00156809 /* portal_wood_frame_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_wood_frame_specular.png; path = ViroSample/portal_wood_frame_specular.png; sourceTree = "<group>"; };
+		8F1B4A081F64B61C00156809 /* portal_archway_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_archway_diffuse.png; path = ViroSample/portal_archway_diffuse.png; sourceTree = "<group>"; };
+		8F1B4A091F64B61C00156809 /* portal_window_frame.vrx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = portal_window_frame.vrx; path = ViroSample/portal_window_frame.vrx; sourceTree = "<group>"; };
+		8F1B4A0A1F64B61C00156809 /* portal_ship_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_ship_diffuse.png; path = ViroSample/portal_ship_diffuse.png; sourceTree = "<group>"; };
+		8F1B4A0B1F64B61C00156809 /* portal_archway_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_archway_specular.png; path = ViroSample/portal_archway_specular.png; sourceTree = "<group>"; };
+		8F1B4A0C1F64B61D00156809 /* portal_wood_frame_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_wood_frame_normal.png; path = ViroSample/portal_wood_frame_normal.png; sourceTree = "<group>"; };
+		8F1B4A0D1F64B61D00156809 /* portal_window_frame_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_window_frame_specular.png; path = ViroSample/portal_window_frame_specular.png; sourceTree = "<group>"; };
+		8F1B4A0E1F64B61D00156809 /* portal_archway_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_archway_normal.png; path = ViroSample/portal_archway_normal.png; sourceTree = "<group>"; };
+		8F1B4A0F1F64B61D00156809 /* portal_window_frame_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_window_frame_normal.png; path = ViroSample/portal_window_frame_normal.png; sourceTree = "<group>"; };
+		8F1B4A101F64B61D00156809 /* portal_wood_frame_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_wood_frame_diffuse.png; path = ViroSample/portal_wood_frame_diffuse.png; sourceTree = "<group>"; };
+		8F1B4A111F64B61E00156809 /* portal_archway.vrx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = portal_archway.vrx; path = ViroSample/portal_archway.vrx; sourceTree = "<group>"; };
+		8F1B4A231F64B6DF00156809 /* emoji_smile_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = emoji_smile_normal.png; path = ViroSample/emoji_smile_normal.png; sourceTree = "<group>"; };
+		8F1B4A241F64B6E000156809 /* emoji_smile_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = emoji_smile_specular.png; path = ViroSample/emoji_smile_specular.png; sourceTree = "<group>"; };
+		8F1B4A251F64B6E000156809 /* emoji_smile_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = emoji_smile_diffuse.png; path = ViroSample/emoji_smile_diffuse.png; sourceTree = "<group>"; };
+		8F1B4A261F64B6E000156809 /* emoji_smile.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = emoji_smile.vrx; path = ViroSample/emoji_smile.vrx; sourceTree = "<group>"; };
 		8F1DF5A71F36408700886805 /* VROPortalFrame.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPortalFrame.cpp; sourceTree = "<group>"; };
 		8F1DF5A81F36408700886805 /* VROPortalFrame.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalFrame.h; sourceTree = "<group>"; };
 		8F1F06581EF06FBB006FC8C2 /* VROARAnchor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARAnchor.h; sourceTree = "<group>"; };
@@ -2059,6 +2067,27 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F1B4A251F64B6E000156809 /* emoji_smile_diffuse.png */,
+				8F1B4A231F64B6DF00156809 /* emoji_smile_normal.png */,
+				8F1B4A241F64B6E000156809 /* emoji_smile_specular.png */,
+				8F1B4A261F64B6E000156809 /* emoji_smile.vrx */,
+				8F1B4A081F64B61C00156809 /* portal_archway_diffuse.png */,
+				8F1B4A0E1F64B61D00156809 /* portal_archway_normal.png */,
+				8F1B4A0B1F64B61C00156809 /* portal_archway_specular.png */,
+				8F1B4A111F64B61E00156809 /* portal_archway.vrx */,
+				8F1B4A051F64B61B00156809 /* portal_entry.png */,
+				8F1B4A0A1F64B61C00156809 /* portal_ship_diffuse.png */,
+				8F1B4A061F64B61C00156809 /* portal_ship_normal.png */,
+				8F1B4A011F64B61A00156809 /* portal_ship_specular.png */,
+				8F1B4A021F64B61B00156809 /* portal_ship.vrx */,
+				8F1B4A031F64B61B00156809 /* portal_window_frame_diffuse.png */,
+				8F1B4A0F1F64B61D00156809 /* portal_window_frame_normal.png */,
+				8F1B4A0D1F64B61D00156809 /* portal_window_frame_specular.png */,
+				8F1B4A091F64B61C00156809 /* portal_window_frame.vrx */,
+				8F1B4A101F64B61D00156809 /* portal_wood_frame_diffuse.png */,
+				8F1B4A0C1F64B61D00156809 /* portal_wood_frame_normal.png */,
+				8F1B4A071F64B61C00156809 /* portal_wood_frame_specular.png */,
+				8F1B4A041F64B61B00156809 /* portal_wood_frame.vrx */,
 				8F37D9EB1F4B187F0029D23E /* wood.png */,
 				A517D2CB1F41A16400A22219 /* cloud.png */,
 				8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.jpg */,
@@ -2066,23 +2095,6 @@
 				8F727F631F39EDAD00CDBBFC /* pug.vrx */,
 				8F432E8B1F2B994C00B1B2DC /* portal_ring.obj */,
 				8F432E8C1F2B994C00B1B2DC /* portal_ring.png */,
-				8A06E33D1F59CF2A00C51902 /* portal_wood_frame_specular.png */,
-				8A06E33E1F59CF2B00C51902 /* portal_wood_frame_diffuse.png */,
-				8A06E33F1F59CF2C00C51902 /* portal_wood_frame_normal.png */,
-				8A06E3401F59CF2C00C51902 /* portal_wood_frame.vrx */,
-				8A06E3391F59CE6E00C51902 /* portal_window_frame_diffuse.png */,
-				8A06E33A1F59CE6E00C51902 /* portal_window_frame_normal.png */,
-				8A06E33C1F59CE6F00C51902 /* portal_window_frame_specular.png */,
-				8A06E33B1F59CE6E00C51902 /* portal_window_frame.vrx */,
-				8A06E3361F59CCCB00C51902 /* portal_ship_diffuse.png */,
-				8A06E3381F59CCCC00C51902 /* portal_ship_normal.png */,
-				8A06E3371F59CCCC00C51902 /* portal_ship_specular.png */,
-				8A06E3351F59CCCB00C51902 /* portal_ship.vrx */,
-				8A06E3331F59CCBB00C51902 /* portal_archway_diffuse.png */,
-				8A06E3341F59CCBC00C51902 /* portal_archway_normal.png */,
-				8A06E3311F59CCBA00C51902 /* portal_archway_specular.png */,
-				8A06E3301F59CCB900C51902 /* portal_archway.vrx */,
-				8A06E3321F59CCBB00C51902 /* portal_entry.png */,
 				8FF5CCB71F290364007C7F52 /* aliengirl_diffuse.png */,
 				8FF5CCB81F290364007C7F52 /* aliengirl_normal.png */,
 				8FF5CCB91F290364007C7F52 /* aliengirl_specular.png */,
@@ -2644,7 +2656,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F1B4A1B1F64B61E00156809 /* portal_ship_diffuse.png in Resources */,
 				8F5CAA1C1F202B5000FEEC7E /* bball.vrx in Resources */,
+				8F1B4A221F64B61E00156809 /* portal_archway.vrx in Resources */,
 				A5ABB1BA1E93300700E07EBC /* chillroots.mp4 in Resources */,
 				8FCED07C1EBBD35200C19BCA /* Sven_Face_Color.png in Resources */,
 				8FCED07A1EBBD35200C19BCA /* Sven_Body_Specular.png in Resources */,
@@ -2661,15 +2675,18 @@
 				8F660AB11E931C6F006D063F /* 4096_clouds.jpg in Resources */,
 				8FCED0581EBBCFCF00C19BCA /* MinionSuitA_Color.png in Resources */,
 				8FCED07F1EBBD35200C19BCA /* Sven_Hair_Color.png in Resources */,
+				8F1B4A1E1F64B61E00156809 /* portal_window_frame_specular.png in Resources */,
 				8F727F671F39EDB700CDBBFC /* pug.vrx in Resources */,
 				8F660AB31E931C6F006D063F /* 4096_night_lights.jpg in Resources */,
 				8FCED0851EBBD35200C19BCA /* SvenArmor_Spec.png in Resources */,
+				8F1B4A211F64B61E00156809 /* portal_wood_frame_diffuse.png in Resources */,
 				8F432E8E1F2B994C00B1B2DC /* portal_ring.png in Resources */,
 				8F129FBE1ED603BE00341D83 /* sven.vrx in Resources */,
 				8FA2E14B1C445CAA0070DB26 /* px.png in Resources */,
 				8F140FCF1E56658700355A1E /* card_main.ktx in Resources */,
 				8F618E2B1EB926B60020B33B /* Heart_Diffuse.jpg in Resources */,
 				8F9278021C66BD4500FF892A /* py1.jpg in Resources */,
+				8F1B4A201F64B61E00156809 /* portal_window_frame_normal.png in Resources */,
 				8FD4DF981C1CD67B003DC425 /* specular.png in Resources */,
 				A517D2CC1F41A16400A22219 /* cloud.png in Resources */,
 				8A3517321EE0A50A00B6E786 /* screenshot.png in Resources */,
@@ -2677,15 +2694,20 @@
 				8F705DF51E8F5D42008BE8F8 /* earth_normal.jpg in Resources */,
 				8FD4D0C01EF0695F00077AD7 /* coffee_mug.obj in Resources */,
 				8F9278011C66BD4500FF892A /* px1.jpg in Resources */,
+				8F1B4A1F1F64B61E00156809 /* portal_archway_normal.png in Resources */,
+				8F1B4A291F64B6E000156809 /* emoji_smile_diffuse.png in Resources */,
 				8FD4D0BF1EF0695F00077AD7 /* coffee_mug_specular.png in Resources */,
 				8FCED0751EBBD35200C19BCA /* Jetpack_Normal.png in Resources */,
 				8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */,
 				A5ABB1D91E95703200E07EBC /* stereoVid360.mp4 in Resources */,
 				8F346B271F23AF39000D16B9 /* bball_SPEC_NRM.png in Resources */,
 				8FCED0591EBBCFCF00C19BCA /* MinionSuitA_Glow.png in Resources */,
+				8F1B4A131F64B61E00156809 /* portal_ship.vrx in Resources */,
 				8F727F681F39EDBB00CDBBFC /* pug_body_normal.png in Resources */,
 				8F9278001C66BD4500FF892A /* nz1.jpg in Resources */,
+				8F1B4A141F64B61E00156809 /* portal_window_frame_diffuse.png in Resources */,
 				8FA2E14A1C445CAA0070DB26 /* nz.png in Resources */,
+				8F1B4A161F64B61E00156809 /* portal_entry.png in Resources */,
 				8F50FC891E0AF54F00A9B4B2 /* male-02-1noCulling.JPG in Resources */,
 				8F3B968F1C77D64200B4FEE0 /* shanghai_tower_specular.jpg in Resources */,
 				8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */,
@@ -2706,25 +2728,9 @@
 				8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */,
 				8F9277FE1C66BD4500FF892A /* nx1.jpg in Resources */,
 				8F37D9EC1F4B18800029D23E /* wood.png in Resources */,
-				8A06E3411F59D16C00C51902 /* portal_wood_frame_specular.png in Resources */,
-				8A06E3421F59D16C00C51902 /* portal_wood_frame_diffuse.png in Resources */,
-				8A06E3431F59D16C00C51902 /* portal_wood_frame_normal.png in Resources */,
-				8A06E3441F59D16C00C51902 /* portal_wood_frame.vrx in Resources */,
-				8A06E3451F59D16C00C51902 /* portal_window_frame_diffuse.png in Resources */,
-				8A06E3461F59D16C00C51902 /* portal_window_frame_normal.png in Resources */,
-				8A06E3471F59D16C00C51902 /* portal_window_frame_specular.png in Resources */,
-				8A06E3481F59D16C00C51902 /* portal_window_frame.vrx in Resources */,
-				8A06E3491F59D16C00C51902 /* portal_ship_diffuse.png in Resources */,
-				8A06E34A1F59D16C00C51902 /* portal_ship_normal.png in Resources */,
-				8A06E34B1F59D16C00C51902 /* portal_ship_specular.png in Resources */,
-				8A06E34C1F59D16C00C51902 /* portal_ship.vrx in Resources */,
-				8A06E34D1F59D16C00C51902 /* portal_archway_diffuse.png in Resources */,
-				8A06E34E1F59D16C00C51902 /* portal_archway_normal.png in Resources */,
-				8A06E34F1F59D16C00C51902 /* portal_archway_specular.png in Resources */,
-				8A06E3501F59D16C00C51902 /* portal_archway.vrx in Resources */,
-				8A06E3511F59D16C00C51902 /* portal_entry.png in Resources */,
 				8FCED07D1EBBD35200C19BCA /* Sven_Face_Normal.png in Resources */,
 				8FCED0771EBBD35200C19BCA /* ramp_inc2.tga in Resources */,
+				8F1B4A271F64B6E000156809 /* emoji_smile_normal.png in Resources */,
 				A540C5C41F3E7190007986E6 /* particles_vsh.glsl in Resources */,
 				8FA2E1481C445CAA0070DB26 /* nx.png in Resources */,
 				A5ABB1D61E95703200E07EBC /* stereo3601.jpg in Resources */,
@@ -2732,19 +2738,24 @@
 				8FCED07B1EBBD35200C19BCA /* Sven_Eye_Color.png in Resources */,
 				8FA2E1411C4447D00070DB26 /* skybox.png in Resources */,
 				8F83DEB11C503EDF0089C31A /* beach.jpg in Resources */,
+				8F1B4A1A1F64B61E00156809 /* portal_window_frame.vrx in Resources */,
 				8FCED07E1EBBD35200C19BCA /* Sven_Face_Specular.png in Resources */,
 				8FCED0741EBBD35200C19BCA /* Jetpack_Glow.png in Resources */,
 				8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */,
 				8F9277FF1C66BD4500FF892A /* ny1.jpg in Resources */,
+				8F1B4A281F64B6E000156809 /* emoji_smile_specular.png in Resources */,
 				8FDD8FF31E3A9907006CF466 /* 360_westlake.jpg in Resources */,
 				8FF5CCBB1F290364007C7F52 /* aliengirl_diffuse.png in Resources */,
 				8FF5CCBE1F290364007C7F52 /* aliengirl.vrx in Resources */,
 				8FF5CCB61F28F5BA007C7F52 /* Porsche911turboS_diff.jpg in Resources */,
 				8FCED05A1EBBCFCF00C19BCA /* MinionSuitA_Normal.png in Resources */,
+				8F1B4A181F64B61E00156809 /* portal_wood_frame_specular.png in Resources */,
+				8F1B4A171F64B61E00156809 /* portal_ship_normal.png in Resources */,
 				A5ABB1D71E95703200E07EBC /* stereo3602.jpg in Resources */,
 				8F50FC8C1E0AF54F00A9B4B2 /* orig_02_-_Defaul1noCulling.JPG in Resources */,
 				8F129FBC1ED603BE00341D83 /* heart.vrx in Resources */,
 				8FCED0781EBBD35200C19BCA /* Sven_Body_Color.png in Resources */,
+				8F1B4A1D1F64B61E00156809 /* portal_wood_frame_normal.png in Resources */,
 				8FCED05D1EBBCFCF00C19BCA /* Squid_Color.png in Resources */,
 				8F50FC881E0AF54F00A9B4B2 /* 01_-_Default1noCulling.JPG in Resources */,
 				8F129FBB1ED603BA00341D83 /* fox.vrx in Resources */,
@@ -2759,11 +2770,16 @@
 				8F50FC8B1E0AF54F00A9B4B2 /* male02.obj in Resources */,
 				8F5C41551BD82C1B006D7A77 /* boba.png in Resources */,
 				8F432E8D1F2B994C00B1B2DC /* portal_ring.obj in Resources */,
+				8F1B4A121F64B61E00156809 /* portal_ship_specular.png in Resources */,
 				8F50FC8A1E0AF54F00A9B4B2 /* male02.mtl in Resources */,
 				8FCED0841EBBD35200C19BCA /* SvenArmor_Normal.png in Resources */,
+				8F1B4A1C1F64B61E00156809 /* portal_archway_specular.png in Resources */,
 				8F705DF61E8F5D42008BE8F8 /* earth.jpg in Resources */,
 				8F83DEB31C5042240089C31A /* surfing.mp4 in Resources */,
+				8F1B4A2A1F64B6E000156809 /* emoji_smile.vrx in Resources */,
 				8A1462D11F327D1500643EF4 /* dark_circle_shadow.png in Resources */,
+				8F1B4A151F64B61E00156809 /* portal_wood_frame.vrx in Resources */,
+				8F1B4A191F64B61E00156809 /* portal_archway_diffuse.png in Resources */,
 				8FCED05B1EBBCFCF00C19BCA /* MinionSuitA_Spec.png in Resources */,
 				A5ABB1CD1E95703200E07EBC /* stereo1.jpg in Resources */,
 				8FA2E1491C445CAA0070DB26 /* ny.png in Resources */,
