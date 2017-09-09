@@ -36,9 +36,11 @@ public:
         return false;
     }
 
-    void onFrame(const VRORenderContext &context) {
+    void willRenderFrame(const VRORenderContext &context) {
         _gvrAudio->SetHeadPose(VROGVRUtil::toGVRMat4f(context.getCamera().getLookAtMatrix()));
         _gvrAudio->Update();
+
+        VRODriverOpenGL::willRenderFrame(context);
     }
 
     void onPause() {

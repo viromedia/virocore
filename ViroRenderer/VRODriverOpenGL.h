@@ -40,19 +40,31 @@ public:
         _depthReadingEnabled(true),
         _colorWritingEnabled(true),
         _cullMode(VROCullMode::None),
-        _blendMode(VROBlendMode::Alpha){
+        _blendMode(VROBlendMode::Alpha) {
         
-        // Initialize actual OpenGL state to match our CPU state
-        glDepthMask(GL_TRUE);
-        glDepthFunc(GL_LEQUAL);
-        glDisable(GL_CULL_FACE);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         _shaderFactory = std::unique_ptr<VROShaderFactory>(new VROShaderFactory());
     }
 
     void willRenderFrame(const VRORenderContext &context) {
+        // Initialize OpenGL state for this frame, matching GL state with CPU state
+        // We need to reset state each frame to sync our CPU state with our GPU
+        // state, in case a part of the renderer outside our control (e.g. Cardboard,
+        // etc.) changes OpenGL state outside of the VRODriver.
+        
+        _colorWritingEnabled = true;
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
+        _depthWritingEnabled = true;
+        _depthReadingEnabled = true;
+        glDepthMask(GL_TRUE);
+        glDepthFunc(GL_LEQUAL);
+        
+        _cullMode = VROCullMode::None;
+        glDisable(GL_CULL_FACE);
+        
+        _blendMode = VROBlendMode::Alpha;
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
     
     void didRenderFrame(const VROFrameTimer &timer, const VRORenderContext &context) {
@@ -120,21 +132,25 @@ public:
             return;
         }
 
-        _blendMode = mode;
         if (_blendMode != VROBlendMode::None && mode == VROBlendMode::None) {
             glDisable(GL_BLEND);
-            return;
-        } else if (_blendMode == VROBlendMode::None && mode != VROBlendMode::None) {
-            glEnable(GL_BLEND);
         }
-
-        if (mode == VROBlendMode::Alpha) {
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        } else if (mode == VROBlendMode::Add) {
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        } else {
-            pwarn("Warn: Attempted to use an unsupported blend mode. No blending is applied.");
+        else {
+            if (_blendMode == VROBlendMode::None && mode != VROBlendMode::None) {
+                glEnable(GL_BLEND);
+            }
+            
+            if (mode == VROBlendMode::Alpha) {
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            }
+            else if (mode == VROBlendMode::Add) {
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            }
+            else {
+                pwarn("Warn: Attempted to use an unsupported blend mode. No blending is applied.");
+            }
         }
+        _blendMode = mode;
     }
     
     void setColorWritingEnabled(bool enabled) {

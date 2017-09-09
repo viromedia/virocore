@@ -55,6 +55,7 @@ public:
     
     void willRenderFrame(const VRORenderContext &context) {
         // Set the head position into _gvrAudio when spatial sound is supported by iOS
+        VRODriverOpenGL::willRenderFrame(context);
     }
 
     std::shared_ptr<VROVideoTextureCache> newVideoTextureCache() {
