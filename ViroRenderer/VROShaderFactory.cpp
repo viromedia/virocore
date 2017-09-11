@@ -588,14 +588,27 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createYCbCrTextureModifier(
         std::vector<std::string> modifierCode =  {
             "uniform sampler2D diffuse_texture_y;",
             "uniform sampler2D diffuse_texture_cbcr;",
-            "const lowp mat4x4 ycbcrToRGBTransform = mat4x4(",
-            "   vec4(+1.0000f, +1.0000f, +1.0000f, +0.0000f),",
-            "   vec4(+0.0000f, -0.3441f, +1.7720f, +0.0000f),",
-            "   vec4(+1.4020f, -0.7141f, +0.0000f, +0.0000f),",
-            "   vec4(-0.7010f, +0.5291f, -0.8860f, +1.0000f)",
+            "const highp mat4x4 ycbcrToRGBTransform = mat4x4(",
+            
+               // There are a number of YCbCr conversion matrices to choose
+               // from. Apple doesn't seem to recommend either (one of their
+               // examples uses full range, the other doesn't). For now we're
+               // using full-range BT.601. Default is left for comparison.
+            
+               // ITU-R BT.601 Full Range Conversion
+               "   vec4(+1.0000f, +1.0000f, +1.0000f, +0.0000f),",
+               "   vec4(+0.0000f, -0.3441f, +1.7720f, +0.0000f),",
+               "   vec4(+1.4020f, -0.7141f, +0.0000f, +0.0000f),",
+               "   vec4(-0.7010f, +0.5291f, -0.8860f, +1.0000f)",
+            
+               // ITU-R BT.601 Conversion (standard for SDTV)
+               //"     vec4(+1.164380f, +1.164380f, +1.164380f, +0.000000f),",
+               //"     vec4(+0.000000f, -0.391762f, +2.017230f, +0.000000f),",
+               //"     vec4(+1.596030f, -0.812968f, +0.000000f, +0.000000f),",
+               //"     vec4(-0.874202f, +0.531668f, -1.085630f, +1.000000f)",
             ");",
-            "lowp vec4 ycbcr = vec4(texture(diffuse_texture_y, _surface.diffuse_texcoord).r,",
-            "                       texture(diffuse_texture_cbcr, _surface.diffuse_texcoord).ba, 1.0);",
+            "highp vec4 ycbcr = vec4(texture(diffuse_texture_y, _surface.diffuse_texcoord).r,",
+            "                        texture(diffuse_texture_cbcr, _surface.diffuse_texcoord).ba, 1.0);",
             "_surface.diffuse_color *= (ycbcrToRGBTransform * ycbcr);"
         };
         
@@ -603,8 +616,32 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createYCbCrTextureModifier(
          Manually linearize the color if we're using gamma correction.
          */
         if (isGammaCorrectionEnabled) {
-            modifierCode.push_back("highp float gamma = 2.2;");
-            modifierCode.push_back("_surface.diffuse_color.rgb = pow(_surface.diffuse_color.rgb, vec3(gamma));");
+            std::vector<std::string> gamma = {
+                /*
+                 The way we linearize from gamma-corrected space depends on our values:
+                 If they're below the cutoff (low-light), we use the latter (lower) operation;
+                 if they're above the cutoff we use the higher operation (pow).
+                 The mix with a bvec trick is a technique to avoid branching in the shader.
+                 
+                 The values here are for gamma 2.2.
+                 */
+                "bvec3 cutoff = lessThan(_surface.diffuse_color.rgb, vec3(0.082));",
+                "highp vec3 higher = pow((_surface.diffuse_color.rgb + vec3(0.099))/vec3(1.099), vec3(2.2));",
+                "highp vec3 lower = _surface.diffuse_color.rgb / vec3(4.5);",
+                "_surface.diffuse_color.rgb = mix(higher, lower, cutoff);",
+            
+                /*
+                 The following values are for gamma 2.4. Left here in case we find it's better
+                 for certain devices.
+                 
+                "bvec3 cutoff = lessThan(_surface.diffuse_color.rgb, vec3(0.04045));",
+                "highp vec3 higher = pow((_surface.diffuse_color.rgb + vec3(0.055))/vec3(1.055), vec3(2.4));",
+                "highp vec3 lower = _surface.diffuse_color.rgb/vec3(12.92);",
+                "_surface.diffuse_color.rgb = mix(higher, lower, cutoff);",
+                */
+            };
+            
+            modifierCode.insert(modifierCode.end(), gamma.begin(), gamma.end());
         }
         sYCbCrTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
                                                                     modifierCode);
