@@ -995,7 +995,7 @@ VROMathFastSquareRoot(float x) {
     const float p02 = -0.825888891;
     const float p03 =  0.287369824;
     
-    if (x == 0.0) {
+    if (x == 0.0 || isinf(x) || isnan(x)) {
         return x;
     }
     
