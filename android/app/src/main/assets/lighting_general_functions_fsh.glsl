@@ -13,7 +13,7 @@ struct VROLightUniforms {
     highp vec4 position;
     highp vec4 direction;
     
-    lowp vec3 color;
+    highp vec3 color;
     highp float spot_inner_angle;
     
     highp float spot_outer_angle;

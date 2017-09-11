@@ -2,8 +2,8 @@
 #include constant_functions_fsh
 #include particles_fsh
 
-uniform lowp vec4 material_diffuse_surface_color;
-uniform lowp float material_diffuse_intensity;
+uniform highp vec4 material_diffuse_surface_color;
+uniform highp float material_diffuse_intensity;
 uniform lowp float material_alpha;
 
 #pragma surface_modifier_uniforms
