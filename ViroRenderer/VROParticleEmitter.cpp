@@ -17,17 +17,13 @@
 
 VROParticleEmitter::VROParticleEmitter(std::shared_ptr<VRODriver> driver,
                                        std::shared_ptr<VRONode> emitterNode,
-                                       std::shared_ptr<VROTexture> texture,
-                                        float width, float height) {
+                                       std::shared_ptr<VROSurface> particleGeometry) {
 
     // Create a particleUBO through which to batch particle information to the GPU.
     std::shared_ptr<VROParticleUBO> particleUBO = std::make_shared<VROParticleUBO>(driver);
 
     // Grab shader modifiers defined by the UBO for processing batched data.
     std::vector<std::shared_ptr<VROShaderModifier>> shaderModifiers = particleUBO->createInstanceShaderModifier();
-
-    // Create a VROSurface, representing the particle geometry template for this emitter.
-    std::shared_ptr<VROSurface> particleGeometry = VROSurface::createSurface(width, height, 0, 0, 1, 1);
 
     // Bind the Particle UBO to this geometry to be processed during instanced rendering.
     particleGeometry->setInstancedUBO(particleUBO);
@@ -38,11 +34,6 @@ VROParticleEmitter::VROParticleEmitter(std::shared_ptr<VRODriver> driver,
     material->setWritesToDepthBuffer(false);
     material->setReadsFromDepthBuffer(true);
     material->setBlendMode(VROBlendMode::Add);
-
-    // Apply the particle texture, if given.
-    if (texture) {
-        material->getDiffuse().setTexture(texture);
-    }
 
     // Initialize the emitter with default values.
     initEmitter();

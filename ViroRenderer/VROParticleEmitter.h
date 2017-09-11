@@ -49,8 +49,7 @@ class VROParticleEmitter {
 public:
     VROParticleEmitter(std::shared_ptr<VRODriver> driver,
                        std::shared_ptr<VRONode> emitterNode,
-                       std::shared_ptr<VROTexture> texture,
-                       float width, float height);
+                       std::shared_ptr<VROSurface> particleGeometry);
     ~VROParticleEmitter();
 
     /*
