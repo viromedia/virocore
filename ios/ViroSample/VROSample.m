@@ -12,7 +12,6 @@
 #import "opencv2/imgproc/imgproc.hpp"
 #import "VROImageTracker.h"
 #import "VROSampleARDelegate.h"
-#import "VROARDraggableNode.h"
 #import "VROChoreographer.h"
 #import "VRORenderer.h"
 #import "VROToneMappingRenderPass.h"
@@ -697,8 +696,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                           VROStereoMode::None);
     std::shared_ptr<VROParticleEmitter> particleEmitter = std::make_shared<VROParticleEmitter>(self.driver,
                                                                                                particleNode,
-                                                                                               imgTexture,
-                                                                                               2, 2);
+                                                                                               nullptr);
     // Vec of intervals to interpolate this modifier along.
     std::vector<VROParticleModifier::VROModifierInterval> intervals;
     VROParticleModifier::VROModifierInterval interval1;
@@ -1834,12 +1832,13 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                     });
     
     std::shared_ptr<VROBox> box = VROBox::createBox(.15, .15, .15);
-    std::shared_ptr<VROARDraggableNode> draggableNode = std::make_shared<VROARDraggableNode>();
+    std::shared_ptr<VRONode> draggableNode = std::make_shared<VRONode>();
     
     self.delegate = std::make_shared<VROEventDelegateiOS>(self);
     self.delegate->setEnabledEvent(VROEventDelegate::EventAction::OnDrag, true);
     
     draggableNode->setEventDelegate(self.delegate);
+    draggableNode->setDragType(VRODragType::FixedToWorld);
     
     draggableNode->setPosition(VROVector3f(0,0,-1));
     std::shared_ptr<VRONode> boxNode = std::make_shared<VRONode>();

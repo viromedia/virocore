@@ -10,7 +10,6 @@
 #include "VRORenderer.h"
 #include "VROProjector.h"
 #include "VROARFrame.h"
-#include "VROARDraggableNode.h"
 
 VROInputControllerARiOS::VROInputControllerARiOS(float viewportWidth, float viewportHeight) :
     _viewportWidth(viewportWidth),
@@ -97,8 +96,9 @@ void VROInputControllerARiOS::processDragging(int source) {
 }
 
 void VROInputControllerARiOS::processDragging(int source, bool alwaysRun) {
-    std::shared_ptr<VROARDraggableNode> arDraggableNode = std::dynamic_pointer_cast<VROARDraggableNode>(_lastDraggedNode->_draggedNode);
-    if (!arDraggableNode) {
+        std::shared_ptr<VRONode> draggedNode = _lastDraggedNode->_draggedNode;
+
+    if (draggedNode->getDragType() == VRODragType::FixedDistance) {
         VROInputControllerBase::processDragging(source);
         return;
     }
@@ -138,20 +138,20 @@ void VROInputControllerARiOS::processDragging(int source, bool alwaysRun) {
             
             // if we're already animating, then "cancel" it at the current position vs terminating
             // which causes the object to "jump" to the end.
-            if (arDraggableNode->isAnimating() && arDraggableNode->getAnimationTransaction()) {
-                VROTransaction::cancel(arDraggableNode->getAnimationTransaction());
-                arDraggableNode->setAnimating(false);
+            if (draggedNode->isAnimatingDrag() && draggedNode->getDragAnimation()) {
+                VROTransaction::cancel(draggedNode->getDragAnimation());
+                draggedNode->setIsAnimatingDrag(false);
             }
             
             // create new transaction to the new location
             VROTransaction::begin();
             VROTransaction::setAnimationDuration(.1);
-            arDraggableNode->setPosition(position);
-            std::weak_ptr<VROARDraggableNode> weakNode = arDraggableNode;
+            draggedNode->setPosition(position);
+            std::weak_ptr<VRONode> weakNode = draggedNode;
             VROTransaction::setFinishCallback([weakNode]() {
-                std::shared_ptr<VROARDraggableNode> strongNode = weakNode.lock();
+                std::shared_ptr<VRONode> strongNode = weakNode.lock();
                 if (strongNode) {
-                    strongNode->setAnimating(false);
+                    strongNode->setIsAnimatingDrag(false);
                 }
             });
             
@@ -159,7 +159,7 @@ void VROInputControllerARiOS::processDragging(int source, bool alwaysRun) {
             _lastDraggedNodePosition = position;
             _lastDraggedNode->_draggedDistanceFromController = position.distanceAccurate(_latestCamera.getPosition());
             
-            arDraggableNode->getEventDelegate()->onDrag(source, position);
+            draggedNode->getEventDelegate()->onDrag(source, position);
             for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
                 delegate->onDrag(source, position);
             }
