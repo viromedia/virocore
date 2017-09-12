@@ -101,21 +101,33 @@ void VROChoreographer::initHDR(std::shared_ptr<VRODriver> driver) {
 }
         
 void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriver> &driver) {
-    _blitTarget->setViewport(viewport);
-    _postProcessTarget->setViewport(viewport);
-    _renderToTextureTarget->setViewport(viewport);
+    /*
+     The display needs the full viewport, in case it's rendering to a translated
+     half of a larger screen (e.g. as in VR).
+     */
+    driver->getDisplay()->setViewport(viewport);
+
+    /*
+     The render targets use an un-translated viewport. We simply blit over the final
+     render target to the display, which will translate it to the correct location
+     on the display because we gave the display the fully specified viewport.
+     */
+    VROViewport rtViewport = VROViewport(0, 0, viewport.getWidth(), viewport.getHeight());
+    
+    _blitTarget->setViewport(rtViewport);
+    _postProcessTarget->setViewport(rtViewport);
+    _renderToTextureTarget->setViewport(rtViewport);
     if (_hdrTarget) {
-        _hdrTarget->setViewport(viewport);
+        _hdrTarget->setViewport(rtViewport);
     }
     if (_blurTargetA) {
-        _blurTargetA->setViewport({ viewport.getX(), viewport.getY(), (int)(viewport.getWidth()  * _blurScaling),
-                                                                      (int)(viewport.getHeight() * _blurScaling) });
+        _blurTargetA->setViewport({ rtViewport.getX(), rtViewport.getY(), (int)(rtViewport.getWidth()  * _blurScaling),
+                                                                          (int)(rtViewport.getHeight() * _blurScaling) });
     }
     if (_blurTargetB) {
-        _blurTargetB->setViewport({ viewport.getX(), viewport.getY(), (int)(viewport.getWidth()  * _blurScaling),
-                                                                      (int)(viewport.getHeight() * _blurScaling) });
+        _blurTargetB->setViewport({ rtViewport.getX(), rtViewport.getY(), (int)(rtViewport.getWidth()  * _blurScaling),
+                                                                          (int)(rtViewport.getHeight() * _blurScaling) });
     }
-    driver->getDisplay()->setViewport(viewport);
 }
 
 #pragma mark - Main Render Cycle
