@@ -213,6 +213,12 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     std::vector<std::string> samplers;
     std::vector<std::shared_ptr<VROShaderModifier>> modifiers;
     
+    // Stereo mode must be placed prior to diffuse texture (because it modifies
+    // the texture coordinates used when sampling the diffuse texture)
+    if (materialCapabilities.diffuseTextureStereoMode != VROStereoMode::None) {
+        modifiers.push_back(createStereoTextureModifier(materialCapabilities.diffuseTextureStereoMode));
+    }
+    
     // Diffuse Map
     if (materialCapabilities.diffuseTexture == VRODiffuseTextureType::Normal) {
         samplers.push_back("diffuse_texture");
@@ -231,9 +237,6 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
         // Do nothing
     }
     
-    if (materialCapabilities.diffuseTextureStereoMode != VROStereoMode::None) {
-        modifiers.push_back(createStereoTextureModifier(materialCapabilities.diffuseTextureStereoMode));
-    }
     if (materialCapabilities.diffuseEGLModifier) {
         modifiers.push_back(createEGLImageModifier());
     }
