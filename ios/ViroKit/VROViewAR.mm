@@ -610,7 +610,17 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     int width  = self.frame.size.width  * self.contentScaleFactor;
     int height = self.frame.size.height * self.contentScaleFactor;
-    
+  
+    /*
+     * https://stackoverflow.com/questions/29505631/crop-video-in-ios-see-weird-green-line-around-video
+     * The video width & height need to be even
+     */
+    if (width % 2 != 0) {
+      width = width - 1;
+    }
+    if (height %2 != 0) {
+      height = height - 1;
+    }
     NSDictionary *videoSetting = @{
                                    AVVideoCodecKey : AVVideoCodecH264,
                                    AVVideoWidthKey : @(width),
