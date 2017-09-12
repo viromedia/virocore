@@ -49,7 +49,7 @@ void VRODebugHUD::prepare(const VRORenderContext &context) {
         return;
     }
     if (context.getFrame() % kFPSRefreshRate == 0 || !_text) {
-        _text = VROText::createSingleLineText(VROStringUtil::toString(context.getFPS(), 2),
+        _text = VROText::createSingleLineText(VROStringUtil::toWString(context.getFPS(), 2),
                                               _typeface,
                                               { 0.6, 1.0, 0.6, 1.0 });
         _node->setGeometry(_text);

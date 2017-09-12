@@ -320,7 +320,7 @@ std::shared_ptr<VROSceneController> VROSample::loadBoxScene(std::shared_ptr<VROD
 
     rootNode->addChildNode(surfaceNode);
 
-    std::string string = "In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
+    std::wstring string = L"In older times when wishing still helped one, there lived a king whose daughters were all beautiful; and the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.\n\nClose by the king's castle lay a great dark forest, and under an old lime-tree in the forest was a well, and when the day was very warm, the king's child went out to the forest and sat down by the fountain; and when she was bored she took a golden ball, and threw it up on high and caught it; and this ball was her favorite plaything.";
     std::shared_ptr<VROTypeface> typeface = driver->newTypeface("Roboto", 8);
     std::shared_ptr<VROText> text = VROText::createText(string, typeface, {1.0, 1.0, 1.0, 1.0}, 10, 8,
                                                         VROTextHorizontalAlignment::Left, VROTextVerticalAlignment::Top,

@@ -99,8 +99,12 @@ JNI_METHOD(void, nativeCreateText)(JNIEnv *env,
                                     jstring clipMode,
                                     jint maxLines) {
     // Get the text string
-    const char *cStrText = env->GetStringUTFChars(text, NULL);
-    std::string strText(cStrText);
+    const jchar *rawText = env->GetStringChars(text, NULL);
+    jsize rawLen = env->GetStringLength(text);
+
+    std::wstring strText;
+    strText.assign(rawText, rawText + rawLen);
+    env->ReleaseStringChars(text, rawText);
 
     // Get the color
     float a = ((color >> 24) & 0xFF) / 255.0;

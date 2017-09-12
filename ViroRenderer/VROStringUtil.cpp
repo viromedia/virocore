@@ -28,6 +28,21 @@ std::string VROStringUtil::toString(double n, int precision) {
     return ss.str();
 }
 
+std::wstring VROStringUtil::toWString(int i) {
+    std::wstringstream ss;
+    ss << i;
+    return ss.str();
+}
+
+std::wstring VROStringUtil::toWString(double n, int precision) {
+    std::wostringstream ss;
+    ss.setf(std::ios::fixed, std::ios::floatfield);
+    ss.precision(precision);
+    
+    ss << n;
+    return ss.str();
+}
+
 int VROStringUtil::toInt(std::string s) {
     return atoi(s.c_str());
 }
@@ -59,6 +74,33 @@ std::vector<std::string> VROStringUtil::split(const std::string &s,
         result.push_back(s.substr(current, next - current));
     }
     while (next != std::string::npos);
+    
+    return result;
+}
+
+std::vector<std::wstring> VROStringUtil::split(const std::wstring &s,
+                                               const std::wstring &delimiters,
+                                               bool emptiesOk) {
+    
+    std::vector<std::wstring> result;
+    size_t current;
+    size_t next = -1;
+    
+    do {
+        if (!emptiesOk) {
+            next = s.find_first_not_of(delimiters, next + 1);
+            if (next == std::wstring::npos) {
+                break;
+            };
+            
+            next -= 1;
+        }
+        
+        current = next + 1;
+        next = s.find_first_of(delimiters, current);
+        result.push_back(s.substr(current, next - current));
+    }
+    while (next != std::wstring::npos);
     
     return result;
 }

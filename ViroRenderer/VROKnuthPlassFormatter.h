@@ -40,16 +40,16 @@ inline KPSum operator-(KPSum lhs, const KPSum& rhs) {
 
 struct KPNode {
     KPNodeType type;
-    std::string value;
+    std::wstring value;
     
-    KPNode(KPNodeType type, std::string value) : type(type), value(value) {}
+    KPNode(KPNodeType type, std::wstring value) : type(type), value(value) {}
     virtual ~KPNode() {}
 };
 
 struct KPGlue : public KPNode {
     float width, stretch, shrink;
     
-    KPGlue(float width, float stretch, float shrink, std::string value) : KPNode(KPNodeType::Glue, value),
+    KPGlue(float width, float stretch, float shrink, std::wstring value) : KPNode(KPNodeType::Glue, value),
     width(width), stretch(stretch), shrink(shrink) {}
     virtual ~KPGlue() {}
 };
@@ -57,7 +57,7 @@ struct KPGlue : public KPNode {
 struct KPBox : public KPNode {
     float width;
     
-    KPBox(float width, std::string value) : KPNode(KPNodeType::Box, value),
+    KPBox(float width, std::wstring value) : KPNode(KPNodeType::Box, value),
     width(width) {}
     virtual ~KPBox() {}
 };
@@ -66,7 +66,7 @@ struct KPPenalty : public KPNode {
     float width, penalty;
     float flagged;
     
-    KPPenalty(float width, float penalty, float flagged) : KPNode(KPNodeType::Penalty, ""),
+    KPPenalty(float width, float penalty, float flagged) : KPNode(KPNodeType::Penalty, L""),
     width(width), penalty(penalty), flagged(flagged) {}
     virtual ~KPPenalty() {}
 };
