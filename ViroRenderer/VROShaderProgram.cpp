@@ -572,5 +572,5 @@ void VROShaderProgram::insertModifier(std::string modifierSource, std::string di
     }
     
     size_t end = source.find("\n", start);
-    source.replace(start, end - start, modifierSource);
+    source.replace(start, end - start + 1, modifierSource);
 }

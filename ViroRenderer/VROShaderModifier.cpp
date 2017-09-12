@@ -49,7 +49,7 @@ VROShaderModifier::VROShaderModifier(VROShaderEntryPoint entryPoint, std::vector
      This way multiple shader modifiers can utilize the same entry point.
      */
     _uniforms = _uniforms + getDirective(VROShaderSection::Uniforms) + "\n";
-    _body = _body + getDirective(VROShaderSection::Body) + "\n";
+    _body = _body + "\n" + getDirective(VROShaderSection::Body) + "\n";
         
     ALLOCATION_TRACKER_ADD(ShaderModifiers, 1);
 }
