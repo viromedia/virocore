@@ -74,45 +74,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     // uncomment the below line to test the AR library, look for logs "Found corner".
     //[self runImageDetection];
 
-    int modulo = index % VROSampleSceneNumScenes;
-    switch (modulo) {
-        case VROSampleSceneTorus:
-            return [self loadTorusScene];
-        case VROSampleSceneCamera:
-            return [self loadCameraScene];
-        case VROSampleSceneVideoSphere:
-            return [self loadVideoSphereScene];
-        case VROSampleSceneText:
-            return [self loadTextScene];
-        case VROSampleSceneOBJ:
-            return [self loadOBJScene];
-        case VROSampleSceneNormalMap:
-            return [self loadNormalMapScene];
-        case VROSampleSceneBox:
-            return [self loadBoxScene];
-        case VROSampleSceneStereoscopic:
-            return [self loadStereoBackground];
-        case VROSampleSceneFBX:
-            return [self loadFBXScene];
-        case VROSampleSceneARPlane:
-            return [self loadARPlaneScene];
-        case VROSampleSceneARDraggableNode:
-            return [self loadARDraggableNodeScene];
-        case VROSampleScenePortal:
-            return [self loadPortalScene];
-        case VROSampleSceneShadow:
-            return [self loadShadowScene];
-        case VROSampleSceneARShadow:
-            return [self loadARShadowScene];
-        case VROSampleSceneBloom:
-            return [self loadBloomScene];
-        case VROSampleSceneHDR:
-            return [self loadHDRScene];
-        default:
-            break;
-    }
-    
-    return [self loadPhysicsScene];
+    return [self loadARPlaneScene];
 }
 
 - (std::shared_ptr<VROTexture>) niagaraTexture {
@@ -694,9 +656,10 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                                                           VROMipmapMode::None,
                                                                           std::make_shared<VROImageiOS>([UIImage imageNamed:@"cloud"], VROTextureInternalFormat::RGBA8), 
                                                                           VROStereoMode::None);
+    std::shared_ptr<VROSurface> surface = VROSurface::createSurface(1,1);
     std::shared_ptr<VROParticleEmitter> particleEmitter = std::make_shared<VROParticleEmitter>(self.driver,
                                                                                                particleNode,
-                                                                                               nullptr);
+                                                                                               surface);
     // Vec of intervals to interpolate this modifier along.
     std::vector<VROParticleModifier::VROModifierInterval> intervals;
     VROParticleModifier::VROModifierInterval interval1;
