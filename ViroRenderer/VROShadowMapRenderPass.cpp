@@ -133,11 +133,11 @@ VROMatrix4f VROShadowMapRenderPass::computeLightProjectionMatrix() const {
     float far  = _light->getShadowFarZ();
     
     if (_light->getType() == VROLightType::Directional) {
-        float orthographicScale = _light->getShadowOrthographicScale();
-        float left   = -orthographicScale;
-        float right  =  orthographicScale;
-        float bottom = -orthographicScale;
-        float top    =  orthographicScale;
+        float orthographicHalfSize = _light->getShadowOrthographicSize() / 2.0;
+        float left   = -orthographicHalfSize;
+        float right  =  orthographicHalfSize;
+        float bottom = -orthographicHalfSize;
+        float top    =  orthographicHalfSize;
         
         return VROMathComputeOrthographicProjection(left, right, bottom, top, near, far);
     }

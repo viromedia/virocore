@@ -1614,7 +1614,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     surfaceNode->setGeometry(surface);
     surfaceNode->setRotationEuler({ -M_PI_2, 0, 0 });
     surfaceNode->setPosition({0, -3, -6});
-    surfaceNode->setLightBitMask(1);
+    surfaceNode->setLightReceivingBitMask(1);
     rootNode->addChildNode(surfaceNode);
     
     self.delegate = std::make_shared<VROEventDelegateiOS>(self);

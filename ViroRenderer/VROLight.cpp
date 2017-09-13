@@ -31,7 +31,7 @@ VROLight::VROLight(VROLightType type) :
     _shadowOpacity(1.0),
     _shadowMapSize(1024),
     _shadowBias(0.005),
-    _shadowOrthographicScale(10),
+    _shadowOrthographicSize(20),
     _shadowNearZ(0.1),
     _shadowFarZ(20),
     _shadowMapIndex(-1),

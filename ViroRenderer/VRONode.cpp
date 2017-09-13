@@ -59,7 +59,7 @@ VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
     _selectable(true),
     _highAccuracyGaze(false),
     _hierarchicalRendering(false),
-    _lightBitMask(1),
+    _lightReceivingBitMask(1),
     _shadowCastingBitMask(1),
     _ignoreEventHandling(false),
     _dragType(VRODragType::FixedDistance),
@@ -85,7 +85,7 @@ VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Rende
     _selectable(node._selectable),
     _highAccuracyGaze(node._highAccuracyGaze),
     _hierarchicalRendering(node._hierarchicalRendering),
-    _lightBitMask(node._lightBitMask),
+    _lightReceivingBitMask(node._lightReceivingBitMask),
     _shadowCastingBitMask(node._shadowCastingBitMask),
     _ignoreEventHandling(node._ignoreEventHandling),
     _dragType(node._dragType),
@@ -212,7 +212,7 @@ void VRONode::updateSortKeys(uint32_t depth,
     
     _computedLights.clear();
     for (std::shared_ptr<VROLight> &light : lights) {
-        if ((light->getInfluenceBitMask() & _lightBitMask) != 0 &&
+        if ((light->getInfluenceBitMask() & _lightReceivingBitMask) != 0 &&
             getBoundingBox().getDistanceToPoint(light->getTransformedPosition()) < light->getAttenuationEndDistance()) {
             _computedLights.push_back(light);
         }
