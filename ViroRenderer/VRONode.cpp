@@ -123,7 +123,7 @@ void VRONode::render(int elementIndex,
 }
 
 void VRONode::render(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    if (_geometry) {
+    if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
         for (int i = 0; i < _geometry->getGeometryElements().size(); i++) {
             std::shared_ptr<VROMaterial> &material = _geometry->getMaterialForElement(i);
             material->bindShader(_computedLightsHash, _computedLights, driver);
@@ -143,7 +143,7 @@ void VRONode::render(const VRORenderContext &context, std::shared_ptr<VRODriver>
 void VRONode::renderSilhouettes(std::shared_ptr<VROMaterial> &material,
                                 VROSilhouetteMode mode, std::function<bool(const VRONode&)> filter,
                                 const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
-    if (_geometry) {
+    if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
         if (!filter || filter(*this)) {
             if (mode == VROSilhouetteMode::Flat) {
                 _geometry->renderSilhouette(_computedTransform, material, context, driver);
