@@ -36,7 +36,10 @@ void VROPencil::render(const VRORenderContext &renderContext, std::shared_ptr<VR
     std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
     material->getDiffuse().setColor({1.0, 0, 0, 1.0});
     material->setCullMode(VROCullMode::None);
+    material->setLightingModel(VROLightingModel::Constant);
     line->setMaterials({ material });
+    material->setWritesToDepthBuffer(false);
+    material->setReadsFromDepthBuffer(false);
     material->bindShader(0, {}, driver);
     material->bindProperties(driver);
 

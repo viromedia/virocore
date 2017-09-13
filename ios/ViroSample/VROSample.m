@@ -663,7 +663,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     //No-op
 }
 
--(void)onClick:(int)source clickState:(VROEventDelegate::ClickState)clickState{
+- (void)onClick:(int)source clickState:(VROEventDelegate::ClickState)clickState clickLocation:(std::vector<float>)location{
     if (clickState == VROEventDelegate::ClickState::Clicked){
         [self.clickBlock invoke];
     }
