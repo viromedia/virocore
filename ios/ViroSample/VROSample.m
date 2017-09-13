@@ -73,8 +73,45 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
 - (std::shared_ptr<VROSceneController>)loadSceneWithIndex:(int)index {
     // uncomment the below line to test the AR library, look for logs "Found corner".
     //[self runImageDetection];
-
-    return [self loadARPlaneScene];
+    int modulo = index % VROSampleSceneNumScenes;
+    switch (modulo) {
+        case VROSampleSceneTorus:
+            return [self loadTorusScene];
+        case VROSampleSceneCamera:
+            return [self loadCameraScene];
+        case VROSampleSceneVideoSphere:
+            return [self loadVideoSphereScene];
+        case VROSampleSceneText:
+            return [self loadTextScene];
+        case VROSampleSceneOBJ:
+            return [self loadOBJScene];
+        case VROSampleSceneNormalMap:
+            return [self loadNormalMapScene];
+        case VROSampleSceneBox:
+            return [self loadBoxScene];
+        case VROSampleSceneStereoscopic:
+            return [self loadStereoBackground];
+        case VROSampleSceneFBX:
+            return [self loadFBXScene];
+        case VROSampleSceneARPlane:
+            return [self loadARPlaneScene];
+        case VROSampleSceneARDraggableNode:
+            return [self loadARDraggableNodeScene];
+        case VROSampleScenePortal:
+            return [self loadPortalScene];
+        case VROSampleSceneShadow:
+            return [self loadShadowScene];
+        case VROSampleSceneARShadow:
+            return [self loadARShadowScene];
+        case VROSampleSceneBloom:
+            return [self loadBloomScene];
+        case VROSampleSceneHDR:
+            return [self loadHDRScene];
+        default:
+            break;
+        }
+    
+        return [self loadPhysicsScene];
 }
 
 - (std::shared_ptr<VROTexture>) niagaraTexture {
