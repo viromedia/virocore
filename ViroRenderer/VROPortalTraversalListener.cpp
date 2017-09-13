@@ -59,22 +59,17 @@ void VROPortalTraversalListener::onFrameDidRender(const VRORenderContext &contex
 
 std::shared_ptr<VROPortal> VROPortalTraversalListener::findPortalTraversal(const VROLineSegment &segment,
                                                                            const tree<std::shared_ptr<VROPortal>> &portalTree) {
-    const std::shared_ptr<VROPortal> &portal = portalTree.value;
-    if (portal->isPassable() && portal->intersectsLineSegment(segment)) {
-        return portal;
-    }
-    else {
-        // Recurse, returning the first child with a valid intersection
-        for (tree<std::shared_ptr<VROPortal>> child : portalTree.children) {
-            const std::shared_ptr<VROPortal> result = findPortalTraversal(segment, child);
-            if (result) {
-                return result;
+    // Return the first child with a valid intersection
+    for (tree<std::shared_ptr<VROPortal>> child : portalTree.children) {
+        if (child.value) {
+            if (child.value->isPassable() && child.value->intersectsLineSegment(segment)) {
+                return child.value;
             }
         }
-        
-        // Return null if no portal traversed
-        return nullptr;
     }
+    
+    // Return null if no portal traversed
+    return nullptr;
 }
 
 void VROPortalTraversalListener::restorePortalFaces(const VROVector3f &cameraPosition,
