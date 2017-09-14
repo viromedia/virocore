@@ -37,7 +37,7 @@ VRORenderTargetOpenGL::VRORenderTargetOpenGL(VRORenderTargetType type, int numAt
 }
 
 VRORenderTargetOpenGL::~VRORenderTargetOpenGL() {
-    discardFramebuffers();
+    deleteFramebuffers();
     ALLOCATION_TRACKER_SUB(RenderTargets, 1);
 }
 
@@ -57,6 +57,29 @@ void VRORenderTargetOpenGL::bind() {
      Prevent logical buffer load by immediately clearing.
      */
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}
+
+void VRORenderTargetOpenGL::discardTransientBuffers() {
+    switch (_type) {
+        case VRORenderTargetType::ColorTexture:
+        case VRORenderTargetType::ColorTextureSRGB:
+        case VRORenderTargetType::ColorTextureHDR16:
+        case VRORenderTargetType::ColorTextureHDR32:
+            GLenum attachments[2];
+            attachments[0] = GL_DEPTH_ATTACHMENT;
+            attachments[1] = GL_STENCIL_ATTACHMENT;
+            glInvalidateFramebuffer(GL_FRAMEBUFFER, 2, attachments);
+            break;
+            
+        case VRORenderTargetType::DepthTexture:
+        case VRORenderTargetType::DepthTextureArray:
+            // Nothing to discard
+            break;
+            
+        default:
+            // Nothing to discard
+            break;
+    }
 }
 
 void VRORenderTargetOpenGL::blitColor(std::shared_ptr<VRORenderTarget> destination) {
@@ -80,7 +103,7 @@ void VRORenderTargetOpenGL::setViewport(VROViewport viewport) {
     // If size changed, recreate the target
     if (previousWidth  != viewport.getWidth() ||
         previousHeight != viewport.getHeight()) {
-        discardFramebuffers();
+        deleteFramebuffers();
         restoreFramebuffers();
     }
 }
@@ -357,7 +380,7 @@ void VRORenderTargetOpenGL::restoreFramebuffers() {
     }
 }
 
-void VRORenderTargetOpenGL::discardFramebuffers() {
+void VRORenderTargetOpenGL::deleteFramebuffers() {
     if (_framebuffer) {
         glDeleteFramebuffers(1, &_framebuffer);
         _framebuffer = 0;
@@ -548,25 +571,41 @@ GLenum toGL(VROFace face) {
 }
 
 void VRORenderTargetOpenGL::enablePortalStencilWriting(VROFace face) {
-    glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_INCR);   // Increment stencil buffer when pass
-    glStencilMaskSeparate(toGL(face), 0xFF);                      // Allow writing to all bits in stencil buffer
+    std::shared_ptr<VRODriver> driver = _driver.lock();
+    if (driver) {
+        driver->setStencilTestEnabled(true);
+        glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_INCR);   // Increment stencil buffer when pass
+        glStencilMaskSeparate(toGL(face), 0xFF);                      // Allow writing to all bits in stencil buffer
+    }
 }
 
 void VRORenderTargetOpenGL::enablePortalStencilRemoval(VROFace face) {
-    glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_DECR);   // Decrement stencil buffer when pass
-    glStencilMaskSeparate(toGL(face), 0xFF);                      // Allow writing to all bits in stencil buffer
+    std::shared_ptr<VRODriver> driver = _driver.lock();
+    if (driver) {
+        driver->setStencilTestEnabled(true);
+        glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_DECR);   // Decrement stencil buffer when pass
+        glStencilMaskSeparate(toGL(face), 0xFF);                      // Allow writing to all bits in stencil buffer
+    }
 }
 
 void VRORenderTargetOpenGL::disablePortalStencilWriting(VROFace face) {
-    glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_KEEP);   // Do not write to stencil buffer
-    glStencilMaskSeparate(toGL(face), 0x00);                      // Protect all stencil bits from writing
+    std::shared_ptr<VRODriver> driver = _driver.lock();
+    if (driver) {
+        driver->setStencilTestEnabled(true);
+        glStencilOpSeparate(toGL(face), GL_KEEP, GL_KEEP, GL_KEEP);   // Do not write to stencil buffer
+        glStencilMaskSeparate(toGL(face), 0x00);                      // Protect all stencil bits from writing
+    }
 }
 
 void VRORenderTargetOpenGL::setStencilPassBits(VROFace face, int bits, bool passIfLess) {
-    if (passIfLess) {
-        glStencilFuncSeparate(toGL(face), GL_LEQUAL, bits, 0xFF);      // Only pass stencil test if bits <= stencil buffer
-    }
-    else {
-        glStencilFuncSeparate(toGL(face), GL_EQUAL, bits, 0xFF);       // Only pass stencil test if bits == stencil buffer
+    std::shared_ptr<VRODriver> driver = _driver.lock();
+    if (driver) {
+        driver->setStencilTestEnabled(true);
+        if (passIfLess) {
+            glStencilFuncSeparate(toGL(face), GL_LEQUAL, bits, 0xFF); // Only pass stencil test if bits <= stencil buffer
+        }
+        else {
+            glStencilFuncSeparate(toGL(face), GL_EQUAL, bits, 0xFF);  // Only pass stencil test if bits == stencil buffer
+        }
     }
 }

@@ -29,6 +29,7 @@ public:
 #pragma mark - VRORenderTarget Implementation
     
     void bind();
+    void discardTransientBuffers();
     void blitColor(std::shared_ptr<VRORenderTarget> destination);
     
     virtual void setViewport(VROViewport viewport);
@@ -43,7 +44,7 @@ public:
     virtual void attachTexture(std::shared_ptr<VROTexture> texture, int attachment);
     virtual void setTextureImageIndex(int index, int attachment);
     virtual const std::shared_ptr<VROTexture> getTexture(int attachment) const;
-    virtual void discardFramebuffers();
+    virtual void deleteFramebuffers();
     virtual void restoreFramebuffers();
     
 #pragma mark - Render Target Rendering

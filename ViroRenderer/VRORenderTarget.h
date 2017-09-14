@@ -90,15 +90,25 @@ public:
     virtual void bind() = 0;
     
     /*
+     Invalidate the unused attachments in this render target. This tells the
+     underlying implementation it does *not* need to transfer these buffers
+     from tile memory back to shared memory, avoiding an expensive logical
+     buffer store when this render target is unbound.
+     
+     Must be invoked before the next render target is bound.
+     */
+    virtual void discardTransientBuffers() = 0;
+    
+    /*
      Blit the color attachment of this framebuffer over to the given destination buffer's
      color attachment. This should be implemented as a driver-level fast operation.
      */
     virtual void blitColor(std::shared_ptr<VRORenderTarget> destination) = 0;
     
     /*
-     Discard all existing framebuffers.
+     Delete all existing framebuffers.
      */
-    virtual void discardFramebuffers() = 0;
+    virtual void deleteFramebuffers() = 0;
     
     /*
      Restores the frame-buffer if the context was lost.

@@ -59,6 +59,9 @@ public:
         glDepthMask(GL_TRUE);
         glDepthFunc(GL_LEQUAL);
         
+        _stencilTestEnabled = true;
+        glEnable(GL_STENCIL_TEST);
+        
         _cullMode = VROCullMode::None;
         glDisable(GL_CULL_FACE);
         
@@ -108,6 +111,20 @@ public:
         }
     }
     
+    void setStencilTestEnabled(bool enabled) {
+        if (_stencilTestEnabled == enabled) {
+            return;
+        }
+        
+        _stencilTestEnabled = enabled;
+        if (_stencilTestEnabled) {
+            glEnable(GL_STENCIL_TEST);
+        }
+        else {
+            glDisable(GL_STENCIL_TEST);
+        }
+    }
+
     void setCullMode(VROCullMode cullMode) {
         if (_cullMode == cullMode) {
             return;
@@ -342,6 +359,7 @@ private:
      */
     bool _colorWritingEnabled;
     bool _depthWritingEnabled, _depthReadingEnabled;
+    bool _stencilTestEnabled;
     VROCullMode _cullMode;
     VROBlendMode _blendMode;
 
