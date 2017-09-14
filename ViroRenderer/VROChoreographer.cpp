@@ -59,9 +59,6 @@ void VROChoreographer::initTargets(std::shared_ptr<VRODriver> driver) {
     _blitTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1);
     
     _renderToTextureTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1);
-    _renderToTexturePostProcess = driver->newImagePostProcess(blitShader);
-    _renderToTexturePostProcess->setVerticalFlip(true);
-    
     _postProcessTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1);
 
     if (_renderShadows) {
@@ -315,9 +312,11 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene,
 void VROChoreographer::renderToTextureAndDisplay(std::shared_ptr<VRORenderTarget> input,
                                                  std::shared_ptr<VRODriver> driver) {
     // Flip/render the image to the RTT target
-    _renderToTexturePostProcess->blit(input, 0, _renderToTextureTarget, {}, driver);
+    input->blitColor(_renderToTextureTarget, true);
     
-    // Blit direct to the display
+    // Blit direct to the display. We can't use the blitColor method here
+    // because the display is multisampled (blitting to a multisampled buffer
+    // is not supported).
     _blitPostProcess->blit(input, 0, driver->getDisplay(), {}, driver);
     if (_renderToTextureCallback) {
         _renderToTextureCallback();

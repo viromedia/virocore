@@ -103,7 +103,7 @@ public:
      Blit the color attachment of this framebuffer over to the given destination buffer's
      color attachment. This should be implemented as a driver-level fast operation.
      */
-    virtual void blitColor(std::shared_ptr<VRORenderTarget> destination) = 0;
+    virtual void blitColor(std::shared_ptr<VRORenderTarget> destination, bool flipY) = 0;
     
     /*
      Delete all existing framebuffers.

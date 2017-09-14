@@ -30,7 +30,7 @@ public:
     
     void bind();
     void discardTransientBuffers();
-    void blitColor(std::shared_ptr<VRORenderTarget> destination);
+    void blitColor(std::shared_ptr<VRORenderTarget> destination, bool flipY);
     
     virtual void setViewport(VROViewport viewport);
     int getWidth() const;

@@ -117,7 +117,6 @@ private:
      */
     bool _renderToTexture;
     std::shared_ptr<VRORenderTarget> _renderToTextureTarget;
-    std::shared_ptr<VROImagePostProcess> _renderToTexturePostProcess;
     std::function<void()> _renderToTextureCallback;
     
     /*

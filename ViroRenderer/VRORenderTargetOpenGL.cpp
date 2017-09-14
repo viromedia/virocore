@@ -82,16 +82,28 @@ void VRORenderTargetOpenGL::discardTransientBuffers() {
     }
 }
 
-void VRORenderTargetOpenGL::blitColor(std::shared_ptr<VRORenderTarget> destination) {
+void VRORenderTargetOpenGL::blitColor(std::shared_ptr<VRORenderTarget> destination, bool flipY) {
     passert (_viewport.getWidth() == destination->getWidth());
     passert (_viewport.getHeight() == destination->getHeight());
     
     VRORenderTargetOpenGL *t = (VRORenderTargetOpenGL *) destination.get();
+    GLenum attachment = GL_COLOR_ATTACHMENT0;
+
     glBindFramebuffer(GL_READ_FRAMEBUFFER, _framebuffer);
+    glReadBuffer(attachment);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, t->_framebuffer);
-    glBlitFramebuffer(   _viewport.getX(),    _viewport.getY(),    _viewport.getX() +    _viewport.getWidth(),    _viewport.getY() +    _viewport.getHeight(),
-                      t->_viewport.getX(), t->_viewport.getY(), t->_viewport.getX() + t->_viewport.getWidth(), t->_viewport.getY() + t->_viewport.getHeight(),
-                      GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    glDrawBuffers(1, &attachment);
+    
+    if (flipY) {
+        glBlitFramebuffer(   _viewport.getX(),  _viewport.getY(), _viewport.getX() + _viewport.getWidth(), _viewport.getY() + _viewport.getHeight(),
+                          t->_viewport.getX(), t->_viewport.getY() + t->_viewport.getHeight(), t->_viewport.getX() + t->_viewport.getWidth(), t->_viewport.getY(),
+                          GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    }
+    else {
+        glBlitFramebuffer(   _viewport.getX(),    _viewport.getY(),    _viewport.getX() +    _viewport.getWidth(),    _viewport.getY() +    _viewport.getHeight(),
+                          t->_viewport.getX(), t->_viewport.getY(), t->_viewport.getX() + t->_viewport.getWidth(), t->_viewport.getY() + t->_viewport.getHeight(),
+                          GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    }
 }
 
 void VRORenderTargetOpenGL::setViewport(VROViewport viewport) {
