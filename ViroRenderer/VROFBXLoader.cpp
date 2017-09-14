@@ -600,7 +600,9 @@ bool VROFBXLoader::nodeHasGeometryRecursive(std::shared_ptr<VRONode> node) {
     else {
         bool hasGeometryInChildren = false;
         for (std::shared_ptr<VRONode> &child : node->getChildNodes()) {
-            hasGeometryInChildren = nodeHasGeometryRecursive(child);
+            if (nodeHasGeometryRecursive(child)) {
+                hasGeometryInChildren = true;
+            }
         }
         
         return hasGeometryInChildren;
