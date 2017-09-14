@@ -52,9 +52,9 @@ void VROPortalTraversalListener::onFrameWillRender(const VRORenderContext &conte
         if (portal) {
             portal->getActivePortalFrame()->setTwoSided(true);
             scene->setActivePortal(portal);
+            
+            restorePortalFaces(context.getCamera().getPosition(), portalTree);
         }
-        
-        restorePortalFaces(context.getCamera().getPosition(), portalTree);
     }
 }
 
