@@ -51,6 +51,8 @@ public:
                                std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VROGeometrySubstrateOpenGL();
     
+    void update(const VROGeometry &geometry,
+                std::shared_ptr<VRODriver> &driver);
     void render(const VROGeometry &geometry,
                 int elementIndex,
                 VROMatrix4f transform,

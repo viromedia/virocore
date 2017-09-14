@@ -32,6 +32,13 @@ public:
     virtual ~VROGeometrySubstrate() {}
     
     /*
+     Update any per-frame data in this substrate. Invoked once per frame
+     during the updateSortKeys() phase.
+     */
+    virtual void update(const VROGeometry &geometry,
+                        std::shared_ptr<VRODriver> &driver) = 0;
+    
+    /*
      Render the given element of the geometry with full texturing and
      lighting. Assumes the material's shader and geometry-independent
      properties have already been bound.

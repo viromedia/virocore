@@ -92,6 +92,10 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t h
             _sortKeys.push_back(key);
         }
     }
+    
+    if (_substrate) {
+        _substrate->update(*this, driver);
+    }
 }
 
 void VROGeometry::getSortKeys(std::vector<VROSortKey> *outKeys) {

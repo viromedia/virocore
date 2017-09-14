@@ -209,6 +209,13 @@ GLuint VROGeometrySubstrateOpenGL::parsePrimitiveType(VROGeometryPrimitiveType p
     }
 }
 
+void VROGeometrySubstrateOpenGL::update(const VROGeometry &geometry,
+                                        std::shared_ptr<VRODriver> &driver) {
+    if (_boneUBO) {
+        _boneUBO->update(geometry.getSkinner());
+    }
+}
+
 void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
                                         int elementIndex,
                                         VROMatrix4f transform,
@@ -248,7 +255,6 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     
     VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
     if (_boneUBO) {
-        _boneUBO->update(geometry.getSkinner());
         substrate->bindBoneUBO(_boneUBO);
     }
 
@@ -342,7 +348,6 @@ void VROGeometrySubstrateOpenGL::renderSilhouette(const VROGeometry &geometry,
         
         VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
         if (_boneUBO) {
-            _boneUBO->update(geometry.getSkinner());
             substrate->bindBoneUBO(_boneUBO);
         }
         
@@ -381,7 +386,6 @@ void VROGeometrySubstrateOpenGL::renderSilhouetteTextured(const VROGeometry &geo
     VROGeometryElementOpenGL &element = _elements[elementIndex];
     VROMaterialSubstrateOpenGL *substrate = static_cast<VROMaterialSubstrateOpenGL *>(material->getSubstrate(driver));
     if (_boneUBO) {
-        _boneUBO->update(geometry.getSkinner());
         substrate->bindBoneUBO(_boneUBO);
     }
     
