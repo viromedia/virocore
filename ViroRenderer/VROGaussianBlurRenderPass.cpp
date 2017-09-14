@@ -13,9 +13,10 @@
 #include "VRORenderContext.h"
 #include "VROShaderModifier.h"
 #include "VROOpenGL.h"
+#include "VRORenderTarget.h"
 
 VROGaussianBlurRenderPass::VROGaussianBlurRenderPass() :
-    _numBlurIterations(10),
+    _numBlurIterations(4),
     _horizontal(false) {
     
 }
@@ -39,19 +40,17 @@ void VROGaussianBlurRenderPass::initPostProcess(std::shared_ptr<VRODriver> drive
         "highp vec3 result = texture(image, v_texcoord).rgb * weight[0];",
         "if (horizontal)",
         "{",
-        "   for(int i = 1; i < 3; ++i)",
-        "   {",
-        "       result += texture(image, v_texcoord + vec2(tex_offset.x * offset[i], 0.0)).rgb * weight[i];",
-        "       result += texture(image, v_texcoord - vec2(tex_offset.x * offset[i], 0.0)).rgb * weight[i];",
-        "   }",
+        "   result += texture(image, v_texcoord + vec2(tex_offset.x * offset[1], 0.0)).rgb * weight[1];",
+        "   result += texture(image, v_texcoord - vec2(tex_offset.x * offset[1], 0.0)).rgb * weight[1];",
+        "   result += texture(image, v_texcoord + vec2(tex_offset.x * offset[2], 0.0)).rgb * weight[2];",
+        "   result += texture(image, v_texcoord - vec2(tex_offset.x * offset[2], 0.0)).rgb * weight[2];",
         "}",
         "else",
         "{",
-        "   for(int i = 1; i < 3; ++i)",
-        "   {",
-        "       result += texture(image, v_texcoord + vec2(0.0, tex_offset.y * offset[i])).rgb * weight[i];",
-        "       result += texture(image, v_texcoord - vec2(0.0, tex_offset.y * offset[i])).rgb * weight[i];",
-        "   }",
+        "   result += texture(image, v_texcoord + vec2(0.0, tex_offset.y * offset[1])).rgb * weight[1];",
+        "   result += texture(image, v_texcoord - vec2(0.0, tex_offset.y * offset[1])).rgb * weight[1];",
+        "   result += texture(image, v_texcoord + vec2(0.0, tex_offset.y * offset[2])).rgb * weight[2];",
+        "   result += texture(image, v_texcoord - vec2(0.0, tex_offset.y * offset[2])).rgb * weight[2];",
         "}",
         "frag_color = vec4(result, 1.0);",
     };

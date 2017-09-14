@@ -30,7 +30,7 @@ VROChoreographer::VROChoreographer(std::shared_ptr<VRODriver> driver) :
     _driver(driver),
     _renderToTexture(false),
     _renderShadows(true),
-    _blurScaling(0.5) {
+    _blurScaling(0.25) {
         
     initTargets(driver);
         
