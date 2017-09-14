@@ -94,18 +94,23 @@ VRORenderPassInputOutput VROGaussianBlurRenderPass::render(std::shared_ptr<VROSc
     passert (_numBlurIterations % 2 == 0);
     
     pglpush("Bloom");
+    _gaussianBlur->begin(driver);
     for (int i = 0; i < _numBlurIterations; i++) {
         if (i == 0) {
-            _gaussianBlur->blit(input, 1, bufferA, {}, driver);
+            _gaussianBlur->blitOpt(input, 1, bufferA, {}, driver);
+            bufferA->discardTransientBuffers();
         }
         else if (i % 2 == 1) {
-            _gaussianBlur->blit(bufferA, 0, bufferB, {}, driver);
+            _gaussianBlur->blitOpt(bufferA, 0, bufferB, {}, driver);
+            bufferB->discardTransientBuffers();
         }
         else {
-            _gaussianBlur->blit(bufferB, 0, bufferA, {}, driver);
+            _gaussianBlur->blitOpt(bufferB, 0, bufferA, {}, driver);
+            bufferA->discardTransientBuffers();
         }
         _horizontal = !_horizontal;
     }
+    _gaussianBlur->end(driver);
     pglpop();
     
     VRORenderPassInputOutput renderPassOutput;

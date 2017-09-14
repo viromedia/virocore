@@ -31,10 +31,12 @@ public:
               std::vector<std::shared_ptr<VROTexture>> textures,
               std::shared_ptr<VRODriver> &driver);
     
-    void accumulate(std::shared_ptr<VRORenderTarget> source, int attachment,
-                    std::shared_ptr<VRORenderTarget> destination,
-                    std::vector<std::shared_ptr<VROTexture>> textures,
-                    std::shared_ptr<VRODriver> &driver);
+    void begin(std::shared_ptr<VRODriver> &driver);
+    void blitOpt(std::shared_ptr<VRORenderTarget> source, int attachment,
+                 std::shared_ptr<VRORenderTarget> destination,
+                 std::vector<std::shared_ptr<VROTexture>> textures,
+                 std::shared_ptr<VRODriver> &driver);
+    void end(std::shared_ptr<VRODriver> &driver);
     
 private:
     
@@ -72,8 +74,12 @@ private:
     void buildQuadFSVAR(bool flipped);
     
     /*
-     Bind (unbind) the parameters and shader required for rendering a full
-     size screen-space quad.
+     Bind the vertex array.
+     */
+    void bindScreenSpaceVAR() const;
+    
+    /*
+     Draw the vertex array.
      */
     void drawScreenSpaceVAR() const;
     

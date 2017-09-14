@@ -39,7 +39,6 @@ VROSceneRendererCardboardOpenGL::~VROSceneRendererCardboardOpenGL() {
 
 void VROSceneRendererCardboardOpenGL::initRenderer(GVRHeadTransform *headTransform) {
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_STENCIL_TEST);
 }
 
 void VROSceneRendererCardboardOpenGL::setSceneController(std::shared_ptr<VROSceneController> sceneController) {

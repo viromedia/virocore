@@ -63,23 +63,59 @@ void VROImagePostProcessOpenGL::blit(std::shared_ptr<VRORenderTarget> source, in
                                      std::shared_ptr<VRORenderTarget> destination,
                                      std::vector<std::shared_ptr<VROTexture>> textures,
                                      std::shared_ptr<VRODriver> &driver) {
+    
+    // Bind the source textures and destination render target
     if (!bind(source, attachment, destination, textures, driver)) {
         return;
     }
+    
+    driver->setDepthWritingEnabled(false);
+    driver->setDepthReadingEnabled(false);
+    driver->setStencilTestEnabled(false);
+    
+    // Compile and bind the shader and its corresponding uniforms
+    if (!_shader->isHydrated()) {
+        _shader->hydrate();
+    }
+    driver->bindShader(_shader);
+    for (VROUniform *uniform : _shaderModifierUniforms) {
+        uniform->set(nullptr, nullptr, nullptr);
+    }
+    
+    bindScreenSpaceVAR();
     drawScreenSpaceVAR();
     driver->unbindShader();
 }
 
-void VROImagePostProcessOpenGL::accumulate(std::shared_ptr<VRORenderTarget> source, int attachment,
-                                           std::shared_ptr<VRORenderTarget> destination,
-                                           std::vector<std::shared_ptr<VROTexture>> textures,
-                                           std::shared_ptr<VRODriver> &driver) {
+void VROImagePostProcessOpenGL::begin(std::shared_ptr<VRODriver> &driver) {
+    driver->setDepthWritingEnabled(false);
+    driver->setDepthReadingEnabled(false);
+    driver->setStencilTestEnabled(false);
+    
+    // Compile and bind the shader
+    if (!_shader->isHydrated()) {
+        _shader->hydrate();
+    }
+    driver->bindShader(_shader);
+    bindScreenSpaceVAR();
+}
+
+void VROImagePostProcessOpenGL::blitOpt(std::shared_ptr<VRORenderTarget> source, int attachment,
+                                        std::shared_ptr<VRORenderTarget> destination,
+                                        std::vector<std::shared_ptr<VROTexture>> textures,
+                                        std::shared_ptr<VRODriver> &driver) {
+    
+    // Bind the source textures and destination render target
     if (!bind(source, attachment, destination, textures, driver)) {
         return;
     }
-    glBlendFunc(GL_ONE, GL_ONE);
+    for (VROUniform *uniform : _shaderModifierUniforms) {
+        uniform->set(nullptr, nullptr, nullptr);
+    }
     drawScreenSpaceVAR();
-    driver->setBlendingMode(VROBlendMode::Alpha);
+}
+
+void VROImagePostProcessOpenGL::end(std::shared_ptr<VRODriver> &driver) {
     driver->unbindShader();
 }
 
@@ -102,36 +138,26 @@ bool VROImagePostProcessOpenGL::bind(std::shared_ptr<VRORenderTarget> source, in
         bindTexture(unit, texture, driver);
     }
     
-    // Bind the destination render target and disable depth testing
+    // Bind the destination render target
     destination->bind();
-    driver->setDepthWritingEnabled(false);
-    driver->setDepthReadingEnabled(false);
-    
-    // Compile and bind the shader and its corresponding uniforms
-    if (!_shader->isHydrated()) {
-        _shader->hydrate();
-    }
-    driver->bindShader(_shader);
-    for (VROUniform *uniform : _shaderModifierUniforms) {
-        uniform->set(nullptr, nullptr, nullptr);
-    }
     
     return true;
 }
 
-void VROImagePostProcessOpenGL::drawScreenSpaceVAR() const {
+void VROImagePostProcessOpenGL::bindScreenSpaceVAR() const {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     int verticesIndex = VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Vertex);
     glEnableVertexAttribArray(verticesIndex);
     glVertexAttribPointer(verticesIndex, 2, GL_FLOAT, 0, 16, _quadFSVAR);
-
+    
     int texcoordIndex = VROGeometryUtilParseAttributeIndex(VROGeometrySourceSemantic::Texcoord);
     glEnableVertexAttribArray(texcoordIndex);
     glVertexAttribPointer(texcoordIndex, 2, GL_FLOAT, 0, 16, ((char *) _quadFSVAR + 2 * sizeof(float)));
-    
+}
+
+void VROImagePostProcessOpenGL::drawScreenSpaceVAR() const {
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void VROImagePostProcessOpenGL::buildQuadFSVAR(bool flipped) {

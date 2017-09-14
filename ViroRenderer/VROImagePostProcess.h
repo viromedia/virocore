@@ -49,17 +49,19 @@ public:
                       std::shared_ptr<VRODriver> &driver) = 0;
     
     /*
-     Accumulate the contents of the given attachment of the source render target
-     onto the given destination render target, additively.
+     Prepare for a post-process that will use the same shader multiple times
+     on different FBOs. This minimizes state changes by performing the
+     configuration (binding the shader and vertex arrays) once for multiple
+     blit operations.
      
-     The provided textures will be bound to samplers (texture units) 1 to N.
-     Texture unit 0 (sampler 0) will receive the source render target's texture.
+     Used in conjunction with blitOpt() and end().
      */
-    virtual void accumulate(std::shared_ptr<VRORenderTarget> source, int attachment,
-                            std::shared_ptr<VRORenderTarget> destination,
-                            std::vector<std::shared_ptr<VROTexture>> textures,
-                            std::shared_ptr<VRODriver> &driver) = 0;
-    
+    virtual void begin(std::shared_ptr<VRODriver> &driver) = 0;
+    virtual void blitOpt(std::shared_ptr<VRORenderTarget> source, int attachment,
+                         std::shared_ptr<VRORenderTarget> destination,
+                         std::vector<std::shared_ptr<VROTexture>> textures,
+                         std::shared_ptr<VRODriver> &driver) = 0;
+    virtual void end(std::shared_ptr<VRODriver> &driver) = 0;
     
 };
 

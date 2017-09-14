@@ -909,9 +909,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     /*
      Setup GL state.
      */
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_STENCIL_TEST);
-    
+    glEnable(GL_DEPTH_TEST);    
     _driver->setCullMode(VROCullMode::Back);
     
     VROViewport viewport(0, 0, self.bounds.size.width  * self.contentScaleFactor,
