@@ -232,35 +232,35 @@ VROQuaternion VROMatrix4f::extractRotation(VROVector3f scale) const {
         float s = 1.f / sqrt(t) * 0.5f;
         
         result.W = s * t;
-        result.Z = ( mtx[4] - mtx[1] ) * s;
-        result.Y = ( mtx[2] - mtx[8] ) * s;
-        result.X = ( mtx[9] - mtx[6] ) * s;
+        result.Z = ( mtx[1] - mtx[4] ) * s;
+        result.Y = ( mtx[8] - mtx[2] ) * s;
+        result.X = ( mtx[6] - mtx[9] ) * s;
     }
     else if (mtx[0] > mtx[5] && mtx[0] > mtx[10]) {
         float t = + mtx[0] - mtx[5] - mtx[10] + 1.0f;
         float s = 1.0f / sqrt( t ) * 0.5f;
         
         result.X = s * t;
-        result.Y = ( mtx[4] + mtx[1] ) * s;
-        result.Z = ( mtx[2] + mtx[8] ) * s;
-        result.W = ( mtx[9] - mtx[6] ) * s;
+        result.Y = ( mtx[1] + mtx[4] ) * s;
+        result.Z = ( mtx[8] + mtx[2] ) * s;
+        result.W = ( mtx[6] - mtx[9] ) * s;
     }
     else if (mtx[5] > mtx[10]) {
         float t = - mtx[0] + mtx[5] - mtx[10] + 1.0f;
         float s = 1.0f / sqrt( t ) * 0.5f;
         result.Y = s * t;
-        result.X = ( mtx[4] + mtx[1] ) * s;
-        result.W = ( mtx[2] - mtx[8] ) * s;
-        result.Z = ( mtx[9] + mtx[6] ) * s;
+        result.X = ( mtx[1] + mtx[4] ) * s;
+        result.W = ( mtx[8] - mtx[2] ) * s;
+        result.Z = ( mtx[6] + mtx[9] ) * s;
     }
     else {
         float t = - mtx[0] - mtx[5] + mtx[10] + 1.0f;
         float s = 1.0f / sqrt( t ) * 0.5f;
         
         result.Z = s * t;
-        result.W = ( mtx[4] - mtx[1] ) * s;
-        result.X = ( mtx[2] + mtx[8] ) * s;
-        result.Y = ( mtx[9] + mtx[6] ) * s;
+        result.W = ( mtx[1] - mtx[4] ) * s;
+        result.X = ( mtx[8] + mtx[2] ) * s;
+        result.Y = ( mtx[6] + mtx[9] ) * s;
     }
     
     return result.normalize();
