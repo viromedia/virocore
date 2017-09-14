@@ -251,6 +251,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
                                                     resourceMap, textureCache);
         rootNode->addChildNode(node);
     }
+    trimEmptyNodes(rootNode);
     
     return rootNode;
 }
@@ -573,4 +574,35 @@ std::shared_ptr<VROKeyframeAnimation> VROFBXLoader::loadFBXKeyframeAnimation(con
     animation->setName(animation_pb.name());
     
     return animation;
+}
+
+void VROFBXLoader::trimEmptyNodes(std::shared_ptr<VRONode> node) {
+    std::vector<std::shared_ptr<VRONode>> toRemove;
+    for (std::shared_ptr<VRONode> &child : node->getChildNodes()) {
+        if (!nodeHasGeometryRecursive(child)) {
+            toRemove.push_back(child);
+        }
+    }
+    
+    for (std::shared_ptr<VRONode> &r : toRemove) {
+        r->removeFromParentNode();
+    }
+    
+    for (std::shared_ptr<VRONode> &child : node->getChildNodes()) {
+        trimEmptyNodes(child);
+    }
+}
+
+bool VROFBXLoader::nodeHasGeometryRecursive(std::shared_ptr<VRONode> node) {
+    if (node->getGeometry() != nullptr) {
+        return true;
+    }
+    else {
+        bool hasGeometryInChildren = false;
+        for (std::shared_ptr<VRONode> &child : node->getChildNodes()) {
+            hasGeometryInChildren = nodeHasGeometryRecursive(child);
+        }
+        
+        return hasGeometryInChildren;
+    }
 }

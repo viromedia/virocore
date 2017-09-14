@@ -424,7 +424,6 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
      Now that _computedTransform has finished computing, save it so that others outside can query for it.
      */
     _lastComputedTransform.copy(_computedTransform);
-    VROVector3f rotation = _lastComputedTransform.extractRotation(_lastComputedTransform.extractScale()).toEuler();
 
     /*
      Move down the tree.
