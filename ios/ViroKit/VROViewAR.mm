@@ -59,6 +59,7 @@ static VROVector3f const kZeroVector = VROVector3f();
      */
     VROViewRecordingErrorBlock _errorBlock;
     bool _isRecording;
+    bool _isFirstRecordingFrame;
     bool _saveToCameraRoll;
     NSString *_videoFileName;
     NSURL *_tempVideoFilePath;
@@ -662,8 +663,8 @@ static VROVector3f const kZeroVector = VROVector3f();
         }
     });
     
-    _startTimeMillis = VROTimeCurrentMillis();
     _isRecording = YES;
+    _isFirstRecordingFrame = YES;
     _videoLoopTimer = [NSTimer timerWithTimeInterval:0.03 target:self selector:@selector(recordFrame) userInfo:nil repeats:YES];
     [[NSRunLoop mainRunLoop] addTimer:_videoLoopTimer forMode:NSRunLoopCommonModes];
 }
@@ -671,8 +672,16 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (void)recordFrame {
     if (_isRecording) {
         if ([_videoWriterInput isReadyForMoreMediaData]) {
-            double currentTime = VROTimeCurrentMillis() - _startTimeMillis;
-            
+            double currentTime;
+            if (_isFirstRecordingFrame) {
+                _startTimeMillis = VROTimeCurrentMillis();
+                currentTime = 0;
+                _isFirstRecordingFrame = false;
+            }
+            else {
+                currentTime = VROTimeCurrentMillis() - _startTimeMillis;
+            }
+
             BOOL success = [_videoWriterPixelBufferAdaptor appendPixelBuffer:_videoPixelBuffer
                                                         withPresentationTime:CMTimeMake(currentTime, 1000)];
             CVPixelBufferUnlockBaseAddress(_videoPixelBuffer, 0);
