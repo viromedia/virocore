@@ -132,6 +132,9 @@
 		8F1B4A281F64B6E000156809 /* emoji_smile_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A241F64B6E000156809 /* emoji_smile_specular.png */; };
 		8F1B4A291F64B6E000156809 /* emoji_smile_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A251F64B6E000156809 /* emoji_smile_diffuse.png */; };
 		8F1B4A2A1F64B6E000156809 /* emoji_smile.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A261F64B6E000156809 /* emoji_smile.vrx */; };
+		8F1B4AA01F69F4A900156809 /* pug_animated.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A9D1F69F4A800156809 /* pug_animated.vrx */; };
+		8F1B4AA11F69F4A900156809 /* pug_body_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A9E1F69F4A800156809 /* pug_body_specular.png */; };
+		8F1B4AA21F69F4A900156809 /* pug_body_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A9F1F69F4A900156809 /* pug_body_diffuse.png */; };
 		8F1DF5A91F36408700886805 /* VROPortalFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1DF5A71F36408700886805 /* VROPortalFrame.cpp */; };
 		8F1DF5AA1F36408700886805 /* VROPortalFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F1DF5A81F36408700886805 /* VROPortalFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F203F0A1DCD236500DC50F2 /* VRODefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FF253B11DC9398A00C1C5C7 /* VRODefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -786,6 +789,9 @@
 		8F1B4A241F64B6E000156809 /* emoji_smile_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = emoji_smile_specular.png; path = ViroSample/emoji_smile_specular.png; sourceTree = "<group>"; };
 		8F1B4A251F64B6E000156809 /* emoji_smile_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = emoji_smile_diffuse.png; path = ViroSample/emoji_smile_diffuse.png; sourceTree = "<group>"; };
 		8F1B4A261F64B6E000156809 /* emoji_smile.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = emoji_smile.vrx; path = ViroSample/emoji_smile.vrx; sourceTree = "<group>"; };
+		8F1B4A9D1F69F4A800156809 /* pug_animated.vrx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = pug_animated.vrx; path = ViroSample/pug_animated.vrx; sourceTree = "<group>"; };
+		8F1B4A9E1F69F4A800156809 /* pug_body_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pug_body_specular.png; path = ViroSample/pug_body_specular.png; sourceTree = "<group>"; };
+		8F1B4A9F1F69F4A900156809 /* pug_body_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pug_body_diffuse.png; path = ViroSample/pug_body_diffuse.png; sourceTree = "<group>"; };
 		8F1DF5A71F36408700886805 /* VROPortalFrame.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPortalFrame.cpp; sourceTree = "<group>"; };
 		8F1DF5A81F36408700886805 /* VROPortalFrame.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalFrame.h; sourceTree = "<group>"; };
 		8F1F06581EF06FBB006FC8C2 /* VROARAnchor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROARAnchor.h; sourceTree = "<group>"; };
@@ -2063,6 +2069,9 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F1B4A9D1F69F4A800156809 /* pug_animated.vrx */,
+				8F1B4A9F1F69F4A900156809 /* pug_body_diffuse.png */,
+				8F1B4A9E1F69F4A800156809 /* pug_body_specular.png */,
 				8F1B4A251F64B6E000156809 /* emoji_smile_diffuse.png */,
 				8F1B4A231F64B6DF00156809 /* emoji_smile_normal.png */,
 				8F1B4A241F64B6E000156809 /* emoji_smile_specular.png */,
@@ -2662,8 +2671,10 @@
 				8FF5CCB51F28F5BA007C7F52 /* porsche911.vrx in Resources */,
 				8FCED05E1EBBCFCF00C19BCA /* Squid_Normal.png in Resources */,
 				8F346B291F23AF39000D16B9 /* bball.jpg in Resources */,
+				8F1B4AA11F69F4A900156809 /* pug_body_specular.png in Resources */,
 				8FF5CCBD1F290364007C7F52 /* aliengirl_specular.png in Resources */,
 				8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */,
+				8F1B4AA21F69F4A900156809 /* pug_body_diffuse.png in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
 				8F346B281F23AF39000D16B9 /* bball_SPEC.png in Resources */,
 				8FCED0791EBBD35200C19BCA /* Sven_Body_Normal.png in Resources */,
@@ -2748,6 +2759,7 @@
 				8F1B4A171F64B61E00156809 /* portal_ship_normal.png in Resources */,
 				A5ABB1D71E95703200E07EBC /* stereo3602.jpg in Resources */,
 				8F50FC8C1E0AF54F00A9B4B2 /* orig_02_-_Defaul1noCulling.JPG in Resources */,
+				8F1B4AA01F69F4A900156809 /* pug_animated.vrx in Resources */,
 				8F129FBC1ED603BE00341D83 /* heart.vrx in Resources */,
 				8FCED0781EBBD35200C19BCA /* Sven_Body_Color.png in Resources */,
 				8F1B4A1D1F64B61E00156809 /* portal_wood_frame_normal.png in Resources */,
