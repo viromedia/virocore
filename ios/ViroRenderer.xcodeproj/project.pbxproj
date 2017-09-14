@@ -343,6 +343,7 @@
 		8FB6591F1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB6591D1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.h */; };
 		8FB659221CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB659201CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp */; };
 		8FB659231CD83A2200D036EB /* VROTextureSubstrateOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB659211CD83A2200D036EB /* VROTextureSubstrateOpenGL.h */; };
+		8FB9EA4C1F6B12580068FCA7 /* VRORenderMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB9EA4B1F6B12580068FCA7 /* VRORenderMetadata.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FBDBE2B1D01EE5E00801B59 /* VROSortKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FBDBE291D01EE5E00801B59 /* VROSortKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */; };
 		8FC6E1C61CEBB31C008EFD5F /* lighting_general_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */; };
@@ -1067,6 +1068,7 @@
 		8FB6591D1CD839FC00D036EB /* VROMaterialSubstrateOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROMaterialSubstrateOpenGL.h; sourceTree = "<group>"; };
 		8FB659201CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROTextureSubstrateOpenGL.cpp; sourceTree = "<group>"; };
 		8FB659211CD83A2200D036EB /* VROTextureSubstrateOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTextureSubstrateOpenGL.h; sourceTree = "<group>"; };
+		8FB9EA4B1F6B12580068FCA7 /* VRORenderMetadata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRORenderMetadata.h; sourceTree = "<group>"; };
 		8FBDBE291D01EE5E00801B59 /* VROSortKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSortKey.h; sourceTree = "<group>"; };
 		8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lighting_general_functions_fsh.glsl; sourceTree = "<group>"; };
 		8FC6E1CF1CECB364008EFD5F /* constant_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constant_fsh.glsl; sourceTree = "<group>"; };
@@ -1448,6 +1450,7 @@
 				8FD4DE9C1C16432B003DC425 /* VROLight.cpp */,
 				8F517BF91BCDC8C20017C70B /* VRORenderContext.h */,
 				8F11B7C61C20C98E0026D150 /* VRORenderParameters.h */,
+				8FB9EA4B1F6B12580068FCA7 /* VRORenderMetadata.h */,
 				8F83DE8C1C4728A30089C31A /* VROHitTestResult.h */,
 				8FCF39621CAEE26F00A86CA3 /* VROHoverDistanceListener.h */,
 				8F65F7841C90CD0B00415115 /* VROConstraint.h */,
@@ -2389,6 +2392,7 @@
 				8FD4DF3E1C18F5EA003DC425 /* VROImageUtil.h in Headers */,
 				8F56AEAA1DE76E1D00DD65B6 /* VROText.h in Headers */,
 				8FD4DF3F1C18F5EA003DC425 /* VROData.h in Headers */,
+				8FB9EA4C1F6B12580068FCA7 /* VRORenderMetadata.h in Headers */,
 				8FD4DF401C18F5EA003DC425 /* VROQuaternion.h in Headers */,
 				8A130D761E3A93820050D83B /* VROSound.h in Headers */,
 				8FD1E1B01C3F20C70005BE4E /* VROVideoSurface.h in Headers */,

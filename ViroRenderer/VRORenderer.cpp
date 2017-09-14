@@ -25,6 +25,7 @@
 #include "VROFrameScheduler.h"
 #include "VROChoreographer.h"
 #include "VROPortalTreeRenderPass.h"
+#include "VRORenderMetadata.h"
 #include "VRODebugHUD.h"
 
 // Target frames-per-second. Eventually this will be platform dependent,
@@ -251,6 +252,8 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
      */
     _context->setOrthographicMatrix(viewport.getOrthographicProjection(0, kZFar));
     _context->getPencil()->clear();
+    
+    _renderMetadata = std::make_shared<VRORenderMetadata>();
 
     const VRORenderContext &context = *_context.get();
     if (_sceneController) {
@@ -261,7 +264,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
             outgoingScene->applyConstraints(context);
             outgoingScene->computeParticles(context);
             outgoingScene->updateVisibility(context);
-            outgoingScene->updateSortKeys(context, driver);
+            outgoingScene->updateSortKeys(_renderMetadata, context, driver);
         }
 
         std::shared_ptr<VROScene> scene = _sceneController->getScene();
@@ -270,7 +273,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         scene->applyConstraints(context);
         scene->computeParticles(context);
         scene->updateVisibility(context);
-        scene->updateSortKeys(context, driver);
+        scene->updateSortKeys(_renderMetadata, context, driver);
         _inputController->onProcess(camera);
         updateSceneEffects(driver, scene);
     }
@@ -364,12 +367,12 @@ void VRORenderer::renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> drive
             _outgoingSceneController->sceneWillRender(_context.get());
             _sceneController->sceneWillRender(_context.get());
 
-            _choreographer->render(eyeType, _outgoingSceneController->getScene(), _context.get(), driver);
-            _choreographer->render(eyeType, _sceneController->getScene(), _context.get(), driver);
+            _choreographer->render(eyeType, _outgoingSceneController->getScene(), _renderMetadata, _context.get(), driver);
+            _choreographer->render(eyeType, _sceneController->getScene(), _renderMetadata, _context.get(), driver);
         }
         else {
             _sceneController->sceneWillRender(_context.get());
-            _choreographer->render(eyeType, _sceneController->getScene(), _context.get(), driver);
+            _choreographer->render(eyeType, _sceneController->getScene(), _renderMetadata, _context.get(), driver);
         }
     }
 }

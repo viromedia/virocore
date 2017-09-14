@@ -172,7 +172,7 @@ VROMaterialShaderCapabilities VROShaderFactory::deriveMaterialCapabilitiesKey(co
     }
     
     // Bloom
-    cap.bloom = material.getBloomThreshold() >= 0;
+    cap.bloom = material.isBloomEnabled();
     return cap;
 }
 

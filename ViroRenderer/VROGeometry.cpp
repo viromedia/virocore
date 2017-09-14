@@ -15,6 +15,7 @@
 #include "VRONode.h"
 #include "VROGeometryUtil.h"
 #include "VROMaterial.h"
+#include "VRORenderMetadata.h"
 
 VROGeometry::~VROGeometry() {
     delete (_bounds);
@@ -62,6 +63,7 @@ void VROGeometry::renderSilhouetteTextured(int element,
 void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t hierarchyDepth,
                                  uint32_t lightsHash, const std::vector<std::shared_ptr<VROLight>> &lights,
                                  float opacity, float distanceFromCamera, float zFar,
+                                 std::shared_ptr<VRORenderMetadata> &metadata,
                                  std::shared_ptr<VRODriver> &driver) {
     _sortKeys.clear();
     
@@ -90,6 +92,10 @@ void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t h
             key.incoming = false;
             
             _sortKeys.push_back(key);
+        }
+        
+        if (material->isBloomEnabled()) {
+            metadata->setRequiresBloomPass(true);
         }
     }
     

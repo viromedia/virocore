@@ -32,6 +32,7 @@ class VROFrameListener;
 class VRORenderDelegateInternal;
 class VROFrameScheduler;
 class VROChoreographer;
+class VRORenderMetadata;
 enum class VROCameraRotationType;
 enum class VROEyeType;
 enum class VROTimingFunctionType;
@@ -126,8 +127,14 @@ public:
      haven't yet done so already (since the scene had appeared), or if it had changed.
      */
     void updateSceneEffects(std::shared_ptr<VRODriver> driver, std::shared_ptr<VROScene> scene);
+    
 #pragma mark - Render Loop
     
+    /*
+     The metadata produced during the last prepareFrame.
+     */
+    std::shared_ptr<VRORenderMetadata> _renderMetadata;
+
     /*
      Prepare to render the next frame. This computes transforms and physics, processes
      animations, updates visibility, and sorts visible objects so they can be rendered

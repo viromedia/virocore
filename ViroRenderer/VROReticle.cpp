@@ -15,6 +15,7 @@
 #include "VROBillboardConstraint.h"
 #include "VROPlatformUtil.h"
 #include "VROTransaction.h"
+#include "VRORenderMetadata.h"
 
 static const float kTriggerAnimationDuration = 0.4;
 static const float kTriggerAnimationInnerCircleThicknessMultiple = 3;
@@ -197,9 +198,10 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext
 void VROReticle::renderNode(std::shared_ptr<VRONode> node, VROMatrix4f parentTransform,
                             const VRORenderContext &renderContext, std::shared_ptr<VRODriver> &driver){
     VRORenderParameters renderParams;
+    std::shared_ptr<VRORenderMetadata> metadata = std::make_shared<VRORenderMetadata>();
     node->computeTransforms(parentTransform, {});
     node->applyConstraints(renderContext, parentTransform, false);
-    node->updateSortKeys(0, renderParams, renderContext, driver);
+    node->updateSortKeys(0, renderParams, metadata, renderContext, driver);
     const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
     if (!geometry){
         return;

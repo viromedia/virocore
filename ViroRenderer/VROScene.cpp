@@ -45,7 +45,8 @@ void VROScene::applyConstraints(const VRORenderContext &context) {
     _rootNode->applyConstraints(context, {}, false);
 }
 
-void VROScene::updateSortKeys(const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
+void VROScene::updateSortKeys(std::shared_ptr<VRORenderMetadata> &metadata,
+                              const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
     passert_thread();
     
     if (kDebugSortOrder) {
@@ -58,7 +59,7 @@ void VROScene::updateSortKeys(const VRORenderContext &context, std::shared_ptr<V
 
     VRORenderParameters renderParams;
     renderParams.lights = _lights;
-    _rootNode->updateSortKeys(0, renderParams, context, driver);
+    _rootNode->updateSortKeys(0, renderParams, metadata, context, driver);
     
     createPortalTree(context);
     _portals.walkTree([] (std::shared_ptr<VROPortal> portal) {

@@ -1806,6 +1806,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         rootNode->addChildNode(boxNode);
     }
     
+    std::vector<std::shared_ptr<VROMaterial>> boxMaterials;
     for (int i = 0; i < lightPositions.size(); i++) {
         std::shared_ptr<VROBox> box = VROBox::createBox(2, 2, 2);
         
@@ -1819,7 +1820,20 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
         boxNode->setPosition({ lightPositions[i].x, lightPositions[i].y, lightPositions[i].z });
         boxNode->setScale({ 0.25, 0.25, 0.25 });
         rootNode->addChildNode(boxNode);
+        
+        boxMaterials.push_back(boxMaterial);
     }
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        for (const std::shared_ptr<VROMaterial> &boxMaterial : boxMaterials) {
+            boxMaterial->setBloomThreshold(-1);
+        }
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        for (const std::shared_ptr<VROMaterial> &boxMaterial : boxMaterials) {
+            boxMaterial->setBloomThreshold(0.5);
+        }
+    });
     
     return sceneController;
 }

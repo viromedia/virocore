@@ -28,6 +28,7 @@ class VROShadowMapRenderPass;
 class VROToneMappingRenderPass;
 class VROGaussianBlurRenderPass;
 class VROPostProcessEffectFactory;
+class VRORenderMetadata;
 enum class VROPostProcessEffect;
 enum class VROEyeType;
 
@@ -37,7 +38,9 @@ public:
     VROChoreographer(std::shared_ptr<VRODriver> driver);
     virtual ~VROChoreographer();
     
-    virtual void render(VROEyeType eye, std::shared_ptr<VROScene> scene, VRORenderContext *context,
+    virtual void render(VROEyeType eye, std::shared_ptr<VROScene> scene,
+                        const std::shared_ptr<VRORenderMetadata> &metadata,
+                        VRORenderContext *context,
                         std::shared_ptr<VRODriver> &driver);
     
     void setBaseRenderPass(std::shared_ptr<VRORenderPass> pass) {
@@ -104,8 +107,8 @@ private:
     /*
      Render the base pass, which renders the 3D scene to the first render target.
      */
-    void renderBasePass(std::shared_ptr<VROScene> scene, VRORenderContext *context,
-                        std::shared_ptr<VRODriver> &driver);
+    void renderBasePass(std::shared_ptr<VROScene> scene, const std::shared_ptr<VRORenderMetadata> &metadata,
+                        VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
     
 #pragma mark - Render to Texture
     

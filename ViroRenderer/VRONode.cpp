@@ -184,6 +184,7 @@ void VRONode::collectLights(std::vector<std::shared_ptr<VROLight>> *outLights) {
 
 void VRONode::updateSortKeys(uint32_t depth,
                              VRORenderParameters &params,
+                             std::shared_ptr<VRORenderMetadata> &metadata,
                              const VRORenderContext &context,
                              std::shared_ptr<VRODriver> &driver) {
     passert_thread();
@@ -278,7 +279,7 @@ void VRONode::updateSortKeys(uint32_t depth,
             furthestDistanceFromCamera = getBoundingBox().getFurthestDistanceToPoint(context.getCamera().getPosition());
         }
         _geometry->updateSortKeys(this, hierarchyId, hierarchyDepth, _computedLightsHash, _computedLights, _computedOpacity,
-                                  distanceFromCamera, context.getZFar(), driver);
+                                  distanceFromCamera, context.getZFar(), metadata, driver);
         
         if (kDebugSortOrder) {
             pinfo("   [%d] Pushed node with position [%f, %f, %f], rendering order %d, hierarchy depth %d (actual depth %d), distance to camera %f, hierarchy ID %d, lights %d",
@@ -300,7 +301,7 @@ void VRONode::updateSortKeys(uint32_t depth,
      Move down the tree.
      */
     for (std::shared_ptr<VRONode> &childNode : _subnodes) {
-        childNode->updateSortKeys(depth + 1, params, context, driver);
+        childNode->updateSortKeys(depth + 1, params, metadata, context, driver);
     }
     
     opacities.pop();

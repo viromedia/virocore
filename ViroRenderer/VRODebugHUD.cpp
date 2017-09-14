@@ -14,6 +14,7 @@
 #include "VROText.h"
 #include "VROTypeface.h"
 #include "VROStringUtil.h"
+#include "VRORenderMetadata.h"
 
 // Frames between FPS text refresh
 static const int kFPSRefreshRate = 60;
@@ -65,9 +66,10 @@ void VRODebugHUD::renderEye(VROEyeType eye, const VRORenderContext &context, std
     }
     
     VRORenderParameters renderParams;
+    std::shared_ptr<VRORenderMetadata> metadata = std::make_shared<VRORenderMetadata>();
     _node->computeTransforms(context.getHUDViewMatrix(), {});
     _node->applyConstraints(context, context.getHUDViewMatrix(), false);
-    _node->updateSortKeys(0, renderParams, context, driver);
+    _node->updateSortKeys(0, renderParams, metadata, context, driver);
     
     for (int i = 0; i < _node->getGeometry()->getGeometryElements().size(); i++) {
         std::shared_ptr<VROMaterial> &material = _node->getGeometry()->getMaterialForElement(i);

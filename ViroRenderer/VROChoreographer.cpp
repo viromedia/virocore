@@ -22,6 +22,7 @@
 #include "VROShadowMapRenderPass.h"
 #include "VROGaussianBlurRenderPass.h"
 #include "VROPostProcessEffectFactory.h"
+#include "VRORenderMetadata.h"
 #include <vector>
 
 #pragma mark - Initialization
@@ -132,17 +133,19 @@ void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriv
 
 #pragma mark - Main Render Cycle
 
-void VROChoreographer::render(VROEyeType eye, std::shared_ptr<VROScene> scene, VRORenderContext *context,
+void VROChoreographer::render(VROEyeType eye, std::shared_ptr<VROScene> scene,
+                              const std::shared_ptr<VRORenderMetadata> &metadata,
+                              VRORenderContext *context,
                               std::shared_ptr<VRODriver> &driver) {
     
     if (!_renderShadows) {
-        renderBasePass(scene, context, driver);
+        renderBasePass(scene, metadata, context, driver);
     }
     else {
         if (eye == VROEyeType::Left || eye == VROEyeType::Monocular) {
             renderShadowPasses(scene, context, driver);
         }
-        renderBasePass(scene, context, driver);
+        renderBasePass(scene, metadata, context, driver);
     }
 }
 
@@ -217,13 +220,14 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
     _shadowPasses = activeShadowPasses;
 }
 
-void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORenderContext *context,
-                                      std::shared_ptr<VRODriver> &driver) {
+void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene,
+                                      const std::shared_ptr<VRORenderMetadata> &metadata,
+                                      VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     VRORenderPassInputOutput inputs;
     if (_renderHDR) {
         std::shared_ptr<VRORenderTarget> toneMappedTarget;
 
-        if (_renderBloom) {
+        if (_renderBloom && metadata->requiresBloomPass()) {
             // Render the scene + bloom to the floating point HDR MRT target
             inputs[kRenderTargetSingleOutput] = _hdrTarget;
             _baseRenderPass->render(scene, inputs, context, driver);
