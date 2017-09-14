@@ -227,6 +227,7 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
             // Render the scene + bloom to the floating point HDR MRT target
             inputs[kRenderTargetSingleOutput] = _hdrTarget;
             _baseRenderPass->render(scene, inputs, context, driver);
+            _hdrTarget->discardTransientBuffers();
             
             // Blur the image. The finished result will reside in _blurTargetB.
             inputs[kGaussianInput] = _hdrTarget;
@@ -236,15 +237,24 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
             
             // Additively blend the bloom back into the image, store in _postProcessTarget
             _additiveBlendPostProcess->blit(_hdrTarget, 0, _postProcessTarget, { _blurTargetB->getTexture(0) }, driver);
+            _postProcessTarget->discardTransientBuffers();
             
             // Run additional post-processing on the normal HDR image
             bool postProcessed = _postProcessEffectFactory->handlePostProcessing(_postProcessTarget, _hdrTarget, driver);
             
             // Blend, tone map, and gamma correct
-            inputs[kToneMappingHDRInput] = postProcessed ? _hdrTarget: _postProcessTarget;
+            if (postProcessed) {
+                _hdrTarget->discardTransientBuffers();
+                inputs[kToneMappingHDRInput] = _hdrTarget;
+            }
+            else {
+                inputs[kToneMappingHDRInput] = _postProcessTarget;
+            }
             if (_renderToTexture) {
                 inputs[kToneMappingOutput] = _blitTarget;
                 _toneMappingPass->render(scene, inputs, context, driver);
+                _blitTarget->discardTransientBuffers();
+                
                 renderToTextureAndDisplay(_blitTarget, driver);
             }
             else {
@@ -256,15 +266,24 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
             // Render the scene to the floating point HDR target
             inputs[kRenderTargetSingleOutput] = _hdrTarget;
             _baseRenderPass->render(scene, inputs, context, driver);
+            _hdrTarget->discardTransientBuffers();
             
             // Run additional post-processing on the HDR image
             bool postProcessed = _postProcessEffectFactory->handlePostProcessing(_hdrTarget, _postProcessTarget, driver);
             
             // Perform tone-mapping with gamma correction
-            inputs[kToneMappingHDRInput]  = postProcessed ? _postProcessTarget : _hdrTarget;
+            if (postProcessed) {
+                _postProcessTarget->discardTransientBuffers();
+                inputs[kToneMappingHDRInput] = _postProcessTarget;
+            }
+            else {
+                inputs[kToneMappingHDRInput] = _hdrTarget;
+            }
             if (_renderToTexture) {
                 inputs[kToneMappingOutput] = _blitTarget;
                 _toneMappingPass->render(scene, inputs, context, driver);
+                _blitTarget->discardTransientBuffers();
+                
                 renderToTextureAndDisplay(_blitTarget, driver);
             }
             else {
@@ -276,6 +295,8 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene, VRORender
     else if (_renderToTexture) {
         inputs[kRenderTargetSingleOutput] = _blitTarget;
         _baseRenderPass->render(scene, inputs, context, driver);
+        _blitTarget->discardTransientBuffers();
+        
         renderToTextureAndDisplay(_blitTarget, driver);
     }
     else {
