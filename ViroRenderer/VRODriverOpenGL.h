@@ -213,13 +213,22 @@ public:
     
     void bindRenderTarget(std::shared_ptr<VRORenderTarget> target) {
         std::shared_ptr<VRORenderTarget> boundRenderTarget = _boundRenderTarget.lock();
-        if (boundRenderTarget != target) {
-            if (boundRenderTarget) {
-                boundRenderTarget->unbind();
-            }
-            target->bind();
-            _boundRenderTarget = target;
+        /*
+         We intentionally leave out a check to see if we're binding the same
+         target over again. Including this check causes only the left eye to be
+         rendered on Android Axon devices, which is odd: on that device the
+         underlying render target must be getting switched external to the
+         VRODriver *between* eyes; so when the renderer tries to bind the render
+         target for the screen again it's rejected as a no-op.
+
+         To prevent this we just always bind the target we're passed in, and
+         don't use our boundRenderTarget to prevent redundant binds.
+         */
+        if (boundRenderTarget) {
+            boundRenderTarget->unbind();
         }
+        target->bind();
+        _boundRenderTarget = target;
     }
     
     void unbindRenderTarget() {
