@@ -31,10 +31,10 @@ void VROInputControllerARiOS::onProcess(const VROCamera &camera) {
 
 void VROInputControllerARiOS::onRotateStart(VROVector3f touchPos) {
     _isRotateOngoing = true;
-    _latestRotation = 1.0; // reset latestRotation!
+    _latestRotation = 0; // reset latestRotation!
     VROVector3f rayFromCamera = calculateCameraRay(touchPos);
     VROInputControllerBase::updateHitNode(_latestCamera, _latestCamera.getPosition(), rayFromCamera);
-    VROInputControllerBase::onRotate(ViroCardBoard::InputSource::Controller, 1.0, VROEventDelegate::RotateState::RotateStart);
+    VROInputControllerBase::onRotate(ViroCardBoard::InputSource::Controller, 0, VROEventDelegate::RotateState::RotateStart);
 }
 
 
