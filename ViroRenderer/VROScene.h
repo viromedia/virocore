@@ -147,7 +147,7 @@ public:
      */
     void setSceneEffect(std::vector<std::string> effects){
         _activeEffects = effects;
-        _hasPendingEffects = true;
+        _shouldResetEffects = true;
     }
 
     /*
@@ -159,10 +159,15 @@ public:
     bool processSceneEffect(std::vector<std::string> &effects){
         effects = _activeEffects;
 
-        bool hasNewEffects = _hasPendingEffects;
-        _hasPendingEffects = false;
+        bool hasNewEffects = _shouldResetEffects;
+        _shouldResetEffects = false;
         return hasNewEffects;
     }
+
+    void setShouldResetEffects(bool reset) {
+        _shouldResetEffects = reset;
+    }
+
 protected:
     
     /*
@@ -246,9 +251,9 @@ private:
     std::vector<std::string> _activeEffects;
 
     /*
-     True if we have called setSceneEffect to set a list of _activeEffects.
+     True if we should reset effects
      */
-    bool _hasPendingEffects = false;
+    bool _shouldResetEffects = false;
 };
 
 #endif /* VROScene_h */
