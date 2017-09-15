@@ -191,7 +191,7 @@ static VROVector3f const kZeroVector = VROVector3f();
      Create AR session checking if an ARKit class and one of our classes have been defined. If not, then load VROARSessionInertial,
      otherwise create a VROARSessioniOS w/ 6DOF tracking.
      */
-    if (NSClassFromString(@"ARWorldTrackingSessionConfiguration") == nil) {
+    if (NSClassFromString(@"ARSession") == nil) {
         _arSession = std::make_shared<VROARSessionInertial>(VROTrackingType::DOF3, _driver);
         // in the 3DOF case, tracking doesn't take time to initialize, but the sceneController hasn't yet been set.
         _hasTrackingInitialized = true;
