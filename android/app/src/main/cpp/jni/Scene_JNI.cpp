@@ -241,11 +241,9 @@ JNI_METHOD(void, nativeDetachFromPhysicsWorld)(JNIEnv *env,
                                      jclass clazz,
                                      jlong sceneRef,
                                      jlong nodeRef) {
-    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
-    std::weak_ptr<VRONode> node_w = Node::native(nodeRef);
-    VROPlatformDispatchAsyncRenderer([sceneController_w, node_w] {
-        std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
-        std::shared_ptr<VRONode> node = node_w.lock();
+    std::shared_ptr<VROSceneController> sceneController = Scene::native(sceneRef);
+    std::shared_ptr<VRONode> node = Node::native(nodeRef);
+    VROPlatformDispatchAsyncRenderer([sceneController, node] {
         if (node && node->getPhysicsBody() && sceneController) {
             sceneController->getScene()->getPhysicsWorld()->removePhysicsBody(node->getPhysicsBody());
         }

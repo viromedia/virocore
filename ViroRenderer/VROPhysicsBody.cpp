@@ -73,7 +73,7 @@ void VROPhysicsBody::releaseBulletBody() {
     if (state != nullptr) {
         delete state;
     }
-    
+
     if (_rigidBody != nullptr){
         delete _rigidBody;
         _rigidBody = nullptr;
@@ -244,17 +244,26 @@ void VROPhysicsBody::updateBulletRigidBody() {
     if (_shape->getIsCompoundShape()) {
         btCompoundShape *compoundShape = (btCompoundShape *)_shape->getBulletShape();
         btVector3 principalInertia;
-        btScalar* masses = new btScalar[compoundShape->getNumChildShapes()];
 
-        // Evenly distribute mass for this compound body
-        for (int j=0; j<compoundShape->getNumChildShapes(); j++) {
-            if (_mass > 0) {
-                masses[j] = _mass / compoundShape->getNumChildShapes();
-            } else {
-                masses[j] = 0;
+        btScalar* masses;
+        int numShapes = compoundShape->getNumChildShapes();
+
+        if (numShapes > 0){
+            masses = new btScalar[numShapes];
+            // Evenly distribute mass for this compound body
+            for (int j=0; j<compoundShape->getNumChildShapes(); j++) {
+                if (_mass > 0) {
+                    masses[j] = _mass / compoundShape->getNumChildShapes();
+                } else {
+                    masses[j] = 1;
+                }
             }
+        } else {
+            // Default to a single shaped mass if no shape.
+            pwarn("Warning, attempted to create a compound shape with no sub shape! Ignoring update.");
+            return;
         }
-
+        
         // Recalculate the inertia and the center of mass offset of the compounded body
         compoundShape->calculatePrincipalAxisTransform(masses, physicsBodyTransformOffset, principalInertia);
 
@@ -294,10 +303,13 @@ void VROPhysicsBody::updateBulletRigidBody() {
             // Finally save the re-computed transform as physicsBodyTransformOffset.
             VROVector3f pos = offsetTransform.extractTranslation();
             VROQuaternion rot = offsetTransform.extractRotation(offsetTransform.extractScale());
+
             VROVector3f nodeScale = node->getComputedTransform().extractScale();
 
             btTransform offsetTransformBullet = btTransform::getIdentity();
-            offsetTransformBullet.setOrigin(btVector3({pos.x * nodeScale.x, pos.y * nodeScale.y, pos.z * nodeScale.z}));
+            offsetTransformBullet.setOrigin(btVector3({pos.x * nodeScale.x,
+                                                       pos.y * nodeScale.y,
+                                                       pos.z * nodeScale.z}));
             offsetTransformBullet.setRotation(btQuaternion({rot.X, rot.Y, rot.Z, rot.W}));
             physicsBodyTransformOffset = offsetTransformBullet;
         }
@@ -305,8 +317,8 @@ void VROPhysicsBody::updateBulletRigidBody() {
 
         // Update the inertia of the compound physics shape
         btVector3 principalInertia;
-        _inertia = VROVector3f(principalInertia.x(), principalInertia.y(), principalInertia.z());
         _shape->getBulletShape()->calculateLocalInertia(_mass, principalInertia);
+        _inertia = VROVector3f(principalInertia.x(), principalInertia.y(), principalInertia.z());
         _rigidBody->setMassProps(_mass, principalInertia);
         _rigidBody->updateInertiaTensor();
     }
@@ -384,6 +396,7 @@ void VROPhysicsBody::applyTorque(VROVector3f torque) {
 void VROPhysicsBody::clearForces() {
     _forces.clear();
     _torques.clear();
+    _rigidBody->clearForces();
 }
 
 void VROPhysicsBody::updateBulletForces() {

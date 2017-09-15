@@ -440,18 +440,21 @@ void VRONode::setWorldTransform(VROVector3f finalPosition, VROQuaternion finalRo
     VROMatrix4f finalComputedTransform;
     finalComputedTransform.toIdentity();
     finalComputedTransform.scale(worldScale.x, worldScale.y, worldScale.z);
-    finalComputedTransform = finalRotation.makeInverse().getMatrix() * finalComputedTransform;
+    finalComputedTransform = finalRotation.getMatrix() * finalComputedTransform;
     finalComputedTransform.translate(finalPosition);
 
     // Calculate local transformations needed to achieve the desired final compute transform
-    // by applying: FinalCompute_Inv_Trans * Parent_Trans = Local_Trans
+    // by applying: Parent_Trans_INV * FinalCompute = Local_Trans
     VROMatrix4f parentTransform = getParentNode()->getComputedTransform();
-    VROMatrix4f currentTransformInverted = finalComputedTransform.invert() * parentTransform;
-    VROMatrix4f currentTransform = currentTransformInverted.invert();
+    VROMatrix4f currentTransform = parentTransform.invert() * finalComputedTransform;
+
     _scale = currentTransform.extractScale();
     _position = currentTransform.extractTranslation();
     _rotation = currentTransform.extractRotation(_scale);
 
+    if (getParentNode() == nullptr){
+        return;
+    }
     // Trigger a computeTransform pass to update the node's bounding boxes and as well as its
     // child's node transforms recursively.
     computeTransforms(getParentNode()->getComputedTransform(), getParentNode()->getComputedRotation());

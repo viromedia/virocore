@@ -13,7 +13,7 @@
 #include <btBulletDynamicsCommon.h>
 const std::string VROPhysicsShape::kSphereTag = "sphere";
 const std::string VROPhysicsShape::kBoxTag = "box";
-const std::string VROPhysicsShape::kAutoCompoundTag = "AutoCompound";
+const std::string VROPhysicsShape::kAutoCompoundTag = "compound";
 
 VROPhysicsShape::VROPhysicsShape(VROShapeType type, std::vector<float> params) {
     if (type != VROShapeType::Sphere || VROShapeType::Box){
