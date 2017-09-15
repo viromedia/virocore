@@ -11,10 +11,10 @@
 #import "VROPortalDelegate.h"
 #import <Foundation/Foundation.h>
 
-/**
- * Protocol to be implemented by objective C controls to be
- * set on VROEventDelegateiOS for the notification of
- * input events.
+/*
+ Protocol to be implemented by objective C controls to be
+ set on VROEventDelegateiOS for the notification of
+ input events.
  */
 @protocol VROPortalDelegateProtocol<NSObject>
 @required
@@ -23,9 +23,9 @@
 @end
 
 
-/**
- * iOS implementation of VROEventDelegate for the notification
- * of delegate events across the bridge.
+/*
+ iOS implementation of VROEventDelegate for the notification
+ of delegate events across the bridge.
  */
 class VROPortalDelegateiOS : public VROPortalDelegate  {
 public:
@@ -34,7 +34,7 @@ public:
     virtual ~VROPortalDelegateiOS() {}
     
     /*
-     * Delegate events triggered by the EventManager.
+     Delegate events triggered by the EventManager.
      */
     virtual void onPortalEnter() {
         [_delegate onPortalEnter];
@@ -44,7 +44,6 @@ public:
     }
     
 private:
-    
     __weak id<VROPortalDelegateProtocol> _delegate;
     
 };

@@ -19,8 +19,7 @@
  */
 class VROPortalDelegate {
 public:
-    VROPortalDelegate() {
-    }
+    VROPortalDelegate() {}
     virtual ~VROPortalDelegate() {}
     virtual void onPortalEnter()=0;
     virtual void onPortalExit()=0;
