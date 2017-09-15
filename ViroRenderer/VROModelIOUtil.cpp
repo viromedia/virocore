@@ -11,6 +11,8 @@
 #include "VROImage.h"
 #include "VROTexture.h"
 #include "VROLog.h"
+#include "VROTextureUtil.h"
+#include "VROStringUtil.h"
 
 std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name, std::string &base, bool isBaseURL, bool sRGB,
                                                         const std::map<std::string, std::string> *resourceMap,
@@ -38,17 +40,35 @@ std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name,
             return texture;
         }
         
-        std::shared_ptr<VROImage> image = VROPlatformLoadImageFromFile(textureFile,
-                                                                       VROTextureInternalFormat::RGBA8);
-        if (isTempTextureFile) {
-            VROPlatformDeleteFile(textureFile);
+        if (VROStringUtil::endsWith(name, "ktx")) {
+            int dataLength;
+            void *data = VROPlatformLoadFile(textureFile, &dataLength);
+            
+            VROTextureFormat format;
+            int texWidth;
+            int texHeight;
+            std::vector<uint32_t> mipSizes;
+            std::shared_ptr<VROData> texData = VROTextureUtil::readKTXHeader((uint8_t *) data, (uint32_t) dataLength,
+                                                                             &format, &texWidth, &texHeight, &mipSizes);
+            std::vector<std::shared_ptr<VROData>> dataVec = { texData };
+            
+            texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, format,
+                                                   VROTextureInternalFormat::RGBA8, true,
+                                                   VROMipmapMode::Pregenerated,
+                                                   dataVec, texWidth, texHeight, mipSizes);
         }
-        if (!image) {
-            pinfo("Failed to load texture [%s] at path [%s]", name.c_str(), textureFile.c_str());
-            return {};
+        else {
+            std::shared_ptr<VROImage> image = VROPlatformLoadImageFromFile(textureFile,
+                                                                           VROTextureInternalFormat::RGBA8);
+            if (isTempTextureFile) {
+                VROPlatformDeleteFile(textureFile);
+            }
+            if (!image) {
+                pinfo("Failed to load texture [%s] at path [%s]", name.c_str(), textureFile.c_str());
+                return {};
+            }
+            texture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, sRGB, VROMipmapMode::Runtime, image);
         }
-
-        texture = std::make_shared<VROTexture>(VROTextureInternalFormat::RGBA8, sRGB, VROMipmapMode::Runtime, image);
         cache.insert(std::make_pair(name, texture));
     }
     else {

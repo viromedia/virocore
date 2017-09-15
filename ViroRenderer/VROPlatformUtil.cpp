@@ -294,19 +294,6 @@ void VROPlatformDeleteFile(std::string filename) {
     env->DeleteLocalRef(cls);
 }
 
-void *VROPlatformLoadFile(std::string filename, int *outLength) {
-    FILE *fl = fopen(filename.c_str(), "r");
-    fseek(fl, 0, SEEK_END);
-    *outLength = ftell(fl);
-
-    char *ret = (char *)malloc(*outLength);
-    fseek(fl, 0, SEEK_SET);
-    fread(ret, 1, *outLength, fl);
-    fclose(fl);
-
-    return ret;
-}
-
 std::string VROPlatformCopyResourceToFile(std::string asset) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jstring jasset = env->NewStringUTF(asset.c_str());
@@ -703,6 +690,19 @@ void Java_com_viro_renderer_jni_PlatformUtil_runTask(JNIEnv *env, jclass clazz, 
 #if VRO_PLATFORM_IOS || VRO_PLATFORM_ANDROID
 
 #include "VROStringUtil.h"
+
+void *VROPlatformLoadFile(std::string filename, int *outLength) {
+    FILE *fl = fopen(filename.c_str(), "r");
+    fseek(fl, 0, SEEK_END);
+    *outLength = ftell(fl);
+    
+    char *ret = (char *)malloc(*outLength);
+    fseek(fl, 0, SEEK_SET);
+    fread(ret, 1, *outLength, fl);
+    fclose(fl);
+    
+    return ret;
+}
 
 gvr_audio_material_type VROPlatformParseGVRAudioMaterial(std::string property) {
     if (VROStringUtil::strcmpinsensitive(property, "transparent")) {
