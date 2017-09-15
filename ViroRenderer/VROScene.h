@@ -140,6 +140,10 @@ public:
     const std::vector<std::shared_ptr<VROLight>> &getLights() const {
         return _lights;
     }
+    
+    const std::shared_ptr<VROPortal> getActivePortal() const {
+        return _activePortal;
+    }
 
     /*
      Sets a list of post processing effects corresponding to VROPostProcessEffect to be applied

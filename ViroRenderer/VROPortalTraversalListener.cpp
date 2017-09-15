@@ -51,8 +51,16 @@ void VROPortalTraversalListener::onFrameWillRender(const VRORenderContext &conte
         std::shared_ptr<VROPortal> portal = findPortalTraversal(segment, portalTree);
         if (portal) {
             portal->getActivePortalFrame()->setTwoSided(true);
+            std::shared_ptr<VROPortal> currentActivePortal = scene->getActivePortal();
+            if(currentActivePortal) {
+                if(currentActivePortal->getPortalDelegate() != nullptr) {
+                    currentActivePortal->getPortalDelegate()->onPortalExit();
+                }
+            }
+            if(portal->getPortalDelegate() != nullptr) {
+                portal->getPortalDelegate()->onPortalEnter();
+            }
             scene->setActivePortal(portal);
-            
             restorePortalFaces(context.getCamera().getPosition(), portalTree);
         }
     }
