@@ -59,7 +59,7 @@ void VRORenderTargetOpenGL::bind() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
-void VRORenderTargetOpenGL::discardTransientBuffers() {
+void VRORenderTargetOpenGL::unbind() {
     switch (_type) {
         case VRORenderTargetType::ColorTexture:
         case VRORenderTargetType::ColorTextureSRGB:
@@ -82,7 +82,10 @@ void VRORenderTargetOpenGL::discardTransientBuffers() {
     }
 }
 
-void VRORenderTargetOpenGL::blitColor(std::shared_ptr<VRORenderTarget> destination, bool flipY) {
+void VRORenderTargetOpenGL::blitColor(std::shared_ptr<VRORenderTarget> destination, bool flipY,
+                                      std::shared_ptr<VRODriver> driver) {
+    
+    driver->unbindRenderTarget();
     passert (_viewport.getWidth() == destination->getWidth());
     passert (_viewport.getHeight() == destination->getHeight());
     

@@ -35,7 +35,7 @@ VRORenderPassInputOutput VROPortalTreeRenderPass::render(std::shared_ptr<VROScen
     
     std::shared_ptr<VRORenderTarget> target = inputs[kRenderTargetSingleOutput];
     passert (target);
-    target->bind();
+    driver->bindRenderTarget(target);
     
     driver->setColorWritingEnabled(true);
     target->clearDepthAndColor();

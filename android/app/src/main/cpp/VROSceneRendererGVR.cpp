@@ -81,7 +81,6 @@ void VROSceneRendererGVR::initGL() {
     _viewportList.reset(new gvr::BufferViewportList(
             _gvr->CreateEmptyBufferViewportList()));
 
-    glEnable(GL_STENCIL_TEST);
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -149,7 +148,6 @@ void VROSceneRendererGVR::renderStereo(VROMatrix4f &headRotation) {
     // Acquire a frame from the swap chain
     gvr::Frame frame = _swapchain->AcquireFrame();
     std::dynamic_pointer_cast<VRODisplayOpenGLGVR>(_driver->getDisplay())->setFrame(frame);
-    frame.BindBuffer(0);
 
     // Extract the left viewport parameters
     _viewportList->GetBufferViewport(GVR_LEFT_EYE, &_scratchViewport);

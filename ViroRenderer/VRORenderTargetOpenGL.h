@@ -12,6 +12,7 @@
 #include "VRORenderTarget.h"
 #include "VROOpenGL.h"
 
+class VRODriver;
 class VRODriverOpenGL;
 
 class VRORenderTargetOpenGL : public VRORenderTarget {
@@ -29,8 +30,9 @@ public:
 #pragma mark - VRORenderTarget Implementation
     
     void bind();
-    void discardTransientBuffers();
-    void blitColor(std::shared_ptr<VRORenderTarget> destination, bool flipY);
+    virtual void unbind();
+    void blitColor(std::shared_ptr<VRORenderTarget> destination, bool flipY,
+                   std::shared_ptr<VRODriver> driver);
     
     virtual void setViewport(VROViewport viewport);
     int getWidth() const;

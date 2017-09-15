@@ -139,8 +139,7 @@ bool VROImagePostProcessOpenGL::bind(std::shared_ptr<VRORenderTarget> source, in
     }
     
     // Bind the destination render target
-    destination->bind();
-    
+    driver->bindRenderTarget(destination);
     return true;
 }
 

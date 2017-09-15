@@ -50,6 +50,7 @@ public:
         // We need to reset state each frame to sync our CPU state with our GPU
         // state, in case a part of the renderer outside our control (e.g. Cardboard,
         // etc.) changes OpenGL state outside of the VRODriver.
+        _boundRenderTarget.reset();
         
         _colorWritingEnabled = true;
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -210,6 +211,21 @@ public:
         }
     }
     
+    void bindRenderTarget(std::shared_ptr<VRORenderTarget> target) {
+        std::shared_ptr<VRORenderTarget> boundRenderTarget = _boundRenderTarget.lock();
+        if (boundRenderTarget != target) {
+            if (boundRenderTarget) {
+                boundRenderTarget->unbind();
+            }
+            target->bind();
+            _boundRenderTarget = target;
+        }
+    }
+    
+    void unbindRenderTarget() {
+        _boundRenderTarget.reset();
+    }
+    
     virtual bool isGammaCorrectionEnabled() {
         return true;
     }
@@ -362,7 +378,8 @@ private:
     bool _stencilTestEnabled;
     VROCullMode _cullMode;
     VROBlendMode _blendMode;
-
+    
+    std::weak_ptr<VRORenderTarget> _boundRenderTarget;
     std::shared_ptr<VROShaderProgram> _boundShader;
 
     /*
