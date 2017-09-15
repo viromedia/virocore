@@ -874,10 +874,10 @@ static VROVector3f const kZeroVector = VROVector3f();
     if (_hasTrackingInitialized) {
         std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
         passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
-        
+
         arScene->trackingHasInitialized();
     }
-    
+
     // Reset the camera background for the new scene
     _cameraBackground.reset();
 }
@@ -888,6 +888,13 @@ static VROVector3f const kZeroVector = VROVector3f();
     _sceneController = sceneController;
     _renderer->setSceneController(sceneController, seconds, timingFunctionType, _driver);
     
+    if (_hasTrackingInitialized) {
+        std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
+        passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
+
+        arScene->trackingHasInitialized();
+    }
+
     // Reset the camera background for the new scene
     _cameraBackground.reset();
 }
