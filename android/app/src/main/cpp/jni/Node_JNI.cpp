@@ -678,7 +678,7 @@ JNI_METHOD(jlong, nativeSetPhysicsDelegate)(JNIEnv *env,
     return PhysicsDelegate_JNI::jptr(delegate);
 }
 
-JNI_METHOD(jlong, nativeClearPhysicsDelegate)(JNIEnv *env,
+JNI_METHOD(void, nativeClearPhysicsDelegate)(JNIEnv *env,
                                             jobject obj,
                                             jlong nativeRef,
                                             jlong delegateRef) {
