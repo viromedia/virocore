@@ -69,10 +69,14 @@ public:
 private:
     
     /*
-     The uniform buffer object ID and binding point for bone parameters.
+     The binding point for bone parameters.
+     */
+    static int sBonesUBOBindingPoint;
+    
+    /*
+     The uniform buffer object ID.
      */
     GLuint _bonesUBO;
-    int _bonesUBOBindingPoint = 0;
     
     /*
      The driver that created this UBO.

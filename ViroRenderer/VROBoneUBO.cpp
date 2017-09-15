@@ -17,6 +17,8 @@
 #include "VRODriverOpenGL.h"
 #include "VRODualQuaternion.h"
 
+int VROBoneUBO::sBonesUBOBindingPoint = 0;
+
 static std::shared_ptr<VROShaderModifier> sSkinningShaderModifier;
 static std::shared_ptr<VROShaderModifier> sSkinningShaderModifierWithScale;
 
@@ -82,21 +84,19 @@ std::shared_ptr<VROShaderModifier> VROBoneUBO::createSkinningShaderModifier(bool
 VROBoneUBO::VROBoneUBO(std::shared_ptr<VRODriverOpenGL> driver) :
     _driver(driver) {
     
-    _bonesUBOBindingPoint = driver->generateBindingPoint();
+    if (sBonesUBOBindingPoint == 0) {
+        sBonesUBOBindingPoint = driver->generateBindingPoint();
+    }
     
     glGenBuffers(1, &_bonesUBO);
     glBindBuffer(GL_UNIFORM_BUFFER, _bonesUBO);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROBonesData), NULL, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    
-    // Links the UBO and the binding point
-    glBindBufferBase(GL_UNIFORM_BUFFER, _bonesUBOBindingPoint, _bonesUBO);
 }
 
 VROBoneUBO::~VROBoneUBO() {
     std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
     if (driver) {
-        driver->internBindingPoint(_bonesUBOBindingPoint);
         glDeleteBuffers(1, &_bonesUBO);
     }
 }
@@ -109,7 +109,10 @@ void VROBoneUBO::unbind(std::shared_ptr<VROShaderProgram> &program) {
 
 void VROBoneUBO::bind(std::shared_ptr<VROShaderProgram> &program) {
     if (program->hasBonesBlock()) {
-        glUniformBlockBinding(program->getProgram(), program->getBonesBlockIndex(), _bonesUBOBindingPoint);
+        // Links the UBO and the binding point
+        glBindBufferBase(GL_UNIFORM_BUFFER, sBonesUBOBindingPoint, _bonesUBO);
+        // Links the shader's block index to the binding point
+        glUniformBlockBinding(program->getProgram(), program->getBonesBlockIndex(), sBonesUBOBindingPoint);
     }
 }
 

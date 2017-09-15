@@ -257,6 +257,7 @@
 		8F705DF61E8F5D42008BE8F8 /* earth.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F705DF31E8F5D42008BE8F8 /* earth.jpg */; };
 		8F705DF71E8F5D42008BE8F8 /* earth.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F705DF41E8F5D42008BE8F8 /* earth.obj */; };
 		8F727F661F39EDB400CDBBFC /* pug_body_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.jpg */; };
+		8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.png */; };
 		8F727F671F39EDB700CDBBFC /* pug.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F727F631F39EDAD00CDBBFC /* pug.vrx */; };
 		8F727F681F39EDBB00CDBBFC /* pug_body_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F727F651F39EDAD00CDBBFC /* pug_body_normal.png */; };
 		8F790CB41F3419C4009A2020 /* VROPortalTraversalListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F790CB21F3419C4009A2020 /* VROPortalTraversalListener.cpp */; };
@@ -982,6 +983,7 @@
 		8F705DF41E8F5D42008BE8F8 /* earth.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = earth.obj; path = ViroSample/earth.obj; sourceTree = "<group>"; };
 		8F727F631F39EDAD00CDBBFC /* pug.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = pug.vrx; path = ViroSample/pug.vrx; sourceTree = "<group>"; };
 		8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = pug_body_diffuse.jpg; path = ViroSample/pug_body_diffuse.jpg; sourceTree = "<group>"; };
+		8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pug_body_diffuse.png; path = ViroSample/pug_body_diffuse.png; sourceTree = "<group>"; };
 		8F727F651F39EDAD00CDBBFC /* pug_body_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pug_body_normal.png; path = ViroSample/pug_body_normal.png; sourceTree = "<group>"; };
 		8F790CB21F3419C4009A2020 /* VROPortalTraversalListener.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPortalTraversalListener.cpp; sourceTree = "<group>"; };
 		8F790CB31F3419C4009A2020 /* VROPortalTraversalListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalTraversalListener.h; sourceTree = "<group>"; };
@@ -2099,6 +2101,7 @@
 				8F37D9EB1F4B187F0029D23E /* wood.png */,
 				A517D2CB1F41A16400A22219 /* cloud.png */,
 				8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.jpg */,
+				8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.png */,
 				8F727F651F39EDAD00CDBBFC /* pug_body_normal.png */,
 				8F727F631F39EDAD00CDBBFC /* pug.vrx */,
 				8F432E8B1F2B994C00B1B2DC /* portal_ring.obj */,
@@ -2671,6 +2674,7 @@
 				8FCED07C1EBBD35200C19BCA /* Sven_Face_Color.png in Resources */,
 				8FCED07A1EBBD35200C19BCA /* Sven_Body_Specular.png in Resources */,
 				8F727F661F39EDB400CDBBFC /* pug_body_diffuse.jpg in Resources */,
+				8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */,
 				8F129FBF1ED603BE00341D83 /* worm.vrx in Resources */,
 				8FF5CCB51F28F5BA007C7F52 /* porsche911.vrx in Resources */,
 				8FCED05E1EBBCFCF00C19BCA /* Squid_Normal.png in Resources */,

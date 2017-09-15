@@ -76,8 +76,11 @@ class VRODriverOpenGL;
  
  The _lightingUBOBindingPoint is similar to a texture unit. It is independent
  of shaders, and there are fixed number of these in our EGL context.
- Every time we create a new UBO, we have to create a new binding point, 
- and bind the UBO to said binding point via glBindBufferBase.
+ Every time we create a new UBO *type*, we have to create a new binding point.
+ The binding point is re-used for all UBO instances of a specific type. E.g. there is
+ one binding point for all bone UBOs, one for all lighting UBOs, etc.
+ Before rendering we have to bind our specific UBO to the binding point of
+ that UBO's type via glBindBufferBase.
  
  Finally, the _lightingBlockIndex is *shader-specific*; it's found in 
  VROShaderProgram. It's similar to a shader's uniform location. When we
@@ -141,16 +144,19 @@ public:
     
 private:
     
+    /*
+     The binding points for lighting parameters in the vertex and fragment shaders.
+     */
+    static int sLightingFragmentUBOBindingPoint;
+    static int sLightingVertexUBOBindingPoint;
+    
     int _hash;
     
     /*
-     The uniform buffer object ID and binding point for lighting parameters
-     in the vertex and fragment shaders.
+     The uniform buffer object ID for lighting parameters in the vertex and fragment shaders.
      */
     GLuint _lightingFragmentUBO;
-    int _lightingFragmentUBOBindingPoint = 0;
     GLuint _lightingVertexUBO;
-    int _lightingVertexUBOBindingPoint = 0;
     
     /*
      The lights that are a part of this UBO.

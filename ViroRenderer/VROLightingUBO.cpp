@@ -13,6 +13,9 @@
 #include "VROShaderProgram.h"
 #include "VRODriverOpenGL.h"
 
+int VROLightingUBO::sLightingVertexUBOBindingPoint = 0;
+int VROLightingUBO::sLightingFragmentUBOBindingPoint = 0;
+
 VROLightingUBO::VROLightingUBO(int hash, const std::vector<std::shared_ptr<VROLight>> &lights,
                                std::shared_ptr<VRODriverOpenGL> driver) :
     _hash(hash),
@@ -20,24 +23,23 @@ VROLightingUBO::VROLightingUBO(int hash, const std::vector<std::shared_ptr<VROLi
     _driver(driver),
     _needsFragmentUpdate(false),
     _needsVertexUpdate(false) {
-    
+        
+    if (sLightingVertexUBOBindingPoint == 0) {
+        sLightingFragmentUBOBindingPoint = driver->generateBindingPoint();
+        sLightingVertexUBOBindingPoint = driver->generateBindingPoint();
+    }
+
     // Initialize the fragment VBO
-    _lightingFragmentUBOBindingPoint = driver->generateBindingPoint();
     glGenBuffers(1, &_lightingFragmentUBO);
     glBindBuffer(GL_UNIFORM_BUFFER, _lightingFragmentUBO);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingFragmentData), NULL, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    
-    // Links the UBO and the binding point
-    glBindBufferBase(GL_UNIFORM_BUFFER, _lightingFragmentUBOBindingPoint, _lightingFragmentUBO);
-        
+            
     // Initialize the vertex VBO
-    _lightingVertexUBOBindingPoint = driver->generateBindingPoint();
     glGenBuffers(1, &_lightingVertexUBO);
     glBindBuffer(GL_UNIFORM_BUFFER, _lightingVertexUBO);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(VROLightingVertexData), NULL, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    glBindBufferBase(GL_UNIFORM_BUFFER, _lightingVertexUBOBindingPoint, _lightingVertexUBO);
         
     updateLightsFragment();
     updateLightsVertex();
@@ -46,10 +48,7 @@ VROLightingUBO::VROLightingUBO(int hash, const std::vector<std::shared_ptr<VROLi
 VROLightingUBO::~VROLightingUBO() {
     std::shared_ptr<VRODriverOpenGL> driver = _driver.lock();
     if (driver) {
-        driver->internBindingPoint(_lightingFragmentUBOBindingPoint);
-        glDeleteBuffers(1, &_lightingFragmentUBO);
-        
-        driver->internBindingPoint(_lightingVertexUBOBindingPoint);
+        glDeleteBuffers(1, &_lightingFragmentUBO);        
         glDeleteBuffers(1, &_lightingVertexUBO);
     }
 }
@@ -71,10 +70,12 @@ void VROLightingUBO::bind(std::shared_ptr<VROShaderProgram> &program) {
         updateLightsVertex();
     }
     if (program->hasLightingFragmentBlock()) {
-        glUniformBlockBinding(program->getProgram(), program->getLightingFragmentBlockIndex(), _lightingFragmentUBOBindingPoint);
+        glBindBufferBase(GL_UNIFORM_BUFFER, sLightingFragmentUBOBindingPoint, _lightingFragmentUBO);
+        glUniformBlockBinding(program->getProgram(), program->getLightingFragmentBlockIndex(), sLightingFragmentUBOBindingPoint);
     }
     if (program->hasLightingVertexBlock()) {
-        glUniformBlockBinding(program->getProgram(), program->getLightingVertexBlockIndex(), _lightingVertexUBOBindingPoint);
+        glBindBufferBase(GL_UNIFORM_BUFFER, sLightingVertexUBOBindingPoint, _lightingVertexUBO);
+        glUniformBlockBinding(program->getProgram(), program->getLightingVertexBlockIndex(), sLightingVertexUBOBindingPoint);
     }
 }
 
