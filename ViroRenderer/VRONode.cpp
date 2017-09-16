@@ -189,7 +189,7 @@ void VRONode::updateSortKeys(uint32_t depth,
                              std::shared_ptr<VRODriver> &driver) {
     passert_thread();
     processActions();
-    
+
     /*
      If a node is not visible, that means none of its children are visible
      either (we use the umbrella bounding box for visibility tests), so we do
@@ -198,12 +198,12 @@ void VRONode::updateSortKeys(uint32_t depth,
     if (!_visible) {
         return;
     }
-    
+
     std::stack<float> &opacities = params.opacities;
     std::vector<std::shared_ptr<VROLight>> &lights = params.lights;
     std::stack<int> &hierarchyDepths = params.hierarchyDepths;
     std::stack<float> &distancesFromCamera = params.distancesFromCamera;
-    
+
     /*
      Compute specific parameters for this node.
      */
@@ -866,7 +866,7 @@ void VRONode::hitTest(const VROCamera &camera, VROVector3f origin, VROVector3f r
     VROMatrix4f transform = _computedTransform;
     boundsOnly = boundsOnly && !getHighAccuracyGaze();
     
-    if (_geometry && _computedOpacity > kHiddenOpacityThreshold) {
+    if (_geometry && _computedOpacity > kHiddenOpacityThreshold && _visible) {
         VROVector3f intPt;
         if (getBoundingBox().intersectsRay(ray, origin, &intPt)) {
             if (boundsOnly || hitTestGeometry(origin, ray, transform)) {
