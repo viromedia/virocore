@@ -24,6 +24,7 @@ static std::atomic_int sTextureId;
 VROTexture::VROTexture(VROTextureType type, VROTextureInternalFormat internalFormat, VROStereoMode stereoMode) :
     _textureId(sTextureId++),
     _type(type),
+    _format(VROTextureFormat::RGBA8),
     _internalFormat(internalFormat),
     _stereoMode(stereoMode),
 
@@ -43,6 +44,7 @@ VROTexture::VROTexture(VROTextureType type, VROTextureInternalFormat internalFor
 VROTexture::VROTexture(VROTextureType type, std::unique_ptr<VROTextureSubstrate> substrate, VROStereoMode stereoState) :
     _textureId(sTextureId++),
     _type(type),
+    _format(VROTextureFormat::RGBA8),
     _stereoMode(stereoState),
 
     // Note these parameters are irrelevent for this constructor, since they are used
@@ -222,6 +224,10 @@ int VROTexture::getNumSubstratesForFormat(VROTextureInternalFormat format) const
     else {
         return 1;
     }
+}
+
+bool VROTexture::hasAlpha() const {
+    return _format != VROTextureFormat::RGB565 && _format != VROTextureFormat::RGB8;
 }
 
 

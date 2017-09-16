@@ -12,7 +12,6 @@
 #include "VROTime.h"
 
 VROImageiOS::VROImageiOS(UIImage *image, VROTextureInternalFormat internalFormat) {
-    
     CGImageRef imageRef = [image CGImage];
     _width = (int) CGImageGetWidth(imageRef);
     _height = (int) CGImageGetHeight(imageRef);
@@ -68,7 +67,7 @@ VROImageiOS::VROImageiOS(UIImage *image, VROTextureInternalFormat internalFormat
         
         _dataLength = _height * _width * (int)bytesPerPixel * sizeof(unsigned char);
         _data = (unsigned char *)srcBuffer.data;
-        _format = VROTextureFormat::RGBA8;
+        _format = hasAlpha(image) ? VROTextureFormat::RGBA8 : VROTextureFormat::RGB8;
     }
 }
 
@@ -79,4 +78,12 @@ VROImageiOS::~VROImageiOS() {
 unsigned char *VROImageiOS::getData(size_t *length) {
     *length = _dataLength;
     return _data;
+}
+
+bool VROImageiOS::hasAlpha(UIImage *image) {
+    CGImageAlphaInfo alpha = CGImageGetAlphaInfo(image.CGImage);
+    return (alpha == kCGImageAlphaFirst ||
+            alpha == kCGImageAlphaLast ||
+            alpha == kCGImageAlphaPremultipliedFirst ||
+            alpha == kCGImageAlphaPremultipliedLast);
 }

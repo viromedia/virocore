@@ -133,7 +133,9 @@ void VROTextureSubstrateOpenGL::loadFace(GLenum target,
         glCompressedTexImage2D(target, 0, internalFormat, width, height, 0,
                                faceData->getDataLength(), faceData->getData());
     }
-    else if (format == VROTextureFormat::RGBA8) {
+    else if (format == VROTextureFormat::RGBA8 || format == VROTextureFormat::RGB8) {
+        // We write format RGB8 into internal format RGBA8, because sRGB8 does not work
+        // with automatic mipmap generation (it is not guaranteed color renderable)
         passert (mipmapMode != VROMipmapMode::Pregenerated);
         passert_msg (internalFormat != VROTextureInternalFormat::RGB565,
                      "RGB565 internal format requires RGB565 or RGB8 source data!");
@@ -163,13 +165,10 @@ GLuint VROTextureSubstrateOpenGL::getInternalFormat(VROTextureInternalFormat for
     switch (format) {
         case VROTextureInternalFormat::RGBA8:
             return sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA;
-            
         case VROTextureInternalFormat::RGBA4:
             return GL_RGBA4;
-            
         case VROTextureInternalFormat::RGB565:
             return GL_RGB565;
-            
         default:
             return GL_RGBA;
     }

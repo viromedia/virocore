@@ -258,7 +258,6 @@
 		8F705DF51E8F5D42008BE8F8 /* earth_normal.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F705DF21E8F5D42008BE8F8 /* earth_normal.jpg */; };
 		8F705DF61E8F5D42008BE8F8 /* earth.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F705DF31E8F5D42008BE8F8 /* earth.jpg */; };
 		8F705DF71E8F5D42008BE8F8 /* earth.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F705DF41E8F5D42008BE8F8 /* earth.obj */; };
-		8F727F661F39EDB400CDBBFC /* pug_body_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.jpg */; };
 		8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.png */; };
 		8F727F671F39EDB700CDBBFC /* pug.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F727F631F39EDAD00CDBBFC /* pug.vrx */; };
 		8F727F681F39EDBB00CDBBFC /* pug_body_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F727F651F39EDAD00CDBBFC /* pug_body_normal.png */; };
@@ -347,6 +346,8 @@
 		8FB659221CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB659201CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp */; };
 		8FB659231CD83A2200D036EB /* VROTextureSubstrateOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB659211CD83A2200D036EB /* VROTextureSubstrateOpenGL.h */; };
 		8FB9EA4C1F6B12580068FCA7 /* VRORenderMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB9EA4B1F6B12580068FCA7 /* VRORenderMetadata.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FB9EA4F1F6B55DF0068FCA7 /* pug_body_diffuse.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 8FB9EA4D1F6B55DE0068FCA7 /* pug_body_diffuse.ktx */; };
+		8FB9EA501F6B55DF0068FCA7 /* pug_body_specular.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 8FB9EA4E1F6B55DE0068FCA7 /* pug_body_specular.ktx */; };
 		8FBDBE2B1D01EE5E00801B59 /* VROSortKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FBDBE291D01EE5E00801B59 /* VROSortKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FC6E1C51CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */; };
 		8FC6E1C61CEBB31C008EFD5F /* lighting_general_functions_fsh.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */; };
@@ -985,8 +986,7 @@
 		8F705DF21E8F5D42008BE8F8 /* earth_normal.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = earth_normal.jpg; path = ViroSample/earth_normal.jpg; sourceTree = "<group>"; };
 		8F705DF31E8F5D42008BE8F8 /* earth.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = earth.jpg; path = ViroSample/earth.jpg; sourceTree = "<group>"; };
 		8F705DF41E8F5D42008BE8F8 /* earth.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = earth.obj; path = ViroSample/earth.obj; sourceTree = "<group>"; };
-		8F727F631F39EDAD00CDBBFC /* pug.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = pug.vrx; path = ViroSample/pug.vrx; sourceTree = "<group>"; };
-		8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = pug_body_diffuse.jpg; path = ViroSample/pug_body_diffuse.jpg; sourceTree = "<group>"; };
+		8F727F631F39EDAD00CDBBFC /* pug.vrx */ = {isa = PBXFileReference; lastKnownFileType = text; name = pug.vrx; path = ViroSample/pug.vrx; sourceTree = "<group>"; };
 		8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pug_body_diffuse.png; path = ViroSample/pug_body_diffuse.png; sourceTree = "<group>"; };
 		8F727F651F39EDAD00CDBBFC /* pug_body_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = pug_body_normal.png; path = ViroSample/pug_body_normal.png; sourceTree = "<group>"; };
 		8F790CB21F3419C4009A2020 /* VROPortalTraversalListener.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPortalTraversalListener.cpp; sourceTree = "<group>"; };
@@ -1075,6 +1075,8 @@
 		8FB659201CD83A2200D036EB /* VROTextureSubstrateOpenGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROTextureSubstrateOpenGL.cpp; sourceTree = "<group>"; };
 		8FB659211CD83A2200D036EB /* VROTextureSubstrateOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROTextureSubstrateOpenGL.h; sourceTree = "<group>"; };
 		8FB9EA4B1F6B12580068FCA7 /* VRORenderMetadata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VRORenderMetadata.h; sourceTree = "<group>"; };
+		8FB9EA4D1F6B55DE0068FCA7 /* pug_body_diffuse.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; name = pug_body_diffuse.ktx; path = ViroSample/pug_body_diffuse.ktx; sourceTree = "<group>"; };
+		8FB9EA4E1F6B55DE0068FCA7 /* pug_body_specular.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; name = pug_body_specular.ktx; path = ViroSample/pug_body_specular.ktx; sourceTree = "<group>"; };
 		8FBDBE291D01EE5E00801B59 /* VROSortKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSortKey.h; sourceTree = "<group>"; };
 		8FC6E1BE1CEB62E9008EFD5F /* lighting_general_functions_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lighting_general_functions_fsh.glsl; sourceTree = "<group>"; };
 		8FC6E1CF1CECB364008EFD5F /* constant_fsh.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constant_fsh.glsl; sourceTree = "<group>"; };
@@ -2080,6 +2082,8 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8FB9EA4D1F6B55DE0068FCA7 /* pug_body_diffuse.ktx */,
+				8FB9EA4E1F6B55DE0068FCA7 /* pug_body_specular.ktx */,
 				8F1B4A9D1F69F4A800156809 /* pug_animated.vrx */,
 				8F1B4A9F1F69F4A900156809 /* pug_body_diffuse.png */,
 				8F1B4A9E1F69F4A800156809 /* pug_body_specular.png */,
@@ -2106,7 +2110,6 @@
 				8F1B4A041F64B61B00156809 /* portal_wood_frame.vrx */,
 				8F37D9EB1F4B187F0029D23E /* wood.png */,
 				A517D2CB1F41A16400A22219 /* cloud.png */,
-				8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.jpg */,
 				8F727F641F39EDAD00CDBBFC /* pug_body_diffuse.png */,
 				8F727F651F39EDAD00CDBBFC /* pug_body_normal.png */,
 				8F727F631F39EDAD00CDBBFC /* pug.vrx */,
@@ -2681,7 +2684,7 @@
 				A5ABB1BA1E93300700E07EBC /* chillroots.mp4 in Resources */,
 				8FCED07C1EBBD35200C19BCA /* Sven_Face_Color.png in Resources */,
 				8FCED07A1EBBD35200C19BCA /* Sven_Body_Specular.png in Resources */,
-				8F727F661F39EDB400CDBBFC /* pug_body_diffuse.jpg in Resources */,
+				8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */,
 				8F727F661F39EDB400CDBBFC /* pug_body_diffuse.png in Resources */,
 				8F129FBF1ED603BE00341D83 /* worm.vrx in Resources */,
 				8FF5CCB51F28F5BA007C7F52 /* porsche911.vrx in Resources */,
@@ -2689,6 +2692,8 @@
 				8F346B291F23AF39000D16B9 /* bball.jpg in Resources */,
 				8F1B4AA11F69F4A900156809 /* pug_body_specular.png in Resources */,
 				8FF5CCBD1F290364007C7F52 /* aliengirl_specular.png in Resources */,
+				8FB9EA4F1F6B55DF0068FCA7 /* pug_body_diffuse.ktx in Resources */,
+				8FB9EA501F6B55DF0068FCA7 /* pug_body_specular.ktx in Resources */,
 				8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */,
 				8F1B4AA21F69F4A900156809 /* pug_body_diffuse.png in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
