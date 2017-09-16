@@ -14,6 +14,12 @@
 #include <atomic>
 #include <memory>
 
+/*
+ The maximum number of lights that can be in use at *one time*.
+ We can have N lights in the scene, so long as any given object
+ never has more than 8 simultaneously influencing it. This value
+ must be kept in sync with the shader max lights values.
+ */
 static const int kMaxLights = 8;
 static const int kFloatsPerMatrix = 16;
 

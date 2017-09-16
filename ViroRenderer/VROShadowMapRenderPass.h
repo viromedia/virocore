@@ -35,6 +35,15 @@ enum class VROSilhouetteFilter;
  */
 const bool kDebugShadowMaps = false;
 
+/*
+ The maximum number of shadow maps allowed. Note that while kMaxLights
+ determines the number of lights that can be used *at one time*, this
+ determines the maximum number of shadow maps that can be created per
+ frame. That is, if we have 48 lights, only kMaxShadowMaps of them will be
+ able to cast a shadow in a given frame.
+ */
+const int kMaxShadowMaps = 32;
+
 class VROShadowMapRenderPass : public VRORenderPass {
 public:
     

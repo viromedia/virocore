@@ -63,10 +63,10 @@ void VROChoreographer::initTargets(std::shared_ptr<VRODriver> driver) {
 
     if (_renderShadows) {
         if (kDebugShadowMaps) {
-            _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTexture, 1, kMaxLights);
+            _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTexture, 1, kMaxShadowMaps);
         }
         else {
-            _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTextureArray, 1, kMaxLights);
+            _shadowTarget = driver->newRenderTarget(VRORenderTargetType::DepthTextureArray, 1, kMaxShadowMaps);
         }
     }
 }
@@ -173,6 +173,7 @@ void VROChoreographer::renderShadowPasses(std::shared_ptr<VROScene> scene, VRORe
         if (!light->getCastsShadow()) {
             continue;
         }
+        passert (light->getType() != VROLightType::Ambient && light->getType() != VROLightType::Omni);
         
         std::shared_ptr<VROShadowMapRenderPass> shadowPass;
         
