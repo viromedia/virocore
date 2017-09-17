@@ -21,11 +21,19 @@ class VRODisplayOpenGLGVR : public VRODisplayOpenGL {
 public:
 
     VRODisplayOpenGLGVR(std::shared_ptr<VRODriverOpenGL> driver) :
-        VRODisplayOpenGL(0, driver) {}
+        VRODisplayOpenGL(0, driver),
+        _frame(nullptr) {}
     virtual ~VRODisplayOpenGLGVR() {}
 
     void bind() {
-        gvr_frame_bind_buffer(_frame, 0);
+        if (_frame != nullptr) {
+            gvr_frame_bind_buffer(_frame, 0);
+        }
+        else {
+            // 360 mode, we don't use the gvr frame but we have a valid framebuffer object
+            VRODisplayOpenGL::bind();
+            return;
+        }
 
         /*
          Bind the viewport and scissor when the render target changes. The scissor
