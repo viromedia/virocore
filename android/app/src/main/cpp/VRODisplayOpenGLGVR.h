@@ -51,7 +51,12 @@ public:
     }
 
     void unbind() {
-        gvr_frame_unbind(_frame);
+        if (_frame != nullptr) {
+            gvr_frame_unbind(_frame);
+        }
+        else {
+            VRODisplayOpenGL::unbind();
+        }
     }
 
     void setFrame(gvr::Frame &frame) {
