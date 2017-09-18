@@ -309,6 +309,15 @@ static VROVector3f const kZeroVector = VROVector3f();
     }
 }
 
+- (void)deleteGL {
+    if (_videoTextureCache) {
+        _videoTextureCache.reset();
+    }
+    if (_arSession) {
+        _arSession.reset();
+    }
+}
+
 - (void)setPaused:(BOOL)paused {
     [_displayLink setPaused:paused];
 }
