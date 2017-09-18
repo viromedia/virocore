@@ -24,6 +24,12 @@ VROGeometry::~VROGeometry() {
     ALLOCATION_TRACKER_SUB(Geometry, 1);
 }
 
+void VROGeometry::deleteGL() {
+    for (std::shared_ptr<VROMaterial> &material : _materials) {
+        material->deleteGL();
+    }
+}
+
 void VROGeometry::prewarm(std::shared_ptr<VRODriver> driver) {
     if (!_substrate) {
         _substrate = driver->newGeometrySubstrate(*this);

@@ -20,6 +20,12 @@ VROMaterialVisual::VROMaterialVisual(const VROMaterialVisual &visual) :
  _contentsTransform(visual._contentsTransform)
 {}
 
+void VROMaterialVisual::deleteGL() {
+    if (_contentsTexture) {
+        _contentsTexture->deleteGL();
+    }
+}
+
 void VROMaterialVisual::copyFrom(const VROMaterialVisual &visual) {
     _permissibleContentsMask = visual._permissibleContentsMask;
     _contentsColor = visual._contentsColor;

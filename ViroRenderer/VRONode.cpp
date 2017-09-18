@@ -98,6 +98,15 @@ VRONode::~VRONode() {
     ALLOCATION_TRACKER_SUB(Nodes, 1);
 }
 
+void VRONode::deleteGL() {
+    if (_geometry) {
+        _geometry->deleteGL();
+    }
+    for (std::shared_ptr<VRONode> &subnode : _subnodes) {
+        subnode->deleteGL();
+    }
+}
+
 std::shared_ptr<VRONode> VRONode::clone() {
     std::shared_ptr<VRONode> node = std::make_shared<VRONode>(*this);
     for (std::shared_ptr<VRONode> &subnode : _subnodes) {

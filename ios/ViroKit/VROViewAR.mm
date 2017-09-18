@@ -316,6 +316,9 @@ static VROVector3f const kZeroVector = VROVector3f();
     if (_arSession) {
         _arSession.reset();
     }
+    if (_sceneController) {
+        _sceneController->getScene()->getRootNode()->deleteGL();
+    }
 }
 
 - (void)setPaused:(BOOL)paused {
@@ -931,6 +934,10 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 - (void)renderFrame {
+    if (!_arSession) {
+        return;
+    }
+    
     /*
      Setup GL state.
      */

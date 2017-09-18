@@ -96,6 +96,18 @@ VROMaterial::~VROMaterial() {
     ALLOCATION_TRACKER_SUB(Materials, 1);
 }
 
+void VROMaterial::deleteGL() {
+    _diffuse->deleteGL();
+    _specular->deleteGL();
+    _normal->deleteGL();
+    _reflective->deleteGL();
+    _emission->deleteGL();
+    _transparent->deleteGL();
+    _multiply->deleteGL();
+    _ambientOcclusion->deleteGL();
+    _selfIllumination->deleteGL();
+}
+
 void VROMaterial::copyFrom(std::shared_ptr<VROMaterial> material) {
     _name = material->_name;
     _shininess = material->_shininess;

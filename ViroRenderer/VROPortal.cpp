@@ -30,6 +30,13 @@ VROPortal::~VROPortal() {
     
 }
 
+void VROPortal::deleteGL() {
+    if (_background) {
+        _background->deleteGL();
+    }
+    VRONode::deleteGL();
+}
+
 #pragma mark - Scene Preparation
 
 void VROPortal::traversePortals(int frame, int recursionLevel,

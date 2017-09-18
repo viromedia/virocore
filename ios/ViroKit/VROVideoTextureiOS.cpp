@@ -31,10 +31,16 @@ VROVideoTextureiOS::VROVideoTextureiOS(VROStereoMode stereoMode) :
 
 VROVideoTextureiOS::~VROVideoTextureiOS() {
     ALLOCATION_TRACKER_SUB(VideoTextures, 1);
+}
+
+void VROVideoTextureiOS::deleteGL() {    
     // Remove observers from the player's item when this is deallocated.
     [_player.currentItem removeObserver:_avPlayerDelegate forKeyPath:kStatusKey context:this];
     [_player.currentItem removeObserver:_avPlayerDelegate forKeyPath:kPlaybackKeepUpKey context:this];
     [_player.currentItem removeObserver:_videoNotificationListener forKeyPath:kStatusKey context:this];
+    
+    // Deletes the CVOpenGLTextureCache
+    _avPlayerDelegate = nil;
 }
 
 #pragma mark - Recorded Video Playback
