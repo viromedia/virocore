@@ -465,16 +465,17 @@ void VROParticleEmitter::resetParticle(VROParticle &particle, double currentTime
     // Transformational properties.
     particle.spawnedWorldTransform = emitterNode->getComputedTransform();
 
+    VROVector3f initialScale = _scaleModifier->getInitialValue();
     VROMatrix4f startTransform;
     startTransform.toIdentity();
-    startTransform.scale(1, 1, 1);
+    startTransform.scale(initialScale.x, initialScale.y, initialScale.z);
     startTransform.translate(getPointInSpawnVolume());
     particle.spawnedLocalTransform = startTransform;
     particle.currentLocalTransform = startTransform;
 
     // Reset particle to initial defaults as defined by configured modifiers.
     particle.initialColor = _colorModifier->getInitialValue();
-    particle.initialScale = _scaleModifier->getInitialValue();
+    particle.initialScale = initialScale;
     particle.initialRotation = _rotationModifier->getInitialValue();
     particle.initialAlpha = _alphaModifier->getInitialValue();
 
