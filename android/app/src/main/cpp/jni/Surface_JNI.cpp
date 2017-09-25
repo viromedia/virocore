@@ -85,6 +85,34 @@ JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetWidth)(JNIEnv *env,
+                                       jclass clazz,
+                                       jlong nativeSurface,
+                                       jfloat width) {
+    std::weak_ptr<VROSurface> surface_w = Surface::native(nativeSurface);
+    VROPlatformDispatchAsyncRenderer([surface_w, width] {
+        std::shared_ptr<VROSurface> surface = surface_w.lock();
+        if (!surface) {
+            return;
+        }
+        surface->setWidth(width);
+    });
+}
+
+JNI_METHOD(void, nativeSetHeight)(JNIEnv *env,
+                                       jclass clazz,
+                                       jlong nativeSurface,
+                                       jfloat height) {
+    std::weak_ptr<VROSurface> surface_w = Surface::native(nativeSurface);
+    VROPlatformDispatchAsyncRenderer([surface_w, height] {
+        std::shared_ptr<VROSurface> surface = surface_w.lock();
+        if (!surface) {
+            return;
+        }
+        surface->setHeight(height);
+    });
+}
+
 JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
                                         jobject obj,
                                         jlong surfaceRef,

@@ -14,11 +14,20 @@
 #include "VROParticleUBO.h"
 #include "VROMaterial.h"
 #include "VRODriverOpenGL.h"
+#include "VROPlatformUtil.h"
 
 VROParticleEmitter::VROParticleEmitter(std::shared_ptr<VRODriver> driver,
                                        std::shared_ptr<VRONode> emitterNode,
                                        std::shared_ptr<VROSurface> particleGeometry) {
+    initEmitter(driver, emitterNode, particleGeometry);
+}
 
+VROParticleEmitter::VROParticleEmitter(){}
+VROParticleEmitter::~VROParticleEmitter(){}
+
+void VROParticleEmitter::initEmitter(std::shared_ptr<VRODriver> driver,
+                                     std::shared_ptr<VRONode> emitterNode,
+                                     std::shared_ptr<VROSurface> particleGeometry) {
     // Create a particleUBO through which to batch particle information to the GPU.
     std::shared_ptr<VROParticleUBO> particleUBO = std::make_shared<VROParticleUBO>(driver);
 
@@ -37,17 +46,17 @@ VROParticleEmitter::VROParticleEmitter(std::shared_ptr<VRODriver> driver,
 
     // Initialize the emitter with default values.
     initEmitter();
+    material->setLightingModel(VROLightingModel::Constant);
 
     // Finally, bind the particle geometry to the emitter node.
     emitterNode->setGeometry(particleGeometry);
     emitterNode->setIgnoreEventHandling(true);
     _particleEmitterNodeWeak = emitterNode;
+
+    setDefaultValues();
 }
 
-VROParticleEmitter::~VROParticleEmitter() {}
-
-void VROParticleEmitter::initEmitter() {
-    // Default modifier behaviors
+void VROParticleEmitter::setDefaultValues() {
     _colorModifier = std::make_shared<VROParticleModifier>(VROVector3f(1,1,1));
     _scaleModifier = std::make_shared<VROParticleModifier>(VROVector3f(1,1,1));
     _rotationModifier = std::make_shared<VROParticleModifier>(VROVector3f(0,0,0));
@@ -594,7 +603,7 @@ VROVector3f VROParticleEmitter::getPointInSpawnVolume() {
     } else {
         // Default to a point.
         if (_currentVolume.shapeParams.size() == 3) {
-            std::vector<double> p = _currentVolume.shapeParams;
+            std::vector<float> p = _currentVolume.shapeParams;
             return VROVector3f(p[0], p[1], p[2]);
         }
     }

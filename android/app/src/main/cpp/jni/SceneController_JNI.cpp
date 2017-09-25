@@ -20,6 +20,7 @@
 #include "Texture_JNI.h"
 #include "RenderContext_JNI.h"
 #include "Node_JNI.h"
+#include "ParticleEmitter_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -190,6 +191,28 @@ JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, j
     env->ReleaseStringUTFChars(ceilingMaterial, cCeilingMaterial);
     env->ReleaseStringUTFChars(floorMaterial, cFloorMaterial);
 
+}
+
+JNI_METHOD(void, nativeAddParticleEmitter)(JNIEnv *env,
+                                               jclass clazz,
+                                               jlong sceneRef,
+                                               jlong particleRef) {
+    std::shared_ptr<VROSceneController> sceneController = SceneController::native(sceneRef);
+    std::shared_ptr<VROParticleEmitter> particleEmitter = ParticleEmitter::native(particleRef);
+    VROPlatformDispatchAsyncRenderer([sceneController, particleEmitter] {
+        sceneController->getScene()->addParticleEmitter(particleEmitter);
+    });
+}
+
+JNI_METHOD(void, nativeRemoveParticleEmitter)(JNIEnv *env,
+                                               jclass clazz,
+                                               jlong sceneRef,
+                                               jlong particleRef) {
+    std::shared_ptr<VROSceneController> sceneController = SceneController::native(sceneRef);
+    std::shared_ptr<VROParticleEmitter> particleEmitter = ParticleEmitter::native(particleRef);
+    VROPlatformDispatchAsyncRenderer([sceneController, particleEmitter] {
+        sceneController->getScene()->removeParticleEmitter(particleEmitter);
+    });
 }
 
 JNI_METHOD(void, nativeSetPhysicsWorldGravity)(JNIEnv *env,

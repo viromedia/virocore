@@ -92,6 +92,14 @@ public class SceneControllerJni {
         findCollisionsWithShapeAsync(mNativeRef, from,to, shapeType, params, tag, callback);
     }
 
+    public void addParticleEmitter(ParticleEmitterJni emitter) {
+        nativeAddParticleEmitter(mNativeRef, emitter.mNativeRef);
+    }
+
+    public void removeParticleEmitter(ParticleEmitterJni emitter) {
+        nativeRemoveParticleEmitter(mNativeRef, emitter.mNativeRef);
+    }
+
     public void destroy() {
         nativeDestroySceneControllerDelegate(mNativeDelegateRef);
         nativeDestroySceneController(mNativeRef);
@@ -113,7 +121,8 @@ public class SceneControllerJni {
     private native void nativeSetSoundRoom(long sceneRef, long renderContextRef, float sizeX,
                                            float sizeY, float sizeZ, String wallMaterial,
                                            String ceilingMaterial, String floorMaterial);
-
+    private native void nativeAddParticleEmitter(long sceneRef, long particleRef);
+    private native void nativeRemoveParticleEmitter(long sceneRef, long particleRef);
     private WeakReference<SceneDelegate> mDelegate = null;
 
     public interface SceneDelegate {

@@ -38,6 +38,14 @@ public class SurfaceJni extends BaseGeometry {
         nativeSetMaterial(mNativeRef, material.mNativeRef);
     }
 
+    public void setWidth(float width) {
+        nativeSetWidth(mNativeRef, width);
+    }
+
+    public void setHeight(float height) {
+        nativeSetHeight(mNativeRef, height);
+    }
+
     public void clearMaterial() {
         nativeClearMaterial(mNativeRef);
     }
@@ -52,7 +60,8 @@ public class SurfaceJni extends BaseGeometry {
                                                        long oldSurfaceRef);
 
     private native void nativeDestroySurface(long surfaceRef);
-
+    private native void nativeSetWidth(long surfaceRef, float width);
+    private native void nativeSetHeight(long surfaceRef, float height);
     private native void nativeSetVideoTexture(long surfaceRef, long textureRef);
     private native void nativeSetImageTexture(long surfaceRef, long textureRef);
     private native void nativeSetMaterial(long surfaceRef, long materialRef);
