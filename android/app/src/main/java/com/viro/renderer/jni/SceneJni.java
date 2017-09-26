@@ -16,9 +16,27 @@ import java.lang.ref.WeakReference;
 public class SceneJni {
     public long mNativeRef;
     public long mNativeDelegateRef;
+
     public SceneJni(NodeJni node) {
         // Set the root node of this scene
         mNativeRef = nativeCreateScene(node.mNativeRef);
+        mNativeDelegateRef = nativeCreateSceneDelegate(mNativeRef);
+    }
+
+    /*
+     Empty default constructor for child classes to use. Child classes should
+     then call setSceneRef to set the mNativeRef.
+     */
+    protected SceneJni() {
+        // no-op
+    }
+
+    /*
+     This method is used by child classes to replace the mNativeRef with
+     a child's nativeRef.
+     */
+    protected void setSceneRef(long sceneRef) {
+        mNativeRef = sceneRef;
         mNativeDelegateRef = nativeCreateSceneDelegate(mNativeRef);
     }
 
@@ -85,7 +103,7 @@ public class SceneJni {
     private native long nativeCreateScene(long nodeRef);
     private native long nativeCreateSceneDelegate(long sceneRef);
     private native void nativeDestroyScene(long sceneReference);
-    private native void nativeDestroySceneDelegate(long sceneDelegateRef);
+    protected native void nativeDestroySceneDelegate(long sceneDelegateRef);
     private native void nativeSetBackgroundVideoTexture(long sceneRef, long videoRef);
     private native void nativeSetBackgroundImageTexture(long sceneRef, long imageRef);
     private native void nativeSetBackgroundCubeImageTexture(long sceneRef, long textureRef);
@@ -116,29 +134,33 @@ public class SceneJni {
 
     /* Called by Native */
     public void onSceneWillAppear() {
-        if (mDelegate != null && mDelegate.get() != null) {
-            mDelegate.get().onSceneWillAppear();
+        SceneDelegate delegate;
+        if (mDelegate != null && (delegate = mDelegate.get()) != null) {
+            delegate.onSceneWillAppear();
         }
     }
 
     /* Called by Native */
     public void onSceneDidAppear() {
-        if (mDelegate != null && mDelegate.get() != null) {
-            mDelegate.get().onSceneDidAppear();
+        SceneDelegate delegate;
+        if (mDelegate != null && (delegate = mDelegate.get()) != null) {
+            delegate.onSceneDidAppear();
         }
     }
 
     /* Called by Native */
     public void onSceneWillDisappear(){
-        if (mDelegate != null && mDelegate.get() != null) {
-            mDelegate.get().onSceneWillDisappear();
+        SceneDelegate delegate;
+        if (mDelegate != null && (delegate = mDelegate.get()) != null) {
+            delegate.onSceneWillDisappear();
         }
     }
 
     /* Called by Native */
     public void onSceneDidDisappear() {
-        if (mDelegate != null && mDelegate.get() != null) {
-            mDelegate.get().onSceneDidDisappear();
+        SceneDelegate delegate;
+        if (mDelegate != null && (delegate = mDelegate.get()) != null) {
+            delegate.onSceneDidDisappear();
         }
     }
 

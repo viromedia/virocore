@@ -32,8 +32,7 @@ JNI_METHOD(jlong, nativeCreateScene)(JNIEnv *env,
                                      jlong root_node_ref) {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
 
-    PersistentRef<VRONode> *persistentNode = reinterpret_cast<PersistentRef<VRONode> *>(root_node_ref);
-    std::weak_ptr<VRONode> node_w = persistentNode->get();
+    std::weak_ptr<VRONode> node_w = Node::native(root_node_ref);
     std::weak_ptr<VROScene> scene_w = sceneController->getScene();
 
     VROPlatformDispatchAsyncRenderer([node_w, scene_w] {
@@ -148,10 +147,10 @@ JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
             return;
         }
         // Get the color
-        float a = ((color >> 24) & 0xFF) / 255.0;
-        float r = ((color >> 16) & 0xFF) / 255.0;
-        float g = ((color >> 8) & 0xFF) / 255.0;
-        float b = (color & 0xFF) / 255.0;
+        float a = ((color >> 24) & 0xFF) / 255.0f;
+        float r = ((color >> 16) & 0xFF) / 255.0f;
+        float g = ((color >> 8) & 0xFF) / 255.0f;
+        float b = (color & 0xFF) / 255.0f;
 
         VROVector4f vecColor(r, g, b, a);
         sceneController->getScene()->getRootNode()->setBackgroundCube(vecColor);

@@ -87,6 +87,9 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/PhysicsDelegate_JNI.cpp
              src/main/cpp/jni/TransformDelegate_JNI.cpp
 
+             src/main/cpp/jni/ARPlane_JNI.cpp
+             src/main/cpp/jni/ARSceneController_JNI.cpp
+
              # Math
              ../../ViroRenderer/VROLineSegment.cpp
              ../../ViroRenderer/VROTriangle.cpp
@@ -213,6 +216,10 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROPhysicsWorld.cpp
              ../../ViroRenderer/VROPhysicsBody.cpp
              ../../ViroRenderer/VROPhysicsShape.cpp
+
+            # AR
+            ../../ViroRenderer/VROARScene.cpp
+            ../../ViroRenderer/VROARComponentManager.cpp
 
              # Image Tracking
              ../../ViroRenderer/VROImageTracker.cpp

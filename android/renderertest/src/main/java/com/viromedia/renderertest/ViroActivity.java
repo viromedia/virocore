@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.viro.renderer.jni.ARSceneControllerJni;
 import com.viro.renderer.jni.AmbientLightJni;
 import com.viro.renderer.jni.AsyncObjListener;
 import com.viro.renderer.jni.BoxJni;
@@ -124,6 +125,11 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     @Override
     public void onGlInitialized() {
         Log.e("ViroActivity", "onGlInitialized called");
+        initializeVrScene();
+        //initializeArScene();
+    }
+
+    private void initializeVrScene() {
         // Creation of SceneJni within scene navigator
         NodeJni rootNode = new NodeJni();
         SceneJni scene = new SceneJni(rootNode);
@@ -166,6 +172,28 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         mVrView.setScene(scene);
         ControllerJni nativeController = new ControllerJni(mVrView.getRenderContextRef());
         //nativeController.setReticleVisibility(false);
+    }
+
+    /*
+     Used to initialize the AR Scene, should also change the mVrView to the AR one...
+     */
+    private void initializeArScene() {
+        NodeJni rootNode = new NodeJni();
+        ARSceneControllerJni scene = new ARSceneControllerJni(rootNode);
+
+        List<NodeJni> nodes = new ArrayList<>();
+        nodes.add(testLine(this));
+
+        testBackgroundImage(scene);
+
+        for (NodeJni node: nodes) {
+            rootNode.addChildNode(node);
+        }
+        testSceneLighting(rootNode);
+
+        // Updating the scene.
+        mVrView.setScene(scene);
+        ControllerJni nativeController = new ControllerJni(mVrView.getRenderContextRef());
     }
 
     private void testEdgeDetect() {

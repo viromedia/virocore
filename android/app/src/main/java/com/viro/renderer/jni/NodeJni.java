@@ -17,13 +17,28 @@ import java.util.Set;
  * Cpp Object           : VRONode.cpp
  */
 public class NodeJni {
-    final protected long mNativeRef;
+    protected long mNativeRef;
 
     protected boolean mDestroyed = false;
     private EventDelegateJni mEventDelegate = null;
 
     public NodeJni() {
         mNativeRef = nativeCreateNode();
+    }
+
+    /*
+     This constructor to be called by child classes that want to
+     override mNativeRef
+     */
+    protected NodeJni(boolean dummyArg) {
+        // no-op
+    }
+
+    /*
+     Function called by child classes to set mNativeRef
+     */
+    protected void setNativeRef(long nativeRef) {
+        mNativeRef = nativeRef;
     }
 
     public void destroy() {

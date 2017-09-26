@@ -13,8 +13,7 @@
 #include <VRONode.h>
 #include "PersistentRef.h"
 
-
-namespace Node{
+namespace Node {
     inline jlong jptr(std::shared_ptr<VRONode> shared_node) {
         PersistentRef<VRONode> *native_node = new PersistentRef<VRONode>(shared_node);
         return reinterpret_cast<intptr_t>(native_node);
