@@ -5,7 +5,7 @@ package com.viro.renderer.jni;
 
 import java.lang.ref.WeakReference;
 
-public class ARSceneControllerJni extends SceneJni {
+public class ARSceneControllerJni extends SceneControllerJni {
     public long mNativeARDelegateRef;
 
     public ARSceneControllerJni(NodeJni node) {
@@ -16,9 +16,9 @@ public class ARSceneControllerJni extends SceneJni {
 
     @Override
     public void destroy() {
-        nativeDestroyARSceneController(mNativeRef);
-        nativeDestroySceneDelegate(mNativeDelegateRef); // comes from SceneJni
+        nativeDestroySceneControllerDelegate(mNativeDelegateRef); // comes from SceneControllerJni
         nativeDestroyARSceneDelegate(mNativeARDelegateRef);
+        nativeDestroyARSceneController(mNativeRef);
     }
 
     public void addARPlane(ARPlaneJni arPlane) {

@@ -1,8 +1,8 @@
 //
-//  Scene_JNI.h
+//  SceneController_JNI.h
 //  ViroRenderer
 //
-//  Copyright © 2016 Viro Media. All rights reserved.
+//  Copyright © 2017 Viro Media. All rights reserved.
 //
 #include <jni.h>
 #include <memory>
@@ -10,7 +10,7 @@
 
 #include "PersistentRef.h"
 
-namespace Scene{
+namespace SceneController {
     inline jlong jptr(std::shared_ptr<VROSceneController> ptr) {
         PersistentRef<VROSceneController> *persistentRef = new PersistentRef<VROSceneController>(ptr);
         return reinterpret_cast<intptr_t>(persistentRef);
@@ -22,24 +22,24 @@ namespace Scene{
     }
 }
 
-class SceneDelegate : public VROSceneController::VROSceneControllerDelegate{
+class SceneControllerDelegate : public VROSceneController::VROSceneControllerDelegate {
 public:
-    SceneDelegate(jobject sceneJavaObject, JNIEnv *env) {
+    SceneControllerDelegate(jobject sceneJavaObject, JNIEnv *env) {
         _javaObject = reinterpret_cast<jclass>(env->NewGlobalRef(sceneJavaObject));
         _env = env;
     }
 
-    ~SceneDelegate() {
+    ~SceneControllerDelegate() {
         _env->DeleteGlobalRef(_javaObject);
     }
 
-    static jlong jptr(std::shared_ptr<SceneDelegate> shared_node) {
-        PersistentRef<SceneDelegate> *native_delegate = new PersistentRef<SceneDelegate>(shared_node);
+    static jlong jptr(std::shared_ptr<SceneControllerDelegate> shared_node) {
+        PersistentRef<SceneControllerDelegate> *native_delegate = new PersistentRef<SceneControllerDelegate>(shared_node);
         return reinterpret_cast<intptr_t>(native_delegate);
     }
 
-    static std::shared_ptr<SceneDelegate> native(jlong ptr) {
-        PersistentRef<SceneDelegate> *persistentDelegate = reinterpret_cast<PersistentRef<SceneDelegate> *>(ptr);
+    static std::shared_ptr<SceneControllerDelegate> native(jlong ptr) {
+        PersistentRef<SceneControllerDelegate> *persistentDelegate = reinterpret_cast<PersistentRef<SceneControllerDelegate> *>(ptr);
         return persistentDelegate->get();
     }
 

@@ -64,10 +64,12 @@ public class RendererJni {
     public void onTouchEvent(int onTouchAction, float touchPosX, float touchPosY) {
         nativeOnTouchEvent(mNativeRef, onTouchAction, touchPosX, touchPosY);
     }
-    public void setScene(long nativeSceneRef) {
-        nativeSetScene(mNativeRef, nativeSceneRef);
+    public void setSceneController(long nativeSceneControllerRef) {
+        nativeSetSceneController(mNativeRef, nativeSceneControllerRef);
     }
-    public void setScene(long nativeSceneRef, float duration) {nativeSetSceneWithAnimation(mNativeRef, nativeSceneRef, duration);};
+    public void setSceneController(long nativeSceneControllerRef, float duration) {
+        nativeSetSceneControllerWithAnimation(mNativeRef, nativeSceneControllerRef, duration);
+    };
     public void setPointOfView(NodeJni node) {
         if (node != null) {
             nativeSetPointOfView(mNativeRef, node.mNativeRef);
@@ -106,8 +108,8 @@ public class RendererJni {
     private native void nativeOnSurfaceCreated(Surface surface, long nativeRenderer);
     private native void nativeOnSurfaceChanged(Surface surface, int width, int height, long nativeRenderer);
     private native void nativeOnSurfaceDestroyed(long nativeRenderer);
-    private native void nativeSetScene(long nativeRenderer, long nativeScene);
-    private native void nativeSetSceneWithAnimation(long nativeRenderer, long nativeScene, float duration);
+    private native void nativeSetSceneController(long nativeRenderer, long nativeScene);
+    private native void nativeSetSceneControllerWithAnimation(long nativeRenderer, long nativeScene, float duration);
     private native void nativeSetPointOfView(long nativeRenderer, long nodeRef);
     private native String nativeGetHeadset(long nativeRenderer);
     private native String nativeGetController(long nativeRenderer);

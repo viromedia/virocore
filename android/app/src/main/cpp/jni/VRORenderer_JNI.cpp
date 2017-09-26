@@ -21,7 +21,7 @@
 #include "VROSceneController.h"
 #include "VRORenderer_JNI.h"
 #include "VROReticle.h"
-#include "Scene_JNI.h"
+#include "SceneController_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -166,16 +166,16 @@ JNI_METHOD(void, nativeOnStop)(JNIEnv *env,
         Renderer::native(native_renderer)->onStop();
 }
 
-JNI_METHOD(void, nativeSetScene)(JNIEnv *env,
-                                 jobject obj,
-                                 jlong native_renderer,
-                                 jlong native_scene_controller_ref) {
+JNI_METHOD(void, nativeSetSceneController)(JNIEnv *env,
+                                           jobject obj,
+                                           jlong native_renderer,
+                                           jlong native_scene_controller_ref) {
     if (kRunRendererTest) {
         return;
     }
 
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
-    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(native_scene_controller_ref);
+    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(native_scene_controller_ref);
 
     VROPlatformDispatchAsyncRenderer([renderer_w, sceneController_w] {
         std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
@@ -190,17 +190,17 @@ JNI_METHOD(void, nativeSetScene)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetSceneWithAnimation)(JNIEnv *env,
-                                 jobject obj,
-                                 jlong native_renderer,
-                                 jlong native_scene_controller_ref,
-                                 jfloat duration) {
+JNI_METHOD(void, nativeSetSceneControllerWithAnimation)(JNIEnv *env,
+                                                        jobject obj,
+                                                        jlong native_renderer,
+                                                        jlong native_scene_controller_ref,
+                                                        jfloat duration) {
     if (kRunRendererTest) {
         return;
     }
 
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
-    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(native_scene_controller_ref);
+    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(native_scene_controller_ref);
 
     VROPlatformDispatchAsyncRenderer([renderer_w, sceneController_w, duration] {
         std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();

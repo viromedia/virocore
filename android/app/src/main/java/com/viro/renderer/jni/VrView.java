@@ -11,7 +11,7 @@ public interface VrView extends Application.ActivityLifecycleCallbacks {
 
     public RenderContextJni getRenderContextRef();
 
-    public void setScene(SceneJni scene);
+    public void setSceneController(SceneControllerJni sceneController);
 
     public void setVrModeEnabled(boolean vrModeEnabled);
 

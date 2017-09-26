@@ -1,8 +1,8 @@
 //
-//  Scene_JNI.cpp
+//  SceneController_JNI.cpp
 //  ViroRenderer
 //
-//  Copyright © 2016 Viro Media. All rights reserved.
+//  Copyright © 2017 Viro Media. All rights reserved.
 //
 
 #include <jni.h>
@@ -16,18 +16,18 @@
 #include "Viro.h"
 #include "PersistentRef.h"
 #include "VideoTexture_JNI.h"
-#include "Scene_JNI.h"
+#include "SceneController_JNI.h"
 #include "Texture_JNI.h"
 #include "RenderContext_JNI.h"
 #include "Node_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_SceneJni_##method_name
+      Java_com_viro_renderer_jni_SceneControllerJni_##method_name
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateScene)(JNIEnv *env,
+JNI_METHOD(jlong, nativeCreateSceneController)(JNIEnv *env,
                                      jobject object,
                                      jlong root_node_ref) {
     std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
@@ -45,34 +45,34 @@ JNI_METHOD(jlong, nativeCreateScene)(JNIEnv *env,
         }
     });
 
-    return Scene::jptr(sceneController);
+    return SceneController::jptr(sceneController);
 }
 
-JNI_METHOD(jlong, nativeCreateSceneDelegate)(JNIEnv *env,
-                                            jobject object,
-                                            jlong native_object_ref) {
-    std::shared_ptr<SceneDelegate> delegate = std::make_shared<SceneDelegate>(object, env);
-    Scene::native(native_object_ref)->setDelegate(delegate);
-    return SceneDelegate::jptr(delegate);
+JNI_METHOD(jlong, nativeCreateSceneControllerDelegate)(JNIEnv *env,
+                                                       jobject object,
+                                                       jlong native_object_ref) {
+    std::shared_ptr<SceneControllerDelegate> delegate = std::make_shared<SceneControllerDelegate>(object, env);
+    SceneController::native(native_object_ref)->setDelegate(delegate);
+    return SceneControllerDelegate::jptr(delegate);
 }
 
-JNI_METHOD(void, nativeDestroyScene)(JNIEnv *env,
-                                        jclass clazz,
-                                        jlong native_object_ref) {
+JNI_METHOD(void, nativeDestroySceneController)(JNIEnv *env,
+                                               jclass clazz,
+                                               jlong native_object_ref) {
     delete reinterpret_cast<PersistentRef<VROSceneController> *>(native_object_ref);
 }
 
-JNI_METHOD(void, nativeDestroySceneDelegate)(JNIEnv *env,
+JNI_METHOD(void, nativeDestroySceneControllerDelegate)(JNIEnv *env,
                                      jclass clazz,
                                      jlong native_delegate_object_ref) {
-    delete reinterpret_cast<PersistentRef<SceneDelegate> *>(native_delegate_object_ref);
+    delete reinterpret_cast<PersistentRef<SceneControllerDelegate> *>(native_delegate_object_ref);
 }
 
 JNI_METHOD(void, nativeSetBackgroundVideoTexture)(JNIEnv *env,
                                      jclass clazz,
                                      jlong sceneRef,
                                      jlong textureRef) {
-    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
 
     VROPlatformDispatchAsyncRenderer([sceneController_w, videoTexture_w] {
@@ -90,7 +90,7 @@ JNI_METHOD(void, nativeSetBackgroundImageTexture)(JNIEnv *env,
                                                   jlong sceneRef,
                                                   jlong imageRef) {
     std::weak_ptr<VROTexture> image_w = Texture::native(imageRef);
-    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
 
     VROPlatformDispatchAsyncRenderer([sceneController_w, image_w] {
         std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
@@ -108,7 +108,7 @@ JNI_METHOD(void, nativeSetBackgroundRotation)(JNIEnv *env,
                                               jfloat rotationDegreeX,
                                               jfloat rotationDegreeY,
                                               jfloat rotationDegreeZ) {
-    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
 
     VROPlatformDispatchAsyncRenderer([sceneController_w, rotationDegreeX, rotationDegreeY, rotationDegreeZ] {
         std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
@@ -124,7 +124,7 @@ JNI_METHOD(void, nativeSetBackgroundCubeImageTexture)(JNIEnv *env,
                                           jclass clazz,
                                           jlong sceneRef,
                                           jlong textureRef) {
-    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
     std::weak_ptr<VROTexture> texture_w = Texture::native(textureRef);
 
     VROPlatformDispatchAsyncRenderer([sceneController_w, texture_w] {
@@ -140,7 +140,7 @@ JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
                                                    jclass clazz,
                                                    jlong sceneRef,
                                                    jlong color) {
-    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
     VROPlatformDispatchAsyncRenderer([sceneController_w, color] {
         std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
         if (!sceneController) {
@@ -196,7 +196,7 @@ JNI_METHOD(void, nativeSetPhysicsWorldGravity)(JNIEnv *env,
                                      jclass clazz,
                                      jlong sceneRef,
                                      jfloatArray gravityArray) {
-    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
     jfloat *gravityArrayf = env->GetFloatArrayElements(gravityArray, 0);
     VROVector3f gravity = VROVector3f(gravityArrayf[0], gravityArrayf[1], gravityArrayf[2]);
 
@@ -212,7 +212,7 @@ JNI_METHOD(void, nativeSetPhysicsWorldDebugDraw)(JNIEnv *env,
                                                jclass clazz,
                                                jlong sceneRef,
                                                jboolean debugDraw) {
-    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
     VROPlatformDispatchAsyncRenderer([sceneController_w, debugDraw] {
         std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
         if (sceneController) {
@@ -225,7 +225,7 @@ JNI_METHOD(void, nativeAttachToPhysicsWorld)(JNIEnv *env,
                                      jclass clazz,
                                      jlong sceneRef,
                                      jlong nodeRef) {
-    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
     std::weak_ptr<VRONode> node_w = Node::native(nodeRef);
     VROPlatformDispatchAsyncRenderer([sceneController_w, node_w] {
         std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
@@ -240,7 +240,7 @@ JNI_METHOD(void, nativeDetachFromPhysicsWorld)(JNIEnv *env,
                                      jclass clazz,
                                      jlong sceneRef,
                                      jlong nodeRef) {
-    std::shared_ptr<VROSceneController> sceneController = Scene::native(sceneRef);
+    std::shared_ptr<VROSceneController> sceneController = SceneController::native(sceneRef);
     std::shared_ptr<VRONode> node = Node::native(nodeRef);
     VROPlatformDispatchAsyncRenderer([sceneController, node] {
         if (node && node->getPhysicsBody() && sceneController) {
@@ -279,7 +279,7 @@ JNI_METHOD(void, findCollisionsWithRayAsync)(JNIEnv *env,
     }
 
     jweak weakCallback = env->NewWeakGlobalRef(callback);
-    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
 
     // Perform the collision ray test asynchronously.
     VROPlatformDispatchAsyncRenderer([sceneController_w, weakCallback, from, to, closest, strTag] {
@@ -354,7 +354,7 @@ JNI_METHOD(void, findCollisionsWithShapeAsync)(JNIEnv *env,
     }
 
     jweak weakCallback = env->NewWeakGlobalRef(callback);
-    std::weak_ptr<VROSceneController> sceneController_w = Scene::native(sceneRef);
+    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
 
     // Perform the collision shape test asynchronously.
     VROPlatformDispatchAsyncRenderer([sceneController_w, weakCallback, from, to, strShapeType, params, strTag] {
@@ -389,20 +389,20 @@ JNI_METHOD(void, findCollisionsWithShapeAsync)(JNIEnv *env,
 /*
  *   Scene delegates for triggering Java methods.
  */
-void SceneDelegate::onSceneWillAppear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
+void SceneControllerDelegate::onSceneWillAppear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
     callVoidFunctionWithName("onSceneWillAppear");
 }
-void SceneDelegate::onSceneDidAppear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
+void SceneControllerDelegate::onSceneDidAppear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
     callVoidFunctionWithName("onSceneDidAppear");
 }
-void SceneDelegate::onSceneWillDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
+void SceneControllerDelegate::onSceneWillDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
     callVoidFunctionWithName("onSceneWillDisappear");
 }
-void SceneDelegate::onSceneDidDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
+void SceneControllerDelegate::onSceneDidDisappear(VRORenderContext *context, std::shared_ptr<VRODriver> driver) {
     callVoidFunctionWithName("onSceneDidDisappear");
 }
 
-void SceneDelegate::callVoidFunctionWithName(std::string functionName) {
+void SceneControllerDelegate::callVoidFunctionWithName(std::string functionName) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, functionName] {

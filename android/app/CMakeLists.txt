@@ -50,7 +50,7 @@ add_library( # Sets the name of the library.
              # Android JNI
              src/main/cpp/jni/VRORenderer_JNI.cpp
              src/main/cpp/jni/Node_JNI.cpp
-             src/main/cpp/jni/Scene_JNI.cpp
+             src/main/cpp/jni/SceneController_JNI.cpp
              src/main/cpp/jni/Camera_JNI.cpp
              src/main/cpp/jni/Box_JNI.cpp
              src/main/cpp/jni/Controller_JNI.cpp

@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
-import android.opengl.EGLSurface;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
@@ -314,8 +313,8 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     }
 
     @Override
-    public void setScene(SceneJni scene) {
-        mNativeRenderer.setScene(scene.mNativeRef, 1.0f);
+    public void setSceneController(SceneControllerJni sceneController) {
+        mNativeRenderer.setSceneController(sceneController.mNativeRef, 1.0f);
     }
 
     /**

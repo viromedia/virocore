@@ -9,25 +9,25 @@ import java.lang.ref.WeakReference;
  * Java JNI wrapper for linking the following classes across the bridge:
  *
  * Android Java Object  : com.viromedia.bridge.viewgroups.Scene.java
- * Java JNI Wrapper     : com.viro.renderer.jni.SceneJni.java
+ * Java JNI Wrapper     : com.viro.renderer.jni.SceneControllerJni.java
  * Cpp JNI wrapper      : Scene_JNI.cpp
  * Cpp Object           : VROScene.cpp
  */
-public class SceneJni {
+public class SceneControllerJni {
     public long mNativeRef;
     public long mNativeDelegateRef;
 
-    public SceneJni(NodeJni node) {
+    public SceneControllerJni(NodeJni node) {
         // Set the root node of this scene
-        mNativeRef = nativeCreateScene(node.mNativeRef);
-        mNativeDelegateRef = nativeCreateSceneDelegate(mNativeRef);
+        mNativeRef = nativeCreateSceneController(node.mNativeRef);
+        mNativeDelegateRef = nativeCreateSceneControllerDelegate(mNativeRef);
     }
 
     /*
      Empty default constructor for child classes to use. Child classes should
      then call setSceneRef to set the mNativeRef.
      */
-    protected SceneJni() {
+    protected SceneControllerJni() {
         // no-op
     }
 
@@ -37,7 +37,7 @@ public class SceneJni {
      */
     protected void setSceneRef(long sceneRef) {
         mNativeRef = sceneRef;
-        mNativeDelegateRef = nativeCreateSceneDelegate(mNativeRef);
+        mNativeDelegateRef = nativeCreateSceneControllerDelegate(mNativeRef);
     }
 
     public void setBackgroundVideoTexture(VideoTextureJni videoTexture) {
@@ -93,17 +93,17 @@ public class SceneJni {
     }
 
     public void destroy() {
-        nativeDestroySceneDelegate(mNativeDelegateRef);
-        nativeDestroyScene(mNativeRef);
+        nativeDestroySceneControllerDelegate(mNativeDelegateRef);
+        nativeDestroySceneController(mNativeRef);
     }
 
     /**
      * Native Functions called into JNI
      */
-    private native long nativeCreateScene(long nodeRef);
-    private native long nativeCreateSceneDelegate(long sceneRef);
-    private native void nativeDestroyScene(long sceneReference);
-    protected native void nativeDestroySceneDelegate(long sceneDelegateRef);
+    private native long nativeCreateSceneController(long nodeRef);
+    private native long nativeCreateSceneControllerDelegate(long sceneRef);
+    private native void nativeDestroySceneController(long sceneReference);
+    protected native void nativeDestroySceneControllerDelegate(long sceneDelegateRef);
     private native void nativeSetBackgroundVideoTexture(long sceneRef, long videoRef);
     private native void nativeSetBackgroundImageTexture(long sceneRef, long imageRef);
     private native void nativeSetBackgroundCubeImageTexture(long sceneRef, long textureRef);

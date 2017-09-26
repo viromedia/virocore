@@ -4,7 +4,6 @@
 package com.viro.renderer.jni;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
@@ -123,8 +122,8 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     }
 
     @Override
-    public void setScene(SceneJni scene) {
-        mNativeRenderer.setScene(scene.mNativeRef, 1.0f);
+    public void setSceneController(SceneControllerJni sceneController) {
+        mNativeRenderer.setSceneController(sceneController.mNativeRef, 1.0f);
     }
 
     @Override

@@ -35,7 +35,7 @@ import com.viro.renderer.jni.OmniLightJni;
 import com.viro.renderer.jni.OpenCVJni;
 import com.viro.renderer.jni.PolylineJni;
 import com.viro.renderer.jni.RenderContextJni;
-import com.viro.renderer.jni.SceneJni;
+import com.viro.renderer.jni.SceneControllerJni;
 import com.viro.renderer.jni.SoundDataJni;
 import com.viro.renderer.jni.SoundDelegate;
 import com.viro.renderer.jni.SoundFieldJni;
@@ -130,25 +130,25 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     }
 
     private void initializeVrScene() {
-        // Creation of SceneJni within scene navigator
+        // Creation of SceneControllerJni within scene navigator
         NodeJni rootNode = new NodeJni();
-        SceneJni scene = new SceneJni(rootNode);
+        SceneControllerJni scene = new SceneControllerJni(rootNode);
         List<NodeJni> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
         //nodes = testSphereVideo(this);
-        //nodes = testBox(getApplicationContext());
+        nodes = testBox(getApplicationContext());
         //nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
         //nodes = testText(this);
 
-        //testBackgroundVideo(scene);
+        testBackgroundVideo(scene);
         //testBackgroundImage(scene);
         //testSkyBoxImage(scene);
 
         //nodes = testStereoSurfaceVideo(this);
         //nodes = testStereoImageSurface(this);
-        nodes.add(testLine(this));
+        //nodes.add(testLine(this));
         //testStereoBackgroundVideo(scene);
         //testStereoBackgroundImage(scene);
 
@@ -169,7 +169,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         testSceneLighting(rootNode);
 
         // Updating the scene.
-        mVrView.setScene(scene);
+        mVrView.setSceneController(scene);
         ControllerJni nativeController = new ControllerJni(mVrView.getRenderContextRef());
         //nativeController.setReticleVisibility(false);
     }
@@ -192,7 +192,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         testSceneLighting(rootNode);
 
         // Updating the scene.
-        mVrView.setScene(scene);
+        mVrView.setSceneController(scene);
         ControllerJni nativeController = new ControllerJni(mVrView.getRenderContextRef());
     }
 
@@ -342,7 +342,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         return Arrays.asList(node);
     }
 
-    private void testBackgroundVideo(final SceneJni scene) {
+    private void testBackgroundVideo(final SceneControllerJni scene) {
         final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef());
         videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
         videoTexture.setVolume(0.1f);
@@ -384,7 +384,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         });
     }
 
-    private void testBackgroundImage(SceneJni scene) {
+    private void testBackgroundImage(SceneControllerJni scene) {
         ImageJni imageJni = new ImageJni("boba.png", TextureFormat.RGBA8);
         TextureJni videoTexture = new TextureJni(imageJni, TextureFormat.RGBA8, true, false);
         scene.setBackgroundImageTexture(videoTexture);
@@ -392,7 +392,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         scene.setBackgroundRotation(rotation);
     }
 
-    private void testSkyBoxImage(SceneJni scene) {
+    private void testSkyBoxImage(SceneControllerJni scene) {
         TextureFormat format = TextureFormat.RGBA8;
 
         ImageJni pximageJni = new ImageJni("px.png", format);
@@ -574,7 +574,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         return node;
     }
 
-    private void testStereoBackgroundImage(SceneJni scene) {
+    private void testStereoBackgroundImage(SceneControllerJni scene) {
         ImageJni imageJni = new ImageJni("stereo3601.jpg", TextureFormat.RGBA4);
         TextureJni videoTexture = new TextureJni(imageJni,
                 TextureFormat.RGBA8, true, false, "TopBottom");
@@ -626,7 +626,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         return Arrays.asList(node);
     }
 
-    private void testStereoBackgroundVideo(final SceneJni scene) {
+    private void testStereoBackgroundVideo(final SceneControllerJni scene) {
         final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef(), "TopBottom");
         videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
             @Override
@@ -798,7 +798,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         }));
     }
 
-    private void setSoundRoom(SceneJni scene, RenderContextJni renderContextJni) {
+    private void setSoundRoom(SceneControllerJni scene, RenderContextJni renderContextJni) {
         float[] size = {2, 2, 2};
         scene.setSoundRoom(renderContextJni, size, "transparent", "wood_panel", "thin_glass");
     }
