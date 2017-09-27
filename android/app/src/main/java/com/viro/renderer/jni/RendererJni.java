@@ -40,6 +40,13 @@ public class RendererJni {
 
     public void recenterTracking() { nativeRecenterTracking(mNativeRef); }
 
+     /* ----------     ARCore only methods    ---------- */
+
+     public RendererJni(ClassLoader appClassLoader, Context context,
+                        ViroARView view, Activity activity, AssetManager assets, PlatformUtil platformUtil) {
+         mNativeRef = nativeCreateRendererARCore(appClassLoader, context, view, activity, assets, platformUtil);
+     }
+
     /* ----------     Common lifecycle methods    ---------- */
 
     public void destroy() { nativeDestroyRenderer(mNativeRef); }
@@ -95,6 +102,8 @@ public class RendererJni {
                                                 AssetManager assets, PlatformUtil platformUtil, long nativeGvrContext);
     private native long nativeCreateRendererOVR(ClassLoader appClassLoader, Context context,
                                                 ViroOvrView view, Activity activity, AssetManager assets, PlatformUtil platformUtil);
+    private native long nativeCreateRendererARCore(ClassLoader appClassLoader, Context context,
+                                                   ViroARView view, Activity activity, AssetManager assets, PlatformUtil platformUtil);
     private native void nativeDestroyRenderer(long nativeRenderer);
     private native void nativeInitializeGl(long nativeRenderer);
     private native void nativeSetVRModeEnabled(long nativeRenderer, boolean enabled);

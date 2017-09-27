@@ -31,6 +31,11 @@ android {
             applicationIdSuffix ".ovr"
             buildConfigField "String", "VR_PLATFORM", "\"OVR\""
         }
+        arcore {
+            resValue "string", "app_name", "RendererTest-arcore"
+            applicationIdSuffix ".arcore"
+            buildConfigField "String", "VR_PLATFORM", "\"ARCore\""
+        }
     }
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
 }
@@ -42,6 +47,7 @@ dependencies {
     })
     compile project(':app')
     compile project(':libs:gvr')
+    compile project(':arcore_client')
     compile 'com.android.support:appcompat-v7:25.0.0'
     testCompile 'junit:junit:4.12'
 }

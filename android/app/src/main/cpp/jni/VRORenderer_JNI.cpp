@@ -15,6 +15,7 @@
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "VROSceneRendererGVR.h"
 #include "VROSceneRendererOVR.h"
+#include "VROSceneRendererARCore.h"
 #include "VROPlatformUtil.h"
 #include "VROSample.h"
 #include "Node_JNI.h"
@@ -64,6 +65,22 @@ JNI_METHOD(jlong, nativeCreateRendererOVR)(JNIEnv *env, jclass clazz,
 
     std::shared_ptr<VROSceneRenderer> renderer
             = std::make_shared<VROSceneRendererOVR>(gvrAudio, view, activity, env);
+    return Renderer::jptr(renderer);
+}
+
+JNI_METHOD(jlong, nativeCreateRendererARCore)(JNIEnv *env, jclass clazz,
+                                              jobject class_loader,
+                                              jobject android_context,
+                                              jobject view,
+                                              jobject activity,
+                                              jobject asset_mgr,
+                                              jobject platform_util) {
+    std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
+    gvrAudio->Init(env, android_context, class_loader, GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
+    VROPlatformSetEnv(env, android_context, asset_mgr, platform_util);
+
+    std::shared_ptr<VROSceneRenderer> renderer
+            = std::make_shared<VROSceneRendererARCore>(gvrAudio);
     return Renderer::jptr(renderer);
 }
 

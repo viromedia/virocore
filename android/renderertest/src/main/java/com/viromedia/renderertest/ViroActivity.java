@@ -48,6 +48,7 @@ import com.viro.renderer.jni.TextJni;
 import com.viro.renderer.jni.TextureFormat;
 import com.viro.renderer.jni.TextureJni;
 import com.viro.renderer.jni.VideoTextureJni;
+import com.viro.renderer.jni.ViroARView;
 import com.viro.renderer.jni.ViroGvrLayout;
 import com.viro.renderer.jni.ViroOvrView;
 import com.viro.renderer.jni.VrView;
@@ -81,6 +82,8 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
             });
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
             mVrView = new ViroOvrView(this, this);
+        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
+            mVrView = new ViroARView(this, this);
         }
 
         mVrView.setVrModeEnabled(true);
