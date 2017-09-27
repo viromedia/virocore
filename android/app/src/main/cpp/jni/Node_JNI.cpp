@@ -711,6 +711,22 @@ JNI_METHOD(void, nativeSetPhysicsVelocity)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetPhysicsIsSimulated) (JNIEnv *env,
+                                             jobject object,
+                                             jlong nativeRef,
+                                             jboolean simulated) {
+    std::weak_ptr<VRONode> node_w = Node::native(nativeRef);
+    VROPlatformDispatchAsyncRenderer([node_w, simulated] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            std::shared_ptr<VROPhysicsBody> pBody = node->getPhysicsBody();
+            if (pBody) {
+                pBody->setIsSimulated(simulated);
+            }
+        }
+    });
+}
+
 JNI_METHOD(jlong, nativeSetTransformDelegate)(JNIEnv *env,
                                            jobject obj,
                                            jlong nativeRef,

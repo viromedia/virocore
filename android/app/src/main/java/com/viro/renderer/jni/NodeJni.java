@@ -285,6 +285,10 @@ public class NodeJni {
         nativeSetPhysicsVelocity(mNativeRef, velocity, isConstant);
     }
 
+    public void setPhysicsIsSimulated(boolean simulated) {
+        nativeSetPhysicsIsSimulated(mNativeRef, simulated);
+    }
+
     /**
      * Physics Delegate callback.
      */
@@ -344,4 +348,5 @@ public class NodeJni {
     private native void nativeClearPhysicsDelegate(long nodeReference, long delegateRef);
     private native void nativeSetTag(long nodeReference, String tag);
     private native void nativeSetPhysicsVelocity(long nodeReference, float[] velocity, boolean isConstant);
+    private native void nativeSetPhysicsIsSimulated(long nodeReference, boolean simulated);
 }
