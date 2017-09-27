@@ -1,17 +1,28 @@
-/**
+/*
  * Copyright © 2017 Viro Media. All rights reserved.
  */
 package com.viro.renderer.jni;
 
-public class ARPlaneJni extends NodeJni {
+public class ARPlaneJni extends ARNodeJni {
 
     public ARPlaneJni(float minWidth, float minHeight) {
-        super(false); // call the dummy parent constructor.
+        super();
         setNativeRef(nativeCreateARPlane(minWidth, minHeight));
     }
 
     public void destroy() {
+        super.destroy();
         nativeDestroyARPlane(mNativeRef);
+    }
+
+    @Override
+    protected long createNativeARNodeDelegate(long nativeRef) {
+        return nativeCreateARPlaneDelegate(nativeRef);
+    }
+
+    @Override
+    void destroyNativeARNodeDelegate(long delegateRef) {
+        nativeDestroyARPlaneDelegate(delegateRef);
     }
 
     public void setMinWidth(float minWidth) {
@@ -29,4 +40,8 @@ public class ARPlaneJni extends NodeJni {
     private native void nativeSetMinWidth(long nativeRef, float minWidth);
 
     private native void nativeSetMinHeight(long nativeRef, float minHeight);
+
+    private native long nativeCreateARPlaneDelegate(long nativeRef);
+
+    private native void nativeDestroyARPlaneDelegate(long delegateRef);
 }

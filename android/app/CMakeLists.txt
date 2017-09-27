@@ -88,6 +88,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/PhysicsDelegate_JNI.cpp
              src/main/cpp/jni/TransformDelegate_JNI.cpp
 
+             # Android AR JNI
              src/main/cpp/jni/ARPlane_JNI.cpp
              src/main/cpp/jni/ARSceneController_JNI.cpp
 
