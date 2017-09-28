@@ -154,7 +154,7 @@ private:
      The binding points for lighting parameters in the vertex and fragment shaders.
      */
     static int sLightingFragmentUBOBindingPoint;
-    static int sLightingVertexUBOBindingPoint;
+    static int sLightingVertexUBOBindingPoint;
     
     int _hash;
     
