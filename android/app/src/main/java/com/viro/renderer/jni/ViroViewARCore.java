@@ -11,22 +11,13 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.ar.core.Config;
-import com.google.ar.core.Frame;
-import com.google.ar.core.Frame.TrackingState;
-import com.google.ar.core.HitResult;
-import com.google.ar.core.Plane;
-import com.google.ar.core.PlaneHitResult;
 import com.google.ar.core.Session;
 
 import com.google.vr.ndk.base.AndroidCompat;
-import com.viro.renderer.BuildInfo;
 import com.viro.renderer.FrameListener;
 import com.viro.renderer.GLSurfaceViewQueue;
 import com.viro.renderer.keys.KeyValidationListener;
@@ -42,7 +33,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * Class for instantiating an AR Viro view. Integrates with AR Core.
  */
-public class ViroARView extends GLSurfaceView implements VrView {
+public class ViroViewARCore extends GLSurfaceView implements VrView {
 
     private static final String TAG = "Viro";
 
@@ -55,14 +46,14 @@ public class ViroARView extends GLSurfaceView implements VrView {
 
     private static class ViroARRenderer implements GLSurfaceView.Renderer {
 
-        private WeakReference<ViroARView> mView;
+        private WeakReference<ViroViewARCore> mView;
 
-        public ViroARRenderer(ViroARView view) {
-            mView = new WeakReference<ViroARView>(view);
+        public ViroARRenderer(ViroViewARCore view) {
+            mView = new WeakReference<ViroViewARCore>(view);
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            ViroARView view = mView.get();
+            ViroViewARCore view = mView.get();
             if (view == null) {
                 return;
             }
@@ -73,7 +64,7 @@ public class ViroARView extends GLSurfaceView implements VrView {
                 Runnable myRunnable = new Runnable() {
                     @Override
                     public void run() {
-                        ViroARView view = mView.get();
+                        ViroViewARCore view = mView.get();
                         if (view == null) {
                             return;
                         }
@@ -85,7 +76,7 @@ public class ViroARView extends GLSurfaceView implements VrView {
         }
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {
-            ViroARView view = mView.get();
+            ViroViewARCore view = mView.get();
             if (view == null) {
                 return;
             }
@@ -98,7 +89,7 @@ public class ViroARView extends GLSurfaceView implements VrView {
 
         @Override
         public void onDrawFrame(GL10 gl) {
-            ViroARView view = mView.get();
+            ViroViewARCore view = mView.get();
             if (view == null) {
                 return;
             }
@@ -131,7 +122,7 @@ public class ViroARView extends GLSurfaceView implements VrView {
     private Config mDefaultConfig;
     private Session mSession;
 
-    public ViroARView(Context context, GlListener glListener) {
+    public ViroViewARCore(Context context, GlListener glListener) {
         super(context);
 
         final Context activityContext = getContext();
@@ -222,100 +213,6 @@ public class ViroARView extends GLSurfaceView implements VrView {
         }
     }
     */
-
-    /*
-    @Override
-    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        GLES20.glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-
-        // Create the texture and pass it to ARCore session to be filled during update().
-        mBackgroundRenderer.createOnGlThread(this);
-        mSession.setCameraTextureName(mBackgroundRenderer.getTextureId());
-
-        // Prepare the other rendering objects.
-        try {
-            mVirtualObject.createOnGlThread(this, "andy.obj", "andy.png");
-            mVirtualObject.setMaterialProperties(0.0f, 3.5f, 1.0f, 6.0f);
-
-            mVirtualObjectShadow.createOnGlThread(this,
-                    "andy_shadow.obj", "andy_shadow.png");
-            mVirtualObjectShadow.setBlendMode(BlendMode.Shadow);
-            mVirtualObjectShadow.setMaterialProperties(1.0f, 0.0f, 0.0f, 1.0f);
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to read obj file");
-        }
-        try {
-            mPlaneRenderer.createOnGlThread(this, "trigrid.png");
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to read plane texture");
-        }
-        mPointCloud.createOnGlThread(this);
-    }
-    */
-
-    /*
-    @Override
-    public void onDrawFrame(GL10 gl) {
-        // Clear screen to notify driver it should not load any pixels from previous frame.
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-
-        try {
-            // Obtain the current frame from ARSession. When the configuration is set to
-            // UpdateMode.BLOCKING (it is by default), this will throttle the rendering to the
-            // camera framerate.
-            Frame frame = mSession.update();
-
-            // Handle taps. Handling only one tap per frame, as taps are usually low frequency
-            // compared to frame rate.
-            MotionEvent tap = mQueuedSingleTaps.poll();
-            if (tap != null && frame.getTrackingState() == TrackingState.TRACKING) {
-                for (HitResult hit : frame.hitTest(tap)) {
-                    // Check if any plane was hit, and if it was hit inside the plane polygon.
-                    if (hit instanceof PlaneHitResult && ((PlaneHitResult) hit).isHitInPolygon()) {
-                        // Cap the number of objects created. This avoids overloading both the
-                        // rendering system and ARCore.
-                        if (mTouches.size() >= 16) {
-                            mSession.removeAnchors(Arrays.asList(mTouches.get(0).getAnchor()));
-                            mTouches.remove(0);
-                        }
-                        // Adding an Anchor tells ARCore that it should track this position in
-                        // space. This anchor will be used in PlaneAttachment to place the 3d model
-                        // in the correct position relative both to the world and to the plane.
-                        mTouches.add(new PlaneAttachment(
-                                ((PlaneHitResult) hit).getPlane(),
-                                mSession.addAnchor(hit.getHitPose())));
-
-                        // Hits are sorted by depth. Consider only closest hit on a plane.
-                        break;
-                    }
-                }
-            }
-
-            // Draw background.
-            mBackgroundRenderer.draw(frame);
-
-            // If not tracking, don't draw 3d objects.
-            if (frame.getTrackingState() == TrackingState.NOT_TRACKING) {
-                return;
-            }
-
-            // Get projection matrix.
-            float[] projmtx = new float[16];
-            mSession.getProjectionMatrix(projmtx, 0, 0.1f, 100.0f);
-
-            // Get camera matrix and draw.
-            float[] viewmtx = new float[16];
-            frame.getViewMatrix(viewmtx, 0);
-
-
-        } catch (Throwable t) {
-            // Avoid crashing the application due to unhandled exceptions.
-            Log.e(TAG, "Exception on the OpenGL thread", t);
-        }
-    }
-*/
-
-    ///// START VIRO METHODS
 
     @Override
     public void setDebug(boolean debug) {

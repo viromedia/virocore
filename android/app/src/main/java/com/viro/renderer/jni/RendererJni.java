@@ -45,7 +45,7 @@ public class RendererJni {
      /* ----------     ARCore only methods    ---------- */
 
      public RendererJni(ClassLoader appClassLoader, Context context,
-                        ViroARView view, Session session, AssetManager assets, PlatformUtil platformUtil) {
+                        ViroViewARCore view, Session session, AssetManager assets, PlatformUtil platformUtil) {
          mNativeRef = nativeCreateRendererARCore(appClassLoader, context, view, session, assets, platformUtil);
      }
 
@@ -105,7 +105,7 @@ public class RendererJni {
     private native long nativeCreateRendererOVR(ClassLoader appClassLoader, Context context,
                                                 ViroOvrView view, Activity activity, AssetManager assets, PlatformUtil platformUtil);
     private native long nativeCreateRendererARCore(ClassLoader appClassLoader, Context context,
-                                                   ViroARView view, Session session, AssetManager assets, PlatformUtil platformUtil);
+                                                   ViroViewARCore view, Session session, AssetManager assets, PlatformUtil platformUtil);
     private native void nativeDestroyRenderer(long nativeRenderer);
     private native void nativeInitializeGl(long nativeRenderer);
     private native void nativeSetVRModeEnabled(long nativeRenderer, boolean enabled);
