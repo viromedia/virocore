@@ -5,6 +5,7 @@
 //  Created by Raj Advani on 11/9/16.
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
+#include <VROARShadow.h>
 #include "Viro.h"
 #include "VROSample.h"
 #include "VRORenderer.h"
@@ -12,6 +13,7 @@
 #include "VROImageAndroid.h"
 #include "VROVideoTextureAVP.h"
 #include "VROText.h"
+#include "VROARSceneController.h"
 #include "VROPlatformUtil.h"
 #include "VROOBJLoader.h"
 #include "VROFBXLoader.h"
@@ -30,7 +32,7 @@ void VROSample::setupRendererWithDriver(std::shared_ptr<VRODriver> driver) {
 }
 
 std::shared_ptr<VROSceneController> VROSample::loadShadowScene(std::shared_ptr<VRODriver> driver) {
-    std::shared_ptr<VROSceneController> sceneController = std::make_shared<VROSceneController>();
+    std::shared_ptr<VROARSceneController> sceneController = std::make_shared<VROARSceneController>();
     std::shared_ptr<VROScene> scene = sceneController->getScene();
 
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
@@ -66,7 +68,7 @@ std::shared_ptr<VROSceneController> VROSample::loadShadowScene(std::shared_ptr<V
 
     rootNode->addLight(ambient);
     rootNode->addLight(spotRed);
-    rootNode->addLight(spotBlue);
+    //rootNode->addLight(spotBlue);
 
     VROTextureInternalFormat format = VROTextureInternalFormat::RGBA8;
 
@@ -95,20 +97,20 @@ std::shared_ptr<VROSceneController> VROSample::loadShadowScene(std::shared_ptr<V
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(40, 40);
     surface->setName("Surface");
     surface->getMaterials().front()->setLightingModel(VROLightingModel::Lambert);
+    VROARShadow::apply(surface->getMaterials().front());
 
     std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
     surfaceNode->setGeometry(surface);
     surfaceNode->setRotationEuler({-M_PI_2, 0, 0});
-    surfaceNode->setPosition({0, -3, -6});
-    surfaceNode->setOpacity(0.8);
+    surfaceNode->setPosition({0, -1, -6});
     rootNode->addChildNode(surfaceNode);
 
     VROTransaction::begin();
     VROTransaction::setAnimationDuration(10);
 
-    boxNode->setPositionX(2);
+    boxNode->setPositionX(0);
     boxNode->setPositionZ(-2.75);
-    boxNode->setPositionY(-2.75);
+    boxNode->setPositionY(-0.75);
     boxNode->setRotationEulerX(M_PI_2);
 
     VROTransaction::commit();

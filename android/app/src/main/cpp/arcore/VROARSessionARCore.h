@@ -15,12 +15,12 @@
 #include <map>
 #include <vector>
 
-class VRODriver;
+class VRODriverOpenGL;
 
 class VROARSessionARCore : public VROARSession, public std::enable_shared_from_this<VROARSessionARCore> {
 public:
     
-    VROARSessionARCore(jni::Object<arcore::Session> sessionJNI, std::shared_ptr<VRODriver> driver);
+    VROARSessionARCore(jni::Object<arcore::Session> sessionJNI, std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VROARSessionARCore();
     
     void run();

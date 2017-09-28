@@ -27,23 +27,25 @@
 #include "VRORenderer.h"
 #include "VROSurface.h"
 #include "VRONode.h"
+#include "VROARScene.h"
 #include "VROInputControllerCardboard.h"
 #include "VROAllocationTracker.h"
+
+static VROVector3f const kZeroVector = VROVector3f();
 
 #pragma mark - Setup
 
 VROSceneRendererARCore::VROSceneRendererARCore(std::shared_ptr<gvr::AudioApi> gvrAudio,
                                                jni::Object<arcore::Session> sessionJNI) :
     _rendererSuspended(true),
-    _suspendedNotificationTime(VROTimeCurrentSeconds()) {
+    _suspendedNotificationTime(VROTimeCurrentSeconds()),
+    _hasTrackingInitialized(false) {
 
     // TODO We need to install an ARCore controller
     std::shared_ptr<VROInputControllerBase> controller = std::make_shared<VROInputControllerCardboard>();
 
-    // Create renderer and attach the controller to it
     _renderer = std::make_shared<VRORenderer>(controller);
     _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
-   // _cameraBackground = std::make_shared<VROSurface>();
     _session = std::make_shared<VROARSessionARCore>(sessionJNI, _driver);
 
     _pointOfView = std::make_shared<VRONode>();
@@ -82,20 +84,18 @@ void VROSceneRendererARCore::renderFrame() {
 
     VROViewport viewport(0, 0, _surfaceSize.width, _surfaceSize.height);
 
-    /*
     if (_sceneController) {
         if (!_cameraBackground) {
-            [self initARSessionWithViewport:viewport scene:_sceneController->getScene()];
+            initARSession(viewport, _sceneController->getScene());
         }
     }
-     */
 
     if (_session->isReady()) {
         // TODO Only on viewport change
         _session->setViewport(viewport);
-        //if (!_sceneController->getScene()->getRootNode()->getBackground()) {
-        //    _sceneController->getScene()->getRootNode()->setBackground(_cameraBackground);
-        //}
+        if (!_sceneController->getScene()->getRootNode()->getBackground()) {
+            _sceneController->getScene()->getRootNode()->setBackground(_cameraBackground);
+        }
 
         /*
          Retrieve transforms from the AR session.
@@ -108,7 +108,6 @@ void VROSceneRendererARCore::renderFrame() {
         VROMatrix4f rotation = camera->getRotation();
         VROVector3f position = camera->getPosition();
 
-        /*
         if (_sceneController && !_hasTrackingInitialized) {
             if (position != kZeroVector) {
                 _hasTrackingInitialized = true;
@@ -118,7 +117,6 @@ void VROSceneRendererARCore::renderFrame() {
                 arScene->trackingHasInitialized();
             }
         }
-        */
 
         // TODO Only on orientation change
         //VROMatrix4f backgroundTransform = frame->getViewportToCameraImageTransform();
@@ -137,8 +135,8 @@ void VROSceneRendererARCore::renderFrame() {
         /*
          Notify scene of the updated ambient light estimates
          */
-        //std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(_arSession->getScene());
-        //scene->updateAmbientLight(frame->getAmbientLightIntensity(), frame->getAmbientLightColorTemperature());
+        std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(_session->getScene());
+        scene->updateAmbientLight(frame->getAmbientLightIntensity(), frame->getAmbientLightColorTemperature());
     }
     else {
         /*
@@ -158,12 +156,40 @@ void VROSceneRendererARCore::renderSuspended() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+    // Notify the user about bad keys 5 times a second (every 200ms/.2s)
     double newTime = VROTimeCurrentSeconds();
-    // notify the user about bad keys 5 times a second (every 200ms/.2s)
     if (newTime - _suspendedNotificationTime > .2) {
         perr("Renderer suspended! Do you have a valid key?");
         _suspendedNotificationTime = newTime;
     }
+}
+
+void VROSceneRendererARCore::initARSession(VROViewport viewport, std::shared_ptr<VROScene> scene) {
+    // Create the background surface
+    _cameraBackground = VROSurface::createSurface(viewport.getX() + viewport.getWidth() / 2.0,
+                                                  viewport.getY() + viewport.getHeight() / 2.0,
+                                                  viewport.getWidth(), viewport.getHeight(),
+                                                  0, 0, 1, 1);
+    _cameraBackground->setScreenSpace(true);
+    _cameraBackground->setName("Camera");
+
+    // Assign the background texture to the background surface
+    std::shared_ptr<VROMaterial> material = _cameraBackground->getMaterials()[0];
+    material->setLightingModel(VROLightingModel::Constant);
+    material->getDiffuse().setTexture(_session->getCameraBackgroundTexture());
+    material->setWritesToDepthBuffer(false);
+
+    _session->setScene(scene);
+    _session->setViewport(viewport);
+    _session->setAnchorDetection({VROAnchorDetection::PlanesHorizontal});
+    _session->run();
+
+    std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(scene);
+    passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
+
+    // TODO: set the AR Component Manager?
+    //arScene->setARComponentManager(_arComponentManager);
+    arScene->addNode(_pointOfView);
 }
 
 /*
@@ -177,7 +203,7 @@ void VROSceneRendererARCore::onSurfaceChanged(jobject surface, jint width, jint 
 }
 
 void VROSceneRendererARCore::onTouchEvent(int action, float x, float y) {
-    // TODO Change this for AR
+    // TODO Change the touch/controller handling for AR
     std::shared_ptr<VROInputControllerBase> baseController = _renderer->getInputController();
     std::shared_ptr<VROInputControllerCardboard> cardboardController
             = std::dynamic_pointer_cast<VROInputControllerCardboard>(baseController);
@@ -209,5 +235,19 @@ void VROSceneRendererARCore::setVRModeEnabled(bool enabled) {
 void VROSceneRendererARCore::setSuspended(bool suspendRenderer) {
     _rendererSuspended = suspendRenderer;
 }
+
+void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneController> sceneController) {
+    _sceneController = sceneController;
+    VROSceneRenderer::setSceneController(sceneController);
+}
+
+void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
+                        VROTimingFunctionType timingFunction) {
+
+    _sceneController = sceneController;
+    VROSceneRenderer::setSceneController(sceneController, seconds, timingFunction);
+}
+
+
 
 

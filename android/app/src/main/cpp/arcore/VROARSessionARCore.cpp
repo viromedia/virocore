@@ -13,16 +13,31 @@
 #include "VROTexture.h"
 #include "VRODriver.h"
 #include "VROScene.h"
-#include "VROTextureSubstrate.h"
+#include "VROTextureSubstrateOpenGL.h"
 #include "VROLog.h"
 #include <algorithm>
 #include "VROPlatformUtil.h"
 
-VROARSessionARCore::VROARSessionARCore(jni::Object<arcore::Session> sessionJNI, std::shared_ptr<VRODriver> driver) :
+VROARSessionARCore::VROARSessionARCore(jni::Object<arcore::Session> sessionJNI, std::shared_ptr<VRODriverOpenGL> driver) :
     VROARSession(VROTrackingType::DOF6) {
 
     _sessionJNI = sessionJNI.NewGlobalRef(*VROPlatformGetJNIEnv());
-    _background = std::make_shared<VROTexture>(VROTextureType::Texture2D, VROTextureInternalFormat::YCBCR);
+
+    // Generate the background texture
+    GLuint textureId;
+    glGenTextures(1, &textureId);
+
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, textureId);
+    glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    std::unique_ptr<VROTextureSubstrate> substrate = std::unique_ptr<VROTextureSubstrateOpenGL>(
+            new VROTextureSubstrateOpenGL(GL_TEXTURE_EXTERNAL_OES, textureId, driver, true));
+    _background = std::make_shared<VROTexture>(VROTextureType::TextureEGLImage, std::move(substrate));
+
+    arcore::session::setCameraTextureName( *_sessionJNI.get(), textureId);
 }
 
 VROARSessionARCore::~VROARSessionARCore() {
@@ -42,9 +57,7 @@ void VROARSessionARCore::pause() {
 }
 
 bool VROARSessionARCore::isReady() const {
-    return true;
-    // TODO
-    //return getScene() != nullptr && _currentFrame.get() != nullptr;
+    return getScene() != nullptr;
 }
 
 void VROARSessionARCore::setAnchorDetection(std::set<VROAnchorDetection> types) {
@@ -109,8 +122,6 @@ std::shared_ptr<VROTexture> VROARSessionARCore::getCameraBackgroundTexture() {
 }
 
 std::unique_ptr<VROARFrame> &VROARSessionARCore::updateFrame() {
-    // TODO Set the actual background texture
-    arcore::session::setCameraTextureName( *_sessionJNI.get(), 0);
     jni::Object<arcore::Frame> frameJNI = arcore::session::update(*_sessionJNI.get());
     _currentFrame = std::make_unique<VROARFrameARCore>(frameJNI, _viewport, shared_from_this());
     return _currentFrame;

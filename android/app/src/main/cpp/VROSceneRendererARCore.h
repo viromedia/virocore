@@ -50,6 +50,14 @@ public:
     void setSuspended(bool suspendRenderer);
 
     /*
+     Override so that this object can hold onto the VROSceneController as
+     well.
+    */
+    void setSceneController(std::shared_ptr<VROSceneController> sceneController);
+    void setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
+                            VROTimingFunctionType timingFunction);
+
+    /*
      Activity lifecycle.
      */
     void onStart() {}
@@ -69,13 +77,16 @@ private:
 
     void renderFrame();
     void renderSuspended();
+    void initARSession(VROViewport viewport, std::shared_ptr<VROScene> scene);
 
-    std::shared_ptr<VROSurface> _cameraBackground;
+        std::shared_ptr<VROSurface> _cameraBackground;
     gvr::Sizei _surfaceSize;
     bool _rendererSuspended;
     double _suspendedNotificationTime;
+    bool _hasTrackingInitialized;
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROARSessionARCore> _session;
+    std::shared_ptr<VROSceneController> _sceneController;
 
 };
 
