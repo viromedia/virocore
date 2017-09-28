@@ -36,7 +36,7 @@ extern "C" {
 // The renderer test runs VROSample.cpp, for fast prototyping when working
 // on renderer features (no bridge integration). Do not check-in with this
 // flag true!
-static const bool kRunRendererTest = true;
+static const bool kRunRendererTest = false;
 static std::shared_ptr<VROSample> sample;
 
 JNI_METHOD(jlong, nativeCreateRendererGVR)(JNIEnv *env, jclass clazz,
