@@ -146,6 +146,8 @@ public class ViroARView extends GLSurfaceView implements VrView {
             }
         };
 
+        // Initialize ARCore
+        mSession = new Session(activity);
 
         // Initialize the native renderer.
         initSurfaceView();
@@ -158,7 +160,7 @@ public class ViroARView extends GLSurfaceView implements VrView {
                 mAssetManager);
         mNativeRenderer = new RendererJni(
                 getClass().getClassLoader(),
-                activityContext.getApplicationContext(), this, activity,
+                activityContext.getApplicationContext(), this, mSession,
                 mAssetManager, mPlatformUtil);
         mNativeRenderContext = new RenderContextJni(mNativeRenderer.mNativeRef);
 
@@ -171,8 +173,6 @@ public class ViroARView extends GLSurfaceView implements VrView {
 
         mWeakActivity = new WeakReference<Activity>(activity);
         setVrModeEnabled(false);
-
-        mSession = new Session(activity);
 
         // Create default config, check is supported, create session from that config.
         mDefaultConfig = Config.createDefaultConfig();

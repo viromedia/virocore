@@ -35,7 +35,6 @@ add_library( # Sets the name of the library.
              src/main/cpp/VROLooper.cpp
              src/main/cpp/VROSceneRendererGVR.cpp
              src/main/cpp/VROSceneRendererOVR.cpp
-             src/main/cpp/VROSceneRendererARCore.cpp
              src/main/cpp/VROSample.cpp
              src/main/cpp/VROImageAndroid.cpp
              src/main/cpp/VROPCMAudioPlayer.cpp
@@ -47,6 +46,13 @@ add_library( # Sets the name of the library.
              src/main/cpp/VROInputControllerDaydream.cpp
              src/main/cpp/VROInputControllerCardboard.cpp
              src/main/cpp/VROInputControllerOVR.cpp
+
+             # ARCore
+             src/main/cpp/VROSceneRendererARCore.cpp
+             src/main/cpp/arcore/VROARSessionARCore.cpp
+             src/main/cpp/arcore/VROARFrameARCore.cpp
+             src/main/cpp/arcore/VROARCameraARCore.cpp
+             src/main/cpp/arcore/ARCore_JNI.cpp
 
              # Android JNI
              src/main/cpp/jni/VRORenderer_JNI.cpp

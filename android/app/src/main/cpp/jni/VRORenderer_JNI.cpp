@@ -11,6 +11,8 @@
 #include <PersistentRef.h>
 #include <VROCamera.h>
 
+#include "arcore/ARCore_JNI.h"
+
 #include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "VROSceneRendererGVR.h"
@@ -23,6 +25,7 @@
 #include "VRORenderer_JNI.h"
 #include "VROReticle.h"
 #include "SceneController_JNI.h"
+#include "object.hpp"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -33,7 +36,7 @@ extern "C" {
 // The renderer test runs VROSample.cpp, for fast prototyping when working
 // on renderer features (no bridge integration). Do not check-in with this
 // flag true!
-static const bool kRunRendererTest = false;
+static const bool kRunRendererTest = true;
 static std::shared_ptr<VROSample> sample;
 
 JNI_METHOD(jlong, nativeCreateRendererGVR)(JNIEnv *env, jclass clazz,
@@ -72,7 +75,7 @@ JNI_METHOD(jlong, nativeCreateRendererARCore)(JNIEnv *env, jclass clazz,
                                               jobject class_loader,
                                               jobject android_context,
                                               jobject view,
-                                              jobject activity,
+                                              jni::Object<arcore::Session> session,
                                               jobject asset_mgr,
                                               jobject platform_util) {
     std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
@@ -80,7 +83,7 @@ JNI_METHOD(jlong, nativeCreateRendererARCore)(JNIEnv *env, jclass clazz,
     VROPlatformSetEnv(env, android_context, asset_mgr, platform_util);
 
     std::shared_ptr<VROSceneRenderer> renderer
-            = std::make_shared<VROSceneRendererARCore>(gvrAudio);
+            = std::make_shared<VROSceneRendererARCore>(gvrAudio, session);
     return Renderer::jptr(renderer);
 }
 

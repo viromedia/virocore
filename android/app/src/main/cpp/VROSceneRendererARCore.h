@@ -16,12 +16,15 @@
 #include <string>
 #include <thread>  // NOLINT
 #include <vector>
+#include <arcore/VROARSessionARCore.h>
 #include "VROSceneRenderer.h"
 #include "VRODriverOpenGLAndroid.h"
 
-#include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_audio.h"
 #include "vr/gvr/capi/include/gvr_types.h"
+
+class VROSurface;
+class VROARSessionARCore;
 
 class VROSceneRendererARCore : public VROSceneRenderer, public std::enable_shared_from_this<VROSceneRendererARCore> {
 
@@ -32,7 +35,8 @@ public:
 
      @param gvr_audio_api The (owned) gvr::AudioApi context.
      */
-    VROSceneRendererARCore(std::shared_ptr<gvr::AudioApi> gvrAudio);
+    VROSceneRendererARCore(std::shared_ptr<gvr::AudioApi> gvrAudio,
+                           jni::Object<arcore::Session> sessionJNI);
     virtual ~VROSceneRendererARCore();
 
     /*
@@ -63,32 +67,15 @@ public:
 
 private:
 
-    /*
-     Prepares the GvrApi framebuffer for rendering, resizing if needed.
-     */
-    void prepareFrame(VROViewport leftViewport,
-                      VROFieldOfView fov,
-                      VROMatrix4f headRotation);
+    void renderFrame();
+    void renderSuspended();
 
-    void renderMono();
-
-    /*
-     Draws the scene for the given eye.
-     */
-    void renderEye(VROEyeType eyeType,
-                   VROMatrix4f eyeFromHeadMatrix,
-                   VROViewport viewport,
-                   VROFieldOfView fov);
-
+    std::shared_ptr<VROSurface> _cameraBackground;
     gvr::Sizei _surfaceSize;
     bool _rendererSuspended;
     double _suspendedNotificationTime;
-
-    /*
-     Utility methods.
-     */
-    gvr::Rectf modulateRect(const gvr::Rectf &rect, float width, float height);
-    gvr::Recti calculatePixelSpaceRect(const gvr::Sizei &texture_size, const gvr::Rectf &texture_rect);
+    std::shared_ptr<VRONode> _pointOfView;
+    std::shared_ptr<VROARSessionARCore> _session;
 
 };
 

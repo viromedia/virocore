@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.view.Surface;
 
+import com.google.ar.core.Session;
+
 /**
  * This class is a convenience wrapper around:
  *
@@ -43,8 +45,8 @@ public class RendererJni {
      /* ----------     ARCore only methods    ---------- */
 
      public RendererJni(ClassLoader appClassLoader, Context context,
-                        ViroARView view, Activity activity, AssetManager assets, PlatformUtil platformUtil) {
-         mNativeRef = nativeCreateRendererARCore(appClassLoader, context, view, activity, assets, platformUtil);
+                        ViroARView view, Session session, AssetManager assets, PlatformUtil platformUtil) {
+         mNativeRef = nativeCreateRendererARCore(appClassLoader, context, view, session, assets, platformUtil);
      }
 
     /* ----------     Common lifecycle methods    ---------- */
@@ -103,7 +105,7 @@ public class RendererJni {
     private native long nativeCreateRendererOVR(ClassLoader appClassLoader, Context context,
                                                 ViroOvrView view, Activity activity, AssetManager assets, PlatformUtil platformUtil);
     private native long nativeCreateRendererARCore(ClassLoader appClassLoader, Context context,
-                                                   ViroARView view, Activity activity, AssetManager assets, PlatformUtil platformUtil);
+                                                   ViroARView view, Session session, AssetManager assets, PlatformUtil platformUtil);
     private native void nativeDestroyRenderer(long nativeRenderer);
     private native void nativeInitializeGl(long nativeRenderer);
     private native void nativeSetVRModeEnabled(long nativeRenderer, boolean enabled);
