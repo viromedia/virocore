@@ -39,7 +39,8 @@ VROSceneRendererARCore::VROSceneRendererARCore(std::shared_ptr<gvr::AudioApi> gv
                                                jni::Object<arcore::Session> sessionJNI) :
     _rendererSuspended(true),
     _suspendedNotificationTime(VROTimeCurrentSeconds()),
-    _hasTrackingInitialized(false) {
+    _hasTrackingInitialized(false),
+    _hasTrackingResumed(false) {
 
     // TODO We need to install an ARCore controller
     std::shared_ptr<VROInputControllerBase> controller = std::make_shared<VROInputControllerCardboard>();
@@ -91,7 +92,6 @@ void VROSceneRendererARCore::renderFrame() {
     }
 
     if (_session->isReady()) {
-        // TODO Only on viewport change
         _session->setViewport(viewport);
         if (!_sceneController->getScene()->getRootNode()->getBackground()) {
             _sceneController->getScene()->getRootNode()->setBackground(_cameraBackground);
@@ -103,55 +103,76 @@ void VROSceneRendererARCore::renderFrame() {
         std::unique_ptr<VROARFrame> &frame = _session->updateFrame();
         const std::shared_ptr<VROARCamera> camera = frame->getCamera();
 
-        VROFieldOfView fov;
-        VROMatrix4f projection = camera->getProjection(viewport, kZNear, _renderer->getFarClippingPlane(), &fov);
-        VROMatrix4f rotation = camera->getRotation();
-        VROVector3f position = camera->getPosition();
-
-        if (_sceneController && !_hasTrackingInitialized) {
-            if (position != kZeroVector) {
-                _hasTrackingInitialized = true;
-
-                std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
-                passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
-                arScene->trackingHasInitialized();
-            }
-        }
-
-        if (((VROARFrameARCore *)frame.get())->isDisplayRotationChanged()) {
-            VROVector3f BL, BR, TL, TR;
-            ((VROARFrameARCore *)frame.get())->getBackgroundTexcoords(&BL, &BR, &TL, &TR);
-            _cameraBackground->setTextureCoordinates(BL, BR, TL, TR);
-        }
-
         /*
-         Render the 3D scene.
+         If we attempt to get the projection matrix from the session before tracking has
+         resumed (even if the session itself has been resumed) we'll get a SessionPausedException.
+         Protect against this by not accessing the session until tracking is operational.
          */
-        _pointOfView->getCamera()->setPosition(position);
-        _renderer->prepareFrame(_frame, viewport, fov, rotation, projection, _driver);
-
-        glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-        _renderer->renderEye(VROEyeType::Monocular, VROMatrix4f::identity(), projection, viewport, _driver);
-        _renderer->endFrame(_driver);
-
-        /*
-         Notify scene of the updated ambient light estimates
-         */
-        std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(_session->getScene());
-        scene->updateAmbientLight(frame->getAmbientLightIntensity(), frame->getAmbientLightColorTemperature());
+        if (_hasTrackingResumed || camera->getTrackingState() == VROARTrackingState::Normal) {
+            _hasTrackingResumed = true;
+            renderWithTracking(camera, frame, viewport);
+        }
+        else {
+            renderWaitingForTracking(viewport);
+        }
     }
     else {
-        /*
-         Render black while waiting for the AR session to initialize.
-         */
-        VROFieldOfView fov = _renderer->computeMonoFOV(viewport.getWidth(), viewport.getHeight());
-        VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
-
-        _renderer->prepareFrame(_frame, viewport, fov, VROMatrix4f::identity(), projection, _driver);
-        glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-        _renderer->renderEye(VROEyeType::Monocular, VROMatrix4f::identity(), projection, viewport, _driver);
-        _renderer->endFrame(_driver);
+        renderWaitingForTracking(viewport);
     }
+}
+
+void VROSceneRendererARCore::renderWithTracking(const std::shared_ptr<VROARCamera> &camera,
+                                                const std::unique_ptr<VROARFrame> &frame,
+                                                VROViewport viewport) {
+    VROFieldOfView fov;
+    VROMatrix4f projection = camera->getProjection(viewport, kZNear, _renderer->getFarClippingPlane(), &fov);
+    VROMatrix4f rotation = camera->getRotation();
+    VROVector3f position = camera->getPosition();
+
+    if (_sceneController && !_hasTrackingInitialized) {
+        if (position != kZeroVector) {
+            _hasTrackingInitialized = true;
+
+            std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
+            passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
+            arScene->trackingHasInitialized();
+        }
+    }
+
+    if (((VROARFrameARCore *)frame.get())->isDisplayRotationChanged()) {
+        VROVector3f BL, BR, TL, TR;
+        ((VROARFrameARCore *)frame.get())->getBackgroundTexcoords(&BL, &BR, &TL, &TR);
+        _cameraBackground->setTextureCoordinates(BL, BR, TL, TR);
+    }
+
+    /*
+     Render the 3D scene.
+     */
+    _pointOfView->getCamera()->setPosition(position);
+    _renderer->prepareFrame(_frame, viewport, fov, rotation, projection, _driver);
+
+    glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
+    _renderer->renderEye(VROEyeType::Monocular, VROMatrix4f::identity(), projection, viewport, _driver);
+    _renderer->endFrame(_driver);
+
+    /*
+     Notify scene of the updated ambient light estimates
+     */
+    std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(_session->getScene());
+    scene->updateAmbientLight(frame->getAmbientLightIntensity(), frame->getAmbientLightColorTemperature());
+}
+
+void VROSceneRendererARCore::renderWaitingForTracking(VROViewport viewport) {
+    /*
+     Render black while waiting for the AR session to initialize.
+     */
+    VROFieldOfView fov = _renderer->computeMonoFOV(viewport.getWidth(), viewport.getHeight());
+    VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
+
+    _renderer->prepareFrame(_frame, viewport, fov, VROMatrix4f::identity(), projection, _driver);
+    glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
+    _renderer->renderEye(VROEyeType::Monocular, VROMatrix4f::identity(), projection, viewport, _driver);
+    _renderer->endFrame(_driver);
 }
 
 void VROSceneRendererARCore::renderSuspended() {
@@ -214,7 +235,6 @@ void VROSceneRendererARCore::onTouchEvent(int action, float x, float y) {
 
 void VROSceneRendererARCore::onPause() {
     std::shared_ptr<VROSceneRendererARCore> shared = shared_from_this();
-
     VROPlatformDispatchAsyncRenderer([shared] {
         shared->_renderer->getInputController()->onPause();
         shared->_driver->onPause();
@@ -228,6 +248,11 @@ void VROSceneRendererARCore::onResume() {
         shared->_renderer->getInputController()->onResume();
         shared->_driver->onResume();
     });
+
+    // Place this here instead of onPause(), just in case a stray render occurs
+    // after pause (while shutting down the GL thread) that flips it back to
+    // true.
+    _hasTrackingResumed = false;
 }
 
 void VROSceneRendererARCore::setVRModeEnabled(bool enabled) {

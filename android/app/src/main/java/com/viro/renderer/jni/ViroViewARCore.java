@@ -7,10 +7,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
+import android.graphics.Point;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.Toast;
 
@@ -139,6 +142,13 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
 
         // Initialize ARCore
         mSession = new Session(activity);
+
+        // ARCore may crash unless we set some initial non-zero display geometry
+        // (this will be resized by the the surface on the GL thread)
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        mSession.setDisplayGeometry(size.x, size.y);
 
         // Initialize the native renderer.
         initSurfaceView();

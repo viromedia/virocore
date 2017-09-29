@@ -24,6 +24,8 @@
 #include "vr/gvr/capi/include/gvr_types.h"
 
 class VROSurface;
+class VROARCamera;
+class VROARFrame;
 class VROARSessionARCore;
 
 class VROSceneRendererARCore : public VROSceneRenderer, public std::enable_shared_from_this<VROSceneRendererARCore> {
@@ -76,18 +78,29 @@ public:
 private:
 
     void renderFrame();
+    void renderWithTracking(const std::shared_ptr<VROARCamera> &camera, const std::unique_ptr<VROARFrame> &frame,
+                            VROViewport viewport);
+    void renderWaitingForTracking(VROViewport viewport);
     void renderSuspended();
     void initARSession(VROViewport viewport, std::shared_ptr<VROScene> scene);
 
-        std::shared_ptr<VROSurface> _cameraBackground;
+    std::shared_ptr<VROSurface> _cameraBackground;
     gvr::Sizei _surfaceSize;
     bool _rendererSuspended;
     double _suspendedNotificationTime;
-    bool _hasTrackingInitialized;
+
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROARSessionARCore> _session;
     std::shared_ptr<VROSceneController> _sceneController;
 
+    /*
+     The hasTrackingInitialized bool gets flipped to true when tracking
+     is initialized for the first time, and stays that way. The resumed
+     flag is set to false whenever the activity is paused, then returns
+     to true after tracking is resumed.
+     */
+    bool _hasTrackingInitialized;
+    bool _hasTrackingResumed;
 };
 
 #endif  // VRO_SCENE_RENDERER_ARCORE_H  // NOLINT
