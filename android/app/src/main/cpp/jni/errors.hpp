@@ -61,19 +61,19 @@ namespace jni
     template < class R >
     R CheckJavaException(JNIEnv& env, R&& r)
        {
-        if (env.ExceptionCheck()) throw PendingJavaException();
+        //if (env.ExceptionCheck()) throw PendingJavaException();
         return std::move(r);
        }
 
     inline void CheckJavaException(JNIEnv& env)
        {
-        if (env.ExceptionCheck()) throw PendingJavaException();
+        //if (env.ExceptionCheck()) throw PendingJavaException();
        }
 
     inline void CheckJavaExceptionThenErrorCode(JNIEnv& env, jint err)
        {
-        CheckJavaException(env);
-        CheckErrorCode(err);
+        //CheckJavaException(env);
+        //CheckErrorCode(err);
        }
 
 
