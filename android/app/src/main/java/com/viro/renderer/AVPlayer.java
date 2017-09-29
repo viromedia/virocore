@@ -4,8 +4,6 @@
 package com.viro.renderer;
 
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
 import android.net.Uri;
 import android.util.Log;
 import android.view.Surface;
@@ -275,8 +273,6 @@ public class AVPlayer {
             Log.w(TAG, "AVPlayer could not seek while in IDLE state");
             return;
         }
-
-        Log.d("kirby", "seeking to " + ((long) (seconds * 1000)));
 
         mExoPlayer.seekTo((long) (seconds * 1000));
     }
