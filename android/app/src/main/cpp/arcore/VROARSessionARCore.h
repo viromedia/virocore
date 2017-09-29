@@ -22,7 +22,7 @@ public:
     
     VROARSessionARCore(jni::Object<arcore::Session> sessionJNI, std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VROARSessionARCore();
-    
+
     void run();
     void pause();
     bool isReady() const;
@@ -43,6 +43,7 @@ public:
     /*
      Internal methods.
      */
+    void initGL(std::shared_ptr<VRODriverOpenGL> driver);
     VROMatrix4f getProjectionMatrix(float near, float far);
 
 private:

@@ -60,8 +60,9 @@ namespace arcore {
         VROMatrix4f getViewMatrix(jni::Object<Frame> frame);
         TrackingState getTrackingState(jni::Object<Frame> frame);
         jni::Object<LightEstimate> getLightEstimate(jni::Object<Frame> frame);
-        bool isDisplayRotationChanged(jni::Object<Frame> frame);
+        jni::jboolean isDisplayRotationChanged(jni::Object<Frame> frame);
         jni::jlong getTimestampNs(jni::Object<Frame> frame);
+        std::vector<float> getBackgroundTexcoords(jni::Object<Frame> frame);
 
     }
 

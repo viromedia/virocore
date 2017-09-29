@@ -78,6 +78,22 @@ VROMatrix4f VROARFrameARCore::getViewportToCameraImageTransform() {
     pabort("Not supported on ARCore");
 }
 
+bool VROARFrameARCore::isDisplayRotationChanged() {
+    return arcore::frame::isDisplayRotationChanged(*_frameJNI.get());
+}
+
+void VROARFrameARCore::getBackgroundTexcoords(VROVector3f *BL, VROVector3f *BR, VROVector3f *TL, VROVector3f *TR) {
+    std::vector<float> texcoords = arcore::frame::getBackgroundTexcoords(*_frameJNI.get());
+    BL->x = texcoords[0];
+    BL->y = texcoords[1];
+    TL->x = texcoords[2];
+    TL->y = texcoords[3];
+    BR->x = texcoords[4];
+    BR->y = texcoords[5];
+    TR->x = texcoords[6];
+    TR->y = texcoords[7];
+}
+
 const std::vector<std::shared_ptr<VROARAnchor>> &VROARFrameARCore::getAnchors() const {
     return _anchors;
 }

@@ -20,9 +20,10 @@
 
 VROARSessionARCore::VROARSessionARCore(jni::Object<arcore::Session> sessionJNI, std::shared_ptr<VRODriverOpenGL> driver) :
     VROARSession(VROTrackingType::DOF6) {
-
     _sessionJNI = sessionJNI.NewGlobalRef(*VROPlatformGetJNIEnv());
+}
 
+void VROARSessionARCore::initGL(std::shared_ptr<VRODriverOpenGL> driver) {
     // Generate the background texture
     GLuint textureId;
     glGenTextures(1, &textureId);

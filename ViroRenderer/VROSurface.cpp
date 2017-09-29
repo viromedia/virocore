@@ -50,7 +50,19 @@ VROSurface::~VROSurface() {
 void VROSurface::updateSurface() {
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
-    buildGeometry(_x, _y, _width, _height, _u0, _v0, _u1, _v1, sources, elements);
+    
+    VROVector3f BL = { _u0, _v1, 0 };
+    BL = _texcoordTransform.multiply(BL);
+    
+    VROVector3f BR = { _u1, _v1, 0 };
+    BR = _texcoordTransform.multiply(BR);
+    
+    VROVector3f TR = { _u1, _v0, 0 };
+    TR = _texcoordTransform.multiply(TR);
+
+    VROVector3f TL = { _u0, _v0, 0 };
+    TL = _texcoordTransform.multiply(TL);
+    buildGeometry(_x, _y, _width, _height, BL, BR, TL, TR, sources, elements);
     
     setSources(sources);
     setElements(elements);
@@ -113,13 +125,23 @@ void VROSurface::setV1(float v1) {
     }, _v1, v1));
 }
 
+void VROSurface::setTextureCoordinates(VROVector3f BL, VROVector3f BR, VROVector3f TL, VROVector3f TR) {
+    std::vector<std::shared_ptr<VROGeometrySource>> sources;
+    std::vector<std::shared_ptr<VROGeometryElement>> elements;
+    buildGeometry(_x, _y, _width, _height, BL, BR, TL, TR, sources, elements);
+    
+    setSources(sources);
+    setElements(elements);
+    updateBoundingBox();
+}
+
 void VROSurface::setTexcoordTransform(VROMatrix4f transform) {
     _texcoordTransform = transform;
     updateSurface();
 }
 
 void VROSurface::buildGeometry(float x, float y, float width, float height,
-                               float u0, float v0, float u1, float v1,
+                               VROVector3f texBL, VROVector3f texBR, VROVector3f texTL, VROVector3f texTR,
                                std::vector<std::shared_ptr<VROGeometrySource>> &sources,
                                std::vector<std::shared_ptr<VROGeometryElement>> &elements) {
     const int numVertices = 4;
@@ -129,7 +151,7 @@ void VROSurface::buildGeometry(float x, float y, float width, float height,
     VROShapeVertexLayout var[varSizeBytes];
     
     VROSurface::buildSurface(var, x - width / 2.0, y - height / 2.0, x + width / 2.0, y + height / 2.0,
-                             u0, v0, u1, v1);
+                             texBL, texBR, texTL, texTR);
     int indices[numIndices] = { 0, 1, 3, 2, 3, 1 };
     
     VROShapeUtilComputeTangents(var, numVertices, indices, numIndices);
@@ -150,54 +172,41 @@ void VROSurface::buildGeometry(float x, float y, float width, float height,
 
 void VROSurface::buildSurface(VROShapeVertexLayout *vertexLayout,
                               float left, float bottom, float right, float top,
-                              float u0, float v0, float u1, float v1) {
+                              VROVector3f texBL, VROVector3f texBR, VROVector3f texTL, VROVector3f texTR) {
     float z = 0;
-    
-    VROVector3f BL = { u0, v1, 0 };
-    BL = _texcoordTransform.multiply(BL);
     
     vertexLayout[0].x = left;
     vertexLayout[0].y = bottom;
     vertexLayout[0].z = z;
-    vertexLayout[0].u = BL.x;
-    vertexLayout[0].v = BL.y;
+    vertexLayout[0].u = texBL.x;
+    vertexLayout[0].v = texBL.y;
     vertexLayout[0].nx = 0;
     vertexLayout[0].ny = 0;
     vertexLayout[0].nz = 1;
     
-    VROVector3f BR = { u1, v1, 0 };
-    BR = _texcoordTransform.multiply(BR);
-    
-    
     vertexLayout[1].x = right;
     vertexLayout[1].y = bottom;
     vertexLayout[1].z = z;
-    vertexLayout[1].u = BR.x;
-    vertexLayout[1].v = BR.y;
+    vertexLayout[1].u = texBR.x;
+    vertexLayout[1].v = texBR.y;
     vertexLayout[1].nx = 0;
     vertexLayout[1].ny = 0;
     vertexLayout[1].nz = 1;
     
-    VROVector3f TR = { u1, v0, 0 };
-    TR = _texcoordTransform.multiply(TR);
-    
     vertexLayout[2].x = right;
     vertexLayout[2].y = top;
     vertexLayout[2].z = z;
-    vertexLayout[2].u = TR.x;
-    vertexLayout[2].v = TR.y;
+    vertexLayout[2].u = texTR.x;
+    vertexLayout[2].v = texTR.y;
     vertexLayout[2].nx = 0;
     vertexLayout[2].ny = 0;
     vertexLayout[2].nz = 1;
     
-    VROVector3f TL = { u0, v0, 0 };
-    TL = _texcoordTransform.multiply(TL);
-    
     vertexLayout[3].x = left;
     vertexLayout[3].y = top;
     vertexLayout[3].z = z;
-    vertexLayout[3].u = TL.x;
-    vertexLayout[3].v = TL.y;
+    vertexLayout[3].u = texTL.x;
+    vertexLayout[3].v = texTL.y;
     vertexLayout[3].nx = 0;
     vertexLayout[3].ny = 0;
     vertexLayout[3].nz = 1;

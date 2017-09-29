@@ -31,6 +31,9 @@ public:
     float getAmbientLightIntensity() const;
     float getAmbientLightColorTemperature() const;
 
+    bool isDisplayRotationChanged();
+    void getBackgroundTexcoords(VROVector3f *BL, VROVector3f *BR, VROVector3f *TL, VROVector3f *TR);
+
 private:
 
     jni::UniqueObject<arcore::Frame> _frameJNI;

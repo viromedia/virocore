@@ -42,12 +42,12 @@ public class RendererJni {
 
     public void recenterTracking() { nativeRecenterTracking(mNativeRef); }
 
-     /* ----------     ARCore only methods    ---------- */
+    /* ----------     ARCore only methods    ---------- */
 
-     public RendererJni(ClassLoader appClassLoader, Context context,
-                        ViroViewARCore view, Session session, AssetManager assets, PlatformUtil platformUtil) {
-         mNativeRef = nativeCreateRendererARCore(appClassLoader, context, view, session, assets, platformUtil);
-     }
+    public RendererJni(ClassLoader appClassLoader, Context context,
+                       ViroViewARCore view, Session session, AssetManager assets, PlatformUtil platformUtil) {
+        mNativeRef = nativeCreateRendererARCore(appClassLoader, context, view, session, assets, platformUtil);
+    }
 
     /* ----------     Common lifecycle methods    ---------- */
 

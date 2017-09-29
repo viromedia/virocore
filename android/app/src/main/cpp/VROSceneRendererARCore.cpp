@@ -60,7 +60,7 @@ VROSceneRendererARCore::~VROSceneRendererARCore() {
 #pragma mark - Rendering
 
 void VROSceneRendererARCore::initGL() {
-
+    _session->initGL(_driver);
 }
 
 void VROSceneRendererARCore::onDrawFrame() {
@@ -118,9 +118,11 @@ void VROSceneRendererARCore::renderFrame() {
             }
         }
 
-        // TODO Only on orientation change
-        //VROMatrix4f backgroundTransform = frame->getViewportToCameraImageTransform();
-        //_cameraBackground->setTexcoordTransform(backgroundTransform);
+        if (((VROARFrameARCore *)frame.get())->isDisplayRotationChanged()) {
+            VROVector3f BL, BR, TL, TR;
+            ((VROARFrameARCore *)frame.get())->getBackgroundTexcoords(&BL, &BR, &TL, &TR);
+            _cameraBackground->setTextureCoordinates(BL, BR, TL, TR);
+        }
 
         /*
          Render the 3D scene.

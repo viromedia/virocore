@@ -103,6 +103,60 @@ namespace arcore {
             return frame.Call(env, method);
         }
 
+        jni::jboolean isDisplayRotationChanged(jni::Object<Frame> frame) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto FrameClass = *jni::Class<Frame>::Find(env).NewGlobalRef(env).release();
+            auto method = FrameClass.GetMethod<jni::jboolean()>(env, "isDisplayRotationChanged");
+            return frame.Call(env, method);
+        }
+
+        void setOrderNative(jni::JNIEnv &env, jobject byteBuffer) {
+            jclass byteOrderClass = env.FindClass("java/nio/ByteOrder");
+            jmethodID nativeByteOrderMethod = env.GetStaticMethodID(byteOrderClass, "nativeOrder", "()Ljava/nio/ByteOrder;");
+            jobject byteOrder = env.CallStaticObjectMethod(byteOrderClass, nativeByteOrderMethod);
+
+            jclass cls = env.FindClass("java/nio/ByteBuffer");
+            jmethodID jmethod = env.GetMethodID(cls, "order", "(Ljava/nio/ByteOrder;)Ljava/nio/ByteBuffer;");
+            env.CallObjectMethod(byteBuffer, jmethod, byteOrder);
+        }
+
+        jobject toFloatBuffer(jni::JNIEnv &env, jobject directByteBuffer) {
+            jclass cls = env.FindClass("java/nio/ByteBuffer");
+            jmethodID jmethod = env.GetMethodID(cls, "asFloatBuffer", "()Ljava/nio/FloatBuffer;");
+            return env.CallObjectMethod(directByteBuffer, jmethod);
+        }
+
+        std::vector<float> getBackgroundTexcoords(jni::Object<Frame> frame) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+
+            // BL, TL, BR, TR
+            float source[8] = { 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0 };
+            jobject sourceBuffer = env.NewDirectByteBuffer(source, sizeof(float) * 8);
+            setOrderNative(env, sourceBuffer);
+            jobject sourceBufferFloat = toFloatBuffer(env, sourceBuffer);
+
+            float dest[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+            jobject destBuffer = env.NewDirectByteBuffer(dest, sizeof(float) * 8);
+            setOrderNative(env, destBuffer);
+            jobject destBufferFloat = toFloatBuffer(env, destBuffer);
+
+            jclass cls = env.FindClass("com/google/ar/core/Frame");
+            jmethodID jmethod = env.GetMethodID(cls, "transformDisplayUvCoords", "(Ljava/nio/FloatBuffer;Ljava/nio/FloatBuffer;)V");
+
+            jobject obj = (jobject) frame.Get();
+            env.CallVoidMethod(obj, jmethod, sourceBufferFloat, destBufferFloat);
+
+            std::vector<float> result;
+            result.assign(dest, dest + 8);
+
+            env.DeleteLocalRef(sourceBuffer);
+            env.DeleteLocalRef(sourceBufferFloat);
+            env.DeleteLocalRef(destBuffer);
+            env.DeleteLocalRef(destBufferFloat);
+
+            return result;
+        }
+
     }
 
     namespace session {
