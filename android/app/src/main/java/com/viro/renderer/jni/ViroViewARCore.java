@@ -203,6 +203,12 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
         setRenderer(new ViroARRenderer(this));
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
+        /*
+         Don't start the SurfaceView yet; we need to wait until the ARCore session
+         is resumed (in onActivityResumed()).
+         */
+        onPause();
+
         // setOnTouchListener(new ViroGvrLayout.ViroOnTouchListener(this));
     }
 
@@ -308,7 +314,6 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
         if (mWeakActivity.get() != activity){
             return;
         }
-
         mNativeRenderer.onPause();
 
         // Note that the order matters - GLSurfaceView is paused first so that it does not try
