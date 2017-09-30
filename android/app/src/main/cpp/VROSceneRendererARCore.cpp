@@ -93,9 +93,6 @@ void VROSceneRendererARCore::renderFrame() {
 
     if (_session->isReady()) {
         _session->setViewport(viewport);
-        if (!_sceneController->getScene()->getRootNode()->getBackground()) {
-            _sceneController->getScene()->getRootNode()->setBackground(_cameraBackground);
-        }
 
         /*
          Retrieve transforms from the AR session.
@@ -109,8 +106,8 @@ void VROSceneRendererARCore::renderFrame() {
          Protect against this by not accessing the session until tracking is operational.
          */
         if (_hasTrackingResumed || camera->getTrackingState() == VROARTrackingState::Normal) {
+            renderWithTracking(camera, frame, viewport, !_hasTrackingResumed);
             _hasTrackingResumed = true;
-            renderWithTracking(camera, frame, viewport);
         }
         else {
             renderWaitingForTracking(viewport);
@@ -123,7 +120,8 @@ void VROSceneRendererARCore::renderFrame() {
 
 void VROSceneRendererARCore::renderWithTracking(const std::shared_ptr<VROARCamera> &camera,
                                                 const std::unique_ptr<VROARFrame> &frame,
-                                                VROViewport viewport) {
+                                                VROViewport viewport,
+                                                bool firstFrameSinceResume) {
     VROFieldOfView fov;
     VROMatrix4f projection = camera->getProjection(viewport, kZNear, _renderer->getFarClippingPlane(), &fov);
     VROMatrix4f rotation = camera->getRotation();
@@ -139,10 +137,16 @@ void VROSceneRendererARCore::renderWithTracking(const std::shared_ptr<VROARCamer
         }
     }
 
-    if (((VROARFrameARCore *)frame.get())->isDisplayRotationChanged()) {
+    if (firstFrameSinceResume || ((VROARFrameARCore *)frame.get())->isDisplayRotationChanged()) {
         VROVector3f BL, BR, TL, TR;
         ((VROARFrameARCore *)frame.get())->getBackgroundTexcoords(&BL, &BR, &TL, &TR);
+
         _cameraBackground->setTextureCoordinates(BL, BR, TL, TR);
+
+        // Wait until we have these proper texture coordinates before installing the background
+        if (!_sceneController->getScene()->getRootNode()->getBackground()) {
+            _sceneController->getScene()->getRootNode()->setBackground(_cameraBackground);
+        }
     }
 
     /*
@@ -223,6 +227,13 @@ void VROSceneRendererARCore::onSurfaceChanged(jobject surface, jint width, jint 
 
     _surfaceSize.width = width;
     _surfaceSize.height = height;
+
+    if (_cameraBackground) {
+        _cameraBackground->setX(width / 2.0);
+        _cameraBackground->setY(height / 2.0);
+        _cameraBackground->setWidth(width);
+        _cameraBackground->setHeight(height);
+    }
 }
 
 void VROSceneRendererARCore::onTouchEvent(int action, float x, float y) {
