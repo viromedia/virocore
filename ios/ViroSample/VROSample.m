@@ -1537,7 +1537,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
                                             }
                                             
                                             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                                                [self animateTake:node];
+                                                [self animateTake:node name:@"02_spin"];
                                             });
                                         });
 }
@@ -1572,7 +1572,7 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     rootNode->addLight(light);
     rootNode->addLight(ambient);
     rootNode->setBackgroundCube([self niagaraTexture]);
-    rootNode->addChildNode([self loadFBXModel:@"aliengirl" position:{ 0, -3, -6 } scale:{ 0.04, 0.04, 0.04 } lightMask:1]);
+    rootNode->addChildNode([self loadFBXModel:@"object_star_anim" position:{ 0, 0, -3 } scale:{ 0.4, 0.4, 0.4 } lightMask:1]);
     
     /*
      Create the box node.
@@ -1990,14 +1990,14 @@ typedef NS_ENUM(NSInteger, VROSampleScene) {
     return sceneController;
 }
 
-- (void)animateTake:(std::shared_ptr<VRONode>)node {
-    node->getAnimation("Take 001", true)->execute(node, [node, self] {
-        [self animateTake:node];
+- (void)animateTake:(std::shared_ptr<VRONode>)node name:(NSString *)name {
+    node->getAnimation([name UTF8String], true)->execute(node, [node, name, self] {
+        [self animateTake:node name:name];
     });
 }
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
-    self.sceneIndex = VROSampleScenePerfTest;
+    self.sceneIndex = VROSampleSceneFBX;
     self.driver = driver;
     
     self.sceneController = [self loadSceneWithIndex:self.sceneIndex];

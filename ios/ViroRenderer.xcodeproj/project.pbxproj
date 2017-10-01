@@ -420,6 +420,10 @@
 		8FD1E1B81C3F32B00005BE4E /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B71C3F32B00005BE4E /* CoreVideo.framework */; };
 		8FD1E1BA1C3F32D20005BE4E /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FD1E1B91C3F32D20005BE4E /* CoreMedia.framework */; };
 		8FD1E1C01C4093790005BE4E /* VROVideoTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD1E1BE1C4093790005BE4E /* VROVideoTexture.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8FD2A4FA1F8064AD00E831A6 /* emoji_smile_anim.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FD2A4F91F8064AD00E831A6 /* emoji_smile_anim.vrx */; };
+		8FD2A4FE1F809AD800E831A6 /* object_star_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD2A4FB1F809AD700E831A6 /* object_star_specular.png */; };
+		8FD2A4FF1F809AD800E831A6 /* object_star_anim.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FD2A4FC1F809AD700E831A6 /* object_star_anim.vrx */; };
+		8FD2A5001F809AD800E831A6 /* object_star_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD2A4FD1F809AD800E831A6 /* object_star_diffuse.png */; };
 		8FD4D0BF1EF0695F00077AD7 /* coffee_mug_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4D0BC1EF0695F00077AD7 /* coffee_mug_specular.png */; };
 		8FD4D0C01EF0695F00077AD7 /* coffee_mug.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4D0BD1EF0695F00077AD7 /* coffee_mug.obj */; };
 		8FD4D0C11EF0695F00077AD7 /* coffee_mug.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4D0BE1EF0695F00077AD7 /* coffee_mug.png */; };
@@ -1147,6 +1151,10 @@
 		8FD1E1B71C3F32B00005BE4E /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		8FD1E1B91C3F32D20005BE4E /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		8FD1E1BE1C4093790005BE4E /* VROVideoTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROVideoTexture.h; sourceTree = "<group>"; };
+		8FD2A4F91F8064AD00E831A6 /* emoji_smile_anim.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = emoji_smile_anim.vrx; path = ViroSample/emoji_smile_anim.vrx; sourceTree = "<group>"; };
+		8FD2A4FB1F809AD700E831A6 /* object_star_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_star_specular.png; path = ViroSample/object_star_specular.png; sourceTree = "<group>"; };
+		8FD2A4FC1F809AD700E831A6 /* object_star_anim.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = object_star_anim.vrx; path = ViroSample/object_star_anim.vrx; sourceTree = "<group>"; };
+		8FD2A4FD1F809AD800E831A6 /* object_star_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = object_star_diffuse.png; path = ViroSample/object_star_diffuse.png; sourceTree = "<group>"; };
 		8FD4D0BC1EF0695F00077AD7 /* coffee_mug_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = coffee_mug_specular.png; path = ViroSample/coffee_mug_specular.png; sourceTree = "<group>"; };
 		8FD4D0BD1EF0695F00077AD7 /* coffee_mug.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = coffee_mug.obj; path = ViroSample/coffee_mug.obj; sourceTree = "<group>"; };
 		8FD4D0BE1EF0695F00077AD7 /* coffee_mug.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = coffee_mug.png; path = ViroSample/coffee_mug.png; sourceTree = "<group>"; };
@@ -2082,6 +2090,9 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8FD2A4FC1F809AD700E831A6 /* object_star_anim.vrx */,
+				8FD2A4FD1F809AD800E831A6 /* object_star_diffuse.png */,
+				8FD2A4FB1F809AD700E831A6 /* object_star_specular.png */,
 				8FB9EA4D1F6B55DE0068FCA7 /* pug_body_diffuse.ktx */,
 				8FB9EA4E1F6B55DE0068FCA7 /* pug_body_specular.ktx */,
 				8F1B4A9D1F69F4A800156809 /* pug_animated.vrx */,
@@ -2090,6 +2101,7 @@
 				8F1B4A251F64B6E000156809 /* emoji_smile_diffuse.png */,
 				8F1B4A231F64B6DF00156809 /* emoji_smile_normal.png */,
 				8F1B4A241F64B6E000156809 /* emoji_smile_specular.png */,
+				8FD2A4F91F8064AD00E831A6 /* emoji_smile_anim.vrx */,
 				8F1B4A261F64B6E000156809 /* emoji_smile.vrx */,
 				8F1B4A081F64B61C00156809 /* portal_archway_diffuse.png */,
 				8F1B4A0E1F64B61D00156809 /* portal_archway_normal.png */,
@@ -2694,6 +2706,7 @@
 				8FF5CCBD1F290364007C7F52 /* aliengirl_specular.png in Resources */,
 				8FB9EA4F1F6B55DF0068FCA7 /* pug_body_diffuse.ktx in Resources */,
 				8FB9EA501F6B55DF0068FCA7 /* pug_body_specular.ktx in Resources */,
+				8FD2A4FF1F809AD800E831A6 /* object_star_anim.vrx in Resources */,
 				8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */,
 				8F1B4AA21F69F4A900156809 /* pug_body_diffuse.png in Resources */,
 				8FA2E14D1C445CAA0070DB26 /* pz.png in Resources */,
@@ -2740,6 +2753,7 @@
 				8FD1E1AC1C3CA07A0005BE4E /* soccerball.obj in Resources */,
 				8FD4D0C11EF0695F00077AD7 /* coffee_mug.png in Resources */,
 				8F1071D31BF40FAF003B3C3F /* momentslogo.png in Resources */,
+				8FD2A5001F809AD800E831A6 /* object_star_diffuse.png in Resources */,
 				8FCED05C1EBBCFCF00C19BCA /* Reflection.png in Resources */,
 				8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */,
 				8FCED0821EBBD35200C19BCA /* SvenArmor_Color.png in Resources */,
@@ -2757,6 +2771,7 @@
 				8F37D9EC1F4B18800029D23E /* wood.png in Resources */,
 				8FCED07D1EBBD35200C19BCA /* Sven_Face_Normal.png in Resources */,
 				8FCED0771EBBD35200C19BCA /* ramp_inc2.tga in Resources */,
+				8FD2A4FA1F8064AD00E831A6 /* emoji_smile_anim.vrx in Resources */,
 				8F1B4A271F64B6E000156809 /* emoji_smile_normal.png in Resources */,
 				A540C5C41F3E7190007986E6 /* particles_vsh.glsl in Resources */,
 				8FA2E1481C445CAA0070DB26 /* nx.png in Resources */,
@@ -2770,6 +2785,7 @@
 				8FCED0741EBBD35200C19BCA /* Jetpack_Glow.png in Resources */,
 				8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */,
 				8F9277FF1C66BD4500FF892A /* ny1.jpg in Resources */,
+				8FD2A4FE1F809AD800E831A6 /* object_star_specular.png in Resources */,
 				8F1B4A281F64B6E000156809 /* emoji_smile_specular.png in Resources */,
 				8FDD8FF31E3A9907006CF466 /* 360_westlake.jpg in Resources */,
 				8FF5CCBB1F290364007C7F52 /* aliengirl_diffuse.png in Resources */,
