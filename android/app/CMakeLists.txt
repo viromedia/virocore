@@ -232,6 +232,29 @@ add_library( # Sets the name of the library.
              # Image Tracking
              ../../ViroRenderer/VROImageTracker.cpp
              ../../ViroRenderer/VROImageTrackerOutput.cpp
+
+             # Renderer Test
+             ../../ViroRenderer/VRORendererTestHarness.cpp
+             ../../ViroRenderer/VROTestUtil.cpp
+             ../../ViroRenderer/VROPhysicsTest.cpp
+             ../../ViroRenderer/VROARDraggableNodeTest.cpp
+             ../../ViroRenderer/VROARPlaneTest.cpp
+             ../../ViroRenderer/VROShadowTest.cpp
+             ../../ViroRenderer/VROARShadowTest.cpp
+             ../../ViroRenderer/VROBloomTest.cpp
+             ../../ViroRenderer/VROParticleTest.cpp
+             ../../ViroRenderer/VROFBXTest.cpp
+             ../../ViroRenderer/VROHDRTest.cpp
+             ../../ViroRenderer/VRONormalMapTest.cpp
+             ../../ViroRenderer/VROOBJTest.cpp
+             ../../ViroRenderer/VROPerfTest.cpp
+             ../../ViroRenderer/VROPortalTest.cpp
+             ../../ViroRenderer/VROShadowTest.cpp
+             ../../ViroRenderer/VROStereoscopicTest.cpp
+             ../../ViroRenderer/VROTextTest.cpp
+             ../../ViroRenderer/VROTorusTest.cpp
+             ../../ViroRenderer/VROVideoSphereTest.cpp
+             ../../ViroRenderer/VROBoxTest.cpp
              )
 
 # Add pre-built libraries
