@@ -89,7 +89,7 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
             for (std::shared_ptr<VROEventDelegate> delegate : _delegates){
                 delegate->onClick(source, VROEventDelegate::ClickState::Clicked, pos);
             }
-            if (focusedNode != nullptr && _lastClickedNode != nullptr) {
+            if (focusedNode != nullptr && focusedNode->getEventDelegate() && _lastClickedNode != nullptr) {
                 focusedNode->getEventDelegate()->onClick(source,
                                                          VROEventDelegate::ClickState::Clicked,
                                                          pos);
@@ -217,7 +217,9 @@ void VROInputControllerBase::processDragging(int source) {
     
     // Update last known dragged position and notify delegates
     _lastDraggedNodePosition = draggedToLocation;
-    draggedNode->getEventDelegate()->onDrag(source, draggedToLocation);
+    if (draggedNode != nullptr && draggedNode->getEventDelegate()){
+        draggedNode->getEventDelegate()->onDrag(source, draggedToLocation);
+    }
     for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
         delegate->onDrag(source, draggedToLocation);
     }
@@ -238,7 +240,7 @@ void VROInputControllerBase::onPinch(int source, float scaleFactor, VROEventDele
         }
     }
 
-    if(_currentPinchedNode) {
+    if(_currentPinchedNode && _currentPinchedNode->getEventDelegate()) {
         _currentPinchedNode->getEventDelegate()->onPinch(source, scaleFactor, pinchState);
         if(pinchState == VROEventDelegate::PinchState::PinchEnd) {
             _currentPinchedNode = nullptr;
@@ -262,7 +264,7 @@ void VROInputControllerBase::onRotate(int source, float rotationFactor, VROEvent
         }
     }
     
-    if(_currentRotateNode) {
+    if(_currentRotateNode && _currentRotateNode->getEventDelegate()) {
         _currentRotateNode->getEventDelegate()->onRotate(source, rotationFactor, rotateState);
         if(rotateState == VROEventDelegate::RotateState::RotateEnd) {
             _currentRotateNode = nullptr;
@@ -350,14 +352,14 @@ void VROInputControllerBase::processGazeEvent(int source, std::shared_ptr<VRONod
         pos.clear();
     }
     
-    if (newNode) {
+    if (newNode && newNode->getEventDelegate()) {
         std::shared_ptr<VROEventDelegate> delegate = newNode->getEventDelegate();
         if (delegate) {
             delegate->onHover(source, true, pos);
         }
     }
 
-    if (_lastHoveredNode) {
+    if (_lastHoveredNode && _lastHoveredNode->getEventDelegate()) {
         std::shared_ptr<VROEventDelegate> delegate = _lastHoveredNode->getEventDelegate();
         if (delegate) {
             delegate->onHover(source, false, pos);
@@ -377,7 +379,7 @@ void VROInputControllerBase::processOnFuseEvent(int source, std::shared_ptr<VRON
     }
 
     // Do nothing if no onFuse node is found
-    if (!focusedNode){
+    if (!focusedNode || !_currentFusedNode->getEventDelegate()){
         return;
     }
 
@@ -406,7 +408,7 @@ void VROInputControllerBase::notifyOnFuseEvent(int source, float timeToFuseRatio
         delegate->onFuse(source, timeToFuseRatio);
     }
 
-    if (_currentFusedNode){
+    if (_currentFusedNode && _currentFusedNode->getEventDelegate()){
         _currentFusedNode->getEventDelegate()->onFuse(source, timeToFuseRatio);
     }
 }

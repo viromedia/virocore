@@ -197,6 +197,8 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext
 
 void VROReticle::renderNode(std::shared_ptr<VRONode> node, VROMatrix4f parentTransform,
                             const VRORenderContext &renderContext, std::shared_ptr<VRODriver> &driver){
+    node->updateVisibility(renderContext);
+
     VRORenderParameters renderParams;
     std::shared_ptr<VRORenderMetadata> metadata = std::make_shared<VRORenderMetadata>();
     node->computeTransforms(parentTransform, {});
