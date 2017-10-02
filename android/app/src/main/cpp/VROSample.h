@@ -12,14 +12,9 @@
 #include <memory>
 #include <VROFrameSynchronizer.h>
 #include "VRORenderDelegate.h"
-#include "VROFrameListener.h"
 
 class VROSceneController;
-class VROTexture;
-class VROVideoTextureAndroid;
-class VROVideoTextureAVP;
-class VROSoundEffect;
-class VROAudioPlayer;
+class VRORendererTestHarness;
 
 class VROSample : public VRORenderDelegate, public std::enable_shared_from_this<VROSample> {
 
@@ -28,22 +23,16 @@ public:
     VROSample();
     virtual ~VROSample();
 
-    std::shared_ptr<VROSceneController> loadBoxScene(std::shared_ptr<VRODriver> driver);
-    std::shared_ptr<VROSceneController> loadHDRScene(std::shared_ptr<VRODriver> driver);
-    std::shared_ptr<VROSceneController> loadShadowScene(std::shared_ptr<VRODriver> driver);
+    void loadTestHarness(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
+                         std::shared_ptr<VRODriver> driver);
 
-    void onFrameWillRender(const VRORenderContext &context);
-    void onFrameDidRender(const VRORenderContext &context);
-
-    void setupRendererWithDriver(std::shared_ptr<VRODriver> driver);
+    std::shared_ptr<VROSceneController> getSceneController();
+    std::shared_ptr<VRONode> getPointOfView();
 
 private:
 
-    std::shared_ptr<VROTexture> getNiagaraTexture();
-    void animateTake(std::shared_ptr<VRONode> node);
+    std::shared_ptr<VRORendererTestHarness> _harness;
 
-    std::shared_ptr<VRODriver> _driver;
-    float _objAngle;
 };
 
 #endif //ANDROID_VROSAMPLERENDERER_H
