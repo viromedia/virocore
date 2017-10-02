@@ -149,7 +149,7 @@ void VROParticleEmitter::updateEmitter(double currentTime, std::shared_ptr<VRONo
     _emitterTotalPassedDistance = currentLoc.distance(_emitterStartLocation)
                                   + _emitterPassedDistanceSoFar;
 
-    if (_emitterTotalPassedTime > _duration && _loop) {
+    if ((_emitterTotalPassedTime > _duration && _loop && _run) || _emitterStartTimeMs == -1) {
         resetEmissionCycle(false);
     }
 }
