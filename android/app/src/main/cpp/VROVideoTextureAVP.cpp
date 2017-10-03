@@ -14,7 +14,7 @@ VROVideoTextureAVP::VROVideoTextureAVP(VROStereoMode stereoMode) :
     VROVideoTexture(VROTextureType::TextureEGLImage, stereoMode),
     _textureId(0)
 {
-    _player = new VROAVPlayer();
+
 }
 
 VROVideoTextureAVP::~VROVideoTextureAVP() {
@@ -23,6 +23,10 @@ VROVideoTextureAVP::~VROVideoTextureAVP() {
     if (_textureId) {
         glDeleteTextures(1, &_textureId);
     }
+}
+
+void VROVideoTextureAVP::init() {
+    _player = new VROAVPlayer();
 }
 
 void VROVideoTextureAVP::setDelegate(std::shared_ptr<VROVideoDelegateInternal> delegate) {

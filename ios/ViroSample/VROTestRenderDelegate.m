@@ -32,7 +32,7 @@
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
     _harness = std::make_shared<VRORendererTestHarness>(self.view.frameSynchronizer, driver);
-    std::shared_ptr<VRORendererTest> test = _harness->loadTest(VRORendererTestType::ARPlane);
+    std::shared_ptr<VRORendererTest> test = _harness->loadTest(VRORendererTestType::VideoSphere);
     
     self.view.sceneController = test->getSceneController();
     if (test->getPointOfView()) {

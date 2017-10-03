@@ -41,6 +41,7 @@ JNI_METHOD(jlong, nativeCreateVideoTexture)(JNIEnv *env,
 
     std::weak_ptr<RenderContext> renderContext_w = RenderContext::native(renderContextRef);
     std::shared_ptr<VROVideoTextureAVP> videoTexture = std::make_shared<VROVideoTextureAVP>(mode);
+    videoTexture->init();
 
     VROPlatformDispatchAsyncRenderer([videoTexture, renderContext_w] {
         std::shared_ptr<RenderContext> renderContext = renderContext_w.lock();

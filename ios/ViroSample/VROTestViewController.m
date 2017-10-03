@@ -9,7 +9,7 @@
 #import "VROTestViewController.h"
 
 // Set to NO to test using an AR view
-static const BOOL kTestVR = NO;
+static const BOOL kTestVR = YES;
 
 @interface VROTestViewController ()
 

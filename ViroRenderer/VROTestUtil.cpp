@@ -26,6 +26,7 @@
 #include "VROPlatformUtil.h"
 #include "VROImageAndroid.h"
 #include "VROVideoTextureAVP.h"
+#include "VRODriverOpenGL.h"
 #endif
 
 std::string VROTestUtil::getURLForResource(std::string resource, std::string type) {
@@ -233,15 +234,23 @@ void VROTestUtil::setLightMasks(std::shared_ptr<VRONode> node, int value) {
 }
 
 std::shared_ptr<VROVideoTexture> VROTestUtil::loadVideoTexture(std::shared_ptr<VRODriver> driver,
+                                                               std::function<void(std::shared_ptr<VROVideoTexture>)> callback,
                                                                VROStereoMode stereo) {
 #if VRO_PLATFORM_IOS
-    return std::make_shared<VROVideoTextureiOS>(stereo);
+    std::shared_ptr<VROVideoTexture> texture = std::make_shared<VROVideoTextureiOS>(stereo);
+    callback(texture);
+
+    return texture;
 #else
-    // Requires UI thread on Android
     std::shared_ptr<VROVideoTextureAVP> videoTexture = std::make_shared<VROVideoTextureAVP>(stereo);
-    VROPlatformDispatchAsyncRenderer([videoTexture, driver] {
-        videoTexture->bindSurface(std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
+    VROPlatformDispatchAsyncApplication([videoTexture, driver, callback] {
+        videoTexture->init();
+        VROPlatformDispatchAsyncRenderer([videoTexture, driver, callback] {
+            videoTexture->bindSurface(std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
+            callback(videoTexture);
+        });
     });
+
     return videoTexture;
 #endif
 }

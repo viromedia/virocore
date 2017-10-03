@@ -25,7 +25,7 @@ void VROStereoscopicTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynch
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     
     // Debug toggle between stereo image and stereo video background
-    bool showImage = true;
+    bool showImage = false;
     if (showImage) {
         std::shared_ptr<VROTexture> imgTexture = VROTestUtil::loadDiffuseTexture("stereo3601.jpg", VROMipmapMode::None,
                                                                                  VROStereoMode::BottomTop);
@@ -34,9 +34,10 @@ void VROStereoscopicTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynch
     else {
         std::string url = VROTestUtil::getURLForResource("stereoVid360", "mp4");
     
-        _videoTexture = VROTestUtil::loadVideoTexture(driver, VROStereoMode::BottomTop);
-        _videoTexture->loadVideo(url, frameSynchronizer, driver);
-        _videoTexture->play();
-        rootNode->setBackgroundSphere(_videoTexture);
+        _videoTexture = VROTestUtil::loadVideoTexture(driver, [url, rootNode, frameSynchronizer, driver] (std::shared_ptr<VROVideoTexture> texture) {
+            texture->loadVideo(url, frameSynchronizer, driver);
+            texture->play();
+            rootNode->setBackgroundSphere(texture);
+        }, VROStereoMode::BottomTop);
     }
 }

@@ -38,9 +38,9 @@ void VROVideoSphereTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchr
     
     std::string url = VROTestUtil::getURLForResource("surfing", "mp4");
     
-    _videoTexture = VROTestUtil::loadVideoTexture(driver);
-    _videoTexture->loadVideo(url, frameSynchronizer, driver);
-    _videoTexture->play();
-    
-    rootNode->setBackgroundSphere(_videoTexture);
+    _videoTexture = VROTestUtil::loadVideoTexture(driver, [url, rootNode, frameSynchronizer, driver] (std::shared_ptr<VROVideoTexture> texture) {
+        texture->loadVideo(url, frameSynchronizer, driver);
+        texture->play();
+        rootNode->setBackgroundSphere(texture);
+    });
 }

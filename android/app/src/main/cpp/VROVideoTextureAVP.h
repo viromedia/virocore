@@ -26,8 +26,17 @@ class VROVideoTextureAVP : public VROVideoTexture, public VROAVPlayerDelegate {
 
 public:
 
+    /*
+     Construct the video texture. After construction, init() must be
+     called from the UI thread, and bindSurface() from the rendering thread.
+     */
     VROVideoTextureAVP(VROStereoMode state = VROStereoMode::None);
     virtual ~VROVideoTextureAVP();
+
+    /*
+     Must be invoked from the UI thread after construction.
+     */
+    void init();
 
     /*
      Must be invoked from the rendering thread after construction.

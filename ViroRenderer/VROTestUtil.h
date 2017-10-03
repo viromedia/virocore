@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <memory>
 #include <string>
+#include <functional>
 #include "VROTexture.h"
 
 class VROTexture;
@@ -40,6 +41,7 @@ public:
     static void setLightMasks(std::shared_ptr<VRONode> node, int value);
     
     static std::shared_ptr<VROVideoTexture> loadVideoTexture(std::shared_ptr<VRODriver> driver,
+                                                             std::function<void(std::shared_ptr<VROVideoTexture>)> callback,
                                                              VROStereoMode stereo = VROStereoMode::None);
 
 private:
