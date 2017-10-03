@@ -174,7 +174,7 @@ JNI_METHOD(void, nativeSetInfluenceBitMask)(JNIEnv *env,
         light->setInfluenceBitMask(bitMask);
     });
 }
-//shadow properties
+
 JNI_METHOD(void, nativeSetShadowOrthographicSize)(JNIEnv *env,
                                                  jclass clazz,
                                                  jlong native_light_ref,

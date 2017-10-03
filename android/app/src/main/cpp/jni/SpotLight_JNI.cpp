@@ -246,7 +246,6 @@ JNI_METHOD(void, nativeSetInfluenceBitMask)(JNIEnv *env,
     });
 }
 
-//shadow properties
 JNI_METHOD(void, nativeSetCastsShadow)(JNIEnv *env,
                                        jclass clazz,
                                        jlong native_light_ref,
@@ -261,7 +260,6 @@ JNI_METHOD(void, nativeSetCastsShadow)(JNIEnv *env,
     });
 }
 
-//shadow properties
 JNI_METHOD(void, nativeSetShadowOpacity)(JNIEnv *env,
                                        jclass clazz,
                                        jlong native_light_ref,
