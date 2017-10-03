@@ -45,7 +45,6 @@ void VROParticleEmitter::initEmitter(std::shared_ptr<VRODriver> driver,
     material->setBlendMode(VROBlendMode::Add);
 
     // Initialize the emitter with default values.
-    initEmitter();
     material->setLightingModel(VROLightingModel::Constant);
 
     // Finally, bind the particle geometry to the emitter node.
