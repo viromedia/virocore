@@ -26,7 +26,6 @@
 #include "VROPlatformUtil.h"
 #include "VROImageAndroid.h"
 #include "VROVideoTextureAVP.h"
-#include "VRODriverOpenGL.h"
 #endif
 
 std::string VROTestUtil::getURLForResource(std::string resource, std::string type) {
