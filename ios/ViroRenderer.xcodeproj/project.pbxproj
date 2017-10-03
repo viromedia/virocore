@@ -112,7 +112,6 @@
 		8F140FCF1E56658700355A1E /* card_main.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 8F140FCE1E56658700355A1E /* card_main.ktx */; };
 		8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1664A51E5E43260062EBCE /* Accelerate.framework */; };
 		8F17701B1E74C01900235C21 /* VROGVRUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1770191E74C01900235C21 /* VROGVRUtil.cpp */; };
-		8F1AB9661EEE1F8F006D76B6 /* VROSampleARDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1AB9641EEE1F8F006D76B6 /* VROSampleARDelegate.cpp */; };
 		8F1B4A121F64B61E00156809 /* portal_ship_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A011F64B61A00156809 /* portal_ship_specular.png */; };
 		8F1B4A131F64B61E00156809 /* portal_ship.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A021F64B61B00156809 /* portal_ship.vrx */; };
 		8F1B4A141F64B61E00156809 /* portal_window_frame_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A031F64B61B00156809 /* portal_window_frame_diffuse.png */; };
@@ -194,7 +193,7 @@
 		8F50FC8C1E0AF54F00A9B4B2 /* orig_02_-_Defaul1noCulling.JPG in Resources */ = {isa = PBXBuildFile; fileRef = 8F50FC871E0AF54F00A9B4B2 /* orig_02_-_Defaul1noCulling.JPG */; };
 		8F517BBB1BCDA2BD0017C70B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBA1BCDA2BD0017C70B /* main.m */; };
 		8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */; };
-		8F517BC11BCDA2BD0017C70B /* VROSample.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC01BCDA2BD0017C70B /* VROSample.m */; };
+		8F517BC11BCDA2BD0017C70B /* VROTestRenderDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F517BC01BCDA2BD0017C70B /* VROTestRenderDelegate.m */; };
 		8F517BC71BCDA2BD0017C70B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BC51BCDA2BD0017C70B /* Main.storyboard */; };
 		8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BC81BCDA2BD0017C70B /* Assets.xcassets */; };
 		8F517BCC1BCDA2BD0017C70B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F517BCA1BCDA2BD0017C70B /* LaunchScreen.storyboard */; };
@@ -467,6 +466,7 @@
 		8FD2A5561F813C4100E831A6 /* VROHDRTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD2A5361F813C4100E831A6 /* VROHDRTest.h */; };
 		8FD2A55A1F817D4200E831A6 /* VROPhysicsTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD2A5581F817D4100E831A6 /* VROPhysicsTest.h */; };
 		8FD2A55B1F817D4200E831A6 /* VROPhysicsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2A5591F817D4100E831A6 /* VROPhysicsTest.cpp */; };
+		8FD2A5661F83D9F000E831A6 /* VROTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2A5651F83D9F000E831A6 /* VROTestViewController.m */; };
 		8FD4D0BF1EF0695F00077AD7 /* coffee_mug_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4D0BC1EF0695F00077AD7 /* coffee_mug_specular.png */; };
 		8FD4D0C01EF0695F00077AD7 /* coffee_mug.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4D0BD1EF0695F00077AD7 /* coffee_mug.obj */; };
 		8FD4D0C11EF0695F00077AD7 /* coffee_mug.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4D0BE1EF0695F00077AD7 /* coffee_mug.png */; };
@@ -817,8 +817,6 @@
 		8F1664A51E5E43260062EBCE /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		8F1770191E74C01900235C21 /* VROGVRUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROGVRUtil.cpp; sourceTree = "<group>"; };
 		8F17701A1E74C01900235C21 /* VROGVRUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGVRUtil.h; sourceTree = "<group>"; };
-		8F1AB9641EEE1F8F006D76B6 /* VROSampleARDelegate.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = VROSampleARDelegate.cpp; path = ViroSample/VROSampleARDelegate.cpp; sourceTree = "<group>"; };
-		8F1AB9651EEE1F8F006D76B6 /* VROSampleARDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VROSampleARDelegate.h; path = ViroSample/VROSampleARDelegate.h; sourceTree = "<group>"; };
 		8F1B4A011F64B61A00156809 /* portal_ship_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_ship_specular.png; path = ViroSample/portal_ship_specular.png; sourceTree = "<group>"; };
 		8F1B4A021F64B61B00156809 /* portal_ship.vrx */ = {isa = PBXFileReference; lastKnownFileType = file; name = portal_ship.vrx; path = ViroSample/portal_ship.vrx; sourceTree = "<group>"; };
 		8F1B4A031F64B61B00156809 /* portal_window_frame_diffuse.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = portal_window_frame_diffuse.png; path = ViroSample/portal_window_frame_diffuse.png; sourceTree = "<group>"; };
@@ -933,8 +931,8 @@
 		8F517BBA1BCDA2BD0017C70B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ViroSample/main.m; sourceTree = "<group>"; };
 		8F517BBC1BCDA2BD0017C70B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ViroSample/AppDelegate.h; sourceTree = "<group>"; };
 		8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = ViroSample/AppDelegate.m; sourceTree = "<group>"; };
-		8F517BBF1BCDA2BD0017C70B /* VROSample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VROSample.h; path = ViroSample/VROSample.h; sourceTree = "<group>"; };
-		8F517BC01BCDA2BD0017C70B /* VROSample.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = VROSample.m; path = ViroSample/VROSample.m; sourceTree = "<group>"; };
+		8F517BBF1BCDA2BD0017C70B /* VROTestRenderDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VROTestRenderDelegate.h; path = ViroSample/VROTestRenderDelegate.h; sourceTree = "<group>"; };
+		8F517BC01BCDA2BD0017C70B /* VROTestRenderDelegate.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = VROTestRenderDelegate.m; path = ViroSample/VROTestRenderDelegate.m; sourceTree = "<group>"; };
 		8F517BC21BCDA2BD0017C70B /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		8F517BC41BCDA2BD0017C70B /* VROSharedStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROSharedStructures.h; sourceTree = "<group>"; };
 		8F517BC61BCDA2BD0017C70B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -1238,6 +1236,8 @@
 		8FD2A5361F813C4100E831A6 /* VROHDRTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROHDRTest.h; sourceTree = "<group>"; };
 		8FD2A5581F817D4100E831A6 /* VROPhysicsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROPhysicsTest.h; sourceTree = "<group>"; };
 		8FD2A5591F817D4100E831A6 /* VROPhysicsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROPhysicsTest.cpp; sourceTree = "<group>"; };
+		8FD2A5641F83D9F000E831A6 /* VROTestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VROTestViewController.h; path = ViroSample/VROTestViewController.h; sourceTree = "<group>"; };
+		8FD2A5651F83D9F000E831A6 /* VROTestViewController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = VROTestViewController.m; path = ViroSample/VROTestViewController.m; sourceTree = "<group>"; };
 		8FD4D0BC1EF0695F00077AD7 /* coffee_mug_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = coffee_mug_specular.png; path = ViroSample/coffee_mug_specular.png; sourceTree = "<group>"; };
 		8FD4D0BD1EF0695F00077AD7 /* coffee_mug.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = coffee_mug.obj; path = ViroSample/coffee_mug.obj; sourceTree = "<group>"; };
 		8FD4D0BE1EF0695F00077AD7 /* coffee_mug.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = coffee_mug.png; path = ViroSample/coffee_mug.png; sourceTree = "<group>"; };
@@ -2216,10 +2216,10 @@
 				8F517BCA1BCDA2BD0017C70B /* LaunchScreen.storyboard */,
 				8F517BBC1BCDA2BD0017C70B /* AppDelegate.h */,
 				8F517BBD1BCDA2BD0017C70B /* AppDelegate.m */,
-				8F517BBF1BCDA2BD0017C70B /* VROSample.h */,
-				8F517BC01BCDA2BD0017C70B /* VROSample.m */,
-				8F1AB9651EEE1F8F006D76B6 /* VROSampleARDelegate.h */,
-				8F1AB9641EEE1F8F006D76B6 /* VROSampleARDelegate.cpp */,
+				8F517BBF1BCDA2BD0017C70B /* VROTestRenderDelegate.h */,
+				8F517BC01BCDA2BD0017C70B /* VROTestRenderDelegate.m */,
+				8FD2A5641F83D9F000E831A6 /* VROTestViewController.h */,
+				8FD2A5651F83D9F000E831A6 /* VROTestViewController.m */,
 				8F517BCD1BCDA2BD0017C70B /* Info.plist */,
 			);
 			name = ViroSample;
@@ -3120,11 +3120,11 @@
 			files = (
 				8F517BBE1BCDA2BD0017C70B /* AppDelegate.m in Sources */,
 				A59E113A1F53951700EB2CEB /* VROPostProcessEffectFactory.cpp in Sources */,
+				8FD2A5661F83D9F000E831A6 /* VROTestViewController.m in Sources */,
 				A58697811E30843000191090 /* VROInputControllerBase.cpp in Sources */,
-				8F517BC11BCDA2BD0017C70B /* VROSample.m in Sources */,
+				8F517BC11BCDA2BD0017C70B /* VROTestRenderDelegate.m in Sources */,
 				8F517BBB1BCDA2BD0017C70B /* main.m in Sources */,
 				8F17701B1E74C01900235C21 /* VROGVRUtil.cpp in Sources */,
-				8F1AB9661EEE1F8F006D76B6 /* VROSampleARDelegate.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

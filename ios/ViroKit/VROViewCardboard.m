@@ -27,7 +27,6 @@
     std::shared_ptr<VRORenderDelegateiOS> _renderDelegateWrapper;
 }
 
-@property (nonatomic) IBInspectable BOOL testingMode;
 @property (readwrite, nonatomic) std::shared_ptr<VRORenderer> renderer;
 @property (readwrite, nonatomic) std::shared_ptr<VROSceneRendererCardboard> sceneRenderer;
 @property (readwrite, nonatomic) VROViewport viewport;

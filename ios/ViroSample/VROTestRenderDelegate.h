@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <ViroKit/ViroKit.h>
 
-@interface VROSample : NSObject <VRORenderDelegate>
+@interface VROTestRenderDelegate : NSObject <VRORenderDelegate>
 
 @property (readwrite, nonatomic) IBOutlet id <VROView> view;
 

@@ -6,13 +6,13 @@
 //  Copyright © 2015 Raj Advani. All rights reserved.
 //
 
-#import "VROSample.h"
+#import "VROTestRenderDelegate.h"
 
-@interface VROSample ()
+@interface VROTestRenderDelegate ()
 @property (readwrite, nonatomic) std::shared_ptr<VRORendererTestHarness> harness;
 @end
 
-@implementation VROSample
+@implementation VROTestRenderDelegate
 
 - (void)willRenderEye:(VROEyeType)eye context:(const VRORenderContext *)renderContext {}
 - (void)didRenderEye:(VROEyeType)eye context:(const VRORenderContext *)renderContext {}
@@ -32,7 +32,7 @@
 
 - (void)setupRendererWithDriver:(std::shared_ptr<VRODriver>)driver {
     _harness = std::make_shared<VRORendererTestHarness>(self.view.frameSynchronizer, driver);
-    std::shared_ptr<VRORendererTest> test = _harness->loadTest(VRORendererTestType::Bloom);
+    std::shared_ptr<VRORendererTest> test = _harness->loadTest(VRORendererTestType::ARPlane);
     
     self.view.sceneController = test->getSceneController();
     if (test->getPointOfView()) {
