@@ -34,7 +34,7 @@ std::string VROTestUtil::getURLForResource(std::string resource, std::string typ
     NSURL *objURL = [NSURL fileURLWithPath:objPath];
     return std::string([[objURL description] UTF8String]);
 #else
-    return VROPlatformCopyAssetToFile(resource + "." + type);
+    return "file:///android_asset/" + resource  + "." + type;
 #endif
 }
 
@@ -185,7 +185,7 @@ std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3
     NSURL *baseURL = [NSURL fileURLWithPath:basePath];
     base = std::string([[baseURL description] UTF8String]);
 #else
-    url = VROPlatformCopyAssetToFile(model + ".vrx");
+    url = "file:///android_asset/" + model + ".vrx";
     base = url.substr(0, url.find_last_of('/'));
 #endif
     

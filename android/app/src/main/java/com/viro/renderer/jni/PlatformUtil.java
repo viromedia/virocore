@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ import java.util.Map;
 public class PlatformUtil {
 
     private static final String TAG = "Viro";
+    private static String ASSET_URL_PREFIX = "file:///android_asset";
 
     private Context mContext;
     private RenderCommandQueue mRenderQueue;
@@ -135,8 +137,16 @@ public class PlatformUtil {
     }
 
     // Accessed by Native code (VROPlatformUtil.cpp)
-    public static String downloadURLToTempFile(String url) throws IOException {
+    public String downloadURLToTempFile(String url) throws IOException {
         File file = File.createTempFile("Viro", "tmp");
+
+        // If the URL begins with file:///android_asset, then copy the asset
+        // to file.
+        if (url.startsWith(ASSET_URL_PREFIX)) {
+            Log.w("Viro", "Copying asset at URL " + url);
+            return copyAssetToFile(url.substring(ASSET_URL_PREFIX.length() + 1));
+        }
+
         try {
             downloadURLSynchronous(url, file);
         }catch(UnknownHostException e) {
@@ -147,6 +157,9 @@ public class PlatformUtil {
             return null;
         }catch(IOException e) {
             Log.w(TAG, "IO error downloading file at URL [" + url + "], download failed");
+            return null;
+        }catch(Exception e) {
+            Log.w(TAG, "Unknown error downloading file at URL [" + url + "]", e);
             return null;
         }
 
@@ -236,15 +249,18 @@ public class PlatformUtil {
 
         try {
             URL url = new URL(myurl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            URLConnection conn = url.openConnection();
             conn.setReadTimeout(10000 /* milliseconds */);
             conn.setConnectTimeout(15000 /* milliseconds */);
-            conn.setRequestMethod("GET");
+            if (conn instanceof HttpURLConnection) {
+                ((HttpURLConnection) conn).setRequestMethod("GET");
+
+            }
             conn.setDoInput(true);
+
             // Starts the query
             conn.connect();
-            int response = conn.getResponseCode();
-
             in = conn.getInputStream();
             out = new FileOutputStream(file);
             transfer(conn.getInputStream(), out);

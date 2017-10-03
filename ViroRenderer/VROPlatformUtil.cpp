@@ -256,8 +256,8 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *succ
     jstring jurl = env->NewStringUTF(url.c_str());
 
     jclass cls = env->FindClass("com/viro/renderer/jni/PlatformUtil");
-    jmethodID jmethod = env->GetStaticMethodID(cls, "downloadURLToTempFile", "(Ljava/lang/String;)Ljava/lang/String;");
-    jstring jpath = (jstring) env->CallStaticObjectMethod(cls, jmethod, jurl);
+    jmethodID jmethod = env->GetMethodID(cls, "downloadURLToTempFile", "(Ljava/lang/String;)Ljava/lang/String;");
+    jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jurl);
 
     env->DeleteLocalRef(jurl);
     env->DeleteLocalRef(cls);
