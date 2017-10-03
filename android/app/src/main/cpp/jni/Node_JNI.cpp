@@ -182,6 +182,32 @@ JNI_METHOD(void, nativeSetOpacity)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetLightReceivingBitMask)(JNIEnv *env,
+                                                  jobject obj,
+                                                  jlong native_node_ref,
+                                                  jint bitMask) {
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w,bitMask] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setLightReceivingBitMask(bitMask);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetShadowCastingBitMask)(JNIEnv *env,
+                                                 jobject obj,
+                                                 jlong native_node_ref,
+                                                 jint bitMask) {
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w,bitMask] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setShadowCastingBitMask(bitMask);
+        }
+    });
+}
+
 JNI_METHOD(void, nativeSetHighAccuracyGaze)(JNIEnv *env,
                                             jobject obj,
                                             jlong native_node_ref,

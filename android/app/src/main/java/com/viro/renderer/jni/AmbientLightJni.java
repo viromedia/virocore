@@ -29,6 +29,11 @@ public class AmbientLightJni extends BaseLight {
         nativeSetColor(mNativeRef, color);
     }
 
+
+    public void setInfluenceBitMask(int bitMask) {
+        nativeSetInfluenceBitMask(mNativeRef, bitMask);
+    }
+
     public void setIntensity(float intensity) {
         nativeSetIntensity(mNativeRef, intensity);
     }
@@ -44,4 +49,6 @@ public class AmbientLightJni extends BaseLight {
     private native void nativeSetColor(long lightRef, long color);
 
     private native void nativeSetIntensity(long lightRef, float intensity);
+
+    private native void nativeSetInfluenceBitMask(long lightRef, int bitMask);
 }

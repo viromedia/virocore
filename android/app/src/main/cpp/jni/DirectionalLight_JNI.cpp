@@ -145,4 +145,148 @@ JNI_METHOD(void, nativeSetDirection)(JNIEnv *env,
     });
 }
 
+
+JNI_METHOD(void, nativeSetCastsShadow)(JNIEnv *env,
+                                       jclass clazz,
+                                       jlong native_light_ref,
+                                       jboolean castsShadow) {
+    std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
+    VROPlatformDispatchAsyncRenderer([light_w, castsShadow] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if (!light) {
+            return;
+        }
+        light->setCastsShadow(castsShadow);
+    });
+}
+
+JNI_METHOD(void, nativeSetInfluenceBitMask)(JNIEnv *env,
+                                            jclass clazz,
+                                            jlong native_light_ref,
+                                            jint bitMask) {
+
+    std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
+    VROPlatformDispatchAsyncRenderer([light_w, bitMask] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if (!light) {
+            return;
+        }
+        light->setInfluenceBitMask(bitMask);
+    });
+}
+//shadow properties
+JNI_METHOD(void, nativeSetShadowOrthographicSize)(JNIEnv *env,
+                                                 jclass clazz,
+                                                 jlong native_light_ref,
+                                                 jfloat size) {
+
+    std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
+    VROPlatformDispatchAsyncRenderer([light_w, size] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if(!light) {
+            return;
+        }
+        light->setShadowOrthographicSize(size);
+    });
+}
+
+JNI_METHOD(void, nativeSetShadowOrthographicPosition)(JNIEnv *env,
+                                                  jclass clazz,
+                                                  jlong native_light_ref,
+                                                  jfloat posX,
+                                                  jfloat posY,
+                                                  jfloat posZ) {
+
+    std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
+    VROPlatformDispatchAsyncRenderer([light_w, posX, posY, posZ] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if(!light) {
+            return;
+        }
+        VROVector3f vecPosition(posX, posY, posZ);
+        light->setPosition(vecPosition);
+    });
+}
+
+JNI_METHOD(void, nativeSetShadowMapSize)(JNIEnv *env,
+                                         jclass clazz,
+                                         jlong native_light_ref,
+                                         jint size) {
+
+    std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
+
+    VROPlatformDispatchAsyncRenderer([light_w, size] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if(!light) {
+            return;
+        }
+        light->setShadowMapSize(size);
+    });
+}
+
+JNI_METHOD(void, nativeSetShadowOpacity)(JNIEnv *env,
+                                         jclass clazz,
+                                         jlong native_light_ref,
+                                         float opacity) {
+
+    std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
+
+    VROPlatformDispatchAsyncRenderer([light_w, opacity] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if(!light) {
+            return;
+        }
+        light->setShadowOpacity(opacity);
+    });
+}
+
+JNI_METHOD(void, nativeSetShadowBias)(JNIEnv *env,
+                                      jclass clazz,
+                                      jlong native_light_ref,
+                                      jfloat bias) {
+
+    std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
+
+    VROPlatformDispatchAsyncRenderer([light_w, bias] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if(!light) {
+            return;
+        }
+        light->setShadowBias(bias);
+    });
+}
+
+
+JNI_METHOD(void, nativeSetShadowNearZ)(JNIEnv *env,
+                                      jclass clazz,
+                                      jlong native_light_ref,
+                                      jfloat shadowNearZ) {
+
+    std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
+
+    VROPlatformDispatchAsyncRenderer([light_w, shadowNearZ] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if(!light) {
+            return;
+        }
+        light->setShadowNearZ(shadowNearZ);
+    });
+}
+
+JNI_METHOD(void, nativeSetShadowFarZ)(JNIEnv *env,
+                                       jclass clazz,
+                                       jlong native_light_ref,
+                                       jfloat shadowFarZ) {
+
+
+    std::weak_ptr<VROLight> light_w = DirectionalLight::native(native_light_ref);
+    VROPlatformDispatchAsyncRenderer([light_w, shadowFarZ] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        if(!light) {
+            return;
+        }
+        light->setShadowFarZ(shadowFarZ);
+    });
+}
+
 } // extern "C"

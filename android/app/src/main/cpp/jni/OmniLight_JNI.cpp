@@ -179,4 +179,17 @@ JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
         light->setPosition(vecPosition);
     });
 }
+
+
+JNI_METHOD(void, nativeSetInfluenceBitMask)(JNIEnv *env,
+                                            jclass clazz,
+                                            jlong native_light_ref,
+                                            jint bitMask) {
+
+    std::weak_ptr<VROLight> light_w = OmniLight::native(native_light_ref);
+    VROPlatformDispatchAsyncRenderer([light_w, bitMask] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        light->setInfluenceBitMask(bitMask);
+    });
+}
 }

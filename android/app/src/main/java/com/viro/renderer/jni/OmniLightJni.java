@@ -49,6 +49,10 @@ public class OmniLightJni extends BaseLight {
         nativeSetPosition(mNativeRef, position[0], position[1], position[2]);
     }
 
+    public void setInfluenceBitMask(int bitMask) {
+        nativeSetInfluenceBitMask(mNativeRef, bitMask);
+    }
+
     private native long nativeCreateOmniLight(long color, float intensity,
                                               float attenuationStartDistance,
                                               float attenuationEndDistance,
@@ -61,4 +65,6 @@ public class OmniLightJni extends BaseLight {
     private native void nativeSetAttenuationStartDistance(long lightRef, float attenuationStartDistance);
     private native void nativeSetAttenuationEndDistance(long lightRef, float attenuationEndDistance);
     private native void nativeSetPosition(long lightRef, float positionX, float positionY, float positionZ);
+    private native void nativeSetInfluenceBitMask(long lightRef, int bitMask);
+
 }

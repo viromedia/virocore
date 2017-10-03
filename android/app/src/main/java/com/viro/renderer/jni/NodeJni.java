@@ -111,6 +111,10 @@ public class NodeJni {
         nativeSetVisible(mNativeRef, visible);
     }
 
+    public void setLightReceivingBitMask(int bitMask) { nativeSetLightReceivingBitMask(mNativeRef, bitMask); }
+
+    public void setShadowCastingBitMask(int bitMask) { nativeSetShadowCastingBitMask(mNativeRef, bitMask); }
+
     public void setHighAccuracyGaze(boolean visible){
         nativeSetHighAccuracyGaze(mNativeRef, visible);
     }
@@ -174,6 +178,8 @@ public class NodeJni {
     private native void nativeSetScalePivot(long nodeReference, float x, float y, float z);
     private native void nativeSetOpacity(long nodeReference, float opacity);
     private native void nativeSetVisible(long nodeReference, boolean visible);
+    private native void nativeSetLightReceivingBitMask(long nodeReference, int bitMask);
+    private native void nativeSetShadowCastingBitMask(long nodeReference, int bitMask);
     private native void nativeSetIgnoreEventHandling(long nodeReference, boolean visible);
     private native void nativeSetHighAccuracyGaze(long nodeReference, boolean enabled);
     private native void nativeSetMaterials(long nodeReference, long[] materials);

@@ -66,6 +66,34 @@ public class SpotLightJni extends BaseLight {
         nativeSetOuterAngle(mNativeRef, outerAngle);
     }
 
+    public void setInfluenceBitMask(int bitMask) {
+        nativeSetInfluenceBitMask(mNativeRef, bitMask);
+    }
+
+    public void setShadowOpacity(float opacity) {
+        nativeSetShadowOpacity(mNativeRef, opacity);
+    }
+
+    public void setCastsShadow(boolean castsShadow) {
+        nativeSetCastsShadow(mNativeRef, castsShadow);
+    }
+
+    public void setShadowMapSize(int shadowMapSize) {
+        nativeSetShadowMapSize(mNativeRef, shadowMapSize);
+    }
+
+    public void setShadowBias(float shadowBias) {
+        nativeSetShadowBias(mNativeRef, shadowBias);
+    }
+
+    public void setShadowNearZ(float shadowNearZ) {
+        nativeSetShadowNearZ(mNativeRef, shadowNearZ);
+    }
+
+    public void setShadowFarZ(float shadowFarZ) {
+        nativeSetShadowFarZ(mNativeRef, shadowFarZ);
+    }
+
     private native long nativeCreateSpotLight(long color, float intensity,
                                               float attenuationStartDistance,
                                               float attenuationEndDistance,
@@ -84,4 +112,12 @@ public class SpotLightJni extends BaseLight {
     private native void nativeSetInnerAngle(long lightRef, float innerAngle);
     private native void nativeSetOuterAngle(long lightRef, float outerAngle);
 
+    private native void nativeSetInfluenceBitMask(long lightRef, int bitMask);
+    private native void nativeSetShadowMapSize(long lightRef, int shadowMapSize);
+    private native void nativeSetShadowBias(long lightRef, float shadowBias);
+    private native void nativeSetShadowNearZ(long lightRef, float shadowNearZ);
+    private native void nativeSetShadowFarZ(long lightRef, float shadowFarZ);
+    private native void nativeSetCastsShadow(long lightRef, boolean castsShadow);
+    private native void nativeSetShadowOpacity(long lightRef, float opacity);
 }
+
