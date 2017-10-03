@@ -12,13 +12,18 @@
 #include "VROOpenGL.h"
 #include <vector>
 #include <memory>
+#include "VRODefines.h"
 
 // True to use dual-quaternion skinning, which has more realistic movement and uses less memory
 // TODO VIRO-1472: DQS skinning is malforming meshes during animation
 static const bool kDualQuaternionEnabled = false;
 
 // Keep in sync with ViroFBX::VROFBXExporter.h and skinning_vsh.glsl
+#if VRO_PLATFORM_ANDROID
+static const int kMaxBones = kDualQuaternionEnabled ? 192 : 64;
+#else
 static const int kMaxBones = kDualQuaternionEnabled ? 192 : 192;
+#endif
 
 // 8 floats for dual quaternions, 4 for scale
 static const int kFloatsPerBone = kDualQuaternionEnabled ? 12 : 16;

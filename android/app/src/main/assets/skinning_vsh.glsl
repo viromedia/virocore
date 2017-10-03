@@ -1,5 +1,5 @@
 layout (std140) uniform bones {
-    mat4 bone_matrices[192];
+    mat4 bone_matrices[64];
 };
 
 layout (std140) uniform bones_dq {
