@@ -100,6 +100,10 @@ public class SceneControllerJni {
         nativeRemoveParticleEmitter(mNativeRef, emitter.mNativeRef);
     }
 
+    public boolean setEffects(String[] effects){
+        return nativeSetEffects(mNativeRef, effects);
+    }
+
     public void destroy() {
         nativeDestroySceneControllerDelegate(mNativeDelegateRef);
         nativeDestroySceneController(mNativeRef);
@@ -123,6 +127,7 @@ public class SceneControllerJni {
                                            String ceilingMaterial, String floorMaterial);
     private native void nativeAddParticleEmitter(long sceneRef, long particleRef);
     private native void nativeRemoveParticleEmitter(long sceneRef, long particleRef);
+    private native boolean nativeSetEffects(long sceneRef, String[] effects);
     private WeakReference<SceneDelegate> mDelegate = null;
 
     public interface SceneDelegate {

@@ -21,6 +21,7 @@
 #include "RenderContext_JNI.h"
 #include "Node_JNI.h"
 #include "ParticleEmitter_JNI.h"
+#include "VROPostProcessEffectFactory.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -214,6 +215,38 @@ JNI_METHOD(void, nativeRemoveParticleEmitter)(JNIEnv *env,
         sceneController->getScene()->removeParticleEmitter(particleEmitter);
     });
 }
+
+JNI_METHOD(bool, nativeSetEffects)(JNIEnv *env,
+                                           jclass clazz,
+                                           jlong sceneRef,
+                                           jobjectArray jEffects) {
+    std::vector<std::string> effects;
+    if (jEffects != NULL) {
+        int numberOfValues = env->GetArrayLength(jEffects);
+        for (int i = 0; i < numberOfValues; i++) {
+            jstring jEffect = (jstring) env->GetObjectArrayElement(jEffects, i);
+            const char *cStrEffect = env->GetStringUTFChars(jEffect, NULL);
+            std::string strEffect(cStrEffect);
+            VROPostProcessEffect postEffect = VROPostProcessEffectFactory::getEffectForString(strEffect);
+            if (postEffect == VROPostProcessEffect::None){
+                perror("Error: Attempted to set an unknown post process effect. Ignoring effects");
+                return false;
+            }
+            effects.push_back(strEffect);
+            env->ReleaseStringUTFChars(jEffect, cStrEffect);
+        }
+    }
+
+
+    std::shared_ptr<VROSceneController> sceneController = SceneController::native(sceneRef);
+    VROPlatformDispatchAsyncRenderer([sceneController, effects] {
+        if (sceneController->getScene()){
+            sceneController->getScene()->setSceneEffect(effects);
+        }
+    });
+    return true;
+}
+
 
 JNI_METHOD(void, nativeSetPhysicsWorldGravity)(JNIEnv *env,
                                      jclass clazz,
