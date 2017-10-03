@@ -14,6 +14,7 @@
 #include "VROGeometry.h"
 #include "VROFBXLoader.h"
 #include "VROExecutableAnimation.h"
+#include "VRODriverOpenGL.h"
 
 #if VRO_PLATFORM_IOS
 #include <UIKit/UIKit.h>
