@@ -25,8 +25,8 @@ VROTextureSubstrateOpenGL::VROTextureSubstrateOpenGL(VROTextureType type,
     _owned(true),
     _driver(driver) {
     
-    bool gammaCorrectionEnabled = driver->isGammaCorrectionEnabled();
-    loadTexture(type, format, internalFormat, gammaCorrectionEnabled && sRGB, mipmapMode, data, width, height, mipSizes,
+    bool linearRenderingEnabled = driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear;
+    loadTexture(type, format, internalFormat, linearRenderingEnabled && sRGB, mipmapMode, data, width, height, mipSizes,
                 wrapS, wrapT, minFilter, magFilter, mipFilter);
     ALLOCATION_TRACKER_ADD(TextureSubstrates, 1);
 }

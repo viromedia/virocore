@@ -17,6 +17,14 @@ public:
     virtual ~VRODriverOpenGLAndroidGVR() { }
 
     /*
+     GVR does not yet provide a way to allocate an sRGB framebuffer
+     so we must do gamma conversion manually.
+     */
+    virtual VROColorRenderingMode getColorRenderingMode() {
+        return VROColorRenderingMode::LinearSoftware;
+    }
+
+    /*
      On GVR the primary framebuffer (display) is tied to a GVR
      swapchain.
      */

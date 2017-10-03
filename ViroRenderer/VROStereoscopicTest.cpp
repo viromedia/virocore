@@ -34,7 +34,7 @@ void VROStereoscopicTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynch
     else {
         std::string url = VROTestUtil::getURLForResource("stereoVid360", "mp4");
     
-        _videoTexture = VROTestUtil::loadVideoTexture(VROStereoMode::BottomTop);
+        _videoTexture = VROTestUtil::loadVideoTexture(driver, VROStereoMode::BottomTop);
         _videoTexture->loadVideo(url, frameSynchronizer, driver);
         _videoTexture->play();
         rootNode->setBackgroundSphere(_videoTexture);

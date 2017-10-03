@@ -36,6 +36,20 @@ public:
     virtual ~VRODriverOpenGLiOS() { }
     
     /*
+     If we're backed by a GLKView, then we should have an sRGB framebuffer.
+     Otherwise use software gamma correction.
+     */
+    virtual VROColorRenderingMode getColorRenderingMode() {
+        GLKView *viewGL = _viewGL;
+        if (viewGL) {
+            return VROColorRenderingMode::Linear;
+        }
+        else {
+            return VROColorRenderingMode::LinearSoftware;
+        }
+    }
+    
+    /*
      On iOS the primary framebuffer (display) may be tied to a GLKView. To
      bind the display we have to go through the GLKView.
      */

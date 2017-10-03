@@ -35,9 +35,8 @@ VROChoreographer::VROChoreographer(std::shared_ptr<VRODriver> driver) :
         
     initTargets(driver);
         
-    // We use HDR if gamma correction is enabled; this way we can
-    // bottle up the gamma correction with the HDR shader
-    _renderHDR = driver->isGammaCorrectionEnabled();
+    // We use HDR only if linear rendering is enabled
+    _renderHDR = driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear;
     _renderBloom = driver->isBloomEnabled();
     initHDR(driver);
 
@@ -95,7 +94,9 @@ void VROChoreographer::initHDR(std::shared_ptr<VRODriver> driver) {
     else {
         _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1);
     }
-    _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingType::Reinhard, driver);
+    _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingType::Reinhard,
+                                                                  driver->getColorRenderingMode() == VROColorRenderingMode::LinearSoftware,
+                                                                  driver);
 }
         
 void VROChoreographer::setViewport(VROViewport viewport, std::shared_ptr<VRODriver> &driver) {

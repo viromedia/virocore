@@ -39,7 +39,8 @@ public:
                                                  int lightMask, std::string animation);
     static void setLightMasks(std::shared_ptr<VRONode> node, int value);
     
-    static std::shared_ptr<VROVideoTexture> loadVideoTexture(VROStereoMode stereo = VROStereoMode::None);
+    static std::shared_ptr<VROVideoTexture> loadVideoTexture(std::shared_ptr<VRODriver> driver,
+                                                             VROStereoMode stereo = VROStereoMode::None);
 
 private:
     

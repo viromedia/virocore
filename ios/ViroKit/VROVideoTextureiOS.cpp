@@ -307,7 +307,7 @@ void VROVideoTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate>
         if (pixelBuffer && driver) {
             CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
             self.texture->displayPixelBuffer(std::move(_videoTextureCache->createTextureSubstrate(pixelBuffer,
-                                                                                                  driver->isGammaCorrectionEnabled())));
+                                                                                                  driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear)));
             CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
             CFRelease(pixelBuffer);
         }

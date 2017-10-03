@@ -16,10 +16,11 @@
 #include "VROOpenGL.h"
 #include "VRORenderTarget.h"
 
-VROToneMappingRenderPass::VROToneMappingRenderPass(VROToneMappingType type, std::shared_ptr<VRODriver> driver) :
+VROToneMappingRenderPass::VROToneMappingRenderPass(VROToneMappingType type, bool gammaCorrectSoftware,
+                                                   std::shared_ptr<VRODriver> driver) :
     _type(type),
     _exposure(1.0),
-    _gammaCorrectionEnabled(true) {
+    _gammaCorrectionEnabled(gammaCorrectSoftware) {
    
 }
 
@@ -27,8 +28,7 @@ VROToneMappingRenderPass::~VROToneMappingRenderPass() {
     
 }
 
-std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess(std::shared_ptr<VRODriver> driver,
-                                                                                 bool gammaCorrect) {
+std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess(std::shared_ptr<VRODriver> driver) {
     std::vector<std::string> samplers = { "hdr_texture" };
     std::vector<std::string> code = {
         "uniform sampler2D hdr_texture;",
@@ -37,14 +37,6 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     
     /*
      Perform tone-mapping.
-     
-     TODO VIRO-1521: When iOS Cardboard starts supporting sRGB backbuffers, we will no longer
-                     need the gamma correction step in this shader, as the native backbuffer can
-                     perform the gamma correction for free.
-
-     TODO VIRO-1555 On Android GVR, we may have to eliminate the manual gamma correction here
-                    in favor of using an Android generated SRGB buffer in ViroGVRLayout. We'll do
-                    the same for iOS once VIRO-1521 is completed
      */
     std::vector<std::string> toneMappingCode;
     if (_type == VROToneMappingType::Reinhard) {
@@ -62,15 +54,19 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
     code.insert(code.end(), toneMappingCode.begin(), toneMappingCode.end());
     
     /*
-     Finally, gamma correct.
+     Gamma correct in the shader if software gamma correction was requested.
      */
     if (_gammaCorrectionEnabled) {
         code.push_back("const highp float gamma = 2.2;");
         code.push_back("mapped = pow(mapped, vec3(1.0 / gamma));");
         code.push_back("frag_color = vec4(mapped, 1.0);");
+        
+        pinfo("Software gamma correction enabled in tone-mapper");
     }
     else {
         code.push_back("frag_color = vec4(mapped, 1.0);");
+
+        pinfo("No gamma correction enabled in tone-mapper");
     }
     
     std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Image, code);
@@ -95,31 +91,21 @@ std::shared_ptr<VROImagePostProcess> VROToneMappingRenderPass::createPostProcess
 VRORenderPassInputOutput VROToneMappingRenderPass::render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
                                                           VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     
-    if (!_postProcessHDR) {
-        _postProcessHDR = createPostProcess(driver, false);
-        _postProcessHDRAndGamma = createPostProcess(driver, true);
+    if (!_postProcess) {
+        _postProcess = createPostProcess(driver);
     }
     
     std::shared_ptr<VRORenderTarget> hdrInput = inputs[kToneMappingHDRInput];
     std::shared_ptr<VRORenderTarget> target = inputs[kToneMappingOutput];
     
     pglpush("Tone Mapping");
-    if (_gammaCorrectionEnabled) {
-        _postProcessHDRAndGamma->blit(hdrInput, 0, target, {}, driver);
-    }
-    else {
-        _postProcessHDR->blit(hdrInput, 0, target, {}, driver);
-    }
+    _postProcess->blit(hdrInput, 0, target, {}, driver);
     pglpop();
     
     VRORenderPassInputOutput output;
     output[kToneMappingOutput] = target;
     
     return output;
-}
-
-void VROToneMappingRenderPass::setGammaCorrectionEnabled(bool enabled) {
-    _gammaCorrectionEnabled = enabled;
 }
 
 void VROToneMappingRenderPass::setExposure(float exposure) {

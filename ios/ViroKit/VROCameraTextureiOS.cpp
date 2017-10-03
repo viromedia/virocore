@@ -187,7 +187,8 @@ void VROCameraTextureiOS::displayPixelBuffer(std::unique_ptr<VROTextureSubstrate
     std::shared_ptr<VROVideoTextureCache> cache = self.cache.lock();
     std::shared_ptr<VRODriver> driver = self.driver.lock();
     if (texture && cache && driver) {
-        texture->displayPixelBuffer(cache->createTextureSubstrate(sampleBuffer, driver->isGammaCorrectionEnabled()));
+        texture->displayPixelBuffer(cache->createTextureSubstrate(sampleBuffer,
+                                                                  driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear));
     }
 
     // Uncomment this line to enable image detection

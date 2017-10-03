@@ -231,11 +231,17 @@ void VROTestUtil::setLightMasks(std::shared_ptr<VRONode> node, int value) {
     }
 }
 
-std::shared_ptr<VROVideoTexture> VROTestUtil::loadVideoTexture(VROStereoMode stereo) {
+std::shared_ptr<VROVideoTexture> VROTestUtil::loadVideoTexture(std::shared_ptr<VRODriver> driver,
+                                                               VROStereoMode stereo) {
 #if VRO_PLATFORM_IOS
     return std::make_shared<VROVideoTextureiOS>(stereo);
 #else
-    return std::make_shared<VROVideoTextureAVP>(stereo);
+    // Requires UI thread on Android
+    std::shared_ptr<VROVideoTextureAVP> videoTexture = std::make_shared<VROVideoTextureAVP>(stereo);
+    VROPlatformDispatchAsyncRenderer([videoTexture, driver] {
+        videoTexture->bindSurface(std::dynamic_pointer_cast<VRODriverOpenGL>(driver));
+    });
+    return videoTexture;
 #endif
 }
 

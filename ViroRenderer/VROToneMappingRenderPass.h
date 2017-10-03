@@ -32,7 +32,8 @@ enum class VROToneMappingType {
 class VROToneMappingRenderPass : public VRORenderPass, public VROAnimatable {
 public:
     
-    VROToneMappingRenderPass(VROToneMappingType type, std::shared_ptr<VRODriver> driver);
+    VROToneMappingRenderPass(VROToneMappingType type, bool gammaCorrectSoftware,
+                             std::shared_ptr<VRODriver> driver);
     virtual ~VROToneMappingRenderPass();
     
     VRORenderPassInputOutput render(std::shared_ptr<VROScene> scene, VRORenderPassInputOutput &inputs,
@@ -43,22 +44,14 @@ public:
      */
     void setExposure(float exposure);
     
-    /*
-     Set to true to manually gamma correct the image during tone-mapping.
-     */
-    void setGammaCorrectionEnabled(bool enabled);
-    
 private:
 
     VROToneMappingType _type;
     float _exposure;
     bool _gammaCorrectionEnabled;
     
-    std::shared_ptr<VROImagePostProcess> _postProcessHDR;
-    std::shared_ptr<VROImagePostProcess> _postProcessHDRAndGamma;
-    
-    std::shared_ptr<VROImagePostProcess> createPostProcess(std::shared_ptr<VRODriver> driver,
-                                                           bool gammaCorrect);
+    std::shared_ptr<VROImagePostProcess> _postProcess;
+    std::shared_ptr<VROImagePostProcess> createPostProcess(std::shared_ptr<VRODriver> driver);
     
 };
 

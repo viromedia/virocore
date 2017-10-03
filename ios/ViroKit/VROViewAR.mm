@@ -126,14 +126,9 @@ static VROVector3f const kZeroVector = VROVector3f();
     
     /*
      Setup the GLKView.
-     
-     TODO VIRO-1521: When iOS Cardboard starts supporting sRGB backbuffers, set the drawableColorFormat
-                     here to GLKViewDrawableColorFormatSRGBA8888, and remove the manual gamma correction
-                     we're currently doing in the VROChoreographer. We can achieve this in Cardboard by
-                     using the new iOS NDK.
      */
     self.enableSetNeedsDisplay = NO;
-    self.drawableColorFormat = GLKViewDrawableColorFormatRGB565;
+    self.drawableColorFormat = GLKViewDrawableColorFormatSRGBA8888;
     self.drawableStencilFormat = GLKViewDrawableStencilFormat8;
     self.drawableDepthFormat = GLKViewDrawableDepthFormat16;
     self.drawableMultisample = GLKViewDrawableMultisample4X;

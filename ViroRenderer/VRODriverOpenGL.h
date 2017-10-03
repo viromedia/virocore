@@ -235,10 +235,6 @@ public:
         _boundRenderTarget.reset();
     }
     
-    virtual bool isGammaCorrectionEnabled() {
-        return true;
-    }
-    
     virtual bool isBloomEnabled() {
         return true;
     }

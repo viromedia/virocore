@@ -27,13 +27,12 @@ public:
     }
     virtual ~VRODriverOpenGLAndroid() { }
 
-    // TODO JIRA-1555 Enable HDR and gamma correction on Android once SRGB is working
-    virtual bool isGammaCorrectionEnabled() {
-        return false;
+    virtual VROColorRenderingMode getColorRenderingMode() {
+        return VROColorRenderingMode::Linear;
     }
 
     virtual bool isBloomEnabled() {
-        return false;
+        return true;
     }
 
     void willRenderFrame(const VRORenderContext &context) {

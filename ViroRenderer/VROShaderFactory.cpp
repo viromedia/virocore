@@ -227,7 +227,7 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     else if (materialCapabilities.diffuseTexture == VRODiffuseTextureType::YCbCr) {
         samplers.push_back("diffuse_texture_y");
         samplers.push_back("diffuse_texture_cbcr");
-        modifiers.push_back(createYCbCrTextureModifier(driver->isGammaCorrectionEnabled()));
+        modifiers.push_back(createYCbCrTextureModifier(driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear));
     }
     else if (materialCapabilities.diffuseTexture == VRODiffuseTextureType::Cube) {
         samplers.push_back("diffuse_texture");
@@ -238,7 +238,7 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     }
     
     if (materialCapabilities.diffuseEGLModifier) {
-        modifiers.push_back(createEGLImageModifier());
+        modifiers.push_back(createEGLImageModifier(driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear));
     }
     
     // Specular Map
@@ -584,7 +584,7 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createStereoTextureModifier
     return modifier;
 }
 
-std::shared_ptr<VROShaderModifier> VROShaderFactory::createYCbCrTextureModifier(bool isGammaCorrectionEnabled) {
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createYCbCrTextureModifier(bool linearizeColor) {
     /*
      Modifier that converts a YCbCr image (encoded in two textures) into an RGB color.
      Note the cbcr texture luminance_alpha, which is why we access the B and A coordinates
@@ -619,34 +619,11 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createYCbCrTextureModifier(
         };
         
         /*
-         Manually linearize the color if we're using gamma correction.
+         Manually linearize the color if requested. We typically do this if gamma correction is
+         enabled.
          */
-        if (isGammaCorrectionEnabled) {
-            std::vector<std::string> gamma = {
-                /*
-                 The way we linearize from gamma-corrected space depends on our values:
-                 If they're below the cutoff (low-light), we use the latter (lower) operation;
-                 if they're above the cutoff we use the higher operation (pow).
-                 The mix with a bvec trick is a technique to avoid branching in the shader.
-                 
-                 The values here are for gamma 2.2.
-                 */
-                "bvec3 cutoff = lessThan(_surface.diffuse_color.rgb, vec3(0.082));",
-                "highp vec3 higher = pow((_surface.diffuse_color.rgb + vec3(0.099))/vec3(1.099), vec3(2.2));",
-                "highp vec3 lower = _surface.diffuse_color.rgb / vec3(4.5);",
-                "_surface.diffuse_color.rgb = mix(higher, lower, cutoff);",
-            
-                /*
-                 The following values are for gamma 2.4. Left here in case we find it's better
-                 for certain devices.
-                 
-                "bvec3 cutoff = lessThan(_surface.diffuse_color.rgb, vec3(0.04045));",
-                "highp vec3 higher = pow((_surface.diffuse_color.rgb + vec3(0.055))/vec3(1.055), vec3(2.4));",
-                "highp vec3 lower = _surface.diffuse_color.rgb/vec3(12.92);",
-                "_surface.diffuse_color.rgb = mix(higher, lower, cutoff);",
-                */
-            };
-            
+        if (linearizeColor) {
+            std::vector<std::string> gamma = createColorLinearizationCode();
             modifierCode.insert(modifierCode.end(), gamma.begin(), gamma.end());
         }
         sYCbCrTextureModifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface,
@@ -655,6 +632,17 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createYCbCrTextureModifier(
     }
     
     return sYCbCrTextureModifier;
+}
+
+std::shared_ptr<VROShaderModifier> VROShaderFactory::createEGLImageModifier(bool linearizeColor) {
+    std::vector<std::string> input;
+    if (linearizeColor) {
+        input = createColorLinearizationCode();
+    }
+    std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface, input);
+    modifier->addReplacement("uniform sampler2D diffuse_texture;", "uniform samplerExternalOES diffuse_texture;");
+
+    return modifier;
 }
 
 std::shared_ptr<VROShaderModifier> VROShaderFactory::createBloomModifier() {
@@ -681,10 +669,30 @@ std::shared_ptr<VROShaderModifier> VROShaderFactory::createBloomModifier() {
     return sBloomModifier;
 }
 
-std::shared_ptr<VROShaderModifier> VROShaderFactory::createEGLImageModifier() {
-    std::vector<std::string> input;
-    std::shared_ptr<VROShaderModifier> modifier = std::make_shared<VROShaderModifier>(VROShaderEntryPoint::Surface, input);
-    modifier->addReplacement("uniform sampler2D diffuse_texture;", "uniform samplerExternalOES diffuse_texture;");
-    
-    return modifier;
+std::vector<std::string> VROShaderFactory::createColorLinearizationCode() {
+    std::vector<std::string> code = {
+        /*
+         The way we linearize from gamma-corrected space depends on our values:
+         If they're below the cutoff (low-light), we use the latter (lower) operation;
+         if they're above the cutoff we use the higher operation (pow).
+         The mix with a bvec trick is a technique to avoid branching in the shader.
+
+         The values here are for gamma 2.2.
+         */
+        "bvec3 cutoff = lessThan(_surface.diffuse_color.rgb, vec3(0.082));",
+        "highp vec3 higher = pow((_surface.diffuse_color.rgb + vec3(0.099))/vec3(1.099), vec3(2.2));",
+        "highp vec3 lower = _surface.diffuse_color.rgb / vec3(4.5);",
+        "_surface.diffuse_color.rgb = mix(higher, lower, cutoff);",
+
+        /*
+         The following values are for gamma 2.4. Left here in case we find it's better
+         for certain devices.
+
+        "bvec3 cutoff = lessThan(_surface.diffuse_color.rgb, vec3(0.04045));",
+        "highp vec3 higher = pow((_surface.diffuse_color.rgb + vec3(0.055))/vec3(1.055), vec3(2.4));",
+        "highp vec3 lower = _surface.diffuse_color.rgb/vec3(12.92);",
+        "_surface.diffuse_color.rgb = mix(higher, lower, cutoff);",
+        */
+    };
+    return code;
 }

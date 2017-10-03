@@ -196,9 +196,7 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
         setEGLContextClientVersion(3);
         setEGLConfigChooser(colorBits, colorBits, colorBits, alphaBits, depthBits, stencilBits);
         setPreserveEGLContextOnPause(true);
-
-        // TODO JIRA-1555 Uncomment this to test creating an SRGB framebuffer
-        //glSurfaceView.setEGLWindowSurfaceFactory(new ViroEGLWindowSurfaceFactory());
+        setEGLWindowSurfaceFactory(new ViroEGLWindowSurfaceFactory());
 
         setRenderer(new ViroARRenderer(this));
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
