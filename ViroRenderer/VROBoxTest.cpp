@@ -24,7 +24,7 @@ void VROBoxTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, 
     
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
-    rootNode->setBackgroundSphere(VROTestUtil::loadWestlakeBackground());
+    rootNode->setBackgroundSphere(VROTestUtil::loadDiffuseTexture("interior_viro.jpg", VROMipmapMode::None));
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 0.6, 0.6, 0.6 });
