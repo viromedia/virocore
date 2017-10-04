@@ -12,6 +12,7 @@
 @interface VROTestRenderDelegate : NSObject <VRORenderDelegate>
 
 @property (readwrite, nonatomic) IBOutlet id <VROView> view;
+@property (readwrite, nonatomic) VRORendererTestType test;
 
 - (IBAction)nextScene:(id)sender;
 

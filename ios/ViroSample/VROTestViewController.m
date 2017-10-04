@@ -9,7 +9,8 @@
 #import "VROTestViewController.h"
 
 // Set to NO to test using an AR view
-static const BOOL kTestVR = YES;
+static const BOOL kTestVR = NO;
+static const VRORendererTestType kRendererTest = VRORendererTestType::ARPlane;
 
 @interface VROTestViewController ()
 
@@ -26,6 +27,7 @@ static const BOOL kTestVR = YES;
         [view awakeFromNib];
         
         self.renderDelegate.view = view;
+        self.renderDelegate.test = kRendererTest;
         self.view = view;
     }
     else {
@@ -35,6 +37,7 @@ static const BOOL kTestVR = YES;
         view.renderDelegate = self.renderDelegate;
         
         self.renderDelegate.view = view;
+        self.renderDelegate.test = kRendererTest;
         self.view = view;
     }
 }
