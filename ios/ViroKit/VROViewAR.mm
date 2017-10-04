@@ -450,8 +450,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     if (_audioFilePath) [fileManager removeItemAtPath:[_audioFilePath path] error:nil];
 }
 
-- (void)takeScreenshot:(NSString *)fileName
-      saveToCameraRoll:(BOOL)saveToCamera
+- (void)takeScreenshot:(NSString *)fileName saveToCameraRoll:(BOOL)saveToCamera
  withCompletionHandler:(VROViewWriteMediaFinishBlock)completionHandler {
     
     // if we're saving this file to camera roll, then also check for that permission before we start
@@ -475,7 +474,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     }
     
     NSURL *filePath = [self checkAndGetTempFileURL:[fileName stringByAppendingString:kVROViewImageSuffix]];
-    
     [UIImagePNGRepresentation(self.snapshot) writeToFile:[filePath path] atomically:YES];
     
     if (saveToCamera) {
@@ -656,8 +654,14 @@ static VROVector3f const kZeroVector = VROVector3f();
         _videoTextureCache = _driver->newVideoTextureCache();
     }
     
-    // Do not use an sRGB texture here, as we perform gamma correction in the HDR shader
-    std::unique_ptr<VROTextureSubstrate> substrate = _videoTextureCache->createTextureSubstrate(_videoPixelBuffer, false);
+    // We only need to use sRGB textures here if gamma correction is performed
+    // on hardware. If gamma correction is performed in software, then the texture
+    // we've received from the renderer is *already* gamma corrected. If gamma
+    // correction is performed on hardware, then the image from the renderer has
+    // not yet been gamma corrected, so we need our video texture to gamma correct
+    // it here, just as the display will.
+    bool sRGB = _driver->getColorRenderingMode() == VROColorRenderingMode::Linear;
+    std::unique_ptr<VROTextureSubstrate> substrate = _videoTextureCache->createTextureSubstrate(_videoPixelBuffer, sRGB);
     std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, std::move(substrate));
     _renderer->getChoreographer()->setRenderToTextureEnabled(true);
     _renderer->getChoreographer()->setRenderTexture(texture);

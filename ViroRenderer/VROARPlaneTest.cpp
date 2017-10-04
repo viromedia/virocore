@@ -45,43 +45,4 @@ void VROARPlaneTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchroniz
     arPlane->addChildNode(objNode);
     arScene->addARPlane(arPlane);
     arScene->addNode(sceneNode);
-    
-    // Taking screenshot/video logic:
-    // TODO: Restore this after VIRO-1482, which should make screen recording cross-platform
-    //       so that we don't need a handle on VROViewAR.
-    /*
-    VROViewAR *arView = (VROViewAR *)self.view;
-    int rand = arc4random_uniform(1000);
-    
-    BOOL takeVideo = NO;
-    if (takeVideo) {
-        NSString *filename = [NSString stringWithFormat:@"testvideo%d", rand];
-        
-        NSLog(@"[VROSample] started recording");
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [arView startVideoRecording:filename saveToCameraRoll:YES errorBlock:nil];
-        });
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            NSLog(@"[VROSample] stopped recording");
-            [arView stopVideoRecordingWithHandler:^(BOOL success, NSURL *url, NSInteger errorCode) {
-             if (url) {
-             [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
-             }
-             }];
-        });
-    } else {
-        NSString *filename = [NSString stringWithFormat:@"testimage%d", rand];
-        
-        NSLog(@"[VROSample] taking screenshot in 5 seconds");
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            [arView takeScreenshot:filename saveToCameraRoll:YES withCompletionHandler:^(BOOL success, NSURL *url, NSInteger errorCode) {
-             if (url) {
-             [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
-             }
-             }];
-        });
-    }
-     */
 }
