@@ -138,8 +138,8 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
     private void initializeVrScene() {
         // Creation of SceneControllerJni within scene navigator
-        NodeJni rootNode = new NodeJni();
-        SceneControllerJni scene = new SceneControllerJni(rootNode);
+        SceneControllerJni scene = new SceneControllerJni();
+        NodeJni rootNode = scene.getSceneNode();
         List<NodeJni> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
         //nodes = testSphereVideo(this);
@@ -149,7 +149,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         //nodes = testImageSurface(this);
         //nodes = testText(this);
 
-        testBackgroundVideo(scene);
+        //testBackgroundVideo(scene);
         //testBackgroundImage(scene);
         //testSkyBoxImage(scene);
 
@@ -186,7 +186,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
      */
     private void initializeArScene() {
         NodeJni rootNode = new NodeJni();
-        ARSceneControllerJni scene = new ARSceneControllerJni(rootNode);
+        ARSceneControllerJni scene = new ARSceneControllerJni();
 
         List<NodeJni> nodes = new ArrayList<>();
         nodes.add(testLine(this));

@@ -17,18 +17,9 @@ public class SceneControllerJni {
     public long mNativeRef;
     public long mNativeDelegateRef;
 
-    public SceneControllerJni(NodeJni node) {
-        // Set the root node of this scene
-        mNativeRef = nativeCreateSceneController(node.mNativeRef);
+    public SceneControllerJni() {
+        setSceneRef(nativeCreateSceneController());
         mNativeDelegateRef = nativeCreateSceneControllerDelegate(mNativeRef);
-    }
-
-    /*
-     Empty default constructor for child classes to use. Child classes should
-     then call setSceneRef to set the mNativeRef.
-     */
-    protected SceneControllerJni() {
-        // no-op
     }
 
     /*
@@ -38,6 +29,15 @@ public class SceneControllerJni {
     protected void setSceneRef(long sceneRef) {
         mNativeRef = sceneRef;
         mNativeDelegateRef = nativeCreateSceneControllerDelegate(mNativeRef);
+    }
+
+    // Creates and returns a NodeJNI representing this Scene controller.
+    // NOTE: The caller is responsible for releasing this NodeJni object.
+    public NodeJni getSceneNode() {
+        final NodeJni nodeJni = new NodeJni(false);
+        long nodeRef = nativeGetSceneNodeRef(mNativeRef);
+        nodeJni.setNativeRef(nodeRef);
+        return nodeJni;
     }
 
     public void setBackgroundVideoTexture(VideoTextureJni videoTexture) {
@@ -112,9 +112,10 @@ public class SceneControllerJni {
     /**
      * Native Functions called into JNI
      */
-    private native long nativeCreateSceneController(long nodeRef);
+    private native long nativeCreateSceneController();
     private native long nativeCreateSceneControllerDelegate(long sceneRef);
     private native void nativeDestroySceneController(long sceneReference);
+    private native long nativeGetSceneNodeRef(long sceneRef);
     protected native void nativeDestroySceneControllerDelegate(long sceneDelegateRef);
     private native void nativeSetBackgroundVideoTexture(long sceneRef, long videoRef);
     private native void nativeSetBackgroundImageTexture(long sceneRef, long imageRef);

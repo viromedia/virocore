@@ -18,22 +18,8 @@
 extern "C" {
 
 JNI_METHOD(jlong, nativeCreateARSceneController) (JNIEnv *env,
-                                        jclass clazz,
-                                        jlong nativeNodeRef) {
+                                        jclass clazz) {
     std::shared_ptr<VROARSceneController> arSceneController = std::make_shared<VROARSceneController>();
-    std::weak_ptr<VRONode> node_w = Node::native(nativeNodeRef);
-    std::weak_ptr<VROScene> scene_w = arSceneController->getScene(); // an VROARScene is a VROScene
-
-    VROPlatformDispatchAsyncRenderer([node_w, scene_w] {
-        std::shared_ptr<VROScene> scene = scene_w.lock();
-        if (scene) {
-            std::shared_ptr<VRONode> node = node_w.lock();
-            if (node) {
-                scene->getRootNode()->addChildNode(node);
-            }
-        }
-    });
-
     return ARSceneController::jptr(arSceneController);
 }
 

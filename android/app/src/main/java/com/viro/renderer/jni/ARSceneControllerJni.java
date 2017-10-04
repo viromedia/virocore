@@ -8,9 +8,8 @@ import java.lang.ref.WeakReference;
 public class ARSceneControllerJni extends SceneControllerJni {
     public long mNativeARDelegateRef;
 
-    public ARSceneControllerJni(NodeJni node) {
-        super();
-        setSceneRef(nativeCreateARSceneController(node.mNativeRef));
+    public ARSceneControllerJni() {
+        setSceneRef(nativeCreateARSceneController());
         mNativeARDelegateRef = nativeCreateARSceneDelegate(mNativeRef);
     }
 
@@ -33,7 +32,7 @@ public class ARSceneControllerJni extends SceneControllerJni {
         nativeRemoveARPlane(mNativeRef, arPlane.mNativeRef);
     }
 
-    private native long nativeCreateARSceneController(long nodeRef);
+    private native long nativeCreateARSceneController();
 
     private native long nativeCreateARSceneDelegate(long sceneControllerRef);
 
