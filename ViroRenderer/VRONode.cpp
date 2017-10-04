@@ -861,7 +861,6 @@ std::vector<VROHitTestResult> VRONode::hitTest(const VROCamera &camera, VROVecto
 
     VROMatrix4f identity;
     hitTest(camera, origin, ray, boundsOnly, results);
-
     return results;
 }
 

@@ -77,12 +77,12 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
     }
 
     /*
-     * If we have completed a ClickUp and ClickDown event sequentially for a
-     * given Node, trigger an onClicked event.
-     *
-     * NOTE: This only tracks the last node that was CLICKED_DOWN irregardless of source;
-     * it does not consider the corner case where DOWN / UP events may be performed from
-     * different sources.
+     If we have completed a ClickUp and ClickDown event sequentially for a
+     given Node, trigger an onClicked event.
+     
+     NOTE: This only tracks the last node that was CLICKED_DOWN regardless of source;
+     it does not consider the corner case where DOWN / UP events may be performed from
+     different sources.
      */
     if (clickState == VROEventDelegate::ClickUp) {
         if (_hitResult->getNode() == _lastClickedNode) {
@@ -115,12 +115,12 @@ void VROInputControllerBase::onButtonEvent(int source, VROEventDelegate::ClickSt
         draggableNode->setIsBeingDragged(true);
 
         /*
-         * Grab and save a reference to the draggedNode that we will be tracking.
-         * Grab and save the distance of the hit result from the controller.
-         * Grab and save the hit location from the hit test and original draggedNode position.
-         * For each of the above, store them within _lastDraggedNode to be used later
-         * within onMove to calculate the new dragged location of the draggedNode
-         * in reference to the controller's movement.
+         Grab and save a reference to the draggedNode that we will be tracking.
+         Grab and save the distance of the hit result from the controller.
+         Grab and save the hit location from the hit test and original draggedNode position.
+         For each of the above, store them within _lastDraggedNode to be used later
+         within onMove to calculate the new dragged location of the draggedNode
+         in reference to the controller's movement.
          */
         std::shared_ptr<VRODraggedObject> draggedObject = std::make_shared<VRODraggedObject>();
         draggedObject->_draggedDistanceFromController = _hitResult->getLocation().distanceAccurate(_lastKnownPosition);
@@ -207,8 +207,8 @@ void VROInputControllerBase::processDragging(int source) {
     draggedNode->setPosition(draggedToLocation);
     
     /*
-     * To avoid spamming the JNI / JS bridge, throttle the notification
-     * of onDrag delegates to a certain degree of accuracy.
+     To avoid spamming the JNI / JS bridge, throttle the notification
+     of onDrag delegates to a certain degree of accuracy.
      */
     float distance = draggedToLocation.distance(_lastDraggedNodePosition);
     if (distance < ON_DRAG_DISTANCE_THRESHOLD) {
@@ -442,7 +442,7 @@ VROHitTestResult VROInputControllerBase::hitTest(const VROCamera &camera, VROVec
 std::shared_ptr<VRONode> VROInputControllerBase::getNodeToHandleEvent(VROEventDelegate::EventAction action,
                                                                       std::shared_ptr<VRONode> node){
     // Base condition, we are asking for the scene's root node's parent, return.
-    if (node == nullptr){
+    if (node == nullptr) {
         return nullptr;
     }
 
