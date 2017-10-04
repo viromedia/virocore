@@ -423,7 +423,7 @@
 		8FD2A4FE1F809AD800E831A6 /* object_star_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD2A4FB1F809AD700E831A6 /* object_star_specular.png */; };
 		8FD2A4FF1F809AD800E831A6 /* object_star_anim.vrx in Resources */ = {isa = PBXBuildFile; fileRef = 8FD2A4FC1F809AD700E831A6 /* object_star_anim.vrx */; };
 		8FD2A5001F809AD800E831A6 /* object_star_diffuse.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD2A4FD1F809AD800E831A6 /* object_star_diffuse.png */; };
-		8FD2A5071F81276B00E831A6 /* VROPencil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD2A5041F81273F00E831A6 /* VROPencil.h */; };
+		8FD2A5071F81276B00E831A6 /* VROPencil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD2A5041F81273F00E831A6 /* VROPencil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD2A5081F81277000E831A6 /* VROPencil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2A5051F81273F00E831A6 /* VROPencil.cpp */; };
 		8FD2A50A1F8127F200E831A6 /* VRORendererTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FD2A5091F8127EF00E831A6 /* VRORendererTest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FD2A50D1F81283800E831A6 /* VRORendererTestHarness.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2A50B1F81283800E831A6 /* VRORendererTestHarness.cpp */; };
@@ -2430,6 +2430,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FD2A5071F81276B00E831A6 /* VROPencil.h in Headers */,
 				8FD2A50A1F8127F200E831A6 /* VRORendererTest.h in Headers */,
 				A59E113C1F5396C100EB2CEB /* VROPostProcessEffectFactory.h in Headers */,
 				8F0E5E951F3B4E170007AD03 /* VRORenderTarget.h in Headers */,
@@ -2670,7 +2671,6 @@
 				8FE382121EF06FED005038CB /* VROARCamera.h in Headers */,
 				8ABD8F381DB72CE000BD9C83 /* VROApiKey.h in Headers */,
 				8F2D1BBC1EC37E1900E7BF44 /* VROSkeleton.h in Headers */,
-				8FD2A5071F81276B00E831A6 /* VROPencil.h in Headers */,
 				8FBDBE2B1D01EE5E00801B59 /* VROSortKey.h in Headers */,
 				8F65F78A1C90CD4700415115 /* VROBillboardConstraint.h in Headers */,
 				8FAE18C81EE79D6D0021C7BB /* VROARFrameiOS.h in Headers */,
