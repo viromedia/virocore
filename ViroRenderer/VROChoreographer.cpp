@@ -48,6 +48,8 @@ VROChoreographer::~VROChoreographer() {
 }
 
 void VROChoreographer::initTargets(std::shared_ptr<VRODriver> driver) {
+    VRORenderTargetType colorType = _renderHDR ? VRORenderTargetType::ColorTextureHDR16 : VRORenderTargetType::ColorTexture;
+    
     std::vector<std::string> blitSamplers = { "source_texture" };
     std::vector<std::string> blitCode = {
         "uniform sampler2D source_texture;",
@@ -55,10 +57,10 @@ void VROChoreographer::initTargets(std::shared_ptr<VRODriver> driver) {
     };
     std::shared_ptr<VROShaderProgram> blitShader = VROImageShaderProgram::create(blitSamplers, blitCode, driver);
     _blitPostProcess = driver->newImagePostProcess(blitShader);
-    _blitTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1);
+    _blitTarget = driver->newRenderTarget(colorType, 1, 1);
     
-    _renderToTextureTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1);
-    _postProcessTarget = driver->newRenderTarget(VRORenderTargetType::ColorTexture, 1, 1);
+    _renderToTextureTarget = driver->newRenderTarget(colorType, 1, 1);
+    _postProcessTarget = driver->newRenderTarget(colorType, 1, 1);
 
     if (_renderShadows) {
         if (kDebugShadowMaps) {
@@ -94,7 +96,7 @@ void VROChoreographer::initHDR(std::shared_ptr<VRODriver> driver) {
     else {
         _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1);
     }
-    _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingType::Reinhard,
+    _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingMethod::Hable,
                                                                   driver->getColorRenderingMode() == VROColorRenderingMode::LinearSoftware,
                                                                   driver);
 }

@@ -18,9 +18,11 @@ class VROImagePostProcess;
 const std::string kToneMappingHDRInput = "TM_Input";
 const std::string kToneMappingOutput = "TM_Output";
 
-enum class VROToneMappingType {
+enum class VROToneMappingMethod {
+    Disabled,
     Reinhard,
-    Exposure
+    Exposure,
+    Hable
 };
 
 /*
@@ -32,7 +34,7 @@ enum class VROToneMappingType {
 class VROToneMappingRenderPass : public VRORenderPass, public VROAnimatable {
 public:
     
-    VROToneMappingRenderPass(VROToneMappingType type, bool gammaCorrectSoftware,
+    VROToneMappingRenderPass(VROToneMappingMethod method, bool gammaCorrectSoftware,
                              std::shared_ptr<VRODriver> driver);
     virtual ~VROToneMappingRenderPass();
     
@@ -40,14 +42,32 @@ public:
                                     VRORenderContext *context, std::shared_ptr<VRODriver> &driver);
     
     /*
-     Set the exposure for the tone-mapping curve. Animatable.
+     Set the tone mapping method to use. This will regenerate the post-process
+     effect.
+     */
+    void setMethod(VROToneMappingMethod method);
+    
+    /*
+     Set the exposure for the tone-mapping curve. This value is exponential; e.g.
+     1.0 doubles brightness, 2.0 quadruples, etc. Animatable.
+     
+     (Note: if in the future we auto-detect exposure from average scene luminance, we
+            will replace this value with minExposure and maxExposure to clamp the
+            detected exposure levels).
      */
     void setExposure(float exposure);
     
+    /*
+     Set the white point for the tone-mapping curve. The white point is the lowest luminance that
+     will appear as white. Modifying this property will change contrast. Animatable.
+     */
+    void setWhitePoint(float whitePoint);
+    
 private:
 
-    VROToneMappingType _type;
+    VROToneMappingMethod _method;
     float _exposure;
+    float _whitePoint;
     bool _gammaCorrectionEnabled;
     
     std::shared_ptr<VROImagePostProcess> _postProcess;

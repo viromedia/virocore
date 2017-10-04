@@ -15,10 +15,18 @@
 #include "VROHitTestResult.h"
 #include "VROLog.h"
 #include "VROAudioPlayer.h"
+#include "VROToneMappingRenderPass.h"
 #include <stack>
 #include <algorithm>
 
-VROScene::VROScene() : VROThreadRestricted(VROThreadName::Renderer) {
+VROScene::VROScene() : VROThreadRestricted(VROThreadName::Renderer),
+    _postProcessingEffectsUpdated(false),
+    _toneMappingEnabled(true),
+    _toneMappingMethod(VROToneMappingMethod::Hable),
+    _toneMappingExposure(1.5),
+    _toneMappingWhitePoint(11.2),
+    _toneMappingUpdated(false) {
+        
     _rootNode = std::make_shared<VROPortal>();
     _rootNode->setName("Root");
     _activePortal = _rootNode;
@@ -125,6 +133,26 @@ const tree<std::shared_ptr<VROPortal>> VROScene::getPortalTree() const {
     return _portals;
 }
 
+std::vector<std::shared_ptr<VROGeometry>> VROScene::getBackgrounds() const {
+    std::vector<std::shared_ptr<VROGeometry>> backgrounds;
+    getBackgrounds(_rootNode, backgrounds);
+    
+    return backgrounds;
+}
+
+void VROScene::getBackgrounds(std::shared_ptr<VRONode> node, std::vector<std::shared_ptr<VROGeometry>> &backgrounds) const {
+    if (node->getType() == VRONodeType::Portal) {
+        std::shared_ptr<VROPortal> portal = std::dynamic_pointer_cast<VROPortal>(node);
+        if (portal->getBackground() != nullptr) {
+            backgrounds.push_back(portal->getBackground());
+        }
+    }
+    
+    for (std::shared_ptr<VRONode> &child : node->getChildNodes()) {
+        getBackgrounds(child, backgrounds);
+    }
+}
+
 #pragma mark - Input Controllers
 
 void VROScene::detachInputController(std::shared_ptr<VROInputControllerBase> controller){
@@ -159,25 +187,50 @@ std::shared_ptr<VROInputPresenter> VROScene::getControllerPresenter(){
     return _controllerPresenter;
 }
 
-std::vector<std::shared_ptr<VROGeometry>> VROScene::getBackgrounds() const {
-    std::vector<std::shared_ptr<VROGeometry>> backgrounds;
-    getBackgrounds(_rootNode, backgrounds);
+#pragma mark - Post-processing
 
-    return backgrounds;
+void VROScene::setToneMappingEnabled(bool enabled) {
+    _toneMappingEnabled = enabled;
+    _toneMappingUpdated = true;
 }
 
-void VROScene::getBackgrounds(std::shared_ptr<VRONode> node, std::vector<std::shared_ptr<VROGeometry>> &backgrounds) const {
-    if (node->getType() == VRONodeType::Portal) {
-        std::shared_ptr<VROPortal> portal = std::dynamic_pointer_cast<VROPortal>(node);
-        if (portal->getBackground() != nullptr) {
-            backgrounds.push_back(portal->getBackground());
-        }
-    }
-    
-    for (std::shared_ptr<VRONode> &child : node->getChildNodes()) {
-        getBackgrounds(child, backgrounds);
-    }
+void VROScene::setToneMappingMethod(VROToneMappingMethod method) {
+    _toneMappingMethod = method;
+    _toneMappingUpdated = true;
 }
+
+void VROScene::setToneMappingExposure(float exposure) {
+    _toneMappingExposure = exposure;
+    _toneMappingUpdated = true;
+}
+
+void VROScene::setToneMappingWhitePoint(float whitePoint) {
+    _toneMappingWhitePoint = whitePoint;
+    _toneMappingUpdated = true;
+}
+
+void VROScene::setToneMappingUpdated(bool updated) {
+    _toneMappingUpdated = updated;
+}
+
+void VROScene::setPostProcessingEffects(std::vector<std::string> effects) {
+    _activePostProcessingEffects = effects;
+    _postProcessingEffectsUpdated = true;
+}
+
+std::vector<std::string> VROScene::getPostProcessingEffects() const {
+    return _activePostProcessingEffects;
+}
+
+void VROScene::setPostProcessingEffectsUpdated(bool updated) {
+    _postProcessingEffectsUpdated = updated;
+}
+
+bool VROScene::isPostProcessingEffectsUpdated() const {
+    return _postProcessingEffectsUpdated;
+}
+
+#pragma mark - Debug
 
 void VROScene::drawBoundingBoxCorners(std::shared_ptr<VRONode> node,
                                       const VRORenderContext &context,

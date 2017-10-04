@@ -26,6 +26,7 @@
 #include "VROChoreographer.h"
 #include "VROPortalTreeRenderPass.h"
 #include "VRORenderMetadata.h"
+#include "VROToneMappingRenderPass.h"
 #include "VRODebugHUD.h"
 
 // Target frames-per-second. Eventually this will be platform dependent,
@@ -426,23 +427,32 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneCo
     }
 }
 
-void VRORenderer::updateSceneEffects(std::shared_ptr<VRODriver> driver,
-                                     std::shared_ptr<VROScene> scene) {
-    // Return if the effects for this scene had already been applied and had not changed.
-    std::vector<std::string> effects;
-    if (!scene->processSceneEffect(effects)){
-        return;
-    }
-
-    std::shared_ptr<VROPostProcessEffectFactory> postProcess
-            = _choreographer->getPostProcessEffectFactory();
-    _choreographer-> getPostProcessEffectFactory() -> clearAllEffects();
-
-    for (std::string strEffect: effects){
-        VROPostProcessEffect effect = postProcess->getEffectForString(strEffect);
-        if (effect != VROPostProcessEffect::None) {
-            _choreographer->getPostProcessEffectFactory()->enableEffect(effect, driver);
+void VRORenderer::updateSceneEffects(std::shared_ptr<VRODriver> driver, std::shared_ptr<VROScene> scene) {
+    if (scene->isPostProcessingEffectsUpdated()) {
+        std::vector<std::string> effects = scene->getPostProcessingEffects();
+        std::shared_ptr<VROPostProcessEffectFactory> postProcess = _choreographer->getPostProcessEffectFactory();
+        postProcess->clearAllEffects();
+        
+        for (std::string &strEffect : effects){
+            VROPostProcessEffect effect = postProcess->getEffectForString(strEffect);
+            if (effect != VROPostProcessEffect::None) {
+                postProcess->enableEffect(effect, driver);
+            }
         }
+        scene->setPostProcessingEffectsUpdated(false);
+    }
+    
+    if (driver->getColorRenderingMode() != VROColorRenderingMode::NonLinear && scene->isToneMappingUpdated()) {
+        std::shared_ptr<VROToneMappingRenderPass> toneMapping = _choreographer->getToneMapping();
+        if (scene->isToneMappingEnabled()) {
+            toneMapping->setMethod(scene->getToneMappingMethod());
+            toneMapping->setExposure(scene->getToneMappingExposure());
+            toneMapping->setWhitePoint(scene->getToneMappingWhitePoint());
+        }
+        else {
+            toneMapping->setMethod(VROToneMappingMethod::Disabled);
+        }
+        scene->setToneMappingUpdated(false);
     }
 }
 

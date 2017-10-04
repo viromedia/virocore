@@ -198,4 +198,19 @@ void VROBoxTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, 
     
     boxParentNode->setRotationEulerZ(M_PI_2);
     VROTransaction::commit();
+    
+    _eventDelegate = std::make_shared<VROBoxEventDelegate>(scene);
+    _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
+    scene->getRootNode()->setEventDelegate(_eventDelegate);
 }
+
+void VROBoxEventDelegate::onClick(int source, ClickState clickState, std::vector<float> position) {
+    std::shared_ptr<VROScene> scene = _scene.lock();
+    if (scene && clickState == ClickState::Clicked) {
+        scene->setToneMappingEnabled(!scene->isToneMappingEnabled());
+        scene->setToneMappingExposure(1.5);
+        scene->setToneMappingWhitePoint(5.0);
+        pinfo("Tone Mapping %d", scene->isToneMappingEnabled());
+    }
+}
+
