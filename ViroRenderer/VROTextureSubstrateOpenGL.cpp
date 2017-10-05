@@ -146,6 +146,16 @@ void VROTextureSubstrateOpenGL::loadFace(GLenum target,
             glGenerateMipmap(GL_TEXTURE_2D);
         }
     }
+    else if (format == VROTextureFormat::RGB9_E5) {
+        // RGB9_E5 is not color renderable so automatic mipmap generation is not
+        // supported
+        passert (mipmapMode == VROMipmapMode::None);
+        passert_msg (internalFormat == VROTextureInternalFormat::RGB9_E5,
+                     "RGB9_E5 internal format requires RGB9_E5 source data!");
+        
+        glTexImage2D(target, 0, GL_RGB9_E5, width, height, 0,
+                     GL_RGB, GL_UNSIGNED_INT_5_9_9_9_REV, faceData->getData());
+    }
     else if (format == VROTextureFormat::RGB565) {
         passert_msg (internalFormat == VROTextureInternalFormat::RGB565,
                      "RGB565 source format is only compatible with RGB565 internal format!");

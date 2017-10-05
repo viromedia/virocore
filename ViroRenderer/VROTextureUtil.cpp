@@ -138,6 +138,39 @@ std::shared_ptr<VROData> VROTextureUtil::readKTXHeader(const uint8_t *data, uint
     return std::make_shared<VROData>(buffer.getData(), buffer.getPosition(), VRODataOwnership::Move);
 }
 
+typedef struct {
+    uint32_t width;
+    uint32_t height;
+    uint32_t numMipLevels;
+} VROVHDData;
+
+std::shared_ptr<VROData> VROTextureUtil::readVHDHeader(const std::string &data, VROTextureFormat *outFormat,
+                                                       int *outWidth, int *outHeight, std::vector<uint32_t> *outMipSizes) {
+    
+    VROVHDData vhdHeader;
+    memcpy(&vhdHeader, data.c_str(), sizeof(VROVHDData));
+    
+    *outFormat = VROTextureFormat::RGB9_E5;
+    *outWidth  = vhdHeader.width;
+    *outHeight = vhdHeader.height;
+    
+    int numMipLevels = vhdHeader.numMipLevels;
+    
+    int mipStartIndex = sizeof(VROVHDData);
+    int mipWidth = vhdHeader.width;
+    int mipHeight = vhdHeader.height;
+    
+    for (int i = 0; i < numMipLevels; i++) {
+        uint32_t mipSize = mipWidth * mipHeight * sizeof(uint32_t);
+        outMipSizes->push_back(mipSize);
+        
+        mipStartIndex += mipSize;
+        mipWidth /= 2;
+        mipHeight /= 2;
+    }
+    return std::make_shared<VROData>(data.c_str() + sizeof(VROVHDData), data.length() - sizeof(VROVHDData));
+}
+
 VROStereoMode VROTextureUtil::getStereoModeForString(std::string stereoModeTag){
     if (VROStringUtil::strcmpinsensitive(stereoModeTag, "leftRight")){
         return VROStereoMode::LeftRight;

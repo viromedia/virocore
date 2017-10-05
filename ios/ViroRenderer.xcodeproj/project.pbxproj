@@ -468,6 +468,8 @@
 		8FD2A55B1F817D4200E831A6 /* VROPhysicsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2A5591F817D4100E831A6 /* VROPhysicsTest.cpp */; };
 		8FD2A5661F83D9F000E831A6 /* VROTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FD2A5651F83D9F000E831A6 /* VROTestViewController.m */; };
 		8FD2A5681F848E2900E831A6 /* interior_viro.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8FD2A5671F848E2800E831A6 /* interior_viro.jpg */; };
+		8FD2A5941F868B1200E831A6 /* sunrise.vhd in Resources */ = {isa = PBXBuildFile; fileRef = 8FD2A5931F868B1200E831A6 /* sunrise.vhd */; };
+		8FD2A5961F8694F800E831A6 /* wooden.vhd in Resources */ = {isa = PBXBuildFile; fileRef = 8FD2A5951F8694F800E831A6 /* wooden.vhd */; };
 		8FD4D0BF1EF0695F00077AD7 /* coffee_mug_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4D0BC1EF0695F00077AD7 /* coffee_mug_specular.png */; };
 		8FD4D0C01EF0695F00077AD7 /* coffee_mug.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4D0BD1EF0695F00077AD7 /* coffee_mug.obj */; };
 		8FD4D0C11EF0695F00077AD7 /* coffee_mug.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FD4D0BE1EF0695F00077AD7 /* coffee_mug.png */; };
@@ -1240,6 +1242,8 @@
 		8FD2A5641F83D9F000E831A6 /* VROTestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VROTestViewController.h; path = ViroSample/VROTestViewController.h; sourceTree = "<group>"; };
 		8FD2A5651F83D9F000E831A6 /* VROTestViewController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = VROTestViewController.m; path = ViroSample/VROTestViewController.m; sourceTree = "<group>"; };
 		8FD2A5671F848E2800E831A6 /* interior_viro.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = interior_viro.jpg; path = ViroSample/interior_viro.jpg; sourceTree = "<group>"; };
+		8FD2A5931F868B1200E831A6 /* sunrise.vhd */ = {isa = PBXFileReference; lastKnownFileType = file; name = sunrise.vhd; path = ViroSample/sunrise.vhd; sourceTree = "<group>"; };
+		8FD2A5951F8694F800E831A6 /* wooden.vhd */ = {isa = PBXFileReference; lastKnownFileType = file; name = wooden.vhd; path = ViroSample/wooden.vhd; sourceTree = "<group>"; };
 		8FD4D0BC1EF0695F00077AD7 /* coffee_mug_specular.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = coffee_mug_specular.png; path = ViroSample/coffee_mug_specular.png; sourceTree = "<group>"; };
 		8FD4D0BD1EF0695F00077AD7 /* coffee_mug.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = coffee_mug.obj; path = ViroSample/coffee_mug.obj; sourceTree = "<group>"; };
 		8FD4D0BE1EF0695F00077AD7 /* coffee_mug.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = coffee_mug.png; path = ViroSample/coffee_mug.png; sourceTree = "<group>"; };
@@ -2230,6 +2234,8 @@
 		8FD4DF301C18F3FA003DC425 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8FD2A5951F8694F800E831A6 /* wooden.vhd */,
+				8FD2A5931F868B1200E831A6 /* sunrise.vhd */,
 				8FD2A5671F848E2800E831A6 /* interior_viro.jpg */,
 				8FD2A4FC1F809AD700E831A6 /* object_star_anim.vrx */,
 				8FD2A4FD1F809AD800E831A6 /* object_star_diffuse.png */,
@@ -2930,10 +2936,12 @@
 				8F129FA31ECEC0A100341D83 /* texture.png in Resources */,
 				8F517BC91BCDA2BD0017C70B /* Assets.xcassets in Resources */,
 				8F9277FE1C66BD4500FF892A /* nx1.jpg in Resources */,
+				8FD2A5941F868B1200E831A6 /* sunrise.vhd in Resources */,
 				8F37D9EC1F4B18800029D23E /* wood.png in Resources */,
 				8FCED07D1EBBD35200C19BCA /* Sven_Face_Normal.png in Resources */,
 				8FCED0771EBBD35200C19BCA /* ramp_inc2.tga in Resources */,
 				8FD2A4FA1F8064AD00E831A6 /* emoji_smile_anim.vrx in Resources */,
+				8FD2A5961F8694F800E831A6 /* wooden.vhd in Resources */,
 				8F1B4A271F64B6E000156809 /* emoji_smile_normal.png in Resources */,
 				A540C5C41F3E7190007986E6 /* particles_vsh.glsl in Resources */,
 				8FA2E1481C445CAA0070DB26 /* nx.png in Resources */,
