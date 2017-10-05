@@ -241,7 +241,7 @@ JNI_METHOD(bool, nativeSetEffects)(JNIEnv *env,
     std::shared_ptr<VROSceneController> sceneController = SceneController::native(sceneRef);
     VROPlatformDispatchAsyncRenderer([sceneController, effects] {
         if (sceneController->getScene()){
-            sceneController->getScene()->setSceneEffect(effects);
+            sceneController->getScene()->setPostProcessingEffects(effects);
         }
     });
     return true;

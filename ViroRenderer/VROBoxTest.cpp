@@ -8,6 +8,7 @@
 
 #include "VROBoxTest.h"
 #include "VROTestUtil.h"
+#include "VROCompress.h"
 
 VROBoxTest::VROBoxTest() :
     VRORendererTest(VRORendererTestType::Box) {
@@ -24,7 +25,32 @@ void VROBoxTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, 
     
     std::shared_ptr<VROPortal> rootNode = scene->getRootNode();
     rootNode->setPosition({0, 0, 0});
-    rootNode->setBackgroundSphere(VROTestUtil::loadDiffuseTexture("interior_viro.jpg", VROMipmapMode::None));
+    
+    /*
+     Load the background texture.
+     */
+    int fileLength;
+    void *fileData = VROTestUtil::loadDataForResource("wooden", "vhd", &fileLength);
+    //void *fileData = VROTestUtil::loadDataForResource("sunrise", "vhd", &fileLength);
+
+    std::string data_gzip((char *)fileData, fileLength);
+    std::string data_texture = VROCompress::decompress(data_gzip);
+    
+    VROTextureFormat format;
+    int texWidth;
+    int texHeight;
+    std::vector<uint32_t> mipSizes;
+    std::shared_ptr<VROData> texData = VROTextureUtil::readVHDHeader(data_texture,
+                                                                     &format, &texWidth, &texHeight, &mipSizes);
+    std::vector<std::shared_ptr<VROData>> dataVec = { texData };
+
+    std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D,
+                                                                       format,
+                                                                       VROTextureInternalFormat::RGB9_E5, true,
+                                                                       VROMipmapMode::None,
+                                                                       dataVec, texWidth, texHeight, mipSizes);
+    rootNode->setBackgroundSphere(texture);
+    //rootNode->setBackgroundSphere(VROTestUtil::loadDiffuseTexture("interior_viro.jpg", VROMipmapMode::None));
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
     ambient->setColor({ 0.6, 0.6, 0.6 });
