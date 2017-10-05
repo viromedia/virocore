@@ -53,6 +53,18 @@ JNI_METHOD(void, nativeAddChildNode)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeRemoveAllChildNodes)(JNIEnv *env,
+                                            jobject obj,
+                                            jlong native_node_ref) {
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        for (std::shared_ptr<VRONode> subNode : node->getChildNodes()){
+            subNode->removeFromParentNode();
+        }
+    });
+}
+
 JNI_METHOD(void, nativeRemoveFromParent)(JNIEnv *env,
                                          jobject obj,
                                          jlong native_node_ref) {

@@ -67,6 +67,10 @@ public class NodeJni {
         nativeRemoveFromParent(childNode.mNativeRef);
     }
 
+    public void removeAllChildNodes(){
+        nativeRemoveAllChildNodes(mNativeRef);
+    }
+
     public void setPosition(float[] position){
         if (position.length < 3){
             throw new IllegalArgumentException("Missing a position coordinate: All three coordinates are needed [x,y,z]");
@@ -170,6 +174,7 @@ public class NodeJni {
     private native void nativeDestroyNode(long nodeReference);
     private native void nativeAddChildNode(long nodeReference, long childNodeReference);
     private native void nativeRemoveFromParent(long nodeReference);
+    private native void nativeRemoveAllChildNodes(long nodeReference);
     private native void nativeSetHierarchicalRendering(long nodeReference, boolean hierarchicalRendering);
     private native void nativeSetPosition(long nodeReference, float x, float y, float z);
     private native void nativeSetRotation(long nodeReference, float x, float y, float z);
