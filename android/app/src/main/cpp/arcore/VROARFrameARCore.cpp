@@ -37,41 +37,57 @@ const std::shared_ptr<VROARCamera> &VROARFrameARCore::getCamera() const {
     return _camera;
 }
 
+// TODO: VIRO-1940 filter results based on types. Right now, devs can't set this, so no use filtering.
 std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set<VROARHitTestResultType> types) {
-    /*
-     Convert from viewport space to camera image space.
-     */
-    VROMatrix4f viewportSpaceToCameraImageSpace = getViewportToCameraImageTransform();
-    VROVector3f pointViewport(x / (float)_viewport.getWidth(), y / (float)_viewport.getHeight());
-    VROVector3f pointCameraImage = viewportSpaceToCameraImageSpace.multiply(pointViewport);
-    
-    /*
-     Perform the ARCore hit test.
 
-     TODO VIRO-1895 Convert this to ARCore
-     */
-    std::vector<VROARHitTestResult> vResults;
+    // TODO: VIRO-1895 make sure x and y are in pixel coordinates
+    jni::Object<arcore::List> hitResultsJni = arcore::frame::hitTest(*_frameJNI.get(), x, y);
 
-    /*
-    CGPoint point = CGPointMake(pointCameraImage.x, pointCameraImage.y);
-    ARHitTestResultType typesAR = convertResultTypes(types);
-    NSArray<ARHitTestResult *> *results = [_frame hitTest:point types:typesAR];
+    int listSize = arcore::list::size(hitResultsJni);
+    std::vector<VROARHitTestResult> toReturn;
 
-    std::shared_ptr<VROARSessionARCore> session = _session.lock();
-    for (ARHitTestResult *result in results) {
-        std::shared_ptr<VROARAnchor> vAnchor;
-        if (session && result.anchor) {
-            vAnchor = session->getAnchorForNative(result.anchor);
+    jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+    static auto PlaneHitResultClass = *jni::Class<arcore::PlaneHitResult>::Find(env).NewGlobalRef(env).release();
+
+    for (int i = 0; i < listSize; i++) {
+        jni::Object<arcore::HitResult> hitResult =
+                (jni::Object<arcore::HitResult>) arcore::list::get(hitResultsJni, i);
+
+        // Determine if the hitResult is a PlaneHitResult.
+        bool isPlane = hitResult.IsInstanceOf(env, PlaneHitResultClass);
+
+        // Get the type of HitResult. ARCore only has 2 hit types Planes & PointCloud (FeaturePoint)
+        VROARHitTestResultType type = isPlane ? VROARHitTestResultType::ExistingPlane
+                                              : VROARHitTestResultType::FeaturePoint;
+
+        // Get the anchor only if the result is of type PlaneHitResult
+        std::shared_ptr<VROARSessionARCore> session = _session.lock();
+        std::shared_ptr<VROARAnchor> vAnchor = nullptr;
+        if (session && isPlane) {
+            jni::Object<arcore::Plane> plane =
+                    arcore::planehitresult::getPlane((jni::Object<arcore::PlaneHitResult>) hitResult);
+            vAnchor = session->getAnchorForNative(plane);
         }
-        
-        VROARHitTestResult vResult(convertResultType(result.type), vAnchor, result.distance,
-                                   VROConvert::toMatrix4f(result.worldTransform),
-                                   VROConvert::toMatrix4f(result.localTransform));
-        vResults.push_back(vResult);
+
+        // Get the distance from the camera to the HitResult.
+        float distance = arcore::hitresult::getDistance(hitResult);
+
+        // Get the transform to the HitResult.
+        VROMatrix4f worldTransform = arcore::hitresult::getPose(hitResult);
+
+        // Calculate the local transform, relative to the anchor (if anchor available).
+        // TODO: VIRO-1895 confirm this is correct. T(local) = T(world) x T(anchor)^-1
+        VROMatrix4f localTransform = VROMatrix4f();
+        if (vAnchor) {
+            VROMatrix4f inverseAnchorTransform = vAnchor->getTransform().invert();
+            localTransform = worldTransform.multiply(inverseAnchorTransform);
+        }
+
+        VROARHitTestResult vResult(type, vAnchor, distance, worldTransform, localTransform);
+        toReturn.push_back(vResult);
     }
-    */
     
-    return vResults;
+    return toReturn;
 }
 
 VROMatrix4f VROARFrameARCore::getViewportToCameraImageTransform() {

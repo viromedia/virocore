@@ -78,8 +78,9 @@ void ARPlaneDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> anchor) {
         jobject anchorObj = ARPlaneDelegate::createJavaARAnchorFromPlane(planeAnchor);
 
         // Yes, the function in the bridge is onAnchorFound.
-        VROPlatformCallJavaFunction(localObj, "onAnchorFound", "(Lcom/viro/renderer/ARAnchor)V",
+        VROPlatformCallJavaFunction(localObj, "onAnchorFound", "(Lcom/viro/renderer/ARAnchor;)V",
                                     anchorObj);
+        env->DeleteWeakGlobalRef(jObject_w);
     });
 }
 
@@ -99,8 +100,10 @@ void ARPlaneDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) {
         jobject anchorObj = ARPlaneDelegate::createJavaARAnchorFromPlane(planeAnchor);
 
         // Yes, the function in the bridge is onAnchorUpdated.
-        VROPlatformCallJavaFunction(localObj, "onAnchorUpdated", "(Lcom/viro/renderer/ARAnchor)V",
+        VROPlatformCallJavaFunction(localObj, "onAnchorUpdated", "(Lcom/viro/renderer/ARAnchor;)V",
                                     anchorObj);
+
+        env->DeleteWeakGlobalRef(jObject_w);
     });
 }
 
@@ -116,6 +119,7 @@ void ARPlaneDelegate::onARAnchorRemoved() {
 
         // Yes, the function in the bridge is onAnchorRemoved.
         VROPlatformCallJavaFunction(localObj, "onAnchorRemoved", "()V");
+        env->DeleteWeakGlobalRef(jObject_w);
     });
 }
 

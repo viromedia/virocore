@@ -34,6 +34,10 @@ public:
     bool isDisplayRotationChanged();
     void getBackgroundTexcoords(VROVector3f *BL, VROVector3f *BR, VROVector3f *TL, VROVector3f *TR);
 
+    jni::Object<arcore::Frame> getFrameJNI() {
+        return *_frameJNI.get();
+    }
+
 private:
 
     jni::UniqueObject<arcore::Frame> _frameJNI;

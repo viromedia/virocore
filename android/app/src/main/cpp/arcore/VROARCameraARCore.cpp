@@ -55,9 +55,9 @@ VROARCameraARCore::~VROARCameraARCore() {
 }
 
 VROARTrackingState VROARCameraARCore::getTrackingState() const {
-    arcore::frame::TrackingState trackingState = arcore::frame::getTrackingState(*_frame.get());
+    arcore::TrackingState trackingState = arcore::frame::getTrackingState(*_frame.get());
     switch (trackingState) {
-        case arcore::frame::TrackingState::NotTracking:
+        case arcore::TrackingState::NotTracking:
             return VROARTrackingState::Unavailable;
         default:
             return VROARTrackingState::Normal;

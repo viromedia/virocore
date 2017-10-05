@@ -10,10 +10,13 @@
 #define VROARSessioniOS_h
 
 #include "VROARSession.h"
+#include "VROARFrameARCore.h"
 #include "VROViewport.h"
 #include "arcore/ARCore_JNI.h"
 #include <map>
 #include <vector>
+#include <VROCameraTexture.h>
+#include <VROARPlaneAnchor.h>
 
 class VRODriverOpenGL;
 
@@ -45,9 +48,9 @@ public:
      */
     void initGL(std::shared_ptr<VRODriverOpenGL> driver);
     VROMatrix4f getProjectionMatrix(float near, float far);
+    std::shared_ptr<VROARAnchor> getAnchorForNative(jni::Object<arcore::Plane> plane);
 
 private:
-    
     /*
      The ARCore session.
      */
@@ -68,12 +71,24 @@ private:
      Vector of all anchors that have been added to this session.
      */
     std::vector<std::shared_ptr<VROARAnchor>> _anchors;
-    
+
+    /*
+     Map of ARCore anchors ("native" anchors) to their Viro representation.
+     Required so we can update VROARAnchors when their ARCore counterparts are
+     updated.
+     */
+    std::map<std::string, std::shared_ptr<VROARAnchor>> _nativeAnchorMap;
+
     /*
      Background to be assigned to the VROScene.
      */
     std::shared_ptr<VROTexture> _background;
 
+    void processUpdatedAnchors(VROARFrameARCore *frame);
+
+    void updateAnchorFromJni(std::shared_ptr<VROARAnchor> anchor, jni::Object<arcore::Anchor> anchorJni);
+
+    void updatePlaneFromJni(std::shared_ptr<VROARPlaneAnchor> plane, jni::Object<arcore::Plane> planeJni);
 };
 
 #endif /* VROARSessionARCore_h */

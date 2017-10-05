@@ -18,6 +18,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.viro.renderer.ARAnchor;
+import com.viro.renderer.jni.ARNodeJni;
+import com.viro.renderer.jni.ARPlaneJni;
 import com.viro.renderer.jni.ARSceneControllerJni;
 import com.viro.renderer.jni.AmbientLightJni;
 import com.viro.renderer.jni.AsyncObjListener;
@@ -68,6 +71,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     private final Map<String, SoundFieldJni> mSoundFieldMap = new HashMap();
     private final Map<String, SpatialSoundJni> mSpatialSoundMap = new HashMap<>();
     private static String TAG = ViroActivity.class.getSimpleName();
+    private ARNodeJni.ARNodeDelegate mARNodeDelegate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,8 +132,8 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     @Override
     public void onGlInitialized() {
         Log.e("ViroActivity", "onGlInitialized called");
-        initializeVrScene();
-        //initializeArScene();
+        //initializeVrScene();
+        initializeArScene();
     }
 
     private void initializeVrScene() {
@@ -187,7 +191,9 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         List<NodeJni> nodes = new ArrayList<>();
         nodes.add(testLine(this));
 
-        testBackgroundImage(scene);
+        //testBackgroundImage(scene);
+
+        nodes.addAll(testARPlane(scene));
 
         for (NodeJni node: nodes) {
             rootNode.addChildNode(node);
@@ -196,7 +202,6 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
         // Updating the scene.
         mVrView.setSceneController(scene);
-        ControllerJni nativeController = new ControllerJni(mVrView.getRenderContextRef());
     }
 
     private void testEdgeDetect() {
@@ -662,6 +667,43 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
                 Log.e(TAG,"onVideoUpdatedTime for Background within ViroActivity:" + seconds);
             }
         });
+    }
+
+    private List<NodeJni> testARPlane(ARSceneControllerJni arScene) {
+        ARPlaneJni arPlane = new ARPlaneJni(0, 0);
+        NodeJni node = new NodeJni();
+        final SurfaceJni surface = new SurfaceJni(.5f, .5f, 0, 0, 1, 1);
+
+        float[] rotation = {-90, 0, 0};
+        node.setRotation(rotation);
+        mARNodeDelegate = new ARNodeJni.ARNodeDelegate() {
+            @Override
+            public void onAnchorFound(ARAnchor anchor) {
+                Log.i("ViroActivity", "onAnchorFound");
+            }
+
+            @Override
+            public void onAnchorUpdated(ARAnchor anchor) {
+                Log.i("ViroActivity", "onAnchorUpdated");
+                surface.setWidth(anchor.getExtent()[0]);
+                surface.setHeight(anchor.getExtent()[2]);
+            }
+
+            @Override
+            public void onAnchorRemoved() {
+                Log.i("ViroActivity", "onAnchorRemoved");
+            }
+        };
+        arPlane.registerARNodeDelegate(mARNodeDelegate);
+
+        surface.attachToNode(node);
+        arPlane.addChildNode(node);
+        arScene.addARPlane(arPlane);
+
+        ArrayList<NodeJni> list = new ArrayList<NodeJni>();
+        list.add(arPlane);
+        return list;
+
     }
 
     private void addNormalSound(String path) {
