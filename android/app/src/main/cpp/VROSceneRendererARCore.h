@@ -76,6 +76,8 @@ public:
     void onSurfaceChanged(jobject surface, jint width, jint height);
     void onSurfaceDestroyed() {}
 
+    std::vector<VROARHitTestResult> performARHitTest(VROVector3f ray);
+
 private:
 
     void renderFrame();

@@ -14,6 +14,8 @@
 #include <cmath>
 #include <random>
 #include <VROTime.h>
+#include <VROProjector.h>
+#include <VROARHitTestResult.h>
 #include "VROARCamera.h"
 #include "arcore/VROARSessionARCore.h"
 #include "arcore/VROARFrameARCore.h"
@@ -292,6 +294,37 @@ void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneControll
 
     _sceneController = sceneController;
     VROSceneRenderer::setSceneController(sceneController, seconds, timingFunction);
+}
+
+std::vector<VROARHitTestResult> VROSceneRendererARCore::performARHitTest(VROVector3f ray) {
+    VROVector3f cameraForward = getRenderer()->getRenderContext()->getCamera().getForward();
+
+    if (cameraForward.dot(ray) <= 0) {
+        return std::vector<VROARHitTestResult>();
+    }
+
+    int viewportArr[4] = {0, 0, _surfaceSize.width, _surfaceSize.height};
+
+    // create the mvp (in this case, the model mat is identity).
+    VROMatrix4f projectionMat = getRenderer()->getRenderContext()->getProjectionMatrix();
+    VROMatrix4f viewMat = getRenderer()->getRenderContext()->getViewMatrix();
+    VROMatrix4f vpMat = projectionMat.multiply(viewMat);
+
+    VROVector3f point;
+    VROProjector::project(ray, vpMat.getArray(), viewportArr, &point);
+
+    std::unique_ptr<VROARFrame> &frame = _session->getLastFrame();
+    if (frame && point.x >= 0 && point.x <= viewportArr[2] && point.y >= 0 && point.y <= viewportArr[3]) {
+        std::vector<VROARHitTestResult> results = frame->hitTest(point.x,
+                                                                 point.y,
+                                                                 {VROARHitTestResultType::ExistingPlaneUsingExtent,
+                                                                  VROARHitTestResultType::ExistingPlane,
+                                                                  VROARHitTestResultType::EstimatedHorizontalPlane,
+                                                                  VROARHitTestResultType::FeaturePoint});
+        return results;
+    };
+
+    return std::vector<VROARHitTestResult>();
 }
 
 

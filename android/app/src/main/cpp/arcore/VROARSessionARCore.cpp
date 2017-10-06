@@ -197,28 +197,40 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frame) {
     if (planesJni.size() > 0) {
 
         for (int i = 0; i < planesJni.size(); i++) {
-            // TODO: VIRO-1895 handle removed planes (check for subsumption).
             jni::Object<arcore::Plane> planeJni = *planesJni[i].get();
+
+            jni::Object<arcore::Plane> newPlane = arcore::plane::getSubsumedBy(planeJni);
 
             std::shared_ptr<VROARPlaneAnchor> vAnchor;
             // ARCore doesn't use ID for planes, but rather they simply return the same object, so
             // the hashcodes (from Java) should be reliable.
             std::string key = VROStringUtil::toString(arcore::plane::getHashCode(planeJni));
 
-            auto it = _nativeAnchorMap.find(key);
-            if (it != _nativeAnchorMap.end()) {
-                vAnchor = std::dynamic_pointer_cast<VROARPlaneAnchor>(it->second);
-                if (vAnchor) {
-                    updatePlaneFromJni(vAnchor, planeJni);
-                    updateAnchor(vAnchor);
+            // If the plane wasn't subsumed by a new plane, then don't remove it.
+            if (newPlane == NULL) {
+                auto it = _nativeAnchorMap.find(key);
+                if (it != _nativeAnchorMap.end()) {
+                    vAnchor = std::dynamic_pointer_cast<VROARPlaneAnchor>(it->second);
+                    if (vAnchor) {
+                        updatePlaneFromJni(vAnchor, planeJni);
+                        updateAnchor(vAnchor);
+                    } else {
+                        pwarn("[Viro] expected to find a Plane.");
+                    }
                 } else {
-                    pwarn("[Viro] expected to find a Plane.");
+                    vAnchor = std::make_shared<VROARPlaneAnchor>();
+                    _nativeAnchorMap[key] = vAnchor;
+                    updatePlaneFromJni(vAnchor, planeJni);
+                    addAnchor(vAnchor);
                 }
             } else {
-                vAnchor = std::make_shared<VROARPlaneAnchor>();
-                _nativeAnchorMap[key] = vAnchor;
-                updatePlaneFromJni(vAnchor, planeJni);
-                addAnchor(vAnchor);
+                auto it = _nativeAnchorMap.find(key);
+                if (it != _nativeAnchorMap.end()) {
+                    vAnchor = std::dynamic_pointer_cast<VROARPlaneAnchor>(it->second);
+                    if (vAnchor) {
+                        removeAnchor(vAnchor);
+                    }
+                }
             }
         }
     }
@@ -229,8 +241,23 @@ void VROARSessionARCore::updateAnchorFromJni(std::shared_ptr<VROARAnchor> anchor
 }
 
 void VROARSessionARCore::updatePlaneFromJni(std::shared_ptr<VROARPlaneAnchor> plane, jni::Object<arcore::Plane> planeJni) {
-    // TODO: VIRO-1895 compute new center if position already set to match ARKit functionality.
-    plane->setTransform(arcore::pose::toMatrix(arcore::plane::getCenterPose(planeJni)));
+    VROMatrix4f newTransform = arcore::pose::toMatrix(arcore::plane::getCenterPose(planeJni));
+    VROVector3f newTranslation = newTransform.extractTranslation();
+
+    VROMatrix4f oldTransform = plane->getTransform();
+    VROVector3f oldTranslation = oldTransform.extractTranslation();
+
+    // If the old translation is NOT the zero vector, then we want to preserve the old translation
+    // and set the "center" instead.
+    if (!oldTranslation.isEqual(VROVector3f())) {
+        // set the center to (Position(new) - Position(old).
+        plane->setCenter(newTranslation - oldTranslation);
+        // translate the newTransform by the difference of (Position(old) - Position(new)) to
+        // keep the same oldTranslation.
+        newTransform.translate(oldTranslation - newTranslation);
+    }
+
+    plane->setTransform(newTransform);
 
     switch (arcore::plane::getType(planeJni)) {
         case arcore::PlaneType::HorizontalUpward :

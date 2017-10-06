@@ -40,7 +40,6 @@ const std::shared_ptr<VROARCamera> &VROARFrameARCore::getCamera() const {
 // TODO: VIRO-1940 filter results based on types. Right now, devs can't set this, so no use filtering.
 std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set<VROARHitTestResultType> types) {
 
-    // TODO: VIRO-1895 make sure x and y are in pixel coordinates
     jni::Object<arcore::List> hitResultsJni = arcore::frame::hitTest(*_frameJNI.get(), x, y);
 
     int listSize = arcore::list::size(hitResultsJni);
@@ -57,7 +56,7 @@ std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set
         bool isPlane = hitResult.IsInstanceOf(env, PlaneHitResultClass);
 
         // Get the type of HitResult. ARCore only has 2 hit types Planes & PointCloud (FeaturePoint)
-        VROARHitTestResultType type = isPlane ? VROARHitTestResultType::ExistingPlane
+        VROARHitTestResultType type = isPlane ? VROARHitTestResultType::ExistingPlaneUsingExtent
                                               : VROARHitTestResultType::FeaturePoint;
 
         // Get the anchor only if the result is of type PlaneHitResult

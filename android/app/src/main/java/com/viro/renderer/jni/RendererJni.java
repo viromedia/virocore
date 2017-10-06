@@ -9,6 +9,9 @@ import android.content.res.AssetManager;
 import android.view.Surface;
 
 import com.google.ar.core.Session;
+import com.viro.renderer.ARHitTestResult;
+
+import java.util.Collection;
 
 /**
  * This class is a convenience wrapper around:
@@ -49,6 +52,17 @@ public class RendererJni {
         mNativeRef = nativeCreateRendererARCore(appClassLoader, context, view, session, assets, platformUtil);
     }
 
+    public void performARHitTestWithRay(float[] ray, ARHitTestCallback callback) {
+        nativePerformARHitTestWithRay(mNativeRef, ray, callback);
+    }
+
+    public void performARHitTestWithPosition(float[] position, ARHitTestCallback callback) {
+        nativePerformARHitTestWithPosition(mNativeRef, position, callback);
+    }
+
+    public interface ARHitTestCallback {
+        void onComplete(ARHitTestResult[] results);
+    }
     /* ----------     Common lifecycle methods    ---------- */
 
     public void destroy() { nativeDestroyRenderer(mNativeRef); }
@@ -127,4 +141,6 @@ public class RendererJni {
     private native void nativeSetDebugHUDEnabled(long nativeRenderer, boolean enabled);
     private native void nativeSetSuspended(long nativeRenderer, boolean suspendRenderer);
     private native void nativeRecenterTracking(long nativeRenderer);
+    private native void nativePerformARHitTestWithRay(long nativeRenderer, float[] ray, ARHitTestCallback callback);
+    private native void nativePerformARHitTestWithPosition(long nativeRenderer, float[] position, ARHitTestCallback callback);
 }

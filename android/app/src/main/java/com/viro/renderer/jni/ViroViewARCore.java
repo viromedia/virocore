@@ -437,4 +437,16 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
                 .setSystemUiVisibility(mSavedSystemUIVisbility);
         refreshActivityLayout();
     }
+
+    public void performARHitTestWithRay(float[] ray, RendererJni.ARHitTestCallback callback) {
+        if (!mDestroyed) {
+            mNativeRenderer.performARHitTestWithRay(ray, callback);
+        }
+    }
+
+    public void performARHitTestWithPosition(float[] position, RendererJni.ARHitTestCallback callback) {
+        if (!mDestroyed) {
+            mNativeRenderer.performARHitTestWithPosition(position, callback);
+        }
+    }
 }
