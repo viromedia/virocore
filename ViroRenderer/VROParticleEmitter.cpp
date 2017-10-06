@@ -631,3 +631,12 @@ VROVector3f VROParticleEmitter::getExplosionAccel(VROVector3f intialVelocity){
     // to where it had started from.
     return (intialVelocity / _impulseDeaccelerationExplosionPeriod) * -1.0;
 }
+
+void VROParticleEmitter::setBlendMode(VROBlendMode mode){
+    std::shared_ptr<VRONode> emitterNode = _particleEmitterNodeWeak.lock();
+    if (emitterNode == nullptr) {
+        return;
+    }
+    std::shared_ptr<VROMaterial> mat = emitterNode->getGeometry()->getMaterials()[0];
+    mat->setBlendMode(mode);
+}

@@ -118,6 +118,10 @@ public class ParticleEmitterJni {
         setModifier("color", modifier);
     }
 
+    public boolean setBlendMode(String mode){
+        return nativeSetParticleBlendMode(mNativeRef, mode);
+    }
+
     /*
      Physics Modifier properties
      */
@@ -208,5 +212,5 @@ public class ParticleEmitterJni {
     private native void nativeSetExplosiveImpulse(long ref, float impulse, float pos[], float deccelPeriod);
     private native void nativeSetParticleModifier(long ref, String modifier, String factor,
                                                   float range[][], float interval[][], float points[][]);
-
+    private native boolean nativeSetParticleBlendMode(long ref, String blendMode);
 }

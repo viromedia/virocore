@@ -164,6 +164,9 @@ public:
             else if (mode == VROBlendMode::Add) {
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE);
             }
+            else if (mode == VROBlendMode::Multiply){
+                glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+            }
             else {
                 pwarn("Warn: Attempted to use an unsupported blend mode. No blending is applied.");
             }
@@ -342,7 +345,7 @@ public:
     std::unique_ptr<VROShaderFactory> &getShaderFactory() {
         return _shaderFactory;
     }
-    
+
 protected:
     
     /*

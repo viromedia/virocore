@@ -321,4 +321,31 @@ JNI_METHOD(void, nativeSetParticleModifier)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(bool, nativeSetParticleBlendMode)(JNIEnv *env,
+                                             jclass clazz,
+                                             jlong native_ref,
+                                             jstring jblendMode) {
+
+    const char *cStrBlendMode = env->GetStringUTFChars(jblendMode, NULL);
+    std::string strBlendMode(cStrBlendMode);
+    env->ReleaseStringUTFChars(jblendMode, cStrBlendMode);
+
+    VROBlendMode mode = VROMaterial::getBlendModeFromString(strBlendMode);
+    if (mode == VROBlendMode::None){
+        pwarn("Viro: Attempted to set invalid Blend mode %s", strBlendMode.c_str());
+        return false;
+    }
+
+    // Apply the modifier on the targeted property, like opacity.
+    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    VROPlatformDispatchAsyncRenderer([native_w, mode] {
+        std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
+        if (!emitter) {
+            return;
+        }
+
+        emitter->setBlendMode(mode);
+    });
+    return true;
+}
 }  // extern "C"
