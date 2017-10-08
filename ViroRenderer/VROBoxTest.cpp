@@ -9,6 +9,7 @@
 #include "VROBoxTest.h"
 #include "VROTestUtil.h"
 #include "VROCompress.h"
+#include "VROToneMappingRenderPass.h"
 
 VROBoxTest::VROBoxTest() :
     VRORendererTest(VRORendererTestType::Box) {
@@ -29,27 +30,7 @@ void VROBoxTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, 
     /*
      Load the background texture.
      */
-    int fileLength;
-    void *fileData = VROTestUtil::loadDataForResource("wooden", "vhd", &fileLength);
-    //void *fileData = VROTestUtil::loadDataForResource("sunrise", "vhd", &fileLength);
-
-    std::string data_gzip((char *)fileData, fileLength);
-    std::string data_texture = VROCompress::decompress(data_gzip);
-    
-    VROTextureFormat format;
-    int texWidth;
-    int texHeight;
-    std::vector<uint32_t> mipSizes;
-    std::shared_ptr<VROData> texData = VROTextureUtil::readVHDHeader(data_texture,
-                                                                     &format, &texWidth, &texHeight, &mipSizes);
-    std::vector<std::shared_ptr<VROData>> dataVec = { texData };
-
-    std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D,
-                                                                       format,
-                                                                       VROTextureInternalFormat::RGB9_E5, true,
-                                                                       VROMipmapMode::None,
-                                                                       dataVec, texWidth, texHeight, mipSizes);
-    rootNode->setBackgroundSphere(texture);
+    rootNode->setBackgroundSphere(VROTestUtil::loadHDRTexture("wooden"));
     //rootNode->setBackgroundSphere(VROTestUtil::loadDiffuseTexture("interior_viro.jpg", VROMipmapMode::None));
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
@@ -233,10 +214,21 @@ void VROBoxTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, 
 void VROBoxEventDelegate::onClick(int source, ClickState clickState, std::vector<float> position) {
     std::shared_ptr<VROScene> scene = _scene.lock();
     if (scene && clickState == ClickState::Clicked) {
-        scene->setToneMappingEnabled(!scene->isToneMappingEnabled());
-        scene->setToneMappingExposure(1.5);
-        scene->setToneMappingWhitePoint(5.0);
-        pinfo("Tone Mapping %d", scene->isToneMappingEnabled());
+        VROToneMappingMethod method = scene->getToneMappingMethod();
+        if (method == VROToneMappingMethod::Hable) {
+            scene->setToneMappingMethod(VROToneMappingMethod::HableLuminanceOnly);
+            pinfo("HABLE (Luminance Only) tone-mapping");
+        }
+        else if (method == VROToneMappingMethod::HableLuminanceOnly) {
+            scene->setToneMappingMethod(VROToneMappingMethod::Disabled);
+            pinfo("DISABLED tone-mapping");
+        }
+        else if (method == VROToneMappingMethod::Disabled) {
+            scene->setToneMappingMethod(VROToneMappingMethod::Hable);
+            pinfo("HABLE tone-mapping");
+        }
+        //scene->setToneMappingExposure(1.5);
+        //scene->setToneMappingWhitePoint(5.0);
     }
 }
 

@@ -11,6 +11,19 @@
 
 #include "VRORendererTest.h"
 
+class VROHDRTest;
+
+class VROHDREventDelegate : public VROEventDelegate {
+public:
+    VROHDREventDelegate(VROHDRTest *test) : _test(test) {};
+    virtual ~VROHDREventDelegate() {};
+    void onClick(int source, ClickState clickState, std::vector<float> position);
+    
+private:
+    VROHDRTest *_test;
+};
+
+
 class VROHDRTest : public VRORendererTest {
 public:
     
@@ -26,10 +39,19 @@ public:
         return _sceneController;
     }
     
+    void changeScene();
+    
 private:
 
+    int _activeScene;
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROSceneController> _sceneController;
+    std::shared_ptr<VROEventDelegate> _eventDelegate;
+    
+    std::shared_ptr<VRONode> buildBoxScene();
+    std::shared_ptr<VRONode> buildWoodenDoorScene();
+    std::shared_ptr<VRONode> buildPlayaScene();
+    std::shared_ptr<VRONode> buildIndoorScene();
     
 };
 

@@ -15,6 +15,8 @@
 #include "VROFBXLoader.h"
 #include "VROExecutableAnimation.h"
 #include "VRODriverOpenGL.h"
+#include "VROTextureUtil.h"
+#include "VROCompress.h"
 
 #if VRO_PLATFORM_IOS
 #include <UIKit/UIKit.h>
@@ -123,6 +125,29 @@ std::shared_ptr<VROTexture> VROTestUtil::loadWestlakeBackground() {
                                         std::make_shared<VROImageAndroid>("360_westlake.jpg",
                                                                           VROTextureInternalFormat::RGBA8));
 #endif
+}
+
+std::shared_ptr<VROTexture> VROTestUtil::loadHDRTexture(std::string texture) {
+    int fileLength;
+    void *fileData = VROTestUtil::loadDataForResource(texture, "vhd", &fileLength);
+    
+    std::string data_gzip((char *)fileData, fileLength);
+    std::string data_texture = VROCompress::decompress(data_gzip);
+    
+    VROTextureFormat format;
+    int texWidth;
+    int texHeight;
+    std::vector<uint32_t> mipSizes;
+    std::shared_ptr<VROData> texData = VROTextureUtil::readVHDHeader(data_texture,
+                                                                     &format, &texWidth, &texHeight, &mipSizes);
+    std::vector<std::shared_ptr<VROData>> dataVec = { texData };
+    
+    free (fileData);
+    return std::make_shared<VROTexture>(VROTextureType::Texture2D,
+                                        format,
+                                        VROTextureInternalFormat::RGB9_E5, true,
+                                        VROMipmapMode::None,
+                                        dataVec, texWidth, texHeight, mipSizes);
 }
 
 std::shared_ptr<VROTexture> VROTestUtil::loadDiffuseTexture(std::string texture, VROMipmapMode mipmap, VROStereoMode stereo) {

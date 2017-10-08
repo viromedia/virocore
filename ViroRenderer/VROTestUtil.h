@@ -36,6 +36,8 @@ public:
     static std::shared_ptr<VROTexture> loadSpecularTexture(std::string texture);
     static std::shared_ptr<VROTexture> loadNormalTexture(std::string texture);
     
+    static std::shared_ptr<VROTexture> loadHDRTexture(std::string texture);
+    
     static std::shared_ptr<VRONode> loadFBXModel(std::string model, VROVector3f position, VROVector3f scale,
                                                  int lightMask, std::string animation);
     static void setLightMasks(std::shared_ptr<VRONode> node, int value);
