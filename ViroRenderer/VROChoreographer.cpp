@@ -96,7 +96,7 @@ void VROChoreographer::initHDR(std::shared_ptr<VRODriver> driver) {
     else {
         _hdrTarget = driver->newRenderTarget(VRORenderTargetType::ColorTextureHDR16, 1, 1);
     }
-    _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingMethod::Hable,
+    _toneMappingPass = std::make_shared<VROToneMappingRenderPass>(VROToneMappingMethod::HableLuminanceOnly,
                                                                   driver->getColorRenderingMode() == VROColorRenderingMode::LinearSoftware,
                                                                   driver);
 }

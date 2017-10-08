@@ -22,7 +22,8 @@ enum class VROToneMappingMethod {
     Disabled,
     Reinhard,
     Exposure,
-    Hable
+    Hable,
+    HableLuminanceOnly,
 };
 
 /*

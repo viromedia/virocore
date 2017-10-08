@@ -22,7 +22,7 @@
 VROScene::VROScene() : VROThreadRestricted(VROThreadName::Renderer),
     _postProcessingEffectsUpdated(false),
     _toneMappingEnabled(true),
-    _toneMappingMethod(VROToneMappingMethod::Hable),
+    _toneMappingMethod(VROToneMappingMethod::HableLuminanceOnly),
     _toneMappingExposure(1.5),
     _toneMappingWhitePoint(11.2),
     _toneMappingUpdated(false) {
