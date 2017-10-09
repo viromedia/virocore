@@ -640,3 +640,12 @@ void VROParticleEmitter::setBlendMode(VROBlendMode mode){
     std::shared_ptr<VROMaterial> mat = emitterNode->getGeometry()->getMaterials()[0];
     mat->setBlendMode(mode);
 }
+
+void VROParticleEmitter::setBloomThreshold(float threshold){
+    std::shared_ptr<VRONode> emitterNode = _particleEmitterNodeWeak.lock();
+    if (emitterNode == nullptr) {
+        return;
+    }
+    std::shared_ptr<VROMaterial> mat = emitterNode->getGeometry()->getMaterials()[0];
+    mat->setBloomThreshold(threshold);
+}

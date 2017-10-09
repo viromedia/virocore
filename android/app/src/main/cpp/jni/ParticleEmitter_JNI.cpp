@@ -348,4 +348,18 @@ JNI_METHOD(bool, nativeSetParticleBlendMode)(JNIEnv *env,
     });
     return true;
 }
+
+JNI_METHOD(void, nativeSetBloomThreshold)(JNIEnv *env,
+                                                jclass clazz,
+                                                jlong native_ref,
+                                                jfloat threshold) {
+    std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
+    VROPlatformDispatchAsyncRenderer([native_w, threshold] {
+        std::shared_ptr<VROParticleEmitter> emitter = native_w.lock();
+        if (emitter) {
+            emitter->setBloomThreshold(threshold);
+        }
+    });
+}
+
 }  // extern "C"

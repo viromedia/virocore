@@ -122,6 +122,10 @@ public class ParticleEmitterJni {
         return nativeSetParticleBlendMode(mNativeRef, mode);
     }
 
+    public void setParticleBloomThreshold(float threshold){
+        nativeSetBloomThreshold(mNativeRef, threshold);
+    }
+
     /*
      Physics Modifier properties
      */
@@ -213,4 +217,5 @@ public class ParticleEmitterJni {
     private native void nativeSetParticleModifier(long ref, String modifier, String factor,
                                                   float range[][], float interval[][], float points[][]);
     private native boolean nativeSetParticleBlendMode(long ref, String blendMode);
+    private native void nativeSetBloomThreshold(long ref, float threshold);
 }
