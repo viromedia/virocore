@@ -119,6 +119,14 @@ public class Renderer {
     }
     public void setDebugHUDEnabled(boolean enabled) { nativeSetDebugHUDEnabled(mNativeRef, enabled); }
 
+    public void addFrameListener(FrameListener frameListener) {
+        nativeAddFrameListener(mNativeRef, frameListener.mNativeRef);
+    }
+
+    public void removeFrameListener(FrameListener frameListener) {
+        nativeRemoveFrameListener(mNativeRef, frameListener.mNativeRef);
+    }
+
     /* ----------     Native methods    ---------- */
 
     private native long nativeCreateRendererGVR(ClassLoader appClassLoader, Context context,
@@ -152,4 +160,8 @@ public class Renderer {
     private native void nativeRecenterTracking(long nativeRenderer);
     private native void nativePerformARHitTestWithRay(long nativeRenderer, float[] ray, ARHitTestCallback callback);
     private native void nativePerformARHitTestWithPosition(long nativeRenderer, float[] position, ARHitTestCallback callback);
+
+    private native void nativeAddFrameListener(long nativeRenderer, long portalTraversalListener);
+    private native void nativeRemoveFrameListener(long nativeRenderer, long portalTraversalListener);
+
 }

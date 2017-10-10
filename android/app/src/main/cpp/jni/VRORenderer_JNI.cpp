@@ -10,7 +10,9 @@
 #include <memory>
 #include <PersistentRef.h>
 #include <VROCamera.h>
+
 #include <VROARHitTestResult.h>
+#include <VROFrameListener.h>
 
 #include "arcore/ARCore_JNI.h"
 
@@ -26,6 +28,7 @@
 #include "VRORenderer_JNI.h"
 #include "VROReticle.h"
 #include "SceneController_JNI.h"
+#include "FrameListener_JNI.h"
 #include "object.hpp"
 
 #define JNI_METHOD(return_type, method_name) \
@@ -486,7 +489,8 @@ JNI_METHOD(void, nativePerformARHitTestWithPosition) (JNIEnv *env,
         for (int i = 0; i < results.size(); i++) {
             VROARHitTestResult result = results[i];
 
-            jmethodID constructorMethod = env->GetMethodID(arHitTestResultClass, "<init>", "(Ljava/lang/String;[F[F[F)V");
+            jmethodID constructorMethod = env->GetMethodID(arHitTestResultClass, "<init>",
+                                                           "(Ljava/lang/String;[F[F[F)V");
             jstring jtypeString;
             jfloatArray jposition = env->NewFloatArray(3);
             jfloatArray jscale = env->NewFloatArray(3);
@@ -494,17 +498,19 @@ JNI_METHOD(void, nativePerformARHitTestWithPosition) (JNIEnv *env,
 
             VROVector3f positionVec = result.getWorldTransform().extractTranslation();
             VROVector3f scaleVec = result.getWorldTransform().extractScale();
-            VROVector3f rotationVec = result.getWorldTransform().extractRotation(scaleVec).toEuler();
+            VROVector3f rotationVec = result.getWorldTransform().extractRotation(
+                    scaleVec).toEuler();
 
             float position[3] = {positionVec.x, positionVec.y, positionVec.z};
             float scale[3] = {scaleVec.x, scaleVec.y, scaleVec.z};
-            float rotation[3] = {toDegrees(rotationVec.x), toDegrees(rotationVec.y), toDegrees(rotationVec.z)};
+            float rotation[3] = {toDegrees(rotationVec.x), toDegrees(rotationVec.y),
+                                 toDegrees(rotationVec.z)};
 
             env->SetFloatArrayRegion(jposition, 0, 3, position);
             env->SetFloatArrayRegion(jscale, 0, 3, scale);
             env->SetFloatArrayRegion(jrotation, 0, 3, rotation);
 
-            const char* typeString;
+            const char *typeString;
             // Note: ARCore currently only supports Plane & FeaturePoint. See VROARFrameARCore::hitTest.
             switch (result.getType()) {
                 case VROARHitTestResultType::ExistingPlaneUsingExtent:
@@ -532,6 +538,44 @@ JNI_METHOD(void, nativePerformARHitTestWithPosition) (JNIEnv *env,
                                         globalArrayRef);
             env->DeleteGlobalRef(globalArrayRef);
         });
+    });
+}
+
+JNI_METHOD(void, nativeAddFrameListener)(JNIEnv *env, jobject obj, jlong native_renderer, jlong frame_listener) {
+
+    std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
+    std::weak_ptr<VROFrameListener> frameListener_w  = FrameListener::native(frame_listener);
+
+    VROPlatformDispatchAsyncRenderer([renderer_w, frameListener_w] {
+        std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
+        if (!renderer) {
+            return;
+        }
+
+        std::shared_ptr<VROFrameListener> frameListener = frameListener_w.lock();
+        if (!frameListener) {
+            return;
+        }
+        renderer->getFrameSynchronizer()->addFrameListener(frameListener);
+    });
+}
+
+JNI_METHOD(void, nativeRemoveFrameListener)(JNIEnv *env, jobject obj, jlong native_renderer, jlong frame_listener) {
+    std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
+    std::weak_ptr<VROFrameListener> frameListener_w  = FrameListener::native(frame_listener);
+
+    VROPlatformDispatchAsyncRenderer([renderer_w, frameListener_w] {
+        std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
+        if (!renderer) {
+            return;
+        }
+
+        std::shared_ptr<VROFrameListener> frameListener = frameListener_w.lock();
+        if (!frameListener) {
+            return;
+        }
+
+        renderer->getFrameSynchronizer()->removeFrameListener(frameListener);
     });
 }
 
