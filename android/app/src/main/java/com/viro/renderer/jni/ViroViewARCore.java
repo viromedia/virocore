@@ -47,7 +47,7 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
         System.loadLibrary("native-lib");
     }
 
-    private static class ViroARRenderer implements GLSurfaceView.Renderer {
+    private static class ViroARRenderer implements Renderer {
 
         private WeakReference<ViroViewARCore> mView;
 
@@ -104,13 +104,13 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
         }
     }
 
-    private GLSurfaceView.Renderer mRenderer;
+    private Renderer mRenderer;
 
-    private RendererJni mNativeRenderer;
-    private final RenderContextJni mNativeRenderContext;
+    private com.viro.renderer.jni.Renderer mNativeRenderer;
+    private final RenderContext mNativeRenderContext;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
-    private GlListener mGlListener = null;
+    private GLListener mGlListener = null;
     private PlatformUtil mPlatformUtil;
     private WeakReference<Activity> mWeakActivity;
     private KeyValidator mKeyValidator;
@@ -126,7 +126,7 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
     private Session mSession;
     private ARTouchGestureListener mARTouchGestureListener;
 
-    public ViroViewARCore(Context context, GlListener glListener) {
+    public ViroViewARCore(Context context, GLListener glListener) {
         super(context);
 
         final Context activityContext = getContext();
@@ -160,11 +160,11 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
                 mFrameListeners,
                 activityContext,
                 mAssetManager);
-        mNativeRenderer = new RendererJni(
+        mNativeRenderer = new com.viro.renderer.jni.Renderer(
                 getClass().getClassLoader(),
                 activityContext.getApplicationContext(), this, mSession,
                 mAssetManager, mPlatformUtil);
-        mNativeRenderContext = new RenderContextJni(mNativeRenderer.mNativeRef);
+        mNativeRenderContext = new RenderContext(mNativeRenderer.mNativeRef);
 
         mGlListener = glListener;
         mKeyValidator = new KeyValidator(activityContext);
@@ -249,12 +249,12 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
     }
 
     @Override
-    public RenderContextJni getRenderContextRef(){
+    public RenderContext getRenderContextRef(){
         return mNativeRenderContext;
     }
 
     @Override
-    public void setSceneController(SceneControllerJni scene) {
+    public void setSceneController(SceneController scene) {
         mNativeRenderer.setSceneController(scene.mNativeRef, 1.0f);
     }
 
@@ -289,7 +289,7 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
     }
 
     @Override
-    public RendererJni getNativeRenderer() {
+    public com.viro.renderer.jni.Renderer getNativeRenderer() {
         return mNativeRenderer;
     }
 
@@ -443,13 +443,13 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
         refreshActivityLayout();
     }
 
-    public void performARHitTestWithRay(float[] ray, RendererJni.ARHitTestCallback callback) {
+    public void performARHitTestWithRay(float[] ray, com.viro.renderer.jni.Renderer.ARHitTestCallback callback) {
         if (!mDestroyed) {
             mNativeRenderer.performARHitTestWithRay(ray, callback);
         }
     }
 
-    public void performARHitTestWithPosition(float[] position, RendererJni.ARHitTestCallback callback) {
+    public void performARHitTestWithPosition(float[] position, com.viro.renderer.jni.Renderer.ARHitTestCallback callback) {
         if (!mDestroyed) {
             mNativeRenderer.performARHitTestWithPosition(position, callback);
         }

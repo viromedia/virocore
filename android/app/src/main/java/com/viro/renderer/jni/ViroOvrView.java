@@ -59,18 +59,18 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
         }
     }
 
-    private RendererJni mNativeRenderer;
-    private final RenderContextJni mNativeRenderContext;
+    private Renderer mNativeRenderer;
+    private final RenderContext mNativeRenderContext;
     private AssetManager mAssetManager;
     private OVRRenderCommandQueue mRenderQueue = new OVRRenderCommandQueue();
     private List<FrameListener> mFrameListeners = new CopyOnWriteArrayList<FrameListener>();
-    private GlListener mGlListener = null;
+    private GLListener mGlListener = null;
     private PlatformUtil mPlatformUtil;
     private WeakReference<Activity> mWeakActivity;
     private KeyValidator mKeyValidator;
     private boolean mDestroyed = false;
 
-    public ViroOvrView(Activity activity, GlListener glListener) {
+    public ViroOvrView(Activity activity, GLListener glListener) {
         super(activity);
         getHolder().addCallback(this);
 
@@ -81,12 +81,12 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
         mPlatformUtil = new PlatformUtil(mRenderQueue, mFrameListeners, activityContext, mAssetManager);
         mFrameListeners.add(mRenderQueue);
 
-        mNativeRenderer = new RendererJni(
+        mNativeRenderer = new Renderer(
                 getClass().getClassLoader(),
                 activityContext.getApplicationContext(),
                 this, activity, mAssetManager, mPlatformUtil);
 
-        mNativeRenderContext = new RenderContextJni(mNativeRenderer.mNativeRef);
+        mNativeRenderContext = new RenderContext(mNativeRenderer.mNativeRef);
 
         mGlListener = glListener;
 
@@ -117,12 +117,12 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     }
 
     @Override
-    public RenderContextJni getRenderContextRef(){
+    public RenderContext getRenderContextRef(){
         return mNativeRenderContext;
     }
 
     @Override
-    public void setSceneController(SceneControllerJni sceneController) {
+    public void setSceneController(SceneController sceneController) {
         mNativeRenderer.setSceneController(sceneController.mNativeRef, 1.0f);
     }
 
@@ -146,7 +146,7 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     }
 
     @Override
-    public RendererJni getNativeRenderer() {
+    public Renderer getNativeRenderer() {
         return mNativeRenderer;
     }
 

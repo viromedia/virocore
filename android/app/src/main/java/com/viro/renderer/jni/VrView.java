@@ -9,13 +9,13 @@ import android.view.View;
 
 public interface VrView extends Application.ActivityLifecycleCallbacks {
 
-    public RenderContextJni getRenderContextRef();
+    public RenderContext getRenderContextRef();
 
-    public void setSceneController(SceneControllerJni sceneController);
+    public void setSceneController(SceneController sceneController);
 
     public void setVrModeEnabled(boolean vrModeEnabled);
 
-    public RendererJni getNativeRenderer();
+    public Renderer getNativeRenderer();
 
     public View getContentView();
 

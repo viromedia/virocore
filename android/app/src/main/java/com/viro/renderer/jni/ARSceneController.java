@@ -1,0 +1,78 @@
+/**
+ * Copyright © 2017 Viro Media. All rights reserved.
+ */
+package com.viro.renderer.jni;
+
+import java.lang.ref.WeakReference;
+
+public class ARSceneController extends SceneController {
+    public long mNativeARDelegateRef;
+
+    public ARSceneController() {
+        setSceneRef(nativeCreateARSceneController());
+        mNativeARDelegateRef = nativeCreateARSceneDelegate(mNativeRef);
+    }
+
+    @Override
+    public void destroy() {
+        nativeDestroySceneControllerDelegate(mNativeDelegateRef); // comes from SceneControllerJni
+        nativeDestroyARSceneDelegate(mNativeARDelegateRef);
+        nativeDestroyARSceneController(mNativeRef);
+    }
+
+    public void addARPlane(ARPlane arPlane) {
+        nativeAddARPlane(mNativeRef, arPlane.mNativeRef);
+    }
+
+    public void updateARPlane(ARPlane arPlane) {
+        nativeUpdateARPlane(mNativeRef, arPlane.mNativeRef);
+    }
+
+    public void removeARPlane(ARPlane arPlane) {
+        nativeRemoveARPlane(mNativeRef, arPlane.mNativeRef);
+    }
+
+    private native long nativeCreateARSceneController();
+
+    private native long nativeCreateARSceneDelegate(long sceneControllerRef);
+
+    private native void nativeDestroyARSceneController(long sceneControllerRef);
+
+    private native void nativeDestroyARSceneDelegate(long delegateRef);
+
+    private native void nativeAddARPlane(long sceneControllerRef, long arPlaneRef);
+
+    private native void nativeUpdateARPlane(long sceneControllerRef, long arPlaneRef);
+
+    private native void nativeRemoveARPlane(long sceneControllerRef, long arPlaneRef);
+
+    // -- ARSceneDelegate --
+
+    private WeakReference<ARSceneDelegate> mARSceneDelegate = null;
+
+    public interface ARSceneDelegate {
+        void onTrackingInitialized();
+        void onAmbientLightUpdate(float lightIntensity, float colorTemperature);
+    }
+
+    public void registerARDelegate(ARSceneDelegate delegate) {
+        mARSceneDelegate = new WeakReference<ARSceneDelegate>(delegate);
+    }
+
+    /* Called by Native */
+    public void onTrackingInitialized() {
+        ARSceneDelegate delegate;
+        if (mARSceneDelegate != null && (delegate = mARSceneDelegate.get()) != null) {
+            delegate.onTrackingInitialized();
+        }
+    }
+
+    /* Called by Native */
+    public void onAmbientLightUpdate(float lightIntensity, float colorTemperature) {
+        ARSceneDelegate delegate;
+        if (mARSceneDelegate != null && (delegate = mARSceneDelegate.get()) != null) {
+            delegate.onAmbientLightUpdate(lightIntensity, colorTemperature);
+        }
+    }
+
+}

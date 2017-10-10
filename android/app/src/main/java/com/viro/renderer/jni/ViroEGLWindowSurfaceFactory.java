@@ -9,6 +9,7 @@ import android.util.Log;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.egl.EGLSurface;
 
 /**
  * Implementation of {@link android.opengl.GLSurfaceView.EGLWindowSurfaceFactory} that
@@ -19,8 +20,8 @@ public class ViroEGLWindowSurfaceFactory implements GLSurfaceView.EGLWindowSurfa
 
     private static final String TAG = "Viro";
 
-    public javax.microedition.khronos.egl.EGLSurface createWindowSurface(EGL10 egl, EGLDisplay display,
-                                                                         EGLConfig config, Object nativeWindow) {
+    @Override
+    public EGLSurface createWindowSurface(EGL10 egl, EGLDisplay display, EGLConfig config, java.lang.Object nativeWindow) {
         javax.microedition.khronos.egl.EGLSurface result = null;
         try {
             final int EGL_GL_COLORSPACE_KHR = 0x309D;

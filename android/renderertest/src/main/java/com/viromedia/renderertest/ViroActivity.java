@@ -19,38 +19,38 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.viro.renderer.ARAnchor;
-import com.viro.renderer.jni.ARNodeJni;
-import com.viro.renderer.jni.ARPlaneJni;
-import com.viro.renderer.jni.ARSceneControllerJni;
-import com.viro.renderer.jni.AmbientLightJni;
+import com.viro.renderer.jni.ARNode;
+import com.viro.renderer.jni.ARPlane;
+import com.viro.renderer.jni.ARSceneController;
+import com.viro.renderer.jni.AmbientLight;
 import com.viro.renderer.jni.AsyncObjListener;
-import com.viro.renderer.jni.BoxJni;
-import com.viro.renderer.jni.ControllerJni;
-import com.viro.renderer.jni.DirectionalLightJni;
-import com.viro.renderer.jni.EventDelegateJni;
-import com.viro.renderer.jni.GlListener;
-import com.viro.renderer.jni.ImageJni;
-import com.viro.renderer.jni.ImageTrackerJni;
-import com.viro.renderer.jni.MaterialJni;
-import com.viro.renderer.jni.NodeJni;
-import com.viro.renderer.jni.ObjectJni;
-import com.viro.renderer.jni.OmniLightJni;
-import com.viro.renderer.jni.OpenCVJni;
-import com.viro.renderer.jni.PolylineJni;
-import com.viro.renderer.jni.RenderContextJni;
-import com.viro.renderer.jni.SceneControllerJni;
-import com.viro.renderer.jni.SoundDataJni;
+import com.viro.renderer.jni.Box;
+import com.viro.renderer.jni.Controller;
+import com.viro.renderer.jni.DirectionalLight;
+import com.viro.renderer.jni.EventDelegate;
+import com.viro.renderer.jni.GLListener;
+import com.viro.renderer.jni.Image;
+import com.viro.renderer.jni.ImageTracker;
+import com.viro.renderer.jni.Material;
+import com.viro.renderer.jni.Node;
+import com.viro.renderer.jni.Object3D;
+import com.viro.renderer.jni.OmniLight;
+import com.viro.renderer.jni.OpenCV;
+import com.viro.renderer.jni.Polyline;
+import com.viro.renderer.jni.RenderContext;
+import com.viro.renderer.jni.SceneController;
+import com.viro.renderer.jni.SoundData;
 import com.viro.renderer.jni.SoundDelegate;
-import com.viro.renderer.jni.SoundFieldJni;
-import com.viro.renderer.jni.SoundJni;
-import com.viro.renderer.jni.SpatialSoundJni;
-import com.viro.renderer.jni.SphereJni;
-import com.viro.renderer.jni.SpotLightJni;
-import com.viro.renderer.jni.SurfaceJni;
-import com.viro.renderer.jni.TextJni;
+import com.viro.renderer.jni.SoundField;
+import com.viro.renderer.jni.Sound;
+import com.viro.renderer.jni.SpatialSound;
+import com.viro.renderer.jni.Sphere;
+import com.viro.renderer.jni.Spotlight;
+import com.viro.renderer.jni.Surface;
+import com.viro.renderer.jni.Text;
 import com.viro.renderer.jni.TextureFormat;
-import com.viro.renderer.jni.TextureJni;
-import com.viro.renderer.jni.VideoTextureJni;
+import com.viro.renderer.jni.Texture;
+import com.viro.renderer.jni.VideoTexture;
 import com.viro.renderer.jni.ViroViewARCore;
 import com.viro.renderer.jni.ViroGvrLayout;
 import com.viro.renderer.jni.ViroOvrView;
@@ -64,14 +64,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ViroActivity extends AppCompatActivity implements GlListener {
+public class ViroActivity extends AppCompatActivity implements GLListener {
     private static int SOUND_COUNT = 0;
     private VrView mVrView;
-    private final Map<String, SoundJni> mSoundMap = new HashMap<>();
-    private final Map<String, SoundFieldJni> mSoundFieldMap = new HashMap();
-    private final Map<String, SpatialSoundJni> mSpatialSoundMap = new HashMap<>();
+    private final Map<String, Sound> mSoundMap = new HashMap<>();
+    private final Map<String, SoundField> mSoundFieldMap = new HashMap();
+    private final Map<String, SpatialSound> mSpatialSoundMap = new HashMap<>();
     private static String TAG = ViroActivity.class.getSimpleName();
-    private ARNodeJni.ARNodeDelegate mARNodeDelegate;
+    private ARNode.ARNodeDelegate mARNodeDelegate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,9 +138,9 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
     private void initializeVrScene() {
         // Creation of SceneControllerJni within scene navigator
-        SceneControllerJni scene = new SceneControllerJni();
-        NodeJni rootNode = scene.getSceneNode();
-        List<NodeJni> nodes = new ArrayList<>();
+        SceneController scene = new SceneController();
+        Node rootNode = scene.getSceneNode();
+        List<Node> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
         //nodes = testSphereVideo(this);
         nodes = testBox(getApplicationContext());
@@ -164,20 +164,20 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         // addSoundField("http://ambisonics.dreamhosters.com/AMB/pink_pan_H.amb");
         // addSpatialSound("http://www.kozco.com/tech/32.mp3");
 
-        final SoundDataJni data = new SoundDataJni("http://www.kozco.com/tech/32.mp3", false);
+        final SoundData data = new SoundData("http://www.kozco.com/tech/32.mp3", false);
         //addSpatialSound(data);
         //addNormalSound(data);
 
         setSoundRoom(scene, mVrView.getRenderContextRef());
 
-        for (NodeJni node: nodes) {
+        for (Node node: nodes) {
             rootNode.addChildNode(node);
         }
         testSceneLighting(rootNode);
 
         // Updating the scene.
         mVrView.setSceneController(scene);
-        ControllerJni nativeController = new ControllerJni(mVrView.getRenderContextRef());
+        Controller nativeController = new Controller(mVrView.getRenderContextRef());
         //nativeController.setReticleVisibility(false);
     }
 
@@ -185,17 +185,17 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
      Used to initialize the AR Scene, should also change the mVrView to the AR one...
      */
     private void initializeArScene() {
-        NodeJni rootNode = new NodeJni();
-        ARSceneControllerJni scene = new ARSceneControllerJni();
+        Node rootNode = new Node();
+        ARSceneController scene = new ARSceneController();
 
-        List<NodeJni> nodes = new ArrayList<>();
+        List<Node> nodes = new ArrayList<>();
         nodes.add(testLine(this));
 
         //testBackgroundImage(scene);
 
         nodes.addAll(testARPlane(scene));
 
-        for (NodeJni node: nodes) {
+        for (Node node: nodes) {
             rootNode.addChildNode(node);
         }
         testSceneLighting(rootNode);
@@ -205,7 +205,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     }
 
     private void testEdgeDetect() {
-        OpenCVJni cv = new OpenCVJni(this);
+        OpenCV cv = new OpenCV(this);
         Bitmap bm = cv.edgeDetectImage("boba.png");
         ImageView image = new ImageView(this);
         image.setImageBitmap(bm);
@@ -216,7 +216,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         Bitmap targetImage = getBitmapFromAssets("ben.jpg");
         Bitmap screenshot = getBitmapFromAssets("screenshot.png");
         if (targetImage != null && screenshot != null) {
-            ImageTrackerJni tracker = new ImageTrackerJni(this, targetImage);
+            ImageTracker tracker = new ImageTracker(this, targetImage);
             tracker.findTarget(screenshot);
         }
     }
@@ -233,10 +233,10 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         return bitmap;
     }
 
-    private List<NodeJni> testText(Context context) {
-        NodeJni node = new NodeJni();
+    private List<Node> testText(Context context) {
+        Node node = new Node();
         // Create text
-        TextJni text = new TextJni(mVrView.getRenderContextRef(),
+        Text text = new Text(mVrView.getRenderContextRef(),
                 "Test Text Here", "Roboto", 25, Color.WHITE, 1f,
                 1f, "Left", "Top", "WordWrap", "None", 0);
         float[] position = {0, -0.5f, -0.5f};
@@ -245,31 +245,31 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         return Arrays.asList(node);
     }
 
-    private void testSceneLighting(NodeJni node) {
+    private void testSceneLighting(Node node) {
         float[] lightDirection = {0, 0, -1};
-        AmbientLightJni ambientLightJni = new AmbientLightJni(Color.BLACK, 1000.0f);
+        AmbientLight ambientLightJni = new AmbientLight(Color.BLACK, 1000.0f);
         ambientLightJni.addToNode(node);
 
-        DirectionalLightJni directionalLightJni = new DirectionalLightJni(Color.BLUE, 1000.0f, lightDirection);
+        DirectionalLight directionalLightJni = new DirectionalLight(Color.BLUE, 1000.0f, lightDirection);
         directionalLightJni.addToNode(node);
 
         float[] omniLightPosition = {1,0,0};
-        OmniLightJni omniLightJni = new OmniLightJni(Color.RED, 1000.0f, 1, 10, omniLightPosition);
+        OmniLight omniLightJni = new OmniLight(Color.RED, 1000.0f, 1, 10, omniLightPosition);
         omniLightJni.addToNode(node);
 
         float[] spotLightPosition = {-2, 0, 3};
-        SpotLightJni spotLightJni = new SpotLightJni(Color.YELLOW, 1000.0f, 1, 10, spotLightPosition,
+        Spotlight spotLightJni = new Spotlight(Color.YELLOW, 1000.0f, 1, 10, spotLightPosition,
                 lightDirection, 2, 10);
         spotLightJni.addToNode(node);
     }
 
-    private List<NodeJni> testSurfaceVideo(Context context) {
-        NodeJni node = new NodeJni();
-        final SurfaceJni surface = new SurfaceJni(4, 4, 0, 0, 1, 1);
+    private List<Node> testSurfaceVideo(Context context) {
+        Node node = new Node();
+        final Surface surface = new Surface(4, 4, 0, 0, 1, 1);
         float[] position = {0,0,-3};
         node.setPosition(position);
-        final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef());
-        videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
+        final VideoTexture videoTexture = new VideoTexture(mVrView.getRenderContextRef());
+        videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
             @Override
             public void onVideoBufferStart() {
 
@@ -308,11 +308,11 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         return Arrays.asList(node);
     }
 
-    private List<NodeJni> testSphereVideo(Context context) {
-        NodeJni node = new NodeJni();
-        final SphereJni sphere = new SphereJni(2, 20, 20, false);
-        final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef());
-        videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
+    private List<Node> testSphereVideo(Context context) {
+        Node node = new Node();
+        final Sphere sphere = new Sphere(2, 20, 20, false);
+        final VideoTexture videoTexture = new VideoTexture(mVrView.getRenderContextRef());
+        videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
             @Override
             public void onVideoBufferStart() {
 
@@ -350,13 +350,13 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         return Arrays.asList(node);
     }
 
-    private void testBackgroundVideo(final SceneControllerJni scene) {
-        final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef());
+    private void testBackgroundVideo(final SceneController scene) {
+        final VideoTexture videoTexture = new VideoTexture(mVrView.getRenderContextRef());
         videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getRenderContextRef());
         videoTexture.setVolume(0.1f);
         videoTexture.setLoop(false);
         videoTexture.play();
-        videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
+        videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
             @Override
             public void onVideoBufferStart() {
 
@@ -392,36 +392,36 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         });
     }
 
-    private void testBackgroundImage(SceneControllerJni scene) {
-        ImageJni imageJni = new ImageJni("boba.png", TextureFormat.RGBA8);
-        TextureJni videoTexture = new TextureJni(imageJni, TextureFormat.RGBA8, true, false);
+    private void testBackgroundImage(SceneController scene) {
+        Image imageJni = new Image("boba.png", TextureFormat.RGBA8);
+        Texture videoTexture = new Texture(imageJni, TextureFormat.RGBA8, true, false);
         scene.setBackgroundImageTexture(videoTexture);
         float[] rotation = {90, 0, 0};
         scene.setBackgroundRotation(rotation);
     }
 
-    private void testSkyBoxImage(SceneControllerJni scene) {
+    private void testSkyBoxImage(SceneController scene) {
         TextureFormat format = TextureFormat.RGBA8;
 
-        ImageJni pximageJni = new ImageJni("px.png", format);
-        ImageJni nximageJni = new ImageJni("nx.png", format);
-        ImageJni pyimageJni = new ImageJni("py.png", format);
-        ImageJni nyimageJni = new ImageJni("ny.png", format);
-        ImageJni pzimageJni = new ImageJni("pz.png", format);
-        ImageJni nzimageJni = new ImageJni("nz.png", format);
+        Image pximageJni = new Image("px.png", format);
+        Image nximageJni = new Image("nx.png", format);
+        Image pyimageJni = new Image("py.png", format);
+        Image nyimageJni = new Image("ny.png", format);
+        Image pzimageJni = new Image("pz.png", format);
+        Image nzimageJni = new Image("nz.png", format);
 
-        TextureJni cubeTexture = new TextureJni(pximageJni, nximageJni, pyimageJni, nyimageJni,
+        Texture cubeTexture = new Texture(pximageJni, nximageJni, pyimageJni, nyimageJni,
                 pzimageJni, nzimageJni, format);
 
         scene.setBackgroundCubeImageTexture(cubeTexture);
     }
 
-    private List<NodeJni> testBox(Context context) {
-        NodeJni node1 = new NodeJni();
-        NodeJni node2 = new NodeJni();
+    private List<Node> testBox(Context context) {
+        Node node1 = new Node();
+        Node node2 = new Node();
 
-        NodeJni node3 = new NodeJni();
-        TextJni textJni = new TextJni(mVrView.getRenderContextRef(), "Test text 1 2 3", "Roboto", 24,
+        Node node3 = new Node();
+        Text textJni = new Text(mVrView.getRenderContextRef(), "Test text 1 2 3", "Roboto", 24,
                 Color.WHITE, 10, 4, "Center", "Center", "None", "None", 1);
 
         float[] position = {0, -1, -2};
@@ -430,16 +430,16 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         node3.setEventDelegateJni(getGenericDelegate("Text"));
 
         // Create a new material with a diffuseTexture set to the image "boba.png"
-        ImageJni bobaImage = new ImageJni("boba.png", TextureFormat.RGBA8);
+        Image bobaImage = new Image("boba.png", TextureFormat.RGBA8);
 
-        TextureJni bobaTexture = new TextureJni(bobaImage, TextureFormat.RGBA8, true, true);
-        MaterialJni material = new MaterialJni();
+        Texture bobaTexture = new Texture(bobaImage, TextureFormat.RGBA8, true, true);
+        Material material = new Material();
 //        material.setTexture(bobaTexture, "diffuseTexture");
         material.setColor(Color.BLUE, "diffuseColor");
         material.setLightingModel("Blinn");
 
         // Creation of ViroBox to the right and billboarded
-        BoxJni boxGeometry = new BoxJni(2,4,2);
+        Box boxGeometry = new Box(2,4,2);
         node1.setGeometry(boxGeometry);
         float[] boxPosition = {5,0,-3};
         node1.setPosition(boxPosition);
@@ -448,7 +448,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         node1.setTransformBehaviors(behaviors);
         node1.setEventDelegateJni(getGenericDelegate("Box"));
 
-        BoxJni boxGeometry2 = new BoxJni(2, 2, 2);
+        Box boxGeometry2 = new Box(2, 2, 2);
         node2.setGeometry(boxGeometry2);
         float[] boxPosition2 = {-2, 0, -3};
         node2.setPosition(boxPosition2);
@@ -457,17 +457,17 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         return Arrays.asList(node1, node2, node3);
     }
 
-    private List<NodeJni> test3dObjectLoading(Context context) {
-        final NodeJni node1 = new NodeJni();
+    private List<Node> test3dObjectLoading(Context context) {
+        final Node node1 = new Node();
 
         // Creation of ObjectJni to the right
-        ObjectJni objectJni = new ObjectJni(Uri.parse("heart.obj"), false, new AsyncObjListener() {
+        Object3D objectJni = new Object3D(Uri.parse("heart.obj"), false, new AsyncObjListener() {
             @Override
             public void onObjLoaded() {
                 // Create a new material with a diffuseTexture set to the image "heart_d.jpg"
-                ImageJni heartImage = new ImageJni("heart_d.jpg", TextureFormat.RGBA8);
-                TextureJni heartTexture = new TextureJni(heartImage, TextureFormat.RGBA8, true, true);
-                MaterialJni material = new MaterialJni();
+                Image heartImage = new Image("heart_d.jpg", TextureFormat.RGBA8);
+                Texture heartTexture = new Texture(heartImage, TextureFormat.RGBA8, true, true);
+                Material material = new Material();
                 material.setTexture(heartTexture, "diffuseTexture");
                 material.setLightingModel("Constant");
                 node1.setMaterials(Arrays.asList(material));
@@ -490,34 +490,34 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         return Arrays.asList(node1);
     }
 
-    private EventDelegateJni getGenericDelegate(final String delegateTag){
-        EventDelegateJni delegateJni = new EventDelegateJni();
-        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_HOVER, false);
-        delegateJni.setEventEnabled(EventDelegateJni.EventAction.ON_FUSE, true);
+    private EventDelegate getGenericDelegate(final String delegateTag){
+        EventDelegate delegateJni = new EventDelegate();
+        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_HOVER, false);
+        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_FUSE, true);
 
-        delegateJni.setEventDelegateCallback(new EventDelegateJni.EventDelegateCallback() {
+        delegateJni.setEventDelegateCallback(new EventDelegate.EventDelegateCallback() {
             @Override
             public void onHover(int source, boolean isHovering, float[] hitLoc) {
                 Log.e(TAG, delegateTag + " onHover " + isHovering);
             }
 
             @Override
-            public void onClick(int source, EventDelegateJni.ClickState clickState, float[] hitLoc) {
+            public void onClick(int source, EventDelegate.ClickState clickState, float[] hitLoc) {
                 Log.e(TAG, delegateTag + " onClick " + clickState.toString());
             }
 
             @Override
-            public void onTouch(int source, EventDelegateJni.TouchState touchState, float[] touchPadPos) {
+            public void onTouch(int source, EventDelegate.TouchState touchState, float[] touchPadPos) {
                 Log.e(TAG, delegateTag + "onTouch " + touchPadPos[0] + "," + touchPadPos[1]);
             }
 
             @Override
-            public void onControllerStatus(int source, EventDelegateJni.ControllerStatus status) {
+            public void onControllerStatus(int source, EventDelegate.ControllerStatus status) {
 
             }
 
             @Override
-            public void onSwipe(int source, EventDelegateJni.SwipeState swipeState) {
+            public void onSwipe(int source, EventDelegate.SwipeState swipeState) {
                 Log.e(TAG, delegateTag + " onSwipe " + swipeState.toString());
             }
 
@@ -541,14 +541,14 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         return delegateJni;
     }
 
-    private List<NodeJni> testImageSurface(Context context) {
-        NodeJni node = new NodeJni();
-        ImageJni bobaImage = new ImageJni("boba.png", TextureFormat.RGBA8);
+    private List<Node> testImageSurface(Context context) {
+        Node node = new Node();
+        Image bobaImage = new Image("boba.png", TextureFormat.RGBA8);
 
-        TextureJni bobaTexture = new TextureJni(bobaImage, TextureFormat.RGBA8, true, true);
-        MaterialJni material = new MaterialJni();
+        Texture bobaTexture = new Texture(bobaImage, TextureFormat.RGBA8, true, true);
+        Material material = new Material();
 
-        SurfaceJni surface = new SurfaceJni(1, 1, 0, 0, 1, 1);
+        Surface surface = new Surface(1, 1, 0, 0, 1, 1);
         surface.setMaterial(material);
         surface.setImageTexture(bobaTexture);
 
@@ -558,23 +558,23 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         return Arrays.asList(node);
     }
 
-    private List<NodeJni> testStereoImageSurface(Context context) {
+    private List<Node> testStereoImageSurface(Context context) {
         float[] position1 = {-1f, 1f, -3.3f};
-        NodeJni imageNode1 = getStereoImage(position1, "stereo1.jpg");
+        Node imageNode1 = getStereoImage(position1, "stereo1.jpg");
         float[] position2 = {0, 1f, -3.3f};
-        NodeJni imageNode2 = getStereoImage(position2, "stereo2.jpg");
+        Node imageNode2 = getStereoImage(position2, "stereo2.jpg");
 
         return Arrays.asList(imageNode1,
                 imageNode2);
     }
 
-    private NodeJni getStereoImage(float[] pos, String img){
-        NodeJni node = new NodeJni();
-        ImageJni bobaImage = new ImageJni(img, TextureFormat.RGBA8);
-        TextureJni bobaTexture = new TextureJni(bobaImage,
+    private Node getStereoImage(float[] pos, String img){
+        Node node = new Node();
+        Image bobaImage = new Image(img, TextureFormat.RGBA8);
+        Texture bobaTexture = new Texture(bobaImage,
                 TextureFormat.RGBA8, true, true, "LeftRight");
-        MaterialJni material = new MaterialJni();
-        SurfaceJni surface = new SurfaceJni(1, 1, 0, 0, 1, 1);
+        Material material = new Material();
+        Surface surface = new Surface(1, 1, 0, 0, 1, 1);
         surface.setMaterial(material);
         surface.setImageTexture(bobaTexture);
         node.setGeometry(surface);
@@ -582,9 +582,9 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         return node;
     }
 
-    private void testStereoBackgroundImage(SceneControllerJni scene) {
-        ImageJni imageJni = new ImageJni("stereo3601.jpg", TextureFormat.RGBA4);
-        TextureJni videoTexture = new TextureJni(imageJni,
+    private void testStereoBackgroundImage(SceneController scene) {
+        Image imageJni = new Image("stereo3601.jpg", TextureFormat.RGBA4);
+        Texture videoTexture = new Texture(imageJni,
                 TextureFormat.RGBA8, true, false, "TopBottom");
         scene.setBackgroundImageTexture(videoTexture);
         float[] rotation = {0, 0, 0};
@@ -592,13 +592,13 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
     }
 
 
-    private List<NodeJni> testStereoSurfaceVideo(final Context context) {
-        NodeJni node = new NodeJni();
-        final SurfaceJni surface = new SurfaceJni(4, 4, 0, 0, 1, 1);
+    private List<Node> testStereoSurfaceVideo(final Context context) {
+        Node node = new Node();
+        final Surface surface = new Surface(4, 4, 0, 0, 1, 1);
         float[] position = {0,0,-5};
         node.setPosition(position);
-        final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef(), "LeftRight");
-        videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
+        final VideoTexture videoTexture = new VideoTexture(mVrView.getRenderContextRef(), "LeftRight");
+        videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
             @Override
             public void onVideoBufferStart() {
 
@@ -634,9 +634,9 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         return Arrays.asList(node);
     }
 
-    private void testStereoBackgroundVideo(final SceneControllerJni scene) {
-        final VideoTextureJni videoTexture = new VideoTextureJni(mVrView.getRenderContextRef(), "TopBottom");
-        videoTexture.setVideoDelegate(new VideoTextureJni.VideoDelegate() {
+    private void testStereoBackgroundVideo(final SceneController scene) {
+        final VideoTexture videoTexture = new VideoTexture(mVrView.getRenderContextRef(), "TopBottom");
+        videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
             @Override
             public void onVideoBufferStart() {
 
@@ -669,14 +669,14 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         });
     }
 
-    private List<NodeJni> testARPlane(ARSceneControllerJni arScene) {
-        ARPlaneJni arPlane = new ARPlaneJni(0, 0);
-        NodeJni node = new NodeJni();
-        final SurfaceJni surface = new SurfaceJni(.5f, .5f, 0, 0, 1, 1);
+    private List<Node> testARPlane(ARSceneController arScene) {
+        ARPlane arPlane = new ARPlane(0, 0);
+        Node node = new Node();
+        final Surface surface = new Surface(.5f, .5f, 0, 0, 1, 1);
 
         float[] rotation = {-90, 0, 0};
         node.setRotation(rotation);
-        mARNodeDelegate = new ARNodeJni.ARNodeDelegate() {
+        mARNodeDelegate = new ARNode.ARNodeDelegate() {
             @Override
             public void onAnchorFound(ARAnchor anchor) {
                 Log.i("ViroActivity", "onAnchorFound");
@@ -700,7 +700,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         arPlane.addChildNode(node);
         arScene.addARPlane(arPlane);
 
-        ArrayList<NodeJni> list = new ArrayList<NodeJni>();
+        ArrayList<Node> list = new ArrayList<Node>();
         list.add(arPlane);
         return list;
 
@@ -708,7 +708,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
     private void addNormalSound(String path) {
         final String key = path + SOUND_COUNT++;
-        mSoundMap.put(key, new SoundJni(path,
+        mSoundMap.put(key, new Sound(path,
                 mVrView.getRenderContextRef(), new SoundDelegate() {
             @Override
             public void onSoundReady() {
@@ -730,9 +730,9 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         }, false));
     }
 
-    private void addNormalSound(SoundDataJni data) {
+    private void addNormalSound(SoundData data) {
         final String key = "" + SOUND_COUNT++;
-        mSoundMap.put(key, new SoundJni(data,
+        mSoundMap.put(key, new Sound(data,
                 mVrView.getRenderContextRef(), new SoundDelegate() {
             @Override
             public void onSoundReady() {
@@ -756,7 +756,7 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
     private void addSoundField(String path) {
         final String key = path + SOUND_COUNT++;
-        mSoundFieldMap.put(key, new SoundFieldJni(path,
+        mSoundFieldMap.put(key, new SoundField(path,
                 mVrView.getRenderContextRef(), new SoundDelegate() {
             @Override
             public void onSoundReady() {
@@ -784,13 +784,13 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
 
     private void addSpatialSound(final String path) {
         final String key = path + SOUND_COUNT++;
-        mSpatialSoundMap.put(key, new SpatialSoundJni(path,
+        mSpatialSoundMap.put(key, new SpatialSound(path,
                 mVrView.getRenderContextRef(), new SoundDelegate() {
             @Override
             public void onSoundReady() {
                 Log.i("SpatialSound", "ViroActivity sound is ready!");
 
-                SpatialSoundJni sound = mSpatialSoundMap.get(key);
+                SpatialSound sound = mSpatialSoundMap.get(key);
                 if (sound != null) {
                     float[] position = {5, 0, 0};
                     sound.setPosition(position);
@@ -813,14 +813,14 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         }, false));
     }
 
-    private void addSpatialSound(final SoundDataJni data) {
+    private void addSpatialSound(final SoundData data) {
         final String key = "" + SOUND_COUNT++;
-        mSpatialSoundMap.put(key, new SpatialSoundJni(data,
+        mSpatialSoundMap.put(key, new SpatialSound(data,
                 mVrView.getRenderContextRef(), new SoundDelegate() {
             @Override
             public void onSoundReady() {
 
-                SpatialSoundJni sound = mSpatialSoundMap.get(key);
+                SpatialSound sound = mSpatialSoundMap.get(key);
                 if (sound != null) {
                     float[] position = {5, 0, 0};
                     sound.setPosition(position);
@@ -843,21 +843,21 @@ public class ViroActivity extends AppCompatActivity implements GlListener {
         }));
     }
 
-    private void setSoundRoom(SceneControllerJni scene, RenderContextJni renderContextJni) {
+    private void setSoundRoom(SceneController scene, RenderContext renderContextJni) {
         float[] size = {2, 2, 2};
         scene.setSoundRoom(renderContextJni, size, "transparent", "wood_panel", "thin_glass");
     }
 
-    private NodeJni testLine(Context scene) {
-        MaterialJni material = new MaterialJni();
+    private Node testLine(Context scene) {
+        Material material = new Material();
         material.setColor(Color.RED, "diffuseColor");
         material.setLightingModel("Constant");
         material.setCullMode("None");
 
         float[] linePos = {0,0,-1};
         float[][] points = {{0,0}, {.5f,.5f}, {1,0}};
-        PolylineJni polyline = new PolylineJni(points, 0.1f);
-        NodeJni node1 = new NodeJni();
+        Polyline polyline = new Polyline(points, 0.1f);
+        Node node1 = new Node();
 
         node1.setPosition(linePos);
         node1.setGeometry(polyline);

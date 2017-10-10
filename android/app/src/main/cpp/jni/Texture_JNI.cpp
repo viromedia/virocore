@@ -14,7 +14,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_TextureJni_##method_name
+      Java_com_viro_renderer_jni_Texture_##method_name
 
 namespace Texture {
     VROTextureInternalFormat getFormat(JNIEnv *env, jstring jformat) {

@@ -17,7 +17,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_AnimationChainJni_##method_name
+      Java_com_viro_renderer_jni_AnimationChain_##method_name
 
 namespace AnimationChain {
     inline jlong jptr(std::shared_ptr<VROAnimationChain> ptr) {

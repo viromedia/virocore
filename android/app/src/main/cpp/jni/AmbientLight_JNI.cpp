@@ -13,7 +13,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_AmbientLightJni_##method_name
+      Java_com_viro_renderer_jni_AmbientLight_##method_name
 
 namespace AmbientLight {
     inline jlong jptr(std::shared_ptr<VROLight> shared_node) {

@@ -11,7 +11,6 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,10 +29,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.egl.EGLContext;
-import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
@@ -51,11 +47,11 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         System.loadLibrary("gvr_audio");
         System.loadLibrary("native-lib");
     }
-    private RendererJni mNativeRenderer;
-    private final RenderContextJni mNativeRenderContext;
+    private Renderer mNativeRenderer;
+    private final RenderContext mNativeRenderContext;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
-    private GlListener mGlListener = null;
+    private GLListener mGlListener = null;
     private PlatformUtil mPlatformUtil;
     private WeakReference<Activity> mWeakActivity;
     private KeyValidator mKeyValidator;
@@ -164,7 +160,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         }
     }
 
-    public ViroGvrLayout(Context context, GlListener glListener, Runnable vrExitListener) {
+    public ViroGvrLayout(Context context, GLListener glListener, Runnable vrExitListener) {
         super(context);
 
         final Context activityContext = getContext();
@@ -186,12 +182,12 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
                 mFrameListeners,
                 activityContext,
                 mAssetManager);
-        mNativeRenderer = new RendererJni(
+        mNativeRenderer = new Renderer(
                 getClass().getClassLoader(),
                 activityContext.getApplicationContext(),
                 mAssetManager, mPlatformUtil,
                 getGvrApi().getNativeGvrContext());
-        mNativeRenderContext = new RenderContextJni(mNativeRenderer.mNativeRef);
+        mNativeRenderContext = new RenderContext(mNativeRenderer.mNativeRef);
 
         mGlListener = glListener;
         mKeyValidator = new KeyValidator(activityContext);
@@ -275,12 +271,12 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     }
 
     @Override
-    public RenderContextJni getRenderContextRef(){
+    public RenderContext getRenderContextRef(){
         return mNativeRenderContext;
     }
 
     @Override
-    public void setSceneController(SceneControllerJni sceneController) {
+    public void setSceneController(SceneController sceneController) {
         mNativeRenderer.setSceneController(sceneController.mNativeRef, 1.0f);
     }
 
@@ -317,7 +313,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     }
 
     @Override
-    public RendererJni getNativeRenderer() {
+    public Renderer getNativeRenderer() {
         return mNativeRenderer;
     }
 

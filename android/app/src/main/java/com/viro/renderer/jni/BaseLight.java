@@ -5,6 +5,6 @@ package com.viro.renderer.jni;
 
 public abstract class BaseLight {
     protected long mNativeRef;
-    public abstract void addToNode(NodeJni jni);
-    public abstract void removeFromNode(NodeJni jni);
+    public abstract void addToNode(Node jni);
+    public abstract void removeFromNode(Node jni);
 }
