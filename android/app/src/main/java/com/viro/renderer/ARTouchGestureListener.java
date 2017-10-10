@@ -11,7 +11,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-import com.viro.renderer.jni.RendererJni;
+import com.viro.renderer.jni.Renderer;
 
 /*
  Class that handles touches and gestures for AR and notifies the RendererJni. This extends
@@ -29,7 +29,7 @@ public class ARTouchGestureListener extends GestureDetector.SimpleOnGestureListe
     private static final int EVENT_END = MotionEvent.ACTION_UP;
     private static final int EVENT_MOVE = MotionEvent.ACTION_MOVE;
 
-    private RendererJni mNativeRenderer;
+    private Renderer mNativeRenderer;
     // whether or not the renderer has been destroyed.
     private boolean mDestroyed = false;
 
@@ -45,7 +45,7 @@ public class ARTouchGestureListener extends GestureDetector.SimpleOnGestureListe
     private float mLastTouchX = 0;
     private float mLastTouchY = 0;
 
-    public ARTouchGestureListener(Context context, RendererJni rendererJni) {
+    public ARTouchGestureListener(Context context, Renderer rendererJni) {
         mNativeRenderer = rendererJni;
         mScaleDetector = new ScaleGestureDetector(context, this);
         mScaleDetector.setQuickScaleEnabled(false);
