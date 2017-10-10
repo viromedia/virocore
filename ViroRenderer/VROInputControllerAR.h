@@ -1,16 +1,16 @@
 //
-//  VROInputControllerARiOS.h
+//  VROInputControllerAR.h
 //  ViroKit
 //
 //  Created by Andy Chu on 6/21/17.
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
-#ifndef VROInputControllerARiOS_h
-#define VROInputControllerARiOS_h
+#ifndef VROInputControllerAR_h
+#define VROInputControllerAR_h
 
 #include "VROInputControllerBase.h"
-#include "VROInputPresenterARiOS.h"
+#include "VROInputPresenterAR.h"
 #include "VROLog.h"
 #include "VRORenderer.h"
 #include "VROARSession.h"
@@ -22,10 +22,10 @@ const double kARMinDragDistance = .33; // meters
 const double kARMaxDragDistance = 5; // meters
 
 
-class VROInputControllerARiOS : public VROInputControllerBase {
+class VROInputControllerAR : public VROInputControllerBase {
 public:
-    VROInputControllerARiOS(float viewportWidth, float viewportHeight);
-    virtual ~VROInputControllerARiOS() {}
+    VROInputControllerAR(float viewportWidth, float viewportHeight);
+    virtual ~VROInputControllerAR() {}
     
     void setViewportSize(float width, float height) {
         _viewportWidth = width;
@@ -47,21 +47,21 @@ public:
      things
      */
     void onProcess(const VROCamera &camera);
-    
+
     /*
-     Call this function when the screen is touched down w/ the given ray
+     Call this function when the screen is touched down w/ the given position
      */
-    void onScreenTouchDown(VROVector3f tapRay);
-    
+    void onScreenTouchDown(VROVector3f touchPos);
+
     /*
-     Call this function if the screen is still being touched w/ the given ray
+     Call this function if the screen is still being touched w/ the given position
      */
-    void onScreenTouchMove(VROVector3f tapRay);
-    
+    void onScreenTouchMove(VROVector3f touchPos);
+
     /*
-     Call this function when the screen is touched up w/ the given ray
+     Call this function when the screen is touched up w/ the given screen position
      */
-    void onScreenTouchUp(VROVector3f tapRay);
+    void onScreenTouchUp(VROVector3f touchPos);
   
     /*
      Call this function when a pinch gesture has begun.
@@ -99,7 +99,7 @@ public:
     
 protected:
     std::shared_ptr<VROInputPresenter> createPresenter() {
-        return std::make_shared<VROInputPresenterARiOS>();
+        return std::make_shared<VROInputPresenterAR>();
     }
 
     /*
@@ -112,7 +112,7 @@ private:
     float _viewportWidth;
     float _viewportHeight;
     float _latestScale;
-    float _latestRotation;
+    float _latestRotation; // degrees
     bool _isTouchOngoing;
     bool _isPinchOngoing;
     bool _isRotateOngoing;
@@ -145,4 +145,4 @@ private:
 
 };
 
-#endif /* VROInputControllerARiOS_h */
+#endif /* VROInputControllerAR_h */

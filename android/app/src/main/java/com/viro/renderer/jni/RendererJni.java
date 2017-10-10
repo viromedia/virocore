@@ -87,6 +87,15 @@ public class RendererJni {
     public void onTouchEvent(int onTouchAction, float touchPosX, float touchPosY) {
         nativeOnTouchEvent(mNativeRef, onTouchAction, touchPosX, touchPosY);
     }
+
+    public void onPinchEvent(int pinchState, float scaleFactor, float viewportX, float viewportY) {
+        nativeOnPinchEvent(mNativeRef, pinchState, scaleFactor, viewportX, viewportY);
+    }
+
+    public void onRotateEvent(int rotateState, float rotateDegrees, float viewportX, float viewportY) {
+        nativeOnRotateEvent(mNativeRef, rotateState, rotateDegrees, viewportX, viewportY);
+    }
+
     public void setSceneController(long nativeSceneControllerRef) {
         nativeSetSceneController(mNativeRef, nativeSceneControllerRef);
     }
@@ -127,6 +136,8 @@ public class RendererJni {
     private native void nativeOnStart(long nativeRenderer);
     private native void nativeOnKeyEvent(long nativeRenderer, int keyCode, int action);
     private native void nativeOnTouchEvent(long nativeRenderer, int onTouchAction, float touchPosX, float touchPosY);
+    private native void nativeOnPinchEvent(long nativeRenderer, int pinchState, float scaleFactor, float viewportX, float viewportY);
+    private native void nativeOnRotateEvent(long nativeRenderer, int rotateState, float rotateDegrees, float viewportX, float viewportY);
     private native void nativeOnPause(long nativeRenderer);
     private native void nativeOnResume(long nativeRenderer);
     private native void nativeOnStop(long nativeRenderer);

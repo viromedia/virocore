@@ -30,7 +30,7 @@
 #import "VROARComponentManager.h"
 #import "VROChoreographer.h"
 #import "VROVideoTextureCache.h"
-#import "VROInputControllerARiOS.h"
+#import "VROInputControllerAR.h"
 #import "VROProjector.h"
 #import "VROWeakProxy.h"
 
@@ -46,7 +46,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     std::shared_ptr<VROARSession> _arSession;
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROARComponentManager> _arComponentManager;
-    std::shared_ptr<VROInputControllerARiOS> _inputController;
+    std::shared_ptr<VROInputControllerAR> _inputController;
     
     CADisplayLink *_displayLink;
     int _frame;
@@ -168,7 +168,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     _frame = 0;
     _suspendedNotificationTime = VROTimeCurrentSeconds();
 
-    _inputController = std::make_shared<VROInputControllerARiOS>(self.frame.size.width * self.contentScaleFactor,
+    _inputController = std::make_shared<VROInputControllerAR>(self.frame.size.width * self.contentScaleFactor,
                                                                  self.frame.size.height * self.contentScaleFactor);
     _renderer = std::make_shared<VRORenderer>(_inputController);
     _inputController->setRenderer(_renderer);

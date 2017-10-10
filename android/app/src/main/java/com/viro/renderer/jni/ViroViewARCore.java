@@ -12,7 +12,6 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.Toast;
@@ -21,6 +20,7 @@ import com.google.ar.core.Config;
 import com.google.ar.core.Session;
 
 import com.google.vr.ndk.base.AndroidCompat;
+import com.viro.renderer.ARTouchGestureListener;
 import com.viro.renderer.FrameListener;
 import com.viro.renderer.GLSurfaceViewQueue;
 import com.viro.renderer.keys.KeyValidationListener;
@@ -124,6 +124,7 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
 
     private Config mDefaultConfig;
     private Session mSession;
+    private ARTouchGestureListener mARTouchGestureListener;
 
     public ViroViewARCore(Context context, GlListener glListener) {
         super(context);
@@ -174,6 +175,9 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
 
         mWeakActivity = new WeakReference<Activity>(activity);
         setVrModeEnabled(false);
+
+        mARTouchGestureListener = new ARTouchGestureListener(activity, mNativeRenderer);
+        setOnTouchListener(mARTouchGestureListener);
 
         // Create default config, check is supported, create session from that config.
         mDefaultConfig = Config.createDefaultConfig();
@@ -352,6 +356,7 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
 
         mNativeRenderContext.delete();
         mNativeRenderer.destroy();
+        mARTouchGestureListener.destroy();
 
         Activity activity = mWeakActivity.get();
         if (activity == null) {
@@ -449,4 +454,5 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
             mNativeRenderer.performARHitTestWithPosition(position, callback);
         }
     }
+
 }

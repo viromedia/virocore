@@ -154,6 +154,40 @@ JNI_METHOD(void, nativeOnTouchEvent)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeOnPinchEvent) (JNIEnv *env,
+                                      jobject object,
+                                      jlong native_renderer,
+                                      jint pinchState,
+                                      jfloat scaleFactor,
+                                      jfloat viewportX,
+                                      jfloat viewportY) {
+    std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
+    VROPlatformDispatchAsyncRenderer([renderer_w, pinchState, scaleFactor, viewportX, viewportY] {
+        std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
+        if (!renderer) {
+            return;
+        }
+        renderer->onPinchEvent(pinchState, scaleFactor, viewportX, viewportY);
+    });
+}
+
+JNI_METHOD(void, nativeOnRotateEvent) (JNIEnv *env,
+                                       jobject object,
+                                       jlong native_renderer,
+                                       jint rotateState,
+                                       jfloat rotateDegrees,
+                                       jfloat viewportX,
+                                       jfloat viewportY) {
+    std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
+    VROPlatformDispatchAsyncRenderer([renderer_w, rotateState, rotateDegrees, viewportX, viewportY] {
+        std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
+        if (!renderer) {
+            return;
+        }
+        renderer->onRotateEvent(rotateState, rotateDegrees, viewportX, viewportY);
+    });
+}
+
 JNI_METHOD(void, nativeSetVRModeEnabled)(JNIEnv *env,
                                          jobject obj,
                                          jlong nativeRenderer, jboolean enabled) {

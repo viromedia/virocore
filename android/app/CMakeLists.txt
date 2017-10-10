@@ -46,6 +46,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/VROInputControllerDaydream.cpp
              src/main/cpp/VROInputControllerCardboard.cpp
              src/main/cpp/VROInputControllerOVR.cpp
+             src/main/cpp/VROInputControllerARAndroid.cpp
 
              # ARCore
              src/main/cpp/VROSceneRendererARCore.cpp
@@ -229,6 +230,7 @@ add_library( # Sets the name of the library.
             # AR
             ../../ViroRenderer/VROARScene.cpp
             ../../ViroRenderer/VROARComponentManager.cpp
+            ../../ViroRenderer/VROInputControllerAR.cpp
 
              # Image Tracking
              ../../ViroRenderer/VROImageTracker.cpp

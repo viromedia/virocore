@@ -44,6 +44,22 @@ public:
     virtual void onKeyEvent(int keyCode, int action) = 0;
 
     /*
+     Called to let the renderer know when a pinch event has occurred.
+     */
+    virtual void onPinchEvent(int pinchState, float scaleFactor,
+                              float viewportX, float viewportY) {
+        // no-op (not all renderers need to implement this)
+    }
+
+    /*
+     Called to let the renderer know when a rotate event has occurred.
+     */
+    virtual void onRotateEvent(int rotateState, float rotateDegrees,
+                               float viewportX, float viewportY) {
+        // no-op (not all renderers need to implement this)
+    }
+
+    /*
      Enable or disable stereo rendering (VR mode). When false, we will render
      using the entire device window. When true, we will render in stereo using
      the platform's distortion renderer.

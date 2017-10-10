@@ -1,17 +1,17 @@
 //
-//  VROInputControllerARiOS.cpp
+//  VROInputControllerAR.cpp
 //  ViroKit
 //
 //  Created by Andy Chu on 6/21/17.
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
 
-#include "VROInputControllerARiOS.h"
+#include "VROInputControllerAR.h"
 #include "VRORenderer.h"
 #include "VROProjector.h"
 #include "VROARFrame.h"
 
-VROInputControllerARiOS::VROInputControllerARiOS(float viewportWidth, float viewportHeight) :
+VROInputControllerAR::VROInputControllerAR(float viewportWidth, float viewportHeight) :
     _viewportWidth(viewportWidth),
     _viewportHeight(viewportHeight),
     _isTouchOngoing(false),
@@ -20,16 +20,16 @@ VROInputControllerARiOS::VROInputControllerARiOS(float viewportWidth, float view
     _lastProcessDragTimeMillis(0) {
 }
 
-VROVector3f VROInputControllerARiOS::getDragForwardOffset() {
+VROVector3f VROInputControllerAR::getDragForwardOffset() {
     return VROVector3f();
 }
 
-void VROInputControllerARiOS::onProcess(const VROCamera &camera) {
+void VROInputControllerAR::onProcess(const VROCamera &camera) {
     _latestCamera = camera;
     processTouchMovement();
 }
 
-void VROInputControllerARiOS::onRotateStart(VROVector3f touchPos) {
+void VROInputControllerAR::onRotateStart(VROVector3f touchPos) {
     _isRotateOngoing = true;
     _latestRotation = 0; // reset latestRotation!
     VROVector3f rayFromCamera = calculateCameraRay(touchPos);
@@ -38,16 +38,16 @@ void VROInputControllerARiOS::onRotateStart(VROVector3f touchPos) {
 }
 
 
-void VROInputControllerARiOS::onRotate(float rotation) {
-    _latestRotation = rotation;
+void VROInputControllerAR::onRotate(float rotationDegrees) {
+    _latestRotation = rotationDegrees;
 }
 
-void VROInputControllerARiOS::onRotateEnd() {
+void VROInputControllerAR::onRotateEnd() {
     _isRotateOngoing = false;
     VROInputControllerBase::onRotate(ViroCardBoard::InputSource::Controller, _latestRotation, VROEventDelegate::RotateState::RotateEnd);
 }
 
-void VROInputControllerARiOS::onPinchStart(VROVector3f touchPos) {
+void VROInputControllerAR::onPinchStart(VROVector3f touchPos) {
     _isPinchOngoing = true;
     _latestScale = 1.0; // reset latestScale!
     VROVector3f rayFromCamera = calculateCameraRay(touchPos);
@@ -56,16 +56,16 @@ void VROInputControllerARiOS::onPinchStart(VROVector3f touchPos) {
 }
 
 
-void VROInputControllerARiOS::onPinchScale(float scale) {
+void VROInputControllerAR::onPinchScale(float scale) {
     _latestScale = scale;
 }
 
-void VROInputControllerARiOS::onPinchEnd() {
+void VROInputControllerAR::onPinchEnd() {
     _isPinchOngoing = false;
     VROInputControllerBase::onPinch(ViroCardBoard::InputSource::Controller, _latestScale, VROEventDelegate::PinchState::PinchEnd);
 }
 
-void VROInputControllerARiOS::onScreenTouchDown(VROVector3f touchPos) {
+void VROInputControllerAR::onScreenTouchDown(VROVector3f touchPos) {
     _latestTouchPos = touchPos;
     _isTouchOngoing = true;
     VROVector3f rayFromCamera = calculateCameraRay(_latestTouchPos);
@@ -73,11 +73,11 @@ void VROInputControllerARiOS::onScreenTouchDown(VROVector3f touchPos) {
     VROInputControllerBase::onButtonEvent(ViroCardBoard::ViewerButton, VROEventDelegate::ClickState::ClickDown);
 }
 
-void VROInputControllerARiOS::onScreenTouchMove(VROVector3f touchPos) {
+void VROInputControllerAR::onScreenTouchMove(VROVector3f touchPos) {
     _latestTouchPos = touchPos;
 }
 
-void VROInputControllerARiOS::onScreenTouchUp(VROVector3f touchPos) {
+void VROInputControllerAR::onScreenTouchUp(VROVector3f touchPos) {
     _latestTouchPos = touchPos;
     _isTouchOngoing = false;
     VROVector3f rayFromCamera = calculateCameraRay(_latestTouchPos);
@@ -91,11 +91,11 @@ void VROInputControllerARiOS::onScreenTouchUp(VROVector3f touchPos) {
     }
 }
 
-void VROInputControllerARiOS::processDragging(int source) {
+void VROInputControllerAR::processDragging(int source) {
     processDragging(source, false);
 }
 
-void VROInputControllerARiOS::processDragging(int source, bool alwaysRun) {
+void VROInputControllerAR::processDragging(int source, bool alwaysRun) {
         std::shared_ptr<VRONode> draggedNode = _lastDraggedNode->_draggedNode;
 
     if (draggedNode->getDragType() == VRODragType::FixedDistance) {
@@ -181,7 +181,7 @@ void VROInputControllerARiOS::processDragging(int source, bool alwaysRun) {
  - Parse the point cloud ourselves to more directly influence the estimates.
  - "Shotgun" the area with hit tests to find the best position.
  */
-VROVector3f VROInputControllerARiOS::getNextDragPosition(std::vector<VROARHitTestResult> results) {
+VROVector3f VROInputControllerAR::getNextDragPosition(std::vector<VROARHitTestResult> results) {
     VROVector3f cameraPos = _latestCamera.getPosition();
     
     // first, bucket the points, if we find an ExistingPlaneUsingExtent, then just return that (highest confidence)
@@ -259,20 +259,20 @@ VROVector3f VROInputControllerARiOS::getNextDragPosition(std::vector<VROARHitTes
     return cameraPos + (touchForward * distance);
 }
 
-bool VROInputControllerARiOS::isDistanceWithinBounds(VROVector3f point1, VROVector3f point2) {
+bool VROInputControllerAR::isDistanceWithinBounds(VROVector3f point1, VROVector3f point2) {
     float distance = point1.distance(point2);
     return distance > kARMinDragDistance && distance < kARMaxDragDistance;
 }
 
-std::string VROInputControllerARiOS::getHeadset() {
+std::string VROInputControllerAR::getHeadset() {
     return std::string("Mobile");
 }
 
-std::string VROInputControllerARiOS::getController() {
+std::string VROInputControllerAR::getController() {
     return std::string("Screen");
 }
 
-void VROInputControllerARiOS::processTouchMovement() {
+void VROInputControllerAR::processTouchMovement() {
     if (_isTouchOngoing) {
         VROVector3f rayFromCamera = calculateCameraRay(_latestTouchPos);
         VROInputControllerBase::updateHitNode(_latestCamera, _latestCamera.getPosition(), rayFromCamera);
@@ -287,7 +287,7 @@ void VROInputControllerARiOS::processTouchMovement() {
     }
 }
  
-VROVector3f VROInputControllerARiOS::calculateCameraRay(VROVector3f touchPos) {
+VROVector3f VROInputControllerAR::calculateCameraRay(VROVector3f touchPos) {
     std::shared_ptr<VRORenderer> renderer = _weakRenderer.lock();
     if (!renderer) {
         return VROVector3f();
@@ -298,16 +298,16 @@ VROVector3f VROInputControllerARiOS::calculateCameraRay(VROVector3f touchPos) {
     // calculate the mvp matrix
     VROMatrix4f projectionMat = renderer->getRenderContext()->getProjectionMatrix();
     VROMatrix4f viewMat = renderer->getRenderContext()->getViewMatrix();
-    
+
     VROMatrix4f mvp = projectionMat.multiply(viewMat);
-    
+
     // unproject the touchPos vector at z = 0 and z = 1
     VROVector3f resultNear;
     VROVector3f resultFar;
     
     VROProjector::unproject(VROVector3f(touchPos.x, touchPos.y, 0), mvp.getArray(), viewportArr, &resultNear);
     VROProjector::unproject(VROVector3f(touchPos.x, touchPos.y, 1), mvp.getArray(), viewportArr, &resultFar);
-    
+
     // minus resultNear from resultFar to get the vector.
     return (resultFar - resultNear).normalize();
 }
