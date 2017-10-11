@@ -46,13 +46,15 @@ VROSceneRendererARCore::VROSceneRendererARCore(std::shared_ptr<gvr::AudioApi> gv
     _hasTrackingInitialized(false),
     _hasTrackingResumed(false) {
 
+    _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
+    _session = std::make_shared<VROARSessionARCore>(sessionJNI, _driver);
+
     // instantiate the input controller w/ viewport size (0,0) and update it later.
     std::shared_ptr<VROInputControllerAR> controller = std::make_shared<VROInputControllerARAndroid>(0,0);
 
     _renderer = std::make_shared<VRORenderer>(controller);
     controller->setRenderer(_renderer);
-    _driver = std::make_shared<VRODriverOpenGLAndroid>(gvrAudio);
-    _session = std::make_shared<VROARSessionARCore>(sessionJNI, _driver);
+    controller->setSession(_session);
 
     _pointOfView = std::make_shared<VRONode>();
     _pointOfView->setCamera(std::make_shared<VRONodeCamera>());

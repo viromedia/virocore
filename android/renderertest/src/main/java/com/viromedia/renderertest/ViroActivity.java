@@ -185,15 +185,15 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
      Used to initialize the AR Scene, should also change the mVrView to the AR one...
      */
     private void initializeArScene() {
-        Node rootNode = new Node();
         ARSceneController scene = new ARSceneController();
+        Node rootNode = scene.getSceneNode();
 
         List<Node> nodes = new ArrayList<>();
         nodes.add(testLine(this));
 
         //testBackgroundImage(scene);
 
-        nodes.addAll(testARPlane(scene));
+        nodes.addAll(testARDrag());
 
         for (Node node: nodes) {
             rootNode.addChildNode(node);
@@ -714,6 +714,28 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         list.add(arPlane);
         return list;
 
+    }
+
+    private List<Node> testARDrag() {
+        Node node = new Node();
+        Node boxNode = new Node();
+        Box box = new Box(.15f, .15f, .15f);
+
+        EventDelegate delegate = getGenericDelegate("boxNode");
+        delegate.setEventEnabled(EventDelegate.EventAction.ON_DRAG, true);
+        node.setEventDelegateJni(delegate);
+        node.setDragType("FixedToWorld");
+
+        float[] nodePos = {0, 0, -1};
+        node.setPosition(nodePos);
+
+        float[] boxPos = {0, .075f, 0};
+        boxNode.setPosition(boxPos);
+
+        box.attachToNode(boxNode);
+        node.addChildNode(boxNode);
+
+        return Arrays.asList(node);
     }
 
     private void addNormalSound(String path) {
