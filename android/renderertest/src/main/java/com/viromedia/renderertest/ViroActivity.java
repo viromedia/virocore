@@ -536,6 +536,16 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
             public void onFuse(int source) {
                 Log.e(TAG, delegateTag + " On fuse");
             }
+
+            @Override
+            public void onPinch(int source, float scaleFactor, EventDelegate.PinchState pinchState) {
+                Log.e(TAG, delegateTag + " On pinch");
+            }
+
+            @Override
+            public void onRotate(int source, float rotateFactor, EventDelegate.RotateState rotateState) {
+                Log.e(TAG, delegateTag + " On rotate");
+            }
         });
 
         return delegateJni;

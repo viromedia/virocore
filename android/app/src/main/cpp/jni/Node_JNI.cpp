@@ -241,6 +241,35 @@ JNI_METHOD(void, nativeSetVisible)(JNIEnv *env,
     });
 }
 
+JNI_METHOD(void, nativeSetDragType)(JNIEnv *env,
+                                    jobject obj,
+                                    jlong native_node_ref,
+                                    jstring dragType) {
+
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+
+    // default type to FixedDistance if we don't recognize the given string
+    VRODragType type = VRODragType::FixedDistance;
+
+    const char *rawString = env->GetStringUTFChars(dragType, NULL);
+    std::string dragTypeStr(rawString);
+
+    if (VROStringUtil::strcmpinsensitive(dragTypeStr, "FixedDistance")) {
+        type = VRODragType::FixedDistance;
+    } else if (VROStringUtil::strcmpinsensitive(dragTypeStr, "FixedToWorld")) {
+        type = VRODragType ::FixedToWorld;
+    }
+
+    env->ReleaseStringUTFChars(dragType, rawString);
+
+    VROPlatformDispatchAsyncRenderer([node_w, type] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setDragType(type);
+        }
+    });
+}
+
 JNI_METHOD(void, nativeSetIgnoreEventHandling)(JNIEnv *env,
                                    jobject obj,
                                    jlong native_node_ref,

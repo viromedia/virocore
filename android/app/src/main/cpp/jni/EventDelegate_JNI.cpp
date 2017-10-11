@@ -238,3 +238,37 @@ void EventDelegate_JNI::onFuse(int source, float timeToFuseRatio){
         env->DeleteLocalRef(localObj);
     });
 }
+
+void EventDelegate_JNI::onPinch(int source, float scaleFactor, PinchState pinchState) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj, source, scaleFactor, pinchState] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj,
+                                    "onPinch", "(IFI)V", source, scaleFactor, pinchState);
+        env->DeleteLocalRef(localObj);
+    });
+}
+
+void EventDelegate_JNI::onRotate(int source, float rotateDegrees, RotateState rotateState) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    VROPlatformDispatchAsyncApplication([weakObj, source, rotateDegrees, rotateState] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj,
+                                    "onRotate", "(IFI)V", source, rotateDegrees, rotateState);
+        env->DeleteLocalRef(localObj);
+    });
+}

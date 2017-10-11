@@ -115,6 +115,10 @@ public class Node {
         nativeSetVisible(mNativeRef, visible);
     }
 
+    public void setDragType(String dragType) {
+        nativeSetDragType(mNativeRef, dragType);
+    }
+
     public void setLightReceivingBitMask(int bitMask) { nativeSetLightReceivingBitMask(mNativeRef, bitMask); }
 
     public void setShadowCastingBitMask(int bitMask) { nativeSetShadowCastingBitMask(mNativeRef, bitMask); }
@@ -183,6 +187,7 @@ public class Node {
     private native void nativeSetScalePivot(long nodeReference, float x, float y, float z);
     private native void nativeSetOpacity(long nodeReference, float opacity);
     private native void nativeSetVisible(long nodeReference, boolean visible);
+    private native void nativeSetDragType(long nodeReference, String dragType);
     private native void nativeSetLightReceivingBitMask(long nodeReference, int bitMask);
     private native void nativeSetShadowCastingBitMask(long nodeReference, int bitMask);
     private native void nativeSetIgnoreEventHandling(long nodeReference, boolean visible);

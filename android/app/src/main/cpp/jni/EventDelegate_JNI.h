@@ -49,6 +49,8 @@ public:
     void onScroll(int source, float x, float y);
     void onDrag(int source, VROVector3f newPosition);
     void onFuse(int source, float timeToFuseRatio);
+    void onPinch(int source, float scaleFactor, PinchState pinchState);
+    void onRotate(int source, float rotateDegrees, RotateState rotateState);
 private:
     jobject _javaObject;
     void callJavaFunction(std::string functionName, std::string methodID, ...);

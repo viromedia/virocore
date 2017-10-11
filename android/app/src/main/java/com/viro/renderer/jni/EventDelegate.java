@@ -68,7 +68,9 @@ public class EventDelegate {
         ON_SWIPE(6),
         ON_SCROLL(7),
         ON_DRAG(8),
-        ON_FUSE(9);
+        ON_FUSE(9),
+        ON_PINCH(10),
+        ON_ROTATE(11);
 
         public final int mTypeId;
 
@@ -186,6 +188,51 @@ public class EventDelegate {
         }
     }
 
+    public enum PinchState {
+        PINCH_START(1),
+        PINCH_MOVE(2),
+        PINCH_END(3);
+
+        public final int mTypeId;
+
+        PinchState(int id) {
+            mTypeId = id;
+        }
+
+        private static Map<Integer, PinchState> map = new HashMap<Integer, PinchState>();
+        static {
+            for (PinchState status : PinchState.values()) {
+                map.put(status.mTypeId, status);
+            }
+        }
+        public static PinchState valueOf(int id) {
+            return map.get(id);
+        }
+    }
+
+
+    public enum RotateState {
+        ROTATE_START(1),
+        ROTATE_MOVE(2),
+        ROTATE_END(3);
+
+        public final int mTypeId;
+
+        RotateState(int id) {
+            mTypeId = id;
+        }
+
+        private static Map<Integer, RotateState> map = new HashMap<Integer, RotateState>();
+        static {
+            for (RotateState status : RotateState.values()) {
+                map.put(status.mTypeId, status);
+            }
+        }
+        public static RotateState valueOf(int id) {
+            return map.get(id);
+        }
+    }
+
     /**
      * Delegate interface to be implemented by a java view component so as
      * to receive event callbacks triggered from native. Implemented delegates
@@ -205,6 +252,8 @@ public class EventDelegate {
         void onScroll(int source, float x, float y);
         void onDrag(int source, float x, float y, float z);
         void onFuse(int source);
+        void onPinch(int source, float scaleFactor, PinchState pinchState);
+        void onRotate(int source, float rotateFactor, RotateState rotateState);
     }
 
     /**
@@ -257,6 +306,18 @@ public class EventDelegate {
     void onFuse(int source) {
         if (mDelegate != null){
             mDelegate.onFuse(source);
+        }
+    }
+
+    void onPinch(int source, float scaleFactor, int pinchState) {
+        if (mDelegate != null) {
+            mDelegate.onPinch(source, scaleFactor, PinchState.valueOf(pinchState));
+        }
+    }
+
+    void onRotate(int source, float rotationDegrees, int rotationState) {
+        if (mDelegate != null) {
+            mDelegate.onRotate(source, rotationDegrees, RotateState.valueOf(rotationState));
         }
     }
 }
