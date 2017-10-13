@@ -107,7 +107,7 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
     private Renderer mRenderer;
 
     private com.viro.renderer.jni.Renderer mNativeRenderer;
-    private final RenderContext mNativeRenderContext;
+    private final ViroContext mNativeViroContext;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
     private GLListener mGlListener = null;
@@ -164,7 +164,7 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
                 getClass().getClassLoader(),
                 activityContext.getApplicationContext(), this, mSession,
                 mAssetManager, mPlatformUtil);
-        mNativeRenderContext = new RenderContext(mNativeRenderer.mNativeRef);
+        mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
 
         mGlListener = glListener;
         mKeyValidator = new KeyValidator(activityContext);
@@ -249,8 +249,8 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
     }
 
     @Override
-    public RenderContext getRenderContextRef(){
-        return mNativeRenderContext;
+    public ViroContext getViroContext(){
+        return mNativeViroContext;
     }
 
     @Override
@@ -354,7 +354,7 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
     public void destroy() {
         mDestroyed = true;
 
-        mNativeRenderContext.delete();
+        mNativeViroContext.dispose();
         mNativeRenderer.destroy();
         mARTouchGestureListener.destroy();
 

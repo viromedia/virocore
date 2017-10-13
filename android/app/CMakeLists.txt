@@ -70,7 +70,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/Texture_JNI.cpp
              src/main/cpp/jni/VideoTexture_JNI.cpp
              src/main/cpp/jni/VideoDelegate_JNI.cpp
-             src/main/cpp/jni/RenderContext_JNI.cpp
+             src/main/cpp/jni/ViroContext_JNI.cpp
              src/main/cpp/jni/EventDelegate_JNI.cpp
              src/main/cpp/jni/AnimationChain_JNI.cpp
              src/main/cpp/jni/AnimationGroup_JNI.cpp

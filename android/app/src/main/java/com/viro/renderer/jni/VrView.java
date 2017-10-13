@@ -9,7 +9,7 @@ import android.view.View;
 
 public interface VrView extends Application.ActivityLifecycleCallbacks {
 
-    public RenderContext getRenderContextRef();
+    public ViroContext getViroContext();
 
     public void setSceneController(SceneController sceneController);
 

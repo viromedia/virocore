@@ -48,7 +48,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         System.loadLibrary("native-lib");
     }
     private Renderer mNativeRenderer;
-    private final RenderContext mNativeRenderContext;
+    private final ViroContext mNativeViroContext;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
     private GLListener mGlListener = null;
@@ -187,7 +187,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
                 activityContext.getApplicationContext(),
                 mAssetManager, mPlatformUtil,
                 getGvrApi().getNativeGvrContext());
-        mNativeRenderContext = new RenderContext(mNativeRenderer.mNativeRef);
+        mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
 
         mGlListener = glListener;
         mKeyValidator = new KeyValidator(activityContext);
@@ -271,8 +271,8 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     }
 
     @Override
-    public RenderContext getRenderContextRef(){
-        return mNativeRenderContext;
+    public ViroContext getViroContext(){
+        return mNativeViroContext;
     }
 
     @Override
@@ -368,7 +368,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
         super.shutdown();
         mDestroyed = true;
 
-        mNativeRenderContext.delete();
+        mNativeViroContext.dispose();
         mNativeRenderer.destroy();
 
         Activity activity = mWeakActivity.get();

@@ -13,7 +13,7 @@
 #include "VROText.h"
 #include "Node_JNI.h"
 #include "TextDelegate_JNI.h"
-#include "RenderContext_JNI.h"
+#include "ViroContext_JNI.h"
 #include "VROPlatformUtil.h"
 
 #define JNI_METHOD(return_type, method_name) \
@@ -85,7 +85,7 @@ extern "C" {
 
 JNI_METHOD(jlong, nativeCreateText)(JNIEnv *env,
                                     jobject object,
-                                    jlong renderContextRef,
+                                    jlong context_j,
                                     jstring text,
                                     jstring fontFamilyName,
                                     jint size,
@@ -140,8 +140,8 @@ JNI_METHOD(jlong, nativeCreateText)(JNIEnv *env,
     std::string strFontFamilyName(cStrFontFamilyName);
     env->ReleaseStringUTFChars(fontFamilyName, cStrFontFamilyName);
 
-    std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
-    std::shared_ptr<VRODriver> driver = renderContext->getDriver();
+    std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
+    std::shared_ptr<VRODriver> driver = context->getDriver();
     std::shared_ptr<VROTypeface> typeface = driver.get()->newTypeface(strFontFamilyName, size);
 
     std::shared_ptr<VROText> vroText = std::make_shared<VROText>(strText, typeface, vecColor, width,

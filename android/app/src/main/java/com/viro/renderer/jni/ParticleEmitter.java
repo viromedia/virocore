@@ -15,8 +15,8 @@ import java.util.ArrayList;
 public class ParticleEmitter {
     final protected long mNativeRef;
 
-    public ParticleEmitter(RenderContext renderContext, Node node, Surface surface) {
-        mNativeRef = nativeCreateEmitter(renderContext.mNativeRef, node.mNativeRef, surface.mNativeRef);
+    public ParticleEmitter(ViroContext viroContext, Node node, Surface surface) {
+        mNativeRef = nativeCreateEmitter(viroContext.mNativeRef, node.mNativeRef, surface.mNativeRef);
     }
 
     public void destroy() {

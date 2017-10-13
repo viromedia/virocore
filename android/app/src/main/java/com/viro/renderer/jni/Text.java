@@ -15,7 +15,7 @@ package com.viro.renderer.jni;
 public class Text extends Geometry {
 
     // Save text properties here
-    private RenderContext mRenderContext;
+    private ViroContext mViroContext;
     private String mTextString;
     private String mFontFamilyName;
     private int mFontSize;
@@ -28,11 +28,11 @@ public class Text extends Geometry {
     private String mClipMode;
     private int mMaxLines;
 
-    public Text(RenderContext renderContext, String text, String fontFamilyName,
+    public Text(ViroContext viroContext, String text, String fontFamilyName,
                 int size, long color, float width, float height,
                 String horizontalAlignment, String verticalAlignment,
                 String lineBreakMode, String clipMode, int maxLines) {
-        mRenderContext = renderContext;
+        mViroContext = viroContext;
         mTextString = text;
         mFontFamilyName = fontFamilyName;
         mFontSize = size;
@@ -45,7 +45,7 @@ public class Text extends Geometry {
         mClipMode = clipMode;
         mMaxLines = maxLines;
 
-        mNativeRef = nativeCreateText(mRenderContext.mNativeRef, mTextString, mFontFamilyName, mFontSize, mColor, mWidth,
+        mNativeRef = nativeCreateText(mViroContext.mNativeRef, mTextString, mFontFamilyName, mFontSize, mColor, mWidth,
                 mHeight, mHorizontalAlignment, mVerticalAlignment, mLineBreakMode, mClipMode, mMaxLines);
     }
 

@@ -87,9 +87,9 @@ public class SceneController {
         nativeSetBackgroundCubeWithColor(mNativeRef, color);
     }
 
-    public void setSoundRoom(RenderContext renderContext, float[] size, String wallMaterial,
+    public void setSoundRoom(ViroContext viroContext, float[] size, String wallMaterial,
                              String ceilingMaterial, String floorMaterial) {
-        nativeSetSoundRoom(mNativeRef, renderContext.mNativeRef, size[0], size[1], size[2],
+        nativeSetSoundRoom(mNativeRef, viroContext.mNativeRef, size[0], size[1], size[2],
                 wallMaterial, ceilingMaterial, floorMaterial);
     }
 

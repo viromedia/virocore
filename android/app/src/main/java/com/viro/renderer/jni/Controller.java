@@ -12,25 +12,25 @@ package com.viro.renderer.jni;
  * Cpp Object           : VROInputPresenter
  */
 public class Controller {
-    private RenderContext mRenderContext;
-    public Controller(RenderContext renderContext) {
-        mRenderContext = renderContext;
+    private ViroContext mViroContext;
+    public Controller(ViroContext viroContext) {
+        mViroContext = viroContext;
     }
 
     public void setEventDelegate(EventDelegate delegate) {
-        nativeSetEventDelegate(mRenderContext.mNativeRef, delegate.mNativeRef);
+        nativeSetEventDelegate(mViroContext.mNativeRef, delegate.mNativeRef);
     }
 
     public void setReticleVisibility(boolean visible) {
-        nativeEnableReticle(mRenderContext.mNativeRef, visible);
+        nativeEnableReticle(mViroContext.mNativeRef, visible);
     }
 
     public void setControllerVisibility(boolean visible) {
-        nativeEnableController(mRenderContext.mNativeRef, visible);
+        nativeEnableController(mViroContext.mNativeRef, visible);
     }
 
     public void getControllerForwardVectorAsync(ControllerJniCallback callback){
-        nativeGetControllerForwardVectorAsync(mRenderContext.mNativeRef, callback);
+        nativeGetControllerForwardVectorAsync(mViroContext.mNativeRef, callback);
     }
 
     private native void nativeSetEventDelegate(long contextRef, long delegateRef);

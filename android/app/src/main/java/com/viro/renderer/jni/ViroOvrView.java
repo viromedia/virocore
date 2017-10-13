@@ -60,7 +60,7 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     }
 
     private Renderer mNativeRenderer;
-    private final RenderContext mNativeRenderContext;
+    private final ViroContext mNativeViroContext;
     private AssetManager mAssetManager;
     private OVRRenderCommandQueue mRenderQueue = new OVRRenderCommandQueue();
     private List<FrameListener> mFrameListeners = new CopyOnWriteArrayList<FrameListener>();
@@ -86,7 +86,7 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
                 activityContext.getApplicationContext(),
                 this, activity, mAssetManager, mPlatformUtil);
 
-        mNativeRenderContext = new RenderContext(mNativeRenderer.mNativeRef);
+        mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
 
         mGlListener = glListener;
 
@@ -117,8 +117,8 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     }
 
     @Override
-    public RenderContext getRenderContextRef(){
-        return mNativeRenderContext;
+    public ViroContext getViroContext(){
+        return mNativeViroContext;
     }
 
     @Override
@@ -230,7 +230,7 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     @Override
     public void destroy() {
         mDestroyed = true;
-        mNativeRenderContext.delete();
+        mNativeViroContext.dispose();
         mNativeRenderer.destroy();
     }
 

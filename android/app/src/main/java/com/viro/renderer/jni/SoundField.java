@@ -10,17 +10,17 @@ public class SoundField implements BaseSound {
     private boolean mReady = false;
     private SoundDelegate mDelegate;
 
-    public SoundField(String path, RenderContext renderContext,
+    public SoundField(String path, ViroContext viroContext,
                       SoundDelegate delegate, boolean local) {
 
-        mNativeRef = nativeCreateSoundField(path, local, renderContext.mNativeRef);
+        mNativeRef = nativeCreateSoundField(path, local, viroContext.mNativeRef);
 
         mDelegate = delegate;
     }
 
-    public SoundField(SoundData data, RenderContext renderContext,
+    public SoundField(SoundData data, ViroContext viroContext,
                       SoundDelegate delegate) {
-        mNativeRef = nativeCreateSoundFieldWithData(data.mNativeRef, renderContext.mNativeRef);
+        mNativeRef = nativeCreateSoundFieldWithData(data.mNativeRef, viroContext.mNativeRef);
         mDelegate = delegate;
     }
 

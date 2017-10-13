@@ -17,14 +17,14 @@ public class VideoTexture {
     protected long mNativeRef = INVALID_REF;
     protected long mNativeDelegateRef = INVALID_REF;
 
-    public VideoTexture(RenderContext renderContext) {
-        mNativeRef = nativeCreateVideoTexture(renderContext.mNativeRef, null);
+    public VideoTexture(ViroContext viroContext) {
+        mNativeRef = nativeCreateVideoTexture(viroContext.mNativeRef, null);
         mNativeDelegateRef = nativeCreateVideoDelegate();
         nativeAttachDelegate(mNativeRef, mNativeDelegateRef);
     }
 
-    public VideoTexture(RenderContext renderContext, String stereoType) {
-        mNativeRef = nativeCreateVideoTexture(renderContext.mNativeRef, stereoType);
+    public VideoTexture(ViroContext viroContext, String stereoType) {
+        mNativeRef = nativeCreateVideoTexture(viroContext.mNativeRef, stereoType);
         mNativeDelegateRef = nativeCreateVideoDelegate();
         nativeAttachDelegate(mNativeRef, mNativeDelegateRef);
     }
@@ -37,8 +37,8 @@ public class VideoTexture {
         mNativeDelegateRef = INVALID_REF;
     }
 
-    public void loadSource(String url, RenderContext renderContext){
-        nativeLoadSource(mNativeRef, url, renderContext.mNativeRef);
+    public void loadSource(String url, ViroContext viroContext){
+        nativeLoadSource(mNativeRef, url, viroContext.mNativeRef);
     }
     public boolean isReady(){
         return mNativeRef != INVALID_REF;

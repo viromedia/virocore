@@ -18,7 +18,7 @@
 #include "VideoTexture_JNI.h"
 #include "SceneController_JNI.h"
 #include "Texture_JNI.h"
-#include "RenderContext_JNI.h"
+#include "ViroContext_JNI.h"
 #include "Node_JNI.h"
 #include "ParticleEmitter_JNI.h"
 #include "VROPostProcessEffectFactory.h"
@@ -153,7 +153,7 @@ JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, jlong renderContextRef,
+JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, jlong context_j,
                                      jfloat sizeX, jfloat sizeY, jfloat sizeZ, jstring wallMaterial,
                                      jstring ceilingMaterial, jstring floorMaterial) {
     const char *cWallMaterial = env->GetStringUTFChars(wallMaterial, NULL);
@@ -164,22 +164,22 @@ JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, j
     std::string strCeilingMaterial(cCeilingMaterial);
     std::string strFloorMaterial(cFloorMaterial);
 
-    std::weak_ptr<RenderContext> renderContext_w = RenderContext::native(renderContextRef);
+    std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
 
-    VROPlatformDispatchAsyncRenderer([renderContext_w,
+    VROPlatformDispatchAsyncRenderer([context_w,
                                              sizeX, sizeY, sizeZ,
                                              strWallMaterial,
                                              strCeilingMaterial,
                                              strFloorMaterial] {
-        std::shared_ptr<RenderContext> renderContext = renderContext_w.lock();
-        if (!renderContext) {
+        std::shared_ptr<ViroContext> context = context_w.lock();
+        if (!context) {
             return;
         }
 
-        renderContext->getDriver()->setSoundRoom(sizeX, sizeY, sizeZ,
-                                                 strWallMaterial,
-                                                 strCeilingMaterial,
-                                                 strFloorMaterial);
+        context->getDriver()->setSoundRoom(sizeX, sizeY, sizeZ,
+                                           strWallMaterial,
+                                           strCeilingMaterial,
+                                           strFloorMaterial);
     });
 
     env->ReleaseStringUTFChars(wallMaterial, cWallMaterial);

@@ -15,7 +15,7 @@
 #include "PersistentRef.h"
 #include "VROFrameSynchronizer.h"
 #include "VRORenderer_JNI.h"
-#include "RenderContext_JNI.h"
+#include "ViroContext_JNI.h"
 #include "VideoTexture_JNI.h"
 #include "VideoDelegate_JNI.h"
 #include "VRODriverOpenGL.h"
@@ -28,7 +28,7 @@ extern "C" {
 
 JNI_METHOD(jlong, nativeCreateVideoTexture)(JNIEnv *env,
                                             jobject object,
-                                            jlong renderContextRef,
+                                            jlong context_j,
                                             jstring stereoMode) {
 
     VROStereoMode mode = VROStereoMode::None;
@@ -39,17 +39,17 @@ JNI_METHOD(jlong, nativeCreateVideoTexture)(JNIEnv *env,
         mode = VROTextureUtil::getStereoModeForString(strStereoMode);
     }
 
-    std::weak_ptr<RenderContext> renderContext_w = RenderContext::native(renderContextRef);
+    std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
     std::shared_ptr<VROVideoTextureAVP> videoTexture = std::make_shared<VROVideoTextureAVP>(mode);
     videoTexture->init();
 
-    VROPlatformDispatchAsyncRenderer([videoTexture, renderContext_w] {
-        std::shared_ptr<RenderContext> renderContext = renderContext_w.lock();
-        if (!renderContext) {
+    VROPlatformDispatchAsyncRenderer([videoTexture, context_w] {
+        std::shared_ptr<ViroContext> context = context_w.lock();
+        if (!context) {
             return;
         }
 
-        videoTexture->bindSurface(std::dynamic_pointer_cast<VRODriverOpenGL>(renderContext->getDriver()));
+        videoTexture->bindSurface(std::dynamic_pointer_cast<VRODriverOpenGL>(context->getDriver()));
     });
 
     return VideoTexture::jptr(videoTexture);
@@ -187,26 +187,26 @@ JNI_METHOD(void, nativeLoadSource)(JNIEnv *env,
                                    jclass clazz,
                                    jlong textureRef,
                                    jstring source,
-                                   jlong renderContextRef) {
+                                   jlong context_j) {
     // Grab required objects from the RenderContext required for initialization
     const char *cVideoSource = env->GetStringUTFChars(source, JNI_FALSE);
     std::string strVideoSource(cVideoSource);
 
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
-    std::weak_ptr<RenderContext> renderContext_w = RenderContext::native(renderContextRef);
+    std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
 
-    VROPlatformDispatchAsyncRenderer([videoTexture_w, renderContext_w, strVideoSource] {
+    VROPlatformDispatchAsyncRenderer([videoTexture_w, context_w, strVideoSource] {
         std::shared_ptr<VROVideoTextureAVP> videoTexture = videoTexture_w.lock();
         if (!videoTexture) {
             return;
         }
-        std::shared_ptr<RenderContext> renderContext = renderContext_w.lock();
-        if (!renderContext) {
+        std::shared_ptr<ViroContext> context = context_w.lock();
+        if (!context) {
             return;
         }
 
-        std::shared_ptr<VROFrameSynchronizer> frameSynchronizer = renderContext->getFrameSynchronizer();
-        std::shared_ptr<VRODriver> driver = renderContext->getDriver();
+        std::shared_ptr<VROFrameSynchronizer> frameSynchronizer = context->getFrameSynchronizer();
+        std::shared_ptr<VRODriver> driver = context->getDriver();
         videoTexture->loadVideo(strVideoSource, frameSynchronizer, driver);
         videoTexture->prewarm();
     });

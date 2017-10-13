@@ -10,7 +10,7 @@
 #include <VROSoundGVR.h>
 #include <VROSoundDataGVR.h>
 #include "PersistentRef.h"
-#include "RenderContext_JNI.h"
+#include "ViroContext_JNI.h"
 #include "SoundDelegate_JNI.h"
 #include "SoundData_JNI.h"
 
@@ -38,16 +38,16 @@ extern "C" {
      * web urls vs local file urls, the Android MediaPlayer handles both.
      */
     JNI_METHOD(jlong, nativeCreateSound)(JNIEnv *env,
-                                                 jobject object,
-                                                 jstring filename,
-                                                 jlong renderContextRef) {
-        std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
+                                         jobject object,
+                                         jstring filename,
+                                         jlong context_j) {
+        std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
 
         const char *cStrFile = env->GetStringUTFChars(filename, NULL);
         std::string file(cStrFile);
         env->ReleaseStringUTFChars(filename, cStrFile);
 
-        std::shared_ptr<VROAudioPlayer> player = renderContext->getDriver()->newAudioPlayer(file, false);
+        std::shared_ptr<VROAudioPlayer> player = context->getDriver()->newAudioPlayer(file, false);
 
         std::shared_ptr<VROAudioPlayerAndroid> playerAndroid = std::dynamic_pointer_cast<VROAudioPlayerAndroid>(player);
         playerAndroid->setDelegate(std::make_shared<SoundDelegate>(object));
@@ -59,11 +59,11 @@ extern "C" {
     JNI_METHOD(jlong, nativeCreateSoundWithData)(JNIEnv *env,
                                                  jobject object,
                                                  jlong dataRef,
-                                                 jlong renderContextRef) {
-        std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
+                                                 jlong context_j) {
+        std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
         std::shared_ptr<VROSoundDataGVR> data = SoundData::native(dataRef);
 
-        std::shared_ptr<VROAudioPlayer> player = renderContext->getDriver()->newAudioPlayer(data);
+        std::shared_ptr<VROAudioPlayer> player = context->getDriver()->newAudioPlayer(data);
         std::shared_ptr<VROAudioPlayerAndroid> playerAndroid = std::dynamic_pointer_cast<VROAudioPlayerAndroid>(player);
         playerAndroid->setDelegate(std::make_shared<SoundDelegate>(object));
         playerAndroid->setup();

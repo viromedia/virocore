@@ -15,22 +15,22 @@ public class Sound implements BaseSound {
      * Constructor for the SoundJni class
      *
      * @param path - path to the file or web resource
-     * @param renderContext - the renderContext
+     * @param viroContext - the renderContext
      * @param delegate - the SoundDelegate
      * @param local - whether or not the given path is a local or web resource
      */
-    public Sound(String path, RenderContext renderContext,
+    public Sound(String path, ViroContext viroContext,
                  SoundDelegate delegate, boolean local) {
         // we don't currently use local because the underlying player is Android's MediaPlayer, if/when
         // we move to GVR audio, we'll want to treat them differently.
         mDelegate = delegate;
-        mNativeRef = nativeCreateSound(path, renderContext.mNativeRef);
+        mNativeRef = nativeCreateSound(path, viroContext.mNativeRef);
     }
 
-    public Sound(SoundData data, RenderContext renderContext,
+    public Sound(SoundData data, ViroContext viroContext,
                  SoundDelegate delegate) {
         mDelegate = delegate;
-        mNativeRef = nativeCreateSoundWithData(data.mNativeRef, renderContext.mNativeRef);
+        mNativeRef = nativeCreateSoundWithData(data.mNativeRef, viroContext.mNativeRef);
     }
 
     @Override

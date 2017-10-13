@@ -10,7 +10,7 @@
 #include <VROSoundGVR.h>
 #include <VROSoundDataGVR.h>
 #include "PersistentRef.h"
-#include "RenderContext_JNI.h"
+#include "ViroContext_JNI.h"
 #include "SoundDelegate_JNI.h"
 #include "Node_JNI.h"
 #include "SoundData_JNI.h"
@@ -37,14 +37,14 @@ JNI_METHOD(jlong, nativeCreateSpatialSound)(JNIEnv *env,
                                             jobject object,
                                             jstring filename,
                                             jboolean local,
-                                            jlong renderContextRef) {
-    std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
+                                            jlong context_j) {
+    std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
 
     const char *cStrFile = env->GetStringUTFChars(filename, NULL);
     std::string file(cStrFile);
     env->ReleaseStringUTFChars(filename, cStrFile);
 
-    std::shared_ptr<VROSound> soundEffect = renderContext->getDriver()->newSound(file, VROSoundType::Spatial, local);
+    std::shared_ptr<VROSound> soundEffect = context->getDriver()->newSound(file, VROSoundType::Spatial, local);
     std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(soundEffect);
     soundGvr->setDelegate(std::make_shared<SoundDelegate>(object));
     return SpatialSound::jptr(soundGvr);
@@ -53,11 +53,11 @@ JNI_METHOD(jlong, nativeCreateSpatialSound)(JNIEnv *env,
 JNI_METHOD(jlong, nativeCreateSpatialSoundWithData)(JNIEnv *env,
                                                     jobject object,
                                                     jlong dataRef,
-                                                    jlong renderContextRef) {
-    std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
+                                                    jlong context_j) {
+    std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::shared_ptr<VROSoundDataGVR> data = SoundData::native(dataRef);
 
-    std::shared_ptr<VROSound> sound = renderContext->getDriver()->newSound(data, VROSoundType::Spatial);
+    std::shared_ptr<VROSound> sound = context->getDriver()->newSound(data, VROSoundType::Spatial);
     std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(sound);
     std::shared_ptr<SoundDelegate> delegate = std::make_shared<SoundDelegate>(object);
     soundGvr->setDelegate(delegate);

@@ -11,15 +11,15 @@ public class SpatialSound implements BaseSound {
     private SoundDelegate mDelegate;
     private Node mParentNode = null;
 
-    public SpatialSound(String path, RenderContext renderContext,
+    public SpatialSound(String path, ViroContext viroContext,
                         SoundDelegate delegate, boolean local) {
-        mNativeRef = nativeCreateSpatialSound(path, local, renderContext.mNativeRef);
+        mNativeRef = nativeCreateSpatialSound(path, local, viroContext.mNativeRef);
         mDelegate = delegate;
     }
 
-    public SpatialSound(SoundData data, RenderContext renderContext,
+    public SpatialSound(SoundData data, ViroContext viroContext,
                         SoundDelegate delegate) {
-        mNativeRef = nativeCreateSpatialSoundWithData(data.mNativeRef, renderContext.mNativeRef);
+        mNativeRef = nativeCreateSpatialSoundWithData(data.mNativeRef, viroContext.mNativeRef);
         mDelegate = delegate;
     }
 
