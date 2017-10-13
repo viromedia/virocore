@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.inputmethod.CursorAnchorInfo;
 import android.widget.ImageView;
 
 import com.viro.renderer.ARAnchor;
@@ -145,10 +146,10 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         //nodes = testSurfaceVideo(this);
         //nodes = testSphereVideo(this);
         //nodes = testBox(getApplicationContext());
-        nodes = test3dObjectLoading(getApplicationContext());
+        //nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
-        //nodes = testText(this);
+        nodes = testText(this);
 
         //testBackgroundVideo(scene);
         //testBackgroundImage(scene);
@@ -239,7 +240,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         // Create text
         Text text = new Text(mVrView.getViroContext(),
                 "Test Text Here", "Roboto", 25, Color.WHITE, 1f,
-                1f, "Left", "Top", "WordWrap", "None", 0);
+                1f, Text.HorizontalAlignment.LEFT, Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
         float[] position = {0, -0.5f, -0.5f};
         node.setPosition(position);
         node.setGeometry(text);
@@ -423,7 +424,8 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
         Node node3 = new Node();
         Text textJni = new Text(mVrView.getViroContext(), "Test text 1 2 3", "Roboto", 24,
-                Color.WHITE, 10, 4, "Center", "Center", "None", "None", 1);
+                Color.WHITE, 10, 4, Text.HorizontalAlignment.CENTER, Text.VerticalAlignment.CENTER, Text.LineBreakMode.NONE,
+                Text.ClipMode.CLIP_TO_BOUNDS, 1);
 
         float[] position = {0, -1, -2};
         node3.setPosition(position);

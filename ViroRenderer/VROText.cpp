@@ -129,9 +129,14 @@ void VROText::update() {
     std::vector<std::shared_ptr<VROGeometrySource>> sources;
     std::vector<std::shared_ptr<VROGeometryElement>> elements;
     std::vector<std::shared_ptr<VROMaterial>> materials;
+
+    float realizedWidth, realizedHeight;
     buildText(_text, _typeface, _color, _width, _height, _horizontalAlignment, _verticalAlignment,
               _lineBreakMode, _clipMode, _maxLines, sources, elements, materials,
-              &_realizedWidth, &_realizedHeight);
+              &realizedWidth, &realizedHeight);
+
+    _realizedWidth = realizedWidth;
+    _realizedHeight = realizedHeight;
 
     setSources(sources);
     setElements(elements);
@@ -179,7 +184,7 @@ void VROText::setLineBreakMode(VROLineBreakMode lineBreakMode) {
     update();
 }
 
-void VROText::setTextClipMode(VROTextClipMode clipMode) {
+void VROText::setClipMode(VROTextClipMode clipMode) {
     _clipMode = clipMode;
     update();
 }
