@@ -16,6 +16,8 @@ package com.viro.renderer.jni;
  */
 public class Box extends Geometry {
 
+    float mWidth, mHeight, mLength;
+
     /**
      * Construct a new Box with the given width, height, and length.
      *
@@ -24,6 +26,9 @@ public class Box extends Geometry {
      * @param length The length of the box (Z dimension).
      */
     public Box(float width, float height, float length) {
+        mWidth = width;
+        mHeight = height;
+        mLength = length;
         mNativeRef = nativeCreateBox(width, height, length);
     }
 
@@ -52,7 +57,17 @@ public class Box extends Geometry {
      * @param width The size of the Box in the X dimension.
      */
     public void setWidth(float width) {
+        mWidth = width;
         nativeSetWidth(mNativeRef, width);
+    }
+
+    /**
+     * Get the width of this Box.
+     *
+     * @return The size of the Box in the X dimension.
+     */
+    public float getWidth() {
+        return mWidth;
     }
 
     /**
@@ -61,7 +76,17 @@ public class Box extends Geometry {
      * @param height The size of the Box in the Y dimension.
      */
     public void setHeight(float height) {
+        mHeight = height;
         nativeSetHeight(mNativeRef, height);
+    }
+
+    /**
+     * Get the height of this Box.
+     *
+     * @return The size of the Box in the Y dimension.
+     */
+    public float getHeight() {
+        return mHeight;
     }
 
     /**
@@ -70,7 +95,17 @@ public class Box extends Geometry {
      * @param length The size of the Box in the Z dimension.
      */
     public void setLength(float length) {
+        mLength = length;
         nativeSetLength(mNativeRef, length);
+    }
+
+    /**
+     * Get the length of this Box.
+     *
+     * @return The size of the Box in the Z dimension.
+     */
+    public float getLength() {
+        return mLength;
     }
 
     private native long nativeCreateBox(float width, float height, float length);

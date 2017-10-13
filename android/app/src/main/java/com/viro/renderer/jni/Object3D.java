@@ -1,5 +1,13 @@
-/**
+/*
  * Copyright © 2016 Viro Media. All rights reserved.
+ */
+/*
+ * Java JNI wrapper for linking the following classes below across the bridge
+ *
+ * Android Java Object : com.viromedia.bridge.view.Object3d.java
+ * Java JNI Wrapper : com.viro.renderer.ObjectJni.java
+ * Cpp JNI Wrapper : Object_JNI.cpp
+ * Cpp Object : VROOBJLoader.cpp
  */
 package com.viro.renderer.jni;
 
@@ -11,14 +19,16 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Java JNI wrapper for linking the following classes below across the bridge
- *
- * Android Java Object : com.viromedia.bridge.view.Object3d.java
- * Java JNI Wrapper : com.viro.renderer.ObjectJni.java
- * Cpp JNI Wrapper : Object_JNI.cpp
- * Cpp Object : VROOBJLoader.cpp
+ * Object3D defines a {@link Node} that can load FBX or OBJ models. These file formats
+ * may contain not just single Geometry instances but entire subgraphs of Nodes. This Node
+ * acts as the parent to the generated subgraph.
+ * <p>
+ * OBJ loading supports MTL files, for loading material properties and textures. For OBJ
+ * files, Materials can also be manually injected by invoking {@link Geometry#setMaterials(List)}.
+ * <p>
+ * FBX loading fully supports material properties, diffuse, specular, and normal maps, and
+ * skeletal and keyframe animation.
  */
-
 public class Object3D extends Node {
 
     private AsyncObject3DListener mAsyncListener = null;
@@ -37,6 +47,17 @@ public class Object3D extends Node {
         mActiveRequestID = new AtomicLong();
     }
 
+    /**
+     * Load an FBX or OBJ model at the given URL into this Node. The model will load asynchronously,
+     * and the provided listener will receive a notification when model loading is completed. To
+     * load Android assets, use URL's of the form <tt>file:///android-asset/[asset-name]</tt>. If
+     * the model requires other resources (e.g. textures), those are expected to be found at the
+     * same base path as the model URL.
+     *
+     * @param url           The URL of the model to load.
+     * @param type          The type of model (FBX or OBJ).
+     * @param asyncListener Listener to respond to model loading status.
+     */
     public void loadModel(Uri url, Type type, AsyncObject3DListener asyncListener) {
         long requestID = mActiveRequestID.incrementAndGet();
         nativeLoadModelFromURL(url.toString(), mNativeRef, type == Type.FBX, requestID);
@@ -44,11 +65,30 @@ public class Object3D extends Node {
         mAsyncListener = asyncListener;
     }
 
+    /**
+     * Load an FBX or OBJ model from bundled application resources.
+     *
+     * @param modelResource       The resource of the FBX or OBJ.
+     * @param type                The type of model (FBX or OBJ).
+     * @param asyncObjListener    Listener to respond to model loading status.
+     * @param resourceNamesToUris Mapping of other resources required by the model, as defined in
+     *                            the model's FBX or OBJ file, to the URI's of those resources.
+     * @hide
+     */
     public void loadModel(String modelResource, Type type, AsyncObject3DListener asyncObjListener,
                           Map<String, String> resourceNamesToUris) {
         long requestID = mActiveRequestID.incrementAndGet();
         nativeLoadModelFromResources(modelResource, resourceNamesToUris, mNativeRef, type == Type.FBX, requestID);
         mAsyncListener = asyncObjListener;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            dispose();
+        } finally {
+            super.finalize();
+        }
     }
 
     /**

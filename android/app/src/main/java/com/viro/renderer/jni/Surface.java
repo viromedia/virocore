@@ -15,6 +15,8 @@ package com.viro.renderer.jni;
  */
 public class Surface extends Geometry {
 
+    private float mWidth, mHeight;
+
     /**
      * Construct a new Surface with the given width and height.
      *
@@ -29,6 +31,8 @@ public class Surface extends Geometry {
      * @hide
      */
     public Surface(float width, float height, float u0, float v0, float u1, float v1) {
+        mWidth = width;
+        mHeight = height;
         mNativeRef = nativeCreateSurface(width, height, u0, v0, u1, v1);
     }
 
@@ -59,25 +63,23 @@ public class Surface extends Geometry {
         }
     }
 
-    public void setVideoTexture(VideoTexture texture){
-        nativeSetVideoTexture(mNativeRef, texture.mNativeRef);
-    }
-
-    public void setImageTexture(Texture texture) {
-        nativeSetImageTexture(mNativeRef, texture.mNativeRef);
-    }
-
-    public void setMaterial(Material material) {
-        nativeSetMaterial(mNativeRef, material.mNativeRef);
-    }
-
     /**
      * Set the width of this Surface.
      *
      * @param width The extent of the Surface along its horizontal axis.
      */
     public void setWidth(float width) {
+        mWidth = width;
         nativeSetWidth(mNativeRef, width);
+    }
+
+    /**
+     * Get the width of this Surface.
+     *
+     * @return The extent of this Surface along its horizontal axis.
+     */
+    public float getWidth() {
+        return mWidth;
     }
 
     /**
@@ -86,22 +88,23 @@ public class Surface extends Geometry {
      * @param height The extent of the Surface along its vertical axis.
      */
     public void setHeight(float height) {
+        mHeight = height;
         nativeSetHeight(mNativeRef, height);
     }
 
-    public void clearMaterial() {
-        nativeClearMaterial(mNativeRef);
+    /**
+     * Get the height of this surface.
+     *
+     * @return The extent of this Surface along its vertical axis.
+     */
+    public float getHeight() {
+        return mHeight;
     }
 
-    /*
-     * Native Functions called into JNI
-     */
-    private native long nativeCreateSurface(float width, float height,
-                                            float u0, float v0, float u1, float v1);
+    private native long nativeCreateSurface(float width, float height, float u0, float v0, float u1, float v1);
     private native long nativeCreateSurfaceFromSurface(float width, float height,
                                                        float u0, float v0, float u1, float v1,
                                                        long oldSurfaceRef);
-
     private native void nativeDestroySurface(long surfaceRef);
     private native void nativeSetWidth(long surfaceRef, float width);
     private native void nativeSetHeight(long surfaceRef, float height);
@@ -109,5 +112,33 @@ public class Surface extends Geometry {
     private native void nativeSetImageTexture(long surfaceRef, long textureRef);
     private native void nativeSetMaterial(long surfaceRef, long materialRef);
     private native void nativeClearMaterial(long surfaceRef);
+
+    /**
+     * @hide
+     * @param texture
+     */
+    public void setVideoTexture(VideoTexture texture){
+        nativeSetVideoTexture(mNativeRef, texture.mNativeRef);
+    }
+    /**
+     * @hide
+     * @param texture
+     */
+    public void setImageTexture(Texture texture) {
+        nativeSetImageTexture(mNativeRef, texture.mNativeRef);
+    }
+    /**
+     * @hide
+     * @param material
+     */
+    public void setMaterial(Material material) {
+        nativeSetMaterial(mNativeRef, material.mNativeRef);
+    }
+    /**
+     * @hide
+     */
+    public void clearMaterial() {
+        nativeClearMaterial(mNativeRef);
+    }
 
 }

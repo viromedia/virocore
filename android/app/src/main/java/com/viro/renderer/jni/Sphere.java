@@ -12,12 +12,16 @@
 package com.viro.renderer.jni;
 
 /**
- * Defines a spherical shape, e.g. where every point on the surface is equidistant from the center.
- * The center of the Sphere is placed at the origin. The surface of the Sphere is approximated
- * by setHeightSegmentCount and setWidthSegmentCount. These define the number of divisions made
- * along the surface to approximate the sphere.
+ * Sphere defines a spherical shape, e.g. where every point on the surface is equidistant from the
+ * center. The center of the Sphere is placed at the origin. The surface of the Sphere is
+ * approximated by setHeightSegmentCount and setWidthSegmentCount. These define the number of
+ * divisions made along the surface to approximate the sphere.
  */
 public class Sphere extends Geometry {
+
+    private float mRadius;
+    private int mWidthSegmentCount, mHeightSegmentCount;
+    private boolean mFacesOutward;
 
     /**
      * Construct a new Sphere. The Sphere will use the default segment approximation and will
@@ -39,6 +43,10 @@ public class Sphere extends Geometry {
      * @param facesOutward       True to have the Sphere face outward.
      */
     public Sphere(float radius, int widthSegmentCount, int heightSegmentCount, boolean facesOutward) {
+        mRadius = radius;
+        mWidthSegmentCount = widthSegmentCount;
+        mHeightSegmentCount = heightSegmentCount;
+        mFacesOutward = facesOutward;
         mNativeRef = nativeCreateSphereParameterized(
                 radius,
                 widthSegmentCount,
@@ -71,7 +79,17 @@ public class Sphere extends Geometry {
      * @param radius The radius.
      */
     public void setRadius(float radius) {
+        mRadius = radius;
         nativeSetRadius(radius);
+    }
+
+    /**
+     * Return the radius of the Sphere.
+     *
+     * @return The radius of the Sphere.
+     */
+    public float getRadius() {
+        return mRadius;
     }
 
     /**
@@ -83,7 +101,17 @@ public class Sphere extends Geometry {
      * @param heightSegmentCount The number of width segments to use.
      */
     public void setHeightSegmentCount(int heightSegmentCount) {
+        mHeightSegmentCount = heightSegmentCount;
         nativeSetHeightSegmentCount(heightSegmentCount);
+    }
+
+    /**
+     * Get the number of segments used to approximate the Sphere across its latitude.
+     *
+     * @return The number of segments.
+     */
+    public int getHeightSegmentCount() {
+        return mHeightSegmentCount;
     }
 
     /**
@@ -95,7 +123,17 @@ public class Sphere extends Geometry {
      * @param widthSegmentCount The number of width segments to use.
      */
     public void setWidthSegmentCount(int widthSegmentCount) {
+        mWidthSegmentCount = widthSegmentCount;
         nativeSetWidthSegmentCount(widthSegmentCount);
+    }
+
+    /**
+     * Get the number of segments used to approximate the Sphere across its longitude.
+     *
+     * @return The number of segments.
+     */
+    public int getWidthSegmentCount() {
+        return mWidthSegmentCount;
     }
 
     /**
@@ -108,7 +146,18 @@ public class Sphere extends Geometry {
      * @param facesOutward True to make the Sphere face outward.
      */
     public void setFacesOutward(boolean facesOutward) {
+        mFacesOutward = facesOutward;
         nativeSetFacesOutward(facesOutward);
+    }
+
+    /**
+     * Return true if the Sphere faces outward, meaning its exterior is visible. If false,
+     * then the Sphere's interior will be visible.
+     *
+     * @return True if the Sphere faces outward.
+     */
+    public boolean getFacesOutward() {
+        return mFacesOutward;
     }
 
     /*
