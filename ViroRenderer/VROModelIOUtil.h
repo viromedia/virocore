@@ -16,6 +16,16 @@
 class VROTexture;
 
 /*
+ The type of file within which the model is stored. On Android, use URL with file:///android-asset/
+ to load assets.
+ */
+enum class VROResourceType {
+    LocalFile,        // Local file path
+    URL,              // URL (remote or local)
+    BundledResource,  // App-bundled resource
+};
+
+/*
  Static utilities for Model IO.
  */
 class VROModelIOUtil {
@@ -31,9 +41,19 @@ public:
      only be used for color (diffuse) textures, and not for textures that are *already* linear
      (e.g. specular, normal, etc.).
      */
-    static std::shared_ptr<VROTexture> loadTexture(const std::string &name, std::string &base, bool isBaseURL, bool sRGB,
+    static std::shared_ptr<VROTexture> loadTexture(const std::string &name, std::string &base, VROResourceType type, bool sRGB,
                                                    const std::map<std::string, std::string> *resourceMap,
                                                    std::map<std::string, std::shared_ptr<VROTexture>> &cache);
+
+    /*
+     Copy the resource or map of resources into a location where they can be loaded by the model
+     loader, and return the new paths.
+
+     This performs no action on local files.
+     */
+    static std::string processResource(std::string resource, VROResourceType type, bool *isTemp);
+    static std::map<std::string, std::string> processResourceMap(const std::map<std::string, std::string> &resourceMap,
+                                                                 VROResourceType type);
     
 };
 

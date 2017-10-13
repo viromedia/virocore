@@ -8,6 +8,7 @@
 
 #include "VRONormalMapTest.h"
 #include "VROTestUtil.h"
+#include "VROModelIOUtil.h"
 
 VRONormalMapTest::VRONormalMapTest() :
     VRORendererTest(VRORendererTestType::NormalMap) {
@@ -41,8 +42,9 @@ void VRONormalMapTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchron
     rootNode->setPosition({0, 0, 0});
     rootNode->addLight(light);
     rootNode->setBackgroundCube(VROTestUtil::loadNiagaraBackground());
-    
-    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(url, base, true,
+
+    std::shared_ptr<VRONode> objNode = std::make_shared<VRONode>();
+    VROOBJLoader::loadOBJFromResource(url, VROResourceType::URL, objNode, true,
                                                                     [](std::shared_ptr<VRONode> node, bool success) {
                                                                         if (!success) {
                                                                             return;

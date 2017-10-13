@@ -23,12 +23,13 @@ import com.viro.renderer.jni.ARNode;
 import com.viro.renderer.jni.ARPlane;
 import com.viro.renderer.jni.ARSceneController;
 import com.viro.renderer.jni.AmbientLight;
-import com.viro.renderer.jni.AsyncObjListener;
+import com.viro.renderer.jni.AsyncObject3DListener;
 import com.viro.renderer.jni.Box;
 import com.viro.renderer.jni.Controller;
 import com.viro.renderer.jni.DirectionalLight;
 import com.viro.renderer.jni.EventDelegate;
 import com.viro.renderer.jni.GLListener;
+import com.viro.renderer.jni.Geometry;
 import com.viro.renderer.jni.Image;
 import com.viro.renderer.jni.ImageTracker;
 import com.viro.renderer.jni.Material;
@@ -132,19 +133,19 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     @Override
     public void onGlInitialized() {
         Log.e("ViroActivity", "onGlInitialized called");
-        //initializeVrScene();
-        initializeArScene();
+        initializeVrScene();
+        //initializeArScene();
     }
 
     private void initializeVrScene() {
         // Creation of SceneControllerJni within scene navigator
         SceneController scene = new SceneController();
-        Node rootNode = scene.getSceneNode();
+        Node rootNode = scene.getRootNode();
         List<Node> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
         //nodes = testSphereVideo(this);
-        nodes = testBox(getApplicationContext());
-        //nodes = test3dObjectLoading(getApplicationContext());
+        //nodes = testBox(getApplicationContext());
+        nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
         //nodes = testText(this);
@@ -186,7 +187,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
      */
     private void initializeArScene() {
         ARSceneController scene = new ARSceneController();
-        Node rootNode = scene.getSceneNode();
+        Node rootNode = scene.getRootNode();
 
         List<Node> nodes = new ArrayList<>();
         nodes.add(testLine(this));
@@ -427,7 +428,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         float[] position = {0, -1, -2};
         node3.setPosition(position);
         node3.setGeometry(textJni);
-        node3.setEventDelegateJni(getGenericDelegate("Text"));
+        //node3.setEventDelegateJni(getGenericDelegate("Text"));
 
         // Create a new material with a diffuseTexture set to the image "boba.png"
         Image bobaImage = new Image("boba.png", TextureFormat.RGBA8);
@@ -443,7 +444,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         node1.setGeometry(boxGeometry);
         float[] boxPosition = {5,0,-3};
         node1.setPosition(boxPosition);
-        node1.setMaterials(Arrays.asList(material));
+        boxGeometry.setMaterials(Arrays.asList(material));
         String[] behaviors = {"billboard"};
         node1.setTransformBehaviors(behaviors);
         node1.setEventDelegateJni(getGenericDelegate("Box"));
@@ -452,8 +453,9 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         node2.setGeometry(boxGeometry2);
         float[] boxPosition2 = {-2, 0, -3};
         node2.setPosition(boxPosition2);
-        node2.setMaterials(Arrays.asList(material));
+        boxGeometry2.setMaterials(Arrays.asList(material));
         node2.setEventDelegateJni(getGenericDelegate("Box2"));
+
         return Arrays.asList(node1, node2, node3);
     }
 
@@ -461,29 +463,31 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         final Node node1 = new Node();
 
         // Creation of ObjectJni to the right
-        Object3D objectJni = new Object3D(Uri.parse("heart.obj"), false, new AsyncObjListener() {
+        Object3D objectJni = new Object3D();
+        objectJni.loadModel(Uri.parse("file:///android_asset/heart.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
-            public void onObjLoaded() {
+            public void onObject3DLoaded(Object3D object, Object3D.Type type) {
                 // Create a new material with a diffuseTexture set to the image "heart_d.jpg"
                 Image heartImage = new Image("heart_d.jpg", TextureFormat.RGBA8);
                 Texture heartTexture = new Texture(heartImage, TextureFormat.RGBA8, true, true);
                 Material material = new Material();
                 material.setTexture(heartTexture, "diffuseTexture");
                 material.setLightingModel("Constant");
-                node1.setMaterials(Arrays.asList(material));
+
+                Geometry geometry = object.getGeometry();
+                if (geometry != null) {
+               //     geometry.setMaterials(Arrays.asList(material));
+                }
+
+                Log.w("Viro", "OBJECT WAS LOADED!");
             }
 
             @Override
-            public void onObjAttached() {
-
-            }
-
-            @Override
-            public void onObjFailed(String error) {
+            public void onObject3DFailed(String error) {
 
             }
         });
-        node1.setGeometry(objectJni);
+        node1.addChildNode(objectJni);
 
         float[] heartPosition = {-0, -5.5f, -1.15f};
         node1.setPosition(heartPosition);
@@ -706,7 +710,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         };
         arPlane.registerARNodeDelegate(mARNodeDelegate);
 
-        surface.attachToNode(node);
+        node.setGeometry(surface);
         arPlane.addChildNode(node);
         arScene.addARPlane(arPlane);
 
@@ -732,7 +736,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         float[] boxPos = {0, .075f, 0};
         boxNode.setPosition(boxPos);
 
-        box.attachToNode(boxNode);
+        boxNode.setGeometry(box);
         node.addChildNode(boxNode);
 
         return Arrays.asList(node);
@@ -893,7 +897,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
         node1.setPosition(linePos);
         node1.setGeometry(polyline);
-        node1.setMaterials(Arrays.asList(material));
+        polyline.setMaterials(Arrays.asList(material));
         node1.setEventDelegateJni(getGenericDelegate("Line"));
         return node1;
     }

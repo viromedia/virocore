@@ -14,7 +14,7 @@
 #include "VROTextureUtil.h"
 #include "VROStringUtil.h"
 
-std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name, std::string &base, bool isBaseURL, bool sRGB,
+std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name, std::string &base, VROResourceType type, bool sRGB,
                                                         const std::map<std::string, std::string> *resourceMap,
                                                         std::map<std::string, std::shared_ptr<VROTexture>> &cache) {
     std::shared_ptr<VROTexture> texture;
@@ -23,27 +23,23 @@ std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name,
     if (it == cache.end()) {
         bool isTempTextureFile = false;
         std::string textureFile;
-        
+
         if (resourceMap == nullptr) {
             textureFile = base + "/" + name;
         } else {
             textureFile = VROPlatformFindValueInResourceMap(name, *resourceMap);
         }
-
-        if (isBaseURL) {
-            bool success = false;
-            textureFile = VROPlatformDownloadURLToFile(textureFile, &isTempTextureFile, &success);
-        }
+        textureFile = processResource(textureFile, type, &isTempTextureFile);
 
         // Abort (return empty texture) if the file wasn't found
         if (textureFile.length() == 0) {
             return texture;
         }
-        
+
         if (VROStringUtil::endsWith(name, "ktx")) {
             int dataLength;
             void *data = VROPlatformLoadFile(textureFile, &dataLength);
-            
+
             VROTextureFormat format;
             int texWidth;
             int texHeight;
@@ -51,7 +47,7 @@ std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name,
             std::shared_ptr<VROData> texData = VROTextureUtil::readKTXHeader((uint8_t *) data, (uint32_t) dataLength,
                                                                              &format, &texWidth, &texHeight, &mipSizes);
             std::vector<std::shared_ptr<VROData>> dataVec = { texData };
-            
+
             texture = std::make_shared<VROTexture>(VROTextureType::Texture2D, format,
                                                    VROTextureInternalFormat::RGBA8, true,
                                                    VROMipmapMode::Pregenerated,
@@ -74,6 +70,42 @@ std::shared_ptr<VROTexture> VROModelIOUtil::loadTexture(const std::string &name,
     else {
         texture = it->second;
     }
-    
+
     return texture;
 }
+
+std::string VROModelIOUtil::processResource(std::string resource, VROResourceType type, bool *isTemp) {
+    std::string path;
+    *isTemp = false;
+
+    if (type == VROResourceType::BundledResource) {
+        path = VROPlatformCopyResourceToFile(resource);
+    }
+    else if (type == VROResourceType::URL) {
+        bool success;
+        path = VROPlatformDownloadURLToFile(resource, isTemp, &success);
+    }
+    else {
+        path = resource;
+    }
+    return path;
+}
+
+std::map<std::string, std::string> VROModelIOUtil::processResourceMap(const std::map<std::string, std::string> &resourceMap,
+                                                                      VROResourceType type) {
+    if (type == VROResourceType::LocalFile) {
+        return resourceMap;
+    }
+    else if (type == VROResourceType::URL) {
+        pabort();
+    }
+    else {
+        std::map<std::string, std::string> resources;
+        for (auto &kv : resourceMap) {
+            resources[kv.first] = VROPlatformCopyResourceToFile(kv.second);
+        }
+        return resources;
+    }
+};
+
+

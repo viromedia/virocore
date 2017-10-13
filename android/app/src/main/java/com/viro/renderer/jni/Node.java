@@ -21,6 +21,7 @@ public class Node {
 
     protected boolean mDestroyed = false;
     private EventDelegate mEventDelegate = null;
+    private Geometry mGeometry;
 
     public Node() {
         mNativeRef = nativeCreateNode();
@@ -41,20 +42,19 @@ public class Node {
         mNativeRef = nativeRef;
     }
 
-    public void destroy() {
+    public void dispose() {
         mDestroyed = true;
         removeTransformDelegate();
         nativeDestroyNode(mNativeRef);
     }
 
     public void setEventDelegateJni(EventDelegate eventDelegate){
-        if (mEventDelegate != null){
+        if (mEventDelegate != null) {
             mEventDelegate.destroy();
         }
 
         mEventDelegate = eventDelegate;
-
-        if (mEventDelegate != null){
+        if (mEventDelegate != null) {
             nativeSetEventDelegate(mNativeRef, mEventDelegate.mNativeRef);
         }
     }
@@ -135,28 +135,20 @@ public class Node {
         nativeSetHierarchicalRendering(mNativeRef, hierarchicalRendering);
     }
 
-    public void setGeometry(BaseGeometry geometry){
-        if (geometry == null){
-            throw new IllegalArgumentException("Missing Required geometry to be set on Node.");
+    // TODO Figure out how to store a UI thread copy of the Geometry. Maybe the attachToNode
+    //      returns a reference that I can store here?
+    public void setGeometry(Geometry geometry){
+        if (geometry != null) {
+            nativeSetGeometry(mNativeRef, geometry.mNativeRef);
         }
-        // Reverse the setting of node to occur within the
-        // corresponding geometry to avoid polymorphing across
-        // the JNI layer.
-        geometry.attachToNode(this);
+        else {
+            nativeClearGeometry(mNativeRef);
+        }
+        mGeometry = geometry;
     }
 
-    public boolean setMaterials(List<Material> materials) {
-        // Create list of longs (refs) to all the materials. If any
-        // material has already been destroyed, return false
-        long[] materialRefs = new long[materials.size()];
-        for (int i = 0; i < materials.size(); i++) {
-            materialRefs[i] = materials.get(i).mNativeRef;
-            if (materialRefs[i] == 0) {
-                return false;
-            }
-        }
-        nativeSetMaterials(mNativeRef, materialRefs);
-        return true;
+    public Geometry getGeometry() {
+        return mGeometry;
     }
 
     public void setTransformBehaviors(String[] transformBehaviors) {
@@ -180,6 +172,8 @@ public class Node {
     private native void nativeRemoveFromParent(long nodeReference);
     private native void nativeRemoveAllChildNodes(long nodeReference);
     private native void nativeSetHierarchicalRendering(long nodeReference, boolean hierarchicalRendering);
+    private native void nativeSetGeometry(long nodeReference, long geoReference);
+    private native void nativeClearGeometry(long nodeReference);
     private native void nativeSetPosition(long nodeReference, float x, float y, float z);
     private native void nativeSetRotation(long nodeReference, float x, float y, float z);
     private native void nativeSetScale(long nodeReference, float x, float y, float z);
@@ -192,12 +186,12 @@ public class Node {
     private native void nativeSetShadowCastingBitMask(long nodeReference, int bitMask);
     private native void nativeSetIgnoreEventHandling(long nodeReference, boolean visible);
     private native void nativeSetHighAccuracyGaze(long nodeReference, boolean enabled);
-    private native void nativeSetMaterials(long nodeReference, long[] materials);
     private native void nativeSetTransformBehaviors(long nodeReference, String[] transformBehaviors);
     private native void nativeSetEventDelegate(long nodeReference, long eventDelegateRef);
     private native long nativeSetTransformDelegate(long nodeReference, double throttlingWindow);
     private native void nativeRemoveTransformDelegate(long nodeReference, long mNativeTransformDelegate);
     private native String[] nativeGetAnimationKeys(long nodeReference);
+    private native Geometry nativeGetGeometry(long nodeReference);
 
     /**
      * TransformDelegate Callback functions called from JNI

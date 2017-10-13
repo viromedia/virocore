@@ -4,7 +4,7 @@
 package com.viro.renderer.jni;
 
 
-public class Polyline extends BaseGeometry {
+public class Polyline extends Geometry {
     public Polyline(float[][] points, float width) {
         mNativeRef = nativeCreatePolyline(points, width);
     }
@@ -13,17 +13,11 @@ public class Polyline extends BaseGeometry {
         nativeDestroyPolyline(mNativeRef);
     }
 
-    @Override
-    public void attachToNode(Node node) {
-        nativeAttachToNode(mNativeRef, node.mNativeRef);
-    }
-
     public void setThickness(float thickness) {
         nativeSetThickness(mNativeRef, thickness);
     }
 
     private native long nativeCreatePolyline(float[][] points, float width);
     private native void nativeDestroyPolyline(long lineReference);
-    private native void nativeAttachToNode(long lineReference, long nodeReference);
     private native void nativeSetThickness(long lineReference, float thickness);
 }

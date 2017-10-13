@@ -17,6 +17,7 @@
 #include "VRODriverOpenGL.h"
 #include "VROTextureUtil.h"
 #include "VROCompress.h"
+#include "VROModelIOUtil.h"
 
 #if VRO_PLATFORM_IOS
 #include <UIKit/UIKit.h>
@@ -28,6 +29,8 @@
 #include "VROPlatformUtil.h"
 #include "VROImageAndroid.h"
 #include "VROVideoTextureAVP.h"
+#include "VROModelIOUtil.h"
+
 #endif
 
 std::string VROTestUtil::getURLForResource(std::string resource, std::string type) {
@@ -214,8 +217,9 @@ std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3
     url = "file:///android_asset/" + model + ".vrx";
     base = url.substr(0, url.find_last_of('/'));
 #endif
-    
-    return VROFBXLoader::loadFBXFromURL(url, base, true,
+
+    std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
+    VROFBXLoader::loadFBXFromResource(url, VROResourceType::URL, node, true,
                                         [scale, position, lightMask, animation](std::shared_ptr<VRONode> node, bool success) {
                                             if (!success) {
                                                 return;
@@ -240,6 +244,7 @@ std::shared_ptr<VRONode> VROTestUtil::loadFBXModel(std::string model, VROVector3
                                             }
                                             animateTake(node, animation);
                                         });
+    return node;
 }
 
 void VROTestUtil::animateTake(std::shared_ptr<VRONode> node, std::string name) {

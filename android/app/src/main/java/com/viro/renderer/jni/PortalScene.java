@@ -31,7 +31,7 @@ public class PortalScene extends Node {
     private WeakReference<PortalDelegate> mDelegate = null;
 
     public void destroy() {
-        super.destroy();
+        super.dispose();
         nativeDestroyPortalScene(mNativeRef);
         mNativeRef = INVALID_REF;
 

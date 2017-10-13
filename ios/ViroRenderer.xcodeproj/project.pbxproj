@@ -333,7 +333,7 @@
 		8FB5351E1EB85A7C00E8E1A6 /* Nodes.pb.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8FB5351C1EB85A7C00E8E1A6 /* Nodes.pb.cc */; settings = {COMPILER_FLAGS = "-w"; }; };
 		8FB5351F1EB85A7C00E8E1A6 /* Nodes.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB5351D1EB85A7C00E8E1A6 /* Nodes.pb.h */; };
 		8FB535271EB8DDBE00E8E1A6 /* VROModelIOUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB535251EB8DDBE00E8E1A6 /* VROModelIOUtil.cpp */; };
-		8FB535281EB8DDBE00E8E1A6 /* VROModelIOUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB535261EB8DDBE00E8E1A6 /* VROModelIOUtil.h */; };
+		8FB535281EB8DDBE00E8E1A6 /* VROModelIOUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB535261EB8DDBE00E8E1A6 /* VROModelIOUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8FB6590C1CD82FD200D036EB /* VROSceneRendererCardboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB6590A1CD82FD200D036EB /* VROSceneRendererCardboard.h */; };
 		8FB6590F1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FB6590D1CD8301000D036EB /* VROSceneRendererCardboardMetal.cpp */; };
 		8FB659101CD8301000D036EB /* VROSceneRendererCardboardMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8FB6590E1CD8301000D036EB /* VROSceneRendererCardboardMetal.h */; };

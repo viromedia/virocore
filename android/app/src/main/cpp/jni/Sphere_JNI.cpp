@@ -37,13 +37,20 @@ extern "C" {
 
 JNI_METHOD(jlong, nativeCreateSphere)(JNIEnv *env,
                                       jclass clazz,
-                                      jfloat radius,
-                                      jint widthSegmentCount,
-                                      jint heightSegementCount,
-                                      jboolean facesOutward) {
+                                      jfloat radius) {
+    std::shared_ptr<VROSphere> sphere = std::make_shared<VROSphere>(radius);
+    return Sphere::jptr(sphere);
+}
+
+JNI_METHOD(jlong, nativeCreateSphereParameterized)(JNIEnv *env,
+                                                   jclass clazz,
+                                                   jfloat radius,
+                                                   jint widthSegmentCount,
+                                                   jint heightSegmentCount,
+                                                   jboolean facesOutward) {
     std::shared_ptr<VROSphere> sphere = VROSphere::createSphere(radius,
                                                                 widthSegmentCount,
-                                                                heightSegementCount,
+                                                                heightSegmentCount,
                                                                 facesOutward);
     return Sphere::jptr(sphere);
 }
@@ -54,26 +61,10 @@ JNI_METHOD(void, nativeDestroySphere)(JNIEnv *env,
     delete reinterpret_cast<PersistentRef<VRONode> *>(nativeNode);
 }
 
-JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong nativeSphere,
-                                     jlong nativeNode) {
-    std::weak_ptr<VROSphere> sphereGeometry_w = Sphere::native(nativeSphere);
-    std::weak_ptr<VRONode> node_w = Node::native(nativeNode);
-
-    VROPlatformDispatchAsyncRenderer([sphereGeometry_w, node_w] {
-        std::shared_ptr<VROSphere> sphereGeometry = sphereGeometry_w.lock();
-        std::shared_ptr<VRONode> node = node_w.lock();
-        if (sphereGeometry && node) {
-            node->setGeometry(sphereGeometry);
-        }
-    });
-}
-
 JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
-                             jobject obj,
-                             jlong sphereRef,
-                             jlong textureRef) {
+                                        jobject obj,
+                                        jlong sphereRef,
+                                        jlong textureRef) {
     std::weak_ptr<VROSphere> sphere_w = Sphere::native(sphereRef);
     std::weak_ptr<VROVideoTexture> videoTexture_w = VideoTexture::native(textureRef);
 
@@ -98,6 +89,63 @@ JNI_METHOD(void, nativeSetVideoTexture)(JNIEnv *env,
         material->setReadsFromDepthBuffer(false);
         material->getDiffuse().setTexture(videoTexture);
         sphere->setMaterials({ material });
+    });
+}
+
+JNI_METHOD(void, nativeSetWidthSegmentCount)(JNIEnv *env,
+                                             jobject obj,
+                                             jlong jsphere,
+                                             jint widthSegmentCount) {
+
+    std::weak_ptr<VROSphere> sphere_w = Sphere::native(jsphere);
+    VROPlatformDispatchAsyncRenderer([sphere_w, widthSegmentCount] {
+        std::shared_ptr<VROSphere> sphere = sphere_w.lock();
+        if (!sphere) {
+            return;
+        }
+        sphere->setWidthSegments(widthSegmentCount);
+    });
+}
+
+JNI_METHOD(void, nativeSetHeightSegmentCount)(JNIEnv *env,
+                                              jobject obj,
+                                              jlong jsphere,
+                                              jint heightSegmentCount) {
+    std::weak_ptr<VROSphere> sphere_w = Sphere::native(jsphere);
+    VROPlatformDispatchAsyncRenderer([sphere_w, heightSegmentCount] {
+        std::shared_ptr<VROSphere> sphere = sphere_w.lock();
+        if (!sphere) {
+            return;
+        }
+        sphere->setHeightSegments(heightSegmentCount);
+    });
+}
+
+JNI_METHOD(void, nativeSetRadius)(JNIEnv *env,
+                                  jobject obj,
+                                  jlong jsphere,
+                                  jfloat radius) {
+    std::weak_ptr<VROSphere> sphere_w = Sphere::native(jsphere);
+    VROPlatformDispatchAsyncRenderer([sphere_w, radius] {
+        std::shared_ptr<VROSphere> sphere = sphere_w.lock();
+        if (!sphere) {
+            return;
+        }
+        sphere->setRadius(radius);
+    });
+}
+
+JNI_METHOD(void, nativeSetFacesOutward)(JNIEnv *env,
+                                       jobject obj,
+                                       jlong jsphere,
+                                       jboolean facesOutward) {
+    std::weak_ptr<VROSphere> sphere_w = Sphere::native(jsphere);
+    VROPlatformDispatchAsyncRenderer([sphere_w, facesOutward] {
+        std::shared_ptr<VROSphere> sphere = sphere_w.lock();
+        if (!sphere) {
+            return;
+        }
+        sphere->setFacesOutward(facesOutward);
     });
 }
 

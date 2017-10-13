@@ -4,8 +4,11 @@
 package com.viro.renderer.jni;
 
 import android.net.Uri;
+import android.util.Log;
 
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Java JNI wrapper for linking the following classes below across the bridge
@@ -16,99 +19,91 @@ import java.util.Map;
  * Cpp Object : VROOBJLoader.cpp
  */
 
-public class Object3D extends BaseGeometry {
-    private long mObjectNodeRef;
-    private long mNodeRef;
-    private AsyncObjListener mAsyncObjListener = null;
-    private boolean mDestroyOnObjNodeCreation = false;
+public class Object3D extends Node {
 
-    public Object3D(Uri pathOrUrl, boolean isFBX, AsyncObjListener asyncObjListener) {
-        nativeLoadModelFromUrl(pathOrUrl.toString(), isFBX);
-        mAsyncObjListener = asyncObjListener;
+    private AsyncObject3DListener mAsyncListener = null;
+    private AtomicLong mActiveRequestID;
+
+    public enum Type {
+        OBJ,
+        FBX
     }
 
-    public Object3D(Uri pathOrUrl, boolean isFBX, AsyncObjListener asyncObjListener,
-                    Map<String, String> resourceNamesToUris) {
-        if (resourceNamesToUris == null) {
-            nativeLoadModelFromFile(pathOrUrl.toString(), isFBX);
-        } else {
-            nativeLoadModelAndResourcesFromFile(pathOrUrl.toString(), resourceNamesToUris, isFBX);
-        }
-        mAsyncObjListener = asyncObjListener;
+    /**
+     * Construct a new Object3D. To load 3D model data into this Node, use
+     * {@link #loadModel(Uri, Type, AsyncObject3DListener)}.
+     */
+    public Object3D() {
+        mActiveRequestID = new AtomicLong();
     }
 
-    public void destroy() {
-        if (mObjectNodeRef != 0) {
-            nativeDestroyNode(mObjectNodeRef);
-            mObjectNodeRef = 0;
-        }
-        else {
-            mDestroyOnObjNodeCreation = true;
-        }
+    public void loadModel(Uri url, Type type, AsyncObject3DListener asyncListener) {
+        long requestID = mActiveRequestID.incrementAndGet();
+        nativeLoadModelFromURL(url.toString(), mNativeRef, type == Type.FBX, requestID);
 
-        // Do NOT destroy mNodeRef, as that belongs to the parent
-        // node; it's only temporarily stored here while we wait for
-        // the OBJ to load (if we destroy it, we'll get a crash if
-        // we attempt to access the node after this Object was removed
-        // from it)
-        mNodeRef = 0;
+        mAsyncListener = asyncListener;
     }
 
-    @Override
-    public void attachToNode(Node node) {
-        // Just save the node ref for now. We'll attach geometry to this node when it's ready
-        mNodeRef = node.mNativeRef;
-
-        // If node with obj ready
-        if (mObjectNodeRef != 0) {
-            nativeAttachToNode(mObjectNodeRef, mNodeRef);
-            // after copying geometry from mObjectNodeRef to mNodeRef, we're done here
-            destroy();
-        }
+    public void loadModel(String modelResource, Type type, AsyncObject3DListener asyncObjListener,
+                          Map<String, String> resourceNamesToUris) {
+        long requestID = mActiveRequestID.incrementAndGet();
+        nativeLoadModelFromResources(modelResource, resourceNamesToUris, mNativeRef, type == Type.FBX, requestID);
+        mAsyncListener = asyncObjListener;
     }
 
-    // Called from JNI upon successful loading of OBJ file
-    public void nodeDidFinishCreation(long objectNodeRef) {
-        mObjectNodeRef = objectNodeRef;
-        // If destroy was called before obj was loaded
-        if (mDestroyOnObjNodeCreation) {
-            destroy();
-        }
-        else {
-            if (mNodeRef != 0) {
-                // after copying geometry to mNodeRef, we're done here
-                nativeAttachToNode(mObjectNodeRef, mNodeRef);
-                destroy();
-            }
+    /**
+     * Release native resources associated with this Object3D.
+     */
+    public void dispose() {
+        super.dispose();
+    }
 
-            if (mAsyncObjListener != null) {
-                // So that clients can override materials if they want to
-                mAsyncObjListener.onObjLoaded();
-            }
+    /**
+     * Called from JNI upon successful loading of an Object3D into this Node.
+     *
+     * @param isFBX True if the model loaded is FBX, false if OBJ.
+     * @hide
+     */
+    public void nodeDidFinishCreation(boolean isFBX, long geometryRef) {
+        if (mDestroyed) {
+            return;
+        }
+
+        /*
+         If the model loaded is OBJ, create a Java Geometry to wrap the native Geometry.
+         This enables developers to set/manipulate materials on the Geometry.
+         */
+        if (!isFBX && geometryRef != 0) {
+            setGeometry(new Geometry(geometryRef));
+        }
+
+        if (mAsyncListener != null) {
+            mAsyncListener.onObject3DLoaded(this, isFBX ? Type.FBX : Type.OBJ);
         }
     }
 
-    // Called from JNI upon OBJ failing to load
+    /**
+     * Called from JNI upon loading failure.
+     *
+     * @param error The error message.
+     * @hide
+     */
     public void nodeDidFailOBJLoad(String error) {
-        if (mDestroyOnObjNodeCreation) {
-            destroy();
-        }
-        else if (mAsyncObjListener != null) {
-            mAsyncObjListener.onObjFailed(error);
+        if (!mDestroyed && mAsyncListener != null) {
+            mAsyncListener.onObject3DFailed(error);
         }
     }
 
-    // Called from JNI after OBJ added to scene
-    public void nodeDidAttachOBJ() {
-        if (mAsyncObjListener != null) {
-            mAsyncObjListener.onObjAttached();
-        }
+    /**
+     * Called from JNI to retrieve the active request ID.
+     *
+     * @return The active request ID.
+     * @hide
+     */
+    public long getActiveRequestID() {
+        return mActiveRequestID.get();
     }
 
-    private native void nativeLoadModelFromFile(String fileName, boolean isFBX);
-    private native void nativeLoadModelAndResourcesFromFile(String fileName,
-                                                            Map<String, String> resources, boolean isFBX);
-    private native void nativeLoadModelFromUrl(String url, boolean isFBX);
-    private native void nativeDestroyNode(long nodeReference);
-    private native void nativeAttachToNode(long boxReference, long nodeReference);
+    private native void nativeLoadModelFromURL(String url, long nodeRef, boolean isFBX, long requestID);
+    private native void nativeLoadModelFromResources(String modelResource, Map<String, String> assetResources, long nodeRef, boolean isFBX, long requestID);
 }

@@ -21,88 +21,67 @@
 #include "VROShapeUtils.h"
 #include "VROModelIOUtil.h"
 
-std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromURL(std::string url, std::string baseURL,
-                                                      bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
-    std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
-    
+void VROOBJLoader::loadOBJFromResource(std::string resource, VROResourceType type,
+                                       std::shared_ptr<VRONode> node,
+                                       bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
     if (async) {
-        VROPlatformDispatchAsyncBackground([url, baseURL, node, onFinish] {
-            bool isTemp = false;
-            bool success = false;
-            std::string file = VROPlatformDownloadURLToFile(url, &isTemp, &success);
-            
-            std::shared_ptr<VROGeometry> geometry;
-            if (success) {
-                geometry = loadOBJ(file, baseURL, true);
-            }
+        VROPlatformDispatchAsyncBackground([resource, type, node, onFinish] {
+            bool isTemp;
+            std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
+            std::string base = resource.substr(0, resource.find_last_of('/'));
+
+            std::shared_ptr<VROGeometry> geometry = loadOBJ(path, base, type);
+            VROPlatformDispatchAsyncRenderer([node, geometry, onFinish] {
+                injectOBJ(geometry, node, onFinish);
+            });
             if (isTemp) {
-                VROPlatformDeleteFile(file);
+                VROPlatformDeleteFile(path);
             }
-
-            VROPlatformDispatchAsyncRenderer([node, geometry, onFinish] {
-                injectOBJ(geometry, node, onFinish);
-            });
         });
     }
     else {
-        bool isTemp = false;
-        bool success = false;
-        std::string file = VROPlatformDownloadURLToFile(url, &isTemp, &success);
-        
-        std::shared_ptr<VROGeometry> geometry;
-        if (success) {
-            geometry = loadOBJ(file, baseURL, true);
-        }
+        bool isTemp;
+        std::string path = VROModelIOUtil::processResource(path, type, &isTemp);
+        std::string base = resource.substr(0, resource.find_last_of('/'));
+
+        std::shared_ptr<VROGeometry> geometry = loadOBJ(resource, base, type);
+        injectOBJ(geometry, node, onFinish);
         if (isTemp) {
-            VROPlatformDeleteFile(file);
+            VROPlatformDeleteFile(path);
         }
-        
-        injectOBJ(geometry, node, onFinish);
     }
-    
-    return node;
 }
 
-std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromFile(std::string file, std::string baseDir,
-                                                       bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
-
-    std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
-
+void VROOBJLoader::loadOBJFromResources(std::string resource, VROResourceType type,
+                                        std::shared_ptr<VRONode> node,
+                                        std::map<std::string, std::string> resourceMap,
+                                        bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
     if (async) {
-        VROPlatformDispatchAsyncBackground([file, baseDir, node, onFinish] {
-            std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseDir, false);
+        VROPlatformDispatchAsyncBackground([resource, type, resourceMap, node, onFinish] {
+            bool isTemp;
+            std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
+            std::map<std::string, std::string> fileMap = VROModelIOUtil::processResourceMap(resourceMap, type);
+
+            std::shared_ptr<VROGeometry> geometry = loadOBJ(path, fileMap);
             VROPlatformDispatchAsyncRenderer([node, geometry, onFinish] {
                 injectOBJ(geometry, node, onFinish);
             });
+            if (isTemp) {
+                VROPlatformDeleteFile(path);
+            }
         });
     }
     else {
-        std::shared_ptr<VROGeometry> geometry = loadOBJ(file, baseDir, false);
+        bool isTemp;
+        std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
+        std::map<std::string, std::string> fileMap = VROModelIOUtil::processResourceMap(resourceMap, type);
+
+        std::shared_ptr<VROGeometry> geometry = loadOBJ(path, fileMap);
         injectOBJ(geometry, node, onFinish);
+        if (isTemp) {
+            VROPlatformDeleteFile(path);
+        }
     }
-
-    return node;
-}
-
-std::shared_ptr<VRONode> VROOBJLoader::loadOBJFromFileWithResources(std::string file, std::map<std::string, std::string> resourceMap,
-                                                       bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
-
-    std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
-    
-    if (async) {
-        VROPlatformDispatchAsyncBackground([file, resourceMap, node, onFinish] {
-            std::shared_ptr<VROGeometry> geometry = loadOBJ(file, resourceMap);
-            VROPlatformDispatchAsyncRenderer([node, geometry, onFinish] {
-                injectOBJ(geometry, node, onFinish);
-            });
-        });
-    }
-    else {
-        std::shared_ptr<VROGeometry> geometry = loadOBJ(file, resourceMap);
-        injectOBJ(geometry, node, onFinish);
-    }
-    
-    return node;
 }
 
 void VROOBJLoader::injectOBJ(std::shared_ptr<VROGeometry> geometry,
@@ -123,7 +102,7 @@ void VROOBJLoader::injectOBJ(std::shared_ptr<VROGeometry> geometry,
 }
 
 std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string base,
-                                                   bool isBaseURL) {
+                                                   VROResourceType type) {
     pinfo("Loading OBJ from file %s", file.c_str());
 
     tinyobj::attrib_t attrib;
@@ -132,7 +111,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
 
     std::string err;
     bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, file.c_str(),
-                                base.c_str(), isBaseURL);
+                                base.c_str(), type == VROResourceType::URL);
     if (!err.empty()) {
         pinfo("OBJ loading warning [%s]", err.c_str());
     }
@@ -141,7 +120,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file, std::string
         // Error condition
         return {};
     }
-    return VROOBJLoader::processOBJ(attrib, shapes, materials, base, isBaseURL);
+    return VROOBJLoader::processOBJ(attrib, shapes, materials, base, type);
 }
 
 std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file,
@@ -166,14 +145,14 @@ std::shared_ptr<VROGeometry> VROOBJLoader::loadOBJ(std::string file,
     }
 
     // we don't have a base url, so just pass in empty string and false
-    return VROOBJLoader::processOBJ(attrib, shapes, materials, "", false, &resourceMap);
+    return VROOBJLoader::processOBJ(attrib, shapes, materials, "", VROResourceType::BundledResource, &resourceMap);
 }
 
 std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
                                                       std::vector<tinyobj::shape_t> &shapes,
                                                       std::vector<tinyobj::material_t> &materials,
                                                       std::string base,
-                                                      bool isBaseURL,
+                                                      VROResourceType type,
                                                       std::map<std::string, std::string> *resourceMap) {
     pinfo("OBJ # of vertices  = %d", (int)(attrib.vertices.size()) / 3);
     pinfo("OBJ # of normals   = %d", (int)(attrib.normals.size()) / 3);
@@ -215,7 +194,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
         }
         
         if (m.diffuse_texname.length() > 0) {
-            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.diffuse_texname, base, isBaseURL, true, resourceMap, textures);
+            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.diffuse_texname, base, type, true, resourceMap, textures);
             if (texture) {
                 material->getDiffuse().setTexture(texture);
             }
@@ -225,7 +204,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
         }
         
         if (m.specular_texname.length() > 0) {
-            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.specular_texname, base, isBaseURL, false, resourceMap, textures);
+            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.specular_texname, base, type, false, resourceMap, textures);
             if (texture) {
                 material->getSpecular().setTexture(texture);
             }
@@ -235,7 +214,7 @@ std::shared_ptr<VROGeometry> VROOBJLoader::processOBJ(tinyobj::attrib_t attrib,
         }
         
         if (m.bump_texname.length() > 0) {
-            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.bump_texname, base, isBaseURL, false, resourceMap, textures);
+            std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(m.bump_texname, base, type, false, resourceMap, textures);
             if (texture) {
                 material->getNormal().setTexture(texture);
             }

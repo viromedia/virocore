@@ -30,18 +30,9 @@ std::shared_ptr<VROText> VROText::createText(std::wstring text, std::shared_ptr<
                                              VROTextHorizontalAlignment horizontalAlignment, VROTextVerticalAlignment verticalAlignment,
                                              VROLineBreakMode lineBreakMode, VROTextClipMode clipMode, int maxLines) {
     
-    std::vector<std::shared_ptr<VROGeometrySource>> sources;
-    std::vector<std::shared_ptr<VROGeometryElement>> elements;
-    std::vector<std::shared_ptr<VROMaterial>> materials;
-    
-    float realizedWidth, realizedHeight;
-    buildText(text, typeface, color, width, height, horizontalAlignment, verticalAlignment,
-              lineBreakMode, clipMode, maxLines, sources, elements, materials,
-              &realizedWidth, &realizedHeight);
-    
-    std::shared_ptr<VROText> model = std::shared_ptr<VROText>(new VROText(sources, elements, realizedWidth, realizedHeight));
-    model->setMaterials(materials);
-    
+    std::shared_ptr<VROText> model = std::make_shared<VROText>(text, typeface, color, width, height, horizontalAlignment,
+                                                               verticalAlignment, lineBreakMode, clipMode, maxLines);
+    model->update();
     return model;
 }
 
@@ -114,6 +105,88 @@ VROVector3f VROText::getTextSize(std::wstring text, std::shared_ptr<VROTypeface>
     }
     
     return size;
+}
+
+VROText::VROText(std::wstring text, std::shared_ptr<VROTypeface> typeface, VROVector4f color,
+                 float width, float height,
+                 VROTextHorizontalAlignment horizontalAlignment,
+                 VROTextVerticalAlignment verticalAlignment,
+                 VROLineBreakMode lineBreakMode, VROTextClipMode clipMode, int maxLines) :
+    _text(text),
+    _typeface(typeface),
+    _color(color),
+    _width(width),
+    _height(height),
+    _horizontalAlignment(horizontalAlignment),
+    _verticalAlignment(verticalAlignment),
+    _lineBreakMode(lineBreakMode),
+    _clipMode(clipMode),
+    _maxLines(maxLines) {
+
+}
+
+void VROText::update() {
+    std::vector<std::shared_ptr<VROGeometrySource>> sources;
+    std::vector<std::shared_ptr<VROGeometryElement>> elements;
+    std::vector<std::shared_ptr<VROMaterial>> materials;
+    buildText(_text, _typeface, _color, _width, _height, _horizontalAlignment, _verticalAlignment,
+              _lineBreakMode, _clipMode, _maxLines, sources, elements, materials,
+              &_realizedWidth, &_realizedHeight);
+
+    setSources(sources);
+    setElements(elements);
+    setMaterials(materials);
+    updateBoundingBox();
+}
+
+void VROText::setText(std::wstring text) {
+    _text = text;
+    update();
+}
+
+void VROText::setTypeface(std::shared_ptr<VROTypeface> typeface) {
+    _typeface = typeface;
+    update();
+}
+
+void VROText::setColor(VROVector4f color) {
+    _color = color;
+    update();
+}
+
+void VROText::setWidth(float width) {
+    _width = width;
+    update();
+}
+
+void VROText::setHeight(float height) {
+    _height = height;
+    update();
+}
+
+void VROText::setHorizontalAlignment(VROTextHorizontalAlignment horizontalAlignment) {
+    _horizontalAlignment = horizontalAlignment;
+    update();
+}
+
+void VROText::setVerticalAlignment(VROTextVerticalAlignment verticalAlignment) {
+    _verticalAlignment = verticalAlignment;
+    update();
+}
+
+void VROText::setLineBreakMode(VROLineBreakMode lineBreakMode) {
+    _lineBreakMode = lineBreakMode;
+    update();
+}
+
+void VROText::setTextClipMode(VROTextClipMode clipMode) {
+    _clipMode = clipMode;
+    update();
+}
+
+void VROText::setMaxLines(int maxLines) {
+    _maxLines = maxLines;
+    update();
 }
 
 void VROText::buildText(std::wstring &text,

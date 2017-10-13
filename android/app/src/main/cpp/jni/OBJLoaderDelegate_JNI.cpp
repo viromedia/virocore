@@ -11,6 +11,7 @@
 #include "VROPlatformUtil.h"
 #include "OBJLoaderDelegate_JNI.h"
 #include "Node_JNI.h"
+#include "Geometry_JNI.h"
 
 OBJLoaderDelegate::OBJLoaderDelegate(jobject nodeJavaObject, JNIEnv *env) {
     _javaObject = reinterpret_cast<jclass>(env->NewGlobalRef(nodeJavaObject));
@@ -21,11 +22,19 @@ OBJLoaderDelegate::~OBJLoaderDelegate() {
     env->DeleteGlobalRef(_javaObject);
 }
 
-void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node) {
+void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlong requestId) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj, node] {
+    // If the request is antiquated, clear the node
+    jlong activeRequestID = VROPlatformCallJavaLongFunction(_javaObject, "getActiveRequestID", "()J");
+    if (activeRequestID != requestId) {
+        pinfo("Received antiquated Object3D load, discarding");
+        node->clearChildren();
+        return;
+    }
+
+    VROPlatformDispatchAsyncApplication([weakObj, node, isFBX] {
         JNIEnv *env = VROPlatformGetJNIEnv();
 
         jobject localObj = env->NewLocalRef(weakObj);
@@ -34,19 +43,17 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node) {
             return;
         }
 
-        // Create a new persistent ref for the node so we can manipulate
-        // it on the Java side
-        jlong nodeRef = Node::jptr(node);
+        // If the request was for an OBJ, create a persistent ref for the Java Geometry and
+        // pass that up as well. This enables Java SDK users to set materials on the Geometry
+        long geometryRef = 0;
+        if (!isFBX && node->getGeometry()) {
+            geometryRef = Geometry::jptr(node->getGeometry());
+        }
 
-        VROPlatformCallJavaFunction(localObj, "nodeDidFinishCreation", "(J)V", nodeRef);
+        VROPlatformCallJavaFunction(localObj, "nodeDidFinishCreation", "(ZJ)V", isFBX, geometryRef);
         env->DeleteLocalRef(localObj);
         env->DeleteWeakGlobalRef(weakObj);
     });
-}
-
-void OBJLoaderDelegate::objAttached() {
-    JNIEnv *env = VROPlatformGetJNIEnv();
-    VROPlatformCallJavaFunction(_javaObject, "nodeDidAttachOBJ", "()V");
 }
 
 void OBJLoaderDelegate::objFailed(std::string error) {

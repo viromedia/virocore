@@ -18,8 +18,7 @@ public:
     OBJLoaderDelegate(jobject nodeJavaObject, JNIEnv *env);
     ~OBJLoaderDelegate();
 
-    void objLoaded(std::shared_ptr<VRONode> node);
-    void objAttached();
+    void objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlong requestId);
     void objFailed(std::string error);
 
 private:

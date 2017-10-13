@@ -8,6 +8,7 @@
 
 #include "VROARDraggableNodeTest.h"
 #include "VROTestUtil.h"
+#include "VROModelIOUtil.h"
 
 VROARDraggableNodeTest::VROARDraggableNodeTest() :
     VRORendererTest(VRORendererTestType::ARDraggableNode) {
@@ -27,18 +28,19 @@ void VROARDraggableNodeTest::build(std::shared_ptr<VROFrameSynchronizer> frameSy
     
     std::string url = VROTestUtil::getURLForResource("coffee_mug", "obj");
     std::string base = url.substr(0, url.find_last_of('/'));
-    
-    std::shared_ptr<VRONode> objNode = VROOBJLoader::loadOBJFromURL(url, base, true,
-                                                                    [this](std::shared_ptr<VRONode> node, bool success) {
-                                                                        if (!success) {
-                                                                            return;
-                                                                        }
-                                                                        node->setScale({0.007, 0.007, 0.007});
-                                                                        
-                                                                        std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
-                                                                        material->getDiffuse().setTexture(VROTestUtil::loadDiffuseTexture("coffee_mug"));
-                                                                        material->getSpecular().setTexture(VROTestUtil::loadSpecularTexture("coffee_mug_specular"));
-                                                                    });
+
+    std::shared_ptr<VRONode> objNode = std::make_shared<VRONode>();
+    VROOBJLoader::loadOBJFromResource(url, VROResourceType::URL, objNode, true,
+                                      [this](std::shared_ptr<VRONode> node, bool success) {
+                                          if (!success) {
+                                              return;
+                                          }
+                                          node->setScale({0.007, 0.007, 0.007});
+
+                                          std::shared_ptr<VROMaterial> material = node->getGeometry()->getMaterials().front();
+                                          material->getDiffuse().setTexture(VROTestUtil::loadDiffuseTexture("coffee_mug"));
+                                          material->getSpecular().setTexture(VROTestUtil::loadSpecularTexture("coffee_mug_specular"));
+                                      });
     
     std::shared_ptr<VROBox> box = VROBox::createBox(.15, .15, .15);
     std::shared_ptr<VRONode> draggableNode = std::make_shared<VRONode>();

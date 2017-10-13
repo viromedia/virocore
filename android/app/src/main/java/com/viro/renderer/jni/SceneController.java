@@ -6,38 +6,65 @@ package com.viro.renderer.jni;
 import java.lang.ref.WeakReference;
 
 /**
- * Java JNI wrapper for linking the following classes across the bridge:
- *
- * Android Java Object  : com.viromedia.bridge.viewgroups.Scene.java
- * Java JNI Wrapper     : com.viro.renderer.jni.SceneControllerJni.java
- * Cpp JNI wrapper      : Scene_JNI.cpp
- * Cpp Object           : VROScene.cpp
+ * The Scene object sits at the top of the scene graph, a hierarchy of {@link Node} objects
+ * representing the 3D world. Scenes are the 3D equivalent of the Views found in most
+ * 2D application frameworks. They contain all the content that Viro renders in AR/VR: UI controls,
+ * 3D objects, lights, and more.
  */
 public class SceneController {
-    public long mNativeRef;
-    public long mNativeDelegateRef;
 
+    /*
+     * Java JNI wrapper for linking the following classes across the bridge:
+     *
+     * Android Java Object  : com.viromedia.bridge.viewgroups.Scene.java
+     * Java JNI Wrapper     : com.viro.renderer.jni.SceneControllerJni.java
+     * Cpp JNI wrapper      : Scene_JNI.cpp
+     * Cpp Object           : VROScene.cpp
+     */
+    protected long mNativeRef;
+    protected long mNativeDelegateRef;
+    private Node mRootNode;
+    private PhysicsWorld mPhysicsWorld;
+
+    /**
+     * Construct a new Scene.
+     */
     public SceneController() {
         setSceneRef(nativeCreateSceneController());
         mNativeDelegateRef = nativeCreateSceneControllerDelegate(mNativeRef);
+
+        mRootNode = new Node(false);
+        mRootNode.setNativeRef(nativeGetSceneNodeRef(mNativeRef));
+        mPhysicsWorld = new PhysicsWorld(this);
     }
 
-    /*
-     This method is used by child classes to replace the mNativeRef with
-     a child's nativeRef.
+    /**
+     * @hide
+     *
+     * This method is used by child classes to replace the mNativeRef with
+     * a child's nativeRef.
      */
     protected void setSceneRef(long sceneRef) {
         mNativeRef = sceneRef;
         mNativeDelegateRef = nativeCreateSceneControllerDelegate(mNativeRef);
     }
 
-    // Creates and returns a NodeJNI representing this Scene controller.
-    // NOTE: The caller is responsible for releasing this NodeJni object.
-    public Node getSceneNode() {
-        final Node nodeJni = new Node(false);
-        long nodeRef = nativeGetSceneNodeRef(mNativeRef);
-        nodeJni.setNativeRef(nodeRef);
-        return nodeJni;
+    /**
+     * Retrieve the root {@link Node} of the scene graph.
+     *
+     * @return The root node.
+     */
+    public Node getRootNode() {
+        return mRootNode;
+    }
+
+    /**
+     * Get the physics simulation for the scene.
+     *
+     * @return The {@link PhysicsWorld} for the scene.
+     */
+    public PhysicsWorld getPhysicsWorld() {
+        return mPhysicsWorld;
     }
 
     public void setBackgroundVideoTexture(VideoTexture videoTexture) {
@@ -66,45 +93,60 @@ public class SceneController {
                 wallMaterial, ceilingMaterial, floorMaterial);
     }
 
-    public void setPhysicsWorldGravity(float gravity[]){
+    void setPhysicsWorldGravity(float gravity[]){
         nativeSetPhysicsWorldGravity(mNativeRef, gravity);
     }
 
-    public void setPhysicsDebugDraw(boolean debugDraw){
+    void setPhysicsDebugDraw(boolean debugDraw){
         nativeSetPhysicsWorldDebugDraw(mNativeRef, debugDraw);
     }
 
-    public void attachBodyToPhysicsWorld(Node node){
+    void attachBodyToPhysicsWorld(Node node){
         nativeAttachToPhysicsWorld(mNativeRef, node.mNativeRef);
     }
 
-    public void detachBodyFromPhysicsWorld(Node node){
+    void detachBodyFromPhysicsWorld(Node node){
         nativeDetachFromPhysicsWorld(mNativeRef, node.mNativeRef);
     }
 
-    public void findCollisionsWithRayAsync(float[] fromPos, float toPos[], boolean closest,
-                                           String tag, PhysicsWorldHitTestCallback callback){
+    void findCollisionsWithRayAsync(float[] fromPos, float toPos[], boolean closest,
+                                           String tag, PhysicsWorld.HitTestCallback callback){
         findCollisionsWithRayAsync(mNativeRef, fromPos, toPos, closest, tag, callback);
     }
 
-    public void findCollisionsWithShapeAsync(float[] from, float[] to, String shapeType, float[] params,
-                                             String tag, PhysicsWorldHitTestCallback callback){
+    void findCollisionsWithShapeAsync(float[] from, float[] to, String shapeType, float[] params,
+                                             String tag, PhysicsWorld.HitTestCallback callback){
         findCollisionsWithShapeAsync(mNativeRef, from,to, shapeType, params, tag, callback);
     }
 
+    /**
+     * Adds a {@link ParticleEmitter} to the scene.
+     *
+     * @param emitter The emitter to add to the scene.
+     */
     public void addParticleEmitter(ParticleEmitter emitter) {
         nativeAddParticleEmitter(mNativeRef, emitter.mNativeRef);
     }
 
+    /**
+     * Removes a {@link ParticleEmitter} from the scene.
+     *
+     * @param emitter The emitter to remove from the scene.
+     */
     public void removeParticleEmitter(ParticleEmitter emitter) {
         nativeRemoveParticleEmitter(mNativeRef, emitter.mNativeRef);
     }
 
+    /**
+     * @hide
+     * @param effects
+     * @return
+     */
     public boolean setEffects(String[] effects){
         return nativeSetEffects(mNativeRef, effects);
     }
 
-    public void destroy() {
+    public void dispose() {
         nativeDestroySceneControllerDelegate(mNativeDelegateRef);
         nativeDestroySceneController(mNativeRef);
     }
@@ -187,16 +229,10 @@ public class SceneController {
     private native void nativeDetachFromPhysicsWorld(long sceneRef, long nodeRef);
     private native void findCollisionsWithRayAsync(long sceneRef, float[] from, float[] to,
                                            boolean closest, String tag,
-                                           PhysicsWorldHitTestCallback callback);
+                                           PhysicsWorld.HitTestCallback callback);
     private native void findCollisionsWithShapeAsync(long sceneRef, float[] from, float[] to,
                                            String shapeType, float[] params, String tag,
-                                           PhysicsWorldHitTestCallback callback);
+                                           PhysicsWorld.HitTestCallback callback);
     private native void nativeSetPhysicsWorldDebugDraw(long sceneRef, boolean debugDraw);
-    /**
-     * Callback used to notify the bridge when the requested hit test
-     * (with ray/shapes) with this given implemented callback have completed.
-     */
-    public interface PhysicsWorldHitTestCallback{
-        void onComplete(boolean hasHit);
-    }
+
 }

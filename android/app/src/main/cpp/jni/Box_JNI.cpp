@@ -46,22 +46,6 @@ JNI_METHOD(void, nativeDestroyBox)(JNIEnv *env,
     delete reinterpret_cast<PersistentRef<VROBox> *>(nativeBoxRef);
 }
 
-JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong native_box_ref,
-                                     jlong native_node_ref) {
-    std::weak_ptr<VROBox> box_w = Box::native(native_box_ref);
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([box_w, node_w] {
-        std::shared_ptr<VROBox> box = box_w.lock();
-        std::shared_ptr<VRONode> node = node_w.lock();
-
-        if (box && node) {
-            node->setGeometry(box);
-        }
-    });
-}
-
 JNI_METHOD(void, nativeSetWidth)(JNIEnv *env,
                                  jclass clazz,
                                  jlong native_box_ref,

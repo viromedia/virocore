@@ -14,7 +14,7 @@ public class ARSceneController extends SceneController {
     }
 
     @Override
-    public void destroy() {
+    public void dispose() {
         nativeDestroySceneControllerDelegate(mNativeDelegateRef); // comes from SceneControllerJni
         nativeDestroyARSceneDelegate(mNativeARDelegateRef);
         nativeDestroyARSceneController(mNativeRef);

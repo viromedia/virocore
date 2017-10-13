@@ -83,9 +83,8 @@ VROTextClipMode getTextClipModeEnum(const std::string& strName) {
 
 extern "C" {
 
-JNI_METHOD(void, nativeCreateText)(JNIEnv *env,
+JNI_METHOD(jlong, nativeCreateText)(JNIEnv *env,
                                     jobject object,
-                                    jlong parentNodeRef,
                                     jlong renderContextRef,
                                     jstring text,
                                     jstring fontFamilyName,
@@ -137,42 +136,26 @@ JNI_METHOD(void, nativeCreateText)(JNIEnv *env,
     VROTextClipMode clipModeEnum = getTextClipModeEnum(strClipMode);
     env->ReleaseStringUTFChars(clipMode, cStrClipMode);
 
-    // Create Text Delegate
-    std::shared_ptr<TextDelegate> delegateRef = std::make_shared<TextDelegate>(object, env);
-
     const char *cStrFontFamilyName = env->GetStringUTFChars(fontFamilyName, NULL);
     std::string strFontFamilyName(cStrFontFamilyName);
     env->ReleaseStringUTFChars(fontFamilyName, cStrFontFamilyName);
 
-    std::weak_ptr<RenderContext> renderContext_w = RenderContext::native(renderContextRef);
-    std::weak_ptr<VRONode> parentNode_w = Node::native(parentNodeRef);
+    std::shared_ptr<RenderContext> renderContext = RenderContext::native(renderContextRef);
+    std::shared_ptr<VRODriver> driver = renderContext->getDriver();
+    std::shared_ptr<VROTypeface> typeface = driver.get()->newTypeface(strFontFamilyName, size);
 
-    // create text on the renderer thread
-    VROPlatformDispatchAsyncRenderer([parentNode_w, renderContext_w, delegateRef, strFontFamilyName, size,
-                                             strText, vecColor, width, height,
-                                             horizontalAlignmentEnum, verticalAlignmentEnum,
-                                             lineBreakModeEnum, clipModeEnum, maxLines] {
+    std::shared_ptr<VROText> vroText = std::make_shared<VROText>(strText, typeface, vecColor, width,
+                                                                 height, horizontalAlignmentEnum,
+                                                                 verticalAlignmentEnum,
+                                                                 lineBreakModeEnum,
+                                                                 clipModeEnum, maxLines);
 
-        std::shared_ptr<RenderContext> renderContext = renderContext_w.lock();
-        std::shared_ptr<VRONode> parentNode = parentNode_w.lock();
-        if (!renderContext || !parentNode) {
-            return;
-        }
+    // Update text on renderer thread (glyph creation requires this)
+    VROPlatformDispatchAsyncRenderer([vroText] {
+        vroText->update();
+    });
 
-        // Grab driver from the RenderContext required for initializing typeface
-        std::shared_ptr<VRODriver> driver = renderContext->getDriver();
-
-        // create typeface
-        std::shared_ptr<VROTypeface> typeface = driver.get()->newTypeface(strFontFamilyName, size);
-
-        std::shared_ptr<VROText> vroText = VROText::createText(strText, typeface, vecColor, width,
-                                                               height, horizontalAlignmentEnum,
-                                                               verticalAlignmentEnum, lineBreakModeEnum,
-                                                               clipModeEnum, maxLines);
-        vroText->updateBoundingBox();
-        parentNode->setGeometry(vroText);
-        delegateRef->textCreated(Text::jptr(vroText));
-   });
+    return Text::jptr(vroText);
 }
 
 JNI_METHOD(void, nativeDestroyText)(JNIEnv *env,

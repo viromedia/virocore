@@ -52,22 +52,6 @@ JNI_METHOD(void, nativeDestroyPolyline)(JNIEnv *env,
     delete reinterpret_cast<PersistentRef<VROPolyline> *>(nativePolylineRef);
 }
 
-JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong nativePolylineRef,
-                                     jlong nativeNodeRef) {
-    std::weak_ptr<VROPolyline> polyline_w = Polyline::native(nativePolylineRef);
-    std::weak_ptr<VRONode> node_w = Node::native(nativeNodeRef);
-    VROPlatformDispatchAsyncRenderer([polyline_w, node_w] {
-        std::shared_ptr<VROPolyline> polyline = polyline_w.lock();
-        std::shared_ptr<VRONode> node = node_w.lock();
-
-        if (polyline && node) {
-            node->setGeometry(polyline);
-        }
-    });
-}
-
 JNI_METHOD(void, nativeSetThickness)(JNIEnv *env,
                                  jclass clazz,
                                  jlong nativePolylineRef,

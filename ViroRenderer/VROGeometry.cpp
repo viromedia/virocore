@@ -31,7 +31,7 @@ void VROGeometry::deleteGL() {
 }
 
 void VROGeometry::prewarm(std::shared_ptr<VRODriver> driver) {
-    if (!_substrate) {
+    if (!_substrate && isRenderable()) {
         _substrate = driver->newGeometrySubstrate(*this);
     }
 }
@@ -45,8 +45,10 @@ void VROGeometry::render(int elementIndex,
                          std::shared_ptr<VRODriver> &driver) {
     
     prewarm(driver);
-    _substrate->render(*this, elementIndex, transform, normalMatrix,
-                       opacity, material, context, driver);
+    if (_substrate) {
+        _substrate->render(*this, elementIndex, transform, normalMatrix,
+                           opacity, material, context, driver);
+    }
 }
 
 void VROGeometry::renderSilhouette(VROMatrix4f transform,
@@ -54,7 +56,9 @@ void VROGeometry::renderSilhouette(VROMatrix4f transform,
                                    const VRORenderContext &context,
                                    std::shared_ptr<VRODriver> &driver) {
     prewarm(driver);
-    _substrate->renderSilhouette(*this, transform, material, context, driver);
+    if (_substrate) {
+        _substrate->renderSilhouette(*this, transform, material, context, driver);
+    }
 }
 
 void VROGeometry::renderSilhouetteTextured(int element,
@@ -63,7 +67,9 @@ void VROGeometry::renderSilhouetteTextured(int element,
                                            const VRORenderContext &context,
                                            std::shared_ptr<VRODriver> &driver) {
     prewarm(driver);
-    _substrate->renderSilhouetteTextured(*this, element, transform, material, context, driver);
+    if (_substrate) {
+        _substrate->renderSilhouetteTextured(*this, element, transform, material, context, driver);
+    }
 }
 
 void VROGeometry::updateSortKeys(VRONode *node, uint32_t hierarchyId, uint32_t hierarchyDepth,
@@ -130,7 +136,11 @@ const VROBoundingBox &VROGeometry::getBoundingBox() {
             _bounds->unionDestructive(box);
         }
     }
-    
+
+    // No geometry sources, return an area 0 box
+    if (!_bounds) {
+        _bounds = new VROBoundingBox();
+    }
     return *_bounds;
 }
 
@@ -148,6 +158,10 @@ std::vector<std::shared_ptr<VROGeometrySource>> VROGeometry::getGeometrySourcesF
     }
     
     return sources;
+}
+
+bool VROGeometry::isRenderable() const {
+    return !_geometrySources.empty() && !_geometryElements.empty();
 }
 
 void VROGeometry::updateSubstrate() {

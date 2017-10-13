@@ -9,6 +9,7 @@
 #include "VROPortalTest.h"
 #include "VROTestUtil.h"
 #include "VROPortalFrame.h"
+#include "VROModelIOUtil.h"
 
 VROPortalTest::VROPortalTest() :
     VRORendererTest(VRORendererTestType::Portal) {
@@ -198,7 +199,8 @@ std::shared_ptr<VROPortalFrame> VROPortalTest::loadPortalEntrance() {
     std::string base = url.substr(0, url.find_last_of('/'));
     
     std::shared_ptr<VROPortalFrame> frame = std::make_shared<VROPortalFrame>();
-    std::shared_ptr<VRONode> node = VROOBJLoader::loadOBJFromURL(url, base, true,
+    std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
+    VROOBJLoader::loadOBJFromResource(url, VROResourceType::URL, node, true,
                                                                  [](std::shared_ptr<VRONode> node, bool success) {
                                                                      if (!success) {
                                                                          return;
@@ -218,7 +220,8 @@ std::shared_ptr<VROPortalFrame> VROPortalTest::loadFBXPortalEntrance(std::string
     std::string base = url.substr(0, url.find_last_of('/'));
     
     std::shared_ptr<VROPortalFrame> frame = std::make_shared<VROPortalFrame>();
-    std::shared_ptr<VRONode> node = VROFBXLoader::loadFBXFromURL(url, base, true,
+    std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
+    VROFBXLoader::loadFBXFromResource(url, VROResourceType::URL, node, true,
                                                                  [scale](std::shared_ptr<VRONode> node, bool success) {
                                                                      if (!success) {
                                                                          return;

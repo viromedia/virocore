@@ -79,7 +79,7 @@ void VROTextTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                                                         linebreakMode, clipMode);
     
     text->setName("Text");
-    pinfo("Realized size %f, %f", text->getWidth(), text->getHeight());
+    pinfo("Realized size %f, %f", text->getRealizedWidth(), text->getRealizedHeight());
     
     std::shared_ptr<VRONode> textNode = std::make_shared<VRONode>();
     textNode->setGeometry(text);

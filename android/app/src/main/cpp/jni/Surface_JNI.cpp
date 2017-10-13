@@ -69,22 +69,6 @@ JNI_METHOD(void, nativeDestroySurface)(JNIEnv *env,
     delete reinterpret_cast<PersistentRef<VROSurface> *>(nativeSurface);
 }
 
-JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong surfaceRef,
-                                     jlong nodeRef) {
-    std::weak_ptr<VROSurface> surface_w = Surface::native(surfaceRef);
-    std::weak_ptr<VRONode> node_w = Node::native(nodeRef);
-
-    VROPlatformDispatchAsyncRenderer([surface_w, node_w] {
-        std::shared_ptr<VROSurface> surface = surface_w.lock();
-        std::shared_ptr<VRONode> node = node_w.lock();
-        if (node && surface) {
-            node->setGeometry(surface);
-        }
-    });
-}
-
 JNI_METHOD(void, nativeSetWidth)(JNIEnv *env,
                                        jclass clazz,
                                        jlong nativeSurface,

@@ -113,88 +113,68 @@ void setTextureProperties(const viro::Node::Geometry::Material::Visual &pb, std:
     texture->setWrapT(convert(pb.wrap_mode_t()));
 }
 
-std::shared_ptr<VRONode> VROFBXLoader::loadFBXFromURL(std::string url, std::string baseURL,
-                                                      bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
-    std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
-    
+void VROFBXLoader::loadFBXFromResource(std::string resource, VROResourceType type,
+                                       std::shared_ptr<VRONode> node,
+                                       bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
     if (async) {
-        VROPlatformDispatchAsyncBackground([url, baseURL, node, onFinish] {
-            bool isTemp = false;
-            bool success = false;
-            std::string file = VROPlatformDownloadURLToFile(url, &isTemp, &success);
-            
-            std::shared_ptr<VRONode> fbxNode;
-            if (success) {
-                fbxNode = loadFBX(file, baseURL, true, nullptr);
-            }
+        VROPlatformDispatchAsyncBackground([resource, type, node, onFinish] {
+            bool isTemp;
+            std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
+            std::string base = resource.substr(0, resource.find_last_of('/'));
+
+            std::shared_ptr<VRONode> fbxNode = loadFBX(path, base, type, nullptr);
+            VROPlatformDispatchAsyncRenderer([node, fbxNode, onFinish] {
+                injectFBX(fbxNode, node, onFinish);
+            });
             if (isTemp) {
-                VROPlatformDeleteFile(file);
+                VROPlatformDeleteFile(path);
             }
-            
-            VROPlatformDispatchAsyncRenderer([node, fbxNode, onFinish] {
-                injectFBX(fbxNode, node, onFinish);
-            });
         });
     }
     else {
-        bool isTemp = false;
-        bool success = false;
-        std::string file = VROPlatformDownloadURLToFile(url, &isTemp, &success);
-        
-        std::shared_ptr<VRONode> fbxNode;
-        if (success) {
-            fbxNode = loadFBX(file, baseURL, true, nullptr);
-        }
+        bool isTemp;
+        std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
+        std::string base = resource.substr(0, resource.find_last_of('/'));
+
+        std::shared_ptr<VRONode> fbxNode = loadFBX(path, base, type, nullptr);
+        injectFBX(fbxNode, node, onFinish);
         if (isTemp) {
-            VROPlatformDeleteFile(file);
+            VROPlatformDeleteFile(path);
         }
-        
-        injectFBX(fbxNode, node, onFinish);
     }
-    
-    return node;
 }
 
-std::shared_ptr<VRONode> VROFBXLoader::loadFBXFromFile(std::string file, std::string baseDir,
-                                                       bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
-    
-    std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
+void VROFBXLoader::loadFBXFromResources(std::string resource, VROResourceType type,
+                                        std::shared_ptr<VRONode> node,
+                                        std::map<std::string, std::string> resourceMap,
+                                        bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
     
     if (async) {
-        VROPlatformDispatchAsyncBackground([file, baseDir, node, onFinish] {
-            std::shared_ptr<VRONode> fbxNode = loadFBX(file, baseDir, false, nullptr);
+        VROPlatformDispatchAsyncBackground([resource, type, resourceMap, node, onFinish] {
+            bool isTemp;
+            std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
+            std::map<std::string, std::string> fileMap = VROModelIOUtil::processResourceMap(resourceMap, type);
+
+            std::shared_ptr<VRONode> fbxNode = loadFBX(path, "", type, &fileMap);
             VROPlatformDispatchAsyncRenderer([node, fbxNode, onFinish] {
                 injectFBX(fbxNode, node, onFinish);
             });
+            if (isTemp) {
+                VROPlatformDeleteFile(path);
+            }
         });
     }
     else {
-        std::shared_ptr<VRONode> fbxNode = loadFBX(file, baseDir, false, nullptr);
-        injectFBX(fbxNode, node, onFinish);
-    }
-    
-    return node;
-}
+        bool isTemp;
+        std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
+        std::map<std::string, std::string> fileMap = VROModelIOUtil::processResourceMap(resourceMap, type);
 
-std::shared_ptr<VRONode> VROFBXLoader::loadFBXFromFileWithResources(std::string file, std::map<std::string, std::string> resourceMap,
-                                                                    bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
-    
-    std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
-    
-    if (async) {
-        VROPlatformDispatchAsyncBackground([file, resourceMap, node, onFinish] {
-            std::shared_ptr<VRONode> fbxNode = loadFBX(file, "", false, &resourceMap);
-            VROPlatformDispatchAsyncRenderer([node, fbxNode, onFinish] {
-                injectFBX(fbxNode, node, onFinish);
-            });
-        });
-    }
-    else {
-        std::shared_ptr<VRONode> fbxNode = loadFBX(file, "", false, &resourceMap);
+        std::shared_ptr<VRONode> fbxNode = loadFBX(path, "", type, &fileMap);
         injectFBX(fbxNode, node, onFinish);
+        if (isTemp) {
+            VROPlatformDeleteFile(path);
+        }
     }
-    
-    return node;
 }
 
 void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode, std::shared_ptr<VRONode> node,
@@ -217,7 +197,7 @@ void VROFBXLoader::injectFBX(std::shared_ptr<VRONode> fbxNode, std::shared_ptr<V
     }
 }
 
-std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string base, bool isBaseURL,
+std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string base, VROResourceType type,
                                                const std::map<std::string, std::string> *resourceMap) {
     
     std::map<std::string, std::shared_ptr<VROTexture>> textureCache;
@@ -247,7 +227,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
     std::shared_ptr<VRONode> rootNode = std::make_shared<VRONode>();
     rootNode->setThreadRestrictionEnabled(false);
     for (int i = 0; i < node_pb.subnode_size(); i++) {
-        std::shared_ptr<VRONode> node = loadFBXNode(node_pb.subnode(i), skeleton, base, isBaseURL,
+        std::shared_ptr<VRONode> node = loadFBXNode(node_pb.subnode(i), skeleton, base, type,
                                                     resourceMap, textureCache);
         rootNode->addChildNode(node);
     }
@@ -258,7 +238,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBX(std::string file, std::string bas
 
 std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
                                                    std::shared_ptr<VROSkeleton> skeleton,
-                                                   std::string base, bool isBaseURL,
+                                                   std::string base, VROResourceType type,
                                                    const std::map<std::string, std::string> *resourceMap,
                                                    std::map<std::string, std::shared_ptr<VROTexture>> &textureCache) {
     
@@ -277,7 +257,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
     
     if (node_pb.has_geometry()) {
         const viro::Node_Geometry &geo_pb = node_pb.geometry();
-        std::shared_ptr<VROGeometry> geo = loadFBXGeometry(geo_pb, base, isBaseURL, resourceMap, textureCache);
+        std::shared_ptr<VROGeometry> geo = loadFBXGeometry(geo_pb, base, type, resourceMap, textureCache);
         geo->setName(node_pb.name());
         
         if (geo_pb.has_skin() && skeleton) {
@@ -324,7 +304,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
     }
     
     for (int i = 0; i < node_pb.subnode_size(); i++) {
-        std::shared_ptr<VRONode> subnode = loadFBXNode(node_pb.subnode(i), skeleton, base, isBaseURL,
+        std::shared_ptr<VRONode> subnode = loadFBXNode(node_pb.subnode(i), skeleton, base, type,
                                                        resourceMap, textureCache);
         node->addChildNode(subnode);
     }
@@ -333,7 +313,7 @@ std::shared_ptr<VRONode> VROFBXLoader::loadFBXNode(const viro::Node &node_pb,
 }
 
 std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geometry &geo_pb,
-                                                           std::string base, bool isBaseURL,
+                                                           std::string base, VROResourceType type,
                                                            const std::map<std::string, std::string> *resourceMap,
                                                            std::map<std::string, std::shared_ptr<VROTexture>> &textureCache) {
     std::shared_ptr<VROData> varData = std::make_shared<VROData>(geo_pb.data().c_str(), geo_pb.data().length());
@@ -390,7 +370,7 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
             diffuse.setIntensity(diffuse_pb.intensity());
             
             if (!diffuse_pb.texture().empty()) {
-                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(diffuse_pb.texture(), base, isBaseURL, true, resourceMap, textureCache);
+                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(diffuse_pb.texture(), base, type, true, resourceMap, textureCache);
                 if (texture) {
                     diffuse.setTexture(texture);
                     setTextureProperties(diffuse_pb, texture);
@@ -407,7 +387,7 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
             specular.setIntensity(specular_pb.intensity());
             
             if (!specular_pb.texture().empty()) {
-                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(specular_pb.texture(), base, isBaseURL, false, resourceMap, textureCache);
+                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(specular_pb.texture(), base, type, false, resourceMap, textureCache);
                 if (texture) {
                     specular.setTexture(texture);
                     setTextureProperties(specular_pb, texture);
@@ -424,7 +404,7 @@ std::shared_ptr<VROGeometry> VROFBXLoader::loadFBXGeometry(const viro::Node_Geom
             normal.setIntensity(normal_pb.intensity());
             
             if (!normal_pb.texture().empty()) {
-                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(normal_pb.texture(), base, isBaseURL, false, resourceMap, textureCache);
+                std::shared_ptr<VROTexture> texture = VROModelIOUtil::loadTexture(normal_pb.texture(), base, type, false, resourceMap, textureCache);
                 if (texture) {
                     normal.setTexture(texture);
                     setTextureProperties(normal_pb, texture);

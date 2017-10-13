@@ -15,6 +15,7 @@
 #include <VROBox.h>
 #include <VROOBJLoader.h>
 #include <VROPlatformUtil.h>
+#include <VROModelIOUtil.h>
 #include "VRONode.h"
 #include "VRORenderContext.h"
 #include "VROInputPresenter.h"
@@ -70,7 +71,8 @@ public:
 
         // Create Controller Obj Node
         std::string controllerObjAsset = VROPlatformCopyAssetToFile("ddcontroller.obj");
-        _controllerNode = VROOBJLoader::loadOBJFromFile(controllerObjAsset, "", false, [this](std::shared_ptr<VRONode> node, bool success) {
+        _controllerNode = std::make_shared<VRONode>();
+        VROOBJLoader::loadOBJFromResource(controllerObjAsset, VROResourceType::LocalFile, _controllerNode, false, [this](std::shared_ptr<VRONode> node, bool success) {
             if (!success) {
                 perr("ERROR when loading controller obj!");
                 return;
@@ -98,7 +100,8 @@ public:
                                                      VROPlatformLoadImageFromAsset("ddLaserTexture.jpg", VROTextureInternalFormat::RGBA8));
         // Create our laser obj
         std::string controllerObjAsset = VROPlatformCopyAssetToFile("ddlaser.obj");
-        _pointerNode = VROOBJLoader::loadOBJFromFile(controllerObjAsset, "", false, [this](std::shared_ptr<VRONode> node, bool success) {
+        _pointerNode = std::make_shared<VRONode>();
+        VROOBJLoader::loadOBJFromResource(controllerObjAsset, VROResourceType::LocalFile, _pointerNode, false, [this](std::shared_ptr<VRONode> node, bool success) {
             if (!success) {
                 perr("ERROR when loading controller obj!");
                 return;
