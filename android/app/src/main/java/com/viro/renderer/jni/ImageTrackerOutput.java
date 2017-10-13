@@ -3,6 +3,9 @@
  */
 package com.viro.renderer.jni;
 
+/**
+ * @hide
+ */
 public class ImageTrackerOutput {
     private final long mNativeRef;
 

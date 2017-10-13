@@ -34,6 +34,8 @@ import java.util.Map;
 /**
  * Methods accessed by JNI to perform platform-dependent
  * functions. Primarily accessed via VROPlatformUtil.cpp.
+ *
+ * @hide
  */
 public class PlatformUtil {
 

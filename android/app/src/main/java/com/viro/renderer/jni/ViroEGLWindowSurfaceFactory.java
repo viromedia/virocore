@@ -15,6 +15,8 @@ import javax.microedition.khronos.egl.EGLSurface;
  * Implementation of {@link android.opengl.GLSurfaceView.EGLWindowSurfaceFactory} that
  * returns a Viro-compatible surface. Currently this means returning an sRGB-enabled
  * surface.
+ *
+ * @hide
  */
 public class ViroEGLWindowSurfaceFactory implements GLSurfaceView.EGLWindowSurfaceFactory {
 

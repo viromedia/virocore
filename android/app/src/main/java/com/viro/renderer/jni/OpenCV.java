@@ -12,6 +12,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+/**
+ * @hide
+ */
 public class OpenCV {
 
     private static final String OUTPUT_PREFIX = "edge_";

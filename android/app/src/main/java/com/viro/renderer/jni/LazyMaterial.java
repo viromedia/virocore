@@ -3,7 +3,7 @@ package com.viro.renderer.jni;
  * Copyright © 2017 Viro Media. All rights reserved.
  */
 
-/*
+/**
  The animation system requires lazy loading of materials from
  the bridge's material manager. To faciliate this we have this
  class, LazyMaterialJni, which corresponds to the native class
@@ -19,6 +19,8 @@ package com.viro.renderer.jni;
  VROLazyMaterialJNI get() invokes abstract java class LazyMaterialJni
  LazyMaterialReact (in MaterialManager in the bridge) extends LazyMaterialJni,
  returning the desired material.
+
+ @hide
  */
 public abstract class LazyMaterial {
 

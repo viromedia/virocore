@@ -7,6 +7,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+/**
+ * @hide
+ */
 public class ImageTracker {
 
     private Context mContext;
