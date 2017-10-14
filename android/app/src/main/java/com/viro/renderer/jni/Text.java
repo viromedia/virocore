@@ -22,57 +22,137 @@ import android.graphics.Color;
  */
 public class Text extends Geometry {
 
+    /**
+     * Controls the horizontal alignment of Text within its bounds.
+     */
     public enum HorizontalAlignment {
+        /**
+         * Text is aligned with the left boundary of the bounds.
+         */
         LEFT("Left"),
+
+        /**
+         * Text is aligned to the right boundary of the bounds.
+         */
         RIGHT("Right"),
+
+        /**
+         * Text is horizontally centered within its bounds.
+         */
         CENTER("Center");
 
         private String mStringValue;
         private HorizontalAlignment(String value) {
             this.mStringValue = value;
         }
+        /**
+         * @hide
+         * @return
+         */
         public String getStringValue() {
             return mStringValue;
         }
     };
 
+    /**
+     * Controls the vertical alignment of Text within its bounds.
+     */
     public enum VerticalAlignment {
+        /**
+         * The top of first line of the text is flush with the top of the Text's bounds.
+         */
         TOP("Top"),
+
+        /**
+         * The bottom of the last line of text is flush with the bottom of the Text's bounds.
+         */
         BOTTOM("Bottom"),
+
+        /**
+         * The text is vertically centered within its bounds.
+         */
         CENTER("Center");
 
         private String mStringValue;
         private VerticalAlignment(String value) {
             this.mStringValue = value;
         }
+        /**
+         * @hide
+         * @return
+         */
         public String getStringValue() {
             return mStringValue;
         }
     };
 
+    /**
+     * Controls the way in which text wraps when it exceeds its bound's width.
+     */
     public enum LineBreakMode {
+        /**
+         * Text will wrap on word boundaries; each time a word doesn't fit, Text will move to a new
+         * line. If a single word doesn't fit on one line, that word will be placed alone on its own
+         * line.
+         */
         WORD_WRAP("WordWrap"),
+
+        /**
+         * Text will wrap character by character.
+         */
         CHAR_WRAP("CharWrap"),
+
+        /**
+         * Text will wrap by word boundaries; the newlines and length of each space are chosen to
+         * minimize the raggedness of the text edges. If used with {@link HorizontalAlignment#LEFT},
+         * this minimizes the raggedness of the right edge; if used with {@link
+         * HorizontalAlignment#RIGHT}, this minimizes the raggedness of the left edge; and if used
+         * with {@link HorizontalAlignment#CENTER} this will attempt to minimize the raggedness of
+         * both edges.
+         */
         JUSTIFY("Justify"),
+
+        /**
+         * Text does not wrap; everything is kept on one line.
+         */
         NONE("None");
 
         private String mStringValue;
         private LineBreakMode(String value) {
             this.mStringValue = value;
         }
+        /**
+         * @hide
+         * @return
+         */
         public String getStringValue() {
             return mStringValue;
         }
     };
 
+    /**
+     * Controls whether text clips when it exceeds its bounds.
+     */
     public enum ClipMode {
+        /**
+         * Text is clipped (cut off) when it exceeds its bounds.
+         */
         CLIP_TO_BOUNDS("ClipToBounds"),
+
+        /**
+         * Text is not clipped; it is allowed to exceed its bounds. In this case, the boundary is
+         * only used for layout and alignment purposes.
+         */
         NONE("None");
 
         private String mStringValue;
         private ClipMode(String value) {
             this.mStringValue = value;
         }
+        /**
+         * @hide
+         * @return
+         */
         public String getStringValue() {
             return mStringValue;
         }
