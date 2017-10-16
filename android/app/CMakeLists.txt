@@ -264,6 +264,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROTorusTest.cpp
              ../../ViroRenderer/VROVideoSphereTest.cpp
              ../../ViroRenderer/VROBoxTest.cpp
+             ../../ViroRenderer/VROPolylineTest.cpp
              )
 
 # Add pre-built libraries
