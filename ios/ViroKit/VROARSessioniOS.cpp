@@ -202,6 +202,8 @@ void VROARSessioniOS::addAnchor(ARAnchor *anchor) {
     else {
         vAnchor = std::make_shared<VROARAnchor>();
     }
+    vAnchor->setId(std::string([anchor.identifier.UUIDString UTF8String]));
+
     updateAnchorFromNative(vAnchor, anchor);
     
     addAnchor(vAnchor);

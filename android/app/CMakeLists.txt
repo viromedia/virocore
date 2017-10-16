@@ -105,6 +105,7 @@ add_library( # Sets the name of the library.
              # Android AR JNI
              src/main/cpp/jni/ARPlane_JNI.cpp
              src/main/cpp/jni/ARSceneController_JNI.cpp
+             src/main/cpp/jni/ARUtils_JNI.cpp
 
              # Math
              ../../ViroRenderer/VROLineSegment.cpp

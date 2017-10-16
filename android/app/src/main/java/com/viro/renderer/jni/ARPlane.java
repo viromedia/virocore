@@ -33,6 +33,10 @@ public class ARPlane extends ARNode {
         nativeSetMinHeight(mNativeRef, minHeight);
     }
 
+    public void setAnchorId(String anchorId) {
+        nativeSetAnchorId(mNativeRef, anchorId);
+    }
+
     private native long nativeCreateARPlane(float minWidth, float minHeight);
 
     private native void nativeDestroyARPlane(long nativeRef);
@@ -40,6 +44,8 @@ public class ARPlane extends ARNode {
     private native void nativeSetMinWidth(long nativeRef, float minWidth);
 
     private native void nativeSetMinHeight(long nativeRef, float minHeight);
+
+    private native void nativeSetAnchorId(long nativeRef, String anchorId);
 
     private native long nativeCreateARPlaneDelegate(long nativeRef);
 

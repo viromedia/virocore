@@ -3,6 +3,10 @@
  */
 package com.viro.renderer.jni;
 
+import android.util.Log;
+
+import com.viro.renderer.ARAnchor;
+
 import java.lang.ref.WeakReference;
 
 public class ARSceneController extends SceneController {
@@ -53,6 +57,9 @@ public class ARSceneController extends SceneController {
     public interface ARSceneDelegate {
         void onTrackingInitialized();
         void onAmbientLightUpdate(float lightIntensity, float colorTemperature);
+        void onAnchorFound(ARAnchor anchor);
+        void onAnchorUpdated(ARAnchor anchor);
+        void onAnchorRemoved(ARAnchor anchor);
     }
 
     public void registerARDelegate(ARSceneDelegate delegate) {
@@ -75,4 +82,27 @@ public class ARSceneController extends SceneController {
         }
     }
 
+    /* Called by Native */
+    public void onAnchorFound(ARAnchor anchor) {
+        ARSceneDelegate delegate;
+        if (mARSceneDelegate != null && (delegate = mARSceneDelegate.get()) != null) {
+            delegate.onAnchorFound(anchor);
+        }
+    }
+
+    /* Called by Native */
+    public void onAnchorUpdated(ARAnchor anchor) {
+        ARSceneDelegate delegate;
+        if (mARSceneDelegate != null && (delegate = mARSceneDelegate.get()) != null) {
+            delegate.onAnchorUpdated(anchor);
+        }
+    }
+
+    /* Called by Native */
+    public void onAnchorRemoved(ARAnchor anchor) {
+        ARSceneDelegate delegate;
+        if (mARSceneDelegate != null && (delegate = mARSceneDelegate.get()) != null) {
+            delegate.onAnchorRemoved(anchor);
+        }
+    }
 }

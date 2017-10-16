@@ -16,7 +16,8 @@ void VROARScene::addNode(std::shared_ptr<VRONode> node) {
 
 void VROARScene::setARComponentManager(std::shared_ptr<VROARComponentManager> arComponentManager) {
     _arComponentManager = arComponentManager;
-    std::vector<std::shared_ptr<VROARPlane>>::iterator it;
+    _arComponentManager->setDelegate(std::dynamic_pointer_cast<VROARComponentManagerDelegate>(shared_from_this()));
+    std::vector<std::shared_ptr<VROARPlaneNode>>::iterator it;
     for (it = _planes.begin(); it < _planes.end(); it++) {
         _arComponentManager->addARPlane(*it);
     }
@@ -56,7 +57,8 @@ void VROARScene::updateAmbientLight(float intensity, float colorTemperature) {
 
 void VROARScene::willAppear() {
     if (_arComponentManager) {
-        std::vector<std::shared_ptr<VROARPlane>>::iterator it;
+        _arComponentManager->setDelegate(std::dynamic_pointer_cast<VROARComponentManagerDelegate>(shared_from_this()));
+        std::vector<std::shared_ptr<VROARPlaneNode>>::iterator it;
         for (it = _planes.begin(); it < _planes.end(); it++) {
             _arComponentManager->addARPlane(*it);
         }
@@ -69,7 +71,7 @@ void VROARScene::willDisappear() {
     }
 }
 
-void VROARScene::addARPlane(std::shared_ptr<VROARPlane> plane) {
+void VROARScene::addARPlane(std::shared_ptr<VROARPlaneNode> plane) {
     // TODO: figure out a way to make ARNode simply not be visible at start.
     // call this once, because when it planes are first added they should not be visible.
     plane->setIsAttached(false);
@@ -79,20 +81,44 @@ void VROARScene::addARPlane(std::shared_ptr<VROARPlane> plane) {
     }
 }
 
-void VROARScene::removeARPlane(std::shared_ptr<VROARPlane> plane) {
+void VROARScene::removeARPlane(std::shared_ptr<VROARPlaneNode> plane) {
     plane->setIsAttached(false);
     if (_arComponentManager) {
         _arComponentManager->removeARPlane(plane);
     }
     _planes.erase(
                    std::remove_if(_planes.begin(), _planes.end(),
-                                  [plane](std::shared_ptr<VROARPlane> candidate) {
+                                  [plane](std::shared_ptr<VROARPlaneNode> candidate) {
                                       return candidate == plane;
                                   }), _planes.end());
 }
 
-void VROARScene::updateARPlane(std::shared_ptr<VROARPlane> plane) {
+void VROARScene::updateARPlane(std::shared_ptr<VROARPlaneNode> plane) {
     if (_arComponentManager) {
         _arComponentManager->updateARPlane(plane);
+    }
+}
+
+#pragma mark - VROARComponentManagerDelegate Implementation
+
+void VROARScene::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
+    std::shared_ptr<VROARSceneDelegate> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->onAnchorFound(anchor);
+    }
+}
+
+void VROARScene::anchorWasUpdated(std::shared_ptr<VROARAnchor> anchor) {
+    std::shared_ptr<VROARPlaneAnchor> plane = std::dynamic_pointer_cast<VROARPlaneAnchor>(anchor);
+    std::shared_ptr<VROARSceneDelegate> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->onAnchorUpdated(anchor);
+    }
+}
+
+void VROARScene::anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor) {
+    std::shared_ptr<VROARSceneDelegate> delegate = _delegate.lock();
+    if (delegate) {
+        delegate->onAnchorRemoved(anchor);
     }
 }

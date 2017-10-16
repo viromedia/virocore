@@ -8,6 +8,8 @@ package com.viro.renderer;
  */
 public class ARAnchor {
     // All ARAnchors have these props
+    private String mAnchorId;
+    private String mType;
     private float[] mPosition;
     private float[] mRotation; // in degrees
     private float[] mScale;
@@ -17,14 +19,24 @@ public class ARAnchor {
     private float[] mExtent;
     private float[] mCenter;
 
-    public ARAnchor(float[] position, float[] rotation, float[] scale,
-                    String alignment, float[] extent, float[] center) {
+    public ARAnchor(String anchorId, String type, float[] position, float[] rotation,
+                    float[] scale, String alignment, float[] extent, float[] center) {
+        mAnchorId = anchorId;
+        mType = type;
         mPosition = position;
         mRotation = rotation;
         mScale = scale;
         mAlignment = alignment;
         mExtent = extent;
         mCenter = center;
+    }
+
+    public String getAnchorId() {
+        return mAnchorId;
+    }
+
+    public String getType() {
+        return mType;
     }
 
     public float[] getPosition() {

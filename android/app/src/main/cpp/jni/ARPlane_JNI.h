@@ -10,17 +10,17 @@
 
 #include <jni.h>
 #include <memory>
-#include <VROARPlane.h>
+#include <VROARPlaneNode.h>
 #include "PersistentRef.h"
 
 namespace ARPlane {
-    inline jlong jptr(std::shared_ptr<VROARPlane> shared_plane) {
-        PersistentRef<VROARPlane> *native_ar_plane = new PersistentRef<VROARPlane>(shared_plane);
+    inline jlong jptr(std::shared_ptr<VROARPlaneNode> shared_plane) {
+        PersistentRef<VROARPlaneNode> *native_ar_plane = new PersistentRef<VROARPlaneNode>(shared_plane);
         return reinterpret_cast<intptr_t>(native_ar_plane);
     }
 
-    inline std::shared_ptr<VROARPlane> native(jlong ptr) {
-        PersistentRef<VROARPlane> *persistentARPlane = reinterpret_cast<PersistentRef<VROARPlane> *>(ptr);
+    inline std::shared_ptr<VROARPlaneNode> native(jlong ptr) {
+        PersistentRef<VROARPlaneNode> *persistentARPlane = reinterpret_cast<PersistentRef<VROARPlaneNode> *>(ptr);
         return persistentARPlane->get();
     }
 }
@@ -49,11 +49,6 @@ public:
     void onARAnchorAttached(std::shared_ptr<VROARAnchor> anchor);
     void onARAnchorUpdated(std::shared_ptr<VROARAnchor> anchor);
     void onARAnchorRemoved();
-
-    // Helper functions to create the ARAnchor
-    jobject createJavaARAnchorFromPlane(std::shared_ptr<VROARPlaneAnchor> anchor);
-    jfloatArray createFloatArrayFromVector3f(VROVector3f vector);
-    jstring createStringFromAlignment(VROARPlaneAlignment alignment);
 
 private:
     jobject _javaObject;

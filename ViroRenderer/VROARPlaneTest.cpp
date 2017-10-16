@@ -25,7 +25,7 @@ void VROARPlaneTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchroniz
     _sceneController = std::make_shared<VROARSceneController>();
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
     std::shared_ptr<VRONode> sceneNode = std::make_shared<VRONode>();
-    std::shared_ptr<VROARPlane> arPlane = std::make_shared<VROARPlane>(0, 0);
+    std::shared_ptr<VROARPlaneNode> arPlane = std::make_shared<VROARPlaneNode>(0, 0);
     
     std::string url = VROTestUtil::getURLForResource("coffee_mug", "obj");
     std::string base = url.substr(0, url.find_last_of('/'));

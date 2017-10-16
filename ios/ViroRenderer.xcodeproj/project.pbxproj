@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6386C3B94B3E92D246F8F9EB /* libPods-ViroKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6447C487DE6546AF514106CC /* libPods-ViroKit.a */; };
-		8A11C8F51EF5AB9D0003E829 /* VROARPlane.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A11C8F41EF5A8E30003E829 /* VROARPlane.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8A11C8F51EF5AB9D0003E829 /* VROARPlaneNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A11C8F41EF5A8E30003E829 /* VROARPlaneNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A11C8F81EF5B2270003E829 /* VROARComponentManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A11C8F61EF5B2270003E829 /* VROARComponentManager.cpp */; };
 		8A11C8F91EF5B2270003E829 /* VROARComponentManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A11C8F71EF5B2270003E829 /* VROARComponentManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A130D751E3A937D0050D83B /* VROSoundDelegateInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A130D741E3A93720050D83B /* VROSoundDelegateInternal.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -707,7 +707,7 @@
 		710AAB43C4650092845EAD81 /* Pods-ViroKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ViroKit.release.xcconfig"; path = "Pods/Target Support Files/Pods-ViroKit/Pods-ViroKit.release.xcconfig"; sourceTree = "<group>"; };
 		8A07C1821ED8D5EA00757C29 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = Libraries/opencv/opencv2.framework; sourceTree = "<group>"; };
 		8A07C1891ED8D8DA00757C29 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
-		8A11C8F41EF5A8E30003E829 /* VROARPlane.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARPlane.h; sourceTree = "<group>"; };
+		8A11C8F41EF5A8E30003E829 /* VROARPlaneNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARPlaneNode.h; sourceTree = "<group>"; };
 		8A11C8F61EF5B2270003E829 /* VROARComponentManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROARComponentManager.cpp; sourceTree = "<group>"; };
 		8A11C8F71EF5B2270003E829 /* VROARComponentManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARComponentManager.h; sourceTree = "<group>"; };
 		8A130D731E3A93720050D83B /* VROSound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROSound.h; sourceTree = "<group>"; };
@@ -1669,7 +1669,7 @@
 				8F1F065B1EF06FBB006FC8C2 /* VROARHitTestResult.h */,
 				8A11C8F61EF5B2270003E829 /* VROARComponentManager.cpp */,
 				8A11C8F71EF5B2270003E829 /* VROARComponentManager.h */,
-				8A11C8F41EF5A8E30003E829 /* VROARPlane.h */,
+				8A11C8F41EF5A8E30003E829 /* VROARPlaneNode.h */,
 				8A5C05581EF6416900F94CB9 /* VROARNode.h */,
 				8A99E6CE1EF1B95800712D79 /* VROARScene.cpp */,
 				8A99E6CF1EF1B95800712D79 /* VROARScene.h */,
@@ -2515,7 +2515,7 @@
 				8FCB10251DD544E800FE425C /* VROVideoTextureCacheOpenGL.h in Headers */,
 				8FE382151EF06FED005038CB /* VROARHitTestResult.h in Headers */,
 				8FD4DF341C18F500003DC425 /* VROGeometry.h in Headers */,
-				8A11C8F51EF5AB9D0003E829 /* VROARPlane.h in Headers */,
+				8A11C8F51EF5AB9D0003E829 /* VROARPlaneNode.h in Headers */,
 				8FD4DF351C18F500003DC425 /* VROGeometryElement.h in Headers */,
 				8FD2A53F1F813C4100E831A6 /* VROPerfTest.h in Headers */,
 				8A11C8F91EF5B2270003E829 /* VROARComponentManager.h in Headers */,

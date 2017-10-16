@@ -50,6 +50,9 @@ public:
 
     void onTrackingInitialized();
     void onAmbientLightUpdate(float ambientLightIntensity, float colorTemperature);
+    void onAnchorFound(std::shared_ptr<VROARAnchor> anchor);
+    void onAnchorUpdated(std::shared_ptr<VROARAnchor> anchor);
+    void onAnchorRemoved(std::shared_ptr<VROARAnchor> anchor);
 
 private:
     jobject _javaObject;

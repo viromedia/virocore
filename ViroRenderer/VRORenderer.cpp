@@ -388,18 +388,20 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneCo
         _outgoingSceneController->getScene()->detachInputController(_inputController);
     }
   
-    sceneController->getScene()->attachInputController(_inputController);
-    sceneController->onSceneWillAppear(_context.get(), driver);
+    // The order here is intentional, we want to let the current scene knows it's about to disappear
+    // before we let the new scene know it will appear (for tear down and set up order)
     if (outgoingSceneController) {
         outgoingSceneController->onSceneWillDisappear(_context.get(), driver);
     }
+    sceneController->getScene()->attachInputController(_inputController);
+    sceneController->onSceneWillAppear(_context.get(), driver);
 
     _sceneController = sceneController;
 
-    sceneController->onSceneDidAppear(_context.get(), driver);
     if (outgoingSceneController) {
         outgoingSceneController->onSceneDidDisappear(_context.get(), driver);
     }
+    sceneController->onSceneDidAppear(_context.get(), driver);
 }
 
 void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,

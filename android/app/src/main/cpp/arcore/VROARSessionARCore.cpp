@@ -188,6 +188,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frame) {
                 vAnchor = std::make_shared<VROARAnchor>();
                 _nativeAnchorMap[key] = vAnchor;
                 updateAnchorFromJni(vAnchor, anchorJni);
+                vAnchor->setId(key);
                 addAnchor(vAnchor);
             }
         }
@@ -221,6 +222,7 @@ void VROARSessionARCore::processUpdatedAnchors(VROARFrameARCore *frame) {
                     vAnchor = std::make_shared<VROARPlaneAnchor>();
                     _nativeAnchorMap[key] = vAnchor;
                     updatePlaneFromJni(vAnchor, planeJni);
+                    vAnchor->setId(key);
                     addAnchor(vAnchor);
                 }
             } else {
