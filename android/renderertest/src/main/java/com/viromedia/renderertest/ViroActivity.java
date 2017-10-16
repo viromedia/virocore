@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +40,7 @@ import com.viro.renderer.jni.Object3D;
 import com.viro.renderer.jni.OmniLight;
 import com.viro.renderer.jni.OpenCV;
 import com.viro.renderer.jni.Polyline;
+import com.viro.renderer.jni.Vector;
 import com.viro.renderer.jni.ViroContext;
 import com.viro.renderer.jni.SceneController;
 import com.viro.renderer.jni.SoundData;
@@ -74,6 +76,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     private final Map<String, SpatialSound> mSpatialSoundMap = new HashMap<>();
     private static String TAG = ViroActivity.class.getSimpleName();
     private ARNode.ARNodeDelegate mARNodeDelegate;
+    private Handler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +99,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         mVrView.validateApiKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
         setContentView(mVrView.getContentView());
 
+        mHandler = new Handler(getMainLooper());
         // uncomment the below line to test AR.
         //testEdgeDetect();
         //testFindTarget();
@@ -149,7 +153,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         //nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
-        nodes = testText(this);
+        //nodes = testText(this);
 
         //testBackgroundVideo(scene);
         //testBackgroundImage(scene);
@@ -157,7 +161,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
         //nodes = testStereoSurfaceVideo(this);
         //nodes = testStereoImageSurface(this);
-        //nodes.add(testLine(this));
+        nodes.add(testLine(this));
         //testStereoBackgroundVideo(scene);
         //testStereoBackgroundImage(scene);
 
@@ -892,15 +896,33 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         material.setLightingModel("Constant");
         material.setCullMode("None");
 
-        float[] linePos = {0,0,-1};
-        float[][] points = {{0,0}, {.5f,.5f}, {1,0}};
-        Polyline polyline = new Polyline(points, 0.1f);
+        float[] linePos = { 0, 0, -2 };
+        float[][] points = { {0, 0}, {1, 0}, {1, 1} };
+
+        final Polyline polyline = new Polyline(points, 0.1f);
         Node node1 = new Node();
 
         node1.setPosition(linePos);
         node1.setGeometry(polyline);
         polyline.setMaterials(Arrays.asList(material));
         node1.setEventDelegateJni(getGenericDelegate("Line"));
+
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                polyline.appendPoint(new Vector(-1, 1, 0));
+            }
+        }, 2000);
+
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                List<Vector> newPoints = new ArrayList<Vector>();
+                newPoints.add(new Vector(0, 0, 0));
+                newPoints.add(new Vector(1, 1, 0));
+
+                polyline.setPoints(newPoints);
+            }
+        }, 4000);
+
         return node1;
     }
 }
