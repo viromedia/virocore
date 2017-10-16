@@ -174,6 +174,8 @@
 		8F383B621F43546C006AB301 /* VROShadowMapRenderPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F383B601F43546C006AB301 /* VROShadowMapRenderPass.h */; };
 		8F39A31C1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F39A31A1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp */; };
 		8F39A31D1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F39A31B1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F3AF9921F95024D0087BA73 /* VROPolylineTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F3AF9901F95024D0087BA73 /* VROPolylineTest.cpp */; };
+		8F3AF9931F95024D0087BA73 /* VROPolylineTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F3AF9911F95024D0087BA73 /* VROPolylineTest.h */; };
 		8F3B968E1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */; };
 		8F3B968F1C77D64200B4FEE0 /* shanghai_tower_specular.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968C1C77D64200B4FEE0 /* shanghai_tower_specular.jpg */; };
 		8F3B96901C77D64200B4FEE0 /* shanghai_tower.obj in Resources */ = {isa = PBXBuildFile; fileRef = 8F3B968D1C77D64200B4FEE0 /* shanghai_tower.obj */; };
@@ -885,6 +887,8 @@
 		8F383B601F43546C006AB301 /* VROShadowMapRenderPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROShadowMapRenderPass.h; sourceTree = "<group>"; };
 		8F39A31A1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROFrustumBoxIntersectionMetadata.cpp; sourceTree = "<group>"; };
 		8F39A31B1EA57FDB001125FC /* VROFrustumBoxIntersectionMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROFrustumBoxIntersectionMetadata.h; sourceTree = "<group>"; };
+		8F3AF9901F95024D0087BA73 /* VROPolylineTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPolylineTest.cpp; sourceTree = "<group>"; };
+		8F3AF9911F95024D0087BA73 /* VROPolylineTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPolylineTest.h; sourceTree = "<group>"; };
 		8F3B968B1C77D64200B4FEE0 /* shanghai_tower_diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shanghai_tower_diffuse.jpg; path = ViroSample/shanghai_tower_diffuse.jpg; sourceTree = "<group>"; };
 		8F3B968C1C77D64200B4FEE0 /* shanghai_tower_specular.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = shanghai_tower_specular.jpg; path = ViroSample/shanghai_tower_specular.jpg; sourceTree = "<group>"; };
 		8F3B968D1C77D64200B4FEE0 /* shanghai_tower.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = shanghai_tower.obj; path = ViroSample/shanghai_tower.obj; sourceTree = "<group>"; };
@@ -2184,6 +2188,8 @@
 				8FD2A5311F813C4000E831A6 /* VROVideoSphereTest.cpp */,
 				8FD2A5101F81323500E831A6 /* VROBoxTest.h */,
 				8FD2A50F1F81323500E831A6 /* VROBoxTest.cpp */,
+				8F3AF9911F95024D0087BA73 /* VROPolylineTest.h */,
+				8F3AF9901F95024D0087BA73 /* VROPolylineTest.cpp */,
 			);
 			name = "Test Scenes";
 			sourceTree = "<group>";
@@ -2641,6 +2647,7 @@
 				8A5C055A1EF6416900F94CB9 /* VROARNode.h in Headers */,
 				8F0FE6751CD2D3FD00A4C297 /* VROViewMetal.h in Headers */,
 				8F83DEA11C4826F80089C31A /* VROTimingFunctionEaseOut.h in Headers */,
+				8F3AF9931F95024D0087BA73 /* VROPolylineTest.h in Headers */,
 				8FF214111F314E0E005ACA96 /* VROTree.h in Headers */,
 				8F3488AF1EE83DD3008917CB /* VROARCameraInertial.h in Headers */,
 				8A130D8C1E3BBEA90050D83B /* VROSoundDelegate.h in Headers */,
@@ -3293,6 +3300,7 @@
 				8F383B611F43546C006AB301 /* VROShadowMapRenderPass.cpp in Sources */,
 				8FD4DF0A1C18ED3C003DC425 /* VRONode.cpp in Sources */,
 				8FD4DEF41C18ED19003DC425 /* VROFrustumPlane.cpp in Sources */,
+				8F3AF9921F95024D0087BA73 /* VROPolylineTest.cpp in Sources */,
 				8FD4DEEE1C18ED0B003DC425 /* VROByteBuffer.cpp in Sources */,
 				8F53C9021E01A39E008314B4 /* VROOBJLoader.cpp in Sources */,
 				8FDDE2091CCFD6A100674DE2 /* VROViewMetal.m in Sources */,
