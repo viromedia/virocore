@@ -13,8 +13,12 @@ public class ARSceneController extends SceneController {
     public long mNativeARDelegateRef;
 
     public ARSceneController() {
-        setSceneRef(nativeCreateARSceneController());
         mNativeARDelegateRef = nativeCreateARSceneDelegate(mNativeRef);
+    }
+
+    @Override
+    protected long createNativeScene() {
+        return nativeCreateARSceneController();
     }
 
     @Override

@@ -30,12 +30,16 @@ public class SceneController {
      * Construct a new Scene.
      */
     public SceneController() {
-        setSceneRef(nativeCreateSceneController());
+        setSceneRef(createNativeScene());
         mNativeDelegateRef = nativeCreateSceneControllerDelegate(mNativeRef);
 
         mRootNode = new Node(false);
         mRootNode.setNativeRef(nativeGetSceneNodeRef(mNativeRef));
         mPhysicsWorld = new PhysicsWorld(this);
+    }
+
+    protected long createNativeScene() {
+        return nativeCreateSceneController();
     }
 
     /**
