@@ -18,7 +18,14 @@ void VROARComponentManager::updateARPlane(std::shared_ptr<VROARPlaneNode> plane)
 
     // if the plane has an anchor, then see if the anchor still fulfills the plane's requirements
     if (anchor) {
-        if (plane->hasRequirementsFulfilled(anchor) || plane->getId() == anchor->getId()) {
+        // if there's an ID on the plane node, then don't check if the plane->hasRequirementsFulfilled
+        // which is used for "auto" assignment through minWidth/height, a plane w/ id means that the
+        // user intends for it to be manually assigned (ignoring minWidth/Height).
+        if (!plane->getId().empty()) {
+            if (plane->getId() == anchor->getId()) {
+                return;
+            }
+        } else if (plane->hasRequirementsFulfilled(anchor)) {
             return;
         }
         // notify the plane of detachment, detach anchor & plane, notify anchor updated.
@@ -28,6 +35,7 @@ void VROARComponentManager::updateARPlane(std::shared_ptr<VROARPlaneNode> plane)
 
         processDetachedAnchor(anchor);
     }
+
     processDetachedPlane(plane);
 }
 
@@ -144,6 +152,10 @@ std::shared_ptr<VROARAnchor> VROARComponentManager::findDetachedAnchor(std::shar
 }
 
 void VROARComponentManager::processDetachedPlane(std::shared_ptr<VROARPlaneNode> plane) {
+    // before we process, we need to remove the plane from any list it might be in, because
+    // if we fail, then we'll accidentally add it back in again!
+    removeFromDetachedList(plane);
+
     std::string id = plane->getId();
     if (!id.empty()) {
         // first find if there's an anchor!
@@ -153,7 +165,9 @@ void VROARComponentManager::processDetachedPlane(std::shared_ptr<VROARPlaneNode>
             std::shared_ptr<VROARPlaneNode> oldPlane = std::dynamic_pointer_cast<VROARPlaneNode>(anchor->getARNode());
             if (oldPlane) {
                 if (oldPlane->getId() == anchor->getId()) {
-                    // do nothing if the oldPlane shared the same ID
+                    // if the oldPlane shared the same ID, add the plane to the _detachedPlanesWithID
+                    // vector so if the oldPlane is ever detached, we can attach it to the anchor
+                    _detachedPlanesWithID.push_back(plane);
                     return;
                 }
                 // detach the oldPlane and process it as detached plane if it doesn't have the same ID
@@ -163,6 +177,8 @@ void VROARComponentManager::processDetachedPlane(std::shared_ptr<VROARPlaneNode>
             }
             // attach the given plane to the anchor that shares its ID.
             attachNodeToAnchor(plane, anchor);
+        } else {
+            _detachedPlanesWithID.push_back(plane);
         }
     } else {
         std::shared_ptr<VROARAnchor> anchor = findDetachedAnchor(plane);
@@ -176,6 +192,10 @@ void VROARComponentManager::processDetachedPlane(std::shared_ptr<VROARPlaneNode>
 }
 
 void VROARComponentManager::processDetachedAnchor(std::shared_ptr<VROARAnchor> anchor) {
+    // before we process, we need to remove the plane from any list it might be in, because
+    // if we fail, then we'll accidentally add it back in again!
+    removeFromDetachedList(anchor);
+
     std::shared_ptr<VROARPlaneNode> plane = findDetachedPlane(anchor);
     if (plane) {
         removeFromDetachedList(plane);
@@ -187,6 +207,14 @@ void VROARComponentManager::processDetachedAnchor(std::shared_ptr<VROARAnchor> a
 
 std::shared_ptr<VROARPlaneNode> VROARComponentManager::findDetachedPlane(std::shared_ptr<VROARAnchor> anchor) {
     std::vector<std::shared_ptr<VROARPlaneNode>>::iterator it;
+    // first check the planes with ID!
+    for (it = _detachedPlanesWithID.begin(); it < _detachedPlanesWithID.end(); it++) {
+        std::shared_ptr<VROARPlaneNode> candidate = *it;
+        if (candidate->getId() == anchor->getId()) {
+            return candidate;
+        }
+    }
+
     for (it = _detachedPlanes.begin(); it < _detachedPlanes.end(); it++) {
         std::shared_ptr<VROARPlaneNode> candidate = *it;
         if (candidate->hasRequirementsFulfilled(anchor)) {
@@ -209,6 +237,12 @@ void VROARComponentManager::removeFromDetachedList(std::shared_ptr<VROARPlaneNod
                                          [plane](std::shared_ptr<VROARPlaneNode> candidate) {
                                              return candidate == plane;
                                          }), _detachedPlanes.end());
+
+    // check the other list too!
+    _detachedPlanesWithID.erase(std::remove_if(_detachedPlanesWithID.begin(), _detachedPlanesWithID.end(),
+                                               [plane](std::shared_ptr<VROARPlaneNode> candidate) {
+                                                   return candidate == plane;
+                                               }), _detachedPlanesWithID.end());
 }
 
 void VROARComponentManager::removeFromDetachedList(std::shared_ptr<VROARAnchor> anchor) {
