@@ -21,7 +21,7 @@ public class ARTouchGestureListener extends GestureDetector.SimpleOnGestureListe
         implements View.OnTouchListener, ScaleGestureDetector.OnScaleGestureListener,
         RotationGestureDetector.OnRotateGestureListener {
 
-    private static final long MIN_FINGER_TOUCH_DURATION = 200; // milliseconds
+    private static final long MIN_FINGER_TOUCH_DURATION = 50; // milliseconds
     private static final long INVALID_FINGER_DOWN_TIME = -1;
 
     // we tie these with the MotionEvent values because we use them in the renderer.

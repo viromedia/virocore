@@ -500,67 +500,6 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         return Arrays.asList(node1);
     }
 
-    private EventDelegate getGenericDelegate(final String delegateTag){
-        EventDelegate delegateJni = new EventDelegate();
-        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_HOVER, false);
-        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_FUSE, true);
-
-        delegateJni.setEventDelegateCallback(new EventDelegate.EventDelegateCallback() {
-            @Override
-            public void onHover(int source, boolean isHovering, float[] hitLoc) {
-                Log.e(TAG, delegateTag + " onHover " + isHovering);
-            }
-
-            @Override
-            public void onClick(int source, EventDelegate.ClickState clickState, float[] hitLoc) {
-                Log.e(TAG, delegateTag + " onClick " + clickState.toString());
-            }
-
-            @Override
-            public void onTouch(int source, EventDelegate.TouchState touchState, float[] touchPadPos) {
-                Log.e(TAG, delegateTag + "onTouch " + touchPadPos[0] + "," + touchPadPos[1]);
-            }
-
-            @Override
-            public void onControllerStatus(int source, EventDelegate.ControllerStatus status) {
-
-            }
-
-            @Override
-            public void onSwipe(int source, EventDelegate.SwipeState swipeState) {
-                Log.e(TAG, delegateTag + " onSwipe " + swipeState.toString());
-            }
-
-            @Override
-            public void onScroll(int source, float x, float y) {
-                Log.e(TAG, delegateTag + " onScroll " + x + "," +y);
-
-            }
-
-            @Override
-            public void onDrag(int source, float x, float y, float z) {
-                Log.e(TAG, delegateTag +" On drag: " + x + ", " + y + ", " + z);
-            }
-
-            @Override
-            public void onFuse(int source) {
-                Log.e(TAG, delegateTag + " On fuse");
-            }
-
-            @Override
-            public void onPinch(int source, float scaleFactor, EventDelegate.PinchState pinchState) {
-                Log.e(TAG, delegateTag + " On pinch");
-            }
-
-            @Override
-            public void onRotate(int source, float rotateFactor, EventDelegate.RotateState rotateState) {
-                Log.e(TAG, delegateTag + " On rotate");
-            }
-        });
-
-        return delegateJni;
-    }
-
     private List<Node> testImageSurface(Context context) {
         Node node = new Node();
         Image bobaImage = new Image("boba.png", TextureFormat.RGBA8);
@@ -726,13 +665,61 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
     }
 
+    private class ARDragDelegateCallback extends GenericEventCallback {
+
+        private Node mNode;
+
+        private float[] mStartScale;
+
+        private float mYRotation = 0;
+
+        public ARDragDelegateCallback(String tag, Node node) {
+            super(tag);
+            mNode = node;
+        }
+
+        @Override
+        public void onPinch(int source, float scaleFactor, EventDelegate.PinchState pinchState) {
+            if (pinchState == EventDelegate.PinchState.PINCH_START) {
+                if (mStartScale == null) {
+                    float[] scale = {1,1,1};
+                    mStartScale = scale;
+                }
+            } else if (pinchState == EventDelegate.PinchState.PINCH_END) {
+                for (int i = 0; i < 3; i++) {
+                    mStartScale[i] = mStartScale[i] * scaleFactor;
+                }
+            } else {
+                float[] newScale = {0,0,0};
+                for (int i = 0; i < 3; i++) {
+                    newScale[i] = mStartScale[i] * scaleFactor;
+                }
+                mNode.setScale(newScale);
+            }
+        }
+
+        @Override
+        public void onRotate(int source, float rotateFactor, EventDelegate.RotateState rotateState) {
+            if (rotateState == EventDelegate.RotateState.ROTATE_MOVE) {
+                float[] newRotation = {0, mYRotation - rotateFactor, 0};
+                mNode.setRotation(newRotation);
+            } else if(rotateState == EventDelegate.RotateState.ROTATE_END) {
+                mYRotation = mYRotation - rotateFactor;
+            }
+        }
+    }
+
     private List<Node> testARDrag() {
         Node node = new Node();
         Node boxNode = new Node();
         Box box = new Box(.15f, .15f, .15f);
 
         EventDelegate delegate = getGenericDelegate("boxNode");
+
         delegate.setEventEnabled(EventDelegate.EventAction.ON_DRAG, true);
+        delegate.setEventEnabled(EventDelegate.EventAction.ON_ROTATE, true);
+        delegate.setEventEnabled(EventDelegate.EventAction.ON_PINCH, true);
+        delegate.setEventDelegateCallback(new ARDragDelegateCallback("boxNode", boxNode));
         node.setEventDelegateJni(delegate);
         node.setDragType("FixedToWorld");
 
@@ -924,5 +911,74 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         }, 4000);
 
         return node1;
+    }
+
+    private EventDelegate getGenericDelegate(final String delegateTag){
+        EventDelegate delegateJni = new EventDelegate();
+        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_HOVER, false);
+        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_FUSE, true);
+
+        delegateJni.setEventDelegateCallback(new GenericEventCallback(delegateTag));
+
+        return delegateJni;
+    }
+
+    private class GenericEventCallback implements EventDelegate.EventDelegateCallback {
+        protected final String delegateTag;
+
+        public GenericEventCallback(String tag) {
+            delegateTag = tag;
+        }
+
+        @Override
+        public void onHover(int source, boolean isHovering, float[] hitLoc) {
+            Log.e(TAG, delegateTag + " onHover " + isHovering);
+        }
+
+        @Override
+        public void onClick(int source, EventDelegate.ClickState clickState, float[] hitLoc) {
+            Log.e(TAG, delegateTag + " onClick " + clickState.toString());
+        }
+
+        @Override
+        public void onTouch(int source, EventDelegate.TouchState touchState, float[] touchPadPos) {
+            Log.e(TAG, delegateTag + "onTouch " + touchPadPos[0] + "," + touchPadPos[1]);
+        }
+
+        @Override
+        public void onControllerStatus(int source, EventDelegate.ControllerStatus status) {
+
+        }
+
+        @Override
+        public void onSwipe(int source, EventDelegate.SwipeState swipeState) {
+            Log.e(TAG, delegateTag + " onSwipe " + swipeState.toString());
+        }
+
+        @Override
+        public void onScroll(int source, float x, float y) {
+            Log.e(TAG, delegateTag + " onScroll " + x + "," +y);
+
+        }
+
+        @Override
+        public void onDrag(int source, float x, float y, float z) {
+            Log.e(TAG, delegateTag +" On drag: " + x + ", " + y + ", " + z);
+        }
+
+        @Override
+        public void onFuse(int source) {
+            Log.e(TAG, delegateTag + " On fuse");
+        }
+
+        @Override
+        public void onPinch(int source, float scaleFactor, EventDelegate.PinchState pinchState) {
+            Log.e(TAG, delegateTag + " On pinch");
+        }
+
+        @Override
+        public void onRotate(int source, float rotateFactor, EventDelegate.RotateState rotateState) {
+            Log.e(TAG, delegateTag + " On rotate");
+        }
     }
 }
