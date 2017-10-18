@@ -55,17 +55,27 @@ std::vector<VROARHitTestResult> VROARFrameARCore::hitTest(int x, int y, std::set
         // Determine if the hitResult is a PlaneHitResult.
         bool isPlane = hitResult.IsInstanceOf(env, PlaneHitResultClass);
 
-        // Get the type of HitResult. ARCore only has 2 hit types Planes & PointCloud (FeaturePoint)
-        VROARHitTestResultType type = isPlane ? VROARHitTestResultType::ExistingPlaneUsingExtent
-                                              : VROARHitTestResultType::FeaturePoint;
 
         // Get the anchor only if the result is of type PlaneHitResult
         std::shared_ptr<VROARSessionARCore> session = _session.lock();
         std::shared_ptr<VROARAnchor> vAnchor = nullptr;
+        VROARHitTestResultType type;
         if (session && isPlane) {
+            bool inExtent = arcore::planehitresult::isHitInExtents((jni::Object<arcore::PlaneHitResult>) hitResult);
+            bool inPolygon = arcore::planehitresult::isHitInPolygon((jni::Object<arcore::PlaneHitResult>) hitResult);
+
+            if (inExtent || inPolygon) {
+                type = VROARHitTestResultType::ExistingPlaneUsingExtent;
+            } else {
+                type = VROARHitTestResultType::EstimatedHorizontalPlane;
+            }
+
             jni::Object<arcore::Plane> plane =
                     arcore::planehitresult::getPlane((jni::Object<arcore::PlaneHitResult>) hitResult);
+
             vAnchor = session->getAnchorForNative(plane);
+        } else {
+            type = VROARHitTestResultType::FeaturePoint;
         }
 
         // Get the distance from the camera to the HitResult.

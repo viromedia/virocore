@@ -128,7 +128,8 @@ namespace arcore {
     namespace planehitresult {
 
         jni::Object<Plane> getPlane(jni::Object<PlaneHitResult> hitResult);
-
+        jboolean isHitInExtents(jni::Object<PlaneHitResult> hitResult);
+        jboolean isHitInPolygon(jni::Object<PlaneHitResult> hitResult);
     }
 
     namespace session {

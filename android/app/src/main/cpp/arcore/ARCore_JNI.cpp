@@ -497,6 +497,19 @@ namespace arcore {
             return hitResult.Call(env, method);
         }
 
+        jboolean isHitInExtents(jni::Object<PlaneHitResult> hitResult) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto PlaneHitResultClass = *jni::Class<PlaneHitResult>::Find(env).NewGlobalRef(env).release();
+            auto method = PlaneHitResultClass.GetMethod<jni::jboolean()>(env, "isHitInExtents");
+            return hitResult.Call(env, method);
+        }
+
+        jboolean isHitInPolygon(jni::Object<PlaneHitResult> hitResult) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto PlaneHitResultClass = *jni::Class<PlaneHitResult>::Find(env).NewGlobalRef(env).release();
+            auto method = PlaneHitResultClass.GetMethod<jni::jboolean()>(env, "isHitInPolygon");
+            return hitResult.Call(env, method);
+        }
     }
 
     namespace session {
