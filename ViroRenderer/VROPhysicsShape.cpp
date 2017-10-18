@@ -90,7 +90,6 @@ btCollisionShape* VROPhysicsShape::generateBasicBulletShape(std::shared_ptr<VRON
     return generateBasicBulletShape(type, params);
 }
 
-
 btCollisionShape* VROPhysicsShape::generateBasicBulletShape(VROPhysicsShape::VROShapeType type, std::vector<float> params) {
     if (type == VROPhysicsShape::VROShapeType::Box) {
         return new btBoxShape(btVector3(params[0],params[1],params[2]));

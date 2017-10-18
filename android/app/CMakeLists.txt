@@ -100,7 +100,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/PortalScene_JNI.cpp
              src/main/cpp/jni/PortalDelegate_JNI.cpp
              src/main/cpp/jni/PortalTraversalListener_JNI.cpp
-
+             src/main/cpp/jni/PhysicsBody_JNI.cpp
 
              # Android AR JNI
              src/main/cpp/jni/ARPlane_JNI.cpp

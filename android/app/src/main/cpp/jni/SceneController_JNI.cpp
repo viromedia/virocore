@@ -271,34 +271,6 @@ JNI_METHOD(void, nativeSetPhysicsWorldDebugDraw)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeAttachToPhysicsWorld)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong sceneRef,
-                                     jlong nodeRef) {
-    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
-    std::weak_ptr<VRONode> node_w = Node::native(nodeRef);
-    VROPlatformDispatchAsyncRenderer([sceneController_w, node_w] {
-        std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
-        std::shared_ptr<VRONode> node = node_w.lock();
-        if (node && node->getPhysicsBody() && sceneController) {
-            sceneController->getScene()->getPhysicsWorld()->addPhysicsBody(node->getPhysicsBody());
-        }
-    });
-}
-
-JNI_METHOD(void, nativeDetachFromPhysicsWorld)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong sceneRef,
-                                     jlong nodeRef) {
-    std::shared_ptr<VROSceneController> sceneController = SceneController::native(sceneRef);
-    std::shared_ptr<VRONode> node = Node::native(nodeRef);
-    VROPlatformDispatchAsyncRenderer([sceneController, node] {
-        if (node && node->getPhysicsBody() && sceneController) {
-            sceneController->getScene()->getPhysicsWorld()->removePhysicsBody(node->getPhysicsBody());
-        }
-    });
-}
-
 JNI_METHOD(void, findCollisionsWithRayAsync)(JNIEnv *env,
                                      jobject obj,
                                      jlong sceneRef,

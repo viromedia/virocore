@@ -105,14 +105,6 @@ public class SceneController {
         nativeSetPhysicsWorldDebugDraw(mNativeRef, debugDraw);
     }
 
-    void attachBodyToPhysicsWorld(Node node){
-        nativeAttachToPhysicsWorld(mNativeRef, node.mNativeRef);
-    }
-
-    void detachBodyFromPhysicsWorld(Node node){
-        nativeDetachFromPhysicsWorld(mNativeRef, node.mNativeRef);
-    }
-
     void findCollisionsWithRayAsync(float[] fromPos, float toPos[], boolean closest,
                                            String tag, PhysicsWorld.HitTestCallback callback){
         findCollisionsWithRayAsync(mNativeRef, fromPos, toPos, closest, tag, callback);
@@ -229,8 +221,6 @@ public class SceneController {
      * Native Viro Phsyics JNI Functions
      */
     private native void nativeSetPhysicsWorldGravity(long sceneRef, float gravity[]);
-    private native void nativeAttachToPhysicsWorld(long sceneRef, long nodeRef);
-    private native void nativeDetachFromPhysicsWorld(long sceneRef, long nodeRef);
     private native void findCollisionsWithRayAsync(long sceneRef, float[] from, float[] to,
                                            boolean closest, String tag,
                                            PhysicsWorld.HitTestCallback callback);

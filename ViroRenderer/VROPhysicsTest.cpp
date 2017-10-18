@@ -46,10 +46,10 @@ void VROPhysicsTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchroniz
     
     std::shared_ptr<VROPhysicsBody> physicsGround = groundNode->initPhysicsBody(VROPhysicsBody::VROPhysicsBodyType::Static,
                                                                                 0, nullptr);
+    physicsGround->setRestitution(1.0);
+    
     std::shared_ptr<VROPhysicsWorld> physicsWorld = scene->getPhysicsWorld();
     physicsWorld->setGravity({0, -9.81f, 0});
-    physicsWorld->addPhysicsBody(physicsGround);
-    physicsGround->setRestitution(0);
     
     _rootNode = rootNode;
 }
@@ -75,12 +75,8 @@ std::shared_ptr<VRONode> VROPhysicsTest::createPhysicsBox(VROVector3f position, 
     _rootNode->addChildNode(boxNode);
     std::shared_ptr<VROPhysicsBody> physicsBody = boxNode->initPhysicsBody(VROPhysicsBody::VROPhysicsBodyType::Dynamic, 5,
                                                                            nullptr);
-    physicsBody->setRestitution(0);
+    physicsBody->setRestitution(1.0);
     physicsBody->setUseGravity(true);
-    
-    std::shared_ptr<VROPhysicsWorld> physicsWorld = _sceneController->getScene()->getPhysicsWorld();
-    physicsWorld->addPhysicsBody(physicsBody);
-    
     return boxNode;
 }
 

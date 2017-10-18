@@ -26,11 +26,12 @@
 #include "VROPortal.h"
 #include "VROMaterial.h"
 #include "VROPhysicsBody.h"
+#include "VROScene.h"
 #include "VROAnimationChain.h"
 #include "VROExecutableAnimation.h"
 #include "VROExecutableNodeAnimation.h"
 #include "VROTransformDelegate.h"
-#include "VROInstancedUBO.h";
+#include "VROInstancedUBO.h"
 
 // Opacity below which a node is considered hidden
 static const float kHiddenOpacityThreshold = 0.02;
@@ -531,7 +532,84 @@ VROMatrix4f VRONode::getLastComputedTransform() const {
     return _lastComputedTransform;
 }
 
-#pragma mark - Portals
+#pragma mark - Scene Graph
+
+void VRONode::addChildNode(std::shared_ptr<VRONode> node) {
+    passert_thread();
+    passert (node);
+    
+    _subnodes.push_back(node);
+    node->_supernode = std::static_pointer_cast<VRONode>(shared_from_this());
+    
+    /*
+     If this node is attached to a VROScene, cascade and assign that scene to
+     all children.
+     */
+    std::shared_ptr<VROScene> scene = _scene.lock();
+    if (scene) {
+        node->setScene(scene, true);
+    }
+}
+
+void VRONode::removeFromParentNode() {
+    passert_thread();
+    
+    std::shared_ptr<VRONode> supernode = _supernode.lock();
+    if (supernode) {
+        std::vector<std::shared_ptr<VRONode>> &parentSubnodes = supernode->_subnodes;
+        parentSubnodes.erase(
+                             std::remove_if(parentSubnodes.begin(), parentSubnodes.end(),
+                                            [this](std::shared_ptr<VRONode> node) {
+                                                return node.get() == this;
+                                            }), parentSubnodes.end());
+        _supernode.reset();
+    }
+    
+    /*
+     Detach this node and all its children from the scene.
+     */
+    setScene(nullptr, true);
+}
+
+std::vector<std::shared_ptr<VRONode>> VRONode::getChildNodes() const {
+    return _subnodes;
+}
+
+void VRONode::setScene(std::shared_ptr<VROScene> scene, bool recursive) {
+    /*
+     When we detach from a scene, remove any physics bodies from that scene's
+     physics world.
+     */
+    std::shared_ptr<VROScene> currentScene = _scene.lock();
+    if (currentScene) {
+        if (currentScene->hasPhysicsWorld() && _physicsBody) {
+            currentScene->getPhysicsWorld()->removePhysicsBody(_physicsBody);
+        }
+    }
+    
+    _scene = scene;
+    
+    /*
+     When we attach to a new scene, add the physics body to the scene's physics
+     world.
+     */
+    if (scene && _physicsBody) {
+        scene->getPhysicsWorld()->addPhysicsBody(_physicsBody);
+    }
+     
+    if (recursive) {
+        for (std::shared_ptr<VRONode> &node : _subnodes) {
+            node->setScene(scene, true);
+        }
+    }
+}
+
+void VRONode::clearChildren() {
+    std::vector<std::shared_ptr<VRONode>> children = _subnodes;
+    for (std::shared_ptr<VRONode> &node : children) {
+        node->removeFromParentNode();
+    }
+}
 
 const std::shared_ptr<VROPortal> VRONode::getParentPortal() const {
     const std::shared_ptr<VRONode> parent = _supernode.lock();
@@ -933,11 +1011,15 @@ void VRONode::removeAllConstraints() {
 
 #pragma mark - Physics
 
-std::shared_ptr<VROPhysicsBody> VRONode::initPhysicsBody(VROPhysicsBody::VROPhysicsBodyType type,
-                                                         float mass,
+std::shared_ptr<VROPhysicsBody> VRONode::initPhysicsBody(VROPhysicsBody::VROPhysicsBodyType type, float mass,
                                                          std::shared_ptr<VROPhysicsShape> shape) {
     std::shared_ptr<VRONode> node = std::static_pointer_cast<VRONode>(shared_from_this());
     _physicsBody = std::make_shared<VROPhysicsBody>(node, type, mass, shape);
+    
+    std::shared_ptr<VROScene> scene = _scene.lock();
+    if (scene) {
+        scene->getPhysicsWorld()->addPhysicsBody(_physicsBody);
+    }
     return _physicsBody;
 }
 
@@ -945,6 +1027,12 @@ std::shared_ptr<VROPhysicsBody> VRONode::getPhysicsBody() const {
     return _physicsBody;
 }
 
-void VRONode::clearPhysicsBody(){
+void VRONode::clearPhysicsBody() {
+    if (_physicsBody) {
+        std::shared_ptr<VROScene> scene = _scene.lock();
+        if (scene && scene->hasPhysicsWorld()) {
+            scene->getPhysicsWorld()->removePhysicsBody(_physicsBody);
+        }
+    }
     _physicsBody = nullptr;
 }

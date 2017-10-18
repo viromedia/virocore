@@ -13,6 +13,7 @@
 #include "VROPhysicsMotionState.h"
 #include "VROStringUtil.h"
 #include <btBulletDynamicsCommon.h>
+
 const std::string VROPhysicsBody::kDynamicTag = "dynamic";
 const std::string VROPhysicsBody::kKinematicTag = "kinematic";
 const std::string VROPhysicsBody::kStaticTag = "static";
@@ -20,9 +21,9 @@ const std::string VROPhysicsBody::kStaticTag = "static";
 VROPhysicsBody::VROPhysicsBody(std::shared_ptr<VRONode> node, VROPhysicsBody::VROPhysicsBodyType type,
                                float mass, std::shared_ptr<VROPhysicsShape> shape) {
     if (type == VROPhysicsBody::VROPhysicsBodyType::Dynamic && mass == 0) {
-        pwarn("Attempted to incorrectly set 0 mass for a Dynamic body type! Defaulting to 1kg mass.");
+        pwarn("Attempted to incorrectly set 0 mass for a dynamic body type! Defaulting to 1kg mass.");
         mass = 1;
-    } else if (type != VROPhysicsBody::VROPhysicsBodyType::Dynamic && mass !=0) {
+    } else if (type != VROPhysicsBody::VROPhysicsBodyType::Dynamic && mass != 0) {
         pwarn("Attempted to incorrectly set mass for a static or kinematic body type! Defaulting to 0kg mass.");
         mass = 0;
     }

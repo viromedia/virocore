@@ -11,7 +11,7 @@ import java.lang.ref.WeakReference;
 public class PhysicsWorld {
 
     /**
-     * Callback used used when hit tests are completed.
+     * Callback used when hit tests are completed.
      */
     public interface HitTestCallback{
         void onComplete(boolean hasHit);
@@ -45,25 +45,11 @@ public class PhysicsWorld {
         }
     }
 
-    public void findCollisionsWithShapeAsync(Vector from, Vector to, String shapeType, float[] params,
+    public void findCollisionsWithShapeAsync(Vector from, Vector to, PhysicsShape shape,
                                              String tag, HitTestCallback callback) {
         SceneController scene = mScene.get();
         if (scene != null) {
-            scene.findCollisionsWithShapeAsync(from.toArray(), to.toArray(), shapeType, params, tag, callback);
-        }
-    }
-
-    public void attachBodyToPhysicsWorld(Node node) {
-        SceneController scene = mScene.get();
-        if (scene != null) {
-            scene.attachBodyToPhysicsWorld(node);
-        }
-    }
-
-    public void detachBodyFromPhysicsWorld(Node node) {
-        SceneController scene = mScene.get();
-        if (scene != null) {
-            scene.detachBodyFromPhysicsWorld(node);
+            scene.findCollisionsWithShapeAsync(from.toArray(), to.toArray(), shape.getType(), shape.getParams(), tag, callback);
         }
     }
 
