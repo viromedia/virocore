@@ -115,14 +115,14 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
     private WeakReference<Activity> mWeakActivity;
     private KeyValidator mKeyValidator;
     private boolean mDestroyed = false;
+    private boolean mActivityPaused = true;
 
     // Activity state to restore to before being modified by the renderer.
     private int mSavedSystemUIVisbility;
     private int mSavedOrientation;
     private OnSystemUiVisibilityChangeListener mSystemVisibilityListener;
 
-
-    private Config mDefaultConfig;
+    private Config mConfig;
     private Session mSession;
     private ARTouchGestureListener mARTouchGestureListener;
 
@@ -180,8 +180,8 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
         setOnTouchListener(mARTouchGestureListener);
 
         // Create default config, check is supported, create session from that config.
-        mDefaultConfig = Config.createDefaultConfig();
-        if (!mSession.isSupported(mDefaultConfig)) {
+        mConfig = Config.createDefaultConfig();
+        if (!mSession.isSupported(mConfig)) {
             Toast.makeText(activity, "This device does not support AR", Toast.LENGTH_LONG).show();
             activity.finish();
             return;
@@ -316,6 +316,9 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
         if (mWeakActivity.get() != activity){
             return;
         }
+
+        mActivityPaused = true;
+
         mNativeRenderer.onPause();
 
         // Note that the order matters - GLSurfaceView is paused first so that it does not try
@@ -331,6 +334,8 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
             return;
         }
 
+        mActivityPaused = false;
+
         setImmersiveSticky();
         mNativeRenderer.onResume();
 
@@ -338,7 +343,7 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
         // permission on Android M and above, now is a good time to ask the user for it.
         if (CameraPermissionHelper.hasCameraPermission(activity)) {
             // Note that order matters - see the note in onPause(), the reverse applies here.
-            mSession.resume(mDefaultConfig);
+            mSession.resume(mConfig);
             super.onResume();
         } else {
             CameraPermissionHelper.requestCameraPermission(activity);
@@ -441,6 +446,29 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
                 .getDecorView()
                 .setSystemUiVisibility(mSavedSystemUIVisbility);
         refreshActivityLayout();
+    }
+
+    public void setAnchorDetectionTypes(List<String> types) {
+        // default case
+        if (types.size() == 0) {
+            mConfig.setPlaneFindingMode(Config.PlaneFindingMode.DISABLED);
+        }
+
+        for (String type : types) {
+            if (type.equalsIgnoreCase("none")) {
+                mConfig.setPlaneFindingMode(Config.PlaneFindingMode.DISABLED);
+            } else if (type.equalsIgnoreCase("planes_horizontal")) {
+                mConfig.setPlaneFindingMode(Config.PlaneFindingMode.HORIZONTAL);
+            }
+        }
+    }
+
+    /* This function is also used by Native (hence the public) */
+    public void setConfig(Config config) {
+        if (mSession.isSupported(config) && !mActivityPaused) {
+            mConfig = config;
+            mSession.resume(mConfig);
+        }
     }
 
     public void performARHitTestWithRay(float[] ray, com.viro.renderer.jni.Renderer.ARHitTestCallback callback) {

@@ -37,6 +37,10 @@ public class ARPlane extends ARNode {
         nativeSetAnchorId(mNativeRef, anchorId);
     }
 
+    public void setPauseUpdates(boolean pauseUpdates) {
+        nativeSetPauseUpdates(mNativeRef, pauseUpdates);
+    }
+
     private native long nativeCreateARPlane(float minWidth, float minHeight);
 
     private native void nativeDestroyARPlane(long nativeRef);
@@ -46,6 +50,8 @@ public class ARPlane extends ARNode {
     private native void nativeSetMinHeight(long nativeRef, float minHeight);
 
     private native void nativeSetAnchorId(long nativeRef, String anchorId);
+
+    private native void nativeSetPauseUpdates(long nativeRef, boolean pauseUpdates);
 
     private native long nativeCreateARPlaneDelegate(long nativeRef);
 

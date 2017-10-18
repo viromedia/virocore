@@ -42,10 +42,10 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile project(':arcore_client')
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.google.android.exoplayer:exoplayer:r2.2.0'
     compile project(':libs:gvr')
-    compile project(':arcore_client')
     compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
     compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
     compile 'com.amazonaws:aws-android-sdk-ddb:2.2.+'

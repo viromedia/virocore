@@ -23,7 +23,9 @@ class VRODriverOpenGL;
 class VROARSessionARCore : public VROARSession, public std::enable_shared_from_this<VROARSessionARCore> {
 public:
     
-    VROARSessionARCore(jni::Object<arcore::Session> sessionJNI, std::shared_ptr<VRODriverOpenGL> driver);
+    VROARSessionARCore(jni::Object<arcore::Session> sessionJNI,
+                       jni::Object<arcore::ViroViewARCore> viroViewJNI,
+                       std::shared_ptr<VRODriverOpenGL> driver);
     virtual ~VROARSessionARCore();
 
     void run();
@@ -57,6 +59,11 @@ private:
     jni::UniqueObject<arcore::Session> _sessionJNI;
 
     /*
+     The ViroViewARCore object.
+     */
+    jni::UniqueWeakObject<arcore::ViroViewARCore> _viroViewJNI;
+
+    /*
      The last computed ARFrame.
      */
     std::unique_ptr<VROARFrame> _currentFrame;
@@ -72,6 +79,10 @@ private:
      */
     std::vector<std::shared_ptr<VROARAnchor>> _anchors;
 
+    arcore::config::LightingMode _lightingMode;
+    arcore::config::PlaneFindingMode _planeFindingMode;
+    arcore::config::UpdateMode  _updateMode;
+
     /*
      Map of ARCore anchors ("native" anchors) to their Viro representation.
      Required so we can update VROARAnchors when their ARCore counterparts are
@@ -83,6 +94,8 @@ private:
      Background to be assigned to the VROScene.
      */
     std::shared_ptr<VROTexture> _background;
+
+    void updateARCoreConfig();
 
     void processUpdatedAnchors(VROARFrameARCore *frame);
 

@@ -234,10 +234,11 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROPhysicsBody.cpp
              ../../ViroRenderer/VROPhysicsShape.cpp
 
-            # AR
-            ../../ViroRenderer/VROARScene.cpp
-            ../../ViroRenderer/VROARComponentManager.cpp
-            ../../ViroRenderer/VROInputControllerAR.cpp
+             # AR
+             ../../ViroRenderer/VROARScene.cpp
+             ../../ViroRenderer/VROARNode.cpp
+             ../../ViroRenderer/VROARComponentManager.cpp
+             ../../ViroRenderer/VROInputControllerAR.cpp
 
              # Image Tracking
              ../../ViroRenderer/VROImageTracker.cpp

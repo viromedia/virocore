@@ -78,7 +78,7 @@ JNI_METHOD(jlong, nativeCreateRendererOVR)(JNIEnv *env, jclass clazz,
 JNI_METHOD(jlong, nativeCreateRendererARCore)(JNIEnv *env, jclass clazz,
                                               jobject class_loader,
                                               jobject android_context,
-                                              jobject view,
+                                              jni::Object<arcore::ViroViewARCore> view,
                                               jni::Object<arcore::Session> session,
                                               jobject asset_mgr,
                                               jobject platform_util) {
@@ -87,7 +87,7 @@ JNI_METHOD(jlong, nativeCreateRendererARCore)(JNIEnv *env, jclass clazz,
     VROPlatformSetEnv(env, android_context, asset_mgr, platform_util);
 
     std::shared_ptr<VROSceneRenderer> renderer
-            = std::make_shared<VROSceneRendererARCore>(gvrAudio, session);
+            = std::make_shared<VROSceneRendererARCore>(gvrAudio, session, view);
     return Renderer::jptr(renderer);
 }
 

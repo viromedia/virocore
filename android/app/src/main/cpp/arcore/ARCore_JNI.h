@@ -28,6 +28,7 @@ namespace arcore {
     struct PlaneHitResult { static constexpr auto Name() { return "com/google/ar/core/PlaneHitResult"; } };
     struct Session;
     struct Object;
+    struct ViroViewARCore;
     struct Collection;
     struct List;
 
@@ -70,6 +71,10 @@ namespace arcore {
     namespace list {
         jint size(jni::Object<List> list);
         jni::Object<Object> get(jni::Object<List> list, int index);
+    }
+
+    namespace viroview {
+        void setConfig(jni::Object<ViroViewARCore> view, jni::Object<Config> config);
     }
 
     namespace pose {
@@ -131,6 +136,7 @@ namespace arcore {
         VROMatrix4f getProjectionMatrix(jni::Object<Session> session, float near, float far);
         void setCameraTextureName(jni::Object<Session> session, jni::jint textureName);
         void pause(jni::Object<Session> session);
+        void resume(jni::Object<Session> session, jni::Object<Config> config);
         jni::Object<Frame> update(jni::Object<Session> session);
 
     }

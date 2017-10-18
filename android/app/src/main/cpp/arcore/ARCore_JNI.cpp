@@ -31,6 +31,8 @@ namespace arcore {
     struct PointCloudHitResult { static constexpr auto Name() { return "com/google/ar/core/PointCloudHitResult"; } };
     struct Session { static constexpr auto Name() { return "com/google/ar/core/Session"; } };
 
+    struct ViroViewARCore { static constexpr auto Name() { return "com/viro/renderer/jni/ViroViewARCore"; } };
+
     struct Object { static constexpr auto Name() { return "java/lang/Object"; } };
     struct Collection { static constexpr auto Name() { return "java/util/Collection"; } };
     struct List { static constexpr auto Name() { return "java/util/List"; } };
@@ -39,9 +41,80 @@ namespace arcore {
 
         jni::Object<Config> getConfig(LightingMode lightingMode, PlaneFindingMode planeFindingMode,
                                       UpdateMode updateMode) {
+            // Create the default config
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto ConfigClass = *jni::Class<Config>::Find(env).NewGlobalRef(env).release();
+            auto createDefaultConfig =
+                    ConfigClass.GetStaticMethod<jni::Object<Config>()>(env, "createDefaultConfig");
+            jni::Object<Config> config = ConfigClass.Call(env, createDefaultConfig);
 
-            // TODO Implement creating a new Config via JNI. This requires setting the corresponding
-            //      enums
+            // Convert LightingMode (c++ enum) to LightingModeEnum (java enum)
+            static auto LightingModeEnumClass = *jni::Class<LightingModeEnum>::Find(env).NewGlobalRef(env).release();
+            jni::Object<LightingModeEnum> lightingModeEnum;
+
+            switch(lightingMode) {
+                case LightingMode::Disabled: {
+                    static auto field = LightingModeEnumClass.GetStaticField<jni::Object<LightingModeEnum>>(env, "DISABLED");
+                    lightingModeEnum = LightingModeEnumClass.Get(env, field);
+                    break;
+                }
+                case LightingMode::AmbientIntensity: {
+                    static auto field = LightingModeEnumClass.GetStaticField<jni::Object<LightingModeEnum>>(env, "AMBIENT_INTENSITY");
+                    lightingModeEnum = LightingModeEnumClass.Get(env, field);
+                    break;
+                }
+            }
+
+            // Set the lightingMode on Config
+            auto setLightingModeMethod =
+                    ConfigClass.GetMethod<void(jni::Object<LightingModeEnum>)>(env, "setLightingMode");
+            config.Call(env, setLightingModeMethod, lightingModeEnum);
+
+            // Convert PlaneFindingMode (c++ enum) to PlaneFindingModeEnum (java enum)
+            static auto PlaneFindingModeClass = *jni::Class<PlaneFindingModeEnum>::Find(env).NewGlobalRef(env).release();
+            jni::Object<PlaneFindingModeEnum> planeFindingModeEnum;
+
+            switch(planeFindingMode) {
+                case PlaneFindingMode::Disabled: {
+                    static auto field = PlaneFindingModeClass.GetStaticField<jni::Object<PlaneFindingModeEnum>>(env, "DISABLED");
+                    planeFindingModeEnum = PlaneFindingModeClass.Get(env, field);
+                    break;
+                }
+                case PlaneFindingMode::Horizontal: {
+                    static auto field = PlaneFindingModeClass.GetStaticField<jni::Object<PlaneFindingModeEnum>>(env, "HORIZONTAL");
+                    planeFindingModeEnum = PlaneFindingModeClass.Get(env, field);
+                    break;
+                }
+            }
+
+            // Set the planeFindingMode on Config
+            auto setPlaneFindingModeMethod =
+                    ConfigClass.GetMethod<void(jni::Object<PlaneFindingModeEnum>)>(env, "setPlaneFindingMode");
+            config.Call(env, setPlaneFindingModeMethod, planeFindingModeEnum);
+
+            // Convert UpdateMode (c++ enum) to UpdateModeEnum (java enum)
+            static auto UpdateModeClass = *jni::Class<UpdateModeEnum>::Find(env).NewGlobalRef(env).release();
+            jni::Object<UpdateModeEnum> updateModeEnum;
+
+            switch(updateMode) {
+                case UpdateMode::Blocking: {
+                    static auto field = UpdateModeClass.GetStaticField<jni::Object<UpdateModeEnum>>(env, "BLOCKING");
+                    updateModeEnum = UpdateModeClass.Get(env, field);
+                    break;
+                }
+                case UpdateMode::LatestCameraImage: {
+                    static auto field = UpdateModeClass.GetStaticField<jni::Object<UpdateModeEnum>>(env, "LATEST_CAMERA_IMAGE");
+                    updateModeEnum = UpdateModeClass.Get(env, field);
+                    break;
+                }
+            }
+
+            // Set the updateMode on Config
+            auto setUpdateModeMethod =
+                    ConfigClass.GetMethod<void(jni::Object<UpdateModeEnum>)>(env, "setUpdateMode");
+            config.Call(env, setUpdateModeMethod, updateModeEnum);
+
+            return config;
         }
 
     }
@@ -95,6 +168,15 @@ namespace arcore {
             static auto ListClass = *jni::Class<List>::Find(env).NewGlobalRef(env).release();
             auto method = ListClass.GetMethod<jni::Object<Object>(jni::jint)>(env, "get");
             return list.Call(env, method, index);
+        }
+    }
+
+    namespace viroview {
+        void setConfig(jni::Object<ViroViewARCore> viroView, jni::Object<Config> config) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto ViroViewClass = *jni::Class<ViroViewARCore>::Find(env).NewGlobalRef(env).release();
+            auto method = ViroViewClass.GetMethod<void(jni::Object<Config>)>(env, "setConfig");
+            viroView.Call(env, method, config);
         }
     }
 
@@ -447,6 +529,13 @@ namespace arcore {
             static auto SessionClass = *jni::Class<Session>::Find(env).NewGlobalRef(env).release();
             auto method = SessionClass.GetMethod<void()>(env, "pause");
             session.Call(env, method);
+        }
+
+        void resume(jni::Object<Session> session, jni::Object<Config> config) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto SessionClass = *jni::Class<Session>::Find(env).NewGlobalRef(env).release();
+            auto method = SessionClass.GetMethod<void(jni::Object<Config>)>(env, "resume");
+            session.Call(env, method, config);
         }
 
         jni::Object<Frame> update(jni::Object<Session> session) {

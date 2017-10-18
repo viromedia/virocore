@@ -61,7 +61,12 @@ private:
     ARSession *_session;
     ARConfiguration *_sessionConfiguration;
     VROARKitSessionDelegate *_delegateAR;
-    
+
+    /*
+     Whether or not the session has been paused.
+     */
+    bool _sessionPaused;
+
     /*
      The last computed ARFrame.
      */

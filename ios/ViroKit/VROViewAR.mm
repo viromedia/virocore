@@ -797,6 +797,10 @@ static VROVector3f const kZeroVector = VROVector3f();
     return std::vector<VROARHitTestResult>();
 }
 
+- (std::shared_ptr<VROARSession>)getARSession {
+    return _arSession;
+}
+
 #pragma mark - Settings and Notifications
 
 - (void)orientationDidChange:(NSNotification *)notification {

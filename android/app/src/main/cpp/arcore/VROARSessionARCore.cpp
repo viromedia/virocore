@@ -20,9 +20,15 @@
 #include <VROStringUtil.h>
 #include "VROARHitTestResult.h"
 
-VROARSessionARCore::VROARSessionARCore(jni::Object<arcore::Session> sessionJNI, std::shared_ptr<VRODriverOpenGL> driver) :
-    VROARSession(VROTrackingType::DOF6) {
+VROARSessionARCore::VROARSessionARCore(jni::Object<arcore::Session> sessionJNI,
+                                       jni::Object<arcore::ViroViewARCore> viroViewJNI,
+                                       std::shared_ptr<VRODriverOpenGL> driver) :
+    VROARSession(VROTrackingType::DOF6),
+    _lightingMode(arcore::config::LightingMode::AmbientIntensity),
+    _planeFindingMode(arcore::config::PlaneFindingMode::Horizontal),
+    _updateMode(arcore::config::UpdateMode::Blocking) {
     _sessionJNI = sessionJNI.NewGlobalRef(*VROPlatformGetJNIEnv());
+    _viroViewJNI = viroViewJNI.NewWeakGlobalRef(*VROPlatformGetJNIEnv());
 }
 
 void VROARSessionARCore::initGL(std::shared_ptr<VRODriverOpenGL> driver) {
@@ -64,7 +70,26 @@ bool VROARSessionARCore::isReady() const {
 }
 
 void VROARSessionARCore::setAnchorDetection(std::set<VROAnchorDetection> types) {
-    //TODO VIRO-1895
+    std::set<VROAnchorDetection>::iterator it;
+    for (it = types.begin(); it != types.end(); it++) {
+        VROAnchorDetection type = *it;
+        switch (type) {
+            case VROAnchorDetection::None:
+                _planeFindingMode = arcore::config::PlaneFindingMode::Disabled;
+                break;
+            case VROAnchorDetection::PlanesHorizontal:
+                _planeFindingMode = arcore::config::PlaneFindingMode::Horizontal;
+                break;
+        }
+    }
+    updateARCoreConfig();
+}
+
+void VROARSessionARCore::updateARCoreConfig() {
+    jni::Object<arcore::ViroViewARCore> view = *_viroViewJNI.get();
+    if (view) {
+        arcore::viroview::setConfig(view, arcore::config::getConfig(_lightingMode, _planeFindingMode, _updateMode));
+    }
 }
 
 void VROARSessionARCore::setScene(std::shared_ptr<VROScene> scene) {

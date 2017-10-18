@@ -23,7 +23,8 @@
 #include "VROPlatformUtil.h"
 
 VROARSessioniOS::VROARSessioniOS(VROTrackingType trackingType, std::shared_ptr<VRODriver> driver) :
-    VROARSession(trackingType) {
+    VROARSession(trackingType),
+    _sessionPaused(true) {
         
     if (@available(iOS 11.0, *)) {
         _session = [[ARSession alloc] init];
@@ -54,14 +55,16 @@ VROARSessioniOS::~VROARSessioniOS() {
 #pragma mark - VROARSession implementation
 
 void VROARSessioniOS::run() {
+    _sessionPaused = false;
     std::shared_ptr<VROARSessioniOS> shared = shared_from_this();
     _delegateAR = [[VROARKitSessionDelegate alloc] initWithSession:shared];
     _session.delegate = _delegateAR;
-    
+
     [_session runWithConfiguration:_sessionConfiguration];
 }
 
 void VROARSessioniOS::pause() {
+    _sessionPaused = true;
     [_session pause];
 }
 
@@ -79,6 +82,11 @@ void VROARSessioniOS::setAnchorDetection(std::set<VROAnchorDetection> types) {
         if ([_sessionConfiguration isKindOfClass:[ARWorldTrackingConfiguration class]]) {
             ((ARWorldTrackingConfiguration *) _sessionConfiguration).planeDetection = NO;
         }
+    }
+
+    // apply the configuration
+    if (!_sessionPaused) {
+        [_session runWithConfiguration:_sessionConfiguration];
     }
 }
 

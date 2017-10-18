@@ -61,7 +61,6 @@ JNI_METHOD(void, nativeSetMinHeight) (JNIEnv *env,
     arPlane->setMinHeight(minHeight);
 }
 
-
 JNI_METHOD(void, nativeSetAnchorId) (JNIEnv *env,
                                jobject object,
                                jlong nativeARPlane,
@@ -74,6 +73,18 @@ JNI_METHOD(void, nativeSetAnchorId) (JNIEnv *env,
 
     env->ReleaseStringUTFChars(id, cStrId);
 }
+
+JNI_METHOD(void, nativeSetPauseUpdates) (JNIEnv *env,
+                                     jobject object,
+                                     jlong nativeARPlane,
+                                     jboolean pauseUpdates) {
+    std::weak_ptr<VROARPlaneNode> arPlane_w = ARPlane::native(nativeARPlane);
+    VROPlatformDispatchAsyncRenderer([arPlane_w, pauseUpdates] {
+        std::shared_ptr<VROARPlaneNode> arPlane = arPlane_w.lock();
+        arPlane->setPauseUpdates(pauseUpdates);
+    });
+}
+
 
 } // extern "C"
 
