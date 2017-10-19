@@ -47,6 +47,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/VROInputControllerCardboard.cpp
              src/main/cpp/VROInputControllerOVR.cpp
              src/main/cpp/VROInputControllerARAndroid.cpp
+             src/main/cpp/VROAVRecorderAndroid.cpp
 
              # ARCore
              src/main/cpp/VROSceneRendererARCore.cpp
@@ -103,6 +104,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/PortalTraversalListener_JNI.cpp
              src/main/cpp/jni/PhysicsBody_JNI.cpp
              src/main/cpp/jni/AnimationTransaction_JNI.cpp
+             src/main/cpp/jni/MediaRecorder_JNI.cpp
 
              # Android AR JNI
              src/main/cpp/jni/ARPlane_JNI.cpp

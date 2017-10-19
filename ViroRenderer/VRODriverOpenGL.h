@@ -235,6 +235,10 @@ public:
     }
     
     void unbindRenderTarget() {
+        std::shared_ptr<VRORenderTarget> boundRenderTarget = _boundRenderTarget.lock();
+        if (boundRenderTarget) {
+            boundRenderTarget->unbind();
+        }
         _boundRenderTarget.reset();
     }
     

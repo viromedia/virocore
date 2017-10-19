@@ -23,6 +23,7 @@
 #include "VROGaussianBlurRenderPass.h"
 #include "VROPostProcessEffectFactory.h"
 #include "VRORenderMetadata.h"
+#include "VRORenderToTextureDelegate.h"
 #include <vector>
 
 #pragma mark - Initialization
@@ -41,6 +42,7 @@ VROChoreographer::VROChoreographer(std::shared_ptr<VRODriver> driver) :
     initHDR(driver);
 
     _postProcessEffectFactory = std::make_shared<VROPostProcessEffectFactory>();
+    _renderToTextureDelegate = nullptr;
 }
 
 VROChoreographer::~VROChoreographer() {
@@ -306,7 +308,11 @@ void VROChoreographer::renderToTextureAndDisplay(std::shared_ptr<VRORenderTarget
                                                  std::shared_ptr<VRODriver> driver) {
     // Flip/render the image to the RTT target
     input->blitColor(_renderToTextureTarget, true, driver);
-    
+
+    if (_renderToTextureDelegate) {
+        _renderToTextureDelegate->renderedFrameTexture(input, driver);
+    }
+
     // Blit direct to the display. We can't use the blitColor method here
     // because the display is multisampled (blitting to a multisampled buffer
     // is not supported).
@@ -334,4 +340,8 @@ std::shared_ptr<VROToneMappingRenderPass> VROChoreographer::getToneMapping() {
 
 std::shared_ptr<VROPostProcessEffectFactory> VROChoreographer::getPostProcessEffectFactory(){
     return _postProcessEffectFactory;
+}
+
+void VROChoreographer::setRenderToTextureDelegate(std::shared_ptr<VRORenderToTextureDelegate> delegate) {
+    _renderToTextureDelegate = delegate;
 }

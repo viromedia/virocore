@@ -117,6 +117,11 @@ public class ViroOvrView extends SurfaceView implements ViroView, SurfaceHolder.
     }
 
     @Override
+    public ViroMediaRecorder getRecorder() {
+        return null; // Recorder is not supported.
+    }
+
+    @Override
     public ViroContext getViroContext(){
         return mNativeViroContext;
     }

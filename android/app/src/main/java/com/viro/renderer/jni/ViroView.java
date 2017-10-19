@@ -35,4 +35,5 @@ public interface ViroView extends Application.ActivityLifecycleCallbacks {
 
     public void recenterTracking();
 
+    public ViroMediaRecorder getRecorder();
 }

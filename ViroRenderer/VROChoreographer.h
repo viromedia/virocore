@@ -29,6 +29,7 @@ class VROToneMappingRenderPass;
 class VROGaussianBlurRenderPass;
 class VROPostProcessEffectFactory;
 class VRORenderMetadata;
+class VRORenderToTextureDelegate;
 enum class VROPostProcessEffect;
 enum class VROEyeType;
 
@@ -55,6 +56,8 @@ public:
      
      Note the flip is required so that the texture appears right-side-up in the
      RTT texture.
+
+     TODO VIRO-2025: Remove these functions in favor of setting a VRORenderToTextureDelgateiOS.
      */
     void setRenderToTextureEnabled(bool enabled);
     void setRenderTexture(std::shared_ptr<VROTexture> texture);
@@ -77,6 +80,11 @@ public:
      */
     std::shared_ptr<VROPostProcessEffectFactory> getPostProcessEffectFactory();
 
+    /*
+     Sets a delegate that is invoked each time a frame has been rendered and passes it
+     a reference to the final VRORenderTarget containing a texture representing the rendered scene.
+     */
+    void setRenderToTextureDelegate(std::shared_ptr<VRORenderToTextureDelegate> delegate);
 private:
     
     std::weak_ptr<VRODriver> _driver;
@@ -125,7 +133,12 @@ private:
      */
     void renderToTextureAndDisplay(std::shared_ptr<VRORenderTarget> input,
                                    std::shared_ptr<VRODriver> driver);
-    
+
+    /*
+     Delegate set by recorders to be notified of 'blitted' render targets containing texture
+     representing the rendered scene that is needed for recording / screen capturing.
+     */
+    std::shared_ptr<VRORenderToTextureDelegate> _renderToTextureDelegate;
 #pragma mark - Shadows
     
     /*

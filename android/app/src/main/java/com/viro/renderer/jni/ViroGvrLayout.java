@@ -323,6 +323,11 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
     }
 
     @Override
+    public ViroMediaRecorder getRecorder() {
+        return null;
+    }
+
+    @Override
     public View getContentView() { return this; }
 
     @Override

@@ -5,7 +5,6 @@ package com.viro.renderer.jni;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
 import android.graphics.Point;
 import android.opengl.GLSurfaceView;
@@ -19,7 +18,6 @@ import android.widget.Toast;
 import com.google.ar.core.Config;
 import com.google.ar.core.Session;
 
-import com.google.vr.ndk.base.AndroidCompat;
 import com.viro.renderer.ARTouchGestureListener;
 import com.viro.renderer.FrameListener;
 import com.viro.renderer.GLSurfaceViewQueue;
@@ -125,6 +123,7 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
     private Config mConfig;
     private Session mSession;
     private ARTouchGestureListener mARTouchGestureListener;
+    private ViroMediaRecorder mMediaRecorder;
 
     public ViroViewARCore(Context context, GLListener glListener) {
         super(context);
@@ -174,7 +173,6 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
         activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mSystemVisibilityListener);
 
         mWeakActivity = new WeakReference<Activity>(activity);
-        setVrModeEnabled(false);
 
         mARTouchGestureListener = new ARTouchGestureListener(activity, mNativeRenderer);
         setOnTouchListener(mARTouchGestureListener);
@@ -234,13 +232,7 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
 
     @Override
     public void setDebug(boolean debug) {
-        /**
-         * Only override in the cardboard case because for Daydream it causes the
-         * controller to no longer work.
-         */
-        if (getHeadset().equalsIgnoreCase("cardboard")) {
-            AndroidCompat.setVrModeEnabled((Activity) getContext(), !debug);
-        }
+        //No-op
     }
 
     @Override
@@ -265,13 +257,7 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
      */
     @Override
     public void setVrModeEnabled(boolean vrModeEnabled) {
-        Activity activity = mWeakActivity.get();
-        if (activity != null) {
-            activity.setRequestedOrientation(vrModeEnabled ?
-                    ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-        }
-
-        mNativeRenderer.setVRModeEnabled(vrModeEnabled);
+        //No-op
     }
 
     @Override
@@ -359,6 +345,10 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
     public void destroy() {
         mDestroyed = true;
 
+        if (mMediaRecorder != null) {
+            mMediaRecorder.destroy();
+        }
+
         mNativeViroContext.dispose();
         mNativeRenderer.destroy();
         mARTouchGestureListener.destroy();
@@ -426,6 +416,15 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
         // No-op
     }
 
+    @Override
+    public ViroMediaRecorder getRecorder() {
+        if (mMediaRecorder == null) {
+            mMediaRecorder = new ViroMediaRecorder(getContext(), mNativeRenderer,
+                    getWidth(), getHeight());
+        }
+        return mMediaRecorder;
+    }
+
     public void setImmersiveSticky() {
         ((Activity)getContext())
                 .getWindow()
@@ -482,5 +481,4 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
             mNativeRenderer.performARHitTestWithPosition(position, callback);
         }
     }
-
 }
