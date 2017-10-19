@@ -180,7 +180,9 @@ static VROVector3f const kZeroVector = VROVector3f();
      recording won't work.
      */
     AVAudioSession *session = [AVAudioSession sharedInstance];
-    [session setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+    [session setCategory:AVAudioSessionCategoryPlayAndRecord
+             withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker
+                   error:nil];
     
     /*
      Create AR session checking if an ARKit class and one of our classes have been defined. If not, then load VROARSessionInertial,
