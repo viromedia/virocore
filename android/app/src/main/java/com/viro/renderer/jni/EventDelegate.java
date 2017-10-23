@@ -5,6 +5,7 @@ package com.viro.renderer.jni;
 
 import java.util.HashMap;
 import java.util.Map;
+import com.viro.renderer.ARHitTestResult;
 
 /**
  * Java JNI wrapper responsible for registering and implementing event
@@ -70,7 +71,8 @@ public class EventDelegate {
         ON_DRAG(8),
         ON_FUSE(9),
         ON_PINCH(10),
-        ON_ROTATE(11);
+        ON_ROTATE(11),
+        ON_CAMERA_HIT_TEST(12);
 
         public final int mTypeId;
 
@@ -254,6 +256,7 @@ public class EventDelegate {
         void onFuse(int source);
         void onPinch(int source, float scaleFactor, PinchState pinchState);
         void onRotate(int source, float rotateFactor, RotateState rotateState);
+        void onCameraHitTest(int source, ARHitTestResult[] results);
     }
 
     /**
@@ -318,6 +321,12 @@ public class EventDelegate {
     void onRotate(int source, float rotationDegrees, int rotationState) {
         if (mDelegate != null) {
             mDelegate.onRotate(source, rotationDegrees, RotateState.valueOf(rotationState));
+        }
+    }
+
+    void onCameraHitTest(int source, ARHitTestResult[] results) {
+        if(mDelegate != null) {
+            mDelegate.onCameraHitTest(source, results);
         }
     }
 }

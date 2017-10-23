@@ -18,6 +18,7 @@
 #include "PersistentRef.h"
 #include "VROGeometry.h"
 #include "VRONode.h"
+#include "VROARHitTestResult.h"
 #include "Node_JNI.h"
 
 /**
@@ -51,6 +52,7 @@ public:
     void onFuse(int source, float timeToFuseRatio);
     void onPinch(int source, float scaleFactor, PinchState pinchState);
     void onRotate(int source, float rotateDegrees, RotateState rotateState);
+    void onCameraHitTest(int source, std::vector<VROARHitTestResult> results);
 private:
     jobject _javaObject;
     void callJavaFunction(std::string functionName, std::string methodID, ...);

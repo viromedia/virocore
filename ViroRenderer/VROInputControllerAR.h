@@ -107,6 +107,7 @@ protected:
      to determine where the object should go based on the real world.
      */
     virtual void processDragging(int source);
+    virtual void processCenterCameraHitTest();
     
 private:
     float _viewportWidth;
@@ -126,6 +127,7 @@ private:
     VROVector3f calculateCameraRay(VROVector3f touchPos);
 
     void processTouchMovement();
+
     
     /*
      Helper function to the overridden processDragging that adds a parameter to determine

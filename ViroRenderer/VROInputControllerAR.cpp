@@ -10,6 +10,7 @@
 #include "VRORenderer.h"
 #include "VROProjector.h"
 #include "VROARFrame.h"
+#include "VROARCamera.h"
 
 VROInputControllerAR::VROInputControllerAR(float viewportWidth, float viewportHeight) :
     _viewportWidth(viewportWidth),
@@ -27,6 +28,7 @@ VROVector3f VROInputControllerAR::getDragForwardOffset() {
 void VROInputControllerAR::onProcess(const VROCamera &camera) {
     _latestCamera = camera;
     processTouchMovement();
+    processCenterCameraHitTest();
 }
 
 void VROInputControllerAR::onRotateStart(VROVector3f touchPos) {
@@ -270,6 +272,33 @@ std::string VROInputControllerAR::getHeadset() {
 
 std::string VROInputControllerAR::getController() {
     return std::string("Screen");
+}
+
+void VROInputControllerAR::processCenterCameraHitTest() {
+    std::shared_ptr<VROARSession> session = _weakSession.lock();
+    if (session && session->isReady()) {
+        std::unique_ptr<VROARFrame> &frame = session->getLastFrame();
+        std::vector<VROARHitTestResult> results;
+        std::shared_ptr<VROEventDelegate> delegate = _scene->getRootNode()->getEventDelegate();
+        if(frame && frame->getCamera()) {
+            std::shared_ptr<VROARCamera> camera = frame->getCamera();
+            // If delegate is enabled, send back empty results if tracking is not available yet.
+            if((camera->getTrackingState() == VROARTrackingState::Unavailable)
+               && delegate->isEventEnabled(VROEventDelegate::EventAction::OnCameraHitTest)) {
+                delegate->onCameraHitTest(ViroCardBoard::InputSource::Controller, results);
+                return;
+            }
+        }
+
+       if(frame && delegate->isEventEnabled(VROEventDelegate::EventAction::OnCameraHitTest)) {
+                results = frame->hitTest(_viewportWidth/2.0f, _viewportHeight/2.0f,
+                                 { VROARHitTestResultType::ExistingPlaneUsingExtent,
+                                     VROARHitTestResultType::ExistingPlane,
+                                     VROARHitTestResultType::EstimatedHorizontalPlane,
+                                     VROARHitTestResultType::FeaturePoint });
+            delegate->onCameraHitTest(ViroCardBoard::InputSource::Controller, results);
+        }
+    }
 }
 
 void VROInputControllerAR::processTouchMovement() {

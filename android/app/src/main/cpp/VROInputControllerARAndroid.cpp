@@ -49,3 +49,9 @@ void VROInputControllerARAndroid::onRotateEvent(int rotateState, float rotateDeg
         pwarn("[Viro] onRotateEvent unknown action: %d", rotateState);
     }
 }
+
+void VROInputControllerARAndroid::processCenterCameraHitTest() {
+    pinfo("Overridden VROInputControllerARAndroid processCenterCamereHitTest() executed.");
+        VROInputControllerAR::processCenterCameraHitTest();
+
+}

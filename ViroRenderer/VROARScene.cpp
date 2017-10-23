@@ -55,6 +55,7 @@ void VROARScene::updateAmbientLight(float intensity, float colorTemperature) {
     }
 }
 
+
 void VROARScene::willAppear() {
     if (_arComponentManager) {
         _arComponentManager->setDelegate(std::dynamic_pointer_cast<VROARComponentManagerDelegate>(shared_from_this()));

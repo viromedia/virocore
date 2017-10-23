@@ -19,6 +19,7 @@ public:
     void onTouchEvent(int action, float x, float y);
     void onPinchEvent(int pinchState, float scaleFactor, float x, float y);
     void onRotateEvent(int rotateState, float rotateDegrees, float x, float y);
+    void processCenterCameraHitTest();
 
 };
 
