@@ -17,16 +17,12 @@ VROMatrix4f VROMatrix4f::identity() {
     return identity;
 }
 
-VROMatrix4f::VROMatrix4f() {
+VROMatrix4f::VROMatrix4f() noexcept {
     toIdentity();
 }
 
 VROMatrix4f::VROMatrix4f(const float *matrix) {
     memcpy(_mtx, matrix, sizeof(float) * 16);
-}
-
-VROMatrix4f::~VROMatrix4f() {
-
 }
 
 void VROMatrix4f::toIdentity() {

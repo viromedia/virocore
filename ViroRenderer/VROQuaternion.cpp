@@ -37,16 +37,6 @@ bool VROQuaternion::operator!=(const VROQuaternion &other) const {
     return !(*this == other);
 }
 
-// assignment operator
-VROQuaternion &VROQuaternion::operator=(const VROQuaternion &other) {
-    X = other.X;
-    Y = other.Y;
-    Z = other.Z;
-    W = other.W;
-    
-    return *this;
-}
-
 // matrix assignment operator
 VROQuaternion &VROQuaternion::operator=(const VROMatrix4f& m) {
     const float diag = m[0] + m[5] + m[10] + 1;

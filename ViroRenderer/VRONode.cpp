@@ -434,7 +434,10 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
     /*
      Now that _computedTransform has finished computing, save it so that others outside can query for it.
      */
-    _lastComputedTransform.copy(_computedTransform);
+    _lastComputedTransform.store(_computedTransform);
+    _lastComputedPosition.store(_computedPosition);
+    _lastComputedRotation.store(_rotation);
+    _lastComputedScale.store(_scale);
 
     /*
      Move down the tree.
@@ -529,7 +532,19 @@ VROMatrix4f VRONode::getComputedTransform() const {
 }
 
 VROMatrix4f VRONode::getLastComputedTransform() const {
-    return _lastComputedTransform;
+    return _lastComputedTransform.load();
+}
+
+VROVector3f VRONode::getLastComputedPosition() const {
+    return _lastComputedPosition.load();
+}
+
+VROQuaternion VRONode::getLastComputedRotation() const {
+    return _lastComputedRotation.load();
+}
+
+VROVector3f VRONode::getLastComputedScale() const {
+    return _lastComputedScale.load();
 }
 
 #pragma mark - Scene Graph

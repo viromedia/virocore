@@ -547,6 +547,7 @@ target_link_libraries( # Specifies the target library.
                        ${lib-egl}
                        ${lib-GLESv3}
                        ${lib-z}
+                       atomic
                        lib-gvr
                        lib-gvr-audio
                        lib-ovr

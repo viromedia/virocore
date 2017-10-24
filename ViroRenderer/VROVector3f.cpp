@@ -11,10 +11,7 @@
 #include "VROMath.h"
 #include <sstream>
 
-VROVector3f::VROVector3f() {
-    x = 0;
-    y = 0;
-    z = 0;
+VROVector3f::VROVector3f() noexcept : x(0), y(0), z(0) {
 }
 
 VROVector3f::VROVector3f(float xIn, float yIn) :
@@ -23,16 +20,6 @@ VROVector3f::VROVector3f(float xIn, float yIn) :
 
 VROVector3f::VROVector3f(float xIn, float yIn, float zIn) :
     x(xIn), y(yIn), z(zIn) {
-
-}
-
-VROVector3f::VROVector3f(const VROVector3f &vector) :
-    x(vector.x),
-    y(vector.y),
-    z(vector.z) {
-}
-
-VROVector3f::~VROVector3f() {
 
 }
 
