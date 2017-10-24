@@ -23,7 +23,7 @@ import com.viro.renderer.ARAnchor;
 import com.viro.renderer.ARHitTestResult;
 import com.viro.renderer.jni.ARNode;
 import com.viro.renderer.jni.ARPlane;
-import com.viro.renderer.jni.ARSceneController;
+import com.viro.renderer.jni.ARScene;
 import com.viro.renderer.jni.AmbientLight;
 import com.viro.renderer.jni.AsyncObject3DListener;
 import com.viro.renderer.jni.Box;
@@ -42,7 +42,7 @@ import com.viro.renderer.jni.OpenCV;
 import com.viro.renderer.jni.Polyline;
 import com.viro.renderer.jni.Vector;
 import com.viro.renderer.jni.ViroContext;
-import com.viro.renderer.jni.SceneController;
+import com.viro.renderer.jni.Scene;
 import com.viro.renderer.jni.SoundData;
 import com.viro.renderer.jni.SoundDelegate;
 import com.viro.renderer.jni.SoundField;
@@ -145,7 +145,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
     private void initializeVrScene() {
         // Creation of SceneControllerJni within scene navigator
-        SceneController scene = new SceneController();
+        Scene scene = new Scene();
         Node rootNode = scene.getRootNode();
         List<Node> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
@@ -192,7 +192,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
      Used to initialize the AR Scene, should also change the mVrView to the AR one...
      */
     private void initializeArScene() {
-        ARSceneController scene = new ARSceneController();
+        ARScene scene = new ARScene();
         Node rootNode = scene.getRootNode();
 
         List<Node> nodes = new ArrayList<>();
@@ -357,7 +357,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         return Arrays.asList(node);
     }
 
-    private void testBackgroundVideo(final SceneController scene) {
+    private void testBackgroundVideo(final Scene scene) {
         final VideoTexture videoTexture = new VideoTexture(mVrView.getViroContext());
         videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getViroContext());
         videoTexture.setVolume(0.1f);
@@ -399,15 +399,15 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         });
     }
 
-    private void testBackgroundImage(SceneController scene) {
+    private void testBackgroundImage(Scene scene) {
         Image imageJni = new Image("boba.png", TextureFormat.RGBA8);
         Texture videoTexture = new Texture(imageJni, TextureFormat.RGBA8, true, false);
         scene.setBackgroundImageTexture(videoTexture);
         float[] rotation = {90, 0, 0};
-        scene.setBackgroundRotation(rotation);
+        scene.setBackgroundRotation(new Vector(rotation));
     }
 
-    private void testSkyBoxImage(SceneController scene) {
+    private void testSkyBoxImage(Scene scene) {
         TextureFormat format = TextureFormat.RGBA8;
 
         Image pximageJni = new Image("px.png", format);
@@ -542,13 +542,13 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         return node;
     }
 
-    private void testStereoBackgroundImage(SceneController scene) {
+    private void testStereoBackgroundImage(Scene scene) {
         Image imageJni = new Image("stereo3601.jpg", TextureFormat.RGBA4);
         Texture videoTexture = new Texture(imageJni,
                 TextureFormat.RGBA8, true, false, "TopBottom");
         scene.setBackgroundImageTexture(videoTexture);
         float[] rotation = {0, 0, 0};
-        scene.setBackgroundRotation(rotation);
+        scene.setBackgroundRotation(new Vector(rotation));
     }
 
 
@@ -594,7 +594,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         return Arrays.asList(node);
     }
 
-    private void testStereoBackgroundVideo(final SceneController scene) {
+    private void testStereoBackgroundVideo(final Scene scene) {
         final VideoTexture videoTexture = new VideoTexture(mVrView.getViroContext(), "TopBottom");
         videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
             @Override
@@ -629,7 +629,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         });
     }
 
-    private List<Node> testARPlane(ARSceneController arScene) {
+    private List<Node> testARPlane(ARScene arScene) {
         ARPlane arPlane = new ARPlane(0, 0);
         Node node = new Node();
         final Surface surface = new Surface(.5f, .5f, 0, 0, 1, 1);
@@ -873,7 +873,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         }));
     }
 
-    private void setSoundRoom(SceneController scene, ViroContext viroContextJni) {
+    private void setSoundRoom(Scene scene, ViroContext viroContextJni) {
         float[] size = {2, 2, 2};
         scene.setSoundRoom(viroContextJni, size, "transparent", "wood_panel", "thin_glass");
     }

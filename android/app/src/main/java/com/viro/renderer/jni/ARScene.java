@@ -3,16 +3,14 @@
  */
 package com.viro.renderer.jni;
 
-import android.util.Log;
-
 import com.viro.renderer.ARAnchor;
 
 import java.lang.ref.WeakReference;
 
-public class ARSceneController extends SceneController {
+public class ARScene extends Scene {
     public long mNativeARDelegateRef;
 
-    public ARSceneController() {
+    public ARScene() {
         mNativeARDelegateRef = nativeCreateARSceneDelegate(mNativeRef);
     }
 

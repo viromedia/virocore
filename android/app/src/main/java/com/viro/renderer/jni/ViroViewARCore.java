@@ -254,7 +254,7 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
     }
 
     @Override
-    public void setSceneController(SceneController scene) {
+    public void setSceneController(Scene scene) {
         mNativeRenderer.setSceneController(scene.mNativeRef, 1.0f);
     }
 

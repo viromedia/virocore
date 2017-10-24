@@ -6,8 +6,8 @@ package com.viro.renderer.jni;
 
 public class PortalTraversalListener extends FrameListener{
 
-    public PortalTraversalListener(SceneController sceneControllerJni) {
-        mNativeRef = nativeCreatePortalTraversalListener(sceneControllerJni.mNativeRef);
+    public PortalTraversalListener(Scene scene) {
+        mNativeRef = nativeCreatePortalTraversalListener(scene.mNativeRef);
     }
 
     public void destroy() {

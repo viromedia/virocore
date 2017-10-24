@@ -4,7 +4,7 @@ package com.viro.renderer.jni;
 import java.lang.ref.WeakReference;
 
 /**
- * The PhysicsWorld encapsulates the physics simulation associated with the {@link SceneController}.
+ * The PhysicsWorld encapsulates the physics simulation associated with the {@link Scene}.
  * Each Scene automatically creates a PhysicsWorld upon construction.
  * This object can be used to set global physics properties like gravity.
  */
@@ -28,14 +28,14 @@ public class PhysicsWorld {
         void onComplete(boolean hasHit);
     }
 
-    private WeakReference<SceneController> mScene;
+    private WeakReference<Scene> mScene;
 
     /**
      * @hide
      * @param scene
      */
-    PhysicsWorld(SceneController scene) {
-        mScene = new WeakReference<SceneController>(scene);
+    PhysicsWorld(Scene scene) {
+        mScene = new WeakReference<Scene>(scene);
     }
 
     /**
@@ -47,7 +47,7 @@ public class PhysicsWorld {
      * @param gravity The gravity vector to use.
      */
     public void setGravity(Vector gravity) {
-        SceneController scene = mScene.get();
+        Scene scene = mScene.get();
         if (scene != null) {
             scene.setPhysicsWorldGravity(gravity.toArray());
         }
@@ -61,7 +61,7 @@ public class PhysicsWorld {
      * @param debugDraw True to enable debug draw mode.
      */
     public void setDebugDraw(boolean debugDraw) {
-        SceneController scene = mScene.get();
+        Scene scene = mScene.get();
         if (scene != null) {
             scene.setPhysicsDebugDraw(debugDraw);
         }
@@ -82,7 +82,7 @@ public class PhysicsWorld {
      */
     public void findCollisionsWithRayAsync(Vector from, Vector to, boolean closest,
                                            String tag, HitTestCallback callback) {
-        SceneController scene = mScene.get();
+        Scene scene = mScene.get();
         if (scene != null) {
             scene.findCollisionsWithRayAsync(from.toArray(), to.toArray(), closest, tag, callback);
         }
@@ -106,7 +106,7 @@ public class PhysicsWorld {
      */
     public void findCollisionsWithShapeAsync(Vector from, Vector to, PhysicsShape shape,
                                              String tag, HitTestCallback callback) {
-        SceneController scene = mScene.get();
+        Scene scene = mScene.get();
         if (scene != null) {
             scene.findCollisionsWithShapeAsync(from.toArray(), to.toArray(), shape.getType(), shape.getParams(),
                     tag, callback);

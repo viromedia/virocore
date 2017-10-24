@@ -11,7 +11,7 @@ public interface VrView extends Application.ActivityLifecycleCallbacks {
 
     public ViroContext getViroContext();
 
-    public void setSceneController(SceneController sceneController);
+    public void setSceneController(Scene scene);
 
     public void setVrModeEnabled(boolean vrModeEnabled);
 

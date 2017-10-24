@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Underlying each {@link SceneController} is a full-featured 3D scene graph engine. A scene graph
+ * Underlying each {@link Scene} is a full-featured 3D scene graph engine. A scene graph
  * is a hierarchical tree structure of nodes that allows developers to intuitively construct a 3D
- * environment. The root node is retrieved via {@link SceneController#getRootNode()}. Sub-nodes are
+ * environment. The root node is retrieved via {@link Scene#getRootNode()}. Sub-nodes are
  * represented by child Node objects. Each Node represents a position and transform in 3D space, to
  * which you can attach 3D objects, lights, or other content.
  * <p>
