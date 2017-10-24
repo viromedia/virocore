@@ -255,7 +255,8 @@ static VROVector3f const kZeroVector = VROVector3f();
     if(recognizer.state == UIGestureRecognizerStateBegan) {
         _inputController->onRotateStart(viewportTouchPos);
     } else if(recognizer.state == UIGestureRecognizerStateChanged) {
-        _inputController->onRotate(recognizer.rotation);
+        // Note: we need to "negate" the rotation because the value returned is "opposite" of our platform.
+        _inputController->onRotate(-recognizer.rotation);
     } else if(recognizer.state == UIGestureRecognizerStateEnded) {
         _inputController->onRotateEnd();
     }

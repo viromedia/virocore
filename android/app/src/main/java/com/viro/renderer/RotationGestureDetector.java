@@ -96,9 +96,7 @@ public class RotationGestureDetector {
     }
 
     public float getRotateDegrees() {
-        // we need to "negate" our rotation degrees to match what iOS returns, but I think Android
-        // is correct, so TODO: VIRO-1971
-        return -mCurrentRotateDegrees;
+        return mCurrentRotateDegrees;
     }
 
     /*
