@@ -220,10 +220,29 @@ public class Scene {
      */
     protected native void nativeDestroySceneControllerDelegate(long sceneDelegateRef);
 
+    /**
+     * The SceneDelegate receives callbacks in response to a {@link Scene} appearing and disappearing.
+     */
     public interface SceneDelegate {
+
+        /**
+         * Callback invoked when a Scene is about to appear.
+         */
         void onSceneWillAppear();
+
+        /**
+         * Callback invoked immediately after a Scene has appeared (after the transition).
+         */
         void onSceneDidAppear();
+
+        /**
+         * Callback invoked when a Scene is about to disappear.
+         */
         void onSceneWillDisappear();
+
+        /**
+         * Callback invoked immediately after a Scene has disappeared (after the transition).
+         */
         void onSceneDidDisappear();
     }
 
