@@ -16,6 +16,7 @@
 #include "Material_JNI.h"
 #include "Geometry_JNI.h"
 #include "VROStringUtil.h"
+#include "Camera_JNI.h"
 #include "EventDelegate_JNI.h"
 #include "PhysicsDelegate_JNI.h"
 #include "TransformDelegate_JNI.h"
@@ -119,6 +120,34 @@ JNI_METHOD(void, nativeClearGeometry)(JNIEnv *env,
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
             node->setGeometry(nullptr);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetCamera)(JNIEnv *env,
+                                  jobject obj,
+                                  jlong node_j,
+                                  jlong camera_j) {
+    std::weak_ptr<VRONodeCamera> camera_w = Camera::native(camera_j);
+    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    VROPlatformDispatchAsyncRenderer([camera_w, node_w] {
+        std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
+        std::shared_ptr<VRONode> node = node_w.lock();
+
+        if (camera && node) {
+            node->setCamera(camera);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeClearCamera)(JNIEnv *env,
+                                    jobject obj,
+                                    jlong node_j) {
+    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    VROPlatformDispatchAsyncRenderer([node_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setCamera(nullptr);
         }
     });
 }

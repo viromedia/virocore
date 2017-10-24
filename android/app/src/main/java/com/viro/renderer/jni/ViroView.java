@@ -7,15 +7,15 @@ package com.viro.renderer.jni;
 import android.app.Application;
 import android.view.View;
 
-public interface VrView extends Application.ActivityLifecycleCallbacks {
+public interface ViroView extends Application.ActivityLifecycleCallbacks {
 
     public ViroContext getViroContext();
 
-    public void setSceneController(Scene scene);
+    public void setScene(Scene scene);
 
     public void setVrModeEnabled(boolean vrModeEnabled);
 
-    public Renderer getNativeRenderer();
+    public Renderer getRenderer();
 
     public View getContentView();
 

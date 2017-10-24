@@ -58,7 +58,7 @@ import com.viro.renderer.jni.VideoTexture;
 import com.viro.renderer.jni.ViroViewARCore;
 import com.viro.renderer.jni.ViroGvrLayout;
 import com.viro.renderer.jni.ViroOvrView;
-import com.viro.renderer.jni.VrView;
+import com.viro.renderer.jni.ViroView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,7 +71,7 @@ import java.util.Map;
 
 public class ViroActivity extends AppCompatActivity implements GLListener {
     private static int SOUND_COUNT = 0;
-    private VrView mVrView;
+    private ViroView mViroView;
     private final Map<String, Sound> mSoundMap = new HashMap<>();
     private final Map<String, SoundField> mSoundFieldMap = new HashMap();
     private final Map<String, SpatialSound> mSpatialSoundMap = new HashMap<>();
@@ -84,21 +84,21 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         super.onCreate(savedInstanceState);
 
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
-            mVrView = new ViroGvrLayout(this, this, new Runnable(){
+            mViroView = new ViroGvrLayout(this, this, new Runnable(){
                 @Override
                 public void run() {
                     Log.e(TAG, "On GVR userRequested exit");
                 }
             });
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
-            mVrView = new ViroOvrView(this, this);
+            mViroView = new ViroOvrView(this, this);
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
-            mVrView = new ViroViewARCore(this, this);
+            mViroView = new ViroViewARCore(this, this);
         }
 
-        mVrView.setVrModeEnabled(true);
-        mVrView.validateApiKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
-        setContentView(mVrView.getContentView());
+        mViroView.setVrModeEnabled(true);
+        mViroView.validateApiKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
+        setContentView(mViroView.getContentView());
 
         mHandler = new Handler(getMainLooper());
         // uncomment the below line to test AR.
@@ -109,31 +109,31 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     @Override
     protected void onStart(){
         super.onStart();
-        mVrView.onActivityStarted(this);
+        mViroView.onActivityStarted(this);
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-        mVrView.onActivityResumed(this);
+        mViroView.onActivityResumed(this);
     }
 
     @Override
     protected void onPause(){
         super.onPause();
-        mVrView.onActivityPaused(this);
+        mViroView.onActivityPaused(this);
     }
 
     @Override
     protected void onStop(){
         super.onStop();
-        mVrView.onActivityStopped(this);
+        mViroView.onActivityStopped(this);
     }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        mVrView.onActivityDestroyed(this);
+        mViroView.onActivityDestroyed(this);
     }
 
     @Override
@@ -175,7 +175,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         //addSpatialSound(data);
         //addNormalSound(data);
 
-        setSoundRoom(scene, mVrView.getViroContext());
+        setSoundRoom(scene, mViroView.getViroContext());
 
         for (Node node: nodes) {
             rootNode.addChildNode(node);
@@ -183,8 +183,8 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         testSceneLighting(rootNode);
 
         // Updating the scene.
-        mVrView.setSceneController(scene);
-        Controller nativeController = new Controller(mVrView.getViroContext());
+        mViroView.setScene(scene);
+        Controller nativeController = new Controller(mViroView.getViroContext());
         //nativeController.setReticleVisibility(false);
     }
 
@@ -208,7 +208,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         testSceneLighting(rootNode);
 
         // Updating the scene.
-        mVrView.setSceneController(scene);
+        mViroView.setScene(scene);
     }
 
     private void testEdgeDetect() {
@@ -243,7 +243,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     private List<Node> testText(Context context) {
         Node node = new Node();
         // Create text
-        Text text = new Text(mVrView.getViroContext(),
+        Text text = new Text(mViroView.getViroContext(),
                 "Test Text Here", "Roboto", 25, Color.WHITE, 1f,
                 1f, Text.HorizontalAlignment.LEFT, Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
         float[] position = {0, -0.5f, -0.5f};
@@ -275,7 +275,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         final Surface surface = new Surface(4, 4, 0, 0, 1, 1);
         float[] position = {0,0,-3};
         node.setPosition(new Vector(position));
-        final VideoTexture videoTexture = new VideoTexture(mVrView.getViroContext());
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext());
         videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
             @Override
             public void onVideoBufferStart() {
@@ -299,7 +299,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
             @Override
             public void onReady() {
                 surface.setVideoTexture(videoTexture);
-                videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getViroContext());
+                videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mViroView.getViroContext());
                 videoTexture.setVolume(0.1f);
                 videoTexture.setLoop(false);
                 videoTexture.play();
@@ -318,7 +318,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     private List<Node> testSphereVideo(Context context) {
         Node node = new Node();
         final Sphere sphere = new Sphere(2, 20, 20, false);
-        final VideoTexture videoTexture = new VideoTexture(mVrView.getViroContext());
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext());
         videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
             @Override
             public void onVideoBufferStart() {
@@ -342,7 +342,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
             @Override
             public void onReady() {
                 sphere.setVideoTexture(videoTexture);
-                videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getViroContext());
+                videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mViroView.getViroContext());
                 videoTexture.setVolume(0.1f);
                 videoTexture.setLoop(false);
                 videoTexture.play();
@@ -358,8 +358,8 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     }
 
     private void testBackgroundVideo(final Scene scene) {
-        final VideoTexture videoTexture = new VideoTexture(mVrView.getViroContext());
-        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getViroContext());
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext());
+        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mViroView.getViroContext());
         videoTexture.setVolume(0.1f);
         videoTexture.setLoop(false);
         videoTexture.play();
@@ -386,7 +386,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
             @Override
             public void onReady() {
                 scene.setBackgroundVideoTexture(videoTexture);
-                videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mVrView.getViroContext());
+                videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mViroView.getViroContext());
                 videoTexture.setVolume(0.1f);
                 videoTexture.setLoop(false);
                 videoTexture.play();
@@ -428,7 +428,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         Node node2 = new Node();
 
         Node node3 = new Node();
-        Text textJni = new Text(mVrView.getViroContext(), "Test text 1 2 3", "Roboto", 24,
+        Text textJni = new Text(mViroView.getViroContext(), "Test text 1 2 3", "Roboto", 24,
                 Color.WHITE, 10, 4, Text.HorizontalAlignment.CENTER, Text.VerticalAlignment.CENTER, Text.LineBreakMode.NONE,
                 Text.ClipMode.CLIP_TO_BOUNDS, 1);
 
@@ -557,7 +557,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         final Surface surface = new Surface(4, 4, 0, 0, 1, 1);
         float[] position = {0,0,-5};
         node.setPosition(new Vector(position));
-        final VideoTexture videoTexture = new VideoTexture(mVrView.getViroContext(), "LeftRight");
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(), "LeftRight");
         videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
             @Override
             public void onVideoBufferStart() {
@@ -577,7 +577,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
             @Override
             public void onReady() {
-                videoTexture.loadSource("file:///android_asset/stereoVid.mp4", mVrView.getViroContext());
+                videoTexture.loadSource("file:///android_asset/stereoVid.mp4", mViroView.getViroContext());
                 videoTexture.setVolume(0.1f);
                 videoTexture.setLoop(true);
                 videoTexture.play();
@@ -595,7 +595,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     }
 
     private void testStereoBackgroundVideo(final Scene scene) {
-        final VideoTexture videoTexture = new VideoTexture(mVrView.getViroContext(), "TopBottom");
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(), "TopBottom");
         videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
             @Override
             public void onVideoBufferStart() {
@@ -616,7 +616,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
             @Override
             public void onReady() {
                 scene.setBackgroundVideoTexture(videoTexture);
-                videoTexture.loadSource("file:///android_asset/stereoVid360.mp4", mVrView.getViroContext());
+                videoTexture.loadSource("file:///android_asset/stereoVid360.mp4", mViroView.getViroContext());
                 videoTexture.setVolume(0.1f);
                 videoTexture.setLoop(false);
                 videoTexture.play();
@@ -739,7 +739,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     private void addNormalSound(String path) {
         final String key = path + SOUND_COUNT++;
         mSoundMap.put(key, new Sound(path,
-                mVrView.getViroContext(), new SoundDelegate() {
+                mViroView.getViroContext(), new SoundDelegate() {
             @Override
             public void onSoundReady() {
                 Log.i("NormalSound", "ViroActivity sound is ready!");
@@ -763,7 +763,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     private void addNormalSound(SoundData data) {
         final String key = "" + SOUND_COUNT++;
         mSoundMap.put(key, new Sound(data,
-                mVrView.getViroContext(), new SoundDelegate() {
+                mViroView.getViroContext(), new SoundDelegate() {
             @Override
             public void onSoundReady() {
                 Log.i("NormalSound", "ViroActivity sound is ready!");
@@ -787,7 +787,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     private void addSoundField(String path) {
         final String key = path + SOUND_COUNT++;
         mSoundFieldMap.put(key, new SoundField(path,
-                mVrView.getViroContext(), new SoundDelegate() {
+                mViroView.getViroContext(), new SoundDelegate() {
             @Override
             public void onSoundReady() {
                 Log.i("SoundField", "ViroActivity sound is ready!");
@@ -815,7 +815,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     private void addSpatialSound(final String path) {
         final String key = path + SOUND_COUNT++;
         mSpatialSoundMap.put(key, new SpatialSound(path,
-                mVrView.getViroContext(), new SoundDelegate() {
+                mViroView.getViroContext(), new SoundDelegate() {
             @Override
             public void onSoundReady() {
                 Log.i("SpatialSound", "ViroActivity sound is ready!");
@@ -846,7 +846,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     private void addSpatialSound(final SoundData data) {
         final String key = "" + SOUND_COUNT++;
         mSpatialSoundMap.put(key, new SpatialSound(data,
-                mVrView.getViroContext(), new SoundDelegate() {
+                mViroView.getViroContext(), new SoundDelegate() {
             @Override
             public void onSoundReady() {
 

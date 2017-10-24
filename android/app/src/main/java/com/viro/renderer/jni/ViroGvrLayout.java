@@ -38,7 +38,7 @@ import javax.microedition.khronos.opengles.GL10;
  * Create this view during or post onCreate within
  * the activity lifecycle.
  */
-public class ViroGvrLayout extends GvrLayout implements VrView {
+public class ViroGvrLayout extends GvrLayout implements ViroView {
     private static final String TAG = "Viro";
 
     // Used to load the 'native-lib' library on application startup.
@@ -276,7 +276,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     }
 
     @Override
-    public void setSceneController(Scene scene) {
+    public void setScene(Scene scene) {
         mNativeRenderer.setSceneController(scene.mNativeRef, 1.0f);
     }
 
@@ -313,7 +313,7 @@ public class ViroGvrLayout extends GvrLayout implements VrView {
     }
 
     @Override
-    public Renderer getNativeRenderer() {
+    public Renderer getRenderer() {
         return mNativeRenderer;
     }
 

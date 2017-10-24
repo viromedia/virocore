@@ -125,6 +125,7 @@ public class Node {
     private boolean mIgnoreEventHandling = false;
     private EnumSet<TransformBehavior> mTransformBehaviors;
     private String mTag;
+    private Camera mCamera;
 
     /**
      * Construct a new Node centered at the origin, with no geometry.
@@ -569,6 +570,31 @@ public class Node {
     }
 
     /**
+     * Attach the given {@link Camera} to this Node. To make this Camera active, this Node
+     * must be set to the point of view via {@link Renderer#setPointOfView(Node)}.
+     *
+     * @param camera The Camera to add to this Node. Null to remove any set Camera.
+     */
+    public void setCamera(Camera camera) {
+        mCamera = camera;
+        if (camera == null) {
+            nativeClearCamera(mNativeRef);
+        }
+        else {
+            nativeSetCamera(mNativeRef, camera.mNativeRef);
+        }
+    }
+
+    /**
+     * Get the {@link Camera} attached to this Node.
+     *
+     * @return The {@link Camera}, or null if none is attached.
+     */
+    public Camera getCamera() {
+        return mCamera;
+    }
+
+    /**
      * Set the {@link TransformBehavior}s to use for this Node. Transform behaviors
      * impact how a Node computes its position, rotation and scale.
      *
@@ -710,6 +736,8 @@ public class Node {
     private native String[] nativeGetAnimationKeys(long nodeReference);
     private native Geometry nativeGetGeometry(long nodeReference);
     private native void nativeSetTag(long nodeReference, String tag);
+    private native void nativeSetCamera(long nodeReference, long cameraReference);
+    private native void nativeClearCamera(long nodeReference);
 
     /*
      TransformDelegate Callback functions called from JNI

@@ -36,7 +36,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * Class for instantiating an AR Viro view. Integrates with AR Core.
  */
-public class ViroViewARCore extends GLSurfaceView implements VrView {
+public class ViroViewARCore extends GLSurfaceView implements ViroView {
 
     private static final String TAG = "Viro";
 
@@ -254,7 +254,7 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
     }
 
     @Override
-    public void setSceneController(Scene scene) {
+    public void setScene(Scene scene) {
         mNativeRenderer.setSceneController(scene.mNativeRef, 1.0f);
     }
 
@@ -289,7 +289,7 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
     }
 
     @Override
-    public com.viro.renderer.jni.Renderer getNativeRenderer() {
+    public com.viro.renderer.jni.Renderer getRenderer() {
         return mNativeRenderer;
     }
 

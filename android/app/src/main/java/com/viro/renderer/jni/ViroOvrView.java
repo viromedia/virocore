@@ -28,7 +28,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Callback {
+public class ViroOvrView extends SurfaceView implements ViroView, SurfaceHolder.Callback {
 
     static {
         System.loadLibrary("vrapi");
@@ -122,7 +122,7 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     }
 
     @Override
-    public void setSceneController(Scene scene) {
+    public void setScene(Scene scene) {
         mNativeRenderer.setSceneController(scene.mNativeRef, 1.0f);
     }
 
@@ -146,7 +146,7 @@ public class ViroOvrView extends SurfaceView implements VrView, SurfaceHolder.Ca
     }
 
     @Override
-    public Renderer getNativeRenderer() {
+    public Renderer getRenderer() {
         return mNativeRenderer;
     }
 
