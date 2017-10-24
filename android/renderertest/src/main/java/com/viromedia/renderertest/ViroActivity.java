@@ -21,6 +21,7 @@ import android.view.inputmethod.CursorAnchorInfo;
 import android.widget.ImageView;
 
 import com.viro.renderer.ARAnchor;
+import com.viro.renderer.ARHitTestResult;
 import com.viro.renderer.jni.ARNode;
 import com.viro.renderer.jni.ARPlane;
 import com.viro.renderer.jni.ARSceneController;
@@ -979,6 +980,11 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         @Override
         public void onRotate(int source, float rotateFactor, EventDelegate.RotateState rotateState) {
             Log.e(TAG, delegateTag + " On rotate");
+        }
+
+        @Override
+        public void onCameraHitTest(int source, ARHitTestResult[] results) {
+            Log.e(TAG, delegateTag + " on Camera Hit Test");
         }
     }
 }

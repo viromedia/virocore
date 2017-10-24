@@ -12,6 +12,6 @@ typedef void (^VROApiKeyValidatorBlock)(BOOL);
 
 @protocol VROApiKeyValidator <NSObject>
 
-- (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROApiKeyValidatorBlock)completionBlock;
+- (void)validateApiKey:(NSString *)apiKey platform:(NSString *)platform withCompletionBlock:(VROApiKeyValidatorBlock)completionBlock;
 
 @end

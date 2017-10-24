@@ -18,6 +18,7 @@ static NSString *const kVROApiKeyMetricsFormat = @"%@_%@_%@_%@_%@";
 
 + (NSString *)CountAttribute;
 
-- (id)initWithApiKey:(NSString *)apiKey;
+- (id)initWithApiKey:(NSString *)apiKey
+            platform:(NSString *)platform;
 
 @end

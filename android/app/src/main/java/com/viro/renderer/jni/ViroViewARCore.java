@@ -298,7 +298,7 @@ public class ViroViewARCore extends GLSurfaceView implements VrView {
 
     @Override
     public String getPlatform() {
-        return "gvr";
+        return "arcore";
     }
 
     @Override

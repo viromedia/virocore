@@ -267,11 +267,11 @@ bool VROInputControllerAR::isDistanceWithinBounds(VROVector3f point1, VROVector3
 }
 
 std::string VROInputControllerAR::getHeadset() {
-    return std::string("Mobile");
+    return std::string("mobile");
 }
 
 std::string VROInputControllerAR::getController() {
-    return std::string("Screen");
+    return std::string("screen");
 }
 
 void VROInputControllerAR::processCenterCameraHitTest() {

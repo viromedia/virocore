@@ -842,11 +842,11 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 - (NSString *)getHeadset {
-    return @"mobile";
+    return [NSString stringWithUTF8String:_inputController->getHeadset().c_str()];
 }
 
 - (NSString *)getController {
-    return @"screen";
+    return [NSString stringWithUTF8String:_inputController->getController().c_str()];
 }
 
 #pragma mark - Key Validation
@@ -868,7 +868,7 @@ static VROVector3f const kZeroVector = VROVector3f();
         
         NSLog(@"[ApiKeyValidator] The key is %@!", valid ? @"valid" : @"invalid");
     };
-    [self.keyValidator validateApiKey:apiKey withCompletionBlock:validatorCompletionBlock];
+    [self.keyValidator validateApiKey:apiKey platform:[self getPlatform] withCompletionBlock:validatorCompletionBlock];
 }
 
 #pragma mark - Camera

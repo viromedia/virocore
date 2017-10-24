@@ -90,11 +90,11 @@
 }
 
 - (NSString *)getHeadset {
-    return @"cardboard";
+    return [NSString stringWithUTF8String:_renderer->getInputController()->getHeadset().c_str()];
 }
 
 - (NSString *)getController {
-    return @"cardboard";
+    return [NSString stringWithUTF8String:_renderer->getInputController()->getController().c_str()];
 }
 
 - (void)willMoveToWindow:(UIWindow *)newWindow {
@@ -136,7 +136,7 @@
       
         NSLog(@"[ApiKeyValidator] The key is %@!", valid ? @"valid" : @"invalid");
     };
-    [self.keyValidator validateApiKey:apiKey withCompletionBlock:validatorCompletionBlock];
+    [self.keyValidator validateApiKey:apiKey platform:[self getPlatform] withCompletionBlock:validatorCompletionBlock];
 }
 
 - (void)recenterTracking {

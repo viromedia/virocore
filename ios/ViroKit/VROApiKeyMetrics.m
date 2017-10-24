@@ -30,7 +30,8 @@
 
 # pragma mark - Instance functions
 
-- (id)initWithApiKey:(NSString *)apiKey {
+- (id)initWithApiKey:(NSString *)apiKey
+            platform:(NSString *)platform {
     self = [super init];
     if (self) {
         NSString *bundleId = [[NSBundle mainBundle] bundleIdentifier];
@@ -40,7 +41,7 @@
         NSString *buildType = @"release";
 #endif
         // we care more about the actual headset than the platform
-        _ApiKey_BundleId_BuildType = [NSString stringWithFormat:kVROApiKeyMetricsFormat, apiKey, @"ios", @"cardboard", bundleId, buildType];
+        _ApiKey_BundleId_BuildType = [NSString stringWithFormat:kVROApiKeyMetricsFormat, apiKey, @"ios", platform, bundleId, buildType];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyyMMdd"];
         _Date = [dateFormatter stringFromDate:[NSDate date]];

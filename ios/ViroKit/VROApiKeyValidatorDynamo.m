@@ -68,7 +68,7 @@ static NSInteger const kVROApiValidatorMaxRetryDelay = 64; // seconds
 /**
  This function validates the given apiKey.
  */
-- (void)validateApiKey:(NSString *)apiKey withCompletionBlock:(VROApiKeyValidatorBlock)completionBlock {
+- (void)validateApiKey:(NSString *)apiKey platform:(NSString *)platform withCompletionBlock:(VROApiKeyValidatorBlock)completionBlock {
   
     @synchronized (self.taskLock) {
         if (apiKey == nil) {
@@ -83,7 +83,7 @@ static NSInteger const kVROApiValidatorMaxRetryDelay = 64; // seconds
             self.nextTaskCompletion = completionBlock;
         } else {
             self.currentKeyToCheck = apiKey;
-            [self checkCurrentKey:completionBlock attempt:1];
+            [self checkCurrentKey:completionBlock platform:platform attempt:1];
         }
     }
 }
@@ -91,7 +91,7 @@ static NSInteger const kVROApiValidatorMaxRetryDelay = 64; // seconds
 /**
  This function checks the current key by creating a task and executing it.
  */
-- (void)checkCurrentKey:(VROApiKeyValidatorBlock)completionBlock attempt:(NSInteger)attempt {
+- (void)checkCurrentKey:(VROApiKeyValidatorBlock)completionBlock platform:(NSString *)platform attempt:(NSInteger)attempt {
   
     NSInteger delay = attempt == 1 ? 0 : MIN(kVROApiValidatorMaxRetryDelay, pow(kVROApiValidatorMinRetryDelay, attempt - 1));
 
@@ -100,7 +100,7 @@ static NSInteger const kVROApiValidatorMaxRetryDelay = 64; // seconds
     dispatch_after(delayTime, dispatch_get_main_queue(), ^(void) {
         // construct a NEW task and run it. We can't keep calling continueWithBlock on a task esp if it already failed.
         AWSTask *task = [self.dynamoObjectMapper load:[VROApiKey class] hashKey:self.currentKeyToCheck rangeKey:nil];
-        [task continueWithBlock:[self getValidationEndBlock:completionBlock attempt:attempt]];
+        [task continueWithBlock:[self getValidationEndBlock:completionBlock platform:platform attempt:attempt]];
     });
 }
 
@@ -109,13 +109,13 @@ static NSInteger const kVROApiValidatorMaxRetryDelay = 64; // seconds
  attempt to get the apiKey from DynamoDB. It should always be given the number of the attempt
  it is registered to (NOT the next one).
  */
-- (AWSContinuationBlock)getValidationEndBlock:(VROApiKeyValidatorBlock)completionBlock attempt:(NSInteger)attempt {
+- (AWSContinuationBlock)getValidationEndBlock:(VROApiKeyValidatorBlock)completionBlock platform:(NSString *)platform attempt:(NSInteger)attempt {
     return ^id(AWSTask *task) {
         @synchronized (self.taskLock) {
             // If there's a next task, just start running it, don't even bother to call the completion block.
             if (self.nextKeyToCheck) {
                 self.currentKeyToCheck = self.nextKeyToCheck;
-                [self checkCurrentKey:self.nextTaskCompletion attempt:attempt + 1];
+                [self checkCurrentKey:self.nextTaskCompletion platform:platform attempt:attempt + 1];
                 self.nextKeyToCheck = nil;
                 self.nextTaskCompletion = nil;
                 return nil;
@@ -123,7 +123,7 @@ static NSInteger const kVROApiValidatorMaxRetryDelay = 64; // seconds
           
             // If the task is cancelled or has errored out, then try to get the apiKey again.
             if (task.cancelled || task.faulted) {
-                [self checkCurrentKey:completionBlock attempt:attempt + 1];
+                [self checkCurrentKey:completionBlock platform:platform attempt:attempt + 1];
                 return nil;
             }
 
@@ -135,7 +135,7 @@ static NSInteger const kVROApiValidatorMaxRetryDelay = 64; // seconds
                 // if the key is valid, then we should increment its corresponding counter in the metrics table.
                 if ([key.Valid isEqualToString:@"true"]) {
                     valid = YES;
-                    VROApiKeyMetrics *metricsRecord = [[VROApiKeyMetrics alloc] initWithApiKey:key.ApiKey];
+                    VROApiKeyMetrics *metricsRecord = [[VROApiKeyMetrics alloc] initWithApiKey:key.ApiKey platform:platform];
                     VROApiMetricsIncrementRequest *incrementRequest =
                             [[VROApiMetricsIncrementRequest alloc] initWithMetrics:metricsRecord
                                                                    dynamoObjMapper:self.dynamoObjectMapper];

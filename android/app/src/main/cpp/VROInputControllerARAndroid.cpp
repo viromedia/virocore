@@ -52,6 +52,5 @@ void VROInputControllerARAndroid::onRotateEvent(int rotateState, float rotateDeg
 
 void VROInputControllerARAndroid::processCenterCameraHitTest() {
     pinfo("Overridden VROInputControllerARAndroid processCenterCamereHitTest() executed.");
-        VROInputControllerAR::processCenterCameraHitTest();
-
+    VROInputControllerAR::processCenterCameraHitTest();
 }
