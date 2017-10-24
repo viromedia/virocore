@@ -255,19 +255,19 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     private void testSceneLighting(Node node) {
         float[] lightDirection = {0, 0, -1};
         AmbientLight ambientLightJni = new AmbientLight(Color.BLACK, 1000.0f);
-        ambientLightJni.addToNode(node);
+        node.addLight(ambientLightJni);
 
-        DirectionalLight directionalLightJni = new DirectionalLight(Color.BLUE, 1000.0f, lightDirection);
-        directionalLightJni.addToNode(node);
+        DirectionalLight directionalLightJni = new DirectionalLight(Color.BLUE, 1000.0f, new Vector(lightDirection));
+        node.addLight(directionalLightJni);
 
         float[] omniLightPosition = {1,0,0};
-        OmniLight omniLightJni = new OmniLight(Color.RED, 1000.0f, 1, 10, omniLightPosition);
-        omniLightJni.addToNode(node);
+        OmniLight omniLightJni = new OmniLight(Color.RED, 1000.0f, 1, 10, new Vector(omniLightPosition));
+        node.addLight(omniLightJni);
 
         float[] spotLightPosition = {-2, 0, 3};
-        Spotlight spotLightJni = new Spotlight(Color.YELLOW, 1000.0f, 1, 10, spotLightPosition,
-                lightDirection, 2, 10);
-        spotLightJni.addToNode(node);
+        Spotlight spotLightJni = new Spotlight(Color.YELLOW, 1000.0f, 1, 10, new Vector(spotLightPosition),
+                new Vector(lightDirection), 2, 10);
+        node.addLight(spotLightJni);
     }
 
     private List<Node> testSurfaceVideo(Context context) {

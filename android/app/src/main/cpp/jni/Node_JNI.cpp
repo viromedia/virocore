@@ -17,6 +17,7 @@
 #include "Geometry_JNI.h"
 #include "VROStringUtil.h"
 #include "Camera_JNI.h"
+#include "Light_JNI.h"
 #include "EventDelegate_JNI.h"
 #include "PhysicsDelegate_JNI.h"
 #include "TransformDelegate_JNI.h"
@@ -98,10 +99,10 @@ JNI_METHOD(void, nativeSetTag)(JNIEnv *env,
 
 JNI_METHOD(void, nativeSetGeometry)(JNIEnv *env,
                                     jobject obj,
-                                    jlong native_node_ref,
-                                    jlong native_geo_ref) {
-    std::weak_ptr<VROGeometry> geo_w = Geometry::native(native_geo_ref);
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+                                    jlong node_j,
+                                    jlong geo_j) {
+    std::weak_ptr<VROGeometry> geo_w = Geometry::native(geo_j);
+    std::weak_ptr<VRONode> node_w = Node::native(node_j);
     VROPlatformDispatchAsyncRenderer([geo_w, node_w] {
         std::shared_ptr<VROGeometry> geo = geo_w.lock();
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -114,12 +115,56 @@ JNI_METHOD(void, nativeSetGeometry)(JNIEnv *env,
 
 JNI_METHOD(void, nativeClearGeometry)(JNIEnv *env,
                                       jobject obj,
-                                      jlong native_node_ref) {
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+                                      jlong node_j) {
+    std::weak_ptr<VRONode> node_w = Node::native(node_j);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
             node->setGeometry(nullptr);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeAddLight)(JNIEnv *env,
+                                 jobject obj,
+                                 jlong node_j,
+                                 jlong light_j) {
+    std::weak_ptr<VROLight> light_w = Light::native(light_j);
+    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    VROPlatformDispatchAsyncRenderer([light_w, node_w] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        std::shared_ptr<VRONode> node = node_w.lock();
+
+        if (light && node) {
+            node->addLight(light);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeRemoveLight)(JNIEnv *env,
+                                    jobject obj,
+                                    jlong node_j,
+                                    jlong light_j) {
+    std::weak_ptr<VROLight> light_w = Light::native(light_j);
+    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    VROPlatformDispatchAsyncRenderer([light_w, node_w] {
+        std::shared_ptr<VROLight> light = light_w.lock();
+        std::shared_ptr<VRONode> node = node_w.lock();
+
+        if (light && node) {
+            node->removeLight(light);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeRemoveAllLights)(JNIEnv *env,
+                                        jobject obj,
+                                        jlong node_j) {
+    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    VROPlatformDispatchAsyncRenderer([node_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->removeAllLights();
         }
     });
 }

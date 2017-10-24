@@ -69,77 +69,7 @@ JNI_METHOD(jlong, nativeCreateSpotLight)(JNIEnv *env,
     return SpotLight::jptr(spotLight);
 }
 
-JNI_METHOD(void, nativeDestroySpotLight)(JNIEnv *env,
-                                            jclass clazz,
-                                            jlong native_light_ref) {
-    delete reinterpret_cast<PersistentRef<VROLight> *>(native_light_ref);
-}
-
-JNI_METHOD(void, nativeAddToNode)(JNIEnv *env,
-                                  jclass clazz,
-                                  jlong native_light_ref,
-                                  jlong native_node_ref) {
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
-
-    VROPlatformDispatchAsyncRenderer([light_w, node_w] {
-        std::shared_ptr<VROLight> light = light_w.lock();
-        std::shared_ptr<VRONode> node = node_w.lock();
-        if (light && node) {
-            node->addLight(light);
-        }
-    });
-}
-
-JNI_METHOD(void, nativeRemoveFromNode)(JNIEnv *env,
-                                       jclass clazz,
-                                       jlong native_light_ref,
-                                       jlong native_node_ref) {
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
-    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
-
-    VROPlatformDispatchAsyncRenderer([light_w, node_w] {
-        std::shared_ptr<VROLight> light = light_w.lock();
-        std::shared_ptr<VRONode> node = node_w.lock();
-        if (light && node) {
-            node->removeLight(light);
-        }
-    });
-}
-
 // Setters
-
-JNI_METHOD(void, nativeSetColor)(JNIEnv *env,
-                                 jclass clazz,
-                                 jlong native_light_ref,
-                                 jlong color) {
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
-    VROPlatformDispatchAsyncRenderer([light_w, color] {
-        std::shared_ptr<VROLight> light = light_w.lock();
-        if (!light) {
-            return;
-        }
-
-        // Get the color
-        float r = ((color >> 16) & 0xFF) / 255.0;
-        float g = ((color >> 8) & 0xFF) / 255.0;
-        float b = (color & 0xFF) / 255.0;
-
-        VROVector3f vecColor(r, g, b);
-        light->setColor(vecColor);
-    });
-}
-
-JNI_METHOD(void, nativeSetIntensity)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong native_light_ref,
-                                     jfloat intensity) {
-    std::shared_ptr<VROLight> light = SpotLight::native(native_light_ref);
-
-    VROPlatformDispatchAsyncRenderer([light, intensity] {
-        light->setIntensity(intensity);
-    });
-}
 
 JNI_METHOD(void, nativeSetAttenuationStartDistance)(JNIEnv *env,
                                                     jclass clazz,
@@ -228,21 +158,6 @@ JNI_METHOD(void, nativeSetOuterAngle)(JNIEnv *env,
             return;
         }
         light->setSpotOuterAngle(outerAngle);
-    });
-}
-
-JNI_METHOD(void, nativeSetInfluenceBitMask)(JNIEnv *env,
-                                            jclass clazz,
-                                            jlong native_light_ref,
-                                            jint bitMask) {
-
-    std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
-    VROPlatformDispatchAsyncRenderer([light_w, bitMask] {
-        std::shared_ptr<VROLight> light = light_w.lock();
-        if(!light) {
-            return;
-        }
-        light->setInfluenceBitMask(bitMask);
     });
 }
 

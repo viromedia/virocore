@@ -114,6 +114,7 @@ public class Node {
     private PhysicsBody mPhysicsBody;
     private WeakReference<Node> mParent;
     private ArrayList<Node> mChildren = new ArrayList<Node>();
+    private ArrayList<Light> mLights = new ArrayList<Light>();
     private Vector mScalePivot;
     private Vector mRotationPivot;
     private float mOpacity = 1.0f;
@@ -595,6 +596,45 @@ public class Node {
     }
 
     /**
+     * Add the given {@link Light} to this Node. The Light will illuminate all objects in the
+     * {@link Scene} that fall within its area of influence. As a child of this Node, the Light
+     * will also receive all the Node's transforms.
+     *
+     * @param light The {@link Light} to add to this Node.
+     */
+    public void addLight(Light light) {
+        mLights.add(light);
+        nativeAddLight(mNativeRef, light.mNativeRef);
+    }
+
+    /**
+     * Remove the given {@link Light} from this Node.
+     *
+     * @param light The {@link Light} to remove.
+     */
+    public void removeLight(Light light) {
+        mLights.remove(light);
+        nativeRemoveLight(mNativeRef, light.mNativeRef);
+    }
+
+    /**
+     * Remove all {@link Light}s from this Node.
+     */
+    public void removeAllLights() {
+        mLights.clear();
+        nativeRemoveAllLights(mNativeRef);
+    }
+
+    /**
+     * Get all {@link Light}s that have been added to this Node.
+     *
+     * @return List of all the Lights in this Node.
+     */
+    public List<Light> getLights() {
+        return mLights;
+    }
+
+    /**
      * Set the {@link TransformBehavior}s to use for this Node. Transform behaviors
      * impact how a Node computes its position, rotation and scale.
      *
@@ -738,6 +778,9 @@ public class Node {
     private native void nativeSetTag(long nodeReference, String tag);
     private native void nativeSetCamera(long nodeReference, long cameraReference);
     private native void nativeClearCamera(long nodeReference);
+    private native void nativeAddLight(long nodeReference, long lightReference);
+    private native void nativeRemoveLight(long nodeReference, long lightReference);
+    private native void nativeRemoveAllLights(long nodeReference);
 
     /*
      TransformDelegate Callback functions called from JNI

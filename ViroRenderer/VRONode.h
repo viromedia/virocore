@@ -329,7 +329,7 @@ public:
      children are visible either (we use the umbrella bounding box for
      visibility tests).
      */
-    bool isVisibile() const {
+    bool isVisible() const {
         return _visible;
     }
     

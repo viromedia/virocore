@@ -75,6 +75,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/AnimationChain_JNI.cpp
              src/main/cpp/jni/AnimationGroup_JNI.cpp
              src/main/cpp/jni/ExecutableAnimation_JNI.cpp
+             src/main/cpp/jni/Light_JNI.cpp
              src/main/cpp/jni/AmbientLight_JNI.cpp
              src/main/cpp/jni/SpotLight_JNI.cpp
              src/main/cpp/jni/DirectionalLight_JNI.cpp

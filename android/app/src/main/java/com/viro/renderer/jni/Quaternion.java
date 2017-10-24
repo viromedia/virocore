@@ -53,7 +53,7 @@ public class Quaternion {
     }
 
     /**
-     * Construct a new Quaternion from the given coordinates in an array of length r.
+     * Construct a new Quaternion from the given coordinates in an array of length 4.
      *
      * @param coordinates The x, y, z, and w coordinates.
      */
