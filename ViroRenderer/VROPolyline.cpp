@@ -308,6 +308,7 @@ void VROPolyline::setThickness(float thickness) {
 
 void VROPolyline::setMaterials(std::vector<std::shared_ptr<VROMaterial>> materials) {
     materials.front()->addShaderModifier(createPolylineShaderModifier());
+    materials.front()->setCullMode(VROCullMode::None);
     VROGeometry::setMaterials(materials);
 }
 

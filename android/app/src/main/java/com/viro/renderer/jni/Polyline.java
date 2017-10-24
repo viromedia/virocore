@@ -52,7 +52,7 @@ public class Polyline extends Geometry {
     public Polyline(float[][] points, float width) {
         mPoints = new ArrayList<Vector>();
         for (int i = 0; i < points.length; i++) {
-            mPoints.add(new Vector(points[i][0], points[i][1], 0));
+            mPoints.add(new Vector(points[i][0], points[i][1], points[i][2]));
         }
         mNativeRef = nativeCreatePolyline(points, width);
     }
