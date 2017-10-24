@@ -19,6 +19,7 @@
 #include "EventDelegate_JNI.h"
 #include "PhysicsDelegate_JNI.h"
 #include "TransformDelegate_JNI.h"
+#include "ARUtils_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -60,9 +61,7 @@ JNI_METHOD(void, nativeRemoveAllChildNodes)(JNIEnv *env,
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
-        for (std::shared_ptr<VRONode> subNode : node->getChildNodes()){
-            subNode->removeFromParentNode();
-        }
+        node->clearChildren();
     });
 }
 
@@ -140,12 +139,12 @@ JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetRotation)(JNIEnv *env,
-                                    jobject obj,
-                                    jlong native_node_ref,
-                                    jfloat rotationDegreesX,
-                                    jfloat rotationDegreesY,
-                                    jfloat rotationDegreesZ) {
+JNI_METHOD(void, nativeSetRotationEuler)(JNIEnv *env,
+                                         jobject obj,
+                                         jlong native_node_ref,
+                                         jfloat rotationDegreesX,
+                                         jfloat rotationDegreesY,
+                                         jfloat rotationDegreesZ) {
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, rotationDegreesX, rotationDegreesY, rotationDegreesZ] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -153,6 +152,23 @@ JNI_METHOD(void, nativeSetRotation)(JNIEnv *env,
             node->setRotation({toRadians(rotationDegreesX),
                                toRadians(rotationDegreesY),
                                toRadians(rotationDegreesZ)});
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetRotationQuaternion)(JNIEnv *env,
+                                              jobject obj,
+                                              jlong native_node_ref,
+                                              jfloat quatX,
+                                              jfloat quatY,
+                                              jfloat quatZ,
+                                              jfloat quatW) {
+    std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
+    VROPlatformDispatchAsyncRenderer([node_w, quatX, quatY, quatZ, quatW] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            VROQuaternion quat(quatX, quatY, quatZ, quatW);
+            node->setRotation(quat);
         }
     });
 }
@@ -207,6 +223,44 @@ JNI_METHOD(void, nativeSetScalePivot)(JNIEnv *env,
             node->setScalePivot(pivotMatrix);
         }
     });
+}
+
+JNI_METHOD(jfloatArray, nativeGetPosition)(JNIEnv *env,
+                                           jobject obj,
+                                           jlong node_j) {
+
+    std::shared_ptr<VRONode> node = Node::native(node_j);
+    return ARUtilsCreateFloatArrayFromVector3f(node->getLastComputedPosition());
+}
+
+JNI_METHOD(jfloatArray, nativeGetScale)(JNIEnv *env,
+                                        jobject obj,
+                                        jlong node_j) {
+
+    std::shared_ptr<VRONode> node = Node::native(node_j);
+    return ARUtilsCreateFloatArrayFromVector3f(node->getLastComputedScale());
+}
+
+JNI_METHOD(jfloatArray, nativeGetRotationEuler)(JNIEnv *env,
+                                                jobject obj,
+                                                jlong node_j) {
+
+    std::shared_ptr<VRONode> node = Node::native(node_j);
+    return ARUtilsCreateFloatArrayFromVector3f(node->getLastComputedRotation().toEuler());
+}
+
+JNI_METHOD(jfloatArray, nativeGetRotationQuaternion)(JNIEnv *env,
+                                                     jobject obj,
+                                                     jlong node_j) {
+
+    std::shared_ptr<VRONode> node = Node::native(node_j);
+    VROQuaternion quaternion = node->getLastComputedRotation();
+
+    jfloatArray array_j = env->NewFloatArray(4);
+    jfloat array_c[4];
+    array_c[0] = quaternion.X; array_c[1] = quaternion.Y; array_c[2] = quaternion.Z; array_c[3] = quaternion.W;
+    env->SetFloatArrayRegion(array_j, 0, 4, array_c);
+    return array_j;
 }
 
 JNI_METHOD(void, nativeSetOpacity)(JNIEnv *env,

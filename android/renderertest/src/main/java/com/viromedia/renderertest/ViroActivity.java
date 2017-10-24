@@ -17,7 +17,6 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.inputmethod.CursorAnchorInfo;
 import android.widget.ImageView;
 
 import com.viro.renderer.ARAnchor;
@@ -65,6 +64,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,7 +150,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         List<Node> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
         //nodes = testSphereVideo(this);
-        //nodes = testBox(getApplicationContext());
+        nodes = testBox(getApplicationContext());
         //nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
@@ -162,7 +162,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
         //nodes = testStereoSurfaceVideo(this);
         //nodes = testStereoImageSurface(this);
-        nodes.add(testLine(this));
+        //nodes.add(testLine(this));
         //testStereoBackgroundVideo(scene);
         //testStereoBackgroundImage(scene);
 
@@ -247,7 +247,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
                 "Test Text Here", "Roboto", 25, Color.WHITE, 1f,
                 1f, Text.HorizontalAlignment.LEFT, Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
         float[] position = {0, -0.5f, -0.5f};
-        node.setPosition(position);
+        node.setPosition(new Vector(position));
         node.setGeometry(text);
         return Arrays.asList(node);
     }
@@ -274,7 +274,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         Node node = new Node();
         final Surface surface = new Surface(4, 4, 0, 0, 1, 1);
         float[] position = {0,0,-3};
-        node.setPosition(position);
+        node.setPosition(new Vector(position));
         final VideoTexture videoTexture = new VideoTexture(mVrView.getViroContext());
         videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
             @Override
@@ -433,9 +433,9 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
                 Text.ClipMode.CLIP_TO_BOUNDS, 1);
 
         float[] position = {0, -1, -2};
-        node3.setPosition(position);
+        node3.setPosition(new Vector(position));
         node3.setGeometry(textJni);
-        //node3.setEventDelegateJni(getGenericDelegate("Text"));
+        //node3.setEventDelegate(getGenericDelegate("Text"));
 
         // Create a new material with a diffuseTexture set to the image "boba.png"
         Image bobaImage = new Image("boba.png", TextureFormat.RGBA8);
@@ -450,18 +450,18 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         Box boxGeometry = new Box(2,4,2);
         node1.setGeometry(boxGeometry);
         float[] boxPosition = {5,0,-3};
-        node1.setPosition(boxPosition);
+        node1.setPosition(new Vector(boxPosition));
         boxGeometry.setMaterials(Arrays.asList(material));
-        String[] behaviors = {"billboard"};
+        EnumSet<Node.TransformBehavior> behaviors = EnumSet.of(Node.TransformBehavior.BILLBOARD);
         node1.setTransformBehaviors(behaviors);
-        node1.setEventDelegateJni(getGenericDelegate("Box"));
+        node1.setEventDelegate(getGenericDelegate("Box"));
 
         Box boxGeometry2 = new Box(2, 2, 2);
         node2.setGeometry(boxGeometry2);
         float[] boxPosition2 = {-2, 0, -3};
-        node2.setPosition(boxPosition2);
+        node2.setPosition(new Vector(boxPosition2));
         boxGeometry2.setMaterials(Arrays.asList(material));
-        node2.setEventDelegateJni(getGenericDelegate("Box2"));
+        node2.setEventDelegate(getGenericDelegate("Box2"));
 
         return Arrays.asList(node1, node2, node3);
     }
@@ -497,7 +497,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         node1.addChildNode(objectJni);
 
         float[] heartPosition = {-0, -5.5f, -1.15f};
-        node1.setPosition(heartPosition);
+        node1.setPosition(new Vector(heartPosition));
         return Arrays.asList(node1);
     }
 
@@ -514,7 +514,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
         node.setGeometry(surface);
         float[] position = {0, 0, -2};
-        node.setPosition(position);
+        node.setPosition(new Vector(position));
         return Arrays.asList(node);
     }
 
@@ -538,7 +538,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         surface.setMaterial(material);
         surface.setImageTexture(bobaTexture);
         node.setGeometry(surface);
-        node.setPosition(pos);
+        node.setPosition(new Vector(pos));
         return node;
     }
 
@@ -556,7 +556,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         Node node = new Node();
         final Surface surface = new Surface(4, 4, 0, 0, 1, 1);
         float[] position = {0,0,-5};
-        node.setPosition(position);
+        node.setPosition(new Vector(position));
         final VideoTexture videoTexture = new VideoTexture(mVrView.getViroContext(), "LeftRight");
         videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
             @Override
@@ -635,7 +635,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         final Surface surface = new Surface(.5f, .5f, 0, 0, 1, 1);
 
         float[] rotation = {-90, 0, 0};
-        node.setRotation(rotation);
+        node.setRotation(new Vector(rotation));
         mARNodeDelegate = new ARNode.ARNodeDelegate() {
             @Override
             public void onAnchorFound(ARAnchor anchor) {
@@ -695,7 +695,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
                 for (int i = 0; i < 3; i++) {
                     newScale[i] = mStartScale[i] * scaleFactor;
                 }
-                mNode.setScale(newScale);
+                mNode.setScale(new Vector(newScale));
             }
         }
 
@@ -703,7 +703,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         public void onRotate(int source, float rotateFactor, EventDelegate.RotateState rotateState) {
             if (rotateState == EventDelegate.RotateState.ROTATE_MOVE) {
                 float[] newRotation = {0, mYRotation - rotateFactor, 0};
-                mNode.setRotation(newRotation);
+                mNode.setRotation(new Vector(newRotation));
             } else if(rotateState == EventDelegate.RotateState.ROTATE_END) {
                 mYRotation = mYRotation - rotateFactor;
             }
@@ -721,14 +721,14 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         delegate.setEventEnabled(EventDelegate.EventAction.ON_ROTATE, true);
         delegate.setEventEnabled(EventDelegate.EventAction.ON_PINCH, true);
         delegate.setEventDelegateCallback(new ARDragDelegateCallback("boxNode", boxNode));
-        node.setEventDelegateJni(delegate);
-        node.setDragType("FixedToWorld");
+        node.setEventDelegate(delegate);
+        node.setDragType(Node.DragType.FIXED_TO_WORLD);
 
         float[] nodePos = {0, 0, -1};
-        node.setPosition(nodePos);
+        node.setPosition(new Vector(nodePos));
 
         float[] boxPos = {0, .075f, 0};
-        boxNode.setPosition(boxPos);
+        boxNode.setPosition(new Vector(boxPos));
 
         boxNode.setGeometry(box);
         node.addChildNode(boxNode);
@@ -890,10 +890,10 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         final Polyline polyline = new Polyline(points, 0.1f);
         Node node1 = new Node();
 
-        node1.setPosition(linePos);
+        node1.setPosition(new Vector(linePos));
         node1.setGeometry(polyline);
         polyline.setMaterials(Arrays.asList(material));
-        node1.setEventDelegateJni(getGenericDelegate("Line"));
+        node1.setEventDelegate(getGenericDelegate("Line"));
 
         mHandler.postDelayed(new Runnable() {
             public void run() {

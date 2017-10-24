@@ -2,6 +2,8 @@ package com.viro.renderer.jni;
 
 /**
  * Represents a 3-component floating-point vector.
+ *
+ * TODO Add equals and hashCode
  */
 public class Vector {
 

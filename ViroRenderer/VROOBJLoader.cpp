@@ -41,7 +41,7 @@ void VROOBJLoader::loadOBJFromResource(std::string resource, VROResourceType typ
     }
     else {
         bool isTemp;
-        std::string path = VROModelIOUtil::processResource(path, type, &isTemp);
+        std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
         std::string base = resource.substr(0, resource.find_last_of('/'));
 
         std::shared_ptr<VROGeometry> geometry = loadOBJ(resource, base, type);
