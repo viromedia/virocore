@@ -273,7 +273,7 @@ void EventDelegate_JNI::onRotate(int source, float rotateDegrees, RotateState ro
     });
 }
 
-void EventDelegate_JNI::onCameraHitTest(int source, std::vector<VROARHitTestResult> results) {
+void EventDelegate_JNI::onCameraARHitTest(int source, std::vector<VROARHitTestResult> results) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
@@ -331,7 +331,7 @@ void EventDelegate_JNI::onCameraHitTest(int source, std::vector<VROARHitTestResu
         }
 
         VROPlatformCallJavaFunction(localObj,
-                                    "onCameraHitTest", "(I[Lcom/viro/renderer/ARHitTestResult;)V", source, resultsArray);
+                                    "onCameraARHitTest", "(I[Lcom/viro/renderer/ARHitTestResult;)V", source, resultsArray);
         env->DeleteLocalRef(localObj);
     });
 }

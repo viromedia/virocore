@@ -284,19 +284,19 @@ void VROInputControllerAR::processCenterCameraHitTest() {
             std::shared_ptr<VROARCamera> camera = frame->getCamera();
             // If delegate is enabled, send back empty results if tracking is not available yet.
             if((camera->getTrackingState() == VROARTrackingState::Unavailable)
-               && delegate->isEventEnabled(VROEventDelegate::EventAction::OnCameraHitTest)) {
-                delegate->onCameraHitTest(ViroCardBoard::InputSource::Controller, results);
+               && delegate->isEventEnabled(VROEventDelegate::EventAction::OnCameraARHitTest)) {
+                delegate->onCameraARHitTest(ViroCardBoard::InputSource::Controller, results);
                 return;
             }
         }
 
-       if(frame && delegate->isEventEnabled(VROEventDelegate::EventAction::OnCameraHitTest)) {
+       if(frame && delegate->isEventEnabled(VROEventDelegate::EventAction::OnCameraARHitTest)) {
                 results = frame->hitTest(_viewportWidth/2.0f, _viewportHeight/2.0f,
                                  { VROARHitTestResultType::ExistingPlaneUsingExtent,
                                      VROARHitTestResultType::ExistingPlane,
                                      VROARHitTestResultType::EstimatedHorizontalPlane,
                                      VROARHitTestResultType::FeaturePoint });
-            delegate->onCameraHitTest(ViroCardBoard::InputSource::Controller, results);
+            delegate->onCameraARHitTest(ViroCardBoard::InputSource::Controller, results);
         }
     }
 }

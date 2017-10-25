@@ -72,7 +72,7 @@ public class EventDelegate {
         ON_FUSE(9),
         ON_PINCH(10),
         ON_ROTATE(11),
-        ON_CAMERA_HIT_TEST(12);
+        ON_CAMERA_AR_HIT_TEST(12);
 
         public final int mTypeId;
 
@@ -256,7 +256,7 @@ public class EventDelegate {
         void onFuse(int source);
         void onPinch(int source, float scaleFactor, PinchState pinchState);
         void onRotate(int source, float rotateFactor, RotateState rotateState);
-        void onCameraHitTest(int source, ARHitTestResult[] results);
+        void onCameraARHitTest(int source, ARHitTestResult[] results);
     }
 
     /**
@@ -324,9 +324,9 @@ public class EventDelegate {
         }
     }
 
-    void onCameraHitTest(int source, ARHitTestResult[] results) {
+    void onCameraARHitTest(int source, ARHitTestResult[] results) {
         if(mDelegate != null) {
-            mDelegate.onCameraHitTest(source, results);
+            mDelegate.onCameraARHitTest(source, results);
         }
     }
 }

@@ -47,7 +47,7 @@ public:
         OnFuse = 9,
         OnPinch = 10,
         OnRotate = 11,
-        OnCameraHitTest = 12,
+        OnCameraARHitTest = 12,
     };
 
     /*
@@ -116,7 +116,7 @@ public:
         _enabledEventMap[VROEventDelegate::EventAction::OnFuse] = false;
         _enabledEventMap[VROEventDelegate::EventAction::OnPinch] = false;
         _enabledEventMap[VROEventDelegate::EventAction::OnRotate] = false;
-        _enabledEventMap[VROEventDelegate::EventAction::OnCameraHitTest] = false;
+        _enabledEventMap[VROEventDelegate::EventAction::OnCameraARHitTest] = false;
     }
 
     /*
@@ -143,7 +143,7 @@ public:
     }
 
 
-    virtual void onCameraHitTest(int source, std::vector<VROARHitTestResult> results) {
+    virtual void onCameraARHitTest(int source, std::vector<VROARHitTestResult> results) {
         // No-op
     }
     
