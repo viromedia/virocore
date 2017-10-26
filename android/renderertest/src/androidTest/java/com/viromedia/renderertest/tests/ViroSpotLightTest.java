@@ -7,7 +7,7 @@
  * the PATENTS file in the same directory.
  */
 
-package com.viromedia.renderertest.tests.gvr;
+package com.viromedia.renderertest.tests;
 
 import android.content.Context;
 import android.content.Intent;
@@ -59,8 +59,8 @@ import static org.junit.Assert.assertEquals;
  */
 
 @RunWith(AndroidJUnit4.class)
-public class ViroGVRSceneLightingTest {
-    private static final String TAG = "GVRSceneLightingTest";
+public class ViroSpotLightTest {
+    private static final String TAG = ViroSpotLightTest.class.getName();
     private Boolean mGLInitialized = false;
     private ViroView mViroView;
     private ViroReleaseTestActivity mActivity;
@@ -161,7 +161,7 @@ public class ViroGVRSceneLightingTest {
     }
 
     @Test
-    public void useAppContext() {
+    public void dummy_test() {
         // Context of the app under test.
         Log.d(TAG, "useApp called");
         Context appContext = InstrumentationRegistry.getTargetContext();
