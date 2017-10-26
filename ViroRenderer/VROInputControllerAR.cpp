@@ -281,22 +281,21 @@ void VROInputControllerAR::processCenterCameraHitTest() {
         std::shared_ptr<VROEventDelegate> delegate = _scene->getRootNode()->getEventDelegate();
 
         std::vector<VROARHitTestResult> results;
-        if(delegate->isEventEnabled(VROEventDelegate::EventAction::OnCameraARHitTest)) {
-            if(frame) {
+        if(delegate && frame && delegate->isEventEnabled(VROEventDelegate::EventAction::OnCameraARHitTest)) {
                 std::shared_ptr<VROARCamera> camera = frame->getCamera();
-                if(camera && (camera->getTrackingState() == VROARTrackingState::Unavailable)){
-                    // If delegate is enabled, send back empty results if tracking is not available yet.
-                    delegate->onCameraARHitTest(ViroCardBoard::InputSource::Controller, results);
-                    return;
-                }
-
-                results = frame->hitTest(_viewportWidth/2.0f, _viewportHeight/2.0f,
-                                     { VROARHitTestResultType::ExistingPlaneUsingExtent,
-                                         VROARHitTestResultType::ExistingPlane,
-                                         VROARHitTestResultType::EstimatedHorizontalPlane,
-                                         VROARHitTestResultType::FeaturePoint });
+                
+            if(camera && (camera->getTrackingState() == VROARTrackingState::Unavailable)){
+                // If delegate is enabled, send back empty results if tracking is not available yet.
                 delegate->onCameraARHitTest(ViroCardBoard::InputSource::Controller, results);
+                return;
             }
+
+            results = frame->hitTest(_viewportWidth/2.0f, _viewportHeight/2.0f,
+                                 { VROARHitTestResultType::ExistingPlaneUsingExtent,
+                                     VROARHitTestResultType::ExistingPlane,
+                                     VROARHitTestResultType::EstimatedHorizontalPlane,
+                                     VROARHitTestResultType::FeaturePoint });
+            delegate->onCameraARHitTest(ViroCardBoard::InputSource::Controller, results);
         }
     }
 }
