@@ -24,7 +24,10 @@ JNI_METHOD(jlong, nativeCreateDelegate)(JNIEnv *env,
 JNI_METHOD(void, nativeDestroyDelegate)(JNIEnv *env,
                                         jclass clazz,
                                         jlong native_node_ref) {
-  delete reinterpret_cast<PersistentRef<VRONode> *>(native_node_ref);
+    // TODO: figure out why this is needed
+    VROPlatformDispatchAsyncRenderer([native_node_ref]{
+        delete reinterpret_cast<PersistentRef<VRONode> *>(native_node_ref);
+    });
 }
 
 JNI_METHOD(void, nativeEnableEvent)(JNIEnv *env,
