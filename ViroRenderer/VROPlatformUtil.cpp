@@ -181,6 +181,13 @@ static std::mutex sTaskMapMutex;
 static int sTaskIdGenerator;
 static std::map<int, std::function<void()>> sTaskMap;
 
+// These queues store the ids of tasks to run on their respective threads once VROPlatformUtil
+// has properly been setup. This is because running these tasks require the PlatformUtil java
+// object to be created and set on sPlatformUtil.
+static std::vector<int> sBackgroundQueue;
+static std::vector<int> sRendererQueue;
+static std::vector<int> sAsyncQueue;
+
 // Get the JNI Environment for the current thread. If the JavaVM is not yet attached to the
 // current thread, attach it
 void getJNIEnv(JNIEnv **jenv) {
@@ -195,6 +202,9 @@ void VROPlatformSetEnv(JNIEnv *env, jobject appContext, jobject assetManager, jo
     sJavaAssetMgr = env->NewGlobalRef(assetManager);
     sPlatformUtil = env->NewGlobalRef(platformUtil);
     sAssetMgr = AAssetManager_fromJava(env, assetManager);
+
+    // Now that we've properly setup VROPlatformUtil, flush the task queues.
+    VROPlatformFlushTaskQueues();
 }
 
 void VROPlatformSetEnv(JNIEnv *env) {
@@ -231,6 +241,7 @@ void VROPlatformReleaseEnv() {
     env->DeleteGlobalRef(sPlatformUtil);
 
     sJavaAssetMgr = nullptr;
+    sPlatformUtil = nullptr;
     sAssetMgr = nullptr;
 }
 
@@ -562,6 +573,11 @@ void VROPlatformRunTask(int taskId) {
 void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     int task = VROPlatformGenerateTask(fcn);
 
+    if (!sPlatformUtil) {
+        sBackgroundQueue.push_back(task);
+        return;
+    }
+
     JNIEnv *env;
     getJNIEnv(&env);
 
@@ -574,14 +590,48 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
 
 void VROPlatformDispatchAsyncRenderer(std::function<void()> fcn) {
     int task = VROPlatformGenerateTask(fcn);
+    if (!sPlatformUtil) {
+        sRendererQueue.push_back(task);
+        return;
+    }
     VROPlatformCallJavaFunction(sPlatformUtil,
                                 "dispatchRenderer", "(I)V", task);
 }
 
 void VROPlatformDispatchAsyncApplication(std::function<void()> fcn){
     int task = VROPlatformGenerateTask(fcn);
+    if (!sPlatformUtil) {
+        sAsyncQueue.push_back(task);
+        return;
+    }
     VROPlatformCallJavaFunction(sPlatformUtil,
                                 "dispatchApplication", "(I)V", task);
+}
+
+void VROPlatformFlushTaskQueues() {
+    for (int task : sBackgroundQueue) {
+        JNIEnv *env;
+        getJNIEnv(&env);
+
+        jclass cls = env->FindClass("com/viro/renderer/jni/PlatformUtil");
+        jmethodID jmethod = env->GetStaticMethodID(cls, "dispatchAsyncBackground", "(I)V");
+        env->CallStaticVoidMethod(cls, jmethod, task);
+
+        env->DeleteLocalRef(cls);
+    }
+    sBackgroundQueue.clear();
+
+    for (int task : sRendererQueue) {
+        VROPlatformCallJavaFunction(sPlatformUtil,
+                                    "dispatchRenderer", "(I)V", task);
+    }
+    sRendererQueue.clear();
+
+    for (int task : sAsyncQueue) {
+        VROPlatformCallJavaFunction(sPlatformUtil,
+                                    "dispatchApplication", "(I)V", task);
+    }
+    sAsyncQueue.clear();
 }
 
 jobject VROPlatformGetClassLoader(JNIEnv *jni, jobject jcontext) {

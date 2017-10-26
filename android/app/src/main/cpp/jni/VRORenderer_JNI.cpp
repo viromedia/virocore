@@ -98,6 +98,9 @@ JNI_METHOD(void, nativeDestroyRenderer)(JNIEnv *env,
     VROThreadRestricted::unsetThread(VROThreadName::Renderer);
 
     delete reinterpret_cast<PersistentRef<VROSceneRenderer> *>(native_renderer);
+
+    // Once the renderer dies, release/reset VROPlatformUtils stuff
+    VROPlatformReleaseEnv();
 }
 
 JNI_METHOD(void, nativeInitializeGl)(JNIEnv *env,
