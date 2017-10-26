@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion '26.0.1'
 
     defaultConfig {
         applicationId "com.viromedia.renderertest"
@@ -11,6 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
 
+        testApplicationId "com.viromedia.renderertest"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
@@ -49,5 +50,8 @@ dependencies {
     compile project(':app')
     compile project(':libs:gvr')
     compile 'com.android.support:appcompat-v7:25.0.0'
-    testCompile 'junit:junit:4.12'
+
+    // testing dependencies
+    androidTestCompile 'junit:junit:4.12'
+    androidTestCompile 'org.awaitility:awaitility:3.0.0'
 }

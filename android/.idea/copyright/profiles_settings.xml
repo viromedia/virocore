@@ -1,3 +1,7 @@
 <component name="CopyrightManager">
-  <settings default="" />
+  <settings default="">
+    <module2copyright>
+      <element module="All" copyright="2017-present, ViroMedia, Inc" />
+    </module2copyright>
+  </settings>
 </component>

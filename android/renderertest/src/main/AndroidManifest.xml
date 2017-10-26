@@ -11,10 +11,11 @@
     <application android:allowBackup="true" android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name" android:supportsRtl="true" android:theme="@style/AppTheme">
         <activity
-            android:name="com.viromedia.renderertest.ViroActivity"
-            android:enableVrMode="true"
+            android:name="com.viromedia.renderertest.ViroReleaseTestActivity"
+            android:enableVrMode="false"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape" >
+            <uses-library android:name="android.support.test.runner" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="com.google.intent.category.CARDBOARD" />

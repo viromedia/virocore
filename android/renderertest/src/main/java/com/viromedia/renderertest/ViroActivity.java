@@ -140,7 +140,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     public void onGlInitialized() {
         Log.e("ViroActivity", "onGlInitialized called");
         initializeVrScene();
-        //initializeArScene();
+//        initializeArScene();
     }
 
     private void initializeVrScene() {
@@ -983,8 +983,8 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         }
 
         @Override
-        public void onCameraHitTest(int source, ARHitTestResult[] results) {
-            Log.e(TAG, delegateTag + " on Camera Hit Test");
+        public void onCameraARHitTest(int source, ARHitTestResult[] results) {
+            Log.e(TAG, delegateTag + " On Camera AR Hit Test");
         }
     }
 }
