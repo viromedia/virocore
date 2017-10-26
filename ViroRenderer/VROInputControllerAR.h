@@ -123,6 +123,8 @@ private:
     std::weak_ptr<VROARSession> _weakSession;
     VROCamera _latestCamera;
     VROVector3f _latestTouchPos;
+    VROQuaternion _cameraLastQuaternion;
+    VROVector3f _cameraLastPosition;
 
     VROVector3f calculateCameraRay(VROVector3f touchPos);
 

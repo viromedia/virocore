@@ -18,7 +18,7 @@ VROInputControllerAR::VROInputControllerAR(float viewportWidth, float viewportHe
     _isTouchOngoing(false),
     _isPinchOngoing(false),
     _isRotateOngoing(false),
-    _lastProcessDragTimeMillis(0) {
+    _lastProcessDragTimeMillis(0){
 }
 
 VROVector3f VROInputControllerAR::getDragForwardOffset() {
@@ -289,13 +289,32 @@ void VROInputControllerAR::processCenterCameraHitTest() {
                 delegate->onCameraARHitTest(ViroCardBoard::InputSource::Controller, results);
                 return;
             }
+            
+            VROQuaternion quaternion = camera->getRotation().extractRotation(VROVector3f(1.0f, 1.0f, 1.0f));
 
-            results = frame->hitTest(_viewportWidth/2.0f, _viewportHeight/2.0f,
-                                 { VROARHitTestResultType::ExistingPlaneUsingExtent,
-                                     VROARHitTestResultType::ExistingPlane,
-                                     VROARHitTestResultType::EstimatedHorizontalPlane,
-                                     VROARHitTestResultType::FeaturePoint });
-            delegate->onCameraARHitTest(ViroCardBoard::InputSource::Controller, results);
+            bool bCameraChanged = false;
+            VROVector3f currPosition = camera->getPosition();
+            float distance = currPosition.distance(_cameraLastPosition);
+            if(distance > 0.001f) {
+                bCameraChanged = true;
+            }
+
+            //using formula : abs(q1.dot(q2)) > 1-EPS to determine equality of quaternions
+            float quatDotProduct = abs(quaternion.dotProduct(_cameraLastQuaternion));
+            if(quatDotProduct <= (1- .000001)) {
+                bCameraChanged = true;
+            }
+
+            if(bCameraChanged) {
+                results = frame->hitTest(_viewportWidth/2.0f, _viewportHeight/2.0f,
+                                     { VROARHitTestResultType::ExistingPlaneUsingExtent,
+                                         VROARHitTestResultType::ExistingPlane,
+                                         VROARHitTestResultType::EstimatedHorizontalPlane,
+                                         VROARHitTestResultType::FeaturePoint });
+                delegate->onCameraARHitTest(ViroCardBoard::InputSource::Controller, results);
+            }
+            _cameraLastQuaternion = quaternion;
+            _cameraLastPosition = currPosition;
         }
     }
 }
