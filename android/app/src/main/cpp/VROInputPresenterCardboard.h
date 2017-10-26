@@ -27,15 +27,15 @@ public:
     }
     ~VROInputPresenterCardboard() {}
 
-    void onClick(int source, ClickState clickState, std::vector<float> position) {
+    void onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position) {
         if (source==ViroCardBoard::InputSource::ViewerButton && clickState==ClickState::ClickUp){
             getReticle()->trigger();
         }
 
-        VROInputPresenter::onClick(source, clickState, position);
+        VROInputPresenter::onClick(source, node, clickState, position);
     }
 
-    void onGazeHit(int source, const VROHitTestResult &hit) {
+    void onGazeHit(int source, std::shared_ptr<VRONode> node, const VROHitTestResult &hit) {
         VROInputPresenter::onReticleGazeHit(hit);
      }
 };

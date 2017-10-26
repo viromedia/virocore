@@ -26,6 +26,13 @@ public abstract class Light {
     protected float mIntensity = 1000;
     private int mInfluenceBitMask = 1;
 
+    /**
+     * @hide
+     */
+    protected Light() {
+
+    }
+
     @Override
     protected void finalize() throws Throwable {
         try {

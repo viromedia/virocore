@@ -30,7 +30,7 @@ void VROBoxTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, 
     /*
      Load the background texture.
      */
-    rootNode->setBackgroundSphere(VROTestUtil::loadHDRTexture("wooden"));
+    //rootNode->setBackgroundSphere(VROTestUtil::loadHDRTexture("wooden"));
     //rootNode->setBackgroundSphere(VROTestUtil::loadDiffuseTexture("interior_viro.jpg", VROMipmapMode::None));
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);
@@ -208,10 +208,12 @@ void VROBoxTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, 
     
     _eventDelegate = std::make_shared<VROBoxEventDelegate>(scene);
     _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnClick, true);
-    scene->getRootNode()->setEventDelegate(_eventDelegate);
+    _eventDelegate->setEnabledEvent(VROEventDelegate::EventAction::OnFuse, true);
+    boxParentNode->setEventDelegate(_eventDelegate);
 }
 
-void VROBoxEventDelegate::onClick(int source, ClickState clickState, std::vector<float> position) {
+void VROBoxEventDelegate::onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState,
+                                  std::vector<float> position) {
     std::shared_ptr<VROScene> scene = _scene.lock();
     if (scene && clickState == ClickState::Clicked) {
         VROToneMappingMethod method = scene->getToneMappingMethod();

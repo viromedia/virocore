@@ -10,6 +10,25 @@
  */
 package com.viro.renderer.jni;
 
+import com.viro.renderer.ARHitTestResult;
+import com.viro.renderer.jni.event.ARHitTestListener;
+import com.viro.renderer.jni.event.ClickListener;
+import com.viro.renderer.jni.event.ClickState;
+import com.viro.renderer.jni.event.ControllerStatus;
+import com.viro.renderer.jni.event.ControllerStatusListener;
+import com.viro.renderer.jni.event.DragListener;
+import com.viro.renderer.jni.event.FuseListener;
+import com.viro.renderer.jni.event.GesturePinchListener;
+import com.viro.renderer.jni.event.GestureRotateListener;
+import com.viro.renderer.jni.event.HoverListener;
+import com.viro.renderer.jni.event.PinchState;
+import com.viro.renderer.jni.event.RotateState;
+import com.viro.renderer.jni.event.SwipeState;
+import com.viro.renderer.jni.event.TouchState;
+import com.viro.renderer.jni.event.TouchpadScrollListener;
+import com.viro.renderer.jni.event.TouchpadSwipeListener;
+import com.viro.renderer.jni.event.TouchpadTouchListener;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,10 +36,11 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Underlying each {@link Scene} is a full-featured 3D scene graph engine. A scene graph
- * is a hierarchical tree structure of nodes that allows developers to intuitively construct a 3D
+ * Underlying each {@link Scene} is a full-featured 3D scene graph engine. A scene graph is a
+ * hierarchical tree structure of nodes that allows developers to intuitively construct a 3D
  * environment. The root node is retrieved via {@link Scene#getRootNode()}. Sub-nodes are
  * represented by child Node objects. Each Node represents a position and transform in 3D space, to
  * which you can attach 3D objects, lights, or other content.
@@ -29,14 +49,35 @@ import java.util.Set;
  * space transform (position, rotation, and scale) relative to its parent Node. You use a hierarchy
  * of Node objects to model your scene in a way that makes sense for your application.
  * <p>
- * To take a concrete example, suppose your app presents an animated view of a solar system.
- * You can construct a Node hierarchy that models the sun, planets, and moons relative to one another.
- * Each body can be a Node, with its position in its orbit defined in the coordinate system of
- * its parent. The sun would define its own coordinate space, and the Earth would position itself in
+ * To take a concrete example, suppose your app presents an animated view of a solar system. You can
+ * construct a Node hierarchy that models the sun, planets, and moons relative to one another. Each
+ * body can be a Node, with its position in its orbit defined in the coordinate system of its
+ * parent. The sun would define its own coordinate space, and the Earth would position itself in
  * that space. At the same time, the Earth would define its own coordinate space in which the moon
  * would position itself, and so on.
+ * <p>
+ * Nodes are also responsible for event handling. Events are triggered either programmatically, or
+ * by an input Controller action. Events start at the "hovered" (or focused) Node. If that Node
+ * cannot respond to the event (e.g. if it does not have the appropriate listener installed), the
+ * event will bubble up the scene graph to that Node's parent, and so on, until a Node that can
+ * handle the event is found.
+ * <p>
+ * All events are also received by the {@link Controller}, which provides a centralized place to
+ * respond to all events regardless of what Nodes they targeted.
  */
-public class Node {
+public class Node implements EventDelegate.EventDelegateCallback {
+
+    private static ConcurrentHashMap<Integer, WeakReference<Node>> nodeWeakMap = new ConcurrentHashMap<Integer, WeakReference<Node>>();
+
+    /**
+     * @hide
+     * @param id
+     * @return
+     */
+    static Node getNodeWithID(int id) {
+        WeakReference<Node> ref = nodeWeakMap.get(id);
+        return ref != null ? ref.get() : null;
+    }
 
     /**
      * Specifies the behavior of dragging if dragging is enabled on a Node's {@link EventDelegate}.
@@ -109,7 +150,6 @@ public class Node {
     protected long mNativeRef;
 
     protected boolean mDestroyed = false;
-    private EventDelegate mEventDelegate = null;
     private Geometry mGeometry;
     private PhysicsBody mPhysicsBody;
     private WeakReference<Node> mParent;
@@ -128,11 +168,28 @@ public class Node {
     private String mTag;
     private Camera mCamera;
 
+    private EventDelegate mEventDelegate;
+    private ClickListener mClickListener;
+    private HoverListener mHoverListener;
+    private ControllerStatusListener mStatusListener;
+    private TouchpadTouchListener mTouchpadTouchListener;
+    private TouchpadSwipeListener mTouchpadSwipeListener;
+    private TouchpadScrollListener mTouchpadScrollListener;
+    private DragListener mDragListener;
+    private FuseListener mFuseListener;
+    private GesturePinchListener mGesturePinchListener;
+    private GestureRotateListener mGestureRotateListener;
+    private ARHitTestListener mARHitTestListener;
+
     /**
      * Construct a new Node centered at the origin, with no geometry.
      */
     public Node() {
         mNativeRef = nativeCreateNode();
+        mEventDelegate = new EventDelegate();
+        mEventDelegate.setEventDelegateCallback(this);
+
+        nodeWeakMap.put(nativeGetUniqueIdentifier(mNativeRef), new WeakReference<Node>(this));
     }
 
     /**
@@ -141,7 +198,8 @@ public class Node {
      * override mNativeRef
      */
     protected Node(boolean dummyArg) {
-        // no-op
+        mEventDelegate = new EventDelegate();
+        mEventDelegate.setEventDelegateCallback(this);
     }
 
     /**
@@ -149,6 +207,7 @@ public class Node {
      */
     protected void setNativeRef(long nativeRef) {
         mNativeRef = nativeRef;
+        nodeWeakMap.put(nativeGetUniqueIdentifier(mNativeRef), new WeakReference<Node>(this));
     }
 
     @Override
@@ -171,23 +230,21 @@ public class Node {
             nativeDestroyNode(mNativeRef);
             mNativeRef = 0;
         }
+        if (mEventDelegate != null) {
+            mEventDelegate.dispose();
+        }
     }
 
     /**
-     * Set the {@link EventDelegate} to use for this Node. EventDelegate objects respond to
-     * input events like cliking, dragging, and moving.
-     *
-     * @param eventDelegate The {@link EventDelegate} to use for input events received on this Node.
+     * @hide
+     * @param delegate
      */
-    public void setEventDelegate(EventDelegate eventDelegate) {
+    public void setEventDelegate(EventDelegate delegate) {
         if (mEventDelegate != null) {
-            mEventDelegate.destroy();
+            mEventDelegate.dispose();
         }
-
-        mEventDelegate = eventDelegate;
-        if (mEventDelegate != null) {
-            nativeSetEventDelegate(mNativeRef, mEventDelegate.mNativeRef);
-        }
+        mEventDelegate = delegate;
+        nativeSetEventDelegate(mNativeRef, delegate.mNativeRef);
     }
 
     /**
@@ -218,11 +275,29 @@ public class Node {
     /**
      * Remove all children from this Node.
      */
-    public void removeAllChildNodes(){
+    public void removeAllChildNodes() {
         List<Node> children = new ArrayList<Node>(mChildren);
         for (Node child : children) {
             child.removeFromParentNode();
         }
+    }
+
+    /**
+     * Get the parent of this Node in the scene-graph. Returns null if this Node has no parent.
+     *
+     * @return The parent Node.
+     */
+    public Node getParentNode() {
+        return mParent != null ? mParent.get() : null;
+    }
+
+    /**
+     * Get the children of this Node in the scene-graph.
+     *
+     * @return The children.
+     */
+    public List<Node> getChildNodes() {
+        return mChildren;
     }
 
     /**
@@ -232,7 +307,7 @@ public class Node {
      *
      * @param position The position as a {@link Vector}.
      */
-    public void setPosition(Vector position){
+    public void setPosition(Vector position) {
         nativeSetPosition(mNativeRef, position.x, position.y, position.z);
     }
 
@@ -693,6 +768,10 @@ public class Node {
         return new HashSet<String>(Arrays.asList(nativeGetAnimationKeys(mNativeRef)));
     }
 
+// +---------------------------------------------------------------------------+
+// | PHYSICS
+// +---------------------------------------------------------------------------+
+
     /**
      * Create a {@link PhysicsBody} for this Node, which makes the Node participate in the physics
      * simulation. The PhysicsBody can be used to tune the way in which this Node responds to other
@@ -741,10 +820,384 @@ public class Node {
         return mPhysicsBody;
     }
 
+// +---------------------------------------------------------------------------+
+// | EVENTS
+// +---------------------------------------------------------------------------+
+
+    /**
+     * Set a {@link ClickListener} to respond when users click with their Controller on this
+     * {@link Node}.
+     *
+     * @param listener The listener to attach, or null to remove any installed listener.
+     */
+    public void setClickListener(ClickListener listener) {
+        mClickListener = listener;
+        if (listener != null) {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_CLICK, true);
+        }
+        else {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_CLICK, false);
+        }
+    }
+
+    /**
+     * Get the {@link ClickListener} that is currently installed for this {@link Node}.
+     *
+     * @return The installed listener, or null if none is installed.
+     */
+    public ClickListener getClickListener() {
+        return mClickListener;
+    }
+
+    /**
+     * Set the {@link HoverListener} to respond when users hover over this {@link Node}.
+     *
+     * @param listener The listener to attach, or null to remove any installed listener.
+     */
+    public void setHoverListener(HoverListener listener) {
+        mHoverListener = listener;
+        if (listener != null) {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_HOVER, true);
+        }
+        else {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_HOVER, false);
+        }
+    }
+
+    /**
+     * Get the {@link HoverListener} that is currently installed for this {@link Node}.
+     *
+     * @return The installed listener, or null if none is installed.
+     */
+    public HoverListener getHoverListener() {
+        return mHoverListener;
+    }
+
+    /**
+     * Set the {@link TouchpadTouchListener} to respond when a user touches or moves across
+     * a touchpad Controller while hovering over this {@link Node}.
+     *
+     * @param listener The listener to attach, or null to remove any installed listener.
+     */
+    public void setTouchpadTouchListener(TouchpadTouchListener listener) {
+        mTouchpadTouchListener = listener;
+        if (listener != null) {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_TOUCH, true);
+        }
+        else {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_TOUCH, false);
+        }
+    }
+
+    /**
+     * Get the {@link TouchpadTouchListener} that is currently installed for this {@link Node}.
+     *
+     * @return The installed listener, or null if none is installed.
+     */
+    public TouchpadTouchListener getTouchpadTouchListener() {
+        return mTouchpadTouchListener;
+    }
+
+    /**
+     * Set the {@link TouchpadSwipeListener} to respond when a user swipes across a touchpad
+     * Controller while hovering over this {@link Node}.
+     *
+     * @param listener The listener to attach, or null to remove any installed listener.
+     */
+    public void setTouchpadSwipeListener(TouchpadSwipeListener listener) {
+        mTouchpadSwipeListener = listener;
+        if (listener != null) {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_SWIPE, true);
+        }
+        else {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_SWIPE, false);
+        }
+    }
+
+    /**
+     * Get the {@link TouchpadSwipeListener} that is currently installed for this {@link Node}.
+     *
+     * @return The installed listener, or null if none is installed.
+     */
+    public TouchpadSwipeListener getTouchpadSwipeListener() {
+        return mTouchpadSwipeListener;
+    }
+
+    /**
+     * Set the {@link TouchpadScrollListener} to respond when a user scrolls a touchpad while
+     * hovering over a {@link Node}.
+     *
+     * @param listener The listener to attach, or null to remove any installed listener.
+     */
+    public void setTouchpadScrollListener(TouchpadScrollListener listener) {
+        mTouchpadScrollListener = listener;
+        if (listener != null) {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_SCROLL, true);
+        }
+        else {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_SCROLL, false);
+        }
+    }
+
+    /**
+     * Get the {@link TouchpadScrollListener} that is currently installed for this {@link Node}.
+     *
+     * @return The installed listener, or null if none is installed.
+     */
+    public TouchpadScrollListener getTouchpadScrollListener() {
+        return mTouchpadScrollListener;
+    }
+
+    /**
+     * Set the {@link DragListener} to respond when a user attempts to drag this {@link Node} by
+     * pressing over it and moving the Controller.
+     *
+     * @param listener The listener to attach, or null to remove any installed listener.
+     */
+    public void setDragListener(DragListener listener) {
+        mDragListener = listener;
+        if (listener != null) {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_DRAG, true);
+        }
+        else {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_DRAG, false);
+        }
+    }
+
+    /**
+     * Get the {@link DragListener} that is currently installed for this {@link Node}.
+     *
+     * @return The installed listener, or null if none is installed.
+     */
+    public DragListener getDragListener() {
+        return mDragListener;
+    }
+
+    /**
+     * Set the {@link FuseListener} to respond when a user hovers over this {@link Node} for
+     * {@link #setTimeToFuse(float)} milliseconds. When this is set, the fuse 'reticle' will
+     * be enabled for this Node.
+     *
+     * @param listener The listener to attach, or null to remove any installed listener.
+     */
+    public void setFuseListener(FuseListener listener) {
+        mFuseListener = listener;
+        if (listener != null) {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_FUSE, true);
+        }
+        else {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_FUSE, false);
+        }
+    }
+
+    /**
+     * Get the {@link FuseListener} that is currently installed for this {@link Node}.
+     *
+     * @return The installed listener, or null if none is installed.
+     */
+    public FuseListener getFuseListener() {
+        return mFuseListener;
+    }
+
+    /**
+     * Set the time in milliseconds the user must hover over a {@link Node} before a Fuse
+     * event is triggered on an installed {@link FuseListener}.
+     * @param millis The time in milliseconds before a Fuse is registered.
+     */
+    public void setTimeToFuse(float millis) {
+        mEventDelegate.setTimeToFuse(millis);
+    }
+
+    /**
+     * Set the {@link GesturePinchListener} to respond when a user pinches with two fingers over
+     * this {@link Node} using a screen Controller.
+     *
+     * @param listener The listener to attach, or null to remove any installed listener.
+     */
+    public void setGesturePinchListener(GesturePinchListener listener) {
+        mGesturePinchListener = listener;
+        if (listener != null) {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_PINCH, true);
+        }
+        else {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_PINCH, false);
+        }
+    }
+
+    /**
+     * Get the {@link GesturePinchListener} that is currently installed for this {@link Node}.
+     *
+     * @return The installed listener, or null if none is installed.
+     */
+    public GesturePinchListener getGesturePinchListener() {
+        return mGesturePinchListener;
+    }
+
+    /**
+     * Set the {@link GestureRotateListener} to respond when a user rotates with two fingers over
+     * this {@link Node} using a screen Controller.
+     *
+     * @param listener The listener to attach, or null to remove any installed listener.
+     */
+    public void setGestureRotateListener(GestureRotateListener listener) {
+        mGestureRotateListener = listener;
+        if (listener != null) {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_ROTATE, true);
+        }
+        else {
+            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_ROTATE, false);
+        }
+    }
+
+    /**
+     * Get the {@link GestureRotateListener} that is currently installed for this {@link Node}.
+     *
+     * @return The installed listener, or null if none is installed.
+     */
+    public GestureRotateListener getGestureRotateListener() {
+        return mGestureRotateListener;
+    }
+
+    /**
+     * Convert the given position from the coordinate space of this Node into the world coordinate
+     * system. This Node's coordinate system is the coordinate system in which the children of this
+     * Node are positioned. The world coordinate system is the global coordinate space; e.g., the
+     * coordinate space of the Scene's root Node.
+     *
+     * @param localPosition The local position to convert.
+     * @return The position in world space.
+     */
+    public Vector convertLocalPositionToWorldSpace(Vector localPosition) {
+        return new Vector(nativeConvertLocalPositionToWorldSpace(mNativeRef, localPosition.x, localPosition.y, localPosition.z));
+    }
+
+    /**
+     * Convert the given position from world coordinates into coordinate space of this Node. The
+     * world coordinate system is the global coordinate space; e.g., the coordinate space of the
+     * Scene's root Node. This Node's coordinate system is the coordinate system in which the
+     * children of this Node are positioned.
+     *
+     * @param worldPosition The world position to convert.
+     * @return The position in local space.
+     */
+    public Vector convertWorldPositionToLocalSpace(Vector worldPosition) {
+        return new Vector(nativeConvertWorldPositionToLocalSpace(mNativeRef, worldPosition.x, worldPosition.y, worldPosition.z));
+    }
+
+    /**
+     * @hide
+     */
+    @Override
+    public void onCameraARHitTest(int source, ARHitTestResult[] results) {
+
+    }
+    /**
+     * @hide
+     */
+    @Override
+    public void onClick(int source, Node node, ClickState clickState, float[] hitLoc) {
+        if (mClickListener != null) {
+            mClickListener.onClick(source, node, clickState, new Vector(hitLoc));
+        }
+    }
+    /**
+     * @hide
+     */
+    @Override
+    public void onHover(int source, Node node, boolean isHovering, float[] hitLoc) {
+        if (mHoverListener != null) {
+            mHoverListener.onHover(source, node, isHovering, new Vector(hitLoc));
+        }
+    }
+    /**
+     * @hide
+     */
+    @Override
+    public void onControllerStatus(int source, ControllerStatus status) {
+        if (mStatusListener != null) {
+            mStatusListener.onControllerStatus(source, status);
+        }
+    }
+    /**
+     * @hide
+     */
+    @Override
+    public void onTouch(int source, Node node, TouchState touchState, float[] touchPadPos) {
+        if (mTouchpadTouchListener != null) {
+            mTouchpadTouchListener.onTouch(source, node, touchState, touchPadPos[0], touchPadPos[1]);
+        }
+    }
+    /**
+     * @hide
+     */
+    @Override
+    public void onScroll(int source, Node node, float x, float y) {
+        if (mTouchpadScrollListener != null) {
+            mTouchpadScrollListener.onScroll(source, node, x, y);
+        }
+    }
+    /**
+     * @hide
+     */
+    @Override
+    public void onSwipe(int source, Node node, SwipeState swipeState) {
+        if (mTouchpadSwipeListener != null) {
+            mTouchpadSwipeListener.onSwipe(source, node, swipeState);
+        }
+    }
+    /**
+     * @hide
+     */
+    @Override
+    public void onDrag(int source, Node node, float x, float y, float z) {
+        if (mDragListener != null) {
+            Vector local = new Vector(x, y, z);
+
+            // We have to convert the local drag coordinates to world space
+            Vector world = new Vector(x, y, z);
+            if (node != null && node.getParentNode() != null) {
+                world = node.getParentNode().convertLocalPositionToWorldSpace(local);
+            }
+            mDragListener.onDrag(source, node, world, local);
+        }
+    }
+    /**
+     * @hide
+     */
+    @Override
+    public void onFuse(int source, Node node) {
+        if (mFuseListener != null) {
+            mFuseListener.onFuse(source, node);
+        }
+    }
+    /**
+     * @hide
+     */
+    @Override
+    public void onPinch(int source, Node node, float scaleFactor, PinchState pinchState) {
+        if (mGesturePinchListener != null) {
+            mGesturePinchListener.onPinch(source, node, scaleFactor, pinchState);
+        }
+    }
+    /**
+     * @hide
+     */
+    @Override
+    public void onRotate(int source, Node node, float rotateFactor, RotateState rotateState) {
+        if (mGestureRotateListener != null) {
+            mGestureRotateListener.onRotate(source, node, rotateFactor, rotateState);
+        }
+    }
+
+ // +---------------------------------------------------------------------------+
+ // | NATIVE
+ // +---------------------------------------------------------------------------+
+
     /*
      * JNI functions for view properties.
      */
     private native long nativeCreateNode();
+    private native int  nativeGetUniqueIdentifier(long nodeReference);
     private native void nativeDestroyNode(long nodeReference);
     private native void nativeAddChildNode(long nodeReference, long childNodeReference);
     private native void nativeRemoveFromParent(long nodeReference);
@@ -781,7 +1234,12 @@ public class Node {
     private native void nativeAddLight(long nodeReference, long lightReference);
     private native void nativeRemoveLight(long nodeReference, long lightReference);
     private native void nativeRemoveAllLights(long nodeReference);
+    private native float[] nativeConvertLocalPositionToWorldSpace(long nodeReference, float x, float y, float z);
+    private native float[] nativeConvertWorldPositionToLocalSpace(long nodeReference, float x, float y, float z);
 
+// +---------------------------------------------------------------------------+
+// | TRANSFORM DELEGATE
+// +---------------------------------------------------------------------------+
     /*
      TransformDelegate Callback functions called from JNI
      */

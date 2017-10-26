@@ -35,6 +35,13 @@ JNI_METHOD(jlong, nativeCreateNode)(JNIEnv *env,
     return Node::jptr(node);
 }
 
+JNI_METHOD(jint , nativeGetUniqueIdentifier)(JNIEnv *env,
+                                             jobject obj,
+                                             jlong node_j) {
+    std::shared_ptr<VRONode> node = Node::native(node_j);
+    return node->getUniqueID();
+}
+
 JNI_METHOD(void, nativeDestroyNode)(JNIEnv *env,
                                     jclass clazz,
                                     jlong native_node_ref) {
@@ -335,6 +342,24 @@ JNI_METHOD(jfloatArray, nativeGetRotationQuaternion)(JNIEnv *env,
     array_c[0] = quaternion.X; array_c[1] = quaternion.Y; array_c[2] = quaternion.Z; array_c[3] = quaternion.W;
     env->SetFloatArrayRegion(array_j, 0, 4, array_c);
     return array_j;
+}
+
+JNI_METHOD(jfloatArray, nativeConvertLocalPositionToWorldSpace)(JNIEnv *env,
+                                                                 jobject obj,
+                                                                 jlong node_j, float x, float y, float z) {
+
+    std::shared_ptr<VRONode> node = Node::native(node_j);
+    VROVector3f localPosition(x, y, z);
+    return ARUtilsCreateFloatArrayFromVector3f(node->getLastComputedTransform().invert().multiply(localPosition));
+}
+
+JNI_METHOD(jfloatArray, nativeConvertWorldPositionToLocalSpace)(JNIEnv *env,
+                                                                jobject obj,
+                                                                jlong node_j, float x, float y, float z) {
+
+    std::shared_ptr<VRONode> node = Node::native(node_j);
+    VROVector3f worldPosition(x, y, z);
+    return ARUtilsCreateFloatArrayFromVector3f(node->getLastComputedTransform().multiply(worldPosition));
 }
 
 JNI_METHOD(void, nativeSetOpacity)(JNIEnv *env,

@@ -54,7 +54,8 @@ void VROPhysicsTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchroniz
     _rootNode = rootNode;
 }
 
-void VROPhysicsEventDelegate::onClick(int source, ClickState clickState, std::vector<float> position) {
+void VROPhysicsEventDelegate::onClick(int source, std::shared_ptr<VRONode> node,
+                                      ClickState clickState, std::vector<float> position) {
     if (clickState == Clicked) {
         _test->createPhysicsBox({ position[0], 10, position[2] }, "box3");
     }

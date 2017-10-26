@@ -17,7 +17,7 @@ class VROPhysicsEventDelegate : public VROEventDelegate {
 public:
     VROPhysicsEventDelegate(VROPhysicsTest *test) : _test(test) {};
     virtual ~VROPhysicsEventDelegate() {};
-    void onClick(int source, ClickState clickState, std::vector<float> position);
+    void onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position);
     
 private:
     VROPhysicsTest *_test;

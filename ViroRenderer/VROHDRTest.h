@@ -17,7 +17,7 @@ class VROHDREventDelegate : public VROEventDelegate {
 public:
     VROHDREventDelegate(VROHDRTest *test) : _test(test) {};
     virtual ~VROHDREventDelegate() {};
-    void onClick(int source, ClickState clickState, std::vector<float> position);
+    void onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position);
     
 private:
     VROHDRTest *_test;

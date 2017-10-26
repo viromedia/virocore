@@ -25,6 +25,12 @@ import com.viro.renderer.jni.ViroGvrLayout;
 import com.viro.renderer.jni.ViroOvrView;
 import com.viro.renderer.jni.ViroView;
 import com.viro.renderer.jni.ViroViewARCore;
+import com.viro.renderer.jni.event.ClickState;
+import com.viro.renderer.jni.event.ControllerStatus;
+import com.viro.renderer.jni.event.PinchState;
+import com.viro.renderer.jni.event.RotateState;
+import com.viro.renderer.jni.event.SwipeState;
+import com.viro.renderer.jni.event.TouchState;
 
 /**
  * Created by manish on 10/25/17.
@@ -124,53 +130,53 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements GLList
         }
 
         @Override
-        public void onHover(int source, boolean isHovering, float[] hitLoc) {
+        public void onHover(int source, Node node, boolean isHovering, float[] hitLoc) {
             Log.e(TAG, delegateTag + " onHover " + isHovering);
         }
 
         @Override
-        public void onClick(int source, EventDelegate.ClickState clickState, float[] hitLoc) {
+        public void onClick(int source, Node node, ClickState clickState, float[] hitLoc) {
             Log.e(TAG, delegateTag + " onClick " + clickState.toString());
         }
 
         @Override
-        public void onTouch(int source, EventDelegate.TouchState touchState, float[] touchPadPos) {
+        public void onTouch(int source, Node node, TouchState touchState, float[] touchPadPos) {
             Log.e(TAG, delegateTag + "onTouch " + touchPadPos[0] + "," + touchPadPos[1]);
         }
 
         @Override
-        public void onControllerStatus(int source, EventDelegate.ControllerStatus status) {
+        public void onControllerStatus(int source, ControllerStatus status) {
 
         }
 
         @Override
-        public void onSwipe(int source, EventDelegate.SwipeState swipeState) {
+        public void onSwipe(int source, Node node, SwipeState swipeState) {
             Log.e(TAG, delegateTag + " onSwipe " + swipeState.toString());
         }
 
         @Override
-        public void onScroll(int source, float x, float y) {
+        public void onScroll(int source, Node node, float x, float y) {
             Log.e(TAG, delegateTag + " onScroll " + x + "," +y);
 
         }
 
         @Override
-        public void onDrag(int source, float x, float y, float z) {
+        public void onDrag(int source, Node node, float x, float y, float z) {
             Log.e(TAG, delegateTag +" On drag: " + x + ", " + y + ", " + z);
         }
 
         @Override
-        public void onFuse(int source) {
+        public void onFuse(int source, Node node) {
             Log.e(TAG, delegateTag + " On fuse");
         }
 
         @Override
-        public void onPinch(int source, float scaleFactor, EventDelegate.PinchState pinchState) {
+        public void onPinch(int source, Node node, float scaleFactor, PinchState pinchState) {
             Log.e(TAG, delegateTag + " On pinch");
         }
 
         @Override
-        public void onRotate(int source, float rotateFactor, EventDelegate.RotateState rotateState) {
+        public void onRotate(int source, Node node, float rotateFactor, RotateState rotateState) {
             Log.e(TAG, delegateTag + " On rotate");
         }
 

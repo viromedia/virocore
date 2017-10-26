@@ -15,7 +15,7 @@ class VROARDraggableNodeEventDelegate : public VROEventDelegate {
 public:
     VROARDraggableNodeEventDelegate() {};
     virtual ~VROARDraggableNodeEventDelegate() {};
-    void onDrag(int source, VROVector3f newPosition) {}
+    void onDrag(int source, std::shared_ptr<VRONode> node, VROVector3f newPosition) {}
 };
 
 class VROARDraggableNodeTest : public VRORendererTest {

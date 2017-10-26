@@ -148,7 +148,8 @@ VROVector3f VROInputControllerDaydream::getDaydreamControllerPosition(const VROQ
 
     // Apply the rotation to the ARM model within the presenter.
     VROVector3f origin;
-    _daydreamPresenter->onMove(ViroDayDream::InputSource::Controller, rotation.toEuler(), origin, forwardVector);
+    _daydreamPresenter->updateLastKnownForward(forwardVector);
+    _daydreamPresenter->setElbowRotation(rotation.toEuler());
 
     // Grab the calculated pointerNode's position from the ARM Model. If the controller does not
     // have pointer node (laser-less), use the controller's body node position.

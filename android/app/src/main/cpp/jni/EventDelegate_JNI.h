@@ -26,7 +26,7 @@
  * both allow java objects to register for events, and to notify them of
  * delegate events across the JNI bridge.
  */
-class EventDelegate_JNI : public VROEventDelegate{
+class EventDelegate_JNI : public VROEventDelegate {
 public:
     EventDelegate_JNI(jobject sceneJavaObject, JNIEnv *env) {
         _javaObject = reinterpret_cast<jclass>(env->NewGlobalRef(sceneJavaObject));
@@ -37,22 +37,23 @@ public:
         env->DeleteGlobalRef(_javaObject);
     }
 
-    /**
-     * Java event delegates to be triggered across the JNI bridge.
+    /*
+     Java event delegates to be triggered across the JNI bridge.
      */
-    void onHover(int source, bool isHovering, std::vector<float> position);
-    void onClick(int source, ClickState clickState, std::vector<float> position);
-    void onTouch(int source, TouchState touchState, float x, float y);
-    void onMove(int source, VROVector3f rotation, VROVector3f position, VROVector3f forwardVec);
+    void onHover(int source, std::shared_ptr<VRONode> node, bool isHovering, std::vector<float> position);
+    void onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position);
+    void onTouch(int source, std::shared_ptr<VRONode> node, TouchState touchState, float x, float y);
+    void onMove(int source, std::shared_ptr<VRONode> node, VROVector3f rotation, VROVector3f position, VROVector3f forwardVec);
     void onControllerStatus(int source, ControllerStatus status);
-    void onGazeHit(int source, float distance, VROVector3f hitLocation);
-    void onSwipe(int source, SwipeState swipeState);
-    void onScroll(int source, float x, float y);
-    void onDrag(int source, VROVector3f newPosition);
-    void onFuse(int source, float timeToFuseRatio);
-    void onPinch(int source, float scaleFactor, PinchState pinchState);
-    void onRotate(int source, float rotateDegrees, RotateState rotateState);
+    void onGazeHit(int source, std::shared_ptr<VRONode> node, float distance, VROVector3f hitLocation);
+    void onSwipe(int source, std::shared_ptr<VRONode> node, SwipeState swipeState);
+    void onScroll(int source, std::shared_ptr<VRONode> node, float x, float y);
+    void onDrag(int source, std::shared_ptr<VRONode> node, VROVector3f newPosition);
+    void onFuse(int source, std::shared_ptr<VRONode> node, float timeToFuseRatio);
+    void onPinch(int source, std::shared_ptr<VRONode> node, float scaleFactor, PinchState pinchState);
+    void onRotate(int source, std::shared_ptr<VRONode> node, float rotateDegrees, RotateState rotateState);
     void onCameraARHitTest(int source, std::vector<VROARHitTestResult> results);
+
 private:
     jobject _javaObject;
     void callJavaFunction(std::string functionName, std::string methodID, ...);

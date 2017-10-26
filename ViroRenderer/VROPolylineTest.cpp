@@ -59,18 +59,21 @@ void VROPolylineTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchroni
     surfaceNode->setEventDelegate(_eventDelegate);
 }
 
-void VROPolylineEventDelegate::onClick(int source, ClickState clickState, std::vector<float> position) {
+void VROPolylineEventDelegate::onClick(int source, std::shared_ptr<VRONode> node,
+                                       ClickState clickState, std::vector<float> position) {
     std::shared_ptr<VROPolyline> polyline = _polyline.lock();
     if (clickState == ClickState::Clicked && polyline && position.size() > 2) {
         polyline->appendPoint({ position[0], position[1], 0.1 });
     }
 }
 
-void VROPolylineEventDelegate::onMove(int source, VROVector3f rotation, VROVector3f position, VROVector3f forwardVec) {
+void VROPolylineEventDelegate::onMove(int source, std::shared_ptr<VRONode> node,
+                                      VROVector3f rotation, VROVector3f position, VROVector3f forwardVec) {
     
 }
 
-void VROPolylineEventDelegate::onDrag(int source, VROVector3f position) {
+void VROPolylineEventDelegate::onDrag(int source, std::shared_ptr<VRONode> node,
+                                      VROVector3f position) {
     
 }
 

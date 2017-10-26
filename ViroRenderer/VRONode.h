@@ -104,6 +104,11 @@ public:
      are shared by reference with the copied node.
      */
     std::shared_ptr<VRONode> clone();
+
+    /*
+     Get a unique ID for this VRONode.
+     */
+    int getUniqueID() { return _uniqueID; }
     
 #pragma mark - Render Cycle
 
@@ -632,6 +637,11 @@ private:
      Name for debugging.
      */
     std::string _name;
+
+    /*
+     Unique identifier.
+     */
+    int _uniqueID;
     
     /*
      Lights, sound, and camera.

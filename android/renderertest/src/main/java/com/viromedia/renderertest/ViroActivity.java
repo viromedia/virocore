@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.EventLog;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -59,6 +60,12 @@ import com.viro.renderer.jni.ViroViewARCore;
 import com.viro.renderer.jni.ViroGvrLayout;
 import com.viro.renderer.jni.ViroOvrView;
 import com.viro.renderer.jni.ViroView;
+import com.viro.renderer.jni.event.ClickState;
+import com.viro.renderer.jni.event.ControllerStatus;
+import com.viro.renderer.jni.event.PinchState;
+import com.viro.renderer.jni.event.RotateState;
+import com.viro.renderer.jni.event.SwipeState;
+import com.viro.renderer.jni.event.TouchState;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -453,7 +460,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         node1.setPosition(new Vector(boxPosition));
         boxGeometry.setMaterials(Arrays.asList(material));
         EnumSet<Node.TransformBehavior> behaviors = EnumSet.of(Node.TransformBehavior.BILLBOARD);
-        node1.setTransformBehaviors(behaviors);
+        //node1.setTransformBehaviors(behaviors);
         node1.setEventDelegate(getGenericDelegate("Box"));
 
         Box boxGeometry2 = new Box(2, 2, 2);
@@ -680,13 +687,13 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         }
 
         @Override
-        public void onPinch(int source, float scaleFactor, EventDelegate.PinchState pinchState) {
-            if (pinchState == EventDelegate.PinchState.PINCH_START) {
+        public void onPinch(int source, Node node, float scaleFactor, PinchState pinchState) {
+            if (pinchState == PinchState.PINCH_START) {
                 if (mStartScale == null) {
                     float[] scale = {1,1,1};
                     mStartScale = scale;
                 }
-            } else if (pinchState == EventDelegate.PinchState.PINCH_END) {
+            } else if (pinchState == PinchState.PINCH_END) {
                 for (int i = 0; i < 3; i++) {
                     mStartScale[i] = mStartScale[i] * scaleFactor;
                 }
@@ -700,11 +707,11 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         }
 
         @Override
-        public void onRotate(int source, float rotateFactor, EventDelegate.RotateState rotateState) {
-            if (rotateState == EventDelegate.RotateState.ROTATE_MOVE) {
+        public void onRotate(int source, Node node, float rotateFactor, RotateState rotateState) {
+            if (rotateState == RotateState.ROTATE_MOVE) {
                 float[] newRotation = {0, mYRotation - rotateFactor, 0};
                 mNode.setRotation(new Vector(newRotation));
-            } else if(rotateState == EventDelegate.RotateState.ROTATE_END) {
+            } else if(rotateState == RotateState.ROTATE_END) {
                 mYRotation = mYRotation - rotateFactor;
             }
         }
@@ -918,7 +925,8 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         EventDelegate delegateJni = new EventDelegate();
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_HOVER, false);
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_FUSE, true);
-
+        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_DRAG, true);
+        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_CLICK, true);
         delegateJni.setEventDelegateCallback(new GenericEventCallback(delegateTag));
 
         return delegateJni;
@@ -932,53 +940,60 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         }
 
         @Override
-        public void onHover(int source, boolean isHovering, float[] hitLoc) {
+        public void onHover(int source, Node node, boolean isHovering, float[] hitLoc) {
             Log.e(TAG, delegateTag + " onHover " + isHovering);
         }
 
         @Override
-        public void onClick(int source, EventDelegate.ClickState clickState, float[] hitLoc) {
-            Log.e(TAG, delegateTag + " onClick " + clickState.toString());
+        public void onClick(int source, Node node, ClickState clickState, float[] hitLoc) {
+            Log.e(TAG, delegateTag + " onClick " + clickState.toString() + " location " +
+                    hitLoc[0] + ", " + hitLoc[1] + ", " + hitLoc[2]);
         }
 
         @Override
-        public void onTouch(int source, EventDelegate.TouchState touchState, float[] touchPadPos) {
+        public void onTouch(int source, Node node, TouchState touchState, float[] touchPadPos) {
             Log.e(TAG, delegateTag + "onTouch " + touchPadPos[0] + "," + touchPadPos[1]);
         }
 
         @Override
-        public void onControllerStatus(int source, EventDelegate.ControllerStatus status) {
+        public void onControllerStatus(int source, ControllerStatus status) {
 
         }
 
         @Override
-        public void onSwipe(int source, EventDelegate.SwipeState swipeState) {
+        public void onSwipe(int source, Node node, SwipeState swipeState) {
             Log.e(TAG, delegateTag + " onSwipe " + swipeState.toString());
         }
 
         @Override
-        public void onScroll(int source, float x, float y) {
+        public void onScroll(int source, Node node, float x, float y) {
             Log.e(TAG, delegateTag + " onScroll " + x + "," +y);
 
         }
 
         @Override
-        public void onDrag(int source, float x, float y, float z) {
+        public void onDrag(int source, Node node, float x, float y, float z) {
             Log.e(TAG, delegateTag +" On drag: " + x + ", " + y + ", " + z);
+
+            Vector converted = node.convertLocalPositionToWorldSpace(new Vector(x, y, z));
+            if (node.getParentNode() != null) {
+                converted = node.getParentNode().convertLocalPositionToWorldSpace(new Vector(x, y, z));
+                Log.e(TAG, delegateTag + " On CONV: " + converted.x + ", " + converted.y + ", " + converted.z);
+            }
         }
 
         @Override
-        public void onFuse(int source) {
+        public void onFuse(int source, Node node) {
             Log.e(TAG, delegateTag + " On fuse");
         }
 
         @Override
-        public void onPinch(int source, float scaleFactor, EventDelegate.PinchState pinchState) {
+        public void onPinch(int source, Node node, float scaleFactor, PinchState pinchState) {
             Log.e(TAG, delegateTag + " On pinch");
         }
 
         @Override
-        public void onRotate(int source, float rotateFactor, EventDelegate.RotateState rotateState) {
+        public void onRotate(int source, Node node, float rotateFactor, RotateState rotateState) {
             Log.e(TAG, delegateTag + " On rotate");
         }
 

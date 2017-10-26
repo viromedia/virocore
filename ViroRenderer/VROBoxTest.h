@@ -15,7 +15,7 @@ class VROBoxEventDelegate : public VROEventDelegate {
 public:
     VROBoxEventDelegate(std::shared_ptr<VROScene> scene) : _scene(scene) {};
     virtual ~VROBoxEventDelegate() {};
-    void onClick(int source, ClickState clickState, std::vector<float> position);
+    void onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position);
     
 private:
     std::weak_ptr<VROScene> _scene;

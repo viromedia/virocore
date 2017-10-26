@@ -10,6 +10,7 @@
 #include <VROInputPresenterDaydream.h>
 #include "ViroContext_JNI.h"
 #include "EventDelegate_JNI.h"
+#include "ARUtils_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -48,8 +49,7 @@ JNI_METHOD(void, nativeEnableReticle)(JNIEnv *env,
             return;
         }
 
-        std::shared_ptr<VROInputPresenter> controllerPresenter
-                = nativeContext->getInputController()->getPresenter();
+        std::shared_ptr<VROInputPresenter> controllerPresenter = nativeContext->getInputController()->getPresenter();
         std::shared_ptr<VROReticle> reticle = controllerPresenter->getReticle();
         if (reticle != nullptr) {
             reticle->setEnabled(enable);
@@ -69,10 +69,17 @@ JNI_METHOD(void, nativeEnableController)(JNIEnv *env,
             return;
         }
 
-        std::shared_ptr<VROInputPresenter> controllerPresenter
-                = nativeContext->getInputController()->getPresenter();
+        std::shared_ptr<VROInputPresenter> controllerPresenter = nativeContext->getInputController()->getPresenter();
         controllerPresenter->getRootNode()->setHidden(!enable);
     });
+}
+
+JNI_METHOD(jfloatArray, nativeGetControllerForwardVector)(JNIEnv *env,
+                                                          jobject obj,
+                                                          jlong context_j) {
+    std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
+    VROVector3f position = context->getInputController()->getPresenter()->getLastKnownForward();
+    return ARUtilsCreateFloatArrayFromVector3f(position);
 }
 
 JNI_METHOD(void, nativeGetControllerForwardVectorAsync)(JNIEnv *env,

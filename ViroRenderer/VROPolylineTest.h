@@ -15,9 +15,9 @@ class VROPolylineEventDelegate : public VROEventDelegate {
 public:
     VROPolylineEventDelegate(std::shared_ptr<VROPolyline> polyline) : _polyline(polyline) {};
     virtual ~VROPolylineEventDelegate() {};
-    void onClick(int source, ClickState clickState, std::vector<float> position);
-    void onMove(int source, VROVector3f rotation, VROVector3f position, VROVector3f forwardVec);
-    void onDrag(int source, VROVector3f newPosition);
+    void onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position);
+    void onMove(int source, std::shared_ptr<VRONode> node, VROVector3f rotation, VROVector3f position, VROVector3f forwardVec);
+    void onDrag(int source, std::shared_ptr<VRONode> node, VROVector3f newPosition);
     
 private:
     std::weak_ptr<VROPolyline> _polyline;

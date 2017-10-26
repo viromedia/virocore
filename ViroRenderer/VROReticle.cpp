@@ -126,9 +126,9 @@ void VROReticle::trigger() {
 }
 
 void VROReticle::setEnabled(bool enabled) {
-    /**
-     * Note: As the reticle doesn't currently support hierarchal rendering, We have
-     * to manually set the property of each node.
+    /*
+     Note: As the reticle doesn't currently support hierarchal rendering, We have
+     to manually set the property of each node.
      */
     _reticleBaseNode->setHidden(!enabled);
     _fuseNode->setHidden(!enabled);
@@ -137,9 +137,9 @@ void VROReticle::setEnabled(bool enabled) {
 }
 
 void VROReticle::setPosition(VROVector3f position){
-    /**
-     * Note: As the reticle doesn't currently support hierarchal rendering, We have
-     * to manually set the property of each node.
+    /*
+     Note: As the reticle doesn't currently support hierarchal rendering, We have
+     to manually set the property of each node.
      */
     _reticleBaseNode->setPosition(position);
     _fuseNode->setPosition(position);
@@ -185,7 +185,7 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext
         parentTransform = renderContext.getHUDViewMatrix();
     }
 
-    if (_isFusing){
+    if (_isFusing) {
         renderNode(_fuseBackgroundNode, parentTransform, renderContext, driver);
         renderNode(_fuseNode, parentTransform, renderContext, driver);
         renderNode(_fuseTriggeredNode, parentTransform, renderContext, driver);
@@ -205,7 +205,7 @@ void VROReticle::renderNode(std::shared_ptr<VRONode> node, VROMatrix4f parentTra
     node->applyConstraints(renderContext, parentTransform, false);
     node->updateSortKeys(0, renderParams, metadata, renderContext, driver);
     const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
-    if (!geometry){
+    if (!geometry) {
         return;
     }
 
@@ -239,7 +239,7 @@ std::vector<VROVector3f> VROReticle::createArc(float radius, int numSegments) {
     return path;
 }
 
-void VROReticle::animateFuse(float ratio){
+void VROReticle::animateFuse(float ratio) {
     // Start fuse scaling animation if we haven't yet already
     if (!_isFusing){
         float scale = _radius / _size * kFuseRadiusMultiplier;
@@ -254,11 +254,11 @@ void VROReticle::animateFuse(float ratio){
     }
 
     // Animate trigger animation if we have finished fusing.
-    if (ratio == 1){
+    if (ratio == 1) {
         animateFuseTriggered();
     }
     
-    if (_fuseLine != nullptr){
+    if (_fuseLine != nullptr) {
         _fuseLine = nullptr;
     }
 

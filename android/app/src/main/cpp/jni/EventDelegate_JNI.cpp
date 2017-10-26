@@ -6,6 +6,7 @@
 //
 
 #include "EventDelegate_JNI.h"
+#include "Node_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -27,10 +28,10 @@ JNI_METHOD(void, nativeDestroyDelegate)(JNIEnv *env,
 }
 
 JNI_METHOD(void, nativeEnableEvent)(JNIEnv *env,
-                                        jclass clazz,
-                                        jlong native_node_ref,
-                                        jint eventTypeId,
-                                        jboolean enabled) {
+                                    jclass clazz,
+                                    jlong native_node_ref,
+                                    jint eventTypeId,
+                                    jboolean enabled) {
 
     std::weak_ptr<EventDelegate_JNI> delegate_w = EventDelegate::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([delegate_w, eventTypeId, enabled] {
@@ -38,15 +39,14 @@ JNI_METHOD(void, nativeEnableEvent)(JNIEnv *env,
         if (!delegate) {
             return;
         }
-        VROEventDelegate::EventAction eventType
-                = static_cast<VROEventDelegate::EventAction>(eventTypeId);
+        VROEventDelegate::EventAction eventType = static_cast<VROEventDelegate::EventAction>(eventTypeId);
         delegate->setEnabledEvent(eventType, enabled);
     });
 }
 
 JNI_METHOD(void, nativeSetTimeToFuse)(JNIEnv *env,
-                                        jclass clazz,
-                                        jlong native_node_ref,
+                                      jclass clazz,
+                                      jlong native_node_ref,
                                       jfloat durationInMillis) {
     std::weak_ptr<EventDelegate_JNI> delegate_w = EventDelegate::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([delegate_w, durationInMillis] {
@@ -59,11 +59,11 @@ JNI_METHOD(void, nativeSetTimeToFuse)(JNIEnv *env,
 }
 
 }  // extern "C"
-void EventDelegate_JNI::onHover(int source, bool isHovering, std::vector<float> position) {
+void EventDelegate_JNI::onHover(int source, std::shared_ptr<VRONode> node, bool isHovering, std::vector<float> position) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj, source, isHovering, position] {
+    VROPlatformDispatchAsyncApplication([weakObj, source, node, isHovering, position] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
@@ -84,17 +84,18 @@ void EventDelegate_JNI::onHover(int source, bool isHovering, std::vector<float> 
             positionArray = nullptr;
         }
 
+        int nodeId = node->getUniqueID();
         VROPlatformCallJavaFunction(localObj,
-                                    "onHover", "(IZ[F)V", source, isHovering, positionArray);
+                                    "onHover", "(IIZ[F)V", source, nodeId, isHovering, positionArray);
         env->DeleteLocalRef(localObj);
     });
 }
 
-void EventDelegate_JNI::onClick(int source, ClickState clickState, std::vector<float> position) {
+void EventDelegate_JNI::onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj, source, clickState, position] {
+    VROPlatformDispatchAsyncApplication([weakObj, source, node, clickState, position] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
@@ -113,30 +114,33 @@ void EventDelegate_JNI::onClick(int source, ClickState clickState, std::vector<f
         } else {
             positionArray = nullptr;
         }
+
+        int nodeId = node->getUniqueID();
         VROPlatformCallJavaFunction(localObj,
-                                    "onClick", "(II[F)V", source, clickState, positionArray);
+                                    "onClick", "(III[F)V", source, nodeId, clickState, positionArray);
         env->DeleteLocalRef(localObj);
     });
 }
 
-void EventDelegate_JNI::onTouch(int source, TouchState touchState, float x, float y){
+void EventDelegate_JNI::onTouch(int source, std::shared_ptr<VRONode> node, TouchState touchState, float x, float y){
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj, source, touchState, x, y] {
+    VROPlatformDispatchAsyncApplication([weakObj, source, node, touchState, x, y] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             return;
         }
 
+        int nodeId = node->getUniqueID();
         VROPlatformCallJavaFunction(localObj,
-                                    "onTouch", "(IIFF)V", source, touchState, x, y);
+                                    "onTouch", "(IIIFF)V", source, nodeId, touchState, x, y);
         env->DeleteLocalRef(localObj);
     });
 }
 
-void EventDelegate_JNI::onMove(int source, VROVector3f rotation, VROVector3f position, VROVector3f forwardVec) {
+void EventDelegate_JNI::onMove(int source, std::shared_ptr<VRONode> node, VROVector3f rotation, VROVector3f position, VROVector3f forwardVec) {
     //No-op
 }
 
@@ -157,63 +161,66 @@ void EventDelegate_JNI::onControllerStatus(int source, ControllerStatus status) 
     });
 }
 
-void EventDelegate_JNI::onGazeHit(int source, float distance, VROVector3f hitLocation) {
+void EventDelegate_JNI::onGazeHit(int source, std::shared_ptr<VRONode> node, float distance, VROVector3f hitLocation) {
     //No-op
 }
 
-void EventDelegate_JNI::onSwipe(int source, SwipeState swipeState) {
+void EventDelegate_JNI::onSwipe(int source, std::shared_ptr<VRONode> node, SwipeState swipeState) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj, source, swipeState] {
+    VROPlatformDispatchAsyncApplication([weakObj, source, node, swipeState] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             return;
         }
 
+        int nodeId = node->getUniqueID();
         VROPlatformCallJavaFunction(localObj,
-                                    "onSwipe", "(II)V", source, swipeState);
+                                    "onSwipe", "(III)V", source, nodeId, swipeState);
         env->DeleteLocalRef(localObj);
     });
 }
 
-void EventDelegate_JNI::onScroll(int source, float x, float y) {
+void EventDelegate_JNI::onScroll(int source, std::shared_ptr<VRONode> node, float x, float y) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj, source, x, y] {
+    VROPlatformDispatchAsyncApplication([weakObj, source, node, x, y] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             return;
         }
 
+        int nodeId = node->getUniqueID();
         VROPlatformCallJavaFunction(localObj,
-                                    "onScroll", "(IFF)V", source, x, y);
+                                    "onScroll", "(IIFF)V", source, nodeId, x, y);
         env->DeleteLocalRef(localObj);
     });
 }
 
-void EventDelegate_JNI::onDrag(int source, VROVector3f newPosition) {
+void EventDelegate_JNI::onDrag(int source, std::shared_ptr<VRONode> node, VROVector3f newPosition) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj, source, newPosition] {
+    VROPlatformDispatchAsyncApplication([weakObj, source, node, newPosition] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             return;
         }
 
+        int nodeId = node->getUniqueID();
         VROPlatformCallJavaFunction(localObj,
-                                    "onDrag", "(IFFF)V", source, newPosition.x, newPosition.y,
+                                    "onDrag", "(IIFFF)V", source, nodeId, newPosition.x, newPosition.y,
                                     newPosition.z);
         env->DeleteLocalRef(localObj);
     });
 }
 
-void EventDelegate_JNI::onFuse(int source, float timeToFuseRatio){
+void EventDelegate_JNI::onFuse(int source, std::shared_ptr<VRONode> node, float timeToFuseRatio){
     /**
      * As onFuse is also used by internal components to update ui based
      * on timeToFuse ratio, we only want to notify our bridge components
@@ -226,49 +233,52 @@ void EventDelegate_JNI::onFuse(int source, float timeToFuseRatio){
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj, source, timeToFuseRatio] {
+    VROPlatformDispatchAsyncApplication([weakObj, source, node, timeToFuseRatio] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             return;
         }
 
+        int nodeId = node->getUniqueID();
         VROPlatformCallJavaFunction(localObj,
-                                    "onFuse", "(I)V", source, timeToFuseRatio);
+                                    "onFuse", "(II)V", source, nodeId, timeToFuseRatio);
         env->DeleteLocalRef(localObj);
     });
 }
 
-void EventDelegate_JNI::onPinch(int source, float scaleFactor, PinchState pinchState) {
+void EventDelegate_JNI::onPinch(int source, std::shared_ptr<VRONode> node, float scaleFactor, PinchState pinchState) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj, source, scaleFactor, pinchState] {
+    VROPlatformDispatchAsyncApplication([weakObj, source, node, scaleFactor, pinchState] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             return;
         }
 
+        int nodeId = node->getUniqueID();
         VROPlatformCallJavaFunction(localObj,
-                                    "onPinch", "(IFI)V", source, scaleFactor, pinchState);
+                                    "onPinch", "(IIFI)V", source, nodeId, scaleFactor, pinchState);
         env->DeleteLocalRef(localObj);
     });
 }
 
-void EventDelegate_JNI::onRotate(int source, float rotateDegrees, RotateState rotateState) {
+void EventDelegate_JNI::onRotate(int source, std::shared_ptr<VRONode> node, float rotateDegrees, RotateState rotateState) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj, source, rotateDegrees, rotateState] {
+    VROPlatformDispatchAsyncApplication([weakObj, source, node, rotateDegrees, rotateState] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
             return;
         }
 
+        int nodeId = node->getUniqueID();
         VROPlatformCallJavaFunction(localObj,
-                                    "onRotate", "(IFI)V", source, rotateDegrees, rotateState);
+                                    "onRotate", "(IIFI)V", source, nodeId, rotateDegrees, rotateState);
         env->DeleteLocalRef(localObj);
     });
 }

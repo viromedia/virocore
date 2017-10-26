@@ -138,8 +138,8 @@ public:
         _rightHanded = isRightHanded;
     }
 
-    void onClick(int source, ClickState clickState, std::vector<float> position) {
-        VROInputPresenter::onClick(source, clickState, position);
+    void onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position) {
+        VROInputPresenter::onClick(source, node, clickState, position);
 
         if (source ==ViroDayDream::InputSource::TouchPad && clickState == ClickState::ClickUp){
             getReticle()->trigger();
@@ -169,24 +169,28 @@ public:
         }
     }
 
-    void onTouch(int source, TouchState touchState, float x, float y){
-        VROInputPresenter::onTouch(source, touchState, x, y);
+    void onTouch(int source, std::shared_ptr<VRONode> node, TouchState touchState, float x, float y){
+        VROInputPresenter::onTouch(source, node, touchState, x, y);
         if (touchState == TouchState::TouchUp){
             setTextureOnController(_controllerIdleTexture);
             return;
         }
     }
 
-    void onMove(int source, VROVector3f controllerRotation, VROVector3f controllerPosition, VROVector3f forwardVec){
-        VROInputPresenter::onMove(source, controllerRotation, controllerPosition, forwardVec);
+    void setElbowRotation(VROVector3f controllerRotation) {
         _elbowNode->setRotation(controllerRotation);
     }
 
-    virtual void onDrag(int source, VROVector3f newPosition) {
-        VROInputPresenter::onDrag(source, newPosition);
+    void onMove(int source, std::shared_ptr<VRONode> node, VROVector3f controllerRotation, VROVector3f controllerPosition, VROVector3f forwardVec){
+        VROInputPresenter::onMove(source, node, controllerRotation, controllerPosition, forwardVec);
+        _elbowNode->setRotation(controllerRotation);
     }
 
-    void onGazeHit(int source, const VROHitTestResult &hit) {
+    virtual void onDrag(int source, std::shared_ptr<VRONode> node, VROVector3f newPosition) {
+        VROInputPresenter::onDrag(source, node, newPosition);
+    }
+
+    void onGazeHit(int source, std::shared_ptr<VRONode> node, const VROHitTestResult &hit) {
         VROInputPresenter::onReticleGazeHit(hit);
      }
 

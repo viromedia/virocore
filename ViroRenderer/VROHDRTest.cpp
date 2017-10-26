@@ -147,7 +147,8 @@ void VROHDRTest::changeScene() {
     rootNode->addChildNode(sceneNode);
 }
 
-void VROHDREventDelegate::onClick(int source, ClickState clickState, std::vector<float> position) {
+void VROHDREventDelegate::onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState,
+                                  std::vector<float> position) {
     if (clickState == ClickState::Clicked) {
         _test->changeScene();
     }

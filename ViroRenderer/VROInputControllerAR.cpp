@@ -161,9 +161,9 @@ void VROInputControllerAR::processDragging(int source, bool alwaysRun) {
             _lastDraggedNodePosition = position;
             _lastDraggedNode->_draggedDistanceFromController = position.distanceAccurate(_latestCamera.getPosition());
             
-            draggedNode->getEventDelegate()->onDrag(source, position);
+            draggedNode->getEventDelegate()->onDrag(source, draggedNode, position);
             for (std::shared_ptr<VROEventDelegate> delegate : _delegates) {
-                delegate->onDrag(source, position);
+                delegate->onDrag(source, draggedNode, position);
             }
         }
     }

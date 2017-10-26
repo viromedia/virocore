@@ -44,9 +44,12 @@ bool kDebugSortOrder = false;
 static int sDebugSortIndex = 0;
 const std::string kDefaultNodeTag = "undefined";
 
+std::atomic<int> sUniqueIDGenerator(0);
+
 #pragma mark - Initialization
 
 VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
+    _uniqueID(sUniqueIDGenerator++),
     _type(VRONodeType::Normal),
     _visible(false),
     _lastVisitedRenderingFrame(-1),
@@ -69,6 +72,7 @@ VRONode::VRONode() : VROThreadRestricted(VROThreadName::Renderer),
 }
 
 VRONode::VRONode(const VRONode &node) : VROThreadRestricted(VROThreadName::Renderer),
+    _uniqueID(sUniqueIDGenerator++),
     _type(node._type),
     _visible(false),
     _lastVisitedRenderingFrame(-1),
