@@ -10,19 +10,14 @@
 package com.viromedia.renderertest.tests;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.viro.renderer.jni.AmbientLight;
 import com.viro.renderer.jni.Box;
 import com.viro.renderer.jni.DirectionalLight;
-import com.viro.renderer.jni.EventDelegate;
-import com.viro.renderer.jni.GLListener;
 import com.viro.renderer.jni.Image;
 import com.viro.renderer.jni.Material;
 import com.viro.renderer.jni.Node;
@@ -33,25 +28,15 @@ import com.viro.renderer.jni.Text;
 import com.viro.renderer.jni.Texture;
 import com.viro.renderer.jni.TextureFormat;
 import com.viro.renderer.jni.Vector;
-import com.viro.renderer.jni.ViroView;
-import com.viromedia.renderertest.ViroActivity;
-import com.viromedia.renderertest.ViroReleaseTestActivity;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -59,38 +44,25 @@ import static org.junit.Assert.assertEquals;
  */
 
 @RunWith(AndroidJUnit4.class)
-public class ViroSpotLightTest {
+public class ViroSpotLightTest extends ViroBaseTest{
     private static final String TAG = ViroSpotLightTest.class.getName();
-    private Boolean mGLInitialized = false;
-    private ViroView mViroView;
-    private ViroReleaseTestActivity mActivity;
-    @Rule
-    public ActivityTestRule<ViroReleaseTestActivity> rule
-            = new ActivityTestRule<>(ViroReleaseTestActivity.class, true, true);
 
-    @Before
-    public void setUp() {
-        System.out.println(TAG + "setUp called");
-        mActivity = rule.getActivity();
-
-        await().until(glInitialized());
-
+    @Override
+    Scene createScene() {
         Scene scene = new Scene();
         Node rootNode = scene.getRootNode();
         List<Node> nodes = new ArrayList<>();
 
-        mViroView = mActivity.getViroView();
-
-        nodes = testBox(mActivity);
+        nodes = testBox();
         for (Node node: nodes) {
             rootNode.addChildNode(node);
         }
-
         testSceneLighting(rootNode);
-        mViroView.setScene(scene);
+
+        return scene;
     }
 
-    private List<Node> testBox(Context context) {
+    private List<Node> testBox() {
         Node node1 = new Node();
         Node node2 = new Node();
 
@@ -151,14 +123,7 @@ public class ViroSpotLightTest {
         node.addLight(spotLightJni);
     }
 
-    private Callable<Boolean> glInitialized() {
-        return new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                return mActivity.isGlInitialized();
-            }
-        };
-    }
+
 
     @Test
     public void dummy_test() {
@@ -169,12 +134,4 @@ public class ViroSpotLightTest {
         assertEquals("com.viromedia.renderertest.gvr", appContext.getPackageName());
         assertEquals(true, mActivity.isGlInitialized());
     }
-
-    @After
-    public void tearDown() throws Exception {
-        synchronized (this) {
-            TimeUnit.SECONDS.sleep(10);
-        }
-    }
-
 }
