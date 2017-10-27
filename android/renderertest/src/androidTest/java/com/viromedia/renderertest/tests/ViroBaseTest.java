@@ -14,8 +14,13 @@ import android.util.Log;
 
 import com.viro.renderer.ARHitTestResult;
 import com.viro.renderer.jni.EventDelegate;
+import com.viro.renderer.jni.Image;
+import com.viro.renderer.jni.Material;
 import com.viro.renderer.jni.Node;
 import com.viro.renderer.jni.Scene;
+import com.viro.renderer.jni.Surface;
+import com.viro.renderer.jni.Texture;
+import com.viro.renderer.jni.TextureFormat;
 import com.viro.renderer.jni.Vector;
 import com.viro.renderer.jni.ViroView;
 import com.viro.renderer.jni.event.ClickState;
@@ -59,9 +64,11 @@ public abstract class ViroBaseTest {
 
         await().until(glInitialized());
 
+        mScene = new Scene();
         createBaseTestScene();
         configureTestScene();
         mViroView.setScene(mScene);
+
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -80,9 +87,35 @@ public abstract class ViroBaseTest {
     }
 
     private void createBaseTestScene() {
-        mScene = new Scene();
+        Node rootNode = mScene.getRootNode();
+
         // Add yes button
+        Node yesButton = new Node();
+        Image yesImage = new Image("icon_thumb_up.png", TextureFormat.RGBA8);
+        Texture yesTexture = new Texture(yesImage,
+                TextureFormat.RGBA8, true, true, "LeftRight");
+        Material yesMaterial = new Material();
+        Surface yesSurface = new Surface(2, 2, 0, 0, 1, 1);
+        yesSurface.setMaterial(yesMaterial);
+        yesSurface.setImageTexture(yesTexture);
+        yesButton.setGeometry(yesSurface);
+        float[] yesPosition = {-1.5f, -2f, -3.3f};
+        yesButton.setPosition(new Vector(yesPosition));
+        rootNode.addChildNode(yesButton);
+
         // Add no button
+        Node noButton = new Node();
+        Image noImage = new Image("icon_thumb_down.png", TextureFormat.RGBA8);
+        Texture noTexture = new Texture(noImage,
+                TextureFormat.RGBA8, true, true, "LeftRight");
+        Material noMaterial = new Material();
+        Surface noSurface = new Surface(2, 2, 0, 0, 1, 1);
+        noSurface.setMaterial(noMaterial);
+        noSurface.setImageTexture(noTexture);
+        noButton.setGeometry(noSurface);
+        float[] noPosition = {1.5f, -2f, -3.3f};
+        noButton.setPosition(new Vector(noPosition));
+        rootNode.addChildNode(noButton);
         // Add instruction card
     }
 
@@ -98,7 +131,7 @@ public abstract class ViroBaseTest {
         }
     }
 
-    private EventDelegate getGenericDelegate(String delegateTag) {
+    protected EventDelegate getGenericDelegate(String delegateTag) {
         EventDelegate delegateJni = new EventDelegate();
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_HOVER, false);
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_FUSE, true);

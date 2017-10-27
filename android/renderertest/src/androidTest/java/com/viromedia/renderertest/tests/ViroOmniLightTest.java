@@ -22,7 +22,6 @@ import com.viro.renderer.jni.Image;
 import com.viro.renderer.jni.Material;
 import com.viro.renderer.jni.Node;
 import com.viro.renderer.jni.OmniLight;
-import com.viro.renderer.jni.Scene;
 import com.viro.renderer.jni.Spotlight;
 import com.viro.renderer.jni.Text;
 import com.viro.renderer.jni.Texture;
@@ -95,14 +94,14 @@ public class ViroOmniLightTest extends ViroBaseTest{
         boxGeometry.setMaterials(Arrays.asList(material));
         EnumSet<Node.TransformBehavior> behaviors = EnumSet.of(Node.TransformBehavior.BILLBOARD);
         node1.setTransformBehaviors(behaviors);
-        node1.setEventDelegate(mActivity.getGenericDelegate("Box"));
+        node1.setEventDelegate(getGenericDelegate("Box"));
 
         Box boxGeometry2 = new Box(2, 2, 2);
         node2.setGeometry(boxGeometry2);
         float[] boxPosition2 = {-2, 0, -3};
         node2.setPosition(new Vector(boxPosition2));
         boxGeometry2.setMaterials(Arrays.asList(material));
-        node2.setEventDelegate(mActivity.getGenericDelegate("Box2"));
+        node2.setEventDelegate(getGenericDelegate("Box2"));
 
         return Arrays.asList(node1, node2, node3);
     }
