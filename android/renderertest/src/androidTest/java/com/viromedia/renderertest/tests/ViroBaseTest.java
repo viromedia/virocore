@@ -9,8 +9,10 @@
 
 package com.viromedia.renderertest.tests;
 
+import android.graphics.Color;
 import android.support.test.rule.ActivityTestRule;
 
+import com.viro.renderer.jni.AmbientLight;
 import com.viro.renderer.jni.Scene;
 import com.viro.renderer.jni.ViroView;
 import com.viromedia.renderertest.ViroReleaseTestActivity;
@@ -19,8 +21,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 
+import java.util.TimerTask;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.Timer;
 
 import static org.awaitility.Awaitility.await;
 
@@ -30,9 +34,11 @@ import static org.awaitility.Awaitility.await;
 
 public abstract class ViroBaseTest {
     private static final String TAG = ViroBaseTest.class.getName();
-    private Scene mScene;
+    protected Scene mScene;
+    protected Timer mTimer;
     protected ViroReleaseTestActivity mActivity;
     public ViroView mViroView;
+
     @Rule
     public ActivityTestRule<ViroReleaseTestActivity> mActivityTestRule
             = new ActivityTestRule<>(ViroReleaseTestActivity.class, true, true);
@@ -41,11 +47,19 @@ public abstract class ViroBaseTest {
     public void setUp() {
         mActivity = mActivityTestRule.getActivity();
         mViroView = mActivity.getViroView();
+        mTimer = new Timer();
+
 
         await().until(glInitialized());
         Scene mScene = createScene();
 
         mViroView.setScene(mScene);
+        mTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                ViroBaseTest.this.callbackEverySecond();
+            }
+        }, 0, 1000);
     }
 
     private Callable<Boolean> glInitialized() {
@@ -56,7 +70,15 @@ public abstract class ViroBaseTest {
             }
         };
     }
-    abstract Scene createScene();
+   Scene createScene() {
+        Scene scene = new Scene();
+        return scene;
+    }
+
+
+    void callbackEverySecond() {
+
+    }
 
     @After
     public void tearDown() throws InterruptedException {
