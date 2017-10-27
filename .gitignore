@@ -5,6 +5,7 @@
 .DS_Store
 
 # Gradle
+android/.idea/
 android/.idea/misc.xml
 android/.idea/gradle.xml
 android/app/.idea/

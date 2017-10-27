@@ -22,7 +22,6 @@ import com.viro.renderer.jni.Image;
 import com.viro.renderer.jni.Material;
 import com.viro.renderer.jni.Node;
 import com.viro.renderer.jni.OmniLight;
-import com.viro.renderer.jni.Scene;
 import com.viro.renderer.jni.Spotlight;
 import com.viro.renderer.jni.Text;
 import com.viro.renderer.jni.Texture;
@@ -56,6 +55,7 @@ public class ViroSpotLightTest extends ViroBaseTest{
         for (Node node: nodes) {
             rootNode.addChildNode(node);
         }
+
         testSceneLighting(rootNode);
     }
 

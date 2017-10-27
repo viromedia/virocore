@@ -14,6 +14,10 @@ android {
         testApplicationId "com.viromedia.renderertest"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        jackOptions {
+            enabled true
+        }
+
     }
     buildTypes {
         release {
@@ -43,15 +47,20 @@ android {
         unitTests.all {
             testLogging {
                 events "passed", "skipped", "failed", "standardOut", "standardError"
-                outputs.upToDateWhen {false}
+                outputs.upToDateWhen { false }
                 showStandardStreams = true
             }
         }
     }
+    // Keep the following configuration in order to target Java 8.
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -59,7 +68,6 @@ dependencies {
     compile project(':app')
     compile project(':libs:gvr')
     compile 'com.android.support:appcompat-v7:25.0.0'
-
     // testing dependencies
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'org.awaitility:awaitility:3.0.0'
