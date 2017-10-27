@@ -51,7 +51,7 @@ public abstract class ViroBaseTest {
 
 
         await().until(glInitialized());
-        Scene mScene = createScene();
+        mScene = createScene();
 
         mViroView.setScene(mScene);
         mTimer.schedule(new TimerTask() {
