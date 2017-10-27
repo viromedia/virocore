@@ -125,17 +125,37 @@ JNI_METHOD(void, nativeSetLightingModel)(JNIEnv *env, jobject obj,
     std::string strName(cStrName);
 
     if (VROStringUtil::strcmpinsensitive(strName, "Blinn")) {
-        Material::native(nativeRef).get()->setLightingModel(VROLightingModel::Blinn);
+        Material::native(nativeRef)->setLightingModel(VROLightingModel::Blinn);
     } else if (VROStringUtil::strcmpinsensitive(strName, "Lambert")) {
-        Material::native(nativeRef).get()->setLightingModel(VROLightingModel::Lambert);
+        Material::native(nativeRef)->setLightingModel(VROLightingModel::Lambert);
     } else if (VROStringUtil::strcmpinsensitive(strName, "Phong")) {
-        Material::native(nativeRef).get()->setLightingModel(VROLightingModel::Phong);
+        Material::native(nativeRef)->setLightingModel(VROLightingModel::Phong);
     } else {
         // Default lightingModel is Constant, so no use checking.
-        Material::native(nativeRef).get()->setLightingModel(VROLightingModel::Constant);
+        Material::native(nativeRef)->setLightingModel(VROLightingModel::Constant);
     }
 
     env->ReleaseStringUTFChars(lightingModelName, cStrName);
+}
+
+JNI_METHOD(void, nativeSetBlendMode)(JNIEnv *env, jobject obj,
+                                     jlong nativeRef,
+                                     jstring blendMode_s) {
+    const char *blendMode_c = env->GetStringUTFChars(blendMode_s, NULL);
+    std::string blendMode(blendMode_c);
+
+    if (VROStringUtil::strcmpinsensitive(blendMode, "Alpha")) {
+        Material::native(nativeRef)->setBlendMode(VROBlendMode::Alpha);
+    }
+    else if (VROStringUtil::strcmpinsensitive(blendMode, "None")) {
+        Material::native(nativeRef)->setBlendMode(VROBlendMode::None);
+    }
+    else {
+        // Default transparencyMode is AOne, so no use checking.
+        Material::native(nativeRef)->setBlendMode(VROBlendMode::Add);
+    }
+
+    env->ReleaseStringUTFChars(blendMode_s, blendMode_c);
 }
 
 JNI_METHOD(void, nativeSetTransparencyMode)(JNIEnv *env, jobject obj,
@@ -145,10 +165,10 @@ JNI_METHOD(void, nativeSetTransparencyMode)(JNIEnv *env, jobject obj,
     std::string strName(cStrName);
 
     if (VROStringUtil::strcmpinsensitive(strName, "RGBZero")) {
-        Material::native(nativeRef).get()->setTransparencyMode(VROTransparencyMode::RGBZero);
+        Material::native(nativeRef)->setTransparencyMode(VROTransparencyMode::RGBZero);
     } else {
         // Default transparencyMode is AOne, so no use checking.
-        Material::native(nativeRef).get()->setTransparencyMode(VROTransparencyMode::AOne);
+        Material::native(nativeRef)->setTransparencyMode(VROTransparencyMode::AOne);
     }
 
     env->ReleaseStringUTFChars(transparencyModeName, cStrName);
@@ -162,12 +182,12 @@ JNI_METHOD(void, nativeSetCullMode)(JNIEnv *env,
     std::string strName(cStrName);
 
     if (VROStringUtil::strcmpinsensitive(strName, "None")) {
-        Material::native(nativeRef).get()->setCullMode(VROCullMode::None);
+        Material::native(nativeRef)->setCullMode(VROCullMode::None);
     } else if (VROStringUtil::strcmpinsensitive(strName, "Front")) {
-        Material::native(nativeRef).get()->setCullMode(VROCullMode::Front);
+        Material::native(nativeRef)->setCullMode(VROCullMode::Front);
     } else {
         // Default cullMode is Back, so no use checking.
-        Material::native(nativeRef).get()->setCullMode(VROCullMode::Back);
+        Material::native(nativeRef)->setCullMode(VROCullMode::Back);
     }
 
     env->ReleaseStringUTFChars(cullModeName, cStrName);

@@ -7,9 +7,12 @@
 #include <jni.h>
 #include <memory>
 #include <VROTextureUtil.h>
+#include "VROData.h"
 
 #include "Image_JNI.h"
+#include "VROPlatformUtil.h"
 #include "Texture_JNI.h"
+#include "VROCompress.h"
 #include "VROLog.h"
 
 #define JNI_METHOD(return_type, method_name) \
@@ -17,6 +20,22 @@
       Java_com_viro_renderer_jni_Texture_##method_name
 
 namespace Texture {
+
+    VROTextureFormat getInputFormat(JNIEnv *env, jstring jformat) {
+        const char *format = env->GetStringUTFChars(jformat, 0);
+        std::string sformat(format);
+
+        VROTextureFormat ret = VROTextureFormat::RGBA8;
+        if (sformat == "RGB565") {
+            ret = VROTextureFormat::RGB565;
+        }
+        else if (sformat == "RGB9_E5") {
+            ret = VROTextureFormat::RGB9_E5;
+        }
+        env->ReleaseStringUTFChars(jformat, format);
+        return ret;
+    }
+
     VROTextureInternalFormat getFormat(JNIEnv *env, jstring jformat) {
         const char *format = env->GetStringUTFChars(jformat, 0);
         std::string sformat(format);
@@ -27,6 +46,9 @@ namespace Texture {
         }
         else if (sformat == "RGB565") {
             ret = VROTextureInternalFormat::RGB565;
+        }
+        else if (sformat == "RGB9_E5") {
+            ret = VROTextureInternalFormat::RGB9_E5;
         }
         env->ReleaseStringUTFChars(jformat, format);
         return ret;
@@ -58,15 +80,27 @@ namespace Texture {
         env->ReleaseStringUTFChars(jfilterMode, filterMode);
         return ret;
     }
+
+    VROStereoMode getStereoMode(JNIEnv *env, jstring stereoMode) {
+        if (stereoMode != NULL) {
+            const char *cStrStereoMode = env->GetStringUTFChars(stereoMode, NULL);
+            std::string strStereoMode(cStrStereoMode);
+            env->ReleaseStringUTFChars(stereoMode, cStrStereoMode);
+            return VROTextureUtil::getStereoModeForString(strStereoMode);
+        }
+        else {
+            return VROStereoMode::None;
+        }
+    }
 }
 
 extern "C" {
 
 JNI_METHOD(jlong, nativeCreateCubeTexture)(JNIEnv *env, jobject obj,
-                                           jlong px, jlong nx,
-                                           jlong py, jlong ny,
-                                           jlong pz, jlong nz,
-                                           jstring format) {
+                                            jlong px, jlong nx,
+                                            jlong py, jlong ny,
+                                            jlong pz, jlong nz,
+                                            jstring format) {
     std::vector<std::shared_ptr<VROImage>> cubeImages = {Image::native(px),
                                                          Image::native(nx),
                                                          Image::native(py),
@@ -81,19 +115,94 @@ JNI_METHOD(jlong, nativeCreateCubeTexture)(JNIEnv *env, jobject obj,
 JNI_METHOD(jlong, nativeCreateImageTexture)(JNIEnv *env, jobject obj, jlong image,
                                             jstring format, jboolean sRGB, jboolean mipmap, jstring stereoMode) {
 
-    VROStereoMode mode = VROStereoMode::None;
-    if (stereoMode != NULL) {
-        const char *cStrStereoMode = env->GetStringUTFChars(stereoMode, NULL);
-        std::string strStereoMode(cStrStereoMode);
-        env->ReleaseStringUTFChars(stereoMode, cStrStereoMode);
-        mode = VROTextureUtil::getStereoModeForString(strStereoMode);
-    }
-
+    VROStereoMode mode = Texture::getStereoMode(env, stereoMode);
     std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(Texture::getFormat(env, format), sRGB,
                                                                           mipmap ? VROMipmapMode::Runtime : VROMipmapMode::None,
                                                                           Image::native(image),
                                                                           mode);
     return Texture::jptr(texturePtr);
+}
+
+JNI_METHOD(jlong, nativeCreateCubeTextureBitmap)(JNIEnv *env, jobject obj,
+                                                 jobject px, jobject nx,
+                                                 jobject py, jobject ny,
+                                                 jobject pz, jobject nz,
+                                                 jstring format_s) {
+
+    VROTextureInternalFormat format = Texture::getFormat(env, format_s);
+    std::vector<std::shared_ptr<VROImage>> cubeImages = {std::make_shared<VROImageAndroid>(px, format),
+                                                         std::make_shared<VROImageAndroid>(nx, format),
+                                                         std::make_shared<VROImageAndroid>(py, format),
+                                                         std::make_shared<VROImageAndroid>(ny, format),
+                                                         std::make_shared<VROImageAndroid>(pz, format),
+                                                         std::make_shared<VROImageAndroid>(nz, format)};
+    std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(format, true, cubeImages);
+    return Texture::jptr(texturePtr);
+}
+
+JNI_METHOD(jlong, nativeCreateImageTextureBitmap)(JNIEnv *env, jobject obj, jobject bitmap,
+                                                 jstring format_s, jboolean sRGB, jboolean mipmap, jstring stereoMode) {
+
+    VROStereoMode mode = Texture::getStereoMode(env, stereoMode);
+    VROTextureInternalFormat format = Texture::getFormat(env, format_s);
+    std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(format, sRGB,
+                                                                          mipmap ? VROMipmapMode::Runtime : VROMipmapMode::None,
+                                                                          std::make_shared<VROImageAndroid>(bitmap, format),
+                                                                          mode);
+    return Texture::jptr(texturePtr);
+}
+
+JNI_METHOD(jlong, nativeCreateImageTextureData)(JNIEnv *env, jobject obj, jobject jbuffer, jint width, jint height,
+                                                jstring inputFormat_s, jstring storageFormat_s, jboolean sRGB, jboolean mipmap,
+                                                jstring stereoMode_s) {
+    void *buffer = env->GetDirectBufferAddress(jbuffer);
+    jlong capacity = env->GetDirectBufferCapacity(jbuffer);
+
+    std::shared_ptr<VROData> data = std::make_shared<VROData>(buffer, capacity);
+    VROTextureFormat inputFormat = Texture::getInputFormat(env, inputFormat_s);
+    VROTextureInternalFormat storageFormat = Texture::getFormat(env, storageFormat_s);
+    VROStereoMode stereoMode = Texture::getStereoMode(env, stereoMode_s);
+
+    std::vector<uint32_t> mipSizes;
+    std::vector<std::shared_ptr<VROData>> dataVec = { data };
+    std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(VROTextureType::Texture2D, inputFormat, storageFormat, sRGB,
+                                                                          mipmap ? VROMipmapMode::Runtime : VROMipmapMode::None,
+                                                                          dataVec, width, height, mipSizes, stereoMode);
+    return Texture::jptr(texturePtr);
+}
+
+JNI_METHOD(jlong, nativeCreateImageTextureVHD)(JNIEnv *env, jobject obj, jobject jbuffer, jstring stereoMode_s) {
+    void *buffer = env->GetDirectBufferAddress(jbuffer);
+    jlong capacity = env->GetDirectBufferCapacity(jbuffer);
+
+    std::string data_gzip((char *)buffer, capacity);
+    std::string data_texture = VROCompress::decompress(data_gzip);
+
+    VROTextureFormat format;
+    int texWidth;
+    int texHeight;
+    std::vector<uint32_t> mipSizes;
+    std::shared_ptr<VROData> texData = VROTextureUtil::readVHDHeader(data_texture,
+                                                                     &format, &texWidth, &texHeight, &mipSizes);
+    std::vector<std::shared_ptr<VROData>> dataVec = { texData };
+    std::shared_ptr<VROTexture> texture = std::make_shared<VROTexture>(VROTextureType::Texture2D,
+                                                                       format,
+                                                                       VROTextureInternalFormat::RGB9_E5,
+                                                                       true,
+                                                                       VROMipmapMode::None,
+                                                                       dataVec, texWidth, texHeight,
+                                                                       mipSizes);
+    return Texture::jptr(texture);
+}
+
+JNI_METHOD(jint, nativeGetTextureWidth)(JNIEnv *env, jobject obj, jlong texture_j) {
+    std::shared_ptr<VROTexture> texture = Texture::native(texture_j);
+    return texture->getWidth();
+}
+
+JNI_METHOD(jint, nativeGetTextureHeight)(JNIEnv *env, jobject obj, jlong texture_j) {
+    std::shared_ptr<VROTexture> texture = Texture::native(texture_j);
+    return texture->getHeight();
 }
 
 JNI_METHOD(void, nativeSetWrapS)(JNIEnv *env, jobject obj, jlong nativeRef, jstring wrapS) {

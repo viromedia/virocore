@@ -9,6 +9,7 @@
 package com.viromedia.renderertest;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -53,7 +54,7 @@ import com.viro.renderer.jni.Sphere;
 import com.viro.renderer.jni.Spotlight;
 import com.viro.renderer.jni.Surface;
 import com.viro.renderer.jni.Text;
-import com.viro.renderer.jni.TextureFormat;
+import com.viro.renderer.jni.Texture.TextureFormat;
 import com.viro.renderer.jni.Texture;
 import com.viro.renderer.jni.VideoTexture;
 import com.viro.renderer.jni.ViroViewARCore;
@@ -67,14 +68,18 @@ import com.viro.renderer.jni.event.RotateState;
 import com.viro.renderer.jni.event.SwipeState;
 import com.viro.renderer.jni.event.TouchState;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 public class ViroActivity extends AppCompatActivity implements GLListener {
     private static int SOUND_COUNT = 0;
@@ -178,6 +183,10 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         // addSoundField("http://ambisonics.dreamhosters.com/AMB/pink_pan_H.amb");
         // addSpatialSound("http://www.kozco.com/tech/32.mp3");
 
+        ByteBuffer hdrImage = getByteBufferFromAssets("wooden.vhd");
+        Texture background = new Texture(hdrImage, null);
+        scene.setBackgroundImageTexture(background);
+
         final SoundData data = new SoundData("http://www.kozco.com/tech/32.mp3", false);
         //addSpatialSound(data);
         //addNormalSound(data);
@@ -233,6 +242,32 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
             ImageTracker tracker = new ImageTracker(this, targetImage);
             tracker.findTarget(screenshot);
         }
+    }
+
+    private ByteBuffer getByteBufferFromAssets(String assetName) {
+        InputStream istr;
+
+        byte[] buffer = new byte[1024];
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        try {
+            istr = getAssets().open(assetName);
+
+            while (true) {
+                int read = istr.read(buffer);
+                if (read == -1) {
+                    break;
+                }
+                outStream.write(buffer, 0, read);
+            }
+            outStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        ByteBuffer direct = ByteBuffer.allocateDirect(outStream.size());
+        direct.put(outStream.toByteArray());
+        direct.rewind();
+        return direct;
     }
 
     private Bitmap getBitmapFromAssets(String assetName) {
@@ -444,14 +479,17 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         node3.setGeometry(textJni);
         //node3.setEventDelegate(getGenericDelegate("Text"));
 
-        // Create a new material with a diffuseTexture set to the image "boba.png"
-        Image bobaImage = new Image("boba.png", TextureFormat.RGBA8);
+        Bitmap bobaBitmap = getBitmapFromAssets("boba.png");
+        Bitmap specBitmap = getBitmapFromAssets("specular.png");
 
-        Texture bobaTexture = new Texture(bobaImage, TextureFormat.RGBA8, true, true);
+        Texture bobaTexture = new Texture(bobaBitmap, TextureFormat.RGBA8, true, true);
+        Texture specTexture = new Texture(specBitmap, TextureFormat.RGBA8, true, true);
+
         Material material = new Material();
-//        material.setTexture(bobaTexture, "diffuseTexture");
-        material.setColor(Color.BLUE, "diffuseColor");
-        material.setLightingModel("Blinn");
+        material.setDiffuseTexture(bobaTexture);
+        material.setDiffuseColor(Color.BLUE);
+        material.setSpecularTexture(specTexture);
+        material.setLightingModel(Material.LightingModel.LAMBERT);
 
         // Creation of ViroBox to the right and billboarded
         Box boxGeometry = new Box(2,4,2);
@@ -485,8 +523,8 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
                 Image heartImage = new Image("heart_d.jpg", TextureFormat.RGBA8);
                 Texture heartTexture = new Texture(heartImage, TextureFormat.RGBA8, true, true);
                 Material material = new Material();
-                material.setTexture(heartTexture, "diffuseTexture");
-                material.setLightingModel("Constant");
+                material.setDiffuseTexture(heartTexture);
+                material.setLightingModel(Material.LightingModel.CONSTANT);
 
                 Geometry geometry = object.getGeometry();
                 if (geometry != null) {
@@ -550,7 +588,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     }
 
     private void testStereoBackgroundImage(Scene scene) {
-        Image imageJni = new Image("stereo3601.jpg", TextureFormat.RGBA4);
+        Image imageJni = new Image("stereo3601.jpg", TextureFormat.RGBA8);
         Texture videoTexture = new Texture(imageJni,
                 TextureFormat.RGBA8, true, false, "TopBottom");
         scene.setBackgroundImageTexture(videoTexture);
@@ -887,9 +925,9 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
     private Node testLine(Context scene) {
         Material material = new Material();
-        material.setColor(Color.RED, "diffuseColor");
-        material.setLightingModel("Constant");
-        material.setCullMode("None");
+        material.setDiffuseColor(Color.RED);
+        material.setLightingModel(Material.LightingModel.CONSTANT);
+        material.setCullMode(Material.CullMode.NONE);
 
         float[] linePos = { 0, 0, -2 };
         float[][] points = { {0, 0}, {1, 0}, {1, 1} };

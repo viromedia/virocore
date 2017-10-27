@@ -30,7 +30,7 @@ void VROBoxTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer, 
     /*
      Load the background texture.
      */
-    //rootNode->setBackgroundSphere(VROTestUtil::loadHDRTexture("wooden"));
+    rootNode->setBackgroundSphere(VROTestUtil::loadHDRTexture("wooden"));
     //rootNode->setBackgroundSphere(VROTestUtil::loadDiffuseTexture("interior_viro.jpg", VROMipmapMode::None));
     
     std::shared_ptr<VROLight> ambient = std::make_shared<VROLight>(VROLightType::Ambient);

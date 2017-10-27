@@ -6,15 +6,18 @@ package com.viro.renderer.jni;
 
 import android.graphics.Bitmap;
 
+/**
+ * @hide
+ */
 public class Image {
     protected long mNativeRef;
 
-    public Image(String resource, TextureFormat format) {
-        mNativeRef = nativeCreateImage(resource, format.getID());
+    public Image(String resource, Texture.TextureFormat format) {
+        mNativeRef = nativeCreateImage(resource, format.getStringValue());
     }
 
-    public Image(Bitmap bitmap, TextureFormat format) {
-        mNativeRef = nativeCreateImageFromBitmap(bitmap, format.getID());
+    public Image(Bitmap bitmap, Texture.TextureFormat format) {
+        mNativeRef = nativeCreateImageFromBitmap(bitmap, format.getStringValue());
     }
 
     public long getWidth() {
