@@ -47,9 +47,8 @@ public class ViroDirectionalLightTest extends ViroBaseTest{
     private static final String TAG = ViroDirectionalLightTest.class.getName();
 
     @Override
-    Scene createScene() {
-        Scene scene = new Scene();
-        Node rootNode = scene.getRootNode();
+    void configureTestScene() {
+        Node rootNode = mScene.getRootNode();
         List<Node> nodes = new ArrayList<>();
 
         nodes = testBox();
@@ -57,8 +56,11 @@ public class ViroDirectionalLightTest extends ViroBaseTest{
             rootNode.addChildNode(node);
         }
         testSceneLighting(rootNode);
+    }
 
-        return scene;
+    @Override
+    void callbackEverySecond() {
+
     }
 
     private List<Node> testBox() {
@@ -125,9 +127,8 @@ public class ViroDirectionalLightTest extends ViroBaseTest{
 
 
     @Test
-    public void dummy_test() {
+    public void testDirectionalLight_direction() {
         // Context of the app under test.
-        Log.d(TAG, "useApp called");
         Context appContext = InstrumentationRegistry.getTargetContext();
 
         assertEquals("com.viromedia.renderertest.gvr", appContext.getPackageName());

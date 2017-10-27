@@ -48,9 +48,8 @@ public class ViroOmniLightTest extends ViroBaseTest{
     private static final String TAG = ViroOmniLightTest.class.getName();
 
     @Override
-    Scene createScene() {
-        Scene scene = new Scene();
-        Node rootNode = scene.getRootNode();
+    void configureTestScene() {
+        Node rootNode = mScene.getRootNode();
         List<Node> nodes = new ArrayList<>();
 
         nodes = testBox();
@@ -58,8 +57,11 @@ public class ViroOmniLightTest extends ViroBaseTest{
             rootNode.addChildNode(node);
         }
         testSceneLighting(rootNode);
+    }
 
-        return scene;
+    @Override
+    void callbackEverySecond() {
+
     }
 
     private List<Node> testBox() {

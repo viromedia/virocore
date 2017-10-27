@@ -18,7 +18,10 @@ import com.viro.renderer.jni.ViroView;
 import com.viromedia.renderertest.ViroReleaseTestActivity;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Rule;
 
 import java.util.TimerTask;
@@ -34,8 +37,8 @@ import static org.awaitility.Awaitility.await;
 
 public abstract class ViroBaseTest {
     private static final String TAG = ViroBaseTest.class.getName();
-    protected Scene mScene;
     protected Timer mTimer;
+    protected Scene mScene;
     protected ViroReleaseTestActivity mActivity;
     public ViroView mViroView;
 
@@ -49,10 +52,10 @@ public abstract class ViroBaseTest {
         mViroView = mActivity.getViroView();
         mTimer = new Timer();
 
-
         await().until(glInitialized());
-        mScene = createScene();
 
+        createBaseTestScene();
+        configureTestScene();
         mViroView.setScene(mScene);
         mTimer.schedule(new TimerTask() {
             @Override
@@ -70,21 +73,23 @@ public abstract class ViroBaseTest {
             }
         };
     }
-   Scene createScene() {
-        Scene scene = new Scene();
-        return scene;
+
+    private void createBaseTestScene() {
+         mScene = new Scene();
+        // Add yes button
+        // Add no button
+        // Add instruction card
     }
 
+    abstract void configureTestScene();
 
-    void callbackEverySecond() {
 
-    }
+    abstract void callbackEverySecond();
 
     @After
     public void tearDown() throws InterruptedException {
         synchronized (this) {
-            TimeUnit.SECONDS.sleep(5);
+            TimeUnit.SECONDS.sleep(10);
         }
-
     }
 }
