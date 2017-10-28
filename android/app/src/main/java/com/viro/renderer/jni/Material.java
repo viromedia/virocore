@@ -5,6 +5,9 @@ package com.viro.renderer.jni;
 
 import android.graphics.Color;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Materials are the set of shading attributes that define the appearance of a geometry's surfaces
  * when rendered. Each {@link Geometry} in a scene can be assigned one or more materials. All UI
@@ -93,6 +96,16 @@ public class Material {
         public String getStringValue() {
             return mStringValue;
         }
+
+        private static Map<String, LightingModel> map = new HashMap<String, LightingModel>();
+        static {
+            for (LightingModel value : LightingModel.values()) {
+                map.put(value.getStringValue().toLowerCase(), value);
+            }
+        }
+        public static LightingModel valueFromString(String str) {
+            return map.get(str.toLowerCase());
+        }
     };
 
     /**
@@ -132,6 +145,16 @@ public class Material {
         public String getStringValue() {
             return mStringValue;
         }
+
+        private static Map<String, BlendMode> map = new HashMap<String, BlendMode>();
+        static {
+            for (BlendMode value : BlendMode.values()) {
+                map.put(value.getStringValue().toLowerCase(), value);
+            }
+        }
+        public static BlendMode valueFromString(String str) {
+            return map.get(str.toLowerCase());
+        }
     };
 
 
@@ -161,7 +184,6 @@ public class Material {
         NONE("None");
 
         private String mStringValue;
-
         private CullMode(String value) {
             this.mStringValue = value;
         }
@@ -172,6 +194,16 @@ public class Material {
          */
         public String getStringValue() {
             return mStringValue;
+        }
+
+        private static Map<String, CullMode> map = new HashMap<String, CullMode>();
+        static {
+            for (CullMode value : CullMode.values()) {
+                map.put(value.getStringValue().toLowerCase(), value);
+            }
+        }
+        public static CullMode valueFromString(String str) {
+            return map.get(str.toLowerCase());
         }
     }
 
@@ -201,6 +233,16 @@ public class Material {
          */
         public String getStringValue() {
             return mStringValue;
+        }
+
+        private static Map<String, TransparencyMode> map = new HashMap<String, TransparencyMode>();
+        static {
+            for (TransparencyMode value : TransparencyMode.values()) {
+                map.put(value.getStringValue().toLowerCase(), value);
+            }
+        }
+        public static TransparencyMode valueFromString(String str) {
+            return map.get(str.toLowerCase());
         }
     };
 
@@ -245,6 +287,14 @@ public class Material {
             nativeDestroyMaterial(mNativeRef);
             mNativeRef = 0;
         }
+    }
+
+    /**
+     * @hide
+     * @return
+     */
+    public long getNativeRef() {
+        return mNativeRef;
     }
 
     /**
@@ -330,7 +380,7 @@ public class Material {
     /**
      * Set the diffuse {@link Color} to use for this Material. The diffuse color, if specified,
      * defines the "base" color of the surfaces using this Material. More specifically,
-     * the diffuse Texture defines for each pixel the light that is reflected from the surface,
+     * the diffuse color defines for each pixel the light that is reflected from the surface,
      * independent of point of view.
      * <p>
      * If a diffuse {@link Texture} is also defined, it will be modulated (multiplied) by this

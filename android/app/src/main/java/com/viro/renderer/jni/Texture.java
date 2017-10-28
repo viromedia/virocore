@@ -6,6 +6,8 @@ package com.viro.renderer.jni;
 import android.graphics.Bitmap;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Texture is an image used to add surface detail and color to a {@link Material}. The most common
@@ -61,6 +63,15 @@ public class Texture {
             return this.mStringValue;
         }
 
+        private static Map<String, TextureFormat> map = new HashMap<String, TextureFormat>();
+        static {
+            for (TextureFormat value : TextureFormat.values()) {
+                map.put(value.getStringValue().toLowerCase(), value);
+            }
+        }
+        public static TextureFormat valueFromString(String str) {
+            return map.get(str.toLowerCase());
+        }
     }
 
     /**
@@ -97,6 +108,16 @@ public class Texture {
         public String getStringValue() {
             return mStringValue;
         }
+
+        private static Map<String, WrapMode> map = new HashMap<String, WrapMode>();
+        static {
+            for (WrapMode value : WrapMode.values()) {
+                map.put(value.getStringValue().toLowerCase(), value);
+            }
+        }
+        public static WrapMode valueFromString(String str) {
+            return map.get(str.toLowerCase());
+        }
     };
 
     /**
@@ -126,6 +147,16 @@ public class Texture {
          */
         public String getStringValue() {
             return mStringValue;
+        }
+
+        private static Map<String, FilterMode> map = new HashMap<String, FilterMode>();
+        static {
+            for (FilterMode value : FilterMode.values()) {
+                map.put(value.getStringValue().toLowerCase(), value);
+            }
+        }
+        public static FilterMode valueFromString(String str) {
+            return map.get(str.toLowerCase());
         }
     };
 
