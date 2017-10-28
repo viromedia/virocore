@@ -30,11 +30,6 @@ public class ViroDirectionalLightTest extends ViroBaseTest{
     void configureTestScene() {
     }
 
-    @Override
-    void callbackEverySecond() {
-
-    }
-
     @Test
     public void testDirectionalLight_direction() {
         // Context of the app under test.

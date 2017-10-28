@@ -43,27 +43,45 @@ public class ViroBoxTest extends ViroBaseTest {
         mBox = new Box(2,4,2);
 
         node.setGeometry(mBox);
-        float[] boxPosition = {5,0,-3};
+        float[] boxPosition = {0,0,-5};
         node.setPosition(new Vector(boxPosition));
         mBox.setMaterials(Arrays.asList(material));
         mScene.getRootNode().addChildNode(node);
     }
 
     @Test
+    public void boxTest() {
+        boxWidthTest();
+        boxHeightTest();
+
+        boxLengthTest();
+    }
+
+    @Test
     public void boxWidthTest() {
         mMutableTestMethod = () -> {
-            if(mBox != null) {
+            if(mBox != null ) {
                 mBox.setWidth(mBox.getWidth() +1);
             }
         };
     }
 
-    @Override
-    void callbackEverySecond(MutableTestMethod testMethod) {
-        if(testMethod == null) {
-            return;
-        }
+    public void boxHeightTest() {
+        mMutableTestMethod = () -> {
+            if(mBox != null) {
+                mBox.setHeight(mBox.getHeight() +1);
+            }
+        };
 
-        testMethod.mutableTest();
+    }
+
+
+    public void boxLengthTest() {
+        mMutableTestMethod = () -> {
+            if(mBox != null) {
+                mBox.setLength(mBox.getLength() +1);
+            }
+        };
+
     }
 }

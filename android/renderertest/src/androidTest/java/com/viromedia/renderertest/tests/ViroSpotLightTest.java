@@ -29,12 +29,9 @@ public class ViroSpotLightTest extends ViroBaseTest{
 
     @Override
     void configureTestScene() {
-    }
-
-    @Override
-    void callbackEverySecond() {
 
     }
+
     @Test
     public void dummy_test() {
         // Context of the app under test.

@@ -31,11 +31,6 @@ public class ViroAmbientLightTest extends ViroBaseTest{
     void configureTestScene() {
     }
 
-    @Override
-    void callbackEverySecond() {
-
-    }
-
     @Test
     public void dummy_test() {
         // Context of the app under test.

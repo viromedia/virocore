@@ -137,7 +137,13 @@ public abstract class ViroBaseTest {
     abstract void configureTestScene();
 
 
-    abstract void callbackEverySecond(MutableTestMethod testMethod);
+    void callbackEverySecond(MutableTestMethod testMethod) {
+        if(testMethod == null) {
+            return;
+        }
+
+        testMethod.mutableTest();
+    }
 
     @After
     public void tearDown() throws InterruptedException {
