@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.viro.renderer.ARHitTestResult;
 import com.viro.renderer.jni.EventDelegate;
@@ -33,6 +34,8 @@ import com.viro.renderer.jni.event.SwipeState;
 import com.viro.renderer.jni.event.TouchState;
 import com.viromedia.renderertest.ViroReleaseTestActivity;
 
+import junit.framework.Assert;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -43,7 +46,6 @@ import java.util.EnumSet;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 
@@ -57,6 +59,8 @@ public abstract class ViroBaseTest {
     }
 
     private static final String TAG = ViroBaseTest.class.getName();
+    private static final String TEST_PASSED = "testPassed";
+    private static final String TEST_FAILED = "testFailed";
     public ViroView mViroView;
     protected MutableTestMethod mMutableTestMethod;
 
@@ -67,6 +71,9 @@ public abstract class ViroBaseTest {
     protected Timer mTimer;
     protected Scene mScene;
     protected ViroReleaseTestActivity mActivity;
+    private boolean mYesButtonsClicked = false;
+    private boolean mNoButtonsClicked = false;
+    private String mExpectedMessage;
 
     @Before
     public void setUp() {
@@ -90,12 +97,7 @@ public abstract class ViroBaseTest {
     }
 
     private Callable<Boolean> glInitialized() {
-        return new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                return mActivity.isGlInitialized();
-            }
-        };
+        return () -> mActivity.isGlInitialized();
     }
 
     private void createBaseTestScene() {
@@ -115,6 +117,7 @@ public abstract class ViroBaseTest {
         float[] yesPosition = {-1.5f, -3f, -3.3f};
         yesButton.setPosition(new Vector(yesPosition));
         yesButton.setTransformBehaviors(transformBehavior);
+        yesButton.setEventDelegate(getGenericDelegate(TEST_PASSED));
         rootNode.addChildNode(yesButton);
 
         // Add no button
@@ -130,10 +133,31 @@ public abstract class ViroBaseTest {
         float[] noPosition = {1.5f, -3f, -3.3f};
         noButton.setPosition(new Vector(noPosition));
         noButton.setTransformBehaviors(transformBehavior);
+        noButton.setEventDelegate(getGenericDelegate(TEST_FAILED));
         rootNode.addChildNode(noButton);
         // Add instruction card
     }
 
+    protected void startTest(String expectedMessage) {
+//        await().until();
+        mExpectedMessage = expectedMessage;
+    }
+
+    protected void assertPass(String expectedMessage) {
+
+        await().until(isTestButtonClicked());
+
+        // reset the button booleans
+
+        mYesButtonsClicked = false;
+        mNoButtonsClicked = false;
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(mActivity, "booleans reset", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     abstract void configureTestScene();
 
 
@@ -145,11 +169,16 @@ public abstract class ViroBaseTest {
         testMethod.mutableTest();
     }
 
+    private Callable<Boolean> isTestButtonClicked() {
+        return () -> (mYesButtonsClicked || mNoButtonsClicked);
+    }
+
+    private Callable<Boolean> isTestButtonReset() {
+        return () -> (!mYesButtonsClicked && !mNoButtonsClicked);
+    }
     @After
     public void tearDown() throws InterruptedException {
-        synchronized (this) {
-            TimeUnit.SECONDS.sleep(10);
-        }
+
     }
 
     private Bitmap getBitmapFromAsset(Context context, String filePath) {
@@ -193,6 +222,15 @@ public abstract class ViroBaseTest {
         public void onClick(int source, Node node, ClickState clickState, float[] hitLoc) {
             Log.e(TAG, delegateTag + " onClick " + clickState.toString() + " location " +
                     hitLoc[0] + ", " + hitLoc[1] + ", " + hitLoc[2]);
+            if (delegateTag.equalsIgnoreCase(TEST_PASSED)) {
+                mYesButtonsClicked = true;
+                Toast.makeText(mActivity, "Test Passed!", Toast.LENGTH_SHORT).show();
+            }
+            if (delegateTag.equalsIgnoreCase(TEST_FAILED)) {
+                mNoButtonsClicked = true;
+                Toast.makeText(mActivity, "Test failed!", Toast.LENGTH_SHORT).show();
+            }
+            Assert.assertTrue(mExpectedMessage, delegateTag.equalsIgnoreCase(TEST_PASSED));
         }
 
         @Override

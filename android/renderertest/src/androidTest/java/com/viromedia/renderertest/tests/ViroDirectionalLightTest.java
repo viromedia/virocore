@@ -9,14 +9,10 @@
 
 package com.viromedia.renderertest.tests;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by manish on 10/25/17.
@@ -31,11 +27,28 @@ public class ViroDirectionalLightTest extends ViroBaseTest{
     }
 
     @Test
-    public void testDirectionalLight_direction() {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
+    public void testDirectionalLight() {
 
-        assertEquals("com.viromedia.renderertest.gvr", appContext.getPackageName());
-        assertEquals(true, mActivity.isGlInitialized());
+        testColorChange();
+
+        testIntensityChange();
+
+        testShadoBiasChange();
+    }
+
+    private void testColorChange() {
+        // test
+        // change color to green
+        assertPass("Changed color from yellow to green");
+    }
+
+    private void testIntensityChange() {
+
+        assertPass("Changed intensity from 0.5 to 1.0");
+    }
+
+    private void testShadoBiasChange() {
+
+        assertPass("Changed shadowBias from something to something");
     }
 }
