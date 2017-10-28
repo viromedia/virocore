@@ -52,8 +52,15 @@ import static org.awaitility.Awaitility.await;
  */
 
 public abstract class ViroBaseTest {
+    public interface MutableTestMethod {
+        public void mutableTest();
+    }
+
     private static final String TAG = ViroBaseTest.class.getName();
     public ViroView mViroView;
+    protected MutableTestMethod mMutableTestMethod;
+
+
     @Rule
     public ActivityTestRule<ViroReleaseTestActivity> mActivityTestRule
             = new ActivityTestRule<>(ViroReleaseTestActivity.class, true, true);
@@ -77,7 +84,7 @@ public abstract class ViroBaseTest {
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                callbackEverySecond();
+                callbackEverySecond(mMutableTestMethod);
             }
         }, 0, 1000);
     }
@@ -130,7 +137,7 @@ public abstract class ViroBaseTest {
     abstract void configureTestScene();
 
 
-    abstract void callbackEverySecond();
+    abstract void callbackEverySecond(MutableTestMethod testMethod);
 
     @After
     public void tearDown() throws InterruptedException {
