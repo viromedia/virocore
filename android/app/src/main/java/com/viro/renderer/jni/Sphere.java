@@ -80,7 +80,7 @@ public class Sphere extends Geometry {
      */
     public void setRadius(float radius) {
         mRadius = radius;
-        nativeSetRadius(radius);
+        nativeSetRadius(mNativeRef, radius);
     }
 
     /**
@@ -102,7 +102,7 @@ public class Sphere extends Geometry {
      */
     public void setHeightSegmentCount(int heightSegmentCount) {
         mHeightSegmentCount = heightSegmentCount;
-        nativeSetHeightSegmentCount(heightSegmentCount);
+        nativeSetHeightSegmentCount(mNativeRef, heightSegmentCount);
     }
 
     /**
@@ -124,7 +124,7 @@ public class Sphere extends Geometry {
      */
     public void setWidthSegmentCount(int widthSegmentCount) {
         mWidthSegmentCount = widthSegmentCount;
-        nativeSetWidthSegmentCount(widthSegmentCount);
+        nativeSetWidthSegmentCount(mNativeRef, widthSegmentCount);
     }
 
     /**
@@ -147,7 +147,7 @@ public class Sphere extends Geometry {
      */
     public void setFacesOutward(boolean facesOutward) {
         mFacesOutward = facesOutward;
-        nativeSetFacesOutward(facesOutward);
+        nativeSetFacesOutward(mNativeRef, facesOutward);
     }
 
     /**
@@ -165,10 +165,10 @@ public class Sphere extends Geometry {
      */
     private native long nativeCreateSphere(float radius);
     private native long nativeCreateSphereParameterized(float radius, int widthSegmentCount, int heightSegementCount, boolean facesOutward);
-    private native void nativeSetWidthSegmentCount(int widthSegmentCount);
-    private native void nativeSetHeightSegmentCount(int heightSegmentCount);
-    private native void nativeSetRadius(float radius);
-    private native void nativeSetFacesOutward(boolean facesOutward);
+    private native void nativeSetWidthSegmentCount(long nodeReference, int widthSegmentCount);
+    private native void nativeSetHeightSegmentCount(long nodeReference, int heightSegmentCount);
+    private native void nativeSetRadius(long nodeReference, float radius);
+    private native void nativeSetFacesOutward(long nodeReference, boolean facesOutward);
     private native void nativeDestroySphere(long nodeReference);
     private native void nativeSetVideoTexture(long nodeReference, long textureRef);
 
