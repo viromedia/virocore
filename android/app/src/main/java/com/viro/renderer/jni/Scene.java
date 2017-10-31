@@ -165,8 +165,10 @@ public class Scene {
         setSceneRef(createNativeScene());
         mNativeDelegateRef = nativeCreateSceneControllerDelegate(mNativeRef);
 
-        mRootNode = new Node(false);
-        mRootNode.setNativeRef(nativeGetSceneNodeRef(mNativeRef));
+        PortalScene root = new PortalScene(false);
+        root.setNativeRef(nativeGetSceneNodeRef(mNativeRef));
+        root.attachDelegate();
+        mRootNode = root;
         mPhysicsWorld = new PhysicsWorld(this);
     }
 
@@ -232,25 +234,15 @@ public class Scene {
     }
 
     /**
-     * Set the background of this Scene to display the given video. The provided {@link
-     * VideoTexture} should be a spherical video to display properly. The video will be rendered
-     * behind all other content.
-     *
-     * @param videoTexture The {@link VideoTexture} containing the video.
-     */
-    public void setBackgroundVideoTexture(VideoTexture videoTexture) {
-        nativeSetBackgroundVideoTexture(mNativeRef, videoTexture.mNativeRef);
-    }
-
-    /**
-     * Set the background of this Scene to display an image. The provided {@link Texture} should
-     * contain a spherical image to display properly. The image will be rendered behind all other
+     * Set the background of this Scene to display the texture. The provided {@link Texture} should
+     * contain a spherical image or spherical video. The image or video will be rendered behind all other
      * content.
      *
-     * @param imageTexture The {@link Texture} containing the image.
+     * @param texture The {@link Texture} containing the image, or {@link VideoTexture} containing
+     *                     the video.
      */
-    public void setBackgroundImageTexture(Texture imageTexture) {
-        nativeSetBackgroundImageTexture(mNativeRef, imageTexture.mNativeRef);
+    public void setBackgroundTexture(Texture texture) {
+        nativeSetBackgroundTexture(mNativeRef, texture.mNativeRef);
     }
 
     /**
@@ -270,12 +262,12 @@ public class Scene {
      *
      * @param cubeTexture The {@link Texture} containing the cube-map.
      */
-    public void setBackgroundCubeImageTexture(Texture cubeTexture) {
+    public void setBackgroundCubeTexture(Texture cubeTexture) {
         nativeSetBackgroundCubeImageTexture(mNativeRef, cubeTexture.mNativeRef);
     }
 
     /**
-     * Set teh background of this Scene to display the given color. The color will be rendered
+     * Set the background of this Scene to display the given color. The color will be rendered
      * behind all other content.
      *
      * @param color The {@link android.graphics.Color}'s int value.
@@ -338,8 +330,7 @@ public class Scene {
     private native long nativeCreateSceneControllerDelegate(long sceneRef);
     private native void nativeDestroySceneController(long sceneReference);
     private native long nativeGetSceneNodeRef(long sceneRef);
-    private native void nativeSetBackgroundVideoTexture(long sceneRef, long videoRef);
-    private native void nativeSetBackgroundImageTexture(long sceneRef, long imageRef);
+    private native void nativeSetBackgroundTexture(long sceneRef, long imageRef);
     private native void nativeSetBackgroundCubeImageTexture(long sceneRef, long textureRef);
     private native void nativeSetBackgroundCubeWithColor(long sceneRef, long color);
     private native void nativeSetBackgroundRotation(long sceneRef, float degreeX, float degreeY,

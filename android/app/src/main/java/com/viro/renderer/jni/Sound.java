@@ -252,38 +252,6 @@ public class Sound implements BaseSound {
         return mDelegate;
     }
 
-    /**
-     * @hide
-     */
-    @Override
-    public void soundIsReady() {
-        mReady = true;
-        if (mDelegate != null) {
-            mDelegate.onSoundReady(this);
-        }
-    }
-
-    /**
-     * @hide
-     */
-    @Override
-    public void soundDidFinish() {
-        if (mDelegate != null) {
-            mDelegate.onSoundFinish(this);
-        }
-    }
-
-    /**
-     * @hide
-     * @param error
-     */
-    @Override
-    public void soundDidFail(String error) {
-        if (mDelegate != null) {
-            mDelegate.onSoundFail(error);
-        }
-    }
-
     private native long nativeCreateSound(String uri, long renderContextRef);
     private native long nativeCreateSoundWithData(long dataRef, long renderContextRef);
     private native void nativeSetup(long mNativeRef);
@@ -294,4 +262,37 @@ public class Sound implements BaseSound {
     private native void nativeSetMuted(long mNativeRef, boolean muted);
     private native void nativeSetLoop(long mNativeRef, boolean loop);
     private native void nativeSeekToTime(long mNativeRef, float seconds);
+
+    /*
+     Invoked from JNI.
+     */
+    /**
+     * @hide
+     */
+    @Override
+    public void soundIsReady() {
+        mReady = true;
+        if (mDelegate != null) {
+            mDelegate.onSoundReady(this);
+        }
+    }
+    /**
+     * @hide
+     */
+    @Override
+    public void soundDidFinish() {
+        if (mDelegate != null) {
+            mDelegate.onSoundFinish(this);
+        }
+    }
+    /**
+     * @hide
+     * @param error
+     */
+    @Override
+    public void soundDidFail(String error) {
+        if (mDelegate != null) {
+            mDelegate.onSoundFail(error);
+        }
+    }
 }

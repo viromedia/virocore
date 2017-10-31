@@ -292,7 +292,7 @@ public class Texture {
     /**
      * Construct a new cube map Texture out of the given images. Cube maps are a group of six
      * images. They are commonly used either as skyboxes (backgrounds that enclose the user), via
-     * {@link Scene#setBackgroundCubeImageTexture(Texture)}, or as reflective or environment
+     * {@link Scene#setBackgroundCubeTexture(Texture)}, or as reflective or environment
      * maps.
      *
      * @param px            The {@link Bitmap} to use for the right side of the cube.

@@ -323,6 +323,24 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
+     * Get the nearest {@link PortalScene} that is an ancestor of this Node. Returns null if this is
+     * the root node.
+     *
+     * @return The nearest ancestor PortalScene.
+     */
+    public PortalScene getParentPortalScene() {
+        Node parent = mParent != null ? mParent.get() : null;
+        if (parent == null) {
+            return null;
+        }
+        if (parent instanceof PortalScene) {
+            return (PortalScene) parent;
+        } else {
+            return parent.getParentPortalScene();
+        }
+    }
+
+    /**
      * Get the children of this Node in the scene-graph.
      *
      * @return The children.

@@ -104,7 +104,7 @@ public class Object3D extends Node {
      * @param isFBX True if the model loaded is FBX, false if OBJ.
      * @hide
      */
-    public void nodeDidFinishCreation(boolean isFBX, long geometryRef) {
+    void nodeDidFinishCreation(boolean isFBX, long geometryRef) {
         if (mDestroyed) {
             return;
         }
@@ -128,7 +128,7 @@ public class Object3D extends Node {
      * @param error The error message.
      * @hide
      */
-    public void nodeDidFailOBJLoad(String error) {
+    void nodeDidFailOBJLoad(String error) {
         if (!mDestroyed && mAsyncListener != null) {
             mAsyncListener.onObject3DFailed(error);
         }
@@ -140,7 +140,7 @@ public class Object3D extends Node {
      * @return The active request ID.
      * @hide
      */
-    public long getActiveRequestID() {
+    long getActiveRequestID() {
         return mActiveRequestID.get();
     }
 

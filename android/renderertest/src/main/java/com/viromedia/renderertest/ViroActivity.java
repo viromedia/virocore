@@ -156,14 +156,14 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         Node rootNode = scene.getRootNode();
         List<Node> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
-        nodes = testSphereVideo(this);
+       // nodes = testSphereVideo(this);
         //nodes = testBox(getApplicationContext());
         //nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
         //nodes = testText(this);
 
-        //testBackgroundVideo(scene);
+        testBackgroundVideo(scene);
         //testBackgroundImage(scene);
         //testSkyBoxImage(scene);
 
@@ -180,7 +180,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
         //ByteBuffer hdrImage = getByteBufferFromAssets("wooden.vhd");
         //Texture background = new Texture(hdrImage, null);
-        //scene.setBackgroundImageTexture(background);
+        //scene.setBackgroundTexture(background);
 
         //final SoundData data = new SoundData("http://www.kozco.com/tech/32.mp3", false);
         //addSpatialSound(data);
@@ -348,7 +348,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     private void testBackgroundVideo(final Scene scene) {
         final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
                 Uri.parse("https://s3.amazonaws.com/viro.video/Climber2Top.mp4"));
-        scene.setBackgroundVideoTexture(videoTexture);
+        scene.setBackgroundTexture(videoTexture);
 
         videoTexture.setVolume(0.1f);
         videoTexture.setLoop(false);
@@ -359,7 +359,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     private void testBackgroundImage(Scene scene) {
         Image imageJni = new Image("boba.png", TextureFormat.RGBA8);
         Texture videoTexture = new Texture(imageJni, TextureFormat.RGBA8, true, false);
-        scene.setBackgroundImageTexture(videoTexture);
+        scene.setBackgroundTexture(videoTexture);
         float[] rotation = {90, 0, 0};
         scene.setBackgroundRotation(new Vector(rotation));
     }
@@ -377,7 +377,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         Texture cubeTexture = new Texture(pximageJni, nximageJni, pyimageJni, nyimageJni,
                 pzimageJni, nzimageJni, format);
 
-        scene.setBackgroundCubeImageTexture(cubeTexture);
+        scene.setBackgroundCubeTexture(cubeTexture);
     }
 
     private List<Node> testBox(Context context) {
@@ -506,7 +506,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         Image imageJni = new Image("stereo3601.jpg", TextureFormat.RGBA8);
         Texture videoTexture = new Texture(imageJni,
                 TextureFormat.RGBA8, true, false, "TopBottom");
-        scene.setBackgroundImageTexture(videoTexture);
+        scene.setBackgroundTexture(videoTexture);
         float[] rotation = {0, 0, 0};
         scene.setBackgroundRotation(new Vector(rotation));
     }
@@ -548,7 +548,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
             @Override
             public void onReady(VideoTexture video) {
-                scene.setBackgroundVideoTexture(video);
+                scene.setBackgroundTexture(video);
                 video.setVolume(0.1f);
                 video.setLoop(false);
                 video.play();

@@ -5,6 +5,7 @@
 #include "Portal_JNI.h"
 #include "PortalScene_JNI.h"
 #include "PortalDelegate_JNI.h"
+#include "Texture_JNI.h"
 #include <VROPlatformUtil.h>
 
 #define JNI_METHOD(return_type, method_name) \
@@ -18,7 +19,6 @@ JNI_METHOD(jlong, nativeCreatePortalScene)(JNIEnv *env,
     std::shared_ptr<VROPortal> portal = std::make_shared<VROPortal>();
     return PortalScene::jptr(portal);
 }
-
 
 JNI_METHOD(void, nativeDestroyPortalScene)(JNIEnv *env,
                                            jobject object,
@@ -87,6 +87,78 @@ JNI_METHOD(void, nativeSetPortalEntrance)(JNIEnv *env, jclass clazz, jlong porta
         }
 
         vroPortal->setPortalEntrance(portalFrame);
+    });
+}
+
+JNI_METHOD(void, nativeSetBackgroundTexture)(JNIEnv *env,
+                                             jclass clazz,
+                                             jlong portal_j,
+                                             jlong texture_j) {
+    std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
+    std::weak_ptr<VROTexture> texture_w = Texture::native(texture_j);
+
+    VROPlatformDispatchAsyncRenderer([portal_w, texture_w] {
+        std::shared_ptr<VROPortal> portal = portal_w.lock();
+        std::shared_ptr<VROTexture> texture = texture_w.lock();
+
+        if (portal && texture) {
+            portal->setBackgroundSphere(texture);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetBackgroundRotation)(JNIEnv *env,
+                                              jclass clazz,
+                                              jlong portal_j,
+                                              jfloat rotationDegreeX,
+                                              jfloat rotationDegreeY,
+                                              jfloat rotationDegreeZ) {
+    std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
+
+    VROPlatformDispatchAsyncRenderer([portal_w, rotationDegreeX, rotationDegreeY, rotationDegreeZ] {
+        std::shared_ptr<VROPortal> portal = portal_w.lock();
+        if (portal) {
+            portal->setBackgroundRotation({toRadians(rotationDegreeX),
+                                           toRadians(rotationDegreeY),
+                                           toRadians(rotationDegreeZ)});
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetBackgroundCubeImageTexture)(JNIEnv *env,
+                                                      jclass clazz,
+                                                      jlong portal_j,
+                                                      jlong texture_j) {
+    std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
+    std::weak_ptr<VROTexture> texture_w = Texture::native(texture_j);
+
+    VROPlatformDispatchAsyncRenderer([portal_w, texture_w] {
+        std::shared_ptr<VROPortal> portal = portal_w.lock();
+        std::shared_ptr<VROTexture> texture = texture_w.lock();
+        if (portal && texture) {
+            portal->setBackgroundCube(texture);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
+                                                   jclass clazz,
+                                                   jlong portal_j,
+                                                   jlong color) {
+    std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
+    VROPlatformDispatchAsyncRenderer([portal_w, color] {
+        std::shared_ptr<VROPortal> portal = portal_w.lock();
+        if (!portal) {
+            return;
+        }
+        // Get the color
+        float a = ((color >> 24) & 0xFF) / 255.0f;
+        float r = ((color >> 16) & 0xFF) / 255.0f;
+        float g = ((color >> 8) & 0xFF) / 255.0f;
+        float b = (color & 0xFF) / 255.0f;
+
+        VROVector4f vecColor(r, g, b, a);
+        portal->setBackgroundCube(vecColor);
     });
 }
 

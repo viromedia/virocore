@@ -30,7 +30,7 @@ import java.lang.ref.WeakReference;
  * </tt>
  * VideoTexture can also be rendered directly to the background of a {@link Scene}, which is useful
  * for displaying spherical, immersive video in VR. To do so, use {@link
- * Scene#setBackgroundVideoTexture(VideoTexture)}.
+ * Scene#setBackgroundTexture(Texture)}.
  */
 public class VideoTexture extends Texture {
 
@@ -304,10 +304,13 @@ public class VideoTexture extends Texture {
     private native void nativeSeekToTime(long nativeTexture, float seconds);
     private native void nativeLoadSource(long nativeTexture, String url, long renderContext);
 
+    /*
+     Invoked from JNI.
+     */
     /**
      * @hide
      */
-    public void playerWillBuffer() {
+    void playerWillBuffer() {
         if (mDelegate != null && mDelegate.get() != null && mNativeRef != 0) {
             mDelegate.get().onVideoBufferStart(this);
         }
@@ -315,7 +318,7 @@ public class VideoTexture extends Texture {
     /**
      * @hide
      */
-    public void playerDidBuffer() {
+    void playerDidBuffer() {
         if (mDelegate != null && mDelegate.get() != null && mNativeRef != 0) {
             mDelegate.get().onVideoBufferEnd(this);
         }
@@ -323,7 +326,7 @@ public class VideoTexture extends Texture {
     /**
      * @hide
      */
-    public void playerDidFinishPlaying() {
+    void playerDidFinishPlaying() {
         if (mDelegate != null && mDelegate.get() != null && mNativeRef != 0) {
             mDelegate.get().onVideoFinish(this);
         }
@@ -331,7 +334,7 @@ public class VideoTexture extends Texture {
     /**
      * @hide
      */
-    public void onVideoFailed(String error) {
+    void onVideoFailed(String error) {
         if (mDelegate != null && mDelegate.get() != null && mNativeRef != 0) {
             mDelegate.get().onVideoFailed(error);
         }
@@ -339,7 +342,7 @@ public class VideoTexture extends Texture {
     /**
      * @hide
      */
-    public void onReady() {
+    void onReady() {
         if (mDelegate != null && mDelegate.get() != null && mNativeRef != 0) {
             mDelegate.get().onReady(this);
         }
@@ -347,7 +350,7 @@ public class VideoTexture extends Texture {
     /**
      * @hide
      */
-    public void onVideoUpdatedTime(float currentTimeInSeconds, float totalTimeInSeconds) {
+    void onVideoUpdatedTime(float currentTimeInSeconds, float totalTimeInSeconds) {
         if (mDelegate != null && mDelegate.get() != null){
             mDelegate.get().onVideoUpdatedTime(this, currentTimeInSeconds, totalTimeInSeconds);
         }

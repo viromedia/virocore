@@ -64,36 +64,19 @@ JNI_METHOD(void, nativeDestroySceneControllerDelegate)(JNIEnv *env,
     delete reinterpret_cast<PersistentRef<SceneControllerDelegate> *>(native_delegate_object_ref);
 }
 
-JNI_METHOD(void, nativeSetBackgroundVideoTexture)(JNIEnv *env,
-                                     jclass clazz,
-                                     jlong sceneRef,
-                                     jlong textureRef) {
-    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
-    std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
+JNI_METHOD(void, nativeSetBackgroundTexture)(JNIEnv *env,
+                                             jclass clazz,
+                                             jlong scene_j,
+                                             jlong texture_j) {
+    std::weak_ptr<VROSceneController> scene_w = SceneController::native(scene_j);
+    std::weak_ptr<VROTexture> texture_w = Texture::native(texture_j);
 
-    VROPlatformDispatchAsyncRenderer([sceneController_w, videoTexture_w] {
-        std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
-        std::shared_ptr<VROVideoTextureAVP> videoTexture = videoTexture_w.lock();
+    VROPlatformDispatchAsyncRenderer([scene_w, texture_w] {
+        std::shared_ptr<VROSceneController> scene = scene_w.lock();
+        std::shared_ptr<VROTexture> texture = texture_w.lock();
 
-        if (sceneController && videoTexture) {
-            sceneController->getScene()->getRootNode()->setBackgroundSphere(videoTexture);
-        }
-    });
-}
-
-JNI_METHOD(void, nativeSetBackgroundImageTexture)(JNIEnv *env,
-                                                  jclass clazz,
-                                                  jlong sceneRef,
-                                                  jlong imageRef) {
-    std::weak_ptr<VROTexture> image_w = Texture::native(imageRef);
-    std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
-
-    VROPlatformDispatchAsyncRenderer([sceneController_w, image_w] {
-        std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
-        std::shared_ptr<VROTexture> image = image_w.lock();
-
-        if (sceneController && image) {
-            sceneController->getScene()->getRootNode()->setBackgroundSphere(image);
+        if (scene && texture) {
+            scene->getScene()->getRootNode()->setBackgroundSphere(texture);
         }
     });
 }
