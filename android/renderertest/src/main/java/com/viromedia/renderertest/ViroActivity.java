@@ -156,8 +156,8 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         Node rootNode = scene.getRootNode();
         List<Node> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
-        //nodes = testSphereVideo(this);
-        nodes = testBox(getApplicationContext());
+        nodes = testSphereVideo(this);
+        //nodes = testBox(getApplicationContext());
         //nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
@@ -174,13 +174,13 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         //testStereoBackgroundImage(scene);
 
         //addNormalSound("http://www.kozco.com/tech/32.mp3");
-        // addNormalSound("http://www.bensound.com/royalty-free-music?download=dubstep");
+        //addNormalSound("http://www.bensound.com/royalty-free-music?download=dubstep");
         //addSoundField("file:///android_asset/thelin.wav");
-        addSpatialSound("http://www.kozco.com/tech/32.mp3");
+        //addSpatialSound("http://www.kozco.com/tech/32.mp3");
 
-        ByteBuffer hdrImage = getByteBufferFromAssets("wooden.vhd");
-        Texture background = new Texture(hdrImage, null);
-        scene.setBackgroundImageTexture(background);
+        //ByteBuffer hdrImage = getByteBufferFromAssets("wooden.vhd");
+        //Texture background = new Texture(hdrImage, null);
+        //scene.setBackgroundImageTexture(background);
 
         //final SoundData data = new SoundData("http://www.kozco.com/tech/32.mp3", false);
         //addSpatialSound(data);
@@ -317,41 +317,13 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         final Surface surface = new Surface(4, 4, 0, 0, 1, 1);
         float[] position = {0,0,-3};
         node.setPosition(new Vector(position));
-        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext());
-        videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
-            @Override
-            public void onVideoBufferStart() {
-
-            }
-
-            @Override
-            public void onVideoBufferEnd() {
-
-            }
-
-            @Override
-            public void onVideoFinish() {
-            }
-
-            @Override
-            public void onVideoFailed(String error) {
-
-            }
-
-            @Override
-            public void onReady() {
-                surface.setVideoTexture(videoTexture);
-                videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mViroView.getViroContext());
-                videoTexture.setVolume(0.1f);
-                videoTexture.setLoop(false);
-                videoTexture.play();
-            }
-
-            @Override
-            public void onVideoUpdatedTime(float seconds, float duration) {
-                Log.e(TAG,"onVideoUpdatedTime for Surface within ViroActivity:" + seconds + "/" + duration);
-            }
-        });
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(), Uri.parse("https://s3.amazonaws.com/viro.video/Climber2Top.mp4"));
+        Material material = new Material();
+        material.setDiffuseTexture(videoTexture);
+        surface.setMaterials(Arrays.asList(material));
+        videoTexture.setVolume(0.1f);
+        videoTexture.setLoop(true);
+        videoTexture.play();
 
         node.setGeometry(surface);
         return Arrays.asList(node);
@@ -360,85 +332,28 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     private List<Node> testSphereVideo(Context context) {
         Node node = new Node();
         final Sphere sphere = new Sphere(2, 20, 20, false);
-        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext());
-        videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
-            @Override
-            public void onVideoBufferStart() {
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
+                Uri.parse("https://s3.amazonaws.com/viro.video/Climber2Top.mp4"));
+        Material material = new Material();
+        material.setDiffuseTexture(videoTexture);
+        sphere.setMaterials(Arrays.asList(material));
+        videoTexture.setVolume(0.1f);
+        videoTexture.setLoop(false);
+        videoTexture.play();
 
-            }
-
-            @Override
-            public void onVideoBufferEnd() {
-
-            }
-
-            @Override
-            public void onVideoFinish() {
-            }
-
-            @Override
-            public void onVideoFailed(String error) {
-
-            }
-
-            @Override
-            public void onReady() {
-                sphere.setVideoTexture(videoTexture);
-                videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mViroView.getViroContext());
-                videoTexture.setVolume(0.1f);
-                videoTexture.setLoop(false);
-                videoTexture.play();
-            }
-
-            @Override
-            public void onVideoUpdatedTime(float seconds, float duration) {
-                Log.e(TAG,"onVideoUpdatedTime for Sphere within ViroActivity:" + seconds);
-            }
-        });
         node.setGeometry(sphere);
         return Arrays.asList(node);
     }
 
     private void testBackgroundVideo(final Scene scene) {
-        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext());
-        videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mViroView.getViroContext());
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
+                Uri.parse("https://s3.amazonaws.com/viro.video/Climber2Top.mp4"));
+        scene.setBackgroundVideoTexture(videoTexture);
+
         videoTexture.setVolume(0.1f);
         videoTexture.setLoop(false);
         videoTexture.play();
-        videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
-            @Override
-            public void onVideoBufferStart() {
 
-            }
-
-            @Override
-            public void onVideoBufferEnd() {
-
-            }
-
-            @Override
-            public void onVideoFinish() {
-            }
-
-            @Override
-            public void onVideoFailed(String error) {
-
-            }
-
-            @Override
-            public void onReady() {
-                scene.setBackgroundVideoTexture(videoTexture);
-                videoTexture.loadSource("https://s3.amazonaws.com/viro.video/Climber2Top.mp4", mViroView.getViroContext());
-                videoTexture.setVolume(0.1f);
-                videoTexture.setLoop(false);
-                videoTexture.play();
-            }
-
-            @Override
-            public void onVideoUpdatedTime(float seconds, float duration) {
-                Log.e(TAG,"onVideoUpdatedTime for Background within ViroActivity:" + seconds);
-            }
-        });
     }
 
     private void testBackgroundImage(Scene scene) {
@@ -602,76 +517,50 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         final Surface surface = new Surface(4, 4, 0, 0, 1, 1);
         float[] position = {0,0,-5};
         node.setPosition(new Vector(position));
-        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(), "LeftRight");
-        videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
-            @Override
-            public void onVideoBufferStart() {
 
-            }
-
-            @Override
-            public void onVideoBufferEnd() {
-
-            }
-
-            @Override
-            public void onVideoFinish() {}
-
-            @Override
-            public void onVideoFailed(String error) {}
-
-            @Override
-            public void onReady() {
-                videoTexture.loadSource("file:///android_asset/stereoVid.mp4", mViroView.getViroContext());
-                videoTexture.setVolume(0.1f);
-                videoTexture.setLoop(true);
-                videoTexture.play();
-                surface.setVideoTexture(videoTexture);
-            }
-
-            @Override
-            public void onVideoUpdatedTime(float seconds, float duration) {
-                Log.e(TAG,"onVideoUpdatedTime for Surface within ViroActivity:" + seconds);
-            }
-        });
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
+                Uri.parse("file:///android_asset/stereoVid.mp4"), null, Texture.StereoMode.LEFT_RIGHT);
+        videoTexture.setVolume(0.1f);
+        videoTexture.setLoop(true);
+        videoTexture.play();
 
         node.setGeometry(surface);
         return Arrays.asList(node);
     }
 
     private void testStereoBackgroundVideo(final Scene scene) {
-        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(), "TopBottom");
-        videoTexture.setVideoDelegate(new VideoTexture.VideoDelegate() {
+        VideoTexture.Delegate delegate = new VideoTexture.Delegate() {
             @Override
-            public void onVideoBufferStart() {
+            public void onVideoBufferStart(VideoTexture video) {
 
             }
 
             @Override
-            public void onVideoBufferEnd() {
+            public void onVideoBufferEnd(VideoTexture video) {
 
             }
 
             @Override
-            public void onVideoFinish() {}
+            public void onVideoFinish(VideoTexture video) {}
 
             @Override
             public void onVideoFailed(String error) {}
 
             @Override
-            public void onReady() {
-                scene.setBackgroundVideoTexture(videoTexture);
-                videoTexture.loadSource("file:///android_asset/stereoVid360.mp4", mViroView.getViroContext());
-                videoTexture.setVolume(0.1f);
-                videoTexture.setLoop(false);
-                videoTexture.play();
+            public void onReady(VideoTexture video) {
+                scene.setBackgroundVideoTexture(video);
+                video.setVolume(0.1f);
+                video.setLoop(false);
+                video.play();
             }
 
             @Override
-            public void onVideoUpdatedTime(float seconds, float duration) {
+            public void onVideoUpdatedTime(VideoTexture video, float seconds, float duration) {
                 Log.e(TAG,"onVideoUpdatedTime for Background within ViroActivity:" + seconds);
             }
-        });
+        };
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(), Uri.parse("file:///android_asset/stereoVid360.mp4"),
+                delegate, Texture.StereoMode.TOP_BOTTOM);
     }
 
     private List<Node> testARPlane(ARScene arScene) {

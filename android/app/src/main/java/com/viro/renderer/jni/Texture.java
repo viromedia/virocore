@@ -222,17 +222,40 @@ public class Texture {
         public String getStringValue() {
             return mStringValue;
         }
+
+        private static Map<String, StereoMode> map = new HashMap<String, StereoMode>();
+        static {
+            for (StereoMode value : StereoMode.values()) {
+                map.put(value.getStringValue().toLowerCase(), value);
+            }
+        }
+        /**
+         * @hide
+         * @return
+         */
+        public static StereoMode valueFromString(String str) {
+            return map.get(str.toLowerCase());
+        }
     };
 
 
     protected long mNativeRef;
     private int mWidth;
     private int mHeight;
-    private WrapMode mWrapS;
-    private WrapMode mWrapT;
-    private FilterMode mMinificationFilter;
-    private FilterMode mMagnificationFilter;
-    private FilterMode mMipFilter;
+    private WrapMode mWrapS = WrapMode.CLAMP;
+    private WrapMode mWrapT = WrapMode.CLAMP;
+    private FilterMode mMinificationFilter = FilterMode.LINEAR;
+    private FilterMode mMagnificationFilter = FilterMode.LINEAR;
+    private FilterMode mMipFilter = FilterMode.LINEAR;
+
+    /**
+     * Subclass constructor, creates its own mNativeRef.
+     *
+     * @hide
+     */
+    Texture() {
+
+    }
 
     /**
      * @hide
