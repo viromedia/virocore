@@ -9,7 +9,6 @@
 package com.viromedia.renderertest;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -17,7 +16,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.EventLog;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -46,7 +44,6 @@ import com.viro.renderer.jni.Vector;
 import com.viro.renderer.jni.ViroContext;
 import com.viro.renderer.jni.Scene;
 import com.viro.renderer.jni.SoundData;
-import com.viro.renderer.jni.SoundDelegate;
 import com.viro.renderer.jni.SoundField;
 import com.viro.renderer.jni.Sound;
 import com.viro.renderer.jni.SpatialSound;
@@ -72,14 +69,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
 
 public class ViroActivity extends AppCompatActivity implements GLListener {
     private static int SOUND_COUNT = 0;
@@ -178,20 +173,25 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         //testStereoBackgroundVideo(scene);
         //testStereoBackgroundImage(scene);
 
-        // addNormalSound("http://www.kozco.com/tech/32.mp3");
+        //addNormalSound("http://www.kozco.com/tech/32.mp3");
         // addNormalSound("http://www.bensound.com/royalty-free-music?download=dubstep");
-        // addSoundField("http://ambisonics.dreamhosters.com/AMB/pink_pan_H.amb");
-        // addSpatialSound("http://www.kozco.com/tech/32.mp3");
+        //addSoundField("file:///android_asset/thelin.wav");
+        addSpatialSound("http://www.kozco.com/tech/32.mp3");
 
         ByteBuffer hdrImage = getByteBufferFromAssets("wooden.vhd");
         Texture background = new Texture(hdrImage, null);
         scene.setBackgroundImageTexture(background);
 
-        final SoundData data = new SoundData("http://www.kozco.com/tech/32.mp3", false);
+        //final SoundData data = new SoundData("http://www.kozco.com/tech/32.mp3", false);
         //addSpatialSound(data);
         //addNormalSound(data);
 
-        setSoundRoom(scene, mViroView.getViroContext());
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                setSoundRoom(scene, mViroView.getViroContext());
+            }
+        }, 5000);
+        //setSoundRoom(scene, mViroView.getViroContext());
 
         for (Node node: nodes) {
             rootNode.addChildNode(node);
@@ -783,42 +783,38 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
     private void addNormalSound(String path) {
         final String key = path + SOUND_COUNT++;
-        mSoundMap.put(key, new Sound(path,
-                mViroView.getViroContext(), new SoundDelegate() {
+        mSoundMap.put(key, new Sound(mViroView.getViroContext(), Uri.parse(path), new Sound.Delegate() {
             @Override
-            public void onSoundReady() {
-                Log.i("NormalSound", "ViroActivity sound is ready!");
-                if (mSoundMap.get(key) != null) {
-                    mSoundMap.get(key).play();
-                }
+            public void onSoundReady(Sound sound) {
+                Log.i("NormalSound", "ViroActivity sound is ready! is paused? " + sound.isPaused());
+                sound.setLoop(true);
+                sound.play();
             }
 
             @Override
-            public void onSoundFinish() {
-                Log.i("NormalSound", "ViroActivity sound has finished!");
+            public void onSoundFinish(Sound sound) {
+                Log.i("Viro", "ViroActivity sound has finished!");
             }
 
             @Override
             public void onSoundFail(String error) {
-
+                Log.i("Viro", "Sound fail with error " + error);
             }
-        }, false));
+        }));
     }
 
     private void addNormalSound(SoundData data) {
         final String key = "" + SOUND_COUNT++;
         mSoundMap.put(key, new Sound(data,
-                mViroView.getViroContext(), new SoundDelegate() {
+                mViroView.getViroContext(), new Sound.Delegate() {
             @Override
-            public void onSoundReady() {
-                Log.i("NormalSound", "ViroActivity sound is ready!");
-                if (mSoundMap.get(key) != null) {
-                    mSoundMap.get(key).play();
-                }
+            public void onSoundReady(Sound sound) {
+                Log.i("NormalSound", "ViroActivity sound is ready! is paused? " + sound.isPaused());
+                sound.play();
             }
 
             @Override
-            public void onSoundFinish() {
+            public void onSoundFinish(Sound sound) {
                 Log.i("NormalSound", "ViroActivity sound has finished!");
             }
 
@@ -831,84 +827,53 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
     private void addSoundField(String path) {
         final String key = path + SOUND_COUNT++;
-        mSoundFieldMap.put(key, new SoundField(path,
-                mViroView.getViroContext(), new SoundDelegate() {
+        mSoundFieldMap.put(key, new SoundField(
+                mViroView.getViroContext(), Uri.parse(path), new SoundField.Delegate() {
             @Override
-            public void onSoundReady() {
+            public void onSoundReady(SoundField sound) {
                 Log.i("SoundField", "ViroActivity sound is ready!");
-                if (mSoundFieldMap.get(key) != null) {
-                    mSoundFieldMap.get(key).setMuted(false);
-                    mSoundFieldMap.get(key).setVolume(1);
-                    mSoundFieldMap.get(key).play();
-                }
-            }
-
-            @Override
-            public void onSoundFinish() {
-                Log.i("SoundField", "ViroActivity sound has finished!");
+                sound.play();
+                sound.setLoop(true);
             }
 
             @Override
             public void onSoundFail(String error) {
-
+                Log.i("SoundField", "Failed to load sound: " + error);
             }
-        }, false));
+        }));
+
         float[] rotation = {0,0,90};
-        mSoundFieldMap.get(key).setRotation(rotation);
+        mSoundFieldMap.get(key).setRotation(new Vector(rotation));
     }
 
     private void addSpatialSound(final String path) {
         final String key = path + SOUND_COUNT++;
-        mSpatialSoundMap.put(key, new SpatialSound(path,
-                mViroView.getViroContext(), new SoundDelegate() {
+        mSpatialSoundMap.put(key, new SpatialSound(mViroView.getViroContext(), Uri.parse(path), new SpatialSound.Delegate() {
             @Override
-            public void onSoundReady() {
+            public void onSoundReady(SpatialSound sound) {
                 Log.i("SpatialSound", "ViroActivity sound is ready!");
 
-                SpatialSound sound = mSpatialSoundMap.get(key);
-                if (sound != null) {
-                    float[] position = {5, 0, 0};
-                    sound.setPosition(position);
-                    sound.setMuted(false);
-                    sound.setVolume(1);
-                    sound.setLoop(true);
-                    sound.play();
-                }
-            }
-
-            @Override
-            public void onSoundFinish() {
-                Log.i("SpatialSound", "ViroActivity sound has finished!");
+                float[] position = {5, 0, 0};
+                sound.setPosition(new Vector(position));
+                sound.play();
             }
 
             @Override
             public void onSoundFail(String error) {
 
             }
-        }, false));
+        }));
     }
 
     private void addSpatialSound(final SoundData data) {
         final String key = "" + SOUND_COUNT++;
         mSpatialSoundMap.put(key, new SpatialSound(data,
-                mViroView.getViroContext(), new SoundDelegate() {
+                mViroView.getViroContext(), new SpatialSound.Delegate() {
             @Override
-            public void onSoundReady() {
-
-                SpatialSound sound = mSpatialSoundMap.get(key);
-                if (sound != null) {
-                    float[] position = {5, 0, 0};
-                    sound.setPosition(position);
-                    sound.setMuted(false);
-                    sound.setVolume(1);
-                    sound.setLoop(true);
-                    sound.play();
-                }
-            }
-
-            @Override
-            public void onSoundFinish() {
-                Log.i("SpatialSound", "ViroActivity sound has finished!");
+            public void onSoundReady(SpatialSound sound) {
+                float[] position = {5, 0, 0};
+                sound.setPosition(new Vector(position));
+                sound.play();
             }
 
             @Override
@@ -919,8 +884,9 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     }
 
     private void setSoundRoom(Scene scene, ViroContext viroContextJni) {
-        float[] size = {2, 2, 2};
-        scene.setSoundRoom(viroContextJni, size, "transparent", "wood_panel", "thin_glass");
+        float[] size = {15, 15, 15};
+        scene.setSoundRoom(viroContextJni, new Vector(size), Scene.AudioMaterial.BRICK_BARE, Scene.AudioMaterial.MARBLE,
+                Scene.AudioMaterial.BRICK_BARE);
     }
 
     private Node testLine(Context scene) {

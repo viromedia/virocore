@@ -17,6 +17,7 @@
 #include "Geometry_JNI.h"
 #include "VROStringUtil.h"
 #include "Camera_JNI.h"
+#include "SpatialSound_JNI.h"
 #include "Light_JNI.h"
 #include "EventDelegate_JNI.h"
 #include "PhysicsDelegate_JNI.h"
@@ -172,6 +173,50 @@ JNI_METHOD(void, nativeRemoveAllLights)(JNIEnv *env,
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
             node->removeAllLights();
+        }
+    });
+}
+
+JNI_METHOD(void, nativeAddSound)(JNIEnv *env,
+                                 jobject obj,
+                                 jlong node_j,
+                                 jlong sound_j) {
+    std::weak_ptr<VROSoundGVR> sound_w = SpatialSound::native(sound_j);
+    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    VROPlatformDispatchAsyncRenderer([sound_w, node_w] {
+        std::shared_ptr<VROSoundGVR> sound = sound_w.lock();
+        std::shared_ptr<VRONode> node = node_w.lock();
+
+        if (sound && node) {
+            node->addSound(sound);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeRemoveSound)(JNIEnv *env,
+                                    jobject obj,
+                                    jlong node_j,
+                                    jlong sound_j) {
+    std::weak_ptr<VROSoundGVR> sound_w = SpatialSound::native(sound_j);
+    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    VROPlatformDispatchAsyncRenderer([sound_w, node_w] {
+        std::shared_ptr<VROSoundGVR> sound = sound_w.lock();
+        std::shared_ptr<VRONode> node = node_w.lock();
+
+        if (sound && node) {
+            node->removeSound(sound);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeRemoveAllSounds)(JNIEnv *env,
+                                        jobject obj,
+                                        jlong node_j) {
+    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    VROPlatformDispatchAsyncRenderer([node_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->removeAllSounds();
         }
     });
 }

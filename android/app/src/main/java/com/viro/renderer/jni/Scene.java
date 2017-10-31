@@ -11,7 +11,11 @@
  */
 package com.viro.renderer.jni;
 
+import android.graphics.Bitmap;
+
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The Scene object sits at the top of the scene graph, a hierarchy of {@link Node} objects
@@ -20,6 +24,133 @@ import java.lang.ref.WeakReference;
  * 3D objects, lights, and more.
  */
 public class Scene {
+
+    /**
+     * AudioMaterial is used to define the Scene's reverb effects. These are used in conjunction
+     * with {@link #setSoundRoom(ViroContext, Vector, AudioMaterial, AudioMaterial, AudioMaterial)}.
+     * In general, harder surface materials are more reverberant than rooms made of soft, absorbent
+     * materials.
+     */
+    public enum AudioMaterial {
+        /**
+         * Transparent, no reverb.
+         */
+        TRANSPARENT("transparent"),
+        /**
+         * Acoustic ceiling tiles.
+         */
+        ACOUSTIC_CEILING_TILES("acoustic_ceiling_tiles"),
+        /**
+         * Brick, bare.
+         */
+        BRICK_BARE("brick_bare"),
+        /**
+         * Painted brick.
+         */
+        BRICK_PAINTED("brick_painted"),
+        /**
+         * Coarse concrete.
+         */
+        CONCRETE_BLOCK_COARSE("concrete_block_coarse"),
+        /**
+         * Painted concrete.
+         */
+        CONCRETE_BLOCK_PAINTED("concrete_block_painted"),
+        /**
+         * Heavy curtain.
+         */
+        CURTAIN_HEAVY("curtain_heavy"),
+        /**
+         * Fiber glass.
+         */
+        FIBER_GLASS_INSULATION("fiber_glass_insulation"),
+        /**
+         * Thin glass.
+         */
+        GLASS_THIN("glass_thin"),
+        /**
+         * Thick glass.
+         */
+        GLASS_THICK("glass_thick"),
+        /**
+         * Grass.
+         */
+        GRASS("grass"),
+        /**
+         * Linoleum on concrete.
+         */
+        LINOLEUM_ON_CONCRETE("linoleum_on_concrete"),
+        /**
+         * Marble.
+         */
+        MARBLE("marble"),
+        /**
+         * Metal.
+         */
+        METAL("metal"),
+        /**
+         * Parquet on concrete.
+         */
+        PARQUET_ON_CONRETE("parquet_on_concrete"),
+        /**
+         * Rough plaster.
+         */
+        PLASTER_ROUGH("plaster_rough"),
+        /**
+         * Smooth plaster.
+         */
+        PLASTER_SMOOTH("plaster_smooth"),
+        /**
+         * Plywood panel.
+         */
+        PLYWOOD_PANEL("plywood_panel"),
+        /**
+         * Polished concrete or tile.
+         */
+        POLISHED_CONCRETE_OR_TILE("polished_concrete_or_tile"),
+        /**
+         * Sheet rock.
+         */
+        SHEET_ROCK("sheet_rock"),
+        /**
+         * Water or ice.
+         */
+        WATER_OR_ICE_SURFACE("water_or_ice_surface"),
+        /**
+         * Wood ceiling.
+         */
+        WOOD_CEILING("wood_ceiling"),
+        /**
+         * Wood panel.
+         */
+        WOOD_PANEL("wood_panel");
+
+        private String mStringValue;
+        private AudioMaterial(String value) {
+            this.mStringValue = value;
+        }
+        /**
+         * @hide
+         * @return
+         */
+        public String getStringValue() {
+            return mStringValue;
+        }
+
+        private static Map<String, AudioMaterial> map = new HashMap<String, AudioMaterial>();
+        static {
+            for (AudioMaterial value : AudioMaterial.values()) {
+                map.put(value.getStringValue().toLowerCase(), value);
+            }
+        }
+        /**
+         * @hide
+         * @return
+         */
+        public static AudioMaterial valueFromString(String str) {
+            return map.get(str.toLowerCase());
+        }
+    };
 
     protected long mNativeRef;
     protected long mNativeDelegateRef;
@@ -133,8 +264,9 @@ public class Scene {
 
     /**
      * Set the background of this Scene to display a cube-map. The provided {@link Texture} should
-     * wrap a cube-map image, constructed via {@link Texture#Texture(Image, Image, Image, Image,
-     * Image, Image, TextureFormat)}. The cube-map will be rendered behind all other content.
+     * wrap a cube-map image, constructed via {@link Texture#Texture(Bitmap, Bitmap, Bitmap, Bitmap,
+     * Bitmap, Bitmap, Texture.TextureFormat)}. The cube-map will be rendered behind all other
+     * content.
      *
      * @param cubeTexture The {@link Texture} containing the cube-map.
      */
@@ -153,18 +285,23 @@ public class Scene {
     }
 
     /**
-     * TODO VIRO-1981
+     * Set the sound room, which enables reverb effects for all {@link SpatialSound} in the Scene.
+     * The sound room is defined by three {@link AudioMaterial}s, each of which has unique
+     * absorption properties which differ with frequency. The room is also give a size in meters,
+     * which is centered around the user. Larger rooms are more reverberant than smaller rooms, and
+     * harder surface materials are more reverberant than rooms made of soft, absorbent materials.
      *
-     * @param viroContext
-     * @param size
-     * @param wallMaterial
-     * @param ceilingMaterial
-     * @param floorMaterial
+     * @param viroContext {@link ViroContext} is required to set the sound room.
+     * @param size        The size of the room's X, Y, and Z dimensions in meters, as a {@link
+     *                    Vector}.
+     * @param wall        The wall {@link AudioMaterial}.
+     * @param ceiling     The ceiling {@link AudioMaterial}.
+     * @param floor       The floor {@link AudioMaterial}.
      */
-    public void setSoundRoom(ViroContext viroContext, float[] size, String wallMaterial,
-                             String ceilingMaterial, String floorMaterial) {
-        nativeSetSoundRoom(mNativeRef, viroContext.mNativeRef, size[0], size[1], size[2],
-                wallMaterial, ceilingMaterial, floorMaterial);
+    public void setSoundRoom(ViroContext viroContext, Vector size, AudioMaterial wall,
+                             AudioMaterial ceiling, AudioMaterial floor) {
+        nativeSetSoundRoom(mNativeRef, viroContext.mNativeRef, size.x, size.y, size.z,
+                wall.getStringValue(), ceiling.getStringValue(), floor.getStringValue());
     }
 
     /**

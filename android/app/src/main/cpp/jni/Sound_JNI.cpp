@@ -51,9 +51,14 @@ extern "C" {
 
         std::shared_ptr<VROAudioPlayerAndroid> playerAndroid = std::dynamic_pointer_cast<VROAudioPlayerAndroid>(player);
         playerAndroid->setDelegate(std::make_shared<SoundDelegate>(object));
-        playerAndroid->setup();
-
         return Sound::jptr(playerAndroid);
+    }
+
+    JNI_METHOD(void, nativeSetup)(JNIEnv *env,
+                                  jobject object,
+                                  jlong sound_j) {
+        std::shared_ptr<VROAudioPlayerAndroid> player = Sound::native(sound_j);
+        player->setup();
     }
 
     JNI_METHOD(jlong, nativeCreateSoundWithData)(JNIEnv *env,

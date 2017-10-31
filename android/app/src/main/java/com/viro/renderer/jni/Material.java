@@ -103,6 +103,10 @@ public class Material {
                 map.put(value.getStringValue().toLowerCase(), value);
             }
         }
+        /**
+         * @hide
+         * @return
+         */
         public static LightingModel valueFromString(String str) {
             return map.get(str.toLowerCase());
         }
@@ -152,6 +156,10 @@ public class Material {
                 map.put(value.getStringValue().toLowerCase(), value);
             }
         }
+        /**
+         * @hide
+         * @return
+         */
         public static BlendMode valueFromString(String str) {
             return map.get(str.toLowerCase());
         }
@@ -202,6 +210,10 @@ public class Material {
                 map.put(value.getStringValue().toLowerCase(), value);
             }
         }
+        /**
+         * @hide
+         * @return
+         */
         public static CullMode valueFromString(String str) {
             return map.get(str.toLowerCase());
         }
@@ -241,6 +253,10 @@ public class Material {
                 map.put(value.getStringValue().toLowerCase(), value);
             }
         }
+        /**
+         * @hide
+         * @return
+         */
         public static TransparencyMode valueFromString(String str) {
             return map.get(str.toLowerCase());
         }

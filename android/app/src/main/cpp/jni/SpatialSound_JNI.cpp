@@ -4,33 +4,19 @@
 //
 //  Copyright © 2017 Viro Media. All rights reserved.
 //
+
 #include <jni.h>
 #include <memory>
+#include "SpatialSound_JNI.h"
 #include <VROSound.h>
-#include <VROSoundGVR.h>
 #include <VROSoundDataGVR.h>
-#include "PersistentRef.h"
 #include "ViroContext_JNI.h"
 #include "SoundDelegate_JNI.h"
-#include "Node_JNI.h"
 #include "SoundData_JNI.h"
-
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_renderer_jni_SpatialSound_##method_name
-
-namespace SpatialSound {
-    inline jlong jptr(std::shared_ptr<VROSoundGVR> ptr) {
-        PersistentRef<VROSoundGVR> *persistentRef = new PersistentRef<VROSoundGVR>(ptr);
-        return reinterpret_cast<intptr_t>(persistentRef);
-    }
-
-    inline std::shared_ptr<VROSoundGVR> native(jlong ptr) {
-        PersistentRef<VROSoundGVR> *persistentRef = reinterpret_cast<PersistentRef<VROSoundGVR> *>(ptr);
-        return persistentRef->get();
-    }
-}
 
 extern "C" {
 JNI_METHOD(jlong, nativeCreateSpatialSound)(JNIEnv *env,
@@ -63,40 +49,6 @@ JNI_METHOD(jlong, nativeCreateSpatialSoundWithData)(JNIEnv *env,
     soundGvr->setDelegate(delegate);
 
     return SpatialSound::jptr(soundGvr);
-}
-
-JNI_METHOD(void, nativeAttachToNode)(JNIEnv *env,
-                                     jobject obj,
-                                     jlong nativeSoundRef,
-                                     jlong nativeNodeRef) {
-    std::weak_ptr<VRONode> node_w = Node::native(nativeNodeRef);
-    std::weak_ptr<VROSound> sound_w = SpatialSound::native(nativeSoundRef);
-
-    VROPlatformDispatchAsyncRenderer([node_w, sound_w] {
-        std::shared_ptr<VRONode> node = node_w.lock();
-        std::shared_ptr<VROSound> sound = sound_w.lock();
-
-        if (node && sound) {
-            node->addSound(sound);
-        }
-    });
-}
-
-JNI_METHOD(void, nativeDetachFromNode)(JNIEnv *env,
-                                       jobject obj,
-                                       jlong nativeSoundRef,
-                                       jlong nativeNodeRef) {
-    std::weak_ptr<VRONode> node_w = Node::native(nativeNodeRef);
-    std::weak_ptr<VROSound> sound_w = SpatialSound::native(nativeSoundRef);
-
-    VROPlatformDispatchAsyncRenderer([node_w, sound_w] {
-        std::shared_ptr<VRONode> node = node_w.lock();
-        std::shared_ptr<VROSound> sound = sound_w.lock();
-
-        if (node && sound) {
-            node->removeSound(sound);
-        }
-    });
 }
 
 JNI_METHOD(void, nativePlaySpatialSound)(JNIEnv *env, jobject obj, jlong nativeRef) {

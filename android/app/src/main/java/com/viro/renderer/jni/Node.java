@@ -155,6 +155,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private WeakReference<Node> mParent;
     private ArrayList<Node> mChildren = new ArrayList<Node>();
     private ArrayList<Light> mLights = new ArrayList<Light>();
+    private ArrayList<SpatialSound> mSounds = new ArrayList<SpatialSound>();
     private Vector mScalePivot;
     private Vector mRotationPivot;
     private float mOpacity = 1.0f;
@@ -710,6 +711,44 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
+     * Add the given {@link SpatialSound} to this Node. As a child of this Node, the SpatialSound
+     * will also receive all the Node's transforms.
+     *
+     * @param sound The {@link SpatialSound} to add to this Node.
+     */
+    public void addSound(SpatialSound sound) {
+        mSounds.add(sound);
+        nativeAddSound(mNativeRef, sound.mNativeRef);
+    }
+
+    /**
+     * Remove the given {@link SpatialSound} from this Node.
+     *
+     * @param sound The SpatialSound remove.
+     */
+    public void removeSound(SpatialSound sound) {
+        mSounds.remove(sound);
+        nativeRemoveSound(mNativeRef, sound.mNativeRef);
+    }
+
+    /**
+     * Remove all {@link SpatialSound}s from this Node.
+     */
+    public void removeAllSounds() {
+        mSounds.clear();
+        nativeRemoveAllSounds(mNativeRef);
+    }
+
+    /**
+     * Get all {@link SpatialSound}s that have been added to this Node.
+     *
+     * @return List of all the SpatialSounds in this Node.
+     */
+    public List<SpatialSound> getSounds() {
+        return mSounds;
+    }
+
+    /**
      * Set the {@link TransformBehavior}s to use for this Node. Transform behaviors
      * impact how a Node computes its position, rotation and scale.
      *
@@ -1234,6 +1273,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native void nativeAddLight(long nodeReference, long lightReference);
     private native void nativeRemoveLight(long nodeReference, long lightReference);
     private native void nativeRemoveAllLights(long nodeReference);
+    private native void nativeAddSound(long nodeReference, long soundReference);
+    private native void nativeRemoveSound(long nodeReference, long soundReference);
+    private native void nativeRemoveAllSounds(long nodeReference);
     private native float[] nativeConvertLocalPositionToWorldSpace(long nodeReference, float x, float y, float z);
     private native float[] nativeConvertWorldPositionToLocalSpace(long nodeReference, float x, float y, float z);
 

@@ -69,6 +69,10 @@ public class Texture {
                 map.put(value.getStringValue().toLowerCase(), value);
             }
         }
+        /**
+         * @hide
+         * @return
+         */
         public static TextureFormat valueFromString(String str) {
             return map.get(str.toLowerCase());
         }
@@ -115,6 +119,10 @@ public class Texture {
                 map.put(value.getStringValue().toLowerCase(), value);
             }
         }
+        /**
+         * @hide
+         * @return
+         */
         public static WrapMode valueFromString(String str) {
             return map.get(str.toLowerCase());
         }
@@ -155,6 +163,10 @@ public class Texture {
                 map.put(value.getStringValue().toLowerCase(), value);
             }
         }
+        /**
+         * @hide
+         * @return
+         */
         public static FilterMode valueFromString(String str) {
             return map.get(str.toLowerCase());
         }

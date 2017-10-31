@@ -176,7 +176,7 @@ public class Text extends Geometry {
      * width and height of the bounds within which to display it. The text will be constrained to
      * the provided bounds, and defaults to wrapping words.
      *
-     * @param viroContext The ViroContext is required to render Text.
+     * @param viroContext The {@link ViroContext} is required to render Text.
      * @param text The text string to display.
      * @param width The width of the bounds within which to display the text.
      * @param height The height of the bounds within which to display the text.

@@ -48,19 +48,19 @@ public class Object3D extends Node {
     }
 
     /**
-     * Load an FBX or OBJ model at the given URL into this Node. The model will load asynchronously,
+     * Load an FBX or OBJ model at the given URI into this Node. The model will load asynchronously,
      * and the provided listener will receive a notification when model loading is completed. To
-     * load Android assets, use URL's of the form <tt>file:///android-asset/[asset-name]</tt>. If
+     * load Android assets, use URI's of the form <tt>file:///android_asset/[asset-name]</tt>. If
      * the model requires other resources (e.g. textures), those are expected to be found at the
-     * same base path as the model URL.
+     * same base path as the model URI.
      *
-     * @param url           The URL of the model to load.
+     * @param uri           The URI of the model to load.
      * @param type          The type of model (FBX or OBJ).
      * @param asyncListener Listener to respond to model loading status.
      */
-    public void loadModel(Uri url, Type type, AsyncObject3DListener asyncListener) {
+    public void loadModel(Uri uri, Type type, AsyncObject3DListener asyncListener) {
         long requestID = mActiveRequestID.incrementAndGet();
-        nativeLoadModelFromURL(url.toString(), mNativeRef, type == Type.FBX, requestID);
+        nativeLoadModelFromURL(uri.toString(), mNativeRef, type == Type.FBX, requestID);
 
         mAsyncListener = asyncListener;
     }
