@@ -1,0 +1,5383 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="description" content="Javadoc API documentation." />
+
+<link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico" />
+<title>
+
+  Node
+
+
+</title>
+<link href="../../../../../assets/doclava-developer-docs.css" rel="stylesheet" type="text/css" />
+<link href="../../../../../assets/customizations.css" rel="stylesheet" type="text/css" />
+<script src="../../../../../assets/search_autocomplete.js" type="text/javascript"></script>
+<script src="../../../../../assets/jquery-resizable.min.js" type="text/javascript"></script>
+<script src="../../../../../assets/doclava-developer-docs.js" type="text/javascript"></script>
+<script src="../../../../../assets/prettify.js" type="text/javascript"></script>
+<script type="text/javascript">
+  setToRoot("../../../../", "../../../../../assets/");
+</script>
+<script src="../../../../../assets/doclava-developer-reference.js" type="text/javascript"></script>
+<script src="../../../../../assets/navtree_data.js" type="text/javascript"></script>
+<script src="../../../../../assets/customizations.js" type="text/javascript"></script>
+<noscript>
+  <style type="text/css">
+    html,body{overflow:auto;}
+    #body-content{position:relative; top:0;}
+    #doc-content{overflow:visible;border-left:3px solid #666;}
+    #side-nav{padding:0;}
+    #side-nav .toggle-list ul {display:block;}
+    #resize-packages-nav{border-bottom:3px solid #666;}
+  </style>
+</noscript>
+</head>
+
+<body class="">
+
+<div id="header">
+    <div id="headerLeft">
+    
+    </div>
+    <div id="headerRight">
+      
+  <div id="search" >
+      <div id="searchForm">
+          <form accept-charset="utf-8" class="gsc-search-box" 
+                onsubmit="return submit_search()">
+            <table class="gsc-search-box" cellpadding="0" cellspacing="0"><tbody>
+                <tr>
+                  <td class="gsc-input">
+                    <input id="search_autocomplete" class="gsc-input" type="text" size="33" autocomplete="off"
+                      title="search developer docs" name="q"
+                      value="search developer docs"
+                      onFocus="search_focus_changed(this, true)"
+                      onBlur="search_focus_changed(this, false)"
+                      onkeydown="return search_changed(event, true, '../../../../')"
+                      onkeyup="return search_changed(event, false, '../../../../')" />
+                  <div id="search_filtered_div" class="no-display">
+                      <table id="search_filtered" cellspacing=0>
+                      </table>
+                  </div>
+                  </td>
+                  <td class="gsc-search-button">
+                    <input type="submit" value="Search" title="search" id="search-button" class="gsc-search-button" />
+                  </td>
+                  <td class="gsc-clear-button">
+                    <div title="clear results" class="gsc-clear-button">&nbsp;</div>
+                  </td>
+                </tr></tbody>
+              </table>
+          </form>
+      </div><!-- searchForm -->
+  </div><!-- search -->
+      
+    </div>
+</div><!-- header -->
+
+
+  <div class="g-section g-tpl-240" id="body-content">
+    <div class="g-unit g-first side-nav-resizable" id="side-nav">
+      <div id="swapper">
+        <div id="nav-panels">
+          <div id="resize-packages-nav">
+            <div id="packages-nav">
+              <div id="index-links">
+                <a href="../../../../packages.html"  >Package Index</a> | 
+                <a href="../../../../classes.html" >Class Index</a>
+              </div>
+              <ul>
+                
+    <li class="selected api apilevel-">
+  <a href="../../../../com/viro/renderer/jni/package-summary.html">com.viro.renderer.jni</a></li>
+    <li class="api apilevel-">
+  <a href="../../../../com/viro/renderer/jni/event/package-summary.html">com.viro.renderer.jni.event</a></li>
+              </ul><br/>
+            </div> <!-- end packages -->
+          </div> <!-- end resize-packages -->
+          <div id="classes-nav">
+            <ul>
+              
+    <li><h2>Interfaces</h2>
+      <ul>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ARNode.ARNodeDelegate.html">ARNode.ARNodeDelegate</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ARScene.ARSceneDelegate.html">ARScene.ARSceneDelegate</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/CameraCallback.html">CameraCallback</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ExecutableAnimation.AnimationDelegate.html">ExecutableAnimation.AnimationDelegate</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Node.TransformDelegate.html">Node.TransformDelegate</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/PhysicsBody.PhysicsDelegate.html">PhysicsBody.PhysicsDelegate</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/PhysicsShape.html">PhysicsShape</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/PortalScene.Delegate.html">PortalScene.Delegate</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Renderer.ARHitTestCallback.html">Renderer.ARHitTestCallback</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Scene.SceneDelegate.html">Scene.SceneDelegate</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Sound.Delegate.html">Sound.Delegate</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/SoundField.Delegate.html">SoundField.Delegate</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/SpatialSound.Delegate.html">SpatialSound.Delegate</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/VideoTexture.Delegate.html">VideoTexture.Delegate</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ViroView.html">ViroView</a></li>
+      </ul>
+    </li>
+              
+    <li><h2>Classes</h2>
+      <ul>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/AmbientLight.html">AmbientLight</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/AnimationChain.html">AnimationChain</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/AnimationGroup.html">AnimationGroup</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ARNode.html">ARNode</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ARPlane.html">ARPlane</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ARScene.html">ARScene</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Box.html">Box</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Camera.html">Camera</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Controller.html">Controller</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/DirectionalLight.html">DirectionalLight</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ExecutableAnimation.html">ExecutableAnimation</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/FrameListener.html">FrameListener</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Geometry.html">Geometry</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Light.html">Light</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Material.html">Material</a></li>
+          <li class="selected api apilevel-"><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Object3D.html">Object3D</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/OmniLight.html">OmniLight</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ParticleEmitter.html">ParticleEmitter</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ParticleEmitter.ParticleBursts.html">ParticleEmitter.ParticleBursts</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ParticleEmitter.ParticleModifier.html">ParticleEmitter.ParticleModifier</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/PhysicsShapeAutoCompound.html">PhysicsShapeAutoCompound</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/PhysicsShapeBox.html">PhysicsShapeBox</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/PhysicsShapeSphere.html">PhysicsShapeSphere</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/PhysicsWorld.html">PhysicsWorld</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Polyline.html">Polyline</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Portal.html">Portal</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/PortalScene.html">PortalScene</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/PortalTraversalListener.html">PortalTraversalListener</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Quaternion.html">Quaternion</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Renderer.html">Renderer</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Scene.html">Scene</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Sound.html">Sound</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/SoundField.html">SoundField</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Sphere.html">Sphere</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Spotlight.html">Spotlight</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Surface.html">Surface</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Text.html">Text</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Texture.html">Texture</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/VideoTexture.html">VideoTexture</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ViroContext.html">ViroContext</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ViroGvrLayout.html">ViroGvrLayout</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ViroOvrView.html">ViroOvrView</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ViroViewARCore.html">ViroViewARCore</a></li>
+      </ul>
+    </li>
+              
+              
+    <li><h2>Enums</h2>
+      <ul>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Camera.RotationType.html">Camera.RotationType</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/ExecutableAnimation.ExecutionType.html">ExecutableAnimation.ExecutionType</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Material.BlendMode.html">Material.BlendMode</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Material.CullMode.html">Material.CullMode</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Material.LightingModel.html">Material.LightingModel</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Material.TransparencyMode.html">Material.TransparencyMode</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Node.DragType.html">Node.DragType</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Node.TransformBehavior.html">Node.TransformBehavior</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Object3D.Type.html">Object3D.Type</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/PhysicsBody.RigidBodyType.html">PhysicsBody.RigidBodyType</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Scene.AudioMaterial.html">Scene.AudioMaterial</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/SpatialSound.Rolloff.html">SpatialSound.Rolloff</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Text.ClipMode.html">Text.ClipMode</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Text.HorizontalAlignment.html">Text.HorizontalAlignment</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Text.LineBreakMode.html">Text.LineBreakMode</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Text.VerticalAlignment.html">Text.VerticalAlignment</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Texture.FilterMode.html">Texture.FilterMode</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Texture.StereoMode.html">Texture.StereoMode</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Texture.TextureFormat.html">Texture.TextureFormat</a></li>
+          <li class="api apilevel-"><a href="../../../../com/viro/renderer/jni/Texture.WrapMode.html">Texture.WrapMode</a></li>
+      </ul>
+    </li>
+              
+              
+            </ul><br/>
+          </div><!-- end classes -->
+        </div><!-- end nav-panels -->
+        <div id="nav-tree" style="display:none">
+          <div id="index-links">
+            <a href="../../../../packages.html"  >Package Index</a> | 
+            <a href="../../../../classes.html" >Class Index</a>
+          </div>
+        </div><!-- end nav-tree -->
+      </div><!-- end swapper -->
+    </div> <!-- end side-nav -->
+    <script>
+      if (!isMobile) {
+        $("<a href='#' id='nav-swap' onclick='swapNav();return false;' style='font-size:10px;line-height:9px;margin-left:1em;text-decoration:none;'><span id='tree-link'>Use Tree Navigation</span><span id='panel-link' style='display:none'>Use Panel Navigation</span></a>").appendTo("#side-nav");
+        chooseDefaultNav();
+        if ($("#nav-tree").is(':visible')) {
+          init_default_navtree("../../../../");
+        } else {
+          addLoadEvent(function() {
+            scrollIntoView("packages-nav");
+            scrollIntoView("classes-nav");
+          });
+        }
+        $("#swapper").css({borderBottom:"2px solid #aaa"});
+      } else {
+        swapNav(); // tree view should be used on mobile
+      }
+    </script>
+
+
+
+<div class="g-unit" id="doc-content">
+
+<div id="api-info-block">
+
+
+
+  
+   
+  
+  
+  
+  
+
+
+<div class="sum-details-links">
+
+
+Summary:
+
+  <a href="#nestedclasses">Nested Classes</a>
+  
+
+
+
+
+
+
+
+
+
+  &#124; <a href="#pubctors">Ctors</a>
+  
+
+
+
+  &#124; <a href="#pubmethods">Methods</a>
+  
+
+
+
+  &#124; <a href="#inhmethods">Inherited Methods</a>
+
+&#124; <a href="#" onclick="return toggleAllClassInherited()" id="toggleAllClassInherited">[Expand All]</a>
+
+</div><!-- end sum-details-links -->
+<div class="api-level">
+  
+
+
+  
+  
+
+</div>
+</div><!-- end api-info-block -->
+
+
+<!-- ======== START OF CLASS DATA ======== -->
+
+<div id="jd-header">
+    public
+     
+     
+    
+    class
+<h1>Node</h1>
+
+
+
+  
+    extends Object<br/>
+  
+  
+  
+
+  
+  
+  
+
+
+</div><!-- end header -->
+
+<div id="naMessage"></div>
+
+<div id="jd-content" class="api apilevel-">
+<table class="jd-inheritance-table">
+
+
+    <tr>
+         	
+        <td colspan="2" class="jd-inheritance-class-cell">java.lang.Object</td>
+    </tr>
+    
+
+    <tr>
+        
+            <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
+         	
+        <td colspan="1" class="jd-inheritance-class-cell">com.viro.renderer.jni.Node</td>
+    </tr>
+    
+
+</table>
+
+
+
+
+<table class="jd-sumtable jd-sumtable-subclasses"><tr><td colspan="12" style="border:none;margin:0;padding:0;">
+
+  <a href="#" onclick="return toggleInherited(this, null)" id="subclasses-direct" class="jd-expando-trigger closed"
+          ><img id="subclasses-direct-trigger"
+          src="../../../../../assets/images/triangle-closed.png"
+          class="jd-expando-trigger-img" /></a>Known Direct Subclasses
+
+  <div id="subclasses-direct">
+      <div id="subclasses-direct-list"
+              class="jd-inheritedlinks"
+              
+              >
+          
+            
+              <a href="../../../../com/viro/renderer/jni/ARNode.html">ARNode</a>,
+            
+              <a href="../../../../com/viro/renderer/jni/Object3D.html">Object3D</a>,
+            
+              <a href="../../../../com/viro/renderer/jni/Portal.html">Portal</a>,
+            
+              <a href="../../../../com/viro/renderer/jni/PortalScene.html">PortalScene</a>
+            
+          
+      </div>
+      <div id="subclasses-direct-summary"
+              style="display: none;"
+              >
+  <table class="jd-sumtable-expando">
+        <tr class="alt-color api apilevel-" >
+              <td class="jd-linkcol"><a href="../../../../com/viro/renderer/jni/ARNode.html">ARNode</a></td>
+              <td class="jd-descrcol" width="100%">&nbsp;</td>
+          </tr>
+        <tr class=" api apilevel-" >
+              <td class="jd-linkcol"><a href="../../../../com/viro/renderer/jni/Object3D.html">Object3D</a></td>
+              <td class="jd-descrcol" width="100%">Object3D defines a <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code> that can load FBX or OBJ models.&nbsp;</td>
+          </tr>
+        <tr class="alt-color api apilevel-" >
+              <td class="jd-linkcol"><a href="../../../../com/viro/renderer/jni/Portal.html">Portal</a></td>
+              <td class="jd-descrcol" width="100%">Portal is a special <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code> that serves as an entry or window into an associated
+ <code><a href="../../../../com/viro/renderer/jni/PortalScene.html">PortalScene</a></code>.&nbsp;</td>
+          </tr>
+        <tr class=" api apilevel-" >
+              <td class="jd-linkcol"><a href="../../../../com/viro/renderer/jni/PortalScene.html">PortalScene</a></td>
+              <td class="jd-descrcol" width="100%">PortalScene represents the top-level of an entire subgraph of <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>s that is displayed
+ through a 'window' known as a <code><a href="../../../../com/viro/renderer/jni/Portal.html">Portal</a></code>.&nbsp;</td>
+          </tr>
+  </table>
+      </div>
+  </div>
+</td></tr></table>
+
+
+
+<table class="jd-sumtable jd-sumtable-subclasses"><tr><td colspan="12" style="border:none;margin:0;padding:0;">
+
+  <a href="#" onclick="return toggleInherited(this, null)" id="subclasses-indirect" class="jd-expando-trigger closed"
+          ><img id="subclasses-indirect-trigger"
+          src="../../../../../assets/images/triangle-closed.png"
+          class="jd-expando-trigger-img" /></a>Known Indirect Subclasses
+
+  <div id="subclasses-indirect">
+      <div id="subclasses-indirect-list"
+              class="jd-inheritedlinks"
+              
+              >
+          
+            
+              <a href="../../../../com/viro/renderer/jni/ARPlane.html">ARPlane</a>
+            
+          
+      </div>
+      <div id="subclasses-indirect-summary"
+              style="display: none;"
+              >
+  <table class="jd-sumtable-expando">
+        <tr class="alt-color api apilevel-" >
+              <td class="jd-linkcol"><a href="../../../../com/viro/renderer/jni/ARPlane.html">ARPlane</a></td>
+              <td class="jd-descrcol" width="100%">&nbsp;</td>
+          </tr>
+  </table>
+      </div>
+  </div>
+</td></tr></table>
+
+
+<div class="jd-descr">
+
+
+<h2>Class Overview</h2>
+<p>Underlying each <code><a href="../../../../com/viro/renderer/jni/Scene.html">Scene</a></code> is a full-featured 3D scene graph engine. A scene graph is a
+ hierarchical tree structure of nodes that allows developers to intuitively construct a 3D
+ environment. The root node is retrieved via <code><a href="../../../../com/viro/renderer/jni/Scene.html#getRootNode()">getRootNode()</a></code>. Sub-nodes are
+ represented by child Node objects. Each Node represents a position and transform in 3D space, to
+ which you can attach 3D objects, lights, or other content.
+ <p>
+ A Node by itself has no visible content when it is rendered; it represents only a coordinate
+ space transform (position, rotation, and scale) relative to its parent Node. You use a hierarchy
+ of Node objects to model your scene in a way that makes sense for your application.
+ <p>
+ To take a concrete example, suppose your app presents an animated view of a solar system. You can
+ construct a Node hierarchy that models the sun, planets, and moons relative to one another. Each
+ body can be a Node, with its position in its orbit defined in the coordinate system of its
+ parent. The sun would define its own coordinate space, and the Earth would position itself in
+ that space. At the same time, the Earth would define its own coordinate space in which the moon
+ would position itself, and so on.
+ <p>
+ Nodes are also responsible for event handling. Events are triggered either programmatically, or
+ by an input Controller action. Events start at the "hovered" (or focused) Node. If that Node
+ cannot respond to the event (e.g. if it does not have the appropriate listener installed), the
+ event will bubble up the scene graph to that Node's parent, and so on, until a Node that can
+ handle the event is found.
+ <p>
+ All events are also received by the <code><a href="../../../../com/viro/renderer/jni/Controller.html">Controller</a></code>, which provides a centralized place to
+ respond to all events regardless of what Nodes they targeted.
+</p>
+
+
+
+
+
+</div><!-- jd-descr -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="jd-descr">
+
+
+<h2>Summary</h2>
+
+
+
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<table id="nestedclasses" class="jd-sumtable"><tr><th colspan="12">Nested Classes</th></tr>
+
+
+  
+    <tr class="alt-color api apilevel-" >
+      <td class="jd-typecol">
+        
+         
+         
+        
+        enum</td>
+      <td class="jd-linkcol"><a href="../../../../com/viro/renderer/jni/Node.DragType.html">Node.DragType</a></td>
+      <td class="jd-descrcol" width="100%">Specifies the behavior of dragging if dragging is enabled on a Node's EventDelegate.&nbsp;</td>
+    </tr>
+    
+    
+    <tr class=" api apilevel-" >
+      <td class="jd-typecol">
+        
+         
+         
+        
+        enum</td>
+      <td class="jd-linkcol"><a href="../../../../com/viro/renderer/jni/Node.TransformBehavior.html">Node.TransformBehavior</a></td>
+      <td class="jd-descrcol" width="100%">TransformBehaviors change the way a Node computes its position, rotation and scale.&nbsp;</td>
+    </tr>
+    
+    
+    <tr class="alt-color api apilevel-" >
+      <td class="jd-typecol">
+        
+         
+         
+        
+        interface</td>
+      <td class="jd-linkcol"><a href="../../../../com/viro/renderer/jni/Node.TransformDelegate.html">Node.TransformDelegate</a></td>
+      <td class="jd-descrcol" width="100%">The TransformDelegate receives callbacks when the Node's position has changed.&nbsp;</td>
+    </tr>
+    
+    
+
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<table id="pubctors" class="jd-sumtable"><tr><th colspan="12">Public Constructors</th></tr>
+
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#Node()">Node</a></span>()
+        
+        <div class="jd-descrdiv">Construct a new Node centered at the origin, with no geometry.</div>
+  
+  </td></tr>
+
+
+
+</table>
+
+
+
+
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+<table id="pubmethods" class="jd-sumtable"><tr><th colspan="12">Public Methods</th></tr>
+
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#addChildNode(com.viro.renderer.jni.Node)">addChildNode</a></span>(<a href="../../../../com/viro/renderer/jni/Node.html">Node</a> childNode)
+        
+        <div class="jd-descrdiv">Add a child Node to this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#addLight(com.viro.renderer.jni.Light)">addLight</a></span>(<a href="../../../../com/viro/renderer/jni/Light.html">Light</a> light)
+        
+        <div class="jd-descrdiv">Add the given <code><a href="../../../../com/viro/renderer/jni/Light.html">Light</a></code> to this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#addSound(com.viro.renderer.jni.SpatialSound)">addSound</a></span>(<a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a> sound)
+        
+        <div class="jd-descrdiv">Add the given <code><a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a></code> to this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#clearPhysicsBody()">clearPhysicsBody</a></span>()
+        
+        <div class="jd-descrdiv">Clear the <code><a href="../../../../com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code> of this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#convertLocalPositionToWorldSpace(com.viro.renderer.jni.Vector)">convertLocalPositionToWorldSpace</a></span>(<a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a> localPosition)
+        
+        <div class="jd-descrdiv">Convert the given position from the coordinate space of this Node into the world coordinate
+ system.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#convertWorldPositionToLocalSpace(com.viro.renderer.jni.Vector)">convertWorldPositionToLocalSpace</a></span>(<a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a> worldPosition)
+        
+        <div class="jd-descrdiv">Convert the given position from world coordinates into coordinate space of this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#dispose()">dispose</a></span>()
+        
+        <div class="jd-descrdiv">Release native resources associated with this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            Set&lt;String&gt;
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getAnimationKeys()">getAnimationKeys</a></span>()
+        
+        <div class="jd-descrdiv">Get the names of the animations available to run on this Node or any of its children.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/Camera.html">Camera</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getCamera()">getCamera</a></span>()
+        
+        <div class="jd-descrdiv">Get the <code><a href="../../../../com/viro/renderer/jni/Camera.html">Camera</a></code> attached to this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            List&lt;<a href="../../../../com/viro/renderer/jni/Node.html">Node</a>&gt;
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getChildNodes()">getChildNodes</a></span>()
+        
+        <div class="jd-descrdiv">Get the children of this Node in the scene-graph.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/event/ClickListener.html">ClickListener</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getClickListener()">getClickListener</a></span>()
+        
+        <div class="jd-descrdiv">Get the <code><a href="../../../../com/viro/renderer/jni/event/ClickListener.html">ClickListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/event/DragListener.html">DragListener</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getDragListener()">getDragListener</a></span>()
+        
+        <div class="jd-descrdiv">Get the <code><a href="../../../../com/viro/renderer/jni/event/DragListener.html">DragListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/Node.DragType.html">Node.DragType</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getDragType()">getDragType</a></span>()
+        
+        <div class="jd-descrdiv">Get the dragging behavior for this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/event/FuseListener.html">FuseListener</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getFuseListener()">getFuseListener</a></span>()
+        
+        <div class="jd-descrdiv">Get the <code><a href="../../../../com/viro/renderer/jni/event/FuseListener.html">FuseListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/Geometry.html">Geometry</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getGeometry()">getGeometry</a></span>()
+        
+        <div class="jd-descrdiv">Get the <code><a href="../../../../com/viro/renderer/jni/Geometry.html">Geometry</a></code> attached to this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/event/GesturePinchListener.html">GesturePinchListener</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getGesturePinchListener()">getGesturePinchListener</a></span>()
+        
+        <div class="jd-descrdiv">Get the <code><a href="../../../../com/viro/renderer/jni/event/GesturePinchListener.html">GesturePinchListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/event/GestureRotateListener.html">GestureRotateListener</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getGestureRotateListener()">getGestureRotateListener</a></span>()
+        
+        <div class="jd-descrdiv">Get the <code><a href="../../../../com/viro/renderer/jni/event/GestureRotateListener.html">GestureRotateListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            boolean
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getHighAccuracyGaze()">getHighAccuracyGaze</a></span>()
+        
+        <div class="jd-descrdiv">Returns true if high accuracy gaze is enabled.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/event/HoverListener.html">HoverListener</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getHoverListener()">getHoverListener</a></span>()
+        
+        <div class="jd-descrdiv">Get the <code><a href="../../../../com/viro/renderer/jni/event/HoverListener.html">HoverListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            boolean
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getIgnoreEventHandling()">getIgnoreEventHandling</a></span>()
+        
+        <div class="jd-descrdiv">Returns true if this Node is currently set to ignore event handling.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            int
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getLightReceivingBitMask()">getLightReceivingBitMask</a></span>()
+        
+        <div class="jd-descrdiv">Get the light receiving bit mask, which determines which lights will illuminate this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            List&lt;<a href="../../../../com/viro/renderer/jni/Light.html">Light</a>&gt;
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getLights()">getLights</a></span>()
+        
+        <div class="jd-descrdiv">Get all <code><a href="../../../../com/viro/renderer/jni/Light.html">Light</a></code>s that have been added to this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            float
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getOpacity()">getOpacity</a></span>()
+        
+        <div class="jd-descrdiv">Get the opacity of this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/Node.html">Node</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getParentNode()">getParentNode</a></span>()
+        
+        <div class="jd-descrdiv">Get the parent of this Node in the scene-graph.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/PortalScene.html">PortalScene</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getParentPortalScene()">getParentPortalScene</a></span>()
+        
+        <div class="jd-descrdiv">Get the nearest <code><a href="../../../../com/viro/renderer/jni/PortalScene.html">PortalScene</a></code> that is an ancestor of this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getPhysicsBody()">getPhysicsBody</a></span>()
+        
+        <div class="jd-descrdiv">Get the <code><a href="../../../../com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code> associated with this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getPositionRealtime()">getPositionRealtime</a></span>()
+        
+        <div class="jd-descrdiv">Get the real-time position of this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getRotationEulerRealtime()">getRotationEulerRealtime</a></span>()
+        
+        <div class="jd-descrdiv">Get the <i>real-time</i> orientation of this Node, expressed as three Euler angles.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getRotationPivot()">getRotationPivot</a></span>()
+        
+        <div class="jd-descrdiv">Get the rotation pivot of this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/Quaternion.html">Quaternion</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getRotationQuaternionRealtime()">getRotationQuaternionRealtime</a></span>()
+        
+        <div class="jd-descrdiv">Get the <i>real-time</i> orientation of this Node, expressed as a <code><a href="../../../../com/viro/renderer/jni/Quaternion.html">Quaternion</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getScalePivot()">getScalePivot</a></span>()
+        
+        <div class="jd-descrdiv">Get the scale pivot of this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getScaleRealtime()">getScaleRealtime</a></span>()
+        
+        <div class="jd-descrdiv">Get the <i>real-time</i> scale of this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            int
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getShadowCastingBitMask()">getShadowCastingBitMask</a></span>()
+        
+        <div class="jd-descrdiv">Get the shadow casting bit mask, which determines for which lights this Node will cast
+ shadows.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            List&lt;<a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a>&gt;
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getSounds()">getSounds</a></span>()
+        
+        <div class="jd-descrdiv">Get all <code><a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a></code>s that have been added to this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            String
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getTag()">getTag</a></span>()
+        
+        <div class="jd-descrdiv">Return the tag for this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/event/TouchpadScrollListener.html">TouchpadScrollListener</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getTouchpadScrollListener()">getTouchpadScrollListener</a></span>()
+        
+        <div class="jd-descrdiv">Get the <code><a href="../../../../com/viro/renderer/jni/event/TouchpadScrollListener.html">TouchpadScrollListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/event/TouchpadSwipeListener.html">TouchpadSwipeListener</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getTouchpadSwipeListener()">getTouchpadSwipeListener</a></span>()
+        
+        <div class="jd-descrdiv">Get the <code><a href="../../../../com/viro/renderer/jni/event/TouchpadSwipeListener.html">TouchpadSwipeListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/event/TouchpadTouchListener.html">TouchpadTouchListener</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getTouchpadTouchListener()">getTouchpadTouchListener</a></span>()
+        
+        <div class="jd-descrdiv">Get the <code><a href="../../../../com/viro/renderer/jni/event/TouchpadTouchListener.html">TouchpadTouchListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            EnumSet&lt;<a href="../../../../com/viro/renderer/jni/Node.TransformBehavior.html">Node.TransformBehavior</a>&gt;
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#getTransformBehaviors()">getTransformBehaviors</a></span>()
+        
+        <div class="jd-descrdiv">Return the <code><a href="../../../../com/viro/renderer/jni/Node.TransformBehavior.html">Node.TransformBehavior</a></code>s used by this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            boolean
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#hasPhysics()">hasPhysics</a></span>()
+        
+        <div class="jd-descrdiv">Return true if this Node has a <code><a href="../../../../com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code> attached, meaning its participates
+ in the physics simulation.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            <a href="../../../../com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a>
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#initPhysicsBody(com.viro.renderer.jni.PhysicsBody.RigidBodyType, float, com.viro.renderer.jni.PhysicsShape)">initPhysicsBody</a></span>(<a href="../../../../com/viro/renderer/jni/PhysicsBody.RigidBodyType.html">PhysicsBody.RigidBodyType</a> rigidBodyType, float mass, <a href="../../../../com/viro/renderer/jni/PhysicsShape.html">PhysicsShape</a> shape)
+        
+        <div class="jd-descrdiv">Create a <code><a href="../../../../com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code> for this Node, which makes the Node participate in the physics
+ simulation.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            boolean
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#isVisible()">isVisible</a></span>()
+        
+        <div class="jd-descrdiv">Return true if this Node's <tt>visible</tt> property is true.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#removeAllChildNodes()">removeAllChildNodes</a></span>()
+        
+        <div class="jd-descrdiv">Remove all children from this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#removeAllLights()">removeAllLights</a></span>()
+        
+        <div class="jd-descrdiv">Remove all <code><a href="../../../../com/viro/renderer/jni/Light.html">Light</a></code>s from this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#removeAllSounds()">removeAllSounds</a></span>()
+        
+        <div class="jd-descrdiv">Remove all <code><a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a></code>s from this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#removeFromParentNode()">removeFromParentNode</a></span>()
+        
+        <div class="jd-descrdiv">Remove this Node from its parent.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#removeLight(com.viro.renderer.jni.Light)">removeLight</a></span>(<a href="../../../../com/viro/renderer/jni/Light.html">Light</a> light)
+        
+        <div class="jd-descrdiv">Remove the given <code><a href="../../../../com/viro/renderer/jni/Light.html">Light</a></code> from this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#removeSound(com.viro.renderer.jni.SpatialSound)">removeSound</a></span>(<a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a> sound)
+        
+        <div class="jd-descrdiv">Remove the given <code><a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a></code> from this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#removeTransformDelegate()">removeTransformDelegate</a></span>()
+        
+        <div class="jd-descrdiv">Remove any <code><a href="../../../../com/viro/renderer/jni/Node.TransformDelegate.html">Node.TransformDelegate</a></code> that is currently attached to this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setCamera(com.viro.renderer.jni.Camera)">setCamera</a></span>(<a href="../../../../com/viro/renderer/jni/Camera.html">Camera</a> camera)
+        
+        <div class="jd-descrdiv">Attach the given <code><a href="../../../../com/viro/renderer/jni/Camera.html">Camera</a></code> to this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setClickListener(com.viro.renderer.jni.event.ClickListener)">setClickListener</a></span>(<a href="../../../../com/viro/renderer/jni/event/ClickListener.html">ClickListener</a> listener)
+        
+        <div class="jd-descrdiv">Set a <code><a href="../../../../com/viro/renderer/jni/event/ClickListener.html">ClickListener</a></code> to respond when users click with their Controller on this
+ <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setDragListener(com.viro.renderer.jni.event.DragListener)">setDragListener</a></span>(<a href="../../../../com/viro/renderer/jni/event/DragListener.html">DragListener</a> listener)
+        
+        <div class="jd-descrdiv">Set the <code><a href="../../../../com/viro/renderer/jni/event/DragListener.html">DragListener</a></code> to respond when a user attempts to drag this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code> by
+ pressing over it and moving the Controller.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setDragType(com.viro.renderer.jni.Node.DragType)">setDragType</a></span>(<a href="../../../../com/viro/renderer/jni/Node.DragType.html">Node.DragType</a> dragType)
+        
+        <div class="jd-descrdiv">Set the behavior of dragging if dragging is enabled on the Node's EventDelegate.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setFuseListener(com.viro.renderer.jni.event.FuseListener)">setFuseListener</a></span>(<a href="../../../../com/viro/renderer/jni/event/FuseListener.html">FuseListener</a> listener)
+        
+        <div class="jd-descrdiv">Set the <code><a href="../../../../com/viro/renderer/jni/event/FuseListener.html">FuseListener</a></code> to respond when a user hovers over this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code> for
+ <code><a href="../../../../com/viro/renderer/jni/Node.html#setTimeToFuse(float)">setTimeToFuse(float)</a></code> milliseconds.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setGeometry(com.viro.renderer.jni.Geometry)">setGeometry</a></span>(<a href="../../../../com/viro/renderer/jni/Geometry.html">Geometry</a> geometry)
+        
+        <div class="jd-descrdiv">Set the <code><a href="../../../../com/viro/renderer/jni/Geometry.html">Geometry</a></code> of this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setGesturePinchListener(com.viro.renderer.jni.event.GesturePinchListener)">setGesturePinchListener</a></span>(<a href="../../../../com/viro/renderer/jni/event/GesturePinchListener.html">GesturePinchListener</a> listener)
+        
+        <div class="jd-descrdiv">Set the <code><a href="../../../../com/viro/renderer/jni/event/GesturePinchListener.html">GesturePinchListener</a></code> to respond when a user pinches with two fingers over
+ this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code> using a screen Controller.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setGestureRotateListener(com.viro.renderer.jni.event.GestureRotateListener)">setGestureRotateListener</a></span>(<a href="../../../../com/viro/renderer/jni/event/GestureRotateListener.html">GestureRotateListener</a> listener)
+        
+        <div class="jd-descrdiv">Set the <code><a href="../../../../com/viro/renderer/jni/event/GestureRotateListener.html">GestureRotateListener</a></code> to respond when a user rotates with two fingers over
+ this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code> using a screen Controller.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setHighAccuracyGaze(boolean)">setHighAccuracyGaze</a></span>(boolean highAccuracyGaze)
+        
+        <div class="jd-descrdiv">True if onHover events should use the Geometry of this Node to determine if the user is
+ hovering over this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setHoverListener(com.viro.renderer.jni.event.HoverListener)">setHoverListener</a></span>(<a href="../../../../com/viro/renderer/jni/event/HoverListener.html">HoverListener</a> listener)
+        
+        <div class="jd-descrdiv">Set the <code><a href="../../../../com/viro/renderer/jni/event/HoverListener.html">HoverListener</a></code> to respond when users hover over this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setIgnoreEventHandling(boolean)">setIgnoreEventHandling</a></span>(boolean ignore)
+        
+        <div class="jd-descrdiv">When set to true, this Node will ignore events and not prevent Nodes behind it from
+ receiving event callbacks.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setLightReceivingBitMask(int)">setLightReceivingBitMask</a></span>(int bitMask)
+        
+        <div class="jd-descrdiv">Set the bit mask that determines what lights will illuminate this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setOpacity(float)">setOpacity</a></span>(float opacity)
+        
+        <div class="jd-descrdiv">Set the opacity of this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setPosition(com.viro.renderer.jni.Vector)">setPosition</a></span>(<a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a> position)
+        
+        <div class="jd-descrdiv">Set the position of this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setRotation(com.viro.renderer.jni.Quaternion)">setRotation</a></span>(<a href="../../../../com/viro/renderer/jni/Quaternion.html">Quaternion</a> rotation)
+        
+        <div class="jd-descrdiv">Set the orientation of this Node, expressed as a <code><a href="../../../../com/viro/renderer/jni/Quaternion.html">Quaternion</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setRotation(com.viro.renderer.jni.Vector)">setRotation</a></span>(<a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a> rotation)
+        
+        <div class="jd-descrdiv">Set the orientation of this Node, expressed as three Euler angles in a <code><a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setRotationPivot(com.viro.renderer.jni.Vector)">setRotationPivot</a></span>(<a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a> pivot)
+        
+        <div class="jd-descrdiv">Set the point on the Node about which rotation will occur.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setScale(com.viro.renderer.jni.Vector)">setScale</a></span>(<a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a> scale)
+        
+        <div class="jd-descrdiv">Set the scale of this node as a <code><a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setScalePivot(com.viro.renderer.jni.Vector)">setScalePivot</a></span>(<a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a> pivot)
+        
+        <div class="jd-descrdiv">Set the point on the Node around which scaling will occur.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setShadowCastingBitMask(int)">setShadowCastingBitMask</a></span>(int bitMask)
+        
+        <div class="jd-descrdiv">Set the bit mask that determines for which lights the contents of this Node will cast
+ shadows.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setTag(java.lang.String)">setTag</a></span>(String tag)
+        
+        <div class="jd-descrdiv">Set the tag for this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setTimeToFuse(float)">setTimeToFuse</a></span>(float millis)
+        
+        <div class="jd-descrdiv">Set the time in milliseconds the user must hover over a <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code> before a Fuse
+ event is triggered on an installed <code><a href="../../../../com/viro/renderer/jni/event/FuseListener.html">FuseListener</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setTouchpadScrollListener(com.viro.renderer.jni.event.TouchpadScrollListener)">setTouchpadScrollListener</a></span>(<a href="../../../../com/viro/renderer/jni/event/TouchpadScrollListener.html">TouchpadScrollListener</a> listener)
+        
+        <div class="jd-descrdiv">Set the <code><a href="../../../../com/viro/renderer/jni/event/TouchpadScrollListener.html">TouchpadScrollListener</a></code> to respond when a user scrolls a touchpad while
+ hovering over a <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setTouchpadSwipeListener(com.viro.renderer.jni.event.TouchpadSwipeListener)">setTouchpadSwipeListener</a></span>(<a href="../../../../com/viro/renderer/jni/event/TouchpadSwipeListener.html">TouchpadSwipeListener</a> listener)
+        
+        <div class="jd-descrdiv">Set the <code><a href="../../../../com/viro/renderer/jni/event/TouchpadSwipeListener.html">TouchpadSwipeListener</a></code> to respond when a user swipes across a touchpad
+ Controller while hovering over this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setTouchpadTouchListener(com.viro.renderer.jni.event.TouchpadTouchListener)">setTouchpadTouchListener</a></span>(<a href="../../../../com/viro/renderer/jni/event/TouchpadTouchListener.html">TouchpadTouchListener</a> listener)
+        
+        <div class="jd-descrdiv">Set the <code><a href="../../../../com/viro/renderer/jni/event/TouchpadTouchListener.html">TouchpadTouchListener</a></code> to respond when a user touches or moves across
+ a touchpad Controller while hovering over this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setTransformBehaviors(java.util.EnumSet<com.viro.renderer.jni.Node.TransformBehavior>)">setTransformBehaviors</a></span>(EnumSet&lt;<a href="../../../../com/viro/renderer/jni/Node.TransformBehavior.html">Node.TransformBehavior</a>&gt; transformBehaviors)
+        
+        <div class="jd-descrdiv">Set the <code><a href="../../../../com/viro/renderer/jni/Node.TransformBehavior.html">Node.TransformBehavior</a></code>s to use for this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setTransformDelegate(com.viro.renderer.jni.Node.TransformDelegate, double)">setTransformDelegate</a></span>(<a href="../../../../com/viro/renderer/jni/Node.TransformDelegate.html">Node.TransformDelegate</a> transformDelegate, double distanceFilter)
+        
+        <div class="jd-descrdiv">Set the <code><a href="../../../../com/viro/renderer/jni/Node.TransformDelegate.html">Node.TransformDelegate</a></code> for this Node.</div>
+  
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad"><a href="../../../../com/viro/renderer/jni/Node.html#setVisible(boolean)">setVisible</a></span>(boolean visible)
+        
+        <div class="jd-descrdiv">Set to false to hide this Node, and all of its children.</div>
+  
+  </td></tr>
+
+
+
+</table>
+
+
+
+
+
+
+
+<!-- ========== METHOD SUMMARY =========== -->
+<table id="inhmethods" class="jd-sumtable"><tr><th>
+  <a href="#" class="toggle-all" onclick="return toggleAllInherited(this, null)">[Expand]</a>
+  <div style="clear:left;">Inherited Methods</div></th></tr>
+
+
+<tr class="api apilevel-" >
+<td colspan="12">
+  <a href="#" onclick="return toggleInherited(this, null)" id="inherited-methods-java.lang.Object" class="jd-expando-trigger closed"
+          ><img id="inherited-methods-java.lang.Object-trigger"
+          src="../../../../../assets/images/triangle-closed.png"
+          class="jd-expando-trigger-img" /></a>
+From class
+
+  java.lang.Object
+
+<div id="inherited-methods-java.lang.Object">
+  <div id="inherited-methods-java.lang.Object-list"
+        class="jd-inheritedlinks">
+  </div>
+  <div id="inherited-methods-java.lang.Object-summary" style="display: none;">
+    <table class="jd-sumtable-expando">
+    
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            boolean
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad">equals</span>(Object arg0)
+        
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            final
+            
+            
+            Class&lt;?&gt;
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad">getClass</span>()
+        
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            int
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad">hashCode</span>()
+        
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            final
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad">notify</span>()
+        
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            final
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad">notifyAll</span>()
+        
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            
+            
+            
+            String
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad">toString</span>()
+        
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            final
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad">wait</span>(long arg0, int arg1)
+        
+  </td></tr>
+
+
+	 
+    <tr class=" api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            final
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad">wait</span>(long arg0)
+        
+  </td></tr>
+
+
+	 
+    <tr class="alt-color api apilevel-" >
+        <td class="jd-typecol">
+            
+            
+            final
+            
+            
+            void
+        </td>
+        <td class="jd-linkcol" width="100%">
+        <span class="sympad">wait</span>()
+        
+  </td></tr>
+
+
+</table>
+  </div>
+</div>
+</td></tr>
+
+
+</table>
+
+
+</div><!-- jd-descr (summary) -->
+
+<!-- Details -->
+
+
+
+
+
+
+
+
+<!-- XML Attributes -->
+
+
+<!-- Enum Values -->
+
+
+<!-- Constants -->
+
+
+<!-- Fields -->
+
+
+<!-- Public ctors -->
+
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<h2>Public Constructors</h2>
+
+
+
+<a id="Node()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        
+      </span>
+      <span class="sympad">Node</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Construct a new Node centered at the origin, with no geometry.
+</p></div>
+
+    </div>
+</div>
+
+
+
+
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<!-- Protected ctors -->
+
+
+
+<!-- ========= METHOD DETAIL ======== -->
+<!-- Public methdos -->
+
+<h2>Public Methods</h2>
+
+
+
+<a id="addChildNode(com.viro.renderer.jni.Node)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">addChildNode</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/Node.html">Node</a> childNode)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Add a child Node to this Node. The child will exist in the coordinate space of this Node
+ (that is, it inherits the rotation, scale, and position of its parent, and applies its own
+ rotation, scale, and position).</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>childNode</th>
+          <td>The Node to add as a child.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="addLight(com.viro.renderer.jni.Light)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">addLight</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/Light.html">Light</a> light)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Add the given <code><a href="../../../../com/viro/renderer/jni/Light.html">Light</a></code> to this Node. The Light will illuminate all objects in the
+ <code><a href="../../../../com/viro/renderer/jni/Scene.html">Scene</a></code> that fall within its area of influence. As a child of this Node, the Light
+ will also receive all the Node's transforms.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>light</th>
+          <td>The <code><a href="../../../../com/viro/renderer/jni/Light.html">Light</a></code> to add to this Node.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="addSound(com.viro.renderer.jni.SpatialSound)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">addSound</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a> sound)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Add the given <code><a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a></code> to this Node. As a child of this Node, the SpatialSound
+ will also receive all the Node's transforms.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>sound</th>
+          <td>The <code><a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a></code> to add to this Node.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="clearPhysicsBody()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">clearPhysicsBody</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Clear the <code><a href="../../../../com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code> of this Node. This will stop the Node from participating
+ in the physics simulation.
+</p></div>
+
+    </div>
+</div>
+
+
+<a id="convertLocalPositionToWorldSpace(com.viro.renderer.jni.Vector)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a>
+      </span>
+      <span class="sympad">convertLocalPositionToWorldSpace</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a> localPosition)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Convert the given position from the coordinate space of this Node into the world coordinate
+ system. This Node's coordinate system is the coordinate system in which the children of this
+ Node are positioned. The world coordinate system is the global coordinate space; e.g., the
+ coordinate space of the Scene's root Node.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>localPosition</th>
+          <td>The local position to convert.</td>
+        </tr>
+      </table>
+  </div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The position in world space.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="convertWorldPositionToLocalSpace(com.viro.renderer.jni.Vector)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a>
+      </span>
+      <span class="sympad">convertWorldPositionToLocalSpace</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a> worldPosition)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Convert the given position from world coordinates into coordinate space of this Node. The
+ world coordinate system is the global coordinate space; e.g., the coordinate space of the
+ Scene's root Node. This Node's coordinate system is the coordinate system in which the
+ children of this Node are positioned.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>worldPosition</th>
+          <td>The world position to convert.</td>
+        </tr>
+      </table>
+  </div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The position in local space.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="dispose()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">dispose</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Release native resources associated with this Node.
+</p></div>
+
+    </div>
+</div>
+
+
+<a id="getAnimationKeys()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        Set&lt;String&gt;
+      </span>
+      <span class="sympad">getAnimationKeys</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the names of the animations available to run on this Node or any of its children.
+ If this Node represents a scene loaded from a 3D file format like FBX, then the returned
+ Set will contain the names of all skeletal and keyframe animations that were installed.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The names of each animation in this Node.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getCamera()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/Camera.html">Camera</a>
+      </span>
+      <span class="sympad">getCamera</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the <code><a href="../../../../com/viro/renderer/jni/Camera.html">Camera</a></code> attached to this Node.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The <code><a href="../../../../com/viro/renderer/jni/Camera.html">Camera</a></code>, or null if none is attached.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getChildNodes()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        List&lt;<a href="../../../../com/viro/renderer/jni/Node.html">Node</a>&gt;
+      </span>
+      <span class="sympad">getChildNodes</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the children of this Node in the scene-graph.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The children.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getClickListener()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/event/ClickListener.html">ClickListener</a>
+      </span>
+      <span class="sympad">getClickListener</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the <code><a href="../../../../com/viro/renderer/jni/event/ClickListener.html">ClickListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The installed listener, or null if none is installed.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getDragListener()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/event/DragListener.html">DragListener</a>
+      </span>
+      <span class="sympad">getDragListener</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the <code><a href="../../../../com/viro/renderer/jni/event/DragListener.html">DragListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The installed listener, or null if none is installed.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getDragType()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/Node.DragType.html">Node.DragType</a>
+      </span>
+      <span class="sympad">getDragType</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the dragging behavior for this Node.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The <code><a href="../../../../com/viro/renderer/jni/Node.DragType.html">Node.DragType</a></code> for this Node.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getFuseListener()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/event/FuseListener.html">FuseListener</a>
+      </span>
+      <span class="sympad">getFuseListener</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the <code><a href="../../../../com/viro/renderer/jni/event/FuseListener.html">FuseListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The installed listener, or null if none is installed.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getGeometry()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/Geometry.html">Geometry</a>
+      </span>
+      <span class="sympad">getGeometry</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the <code><a href="../../../../com/viro/renderer/jni/Geometry.html">Geometry</a></code> attached to this Node. Geometries are the actual 3D objects that are
+ rendered for each Node.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The Geometry attached to this Node, or null if no Geometry is attached.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getGesturePinchListener()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/event/GesturePinchListener.html">GesturePinchListener</a>
+      </span>
+      <span class="sympad">getGesturePinchListener</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the <code><a href="../../../../com/viro/renderer/jni/event/GesturePinchListener.html">GesturePinchListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The installed listener, or null if none is installed.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getGestureRotateListener()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/event/GestureRotateListener.html">GestureRotateListener</a>
+      </span>
+      <span class="sympad">getGestureRotateListener</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the <code><a href="../../../../com/viro/renderer/jni/event/GestureRotateListener.html">GestureRotateListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The installed listener, or null if none is installed.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getHighAccuracyGaze()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        boolean
+      </span>
+      <span class="sympad">getHighAccuracyGaze</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Returns true if high accuracy gaze is enabled.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>True if this Node is using high accuracy gazing.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getHoverListener()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/event/HoverListener.html">HoverListener</a>
+      </span>
+      <span class="sympad">getHoverListener</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the <code><a href="../../../../com/viro/renderer/jni/event/HoverListener.html">HoverListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The installed listener, or null if none is installed.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getIgnoreEventHandling()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        boolean
+      </span>
+      <span class="sympad">getIgnoreEventHandling</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Returns true if this Node is currently set to ignore event handling.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>True if this Node is ignoring event handling.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getLightReceivingBitMask()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        int
+      </span>
+      <span class="sympad">getLightReceivingBitMask</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the light receiving bit mask, which determines which lights will illuminate this Node.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The bit mask.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getLights()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        List&lt;<a href="../../../../com/viro/renderer/jni/Light.html">Light</a>&gt;
+      </span>
+      <span class="sympad">getLights</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get all <code><a href="../../../../com/viro/renderer/jni/Light.html">Light</a></code>s that have been added to this Node.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>List of all the Lights in this Node.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getOpacity()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        float
+      </span>
+      <span class="sympad">getOpacity</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the opacity of this Node. A value of 0.0 means the contents fo the Node are fully
+ transparent, and a value of 1.0 means the contents of the Node are fully opaque.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The opacity from 0.0 to 1.0.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getParentNode()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/Node.html">Node</a>
+      </span>
+      <span class="sympad">getParentNode</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the parent of this Node in the scene-graph. Returns null if this Node has no parent.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The parent Node.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getParentPortalScene()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/PortalScene.html">PortalScene</a>
+      </span>
+      <span class="sympad">getParentPortalScene</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the nearest <code><a href="../../../../com/viro/renderer/jni/PortalScene.html">PortalScene</a></code> that is an ancestor of this Node. Returns null if this is
+ the root node.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The nearest ancestor PortalScene.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getPhysicsBody()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a>
+      </span>
+      <span class="sympad">getPhysicsBody</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the <code><a href="../../../../com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code> associated with this Node. The PhysicsBody can be used to tune
+ the way in which this Node responds to other physics bodies, global forces, and collisions.
+ Returns null if this Node is not participating in the physics simulation. To activate physics
+ for a node, use <code><a href="../../../../com/viro/renderer/jni/Node.html#initPhysicsBody(com.viro.renderer.jni.PhysicsBody.RigidBodyType, float, com.viro.renderer.jni.PhysicsShape)">initPhysicsBody(PhysicsBody.RigidBodyType, float, PhysicsShape)</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The <code><a href="../../../../com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code> associated with this Node.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getPositionRealtime()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a>
+      </span>
+      <span class="sympad">getPositionRealtime</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the real-time position of this Node. The real-time position is the Node's location in the
+ coordinate system of its parent, as it currently appears on-screen. Note this may not match
+ the value last set by <code><a href="../../../../com/viro/renderer/jni/Node.html#setPosition(com.viro.renderer.jni.Vector)">setPosition(Vector)</a></code> because the real-time position is
+ influenced by many factors: animation, the physics simulation, and more.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The real-time position as a <code><a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a></code>.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getRotationEulerRealtime()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a>
+      </span>
+      <span class="sympad">getRotationEulerRealtime</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the <i>real-time</i> orientation of this Node, expressed as three Euler angles.
+ Specifically, the X component is rotation about the X axis (pitch), the Y component is
+ rotation about the node's Y axis (yaw), and Z is the rotation around the node's Z axis
+ (roll). This returns the real-time orientation, meaning the orientation of the Node as it
+ currently appears on-screen.
+ <p>
+ Note this may not match the value last set by <code><a href="../../../../com/viro/renderer/jni/Node.html#setRotation(com.viro.renderer.jni.Vector)">setRotation(Vector)</a></code> because the
+ real-time rotation is influenced by many factors: animation, the physics simulation, and
+ more.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The rotation in Euler form.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getRotationPivot()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a>
+      </span>
+      <span class="sympad">getRotationPivot</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the rotation pivot of this Node. The rotation pivot defines the point about which
+ rotation occurs.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The pivot point as a <code><a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a></code>.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getRotationQuaternionRealtime()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/Quaternion.html">Quaternion</a>
+      </span>
+      <span class="sympad">getRotationQuaternionRealtime</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the <i>real-time</i> orientation of this Node, expressed as a <code><a href="../../../../com/viro/renderer/jni/Quaternion.html">Quaternion</a></code>.  This
+ returns the real-time orientation, meaning the orientation of the Node as it currently
+ appears on-screen. Note this may not match the value last set by <code><a href="../../../../com/viro/renderer/jni/Node.html#setRotation(com.viro.renderer.jni.Vector)">setRotation(Vector)</a></code>
+ because the real-time rotation is influenced by many factors: animation, the physics
+ simulation, and more.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The rotation in Quaternion form.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getScalePivot()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a>
+      </span>
+      <span class="sympad">getScalePivot</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the scale pivot of this Node. The scale pivot defines the point around which scaling
+ occurs.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The pivot point as a <code><a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a></code>.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getScaleRealtime()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a>
+      </span>
+      <span class="sympad">getScaleRealtime</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the <i>real-time</i> scale of this Node.
+ <p>
+ Note this may not match the value last set by <code><a href="../../../../com/viro/renderer/jni/Node.html#setScale(com.viro.renderer.jni.Vector)">setScale(Vector)</a></code> because there may be
+ an ongoing animation.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The scale <code><a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a></code>.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getShadowCastingBitMask()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        int
+      </span>
+      <span class="sympad">getShadowCastingBitMask</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the shadow casting bit mask, which determines for which lights this Node will cast
+ shadows.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The bit mask.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getSounds()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        List&lt;<a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a>&gt;
+      </span>
+      <span class="sympad">getSounds</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get all <code><a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a></code>s that have been added to this Node.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>List of all the SpatialSounds in this Node.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getTag()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        String
+      </span>
+      <span class="sympad">getTag</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Return the tag for this Node. The tag is a non-unique identifier that you can use for any
+ purpose.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The tag used by this Node, or null if no tag is set.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getTouchpadScrollListener()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/event/TouchpadScrollListener.html">TouchpadScrollListener</a>
+      </span>
+      <span class="sympad">getTouchpadScrollListener</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the <code><a href="../../../../com/viro/renderer/jni/event/TouchpadScrollListener.html">TouchpadScrollListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The installed listener, or null if none is installed.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getTouchpadSwipeListener()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/event/TouchpadSwipeListener.html">TouchpadSwipeListener</a>
+      </span>
+      <span class="sympad">getTouchpadSwipeListener</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the <code><a href="../../../../com/viro/renderer/jni/event/TouchpadSwipeListener.html">TouchpadSwipeListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The installed listener, or null if none is installed.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getTouchpadTouchListener()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/event/TouchpadTouchListener.html">TouchpadTouchListener</a>
+      </span>
+      <span class="sympad">getTouchpadTouchListener</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Get the <code><a href="../../../../com/viro/renderer/jni/event/TouchpadTouchListener.html">TouchpadTouchListener</a></code> that is currently installed for this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The installed listener, or null if none is installed.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="getTransformBehaviors()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        EnumSet&lt;<a href="../../../../com/viro/renderer/jni/Node.TransformBehavior.html">Node.TransformBehavior</a>&gt;
+      </span>
+      <span class="sympad">getTransformBehaviors</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Return the <code><a href="../../../../com/viro/renderer/jni/Node.TransformBehavior.html">Node.TransformBehavior</a></code>s used by this Node.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The TransformBehaviors in an EnumSet.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="hasPhysics()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        boolean
+      </span>
+      <span class="sympad">hasPhysics</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Return true if this Node has a <code><a href="../../../../com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code> attached, meaning its participates
+ in the physics simulation.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>True if this Node participates in the physics simulation.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="initPhysicsBody(com.viro.renderer.jni.PhysicsBody.RigidBodyType, float, com.viro.renderer.jni.PhysicsShape)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        <a href="../../../../com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a>
+      </span>
+      <span class="sympad">initPhysicsBody</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/PhysicsBody.RigidBodyType.html">PhysicsBody.RigidBodyType</a> rigidBodyType, float mass, <a href="../../../../com/viro/renderer/jni/PhysicsShape.html">PhysicsShape</a> shape)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Create a <code><a href="../../../../com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code> for this Node, which makes the Node participate in the physics
+ simulation. The PhysicsBody can be used to tune the way in which this Node responds to other
+ physics bodies, global forces, and collisions.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>rigidBodyType</th>
+          <td>The rigid body type, which controls how the Node responds to forces and
+                      collisions.</td>
+        </tr>
+        <tr>
+          <th>mass</th>
+          <td>The mass of the PhysicsBody, in kilograms.</td>
+        </tr>
+        <tr>
+          <th>shape</th>
+          <td>The shape of the PhysicsBody.</td>
+        </tr>
+      </table>
+  </div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The initialized <code><a href="../../../../com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code>.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="isVisible()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        boolean
+      </span>
+      <span class="sympad">isVisible</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Return true if this Node's <tt>visible</tt> property is true. Note this does not return
+ whether the Node is *actually* visible in the user's current view; it only returns the value
+ of this property.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Returns</h5>
+      <ul class="nolist"><li>The visible property of this Node.
+</li></ul>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="removeAllChildNodes()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">removeAllChildNodes</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Remove all children from this Node.
+</p></div>
+
+    </div>
+</div>
+
+
+<a id="removeAllLights()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">removeAllLights</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Remove all <code><a href="../../../../com/viro/renderer/jni/Light.html">Light</a></code>s from this Node.
+</p></div>
+
+    </div>
+</div>
+
+
+<a id="removeAllSounds()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">removeAllSounds</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Remove all <code><a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a></code>s from this Node.
+</p></div>
+
+    </div>
+</div>
+
+
+<a id="removeFromParentNode()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">removeFromParentNode</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Remove this Node from its parent.
+</p></div>
+
+    </div>
+</div>
+
+
+<a id="removeLight(com.viro.renderer.jni.Light)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">removeLight</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/Light.html">Light</a> light)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Remove the given <code><a href="../../../../com/viro/renderer/jni/Light.html">Light</a></code> from this Node.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>light</th>
+          <td>The <code><a href="../../../../com/viro/renderer/jni/Light.html">Light</a></code> to remove.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="removeSound(com.viro.renderer.jni.SpatialSound)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">removeSound</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a> sound)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Remove the given <code><a href="../../../../com/viro/renderer/jni/SpatialSound.html">SpatialSound</a></code> from this Node.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>sound</th>
+          <td>The SpatialSound remove.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="removeTransformDelegate()"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">removeTransformDelegate</span>
+      <span class="normal">()</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Remove any <code><a href="../../../../com/viro/renderer/jni/Node.TransformDelegate.html">Node.TransformDelegate</a></code> that is currently attached to this Node.
+</p></div>
+
+    </div>
+</div>
+
+
+<a id="setCamera(com.viro.renderer.jni.Camera)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setCamera</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/Camera.html">Camera</a> camera)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Attach the given <code><a href="../../../../com/viro/renderer/jni/Camera.html">Camera</a></code> to this Node. To make this Camera active, this Node
+ must be set to the point of view via <code><a href="../../../../com/viro/renderer/jni/Renderer.html#setPointOfView(com.viro.renderer.jni.Node)">setPointOfView(Node)</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>camera</th>
+          <td>The Camera to add to this Node. Null to remove any set Camera.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setClickListener(com.viro.renderer.jni.event.ClickListener)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setClickListener</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/event/ClickListener.html">ClickListener</a> listener)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set a <code><a href="../../../../com/viro/renderer/jni/event/ClickListener.html">ClickListener</a></code> to respond when users click with their Controller on this
+ <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>listener</th>
+          <td>The listener to attach, or null to remove any installed listener.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setDragListener(com.viro.renderer.jni.event.DragListener)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setDragListener</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/event/DragListener.html">DragListener</a> listener)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the <code><a href="../../../../com/viro/renderer/jni/event/DragListener.html">DragListener</a></code> to respond when a user attempts to drag this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code> by
+ pressing over it and moving the Controller.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>listener</th>
+          <td>The listener to attach, or null to remove any installed listener.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setDragType(com.viro.renderer.jni.Node.DragType)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setDragType</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/Node.DragType.html">Node.DragType</a> dragType)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the behavior of dragging if dragging is enabled on the Node's EventDelegate.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>dragType</th>
+          <td>The <code><a href="../../../../com/viro/renderer/jni/Node.DragType.html">Node.DragType</a></code> to use.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setFuseListener(com.viro.renderer.jni.event.FuseListener)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setFuseListener</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/event/FuseListener.html">FuseListener</a> listener)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the <code><a href="../../../../com/viro/renderer/jni/event/FuseListener.html">FuseListener</a></code> to respond when a user hovers over this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code> for
+ <code><a href="../../../../com/viro/renderer/jni/Node.html#setTimeToFuse(float)">setTimeToFuse(float)</a></code> milliseconds. When this is set, the fuse 'reticle' will
+ be enabled for this Node.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>listener</th>
+          <td>The listener to attach, or null to remove any installed listener.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setGeometry(com.viro.renderer.jni.Geometry)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setGeometry</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/Geometry.html">Geometry</a> geometry)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the <code><a href="../../../../com/viro/renderer/jni/Geometry.html">Geometry</a></code> of this Node. Geometries are the actual 3D objects that are rendered
+ for each Node.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>geometry</th>
+          <td>The <code><a href="../../../../com/viro/renderer/jni/Geometry.html">Geometry</a></code> to attach to this Node. Null to remove any Geometry from
+                 this Node.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setGesturePinchListener(com.viro.renderer.jni.event.GesturePinchListener)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setGesturePinchListener</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/event/GesturePinchListener.html">GesturePinchListener</a> listener)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the <code><a href="../../../../com/viro/renderer/jni/event/GesturePinchListener.html">GesturePinchListener</a></code> to respond when a user pinches with two fingers over
+ this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code> using a screen Controller.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>listener</th>
+          <td>The listener to attach, or null to remove any installed listener.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setGestureRotateListener(com.viro.renderer.jni.event.GestureRotateListener)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setGestureRotateListener</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/event/GestureRotateListener.html">GestureRotateListener</a> listener)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the <code><a href="../../../../com/viro/renderer/jni/event/GestureRotateListener.html">GestureRotateListener</a></code> to respond when a user rotates with two fingers over
+ this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code> using a screen Controller.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>listener</th>
+          <td>The listener to attach, or null to remove any installed listener.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setHighAccuracyGaze(boolean)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setHighAccuracyGaze</span>
+      <span class="normal">(boolean highAccuracyGaze)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>True if onHover events should use the Geometry of this Node to determine if the user is
+ hovering over this Node. If false, the Node's axis-aligned bounding box will be used
+ instead. High accuracy gazing is more accurate but takes more processing power. The default
+ value is false.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>highAccuracyGaze</th>
+          <td>True to enable high accuracy gazing.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setHoverListener(com.viro.renderer.jni.event.HoverListener)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setHoverListener</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/event/HoverListener.html">HoverListener</a> listener)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the <code><a href="../../../../com/viro/renderer/jni/event/HoverListener.html">HoverListener</a></code> to respond when users hover over this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>listener</th>
+          <td>The listener to attach, or null to remove any installed listener.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setIgnoreEventHandling(boolean)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setIgnoreEventHandling</span>
+      <span class="normal">(boolean ignore)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>When set to true, this Node will ignore events and not prevent Nodes behind it from
+ receiving event callbacks.
+ <p>
+ The default value is false.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>ignore</th>
+          <td>True to make this Node ignore events.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setLightReceivingBitMask(int)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setLightReceivingBitMask</span>
+      <span class="normal">(int bitMask)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the bit mask that determines what lights will illuminate this Node. This bit mask is
+ bitwise and-ed (&) with each Light's influenceBitMask. If the result is > 0, then the Light
+ will illuminate this Node. The default value is 0x1.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>bitMask</th>
+          <td>The bit mask to set.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setOpacity(float)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setOpacity</span>
+      <span class="normal">(float opacity)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the opacity of this Node. A value of 0.0 means the contents of the Node are fully
+ transparent, and a value of 1.0 means the contents of the Node are fully opaque. This applies
+ to all the Node's children as well. A Node's final opacity is the opacity of its parents,
+ and its own opacity, multiplied together.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>opacity</th>
+          <td>The opacity from 0.0 to 1.0.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setPosition(com.viro.renderer.jni.Vector)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setPosition</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a> position)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the position of this Node. The position defines the Node's location within the coordinate
+ system of its parent. The default position is (0, 0, 0): the origin of the parent node’s
+ coordinate system.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>position</th>
+          <td>The position as a <code><a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a></code>.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setRotation(com.viro.renderer.jni.Quaternion)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setRotation</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/Quaternion.html">Quaternion</a> rotation)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the orientation of this Node, expressed as a <code><a href="../../../../com/viro/renderer/jni/Quaternion.html">Quaternion</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>rotation</th>
+          <td>The rotation in Quaternion form.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setRotation(com.viro.renderer.jni.Vector)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setRotation</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a> rotation)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the orientation of this Node, expressed as three Euler angles in a <code><a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a></code>.
+ Specifically, the X component is rotation about the X axis (pitch), the Y component is
+ rotation about the node's Y axis (yaw), and Z is the rotation around the node's Z axis
+ (roll).
+ <p>
+ The rotation is made relative to the rotation pivot. See <code><a href="../../../../com/viro/renderer/jni/Node.html#setRotationPivot(com.viro.renderer.jni.Vector)">setRotationPivot(Vector)</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>rotation</th>
+          <td>Vector containing the rotation as three Euler angles.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setRotationPivot(com.viro.renderer.jni.Vector)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setRotationPivot</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a> pivot)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the point on the Node about which rotation will occur. This defaults to the (0, 0, 0),
+ the origin of the Node's coordinate system.
+ <p>
+ For example, imagine this Node's Geometry is a unit box (e.g. length 1.0 in each dimension).
+ If the rotation pivot is (0, 0, 0) and we rotate about the Z axis, the box will spin about
+ its center. If the rotation pivot is (-0.5, 0, -0.5) and we rotate about the Z axis, the box
+ will spin around its far-left edge.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>pivot</th>
+          <td>The pivot point as a <code><a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a></code>.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setScale(com.viro.renderer.jni.Vector)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setScale</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a> scale)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the scale of this node as a <code><a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a></code>. The <code><a href="../../../../com/viro/renderer/jni/Geometry.html">Geometry</a></code> of this Node (and all of
+ its child Nodes), will have its dimension multiplied in each direction by the corresponding
+ component of this vector. For example, if scale is (5, 5, 1), the Geometry's width and height
+ would be increased 5x, but it's extent along the Z axis would remain constant.
+ <p>
+ The default scale is (1, 1, 1). Scale is applied relative to the scale pivot. See <code><a href="../../../../com/viro/renderer/jni/Node.html#setScalePivot(com.viro.renderer.jni.Vector)">setScalePivot(Vector)</a></code> .</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>scale</th>
+          <td>The scale <code><a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a></code>.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setScalePivot(com.viro.renderer.jni.Vector)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setScalePivot</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a> pivot)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the point on the Node around which scaling will occur. This defaults to the (0, 0, 0),
+ the origin of the Node's coordinate system.
+ <p>
+ For example, imagine this Node's Geometry is a unit box (e.g. length 1.0 in each dimension).
+ If the scale pivot is (0, 0, 0) and we scale by (2.0, 2.0, 2.0), the box will grow equally in
+ each direction, remaining centered at (0, 0, 0) but with a new width, height, and length of
+ (2, 2, 2).
+ <p>
+ If, however, the scale pivot is (-0.5, -0.5, 0.5) and we scale by the same amount, the box
+ will only grow along the +X, +Y, and -Z dimensions (up, to the right, and away from the
+ user). Its new center will be (1, 1, 1), and it's new width, height, and length will be (2,
+ 2, 2).</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>pivot</th>
+          <td>The pivot point as a <code><a href="../../../../com/viro/renderer/jni/Vector.html">Vector</a></code>.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setShadowCastingBitMask(int)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setShadowCastingBitMask</span>
+      <span class="normal">(int bitMask)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the bit mask that determines for which lights the contents of this Node will cast
+ shadows.  This bit mask is bitwise and-ed (&) with each Light's influenceBitMask. If the
+ result is > 0, then this Node will cast shadows from the light. The default value is 0x1.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>bitMask</th>
+          <td>The bit mask to set.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setTag(java.lang.String)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setTag</span>
+      <span class="normal">(String tag)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the tag for this Node. The tag is a non-unique identifier that you can use for any
+ purpose. Tags are also used in the physics simulation to identify objects in collisions.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>tag</th>
+          <td>The tag to set, which is any arbitrary String.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setTimeToFuse(float)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setTimeToFuse</span>
+      <span class="normal">(float millis)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the time in milliseconds the user must hover over a <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code> before a Fuse
+ event is triggered on an installed <code><a href="../../../../com/viro/renderer/jni/event/FuseListener.html">FuseListener</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>millis</th>
+          <td>The time in milliseconds before a Fuse is registered.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setTouchpadScrollListener(com.viro.renderer.jni.event.TouchpadScrollListener)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setTouchpadScrollListener</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/event/TouchpadScrollListener.html">TouchpadScrollListener</a> listener)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the <code><a href="../../../../com/viro/renderer/jni/event/TouchpadScrollListener.html">TouchpadScrollListener</a></code> to respond when a user scrolls a touchpad while
+ hovering over a <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>listener</th>
+          <td>The listener to attach, or null to remove any installed listener.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setTouchpadSwipeListener(com.viro.renderer.jni.event.TouchpadSwipeListener)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setTouchpadSwipeListener</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/event/TouchpadSwipeListener.html">TouchpadSwipeListener</a> listener)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the <code><a href="../../../../com/viro/renderer/jni/event/TouchpadSwipeListener.html">TouchpadSwipeListener</a></code> to respond when a user swipes across a touchpad
+ Controller while hovering over this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>listener</th>
+          <td>The listener to attach, or null to remove any installed listener.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setTouchpadTouchListener(com.viro.renderer.jni.event.TouchpadTouchListener)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setTouchpadTouchListener</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/event/TouchpadTouchListener.html">TouchpadTouchListener</a> listener)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the <code><a href="../../../../com/viro/renderer/jni/event/TouchpadTouchListener.html">TouchpadTouchListener</a></code> to respond when a user touches or moves across
+ a touchpad Controller while hovering over this <code><a href="../../../../com/viro/renderer/jni/Node.html">Node</a></code>.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>listener</th>
+          <td>The listener to attach, or null to remove any installed listener.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setTransformBehaviors(java.util.EnumSet<com.viro.renderer.jni.Node.TransformBehavior>)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setTransformBehaviors</span>
+      <span class="normal">(EnumSet&lt;<a href="../../../../com/viro/renderer/jni/Node.TransformBehavior.html">Node.TransformBehavior</a>&gt; transformBehaviors)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the <code><a href="../../../../com/viro/renderer/jni/Node.TransformBehavior.html">Node.TransformBehavior</a></code>s to use for this Node. Transform behaviors
+ impact how a Node computes its position, rotation and scale.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>transformBehaviors</th>
+          <td>The TransformBehaviors to set.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setTransformDelegate(com.viro.renderer.jni.Node.TransformDelegate, double)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setTransformDelegate</span>
+      <span class="normal">(<a href="../../../../com/viro/renderer/jni/Node.TransformDelegate.html">Node.TransformDelegate</a> transformDelegate, double distanceFilter)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set the <code><a href="../../../../com/viro/renderer/jni/Node.TransformDelegate.html">Node.TransformDelegate</a></code> for this Node. The delegate will receive callbacks
+ when the Node's position has changed.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>transformDelegate</th>
+          <td>The delegate to set.</td>
+        </tr>
+        <tr>
+          <th>distanceFilter</th>
+          <td>The delegate will be notified whenever the Node's position has
+                          changed by at least this magnitude.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+<a id="setVisible(boolean)"></a>
+
+<div class="jd-details api apilevel-"> 
+    <h4 class="jd-details-title">
+      <span class="normal">
+        public 
+         
+         
+         
+         
+        void
+      </span>
+      <span class="sympad">setVisible</span>
+      <span class="normal">(boolean visible)</span>
+    </h4>
+      <div class="api-level">
+        <div>
+
+</div>
+        
+  
+
+      </div>
+    <div class="jd-details-descr">
+      
+  <div class="jd-tagdata jd-tagdescr"><p>Set to false to hide this Node, and all of its children. The default value is true.</p></div>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Parameters</h5>
+      <table class="jd-tagtable">
+        <tr>
+          <th>visible</th>
+          <td>True to reveal the Node, false to hide.
+</td>
+        </tr>
+      </table>
+  </div>
+
+    </div>
+</div>
+
+
+
+
+
+<!-- ========= METHOD DETAIL ======== -->
+
+
+
+<!-- ========= END OF CLASS DATA ========= -->
+<a id="navbar_top"></a>
+
+<div id="footer">
+Generated by <a href="http://code.google.com/p/doclava/">Doclava</a>.
+</div> <!-- end footer -->
+
+</div> <!-- jd-content -->
+
+</div><!-- end doc-content -->
+
+</div> <!-- end body-content --> 
+
+<script type="text/javascript">
+init(); /* initialize doclava-developer-docs.js */
+</script>
+
+</body>
+</html>
