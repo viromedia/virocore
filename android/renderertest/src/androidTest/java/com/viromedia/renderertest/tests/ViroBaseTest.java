@@ -38,21 +38,20 @@ import com.viro.renderer.jni.event.TouchState;
 import com.viromedia.renderertest.ViroReleaseTestActivity;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InterruptedIOException;
 import java.util.EnumSet;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.awaitility.Awaitility.await;
 
 /**
@@ -72,8 +71,9 @@ public abstract class ViroBaseTest {
     protected Timer mTimer;
     protected Scene mScene;
     protected ViroReleaseTestActivity mActivity;
-    private String mExpectedMessage;
-    private Node mInstructionCardNode;
+    private Node mTestClassNameNode;
+    private Node mTestMethodNameNode;
+    private Node mExpectedMessageNode;
 
     @Before
     public void setUp() {
@@ -102,7 +102,7 @@ public abstract class ViroBaseTest {
 
     private void createBaseTestScene() {
         Node rootNode = mScene.getRootNode();
-        EnumSet<Node.TransformBehavior> transformBehavior = EnumSet.of(Node.TransformBehavior.BILLBOARD);
+        EnumSet<Node.TransformBehavior> transformBehavior = EnumSet.of(Node.TransformBehavior.BILLBOARD_Y);
 
         // Add yes button
         Node yesButton = new Node();
@@ -136,27 +136,49 @@ public abstract class ViroBaseTest {
         noButton.setEventDelegate(getGenericDelegate(TEST_FAILED));
         rootNode.addChildNode(noButton);
 
-        // Add instruction card
-        mInstructionCardNode = new Node();
+        // Add class name
+        mTestClassNameNode = new Node();
+        Text testClassNameText = new Text(mViroView.getViroContext(), getClass().getSimpleName(),
+                "Roboto", 25, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
+                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
+        float[] classNamePosition = {-1.5f, 3f, -3.3f};
+        mTestClassNameNode.setPosition(new Vector(classNamePosition));
+        mTestClassNameNode.setGeometry(testClassNameText);
+        rootNode.addChildNode(mTestClassNameNode);
+
+        // Add method name
+        mTestMethodNameNode = new Node();
+        Text testMethodNameText = new Text(mViroView.getViroContext(),
+                Thread.currentThread().getStackTrace()[1].getMethodName(),
+                "Roboto", 25, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
+                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
+        float[] methodNamePosition = {-1.5f, 2.5f, -3.3f};
+        mTestMethodNameNode.setPosition(new Vector(methodNamePosition));
+        mTestMethodNameNode.setGeometry(testMethodNameText);
+        rootNode.addChildNode(mTestMethodNameNode);
+
+        // Add expected message card
+        mExpectedMessageNode = new Node();
         Text instructionCardText = new Text(mViroView.getViroContext(),
                 "Test Text Here", "Roboto", 25, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        float[] position = {0, 0f, -3.3f};
-        mInstructionCardNode.setPosition(new Vector(position));
-        mInstructionCardNode.setGeometry(instructionCardText);
-        rootNode.addChildNode(mInstructionCardNode);
+        float[] position = {-1.5f, 2f, -3.3f};
+        mExpectedMessageNode.setPosition(new Vector(position));
+        mExpectedMessageNode.setGeometry(instructionCardText);
+        rootNode.addChildNode(mExpectedMessageNode);
     }
 
     protected void assertPass(String expectedMessage) {
 
         mTestButtonsClicked.set(false);
 
-
-        Text instructionCardText = (Text) mInstructionCardNode.getGeometry();
+        Text methodNameText = (Text) mTestMethodNameNode.getGeometry();
+        methodNameText.setText(Thread.currentThread().getStackTrace()[3].getMethodName());
+        Text instructionCardText = (Text) mExpectedMessageNode.getGeometry();
         instructionCardText.setText(expectedMessage);
 
 
-        await().untilTrue(mTestButtonsClicked);
+        await().atMost(30, TimeUnit.SECONDS).untilTrue(mTestButtonsClicked);
     }
 
     abstract void configureTestScene();
@@ -222,7 +244,11 @@ public abstract class ViroBaseTest {
                     hitLoc[0] + ", " + hitLoc[1] + ", " + hitLoc[2]);
 
             if (clickState.equals(ClickState.CLICKED)) {
-                Assert.assertTrue(mExpectedMessage, delegateTag.equalsIgnoreCase(TEST_PASSED));
+                if (delegateTag.equalsIgnoreCase(TEST_PASSED)) {
+                    assertTrue(delegateTag.equalsIgnoreCase(TEST_PASSED));
+                } else {
+                    fail();
+                }
                 mTestButtonsClicked.set(true);
             }
         }
@@ -278,12 +304,5 @@ public abstract class ViroBaseTest {
         public void onCameraARHitTest(int source, ARHitTestResult[] results) {
             Log.e(TAG, delegateTag + " On Camera AR Hit Test");
         }
-    }
-
-    /**
-     * Created by vadvani on 10/30/17.
-     */
-
-    public static class ViroSurfaceTest {
     }
 }
