@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
  */
 
 @RunWith(AndroidJUnit4.class)
-public class ViroDirectionalLightTest extends ViroBaseTest{
+public class ViroDirectionalLightTest extends ViroBaseTest {
     private static final String TAG = ViroDirectionalLightTest.class.getName();
 
     @Override
@@ -27,28 +27,25 @@ public class ViroDirectionalLightTest extends ViroBaseTest{
     }
 
     @Test
-    public void testDirectionalLight() {
-
-        testColorChange();
+    public void testDirectionalLight() throws InterruptedException {
 
         testIntensityChange();
+        testColorChange();
 
-        testShadoBiasChange();
+        testShadowBiasChange();
     }
 
-    private void testColorChange() {
+    private void testColorChange() throws InterruptedException {
         // test
         // change color to green
-        assertPass("Changed color from yellow to green");
+        assertPass("running testColorChange()");
     }
 
-    private void testIntensityChange() {
-
-        assertPass("Changed intensity from 0.5 to 1.0");
+    private void testIntensityChange() throws InterruptedException {
+        assertPass("running testIntensityChange()");
     }
 
-    private void testShadoBiasChange() {
-
-        assertPass("Changed shadowBias from something to something");
+    private void testShadowBiasChange() throws InterruptedException {
+        assertPass("running testShadowBiasChange()");
     }
 }

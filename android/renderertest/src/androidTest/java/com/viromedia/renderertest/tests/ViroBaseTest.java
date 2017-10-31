@@ -13,9 +13,10 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.os.Looper;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.viro.renderer.ARHitTestResult;
 import com.viro.renderer.jni.EventDelegate;
@@ -23,6 +24,7 @@ import com.viro.renderer.jni.Material;
 import com.viro.renderer.jni.Node;
 import com.viro.renderer.jni.Scene;
 import com.viro.renderer.jni.Surface;
+import com.viro.renderer.jni.Text;
 import com.viro.renderer.jni.Texture;
 import com.viro.renderer.jni.Vector;
 import com.viro.renderer.jni.ViroView;
@@ -34,9 +36,8 @@ import com.viro.renderer.jni.event.SwipeState;
 import com.viro.renderer.jni.event.TouchState;
 import com.viromedia.renderertest.ViroReleaseTestActivity;
 
-import junit.framework.Assert;
-
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 
@@ -46,6 +47,8 @@ import java.util.EnumSet;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.awaitility.Awaitility.await;
 
@@ -54,30 +57,29 @@ import static org.awaitility.Awaitility.await;
  */
 
 public abstract class ViroBaseTest {
-    public interface MutableTestMethod {
-        public void mutableTest();
-    }
-
     private static final String TAG = ViroBaseTest.class.getName();
     private static final String TEST_PASSED = "testPassed";
     private static final String TEST_FAILED = "testFailed";
+    private final AtomicBoolean mTestButtonsClicked = new AtomicBoolean(false);
+    private final CyclicBarrier mBarrier = new CyclicBarrier(2);
     public ViroView mViroView;
-    protected MutableTestMethod mMutableTestMethod;
-
-
     @Rule
     public ActivityTestRule<ViroReleaseTestActivity> mActivityTestRule
             = new ActivityTestRule<>(ViroReleaseTestActivity.class, true, true);
+    protected MutableTestMethod mMutableTestMethod;
     protected Timer mTimer;
     protected Scene mScene;
     protected ViroReleaseTestActivity mActivity;
-    private boolean mYesButtonsClicked = false;
-    private boolean mNoButtonsClicked = false;
     private String mExpectedMessage;
+    private Node mInstructionCardNode;
+    private Thread mTestRunnerThread;
+    private Looper mTestLooper;
 
     @Before
     public void setUp() {
         mActivity = mActivityTestRule.getActivity();
+        mTestRunnerThread = Thread.currentThread();
+        mTestLooper = Looper.myLooper();
         mViroView = mActivity.getViroView();
         mTimer = new Timer();
 
@@ -135,31 +137,32 @@ public abstract class ViroBaseTest {
         noButton.setTransformBehaviors(transformBehavior);
         noButton.setEventDelegate(getGenericDelegate(TEST_FAILED));
         rootNode.addChildNode(noButton);
+
         // Add instruction card
+        mInstructionCardNode = new Node();
+        Text instructionCardText = new Text(mViroView.getViroContext(),
+                "Test Text Here", "Roboto", 25, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
+                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
+        float[] position = {0, 0f, -3.3f};
+        mInstructionCardNode.setPosition(new Vector(position));
+        mInstructionCardNode.setGeometry(instructionCardText);
+        rootNode.addChildNode(mInstructionCardNode);
     }
 
-    protected void startTest(String expectedMessage) {
-//        await().until();
-        mExpectedMessage = expectedMessage;
+    protected void assertPass(String expectedMessage) throws InterruptedException {
+
+        mTestButtonsClicked.set(false);
+
+        Text instructionCardText = (Text) mInstructionCardNode.getGeometry();
+        instructionCardText.setText(expectedMessage);
+
+        await().untilTrue(mTestButtonsClicked);
+//        // Reset it for the next test
+//        Text instructionCardText = (Text) mInstructionCardNode.getGeometry();
+//        instructionCardText.setText("Reset booleans");
     }
 
-    protected void assertPass(String expectedMessage) {
-
-        await().until(isTestButtonClicked());
-
-        // reset the button booleans
-
-        mYesButtonsClicked = false;
-        mNoButtonsClicked = false;
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(mActivity, "booleans reset", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
     abstract void configureTestScene();
-
 
     void callbackEverySecond(MutableTestMethod testMethod) {
         if(testMethod == null) {
@@ -169,13 +172,6 @@ public abstract class ViroBaseTest {
         testMethod.mutableTest();
     }
 
-    private Callable<Boolean> isTestButtonClicked() {
-        return () -> (mYesButtonsClicked || mNoButtonsClicked);
-    }
-
-    private Callable<Boolean> isTestButtonReset() {
-        return () -> (!mYesButtonsClicked && !mNoButtonsClicked);
-    }
     @After
     public void tearDown() throws InterruptedException {
 
@@ -195,6 +191,7 @@ public abstract class ViroBaseTest {
 
         return bitmap;
     }
+
     protected EventDelegate getGenericDelegate(String delegateTag) {
         EventDelegate delegateJni = new EventDelegate();
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_HOVER, false);
@@ -204,6 +201,10 @@ public abstract class ViroBaseTest {
         delegateJni.setEventDelegateCallback(new GenericEventCallback(delegateTag));
 
         return delegateJni;
+    }
+
+    public interface MutableTestMethod {
+        public void mutableTest();
     }
 
     private class GenericEventCallback implements EventDelegate.EventDelegateCallback {
@@ -222,15 +223,19 @@ public abstract class ViroBaseTest {
         public void onClick(int source, Node node, ClickState clickState, float[] hitLoc) {
             Log.e(TAG, delegateTag + " onClick " + clickState.toString() + " location " +
                     hitLoc[0] + ", " + hitLoc[1] + ", " + hitLoc[2]);
-            if (delegateTag.equalsIgnoreCase(TEST_PASSED)) {
-                mYesButtonsClicked = true;
-                Toast.makeText(mActivity, "Test Passed!", Toast.LENGTH_SHORT).show();
+
+            if (clickState.equals(ClickState.CLICKED)) {
+                Assert.assertTrue(mExpectedMessage, delegateTag.equalsIgnoreCase(TEST_PASSED));
+                mTestButtonsClicked.set(true);
             }
-            if (delegateTag.equalsIgnoreCase(TEST_FAILED)) {
-                mNoButtonsClicked = true;
-                Toast.makeText(mActivity, "Test failed!", Toast.LENGTH_SHORT).show();
-            }
-            Assert.assertTrue(mExpectedMessage, delegateTag.equalsIgnoreCase(TEST_PASSED));
+
+//            new Handler(mTestLooper).post(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//
+//                }
+//            });
         }
 
         @Override
