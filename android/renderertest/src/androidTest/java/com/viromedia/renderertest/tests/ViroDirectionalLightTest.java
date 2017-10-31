@@ -27,7 +27,7 @@ public class ViroDirectionalLightTest extends ViroBaseTest {
     }
 
     @Test
-    public void testDirectionalLight() throws InterruptedException {
+    public void testDirectionalLight() {
 
         testIntensityChange();
         testColorChange();
@@ -35,17 +35,17 @@ public class ViroDirectionalLightTest extends ViroBaseTest {
         testShadowBiasChange();
     }
 
-    private void testColorChange() throws InterruptedException {
+    private void testColorChange() {
         // test
         // change color to green
         assertPass("running testColorChange()");
     }
 
-    private void testIntensityChange() throws InterruptedException {
+    private void testIntensityChange() {
         assertPass("running testIntensityChange()");
     }
 
-    private void testShadowBiasChange() throws InterruptedException {
+    private void testShadowBiasChange() {
         assertPass("running testShadowBiasChange()");
     }
 }

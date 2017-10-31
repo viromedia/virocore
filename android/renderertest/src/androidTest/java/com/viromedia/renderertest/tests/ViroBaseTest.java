@@ -2,8 +2,10 @@
  * Copyright (c) 2017-present, ViroMedia, Inc.
  * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the LICENSE file in the
- * root directory of this source tree. An additional grant of patent rights can be found in
+ * This source code is licensed under the BSD-style license found in the
+LICENSE file in the
+ * root directory of this source tree. An additional grant
+of patent rights can be found in
  * the PATENTS file in the same directory.
  */
 
@@ -14,7 +16,6 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Looper;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 
@@ -48,8 +49,6 @@ import java.util.EnumSet;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
-
-import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.TimeUnit;
 
@@ -65,7 +64,6 @@ public abstract class ViroBaseTest {
     private static final String TEST_PASSED = "testPassed";
     private static final String TEST_FAILED = "testFailed";
     private final AtomicBoolean mTestButtonsClicked = new AtomicBoolean(false);
-    private final CyclicBarrier mBarrier = new CyclicBarrier(2);
     public ViroView mViroView;
     @Rule
     public ActivityTestRule<ViroReleaseTestActivity> mActivityTestRule
@@ -76,14 +74,10 @@ public abstract class ViroBaseTest {
     protected ViroReleaseTestActivity mActivity;
     private String mExpectedMessage;
     private Node mInstructionCardNode;
-    private Thread mTestRunnerThread;
-    private Looper mTestLooper;
 
     @Before
     public void setUp() {
         mActivity = mActivityTestRule.getActivity();
-        mTestRunnerThread = Thread.currentThread();
-        mTestLooper = Looper.myLooper();
         mViroView = mActivity.getViroView();
         mTimer = new Timer();
 
@@ -163,10 +157,6 @@ public abstract class ViroBaseTest {
 
 
         await().untilTrue(mTestButtonsClicked);
-
-//        // Reset it for the next test
-//        Text instructionCardText = (Text) mInstructionCardNode.getGeometry();
-//        instructionCardText.setText("Reset booleans");
     }
 
     abstract void configureTestScene();
@@ -235,14 +225,6 @@ public abstract class ViroBaseTest {
                 Assert.assertTrue(mExpectedMessage, delegateTag.equalsIgnoreCase(TEST_PASSED));
                 mTestButtonsClicked.set(true);
             }
-
-//            new Handler(mTestLooper).post(new Runnable() {
-//                @Override
-//                public void run() {
-//
-//
-//                }
-//            });
         }
 
         @Override
