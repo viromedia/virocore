@@ -43,12 +43,16 @@ import org.junit.Rule;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.util.EnumSet;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
+
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.TimeUnit;
+
 
 import static org.awaitility.Awaitility.await;
 
@@ -149,14 +153,17 @@ public abstract class ViroBaseTest {
         rootNode.addChildNode(mInstructionCardNode);
     }
 
-    protected void assertPass(String expectedMessage) throws InterruptedException {
+    protected void assertPass(String expectedMessage) {
 
         mTestButtonsClicked.set(false);
+
 
         Text instructionCardText = (Text) mInstructionCardNode.getGeometry();
         instructionCardText.setText(expectedMessage);
 
+
         await().untilTrue(mTestButtonsClicked);
+
 //        // Reset it for the next test
 //        Text instructionCardText = (Text) mInstructionCardNode.getGeometry();
 //        instructionCardText.setText("Reset booleans");
@@ -289,5 +296,12 @@ public abstract class ViroBaseTest {
         public void onCameraARHitTest(int source, ARHitTestResult[] results) {
             Log.e(TAG, delegateTag + " On Camera AR Hit Test");
         }
+    }
+
+    /**
+     * Created by vadvani on 10/30/17.
+     */
+
+    public static class ViroSurfaceTest {
     }
 }

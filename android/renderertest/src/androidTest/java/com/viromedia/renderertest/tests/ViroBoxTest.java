@@ -40,7 +40,7 @@ public class ViroBoxTest extends ViroBaseTest {
 
         // Creation of ViroBox
         Node node = new Node();
-        mBox = new Box(2,4,2);
+        mBox = new Box(1,1,1);
 
         node.setGeometry(mBox);
         float[] boxPosition = {0,0,-5};
@@ -53,35 +53,34 @@ public class ViroBoxTest extends ViroBaseTest {
     public void boxTest() {
         boxWidthTest();
         boxHeightTest();
-
         boxLengthTest();
     }
 
-    @Test
+
     public void boxWidthTest() {
         mMutableTestMethod = () -> {
-            if(mBox != null ) {
+            if(mBox != null  && mBox.getWidth() < 5) {
                 mBox.setWidth(mBox.getWidth() +1);
             }
         };
+        assertPass("Box changed in width from 1 to 5");
     }
 
     public void boxHeightTest() {
         mMutableTestMethod = () -> {
-            if(mBox != null) {
+            if(mBox != null && mBox.getHeight() < 5) {
                 mBox.setHeight(mBox.getHeight() +1);
             }
         };
-
+        assertPass("Box changed in height from 1 to 5");
     }
-
 
     public void boxLengthTest() {
         mMutableTestMethod = () -> {
-            if(mBox != null) {
+            if(mBox != null && mBox.getLength() < 5) {
                 mBox.setLength(mBox.getLength() +1);
             }
         };
-
+        assertPass("Box changed in length from 1 to 5");
     }
 }
