@@ -33,8 +33,10 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -108,6 +110,20 @@ public class Node implements EventDelegate.EventDelegateCallback {
         public String getStringValue() {
             return mStringValue;
         }
+
+        private static Map<String, DragType> map = new HashMap<String, DragType>();
+        static {
+            for (DragType value : DragType.values()) {
+                map.put(value.getStringValue().toLowerCase(), value);
+            }
+        }
+        /**
+         * @hide
+         * @return
+         */
+        public static DragType valueFromString(String str) {
+            return map.get(str.toLowerCase());
+        }
     };
 
     /**
@@ -143,6 +159,20 @@ public class Node implements EventDelegate.EventDelegateCallback {
          */
         public String getStringValue() {
             return mStringValue;
+        }
+
+        private static Map<String, TransformBehavior> map = new HashMap<String, TransformBehavior>();
+        static {
+            for (TransformBehavior value : TransformBehavior.values()) {
+                map.put(value.getStringValue().toLowerCase(), value);
+            }
+        }
+        /**
+         * @hide
+         * @return
+         */
+        public static TransformBehavior valueFromString(String str) {
+            return map.get(str.toLowerCase());
         }
     };
 

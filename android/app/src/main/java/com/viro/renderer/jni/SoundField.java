@@ -224,7 +224,7 @@ public class SoundField implements BaseSound {
      * Set the {@link Delegate}, which can be used to respond to SoundField loading and
      * playback events.
      *
-     * @param delegate The SoundFieldDelegate to use for this SoundField.
+     * @param delegate The delegate to use for this SoundField.
      */
     public void setDelegate(Delegate delegate) {
         mDelegate = delegate;

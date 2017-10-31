@@ -246,7 +246,7 @@ public class Sound implements BaseSound {
     /**
      * Get the {@link Delegate} used to receive callbacks for this Sound.
      *
-     * @return The SoundDelegate, or null if none is attached.
+     * @return The delegate, or null if none is attached.
      */
     public Delegate getDelegate() {
         return mDelegate;

@@ -211,7 +211,7 @@ public class SpatialSound implements BaseSound {
     }
 
     /**
-     * Get the volume of the Sound, between 0.0 and 1.0.
+     * Get the volume of the SpatialSound, between 0.0 and 1.0.
      *
      * @return The volume.
      */
@@ -272,7 +272,7 @@ public class SpatialSound implements BaseSound {
      * Set the {@link Delegate}, which can be used to respond to SpatialSound loading and playback
      * events.
      *
-     * @param delegate The SoundDelegate to use for this Sound.
+     * @param delegate The delegate to use for this Sound.
      */
     public void setDelegate(Delegate delegate) {
         mDelegate = delegate;
