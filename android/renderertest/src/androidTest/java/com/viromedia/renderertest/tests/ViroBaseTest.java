@@ -52,7 +52,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Created by manish on 10/26/17.
@@ -244,12 +243,8 @@ public abstract class ViroBaseTest {
                     hitLoc[0] + ", " + hitLoc[1] + ", " + hitLoc[2]);
 
             if (clickState.equals(ClickState.CLICKED)) {
-                if (delegateTag.equalsIgnoreCase(TEST_PASSED)) {
-                    assertTrue(delegateTag.equalsIgnoreCase(TEST_PASSED));
-                } else {
-                    fail();
-                }
                 mTestButtonsClicked.set(true);
+                assertTrue(delegateTag.equalsIgnoreCase(TEST_PASSED));
             }
         }
 
