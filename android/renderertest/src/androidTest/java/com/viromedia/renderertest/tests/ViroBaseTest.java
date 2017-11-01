@@ -106,36 +106,36 @@ public abstract class ViroBaseTest {
     }
 
     private void createBaseTestScene() {
-        Node rootNode = mScene.getRootNode();
-        EnumSet<Node.TransformBehavior> transformBehavior = EnumSet.of(Node.TransformBehavior.BILLBOARD_Y);
+        final Node rootNode = mScene.getRootNode();
+        final EnumSet<Node.TransformBehavior> transformBehavior = EnumSet.of(Node.TransformBehavior.BILLBOARD_Y);
 
         // Add yes button
-        Node yesButton = new Node();
-        Bitmap yesBitmap = getBitmapFromAssets(mActivity, "icon_thumb_up.png");
-        Texture yesTexture = new Texture(yesBitmap,
+        final Node yesButton = new Node();
+        final Bitmap yesBitmap = getBitmapFromAssets(mActivity, "icon_thumb_up.png");
+        final Texture yesTexture = new Texture(yesBitmap,
                 Texture.TextureFormat.RGBA8, true, true);
-        Material yesMaterial = new Material();
-        Surface yesSurface = new Surface(2, 2, 0, 0, 1, 1);
+        final Material yesMaterial = new Material();
+        final Surface yesSurface = new Surface(2, 2, 0, 0, 1, 1);
         yesSurface.setMaterial(yesMaterial);
         yesSurface.setImageTexture(yesTexture);
         yesButton.setGeometry(yesSurface);
-        float[] yesPosition = {-1.5f, -3f, -3.3f};
+        final float[] yesPosition = {-1.5f, -5f, -3.3f};
         yesButton.setPosition(new Vector(yesPosition));
         yesButton.setTransformBehaviors(transformBehavior);
         yesButton.setEventDelegate(getGenericDelegate(TEST_PASSED_TAG));
         rootNode.addChildNode(yesButton);
 
         // Add no button
-        Node noButton = new Node();
-        Bitmap noBitmap = getBitmapFromAssets(mActivity, "icon_thumb_down.png");
-        Texture noTexture = new Texture(noBitmap,
+        final Node noButton = new Node();
+        final Bitmap noBitmap = getBitmapFromAssets(mActivity, "icon_thumb_down.png");
+        final Texture noTexture = new Texture(noBitmap,
                 Texture.TextureFormat.RGBA8, true, true);
-        Material noMaterial = new Material();
-        Surface noSurface = new Surface(2, 2, 0, 0, 1, 1);
+        final Material noMaterial = new Material();
+        final Surface noSurface = new Surface(2, 2, 0, 0, 1, 1);
         noSurface.setMaterial(noMaterial);
         noSurface.setImageTexture(noTexture);
         noButton.setGeometry(noSurface);
-        float[] noPosition = {1.5f, -3f, -3.3f};
+        final float[] noPosition = {1.5f, -5f, -3.3f};
         noButton.setPosition(new Vector(noPosition));
         noButton.setTransformBehaviors(transformBehavior);
         noButton.setEventDelegate(getGenericDelegate(TEST_FAILED_TAG));
@@ -143,44 +143,44 @@ public abstract class ViroBaseTest {
 
         // Add class name
         mTestClassNameNode = new Node();
-        Text testClassNameText = new Text(mViroView.getViroContext(), getClass().getSimpleName(),
+        final Text testClassNameText = new Text(mViroView.getViroContext(), getClass().getSimpleName(),
                 "Roboto", 25, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        float[] classNamePosition = {-1.5f, 3f, -3.3f};
+        final float[] classNamePosition = {-1.5f, 5f, -3.3f};
         mTestClassNameNode.setPosition(new Vector(classNamePosition));
         mTestClassNameNode.setGeometry(testClassNameText);
         rootNode.addChildNode(mTestClassNameNode);
 
         // Add method name
         mTestMethodNameNode = new Node();
-        Text testMethodNameText = new Text(mViroView.getViroContext(),
+        final Text testMethodNameText = new Text(mViroView.getViroContext(),
                 Thread.currentThread().getStackTrace()[1].getMethodName(),
                 "Roboto", 25, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        float[] methodNamePosition = {-1.5f, 2.5f, -3.3f};
+        final float[] methodNamePosition = {-1.5f, 4.5f, -3.3f};
         mTestMethodNameNode.setPosition(new Vector(methodNamePosition));
         mTestMethodNameNode.setGeometry(testMethodNameText);
         rootNode.addChildNode(mTestMethodNameNode);
 
         // Add expected message card
         mExpectedMessageNode = new Node();
-        Text instructionCardText = new Text(mViroView.getViroContext(),
+        final Text instructionCardText = new Text(mViroView.getViroContext(),
                 "Test Text Here", "Roboto", 25, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        float[] position = {-1.5f, 2f, -3.3f};
+        final float[] position = {-1.5f, 4f, -3.3f};
         mExpectedMessageNode.setPosition(new Vector(position));
         mExpectedMessageNode.setGeometry(instructionCardText);
         rootNode.addChildNode(mExpectedMessageNode);
     }
 
-    protected void assertPass(String expectedMessage) {
+    protected void assertPass(final String expectedMessage) {
 
         mTestButtonsClicked.set(false);
         mTestResult.set(-1);
 
-        Text methodNameText = (Text) mTestMethodNameNode.getGeometry();
+        final Text methodNameText = (Text) mTestMethodNameNode.getGeometry();
         methodNameText.setText(Thread.currentThread().getStackTrace()[3].getMethodName());
-        Text instructionCardText = (Text) mExpectedMessageNode.getGeometry();
+        final Text instructionCardText = (Text) mExpectedMessageNode.getGeometry();
         instructionCardText.setText(expectedMessage);
 
         await().atMost(TEST_MAX_DURATION_SEC, TimeUnit.SECONDS).untilTrue(mTestButtonsClicked);
@@ -189,7 +189,7 @@ public abstract class ViroBaseTest {
 
     abstract void configureTestScene();
 
-    void callbackEverySecond(MutableTestMethod testMethod) {
+    void callbackEverySecond(final MutableTestMethod testMethod) {
         if(testMethod == null) {
             return;
         }
@@ -202,23 +202,23 @@ public abstract class ViroBaseTest {
 
     }
 
-    protected Bitmap getBitmapFromAssets(Context context, String filePath) {
-        AssetManager assetManager = context.getAssets();
+    protected Bitmap getBitmapFromAssets(final Context context, final String filePath) {
+        final AssetManager assetManager = context.getAssets();
 
-        InputStream istr;
+        final InputStream istr;
         Bitmap bitmap = null;
         try {
             istr = assetManager.open(filePath);
             bitmap = BitmapFactory.decodeStream(istr);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             System.err.println("Error loading image from assets");
         }
 
         return bitmap;
     }
 
-    protected EventDelegate getGenericDelegate(String delegateTag) {
-        EventDelegate delegateJni = new EventDelegate();
+    protected EventDelegate getGenericDelegate(final String delegateTag) {
+        final EventDelegate delegateJni = new EventDelegate();
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_HOVER, false);
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_FUSE, true);
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_DRAG, true);
@@ -242,17 +242,17 @@ public abstract class ViroBaseTest {
     private class GenericEventCallback implements EventDelegate.EventDelegateCallback {
         protected final String delegateTag;
 
-        public GenericEventCallback(String tag) {
+        public GenericEventCallback(final String tag) {
             delegateTag = tag;
         }
 
         @Override
-        public void onHover(int source, Node node, boolean isHovering, float[] hitLoc) {
+        public void onHover(final int source, final Node node, final boolean isHovering, final float[] hitLoc) {
             Log.e(TAG, delegateTag + " onHover " + isHovering);
         }
 
         @Override
-        public void onClick(int source, Node node, ClickState clickState, float[] hitLoc) {
+        public void onClick(final int source, final Node node, final ClickState clickState, final float[] hitLoc) {
             Log.e(TAG, delegateTag + " onClick " + clickState.toString() + " location " +
                     hitLoc[0] + ", " + hitLoc[1] + ", " + hitLoc[2]);
 
@@ -263,28 +263,28 @@ public abstract class ViroBaseTest {
         }
 
         @Override
-        public void onTouch(int source, Node node, TouchState touchState, float[] touchPadPos) {
+        public void onTouch(final int source, final Node node, final TouchState touchState, final float[] touchPadPos) {
             Log.e(TAG, delegateTag + "onTouch " + touchPadPos[0] + "," + touchPadPos[1]);
         }
 
         @Override
-        public void onControllerStatus(int source, ControllerStatus status) {
+        public void onControllerStatus(final int source, final ControllerStatus status) {
 
         }
 
         @Override
-        public void onSwipe(int source, Node node, SwipeState swipeState) {
+        public void onSwipe(final int source, final Node node, final SwipeState swipeState) {
             Log.e(TAG, delegateTag + " onSwipe " + swipeState.toString());
         }
 
         @Override
-        public void onScroll(int source, Node node, float x, float y) {
+        public void onScroll(final int source, final Node node, final float x, final float y) {
             Log.e(TAG, delegateTag + " onScroll " + x + "," + y);
 
         }
 
         @Override
-        public void onDrag(int source, Node node, float x, float y, float z) {
+        public void onDrag(final int source, final Node node, final float x, final float y, final float z) {
             Log.e(TAG, delegateTag + " On drag: " + x + ", " + y + ", " + z);
 
             Vector converted = node.convertLocalPositionToWorldSpace(new Vector(x, y, z));
@@ -295,22 +295,22 @@ public abstract class ViroBaseTest {
         }
 
         @Override
-        public void onFuse(int source, Node node) {
+        public void onFuse(final int source, final Node node) {
             Log.e(TAG, delegateTag + " On fuse");
         }
 
         @Override
-        public void onPinch(int source, Node node, float scaleFactor, PinchState pinchState) {
+        public void onPinch(final int source, final Node node, final float scaleFactor, final PinchState pinchState) {
             Log.e(TAG, delegateTag + " On pinch");
         }
 
         @Override
-        public void onRotate(int source, Node node, float rotateFactor, RotateState rotateState) {
+        public void onRotate(final int source, final Node node, final float rotateFactor, final RotateState rotateState) {
             Log.e(TAG, delegateTag + " On rotate");
         }
 
         @Override
-        public void onCameraARHitTest(int source, ARHitTestResult[] results) {
+        public void onCameraARHitTest(final int source, final ARHitTestResult[] results) {
             Log.e(TAG, delegateTag + " On Camera AR Hit Test");
         }
     }
