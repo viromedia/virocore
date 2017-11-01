@@ -78,6 +78,8 @@ public abstract class ViroBaseTest {
     private Node mTestClassNameNode;
     private Node mTestMethodNameNode;
     private Node mExpectedMessageNode;
+    private GenericEventCallback callbackOne;
+    private GenericEventCallback callbackTwo;
 
     @Before
     public void setUp() {
@@ -221,7 +223,14 @@ public abstract class ViroBaseTest {
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_FUSE, true);
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_DRAG, false);
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_CLICK, true);
-        delegateJni.setEventDelegateCallback(new GenericEventCallback(delegateTag));
+        if(delegateTag.equalsIgnoreCase(TEST_PASSED)) {
+            callbackOne = new GenericEventCallback(delegateTag);
+            delegateJni.setEventDelegateCallback(callbackOne);
+        }else {
+            callbackTwo = new GenericEventCallback(delegateTag);
+            delegateJni.setEventDelegateCallback(callbackTwo);
+        }
+
 
         return delegateJni;
     }
