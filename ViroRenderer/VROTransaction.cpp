@@ -44,6 +44,10 @@ void VROTransaction::begin() {
     openTransactions.push(animation);
 }
 
+void VROTransaction::add(std::shared_ptr<VROTransaction> transaction) {
+    openTransactions.push(transaction);
+}
+
 std::shared_ptr<VROTransaction> VROTransaction::commit() {
     std::shared_ptr<VROTransaction> animation = get();
     if (!animation) {

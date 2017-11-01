@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import com.viro.renderer.ARAnchor;
@@ -25,6 +26,8 @@ import com.viro.renderer.jni.ARNode;
 import com.viro.renderer.jni.ARPlane;
 import com.viro.renderer.jni.ARScene;
 import com.viro.renderer.jni.AmbientLight;
+import com.viro.renderer.jni.AnimationTimingFunction;
+import com.viro.renderer.jni.AnimationTransaction;
 import com.viro.renderer.jni.AsyncObject3DListener;
 import com.viro.renderer.jni.Box;
 import com.viro.renderer.jni.Controller;
@@ -157,13 +160,13 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         List<Node> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
        // nodes = testSphereVideo(this);
-        //nodes = testBox(getApplicationContext());
+        nodes = testBox(getApplicationContext());
         //nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
         //nodes = testText(this);
 
-        testBackgroundVideo(scene);
+        //testBackgroundVideo(scene);
         //testBackgroundImage(scene);
         //testSkyBoxImage(scene);
 
@@ -409,8 +412,8 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         // Creation of ViroBox to the right and billboarded
         Box boxGeometry = new Box(2,4,2);
         node1.setGeometry(boxGeometry);
-        float[] boxPosition = {5,0,-3};
-        node1.setPosition(new Vector(boxPosition));
+        Vector boxPosition = new Vector(5 , 0 ,-3);
+        node1.setPosition(boxPosition);
         boxGeometry.setMaterials(Arrays.asList(material));
         EnumSet<Node.TransformBehavior> behaviors = EnumSet.of(Node.TransformBehavior.BILLBOARD);
         //node1.setTransformBehaviors(behaviors);
@@ -418,10 +421,26 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
         Box boxGeometry2 = new Box(2, 2, 2);
         node2.setGeometry(boxGeometry2);
-        float[] boxPosition2 = {-2, 0, -3};
-        node2.setPosition(new Vector(boxPosition2));
+        Vector boxPosition2 = new Vector(-2, 0, -3);
+        node2.setPosition(boxPosition2);
         boxGeometry2.setMaterials(Arrays.asList(material));
         node2.setEventDelegate(getGenericDelegate("Box2"));
+
+        AnimationTransaction.begin();
+        AnimationTransaction.setAnimationDelay(2);
+        AnimationTransaction.setAnimationDuration(5);
+        AnimationTransaction.setTimingFunction(AnimationTimingFunction.Bounce);
+        AnimationTransaction.setFinishCallback(new AnimationTransaction.FinishedCallback() {
+            @Override
+            public void onFinished(AnimationTransaction transaction) {
+                Log.i("Viro", "Animation finished");
+            }
+        });
+        node2.setPosition(new Vector(-2, 2.5f, -3));
+
+        AnimationTransaction transaction = AnimationTransaction.commit();
+
+
 
         return Arrays.asList(node1, node2, node3);
     }

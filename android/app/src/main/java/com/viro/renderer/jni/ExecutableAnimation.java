@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2017 Viro Media. All rights reserved.
  */
 package com.viro.renderer.jni;
@@ -9,6 +9,7 @@ public class ExecutableAnimation {
     }
 
     protected long mNativeRef;
+    protected AnimationDelegate mDelegate;
 
     /**
      * Constructor used by subclasses. The subclass must initialize the
@@ -52,7 +53,6 @@ public class ExecutableAnimation {
      * AnimationDelegate logic
      */
 
-    protected AnimationDelegate mDelegate;
 
     public interface AnimationDelegate {
         void onFinish(ExecutableAnimation animation);
