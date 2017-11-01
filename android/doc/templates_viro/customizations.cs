@@ -25,8 +25,6 @@ def:reference_default_nav() ?>
   <?cs else ?>
     <div id="devdoc-nav">
       <div id="api-nav-header">
-        <div id="api-level-toggle">
-        </div><!-- end toggle -->
         <div id="api-nav-title">Viro APIs</div>
       </div><!-- end nav header -->
       <script>
@@ -146,63 +144,13 @@ def:custom_left_nav() ?>
   <?cs if:(!fullpage && !nonavpage) || forcelocalnav ?>
     <?cs if:!referenceonly ?>
     <a class="dac-nav-back-button dac-swap-section dac-up dac-no-anim" data-swap-button href="javascript:;">
-      <i class="dac-sprite dac-nav-back"></i> <span class="dac-nav-back-title">Back</span>
+      <i class="dac-sprite dac-nav-back"></i> 
     </a>
     <?cs /if ?>
     <div class="dac-nav-sub dac-swap-section dac-right dac-active" itemscope
       itemtype="http://schema.org/SiteNavigationElement" <?cs
         if:referenceonly ?>style="top:0 !important;"<?cs /if ?>>
-      <?cs if:ndk ?>
-        <?cs if:guide ?>
-          <?cs include:"../../../../frameworks/base/docs/html/ndk/guides/guides_toc.cs" ?>
-        <?cs elif:reference ?>
-          <?cs include:"../../../../frameworks/base/docs/html/ndk/reference/reference_toc.cs" ?>
-        <?cs elif:downloads ?>
-          <?cs include:"../../../../frameworks/base/docs/html/ndk/downloads/downloads_toc.cs" ?>
-        <?cs elif:samples ?>
-          <?cs include:"../../../../frameworks/base/docs/html/ndk/samples/samples_toc.cs" ?>
-        <?cs else ?>
-          <?cs call:reference_default_nav() ?>
-        <?cs /if ?>
-      <?cs elif:guide ?>
-        <?cs include:"../../../../frameworks/base/docs/html/guide/guide_toc.cs" ?>
-      <?cs elif:design ?>
-        <?cs include:"../../../../frameworks/base/docs/html/design/design_toc.cs" ?>
-      <?cs elif:training ?>
-        <?cs include:"../../../../frameworks/base/docs/html/training/training_toc.cs" ?>
-      <?cs elif:tools ?>
-        <?cs include:"../../../../frameworks/base/docs/html/tools/tools_toc.cs" ?>
-      <?cs elif:google ?>
-        <?cs include:"../../../../frameworks/base/docs/html/google/google_toc.cs" ?>
-      <?cs elif:samples ?>
-        <?cs include:"../../../../frameworks/base/docs/html/samples/samples_toc.cs" ?>
-      <?cs elif:preview ?>
-        <?cs include:"../../../../frameworks/base/docs/html/preview/preview_toc.cs" ?>
-      <?cs elif:preview ?>
-        <?cs include:"../../../../frameworks/base/docs/html/wear/preview/preview_toc.cs" ?>
-      <?cs elif:distribute ?>
-        <?cs if:googleplay ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/googleplay/googleplay_toc.cs" ?>
-        <?cs elif:essentials ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/essentials/essentials_toc.cs" ?>
-        <?cs elif:users ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/users/users_toc.cs" ?>
-        <?cs elif:engage ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/engage/engage_toc.cs" ?>
-        <?cs elif:monetize ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/monetize/monetize_toc.cs" ?>
-        <?cs elif:analyze ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/analyze/analyze_toc.cs" ?>
-        <?cs elif:disttools ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/tools/disttools_toc.cs" ?>
-        <?cs elif:stories ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/stories/stories_toc.cs" ?>
-        <?cs /if ?>
-      <?cs elif:about ?>
-        <?cs include:"../../../../frameworks/base/docs/html/about/about_toc.cs" ?>
-      <?cs else ?>
-        <?cs call:reference_default_nav() ?>
-      <?cs /if ?>
+      <?cs call:reference_default_nav() ?>
     </div>
   <?cs /if ?>
 <?cs /def ?><?cs
@@ -217,10 +165,7 @@ def:custom_cc_copyright() ?>
 <?cs /def ?><?cs
 
 def:custom_copyright() ?>
-  Except as noted, this content is licensed under <a
-  href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>.
-  For details and restrictions, see the <a href="<?cs var:toroot ?>license.html">
-  Content License</a>.
+  Copyright © 2017 Viro Media. All rights reserved.
 <?cs /def ?><?cs
 
 def:custom_footerlinks() ?>

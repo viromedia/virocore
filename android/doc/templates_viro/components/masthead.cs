@@ -6,20 +6,18 @@
       <div class="dac-header-inner">
         <a class="dac-nav-toggle" data-dac-toggle-nav href="javascript:;" title="Open navigation">
           <span class="dac-nav-hamburger">
-            <span class="dac-nav-hamburger-top"></span>
-            <span class="dac-nav-hamburger-mid"></span>
-            <span class="dac-nav-hamburger-bot"></span>
+
           </span>
         </a>
         <?cs if:ndk ?><a class="dac-header-logo" style="width:144px;" href="<?cs var:toroot
         ?>ndk/index.html">
-          <img class="dac-header-logo-image" src="<?cs var:toroot ?>assets/images/android_logo.png"
-              srcset="<?cs var:toroot ?>assets/images/android_logo@2x.png 2x"
-              width="32" height="36" alt="Android" /> NDK
+          <img class="dac-header-logo-image" src="<?cs var:toroot ?>assets/images/logo_virocore.png"
+              srcset="<?cs var:toroot ?>assets/images/logo_virocore@2x.png 2x"
+              width="143" height="36" alt="Android" /> NDK
           </a><?cs else ?><a class="dac-header-logo" href="<?cs var:toroot ?>index.html">
-          <img class="dac-header-logo-image" src="<?cs var:toroot ?>assets/images/android_logo.png"
-              srcset="<?cs var:toroot ?>assets/images/android_logo@2x.png 2x"
-              width="32" height="36" alt="Android" /> Developers
+          <img class="dac-header-logo-image" src="<?cs var:toroot ?>assets/images/logo_virocore.png"
+              srcset="<?cs var:toroot ?>assets/images/logo_virocore@2x.png 2x"
+              width="143" height="36" alt="Android" />
           </a><?cs /if ?>
 
         <?cs if:ndk
@@ -73,31 +71,13 @@
         #
         ?><ul class="dac-header-tabs">
           <li>
-          <a class="dac-header-tab" href="<?cs var:toroot ?>design/index.html"
-             zh-tw-lang="設計"
-             zh-cn-lang="设计"
-             ru-lang="Проектирование"
-             ko-lang="디자인"
-             ja-lang="設計"
-             es-lang="Diseñar">Design</a>
+
           </li>
           <li>
-          <a class="dac-header-tab" href="<?cs var:toroot ?>develop/index.html"
-             zh-tw-lang="開發"
-             zh-cn-lang="开发"
-             ru-lang="Разработка"
-             ko-lang="개발"
-             ja-lang="開発"
-             es-lang="Desarrollar">Develop</a>
+
           </li>
           <li>
-          <a class="dac-header-tab" href="<?cs var:toroot ?>distribute/index.html"
-             zh-tw-lang="發佈"
-             zh-cn-lang="分发"
-             ru-lang="Распространение"
-             ko-lang="배포"
-             ja-lang="配布"
-             es-lang="Distribuir">Distribute</a>
+
           </li>
         </ul><?cs
         /if ?><?cs
@@ -109,11 +89,9 @@
 
         <?cs if:ndk ?><a class="dac-header-console-btn" href="http://developer.android.com">
           Back to Android Developers
-        </a><?cs else ?><a class="dac-header-console-btn" href="https://play.google.com/apps/publish/">
-          <span class="dac-sprite dac-google-play"></span>
-          <span class="dac-visible-desktop-inline">Developer</span>
-          Console
-        </a><?cs /if ?><?cs
+        </a><?cs else ?>
+
+        <?cs /if ?><?cs
 
         # ADD SEARCH AND MENU ?><?cs
         if:!ndk ?><?cs

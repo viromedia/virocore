@@ -3,58 +3,26 @@
   <div class="dac-footer<?cs if:fullpage ?> dac-landing<?cs /if ?>">
     <div class="cols dac-footer-main">
       <div class="col-1of2">
-        <a class="dac-footer-getnews" id="newsletter" data-modal-toggle="newsletter" href="javascript:;">Get news &amp; tips <span
-          class="dac-fab dac-primary"><i class="dac-sprite dac-mail"></i></span></a>
+        
       </div>
       <div class="col-1of2 dac-footer-reachout">
         <div class="dac-footer-contact">
-          <a class="dac-footer-contact-link" href="http://android-developers.blogspot.com/">Blog</a>
-          <a class="dac-footer-contact-link" href="/support.html">Support</a>
-        </div>
-        <div class="dac-footer-social">
-          <a class="dac-button-social dac-youtube dac-footer-social-link" href="https://www.youtube.com/user/androiddevelopers"><i class="dac-sprite dac-youtube"></i></a>
-          <a class="dac-button-social dac-gplus dac-footer-social-link" href="https://plus.google.com/+AndroidDevelopers"><i class="dac-sprite dac-gplus"></i></a>
-          <a class="dac-button-social dac-twitter dac-footer-social-link" href="https://twitter.com/AndroidDev"><i class="dac-sprite dac-twitter"></i></a>
+          <a class="dac-footer-contact-link" href="http://blog.viromedia.com/">Blog</a>
+          <a class="dac-footer-contact-link" href="https://github.com/viromedia/viro/issues">Support</a>
         </div>
       </div>
     </div>
 
     <hr class="dac-footer-separator"/>
 
-    <?cs if:reference ?>
-      <p class="dac-footer-copyright">
-        <?cs call:custom_copyright() ?>
-      </p>
-      <p class="dac-footer-build">
-        <?cs call:custom_buildinfo() ?>
-      </p>
-    <?cs elif:!hide_license_footer ?>
-      <p class="dac-footer-copyright">
-        <?cs call:custom_cc_copyright() ?>
-      </p>
-    <?cs /if ?>
+    <p class="dac-footer-copyright">
+      <?cs call:custom_copyright() ?>
+    </p>
 
     <p class="dac-footer-links">
-      <a href="/about/android.html">About Android</a>
-      <a href="/auto/index.html">Auto</a>
-      <a href="/tv/index.html">TV</a>
-      <a href="/wear/index.html">Wear</a>
-      <a href="/legal.html">Legal</a>
-
-      <span id="language" class="locales">
-        <select name="language" onchange="changeLangPref(this.value, true)">
-          <option value="en" selected="selected">English</option>
-          <option value="es">Español</option>
-          <option value="id">Bahasa Indonesia</option>
-          <option value="ja">日本語</option>
-          <option value="ko">한국어</option>
-          <option value="pt-br">Português Brasileiro</option>
-          <option value="ru">Русский</option>
-          <option value="vi">tiếng Việt</option>
-          <option value="zh-cn">中文（简体)</option>
-          <option value="zh-tw">中文（繁體)</option>
-        </select>
-      </span>
+      <a href="http://viromedia.com">About Viro</a>
+      <a href="http://viromedia.com/viroar">AR</a>
+      <a href="http://viromedia.com/virovr">VR</a>
     </p>
   </div>
 </div>

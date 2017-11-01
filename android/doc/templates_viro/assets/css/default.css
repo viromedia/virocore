@@ -6892,7 +6892,7 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
 .dac-header {
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.07);
   box-sizing: border-box;
-  background: #6ab344;
+  background: #29a6cf;
   height: 64px;
   margin: 0;
   left: 0;
@@ -6934,7 +6934,7 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
   letter-spacing: .3px;
   line-height: 36px;
   opacity: 1;
-  padding: 13px 48px 15px 0;
+  padding: 13px 62px 15px 0;
 }
 
 .dac-header-logo, .dac-header-logo:hover, .dac-header-logo:focus {
@@ -7171,8 +7171,6 @@ body.no-crumbs .dac-header-crumbs {
 
 @media (min-width: 980px) {
   .dac-header-search-inner::after {
-    background: -webkit-linear-gradient(right, #6ab344, rgba(106, 179, 68, 0));
-    background: linear-gradient(to left, #6ab344, rgba(106, 179, 68, 0));
     content: '';
     display: block;
     height: 64px;
@@ -7207,7 +7205,7 @@ body.no-crumbs .dac-header-crumbs {
 }
 
 .dac-header-search-input {
-  background: #77be53;
+  background: #3abae4;
   border-radius: 3px;
   border: none;
   box-sizing: border-box;
@@ -7493,13 +7491,14 @@ body.no-crumbs .dac-header-crumbs {
 
 .dac-nav-back-button {
   background: #546e7a;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   display: block;
   font-weight: 500;
   font-size: 18px;
+  line-height: 0px;
+  height: 0px;
   left: 0;
   margin: 0;
-  padding: 20px;
+  padding: 0px;
   position: absolute !important;
   right: 0;
   top: 0;
@@ -7640,7 +7639,7 @@ body.no-crumbs .dac-header-crumbs {
   float: left;
   height: 15px;
   padding: 22px 20px;
-  width: 18px;
+  width: 0px;
 }
 
 @media (max-width: 719px) {
@@ -7750,7 +7749,7 @@ body.no-crumbs .dac-header-crumbs {
   bottom: 0;
   left: 0;
   position: absolute !important;
-  top: 65px !important;
+  top: 0px !important;
   right: 0;
   z-index: 1;
 }
