@@ -86,7 +86,7 @@ private:
 
     void renderFrame();
     void renderWithTracking(const std::shared_ptr<VROARCamera> &camera, const std::unique_ptr<VROARFrame> &frame,
-                            VROViewport viewport, bool firstFrameSinceResume);
+                            VROViewport viewport, bool backgroundNeedsReset);
     void renderWaitingForTracking(VROViewport viewport);
     void renderSuspended();
     void initARSession(VROViewport viewport, std::shared_ptr<VROScene> scene);

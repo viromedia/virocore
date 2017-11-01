@@ -93,9 +93,11 @@ void VROSceneRendererARCore::renderFrame() {
 
     VROViewport viewport(0, 0, _surfaceSize.width, _surfaceSize.height);
 
+    bool backgroundNeedsReset = false;
     if (_sceneController) {
         if (!_cameraBackground) {
             initARSession(viewport, _sceneController->getScene());
+            backgroundNeedsReset = true;
         }
     }
 
@@ -114,7 +116,7 @@ void VROSceneRendererARCore::renderFrame() {
          Protect against this by not accessing the session until tracking is operational.
          */
         if (_hasTrackingResumed || camera->getTrackingState() == VROARTrackingState::Normal) {
-            renderWithTracking(camera, frame, viewport, !_hasTrackingResumed);
+            renderWithTracking(camera, frame, viewport, !_hasTrackingResumed || backgroundNeedsReset);
             _hasTrackingResumed = true;
         }
         else {
@@ -129,7 +131,7 @@ void VROSceneRendererARCore::renderFrame() {
 void VROSceneRendererARCore::renderWithTracking(const std::shared_ptr<VROARCamera> &camera,
                                                 const std::unique_ptr<VROARFrame> &frame,
                                                 VROViewport viewport,
-                                                bool firstFrameSinceResume) {
+                                                bool backgroundNeedsReset) {
     VROFieldOfView fov;
     VROMatrix4f projection = camera->getProjection(viewport, kZNear, _renderer->getFarClippingPlane(), &fov);
     VROMatrix4f rotation = camera->getRotation();
@@ -145,7 +147,7 @@ void VROSceneRendererARCore::renderWithTracking(const std::shared_ptr<VROARCamer
         }
     }
 
-    if (firstFrameSinceResume || ((VROARFrameARCore *)frame.get())->isDisplayRotationChanged()) {
+    if (backgroundNeedsReset || ((VROARFrameARCore *)frame.get())->isDisplayRotationChanged()) {
         VROVector3f BL, BR, TL, TR;
         ((VROARFrameARCore *)frame.get())->getBackgroundTexcoords(&BL, &BR, &TL, &TR);
 
@@ -314,6 +316,9 @@ void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneControll
         arScene->setARComponentManager(_componentManager);
     }
     VROSceneRenderer::setSceneController(sceneController);
+
+    // Reset the camera background for the new scene
+    _cameraBackground.reset();
 }
 
 void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneController> sceneController, float seconds,
@@ -321,6 +326,9 @@ void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneControll
 
     _sceneController = sceneController;
     VROSceneRenderer::setSceneController(sceneController, seconds, timingFunction);
+
+    // Reset the camera background for the new scene
+    _cameraBackground.reset();
 }
 
 std::vector<VROARHitTestResult> VROSceneRendererARCore::performARHitTest(VROVector3f ray) {
