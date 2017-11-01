@@ -30,7 +30,7 @@ void TransformDelegate_JNI::onPositionUpdate(VROVector3f position){
             return;
         }
 
-        VROPlatformCallJavaFunction(weakObj, "onPositionUpdate", "(FFF)V",
+        VROPlatformCallJavaFunction(localObj, "onPositionUpdate", "(FFF)V",
                                     position.x, position.y, position.z);
         env->DeleteLocalRef(localObj);
         env->DeleteWeakGlobalRef(weakObj);
