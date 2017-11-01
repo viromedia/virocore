@@ -16,6 +16,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/features2d/features2d.hpp"
 #include <android/bitmap.h>
+#include <VROPlatformUtil.h>
 #include "VROLog.h"
 
 #define JNI_METHOD(return_type, method_name) \
@@ -50,10 +51,8 @@ JNI_METHOD(void, nativeRunEdgeDetection)(JNIEnv *env, jobject obj,
                                          jstring jinputFile,
                                          jstring joutputFile) {
     // Get the strings
-    const char *cStrInput = env->GetStringUTFChars(jinputFile, NULL);
-    std::string inputFileName(cStrInput);
-    const char *cStrOutput = env->GetStringUTFChars(joutputFile, NULL);
-    std::string outputFileName(cStrOutput);
+    std::string inputFileName = VROPlatformGetString(jinputFile);
+    std::string outputFileName = VROPlatformGetString(joutputFile);
 
     cv::Mat input = cv::imread(inputFileName, cv::IMREAD_GRAYSCALE);
 
@@ -61,25 +60,16 @@ JNI_METHOD(void, nativeRunEdgeDetection)(JNIEnv *env, jobject obj,
     cv::Canny(input, output, 70, 100);
 
     cv::imwrite(outputFileName, output);
-
-
-    env->ReleaseStringUTFChars(jinputFile, cStrInput);
-    env->ReleaseStringUTFChars(joutputFile, cStrOutput);
 }
 
 JNI_METHOD(void, nativeReadWriteBitmap)(JNIEnv *env, jobject obj,
                                         jstring jinstring, jstring joutstring) {
-    const char *cStrInput = env->GetStringUTFChars(jinstring, NULL);
-    std::string inputFilePath(cStrInput);
-    const char *cStrOutput = env->GetStringUTFChars(joutstring, NULL);
-    std::string outputFilePath(cStrOutput);
+    std::string inputFilePath = VROPlatformGetString(jinstring);
+    std::string outputFilePath = VROPlatformGetString(joutstring);
 
     cv::Mat input = cv::imread(inputFilePath, cv::IMREAD_GRAYSCALE);
 
     cv::imwrite(outputFilePath, input);
-
-    env->ReleaseStringUTFChars(jinstring, cStrInput);
-    env->ReleaseStringUTFChars(joutstring, cStrOutput);
 }
 
 }  // extern "C"

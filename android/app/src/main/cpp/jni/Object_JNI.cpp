@@ -26,10 +26,7 @@ JNI_METHOD(void, nativeLoadModelFromURL)(JNIEnv *env,
                                          jlong node_j,
                                          jboolean isFBX,
                                          jlong requestId) {
-    const char *cURL = env->GetStringUTFChars(jURL, NULL);
-    std::string URL(cURL);
-    env->ReleaseStringUTFChars(jURL, cURL);
-
+    std::string URL = VROPlatformGetString(jURL);
     std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(object, env);
     std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish =
             [delegateRef, isFBX, requestId](std::shared_ptr<VRONode> node, bool success) {
@@ -59,10 +56,7 @@ JNI_METHOD(void, nativeLoadModelFromResources)(JNIEnv *env,
                                                 jlong node_j,
                                                 jboolean isFBX,
                                                 jlong requestId) {
-    const char *cresource = env->GetStringUTFChars(jresource, NULL);
-    std::string resource(cresource);
-    env->ReleaseStringUTFChars(jresource, cresource);
-
+    std::string resource = VROPlatformGetString(jresource);
     std::shared_ptr<OBJLoaderDelegate> delegateRef = std::make_shared<OBJLoaderDelegate>(object, env);
     std::function<void(std::shared_ptr<VRONode> node, bool success)> onFinish =
             [delegateRef, isFBX, requestId](std::shared_ptr<VRONode> node, bool success) {

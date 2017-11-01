@@ -23,18 +23,14 @@ JNI_METHOD(void, nativeInitPhysicsBody)(JNIEnv *env,
                                         jstring shapeTypeStr,
                                         jfloatArray shapeParams) {
     // Get Physics Body type
-    const char *cStrBodyType = env->GetStringUTFChars(bodyTypeStr, NULL);
-    std::string strBodyType(cStrBodyType);
+    std::string strBodyType = VROPlatformGetString(bodyTypeStr);
     VROPhysicsBody::VROPhysicsBodyType bodyType = VROPhysicsBody::getBodyTypeForString(strBodyType);
-    env->ReleaseStringUTFChars(bodyTypeStr, cStrBodyType);
 
     // Build a VROPhysicsShape if possible
     std::shared_ptr<VROPhysicsShape> propPhysicsShape = nullptr;
     if (shapeTypeStr != NULL) {
-        const char *cStrShapeType = env->GetStringUTFChars(shapeTypeStr, NULL);
-        std::string strShapeType(cStrShapeType);
+        std::string strShapeType = VROPlatformGetString(shapeTypeStr);
         VROPhysicsShape::VROShapeType shapeType = VROPhysicsShape::getTypeForString(strShapeType);
-        env->ReleaseStringUTFChars(shapeTypeStr, cStrShapeType);
 
         int paramsLength = env->GetArrayLength(shapeParams);
         jfloat *pointArray = env->GetFloatArrayElements(shapeParams, 0);
@@ -79,10 +75,8 @@ JNI_METHOD(void, nativeSetPhysicsShape)(JNIEnv *env,
     std::shared_ptr<VROPhysicsShape> propPhysicsShape = nullptr;
     if (shapeTypeStr != NULL) {
         // Get the shape type
-        const char *cStrShapeType = env->GetStringUTFChars(shapeTypeStr, NULL);
-        std::string strShapeType(cStrShapeType);
+        std::string strShapeType = VROPlatformGetString(shapeTypeStr);
         VROPhysicsShape::VROShapeType shapeType = VROPhysicsShape::getTypeForString(strShapeType);
-        env->ReleaseStringUTFChars(shapeTypeStr, cStrShapeType);
 
         // Get the shape params
         int paramsLength = env->GetArrayLength(shapeParams);
@@ -279,12 +273,10 @@ JNI_METHOD(jstring, nativeIsValidBodyType)(JNIEnv *env,
                                            jclass clazz,
                                            jstring bodyType,
                                            jfloat mass) {
-// Grab the physics body type
-    const char *cStrBodyType = env->GetStringUTFChars(bodyType, NULL);
-    std::string strBodyType(cStrBodyType);
-    env->ReleaseStringUTFChars(bodyType, cStrBodyType);
+    // Grab the physics body type
+    std::string strBodyType = VROPlatformGetString(bodyType);
 
-// Verify if the physics body type is valid and return
+    // Verify if the physics body type is valid and return
     std::string errorMsg;
     bool isValid = VROPhysicsBody::isValidType(strBodyType, mass, errorMsg);
     if (isValid) {
@@ -298,12 +290,10 @@ JNI_METHOD(jstring, nativeIsValidShapeType)(JNIEnv *env,
                                             jclass clazz,
                                             jstring shapeType,
                                             jfloatArray shapeParams) {
-// Grab the shape type
-    const char *cStrShapeType = env->GetStringUTFChars(shapeType, NULL);
-    std::string strShapeType(cStrShapeType);
-    env->ReleaseStringUTFChars(shapeType, cStrShapeType);
+    // Grab the shape type
+    std::string strShapeType = VROPlatformGetString(shapeType);
 
-// Grab the shape params
+    // Grab the shape params
     int paramsLength = env->GetArrayLength(shapeParams);
     jfloat *pointArray = env->GetFloatArrayElements(shapeParams, 0);
     std::vector<float> params;

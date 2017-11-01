@@ -63,18 +63,13 @@ JNI_METHOD(void, nativeSetRotationType)(JNIEnv *env,
                                               jobject obj,
                                               jlong nativeCamera,
                                               jstring rotationType) {
-    // Get the string
-    const char *cStrRotationType = env->GetStringUTFChars(rotationType, NULL);
-    std::string strRotationType(cStrRotationType);
     VROCameraRotationType type;
-
-    if (VROStringUtil::strcmpinsensitive(strRotationType, "orbit")) {
+    if (VROStringUtil::strcmpinsensitive(VROPlatformGetString(rotationType), "orbit")) {
         type = VROCameraRotationType::Orbit;
     } else {
         // default rotation type is standard.
         type = VROCameraRotationType::Standard;
     }
-    env->ReleaseStringUTFChars(rotationType, cStrRotationType);
 
     std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
     VROPlatformDispatchAsyncRenderer([camera_w, type] {

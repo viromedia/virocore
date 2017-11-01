@@ -92,10 +92,7 @@ JNI_METHOD(void, nativeSetTag)(JNIEnv *env,
                                     jobject obj,
                                     jlong native_node_ref,
                                     jstring tag) {
-    const char *cStrTag = env->GetStringUTFChars(tag, NULL);
-    std::string strBodyType(cStrTag);
-    env->ReleaseStringUTFChars(tag, cStrTag);
-
+    std::string strBodyType = VROPlatformGetString(tag);
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, strBodyType] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -477,17 +474,13 @@ JNI_METHOD(void, nativeSetDragType)(JNIEnv *env,
 
     // default type to FixedDistance if we don't recognize the given string
     VRODragType type = VRODragType::FixedDistance;
-
-    const char *rawString = env->GetStringUTFChars(dragType, NULL);
-    std::string dragTypeStr(rawString);
+    std::string dragTypeStr = VROPlatformGetString(dragType);
 
     if (VROStringUtil::strcmpinsensitive(dragTypeStr, "FixedDistance")) {
         type = VRODragType::FixedDistance;
     } else if (VROStringUtil::strcmpinsensitive(dragTypeStr, "FixedToWorld")) {
         type = VRODragType ::FixedToWorld;
     }
-
-    env->ReleaseStringUTFChars(dragType, rawString);
 
     VROPlatformDispatchAsyncRenderer([node_w, type] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -534,10 +527,9 @@ JNI_METHOD(void, nativeSetTransformBehaviors)(JNIEnv *env,
 
     for (int i = 0; i < length; i++) {
         jstring string = (jstring) (env->GetObjectArrayElement(stringArrayRef, i));
-        const char *rawString = env->GetStringUTFChars(string, NULL);
-        std::string transformBehavior(rawString);
+        std::string transformBehavior = VROPlatformGetString(string);
 
-        // Parse out the constratins and save a copy into tempConstraints
+        // Parse out the constraints and save a copy into tempConstraints
         if (VROStringUtil::strcmpinsensitive(transformBehavior, "billboard")) {
             tempConstraints.push_back(
                     std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
@@ -548,7 +540,6 @@ JNI_METHOD(void, nativeSetTransformBehaviors)(JNIEnv *env,
             tempConstraints.push_back(
                     std::make_shared<VROBillboardConstraint>(VROBillboardAxis::Y));
         }
-        env->ReleaseStringUTFChars(string, rawString);
     }
     env->DeleteLocalRef(stringArrayRef);
 

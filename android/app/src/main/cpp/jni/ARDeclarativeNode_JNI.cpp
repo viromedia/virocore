@@ -12,12 +12,9 @@ JNI_METHOD(void, nativeSetAnchorId) (JNIEnv *env,
                                      jobject object,
                                      jlong node_j,
                                      jstring id_j) {
-    const char *id_c = env->GetStringUTFChars(id_j, NULL);
-    std::string id_s(id_c);
-
+    std::string id_s = VROPlatformGetString(id_j);
     std::shared_ptr<VROARDeclarativeNode> node = ARDeclarativeNode::native(node_j);
     node->setAnchorId(id_s);
-    env->ReleaseStringUTFChars(id_j, id_c);
 }
 
 JNI_METHOD(jlong, nativeCreateARNodeDelegate) (JNIEnv *env,

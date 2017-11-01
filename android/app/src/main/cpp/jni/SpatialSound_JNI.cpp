@@ -25,11 +25,7 @@ JNI_METHOD(jlong, nativeCreateSpatialSound)(JNIEnv *env,
                                             jboolean local,
                                             jlong context_j) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
-
-    const char *cStrFile = env->GetStringUTFChars(filename, NULL);
-    std::string file(cStrFile);
-    env->ReleaseStringUTFChars(filename, cStrFile);
-
+    std::string file = VROPlatformGetString(filename);
     std::shared_ptr<VROSound> soundEffect = context->getDriver()->newSound(file, VROSoundType::Spatial, local);
     std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(soundEffect);
     soundGvr->setDelegate(std::make_shared<SoundDelegate>(object));
@@ -98,8 +94,7 @@ JNI_METHOD(void, nativeSetDistanceRolloff)(JNIEnv *env,
                                            jstring model,
                                            jfloat minDistance,
                                            jfloat maxDistance) {
-    const char *cModelString = env->GetStringUTFChars(model, NULL);
-    std::string modelString(cModelString);
+    std::string modelString = VROPlatformGetString(model);
 
     if (VROStringUtil::strcmpinsensitive(modelString, "none")) {
         SpatialSound::native(nativeRef)->setDistanceRolloffModel(VROSoundRolloffModel::None,

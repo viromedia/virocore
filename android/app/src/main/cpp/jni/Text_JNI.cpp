@@ -98,12 +98,13 @@ JNI_METHOD(jlong, nativeCreateText)(JNIEnv *env,
                                     jstring clipMode_j,
                                     jint maxLines) {
     // Get the text string
-    const jchar *text_c = env->GetStringChars(text_j, NULL);
-    jsize textLength = env->GetStringLength(text_j);
-
     std::wstring text;
-    text.assign(text_c, text_c + textLength);
-    env->ReleaseStringChars(text_j, text_c);
+    if (text_j != NULL){
+        const jchar *text_c = env->GetStringChars(text_j, NULL);
+        jsize textLength = env->GetStringLength(text_j);
+        text.assign(text_c, text_c + textLength);
+        env->ReleaseStringChars(text_j, text_c);
+    }
 
     // Get the color
     float a = ((color >> 24) & 0xFF) / 255.0;
@@ -113,33 +114,18 @@ JNI_METHOD(jlong, nativeCreateText)(JNIEnv *env,
     VROVector4f vecColor(r, g, b, a);
 
     // Get horizontal alignment
-    const char *horizontalAlignment_c = env->GetStringUTFChars(horizontalAlignment_j, NULL);
-    std::string horizontalAlignment_s(horizontalAlignment_c);
-    VROTextHorizontalAlignment horizontalAlignment = getHorizontalAlignmentEnum(horizontalAlignment_s);
-    env->ReleaseStringUTFChars(horizontalAlignment_j, horizontalAlignment_c);
+    VROTextHorizontalAlignment horizontalAlignment = getHorizontalAlignmentEnum(VROPlatformGetString(horizontalAlignment_j));
 
     // Get vertical alignment
-    const char *verticalAlignment_c = env->GetStringUTFChars(verticalAlignment_j, NULL);
-    std::string verticalAlignment_s(verticalAlignment_c);
-    VROTextVerticalAlignment verticalAlignment = getVerticalAlignmentEnum(verticalAlignment_s);
-    env->ReleaseStringUTFChars(verticalAlignment_j, verticalAlignment_c);
+    VROTextVerticalAlignment verticalAlignment = getVerticalAlignmentEnum(VROPlatformGetString(verticalAlignment_j));
 
     // Get line break mode
-    const char *lineBreakMode_c = env->GetStringUTFChars(lineBreakMode_j, NULL);
-    std::string lineBreakMode_s(lineBreakMode_c);
-    VROLineBreakMode lineBreakMode = getLineBreakModeEnum(lineBreakMode_s);
-    env->ReleaseStringUTFChars(lineBreakMode_j, lineBreakMode_c);
+    VROLineBreakMode lineBreakMode = getLineBreakModeEnum(VROPlatformGetString(lineBreakMode_j));
 
     // Get clip mode
-    const char *clipMode_c = env->GetStringUTFChars(clipMode_j, NULL);
-    std::string clipMode_s(clipMode_c);
-    VROTextClipMode clipMode = getTextClipModeEnum(clipMode_s);
-    env->ReleaseStringUTFChars(clipMode_j, clipMode_c);
+    VROTextClipMode clipMode = getTextClipModeEnum(VROPlatformGetString(clipMode_j));
 
-    const char *fontFamily_c = env->GetStringUTFChars(fontFamily_j, NULL);
-    std::string fontFamily(fontFamily_c);
-    env->ReleaseStringUTFChars(fontFamily_j, fontFamily_c);
-
+    std::string fontFamily = VROPlatformGetString(fontFamily_j);
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::shared_ptr<VRODriver> driver = context->getDriver();
     std::shared_ptr<VROTypeface> typeface = driver.get()->newTypeface(fontFamily, size);
@@ -192,11 +178,7 @@ JNI_METHOD(void, nativeSetFont)(JNIEnv *env,
                                 jlong text_j,
                                 jint size,
                                 jstring family_j) {
-
-    const char *family_c = env->GetStringUTFChars(family_j, NULL);
-    std::string family(family_c);
-    env->ReleaseStringUTFChars(family_j, family_c);
-
+    std::string family = VROPlatformGetString(family_j);
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::shared_ptr<VROTypeface> typeface = context->getDriver()->newTypeface(family, size);
 
@@ -265,11 +247,8 @@ JNI_METHOD(void, nativeSetHorizontalAlignment)(JNIEnv *env,
                                                jobject obj,
                                                jlong text_j,
                                                jstring horizontalAlignment_j) {
-
-    const char *horizontalAlignment_c = env->GetStringUTFChars(horizontalAlignment_j, NULL);
-    std::string horizontalAlignment_s(horizontalAlignment_c);
-    VROTextHorizontalAlignment horizontalAlignment = getHorizontalAlignmentEnum(horizontalAlignment_s);
-    env->ReleaseStringUTFChars(horizontalAlignment_j, horizontalAlignment_c);
+    VROTextHorizontalAlignment horizontalAlignment
+            = getHorizontalAlignmentEnum(VROPlatformGetString(horizontalAlignment_j));
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, horizontalAlignment] {
@@ -285,11 +264,8 @@ JNI_METHOD(void, nativeSetVerticalAlignment)(JNIEnv *env,
                                              jobject obj,
                                              jlong text_j,
                                              jstring verticalAlignment_j) {
-
-    const char *verticalAlignment_c = env->GetStringUTFChars(verticalAlignment_j, NULL);
-    std::string verticalAlignment_s(verticalAlignment_c);
-    VROTextVerticalAlignment verticalAlignment = getVerticalAlignmentEnum(verticalAlignment_s);
-    env->ReleaseStringUTFChars(verticalAlignment_j, verticalAlignment_c);
+    VROTextVerticalAlignment verticalAlignment
+            = getVerticalAlignmentEnum(VROPlatformGetString(verticalAlignment_j));
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, verticalAlignment] {
@@ -305,11 +281,7 @@ JNI_METHOD(void, nativeSetLineBreakMode)(JNIEnv *env,
                                          jobject obj,
                                          jlong text_j,
                                          jstring lineBreakMode_j) {
-
-    const char *lineBreakMode_c = env->GetStringUTFChars(lineBreakMode_j, NULL);
-    std::string lineBreakMode_s(lineBreakMode_c);
-    VROLineBreakMode lineBreakMode = getLineBreakModeEnum(lineBreakMode_s);
-    env->ReleaseStringUTFChars(lineBreakMode_j, lineBreakMode_c);
+    VROLineBreakMode lineBreakMode = getLineBreakModeEnum(VROPlatformGetString(lineBreakMode_j));
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, lineBreakMode] {
@@ -327,10 +299,7 @@ JNI_METHOD(void, nativeSetClipMode)(JNIEnv *env,
                                     jstring clipMode_j) {
 
     // Get clip mode
-    const char *clipMode_c = env->GetStringUTFChars(clipMode_j, NULL);
-    std::string clipMode_s(clipMode_c);
-    VROTextClipMode clipMode = getTextClipModeEnum(clipMode_s);
-    env->ReleaseStringUTFChars(clipMode_j, clipMode_c);
+    VROTextClipMode clipMode = getTextClipModeEnum(VROPlatformGetString(clipMode_j));
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, clipMode] {

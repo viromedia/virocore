@@ -139,13 +139,9 @@ JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
 JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, jlong context_j,
                                      jfloat sizeX, jfloat sizeY, jfloat sizeZ, jstring wallMaterial,
                                      jstring ceilingMaterial, jstring floorMaterial) {
-    const char *cWallMaterial = env->GetStringUTFChars(wallMaterial, NULL);
-    const char *cCeilingMaterial = env->GetStringUTFChars(ceilingMaterial, NULL);
-    const char *cFloorMaterial = env->GetStringUTFChars(floorMaterial, NULL);
-
-    std::string strWallMaterial(cWallMaterial);
-    std::string strCeilingMaterial(cCeilingMaterial);
-    std::string strFloorMaterial(cFloorMaterial);
+    std::string strWallMaterial = VROPlatformGetString(wallMaterial);
+    std::string strCeilingMaterial = VROPlatformGetString(ceilingMaterial);
+    std::string strFloorMaterial = VROPlatformGetString(floorMaterial);
 
     std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
 
@@ -164,11 +160,6 @@ JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, j
                                            strCeilingMaterial,
                                            strFloorMaterial);
     });
-
-    env->ReleaseStringUTFChars(wallMaterial, cWallMaterial);
-    env->ReleaseStringUTFChars(ceilingMaterial, cCeilingMaterial);
-    env->ReleaseStringUTFChars(floorMaterial, cFloorMaterial);
-
 }
 
 JNI_METHOD(void, nativeAddParticleEmitter)(JNIEnv *env,
@@ -202,15 +193,13 @@ JNI_METHOD(bool, nativeSetEffects)(JNIEnv *env,
         int numberOfValues = env->GetArrayLength(jEffects);
         for (int i = 0; i < numberOfValues; i++) {
             jstring jEffect = (jstring) env->GetObjectArrayElement(jEffects, i);
-            const char *cStrEffect = env->GetStringUTFChars(jEffect, NULL);
-            std::string strEffect(cStrEffect);
+            std::string strEffect = VROPlatformGetString(jEffect);
             VROPostProcessEffect postEffect = VROPostProcessEffectFactory::getEffectForString(strEffect);
             if (postEffect == VROPostProcessEffect::None){
                 perror("Error: Attempted to set an unknown post process effect. Ignoring effects");
                 return false;
             }
             effects.push_back(strEffect);
-            env->ReleaseStringUTFChars(jEffect, cStrEffect);
         }
     }
 
@@ -274,9 +263,7 @@ JNI_METHOD(void, findCollisionsWithRayAsync)(JNIEnv *env,
     env->ReleaseFloatArrayElements(toPos, toPosf, 0);
 
     // Get the ray tag used to notify collided objects with.
-    const char *cStrTag = env->GetStringUTFChars(tag, NULL);
-    std::string strTag(cStrTag);
-    env->ReleaseStringUTFChars(tag, cStrTag);
+    std::string strTag = VROPlatformGetString(tag);
 
     // If no ray tag is given, set it to the default tag.
     if (strTag.empty()) {
@@ -335,9 +322,7 @@ JNI_METHOD(void, findCollisionsWithShapeAsync)(JNIEnv *env,
     env->ReleaseFloatArrayElements(posStart, posEndf, 0);
 
     // Grab the shape type
-    const char *cStrShapeType = env->GetStringUTFChars(shapeType, NULL);
-    std::string strShapeType(cStrShapeType);
-    env->ReleaseStringUTFChars(shapeType, cStrShapeType);
+    std::string strShapeType = VROPlatformGetString(shapeType);
 
     // Grab the shape params
     int paramsLength = env->GetArrayLength(shapeParams);
@@ -349,9 +334,7 @@ JNI_METHOD(void, findCollisionsWithShapeAsync)(JNIEnv *env,
     env->ReleaseFloatArrayElements(shapeParams, pointArray, 0);
 
     // Get the ray tag used to notify collided objects with.
-    const char *cStrTag = env->GetStringUTFChars(tag, NULL);
-    std::string strTag(cStrTag);
-    env->ReleaseStringUTFChars(tag, cStrTag);
+    std::string strTag = VROPlatformGetString(tag);
 
     // If no ray tag is given, set it to the default tag.
     if (strTag.empty()) {

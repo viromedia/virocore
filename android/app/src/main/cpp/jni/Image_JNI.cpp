@@ -18,13 +18,11 @@
 extern "C" {
 
 JNI_METHOD(jlong, nativeCreateImage)(JNIEnv *env, jobject obj, jstring resource, jstring format) {
-    const char *cStrResource = env->GetStringUTFChars(resource, NULL);
-    std::string strResource(cStrResource);
+    std::string strResource = VROPlatformGetString(resource);
 
     VROTextureInternalFormat internalFormat = Texture::getFormat(env, format);
     std::shared_ptr<VROImageAndroid> imagePtr = std::make_shared<VROImageAndroid>(strResource, internalFormat);
 
-    env->ReleaseStringUTFChars(resource, cStrResource);
     return Image::jptr(imagePtr);
 }
 

@@ -10,6 +10,7 @@
 
 #include <jni.h>
 #include <memory>
+#include <VROPlatformUtil.h>
 #include "PersistentRef.h"
 #include "VROParticleEmitter.h"
 
@@ -45,10 +46,8 @@ namespace ParticleEmitter {
         }
 
         // Grab a reference factor for this modifier against which to interpolate.
-        const char *cStrFactor = env->GetStringUTFChars(jFactor, NULL);
-        std::string strFactorType(cStrFactor);
+        std::string strFactorType = VROPlatformGetString(jFactor);
         VROParticleModifier::VROModifierFactor bodyType = VROParticleModifier::getModifierFactorForString(strFactorType);
-        env->ReleaseStringUTFChars(jFactor, cStrFactor);
 
         // Parse out VROModifierIntervals containing sequentially interpolated target values and its
         // corresponding intervals.

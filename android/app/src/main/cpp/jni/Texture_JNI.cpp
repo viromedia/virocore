@@ -8,6 +8,7 @@
 #include <memory>
 #include <VROTextureUtil.h>
 #include "VROData.h"
+#include <VROPlatformUtil.h>
 
 #include "Image_JNI.h"
 #include "VROPlatformUtil.h"
@@ -22,8 +23,7 @@
 namespace Texture {
 
     VROTextureFormat getInputFormat(JNIEnv *env, jstring jformat) {
-        const char *format = env->GetStringUTFChars(jformat, 0);
-        std::string sformat(format);
+        std::string sformat = VROPlatformGetString(jformat);
 
         VROTextureFormat ret = VROTextureFormat::RGBA8;
         if (sformat == "RGB565") {
@@ -32,14 +32,12 @@ namespace Texture {
         else if (sformat == "RGB9_E5") {
             ret = VROTextureFormat::RGB9_E5;
         }
-        env->ReleaseStringUTFChars(jformat, format);
+
         return ret;
     }
 
     VROTextureInternalFormat getFormat(JNIEnv *env, jstring jformat) {
-        const char *format = env->GetStringUTFChars(jformat, 0);
-        std::string sformat(format);
-
+        std::string sformat = VROPlatformGetString(jformat);
         VROTextureInternalFormat ret = VROTextureInternalFormat::RGBA8;
         if (sformat == "RGBA4") {
             ret = VROTextureInternalFormat::RGBA4;
@@ -50,14 +48,11 @@ namespace Texture {
         else if (sformat == "RGB9_E5") {
             ret = VROTextureInternalFormat::RGB9_E5;
         }
-        env->ReleaseStringUTFChars(jformat, format);
         return ret;
     }
 
     VROWrapMode getWrapMode(JNIEnv *env, jstring jwrapMode) {
-        const char *wrapMode = env->GetStringUTFChars(jwrapMode, 0);
-        std::string swrapMode(wrapMode);
-
+        std::string swrapMode = VROPlatformGetString(jwrapMode);
         VROWrapMode ret = VROWrapMode::Clamp;
         if (swrapMode == "Repeat") {
             ret = VROWrapMode::Repeat;
@@ -65,19 +60,15 @@ namespace Texture {
         else if (swrapMode == "Mirror") {
             ret = VROWrapMode::Mirror;
         }
-        env->ReleaseStringUTFChars(jwrapMode, wrapMode);
         return ret;
     }
 
     VROFilterMode getFilterMode(JNIEnv *env, jstring jfilterMode) {
-        const char *filterMode = env->GetStringUTFChars(jfilterMode, 0);
-        std::string sfilterMode(filterMode);
-
+        std::string sfilterMode = VROPlatformGetString(jfilterMode);
         VROFilterMode ret = VROFilterMode::Linear;
         if (sfilterMode == "Nearest") {
             ret = VROFilterMode::Nearest;
         }
-        env->ReleaseStringUTFChars(jfilterMode, filterMode);
         return ret;
     }
 
@@ -114,7 +105,6 @@ JNI_METHOD(jlong, nativeCreateCubeTexture)(JNIEnv *env, jobject obj,
 
 JNI_METHOD(jlong, nativeCreateImageTexture)(JNIEnv *env, jobject obj, jlong image,
                                             jstring format, jboolean sRGB, jboolean mipmap, jstring stereoMode) {
-
     VROStereoMode mode = Texture::getStereoMode(env, stereoMode);
     std::shared_ptr<VROTexture> texturePtr = std::make_shared<VROTexture>(Texture::getFormat(env, format), sRGB,
                                                                           mipmap ? VROMipmapMode::Runtime : VROMipmapMode::None,

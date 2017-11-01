@@ -18,9 +18,7 @@ extern "C" {
                                              jclass clazz,
                                              jstring filepath,
                                              jboolean local) {
-        const char *cStrPath = env->GetStringUTFChars(filepath, NULL);
-        std::string path(cStrPath);
-        env->ReleaseStringUTFChars(filepath, cStrPath);
+        std::string path = VROPlatformGetString(filepath);
 
         // Set the platform env because the renderer could've not been initialized yet (and set
         // the env)

@@ -5,6 +5,7 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
+#include <VROPlatformUtil.h>
 #include "Material_JNI.h"
 #include "VROStringUtil.h"
 
@@ -36,8 +37,7 @@ JNI_METHOD(void, nativeSetTexture)(JNIEnv *env, jobject obj,
                                    jlong textureRef,
                                    jstring materialPropertyName) {
     // Get the string
-    const char *cStrName = env->GetStringUTFChars(materialPropertyName, NULL);
-    std::string strName(cStrName);
+    std::string strName = VROPlatformGetString(materialPropertyName);
 
     // Get the texture
     std::shared_ptr<VROTexture> texture = Texture::native(textureRef);
@@ -62,8 +62,6 @@ JNI_METHOD(void, nativeSetTexture)(JNIEnv *env, jobject obj,
     } else if (VROStringUtil::strcmpinsensitive(strName, "selfIlluminationTexture")) {
         Material::native(nativeRef).get()->getSelfIllumination().setTexture(texture);
     }
-
-    env->ReleaseStringUTFChars(materialPropertyName, cStrName);
 }
 
 JNI_METHOD(void, nativeSetColor)(JNIEnv *env, jobject obj,
@@ -71,8 +69,7 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env, jobject obj,
                                  jlong color,
                                  jstring materialPropertyName) {
     // Get the string
-    const char *cStrName = env->GetStringUTFChars(materialPropertyName, NULL);
-    std::string strName(cStrName);
+    std::string strName = VROPlatformGetString(materialPropertyName);
 
     // Get the color
     float a = ((color >> 24) & 0xFF) / 255.0;
@@ -102,8 +99,6 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env, jobject obj,
     } else if (VROStringUtil::strcmpinsensitive(strName, "selfIlluminationColor")) {
         Material::native(nativeRef).get()->getSelfIllumination().setColor(vecColor);
     }
-
-    env->ReleaseStringUTFChars(materialPropertyName, cStrName);
 }
 
 JNI_METHOD(void, nativeSetShininess)(JNIEnv *env, jobject obj,
@@ -121,8 +116,7 @@ JNI_METHOD(void, nativeSetFresnelExponent)(JNIEnv *env, jobject obj,
 JNI_METHOD(void, nativeSetLightingModel)(JNIEnv *env, jobject obj,
                                          jlong nativeRef,
                                          jstring lightingModelName) {
-    const char *cStrName = env->GetStringUTFChars(lightingModelName, NULL);
-    std::string strName(cStrName);
+    std::string strName = VROPlatformGetString(lightingModelName);
 
     if (VROStringUtil::strcmpinsensitive(strName, "Blinn")) {
         Material::native(nativeRef)->setLightingModel(VROLightingModel::Blinn);
@@ -134,15 +128,12 @@ JNI_METHOD(void, nativeSetLightingModel)(JNIEnv *env, jobject obj,
         // Default lightingModel is Constant, so no use checking.
         Material::native(nativeRef)->setLightingModel(VROLightingModel::Constant);
     }
-
-    env->ReleaseStringUTFChars(lightingModelName, cStrName);
 }
 
 JNI_METHOD(void, nativeSetBlendMode)(JNIEnv *env, jobject obj,
                                      jlong nativeRef,
                                      jstring blendMode_s) {
-    const char *blendMode_c = env->GetStringUTFChars(blendMode_s, NULL);
-    std::string blendMode(blendMode_c);
+    std::string blendMode = VROPlatformGetString(blendMode_s);
 
     if (VROStringUtil::strcmpinsensitive(blendMode, "Alpha")) {
         Material::native(nativeRef)->setBlendMode(VROBlendMode::Alpha);
@@ -154,15 +145,12 @@ JNI_METHOD(void, nativeSetBlendMode)(JNIEnv *env, jobject obj,
         // Default transparencyMode is AOne, so no use checking.
         Material::native(nativeRef)->setBlendMode(VROBlendMode::Add);
     }
-
-    env->ReleaseStringUTFChars(blendMode_s, blendMode_c);
 }
 
 JNI_METHOD(void, nativeSetTransparencyMode)(JNIEnv *env, jobject obj,
                                       jlong nativeRef,
                                       jstring transparencyModeName) {
-    const char *cStrName = env->GetStringUTFChars(transparencyModeName, NULL);
-    std::string strName(cStrName);
+    std::string strName = VROPlatformGetString(transparencyModeName);
 
     if (VROStringUtil::strcmpinsensitive(strName, "RGBZero")) {
         Material::native(nativeRef)->setTransparencyMode(VROTransparencyMode::RGBZero);
@@ -170,16 +158,13 @@ JNI_METHOD(void, nativeSetTransparencyMode)(JNIEnv *env, jobject obj,
         // Default transparencyMode is AOne, so no use checking.
         Material::native(nativeRef)->setTransparencyMode(VROTransparencyMode::AOne);
     }
-
-    env->ReleaseStringUTFChars(transparencyModeName, cStrName);
 }
 
 JNI_METHOD(void, nativeSetCullMode)(JNIEnv *env,
                                     jobject obj,
                                     jlong nativeRef,
                                     jstring cullModeName) {
-    const char *cStrName = env->GetStringUTFChars(cullModeName, NULL);
-    std::string strName(cStrName);
+    std::string strName = VROPlatformGetString(cullModeName);
 
     if (VROStringUtil::strcmpinsensitive(strName, "None")) {
         Material::native(nativeRef)->setCullMode(VROCullMode::None);
@@ -189,8 +174,6 @@ JNI_METHOD(void, nativeSetCullMode)(JNIEnv *env,
         // Default cullMode is Back, so no use checking.
         Material::native(nativeRef)->setCullMode(VROCullMode::Back);
     }
-
-    env->ReleaseStringUTFChars(cullModeName, cStrName);
 }
 
 JNI_METHOD(void, nativeSetDiffuseIntensity)(JNIEnv *env, jobject obj, jlong nativeRef, jfloat diffuseIntensity) {

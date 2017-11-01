@@ -176,9 +176,7 @@ JNI_METHOD(void, nativeSetSpawnVolume)(JNIEnv *env,
                                         jboolean jSpawnOnSurface) {
 
     // Grab the emitter's spawn volume shape.
-    const char *cStrShape = env->GetStringUTFChars(jShape, NULL);
-    std::string strShape(cStrShape);
-    env->ReleaseStringUTFChars(jShape, cStrShape);
+    std::string strShape = VROPlatformGetString(jShape);
     VROParticleSpawnVolume::Shape shape
             = VROParticleSpawnVolume::getModifierFactorForString(strShape);
 
@@ -290,10 +288,7 @@ JNI_METHOD(void, nativeSetParticleModifier)(JNIEnv *env,
                                                                                     jInitialValues,
                                                                                     jInterpolatedIntervalWindows,
                                                                                     jInterpolatedPoints);
-
-    const char *cStrModifier = env->GetStringUTFChars(jModifier, NULL);
-    std::string strModifier(cStrModifier);
-    env->ReleaseStringUTFChars(jModifier, cStrModifier);
+    std::string strModifier = VROPlatformGetString(jModifier);
 
     // Apply the modifier on the targeted property, like opacity.
     std::weak_ptr<VROParticleEmitter> native_w = ParticleEmitter::native(native_ref);
@@ -325,11 +320,7 @@ JNI_METHOD(bool, nativeSetParticleBlendMode)(JNIEnv *env,
                                              jclass clazz,
                                              jlong native_ref,
                                              jstring jblendMode) {
-
-    const char *cStrBlendMode = env->GetStringUTFChars(jblendMode, NULL);
-    std::string strBlendMode(cStrBlendMode);
-    env->ReleaseStringUTFChars(jblendMode, cStrBlendMode);
-
+    std::string strBlendMode = VROPlatformGetString(jblendMode);
     VROBlendMode mode = VROMaterial::getBlendModeFromString(strBlendMode);
     if (mode == VROBlendMode::None){
         pwarn("Viro: Attempted to set invalid Blend mode %s", strBlendMode.c_str());

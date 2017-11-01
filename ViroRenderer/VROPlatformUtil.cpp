@@ -313,12 +313,10 @@ std::string VROPlatformCopyResourceToFile(std::string asset) {
     jmethodID jmethod = env->GetMethodID(cls, "copyResourceToFile", "(Ljava/lang/String;)Ljava/lang/String;");
     jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jasset);
 
-    const char *path = env->GetStringUTFChars(jpath, 0);
-    std::string spath(path);
+    std::string spath = VROPlatformGetString(jpath);
 
-    pinfo("Path to file is %s", path);
+    pinfo("Path to file is %s", spath.c_str());
 
-    env->ReleaseStringUTFChars(jpath, path);
     env->DeleteLocalRef(jpath);
     env->DeleteLocalRef(jasset);
     env->DeleteLocalRef(cls);
@@ -361,16 +359,14 @@ std::map<std::string, std::string> VROPlatformConvertFromJavaMap(jobject javaMap
         // get the key
         jstring key = (jstring) env->GetObjectArrayElement(keyArray, i);
         // convert to std::string
-        const char *cStrKey = env->GetStringUTFChars(key, NULL);
-        std::string strKey(cStrKey);
+        std::string strKey = VROPlatformGetString(key);
         // get the value from the Map
         jmethodID mapGetMethod = env->GetMethodID(mapClass, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
         jstring value = (jstring) env->CallObjectMethod(javaMap, mapGetMethod, key);
         // convert to std::string
-        const char *cStrValue = env->GetStringUTFChars(value, NULL);
-        std::string strValue(cStrValue);
+        std::string strValue = VROPlatformGetString(value);
         // add to the map
-        toReturn.insert(std::make_pair(cStrKey, cStrValue));
+        toReturn.insert(std::make_pair(strKey.c_str(), strValue.c_str()));
     }
     return toReturn;
 }
@@ -411,12 +407,10 @@ std::string VROPlatformCopyAssetToFile(std::string asset) {
     jmethodID jmethod = env->GetMethodID(cls, "copyAssetToFile", "(Ljava/lang/String;)Ljava/lang/String;");
     jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jasset);
 
-    const char *path = env->GetStringUTFChars(jpath, 0);
-    std::string spath(path);
+    std::string spath = VROPlatformGetString(jpath);
 
-    pinfo("Path to file is %s", path);
+    pinfo("Path to file is %s", spath.c_str());
 
-    env->ReleaseStringUTFChars(jpath, path);
     env->DeleteLocalRef(jpath);
     env->DeleteLocalRef(jasset);
     env->DeleteLocalRef(cls);
@@ -729,6 +723,21 @@ void VROPlatformCallJavaFunction(jobject javaObject,
 
     env->DeleteLocalRef(viroClass);
     return result;
+}
+
+std::string VROPlatformGetString(jstring jInputString){
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    env->ExceptionClear();
+
+    if (jInputString == NULL){
+        return "";
+    }
+
+    const char *inputString_c = env->GetStringUTFChars(jInputString, NULL);
+    std::string sInputString(inputString_c);
+    env->ReleaseStringUTFChars(jInputString, inputString_c);
+
+    return sInputString;
 }
 
 void Java_com_viro_renderer_jni_PlatformUtil_runTask(JNIEnv *env, jclass clazz, jint taskId) {
