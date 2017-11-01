@@ -13,7 +13,7 @@
         <uses-library android:name="android.support.test.runner"
             android:required="false"/>
         <activity
-            android:name="com.viromedia.renderertest.ViroReleaseTestActivity"
+            android:name="com.viromedia.renderertest.ViroActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:enableVrMode="false"
             android:screenOrientation="landscape" >
