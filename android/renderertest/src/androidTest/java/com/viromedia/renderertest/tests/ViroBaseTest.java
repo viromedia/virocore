@@ -105,7 +105,7 @@ public abstract class ViroBaseTest {
 
         // Add yes button
         Node yesButton = new Node();
-        Bitmap yesBitmap = getBitmapFromAsset(mActivity, "icon_thumb_up.png");
+        Bitmap yesBitmap = getBitmapFromAssets(mActivity, "icon_thumb_up.png");
         Texture yesTexture = new Texture(yesBitmap,
                 Texture.TextureFormat.RGBA8, true, true);
         Material yesMaterial = new Material();
@@ -121,7 +121,7 @@ public abstract class ViroBaseTest {
 
         // Add no button
         Node noButton = new Node();
-        Bitmap noBitmap = getBitmapFromAsset(mActivity, "icon_thumb_down.png");
+        Bitmap noBitmap = getBitmapFromAssets(mActivity, "icon_thumb_down.png");
         Texture noTexture = new Texture(noBitmap,
                 Texture.TextureFormat.RGBA8, true, true);
         Material noMaterial = new Material();
@@ -176,7 +176,7 @@ public abstract class ViroBaseTest {
         Text instructionCardText = (Text) mExpectedMessageNode.getGeometry();
         instructionCardText.setText(expectedMessage);
 
-
+        Log.i(TAG, "assertPass : Waiting for 30 seconds...");
         await().atMost(30, TimeUnit.SECONDS).untilTrue(mTestButtonsClicked);
     }
 
@@ -195,7 +195,7 @@ public abstract class ViroBaseTest {
 
     }
 
-    private Bitmap getBitmapFromAsset(Context context, String filePath) {
+    protected Bitmap getBitmapFromAssets(Context context, String filePath) {
         AssetManager assetManager = context.getAssets();
 
         InputStream istr;
@@ -214,7 +214,7 @@ public abstract class ViroBaseTest {
         EventDelegate delegateJni = new EventDelegate();
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_HOVER, false);
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_FUSE, true);
-        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_DRAG, true);
+        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_DRAG, false);
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_CLICK, true);
         delegateJni.setEventDelegateCallback(new GenericEventCallback(delegateTag));
 
