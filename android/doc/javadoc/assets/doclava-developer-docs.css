@@ -2,7 +2,7 @@
    info: developer doc styles
 */
 
-@import url("doclava-developer-core.css");
+@import url("android-developer-core.css");
 
 #title {
   border-bottom: 4px solid #ccc;
@@ -320,7 +320,6 @@
 /* right alignment for the return type in sumtable */
 .jd-sumtable .jd-typecol {
   text-align:right;
-  white-space: nowrap;
 }
 
 /* adjustments for the expando table-in-table */
@@ -351,7 +350,6 @@ links to summary tables) */
 #api-level-toggle {
   padding:0 0px;
   font-size:11px;
-  margin:3px 10px 0 0;
 }
 
 #api-level-toggle label.disabled {
@@ -958,7 +956,6 @@ table ol.toc {
 }
 .jd-linktable .jd-typecol {
   text-align:right;
-  white-space: nowrap;
 }
 .jd-linktable .jd-valcol {
 }
@@ -1095,7 +1092,11 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; }
   }
 
   #header {
-    height:50px;
+    height:60px;
+  }
+
+  #headerLeft {
+    padding:0;
   }
 
   #header-tabs,
@@ -1152,3 +1153,4 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; }
   table, img {
     page-break-inside: avoid;
   }
+}
