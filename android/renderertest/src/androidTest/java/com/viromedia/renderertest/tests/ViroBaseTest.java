@@ -49,9 +49,10 @@ import java.util.TimerTask;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by manish on 10/26/17.
@@ -59,9 +60,13 @@ import static org.junit.Assert.assertTrue;
 
 public abstract class ViroBaseTest {
     private static final String TAG = ViroBaseTest.class.getName();
-    private static final String TEST_PASSED = "testPassed";
-    private static final String TEST_FAILED = "testFailed";
+    private static final String TEST_PASSED_TAG = "testPassed";
+    private static final String TEST_FAILED_TAG = "testFailed";
+    private static final Integer TEST_FAILED = 1;
+    private static final Integer TEST_PASSED = 1;
+    private static final Integer TEST_MAX_DURATION_SEC = 30;
     private final AtomicBoolean mTestButtonsClicked = new AtomicBoolean(false);
+    private final AtomicInteger mTestResult = new AtomicInteger(-1);
     public ViroView mViroView;
     @Rule
     public ActivityTestRule<ViroReleaseTestActivity> mActivityTestRule
@@ -79,7 +84,6 @@ public abstract class ViroBaseTest {
         mActivity = mActivityTestRule.getActivity();
         mViroView = mActivity.getViroView();
         mTimer = new Timer();
-
         await().until(glInitialized());
 
         mScene = new Scene();
@@ -116,7 +120,7 @@ public abstract class ViroBaseTest {
         float[] yesPosition = {-1.5f, -3f, -3.3f};
         yesButton.setPosition(new Vector(yesPosition));
         yesButton.setTransformBehaviors(transformBehavior);
-        yesButton.setEventDelegate(getGenericDelegate(TEST_PASSED));
+        yesButton.setEventDelegate(getGenericDelegate(TEST_PASSED_TAG));
         rootNode.addChildNode(yesButton);
 
         // Add no button
@@ -132,7 +136,7 @@ public abstract class ViroBaseTest {
         float[] noPosition = {1.5f, -3f, -3.3f};
         noButton.setPosition(new Vector(noPosition));
         noButton.setTransformBehaviors(transformBehavior);
-        noButton.setEventDelegate(getGenericDelegate(TEST_FAILED));
+        noButton.setEventDelegate(getGenericDelegate(TEST_FAILED_TAG));
         rootNode.addChildNode(noButton);
 
         // Add class name
@@ -170,14 +174,15 @@ public abstract class ViroBaseTest {
     protected void assertPass(String expectedMessage) {
 
         mTestButtonsClicked.set(false);
+        mTestResult.set(-1);
 
         Text methodNameText = (Text) mTestMethodNameNode.getGeometry();
         methodNameText.setText(Thread.currentThread().getStackTrace()[3].getMethodName());
         Text instructionCardText = (Text) mExpectedMessageNode.getGeometry();
         instructionCardText.setText(expectedMessage);
 
-        Log.i(TAG, "assertPass : Waiting for 30 seconds...");
-        await().atMost(30, TimeUnit.SECONDS).untilTrue(mTestButtonsClicked);
+        await().atMost(TEST_MAX_DURATION_SEC, TimeUnit.SECONDS).untilTrue(mTestButtonsClicked);
+        assertEquals((long) TEST_PASSED, (long) mTestResult.get());
     }
 
     abstract void configureTestScene();
@@ -243,8 +248,8 @@ public abstract class ViroBaseTest {
                     hitLoc[0] + ", " + hitLoc[1] + ", " + hitLoc[2]);
 
             if (clickState.equals(ClickState.CLICKED)) {
+                mTestResult.set(delegateTag.equalsIgnoreCase(TEST_PASSED_TAG) ? TEST_PASSED : TEST_FAILED);
                 mTestButtonsClicked.set(true);
-                assertTrue(delegateTag.equalsIgnoreCase(TEST_PASSED));
             }
         }
 
