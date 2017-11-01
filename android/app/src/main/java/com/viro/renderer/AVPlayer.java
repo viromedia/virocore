@@ -23,6 +23,11 @@ import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.source.dash.DashMediaSource;
+import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
+import com.google.android.exoplayer2.source.hls.HlsMediaSource;
+import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
+import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -182,8 +187,7 @@ public class AVPlayer {
             }
             Log.i(TAG, "AVPlayer setting URL to [" + uri + "]");
 
-            MediaSource mediaSource = new ExtractorMediaSource(uri, dataSourceFactory, extractorsFactory,
-                    null, null);
+            MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, extractorsFactory);
 
             mExoPlayer.prepare(mediaSource);
             mExoPlayer.seekToDefaultPosition();
@@ -198,6 +202,44 @@ public class AVPlayer {
             reset();
 
             return false;
+        }
+    }
+
+    private MediaSource buildMediaSource(Uri uri, DataSource.Factory mediaDataSourceFactory,
+                                         ExtractorsFactory extractorsFactory) {
+        int type = inferContentType(uri);
+        switch (type) {
+            case C.TYPE_SS:
+                return new SsMediaSource(uri, mediaDataSourceFactory,
+                        new DefaultSsChunkSource.Factory(mediaDataSourceFactory), null, null);
+            case C.TYPE_DASH:
+                return new DashMediaSource(uri, mediaDataSourceFactory,
+                        new DefaultDashChunkSource.Factory(mediaDataSourceFactory), null, null);
+            case C.TYPE_HLS:
+                return new HlsMediaSource(uri, mediaDataSourceFactory, null, null);
+            default:
+                // Return an ExtraMediaSource as default.
+                return new ExtractorMediaSource(uri, mediaDataSourceFactory, extractorsFactory,
+                        null, null);
+        }
+    }
+
+    private int inferContentType(Uri uri) {
+        String path = uri.getPath();
+        return path == null ? C.TYPE_OTHER : inferContentType(path);
+    }
+
+    private int inferContentType(String fileName) {
+        fileName = Util.toLowerInvariant(fileName);
+        if (fileName.endsWith(".mpd")) {
+            return C.TYPE_DASH;
+        } else if (fileName.endsWith(".m3u8")) {
+            return C.TYPE_HLS;
+        } else if (fileName.endsWith(".ism") || fileName.endsWith(".isml")
+                || fileName.endsWith(".ism/manifest") || fileName.endsWith(".isml/manifest")) {
+            return C.TYPE_SS;
+        } else {
+            return C.TYPE_OTHER;
         }
     }
 
