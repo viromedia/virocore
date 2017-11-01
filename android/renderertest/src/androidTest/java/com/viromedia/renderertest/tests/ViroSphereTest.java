@@ -19,6 +19,8 @@ import com.viro.renderer.jni.Node;
 import com.viro.renderer.jni.Sphere;
 import com.viro.renderer.jni.Texture;
 import com.viro.renderer.jni.Vector;
+import com.viro.renderer.jni.event.ClickListener;
+import com.viro.renderer.jni.event.ClickState;
 
 import org.junit.Test;
 
@@ -56,6 +58,12 @@ public class ViroSphereTest extends ViroBaseTest {
         float[] spherePosition = {-6.5f,0,-15};
         node.setPosition(new Vector(spherePosition));
         mSphereOne.setMaterials(Arrays.asList(material));
+        node.setClickListener(new ClickListener() {
+            @Override
+            public void onClick(int source, Node node, ClickState clickState, Vector location) {
+                Log.i("ViroSphereTest", "Click listener on sphere one invoked");
+        }
+        });
         mScene.getRootNode().addChildNode(node);
 
         //Create of second sphere using other constructor.
@@ -68,6 +76,12 @@ public class ViroSphereTest extends ViroBaseTest {
         nodeTwo.setGeometry(mSphereTwo);
         float[] sphereTwoPosition = {6.5f,0,-15};
         nodeTwo.setPosition(new Vector(sphereTwoPosition));
+        nodeTwo.setClickListener(new ClickListener() {
+            @Override
+            public void onClick(int source, Node node, ClickState clickState, Vector location) {
+                Log.i("ViroSphereTest", "Click listener on sphere two invoked");
+            }
+        });
         mSphereTwo.setMaterials(Arrays.asList(materialBlue));
         mScene.getRootNode().addChildNode(nodeTwo);
     }
