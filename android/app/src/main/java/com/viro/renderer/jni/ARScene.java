@@ -26,6 +26,10 @@ public class ARScene extends Scene {
         nativeDestroyARSceneController(mNativeRef);
     }
 
+    public void displayPointCloud(boolean displayPointCloud) {
+        nativeDisplayPointCloud(mNativeRef, displayPointCloud);
+    }
+
     public void addARPlane(ARPlane arPlane) {
         nativeAddARPlane(mNativeRef, arPlane.mNativeRef);
     }
@@ -45,6 +49,8 @@ public class ARScene extends Scene {
     private native void nativeDestroyARSceneController(long sceneControllerRef);
 
     private native void nativeDestroyARSceneDelegate(long delegateRef);
+
+    private native void nativeDisplayPointCloud(long sceneControllerRef, boolean displayPointCloud);
 
     private native void nativeAddARPlane(long sceneControllerRef, long arPlaneRef);
 

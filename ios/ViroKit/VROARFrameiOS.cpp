@@ -15,9 +15,8 @@
 #include "VROVideoTextureCache.h"
 #include "VROTextureSubstrate.h"
 #include "VROConvert.h"
-#include "VROVector3f.h"
+#include "VROVector4f.h"
 #include "VROARHitTestResult.h"
-#include "VROLog.h"
 
 VROARFrameiOS::VROARFrameiOS(ARFrame *frame, VROViewport viewport, VROCameraOrientation orientation,
                              std::shared_ptr<VROARSessioniOS> session) :
@@ -156,6 +155,25 @@ float VROARFrameiOS::getAmbientLightIntensity() const {
 
 float VROARFrameiOS::getAmbientLightColorTemperature() const {
     return _frame.lightEstimate.ambientColorTemperature;
+}
+
+std::shared_ptr<VROARPointCloud> VROARFrameiOS::getPointCloud() {
+    if (_pointCloud) {
+        return _pointCloud;
+    }
+    std::vector<VROVector4f> points;
+    ARPointCloud *arPointCloud = _frame.rawFeaturePoints;
+    for (int i = 0; i < arPointCloud.count; i++) {
+        vector_float3 arPoint = arPointCloud.points[i];
+        // the last value in the point is a "confidence" value from 0 to 1. Since
+        // ARKit doesn't provide this, set it to 1.
+        points.push_back(VROVector4f(arPoint.x, arPoint.y, arPoint.z, 1));
+    }
+    
+    std::vector<uint64_t> identifiers(arPointCloud.identifiers, arPointCloud.identifiers + arPointCloud.count);
+    
+    _pointCloud = std::make_shared<VROARPointCloud>(points, identifiers);
+    return _pointCloud;
 }
 
 #endif

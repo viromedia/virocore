@@ -34,6 +34,7 @@ public:
     float getAmbientLightIntensity() const;
     float getAmbientLightColorTemperature() const;
 
+    std::shared_ptr<VROARPointCloud> getPointCloud();
     
 private:
     
@@ -43,6 +44,7 @@ private:
     std::weak_ptr<VROARSessioniOS> _session;
     std::shared_ptr<VROARCamera> _camera;
     std::vector<std::shared_ptr<VROARAnchor>> _anchors;
+    std::shared_ptr<VROARPointCloud> _pointCloud;
     
 };
 

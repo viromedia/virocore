@@ -29,6 +29,7 @@ namespace arcore {
     struct FrameTrackingStateEnum { static constexpr auto Name() { return "com/google/ar/core/Frame$TrackingState"; } };
     struct HitResult { static constexpr auto Name() { return "com/google/ar/core/HitResult"; } };
     struct PointCloudHitResult { static constexpr auto Name() { return "com/google/ar/core/PointCloudHitResult"; } };
+    struct PointCloud {static constexpr auto Name() { return "com/google/ar/core/PointCloud"; } };
     struct Session { static constexpr auto Name() { return "com/google/ar/core/Session"; } };
 
     struct ViroViewARCore { static constexpr auto Name() { return "com/viro/renderer/jni/ViroViewARCore"; } };
@@ -36,6 +37,7 @@ namespace arcore {
     struct Object { static constexpr auto Name() { return "java/lang/Object"; } };
     struct Collection { static constexpr auto Name() { return "java/util/Collection"; } };
     struct List { static constexpr auto Name() { return "java/util/List"; } };
+    struct FloatBuffer { static constexpr auto Name() { return "java/nio/FloatBuffer"; } };
 
     namespace config {
 
@@ -168,6 +170,27 @@ namespace arcore {
             static auto ListClass = *jni::Class<List>::Find(env).NewGlobalRef(env).release();
             auto method = ListClass.GetMethod<jni::Object<Object>(jni::jint)>(env, "get");
             return list.Call(env, method, index);
+        }
+    }
+
+    namespace floatbuffer {
+        // Note: the "array()" function is available, but the FloatBuffer that
+        // ARCore uses here doesn't support that function (isn't array-backed).
+        std::vector<float> toVector(jni::Object<FloatBuffer> buffer) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto FloatBufferClass = *jni::Class<FloatBuffer>::Find(env).NewGlobalRef(
+                    env).release();
+            auto capacityMethod = FloatBufferClass.GetMethod<jni::jint()>(env, "capacity");
+            auto getMethod = FloatBufferClass.GetMethod<jni::jfloat()>(env, "get");
+
+            int size = buffer.Call(env, capacityMethod);
+            std::vector<float> floatVector(size);
+
+            for (int i = 0; i < size; i++) {
+                floatVector.push_back(buffer.Call(env, getMethod));
+            }
+
+            return floatVector;
         }
     }
 
@@ -465,6 +488,31 @@ namespace arcore {
             env.DeleteLocalRef(destBufferFloat);
 
             return result;
+        }
+
+        jni::Object<PointCloud> getPointCloud(jni::Object<Frame> frame) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto FrameClass = *jni::Class<Frame>::Find(env).NewGlobalRef(env).release();
+            auto method = FrameClass.GetMethod<jni::Object<PointCloud>()>(env, "getPointCloud");
+            return frame.Call(env, method);
+        }
+
+        VROMatrix4f getPointCloudPose(jni::Object<Frame> frame) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto FrameClass = *jni::Class<Frame>::Find(env).NewGlobalRef(env).release();
+            auto method = FrameClass.GetMethod<jni::Object<Pose>()>(env, "getPointCloudPose");
+            jni::Object<Pose> pose = frame.Call(env, method);
+            return pose::toMatrix(pose);
+        }
+    }
+
+    namespace pointcloud {
+
+        jni::Object<FloatBuffer> getPoints(jni::Object<PointCloud> pointCloud) {
+            jni::JNIEnv &env = *VROPlatformGetJNIEnv();
+            static auto PointCloudClass = *jni::Class<PointCloud>::Find(env).NewGlobalRef(env).release();
+            auto method = PointCloudClass.GetMethod<jni::Object<FloatBuffer>()>(env, "getPoints");
+            return pointCloud.Call(env, method);
         }
 
     }

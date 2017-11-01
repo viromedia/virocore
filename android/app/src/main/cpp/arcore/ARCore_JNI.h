@@ -26,11 +26,13 @@ namespace arcore {
     struct Frame;
     struct HitResult;
     struct PlaneHitResult { static constexpr auto Name() { return "com/google/ar/core/PlaneHitResult"; } };
+    struct PointCloud;
     struct Session;
     struct Object;
     struct ViroViewARCore;
     struct Collection;
     struct List;
+    struct FloatBuffer;
 
     enum class TrackingState {
         NotTracking,
@@ -71,6 +73,10 @@ namespace arcore {
     namespace list {
         jint size(jni::Object<List> list);
         jni::Object<Object> get(jni::Object<List> list, int index);
+    }
+
+    namespace floatbuffer {
+        std::vector<float> toVector(jni::Object<FloatBuffer> buffer);
     }
 
     namespace viroview {
@@ -115,6 +121,14 @@ namespace arcore {
         jni::Object<Collection> getUpdatedAnchors(jni::Object<Frame> frame);
         jni::Object<Collection> getUpdatedPlanes(jni::Object<Frame> frame);
         std::vector<float> getBackgroundTexcoords(jni::Object<Frame> frame);
+        jni::Object<PointCloud> getPointCloud(jni::Object<Frame> frame);
+        VROMatrix4f getPointCloudPose(jni::Object<Frame> frame);
+
+    }
+
+    namespace pointcloud {
+
+        jni::Object<FloatBuffer> getPoints(jni::Object<PointCloud> pointCloud);
 
     }
 

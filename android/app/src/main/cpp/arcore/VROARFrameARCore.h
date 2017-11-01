@@ -38,6 +38,8 @@ public:
         return *_frameJNI.get();
     }
 
+    std::shared_ptr<VROARPointCloud> getPointCloud();
+
 private:
 
     jni::UniqueObject<arcore::Frame> _frameJNI;
@@ -45,7 +47,8 @@ private:
     std::shared_ptr<VROARCamera> _camera;
     VROViewport _viewport;
     std::vector<std::shared_ptr<VROARAnchor>> _anchors;
-    
+    std::shared_ptr<VROARPointCloud> _pointCloud;
+
 };
 
 #endif /* VROARFrameARCore_h */

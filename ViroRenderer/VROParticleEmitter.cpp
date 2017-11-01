@@ -82,6 +82,35 @@ void VROParticleEmitter::setDefaultValues() {
     _currentVolume = defaultVol;
 }
 
+void VROParticleEmitter::setParticleSurface(std::shared_ptr<VROSurface> particleSurface) {
+    std::shared_ptr<VRONode> emitterNode = _particleEmitterNodeWeak.lock();
+
+    if (emitterNode) {
+        std::shared_ptr<VROInstancedUBO> instanceUBO = emitterNode->getGeometry()->getInstancedUBO();
+        
+        // Grab shader modifiers defined by the UBO for processing batched data.
+        std::vector<std::shared_ptr<VROShaderModifier>> shaderModifiers = instanceUBO->createInstanceShaderModifier();
+        
+        // Bind the Particle UBO to this geometry to be processed during instanced rendering.
+        particleSurface->setInstancedUBO(instanceUBO);
+        std::shared_ptr<VROMaterial> material = particleSurface->getMaterials()[0];
+        for (std::shared_ptr<VROShaderModifier> modifier : shaderModifiers) {
+            material->addShaderModifier(modifier);
+        }
+        material->setWritesToDepthBuffer(false);
+        material->setReadsFromDepthBuffer(true);
+        material->setBlendMode(VROBlendMode::Add);
+        
+        // Initialize the emitter with default values.
+        material->setLightingModel(VROLightingModel::Constant);
+        
+        // Finally, bind the particle geometry to the emitter node.
+        emitterNode->setGeometry(particleSurface);
+        emitterNode->setIgnoreEventHandling(true);
+        
+    }
+}
+
 bool VROParticleEmitter::processDelay(double currentTime) {
     // If no delay duration has been set, return immediately.
     if (_emitterDelayDuration == -1){
@@ -320,7 +349,7 @@ int VROParticleEmitter::getSpawnParticlesPerSecond(double currentTime) {
         _intervalSpawnedLastEmitTime = _intervalSpawnedLastEmitTime + (particles * _intervalSpawnedEmissionRate);
         numOfParticlesToEmit = particles;
 
-        // Check if we passed  1000ms and if so remove additional particles that were
+        // Check if we passed 1000ms and if so remove additional particles that were
         // created in the overshot.
         if (_intervalSpawnedLastEmitTime - _intervalSpawnedInitTime > 1000) {
             double overShotTime = (_intervalSpawnedLastEmitTime - _intervalSpawnedInitTime) - 1000;

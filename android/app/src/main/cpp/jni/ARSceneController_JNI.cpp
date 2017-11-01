@@ -46,6 +46,21 @@ JNI_METHOD(void, nativeDestroyARSceneDelegate) (JNIEnv *env,
     delete reinterpret_cast<PersistentRef<VROARSceneDelegate> *>(arSceneDelegatePtr);
 }
 
+JNI_METHOD(void, nativeDisplayPointCloud) (JNIEnv *env,
+                                           jobject object,
+                                           jlong arSceneControllerPtr,
+                                           jboolean displayPointCloud) {
+    std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
+            ARSceneController::native(arSceneControllerPtr)->getScene());
+    VROPlatformDispatchAsyncRenderer([arScene_w, displayPointCloud] {
+        std::shared_ptr<VROARScene> arScene = arScene_w.lock();
+
+        if (arScene) {
+            arScene->displayPointCloud(displayPointCloud);
+        }
+    });
+}
+
 JNI_METHOD(void, nativeAddARPlane) (JNIEnv *env,
                                     jobject object,
                                     jlong arSceneControllerPtr,

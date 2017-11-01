@@ -61,6 +61,9 @@
 		8ADC38D51F0AFAF2006DD653 /* VROARNodeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ADC38D41F0AFAF2006DD653 /* VROARNodeDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8ADC38D71F0AFD0A006DD653 /* VROARNodeDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8ADF360B1F14237B002BF73D /* VROARSceneDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ADF360A1F14237B002BF73D /* VROARSceneDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8AF0E0831FA7FA9D0083CBAE /* VROPointCloudEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AF0E0811FA7FA9D0083CBAE /* VROPointCloudEmitter.cpp */; };
+		8AF0E0841FA7FA9D0083CBAE /* VROPointCloudEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF0E0821FA7FA9D0083CBAE /* VROPointCloudEmitter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8AF0E08A1FA928480083CBAE /* point_cloud.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF0E0891FA928480083CBAE /* point_cloud.png */; };
 		8B2F2A471F6B8E2D000C9924 /* VROPortalDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B2F2A461F6B8E2D000C9924 /* VROPortalDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8B2F2A481F6B9D0A000C9924 /* VROPortalDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B2F2A451F6B87BB000C9924 /* VROPortalDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8BDDA00D1E54F6B200A42870 /* VROLazyMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDDA00B1E54F48500A42870 /* VROLazyMaterial.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -756,6 +759,9 @@
 		8ADC38D41F0AFAF2006DD653 /* VROARNodeDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARNodeDelegate.h; sourceTree = "<group>"; };
 		8ADC38D61F0AFD0A006DD653 /* VROARNodeDelegateiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARNodeDelegateiOS.h; sourceTree = "<group>"; };
 		8ADF360A1F14237B002BF73D /* VROARSceneDelegateiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARSceneDelegateiOS.h; sourceTree = "<group>"; };
+		8AF0E0811FA7FA9D0083CBAE /* VROPointCloudEmitter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPointCloudEmitter.cpp; sourceTree = "<group>"; };
+		8AF0E0821FA7FA9D0083CBAE /* VROPointCloudEmitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPointCloudEmitter.h; sourceTree = "<group>"; };
+		8AF0E0891FA928480083CBAE /* point_cloud.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = point_cloud.png; sourceTree = "<group>"; };
 		8AF39AB51F2295F700229AC0 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		8B2F2A451F6B87BB000C9924 /* VROPortalDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalDelegate.h; sourceTree = "<group>"; };
 		8B2F2A461F6B8E2D000C9924 /* VROPortalDelegateiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalDelegateiOS.h; sourceTree = "<group>"; };
@@ -1526,10 +1532,12 @@
 				A59E11391F53951700EB2CEB /* VROPostProcessEffectFactory.h */,
 				A517D2D61F44AC5E00A22219 /* VROParticleModifier.h */,
 				A51347311F329B0B00FF3726 /* VROParticleEmitter.cpp */,
+				A51347321F329B0B00FF3726 /* VROParticleEmitter.h */,
 				A540C5C21F3D8711007986E6 /* VROInstancedUBO.h */,
 				A513473C1F35420300FF3726 /* VROParticleUBO.cpp */,
 				A513473D1F35420300FF3726 /* VROParticleUBO.h */,
-				A51347321F329B0B00FF3726 /* VROParticleEmitter.h */,
+				8AF0E0811FA7FA9D0083CBAE /* VROPointCloudEmitter.cpp */,
+				8AF0E0821FA7FA9D0083CBAE /* VROPointCloudEmitter.h */,
 				A58697881E30887500191090 /* VROInputType.h */,
 				A58697801E30843000191090 /* VROInputPresenter.h */,
 				8F5C413D1BD56F98006D7A77 /* VROScene.h */,
@@ -1779,6 +1787,7 @@
 			isa = PBXGroup;
 			children = (
 				8F152A7C1C11351D00A211F8 /* blank.png */,
+				8AF0E0891FA928480083CBAE /* point_cloud.png */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -2593,6 +2602,7 @@
 				8A130D761E3A93820050D83B /* VROSound.h in Headers */,
 				8FD1E1B01C3F20C70005BE4E /* VROVideoSurface.h in Headers */,
 				8A35172A1EDE035300B6E786 /* VROOpenCV.h in Headers */,
+				8AF0E0841FA7FA9D0083CBAE /* VROPointCloudEmitter.h in Headers */,
 				8F53C9031E01B5CB008314B4 /* VROOBJLoader.h in Headers */,
 				8FD4DF411C18F5EB003DC425 /* VROPlane.h in Headers */,
 				8FCF39641CAEE26F00A86CA3 /* VROHoverDistanceListener.h in Headers */,
@@ -3034,6 +3044,7 @@
 			files = (
 				A540C5C81F3E7403007986E6 /* particles_fsh.glsl in Resources */,
 				A540C5C51F3E72BF007986E6 /* particles_vsh.glsl in Resources */,
+				8AF0E08A1FA928480083CBAE /* point_cloud.png in Resources */,
 				8F03BCE01CECC92300D071F8 /* standard_vsh.glsl in Resources */,
 				8F129FB01ED4D56300341D83 /* skinning_vsh.glsl in Resources */,
 				8F03BCE21CECC92300D071F8 /* standard_fsh.glsl in Resources */,
@@ -3331,6 +3342,7 @@
 				8FC908861CA458EB00069C89 /* VRONodeCamera.cpp in Sources */,
 				8FCB0FFA1DCFF68E00FE425C /* VROAudioPlayeriOS.cpp in Sources */,
 				8F3488B01EE83DD3008917CB /* VROARFrameInertial.cpp in Sources */,
+				8AF0E0831FA7FA9D0083CBAE /* VROPointCloudEmitter.cpp in Sources */,
 				8FD2A5491F813C4100E831A6 /* VROOBJTest.cpp in Sources */,
 				8F3488AC1EE83DD3008917CB /* VROARAnchorInertial.cpp in Sources */,
 				8A3517361EE0B55400B6E786 /* VROImageTrackerOutput.cpp in Sources */,

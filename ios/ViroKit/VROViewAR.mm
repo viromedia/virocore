@@ -960,7 +960,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     }
     
     if (_arSession->isReady()) {
-        // TODO Only on viewport change
+        // TODO Only on viewport change (and scene change!)
         _arSession->setViewport(viewport);
         if (!_sceneController->getScene()->getRootNode()->getBackground()) {
             _sceneController->getScene()->getRootNode()->setBackground(_cameraBackground);
@@ -1056,7 +1056,9 @@ static VROVector3f const kZeroVector = VROVector3f();
     passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
     
     arScene->setARComponentManager(_arComponentManager);
+    arScene->setARSession(_arSession);
     arScene->addNode(_pointOfView);
+    arScene->setDriver(_driver);
 }
 
 - (void)recenterTracking {

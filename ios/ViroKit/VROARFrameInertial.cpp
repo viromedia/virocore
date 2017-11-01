@@ -53,3 +53,7 @@ float VROARFrameInertial::getAmbientLightColorTemperature() const {
     // Light color temperature is not supported by the Inertial AR engine
     return 1.0;
 }
+
+std::shared_ptr<VROARPointCloud> VROARFrameInertial::getPointCloud() {
+    return std::make_shared<VROARPointCloud>();
+}

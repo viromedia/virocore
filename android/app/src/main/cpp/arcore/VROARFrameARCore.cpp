@@ -9,11 +9,9 @@
 #include "VROARFrameARCore.h"
 #include "VROARSessionARCore.h"
 #include "VROARCameraARCore.h"
-#include "VROTextureSubstrate.h"
-#include "VROVector3f.h"
 #include "VROARHitTestResult.h"
 #include "VROPlatformUtil.h"
-#include "VROLog.h"
+#include "VROVector4f.h"
 
 VROARFrameARCore::VROARFrameARCore(jni::Object<arcore::Frame> frameJNI,
                                    VROViewport viewport,
@@ -137,3 +135,36 @@ float VROARFrameARCore::getAmbientLightColorTemperature() const {
     return 1.0;
 }
 
+std::shared_ptr<VROARPointCloud> VROARFrameARCore::getPointCloud() {
+    if (_pointCloud) {
+        return _pointCloud;
+    }
+
+    JNIEnv* env = VROPlatformGetJNIEnv();
+
+    std::vector<VROVector4f> points;
+    std::vector<uint64_t> identifiers; // Android doesn't have any identifiers with their point cloud!
+
+    jni::Object<arcore::PointCloud> pointCloud = arcore::frame::getPointCloud(*_frameJNI.get());
+    if (pointCloud != NULL) {
+        VROMatrix4f pointCloudTransform = arcore::frame::getPointCloudPose(*_frameJNI.get());
+
+        std::vector<float> pointsVector = arcore::floatbuffer::toVector(arcore::pointcloud::getPoints(pointCloud));
+        for (int i = 0; i < pointsVector.size(); i += 4) {
+            // Only use points with > .1 confidence (scale of 0 -> 1)
+            if (pointsVector[i + 3] > .1) {
+                // The 4th value is a confidence value that we don't want to transform,
+                // so transform the vector and then set the 4th value!
+                VROVector4f point = VROVector4f(pointsVector[i], pointsVector[i + 1],
+                                                pointsVector[i + 2], 1);
+
+                point = pointCloudTransform.multiply(point);
+                point.w = pointsVector[i + 3];
+                points.push_back(point);
+            }
+        }
+    }
+
+    _pointCloud = std::make_shared<VROARPointCloud>(points, identifiers);
+    return _pointCloud;
+}

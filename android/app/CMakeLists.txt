@@ -241,6 +241,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROARNode.cpp
              ../../ViroRenderer/VROARComponentManager.cpp
              ../../ViroRenderer/VROInputControllerAR.cpp
+             ../../ViroRenderer/VROPointCloudEmitter.cpp
 
              # Image Tracking
              ../../ViroRenderer/VROImageTracker.cpp

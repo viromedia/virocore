@@ -149,8 +149,8 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     @Override
     public void onGlInitialized() {
         Log.e("ViroActivity", "onGlInitialized called");
-        initializeVrScene();
-//        initializeArScene();
+        //initializeVrScene();
+        initializeArScene();
     }
 
     private void initializeVrScene() {
@@ -229,6 +229,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
         // Updating the scene.
         mViroView.setScene(scene);
+        scene.displayPointCloud(true);
     }
 
     private void testEdgeDetect() {
@@ -752,7 +753,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         material.setCullMode(Material.CullMode.NONE);
 
         final float[] linePos = {0, 0, -2};
-        final float[][] points = {{0, 0}, {1, 0}, {1, 1}};
+        final float[][] points = {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}};
 
         final Polyline polyline = new Polyline(points, 0.1f);
         final Node node1 = new Node();

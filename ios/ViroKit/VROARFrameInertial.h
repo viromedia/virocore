@@ -27,6 +27,7 @@ public:
     float getAmbientLightIntensity() const;
     float getAmbientLightColorTemperature() const;
 
+    std::shared_ptr<VROARPointCloud> getPointCloud();
     
 private:
     
