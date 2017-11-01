@@ -25,6 +25,7 @@ import com.viro.renderer.jni.ARNode;
 import com.viro.renderer.jni.ARPlane;
 import com.viro.renderer.jni.ARScene;
 import com.viro.renderer.jni.AmbientLight;
+import com.viro.renderer.jni.Animation;
 import com.viro.renderer.jni.AnimationTimingFunction;
 import com.viro.renderer.jni.AnimationTransaction;
 import com.viro.renderer.jni.AsyncObject3DListener;
@@ -159,8 +160,8 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         List<Node> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
        // nodes = testSphereVideo(this);
-        nodes = testBox(getApplicationContext());
-        //nodes = test3dObjectLoading(getApplicationContext());
+        //nodes = testBox(getApplicationContext());
+        nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
         //nodes = testText(this);
@@ -427,8 +428,8 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         node2.setEventDelegate(getGenericDelegate("Box2"));
 
         AnimationTransaction.begin();
-        AnimationTransaction.setAnimationDelay(2);
-        AnimationTransaction.setAnimationDuration(5);
+        AnimationTransaction.setAnimationDelay(1000);
+        AnimationTransaction.setAnimationDuration(5000);
         AnimationTransaction.setTimingFunction(AnimationTimingFunction.Bounce);
         AnimationTransaction.setFinishCallback(new AnimationTransaction.FinishedCallback() {
             @Override
@@ -440,8 +441,6 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
         final AnimationTransaction transaction = AnimationTransaction.commit();
 
-
-
         return Arrays.asList(node1, node2, node3);
     }
 
@@ -450,22 +449,16 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
         // Creation of ObjectJni to the right
         final Object3D objectJni = new Object3D();
-        objectJni.loadModel(Uri.parse("file:///android_asset/heart.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+        objectJni.loadModel(Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
-                // Create a new material with a diffuseTexture set to the image "heart_d.jpg"
-                final Image heartImage = new Image("heart_d.jpg", TextureFormat.RGBA8);
-                final Texture heartTexture = new Texture(heartImage, TextureFormat.RGBA8, true, true);
-                final Material material = new Material();
-                material.setDiffuseTexture(heartTexture);
-                material.setLightingModel(Material.LightingModel.CONSTANT);
+                object.setPosition(new Vector(0, 0, -3));
+                object.setScale(new Vector(0.4f, 0.4f, 0.4f));
 
-                final Geometry geometry = object.getGeometry();
-                if (geometry != null) {
-               //     geometry.setMaterials(Arrays.asList(material));
-                }
-
-                Log.w("Viro", "OBJECT WAS LOADED!");
+                Animation animation = object.getAnimation("02_spin");
+                animation.setDelay(5000);
+                animation.setLoop(true);
+                animation.play();
             }
 
             @Override
@@ -474,9 +467,6 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
             }
         });
         node1.addChildNode(objectJni);
-
-        final float[] heartPosition = {-0, -5.5f, -1.15f};
-        node1.setPosition(new Vector(heartPosition));
         return Arrays.asList(node1);
     }
 

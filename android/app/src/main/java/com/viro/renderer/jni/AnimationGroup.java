@@ -3,6 +3,9 @@
  */
 package com.viro.renderer.jni;
 
+/**
+ * @hide
+ */
 public class AnimationGroup extends ExecutableAnimation {
 
     private LazyMaterial mLazyMaterial;

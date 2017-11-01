@@ -3,6 +3,9 @@
  */
 package com.viro.renderer.jni;
 
+/**
+ * @hide
+ */
 public class AnimationChain extends ExecutableAnimation {
 
     public AnimationChain(ExecutionType type) {

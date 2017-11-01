@@ -41,7 +41,7 @@ public class PortalScene extends Node {
     }
 
     private long mNativeDelegateRef;
-    private WeakReference<Delegate> mDelegate = null;
+    private Delegate mDelegate = null;
     private boolean mPassable = false;
     private Portal mPortal;
 
@@ -149,8 +149,17 @@ public class PortalScene extends Node {
      *
      * @param delegate The delegate to use with this PortalScene.
      */
-    public void setPortalSceneDelegate(Delegate delegate) {
-        mDelegate = new WeakReference<Delegate>(delegate);
+    public void setDelegate(Delegate delegate) {
+        mDelegate = delegate;
+    }
+
+    /**
+     * Get the {@link Delegate} used for responding to portal entry events.
+     *
+     * @return The delegate, or null if none is set.
+     */
+    public Delegate getDelegate() {
+        return mDelegate;
     }
 
     /**
@@ -216,8 +225,8 @@ public class PortalScene extends Node {
      * @hide
      */
     void onPortalEnter() {
-        if (mDelegate != null && mDelegate.get() != null && mNativeRef != 0) {
-            mDelegate.get().onPortalEnter(this);
+        if (mDelegate != null && mNativeRef != 0) {
+            mDelegate.onPortalEnter(this);
         }
     }
 
@@ -225,8 +234,8 @@ public class PortalScene extends Node {
      * @hide
      */
     void onPortalExit() {
-        if (mDelegate != null && mDelegate.get() != null && mNativeRef != 0) {
-            mDelegate.get().onPortalExit(this);
+        if (mDelegate != null && mNativeRef != 0) {
+            mDelegate.onPortalExit(this);
         }
     }
 }

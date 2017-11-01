@@ -12,6 +12,49 @@ import java.util.Stack;
 
 /**
  * AnimationTransaction exposes a simple interface for animating properties of Viro objects.
+ * For example, to animate a {@link Node} to a new position, simply enclose the normal
+ * {@link Node#setPosition(Vector)} call within an AnimationTransaction:
+ * <p>
+ * <tt>
+ * <pre>
+ * AnimationTransaction.begin();
+ * AnimationTransaction.setAnimationDuration(5000);
+ * node.setPosition(new Vector(-2, 2.5f, -3));
+ * AnimationTransaction.commit();</pre>
+ * </tt>
+ * You can also perform more complex animations, like changing to a new {@link Material} while
+ * rotating a Node. The initial Material will crossfade over to the new Material. We do this in the
+ * example below while using an "Ease Out" curve to decelerate the animation as it nears its end:
+ * <p>
+ * <tt>
+ * <pre>
+ * AnimationTransaction.begin();
+ * AnimationTransaction.setAnimationDuration(5000);
+ * AnimationTransaction.setTimingFunction(AnimationTimingFunction.EaseOut);
+ *
+ * node.setRotation(new Vector(0, M_PI_2, 0));
+ * node.setMaterial(material);
+ *
+ * AnimationTransaction.commit();</pre>
+ * </tt>
+ * Finally, you can also chain animations or respond to the end of an animation by using a
+ * {@link FinishedCallback}. In the snippet below, we move the position of a Node then, once that
+ * animation completes, we rotate the Node.
+ * <p>
+ * <tt>
+ * <pre>
+ * AnimationTransaction.begin();
+ * AnimationTransaction.setAnimationDuration(5000);
+ * AnimationTransaction.setFinishCallback(new AnimationTransaction.FinishedCallback() {
+ *     public void onFinished(final AnimationTransaction transaction) {
+ *         AnimationTransaction.begin();
+ *         node.setRotation(new Vector(0, M_PI_2, 0));
+ *         AnimationTransaction.commit();
+ *     }
+ * });
+ * node.setPosition(new Vector(-2, 2.5f, -3));
+ * AnimationTransaction.commit();</pre>
+ * </tt>
  */
 public class AnimationTransaction {
 
@@ -58,20 +101,20 @@ public class AnimationTransaction {
     /**
      * Set the duration fo all animations in this AnimationTransaction, in seconds.
      *
-     * @param durationSeconds The duration of the transaction, in seconds.
+     * @param durationMillis The duration of the transaction, in milliseconds.
      */
-    public static void setAnimationDuration(float durationSeconds) {
-        nativeSetAnimationDuration(durationSeconds);
+    public static void setAnimationDuration(long durationMillis) {
+        nativeSetAnimationDuration(durationMillis / 1000f);
     }
 
     /**
      * Set the time in seconds that we wait before the animations in this transaction start (after
      * the AnimationTransaction is committed).
      *
-     * @param delaySeconds The seconds to delay before beginning the transaction.
+     * @param delayMillis The milliseconds to delay before beginning the transaction.
      */
-    public static void setAnimationDelay(float delaySeconds) {
-        nativeSetAnimationDelay(delaySeconds);
+    public static void setAnimationDelay(long delayMillis) {
+        nativeSetAnimationDelay(delayMillis / 1000f);
     }
 
     /**

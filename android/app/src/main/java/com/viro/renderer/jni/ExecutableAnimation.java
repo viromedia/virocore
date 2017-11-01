@@ -3,6 +3,9 @@
  */
 package com.viro.renderer.jni;
 
+/**
+ * @hide
+ */
 public class ExecutableAnimation {
     public enum ExecutionType {
         SERIAL, PARALLEL

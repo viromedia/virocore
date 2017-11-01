@@ -86,7 +86,7 @@ public class VideoTexture extends Texture {
 
     private long mNativeDelegateRef;
 
-    private WeakReference<Delegate> mDelegate = null;
+    private Delegate mDelegate = null;
     private boolean mReady = false;
     private float mVolume = 1.0f;
     private boolean mMuted = false;
@@ -137,7 +137,7 @@ public class VideoTexture extends Texture {
         mNativeRef = nativeCreateVideoTexture(viroContext.mNativeRef, stereoMode == null ? null : stereoMode.getStringValue());
         mNativeDelegateRef = nativeCreateVideoDelegate();
         if (delegate != null) {
-            mDelegate = new WeakReference<Delegate>(delegate);
+            mDelegate = delegate;
         }
         nativeAttachDelegate(mNativeRef, mNativeDelegateRef);
         nativeLoadSource(mNativeRef, uri.toString(), viroContext.mNativeRef);
@@ -284,8 +284,17 @@ public class VideoTexture extends Texture {
      *
      * @param delegate The delegate to use for this video.
      */
-    public void setVideoDelegate(Delegate delegate) {
-        mDelegate = new WeakReference<Delegate>(delegate);
+    public void setDelegate(Delegate delegate) {
+        mDelegate = delegate;
+    }
+
+    /**
+     * Get the {@link Delegate} used to receive callbacks for this VideoTexture.
+     *
+     * @return The delegate, or null if none is attached.
+     */
+    public Delegate getDelegate() {
+        return mDelegate;
     }
 
     /*
@@ -311,48 +320,48 @@ public class VideoTexture extends Texture {
      * @hide
      */
     void playerWillBuffer() {
-        if (mDelegate != null && mDelegate.get() != null && mNativeRef != 0) {
-            mDelegate.get().onVideoBufferStart(this);
+        if (mDelegate != null && mNativeRef != 0) {
+            mDelegate.onVideoBufferStart(this);
         }
     }
     /**
      * @hide
      */
     void playerDidBuffer() {
-        if (mDelegate != null && mDelegate.get() != null && mNativeRef != 0) {
-            mDelegate.get().onVideoBufferEnd(this);
+        if (mDelegate != null && mNativeRef != 0) {
+            mDelegate.onVideoBufferEnd(this);
         }
     }
     /**
      * @hide
      */
     void playerDidFinishPlaying() {
-        if (mDelegate != null && mDelegate.get() != null && mNativeRef != 0) {
-            mDelegate.get().onVideoFinish(this);
+        if (mDelegate != null && mNativeRef != 0) {
+            mDelegate.onVideoFinish(this);
         }
     }
     /**
      * @hide
      */
     void onVideoFailed(String error) {
-        if (mDelegate != null && mDelegate.get() != null && mNativeRef != 0) {
-            mDelegate.get().onVideoFailed(error);
+        if (mDelegate != null && mNativeRef != 0) {
+            mDelegate.onVideoFailed(error);
         }
     }
     /**
      * @hide
      */
     void onReady() {
-        if (mDelegate != null && mDelegate.get() != null && mNativeRef != 0) {
-            mDelegate.get().onReady(this);
+        if (mDelegate != null && mNativeRef != 0) {
+            mDelegate.onReady(this);
         }
     }
     /**
      * @hide
      */
     void onVideoUpdatedTime(float currentTimeInSeconds, float totalTimeInSeconds) {
-        if (mDelegate != null && mDelegate.get() != null){
-            mDelegate.get().onVideoUpdatedTime(this, currentTimeInSeconds, totalTimeInSeconds);
+        if (mDelegate != null) {
+            mDelegate.onVideoUpdatedTime(this, currentTimeInSeconds, totalTimeInSeconds);
         }
     }
 }

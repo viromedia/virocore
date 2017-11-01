@@ -855,6 +855,25 @@ public class Node implements EventDelegate.EventDelegateCallback {
         return new HashSet<String>(Arrays.asList(nativeGetAnimationKeys(mNativeRef)));
     }
 
+    /**
+     * Get the {@link Animation} associated with this Node or its children with the given key.
+     * Returns null if no Animation could be found with the specified key. The {@link Animation}
+     * returned here is new, and not cached. It can be freshly configured (e.g. by setting its
+     * looping and delay parameters) and then executed.
+     * <p>
+     * To see all available Animations on this Node, use {@link #getAnimationKeys()}.
+     *
+     * @param key The name of the {@link Animation}.
+     * @return The {@link Animation} found, or null if none found.
+     */
+    public Animation getAnimation(String key) {
+        if (!getAnimationKeys().contains(key)) {
+            return null;
+        }
+        ExecutableAnimation executable = new ExecutableAnimation(this, key);
+        return new Animation(executable, this);
+    }
+
 // +---------------------------------------------------------------------------+
 // | PHYSICS
 // +---------------------------------------------------------------------------+
