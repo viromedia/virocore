@@ -8,7 +8,6 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++14 -frtti -fcxx-exceptions"
@@ -39,9 +38,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
     compile project(':arcore_client')
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.google.android.exoplayer:exoplayer:r2.2.0'
@@ -53,7 +49,6 @@ dependencies {
     compile 'com.amazonaws:aws-android-sdk-cognito:2.2.+'
     compile 'com.amazonaws:aws-android-sdk-cognitoidentityprovider:2.2.+'
 
-    testCompile 'junit:junit:4.12'
 }
 
 task copyReleaseAAR(type: Copy) {
