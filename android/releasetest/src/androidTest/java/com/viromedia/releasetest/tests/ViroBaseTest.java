@@ -88,6 +88,7 @@ public abstract class ViroBaseTest {
         mTimer = new Timer();
         await().until(glInitialized());
 
+        // TODO Create ARSscene if build variant is arcore. VIRO-2101
         mScene = new Scene();
         createBaseTestScene();
         configureTestScene();
@@ -119,7 +120,7 @@ public abstract class ViroBaseTest {
         yesSurface.setMaterial(yesMaterial);
         yesSurface.setImageTexture(yesTexture);
         yesButton.setGeometry(yesSurface);
-        final float[] yesPosition = {-1.5f, -5f, -3.3f};
+        final float[] yesPosition = {2.5f, -0.5f, -3.3f};
         yesButton.setPosition(new Vector(yesPosition));
         yesButton.setTransformBehaviors(transformBehavior);
         yesButton.setEventDelegate(getGenericDelegate(TEST_PASSED_TAG));
@@ -135,7 +136,7 @@ public abstract class ViroBaseTest {
         noSurface.setMaterial(noMaterial);
         noSurface.setImageTexture(noTexture);
         noButton.setGeometry(noSurface);
-        final float[] noPosition = {1.5f, -5f, -3.3f};
+        final float[] noPosition = {-2.5f, -0.5f, -3.3f};
         noButton.setPosition(new Vector(noPosition));
         noButton.setTransformBehaviors(transformBehavior);
         noButton.setEventDelegate(getGenericDelegate(TEST_FAILED_TAG));

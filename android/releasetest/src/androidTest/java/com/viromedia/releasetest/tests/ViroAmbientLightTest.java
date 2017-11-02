@@ -93,7 +93,7 @@ public class ViroAmbientLightTest extends ViroBaseTest {
     }
 
     @Test
-    public void testDirectionalLight() {
+    public void testAmbientLight() {
         // Context of the app under test.
         testSetColor();
         testSetIntensity();
