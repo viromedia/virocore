@@ -582,4 +582,9 @@ JNI_METHOD(void, nativeRemoveFrameListener)(JNIEnv *env, jobject obj, jlong nati
     });
 }
 
+JNI_METHOD(jboolean, nativeIsReticlePointerFixed)(JNIEnv *env, jobject obj, jlong native_renderer) {
+    std::shared_ptr<VROSceneRenderer> sceneRenderer = Renderer::native(native_renderer);
+    return sceneRenderer->getRenderer()->getInputController()->getPresenter()->getReticle()->isPointerFixed();
+}
+
 }  // extern "C"

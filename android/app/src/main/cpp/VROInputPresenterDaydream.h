@@ -37,7 +37,7 @@ public:
                                                VROMipmapMode::Runtime,
                                                VROPlatformLoadImageFromAsset("dd_reticle_large.png", VROTextureInternalFormat::RGBA8));
         std::shared_ptr<VROReticle> reticle = std::make_shared<VROReticle>(reticleTexture);
-        reticle->setPointerMode(true);
+        reticle->setPointerFixed(false);
         setReticle(reticle);
     }
     ~VROInputPresenterDaydream() {}

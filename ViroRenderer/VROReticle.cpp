@@ -24,7 +24,7 @@ static const float kCircleSegments = 64;
 static const float kFuseRadiusMultiplier = 3;
 
 VROReticle::VROReticle(std::shared_ptr<VROTexture> reticleTexture) :
-    _isPointerFixed(false),
+    _isPointerFixed(true),
     _enabled(true),
     _isFusing(false),
     _size(0.01),
@@ -138,7 +138,7 @@ void VROReticle::setEnabled(bool enabled) {
 
 void VROReticle::setPosition(VROVector3f position){
     /*
-     Note: As the reticle doesn't currently support hierarchal rendering, We have
+     Note: As the reticle doesn't currently support hierarchical rendering, We have
      to manually set the property of each node.
      */
     _reticleBaseNode->setPosition(position);
@@ -153,12 +153,12 @@ void VROReticle::setRadius(float radius) {
     _reticleBaseNode->setScale({scale, scale, scale});
 }
 
-void VROReticle::setPointerMode(bool pointerMode){
-    _isPointerFixed = pointerMode;
+void VROReticle::setPointerFixed(bool fixed){
+    _isPointerFixed = fixed;
 
-    // Add billboard constraints in pointer mode so that reticle always faces the
+    // Add billboard constraints if the pointer is not fixed, so that the reticle always faces the
     // user even if it's pointed at a sharp angle.
-    if (_isPointerFixed){
+    if (!_isPointerFixed) {
         _reticleBaseNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
         _fuseNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
         _fuseBackgroundNode->addConstraint(std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All));
@@ -171,7 +171,7 @@ void VROReticle::setPointerMode(bool pointerMode){
     }
 }
 
-bool VROReticle::getPointerMode(){
+bool VROReticle::isPointerFixed() {
     return _isPointerFixed;
 }
 
@@ -181,7 +181,7 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext
     }
     
     VROMatrix4f parentTransform;
-    if (!_isPointerFixed) {
+    if (_isPointerFixed) {
         parentTransform = renderContext.getHUDViewMatrix();
     }
 

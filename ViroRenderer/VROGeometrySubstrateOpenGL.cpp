@@ -232,7 +232,7 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
     }
     if (geometry.isScreenSpace()) {
         /*
-         Screen space geometries are specified in viepwort (screen) coordinates.
+         Screen space geometries are specified in viewport (screen) coordinates.
          Therefore they do not respond to the camera (identity view matrix), and
          they use an orthographic projection.
          */

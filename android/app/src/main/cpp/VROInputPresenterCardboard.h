@@ -23,7 +23,7 @@ class VROInputPresenterCardboard : public VROInputPresenter {
 public:
     VROInputPresenterCardboard() {
         setReticle(std::make_shared<VROReticle>(nullptr));
-        getReticle()->setPointerMode(false);
+        getReticle()->setPointerFixed(true);
     }
     ~VROInputPresenterCardboard() {}
 

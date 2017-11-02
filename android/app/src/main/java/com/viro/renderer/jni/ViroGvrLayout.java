@@ -205,12 +205,17 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
             AndroidCompat.setVrModeEnabled((Activity) getContext(), true);
         }
 
-        // While this is for VR mode, there doesn't seem to be a negative impact in Mono mode.
-        if (setAsyncReprojectionEnabled(true)) {
-            // Scanline racing decouples the app framerate from the display framerate,
-            // allowing immersive interaction even at the throttled clockrates set by
-            // sustained performance mode.
-            AndroidCompat.setSustainedPerformanceMode((Activity) getContext(), true);
+        // Turn on async reprojection (which skews existing frames and fills them in when we're
+        // dropping under 60 FPS). Async reprojection is only available on Daydream-enabled devices.
+        // If we're using a fixed pointer, then do *not* use async reprojection, because it not
+        // compatible with any HUD elements: it makes them wobble.
+        if (!mNativeRenderer.isReticlePointerFixed()) {
+            if (setAsyncReprojectionEnabled(true)) {
+                // Scanline racing decouples the app framerate from the display framerate,
+                // allowing immersive interaction even at the throttled clockrates set by
+                // sustained performance mode.
+                AndroidCompat.setSustainedPerformanceMode((Activity) getContext(), true);
+            }
         }
 
         final Activity activity = (Activity)getContext();
