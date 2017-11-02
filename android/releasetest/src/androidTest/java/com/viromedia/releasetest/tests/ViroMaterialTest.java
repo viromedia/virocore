@@ -65,9 +65,10 @@ public class ViroMaterialTest extends ViroBaseTest {
         mNodeBox.setOpacity(0.8f);
         float[] boxPosition = {0, 0, -4};
         mNodeBox.setPosition(new Vector(boxPosition));
+        mNodeBox.setRotation(new Vector(0f, 45f, 0f));
         mMaterialBoxList = new ArrayList();
         int[] colorArray = {Color.DKGRAY, Color.GRAY, Color.LTGRAY, Color.MAGENTA, Color.CYAN, Color.YELLOW};
-        for(int i=0; i<6; i++){
+        for(int i = 0; i < 6; i++) {
             Material material = new Material();
             material.setLightingModel(Material.LightingModel.CONSTANT);
             material.setDiffuseColor(colorArray[i]);
@@ -96,7 +97,7 @@ public class ViroMaterialTest extends ViroBaseTest {
         //test blend modes
         testMaterialBlendNone();
         testMaterialBlendAlpha();
-        //testMaterialBlendAdd();
+        testMaterialBlendAdd();
 
         //test transparency modes.
         testMaterialTransparencyModeAOne();
