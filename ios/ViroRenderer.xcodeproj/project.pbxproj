@@ -64,6 +64,7 @@
 		8AF0E0831FA7FA9D0083CBAE /* VROPointCloudEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AF0E0811FA7FA9D0083CBAE /* VROPointCloudEmitter.cpp */; };
 		8AF0E0841FA7FA9D0083CBAE /* VROPointCloudEmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF0E0821FA7FA9D0083CBAE /* VROPointCloudEmitter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8AF0E08A1FA928480083CBAE /* point_cloud.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AF0E0891FA928480083CBAE /* point_cloud.png */; };
+		8AF0E08E1FABA4C50083CBAE /* VROARPointCloud.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF0E08C1FABA4C40083CBAE /* VROARPointCloud.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8B2F2A471F6B8E2D000C9924 /* VROPortalDelegateiOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B2F2A461F6B8E2D000C9924 /* VROPortalDelegateiOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8B2F2A481F6B9D0A000C9924 /* VROPortalDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B2F2A451F6B87BB000C9924 /* VROPortalDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8BDDA00D1E54F6B200A42870 /* VROLazyMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BDDA00B1E54F48500A42870 /* VROLazyMaterial.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -762,6 +763,7 @@
 		8AF0E0811FA7FA9D0083CBAE /* VROPointCloudEmitter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = VROPointCloudEmitter.cpp; sourceTree = "<group>"; };
 		8AF0E0821FA7FA9D0083CBAE /* VROPointCloudEmitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPointCloudEmitter.h; sourceTree = "<group>"; };
 		8AF0E0891FA928480083CBAE /* point_cloud.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = point_cloud.png; sourceTree = "<group>"; };
+		8AF0E08C1FABA4C40083CBAE /* VROARPointCloud.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROARPointCloud.h; sourceTree = "<group>"; };
 		8AF39AB51F2295F700229AC0 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		8B2F2A451F6B87BB000C9924 /* VROPortalDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalDelegate.h; sourceTree = "<group>"; };
 		8B2F2A461F6B8E2D000C9924 /* VROPortalDelegateiOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VROPortalDelegateiOS.h; sourceTree = "<group>"; };
@@ -1680,6 +1682,7 @@
 				8A11C8F61EF5B2270003E829 /* VROARComponentManager.cpp */,
 				8A11C8F71EF5B2270003E829 /* VROARComponentManager.h */,
 				8A11C8F41EF5A8E30003E829 /* VROARPlaneNode.h */,
+				8AF0E08C1FABA4C40083CBAE /* VROARPointCloud.h */,
 				8A4590FA1F97BF4D00D3811A /* VROARNode.cpp */,
 				8A5C05581EF6416900F94CB9 /* VROARNode.h */,
 				8A99E6CE1EF1B95800712D79 /* VROARScene.cpp */,
@@ -2617,6 +2620,7 @@
 				8F52EA301E1D643000F1AF9D /* VROExecutableAnimation.h in Headers */,
 				8FDDB4AF1DB055A700DE0968 /* VROShaderModifier.h in Headers */,
 				8F83DE9E1C4826F80089C31A /* VROTimingFunctionCubicBezier.h in Headers */,
+				8AF0E08E1FABA4C50083CBAE /* VROARPointCloud.h in Headers */,
 				8FD4DF471C18F5EB003DC425 /* VROVector4f.h in Headers */,
 				8F53D3A51DCB9B2A001C91A8 /* VROImage.h in Headers */,
 				8FD4DF491C18F5EB003DC425 /* VROMatrix4f.h in Headers */,
