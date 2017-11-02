@@ -57,6 +57,9 @@ VROSceneRendererARCore::VROSceneRendererARCore(std::shared_ptr<gvr::AudioApi> gv
     controller->setRenderer(_renderer);
     controller->setSession(_session);
 
+    _componentManager = std::make_shared<VROARComponentManager>();
+    _session->setDelegate(_componentManager);
+
     _pointOfView = std::make_shared<VRONode>();
     _pointOfView->setCamera(std::make_shared<VRONodeCamera>());
     _renderer->setPointOfView(_pointOfView);
@@ -216,12 +219,9 @@ void VROSceneRendererARCore::initARSession(VROViewport viewport, std::shared_ptr
     material->getDiffuse().setTexture(_session->getCameraBackgroundTexture());
     material->setWritesToDepthBuffer(false);
 
-    _componentManager = std::make_shared<VROARComponentManager>();
-
     _session->setScene(scene);
     _session->setViewport(viewport);
     _session->setAnchorDetection({VROAnchorDetection::PlanesHorizontal});
-    _session->setDelegate(_componentManager);
 
     _session->run();
 
