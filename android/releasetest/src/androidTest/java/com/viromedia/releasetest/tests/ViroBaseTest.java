@@ -20,6 +20,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 
 import com.viro.renderer.ARHitTestResult;
+import com.viro.renderer.jni.ARScene;
 import com.viro.renderer.jni.EventDelegate;
 import com.viro.renderer.jni.Material;
 import com.viro.renderer.jni.Node;
@@ -35,6 +36,7 @@ import com.viro.renderer.jni.event.PinchState;
 import com.viro.renderer.jni.event.RotateState;
 import com.viro.renderer.jni.event.SwipeState;
 import com.viro.renderer.jni.event.TouchState;
+import com.viromedia.releasetest.BuildConfig;
 import com.viromedia.releasetest.ViroReleaseTestActivity;
 
 import org.junit.After;
@@ -88,8 +90,11 @@ public abstract class ViroBaseTest {
         mTimer = new Timer();
         await().until(glInitialized());
 
-        // TODO Create ARSscene if build variant is arcore. VIRO-2101
-        mScene = new Scene();
+        if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
+            mScene = new ARScene();
+        } else {
+            mScene = new Scene();
+        }
         createBaseTestScene();
         configureTestScene();
         mViroView.setScene(mScene);
@@ -245,11 +250,11 @@ public abstract class ViroBaseTest {
     }
 
     public interface TestCleanUpMethod {
-        public void cleanUp();
+        void cleanUp();
     }
 
     public interface MutableTestMethod {
-        public void mutableTest();
+        void mutableTest();
     }
 
     private class GenericEventCallback implements EventDelegate.EventDelegateCallback {
