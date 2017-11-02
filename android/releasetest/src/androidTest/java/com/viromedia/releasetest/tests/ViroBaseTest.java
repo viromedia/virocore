@@ -16,7 +16,6 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 
 import com.viro.renderer.ARHitTestResult;
@@ -71,8 +70,8 @@ public abstract class ViroBaseTest {
     private final AtomicInteger mTestResult = new AtomicInteger(-1);
     public ViroView mViroView;
     @Rule
-    public ActivityTestRule<ViroReleaseTestActivity> mActivityTestRule
-            = new ActivityTestRule<>(ViroReleaseTestActivity.class, true, true);
+    public ViroActivityTestRule<ViroReleaseTestActivity> mActivityTestRule
+            = new ViroActivityTestRule(ViroReleaseTestActivity.class, true, true);
     protected MutableTestMethod mMutableTestMethod;
     protected Timer mTimer;
     protected Scene mScene;
@@ -85,7 +84,7 @@ public abstract class ViroBaseTest {
 
     @Before
     public void setUp() {
-        mActivity = mActivityTestRule.getActivity();
+        mActivity = (ViroReleaseTestActivity) mActivityTestRule.getActivity();
         mViroView = mActivity.getViroView();
         mTimer = new Timer();
         await().until(glInitialized());
@@ -234,8 +233,8 @@ public abstract class ViroBaseTest {
     protected EventDelegate getGenericDelegate(final String delegateTag) {
         final EventDelegate delegateJni = new EventDelegate();
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_HOVER, false);
-        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_FUSE, true);
-        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_DRAG, true);
+        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_FUSE, false);
+        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_DRAG, false);
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_CLICK, true);
         if (delegateTag.equalsIgnoreCase(TEST_PASSED_TAG)) {
             callbackOne = new GenericEventCallback(delegateTag);

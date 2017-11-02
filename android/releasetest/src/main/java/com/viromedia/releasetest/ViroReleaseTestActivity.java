@@ -33,6 +33,7 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements GLList
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+        Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         System.out.println("onCreate called");
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
@@ -60,30 +61,35 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements GLList
 
     @Override
     protected void onStart() {
+        Log.i(TAG, "onStart");
         super.onStart();
         mViroView.onActivityStarted(this);
     }
 
     @Override
     protected void onResume() {
+        Log.i(TAG, "onResume");
         super.onResume();
         mViroView.onActivityResumed(this);
     }
 
     @Override
     protected void onPause() {
+        Log.i(TAG, "onPause");
         super.onPause();
         mViroView.onActivityPaused(this);
     }
 
     @Override
     protected void onStop() {
+        Log.i(TAG, "onStop");
         super.onStop();
         mViroView.onActivityStopped(this);
     }
 
     @Override
     protected void onDestroy() {
+        Log.i(TAG, "onDestroy");
         super.onDestroy();
         mViroView.onActivityDestroyed(this);
     }
