@@ -187,6 +187,14 @@ public abstract class ViroBaseTest {
         assertEquals((long) TEST_PASSED, (long) mTestResult.get());
     }
 
+    protected void assertPass(final String expectedMessage, final TestCleanUpMethod method) {
+        assertPass(expectedMessage);
+
+        if (method != null) {
+            method.cleanUp();
+        }
+    }
+
     abstract void configureTestScene();
 
     void callbackEverySecond(final MutableTestMethod testMethod) {
@@ -233,6 +241,10 @@ public abstract class ViroBaseTest {
 
 
         return delegateJni;
+    }
+
+    public interface TestCleanUpMethod {
+        public void cleanUp();
     }
 
     public interface MutableTestMethod {

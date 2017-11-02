@@ -10,12 +10,14 @@
 package com.viromedia.releasetest.tests;
 
 import android.graphics.Color;
+import android.support.test.espresso.core.deps.guava.collect.Iterables;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.viro.renderer.jni.Box;
+import com.viro.renderer.jni.AmbientLight;
 import com.viro.renderer.jni.DirectionalLight;
 import com.viro.renderer.jni.Material;
 import com.viro.renderer.jni.Node;
+import com.viro.renderer.jni.Sphere;
 import com.viro.renderer.jni.Surface;
 import com.viro.renderer.jni.Vector;
 
@@ -23,6 +25,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by manish on 10/25/17.
@@ -31,63 +35,178 @@ import java.util.Arrays;
 @RunWith(AndroidJUnit4.class)
 public class ViroDirectionalLightTest extends ViroBaseTest {
     private static final String TAG = ViroDirectionalLightTest.class.getName();
-
+    private static final int INFLUENCE_BITMASK = 1;
     private DirectionalLight mDirectionalLight;
 
     @Override
     void configureTestScene() {
-//        final AmbientLight ambientLightJni = new AmbientLight(Color.WHITE, 1000.0f);
-//        mScene.getRootNode().addLight(ambientLightJni);
-
-        final Node verticleSurfaceNode = new Node();
-        final Surface surface = new Surface(6, 6);
-        final float[] surfacePos = {0, 2, -4};
-        verticleSurfaceNode.setPosition(new Vector(surfacePos));
-        final Material surfaceMaterial = new Material();
-        surfaceMaterial.setDiffuseColor(Color.GREEN);
-        surfaceMaterial.setLightingModel(Material.LightingModel.LAMBERT);
-        surface.setMaterials(Arrays.asList(surfaceMaterial));
-        verticleSurfaceNode.setGeometry(surface);
-        mScene.getRootNode().addChildNode(verticleSurfaceNode);
-
-        final Node boxNode = new Node();
-        final Box box = new Box(1, 1, 1);
-        final Material boxMaterial = new Material();
-        boxMaterial.setDiffuseColor(Color.BLUE);
-        boxMaterial.setLightingModel(Material.LightingModel.LAMBERT);
-
-        boxNode.setGeometry(box);
-        final float[] boxPosition = {0, -0.5f, -2};
-        boxNode.setPosition(new Vector(boxPosition));
-        box.setMaterials(Arrays.asList(boxMaterial));
-        mScene.getRootNode().addChildNode(boxNode);
+        final AmbientLight ambientLightJni = new AmbientLight(Color.WHITE, 100.0f);
+        mScene.getRootNode().addLight(ambientLightJni);
 
         // Add directional light in -Z direction
         mDirectionalLight = new DirectionalLight();
-        mDirectionalLight.setColor(Color.GREEN);
+        mDirectionalLight.setInfluenceBitMask(INFLUENCE_BITMASK);
+
         mScene.getRootNode().addLight(mDirectionalLight);
+
+        // Configure verticle surface
+        final Node verticleSurfaceNode = new Node();
+        final Surface surface = new Surface(5, 5);
+        final float[] surfacePos = {0, 0, -5};
+        verticleSurfaceNode.setPosition(new Vector(surfacePos));
+        final Material surfaceMaterial = new Material();
+        surfaceMaterial.setDiffuseColor(Color.WHITE);
+        surfaceMaterial.setLightingModel(Material.LightingModel.BLINN);
+        surface.setMaterials(Arrays.asList(surfaceMaterial));
+        verticleSurfaceNode.setGeometry(surface);
+        verticleSurfaceNode.setLightReceivingBitMask(INFLUENCE_BITMASK);
+        mScene.getRootNode().addChildNode(verticleSurfaceNode);
+
+        // Configure horizontal surface
+        final Node horizontalSurfaceNode = new Node();
+        final Surface hSurface = new Surface(5, 5);
+        final float[] hSurfacePos = {0, -2f, -5};
+        horizontalSurfaceNode.setPosition(new Vector(hSurfacePos));
+        final Material hSurfaceMaterial = new Material();
+        hSurfaceMaterial.setDiffuseColor(Color.WHITE);
+        hSurfaceMaterial.setLightingModel(Material.LightingModel.BLINN);
+        hSurface.setMaterials(Arrays.asList(hSurfaceMaterial));
+        horizontalSurfaceNode.setGeometry(hSurface);
+        horizontalSurfaceNode.setRotation(new Vector(-90, 0, 0));
+        horizontalSurfaceNode.setLightReceivingBitMask(INFLUENCE_BITMASK);
+        mScene.getRootNode().addChildNode(horizontalSurfaceNode);
+
+        // Configure sphere
+        final Node sphereNode = new Node();
+        final Sphere sphere = new Sphere(0.5f);
+        final Material sphereMaterial = new Material();
+        sphereMaterial.setDiffuseColor(Color.WHITE);
+        sphereMaterial.setLightingModel(Material.LightingModel.BLINN);
+        sphereNode.setShadowCastingBitMask(INFLUENCE_BITMASK);
+        sphereNode.setLightReceivingBitMask(INFLUENCE_BITMASK);
+        sphereNode.setGeometry(sphere);
+        final float[] spherePos = {0, -0.5f, -2f};
+        sphereNode.setPosition(new Vector(spherePos));
+        sphere.setMaterials(Arrays.asList(sphereMaterial));
+        mScene.getRootNode().addChildNode(sphereNode);
+
     }
 
     @Test
     public void testDirectionalLight() {
 
-        testIntensityChange();
-        testColorChange();
+        testSetColor();
+        testSetIntensity();
+        testSetCastsShadow();
+        testSetDirection();
 
-        testShadowBiasChange();
+        // TODO Create bug for shadows not working with directional light
+//        testSetInfluenceBitMask();
+//        testSetShadowOrthographicSize();
+//        testSetShadowOrthographicPosition();
+//        testSetShadowMapSize();
+//        testSetShadowBias();
+//        testSetShadowNearZ();
+//        testSetShadowFarZ();
+//        testSetShadowOpacity();
     }
 
-    private void testColorChange() {
-        // test
-        // change color to green
+    /**
+     * Base Light.java props
+     **/
+
+    private void testSetColor() {
+        final List<Integer> colors = Arrays.asList(Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.CYAN);
+
+        final Iterator<Integer> itr = Iterables.cycle(colors).iterator();
+
+        mMutableTestMethod = () -> {
+            mDirectionalLight.setColor(itr.next());
+        };
+        assertPass("Cycling colors through WHITE, RED, GREEN, BLUE, MAGENTA, CYAN", () -> {
+            mDirectionalLight.setColor(Color.GREEN);
+        });
+
+    }
+
+    private void testSetIntensity() {
+        mMutableTestMethod = () -> {
+            if (mDirectionalLight != null) {
+                final float currentIntensity = mDirectionalLight.getIntensity();
+                mDirectionalLight.setIntensity((currentIntensity + 200) % 2000);
+            }
+        };
+        assertPass("Cycling intensity from 0 to 2000, with +200 every second", () -> {
+            mDirectionalLight.setIntensity(1000);
+        });
+    }
+
+    private void testSetCastsShadow() {
+        mMutableTestMethod = () -> {
+            if (mDirectionalLight != null) {
+                mDirectionalLight.setCastsShadow(!mDirectionalLight.getCastsShadow());
+            }
+        };
+        assertPass("Toggling casts shadow", () -> {
+            mDirectionalLight.setCastsShadow(false);
+        });
+    }
+
+    private void testSetInfluenceBitMask() {
         assertPass("running testColorChange()");
+
     }
 
-    private void testIntensityChange() {
-        assertPass("running testIntensityChange()");
+
+    private void testSetDirection() {
+        final List<Vector> directions = Arrays.asList(new Vector(0, 0, -1), new Vector(0, -1, -1), new Vector(0, -1, 0));
+        final Iterator<Vector> itr = Iterables.cycle(directions).iterator();
+        mMutableTestMethod = () -> {
+            if (mDirectionalLight != null) {
+                mDirectionalLight.setDirection(itr.next());
+            }
+        };
+
+        assertPass("Changing direction of light from -z to -y axis", () -> {
+            mDirectionalLight.setDirection(directions.get(0));
+        });
+        assertPass("running testColorChange()");
+
     }
 
-    private void testShadowBiasChange() {
-        assertPass("running testShadowBiasChange()");
+
+    private void testSetShadowOrthographicSize() {
+        assertPass("running testColorChange()");
+
+    }
+
+    private void testSetShadowOrthographicPosition() {
+        assertPass("running testColorChange()");
+
+    }
+
+    private void testSetShadowMapSize() {
+        assertPass("running testColorChange()");
+
+    }
+
+    private void testSetShadowBias() {
+        assertPass("running testColorChange()");
+
+    }
+
+    private void testSetShadowNearZ() {
+        assertPass("running testColorChange()");
+
+    }
+
+    private void testSetShadowFarZ() {
+        assertPass("running testColorChange()");
+
+    }
+
+    private void testSetShadowOpacity() {
+        assertPass("running testColorChange()");
+
     }
 }
