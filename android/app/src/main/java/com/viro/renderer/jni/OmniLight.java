@@ -105,6 +105,16 @@ public class OmniLight extends Light {
         nativeSetAttenuationEndDistance(mNativeRef, attenuationEndDistance);
     }
 
+    /**
+     * Get the attenuation end distance, which is the distance from the light at which no
+     * illumination will be received.
+     *
+     * @return The attenuation end distance.
+     */
+    public float getAttenuationEndDistance() {
+        return mAttenuationEndDistance;
+    }
+
     private native long nativeCreateOmniLight(long color, float intensity,
                                               float attenuationStartDistance,
                                               float attenuationEndDistance,
