@@ -24,7 +24,7 @@ public class Surface extends Geometry {
      * @param height The extent of the Surface along its vertical axis (Y).
      */
     public Surface(float width, float height) {
-        this(width, height, 0, 1, 0, 1);
+        this(width, height, 0, 0, 1, 1);
     }
 
     /**
