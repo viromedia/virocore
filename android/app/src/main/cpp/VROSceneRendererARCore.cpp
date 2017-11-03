@@ -230,6 +230,8 @@ void VROSceneRendererARCore::initARSession(VROViewport viewport, std::shared_ptr
     passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
 
     arScene->setARComponentManager(_componentManager);
+    arScene->setDriver(_driver);
+    arScene->setARSession(_session);
     arScene->addNode(_pointOfView);
 }
 

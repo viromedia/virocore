@@ -90,10 +90,12 @@ void VROParticleEmitter::setParticleSurface(std::shared_ptr<VROSurface> particle
         
         // Grab shader modifiers defined by the UBO for processing batched data.
         std::vector<std::shared_ptr<VROShaderModifier>> shaderModifiers = instanceUBO->createInstanceShaderModifier();
-        
+
         // Bind the Particle UBO to this geometry to be processed during instanced rendering.
         particleSurface->setInstancedUBO(instanceUBO);
         std::shared_ptr<VROMaterial> material = particleSurface->getMaterials()[0];
+        std::vector<std::shared_ptr<VROShaderModifier>> modifiers =  material->getShaderModifiers();
+        modifiers.clear();
         for (std::shared_ptr<VROShaderModifier> modifier : shaderModifiers) {
             material->addShaderModifier(modifier);
         }
@@ -103,7 +105,7 @@ void VROParticleEmitter::setParticleSurface(std::shared_ptr<VROSurface> particle
         
         // Initialize the emitter with default values.
         material->setLightingModel(VROLightingModel::Constant);
-        
+
         // Finally, bind the particle geometry to the emitter node.
         emitterNode->setGeometry(particleSurface);
         emitterNode->setIgnoreEventHandling(true);

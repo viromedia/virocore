@@ -30,6 +30,22 @@ public class ARScene extends Scene {
         nativeDisplayPointCloud(mNativeRef, displayPointCloud);
     }
 
+    public void resetPointCloudSurface() {
+        nativeResetPointCloudSurface(mNativeRef);
+    }
+
+    public void setPointCloudSurface(Surface surface) {
+        nativeSetPointCloudSurface(mNativeRef, surface.mNativeRef);
+    }
+
+    public void setPointCloudSurfaceScale(Vector scale) {
+        nativeSetPointCloudSurfaceScale(mNativeRef, scale.x, scale.y, scale.z);
+    }
+
+    public void setPointCloudMaxPoints(int maxPoints) {
+        nativeSetPointCloudMaxPoints(mNativeRef, maxPoints);
+    }
+
     public void addARPlane(ARPlane arPlane) {
         nativeAddARPlane(mNativeRef, arPlane.mNativeRef);
     }
@@ -51,6 +67,14 @@ public class ARScene extends Scene {
     private native void nativeDestroyARSceneDelegate(long delegateRef);
 
     private native void nativeDisplayPointCloud(long sceneControllerRef, boolean displayPointCloud);
+
+    private native void nativeResetPointCloudSurface(long sceneControllerRef);
+
+    private native void nativeSetPointCloudSurface(long sceneControllerRef, long surfaceRef);
+
+    private native void nativeSetPointCloudSurfaceScale(long sceneControllerRef, float scaleX, float scaleY, float scaleZ);
+
+    private native void nativeSetPointCloudMaxPoints(long sceneControllerRef, int maxPoints);
 
     private native void nativeAddARPlane(long sceneControllerRef, long arPlaneRef);
 

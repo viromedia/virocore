@@ -18,13 +18,13 @@
 VROPointCloudEmitter::VROPointCloudEmitter(std::shared_ptr<VRODriver> driver,
                                            std::shared_ptr<VRONode> node,
                                            std::shared_ptr<VROARSession> session) :
-    _particleScale(VROVector3f(.01, .01, .01)),
-    _maxParticles(500) {
+    _particleScale(VROVector3f(.01, .01, .01)) {
 
     initPointCloudTexture();
 
     _arSession = session;
 
+    // create surfaces w/ size 1,1 and use _particleScale to downsize (if required).
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(1, 1);
     surface->getMaterials()[0]->getDiffuse().setTexture(getPointCloudTexture());
     surface->getMaterials()[0]->setBloomThreshold(-1);
@@ -36,6 +36,23 @@ VROPointCloudEmitter::VROPointCloudEmitter(std::shared_ptr<VRODriver> driver,
 void VROPointCloudEmitter::clearParticles() {
     _particles.clear();
     _zombieParticles.clear();
+    std::shared_ptr<VRONode> emitterNode = _particleEmitterNodeWeak.lock();
+    if (emitterNode) {
+        updateUBO(emitterNode, VROBoundingBox(0,0,0,0,0,0));
+    }
+}
+
+void VROPointCloudEmitter::resetParticleSurface() {
+    std::shared_ptr<VROSurface> newSurface = VROSurface::createSurface(1, 1);
+    newSurface->getMaterials()[0]->getDiffuse().setTexture(getPointCloudTexture());
+    newSurface->getMaterials()[0]->setBloomThreshold(-1);
+    newSurface->getMaterials()[0]->setBlendMode(VROBlendMode::Add);
+    VROParticleEmitter::setParticleSurface(newSurface);
+
+}
+
+void VROPointCloudEmitter::setParticleSurface(std::shared_ptr<VROSurface> particleSurface) {
+    VROParticleEmitter::setParticleSurface(particleSurface);
 }
 
 void VROPointCloudEmitter::update(const VRORenderContext &context) {

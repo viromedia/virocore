@@ -5,14 +5,12 @@
 //  Copyright © 2016 Viro Media. All rights reserved.
 //
 
-#include <jni.h>
-#include <memory>
+#include "Surface_JNI.h"
 #include <VROVideoSurface.h>
 #include <VROVideoTextureAVP.h>
 #include "VRONode.h"
 
 #include "VROMaterial.h"
-#include "PersistentRef.h"
 #include "VROFrameSynchronizer.h"
 #include "VRORenderer_JNI.h"
 #include "Node_JNI.h"
@@ -23,18 +21,6 @@
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
       Java_com_viro_renderer_jni_Surface_##method_name
-
-namespace Surface {
-    inline jlong jptr(std::shared_ptr<VROSurface> surface) {
-        PersistentRef<VROSurface> *persistedSurface = new PersistentRef<VROSurface>(surface);
-        return reinterpret_cast<intptr_t>(persistedSurface);
-    }
-
-    inline std::shared_ptr<VROSurface> native(jlong ptr) {
-        PersistentRef<VROSurface> *persistedSurface = reinterpret_cast<PersistentRef<VROSurface> *>(ptr);
-        return persistedSurface->get();
-    }
-}
 
 extern "C" {
 

@@ -48,7 +48,15 @@ void VROARScene::displayPointCloud(bool displayPointCloud) {
 
     // If we should have an emitter and none exists, try to create one...
     if (_displayPointCloud && !_pointCloudEmitter) {
+        // Note: the creation could fail!
         _pointCloudEmitter = createPointCloudEmitter();
+        if (_pointCloudEmitter) {
+            if (_pointCloudSurface) {
+                _pointCloudEmitter->setParticleSurface(_pointCloudSurface);
+            }
+            _pointCloudEmitter->setMaxParticles(_pointCloudMaxPoints);
+            _pointCloudEmitter->setParticleScale(_pointCloudSurfaceScale);
+        }
     }
 
     // If we had an emitter, then add or remove it.
@@ -59,6 +67,34 @@ void VROARScene::displayPointCloud(bool displayPointCloud) {
             VROScene::removeParticleEmitter(_pointCloudEmitter);
             _pointCloudEmitter->clearParticles();
         }
+    }
+}
+
+void VROARScene::resetPointCloudSurface() {
+    _pointCloudSurface = nullptr;
+    if (_pointCloudEmitter) {
+        _pointCloudEmitter->resetParticleSurface();
+    }
+}
+
+void VROARScene::setPointCloudSurface(std::shared_ptr<VROSurface> surface) {
+    _pointCloudSurface = surface;
+    if (_pointCloudEmitter) {
+        _pointCloudEmitter->setParticleSurface(surface);
+    }
+}
+
+void VROARScene::setPointCloudSurfaceScale(VROVector3f scale) {
+    _pointCloudSurfaceScale = scale;
+    if (_pointCloudEmitter) {
+        _pointCloudEmitter->setParticleScale(scale);
+    }
+}
+
+void VROARScene::setPointCloudMaxPoints(int maxPoints) {
+    _pointCloudMaxPoints = maxPoints;
+    if (_pointCloudEmitter) {
+        _pointCloudEmitter->setMaxParticles(_pointCloudMaxPoints);
     }
 }
 

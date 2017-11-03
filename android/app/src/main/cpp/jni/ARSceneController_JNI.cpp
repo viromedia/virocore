@@ -10,6 +10,7 @@
 #include "ARPlane_JNI.h"
 #include "Node_JNI.h"
 #include "ARUtils_JNI.h"
+#include "Surface_JNI.h"
 #include <VROPlatformUtil.h>
 
 #define JNI_METHOD(return_type, method_name) \
@@ -57,6 +58,67 @@ JNI_METHOD(void, nativeDisplayPointCloud) (JNIEnv *env,
 
         if (arScene) {
             arScene->displayPointCloud(displayPointCloud);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeResetPointCloudSurface) (JNIEnv *env,
+                                                jobject object,
+                                                jlong arSceneControllerPtr) {
+    std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
+            ARSceneController::native(arSceneControllerPtr)->getScene());
+    VROPlatformDispatchAsyncRenderer([arScene_w] {
+        std::shared_ptr<VROARScene> arScene = arScene_w.lock();
+
+        if (arScene) {
+            arScene->resetPointCloudSurface();
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetPointCloudSurface) (JNIEnv *env,
+                                              jobject object,
+                                              jlong arSceneControllerPtr,
+                                              jlong pointCloudSurface) {
+    std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
+            ARSceneController::native(arSceneControllerPtr)->getScene());
+    std::weak_ptr<VROSurface> surface_w = Surface::native(pointCloudSurface);
+    VROPlatformDispatchAsyncRenderer([arScene_w, surface_w] {
+        std::shared_ptr<VROARScene> arScene = arScene_w.lock();
+        std::shared_ptr<VROSurface> surface = surface_w.lock();
+
+        if (arScene && surface) {
+            arScene->setPointCloudSurface(surface);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetPointCloudSurfaceScale) (JNIEnv *env,
+                                                   jobject object,
+                                                   jlong arSceneControllerPtr,
+                                                   jfloat scaleX, jfloat scaleY, jfloat scaleZ) {
+    std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
+            ARSceneController::native(arSceneControllerPtr)->getScene());
+    VROPlatformDispatchAsyncRenderer([arScene_w, scaleX, scaleY, scaleZ] {
+        std::shared_ptr<VROARScene> arScene = arScene_w.lock();
+
+        if (arScene) {
+            arScene->setPointCloudSurfaceScale({scaleX, scaleY, scaleZ});
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetPointCloudMaxPoints) (JNIEnv *env,
+                                                jobject object,
+                                                jlong arSceneControllerPtr,
+                                                jint maxPoints) {
+    std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
+            ARSceneController::native(arSceneControllerPtr)->getScene());
+    VROPlatformDispatchAsyncRenderer([arScene_w, maxPoints] {
+        std::shared_ptr<VROARScene> arScene = arScene_w.lock();
+
+        if (arScene) {
+            arScene->setPointCloudMaxPoints(maxPoints);
         }
     });
 }
