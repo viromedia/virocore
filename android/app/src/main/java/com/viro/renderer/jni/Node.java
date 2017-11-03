@@ -311,6 +311,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
         for (Node child : children) {
             child.removeFromParentNode();
         }
+
+        // Ensure that we also remove any native nodes that may not be tracked in java.
+        nativeRemoveAllChildNodes(mNativeRef);
     }
 
     /**

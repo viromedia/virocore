@@ -59,9 +59,9 @@ public class Object3D extends Node {
      * @param asyncListener Listener to respond to model loading status.
      */
     public void loadModel(Uri uri, Type type, AsyncObject3DListener asyncListener) {
+        removeAllChildNodes();
         long requestID = mActiveRequestID.incrementAndGet();
         nativeLoadModelFromURL(uri.toString(), mNativeRef, type == Type.FBX, requestID);
-
         mAsyncListener = asyncListener;
     }
 
@@ -77,6 +77,8 @@ public class Object3D extends Node {
      */
     public void loadModel(String modelResource, Type type, AsyncObject3DListener asyncObjListener,
                           Map<String, String> resourceNamesToUris) {
+        removeAllChildNodes();
+
         long requestID = mActiveRequestID.incrementAndGet();
         nativeLoadModelFromResources(modelResource, resourceNamesToUris, mNativeRef, type == Type.FBX, requestID);
         mAsyncListener = asyncObjListener;
