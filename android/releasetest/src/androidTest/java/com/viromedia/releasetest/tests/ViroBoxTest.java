@@ -40,7 +40,7 @@ public class ViroBoxTest extends ViroBaseTest {
         mBox = new Box(1, 1, 1);
 
         node.setGeometry(mBox);
-        final float[] boxPosition = {0, 0, -5};
+        final float[] boxPosition = {0, -0.5f, -5};
         node.setPosition(new Vector(boxPosition));
         mBox.setMaterials(Arrays.asList(material));
         mScene.getRootNode().addChildNode(node);
@@ -60,7 +60,9 @@ public class ViroBoxTest extends ViroBaseTest {
                 mBox.setWidth(mBox.getWidth() + 1);
             }
         };
-        assertPass("Box changed in width from 1 to 5");
+        assertPass("Box changed in width from 1 to 5", () -> {
+            mBox.setWidth(1);
+        });
     }
 
     public void boxHeightTest() {
@@ -69,7 +71,9 @@ public class ViroBoxTest extends ViroBaseTest {
                 mBox.setHeight(mBox.getHeight() + 1);
             }
         };
-        assertPass("Box changed in height from 1 to 5");
+        assertPass("Box changed in height from 1 to 5", () -> {
+            mBox.setHeight(1);
+        });
     }
 
     public void boxLengthTest() {
@@ -78,6 +82,8 @@ public class ViroBoxTest extends ViroBaseTest {
                 mBox.setLength(mBox.getLength() + 1);
             }
         };
-        assertPass("Box changed in length from 1 to 5");
+        assertPass("Box changed in length from 1 to 5", () -> {
+            mBox.setLength(1);
+        });
     }
 }

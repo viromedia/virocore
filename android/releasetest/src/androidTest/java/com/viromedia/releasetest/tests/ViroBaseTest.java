@@ -233,8 +233,8 @@ public abstract class ViroBaseTest {
     protected EventDelegate getGenericDelegate(final String delegateTag) {
         final EventDelegate delegateJni = new EventDelegate();
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_HOVER, false);
-        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_FUSE, false);
-        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_DRAG, false);
+        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_FUSE, true);
+        delegateJni.setEventEnabled(EventDelegate.EventAction.ON_DRAG, true);
         delegateJni.setEventEnabled(EventDelegate.EventAction.ON_CLICK, true);
         if (delegateTag.equalsIgnoreCase(TEST_PASSED_TAG)) {
             callbackOne = new GenericEventCallback(delegateTag);
