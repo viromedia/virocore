@@ -155,7 +155,9 @@ void VROFBXLoader::loadFBXFromResources(std::string resource, VROResourceType ty
             std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
             std::map<std::string, std::string> fileMap = VROModelIOUtil::processResourceMap(resourceMap, type);
 
-            std::shared_ptr<VRONode> fbxNode = loadFBX(path, "", type, &fileMap);
+            // Note: since we're loading from resources, that meant that we copied the resources over to
+            // a local file and so, the new type (from here on out) is LocalFile
+            std::shared_ptr<VRONode> fbxNode = loadFBX(path, "", VROResourceType::LocalFile, &fileMap);
             VROPlatformDispatchAsyncRenderer([node, fbxNode, onFinish] {
                 injectFBX(fbxNode, node, onFinish);
             });
@@ -169,7 +171,9 @@ void VROFBXLoader::loadFBXFromResources(std::string resource, VROResourceType ty
         std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
         std::map<std::string, std::string> fileMap = VROModelIOUtil::processResourceMap(resourceMap, type);
 
-        std::shared_ptr<VRONode> fbxNode = loadFBX(path, "", type, &fileMap);
+        // Note: since we're loading from resources, that meant that we copied the resources over to
+        // a local file and so, the new type (from here on out) is LocalFile
+        std::shared_ptr<VRONode> fbxNode = loadFBX(path, "", VROResourceType::LocalFile, &fileMap);
         injectFBX(fbxNode, node, onFinish);
         if (isTemp) {
             VROPlatformDeleteFile(path);
