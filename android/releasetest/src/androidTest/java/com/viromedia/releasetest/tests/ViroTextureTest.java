@@ -12,7 +12,6 @@ package com.viromedia.releasetest.tests;
 import android.graphics.Color;
 
 import com.viro.renderer.jni.DirectionalLight;
-import com.viro.renderer.jni.Image;
 import com.viro.renderer.jni.Vector;
 
 import org.junit.Test;
@@ -22,17 +21,17 @@ public class ViroTextureTest extends ViroBaseTest {
 
     @Override
     void configureTestScene() {
-        DirectionalLight light = new DirectionalLight(Color.WHITE, 1000.0f, new Vector(0, 0, -1f));
+        final DirectionalLight light = new DirectionalLight(Color.WHITE, 1000.0f, new Vector(0, 0, -1f));
         mScene.getRootNode().addLight(light);
-        Image image = new Image();
+//        Image image = new Image();
 
     }
 
     @Test
     public void testImages() {
-        testImageConstructorString();
-        testImageConstructorBitmap();
-        testImage
+//        testImageConstructorString();
+//        testImageConstructorBitmap();
+//        testImage
     }
 
 

@@ -457,6 +457,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
     }
 
     private void setDefaults() {
+        mCueBallPhysics.setUseGravity(true);
         mBallsPhysics.forEach(p -> p.setUseGravity(true));
         mBallsPhysics.forEach(p -> p.setRestitution((float) BALL_RESTITUTION));
         mBallsPhysics.forEach(p -> p.setFriction((float) BALL_FRICTION));
@@ -504,16 +505,21 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
             final Random rand = new Random();
             mCueBallPhysics.applyForce(directions.get(rand.nextInt(directions.size())), new Vector(0, 0, 0));
         };
-        assertPass("Applying force to cue ball every second");
+        assertPass("Applying force to cue ball every second", () -> {
+            mCueBallPhysics.clearForce();
+        });
     }
+
+    // TODO This test doesn't work. Figure out why.
     private void testSetUseGravity() {
+        mCueBallPhysics.applyForce(new Vector(0, 0.5f, 0), new Vector(0, 0, 0));
         mMutableTestMethod = () -> {
             mCueBallPhysics.setUseGravity(!mCueBallPhysics.getUseGravity());
-            mCueBallPhysics.applyImpulse(new Vector(0, -2, 2), new Vector(0, 0, 0));
         };
 
         assertPass("Hitting the cue ball to bounce and toggling gravity on/off ", () -> {
-            mBallsPhysics.forEach(p -> p.setUseGravity(true));
+            mCueBallPhysics.clearForce();
+            mCueBallPhysics.setUseGravity(true);
         });
     }
 
