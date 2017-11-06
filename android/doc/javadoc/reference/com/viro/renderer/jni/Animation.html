@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>PhysicsWorld | Android Developers
+  <title>Animation | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -228,7 +228,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
     <li><h2>Classes</h2>
       <ul>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/AmbientLight.html">AmbientLight</a></li>
-          <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Animation.html">Animation</a></li>
+          <li class="selected api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Animation.html">Animation</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/AnimationTransaction.html">AnimationTransaction</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ARNode.html">ARNode</a></li>
@@ -252,7 +252,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShapeAutoCompound.html">PhysicsShapeAutoCompound</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShapeBox.html">PhysicsShapeBox</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShapeSphere.html">PhysicsShapeSphere</a></li>
-          <li class="selected api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html">PhysicsWorld</a></li>
+          <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html">PhysicsWorld</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Polyline.html">Polyline</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PortalScene.html">PortalScene</a></li>
@@ -496,7 +496,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">PhysicsWorld</h1>
+<h1 class="api-title">Animation</h1>
 <p>
 <code class="api-signature">
   public
@@ -504,7 +504,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
   class
-  PhysicsWorld
+  Animation
 </code>
 <br>
 
@@ -537,7 +537,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.renderer.jni.PhysicsWorld
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.renderer.jni.Animation
     </td>
   </tr>
   
@@ -550,9 +550,11 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>The PhysicsWorld encapsulates the physics simulation associated with the <code><a href="../../../../../reference/com/viro/renderer/jni/Scene.html">Scene</a></code>.
- Each Scene automatically creates a PhysicsWorld upon construction.
- This object can be used to set global physics properties like gravity.
+  <p>Animation represents a set of skeletal or keyframe animations that can be executed. These
+ animations are techniques for animating complex geometries; for example, to make a humanoid
+ character walk. They are typically authored in 3D graphics software, and exported as
+ FBX files, which can then be loaded into Viro via <code><a href="../../../../../reference/com/viro/renderer/jni/Object3D.html">Object3D</a></code>. To retrieve an Animation,
+ use <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html#getAnimation(java.lang.String)">getAnimation(String)</a></code>.
 </p>
 
 
@@ -581,8 +583,25 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         interface</code></td>
       <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a></code>
-        <p>Callback used when hit tests are completed.&nbsp;
+        <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.Delegate.html">Animation.Delegate</a></code>
+        <p>Callback interface to respond to <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.html">Animation</a></code> events.&nbsp;
+        
+    
+</p>
+      </td>
+    </tr>
+    
+    
+    <tr class="api apilevel-" >
+      <td class="jd-typecol"><code>
+        
+        
+        
+        
+        enum</code></td>
+      <td class="jd-descrcol" width="100%">
+        <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html">Animation.State</a></code>
+        <p>Represents the playback state of an Animation.&nbsp;
         
     
 </p>
@@ -633,16 +652,69 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
-        void</code>
+        long</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html#findCollisionsWithRayAsync(com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector, boolean, java.lang.String, com.viro.renderer.jni.PhysicsWorld.HitTestCallback)">findCollisionsWithRayAsync</a>(<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> from, <a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> to, boolean closest, String tag, <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a> callback)
+      <a href="../../../../../reference/com/viro/renderer/jni/Animation.html#getDelay()">getDelay</a>()
       </code>
       
-        <p>Find collisions between the ray from <tt>from</tt> to <tt>to</tt> with any <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code> objects
- that have physics bodies.
+        <p>Get the delay, in millieconds, that the Animation will wait before running.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../../reference/com/viro/renderer/jni/Animation.Delegate.html">Animation.Delegate</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../../reference/com/viro/renderer/jni/Animation.html#getDelegate()">getDelegate</a>()
+      </code>
+      
+        <p>Get the <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.Delegate.html">Animation.Delegate</a></code> used to receive callbacks for this Animation.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        boolean</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../../reference/com/viro/renderer/jni/Animation.html#getLoop()">getLoop</a>()
+      </code>
+      
+        <p>Return true if the Animation is currently set to loop after playback.
         
     
 </p>
@@ -666,11 +738,10 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html#findCollisionsWithShapeAsync(com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector, com.viro.renderer.jni.PhysicsShape, java.lang.String, com.viro.renderer.jni.PhysicsWorld.HitTestCallback)">findCollisionsWithShapeAsync</a>(<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> from, <a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> to, <a href="../../../../../reference/com/viro/renderer/jni/PhysicsShape.html">PhysicsShape</a> shape, String tag, <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a> callback)
+      <a href="../../../../../reference/com/viro/renderer/jni/Animation.html#pause()">pause</a>()
       </code>
       
-        <p>Find collisions between the <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShape.html">PhysicsShape</a></code> cast from <tt>from</tt> to <tt>to</tt> with
- any <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code> objects that have physics bodies.
+        <p>Pauses a <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html#RUNNING">RUNNING</a></code> Animation or terminates a <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html#SCHEDULED">SCHEDULED</a></code> Animation.
         
     
 </p>
@@ -694,10 +765,10 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html#setDebugDraw(boolean)">setDebugDraw</a>(boolean debugDraw)
+      <a href="../../../../../reference/com/viro/renderer/jni/Animation.html#play()">play</a>()
       </code>
       
-        <p>Enable or disable physics 'debug draw' mode.
+        <p>Start a <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html#STOPPED">STOPPED</a></code> Animation or resume a <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html#PAUSED">PAUSED</a></code> Animation.
         
     
 </p>
@@ -721,10 +792,93 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html#setGravity(com.viro.renderer.jni.Vector)">setGravity</a>(<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> gravity)
+      <a href="../../../../../reference/com/viro/renderer/jni/Animation.html#setDelay(long)">setDelay</a>(long delay)
       </code>
       
-        <p>Set the constant gravity force to use in the physics simulation.
+        <p>Set the delay, in milliseconds, that the Animation will wait before running after <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.html#play()">play()</a></code>
+ is invoked.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../../reference/com/viro/renderer/jni/Animation.html#setDelegate(com.viro.renderer.jni.Animation.Delegate)">setDelegate</a>(<a href="../../../../../reference/com/viro/renderer/jni/Animation.Delegate.html">Animation.Delegate</a> delegate)
+      </code>
+      
+        <p>Set the <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.Delegate.html">Animation.Delegate</a></code>, which can be used to respond to Animation playback
+ events.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../../reference/com/viro/renderer/jni/Animation.html#setLoop(boolean)">setLoop</a>(boolean loop)
+      </code>
+      
+        <p>Set to true to make the Animation automatically loop to the beginning when playback finishes.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../../reference/com/viro/renderer/jni/Animation.html#stop()">stop</a>()
+      </code>
+      
+        <p>Terminates any <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html#SCHEDULED">SCHEDULED</a></code>, <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html#RUNNING">RUNNING</a></code> or <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html#PAUSED">PAUSED</a></code> Animation.
         
     
 </p>
@@ -771,10 +925,10 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="findCollisionsWithRayAsync(com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector, boolean, java.lang.String, com.viro.renderer.jni.PhysicsWorld.HitTestCallback)"></A>
+<A NAME="getDelay()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">findCollisionsWithRayAsync</h3>
+    <h3 class="api-name">getDelay</h3>
     <div class="api-level">
       <div></div>
       
@@ -782,45 +936,17 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-void findCollisionsWithRayAsync (<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> from, 
-                <a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> to, 
-                boolean closest, 
-                String tag, 
-                <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a> callback)</pre>
+long getDelay ()</pre>
     
     
 
     
-  <p>Find collisions between the ray from <tt>from</tt> to <tt>to</tt> with any <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code> objects
- that have physics bodies.  Each individual <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code> will receive in
- its <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.PhysicsDelegate.html">PhysicsBody.PhysicsDelegate</a></code> a <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.PhysicsDelegate.html#onCollided(java.lang.String, com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector)">onCollided(String, Vector, Vector)</a></code>
- event upon collision. The event will contain the tag given to this intersection test.</p></p>
+  <p>Get the delay, in millieconds, that the Animation will wait before running.</p></p>
     <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
+      <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code>from</code></td>
-        <td width="100%">
-          <code>Vector</code>: The source of the ray.</p></td>
-      </tr>
-      <tr>
-        <td><code>to</code></td>
-        <td width="100%">
-          <code>Vector</code>: The destination of the ray.</p></td>
-      </tr>
-      <tr>
-        <td><code>closest</code></td>
-        <td width="100%">
-          <code>boolean</code>: True to only collide with the closest object.</p></td>
-      </tr>
-      <tr>
-        <td><code>tag</code></td>
-        <td width="100%">
-          <code>String</code>: The tag to use to identify this ray test in the <tt>onCollision</tt> callback of each <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code>.</p></td>
-      </tr>
-      <tr>
-        <td><code>callback</code></td>
-        <td width="100%">
-          <code>PhysicsWorld.HitTestCallback</code>: The <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a></code> to use, which will be invoked when the test is completed.
+        <td><code>long</code></td>
+        <td width="100%">The delay in milliseconds.
 </p></td>
       </tr>
     </table>
@@ -828,10 +954,10 @@ void findCollisionsWithRayAsync (<a href="../../../../../reference/com/viro/rend
 </div>
 
 
-<A NAME="findCollisionsWithShapeAsync(com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector, com.viro.renderer.jni.PhysicsShape, java.lang.String, com.viro.renderer.jni.PhysicsWorld.HitTestCallback)"></A>
+<A NAME="getDelegate()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">findCollisionsWithShapeAsync</h3>
+    <h3 class="api-name">getDelegate</h3>
     <div class="api-level">
       <div></div>
       
@@ -839,48 +965,17 @@ void findCollisionsWithRayAsync (<a href="../../../../../reference/com/viro/rend
 
     </div>
 <pre class="api-signature no-pretty-print">
-void findCollisionsWithShapeAsync (<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> from, 
-                <a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> to, 
-                <a href="../../../../../reference/com/viro/renderer/jni/PhysicsShape.html">PhysicsShape</a> shape, 
-                String tag, 
-                <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a> callback)</pre>
+<a href="../../../../../reference/com/viro/renderer/jni/Animation.Delegate.html">Animation.Delegate</a> getDelegate ()</pre>
     
     
 
     
-  <p>Find collisions between the <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShape.html">PhysicsShape</a></code> cast from <tt>from</tt> to <tt>to</tt> with
- any <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code> objects that have physics bodies.  Each individual <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code> will
- receive in its <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.PhysicsDelegate.html">PhysicsBody.PhysicsDelegate</a></code> a <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.PhysicsDelegate.html#onCollided(java.lang.String, com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector)">onCollided(String, Vector, Vector)</a></code> event
- upon collision. The event will contain the tag given to this intersection test.</p></p>
+  <p>Get the <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.Delegate.html">Animation.Delegate</a></code> used to receive callbacks for this Animation.</p></p>
     <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
+      <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code>from</code></td>
-        <td width="100%">
-          <code>Vector</code>: The source of the ray.</p></td>
-      </tr>
-      <tr>
-        <td><code>to</code></td>
-        <td width="100%">
-          <code>Vector</code>: The destination of the ray.</p></td>
-      </tr>
-      <tr>
-        <td><code>shape</code></td>
-        <td width="100%">
-          <code>PhysicsShape</code>: The shape to use for the collision test. Only <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShapeSphere.html">PhysicsShapeSphere</a></code> and
-                 <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShapeBox.html">PhysicsShapeBox</a></code> are supported.</p></td>
-      </tr>
-      <tr>
-        <td><code>tag</code></td>
-        <td width="100%">
-          <code>String</code>: The tag to use to identify this ray test in the <tt>onCollision</tt> callback
-                 of each <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code>.</p></td>
-      </tr>
-      <tr>
-        <td><code>callback</code></td>
-        <td width="100%">
-          <code>PhysicsWorld.HitTestCallback</code>: The <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a></code> to use, which will be invoked when the test is
-                 completed.
+        <td><code><a href="../../../../../reference/com/viro/renderer/jni/Animation.Delegate.html">Animation.Delegate</a></code></td>
+        <td width="100%">The delegate, or null if none is attached.
 </p></td>
       </tr>
     </table>
@@ -888,10 +983,10 @@ void findCollisionsWithShapeAsync (<a href="../../../../../reference/com/viro/re
 </div>
 
 
-<A NAME="setDebugDraw(boolean)"></A>
+<A NAME="getLoop()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">setDebugDraw</h3>
+    <h3 class="api-name">getLoop</h3>
     <div class="api-level">
       <div></div>
       
@@ -899,20 +994,17 @@ void findCollisionsWithShapeAsync (<a href="../../../../../reference/com/viro/re
 
     </div>
 <pre class="api-signature no-pretty-print">
-void setDebugDraw (boolean debugDraw)</pre>
+boolean getLoop ()</pre>
     
     
 
     
-  <p>Enable or disable physics 'debug draw' mode. When this mode is enabled, the physics shapes
- will be drawn around each object with a PhysicsBody. This is useful for understanding what
- approximations the physics simulation is using during its computations.</p></p>
+  <p>Return true if the Animation is currently set to loop after playback.</p></p>
     <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
+      <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code>debugDraw</code></td>
-        <td width="100%">
-          <code>boolean</code>: True to enable debug draw mode.
+        <td><code>boolean</code></td>
+        <td width="100%">True if loop is enabled.
 </p></td>
       </tr>
     </table>
@@ -920,10 +1012,10 @@ void setDebugDraw (boolean debugDraw)</pre>
 </div>
 
 
-<A NAME="setGravity(com.viro.renderer.jni.Vector)"></A>
+<A NAME="pause()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">setGravity</h3>
+    <h3 class="api-name">pause</h3>
     <div class="api-level">
       <div></div>
       
@@ -931,23 +1023,153 @@ void setDebugDraw (boolean debugDraw)</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-void setGravity (<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> gravity)</pre>
+void pause ()</pre>
     
     
 
     
-  <p>Set the constant gravity force to use in the physics simulation. Gravity globally accelerates
- physics bodies in a specific direction. This defaults to Earth's gravitational force: {0,
- -9.81, 0}. Not all physics bodies need to respond to gravity: this can be set via <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.html#setUseGravity(boolean)">setUseGravity(boolean)</a></code>.</p></p>
+  <p>Pauses a <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html#RUNNING">RUNNING</a></code> Animation or terminates a <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html#SCHEDULED">SCHEDULED</a></code> Animation.
+ The Animation can be resumed by invoking <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.html#play()">play()</a></code>. If the Animation was scheduled --
+ meaning it was waiting for its <tt>delay</tt> period to expire -- then this function will
+ stop the animation.
+</p></p>
+
+</div>
+
+
+<A NAME="play()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">play</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void play ()</pre>
+    
+    
+
+    
+  <p>Start a <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html#STOPPED">STOPPED</a></code> Animation or resume a <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html#PAUSED">PAUSED</a></code> Animation. If the
+ Animation is paused, then it will immediately resume. If the Animation is <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html#STOPPED">STOPPED</a></code>, then it will first wait <tt>delay</tt> milliseconds before starting.
+</p></p>
+
+</div>
+
+
+<A NAME="setDelay(long)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setDelay</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setDelay (long delay)</pre>
+    
+    
+
+    
+  <p>Set the delay, in milliseconds, that the Animation will wait before running after <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.html#play()">play()</a></code>
+ is invoked.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>gravity</code></td>
+        <td><code>delay</code></td>
         <td width="100%">
-          <code>Vector</code>: The gravity vector to use.
+          <code>long</code>: The delay in milliseconds.
 </p></td>
       </tr>
     </table>
+
+</div>
+
+
+<A NAME="setDelegate(com.viro.renderer.jni.Animation.Delegate)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setDelegate</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setDelegate (<a href="../../../../../reference/com/viro/renderer/jni/Animation.Delegate.html">Animation.Delegate</a> delegate)</pre>
+    
+    
+
+    
+  <p>Set the <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.Delegate.html">Animation.Delegate</a></code>, which can be used to respond to Animation playback
+ events.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>delegate</code></td>
+        <td width="100%">
+          <code>Animation.Delegate</code>: The delegate to use for this Animation.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setLoop(boolean)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setLoop</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setLoop (boolean loop)</pre>
+    
+    
+
+    
+  <p>Set to true to make the Animation automatically loop to the beginning when playback finishes.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>loop</code></td>
+        <td width="100%">
+          <code>boolean</code>: True to loop.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="stop()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">stop</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void stop ()</pre>
+    
+    
+
+    
+  <p>Terminates any <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html#SCHEDULED">SCHEDULED</a></code>, <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html#RUNNING">RUNNING</a></code> or <code><a href="../../../../../reference/com/viro/renderer/jni/Animation.State.html#PAUSED">PAUSED</a></code> Animation.
+</p></p>
 
 </div>
 

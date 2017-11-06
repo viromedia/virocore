@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>PhysicsWorld | Android Developers
+  <title>ViroMediaRecorder | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -252,7 +252,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShapeAutoCompound.html">PhysicsShapeAutoCompound</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShapeBox.html">PhysicsShapeBox</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShapeSphere.html">PhysicsShapeSphere</a></li>
-          <li class="selected api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html">PhysicsWorld</a></li>
+          <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html">PhysicsWorld</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Polyline.html">Polyline</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PortalScene.html">PortalScene</a></li>
@@ -272,7 +272,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/VideoTexture.html">VideoTexture</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ViroContext.html">ViroContext</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ViroGvrLayout.html">ViroGvrLayout</a></li>
-          <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ViroMediaRecorder.html">ViroMediaRecorder</a></li>
+          <li class="selected api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ViroMediaRecorder.html">ViroMediaRecorder</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ViroOvrView.html">ViroOvrView</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ViroViewARCore.html">ViroViewARCore</a></li>
       </ul>
@@ -496,7 +496,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">PhysicsWorld</h1>
+<h1 class="api-title">ViroMediaRecorder</h1>
 <p>
 <code class="api-signature">
   public
@@ -504,7 +504,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
   class
-  PhysicsWorld
+  ViroMediaRecorder
 </code>
 <br>
 
@@ -537,7 +537,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.renderer.jni.PhysicsWorld
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.renderer.jni.ViroMediaRecorder
     </td>
   </tr>
   
@@ -550,9 +550,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>The PhysicsWorld encapsulates the physics simulation associated with the <code><a href="../../../../../reference/com/viro/renderer/jni/Scene.html">Scene</a></code>.
- Each Scene automatically creates a PhysicsWorld upon construction.
- This object can be used to set global physics properties like gravity.
+  <p>ViroMediaRecorder encapsulates the implementation and handling of screenshot capturing and
+ screen recording of a rendered scene associated with a given Renderer.
 </p>
 
 
@@ -567,50 +566,47 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<table id="nestedclasses" class="responsive">
-<tr><th colspan="2"><h3>Nested classes</h3></th></tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<table id="pubctors" class="responsive constructors">
+<tr><th colspan="2"><h3>Public constructors</h3></th></tr>
+
 
 
   
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        interface</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a></code>
-        <p>Callback used when hit tests are completed.&nbsp;
-        
-    
-</p>
-      </td>
-    </tr>
-    
-    
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../../reference/com/viro/renderer/jni/ViroMediaRecorder.html#ViroMediaRecorder(Context, com.viro.renderer.jni.Renderer, int, int)">ViroMediaRecorder</a>(Context context, <a href="../../../../../reference/com/viro/renderer/jni/Renderer.html">Renderer</a> rendererJni, int width, int height)
+      </code>
+      
+    </td>
+  </tr>
+  
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</table>
 
 
 
@@ -638,11 +634,77 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html#findCollisionsWithRayAsync(com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector, boolean, java.lang.String, com.viro.renderer.jni.PhysicsWorld.HitTestCallback)">findCollisionsWithRayAsync</a>(<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> from, <a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> to, boolean closest, String tag, <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a> callback)
+      <a href="../../../../../reference/com/viro/renderer/jni/ViroMediaRecorder.html#destroy()">destroy</a>()
       </code>
       
-        <p>Find collisions between the ray from <tt>from</tt> to <tt>to</tt> with any <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code> objects
- that have physics bodies.
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        static
+        
+        
+        boolean</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../../reference/com/viro/renderer/jni/ViroMediaRecorder.html#hasAudioAndRecordingPermissions(Context)">hasAudioAndRecordingPermissions</a>(Context context)
+      </code>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        static
+        
+        
+        boolean</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../../reference/com/viro/renderer/jni/ViroMediaRecorder.html#hasRecordingPermissions(Context)">hasRecordingPermissions</a>(Context context)
+      </code>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../../reference/com/viro/renderer/jni/ViroMediaRecorder.html#startRecordingAsync(java.lang.String, boolean, com.viro.renderer.jni.ViroMediaRecorderDelegate)">startRecordingAsync</a>(String fileName, boolean saveToCameraRoll, <a href="../../../../../reference/com/viro/renderer/jni/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a> onErrorDelegate)
+      </code>
+      
+        <p>Schedules a screen recording to start on the next rendered frame and be saved with the
+ provided fileName.
         
     
 </p>
@@ -666,11 +728,10 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html#findCollisionsWithShapeAsync(com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector, com.viro.renderer.jni.PhysicsShape, java.lang.String, com.viro.renderer.jni.PhysicsWorld.HitTestCallback)">findCollisionsWithShapeAsync</a>(<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> from, <a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> to, <a href="../../../../../reference/com/viro/renderer/jni/PhysicsShape.html">PhysicsShape</a> shape, String tag, <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a> callback)
+      <a href="../../../../../reference/com/viro/renderer/jni/ViroMediaRecorder.html#stopRecordingAsync(com.viro.renderer.jni.ViroMediaRecorderDelegate)">stopRecordingAsync</a>(<a href="../../../../../reference/com/viro/renderer/jni/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a> completionCallback)
       </code>
       
-        <p>Find collisions between the <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShape.html">PhysicsShape</a></code> cast from <tt>from</tt> to <tt>to</tt> with
- any <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code> objects that have physics bodies.
+        <p>Schedules the conclusion of the current video recording, if any.
         
     
 </p>
@@ -694,37 +755,11 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html#setDebugDraw(boolean)">setDebugDraw</a>(boolean debugDraw)
+      <a href="../../../../../reference/com/viro/renderer/jni/ViroMediaRecorder.html#takeScreenShotAsync(java.lang.String, boolean, com.viro.renderer.jni.ViroMediaRecorderDelegate)">takeScreenShotAsync</a>(String fileName, boolean saveToCameraRoll, <a href="../../../../../reference/com/viro/renderer/jni/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a> completionCallback)
       </code>
       
-        <p>Enable or disable physics 'debug draw' mode.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html#setGravity(com.viro.renderer.jni.Vector)">setGravity</a>(<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> gravity)
-      </code>
-      
-        <p>Set the constant gravity force to use in the physics simulation.
+        <p>Schedules a screenshot to be taken and saved with the provided fileName on the next
+ rendered frame.
         
     
 </p>
@@ -758,6 +793,60 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <!-- Public ctors -->
 
 
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<h2 class="api-section">Public constructors</h2>
+
+
+
+<A NAME="ViroMediaRecorder(Context, com.viro.renderer.jni.Renderer, int, int)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">ViroMediaRecorder</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+ViroMediaRecorder (Context context, 
+                <a href="../../../../../reference/com/viro/renderer/jni/Renderer.html">Renderer</a> rendererJni, 
+                int width, 
+                int height)</pre>
+    
+    
+
+    
+  <p></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>context</code></td>
+        <td width="100%">
+          <code>Context</code> <!-- no parameter comment --></p></td>
+      </tr>
+      <tr>
+        <td><code>rendererJni</code></td>
+        <td width="100%">
+          <code>Renderer</code> <!-- no parameter comment --></p></td>
+      </tr>
+      <tr>
+        <td><code>width</code></td>
+        <td width="100%">
+          <code>int</code> <!-- no parameter comment --></p></td>
+      </tr>
+      <tr>
+        <td><code>height</code></td>
+        <td width="100%">
+          <code>int</code> <!-- no parameter comment --></p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+
+
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <!-- Protected ctors -->
@@ -771,10 +860,10 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="findCollisionsWithRayAsync(com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector, boolean, java.lang.String, com.viro.renderer.jni.PhysicsWorld.HitTestCallback)"></A>
+<A NAME="destroy()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">findCollisionsWithRayAsync</h3>
+    <h3 class="api-name">destroy</h3>
     <div class="api-level">
       <div></div>
       
@@ -782,56 +871,56 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-void findCollisionsWithRayAsync (<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> from, 
-                <a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> to, 
-                boolean closest, 
-                String tag, 
-                <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a> callback)</pre>
+void destroy ()</pre>
     
     
 
     
-  <p>Find collisions between the ray from <tt>from</tt> to <tt>to</tt> with any <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code> objects
- that have physics bodies.  Each individual <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code> will receive in
- its <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.PhysicsDelegate.html">PhysicsBody.PhysicsDelegate</a></code> a <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.PhysicsDelegate.html#onCollided(java.lang.String, com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector)">onCollided(String, Vector, Vector)</a></code>
- event upon collision. The event will contain the tag given to this intersection test.</p></p>
+  <p></p></p>
+
+</div>
+
+
+<A NAME="hasAudioAndRecordingPermissions(Context)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">hasAudioAndRecordingPermissions</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+boolean hasAudioAndRecordingPermissions (Context context)</pre>
+    
+    
+
+    
+  <p></p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>from</code></td>
+        <td><code>context</code></td>
         <td width="100%">
-          <code>Vector</code>: The source of the ray.</p></td>
+          <code>Context</code> <!-- no parameter comment --></p></td>
       </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code>to</code></td>
-        <td width="100%">
-          <code>Vector</code>: The destination of the ray.</p></td>
-      </tr>
-      <tr>
-        <td><code>closest</code></td>
-        <td width="100%">
-          <code>boolean</code>: True to only collide with the closest object.</p></td>
-      </tr>
-      <tr>
-        <td><code>tag</code></td>
-        <td width="100%">
-          <code>String</code>: The tag to use to identify this ray test in the <tt>onCollision</tt> callback of each <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code>.</p></td>
-      </tr>
-      <tr>
-        <td><code>callback</code></td>
-        <td width="100%">
-          <code>PhysicsWorld.HitTestCallback</code>: The <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a></code> to use, which will be invoked when the test is completed.
-</p></td>
+        <td><code>boolean</code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
       </tr>
     </table>
 
 </div>
 
 
-<A NAME="findCollisionsWithShapeAsync(com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector, com.viro.renderer.jni.PhysicsShape, java.lang.String, com.viro.renderer.jni.PhysicsWorld.HitTestCallback)"></A>
+<A NAME="hasRecordingPermissions(Context)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">findCollisionsWithShapeAsync</h3>
+    <h3 class="api-name">hasRecordingPermissions</h3>
     <div class="api-level">
       <div></div>
       
@@ -839,59 +928,35 @@ void findCollisionsWithRayAsync (<a href="../../../../../reference/com/viro/rend
 
     </div>
 <pre class="api-signature no-pretty-print">
-void findCollisionsWithShapeAsync (<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> from, 
-                <a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> to, 
-                <a href="../../../../../reference/com/viro/renderer/jni/PhysicsShape.html">PhysicsShape</a> shape, 
-                String tag, 
-                <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a> callback)</pre>
+boolean hasRecordingPermissions (Context context)</pre>
     
     
 
     
-  <p>Find collisions between the <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShape.html">PhysicsShape</a></code> cast from <tt>from</tt> to <tt>to</tt> with
- any <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code> objects that have physics bodies.  Each individual <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code> will
- receive in its <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.PhysicsDelegate.html">PhysicsBody.PhysicsDelegate</a></code> a <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.PhysicsDelegate.html#onCollided(java.lang.String, com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector)">onCollided(String, Vector, Vector)</a></code> event
- upon collision. The event will contain the tag given to this intersection test.</p></p>
+  <p></p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>from</code></td>
+        <td><code>context</code></td>
         <td width="100%">
-          <code>Vector</code>: The source of the ray.</p></td>
+          <code>Context</code> <!-- no parameter comment --></p></td>
       </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code>to</code></td>
-        <td width="100%">
-          <code>Vector</code>: The destination of the ray.</p></td>
-      </tr>
-      <tr>
-        <td><code>shape</code></td>
-        <td width="100%">
-          <code>PhysicsShape</code>: The shape to use for the collision test. Only <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShapeSphere.html">PhysicsShapeSphere</a></code> and
-                 <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShapeBox.html">PhysicsShapeBox</a></code> are supported.</p></td>
-      </tr>
-      <tr>
-        <td><code>tag</code></td>
-        <td width="100%">
-          <code>String</code>: The tag to use to identify this ray test in the <tt>onCollision</tt> callback
-                 of each <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code>.</p></td>
-      </tr>
-      <tr>
-        <td><code>callback</code></td>
-        <td width="100%">
-          <code>PhysicsWorld.HitTestCallback</code>: The <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a></code> to use, which will be invoked when the test is
-                 completed.
-</p></td>
+        <td><code>boolean</code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
       </tr>
     </table>
 
 </div>
 
 
-<A NAME="setDebugDraw(boolean)"></A>
+<A NAME="startRecordingAsync(java.lang.String, boolean, com.viro.renderer.jni.ViroMediaRecorderDelegate)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">setDebugDraw</h3>
+    <h3 class="api-name">startRecordingAsync</h3>
     <div class="api-level">
       <div></div>
       
@@ -899,31 +964,44 @@ void findCollisionsWithShapeAsync (<a href="../../../../../reference/com/viro/re
 
     </div>
 <pre class="api-signature no-pretty-print">
-void setDebugDraw (boolean debugDraw)</pre>
+void startRecordingAsync (String fileName, 
+                boolean saveToCameraRoll, 
+                <a href="../../../../../reference/com/viro/renderer/jni/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a> onErrorDelegate)</pre>
     
     
 
     
-  <p>Enable or disable physics 'debug draw' mode. When this mode is enabled, the physics shapes
- will be drawn around each object with a PhysicsBody. This is useful for understanding what
- approximations the physics simulation is using during its computations.</p></p>
+  <p>Schedules a screen recording to start on the next rendered frame and be saved with the
+ provided fileName. The screenshot is saved at a location determined by
+ ViroMediaRecorder.getMediaStorageDirectory(), and the success or failure of this request
+ are notified through the provided onErrorDelegate.
+</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>debugDraw</code></td>
+        <td><code>fileName</code></td>
         <td width="100%">
-          <code>boolean</code>: True to enable debug draw mode.
-</p></td>
+          <code>String</code> <!-- no parameter comment --></p></td>
+      </tr>
+      <tr>
+        <td><code>saveToCameraRoll</code></td>
+        <td width="100%">
+          <code>boolean</code> <!-- no parameter comment --></p></td>
+      </tr>
+      <tr>
+        <td><code>onErrorDelegate</code></td>
+        <td width="100%">
+          <code>ViroMediaRecorderDelegate</code> <!-- no parameter comment --></p></td>
       </tr>
     </table>
 
 </div>
 
 
-<A NAME="setGravity(com.viro.renderer.jni.Vector)"></A>
+<A NAME="stopRecordingAsync(com.viro.renderer.jni.ViroMediaRecorderDelegate)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">setGravity</h3>
+    <h3 class="api-name">stopRecordingAsync</h3>
     <div class="api-level">
       <div></div>
       
@@ -931,21 +1009,65 @@ void setDebugDraw (boolean debugDraw)</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-void setGravity (<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> gravity)</pre>
+void stopRecordingAsync (<a href="../../../../../reference/com/viro/renderer/jni/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a> completionCallback)</pre>
     
     
 
     
-  <p>Set the constant gravity force to use in the physics simulation. Gravity globally accelerates
- physics bodies in a specific direction. This defaults to Earth's gravitational force: {0,
- -9.81, 0}. Not all physics bodies need to respond to gravity: this can be set via <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.html#setUseGravity(boolean)">setUseGravity(boolean)</a></code>.</p></p>
+  <p>Schedules the conclusion of the current video recording, if any. The success or
+ failure of this request are notified through the provided completion callback.
+</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>gravity</code></td>
+        <td><code>completionCallback</code></td>
         <td width="100%">
-          <code>Vector</code>: The gravity vector to use.
-</p></td>
+          <code>ViroMediaRecorderDelegate</code> <!-- no parameter comment --></p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="takeScreenShotAsync(java.lang.String, boolean, com.viro.renderer.jni.ViroMediaRecorderDelegate)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">takeScreenShotAsync</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void takeScreenShotAsync (String fileName, 
+                boolean saveToCameraRoll, 
+                <a href="../../../../../reference/com/viro/renderer/jni/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a> completionCallback)</pre>
+    
+    
+
+    
+  <p>Schedules a screenshot to be taken and saved with the provided fileName on the next
+ rendered frame. The screenshot is saved at a location determined by
+ ViroMediaRecorder.getMediaStorageDirectory(), and the success or failure
+ of this request are notified through the provided completion callback.
+</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>fileName</code></td>
+        <td width="100%">
+          <code>String</code> <!-- no parameter comment --></p></td>
+      </tr>
+      <tr>
+        <td><code>saveToCameraRoll</code></td>
+        <td width="100%">
+          <code>boolean</code> <!-- no parameter comment --></p></td>
+      </tr>
+      <tr>
+        <td><code>completionCallback</code></td>
+        <td width="100%">
+          <code>ViroMediaRecorderDelegate</code> <!-- no parameter comment --></p></td>
       </tr>
     </table>
 

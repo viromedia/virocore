@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>PhysicsWorld | Android Developers
+  <title>ARScene.Delegate | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -206,7 +206,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
       <ul>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Animation.Delegate.html">Animation.Delegate</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/AnimationTransaction.FinishedCallback.html">AnimationTransaction.FinishedCallback</a></li>
-          <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ARScene.Delegate.html">ARScene.Delegate</a></li>
+          <li class="selected api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ARScene.Delegate.html">ARScene.Delegate</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/AsyncObject3DListener.html">AsyncObject3DListener</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/CameraCallback.html">CameraCallback</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Node.TransformDelegate.html">Node.TransformDelegate</a></li>
@@ -252,7 +252,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShapeAutoCompound.html">PhysicsShapeAutoCompound</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShapeBox.html">PhysicsShapeBox</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShapeSphere.html">PhysicsShapeSphere</a></li>
-          <li class="selected api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html">PhysicsWorld</a></li>
+          <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html">PhysicsWorld</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Polyline.html">Polyline</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/PortalScene.html">PortalScene</a></li>
@@ -496,26 +496,18 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">PhysicsWorld</h1>
+<h1 class="api-title">ARScene.Delegate</h1>
 <p>
 <code class="api-signature">
   public
+  static
   
   
-  
-  class
-  PhysicsWorld
+  interface
+  ARScene.Delegate
 </code>
 <br>
 
-
-<code class="api-signature">
-  
-    extends Object
-  
-  
-  
-</code>
 
 <code class="api-signature">
   
@@ -528,16 +520,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
   <tr>
     
-    <td colspan="2" class="jd-inheritance-class-cell">java.lang.Object
-    </td>
-  </tr>
-  
-
-  <tr>
-    
-      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
-    
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.renderer.jni.PhysicsWorld
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.renderer.jni.ARScene.Delegate
     </td>
   </tr>
   
@@ -550,9 +533,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>The PhysicsWorld encapsulates the physics simulation associated with the <code><a href="../../../../../reference/com/viro/renderer/jni/Scene.html">Scene</a></code>.
- Each Scene automatically creates a PhysicsWorld upon construction.
- This object can be used to set global physics properties like gravity.
+  <p>Callback interface for ARScene events. These include the detection of ambient light and the
+ tracking of real-world features.
 </p>
 
 
@@ -564,32 +546,6 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 <h2 class="api-section">Summary</h2>
-
-
-
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<table id="nestedclasses" class="responsive">
-<tr><th colspan="2"><h3>Nested classes</h3></th></tr>
-
-
-  
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        interface</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a></code>
-        <p>Callback used when hit tests are completed.&nbsp;
-        
-    
-</p>
-      </td>
-    </tr>
-    
-    
 
 
 
@@ -628,7 +584,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
     <td><code>
-        
+        abstract
         
         
         
@@ -638,11 +594,11 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html#findCollisionsWithRayAsync(com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector, boolean, java.lang.String, com.viro.renderer.jni.PhysicsWorld.HitTestCallback)">findCollisionsWithRayAsync</a>(<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> from, <a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> to, boolean closest, String tag, <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a> callback)
+      <a href="../../../../../reference/com/viro/renderer/jni/ARScene.Delegate.html#onAmbientLightUpdate(float, float)">onAmbientLightUpdate</a>(float lightIntensity, float colorTemperature)
       </code>
       
-        <p>Find collisions between the ray from <tt>from</tt> to <tt>to</tt> with any <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code> objects
- that have physics bodies.
+        <p>Invoked when the AR system's estimation of the current ambient light levels are
+ updated.
         
     
 </p>
@@ -656,7 +612,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
     <td><code>
-        
+        abstract
         
         
         
@@ -666,11 +622,10 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html#findCollisionsWithShapeAsync(com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector, com.viro.renderer.jni.PhysicsShape, java.lang.String, com.viro.renderer.jni.PhysicsWorld.HitTestCallback)">findCollisionsWithShapeAsync</a>(<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> from, <a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> to, <a href="../../../../../reference/com/viro/renderer/jni/PhysicsShape.html">PhysicsShape</a> shape, String tag, <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a> callback)
+      <a href="../../../../../reference/com/viro/renderer/jni/ARScene.Delegate.html#onAnchorFound(com.viro.renderer.jni.ARAnchor, com.viro.renderer.jni.ARNode)">onAnchorFound</a>(<a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a> anchor, <a href="../../../../../reference/com/viro/renderer/jni/ARNode.html">ARNode</a> node)
       </code>
       
-        <p>Find collisions between the <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShape.html">PhysicsShape</a></code> cast from <tt>from</tt> to <tt>to</tt> with
- any <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code> objects that have physics bodies.
+        <p>Invoked when a real-world <code><a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a></code> is detected.
         
     
 </p>
@@ -684,7 +639,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
     <td><code>
-        
+        abstract
         
         
         
@@ -694,10 +649,10 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html#setDebugDraw(boolean)">setDebugDraw</a>(boolean debugDraw)
+      <a href="../../../../../reference/com/viro/renderer/jni/ARScene.Delegate.html#onAnchorRemoved(com.viro.renderer.jni.ARAnchor, com.viro.renderer.jni.ARNode)">onAnchorRemoved</a>(<a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a> anchor, <a href="../../../../../reference/com/viro/renderer/jni/ARNode.html">ARNode</a> node)
       </code>
       
-        <p>Enable or disable physics 'debug draw' mode.
+        <p>Invoked when an <code><a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a></code> is removed from the world.
         
     
 </p>
@@ -711,7 +666,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
     <td><code>
-        
+        abstract
         
         
         
@@ -721,10 +676,37 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.html#setGravity(com.viro.renderer.jni.Vector)">setGravity</a>(<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> gravity)
+      <a href="../../../../../reference/com/viro/renderer/jni/ARScene.Delegate.html#onAnchorUpdated(com.viro.renderer.jni.ARAnchor, com.viro.renderer.jni.ARNode)">onAnchorUpdated</a>(<a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a> anchor, <a href="../../../../../reference/com/viro/renderer/jni/ARNode.html">ARNode</a> node)
       </code>
       
-        <p>Set the constant gravity force to use in the physics simulation.
+        <p>Invoked when a real-world <code><a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a></code> is updated.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        abstract
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../../reference/com/viro/renderer/jni/ARScene.Delegate.html#onTrackingInitialized()">onTrackingInitialized</a>()
+      </code>
+      
+        <p>Invoked when tracking is initialized and functional.
         
     
 </p>
@@ -771,10 +753,10 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="findCollisionsWithRayAsync(com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector, boolean, java.lang.String, com.viro.renderer.jni.PhysicsWorld.HitTestCallback)"></A>
+<A NAME="onAmbientLightUpdate(float, float)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">findCollisionsWithRayAsync</h3>
+    <h3 class="api-name">onAmbientLightUpdate</h3>
     <div class="api-level">
       <div></div>
       
@@ -782,45 +764,26 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-void findCollisionsWithRayAsync (<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> from, 
-                <a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> to, 
-                boolean closest, 
-                String tag, 
-                <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a> callback)</pre>
+void onAmbientLightUpdate (float lightIntensity, 
+                float colorTemperature)</pre>
     
     
 
     
-  <p>Find collisions between the ray from <tt>from</tt> to <tt>to</tt> with any <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code> objects
- that have physics bodies.  Each individual <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code> will receive in
- its <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.PhysicsDelegate.html">PhysicsBody.PhysicsDelegate</a></code> a <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.PhysicsDelegate.html#onCollided(java.lang.String, com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector)">onCollided(String, Vector, Vector)</a></code>
- event upon collision. The event will contain the tag given to this intersection test.</p></p>
+  <p>Invoked when the AR system's estimation of the current ambient light levels are
+ updated. These values can be pumped into an <code><a href="../../../../../reference/com/viro/renderer/jni/AmbientLight.html">AmbientLight</a></code> to match the
+ lighting used by the virtual world to the lighting observed in the real world.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>from</code></td>
+        <td><code>lightIntensity</code></td>
         <td width="100%">
-          <code>Vector</code>: The source of the ray.</p></td>
+          <code>float</code>: The light intensity detected.</p></td>
       </tr>
       <tr>
-        <td><code>to</code></td>
+        <td><code>colorTemperature</code></td>
         <td width="100%">
-          <code>Vector</code>: The destination of the ray.</p></td>
-      </tr>
-      <tr>
-        <td><code>closest</code></td>
-        <td width="100%">
-          <code>boolean</code>: True to only collide with the closest object.</p></td>
-      </tr>
-      <tr>
-        <td><code>tag</code></td>
-        <td width="100%">
-          <code>String</code>: The tag to use to identify this ray test in the <tt>onCollision</tt> callback of each <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code>.</p></td>
-      </tr>
-      <tr>
-        <td><code>callback</code></td>
-        <td width="100%">
-          <code>PhysicsWorld.HitTestCallback</code>: The <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a></code> to use, which will be invoked when the test is completed.
+          <code>float</code>: The color temperature detected.
 </p></td>
       </tr>
     </table>
@@ -828,10 +791,10 @@ void findCollisionsWithRayAsync (<a href="../../../../../reference/com/viro/rend
 </div>
 
 
-<A NAME="findCollisionsWithShapeAsync(com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector, com.viro.renderer.jni.PhysicsShape, java.lang.String, com.viro.renderer.jni.PhysicsWorld.HitTestCallback)"></A>
+<A NAME="onAnchorFound(com.viro.renderer.jni.ARAnchor, com.viro.renderer.jni.ARNode)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">findCollisionsWithShapeAsync</h3>
+    <h3 class="api-name">onAnchorFound</h3>
     <div class="api-level">
       <div></div>
       
@@ -839,48 +802,28 @@ void findCollisionsWithRayAsync (<a href="../../../../../reference/com/viro/rend
 
     </div>
 <pre class="api-signature no-pretty-print">
-void findCollisionsWithShapeAsync (<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> from, 
-                <a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> to, 
-                <a href="../../../../../reference/com/viro/renderer/jni/PhysicsShape.html">PhysicsShape</a> shape, 
-                String tag, 
-                <a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a> callback)</pre>
+void onAnchorFound (<a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a> anchor, 
+                <a href="../../../../../reference/com/viro/renderer/jni/ARNode.html">ARNode</a> node)</pre>
     
     
 
     
-  <p>Find collisions between the <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShape.html">PhysicsShape</a></code> cast from <tt>from</tt> to <tt>to</tt> with
- any <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code> objects that have physics bodies.  Each individual <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code> will
- receive in its <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.PhysicsDelegate.html">PhysicsBody.PhysicsDelegate</a></code> a <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.PhysicsDelegate.html#onCollided(java.lang.String, com.viro.renderer.jni.Vector, com.viro.renderer.jni.Vector)">onCollided(String, Vector, Vector)</a></code> event
- upon collision. The event will contain the tag given to this intersection test.</p></p>
+  <p>Invoked when a real-world <code><a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a></code> is detected. You can associate virtual
+ content with this new anchor by adding said content to the associated <code><a href="../../../../../reference/com/viro/renderer/jni/ARNode.html">ARNode</a></code>.
+ Note that the <code><a href="../../../../../reference/com/viro/renderer/jni/ARNode.html">ARNode</a></code> is automatically added to the Scene, and will be
+ continually updated to stay in the sync with the anchor as the anchor's properties,
+ orientation, or position change.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>from</code></td>
+        <td><code>anchor</code></td>
         <td width="100%">
-          <code>Vector</code>: The source of the ray.</p></td>
+          <code>ARAnchor</code>: The detected <code><a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a></code> representing a real-world feature.</p></td>
       </tr>
       <tr>
-        <td><code>to</code></td>
+        <td><code>node</code></td>
         <td width="100%">
-          <code>Vector</code>: The destination of the ray.</p></td>
-      </tr>
-      <tr>
-        <td><code>shape</code></td>
-        <td width="100%">
-          <code>PhysicsShape</code>: The shape to use for the collision test. Only <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShapeSphere.html">PhysicsShapeSphere</a></code> and
-                 <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsShapeBox.html">PhysicsShapeBox</a></code> are supported.</p></td>
-      </tr>
-      <tr>
-        <td><code>tag</code></td>
-        <td width="100%">
-          <code>String</code>: The tag to use to identify this ray test in the <tt>onCollision</tt> callback
-                 of each <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.html">PhysicsBody</a></code>.</p></td>
-      </tr>
-      <tr>
-        <td><code>callback</code></td>
-        <td width="100%">
-          <code>PhysicsWorld.HitTestCallback</code>: The <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsWorld.HitTestCallback.html">PhysicsWorld.HitTestCallback</a></code> to use, which will be invoked when the test is
-                 completed.
+          <code>ARNode</code>: The virtual world <code><a href="../../../../../reference/com/viro/renderer/jni/ARNode.html">ARNode</a></code> associated with the ARAnchor.
 </p></td>
       </tr>
     </table>
@@ -888,10 +831,10 @@ void findCollisionsWithShapeAsync (<a href="../../../../../reference/com/viro/re
 </div>
 
 
-<A NAME="setDebugDraw(boolean)"></A>
+<A NAME="onAnchorRemoved(com.viro.renderer.jni.ARAnchor, com.viro.renderer.jni.ARNode)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">setDebugDraw</h3>
+    <h3 class="api-name">onAnchorRemoved</h3>
     <div class="api-level">
       <div></div>
       
@@ -899,20 +842,27 @@ void findCollisionsWithShapeAsync (<a href="../../../../../reference/com/viro/re
 
     </div>
 <pre class="api-signature no-pretty-print">
-void setDebugDraw (boolean debugDraw)</pre>
+void onAnchorRemoved (<a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a> anchor, 
+                <a href="../../../../../reference/com/viro/renderer/jni/ARNode.html">ARNode</a> node)</pre>
     
     
 
     
-  <p>Enable or disable physics 'debug draw' mode. When this mode is enabled, the physics shapes
- will be drawn around each object with a PhysicsBody. This is useful for understanding what
- approximations the physics simulation is using during its computations.</p></p>
+  <p>Invoked when an <code><a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a></code> is removed from the world. This occurs if the AR
+ tracking system loses confidence in the ARAnchor and can no longer place it, or when an
+ ARAnchor gets subsumed by another: for example, if the tracking system realizes that two
+ separate horizontal planes are actually one larger plane.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>debugDraw</code></td>
+        <td><code>anchor</code></td>
         <td width="100%">
-          <code>boolean</code>: True to enable debug draw mode.
+          <code>ARAnchor</code>: The <code><a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a></code> that was removed.</p></td>
+      </tr>
+      <tr>
+        <td><code>node</code></td>
+        <td width="100%">
+          <code>ARNode</code>: The corresponding <code><a href="../../../../../reference/com/viro/renderer/jni/ARNode.html">ARNode</a></code>, which is also removed from the Scene.
 </p></td>
       </tr>
     </table>
@@ -920,10 +870,10 @@ void setDebugDraw (boolean debugDraw)</pre>
 </div>
 
 
-<A NAME="setGravity(com.viro.renderer.jni.Vector)"></A>
+<A NAME="onAnchorUpdated(com.viro.renderer.jni.ARAnchor, com.viro.renderer.jni.ARNode)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">setGravity</h3>
+    <h3 class="api-name">onAnchorUpdated</h3>
     <div class="api-level">
       <div></div>
       
@@ -931,23 +881,51 @@ void setDebugDraw (boolean debugDraw)</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-void setGravity (<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> gravity)</pre>
+void onAnchorUpdated (<a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a> anchor, 
+                <a href="../../../../../reference/com/viro/renderer/jni/ARNode.html">ARNode</a> node)</pre>
     
     
 
     
-  <p>Set the constant gravity force to use in the physics simulation. Gravity globally accelerates
- physics bodies in a specific direction. This defaults to Earth's gravitational force: {0,
- -9.81, 0}. Not all physics bodies need to respond to gravity: this can be set via <code><a href="../../../../../reference/com/viro/renderer/jni/PhysicsBody.html#setUseGravity(boolean)">setUseGravity(boolean)</a></code>.</p></p>
+  <p>Invoked when a real-world <code><a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a></code> is updated. This occurs when the AR tracking
+ system refines its estimation about the size or orientation or position of an ARAnchor,
+ or when other underlying properties of the anchor change.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>gravity</code></td>
+        <td><code>anchor</code></td>
         <td width="100%">
-          <code>Vector</code>: The gravity vector to use.
+          <code>ARAnchor</code>: The <code><a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a></code> that was updated.</p></td>
+      </tr>
+      <tr>
+        <td><code>node</code></td>
+        <td width="100%">
+          <code>ARNode</code>: The <code><a href="../../../../../reference/com/viro/renderer/jni/ARNode.html">ARNode</a></code> corresponding to the anchor.
 </p></td>
       </tr>
     </table>
+
+</div>
+
+
+<A NAME="onTrackingInitialized()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">onTrackingInitialized</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void onTrackingInitialized ()</pre>
+    
+    
+
+    
+  <p>Invoked when tracking is initialized and functional.
+</p></p>
 
 </div>
 
