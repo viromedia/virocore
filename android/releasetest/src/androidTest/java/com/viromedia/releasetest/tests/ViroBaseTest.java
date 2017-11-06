@@ -65,7 +65,8 @@ public abstract class ViroBaseTest {
     private static final String TEST_FAILED_TAG = "testFailed";
     private static final Integer TEST_FAILED = 1;
     private static final Integer TEST_PASSED = 1;
-    private static final Integer TEST_MAX_DURATION_SEC = 30;
+    // TODO This is this large just for testing
+    private static final Integer TEST_MAX_DURATION_SEC = 60;
     private final AtomicBoolean mTestButtonsClicked = new AtomicBoolean(false);
     private final AtomicInteger mTestResult = new AtomicInteger(-1);
     public ViroView mViroView;
