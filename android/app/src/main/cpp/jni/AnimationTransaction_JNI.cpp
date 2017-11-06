@@ -65,7 +65,7 @@ JNI_METHOD(void, nativeSetAnimationDuration)(JNIEnv *env, jclass clazz, float du
 }
 
 JNI_METHOD(void, nativeSetTimingFunction)(JNIEnv *env, jclass clazz, jstring timing_j) {
-    std::string timing_s = VROPlatformGetString(timing_j);
+    std::string timing_s = VROPlatformGetString(timing_j, env);
     VROTimingFunctionType timing = VROTimingFunctionType::Linear;
     if (VROStringUtil::strcmpinsensitive(timing_s, "easein")) {
         timing = VROTimingFunctionType::EaseIn;

@@ -60,7 +60,7 @@ JNI_METHOD(jlong, nativeCreateAnimationGroup)(JNIEnv *env, jclass clazz,
         materialAnimations.push_back(lazyMaterial);
     }
 
-    std::string functionTypeStr = VROPlatformGetString(functionType);
+    std::string functionTypeStr = VROPlatformGetString(functionType, env);
     std::shared_ptr<VROAnimationGroup> animationGroup = VROAnimationGroup::parse(durationSeconds, delaySeconds,
                                                                                  functionTypeStr, animationProperties,
                                                                                  materialAnimations);

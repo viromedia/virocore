@@ -66,7 +66,7 @@ JNI_METHOD(void, nativeSetAnchorId) (JNIEnv *env,
                                jlong nativeARPlane,
                                jstring id) {
     std::shared_ptr<VROARPlaneNode> arPlane = ARPlane::native(nativeARPlane);
-    arPlane->setId(VROPlatformGetString(id));
+    arPlane->setId(VROPlatformGetString(id, env));
 }
 
 JNI_METHOD(void, nativeSetPauseUpdates) (JNIEnv *env,

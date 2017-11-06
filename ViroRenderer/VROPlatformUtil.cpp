@@ -313,7 +313,7 @@ std::string VROPlatformCopyResourceToFile(std::string asset) {
     jmethodID jmethod = env->GetMethodID(cls, "copyResourceToFile", "(Ljava/lang/String;)Ljava/lang/String;");
     jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jasset);
 
-    std::string spath = VROPlatformGetString(jpath);
+    std::string spath = VROPlatformGetString(jpath, env);
 
     pinfo("Path to file is %s", spath.c_str());
 
@@ -359,12 +359,12 @@ std::map<std::string, std::string> VROPlatformConvertFromJavaMap(jobject javaMap
         // get the key
         jstring key = (jstring) env->GetObjectArrayElement(keyArray, i);
         // convert to std::string
-        std::string strKey = VROPlatformGetString(key);
+        std::string strKey = VROPlatformGetString(key, env);
         // get the value from the Map
         jmethodID mapGetMethod = env->GetMethodID(mapClass, "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
         jstring value = (jstring) env->CallObjectMethod(javaMap, mapGetMethod, key);
         // convert to std::string
-        std::string strValue = VROPlatformGetString(value);
+        std::string strValue = VROPlatformGetString(value, env);
         // add to the map
         toReturn.insert(std::make_pair(strKey.c_str(), strValue.c_str()));
     }
@@ -407,7 +407,7 @@ std::string VROPlatformCopyAssetToFile(std::string asset) {
     jmethodID jmethod = env->GetMethodID(cls, "copyAssetToFile", "(Ljava/lang/String;)Ljava/lang/String;");
     jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jasset);
 
-    std::string spath = VROPlatformGetString(jpath);
+    std::string spath = VROPlatformGetString(jpath, env);
 
     pinfo("Path to file is %s", spath.c_str());
 
@@ -725,9 +725,11 @@ void VROPlatformCallJavaFunction(jobject javaObject,
     return result;
 }
 
-std::string VROPlatformGetString(jstring jInputString){
-    JNIEnv *env = VROPlatformGetJNIEnv();
-    env->ExceptionClear();
+std::string VROPlatformGetString(jstring jInputString, JNIEnv *env){
+    if (env == NULL){
+        env = VROPlatformGetJNIEnv();
+        env->ExceptionClear();
+    }
 
     if (jInputString == NULL){
         return "";

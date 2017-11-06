@@ -171,8 +171,8 @@ jlong VROPlatformCallJavaLongFunction(jobject javaObject,
                                      std::string functionName,
                                      std::string methodID, ...);
 
-// Safely converts a jstring into a std::string
-std::string VROPlatformGetString(jstring string);
+// Safely converts the given string with the provided jni environment.
+std::string VROPlatformGetString(jstring string, JNIEnv *env);
 
 #pragma mark - Android A/V
 

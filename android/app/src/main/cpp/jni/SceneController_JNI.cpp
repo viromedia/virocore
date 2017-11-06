@@ -139,9 +139,9 @@ JNI_METHOD(void, nativeSetBackgroundCubeWithColor)(JNIEnv *env,
 JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, jlong context_j,
                                      jfloat sizeX, jfloat sizeY, jfloat sizeZ, jstring wallMaterial,
                                      jstring ceilingMaterial, jstring floorMaterial) {
-    std::string strWallMaterial = VROPlatformGetString(wallMaterial);
-    std::string strCeilingMaterial = VROPlatformGetString(ceilingMaterial);
-    std::string strFloorMaterial = VROPlatformGetString(floorMaterial);
+    std::string strWallMaterial = VROPlatformGetString(wallMaterial, env);
+    std::string strCeilingMaterial = VROPlatformGetString(ceilingMaterial, env);
+    std::string strFloorMaterial = VROPlatformGetString(floorMaterial, env);
 
     std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
 
@@ -193,7 +193,7 @@ JNI_METHOD(bool, nativeSetEffects)(JNIEnv *env,
         int numberOfValues = env->GetArrayLength(jEffects);
         for (int i = 0; i < numberOfValues; i++) {
             jstring jEffect = (jstring) env->GetObjectArrayElement(jEffects, i);
-            std::string strEffect = VROPlatformGetString(jEffect);
+            std::string strEffect = VROPlatformGetString(jEffect, env);
             VROPostProcessEffect postEffect = VROPostProcessEffectFactory::getEffectForString(strEffect);
             effects.push_back(strEffect);
         }
@@ -258,7 +258,7 @@ JNI_METHOD(void, findCollisionsWithRayAsync)(JNIEnv *env,
     env->ReleaseFloatArrayElements(toPos, toPosf, 0);
 
     // Get the ray tag used to notify collided objects with.
-    std::string strTag = VROPlatformGetString(tag);
+    std::string strTag = VROPlatformGetString(tag, env);
 
     // If no ray tag is given, set it to the default tag.
     if (strTag.empty()) {
@@ -317,7 +317,7 @@ JNI_METHOD(void, findCollisionsWithShapeAsync)(JNIEnv *env,
     env->ReleaseFloatArrayElements(posStart, posEndf, 0);
 
     // Grab the shape type
-    std::string strShapeType = VROPlatformGetString(shapeType);
+    std::string strShapeType = VROPlatformGetString(shapeType, env);
 
     // Grab the shape params
     int paramsLength = env->GetArrayLength(shapeParams);
@@ -329,7 +329,7 @@ JNI_METHOD(void, findCollisionsWithShapeAsync)(JNIEnv *env,
     env->ReleaseFloatArrayElements(shapeParams, pointArray, 0);
 
     // Get the ray tag used to notify collided objects with.
-    std::string strTag = VROPlatformGetString(tag);
+    std::string strTag = VROPlatformGetString(tag, env);
 
     // If no ray tag is given, set it to the default tag.
     if (strTag.empty()) {

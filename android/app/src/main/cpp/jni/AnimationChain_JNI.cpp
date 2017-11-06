@@ -37,7 +37,7 @@ JNI_METHOD(jlong, nativeCreateAnimationChain)(JNIEnv *env, jclass clazz, jstring
     std::vector<std::shared_ptr<VROExecutableAnimation>> emptyChain;
     VROAnimationChainExecution execution = VROAnimationChainExecution::Serial;
 
-    if (VROStringUtil::strcmpinsensitive(VROPlatformGetString(executionType), "parallel")) {
+    if (VROStringUtil::strcmpinsensitive(VROPlatformGetString(executionType, env), "parallel")) {
         execution = VROAnimationChainExecution::Parallel;
     }
 

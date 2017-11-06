@@ -46,7 +46,7 @@ namespace ParticleEmitter {
         }
 
         // Grab a reference factor for this modifier against which to interpolate.
-        std::string strFactorType = VROPlatformGetString(jFactor);
+        std::string strFactorType = VROPlatformGetString(jFactor, env);
         VROParticleModifier::VROModifierFactor bodyType = VROParticleModifier::getModifierFactorForString(strFactorType);
 
         // Parse out VROModifierIntervals containing sequentially interpolated target values and its

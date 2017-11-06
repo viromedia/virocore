@@ -30,7 +30,7 @@ JNI_METHOD(jlong, nativeCreateVideoTexture)(JNIEnv *env,
                                             jobject object,
                                             jlong context_j,
                                             jstring stereoMode) {
-    VROStereoMode mode = VROTextureUtil::getStereoModeForString(VROPlatformGetString(stereoMode));
+    VROStereoMode mode = VROTextureUtil::getStereoModeForString(VROPlatformGetString(stereoMode, env));
     std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
     std::shared_ptr<VROVideoTextureAVP> videoTexture = std::make_shared<VROVideoTextureAVP>(mode);
     videoTexture->init();
@@ -181,7 +181,7 @@ JNI_METHOD(void, nativeLoadSource)(JNIEnv *env,
                                    jstring source,
                                    jlong context_j) {
     // Grab required objects from the RenderContext required for initialization
-    std::string strVideoSource = VROPlatformGetString(source);
+    std::string strVideoSource = VROPlatformGetString(source, env);
     std::weak_ptr<VROVideoTextureAVP> videoTexture_w = VideoTexture::native(textureRef);
     std::weak_ptr<ViroContext> context_w = ViroContext::native(context_j);
 

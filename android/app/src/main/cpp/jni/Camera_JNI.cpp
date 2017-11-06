@@ -64,7 +64,7 @@ JNI_METHOD(void, nativeSetRotationType)(JNIEnv *env,
                                               jlong nativeCamera,
                                               jstring rotationType) {
     VROCameraRotationType type;
-    if (VROStringUtil::strcmpinsensitive(VROPlatformGetString(rotationType), "orbit")) {
+    if (VROStringUtil::strcmpinsensitive(VROPlatformGetString(rotationType, env), "orbit")) {
         type = VROCameraRotationType::Orbit;
     } else {
         // default rotation type is standard.

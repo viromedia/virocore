@@ -23,7 +23,7 @@
 namespace Texture {
 
     VROTextureFormat getInputFormat(JNIEnv *env, jstring jformat) {
-        std::string sformat = VROPlatformGetString(jformat);
+        std::string sformat = VROPlatformGetString(jformat, env);
 
         VROTextureFormat ret = VROTextureFormat::RGBA8;
         if (sformat == "RGB565") {
@@ -37,7 +37,7 @@ namespace Texture {
     }
 
     VROTextureInternalFormat getFormat(JNIEnv *env, jstring jformat) {
-        std::string sformat = VROPlatformGetString(jformat);
+        std::string sformat = VROPlatformGetString(jformat, env);
         VROTextureInternalFormat ret = VROTextureInternalFormat::RGBA8;
         if (sformat == "RGBA4") {
             ret = VROTextureInternalFormat::RGBA4;
@@ -52,7 +52,7 @@ namespace Texture {
     }
 
     VROWrapMode getWrapMode(JNIEnv *env, jstring jwrapMode) {
-        std::string swrapMode = VROPlatformGetString(jwrapMode);
+        std::string swrapMode = VROPlatformGetString(jwrapMode, env);
         VROWrapMode ret = VROWrapMode::Clamp;
         if (swrapMode == "Repeat") {
             ret = VROWrapMode::Repeat;
@@ -64,7 +64,7 @@ namespace Texture {
     }
 
     VROFilterMode getFilterMode(JNIEnv *env, jstring jfilterMode) {
-        std::string sfilterMode = VROPlatformGetString(jfilterMode);
+        std::string sfilterMode = VROPlatformGetString(jfilterMode, env);
         VROFilterMode ret = VROFilterMode::Linear;
         if (sfilterMode == "Nearest") {
             ret = VROFilterMode::Nearest;

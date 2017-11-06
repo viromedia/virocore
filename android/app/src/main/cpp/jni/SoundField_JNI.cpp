@@ -38,7 +38,7 @@ JNI_METHOD(jlong, nativeCreateSoundField)(JNIEnv *env,
                                           jboolean local,
                                           jlong context_j) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
-    std::string file = VROPlatformGetString(filename);
+    std::string file = VROPlatformGetString(filename, env);
     std::shared_ptr<VROSound> soundEffect = context->getDriver()->newSound(file, VROSoundType::SoundField, local);
     std::shared_ptr<VROSoundGVR> soundGvr = std::dynamic_pointer_cast<VROSoundGVR>(soundEffect);
     soundGvr->setDelegate(std::make_shared<SoundDelegate>(object));

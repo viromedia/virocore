@@ -69,7 +69,7 @@ extern "C" {
         std::weak_ptr<VROAVPlayerDelegate> delegateWeak
             = native(nativePlayerRef)->getDelegate();
         if(auto tmp = delegateWeak.lock()){
-            tmp->onError(VROPlatformGetString(error));
+            tmp->onError(VROPlatformGetString(error, env));
         }
     }
 }

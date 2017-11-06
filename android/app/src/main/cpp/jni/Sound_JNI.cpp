@@ -43,7 +43,7 @@ extern "C" {
                                          jlong context_j) {
         std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
 
-        std::string file = VROPlatformGetString(filename);
+        std::string file = VROPlatformGetString(filename, env);
         std::shared_ptr<VROAudioPlayer> player = context->getDriver()->newAudioPlayer(file, false);
         std::shared_ptr<VROAudioPlayerAndroid> playerAndroid = std::dynamic_pointer_cast<VROAudioPlayerAndroid>(player);
         playerAndroid->setDelegate(std::make_shared<SoundDelegate>(object));

@@ -92,7 +92,7 @@ JNI_METHOD(void, nativeSetTag)(JNIEnv *env,
                                     jobject obj,
                                     jlong native_node_ref,
                                     jstring tag) {
-    std::string strBodyType = VROPlatformGetString(tag);
+    std::string strBodyType = VROPlatformGetString(tag, env);
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w, strBodyType] {
         std::shared_ptr<VRONode> node = node_w.lock();
@@ -474,7 +474,7 @@ JNI_METHOD(void, nativeSetDragType)(JNIEnv *env,
 
     // default type to FixedDistance if we don't recognize the given string
     VRODragType type = VRODragType::FixedDistance;
-    std::string dragTypeStr = VROPlatformGetString(dragType);
+    std::string dragTypeStr = VROPlatformGetString(dragType, env);
 
     if (VROStringUtil::strcmpinsensitive(dragTypeStr, "FixedDistance")) {
         type = VRODragType::FixedDistance;
@@ -527,7 +527,7 @@ JNI_METHOD(void, nativeSetTransformBehaviors)(JNIEnv *env,
 
     for (int i = 0; i < length; i++) {
         jstring string = (jstring) (env->GetObjectArrayElement(stringArrayRef, i));
-        std::string transformBehavior = VROPlatformGetString(string);
+        std::string transformBehavior = VROPlatformGetString(string, env);
 
         // Parse out the constraints and save a copy into tempConstraints
         if (VROStringUtil::strcmpinsensitive(transformBehavior, "billboard")) {

@@ -37,7 +37,7 @@ JNI_METHOD(void, nativeSetTexture)(JNIEnv *env, jobject obj,
                                    jlong textureRef,
                                    jstring materialPropertyName) {
     // Get the string
-    std::string strName = VROPlatformGetString(materialPropertyName);
+    std::string strName = VROPlatformGetString(materialPropertyName, env);
 
     // Get the texture
     std::shared_ptr<VROTexture> texture = Texture::native(textureRef);
@@ -69,7 +69,7 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env, jobject obj,
                                  jlong color,
                                  jstring materialPropertyName) {
     // Get the string
-    std::string strName = VROPlatformGetString(materialPropertyName);
+    std::string strName = VROPlatformGetString(materialPropertyName, env);
 
     // Get the color
     float a = ((color >> 24) & 0xFF) / 255.0;
@@ -116,7 +116,7 @@ JNI_METHOD(void, nativeSetFresnelExponent)(JNIEnv *env, jobject obj,
 JNI_METHOD(void, nativeSetLightingModel)(JNIEnv *env, jobject obj,
                                          jlong nativeRef,
                                          jstring lightingModelName) {
-    std::string strName = VROPlatformGetString(lightingModelName);
+    std::string strName = VROPlatformGetString(lightingModelName, env);
 
     if (VROStringUtil::strcmpinsensitive(strName, "Blinn")) {
         Material::native(nativeRef)->setLightingModel(VROLightingModel::Blinn);
@@ -133,7 +133,7 @@ JNI_METHOD(void, nativeSetLightingModel)(JNIEnv *env, jobject obj,
 JNI_METHOD(void, nativeSetBlendMode)(JNIEnv *env, jobject obj,
                                      jlong nativeRef,
                                      jstring blendMode_s) {
-    std::string blendMode = VROPlatformGetString(blendMode_s);
+    std::string blendMode = VROPlatformGetString(blendMode_s, env);
 
     if (VROStringUtil::strcmpinsensitive(blendMode, "Alpha")) {
         Material::native(nativeRef)->setBlendMode(VROBlendMode::Alpha);
@@ -150,7 +150,7 @@ JNI_METHOD(void, nativeSetBlendMode)(JNIEnv *env, jobject obj,
 JNI_METHOD(void, nativeSetTransparencyMode)(JNIEnv *env, jobject obj,
                                       jlong nativeRef,
                                       jstring transparencyModeName) {
-    std::string strName = VROPlatformGetString(transparencyModeName);
+    std::string strName = VROPlatformGetString(transparencyModeName, env);
 
     if (VROStringUtil::strcmpinsensitive(strName, "RGBZero")) {
         Material::native(nativeRef)->setTransparencyMode(VROTransparencyMode::RGBZero);
@@ -164,7 +164,7 @@ JNI_METHOD(void, nativeSetCullMode)(JNIEnv *env,
                                     jobject obj,
                                     jlong nativeRef,
                                     jstring cullModeName) {
-    std::string strName = VROPlatformGetString(cullModeName);
+    std::string strName = VROPlatformGetString(cullModeName, env);
 
     if (VROStringUtil::strcmpinsensitive(strName, "None")) {
         Material::native(nativeRef)->setCullMode(VROCullMode::None);

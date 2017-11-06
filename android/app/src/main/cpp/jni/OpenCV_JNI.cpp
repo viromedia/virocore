@@ -51,8 +51,8 @@ JNI_METHOD(void, nativeRunEdgeDetection)(JNIEnv *env, jobject obj,
                                          jstring jinputFile,
                                          jstring joutputFile) {
     // Get the strings
-    std::string inputFileName = VROPlatformGetString(jinputFile);
-    std::string outputFileName = VROPlatformGetString(joutputFile);
+    std::string inputFileName = VROPlatformGetString(jinputFile, env);
+    std::string outputFileName = VROPlatformGetString(joutputFile, env);
 
     cv::Mat input = cv::imread(inputFileName, cv::IMREAD_GRAYSCALE);
 
@@ -64,8 +64,8 @@ JNI_METHOD(void, nativeRunEdgeDetection)(JNIEnv *env, jobject obj,
 
 JNI_METHOD(void, nativeReadWriteBitmap)(JNIEnv *env, jobject obj,
                                         jstring jinstring, jstring joutstring) {
-    std::string inputFilePath = VROPlatformGetString(jinstring);
-    std::string outputFilePath = VROPlatformGetString(joutstring);
+    std::string inputFilePath = VROPlatformGetString(jinstring, env);
+    std::string outputFilePath = VROPlatformGetString(joutstring, env);
 
     cv::Mat input = cv::imread(inputFilePath, cv::IMREAD_GRAYSCALE);
 

@@ -23,13 +23,13 @@ JNI_METHOD(void, nativeInitPhysicsBody)(JNIEnv *env,
                                         jstring shapeTypeStr,
                                         jfloatArray shapeParams) {
     // Get Physics Body type
-    std::string strBodyType = VROPlatformGetString(bodyTypeStr);
+    std::string strBodyType = VROPlatformGetString(bodyTypeStr, env);
     VROPhysicsBody::VROPhysicsBodyType bodyType = VROPhysicsBody::getBodyTypeForString(strBodyType);
 
     // Build a VROPhysicsShape if possible
     std::shared_ptr<VROPhysicsShape> propPhysicsShape = nullptr;
     if (shapeTypeStr != NULL) {
-        std::string strShapeType = VROPlatformGetString(shapeTypeStr);
+        std::string strShapeType = VROPlatformGetString(shapeTypeStr, env);
         VROPhysicsShape::VROShapeType shapeType = VROPhysicsShape::getTypeForString(strShapeType);
 
         int paramsLength = env->GetArrayLength(shapeParams);
@@ -75,7 +75,7 @@ JNI_METHOD(void, nativeSetPhysicsShape)(JNIEnv *env,
     std::shared_ptr<VROPhysicsShape> propPhysicsShape = nullptr;
     if (shapeTypeStr != NULL) {
         // Get the shape type
-        std::string strShapeType = VROPlatformGetString(shapeTypeStr);
+        std::string strShapeType = VROPlatformGetString(shapeTypeStr, env);
         VROPhysicsShape::VROShapeType shapeType = VROPhysicsShape::getTypeForString(strShapeType);
 
         // Get the shape params
@@ -274,7 +274,7 @@ JNI_METHOD(jstring, nativeIsValidBodyType)(JNIEnv *env,
                                            jstring bodyType,
                                            jfloat mass) {
     // Grab the physics body type
-    std::string strBodyType = VROPlatformGetString(bodyType);
+    std::string strBodyType = VROPlatformGetString(bodyType, env);
 
     // Verify if the physics body type is valid and return
     std::string errorMsg;
@@ -291,7 +291,7 @@ JNI_METHOD(jstring, nativeIsValidShapeType)(JNIEnv *env,
                                             jstring shapeType,
                                             jfloatArray shapeParams) {
     // Grab the shape type
-    std::string strShapeType = VROPlatformGetString(shapeType);
+    std::string strShapeType = VROPlatformGetString(shapeType, env);
 
     // Grab the shape params
     int paramsLength = env->GetArrayLength(shapeParams);

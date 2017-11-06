@@ -114,18 +114,18 @@ JNI_METHOD(jlong, nativeCreateText)(JNIEnv *env,
     VROVector4f vecColor(r, g, b, a);
 
     // Get horizontal alignment
-    VROTextHorizontalAlignment horizontalAlignment = getHorizontalAlignmentEnum(VROPlatformGetString(horizontalAlignment_j));
+    VROTextHorizontalAlignment horizontalAlignment = getHorizontalAlignmentEnum(VROPlatformGetString(horizontalAlignment_j, env));
 
     // Get vertical alignment
-    VROTextVerticalAlignment verticalAlignment = getVerticalAlignmentEnum(VROPlatformGetString(verticalAlignment_j));
+    VROTextVerticalAlignment verticalAlignment = getVerticalAlignmentEnum(VROPlatformGetString(verticalAlignment_j, env));
 
     // Get line break mode
-    VROLineBreakMode lineBreakMode = getLineBreakModeEnum(VROPlatformGetString(lineBreakMode_j));
+    VROLineBreakMode lineBreakMode = getLineBreakModeEnum(VROPlatformGetString(lineBreakMode_j, env));
 
     // Get clip mode
-    VROTextClipMode clipMode = getTextClipModeEnum(VROPlatformGetString(clipMode_j));
+    VROTextClipMode clipMode = getTextClipModeEnum(VROPlatformGetString(clipMode_j, env));
 
-    std::string fontFamily = VROPlatformGetString(fontFamily_j);
+    std::string fontFamily = VROPlatformGetString(fontFamily_j, env);
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::shared_ptr<VRODriver> driver = context->getDriver();
     std::shared_ptr<VROTypeface> typeface = driver.get()->newTypeface(fontFamily, size);
@@ -178,7 +178,7 @@ JNI_METHOD(void, nativeSetFont)(JNIEnv *env,
                                 jlong text_j,
                                 jint size,
                                 jstring family_j) {
-    std::string family = VROPlatformGetString(family_j);
+    std::string family = VROPlatformGetString(family_j, env);
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::shared_ptr<VROTypeface> typeface = context->getDriver()->newTypeface(family, size);
 
@@ -248,7 +248,7 @@ JNI_METHOD(void, nativeSetHorizontalAlignment)(JNIEnv *env,
                                                jlong text_j,
                                                jstring horizontalAlignment_j) {
     VROTextHorizontalAlignment horizontalAlignment
-            = getHorizontalAlignmentEnum(VROPlatformGetString(horizontalAlignment_j));
+            = getHorizontalAlignmentEnum(VROPlatformGetString(horizontalAlignment_j, env));
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, horizontalAlignment] {
@@ -265,7 +265,7 @@ JNI_METHOD(void, nativeSetVerticalAlignment)(JNIEnv *env,
                                              jlong text_j,
                                              jstring verticalAlignment_j) {
     VROTextVerticalAlignment verticalAlignment
-            = getVerticalAlignmentEnum(VROPlatformGetString(verticalAlignment_j));
+            = getVerticalAlignmentEnum(VROPlatformGetString(verticalAlignment_j, env));
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, verticalAlignment] {
@@ -281,7 +281,7 @@ JNI_METHOD(void, nativeSetLineBreakMode)(JNIEnv *env,
                                          jobject obj,
                                          jlong text_j,
                                          jstring lineBreakMode_j) {
-    VROLineBreakMode lineBreakMode = getLineBreakModeEnum(VROPlatformGetString(lineBreakMode_j));
+    VROLineBreakMode lineBreakMode = getLineBreakModeEnum(VROPlatformGetString(lineBreakMode_j, env));
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, lineBreakMode] {
@@ -299,7 +299,7 @@ JNI_METHOD(void, nativeSetClipMode)(JNIEnv *env,
                                     jstring clipMode_j) {
 
     // Get clip mode
-    VROTextClipMode clipMode = getTextClipModeEnum(VROPlatformGetString(clipMode_j));
+    VROTextClipMode clipMode = getTextClipModeEnum(VROPlatformGetString(clipMode_j, env));
 
     std::weak_ptr<VROText> text_w = Text::native(text_j);
     VROPlatformDispatchAsyncRenderer([text_w, clipMode] {

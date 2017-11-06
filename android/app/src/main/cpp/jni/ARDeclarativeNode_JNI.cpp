@@ -12,7 +12,7 @@ JNI_METHOD(void, nativeSetAnchorId) (JNIEnv *env,
                                      jobject object,
                                      jlong node_j,
                                      jstring id_j) {
-    std::string id_s = VROPlatformGetString(id_j);
+    std::string id_s = VROPlatformGetString(id_j, env);
     std::shared_ptr<VROARDeclarativeNode> node = ARDeclarativeNode::native(node_j);
     node->setAnchorId(id_s);
 }
