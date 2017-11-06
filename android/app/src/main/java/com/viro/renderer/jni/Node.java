@@ -237,6 +237,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * @hide Function called by child classes to set mNativeRef
      */
     protected void setNativeRef(long nativeRef) {
+        if (nativeRef == 0) {
+            throw new IllegalArgumentException("Attempted to create a Node with an invalid reference");
+        }
         mNativeRef = nativeRef;
         nodeWeakMap.put(nativeGetUniqueIdentifier(mNativeRef), new WeakReference<Node>(this));
     }
@@ -1306,7 +1309,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * JNI functions for view properties.
      */
     private native long nativeCreateNode();
-    private native int  nativeGetUniqueIdentifier(long nodeReference);
+    native int  nativeGetUniqueIdentifier(long nodeReference);
     private native void nativeDestroyNode(long nodeReference);
     private native void nativeAddChildNode(long nodeReference, long childNodeReference);
     private native void nativeRemoveFromParent(long nodeReference);

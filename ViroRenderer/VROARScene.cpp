@@ -24,7 +24,9 @@ void VROARScene::initDeclarativeSession() {
 
 void VROARScene::initImperativeSession() {
     passert (_declarativeSession == nullptr);
-    _imperativeSession = std::make_shared<VROARImperativeSession>();
+
+    std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(shared_from_this());
+    _imperativeSession = std::make_shared<VROARImperativeSession>(scene);
 }
 
 std::shared_ptr<VROARSessionDelegate> VROARScene::getSessionDelegate() {

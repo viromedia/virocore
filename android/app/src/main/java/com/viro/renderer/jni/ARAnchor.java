@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * ARAnchor represents real-world objects whose position and orientation can be tracked. ARAnchors
- * are automatically created by Viro when planes are detected. A corresponding {@link ARNode} is
+ * are automatically created by Viro when AR features are detected. A corresponding {@link ARNode} is
  * created and added to the {@link Scene} for each detected anchor.
  */
 public class ARAnchor {
@@ -79,21 +79,14 @@ public class ARAnchor {
     @Override
     protected void finalize() throws Throwable {
         try {
-            dispose();
+
         } finally {
             super.finalize();
         }
     }
 
     /**
-     * Release native resources associated with this ARAnchor.
-     */
-    public void dispose() {
-
-    }
-
-    /**
-     * Get a unique String ID for this anchor.
+     * Get a unique String ID for this ARAnchor.
      *
      * @return Unique ID for the anchor.
      */
@@ -101,18 +94,41 @@ public class ARAnchor {
         return mAnchorId;
     }
 
+    /**
+     * Return the {@link Type} of this ARAnchor.
+     *
+     * @return The ARAnchor type.
+     */
     public Type getType() {
         return mType;
     }
 
+    /**
+     * Get the position of this ARAnchor in world coordinates.
+     *
+     * @return The position of the ARAnchor as a {@link Vector}.
+     */
     public Vector getPosition() {
         return mPosition;
     }
 
+    /**
+     * Get the rotation of this ARAnchor about each principal axis. The rotation defines the
+     * anchor's orientation. The position, rotation, and scale of an ARAnchor define its
+     * "pose", or transformation in the world.
+     *
+     * @return The three Euler rotation angles in a {@link Vector}.
+     */
     public Vector getRotation() {
         return mRotation;
     }
 
+    /**
+     * Get the scale of this ARAnchor in the X, Y, and Z dimensions. The position, rotation, and
+     * scale of an ARAnchor define its "pose", or transformation in the world.
+     *
+     * @return The scale of this anchor.
+     */
     public Vector getScale() {
         return mScale;
     }

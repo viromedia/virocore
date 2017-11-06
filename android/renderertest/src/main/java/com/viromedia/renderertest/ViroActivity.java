@@ -215,7 +215,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
      Used to initialize the AR Scene, should also change the mVrView to the AR one...
      */
     private void initializeArScene() {
-        final ARScene scene = new ARScene(true);
+        final ARScene scene = new ARScene();
         final Node rootNode = scene.getRootNode();
 
         final List<Node> nodes = new ArrayList<>();
@@ -224,7 +224,8 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         //testBackgroundImage(scene);
 
         //nodes.addAll(testARDrag());
-        nodes.addAll(testARPlane(scene));
+        //nodes.addAll(testARPlane(scene));
+        nodes.addAll(testImperativePlane(scene));
 
         for (final Node node : nodes) {
             rootNode.addChildNode(node);
@@ -305,7 +306,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
     private void testSceneLighting(final Node node) {
         final float[] lightDirection = {0, 0, -1};
-        final AmbientLight ambientLightJni = new AmbientLight(Color.BLACK, 1000.0f);
+        final AmbientLight ambientLightJni = new AmbientLight(Color.WHITE, 300.0f);
         node.addLight(ambientLightJni);
 
         final DirectionalLight directionalLightJni = new DirectionalLight(Color.BLUE, 1000.0f, new Vector(lightDirection));
@@ -615,7 +616,66 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         final ArrayList<Node> list = new ArrayList<>();
         list.add(arPlane);
         return list;
+    }
 
+    private Object3D loadObjectNode() {
+        final Object3D objectNode = new Object3D();
+        objectNode.loadModel(Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+                object.setPosition(new Vector(0, 0, 0));
+                object.setScale(new Vector(0.4f, 0.4f, 0.4f));
+
+                Animation animation = object.getAnimation("02_spin");
+                animation.setDelay(5000);
+                animation.setLoop(true);
+                animation.play();
+
+                Log.i("Viro", "LOADED THE 3D MODEL");
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+
+            }
+        });
+        return objectNode;
+    }
+
+    private List<Node> testImperativePlane(final ARScene arScene) {
+
+
+        arScene.setDelegate(new ARScene.Delegate() {
+            @Override
+            public void onTrackingInitialized() {
+
+            }
+
+            @Override
+            public void onAmbientLightUpdate(float lightIntensity, float colorTemperature) {
+
+            }
+
+            @Override
+            public void onAnchorFound(ARAnchor anchor, ARNode node) {
+                Log.i("Viro", "Found anchor!");
+                node.addChildNode(loadObjectNode());
+            }
+
+            @Override
+            public void onAnchorUpdated(ARAnchor anchor, ARNode node) {
+                Log.i("Viro", "Node position is " + node.getPositionRealtime().x + ", " + node.getPositionRealtime().y + ", " + node.getPositionRealtime().z);
+
+            }
+
+            @Override
+            public void onAnchorRemoved(ARAnchor anchor, ARNode node) {
+
+            }
+        });
+
+        final ArrayList<Node> list = new ArrayList<>();
+        return list;
     }
 
     private List<Node> testARDrag() {

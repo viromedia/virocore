@@ -9,8 +9,10 @@
 #include "ARSceneController_JNI.h"
 #include "ARDeclarativePlane_JNI.h"
 #include "ARDeclarativeNode_JNI.h"
+#include "VROARImperativeSession.h"
 #include "Node_JNI.h"
 #include "ARUtils_JNI.h"
+#include "ARNode_JNI.h"
 #include "Surface_JNI.h"
 #include <VROPlatformUtil.h>
 
@@ -39,14 +41,22 @@ JNI_METHOD(jlong, nativeCreateARSceneControllerDeclarative)(JNIEnv *env, jclass 
 JNI_METHOD(jlong, nativeCreateARSceneDelegate) (JNIEnv *env,
                                                jobject object,
                                                jlong arSceneControllerPtr) {
-    std::shared_ptr<ARSceneDelegate> delegate = std::make_shared<ARSceneDelegate>(object, env);
-    std::shared_ptr<VROARScene> arScene =
-            std::dynamic_pointer_cast<VROARScene>(ARSceneController::native(arSceneControllerPtr)->getScene());
-    arScene->setDelegate(delegate);
+    std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(ARSceneController::native(arSceneControllerPtr)->getScene());
     if (arScene->getDeclarativeSession()) {
+        std::shared_ptr<ARDeclarativeSceneDelegate> delegate = std::make_shared<ARDeclarativeSceneDelegate>(object, env);
+        arScene->setDelegate(delegate);
         arScene->getDeclarativeSession()->setDelegate(delegate);
+
+        return ARDeclarativeSceneDelegate::jptr(delegate);
     }
-    return ARSceneDelegate::jptr(delegate);
+    else {
+        passert (arScene->getImperativeSession() != nullptr);
+        std::shared_ptr<ARImperativeSceneDelegate> delegate = std::make_shared<ARImperativeSceneDelegate>(object, env);
+        arScene->setDelegate(delegate);
+        arScene->getImperativeSession()->setDelegate(delegate);
+
+        return ARImperativeSceneDelegate::jptr(delegate);
+    }
 }
 
 JNI_METHOD(void, nativeDestroyARSceneDelegate) (JNIEnv *env,
@@ -187,7 +197,7 @@ JNI_METHOD(void, nativeRemoveARNode) (JNIEnv *env,
 
 }  // extern "C"
 
-void ARSceneDelegate::onTrackingInitialized() {
+void ARDeclarativeSceneDelegate::onTrackingInitialized() {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak] {
@@ -202,7 +212,7 @@ void ARSceneDelegate::onTrackingInitialized() {
     });
 }
 
-void ARSceneDelegate::onAmbientLightUpdate(float ambientLightIntensity, float colorTemperature) {
+void ARDeclarativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensity, float colorTemperature) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, ambientLightIntensity, colorTemperature] {
@@ -218,7 +228,7 @@ void ARSceneDelegate::onAmbientLightUpdate(float ambientLightIntensity, float co
     });
 }
 
-void ARSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
+void ARDeclarativeSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, anchor] {
@@ -229,17 +239,19 @@ void ARSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
         }
 
         jobject janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
-        VROPlatformCallJavaFunction(localObj, "onAnchorFound", "(Lcom/viro/renderer/jni/ARAnchor;)V",
-                                    janchor);
+        jlong nodeNativeRef = 0;
+        VROPlatformCallJavaFunction(localObj, "onAnchorFound",
+                                    "(Lcom/viro/renderer/jni/ARAnchor;J)V",
+                                    janchor, nodeNativeRef);
         env->DeleteLocalRef(localObj);
     });
 }
 
-void ARSceneDelegate::anchorWillUpdate(std::shared_ptr<VROARAnchor> anchor) {
+void ARDeclarativeSceneDelegate::anchorWillUpdate(std::shared_ptr<VROARAnchor> anchor) {
 
 }
 
-void ARSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor) {
+void ARDeclarativeSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, anchor] {
@@ -250,13 +262,14 @@ void ARSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor) {
         }
 
         jobject janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
-        VROPlatformCallJavaFunction(localObj, "onAnchorUpdated", "(Lcom/viro/renderer/jni/ARAnchor;)V",
-                                    janchor);
+        VROPlatformCallJavaFunction(localObj, "onAnchorUpdated",
+                                    "(Lcom/viro/renderer/jni/ARAnchor;I)V",
+                                    janchor, 0);
         env->DeleteLocalRef(localObj);
     });
 }
 
-void ARSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor) {
+void ARDeclarativeSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, anchor] {
@@ -267,8 +280,104 @@ void ARSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor) {
         }
 
         jobject janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
-        VROPlatformCallJavaFunction(localObj, "onAnchorRemoved", "(Lcom/viro/renderer/jni/ARAnchor;)V",
-                                    janchor);
+        VROPlatformCallJavaFunction(localObj, "onAnchorRemoved",
+                                    "(Lcom/viro/renderer/jni/ARAnchor;I)V",
+                                    janchor, 0);
+        env->DeleteLocalRef(localObj);
+    });
+}
+
+// +---------------------------------------------------------------------------+
+// | Imperative Delegate
+// +---------------------------------------------------------------------------+
+
+void ARImperativeSceneDelegate::onTrackingInitialized() {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
+    VROPlatformDispatchAsyncApplication([jObjWeak] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(jObjWeak);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj, "onTrackingInitialized", "()V");
+        env->DeleteLocalRef(localObj);
+    });
+}
+
+void ARImperativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensity,
+                                                     float colorTemperature) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
+    VROPlatformDispatchAsyncApplication([jObjWeak, ambientLightIntensity, colorTemperature] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(jObjWeak);
+        if (localObj == NULL) {
+            return;
+        }
+
+        VROPlatformCallJavaFunction(localObj, "onAmbientLightUpdate", "(FF)V",
+                                    ambientLightIntensity, colorTemperature);
+        env->DeleteLocalRef(localObj);
+    });
+}
+
+void ARImperativeSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
+    VROPlatformDispatchAsyncApplication([jObjWeak, anchor, node] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(jObjWeak);
+        if (localObj == NULL) {
+            return;
+        }
+
+        jobject janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
+        jlong node_j = ARNode::jptr(node);
+        VROPlatformCallJavaFunction(localObj, "onAnchorFound",
+                                    "(Lcom/viro/renderer/jni/ARAnchor;J)V",
+                                    janchor, node_j);
+        env->DeleteLocalRef(localObj);
+    });
+}
+
+void ARImperativeSceneDelegate::anchorWillUpdate(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node) {
+
+}
+
+void ARImperativeSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
+    VROPlatformDispatchAsyncApplication([jObjWeak, anchor, node] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(jObjWeak);
+        if (localObj == NULL) {
+            return;
+        }
+
+        jobject janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
+        VROPlatformCallJavaFunction(localObj, "onAnchorUpdated",
+                                    "(Lcom/viro/renderer/jni/ARAnchor;I)V",
+                                    janchor, node->getUniqueID());
+        env->DeleteLocalRef(localObj);
+    });
+}
+
+void ARImperativeSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
+    VROPlatformDispatchAsyncApplication([jObjWeak, anchor, node] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(jObjWeak);
+        if (localObj == NULL) {
+            return;
+        }
+
+        jobject janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
+        VROPlatformCallJavaFunction(localObj, "onAnchorRemoved",
+                                    "(Lcom/viro/renderer/jni/ARAnchor;I)V",
+                                    janchor, node->getUniqueID());
         env->DeleteLocalRef(localObj);
     });
 }

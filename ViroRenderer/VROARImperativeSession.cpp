@@ -9,8 +9,9 @@
 #include "VROARImperativeSession.h"
 #include "VROARAnchor.h"
 #include "VROARNode.h"
+#include "VROARScene.h"
 
-VROARImperativeSession::VROARImperativeSession() {
+VROARImperativeSession::VROARImperativeSession(std::shared_ptr<VROARScene> scene) : _scene(scene) {
     
 }
 
@@ -22,7 +23,11 @@ void VROARImperativeSession::anchorWasDetected(std::shared_ptr<VROARAnchor> anch
     std::shared_ptr<VROARNode> node = std::make_shared<VROARNode>();
     anchor->setARNode(node);
     node->setAnchor(anchor);
-    
+
+    std::shared_ptr<VROARScene> scene = _scene.lock();
+    if (scene) {
+        scene->addNode(node);
+    }
     std::shared_ptr<VROARImperativeSessionDelegate> delegate = _delegate.lock();
     if (delegate) {
         delegate->anchorWasDetected(anchor, node);
@@ -47,6 +52,7 @@ void VROARImperativeSession::anchorWasRemoved(std::shared_ptr<VROARAnchor> ancho
     std::shared_ptr<VROARNode> node = anchor->getARNode();
     node->setAnchor(nullptr);
     anchor->setARNode(nullptr);
+    node->removeFromParentNode();
     
     std::shared_ptr<VROARImperativeSessionDelegate> delegate = _delegate.lock();
     if (delegate) {

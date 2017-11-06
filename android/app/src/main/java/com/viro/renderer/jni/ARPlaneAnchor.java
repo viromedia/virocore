@@ -14,9 +14,8 @@ import java.util.Map;
 
 /**
  * ARPlaneAnchor is a specialized {@link ARAnchor} that represents a detected plane in the
- * real-world. Viro will automatically construct a corresponding {@link ARDeclarativePlane} for each plane
- * anchor, and will automatically include that ARPlane in the scene. You can use the {@link ARDeclarativePlane}
- * as a real-world surface on which to place virtual content.
+ * real-world. You can use the {@link ARNode} corresponding to an ARPlane as a real-world surface
+ * on which to place virtual content.
  */
 public class ARPlaneAnchor extends ARAnchor {
 

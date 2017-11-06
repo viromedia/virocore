@@ -4,6 +4,7 @@
 package com.viro.renderer.jni;
 
 import java.lang.ref.WeakReference;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ARNode is a specialized {@link Node} that corresponds to a detected {@link ARAnchor}. ARNodes are
@@ -16,28 +17,62 @@ import java.lang.ref.WeakReference;
  * example, if an {@link ARPlaneAnchor} is detected, you can add a 3D model to that plane by loading
  * the {@link Object3D} and making it a child of the ARNode.
  * <p>
+ * To get an ARNode, attach a {@link com.viro.renderer.jni.ARScene.Delegate} to the {@link ARScene},
+ * and listen for {@link com.viro.renderer.jni.ARScene.Delegate#onAnchorFound(ARAnchor, ARNode)},
+ * which is invoked each time a new {@link ARAnchor} is found, with its corresponding {@link
+ * ARNode}.
  */
-public abstract class ARNode extends Node {
+public class ARNode extends Node {
 
-    public ARNode() {
+    /**
+     * ARNodes need strong references to native created ARNodes since their Java representation
+     * typically isn't stored anywhere. We remove ARNodes from this map as they are removed by the
+     * AR tracking engine.
+     *
+     * @hide
+     */
+    private static ConcurrentHashMap<Integer, ARNode> nodeARMap = new ConcurrentHashMap<Integer, ARNode>();
+
+    /**
+     * @hide
+     */
+    static ARNode getARNodeWithID(int id) {
+        return nodeARMap.get(id);
+    }
+
+    /**
+     * @hide
+     */
+    static ARNode removeARNodeWithID(int id) {
+        return nodeARMap.remove(id);
+    }
+
+    /**
+     * Protected constructor for subclasses (declarative nodes).
+     * @hide
+     */
+    ARNode() {
+
+    }
+
+    /**
+     * Protected constructor to wrap an ARNode created natively.
+     * @hide
+     * @param nativeRef
+     */
+    ARNode(long nativeRef) {
         super(false); // call the empty NodeJni constructor.
+        setNativeRef(nativeRef);
+        nodeARMap.put(nativeGetUniqueIdentifier(mNativeRef), this);
     }
 
     @Override
     protected void finalize() throws Throwable {
         try {
-            dispose();
+
         } finally {
             super.finalize();
         }
-    }
-
-    /**
-     * Release native resources associated with this ARNode.
-     */
-    @Override
-    public void dispose() {
-        super.dispose();
     }
 
     /**
