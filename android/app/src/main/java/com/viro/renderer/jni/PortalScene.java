@@ -8,10 +8,9 @@ import android.graphics.Bitmap;
 import java.lang.ref.WeakReference;
 
 /**
- * PortalScene represents the top-level of an entire subgraph of {@link Node}s that is displayed
- * through a 'window' known as a {@link Portal}. Each PortalScene can represent an entirely new
- * Scene full of child Nodes, geometries, 3D models, and more. Additionally, each PortalScene can
- * have its own background texture. If a PortalScene is set to <tt>passable</tt>, users are able
+ * PortalScene is the root of the subgraph of {@link Node}s that is displayed through a {@link
+ * Portal}. Each PortalScene can contain any number of child nodes and content, and each PortalScene
+ * can have its own background texture. If a PortalScene is set to <tt>passable</tt>, users are able
  * to walk <i>through</i> the {@link Portal} into the PortalScene.
  * <p>
  * PortalScenes are typically used in AR to create an effect where the user walks from the real

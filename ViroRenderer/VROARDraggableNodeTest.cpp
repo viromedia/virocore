@@ -24,6 +24,7 @@ void VROARDraggableNodeTest::build(std::shared_ptr<VROFrameSynchronizer> frameSy
 
     _sceneController = std::make_shared<VROARSceneController>();
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
+    arScene->initDeclarativeSession();
     std::shared_ptr<VRONode> sceneNode = std::make_shared<VRONode>();
     
     std::string url = VROTestUtil::getURLForResource("coffee_mug", "obj");

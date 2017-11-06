@@ -11,6 +11,7 @@
 #include <jni.h>
 #include <memory>
 #include <VROARSceneController.h>
+#include <VROARDeclarativeSession.h>
 #include "PersistentRef.h"
 
 namespace ARSceneController {
@@ -27,7 +28,7 @@ namespace ARSceneController {
     }
 }
 
-class ARSceneDelegate : public VROARSceneDelegate {
+class ARSceneDelegate : public VROARSceneDelegate, public VROARDeclarativeSessionDelegate {
 public:
     ARSceneDelegate(jobject arSceneJavaObject, JNIEnv *env) {
         _javaObject = reinterpret_cast<jclass>(env->NewGlobalRef(arSceneJavaObject));
@@ -50,9 +51,10 @@ public:
 
     void onTrackingInitialized();
     void onAmbientLightUpdate(float ambientLightIntensity, float colorTemperature);
-    void onAnchorFound(std::shared_ptr<VROARAnchor> anchor);
-    void onAnchorUpdated(std::shared_ptr<VROARAnchor> anchor);
-    void onAnchorRemoved(std::shared_ptr<VROARAnchor> anchor);
+    void anchorWasDetected(std::shared_ptr<VROARAnchor> anchor);
+    void anchorWillUpdate(std::shared_ptr<VROARAnchor> anchor);
+    void anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor);
+    void anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor);
 
 private:
     jobject _javaObject;

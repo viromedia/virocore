@@ -19,10 +19,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.viro.renderer.ARAnchor;
+import com.viro.renderer.jni.ARAnchor;
 import com.viro.renderer.ARHitTestResult;
+import com.viro.renderer.jni.ARDeclarativeNode;
 import com.viro.renderer.jni.ARNode;
-import com.viro.renderer.jni.ARPlane;
+import com.viro.renderer.jni.ARDeclarativePlane;
+import com.viro.renderer.jni.ARPlaneAnchor;
 import com.viro.renderer.jni.ARScene;
 import com.viro.renderer.jni.AmbientLight;
 import com.viro.renderer.jni.Animation;
@@ -34,7 +36,6 @@ import com.viro.renderer.jni.Controller;
 import com.viro.renderer.jni.DirectionalLight;
 import com.viro.renderer.jni.EventDelegate;
 import com.viro.renderer.jni.GLListener;
-import com.viro.renderer.jni.Geometry;
 import com.viro.renderer.jni.Image;
 import com.viro.renderer.jni.ImageTracker;
 import com.viro.renderer.jni.Material;
@@ -85,8 +86,8 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     private final Map<String, Sound> mSoundMap = new HashMap<>();
     private final Map<String, SoundField> mSoundFieldMap = new HashMap();
     private final Map<String, SpatialSound> mSpatialSoundMap = new HashMap<>();
+    private ARDeclarativeNode.Delegate mARNodeDelegate;
     private ViroView mViroView;
-    private ARNode.ARNodeDelegate mARNodeDelegate;
     private Handler mHandler;
 
     @Override
@@ -107,6 +108,7 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         }
 
         mViroView.setVrModeEnabled(true);
+        mViroView.setDebugHUDEnabled(true);
         mViroView.validateApiKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
         setContentView(mViroView.getContentView());
 
@@ -161,10 +163,11 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         //nodes = testSurfaceVideo(this);
        // nodes = testSphereVideo(this);
         //nodes = testBox(getApplicationContext());
-        nodes = test3dObjectLoading(getApplicationContext());
+        //nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
         //nodes = testText(this);
+        nodes = testARDrag();
 
         //testBackgroundVideo(scene);
         //testBackgroundImage(scene);
@@ -212,15 +215,16 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
      Used to initialize the AR Scene, should also change the mVrView to the AR one...
      */
     private void initializeArScene() {
-        final ARScene scene = new ARScene();
+        final ARScene scene = new ARScene(true);
         final Node rootNode = scene.getRootNode();
 
         final List<Node> nodes = new ArrayList<>();
-        nodes.add(testLine(this));
+        //nodes.add(testLine(this));
 
         //testBackgroundImage(scene);
 
-        nodes.addAll(testARDrag());
+        //nodes.addAll(testARDrag());
+        nodes.addAll(testARPlane(scene));
 
         for (final Node node : nodes) {
             rootNode.addChildNode(node);
@@ -576,13 +580,14 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     }
 
     private List<Node> testARPlane(final ARScene arScene) {
-        final ARPlane arPlane = new ARPlane(0, 0);
+        final ARDeclarativePlane arPlane = new ARDeclarativePlane(0, 0);
         final Node node = new Node();
         final Surface surface = new Surface(.5f, .5f, 0, 0, 1, 1);
 
         final float[] rotation = {-90, 0, 0};
         node.setRotation(new Vector(rotation));
-        mARNodeDelegate = new ARNode.ARNodeDelegate() {
+
+        mARNodeDelegate = new ARDeclarativeNode.Delegate() {
             @Override
             public void onAnchorFound(final ARAnchor anchor) {
                 Log.i("ViroActivity", "onAnchorFound");
@@ -590,9 +595,10 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
 
             @Override
             public void onAnchorUpdated(final ARAnchor anchor) {
-                Log.i("ViroActivity", "onAnchorUpdated");
-                surface.setWidth(anchor.getExtent()[0]);
-                surface.setHeight(anchor.getExtent()[2]);
+                ARPlaneAnchor planeAnchor = (ARPlaneAnchor) anchor;
+                Log.i("ViroActivity", "onAnchorUpdated width " + planeAnchor.getExtent().x + ", " + planeAnchor.getExtent().z);
+                surface.setWidth(planeAnchor.getExtent().x);
+                surface.setHeight(planeAnchor.getExtent().z);
             }
 
             @Override
@@ -600,11 +606,11 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
                 Log.i("ViroActivity", "onAnchorRemoved");
             }
         };
-        arPlane.registerARNodeDelegate(mARNodeDelegate);
+        arPlane.setDelegate(mARNodeDelegate);
 
         node.setGeometry(surface);
         arPlane.addChildNode(node);
-        arScene.addARPlane(arPlane);
+        arScene.addARDeclarativeNode(arPlane);
 
         final ArrayList<Node> list = new ArrayList<>();
         list.add(arPlane);

@@ -17,7 +17,6 @@
 #include <thread>  // NOLINT
 #include <vector>
 #include <arcore/VROARSessionARCore.h>
-#include <VROARComponentManager.h>
 #include "VROSceneRenderer.h"
 #include "VRODriverOpenGLAndroid.h"
 
@@ -99,7 +98,6 @@ private:
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROARSessionARCore> _session;
     std::shared_ptr<VROSceneController> _sceneController;
-    std::shared_ptr<VROARComponentManager> _componentManager;
 
     /*
      The hasTrackingInitialized bool gets flipped to true when tracking

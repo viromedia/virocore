@@ -9,6 +9,32 @@
 #include "VROARScene.h"
 #include "VROARAnchor.h"
 #include "VROPortal.h"
+#include "VROARSession.h"
+#include "VROARDeclarativeNode.h"
+#include "VROARConstraintMatcher.h"
+#include "VROPointCloudEmitter.h"
+#include "VROARImperativeSession.h"
+#include "VROARDeclarativeSession.h"
+
+void VROARScene::initDeclarativeSession() {
+    passert (_imperativeSession == nullptr);
+    _declarativeSession = std::make_shared<VROARDeclarativeSession>();
+    _declarativeSession->init();
+}
+
+void VROARScene::initImperativeSession() {
+    passert (_declarativeSession == nullptr);
+    _imperativeSession = std::make_shared<VROARImperativeSession>();
+}
+
+std::shared_ptr<VROARSessionDelegate> VROARScene::getSessionDelegate() {
+    if (_declarativeSession) {
+        return _declarativeSession;
+    }
+    else {
+        return _imperativeSession;
+    }
+}
 
 void VROARScene::addNode(std::shared_ptr<VRONode> node) {
     getRootNode()->addChildNode(node);
@@ -21,15 +47,6 @@ void VROARScene::setARSession(std::shared_ptr<VROARSession> arSession) {
     // to run through the creation/addition logic now that the session is set.
     if (!_pointCloudEmitter) {
         displayPointCloud(_displayPointCloud);
-    }
-}
-
-void VROARScene::setARComponentManager(std::shared_ptr<VROARComponentManager> arComponentManager) {
-    _arComponentManager = arComponentManager;
-    _arComponentManager->setDelegate(std::dynamic_pointer_cast<VROARComponentManagerDelegate>(shared_from_this()));
-    std::vector<std::shared_ptr<VROARPlaneNode>>::iterator it;
-    for (it = _planes.begin(); it < _planes.end(); it++) {
-        _arComponentManager->addARPlane(*it);
     }
 }
 
@@ -143,71 +160,14 @@ void VROARScene::updateAmbientLight(float intensity, float colorTemperature) {
     }
 }
 
-
 void VROARScene::willAppear() {
-    if (_arComponentManager) {
-        _arComponentManager->setDelegate(std::dynamic_pointer_cast<VROARComponentManagerDelegate>(shared_from_this()));
-        std::vector<std::shared_ptr<VROARPlaneNode>>::iterator it;
-        for (it = _planes.begin(); it < _planes.end(); it++) {
-            _arComponentManager->addARPlane(*it);
-        }
+    if (_declarativeSession) {
+        _declarativeSession->sceneWillAppear();
     }
 }
 
 void VROARScene::willDisappear() {
-    if (_arComponentManager) {
-        _arComponentManager->clearAllPlanes(_planes);
-    }
-}
-
-void VROARScene::addARPlane(std::shared_ptr<VROARPlaneNode> plane) {
-    // TODO: figure out a way to make ARNode simply not be visible at start.
-    // call this once, because when it planes are first added they should not be visible.
-    plane->setIsAttached(false);
-    _planes.push_back(plane);
-    if (_arComponentManager) {
-        _arComponentManager->addARPlane(plane);
-    }
-}
-
-void VROARScene::removeARPlane(std::shared_ptr<VROARPlaneNode> plane) {
-    plane->setIsAttached(false);
-    if (_arComponentManager) {
-        _arComponentManager->removeARPlane(plane);
-    }
-    _planes.erase(
-                   std::remove_if(_planes.begin(), _planes.end(),
-                                  [plane](std::shared_ptr<VROARPlaneNode> candidate) {
-                                      return candidate == plane;
-                                  }), _planes.end());
-}
-
-void VROARScene::updateARPlane(std::shared_ptr<VROARPlaneNode> plane) {
-    if (_arComponentManager) {
-        _arComponentManager->updateARPlane(plane);
-    }
-}
-
-#pragma mark - VROARComponentManagerDelegate Implementation
-
-void VROARScene::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
-    std::shared_ptr<VROARSceneDelegate> delegate = _delegate.lock();
-    if (delegate) {
-        delegate->onAnchorFound(anchor);
-    }
-}
-
-void VROARScene::anchorWasUpdated(std::shared_ptr<VROARAnchor> anchor) {
-    std::shared_ptr<VROARPlaneAnchor> plane = std::dynamic_pointer_cast<VROARPlaneAnchor>(anchor);
-    std::shared_ptr<VROARSceneDelegate> delegate = _delegate.lock();
-    if (delegate) {
-        delegate->onAnchorUpdated(anchor);
-    }
-}
-
-void VROARScene::anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor) {
-    std::shared_ptr<VROARSceneDelegate> delegate = _delegate.lock();
-    if (delegate) {
-        delegate->onAnchorRemoved(anchor);
+    if (_declarativeSession) {
+        _declarativeSession->sceneWillDisappear();
     }
 }

@@ -50,7 +50,9 @@ public class Vector {
     public Vector(float[] coordinates) {
         this.x = coordinates[0];
         this.y = coordinates[1];
-        this.z = coordinates[2];
+        if (coordinates.length > 2) {
+            this.z = coordinates[2];
+        }
     }
 
     /**

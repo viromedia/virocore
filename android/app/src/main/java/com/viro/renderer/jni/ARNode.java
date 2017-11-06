@@ -3,68 +3,61 @@
  */
 package com.viro.renderer.jni;
 
-import com.viro.renderer.ARAnchor;
-
 import java.lang.ref.WeakReference;
 
+/**
+ * ARNode is a specialized {@link Node} that corresponds to a detected {@link ARAnchor}. ARNodes are
+ * automatically created by Viro and added to the {@link Scene} as they are detected, and by default
+ * hold no content and have no children. Each ARNode is continually updated to stay in sync with its
+ * corresponding ARAnchor: if the anchor's position, orientation, or other detected properties
+ * change, the ARNode will be changed as well.
+ * <p>
+ * ARNode is the mechanism through which you can attach virtual content to real-world objects. For
+ * example, if an {@link ARPlaneAnchor} is detected, you can add a 3D model to that plane by loading
+ * the {@link Object3D} and making it a child of the ARNode.
+ * <p>
+ */
 public abstract class ARNode extends Node {
-
-    public long mNativeARNodeDelegateRef;
 
     public ARNode() {
         super(false); // call the empty NodeJni constructor.
     }
 
-    public void destroy() {
-        destroyNativeARNodeDelegate(mNativeARNodeDelegateRef);
-    }
-
-    protected void setNativeRef(long nativeRef) {
-        super.setNativeRef(nativeRef);
-        mNativeARNodeDelegateRef = createNativeARNodeDelegate(nativeRef);
-    }
-
-    // We want our child classes to create their own ARNodeDelegate objects so they can
-    // handle creating the ARAnchor objects in the C++ JNI layer. But this class still
-    // implements the callbacks so that we don't have to duplicate more code.
-    abstract long createNativeARNodeDelegate(long nativeRef);
-    abstract void destroyNativeARNodeDelegate(long delegateRef);
-
-    // -- ARNodeDelegate --
-
-    public interface ARNodeDelegate {
-        void onAnchorFound(ARAnchor anchor);
-        void onAnchorUpdated(ARAnchor anchor);
-        void onAnchorRemoved();
-    }
-
-    private WeakReference<ARNodeDelegate> mARNodeDelegate = null;
-
-    public void registerARNodeDelegate(ARNodeDelegate delegate) {
-        mARNodeDelegate = new WeakReference<ARNodeDelegate>(delegate);
-    }
-
-    /* Called by Native */
-    public void onAnchorFound(ARAnchor anchor) {
-        ARNodeDelegate delegate;
-        if (mARNodeDelegate != null && (delegate = mARNodeDelegate.get()) != null) {
-            delegate.onAnchorFound(anchor);
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            dispose();
+        } finally {
+            super.finalize();
         }
     }
 
-    /* Called by Native */
-    public void onAnchorUpdated(ARAnchor anchor) {
-        ARNodeDelegate delegate;
-        if (mARNodeDelegate != null && (delegate = mARNodeDelegate.get()) != null) {
-            delegate.onAnchorUpdated(anchor);
-        }
+    /**
+     * Release native resources associated with this ARNode.
+     */
+    @Override
+    public void dispose() {
+        super.dispose();
     }
 
-    /* Called by Native */
-    public void onAnchorRemoved() {
-        ARNodeDelegate delegate;
-        if (mARNodeDelegate != null && (delegate = mARNodeDelegate.get()) != null) {
-            delegate.onAnchorRemoved();
-        }
+    /**
+     * Set to true to pause automatic synchronization between this ARNode and its {@link ARAnchor}.
+     * ARAnchors are periodically updated by the AR tracking system as its estimates of the anchor's
+     * properties are refined. By default, updates to the ARAnchor are synchronized to the ARNode;
+     * for example, if the tracking system determines that an ARAnchor has moved, the ARNode will
+     * move as well.
+     * <p>
+     * It may be useful to pause updates if you wish to ensure the stability of your {@link Scene}
+     * for a period of time. The ARNode will be immediately updated to its anchor's latest position
+     * when pause updates is turned off.
+     *
+     * @param pauseUpdates True to pause updates, false to resume updating. When set to false, the
+     *                     ARNode will immediately be updated to match its {@link ARAnchor}.
+     */
+    public void setPauseUpdates(boolean pauseUpdates) {
+        nativeSetPauseUpdates(mNativeRef, pauseUpdates);
     }
+
+    private native void nativeSetPauseUpdates(long nativeRef, boolean pauseUpdates);
+
 }

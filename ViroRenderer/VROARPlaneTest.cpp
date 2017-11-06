@@ -9,6 +9,7 @@
 #include "VROARPlaneTest.h"
 #include "VROTestUtil.h"
 #include "VROModelIOUtil.h"
+#include "VROARDeclarativePlane.h"
 
 VROARPlaneTest::VROARPlaneTest() :
     VRORendererTest(VRORendererTestType::ARPlane) {
@@ -22,10 +23,13 @@ VROARPlaneTest::~VROARPlaneTest() {
 void VROARPlaneTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronizer,
                            std::shared_ptr<VRODriver> driver) {
     
-    _sceneController = std::make_shared<VROARSceneController>();
+    std::shared_ptr<VROARSceneController> sceneController = std::make_shared<VROARSceneController>();
+    _sceneController = sceneController;
+    
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(_sceneController->getScene());
+    arScene->initDeclarativeSession();
     std::shared_ptr<VRONode> sceneNode = std::make_shared<VRONode>();
-    std::shared_ptr<VROARPlaneNode> arPlane = std::make_shared<VROARPlaneNode>(0, 0);
+    std::shared_ptr<VROARDeclarativePlane> arPlane = std::make_shared<VROARDeclarativePlane>(0, 0);
     
     std::string url = VROTestUtil::getURLForResource("coffee_mug", "obj");
     std::string base = url.substr(0, url.find_last_of('/'));
@@ -45,6 +49,7 @@ void VROARPlaneTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchroniz
     
     sceneNode->addChildNode(arPlane);
     arPlane->addChildNode(objNode);
-    arScene->addARPlane(arPlane);
+    
+    arScene->getDeclarativeSession()->addARNode(arPlane);
     arScene->addNode(sceneNode);
 }

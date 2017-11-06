@@ -163,13 +163,15 @@ public class Scene {
      */
     public Scene() {
         setSceneRef(createNativeScene());
-        mNativeDelegateRef = nativeCreateSceneControllerDelegate(mNativeRef);
+    }
 
-        PortalScene root = new PortalScene(false);
-        root.setNativeRef(nativeGetSceneNodeRef(mNativeRef));
-        root.attachDelegate();
-        mRootNode = root;
-        mPhysicsWorld = new PhysicsWorld(this);
+    /**
+     * Subclass constructor, does not set the scene-ref.
+     *
+     * @hide
+     */
+    Scene(boolean dummy) {
+
     }
 
     /**
@@ -181,16 +183,21 @@ public class Scene {
     }
 
     /**
-     * @hide
+     * After-construction method when the sceneRef is known. Initializes
+     * the rest of the Scene.
      *
-     * This method is used by child classes to replace the mNativeRef with
-     * a child's nativeRef.
+     * @hide
      */
     protected void setSceneRef(long sceneRef) {
         mNativeRef = sceneRef;
         mNativeDelegateRef = nativeCreateSceneControllerDelegate(mNativeRef);
-    }
 
+        PortalScene root = new PortalScene(false);
+        root.setNativeRef(nativeGetSceneNodeRef(mNativeRef));
+        root.attachDelegate();
+        mRootNode = root;
+        mPhysicsWorld = new PhysicsWorld(this);
+    }
 
     @Override
     protected void finalize() throws Throwable {
@@ -349,7 +356,7 @@ public class Scene {
     protected native void nativeDestroySceneControllerDelegate(long sceneDelegateRef);
 
     /**
-     * The SceneDelegate receives callbacks in response to a {@link Scene} appearing and disappearing.
+     * Receives callbacks in response to a {@link Scene} appearing and disappearing.
      */
     public interface SceneDelegate {
 

@@ -7,7 +7,8 @@
 
 
 #include "ARSceneController_JNI.h"
-#include "ARPlane_JNI.h"
+#include "ARDeclarativePlane_JNI.h"
+#include "ARDeclarativeNode_JNI.h"
 #include "Node_JNI.h"
 #include "ARUtils_JNI.h"
 #include "Surface_JNI.h"
@@ -19,9 +20,19 @@
 
 extern "C" {
 
-JNI_METHOD(jlong, nativeCreateARSceneController) (JNIEnv *env,
-                                        jclass clazz) {
+JNI_METHOD(jlong, nativeCreateARSceneController) (JNIEnv *env, jclass clazz) {
     std::shared_ptr<VROARSceneController> arSceneController = std::make_shared<VROARSceneController>();
+    std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(arSceneController->getScene());
+    scene->initImperativeSession();
+
+    return ARSceneController::jptr(arSceneController);
+}
+
+JNI_METHOD(jlong, nativeCreateARSceneControllerDeclarative)(JNIEnv *env, jclass clazz) {
+    std::shared_ptr<VROARSceneController> arSceneController = std::make_shared<VROARSceneController>();
+    std::shared_ptr<VROARScene> scene = std::dynamic_pointer_cast<VROARScene>(arSceneController->getScene());
+    scene->initDeclarativeSession();
+
     return ARSceneController::jptr(arSceneController);
 }
 
@@ -32,13 +43,10 @@ JNI_METHOD(jlong, nativeCreateARSceneDelegate) (JNIEnv *env,
     std::shared_ptr<VROARScene> arScene =
             std::dynamic_pointer_cast<VROARScene>(ARSceneController::native(arSceneControllerPtr)->getScene());
     arScene->setDelegate(delegate);
+    if (arScene->getDeclarativeSession()) {
+        arScene->getDeclarativeSession()->setDelegate(delegate);
+    }
     return ARSceneDelegate::jptr(delegate);
-}
-
-JNI_METHOD(void, nativeDestroyARSceneController) (JNIEnv *env,
-                                        jobject object,
-                                        jlong arSceneControllerPtr) {
-    delete reinterpret_cast<PersistentRef<VROARSceneController> *>(arSceneControllerPtr);
 }
 
 JNI_METHOD(void, nativeDestroyARSceneDelegate) (JNIEnv *env,
@@ -123,56 +131,56 @@ JNI_METHOD(void, nativeSetPointCloudMaxPoints) (JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeAddARPlane) (JNIEnv *env,
-                                    jobject object,
-                                    jlong arSceneControllerPtr,
-                                    jlong arPlanePtr) {
+JNI_METHOD(void, nativeAddARNode) (JNIEnv *env,
+                                   jobject object,
+                                   jlong scene_j,
+                                   jlong node_j) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
-            ARSceneController::native(arSceneControllerPtr)->getScene());
-    std::weak_ptr<VROARPlaneNode> arPlane_w = ARPlane::native(arPlanePtr);
+            ARSceneController::native(scene_j)->getScene());
+    std::weak_ptr<VROARDeclarativeNode> node_w = ARDeclarativeNode::native(node_j);
 
-    VROPlatformDispatchAsyncRenderer([arPlane_w, arScene_w] {
+    VROPlatformDispatchAsyncRenderer([node_w, arScene_w] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
-        std::shared_ptr<VROARPlaneNode> arPlane = arPlane_w.lock();
+        std::shared_ptr<VROARDeclarativeNode> node = node_w.lock();
 
-        if (arScene && arPlane) {
-            arScene->addARPlane(arPlane);
+        if (arScene && node) {
+            arScene->getDeclarativeSession()->addARNode(node);
         }
     });
 }
 
-JNI_METHOD(void, nativeUpdateARPlane) (JNIEnv *env,
+JNI_METHOD(void, nativeUpdateARNode) (JNIEnv *env,
+                                       jobject object,
+                                       jlong scene_j,
+                                       jlong node_j) {
+    std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
+            ARSceneController::native(scene_j)->getScene());
+    std::weak_ptr<VROARDeclarativeNode> node_w = ARDeclarativeNode::native(node_j);
+
+    VROPlatformDispatchAsyncRenderer([node_w, arScene_w] {
+        std::shared_ptr<VROARScene> arScene = arScene_w.lock();
+        std::shared_ptr<VROARDeclarativeNode> node = node_w.lock();
+
+        if (arScene && node) {
+            arScene->getDeclarativeSession()->updateARNode(node);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeRemoveARNode) (JNIEnv *env,
                                        jobject object,
                                        jlong arSceneControllerPtr,
                                        jlong arPlanePtr) {
     std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
             ARSceneController::native(arSceneControllerPtr)->getScene());
-    std::weak_ptr<VROARPlaneNode> arPlane_w = ARPlane::native(arPlanePtr);
+    std::weak_ptr<VROARDeclarativeNode> arPlane_w = ARDeclarativeNode::native(arPlanePtr);
 
     VROPlatformDispatchAsyncRenderer([arPlane_w, arScene_w] {
         std::shared_ptr<VROARScene> arScene = arScene_w.lock();
-        std::shared_ptr<VROARPlaneNode> arPlane = arPlane_w.lock();
+        std::shared_ptr<VROARDeclarativeNode> node = arPlane_w.lock();
 
-        if (arScene && arPlane) {
-            arScene->updateARPlane(arPlane);
-        }
-    });
-}
-
-JNI_METHOD(void, nativeRemoveARPlane) (JNIEnv *env,
-                                       jobject object,
-                                       jlong arSceneControllerPtr,
-                                       jlong arPlanePtr) {
-    std::weak_ptr<VROARScene> arScene_w = std::dynamic_pointer_cast<VROARScene>(
-            ARSceneController::native(arSceneControllerPtr)->getScene());
-    std::weak_ptr<VROARPlaneNode> arPlane_w = ARPlane::native(arPlanePtr);
-
-    VROPlatformDispatchAsyncRenderer([arPlane_w, arScene_w] {
-        std::shared_ptr<VROARScene> arScene = arScene_w.lock();
-        std::shared_ptr<VROARPlaneNode> arPlane = arPlane_w.lock();
-
-        if (arScene && arPlane) {
-            arScene->removeARPlane(arPlane);
+        if (arScene && node) {
+            arScene->getDeclarativeSession()->removeARNode(node);
         }
     });
 }
@@ -210,7 +218,7 @@ void ARSceneDelegate::onAmbientLightUpdate(float ambientLightIntensity, float co
     });
 }
 
-void ARSceneDelegate::onAnchorFound(std::shared_ptr<VROARAnchor> anchor) {
+void ARSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, anchor] {
@@ -221,14 +229,17 @@ void ARSceneDelegate::onAnchorFound(std::shared_ptr<VROARAnchor> anchor) {
         }
 
         jobject janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
-
-        VROPlatformCallJavaFunction(localObj, "onAnchorFound", "(Lcom/viro/renderer/ARAnchor;)V",
+        VROPlatformCallJavaFunction(localObj, "onAnchorFound", "(Lcom/viro/renderer/jni/ARAnchor;)V",
                                     janchor);
         env->DeleteLocalRef(localObj);
     });
 }
 
-void ARSceneDelegate::onAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) {
+void ARSceneDelegate::anchorWillUpdate(std::shared_ptr<VROARAnchor> anchor) {
+
+}
+
+void ARSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, anchor] {
@@ -239,14 +250,13 @@ void ARSceneDelegate::onAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) {
         }
 
         jobject janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
-
-        VROPlatformCallJavaFunction(localObj, "onAnchorUpdated", "(Lcom/viro/renderer/ARAnchor;)V",
+        VROPlatformCallJavaFunction(localObj, "onAnchorUpdated", "(Lcom/viro/renderer/jni/ARAnchor;)V",
                                     janchor);
         env->DeleteLocalRef(localObj);
     });
 }
 
-void ARSceneDelegate::onAnchorRemoved(std::shared_ptr<VROARAnchor> anchor) {
+void ARSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, anchor] {
@@ -257,8 +267,7 @@ void ARSceneDelegate::onAnchorRemoved(std::shared_ptr<VROARAnchor> anchor) {
         }
 
         jobject janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
-
-        VROPlatformCallJavaFunction(localObj, "onAnchorRemoved", "(Lcom/viro/renderer/ARAnchor;)V",
+        VROPlatformCallJavaFunction(localObj, "onAnchorRemoved", "(Lcom/viro/renderer/jni/ARAnchor;)V",
                                     janchor);
         env->DeleteLocalRef(localObj);
     });

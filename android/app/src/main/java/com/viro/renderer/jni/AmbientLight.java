@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2016 Viro Media. All rights reserved.
  */
 package com.viro.renderer.jni;

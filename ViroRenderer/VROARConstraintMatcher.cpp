@@ -1,5 +1,5 @@
 //
-//  VROARComponentManager.cpp
+//  VROARConstraintMatcher.cpp
 //  ViroKit
 //
 //  Created by Andy Chu on 6/16/17.
@@ -33,7 +33,7 @@ void VROARConstraintMatcher::updateARNode(std::shared_ptr<VROARDeclarativeNode> 
         // notify the node of detachment, detach anchor & node, notify anchor updated.
         node->onARAnchorRemoved();
         anchor->setARNode(nullptr);
-        notifyAnchorWasUpdated(anchor);
+        notifyAnchorWasDetached(anchor);
 
         processDetachedAnchor(anchor);
     }
@@ -46,7 +46,7 @@ void VROARConstraintMatcher::removeARNode(std::shared_ptr<VROARDeclarativeNode> 
     if (anchor) {
         // detach the node from anchor and notify anchor updated
         anchor->setARNode(nullptr);
-        notifyAnchorWasUpdated(anchor);
+        notifyAnchorWasDetached(anchor);
 
         processDetachedAnchor(anchor);
     } else {
@@ -54,19 +54,11 @@ void VROARConstraintMatcher::removeARNode(std::shared_ptr<VROARDeclarativeNode> 
     }
 }
 
-void VROARConstraintMatcher::setDelegate(std::shared_ptr<VROARComponentManagerDelegate> delegate) {
+void VROARConstraintMatcher::setDelegate(std::shared_ptr<VROARConstraintMatcherDelegate> delegate) {
     _delegate = delegate;
-    // When attaching a new delegate, notify delegate of all "detached" anchors.
-    if (delegate) {
-        std::vector<std::shared_ptr<VROARAnchor>>::iterator it;
-        for (it = _detachedAnchors.begin(); it < _detachedAnchors.end(); it++) {
-            std::shared_ptr<VROARAnchor> anchor = *it;
-            delegate->anchorWasDetected(anchor);
-        }
-    }
 }
 
-void VROARConstraintMatcher::clearAllNodes(std::vector<std::shared_ptr<VROARDeclarativeNode>> nodes) {
+void VROARConstraintMatcher::detachAllNodes(std::vector<std::shared_ptr<VROARDeclarativeNode>> nodes) {
     std::vector<std::shared_ptr<VROARDeclarativeNode>>::iterator it;
     for (it = nodes.begin(); it < nodes.end(); it++) {
         std::shared_ptr<VROARDeclarativeNode> node = *it;
@@ -80,22 +72,14 @@ void VROARConstraintMatcher::clearAllNodes(std::vector<std::shared_ptr<VROARDecl
     }
 }
 
-#pragma mark - VROARSessionDelegate Implementation
+#pragma mark - Forwarded ARSessionDelegate callbacks from ARScene
 
 void VROARConstraintMatcher::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
-    // add anchor to map
     _nativeAnchorMap[anchor->getId()] = anchor;
-
-    notifyAnchorWasDetected(anchor);
     processDetachedAnchor(anchor);
 }
 
-void VROARConstraintMatcher::anchorWillUpdate(std::shared_ptr<VROARAnchor> anchor) {
-    // no-op
-}
-
 void VROARConstraintMatcher::anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor) {
-    notifyAnchorWasUpdated(anchor);
     std::shared_ptr<VROARDeclarativeNode> arNode = std::dynamic_pointer_cast<VROARDeclarativeNode>(anchor->getARNode());
     if (arNode) {
         if (arNode->hasRequirementsFulfilled(anchor)) {
@@ -112,7 +96,6 @@ void VROARConstraintMatcher::anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor
 }
 
 void VROARConstraintMatcher::anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor) {
-    notifyAnchorWasRemoved(anchor);
     std::shared_ptr<VROARDeclarativeNode> node = std::dynamic_pointer_cast<VROARDeclarativeNode>(anchor->getARNode());
     // if anchor was attached to a node, notify the node that anchor was removed then "handle" the detached node.
     if (node) {
@@ -128,7 +111,6 @@ void VROARConstraintMatcher::anchorWasRemoved(std::shared_ptr<VROARAnchor> ancho
     if (it != _nativeAnchorMap.end()) {
         _nativeAnchorMap.erase(it);
     }
-
 }
 
 #pragma mark - Internal Functions
@@ -158,10 +140,10 @@ void VROARConstraintMatcher::processDetachedNode(std::shared_ptr<VROARDeclarativ
     // if we fail, then we'll accidentally add it back in again!
     removeFromDetachedList(node);
 
-    std::string id = node->getAnchorId();
-    if (!id.empty()) {
+    std::string anchorId = node->getAnchorId();
+    if (!anchorId.empty()) {
         // first find if there's an anchor!
-        std::shared_ptr<VROARAnchor> anchor = getAnchorFromId(id);
+        std::shared_ptr<VROARAnchor> anchor = getAnchorFromId(anchorId);
         if (anchor) {
             removeFromDetachedList(anchor);
             std::shared_ptr<VROARDeclarativeNode> oldNode = std::dynamic_pointer_cast<VROARDeclarativeNode>(anchor->getARNode());
@@ -226,12 +208,11 @@ std::shared_ptr<VROARDeclarativeNode> VROARConstraintMatcher::findDetachedNode(s
     return nullptr;
 }
 
-void VROARConstraintMatcher::attachNodeToAnchor(std::shared_ptr<VROARNode> node, std::shared_ptr<VROARAnchor> anchor) {
+void VROARConstraintMatcher::attachNodeToAnchor(std::shared_ptr<VROARDeclarativeNode> node, std::shared_ptr<VROARAnchor> anchor) {
     anchor->setARNode(node);
     node->setAnchor(anchor);
     node->onARAnchorAttached();
-    
-    notifyAnchorWasUpdated(anchor);
+    notifyAnchorWasAttached(anchor);
 }
 
 void VROARConstraintMatcher::removeFromDetachedList(std::shared_ptr<VROARDeclarativeNode> node) {
@@ -254,23 +235,16 @@ void VROARConstraintMatcher::removeFromDetachedList(std::shared_ptr<VROARAnchor>
                                           }), _detachedAnchors.end());
 }
 
-void VROARConstraintMatcher::notifyAnchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
-    std::shared_ptr<VROARComponentManagerDelegate> delegate = _delegate.lock();
+void VROARConstraintMatcher::notifyAnchorWasAttached(std::shared_ptr<VROARAnchor> anchor) {
+    std::shared_ptr<VROARConstraintMatcherDelegate> delegate = _delegate.lock();
     if (delegate) {
-        delegate->anchorWasDetected(anchor);
+        delegate->anchorWasAttached(anchor);
     }
 }
 
-void VROARConstraintMatcher::notifyAnchorWasUpdated(std::shared_ptr<VROARAnchor> anchor) {
-    std::shared_ptr<VROARComponentManagerDelegate> delegate = _delegate.lock();
+void VROARConstraintMatcher::notifyAnchorWasDetached(std::shared_ptr<VROARAnchor> anchor) {
+    std::shared_ptr<VROARConstraintMatcherDelegate> delegate = _delegate.lock();
     if (delegate) {
-        delegate->anchorWasUpdated(anchor);
-    }
-}
-
-void VROARConstraintMatcher::notifyAnchorWasRemoved(std::shared_ptr<VROARAnchor> anchor) {
-    std::shared_ptr<VROARComponentManagerDelegate> delegate = _delegate.lock();
-    if (delegate) {
-        delegate->anchorWasRemoved(anchor);
+        delegate->anchorWasDetached(anchor);
     }
 }

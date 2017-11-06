@@ -107,7 +107,9 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/MediaRecorder_JNI.cpp
 
              # Android AR JNI
-             src/main/cpp/jni/ARPlane_JNI.cpp
+             src/main/cpp/jni/ARNode_JNI.cpp
+             src/main/cpp/jni/ARDeclarativeNode_JNI.cpp
+             src/main/cpp/jni/ARDeclarativePlane_JNI.cpp
              src/main/cpp/jni/ARSceneController_JNI.cpp
              src/main/cpp/jni/ARUtils_JNI.cpp
 
@@ -241,7 +243,9 @@ add_library( # Sets the name of the library.
              # AR
              ../../ViroRenderer/VROARScene.cpp
              ../../ViroRenderer/VROARNode.cpp
-             ../../ViroRenderer/VROARComponentManager.cpp
+             ../../ViroRenderer/VROARConstraintMatcher.cpp
+             ../../ViroRenderer/VROARDeclarativeSession.cpp
+             ../../ViroRenderer/VROARImperativeSession.cpp
              ../../ViroRenderer/VROInputControllerAR.cpp
              ../../ViroRenderer/VROPointCloudEmitter.cpp
 

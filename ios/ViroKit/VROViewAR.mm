@@ -10,7 +10,7 @@
 #import <Photos/Photos.h>
 #import "VROViewAR.h"
 #import "VRORenderer.h"
-#import "VROSceneController.h"
+#import "VROARSceneController.h"
 #import "VRORenderDelegateiOS.h"
 #import "VROTime.h"
 #import "VROEye.h"
@@ -27,7 +27,6 @@
 #import "VRONodeCamera.h"
 #import "vr/gvr/capi/include/gvr_audio.h"
 #import "VROARScene.h"
-#import "VROARComponentManager.h"
 #import "VROChoreographer.h"
 #import "VROVideoTextureCache.h"
 #import "VROInputControllerAR.h"
@@ -38,14 +37,13 @@ static VROVector3f const kZeroVector = VROVector3f();
 
 @interface VROViewAR () {
     std::shared_ptr<VRORenderer> _renderer;
-    std::shared_ptr<VROSceneController> _sceneController;
+    std::shared_ptr<VROARSceneController> _sceneController;
     std::shared_ptr<VRORenderDelegateiOS> _renderDelegateWrapper;
     std::shared_ptr<VRODriverOpenGL> _driver;
     std::shared_ptr<gvr::AudioApi> _gvrAudio;
     std::shared_ptr<VROSurface> _cameraBackground;
     std::shared_ptr<VROARSession> _arSession;
     std::shared_ptr<VRONode> _pointOfView;
-    std::shared_ptr<VROARComponentManager> _arComponentManager;
     std::shared_ptr<VROInputControllerAR> _inputController;
     
     CADisplayLink *_displayLink;
@@ -197,12 +195,6 @@ static VROVector3f const kZeroVector = VROVector3f();
     }
 
     _arSession->setOrientation(VROConvert::toCameraOrientation([[UIApplication sharedApplication] statusBarOrientation]));
-    
-    /*
-     Create AR component manager and set it as the delegate to the AR session.
-     */
-    _arComponentManager = std::make_shared<VROARComponentManager>();
-    _arSession->setDelegate(_arComponentManager);
     
     // set session on input controller!
     _inputController->setSession(std::dynamic_pointer_cast<VROARSession>(_arSession));
@@ -886,7 +878,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 #pragma mark - Scene Loading
 
 - (void)setSceneController:(std::shared_ptr<VROSceneController>) sceneController {
-    _sceneController = sceneController;
+    _sceneController = std::dynamic_pointer_cast<VROARSceneController>(sceneController);
     _renderer->setSceneController(sceneController, _driver);
     
     if (_hasTrackingInitialized) {
@@ -903,7 +895,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (void)setSceneController:(std::shared_ptr<VROSceneController>)sceneController
                   duration:(float)seconds
             timingFunction:(VROTimingFunctionType)timingFunctionType {
-    _sceneController = sceneController;
+    _sceneController = std::dynamic_pointer_cast<VROARSceneController>(sceneController);
     _renderer->setSceneController(sceneController, seconds, timingFunctionType, _driver);
     
     if (_hasTrackingInitialized) {
@@ -1055,7 +1047,7 @@ static VROVector3f const kZeroVector = VROVector3f();
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(scene);
     passert_msg (arScene != nullptr, "AR View requires an AR Scene!");
     
-    arScene->setARComponentManager(_arComponentManager);
+    _arSession->setDelegate(arScene->getSessionDelegate());
     arScene->setARSession(_arSession);
     arScene->addNode(_pointOfView);
     arScene->setDriver(_driver);

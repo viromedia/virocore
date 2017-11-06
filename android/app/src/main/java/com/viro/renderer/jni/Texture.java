@@ -74,7 +74,7 @@ public class Texture {
          * @return
          */
         public static TextureFormat valueFromString(String str) {
-            return map.get(str.toLowerCase());
+            return str == null ? null : map.get(str.toLowerCase());
         }
     }
 
@@ -124,7 +124,7 @@ public class Texture {
          * @return
          */
         public static WrapMode valueFromString(String str) {
-            return map.get(str.toLowerCase());
+            return str == null ? null : map.get(str.toLowerCase());
         }
     };
 
@@ -168,7 +168,7 @@ public class Texture {
          * @return
          */
         public static FilterMode valueFromString(String str) {
-            return map.get(str.toLowerCase());
+            return str == null ? null : map.get(str.toLowerCase());
         }
     };
 
@@ -234,7 +234,7 @@ public class Texture {
          * @return
          */
         public static StereoMode valueFromString(String str) {
-            return map.get(str.toLowerCase());
+            return str == null ? null : map.get(str.toLowerCase());
         }
     };
 

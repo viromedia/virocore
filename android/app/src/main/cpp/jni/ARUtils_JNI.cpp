@@ -13,50 +13,50 @@
  */
 jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jclass cls = env->FindClass("com/viro/renderer/ARAnchor");
-
-    /*
-     ARAnchor's constructor has the following args:
-
-     String anchorId, String type, float[] position, float[] rotation,
-     float[] scale, String alignment, float[] extent, float[] center
-     */
-    jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[FLjava/lang/String;[F[F)V");
-
-    VROMatrix4f transform = anchor->getTransform();
-    VROVector3f rotationRads = transform.extractRotation(transform.extractScale()).toEuler();
 
     const char *achorIdArr = anchor->getId().c_str();
     jstring anchorId = env->NewStringUTF(achorIdArr);
 
-    // default type to "anchor", override later if necessary
-    const char *typeArr = "anchor";
-
+    VROMatrix4f transform = anchor->getTransform();
+    VROVector3f rotationRads = transform.extractRotation(transform.extractScale()).toEuler();
     jfloatArray positionArray = ARUtilsCreateFloatArrayFromVector3f(transform.extractTranslation());
-    jfloatArray rotationArray = ARUtilsCreateFloatArrayFromVector3f(
-            {toDegrees(rotationRads.x), toDegrees(rotationRads.y), toDegrees(rotationRads.z)});
+    jfloatArray rotationArray = ARUtilsCreateFloatArrayFromVector3f( {toDegrees(rotationRads.x),
+                                                                      toDegrees(rotationRads.y),
+                                                                      toDegrees(rotationRads.z)});
     jfloatArray scaleArray = ARUtilsCreateFloatArrayFromVector3f(transform.extractScale());
-
-    // plane-only properties
-    jstring alignment = NULL;
-    jfloatArray extentArray = NULL;
-    jfloatArray centerArray = NULL;
 
     std::shared_ptr<VROARPlaneAnchor> plane = std::dynamic_pointer_cast<VROARPlaneAnchor>(anchor);
     if (plane) {
-        typeArr = "plane";
-        alignment = ARUtilsCreateStringFromAlignment(plane->getAlignment());
-        extentArray = ARUtilsCreateFloatArrayFromVector3f(plane->getExtent());
-        centerArray = ARUtilsCreateFloatArrayFromVector3f(plane->getCenter());
+        /*
+         ARPlaneAnchor's constructor has the following args:
+         String anchorId, String type, float[] position, float[] rotation,
+         float[] scale, String alignment, float[] extent, float[] center
+         */
+        jclass cls = env->FindClass("com/viro/renderer/jni/ARPlaneAnchor");
+        jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[FLjava/lang/String;[F[F)V");
+
+        jstring alignment = ARUtilsCreateStringFromAlignment(plane->getAlignment());
+        jfloatArray extentArray = ARUtilsCreateFloatArrayFromVector3f(plane->getExtent());
+        jfloatArray centerArray = ARUtilsCreateFloatArrayFromVector3f(plane->getCenter());
+
+        const char *typeArr = "plane";
+        jstring type = env->NewStringUTF(typeArr);
+
+        return env->NewObject(cls, constructor, anchorId, type, positionArray, rotationArray, scaleArray,
+                                            alignment, extentArray, centerArray);
     }
+    else {
+        /*
+         ARAnchor's constructor has the following args:
+         String anchorId, String type, float[] position, float[] rotation, float[] scale
+         */
+        jclass cls = env->FindClass("com/viro/renderer/jni/ARAnchor");
+        jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[F)V");
 
-    // create the jstring from type after overriding if necessary.
-    jstring type = env->NewStringUTF(typeArr);
-
-    jobject javaAnchor = env->NewObject(cls, constructor, anchorId, type, positionArray, rotationArray, scaleArray,
-                                        alignment, extentArray, centerArray);
-
-    return javaAnchor;
+        const char *typeArr = "anchor";
+        jstring type = env->NewStringUTF(typeArr);
+        return env->NewObject(cls, constructor, anchorId, type, positionArray, rotationArray, scaleArray);
+    }
 }
 
 jfloatArray ARUtilsCreateFloatArrayFromVector3f(VROVector3f vector) {
@@ -73,6 +73,15 @@ jstring ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment) {
     const char *strArr;
     if (alignment == VROARPlaneAlignment::Horizontal) {
         strArr = "Horizontal";
+    }
+    else if (alignment == VROARPlaneAlignment::HorizontalUpwards) {
+        strArr = "HorizontalUpward";
+    }
+    else if (alignment == VROARPlaneAlignment::HorizontalDownwards) {
+        strArr = "HorizontalDownward";
+    }
+    else {
+        strArr = "NonHorizontal";
     }
     return env->NewStringUTF(strArr);
 }
