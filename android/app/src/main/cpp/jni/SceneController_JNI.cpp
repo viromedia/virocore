@@ -195,15 +195,10 @@ JNI_METHOD(bool, nativeSetEffects)(JNIEnv *env,
             jstring jEffect = (jstring) env->GetObjectArrayElement(jEffects, i);
             std::string strEffect = VROPlatformGetString(jEffect);
             VROPostProcessEffect postEffect = VROPostProcessEffectFactory::getEffectForString(strEffect);
-            if (postEffect == VROPostProcessEffect::None){
-                perror("Error: Attempted to set an unknown post process effect. Ignoring effects");
-                return false;
-            }
             effects.push_back(strEffect);
         }
     }
-
-
+    
     std::shared_ptr<VROSceneController> sceneController = SceneController::native(sceneRef);
     VROPlatformDispatchAsyncRenderer([sceneController, effects] {
         if (sceneController->getScene()){
