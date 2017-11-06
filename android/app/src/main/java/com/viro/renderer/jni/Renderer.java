@@ -118,7 +118,6 @@ public class Renderer {
        nativeSetSuspended(mNativeRef, suspend);
     }
     public void setDebugHUDEnabled(boolean enabled) { nativeSetDebugHUDEnabled(mNativeRef, enabled); }
-    public boolean isReticlePointerFixed() { return nativeIsReticlePointerFixed(mNativeRef); }
 
     public void addFrameListener(FrameListener frameListener) {
         nativeAddFrameListener(mNativeRef, frameListener.mNativeRef);
@@ -156,7 +155,6 @@ public class Renderer {
     private native void nativeSetPointOfView(long nativeRenderer, long nodeRef);
     private native String nativeGetHeadset(long nativeRenderer);
     private native String nativeGetController(long nativeRenderer);
-    private native boolean nativeIsReticlePointerFixed(long nativeRenderer);
     private native void nativeSetDebugHUDEnabled(long nativeRenderer, boolean enabled);
     private native void nativeSetSuspended(long nativeRenderer, boolean suspendRenderer);
     private native void nativeRecenterTracking(long nativeRenderer);

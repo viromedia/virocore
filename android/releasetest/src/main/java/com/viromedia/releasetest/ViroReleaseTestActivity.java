@@ -63,13 +63,13 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements GLList
     protected void onStart() {
         Log.i(TAG, "onStart");
         super.onStart();
-        mViroView.onActivityStarted(this);
     }
 
     @Override
     protected void onResume() {
         Log.i(TAG, "onResume");
         super.onResume();
+        mViroView.onActivityStarted(this);
         mViroView.onActivityResumed(this);
     }
 
@@ -78,20 +78,21 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements GLList
         Log.i(TAG, "onPause");
         super.onPause();
         mViroView.onActivityPaused(this);
+        mViroView.onActivityStopped(this);
+        mViroView.onActivityDestroyed(this);
+        mViroView.destroy();
     }
 
     @Override
     protected void onStop() {
         Log.i(TAG, "onStop");
         super.onStop();
-        mViroView.onActivityStopped(this);
     }
 
     @Override
     protected void onDestroy() {
         Log.i(TAG, "onDestroy");
         super.onDestroy();
-        mViroView.onActivityDestroyed(this);
     }
 
     public ViroView getViroView() {
