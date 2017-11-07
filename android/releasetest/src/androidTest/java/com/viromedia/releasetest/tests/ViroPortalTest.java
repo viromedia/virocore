@@ -33,7 +33,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-
 public class ViroPortalTest extends ViroBaseTest  {
 
     private PortalScene mPortalScene;
@@ -100,9 +99,15 @@ public class ViroPortalTest extends ViroBaseTest  {
     }
 
     private void testPortalSceneBackgroundVideoTexture() {
-        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
-                Uri.parse("https://s3.amazonaws.com/viro.video/Climber2Top.mp4"));
-        mPortalScene.setBackgroundTexture(videoTexture);
+        // TODO: Remove UI-Threaded patch once VIRO-2162 has been implemented.
+        runOnUiThread(()->{
+            final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
+                    Uri.parse("https://s3.amazonaws.com/viro.video/Climber2Top.mp4"));
+            mPortalScene.setBackgroundTexture(videoTexture);
+            videoTexture.setLoop(true);
+            videoTexture.play();
+        });
+
         assertPass("The portal background should display a video of a climber.");
     }
 

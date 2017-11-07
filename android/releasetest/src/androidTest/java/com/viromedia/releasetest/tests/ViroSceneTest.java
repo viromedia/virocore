@@ -56,9 +56,13 @@ public class ViroSceneTest extends ViroBaseTest {
     }
 
     private void testSceneBackgroundVideoTexture() {
-        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
-                Uri.parse("https://s3.amazonaws.com/viro.video/Climber2Top.mp4"));
-        mScene.setBackgroundTexture(videoTexture);
+        runOnUiThread(()->{
+            final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
+                    Uri.parse("https://s3.amazonaws.com/viro.video/Climber2Top.mp4"));
+            mScene.setBackgroundTexture(videoTexture);
+            videoTexture.setLoop(true);
+            videoTexture.play();
+        });
         assertPass("The scene  background should display a video of a climber.");
     }
 

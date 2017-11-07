@@ -16,6 +16,8 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.viro.renderer.ARHitTestResult;
@@ -331,5 +333,19 @@ public abstract class ViroBaseTest {
         public void onCameraARHitTest(final int source, final ARHitTestResult[] results) {
             Log.e(TAG, delegateTag + " On Camera AR Hit Test");
         }
+    }
+
+    // TODO: Remove UI-Threaded patch once VIRO-2162 has been implemented.
+    protected void runOnUiThread(Runnable runnable){
+        AtomicBoolean finishedTest = new AtomicBoolean(false);
+        Runnable myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                runnable.run();
+                finishedTest.set(true);
+            }
+        };
+        new Handler(Looper.getMainLooper()).post(myRunnable);
+        await().until(() -> finishedTest.get());
     }
 }

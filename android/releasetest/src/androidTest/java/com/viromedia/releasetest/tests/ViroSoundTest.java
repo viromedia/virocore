@@ -11,11 +11,11 @@ package com.viromedia.releasetest.tests;
 
 import android.graphics.Color;
 import android.net.Uri;
-
 import com.viro.renderer.jni.Node;
 import com.viro.renderer.jni.Sound;
 import com.viro.renderer.jni.Text;
 import com.viro.renderer.jni.Vector;
+import com.viro.renderer.jni.ViroContext;
 
 import org.junit.Test;
 
@@ -37,7 +37,13 @@ public class ViroSoundTest extends ViroBaseTest {
         textNode.setPosition(new Vector(-1.5f, 1f, -3.3f));
         textNode.setGeometry(mDelegateText);
         mScene.getRootNode().addChildNode(textNode);
-        mSound = new Sound(mViroView.getViroContext(), Uri.fromFile(new File("file:///android_asset/metronome.mp3")), new Sound.Delegate() {
+
+        final ViroContext context = mViroView.getViroContext();
+        runOnUiThread(()->{
+            mSound = new Sound(mViroView.getViroContext(), Uri.parse("file:///android_asset/metronome.mp3"), null);
+        });
+
+        mSound.setDelegate(new Sound.Delegate() {
             @Override
             public void onSoundReady(final Sound sound) {
                 mDelegateText.setText("onSoundReady called. Playing song");
