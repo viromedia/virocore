@@ -11,6 +11,7 @@ package com.viromedia.releasetest.tests;
 
 import android.graphics.Color;
 import android.os.Handler;
+import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
 import com.viro.renderer.jni.AmbientLight;
 import com.viro.renderer.jni.Material;
@@ -21,6 +22,7 @@ import com.viro.renderer.jni.Vector;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -43,6 +45,8 @@ public class ViroPolylineTest extends ViroBaseTest {
         material.setCullMode(Material.CullMode.NONE);
         final float[][] points = {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}};
         polyline = new Polyline(points, 0.1f);
+        polyline.setMaterials(Arrays.asList(material));
+        polylineNode = new Node();
         polylineNode.setGeometry(polyline);
         polylineNode.setPosition(new Vector(0, -1f, -3.3f));
         mScene.getRootNode().addChildNode(polylineNode);
@@ -56,32 +60,36 @@ public class ViroPolylineTest extends ViroBaseTest {
     }
 
     private void testAppendPoints() {
+        final List<Vector> points = Arrays.asList(new Vector(0, 1, 0), new Vector(-1, 1, 0),
+                new Vector(-1, 0, 0), new Vector(-1, -1, 0),
+                new Vector(0, -1, 0), new Vector(1, -1, 0), new Vector(2, -1, 0),
+                new Vector(2, 0, 0), new Vector(2, 1, 0), new Vector(2, 2, 0));
+
+        final Iterator<Vector> itr = Iterables.cycle(points).iterator();
+
         mMutableTestMethod = () -> {
-            polyline.appendPoint(new Vector(getRandCoord(), getRandCoord(), getRandCoord()));
+            polyline.appendPoint(itr.next());
         };
 
-        assertPass("Setting new points every second");
+        assertPass("Appending new points every second");
     }
 
     private void testSetPoints() {
 
+        final List<Vector> points1 = Arrays.asList(new Vector(0, 1, 0), new Vector(-1, 1, 0),
+                new Vector(-1, 0, 0), new Vector(-1, -1, 0), new Vector(0, -1, 0));
+
+        final List<Vector> points2 = Arrays.asList(new Vector(1, -1, 0), new Vector(2, -1, 0),
+                new Vector(2, 0, 0), new Vector(2, 1, 0), new Vector(2, 2, 0));
+
+        final List<List> pointSets = Arrays.asList(points1, points2);
+        final Iterator<List> itr = Iterables.cycle(pointSets).iterator();
         mMutableTestMethod = () -> {
-            final List<Vector> points = Arrays.asList(new Vector(getRandCoord(), getRandCoord(), getRandCoord()),
-                    new Vector(getRandCoord(), getRandCoord(), getRandCoord()),
-                    new Vector(getRandCoord(), getRandCoord(), getRandCoord()),
-                    new Vector(getRandCoord(), getRandCoord(), getRandCoord()));
-            polyline.setPoints(points);
+
+            polyline.setPoints(itr.next());
         };
 
-        assertPass("Setting new points every second");
-    }
-
-    private int getRandCoord() {
-        if (Math.random() % 2 == 0) {
-            return 0;
-        } else {
-            return 1;
-        }
+        assertPass("Alternating between new points every second");
     }
 
     private void testSetThickness() {
