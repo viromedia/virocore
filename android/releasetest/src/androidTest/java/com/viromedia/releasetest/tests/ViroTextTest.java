@@ -68,7 +68,7 @@ public class ViroTextTest extends ViroBaseTest {
         mMutableTestMethod = () -> {
             mText.setLineBreakMode(itr.next());
         };
-        assertPass("Cycling through all VerticleAlignment values", () -> {
+        assertPass("Cycling through all LineBreakMode values", () -> {
             mText.setLineBreakMode(Text.LineBreakMode.WORD_WRAP);
         });
     }
@@ -78,7 +78,7 @@ public class ViroTextTest extends ViroBaseTest {
         mMutableTestMethod = () -> {
             mText.setClipMode(itr.next());
         };
-        assertPass("Cycling through all VerticleAlignment values", () -> {
+        assertPass("Cycling through all ClipMode values", () -> {
             mText.setClipMode(Text.ClipMode.NONE);
         });
     }
@@ -122,7 +122,7 @@ public class ViroTextTest extends ViroBaseTest {
         mMutableTestMethod = () -> {
             mText.setHeight(itr.next());
         };
-        assertPass("Cycling through increasing widths", () -> {
+        assertPass("Cycling through increasing heights", () -> {
             mText.setHeight(1);
         });
     }
