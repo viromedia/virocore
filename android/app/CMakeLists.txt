@@ -35,6 +35,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/VROLooper.cpp
              src/main/cpp/VROSceneRendererGVR.cpp
              src/main/cpp/VROSceneRendererOVR.cpp
+             src/main/cpp/VROSceneRendererSceneView.cpp
              src/main/cpp/VROSample.cpp
              src/main/cpp/VROImageAndroid.cpp
              src/main/cpp/VROPCMAudioPlayer.cpp

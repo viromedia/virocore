@@ -24,6 +24,13 @@ public class Renderer {
 
     protected long mNativeRef;
 
+    /* ----------     Scene view only methods    ---------- */
+
+    public Renderer(ClassLoader appClassLoader, Context context, ViroViewScene view, AssetManager assets,
+                    PlatformUtil platformUtil) {
+        mNativeRef = nativeCreateRendererSceneView(appClassLoader, context, view, assets, platformUtil);
+    }
+
     /* ----------     GVR only methods    ---------- */
 
     public Renderer(ClassLoader appClassLoader, Context context,
@@ -138,6 +145,8 @@ public class Renderer {
                                                 ViroViewOVR view, Activity activity, AssetManager assets, PlatformUtil platformUtil);
     private native long nativeCreateRendererARCore(ClassLoader appClassLoader, Context context,
                                                    ViroViewARCore view, Session session, AssetManager assets, PlatformUtil platformUtil);
+    private native long nativeCreateRendererSceneView(ClassLoader appClassLoader, Context context,
+                                                       ViroViewScene view, AssetManager assets, PlatformUtil platformUtil);
     private native void nativeDestroyRenderer(long nativeRenderer);
     private native void nativeInitializeGl(long nativeRenderer);
     private native void nativeSetVRModeEnabled(long nativeRenderer, boolean enabled);

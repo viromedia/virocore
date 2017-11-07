@@ -19,6 +19,7 @@ import com.viro.renderer.jni.ViroViewGVR;
 import com.viro.renderer.jni.ViroViewOVR;
 import com.viro.renderer.jni.ViroView;
 import com.viro.renderer.jni.ViroViewARCore;
+import com.viro.renderer.jni.ViroViewScene;
 
 /**
  * Created by manish on 10/25/17.
@@ -48,6 +49,8 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
             mViroView = new ViroViewOVR(this, this);
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
             mViroView = new ViroViewARCore(this, this);
+        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("Scene")) {
+            mViroView = new ViroViewScene(this, this);
         }
 
         mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");

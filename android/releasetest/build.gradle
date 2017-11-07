@@ -41,6 +41,11 @@ android {
             applicationIdSuffix ".arcore"
             buildConfigField "String", "VR_PLATFORM", "\"ARCore\""
         }
+        scene {
+            resValue "string", "app_name", "ReleasTest-scene"
+            applicationIdSuffix ".scene"
+            buildConfigField "String", "VR_PLATFORM", "\"Scene\""
+        }
     }
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
     testOptions {

@@ -32,6 +32,7 @@ import com.viro.renderer.jni.AnimationTimingFunction;
 import com.viro.renderer.jni.AnimationTransaction;
 import com.viro.renderer.jni.AsyncObject3DListener;
 import com.viro.renderer.jni.Box;
+import com.viro.renderer.jni.Camera;
 import com.viro.renderer.jni.Controller;
 import com.viro.renderer.jni.DirectionalLight;
 import com.viro.renderer.jni.EventDelegate;
@@ -62,6 +63,7 @@ import com.viro.renderer.jni.ViroViewGVR;
 import com.viro.renderer.jni.ViroViewOVR;
 import com.viro.renderer.jni.ViroView;
 import com.viro.renderer.jni.ViroViewARCore;
+import com.viro.renderer.jni.ViroViewScene;
 import com.viro.renderer.jni.event.ClickState;
 import com.viro.renderer.jni.event.ControllerStatus;
 import com.viro.renderer.jni.event.PinchState;
@@ -105,6 +107,8 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
             mViroView = new ViroViewOVR(this, this);
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
             mViroView = new ViroViewARCore(this, this);
+        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("Scene")) {
+            mViroView = new ViroViewScene(this, this);
         }
 
         mViroView.setVRModeEnabled(true);
@@ -151,8 +155,8 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     @Override
     public void onRendererStart() {
         Log.e("ViroActivity", "onRendererStart called");
-        //initializeVrScene();
-        initializeArScene();
+        initializeVrScene();
+        //initializeArScene();
     }
 
     private void initializeVrScene() {
@@ -166,7 +170,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         //nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
-        nodes = testText(this);
+        nodes = testText();
         //nodes = testARDrag();
 
         //testBackgroundVideo(scene);
@@ -292,7 +296,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         return bitmap;
     }
 
-    private List<Node> testText(final Context context) {
+    private List<Node> testText() {
         final Node node = new Node();
         // Create text
         final Text text = new Text(mViroView.getViroContext(),
@@ -301,6 +305,13 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         final float[] position = {0, -0.5f, -0.5f};
         node.setPosition(new Vector(position));
         node.setGeometry(text);
+
+        Node pointOfView = new Node();
+        Camera camera = new Camera();
+        camera.setPosition(new Vector(0, 0, 3));
+        pointOfView.setCamera(camera);
+        mViroView.setPointOfView(pointOfView);
+
         return Arrays.asList(node);
     }
 

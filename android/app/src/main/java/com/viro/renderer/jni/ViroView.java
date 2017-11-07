@@ -22,7 +22,7 @@ import java.lang.ref.WeakReference;
  * ViroView is the entrypoint for Viro applications, it enables the rendering of 3D AR and VR
  * content to an Android View. To use ViroView, instantiate one of its subclasses:
  * <p>
- * <ul> <li>{@link ViroViewScene} renders content directly to an Android View</li> <li>{@link
+ * <ul> <li>{@link ViroViewScene} renders content directly to an Android View.</li> <li>{@link
  * ViroViewGVR} renders content in stereo for virtual reality applications using Google's GVR SDK.
  * This supports Google Cardboard and Google Daydream.</li> <li>{@link ViroViewOVR} renders content
  * in stereo for virtual reality applications using Facebook's Oculus Mobile SDK. This supports
@@ -145,6 +145,19 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      */
     public final ViroContext getViroContext() {
         return mNativeViroContext;
+    }
+
+    /**
+     * Make the given {@link Node} the point of view for the user. The {@link Scene} in this
+     * ViroView will be rendered from the perspective of the given Node's {@link Camera}. This
+     * method is used to change the user's view of the scene. Note that when in AR or VR modes, the
+     * point of view is automatically computed based on the device's rotation and position in the
+     * world. This method is primarily for use with {@link ViroViewScene}.
+     *
+     * @param node The {@link Node} whose {@link Camera} will be used for the point of view.
+     */
+    public void setPointOfView(Node node) {
+        getRenderer().setPointOfView(node);
     }
 
     /**

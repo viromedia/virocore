@@ -33,9 +33,9 @@ import javax.microedition.khronos.opengles.GL10;
 
 /**
  * ViroViewARCore is a {@link ViroView} for rendering augmented reality scenes using Google's ARCore
- * API for tracking, and Viro for rendering. When using this view, the camera's real-time video feed
- * will be rendered to the background of your {@link ARScene}, and the coordinate system of Viro's
- * virtual content and the real world will be fused.
+ * API for tracking. When using this view, the camera's real-time video feed will be rendered to the
+ * background of your {@link ARScene}, and the coordinate system of Viro's virtual content and the
+ * real world will be fused.
  * <p>
  * The coordinate system's origin is the location of the device when it starts the application.
  * Units are in meters.

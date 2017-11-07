@@ -14,12 +14,16 @@ package com.viro.renderer.jni;
  * The Camera defines the point of view of the user in the {@link Scene}. You can display the
  * Scene from the point of view of any {@link Node}. To do this, create a {@link Camera} and attach
  * it to a Node via {@link Node#setCamera(Camera)}. Then make that Node the point of view for the
- * Renderer by invoking {@link Renderer#setPointOfView(Node)}.
+ * renderer by invoking {@link ViroView#setPointOfView(Node)}.
  * <p>
- * Because the Camera is included in the scene graph, it can be moved, animated, and rotated
+ * Camera is used to change the user's view of the scene. Note that when in AR or VR modes, the
+ * point of view is automatically computed based on the device's rotation and position in the
+ * world. This class is primarily for use with {@link ViroViewScene}.
+ * <p>>
+ * Because Camera is included in the scene graph, it can be moved, animated, and rotated
  * alongside other Nodes. You can also set the position and orientation of the Camera object itself.
  * <p>
- * The initial orientation of the Camera is pointing in the negative Z direction: that is, into the
+ * The initial orientation of the camera is pointing in the negative Z direction: that is, into the
  * screen. If no point of view is set in the {@link Renderer}, the user will be positioned at the
  * origin looking in the negative Z direction.
  * <p>
