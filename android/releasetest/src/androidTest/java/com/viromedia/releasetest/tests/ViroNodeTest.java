@@ -20,7 +20,7 @@ import java.util.Arrays;
  * are covered in other tests.
  */
 
-public class ViroNodeTest  extends ViroBaseTest {
+public class ViroNodeTest extends ViroBaseTest {
 
     private Node childOne;
     private Node childTwo;
