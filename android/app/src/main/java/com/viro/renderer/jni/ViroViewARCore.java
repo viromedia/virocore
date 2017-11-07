@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Display;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.ar.core.Config;
@@ -21,20 +20,72 @@ import com.google.ar.core.Session;
 import com.viro.renderer.ARTouchGestureListener;
 import com.viro.renderer.FrameListener;
 import com.viro.renderer.GLSurfaceViewQueue;
-import com.viro.renderer.keys.KeyValidationListener;
-import com.viro.renderer.keys.KeyValidator;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * Class for instantiating an AR Viro view. Integrates with AR Core.
+ * ViroViewARCore is a {@link ViroView} for rendering augmented reality scenes using Google's ARCore
+ * API for tracking, and Viro for rendering. When using this view, the camera's real-time video feed
+ * will be rendered to the background of your {@link ARScene}, and the coordinate system of Viro's
+ * virtual content and the real world will be fused.
+ * <p>
+ * The coordinate system's origin is the location of the device when it starts the application.
+ * Units are in meters.
  */
-public class ViroViewARCore extends GLSurfaceView implements ViroView {
+public class ViroViewARCore extends ViroView {
+
+    /**
+     * ARCore, which underlies Viro's augmented reality system, can be set to detect various types
+     * of real world features (anchors) by continually scanning the incoming video feed from the
+     * device camera. This enum indicates what anchors ARCore should attempt to detect. The {@link
+     * com.viro.renderer.jni.ARScene.Delegate} will receive a callback whenever an {@link ARAnchor}
+     * of one of these enabled types is found.
+     */
+    public enum AnchorDetectionType {
+
+        /**
+         * Anchor detection will be entirely disabled. This setting results in optimal performance
+         * and should be used in applications where anchors are not required.
+         */
+        NONE("none"),
+
+        /**
+         * Horizontal planes will be detected by the AR tracking system.
+         */
+        PLANES_HORIZONTAL("planes_horizontal");
+
+        private String mStringValue;
+        private AnchorDetectionType(String value) {
+            this.mStringValue = value;
+        }
+        /**
+         * @hide
+         */
+        public String getStringValue() {
+            return mStringValue;
+        }
+
+        private static Map<String, AnchorDetectionType> map = new HashMap<String, AnchorDetectionType>();
+        static {
+            for (AnchorDetectionType value : AnchorDetectionType.values()) {
+                map.put(value.getStringValue().toLowerCase(), value);
+            }
+        }
+        /**
+         * @hide
+         */
+        public static AnchorDetectionType valueFromString(String str) {
+            return map.get(str.toLowerCase());
+        }
+    };
 
     private static final String TAG = "Viro";
 
@@ -45,7 +96,7 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
         System.loadLibrary("native-lib");
     }
 
-    private static class ViroARRenderer implements Renderer {
+    private static class ViroARRenderer implements GLSurfaceView.Renderer {
 
         private WeakReference<ViroViewARCore> mView;
 
@@ -59,9 +110,9 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
                 return;
             }
 
-            view.mNativeRenderer.onSurfaceCreated(view.getHolder().getSurface());
+            view.mNativeRenderer.onSurfaceCreated(view.mSurfaceView.getHolder().getSurface());
             view.mNativeRenderer.initalizeGl();
-            if (view.mGlListener != null) {
+            if (view.mRenderStartListener != null) {
                 Runnable myRunnable = new Runnable() {
                     @Override
                     public void run() {
@@ -69,7 +120,7 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
                         if (view == null) {
                             return;
                         }
-                        view.mGlListener.onGlInitialized();
+                        view.mRenderStartListener.onRendererStart();
                     }
                 };
                 new Handler(Looper.getMainLooper()).post(myRunnable);
@@ -81,7 +132,7 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
             if (view == null) {
                 return;
             }
-            view.mNativeRenderer.onSurfaceChanged(view.getHolder().getSurface(), width, height);
+            view.mNativeRenderer.onSurfaceChanged(view.mSurfaceView.getHolder().getSurface(), width, height);
 
             // Notify ARCore session that the view size changed so that the perspective matrix and
             // the video background can be properly adjusted.
@@ -103,42 +154,32 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
     }
 
     private Renderer mRenderer;
-
-    private com.viro.renderer.jni.Renderer mNativeRenderer;
-    private final ViroContext mNativeViroContext;
+    private GLSurfaceView mSurfaceView;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
-    private GLListener mGlListener = null;
+    private RendererStartListener mRenderStartListener = null;
     private PlatformUtil mPlatformUtil;
-    private WeakReference<Activity> mWeakActivity;
-    private KeyValidator mKeyValidator;
-    private boolean mDestroyed = false;
     private boolean mActivityPaused = true;
-
-    // Activity state to restore to before being modified by the renderer.
-    private int mSavedSystemUIVisbility;
-    private int mSavedOrientation;
-    private OnSystemUiVisibilityChangeListener mSystemVisibilityListener;
 
     private Config mConfig;
     private Session mSession;
     private ARTouchGestureListener mARTouchGestureListener;
     private ViroMediaRecorder mMediaRecorder;
 
-    public ViroViewARCore(Context context, GLListener glListener) {
+    /**
+     * Create a new ViroViewARCore.
+     *
+     * @param context               The activity context.
+     * @param rendererStartListener Runnable to invoke when the renderer has finished initializing.
+     *                              Optional, may be null.
+     */
+    public ViroViewARCore(Context context, RendererStartListener rendererStartListener) {
         super(context);
+        mSurfaceView = new GLSurfaceView(context);
+        addView(mSurfaceView);
 
         final Context activityContext = getContext();
         final Activity activity = (Activity) getContext();
-
-        mSystemVisibilityListener = new OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int visibility) {
-                if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                    setImmersiveSticky();
-                }
-            }
-        };
 
         // Initialize ARCore
         mSession = new Session(activity);
@@ -155,7 +196,7 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
 
         mAssetManager = getResources().getAssets();
         mPlatformUtil = new PlatformUtil(
-                new GLSurfaceViewQueue(this),
+                new GLSurfaceViewQueue(mSurfaceView),
                 mFrameListeners,
                 activityContext,
                 mAssetManager);
@@ -165,15 +206,7 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
                 mAssetManager, mPlatformUtil);
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
 
-        mGlListener = glListener;
-        mKeyValidator = new KeyValidator(activityContext);
-
-        mSavedSystemUIVisbility = activity.getWindow().getDecorView().getSystemUiVisibility();
-        mSavedOrientation = activity.getRequestedOrientation();
-        activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mSystemVisibilityListener);
-
-        mWeakActivity = new WeakReference<Activity>(activity);
-
+        mRenderStartListener = rendererStartListener;
         mARTouchGestureListener = new ARTouchGestureListener(activity, mNativeRenderer);
         setOnTouchListener(mARTouchGestureListener);
 
@@ -195,20 +228,19 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
         int depthBits = 16;
         int stencilBits = 8;
 
-        setEGLContextClientVersion(3);
-        setEGLConfigChooser(colorBits, colorBits, colorBits, alphaBits, depthBits, stencilBits);
-        setPreserveEGLContextOnPause(true);
-        setEGLWindowSurfaceFactory(new ViroEGLWindowSurfaceFactory());
+        mSurfaceView.setEGLContextClientVersion(3);
+        mSurfaceView.setEGLConfigChooser(colorBits, colorBits, colorBits, alphaBits, depthBits, stencilBits);
+        mSurfaceView.setPreserveEGLContextOnPause(true);
+        mSurfaceView.setEGLWindowSurfaceFactory(new ViroEGLWindowSurfaceFactory());
 
-        setRenderer(new ViroARRenderer(this));
-        setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        mSurfaceView.setRenderer(new ViroARRenderer(this));
+        mSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
         /*
          Don't start the SurfaceView yet; we need to wait until the ARCore session
          is resumed (in onActivityResumed()).
          */
-        onPause();
-
+        mSurfaceView.onPause();
         // setOnTouchListener(new ViroGvrLayout.ViroOnTouchListener(this));
     }
 
@@ -230,73 +262,41 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
     }
     */
 
+    /**
+     * @hide
+     */
     @Override
     public void setDebug(boolean debug) {
         //No-op
     }
 
     @Override
-    public void setDebugHUDEnabled(boolean enabled) {
-        mNativeRenderer.setDebugHUDEnabled(enabled);
-    }
-
-    @Override
-    public ViroContext getViroContext(){
-        return mNativeViroContext;
-    }
-
-    @Override
     public void setScene(Scene scene) {
+        if (!(scene instanceof ARScene)) {
+            throw new IllegalArgumentException("ViroViewARCore requires an ARScene");
+        }
         mNativeRenderer.setSceneController(scene.mNativeRef, 1.0f);
     }
 
     /**
-     * This function sets up the view for whichever mode is desired.
-     *
-     * @param vrModeEnabled - whether or not to use VR or 360 mode.
+     * @hide
      */
     @Override
-    public void setVrModeEnabled(boolean vrModeEnabled) {
+    public void setVRModeEnabled(boolean vrModeEnabled) {
         //No-op
     }
 
-    @Override
-    public void validateApiKey(String apiKey) {
-        mNativeRenderer.setSuspended(false);
-        // we actually care more about the headset than platform in this case.
-        mKeyValidator.validateKey(apiKey, getHeadset(), new KeyValidationListener() {
-            @Override
-            public void onResponse(boolean success) {
-                if (!mDestroyed) {
-                    mNativeRenderer.setSuspended(!success);
-                }
-            }
-        });
-    }
-
-    @Override
-    public com.viro.renderer.jni.Renderer getRenderer() {
-        return mNativeRenderer;
-    }
-
-    @Override
-    public View getContentView() { return this; }
-
+    /**
+     * @hide
+     */
     @Override
     public String getPlatform() {
         return "arcore";
     }
 
-    @Override
-    public String getHeadset() {
-        return mNativeRenderer.getHeadset();
-    }
-
-    @Override
-    public String getController() {
-        return mNativeRenderer.getController();
-    }
-
+    /**
+     * @hide
+     */
     @Override
     public void onActivityPaused(Activity activity) {
         if (mWeakActivity.get() != activity){
@@ -304,16 +304,18 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
         }
 
         mActivityPaused = true;
-
         mNativeRenderer.onPause();
 
         // Note that the order matters - GLSurfaceView is paused first so that it does not try
         // to query the session. If Session is paused before GLSurfaceView, GLSurfaceView may
         // still call mSession.update() and get a SessionPausedException.
-        super.onPause();
+        mSurfaceView.onPause();
         mSession.pause();
     }
 
+    /**
+     * @hide
+     */
     @Override
     public void onActivityResumed(Activity activity) {
         if (mWeakActivity.get() != activity){
@@ -321,7 +323,6 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
         }
 
         mActivityPaused = false;
-
         setImmersiveSticky();
         mNativeRenderer.onResume();
 
@@ -330,64 +331,40 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
         if (CameraPermissionHelper.hasCameraPermission(activity)) {
             // Note that order matters - see the note in onPause(), the reverse applies here.
             mSession.resume(mConfig);
-            super.onResume();
+            mSurfaceView.onResume();
         } else {
             CameraPermissionHelper.requestCameraPermission(activity);
         }
     }
 
+    /**
+     * @hide
+     */
     @Override
     public void onActivityDestroyed(Activity activity) {
         // no-op, the vrview destruction should be controlled by the SceneNavigator.
     }
 
     @Override
-    public void destroy() {
-        mDestroyed = true;
-
+    public void dispose() {
         if (mMediaRecorder != null) {
             mMediaRecorder.destroy();
         }
-
-        mNativeViroContext.dispose();
-        mNativeRenderer.destroy();
         mARTouchGestureListener.destroy();
-
-        Activity activity = mWeakActivity.get();
-        if (activity == null) {
-            return;
-        }
-
-        activity.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(null);
-        activity.setRequestedOrientation(mSavedOrientation);
-        unSetImmersiveSticky();
+        super.dispose();
     }
 
-    private void refreshActivityLayout(){
-        Runnable myRunnable = new Runnable() {
-            @Override
-            public void run() {
-                View view = ((Activity)getContext()).findViewById(android.R.id.content);
-                if (view != null){
-                    // The size of the activity's root view has changed since we have
-                    // manually removed the toolbar to enter full screen. Thus, call
-                    // requestLayout to re-measure the view sizes.
-                    view.requestLayout();
-
-                    // To be certain a relayout will result in a redraw, we call invalidate
-                    view.invalidate();
-                }
-            }
-        };
-        new Handler(Looper.getMainLooper()).post(myRunnable);
-    }
-
+    /**
+     * @hide
+     */
     @Override
     public void onActivityCreated(Activity activity, Bundle bundle) {
         //No-op
     }
 
+    /**
+     * @hide
+     */
     @Override
     public void onActivityStarted(Activity activity) {
         if (mWeakActivity.get() != activity){
@@ -397,6 +374,9 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
         mNativeRenderer.onStart();
     }
 
+    /**
+     * @hide
+     */
     @Override
     public void onActivityStopped(Activity activity) {
         if (mWeakActivity.get() != activity){
@@ -406,11 +386,17 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
         mNativeRenderer.onStop();
     }
 
+    /**
+     * @hide
+     */
     @Override
     public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
         // No-op
     }
 
+    /**
+     * @hide
+     */
     @Override
     public void recenterTracking() {
         // No-op
@@ -425,44 +411,31 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
         return mMediaRecorder;
     }
 
-    public void setImmersiveSticky() {
-        ((Activity)getContext())
-                .getWindow()
-                .getDecorView()
-                .setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        refreshActivityLayout();
-    }
-
-    public void unSetImmersiveSticky(){
-        ((Activity)getContext())
-                .getWindow()
-                .getDecorView()
-                .setSystemUiVisibility(mSavedSystemUIVisbility);
-        refreshActivityLayout();
-    }
-
-    public void setAnchorDetectionTypes(List<String> types) {
-        // default case
+    /**
+     * Set the types of {@link ARAnchor}s the system should attempt to detect and track. The {@link
+     * com.viro.renderer.jni.ARScene.Delegate} will receive a callback whenever an {@link ARAnchor}
+     * of one of these enabled types is found.
+     *
+     * @param types The set of anchor types that should be tracked.
+     */
+    public void setAnchorDetectionTypes(EnumSet<AnchorDetectionType> types) {
         if (types.size() == 0) {
             mConfig.setPlaneFindingMode(Config.PlaneFindingMode.DISABLED);
         }
-
-        for (String type : types) {
-            if (type.equalsIgnoreCase("none")) {
+        for (AnchorDetectionType type : types) {
+            if (type == AnchorDetectionType.NONE) {
                 mConfig.setPlaneFindingMode(Config.PlaneFindingMode.DISABLED);
-            } else if (type.equalsIgnoreCase("planes_horizontal")) {
+            } else if (type == AnchorDetectionType.PLANES_HORIZONTAL) {
                 mConfig.setPlaneFindingMode(Config.PlaneFindingMode.HORIZONTAL);
             }
         }
     }
 
-    /* This function is also used by Native (hence the public) */
+    /**
+     * Invoked by native.
+     * @hide
+     * @param config
+     */
     public void setConfig(Config config) {
         if (mSession.isSupported(config) && !mActivityPaused) {
             mConfig = config;
@@ -470,12 +443,14 @@ public class ViroViewARCore extends GLSurfaceView implements ViroView {
         }
     }
 
+    // TODO Implement
     public void performARHitTestWithRay(float[] ray, com.viro.renderer.jni.Renderer.ARHitTestCallback callback) {
         if (!mDestroyed) {
             mNativeRenderer.performARHitTestWithRay(ray, callback);
         }
     }
 
+    // TODO Implement
     public void performARHitTestWithPosition(float[] position, com.viro.renderer.jni.Renderer.ARHitTestCallback callback) {
         if (!mDestroyed) {
             mNativeRenderer.performARHitTestWithPosition(position, callback);

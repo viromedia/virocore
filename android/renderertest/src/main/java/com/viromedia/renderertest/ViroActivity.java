@@ -35,7 +35,6 @@ import com.viro.renderer.jni.Box;
 import com.viro.renderer.jni.Controller;
 import com.viro.renderer.jni.DirectionalLight;
 import com.viro.renderer.jni.EventDelegate;
-import com.viro.renderer.jni.GLListener;
 import com.viro.renderer.jni.Image;
 import com.viro.renderer.jni.ImageTracker;
 import com.viro.renderer.jni.Material;
@@ -44,6 +43,7 @@ import com.viro.renderer.jni.Object3D;
 import com.viro.renderer.jni.OmniLight;
 import com.viro.renderer.jni.OpenCV;
 import com.viro.renderer.jni.Polyline;
+import com.viro.renderer.jni.RendererStartListener;
 import com.viro.renderer.jni.Scene;
 import com.viro.renderer.jni.Sound;
 import com.viro.renderer.jni.SoundData;
@@ -58,8 +58,8 @@ import com.viro.renderer.jni.Texture.TextureFormat;
 import com.viro.renderer.jni.Vector;
 import com.viro.renderer.jni.VideoTexture;
 import com.viro.renderer.jni.ViroContext;
-import com.viro.renderer.jni.ViroGvrLayout;
-import com.viro.renderer.jni.ViroOvrView;
+import com.viro.renderer.jni.ViroViewGVR;
+import com.viro.renderer.jni.ViroViewOVR;
 import com.viro.renderer.jni.ViroView;
 import com.viro.renderer.jni.ViroViewARCore;
 import com.viro.renderer.jni.event.ClickState;
@@ -80,7 +80,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ViroActivity extends AppCompatActivity implements GLListener {
+public class ViroActivity extends AppCompatActivity implements RendererStartListener {
     private static final String TAG = ViroActivity.class.getSimpleName();
     private static int SOUND_COUNT = 0;
     private final Map<String, Sound> mSoundMap = new HashMap<>();
@@ -95,22 +95,22 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         super.onCreate(savedInstanceState);
 
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
-            mViroView = new ViroGvrLayout(this, this, new Runnable(){
+            mViroView = new ViroViewGVR(this, this, new Runnable(){
                 @Override
                 public void run() {
                     Log.e(TAG, "On GVR userRequested exit");
                 }
             });
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
-            mViroView = new ViroOvrView(this, this);
+            mViroView = new ViroViewOVR(this, this);
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
             mViroView = new ViroViewARCore(this, this);
         }
 
-        mViroView.setVrModeEnabled(true);
+        mViroView.setVRModeEnabled(true);
         mViroView.setDebugHUDEnabled(true);
-        mViroView.validateApiKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
-        setContentView(mViroView.getContentView());
+        mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
+        setContentView(mViroView);
 
         mHandler = new Handler(getMainLooper());
         // uncomment the below line to test AR.
@@ -149,8 +149,8 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
     }
 
     @Override
-    public void onGlInitialized() {
-        Log.e("ViroActivity", "onGlInitialized called");
+    public void onRendererStart() {
+        Log.e("ViroActivity", "onRendererStart called");
         //initializeVrScene();
         initializeArScene();
     }
@@ -166,8 +166,8 @@ public class ViroActivity extends AppCompatActivity implements GLListener {
         //nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
-        //nodes = testText(this);
-        nodes = testARDrag();
+        nodes = testText(this);
+        //nodes = testARDrag();
 
         //testBackgroundVideo(scene);
         //testBackgroundImage(scene);

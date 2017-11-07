@@ -1,5 +1,11 @@
-/**
+/*
  * Copyright © 2016 Viro Media. All rights reserved.
+ */
+/*
+ * This class is a convenience wrapper around:
+ *
+ * Cpp JNI wrapper      : VRORenderer_JNI.cpp
+ * Cpp Object           : VROSceneRendererGVR.cpp
  */
 package com.viro.renderer.jni;
 
@@ -12,10 +18,7 @@ import com.google.ar.core.Session;
 import com.viro.renderer.ARHitTestResult;
 
 /**
- * This class is a convenience wrapper around:
- *
- * Cpp JNI wrapper      : VRORenderer_JNI.cpp
- * Cpp Object           : VROSceneRendererGVR.cpp
+ * @hide
  */
 public class Renderer {
 
@@ -35,7 +38,7 @@ public class Renderer {
 
     /* ----------     OVR only methods    ---------- */
     public Renderer(ClassLoader appClassLoader, Context context,
-                    ViroOvrView view, Activity activity, AssetManager assets, PlatformUtil platformUtil) {
+                    ViroViewOVR view, Activity activity, AssetManager assets, PlatformUtil platformUtil) {
         mNativeRef = nativeCreateRendererOVR(appClassLoader, context, view, activity, assets, platformUtil);
     }
 
@@ -132,7 +135,7 @@ public class Renderer {
     private native long nativeCreateRendererGVR(ClassLoader appClassLoader, Context context,
                                                 AssetManager assets, PlatformUtil platformUtil, long nativeGvrContext);
     private native long nativeCreateRendererOVR(ClassLoader appClassLoader, Context context,
-                                                ViroOvrView view, Activity activity, AssetManager assets, PlatformUtil platformUtil);
+                                                ViroViewOVR view, Activity activity, AssetManager assets, PlatformUtil platformUtil);
     private native long nativeCreateRendererARCore(ClassLoader appClassLoader, Context context,
                                                    ViroViewARCore view, Session session, AssetManager assets, PlatformUtil platformUtil);
     private native void nativeDestroyRenderer(long nativeRenderer);

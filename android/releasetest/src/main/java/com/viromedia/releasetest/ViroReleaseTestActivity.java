@@ -14,9 +14,9 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.viro.renderer.jni.GLListener;
-import com.viro.renderer.jni.ViroGvrLayout;
-import com.viro.renderer.jni.ViroOvrView;
+import com.viro.renderer.jni.RendererStartListener;
+import com.viro.renderer.jni.ViroViewGVR;
+import com.viro.renderer.jni.ViroViewOVR;
 import com.viro.renderer.jni.ViroView;
 import com.viro.renderer.jni.ViroViewARCore;
 
@@ -24,7 +24,7 @@ import com.viro.renderer.jni.ViroViewARCore;
  * Created by manish on 10/25/17.
  */
 
-public class ViroReleaseTestActivity extends AppCompatActivity implements GLListener {
+public class ViroReleaseTestActivity extends AppCompatActivity implements RendererStartListener {
     private static final String TAG = ViroReleaseTestActivity.class.getSimpleName();
 
     private ViroView mViroView;
@@ -37,21 +37,21 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements GLList
         super.onCreate(savedInstanceState);
         System.out.println("onCreate called");
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
-            mViroView = new ViroGvrLayout(this, this, new Runnable() {
+            mViroView = new ViroViewGVR(this, this, new Runnable() {
                 @Override
                 public void run() {
                     Log.d(TAG, "On GVR userRequested exit");
                 }
             });
-            mViroView.setVrModeEnabled(false);
+            mViroView.setVRModeEnabled(false);
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
-            mViroView = new ViroOvrView(this, this);
+            mViroView = new ViroViewOVR(this, this);
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
             mViroView = new ViroViewARCore(this, this);
         }
 
-        mViroView.validateApiKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
-        setContentView(mViroView.getContentView());
+        mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
+        setContentView(mViroView);
 
         mHandler = new Handler(getMainLooper());
         // uncomment the below line to test AR.
@@ -80,7 +80,7 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements GLList
         mViroView.onActivityPaused(this);
         mViroView.onActivityStopped(this);
         mViroView.onActivityDestroyed(this);
-        mViroView.destroy();
+        mViroView.dispose();
     }
 
     @Override
@@ -100,7 +100,7 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements GLList
     }
 
     @Override
-    public void onGlInitialized() {
+    public void onRendererStart() {
         mGLInitialized = true;
     }
 

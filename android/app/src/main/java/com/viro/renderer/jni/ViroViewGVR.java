@@ -22,8 +22,6 @@ import com.google.vr.ndk.base.GvrLayout;
 import com.viro.renderer.BuildInfo;
 import com.viro.renderer.FrameListener;
 import com.viro.renderer.GLSurfaceViewQueue;
-import com.viro.renderer.keys.KeyValidationListener;
-import com.viro.renderer.keys.KeyValidator;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -33,12 +31,11 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * Custom Android view encapsulating all GvrLayout
- * setup and initialization for displaying a VR view.
- * Create this view during or post onCreate within
- * the activity lifecycle.
+ * ViroViewGVR is a {@link ViroView} for rendering content in stereo for VR headsets using
+ * the Google GVR SDK. This includes both Google Cardboard and Daydream headsets. ViroViewGVR
+ * handles all GVR initialization.
  */
-public class ViroGvrLayout extends GvrLayout implements ViroView {
+public class ViroViewGVR extends ViroView {
     private static final String TAG = "Viro";
 
     // Used to load the 'native-lib' library on application startup.
@@ -47,33 +44,26 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
         System.loadLibrary("gvr_audio");
         System.loadLibrary("native-lib");
     }
-    private Renderer mNativeRenderer;
-    private final ViroContext mNativeViroContext;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
-    private GLListener mGlListener = null;
+    private RendererStartListener mRenderStartListener = null;
     private PlatformUtil mPlatformUtil;
-    private WeakReference<Activity> mWeakActivity;
-    private KeyValidator mKeyValidator;
-    private boolean mDestroyed = false;
+    private GvrLayout mGVRLayout;
 
     // Activity state to restore to before being modified by the renderer.
-    private int mSavedSystemUIVisbility;
-    private int mSavedOrientation;
-    private OnSystemUiVisibilityChangeListener mSystemVisibilityListener;
 
     private static class ViroSurfaceViewRenderer implements GLSurfaceView.Renderer {
 
-        private WeakReference<ViroGvrLayout> mView;
+        private WeakReference<ViroViewGVR> mView;
         private WeakReference<GLSurfaceView> mSurface;
 
-        public ViroSurfaceViewRenderer(ViroGvrLayout view, GLSurfaceView surface) {
-            mView = new WeakReference<ViroGvrLayout>(view);
+        public ViroSurfaceViewRenderer(ViroViewGVR view, GLSurfaceView surface) {
+            mView = new WeakReference<ViroViewGVR>(view);
             mSurface = new WeakReference<GLSurfaceView>(surface);
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            ViroGvrLayout view = mView.get();
+            ViroViewGVR view = mView.get();
             if (view == null) {
                 return;
             }
@@ -84,15 +74,15 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
 
             view.mNativeRenderer.onSurfaceCreated(surface.getHolder().getSurface());
             view.mNativeRenderer.initalizeGl();
-            if (view.mGlListener != null) {
+            if (view.mRenderStartListener != null) {
                 Runnable myRunnable = new Runnable() {
                     @Override
                     public void run() {
-                        ViroGvrLayout view = mView.get();
+                        ViroViewGVR view = mView.get();
                         if (view == null) {
                             return;
                         }
-                        view.mGlListener.onGlInitialized();
+                        view.mRenderStartListener.onRendererStart();
                     }
                 };
                 new Handler(Looper.getMainLooper()).post(myRunnable);
@@ -100,7 +90,7 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
         }
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {
-            ViroGvrLayout view = mView.get();
+            ViroViewGVR view = mView.get();
             if (view == null) {
                 return;
             }
@@ -114,7 +104,7 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
              * if the dimensions of the surface has changed (for example
              * during a rotation).
              */
-            final GvrApi gvr = view.getGvrApi();
+            final GvrApi gvr = view.mGVRLayout.getGvrApi();
             if (gvr != null) {
                 gvr.refreshDisplayMetrics();
             }
@@ -124,7 +114,7 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
 
         @Override
         public void onDrawFrame(GL10 gl) {
-            ViroGvrLayout view = mView.get();
+            ViroViewGVR view = mView.get();
             if (view == null) {
                 return;
             }
@@ -138,15 +128,15 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
 
     private static class ViroOnTouchListener implements OnTouchListener {
 
-        private WeakReference<ViroGvrLayout> mView;
+        private WeakReference<ViroViewGVR> mView;
 
-        public ViroOnTouchListener(ViroGvrLayout view) {
-            mView = new WeakReference<ViroGvrLayout>(view);
+        public ViroOnTouchListener(ViroViewGVR view) {
+            mView = new WeakReference<ViroViewGVR>(view);
         }
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            ViroGvrLayout view = mView.get();
+            ViroViewGVR view = mView.get();
             if (view == null) {
                 return false;
             }
@@ -160,18 +150,22 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
         }
     }
 
-    public ViroGvrLayout(Context context, GLListener glListener, Runnable vrExitListener) {
+    /**
+     * Create a new ViroViewGVR.
+     *
+     * @param context               The activity context.
+     * @param rendererStartListener Runnable to invoke when the renderer has finished initializing.
+     *                              Optional, may be null.
+     * @param vrExitListener        Runnable to invoke when the user manually exits VR mode by
+     *                              tapping on GVR's close button.
+     */
+    public ViroViewGVR(Context context, RendererStartListener rendererStartListener, Runnable vrExitListener) {
         super(context);
+        mGVRLayout = new GvrLayout(context);
+        addView(mGVRLayout);
 
         final Context activityContext = getContext();
-        mSystemVisibilityListener = new OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int visibility) {
-                if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                    setImmersiveSticky();
-                }
-            }
-        };
+
 
         // Initialize the native renderer.
         GLSurfaceView glSurfaceView = createSurfaceView();
@@ -186,14 +180,13 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
                 getClass().getClassLoader(),
                 activityContext.getApplicationContext(),
                 mAssetManager, mPlatformUtil,
-                getGvrApi().getNativeGvrContext());
+                mGVRLayout.getGvrApi().getNativeGvrContext());
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
 
-        mGlListener = glListener;
-        mKeyValidator = new KeyValidator(activityContext);
+        mRenderStartListener = rendererStartListener;
 
         // Add the GLSurfaceView to the GvrLayout.
-        setPresentationView(glSurfaceView);
+        mGVRLayout.setPresentationView(glSurfaceView);
 
         // We want Android's VR mode on as long as the app is in either release or the device
         // is using Daydream. The renderer (library) is always in release, so we use BuildInfo to
@@ -210,7 +203,7 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
         // If we're using a fixed pointer, then do *not* use async reprojection, because it not
         // compatible with any HUD elements: it makes them wobble.
         if (getController().equalsIgnoreCase("daydream")){
-            if (setAsyncReprojectionEnabled(true)) {
+            if (mGVRLayout.setAsyncReprojectionEnabled(true)) {
                 // Scanline racing decouples the app framerate from the display framerate,
                 // allowing immersive interaction even at the throttled clockrates set by
                 // sustained performance mode.
@@ -219,18 +212,13 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
         }
 
         final Activity activity = (Activity)getContext();
-        mSavedSystemUIVisbility = activity.getWindow().getDecorView().getSystemUiVisibility();
-        mSavedOrientation = activity.getRequestedOrientation();
 
         // Prevent screen from dimming/locking.
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        // Attach SystemUiVisibilityChangeListeners to enforce a full screen experience.
-        activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(mSystemVisibilityListener);
-        mWeakActivity = new WeakReference<Activity>(activity);
 
-        getUiLayout().setCloseButtonListener(vrExitListener);
+        mGVRLayout.getUiLayout().setCloseButtonListener(vrExitListener);
         // default the mode to VR
-        setVrModeEnabled(true);
+        setVRModeEnabled(true);
     }
 
     /**
@@ -254,6 +242,9 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
         return glSurfaceView;
     }
 
+    /**
+     * @hide
+     */
     @Override
     public void setDebug(boolean debug) {
         /**
@@ -266,18 +257,8 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
     }
 
     @Override
-    public void setDebugHUDEnabled(boolean enabled) {
-        mNativeRenderer.setDebugHUDEnabled(enabled);
-    }
-
-    @Override
     public void recenterTracking() {
-        getGvrApi().recenterTracking();
-    }
-
-    @Override
-    public ViroContext getViroContext(){
-        return mNativeViroContext;
+        mGVRLayout.getGvrApi().recenterTracking();
     }
 
     @Override
@@ -285,66 +266,38 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
         mNativeRenderer.setSceneController(scene.mNativeRef, 1.0f);
     }
 
-    /**
-     * This function sets up the view for whichever mode is desired.
-     *
-     * @param vrModeEnabled - whether or not to use VR or 360 mode.
-     */
     @Override
-    public void setVrModeEnabled(boolean vrModeEnabled) {
+    public void setVRModeEnabled(boolean vrModeEnabled) {
         Activity activity = mWeakActivity.get();
         if (activity != null) {
             activity.setRequestedOrientation(vrModeEnabled ?
                     ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         }
 
-        setStereoModeEnabled(vrModeEnabled);
-        getUiLayout().setEnabled(vrModeEnabled);
+        mGVRLayout.setStereoModeEnabled(vrModeEnabled);
+        mGVRLayout.getUiLayout().setEnabled(vrModeEnabled);
         mNativeRenderer.setVRModeEnabled(vrModeEnabled);
     }
 
-    @Override
-    public void validateApiKey(String apiKey) {
-        mNativeRenderer.setSuspended(false);
-        // we actually care more about the headset than platform in this case.
-        mKeyValidator.validateKey(apiKey, getHeadset(), new KeyValidationListener() {
-            @Override
-            public void onResponse(boolean success) {
-                if (!mDestroyed) {
-                    mNativeRenderer.setSuspended(!success);
-                }
-            }
-        });
-    }
-
-    @Override
-    public Renderer getRenderer() {
-        return mNativeRenderer;
-    }
-
+    /**
+     * @hide
+     */
     @Override
     public ViroMediaRecorder getRecorder() {
         return null;
     }
 
-    @Override
-    public View getContentView() { return this; }
-
+    /**
+     * @hide
+     */
     @Override
     public String getPlatform() {
         return "gvr";
     }
 
-    @Override
-    public String getHeadset() {
-        return mNativeRenderer.getHeadset();
-    }
-
-    @Override
-    public String getController() {
-        return mNativeRenderer.getController();
-    }
-
+    /**
+     * @hide
+     */
     @Override
     public void onActivityPaused(Activity activity) {
         if (mWeakActivity.get() != activity){
@@ -352,9 +305,12 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
         }
 
         mNativeRenderer.onPause();
-        super.onPause();
+        mGVRLayout.onPause();
     }
 
+    /**
+     * @hide
+     */
     @Override
     public void onActivityResumed(Activity activity) {
         if (mWeakActivity.get() != activity){
@@ -365,34 +321,29 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
 
         // Ensure fullscreen immersion.
         setImmersiveSticky();
-        super.onResume();
+        mGVRLayout.onResume();
     }
 
+    /**
+     * @hide
+     */
     @Override
     public void onActivityDestroyed(Activity activity) {
         // no-op, the vrview destruction should be controlled by the SceneNavigator.
     }
 
+    /**
+     * @hide
+     */
     @Override
-    public void destroy() {
-        super.shutdown();
-        mDestroyed = true;
-
-        mNativeViroContext.dispose();
-        mNativeRenderer.destroy();
-
-        Activity activity = mWeakActivity.get();
-        if (activity == null) {
-            return;
-        }
-
-        activity.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(null);
-        activity.setRequestedOrientation(mSavedOrientation);
-        unSetImmersiveSticky();
+    public void dispose() {
+        mGVRLayout.shutdown();
+        super.dispose();
     }
 
-
+    /**
+     * @hide
+     */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         // Avoid accidental volume key presses while the phone is in the VR headset.
@@ -400,55 +351,20 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
                 || event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
             return true;
         }
-        return super.dispatchKeyEvent(event);
+        return mGVRLayout.dispatchKeyEvent(event);
     }
 
-    public void setImmersiveSticky() {
-        ((Activity)getContext())
-                .getWindow()
-                .getDecorView()
-                .setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        refreshActivityLayout();
-    }
-
-    public void unSetImmersiveSticky(){
-        ((Activity)getContext())
-                .getWindow()
-                .getDecorView()
-                .setSystemUiVisibility(mSavedSystemUIVisbility);
-        refreshActivityLayout();
-    }
-
-    private void refreshActivityLayout(){
-        Runnable myRunnable = new Runnable() {
-            @Override
-            public void run() {
-                View view = ((Activity)getContext()).findViewById(android.R.id.content);
-                if (view != null){
-                    // The size of the activity's root view has changed since we have
-                    // manually removed the toolbar to enter full screen. Thus, call
-                    // requestLayout to re-measure the view sizes.
-                    view.requestLayout();
-
-                    // To be certain a relayout will result in a redraw, we call invalidate
-                    view.invalidate();
-                }
-            }
-        };
-        new Handler(Looper.getMainLooper()).post(myRunnable);
-    }
-
+    /**
+     * @hide
+     */
     @Override
     public void onActivityCreated(Activity activity, Bundle bundle) {
         //No-op
     }
 
+    /**
+     * @hide
+     */
     @Override
     public void onActivityStarted(Activity activity) {
         if (mWeakActivity.get() != activity){
@@ -458,6 +374,9 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
         mNativeRenderer.onStart();
     }
 
+    /**
+     * @hide
+     */
     @Override
     public void onActivityStopped(Activity activity) {
         if (mWeakActivity.get() != activity){
@@ -467,6 +386,9 @@ public class ViroGvrLayout extends GvrLayout implements ViroView {
         mNativeRenderer.onStop();
     }
 
+    /**
+     * @hide
+     */
     @Override
     public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
         //No-op
