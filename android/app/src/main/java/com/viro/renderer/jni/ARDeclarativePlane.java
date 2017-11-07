@@ -10,7 +10,7 @@ public class ARDeclarativePlane extends ARDeclarativeNode {
 
     public ARDeclarativePlane(float minWidth, float minHeight) {
         super();
-        setNativeRef(nativeCreateARPlane(minWidth, minHeight));
+        initWithNativeRef(nativeCreateARPlane(minWidth, minHeight));
     }
 
     @Override

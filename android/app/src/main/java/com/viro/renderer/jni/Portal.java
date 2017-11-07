@@ -21,7 +21,7 @@ public class Portal extends Node {
      */
     public Portal() {
         super(false);
-        setNativeRef(nativeCreatePortal());
+        initWithNativeRef(nativeCreatePortal());
     }
 
     @Override

@@ -5,8 +5,6 @@ package com.viro.renderer.jni;
 
 import android.graphics.Bitmap;
 
-import java.lang.ref.WeakReference;
-
 /**
  * PortalScene is the root of the subgraph of {@link Node}s that is displayed through a {@link
  * Portal}. Each PortalScene can contain any number of child nodes and content, and each PortalScene
@@ -51,7 +49,7 @@ public class PortalScene extends Node {
      */
     public PortalScene() {
         super(false);
-        setNativeRef(nativeCreatePortalScene());
+        initWithNativeRef(nativeCreatePortalScene());
         attachDelegate();
     }
 

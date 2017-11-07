@@ -2,7 +2,6 @@ package com.viromedia.releasetest.tests;
 
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.util.Log;
 
 import com.viro.renderer.jni.Box;
@@ -14,11 +13,6 @@ import com.viro.renderer.jni.Sphere;
 import com.viro.renderer.jni.Text;
 import com.viro.renderer.jni.Vector;
 import com.viro.renderer.jni.event.ClickListener;
-import com.viro.renderer.jni.event.ClickState;
-import com.viro.renderer.jni.event.FuseListener;
-import com.viro.renderer.jni.event.GesturePinchListener;
-import com.viro.renderer.jni.event.HoverListener;
-import com.viro.renderer.jni.event.PinchState;
 
 import org.junit.Test;
 
@@ -34,6 +28,7 @@ public class ViroEventsTest extends ViroBaseTest {
     private Object3D objectNode;
     private Node sphereNode;
     private Text eventText;
+    private static final String DEFAULT_EVENT_TEXT = "No events Detected.";
 
     @Override
     void configureTestScene() {
@@ -71,7 +66,7 @@ public class ViroEventsTest extends ViroBaseTest {
         mScene.getRootNode().addChildNode(objectNode);
         mScene.getRootNode().addChildNode(sphereNode);
         eventText = new Text(mViroView.getViroContext(),
-                "Event not registered.", "Roboto", 20, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
+                DEFAULT_EVENT_TEXT, "Roboto", 20, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.CLIP_TO_BOUNDS, 0);
 
         Node textNode = new Node();
@@ -103,30 +98,41 @@ public class ViroEventsTest extends ViroBaseTest {
 
         boxClickListener = (source, node, clickState, location) -> {
             eventText.setText("Clicked on 3d object.");
-            Log.i("ViroEventsTest", "CLICKED ON OBJECT!!");
         };
         objectNode.setClickListener(boxClickListener);
 
         sphereNode.setClickListener((source, node, clickState, location) -> {
             eventText.setText("Clicked on sphere.");
         });
-        assertPass("All objects are clickable.");
+
+        assertPass("All objects are clickable.", ()->{
+            objectNode.setClickListener(null);
+            sphereNode.setClickListener(null);
+            boxClickListener = null;
+            eventText.setText(DEFAULT_EVENT_TEXT);
+        });
     }
 
     private void testEventsHoverListener() {
         boxNode.setHoverListener((source, node, isHovering, location) -> {
             eventText.setText("Hovered over box.");
+
         });
 
         objectNode.setHoverListener((source, node, isHovering, location) -> {
             eventText.setText("Hovered over 3d object.");
         });
 
-        sphereNode.setClickListener((source, node, isHovering, location) -> {
+        sphereNode.setHoverListener((source, node, isHovering, location) -> {
             eventText.setText("Hovered over sphere.");
         });
 
-        assertPass("All events hover.");
+        assertPass("All events hover.", ()->{
+            boxNode.setHoverListener(null);
+            objectNode.setHoverListener(null);
+            sphereNode.setHoverListener(null);
+            eventText.setText(DEFAULT_EVENT_TEXT);
+        });
     }
 
 
@@ -143,7 +149,12 @@ public class ViroEventsTest extends ViroBaseTest {
             eventText.setText("Set fuse on Sphere.");
         });
 
-        assertPass("All nodes respond to onFuse.");
+        assertPass("All nodes respond to onFuse.", ()->{
+            boxNode.setFuseListener(null);
+            objectNode.setFuseListener(null);
+            sphereNode.setFuseListener(null);
+            eventText.setText(DEFAULT_EVENT_TEXT);
+        });
     }
 
     private void testEventsDragListener() {
@@ -163,6 +174,7 @@ public class ViroEventsTest extends ViroBaseTest {
             sphereNode.setDragListener(null);
             objectNode.setDragListener(null);
             boxNode.setDragListener(null);
+            eventText.setText(DEFAULT_EVENT_TEXT);
         });
     }
 
@@ -182,7 +194,12 @@ public class ViroEventsTest extends ViroBaseTest {
             eventText.setText("Pinching on Sphere");
             sphereNode.setScale(new Vector(scaleFactor, scaleFactor, scaleFactor));
         });
-        assertPass("All nodes respond to pinch.");
+        assertPass("All nodes respond to pinch.", () -> {
+            sphereNode.setGesturePinchListener(null);
+            objectNode.setGesturePinchListener(null);
+            boxNode.setGesturePinchListener(null);
+            eventText.setText(DEFAULT_EVENT_TEXT);
+        });
     }
 
     private void testEventsGestureRotateListener() {
@@ -199,7 +216,12 @@ public class ViroEventsTest extends ViroBaseTest {
             eventText.setText("Rotating on Sphere.");
         });
 
-        assertPass("All nodes respond to rotate.");
+        assertPass("All nodes respond to rotate.", () -> {
+            sphereNode.setGestureRotateListener(null);
+            objectNode.setGestureRotateListener(null);
+            boxNode.setGestureRotateListener(null);
+            eventText.setText(DEFAULT_EVENT_TEXT);
+        });
     }
 
     private void testEventsTouchpadTouchListener() {
@@ -215,7 +237,12 @@ public class ViroEventsTest extends ViroBaseTest {
             eventText.setText("Touch registered on Sphere. TouchState: " + touchState.toString());
         });
 
-        assertPass("For GearVR: All objects can be touched with touch pad, Touch state changes.");
+        assertPass("For GearVR: All objects can be touched with touch pad, Touch state changes.", () -> {
+            sphereNode.setTouchpadTouchListener(null);
+            objectNode.setTouchpadTouchListener(null);
+            boxNode.setTouchpadTouchListener(null);
+            eventText.setText(DEFAULT_EVENT_TEXT);
+        });
     }
 
     private void testEventsTouchpadSwipeListener() {

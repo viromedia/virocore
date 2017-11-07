@@ -193,7 +193,7 @@ public class Scene {
         mNativeDelegateRef = nativeCreateSceneControllerDelegate(mNativeRef);
 
         PortalScene root = new PortalScene(false);
-        root.setNativeRef(nativeGetSceneNodeRef(mNativeRef));
+        root.initWithNativeRef(nativeGetSceneNodeRef(mNativeRef));
         root.attachDelegate();
         mRootNode = root;
         mPhysicsWorld = new PhysicsWorld(this);

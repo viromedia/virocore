@@ -3,7 +3,6 @@
  */
 package com.viro.renderer.jni;
 
-import java.lang.ref.WeakReference;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -62,7 +61,7 @@ public class ARNode extends Node {
      */
     ARNode(long nativeRef) {
         super(false); // call the empty NodeJni constructor.
-        setNativeRef(nativeRef);
+        initWithNativeRef(nativeRef);
         nodeARMap.put(nativeGetUniqueIdentifier(mNativeRef), this);
     }
 

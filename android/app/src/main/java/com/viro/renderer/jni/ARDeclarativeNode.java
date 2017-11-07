@@ -9,8 +9,6 @@
 
 package com.viro.renderer.jni;
 
-import android.util.Log;
-
 import java.lang.ref.WeakReference;
 
 /**
@@ -32,8 +30,8 @@ public class ARDeclarativeNode extends ARNode {
     }
 
     @Override
-    protected void setNativeRef(long nativeRef) {
-        super.setNativeRef(nativeRef);
+    protected void initWithNativeRef(long nativeRef) {
+        super.initWithNativeRef(nativeRef);
         mNativeARNodeDelegateRef = nativeCreateARNodeDelegate(nativeRef);
     }
 

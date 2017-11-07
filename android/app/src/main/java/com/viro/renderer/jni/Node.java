@@ -217,10 +217,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
      */
     public Node() {
         mNativeRef = nativeCreateNode();
-        mEventDelegate = new EventDelegate();
-        mEventDelegate.setEventDelegateCallback(this);
-
-        nodeWeakMap.put(nativeGetUniqueIdentifier(mNativeRef), new WeakReference<Node>(this));
+        initWithNativeRef(mNativeRef);
     }
 
     /**
@@ -229,19 +226,22 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * override mNativeRef
      */
     protected Node(boolean dummyArg) {
-        mEventDelegate = new EventDelegate();
-        mEventDelegate.setEventDelegateCallback(this);
+        // No-op.
     }
 
     /**
      * @hide Function called by child classes to set mNativeRef
      */
-    protected void setNativeRef(long nativeRef) {
+    protected void initWithNativeRef(long nativeRef) {
         if (nativeRef == 0) {
             throw new IllegalArgumentException("Attempted to create a Node with an invalid reference");
         }
         mNativeRef = nativeRef;
         nodeWeakMap.put(nativeGetUniqueIdentifier(mNativeRef), new WeakReference<Node>(this));
+
+        final EventDelegate eventDelegate = new EventDelegate();
+        eventDelegate.setEventDelegateCallback(this);
+        setEventDelegate(eventDelegate);
     }
 
     @Override
