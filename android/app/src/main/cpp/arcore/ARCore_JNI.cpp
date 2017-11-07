@@ -184,10 +184,28 @@ namespace arcore {
             auto getMethod = FloatBufferClass.GetMethod<jni::jfloat()>(env, "get");
 
             int size = buffer.Call(env, capacityMethod);
+
+            // if there are no points, then return the empty vector.
+            if (size == 0) {
+                return std::vector<float>();
+            }
+
             std::vector<float> floatVector(size);
 
             for (int i = 0; i < size; i++) {
                 floatVector.push_back(buffer.Call(env, getMethod));
+
+                // Check for an exception, only one possible is a BufferUnderflowException which
+                // occurs when you try to "get" but nothing is left... even though we're only going
+                // up to the capacity. If the ARCore session is stopped while we're reading, it looks
+                // like it flushes the buffer thus giving us the error, even though we haven't read
+                // all the values they said where available. In this case, clear the exception and
+                // just return the empty array. We could also do a hasRemaining() call into Java, but
+                // I think this ExceptionCheck might be cheaper.
+                if (env.ExceptionCheck()) {
+                    env.ExceptionClear();
+                    return std::vector<float>();
+                }
             }
 
             return floatVector;
