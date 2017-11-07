@@ -402,7 +402,7 @@ public class Texture {
             }
         }
         else {
-            if (storageFormat != TextureFormat.RGB9_E5) {
+            if (storageFormat == TextureFormat.RGB9_E5) {
                 throw new IllegalArgumentException("RGB8 and RGB565 images cannot be stored in RGB9_E5 format");
             }
         }
