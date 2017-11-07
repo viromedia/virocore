@@ -512,9 +512,12 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
 
     // TODO This test doesn't work. Figure out why.
     private void testSetUseGravity() {
-        mCueBallPhysics.applyForce(new Vector(0, 0.5f, 0), new Vector(0, 0, 0));
         mMutableTestMethod = () -> {
+            mCueBallPhysics.clearForce();
             mCueBallPhysics.setUseGravity(!mCueBallPhysics.getUseGravity());
+            if (!mCueBallPhysics.getUseGravity()) {
+                mCueBallPhysics.applyForce(new Vector(0, 0.5f, 0), new Vector(0, 0, 0));
+            }
         };
 
         assertPass("Hitting the cue ball to bounce and toggling gravity on/off ", () -> {

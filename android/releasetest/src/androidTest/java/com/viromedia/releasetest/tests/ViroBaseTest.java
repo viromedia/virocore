@@ -78,6 +78,8 @@ public abstract class ViroBaseTest {
     protected MutableTestMethod mMutableTestMethod;
     protected Timer mTimer;
     protected Scene mScene;
+    protected Node mYesButtonNode;
+    protected Node mNoButtonNode;
     protected ViroReleaseTestActivity mActivity;
     private Node mTestClassNameNode;
     private Node mTestMethodNameNode;
@@ -118,7 +120,7 @@ public abstract class ViroBaseTest {
         final EnumSet<Node.TransformBehavior> transformBehavior = EnumSet.of(Node.TransformBehavior.BILLBOARD_Y);
 
         // Add yes button
-        final Node yesButton = new Node();
+        mYesButtonNode = new Node();
         final Bitmap yesBitmap = getBitmapFromAssets(mActivity, "icon_thumb_up.png");
         final Texture yesTexture = new Texture(yesBitmap,
                 Texture.TextureFormat.RGBA8, true, true);
@@ -126,15 +128,15 @@ public abstract class ViroBaseTest {
         final Surface yesSurface = new Surface(2, 2, 0, 0, 1, 1);
         yesSurface.setMaterial(yesMaterial);
         yesSurface.setImageTexture(yesTexture);
-        yesButton.setGeometry(yesSurface);
+        mYesButtonNode.setGeometry(yesSurface);
         final float[] yesPosition = {2.5f, -0.5f, -3.3f};
-        yesButton.setPosition(new Vector(yesPosition));
-        yesButton.setTransformBehaviors(transformBehavior);
-        yesButton.setEventDelegate(getGenericDelegate(TEST_PASSED_TAG));
-        rootNode.addChildNode(yesButton);
+        mYesButtonNode.setPosition(new Vector(yesPosition));
+        mYesButtonNode.setTransformBehaviors(transformBehavior);
+        mYesButtonNode.setEventDelegate(getGenericDelegate(TEST_PASSED_TAG));
+        rootNode.addChildNode(mYesButtonNode);
 
         // Add no button
-        final Node noButton = new Node();
+        mNoButtonNode = new Node();
         final Bitmap noBitmap = getBitmapFromAssets(mActivity, "icon_thumb_down.png");
         final Texture noTexture = new Texture(noBitmap,
                 Texture.TextureFormat.RGBA8, true, true);
@@ -142,19 +144,19 @@ public abstract class ViroBaseTest {
         final Surface noSurface = new Surface(2, 2, 0, 0, 1, 1);
         noSurface.setMaterial(noMaterial);
         noSurface.setImageTexture(noTexture);
-        noButton.setGeometry(noSurface);
+        mNoButtonNode.setGeometry(noSurface);
         final float[] noPosition = {-2.5f, -0.5f, -3.3f};
-        noButton.setPosition(new Vector(noPosition));
-        noButton.setTransformBehaviors(transformBehavior);
-        noButton.setEventDelegate(getGenericDelegate(TEST_FAILED_TAG));
-        rootNode.addChildNode(noButton);
+        mNoButtonNode.setPosition(new Vector(noPosition));
+        mNoButtonNode.setTransformBehaviors(transformBehavior);
+        mNoButtonNode.setEventDelegate(getGenericDelegate(TEST_FAILED_TAG));
+        rootNode.addChildNode(mNoButtonNode);
 
         // Add class name
         mTestClassNameNode = new Node();
         final Text testClassNameText = new Text(mViroView.getViroContext(), getClass().getSimpleName(),
-                "Roboto", 25, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
+                "Roboto", 25, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        final float[] classNamePosition = {-1.5f, 3f, -3.3f};
+        final float[] classNamePosition = {0f, 3f, -3.3f};
         mTestClassNameNode.setPosition(new Vector(classNamePosition));
         mTestClassNameNode.setGeometry(testClassNameText);
         rootNode.addChildNode(mTestClassNameNode);
@@ -163,9 +165,9 @@ public abstract class ViroBaseTest {
         mTestMethodNameNode = new Node();
         final Text testMethodNameText = new Text(mViroView.getViroContext(),
                 Thread.currentThread().getStackTrace()[1].getMethodName(),
-                "Roboto", 25, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
+                "Roboto", 25, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        final float[] methodNamePosition = {-1.5f, 2.5f, -3.3f};
+        final float[] methodNamePosition = {0f, 2.5f, -3.3f};
         mTestMethodNameNode.setPosition(new Vector(methodNamePosition));
         mTestMethodNameNode.setGeometry(testMethodNameText);
         rootNode.addChildNode(mTestMethodNameNode);
@@ -173,9 +175,9 @@ public abstract class ViroBaseTest {
         // Add expected message card
         mExpectedMessageNode = new Node();
         final Text instructionCardText = new Text(mViroView.getViroContext(),
-                "Test Text Here", "Roboto", 25, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
+                "Test Text Here", "Roboto", 25, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
                 Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        final float[] position = {-1.5f, 2f, -3.3f};
+        final float[] position = {0f, 2f, -3.3f};
         mExpectedMessageNode.setPosition(new Vector(position));
         mExpectedMessageNode.setGeometry(instructionCardText);
         rootNode.addChildNode(mExpectedMessageNode);
@@ -306,7 +308,7 @@ public abstract class ViroBaseTest {
         @Override
         public void onDrag(final int source, final Node node, final float x, final float y, final float z) {
             Log.e(TAG, delegateTag + " On drag: " + x + ", " + y + ", " + z);
-
+            // TODO Differentiate between drag vs click if the user just wanted to move the object and not click it
             Vector converted = node.convertLocalPositionToWorldSpace(new Vector(x, y, z));
             if (node.getParentNode() != null) {
                 converted = node.getParentNode().convertLocalPositionToWorldSpace(new Vector(x, y, z));
