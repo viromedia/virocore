@@ -22,7 +22,7 @@ VROLight::VROLight(VROLightType type) :
     _updatedFragmentData(true),
     _updatedVertexData(true),
     _attenuationStartDistance(2.0),
-    _attenuationEndDistance(std::numeric_limits<float>::max()),
+    _attenuationEndDistance(10),
     _attenuationFalloffExponent(2.0),
     _direction( { 0, 0, -1.0} ),
     _spotInnerAngle(0),

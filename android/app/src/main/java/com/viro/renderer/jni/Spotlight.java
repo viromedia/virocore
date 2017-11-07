@@ -17,7 +17,7 @@ public class Spotlight extends Light {
     private float mInnerAngle = 0;
     private float mOuterAngle = 45;
     private float mAttenuationStartDistance = 2.0f;
-    private float mAttenuationEndDistance = Float.MAX_VALUE;
+    private float mAttenuationEndDistance = 10f;
     private boolean mCastsShadow = false;
     private int mShadowMapSize = 1024;
     private float mShadowBias = 0.005f;

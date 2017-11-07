@@ -13,7 +13,7 @@ public class OmniLight extends Light {
 
     private Vector mPosition = new Vector(0, 0, 0);
     private float mAttenuationStartDistance = 2.0f;
-    private float mAttenuationEndDistance = Float.MAX_VALUE;
+    private float mAttenuationEndDistance = 10f;
 
     /**
      * Construct a new OmniLight with default values: white color, normal intensity, and positioned
