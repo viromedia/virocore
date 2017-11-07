@@ -110,17 +110,15 @@ JNI_METHOD(void, nativeSetBackgroundTexture)(JNIEnv *env,
 JNI_METHOD(void, nativeSetBackgroundRotation)(JNIEnv *env,
                                               jclass clazz,
                                               jlong portal_j,
-                                              jfloat rotationDegreeX,
-                                              jfloat rotationDegreeY,
-                                              jfloat rotationDegreeZ) {
+                                              jfloat rotationRadiansX,
+                                              jfloat rotationRadiansY,
+                                              jfloat rotationRadiansZ) {
     std::weak_ptr<VROPortal> portal_w = PortalScene::native(portal_j);
 
-    VROPlatformDispatchAsyncRenderer([portal_w, rotationDegreeX, rotationDegreeY, rotationDegreeZ] {
+    VROPlatformDispatchAsyncRenderer([portal_w, rotationRadiansX, rotationRadiansY, rotationRadiansZ] {
         std::shared_ptr<VROPortal> portal = portal_w.lock();
         if (portal) {
-            portal->setBackgroundRotation({toRadians(rotationDegreeX),
-                                           toRadians(rotationDegreeY),
-                                           toRadians(rotationDegreeZ)});
+            portal->setBackgroundRotation({rotationRadiansX, rotationRadiansY, rotationRadiansZ});
         }
     });
 }

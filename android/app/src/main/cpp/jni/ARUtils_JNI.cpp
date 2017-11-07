@@ -20,9 +20,9 @@ jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor)
     VROMatrix4f transform = anchor->getTransform();
     VROVector3f rotationRads = transform.extractRotation(transform.extractScale()).toEuler();
     jfloatArray positionArray = ARUtilsCreateFloatArrayFromVector3f(transform.extractTranslation());
-    jfloatArray rotationArray = ARUtilsCreateFloatArrayFromVector3f( {toDegrees(rotationRads.x),
-                                                                      toDegrees(rotationRads.y),
-                                                                      toDegrees(rotationRads.z)});
+    jfloatArray rotationArray = ARUtilsCreateFloatArrayFromVector3f( {rotationRads.x,
+                                                                      rotationRads.y,
+                                                                      rotationRads.z});
     jfloatArray scaleArray = ARUtilsCreateFloatArrayFromVector3f(transform.extractScale());
 
     std::shared_ptr<VROARPlaneAnchor> plane = std::dynamic_pointer_cast<VROARPlaneAnchor>(anchor);

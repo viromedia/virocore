@@ -430,7 +430,7 @@ JNI_METHOD(void, nativePerformARHitTestWithRay) (JNIEnv *env,
 
             float position[3] = {positionVec.x, positionVec.y, positionVec.z};
             float scale[3] = {scaleVec.x, scaleVec.y, scaleVec.z};
-            float rotation[3] = {toDegrees(rotationVec.x), toDegrees(rotationVec.y), toDegrees(rotationVec.z)};
+            float rotation[3] = {rotationVec.x, rotationVec.y, rotationVec.z};
 
             env->SetFloatArrayRegion(jposition, 0, 3, position);
             env->SetFloatArrayRegion(jscale, 0, 3, scale);
@@ -523,8 +523,7 @@ JNI_METHOD(void, nativePerformARHitTestWithPosition) (JNIEnv *env,
 
             float position[3] = {positionVec.x, positionVec.y, positionVec.z};
             float scale[3] = {scaleVec.x, scaleVec.y, scaleVec.z};
-            float rotation[3] = {toDegrees(rotationVec.x), toDegrees(rotationVec.y),
-                                 toDegrees(rotationVec.z)};
+            float rotation[3] = {rotationVec.x, rotationVec.y, rotationVec.z};
 
             env->SetFloatArrayRegion(jposition, 0, 3, position);
             env->SetFloatArrayRegion(jscale, 0, 3, scale);

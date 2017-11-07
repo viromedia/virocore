@@ -70,7 +70,7 @@ public class ViroSceneTest extends ViroBaseTest {
         final List<Float> rotations = Arrays.asList(0f, 45f, 90f, 135f, 180f, 225f, 270f);
         final Iterator<Float> itr = Iterables.cycle(rotations).iterator();
         mMutableTestMethod = () -> {
-            mScene.setBackgroundRotation(new Vector(0, 0, itr.next()));
+            mScene.setBackgroundRotation(new Vector(0, 0, Math.toRadians(itr.next())));
         };
         assertPass("The scene background should rotate.");
     }

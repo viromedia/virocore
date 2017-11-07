@@ -95,12 +95,10 @@ JNI_METHOD(void, nativeSeekToTime)(JNIEnv *env, jobject obj,
 JNI_METHOD(void, nativeSetRotation)(JNIEnv *env,
                                     jobject obj,
                                     jlong nativeRef,
-                                    jfloat rotationDegreesX,
-                                    jfloat rotationDegreesY,
-                                    jfloat rotationDegreesZ) {
-    SoundField::native(nativeRef)->setRotation({toRadians(rotationDegreesX),
-                                                toRadians(rotationDegreesY),
-                                                toRadians(rotationDegreesZ)});
+                                    jfloat rotationRadiansX,
+                                    jfloat rotationRadiansY,
+                                    jfloat rotationRadiansZ) {
+    SoundField::native(nativeRef)->setRotation({rotationRadiansX, rotationRadiansY, rotationRadiansZ});
 }
 
 JNI_METHOD(void, nativeDestroySoundField)(JNIEnv *env, jobject obj, jlong nativeRef) {

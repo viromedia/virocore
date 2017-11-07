@@ -204,7 +204,7 @@ public class SoundField implements BaseSound {
      * Set the rotation of this SoundField. This can be used to rotate the direction of sounds
      * coming from the ambisonic sound field with respect to the user.
      *
-     * @param rotation The rotation about the X, Y, and Z axes, in a {@link Vector}.
+     * @param rotation The rotation about the X, Y, and Z axes, in a {@link Vector} in radians.
      */
     public void setRotation(Vector rotation) {
         nativeSetRotation(mNativeRef, rotation.x, rotation.y, rotation.z);
@@ -281,5 +281,5 @@ public class SoundField implements BaseSound {
     private native void nativeSetMuted(long mNativeRef, boolean muted);
     private native void nativeSetLoop(long mNativeRef, boolean loop);
     private native void nativeSeekToTime(long mNativeRef, float seconds);
-    private native void nativeSetRotation(long mNativeRef, float degreesX, float degreesY, float degreesZ);
+    private native void nativeSetRotation(long mNativeRef, float radiansX, float radiansY, float radiansZ);
 }

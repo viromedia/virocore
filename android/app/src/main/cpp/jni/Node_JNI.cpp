@@ -265,16 +265,16 @@ JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
 JNI_METHOD(void, nativeSetRotationEuler)(JNIEnv *env,
                                          jobject obj,
                                          jlong native_node_ref,
-                                         jfloat rotationDegreesX,
-                                         jfloat rotationDegreesY,
-                                         jfloat rotationDegreesZ) {
+                                         jfloat rotationRadiansX,
+                                         jfloat rotationRadiansY,
+                                         jfloat rotationRadiansZ) {
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
-    VROPlatformDispatchAsyncRenderer([node_w, rotationDegreesX, rotationDegreesY, rotationDegreesZ] {
+    VROPlatformDispatchAsyncRenderer([node_w, rotationRadiansX, rotationRadiansY, rotationRadiansZ] {
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
-            node->setRotation({toRadians(rotationDegreesX),
-                               toRadians(rotationDegreesY),
-                               toRadians(rotationDegreesZ)});
+            node->setRotation({rotationRadiansX,
+                               rotationRadiansY,
+                               rotationRadiansZ});
         }
     });
 }

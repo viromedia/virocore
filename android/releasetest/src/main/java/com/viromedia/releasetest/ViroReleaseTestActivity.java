@@ -44,7 +44,7 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
                     Log.d(TAG, "On GVR userRequested exit");
                 }
             });
-            mViroView.setVRModeEnabled(false);
+            mViroView.setVRModeEnabled(true);
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
             mViroView = new ViroViewOVR(this, this);
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {

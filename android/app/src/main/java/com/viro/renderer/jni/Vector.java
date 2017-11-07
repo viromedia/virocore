@@ -43,6 +43,18 @@ public class Vector {
     }
 
     /**
+     * Construct a new Vector from the given double coordinates by
+     * downcasting them to floats.
+     *
+     * @param x The X coordinate.
+     * @param y The Y coordinate.
+     * @param z The Z coordinate.
+     */
+    public Vector(double x, double y, double z) {
+        this((float) x, (float) y, (float) z);
+    }
+
+    /**
      * Construct a new Vector from the given coordinates in an array of length 3.
      *
      * @param coordinates The x, y, and z coordinates.

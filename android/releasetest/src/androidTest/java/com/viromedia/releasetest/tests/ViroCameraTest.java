@@ -58,7 +58,8 @@ public class ViroCameraTest extends ViroBaseTest {
     public void testCamera() {
         testCameraPosition();
         testCameraOrbitMode();
-        testCameraRotation();
+        testCameraRotationQuaternion();
+        testCameraRotationEuler();
     }
 
     private void testCameraOrbitMode() {
@@ -73,22 +74,35 @@ public class ViroCameraTest extends ViroBaseTest {
         mMutableTestMethod = () -> {
             Vector position = mCamera.getPosition();
             if(position.z > -5f) {
-                mCamera.setPosition(new Vector(0, 0, position.z - .2f));
+                mCamera.setPosition(new Vector(0, 0, position.z + .2f));
             }
         };
         assertPass("Camera position moves back.", ()->{mCamera.setPosition(new Vector(0, 0, 0));});
     }
 
-    private void testCameraRotation() {
+    private void testCameraRotationQuaternion() {
         mMutableTestMethod = () -> {
             mRotationAngle+=5.0f;
-            Quaternion quaternion = ViroCameraTest.toQuaternion(0, Math.PI * mRotationAngle/180.0f, 0);
+            Quaternion quaternion = ViroCameraTest.toQuaternion(0, Math.toRadians(mRotationAngle), 0);
             mCamera.setRotation(quaternion);
         };
 
-        assertPass("Camera rotates.", () ->{mCamera.setRotation(ViroCameraTest.toQuaternion(0, 0, 0));});
+        assertPass("Camera rotates upwards (via Quaternion).", () ->{mCamera.setRotation(ViroCameraTest.toQuaternion(0, 0, 0));});
     }
 
+    private void testCameraRotationEuler() {
+        mMutableTestMethod = () -> {
+            mRotationAngle+=5.0f;
+            mCamera.setRotation(new Vector(0, Math.toRadians(mRotationAngle), 0));
+        };
+
+        assertPass("Camera rotates to the left (via Euler angles).", ()->{
+            mCamera.setRotation(new Vector());
+            mRotationAngle = 0;
+        });
+    }
+
+    // TODO: VIRO-2166 Move to Quaternion class
     private static Quaternion toQuaternion(double pitch, double roll, double yaw)
     {
         Quaternion q = new Quaternion();

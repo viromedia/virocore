@@ -46,7 +46,6 @@ public class ViroTextureTest extends ViroBaseTest {
 
         protected ByteBuffer doInBackground(String... urls) {
             String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
             try {
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 byte[] bytes = IOUtils.toByteArray(in);

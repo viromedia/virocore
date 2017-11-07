@@ -46,9 +46,22 @@ JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
     });
 }
 
-JNI_METHOD(void, nativeSetRotation)(JNIEnv *env,
-                                    jobject obj,
-                                    jlong nativeCamera, jfloat x, jfloat y, jfloat z, jfloat w) {
+JNI_METHOD(void, nativeSetRotationEuler)(JNIEnv *env,
+                                         jobject obj,
+                                         jlong nativeCamera, jfloat x, jfloat y, jfloat z) {
+    std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
+    VROPlatformDispatchAsyncRenderer([camera_w, x, y, z] {
+        std::shared_ptr<VRONodeCamera> camera = camera_w.lock();
+        if (camera) {
+            VROQuaternion quaternion = { x, y, z };
+            camera->setBaseRotation(quaternion);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetRotationQuaternion)(JNIEnv *env,
+                                              jobject obj,
+                                              jlong nativeCamera, jfloat x, jfloat y, jfloat z, jfloat w) {
     std::weak_ptr<VRONodeCamera> camera_w = Camera::native(nativeCamera);
     VROPlatformDispatchAsyncRenderer([camera_w, x, y, z, w] {
         std::shared_ptr<VRONodeCamera> camera = camera_w.lock();

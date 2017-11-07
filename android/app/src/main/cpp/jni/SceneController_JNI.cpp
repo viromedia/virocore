@@ -84,17 +84,17 @@ JNI_METHOD(void, nativeSetBackgroundTexture)(JNIEnv *env,
 JNI_METHOD(void, nativeSetBackgroundRotation)(JNIEnv *env,
                                               jclass clazz,
                                               jlong sceneRef,
-                                              jfloat rotationDegreeX,
-                                              jfloat rotationDegreeY,
-                                              jfloat rotationDegreeZ) {
+                                              jfloat rotationRadiansX,
+                                              jfloat rotationRadiansY,
+                                              jfloat rotationRadiansZ) {
     std::weak_ptr<VROSceneController> sceneController_w = SceneController::native(sceneRef);
 
-    VROPlatformDispatchAsyncRenderer([sceneController_w, rotationDegreeX, rotationDegreeY, rotationDegreeZ] {
+    VROPlatformDispatchAsyncRenderer([sceneController_w, rotationRadiansX, rotationRadiansY, rotationRadiansZ] {
         std::shared_ptr<VROSceneController> sceneController = sceneController_w.lock();
         if (sceneController) {
-            sceneController->getScene()->getRootNode()->setBackgroundRotation({toRadians(rotationDegreeX),
-                                                                               toRadians(rotationDegreeY),
-                                                                               toRadians(rotationDegreeZ)});
+            sceneController->getScene()->getRootNode()->setBackgroundRotation({rotationRadiansX,
+                                                                               rotationRadiansY,
+                                                                               rotationRadiansZ});
         }
     });
 }

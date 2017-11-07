@@ -1,6 +1,7 @@
 package com.viromedia.releasetest.tests;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import com.viro.renderer.jni.Box;
 import com.viro.renderer.jni.DirectionalLight;
@@ -77,22 +78,22 @@ public class ViroNodeTest extends ViroBaseTest {
     public void testNode() {
         testNodeAddChildren();
 
-        testNodePositionParent();
+        //testNodePositionParent();
         testNodeRotationParent();
-        testNodeScaleParent();
-        testNodeVisibilityParent();
-        testNodeOpacityParent();
-        testNodePositionChild();
+//        testNodeScaleParent();
+//        testNodeVisibilityParent();
+//        testNodeOpacityParent();
+//        testNodePositionChild();
         testNodeRotationChild();
-        testNodeScaleChild();
-        testNodeVisibilityChild();
-        testNodeOpacityChild();
-        testNodeChangeGeometry();
-        testNodeRemoveFromParent();
-        testNodeRemoveAllChildren();
-        testTransformBehaviorX();
-        testTransformBehaviorY();
-        testTransformBehaviorXY();
+//        testNodeScaleChild();
+//        testNodeVisibilityChild();
+//        testNodeOpacityChild();
+//        testNodeChangeGeometry();
+//        testNodeRemoveFromParent();
+//        testNodeRemoveAllChildren();
+//        testTransformBehaviorX();
+//        testTransformBehaviorY();
+//        testTransformBehaviorXY();
     }
 
     private void testNodeAddChildren() {
@@ -106,7 +107,9 @@ public class ViroNodeTest extends ViroBaseTest {
     private void testNodePositionParent() {
         mMutableTestMethod = () -> {
             if (parentSphereNode != null && parentSphereNode.getPositionRealtime().z > -10) {
-                final Vector newPosition = new Vector(parentSphereNode.getPositionRealtime().x, parentSphereNode.getPositionRealtime().y, parentSphereNode.getPositionRealtime().z - .5f);
+                final Vector newPosition = new Vector(parentSphereNode.getPositionRealtime().x,
+                        parentSphereNode.getPositionRealtime().y,
+                        parentSphereNode.getPositionRealtime().z - .5f);
                 parentSphereNode.setPosition(newPosition);
             }
         };
@@ -118,7 +121,10 @@ public class ViroNodeTest extends ViroBaseTest {
     private void testNodeRotationParent() {
         mMutableTestMethod = () -> {
             if (parentSphereNode != null) {
-                final Vector newRotation = new Vector(parentSphereNode.getRotationEulerRealtime().x + +25f, parentSphereNode.getRotationEulerRealtime().y + +25f, parentSphereNode.getRotationEulerRealtime().z + 25f);
+                final Vector newRotation =
+                        new Vector(parentSphereNode.getRotationEulerRealtime().x,
+                                   parentSphereNode.getRotationEulerRealtime().y + Math.toRadians(25),
+                                   parentSphereNode.getRotationEulerRealtime().z);
                 parentSphereNode.setRotation(newRotation);
             }
         };
@@ -132,7 +138,9 @@ public class ViroNodeTest extends ViroBaseTest {
         mMutableTestMethod = () -> {
             if (parentSphereNode != null && parentSphereNode.getScaleRealtime().z > .2f) {
 
-                final Vector newScale = new Vector(parentSphereNode.getScaleRealtime().x - .2f, parentSphereNode.getScaleRealtime().y - .2f, parentSphereNode.getScaleRealtime().z - .2f);
+                final Vector newScale = new Vector(parentSphereNode.getScaleRealtime().x - .2f,
+                        parentSphereNode.getScaleRealtime().y - .2f,
+                        parentSphereNode.getScaleRealtime().z - .2f);
                 parentSphereNode.setScale(newScale);
             }
         };
@@ -193,7 +201,8 @@ public class ViroNodeTest extends ViroBaseTest {
     private void testNodePositionChild() {
         mMutableTestMethod = () -> {
             if (childOne != null && childOne.getPositionRealtime().z > -10) {
-                final Vector newPosition = new Vector(childOne.getPositionRealtime().x, childOne.getPositionRealtime().y, childOne.getPositionRealtime().z - .5f);
+                final Vector newPosition = new Vector(childOne.getPositionRealtime().x,
+                        childOne.getPositionRealtime().y, childOne.getPositionRealtime().z - .5f);
                 childOne.setPosition(newPosition);
             }
         };
@@ -205,7 +214,9 @@ public class ViroNodeTest extends ViroBaseTest {
     private void testNodeRotationChild() {
         mMutableTestMethod = () -> {
             if (childTwo != null && childTwo.getRotationEulerRealtime().z < 180) {
-                final Vector newRotation = new Vector(childTwo.getRotationEulerRealtime().x, childTwo.getRotationEulerRealtime().y, childTwo.getRotationEulerRealtime().z + 25f);
+                final Vector newRotation = new Vector(childTwo.getRotationEulerRealtime().x,
+                        childTwo.getRotationEulerRealtime().y,
+                        childTwo.getRotationEulerRealtime().z + Math.toRadians(25));
                 childTwo.setRotation(newRotation);
             }
         };
@@ -218,7 +229,9 @@ public class ViroNodeTest extends ViroBaseTest {
     private void testNodeScaleChild() {
         mMutableTestMethod = () -> {
             if (childThree != null && childThree.getScaleRealtime().z > .2f) {
-                final Vector newScale = new Vector(childThree.getScaleRealtime().x - .2f, childThree.getScaleRealtime().y - .2f, childThree.getScaleRealtime().z - .2f);
+                final Vector newScale = new Vector(childThree.getScaleRealtime().x - .2f,
+                        childThree.getScaleRealtime().y - .2f,
+                        childThree.getScaleRealtime().z - .2f);
                 childThree.setScale(newScale);
             }
         };

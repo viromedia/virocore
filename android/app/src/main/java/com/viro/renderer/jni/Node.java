@@ -387,7 +387,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * The rotation is made relative to the rotation pivot. See {@link
      * Node#setRotationPivot(Vector)}.
      *
-     * @param rotation Vector containing the rotation as three Euler angles.
+     * @param rotation {@link Vector} containing the rotation as three Euler angles in radians.
      */
     public void setRotation(Vector rotation) {
         nativeSetRotationEuler(mNativeRef, rotation.x, rotation.y, rotation.z);

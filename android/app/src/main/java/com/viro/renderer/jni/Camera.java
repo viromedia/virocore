@@ -115,11 +115,23 @@ public class Camera {
      * in the scene graph. The default orientation is looking in the negative Z direction (into
      * the screen).
      *
+     * @param rotation {@link Vector} containing the rotation as Euler angles in radians.
+     */
+    public void setRotation(Vector rotation) {
+        mRotation = new Quaternion(); // TODO: VIRO-2166 update Quaternion to accept euler angles
+        nativeSetRotationEuler(mNativeRef, rotation.x, rotation.y, rotation.z);
+    }
+
+    /**
+     * Set the rotation of this Camera. Note the Camera is also rotated by its parent hierarchy
+     * in the scene graph. The default orientation is looking in the negative Z direction (into
+     * the screen).
+     *
      * @param rotation The rotation as a {@link Quaternion}.
      */
     public void setRotation(Quaternion rotation) {
         mRotation = rotation;
-        nativeSetRotation(mNativeRef, rotation.x, rotation.y, rotation.z, rotation.w);
+        nativeSetRotationQuaternion(mNativeRef, rotation.x, rotation.y, rotation.z, rotation.w);
     }
 
     /**
@@ -177,7 +189,8 @@ public class Camera {
     private native long nativeCreateCamera();
     private native void nativeDestroyCamera(long nativeRef);
     private native void nativeSetPosition(long nativeRef, float x, float y, float z);
-    private native void nativeSetRotation(long nativeRef, float x, float y, float z, float w);
+    private native void nativeSetRotationEuler(long nativeRef, float x, float y, float z);
+    private native void nativeSetRotationQuaternion(long nativeRef, float x, float y, float z, float w);
     private native void nativeSetRotationType(long nativeRef, String rotationType);
     private native void nativeSetOrbitFocalPoint(long nativeRef, float x, float y, float z);
 }

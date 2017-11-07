@@ -3,7 +3,7 @@ package com.viro.renderer.jni;
 /**
  * Represents a 4-component floating-point quaternion.
  *
- * TODO Add all methods
+ * TODO: VIRO-2166 Add all methods
  */
 public class Quaternion {
 

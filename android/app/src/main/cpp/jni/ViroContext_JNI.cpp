@@ -57,7 +57,7 @@ JNI_METHOD(void, nativeGetCameraOrientation)(JNIEnv *env,
         VROPlatformCallJavaFunction(jCallback,
                                     "onGetCameraOrientation", "(FFFFFFFFFFFF)V",
                                     position.x, position.y, position.z,
-                                    toDegrees(rotation.x), toDegrees(rotation.y), toDegrees(rotation.z),
+                                    rotation.x, rotation.y, rotation.z,
                                     forward.x, forward.y, forward.z,
                                     up.x, up.y, up.z);
         env->DeleteLocalRef(jCallback);

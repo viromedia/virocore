@@ -61,7 +61,7 @@ public class ARAnchor {
     private String mAnchorId;
     private Type mType;
     private Vector mPosition; // world transform of the anchor
-    private Vector mRotation; // in degrees TODO convert to radians
+    private Vector mRotation; // in radians
     private Vector mScale;
 
     /**
@@ -117,7 +117,7 @@ public class ARAnchor {
      * anchor's orientation. The position, rotation, and scale of an ARAnchor define its
      * "pose", or transformation in the world.
      *
-     * @return The three Euler rotation angles in a {@link Vector}.
+     * @return The three Euler rotation angles in a {@link Vector} in radians.
      */
     public Vector getRotation() {
         return mRotation;

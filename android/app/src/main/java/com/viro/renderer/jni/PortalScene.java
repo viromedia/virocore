@@ -172,9 +172,9 @@ public class PortalScene extends Node {
     }
 
     /**
-     * Rotate the background image or video by the given degrees about the X, Y, and Z axes.
+     * Rotate the background image or video by the given radians about the X, Y, and Z axes.
      *
-     * @param rotation {@link Vector} containing rotation about the X, Y, and Z axes.
+     * @param rotation {@link Vector} containing rotation about the X, Y, and Z axes in radians.
      */
     public void setBackgroundRotation(Vector rotation) {
         nativeSetBackgroundRotation(mNativeRef, rotation.x, rotation.y, rotation.z);
@@ -209,8 +209,8 @@ public class PortalScene extends Node {
     private native void nativeSetBackgroundTexture(long nativeRef, long imageRef);
     private native void nativeSetBackgroundCubeImageTexture(long nativeRef, long textureRef);
     private native void nativeSetBackgroundCubeWithColor(long nativeRef, long color);
-    private native void nativeSetBackgroundRotation(long nativeRef, float degreeX, float degreeY,
-                                                    float degreeZ);
+    private native void nativeSetBackgroundRotation(long nativeRef, float radiansX, float radiansY,
+                                                    float radiansZ);
     private native long nativeAttachDelegate(long nativeRef, long delegateRef);
     private native void nativeSetPassable(long nativeRef, boolean passable);
     private native void nativeSetPortalEntrance(long nativeRef, long portalNativeRef);

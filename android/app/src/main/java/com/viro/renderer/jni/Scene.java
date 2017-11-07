@@ -253,7 +253,7 @@ public class Scene {
     }
 
     /**
-     * Rotate the background image or video by the given degrees about the X, Y, and Z axes.
+     * Rotate the background image or video by the given radians about the X, Y, and Z axes.
      *
      * @param rotation {@link Vector} containing rotation about the X, Y, and Z axes.
      */
@@ -340,8 +340,8 @@ public class Scene {
     private native void nativeSetBackgroundTexture(long sceneRef, long imageRef);
     private native void nativeSetBackgroundCubeImageTexture(long sceneRef, long textureRef);
     private native void nativeSetBackgroundCubeWithColor(long sceneRef, long color);
-    private native void nativeSetBackgroundRotation(long sceneRef, float degreeX, float degreeY,
-                                                    float degreeZ);
+    private native void nativeSetBackgroundRotation(long sceneRef, float radiansX, float radiansY,
+                                                    float radiansZ);
     private native void nativeSetSoundRoom(long sceneRef, long renderContextRef, float sizeX,
                                            float sizeY, float sizeZ, String wallMaterial,
                                            String ceilingMaterial, String floorMaterial);
