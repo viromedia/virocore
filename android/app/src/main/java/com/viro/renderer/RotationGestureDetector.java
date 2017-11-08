@@ -95,8 +95,8 @@ public class RotationGestureDetector {
         return getMidpoint(mLatestLine);
     }
 
-    public float getRotateDegrees() {
-        return mCurrentRotateDegrees;
+    public float getRotateRadians() {
+        return (float) Math.toRadians(mCurrentRotateDegrees);
     }
 
     /*

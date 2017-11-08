@@ -78,22 +78,22 @@ public class ViroNodeTest extends ViroBaseTest {
     public void testNode() {
         testNodeAddChildren();
 
-        //testNodePositionParent();
+        testNodePositionParent();
         testNodeRotationParent();
-//        testNodeScaleParent();
-//        testNodeVisibilityParent();
-//        testNodeOpacityParent();
-//        testNodePositionChild();
+        testNodeScaleParent();
+        testNodeVisibilityParent();
+        testNodeOpacityParent();
+        testNodePositionChild();
         testNodeRotationChild();
-//        testNodeScaleChild();
-//        testNodeVisibilityChild();
-//        testNodeOpacityChild();
-//        testNodeChangeGeometry();
-//        testNodeRemoveFromParent();
-//        testNodeRemoveAllChildren();
-//        testTransformBehaviorX();
-//        testTransformBehaviorY();
-//        testTransformBehaviorXY();
+        testNodeScaleChild();
+        testNodeVisibilityChild();
+        testNodeOpacityChild();
+        testNodeChangeGeometry();
+        testNodeRemoveFromParent();
+        testNodeRemoveAllChildren();
+        testTransformBehaviorX();
+        testTransformBehaviorY();
+        testTransformBehaviorXY();
     }
 
     private void testNodeAddChildren() {

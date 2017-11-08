@@ -198,16 +198,16 @@ JNI_METHOD(void, nativeOnRotateEvent) (JNIEnv *env,
                                        jobject object,
                                        jlong native_renderer,
                                        jint rotateState,
-                                       jfloat rotateDegrees,
+                                       jfloat rotateRadians,
                                        jfloat viewportX,
                                        jfloat viewportY) {
     std::weak_ptr<VROSceneRenderer> renderer_w = Renderer::native(native_renderer);
-    VROPlatformDispatchAsyncRenderer([renderer_w, rotateState, rotateDegrees, viewportX, viewportY] {
+    VROPlatformDispatchAsyncRenderer([renderer_w, rotateState, rotateRadians, viewportX, viewportY] {
         std::shared_ptr<VROSceneRenderer> renderer = renderer_w.lock();
         if (!renderer) {
             return;
         }
-        renderer->onRotateEvent(rotateState, rotateDegrees, viewportX, viewportY);
+        renderer->onRotateEvent(rotateState, rotateRadians, viewportX, viewportY);
     });
 }
 

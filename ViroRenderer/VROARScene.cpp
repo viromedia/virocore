@@ -16,6 +16,13 @@
 #include "VROARImperativeSession.h"
 #include "VROARDeclarativeSession.h"
 
+VROARScene::~VROARScene() {
+    // no-op, we define this here vs in header because for some reason if you want
+    // to dynamic cast from a base to a derived class, the derived class had better
+    // override a virtual function, but not in the header. See this link for related
+    // issue: https://bytes.com/topic/c/answers/851223-q-strange-dynamic_cast-problem
+}
+
 void VROARScene::initDeclarativeSession() {
     passert (_imperativeSession == nullptr);
     _declarativeSession = std::make_shared<VROARDeclarativeSession>();

@@ -90,9 +90,10 @@ public:
     void onRotateEnd();
     
     /*
-     Call this function when a rotate gesture is scaling(after start, before end).
+     Call this function when a rotate gesture is updating (after start, before end).
+     The rotation value should be in radians
      */
-    void onRotate(float rotation);
+    void onRotate(float rotationRadians);
     
     std::string getHeadset();
     std::string getController();

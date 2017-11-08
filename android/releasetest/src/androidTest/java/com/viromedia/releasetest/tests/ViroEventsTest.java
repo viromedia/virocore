@@ -204,15 +204,15 @@ public class ViroEventsTest extends ViroBaseTest {
 
     private void testEventsGestureRotateListener() {
 
-        boxNode.setGestureRotateListener((source, node, rotateDegrees, rotateState) -> {
+        boxNode.setGestureRotateListener((source, node, rotateRadians, rotateState) -> {
             eventText.setText("Rotating on Box.");
         });
 
-        objectNode.setGestureRotateListener((source, node, rotateDegrees, rotateState) -> {
+        objectNode.setGestureRotateListener((source, node, rotateRadians, rotateState) -> {
             eventText.setText("Rotating on 3d Object.");
         });
 
-        sphereNode.setGestureRotateListener((source, node, rotateDegrees, rotateState) -> {
+        sphereNode.setGestureRotateListener((source, node, rotateRadians, rotateState) -> {
             eventText.setText("Rotating on Sphere.");
         });
 

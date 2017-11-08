@@ -327,7 +327,7 @@ public abstract class ViroBaseTest {
         }
 
         @Override
-        public void onRotate(final int source, final Node node, final float rotateFactor, final RotateState rotateState) {
+        public void onRotate(final int source, final Node node, final float rotationRadians, final RotateState rotateState) {
             Log.e(TAG, delegateTag + " On rotate");
         }
 

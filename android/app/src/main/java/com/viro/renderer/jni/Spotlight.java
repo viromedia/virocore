@@ -15,7 +15,7 @@ public class Spotlight extends Light {
     private Vector mDirection = new Vector(0, 0, -1);
     private Vector mPosition = new Vector(0, 0, 0);
     private float mInnerAngle = 0;
-    private float mOuterAngle = 45;
+    private float mOuterAngle = (float) Math.PI / 4;
     private float mAttenuationStartDistance = 2.0f;
     private float mAttenuationEndDistance = 10f;
     private boolean mCastsShadow = false;
@@ -123,7 +123,7 @@ public class Spotlight extends Light {
      * receive the light's full illumination. The illumination declines from innerAngle until
      * reaching outerAngle.
      *
-     * @param innerAngle The inner angle in degrees.
+     * @param innerAngle The inner angle in radians.
      */
     public void setInnerAngle(float innerAngle) {
         mInnerAngle = innerAngle;
@@ -134,7 +134,7 @@ public class Spotlight extends Light {
      * Get the inner angle, which is the angle from the cone axis to the edge of full illumination
      * section of the cone.
      *
-     * @return The inner angle in degrees.
+     * @return The inner angle in radians.
      */
     public float getInnerAngle() {
         return mInnerAngle;
@@ -145,9 +145,9 @@ public class Spotlight extends Light {
      * the no illumination (soft edge) of the cone. If the outer angle is zero, then the entirety of
      * the cone will have full illumination.
      * <p>
-     * The default is set to 45.
+     * The default is set to PI / 4 radians (45 degrees).
      *
-     * @param outerAngle The outer angle in degrees.
+     * @param outerAngle The outer angle in radians.
      */
     public void setOuterAngle(float outerAngle) {
         mOuterAngle = outerAngle;
@@ -158,7 +158,7 @@ public class Spotlight extends Light {
      * Get the outer angle, which is the angle from the full illumination (hard edge) of the cone
      * to the no illumination (soft edge) of the cone.
      *
-     * @return The outer angle in degrees.
+     * @return The outer angle in radians.
      */
     public float getOuterAngle() {
         return mOuterAngle;
@@ -364,8 +364,8 @@ public class Spotlight extends Light {
     private native void nativeSetAttenuationEndDistance(long lightRef, float attenuationEndDistance);
     private native void nativeSetPosition(long lightRef, float positionX, float positionY, float positionZ);
     private native void nativeSetDirection(long lightRef, float directionX, float directionY, float directionZ);
-    private native void nativeSetInnerAngle(long lightRef, float innerAngle);
-    private native void nativeSetOuterAngle(long lightRef, float outerAngle);
+    private native void nativeSetInnerAngle(long lightRef, float innerAngleRadians);
+    private native void nativeSetOuterAngle(long lightRef, float outerAngleRadians);
     private native void nativeSetShadowMapSize(long lightRef, int shadowMapSize);
     private native void nativeSetShadowBias(long lightRef, float shadowBias);
     private native void nativeSetShadowNearZ(long lightRef, float shadowNearZ);

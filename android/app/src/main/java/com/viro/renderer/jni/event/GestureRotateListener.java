@@ -16,9 +16,9 @@ public interface GestureRotateListener {
      *                      component on the Controller triggered the event. See the
      *                      Controller's Guide for information.
      * @param node          The {@link Node} on which the gesture is being performed.
-     * @param rotateDegrees The degrees of rotation of the gesture since the beginning of the
+     * @param rotateRadians The rotation (in radians) of the gesture since the beginning of the
      *                      event; specifically, since receiving the ROTATE_START state.
      * @param rotateState   The state of the rotate event.
      */
-    void onRotate(int source, Node node, float rotateDegrees, RotateState rotateState);
+    void onRotate(int source, Node node, float rotateRadians, RotateState rotateState);
 }

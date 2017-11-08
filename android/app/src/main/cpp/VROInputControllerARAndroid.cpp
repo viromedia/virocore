@@ -38,11 +38,11 @@ void VROInputControllerARAndroid::onPinchEvent(int pinchState, float scaleFactor
     }
 }
 
-void VROInputControllerARAndroid::onRotateEvent(int rotateState, float rotateDegrees, float x, float y) {
+void VROInputControllerARAndroid::onRotateEvent(int rotateState, float rotateRadians, float x, float y) {
     if (rotateState == AMOTION_EVENT_ACTION_DOWN) {
         onRotateStart(VROVector3f(x, y));
     } else if (rotateState == AMOTION_EVENT_ACTION_MOVE) {
-        onRotate(rotateDegrees);
+        onRotate(rotateRadians);
     } else if (rotateState == AMOTION_EVENT_ACTION_UP) {
         onRotateEnd();
     } else {

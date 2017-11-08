@@ -329,7 +329,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
 
         final float[] spotLightPosition = {-2, 0, 3};
         final Spotlight spotLightJni = new Spotlight(Color.YELLOW, 1000.0f, 1, 10, new Vector(spotLightPosition),
-                new Vector(lightDirection), 2, 10);
+                new Vector(lightDirection), (float) Math.toRadians(2), (float) Math.toRadians(10));
         node.addLight(spotLightJni);
     }
 
@@ -596,7 +596,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         final Node node = new Node();
         final Surface surface = new Surface(.5f, .5f, 0, 0, 1, 1);
 
-        final float[] rotation = {-90, 0, 0};
+        final float[] rotation = { (float) -Math.PI / 2, 0, 0};
         node.setRotation(new Vector(rotation));
 
         mARNodeDelegate = new ARDeclarativeNode.Delegate() {
@@ -776,7 +776,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
             }
         }));
 
-        final float[] rotation = {0, 0, 90};
+        final float[] rotation = {0, 0, (float) Math.PI / 2};
         mSoundFieldMap.get(key).setRotation(new Vector(rotation));
     }
 
@@ -906,12 +906,12 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         }
 
         @Override
-        public void onRotate(final int source, final Node node, final float rotateFactor, final RotateState rotateState) {
+        public void onRotate(final int source, final Node node, final float rotationRadians, final RotateState rotateState) {
             if (rotateState == RotateState.ROTATE_MOVE) {
-                final float[] newRotation = {0, mYRotation - rotateFactor, 0};
+                final float[] newRotation = {0, mYRotation - rotationRadians, 0};
                 mNode.setRotation(new Vector(newRotation));
             } else if (rotateState == RotateState.ROTATE_END) {
-                mYRotation = mYRotation - rotateFactor;
+                mYRotation = mYRotation - rotationRadians;
             }
         }
     }
@@ -977,7 +977,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         }
 
         @Override
-        public void onRotate(final int source, final Node node, final float rotateFactor, final RotateState rotateState) {
+        public void onRotate(final int source, final Node node, final float rotationRadians, final RotateState rotateState) {
             Log.e(TAG, delegateTag + " On rotate");
         }
 

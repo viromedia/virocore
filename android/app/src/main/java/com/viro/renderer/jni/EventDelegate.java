@@ -80,7 +80,7 @@ public class EventDelegate {
         /**
          * @hide
          */
-        void onRotate(int source, Node node, float rotateFactor, RotateState rotateState);
+        void onRotate(int source, Node node, float rotationRadians, RotateState rotateState);
         /**
          * @hide
          */
@@ -276,10 +276,10 @@ public class EventDelegate {
     /**
      * @hide
      */
-    void onRotate(int source, int nodeId, float rotationDegrees, int rotationState) {
+    void onRotate(int source, int nodeId, float rotationRadians, int rotationState) {
         Node node = Node.getNodeWithID(nodeId);
         if (mDelegate != null && mDelegate.get() != null) {
-            mDelegate.get().onRotate(source, node, rotationDegrees, RotateState.valueOf(rotationState));
+            mDelegate.get().onRotate(source, node, rotationRadians, RotateState.valueOf(rotationState));
         }
     }
 

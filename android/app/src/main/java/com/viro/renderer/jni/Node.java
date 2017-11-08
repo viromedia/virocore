@@ -1295,9 +1295,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * @hide
      */
     @Override
-    public void onRotate(int source, Node node, float rotateFactor, RotateState rotateState) {
+    public void onRotate(int source, Node node, float rotateRadians, RotateState rotateState) {
         if (mGestureRotateListener != null) {
-            mGestureRotateListener.onRotate(source, node, rotateFactor, rotateState);
+            mGestureRotateListener.onRotate(source, node, rotateRadians, rotateState);
         }
     }
 

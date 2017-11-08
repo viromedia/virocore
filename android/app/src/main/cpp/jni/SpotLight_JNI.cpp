@@ -136,28 +136,28 @@ JNI_METHOD(void, nativeSetDirection)(JNIEnv *env,
 JNI_METHOD(void, nativeSetInnerAngle)(JNIEnv *env,
                                                   jclass clazz,
                                                   jlong native_light_ref,
-                                                  jfloat innerAngle) {
+                                                  jfloat innerAngleRadians) {
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
-    VROPlatformDispatchAsyncRenderer([light_w, innerAngle] {
+    VROPlatformDispatchAsyncRenderer([light_w, innerAngleRadians] {
         std::shared_ptr<VROLight> light = light_w.lock();
         if (!light) {
             return;
         }
-        light->setSpotInnerAngle(innerAngle);
+        light->setSpotInnerAngle(toDegrees(innerAngleRadians));
     });
 }
 
 JNI_METHOD(void, nativeSetOuterAngle)(JNIEnv *env,
                                                   jclass clazz,
                                                   jlong native_light_ref,
-                                                  jfloat outerAngle) {
+                                                  jfloat outerAngleRadians) {
     std::weak_ptr<VROLight> light_w = SpotLight::native(native_light_ref);
-    VROPlatformDispatchAsyncRenderer([light_w, outerAngle] {
+    VROPlatformDispatchAsyncRenderer([light_w, outerAngleRadians] {
         std::shared_ptr<VROLight> light = light_w.lock();
         if (!light) {
             return;
         }
-        light->setSpotOuterAngle(outerAngle);
+        light->setSpotOuterAngle(toDegrees(outerAngleRadians));
     });
 }
 

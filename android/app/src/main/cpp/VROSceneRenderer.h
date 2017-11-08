@@ -54,7 +54,7 @@ public:
     /*
      Called to let the renderer know when a rotate event has occurred.
      */
-    virtual void onRotateEvent(int rotateState, float rotateDegrees,
+    virtual void onRotateEvent(int rotateState, float rotateRadians,
                                float viewportX, float viewportY) {
         // no-op (not all renderers need to implement this)
     }

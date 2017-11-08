@@ -126,12 +126,12 @@ void VROSceneRendererSceneView::onPinchEvent(int pinchState, float scaleFactor,
     arTouchController->onPinchEvent(pinchState, scaleFactor, viewportX, viewportY);
 }
 
-void VROSceneRendererSceneView::onRotateEvent(int rotateState, float rotateDegrees, float viewportX,
+void VROSceneRendererSceneView::onRotateEvent(int rotateState, float rotateRadians, float viewportX,
                                            float viewportY) {
     std::shared_ptr<VROInputControllerBase> baseController = _renderer->getInputController();
     std::shared_ptr<VROInputControllerARAndroid> arTouchController
             = std::dynamic_pointer_cast<VROInputControllerARAndroid>(baseController);
-    arTouchController->onRotateEvent(rotateState, rotateDegrees, viewportX, viewportY);
+    arTouchController->onRotateEvent(rotateState, rotateRadians, viewportX, viewportY);
 }
 
 void VROSceneRendererSceneView::onPause() {

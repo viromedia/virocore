@@ -40,8 +40,8 @@ void VROInputControllerAR::onRotateStart(VROVector3f touchPos) {
 }
 
 
-void VROInputControllerAR::onRotate(float rotationDegrees) {
-    _latestRotation = rotationDegrees;
+void VROInputControllerAR::onRotate(float rotationRadians) {
+    _latestRotation = rotationRadians;
 }
 
 void VROInputControllerAR::onRotateEnd() {

@@ -158,7 +158,7 @@ public class ARTouchGestureListener extends GestureDetector.SimpleOnGestureListe
         mIsRotating = true;
         if (!mDestroyed) {
             PointF center = detector.getOriginalCenterPoint();
-            mNativeRenderer.onRotateEvent(EVENT_BEGIN, detector.getRotateDegrees(), center.x, center.y);
+            mNativeRenderer.onRotateEvent(EVENT_BEGIN, detector.getRotateRadians(), center.x, center.y);
         }
     }
 
@@ -166,7 +166,7 @@ public class ARTouchGestureListener extends GestureDetector.SimpleOnGestureListe
     public void onRotate(RotationGestureDetector detector) {
         if (!mDestroyed) {
             PointF center = detector.getCenterPoint();
-            mNativeRenderer.onRotateEvent(EVENT_MOVE, detector.getRotateDegrees(), center.x, center.y);
+            mNativeRenderer.onRotateEvent(EVENT_MOVE, detector.getRotateRadians(), center.x, center.y);
         }
     }
 
@@ -175,7 +175,7 @@ public class ARTouchGestureListener extends GestureDetector.SimpleOnGestureListe
         mIsRotating = false;
         if (!mDestroyed) {
             PointF center = detector.getCenterPoint();
-            mNativeRenderer.onRotateEvent(EVENT_END, detector.getRotateDegrees(), center.x, center.y);
+            mNativeRenderer.onRotateEvent(EVENT_END, detector.getRotateRadians(), center.x, center.y);
         }
     }
 }

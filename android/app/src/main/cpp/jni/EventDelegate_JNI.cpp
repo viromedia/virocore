@@ -268,11 +268,11 @@ void EventDelegate_JNI::onPinch(int source, std::shared_ptr<VRONode> node, float
     });
 }
 
-void EventDelegate_JNI::onRotate(int source, std::shared_ptr<VRONode> node, float rotateDegrees, RotateState rotateState) {
+void EventDelegate_JNI::onRotate(int source, std::shared_ptr<VRONode> node, float rotationRadians, RotateState rotateState) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj, source, node, rotateDegrees, rotateState] {
+    VROPlatformDispatchAsyncApplication([weakObj, source, node, rotationRadians, rotateState] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
@@ -281,7 +281,7 @@ void EventDelegate_JNI::onRotate(int source, std::shared_ptr<VRONode> node, floa
 
         int nodeId = node->getUniqueID();
         VROPlatformCallJavaFunction(localObj,
-                                    "onRotate", "(IIFI)V", source, nodeId, rotateDegrees, rotateState);
+                                    "onRotate", "(IIFI)V", source, nodeId, rotationRadians, rotateState);
         env->DeleteLocalRef(localObj);
     });
 }

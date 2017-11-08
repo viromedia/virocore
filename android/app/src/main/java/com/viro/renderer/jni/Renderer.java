@@ -100,8 +100,8 @@ public class Renderer {
         nativeOnPinchEvent(mNativeRef, pinchState, scaleFactor, viewportX, viewportY);
     }
 
-    public void onRotateEvent(int rotateState, float rotateDegrees, float viewportX, float viewportY) {
-        nativeOnRotateEvent(mNativeRef, rotateState, rotateDegrees, viewportX, viewportY);
+    public void onRotateEvent(int rotateState, float rotateRadians, float viewportX, float viewportY) {
+        nativeOnRotateEvent(mNativeRef, rotateState, rotateRadians, viewportX, viewportY);
     }
 
     public void setSceneController(long nativeSceneControllerRef) {
@@ -155,7 +155,7 @@ public class Renderer {
     private native void nativeOnKeyEvent(long nativeRenderer, int keyCode, int action);
     private native void nativeOnTouchEvent(long nativeRenderer, int onTouchAction, float touchPosX, float touchPosY);
     private native void nativeOnPinchEvent(long nativeRenderer, int pinchState, float scaleFactor, float viewportX, float viewportY);
-    private native void nativeOnRotateEvent(long nativeRenderer, int rotateState, float rotateDegrees, float viewportX, float viewportY);
+    private native void nativeOnRotateEvent(long nativeRenderer, int rotateState, float rotateRadians, float viewportX, float viewportY);
     private native void nativeOnPause(long nativeRenderer);
     private native void nativeOnResume(long nativeRenderer);
     private native void nativeOnStop(long nativeRenderer);

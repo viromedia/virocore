@@ -244,23 +244,23 @@ void VROInputControllerBase::onPinch(int source, float scaleFactor, VROEventDele
     }
 }
 
-void VROInputControllerBase::onRotate(int source, float rotationFactor, VROEventDelegate::RotateState rotateState) {
+void VROInputControllerBase::onRotate(int source, float rotationRadians, VROEventDelegate::RotateState rotateState) {
     if(rotateState == VROEventDelegate::RotateState::RotateStart) {
         if(_hitResult == nullptr) {
             return;
         }
-        _lastRotation = rotationFactor;
+        _lastRotation = rotationRadians;
         _currentRotateNode = getNodeToHandleEvent(VROEventDelegate::EventAction::OnRotate, _hitResult->getNode());
     }
     
     if(_currentRotateNode && rotateState == VROEventDelegate::RotateState::RotateMove) {
-        if(fabs(rotationFactor - _lastRotation) < ON_ROTATE_THRESHOLD) {
+        if(fabs(rotationRadians - _lastRotation) < ON_ROTATE_THRESHOLD) {
             return;
         }
     }
     
     if(_currentRotateNode && _currentRotateNode->getEventDelegate()) {
-        _currentRotateNode->getEventDelegate()->onRotate(source, _currentRotateNode, rotationFactor, rotateState);
+        _currentRotateNode->getEventDelegate()->onRotate(source, _currentRotateNode, rotationRadians, rotateState);
         if(rotateState == VROEventDelegate::RotateState::RotateEnd) {
             _currentRotateNode = nullptr;
         }
