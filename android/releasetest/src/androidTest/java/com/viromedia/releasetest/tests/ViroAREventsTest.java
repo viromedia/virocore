@@ -21,7 +21,7 @@ import java.util.Arrays;
  * Created by vadvani on 11/7/17.
  */
 
-public class ViroAREvents extends ViroBaseTest {
+public class ViroAREventsTest extends ViroBaseTest {
 
     private Node boxNode;
     private Object3D objectNode;

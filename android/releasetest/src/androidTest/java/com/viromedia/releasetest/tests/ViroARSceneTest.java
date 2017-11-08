@@ -28,7 +28,7 @@ import java.util.List;
  * This includes tests for all methods for ARScene except the onAnchor callbacks. Those are tested in ViroARNodeTest.
  */
 
-public class ViroARScene extends ViroBaseTest {
+public class ViroARSceneTest extends ViroBaseTest {
 
     private ARScene mARScene;
     private Node mBoxNode;
