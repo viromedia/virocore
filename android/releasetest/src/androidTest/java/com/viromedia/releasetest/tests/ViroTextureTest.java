@@ -14,7 +14,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
-import com.amazonaws.util.IOUtils;
 import com.viro.renderer.jni.Box;
 import com.viro.renderer.jni.DirectionalLight;
 import com.viro.renderer.jni.Material;
@@ -25,6 +24,8 @@ import com.viro.renderer.jni.Vector;
 
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -40,6 +41,7 @@ public class ViroTextureTest extends ViroBaseTest {
     private Node mSphereNode;
     private Texture mTexture;
     private Texture mSphereTexture;
+    private static final int BUFFER_SIZE = 1024 * 4;
 
     private class DownloadImageTask extends AsyncTask<String, Void, ByteBuffer> {
 
@@ -48,7 +50,7 @@ public class ViroTextureTest extends ViroBaseTest {
             String urldisplay = urls[0];
             try {
                 InputStream in = new java.net.URL(urldisplay).openStream();
-                byte[] bytes = IOUtils.toByteArray(in);
+                byte[] bytes = ViroTextureTest.toByteArray(in);
 
                 ByteBuffer byteBuffer = ByteBuffer.allocateDirect(bytes.length);//ByteBuffer.wrap(bytes);
                 byteBuffer.put(bytes, 0, bytes.length);
@@ -245,5 +247,20 @@ public class ViroTextureTest extends ViroBaseTest {
 
         assertPass("Loop texture modes for setMagnificationFilter from LINEAR, NEAREST.");
     }
+
+    public static byte[] toByteArray(InputStream is) throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try {
+            byte[] b = new byte[BUFFER_SIZE];
+            int n = 0;
+            while ((n = is.read(b)) != -1) {
+                output.write(b, 0, n);
+            }
+            return output.toByteArray();
+        } finally {
+            output.close();
+        }
+    }
+
 
 }
