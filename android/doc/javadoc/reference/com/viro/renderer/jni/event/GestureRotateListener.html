@@ -204,7 +204,6 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           
     <li><h2>Interfaces</h2>
       <ul>
-          <li class="api apilevel-"><a href="../../../../../../reference/com/viro/renderer/jni/event/ARHitTestListener.html">ARHitTestListener</a></li>
           <li class="api apilevel-"><a href="../../../../../../reference/com/viro/renderer/jni/event/ClickListener.html">ClickListener</a></li>
           <li class="api apilevel-"><a href="../../../../../../reference/com/viro/renderer/jni/event/ControllerStatusListener.html">ControllerStatusListener</a></li>
           <li class="api apilevel-"><a href="../../../../../../reference/com/viro/renderer/jni/event/DragListener.html">DragListener</a></li>
@@ -517,7 +516,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../../../reference/com/viro/renderer/jni/event/GestureRotateListener.html#onRotate(int, com.viro.renderer.jni.Node, float, com.viro.renderer.jni.event.RotateState)">onRotate</a>(int source, <a href="../../../../../../reference/com/viro/renderer/jni/Node.html">Node</a> node, float rotateDegrees, <a href="../../../../../../reference/com/viro/renderer/jni/event/RotateState.html">RotateState</a> rotateState)
+      <a href="../../../../../../reference/com/viro/renderer/jni/event/GestureRotateListener.html#onRotate(int, com.viro.renderer.jni.Node, float, com.viro.renderer.jni.event.RotateState)">onRotate</a>(int source, <a href="../../../../../../reference/com/viro/renderer/jni/Node.html">Node</a> node, float rotateRadians, <a href="../../../../../../reference/com/viro/renderer/jni/event/RotateState.html">RotateState</a> rotateState)
       </code>
       
         <p>Callback when a two-finger rotate gesture is detected on the Controller screen.
@@ -580,7 +579,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <pre class="api-signature no-pretty-print">
 void onRotate (int source, 
                 <a href="../../../../../../reference/com/viro/renderer/jni/Node.html">Node</a> node, 
-                float rotateDegrees, 
+                float rotateRadians, 
                 <a href="../../../../../../reference/com/viro/renderer/jni/event/RotateState.html">RotateState</a> rotateState)</pre>
     
     
@@ -603,9 +602,9 @@ void onRotate (int source,
           <code>Node</code>: The <code><a href="../../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code> on which the gesture is being performed.</p></td>
       </tr>
       <tr>
-        <td><code>rotateDegrees</code></td>
+        <td><code>rotateRadians</code></td>
         <td width="100%">
-          <code>float</code>: The degrees of rotation of the gesture since the beginning of the
+          <code>float</code>: The rotation (in radians) of the gesture since the beginning of the
                       event; specifically, since receiving the ROTATE_START state.</p></td>
       </tr>
       <tr>

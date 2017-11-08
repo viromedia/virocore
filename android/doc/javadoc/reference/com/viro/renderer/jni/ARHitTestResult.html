@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Spotlight | Android Developers
+  <title>ARHitTestResult | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -231,7 +231,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Animation.html">Animation</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/AnimationTransaction.html">AnimationTransaction</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ARAnchor.html">ARAnchor</a></li>
-          <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ARHitTestResult.html">ARHitTestResult</a></li>
+          <li class="selected api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ARHitTestResult.html">ARHitTestResult</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ARNode.html">ARNode</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ARPlaneAnchor.html">ARPlaneAnchor</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/ARScene.html">ARScene</a></li>
@@ -264,7 +264,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/SoundField.html">SoundField</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/SpatialSound.html">SpatialSound</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Sphere.html">Sphere</a></li>
-          <li class="selected api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html">Spotlight</a></li>
+          <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html">Spotlight</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Surface.html">Surface</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Text.html">Text</a></li>
           <li class="api apilevel-"><a href="../../../../../reference/com/viro/renderer/jni/Texture.html">Texture</a></li>
@@ -500,7 +500,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">Spotlight</h1>
+<h1 class="api-title">ARHitTestResult</h1>
 <p>
 <code class="api-signature">
   public
@@ -508,20 +508,14 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
   class
-  Spotlight
+  ARHitTestResult
 </code>
 <br>
 
 
 <code class="api-signature">
   
-  
-  
-</code>
-
-<code class="api-signature">
-  
-    extends <a href="../../../../../reference/com/viro/renderer/jni/Light.html">Light</a>
+    extends Object
   
   
   
@@ -538,7 +532,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
   <tr>
     
-    <td colspan="3" class="jd-inheritance-class-cell">java.lang.Object
+    <td colspan="2" class="jd-inheritance-class-cell">java.lang.Object
     </td>
   </tr>
   
@@ -547,18 +541,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="../../../../../reference/com/viro/renderer/jni/Light.html">com.viro.renderer.jni.Light</a>
-    </td>
-  </tr>
-  
-
-  <tr>
-    
-      <td class="jd-inheritance-space">&nbsp;</td>
-    
-      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
-    
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.renderer.jni.Spotlight
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.renderer.jni.ARHitTestResult
     </td>
   </tr>
   
@@ -571,11 +554,9 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>Spotlight is a <code><a href="../../../../../reference/com/viro/renderer/jni/Light.html">Light</a></code> that illuminates objects within a cone-shaped area, in a given
- direction, with decreasing intensity over distance.
- <p>
- Spotlight can cast shadows. These shadows are cast using an perspective projection (e.g.
- the size of the shadows changes as the shadow casters' distance from the light changes).
+  <p>ARHitTestResult encapsulates a single result of an AR hit-test. AR hit-tests are initiated from
+ the <code><a href="../../../../../reference/com/viro/renderer/jni/ViroViewARCore.html">ViroViewARCore</a></code>. These hit tests are a mechanism for you to
+ discover what real-world objects are contained along a given ray in the <code><a href="../../../../../reference/com/viro/renderer/jni/Scene.html">Scene</a></code> or at a given 2D point on the <code><a href="../../../../../reference/com/viro/renderer/jni/ViroViewARCore.html">ViroViewARCore</a></code>.
 </p>
 
 
@@ -590,53 +571,51 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
-<table id="pubctors" class="responsive constructors">
-<tr><th colspan="2"><h3>Public constructors</h3></th></tr>
-
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<table id="nestedclasses" class="responsive">
+<tr><th colspan="2"><h3>Nested classes</h3></th></tr>
 
 
   
-  <tr class="api apilevel-" >
-  
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#Spotlight()">Spotlight</a>()
-      </code>
-      
-        <p>Construct a new Spotlight with default values: white color, normal intensity, pointing
- in the negative Z direction and positioned at the origin of its parent <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code>.
+    <tr class="api apilevel-" >
+      <td class="jd-typecol"><code>
+        
+        
+        
+        
+        enum</code></td>
+      <td class="jd-descrcol" width="100%">
+        <code><a href="../../../../../reference/com/viro/renderer/jni/ARHitTestResult.Type.html">ARHitTestResult.Type</a></code>
+        <p>Hit-tests can intersect different kinds of real-world features, each identified by their
+ Type.&nbsp;
         
     
 </p>
-      
-    </td>
-  </tr>
-  
+      </td>
+    </tr>
+    
+    
 
 
-</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -659,70 +638,15 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
-        float</code>
+        <a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a></code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#getAttenuationEndDistance()">getAttenuationEndDistance</a>()
+      <a href="../../../../../reference/com/viro/renderer/jni/ARHitTestResult.html#getPosition()">getPosition</a>()
       </code>
       
-        <p>Get the attenuation end distance, which is the distance from the light at which no
- illumination will be received.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        float</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#getAttenuationStartDistance()">getAttenuationStartDistance</a>()
-      </code>
-      
-        <p>Get the attenuation start distance, which determines when the light starts attenuating.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        boolean</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#getCastsShadow()">getCastsShadow</a>()
-      </code>
-      
-        <p>Returns true if this Spotlight casts shadows.
+        <p>Returns the position of the detected real-world object, in world coordinates.
         
     
 </p>
@@ -746,66 +670,11 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#getDirection()">getDirection</a>()
+      <a href="../../../../../reference/com/viro/renderer/jni/ARHitTestResult.html#getRotation()">getRotation</a>()
       </code>
       
-        <p>Get the direction of this Spotlight.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        float</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#getInnerAngle()">getInnerAngle</a>()
-      </code>
-      
-        <p>Get the inner angle, which is the angle from the cone axis to the edge of full illumination
- section of the cone.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        float</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#getOuterAngle()">getOuterAngle</a>()
-      </code>
-      
-        <p>Get the outer angle, which is the angle from the full illumination (hard edge) of the cone
- to the no illumination (soft edge) of the cone.
+        <p>Return the orientation of the detected real-world object, along each of the three
+ principal axes.
         
     
 </p>
@@ -829,10 +698,10 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#getPosition()">getPosition</a>()
+      <a href="../../../../../reference/com/viro/renderer/jni/ARHitTestResult.html#getScale()">getScale</a>()
       </code>
       
-        <p>Get the position of this Spotlight.
+        <p>Return the scale of the detected real-world object.
         
     
 </p>
@@ -851,452 +720,15 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
-        float</code>
+        <a href="../../../../../reference/com/viro/renderer/jni/ARHitTestResult.Type.html">ARHitTestResult.Type</a></code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#getShadowBias()">getShadowBias</a>()
+      <a href="../../../../../reference/com/viro/renderer/jni/ARHitTestResult.html#getType()">getType</a>()
       </code>
       
-        <p>Return the amount of bias that is applied to the Z coordinate when performing shadow
- depth comparisons.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        float</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#getShadowFarZ()">getShadowFarZ</a>()
-      </code>
-      
-        <p>Get the far clipping plane used when rendering shadows.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        int</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#getShadowMapSize()">getShadowMapSize</a>()
-      </code>
-      
-        <p>Return the size of the texture map to which the shadowed portion of the scene will be
- rendered when computing shadows.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        float</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#getShadowNearZ()">getShadowNearZ</a>()
-      </code>
-      
-        <p>Get the near clipping plane used when rendering shadows.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        float</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#getShadowOpacity()">getShadowOpacity</a>()
-      </code>
-      
-        <p>Return the opacity of shadows cast from this Light.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#setAttenuationEndDistance(float)">setAttenuationEndDistance</a>(float attenuationEndDistance)
-      </code>
-      
-        <p>Set the attenuation end distance, which determines when the light drops to zero illumination.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#setAttenuationStartDistance(float)">setAttenuationStartDistance</a>(float attenuationStartDistance)
-      </code>
-      
-        <p>Set the attenuation start distance, which determines when the light begins to attenuate.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#setCastsShadow(boolean)">setCastsShadow</a>(boolean castsShadow)
-      </code>
-      
-        <p>Set to true to make this Spotlight cast shadows.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#setDirection(com.viro.renderer.jni.Vector)">setDirection</a>(<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> direction)
-      </code>
-      
-        <p>Set the direction of the Spotlight.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#setInnerAngle(float)">setInnerAngle</a>(float innerAngle)
-      </code>
-      
-        <p>Set the inner angle, which is the angle from the axis of the light cone to the edge of the 'full
- illumination' section of the light cone.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#setOuterAngle(float)">setOuterAngle</a>(float outerAngle)
-      </code>
-      
-        <p>Set the outer angle, which is the angle from the full illumination (hard edge) of the cone to
- the no illumination (soft edge) of the cone.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#setPosition(com.viro.renderer.jni.Vector)">setPosition</a>(<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> position)
-      </code>
-      
-        <p>Set the position of this Spotlight within the coordinate system of its parent <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#setShadowBias(float)">setShadowBias</a>(float shadowBias)
-      </code>
-      
-        <p>Set the amount of bias to apply to the Z coordinate when performing the shadow depth
- comparison.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#setShadowFarZ(float)">setShadowFarZ</a>(float shadowFarZ)
-      </code>
-      
-        <p>Set the far clipping plane to use when rendering shadows.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#setShadowMapSize(int)">setShadowMapSize</a>(int shadowMapSize)
-      </code>
-      
-        <p>Set the size of the shadow map used to cast shadows for this light.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#setShadowNearZ(float)">setShadowNearZ</a>(float shadowNearZ)
-      </code>
-      
-        <p>Set the near clipping plane to use when rendering shadows.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#setShadowOpacity(float)">setShadowOpacity</a>(float opacity)
-      </code>
-      
-        <p>The opacity of the shadow.
+        <p>Returns the kind of detected real-world object contained in this result.
         
     
 </p>
@@ -1330,36 +762,6 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <!-- Public ctors -->
 
 
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
-<h2 class="api-section">Public constructors</h2>
-
-
-
-<A NAME="Spotlight()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">Spotlight</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-Spotlight ()</pre>
-    
-    
-
-    
-  <p>Construct a new Spotlight with default values: white color, normal intensity, pointing
- in the negative Z direction and positioned at the origin of its parent <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code>.
-</p></p>
-
-</div>
-
-
-
-
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <!-- Protected ctors -->
@@ -1371,183 +773,6 @@ Spotlight ()</pre>
 
 <h2 class="api-section">Public methods</h2>
 
-
-
-<A NAME="getAttenuationEndDistance()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getAttenuationEndDistance</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-float getAttenuationEndDistance ()</pre>
-    
-    
-
-    
-  <p>Get the attenuation end distance, which is the distance from the light at which no
- illumination will be received.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>float</code></td>
-        <td width="100%">The attenuation end distance.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getAttenuationStartDistance()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getAttenuationStartDistance</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-float getAttenuationStartDistance ()</pre>
-    
-    
-
-    
-  <p>Get the attenuation start distance, which determines when the light starts attenuating.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>float</code></td>
-        <td width="100%">The attenuation start distance.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getCastsShadow()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getCastsShadow</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-boolean getCastsShadow ()</pre>
-    
-    
-
-    
-  <p>Returns true if this Spotlight casts shadows.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>boolean</code></td>
-        <td width="100%">True if this light casts shadows.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getDirection()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getDirection</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> getDirection ()</pre>
-    
-    
-
-    
-  <p>Get the direction of this Spotlight.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code><a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a></code></td>
-        <td width="100%">The direction as a <code><a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a></code>.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getInnerAngle()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getInnerAngle</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-float getInnerAngle ()</pre>
-    
-    
-
-    
-  <p>Get the inner angle, which is the angle from the cone axis to the edge of full illumination
- section of the cone.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>float</code></td>
-        <td width="100%">The inner angle in radians.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getOuterAngle()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getOuterAngle</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-float getOuterAngle ()</pre>
-    
-    
-
-    
-  <p>Get the outer angle, which is the angle from the full illumination (hard edge) of the cone
- to the no illumination (soft edge) of the cone.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>float</code></td>
-        <td width="100%">The outer angle in radians.
-</p></td>
-      </tr>
-    </table>
-
-</div>
 
 
 <A NAME="getPosition()"></A>
@@ -1566,12 +791,12 @@ float getOuterAngle ()</pre>
     
 
     
-  <p>Get the position of this Spotlight.</p></p>
+  <p>Returns the position of the detected real-world object, in world coordinates.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
         <td><code><a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a></code></td>
-        <td width="100%">The positio as a <code><a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a></code>.
+        <td width="100%">The position in world coordinates, in a <code><a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a></code>.
 </p></td>
       </tr>
     </table>
@@ -1579,10 +804,10 @@ float getOuterAngle ()</pre>
 </div>
 
 
-<A NAME="getShadowBias()"></A>
+<A NAME="getRotation()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">getShadowBias</h3>
+    <h3 class="api-name">getRotation</h3>
     <div class="api-level">
       <div></div>
       
@@ -1590,18 +815,18 @@ float getOuterAngle ()</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-float getShadowBias ()</pre>
+<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> getRotation ()</pre>
     
     
 
     
-  <p>Return the amount of bias that is applied to the Z coordinate when performing shadow
- depth comparisons.</p></p>
+  <p>Return the orientation of the detected real-world object, along each of the three
+ principal axes.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code>float</code></td>
-        <td width="100%">The shadow bias value.
+        <td><code><a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a></code></td>
+        <td width="100%">The rotation in radians along the X, Y, and Z axes, stored in a <code><a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a></code>.
 </p></td>
       </tr>
     </table>
@@ -1609,10 +834,10 @@ float getShadowBias ()</pre>
 </div>
 
 
-<A NAME="getShadowFarZ()"></A>
+<A NAME="getScale()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">getShadowFarZ</h3>
+    <h3 class="api-name">getScale</h3>
     <div class="api-level">
       <div></div>
       
@@ -1620,18 +845,17 @@ float getShadowBias ()</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-float getShadowFarZ ()</pre>
+<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> getScale ()</pre>
     
     
 
     
-  <p>Get the far clipping plane used when rendering shadows. See <code><a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#setShadowFarZ(float)">setShadowFarZ(float)</a></code>
- for discussion.</p></p>
+  <p>Return the scale of the detected real-world object.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code>float</code></td>
-        <td width="100%">The shadow far clipping plane.
+        <td><code><a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a></code></td>
+        <td width="100%">The scale in a <code><a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a></code>.
 </p></td>
       </tr>
     </table>
@@ -1639,10 +863,10 @@ float getShadowFarZ ()</pre>
 </div>
 
 
-<A NAME="getShadowMapSize()"></A>
+<A NAME="getType()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">getShadowMapSize</h3>
+    <h3 class="api-name">getType</h3>
     <div class="api-level">
       <div></div>
       
@@ -1650,476 +874,17 @@ float getShadowFarZ ()</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-int getShadowMapSize ()</pre>
+<a href="../../../../../reference/com/viro/renderer/jni/ARHitTestResult.Type.html">ARHitTestResult.Type</a> getType ()</pre>
     
     
 
     
-  <p>Return the size of the texture map to which the shadowed portion of the scene will be
- rendered when computing shadows.</p></p>
+  <p>Returns the kind of detected real-world object contained in this result.</p></p>
     <table class="responsive">
       <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code>int</code></td>
-        <td width="100%">The size of the shadow map.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getShadowNearZ()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getShadowNearZ</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-float getShadowNearZ ()</pre>
-    
-    
-
-    
-  <p>Get the near clipping plane used when rendering shadows. See <code><a href="../../../../../reference/com/viro/renderer/jni/Spotlight.html#setShadowNearZ(float)">setShadowNearZ(float)</a></code>
- for discussion.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>float</code></td>
-        <td width="100%">The shadow near clipping plane.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="getShadowOpacity()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">getShadowOpacity</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-float getShadowOpacity ()</pre>
-    
-    
-
-    
-  <p>Return the opacity of shadows cast from this Light.</p></p>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>float</code></td>
-        <td width="100%">The shadow opacity.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setAttenuationEndDistance(float)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setAttenuationEndDistance</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setAttenuationEndDistance (float attenuationEndDistance)</pre>
-    
-    
-
-    
-  <p>Set the attenuation end distance, which determines when the light drops to zero illumination.
- Objects positioned at a distance greater than the attenuation end distance from the light's
- position will receive no illumination from this light.
- <p>
- The default value is Float.MAX_VALUE.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>attenuationEndDistance</code></td>
-        <td width="100%">
-          <code>float</code>: The distance from the light at which no illumination will be
-                               received.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setAttenuationStartDistance(float)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setAttenuationStartDistance</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setAttenuationStartDistance (float attenuationStartDistance)</pre>
-    
-    
-
-    
-  <p>Set the attenuation start distance, which determines when the light begins to attenuate.
- Objects positioned closer to the light than the attenuation start distance will receive the
- light's full illumination.
- <p>
- Objects positioned between the start and end distance will receive a proportion of the lights
- illumination, transitioning from full illumination to no illumination the further out from
- the lights position the object is.
- <p>
- The default value is 2.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>attenuationStartDistance</code></td>
-        <td width="100%">
-          <code>float</code>: The distance from the light at which the light begins to
-                                 attenuate.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setCastsShadow(boolean)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setCastsShadow</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setCastsShadow (boolean castsShadow)</pre>
-    
-    
-
-    
-  <p>Set to true to make this Spotlight cast shadows. Shadow construction is
- performance intensive; it is recommended to cast shadows from as few lights as
- possible to preserve frame-rate.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>castsShadow</code></td>
-        <td width="100%">
-          <code>boolean</code>: True to cast shadows, false to not cast shadows from the light.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setDirection(com.viro.renderer.jni.Vector)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setDirection</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setDirection (<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> direction)</pre>
-    
-    
-
-    
-  <p>Set the direction of the Spotlight.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>direction</code></td>
-        <td width="100%">
-          <code>Vector</code>: The direction as a <code><a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a></code>.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setInnerAngle(float)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setInnerAngle</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setInnerAngle (float innerAngle)</pre>
-    
-    
-
-    
-  <p>Set the inner angle, which is the angle from the axis of the light cone to the edge of the 'full
- illumination' section of the light cone.
- <p>
- The default is set to 0, which means only objects hitting the center of the spotlight will
- receive the light's full illumination. The illumination declines from innerAngle until
- reaching outerAngle.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>innerAngle</code></td>
-        <td width="100%">
-          <code>float</code>: The inner angle in radians.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setOuterAngle(float)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setOuterAngle</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setOuterAngle (float outerAngle)</pre>
-    
-    
-
-    
-  <p>Set the outer angle, which is the angle from the full illumination (hard edge) of the cone to
- the no illumination (soft edge) of the cone. If the outer angle is zero, then the entirety of
- the cone will have full illumination.
- <p>
- The default is set to PI / 4 radians (45 degrees).</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>outerAngle</code></td>
-        <td width="100%">
-          <code>float</code>: The outer angle in radians.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setPosition(com.viro.renderer.jni.Vector)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setPosition</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setPosition (<a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a> position)</pre>
-    
-    
-
-    
-  <p>Set the position of this Spotlight within the coordinate system of its parent <code><a href="../../../../../reference/com/viro/renderer/jni/Node.html">Node</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>position</code></td>
-        <td width="100%">
-          <code>Vector</code>: The position of as a <code><a href="../../../../../reference/com/viro/renderer/jni/Vector.html">Vector</a></code>.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setShadowBias(float)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setShadowBias</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setShadowBias (float shadowBias)</pre>
-    
-    
-
-    
-  <p>Set the amount of bias to apply to the Z coordinate when performing the shadow depth
- comparison. This reduces shadow acne, but large biases can cause "peter panning".
- <p>
- The default value is 0.005.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>shadowBias</code></td>
-        <td width="100%">
-          <code>float</code>: The shadow bias value.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setShadowFarZ(float)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setShadowFarZ</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setShadowFarZ (float shadowFarZ)</pre>
-    
-    
-
-    
-  <p>Set the far clipping plane to use when rendering shadows. Shadows are only cast by and on
- surfaces closer than this plane.
- <p>
- This value defines the units away the far clipping plane is from the light's position, in the
- direction of the light.
- <p>
- The shadow bounds constructed from this property, shadowNearZ, and the light's cone
- (innerAngle and outerAngle) should be kept as tight as possible to maximize the resolution of
- shadows.
- <p>
- The default value is 20.</p></p>
-
-</div>
-
-
-<A NAME="setShadowMapSize(int)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setShadowMapSize</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setShadowMapSize (int shadowMapSize)</pre>
-    
-    
-
-    
-  <p>Set the size of the shadow map used to cast shadows for this light.
- <p>
- Shadows are created by rendering the silhouettes of scene geometry onto a 2D image from the
- point of view of the light, then projecting that image onto the final view.
- <p>
- Larger shadow maps result in higher resolution shadows, but can have a higher memory and
- performance cost. Smaller shadow maps are faster but result in pixelated edges.
- <p>
- The default value is 1024.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>shadowMapSize</code></td>
-        <td width="100%">
-          <code>int</code>: The size of the shadow map.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="setShadowNearZ(float)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setShadowNearZ</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setShadowNearZ (float shadowNearZ)</pre>
-    
-    
-
-    
-  <p>Set the near clipping plane to use when rendering shadows. Shadows are only cast by and on
- surfaces further away than this plane.
- <p>
- This value defines the units away the near clipping plane is from the light's position, in
- the direction of the light.
- <p>
- The shadow bounds constructed from this property, shadowNearZ, and the light's cone
- (innerAngle and outerAngle) should be kept as tight as possible to maximize the resolution of
- shadows.
- <p>
- The default value is 0.1.</p></p>
-
-</div>
-
-
-<A NAME="setShadowOpacity(float)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">setShadowOpacity</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void setShadowOpacity (float opacity)</pre>
-    
-    
-
-    
-  <p>The opacity of the shadow. 1.0 creates a pitch black shadow. Lower opacities (approaching
- 0.0), make the shadow fainter and fainter.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>opacity</code></td>
-        <td width="100%">
-          <code>float</code>: The shadow opacity.
+        <td><code><a href="../../../../../reference/com/viro/renderer/jni/ARHitTestResult.Type.html">ARHitTestResult.Type</a></code></td>
+        <td width="100%">The type of the real-world object.
 </p></td>
       </tr>
     </table>
