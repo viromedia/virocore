@@ -284,7 +284,7 @@ public class EventDelegate {
     }
 
     void onCameraARHitTest(int source, ARHitTestResult[] results) {
-        if (mDelegate != null) {
+        if (mDelegate != null && mDelegate.get() != null) {
             mDelegate.get().onCameraARHitTest(source, results);
         }
     }

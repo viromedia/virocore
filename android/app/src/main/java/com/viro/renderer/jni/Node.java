@@ -1380,7 +1380,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * @param z
      */
     public final void onPositionUpdate(float x, float y, float z) {
-        if (mTransformDelegate.get() != null){
+        if (mTransformDelegate != null && mTransformDelegate.get() != null){
             mTransformDelegate.get().onPositionUpdate(new Vector(x,y,z));
         }
     }
