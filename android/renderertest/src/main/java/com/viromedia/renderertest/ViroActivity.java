@@ -20,7 +20,8 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.viro.renderer.jni.ARAnchor;
-import com.viro.renderer.ARHitTestResult;
+import com.viro.renderer.jni.ARHitTestCallback;
+import com.viro.renderer.jni.ARHitTestResult;
 import com.viro.renderer.jni.ARDeclarativeNode;
 import com.viro.renderer.jni.ARNode;
 import com.viro.renderer.jni.ARDeclarativePlane;

@@ -20,7 +20,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.viro.renderer.ARHitTestResult;
+import com.viro.renderer.jni.ARHitTestResult;
 import com.viro.renderer.jni.ARScene;
 import com.viro.renderer.jni.EventDelegate;
 import com.viro.renderer.jni.Material;

@@ -328,9 +328,23 @@ void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneControll
     _cameraBackground.reset();
 }
 
+std::vector<VROARHitTestResult> VROSceneRendererARCore::performARHitTest(float x, float y) {
+    int viewportArr[4] = {0, 0, _surfaceSize.width, _surfaceSize.height};
+
+    std::unique_ptr<VROARFrame> &frame = _session->getLastFrame();
+    if (frame && x >= 0 && x <= viewportArr[2] && y >= 0 && y <= viewportArr[3]) {
+        std::vector<VROARHitTestResult> results = frame->hitTest(x, y,
+                                                                 {VROARHitTestResultType::ExistingPlaneUsingExtent,
+                                                                  VROARHitTestResultType::ExistingPlane,
+                                                                  VROARHitTestResultType::EstimatedHorizontalPlane,
+                                                                  VROARHitTestResultType::FeaturePoint});
+        return results;
+    };
+    return std::vector<VROARHitTestResult>();
+}
+
 std::vector<VROARHitTestResult> VROSceneRendererARCore::performARHitTest(VROVector3f ray) {
     VROVector3f cameraForward = getRenderer()->getRenderContext()->getCamera().getForward();
-
     if (cameraForward.dot(ray) <= 0) {
         return std::vector<VROARHitTestResult>();
     }
@@ -344,19 +358,7 @@ std::vector<VROARHitTestResult> VROSceneRendererARCore::performARHitTest(VROVect
 
     VROVector3f point;
     VROProjector::project(ray, vpMat.getArray(), viewportArr, &point);
-
-    std::unique_ptr<VROARFrame> &frame = _session->getLastFrame();
-    if (frame && point.x >= 0 && point.x <= viewportArr[2] && point.y >= 0 && point.y <= viewportArr[3]) {
-        std::vector<VROARHitTestResult> results = frame->hitTest(point.x,
-                                                                 point.y,
-                                                                 {VROARHitTestResultType::ExistingPlaneUsingExtent,
-                                                                  VROARHitTestResultType::ExistingPlane,
-                                                                  VROARHitTestResultType::EstimatedHorizontalPlane,
-                                                                  VROARHitTestResultType::FeaturePoint});
-        return results;
-    };
-
-    return std::vector<VROARHitTestResult>();
+    return performARHitTest(point.x, point.y);
 }
 
 

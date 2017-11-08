@@ -79,6 +79,14 @@ public:
     void onSurfaceChanged(jobject surface, jint width, jint height);
     void onSurfaceDestroyed() {}
 
+    /*
+     AR hit test using point on the screen in 2D coordinate system.
+     */
+    std::vector<VROARHitTestResult> performARHitTest(float x, float y);
+
+    /*
+     AR hit test using a ray from camera's position into the 3D scene.
+     */
     std::vector<VROARHitTestResult> performARHitTest(VROVector3f ray);
 
 private:

@@ -11,11 +11,6 @@
  */
 package com.viro.renderer.jni;
 
-import android.app.usage.UsageEvents;
-import android.gesture.Gesture;
-
-import com.viro.renderer.ARHitTestResult;
-import com.viro.renderer.jni.event.ARHitTestListener;
 import com.viro.renderer.jni.event.ClickListener;
 import com.viro.renderer.jni.event.ClickState;
 import com.viro.renderer.jni.event.ControllerStatus;
@@ -32,9 +27,6 @@ import com.viro.renderer.jni.event.TouchState;
 import com.viro.renderer.jni.event.TouchpadScrollListener;
 import com.viro.renderer.jni.event.TouchpadSwipeListener;
 import com.viro.renderer.jni.event.TouchpadTouchListener;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Controller represents the UI through which the user interacts with the {@link Scene}. The exact
@@ -67,7 +59,6 @@ public class Controller implements EventDelegate.EventDelegateCallback {
     private FuseListener mFuseListener;
     private GesturePinchListener mGesturePinchListener;
     private GestureRotateListener mGestureRotateListener;
-    private ARHitTestListener mARHitTestListener;
 
     /**
      * @hide
@@ -393,38 +384,12 @@ public class Controller implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Set the {@link ARHitTestListener} to respond when an AR hit test intersects with this
-     * {@link Node}. TODO DOC Indicate how these hit tests are triggered
-     *
-     * @param listener The listener to attach, or null to remove any installed listener.
-     */
-    public void setARHitTestListener(ARHitTestListener listener) {
-        mARHitTestListener = listener;
-        if (listener != null) {
-            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_CAMERA_AR_HIT_TEST, true);
-        }
-        else {
-            mEventDelegate.setEventEnabled(EventDelegate.EventAction.ON_CAMERA_AR_HIT_TEST, false);
-        }
-    }
-
-    /**
-     * Get the {@link ARHitTestListener} that is currently installed for this Controller.
-     *
-     * @return The installed listener, or null if none is installed.
-     */
-    public ARHitTestListener getARHitTestListener() {
-        return mARHitTestListener;
-    }
-
-    /**
+     * This is used for real-time depth testing, only by the VRTScene. Not exposed to Java API.
      * @hide
      */
     @Override
     public void onCameraARHitTest(int source, ARHitTestResult[] results) {
-        if (mARHitTestListener != null) {
-            mARHitTestListener.onARHitTest(source, results);
-        }
+
     }
 
     /**

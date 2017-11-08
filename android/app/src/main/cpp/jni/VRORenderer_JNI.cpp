@@ -380,7 +380,95 @@ JNI_METHOD(void, nativeRecenterTracking)(JNIEnv *env,
     ovrRenderer->recenterTracking();
 }
 
-// TODO: this function is very much like the one below, we should unify them.
+void invokeARResultsCallback(std::vector<VROARHitTestResult> &results, jweak weakCallback) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jclass arHitTestResultClass = env->FindClass("com/viro/renderer/jni/ARHitTestResult");
+
+    jobjectArray resultsArray = env->NewObjectArray(results.size(), arHitTestResultClass, NULL);
+    for (int i = 0; i < results.size(); i++) {
+        VROARHitTestResult result = results[i];
+
+        jmethodID constructorMethod = env->GetMethodID(arHitTestResultClass, "<init>", "(Ljava/lang/String;[F[F[F)V");
+        jstring jtypeString;
+        jfloatArray jposition = env->NewFloatArray(3);
+        jfloatArray jscale = env->NewFloatArray(3);
+        jfloatArray jrotation = env->NewFloatArray(3);
+
+        VROVector3f positionVec = result.getWorldTransform().extractTranslation();
+        VROVector3f scaleVec = result.getWorldTransform().extractScale();
+        VROVector3f rotationVec = result.getWorldTransform().extractRotation(scaleVec).toEuler();
+
+        float position[3] = {positionVec.x, positionVec.y, positionVec.z};
+        float scale[3] = {scaleVec.x, scaleVec.y, scaleVec.z};
+        float rotation[3] = {rotationVec.x, rotationVec.y, rotationVec.z};
+
+        env->SetFloatArrayRegion(jposition, 0, 3, position);
+        env->SetFloatArrayRegion(jscale, 0, 3, scale);
+        env->SetFloatArrayRegion(jrotation, 0, 3, rotation);
+
+        const char* typeString;
+        // Note: ARCore currently only supports Plane & FeaturePoint. See VROARFrameARCore::hitTest.
+        switch (result.getType()) {
+            case VROARHitTestResultType::ExistingPlaneUsingExtent:
+                typeString = "ExistingPlaneUsingExtent";
+                break;
+            default: // FeaturePoint
+                typeString = "FeaturePoint";
+                break;
+        }
+
+        jtypeString = env->NewStringUTF(typeString);
+        jobject jresult = env->NewObject(arHitTestResultClass, constructorMethod, jtypeString,
+                                         jposition, jscale, jrotation);
+        env->SetObjectArrayElement(resultsArray, i, jresult);
+    }
+
+    jobject globalArrayRef = env->NewGlobalRef(resultsArray);
+    VROPlatformDispatchAsyncApplication([weakCallback, globalArrayRef] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject callback = env->NewLocalRef(weakCallback);
+        VROPlatformCallJavaFunction(callback, "onHitTestFinished",
+                                    "([Lcom/viro/renderer/jni/ARHitTestResult;)V",
+                                    globalArrayRef);
+        env->DeleteGlobalRef(globalArrayRef);
+    });
+}
+
+void invokeEmptyARResultsCallback(jweak weakCallback) {
+    VROPlatformDispatchAsyncApplication([weakCallback] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject callback = env->NewLocalRef(weakCallback);
+        jclass arHitTestResultClass = env->FindClass("com/viro/renderer/jni/ARHitTestResult");
+        jobjectArray emptyArray = env->NewObjectArray(0, arHitTestResultClass, NULL);
+        VROPlatformCallJavaFunction(callback, "onHitTestFinished",
+                                    "([Lcom/viro/renderer/jni/ARHitTestResult;)V", emptyArray);
+    });
+}
+
+void performARHitTest(VROVector3f rayVec, std::weak_ptr<VROSceneRendererARCore> arRenderer_w,
+                      jweak weakCallback) {
+    std::shared_ptr<VROSceneRendererARCore> arRenderer = arRenderer_w.lock();
+    if (!arRenderer) {
+        invokeEmptyARResultsCallback(weakCallback);
+    }
+    else {
+        std::vector<VROARHitTestResult> results = arRenderer->performARHitTest(rayVec);
+        invokeARResultsCallback(results, weakCallback);
+    }
+}
+
+void performARHitTestPoint(JNIEnv *env, float x, float y, std::weak_ptr<VROSceneRendererARCore> arRenderer_w,
+                           jweak weakCallback) {
+    std::shared_ptr<VROSceneRendererARCore> arRenderer = arRenderer_w.lock();
+    if (!arRenderer) {
+        invokeEmptyARResultsCallback(weakCallback);
+    }
+    else {
+        std::vector<VROARHitTestResult> results = arRenderer->performARHitTest(x, y);
+        invokeARResultsCallback(results, weakCallback);
+    }
+}
+
 JNI_METHOD(void, nativePerformARHitTestWithRay) (JNIEnv *env,
                                                  jobject object,
                                                  jlong native_renderer,
@@ -397,73 +485,7 @@ JNI_METHOD(void, nativePerformARHitTestWithRay) (JNIEnv *env,
     jweak weakCallback = env->NewWeakGlobalRef(callback);
 
     VROPlatformDispatchAsyncRenderer([arRenderer_w, weakCallback, rayVec] {
-        JNIEnv *env = VROPlatformGetJNIEnv();
-        std::shared_ptr<VROSceneRendererARCore> arRenderer = arRenderer_w.lock();
-        jclass arHitTestResultClass = env->FindClass("com/viro/renderer/ARHitTestResult");
-
-        if (!arRenderer) {
-            VROPlatformDispatchAsyncApplication([weakCallback] {
-                JNIEnv *env = VROPlatformGetJNIEnv();
-                jobject callback = env->NewLocalRef(weakCallback);
-                jclass arHitTestResultClass = env->FindClass("com/viro/renderer/ARHitTestResult");
-                jobjectArray emptyArray = env->NewObjectArray(0, arHitTestResultClass, NULL);
-                VROPlatformCallJavaFunction(callback, "onComplete",
-                                            "([Lcom/viro/renderer/ARHitTestResult;)V", emptyArray);
-            });
-        }
-
-        std::vector<VROARHitTestResult> results = arRenderer->performARHitTest(rayVec);
-
-        jobjectArray resultsArray = env->NewObjectArray(results.size(), arHitTestResultClass, NULL);
-        for (int i = 0; i < results.size(); i++) {
-            VROARHitTestResult result = results[i];
-
-            jmethodID constructorMethod = env->GetMethodID(arHitTestResultClass, "<init>", "(Ljava/lang/String;[F[F[F)V");
-            jstring jtypeString;
-            jfloatArray jposition = env->NewFloatArray(3);
-            jfloatArray jscale = env->NewFloatArray(3);
-            jfloatArray jrotation = env->NewFloatArray(3);
-
-            VROVector3f positionVec = result.getWorldTransform().extractTranslation();
-            VROVector3f scaleVec = result.getWorldTransform().extractScale();
-            VROVector3f rotationVec = result.getWorldTransform().extractRotation(scaleVec).toEuler();
-
-            float position[3] = {positionVec.x, positionVec.y, positionVec.z};
-            float scale[3] = {scaleVec.x, scaleVec.y, scaleVec.z};
-            float rotation[3] = {rotationVec.x, rotationVec.y, rotationVec.z};
-
-            env->SetFloatArrayRegion(jposition, 0, 3, position);
-            env->SetFloatArrayRegion(jscale, 0, 3, scale);
-            env->SetFloatArrayRegion(jrotation, 0, 3, rotation);
-
-            const char* typeString;
-            // Note: ARCore currently only supports Plane & FeaturePoint. See VROARFrameARCore::hitTest.
-            switch (result.getType()) {
-                case VROARHitTestResultType::ExistingPlaneUsingExtent:
-                    typeString = "ExistingPlaneUsingExtent";
-                    break;
-                default: // FeaturePoint
-                    typeString = "FeaturePoint";
-                    break;
-            }
-
-            jtypeString = env->NewStringUTF(typeString);
-
-            jobject jresult = env->NewObject(arHitTestResultClass, constructorMethod, jtypeString,
-                                             jposition, jscale, jrotation);
-
-            env->SetObjectArrayElement(resultsArray, i, jresult);
-        }
-
-        jobject globalArrayRef = env->NewGlobalRef(resultsArray);
-        VROPlatformDispatchAsyncApplication([weakCallback, globalArrayRef] {
-            JNIEnv *env = VROPlatformGetJNIEnv();
-            jobject callback = env->NewLocalRef(weakCallback);
-            VROPlatformCallJavaFunction(callback, "onComplete",
-                                        "([Lcom/viro/renderer/ARHitTestResult;)V",
-                                        globalArrayRef);
-            env->DeleteGlobalRef(globalArrayRef);
-        });
+        performARHitTest(rayVec, arRenderer_w, weakCallback);
     });
 }
 
@@ -488,75 +510,21 @@ JNI_METHOD(void, nativePerformARHitTestWithPosition) (JNIEnv *env,
     jweak weakCallback = env->NewWeakGlobalRef(callback);
 
     VROPlatformDispatchAsyncRenderer([arRenderer_w, weakCallback, rayVec] {
-        JNIEnv *env = VROPlatformGetJNIEnv();
-        std::shared_ptr<VROSceneRendererARCore> arRenderer = arRenderer_w.lock();
-        jclass arHitTestResultClass = env->FindClass("com/viro/renderer/ARHitTestResult");
+        performARHitTest(rayVec, arRenderer_w, weakCallback);
+    });
+}
 
-        if (!arRenderer) {
-            VROPlatformDispatchAsyncApplication([weakCallback] {
-                JNIEnv *env = VROPlatformGetJNIEnv();
-                jobject callback = env->NewLocalRef(weakCallback);
-                jclass arHitTestResultClass = env->FindClass("com/viro/renderer/ARHitTestResult");
-                jobjectArray emptyArray = env->NewObjectArray(0, arHitTestResultClass, NULL);
-                VROPlatformCallJavaFunction(callback, "onComplete",
-                                            "([Lcom/viro/renderer/ARHitTestResult;)V", emptyArray);
-            });
-        }
+JNI_METHOD(void, nativePerformARHitTestWithPoint) (JNIEnv *env,
+                                                   jobject object,
+                                                   jlong native_renderer,
+                                                   jfloat x, jfloat y,
+                                                   jobject callback) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
+    std::weak_ptr<VROSceneRendererARCore> arRenderer_w = std::dynamic_pointer_cast<VROSceneRendererARCore>(renderer);
+    jweak weakCallback = env->NewWeakGlobalRef(callback);
 
-        std::vector<VROARHitTestResult> results = arRenderer->performARHitTest(rayVec);
-
-        jobjectArray resultsArray = env->NewObjectArray(results.size(), arHitTestResultClass, NULL);
-        for (int i = 0; i < results.size(); i++) {
-            VROARHitTestResult result = results[i];
-
-            jmethodID constructorMethod = env->GetMethodID(arHitTestResultClass, "<init>",
-                                                           "(Ljava/lang/String;[F[F[F)V");
-            jstring jtypeString;
-            jfloatArray jposition = env->NewFloatArray(3);
-            jfloatArray jscale = env->NewFloatArray(3);
-            jfloatArray jrotation = env->NewFloatArray(3);
-
-            VROVector3f positionVec = result.getWorldTransform().extractTranslation();
-            VROVector3f scaleVec = result.getWorldTransform().extractScale();
-            VROVector3f rotationVec = result.getWorldTransform().extractRotation(
-                    scaleVec).toEuler();
-
-            float position[3] = {positionVec.x, positionVec.y, positionVec.z};
-            float scale[3] = {scaleVec.x, scaleVec.y, scaleVec.z};
-            float rotation[3] = {rotationVec.x, rotationVec.y, rotationVec.z};
-
-            env->SetFloatArrayRegion(jposition, 0, 3, position);
-            env->SetFloatArrayRegion(jscale, 0, 3, scale);
-            env->SetFloatArrayRegion(jrotation, 0, 3, rotation);
-
-            const char *typeString;
-            // Note: ARCore currently only supports Plane & FeaturePoint. See VROARFrameARCore::hitTest.
-            switch (result.getType()) {
-                case VROARHitTestResultType::ExistingPlaneUsingExtent:
-                    typeString = "ExistingPlaneUsingExtent";
-                    break;
-                default: // FeaturePoint
-                    typeString = "FeaturePoint";
-                    break;
-            }
-
-            jtypeString = env->NewStringUTF(typeString);
-
-            jobject jresult = env->NewObject(arHitTestResultClass, constructorMethod, jtypeString,
-                                             jposition, jscale, jrotation);
-
-            env->SetObjectArrayElement(resultsArray, i, jresult);
-        }
-
-        jobject globalArrayRef = env->NewGlobalRef(resultsArray);
-        VROPlatformDispatchAsyncApplication([weakCallback, globalArrayRef] {
-            JNIEnv *env = VROPlatformGetJNIEnv();
-            jobject callback = env->NewLocalRef(weakCallback);
-            VROPlatformCallJavaFunction(callback, "onComplete",
-                                        "([Lcom/viro/renderer/ARHitTestResult;)V",
-                                        globalArrayRef);
-            env->DeleteGlobalRef(globalArrayRef);
-        });
+    VROPlatformDispatchAsyncRenderer([env, arRenderer_w, weakCallback, x, y] {
+        performARHitTestPoint(env, x, y, arRenderer_w, weakCallback);
     });
 }
 

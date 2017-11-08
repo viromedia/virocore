@@ -10,8 +10,6 @@
  */
 package com.viro.renderer.jni;
 
-import com.viro.renderer.ARHitTestResult;
-import com.viro.renderer.jni.event.ARHitTestListener;
 import com.viro.renderer.jni.event.ClickListener;
 import com.viro.renderer.jni.event.ClickState;
 import com.viro.renderer.jni.event.ControllerStatus;
@@ -210,7 +208,6 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private FuseListener mFuseListener;
     private GesturePinchListener mGesturePinchListener;
     private GestureRotateListener mGestureRotateListener;
-    private ARHitTestListener mARHitTestListener;
 
     /**
      * Construct a new Node centered at the origin, with no geometry.
@@ -1197,6 +1194,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
+     * This is used for real-time depth testing, only by the VRTScene. Not exposed to Java API.
      * @hide
      */
     @Override

@@ -15,7 +15,6 @@ import android.content.res.AssetManager;
 import android.view.Surface;
 
 import com.google.ar.core.Session;
-import com.viro.renderer.ARHitTestResult;
 
 /**
  * @hide
@@ -68,9 +67,10 @@ public class Renderer {
         nativePerformARHitTestWithPosition(mNativeRef, position, callback);
     }
 
-    public interface ARHitTestCallback {
-        void onComplete(ARHitTestResult[] results);
+    public void performARHitTestWithPoint(float x, float y, ARHitTestCallback callback) {
+        nativePerformARHitTestWithPoint(mNativeRef, x, y, callback);
     }
+
     /* ----------     Common lifecycle methods    ---------- */
 
     public void destroy() { nativeDestroyRenderer(mNativeRef); }
@@ -172,6 +172,7 @@ public class Renderer {
     private native void nativeRecenterTracking(long nativeRenderer);
     private native void nativePerformARHitTestWithRay(long nativeRenderer, float[] ray, ARHitTestCallback callback);
     private native void nativePerformARHitTestWithPosition(long nativeRenderer, float[] position, ARHitTestCallback callback);
+    private native void nativePerformARHitTestWithPoint(long nativeRenderer, float x, float y, ARHitTestCallback callback);
 
     private native void nativeAddFrameListener(long nativeRenderer, long portalTraversalListener);
     private native void nativeRemoveFrameListener(long nativeRenderer, long portalTraversalListener);

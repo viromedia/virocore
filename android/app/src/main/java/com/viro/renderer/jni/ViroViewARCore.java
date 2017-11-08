@@ -443,17 +443,50 @@ public class ViroViewARCore extends ViroView {
         }
     }
 
-    // TODO Implement
-    public void performARHitTestWithRay(float[] ray, com.viro.renderer.jni.Renderer.ARHitTestCallback callback) {
+    /**
+     * Performs a hit-test from the camera's position in the direction of the given ray. The
+     * hit-test returns all <i>real-world</i> features that are intersected by the ray.
+     *
+     * @param ray      Perform the hit-test from the camera's position in the direction of this
+     *                 ray.
+     * @param callback The callback that will receive the {@link ARHitTestResult}
+     *                 results.
+     */
+    public void performARHitTestWithRay(Vector ray, ARHitTestCallback callback) {
         if (!mDestroyed) {
-            mNativeRenderer.performARHitTestWithRay(ray, callback);
+            mNativeRenderer.performARHitTestWithRay(ray.toArray(), callback);
         }
     }
 
-    // TODO Implement
-    public void performARHitTestWithPosition(float[] position, com.viro.renderer.jni.Renderer.ARHitTestCallback callback) {
+    /**
+     * Performs a hit-test along the ray from the camera's current position <i>to</i> the given
+     * position in world coordinates. The hit-test returns all <i>real-world</i> features that are
+     * intersected by the ray.
+     *
+     * @param position Perform the hit-test along the ray from the camera's position to this
+     *                 position.
+     * @param callback The callback that will receive the {@link ARHitTestResult}
+     *                 results.
+     */
+    public void performARHitTestWithPosition(Vector position, ARHitTestCallback callback) {
         if (!mDestroyed) {
-            mNativeRenderer.performARHitTestWithPosition(position, callback);
+            mNativeRenderer.performARHitTestWithPosition(position.toArray(), callback);
+        }
+    }
+
+
+    /**
+     * Performs a hit-test searching for all <i>real-world</i> features at the given 2D point on the
+     * view. Note that since a single 2D point on view corresponds to a 3D ray in the scene,
+     * multiple results may be returned (each at a different depth).
+     *
+     * @param point    Perform the hit-test at this Point in the 2D view's coordinate system.
+     * @param callback The callback that will receive the {@link ARHitTestResult}
+     *                 results.
+     */
+    public void performARHitTest(Point point, ARHitTestCallback callback) {
+        if (!mDestroyed) {
+            mNativeRenderer.performARHitTestWithPoint(point.x, point.y, callback);
         }
     }
 }

@@ -15,7 +15,7 @@ package com.viro.renderer.jni;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
-import com.viro.renderer.ARHitTestResult;
+
 import com.viro.renderer.jni.event.ClickState;
 import com.viro.renderer.jni.event.ControllerStatus;
 import com.viro.renderer.jni.event.PinchState;

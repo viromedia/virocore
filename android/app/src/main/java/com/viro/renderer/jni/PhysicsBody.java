@@ -85,7 +85,7 @@ public class PhysicsBody {
     }
 
     /**
-     * Set the Shape that should be used to approximate the PhysicsBody during the
+     * Set the {@link PhysicsShape} that should be used to approximate the PhysicsBody during the
      * physics simulation.
      *
      * @param shape The solid volume of the PhysicsBody.
@@ -96,7 +96,7 @@ public class PhysicsBody {
     }
 
     /**
-     * Get the Shape that is used to approximate the PhysicsBody.
+     * Get the {@link PhysicsShape} that is used to approximate the PhysicsBody.
      *
      * @return The solid volume of the PhysicsBody.
      */
