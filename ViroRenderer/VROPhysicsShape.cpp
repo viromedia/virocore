@@ -92,7 +92,7 @@ btCollisionShape* VROPhysicsShape::generateBasicBulletShape(std::shared_ptr<VRON
 
 btCollisionShape* VROPhysicsShape::generateBasicBulletShape(VROPhysicsShape::VROShapeType type, std::vector<float> params) {
     if (type == VROPhysicsShape::VROShapeType::Box) {
-        return new btBoxShape(btVector3(params[0],params[1],params[2]));
+        return new btBoxShape(btVector3(params[0] / 2, params[1] / 2, params[2] / 2));
     } else if (type == VROPhysicsShape::VROShapeType::Sphere) {
         return new btSphereShape(btScalar(params[0]));
     } else if (type != VROPhysicsShape::VROShapeType::Auto &&
