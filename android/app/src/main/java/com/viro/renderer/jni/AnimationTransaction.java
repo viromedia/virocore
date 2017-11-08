@@ -99,7 +99,7 @@ public class AnimationTransaction {
     }
 
     /**
-     * Set the duration fo all animations in this AnimationTransaction, in seconds.
+     * Set the duration of all animations in this AnimationTransaction, in seconds.
      *
      * @param durationMillis The duration of the transaction, in milliseconds.
      */
