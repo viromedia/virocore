@@ -44,6 +44,7 @@ public class ViroPortalTest extends ViroBaseTest  {
         AmbientLight light = new AmbientLight(Color.WHITE, 1000.0f);
         mScene.getRootNode().addLight(light);
         mPortal = new Portal();
+        mPortal.setIgnoreEventHandling(true);
         mPortalScene = new PortalScene();
         mPortalScene.setPosition(new Vector(0, 0, -6));
         mScene.getRootNode().addChildNode(mPortalScene);
@@ -79,9 +80,11 @@ public class ViroPortalTest extends ViroBaseTest  {
             if(mPortal.getChildNodes().get(0) == object3DShip) {
                 mPortal.removeAllChildNodes();
                 mPortal.addChildNode(object3DArchway);
+                object3DArchway.setIgnoreEventHandling(true);
             } else {
                 mPortal.removeAllChildNodes();
                 mPortal.addChildNode(object3DShip);
+                object3DShip.setIgnoreEventHandling(true);
             }
         };
 
