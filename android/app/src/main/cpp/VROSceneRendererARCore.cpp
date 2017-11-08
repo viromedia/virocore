@@ -308,10 +308,16 @@ void VROSceneRendererARCore::setSuspended(bool suspendRenderer) {
 
 void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneController> sceneController) {
     _sceneController = sceneController;
+
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(sceneController->getScene());
     if (arScene && _session) {
         _session->setDelegate(arScene->getSessionDelegate());
+        if (_hasTrackingInitialized) {
+            arScene->trackingHasInitialized();
+        }
     }
+    passert_msg(arScene != nullptr, "[Viro] AR requires using ARScene");
+
     VROSceneRenderer::setSceneController(sceneController);
 
     // Reset the camera background for the new scene
@@ -322,6 +328,16 @@ void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneControll
                         VROTimingFunctionType timingFunction) {
 
     _sceneController = sceneController;
+
+    std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(sceneController->getScene());
+    if (arScene && _session) {
+        _session->setDelegate(arScene->getSessionDelegate());
+        if (_hasTrackingInitialized) {
+            arScene->trackingHasInitialized();
+        }
+    }
+    passert_msg(arScene != nullptr, "[Viro] AR requires using ARScene");
+
     VROSceneRenderer::setSceneController(sceneController, seconds, timingFunction);
 
     // Reset the camera background for the new scene
