@@ -88,9 +88,9 @@ void VROARScene::displayPointCloud(bool displayPointCloud) {
     // If we had an emitter, then add or remove it.
     if (_pointCloudEmitter) {
         if (_displayPointCloud) {
-            VROScene::addParticleEmitter(_pointCloudEmitter);
+            _pointCloudNode->setParticleEmitter(_pointCloudEmitter);
         } else {
-            VROScene::removeParticleEmitter(_pointCloudEmitter);
+            _pointCloudNode->removeParticleEmitter();
             _pointCloudEmitter->clearParticles();
         }
     }
@@ -130,11 +130,7 @@ std::shared_ptr<VROPointCloudEmitter> VROARScene::createPointCloudEmitter() {
     if (!driver || !arSession) {
         return nullptr;
     }
-    
-    std::shared_ptr<VRONode> node = std::make_shared<VRONode>();
-    _rootNode->addChildNode(node);
-
-    return std::make_shared<VROPointCloudEmitter>(driver, node, arSession);
+    return std::make_shared<VROPointCloudEmitter>(driver, arSession);
 }
 
 void VROARScene::setDelegate(std::shared_ptr<VROARSceneDelegate> delegate) {

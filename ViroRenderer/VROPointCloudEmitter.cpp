@@ -16,10 +16,8 @@
 #include "VROParticleUBO.h"
 
 VROPointCloudEmitter::VROPointCloudEmitter(std::shared_ptr<VRODriver> driver,
-                                           std::shared_ptr<VRONode> node,
                                            std::shared_ptr<VROARSession> session) :
     _particleScale(VROVector3f(.01, .01, .01)) {
-
     initPointCloudTexture();
 
     _arSession = session;
@@ -30,16 +28,13 @@ VROPointCloudEmitter::VROPointCloudEmitter(std::shared_ptr<VRODriver> driver,
     surface->getMaterials()[0]->setBloomThreshold(-1);
     surface->getMaterials()[0]->setBlendMode(VROBlendMode::Add);
 
-    VROParticleEmitter::initEmitter(driver, node, surface);
+    VROParticleEmitter::initEmitter(driver, surface);
 }
 
 void VROPointCloudEmitter::clearParticles() {
     _particles.clear();
     _zombieParticles.clear();
-    std::shared_ptr<VRONode> emitterNode = _particleEmitterNodeWeak.lock();
-    if (emitterNode) {
-        updateUBO(emitterNode, VROBoundingBox(0,0,0,0,0,0));
-    }
+    updateUBO(VROBoundingBox(0, 0, 0, 0, 0, 0));
 }
 
 void VROPointCloudEmitter::resetParticleSurface() {
@@ -48,33 +43,28 @@ void VROPointCloudEmitter::resetParticleSurface() {
     newSurface->getMaterials()[0]->setBloomThreshold(-1);
     newSurface->getMaterials()[0]->setBlendMode(VROBlendMode::Add);
     VROParticleEmitter::setParticleSurface(newSurface);
-
 }
 
 void VROPointCloudEmitter::setParticleSurface(std::shared_ptr<VROSurface> particleSurface) {
     VROParticleEmitter::setParticleSurface(particleSurface);
 }
 
-void VROPointCloudEmitter::update(const VRORenderContext &context) {
-    std::shared_ptr<VRONode> emitterNode = _particleEmitterNodeWeak.lock();
+void VROPointCloudEmitter::update(const VRORenderContext &context, const VROMatrix4f &computedTransform) {
     std::shared_ptr<VROARSession> arSession = _arSession.lock();
-    if (!emitterNode || !arSession) {
+    if (!arSession) {
         return;
     }
-
     std::unique_ptr<VROARFrame> &frame = arSession->getLastFrame();
     if (!frame) {
         return;
     }
+    
     std::vector<VROVector4f> pointCloudPoints = frame->getPointCloud()->getPoints();
-
-    VROBoundingBox boundingBox = updateParticles(emitterNode, pointCloudPoints, context);
-    updateUBO(emitterNode, boundingBox);
-
+    VROBoundingBox boundingBox = updateParticles(pointCloudPoints, context);
+    updateUBO(boundingBox);
 }
 
-VROBoundingBox VROPointCloudEmitter::updateParticles(std::shared_ptr<VRONode> node,
-                                                     std::vector<VROVector4f> pointCloudPoints,
+VROBoundingBox VROPointCloudEmitter::updateParticles(std::vector<VROVector4f> pointCloudPoints,
                                                      const VRORenderContext &context) {
     int pointCloudIndex = 0;
     int increment = 0;
@@ -154,11 +144,11 @@ void VROPointCloudEmitter::computeParticleTransform(VROParticle *particle,
     boundingBox->setMaxZ(std::max(boundingBox->getMaxZ(), position3f.z));
 }
 
-void VROPointCloudEmitter::updateUBO(std::shared_ptr<VRONode> node, VROBoundingBox boundingBox) {
+void VROPointCloudEmitter::updateUBO(VROBoundingBox boundingBox) {
     if (_particles.size() == 0){
         boundingBox = VROBoundingBox(0,0,0,0,0,0);
     }
-    std::shared_ptr<VROInstancedUBO> instancedUBO = node->getGeometry()->getInstancedUBO();
+    std::shared_ptr<VROInstancedUBO> instancedUBO = _particleGeometry->getInstancedUBO();
     std::static_pointer_cast<VROParticleUBO>(instancedUBO)->update(_particles, boundingBox);
 }
 

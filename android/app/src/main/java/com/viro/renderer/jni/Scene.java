@@ -304,24 +304,6 @@ public class Scene {
     }
 
     /**
-     * Adds a {@link ParticleEmitter} to the scene.
-     *
-     * @param emitter The emitter to add to the scene.
-     */
-    public void addParticleEmitter(ParticleEmitter emitter) {
-        nativeAddParticleEmitter(mNativeRef, emitter.mNativeRef);
-    }
-
-    /**
-     * Removes a {@link ParticleEmitter} from the scene.
-     *
-     * @param emitter The emitter to remove from the scene.
-     */
-    public void removeParticleEmitter(ParticleEmitter emitter) {
-        nativeRemoveParticleEmitter(mNativeRef, emitter.mNativeRef);
-    }
-
-    /**
      * @hide
      * @param effects
      * @return
@@ -345,8 +327,6 @@ public class Scene {
     private native void nativeSetSoundRoom(long sceneRef, long renderContextRef, float sizeX,
                                            float sizeY, float sizeZ, String wallMaterial,
                                            String ceilingMaterial, String floorMaterial);
-    private native void nativeAddParticleEmitter(long sceneRef, long particleRef);
-    private native void nativeRemoveParticleEmitter(long sceneRef, long particleRef);
     private native boolean nativeSetEffects(long sceneRef, String[] effects);
 
     /**

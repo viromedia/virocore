@@ -17,16 +17,14 @@
 #include "VROPlatformUtil.h"
 
 VROParticleEmitter::VROParticleEmitter(std::shared_ptr<VRODriver> driver,
-                                       std::shared_ptr<VRONode> emitterNode,
                                        std::shared_ptr<VROSurface> particleGeometry) {
-    initEmitter(driver, emitterNode, particleGeometry);
+    initEmitter(driver, particleGeometry);
 }
 
 VROParticleEmitter::VROParticleEmitter(){}
 VROParticleEmitter::~VROParticleEmitter(){}
 
 void VROParticleEmitter::initEmitter(std::shared_ptr<VRODriver> driver,
-                                     std::shared_ptr<VRONode> emitterNode,
                                      std::shared_ptr<VROSurface> particleGeometry) {
     // Create a particleUBO through which to batch particle information to the GPU.
     std::shared_ptr<VROParticleUBO> particleUBO = std::make_shared<VROParticleUBO>(driver);
@@ -46,12 +44,7 @@ void VROParticleEmitter::initEmitter(std::shared_ptr<VRODriver> driver,
 
     // Initialize the emitter with default values.
     material->setLightingModel(VROLightingModel::Constant);
-
-    // Finally, bind the particle geometry to the emitter node.
-    emitterNode->setGeometry(particleGeometry);
-    emitterNode->setIgnoreEventHandling(true);
-    _particleEmitterNodeWeak = emitterNode;
-
+    _particleGeometry = particleGeometry;
     setDefaultValues();
 }
 
@@ -71,7 +64,7 @@ void VROParticleEmitter::setDefaultValues() {
     _maxParticles = 500;
     _particlesEmittedPerMeter = std::pair<int, int>(0, 0);
     _particlesEmittedPerSecond = std::pair<int, int>(10, 10);
-    _particleLifeTime= std::pair<int, int>(2000,2000);
+    _particleLifeTime = std::pair<int, int>(2000,2000);
     _loop = true;
     _run = false;
     _requestRun = false;
@@ -83,34 +76,25 @@ void VROParticleEmitter::setDefaultValues() {
 }
 
 void VROParticleEmitter::setParticleSurface(std::shared_ptr<VROSurface> particleSurface) {
-    std::shared_ptr<VRONode> emitterNode = _particleEmitterNodeWeak.lock();
-
-    if (emitterNode) {
-        std::shared_ptr<VROInstancedUBO> instanceUBO = emitterNode->getGeometry()->getInstancedUBO();
-        
-        // Grab shader modifiers defined by the UBO for processing batched data.
-        std::vector<std::shared_ptr<VROShaderModifier>> shaderModifiers = instanceUBO->createInstanceShaderModifier();
-
-        // Bind the Particle UBO to this geometry to be processed during instanced rendering.
-        particleSurface->setInstancedUBO(instanceUBO);
-        std::shared_ptr<VROMaterial> material = particleSurface->getMaterials()[0];
-        std::vector<std::shared_ptr<VROShaderModifier>> modifiers =  material->getShaderModifiers();
-        modifiers.clear();
-        for (std::shared_ptr<VROShaderModifier> modifier : shaderModifiers) {
-            material->addShaderModifier(modifier);
-        }
-        material->setWritesToDepthBuffer(false);
-        material->setReadsFromDepthBuffer(true);
-        material->setBlendMode(VROBlendMode::Add);
-        
-        // Initialize the emitter with default values.
-        material->setLightingModel(VROLightingModel::Constant);
-
-        // Finally, bind the particle geometry to the emitter node.
-        emitterNode->setGeometry(particleSurface);
-        emitterNode->setIgnoreEventHandling(true);
-        
+    std::shared_ptr<VROInstancedUBO> instanceUBO = _particleGeometry->getInstancedUBO();
+    particleSurface->setInstancedUBO(instanceUBO);
+    
+    std::shared_ptr<VROMaterial> material = particleSurface->getMaterials()[0];
+    material->removeAllShaderModifiers();
+    
+    std::vector<std::shared_ptr<VROShaderModifier>> shaderModifiers = instanceUBO->createInstanceShaderModifier();
+    for (std::shared_ptr<VROShaderModifier> modifier : shaderModifiers) {
+        material->addShaderModifier(modifier);
     }
+    material->setWritesToDepthBuffer(false);
+    material->setReadsFromDepthBuffer(true);
+    material->setBlendMode(particleSurface->getMaterials().front()->getBlendMode());
+    material->setLightingModel(VROLightingModel::Constant);
+    _particleGeometry = particleSurface;
+}
+
+std::shared_ptr<VROGeometry> VROParticleEmitter::getParticleSurface() const {
+    return _particleGeometry;
 }
 
 bool VROParticleEmitter::processDelay(double currentTime) {
@@ -141,44 +125,39 @@ bool VROParticleEmitter::processDelay(double currentTime) {
 
     return false;
 }
-void VROParticleEmitter::update(const VRORenderContext &context) {
-    std::shared_ptr<VRONode> emitterNode = _particleEmitterNodeWeak.lock();
-    if (emitterNode == nullptr) {
-        return;
-    }
+void VROParticleEmitter::update(const VRORenderContext &context, const VROMatrix4f &computedTransform) {
+    _lastComputedTransform = computedTransform;
     double currentTime = VROTimeCurrentMillis();
 
     bool isCurrentlyDelayed = processDelay(currentTime);
-    if (!isCurrentlyDelayed){
-        updateEmitter(currentTime, emitterNode);
+    if (!isCurrentlyDelayed) {
+        updateEmitter(currentTime, computedTransform);
     }
-
-    updateParticles(currentTime, context, emitterNode, isCurrentlyDelayed);
+    updateParticles(currentTime, context, computedTransform, isCurrentlyDelayed);
 }
 
-void VROParticleEmitter::updateEmitter(double currentTime, std::shared_ptr<VRONode> emitterNode) {
+void VROParticleEmitter::updateEmitter(double currentTime, const VROMatrix4f &computedTransform) {
     if (_run != _requestRun || _emitterStartTimeMs == -1) {
         _run = _requestRun;
 
         if (_run) {
             // If resuming the animation, recompute our startTime and startLocation.
             _emitterStartTimeMs = currentTime;
-            _emitterStartLocation = emitterNode->getComputedTransform().extractTranslation();
+            _emitterStartLocation = computedTransform.extractTranslation();
         } else {
             // If pausing, preserve the amount of passed time and distance.
             _emitterPassedTimeSoFar = _emitterPassedTimeSoFar + (currentTime - _emitterStartTimeMs);
 
-            VROVector3f currentLoc = emitterNode->getComputedTransform().extractTranslation();
+            VROVector3f currentLoc = computedTransform.extractTranslation();
             _emitterPassedDistanceSoFar = _emitterPassedDistanceSoFar
                                           + currentLoc.distance(_emitterStartLocation);
         }
     }
 
     // Process emitter states
-    VROVector3f currentLoc = emitterNode->getComputedTransform().extractTranslation();
+    VROVector3f currentLoc = computedTransform.extractTranslation();
     _emitterTotalPassedTime = currentTime - _emitterStartTimeMs + _emitterPassedTimeSoFar;
-    _emitterTotalPassedDistance = currentLoc.distance(_emitterStartLocation)
-                                  + _emitterPassedDistanceSoFar;
+    _emitterTotalPassedDistance = currentLoc.distance(_emitterStartLocation) + _emitterPassedDistanceSoFar;
 
     if ((_emitterTotalPassedTime > _duration && _loop && _run) || _emitterStartTimeMs == -1) {
         resetEmissionCycle(false);
@@ -190,11 +169,6 @@ bool VROParticleEmitter::finishedEmissionCycle() {
 }
 
 void VROParticleEmitter::resetEmissionCycle(bool resetParticles) {
-    std::shared_ptr<VRONode> emitterNode = _particleEmitterNodeWeak.lock();
-    if (emitterNode == nullptr) {
-        return;
-    }
-
     if (resetParticles) {
         _particles.clear();
         _zombieParticles.clear();
@@ -211,7 +185,7 @@ void VROParticleEmitter::resetEmissionCycle(bool resetParticles) {
     // Restart location references for this emitter.
     _emitterTotalPassedDistance = 0;
     _emitterPassedDistanceSoFar = 0;
-    _emitterStartLocation = emitterNode->getComputedPosition();
+    _emitterStartLocation = _lastComputedTransform.extractTranslation();
 
     // Restart this emitter's scheduled particle burst animation.
     std::vector<VROParticleBurst> copyBurst(_bursts);
@@ -220,8 +194,8 @@ void VROParticleEmitter::resetEmissionCycle(bool resetParticles) {
 
 void VROParticleEmitter::updateParticles(double currentTime,
                                          const VRORenderContext &context,
-                                         std::shared_ptr<VRONode> emitterNode,
-                                            bool isCurrentlyDelayed) {
+                                         const VROMatrix4f &computedTransform,
+                                         bool isCurrentlyDelayed) {
     updateParticlePhysics(currentTime);
     updateParticleAppearance(currentTime);
     updateParticlesToBeKilled(currentTime);
@@ -229,13 +203,12 @@ void VROParticleEmitter::updateParticles(double currentTime,
     // Do not spawn if the emitter is in delay mode, or if !_run, or if we have finished
     // an emission cycle.
     if (!isCurrentlyDelayed && _run && !finishedEmissionCycle()) {
-        updateParticleSpawn(currentTime, emitterNode->getComputedTransform().extractTranslation());
+        updateParticleSpawn(currentTime, computedTransform.extractTranslation());
     }
 
     updateZombieParticles(currentTime);
 
     // Finally calculate and billboard the updated particle's world transform before rendering.
-    VROMatrix4f emitterNodeTrans = emitterNode->getComputedTransform();
     std::shared_ptr<VROBillboardConstraint> constraint
             = std::make_shared<VROBillboardConstraint>(VROBillboardAxis::All);
 
@@ -244,7 +217,7 @@ void VROParticleEmitter::updateParticles(double currentTime,
         if (_particles[i].fixedToEmitter) {
             // If the particle is fixedToEmitter, position the particle in referenceFactor to the
             // emitter's base transform.
-            _particles[i].currentWorldTransform = emitterNodeTrans.multiply(_particles[i].currentLocalTransform);
+            _particles[i].currentWorldTransform = computedTransform.multiply(_particles[i].currentLocalTransform);
         } else {
             // Else, position the particle in referenceFactor to where it had first been spawned.
             _particles[i].currentWorldTransform = _particles[i].spawnedWorldTransform.multiply(_particles[i].currentLocalTransform);
@@ -268,7 +241,7 @@ void VROParticleEmitter::updateParticles(double currentTime,
     if (_particles.size() == 0){
         box = VROBoundingBox(0,0,0,0,0,0);
     }
-    std::shared_ptr<VROInstancedUBO> instancedUBO = emitterNode->getGeometry()->getInstancedUBO();
+    std::shared_ptr<VROInstancedUBO> instancedUBO = _particleGeometry->getInstancedUBO();
     std::static_pointer_cast<VROParticleUBO>(instancedUBO)->update(_particles, box);
 }
 
@@ -283,7 +256,7 @@ void VROParticleEmitter::updateParticlePhysics(double currentTime) {
 
         // Apply Velocity equation. NOTE: We are assuming a constant rate of acceleration and velocity.
         float tSec = _particles[i].timeSinceSpawnedInMs / 1000;
-        if (_impulseDeaccelerationExplosionPeriod != -1 && tSec > _impulseDeaccelerationExplosionPeriod){
+        if (_impulseDeaccelerationExplosionPeriod >= 0 && tSec > _impulseDeaccelerationExplosionPeriod){
             tSec = _impulseDeaccelerationExplosionPeriod;
         }
 
@@ -330,7 +303,7 @@ void VROParticleEmitter::updateParticleSpawn(double currentTime, VROVector3f cur
     totalParticles += getSpawnParticleBursts();
 
     // Determine if we've hit the max number of particles and return if so.
-    int activeParticles = _particles.size() - _zombieParticles.size();
+    int activeParticles = (int) (_particles.size() - _zombieParticles.size());
     if (totalParticles == 0 || activeParticles + totalParticles > _maxParticles) {
         return;
     }
@@ -491,18 +464,13 @@ void VROParticleEmitter::updateZombieParticles(double currentTime) {
 }
 
 void VROParticleEmitter::resetParticle(VROParticle &particle, double currentTime) {
-    std::shared_ptr<VRONode> emitterNode = _particleEmitterNodeWeak.lock();
-    if (emitterNode == nullptr) {
-        return;
-    }
-
     // Life cycle properties.
     particle.lifePeriodMs = random(_particleLifeTime.first, _particleLifeTime.second);
     particle.zombiePeriodMs = 500;
     particle.spawnTimeMs = currentTime;
 
     // Transformational properties.
-    particle.spawnedWorldTransform = emitterNode->getComputedTransform();
+    particle.spawnedWorldTransform = _lastComputedTransform;
 
     VROVector3f initialScale = _scaleModifier->getInitialValue();
     VROMatrix4f startTransform;
@@ -518,13 +486,13 @@ void VROParticleEmitter::resetParticle(VROParticle &particle, double currentTime
     particle.initialRotation = _rotationModifier->getInitialValue();
     particle.initialAlpha = _alphaModifier->getInitialValue();
 
-    if (_impulseExplosionMagnitude == -1){
+    if (_impulseExplosionMagnitude == -1) {
         particle.initialVelocity = _velocityModifier->getInitialValue();
     } else {
         particle.initialVelocity = getExplosionInitialVel(startTransform.extractTranslation());
     }
 
-    if (_impulseDeaccelerationExplosionPeriod == -1){
+    if (_impulseDeaccelerationExplosionPeriod < 0){
         particle.initialAccel = _accelerationModifier->getInitialValue();
     } else {
         _accelerationModifier
@@ -664,19 +632,11 @@ VROVector3f VROParticleEmitter::getExplosionAccel(VROVector3f intialVelocity){
 }
 
 void VROParticleEmitter::setBlendMode(VROBlendMode mode){
-    std::shared_ptr<VRONode> emitterNode = _particleEmitterNodeWeak.lock();
-    if (emitterNode == nullptr) {
-        return;
-    }
-    std::shared_ptr<VROMaterial> mat = emitterNode->getGeometry()->getMaterials()[0];
+    std::shared_ptr<VROMaterial> mat = _particleGeometry->getMaterials()[0];
     mat->setBlendMode(mode);
 }
 
 void VROParticleEmitter::setBloomThreshold(float threshold){
-    std::shared_ptr<VRONode> emitterNode = _particleEmitterNodeWeak.lock();
-    if (emitterNode == nullptr) {
-        return;
-    }
-    std::shared_ptr<VROMaterial> mat = emitterNode->getGeometry()->getMaterials()[0];
+    std::shared_ptr<VROMaterial> mat = _particleGeometry->getMaterials()[0];
     mat->setBloomThreshold(threshold);
 }

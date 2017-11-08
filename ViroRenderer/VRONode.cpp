@@ -26,6 +26,7 @@
 #include "VROPortal.h"
 #include "VROMaterial.h"
 #include "VROPhysicsBody.h"
+#include "VROParticleEmitter.h"
 #include "VROScene.h"
 #include "VROAnimationChain.h"
 #include "VROExecutableAnimation.h"
@@ -623,7 +624,7 @@ void VRONode::setScene(std::shared_ptr<VROScene> scene, bool recursive) {
     }
 }
 
-void VRONode::clearChildren() {
+void VRONode::removeAllChildren() {
     std::vector<std::shared_ptr<VRONode>> children = _subnodes;
     for (std::shared_ptr<VRONode> &node : children) {
         node->removeFromParentNode();
@@ -1054,4 +1055,41 @@ void VRONode::clearPhysicsBody() {
         }
     }
     _physicsBody = nullptr;
+}
+
+#pragma mark - Particle Emitters
+
+void VRONode::updateParticles(const VRORenderContext &context) {
+    if (_particleEmitter) {
+        // Check if the particle emitter's surface has changed
+        if (_geometry != _particleEmitter->getParticleSurface()) {
+            _geometry = _particleEmitter->getParticleSurface();
+        }
+        
+        // Update the emitter
+        _particleEmitter->update(context, _computedTransform);
+    }
+    
+    // Recurse to children
+    for (std::shared_ptr<VRONode> &child : _subnodes) {
+        child->updateParticles(context);
+    }
+}
+
+void VRONode::setParticleEmitter(std::shared_ptr<VROParticleEmitter> emitter) {
+    passert_thread();
+    _particleEmitter = emitter;
+    _geometry = emitter->getParticleSurface();
+    setIgnoreEventHandling(true);
+}
+
+void VRONode::removeParticleEmitter() {
+    passert_thread();
+    _particleEmitter.reset();
+    _geometry.reset();
+    setIgnoreEventHandling(false);
+}
+
+std::shared_ptr<VROParticleEmitter> VRONode::getParticleEmitter() const {
+    return _particleEmitter;
 }

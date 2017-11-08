@@ -53,6 +53,9 @@ public class ARHitTestResult {
         private Type(String value) {
             this.mStringValue = value;
         }
+        /**
+         * @hide
+         */
         public String getStringValue() {
             return this.mStringValue;
         }

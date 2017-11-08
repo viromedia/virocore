@@ -179,6 +179,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
 
     protected boolean mDestroyed = false;
     private Geometry mGeometry;
+    private ParticleEmitter mParticleEmitter;
     private PhysicsBody mPhysicsBody;
     private WeakReference<Node> mParent;
     private ArrayList<Node> mChildren = new ArrayList<Node>();
@@ -672,13 +673,15 @@ public class Node implements EventDelegate.EventDelegateCallback {
 
     /**
      * Set the {@link Geometry} of this Node. Geometries are the actual 3D objects that are rendered
-     * for each Node.
+     * for each Node. Setting a Geometry will remove any attached {@link ParticleEmitter} from the
+     * Node.
      *
      * @param geometry The {@link Geometry} to attach to this Node. Null to remove any Geometry from
      *                 this Node.
      */
     public void setGeometry(Geometry geometry) {
         if (geometry != null) {
+            removeParticleEmitter();
             nativeSetGeometry(mNativeRef, geometry.mNativeRef);
         }
         else {
@@ -695,6 +698,40 @@ public class Node implements EventDelegate.EventDelegateCallback {
      */
     public Geometry getGeometry() {
         return mGeometry;
+    }
+
+    /**
+     * Set the {@link ParticleEmitter} to use for this Node. This will remove any {@link Geometry}
+     * currently attached to the Node.
+     *
+     * @param emitter The emitter to use for this Node. Null to remove any {@link ParticleEmitter}
+     *                from this Node.
+     */
+    public void setParticleEmitter(ParticleEmitter emitter) {
+        if (emitter != null) {
+            mParticleEmitter = emitter;
+            nativeSetParticleEmitter(mNativeRef, emitter.mNativeRef);
+        }
+        else {
+            removeParticleEmitter();;
+        }
+    }
+
+    /**
+     * Return the {@link ParticleEmitter} attached to this Node, if any.
+     *
+     * @return The {@link ParticleEmitter}, or null if none is attached.
+     */
+    public ParticleEmitter getParticleEmitter() {
+        return mParticleEmitter;
+    }
+
+    /**
+     * Removes any attached {@link ParticleEmitter} from this Node.
+     */
+    public void removeParticleEmitter() {
+        mParticleEmitter = null;
+        nativeRemoveParticleEmitter(mNativeRef);
     }
 
     /**
@@ -1347,6 +1384,8 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native void nativeAddSound(long nodeReference, long soundReference);
     private native void nativeRemoveSound(long nodeReference, long soundReference);
     private native void nativeRemoveAllSounds(long nodeReference);
+    private native void nativeSetParticleEmitter(long nodeRef, long particleRef);
+    private native void nativeRemoveParticleEmitter(long nodeRef);
     private native float[] nativeConvertLocalPositionToWorldSpace(long nodeReference, float x, float y, float z);
     private native float[] nativeConvertWorldPositionToLocalSpace(long nodeReference, float x, float y, float z);
 

@@ -161,7 +161,7 @@ public class Material {
          * @return
          */
         public static BlendMode valueFromString(String str) {
-            return map.get(str.toLowerCase());
+            return str == null ? null : map.get(str.toLowerCase());
         }
     };
 

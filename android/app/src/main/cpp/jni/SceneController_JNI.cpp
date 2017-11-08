@@ -162,28 +162,6 @@ JNI_METHOD(void, nativeSetSoundRoom)(JNIEnv *env, jobject obj, jlong sceneRef, j
     });
 }
 
-JNI_METHOD(void, nativeAddParticleEmitter)(JNIEnv *env,
-                                               jclass clazz,
-                                               jlong sceneRef,
-                                               jlong particleRef) {
-    std::shared_ptr<VROSceneController> sceneController = SceneController::native(sceneRef);
-    std::shared_ptr<VROParticleEmitter> particleEmitter = ParticleEmitter::native(particleRef);
-    VROPlatformDispatchAsyncRenderer([sceneController, particleEmitter] {
-        sceneController->getScene()->addParticleEmitter(particleEmitter);
-    });
-}
-
-JNI_METHOD(void, nativeRemoveParticleEmitter)(JNIEnv *env,
-                                               jclass clazz,
-                                               jlong sceneRef,
-                                               jlong particleRef) {
-    std::shared_ptr<VROSceneController> sceneController = SceneController::native(sceneRef);
-    std::shared_ptr<VROParticleEmitter> particleEmitter = ParticleEmitter::native(particleRef);
-    VROPlatformDispatchAsyncRenderer([sceneController, particleEmitter] {
-        sceneController->getScene()->removeParticleEmitter(particleEmitter);
-    });
-}
-
 JNI_METHOD(bool, nativeSetEffects)(JNIEnv *env,
                                            jclass clazz,
                                            jlong sceneRef,

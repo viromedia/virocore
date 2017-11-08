@@ -263,7 +263,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
             outgoingScene->computeTransforms(context);
             outgoingScene->computePhysics(context);
             outgoingScene->applyConstraints(context);
-            outgoingScene->computeParticles(context);
+            outgoingScene->updateParticles(context);
             outgoingScene->updateVisibility(context);
             outgoingScene->updateSortKeys(_renderMetadata, context, driver);
         }
@@ -272,7 +272,7 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
         scene->computeTransforms(context);
         scene->computePhysics(context);
         scene->applyConstraints(context);
-        scene->computeParticles(context);
+        scene->updateParticles(context);
         scene->updateVisibility(context);
         scene->updateSortKeys(_renderMetadata, context, driver);
         _inputController->onProcess(camera);

@@ -53,6 +53,10 @@ void VROScene::applyConstraints(const VRORenderContext &context) {
     _rootNode->applyConstraints(context, {}, false);
 }
 
+void VROScene::updateParticles(const VRORenderContext &context) {
+    _rootNode->updateParticles(context);
+}
+
 void VROScene::updateSortKeys(std::shared_ptr<VRORenderMetadata> &metadata,
                               const VRORenderContext &context, std::shared_ptr<VRODriver> &driver) {
     passert_thread();
@@ -155,7 +159,7 @@ void VROScene::getBackgrounds(std::shared_ptr<VRONode> node, std::vector<std::sh
 
 #pragma mark - Input Controllers
 
-void VROScene::detachInputController(std::shared_ptr<VROInputControllerBase> controller){
+void VROScene::detachInputController(std::shared_ptr<VROInputControllerBase> controller) {
     passert_thread();
     if (!_controllerPresenter){
         return;
@@ -183,7 +187,7 @@ void VROScene::attachInputController(std::shared_ptr<VROInputControllerBase> con
     controller->attachScene(shared_from_this());
 }
 
-std::shared_ptr<VROInputPresenter> VROScene::getControllerPresenter(){
+std::shared_ptr<VROInputPresenter> VROScene::getControllerPresenter() {
     return _controllerPresenter;
 }
 

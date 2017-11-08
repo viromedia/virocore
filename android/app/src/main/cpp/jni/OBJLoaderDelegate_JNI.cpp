@@ -30,7 +30,7 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlo
     jlong activeRequestID = VROPlatformCallJavaLongFunction(_javaObject, "getActiveRequestID", "()J");
     if (activeRequestID != requestId) {
         pinfo("Received antiquated Object3D load, discarding");
-        node->clearChildren();
+        node->removeAllChildren();
         return;
     }
 

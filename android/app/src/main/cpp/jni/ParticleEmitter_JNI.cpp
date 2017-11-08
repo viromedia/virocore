@@ -16,17 +16,15 @@
 extern "C" {
 
 JNI_METHOD(jlong, nativeCreateEmitter)(JNIEnv *env,
-                                        jobject obj,
-                                   jlong context_j,
-                                   jlong native_node_ref,
-                                   jlong native_surface_ref) {
+                                       jobject obj,
+                                       jlong context_j,
+                                       jlong native_surface_ref) {
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
-    std::shared_ptr<VRONode> node = Node::native(native_node_ref);
     std::shared_ptr<VROSurface> surface = reinterpret_cast<PersistentRef<VROSurface> *>(native_surface_ref)->get();
     std::shared_ptr<VROParticleEmitter> particleEmitter = std::make_shared<VROParticleEmitter>();
 
-    VROPlatformDispatchAsyncRenderer([particleEmitter, context, node, surface] {
-        particleEmitter->initEmitter(context->getDriver(), node, surface);
+    VROPlatformDispatchAsyncRenderer([particleEmitter, context, surface] {
+        particleEmitter->initEmitter(context->getDriver(), surface);
     });
 
     return ParticleEmitter::jptr(particleEmitter);

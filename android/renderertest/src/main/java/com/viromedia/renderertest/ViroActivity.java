@@ -12,6 +12,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +45,7 @@ import com.viro.renderer.jni.Node;
 import com.viro.renderer.jni.Object3D;
 import com.viro.renderer.jni.OmniLight;
 import com.viro.renderer.jni.OpenCV;
+import com.viro.renderer.jni.ParticleEmitter;
 import com.viro.renderer.jni.Polyline;
 import com.viro.renderer.jni.RendererStartListener;
 import com.viro.renderer.jni.Scene;
@@ -171,7 +173,8 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         //nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
-        nodes = testText();
+        //nodes = testText();
+        nodes = testParticles();
         //nodes = testARDrag();
 
         //testBackgroundVideo(scene);
@@ -240,6 +243,54 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         // Updating the scene.
         mViroView.setScene(scene);
         scene.displayPointCloud(true);
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ViroViewARCore view = (ViroViewARCore) mViroView;
+                view.performARHitTest(new Point(view.getWidth() / 2, view.getHeight() / 2), new ARHitTestCallback() {
+                    @Override
+                    public void onHitTestFinished(ARHitTestResult[] results) {
+                        Log.w("Viro", "Hit test complete");
+                        for (ARHitTestResult result : results) {
+                            Log.w("Viro", "   result " + result.getType() + ", position " + result.getPosition());
+                        }
+                    }
+                });
+            }
+        }, 2000);
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ViroViewARCore view = (ViroViewARCore) mViroView;
+                view.performARHitTest(new Point(view.getWidth() / 2, view.getHeight() / 2), new ARHitTestCallback() {
+                    @Override
+                    public void onHitTestFinished(ARHitTestResult[] results) {
+                        Log.w("Viro", "Hit test complete");
+                        for (ARHitTestResult result : results) {
+                            Log.w("Viro", "   result " + result.getType() + ", position " + result.getPosition());
+                        }
+                    }
+                });
+            }
+        }, 4000);
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ViroViewARCore view = (ViroViewARCore) mViroView;
+                view.performARHitTest(new Point(view.getWidth() / 2, view.getHeight() / 2), new ARHitTestCallback() {
+                    @Override
+                    public void onHitTestFinished(ARHitTestResult[] results) {
+                        Log.w("Viro", "Hit test complete");
+                        for (ARHitTestResult result : results) {
+                            Log.w("Viro", "   result " + result.getType() + ", position " + result.getPosition());
+                        }
+                    }
+                });
+            }
+        }, 6000);
     }
 
     private void testEdgeDetect() {
@@ -400,6 +451,36 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
                 pzimageJni, nzimageJni, format);
 
         scene.setBackgroundCubeTexture(cubeTexture);
+    }
+
+    private List<Node> testParticles() {
+        final Bitmap bobaBitmap = getBitmapFromAssets("boba.png");
+        final Bitmap specBitmap = getBitmapFromAssets("specular.png");
+        final Texture bobaTexture = new Texture(bobaBitmap, TextureFormat.RGBA8, true, true);
+
+        Node particleNode = new Node();
+        particleNode.setPosition(new Vector(0, -10, -15));
+
+        final Material material = new Material();
+        material.setDiffuseTexture(bobaTexture);
+        material.setDiffuseColor(Color.BLUE);
+        material.setSpecularTexture(bobaTexture);
+        material.setLightingModel(Material.LightingModel.LAMBERT);
+
+        Surface surface = new Surface(1, 1);
+        surface.setMaterials(Arrays.asList(material));
+
+        ParticleEmitter particleEmitter = new ParticleEmitter(mViroView.getViroContext(), surface);
+
+        Vector sizeMinStart = new Vector(2, 2, 2);
+        Vector sizeMaxStart = new Vector(5, 5, 5);
+        ParticleEmitter.ParticleModifierVector modifier = new ParticleEmitter.ParticleModifierVector(sizeMinStart, sizeMaxStart);
+        modifier.addInterval(1000, new Vector(0, 0, 0));
+
+        particleEmitter.setScaleModifier(modifier);
+        particleNode.setParticleEmitter(particleEmitter);
+        particleEmitter.run();
+        return Arrays.asList(particleNode);
     }
 
     private List<Node> testBox(final Context context) {
@@ -639,7 +720,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
                 object.setScale(new Vector(0.4f, 0.4f, 0.4f));
 
                 Animation animation = object.getAnimation("02_spin");
-                animation.setDelay(5000);
+                //animation.setDelay(5000);
                 animation.setLoop(true);
                 animation.play();
 
@@ -655,8 +736,6 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     }
 
     private List<Node> testImperativePlane(final ARScene arScene) {
-
-
         arScene.setDelegate(new ARScene.Delegate() {
             @Override
             public void onTrackingInitialized() {

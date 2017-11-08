@@ -22,6 +22,7 @@
 #include "EventDelegate_JNI.h"
 #include "PhysicsDelegate_JNI.h"
 #include "TransformDelegate_JNI.h"
+#include "ParticleEmitter_JNI.h"
 #include "ARUtils_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
@@ -71,7 +72,7 @@ JNI_METHOD(void, nativeRemoveAllChildNodes)(JNIEnv *env,
     std::weak_ptr<VRONode> node_w = Node::native(native_node_ref);
     VROPlatformDispatchAsyncRenderer([node_w] {
         std::shared_ptr<VRONode> node = node_w.lock();
-        node->clearChildren();
+        node->removeAllChildren();
     });
 }
 
@@ -126,6 +127,32 @@ JNI_METHOD(void, nativeClearGeometry)(JNIEnv *env,
         std::shared_ptr<VRONode> node = node_w.lock();
         if (node) {
             node->setGeometry(nullptr);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeSetParticleEmitter)(JNIEnv *env,
+                                           jclass clazz,
+                                           jlong node_j,
+                                           jlong particle_j) {
+    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    std::shared_ptr<VROParticleEmitter> particle = ParticleEmitter::native(particle_j);
+    VROPlatformDispatchAsyncRenderer([node_w, particle] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->setParticleEmitter(particle);
+        }
+    });
+}
+
+JNI_METHOD(void, nativeRemoveParticleEmitter)(JNIEnv *env,
+                                              jclass clazz,
+                                              jlong node_j) {
+    std::weak_ptr<VRONode> node_w = Node::native(node_j);
+    VROPlatformDispatchAsyncRenderer([node_w] {
+        std::shared_ptr<VRONode> node = node_w.lock();
+        if (node) {
+            node->removeParticleEmitter();
         }
     });
 }
