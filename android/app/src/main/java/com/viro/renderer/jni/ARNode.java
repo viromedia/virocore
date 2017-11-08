@@ -51,7 +51,7 @@ public class ARNode extends Node {
      * @hide
      */
     ARNode() {
-
+        super(false); // call the empty Node constructor
     }
 
     /**
@@ -60,7 +60,7 @@ public class ARNode extends Node {
      * @param nativeRef
      */
     ARNode(long nativeRef) {
-        super(false); // call the empty NodeJni constructor.
+        super(false); // call the empty Node constructor.
         initWithNativeRef(nativeRef);
         nodeARMap.put(nativeGetUniqueIdentifier(mNativeRef), this);
     }
