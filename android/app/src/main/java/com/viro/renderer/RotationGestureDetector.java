@@ -18,11 +18,11 @@ public class RotationGestureDetector {
     private class Line {
         public float x1, y1, x2, y2;
 
-        public Line(MotionEvent event, int pointer1, int pointer2) {
-            x1 = event.getX(event.findPointerIndex(pointer1));
-            y1 = event.getY(event.findPointerIndex(pointer1));
-            x2 = event.getX(event.findPointerIndex(pointer2));
-            y2 = event.getY(event.findPointerIndex(pointer2));
+        public Line(MotionEvent event, int pointerIndex1, int pointerIndex2) {
+            x1 = event.getX(pointerIndex1);
+            y1 = event.getY(pointerIndex1);
+            x2 = event.getX(pointerIndex2);
+            y2 = event.getY(pointerIndex2);
         }
     }
 
@@ -46,11 +46,19 @@ public class RotationGestureDetector {
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 mPointer2 = event.getPointerId(event.getActionIndex());
-                mFirstLine = new Line(event, mPointer1, mPointer2);
+                mFirstLine = new Line(event, event.findPointerIndex(mPointer1),
+                        event.findPointerIndex(mPointer2));
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (mPointer1 != INVALID_POINTER && mPointer2 != INVALID_POINTER) {
-                    mLatestLine = new Line(event, mPointer1, mPointer2);
+                    int pointerIndex1 = event.findPointerIndex(mPointer1);
+                    int pointerIndex2 = event.findPointerIndex(mPointer2);
+                    if (pointerIndex1 == -1 || pointerIndex2 == -1) {
+                        // saw this on S8, we get a "move" before an ACTION_POINTER_UP was
+                        // called so mPointer2 isn't == INVALID_POINTER, but it really is.
+                        break;
+                    }
+                    mLatestLine = new Line(event, pointerIndex1, pointerIndex2);
                     mCurrentRotateDegrees = calcAngleBetweenLines(mFirstLine, mLatestLine);
 
                     // TODO: if rotation hasn't begun, should we consider a minimum angle?
