@@ -238,7 +238,7 @@ public class Sound implements BaseSound {
     public void setDelegate(Delegate delegate) {
         mDelegate = delegate;
         // call the delegate.onSoundReady() if we're already ready.
-        if (mReady) {
+        if (mReady && delegate != null) {
             delegate.onSoundReady(this);
         }
     }
