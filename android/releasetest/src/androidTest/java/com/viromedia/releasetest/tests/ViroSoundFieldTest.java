@@ -14,7 +14,7 @@ import android.net.Uri;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
 import com.viro.renderer.jni.Node;
-import com.viro.renderer.jni.Sound;
+import com.viro.renderer.jni.SoundField;
 import com.viro.renderer.jni.Text;
 import com.viro.renderer.jni.Vector;
 import com.viro.renderer.jni.ViroContext;
@@ -30,8 +30,8 @@ import java.util.Random;
  * Created by manish on 11/6/17.
  */
 
-public class ViroSoundTest extends ViroBaseTest {
-    private Sound mSound;
+public class ViroSoundFieldTest extends ViroBaseTest {
+    private SoundField mSound;
     private Text mDelegateText;
 
     @Override
@@ -44,21 +44,16 @@ public class ViroSoundTest extends ViroBaseTest {
         mScene.getRootNode().addChildNode(textNode);
 
         final ViroContext context = mViroView.getViroContext();
-        runOnUiThread(()->{
-            mSound = new Sound(mViroView.getViroContext(), Uri.parse("file:///android_asset/metronome.mp3"), null);
+        runOnUiThread(() -> {
+            mSound = new SoundField(mViroView.getViroContext(), Uri.parse("file:///android_asset/thelin.wav"), null);
         });
 
         mSound.setLoop(true);
-        mSound.setDelegate(new Sound.Delegate() {
+        mSound.setDelegate(new SoundField.Delegate() {
             @Override
-            public void onSoundReady(final Sound sound) {
+            public void onSoundReady(final SoundField sound) {
                 mDelegateText.setText("onSoundReady called. Playing song");
                 sound.play();
-            }
-
-            @Override
-            public void onSoundFinish(final Sound sound) {
-                mDelegateText.setText("onSoundFinish called");
             }
 
             @Override
@@ -78,6 +73,7 @@ public class ViroSoundTest extends ViroBaseTest {
         testSetLoop();
         testSeekToTime();
         testSetDelegate();
+        testSetRotation();
     }
 
     private void testPlayPause() {
@@ -111,11 +107,13 @@ public class ViroSoundTest extends ViroBaseTest {
 
     private void testSetMuted() {
         mMutableTestMethod = () -> {
-            mDelegateText.setText("Sound muted: " + mSound.isMuted());
+            mDelegateText.setText("Sound muted: " + mSound.isMuted() + "\n This should toggle, TODO BUG VIRO-2192 ");
             mSound.setMuted(!mSound.isMuted());
         };
         assertPass("Toggling mute / unmute every second", () -> {
             mSound.setMuted(false);
+            mMutableTestMethod = () -> {
+            };
         });
     }
 
@@ -145,17 +143,11 @@ public class ViroSoundTest extends ViroBaseTest {
 
     // TODO VIRO-2181 setting null delegate will cause an NPE
     private void testSetDelegate() {
-        final Sound.Delegate delegate1 = new Sound.Delegate() {
+        final SoundField.Delegate delegate1 = new SoundField.Delegate() {
             @Override
-            public void onSoundReady(final Sound sound) {
+            public void onSoundReady(final SoundField sound) {
                 mDelegateText.setText("DELEGATE 1 onSoundReady called. Playing song");
                 mSound.play();
-            }
-
-            @Override
-            public void onSoundFinish(final Sound sound) {
-                mDelegateText.setText("DELEGATE 1 onSoundFinish called. Playing song");
-
             }
 
             @Override
@@ -164,17 +156,11 @@ public class ViroSoundTest extends ViroBaseTest {
             }
         };
 
-        final Sound.Delegate delegate2 = new Sound.Delegate() {
+        final SoundField.Delegate delegate2 = new SoundField.Delegate() {
             @Override
-            public void onSoundReady(final Sound sound) {
+            public void onSoundReady(final SoundField sound) {
                 mDelegateText.setText("DELEGATE 2 onSoundReady called. Playing song");
                 mSound.play();
-            }
-
-            @Override
-            public void onSoundFinish(final Sound sound) {
-                mDelegateText.setText("DELEGATE 2 onSoundFinish called. Playing song");
-
             }
 
             @Override
@@ -183,8 +169,8 @@ public class ViroSoundTest extends ViroBaseTest {
             }
         };
 
-        final List<Sound.Delegate> delegates = Arrays.asList(delegate1, delegate2);
-        final Iterator<Sound.Delegate> itr = Iterables.cycle(delegates).iterator();
+        final List<SoundField.Delegate> delegates = Arrays.asList(delegate1, delegate2);
+        final Iterator<SoundField.Delegate> itr = Iterables.cycle(delegates).iterator();
 
         mMutableTestMethod = () -> {
 
@@ -192,5 +178,15 @@ public class ViroSoundTest extends ViroBaseTest {
         };
 
         assertPass("Toggling between two delegates");
+    }
+
+    private void testSetRotation() {
+        mMutableTestMethod = () -> {
+            mSound.setRotation(new Vector(0, 1.57, 0));
+            mDelegateText.setText("setRotation with 45 degrees / .78 radians along Y-axis");
+        };
+
+        assertPass("SoundField seems to rotate correctly");
+
     }
 }

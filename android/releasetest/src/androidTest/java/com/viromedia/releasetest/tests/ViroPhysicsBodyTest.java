@@ -45,6 +45,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
     private static final double TABLE_FRICTION = 0.2;
     private static final double BALL_RESTITUTION = 0.92;
     private static final double TABLE_RESTITUTION = 0.5;
+    private static final String POOL_BALL_SPECULAR = "pool_ball_specular.png";
 
     private Box mTable;
     private PhysicsBody mTablePhysics;
@@ -205,11 +206,15 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         mCueBallPhysics = cueBallNode.initPhysicsBody(PhysicsBody.RigidBodyType.DYNAMIC, 0.170f, physicsShapeSphere);
         playGroundNode.addChildNode(cueBallNode);
 
+        final Bitmap ballSpecularBitmap = getBitmapFromAssets(mActivity, "pool_ball_specular.png");
+        final Texture specularTexture = new Texture(ballSpecularBitmap,
+                Texture.TextureFormat.RGBA8, true, true);
         // Ball 1
         final Material ballOneMaterial = new Material();
         final Bitmap ballOneBitmap = getBitmapFromAssets(mActivity, "Ball11.jpg");
         final Texture ballOneTexture = new Texture(ballOneBitmap, Texture.TextureFormat.RGBA8, true, true);
         ballOneMaterial.setDiffuseTexture(ballOneTexture);
+        ballOneMaterial.setSpecularTexture(specularTexture);
         ballOneMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node ballOneNode = new Node();
         mBall1 = new Sphere(scaleSize(BALL_RADIUS));
@@ -226,6 +231,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         final Bitmap ballTwoBitmap = getBitmapFromAssets(mActivity, "Ball5.jpg");
         final Texture ballTwoTexture = new Texture(ballTwoBitmap, Texture.TextureFormat.RGBA8, true, true);
         ballTwoMaterial.setDiffuseTexture(ballTwoTexture);
+        ballTwoMaterial.setSpecularTexture(specularTexture);
         ballTwoMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node ballTwoNode = new Node();
         mBall2 = new Sphere(scaleSize(BALL_RADIUS));
@@ -242,6 +248,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         final Bitmap ballThreeBitmap = getBitmapFromAssets(mActivity, "Ball2.jpg");
         final Texture ballThreeTexture = new Texture(ballThreeBitmap, Texture.TextureFormat.RGBA8, true, true);
         ballThreeMaterial.setDiffuseTexture(ballThreeTexture);
+        ballThreeMaterial.setSpecularTexture(specularTexture);
         ballThreeMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node ballThreeNode = new Node();
         mBall3 = new Sphere(scaleSize(BALL_RADIUS));
@@ -258,6 +265,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         final Bitmap ballFourBitmap = getBitmapFromAssets(mActivity, "Ball13.jpg");
         final Texture ballFourTexture = new Texture(ballFourBitmap, Texture.TextureFormat.RGBA8, true, true);
         ballFourMaterial.setDiffuseTexture(ballFourTexture);
+        ballFourMaterial.setSpecularTexture(specularTexture);
         ballFourMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node ballFourNode = new Node();
         mBall4 = new Sphere(scaleSize(BALL_RADIUS));
@@ -274,6 +282,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         final Bitmap ballFiveBitmap = getBitmapFromAssets(mActivity, "Ball4.jpg");
         final Texture ballFiveTexture = new Texture(ballFiveBitmap, Texture.TextureFormat.RGBA8, true, true);
         ballFiveMaterial.setDiffuseTexture(ballFiveTexture);
+        ballFiveMaterial.setSpecularTexture(specularTexture);
         ballFiveMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node ballFiveNode = new Node();
         mBall5 = new Sphere(scaleSize(BALL_RADIUS));
@@ -290,6 +299,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         final Bitmap ballSixBitmap = getBitmapFromAssets(mActivity, "Ball3.jpg");
         final Texture ballSixTexture = new Texture(ballSixBitmap, Texture.TextureFormat.RGBA8, true, true);
         ballSixMaterial.setDiffuseTexture(ballSixTexture);
+        ballSixMaterial.setSpecularTexture(specularTexture);
         ballSixMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node ballSixNode = new Node();
         mBall6 = new Sphere(scaleSize(BALL_RADIUS));
@@ -306,6 +316,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         final Bitmap ballSevenBitmap = getBitmapFromAssets(mActivity, "Ball10.jpg");
         final Texture ballSevenTexture = new Texture(ballSevenBitmap, Texture.TextureFormat.RGBA8, true, true);
         ballSevenMaterial.setDiffuseTexture(ballSevenTexture);
+        ballSevenMaterial.setSpecularTexture(specularTexture);
         ballSevenMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node ballSevenNode = new Node();
         mBall7 = new Sphere(scaleSize(BALL_RADIUS));
@@ -322,6 +333,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         final Bitmap ballEightBitmap = getBitmapFromAssets(mActivity, "Ball6.jpg");
         final Texture ballEightTexture = new Texture(ballEightBitmap, Texture.TextureFormat.RGBA8, true, true);
         ballEightMaterial.setDiffuseTexture(ballEightTexture);
+        ballEightMaterial.setSpecularTexture(specularTexture);
         ballEightMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node ballEightNode = new Node();
         mBall8 = new Sphere(scaleSize(BALL_RADIUS));
@@ -338,6 +350,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         final Bitmap ballNineBitmap = getBitmapFromAssets(mActivity, "Ball14.jpg");
         final Texture ballNineTexture = new Texture(ballNineBitmap, Texture.TextureFormat.RGBA8, true, true);
         ballNineMaterial.setDiffuseTexture(ballNineTexture);
+        ballNineMaterial.setSpecularTexture(specularTexture);
         ballNineMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node ballNineNode = new Node();
         mBall9 = new Sphere(scaleSize(BALL_RADIUS));
@@ -354,6 +367,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         final Bitmap ballTenBitmap = getBitmapFromAssets(mActivity, "Ball8.jpg");
         final Texture ballTenTexture = new Texture(ballTenBitmap, Texture.TextureFormat.RGBA8, true, true);
         ballTenMaterial.setDiffuseTexture(ballTenTexture);
+        ballTenMaterial.setSpecularTexture(specularTexture);
         ballTenMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node ballTenNode = new Node();
         mBall10 = new Sphere(scaleSize(BALL_RADIUS));
@@ -370,6 +384,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         final Bitmap ballElevenBitmap = getBitmapFromAssets(mActivity, "Ball1.jpg");
         final Texture ballElevenTexture = new Texture(ballElevenBitmap, Texture.TextureFormat.RGBA8, true, true);
         ballElevenMaterial.setDiffuseTexture(ballElevenTexture);
+        ballElevenMaterial.setSpecularTexture(specularTexture);
         ballElevenMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node ballElevenNode = new Node();
         mBall11 = new Sphere(scaleSize(BALL_RADIUS));
@@ -386,6 +401,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         final Bitmap ballTwelveBitmap = getBitmapFromAssets(mActivity, "Ball12.jpg");
         final Texture ballTwelveTexture = new Texture(ballTwelveBitmap, Texture.TextureFormat.RGBA8, true, true);
         ballTwelveMaterial.setDiffuseTexture(ballTwelveTexture);
+        ballTwelveMaterial.setSpecularTexture(specularTexture);
         ballTwelveMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node ballTwelveNode = new Node();
         mBall12 = new Sphere(scaleSize(BALL_RADIUS));
@@ -402,6 +418,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         final Bitmap ballThirteenBitmap = getBitmapFromAssets(mActivity, "Ball7.jpg");
         final Texture ballThirteenTexture = new Texture(ballThirteenBitmap, Texture.TextureFormat.RGBA8, true, true);
         ballThirteenMaterial.setDiffuseTexture(ballThirteenTexture);
+        ballThirteenMaterial.setSpecularTexture(specularTexture);
         ballThirteenMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node ballThirteenNode = new Node();
         mBall13 = new Sphere(scaleSize(BALL_RADIUS));
@@ -418,6 +435,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         final Bitmap ballFourteenBitmap = getBitmapFromAssets(mActivity, "Ball9.jpg");
         final Texture ballFourteenTexture = new Texture(ballFourteenBitmap, Texture.TextureFormat.RGBA8, true, true);
         ballFourteenMaterial.setDiffuseTexture(ballFourteenTexture);
+        ballFourteenMaterial.setSpecularTexture(specularTexture);
         ballFourteenMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node ballFourteenNode = new Node();
         mBall14 = new Sphere(scaleSize(BALL_RADIUS));
@@ -434,6 +452,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         final Bitmap ballFifteenBitmap = getBitmapFromAssets(mActivity, "Ball15.jpg");
         final Texture ballFifteenTexture = new Texture(ballFifteenBitmap, Texture.TextureFormat.RGBA8, true, true);
         ballFifteenMaterial.setDiffuseTexture(ballFifteenTexture);
+        ballFifteenMaterial.setSpecularTexture(specularTexture);
         ballFifteenMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node ballFifteenNode = new Node();
         mBall15 = new Sphere(scaleSize(BALL_RADIUS));
