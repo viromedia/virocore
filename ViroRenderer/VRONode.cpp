@@ -235,10 +235,6 @@ void VRONode::updateSortKeys(uint32_t depth,
     }
     _computedLightsHash = VROLight::hashLights(_computedLights);
 
-    for (std::shared_ptr<VROSound> &sound : _sounds) {
-        sound->setTransformedPosition(_computedTransform.multiply(sound->getPosition()));
-    }
-
     /*
      This node uses hierarchical rendering if its flag is set, or if its parent
      used hierarchical rendering.
@@ -353,6 +349,11 @@ void VRONode::computeTransforms(VROMatrix4f parentTransform, VROMatrix4f parentR
      Compute the rotation for this node.
      */
     _computedRotation = parentRotation.multiply(_rotation.getMatrix());
+
+    // Apply the computed transform for spatial sounds, if any.
+    for (std::shared_ptr<VROSound> &sound : _sounds) {
+        sound->setTransformedPosition(_computedTransform.multiply(sound->getPosition()));
+    }
 
     /*
      Move down the tree.
