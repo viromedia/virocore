@@ -2,19 +2,16 @@ package com.viromedia.releasetest.tests;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
-import com.google.android.exoplayer2.text.Cue;
 import com.viro.renderer.jni.ARAnchor;
 import com.viro.renderer.jni.ARNode;
 import com.viro.renderer.jni.ARPlaneAnchor;
 import com.viro.renderer.jni.ARScene;
 import com.viro.renderer.jni.AmbientLight;
 import com.viro.renderer.jni.Box;
-import com.viro.renderer.jni.Light;
 import com.viro.renderer.jni.Material;
 import com.viro.renderer.jni.Node;
-import com.viro.renderer.jni.Sphere;
+
 import com.viro.renderer.jni.Surface;
 import com.viro.renderer.jni.Text;
 import com.viro.renderer.jni.Texture;
@@ -23,7 +20,6 @@ import com.viro.renderer.jni.Vector;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -122,13 +118,15 @@ public class ViroARNodeTest extends ViroBaseTest {
                                 ARPlaneAnchor anchorPlane = (ARPlaneAnchor) anchor;
                                 anchorString += ("Center:" + anchorPlane.getCenter().toString() + ", " + "Extent: " + anchorPlane.getExtent().toString() + ", Alignment: " + anchorPlane.getAlignment().toString());
                             }
-
                             text.setText(anchorString);
                         }
 
                         if(childNode.getGeometry() instanceof Surface) {
-                            Surface surface = (Surface) childNode.getGeometry();
-
+                            ARPlaneAnchor planeAnchor = (ARPlaneAnchor)anchor;
+                            Surface surface = (Surface)childNode.getGeometry();
+                            surface.setWidth(planeAnchor.getExtent().x);
+                            surface.setHeight(planeAnchor.getExtent().z);
+                            childNode.setScale(planeAnchor.getScale());
                         }
                     }
                 }
