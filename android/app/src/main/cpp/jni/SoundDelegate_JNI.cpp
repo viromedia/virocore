@@ -22,7 +22,7 @@ SoundDelegate::~SoundDelegate() {
 void SoundDelegate::soundIsReady() {
     JNIEnv *env = VROPlatformGetJNIEnv();
     env->ExceptionClear();
-    jclass javaClass = env->FindClass("com/viro/renderer/jni/NativeSoundDelegate");
+    jclass javaClass = env->FindClass("com/viro/core/internal/NativeSoundDelegate");
 
     if (javaClass == nullptr) {
         perr("Unable to find NativeSoundDelegate class for soundIsReady() callback");
@@ -46,7 +46,7 @@ void SoundDelegate::soundIsReady() {
 void SoundDelegate::soundDidFinish() {
     JNIEnv *env = VROPlatformGetJNIEnv();
     env->ExceptionClear();
-    jclass javaClass = env->FindClass("com/viro/renderer/jni/NativeSoundDelegate");
+    jclass javaClass = env->FindClass("com/viro/core/internal/NativeSoundDelegate");
 
     if (javaClass == nullptr) {
         perr("Unable to find NativeSoundDelegate class for soundDidFinish() callback");
@@ -70,7 +70,7 @@ void SoundDelegate::soundDidFinish() {
 void SoundDelegate::soundDidFail(std::string error) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     env->ExceptionClear();
-    jclass javaClass = env->FindClass("com/viro/renderer/jni/NativeSoundDelegate");
+    jclass javaClass = env->FindClass("com/viro/core/internal/NativeSoundDelegate");
 
     if (javaClass == nullptr) {
         perr("Unable to find NativeSoundDelegate class for soundDidFail(String) callback");

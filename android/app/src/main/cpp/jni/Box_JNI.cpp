@@ -15,7 +15,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_Box_##method_name
+      Java_com_viro_core_Box_##method_name
 
 namespace Box {
     inline jlong jptr(std::shared_ptr<VROBox> shared_node) {

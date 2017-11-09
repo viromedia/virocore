@@ -32,7 +32,7 @@ namespace arcore {
     struct PointCloud {static constexpr auto Name() { return "com/google/ar/core/PointCloud"; } };
     struct Session { static constexpr auto Name() { return "com/google/ar/core/Session"; } };
 
-    struct ViroViewARCore { static constexpr auto Name() { return "com/viro/renderer/jni/ViroViewARCore"; } };
+    struct ViroViewARCore { static constexpr auto Name() { return "com/viro/core/ViroViewARCore"; } };
 
     struct Object { static constexpr auto Name() { return "java/lang/Object"; } };
     struct Collection { static constexpr auto Name() { return "java/util/Collection"; } };

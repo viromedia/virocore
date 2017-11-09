@@ -34,7 +34,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_Renderer_##method_name
+      Java_com_viro_core_Renderer_##method_name
 
 extern "C" {
 
@@ -382,7 +382,7 @@ JNI_METHOD(void, nativeRecenterTracking)(JNIEnv *env,
 
 void invokeARResultsCallback(std::vector<VROARHitTestResult> &results, jweak weakCallback) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jclass arHitTestResultClass = env->FindClass("com/viro/renderer/jni/ARHitTestResult");
+    jclass arHitTestResultClass = env->FindClass("com/viro/core/ARHitTestResult");
 
     jobjectArray resultsArray = env->NewObjectArray(results.size(), arHitTestResultClass, NULL);
     for (int i = 0; i < results.size(); i++) {
@@ -428,7 +428,7 @@ void invokeARResultsCallback(std::vector<VROARHitTestResult> &results, jweak wea
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject callback = env->NewLocalRef(weakCallback);
         VROPlatformCallJavaFunction(callback, "onHitTestFinished",
-                                    "([Lcom/viro/renderer/jni/ARHitTestResult;)V",
+                                    "([Lcom/viro/core/ARHitTestResult;)V",
                                     globalArrayRef);
         env->DeleteGlobalRef(globalArrayRef);
     });
@@ -438,10 +438,10 @@ void invokeEmptyARResultsCallback(jweak weakCallback) {
     VROPlatformDispatchAsyncApplication([weakCallback] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject callback = env->NewLocalRef(weakCallback);
-        jclass arHitTestResultClass = env->FindClass("com/viro/renderer/jni/ARHitTestResult");
+        jclass arHitTestResultClass = env->FindClass("com/viro/core/ARHitTestResult");
         jobjectArray emptyArray = env->NewObjectArray(0, arHitTestResultClass, NULL);
         VROPlatformCallJavaFunction(callback, "onHitTestFinished",
-                                    "([Lcom/viro/renderer/jni/ARHitTestResult;)V", emptyArray);
+                                    "([Lcom/viro/core/ARHitTestResult;)V", emptyArray);
     });
 }
 

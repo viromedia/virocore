@@ -3,15 +3,15 @@ package com.viromedia.releasetest.tests;
 
 import android.graphics.Color;
 
-import com.viro.renderer.jni.AmbientLight;
-import com.viro.renderer.jni.Box;
-import com.viro.renderer.jni.DirectionalLight;
-import com.viro.renderer.jni.Material;
-import com.viro.renderer.jni.Node;
-import com.viro.renderer.jni.Quaternion;
-import com.viro.renderer.jni.Renderer;
-import com.viro.renderer.jni.Vector;
-import com.viro.renderer.jni.Camera;
+import com.viro.core.AmbientLight;
+import com.viro.core.Box;
+import com.viro.core.DirectionalLight;
+import com.viro.core.Material;
+import com.viro.core.Node;
+import com.viro.core.Quaternion;
+import com.viro.core.Renderer;
+import com.viro.core.Vector;
+import com.viro.core.Camera;
 import com.viromedia.releasetest.ViroReleaseTestActivity;
 
 import org.junit.Test;

@@ -32,7 +32,7 @@ jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor)
          String anchorId, String type, float[] position, float[] rotation,
          float[] scale, String alignment, float[] extent, float[] center
          */
-        jclass cls = env->FindClass("com/viro/renderer/jni/ARPlaneAnchor");
+        jclass cls = env->FindClass("com/viro/core/ARPlaneAnchor");
         jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[FLjava/lang/String;[F[F)V");
 
         jstring alignment = ARUtilsCreateStringFromAlignment(plane->getAlignment());
@@ -50,7 +50,7 @@ jobject ARUtilsCreateJavaARAnchorFromAnchor(std::shared_ptr<VROARAnchor> anchor)
          ARAnchor's constructor has the following args:
          String anchorId, String type, float[] position, float[] rotation, float[] scale
          */
-        jclass cls = env->FindClass("com/viro/renderer/jni/ARAnchor");
+        jclass cls = env->FindClass("com/viro/core/ARAnchor");
         jmethodID constructor = env->GetMethodID(cls, "<init>", "(Ljava/lang/String;Ljava/lang/String;[F[F[F)V");
 
         const char *typeArr = "anchor";

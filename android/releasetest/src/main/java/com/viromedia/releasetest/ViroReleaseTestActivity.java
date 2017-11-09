@@ -14,12 +14,12 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.viro.renderer.jni.RendererStartListener;
-import com.viro.renderer.jni.ViroViewGVR;
-import com.viro.renderer.jni.ViroViewOVR;
-import com.viro.renderer.jni.ViroView;
-import com.viro.renderer.jni.ViroViewARCore;
-import com.viro.renderer.jni.ViroViewScene;
+import com.viro.core.RendererStartListener;
+import com.viro.core.ViroViewGVR;
+import com.viro.core.ViroViewOVR;
+import com.viro.core.ViroView;
+import com.viro.core.ViroViewARCore;
+import com.viro.core.ViroViewScene;
 
 /**
  * Created by manish on 10/25/17.

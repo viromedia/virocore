@@ -3,13 +3,13 @@ package com.viromedia.releasetest.tests;
 import android.graphics.Color;
 import android.net.Uri;
 
-import com.viro.renderer.jni.AmbientLight;
-import com.viro.renderer.jni.Animation;
-import com.viro.renderer.jni.AsyncObject3DListener;
-import com.viro.renderer.jni.Node;
-import com.viro.renderer.jni.Object3D;
-import com.viro.renderer.jni.Text;
-import com.viro.renderer.jni.Vector;
+import com.viro.core.AmbientLight;
+import com.viro.core.Animation;
+import com.viro.core.AsyncObject3DListener;
+import com.viro.core.Node;
+import com.viro.core.Object3D;
+import com.viro.core.Text;
+import com.viro.core.Vector;
 
 
 import org.junit.Test;

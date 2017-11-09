@@ -266,7 +266,7 @@ std::string VROPlatformDownloadURLToFile(std::string url, bool *temp, bool *succ
     JNIEnv *env = VROPlatformGetJNIEnv();
     jstring jurl = env->NewStringUTF(url.c_str());
 
-    jclass cls = env->FindClass("com/viro/renderer/jni/PlatformUtil");
+    jclass cls = env->FindClass("com/viro/core/internal/PlatformUtil");
     jmethodID jmethod = env->GetMethodID(cls, "downloadURLToTempFile", "(Ljava/lang/String;)Ljava/lang/String;");
     jstring jpath = (jstring) env->CallObjectMethod(sPlatformUtil, jmethod, jurl);
 
@@ -575,7 +575,7 @@ void VROPlatformDispatchAsyncBackground(std::function<void()> fcn) {
     JNIEnv *env;
     getJNIEnv(&env);
 
-    jclass cls = env->FindClass("com/viro/renderer/jni/PlatformUtil");
+    jclass cls = env->FindClass("com/viro/core/internal/PlatformUtil");
     jmethodID jmethod = env->GetStaticMethodID(cls, "dispatchAsyncBackground", "(I)V");
     env->CallStaticVoidMethod(cls, jmethod, task);
 
@@ -607,7 +607,7 @@ void VROPlatformFlushTaskQueues() {
         JNIEnv *env;
         getJNIEnv(&env);
 
-        jclass cls = env->FindClass("com/viro/renderer/jni/PlatformUtil");
+        jclass cls = env->FindClass("com/viro/core/internal/PlatformUtil");
         jmethodID jmethod = env->GetStaticMethodID(cls, "dispatchAsyncBackground", "(I)V");
         env->CallStaticVoidMethod(cls, jmethod, task);
 
@@ -742,7 +742,7 @@ std::string VROPlatformGetString(jstring jInputString, JNIEnv *env){
     return sInputString;
 }
 
-void Java_com_viro_renderer_jni_PlatformUtil_runTask(JNIEnv *env, jclass clazz, jint taskId) {
+void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz, jint taskId) {
     VROPlatformRunTask(taskId);
 }
 

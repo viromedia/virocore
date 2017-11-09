@@ -13,7 +13,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_Polyline_##method_name
+      Java_com_viro_core_Polyline_##method_name
 
 namespace Polyline {
     inline jlong jptr(std::shared_ptr<VROPolyline> shared_node) {

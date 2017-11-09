@@ -12,10 +12,10 @@ package com.viromedia.releasetest.tests;
 import android.graphics.Color;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
-import com.viro.renderer.jni.AmbientLight;
-import com.viro.renderer.jni.Node;
-import com.viro.renderer.jni.Text;
-import com.viro.renderer.jni.Vector;
+import com.viro.core.AmbientLight;
+import com.viro.core.Node;
+import com.viro.core.Text;
+import com.viro.core.Vector;
 
 import org.junit.Test;
 

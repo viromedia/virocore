@@ -4,7 +4,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_ARDeclarativeNode_##method_name
+      Java_com_viro_core_internal_ARDeclarativeNode_##method_name
 
 extern "C" {
 
@@ -47,7 +47,7 @@ void ARDeclarativeNodeDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> 
         }
 
         jobject anchorObj = ARUtilsCreateJavaARAnchorFromAnchor(anchor_s);
-        VROPlatformCallJavaFunction(localObj, "onAnchorFound", "(Lcom/viro/renderer/jni/ARAnchor;)V",
+        VROPlatformCallJavaFunction(localObj, "onAnchorFound", "(Lcom/viro/core/ARAnchor;)V",
                                     anchorObj);
         env->DeleteWeakGlobalRef(jObject_w);
     });
@@ -66,7 +66,7 @@ void ARDeclarativeNodeDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> a
         }
 
         jobject anchorObj = ARUtilsCreateJavaARAnchorFromAnchor(anchor_s);
-        VROPlatformCallJavaFunction(localObj, "onAnchorUpdated", "(Lcom/viro/renderer/jni/ARAnchor;)V",
+        VROPlatformCallJavaFunction(localObj, "onAnchorUpdated", "(Lcom/viro/core/ARAnchor;)V",
                                     anchorObj);
         env->DeleteWeakGlobalRef(jObject_w);
     });

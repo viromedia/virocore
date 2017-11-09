@@ -11,7 +11,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_ARPlane_##method_name
+      Java_com_viro_core_ARPlane_##method_name
 
 extern "C" {
 
@@ -99,7 +99,7 @@ void ARPlaneDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> anchor) {
         jobject anchorObj = ARUtilsCreateJavaARAnchorFromAnchor(planeAnchor);
 
         // Yes, the function in the bridge is onAnchorFound.
-        VROPlatformCallJavaFunction(localObj, "onAnchorFound", "(Lcom/viro/renderer/ARAnchor;)V",
+        VROPlatformCallJavaFunction(localObj, "onAnchorFound", "(Lcom/viro/core/ARAnchor;)V",
                                     anchorObj);
         env->DeleteWeakGlobalRef(jObject_w);
     });
@@ -121,7 +121,7 @@ void ARPlaneDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) {
         jobject anchorObj = ARUtilsCreateJavaARAnchorFromAnchor(planeAnchor);
 
         // Yes, the function in the bridge is onAnchorUpdated.
-        VROPlatformCallJavaFunction(localObj, "onAnchorUpdated", "(Lcom/viro/renderer/ARAnchor;)V",
+        VROPlatformCallJavaFunction(localObj, "onAnchorUpdated", "(Lcom/viro/core/ARAnchor;)V",
                                     anchorObj);
 
         env->DeleteWeakGlobalRef(jObject_w);

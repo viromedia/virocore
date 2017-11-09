@@ -18,7 +18,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_ImageTracker_##method_name
+      Java_com_viro_core_internal_ImageTracker_##method_name
 
 namespace ImageTracker {
         inline jlong jptr(std::shared_ptr<VROImageTracker> tracker) {

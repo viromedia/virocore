@@ -13,14 +13,14 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
 
-import com.viro.renderer.jni.AmbientLight;
-import com.viro.renderer.jni.Material;
-import com.viro.renderer.jni.Node;
-import com.viro.renderer.jni.Sphere;
-import com.viro.renderer.jni.Texture;
-import com.viro.renderer.jni.Vector;
-import com.viro.renderer.jni.event.ClickListener;
-import com.viro.renderer.jni.event.ClickState;
+import com.viro.core.AmbientLight;
+import com.viro.core.Material;
+import com.viro.core.Node;
+import com.viro.core.Sphere;
+import com.viro.core.Texture;
+import com.viro.core.Vector;
+import com.viro.core.ClickListener;
+import com.viro.core.ClickState;
 
 import org.junit.Test;
 

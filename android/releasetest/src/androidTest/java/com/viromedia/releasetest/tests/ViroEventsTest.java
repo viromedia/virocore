@@ -4,15 +4,15 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
 
-import com.viro.renderer.jni.Box;
-import com.viro.renderer.jni.DirectionalLight;
-import com.viro.renderer.jni.Material;
-import com.viro.renderer.jni.Node;
-import com.viro.renderer.jni.Object3D;
-import com.viro.renderer.jni.Sphere;
-import com.viro.renderer.jni.Text;
-import com.viro.renderer.jni.Vector;
-import com.viro.renderer.jni.event.ClickListener;
+import com.viro.core.Box;
+import com.viro.core.DirectionalLight;
+import com.viro.core.Material;
+import com.viro.core.Node;
+import com.viro.core.Object3D;
+import com.viro.core.Sphere;
+import com.viro.core.Text;
+import com.viro.core.Vector;
+import com.viro.core.ClickListener;
 
 import org.junit.Test;
 

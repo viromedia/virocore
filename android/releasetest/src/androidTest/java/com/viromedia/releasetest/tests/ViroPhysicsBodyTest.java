@@ -12,18 +12,18 @@ package com.viromedia.releasetest.tests;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
-import com.viro.renderer.jni.AmbientLight;
-import com.viro.renderer.jni.Box;
-import com.viro.renderer.jni.DirectionalLight;
-import com.viro.renderer.jni.Material;
-import com.viro.renderer.jni.Node;
-import com.viro.renderer.jni.PhysicsBody;
-import com.viro.renderer.jni.PhysicsShapeBox;
-import com.viro.renderer.jni.PhysicsShapeSphere;
-import com.viro.renderer.jni.PhysicsWorld;
-import com.viro.renderer.jni.Sphere;
-import com.viro.renderer.jni.Texture;
-import com.viro.renderer.jni.Vector;
+import com.viro.core.AmbientLight;
+import com.viro.core.Box;
+import com.viro.core.DirectionalLight;
+import com.viro.core.Material;
+import com.viro.core.Node;
+import com.viro.core.PhysicsBody;
+import com.viro.core.PhysicsShapeBox;
+import com.viro.core.PhysicsShapeSphere;
+import com.viro.core.PhysicsWorld;
+import com.viro.core.Sphere;
+import com.viro.core.Texture;
+import com.viro.core.Vector;
 
 import org.junit.Test;
 

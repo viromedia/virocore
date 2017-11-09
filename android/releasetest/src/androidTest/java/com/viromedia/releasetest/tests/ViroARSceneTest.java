@@ -4,18 +4,17 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
-import com.viro.renderer.jni.ARAnchor;
-import com.viro.renderer.jni.ARNode;
-import com.viro.renderer.jni.ARScene;
-import com.viro.renderer.jni.AmbientLight;
-import com.viro.renderer.jni.Box;
-import com.viro.renderer.jni.Light;
-import com.viro.renderer.jni.Material;
-import com.viro.renderer.jni.Node;
-import com.viro.renderer.jni.Surface;
-import com.viro.renderer.jni.Text;
-import com.viro.renderer.jni.Texture;
-import com.viro.renderer.jni.Vector;
+import com.viro.core.ARAnchor;
+import com.viro.core.ARNode;
+import com.viro.core.ARScene;
+import com.viro.core.AmbientLight;
+import com.viro.core.Box;
+import com.viro.core.Material;
+import com.viro.core.Node;
+import com.viro.core.Surface;
+import com.viro.core.Text;
+import com.viro.core.Texture;
+import com.viro.core.Vector;
 
 import org.junit.Test;
 

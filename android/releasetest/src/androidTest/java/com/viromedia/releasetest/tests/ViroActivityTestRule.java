@@ -13,7 +13,7 @@ import android.app.Activity;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 
-import com.viro.renderer.jni.ViroView;
+import com.viro.core.ViroView;
 import com.viromedia.releasetest.ViroReleaseTestActivity;
 
 /**

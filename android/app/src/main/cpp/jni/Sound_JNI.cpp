@@ -17,7 +17,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_Sound_##method_name
+      Java_com_viro_core_Sound_##method_name
 
 // TODO: when GVR audio supports the seekToTime, etc, then change the native object to a VROSound.
 namespace Sound {

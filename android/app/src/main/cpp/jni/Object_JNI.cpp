@@ -16,7 +16,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_Object3D_##method_name
+      Java_com_viro_core_Object3D_##method_name
 
 extern "C" {
 

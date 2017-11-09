@@ -13,13 +13,13 @@ import android.graphics.Color;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.viro.renderer.jni.DirectionalLight;
-import com.viro.renderer.jni.Material;
-import com.viro.renderer.jni.Node;
-import com.viro.renderer.jni.OmniLight;
-import com.viro.renderer.jni.Sphere;
-import com.viro.renderer.jni.Surface;
-import com.viro.renderer.jni.Vector;
+import com.viro.core.DirectionalLight;
+import com.viro.core.Material;
+import com.viro.core.Node;
+import com.viro.core.OmniLight;
+import com.viro.core.Sphere;
+import com.viro.core.Surface;
+import com.viro.core.Vector;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

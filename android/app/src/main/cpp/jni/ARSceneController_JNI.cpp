@@ -18,7 +18,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_ARScene_##method_name
+      Java_com_viro_core_ARScene_##method_name
 
 extern "C" {
 
@@ -241,7 +241,7 @@ void ARDeclarativeSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> 
         jobject janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
         jlong nodeNativeRef = 0;
         VROPlatformCallJavaFunction(localObj, "onAnchorFound",
-                                    "(Lcom/viro/renderer/jni/ARAnchor;J)V",
+                                    "(Lcom/viro/core/ARAnchor;J)V",
                                     janchor, nodeNativeRef);
         env->DeleteLocalRef(localObj);
     });
@@ -263,7 +263,7 @@ void ARDeclarativeSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> an
 
         jobject janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
         VROPlatformCallJavaFunction(localObj, "onAnchorUpdated",
-                                    "(Lcom/viro/renderer/jni/ARAnchor;I)V",
+                                    "(Lcom/viro/core/ARAnchor;I)V",
                                     janchor, 0);
         env->DeleteLocalRef(localObj);
     });
@@ -281,7 +281,7 @@ void ARDeclarativeSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> a
 
         jobject janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
         VROPlatformCallJavaFunction(localObj, "onAnchorRemoved",
-                                    "(Lcom/viro/renderer/jni/ARAnchor;I)V",
+                                    "(Lcom/viro/core/ARAnchor;I)V",
                                     janchor, 0);
         env->DeleteLocalRef(localObj);
     });
@@ -336,7 +336,7 @@ void ARImperativeSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> a
         jobject janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
         jlong node_j = ARNode::jptr(node);
         VROPlatformCallJavaFunction(localObj, "onAnchorFound",
-                                    "(Lcom/viro/renderer/jni/ARAnchor;J)V",
+                                    "(Lcom/viro/core/ARAnchor;J)V",
                                     janchor, node_j);
         env->DeleteLocalRef(localObj);
     });
@@ -358,7 +358,7 @@ void ARImperativeSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> anc
 
         jobject janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
         VROPlatformCallJavaFunction(localObj, "onAnchorUpdated",
-                                    "(Lcom/viro/renderer/jni/ARAnchor;I)V",
+                                    "(Lcom/viro/core/ARAnchor;I)V",
                                     janchor, node->getUniqueID());
         env->DeleteLocalRef(localObj);
     });
@@ -376,7 +376,7 @@ void ARImperativeSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> an
 
         jobject janchor = ARUtilsCreateJavaARAnchorFromAnchor(anchor);
         VROPlatformCallJavaFunction(localObj, "onAnchorRemoved",
-                                    "(Lcom/viro/renderer/jni/ARAnchor;I)V",
+                                    "(Lcom/viro/core/ARAnchor;I)V",
                                     janchor, node->getUniqueID());
         env->DeleteLocalRef(localObj);
     });

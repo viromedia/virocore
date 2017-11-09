@@ -13,11 +13,11 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
-import com.viro.renderer.jni.Node;
-import com.viro.renderer.jni.SoundField;
-import com.viro.renderer.jni.Text;
-import com.viro.renderer.jni.Vector;
-import com.viro.renderer.jni.ViroContext;
+import com.viro.core.Node;
+import com.viro.core.SoundField;
+import com.viro.core.Text;
+import com.viro.core.Vector;
+import com.viro.core.ViroContext;
 
 import org.junit.Test;
 

@@ -10,7 +10,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_EventDelegate_##method_name
+      Java_com_viro_core_EventDelegate_##method_name
 
 extern "C" {
 
@@ -292,7 +292,7 @@ void EventDelegate_JNI::onCameraARHitTest(int source, std::vector<VROARHitTestRe
 
     VROPlatformDispatchAsyncApplication([weakObj, source, results] {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        jclass arHitTestResultClass = env->FindClass("com/viro/renderer/ARHitTestResult");
+        jclass arHitTestResultClass = env->FindClass("com/viro/core/ARHitTestResult");
 
         jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
@@ -343,7 +343,7 @@ void EventDelegate_JNI::onCameraARHitTest(int source, std::vector<VROARHitTestRe
         }
 
         VROPlatformCallJavaFunction(localObj,
-                                    "onCameraARHitTest", "(I[Lcom/viro/renderer/ARHitTestResult;)V", source, resultsArray);
+                                    "onCameraARHitTest", "(I[Lcom/viro/core/ARHitTestResult;)V", source, resultsArray);
         env->DeleteLocalRef(localObj);
     });
 }

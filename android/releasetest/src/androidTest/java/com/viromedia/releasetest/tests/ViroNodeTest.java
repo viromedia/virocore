@@ -1,15 +1,14 @@
 package com.viromedia.releasetest.tests;
 
 import android.graphics.Color;
-import android.util.Log;
 
-import com.viro.renderer.jni.Box;
-import com.viro.renderer.jni.DirectionalLight;
-import com.viro.renderer.jni.Material;
-import com.viro.renderer.jni.Node;
-import com.viro.renderer.jni.Polyline;
-import com.viro.renderer.jni.Sphere;
-import com.viro.renderer.jni.Vector;
+import com.viro.core.Box;
+import com.viro.core.DirectionalLight;
+import com.viro.core.Material;
+import com.viro.core.Node;
+import com.viro.core.Polyline;
+import com.viro.core.Sphere;
+import com.viro.core.Vector;
 
 import org.junit.Test;
 

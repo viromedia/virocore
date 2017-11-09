@@ -12,7 +12,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_jni_ExecutableAnimation_##method_name
+      Java_com_viro_core_internal_ExecutableAnimation_##method_name
 
 extern "C" {
 
@@ -61,7 +61,7 @@ JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeR
 
                 if (obj != NULL) {
                     jclass javaClass = VROPlatformFindClass(env, obj,
-                                                            "com/viro/renderer/jni/AnimationGroup");
+                                                            "com/viro/core/internal/AnimationGroup");
                     if (javaClass == nullptr) {
                         perr("Unable to find AnimationGroupJni class for onFinish callback.");
                         return;

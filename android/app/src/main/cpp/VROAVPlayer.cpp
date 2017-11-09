@@ -11,7 +11,7 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-      Java_com_viro_renderer_AVPlayer_##method_name
+      Java_com_viro_core_internal_AVPlayer_##method_name
 
 extern "C" {
     inline jlong jptr(VROAVPlayer *nativePlayer) {
@@ -74,7 +74,7 @@ extern "C" {
     }
 }
 
-static const char *AVPlayerClass = "com/viro/renderer/AVPlayer";
+static const char *AVPlayerClass = "com/viro/core/internal/AVPlayer";
 VROAVPlayer::VROAVPlayer() :
     _jsurface(nullptr),
     _textureId(0) {
