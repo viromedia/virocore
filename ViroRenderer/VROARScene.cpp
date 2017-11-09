@@ -89,6 +89,9 @@ void VROARScene::displayPointCloud(bool displayPointCloud) {
     if (_pointCloudEmitter) {
         if (_displayPointCloud) {
             _pointCloudNode->setParticleEmitter(_pointCloudEmitter);
+            if (_pointCloudNode->getParentNode() == nullptr) {
+                addNode(_pointCloudNode);
+            }
         } else {
             _pointCloudNode->removeParticleEmitter();
             _pointCloudEmitter->clearParticles();
