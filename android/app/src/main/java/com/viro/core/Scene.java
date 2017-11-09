@@ -161,7 +161,7 @@ public class Scene {
     protected long mNativeDelegateRef;
     private Node mRootNode;
     private PhysicsWorld mPhysicsWorld;
-    private WeakReference<SceneDelegate> mDelegate = null;
+    private VisibilityListener mListener = null;
 
     /**
      * Construct a new Scene.
@@ -343,7 +343,7 @@ public class Scene {
     /**
      * Receives callbacks in response to a {@link Scene} appearing and disappearing.
      */
-    public interface SceneDelegate {
+    public interface VisibilityListener {
 
         /**
          * Callback invoked when a Scene is about to appear.
@@ -367,12 +367,11 @@ public class Scene {
     }
 
     /**
-     * Registers the given delegate for callbacks. Registering the same
-     * delegate twice will still only result in that delegate being
-     * called once.
+     * Set the given {@link VisibilityListener} to receive callbacks when the Scene's visibility
+     * status changes.
      */
-    public void registerDelegate(SceneDelegate delegate) {
-        mDelegate = new WeakReference<SceneDelegate>(delegate);
+    public void setVisibilityListener(VisibilityListener listener) {
+        mListener = listener;
     }
 
     /*
@@ -383,18 +382,16 @@ public class Scene {
      * @hide
      */
     public void onSceneWillAppear() {
-        SceneDelegate delegate;
-        if (mDelegate != null && (delegate = mDelegate.get()) != null) {
-            delegate.onSceneWillAppear();
+        if (mListener != null) {
+            mListener.onSceneWillAppear();
         }
     }
     /**
      * @hide
      */
     public void onSceneDidAppear() {
-        SceneDelegate delegate;
-        if (mDelegate != null && (delegate = mDelegate.get()) != null) {
-            delegate.onSceneDidAppear();
+        if (mListener != null) {
+            mListener.onSceneDidAppear();
         }
     }
 
@@ -402,9 +399,8 @@ public class Scene {
      * @hide
      */
     public void onSceneWillDisappear(){
-        SceneDelegate delegate;
-        if (mDelegate != null && (delegate = mDelegate.get()) != null) {
-            delegate.onSceneWillDisappear();
+        if (mListener != null) {
+            mListener.onSceneWillDisappear();
         }
     }
 
@@ -412,9 +408,8 @@ public class Scene {
      * @hide
      */
     public void onSceneDidDisappear() {
-        SceneDelegate delegate;
-        if (mDelegate != null && (delegate = mDelegate.get()) != null) {
-            delegate.onSceneDidDisappear();
+        if (mListener != null) {
+            mListener.onSceneDidDisappear();
         }
     }
 
@@ -424,10 +419,10 @@ public class Scene {
     private native void nativeSetPhysicsWorldGravity(long sceneRef, float gravity[]);
     private native void findCollisionsWithRayAsync(long sceneRef, float[] from, float[] to,
                                            boolean closest, String tag,
-                                           PhysicsWorld.HitTestCallback callback);
+                                           PhysicsWorld.HitTestListener callback);
     private native void findCollisionsWithShapeAsync(long sceneRef, float[] from, float[] to,
                                            String shapeType, float[] params, String tag,
-                                           PhysicsWorld.HitTestCallback callback);
+                                           PhysicsWorld.HitTestListener callback);
     private native void nativeSetPhysicsWorldDebugDraw(long sceneRef, boolean debugDraw);
 
     /*
@@ -458,7 +453,7 @@ public class Scene {
      * @param callback
      */
     void findCollisionsWithRayAsync(float[] fromPos, float toPos[], boolean closest,
-                                    String tag, PhysicsWorld.HitTestCallback callback){
+                                    String tag, PhysicsWorld.HitTestListener callback){
         findCollisionsWithRayAsync(mNativeRef, fromPos, toPos, closest, tag, callback);
     }
 
@@ -472,7 +467,7 @@ public class Scene {
      * @param callback
      */
     void findCollisionsWithShapeAsync(float[] from, float[] to, String shapeType, float[] params,
-                                      String tag, PhysicsWorld.HitTestCallback callback){
+                                      String tag, PhysicsWorld.HitTestListener callback){
         findCollisionsWithShapeAsync(mNativeRef, from,to, shapeType, params, tag, callback);
     }
 

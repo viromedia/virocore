@@ -119,7 +119,7 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
         AnimationTransaction.setAnimationDuration(2000);
         AnimationTransaction.setTimingFunction(AnimationTimingFunction.Linear);
         boxNode.setPosition(new Vector(0, 0, -6));
-        AnimationTransaction.setFinishCallback((transaction)-> {
+        AnimationTransaction.setListener((transaction)-> {
                 AnimationTransaction.begin();
                     AnimationTransaction.setAnimationDuration(2000);
             boxNode.setRotation(new Vector(0, 1.04, 0));

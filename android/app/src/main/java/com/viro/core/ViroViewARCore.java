@@ -53,7 +53,7 @@ public class ViroViewARCore extends ViroView {
      * ARCore, which underlies Viro's augmented reality system, can be set to detect various types
      * of real world features (anchors) by continually scanning the incoming video feed from the
      * device camera. This enum indicates what anchors ARCore should attempt to detect. The {@link
-     * ARScene.Delegate} will receive a callback whenever an {@link ARAnchor}
+     * ARScene.Listener} will receive a callback whenever an {@link ARAnchor}
      * of one of these enabled types is found.
      */
     public enum AnchorDetectionType {
@@ -420,7 +420,7 @@ public class ViroViewARCore extends ViroView {
 
     /**
      * Set the types of {@link ARAnchor}s the system should attempt to detect and track. The {@link
-     * ARScene.Delegate} will receive a callback whenever an {@link ARAnchor}
+     * ARScene.Listener} will receive a callback whenever an {@link ARAnchor}
      * of one of these enabled types is found.
      *
      * @param types The set of anchor types that should be tracked.
@@ -459,7 +459,7 @@ public class ViroViewARCore extends ViroView {
      * @param callback The callback that will receive the {@link ARHitTestResult}
      *                 results.
      */
-    public void performARHitTestWithRay(Vector ray, ARHitTestCallback callback) {
+    public void performARHitTestWithRay(Vector ray, ARHitTestListener callback) {
         if (!mDestroyed) {
             mNativeRenderer.performARHitTestWithRay(ray.toArray(), callback);
         }
@@ -475,7 +475,7 @@ public class ViroViewARCore extends ViroView {
      * @param callback The callback that will receive the {@link ARHitTestResult}
      *                 results.
      */
-    public void performARHitTestWithPosition(Vector position, ARHitTestCallback callback) {
+    public void performARHitTestWithPosition(Vector position, ARHitTestListener callback) {
         if (!mDestroyed) {
             mNativeRenderer.performARHitTestWithPosition(position.toArray(), callback);
         }
@@ -491,7 +491,7 @@ public class ViroViewARCore extends ViroView {
      * @param callback The callback that will receive the {@link ARHitTestResult}
      *                 results.
      */
-    public void performARHitTest(Point point, ARHitTestCallback callback) {
+    public void performARHitTest(Point point, ARHitTestListener callback) {
         if (!mDestroyed) {
             mNativeRenderer.performARHitTestWithPoint(point.x, point.y, callback);
         }

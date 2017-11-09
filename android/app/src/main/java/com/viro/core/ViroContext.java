@@ -15,6 +15,8 @@
  */
 package com.viro.core;
 
+import com.viro.core.internal.CameraCallback;
+
 /**
  * ViroContext provides context for the Viro application. It is tied to a specific EGL Context
  * and is required for rendering tasks.

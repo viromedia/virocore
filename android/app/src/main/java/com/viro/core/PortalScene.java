@@ -24,9 +24,9 @@ import android.graphics.Bitmap;
 public class PortalScene extends Node {
 
     /**
-     * Callback interface for responding to user's entering or existing a PortalScene.
+     * Callback interface for responding to users entering or exiting a PortalScene.
      */
-    public interface Delegate {
+    public interface EntryListener {
         /**
          * Invoked when the user enters this PortalScene.
          *
@@ -43,7 +43,7 @@ public class PortalScene extends Node {
     }
 
     private long mNativeDelegateRef;
-    private Delegate mDelegate = null;
+    private EntryListener mEntryListener = null;
     private boolean mPassable = false;
     private Portal mPortal;
 
@@ -146,22 +146,22 @@ public class PortalScene extends Node {
     }
 
     /**
-     * Set the {@link Delegate} to use for responding to the user entering or exiting this
+     * Set the {@link EntryListener} to use for responding to the user entering or exiting this
      * {@link PortalScene}. Only used if this PortalScene is set to passable.
      *
-     * @param delegate The delegate to use with this PortalScene.
+     * @param delegate The listener to use with this PortalScene.
      */
-    public void setDelegate(Delegate delegate) {
-        mDelegate = delegate;
+    public void setEntryListener(EntryListener delegate) {
+        mEntryListener = delegate;
     }
 
     /**
-     * Get the {@link Delegate} used for responding to portal entry events.
+     * Get the {@link EntryListener} used for responding to portal entry events.
      *
-     * @return The delegate, or null if none is set.
+     * @return The listener, or null if none is set.
      */
-    public Delegate getDelegate() {
-        return mDelegate;
+    public EntryListener getEntryListener() {
+        return mEntryListener;
     }
 
     /**
@@ -227,8 +227,8 @@ public class PortalScene extends Node {
      * @hide
      */
     void onPortalEnter() {
-        if (mDelegate != null && mNativeRef != 0) {
-            mDelegate.onPortalEnter(this);
+        if (mEntryListener != null && mNativeRef != 0) {
+            mEntryListener.onPortalEnter(this);
         }
     }
 
@@ -236,8 +236,8 @@ public class PortalScene extends Node {
      * @hide
      */
     void onPortalExit() {
-        if (mDelegate != null && mNativeRef != 0) {
-            mDelegate.onPortalExit(this);
+        if (mEntryListener != null && mNativeRef != 0) {
+            mEntryListener.onPortalExit(this);
         }
     }
 }

@@ -48,7 +48,7 @@ public class ViroSpatialSoundTest extends ViroBaseTest {
         mSound.setPosition(new Vector(-5, 0, 0));
         mSound.setDistanceRolloff(SpatialSound.Rolloff.LINEAR, 3, 5);
         mSound.setLoop(true);
-        mSound.setDelegate(new SpatialSound.Delegate() {
+        mSound.setPlaybackListener(new SpatialSound.PlaybackListener() {
             @Override
             public void onSoundReady(final SpatialSound sound) {
                 mDelegateText.setText("onSoundReady called. Playing song");
@@ -156,7 +156,7 @@ public class ViroSpatialSoundTest extends ViroBaseTest {
 
     // TODO VIRO-2181 setting null delegate will cause an NPE
     private void testSetDelegate() {
-        final SpatialSound.Delegate delegate1 = new SpatialSound.Delegate() {
+        final SpatialSound.PlaybackListener delegate1 = new SpatialSound.PlaybackListener() {
             @Override
             public void onSoundReady(final SpatialSound sound) {
                 mDelegateText.setText("DELEGATE 1 onSoundReady called. Playing song");
@@ -169,7 +169,7 @@ public class ViroSpatialSoundTest extends ViroBaseTest {
             }
         };
 
-        final SpatialSound.Delegate delegate2 = new SpatialSound.Delegate() {
+        final SpatialSound.PlaybackListener delegate2 = new SpatialSound.PlaybackListener() {
             @Override
             public void onSoundReady(final SpatialSound sound) {
                 mDelegateText.setText("DELEGATE 2 onSoundReady called. Playing song");
@@ -182,12 +182,12 @@ public class ViroSpatialSoundTest extends ViroBaseTest {
             }
         };
 
-        final List<SpatialSound.Delegate> delegates = Arrays.asList(delegate1, delegate2);
-        final Iterator<SpatialSound.Delegate> itr = Iterables.cycle(delegates).iterator();
+        final List<SpatialSound.PlaybackListener> delegates = Arrays.asList(delegate1, delegate2);
+        final Iterator<SpatialSound.PlaybackListener> itr = Iterables.cycle(delegates).iterator();
 
         mMutableTestMethod = () -> {
 
-            mSound.setDelegate(itr.next());
+            mSound.setPlaybackListener(itr.next());
         };
 
         assertPass("Toggling between two delegates");

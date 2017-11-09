@@ -25,10 +25,6 @@ import com.viro.core.Sphere;
 import com.viro.core.Texture;
 import com.viro.core.Vector;
 import com.viro.core.VideoTexture;
-import com.viro.core.AmbientLight;
-import com.viro.core.Texture;
-import com.viro.core.Vector;
-import com.viro.core.VideoTexture;
 
 import org.junit.Test;
 
@@ -134,7 +130,7 @@ public class ViroSceneTest extends ViroBaseTest {
         scene1.getRootNode().addChildNode(boxNode);
         runOnUiThread(() -> {
             final Sound sound = new Sound(mViroView.getViroContext(),
-                    Uri.parse("file:///android_asset/flies_mono.wav"), new Sound.Delegate() {
+                    Uri.parse("file:///android_asset/flies_mono.wav"), new Sound.PlaybackListener() {
                 @Override
                 public void onSoundReady(final Sound sound) {
                     sound.play();
@@ -165,7 +161,7 @@ public class ViroSceneTest extends ViroBaseTest {
 
         runOnUiThread(() -> {
             final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
-                    Uri.parse("file:///android_asset/stereoVid360.mp4"), new VideoTexture.Delegate() {
+                    Uri.parse("file:///android_asset/stereoVid360.mp4"), new VideoTexture.PlaybackListener() {
                 @Override
                 public void onVideoBufferStart(final VideoTexture video) {
 

@@ -30,7 +30,7 @@ public class SpatialSound implements BaseSound {
     /**
      * Callback interface for responding to {@link SpatialSound} events.
      */
-    public interface Delegate {
+    public interface PlaybackListener {
 
         /**
          * Invoked when a {@link SpatialSound} has finished loading and is ready to play without
@@ -96,7 +96,7 @@ public class SpatialSound implements BaseSound {
     long mNativeRef;
     WeakReference<Node> mParentNode = null;
 
-    private Delegate mDelegate;
+    private PlaybackListener mListener;
     private boolean mReady = false;
     private float mVolume = 1.0f;
     private boolean mMuted = false;
@@ -109,29 +109,29 @@ public class SpatialSound implements BaseSound {
      * @param viroContext The {@link ViroContext} is required to play sounds.
      * @param uri         The URI of the sound. To load the sound from an Android asset, use URI's
      *                    of the form <tt>file:///android_asset/[asset-name]</tt>.
-     * @param delegate    {@link SoundDelegate} which can be used to respond to sound loading and
+     * @param listener    {@link PlaybackListener} which can be used to respond to sound loading and
      *                    playback events. May be null.
      */
-    public SpatialSound(ViroContext viroContext, Uri uri, Delegate delegate) {
+    public SpatialSound(ViroContext viroContext, Uri uri, PlaybackListener listener) {
         mNativeRef = nativeCreateSpatialSound(uri.toString(), false, viroContext.mNativeRef);
-        mDelegate = delegate;
+        mListener = listener;
     }
 
     /**
      * @hide
      */
-    public SpatialSound(String path, ViroContext viroContext, Delegate delegate, boolean local) {
+    public SpatialSound(String path, ViroContext viroContext, PlaybackListener delegate, boolean local) {
         mNativeRef = nativeCreateSpatialSound(path, local, viroContext.mNativeRef);
-        mDelegate = delegate;
+        mListener = delegate;
     }
 
     /**
      * @hide
      */
     public SpatialSound(SoundData data, ViroContext viroContext,
-                        Delegate delegate) {
+                        PlaybackListener delegate) {
         mNativeRef = nativeCreateSpatialSoundWithData(data.mNativeRef, viroContext.mNativeRef);
-        mDelegate = delegate;
+        mListener = delegate;
     }
 
     @Override
@@ -276,26 +276,25 @@ public class SpatialSound implements BaseSound {
     }
 
     /**
-     * Set the {@link Delegate}, which can be used to respond to SpatialSound loading and playback
+     * Set the {@link PlaybackListener}, which can be used to respond to SpatialSound loading and playback
      * events.
      *
-     * @param delegate The delegate to use for this Sound.
+     * @param listener The listener to use for this Sound.
      */
-    public void setDelegate(Delegate delegate) {
-        mDelegate = delegate;
-        // call the delegate.onSoundReady() if we're already ready.
+    public void setPlaybackListener(PlaybackListener listener) {
+        mListener = listener;
         if (mReady) {
-            delegate.onSoundReady(this);
+            listener.onSoundReady(this);
         }
     }
 
     /**
-     * Get the {@link Delegate} used to receive callbacks for this SpatialSound.
+     * Get the {@link PlaybackListener} used to receive callbacks for this SpatialSound.
      *
-     * @return The SoundDelegate, or null if none is attached.
+     * @return The listener, or null if none is attached.
      */
-    public Delegate getDelegate() {
-        return mDelegate;
+    public PlaybackListener getPlaybackListener() {
+        return mListener;
     }
 
     /**
@@ -330,8 +329,8 @@ public class SpatialSound implements BaseSound {
     @Override
     public void soundIsReady() {
         mReady = true;
-        if (mDelegate != null) {
-            mDelegate.onSoundReady(this);
+        if (mListener != null) {
+            mListener.onSoundReady(this);
         }
     }
 
@@ -349,8 +348,8 @@ public class SpatialSound implements BaseSound {
      */
     @Override
     public void soundDidFail(String error) {
-        if (mDelegate != null) {
-            mDelegate.onSoundFail(error);
+        if (mListener != null) {
+            mListener.onSoundFail(error);
         }
     }
 

@@ -24,7 +24,7 @@ import com.viro.core.internal.ARDeclarativeNode;
  * The second way to add virtual content is to use {@link ARAnchor}. ARAnchors represent features
  * detected in the real-world. You can associate (or "anchor") your content to these features by
  * adding your content to the {@link ARNode} that corresponds to each detected ARAnchor. To do this,
- * implement the ARScene {@link Delegate}. The {@link Delegate} callbacks are invoked whenever
+ * implement the ARScene {@link Listener}. The {@link Listener} callbacks are invoked whenever
  * {@link ARAnchor}s are found (or updated, or removed) in the real-world.
  */
 public class ARScene extends Scene {
@@ -33,7 +33,7 @@ public class ARScene extends Scene {
      * Callback interface for ARScene events. These include the detection of ambient light and the
      * tracking of real-world features.
      */
-    public interface Delegate {
+    public interface Listener {
         /**
          * Invoked when tracking is initialized and functional.
          */
@@ -83,7 +83,7 @@ public class ARScene extends Scene {
         void onAnchorRemoved(ARAnchor anchor, ARNode node);
     }
 
-    private Delegate mDelegate = null;
+    private Listener mListener = null;
     private long mNativeARDelegateRef;
 
     /**
@@ -135,6 +135,17 @@ public class ARScene extends Scene {
             nativeDestroyARSceneDelegate(mNativeARDelegateRef);
             mNativeARDelegateRef = 0;
         }
+    }
+
+    /**
+     * Set the {@link Listener} to use for responding to AR events. This enables your application
+     * to receive {@link ARAnchor} and {@link ARNode} objects as they are detected by the AR
+     * tracking system.
+     *
+     * @param listener The {@link Listener} to use for this ARScene.
+     */
+    public void setListener(Listener listener) {
+        mListener = listener;
     }
 
     /**
@@ -218,51 +229,47 @@ public class ARScene extends Scene {
     private native void nativeSetPointCloudSurfaceScale(long sceneControllerRef, float scaleX, float scaleY, float scaleZ);
     private native void nativeSetPointCloudMaxPoints(long sceneControllerRef, int maxPoints);
 
-    public void setDelegate(Delegate delegate) {
-        mDelegate = delegate;
-    }
-
     // Called by JNI
 
     /**
      * @hide
      */
     void onTrackingInitialized() {
-        if (mDelegate != null) {
-            mDelegate.onTrackingInitialized();
+        if (mListener != null) {
+            mListener.onTrackingInitialized();
         }
     }
     /**
      * @hide
      */
     void onAmbientLightUpdate(float lightIntensity, float colorTemperature) {
-        Delegate delegate;
-        if (mDelegate != null) {
-            mDelegate.onAmbientLightUpdate(lightIntensity, colorTemperature);
+        Listener delegate;
+        if (mListener != null) {
+            mListener.onAmbientLightUpdate(lightIntensity, colorTemperature);
         }
     }
     /**
      * @hide
      */
     void onAnchorFound(ARAnchor anchor, long nodeNativeRef) {
-        if (mDelegate != null) {
+        if (mListener != null) {
             ARNode node = null;
             if (nodeNativeRef != 0) {
                 node = new ARNode(nodeNativeRef);
             }
-            mDelegate.onAnchorFound(anchor, node);
+            mListener.onAnchorFound(anchor, node);
         }
     }
     /**
      * @hide
      */
     void onAnchorUpdated(ARAnchor anchor, int nodeId) {
-        if (mDelegate != null) {
+        if (mListener != null) {
             ARNode node = null;
             if (nodeId != 0) {
                 node = ARNode.getARNodeWithID(nodeId);
             }
-            mDelegate.onAnchorUpdated(anchor, node);
+            mListener.onAnchorUpdated(anchor, node);
         }
     }
     /**
@@ -270,12 +277,12 @@ public class ARScene extends Scene {
      */
     /* Called by Native */
     void onAnchorRemoved(ARAnchor anchor, int nodeId) {
-        if (mDelegate != null) {
+        if (mListener != null) {
             ARNode node = null;
             if (nodeId != 0) {
                 node = ARNode.removeARNodeWithID(nodeId);
             }
-            mDelegate.onAnchorRemoved(anchor, node);
+            mListener.onAnchorRemoved(anchor, node);
         }
     }
 }

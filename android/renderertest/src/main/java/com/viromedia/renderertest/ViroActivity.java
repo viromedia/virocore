@@ -23,7 +23,7 @@ import android.widget.ImageView;
 import com.viro.core.ARAnchor;
 import com.viro.core.internal.ARDeclarativeNode;
 import com.viro.core.internal.ARDeclarativePlane;
-import com.viro.core.ARHitTestCallback;
+import com.viro.core.ARHitTestListener;
 import com.viro.core.ARHitTestResult;
 import com.viro.core.ARNode;
 import com.viro.core.ARPlaneAnchor;
@@ -248,7 +248,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
             @Override
             public void run() {
                 final ViroViewARCore view = (ViroViewARCore) mViroView;
-                view.performARHitTest(new Point(view.getWidth() / 2, view.getHeight() / 2), new ARHitTestCallback() {
+                view.performARHitTest(new Point(view.getWidth() / 2, view.getHeight() / 2), new ARHitTestListener() {
                     @Override
                     public void onHitTestFinished(final ARHitTestResult[] results) {
                         Log.w("Viro", "Hit test complete");
@@ -264,7 +264,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
             @Override
             public void run() {
                 final ViroViewARCore view = (ViroViewARCore) mViroView;
-                view.performARHitTest(new Point(view.getWidth() / 2, view.getHeight() / 2), new ARHitTestCallback() {
+                view.performARHitTest(new Point(view.getWidth() / 2, view.getHeight() / 2), new ARHitTestListener() {
                     @Override
                     public void onHitTestFinished(final ARHitTestResult[] results) {
                         Log.w("Viro", "Hit test complete");
@@ -280,7 +280,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
             @Override
             public void run() {
                 final ViroViewARCore view = (ViroViewARCore) mViroView;
-                view.performARHitTest(new Point(view.getWidth() / 2, view.getHeight() / 2), new ARHitTestCallback() {
+                view.performARHitTest(new Point(view.getWidth() / 2, view.getHeight() / 2), new ARHitTestListener() {
                     @Override
                     public void onHitTestFinished(final ARHitTestResult[] results) {
                         Log.w("Viro", "Hit test complete");
@@ -530,9 +530,9 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         AnimationTransaction.setAnimationDelay(1000);
         AnimationTransaction.setAnimationDuration(5000);
         AnimationTransaction.setTimingFunction(AnimationTimingFunction.Bounce);
-        AnimationTransaction.setFinishCallback(new AnimationTransaction.FinishedCallback() {
+        AnimationTransaction.setListener(new AnimationTransaction.Listener() {
             @Override
-            public void onFinished(final AnimationTransaction transaction) {
+            public void onFinish(final AnimationTransaction transaction) {
                 Log.i("Viro", "Animation finished");
             }
         });
@@ -637,7 +637,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     }
 
     private void testStereoBackgroundVideo(final Scene scene) {
-        final VideoTexture.Delegate delegate = new VideoTexture.Delegate() {
+        final VideoTexture.PlaybackListener delegate = new VideoTexture.PlaybackListener() {
             @Override
             public void onVideoBufferStart(final VideoTexture video) {
 
@@ -736,7 +736,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     }
 
     private List<Node> testImperativePlane(final ARScene arScene) {
-        arScene.setDelegate(new ARScene.Delegate() {
+        arScene.setListener(new ARScene.Listener() {
             @Override
             public void onTrackingInitialized() {
 
@@ -797,7 +797,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
 
     private void addNormalSound(final String path) {
         final String key = path + SOUND_COUNT++;
-        mSoundMap.put(key, new Sound(mViroView.getViroContext(), Uri.parse(path), new Sound.Delegate() {
+        mSoundMap.put(key, new Sound(mViroView.getViroContext(), Uri.parse(path), new Sound.PlaybackListener() {
             @Override
             public void onSoundReady(final Sound sound) {
                 Log.i("NormalSound", "ViroActivity sound is ready! is paused? " + sound.isPaused());
@@ -820,7 +820,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     private void addNormalSound(final SoundData data) {
         final String key = "" + SOUND_COUNT++;
         mSoundMap.put(key, new Sound(data,
-                mViroView.getViroContext(), new Sound.Delegate() {
+                mViroView.getViroContext(), new Sound.PlaybackListener() {
             @Override
             public void onSoundReady(final Sound sound) {
                 Log.i("NormalSound", "ViroActivity sound is ready! is paused? " + sound.isPaused());
@@ -842,7 +842,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     private void addSoundField(final String path) {
         final String key = path + SOUND_COUNT++;
         mSoundFieldMap.put(key, new SoundField(
-                mViroView.getViroContext(), Uri.parse(path), new SoundField.Delegate() {
+                mViroView.getViroContext(), Uri.parse(path), new SoundField.PlaybackListener() {
             @Override
             public void onSoundReady(final SoundField sound) {
                 Log.i("SoundField", "ViroActivity sound is ready!");
@@ -862,7 +862,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
 
     private void addSpatialSound(final String path) {
         final String key = path + SOUND_COUNT++;
-        mSpatialSoundMap.put(key, new SpatialSound(mViroView.getViroContext(), Uri.parse(path), new SpatialSound.Delegate() {
+        mSpatialSoundMap.put(key, new SpatialSound(mViroView.getViroContext(), Uri.parse(path), new SpatialSound.PlaybackListener() {
             @Override
             public void onSoundReady(final SpatialSound sound) {
                 Log.i("SpatialSound", "ViroActivity sound is ready!");
@@ -882,7 +882,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     private void addSpatialSound(final SoundData data) {
         final String key = "" + SOUND_COUNT++;
         mSpatialSoundMap.put(key, new SpatialSound(data,
-                mViroView.getViroContext(), new SpatialSound.Delegate() {
+                mViroView.getViroContext(), new SpatialSound.PlaybackListener() {
             @Override
             public void onSoundReady(final SpatialSound sound) {
                 final float[] position = {5, 0, 0};

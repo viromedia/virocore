@@ -6,7 +6,8 @@
  * root directory of this source tree. An additional grant  of patent rights can be found in
  * the PATENTS file in the same directory.
  */
-package com.viro.core;
+
+ package com.viro.core.internal;
 
 /**
  * Callback interface used to get camera related information from the

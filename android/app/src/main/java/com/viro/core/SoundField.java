@@ -22,7 +22,7 @@ public class SoundField implements BaseSound {
     /**
      * Callback interface for responding to {@link SoundField} events.
      */
-    public interface Delegate {
+    public interface PlaybackListener {
 
         /**
          * Invoked when a {@link SoundField} has finished loading and is ready to play without delay.
@@ -45,7 +45,7 @@ public class SoundField implements BaseSound {
     private boolean mMuted = false;
     private boolean mPaused = true;
     private boolean mLoop = false;
-    private Delegate mDelegate;
+    private PlaybackListener mListener;
 
     /**
      * Construct a new SoundField.
@@ -53,29 +53,29 @@ public class SoundField implements BaseSound {
      * @param viroContext The {@link ViroContext} is required to play sounds.
      * @param uri         The URI of the sound. To load the sound from an Android asset, use URI's
      *                    of the form <tt>file:///android_asset/[asset-name]</tt>.
-     * @param delegate    {@link Delegate} which can be used to respond to sound loading and
+     * @param listener    {@link PlaybackListener} which can be used to respond to sound loading and
      *                    playback events. May be null.
      */
-    public SoundField(ViroContext viroContext, Uri uri, Delegate delegate) {
+    public SoundField(ViroContext viroContext, Uri uri, PlaybackListener listener) {
         mNativeRef = nativeCreateSoundField(uri.toString(), false, viroContext.mNativeRef);
-        mDelegate = delegate;
+        mListener = listener;
     }
 
     /**
      * @hide
      */
-    public SoundField(String path, ViroContext viroContext, Delegate delegate, boolean local) {
+    public SoundField(String path, ViroContext viroContext, PlaybackListener delegate, boolean local) {
         mNativeRef = nativeCreateSoundField(path, local, viroContext.mNativeRef);
-        mDelegate = delegate;
+        mListener = delegate;
     }
 
     /**
      * @hide
      */
     public SoundField(SoundData data, ViroContext viroContext,
-                      Delegate delegate) {
+                      PlaybackListener delegate) {
         mNativeRef = nativeCreateSoundFieldWithData(data.mNativeRef, viroContext.mNativeRef);
-        mDelegate = delegate;
+        mListener = delegate;
     }
 
     @Override
@@ -225,26 +225,25 @@ public class SoundField implements BaseSound {
     }
 
     /**
-     * Set the {@link Delegate}, which can be used to respond to SoundField loading and
+     * Set the {@link PlaybackListener}, which can be used to respond to SoundField loading and
      * playback events.
      *
-     * @param delegate The delegate to use for this SoundField.
+     * @param listener The listener to use for this SoundField.
      */
-    public void setDelegate(Delegate delegate) {
-        mDelegate = delegate;
-        // call the delegate.onSoundReady() if we're already ready.
+    public void setPlaybackListener(PlaybackListener listener) {
+        mListener = listener;
         if (mReady) {
-            delegate.onSoundReady(this);
+            listener.onSoundReady(this);
         }
     }
 
     /**
-     * Get the {@link Delegate} used to receive callbacks for this SoundField.
+     * Get the {@link PlaybackListener} used to receive callbacks for this SoundField.
      *
-     * @return The SoundFieldDelegate, or null if none is attached.
+     * @return The listener, or null if none is attached.
      */
-    public Delegate getDelegate() {
-        return mDelegate;
+    public PlaybackListener getPlaybackListener() {
+        return mListener;
     }
     /**
      * @hide
@@ -252,8 +251,8 @@ public class SoundField implements BaseSound {
     @Override
     public void soundIsReady() {
         mReady = true;
-        if (mDelegate != null) {
-            mDelegate.onSoundReady(this);
+        if (mListener != null) {
+            mListener.onSoundReady(this);
         }
     }
 
@@ -271,8 +270,8 @@ public class SoundField implements BaseSound {
      */
     @Override
     public void soundDidFail(String error) {
-        if (mDelegate != null) {
-            mDelegate.onSoundFail(error);
+        if (mListener != null) {
+            mListener.onSoundFail(error);
         }
     }
 

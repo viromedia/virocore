@@ -14,7 +14,7 @@ package com.viro.core;
  * through the {@link ViroViewARCore}. Hit-tests are used to search the {@link ARScene} for
  * real-world objects.
  */
-public interface ARHitTestCallback {
+public interface ARHitTestListener {
 
     /**
      * Invoked when an AR hit-test has completed. As each hit-test can intersect with multiple

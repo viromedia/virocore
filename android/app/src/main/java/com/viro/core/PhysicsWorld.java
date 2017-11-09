@@ -21,15 +21,15 @@ public class PhysicsWorld {
 
     /**
      * Callback used when hit tests are completed. This callback does not indicate what collisions
-     * occurred: each PhysicsBody's individual {@link PhysicsBody.PhysicsDelegate}
+     * occurred: each PhysicsBody's individual {@link PhysicsBody.CollisionListener}
      * will receive those collision callbacks.
      */
-    public interface HitTestCallback {
+    public interface HitTestListener {
 
         /**
-         * Inovked when a hit test has completed. Each individual {@link PhysicsBody} receives in
-         * its {@link PhysicsBody.PhysicsDelegate} a {@link
-         * PhysicsBody.PhysicsDelegate#onCollided(String, Vector, Vector)}
+         * Invoked when a hit test has completed. Each individual {@link PhysicsBody} receives in
+         * its {@link PhysicsBody.CollisionListener} a {@link
+         * PhysicsBody.CollisionListener#onCollided(String, Vector, Vector)}
          * upon collision. This callback only returns if there was any hit.
          *
          * @param hasHit True if the hit test intersected with anything.
@@ -79,18 +79,18 @@ public class PhysicsWorld {
     /**
      * Find collisions between the ray from <tt>from</tt> to <tt>to</tt> with any {@link Node} objects
      * that have physics bodies.  Each individual {@link PhysicsBody} will receive in
-     * its {@link PhysicsBody.PhysicsDelegate} a {@link
-     * PhysicsBody.PhysicsDelegate#onCollided(String, Vector, Vector)}
+     * its {@link PhysicsBody.CollisionListener} a {@link
+     * PhysicsBody.CollisionListener#onCollided(String, Vector, Vector)}
      * event upon collision. The event will contain the tag given to this intersection test.
      *
      * @param from The source of the ray.
      * @param to The destination of the ray.
      * @param closest True to only collide with the closest object.
      * @param tag The tag to use to identify this ray test in the <tt>onCollision</tt> callback of each {@link PhysicsBody}.
-     * @param callback The {@link HitTestCallback} to use, which will be invoked when the test is completed.
+     * @param callback The {@link HitTestListener} to use, which will be invoked when the test is completed.
      */
     public void findCollisionsWithRayAsync(Vector from, Vector to, boolean closest,
-                                           String tag, HitTestCallback callback) {
+                                           String tag, HitTestListener callback) {
         Scene scene = mScene.get();
         if (scene != null) {
             scene.findCollisionsWithRayAsync(from.toArray(), to.toArray(), closest, tag, callback);
@@ -100,8 +100,8 @@ public class PhysicsWorld {
     /**
      * Find collisions between the {@link PhysicsShape} cast from <tt>from</tt> to <tt>to</tt> with
      * any {@link Node} objects that have physics bodies.  Each individual {@link PhysicsBody} will
-     * receive in its {@link PhysicsBody.PhysicsDelegate} a {@link
-     * PhysicsBody.PhysicsDelegate#onCollided(String, Vector, Vector)} event
+     * receive in its {@link PhysicsBody.CollisionListener} a {@link
+     * PhysicsBody.CollisionListener#onCollided(String, Vector, Vector)} event
      * upon collision. The event will contain the tag given to this intersection test.
      *
      * @param from     The source of the ray.
@@ -110,11 +110,11 @@ public class PhysicsWorld {
      *                 {@link PhysicsShapeBox} are supported.
      * @param tag      The tag to use to identify this ray test in the <tt>onCollision</tt> callback
      *                 of each {@link PhysicsBody}.
-     * @param callback The {@link HitTestCallback} to use, which will be invoked when the test is
+     * @param callback The {@link HitTestListener} to use, which will be invoked when the test is
      *                 completed.
      */
     public void findCollisionsWithShapeAsync(Vector from, Vector to, PhysicsShape shape,
-                                             String tag, HitTestCallback callback) {
+                                             String tag, HitTestListener callback) {
         Scene scene = mScene.get();
         if (scene != null) {
             scene.findCollisionsWithShapeAsync(from.toArray(), to.toArray(), shape.getType(), shape.getParams(),

@@ -39,14 +39,14 @@ import java.util.Stack;
  * AnimationTransaction.commit();</pre>
  * </tt>
  * Finally, you can also chain animations or respond to the end of an animation by using a
- * {@link FinishedCallback}. In the snippet below, we move the position of a Node then, once that
+ * {@link Listener}. In the snippet below, we move the position of a Node then, once that
  * animation completes, we rotate the Node.
  * <p>
  * <tt>
  * <pre>
  * AnimationTransaction.begin();
  * AnimationTransaction.setAnimationDuration(5000);
- * AnimationTransaction.setFinishCallback(new AnimationTransaction.FinishedCallback() {
+ * AnimationTransaction.setFinishCallback(new AnimationTransaction.Listener() {
  *     public void onFinished(final AnimationTransaction transaction) {
  *         AnimationTransaction.begin();
  *         node.setRotation(new Vector(0, M_PI_2, 0));
@@ -62,14 +62,14 @@ public class AnimationTransaction {
     /**
      * Callback interface for responding to the end of an {@link AnimationTransaction}.
      */
-    public interface FinishedCallback {
+    public interface Listener {
         /**
          * Invoked when an {@link AnimationTransaction} naturally finishes, or when it is
          * forcibly terminated through {@link AnimationTransaction#terminate()}.
          *
          * @param transaction The transaction that finished.
          */
-        public void onFinished(AnimationTransaction transaction);
+        public void onFinish(AnimationTransaction transaction);
     }
 
 // +---------------------------------------------------------------------------+
@@ -119,13 +119,12 @@ public class AnimationTransaction {
     }
 
     /**
-     * Set a {@link FinishedCallback} to invoke when the active transaction completes.
+     * Set a {@link Listener} to invoke when the active transaction completes.
      *
-     * @param finishedCallback The {@link FinishedCallback} to use for the current
-     *                       transaction.
+     * @param listener The {@link Listener} to use for the current transaction.
      */
-    public static void setFinishCallback(FinishedCallback finishedCallback) {
-        sOpenTransactions.peek().mFinishedCallback = finishedCallback;
+    public static void setListener(Listener listener) {
+        sOpenTransactions.peek().mListener = listener;
     }
 
     /**
@@ -143,7 +142,7 @@ public class AnimationTransaction {
 // +---------------------------------------------------------------------------+
 
     private long mNativeRef;
-    private FinishedCallback mFinishedCallback;
+    private Listener mListener;
 
     private AnimationTransaction(long nativeRef) {
         mNativeRef = nativeRef;
@@ -187,7 +186,7 @@ public class AnimationTransaction {
 
     /**
      * Terminate this AnimationTransaction. This will force (snap) all values to their final
-     * value, and invoke the {@link FinishedCallback}.
+     * value, and invoke the {@link Listener}.
      */
     public void terminate() {
         nativeTerminate(mNativeRef);
@@ -207,8 +206,8 @@ public class AnimationTransaction {
      Invoked by JNI.
      */
     void onAnimationFinished() {
-        if (mFinishedCallback != null) {
-            mFinishedCallback.onFinished(this);
+        if (mListener != null) {
+            mListener.onFinish(this);
         }
     }
 }

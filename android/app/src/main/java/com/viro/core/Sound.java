@@ -26,7 +26,7 @@ public class Sound implements BaseSound {
     /**
      * Callback interface for responding to {@link Sound} events.
      */
-    public interface Delegate {
+    public interface PlaybackListener {
 
         /**
          * Invoked when a {@link Sound} has finished loading and is ready to play without delay.
@@ -53,7 +53,7 @@ public class Sound implements BaseSound {
 
     long mNativeRef;
 
-    private Delegate mDelegate;
+    private PlaybackListener mListener;
     private boolean mReady = false;
     private float mVolume = 1.0f;
     private boolean mMuted = false;
@@ -66,16 +66,16 @@ public class Sound implements BaseSound {
      * @param viroContext The {@link ViroContext} is required to play sounds.
      * @param uri         The URI of the sound. To load the sound from an Android asset, use URI's
      *                    of the form <tt>file:///android_asset/[asset-name]</tt>.
-     * @param delegate    {@link Delegate} which can be used to respond to sound loading and
+     * @param listener    {@link PlaybackListener} which can be used to respond to sound loading and
      *                    playback events. May be null.
      */
-    public Sound(ViroContext viroContext, Uri uri, Delegate delegate) {
+    public Sound(ViroContext viroContext, Uri uri, PlaybackListener listener) {
         // we don't currently use local because the underlying player is Android's MediaPlayer, if/when
         // we move to GVR audio, we'll want to treat them differently.
-        mDelegate = delegate;
+        mListener = listener;
         mNativeRef = nativeCreateSound(uri.toString(), viroContext.mNativeRef);
 
-        // Setup is called after creation because setup may end up invoking the delegate, and we
+        // Setup is called after creation because setup may end up invoking the listener, and we
         // need mNativeRef set to a valid pointer before we do so
         nativeSetup(mNativeRef);
     }
@@ -83,11 +83,11 @@ public class Sound implements BaseSound {
     /**
      * @hide
      */
-    public Sound(String path, ViroContext viroContext, Delegate delegate) {
-        mDelegate = delegate;
+    public Sound(String path, ViroContext viroContext, PlaybackListener listener) {
+        mListener = listener;
         mNativeRef = nativeCreateSound(path, viroContext.mNativeRef);
 
-        // Setup is called after creation because setup may end up invoking the delegate, and we
+        // Setup is called after creation because setup may end up invoking the listener, and we
         // need mNativeRef set to a valid pointer before we do so
         nativeSetup(mNativeRef);
     }
@@ -95,8 +95,8 @@ public class Sound implements BaseSound {
     /**
      * @hide
      */
-    public Sound(SoundData data, ViroContext viroContext, Delegate delegate) {
-        mDelegate = delegate;
+    public Sound(SoundData data, ViroContext viroContext, PlaybackListener listener) {
+        mListener = listener;
         mNativeRef = nativeCreateSoundWithData(data.mNativeRef, viroContext.mNativeRef);
     }
 
@@ -237,26 +237,25 @@ public class Sound implements BaseSound {
     }
 
     /**
-     * Set the {@link Delegate}, which can be used to respond to Sound loading and playback
+     * Set the {@link PlaybackListener}, which can be used to respond to Sound loading and playback
      * events.
      *
-     * @param delegate The SoundDelegate to use for this Sound.
+     * @param listener The listener to use for this Sound.
      */
-    public void setDelegate(Delegate delegate) {
-        mDelegate = delegate;
-        // call the delegate.onSoundReady() if we're already ready.
-        if (mReady && delegate != null) {
-            delegate.onSoundReady(this);
+    public void setPlaybackListener(PlaybackListener listener) {
+        mListener = listener;
+        if (mReady && listener != null) {
+            listener.onSoundReady(this);
         }
     }
 
     /**
-     * Get the {@link Delegate} used to receive callbacks for this Sound.
+     * Get the {@link PlaybackListener} used to receive callbacks for this Sound.
      *
-     * @return The delegate, or null if none is attached.
+     * @return The listener, or null if none is attached.
      */
-    public Delegate getDelegate() {
-        return mDelegate;
+    public PlaybackListener getPlaybackListener() {
+        return mListener;
     }
 
     private native long nativeCreateSound(String uri, long renderContextRef);
@@ -279,8 +278,8 @@ public class Sound implements BaseSound {
     @Override
     public void soundIsReady() {
         mReady = true;
-        if (mDelegate != null) {
-            mDelegate.onSoundReady(this);
+        if (mListener != null) {
+            mListener.onSoundReady(this);
         }
     }
     /**
@@ -288,8 +287,8 @@ public class Sound implements BaseSound {
      */
     @Override
     public void soundDidFinish() {
-        if (mDelegate != null) {
-            mDelegate.onSoundFinish(this);
+        if (mListener != null) {
+            mListener.onSoundFinish(this);
         }
     }
     /**
@@ -298,8 +297,8 @@ public class Sound implements BaseSound {
      */
     @Override
     public void soundDidFail(String error) {
-        if (mDelegate != null) {
-            mDelegate.onSoundFail(error);
+        if (mListener != null) {
+            mListener.onSoundFail(error);
         }
     }
 }

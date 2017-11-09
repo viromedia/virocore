@@ -70,7 +70,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Specifies the behavior of dragging if dragging is enabled on a Node's {@link EventDelegate}.
+     * Specifies the behavior of dragging if the Node has an attached {@link DragListener}.
      */
     public enum DragType {
         /**
@@ -253,7 +253,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
      */
     public void dispose() {
         mDestroyed = true;
-        removeTransformDelegate();
+        removeTransformListener();
 
         if (mNativeRef != 0) {
             nativeDestroyNode(mNativeRef);
@@ -556,7 +556,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Set the behavior of dragging if dragging is enabled on the Node's {@link EventDelegate}.
+     * Set the behavior of dragging if this Node has an attached {@link DragListener}.
      *
      * @param dragType The {@link DragType} to use.
      */
@@ -1387,18 +1387,18 @@ public class Node implements EventDelegate.EventDelegateCallback {
     private native float[] nativeConvertWorldPositionToLocalSpace(long nodeReference, float x, float y, float z);
 
 // +---------------------------------------------------------------------------+
-// | TRANSFORM DELEGATE
+// | TRANSFORM LISTENER
 // +---------------------------------------------------------------------------+
     /*
-     TransformDelegate Callback functions called from JNI
+     TransformListener Callback functions called from JNI
      */
-    private WeakReference<TransformDelegate> mTransformDelegate = null;
+    private WeakReference<TransformListener> mTransformListener = null;
     private long mNativeTransformDelegate = INVALID_REF;
 
     /**
-     * The TransformDelegate receives callbacks when the Node's position has changed.
+     * The TransformListener receives callbacks when the Node's position has changed.
      */
-    public interface TransformDelegate {
+    public interface TransformListener {
 
         /**
          * Invoked when this Node's position has been updated. The incoming position is the
@@ -1416,32 +1416,32 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * @param z
      */
     public final void onPositionUpdate(float x, float y, float z) {
-        if (mTransformDelegate != null && mTransformDelegate.get() != null){
-            mTransformDelegate.get().onPositionUpdate(new Vector(x,y,z));
+        if (mTransformListener != null && mTransformListener.get() != null){
+            mTransformListener.get().onPositionUpdate(new Vector(x,y,z));
         }
     }
 
     /**
-     * Set the {@link TransformDelegate} for this Node. The delegate will receive callbacks
+     * Set the {@link TransformListener} for this Node. The listener will receive callbacks
      * when the Node's position has changed.
      *
-     * @param transformDelegate The delegate to set.
-     * @param distanceFilter    The delegate will be notified whenever the Node's position has
+     * @param transformListener The listener to set.
+     * @param distanceFilter    The listener will be notified whenever the Node's position has
      *                          changed by at least this magnitude.
      */
-    public void setTransformDelegate(TransformDelegate transformDelegate, double distanceFilter) {
+    public void setTransformListener(TransformListener transformListener, double distanceFilter) {
         if (mNativeTransformDelegate == INVALID_REF) {
             mNativeTransformDelegate = nativeSetTransformDelegate(mNativeRef, distanceFilter);
         }
-        mTransformDelegate = new WeakReference<TransformDelegate>(transformDelegate);
+        mTransformListener = new WeakReference<TransformListener>(transformListener);
     }
 
     /**
-     * Remove any {@link TransformDelegate} that is currently attached to this Node.
+     * Remove any {@link TransformListener} that is currently attached to this Node.
      */
-    public void removeTransformDelegate() {
+    public void removeTransformListener() {
         if (mNativeTransformDelegate != INVALID_REF) {
-            mTransformDelegate = null;
+            mTransformListener = null;
             nativeRemoveTransformDelegate(mNativeRef, mNativeTransformDelegate);
             mNativeTransformDelegate = INVALID_REF;
         }

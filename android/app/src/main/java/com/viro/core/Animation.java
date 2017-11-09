@@ -54,7 +54,7 @@ public class Animation {
     /**
      * Callback interface to respond to {@link Animation} events.
      */
-    public interface Delegate {
+    public interface Listener {
 
         /**
          * Invoked when the {@link Animation} starts. The Animation starts after {@link #play()} is
@@ -82,7 +82,7 @@ public class Animation {
     private long mDelayInMilliseconds = 0;
     private boolean mLoop = false;
     private State mState = State.STOPPED;
-    private Delegate mDelegate;
+    private Listener mListener;
 
     /*
      * This is a handler to the main thread where we queue up our delayed runner
@@ -142,22 +142,22 @@ public class Animation {
     }
 
     /**
-     * Set the {@link Delegate}, which can be used to respond to Animation playback
+     * Set the {@link Listener}, which can be used to respond to Animation playback
      * events.
      *
-     * @param delegate The delegate to use for this Animation.
+     * @param listener The listener to use for this Animation.
      */
-    public void setDelegate(Delegate delegate) {
-        mDelegate = delegate;
+    public void setListener(Listener listener) {
+        mListener = listener;
     }
 
     /**
-     * Get the {@link Delegate} used to receive callbacks for this Animation.
+     * Get the {@link Listener} used to receive callbacks for this Animation.
      *
-     * @return The delegate, or null if none is attached.
+     * @return The listener, or null if none is attached.
      */
-    public Delegate getDelegate() {
-        return mDelegate;
+    public Listener getListener() {
+        return mListener;
     }
 
     /**
@@ -241,21 +241,21 @@ public class Animation {
     }
 
     /*
-     * This method is called when an animation starts. It notifies the delegate.
+     * This method is called when an animation starts. It notifies the listener.
      */
     private void onStartAnimation() {
-        if (mDelegate != null) {
-            mDelegate.onAnimationStart(this);
+        if (mListener != null) {
+            mListener.onAnimationStart(this);
         }
     }
 
     /*
-     * This method is called by the JNI when the animation ends. It notifies the delegate and
+     * This method is called by the JNI when the animation ends. It notifies the listener and
      * handles looping logic.
      */
     private void onFinishAnimation(ExecutableAnimation animation) {
-        if (mDelegate != null) {
-            mDelegate.onAnimationFinish(this, false);
+        if (mListener != null) {
+            mListener.onAnimationFinish(this, false);
         }
 
         mState = State.SCHEDULED;

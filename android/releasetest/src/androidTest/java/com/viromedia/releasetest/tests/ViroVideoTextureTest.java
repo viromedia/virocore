@@ -48,7 +48,7 @@ public class ViroVideoTextureTest extends ViroBaseTest {
 
 
         runOnUiThread(() -> {
-            final VideoTexture.Delegate delegate = new VideoTexture.Delegate() {
+            final VideoTexture.PlaybackListener delegate = new VideoTexture.PlaybackListener() {
                 private static final String TAG = "VideoDelegate: ";
 
                 @Override
@@ -204,7 +204,7 @@ public class ViroVideoTextureTest extends ViroBaseTest {
     }
 
     private void testSetDelegate() {
-        final VideoTexture.Delegate delegate1 = new VideoTexture.Delegate() {
+        final VideoTexture.PlaybackListener delegate1 = new VideoTexture.PlaybackListener() {
             private static final String TAG = "VideoDelegate1: ";
 
             @Override
@@ -239,7 +239,7 @@ public class ViroVideoTextureTest extends ViroBaseTest {
             }
         };
 
-        final VideoTexture.Delegate delegate2 = new VideoTexture.Delegate() {
+        final VideoTexture.PlaybackListener delegate2 = new VideoTexture.PlaybackListener() {
             private static final String TAG = "VideoDelegate2: ";
 
             @Override
@@ -274,12 +274,12 @@ public class ViroVideoTextureTest extends ViroBaseTest {
             }
         };
 
-        final List<VideoTexture.Delegate> delegates = Arrays.asList(delegate1, delegate2);
-        final Iterator<VideoTexture.Delegate> itr = Iterables.cycle(delegates).iterator();
+        final List<VideoTexture.PlaybackListener> delegates = Arrays.asList(delegate1, delegate2);
+        final Iterator<VideoTexture.PlaybackListener> itr = Iterables.cycle(delegates).iterator();
 
         mMutableTestMethod = () -> {
 
-            mVideoTexture.setDelegate(itr.next());
+            mVideoTexture.setPlaybackListener(itr.next());
         };
 
         assertPass("Toggling between two delegates", () -> {

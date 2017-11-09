@@ -40,7 +40,7 @@ public class VideoTexture extends Texture {
     /**
      * Callback interface for responding to video lifecycle and playback events.
      */
-    public interface Delegate {
+    public interface PlaybackListener {
         /**
          * Invoked when the video begins buffering.
          *
@@ -89,7 +89,7 @@ public class VideoTexture extends Texture {
 
     private long mNativeDelegateRef;
 
-    private Delegate mDelegate = null;
+    private PlaybackListener mListener = null;
     private boolean mReady = false;
     private float mVolume = 1.0f;
     private boolean mMuted = false;
@@ -113,11 +113,11 @@ public class VideoTexture extends Texture {
      * @param viroContext The {@link ViroContext} is required to play videos.
      * @param uri         The URI of the video. To load the video from an Android asset, use URI's
      *                    of the form <tt>file:///android_asset/[asset-name]</tt>.
-     * @param delegate    {@link Delegate} which can be used to respond to video loading and
+     * @param listener    {@link PlaybackListener} which can be used to respond to video loading and
      *                    playback events. May be null.
      */
-    public VideoTexture(ViroContext viroContext, Uri uri, Delegate delegate) {
-        this(viroContext, uri, delegate, null);
+    public VideoTexture(ViroContext viroContext, Uri uri, PlaybackListener listener) {
+        this(viroContext, uri, listener, null);
     }
 
     /**
@@ -130,17 +130,17 @@ public class VideoTexture extends Texture {
      * @param viroContext The {@link ViroContext} is required to play videos.
      * @param uri         The URI of the video. To load the video from an Android asset, use URI's
      *                    of the form <tt>file:///android_asset/[asset-name]</tt>.
-     * @param delegate    {@link Delegate} which can be used to respond to video loading and
+     * @param listener    {@link PlaybackListener} which can be used to respond to video loading and
      *                    playback events. May be null.
      * @param stereoMode  The {@link StereoMode} indicating which half of the video to render to the
      *                    left eye, and which to render to the right eye. Null if the video is not
      *                    stereo.
      */
-    public VideoTexture(ViroContext viroContext, Uri uri, Delegate delegate, Texture.StereoMode stereoMode) {
+    public VideoTexture(ViroContext viroContext, Uri uri, PlaybackListener listener, Texture.StereoMode stereoMode) {
         mNativeRef = nativeCreateVideoTexture(viroContext.mNativeRef, stereoMode == null ? null : stereoMode.getStringValue());
         mNativeDelegateRef = nativeCreateVideoDelegate();
-        if (delegate != null) {
-            mDelegate = delegate;
+        if (listener != null) {
+            mListener = listener;
         }
         nativeAttachDelegate(mNativeRef, mNativeDelegateRef);
         nativeLoadSource(mNativeRef, uri.toString(), viroContext.mNativeRef);
@@ -282,22 +282,22 @@ public class VideoTexture extends Texture {
     }
 
     /**
-     * Set the {@link Delegate}, which can be used to respond to video loading and playback
+     * Set the {@link PlaybackListener}, which can be used to respond to video loading and playback
      * events.
      *
-     * @param delegate The delegate to use for this video.
+     * @param listener The listener to use for this video.
      */
-    public void setDelegate(Delegate delegate) {
-        mDelegate = delegate;
+    public void setPlaybackListener(PlaybackListener listener) {
+        mListener = listener;
     }
 
     /**
-     * Get the {@link Delegate} used to receive callbacks for this VideoTexture.
+     * Get the {@link PlaybackListener} used to receive callbacks for this VideoTexture.
      *
-     * @return The delegate, or null if none is attached.
+     * @return The listener, or null if none is attached.
      */
-    public Delegate getDelegate() {
-        return mDelegate;
+    public PlaybackListener getPlaybackListener() {
+        return mListener;
     }
 
     /*
@@ -323,48 +323,48 @@ public class VideoTexture extends Texture {
      * @hide
      */
     void playerWillBuffer() {
-        if (mDelegate != null && mNativeRef != 0) {
-            mDelegate.onVideoBufferStart(this);
+        if (mListener != null && mNativeRef != 0) {
+            mListener.onVideoBufferStart(this);
         }
     }
     /**
      * @hide
      */
     void playerDidBuffer() {
-        if (mDelegate != null && mNativeRef != 0) {
-            mDelegate.onVideoBufferEnd(this);
+        if (mListener != null && mNativeRef != 0) {
+            mListener.onVideoBufferEnd(this);
         }
     }
     /**
      * @hide
      */
     void playerDidFinishPlaying() {
-        if (mDelegate != null && mNativeRef != 0) {
-            mDelegate.onVideoFinish(this);
+        if (mListener != null && mNativeRef != 0) {
+            mListener.onVideoFinish(this);
         }
     }
     /**
      * @hide
      */
     void onVideoFailed(String error) {
-        if (mDelegate != null && mNativeRef != 0) {
-            mDelegate.onVideoFailed(error);
+        if (mListener != null && mNativeRef != 0) {
+            mListener.onVideoFailed(error);
         }
     }
     /**
      * @hide
      */
     void onReady() {
-        if (mDelegate != null && mNativeRef != 0) {
-            mDelegate.onReady(this);
+        if (mListener != null && mNativeRef != 0) {
+            mListener.onReady(this);
         }
     }
     /**
      * @hide
      */
     void onVideoUpdatedTime(float currentTimeInSeconds, float totalTimeInSeconds) {
-        if (mDelegate != null) {
-            mDelegate.onVideoUpdatedTime(this, currentTimeInSeconds, totalTimeInSeconds);
+        if (mListener != null) {
+            mListener.onVideoUpdatedTime(this, currentTimeInSeconds, totalTimeInSeconds);
         }
     }
 }

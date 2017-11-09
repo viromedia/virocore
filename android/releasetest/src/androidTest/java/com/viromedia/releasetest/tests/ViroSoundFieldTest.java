@@ -49,7 +49,7 @@ public class ViroSoundFieldTest extends ViroBaseTest {
         });
 
         mSound.setLoop(true);
-        mSound.setDelegate(new SoundField.Delegate() {
+        mSound.setPlaybackListener(new SoundField.PlaybackListener() {
             @Override
             public void onSoundReady(final SoundField sound) {
                 mDelegateText.setText("onSoundReady called. Playing song");
@@ -143,7 +143,7 @@ public class ViroSoundFieldTest extends ViroBaseTest {
 
     // TODO VIRO-2181 setting null delegate will cause an NPE
     private void testSetDelegate() {
-        final SoundField.Delegate delegate1 = new SoundField.Delegate() {
+        final SoundField.PlaybackListener delegate1 = new SoundField.PlaybackListener() {
             @Override
             public void onSoundReady(final SoundField sound) {
                 mDelegateText.setText("DELEGATE 1 onSoundReady called. Playing song");
@@ -156,7 +156,7 @@ public class ViroSoundFieldTest extends ViroBaseTest {
             }
         };
 
-        final SoundField.Delegate delegate2 = new SoundField.Delegate() {
+        final SoundField.PlaybackListener delegate2 = new SoundField.PlaybackListener() {
             @Override
             public void onSoundReady(final SoundField sound) {
                 mDelegateText.setText("DELEGATE 2 onSoundReady called. Playing song");
@@ -169,12 +169,12 @@ public class ViroSoundFieldTest extends ViroBaseTest {
             }
         };
 
-        final List<SoundField.Delegate> delegates = Arrays.asList(delegate1, delegate2);
-        final Iterator<SoundField.Delegate> itr = Iterables.cycle(delegates).iterator();
+        final List<SoundField.PlaybackListener> delegates = Arrays.asList(delegate1, delegate2);
+        final Iterator<SoundField.PlaybackListener> itr = Iterables.cycle(delegates).iterator();
 
         mMutableTestMethod = () -> {
 
-            mSound.setDelegate(itr.next());
+            mSound.setPlaybackListener(itr.next());
         };
 
         assertPass("Toggling between two delegates");

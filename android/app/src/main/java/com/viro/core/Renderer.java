@@ -65,15 +65,15 @@ public class Renderer {
         mNativeRef = nativeCreateRendererARCore(appClassLoader, context, view, session, assets, platformUtil);
     }
 
-    public void performARHitTestWithRay(float[] ray, ARHitTestCallback callback) {
+    public void performARHitTestWithRay(float[] ray, ARHitTestListener callback) {
         nativePerformARHitTestWithRay(mNativeRef, ray, callback);
     }
 
-    public void performARHitTestWithPosition(float[] position, ARHitTestCallback callback) {
+    public void performARHitTestWithPosition(float[] position, ARHitTestListener callback) {
         nativePerformARHitTestWithPosition(mNativeRef, position, callback);
     }
 
-    public void performARHitTestWithPoint(float x, float y, ARHitTestCallback callback) {
+    public void performARHitTestWithPoint(float x, float y, ARHitTestListener callback) {
         nativePerformARHitTestWithPoint(mNativeRef, x, y, callback);
     }
 
@@ -176,9 +176,9 @@ public class Renderer {
     private native void nativeSetDebugHUDEnabled(long nativeRenderer, boolean enabled);
     private native void nativeSetSuspended(long nativeRenderer, boolean suspendRenderer);
     private native void nativeRecenterTracking(long nativeRenderer);
-    private native void nativePerformARHitTestWithRay(long nativeRenderer, float[] ray, ARHitTestCallback callback);
-    private native void nativePerformARHitTestWithPosition(long nativeRenderer, float[] position, ARHitTestCallback callback);
-    private native void nativePerformARHitTestWithPoint(long nativeRenderer, float x, float y, ARHitTestCallback callback);
+    private native void nativePerformARHitTestWithRay(long nativeRenderer, float[] ray, ARHitTestListener callback);
+    private native void nativePerformARHitTestWithPosition(long nativeRenderer, float[] position, ARHitTestListener callback);
+    private native void nativePerformARHitTestWithPoint(long nativeRenderer, float x, float y, ARHitTestListener callback);
 
     private native void nativeAddFrameListener(long nativeRenderer, long portalTraversalListener);
     private native void nativeRemoveFrameListener(long nativeRenderer, long portalTraversalListener);

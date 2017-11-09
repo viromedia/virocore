@@ -62,7 +62,7 @@ public class ViroARSceneTest extends ViroBaseTest {
         textNode.setGeometry(mTestText);
         mScene.getRootNode().addChildNode(textNode);
 
-        mARScene.setDelegate(new ARScene.Delegate() {
+        mARScene.setListener(new ARScene.Listener() {
             @Override
             public void onTrackingInitialized() {
                 mTestText.setText("AR Initialized callback received!");

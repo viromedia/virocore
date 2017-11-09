@@ -179,7 +179,7 @@ public class ViroPortalTest extends ViroBaseTest  {
         mScene.getRootNode().addChildNode(textNode);
 
         mPortalScene.setPassable(true);
-        mPortalScene.setDelegate(new PortalScene.Delegate() {
+        mPortalScene.setEntryListener(new PortalScene.EntryListener() {
             @Override
             public void onPortalEnter(PortalScene portalScene) {
                 text.setText("Entered portal!");

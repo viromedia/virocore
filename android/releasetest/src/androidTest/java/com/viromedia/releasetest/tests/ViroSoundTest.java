@@ -49,7 +49,7 @@ public class ViroSoundTest extends ViroBaseTest {
         });
 
         mSound.setLoop(true);
-        mSound.setDelegate(new Sound.Delegate() {
+        mSound.setPlaybackListener(new Sound.PlaybackListener() {
             @Override
             public void onSoundReady(final Sound sound) {
                 mDelegateText.setText("onSoundReady called. Playing song");
@@ -145,7 +145,7 @@ public class ViroSoundTest extends ViroBaseTest {
 
     // TODO VIRO-2181 setting null delegate will cause an NPE
     private void testSetDelegate() {
-        final Sound.Delegate delegate1 = new Sound.Delegate() {
+        final Sound.PlaybackListener delegate1 = new Sound.PlaybackListener() {
             @Override
             public void onSoundReady(final Sound sound) {
                 mDelegateText.setText("DELEGATE 1 onSoundReady called. Playing song");
@@ -164,7 +164,7 @@ public class ViroSoundTest extends ViroBaseTest {
             }
         };
 
-        final Sound.Delegate delegate2 = new Sound.Delegate() {
+        final Sound.PlaybackListener delegate2 = new Sound.PlaybackListener() {
             @Override
             public void onSoundReady(final Sound sound) {
                 mDelegateText.setText("DELEGATE 2 onSoundReady called. Playing song");
@@ -183,12 +183,12 @@ public class ViroSoundTest extends ViroBaseTest {
             }
         };
 
-        final List<Sound.Delegate> delegates = Arrays.asList(delegate1, delegate2);
-        final Iterator<Sound.Delegate> itr = Iterables.cycle(delegates).iterator();
+        final List<Sound.PlaybackListener> delegates = Arrays.asList(delegate1, delegate2);
+        final Iterator<Sound.PlaybackListener> itr = Iterables.cycle(delegates).iterator();
 
         mMutableTestMethod = () -> {
 
-            mSound.setDelegate(itr.next());
+            mSound.setPlaybackListener(itr.next());
         };
 
         assertPass("Toggling between two delegates");

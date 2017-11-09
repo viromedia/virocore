@@ -21,8 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * example, if an {@link ARPlaneAnchor} is detected, you can add a 3D model to that plane by loading
  * the {@link Object3D} and making it a child of the ARNode.
  * <p>
- * To get an ARNode, attach a {@link ARScene.Delegate} to the {@link ARScene},
- * and listen for {@link ARScene.Delegate#onAnchorFound(ARAnchor, ARNode)},
+ * To get an ARNode, attach a {@link ARScene.Listener} to the {@link ARScene},
+ * and listen for {@link ARScene.Listener#onAnchorFound(ARAnchor, ARNode)},
  * which is invoked each time a new {@link ARAnchor} is found, with its corresponding {@link
  * ARNode}.
  */

@@ -344,42 +344,42 @@ public class PhysicsBody {
     }
 
     /*
-     * Physics Delegate callback.
+     * Collision listener callback.
      */
-    private WeakReference<PhysicsDelegate> mPhysicsDelegate = null;
+    private WeakReference<CollisionListener> mCollisionListener = null;
     private static long INVALID_REF = Long.MAX_VALUE;
     private long mNativePhysicsDelegate = INVALID_REF;
 
     /**
-     * Set the PhysicsDelegate to use for this PhysicsBody. The delegate receives a callback
+     * Set the {@link CollisionListener} to use for this PhysicsBody. The listener receives a callback
      * each time this PhysicsBody collides with another.
      *
-     * @param delegate The delegate to use. Null to remove the delegate.
+     * @param listener The listener to use. Null to remove the listener.
      */
-    public void setPhysicsDelegate(PhysicsDelegate delegate) {
-        if (delegate != null && mNativePhysicsDelegate == INVALID_REF) {
-            mPhysicsDelegate = new WeakReference<PhysicsDelegate>(delegate);
+    public void setCollisionListener(CollisionListener listener) {
+        if (listener != null && mNativePhysicsDelegate == INVALID_REF) {
+            mCollisionListener = new WeakReference<CollisionListener>(listener);
             mNativePhysicsDelegate = nativeSetPhysicsDelegate(mNativeRef);
         }
-        else if (delegate == null && mNativePhysicsDelegate != INVALID_REF) {
+        else if (listener == null && mNativePhysicsDelegate != INVALID_REF) {
             nativeClearPhysicsDelegate(mNativeRef, mNativePhysicsDelegate);
             mNativePhysicsDelegate = INVALID_REF;
-            mPhysicsDelegate = null;
+            mCollisionListener = null;
         }
     }
 
     /**
      * Callback interface for responding to PhysicsBody collisions.
      */
-    public interface PhysicsDelegate {
+    public interface CollisionListener {
 
         /**
-         * Callback invoked each time this delegate's PhysicsBody enters a collision with another
+         * Callback invoked each time this listener's PhysicsBody enters a collision with another
          * PhysicsBody.
          *
          * @param tag      The tag of the {@link Node} associated with the collided PhysicsBody.
-         * @param position The position on this delegate's PhysicsBody where the collision occurred.
-         * @param normal   The normal vector on the surface of this delegate's PhysicsBody where the
+         * @param position The position on this listener's PhysicsBody where the collision occurred.
+         * @param normal   The normal vector on the surface of this listener's PhysicsBody where the
          *                 collision occurred.
          */
         void onCollided(String tag, Vector position, Vector normal);
@@ -398,11 +398,11 @@ public class PhysicsBody {
     public void onCollided(String collidedTag,
                            float posX, float posY, float posZ,
                            float normX, float normY, float normZ) {
-        if (mPhysicsDelegate != null && mPhysicsDelegate.get() != null
+        if (mCollisionListener != null && mCollisionListener.get() != null
                 && mNativePhysicsDelegate != INVALID_REF) {
             Vector position = new Vector(posX, posY, posZ);
             Vector normal = new Vector(normX, normY, normZ);
-            mPhysicsDelegate.get().onCollided(collidedTag, position, normal);
+            mCollisionListener.get().onCollided(collidedTag, position, normal);
         }
     }
 
