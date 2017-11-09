@@ -15,6 +15,13 @@ import android.net.Uri;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
 import com.viro.renderer.jni.AmbientLight;
+import com.viro.renderer.jni.Box;
+import com.viro.renderer.jni.DirectionalLight;
+import com.viro.renderer.jni.Material;
+import com.viro.renderer.jni.Node;
+import com.viro.renderer.jni.Scene;
+import com.viro.renderer.jni.Sound;
+import com.viro.renderer.jni.Sphere;
 import com.viro.renderer.jni.Texture;
 import com.viro.renderer.jni.Vector;
 import com.viro.renderer.jni.VideoTexture;
@@ -35,7 +42,7 @@ public class ViroSceneTest extends ViroBaseTest {
 
     @Override
     void configureTestScene() {
-        AmbientLight light = new AmbientLight(Color.WHITE, 1000.0f);
+        final AmbientLight light = new AmbientLight(Color.WHITE, 1000.0f);
         mScene.getRootNode().addLight(light);
     }
 
@@ -46,10 +53,11 @@ public class ViroSceneTest extends ViroBaseTest {
         testSceneBackgroundColor();
         testSceneBackgroundCube();
         testSceneBackgroundVideoTexture();
+        testSceneTransition();
     }
 
     private void testSceneBackgroundTexture() {
-        Bitmap background = this.getBitmapFromAssets(mActivity, "360_westlake.jpg");
+        final Bitmap background = getBitmapFromAssets(mActivity, "360_westlake.jpg");
         final Texture backgroundTexture = new Texture(background, Texture.TextureFormat.RGBA8, true, true);
         mScene.setBackgroundTexture(backgroundTexture);
         assertPass("The scene background should display a texture of westlake.");
@@ -86,12 +94,12 @@ public class ViroSceneTest extends ViroBaseTest {
 
     private void testSceneBackgroundCube() {
         mMutableTestMethod = null;
-        final Bitmap px = this.getBitmapFromAssets(mActivity, "px.png");
-        final Bitmap nx = this.getBitmapFromAssets(mActivity, "nx.png");
-        final Bitmap py = this.getBitmapFromAssets(mActivity, "py.png");
-        final Bitmap ny = this.getBitmapFromAssets(mActivity, "ny.png");
-        final Bitmap pz = this.getBitmapFromAssets(mActivity, "pz.png");
-        final Bitmap nz = this.getBitmapFromAssets(mActivity, "nz.png");
+        final Bitmap px = getBitmapFromAssets(mActivity, "px.png");
+        final Bitmap nx = getBitmapFromAssets(mActivity, "nx.png");
+        final Bitmap py = getBitmapFromAssets(mActivity, "py.png");
+        final Bitmap ny = getBitmapFromAssets(mActivity, "ny.png");
+        final Bitmap pz = getBitmapFromAssets(mActivity, "pz.png");
+        final Bitmap nz = getBitmapFromAssets(mActivity, "nz.png");
 
         final Texture cubeTexture = new Texture(px, nx, py, ny,
                 pz, nz, Texture.TextureFormat.RGBA8);
@@ -101,4 +109,103 @@ public class ViroSceneTest extends ViroBaseTest {
         assertPass("The scene should be a cube map.");
     }
 
+    private void testSceneTransition() {
+        // Set scene (with audio), set an onClickListener on a box, on Click change scene
+        final AmbientLight light = new AmbientLight(Color.WHITE, 200f);
+        final DirectionalLight directionalLight = new DirectionalLight();
+        final Material material = new Material();
+
+        material.setLightingModel(Material.LightingModel.BLINN);
+        material.setDiffuseColor(Color.BLUE);
+
+
+        final Scene scene1 = new Scene();
+        scene1.getRootNode().addLight(light);
+        scene1.getRootNode().addLight(directionalLight);
+        final Node boxNode = new Node();
+        final Box box1 = new Box(2, 2, 2);
+        box1.setMaterials(Arrays.asList(material));
+        boxNode.setGeometry(box1);
+        boxNode.setPosition(new Vector(0, -2.5f, -3.3f));
+        scene1.getRootNode().addChildNode(boxNode);
+        runOnUiThread(() -> {
+            final Sound sound = new Sound(mViroView.getViroContext(),
+                    Uri.parse("file:///android_asset/flies_mono.wav"), new Sound.Delegate() {
+                @Override
+                public void onSoundReady(final Sound sound) {
+                    sound.play();
+                }
+
+                @Override
+                public void onSoundFinish(final Sound sound) {
+
+                }
+
+                @Override
+                public void onSoundFail(final String error) {
+
+                }
+            });
+            sound.setLoop(true);
+        });
+
+        final Scene scene2 = new Scene();
+        scene2.getRootNode().addLight(light);
+        scene2.getRootNode().addLight(directionalLight);
+        final Node sphereNode = new Node();
+        final Sphere sphere = new Sphere(1);
+        sphere.setMaterials(Arrays.asList(material));
+        sphereNode.setGeometry(sphere);
+        sphereNode.setPosition(new Vector(0, -2.5f, -3.3f));
+        scene2.getRootNode().addChildNode(sphereNode);
+
+        runOnUiThread(() -> {
+            final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(),
+                    Uri.parse("file:///android_asset/stereoVid360.mp4"), new VideoTexture.Delegate() {
+                @Override
+                public void onVideoBufferStart(final VideoTexture video) {
+
+                }
+
+                @Override
+                public void onVideoBufferEnd(final VideoTexture video) {
+
+                }
+
+                @Override
+                public void onVideoFinish(final VideoTexture video) {
+
+                }
+
+                @Override
+                public void onReady(final VideoTexture video) {
+                    video.play();
+                }
+
+                @Override
+                public void onVideoFailed(final String error) {
+
+                }
+
+                @Override
+                public void onVideoUpdatedTime(final VideoTexture video, final float seconds, final float totalDuration) {
+
+                }
+            },
+                    Texture.StereoMode.TOP_BOTTOM);
+            videoTexture.setVolume(1);
+            videoTexture.setLoop(true);
+            final Material videoMaterial = new Material();
+            videoMaterial.setDiffuseTexture(videoTexture);
+            scene2.setBackgroundTexture(videoTexture);
+        });
+
+
+        final List<Scene> scenes = Arrays.asList(scene1, scene1, scene2, scene2);
+        final Iterator<Scene> iterator = Iterables.cycle(scenes).iterator();
+        mMutableTestMethod = () -> {
+            mViroView.setScene(iterator.next());
+        };
+        assertPass("Alternating between two scenes");
+    }
 }
