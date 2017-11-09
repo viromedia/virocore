@@ -193,7 +193,7 @@ public class Sound implements BaseSound {
      */
     @Override
     public void setMuted(boolean muted) {
-        mMuted = true;
+        mMuted = muted;
         nativeSetMuted(mNativeRef, muted);
     }
 

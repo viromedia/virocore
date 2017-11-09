@@ -240,7 +240,7 @@ public class VideoTexture extends Texture {
      * @param muted True to mute.
      */
     public void setMuted(boolean muted) {
-        mMuted = true;
+        mMuted = muted;
         nativeSetMuted(mNativeRef, muted);
     }
 
