@@ -18,6 +18,7 @@ import java.util.List;
 public class Geometry {
 
     protected long mNativeRef;
+    private List<Material> mMaterials;
 
     /**
      * Construct a new Geometry.
@@ -36,7 +37,16 @@ public class Geometry {
     }
 
     /**
-     * Set the Materials that define the Geometry's appearance.
+     * Get the {@link Material} objects used by this Geometry.
+     *
+     * @return List containing each {@link Material} used by this Geometry.
+     */
+    public List<Material> getMaterials() {
+        return mMaterials;
+    }
+
+    /**
+     * Set the {@link Material} objects that define the Geometry's appearance.
      * <p>
      * Materials consist of a variety of visual properties, including colors and textures, that
      * define how the Geometry interacts with the Lights in a Scene to render each pixel.
@@ -47,6 +57,8 @@ public class Geometry {
      * @param materials The list of Materials to use for this Geometry.
      */
     public void setMaterials(List<Material> materials) {
+        mMaterials = materials;
+
         // Create list of longs (refs) to all the materials. If any
         // material has already been destroyed, return false
         long[] materialRefs = new long[materials.size()];
@@ -59,6 +71,23 @@ public class Geometry {
         nativeSetMaterials(mNativeRef, materialRefs);
     }
 
+    /**
+     * @hide
+     */
+    public void copyAndSetMaterials(List<Material> materials) {
+        // Create list of longs (refs) to all the materials. If any
+        // material has already been destroyed, return false
+        long[] materialRefs = new long[materials.size()];
+        for (int i = 0; i < materials.size(); i++) {
+            materialRefs[i] = materials.get(i).mNativeRef;
+            if (materialRefs[i] == 0) {
+                return;
+            }
+        }
+        nativeCopyAndSetMaterials(mNativeRef, materialRefs);
+    }
+
     private native void nativeSetMaterials(long nativeRef, long[] materials);
+    private native void nativeCopyAndSetMaterials(long nativeRef, long[] materials);
 
 }

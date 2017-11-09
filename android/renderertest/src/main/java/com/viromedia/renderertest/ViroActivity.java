@@ -548,6 +548,8 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
             }
         });
         node2.setPosition(new Vector(-2, 2.5f, -3));
+        Material mat = node2.getGeometry().getMaterials().get(0);
+        mat.setDiffuseColor(Color.RED);
 
         final AnimationTransaction transaction = AnimationTransaction.commit();
 

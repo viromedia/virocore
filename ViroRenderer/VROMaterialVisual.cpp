@@ -48,9 +48,7 @@ void VROMaterialVisual::setColor(VROVector4f color) {
         pabort("Material visual does not support fixed contents");
         return;
     }
-    
     _material.fadeSnapshot();
-    
     _contentsColor = color;
     _material.updateSubstrate();
 }

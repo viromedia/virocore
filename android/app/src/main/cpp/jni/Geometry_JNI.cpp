@@ -16,8 +16,29 @@ extern "C" {
 
 JNI_METHOD(void, nativeSetMaterials)(JNIEnv *env,
                                      jobject obj,
-                                     jlong nativeGeoRef,
-                                     jlongArray longArrayRef) {
+                                     jlong geo_j,
+                                     jlongArray materials_j) {
+    jlong *materials_c = env->GetLongArrayElements(materials_j, 0);
+    jsize len = env->GetArrayLength(materials_j);
+    std::vector<std::shared_ptr<VROMaterial>> materials;
+    for (int i = 0; i < len; i++) {
+        materials.push_back(Material::native(materials_c[i]));
+    }
+
+    std::weak_ptr<VROGeometry> geo_w = Geometry::native(geo_j);
+    VROPlatformDispatchAsyncRenderer([geo_w, materials] {
+        std::shared_ptr<VROGeometry> geo = geo_w.lock();
+        if (geo) {
+            geo->setMaterials(materials);
+        }
+    });
+    env->ReleaseLongArrayElements(materials_j, materials_c, 0);
+}
+
+JNI_METHOD(void, nativeCopyAndSetMaterials)(JNIEnv *env,
+                                            jobject obj,
+                                            jlong nativeGeoRef,
+                                            jlongArray longArrayRef) {
     jlong *longArray = env->GetLongArrayElements(longArrayRef, 0);
     jsize len = env->GetArrayLength(longArrayRef);
 

@@ -93,12 +93,9 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
     }
 
     private void testAnimationMaterial() {
-        final Material material = new Material();
-        material.setLightingModel(Material.LightingModel.BLINN);
-        material.setDiffuseColor(Color.RED);
         AnimationTransaction.begin();
         AnimationTransaction.setAnimationDuration(4000);
-        mBox.setMaterials(Arrays.asList(material));
+        mBox.getMaterials().get(0).setDiffuseColor(Color.RED);
         AnimationTransaction.commit();
         assertPass("Material blends from blue to red.");
     }
