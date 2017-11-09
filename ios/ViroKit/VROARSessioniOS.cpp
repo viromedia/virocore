@@ -94,6 +94,16 @@ void VROARSessioniOS::setScene(std::shared_ptr<VROScene> scene) {
     VROARSession::setScene(scene);
 }
 
+void VROARSessioniOS::setDelegate(std::shared_ptr<VROARSessionDelegate> delegate) {
+    VROARSession::setDelegate(delegate);
+    // When we add a new delegate, notify it of all the anchors we've found thus far
+    if (delegate) {
+        for (auto it = _anchors.begin(); it != _anchors.end();it++) {
+            delegate->anchorWasDetected(*it);
+        }
+    }
+}
+
 void VROARSessioniOS::addAnchor(std::shared_ptr<VROARAnchor> anchor) {
     std::shared_ptr<VROARSessionDelegate> delegate = getDelegate();
     if (!delegate) {

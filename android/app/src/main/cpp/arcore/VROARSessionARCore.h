@@ -33,6 +33,7 @@ public:
     bool isReady() const;
     
     void setScene(std::shared_ptr<VROScene> scene);
+    void setDelegate(std::shared_ptr<VROARSessionDelegate> delegate);
     void setAnchorDetection(std::set<VROAnchorDetection> types);
     void addAnchor(std::shared_ptr<VROARAnchor> anchor);
     void removeAnchor(std::shared_ptr<VROARAnchor> anchor);

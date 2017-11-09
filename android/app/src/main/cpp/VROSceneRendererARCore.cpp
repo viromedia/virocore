@@ -310,8 +310,7 @@ void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneControll
     _sceneController = sceneController;
 
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(sceneController->getScene());
-    if (arScene && _session) {
-        _session->setDelegate(arScene->getSessionDelegate());
+    if (arScene) {
         if (_hasTrackingInitialized) {
             arScene->trackingHasInitialized();
         }
@@ -330,8 +329,7 @@ void VROSceneRendererARCore::setSceneController(std::shared_ptr<VROSceneControll
     _sceneController = sceneController;
 
     std::shared_ptr<VROARScene> arScene = std::dynamic_pointer_cast<VROARScene>(sceneController->getScene());
-    if (arScene && _session) {
-        _session->setDelegate(arScene->getSessionDelegate());
+    if (arScene) {
         if (_hasTrackingInitialized) {
             arScene->trackingHasInitialized();
         }
