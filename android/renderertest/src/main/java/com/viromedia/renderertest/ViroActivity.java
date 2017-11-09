@@ -21,11 +21,11 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.viro.renderer.jni.ARAnchor;
+import com.viro.renderer.jni.ARDeclarativeNode;
+import com.viro.renderer.jni.ARDeclarativePlane;
 import com.viro.renderer.jni.ARHitTestCallback;
 import com.viro.renderer.jni.ARHitTestResult;
-import com.viro.renderer.jni.ARDeclarativeNode;
 import com.viro.renderer.jni.ARNode;
-import com.viro.renderer.jni.ARDeclarativePlane;
 import com.viro.renderer.jni.ARPlaneAnchor;
 import com.viro.renderer.jni.ARScene;
 import com.viro.renderer.jni.AmbientLight;
@@ -62,10 +62,10 @@ import com.viro.renderer.jni.Texture.TextureFormat;
 import com.viro.renderer.jni.Vector;
 import com.viro.renderer.jni.VideoTexture;
 import com.viro.renderer.jni.ViroContext;
-import com.viro.renderer.jni.ViroViewGVR;
-import com.viro.renderer.jni.ViroViewOVR;
 import com.viro.renderer.jni.ViroView;
 import com.viro.renderer.jni.ViroViewARCore;
+import com.viro.renderer.jni.ViroViewGVR;
+import com.viro.renderer.jni.ViroViewOVR;
 import com.viro.renderer.jni.ViroViewScene;
 import com.viro.renderer.jni.event.ClickState;
 import com.viro.renderer.jni.event.ControllerStatus;
@@ -166,7 +166,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         // Creation of SceneControllerJni within scene navigator
         final Scene scene = new Scene();
         final Node rootNode = scene.getRootNode();
-        List<Node> nodes = new ArrayList<>();
+        final List<Node> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
        // nodes = testSphereVideo(this);
         //nodes = testBox(getApplicationContext());
@@ -174,10 +174,10 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
 
         //nodes = testImageSurface(this);
         //nodes = testText();
-        nodes = testParticles();
-        //nodes = testARDrag();
+//        nodes = testParticles();
+//        nodes = testARDrag();
 
-        //testBackgroundVideo(scene);
+        testBackgroundVideo(scene);
         //testBackgroundImage(scene);
         //testSkyBoxImage(scene);
 
@@ -247,12 +247,12 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                ViroViewARCore view = (ViroViewARCore) mViroView;
+                final ViroViewARCore view = (ViroViewARCore) mViroView;
                 view.performARHitTest(new Point(view.getWidth() / 2, view.getHeight() / 2), new ARHitTestCallback() {
                     @Override
-                    public void onHitTestFinished(ARHitTestResult[] results) {
+                    public void onHitTestFinished(final ARHitTestResult[] results) {
                         Log.w("Viro", "Hit test complete");
-                        for (ARHitTestResult result : results) {
+                        for (final ARHitTestResult result : results) {
                             Log.w("Viro", "   result " + result.getType() + ", position " + result.getPosition());
                         }
                     }
@@ -263,12 +263,12 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                ViroViewARCore view = (ViroViewARCore) mViroView;
+                final ViroViewARCore view = (ViroViewARCore) mViroView;
                 view.performARHitTest(new Point(view.getWidth() / 2, view.getHeight() / 2), new ARHitTestCallback() {
                     @Override
-                    public void onHitTestFinished(ARHitTestResult[] results) {
+                    public void onHitTestFinished(final ARHitTestResult[] results) {
                         Log.w("Viro", "Hit test complete");
-                        for (ARHitTestResult result : results) {
+                        for (final ARHitTestResult result : results) {
                             Log.w("Viro", "   result " + result.getType() + ", position " + result.getPosition());
                         }
                     }
@@ -279,12 +279,12 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                ViroViewARCore view = (ViroViewARCore) mViroView;
+                final ViroViewARCore view = (ViroViewARCore) mViroView;
                 view.performARHitTest(new Point(view.getWidth() / 2, view.getHeight() / 2), new ARHitTestCallback() {
                     @Override
-                    public void onHitTestFinished(ARHitTestResult[] results) {
+                    public void onHitTestFinished(final ARHitTestResult[] results) {
                         Log.w("Viro", "Hit test complete");
-                        for (ARHitTestResult result : results) {
+                        for (final ARHitTestResult result : results) {
                             Log.w("Viro", "   result " + result.getType() + ", position " + result.getPosition());
                         }
                     }
@@ -358,8 +358,8 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         node.setPosition(new Vector(position));
         node.setGeometry(text);
 
-        Node pointOfView = new Node();
-        Camera camera = new Camera();
+        final Node pointOfView = new Node();
+        final Camera camera = new Camera();
         camera.setPosition(new Vector(0, 0, 3));
         pointOfView.setCamera(camera);
         mViroView.setPointOfView(pointOfView);
@@ -458,7 +458,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         final Bitmap specBitmap = getBitmapFromAssets("specular.png");
         final Texture bobaTexture = new Texture(bobaBitmap, TextureFormat.RGBA8, true, true);
 
-        Node particleNode = new Node();
+        final Node particleNode = new Node();
         particleNode.setPosition(new Vector(0, -10, -15));
 
         final Material material = new Material();
@@ -467,14 +467,14 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         material.setSpecularTexture(bobaTexture);
         material.setLightingModel(Material.LightingModel.LAMBERT);
 
-        Surface surface = new Surface(1, 1);
+        final Surface surface = new Surface(1, 1);
         surface.setMaterials(Arrays.asList(material));
 
-        ParticleEmitter particleEmitter = new ParticleEmitter(mViroView.getViroContext(), surface);
+        final ParticleEmitter particleEmitter = new ParticleEmitter(mViroView.getViroContext(), surface);
 
-        Vector sizeMinStart = new Vector(2, 2, 2);
-        Vector sizeMaxStart = new Vector(5, 5, 5);
-        ParticleEmitter.ParticleModifierVector modifier = new ParticleEmitter.ParticleModifierVector(sizeMinStart, sizeMaxStart);
+        final Vector sizeMinStart = new Vector(2, 2, 2);
+        final Vector sizeMaxStart = new Vector(5, 5, 5);
+        final ParticleEmitter.ParticleModifierVector modifier = new ParticleEmitter.ParticleModifierVector(sizeMinStart, sizeMaxStart);
         modifier.addInterval(1000, new Vector(0, 0, 0));
 
         particleEmitter.setScaleModifier(modifier);
@@ -554,7 +554,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
                 object.setPosition(new Vector(0, 0, -3));
                 object.setScale(new Vector(0.4f, 0.4f, 0.4f));
 
-                Animation animation = object.getAnimation("02_spin");
+                final Animation animation = object.getAnimation("02_spin");
                 animation.setDelay(5000);
                 animation.setLoop(true);
                 animation.play();
@@ -689,7 +689,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
 
             @Override
             public void onAnchorUpdated(final ARAnchor anchor) {
-                ARPlaneAnchor planeAnchor = (ARPlaneAnchor) anchor;
+                final ARPlaneAnchor planeAnchor = (ARPlaneAnchor) anchor;
                 Log.i("ViroActivity", "onAnchorUpdated width " + planeAnchor.getExtent().x + ", " + planeAnchor.getExtent().z);
                 surface.setWidth(planeAnchor.getExtent().x);
                 surface.setHeight(planeAnchor.getExtent().z);
@@ -719,7 +719,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
                 object.setPosition(new Vector(0, 0, 0));
                 object.setScale(new Vector(0.4f, 0.4f, 0.4f));
 
-                Animation animation = object.getAnimation("02_spin");
+                final Animation animation = object.getAnimation("02_spin");
                 //animation.setDelay(5000);
                 animation.setLoop(true);
                 animation.play();
@@ -743,24 +743,24 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
             }
 
             @Override
-            public void onAmbientLightUpdate(float lightIntensity, float colorTemperature) {
+            public void onAmbientLightUpdate(final float lightIntensity, final float colorTemperature) {
 
             }
 
             @Override
-            public void onAnchorFound(ARAnchor anchor, ARNode node) {
+            public void onAnchorFound(final ARAnchor anchor, final ARNode node) {
                 Log.i("Viro", "Found anchor!");
                 node.addChildNode(loadObjectNode());
             }
 
             @Override
-            public void onAnchorUpdated(ARAnchor anchor, ARNode node) {
+            public void onAnchorUpdated(final ARAnchor anchor, final ARNode node) {
                 Log.i("Viro", "Node position is " + node.getPositionRealtime().x + ", " + node.getPositionRealtime().y + ", " + node.getPositionRealtime().z);
 
             }
 
             @Override
-            public void onAnchorRemoved(ARAnchor anchor, ARNode node) {
+            public void onAnchorRemoved(final ARAnchor anchor, final ARNode node) {
 
             }
         });

@@ -10,7 +10,6 @@
 package com.viromedia.releasetest.tests;
 
 import android.graphics.Color;
-import android.graphics.drawable.AnimatedStateListDrawable;
 
 import com.viro.renderer.jni.AmbientLight;
 import com.viro.renderer.jni.AnimationTimingFunction;
@@ -35,11 +34,11 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
     private Box mBox;
     @Override
     void configureTestScene() {
-        AmbientLight light = new AmbientLight(Color.WHITE, 1000.0f);
+        final AmbientLight light = new AmbientLight(Color.WHITE, 1000.0f);
         mScene.getRootNode().addLight(light);
         boxNode = new Node();
         mBox = new Box(1, 1, 1);
-        Material material = new Material();
+        final Material material = new Material();
         material.setLightingModel(Material.LightingModel.BLINN);
         material.setDiffuseColor(Color.BLUE);
         mBox.setMaterials(Arrays.asList(material));
@@ -64,7 +63,7 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
         AnimationTransaction.begin();
         AnimationTransaction.setAnimationDuration(3000);
         AnimationTransaction.setTimingFunction(AnimationTimingFunction.EaseOut);
-            boxNode.setPosition(new Vector(3, 0, -3));
+        boxNode.setPosition(new Vector(3, 0, -3));
         AnimationTransaction.commit();
         assertPass("Position animates from x -3 to 3.", () -> {
             boxNode.setPosition(new Vector(0, 0, -3));
@@ -75,7 +74,7 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
         AnimationTransaction.begin();
         AnimationTransaction.setAnimationDuration(3000);
         AnimationTransaction.setTimingFunction(AnimationTimingFunction.EaseOut);
-            boxNode.setRotation(new Vector(0, 45, 45));
+        boxNode.setRotation(new Vector(0, 0.78, 0.78));
         AnimationTransaction.commit();
         assertPass("Animate rotation to 45 degrees on y and z axis.", ()->{
             boxNode.setRotation(new Vector(0, 0, 0));
@@ -86,7 +85,7 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
         AnimationTransaction.begin();
         AnimationTransaction.setAnimationDuration(3000);
         AnimationTransaction.setTimingFunction(AnimationTimingFunction.EaseOut);
-            boxNode.setScale(new Vector(.2f, .2f, 2f));
+        boxNode.setScale(new Vector(.2f, .2f, 2f));
         AnimationTransaction.commit();
         assertPass("Animate animates from scale 1 to .2", ()-> {
             boxNode.setScale(new Vector(1f, 1f, 1f));
@@ -94,12 +93,12 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
     }
 
     private void testAnimationMaterial() {
-        Material material = new Material();
+        final Material material = new Material();
         material.setLightingModel(Material.LightingModel.BLINN);
         material.setDiffuseColor(Color.RED);
         AnimationTransaction.begin();
         AnimationTransaction.setAnimationDuration(4000);
-            mBox.setMaterials(Arrays.asList(material));
+        mBox.setMaterials(Arrays.asList(material));
         AnimationTransaction.commit();
         assertPass("Material blends from blue to red.");
     }
@@ -123,7 +122,7 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
         AnimationTransaction.setFinishCallback((transaction)-> {
                 AnimationTransaction.begin();
                     AnimationTransaction.setAnimationDuration(2000);
-                    boxNode.setRotation(new Vector(0, 60, 0));
+            boxNode.setRotation(new Vector(0, 1.04, 0));
                 AnimationTransaction.commit();
         });
         AnimationTransaction.commit();
@@ -135,12 +134,12 @@ public class ViroAnimationTransactionTest extends ViroBaseTest {
     }
 
     private void testAnimationEasing() {
-        for(AnimationTimingFunction animationTimingFunction: AnimationTimingFunction.values()) {
+        for (final AnimationTimingFunction animationTimingFunction : AnimationTimingFunction.values()) {
             testEasing(animationTimingFunction);
         }
     }
 
-    private void testEasing(AnimationTimingFunction animTimingFunction) {
+    private void testEasing(final AnimationTimingFunction animTimingFunction) {
         AnimationTransaction.begin();
         AnimationTransaction.setAnimationDuration(2000);
         AnimationTransaction.setTimingFunction(animTimingFunction);
