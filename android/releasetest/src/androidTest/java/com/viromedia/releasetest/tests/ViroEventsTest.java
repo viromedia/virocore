@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.viro.core.Box;
+import com.viro.core.ClickState;
 import com.viro.core.DirectionalLight;
 import com.viro.core.Material;
 import com.viro.core.Node;
@@ -96,18 +97,48 @@ public class ViroEventsTest extends ViroBaseTest {
         //    Log.i("ViroEventsTest", "CLICKED ON BOX!!");
         //});
 
-        boxClickListener = (source, node, clickState, location) -> {
-            eventText.setText("Clicked on 3d object.");
-        };
-        objectNode.setClickListener(boxClickListener);
+        boxNode.setClickListener(new ClickListener() {
+            @Override
+            public void onClick(int source, Node node, Vector location) {
+                eventText.setText("Clicked on box node.");
+            }
 
-        sphereNode.setClickListener((source, node, clickState, location) -> {
-            eventText.setText("Clicked on sphere.");
+            @Override
+            public void onClickState(int source, Node node, ClickState clickState, Vector location) {
+
+            }
         });
 
-        assertPass("All objects are clickable.", ()->{
+        boxClickListener = new ClickListener() {
+            @Override
+            public void onClick(int source, Node node, Vector location) {
+                eventText.setText("Clicked on 3d object.");
+            }
+
+            @Override
+            public void onClickState(int source, Node node, ClickState clickState, Vector location) {
+
+            }
+        };
+
+        objectNode.setClickListener(boxClickListener);
+
+        sphereNode.setClickListener(new ClickListener() {
+            @Override
+            public void onClick(int source, Node node, Vector location) {
+                eventText.setText("Clicked on sphere object.");
+            }
+
+            @Override
+            public void onClickState(int source, Node node, ClickState clickState, Vector location) {
+
+            }
+        });
+
+        assertPass("All objects are clickable.", () -> {
             objectNode.setClickListener(null);
             sphereNode.setClickListener(null);
+            boxNode.setClickListener(null);
             boxClickListener = null;
             eventText.setText(DEFAULT_EVENT_TEXT);
         });

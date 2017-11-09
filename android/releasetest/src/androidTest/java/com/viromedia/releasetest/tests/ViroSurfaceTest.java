@@ -50,7 +50,7 @@ public class ViroSurfaceTest extends ViroBaseTest {
 
     @Test
     public void surfaceTest() {
-        //surfaceWidth();
+        surfaceWidth();
         surfaceHeight();
     }
 

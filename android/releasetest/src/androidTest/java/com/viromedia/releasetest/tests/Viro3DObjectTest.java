@@ -20,6 +20,8 @@ import org.junit.Test;
 
 public class Viro3DObjectTest extends ViroBaseTest {
     private Object3D mObject3D;
+    private Animation mAnimation;
+    private boolean mIsAnimPaused = false;
 
     @Override
     void configureTestScene() {
@@ -34,6 +36,8 @@ public class Viro3DObjectTest extends ViroBaseTest {
     @Test
     public void test3DObject() {
         testLoadModelFBX();
+        testFBXAnimPause();
+        testFBXAnimStop();
         testLoadModelOBJ();
         testLoadModelError();
     }
@@ -45,10 +49,10 @@ public class Viro3DObjectTest extends ViroBaseTest {
                 object.setPosition(new Vector(0, 0, -3));
                 object.setScale(new Vector(0.4f, 0.4f, 0.4f));
 
-                Animation animation = object.getAnimation("02_spin");
-                animation.setDelay(5000);
-                animation.setLoop(true);
-                animation.play();
+                mAnimation = object.getAnimation("02_spin");
+                mAnimation.setDelay(2000);
+                mAnimation.setLoop(true);
+                mAnimation.play();
             }
 
             @Override
@@ -58,6 +62,32 @@ public class Viro3DObjectTest extends ViroBaseTest {
         });
 
         assertPass("Star model loads and begins to animate.");
+    }
+
+    private void testFBXAnimPause() {
+        mMutableTestMethod = () -> {
+            if(!mIsAnimPaused) {
+                mAnimation.pause();
+                mIsAnimPaused = true;
+            } else {
+                mAnimation.play();
+            }
+        };
+
+        assertPass("FBX rotates from pause to play.", ()-> {
+            if(mIsAnimPaused) {
+                mMutableTestMethod = null;
+                if(mIsAnimPaused) {
+                    mAnimation.play();
+                }
+            }
+        });
+    }
+
+    private void testFBXAnimStop() {
+        mMutableTestMethod = null;
+        mAnimation.stop();
+        assertPass("FBX animation stops.");
     }
 
     private void testLoadModelOBJ() {
