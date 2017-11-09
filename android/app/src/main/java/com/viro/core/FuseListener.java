@@ -18,12 +18,12 @@ import com.viro.core.Node;
 public interface FuseListener {
 
     /**
-     * Callback when the {@link Node} receiving this event has fused, meaning the Controller
-     * has hovered over this Node for <i>time to fuse</i> milliseconds. Time to fuse can be
+     * Callback when the given {@link Node} has fused, meaning the Controller
+     * has hovered over the Node for <i>time to fuse</i> milliseconds. Time to fuse can be
      * set via {@link Node#setTimeToFuse(float)}.
      *
-     * @param source The platform specific source ID, which indicates what button or component
-     *               on the Controller triggered the event. See the Controller's Guide for
+     * @param source The platform specific source ID, which indicates what button or component on
+     *               the Controller triggered the event. See the Controller's Guide for
      *               information.
      * @param node   The {@link Node} being hovered over (the Node that is "fusing").
      */

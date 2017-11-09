@@ -19,8 +19,7 @@ import com.viro.core.Vector;
 public interface DragListener {
 
     /**
-     * Callback when a drag motion (click down, then move) is detected for the {@link Node}
-     * receiving this event.
+     * Callback when a drag motion (click down, then move) is detected for the given {@link Node}.
      *
      * @param source        The platform specific source ID, which indicates what button or
      *                      component on the Controller triggered the event. See the Controller's

@@ -386,7 +386,10 @@ public class Controller implements EventDelegate.EventDelegateCallback {
     @Override
     public void onClick(int source, Node node, ClickState clickState, float[] hitLoc) {
         if (mClickListener != null) {
-            mClickListener.onClick(source, node, clickState, new Vector(hitLoc));
+            mClickListener.onClickState(source, node, clickState, new Vector(hitLoc));
+            if (clickState == ClickState.CLICKED) {
+                mClickListener.onClick(source, node, new Vector(hitLoc));
+            }
         }
     }
     /**

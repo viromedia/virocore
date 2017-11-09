@@ -40,8 +40,16 @@ public enum ClickState {
             map.put(status.mTypeId, status);
         }
     }
+
+    /**
+     * @hide
+     */
     public static ClickState valueOf(int id) {
         return map.get(id);
     }
+
+    /**
+     * @hide
+     */
     public int getTypeId() { return mTypeId; }
 }

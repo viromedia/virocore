@@ -40,8 +40,16 @@ public enum TouchState {
             map.put(status.mTypeId, status);
         }
     }
+
+    /**
+     * @hide
+     */
     public static TouchState valueOf(int id) {
         return map.get(id);
     }
+
+    /**
+     * @hide
+     */
     public int getTypeId() { return mTypeId; }
 }

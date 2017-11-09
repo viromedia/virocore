@@ -17,7 +17,7 @@ public interface TouchpadSwipeListener {
 
     /**
      * Callback when a swipe was been detected on a touchpad controller while hovering over
-     * the {@link Node} receiving this event.
+     * the given {@link Node}.
      *
      * @param source     The platform specific source ID, which indicates what button or
      *                   component on the Controller triggered the event. See the Controller's

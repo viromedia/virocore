@@ -44,8 +44,16 @@ public enum SwipeState {
             map.put(status.mTypeId, status);
         }
     }
+
+    /**
+     * @hide
+     */
     public static SwipeState valueOf(int id) {
         return map.get(id);
     }
+
+    /**
+     * @hide
+     */
     public int getTypeId() { return mTypeId; }
 }

@@ -49,8 +49,16 @@ public enum ControllerStatus {
             map.put(status.mTypeId, status);
         }
     }
+
+    /**
+     * @hide
+     */
     public static ControllerStatus valueOf(int id) {
         return map.get(id);
     }
+
+    /**
+     * @hide
+     */
     public int getTypeId() { return mTypeId; }
 }

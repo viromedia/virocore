@@ -19,7 +19,7 @@ public interface TouchpadScrollListener {
 
     /**
      * Callback when a scrolling gesture is detected on the touchpad while hovering over
-     * the {@link Node} receiving this event.
+     * the given {@link Node}.
      *
      * @param source The platform specific source ID, which indicates what button or component
      *               on the Controller triggered the event. See the Controller's Guide for

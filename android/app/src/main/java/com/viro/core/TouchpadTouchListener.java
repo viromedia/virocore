@@ -17,8 +17,7 @@ public interface TouchpadTouchListener {
 
     /**
      * Callback when a touchpad touch event is received, meaning the user has placed and/or
-     * moved a finger on a touchpad controller while hovering over the {@link Node} receiving
-     * this event.
+     * moved a finger on a touchpad controller while hovering over the given {@link Node}.
      *
      * @param source     The platform specific source ID, which indicates what button or
      *                   component on the Controller triggered the event. See the Controller's

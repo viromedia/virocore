@@ -21,6 +21,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.viro.core.ARAnchor;
+import com.viro.core.ClickListener;
 import com.viro.core.internal.ARDeclarativeNode;
 import com.viro.core.internal.ARDeclarativePlane;
 import com.viro.core.ARHitTestListener;
@@ -158,18 +159,18 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     @Override
     public void onRendererStart() {
         Log.e("ViroActivity", "onRendererStart called");
-        //initializeVrScene();
-        initializeArScene();
+        initializeVrScene();
+        //initializeArScene();
     }
 
     private void initializeVrScene() {
         // Creation of SceneControllerJni within scene navigator
         final Scene scene = new Scene();
         final Node rootNode = scene.getRootNode();
-        final List<Node> nodes = new ArrayList<>();
+        List<Node> nodes = new ArrayList<>();
         //nodes = testSurfaceVideo(this);
        // nodes = testSphereVideo(this);
-        //nodes = testBox(getApplicationContext());
+        nodes = testBox(getApplicationContext());
         //nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
@@ -524,7 +525,17 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         final Vector boxPosition2 = new Vector(-2, 0, -3);
         node2.setPosition(boxPosition2);
         boxGeometry2.setMaterials(Arrays.asList(material));
-        node2.setEventDelegate(getGenericDelegate("Box2"));
+        node2.setClickListener(new ClickListener() {
+            @Override
+            public void onClick(int source, Node node, Vector location) {
+                Log.i("Viro", "ON CLICK");
+            }
+
+            @Override
+            public void onClickState(int source, Node node, ClickState clickState, Vector location) {
+                Log.i("Viro", "on click state " + clickState.toString());
+            }
+        });
 
         AnimationTransaction.begin();
         AnimationTransaction.setAnimationDelay(1000);

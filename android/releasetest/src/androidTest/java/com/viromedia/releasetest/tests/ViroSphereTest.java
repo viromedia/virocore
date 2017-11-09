@@ -61,8 +61,13 @@ public class ViroSphereTest extends ViroBaseTest {
         mSphereOne.setMaterials(Arrays.asList(material));
         node.setClickListener(new ClickListener() {
             @Override
-            public void onClick(final int source, final Node node, final ClickState clickState, final Vector location) {
+            public void onClick(final int source, final Node node, final Vector location) {
                 Log.i("ViroSphereTest", "Click listener on sphere one invoked");
+            }
+
+            @Override
+            public void onClickState(int source, Node node, ClickState clickState, Vector location) {
+
             }
         });
         mScene.getRootNode().addChildNode(node);
@@ -79,8 +84,13 @@ public class ViroSphereTest extends ViroBaseTest {
         nodeTwo.setPosition(new Vector(sphereTwoPosition));
         nodeTwo.setClickListener(new ClickListener() {
             @Override
-            public void onClick(final int source, final Node node, final ClickState clickState, final Vector location) {
+            public void onClick(final int source, final Node node, final Vector location) {
                 Log.i("ViroSphereTest", "Click listener on sphere two invoked");
+            }
+
+            @Override
+            public void onClickState(int source, Node node, ClickState clickState, Vector location) {
+
             }
         });
         mSphereTwo.setMaterials(Arrays.asList(materialBlue));

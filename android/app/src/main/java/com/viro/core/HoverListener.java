@@ -20,7 +20,7 @@ public interface HoverListener {
 
     /**
      * Callback when a hover event is received; that is, when the Controller begins or ends
-     * hovering over the {@link Node} receiving this event.
+     * hovering over the given {@link Node}.
      *
      * @param source     The platform specific source ID, which indicates what button or
      *                   component on the Controller triggered the event. See the Controller's

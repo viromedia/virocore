@@ -40,6 +40,10 @@ public enum PinchState {
             map.put(status.mTypeId, status);
         }
     }
+
+    /**
+     * @hide
+     */
     public static PinchState valueOf(int id) {
         return map.get(id);
     }
