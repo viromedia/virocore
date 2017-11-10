@@ -43,33 +43,6 @@ public class ViroTextureTest extends ViroBaseTest {
     private Texture mSphereTexture;
     private static final int BUFFER_SIZE = 1024 * 4;
 
-    private class DownloadImageTask extends AsyncTask<String, Void, ByteBuffer> {
-
-
-        protected ByteBuffer doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                byte[] bytes = ViroTextureTest.toByteArray(in);
-
-                ByteBuffer byteBuffer = ByteBuffer.allocateDirect(bytes.length);//ByteBuffer.wrap(bytes);
-                byteBuffer.put(bytes, 0, bytes.length);
-                return byteBuffer;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        protected void onPostExecute(ByteBuffer byteBuffer) {
-
-            mTexture = new Texture(byteBuffer, 4500, 3000, Texture.TextureFormat.RGBA8, Texture.TextureFormat.RGBA8, true, true, null);
-            Material material = new Material();
-            material.setDiffuseTexture(mTexture);
-            mBox.setMaterials(Arrays.asList(material));
-        }
-    }
-
     @Override
     void configureTestScene() {
         final DirectionalLight light = new DirectionalLight(Color.WHITE, 1000.0f, new Vector(0, 0, -1f));
@@ -106,8 +79,8 @@ public class ViroTextureTest extends ViroBaseTest {
         testBitmapMagnificationFilter();
         testTextureBitmapConstructorMipMapOff();
         testTextureBitMapConstructorStereoMode();
-        //testTextureDataConstructor();
-        //testTextureDataConstructorStereoMode();
+        testTextureDataConstructor();
+        testTextureDataConstructorStereoMode();
         testTextureCubeMap();
 
     }
@@ -179,8 +152,21 @@ public class ViroTextureTest extends ViroBaseTest {
     }
 
     private void testTextureDataConstructor() {
-        new DownloadImageTask().execute("http://static.pexels.com/photos/45888/landscape-scotland-nature-highlands-and-islands-45888.jpeg");
-        assertPass("Loading texture from URL and converting to ByteBuffer. Should see scottish highlands show up.");
+        Bitmap bobaBitmap = this.getBitmapFromAssets(mActivity, "boba.png");
+        mTexture = new Texture(getRBGAFromBitmap(bobaBitmap), bobaBitmap.getWidth(), bobaBitmap.getHeight(),
+                                          Texture.TextureFormat.RGBA8, Texture.TextureFormat.RGBA8,
+                                          true, false, null);
+        Material material = new Material();
+        material.setDiffuseTexture(mTexture);
+        mBox.setMaterials(Arrays.asList(material));
+        mNode.setPosition(new Vector(0, 0, -1));
+        mMutableTestMethod = () -> {
+
+            Vector position = mNode.getPositionRealtime();
+            mNode.setPosition(new Vector(0, 0, position.z - .5f));
+
+        };
+        assertPass("Loading from Bitmap, converting to raw, and loading into Texture. Should see textured box.");
     }
 
     private void testTextureDataConstructorStereoMode() {
@@ -246,6 +232,34 @@ public class ViroTextureTest extends ViroBaseTest {
         };
 
         assertPass("Loop texture modes for setMagnificationFilter from LINEAR, NEAREST.");
+    }
+
+    private ByteBuffer getRBGAFromBitmap(Bitmap bitmap) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int componentsPerPixel = 4;
+        int totalPixels = width * height;
+        int totalBytes = totalPixels * componentsPerPixel;
+
+        byte[] rgbValues = new byte[totalBytes];
+        int[] argbPixels = new int[totalPixels];
+        bitmap.getPixels(argbPixels, 0, width, 0, 0, width, height);
+        for (int i = 0; i < totalPixels; i++) {
+            int argbPixel = argbPixels[i];
+            int red = Color.red(argbPixel);
+            int green = Color.green(argbPixel);
+            int blue = Color.blue(argbPixel);
+            int alpha = Color.alpha(argbPixel);
+            rgbValues[i * componentsPerPixel + 0] = (byte) red;
+            rgbValues[i * componentsPerPixel + 1] = (byte) green;
+            rgbValues[i * componentsPerPixel + 2] = (byte) blue;
+            rgbValues[i * componentsPerPixel + 3] = (byte) alpha;
+        }
+
+        ByteBuffer buffer = ByteBuffer.allocateDirect(rgbValues.length);
+        buffer.put(rgbValues);
+        buffer.flip();
+        return buffer;
     }
 
     public static byte[] toByteArray(InputStream is) throws IOException {

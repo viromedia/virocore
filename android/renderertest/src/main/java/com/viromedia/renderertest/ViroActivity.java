@@ -484,6 +484,34 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         return Arrays.asList(particleNode);
     }
 
+    private ByteBuffer getRBGAFromBitmap(Bitmap bitmap) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int componentsPerPixel = 4;
+        int totalPixels = width * height;
+        int totalBytes = totalPixels * componentsPerPixel;
+
+        byte[] rgbValues = new byte[totalBytes];
+        int[] argbPixels = new int[totalPixels];
+        bitmap.getPixels(argbPixels, 0, width, 0, 0, width, height);
+        for (int i = 0; i < totalPixels; i++) {
+            int argbPixel = argbPixels[i];
+            int red = Color.red(argbPixel);
+            int green = Color.green(argbPixel);
+            int blue = Color.blue(argbPixel);
+            int alpha = Color.alpha(argbPixel);
+            rgbValues[i * componentsPerPixel + 0] = (byte) red;
+            rgbValues[i * componentsPerPixel + 1] = (byte) green;
+            rgbValues[i * componentsPerPixel + 2] = (byte) blue;
+            rgbValues[i * componentsPerPixel + 3] = (byte) alpha;
+        }
+
+        ByteBuffer buffer = ByteBuffer.allocateDirect(rgbValues.length);
+        buffer.put(rgbValues);
+        buffer.flip();
+        return buffer;
+    }
+
     private List<Node> testBox(final Context context) {
         final Node node1 = new Node();
         final Node node2 = new Node();
@@ -501,7 +529,9 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         final Bitmap bobaBitmap = getBitmapFromAssets("boba.png");
         final Bitmap specBitmap = getBitmapFromAssets("specular.png");
 
-        final Texture bobaTexture = new Texture(bobaBitmap, TextureFormat.RGBA8, true, true);
+        //final Texture bobaTexture = new Texture(bobaBitmap, TextureFormat.RGBA8, true, true);
+        final Texture bobaTexture = new Texture(getRBGAFromBitmap(bobaBitmap), bobaBitmap.getWidth(), bobaBitmap.getHeight(), Texture.TextureFormat.RGBA8, Texture.TextureFormat.RGBA8,
+        true, false, null);
         final Texture specTexture = new Texture(specBitmap, TextureFormat.RGBA8, true, true);
 
         final Material material = new Material();

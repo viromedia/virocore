@@ -371,8 +371,8 @@ public class Texture {
     }
 
     /**
-     * Construct a new 2D Texture out of the given image contained in the given {@link ByteBuffer},
-     * stored in the given format. Not all input formats are compatible with all storage formats.
+     * Construct a new 2D Texture out of the image contained in the given {@link ByteBuffer},
+     * stored in the indicated format. Not all input formats are compatible with all storage formats.
      * This method can be used to load images that are not in {@link Bitmap} form: for example,
      * raw images or HDR images.
      *
@@ -422,7 +422,7 @@ public class Texture {
     }
 
     /**
-     * Construct a new 2D <i>HDR</i> Texture out of the given image contained in VHD format in the
+     * Construct a new 2D <i>HDR</i> Texture out of the image contained in VHD format in the
      * given {@link ByteBuffer}.
      *
      * @param data            The raw image data to turn into a Texture. This must be a
