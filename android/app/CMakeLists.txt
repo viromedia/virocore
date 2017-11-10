@@ -102,7 +102,6 @@ add_library( # Sets the name of the library.
              src/main/cpp/jni/Portal_JNI.cpp
              src/main/cpp/jni/PortalScene_JNI.cpp
              src/main/cpp/jni/PortalDelegate_JNI.cpp
-             src/main/cpp/jni/PortalTraversalListener_JNI.cpp
              src/main/cpp/jni/PhysicsBody_JNI.cpp
              src/main/cpp/jni/AnimationTransaction_JNI.cpp
              src/main/cpp/jni/MediaRecorder_JNI.cpp
@@ -152,6 +151,7 @@ add_library( # Sets the name of the library.
 
              # Renderer
              ../../ViroRenderer/VROScene.cpp
+             ../../ViroRenderer/VROSceneController.cpp
              ../../ViroRenderer/VROCamera.cpp
              ../../ViroRenderer/VRONode.cpp
              ../../ViroRenderer/VROPortal.cpp

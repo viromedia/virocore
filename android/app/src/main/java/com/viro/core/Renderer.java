@@ -135,11 +135,11 @@ public class Renderer {
     }
     public void setDebugHUDEnabled(boolean enabled) { nativeSetDebugHUDEnabled(mNativeRef, enabled); }
 
-    public void addFrameListener(FrameListener frameListener) {
+    public void addFrameListener(NativeFrameListener frameListener) {
         nativeAddFrameListener(mNativeRef, frameListener.mNativeRef);
     }
 
-    public void removeFrameListener(FrameListener frameListener) {
+    public void removeFrameListener(NativeFrameListener frameListener) {
         nativeRemoveFrameListener(mNativeRef, frameListener.mNativeRef);
     }
 

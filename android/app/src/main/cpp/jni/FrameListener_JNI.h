@@ -21,19 +21,4 @@ namespace FrameListener {
     }
 }
 
-
-namespace PortalTraversalListener {
-    inline jlong jptr(std::shared_ptr<VROPortalTraversalListener> shared_node) {
-        PersistentRef<VROPortalTraversalListener> *nativeListener = new PersistentRef<VROPortalTraversalListener>(shared_node);
-        return reinterpret_cast<intptr_t>(nativeListener);
-    }
-
-    inline std::shared_ptr<VROPortalTraversalListener> native(jlong ptr) {
-        PersistentRef<VROPortalTraversalListener> *nativeListener = reinterpret_cast<PersistentRef<VROPortalTraversalListener> *>(ptr);
-        return nativeListener->get();
-    }
-}
-
-
-
 #endif //ANDROID_FRAMELISTENER_JNI_H

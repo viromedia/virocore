@@ -30,7 +30,6 @@ private:
 
     std::shared_ptr<VRONode> _pointOfView;
     std::shared_ptr<VROSceneController> _sceneController;
-    std::shared_ptr<VROPortalTraversalListener> _portalTraversalListener;
     
     std::shared_ptr<VROPortalFrame> loadPortalEntrance();
     std::shared_ptr<VROPortalFrame> loadFBXPortalEntrance(std::string fbxPath, float scale);

@@ -365,14 +365,10 @@ void VRORenderer::endFrame(std::shared_ptr<VRODriver> driver) {
 void VRORenderer::renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> driver) {
     if (_sceneController) {
         if (_outgoingSceneController && _outgoingSceneController->hasActiveTransitionAnimation()) {
-            _outgoingSceneController->sceneWillRender(_context.get());
-            _sceneController->sceneWillRender(_context.get());
-
             _choreographer->render(eyeType, _outgoingSceneController->getScene(), _renderMetadata, _context.get(), driver);
             _choreographer->render(eyeType, _sceneController->getScene(), _renderMetadata, _context.get(), driver);
         }
         else {
-            _sceneController->sceneWillRender(_context.get());
             _choreographer->render(eyeType, _sceneController->getScene(), _renderMetadata, _context.get(), driver);
         }
     }

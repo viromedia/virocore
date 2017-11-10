@@ -9,8 +9,10 @@
 
 package com.viro.core;
 
-public abstract class FrameListener {
+/**
+ * @hide
+ */
+abstract class NativeFrameListener {
     protected long mNativeRef;
-
     public abstract void destroy();
 }

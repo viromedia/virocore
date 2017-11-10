@@ -179,9 +179,6 @@ void VROPortalTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronize
     
     VROTransaction::commit();
  
-    _portalTraversalListener = std::make_shared<VROPortalTraversalListener>(scene);
-    frameSynchronizer->addFrameListener(_portalTraversalListener);
-    
     std::shared_ptr<VRONodeCamera> camera = std::make_shared<VRONodeCamera>();
     scene->getRootNode()->setCamera(camera);
     
