@@ -162,7 +162,7 @@ public class ViroTextureTest extends ViroBaseTest {
     }
 
     private void testTextureBitMapConstructorStereoMode() {
-        Bitmap bobaBitmap = this.getBitmapFromAssets(mActivity, "stereo1.png");
+        Bitmap bobaBitmap = this.getBitmapFromAssets(mActivity, "stereo1.jpg");
         mTexture = new Texture(bobaBitmap, Texture.TextureFormat.RGBA8, true, true, Texture.StereoMode.LEFT_RIGHT);
         Material material = new Material();
         material.setDiffuseTexture(mTexture);
