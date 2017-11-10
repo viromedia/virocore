@@ -176,8 +176,8 @@ JNI_METHOD(void, nativeSetFont)(JNIEnv *env,
                                 jobject obj,
                                 jlong context_j,
                                 jlong text_j,
-                                jint size,
-                                jstring family_j) {
+                                jstring family_j,
+                                jint size) {
     std::string family = VROPlatformGetString(family_j, env);
     std::shared_ptr<ViroContext> context = ViroContext::native(context_j);
     std::shared_ptr<VROTypeface> typeface = context->getDriver()->newTypeface(family, size);
