@@ -442,8 +442,9 @@ void VRONode::applyConstraints(const VRORenderContext &context, VROMatrix4f pare
      */
     _lastComputedTransform.store(_computedTransform);
     _lastComputedPosition.store(_computedPosition);
-    _lastComputedRotation.store(_rotation);
-    _lastComputedScale.store(_scale);
+    _lastPosition.store(_position);
+    _lastRotation.store(_rotation);
+    _lastScale.store(_scale);
 
     /*
      Move down the tree.
@@ -537,20 +538,24 @@ VROMatrix4f VRONode::getComputedTransform() const {
     return _computedTransform;
 }
 
-VROMatrix4f VRONode::getLastComputedTransform() const {
+VROMatrix4f VRONode::getLastWorldTransform() const {
     return _lastComputedTransform.load();
 }
 
-VROVector3f VRONode::getLastComputedPosition() const {
+VROVector3f VRONode::getLastWorldPosition() const {
     return _lastComputedPosition.load();
 }
 
-VROQuaternion VRONode::getLastComputedRotation() const {
-    return _lastComputedRotation.load();
+VROVector3f VRONode::getLastLocalPosition() const {
+    return _lastPosition.load();
 }
 
-VROVector3f VRONode::getLastComputedScale() const {
-    return _lastComputedScale.load();
+VROQuaternion VRONode::getLastLocalRotation() const {
+    return _lastRotation.load();
+}
+
+VROVector3f VRONode::getLastLocalScale() const {
+    return _lastScale.load();
 }
 
 #pragma mark - Scene Graph

@@ -52,11 +52,9 @@ static const float kZFarMultiplier = 1.15;
 static const int kFPSMaxSamples = 100;
 
 class VRORenderer {
-
 public:
 
     VRORenderer(std::shared_ptr<VROInputControllerBase> inputController);
-
     virtual ~VRORenderer();
 
     /*

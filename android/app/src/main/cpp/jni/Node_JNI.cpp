@@ -380,7 +380,7 @@ JNI_METHOD(jfloatArray, nativeGetPosition)(JNIEnv *env,
                                            jlong node_j) {
 
     std::shared_ptr<VRONode> node = Node::native(node_j);
-    return ARUtilsCreateFloatArrayFromVector3f(node->getLastComputedPosition());
+    return ARUtilsCreateFloatArrayFromVector3f(node->getLastLocalPosition());
 }
 
 JNI_METHOD(jfloatArray, nativeGetScale)(JNIEnv *env,
@@ -388,7 +388,7 @@ JNI_METHOD(jfloatArray, nativeGetScale)(JNIEnv *env,
                                         jlong node_j) {
 
     std::shared_ptr<VRONode> node = Node::native(node_j);
-    return ARUtilsCreateFloatArrayFromVector3f(node->getLastComputedScale());
+    return ARUtilsCreateFloatArrayFromVector3f(node->getLastLocalScale());
 }
 
 JNI_METHOD(jfloatArray, nativeGetRotationEuler)(JNIEnv *env,
@@ -396,7 +396,7 @@ JNI_METHOD(jfloatArray, nativeGetRotationEuler)(JNIEnv *env,
                                                 jlong node_j) {
 
     std::shared_ptr<VRONode> node = Node::native(node_j);
-    return ARUtilsCreateFloatArrayFromVector3f(node->getLastComputedRotation().toEuler());
+    return ARUtilsCreateFloatArrayFromVector3f(node->getLastLocalRotation().toEuler());
 }
 
 JNI_METHOD(jfloatArray, nativeGetRotationQuaternion)(JNIEnv *env,
@@ -404,7 +404,7 @@ JNI_METHOD(jfloatArray, nativeGetRotationQuaternion)(JNIEnv *env,
                                                      jlong node_j) {
 
     std::shared_ptr<VRONode> node = Node::native(node_j);
-    VROQuaternion quaternion = node->getLastComputedRotation();
+    VROQuaternion quaternion = node->getLastLocalRotation();
 
     jfloatArray array_j = env->NewFloatArray(4);
     jfloat array_c[4];
@@ -419,7 +419,7 @@ JNI_METHOD(jfloatArray, nativeConvertLocalPositionToWorldSpace)(JNIEnv *env,
 
     std::shared_ptr<VRONode> node = Node::native(node_j);
     VROVector3f localPosition(x, y, z);
-    return ARUtilsCreateFloatArrayFromVector3f(node->getLastComputedTransform().invert().multiply(localPosition));
+    return ARUtilsCreateFloatArrayFromVector3f(node->getLastWorldTransform().invert().multiply(localPosition));
 }
 
 JNI_METHOD(jfloatArray, nativeConvertWorldPositionToLocalSpace)(JNIEnv *env,
@@ -428,7 +428,7 @@ JNI_METHOD(jfloatArray, nativeConvertWorldPositionToLocalSpace)(JNIEnv *env,
 
     std::shared_ptr<VRONode> node = Node::native(node_j);
     VROVector3f worldPosition(x, y, z);
-    return ARUtilsCreateFloatArrayFromVector3f(node->getLastComputedTransform().multiply(worldPosition));
+    return ARUtilsCreateFloatArrayFromVector3f(node->getLastWorldTransform().multiply(worldPosition));
 }
 
 JNI_METHOD(void, nativeSetOpacity)(JNIEnv *env,

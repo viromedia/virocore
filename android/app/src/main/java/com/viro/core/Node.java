@@ -362,10 +362,11 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Get the real-time position of this Node. The real-time position is the Node's location in the
-     * coordinate system of its parent, as it currently appears on-screen. Note this may not match
-     * the value last set by {@link #setPosition(Vector)} because the real-time position is
-     * influenced by many factors: animation, the physics simulation, and more.
+     * Get the real-time <i>local</i> position of this Node. The local position is the Node's
+     * location in the coordinate system of its parent. The position returned is real-time in that
+     * it is the position the Node currently appears on-screen. Note this may not match the value
+     * last set by {@link #setPosition(Vector)} because the real-time position is influenced by many
+     * factors: animation, the physics simulation, and more.
      *
      * @return The real-time position as a {@link Vector}.
      */
@@ -398,7 +399,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
     }
 
     /**
-     * Get the <i>real-time</i> orientation of this Node, expressed as three Euler angles.
+     * Get the <i>real-time</i> local orientation of this Node, expressed as three Euler angles.
      * Specifically, the X component is rotation about the X axis (pitch), the Y component is
      * rotation about the node's Y axis (yaw), and Z is the rotation around the node's Z axis
      * (roll). This returns the real-time orientation, meaning the orientation of the Node as it
@@ -407,6 +408,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * Note this may not match the value last set by {@link #setRotation(Vector)} because the
      * real-time rotation is influenced by many factors: animation, the physics simulation, and
      * more.
+     * <p>
+     * The returned orientation is the Node's local orientation (its orientation with respect to its
+     * parent). It does not take into the account the orientation of parent Nodes.
      *
      * @return The rotation in Euler form.
      */
@@ -420,6 +424,9 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * appears on-screen. Note this may not match the value last set by {@link #setRotation(Vector)}
      * because the real-time rotation is influenced by many factors: animation, the physics
      * simulation, and more.
+     * <p>
+     * The returned orientation is the Node's local orientation (its orientation with respect to its
+     * parent). It does not take into the account the orientation of parent Nodes.
      *
      * @return The rotation in Quaternion form.
      */
