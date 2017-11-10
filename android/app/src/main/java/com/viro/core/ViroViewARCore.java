@@ -285,6 +285,18 @@ public class ViroViewARCore extends ViroView {
         mNativeRenderer.setSceneController(scene.mNativeRef, 1.0f);
     }
 
+    @Override
+    public void setOnTouchListener(OnTouchListener listener) {
+        // If we're adding our own ARTouchGestureListener, then we add it as the actual
+        // touch listener otherwise, we attach the listener to the ARTouchGestureListener
+        // which will forward the touches to the given listener before processing them itself.
+        if (listener instanceof ARTouchGestureListener) {
+            super.setOnTouchListener(listener);
+        } else if(mARTouchGestureListener != null) {
+            mARTouchGestureListener.setOnTouchListener(listener);
+        }
+    }
+
     /**
      * @hide
      */

@@ -38,8 +38,9 @@ public class ARTouchGestureListener extends GestureDetector.SimpleOnGestureListe
     private boolean mDestroyed = false;
 
     private ScaleGestureDetector mScaleDetector;
-    private GestureDetector mGestureDetector;
     private RotationGestureDetector mRotateDetector;
+
+    private View.OnTouchListener mUserTouchListener;
 
     private long mFingerDownTime = 0;
     private boolean mIsTouching = false;
@@ -53,7 +54,6 @@ public class ARTouchGestureListener extends GestureDetector.SimpleOnGestureListe
         mNativeRenderer = rendererJni;
         mScaleDetector = new ScaleGestureDetector(context, this);
         mScaleDetector.setQuickScaleEnabled(false);
-        mGestureDetector = new GestureDetector(context, this);
         mRotateDetector = new RotationGestureDetector(this);
     }
 
@@ -68,6 +68,10 @@ public class ARTouchGestureListener extends GestureDetector.SimpleOnGestureListe
         }
     }
 
+    public void setOnTouchListener(View.OnTouchListener listener) {
+        mUserTouchListener = listener;
+    }
+
     /*
      * -- OnTouchListener Implementation --
      */
@@ -76,6 +80,10 @@ public class ARTouchGestureListener extends GestureDetector.SimpleOnGestureListe
     public boolean onTouch(View v, MotionEvent event) {
         if (mDestroyed) {
             return false;
+        }
+
+        if (mUserTouchListener != null && mUserTouchListener.onTouch(v, event)) {
+            return true;
         }
 
         switch (event.getActionMasked()) {

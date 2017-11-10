@@ -107,7 +107,7 @@ public class ViroARHitTest extends ViroBaseTest {
                         }
                     });
                 }
-                return true;
+                return false;
             }
         });
 
