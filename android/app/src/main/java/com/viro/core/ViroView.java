@@ -44,7 +44,7 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
 
     private int mSavedSystemUIVisbility;
     private int mSavedOrientation;
-    protected Renderer mNativeRenderer;
+    Renderer mNativeRenderer;
     protected ViroContext mNativeViroContext;
     private KeyValidator mKeyValidator;
     private OnSystemUiVisibilityChangeListener mSystemVisibilityListener;
