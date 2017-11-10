@@ -48,7 +48,7 @@ public class ViroSphereTest extends ViroBaseTest {
         // Creation of first sphere using radius constructor.
         final Material material = new Material();
         final Bitmap bobaBitmap = getBitmapFromAssets(mActivity, "boba.png");
-        final Texture bobaTexture = new Texture(bobaBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture bobaTexture = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true);
         material.setDiffuseTexture(bobaTexture);
         material.setDiffuseColor(Color.RED);
         material.setLightingModel(Material.LightingModel.BLINN);

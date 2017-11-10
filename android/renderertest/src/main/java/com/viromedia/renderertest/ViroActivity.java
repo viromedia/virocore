@@ -59,7 +59,7 @@ import com.viro.core.Spotlight;
 import com.viro.core.Surface;
 import com.viro.core.Text;
 import com.viro.core.Texture;
-import com.viro.core.Texture.TextureFormat;
+import com.viro.core.Texture.Format;
 import com.viro.core.Vector;
 import com.viro.core.VideoTexture;
 import com.viro.core.ViroContext;
@@ -431,15 +431,15 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     }
 
     private void testBackgroundImage(final Scene scene) {
-        final Image imageJni = new Image("boba.png", TextureFormat.RGBA8);
-        final Texture videoTexture = new Texture(imageJni, TextureFormat.RGBA8, true, false);
+        final Image imageJni = new Image("boba.png", Format.RGBA8);
+        final Texture videoTexture = new Texture(imageJni, Format.RGBA8, true, false);
         scene.setBackgroundTexture(videoTexture);
         final float[] rotation = {90, 0, 0};
         scene.setBackgroundRotation(new Vector(rotation));
     }
 
     private void testSkyBoxImage(final Scene scene) {
-        final TextureFormat format = TextureFormat.RGBA8;
+        final Format format = Format.RGBA8;
 
         final Image pximageJni = new Image("px.png", format);
         final Image nximageJni = new Image("nx.png", format);
@@ -457,7 +457,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     private List<Node> testParticles() {
         final Bitmap bobaBitmap = getBitmapFromAssets("boba.png");
         final Bitmap specBitmap = getBitmapFromAssets("specular.png");
-        final Texture bobaTexture = new Texture(bobaBitmap, TextureFormat.RGBA8, true, true);
+        final Texture bobaTexture = new Texture(bobaBitmap, Format.RGBA8, true, true);
 
         final Node particleNode = new Node();
         particleNode.setPosition(new Vector(0, -10, -15));
@@ -530,9 +530,9 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         final Bitmap specBitmap = getBitmapFromAssets("specular.png");
 
         //final Texture bobaTexture = new Texture(bobaBitmap, TextureFormat.RGBA8, true, true);
-        final Texture bobaTexture = new Texture(getRBGAFromBitmap(bobaBitmap), bobaBitmap.getWidth(), bobaBitmap.getHeight(), Texture.TextureFormat.RGBA8, Texture.TextureFormat.RGBA8,
+        final Texture bobaTexture = new Texture(getRBGAFromBitmap(bobaBitmap), bobaBitmap.getWidth(), bobaBitmap.getHeight(), Format.RGBA8, Format.RGBA8,
         true, false, null);
-        final Texture specTexture = new Texture(specBitmap, TextureFormat.RGBA8, true, true);
+        final Texture specTexture = new Texture(specBitmap, Format.RGBA8, true, true);
 
         final Material material = new Material();
         material.setDiffuseTexture(bobaTexture);
@@ -614,9 +614,9 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
 
     private List<Node> testImageSurface(final Context context) {
         final Node node = new Node();
-        final Image bobaImage = new Image("boba.png", TextureFormat.RGBA8);
+        final Image bobaImage = new Image("boba.png", Format.RGBA8);
 
-        final Texture bobaTexture = new Texture(bobaImage, TextureFormat.RGBA8, true, true);
+        final Texture bobaTexture = new Texture(bobaImage, Format.RGBA8, true, true);
         final Material material = new Material();
 
         final Surface surface = new Surface(1, 1, 0, 0, 1, 1);
@@ -641,9 +641,9 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
 
     private Node getStereoImage(final float[] pos, final String img) {
         final Node node = new Node();
-        final Image bobaImage = new Image(img, TextureFormat.RGBA8);
+        final Image bobaImage = new Image(img, Format.RGBA8);
         final Texture bobaTexture = new Texture(bobaImage,
-                TextureFormat.RGBA8, true, true, "LeftRight");
+                Format.RGBA8, true, true, "LeftRight");
         final Material material = new Material();
         final Surface surface = new Surface(1, 1, 0, 0, 1, 1);
         surface.setMaterial(material);
@@ -654,9 +654,9 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
     }
 
     private void testStereoBackgroundImage(final Scene scene) {
-        final Image imageJni = new Image("stereo3601.jpg", TextureFormat.RGBA8);
+        final Image imageJni = new Image("stereo3601.jpg", Format.RGBA8);
         final Texture videoTexture = new Texture(imageJni,
-                TextureFormat.RGBA8, true, false, "TopBottom");
+                Format.RGBA8, true, false, "TopBottom");
         scene.setBackgroundTexture(videoTexture);
         final float[] rotation = {0, 0, 0};
         scene.setBackgroundRotation(new Vector(rotation));

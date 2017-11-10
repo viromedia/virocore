@@ -11,7 +11,6 @@ package com.viromedia.releasetest.tests;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
 
 import com.viro.core.Box;
@@ -61,7 +60,7 @@ public class ViroTextureTest extends ViroBaseTest {
         mSphereNode.setGeometry(mSphere);
 
         Bitmap bobaBitmap = this.getBitmapFromAssets(mActivity, "boba.png");
-        mSphereTexture  = new Texture(bobaBitmap, Texture.TextureFormat.RGBA8, true, true);
+        mSphereTexture  = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true);
         Material material = new Material();
         material.setDiffuseTexture(mSphereTexture);
         material.setLightingModel(Material.LightingModel.BLINN);
@@ -87,7 +86,7 @@ public class ViroTextureTest extends ViroBaseTest {
 
     private void testTextureBitmapConstructorMipMapOn() {
         Bitmap bobaBitmap = this.getBitmapFromAssets(mActivity, "boba.png");
-        mTexture = new Texture(bobaBitmap, Texture.TextureFormat.RGBA8, true, true);
+        mTexture = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true);
         Material material = new Material();
         material.setDiffuseTexture(mTexture);
         material.setLightingModel(Material.LightingModel.BLINN);
@@ -105,7 +104,7 @@ public class ViroTextureTest extends ViroBaseTest {
 
     private void testTextureBitmapConstructorMipMapOff() {
         Bitmap bobaBitmap = this.getBitmapFromAssets(mActivity, "boba.png");
-        mTexture = new Texture(bobaBitmap, Texture.TextureFormat.RGBA8, true, true);
+        mTexture = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true);
         Material material = new Material();
         material.setDiffuseTexture(mTexture);
         mBox.setMaterials(Arrays.asList(material));
@@ -129,14 +128,14 @@ public class ViroTextureTest extends ViroBaseTest {
         final Bitmap nz = this.getBitmapFromAssets(mActivity, "nz.png");
 
         mTexture  = new Texture(px, nx, py, ny,
-                pz, nz, Texture.TextureFormat.RGBA8);
+                pz, nz, Texture.Format.RGBA8);
         mScene.setBackgroundCubeTexture(mTexture);
         assertPass("Background of scene should be cube texture.");
     }
 
     private void testTextureBitMapConstructorStereoMode() {
         Bitmap bobaBitmap = this.getBitmapFromAssets(mActivity, "stereo1.jpg");
-        mTexture = new Texture(bobaBitmap, Texture.TextureFormat.RGBA8, true, true, Texture.StereoMode.LEFT_RIGHT);
+        mTexture = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true, Texture.StereoMode.LEFT_RIGHT);
         Material material = new Material();
         material.setDiffuseTexture(mTexture);
         mBox.setMaterials(Arrays.asList(material));
@@ -154,7 +153,7 @@ public class ViroTextureTest extends ViroBaseTest {
     private void testTextureDataConstructor() {
         Bitmap bobaBitmap = this.getBitmapFromAssets(mActivity, "boba.png");
         mTexture = new Texture(getRBGAFromBitmap(bobaBitmap), bobaBitmap.getWidth(), bobaBitmap.getHeight(),
-                                          Texture.TextureFormat.RGBA8, Texture.TextureFormat.RGBA8,
+                                          Texture.Format.RGBA8, Texture.Format.RGBA8,
                                           true, false, null);
         Material material = new Material();
         material.setDiffuseTexture(mTexture);

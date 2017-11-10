@@ -188,7 +188,7 @@ public class PortalScene extends Node {
     /**
      * Set the background of this PortalScene to display a cube-map. The provided {@link Texture} should
      * wrap a cube-map image, constructed via {@link Texture#Texture(Bitmap, Bitmap, Bitmap, Bitmap,
-     * Bitmap, Bitmap, Texture.TextureFormat)}. The cube-map will be rendered behind all other
+     * Bitmap, Bitmap, Texture.Format)}. The cube-map will be rendered behind all other
      * content.
      *
      * @param cubeTexture The {@link Texture} containing the cube-map.

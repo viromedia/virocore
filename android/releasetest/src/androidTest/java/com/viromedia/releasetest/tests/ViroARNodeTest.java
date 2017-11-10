@@ -45,7 +45,7 @@ public class ViroARNodeTest extends ViroBaseTest {
         mARScene = (ARScene)mScene;
 
         final Bitmap bobaBitmap = getBitmapFromAssets(mActivity, "boba.png");
-        final Texture bobaTexture = new Texture(bobaBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture bobaTexture = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true);
         final Material material = new Material();
         material.setDiffuseTexture(bobaTexture);
         material.setLightingModel(Material.LightingModel.BLINN);

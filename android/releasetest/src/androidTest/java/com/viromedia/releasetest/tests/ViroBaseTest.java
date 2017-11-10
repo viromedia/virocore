@@ -123,7 +123,7 @@ public abstract class ViroBaseTest {
         mYesButtonNode = new Node();
         final Bitmap yesBitmap = getBitmapFromAssets(mActivity, "icon_thumb_up.png");
         final Texture yesTexture = new Texture(yesBitmap,
-                Texture.TextureFormat.RGBA8, true, true);
+                Texture.Format.RGBA8, true, true);
         final Material yesMaterial = new Material();
         final Surface yesSurface = new Surface(2, 2, 0, 0, 1, 1);
         yesSurface.setMaterial(yesMaterial);
@@ -139,7 +139,7 @@ public abstract class ViroBaseTest {
         mNoButtonNode = new Node();
         final Bitmap noBitmap = getBitmapFromAssets(mActivity, "icon_thumb_down.png");
         final Texture noTexture = new Texture(noBitmap,
-                Texture.TextureFormat.RGBA8, true, true);
+                Texture.Format.RGBA8, true, true);
         final Material noMaterial = new Material();
         final Surface noSurface = new Surface(2, 2, 0, 0, 1, 1);
         noSurface.setMaterial(noMaterial);

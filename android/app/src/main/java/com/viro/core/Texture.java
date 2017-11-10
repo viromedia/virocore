@@ -34,9 +34,9 @@ public class Texture {
     //      texture format enums: one input and one output. Then we'll have a number of
     //      try-catch blocks that will indicate what happens.
     /**
-     * TextureFormat identifies the format of the pixel-data underlying the {@link Texture}.
+     * Texture.Format identifies the format of the pixel-data underlying the {@link Texture}.
      */
-    public enum TextureFormat {
+    public enum Format {
         /**
          * Texture data is stored in standard RGBA8 format.
          */
@@ -54,8 +54,8 @@ public class Texture {
 
         private final String mStringValue;
 
-        public static TextureFormat forString(String string) {
-            for (TextureFormat format : TextureFormat.values()) {
+        public static Format forString(String string) {
+            for (Format format : Format.values()) {
                 if (format.getStringValue().equalsIgnoreCase(string)) {
                     return format;
                 }
@@ -63,16 +63,16 @@ public class Texture {
             throw new IllegalArgumentException("Invalid texture format [" + string + "]");
         }
 
-        private TextureFormat(String value) {
+        private Format(String value) {
             this.mStringValue = value;
         }
         public String getStringValue() {
             return this.mStringValue;
         }
 
-        private static Map<String, TextureFormat> map = new HashMap<String, TextureFormat>();
+        private static Map<String, Format> map = new HashMap<String, Format>();
         static {
-            for (TextureFormat value : TextureFormat.values()) {
+            for (Format value : Format.values()) {
                 map.put(value.getStringValue().toLowerCase(), value);
             }
         }
@@ -80,7 +80,7 @@ public class Texture {
          * @hide
          * @return
          */
-        public static TextureFormat valueFromString(String str) {
+        public static Format valueFromString(String str) {
             return str == null ? null : map.get(str.toLowerCase());
         }
     }
@@ -269,7 +269,7 @@ public class Texture {
      */
     public Texture(Image px, Image nx, Image py,
                    Image ny, Image pz, Image nz,
-                   TextureFormat format) {
+                   Format format) {
         mNativeRef = nativeCreateCubeTexture(px.mNativeRef, nx.mNativeRef,
                                              py.mNativeRef, ny.mNativeRef,
                                              pz.mNativeRef, nz.mNativeRef,
@@ -281,7 +281,7 @@ public class Texture {
     /**
      * @hide
      */
-    public Texture(Image image, TextureFormat format, boolean sRGB, boolean mipmap) {
+    public Texture(Image image, Format format, boolean sRGB, boolean mipmap) {
         mNativeRef = nativeCreateImageTexture(image.mNativeRef, format.getStringValue(), sRGB, mipmap, null);
         mWidth = (int) image.getWidth();
         mHeight = (int) image.getHeight();
@@ -290,7 +290,7 @@ public class Texture {
     /**
      * @hide
      */
-    public Texture(Image image, TextureFormat format, boolean sRGB, boolean mipmap, String stereoMode) {
+    public Texture(Image image, Format format, boolean sRGB, boolean mipmap, String stereoMode) {
         mNativeRef = nativeCreateImageTexture(image.mNativeRef, format.getStringValue(), sRGB, mipmap, stereoMode);
         mWidth = (int) image.getWidth();
         mHeight = (int) image.getHeight();
@@ -312,8 +312,8 @@ public class Texture {
      */
     public Texture(Bitmap px, Bitmap nx, Bitmap py,
                    Bitmap ny, Bitmap pz, Bitmap nz,
-                   TextureFormat storageFormat) {
-        if (storageFormat == TextureFormat.RGB9_E5) {
+                   Format storageFormat) {
+        if (storageFormat == Format.RGB9_E5) {
             throw new IllegalArgumentException("Bitmaps cannot be stored in RGB9_E5 format");
         }
 
@@ -327,8 +327,8 @@ public class Texture {
      *
      * @param image           The {@link Bitmap} to turn into a Texture.
      * @param storageFormat   The format in which to store the Texture in memory. Bitmaps can be
-     *                        stored as either {@link TextureFormat#RGBA8} or {@link
-     *                        TextureFormat#RGB565}.
+     *                        stored as either {@link Format#RGBA8} or {@link
+     *                        Format#RGB565}.
      * @param sRGB            True if the image is in a gamma-corrected (sRGB) format. If true, Viro
      *                        will linearize the texture during shading computations. This option
      *                        should generally be set to true for diffuse and specular images, and
@@ -337,7 +337,7 @@ public class Texture {
      *                        the Texture. Mipmapping dramatically improves the visual quality and
      *                        performance of Textures when they are rendered onto small surfaces.
      */
-    public Texture(Bitmap image, TextureFormat storageFormat, boolean sRGB, boolean generateMipmaps) {
+    public Texture(Bitmap image, Format storageFormat, boolean sRGB, boolean generateMipmaps) {
         this(image, storageFormat, sRGB, generateMipmaps, null);
     }
 
@@ -347,8 +347,8 @@ public class Texture {
      *
      * @param image           The {@link Bitmap} to turn into a Texture.
      * @param storageFormat   The format in which to store the Texture in memory. Bitmaps can be
-     *                        stored as either {@link TextureFormat#RGBA8} or {@link
-     *                        TextureFormat#RGB565}.
+     *                        stored as either {@link Format#RGBA8} or {@link
+     *                        Format#RGB565}.
      * @param sRGB            True if the image is in a gamma-corrected (sRGB) format. If true, Viro
      *                        will linearize the texture during shading computations. This option
      *                        should generally be set to true for diffuse and specular images, and
@@ -360,8 +360,8 @@ public class Texture {
      *                        the left eye, and which to render to the right eye. Null if the image
      *                        is not stereo.
      */
-    public Texture(Bitmap image, TextureFormat storageFormat, boolean sRGB, boolean generateMipmaps, StereoMode stereoMode) {
-        if (storageFormat == TextureFormat.RGB9_E5) {
+    public Texture(Bitmap image, Format storageFormat, boolean sRGB, boolean generateMipmaps, StereoMode stereoMode) {
+        if (storageFormat == Format.RGB9_E5) {
             throw new IllegalArgumentException("Bitmaps cannot be stored in RGB9_E5 format");
         }
         mNativeRef = nativeCreateImageTextureBitmap(image, storageFormat.getStringValue(), sRGB, generateMipmaps,
@@ -395,21 +395,21 @@ public class Texture {
      *                        the left eye, and which to render to the right eye. Null if the image
      *                        is not stereo.
      */
-    public Texture(ByteBuffer data, int width, int height, TextureFormat inputFormat, TextureFormat storageFormat,
+    public Texture(ByteBuffer data, int width, int height, Format inputFormat, Format storageFormat,
                    boolean sRGB, boolean generateMipmaps, StereoMode stereoMode) {
         if (!data.isDirect()) {
             throw new IllegalArgumentException("Image data must be stored in a direct ByteBuffer");
         }
-        if (inputFormat == TextureFormat.RGB9_E5) {
+        if (inputFormat == Format.RGB9_E5) {
             if (generateMipmaps) {
                 throw new IllegalArgumentException("Mipmaps cannot be generated for RGB9_E5 images");
             }
-            if (storageFormat != TextureFormat.RGB9_E5) {
+            if (storageFormat != Format.RGB9_E5) {
                 throw new IllegalArgumentException("RGB9_E5 images may only be stored in RGB9_E5 format");
             }
         }
         else {
-            if (storageFormat == TextureFormat.RGB9_E5) {
+            if (storageFormat == Format.RGB9_E5) {
                 throw new IllegalArgumentException("RGB8 and RGB565 images cannot be stored in RGB9_E5 format");
             }
         }

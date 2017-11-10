@@ -96,7 +96,7 @@ public class ViroPortalTest extends ViroBaseTest  {
     private void testPortalSceneBackgroundTexture() {
 
         Bitmap background = this.getBitmapFromAssets(mActivity, "360_westlake.jpg");
-        final Texture backgroundTexture = new Texture(background, Texture.TextureFormat.RGBA8, true, true);
+        final Texture backgroundTexture = new Texture(background, Texture.Format.RGBA8, true, true);
         mPortalScene.setBackgroundTexture(backgroundTexture);
         assertPass("The portal background should display a texture of westlake.");
     }
@@ -142,7 +142,7 @@ public class ViroPortalTest extends ViroBaseTest  {
         final Bitmap nz = this.getBitmapFromAssets(mActivity, "nz.png");
 
         final Texture cubeTexture = new Texture(px, nx, py, ny,
-                pz, nz, Texture.TextureFormat.RGBA8);
+                pz, nz, Texture.Format.RGBA8);
 
         mPortalScene.setBackgroundCubeTexture(cubeTexture);
 

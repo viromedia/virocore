@@ -193,7 +193,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         // Cue Ball
         final Material cueBallMaterial = new Material();
         final Bitmap cueBallBitmap = getBitmapFromAssets(mActivity, "BallCue.jpg");
-        final Texture cueBallTexture = new Texture(cueBallBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture cueBallTexture = new Texture(cueBallBitmap, Texture.Format.RGBA8, true, true);
         cueBallMaterial.setDiffuseTexture(cueBallTexture);
         cueBallMaterial.setLightingModel(Material.LightingModel.PHONG);
         final Node cueBallNode = new Node();
@@ -208,11 +208,11 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
 
         final Bitmap ballSpecularBitmap = getBitmapFromAssets(mActivity, "pool_ball_specular.png");
         final Texture specularTexture = new Texture(ballSpecularBitmap,
-                Texture.TextureFormat.RGBA8, true, true);
+                Texture.Format.RGBA8, true, true);
         // Ball 1
         final Material ballOneMaterial = new Material();
         final Bitmap ballOneBitmap = getBitmapFromAssets(mActivity, "Ball11.jpg");
-        final Texture ballOneTexture = new Texture(ballOneBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture ballOneTexture = new Texture(ballOneBitmap, Texture.Format.RGBA8, true, true);
         ballOneMaterial.setDiffuseTexture(ballOneTexture);
         ballOneMaterial.setSpecularTexture(specularTexture);
         ballOneMaterial.setLightingModel(Material.LightingModel.PHONG);
@@ -229,7 +229,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         // Ball 2
         final Material ballTwoMaterial = new Material();
         final Bitmap ballTwoBitmap = getBitmapFromAssets(mActivity, "Ball5.jpg");
-        final Texture ballTwoTexture = new Texture(ballTwoBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture ballTwoTexture = new Texture(ballTwoBitmap, Texture.Format.RGBA8, true, true);
         ballTwoMaterial.setDiffuseTexture(ballTwoTexture);
         ballTwoMaterial.setSpecularTexture(specularTexture);
         ballTwoMaterial.setLightingModel(Material.LightingModel.PHONG);
@@ -246,7 +246,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         // Ball 3
         final Material ballThreeMaterial = new Material();
         final Bitmap ballThreeBitmap = getBitmapFromAssets(mActivity, "Ball2.jpg");
-        final Texture ballThreeTexture = new Texture(ballThreeBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture ballThreeTexture = new Texture(ballThreeBitmap, Texture.Format.RGBA8, true, true);
         ballThreeMaterial.setDiffuseTexture(ballThreeTexture);
         ballThreeMaterial.setSpecularTexture(specularTexture);
         ballThreeMaterial.setLightingModel(Material.LightingModel.PHONG);
@@ -263,7 +263,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         // Ball 4
         final Material ballFourMaterial = new Material();
         final Bitmap ballFourBitmap = getBitmapFromAssets(mActivity, "Ball13.jpg");
-        final Texture ballFourTexture = new Texture(ballFourBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture ballFourTexture = new Texture(ballFourBitmap, Texture.Format.RGBA8, true, true);
         ballFourMaterial.setDiffuseTexture(ballFourTexture);
         ballFourMaterial.setSpecularTexture(specularTexture);
         ballFourMaterial.setLightingModel(Material.LightingModel.PHONG);
@@ -280,7 +280,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         // Ball 5
         final Material ballFiveMaterial = new Material();
         final Bitmap ballFiveBitmap = getBitmapFromAssets(mActivity, "Ball4.jpg");
-        final Texture ballFiveTexture = new Texture(ballFiveBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture ballFiveTexture = new Texture(ballFiveBitmap, Texture.Format.RGBA8, true, true);
         ballFiveMaterial.setDiffuseTexture(ballFiveTexture);
         ballFiveMaterial.setSpecularTexture(specularTexture);
         ballFiveMaterial.setLightingModel(Material.LightingModel.PHONG);
@@ -297,7 +297,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         // Ball 6
         final Material ballSixMaterial = new Material();
         final Bitmap ballSixBitmap = getBitmapFromAssets(mActivity, "Ball3.jpg");
-        final Texture ballSixTexture = new Texture(ballSixBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture ballSixTexture = new Texture(ballSixBitmap, Texture.Format.RGBA8, true, true);
         ballSixMaterial.setDiffuseTexture(ballSixTexture);
         ballSixMaterial.setSpecularTexture(specularTexture);
         ballSixMaterial.setLightingModel(Material.LightingModel.PHONG);
@@ -314,7 +314,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         // Ball 7
         final Material ballSevenMaterial = new Material();
         final Bitmap ballSevenBitmap = getBitmapFromAssets(mActivity, "Ball10.jpg");
-        final Texture ballSevenTexture = new Texture(ballSevenBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture ballSevenTexture = new Texture(ballSevenBitmap, Texture.Format.RGBA8, true, true);
         ballSevenMaterial.setDiffuseTexture(ballSevenTexture);
         ballSevenMaterial.setSpecularTexture(specularTexture);
         ballSevenMaterial.setLightingModel(Material.LightingModel.PHONG);
@@ -331,7 +331,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         // Ball 8
         final Material ballEightMaterial = new Material();
         final Bitmap ballEightBitmap = getBitmapFromAssets(mActivity, "Ball6.jpg");
-        final Texture ballEightTexture = new Texture(ballEightBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture ballEightTexture = new Texture(ballEightBitmap, Texture.Format.RGBA8, true, true);
         ballEightMaterial.setDiffuseTexture(ballEightTexture);
         ballEightMaterial.setSpecularTexture(specularTexture);
         ballEightMaterial.setLightingModel(Material.LightingModel.PHONG);
@@ -348,7 +348,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         // Ball 9
         final Material ballNineMaterial = new Material();
         final Bitmap ballNineBitmap = getBitmapFromAssets(mActivity, "Ball14.jpg");
-        final Texture ballNineTexture = new Texture(ballNineBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture ballNineTexture = new Texture(ballNineBitmap, Texture.Format.RGBA8, true, true);
         ballNineMaterial.setDiffuseTexture(ballNineTexture);
         ballNineMaterial.setSpecularTexture(specularTexture);
         ballNineMaterial.setLightingModel(Material.LightingModel.PHONG);
@@ -365,7 +365,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         // Ball 10
         final Material ballTenMaterial = new Material();
         final Bitmap ballTenBitmap = getBitmapFromAssets(mActivity, "Ball8.jpg");
-        final Texture ballTenTexture = new Texture(ballTenBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture ballTenTexture = new Texture(ballTenBitmap, Texture.Format.RGBA8, true, true);
         ballTenMaterial.setDiffuseTexture(ballTenTexture);
         ballTenMaterial.setSpecularTexture(specularTexture);
         ballTenMaterial.setLightingModel(Material.LightingModel.PHONG);
@@ -382,7 +382,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         // Ball 11
         final Material ballElevenMaterial = new Material();
         final Bitmap ballElevenBitmap = getBitmapFromAssets(mActivity, "Ball1.jpg");
-        final Texture ballElevenTexture = new Texture(ballElevenBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture ballElevenTexture = new Texture(ballElevenBitmap, Texture.Format.RGBA8, true, true);
         ballElevenMaterial.setDiffuseTexture(ballElevenTexture);
         ballElevenMaterial.setSpecularTexture(specularTexture);
         ballElevenMaterial.setLightingModel(Material.LightingModel.PHONG);
@@ -399,7 +399,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         // Ball 12
         final Material ballTwelveMaterial = new Material();
         final Bitmap ballTwelveBitmap = getBitmapFromAssets(mActivity, "Ball12.jpg");
-        final Texture ballTwelveTexture = new Texture(ballTwelveBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture ballTwelveTexture = new Texture(ballTwelveBitmap, Texture.Format.RGBA8, true, true);
         ballTwelveMaterial.setDiffuseTexture(ballTwelveTexture);
         ballTwelveMaterial.setSpecularTexture(specularTexture);
         ballTwelveMaterial.setLightingModel(Material.LightingModel.PHONG);
@@ -416,7 +416,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         // Ball 13
         final Material ballThirteenMaterial = new Material();
         final Bitmap ballThirteenBitmap = getBitmapFromAssets(mActivity, "Ball7.jpg");
-        final Texture ballThirteenTexture = new Texture(ballThirteenBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture ballThirteenTexture = new Texture(ballThirteenBitmap, Texture.Format.RGBA8, true, true);
         ballThirteenMaterial.setDiffuseTexture(ballThirteenTexture);
         ballThirteenMaterial.setSpecularTexture(specularTexture);
         ballThirteenMaterial.setLightingModel(Material.LightingModel.PHONG);
@@ -433,7 +433,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         // Ball 14
         final Material ballFourteenMaterial = new Material();
         final Bitmap ballFourteenBitmap = getBitmapFromAssets(mActivity, "Ball9.jpg");
-        final Texture ballFourteenTexture = new Texture(ballFourteenBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture ballFourteenTexture = new Texture(ballFourteenBitmap, Texture.Format.RGBA8, true, true);
         ballFourteenMaterial.setDiffuseTexture(ballFourteenTexture);
         ballFourteenMaterial.setSpecularTexture(specularTexture);
         ballFourteenMaterial.setLightingModel(Material.LightingModel.PHONG);
@@ -450,7 +450,7 @@ public class ViroPhysicsBodyTest extends ViroBaseTest {
         // Ball 15
         final Material ballFifteenMaterial = new Material();
         final Bitmap ballFifteenBitmap = getBitmapFromAssets(mActivity, "Ball15.jpg");
-        final Texture ballFifteenTexture = new Texture(ballFifteenBitmap, Texture.TextureFormat.RGBA8, true, true);
+        final Texture ballFifteenTexture = new Texture(ballFifteenBitmap, Texture.Format.RGBA8, true, true);
         ballFifteenMaterial.setDiffuseTexture(ballFifteenTexture);
         ballFifteenMaterial.setSpecularTexture(specularTexture);
         ballFifteenMaterial.setLightingModel(Material.LightingModel.PHONG);

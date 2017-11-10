@@ -39,7 +39,7 @@ public class ViroParticleEmitterTest extends ViroBaseTest {
 
         // Construct Particle Image
         final Bitmap result = this.getBitmapFromAssets(mActivity, "particle_snow.png");
-        final Texture snowTexture = new Texture(result, Texture.TextureFormat.RGBA8, true, true);
+        final Texture snowTexture = new Texture(result, Texture.Format.RGBA8, true, true);
         nativeSurface.setImageTexture(snowTexture);
 
         // Finally construct the particle with the geometry and node.

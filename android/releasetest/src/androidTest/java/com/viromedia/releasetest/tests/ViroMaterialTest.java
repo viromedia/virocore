@@ -44,7 +44,7 @@ public class ViroMaterialTest extends ViroBaseTest {
         mScene.getRootNode().addLight(mDirectionalLight);
 
         Bitmap bobaBitmap = this.getBitmapFromAssets(mActivity, "boba.png");
-        Texture bobaTexture = new Texture(bobaBitmap, Texture.TextureFormat.RGBA8, true, true);
+        Texture bobaTexture = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true);
 
         mMaterial = new Material();
         mMaterial.setDiffuseTexture(bobaTexture);
@@ -133,7 +133,7 @@ public class ViroMaterialTest extends ViroBaseTest {
 
     private void testMaterialSpecularTexture() {
         Bitmap specBitmap = this.getBitmapFromAssets(mActivity, "specular.png");
-        Texture specTexture = new Texture(specBitmap, Texture.TextureFormat.RGBA8, true, true);
+        Texture specTexture = new Texture(specBitmap, Texture.Format.RGBA8, true, true);
         mMaterial.setSpecularTexture(specTexture);
         mSphere.setMaterials(Arrays.asList(mMaterial));
         assertPass("Added specular texture to the material");
@@ -141,7 +141,7 @@ public class ViroMaterialTest extends ViroBaseTest {
 
     private void testMaterialNormalMapTexture() {
         Bitmap specBitmap = this.getBitmapFromAssets(mActivity, "earth_normal.jpg");
-        Texture specTexture = new Texture(specBitmap, Texture.TextureFormat.RGBA8, true, true);
+        Texture specTexture = new Texture(specBitmap, Texture.Format.RGBA8, true, true);
         mMaterial.setNormalMap(specTexture);
         mSphere.setMaterials(Arrays.asList(mMaterial));
         assertPass("Added normal map to the material.");

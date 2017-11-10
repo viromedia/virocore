@@ -58,7 +58,7 @@ public class ViroSceneTest extends ViroBaseTest {
 
     private void testSceneBackgroundTexture() {
         final Bitmap background = getBitmapFromAssets(mActivity, "360_westlake.jpg");
-        final Texture backgroundTexture = new Texture(background, Texture.TextureFormat.RGBA8, true, true);
+        final Texture backgroundTexture = new Texture(background, Texture.Format.RGBA8, true, true);
         mScene.setBackgroundTexture(backgroundTexture);
         assertPass("The scene background should display a texture of westlake.");
     }
@@ -102,7 +102,7 @@ public class ViroSceneTest extends ViroBaseTest {
         final Bitmap nz = getBitmapFromAssets(mActivity, "nz.png");
 
         final Texture cubeTexture = new Texture(px, nx, py, ny,
-                pz, nz, Texture.TextureFormat.RGBA8);
+                pz, nz, Texture.Format.RGBA8);
 
         mScene.setBackgroundCubeTexture(cubeTexture);
 

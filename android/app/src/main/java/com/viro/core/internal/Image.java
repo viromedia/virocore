@@ -20,11 +20,11 @@ import com.viro.core.Texture;
 public class Image {
     public long mNativeRef;
 
-    public Image(String resource, Texture.TextureFormat format) {
+    public Image(String resource, Texture.Format format) {
         mNativeRef = nativeCreateImage(resource, format.getStringValue());
     }
 
-    public Image(Bitmap bitmap, Texture.TextureFormat format) {
+    public Image(Bitmap bitmap, Texture.Format format) {
         mNativeRef = nativeCreateImageFromBitmap(bitmap, format.getStringValue());
     }
 
