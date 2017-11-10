@@ -258,8 +258,8 @@ public class Animation {
             mListener.onAnimationFinish(this, false);
         }
 
-        mState = State.SCHEDULED;
-        if (mLoop) {
+        if (mLoop && mState == State.RUNNING) {
+            mState = State.SCHEDULED;
             startAnimation();
         }
     }
