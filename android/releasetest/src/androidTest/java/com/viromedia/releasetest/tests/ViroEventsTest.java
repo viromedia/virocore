@@ -288,6 +288,13 @@ public class ViroEventsTest extends ViroBaseTest {
         sphereNode.setTouchpadSwipeListener((source, node, swipeState) -> {
             eventText.setText("Touchpad listener registered on Sphere. SwipeState: " + swipeState.toString());
         });
+
+        assertPass("For GearVR: All objects register swipe event with touch pad.", () -> {
+            sphereNode.setTouchpadSwipeListener(null);
+            objectNode.setTouchpadSwipeListener(null);
+            boxNode.setTouchpadSwipeListener(null);
+            eventText.setText(DEFAULT_EVENT_TEXT);
+        });
     }
 
     private void testEventsTouchpadScrollListener() {
@@ -301,6 +308,13 @@ public class ViroEventsTest extends ViroBaseTest {
 
         sphereNode.setTouchpadScrollListener((source, node, x, y) -> {
             eventText.setText("Scroll listener registered on sphere. (x,y):" + "[" + x + "," + y + "]");
+        });
+
+        assertPass("For GearVR: All objects register scroll event with touch pad.", () -> {
+            sphereNode.setTouchpadScrollListener(null);
+            objectNode.setTouchpadScrollListener(null);
+            boxNode.setTouchpadScrollListener(null);
+            eventText.setText(DEFAULT_EVENT_TEXT);
         });
     }
 
