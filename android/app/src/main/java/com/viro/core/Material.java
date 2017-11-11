@@ -291,6 +291,47 @@ public class Material {
         mNativeRef = nativeCreateMaterial();
     }
 
+    /**
+     * The bridge creates immutable materials on the UI thread, which are then copied to individual
+     * components. It therefore needs this constructor, because the setters on this constructor
+     * all dispatch to the rendering thread -- we can't do that for the bridge because those setters
+     * will end up running after the materials have already been copied and assigned to components.
+     * Hence this constructor that does it all at once on the UI thread.
+     * @hide
+     */
+    public Material(LightingModel lightingModel, int diffuseColor, Texture diffuseTexture, float diffuseIntensity, Texture specularTexture,
+                    float shininess, float fresnelExponent, Texture normalMap, CullMode cullMode,
+                    TransparencyMode transparencyMode, BlendMode blendMode, float bloomThreshold,
+                    boolean writesToDepthBuffer, boolean readsFromDepthBuffer) {
+
+        mWritesToDepthBuffer = writesToDepthBuffer;
+        mReadsFromDepthBuffer = readsFromDepthBuffer;
+        mLightingModel = lightingModel;
+        mDiffuseTexture = diffuseTexture;
+        mDiffuseColor = diffuseColor;
+        mDiffuseIntensity = diffuseIntensity;
+        mSpecularTexture = specularTexture;
+        mShininess = shininess;
+        mFresnelExponent = fresnelExponent;
+        mNormalMap = normalMap;
+        mCullMode = cullMode;
+        mTransparencyMode = transparencyMode;
+        mBlendMode = blendMode;
+        mBloomThreshold = bloomThreshold;
+        mNativeRef = nativeCreateImmutableMaterial(lightingModel.getStringValue(),
+                diffuseColor,
+                diffuseTexture != null ? diffuseTexture.mNativeRef : 0,
+                diffuseIntensity,
+                specularTexture != null ? specularTexture.mNativeRef : 0,
+                shininess,
+                fresnelExponent,
+                normalMap != null ? normalMap.mNativeRef : 0,
+                cullMode.getStringValue(),
+                transparencyMode.getStringValue(),
+                blendMode.getStringValue(),
+                bloomThreshold, writesToDepthBuffer, readsFromDepthBuffer);
+    }
+
     @Override
     protected void finalize() throws Throwable {
         try {
@@ -653,6 +694,10 @@ public class Material {
     }
 
     private native long nativeCreateMaterial();
+    private native long nativeCreateImmutableMaterial(String lightingModel, long diffuseColor, long diffuseTexture, float diffuseIntensity, long specularTexture,
+                                                      float shininess, float fresnelExponent, long normalMap, String cullMode,
+                                                      String transparencyMode, String blendMode, float bloomThreshold,
+                                                      boolean writesToDepthBuffer, boolean readsFromDepthBuffer);
     private native void nativeSetWritesToDepthBuffer(long nativeRef, boolean writesToDepthBuffer);
     private native void nativeSetReadsFromDepthBuffer(long nativeRef, boolean readsFromDepthBuffer);
     private native void nativeSetTexture(long nativeRef, long textureRef, String materialPropertyName);

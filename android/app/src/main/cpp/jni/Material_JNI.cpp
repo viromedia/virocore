@@ -8,6 +8,7 @@
 #include <VROPlatformUtil.h>
 #include "Material_JNI.h"
 #include "VROStringUtil.h"
+#include "VROLog.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -15,9 +16,92 @@
 
 extern "C" {
 
+VROVector4f parseColor(jlong color) {
+    float a = ((color >> 24) & 0xFF) / 255.0;
+    float r = ((color >> 16) & 0xFF) / 255.0;
+    float g = ((color >> 8) & 0xFF) / 255.0;
+    float b = (color & 0xFF) / 255.0;
+    return {r, g, b, a};
+}
+
+VROLightingModel parseLightingModel(std::string strName) {
+    if (VROStringUtil::strcmpinsensitive(strName, "Blinn")) {
+        return VROLightingModel::Blinn;
+    }
+    else if (VROStringUtil::strcmpinsensitive(strName, "Lambert")) {
+        return VROLightingModel::Lambert;
+    }
+    else if (VROStringUtil::strcmpinsensitive(strName, "Phong")) {
+        return VROLightingModel::Phong;
+    }
+    else {
+        // Default lightingModel is Constant, so no use checking.
+        return VROLightingModel::Constant;
+    }
+}
+
+VROBlendMode parseBlendMode(std::string blendMode) {
+    if (VROStringUtil::strcmpinsensitive(blendMode, "Alpha")) {
+        return VROBlendMode::Alpha;
+    }
+    else if (VROStringUtil::strcmpinsensitive(blendMode, "None")) {
+        return VROBlendMode::None;
+    }
+    else {
+        // Default transparencyMode is AOne, so no use checking.
+        return VROBlendMode::Add;
+    }
+}
+
+VROTransparencyMode parseTransparencyMode(std::string strName) {
+    if (VROStringUtil::strcmpinsensitive(strName, "RGBZero")) {
+        return VROTransparencyMode::RGBZero;
+    }
+    else {
+        // Default transparencyMode is AOne, so no use checking.
+        return VROTransparencyMode::AOne;
+    }
+}
+
+VROCullMode parseCullMode(std::string strName) {
+    if (VROStringUtil::strcmpinsensitive(strName, "None")) {
+        return VROCullMode::None;
+    }
+    else if (VROStringUtil::strcmpinsensitive(strName, "Front")) {
+        return VROCullMode::Front;
+    } else {
+        // Default cullMode is Back, so no use checking.
+        return VROCullMode::Back;
+    }
+}
+
 JNI_METHOD(jlong, nativeCreateMaterial)(JNIEnv *env, jobject obj) {
     std::shared_ptr<VROMaterial> materialPtr = std::make_shared<VROMaterial>();
     return Material::jptr(materialPtr);
+}
+
+JNI_METHOD(jlong, nativeCreateImmutableMaterial)(JNIEnv *env, jobject obj,
+                                                 jstring lightingModel, jlong diffuseColor, jlong diffuseTexture,
+                                                 jfloat diffuseIntensity, jlong specularTexture,
+                                                 jfloat shininess, jfloat fresnelExponent, jlong normalMap, jstring cullMode,
+                                                 jstring transparencyMode, jstring blendMode, jfloat bloomThreshold,
+                                                 jboolean writesToDepthBuffer, jboolean readsFromDepthBuffer) {
+    std::shared_ptr<VROMaterial> material = std::make_shared<VROMaterial>();
+    material->setLightingModel(parseLightingModel(VROPlatformGetString(lightingModel, env)));
+    material->getDiffuse().setColor(parseColor(diffuseColor));
+    if (diffuseTexture != 0) { material->getDiffuse().setTexture(Texture::native(diffuseTexture)); }
+    material->getDiffuse().setIntensity(diffuseIntensity);
+    if (specularTexture != 0) { material->getSpecular().setTexture(Texture::native(specularTexture)); }
+    material->setShininess(shininess);
+    material->setFresnelExponent(fresnelExponent);
+    if (normalMap != 0) { material->getNormal().setTexture(Texture::native(normalMap)); }
+    material->setCullMode(parseCullMode(VROPlatformGetString(cullMode, env)));
+    material->setTransparencyMode(parseTransparencyMode(VROPlatformGetString(transparencyMode, env)));
+    material->setBlendMode(parseBlendMode(VROPlatformGetString(blendMode, env)));
+    material->setBloomThreshold(bloomThreshold);
+    material->setWritesToDepthBuffer(writesToDepthBuffer);
+    material->setReadsFromDepthBuffer(readsFromDepthBuffer);
+    return Material::jptr(material);
 }
 
 JNI_METHOD(void, nativeSetWritesToDepthBuffer)(JNIEnv *env, jobject obj,
@@ -84,13 +168,7 @@ JNI_METHOD(void, nativeSetColor)(JNIEnv *env, jobject obj,
                                  jlong color,
                                  jstring materialPropertyName) {
     std::string strName = VROPlatformGetString(materialPropertyName, env);
-
-    // Get the color
-    float a = ((color >> 24) & 0xFF) / 255.0;
-    float r = ((color >> 16) & 0xFF) / 255.0;
-    float g = ((color >> 8) & 0xFF) / 255.0;
-    float b = (color & 0xFF) / 255.0;
-    VROVector4f vecColor(r, g, b, a);
+    VROVector4f vecColor = parseColor(color);
 
     std::weak_ptr<VROMaterial> material_w = Material::native(material_j);
     VROPlatformDispatchAsyncRenderer([vecColor, material_w, strName] {
@@ -153,19 +231,9 @@ JNI_METHOD(void, nativeSetLightingModel)(JNIEnv *env, jobject obj,
     VROPlatformDispatchAsyncRenderer([material_w, strName] {
         std::shared_ptr<VROMaterial> material = material_w.lock();
         if (material) {
-            if (VROStringUtil::strcmpinsensitive(strName, "Blinn")) {
-                material->setLightingModel(VROLightingModel::Blinn);
-            } else if (VROStringUtil::strcmpinsensitive(strName, "Lambert")) {
-                material->setLightingModel(VROLightingModel::Lambert);
-            } else if (VROStringUtil::strcmpinsensitive(strName, "Phong")) {
-                material->setLightingModel(VROLightingModel::Phong);
-            } else {
-                // Default lightingModel is Constant, so no use checking.
-                material->setLightingModel(VROLightingModel::Constant);
-            }
+            material->setLightingModel(parseLightingModel(strName));
         }
     });
-
 }
 
 JNI_METHOD(void, nativeSetBlendMode)(JNIEnv *env, jobject obj,
@@ -177,19 +245,9 @@ JNI_METHOD(void, nativeSetBlendMode)(JNIEnv *env, jobject obj,
     VROPlatformDispatchAsyncRenderer([material_w, blendMode] {
         std::shared_ptr<VROMaterial> material = material_w.lock();
         if (material) {
-            if (VROStringUtil::strcmpinsensitive(blendMode, "Alpha")) {
-                material->setBlendMode(VROBlendMode::Alpha);
-            }
-            else if (VROStringUtil::strcmpinsensitive(blendMode, "None")) {
-                material->setBlendMode(VROBlendMode::None);
-            }
-            else {
-                // Default transparencyMode is AOne, so no use checking.
-                material->setBlendMode(VROBlendMode::Add);
-            }
+            material->setBlendMode(parseBlendMode(blendMode));
         }
     });
-
 }
 
 JNI_METHOD(void, nativeSetTransparencyMode)(JNIEnv *env, jobject obj,
@@ -201,13 +259,7 @@ JNI_METHOD(void, nativeSetTransparencyMode)(JNIEnv *env, jobject obj,
     VROPlatformDispatchAsyncRenderer([material_w, strName] {
         std::shared_ptr<VROMaterial> material = material_w.lock();
         if (material) {
-            if (VROStringUtil::strcmpinsensitive(strName, "RGBZero")) {
-                material->setTransparencyMode(VROTransparencyMode::RGBZero);
-            }
-            else {
-                // Default transparencyMode is AOne, so no use checking.
-                material->setTransparencyMode(VROTransparencyMode::AOne);
-            }
+            material->setTransparencyMode(parseTransparencyMode(strName));
         }
     });
 }
@@ -222,15 +274,7 @@ JNI_METHOD(void, nativeSetCullMode)(JNIEnv *env,
     VROPlatformDispatchAsyncRenderer([material_w, strName] {
         std::shared_ptr<VROMaterial> material = material_w.lock();
         if (material) {
-            if (VROStringUtil::strcmpinsensitive(strName, "None")) {
-                material->setCullMode(VROCullMode::None);
-            }
-            else if (VROStringUtil::strcmpinsensitive(strName, "Front")) {
-                material->setCullMode(VROCullMode::Front);
-            } else {
-                // Default cullMode is Back, so no use checking.
-                material->setCullMode(VROCullMode::Back);
-            }
+            material->setCullMode(parseCullMode(strName));
         }
     });
 }
