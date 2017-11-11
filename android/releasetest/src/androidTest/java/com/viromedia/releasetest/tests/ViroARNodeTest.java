@@ -77,7 +77,7 @@ public class ViroARNodeTest extends ViroBaseTest {
             }
 
             @Override
-            public void onAnchorFound(ARAnchor anchor, ARNode node) {
+            public void onAnchorFound(ARAnchor anchor, ARNode arNode) {
                 if(mAnchorFoundTestStarted) {
                     Text text  = new Text(mViroView.getViroContext(),
                             "Text attached to ARNODE!", "Roboto", 12, Color.WHITE, 1f, 1f, Text.HorizontalAlignment.LEFT,
@@ -94,20 +94,20 @@ public class ViroARNodeTest extends ViroBaseTest {
                         Surface surface = new Surface(arPlaneAnchor.getExtent().x, arPlaneAnchor.getExtent().z);
                         surface.setMaterials(Arrays.asList(material));
 
-                        Node nodeSurface = new Node();
-                        node.setGeometry(surface);
-                        nodeSurface.setPosition(new Vector(0, 0, 0));
-                        nodeSurface.setRotation(new Vector(-Math.toRadians(90.0), 0, 0));
-                        node.addChildNode(nodeSurface);
+                        Node surfaceNode = new Node();
+                        surfaceNode.setGeometry(surface);
+                        surfaceNode.setPosition(new Vector(0, 0, 0));
+                        surfaceNode.setRotation(new Vector(-Math.toRadians(90.0), 0, 0));
+                        arNode.addChildNode(surfaceNode);
                     }
-                    node.addChildNode(textNode);
+                    arNode.addChildNode(textNode);
                 }
             }
 
             @Override
-            public void onAnchorUpdated(ARAnchor anchor, ARNode node) {
+            public void onAnchorUpdated(ARAnchor anchor, ARNode arNode) {
                 if(mAnchorUpdatedTestStarted) {
-                    List<Node> childNodes = node.getChildNodes();
+                    List<Node> childNodes = arNode.getChildNodes();
                     for (Node childNode : childNodes) {
                         if(childNode.getGeometry() instanceof Text) {
                             Text text = (Text) childNode.getGeometry();
@@ -132,12 +132,12 @@ public class ViroARNodeTest extends ViroBaseTest {
                 }
 
                 if(mNodePauseUpdatesTestStarted) {
-                    node.setPauseUpdates(true);
+                    arNode.setPauseUpdates(true);
                 }
             }
 
             @Override
-            public void onAnchorRemoved(ARAnchor anchor, ARNode node) {
+            public void onAnchorRemoved(ARAnchor anchor, ARNode arNode) {
                mTestText.setText("An anchor has been removed!");
             }
         });

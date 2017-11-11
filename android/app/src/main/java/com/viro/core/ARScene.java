@@ -57,9 +57,9 @@ public class ARScene extends Scene {
          * orientation, or position change.
          *
          * @param anchor The detected {@link ARAnchor} representing a real-world feature.
-         * @param node   The virtual world {@link ARNode} associated with the ARAnchor.
+         * @param arNode   The virtual world {@link ARNode} associated with the ARAnchor.
          */
-        void onAnchorFound(ARAnchor anchor, ARNode node);
+        void onAnchorFound(ARAnchor anchor, ARNode arNode);
 
         /**
          * Invoked when a real-world {@link ARAnchor} is updated. This occurs when the AR tracking
@@ -67,9 +67,9 @@ public class ARScene extends Scene {
          * or when other underlying properties of the anchor change.
          *
          * @param anchor The {@link ARAnchor} that was updated.
-         * @param node   The {@link ARNode} corresponding to the anchor.
+         * @param arNode   The {@link ARNode} corresponding to the anchor.
          */
-        void onAnchorUpdated(ARAnchor anchor, ARNode node);
+        void onAnchorUpdated(ARAnchor anchor, ARNode arNode);
 
         /**
          * Invoked when an {@link ARAnchor} is removed from the world. This occurs if the AR
@@ -78,9 +78,9 @@ public class ARScene extends Scene {
          * separate horizontal planes are actually one larger plane.
          *
          * @param anchor The {@link ARAnchor} that was removed.
-         * @param node   The corresponding {@link ARNode}, which is also removed from the Scene.
+         * @param arNode   The corresponding {@link ARNode}, which is also removed from the Scene.
          */
-        void onAnchorRemoved(ARAnchor anchor, ARNode node);
+        void onAnchorRemoved(ARAnchor anchor, ARNode arNode);
     }
 
     private Listener mListener = null;
