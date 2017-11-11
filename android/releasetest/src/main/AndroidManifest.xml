@@ -17,12 +17,15 @@
         <uses-library
             android:name="android.support.test.runner"
             android:required="false" />
+        <!-- Required for Viro-->
+        <meta-data
+            android:name="com.viromedia.API_KEY"
+            android:value="7EEDCB99-2C3B-4681-AE17-17BC165BF792" />
         <activity
             android:name="com.viromedia.releasetest.ViroReleaseTestActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:enableVrMode="false"
             android:screenOrientation="landscape">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

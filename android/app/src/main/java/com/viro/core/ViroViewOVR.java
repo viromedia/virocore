@@ -13,12 +13,17 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.support.annotation.AttrRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 
+import com.google.vr.cardboard.ContextUtils;
 import com.viro.core.internal.FrameListener;
 import com.viro.core.internal.PlatformUtil;
 import com.viro.core.internal.RenderCommandQueue;
@@ -63,11 +68,11 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
         }
     }
 
+    private final Activity mActivity;
     private SurfaceView mSurfaceView;
     private AssetManager mAssetManager;
     private OVRRenderCommandQueue mRenderQueue = new OVRRenderCommandQueue();
     private List<FrameListener> mFrameListeners = new CopyOnWriteArrayList<FrameListener>();
-    private RendererStartListener mRenderStartListener = null;
     private PlatformUtil mPlatformUtil;
 
     /**
@@ -77,9 +82,50 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
      * @param rendererStartListener Runnable to invoke when the renderer has finished initializing.
      *                              Optional, may be null.
      */
-    public ViroViewOVR(Activity activity, RendererStartListener rendererStartListener) {
+    public ViroViewOVR(final Activity activity, final RendererStartListener rendererStartListener) {
         super(activity);
-        mSurfaceView = new SurfaceView(activity);
+        mActivity = activity;
+        init(rendererStartListener);
+    }
+
+    /**
+     * @hide
+     *
+     * @param context
+     */
+    public ViroViewOVR(@NonNull final Context context) {
+        this(context, null);
+    }
+
+    /**
+     * @hide
+     *
+     * @param context
+     * @param attrs
+     */
+    public ViroViewOVR(@NonNull final Context context, @Nullable final AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    /**
+     * @hide
+     *
+     * @param context
+     * @param attrs
+     * @param defStyleAttr
+     */
+    public ViroViewOVR(@NonNull final Context context, @Nullable final AttributeSet attrs, @AttrRes final int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        if (ContextUtils.getActivity(context) == null) {
+            throw new IllegalArgumentException("An Activity Context is required for Viro functionality.");
+        } else {
+            mActivity = (Activity) context;
+            init(null);
+        }
+    }
+
+    private void init(final RendererStartListener rendererStartListener) {
+        mSurfaceView = new SurfaceView(mActivity);
         mSurfaceView.getHolder().addCallback(this);
         addView(mSurfaceView);
 
@@ -93,7 +139,7 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
         mNativeRenderer = new Renderer(
                 getClass().getClassLoader(),
                 activityContext.getApplicationContext(),
-                this, activity, mAssetManager, mPlatformUtil);
+                this, mActivity, mAssetManager, mPlatformUtil);
 
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
         mRenderStartListener = rendererStartListener;
@@ -101,9 +147,10 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
         // Note: unlike GVR we don't have to worry about restoring these Activity settings because
         // OVR apps aren't hybrid 2D -> VR applications.
         // Prevent screen from dimming/locking.
-        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         // Prevent screen from switching to portrait
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        validateAPIKey();
     }
 
     @Override

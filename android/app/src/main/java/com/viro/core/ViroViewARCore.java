@@ -16,14 +16,18 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.AttrRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.AttributeSet;
 import android.view.Display;
 import android.widget.Toast;
 
 import com.google.ar.core.Config;
 import com.google.ar.core.Session;
-
-import com.viro.core.internal.CameraPermissionHelper;
+import com.google.vr.cardboard.ContextUtils;
 import com.viro.core.internal.ARTouchGestureListener;
+import com.viro.core.internal.CameraPermissionHelper;
 import com.viro.core.internal.FrameListener;
 import com.viro.core.internal.GLSurfaceViewQueue;
 import com.viro.core.internal.PlatformUtil;
@@ -164,10 +168,8 @@ public class ViroViewARCore extends ViroView {
     private GLSurfaceView mSurfaceView;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
-    private RendererStartListener mRenderStartListener = null;
     private PlatformUtil mPlatformUtil;
     private boolean mActivityPaused = true;
-
     private Config mConfig;
     private Session mSession;
     private ARTouchGestureListener mARTouchGestureListener;
@@ -180,8 +182,47 @@ public class ViroViewARCore extends ViroView {
      * @param rendererStartListener Runnable to invoke when the renderer has finished initializing.
      *                              Optional, may be null.
      */
-    public ViroViewARCore(Context context, RendererStartListener rendererStartListener) {
+    public ViroViewARCore(@NonNull final Context context, @Nullable final RendererStartListener rendererStartListener) {
         super(context);
+        init(context, rendererStartListener);
+    }
+
+    /**
+     * @hide
+     *
+     * @param context
+     */
+    public ViroViewARCore(@NonNull final Context context) {
+        this(context, (AttributeSet) null);
+    }
+
+    /**
+     * @hide
+     *
+     * @param context
+     * @param attrs
+     */
+    public ViroViewARCore(@NonNull final Context context, @Nullable final AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    /**
+     * @hide
+     *
+     * @param context
+     * @param attrs
+     * @param defStyleAttr
+     */
+    public ViroViewARCore(@NonNull final Context context, @Nullable final AttributeSet attrs, @AttrRes final int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        if (ContextUtils.getActivity(context) == null) {
+            throw new IllegalArgumentException("An Activity Context is required for Viro functionality.");
+        } else {
+            init(context, null);
+        }
+    }
+
+    private void init(final Context context, final RendererStartListener rendererStartListener) {
         mSurfaceView = new GLSurfaceView(context);
         addView(mSurfaceView);
 
@@ -193,8 +234,8 @@ public class ViroViewARCore extends ViroView {
 
         // ARCore may crash unless we set some initial non-zero display geometry
         // (this will be resized by the the surface on the GL thread)
-        Display display = activity.getWindowManager().getDefaultDisplay();
-        Point size = new Point();
+        final Display display = activity.getWindowManager().getDefaultDisplay();
+        final Point size = new Point();
         display.getSize(size);
         mSession.setDisplayGeometry(size.x, size.y);
 
@@ -225,6 +266,7 @@ public class ViroViewARCore extends ViroView {
             return;
         }
     }
+
 
     /**
      * Initialize this {@link GLSurfaceView}.

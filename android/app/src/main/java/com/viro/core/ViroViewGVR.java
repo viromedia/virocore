@@ -2,8 +2,10 @@
  * Copyright (c) 2017-present, ViroMedia, Inc.
  * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the  LICENSE file in the
- * root directory of this source tree. An additional grant  of patent rights can be found in
+ * This source code is licensed under the BSD-style license found in the 
+LICENSE file in the
+ * root directory of this source tree. An additional grant 
+of patent rights can be found in
  * the PATENTS file in the same directory.
  */
 package com.viro.core;
@@ -16,11 +18,16 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.AttrRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.google.vr.cardboard.ContextUtils;
 import com.google.vr.ndk.base.AndroidCompat;
 import com.google.vr.ndk.base.GvrApi;
 import com.google.vr.ndk.base.GvrLayout;
@@ -52,7 +59,6 @@ public class ViroViewGVR extends ViroView {
     }
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
-    private RendererStartListener mRenderStartListener = null;
     private PlatformUtil mPlatformUtil;
     private GvrLayout mGVRLayout;
 
@@ -160,13 +166,53 @@ public class ViroViewGVR extends ViroView {
      * Create a new ViroViewGVR.
      *
      * @param context               The activity context.
-     * @param rendererStartListener Runnable to invoke when the renderer has finished initializing.
+     * @param rendererStartListener Callback invoked when the renderer has finished initializing.
      *                              Optional, may be null.
      * @param vrExitListener        Runnable to invoke when the user manually exits VR mode by
      *                              tapping on GVR's close button.
      */
-    public ViroViewGVR(Context context, RendererStartListener rendererStartListener, Runnable vrExitListener) {
+    public ViroViewGVR(@NonNull final Context context, @Nullable final RendererStartListener rendererStartListener, @Nullable final Runnable vrExitListener) {
         super(context);
+        init(context, rendererStartListener, vrExitListener);
+    }
+
+    /**
+     * @hide
+     *
+     * @param context
+     */
+    public ViroViewGVR(@NonNull final Context context) {
+        this(context, null);
+    }
+
+    /**
+     * @hide
+     *
+     * @param context
+     * @param attrs
+     */
+    public ViroViewGVR(@NonNull final Context context, @Nullable final AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    /**
+     * @hide
+     *
+     * @param context
+     * @param attrs
+     * @param defStyleAttr
+     */
+    public ViroViewGVR(@NonNull final Context context, @Nullable final AttributeSet attrs, @AttrRes final int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        if (ContextUtils.getActivity(context) == null) {
+            throw new IllegalArgumentException("An Activity Context is required for Viro functionality.");
+        } else {
+            init(context, null, null);
+        }
+
+    }
+
+    private void init(final Context context, final RendererStartListener rendererStartListener, final Runnable vrExitListener) {
         mGVRLayout = new GvrLayout(context);
         addView(mGVRLayout);
 
@@ -174,7 +220,7 @@ public class ViroViewGVR extends ViroView {
 
 
         // Initialize the native renderer.
-        GLSurfaceView glSurfaceView = createSurfaceView();
+        final GLSurfaceView glSurfaceView = createSurfaceView();
 
         mAssetManager = getResources().getAssets();
         mPlatformUtil = new PlatformUtil(
@@ -217,7 +263,7 @@ public class ViroViewGVR extends ViroView {
             }
         }
 
-        final Activity activity = (Activity)getContext();
+        final Activity activity = (Activity) getContext();
 
         // Prevent screen from dimming/locking.
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -225,6 +271,7 @@ public class ViroViewGVR extends ViroView {
         mGVRLayout.getUiLayout().setCloseButtonListener(vrExitListener);
         // default the mode to VR
         setVRModeEnabled(true);
+        validateAPIKey();
     }
 
     /**
@@ -285,6 +332,15 @@ public class ViroViewGVR extends ViroView {
         mNativeRenderer.setVRModeEnabled(vrModeEnabled);
     }
 
+    /**
+     * Runnable to invoke when the user manually exits VR mode by
+     * tapping on GVR's close button.
+     * @param vrExitRunnable {@link Runnable}
+     */
+    public void setVRExitRunnable(final Runnable vrExitRunnable) {
+        mGVRLayout.getUiLayout().setCloseButtonListener(vrExitRunnable);
+
+    }
     /**
      * @hide
      */
