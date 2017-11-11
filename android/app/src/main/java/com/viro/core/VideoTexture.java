@@ -132,9 +132,9 @@ public class VideoTexture extends Texture {
      *                    of the form <tt>file:///android_asset/[asset-name]</tt>.
      * @param listener    {@link PlaybackListener} which can be used to respond to video loading and
      *                    playback events. May be null.
-     * @param stereoMode  The {@link StereoMode} indicating which half of the video to render to the
-     *                    left eye, and which to render to the right eye. Null if the video is not
-     *                    stereo.
+     * @param stereoMode  The {@link com.viro.core.Texture.StereoMode} indicating which half of the
+     *                    video to render to the left eye, and which to render to the right eye.
+     *                    Null if the video is not stereo.
      */
     public VideoTexture(ViroContext viroContext, Uri uri, PlaybackListener listener, Texture.StereoMode stereoMode) {
         mNativeRef = nativeCreateVideoTexture(viroContext.mNativeRef, stereoMode == null ? null : stereoMode.getStringValue());

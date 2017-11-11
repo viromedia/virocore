@@ -740,7 +740,7 @@ public class Node implements EventDelegate.EventDelegateCallback {
 
     /**
      * Attach the given {@link Camera} to this Node. To make this Camera active, this Node
-     * must be set to the point of view via {@link Renderer#setPointOfView(Node)}.
+     * must be set to the point of view via {@link ViroView#setPointOfView(Node)}.
      *
      * @param camera The Camera to add to this Node. Null to remove any set Camera.
      */

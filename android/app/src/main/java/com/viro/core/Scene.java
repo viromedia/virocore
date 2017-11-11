@@ -267,9 +267,7 @@ public class Scene {
 
     /**
      * Set the background of this Scene to display a cube-map. The provided {@link Texture} should
-     * wrap a cube-map image, constructed via {@link Texture#Texture(Bitmap, Bitmap, Bitmap, Bitmap,
-     * Bitmap, Bitmap, Texture.Format)}. The cube-map will be rendered behind all other
-     * content.
+     * wrap a cube-map image. The cube-map will be rendered behind all other content.
      *
      * @param cubeTexture The {@link Texture} containing the cube-map.
      */

@@ -29,7 +29,7 @@ package com.viro.core;
  * alongside other Nodes. You can also set the position and orientation of the Camera object itself.
  * <p>
  * The initial orientation of the camera is pointing in the negative Z direction: that is, into the
- * screen. If no point of view is set in the {@link Renderer}, the user will be positioned at the
+ * screen. If no point of view is set in the {@link ViroView}, the user will be positioned at the
  * origin looking in the negative Z direction.
  * <p>
  */
