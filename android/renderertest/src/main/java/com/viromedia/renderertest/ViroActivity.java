@@ -171,7 +171,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         //nodes = testSurfaceVideo(this);
        // nodes = testSphereVideo(this);
         nodes = testBox(getApplicationContext());
-        //nodes = test3dObjectLoading(getApplicationContext());
+       // nodes = test3dObjectLoading(getApplicationContext());
 
         //nodes = testImageSurface(this);
         //nodes = testText();
@@ -216,7 +216,7 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
 
         // Updating the scene.
         mViroView.setScene(scene);
-        final Controller nativeController = new Controller(mViroView.getViroContext());
+        final Controller nativeController = mViroView.getController();
         //nativeController.setReticleVisibility(false);
     }
 

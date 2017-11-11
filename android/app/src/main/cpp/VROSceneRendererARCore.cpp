@@ -234,7 +234,7 @@ void VROSceneRendererARCore::initARSession(VROViewport viewport, std::shared_ptr
  Update render sizes as the surface changes.
  */
 void VROSceneRendererARCore::onSurfaceChanged(jobject surface, jint width, jint height) {
-    VROThreadRestricted::setThread(VROThreadName::Renderer, pthread_self());
+    VROThreadRestricted::setThread(VROThreadName::Renderer);
 
     _surfaceSize.width = width;
     _surfaceSize.height = height;

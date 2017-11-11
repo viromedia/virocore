@@ -112,7 +112,7 @@ JNI_METHOD(void, nativeDestroyRenderer)(JNIEnv *env,
                                         jclass clazz,
                                         jlong native_renderer) {
     Renderer::native(native_renderer)->onDestroy();
-    VROThreadRestricted::unsetThread(VROThreadName::Renderer);
+    VROThreadRestricted::unsetThread();
 
     delete reinterpret_cast<PersistentRef<VROSceneRenderer> *>(native_renderer);
 
@@ -124,7 +124,7 @@ JNI_METHOD(void, nativeInitializeGl)(JNIEnv *env,
                                      jobject obj,
                                      jlong native_renderer) {
 
-    VROThreadRestricted::setThread(VROThreadName::Renderer, pthread_self());
+    VROThreadRestricted::setThread(VROThreadName::Renderer);
     std::shared_ptr<VROSceneRenderer> sceneRenderer = Renderer::native(native_renderer);
 
     if (kRunRendererTest) {

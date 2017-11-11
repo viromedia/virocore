@@ -121,6 +121,7 @@ static VROVector3f const kZeroVector = VROVector3f();
         EAGLContext *context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
         self.context = context;
     }
+    VROThreadRestricted::setThread(VROThreadName::Renderer);
     
     /*
      Setup the GLKView.
@@ -293,6 +294,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 - (void)dealloc {
+    VROThreadRestricted::unsetThread();
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     if (_displayLink) {
         [_displayLink invalidate];

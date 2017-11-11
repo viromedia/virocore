@@ -9,8 +9,14 @@
 #include "VROThreadRestricted.h"
 #include "VROLog.h"
 #include <map>
+#include <atomic>
 
-static std::map<VROThreadName, pthread_t> sThreadMap;
+// We are permissive of all operations *until* a rendering thread is set.
+// This alleviates startup issues.
+static std::atomic<bool> sRenderingThreadSet;
+
+// The thread-local name of the current thread.
+static thread_local VROThreadName tThreadName = VROThreadName::Undefined;
 
 std::string print_thread_id(pthread_t id) {
     char buf[1024];
@@ -23,36 +29,19 @@ std::string print_thread_id(pthread_t id) {
     return std::string(buf);
 }
 
-void VROThreadRestricted::setThread(VROThreadName name, pthread_t thread) {
-    sThreadMap[name] = thread;
+void VROThreadRestricted::setThread(VROThreadName name) {
+    // Note this will not extend to multiple named threads, we would need
+    // bools for each one.
+    sRenderingThreadSet = true;
+    tThreadName = name;
 }
 
-void VROThreadRestricted::unsetThread(VROThreadName name) {
-    sThreadMap.erase(name);
+void VROThreadRestricted::unsetThread() {
+    tThreadName = VROThreadName::Undefined;
 }
 
-pthread_t VROThreadRestricted::getThread(VROThreadName name, pthread_t ret_not_found) {
-    auto it = sThreadMap.find(name);
-    if (it == sThreadMap.end()) {
-        return ret_not_found;
-    }
-    else {
-        return it->second;
-    }
-}
-
-VROThreadRestricted::VROThreadRestricted() :
-    _restricted_thread_name(VROThreadName::Undefined),
-    _restricted_thread(pthread_self()),
-    _enabled(true) {
-    
-}
-
-VROThreadRestricted::VROThreadRestricted(pthread_t thread) :
-    _restricted_thread_name(VROThreadName::Undefined),
-    _restricted_thread(thread),
-    _enabled(true) {
-    
+bool VROThreadRestricted::isThread(VROThreadName name) {
+    return tThreadName == name;
 }
 
 VROThreadRestricted::VROThreadRestricted(VROThreadName name) :
@@ -60,30 +49,17 @@ VROThreadRestricted::VROThreadRestricted(VROThreadName name) :
     _enabled(true) {
 }
 
-
 VROThreadRestricted::~VROThreadRestricted() {
     
 }
 
-void VROThreadRestricted::setThreadRestriction(pthread_t thread) {
-    _restricted_thread = thread;
-    _restricted_thread_name = VROThreadName::Undefined;
-}
-
-
 void VROThreadRestricted::passert_thread() {
-    if (!_enabled) {
+    if (!sRenderingThreadSet || !_enabled) {
         return;
     }
-    
-    pthread_t restricted_thread = _restricted_thread;
-    if (_restricted_thread_name != VROThreadName::Undefined) {
-        restricted_thread = getThread(_restricted_thread_name, pthread_self());
-    }
-
-    passert_msg(pthread_equal(pthread_self(), restricted_thread),
-                "For object %p, current thread [%s] does not match object's thread restriction [%s]",
+    passert_msg(tThreadName == _restricted_thread_name,
+                "For object %p, current thread [%d] does not match object's thread restriction [%d]",
                 this,
-                print_thread_id(pthread_self()).c_str(),
-                print_thread_id(restricted_thread).c_str());
+                tThreadName,
+                _restricted_thread_name);
 }

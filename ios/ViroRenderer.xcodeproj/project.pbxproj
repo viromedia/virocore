@@ -990,7 +990,7 @@
 		8F548E441C23654E00556688 /* VROAnimationFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationFloat.h; sourceTree = "<group>"; };
 		8F548E481C23656000556688 /* VROAnimationVector3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimationVector3f.h; sourceTree = "<group>"; };
 		8F548E4C1C23665100556688 /* VROAnimatable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROAnimatable.h; sourceTree = "<group>"; };
-		8F548E511C2378D500556688 /* VROAnimatable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VROAnimatable.cpp; sourceTree = "<group>"; };
+		8F548E511C2378D500556688 /* VROAnimatable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROAnimatable.cpp; sourceTree = "<group>"; };
 		8F56AE9B1DE6810800DD65B6 /* libFreetype2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFreetype2.a; path = Libraries/freetype/libFreetype2.a; sourceTree = "<group>"; };
 		8F56AE9F1DE7619000DD65B6 /* VROGlyph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VROGlyph.h; sourceTree = "<group>"; };
 		8F56AEA21DE764A700DD65B6 /* VROGlyphOpenGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = VROGlyphOpenGL.cpp; sourceTree = "<group>"; };

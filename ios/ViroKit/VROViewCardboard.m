@@ -57,6 +57,10 @@
     return self;
 }
 
+- (void)dealloc {
+    VROThreadRestricted::unsetThread();
+}
+
 - (void)awakeFromNib {
     [super awakeFromNib];
     
@@ -73,6 +77,7 @@
     // Do not allow the display to go into sleep
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     
+    VROThreadRestricted::setThread(VROThreadName::Renderer);
     self.renderer = std::make_shared<VRORenderer>(std::make_shared<VROInputControllerCardboardiOS>());
     self.sceneRenderer = std::make_shared<VROSceneRendererCardboardOpenGL>(self.context, self.renderer);
 }
