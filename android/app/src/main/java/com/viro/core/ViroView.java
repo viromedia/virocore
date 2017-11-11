@@ -185,6 +185,19 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     }
 
     /**
+     * Retrieve the {@link Controller} for this view. Controller represents the user interface
+     * through which the user interacts with the {@link Scene}. The exact form of Controller depends
+     * on the underlying platform. For example, for Daydream this represents the Daydream controller
+     * (the laser pointer). For Cardboard and GearVR, Controller is effectively the head-mounted
+     * display itself (and its tap button).
+     *
+     * @return The {@link Controller} for this ViroView.
+     */
+    public final Controller getController() {
+        return mNativeViroContext.getController();
+    }
+
+    /**
      * @hide
      */
     public abstract String getPlatform();
@@ -197,7 +210,7 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     /**
      * @hide
      */
-    public final String getController() {
+    public final String getControllerType() {
         return mNativeRenderer.getController();
     }
     /**

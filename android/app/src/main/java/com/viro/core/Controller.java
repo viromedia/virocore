@@ -52,7 +52,7 @@ public class Controller implements EventDelegate.EventDelegateCallback {
      * @hide
      * @param viroContext
      */
-    public Controller(ViroContext viroContext) {
+    Controller(ViroContext viroContext) {
         mViroContext = viroContext;
         mEventDelegate = new EventDelegate();
         mEventDelegate.setEventDelegateCallback(this);

@@ -23,7 +23,8 @@ import com.viro.core.internal.CameraCallback;
  */
 public class ViroContext {
 
-    protected long mNativeRef;
+    long mNativeRef;
+    private Controller mController;
 
     /**
      * Construct a new ViroContext with the native handle to the Renderer.
@@ -33,6 +34,7 @@ public class ViroContext {
      */
     ViroContext(long mRenderRef){
         mNativeRef = nativeCreateViroContext(mRenderRef);
+        mController = new Controller(this);
     }
 
     @Override
@@ -60,10 +62,16 @@ public class ViroContext {
 
     /**
      * @hide
-     * @param callback
      */
     public void getCameraOrientation(CameraCallback callback) {
         nativeGetCameraOrientation(mNativeRef, callback);
+    }
+
+    /**
+     * @hide
+     */
+    public Controller getController() {
+        return mController;
     }
 
 }
