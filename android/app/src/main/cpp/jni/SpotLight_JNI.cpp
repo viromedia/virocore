@@ -63,8 +63,8 @@ JNI_METHOD(jlong, nativeCreateSpotLight)(JNIEnv *env,
     VROVector3f vecDirection(directionX, directionY, directionZ);
     spotLight->setDirection(vecDirection);
 
-    spotLight->setSpotInnerAngle(innerAngle);
-    spotLight->setSpotOuterAngle(outerAngle);
+    spotLight->setSpotInnerAngle(toDegrees(innerAngle));
+    spotLight->setSpotOuterAngle(toDegrees(outerAngle));
 
     return SpotLight::jptr(spotLight);
 }
@@ -81,6 +81,7 @@ JNI_METHOD(void, nativeSetAttenuationStartDistance)(JNIEnv *env,
         if (!light) {
             return;
         }
+        pinfo("Set spotlight attenuation start %f", attenuationStartDistance);
         light->setAttenuationStartDistance(attenuationStartDistance);
     });
 }
@@ -95,6 +96,7 @@ JNI_METHOD(void, nativeSetAttenuationEndDistance)(JNIEnv *env,
         if (!light) {
             return;
         }
+        pinfo("Set spotlight attenuation end %f", attenuationEndDistance);
         light->setAttenuationEndDistance(attenuationEndDistance);
     });
 }
@@ -111,6 +113,7 @@ JNI_METHOD(void, nativeSetPosition)(JNIEnv *env,
         if (!light) {
             return;
         }
+        pinfo("Set spotlight position %f, %f, %f", positionX, positionY, positionZ);
         VROVector3f vecPosition(positionX, positionY, positionZ);
         light->setPosition(vecPosition);
     });
@@ -128,6 +131,7 @@ JNI_METHOD(void, nativeSetDirection)(JNIEnv *env,
         if (!light) {
             return;
         }
+        pinfo("Set spotlight direction %f, %f, %f", directionX, directionY, directionZ);
         VROVector3f vecDirection(directionX, directionY, directionZ);
         light->setDirection(vecDirection);
     });
@@ -143,6 +147,7 @@ JNI_METHOD(void, nativeSetInnerAngle)(JNIEnv *env,
         if (!light) {
             return;
         }
+        pinfo("Set spotlight inner angle %f", toDegrees(innerAngleRadians));
         light->setSpotInnerAngle(toDegrees(innerAngleRadians));
     });
 }
@@ -157,6 +162,7 @@ JNI_METHOD(void, nativeSetOuterAngle)(JNIEnv *env,
         if (!light) {
             return;
         }
+        pinfo("Set spotlight outer angle %f", toDegrees(outerAngleRadians));
         light->setSpotOuterAngle(toDegrees(outerAngleRadians));
     });
 }
