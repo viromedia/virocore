@@ -188,6 +188,7 @@ add_library( # Sets the name of the library.
              ../../ViroRenderer/VROGaussianBlurRenderPass.cpp
 
              # AR
+             ../../ViroRenderer/VROARSceneController.cpp
              ../../ViroRenderer/VROARShadow.cpp
 
              # Animation
