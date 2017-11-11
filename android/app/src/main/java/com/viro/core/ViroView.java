@@ -164,6 +164,41 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
         getRenderer().setPointOfView(node);
     }
 
+
+    /**
+     * Get the real-time <i>world</i> position from the current point of view (Camera). The
+     * position returned is real-time in that it is the position the Camera currently appears on-screen.
+     *
+     * @return The real-time position as a {@link Vector}.
+     */
+    public Vector getLastCameraPositionRealtime() {
+        return getRenderer().getLastCameraPositionRealtime();
+    }
+
+    /**
+     * Get the real-time <i>local</i> orientation from the current point of view (Camera), expressed as
+     * three Euler angles. Specifically, the X component is rotation about the X axis (pitch), the
+     * Y component is rotation about the node's Y axis (yaw), and Z is the rotation around the node's Z axis
+     * (roll). This returns the real-time orientation, meaning the orientation of the Camera as it
+     * currently appears on-screen.
+     *
+     * The returned orientation is the Camera's <i>world</i> orientation.
+     *
+     * @return The rotation in Euler form as a {@link Vector} in radians.
+     */
+    public Vector getLastCameraRotationEulerRealtime() {
+        return getRenderer().getLastCameraRotationRealtime();
+    }
+
+    /**
+     * Get the direction in which the Camera is facing (e.g. in the direction of the reticle).
+     *
+     * @return The direction the Camera is facing.
+     */
+    public Vector getLastCameraForwardRealtime() {
+        return getRenderer().getLastCameraForwardRealtime();
+    }
+
     /**
      * Your Viro API key must be validated, via this method, prior to rendering content. Content
      * will render during the validation process; if the key fails validation, the screen will

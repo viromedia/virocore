@@ -199,9 +199,13 @@ VROCamera VRORenderer::updateCamera(const VROViewport &viewport, const VROFieldO
             }
         }
     }
-    
+
     camera.computeLookAtMatrix();
     camera.computeFrustum();
+
+    _lastComputedCameraPosition.store(camera.getPosition());
+    _lastComputedCameraRotation.store(camera.getRotation().toEuler());
+    _lastComputedCameraForward.store(camera.getForward());
     return camera;
 }
 

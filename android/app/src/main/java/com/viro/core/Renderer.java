@@ -143,6 +143,18 @@ public class Renderer {
         nativeRemoveFrameListener(mNativeRef, frameListener.mNativeRef);
     }
 
+    public Vector getLastCameraPositionRealtime() {
+        return new Vector(nativeGetCameraPositionRealtime(mNativeRef));
+    }
+
+    public Vector getLastCameraRotationRealtime() {
+        return new Vector(nativeGetCameraRotationRealtime(mNativeRef));
+    }
+
+    public Vector getLastCameraForwardRealtime(){
+        return new Vector(nativeGetCameraForwardRealtime(mNativeRef));
+    }
+
     /* ----------     Native methods    ---------- */
 
     private native long nativeCreateRendererGVR(ClassLoader appClassLoader, Context context,
@@ -182,5 +194,7 @@ public class Renderer {
 
     private native void nativeAddFrameListener(long nativeRenderer, long portalTraversalListener);
     private native void nativeRemoveFrameListener(long nativeRenderer, long portalTraversalListener);
-
+    private native float[] nativeGetCameraPositionRealtime(long nativeRenderer);
+    private native float[] nativeGetCameraRotationRealtime(long nativeRenderer);
+    private native float[] nativeGetCameraForwardRealtime(long nativeRenderer);
 }

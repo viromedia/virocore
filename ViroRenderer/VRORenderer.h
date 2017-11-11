@@ -173,7 +173,30 @@ public:
     
     // Some VR frameworks provide controls to allow the user to exit VR
     void requestExitVR();
-    
+
+    /*
+     Returns the last computed camera position.
+     TODO: Revisit unifying Camera APIs in VIRO-2235.
+     */
+    VROVector3f getCameraPositionRealTime() const {
+        return _lastComputedCameraPosition.load();
+    }
+
+    /*
+     Returns the last computed camera euler rotation.
+     TODO: Revisit unifying Camera APIs in VIRO-2235.
+     */
+    VROVector3f getCameraRotationRealTime() const {
+        return _lastComputedCameraRotation.load();
+    }
+
+    /*
+     Returns the last computed camera forward.
+     TODO: Revisit unifying Camera APIs in VIRO-2235.
+     */
+    VROVector3f getCameraForwardRealTime() const {
+        return _lastComputedCameraForward.load();
+    }
 private:
 
     bool _rendererInitialized;
@@ -219,7 +242,14 @@ private:
   
     VROCamera updateCamera(const VROViewport &viewport, const VROFieldOfView &fov,
                            const VROMatrix4f &headRotation, const VROMatrix4f &projection);
-    
+
+    /*
+     TODO: Revisit unifying Camera APIs in VIRO-2235.
+     */
+    std::atomic<VROVector3f> _lastComputedCameraPosition;
+    std::atomic<VROVector3f> _lastComputedCameraRotation;
+    std::atomic<VROVector3f> _lastComputedCameraForward;
+
 #pragma mark - [Private] FPS Computation
     
     /*
@@ -280,7 +310,6 @@ private:
     
     void notifyFrameStart();
     void notifyFrameEnd();
-    
 };
 
 #endif /* VRORenderer_h */

@@ -31,6 +31,7 @@
 #include "SceneController_JNI.h"
 #include "FrameListener_JNI.h"
 #include "object.hpp"
+#include "ARUtils_JNI.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -569,6 +570,27 @@ JNI_METHOD(void, nativeRemoveFrameListener)(JNIEnv *env, jobject obj, jlong nati
 JNI_METHOD(jboolean, nativeIsReticlePointerFixed)(JNIEnv *env, jobject obj, jlong native_renderer) {
     std::shared_ptr<VROSceneRenderer> sceneRenderer = Renderer::native(native_renderer);
     return sceneRenderer->getRenderer()->getInputController()->getPresenter()->getReticle()->isPointerFixed();
+}
+
+JNI_METHOD(jfloatArray, nativeGetCameraPositionRealtime)(JNIEnv *env,
+                                             jobject obj,
+                                             jlong native_renderer) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
+    return ARUtilsCreateFloatArrayFromVector3f(renderer->getRenderer()->getCameraPositionRealTime());
+}
+
+JNI_METHOD(jfloatArray, nativeGetCameraRotationRealtime)(JNIEnv *env,
+                                                         jobject obj,
+                                                         jlong native_renderer) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
+    return ARUtilsCreateFloatArrayFromVector3f(renderer->getRenderer()->getCameraRotationRealTime());
+}
+
+JNI_METHOD(jfloatArray, nativeGetCameraForwardRealtime)(JNIEnv *env,
+                                                         jobject obj,
+                                                         jlong native_renderer) {
+    std::shared_ptr<VROSceneRenderer> renderer = Renderer::native(native_renderer);
+    return ARUtilsCreateFloatArrayFromVector3f(renderer->getRenderer()->getCameraForwardRealTime());
 }
 
 }  // extern "C"

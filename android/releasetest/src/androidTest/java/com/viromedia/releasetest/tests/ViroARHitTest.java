@@ -2,6 +2,7 @@ package com.viromedia.releasetest.tests;
 
 import android.graphics.Color;
 import android.graphics.Point;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -43,23 +44,28 @@ public class ViroARHitTest extends ViroBaseTest {
     }
 
     private void testPerformARHitTestWithRay() {
-        mViewARCore.performARHitTestWithRay(new Vector(0, 0, -1), new ARHitTestListener() {
-            public void onHitTestFinished(ARHitTestResult[] results) {
-                for(ARHitTestResult result: results) {
-                    Sphere sphere = new Sphere(.1f);
-                    Material material = new Material();
-                    material.setLightingModel(Material.LightingModel.BLINN);
-                    material.setDiffuseColor(Color.BLUE);
-                    sphere.setMaterials(Arrays.asList(material));
-                    Node nodeSphere = new Node();
-                    nodeSphere.setPosition(result.getPosition());
-                    nodeSphere.setGeometry(sphere);
-                    mScene.getRootNode().addChildNode(nodeSphere);
-                }
-            }
-        });
+        mMutableTestMethod = () -> {
+            Vector forward = mViroView.getLastCameraForwardRealtime();
+            Vector fowardWithDistance = new Vector(forward.x * 2.f, forward.y * 2.f, forward.z * 2.f);
 
-        assertPass("Should see rendered results from AR HIT with ray.");
+            mViewARCore.performARHitTestWithRay(fowardWithDistance, new ARHitTestListener() {
+                public void onHitTestFinished(ARHitTestResult[] results) {
+                    for (ARHitTestResult result : results) {
+                        Sphere sphere = new Sphere(.1f);
+                        Material material = new Material();
+                        material.setLightingModel(Material.LightingModel.BLINN);
+                        material.setDiffuseColor(Color.BLUE);
+                        sphere.setMaterials(Arrays.asList(material));
+                        Node nodeSphere = new Node();
+                        nodeSphere.setPosition(result.getPosition());
+                        nodeSphere.setGeometry(sphere);
+                        mScene.getRootNode().addChildNode(nodeSphere);
+                    }
+                }
+            });
+        };
+
+        assertPass("Should see rendered results from AR HIT with ray (blue balls).");
     }
 
     private void testPerformARHitTestWithPosition() {
