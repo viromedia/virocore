@@ -37,6 +37,7 @@ void VROThreadRestricted::setThread(VROThreadName name) {
 }
 
 void VROThreadRestricted::unsetThread() {
+    sRenderingThreadSet = false;
     tThreadName = VROThreadName::Undefined;
 }
 
