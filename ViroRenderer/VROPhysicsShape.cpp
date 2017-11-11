@@ -82,9 +82,9 @@ btCollisionShape* VROPhysicsShape::generateBasicBulletShape(std::shared_ptr<VRON
     } else {
         type = VROPhysicsShape::VROShapeType::Box;
         VROBoundingBox bb = geometry->getBoundingBox();
-        params.push_back(bb.getSpanX() / 2);
-        params.push_back(bb.getSpanY() / 2);
-        params.push_back(bb.getSpanZ() / 2);
+        params.push_back(bb.getSpanX());
+        params.push_back(bb.getSpanY());
+        params.push_back(bb.getSpanZ());
     }
 
     return generateBasicBulletShape(type, params);
