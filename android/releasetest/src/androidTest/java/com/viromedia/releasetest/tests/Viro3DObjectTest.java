@@ -91,8 +91,8 @@ public class Viro3DObjectTest extends ViroBaseTest {
     }
 
     private void testLoadModelOBJ() {
-        mObject3D.setPosition(new Vector(0, 0, -20));
-        mObject3D.setScale(new Vector(0.2f, 0.2f, 0.2f));
+        mObject3D.setPosition(new Vector(0, 0, -11));
+        mObject3D.setScale(new Vector(0.04f, 0.04f, 0.04f));
         mObject3D.loadModel((Uri.parse("file:///android_asset/male02.obj")), Object3D.Type.OBJ,  new AsyncObject3DListener() {
             @Override
             public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
@@ -105,7 +105,7 @@ public class Viro3DObjectTest extends ViroBaseTest {
             }
         });
 
-        assertPass("Tom Cruise look alike model loads and displays.");
+        assertPass("Tom Cruise lookalike model loads and displays.");
     }
 
     private void testLoadModelError() {

@@ -228,9 +228,14 @@ void VRONode::updateSortKeys(uint32_t depth,
     
     _computedLights.clear();
     for (std::shared_ptr<VROLight> &light : lights) {
-        if ((light->getInfluenceBitMask() & _lightReceivingBitMask) != 0 &&
-            getBoundingBox().getDistanceToPoint(light->getTransformedPosition()) < light->getAttenuationEndDistance()) {
-            _computedLights.push_back(light);
+        if ((light->getInfluenceBitMask() & _lightReceivingBitMask) != 0) {
+
+            // Ambient and Directional lights do not attenuate so do not cull them here
+            if (light->getType() == VROLightType::Ambient ||
+                light->getType() == VROLightType::Directional ||
+                getBoundingBox().getDistanceToPoint(light->getTransformedPosition()) < light->getAttenuationEndDistance()) {
+                _computedLights.push_back(light);
+            }
         }
     }
     _computedLightsHash = VROLight::hashLights(_computedLights);
