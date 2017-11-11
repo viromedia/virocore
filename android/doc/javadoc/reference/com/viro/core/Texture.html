@@ -248,7 +248,6 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Camera.html">Camera</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.html">DirectionalLight</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/FrameListener.html">FrameListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.html">Material</a></li>
@@ -272,7 +271,6 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Polyline.html">Polyline</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalTraversalListener.html">PortalTraversalListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sound.html">Sound</a></li>
@@ -324,8 +322,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.TextureFormat.html">Texture.TextureFormat</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchState.html">TouchState</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.ERROR.html">ViroMediaRecorderDelegate.ERROR</a></li>
@@ -537,7 +535,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <code class="api-signature">
   
-    extends Object
+    extends <a href="http://d.android.com/reference/java/lang/Object.html">Object</a>
   
   
   
@@ -554,7 +552,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
   <tr>
     
-    <td colspan="2" class="jd-inheritance-class-cell">java.lang.Object
+    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
     </td>
   </tr>
   
@@ -664,8 +662,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         enum</code></td>
       <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></code>
-        <p>StereoMode is used in VR to render a <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> in stereo.&nbsp;
+        <code><a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a></code>
+        <p>Texture.Format identifies the format of the pixel-data underlying the <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code>.&nbsp;
         
     
 </p>
@@ -681,8 +679,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         enum</code></td>
       <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/Texture.TextureFormat.html">Texture.TextureFormat</a></code>
-        <p>TextureFormat identifies the format of the pixel-data underlying the <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code>.&nbsp;
+        <code><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></code>
+        <p>StereoMode is used in VR to render a <code><a href="../../../../reference/com/viro/core/Texture.html">Texture</a></code> in stereo.&nbsp;
         
     
 </p>
@@ -743,10 +741,10 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#Texture(Bitmap, Bitmap, Bitmap, Bitmap, Bitmap, Bitmap, com.viro.core.Texture.TextureFormat)">Texture</a>(Bitmap px, Bitmap nx, Bitmap py, Bitmap ny, Bitmap pz, Bitmap nz, <a href="../../../../reference/com/viro/core/Texture.TextureFormat.html">Texture.TextureFormat</a> storageFormat)
+      <a href="../../../../reference/com/viro/core/Texture.html#Texture(android.graphics.Bitmap, com.viro.core.Texture.Format, boolean, boolean, com.viro.core.Texture.StereoMode)">Texture</a>(<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> image, <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat, boolean sRGB, boolean generateMipmaps, <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)
       </code>
       
-        <p>Construct a new cube map Texture out of the given images.
+        <p>Construct a new <i>stereo</i> 2D Texture out of the given image represented as a <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code>.
         
     
 </p>
@@ -761,10 +759,11 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#Texture(Bitmap, com.viro.core.Texture.TextureFormat, boolean, boolean)">Texture</a>(Bitmap image, <a href="../../../../reference/com/viro/core/Texture.TextureFormat.html">Texture.TextureFormat</a> storageFormat, boolean sRGB, boolean generateMipmaps)
+      <a href="../../../../reference/com/viro/core/Texture.html#Texture(java.nio.ByteBuffer, int, int, com.viro.core.Texture.Format, com.viro.core.Texture.Format, boolean, boolean, com.viro.core.Texture.StereoMode)">Texture</a>(<a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a> data, int width, int height, <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> inputFormat, <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat, boolean sRGB, boolean generateMipmaps, <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)
       </code>
       
-        <p>Construct a new 2D Texture out of the given image represented as a <code><a href="../../../../">ERROR(/Bitmap)</a></code>.
+        <p>Construct a new 2D Texture out of the image contained in the given <code><a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>,
+ stored in the indicated format.
         
     
 </p>
@@ -779,48 +778,11 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#Texture(Bitmap, com.viro.core.Texture.TextureFormat, boolean, boolean, com.viro.core.Texture.StereoMode)">Texture</a>(Bitmap image, <a href="../../../../reference/com/viro/core/Texture.TextureFormat.html">Texture.TextureFormat</a> storageFormat, boolean sRGB, boolean generateMipmaps, <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)
+      <a href="../../../../reference/com/viro/core/Texture.html#Texture(java.nio.ByteBuffer, com.viro.core.Texture.StereoMode)">Texture</a>(<a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a> data, <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)
       </code>
       
-        <p>Construct a new <i>stereo</i> 2D Texture out of the given image represented as a <code><a href="../../../../">ERROR(/Bitmap)</a></code>.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#Texture(java.nio.ByteBuffer, int, int, com.viro.core.Texture.TextureFormat, com.viro.core.Texture.TextureFormat, boolean, boolean, com.viro.core.Texture.StereoMode)">Texture</a>(ByteBuffer data, int width, int height, <a href="../../../../reference/com/viro/core/Texture.TextureFormat.html">Texture.TextureFormat</a> inputFormat, <a href="../../../../reference/com/viro/core/Texture.TextureFormat.html">Texture.TextureFormat</a> storageFormat, boolean sRGB, boolean generateMipmaps, <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)
-      </code>
-      
-        <p>Construct a new 2D Texture out of the given image contained in the given <code><a href="../../../../reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>,
- stored in the given format.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Texture.html#Texture(java.nio.ByteBuffer, com.viro.core.Texture.StereoMode)">Texture</a>(ByteBuffer data, <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)
-      </code>
-      
-        <p>Construct a new 2D <i>HDR</i> Texture out of the given image contained in VHD format in the
- given <code><a href="../../../../reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>.
+        <p>Construct a new 2D <i>HDR</i> Texture out of the image contained in VHD format in the
+ given <code><a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>.
         
     
 </p>
@@ -1224,7 +1186,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="Texture(Bitmap, Bitmap, Bitmap, Bitmap, Bitmap, Bitmap, com.viro.core.Texture.TextureFormat)"></A>
+<A NAME="Texture(android.graphics.Bitmap, com.viro.core.Texture.Format, boolean, boolean, com.viro.core.Texture.StereoMode)"></A>
 
 <div class="api apilevel-">
     <h3 class="api-name">Texture</h3>
@@ -1235,131 +1197,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-Texture (Bitmap px, 
-                Bitmap nx, 
-                Bitmap py, 
-                Bitmap ny, 
-                Bitmap pz, 
-                Bitmap nz, 
-                <a href="../../../../reference/com/viro/core/Texture.TextureFormat.html">Texture.TextureFormat</a> storageFormat)</pre>
-    
-    
-
-    
-  <p>Construct a new cube map Texture out of the given images. Cube maps are a group of six
- images. They are commonly used either as skyboxes (backgrounds that enclose the user), via
- <code><a href="../../../../reference/com/viro/core/Scene.html#setBackgroundCubeTexture(com.viro.core.Texture)">setBackgroundCubeTexture(Texture)</a></code>, or as reflective or environment
- maps.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>px</code></td>
-        <td width="100%">
-          <code>Bitmap</code>: The <code><a href="../../../../">ERROR(/Bitmap)</a></code> to use for the right side of the cube.</p></td>
-      </tr>
-      <tr>
-        <td><code>nx</code></td>
-        <td width="100%">
-          <code>Bitmap</code>: The <code><a href="../../../../">ERROR(/Bitmap)</a></code> to use for the left side of the cube.</p></td>
-      </tr>
-      <tr>
-        <td><code>py</code></td>
-        <td width="100%">
-          <code>Bitmap</code>: The <code><a href="../../../../">ERROR(/Bitmap)</a></code> to use for the top side of the cube.</p></td>
-      </tr>
-      <tr>
-        <td><code>ny</code></td>
-        <td width="100%">
-          <code>Bitmap</code>: The <code><a href="../../../../">ERROR(/Bitmap)</a></code> to use for the bottom side of the cube.</p></td>
-      </tr>
-      <tr>
-        <td><code>pz</code></td>
-        <td width="100%">
-          <code>Bitmap</code>: The <code><a href="../../../../">ERROR(/Bitmap)</a></code> to use for the far side of the cube.</p></td>
-      </tr>
-      <tr>
-        <td><code>nz</code></td>
-        <td width="100%">
-          <code>Bitmap</code>: The <code><a href="../../../../">ERROR(/Bitmap)</a></code> to use for the near side of the cube.</p></td>
-      </tr>
-      <tr>
-        <td><code>storageFormat</code></td>
-        <td width="100%">
-          <code>Texture.TextureFormat</code>: The format in which to store the texture in memory.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="Texture(Bitmap, com.viro.core.Texture.TextureFormat, boolean, boolean)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">Texture</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-Texture (Bitmap image, 
-                <a href="../../../../reference/com/viro/core/Texture.TextureFormat.html">Texture.TextureFormat</a> storageFormat, 
-                boolean sRGB, 
-                boolean generateMipmaps)</pre>
-    
-    
-
-    
-  <p>Construct a new 2D Texture out of the given image represented as a <code><a href="../../../../">ERROR(/Bitmap)</a></code>.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>image</code></td>
-        <td width="100%">
-          <code>Bitmap</code>: The <code><a href="../../../../">ERROR(/Bitmap)</a></code> to turn into a Texture.</p></td>
-      </tr>
-      <tr>
-        <td><code>storageFormat</code></td>
-        <td width="100%">
-          <code>Texture.TextureFormat</code>: The format in which to store the Texture in memory. Bitmaps can be
-                        stored as either <code><a href="../../../../reference/com/viro/core/Texture.TextureFormat.html#RGBA8">RGBA8</a></code> or <code><a href="../../../../reference/com/viro/core/Texture.TextureFormat.html#RGB565">RGB565</a></code>.</p></td>
-      </tr>
-      <tr>
-        <td><code>sRGB</code></td>
-        <td width="100%">
-          <code>boolean</code>: True if the image is in a gamma-corrected (sRGB) format. If true, Viro
-                        will linearize the texture during shading computations. This option
-                        should generally be set to true for diffuse and specular images, and
-                        false for non-visual images like normal maps.</p></td>
-      </tr>
-      <tr>
-        <td><code>generateMipmaps</code></td>
-        <td width="100%">
-          <code>boolean</code>: True if Viro should generate mipmaps for the image and store them in
-                        the Texture. Mipmapping dramatically improves the visual quality and
-                        performance of Textures when they are rendered onto small surfaces.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="Texture(Bitmap, com.viro.core.Texture.TextureFormat, boolean, boolean, com.viro.core.Texture.StereoMode)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">Texture</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-Texture (Bitmap image, 
-                <a href="../../../../reference/com/viro/core/Texture.TextureFormat.html">Texture.TextureFormat</a> storageFormat, 
+Texture (<a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a> image, 
+                <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat, 
                 boolean sRGB, 
                 boolean generateMipmaps, 
                 <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)</pre>
@@ -1367,19 +1206,19 @@ Texture (Bitmap image,
     
 
     
-  <p>Construct a new <i>stereo</i> 2D Texture out of the given image represented as a <code><a href="../../../../">ERROR(/Bitmap)</a></code>.</p></p>
+  <p>Construct a new <i>stereo</i> 2D Texture out of the given image represented as a <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
         <td><code>image</code></td>
         <td width="100%">
-          <code>Bitmap</code>: The <code><a href="../../../../">ERROR(/Bitmap)</a></code> to turn into a Texture.</p></td>
+          <code>Bitmap</code>: The <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> to turn into a Texture.</p></td>
       </tr>
       <tr>
         <td><code>storageFormat</code></td>
         <td width="100%">
-          <code>Texture.TextureFormat</code>: The format in which to store the Texture in memory. Bitmaps can be
-                        stored as either <code><a href="../../../../reference/com/viro/core/Texture.TextureFormat.html#RGBA8">RGBA8</a></code> or <code><a href="../../../../reference/com/viro/core/Texture.TextureFormat.html#RGB565">RGB565</a></code>.</p></td>
+          <code>Texture.Format</code>: The format in which to store the Texture in memory. Bitmaps can be
+                        stored as either <code><a href="../../../../reference/com/viro/core/Texture.Format.html#RGBA8">RGBA8</a></code> or <code><a href="../../../../reference/com/viro/core/Texture.Format.html#RGB565">RGB565</a></code>.</p></td>
       </tr>
       <tr>
         <td><code>sRGB</code></td>
@@ -1409,7 +1248,7 @@ Texture (Bitmap image,
 </div>
 
 
-<A NAME="Texture(java.nio.ByteBuffer, int, int, com.viro.core.Texture.TextureFormat, com.viro.core.Texture.TextureFormat, boolean, boolean, com.viro.core.Texture.StereoMode)"></A>
+<A NAME="Texture(java.nio.ByteBuffer, int, int, com.viro.core.Texture.Format, com.viro.core.Texture.Format, boolean, boolean, com.viro.core.Texture.StereoMode)"></A>
 
 <div class="api apilevel-">
     <h3 class="api-name">Texture</h3>
@@ -1420,11 +1259,11 @@ Texture (Bitmap image,
 
     </div>
 <pre class="api-signature no-pretty-print">
-Texture (ByteBuffer data, 
+Texture (<a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a> data, 
                 int width, 
                 int height, 
-                <a href="../../../../reference/com/viro/core/Texture.TextureFormat.html">Texture.TextureFormat</a> inputFormat, 
-                <a href="../../../../reference/com/viro/core/Texture.TextureFormat.html">Texture.TextureFormat</a> storageFormat, 
+                <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> inputFormat, 
+                <a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a> storageFormat, 
                 boolean sRGB, 
                 boolean generateMipmaps, 
                 <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)</pre>
@@ -1432,9 +1271,9 @@ Texture (ByteBuffer data,
     
 
     
-  <p>Construct a new 2D Texture out of the given image contained in the given <code><a href="../../../../reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>,
- stored in the given format. Not all input formats are compatible with all storage formats.
- This method can be used to load images that are not in <code><a href="../../../../">ERROR(/Bitmap)</a></code> form: for example,
+  <p>Construct a new 2D Texture out of the image contained in the given <code><a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>,
+ stored in the indicated format. Not all input formats are compatible with all storage formats.
+ This method can be used to load images that are not in <code><a href="http://d.android.com/reference/android/graphics/Bitmap.html">Bitmap</a></code> form: for example,
  raw images or HDR images.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
@@ -1442,7 +1281,7 @@ Texture (ByteBuffer data,
         <td><code>data</code></td>
         <td width="100%">
           <code>ByteBuffer</code>: The raw image data to turn into a Texture. This must be a
-                        <i>direct</i> <code><a href="../../../../reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>. The image data must start at
+                        <i>direct</i> <code><a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>. The image data must start at
                         position 0 in the buffer and end at the buffer's capacity.</p></td>
       </tr>
       <tr>
@@ -1458,12 +1297,12 @@ Texture (ByteBuffer data,
       <tr>
         <td><code>inputFormat</code></td>
         <td width="100%">
-          <code>Texture.TextureFormat</code>: The format of the data stored in <tt>data</tt>.</p></td>
+          <code>Texture.Format</code>: The format of the data stored in <tt>data</tt>.</p></td>
       </tr>
       <tr>
         <td><code>storageFormat</code></td>
         <td width="100%">
-          <code>Texture.TextureFormat</code>: The format in which to store the Texture in memory.</p></td>
+          <code>Texture.Format</code>: The format in which to store the Texture in memory.</p></td>
       </tr>
       <tr>
         <td><code>sRGB</code></td>
@@ -1505,21 +1344,21 @@ Texture (ByteBuffer data,
 
     </div>
 <pre class="api-signature no-pretty-print">
-Texture (ByteBuffer data, 
+Texture (<a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a> data, 
                 <a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a> stereoMode)</pre>
     
     
 
     
-  <p>Construct a new 2D <i>HDR</i> Texture out of the given image contained in VHD format in the
- given <code><a href="../../../../reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>.</p></p>
+  <p>Construct a new 2D <i>HDR</i> Texture out of the image contained in VHD format in the
+ given <code><a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
         <td><code>data</code></td>
         <td width="100%">
           <code>ByteBuffer</code>: The raw image data to turn into a Texture. This must be a
-                        <i>direct</i> <code><a href="../../../../reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>. The image data must start at
+                        <i>direct</i> <code><a href="http://d.android.com/reference/java/nio/ByteBuffer.html">ByteBuffer</a></code>. The image data must start at
                         position 0 in the buffer and end at the buffer's capacity.</p></td>
       </tr>
       <tr>

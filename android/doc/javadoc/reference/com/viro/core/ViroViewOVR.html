@@ -248,7 +248,6 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Camera.html">Camera</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/DirectionalLight.html">DirectionalLight</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/FrameListener.html">FrameListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.html">Material</a></li>
@@ -272,7 +271,6 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Polyline.html">Polyline</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Portal.html">Portal</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.html">PortalScene</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalTraversalListener.html">PortalTraversalListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sound.html">Sound</a></li>
@@ -324,8 +322,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.LineBreakMode.html">Text.LineBreakMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Text.VerticalAlignment.html">Text.VerticalAlignment</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.FilterMode.html">Texture.FilterMode</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.Format.html">Texture.Format</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.TextureFormat.html">Texture.TextureFormat</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchState.html">TouchState</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.ERROR.html">ViroMediaRecorderDelegate.ERROR</a></li>
@@ -549,8 +547,6 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <code class="api-signature">
   
-    extends <a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a>
-  
   
   
 </code>
@@ -561,12 +557,31 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
 </code>
 
+<code class="api-signature">
+  
+    extends <a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a>
+  
+  
+  
+</code>
+
+<code class="api-signature">
+  
+  
+      implements
+      
+        <a href="http://d.android.com/reference/android/view/SurfaceHolder.Callback.html">SurfaceHolder.Callback</a>
+      
+  
+  
+</code>
+
 </p><table class="jd-inheritance-table">
 
 
   <tr>
     
-    <td colspan="4" class="jd-inheritance-class-cell">java.lang.Object
+    <td colspan="6" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
     </td>
   </tr>
   
@@ -575,12 +590,40 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="3" class="jd-inheritance-class-cell">FrameLayout
+    <td colspan="5" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/android/view/View.html">android.view.View</a>
     </td>
   </tr>
   
 
   <tr>
+    
+      <td class="jd-inheritance-space">&nbsp;</td>
+    
+      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
+    
+    <td colspan="4" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/android/view/ViewGroup.html">android.view.ViewGroup</a>
+    </td>
+  </tr>
+  
+
+  <tr>
+    
+      <td class="jd-inheritance-space">&nbsp;</td>
+    
+      <td class="jd-inheritance-space">&nbsp;</td>
+    
+      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
+    
+    <td colspan="3" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/android/widget/FrameLayout.html">android.widget.FrameLayout</a>
+    </td>
+  </tr>
+  
+
+  <tr>
+    
+      <td class="jd-inheritance-space">&nbsp;</td>
+    
+      <td class="jd-inheritance-space">&nbsp;</td>
     
       <td class="jd-inheritance-space">&nbsp;</td>
     
@@ -592,6 +635,10 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
 
   <tr>
+    
+      <td class="jd-inheritance-space">&nbsp;</td>
+    
+      <td class="jd-inheritance-space">&nbsp;</td>
     
       <td class="jd-inheritance-space">&nbsp;</td>
     
@@ -660,7 +707,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ViroViewOVR.html#ViroViewOVR(Activity, com.viro.core.RendererStartListener)">ViroViewOVR</a>(Activity activity, <a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a> rendererStartListener)
+      <a href="../../../../reference/com/viro/core/ViroViewOVR.html#ViroViewOVR(android.app.Activity, com.viro.core.RendererStartListener)">ViroViewOVR</a>(<a href="http://d.android.com/reference/android/app/Activity.html">Activity</a> activity, <a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a> rendererStartListener)
       </code>
       
         <p>Create a new ViroViewOVR.
@@ -797,7 +844,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="ViroViewOVR(Activity, com.viro.core.RendererStartListener)"></A>
+<A NAME="ViroViewOVR(android.app.Activity, com.viro.core.RendererStartListener)"></A>
 
 <div class="api apilevel-">
     <h3 class="api-name">ViroViewOVR</h3>
@@ -808,7 +855,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-ViroViewOVR (Activity activity, 
+ViroViewOVR (<a href="http://d.android.com/reference/android/app/Activity.html">Activity</a> activity, 
                 <a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a> rendererStartListener)</pre>
     
     
