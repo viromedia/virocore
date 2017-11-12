@@ -68,7 +68,6 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
         }
     }
 
-    private final Activity mActivity;
     private SurfaceView mSurfaceView;
     private AssetManager mAssetManager;
     private OVRRenderCommandQueue mRenderQueue = new OVRRenderCommandQueue();
@@ -84,7 +83,6 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
      */
     public ViroViewOVR(final Activity activity, final RendererStartListener rendererStartListener) {
         super(activity);
-        mActivity = activity;
         init(rendererStartListener);
     }
 
@@ -119,13 +117,16 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
         if (ContextUtils.getActivity(context) == null) {
             throw new IllegalArgumentException("An Activity Context is required for Viro functionality.");
         } else {
-            mActivity = (Activity) context;
             init(null);
         }
     }
 
     private void init(final RendererStartListener rendererStartListener) {
-        mSurfaceView = new SurfaceView(mActivity);
+        Activity activity = mWeakActivity.get();
+        if (activity == null) {
+            return;
+        }
+        mSurfaceView = new SurfaceView(activity);
         mSurfaceView.getHolder().addCallback(this);
         addView(mSurfaceView);
 
@@ -139,7 +140,7 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
         mNativeRenderer = new Renderer(
                 getClass().getClassLoader(),
                 activityContext.getApplicationContext(),
-                this, mActivity, mAssetManager, mPlatformUtil);
+                this, activity, mAssetManager, mPlatformUtil);
 
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
         mRenderStartListener = rendererStartListener;
@@ -147,9 +148,9 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
         // Note: unlike GVR we don't have to worry about restoring these Activity settings because
         // OVR apps aren't hybrid 2D -> VR applications.
         // Prevent screen from dimming/locking.
-        mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         // Prevent screen from switching to portrait
-        mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         validateAPIKey();
     }
 

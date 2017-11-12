@@ -335,12 +335,13 @@ public class ViroViewGVR extends ViroView {
     /**
      * Runnable to invoke when the user manually exits VR mode by
      * tapping on GVR's close button.
+     *
      * @param vrExitRunnable {@link Runnable}
      */
     public void setVRExitRunnable(final Runnable vrExitRunnable) {
         mGVRLayout.getUiLayout().setCloseButtonListener(vrExitRunnable);
-
     }
+
     /**
      * @hide
      */

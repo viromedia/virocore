@@ -295,16 +295,19 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     }
 
     /**
-     * Set the callback listener that would be invoked when the renderer has finished initializing.
-     * @param renderStartListener {@link RendererStartListener} Interface callback
+     * Set the callback listener that will be invoked when the renderer has finished initializing.
+     *
+     * @param renderStartListener {@link RendererStartListener} callback.
      */
     public final void setRenderStartListener(final RendererStartListener renderStartListener) {
         mRenderStartListener = renderStartListener;
     }
+
     /**
      * @hide
      */
     public abstract String getPlatform();
+
     /**
      * @hide
      */
