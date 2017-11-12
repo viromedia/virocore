@@ -230,8 +230,6 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     }
     
     _frameStartTime = VROTimeCurrentMillis();
-
-    VROTransaction::beginImplicitAnimation();
     VROTransaction::update();
 
     _context->setFrame(frame);
@@ -354,8 +352,6 @@ void VRORenderer::endFrame(std::shared_ptr<VRODriver> driver) {
     }
 
     notifyFrameEnd();
-    VROTransaction::commitAll();
-    
      _frameEndTime = VROTimeCurrentMillis();
     double timeForProcessing = _mpfTarget - (_frameEndTime - _frameStartTime);
     

@@ -33,12 +33,6 @@ bool VROTransaction::isActive() {
     return !openTransactions.empty() && openTransactions.top()->_durationSeconds > 0;
 }
 
-void VROTransaction::beginImplicitAnimation() {
-    if (openTransactions.empty()) {
-        begin();
-    }
-}
-
 void VROTransaction::begin() {
     std::shared_ptr<VROTransaction> animation = std::shared_ptr<VROTransaction>(new VROTransaction());
     openTransactions.push(animation);
@@ -84,10 +78,31 @@ void VROTransaction::setTimingFunction(std::unique_ptr<VROTimingFunction> timing
     animation->_timingFunction = std::move(timingFunction);
 }
 
-void VROTransaction::commitAll() {
-    while (!openTransactions.empty()) {
-        commit();
+void VROTransaction::setAnimationDelay(float delaySeconds) {
+    std::shared_ptr<VROTransaction> animation = get();
+    if (!animation) {
+        pabort();
     }
+
+    animation->_delayTimeSeconds = delaySeconds;
+}
+
+void VROTransaction::setAnimationDuration(float durationSeconds) {
+    std::shared_ptr<VROTransaction> animation = get();
+    if (!animation) {
+        pabort();
+    }
+
+    animation->_durationSeconds = durationSeconds;
+}
+
+float VROTransaction::getAnimationDuration() {
+    std::shared_ptr<VROTransaction> animation = get();
+    if (!animation) {
+        pabort();
+    }
+
+    return animation->_durationSeconds;
 }
 
 void VROTransaction::resume(std::shared_ptr<VROTransaction> transaction){
@@ -183,33 +198,6 @@ VROTransaction::VROTransaction() :
         _startTimeSeconds(0),
         _delayTimeSeconds(0){
     _timingFunction = std::unique_ptr<VROTimingFunction>(new VROTimingFunctionLinear());
-}
-
-void VROTransaction::setAnimationDelay(float delaySeconds) {
-    std::shared_ptr<VROTransaction> animation = get();
-    if (!animation) {
-        pabort();
-    }
-
-    animation->_delayTimeSeconds = delaySeconds;
-}
-
-void VROTransaction::setAnimationDuration(float durationSeconds) {
-    std::shared_ptr<VROTransaction> animation = get();
-    if (!animation) {
-        pabort();
-    }
-
-    animation->_durationSeconds = durationSeconds;
-}
-
-float VROTransaction::getAnimationDuration() {
-    std::shared_ptr<VROTransaction> animation = get();
-    if (!animation) {
-        pabort();
-    }
-
-    return animation->_durationSeconds;
 }
 
 void VROTransaction::processAnimations(float t) {
