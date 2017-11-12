@@ -251,7 +251,7 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
      */
     @Override
     public void onActivityDestroyed(Activity activity) {
-        // No-op
+        this.dispose();
     }
 
     /**
@@ -305,7 +305,7 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
                 mNativeRenderer.initalizeGl();
             }
         });
-        if (mRenderStartListener != null) {
+        if (mRenderStartListener != null && !mDestroyed) {
             mRenderStartListener.onRendererStart();
         }
     }

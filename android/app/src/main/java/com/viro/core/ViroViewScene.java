@@ -69,7 +69,7 @@ public class ViroViewScene extends ViroView {
                     @Override
                     public void run() {
                         ViroViewScene view = mView.get();
-                        if (view == null) {
+                        if (view == null || view.mDestroyed) {
                             return;
                         }
                         view.mRenderStartListener.onRendererStart();
@@ -257,7 +257,7 @@ public class ViroViewScene extends ViroView {
      */
     @Override
     public void onActivityDestroyed(Activity activity) {
-        // no-op, the vrview destruction should be controlled by the SceneNavigator.
+        this.dispose();
     }
 
     @Override
