@@ -97,6 +97,25 @@ public class ARNode extends Node {
         nativeSetPauseUpdates(mNativeRef, pauseUpdates);
     }
 
+    /**
+     * This operation is not valid for ARNodes. This is because their transforms are constantly
+     * updated by the underlying AR tracking system. Calling this function will throw an IllegalAccessError.
+     */
+    @Override
+    public void setPosition(Vector position) {
+        throw new IllegalAccessError("Viro: Invalid attempt to set a position for an ARNode!");
+    }
+
+    /**
+     * This operation is not valid for ARNodes. This is because their transforms are constantly
+     * updated by the underlying AR tracking system. Calling this function will throw an IllegalAccessError.
+     */
+    @Override
+    public void setRotation(Vector rotation) {
+        throw new IllegalAccessError("Viro: Invalid attempt to set a rotation for an ARNode!");
+    }
+
+
     private native void nativeSetPauseUpdates(long nativeRef, boolean pauseUpdates);
 
 }
