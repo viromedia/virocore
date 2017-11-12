@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/arcore_client" />
             <option value="$PROJECT_DIR$/libs" />
             <option value="$PROJECT_DIR$/libs/gvr" />
+            <option value="$PROJECT_DIR$/memoryleaktest" />
             <option value="$PROJECT_DIR$/releasetest" />
             <option value="$PROJECT_DIR$/renderertest" />
           </set>

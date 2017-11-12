@@ -242,14 +242,36 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     }
 
     /**
-     * Your Viro API key must be validated, via this method, prior to rendering content. Content
+     * (Used by Java API, mApiKey picked up from Metadata in Android Manifest) Your Viro API key must be validated, via this method, prior to rendering content. Content
      * will render during the validation process; if the key fails validation, the screen will
      * deactivate and render black.
+     *
+     * @hide
      */
      final void validateAPIKey() {
         mNativeRenderer.setSuspended(false);
         // we actually care more about the headset than platform in this case.
         mKeyValidator.validateKey(mApiKey, getHeadset(), new KeyValidationListener() {
+            @Override
+            public void onResponse(boolean success) {
+                if (!mDestroyed) {
+                    mNativeRenderer.setSuspended(!success);
+                }
+            }
+        });
+    }
+
+    /**
+     * (Used by React Viro, apiKey passed through react)Your Viro API key must be validated, via this method, prior to rendering content. Content
+     * will render during the validation process; if the key fails validation, the screen will
+     * deactivate and render black.
+     *
+     * @hide
+     */
+    public final void validateAPIKey(String apiKey) {
+        mNativeRenderer.setSuspended(false);
+        // we actually care more about the headset than platform in this case.
+        mKeyValidator.validateKey(apiKey, getHeadset(), new KeyValidationListener() {
             @Override
             public void onResponse(boolean success) {
                 if (!mDestroyed) {
