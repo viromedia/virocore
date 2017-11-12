@@ -16,7 +16,12 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.AttrRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.AttributeSet;
 
+import com.google.vr.cardboard.ContextUtils;
 import com.viro.core.internal.FrameListener;
 import com.viro.core.internal.GLSurfaceViewQueue;
 import com.viro.core.internal.PlatformUtil;
@@ -41,6 +46,7 @@ public class ViroViewScene extends ViroView {
         System.loadLibrary("gvr_audio");
         System.loadLibrary("native-lib");
     }
+
 
     private static class ViroARRenderer implements GLSurfaceView.Renderer {
 
@@ -113,6 +119,46 @@ public class ViroViewScene extends ViroView {
      */
     public ViroViewScene(Context context, RendererStartListener rendererStartListener) {
         super(context);
+        init(context, rendererStartListener);
+    }
+
+    /**
+     * @hide
+     *
+     * @param context
+     */
+    public ViroViewScene(@NonNull final Context context) {
+        this(context, (AttributeSet) null);
+    }
+
+    /**
+     * @hide
+     *
+     * @param context
+     * @param attrs
+     */
+    public ViroViewScene(@NonNull final Context context, @Nullable final AttributeSet attrs) {
+        this(context, attrs, 0);
+
+    }
+
+    /**
+     * @hide
+     *
+     * @param context
+     * @param attrs
+     * @param defStyleAttr
+     */
+    public ViroViewScene(@NonNull final Context context, @Nullable final AttributeSet attrs, @AttrRes final int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        if (ContextUtils.getActivity(context) == null) {
+            throw new IllegalArgumentException("An Activity Context is required for Viro functionality.");
+        } else {
+            init(context, null);
+        }
+    }
+
+    private void init(Context context, RendererStartListener rendererStartListener) {
         mSurfaceView = new GLSurfaceView(context);
         addView(mSurfaceView);
 
@@ -133,7 +179,6 @@ public class ViroViewScene extends ViroView {
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
         mRenderStartListener = rendererStartListener;
     }
-
     private void initSurfaceView() {
         int colorBits = 8;
         int alphaBits = 8;

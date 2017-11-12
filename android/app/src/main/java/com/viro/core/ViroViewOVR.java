@@ -92,7 +92,7 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
      * @param context
      */
     public ViroViewOVR(@NonNull final Context context) {
-        this(context, null);
+        this(context, (AttributeSet) null);
     }
 
     /**

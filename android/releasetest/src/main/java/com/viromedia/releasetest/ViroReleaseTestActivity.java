@@ -26,7 +26,7 @@ import com.viro.core.ViroViewGVR;
 public class ViroReleaseTestActivity extends AppCompatActivity implements RendererStartListener, RendererCloseListener {
     private static final String TAG = ViroReleaseTestActivity.class.getSimpleName();
 
-    private ViroViewGVR mViroView;
+    private ViroView mViroView;
     private Handler mHandler;
     private boolean mGLInitialized = false;
 
@@ -35,26 +35,22 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
         Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         System.out.println("onCreate called");
-//        if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
-//            mViroView = new ViroViewGVR(this, this, new Runnable() {
-//                @Override
-//                public void run() {
-//                    Log.d(TAG, "On GVR userRequested exit");
-//                }
-//            });
-//            mViroView.setVRModeEnabled(true);
-//        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
-//            mViroView = new ViroViewOVR(this, this);
-//        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
-//            mViroView = new ViroViewARCore(this, this);
-//        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("Scene")) {
-//            mViroView = new ViroViewScene(this, this);
-//        }
+        if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
+            setContentView(R.layout.activity_main_gvr);
+            ((ViroViewGVR)mViroView).setVRExitRunnable(() -> Log.d(TAG, "On GVR userRequested exit"));
+            mViroView.setVRModeEnabled(true);
+        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
+            setContentView(R.layout.activity_main_ovr);
+        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
+            setContentView(R.layout.activity_main_arcore);
+        } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("Scene")) {
+            setContentView(R.layout.activity_main_scene);
+        }
 
-        setContentView(R.layout.activity_main);
-        mViroView = (ViroViewGVR) findViewById(R.id.viro_view);
+        mViroView = (ViroView) findViewById(R.id.viro_view);
         mViroView.setRenderStartListener(this);
-        mViroView.setVRExitRunnable(() -> Log.d(TAG, "On GVR userRequested exit"));
+
+
         mHandler = new Handler(getMainLooper());
         // uncomment the below line to test AR.
         //testEdgeDetect();
