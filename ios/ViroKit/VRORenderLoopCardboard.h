@@ -37,7 +37,7 @@
  */
 @interface VRORenderLoopTarget : NSObject
 
-@property (readwrite, nonatomic) VROViewCardboard *cardboardView;
+@property (weak, readwrite, nonatomic) VROViewCardboard *cardboardView;
 
 - (void)render;
 
