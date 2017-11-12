@@ -1,0 +1,80 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "26.0.1"
+
+    defaultConfig {
+        applicationId "com.example.memoryleaktest"
+        minSdkVersion 21
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    productFlavors {
+        gvr {
+            resValue "string", "app_name", "MemoryLeakTest-gvr"
+            applicationIdSuffix ".gvr"
+            buildConfigField "String", "VR_PLATFORM", "\"GVR\""
+        }
+        ovr {
+            resValue "string", "app_name", "MemoryLeakTest-ovr"
+            applicationIdSuffix ".ovr"
+            buildConfigField "String", "VR_PLATFORM", "\"OVR\""
+        }
+        arcore {
+            resValue "string", "app_name", "MemoryLeakTest-arcore"
+            applicationIdSuffix ".arcore"
+            buildConfigField "String", "VR_PLATFORM", "\"ARCore\""
+        }
+        scene {
+            resValue "string", "app_name", "MemoryLeakTest-scene"
+            applicationIdSuffix ".scene"
+            buildConfigField "String", "VR_PLATFORM", "\"Scene\""
+        }
+    }
+    sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
+    testOptions {
+        unitTests.all {
+            testLogging {
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+                outputs.upToDateWhen { false }
+                showStandardStreams = true
+            }
+        }
+    }
+
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.2.0'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':arcore_client')
+    compile project(':app')
+    compile project(':libs:gvr')
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.6-SNAPSHOT'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.6-SNAPSHOT'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+}
+
+
