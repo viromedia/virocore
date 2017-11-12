@@ -45,7 +45,7 @@ public class ViroSoundTest extends ViroBaseTest {
 
         final ViroContext context = mViroView.getViroContext();
         runOnUiThread(()->{
-            mSound = new Sound(mViroView.getViroContext(), Uri.parse("file:///android_asset/metronome.mp3"), null);
+            mSound = new Sound(mViroView.getViroContext(), Uri.parse("file:///android_asset/mpthreetest.mp3"), null);
         });
 
         mSound.setLoop(true);

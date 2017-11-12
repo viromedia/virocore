@@ -66,12 +66,6 @@ public class ViroSoundFieldTest extends ViroBaseTest {
 
     @Test
     public void testSound() {
-
-        testPlayPause();
-        testSetVolume();
-        testSetMuted();
-        testSetLoop();
-        testSeekToTime();
         testSetDelegate();
         testSetRotation();
     }
@@ -126,7 +120,8 @@ public class ViroSoundFieldTest extends ViroBaseTest {
             mSound.setLoop(true);
         });
     }
-
+/*
+    NOTE: GVR Sound field does not currently support seek to time.
     private void testSeekToTime() {
         final List<Double> seekTimes = Arrays.asList(10.0, 15.0, 20.0, 25.0);
 
@@ -140,7 +135,7 @@ public class ViroSoundFieldTest extends ViroBaseTest {
             mSound.seekToTime(0);
         });
     }
-
+*/
     // TODO VIRO-2181 setting null delegate will cause an NPE
     private void testSetDelegate() {
         final SoundField.PlaybackListener delegate1 = new SoundField.PlaybackListener() {
