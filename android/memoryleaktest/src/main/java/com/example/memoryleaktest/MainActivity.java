@@ -73,5 +73,27 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+        Button stereoBgButton = (Button)findViewById(R.id.stereo_bg_button);
+        stereoBgButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MemoryLeakTest.class);
+                intent.putExtra("TestToRun", "bgStereoVideoTest");
+                Log.i(TAG, "Start Activity Stereo Bg Test.");
+                startActivity(intent);
+            }
+        });
+
+        Button lightButton = (Button)findViewById(R.id.light_button);
+        lightButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MemoryLeakTest.class);
+                intent.putExtra("TestToRun", "lightTest");
+                Log.i(TAG, "Start Activity light test.");
+                startActivity(intent);
+            }
+        });
     }
 }

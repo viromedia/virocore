@@ -27,10 +27,8 @@
             android:screenOrientation="landscape"
             >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
                 <category android:name="com.google.intent.category.CARDBOARD" />
                 <category android:name="com.google.intent.category.DAYDREAM" />
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>

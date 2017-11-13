@@ -20,12 +20,16 @@ import com.viro.core.AsyncObject3DListener;
 import com.viro.core.Box;
 import com.viro.core.ClickListener;
 import com.viro.core.ClickState;
+import com.viro.core.DirectionalLight;
 import com.viro.core.Material;
 import com.viro.core.Node;
 import com.viro.core.Object3D;
+import com.viro.core.OmniLight;
 import com.viro.core.ParticleEmitter;
 import com.viro.core.RendererStartListener;
+import com.viro.core.Scene;
 import com.viro.core.Sphere;
+import com.viro.core.Spotlight;
 import com.viro.core.Surface;
 import com.viro.core.Text;
 import com.viro.core.Texture;
@@ -36,6 +40,7 @@ import com.viro.core.ViroViewARCore;
 import com.viro.core.ViroViewGVR;
 import com.viro.core.ViroViewOVR;
 import com.viro.core.ViroViewScene;
+import com.viro.core.internal.Image;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -125,18 +130,19 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
     public void initializeArScene() {
         final ARScene scene = new ARScene();
         final Node rootNode = scene.getRootNode();
-        List<Node> nodes = selectScene();
-        for (final Node node : nodes) {
-            rootNode.addChildNode(node);
+        List<Node> nodes = selectScene(scene);
+        if(nodes != null) {
+            for (final Node node : nodes) {
+                rootNode.addChildNode(node);
+            }
         }
-
 
         final AmbientLight ambientLightJni = new AmbientLight(Color.WHITE, 300.0f);
         scene.getRootNode().addLight(ambientLightJni);
         mViroView.setScene(scene);
     }
 
-    private List<Node> selectScene() {
+    private List<Node> selectScene(Scene scene) {
         //boxTest, sphereTest, videoTest, objectTest
         if(mTestToRun.equalsIgnoreCase("boxTest")) {
             return testBox(mViroView.getContext());
@@ -148,6 +154,10 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
             return test3dObjectLoading(mViroView.getContext());
         } else if(mTestToRun.equalsIgnoreCase("particlesTest")) {
             return testParticles();
+        } else if(mTestToRun.equalsIgnoreCase("bgStereoVideoTest")) {
+            testStereoBackgroundVideo(scene);
+        } else if(mTestToRun.equalsIgnoreCase("lightTest")) {
+             testSceneLighting(scene.getRootNode());
         }
         return null;
     }
@@ -283,6 +293,26 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         return Arrays.asList(node1);
     }
 
+
+    private void testSceneLighting(final Node node) {
+        final float[] lightDirection = {0, 0, -1};
+        final AmbientLight ambientLightJni = new AmbientLight(Color.WHITE, 300.0f);
+        node.addLight(ambientLightJni);
+
+        final DirectionalLight directionalLightJni = new DirectionalLight(Color.BLUE, 1000.0f, new Vector(lightDirection));
+        node.addLight(directionalLightJni);
+
+        final float[] omniLightPosition = {1, 0, 0};
+        final OmniLight omniLightJni = new OmniLight(Color.RED, 1000.0f, 1, 10, new Vector(omniLightPosition));
+        node.addLight(omniLightJni);
+
+        final float[] spotLightPosition = {-2, 0, 3};
+        final Spotlight spotLightJni = new Spotlight(Color.YELLOW, 1000.0f, 1, 10, new Vector(spotLightPosition),
+                new Vector(lightDirection), (float) Math.toRadians(2), (float) Math.toRadians(10));
+        node.addLight(spotLightJni);
+    }
+
+
     private List<Node> testParticles() {
         final Bitmap bobaBitmap = getBitmapFromAssets("boba.png");
         final Bitmap specBitmap = getBitmapFromAssets("specular.png");
@@ -311,6 +341,44 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         particleNode.setParticleEmitter(particleEmitter);
         particleEmitter.run();
         return Arrays.asList(particleNode);
+    }
+
+
+    private void testStereoBackgroundVideo(final Scene scene) {
+        final VideoTexture.PlaybackListener delegate = new VideoTexture.PlaybackListener() {
+            @Override
+            public void onVideoBufferStart(final VideoTexture video) {
+
+            }
+
+            @Override
+            public void onVideoBufferEnd(final VideoTexture video) {
+
+            }
+
+            @Override
+            public void onVideoFinish(final VideoTexture video) {
+            }
+
+            @Override
+            public void onVideoFailed(final String error) {
+            }
+
+            @Override
+            public void onReady(final VideoTexture video) {
+                scene.setBackgroundTexture(video);
+                video.setVolume(0.1f);
+                video.setLoop(false);
+                video.play();
+            }
+
+            @Override
+            public void onVideoUpdatedTime(final VideoTexture video, final float seconds, final float duration) {
+                Log.e(TAG,"onVideoUpdatedTime for Background within ViroActivity:" + seconds);
+            }
+        };
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(), Uri.parse("file:///android_asset/stereoVid360.mp4"),
+                delegate, Texture.StereoMode.TOP_BOTTOM);
     }
 
     private Bitmap getBitmapFromAssets(final String assetName) {

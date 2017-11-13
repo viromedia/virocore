@@ -50,10 +50,27 @@
         android:layout_alignStart="@+id/video_button" />
 
     <Button
+        android:text="Scene BG Stereo Vid Test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/stereo_bg_button"
+        android:layout_below="@+id/object_button"
+        android:layout_alignStart="@+id/object_button" />
+
+    <Button
         android:text="Particle Test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/particle_button"
-        android:layout_below="@+id/object_button"
-        android:layout_alignStart="@+id/object_button" />
+        android:layout_below="@+id/stereo_bg_button"
+        android:layout_alignStart="@+id/stereo_bg_button"
+        android:layout_marginTop="45dp" />
+
+    <Button
+        android:text="Light Test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/light_button"
+        android:layout_below="@+id/stereo_bg_button"
+        android:layout_alignStart="@+id/stereo_bg_button" />
 </RelativeLayout>
