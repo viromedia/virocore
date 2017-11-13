@@ -271,11 +271,15 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     public final void validateAPIKey(String apiKey) {
         mNativeRenderer.setSuspended(false);
         // we actually care more about the headset than platform in this case.
+        final WeakReference<Renderer> weakRenderer = new WeakReference<>(mNativeRenderer);
         mKeyValidator.validateKey(apiKey, getHeadset(), new KeyValidationListener() {
             @Override
             public void onResponse(boolean success) {
                 if (!mDestroyed) {
-                    mNativeRenderer.setSuspended(!success);
+                    Renderer renderer = weakRenderer.get();
+                    if(renderer != null ) {
+                        renderer.setSuspended(!success);
+                    }
                 }
             }
         });
