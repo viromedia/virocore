@@ -123,7 +123,7 @@ public class Camera {
      * @param rotation {@link Vector} containing the rotation as Euler angles in radians.
      */
     public void setRotation(Vector rotation) {
-        mRotation = new Quaternion(); // TODO: VIRO-2166 update Quaternion to accept euler angles
+        mRotation = new Quaternion(rotation);
         nativeSetRotationEuler(mNativeRef, rotation.x, rotation.y, rotation.z);
     }
 
