@@ -115,7 +115,6 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         super.onDestroy();
         mViroView.onActivityDestroyed(this);
         Log.i(TAG, "MemoryLeakTest onDestroy called.");
-
     }
 
 
@@ -152,7 +151,7 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
             return testSurfaceVideo(mViroView.getContext());
         } else if(mTestToRun.equalsIgnoreCase("objectTest")) {
             return test3dObjectLoading(mViroView.getContext());
-        } else if(mTestToRun.equalsIgnoreCase("particlesTest")) {
+        } else if(mTestToRun.equalsIgnoreCase("particleTest")) {
             return testParticles();
         } else if(mTestToRun.equalsIgnoreCase("bgStereoVideoTest")) {
             testStereoBackgroundVideo(scene);
@@ -175,7 +174,7 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         node3.setPosition(new Vector(position));
         node3.setGeometry(textJni);
         //node3.setEventDelegate(getGenericDelegate("Text"));
-         final Bitmap bobaBitmap = getBitmapFromAssets("boba.png");
+        final Bitmap bobaBitmap = getBitmapFromAssets("boba.png");
         final Bitmap specBitmap = getBitmapFromAssets("specular.png");
 
         final Texture bobaTexture = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true);
@@ -310,6 +309,19 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         final Spotlight spotLightJni = new Spotlight(Color.YELLOW, 1000.0f, 1, 10, new Vector(spotLightPosition),
                 new Vector(lightDirection), (float) Math.toRadians(2), (float) Math.toRadians(10));
         node.addLight(spotLightJni);
+
+        Node nodeBox = new Node();
+        Box box = new Box(1,1,1);
+
+        Material material = new Material();
+        final Bitmap bobaBitmap = getBitmapFromAssets("boba.png");
+        final Texture bobaTexture = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true);
+        material.setDiffuseTexture(bobaTexture);
+        material.setLightingModel(Material.LightingModel.BLINN);
+        box.setMaterials(Arrays.asList(material));
+        nodeBox.setPosition(new Vector(0, 0, -3));
+        nodeBox.setGeometry(box);
+        node.addChildNode(nodeBox);
     }
 
 
@@ -319,7 +331,7 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         final Texture bobaTexture = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true);
 
         final Node particleNode = new Node();
-        particleNode.setPosition(new Vector(0, -10, -15));
+        particleNode.setPosition(new Vector(0, -1, -6));
 
         final Material material = new Material();
         material.setDiffuseTexture(bobaTexture);
