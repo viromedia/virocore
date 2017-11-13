@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ Copyright (c) 2017-present, ViroMedia, Inc.
   ~ All rights reserved.
@@ -13,5 +14,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.viromedia.releasetest.ViroReleaseTestActivity">
+
+    <ImageView
+        android:id="@+id/thumbsUp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:padding="10dp"
+        android:src="@drawable/icon_thumb_up"
+        android:layout_gravity="bottom|end" />
+
+    <ImageView
+        android:id="@+id/thumbsDown"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:padding="10dp"
+        android:src="@drawable/icon_thumb_down"
+        android:layout_gravity="bottom|start" />
 
 </com.viro.core.ViroViewGVR>

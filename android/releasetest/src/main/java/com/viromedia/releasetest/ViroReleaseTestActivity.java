@@ -13,6 +13,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.viro.core.RendererCloseListener;
 import com.viro.core.RendererStartListener;
@@ -28,6 +31,8 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
 
     private ViroView mViroView;
     private Handler mHandler;
+    private ImageView mThumbsUp;
+    private ImageView mThumbsDown;
     private boolean mGLInitialized = false;
 
     @Override
@@ -36,9 +41,7 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
         super.onCreate(savedInstanceState);
         System.out.println("onCreate called");
         if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
-            setContentView(R.layout.activity_main_gvr);
-            ((ViroViewGVR)mViroView).setVRExitRunnable(() -> Log.d(TAG, "On GVR userRequested exit"));
-            mViroView.setVRModeEnabled(true);
+            setContentView(R.layout.activity_main_gvr_vr_enabled);
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("OVR")) {
             setContentView(R.layout.activity_main_ovr);
         } else if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("ARCore")) {
@@ -50,12 +53,27 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
         mViroView = (ViroView) findViewById(R.id.viro_view);
         mViroView.setRenderStartListener(this);
 
+        if (BuildConfig.VR_PLATFORM.equalsIgnoreCase("GVR")) {
+            ((ViroViewGVR)mViroView).setVRExitRunnable(() -> Log.d(TAG, "On GVR userRequested exit"));
+            mViroView.setVRModeEnabled(BuildConfig.VR_ENABLED == 1);
+        }
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+
+        mThumbsUp = (ImageView) findViewById(R.id.thumbsUp);
+        mThumbsDown = (ImageView) findViewById(R.id.thumbsDown);
 
         mHandler = new Handler(getMainLooper());
-        // uncomment the below line to test AR.
-        //testEdgeDetect();
-        //testFindTarget();
     }
+
+    public View getThumbsUpView() {
+        return mThumbsUp;
+    }
+
+    public View getThumbsDownView() {
+        return mThumbsDown;
+    }
+
 
     @Override
     protected void onStart() {
@@ -99,6 +117,7 @@ public class ViroReleaseTestActivity extends AppCompatActivity implements Render
 
     @Override
     public void onRendererStart() {
+        Log.d(TAG, "onRendererStart called");
         mGLInitialized = true;
     }
 

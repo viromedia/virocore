@@ -19,6 +19,8 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.viro.core.ARHitTestResult;
 import com.viro.core.ARScene;
@@ -112,10 +114,53 @@ public abstract class ViroBaseTest {
     }
 
     private Callable<Boolean> glInitialized() {
+        Log.d(TAG, "glInitialized called - " + mActivity.isGlInitialized());
         return () -> mActivity.isGlInitialized();
     }
 
     private void createBaseTestScene() {
+        final Node rootNode = mScene.getRootNode();
+        final EnumSet<Node.TransformBehavior> transformBehavior = EnumSet.of(Node.TransformBehavior.BILLBOARD_Y);
+
+        if (BuildConfig.VR_ENABLED == 1) {
+            addThumbButtonsInVR();
+        } else {
+            addThumbButtonsOnGlass();
+        }
+
+        // Add class name
+        mTestClassNameNode = new Node();
+        final Text testClassNameText = new Text(mViroView.getViroContext(), getClass().getSimpleName(),
+                "Roboto", 25, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
+                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
+        final float[] classNamePosition = {0f, 3f, -3.3f};
+        mTestClassNameNode.setPosition(new Vector(classNamePosition));
+        mTestClassNameNode.setGeometry(testClassNameText);
+        rootNode.addChildNode(mTestClassNameNode);
+
+        // Add method name
+        mTestMethodNameNode = new Node();
+        final Text testMethodNameText = new Text(mViroView.getViroContext(),
+                Thread.currentThread().getStackTrace()[1].getMethodName(),
+                "Roboto", 25, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
+                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
+        final float[] methodNamePosition = {0f, 2.5f, -3.3f};
+        mTestMethodNameNode.setPosition(new Vector(methodNamePosition));
+        mTestMethodNameNode.setGeometry(testMethodNameText);
+        rootNode.addChildNode(mTestMethodNameNode);
+
+        // Add expected message card
+        mExpectedMessageNode = new Node();
+        final Text instructionCardText = new Text(mViroView.getViroContext(),
+                "Test Text Here", "Roboto", 25, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
+                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
+        final float[] position = {0f, 2f, -3.3f};
+        mExpectedMessageNode.setPosition(new Vector(position));
+        mExpectedMessageNode.setGeometry(instructionCardText);
+        rootNode.addChildNode(mExpectedMessageNode);
+    }
+
+    private void addThumbButtonsInVR() {
         final Node rootNode = mScene.getRootNode();
         final EnumSet<Node.TransformBehavior> transformBehavior = EnumSet.of(Node.TransformBehavior.BILLBOARD_Y);
 
@@ -150,39 +195,27 @@ public abstract class ViroBaseTest {
         mNoButtonNode.setTransformBehaviors(transformBehavior);
         mNoButtonNode.setEventDelegate(getGenericDelegate(TEST_FAILED_TAG));
         rootNode.addChildNode(mNoButtonNode);
-
-        // Add class name
-        mTestClassNameNode = new Node();
-        final Text testClassNameText = new Text(mViroView.getViroContext(), getClass().getSimpleName(),
-                "Roboto", 25, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
-                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        final float[] classNamePosition = {0f, 3f, -3.3f};
-        mTestClassNameNode.setPosition(new Vector(classNamePosition));
-        mTestClassNameNode.setGeometry(testClassNameText);
-        rootNode.addChildNode(mTestClassNameNode);
-
-        // Add method name
-        mTestMethodNameNode = new Node();
-        final Text testMethodNameText = new Text(mViroView.getViroContext(),
-                Thread.currentThread().getStackTrace()[1].getMethodName(),
-                "Roboto", 25, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
-                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        final float[] methodNamePosition = {0f, 2.5f, -3.3f};
-        mTestMethodNameNode.setPosition(new Vector(methodNamePosition));
-        mTestMethodNameNode.setGeometry(testMethodNameText);
-        rootNode.addChildNode(mTestMethodNameNode);
-
-        // Add expected message card
-        mExpectedMessageNode = new Node();
-        final Text instructionCardText = new Text(mViroView.getViroContext(),
-                "Test Text Here", "Roboto", 25, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
-                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
-        final float[] position = {0f, 2f, -3.3f};
-        mExpectedMessageNode.setPosition(new Vector(position));
-        mExpectedMessageNode.setGeometry(instructionCardText);
-        rootNode.addChildNode(mExpectedMessageNode);
     }
 
+    private void addThumbButtonsOnGlass() {
+        ImageView thumbsUp = (ImageView) mActivity.getThumbsUpView();
+        thumbsUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTestResult.set(TEST_PASSED);
+                mTestButtonsClicked.set(true);
+            }
+        });
+
+        ImageView thumbsDown = (ImageView) mActivity.getThumbsDownView();
+        thumbsDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTestResult.set(TEST_FAILED);
+                mTestButtonsClicked.set(true);
+            }
+        });
+    }
     protected void assertPass(final String expectedMessage) {
 
         mTestButtonsClicked.set(false);

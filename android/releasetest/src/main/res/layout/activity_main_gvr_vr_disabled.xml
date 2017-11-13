@@ -7,8 +7,7 @@
   ~ root directory of this source tree. An additional grant  of patent rights can be found in
   ~ the PATENTS file in the same directory.
   -->
-
-<com.viro.core.ViroViewARCore xmlns:android="http://schemas.android.com/apk/res/android"
+<com.viro.core.ViroViewGVR xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/viro_view"
     android:layout_width="match_parent"
@@ -31,4 +30,4 @@
         android:src="@drawable/icon_thumb_down"
         android:layout_gravity="bottom|start" />
 
-</com.viro.core.ViroViewARCore>
+</com.viro.core.ViroViewGVR>
