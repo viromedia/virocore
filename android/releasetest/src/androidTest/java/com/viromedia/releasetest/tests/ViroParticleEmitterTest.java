@@ -142,12 +142,9 @@ public class ViroParticleEmitterTest extends ViroBaseTest {
     }
 
     public void emitterRotationTest() {
-        Vector startSize = new Vector(0,0,0);
-        Vector endSize = new Vector(0,0,3.14);
-
-        ParticleEmitter.ParticleModifierVector mod
-                = new ParticleEmitter.ParticleModifierVector(startSize, startSize);
-        mod.addInterval(1000, endSize);
+        ParticleEmitter.ParticleModifierFloat mod
+                = new ParticleEmitter.ParticleModifierFloat(0, 0);
+        mod.addInterval(1000, 3.14f);
         mEmitter.setRotationModifier(mod);
         mEmitter.run();
 
@@ -170,16 +167,16 @@ public class ViroParticleEmitterTest extends ViroBaseTest {
     public void randomizedPropertiesTest(){
         float opacityStart = 1.0f;
         float opacityEnd = 0.0f;
-        Vector startRot = new Vector(0,0,0);
-        Vector endRot = new Vector(0,0,3.14);
+        float startRot = 0f;
+        float endRot = 3.14f;
         Vector startScale = new Vector(1,1,0);
         Vector endScale = new Vector(3,3,0);
         int colorStart = Color.RED;
         int colorEnd = Color.BLUE;
 
 
-        ParticleEmitter.ParticleModifierVector mod1
-                = new ParticleEmitter.ParticleModifierVector(startRot, endRot);
+        ParticleEmitter.ParticleModifierFloat mod1
+                = new ParticleEmitter.ParticleModifierFloat(startRot, endRot);
         mod1.addInterval(1000, endRot);
         mEmitter.setRotationModifier(mod1);
 
