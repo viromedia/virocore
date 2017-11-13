@@ -1120,8 +1120,25 @@ public class ParticleEmitter {
      * @param modifier The {@link ParticleModifierVector} describing rotation behavior for the
      *                 particles.
      */
-    public void setRotationModifier(ParticleModifierVector modifier) {
-        setModifier("rotation", modifier);
+    public void setRotationModifier(ParticleModifierFloat modifier) {
+        // Convert the float modifier into a vector modifier that the renderer expects.
+        float[][] initalRange = modifier.getInitialRange();
+        Factor factor = modifier.getFactor();
+
+        Vector min = new Vector(0f, 0f, initalRange[0][0]);
+        Vector max = new Vector(0f, 0f, initalRange[1][0]);
+        ParticleModifierVector vecModifier = new ParticleModifierVector(min, max);
+
+        float[][] intervals = modifier.getInterpolatedIntervals();
+        float[][] points = modifier.getInterpolatedPoints();
+        for (int i = 0; i < intervals.length; i ++){
+            float intervalLength = intervals[i][1] - intervals[i][0];
+            Vector point = new Vector(0,0, points[i][0]);
+            vecModifier.addInterval(intervalLength, point);
+        }
+
+        vecModifier.setFactor(factor);
+        setModifier("rotation", vecModifier);
     }
 
     /**
