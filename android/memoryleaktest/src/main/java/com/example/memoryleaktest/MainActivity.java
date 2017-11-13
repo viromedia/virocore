@@ -62,5 +62,16 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+        Button particleButton = (Button)findViewById(R.id.particle_button);
+        particleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MemoryLeakTest.class);
+                intent.putExtra("TestToRun", "particleTest");
+                Log.i(TAG, "Start Activity particle test.");
+                startActivity(intent);
+            }
+        });
     }
 }

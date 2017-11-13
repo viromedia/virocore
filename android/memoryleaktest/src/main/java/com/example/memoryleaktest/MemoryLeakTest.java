@@ -13,15 +13,20 @@ import android.content.Intent;
 
 import com.viro.core.ARScene;
 import com.viro.core.AmbientLight;
+import com.viro.core.Animation;
 import com.viro.core.AnimationTimingFunction;
 import com.viro.core.AnimationTransaction;
+import com.viro.core.AsyncObject3DListener;
 import com.viro.core.Box;
 import com.viro.core.ClickListener;
 import com.viro.core.ClickState;
 import com.viro.core.Material;
 import com.viro.core.Node;
+import com.viro.core.Object3D;
+import com.viro.core.ParticleEmitter;
 import com.viro.core.RendererStartListener;
 import com.viro.core.Sphere;
+import com.viro.core.Surface;
 import com.viro.core.Text;
 import com.viro.core.Texture;
 import com.viro.core.Vector;
@@ -44,7 +49,6 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
     private boolean mGLInitialized = false;
     private ViroView mViroView;
     private String mTestToRun;
-    private Handler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +76,8 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         mTestToRun = intent.getStringExtra("TestToRun");
 
         mViroView.setVRModeEnabled(false);
-        mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
         setContentView(mViroView);
-
-       // mHandler = new Handler(getMainLooper());
+        Log.i("MemoryLeakTest", "ViroViewGVR addr onCreate:" + mViroView.hashCode());
     }
 
     @Override
@@ -104,8 +106,11 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
 
     @Override
     protected void onDestroy(){
+        Log.i("MemoryLeakTest", "ViroViewGVR addr onDestroy:" + mViroView.hashCode());
         super.onDestroy();
         mViroView.onActivityDestroyed(this);
+        Log.i(TAG, "MemoryLeakTest onDestroy called.");
+
     }
 
 
@@ -138,9 +143,11 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         } else if(mTestToRun.equalsIgnoreCase("sphereTest")) {
             return testSphereVideo(mViroView.getContext());
         } else if(mTestToRun.equalsIgnoreCase("videoTest")) {
-
+            return testSurfaceVideo(mViroView.getContext());
         } else if(mTestToRun.equalsIgnoreCase("objectTest")) {
-
+            return test3dObjectLoading(mViroView.getContext());
+        } else if(mTestToRun.equalsIgnoreCase("particlesTest")) {
+            return testParticles();
         }
         return null;
     }
@@ -230,6 +237,80 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
 
         node.setGeometry(sphere);
         return Arrays.asList(node);
+    }
+
+    private List<Node> testSurfaceVideo(final Context context) {
+        final Node node = new Node();
+        final Surface surface = new Surface(4, 4, 0, 0, 1, 1);
+        final float[] position = {0, 0, -3};
+        node.setPosition(new Vector(position));
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(), Uri.parse("https://s3.amazonaws.com/viro.video/Climber2Top.mp4"));
+        final Material material = new Material();
+        material.setDiffuseTexture(videoTexture);
+        surface.setMaterials(Arrays.asList(material));
+        videoTexture.setVolume(0.1f);
+        videoTexture.setLoop(true);
+        videoTexture.play();
+
+        node.setGeometry(surface);
+        return Arrays.asList(node);
+    }
+
+
+    private List<Node> test3dObjectLoading(final Context context) {
+        final Node node1 = new Node();
+
+        // Creation of ObjectJni to the right
+        final Object3D objectJni = new Object3D();
+        objectJni.loadModel(Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, new AsyncObject3DListener() {
+            @Override
+            public void onObject3DLoaded(final Object3D object, final Object3D.Type type) {
+                object.setPosition(new Vector(0, 0, -3));
+                object.setScale(new Vector(0.4f, 0.4f, 0.4f));
+
+                final Animation animation = object.getAnimation("02_spin");
+                animation.setDelay(5000);
+                animation.setLoop(true);
+                animation.play();
+            }
+
+            @Override
+            public void onObject3DFailed(final String error) {
+
+            }
+        });
+        node1.addChildNode(objectJni);
+        return Arrays.asList(node1);
+    }
+
+    private List<Node> testParticles() {
+        final Bitmap bobaBitmap = getBitmapFromAssets("boba.png");
+        final Bitmap specBitmap = getBitmapFromAssets("specular.png");
+        final Texture bobaTexture = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true);
+
+        final Node particleNode = new Node();
+        particleNode.setPosition(new Vector(0, -10, -15));
+
+        final Material material = new Material();
+        material.setDiffuseTexture(bobaTexture);
+        material.setDiffuseColor(Color.BLUE);
+        material.setSpecularTexture(bobaTexture);
+        material.setLightingModel(Material.LightingModel.LAMBERT);
+
+        final Surface surface = new Surface(1, 1);
+        surface.setMaterials(Arrays.asList(material));
+
+        final ParticleEmitter particleEmitter = new ParticleEmitter(mViroView.getViroContext(), surface);
+
+        final Vector sizeMinStart = new Vector(2, 2, 2);
+        final Vector sizeMaxStart = new Vector(5, 5, 5);
+        final ParticleEmitter.ParticleModifierVector modifier = new ParticleEmitter.ParticleModifierVector(sizeMinStart, sizeMaxStart);
+        modifier.addInterval(1000, new Vector(0, 0, 0));
+
+        particleEmitter.setScaleModifier(modifier);
+        particleNode.setParticleEmitter(particleEmitter);
+        particleEmitter.run();
+        return Arrays.asList(particleNode);
     }
 
     private Bitmap getBitmapFromAssets(final String assetName) {
