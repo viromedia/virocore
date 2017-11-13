@@ -62,6 +62,14 @@ JNI_METHOD(void, nativeSetTimeToFuse)(JNIEnv *env,
 }
 
 }  // extern "C"
+
+/*
+ This integer represents a value which no Node should return when getUniqueID()
+ is invoked. This value is derived from the behavior of sUniqueIDGenerator in
+ VRONode.h.
+ */
+static int sNullNodeID = -1;
+
 void EventDelegate_JNI::onHover(int source, std::shared_ptr<VRONode> node, bool isHovering, std::vector<float> position) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
@@ -87,7 +95,7 @@ void EventDelegate_JNI::onHover(int source, std::shared_ptr<VRONode> node, bool 
             positionArray = nullptr;
         }
 
-        int nodeId = node->getUniqueID();
+        int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
         VROPlatformCallJavaFunction(localObj,
                                     "onHover", "(IIZ[F)V", source, nodeId, isHovering, positionArray);
         env->DeleteLocalRef(localObj);
@@ -118,7 +126,7 @@ void EventDelegate_JNI::onClick(int source, std::shared_ptr<VRONode> node, Click
             positionArray = nullptr;
         }
 
-        int nodeId = node->getUniqueID();
+        int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
         VROPlatformCallJavaFunction(localObj,
                                     "onClick", "(III[F)V", source, nodeId, clickState, positionArray);
         env->DeleteLocalRef(localObj);
@@ -136,7 +144,7 @@ void EventDelegate_JNI::onTouch(int source, std::shared_ptr<VRONode> node, Touch
             return;
         }
 
-        int nodeId = node->getUniqueID();
+        int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
         VROPlatformCallJavaFunction(localObj,
                                     "onTouch", "(IIIFF)V", source, nodeId, touchState, x, y);
         env->DeleteLocalRef(localObj);
@@ -179,7 +187,7 @@ void EventDelegate_JNI::onSwipe(int source, std::shared_ptr<VRONode> node, Swipe
             return;
         }
 
-        int nodeId = node->getUniqueID();
+        int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
         VROPlatformCallJavaFunction(localObj,
                                     "onSwipe", "(III)V", source, nodeId, swipeState);
         env->DeleteLocalRef(localObj);
@@ -197,7 +205,7 @@ void EventDelegate_JNI::onScroll(int source, std::shared_ptr<VRONode> node, floa
             return;
         }
 
-        int nodeId = node->getUniqueID();
+        int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
         VROPlatformCallJavaFunction(localObj,
                                     "onScroll", "(IIFF)V", source, nodeId, x, y);
         env->DeleteLocalRef(localObj);
@@ -215,7 +223,7 @@ void EventDelegate_JNI::onDrag(int source, std::shared_ptr<VRONode> node, VROVec
             return;
         }
 
-        int nodeId = node->getUniqueID();
+        int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
         VROPlatformCallJavaFunction(localObj,
                                     "onDrag", "(IIFFF)V", source, nodeId, newPosition.x, newPosition.y,
                                     newPosition.z);
@@ -243,7 +251,7 @@ void EventDelegate_JNI::onFuse(int source, std::shared_ptr<VRONode> node, float 
             return;
         }
 
-        int nodeId = node->getUniqueID();
+        int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
         VROPlatformCallJavaFunction(localObj,
                                     "onFuse", "(II)V", source, nodeId, timeToFuseRatio);
         env->DeleteLocalRef(localObj);
@@ -261,7 +269,7 @@ void EventDelegate_JNI::onPinch(int source, std::shared_ptr<VRONode> node, float
             return;
         }
 
-        int nodeId = node->getUniqueID();
+        int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
         VROPlatformCallJavaFunction(localObj,
                                     "onPinch", "(IIFI)V", source, nodeId, scaleFactor, pinchState);
         env->DeleteLocalRef(localObj);
@@ -279,7 +287,7 @@ void EventDelegate_JNI::onRotate(int source, std::shared_ptr<VRONode> node, floa
             return;
         }
 
-        int nodeId = node->getUniqueID();
+        int nodeId = node != nullptr ? node->getUniqueID() : sNullNodeID;
         VROPlatformCallJavaFunction(localObj,
                                     "onRotate", "(IIFI)V", source, nodeId, rotationRadians, rotateState);
         env->DeleteLocalRef(localObj);

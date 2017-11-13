@@ -45,6 +45,9 @@ bool kDebugSortOrder = false;
 static int sDebugSortIndex = 0;
 const std::string kDefaultNodeTag = "undefined";
 
+// Note: if you change the initial value below, make that sNullNodeID
+// in EventDelegate_JNI.cpp still represents a value that this will
+// never vend.
 std::atomic<int> sUniqueIDGenerator(0);
 
 #pragma mark - Initialization
