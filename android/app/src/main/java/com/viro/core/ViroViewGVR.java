@@ -400,10 +400,12 @@ public class ViroViewGVR extends ViroView {
      */
     @Override
     public void dispose() {
-        mGVRLayout.shutdown();
-        // once we dispose the view, we should turn off the VR specific stuff.
-        AndroidCompat.setVrModeEnabled((Activity) getContext(), false);
-        AndroidCompat.setSustainedPerformanceMode((Activity) getContext(), false);
+        if (!mDestroyed) {
+            mGVRLayout.shutdown();
+            // once we dispose the view, we should turn off the VR specific stuff.
+            AndroidCompat.setVrModeEnabled((Activity) getContext(), false);
+            AndroidCompat.setSustainedPerformanceMode((Activity) getContext(), false);
+        }
 
         super.dispose();
     }
