@@ -254,7 +254,10 @@ public class ViroViewGVR extends ViroView {
         // dropping under 60 FPS). Async reprojection is only available on Daydream-enabled devices.
         // If we're using a fixed pointer, then do *not* use async reprojection, because it not
         // compatible with any HUD elements: it makes them wobble.
-        if (getControllerType().equalsIgnoreCase("daydream")){
+
+        // TODO VIRO-2269 Async reprojection is causing shadowing issues, so it's disabled here
+        //                by using if (false)
+        if (false && getControllerType().equalsIgnoreCase("daydream")){
             if (mGVRLayout.setAsyncReprojectionEnabled(true)) {
                 // Scanline racing decouples the app framerate from the display framerate,
                 // allowing immersive interaction even at the throttled clockrates set by
