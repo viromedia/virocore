@@ -56,8 +56,8 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     private final static String API_KEY_METADATA_TAG = "com.viromedia.API_KEY";
 
     // Available renderer flavors, can be accessed through com.viro.renderer.BuildConfig.FLAVOR
-    protected final static String FLAVOR_VIRO_REACT = "viro_react";
-    protected final static String FLAVOR_VIRO_CORE = "viro_core";
+    public final static String FLAVOR_VIRO_REACT = "viro_react";
+    public final static String FLAVOR_VIRO_CORE = "viro_core";
 
     private int mSavedSystemUIVisbility;
     private int mSavedOrientation;

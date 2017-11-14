@@ -10,6 +10,7 @@ package com.viro.core.internal.keys;
 
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -17,7 +18,9 @@ import com.amazonaws.services.dynamodbv2.model.AttributeAction;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
+import com.viro.core.ViroView;
 import com.viro.core.internal.BuildInfo;
+import com.viro.renderer.BuildConfig;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -102,7 +105,12 @@ public class KeyMetricsRecorder {
         // Add the API key
         builder.append(key).append(DELIMITER);
         // Add the OS
-        builder.append("android").append(DELIMITER);
+        if (BuildConfig.FLAVOR.equalsIgnoreCase(ViroView.FLAVOR_VIRO_CORE)) {
+            // don't reuse FLAVOR_VIRO_CORE because our delimiter is an underscore...
+            builder.append("virocore").append(DELIMITER);
+        } else {
+            builder.append("android").append(DELIMITER);
+        }
         // Add the VR platform
         builder.append(vrPlatform).append(DELIMITER);
         // Add the Android package name
