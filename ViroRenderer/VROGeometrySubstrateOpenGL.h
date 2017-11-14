@@ -124,7 +124,8 @@ private:
     std::unique_ptr<VROBoneUBO> _boneUBO;
     
     void renderMaterial(const VROGeometry &geometry,
-                        VROMaterialSubstrateOpenGL *material,
+                        const std::shared_ptr<VROMaterial> &material,
+                        VROMaterialSubstrateOpenGL *substrate,
                         VROGeometryElementOpenGL &element,
                         float opacity,
                         const VRORenderContext &renderContext,

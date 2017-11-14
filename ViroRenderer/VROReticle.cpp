@@ -45,6 +45,7 @@ VROReticle::VROReticle(std::shared_ptr<VROTexture> reticleTexture) :
         _reticleLine->setName("Reticle");
         _reticleLine->getMaterials().front()->setWritesToDepthBuffer(false);
         _reticleLine->getMaterials().front()->setReadsFromDepthBuffer(false);
+        _reticleLine->getMaterials().front()->setReceivesShadows(false);
         _reticleLine->getMaterials().front()->getDiffuse().setColor({0.33, 0.976, 0.968, 1.0});
         _reticleBaseNode->setGeometry(_reticleLine);
         _reticleBaseNode->setPosition({0, 0, -2});
@@ -57,6 +58,7 @@ VROReticle::VROReticle(std::shared_ptr<VROTexture> reticleTexture) :
         material->getDiffuse().setTexture(reticleTexture);
         material->setWritesToDepthBuffer(false);
         material->setReadsFromDepthBuffer(false);
+        material->setReceivesShadows(false);
         _reticleBaseNode->setGeometry(_reticleIcon);
     }
 
@@ -68,6 +70,7 @@ VROReticle::VROReticle(std::shared_ptr<VROTexture> reticleTexture) :
     _fuseBackgroundLine->getMaterials().front()->setTransparency(0.1);
     _fuseBackgroundLine->getMaterials().front()->setWritesToDepthBuffer(false);
     _fuseBackgroundLine->getMaterials().front()->setReadsFromDepthBuffer(false);
+    _fuseBackgroundLine->getMaterials().front()->setReceivesShadows(false);
     _fuseBackgroundLine->getMaterials().front()->getDiffuse().setColor({0.33, 0.976, 0.968, 1.0});
     _fuseBackgroundNode->setGeometry(_fuseBackgroundLine);
 
@@ -76,6 +79,7 @@ VROReticle::VROReticle(std::shared_ptr<VROTexture> reticleTexture) :
     _fuseTriggeredLine->setName("Reticle_FuseTriggered");
     _fuseTriggeredLine->getMaterials().front()->setWritesToDepthBuffer(false);
     _fuseTriggeredLine->getMaterials().front()->setReadsFromDepthBuffer(false);
+    _fuseTriggeredLine->getMaterials().front()->setReceivesShadows(false);
     _fuseTriggeredLine->getMaterials().front()->getDiffuse().setColor({1.0, 1.0, 1.0, 0.5});
     _fuseTriggeredNode->setGeometry(_fuseTriggeredLine);
 
@@ -273,6 +277,7 @@ void VROReticle::animateFuse(float ratio) {
     _fuseLine->setName("Reticle_Fuse");
     _fuseLine->getMaterials().front()->setWritesToDepthBuffer(false);
     _fuseLine->getMaterials().front()->setReadsFromDepthBuffer(false);
+    _fuseLine->getMaterials().front()->setReceivesShadows(false);
     _fuseLine->getMaterials().front()->getDiffuse().setColor({1.0, 1.0, 0.968, 1.0});
     
     _fuseNode->setGeometry(_fuseLine);

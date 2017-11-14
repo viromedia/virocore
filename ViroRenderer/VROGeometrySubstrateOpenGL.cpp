@@ -265,22 +265,23 @@ void VROGeometrySubstrateOpenGL::render(const VROGeometry &geometry,
                         context.getCamera().getPosition(), context.getEyeType());
     
     glBindVertexArray(_vaos[elementIndex]);
-    renderMaterial(geometry, substrate, element, opacity, context, driver);
+    renderMaterial(geometry, material, substrate, element, opacity, context, driver);
     glBindVertexArray(0);
     
     pglpop();
 }
 
 void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
-                                                VROMaterialSubstrateOpenGL *material,
+                                                const std::shared_ptr<VROMaterial> &material,
+                                                VROMaterialSubstrateOpenGL *substrate,
                                                 VROGeometryElementOpenGL &element,
                                                 float opacity,
                                                 const VRORenderContext &context,
                                                 std::shared_ptr<VRODriver> &driver) {
-    material->bindGeometry(opacity, geometry);
+    substrate->bindGeometry(opacity, geometry);
 
     int activeTexture = 0;
-    const std::vector<std::shared_ptr<VROTexture>> &textures = material->getTextures();
+    const std::vector<std::shared_ptr<VROTexture>> &textures = substrate->getTextures();
     for (int j = 0; j < textures.size(); ++j) {
         const std::shared_ptr<VROTexture> &texture = textures[j];
         
@@ -302,7 +303,7 @@ void VROGeometrySubstrateOpenGL::renderMaterial(const VROGeometry &geometry,
         }
     }
 
-    if (context.getShadowMap()) {
+    if (material->getReceivesShadows() && context.getShadowMap()) {
         VROTextureSubstrateOpenGL *substrate = (VROTextureSubstrateOpenGL *) context.getShadowMap()->getSubstrate(0, driver, nullptr);
         std::pair<GLenum, GLuint> targetAndTexture = substrate->getTexture();
         
@@ -392,7 +393,7 @@ void VROGeometrySubstrateOpenGL::renderSilhouetteTextured(const VROGeometry &geo
                         context.getCamera().getPosition(), context.getEyeType());
     
     glBindVertexArray(_vaos[elementIndex]);
-    renderMaterial(geometry, substrate, element, 1.0, context, driver);
+    renderMaterial(geometry, material, substrate, element, 1.0, context, driver);
     glBindVertexArray(0);
     
     pglpop();

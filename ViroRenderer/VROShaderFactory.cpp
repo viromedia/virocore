@@ -95,6 +95,7 @@ VROMaterialShaderCapabilities VROShaderFactory::deriveMaterialCapabilitiesKey(co
     cap.reflectiveTexture = false;
     cap.diffuseTextureStereoMode = VROStereoMode::None;
     cap.bloom = false;
+    cap.receivesShadows = true;
     
     cap.additionalModifierKeys = VROShaderModifier::getShaderModifierKey(material.getShaderModifiers());
     
@@ -170,6 +171,9 @@ VROMaterialShaderCapabilities VROShaderFactory::deriveMaterialCapabilitiesKey(co
             cap.lightingModel = VROLightingModel::Phong;
         }
     }
+
+    // Shadows
+    cap.receivesShadows = material.getReceivesShadows();
     
     // Bloom
     cap.bloom = material.isBloomEnabled();
@@ -271,7 +275,7 @@ std::shared_ptr<VROShaderProgram> VROShaderFactory::buildShader(VROShaderCapabil
     }
     
     // Shadow modifiers
-    if (lightingCapabilities.shadows) {
+    if (lightingCapabilities.shadows && materialCapabilities.receivesShadows) {
         modifiers.push_back(createShadowMapGeometryModifier());
         modifiers.push_back(createShadowMapLightModifier());
         if (kDebugShadowMaps) {

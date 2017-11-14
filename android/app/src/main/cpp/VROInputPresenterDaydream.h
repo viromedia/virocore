@@ -83,6 +83,7 @@ public:
             material->getDiffuse().setTexture(_controllerIdleTexture);
             material->setWritesToDepthBuffer(false);
             material->setReadsFromDepthBuffer(false);
+            material->setReceivesShadows(false);
         });
         _controllerNode->setSelectable(false);
 
@@ -113,6 +114,7 @@ public:
             material->getDiffuse().setTexture(_laserTexture);
             material->setWritesToDepthBuffer(false);
             material->setReadsFromDepthBuffer(false);
+            material->setReceivesShadows(false);
         });
 
         _pointerNode->setPosition(_controllerNode->getPosition());
