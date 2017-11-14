@@ -13,6 +13,7 @@
 #include "VROTransaction.h"
 #include "VROAllocationTracker.h"
 #include "VROSortKey.h"
+#include "VROThreadRestricted.h"
 #include "VROLog.h"
 #include <atomic>
 #include <algorithm>
@@ -122,6 +123,8 @@ void VROMaterial::copyFrom(std::shared_ptr<VROMaterial> material) {
     _blendMode = material->_blendMode;
     _writesToDepthBuffer = material->_writesToDepthBuffer;
     _readsFromDepthBuffer = material->_readsFromDepthBuffer;
+    _bloomThreshold = material->_bloomThreshold;
+    _receivesShadows = material->_receivesShadows;
     
     _substrate = nullptr;
     
@@ -155,44 +158,48 @@ void VROMaterial::setFresnelExponent(float fresnelExponent) {
 }
 
 void VROMaterial::fadeSnapshot() {
-    std::shared_ptr<VROTransaction> transaction = VROTransaction::get();
-    if (transaction && !transaction->isDegenerate()) {
-        std::shared_ptr<VROMaterial> shared = std::static_pointer_cast<VROMaterial>(shared_from_this());
-        std::shared_ptr<VROMaterial> outgoing = std::make_shared<VROMaterial>(shared);
-        _outgoing = outgoing;
+    if (VROThreadRestricted::isThread(VROThreadName::Renderer)) {
+        std::shared_ptr<VROTransaction> transaction = VROTransaction::get();
+        if (transaction && !transaction->isDegenerate()) {
+            std::shared_ptr<VROMaterial> shared = std::static_pointer_cast<VROMaterial>(shared_from_this());
+            std::shared_ptr<VROMaterial> outgoing = std::make_shared<VROMaterial>(shared);
+            _outgoing = outgoing;
 
-        // Fade the incoming material (this material) in, up to its previous transparency
-        float previousTransparency = _transparency;
-        _transparency = 0.0;
-        animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
-                                                        ((VROMaterial *)animatable)->_transparency = v;
-                                                    },
-                                                    0.0, previousTransparency,
-                                                    [outgoing](VROAnimatable *const animatable) {
-                                                        VROMaterial *material = ((VROMaterial *)animatable);
-                                                        // Ensure we're not removing a more recent animation
-                                                        if (outgoing == material->_outgoing) {
-                                                            material->removeOutgoingMaterial();
-                                                        }
-                                                    }
-                                                    ));
+            // Fade the incoming material (this material) in, up to its previous transparency
+            float previousTransparency = _transparency;
+            _transparency = 0.0;
+            animate(std::make_shared<VROAnimationFloat>(
+                    [](VROAnimatable *const animatable, float v) {
+                        ((VROMaterial *) animatable)->_transparency = v;
+                    },
+                    0.0, previousTransparency,
+                    [outgoing](VROAnimatable *const animatable) {
+                        VROMaterial *material = ((VROMaterial *) animatable);
+                        // Ensure we're not removing a more recent animation
+                        if (outgoing == material->_outgoing) {
+                            material->removeOutgoingMaterial();
+                        }
+                    }
+            ));
 
-        // Fade the outgoing material out as well; it looks better to cross-fade between materials,
-        // so there won't be a 'pop' effect when we suddenly remove the outgoing material
-        // (when the incoming material is opaque this is not a problem because it completely
-        // blocks the outgoing material as its transparency reaches 1.0).
-        
-        // VA: Before we had a conditional if(previousTransparency < 1.0), now we fade out regardless
-        //     since textures can contain an alpha texture.
-        // RA: the problem with removing the previousTransparency conditional is that when we crossfade two
-        //     opaque materials, we end up with opacity < 1.0 during the crossfade. e.g., when incoming opacity
-        //     is 0.25 and outgoing is 0.75, the total opacity is < 1.0.
-        
-        // TODO Figure out how to cross-fade in a way that works for both opaque and transparent materials
-          _outgoing->_transparency = previousTransparency;
-          _outgoing->animate(std::make_shared<VROAnimationFloat>([](VROAnimatable *const animatable, float v) {
-                ((VROMaterial *)animatable)->_transparency = v;
-          }, previousTransparency, 0.0));
+            // Fade the outgoing material out as well; it looks better to cross-fade between materials,
+            // so there won't be a 'pop' effect when we suddenly remove the outgoing material
+            // (when the incoming material is opaque this is not a problem because it completely
+            // blocks the outgoing material as its transparency reaches 1.0).
+
+            // VA: Before we had a conditional if(previousTransparency < 1.0), now we fade out regardless
+            //     since textures can contain an alpha texture.
+            // RA: the problem with removing the previousTransparency conditional is that when we crossfade two
+            //     opaque materials, we end up with opacity < 1.0 during the crossfade. e.g., when incoming opacity
+            //     is 0.25 and outgoing is 0.75, the total opacity is < 1.0.
+
+            // TODO Figure out how to cross-fade in a way that works for both opaque and transparent materials
+            _outgoing->_transparency = previousTransparency;
+            _outgoing->animate(std::make_shared<VROAnimationFloat>(
+                    [](VROAnimatable *const animatable, float v) {
+                        ((VROMaterial *) animatable)->_transparency = v;
+                    }, previousTransparency, 0.0));
+        }
     }
 }
 

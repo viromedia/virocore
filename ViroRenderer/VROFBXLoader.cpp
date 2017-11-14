@@ -487,9 +487,7 @@ std::unique_ptr<VROSkinner> VROFBXLoader::loadFBXSkinner(const viro::Node_Geomet
                                                                                          bone_weights_pb.bytes_per_component(),
                                                                                          bone_weights_pb.data_offset(),
                                                                                          bone_weights_pb.data_stride());
-    
-    
-    
+
     return std::unique_ptr<VROSkinner>(new VROSkinner(skeleton, geometryBindTransform, bindTransforms, boneIndices, boneWeights));
 }
 

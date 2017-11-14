@@ -328,9 +328,7 @@ public class PlatformUtil {
 
     /*
      * Run the the native function identified by the given task ID
-     * asynchronously. If backround is true, the task will be run in
-     * a background thread. If background is false, it will be run on
-     * the rendering thread.
+     * asynchronously on the rendering thread.
      */
     public void dispatchRenderer(final int taskId) {
         mRenderQueue.queueEvent(new Runnable() {
@@ -343,7 +341,7 @@ public class PlatformUtil {
 
     /*
      * Run the the native function identified by the given task ID
-     * asynchronously on an the application UI thread.
+     * asynchronously on the application UI thread.
      */
     public void dispatchApplication(final int taskId) {
         Runnable myRunnable = new Runnable() {
