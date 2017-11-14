@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply from: 'maven-push.gradle'
 
 android {
     compileSdkVersion 25
@@ -18,7 +19,11 @@ android {
             // libraries Gradle should build and package with your APK.
             abiFilters 'armeabi-v7a'
         }
+
+
     }
+    publishNonDefault true
+
     buildTypes {
         release {
             minifyEnabled false
@@ -27,6 +32,16 @@ android {
         }
         debug {
             buildConfigField "String", "COGNITO_IDENTITY_POOL_ID", "***REMOVED***"
+        }
+    }
+
+    productFlavors {
+        viro_core {
+            buildConfigField "String", "dummyField", "\"ViroCore\""
+        }
+
+        viro_react {
+            buildConfigField "String", "dummyField", "\"ViroReact\""
         }
     }
     externalNativeBuild {
@@ -56,8 +71,8 @@ task copyReleaseAAR(type: Copy) {
     // Change the next line to reflect the path to your react-viro repo, this
     // script is run from ViroRenderer/android/app/
     into('../../../react-viro/android/viro_renderer/')
-    include(project.name + '-release.aar')
-    rename(project.name + '-release.aar', 'viro_renderer-release.aar')
+    include('app-viro_react-release.aar')
+    rename('app-viro_react-release.aar', 'viro_renderer-release.aar')
 }
 
 tasks.whenTaskAdded { task ->

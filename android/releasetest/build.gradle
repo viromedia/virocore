@@ -83,7 +83,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile project(':arcore_client')
-    compile project(':app')
+    compile project(path: ':app', configuration: 'viro_coreRelease')
     compile project(':libs:gvr')
     compile 'com.android.support:appcompat-v7:25.0.0'
     // testing dependencies

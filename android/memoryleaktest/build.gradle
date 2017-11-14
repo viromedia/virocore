@@ -64,7 +64,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':arcore_client')
-    compile project(':app')
+    compile project(path: ':app', configuration: 'viro_coreRelease')
     compile project(':libs:gvr')
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.6-SNAPSHOT'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.6-SNAPSHOT'

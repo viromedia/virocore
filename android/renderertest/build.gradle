@@ -57,5 +57,6 @@ dependencies {
     compile project(':arcore_client')
     compile project(':app')
     compile project(':libs:gvr')
+    compile project(path: ':app', configuration: 'viro_reactRelease')
     compile 'com.android.support:appcompat-v7:25.0.0'
 }
