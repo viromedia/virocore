@@ -952,7 +952,14 @@ static VROVector3f const kZeroVector = VROVector3f();
             [self initARSessionWithViewport:viewport scene:_sceneController->getScene()];
         }
     }
-    
+
+    // The viewport can be 0, if say in React Native, the user accidentally messes up their
+    // styles and React Native lays the view out with 0 width or height. No use rendering
+    // in this case.
+    if (viewport.getWidth() == 0 || viewport.getHeight() == 0) {
+        return;
+    }
+
     if (_arSession->isReady()) {
         // TODO Only on viewport change (and scene change!)
         _arSession->setViewport(viewport);
