@@ -8,11 +8,11 @@
 
 
 PortalDelegate::PortalDelegate(jobject javaPortalSceneObject){
-    _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewGlobalRef(javaPortalSceneObject));
+    _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(javaPortalSceneObject));
 }
 
 PortalDelegate::~PortalDelegate() {
-    VROPlatformGetJNIEnv()->DeleteGlobalRef(_javaObject);
+    VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
 }
 
 void PortalDelegate::onPortalEnter() {

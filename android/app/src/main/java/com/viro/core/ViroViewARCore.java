@@ -329,6 +329,7 @@ public class ViroViewARCore extends ViroView {
         if (!(scene instanceof ARScene)) {
             throw new IllegalArgumentException("ViroViewARCore requires an ARScene");
         }
+        super.setScene(scene);
         mNativeRenderer.setSceneController(scene.mNativeRef, 1.0f);
     }
 
@@ -414,6 +415,21 @@ public class ViroViewARCore extends ViroView {
     @Override
     public void onActivityDestroyed(Activity activity) {
         this.dispose();
+
+        /*
+          TODO VIRO-2280: Fix Tango Memory leak that holds onto ViroViewARCore.
+          As a temporary patch, we null out our viro components here to free up
+          most of our 3D controls in memory.
+         */
+        mARTouchGestureListener = null;
+        mPlatformUtil = null;
+        mAssetManager = null;
+        mSurfaceView = null;
+        mRenderer = null;
+        mSession = null;
+        mFrameListeners.clear();
+        mFrameListeners = null;
+        // End TODO VIRO-2280
     }
 
     @Override

@@ -37,6 +37,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -65,6 +66,33 @@ public class PlatformUtil {
         mAssetManager = assetManager;
         mRenderQueue = queue;
         mApplicationHandler = new Handler(Looper.getMainLooper());
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            dispose();
+        } finally {
+            super.finalize();
+        }
+    }
+
+    private void dispose(){
+        // Ensure that all referenced video sinks that were created are cleaned up.
+        Iterator it = mVideoSinks.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            VideoSink videoSink = (VideoSink) pair.getValue();
+            mFrameListeners.remove(videoSink);
+            videoSink.releaseSurface();
+            it.remove();
+        }
+
+        mVideoSinks = null;
+        mContext = null;
+        mFrameListeners = null;
+        mRenderQueue = null;
+        mApplicationHandler = null;
     }
 
     /**

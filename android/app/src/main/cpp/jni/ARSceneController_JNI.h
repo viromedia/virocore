@@ -13,6 +13,7 @@
 #include <VROARSceneController.h>
 #include <VROARDeclarativeSession.h>
 #include <VROARImperativeSession.h>
+#include <VROPlatformUtil.h>
 #include "PersistentRef.h"
 
 namespace ARSceneController {
@@ -32,12 +33,11 @@ namespace ARSceneController {
 class ARDeclarativeSceneDelegate : public VROARSceneDelegate, public VROARDeclarativeSessionDelegate {
 public:
     ARDeclarativeSceneDelegate(jobject arSceneJavaObject, JNIEnv *env) {
-        _javaObject = reinterpret_cast<jclass>(env->NewGlobalRef(arSceneJavaObject));
-        _env = env;
+        _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(arSceneJavaObject));
     }
 
     virtual ~ARDeclarativeSceneDelegate() {
-        _env->DeleteGlobalRef(_javaObject);
+        VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
     }
 
     static jlong jptr(std::shared_ptr<ARDeclarativeSceneDelegate> arSceneDelegate) {
@@ -59,18 +59,16 @@ public:
 
 private:
     jobject _javaObject;
-    JNIEnv *_env;
 };
 
 class ARImperativeSceneDelegate : public VROARSceneDelegate, public VROARImperativeSessionDelegate {
 public:
     ARImperativeSceneDelegate(jobject arSceneJavaObject, JNIEnv *env) {
-        _javaObject = reinterpret_cast<jclass>(env->NewGlobalRef(arSceneJavaObject));
-        _env = env;
+        _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(arSceneJavaObject));
     }
 
     virtual ~ARImperativeSceneDelegate() {
-        _env->DeleteGlobalRef(_javaObject);
+        VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
     }
 
     static jlong jptr(std::shared_ptr<ARImperativeSceneDelegate> arSceneDelegate) {
@@ -92,7 +90,6 @@ public:
 
 private:
     jobject _javaObject;
-    JNIEnv *_env;
 };
 
 #endif

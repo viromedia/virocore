@@ -69,7 +69,7 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     protected WeakReference<Activity> mWeakActivity;
     private String mApiKey;
     protected RendererStartListener mRenderStartListener = null;
-
+    private Scene mCurrentScene;
 
     /**
      * @hide
@@ -135,6 +135,13 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
         if (mDestroyed) {
             return;
         }
+
+        /*
+          TODO VIRO-2280: Fix Tango Memory leak that holds onto ViroViewARCore.
+          As a temporary patch, we null out mCurrent scene here to release our 3D scene
+          in memory.
+         */
+        mCurrentScene = null;
         mDestroyed = true;
         mNativeViroContext.dispose();
         mNativeRenderer.destroy();
@@ -156,7 +163,9 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
      *
      * @param scene The {@link Scene} to render in this ViroView.
      */
-    public abstract void setScene(Scene scene);
+    public void setScene(Scene scene){
+        mCurrentScene = scene;
+    }
 
     /**
      * For VR applications, set this to true to render in stereo mode. Stereo renders two images:

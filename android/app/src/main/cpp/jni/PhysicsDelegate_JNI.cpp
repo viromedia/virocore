@@ -13,11 +13,11 @@
 #include "VROLog.h"
 
 PhysicsDelegate_JNI::PhysicsDelegate_JNI(jobject obj){
-    _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewGlobalRef(obj));
+    _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(obj));
 }
 
 PhysicsDelegate_JNI::~PhysicsDelegate_JNI() {
-    VROPlatformGetJNIEnv()->DeleteGlobalRef(_javaObject);
+    VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
 }
 
 void PhysicsDelegate_JNI::onCollided(std::string key, VROPhysicsBody::VROCollision collision) {

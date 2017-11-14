@@ -14,12 +14,12 @@
 #include "Geometry_JNI.h"
 
 OBJLoaderDelegate::OBJLoaderDelegate(jobject nodeJavaObject, JNIEnv *env) {
-    _javaObject = reinterpret_cast<jclass>(env->NewGlobalRef(nodeJavaObject));
+    _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(nodeJavaObject));
 }
 
 OBJLoaderDelegate::~OBJLoaderDelegate() {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    env->DeleteGlobalRef(_javaObject);
+    env->DeleteWeakGlobalRef(_javaObject);
 }
 
 void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlong requestId) {

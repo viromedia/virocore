@@ -11,11 +11,11 @@
 #include "TransformDelegate_JNI.h"
 
 TransformDelegate_JNI::TransformDelegate_JNI(jobject javaDelegateObject, double distanceFilter):VROTransformDelegate(distanceFilter){
-    _javaObject  = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewGlobalRef(javaDelegateObject));
+    _javaObject  = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(javaDelegateObject));
 }
 
 TransformDelegate_JNI::~TransformDelegate_JNI() {
-    VROPlatformGetJNIEnv()->DeleteGlobalRef(_javaObject);
+    VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
 }
 
 

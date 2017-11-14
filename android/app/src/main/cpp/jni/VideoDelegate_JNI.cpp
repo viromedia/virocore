@@ -15,11 +15,11 @@
 #include "VROLog.h"
 
 VideoDelegate::VideoDelegate(jobject javaVideoObject){
-    _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewGlobalRef(javaVideoObject));
+    _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(javaVideoObject));
 }
 
 VideoDelegate::~VideoDelegate() {
-    VROPlatformGetJNIEnv()->DeleteGlobalRef(_javaObject);
+    VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
 }
 
 void VideoDelegate::videoWillBuffer() {

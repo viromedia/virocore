@@ -80,7 +80,6 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
 
         Intent intent = getIntent();
         mTestToRun = intent.getStringExtra("TestToRun");
-
         mViroView.setVRModeEnabled(false);
         setContentView(mViroView);
         Log.i("MemoryLeakTest", "ViroViewGVR addr onCreate:" + mViroView.hashCode());
@@ -127,6 +126,21 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         initializeArScene();
     }
 
+    public void initializeVrScene() {
+        final Scene scene = new Scene();
+        final Node rootNode = scene.getRootNode();
+        List<Node> nodes = selectScene(scene);
+        if (nodes != null){
+            for (final Node node : nodes) {
+                rootNode.addChildNode(node);
+            }
+        }
+
+        final AmbientLight ambientLightJni = new AmbientLight(Color.WHITE, 300.0f);
+        scene.getRootNode().addLight(ambientLightJni);
+        mViroView.setScene(scene);
+    }
+
     public void initializeArScene() {
         final ARScene scene = new ARScene();
         final Node rootNode = scene.getRootNode();
@@ -137,8 +151,6 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
             }
         }
 
-        final AmbientLight ambientLightJni = new AmbientLight(Color.WHITE, 300.0f);
-        scene.getRootNode().addLight(ambientLightJni);
         mViroView.setScene(scene);
     }
 

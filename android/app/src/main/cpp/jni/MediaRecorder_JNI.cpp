@@ -53,10 +53,12 @@ JNI_METHOD(void, nativeScheduleScreenCapture)(JNIEnv *env,
 
 
 MediaRecorder_JNI::MediaRecorder_JNI(jobject recorderJavaObject, JNIEnv *env) {
-    _javaMediaRecorder = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewGlobalRef(recorderJavaObject));
+    _javaMediaRecorder = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewWeakGlobalRef(recorderJavaObject));
 }
 
 MediaRecorder_JNI::~MediaRecorder_JNI() {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    env->DeleteWeakGlobalRef(_javaMediaRecorder);
 }
 
 /*

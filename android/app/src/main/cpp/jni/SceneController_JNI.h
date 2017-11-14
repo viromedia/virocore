@@ -7,6 +7,7 @@
 #include <jni.h>
 #include <memory>
 #include <VROSceneController.h>
+#include <VROPlatformUtil.h>
 
 #include "PersistentRef.h"
 
@@ -25,12 +26,11 @@ namespace SceneController {
 class SceneControllerDelegate : public VROSceneController::VROSceneControllerDelegate {
 public:
     SceneControllerDelegate(jobject sceneJavaObject, JNIEnv *env) {
-        _javaObject = reinterpret_cast<jclass>(env->NewGlobalRef(sceneJavaObject));
-        _env = env;
+        _javaObject = reinterpret_cast<jclass>(env->NewWeakGlobalRef(sceneJavaObject));
     }
 
     ~SceneControllerDelegate() {
-        _env->DeleteGlobalRef(_javaObject);
+        VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
     }
 
     static jlong jptr(std::shared_ptr<SceneControllerDelegate> shared_node) {
@@ -50,6 +50,4 @@ public:
 private:
     void callVoidFunctionWithName(std::string functionName);
     jobject _javaObject;
-    JNIEnv *_env;
-
 };

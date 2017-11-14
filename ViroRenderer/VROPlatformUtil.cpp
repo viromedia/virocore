@@ -505,6 +505,12 @@ jobject VROPlatformCreateVideoSink(int textureId) {
 }
 
 void VROPlatformDestroyVideoSink(int textureId) {
+    // As Video finalizers in Java can get called after the renderer is destroyed,
+    // we perform a null check here to prevent video sinks from getting cleaned up twice.
+    if (sPlatformUtil == NULL){
+        return;
+    }
+
     JNIEnv *env;
     getJNIEnv(&env);
 
