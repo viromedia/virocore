@@ -221,6 +221,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShape.html">PhysicsShape</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.HitTestListener.html">PhysicsWorld.HitTestListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.EntryListener.html">PortalScene.EntryListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererCloseListener.html">RendererCloseListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.VisibilityListener.html">Scene.VisibilityListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sound.PlaybackListener.html">Sound.PlaybackListener</a></li>
@@ -230,7 +231,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadSwipeListener.html">TouchpadSwipeListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></li>
       </ul>
     </li>
           
@@ -251,6 +253,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.html">Material</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.html">Node</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/OmniLight.html">OmniLight</a></li>
@@ -326,7 +329,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchState.html">TouchState</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.ERROR.html">ViroMediaRecorderDelegate.ERROR</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.Error.html">ViroMediaRecorder.Error</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewARCore.AnchorDetectionType.html">ViroViewARCore.AnchorDetectionType</a></li>
       </ul>
     </li>
@@ -718,8 +721,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
  <code><a href="../../../../reference/com/viro/core/ARScene.html">ARScene</a></code> for AR), adding content to the Scene, and assigning it to the ViroView with
  <code><a href="../../../../reference/com/viro/core/ViroView.html#setScene(com.viro.core.Scene)">setScene(Scene)</a></code>.
  <p>
- Note that after instantiation, the ViroView must validate your Viro API Key. To do this, pass your
- API key into <code><a href="../../../../reference/com/viro/core/ViroView.html#validateAPIKey(java.lang.String)">validateAPIKey(String)</a></code>.
+ Note that after instantiation, the ViroView will validate your Viro API Key. To do this, pass your
+ API key into AndroidManifest.xml metadata as <meta-data android:name="com.viromedia.API_KEY" android:value="YOUR_API_KEY"/>.
 </p>
 
 
@@ -783,6 +786,115 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>Release native resources associated with this ViroView.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        final
+        
+        <a href="../../../../reference/com/viro/core/Controller.html">Controller</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#getController()">getController</a>()
+      </code>
+      
+        <p>Retrieve the <code><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></code> for this view.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#getLastCameraForwardRealtime()">getLastCameraForwardRealtime</a>()
+      </code>
+      
+        <p>Get the direction in which the Camera is facing (e.g.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#getLastCameraPositionRealtime()">getLastCameraPositionRealtime</a>()
+      </code>
+      
+        <p>Get the real-time <i>world</i> position from the current point of view (Camera).
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#getLastCameraRotationEulerRealtime()">getLastCameraRotationEulerRealtime</a>()
+      </code>
+      
+        <p>Get the real-time <i>local</i> orientation from the current point of view (Camera), expressed as
+ three Euler angles.
         
     
 </p>
@@ -904,6 +1016,33 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
     <td><code>
+        
+        
+        
+        final
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroView.html#setRenderStartListener(com.viro.core.RendererStartListener)">setRenderStartListener</a>(<a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a> renderStartListener)
+      </code>
+      
+        <p>Set the callback listener that will be invoked when the renderer has finished initializing.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
         abstract
         
         
@@ -945,33 +1084,6 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
       </code>
       
         <p>For VR applications, set this to true to render in stereo mode.
-        
-    
-</p>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        final
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ViroView.html#validateAPIKey(java.lang.String)">validateAPIKey</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> apiKey)
-      </code>
-      
-        <p>Your Viro API key must be validated, via this method, prior to rendering content.
         
     
 </p>
@@ -1036,6 +1148,133 @@ void dispose ()</pre>
     
   <p>Release native resources associated with this ViroView.
 </p></p>
+
+</div>
+
+
+<A NAME="getController()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getController</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Controller.html">Controller</a> getController ()</pre>
+    
+    
+
+    
+  <p>Retrieve the <code><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></code> for this view. Controller represents the user interface
+ through which the user interacts with the <code><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></code>. The exact form of Controller depends
+ on the underlying platform. For example, for Daydream this represents the Daydream controller
+ (the laser pointer). For Cardboard and GearVR, Controller is effectively the head-mounted
+ display itself (and its tap button).</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></code></td>
+        <td width="100%">The <code><a href="../../../../reference/com/viro/core/Controller.html">Controller</a></code> for this ViroView.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getLastCameraForwardRealtime()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getLastCameraForwardRealtime</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> getLastCameraForwardRealtime ()</pre>
+    
+    
+
+    
+  <p>Get the direction in which the Camera is facing (e.g. in the direction of the reticle).</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The direction the Camera is facing.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getLastCameraPositionRealtime()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getLastCameraPositionRealtime</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> getLastCameraPositionRealtime ()</pre>
+    
+    
+
+    
+  <p>Get the real-time <i>world</i> position from the current point of view (Camera). The
+ position returned is real-time in that it is the position the Camera currently appears on-screen.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The real-time position as a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getLastCameraRotationEulerRealtime()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getLastCameraRotationEulerRealtime</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> getLastCameraRotationEulerRealtime ()</pre>
+    
+    
+
+    
+  <p>Get the real-time <i>local</i> orientation from the current point of view (Camera), expressed as
+ three Euler angles. Specifically, the X component is rotation about the X axis (pitch), the
+ Y component is rotation about the node's Y axis (yaw), and Z is the rotation around the node's Z axis
+ (roll). This returns the real-time orientation, meaning the orientation of the Camera as it
+ currently appears on-screen.
+
+ The returned orientation is the Camera's <i>world</i> orientation.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The rotation in Euler form as a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> in radians.
+</p></td>
+      </tr>
+    </table>
 
 </div>
 
@@ -1157,6 +1396,36 @@ void setPointOfView (<a href="../../../../reference/com/viro/core/Node.html">Nod
 </div>
 
 
+<A NAME="setRenderStartListener(com.viro.core.RendererStartListener)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setRenderStartListener</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setRenderStartListener (<a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a> renderStartListener)</pre>
+    
+    
+
+    
+  <p>Set the callback listener that will be invoked when the renderer has finished initializing.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>renderStartListener</code></td>
+        <td width="100%">
+          <code>RendererStartListener</code>: <code><a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a></code> callback.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 <A NAME="setScene(com.viro.core.Scene)"></A>
 
 <div class="api apilevel-">
@@ -1216,38 +1485,6 @@ void setVRModeEnabled (boolean vrModeEnabled)</pre>
         <td><code>vrModeEnabled</code></td>
         <td width="100%">
           <code>boolean</code>: True to enable VR mode.
-</p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="validateAPIKey(java.lang.String)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">validateAPIKey</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void validateAPIKey (<a href="http://d.android.com/reference/java/lang/String.html">String</a> apiKey)</pre>
-    
-    
-
-    
-  <p>Your Viro API key must be validated, via this method, prior to rendering content. Content
- will render during the validation process; if the key fails validation, the screen will
- deactivate and render black.</p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>apiKey</code></td>
-        <td width="100%">
-          <code>String</code>: Your Viro API key.
 </p></td>
       </tr>
     </table>

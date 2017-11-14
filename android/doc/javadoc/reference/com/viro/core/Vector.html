@@ -221,6 +221,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShape.html">PhysicsShape</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.HitTestListener.html">PhysicsWorld.HitTestListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.EntryListener.html">PortalScene.EntryListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererCloseListener.html">RendererCloseListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.VisibilityListener.html">Scene.VisibilityListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sound.PlaybackListener.html">Sound.PlaybackListener</a></li>
@@ -230,7 +231,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadSwipeListener.html">TouchpadSwipeListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></li>
       </ul>
     </li>
           
@@ -251,6 +253,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.html">Material</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.html">Node</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/OmniLight.html">OmniLight</a></li>
@@ -326,7 +329,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchState.html">TouchState</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.ERROR.html">ViroMediaRecorderDelegate.ERROR</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.Error.html">ViroMediaRecorder.Error</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewARCore.AnchorDetectionType.html">ViroViewARCore.AnchorDetectionType</a></li>
       </ul>
     </li>
@@ -574,9 +577,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>Represents a 3-component floating-point vector.
-
- TODO Add equals and hashCode
+  <p>Vector represents a 3-component floating-point vector.
 </p>
 
 
@@ -761,6 +762,463 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <tr><th colspan="2"><h3>Public methods</h3></th></tr>
 
 
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#add(com.viro.core.Vector)">add</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> vB)
+      </code>
+      
+        <p>Add this Vector to the given Vector and return the result (neither this Vector nor the
+ input Vector are mutated).
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#clear()">clear</a>()
+      </code>
+      
+        <p>Zero out this Vector.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#cross(com.viro.core.Vector)">cross</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> vB)
+      </code>
+      
+        <p>Compute the cross product between this Vector and the given Vector and return the result
+ (neither this Vector nor the input Vector are mutated).
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#distance(com.viro.core.Vector)">distance</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> vB)
+      </code>
+      
+        <p>Return the Euclidean distance between the position defined by this Vector and the position defined
+ by the given Vector.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#dot(com.viro.core.Vector)">dot</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> vB)
+      </code>
+      
+        <p>Return the dot product of this Vector with the given Vector.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        boolean</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#equals(java.lang.Object)">equals</a>(<a href="http://d.android.com/reference/java/lang/Object.html">Object</a> object)
+      </code>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        int</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#hashCode()">hashCode</a>()
+      </code>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#interpolate(com.viro.core.Vector, float)">interpolate</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> other, float t)
+      </code>
+      
+        <p>Interpolate between this Vector and the given Vector by the given value (between 0 and 1),
+ and return the result (neither this Vector nor the input Vector are mutated).
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#magnitude()">magnitude</a>()
+      </code>
+      
+        <p>Return the magnitude of this Vector.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#midpoint(com.viro.core.Vector)">midpoint</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> other)
+      </code>
+      
+        <p>Return the midpoint between this Vector and the given Vector.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#normalize()">normalize</a>()
+      </code>
+      
+        <p>Normalize this vector and return the result (this Vector is not mutated).
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        boolean</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#rayIntersectPlane(com.viro.core.Vector, com.viro.core.Vector, com.viro.core.Vector, com.viro.core.Vector)">rayIntersectPlane</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> point, <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> normal, <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> origin, <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> intPt)
+      </code>
+      
+        <p>Determine if the ray defined by the given origin, in the direction of this Vector, intersects
+ the plane defined by the given point and normal vector.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#rotateAboutAxis(com.viro.core.Vector, com.viro.core.Vector, float)">rotateAboutAxis</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> axisDir, <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> axisPos, float angleRad)
+      </code>
+      
+        <p>Rotate this Vector about the given axis, and return the result (neither this Vector nor the
+ input Vector are mutated).
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#scale(float)">scale</a>(float factor)
+      </code>
+      
+        <p>Scale each component of this Vector by the given amount and return the result (this Vector is
+ not mutated).
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#set(float, float, float)">set</a>(float x, float y, float z)
+      </code>
+      
+        <p>Set the X, Y, and X components of this Vector.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#set(com.viro.core.Vector)">set</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> value)
+      </code>
+      
+        <p>Set this Vector to equal the given vector.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Vector.html#subtract(com.viro.core.Vector)">subtract</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> vB)
+      </code>
+      
+        <p>Subtract the given Vector from this Vector and return the result (neither this Vector nor the
+ input Vector are mutated).
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
 
   
   <tr class="api apilevel-" >
@@ -1070,6 +1528,637 @@ Vector (float[] coordinates)</pre>
 
 <h2 class="api-section">Public methods</h2>
 
+
+
+<A NAME="add(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">add</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> add (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> vB)</pre>
+    
+    
+
+    
+  <p>Add this Vector to the given Vector and return the result (neither this Vector nor the
+ input Vector are mutated).</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>vB</code></td>
+        <td width="100%">
+          <code>Vector</code>: The Vector to add to this one.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The result.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="clear()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">clear</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void clear ()</pre>
+    
+    
+
+    
+  <p>Zero out this Vector.
+</p></p>
+
+</div>
+
+
+<A NAME="cross(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">cross</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> cross (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> vB)</pre>
+    
+    
+
+    
+  <p>Compute the cross product between this Vector and the given Vector and return the result
+ (neither this Vector nor the input Vector are mutated).</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>vB</code></td>
+        <td width="100%">
+          <code>Vector</code>: The Vector to cross with this one.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The cross product of the two Vectors.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="distance(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">distance</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float distance (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> vB)</pre>
+    
+    
+
+    
+  <p>Return the Euclidean distance between the position defined by this Vector and the position defined
+ by the given Vector.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>vB</code></td>
+        <td width="100%">
+          <code>Vector</code>: Return the distance to this position.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>float</code></td>
+        <td width="100%">The distance between the two positions.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="dot(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">dot</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float dot (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> vB)</pre>
+    
+    
+
+    
+  <p>Return the dot product of this Vector with the given Vector.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>vB</code></td>
+        <td width="100%">
+          <code>Vector</code>: The Vector to dot with.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>float</code></td>
+        <td width="100%">The result of the dot product.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="equals(java.lang.Object)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">equals</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+boolean equals (<a href="http://d.android.com/reference/java/lang/Object.html">Object</a> object)</pre>
+    
+    
+
+    
+  <p></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>object</code></td>
+        <td width="100%">
+          <code>Object</code> <!-- no parameter comment --></p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="hashCode()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">hashCode</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+int hashCode ()</pre>
+    
+    
+
+    
+  <p></p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>int</code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="interpolate(com.viro.core.Vector, float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">interpolate</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> interpolate (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> other, 
+                float t)</pre>
+    
+    
+
+    
+  <p>Interpolate between this Vector and the given Vector by the given value (between 0 and 1),
+ and return the result (neither this Vector nor the input Vector are mutated).</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>other</code></td>
+        <td width="100%">
+          <code>Vector</code>: The Vector to interpolate between.</p></td>
+      </tr>
+      <tr>
+        <td><code>t</code></td>
+        <td width="100%">
+          <code>float</code>: The interpolation amount (where 0 is this Vector and 1 is the input Vector).</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The interpolated Vector.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="magnitude()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">magnitude</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float magnitude ()</pre>
+    
+    
+
+    
+  <p>Return the magnitude of this Vector.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>float</code></td>
+        <td width="100%">The magnitude.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="midpoint(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">midpoint</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> midpoint (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> other)</pre>
+    
+    
+
+    
+  <p>Return the midpoint between this Vector and the given Vector.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>other</code></td>
+        <td width="100%">
+          <code>Vector</code>: The Vector we return the midpoint from.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The midpoint between the two Vectors.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="normalize()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">normalize</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> normalize ()</pre>
+    
+    
+
+    
+  <p>Normalize this vector and return the result (this Vector is not mutated).</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The normalized Vector.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="rayIntersectPlane(com.viro.core.Vector, com.viro.core.Vector, com.viro.core.Vector, com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">rayIntersectPlane</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+boolean rayIntersectPlane (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> point, 
+                <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> normal, 
+                <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> origin, 
+                <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> intPt)</pre>
+    
+    
+
+    
+  <p>Determine if the ray defined by the given origin, in the direction of this Vector, intersects
+ the plane defined by the given point and normal vector.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>point</code></td>
+        <td width="100%">
+          <code>Vector</code>: Any point on the plane.</p></td>
+      </tr>
+      <tr>
+        <td><code>normal</code></td>
+        <td width="100%">
+          <code>Vector</code>: The normal of the plane.</p></td>
+      </tr>
+      <tr>
+        <td><code>origin</code></td>
+        <td width="100%">
+          <code>Vector</code>: The origin of the ray.</p></td>
+      </tr>
+      <tr>
+        <td><code>intPt</code></td>
+        <td width="100%">
+          <code>Vector</code>: Store the point of intersection, if any, between the ray and plane here.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%">True if the ray intersected the plane.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="rotateAboutAxis(com.viro.core.Vector, com.viro.core.Vector, float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">rotateAboutAxis</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> rotateAboutAxis (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> axisDir, 
+                <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> axisPos, 
+                float angleRad)</pre>
+    
+    
+
+    
+  <p>Rotate this Vector about the given axis, and return the result (neither this Vector nor the
+ input Vector are mutated).</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>axisDir</code></td>
+        <td width="100%">
+          <code>Vector</code>: The direction of the axis we are rotating about.</p></td>
+      </tr>
+      <tr>
+        <td><code>axisPos</code></td>
+        <td width="100%">
+          <code>Vector</code>: Any point on the axis we are rotating about.</p></td>
+      </tr>
+      <tr>
+        <td><code>angleRad</code></td>
+        <td width="100%">
+          <code>float</code>: The amount by which we should rotate, in radians.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The rotated Vector.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="scale(float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">scale</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> scale (float factor)</pre>
+    
+    
+
+    
+  <p>Scale each component of this Vector by the given amount and return the result (this Vector is
+ not mutated).</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>factor</code></td>
+        <td width="100%">
+          <code>float</code>: The factor by which to multiply each component of this Vector.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The scaled Vector.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="set(float, float, float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">set</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void set (float x, 
+                float y, 
+                float z)</pre>
+    
+    
+
+    
+  <p>Set the X, Y, and X components of this Vector.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>x</code></td>
+        <td width="100%">
+          <code>float</code>: The X component.</p></td>
+      </tr>
+      <tr>
+        <td><code>y</code></td>
+        <td width="100%">
+          <code>float</code>: The Y component.</p></td>
+      </tr>
+      <tr>
+        <td><code>z</code></td>
+        <td width="100%">
+          <code>float</code>: The Z component.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="set(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">set</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void set (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> value)</pre>
+    
+    
+
+    
+  <p>Set this Vector to equal the given vector. Each component (x, y, z) will be copied from
+ the given Vector.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>value</code></td>
+        <td width="100%">
+          <code>Vector</code>: The Vector whose values we will copy into this Vector.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="subtract(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">subtract</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> subtract (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> vB)</pre>
+    
+    
+
+    
+  <p>Subtract the given Vector from this Vector and return the result (neither this Vector nor the
+ input Vector are mutated).</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>vB</code></td>
+        <td width="100%">
+          <code>Vector</code>: The Vector to subtract from this one.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The result.
+</p></td>
+      </tr>
+    </table>
+
+</div>
 
 
 <A NAME="toArray()"></A>

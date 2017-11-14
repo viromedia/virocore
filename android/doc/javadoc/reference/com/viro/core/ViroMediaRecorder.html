@@ -221,6 +221,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShape.html">PhysicsShape</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.HitTestListener.html">PhysicsWorld.HitTestListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.EntryListener.html">PortalScene.EntryListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererCloseListener.html">RendererCloseListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.VisibilityListener.html">Scene.VisibilityListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sound.PlaybackListener.html">Sound.PlaybackListener</a></li>
@@ -230,7 +231,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadSwipeListener.html">TouchpadSwipeListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></li>
       </ul>
     </li>
           
@@ -251,6 +253,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.html">Material</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.html">Node</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/OmniLight.html">OmniLight</a></li>
@@ -326,7 +329,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchState.html">TouchState</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.ERROR.html">ViroMediaRecorderDelegate.ERROR</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.Error.html">ViroMediaRecorder.Error</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewARCore.AnchorDetectionType.html">ViroViewARCore.AnchorDetectionType</a></li>
       </ul>
     </li>
@@ -574,8 +577,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>ViroMediaRecorder encapsulates the implementation and handling of screenshot capturing and
- screen recording of a rendered scene associated with a given Renderer.
+  <p>ViroMediaRecorder enables you to take a screenshot or record a video of the scene rendered in
+ your <code><a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a></code>.
 </p>
 
 
@@ -590,47 +593,85 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
-<table id="pubctors" class="responsive constructors">
-<tr><th colspan="2"><h3>Public constructors</h3></th></tr>
-
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<table id="nestedclasses" class="responsive">
+<tr><th colspan="2"><h3>Nested classes</h3></th></tr>
 
 
   
-  <tr class="api apilevel-" >
-  
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#ViroMediaRecorder(android.content.Context, com.viro.core.Renderer, int, int)">ViroMediaRecorder</a>(<a href="http://d.android.com/reference/android/content/Context.html">Context</a> context, <a href="../../../../reference/com/viro/core/Renderer.html">Renderer</a> rendererJni, int width, int height)
-      </code>
-      
-    </td>
-  </tr>
-  
+    <tr class="api apilevel-" >
+      <td class="jd-typecol"><code>
+        
+        
+        
+        
+        enum</code></td>
+      <td class="jd-descrcol" width="100%">
+        <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.Error.html">ViroMediaRecorder.Error</a></code>
+        <p>Enum indicating what error (if any) was encountered during a recording operation.&nbsp;
+        
+    
+</p>
+      </td>
+    </tr>
+    
+    
+    <tr class="api apilevel-" >
+      <td class="jd-typecol"><code>
+        
+        
+        
+        
+        interface</code></td>
+      <td class="jd-descrcol" width="100%">
+        <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></code>
+        <p>Listener for responding to recording success and failure.&nbsp;
+        
+    
+</p>
+      </td>
+    </tr>
+    
+    
+    <tr class="api apilevel-" >
+      <td class="jd-typecol"><code>
+        
+        
+        
+        
+        interface</code></td>
+      <td class="jd-descrcol" width="100%">
+        <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></code>
+        <p>Listener for responding to errors when starting a recording, and for responding to errors
+ during a recording.&nbsp;
+        
+    
+</p>
+      </td>
+    </tr>
+    
+    
 
 
-</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -658,77 +699,10 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#destroy()">destroy</a>()
+      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#startRecordingAsync(java.lang.String, boolean, com.viro.core.ViroMediaRecorder.RecordingErrorListener)">startRecordingAsync</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> fileName, boolean saveToCameraRoll, <a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a> errorListener)
       </code>
       
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        static
-        
-        
-        boolean</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#hasAudioAndRecordingPermissions(android.content.Context)">hasAudioAndRecordingPermissions</a>(<a href="http://d.android.com/reference/android/content/Context.html">Context</a> context)
-      </code>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        static
-        
-        
-        boolean</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#hasRecordingPermissions(android.content.Context)">hasRecordingPermissions</a>(<a href="http://d.android.com/reference/android/content/Context.html">Context</a> context)
-      </code>
-      
-    </td>
-  </tr>
-  
-
-  
-  <tr class="api apilevel-" >
-  
-  
-    <td><code>
-        
-        
-        
-        
-        
-        void</code>
-    </td>
-  
-    <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#startRecordingAsync(java.lang.String, boolean, com.viro.core.ViroMediaRecorderDelegate)">startRecordingAsync</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> fileName, boolean saveToCameraRoll, <a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a> onErrorDelegate)
-      </code>
-      
-        <p>Schedules a screen recording to start on the next rendered frame and be saved with the
- provided fileName.
+        <p>Schedules a screen recording to start on the next rendered frame.
         
     
 </p>
@@ -752,7 +726,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#stopRecordingAsync(com.viro.core.ViroMediaRecorderDelegate)">stopRecordingAsync</a>(<a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a> completionCallback)
+      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#stopRecordingAsync(com.viro.core.ViroMediaRecorder.FinishListener)">stopRecordingAsync</a>(<a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a> finishListener)
       </code>
       
         <p>Schedules the conclusion of the current video recording, if any.
@@ -779,11 +753,10 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#takeScreenShotAsync(java.lang.String, boolean, com.viro.core.ViroMediaRecorderDelegate)">takeScreenShotAsync</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> fileName, boolean saveToCameraRoll, <a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a> completionCallback)
+      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#takeScreenShotAsync(java.lang.String, boolean, com.viro.core.ViroMediaRecorder.FinishListener)">takeScreenShotAsync</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> fileName, boolean saveToCameraRoll, <a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a> finishListener)
       </code>
       
-        <p>Schedules a screenshot to be taken and saved with the provided fileName on the next
- rendered frame.
+        <p>Schedules a screenshot to be taken and saved on the next rendered frame.
         
     
 </p>
@@ -817,60 +790,6 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <!-- Public ctors -->
 
 
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
-<h2 class="api-section">Public constructors</h2>
-
-
-
-<A NAME="ViroMediaRecorder(android.content.Context, com.viro.core.Renderer, int, int)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">ViroMediaRecorder</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-ViroMediaRecorder (<a href="http://d.android.com/reference/android/content/Context.html">Context</a> context, 
-                <a href="../../../../reference/com/viro/core/Renderer.html">Renderer</a> rendererJni, 
-                int width, 
-                int height)</pre>
-    
-    
-
-    
-  <p></p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>context</code></td>
-        <td width="100%">
-          <code>Context</code> <!-- no parameter comment --></p></td>
-      </tr>
-      <tr>
-        <td><code>rendererJni</code></td>
-        <td width="100%">
-          <code>Renderer</code> <!-- no parameter comment --></p></td>
-      </tr>
-      <tr>
-        <td><code>width</code></td>
-        <td width="100%">
-          <code>int</code> <!-- no parameter comment --></p></td>
-      </tr>
-      <tr>
-        <td><code>height</code></td>
-        <td width="100%">
-          <code>int</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-
-
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <!-- Protected ctors -->
@@ -884,100 +803,7 @@ ViroMediaRecorder (<a href="http://d.android.com/reference/android/content/Conte
 
 
 
-<A NAME="destroy()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">destroy</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-void destroy ()</pre>
-    
-    
-
-    
-  <p></p></p>
-
-</div>
-
-
-<A NAME="hasAudioAndRecordingPermissions(android.content.Context)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">hasAudioAndRecordingPermissions</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-boolean hasAudioAndRecordingPermissions (<a href="http://d.android.com/reference/android/content/Context.html">Context</a> context)</pre>
-    
-    
-
-    
-  <p></p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>context</code></td>
-        <td width="100%">
-          <code>Context</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>boolean</code></td>
-        <td width="100%"><!-- no returns description in source --></p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="hasRecordingPermissions(android.content.Context)"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">hasRecordingPermissions</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-boolean hasRecordingPermissions (<a href="http://d.android.com/reference/android/content/Context.html">Context</a> context)</pre>
-    
-    
-
-    
-  <p></p></p>
-    <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
-      <tr>
-        <td><code>context</code></td>
-        <td width="100%">
-          <code>Context</code> <!-- no parameter comment --></p></td>
-      </tr>
-    </table>
-    <table class="responsive">
-      <tr><th colspan=2>Returns</th></tr>
-      <tr>
-        <td><code>boolean</code></td>
-        <td width="100%"><!-- no returns description in source --></p></td>
-      </tr>
-    </table>
-
-</div>
-
-
-<A NAME="startRecordingAsync(java.lang.String, boolean, com.viro.core.ViroMediaRecorderDelegate)"></A>
+<A NAME="startRecordingAsync(java.lang.String, boolean, com.viro.core.ViroMediaRecorder.RecordingErrorListener)"></A>
 
 <div class="api apilevel-">
     <h3 class="api-name">startRecordingAsync</h3>
@@ -990,39 +816,41 @@ boolean hasRecordingPermissions (<a href="http://d.android.com/reference/android
 <pre class="api-signature no-pretty-print">
 void startRecordingAsync (<a href="http://d.android.com/reference/java/lang/String.html">String</a> fileName, 
                 boolean saveToCameraRoll, 
-                <a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a> onErrorDelegate)</pre>
+                <a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a> errorListener)</pre>
     
     
 
     
-  <p>Schedules a screen recording to start on the next rendered frame and be saved with the
- provided fileName. The screenshot is saved at a location determined by
- ViroMediaRecorder.getMediaStorageDirectory(), and the success or failure of this request
- are notified through the provided onErrorDelegate.
-</p></p>
+  <p>Schedules a screen recording to start on the next rendered frame. The recording will continue
+ until <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.html#stopRecordingAsync(com.viro.core.ViroMediaRecorder.FinishListener)">stopRecordingAsync(FinishListener)</a></code> is invoked. When finished, the recording
+ will be saved to the given file. The file will be stored in the device's photos if
+ <tt>saveToCameraRoll</tt> is true; otherwise it is stored in <code><a href="http://d.android.com/reference/android/content/Context.html#getFilesDir()">getFilesDir()</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
         <td><code>fileName</code></td>
         <td width="100%">
-          <code>String</code> <!-- no parameter comment --></p></td>
+          <code>String</code>: The name of the file that will store the finished recording.</p></td>
       </tr>
       <tr>
         <td><code>saveToCameraRoll</code></td>
         <td width="100%">
-          <code>boolean</code> <!-- no parameter comment --></p></td>
+          <code>boolean</code>: True to save the recording to the camera roll. False to save the file
+                         in <code><a href="http://d.android.com/reference/android/content/Context.html#getFilesDir()">getFilesDir()</a></code>.</p></td>
       </tr>
       <tr>
-        <td><code>onErrorDelegate</code></td>
+        <td><code>errorListener</code></td>
         <td width="100%">
-          <code>ViroMediaRecorderDelegate</code> <!-- no parameter comment --></p></td>
+          <code>ViroMediaRecorder.RecordingErrorListener</code>: Listener that is invoked if the recording operation encounters an
+                         error.
+</p></td>
       </tr>
     </table>
 
 </div>
 
 
-<A NAME="stopRecordingAsync(com.viro.core.ViroMediaRecorderDelegate)"></A>
+<A NAME="stopRecordingAsync(com.viro.core.ViroMediaRecorder.FinishListener)"></A>
 
 <div class="api apilevel-">
     <h3 class="api-name">stopRecordingAsync</h3>
@@ -1033,27 +861,27 @@ void startRecordingAsync (<a href="http://d.android.com/reference/java/lang/Stri
 
     </div>
 <pre class="api-signature no-pretty-print">
-void stopRecordingAsync (<a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a> completionCallback)</pre>
+void stopRecordingAsync (<a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a> finishListener)</pre>
     
     
 
     
   <p>Schedules the conclusion of the current video recording, if any. The success or
- failure of this request are notified through the provided completion callback.
-</p></p>
+ failure of this request are notified through the provided <code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>completionCallback</code></td>
+        <td><code>finishListener</code></td>
         <td width="100%">
-          <code>ViroMediaRecorderDelegate</code> <!-- no parameter comment --></p></td>
+          <code>ViroMediaRecorder.FinishListener</code>: Callback interface that is invoked on success or failure.
+</p></td>
       </tr>
     </table>
 
 </div>
 
 
-<A NAME="takeScreenShotAsync(java.lang.String, boolean, com.viro.core.ViroMediaRecorderDelegate)"></A>
+<A NAME="takeScreenShotAsync(java.lang.String, boolean, com.viro.core.ViroMediaRecorder.FinishListener)"></A>
 
 <div class="api apilevel-">
     <h3 class="api-name">takeScreenShotAsync</h3>
@@ -1066,32 +894,32 @@ void stopRecordingAsync (<a href="../../../../reference/com/viro/core/ViroMediaR
 <pre class="api-signature no-pretty-print">
 void takeScreenShotAsync (<a href="http://d.android.com/reference/java/lang/String.html">String</a> fileName, 
                 boolean saveToCameraRoll, 
-                <a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a> completionCallback)</pre>
+                <a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a> finishListener)</pre>
     
     
 
     
-  <p>Schedules a screenshot to be taken and saved with the provided fileName on the next
- rendered frame. The screenshot is saved at a location determined by
- ViroMediaRecorder.getMediaStorageDirectory(), and the success or failure
- of this request are notified through the provided completion callback.
-</p></p>
+  <p>Schedules a screenshot to be taken and saved on the next rendered frame. When finished, the
+ screenshot will be saved to the given file. The file will be stored in the device's photos if
+ <tt>saveToCameraRoll</tt> is true; otherwise it is stored in <code><a href="http://d.android.com/reference/android/content/Context.html#getFilesDir()">getFilesDir()</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
         <td><code>fileName</code></td>
         <td width="100%">
-          <code>String</code> <!-- no parameter comment --></p></td>
+          <code>String</code>: The name of the file that will store the screenshot.</p></td>
       </tr>
       <tr>
         <td><code>saveToCameraRoll</code></td>
         <td width="100%">
-          <code>boolean</code> <!-- no parameter comment --></p></td>
+          <code>boolean</code>: True to save the screenshot to the camera roll. False to save the
+                         file in <code><a href="http://d.android.com/reference/android/content/Context.html#getFilesDir()">getFilesDir()</a></code>.</p></td>
       </tr>
       <tr>
-        <td><code>completionCallback</code></td>
+        <td><code>finishListener</code></td>
         <td width="100%">
-          <code>ViroMediaRecorderDelegate</code> <!-- no parameter comment --></p></td>
+          <code>ViroMediaRecorder.FinishListener</code>: Callback interface that is invoked on success or failure.
+</p></td>
       </tr>
     </table>
 

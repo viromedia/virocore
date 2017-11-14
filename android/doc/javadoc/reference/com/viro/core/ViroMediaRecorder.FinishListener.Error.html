@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Object3D | Android Developers
+  <title>ViroMediaRecorder.FinishListener.Error | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -232,7 +232,6 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></li>
       </ul>
     </li>
           
@@ -253,9 +252,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.html">Material</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.html">Node</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/OmniLight.html">OmniLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ParticleEmitter.html">ParticleEmitter</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ParticleEmitter.EmissionBurst.html">ParticleEmitter.EmissionBurst</a></li>
@@ -329,7 +327,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchState.html">TouchState</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.Error.html">ViroMediaRecorder.Error</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewARCore.AnchorDetectionType.html">ViroViewARCore.AnchorDetectionType</a></li>
       </ul>
     </li>
@@ -523,15 +521,15 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">Object3D</h1>
+<h1 class="api-title">ViroMediaRecorder.FinishListener.Error</h1>
 <p>
 <code class="api-signature">
   public
+  static
+  final
   
-  
-  
-  class
-  Object3D
+  enum
+  ViroMediaRecorder.FinishListener.Error
 </code>
 <br>
 
@@ -544,7 +542,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <code class="api-signature">
   
-    extends <a href="../../../../reference/com/viro/core/Node.html">Node</a>
+    extends <a href="http://d.android.com/reference/java/lang/Enum.html">Enum</a>&lt;<a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a>&gt;
   
   
   
@@ -570,7 +568,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="../../../../reference/com/viro/core/Node.html">com.viro.core.Node</a>
+    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Enum.html">java.lang.Enum</a>&lt;<a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">com.viro.core.ViroMediaRecorder.FinishListener.Error</a>&gt;
     </td>
   </tr>
   
@@ -581,7 +579,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.Object3D
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.ViroMediaRecorder.FinishListener.Error
     </td>
   </tr>
   
@@ -594,15 +592,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>Object3D defines a <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that can load FBX or OBJ models. These file formats
- may contain not just single Geometry instances but entire subgraphs of Nodes. This Node
- acts as the parent to the generated subgraph.
- <p>
- OBJ loading supports MTL files, for loading material properties and textures. For OBJ
- files, Materials can also be manually injected by invoking <code><a href="../../../../reference/com/viro/core/Geometry.html#setMaterials(java.util.List<com.viro.core.Material>)">setMaterials(List)</a></code>.
- <p>
- FBX loading fully supports material properties, diffuse, specular, and normal maps, and
- skeletal and keyframe animation.
+  <p>Enum indicating what error (if any) was encountered during a recording operation.
 </p>
 
 
@@ -617,29 +607,6 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<table id="nestedclasses" class="responsive">
-<tr><th colspan="2"><h3>Nested classes</h3></th></tr>
-
-
-  
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        enum</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a></code>
-        <p>&nbsp;
-        
-    
-</p>
-      </td>
-    </tr>
-    
-    
 
 
 
@@ -648,47 +615,108 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
-<table id="pubctors" class="responsive constructors">
-<tr><th colspan="2"><h3>Public constructors</h3></th></tr>
-
-
+<!-- =========== ENUM CONSTANT SUMMARY =========== -->
+<table id="enumconstants" class="responsive constants">
+  <tr><th colspan="2"><h3>Enum values</h3></th></tr>
 
   
   <tr class="api apilevel-" >
-  
-  
+    <td><code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a></code>&nbsp;</td>
     <td width="100%">
-      <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#Object3D()">Object3D</a>()
-      </code>
+      <code>ALREADY_RUNNING</code>
+      <p>The recording failed to start because a previous recording was still running.&nbsp;
       
-        <p>Construct a new Object3D.
-        
     
 </p>
-      
     </td>
   </tr>
   
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>ALREADY_STOPPED</code>
+      <p>The recording failed to stop because no recording was active.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>INITIALIZATION</code>
+      <p>The recording failed because of an unknown error initializing.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>NONE</code>
+      <p>The recording was a success.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>NO_PERMISSIONS</code>
+      <p>Recording failed because we did not have <code><a href="http://d.android.com/reference/android/Manifest.permission.html#RECORD_AUDIO">RECORD_AUDIO</a></code> or
+ <code><a href="http://d.android.com/reference/android/Manifest.permission.html#WRITE_EXTERNAL_STORAGE">WRITE_EXTERNAL_STORAGE</a></code> permissions.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>UNKNOWN</code>
+      <p>Recording failed for an unknown reason.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
+  <tr class="api apilevel-" >
+    <td><code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a></code>&nbsp;</td>
+    <td width="100%">
+      <code>WRITE_TO_FILE</code>
+      <p>The recording failed becuase it could not write to the given file.&nbsp;
+      
+    
+</p>
+    </td>
+  </tr>
+  
+  
 
 
-</table>
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -708,21 +736,16 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
     <td><code>
         
         
+        static
         
         
-        
-        void</code>
+        <a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a></code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#dispose()">dispose</a>()
+      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html#valueOf(java.lang.String)">valueOf</a>(<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)
       </code>
-      
-        <p>Release native resources associated with this Object3D.
-        
-    
-</p>
       
     </td>
   </tr>
@@ -735,21 +758,16 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
     <td><code>
         
         
+        static
+        final
         
-        
-        
-        void</code>
+        <a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">Error[]</a></code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#loadModel(android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)">loadModel</a>(<a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri, <a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a> type, <a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a> asyncListener)
+      <a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html#values()">values</a>()
       </code>
-      
-        <p>Load an FBX or OBJ model at the given URI into this Node.
-        
-    
-</p>
       
     </td>
   </tr>
@@ -771,6 +789,183 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <!-- Enum Values -->
 
 
+<!-- ========= ENUM CONSTANTS DETAIL ======== -->
+<h2 class="api-section">Enum values</h2>
+
+
+
+
+<A NAME="ALREADY_RUNNING"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">ALREADY_RUNNING</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a> ALREADY_RUNNING</pre>
+    
+    
+
+    
+  <p>The recording failed to start because a previous recording was still running.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="ALREADY_STOPPED"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">ALREADY_STOPPED</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a> ALREADY_STOPPED</pre>
+    
+    
+
+    
+  <p>The recording failed to stop because no recording was active.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="INITIALIZATION"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">INITIALIZATION</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a> INITIALIZATION</pre>
+    
+    
+
+    
+  <p>The recording failed because of an unknown error initializing.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="NONE"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">NONE</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a> NONE</pre>
+    
+    
+
+    
+  <p>The recording was a success.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="NO_PERMISSIONS"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">NO_PERMISSIONS</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a> NO_PERMISSIONS</pre>
+    
+    
+
+    
+  <p>Recording failed because we did not have <code><a href="http://d.android.com/reference/android/Manifest.permission.html#RECORD_AUDIO">RECORD_AUDIO</a></code> or
+ <code><a href="http://d.android.com/reference/android/Manifest.permission.html#WRITE_EXTERNAL_STORAGE">WRITE_EXTERNAL_STORAGE</a></code> permissions.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="UNKNOWN"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">UNKNOWN</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a> UNKNOWN</pre>
+    
+    
+
+    
+  <p>Recording failed for an unknown reason.
+</p></p>
+
+    
+</div>
+
+
+
+<A NAME="WRITE_TO_FILE"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">WRITE_TO_FILE</h3>
+    <div class="api-level">
+      
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a> WRITE_TO_FILE</pre>
+    
+    
+
+    
+  <p>The recording failed becuase it could not write to the given file. This could mean
+ the directory to store the file didn't exist or a similar IO error.
+</p></p>
+
+    
+</div>
+
+
+
+
 <!-- Constants -->
 
 
@@ -778,36 +973,6 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 <!-- Public ctors -->
-
-
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
-<h2 class="api-section">Public constructors</h2>
-
-
-
-<A NAME="Object3D()"></A>
-
-<div class="api apilevel-">
-    <h3 class="api-name">Object3D</h3>
-    <div class="api-level">
-      <div></div>
-      
-  
-
-    </div>
-<pre class="api-signature no-pretty-print">
-Object3D ()</pre>
-    
-    
-
-    
-  <p>Construct a new Object3D. To load 3D model data into this Node, use
- <code><a href="../../../../reference/com/viro/core/Object3D.html#loadModel(android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)">loadModel(Uri, Type, AsyncObject3DListener)</a></code>.
-</p></p>
-
-</div>
-
-
 
 
 
@@ -823,10 +988,10 @@ Object3D ()</pre>
 
 
 
-<A NAME="dispose()"></A>
+<A NAME="valueOf(java.lang.String)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">dispose</h3>
+    <h3 class="api-name">valueOf</h3>
     <div class="api-level">
       <div></div>
       
@@ -834,21 +999,35 @@ Object3D ()</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-void dispose ()</pre>
+<a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a> valueOf (<a href="http://d.android.com/reference/java/lang/String.html">String</a> name)</pre>
     
     
 
     
-  <p>Release native resources associated with this Object3D.
-</p></p>
+  <p></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>name</code></td>
+        <td width="100%">
+          <code>String</code> <!-- no parameter comment --></p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">ViroMediaRecorder.FinishListener.Error</a></code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
+      </tr>
+    </table>
 
 </div>
 
 
-<A NAME="loadModel(android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)"></A>
+<A NAME="values()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">loadModel</h3>
+    <h3 class="api-name">values</h3>
     <div class="api-level">
       <div></div>
       
@@ -856,35 +1035,17 @@ void dispose ()</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-void loadModel (<a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri, 
-                <a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a> type, 
-                <a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a> asyncListener)</pre>
+<a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">Error[]</a> values ()</pre>
     
     
 
     
-  <p>Load an FBX or OBJ model at the given URI into this Node. The model will load asynchronously,
- and the provided listener will receive a notification when model loading is completed. To
- load Android assets, use URI's of the form <tt>file:///android_asset/[asset-name]</tt>. If
- the model requires other resources (e.g. textures), those are expected to be found at the
- same base path as the model URI.</p></p>
+  <p></p></p>
     <table class="responsive">
-    <tr><th colspan=2>Parameters</th></tr>
+      <tr><th colspan=2>Returns</th></tr>
       <tr>
-        <td><code>uri</code></td>
-        <td width="100%">
-          <code>Uri</code>: The URI of the model to load.</p></td>
-      </tr>
-      <tr>
-        <td><code>type</code></td>
-        <td width="100%">
-          <code>Object3D.Type</code>: The type of model (FBX or OBJ).</p></td>
-      </tr>
-      <tr>
-        <td><code>asyncListener</code></td>
-        <td width="100%">
-          <code>AsyncObject3DListener</code>: Listener to respond to model loading status.
-</p></td>
+        <td><code><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.Error.html">Error[]</a></code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
       </tr>
     </table>
 

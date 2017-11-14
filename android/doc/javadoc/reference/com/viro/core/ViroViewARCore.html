@@ -221,6 +221,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShape.html">PhysicsShape</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.HitTestListener.html">PhysicsWorld.HitTestListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.EntryListener.html">PortalScene.EntryListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererCloseListener.html">RendererCloseListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.VisibilityListener.html">Scene.VisibilityListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sound.PlaybackListener.html">Sound.PlaybackListener</a></li>
@@ -230,7 +231,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadSwipeListener.html">TouchpadSwipeListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></li>
       </ul>
     </li>
           
@@ -251,6 +253,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.html">Material</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.html">Node</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/OmniLight.html">OmniLight</a></li>
@@ -326,7 +329,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchState.html">TouchState</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.ERROR.html">ViroMediaRecorderDelegate.ERROR</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.Error.html">ViroMediaRecorder.Error</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewARCore.AnchorDetectionType.html">ViroViewARCore.AnchorDetectionType</a></li>
       </ul>
     </li>
@@ -940,6 +943,55 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
+      <a href="../../../../reference/com/viro/core/ViroViewARCore.html#setOnTouchListener(android.view.View.OnTouchListener)">setOnTouchListener</a>(<a href="http://d.android.com/reference/android/view/View.OnTouchListener.html">View.OnTouchListener</a> listener)
+      </code>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/ViroViewARCore.html#setPointOfView(com.viro.core.Node)">setPointOfView</a>(<a href="../../../../reference/com/viro/core/Node.html">Node</a> node)
+      </code>
+      
+        <p>Make the given <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> the point of view for the user.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        void</code>
+    </td>
+  
+    <td width="100%">
+      <code>
       <a href="../../../../reference/com/viro/core/ViroViewARCore.html#setScene(com.viro.core.Scene)">setScene</a>(<a href="../../../../reference/com/viro/core/Scene.html">Scene</a> scene)
       </code>
       
@@ -1228,6 +1280,69 @@ void setAnchorDetectionTypes (<a href="http://d.android.com/reference/java/util/
         <td><code>types</code></td>
         <td width="100%">
           <code>EnumSet</code>: The set of anchor types that should be tracked.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setOnTouchListener(android.view.View.OnTouchListener)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setOnTouchListener</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setOnTouchListener (<a href="http://d.android.com/reference/android/view/View.OnTouchListener.html">View.OnTouchListener</a> listener)</pre>
+    
+    
+
+    
+  <p></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>listener</code></td>
+        <td width="100%">
+          <code>View.OnTouchListener</code> <!-- no parameter comment --></p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="setPointOfView(com.viro.core.Node)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">setPointOfView</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+void setPointOfView (<a href="../../../../reference/com/viro/core/Node.html">Node</a> node)</pre>
+    
+    
+
+    
+  <p>Make the given <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> the point of view for the user. The <code><a href="../../../../reference/com/viro/core/Scene.html">Scene</a></code> in this
+ ViroView will be rendered from the perspective of the given Node's <code><a href="../../../../reference/com/viro/core/Camera.html">Camera</a></code>. This
+ method is used to change the user's view of the scene. Note that when in AR or VR modes, the
+ point of view is automatically computed based on the device's rotation and position in the
+ world. This method is primarily for use with <code><a href="../../../../reference/com/viro/core/ViroViewScene.html">ViroViewScene</a></code>.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>node</code></td>
+        <td width="100%">
+          <code>Node</code>: The <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> whose <code><a href="../../../../reference/com/viro/core/Camera.html">Camera</a></code> will be used for the point of view.
 </p></td>
       </tr>
     </table>

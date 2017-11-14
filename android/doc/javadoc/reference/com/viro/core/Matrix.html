@@ -50,7 +50,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Object3D | Android Developers
+  <title>Matrix | Android Developers
 </title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -253,9 +253,9 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.html">Material</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></li>
+          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.html">Node</a></li>
-          <li class="selected api apilevel-"><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/OmniLight.html">OmniLight</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ParticleEmitter.html">ParticleEmitter</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ParticleEmitter.EmissionBurst.html">ParticleEmitter.EmissionBurst</a></li>
@@ -523,7 +523,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 <!-- ======== START OF CLASS DATA ======== -->
 
-<h1 class="api-title">Object3D</h1>
+<h1 class="api-title">Matrix</h1>
 <p>
 <code class="api-signature">
   public
@@ -531,20 +531,14 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
   
   class
-  Object3D
+  Matrix
 </code>
 <br>
 
 
 <code class="api-signature">
   
-  
-  
-</code>
-
-<code class="api-signature">
-  
-    extends <a href="../../../../reference/com/viro/core/Node.html">Node</a>
+    extends <a href="http://d.android.com/reference/java/lang/Object.html">Object</a>
   
   
   
@@ -561,7 +555,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
   <tr>
     
-    <td colspan="3" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
+    <td colspan="2" class="jd-inheritance-class-cell"><a href="http://d.android.com/reference/java/lang/Object.html">java.lang.Object</a>
     </td>
   </tr>
   
@@ -570,18 +564,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
     
       <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
     
-    <td colspan="2" class="jd-inheritance-class-cell"><a href="../../../../reference/com/viro/core/Node.html">com.viro.core.Node</a>
-    </td>
-  </tr>
-  
-
-  <tr>
-    
-      <td class="jd-inheritance-space">&nbsp;</td>
-    
-      <td class="jd-inheritance-space">&nbsp;&nbsp;&nbsp;&#x21b3;</td>
-    
-    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.Object3D
+    <td colspan="1" class="jd-inheritance-class-cell">com.viro.core.Matrix
     </td>
   </tr>
   
@@ -594,15 +577,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>Object3D defines a <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that can load FBX or OBJ models. These file formats
- may contain not just single Geometry instances but entire subgraphs of Nodes. This Node
- acts as the parent to the generated subgraph.
- <p>
- OBJ loading supports MTL files, for loading material properties and textures. For OBJ
- files, Materials can also be manually injected by invoking <code><a href="../../../../reference/com/viro/core/Geometry.html#setMaterials(java.util.List<com.viro.core.Material>)">setMaterials(List)</a></code>.
- <p>
- FBX loading fully supports material properties, diffuse, specular, and normal maps, and
- skeletal and keyframe animation.
+  <p>Matrix represents a 4x4 floating-point Matrix. Values are column-major.
 </p>
 
 
@@ -614,32 +589,6 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 <h2 class="api-section">Summary</h2>
-
-
-
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<table id="nestedclasses" class="responsive">
-<tr><th colspan="2"><h3>Nested classes</h3></th></tr>
-
-
-  
-    <tr class="api apilevel-" >
-      <td class="jd-typecol"><code>
-        
-        
-        
-        
-        enum</code></td>
-      <td class="jd-descrcol" width="100%">
-        <code><a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a></code>
-        <p>&nbsp;
-        
-    
-</p>
-      </td>
-    </tr>
-    
-    
 
 
 
@@ -675,10 +624,28 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#Object3D()">Object3D</a>()
+      <a href="../../../../reference/com/viro/core/Matrix.html#Matrix()">Matrix</a>()
       </code>
       
-        <p>Construct a new Object3D.
+        <p>Construct a new Matrix, initialized to identity.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Matrix.html#Matrix(float[])">Matrix</a>(float[] values)
+      </code>
+      
+        <p>Construct a new Matrix with the given values in a float[16], in column-major order.
         
     
 </p>
@@ -711,15 +678,37 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
-        void</code>
+        boolean</code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#dispose()">dispose</a>()
+      <a href="../../../../reference/com/viro/core/Matrix.html#equals(java.lang.Object)">equals</a>(<a href="http://d.android.com/reference/java/lang/Object.html">Object</a> obj)
       </code>
       
-        <p>Release native resources associated with this Object3D.
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Matrix.html#extractRotation(com.viro.core.Vector)">extractRotation</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> scale)
+      </code>
+      
+        <p>Extract the rotation embedded in this Matrix and return it as a <code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code>.
         
     
 </p>
@@ -738,15 +727,304 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
-        void</code>
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
     </td>
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/Object3D.html#loadModel(android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)">loadModel</a>(<a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri, <a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a> type, <a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a> asyncListener)
+      <a href="../../../../reference/com/viro/core/Matrix.html#extractScale()">extractScale</a>()
       </code>
       
-        <p>Load an FBX or OBJ model at the given URI into this Node.
+        <p>Extract the scale component of this Matrix and return it as a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Matrix.html#extractTranslation()">extractTranslation</a>()
+      </code>
+      
+        <p>Extract the translation component of this Matrix and return it as a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        int</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Matrix.html#hashCode()">hashCode</a>()
+      </code>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Matrix.html#invert()">invert</a>()
+      </code>
+      
+        <p>Invert this Matrix and return the result (this Matrix is not mutated by the operation).
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        static
+        
+        
+        <a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Matrix.html#makeIdentity()">makeIdentity</a>()
+      </code>
+      
+        <p>Return a new identity matrix.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        static
+        
+        
+        <a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Matrix.html#makeRotation(float, com.viro.core.Vector, com.viro.core.Vector)">makeRotation</a>(float angleRad, <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> origin, <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> dir)
+      </code>
+      
+        <p>Return a new rotation matrix about the given axis.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        static
+        
+        
+        <a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Matrix.html#makeScale(float, float, float)">makeScale</a>(float sx, float sy, float sz)
+      </code>
+      
+        <p>Return a new scale matrix.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        static
+        
+        
+        <a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Matrix.html#makeTranslation(float, float, float)">makeTranslation</a>(float tx, float ty, float tz)
+      </code>
+      
+        <p>Return a new translation matrix.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Matrix.html#multiply(com.viro.core.Vector)">multiply</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> vector)
+      </code>
+      
+        <p>Multiply this Matrix by the given <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> and return the result (neither this Matrix
+ nor the input Vector are mutated by this operation).
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Matrix.html#multiply(com.viro.core.Matrix)">multiply</a>(<a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a> matrix)
+      </code>
+      
+        <p>Multiply this Matrix by the given matrix and return the result (neither this Matrix nor the
+ input Matrix are mutated by this operation).
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="http://d.android.com/reference/java/lang/String.html">String</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Matrix.html#toString()">toString</a>()
+      </code>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Matrix.html#transpose()">transpose</a>()
+      </code>
+      
+        <p>Transpose this Matrix and return the result (this Matrix is not mutated by the operation).
         
     
 </p>
@@ -785,10 +1063,10 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
 
-<A NAME="Object3D()"></A>
+<A NAME="Matrix()"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">Object3D</h3>
+    <h3 class="api-name">Matrix</h3>
     <div class="api-level">
       <div></div>
       
@@ -796,14 +1074,43 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
     </div>
 <pre class="api-signature no-pretty-print">
-Object3D ()</pre>
+Matrix ()</pre>
     
     
 
     
-  <p>Construct a new Object3D. To load 3D model data into this Node, use
- <code><a href="../../../../reference/com/viro/core/Object3D.html#loadModel(android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)">loadModel(Uri, Type, AsyncObject3DListener)</a></code>.
+  <p>Construct a new Matrix, initialized to identity.
 </p></p>
+
+</div>
+
+
+<A NAME="Matrix(float[])"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Matrix</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+Matrix (float[] values)</pre>
+    
+    
+
+    
+  <p>Construct a new Matrix with the given values in a float[16], in column-major order.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>values</code></td>
+        <td width="100%">
+          <code>float</code>: The column-major component values for the Matrix, in an array of length 16.
+</p></td>
+      </tr>
+    </table>
 
 </div>
 
@@ -823,10 +1130,10 @@ Object3D ()</pre>
 
 
 
-<A NAME="dispose()"></A>
+<A NAME="equals(java.lang.Object)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">dispose</h3>
+    <h3 class="api-name">equals</h3>
     <div class="api-level">
       <div></div>
       
@@ -834,21 +1141,35 @@ Object3D ()</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-void dispose ()</pre>
+boolean equals (<a href="http://d.android.com/reference/java/lang/Object.html">Object</a> obj)</pre>
     
     
 
     
-  <p>Release native resources associated with this Object3D.
-</p></p>
+  <p></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>obj</code></td>
+        <td width="100%">
+          <code>Object</code> <!-- no parameter comment --></p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
+      </tr>
+    </table>
 
 </div>
 
 
-<A NAME="loadModel(android.net.Uri, com.viro.core.Object3D.Type, com.viro.core.AsyncObject3DListener)"></A>
+<A NAME="extractRotation(com.viro.core.Vector)"></A>
 
 <div class="api apilevel-">
-    <h3 class="api-name">loadModel</h3>
+    <h3 class="api-name">extractRotation</h3>
     <div class="api-level">
       <div></div>
       
@@ -856,34 +1177,455 @@ void dispose ()</pre>
 
     </div>
 <pre class="api-signature no-pretty-print">
-void loadModel (<a href="http://d.android.com/reference/android/net/Uri.html">Uri</a> uri, 
-                <a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a> type, 
-                <a href="../../../../reference/com/viro/core/AsyncObject3DListener.html">AsyncObject3DListener</a> asyncListener)</pre>
+<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> extractRotation (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> scale)</pre>
     
     
 
     
-  <p>Load an FBX or OBJ model at the given URI into this Node. The model will load asynchronously,
- and the provided listener will receive a notification when model loading is completed. To
- load Android assets, use URI's of the form <tt>file:///android_asset/[asset-name]</tt>. If
- the model requires other resources (e.g. textures), those are expected to be found at the
- same base path as the model URI.</p></p>
+  <p>Extract the rotation embedded in this Matrix and return it as a <code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code>. This
+ matrix is not mutated by this operation. The scale component of this Matrix is required to
+ compute the rotation: this can be retrieved via <code><a href="../../../../reference/com/viro/core/Matrix.html#extractScale()">extractScale()</a></code>.</p></p>
     <table class="responsive">
     <tr><th colspan=2>Parameters</th></tr>
       <tr>
-        <td><code>uri</code></td>
+        <td><code>scale</code></td>
         <td width="100%">
-          <code>Uri</code>: The URI of the model to load.</p></td>
+          <code>Vector</code>: The scale component of the Matrix, as returned by <code><a href="../../../../reference/com/viro/core/Matrix.html#extractScale()">extractScale()</a></code>.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code></td>
+        <td width="100%">The rotation component of this Matrix as a <code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code>.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="extractScale()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">extractScale</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> extractScale ()</pre>
+    
+    
+
+    
+  <p>Extract the scale component of this Matrix and return it as a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>. This Matrix
+ is not mutated by this operation.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The scale (X, Y, and Z) embedded bin this Matrix.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="extractTranslation()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">extractTranslation</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> extractTranslation ()</pre>
+    
+    
+
+    
+  <p>Extract the translation component of this Matrix and return it as a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>. This
+ Matrix is not mutated by this operation.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The translation (X, Y, and Z) embedded in this Matrix.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="hashCode()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">hashCode</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+int hashCode ()</pre>
+    
+    
+
+    
+  <p></p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>int</code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="invert()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">invert</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a> invert ()</pre>
+    
+    
+
+    
+  <p>Invert this Matrix and return the result (this Matrix is not mutated by the operation).</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code></td>
+        <td width="100%">The inverted Matrix.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="makeIdentity()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">makeIdentity</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a> makeIdentity ()</pre>
+    
+    
+
+    
+  <p>Return a new identity matrix.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code></td>
+        <td width="100%">Identity matrix.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="makeRotation(float, com.viro.core.Vector, com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">makeRotation</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a> makeRotation (float angleRad, 
+                <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> origin, 
+                <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> dir)</pre>
+    
+    
+
+    
+  <p>Return a new rotation matrix about the given axis. Multiplying this Matrix with a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> will rotate the vector by the given radians about the provided axis.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>angleRad</code></td>
+        <td width="100%">
+          <code>float</code>: The rotation amount in radians.</p></td>
       </tr>
       <tr>
-        <td><code>type</code></td>
+        <td><code>origin</code></td>
         <td width="100%">
-          <code>Object3D.Type</code>: The type of model (FBX or OBJ).</p></td>
+          <code>Vector</code>: The origin of the axis of rotation.</p></td>
       </tr>
       <tr>
-        <td><code>asyncListener</code></td>
+        <td><code>dir</code></td>
         <td width="100%">
-          <code>AsyncObject3DListener</code>: Listener to respond to model loading status.
+          <code>Vector</code>: The direction of the axis of rotation.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code></td>
+        <td width="100%">The rotation Matrix.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="makeScale(float, float, float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">makeScale</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a> makeScale (float sx, 
+                float sy, 
+                float sz)</pre>
+    
+    
+
+    
+  <p>Return a new scale matrix. Multiplying this Matrix with a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> will scale the
+ Vector by the given amounts.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>sx</code></td>
+        <td width="100%">
+          <code>float</code>: The X scale.</p></td>
+      </tr>
+      <tr>
+        <td><code>sy</code></td>
+        <td width="100%">
+          <code>float</code>: The Y scale.</p></td>
+      </tr>
+      <tr>
+        <td><code>sz</code></td>
+        <td width="100%">
+          <code>float</code>: The Z scale.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code></td>
+        <td width="100%">The scale Matrix.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="makeTranslation(float, float, float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">makeTranslation</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a> makeTranslation (float tx, 
+                float ty, 
+                float tz)</pre>
+    
+    
+
+    
+  <p>Return a new translation matrix. Multiplying this Matrix with a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> will translate
+ the Vector by the given amounts.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>tx</code></td>
+        <td width="100%">
+          <code>float</code>: The X translation.</p></td>
+      </tr>
+      <tr>
+        <td><code>ty</code></td>
+        <td width="100%">
+          <code>float</code>: The Y translation.</p></td>
+      </tr>
+      <tr>
+        <td><code>tz</code></td>
+        <td width="100%">
+          <code>float</code>: The Z translation.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code></td>
+        <td width="100%">The translation Matrix.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="multiply(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">multiply</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> multiply (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> vector)</pre>
+    
+    
+
+    
+  <p>Multiply this Matrix by the given <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> and return the result (neither this Matrix
+ nor the input Vector are mutated by this operation).</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>vector</code></td>
+        <td width="100%">
+          <code>Vector</code>: The <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> to multiply by this Matrix.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The result of the multiplication.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="multiply(com.viro.core.Matrix)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">multiply</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a> multiply (<a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a> matrix)</pre>
+    
+    
+
+    
+  <p>Multiply this Matrix by the given matrix and return the result (neither this Matrix nor the
+ input Matrix are mutated by this operation).</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>matrix</code></td>
+        <td width="100%">
+          <code>Matrix</code>: The Matrix to multiply by this one.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code></td>
+        <td width="100%">The product of the two matrices.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="toString()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">toString</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="http://d.android.com/reference/java/lang/String.html">String</a> toString ()</pre>
+    
+    
+
+    
+  <p></p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="http://d.android.com/reference/java/lang/String.html">String</a></code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="transpose()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">transpose</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a> transpose ()</pre>
+    
+    
+
+    
+  <p>Transpose this Matrix and return the result (this Matrix is not mutated by the operation).</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code></td>
+        <td width="100%">The transposed Matrix.
 </p></td>
       </tr>
     </table>

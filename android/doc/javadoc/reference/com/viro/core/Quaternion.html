@@ -221,6 +221,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShape.html">PhysicsShape</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.HitTestListener.html">PhysicsWorld.HitTestListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.EntryListener.html">PortalScene.EntryListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererCloseListener.html">RendererCloseListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.VisibilityListener.html">Scene.VisibilityListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sound.PlaybackListener.html">Sound.PlaybackListener</a></li>
@@ -230,7 +231,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadSwipeListener.html">TouchpadSwipeListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></li>
       </ul>
     </li>
           
@@ -251,6 +253,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.html">Material</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.html">Node</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/OmniLight.html">OmniLight</a></li>
@@ -326,7 +329,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchState.html">TouchState</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.ERROR.html">ViroMediaRecorderDelegate.ERROR</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.Error.html">ViroMediaRecorder.Error</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewARCore.AnchorDetectionType.html">ViroViewARCore.AnchorDetectionType</a></li>
       </ul>
     </li>
@@ -575,8 +578,6 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 
 
   <p>Represents a 4-component floating-point quaternion.
-
- TODO: VIRO-2166 Add all methods
 </p>
 
 
@@ -745,6 +746,78 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   </tr>
   
 
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#Quaternion(float, float, float)">Quaternion</a>(float x, float y, float z)
+      </code>
+      
+        <p>Construct a new Quaternion from the given Euler angles about each axis, in radians.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#Quaternion(com.viro.core.Vector)">Quaternion</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> vec)
+      </code>
+      
+        <p>Construct a new Quaternion from the given Euler angles in radians.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#Quaternion(com.viro.core.Quaternion)">Quaternion</a>(<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> quaternion)
+      </code>
+      
+        <p>Construct a new Quaternion by copying the given Quaternion.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#Quaternion(com.viro.core.Matrix)">Quaternion</a>(<a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a> matrix)
+      </code>
+      
+        <p>Construct a new Quaternion from the given rotation <code><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
 
 </table>
 
@@ -769,6 +842,486 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
         
         
         
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#dot(com.viro.core.Quaternion)">dot</a>(<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> q2)
+      </code>
+      
+        <p>Compute the dot product of this Quaternion with the given Quaternion, and return the
+ result.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        boolean</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#equals(java.lang.Object)">equals</a>(<a href="http://d.android.com/reference/java/lang/Object.html">Object</a> obj)
+      </code>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#getAngle()">getAngle</a>()
+      </code>
+      
+        <p>Get the angle, in radians, of the rotation this Quaternion represents.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#getMatrix()">getMatrix</a>()
+      </code>
+      
+        <p>Convert this Quaternion into a rotation <code><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#getNorm()">getNorm</a>()
+      </code>
+      
+        <p>Get the norm of this Quaternion.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        int</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#hashCode()">hashCode</a>()
+      </code>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#invert()">invert</a>()
+      </code>
+      
+        <p>Invert this Quaternion and return the result.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#lerp(com.viro.core.Quaternion, float)">lerp</a>(<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> q, float t)
+      </code>
+      
+        <p>Linearly interpolate between this Quaternion and the given Quaternion, and return the result.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        static
+        
+        
+        <a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#makeIdentity()">makeIdentity</a>()
+      </code>
+      
+        <p>Construct and return the identity Quaternion.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#makeRotation(float, com.viro.core.Vector)">makeRotation</a>(float angle, <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> axis)
+      </code>
+      
+        <p>Make a <code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code> that rotates about the given axis by the given angle in radians.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        static
+        
+        
+        <a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#makeRotationFromTo(com.viro.core.Vector, com.viro.core.Vector)">makeRotationFromTo</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> from, <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> to)
+      </code>
+      
+        <p>Construct and return a Quaternion that rotates the ray <tt>from</tt> to the
+ ray <tt>to</tt>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#multiply(float)">multiply</a>(float s)
+      </code>
+      
+        <p>Multiply this Quaternion by the given scalar value and return the result.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#multiply(com.viro.core.Quaternion)">multiply</a>(<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> other)
+      </code>
+      
+        <p>Multiply this Quaternion by the given Quaternion and return the result.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#multiply(com.viro.core.Vector)">multiply</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> v)
+      </code>
+      
+        <p>Multiply the given <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> by this Quaternion and return the result.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#normalize()">normalize</a>()
+      </code>
+      
+        <p>Normalize this Quaternion and return the result.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#slerp(com.viro.core.Quaternion, float, float)">slerp</a>(<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> q, float t, float threshold)
+      </code>
+      
+        <p>Perform a spherical linear interpolation between this Quaternion and the given Quaternion,
+ and return the result.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#subtract(com.viro.core.Quaternion)">subtract</a>(<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> b)
+      </code>
+      
+        <p>Subtract the given Quaternion from this Quaternion and return the result.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        float</code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#toAngleAxis(com.viro.core.Vector)">toAngleAxis</a>(<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> axis)
+      </code>
+      
+        <p>Get the axis of rotation and the angle of rotation (in radians) that this Quaternion
+ represents.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
         float[]</code>
     </td>
   
@@ -781,6 +1334,56 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
         
     
 </p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#toEuler()">toEuler</a>()
+      </code>
+      
+        <p>Convert this Quaternion into Euler rotation about each principal axis, and return the
+ result in a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>.
+        
+    
+</p>
+      
+    </td>
+  </tr>
+  
+
+  
+  <tr class="api apilevel-" >
+  
+  
+    <td><code>
+        
+        
+        
+        
+        
+        <a href="http://d.android.com/reference/java/lang/String.html">String</a></code>
+    </td>
+  
+    <td width="100%">
+      <code>
+      <a href="../../../../reference/com/viro/core/Quaternion.html#toString()">toString</a>()
+      </code>
       
     </td>
   </tr>
@@ -1019,6 +1622,139 @@ Quaternion (float[] coordinates)</pre>
 </div>
 
 
+<A NAME="Quaternion(float, float, float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Quaternion</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+Quaternion (float x, 
+                float y, 
+                float z)</pre>
+    
+    
+
+    
+  <p>Construct a new Quaternion from the given Euler angles about each axis, in radians.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>x</code></td>
+        <td width="100%">
+          <code>float</code>: The X-axis rotation in radians.</p></td>
+      </tr>
+      <tr>
+        <td><code>y</code></td>
+        <td width="100%">
+          <code>float</code>: The Y-axis rotation in radians.</p></td>
+      </tr>
+      <tr>
+        <td><code>z</code></td>
+        <td width="100%">
+          <code>float</code>: The Z-axis rotation in radians.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="Quaternion(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Quaternion</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+Quaternion (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> vec)</pre>
+    
+    
+
+    
+  <p>Construct a new Quaternion from the given Euler angles in radians. The angles are provided
+ as components in a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>vec</code></td>
+        <td width="100%">
+          <code>Vector</code>: The vector containing the Euler angle rotation.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="Quaternion(com.viro.core.Quaternion)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Quaternion</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+Quaternion (<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> quaternion)</pre>
+    
+    
+
+    
+  <p>Construct a new Quaternion by copying the given Quaternion.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>quaternion</code></td>
+        <td width="100%">
+          <code>Quaternion</code>: The Quaternion to copy.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="Quaternion(com.viro.core.Matrix)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">Quaternion</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+Quaternion (<a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a> matrix)</pre>
+    
+    
+
+    
+  <p>Construct a new Quaternion from the given rotation <code><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code>.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>matrix</code></td>
+        <td width="100%">
+          <code>Matrix</code>: The rotation Matrix to convert into a Quaternion.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
 
 
 
@@ -1032,6 +1768,666 @@ Quaternion (float[] coordinates)</pre>
 
 <h2 class="api-section">Public methods</h2>
 
+
+
+<A NAME="dot(com.viro.core.Quaternion)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">dot</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float dot (<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> q2)</pre>
+    
+    
+
+    
+  <p>Compute the dot product of this Quaternion with the given Quaternion, and return the
+ result. Neither Quaternion is mutated by this operation.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>q2</code></td>
+        <td width="100%">
+          <code>Quaternion</code>: The Quaternion with which to dot this Quaternion.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>float</code></td>
+        <td width="100%">The dot product of the two Quaternions.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="equals(java.lang.Object)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">equals</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+boolean equals (<a href="http://d.android.com/reference/java/lang/Object.html">Object</a> obj)</pre>
+    
+    
+
+    
+  <p></p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>obj</code></td>
+        <td width="100%">
+          <code>Object</code> <!-- no parameter comment --></p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>boolean</code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getAngle()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getAngle</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float getAngle ()</pre>
+    
+    
+
+    
+  <p>Get the angle, in radians, of the rotation this Quaternion represents. Note this method does
+ not specify about which <i>axis</i> the rotation will occur. To retrieve the axis use <code><a href="../../../../reference/com/viro/core/Quaternion.html#toAngleAxis(com.viro.core.Vector)">toAngleAxis(Vector)</a></code>.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>float</code></td>
+        <td width="100%">The angle of rotation in radians.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getMatrix()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getMatrix</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a> getMatrix ()</pre>
+    
+    
+
+    
+  <p>Convert this Quaternion into a rotation <code><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code>.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></code></td>
+        <td width="100%">The rotation Matrix generated from this Quaternion.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="getNorm()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">getNorm</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float getNorm ()</pre>
+    
+    
+
+    
+  <p>Get the norm of this Quaternion.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>float</code></td>
+        <td width="100%">The norm of the Quaternion.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="hashCode()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">hashCode</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+int hashCode ()</pre>
+    
+    
+
+    
+  <p></p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>int</code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="invert()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">invert</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> invert ()</pre>
+    
+    
+
+    
+  <p>Invert this Quaternion and return the result. This Quaternion is not mutated by this
+ operation.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code></td>
+        <td width="100%">The inverted Quaternion.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="lerp(com.viro.core.Quaternion, float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">lerp</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> lerp (<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> q, 
+                float t)</pre>
+    
+    
+
+    
+  <p>Linearly interpolate between this Quaternion and the given Quaternion, and return the result.
+ Neither Quaternion is mutated by this operation.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>q</code></td>
+        <td width="100%">
+          <code>Quaternion</code>: The Quaternion to interpolate toward.</p></td>
+      </tr>
+      <tr>
+        <td><code>t</code></td>
+        <td width="100%">
+          <code>float</code>: The interpolation factor between 0 and 1, where 0 corresponds to this Quaternion, 1
+             corresponds to <tt>q</tt>, and values in-between result in an interpolated Quaternion between the two.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code></td>
+        <td width="100%">The interpolated Quaternion.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="makeIdentity()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">makeIdentity</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> makeIdentity ()</pre>
+    
+    
+
+    
+  <p>Construct and return the identity Quaternion.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code></td>
+        <td width="100%">The identity Quaternion.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="makeRotation(float, com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">makeRotation</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> makeRotation (float angle, 
+                <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> axis)</pre>
+    
+    
+
+    
+  <p>Make a <code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code> that rotates about the given axis by the given angle in radians.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>angle</code></td>
+        <td width="100%">
+          <code>float</code>: The magnitude of the rotation in radians.</p></td>
+      </tr>
+      <tr>
+        <td><code>axis</code></td>
+        <td width="100%">
+          <code>Vector</code>: The axis about which rotation will occur. Must be unit length.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code></td>
+        <td width="100%">The <code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code> representing rotation of <tt>angle</tt> radians about
+ <tt>axis</tt>.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="makeRotationFromTo(com.viro.core.Vector, com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">makeRotationFromTo</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> makeRotationFromTo (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> from, 
+                <a href="../../../../reference/com/viro/core/Vector.html">Vector</a> to)</pre>
+    
+    
+
+    
+  <p>Construct and return a Quaternion that rotates the ray <tt>from</tt> to the
+ ray <tt>to</tt>. In other words, when multiplied by this Quaternion, <tt>from</tt>
+ will become <tt>to</tt>.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>from</code></td>
+        <td width="100%">
+          <code>Vector</code>: The Quaternion will move this <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> to the <tt>to</tt> Vector.</p></td>
+      </tr>
+      <tr>
+        <td><code>to</code></td>
+        <td width="100%">
+          <code>Vector</code>: The destination <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code></td>
+        <td width="100%">The Quaternion to rotate <tt>from</tt> to <tt>to</tt>.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="multiply(float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">multiply</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> multiply (float s)</pre>
+    
+    
+
+    
+  <p>Multiply this Quaternion by the given scalar value and return the result. This Quaternion
+ is not mutated by this operation.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>s</code></td>
+        <td width="100%">
+          <code>float</code>: The scalar value to multiply by.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code></td>
+        <td width="100%">The scaled Quaternion.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="multiply(com.viro.core.Quaternion)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">multiply</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> multiply (<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> other)</pre>
+    
+    
+
+    
+  <p>Multiply this Quaternion by the given Quaternion and return the result. Neither Quaternion
+ is mutated by this operation.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>other</code></td>
+        <td width="100%">
+          <code>Quaternion</code>: The Quaternion to multiply by.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code></td>
+        <td width="100%">The product of the two Quaternions.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="multiply(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">multiply</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> multiply (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> v)</pre>
+    
+    
+
+    
+  <p>Multiply the given <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> by this Quaternion and return the result. Neither the
+ Quaternion nor the Vector are mutated by this operation.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>v</code></td>
+        <td width="100%">
+          <code>Vector</code>: The <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code> to be multiplied.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The result of the multiplication.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="normalize()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">normalize</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> normalize ()</pre>
+    
+    
+
+    
+  <p>Normalize this Quaternion and return the result. This Quaternion is not mutated by this
+ operation.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code></td>
+        <td width="100%">The normalized Quaternion.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="slerp(com.viro.core.Quaternion, float, float)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">slerp</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> slerp (<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> q, 
+                float t, 
+                float threshold)</pre>
+    
+    
+
+    
+  <p>Perform a spherical linear interpolation between this Quaternion and the given Quaternion,
+ and return the result. Slerp results in constant-speed motion along a unit-radius great
+ circle arc between the two Quaternions.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>q</code></td>
+        <td width="100%">
+          <code>Quaternion</code>: The Quaternion to interpolate toward.</p></td>
+      </tr>
+      <tr>
+        <td><code>t</code></td>
+        <td width="100%">
+          <code>float</code>: The interpolation factor between 0 and 1, where 0 corresponds to this
+                  Quaternion, 1 corresponds to <tt>q</tt>, and values in-between result in an
+                  interpolated Quaternion between the two.</p></td>
+      </tr>
+      <tr>
+        <td><code>threshold</code></td>
+        <td width="100%">
+          <code>float</code>: To avoid inaccuracies near the end (t = 1) the interpolation switches to
+                  linear interpolation at some point. This value defines how much of the
+                  remaining interpolation will be calculated with lerp. Everything from
+                  1-threshold up will be linear interpolation. A reasonable default threshold
+                  is 0.05f.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code></td>
+        <td width="100%">The interpolated Quaternion.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="subtract(com.viro.core.Quaternion)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">subtract</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> subtract (<a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a> b)</pre>
+    
+    
+
+    
+  <p>Subtract the given Quaternion from this Quaternion and return the result. Neither Quaternion
+ is mutated by this operation.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>b</code></td>
+        <td width="100%">
+          <code>Quaternion</code>: The Quaternion to subtract.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Quaternion.html">Quaternion</a></code></td>
+        <td width="100%">The difference after subtracting the given Quaternion from this Quaternion.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="toAngleAxis(com.viro.core.Vector)"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">toAngleAxis</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+float toAngleAxis (<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> axis)</pre>
+    
+    
+
+    
+  <p>Get the axis of rotation and the angle of rotation (in radians) that this Quaternion
+ represents. Store the axis in the given output <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>.</p></p>
+    <table class="responsive">
+    <tr><th colspan=2>Parameters</th></tr>
+      <tr>
+        <td><code>axis</code></td>
+        <td width="100%">
+          <code>Vector</code>: The axis computed will be stored here.</p></td>
+      </tr>
+    </table>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code>float</code></td>
+        <td width="100%">The angle of rotation in radians.
+</p></td>
+      </tr>
+    </table>
+
+</div>
 
 
 <A NAME="toArray()"></A>
@@ -1057,6 +2453,64 @@ float[] toArray ()</pre>
         <td><code>float[]</code></td>
         <td width="100%">Float array of length four with components [x, y, z, w].
 </p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="toEuler()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">toEuler</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="../../../../reference/com/viro/core/Vector.html">Vector</a> toEuler ()</pre>
+    
+    
+
+    
+  <p>Convert this Quaternion into Euler rotation about each principal axis, and return the
+ result in a <code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code>. This Quaternion is not mutated by this operation.</p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="../../../../reference/com/viro/core/Vector.html">Vector</a></code></td>
+        <td width="100%">The Euler rotation about each axis (X, Y, and Z) in radians.
+</p></td>
+      </tr>
+    </table>
+
+</div>
+
+
+<A NAME="toString()"></A>
+
+<div class="api apilevel-">
+    <h3 class="api-name">toString</h3>
+    <div class="api-level">
+      <div></div>
+      
+  
+
+    </div>
+<pre class="api-signature no-pretty-print">
+<a href="http://d.android.com/reference/java/lang/String.html">String</a> toString ()</pre>
+    
+    
+
+    
+  <p></p></p>
+    <table class="responsive">
+      <tr><th colspan=2>Returns</th></tr>
+      <tr>
+        <td><code><a href="http://d.android.com/reference/java/lang/String.html">String</a></code></td>
+        <td width="100%"><!-- no returns description in source --></p></td>
       </tr>
     </table>
 

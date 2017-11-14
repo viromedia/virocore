@@ -221,6 +221,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsShape.html">PhysicsShape</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PhysicsWorld.HitTestListener.html">PhysicsWorld.HitTestListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/PortalScene.EntryListener.html">PortalScene.EntryListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererCloseListener.html">RendererCloseListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/RendererStartListener.html">RendererStartListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Scene.VisibilityListener.html">Scene.VisibilityListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Sound.PlaybackListener.html">Sound.PlaybackListener</a></li>
@@ -230,7 +231,8 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadSwipeListener.html">TouchpadSwipeListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchpadTouchListener.html">TouchpadTouchListener</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/VideoTexture.PlaybackListener.html">VideoTexture.PlaybackListener</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.html">ViroMediaRecorderDelegate</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.FinishListener.html">ViroMediaRecorder.FinishListener</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.RecordingErrorListener.html">ViroMediaRecorder.RecordingErrorListener</a></li>
       </ul>
     </li>
           
@@ -251,6 +253,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Geometry.html">Geometry</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Light.html">Light</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Material.html">Material</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Matrix.html">Matrix</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Node.html">Node</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/OmniLight.html">OmniLight</a></li>
@@ -326,7 +329,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.StereoMode.html">Texture.StereoMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/Texture.WrapMode.html">Texture.WrapMode</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/TouchState.html">TouchState</a></li>
-          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorderDelegate.ERROR.html">ViroMediaRecorderDelegate.ERROR</a></li>
+          <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroMediaRecorder.Error.html">ViroMediaRecorder.Error</a></li>
           <li class="api apilevel-"><a href="../../../../reference/com/viro/core/ViroViewARCore.AnchorDetectionType.html">ViroViewARCore.AnchorDetectionType</a></li>
       </ul>
     </li>
@@ -646,7 +649,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARScene.Listener.html#onAnchorFound(com.viro.core.ARAnchor, com.viro.core.ARNode)">onAnchorFound</a>(<a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a> anchor, <a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a> node)
+      <a href="../../../../reference/com/viro/core/ARScene.Listener.html#onAnchorFound(com.viro.core.ARAnchor, com.viro.core.ARNode)">onAnchorFound</a>(<a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a> anchor, <a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a> arNode)
       </code>
       
         <p>Invoked when a real-world <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code> is detected.
@@ -673,7 +676,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARScene.Listener.html#onAnchorRemoved(com.viro.core.ARAnchor, com.viro.core.ARNode)">onAnchorRemoved</a>(<a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a> anchor, <a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a> node)
+      <a href="../../../../reference/com/viro/core/ARScene.Listener.html#onAnchorRemoved(com.viro.core.ARAnchor, com.viro.core.ARNode)">onAnchorRemoved</a>(<a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a> anchor, <a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a> arNode)
       </code>
       
         <p>Invoked when an <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code> is removed from the world.
@@ -700,7 +703,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
   
     <td width="100%">
       <code>
-      <a href="../../../../reference/com/viro/core/ARScene.Listener.html#onAnchorUpdated(com.viro.core.ARAnchor, com.viro.core.ARNode)">onAnchorUpdated</a>(<a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a> anchor, <a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a> node)
+      <a href="../../../../reference/com/viro/core/ARScene.Listener.html#onAnchorUpdated(com.viro.core.ARAnchor, com.viro.core.ARNode)">onAnchorUpdated</a>(<a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a> anchor, <a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a> arNode)
       </code>
       
         <p>Invoked when a real-world <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code> is updated.
@@ -827,7 +830,7 @@ void onAmbientLightUpdate (float lightIntensity,
     </div>
 <pre class="api-signature no-pretty-print">
 void onAnchorFound (<a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a> anchor, 
-                <a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a> node)</pre>
+                <a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a> arNode)</pre>
     
     
 
@@ -845,7 +848,7 @@ void onAnchorFound (<a href="../../../../reference/com/viro/core/ARAnchor.html">
           <code>ARAnchor</code>: The detected <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code> representing a real-world feature.</p></td>
       </tr>
       <tr>
-        <td><code>node</code></td>
+        <td><code>arNode</code></td>
         <td width="100%">
           <code>ARNode</code>: The virtual world <code><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></code> associated with the ARAnchor.
 </p></td>
@@ -867,7 +870,7 @@ void onAnchorFound (<a href="../../../../reference/com/viro/core/ARAnchor.html">
     </div>
 <pre class="api-signature no-pretty-print">
 void onAnchorRemoved (<a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a> anchor, 
-                <a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a> node)</pre>
+                <a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a> arNode)</pre>
     
     
 
@@ -884,7 +887,7 @@ void onAnchorRemoved (<a href="../../../../reference/com/viro/core/ARAnchor.html
           <code>ARAnchor</code>: The <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code> that was removed.</p></td>
       </tr>
       <tr>
-        <td><code>node</code></td>
+        <td><code>arNode</code></td>
         <td width="100%">
           <code>ARNode</code>: The corresponding <code><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></code>, which is also removed from the Scene.
 </p></td>
@@ -906,7 +909,7 @@ void onAnchorRemoved (<a href="../../../../reference/com/viro/core/ARAnchor.html
     </div>
 <pre class="api-signature no-pretty-print">
 void onAnchorUpdated (<a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a> anchor, 
-                <a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a> node)</pre>
+                <a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a> arNode)</pre>
     
     
 
@@ -922,7 +925,7 @@ void onAnchorUpdated (<a href="../../../../reference/com/viro/core/ARAnchor.html
           <code>ARAnchor</code>: The <code><a href="../../../../reference/com/viro/core/ARAnchor.html">ARAnchor</a></code> that was updated.</p></td>
       </tr>
       <tr>
-        <td><code>node</code></td>
+        <td><code>arNode</code></td>
         <td width="100%">
           <code>ARNode</code>: The <code><a href="../../../../reference/com/viro/core/ARNode.html">ARNode</a></code> corresponding to the anchor.
 </p></td>
