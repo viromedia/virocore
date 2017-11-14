@@ -89,7 +89,7 @@ void VROShadowTest::build(std::shared_ptr<VROFrameSynchronizer> frameSynchronize
     std::shared_ptr<VROSurface> surface = VROSurface::createSurface(40, 40);
     surface->setName("Surface");
     surface->getMaterials().front()->setLightingModel(VROLightingModel::Lambert);
-    
+
     std::shared_ptr<VRONode> surfaceNode = std::make_shared<VRONode>();
     surfaceNode->setGeometry(surface);
     surfaceNode->setRotationEuler({ -M_PI_2, 0, 0 });

@@ -27,8 +27,6 @@ VROTypefaceAndroid::~VROTypefaceAndroid() {
 FT_Face VROTypefaceAndroid::loadFace(std::string name, int size, FT_Library ft) {
     FT_Face face;
     if (FT_New_Face(_ft, getFontPath(name).c_str(), 0, &face)) {
-        pinfo("Failed to load font %s, loading system font", name.c_str());
-
         if (FT_New_Face(_ft, getFontPath(kSystemFont).c_str(), 0, &face)) {
             pabort("Failed to load system font %s", kSystemFont.c_str());
         }

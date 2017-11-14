@@ -228,8 +228,6 @@ void VROChoreographer::renderBasePass(std::shared_ptr<VROScene> scene,
                                       VRORenderContext *context, std::shared_ptr<VRODriver> &driver) {
     VRORenderPassInputOutput inputs;
     if (_renderHDR) {
-        std::shared_ptr<VRORenderTarget> toneMappedTarget;
-
         if (_renderBloom && metadata->requiresBloomPass()) {
             // Render the scene + bloom to the floating point HDR MRT target
             inputs[kRenderTargetSingleOutput] = _hdrTarget;

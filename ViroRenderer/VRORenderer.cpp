@@ -318,6 +318,7 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     _context->setEyeType(eye);
     _context->setZNear(kZNear);
     _context->setZFar(getFarClippingPlane());
+    _context->setInputController(_inputController);
 
     renderEye(eye, driver);
 
@@ -334,7 +335,6 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     if (delegate) {
         delegate->didRenderEye(eye, _context.get());
     }
-
     _context->getPencil()->render(*_context.get(), driver);
     
     // This unbinds the last shader to even out our pglpush and pops

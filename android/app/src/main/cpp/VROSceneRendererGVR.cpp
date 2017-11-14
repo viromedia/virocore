@@ -137,7 +137,7 @@ void VROSceneRendererGVR::onDrawFrame() {
     ALLOCATION_TRACKER_PRINT();
 }
 
-// For stereo rendering we use GVR's swapchain, which provides async projection
+// For stereo rendering we use GVR's swapchain, which provides async reprojection
 // (async timewarp, basically), and distorts the images. To do this we render
 // to each of the buffers. The gvr::Frame performs distortion and async reprojection
 // when we invoke Submit().
@@ -171,8 +171,8 @@ void VROSceneRendererGVR::renderStereo(VROMatrix4f &headRotation) {
               rightViewport, rightFov);
     _renderer->endFrame(_driver);
 
-    frame.Unbind();
-    frame.Submit(*_viewportList, _headView);
+    frame.Unbind(); // Binds the root OpenGL framebuffer, so we can submit the Frame
+    frame.Submit(*_viewportList, _headView); // Submits all layers (buffer 0, buffer 1, etc.) to the framebuffer
 }
 
 // For mono rendering we simply render direct to our GLSurfaceView, avoiding
