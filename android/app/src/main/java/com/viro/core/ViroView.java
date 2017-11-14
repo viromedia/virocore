@@ -107,13 +107,10 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
             final ApplicationInfo ai = activity.getPackageManager().getApplicationInfo(activity.getPackageName(), PackageManager.GET_META_DATA);
             final Bundle bundle = ai.metaData;
             final String viroApiKey = bundle.getString(API_KEY_METADATA_TAG);
-            if (viroApiKey == null || viroApiKey.isEmpty()) {
-                throw new IllegalArgumentException();
-            }
 
             mApiKey = viroApiKey;
-        } catch (final Exception e) {
-            Log.e(TAG, "Dear developer. Don't forget to configure <meta-data android:name=\"com.viromedia.API_KEY\" android:value=\"YOUR_API_KEY\"/> in your AndroidManifest.xml file. Don't have an API KEY? Get one by signing up on https://viromedia.com/signup/");
+        } catch (final PackageManager.NameNotFoundException e) {
+            Log.w("Viro", "Unable to find package name: " + e.getMessage());
         }
     }
 
