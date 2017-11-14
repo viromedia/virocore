@@ -77,7 +77,7 @@ public class Animation {
         public void onAnimationFinish(Animation animation, boolean canceled);
     }
 
-    private Node mNode;
+    private WeakReference<Node> mNode;
     private ExecutableAnimation mExecutableAnimation;
     private long mDelayInMilliseconds = 0;
     private boolean mLoop = false;
@@ -101,7 +101,7 @@ public class Animation {
 
     Animation(ExecutableAnimation animation, Node node) {
         mExecutableAnimation = animation;
-        mNode = node;
+        mNode = new WeakReference<Node>(node);
     }
 
     /**
@@ -225,10 +225,15 @@ public class Animation {
             mState = State.STOPPED;
             return;
         }
+        Node node = mNode.get();
+        if (node == null){
+            return;
+        }
+
         onStartAnimation();
 
         final WeakReference<Animation> weakSelf = new WeakReference<>(this);
-        mExecutableAnimation.execute(mNode, new ExecutableAnimation.AnimationDelegate() {
+        mExecutableAnimation.execute(node, new ExecutableAnimation.AnimationDelegate() {
             @Override
             public void onFinish(ExecutableAnimation animation) {
                 Animation self = weakSelf.get();
