@@ -33,7 +33,7 @@ public:
 private:
     
     std::shared_ptr<VROARSessionARCore> _session;
-    jni::UniqueWeakObject<arcore::Frame> _frame;
+    jni::UniqueObject<arcore::Frame> _frame;
 
     VROVector3f _position;
     VROMatrix4f _rotation;

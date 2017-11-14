@@ -40,7 +40,6 @@ JNI_METHOD(void, nativeSetPassable)(JNIEnv *env,
 JNI_METHOD(jlong, nativeCreatePortalDelegate)(JNIEnv *env,
                                               jobject object) {
     VROPlatformSetEnv(env);
-
     std::shared_ptr<PortalDelegate> delegate = std::make_shared<PortalDelegate>(object);
     return PortalDelegate::jptr(delegate);
 }

@@ -11,12 +11,12 @@
 #include "SoundDelegate_JNI.h"
 
 SoundDelegate::SoundDelegate(jobject soundObjectJava) {
-    _javaObject = VROPlatformGetJNIEnv()->NewWeakGlobalRef(soundObjectJava);
+    _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewGlobalRef(soundObjectJava));
 }
 
 SoundDelegate::~SoundDelegate() {
     // TODO: fix the below
-    VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
+    VROPlatformGetJNIEnv()->DeleteGlobalRef(_javaObject);
 }
 
 void SoundDelegate::soundIsReady() {
@@ -35,14 +35,11 @@ void SoundDelegate::soundIsReady() {
         return;
     }
 
-    if (_javaObject != NULL){
-        env->CallVoidMethod(_javaObject, method);
-        if (env->ExceptionOccurred()) {
-            perr("Exception occurred while invoking soundIsReady()");
-            env->ExceptionClear();
-        }
+    env->CallVoidMethod(_javaObject, method);
+    if (env->ExceptionOccurred()) {
+        perr("Exception occurred while invoking soundIsReady()");
+        env->ExceptionClear();
     }
-
     env->DeleteLocalRef(javaClass);
 }
 

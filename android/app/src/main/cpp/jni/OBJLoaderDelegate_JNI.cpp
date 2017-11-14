@@ -14,38 +14,32 @@
 #include "Geometry_JNI.h"
 
 OBJLoaderDelegate::OBJLoaderDelegate(jobject nodeJavaObject, JNIEnv *env) {
-    _javaObject = env->NewWeakGlobalRef(nodeJavaObject);
+    _javaObject = reinterpret_cast<jclass>(env->NewGlobalRef(nodeJavaObject));
 }
 
 OBJLoaderDelegate::~OBJLoaderDelegate() {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    env->DeleteWeakGlobalRef(_javaObject);
+    env->DeleteGlobalRef(_javaObject);
 }
 
 void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlong requestId) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = _javaObject;
-
-    if (weakObj == NULL){
-        return;
-    }
-
-    jobject ref =env->NewGlobalRef(_javaObject);
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
     // If the request is antiquated, clear the node
-    jlong activeRequestID = VROPlatformCallJavaLongFunction(ref, "getActiveRequestID", "()J");
+    jlong activeRequestID = VROPlatformCallJavaLongFunction(_javaObject, "getActiveRequestID", "()J");
     if (activeRequestID != requestId) {
         pinfo("Received antiquated Object3D load, discarding");
         node->removeAllChildren();
-        env->DeleteGlobalRef(ref);
         return;
     }
 
-    VROPlatformDispatchAsyncApplication([ref, node, isFBX] {
+    VROPlatformDispatchAsyncApplication([weakObj, node, isFBX] {
         JNIEnv *env = VROPlatformGetJNIEnv();
 
-        jobject localObj = env->NewLocalRef(ref);
+        jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(weakObj);
             return;
         }
 
@@ -58,27 +52,28 @@ void OBJLoaderDelegate::objLoaded(std::shared_ptr<VRONode> node, bool isFBX, jlo
 
         VROPlatformCallJavaFunction(localObj, "nodeDidFinishCreation", "(ZJ)V", isFBX, geometryRef);
         env->DeleteLocalRef(localObj);
-        env->DeleteGlobalRef(ref);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }
 
 void OBJLoaderDelegate::objFailed(std::string error) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jobject ref = env->NewGlobalRef(_javaObject);
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([ref, error] {
+    VROPlatformDispatchAsyncApplication([weakObj, error] {
         JNIEnv *env = VROPlatformGetJNIEnv();
 
-        jobject localObj = env->NewLocalRef(ref);
+        jobject localObj = env->NewLocalRef(weakObj);
         if (localObj == NULL) {
+            env->DeleteWeakGlobalRef(weakObj);
             return;
         }
 
         jstring jerror = env->NewStringUTF(error.c_str());
         VROPlatformCallJavaFunction(localObj, "nodeDidFailOBJLoad", "(Ljava/lang/String;)V", jerror);
 
-        env->DeleteLocalRef(jerror);
         env->DeleteLocalRef(localObj);
-        env->DeleteGlobalRef(ref);
+        env->DeleteLocalRef(jerror);
+        env->DeleteWeakGlobalRef(weakObj);
     });
 }

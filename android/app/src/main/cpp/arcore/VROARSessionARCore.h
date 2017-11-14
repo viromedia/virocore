@@ -57,7 +57,7 @@ private:
     /*
      The ARCore session.
      */
-    jni::UniqueWeakObject<arcore::Session> _sessionJNI;
+    jni::UniqueObject<arcore::Session> _sessionJNI;
 
     /*
      The ViroViewARCore object.

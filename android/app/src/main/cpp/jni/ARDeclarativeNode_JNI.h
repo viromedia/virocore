@@ -4,7 +4,6 @@
 #include <jni.h>
 #include <memory>
 #include <VROARDeclarativePlane.h>
-#include <VROPlatformUtil.h>
 #include "PersistentRef.h"
 
 namespace ARDeclarativeNode {
@@ -22,11 +21,12 @@ namespace ARDeclarativeNode {
 class ARDeclarativeNodeDelegate : public VROARDeclarativeNodeDelegate {
 public:
     ARDeclarativeNodeDelegate(jobject arNodeObject, JNIEnv *env) {
-        _javaObject = env->NewWeakGlobalRef(arNodeObject);
+        _javaObject = reinterpret_cast<jclass>(env->NewGlobalRef(arNodeObject));
+        _env = env;
     }
 
     ~ARDeclarativeNodeDelegate() {
-        VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_javaObject);
+        _env->DeleteGlobalRef(_javaObject);
     }
 
     static jlong jptr(std::shared_ptr<ARDeclarativeNodeDelegate> delegate) {
@@ -44,7 +44,8 @@ public:
     void onARAnchorRemoved();
 
 private:
-    jweak _javaObject;
+    jobject _javaObject;
+    JNIEnv *_env;
 };
 
 #endif //ANDROID_ARDECLARATIVENODE_H

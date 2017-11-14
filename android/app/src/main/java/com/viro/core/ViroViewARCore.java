@@ -164,6 +164,7 @@ public class ViroViewARCore extends ViroView {
         }
     }
 
+    private Renderer mRenderer;
     private GLSurfaceView mSurfaceView;
     private AssetManager mAssetManager;
     private List<FrameListener> mFrameListeners = new ArrayList();
@@ -245,7 +246,7 @@ public class ViroViewARCore extends ViroView {
         mPlatformUtil = new PlatformUtil(
                 new GLSurfaceViewQueue(mSurfaceView),
                 mFrameListeners,
-                activityContext.getApplicationContext(),
+                activityContext,
                 mAssetManager);
         mNativeRenderer = new Renderer(
                 getClass().getClassLoader(),
@@ -323,7 +324,6 @@ public class ViroViewARCore extends ViroView {
         if (!(scene instanceof ARScene)) {
             throw new IllegalArgumentException("ViroViewARCore requires an ARScene");
         }
-        super.setScene(scene);
         mNativeRenderer.setSceneController(scene.mNativeRef, 1.0f);
     }
 
@@ -413,12 +413,9 @@ public class ViroViewARCore extends ViroView {
 
     @Override
     public void dispose() {
-        mSession = null;
-
         if (mMediaRecorder != null) {
             mMediaRecorder.dispose();
         }
-
         mARTouchGestureListener.destroy();
         super.dispose();
     }

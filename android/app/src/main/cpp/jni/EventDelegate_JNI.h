@@ -29,12 +29,12 @@
 class EventDelegate_JNI : public VROEventDelegate {
 public:
     EventDelegate_JNI(jobject sceneJavaObject, JNIEnv *env) {
-        _javaObject = env->NewWeakGlobalRef(sceneJavaObject);
+        _javaObject = reinterpret_cast<jclass>(env->NewGlobalRef(sceneJavaObject));
     }
 
     ~EventDelegate_JNI() {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        env->DeleteWeakGlobalRef(_javaObject);
+        env->DeleteGlobalRef(_javaObject);
     }
 
     /*
@@ -55,7 +55,7 @@ public:
     void onCameraARHitTest(int source, std::vector<VROARHitTestResult> results);
 
 private:
-    jweak _javaObject;
+    jobject _javaObject;
     void callJavaFunction(std::string functionName, std::string methodID, ...);
 };
 

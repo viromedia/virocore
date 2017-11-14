@@ -53,7 +53,7 @@ JNI_METHOD(void, nativeScheduleScreenCapture)(JNIEnv *env,
 
 
 MediaRecorder_JNI::MediaRecorder_JNI(jobject recorderJavaObject, JNIEnv *env) {
-    _javaMediaRecorder = VROPlatformGetJNIEnv()->NewWeakGlobalRef(recorderJavaObject);
+    _javaMediaRecorder = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewGlobalRef(recorderJavaObject));
 }
 
 MediaRecorder_JNI::~MediaRecorder_JNI() {
@@ -85,36 +85,21 @@ void MediaRecorder_JNI::nativeScheduleScreenCapture() {
  * Native to Java calls.
  */
 void MediaRecorder_JNI::onBindToEGLSurface() {
-    if (_javaMediaRecorder == NULL){
-        return;
-    }
     VROPlatformCallJavaFunction(_javaMediaRecorder, "onNativeBindToEGLSurface","()V");
 }
 
 void MediaRecorder_JNI::onUnBindFromEGLSurface() {
-    if (_javaMediaRecorder == NULL){
-        return;
-    }
     VROPlatformCallJavaFunction(_javaMediaRecorder, "onNativeUnBindEGLSurface","()V");
 }
 
 void MediaRecorder_JNI::onEnableFrameRecording(bool enabled) {
-    if (_javaMediaRecorder == NULL){
-        return;
-    }
     VROPlatformCallJavaFunction(_javaMediaRecorder, "onNativeEnableFrameRecording","(Z)V", enabled);
 }
 
 void MediaRecorder_JNI::onEglSwap() {
-    if (_javaMediaRecorder == NULL){
-        return;
-    }
     VROPlatformCallJavaFunction(_javaMediaRecorder, "onNativeSwapEGLSurface","()V");
 }
 
 void MediaRecorder_JNI::onTakeScreenshot() {
-    if (_javaMediaRecorder == NULL){
-        return;
-    }
     VROPlatformCallJavaFunction(_javaMediaRecorder, "onNativeTakeScreenshot","()V");
 }

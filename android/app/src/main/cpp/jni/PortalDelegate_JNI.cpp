@@ -8,15 +8,16 @@
 
 
 PortalDelegate::PortalDelegate(jobject javaPortalSceneObject){
-    _w_javaObject = VROPlatformGetJNIEnv()->NewWeakGlobalRef(javaPortalSceneObject);
+    _javaObject = reinterpret_cast<jclass>(VROPlatformGetJNIEnv()->NewGlobalRef(javaPortalSceneObject));
 }
 
 PortalDelegate::~PortalDelegate() {
-    VROPlatformGetJNIEnv()->DeleteWeakGlobalRef(_w_javaObject);
+    VROPlatformGetJNIEnv()->DeleteGlobalRef(_javaObject);
 }
 
 void PortalDelegate::onPortalEnter() {
-    jweak weakObj = _w_javaObject;
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         JNIEnv *env = VROPlatformGetJNIEnv();
@@ -34,7 +35,8 @@ void PortalDelegate::onPortalEnter() {
 
 
 void PortalDelegate::onPortalExit() {
-    jweak weakObj = _w_javaObject;
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj] {
         JNIEnv *env = VROPlatformGetJNIEnv();

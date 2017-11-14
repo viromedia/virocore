@@ -36,6 +36,6 @@ public:
     void onCollided(std::string key, VROPhysicsBody::VROCollision collision);
 
 private:
-    jweak _javaObject;
+        jobject _javaObject;
 };
 #endif

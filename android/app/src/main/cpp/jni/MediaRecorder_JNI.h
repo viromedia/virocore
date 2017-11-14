@@ -42,7 +42,7 @@ public:
 
 private:
     std::shared_ptr<VROAVRecorderAndroid> _nativeMediaRecorder;
-    jweak _javaMediaRecorder;
+    jobject _javaMediaRecorder;
 };
 
 #endif //MEDIA_RECORDER_JNI_H

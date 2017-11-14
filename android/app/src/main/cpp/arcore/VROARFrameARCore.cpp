@@ -19,7 +19,7 @@ VROARFrameARCore::VROARFrameARCore(jni::Object<arcore::Frame> frameJNI,
     _session(session),
     _viewport(viewport) {
 
-    _frameJNI = frameJNI.NewWeakGlobalRef(*VROPlatformGetJNIEnv());
+    _frameJNI = frameJNI.NewGlobalRef(*VROPlatformGetJNIEnv());
     _camera = std::make_shared<VROARCameraARCore>(frameJNI, session);
 }
 

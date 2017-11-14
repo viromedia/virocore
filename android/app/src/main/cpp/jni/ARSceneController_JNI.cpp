@@ -199,7 +199,7 @@ JNI_METHOD(void, nativeRemoveARNode) (JNIEnv *env,
 
 void ARDeclarativeSceneDelegate::onTrackingInitialized() {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObjWeak = _javaObject;
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
@@ -214,7 +214,7 @@ void ARDeclarativeSceneDelegate::onTrackingInitialized() {
 
 void ARDeclarativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensity, float colorTemperature) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObjWeak = _javaObject;
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, ambientLightIntensity, colorTemperature] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
@@ -230,7 +230,7 @@ void ARDeclarativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensit
 
 void ARDeclarativeSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObjWeak = _javaObject;
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, anchor] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
@@ -253,7 +253,7 @@ void ARDeclarativeSceneDelegate::anchorWillUpdate(std::shared_ptr<VROARAnchor> a
 
 void ARDeclarativeSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObjWeak = _javaObject;
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, anchor] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
@@ -271,7 +271,7 @@ void ARDeclarativeSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> an
 
 void ARDeclarativeSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObjWeak = _javaObject;
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, anchor] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
@@ -293,7 +293,7 @@ void ARDeclarativeSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> a
 
 void ARImperativeSceneDelegate::onTrackingInitialized() {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObjWeak = _javaObject;
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
@@ -309,7 +309,7 @@ void ARImperativeSceneDelegate::onTrackingInitialized() {
 void ARImperativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensity,
                                                      float colorTemperature) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObjWeak = _javaObject;
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, ambientLightIntensity, colorTemperature] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
@@ -325,7 +325,7 @@ void ARImperativeSceneDelegate::onAmbientLightUpdate(float ambientLightIntensity
 
 void ARImperativeSceneDelegate::anchorWasDetected(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObjWeak = _javaObject;
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, anchor, node] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
@@ -348,7 +348,7 @@ void ARImperativeSceneDelegate::anchorWillUpdate(std::shared_ptr<VROARAnchor> an
 
 void ARImperativeSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObjWeak = _javaObject;
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, anchor, node] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);
@@ -366,7 +366,7 @@ void ARImperativeSceneDelegate::anchorDidUpdate(std::shared_ptr<VROARAnchor> anc
 
 void ARImperativeSceneDelegate::anchorWasRemoved(std::shared_ptr<VROARAnchor> anchor, std::shared_ptr<VROARNode> node) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObjWeak = _javaObject;
+    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
     VROPlatformDispatchAsyncApplication([jObjWeak, anchor, node] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);

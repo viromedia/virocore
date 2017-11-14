@@ -22,7 +22,7 @@ public:
     void objFailed(std::string error);
 
 private:
-    jweak _javaObject;
+    jobject _javaObject;
 
 };
 

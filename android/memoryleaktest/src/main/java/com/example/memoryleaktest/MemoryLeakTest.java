@@ -82,8 +82,6 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         mTestToRun = intent.getStringExtra("TestToRun");
 
         mViroView.setVRModeEnabled(false);
-        mViroView.validateAPIKey("7EEDCB99-2C3B-4681-AE17-17BC165BF792");
-
         setContentView(mViroView);
         Log.i("MemoryLeakTest", "ViroViewGVR addr onCreate:" + mViroView.hashCode());
     }
@@ -117,7 +115,7 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         Log.i("MemoryLeakTest", "ViroViewGVR addr onDestroy:" + mViroView.hashCode());
         super.onDestroy();
         mViroView.onActivityDestroyed(this);
-        Log.i(TAG, " dMemoryLeakTest onDestroy called.");
+        Log.i(TAG, "MemoryLeakTest onDestroy called.");
     }
 
 
@@ -127,22 +125,6 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         Log.e("ViroActivity", "onRendererStart called");
         //initializeVrScene();
         initializeArScene();
-    }
-
-    public void initializeVrScene() {
-        final Scene scene = new Scene();
-        final Node rootNode = scene.getRootNode();
-        List<Node> nodes = selectScene(scene);
-        if (nodes != null){
-            for (final Node node : nodes) {
-                rootNode.addChildNode(node);
-            }
-        }
-
-
-        final AmbientLight ambientLightJni = new AmbientLight(Color.WHITE, 300.0f);
-        scene.getRootNode().addLight(ambientLightJni);
-        mViroView.setScene(scene);
     }
 
     public void initializeArScene() {
@@ -155,6 +137,8 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
             }
         }
 
+        final AmbientLight ambientLightJni = new AmbientLight(Color.WHITE, 300.0f);
+        scene.getRootNode().addLight(ambientLightJni);
         mViroView.setScene(scene);
     }
 
@@ -213,9 +197,9 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         material.setLightingModel(Material.LightingModel.LAMBERT);
 
         // Creation of ViroBox to the right and billboarded
-        final Box boxGeometry = new Box(1, 1, 1);
+        final Box boxGeometry = new Box(2, 4, 2);
         node1.setGeometry(boxGeometry);
-        final Vector boxPosition = new Vector(1, 0, -1);
+        final Vector boxPosition = new Vector(5, 0, -3);
         node1.setPosition(boxPosition);
         boxGeometry.setMaterials(Arrays.asList(material));
         final EnumSet<Node.TransformBehavior> behaviors = EnumSet.of(Node.TransformBehavior.BILLBOARD);
@@ -279,13 +263,14 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         final Surface surface = new Surface(4, 4, 0, 0, 1, 1);
         final float[] position = {0, 0, -3};
         node.setPosition(new Vector(position));
-        VideoTexture texture = new VideoTexture(mViroView.getViroContext(), Uri.parse("https://s3.amazonaws.com/viro.video/Climber2Top.mp4"));
+        final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(), Uri.parse("https://s3.amazonaws.com/viro.video/Climber2Top.mp4"));
         final Material material = new Material();
-        material.setDiffuseTexture(texture);
+        material.setDiffuseTexture(videoTexture);
         surface.setMaterials(Arrays.asList(material));
-        texture.setVolume(0.1f);
-        texture.setLoop(true);
-        texture.play();
+        videoTexture.setVolume(0.1f);
+        videoTexture.setLoop(true);
+        videoTexture.play();
+
         node.setGeometry(surface);
         return Arrays.asList(node);
     }

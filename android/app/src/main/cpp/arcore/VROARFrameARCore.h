@@ -42,7 +42,7 @@ public:
 
 private:
 
-    jni::UniqueWeakObject<arcore::Frame> _frameJNI;
+    jni::UniqueObject<arcore::Frame> _frameJNI;
     std::weak_ptr<VROARSessionARCore> _session;
     std::shared_ptr<VROARCamera> _camera;
     VROViewport _viewport;

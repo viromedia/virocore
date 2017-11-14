@@ -72,7 +72,7 @@ static int sNullNodeID = -1;
 
 void EventDelegate_JNI::onHover(int source, std::shared_ptr<VRONode> node, bool isHovering, std::vector<float> position) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = _javaObject;
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, source, node, isHovering, position] {
         JNIEnv *env = VROPlatformGetJNIEnv();
@@ -104,7 +104,7 @@ void EventDelegate_JNI::onHover(int source, std::shared_ptr<VRONode> node, bool 
 
 void EventDelegate_JNI::onClick(int source, std::shared_ptr<VRONode> node, ClickState clickState, std::vector<float> position) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = _javaObject;
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, source, node, clickState, position] {
         JNIEnv *env = VROPlatformGetJNIEnv();
@@ -135,7 +135,7 @@ void EventDelegate_JNI::onClick(int source, std::shared_ptr<VRONode> node, Click
 
 void EventDelegate_JNI::onTouch(int source, std::shared_ptr<VRONode> node, TouchState touchState, float x, float y){
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = _javaObject;
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, source, node, touchState, x, y] {
         JNIEnv *env = VROPlatformGetJNIEnv();
@@ -157,7 +157,7 @@ void EventDelegate_JNI::onMove(int source, std::shared_ptr<VRONode> node, VROVec
 
 void EventDelegate_JNI::onControllerStatus(int source, ControllerStatus status) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = _javaObject;
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, source, status] {
         JNIEnv *env = VROPlatformGetJNIEnv();
@@ -196,7 +196,7 @@ void EventDelegate_JNI::onSwipe(int source, std::shared_ptr<VRONode> node, Swipe
 
 void EventDelegate_JNI::onScroll(int source, std::shared_ptr<VRONode> node, float x, float y) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = _javaObject;
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, source, node, x, y] {
         JNIEnv *env = VROPlatformGetJNIEnv();
@@ -214,7 +214,7 @@ void EventDelegate_JNI::onScroll(int source, std::shared_ptr<VRONode> node, floa
 
 void EventDelegate_JNI::onDrag(int source, std::shared_ptr<VRONode> node, VROVector3f newPosition) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = _javaObject;
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, source, node, newPosition] {
         JNIEnv *env = VROPlatformGetJNIEnv();
@@ -242,7 +242,7 @@ void EventDelegate_JNI::onFuse(int source, std::shared_ptr<VRONode> node, float 
     }
 
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = _javaObject;
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, source, node, timeToFuseRatio] {
         JNIEnv *env = VROPlatformGetJNIEnv();
@@ -260,7 +260,7 @@ void EventDelegate_JNI::onFuse(int source, std::shared_ptr<VRONode> node, float 
 
 void EventDelegate_JNI::onPinch(int source, std::shared_ptr<VRONode> node, float scaleFactor, PinchState pinchState) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = _javaObject;
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, source, node, scaleFactor, pinchState] {
         JNIEnv *env = VROPlatformGetJNIEnv();
@@ -278,7 +278,7 @@ void EventDelegate_JNI::onPinch(int source, std::shared_ptr<VRONode> node, float
 
 void EventDelegate_JNI::onRotate(int source, std::shared_ptr<VRONode> node, float rotationRadians, RotateState rotateState) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = _javaObject;
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, source, node, rotationRadians, rotateState] {
         JNIEnv *env = VROPlatformGetJNIEnv();
@@ -296,7 +296,7 @@ void EventDelegate_JNI::onRotate(int source, std::shared_ptr<VRONode> node, floa
 
 void EventDelegate_JNI::onCameraARHitTest(int source, std::vector<VROARHitTestResult> results) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak weakObj = _javaObject;
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
     VROPlatformDispatchAsyncApplication([weakObj, source, results] {
         JNIEnv *env = VROPlatformGetJNIEnv();
