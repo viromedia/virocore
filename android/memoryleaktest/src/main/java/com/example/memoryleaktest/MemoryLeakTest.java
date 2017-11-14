@@ -418,7 +418,8 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
 
     private List<Node> testAudio() {
         SpatialSound sound = new SpatialSound(mViroView.getViroContext(), Uri.parse("file:///android_asset/flies_mono.wav"), null);
-        sound.setPosition(new Vector(-5, 0, 0));
+        sound.setPosition(new Vector(-1, 0, 0));
+        sound.setVolume(1.0f);
         sound.setDistanceRolloff(SpatialSound.Rolloff.LINEAR, 3, 5);
         sound.setLoop(true);
 
