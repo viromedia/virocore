@@ -25,6 +25,7 @@ import com.google.vr.cardboard.ContextUtils;
 import com.viro.core.internal.FrameListener;
 import com.viro.core.internal.GLSurfaceViewQueue;
 import com.viro.core.internal.PlatformUtil;
+import com.viro.renderer.BuildConfig;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -178,6 +179,10 @@ public class ViroViewScene extends ViroView {
                 mAssetManager, mPlatformUtil);
         mNativeViroContext = new ViroContext(mNativeRenderer.mNativeRef);
         mRenderStartListener = rendererStartListener;
+
+        if (BuildConfig.FLAVOR.equalsIgnoreCase(FLAVOR_VIRO_CORE)) {
+            validateAPIKeyFromManifest();
+        }
     }
     private void initSurfaceView() {
         int colorBits = 8;

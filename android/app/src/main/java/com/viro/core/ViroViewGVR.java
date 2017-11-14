@@ -35,6 +35,7 @@ import com.viro.core.internal.BuildInfo;
 import com.viro.core.internal.FrameListener;
 import com.viro.core.internal.GLSurfaceViewQueue;
 import com.viro.core.internal.PlatformUtil;
+import com.viro.renderer.BuildConfig;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -274,7 +275,10 @@ public class ViroViewGVR extends ViroView {
         mGVRLayout.getUiLayout().setCloseButtonListener(vrExitListener);
         // default the mode to VR
         setVRModeEnabled(true);
-        validateAPIKey();
+
+        if (BuildConfig.FLAVOR.equalsIgnoreCase(FLAVOR_VIRO_CORE)) {
+            validateAPIKeyFromManifest();
+        }
     }
 
     /**

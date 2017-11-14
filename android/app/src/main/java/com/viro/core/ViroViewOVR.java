@@ -27,6 +27,7 @@ import com.google.vr.cardboard.ContextUtils;
 import com.viro.core.internal.FrameListener;
 import com.viro.core.internal.PlatformUtil;
 import com.viro.core.internal.RenderCommandQueue;
+import com.viro.renderer.BuildConfig;
 
 import java.util.List;
 import java.util.Queue;
@@ -151,7 +152,10 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         // Prevent screen from switching to portrait
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        validateAPIKey();
+
+        if (BuildConfig.FLAVOR.equalsIgnoreCase(FLAVOR_VIRO_CORE)) {
+            validateAPIKeyFromManifest();
+        }
     }
 
     @Override

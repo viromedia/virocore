@@ -35,6 +35,7 @@ android {
         }
     }
 
+    // If the flavors are updated, make sure to update ViroView.java's static flavor fields.
     productFlavors {
         viro_core {
             buildConfigField "String", "dummyField", "\"ViroCore\""
@@ -44,6 +45,7 @@ android {
             buildConfigField "String", "dummyField", "\"ViroReact\""
         }
     }
+
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
