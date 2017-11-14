@@ -19,6 +19,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
 import com.viro.core.internal.BuildInfo;
 
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -35,11 +36,11 @@ public class KeyMetricsRecorder {
     private static final String METRICS_TABLE_COUNT_ATTR = "Count";
 
     private final AmazonDynamoDBClient mDynamoClient;
-    private final Context mContext;
+    private final WeakReference<Context> mContextWeak;
 
     public KeyMetricsRecorder(AmazonDynamoDBClient client, Context context) {
         mDynamoClient = client;
-        mContext = context;
+        mContextWeak = new WeakReference<Context>(context);
     }
 
     public void record(String key, String vrPlatform) {
@@ -105,9 +106,12 @@ public class KeyMetricsRecorder {
         // Add the VR platform
         builder.append(vrPlatform).append(DELIMITER);
         // Add the Android package name
-        builder.append(BuildInfo.getPackageName(mContext)).append(DELIMITER);
-        // Add the build type (debug|release);
-        builder.append(BuildInfo.isDebug(mContext) ? "debug" : "release");
+        Context context = mContextWeak.get();
+        if(context != null) {
+            builder.append(BuildInfo.getPackageName(context)).append(DELIMITER);
+            // Add the build type (debug|release);
+            builder.append(BuildInfo.isDebug(context) ? "debug" : "release");
+        }
         return builder.toString();
     }
 

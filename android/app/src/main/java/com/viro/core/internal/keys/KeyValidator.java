@@ -18,6 +18,8 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.viro.renderer.BuildConfig;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Utility class to validate api keys passed in SceneNavigator
  */
@@ -25,16 +27,16 @@ import com.viro.renderer.BuildConfig;
 public class KeyValidator {
 
     private static final String TAG = "Viro";
-    private Context mContext;
+    private WeakReference<Context> mContextWeakRef;
     private DynamoDBMapper mDynamoDBMapper;
     private AmazonDynamoDBClient mDynamoClient;
 
     private static int MAX_WAIT_INTERVAL_MILLIS = 64000;
 
     public KeyValidator(Context context) {
-        mContext = context;
+        mContextWeakRef = new WeakReference<Context>(context);
         CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
-                mContext,
+                context,
                 BuildConfig.COGNITO_IDENTITY_POOL_ID,
                 Regions.US_WEST_2
         );
@@ -64,8 +66,11 @@ public class KeyValidator {
                         // Our dynamodb table stores valid as String true or false. As a result, objectmapper loads it as String
                         if (keyFromDynamo != null && keyFromDynamo.getValid().equalsIgnoreCase("true")) {
                             listener.onResponse(true);
-                            KeyMetricsRecorder recorder = new KeyMetricsRecorder(mDynamoClient, mContext);
-                            recorder.record(apiKey, vrPlatform);
+                            Context context = mContextWeakRef.get();
+                            if(context != null) {
+                                KeyMetricsRecorder recorder = new KeyMetricsRecorder(mDynamoClient, context);
+                                recorder.record(apiKey, vrPlatform);
+                            }
                         } else {
                             listener.onResponse(false);
                             Log.i(TAG, "The given API Key is either missing or invalid! If you " +
