@@ -170,6 +170,9 @@ public class ViroViewOVR extends ViroView implements SurfaceHolder.Callback {
 
     @Override
     public void setScene(Scene scene) {
+        if (scene == mCurrentScene) {
+            return;
+        }
         super.setScene(scene);
         mNativeRenderer.setSceneController(scene.mNativeRef, 1.0f);
     }

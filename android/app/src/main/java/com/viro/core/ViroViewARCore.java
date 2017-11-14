@@ -326,6 +326,9 @@ public class ViroViewARCore extends ViroView {
 
     @Override
     public void setScene(Scene scene) {
+        if (scene == mCurrentScene) {
+            return;
+        }
         if (!(scene instanceof ARScene)) {
             throw new IllegalArgumentException("ViroViewARCore requires an ARScene");
         }

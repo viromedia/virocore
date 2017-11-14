@@ -323,6 +323,9 @@ public class ViroViewGVR extends ViroView {
 
     @Override
     public void setScene(Scene scene) {
+        if (scene == mCurrentScene) {
+            return;
+        }
         super.setScene(scene);
         mNativeRenderer.setSceneController(scene.mNativeRef, 1.0f);
     }

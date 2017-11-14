@@ -69,7 +69,7 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
     protected WeakReference<Activity> mWeakActivity;
     private String mApiKey;
     protected RendererStartListener mRenderStartListener = null;
-    private Scene mCurrentScene;
+    protected Scene mCurrentScene;
 
     /**
      * @hide
