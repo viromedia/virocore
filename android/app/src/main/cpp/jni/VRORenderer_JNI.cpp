@@ -51,6 +51,8 @@ JNI_METHOD(jlong, nativeCreateRendererGVR)(JNIEnv *env, jclass clazz,
                                            jobject asset_mgr,
                                            jobject platform_util,
                                            jlong native_gvr_api) {
+    VROPlatformSetType(VROPlatformType::AndroidGVR);
+
     std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
     gvrAudio->Init(env, android_context, class_loader, GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
     VROPlatformSetEnv(env, android_context, asset_mgr, platform_util);
@@ -68,6 +70,8 @@ JNI_METHOD(jlong, nativeCreateRendererOVR)(JNIEnv *env, jclass clazz,
                                            jobject activity,
                                            jobject asset_mgr,
                                            jobject platform_util) {
+    VROPlatformSetType(VROPlatformType::AndroidOVR);
+
     std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
     gvrAudio->Init(env, android_context, class_loader, GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
     VROPlatformSetEnv(env, android_context, asset_mgr, platform_util);
@@ -84,6 +88,8 @@ JNI_METHOD(jlong, nativeCreateRendererARCore)(JNIEnv *env, jclass clazz,
                                               jni::Object<arcore::Session> session,
                                               jobject asset_mgr,
                                               jobject platform_util) {
+    VROPlatformSetType(VROPlatformType::AndroidARCore);
+
     std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
     gvrAudio->Init(env, android_context, class_loader, GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
     VROPlatformSetEnv(env, android_context, asset_mgr, platform_util);
@@ -100,6 +106,8 @@ JNI_METHOD(jlong, nativeCreateRendererSceneView)(JNIEnv *env, jclass clazz,
                                                  jobject view,
                                                  jobject asset_mgr,
                                                  jobject platform_util) {
+    VROPlatformSetType(VROPlatformType::AndroidSceneView);
+
     std::shared_ptr<gvr::AudioApi> gvrAudio = std::make_shared<gvr::AudioApi>();
     gvrAudio->Init(env, android_context, class_loader, GVR_AUDIO_RENDERING_BINAURAL_HIGH_QUALITY);
     VROPlatformSetEnv(env, android_context, asset_mgr, platform_util);

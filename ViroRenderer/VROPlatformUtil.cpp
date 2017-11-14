@@ -12,6 +12,15 @@
 #include <stdlib.h>
 #include <fstream>
 
+static VROPlatformType sPlatformType = VROPlatformType::Unknown;
+
+void VROPlatformSetType(VROPlatformType type) {
+    sPlatformType = type;
+}
+VROPlatformType VROPlatformGetType() {
+    return sPlatformType;
+}
+
 std::string VROPlatformLoadFileAsString(std::string path) {
     std::ifstream input(path, std::ios::in | std::ios::binary);
     if (input) {

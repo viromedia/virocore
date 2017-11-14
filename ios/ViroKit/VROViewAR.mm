@@ -117,6 +117,7 @@ static VROVector3f const kZeroVector = VROVector3f();
 }
 
 - (void)initRenderer {
+    VROPlatformSetType(VROPlatformType::iOSARKit);
     if (!self.context) {
         EAGLContext *context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
         self.context = context;

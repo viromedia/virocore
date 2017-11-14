@@ -9,6 +9,7 @@
 #import "VROViewCardboard.h"
 #import <memory>
 #import "VRORenderer.h"
+#import "VROPlatformUtil.h"
 #import "VRORenderLoopCardboard.h"
 #import "VROSceneRendererCardboardMetal.h"
 #import "VROSceneRendererCardboardOpenGL.h"
@@ -71,6 +72,7 @@
 }
 
 - (void)initRenderer {
+    VROPlatformSetType(VROPlatformType::iOSCardboard);
     self.delegate = self;
     self.keyValidator = [[VROApiKeyValidatorDynamo alloc] init];
   
