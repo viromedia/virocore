@@ -39,11 +39,13 @@ public class KeyMetricsRecorder {
     private static final String METRICS_TABLE_COUNT_ATTR = "Count";
 
     private final AmazonDynamoDBClient mDynamoClient;
-    private final WeakReference<Context> mContextWeak;
+    private String mPackageName;
+    private boolean isDebug;
 
     public KeyMetricsRecorder(AmazonDynamoDBClient client, Context context) {
         mDynamoClient = client;
-        mContextWeak = new WeakReference<Context>(context);
+        mPackageName = BuildInfo.getPackageName(context);
+        isDebug = BuildInfo.isDebug(context);
     }
 
     public void record(String key, String vrPlatform) {
@@ -114,12 +116,10 @@ public class KeyMetricsRecorder {
         // Add the VR platform
         builder.append(vrPlatform).append(DELIMITER);
         // Add the Android package name
-        Context context = mContextWeak.get();
-        if(context != null) {
-            builder.append(BuildInfo.getPackageName(context)).append(DELIMITER);
-            // Add the build type (debug|release);
-            builder.append(BuildInfo.isDebug(context) ? "debug" : "release");
-        }
+        builder.append(mPackageName).append(DELIMITER);
+        // Add the build type (debug|release);
+        builder.append(isDebug ? "debug" : "release");
+
         return builder.toString();
     }
 
