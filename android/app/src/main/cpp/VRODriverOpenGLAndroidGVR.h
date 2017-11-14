@@ -21,7 +21,13 @@ public:
      so we must do gamma conversion manually.
      */
     virtual VROColorRenderingMode getColorRenderingMode() {
-        return VROColorRenderingMode::LinearSoftware;
+        // TODO VIRO-2278: restore this to LinearSoftware after bottleneck is found
+        return VROColorRenderingMode::NonLinear;
+    }
+
+    virtual bool isBloomEnabled() {
+        // TODO VIRO-2278: restore this to true after bottleneck is found
+        return false;
     }
 
     /*

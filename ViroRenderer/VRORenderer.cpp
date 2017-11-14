@@ -365,7 +365,9 @@ void VRORenderer::endFrame(std::shared_ptr<VRODriver> driver) {
 void VRORenderer::renderEye(VROEyeType eyeType, std::shared_ptr<VRODriver> driver) {
     if (_sceneController) {
         if (_outgoingSceneController && _outgoingSceneController->hasActiveTransitionAnimation()) {
-            _choreographer->render(eyeType, _outgoingSceneController->getScene(), _renderMetadata, _context.get(), driver);
+            // TODO VIRO-2277 Re-enable outgoing transitions. These cause a crash on Daydream
+            //                when transitioning from the release test menu to the ViroShadowTest
+            //_choreographer->render(eyeType, _outgoingSceneController->getScene(), _renderMetadata, _context.get(), driver);
             _choreographer->render(eyeType, _sceneController->getScene(), _renderMetadata, _context.get(), driver);
         }
         else {
