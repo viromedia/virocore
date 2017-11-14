@@ -10,11 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.memoryleaktest.MemoryLeakTest">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
-
     <Button
         android:text="Box Test Memory"
         android:layout_width="wrap_content"
@@ -73,4 +68,36 @@
         android:id="@+id/light_button"
         android:layout_below="@+id/stereo_bg_button"
         android:layout_alignStart="@+id/stereo_bg_button" />
+
+    <Button
+        android:text="Event Test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/event_button"
+        android:layout_below="@+id/particle_button"
+        android:layout_alignStart="@+id/particle_button" />
+
+    <Button
+        android:text="Audio Test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/audio_button"
+        android:layout_below="@+id/event_button"
+        android:layout_alignStart="@+id/event_button" />
+
+    <Button
+        android:text="Anim Test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/anim_button"
+        android:layout_toEndOf="@+id/particle_button"
+        android:layout_alignBottom="@+id/audio_button" />
+
+    <Button
+        android:text="Image Test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/image_button"
+        android:layout_below="@+id/particle_button"
+        android:layout_alignStart="@+id/anim_button" />
 </RelativeLayout>

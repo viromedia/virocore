@@ -28,6 +28,7 @@ import com.viro.core.OmniLight;
 import com.viro.core.ParticleEmitter;
 import com.viro.core.RendererStartListener;
 import com.viro.core.Scene;
+import com.viro.core.SpatialSound;
 import com.viro.core.Sphere;
 import com.viro.core.Spotlight;
 import com.viro.core.Surface;
@@ -157,7 +158,16 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
             testStereoBackgroundVideo(scene);
         } else if(mTestToRun.equalsIgnoreCase("lightTest")) {
              testSceneLighting(scene.getRootNode());
+        } else if(mTestToRun.equalsIgnoreCase("eventTest")) {
+            return testEventsClickListener();
+        } else if(mTestToRun.equalsIgnoreCase("imageTest")) {
+            return testSurfaceImage();
+        } else if(mTestToRun.equalsIgnoreCase("audioTest")) {
+            return testAudio();
+        } else if(mTestToRun.equalsIgnoreCase("animTest")) {
+            return testAnim();
         }
+
         return null;
     }
 
@@ -265,6 +275,19 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         return Arrays.asList(node);
     }
 
+    private List<Node> testSurfaceImage() {
+        final Node node = new Node();
+        final Surface surface = new Surface(4, 4, 0, 0, 1, 1);
+        final float[] position = {0, 0, -3};
+        node.setPosition(new Vector(position));
+        final Bitmap bobaBitmap = getBitmapFromAssets("boba.png");
+        final Texture bobaTexture = new Texture(bobaBitmap, Texture.Format.RGBA8, true, true);
+        final Material material = new Material();
+        material.setDiffuseTexture(bobaTexture);
+        surface.setMaterials(Arrays.asList(material));
+        node.setGeometry(surface);
+        return Arrays.asList(node);
+    }
 
     private List<Node> test3dObjectLoading(final Context context) {
         final Node node1 = new Node();
@@ -391,6 +414,106 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
         };
         final VideoTexture videoTexture = new VideoTexture(mViroView.getViroContext(), Uri.parse("file:///android_asset/stereoVid360.mp4"),
                 delegate, Texture.StereoMode.TOP_BOTTOM);
+    }
+
+    private List<Node> testAudio() {
+        SpatialSound sound = new SpatialSound(mViroView.getViroContext(), Uri.parse("file:///android_asset/flies_mono.wav"), null);
+        sound.setPosition(new Vector(-5, 0, 0));
+        sound.setDistanceRolloff(SpatialSound.Rolloff.LINEAR, 3, 5);
+        sound.setLoop(true);
+
+        sound.setPlaybackListener(new SpatialSound.PlaybackListener() {
+            @Override
+            public void onSoundReady(final SpatialSound sound) {
+                sound.play();
+            }
+
+            @Override
+            public void onSoundFail(final String error) {
+            }
+        });
+
+        Node soundNode = new Node();
+        soundNode.addSound(sound);
+        return  Arrays.asList(soundNode);
+    }
+
+    private List<Node> testAnim() {
+        Node boxNode = new Node();
+        boxNode.setGeometry(new Box(1, 1, 1));
+        boxNode.setPosition(new Vector(0, 0, -3));
+        AnimationTransaction.begin();
+        AnimationTransaction.setAnimationDuration(4500);
+        AnimationTransaction.setTimingFunction(AnimationTimingFunction.EaseOut);
+            boxNode.setRotation(new Vector(0, 0.78, 0.78));
+        AnimationTransaction.commit();
+        return Arrays.asList(boxNode);
+    }
+
+
+    private List<Node> testEventsClickListener() {
+        Log.i("ViroEventsTest", "in testEventsClickListener()");
+
+        Node boxNode = new Node();
+        boxNode.setPosition(new Vector(2, 0, -3));
+        boxNode.setGeometry(new Box(1, 1, 1));
+
+        Node sphereNode = new Node();
+        sphereNode.setPosition(new Vector(0, 0, -3));
+        sphereNode.setGeometry(new Sphere(.5f));
+
+        Object3D objectNode = new Object3D();
+        objectNode.setPosition(new Vector(-2, 0, -3));
+        objectNode.loadModel(Uri.parse("file:///android_asset/object_star_anim.vrx"), Object3D.Type.FBX, null);
+
+        Node textNode = new Node();
+        textNode.setPosition(new Vector(0, -1, -3));
+        final Text eventText = new Text(mViroView.getViroContext(), "No event tapped.",
+                "Roboto", 25, Color.WHITE, 5f, 1f, Text.HorizontalAlignment.LEFT,
+                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
+        textNode.setGeometry(eventText);
+
+        boxNode.setClickListener(new ClickListener() {
+            @Override
+            public void onClick(int source, Node node, Vector location) {
+                eventText.setText("Clicked on box node.");
+            }
+
+            @Override
+            public void onClickState(int source, Node node, ClickState clickState, Vector location) {
+
+            }
+        });
+
+        ClickListener boxClickListener = new ClickListener() {
+            @Override
+            public void onClick(int source, Node node, Vector location) {
+                eventText.setText("Clicked on 3d object.");
+            }
+
+            @Override
+            public void onClickState(int source, Node node, ClickState clickState, Vector location) {
+
+            }
+        };
+
+        objectNode.setClickListener(boxClickListener);
+
+        sphereNode.setClickListener(new ClickListener() {
+            @Override
+            public void onClick(int source, Node node, Vector location) {
+                eventText.setText("Clicked on sphere object.");
+            }
+
+            @Override
+            public void onClickState(int source, Node node, ClickState clickState, Vector location) {
+
+            }
+        });
+
+
+
+        return Arrays.asList(boxNode, sphereNode, objectNode, textNode);
     }
 
     private Bitmap getBitmapFromAssets(final String assetName) {

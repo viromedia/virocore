@@ -95,5 +95,50 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+        Button eventButton = (Button)findViewById(R.id.event_button);
+        eventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MemoryLeakTest.class);
+                intent.putExtra("TestToRun", "eventTest");
+                Log.i(TAG, "Start Activity event test.");
+                startActivity(intent);
+            }
+        });
+
+        Button audioButton = (Button)findViewById(R.id.audio_button);
+        audioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MemoryLeakTest.class);
+                intent.putExtra("TestToRun", "audioTest");
+                Log.i(TAG, "Start Activity audio test.");
+                startActivity(intent);
+            }
+        });
+
+        Button imageButton = (Button)findViewById(R.id.image_button);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MemoryLeakTest.class);
+                intent.putExtra("TestToRun", "imageTest");
+                Log.i(TAG, "Start Activity image test.");
+                startActivity(intent);
+            }
+        });
+
+        Button animButton = (Button)findViewById(R.id.anim_button);
+        animButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MemoryLeakTest.class);
+                intent.putExtra("TestToRun", "animTest");
+                Log.i(TAG, "Start Activity anim test.");
+                startActivity(intent);
+            }
+        });
+
     }
 }
