@@ -36,8 +36,7 @@ JNI_METHOD(void, nativeDestroyARNodeDelegate) (JNIEnv *env,
 
 void ARDeclarativeNodeDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> anchor) {
     std::weak_ptr<VROARAnchor> anchor_w = std::dynamic_pointer_cast<VROARAnchor>(anchor);
-    JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObject_w = env->NewWeakGlobalRef(_javaObject);
+    jweak jObject_w = _javaObject;
     VROPlatformDispatchAsyncApplication([this, jObject_w, anchor_w] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObject_w);
@@ -55,8 +54,7 @@ void ARDeclarativeNodeDelegate::onARAnchorAttached(std::shared_ptr<VROARAnchor> 
 
 void ARDeclarativeNodeDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> anchor) {
     std::weak_ptr<VROARAnchor> anchor_w = std::dynamic_pointer_cast<VROARAnchor>(anchor);
-    JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObject_w = env->NewWeakGlobalRef(_javaObject);
+    jweak jObject_w = _javaObject;
     VROPlatformDispatchAsyncApplication([this, jObject_w, anchor_w] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObject_w);
@@ -73,8 +71,7 @@ void ARDeclarativeNodeDelegate::onARAnchorUpdated(std::shared_ptr<VROARAnchor> a
 }
 
 void ARDeclarativeNodeDelegate::onARAnchorRemoved() {
-    JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObject_w = env->NewWeakGlobalRef(_javaObject);
+    jweak jObject_w = _javaObject;
     VROPlatformDispatchAsyncApplication([jObject_w] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObject_w);

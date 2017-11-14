@@ -28,7 +28,7 @@ class PortalDelegate: public VROPortalDelegate {
     virtual void onPortalEnter();
     virtual void onPortalExit();
 private:
-    jobject _javaObject;
+    jweak _w_javaObject;
 };
 
 

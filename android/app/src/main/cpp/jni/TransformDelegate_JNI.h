@@ -34,6 +34,6 @@ public:
     void onPositionUpdate(VROVector3f position);
 
 private:
-    jobject _javaObject;
+    jweak _javaObject;
 };
 #endif

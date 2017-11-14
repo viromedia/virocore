@@ -365,7 +365,7 @@ void SceneControllerDelegate::onSceneDidDisappear(VRORenderContext *context, std
 
 void SceneControllerDelegate::callVoidFunctionWithName(std::string functionName) {
     JNIEnv *env = VROPlatformGetJNIEnv();
-    jweak jObjWeak = env->NewWeakGlobalRef(_javaObject);
+    jweak jObjWeak = _javaObject;
     VROPlatformDispatchAsyncApplication([jObjWeak, functionName] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jobject localObj = env->NewLocalRef(jObjWeak);

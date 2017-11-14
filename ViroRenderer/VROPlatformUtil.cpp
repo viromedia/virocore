@@ -508,6 +508,10 @@ void VROPlatformDestroyVideoSink(int textureId) {
     JNIEnv *env;
     getJNIEnv(&env);
 
+    if (sPlatformUtil == NULL){
+        return;
+    }
+
     jclass cls = env->GetObjectClass(sPlatformUtil);
     jmethodID jmethod = env->GetMethodID(cls, "destroyVideoSink", "(I)V");
     env->CallVoidMethod(sPlatformUtil, jmethod, textureId);

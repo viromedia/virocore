@@ -42,6 +42,6 @@ class VideoDelegate : public VROVideoDelegateInternal {
     virtual void videoDidFail(std::string error);
 
 private:
-        jobject _javaObject;
+    jweak _w_javaObject;
 };
 #endif

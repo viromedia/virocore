@@ -21,22 +21,26 @@ class VROLazyMaterialJNI : public VROLazyMaterial {
 public:
     VROLazyMaterialJNI(jobject obj) {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        _jobj = env->NewGlobalRef(obj);
+        _jobj = env->NewWeakGlobalRef(obj);
     }
 
     virtual ~VROLazyMaterialJNI() {
         JNIEnv *env = VROPlatformGetJNIEnv();
-        env->DeleteGlobalRef(_jobj);
+        env->DeleteWeakGlobalRef(_jobj);
     }
 
     std::shared_ptr<VROMaterial> get() {
+        if (_jobj == NULL){
+            return nullptr;
+        }
+
         jlong jptr = VROPlatformCallJavaLongFunction(_jobj, "get", "()J");
         return Material::native(jptr);
     }
 
 private:
     // The corresponding LazyMaterialJni
-    jobject _jobj;
+    jweak _jobj;
 };
 
 namespace LazyMaterial {

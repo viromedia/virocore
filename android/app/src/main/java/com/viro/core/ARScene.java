@@ -100,6 +100,7 @@ public class ARScene extends Scene {
      * @param declarative
      */
     public ARScene(boolean declarative) {
+
         super(true); // Invoke the dummy constructor
         long nativeRef = nativeCreateARSceneControllerDeclarative();
         setSceneRef(nativeRef);

@@ -19,7 +19,7 @@
 
 VROARCameraARCore::VROARCameraARCore(jni::Object<arcore::Frame> frame, std::shared_ptr<VROARSessionARCore> session) :
     _session(session) {
-    _frame = frame.NewGlobalRef(*VROPlatformGetJNIEnv());
+    _frame = frame.NewWeakGlobalRef(*VROPlatformGetJNIEnv());
 
     VROMatrix4f viewMatrix = arcore::frame::getViewMatrix(frame);
     VROMatrix4f cameraMatrix = viewMatrix.invert();

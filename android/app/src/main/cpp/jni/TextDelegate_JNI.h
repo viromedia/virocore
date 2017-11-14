@@ -29,7 +29,7 @@ public:
     void textCreated(jlong native_text_ref);
 
 private:
-    jobject _javaObject;
+    jweak _javaObject;
 
 };
 #endif //ANDROID_TEXTDELEGATE_JNI_H

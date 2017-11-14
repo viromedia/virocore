@@ -27,7 +27,7 @@ VROARSessionARCore::VROARSessionARCore(jni::Object<arcore::Session> sessionJNI,
     _lightingMode(arcore::config::LightingMode::AmbientIntensity),
     _planeFindingMode(arcore::config::PlaneFindingMode::Horizontal),
     _updateMode(arcore::config::UpdateMode::Blocking) {
-    _sessionJNI = sessionJNI.NewGlobalRef(*VROPlatformGetJNIEnv());
+    _sessionJNI = sessionJNI.NewWeakGlobalRef(*VROPlatformGetJNIEnv());
     _viroViewJNI = viroViewJNI.NewWeakGlobalRef(*VROPlatformGetJNIEnv());
 }
 

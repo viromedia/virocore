@@ -42,38 +42,46 @@ JNI_METHOD(jlong, nativeWrapNodeAnimation)(JNIEnv *env,
 JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeRef, jlong nodeRef) {
     // Hold a global reference to the object until the animation finishes, so that
     // we invoke its animationDidFinish callback
-    jobject obj_g = env->NewGlobalRef(obj);
+    jweak obj_g = env->NewWeakGlobalRef(obj);
 
     std::weak_ptr<VROExecutableAnimation> animation_w = ExecutableAnimation::native(nativeRef);
     std::weak_ptr<VRONode> node_w = Node::native(nodeRef);
 
     VROPlatformDispatchAsyncRenderer([animation_w, node_w, obj_g] {
+        if (obj_g == NULL){
+            return;
+        }
+
         JNIEnv *env = VROPlatformGetJNIEnv();
         std::shared_ptr<VROExecutableAnimation> animation = animation_w.lock();
         if (!animation) {
-            env->DeleteGlobalRef(obj_g);
+            env->DeleteWeakGlobalRef(obj_g);
             return;
         }
         std::shared_ptr<VRONode> node = node_w.lock();
         if (!node) {
-            env->DeleteGlobalRef(obj_g);
+            env->DeleteWeakGlobalRef(obj_g);
             return;
         }
         animation->execute(node, [obj_g] {
             VROPlatformDispatchAsyncApplication([obj_g] {
+                if (obj_g == NULL){
+                    return;
+                }
+
                 JNIEnv *env = VROPlatformGetJNIEnv();
                 jclass javaClass = VROPlatformFindClass(env, obj_g,
                                                         "com/viro/core/internal/ExecutableAnimation");
                 if (javaClass == nullptr) {
                     perr("Unable to find ExecutableAnimation class for onFinish callback.");
-                    env->DeleteGlobalRef(obj_g);
+                    env->DeleteWeakGlobalRef(obj_g);
                     return;
                 }
 
                 jmethodID method = env->GetMethodID(javaClass, "animationDidFinish", "()V");
                 if (method == nullptr) {
                     perr("Unable to find animationDidFinish() method in ExecutableAnimation");
-                    env->DeleteGlobalRef(obj_g);
+                    env->DeleteWeakGlobalRef(obj_g);
                     return;
                 }
 
@@ -82,7 +90,7 @@ JNI_METHOD(void, nativeExecuteAnimation)(JNIEnv *env, jobject obj, jlong nativeR
                     perr("Exception encountered calling ExecutableAnimation::animationDidFinish");
                 }
                 env->DeleteLocalRef(javaClass);
-                env->DeleteGlobalRef(obj_g);
+                env->DeleteWeakGlobalRef(obj_g);
             });
         });
     });
