@@ -122,12 +122,24 @@ void VROFBXLoader::loadFBXFromResource(std::string resource, VROResourceType typ
             std::string path = VROModelIOUtil::processResource(resource, type, &isTemp);
             std::string base = resource.substr(0, resource.find_last_of('/'));
 
-            std::shared_ptr<VRONode> fbxNode = loadFBX(path, base, type, nullptr);
-            VROPlatformDispatchAsyncRenderer([node, fbxNode, onFinish] {
-                injectFBX(fbxNode, node, onFinish);
-            });
-            if (isTemp) {
-                VROPlatformDeleteFile(path);
+            // TODO VIRO-2286 Determine why asynchronous FBX loading breaks OVR
+            if (VROPlatformGetType() == VROPlatformType::AndroidOVR) {
+                VROPlatformDispatchAsyncRenderer([node, path, base, isTemp, type, onFinish] {
+                    std::shared_ptr<VRONode> fbxNode = loadFBX(path, base, type, nullptr);
+                    injectFBX(fbxNode, node, onFinish);
+                    if (isTemp) {
+                        VROPlatformDeleteFile(path);
+                    }
+                });
+            }
+            else {
+                std::shared_ptr<VRONode> fbxNode = loadFBX(path, base, type, nullptr);
+                VROPlatformDispatchAsyncRenderer([node, fbxNode, onFinish] {
+                    injectFBX(fbxNode, node, onFinish);
+                });
+                if (isTemp) {
+                    VROPlatformDeleteFile(path);
+                }
             }
         });
     }
@@ -148,7 +160,6 @@ void VROFBXLoader::loadFBXFromResources(std::string resource, VROResourceType ty
                                         std::shared_ptr<VRONode> node,
                                         std::map<std::string, std::string> resourceMap,
                                         bool async, std::function<void(std::shared_ptr<VRONode>, bool)> onFinish) {
-    
     if (async) {
         VROPlatformDispatchAsyncBackground([resource, type, resourceMap, node, onFinish] {
             bool isTemp;
@@ -157,12 +168,25 @@ void VROFBXLoader::loadFBXFromResources(std::string resource, VROResourceType ty
 
             // Note: since we're loading from resources, that meant that we copied the resources over to
             // a local file and so, the new type (from here on out) is LocalFile
-            std::shared_ptr<VRONode> fbxNode = loadFBX(path, "", VROResourceType::LocalFile, &fileMap);
-            VROPlatformDispatchAsyncRenderer([node, fbxNode, onFinish] {
-                injectFBX(fbxNode, node, onFinish);
-            });
-            if (isTemp) {
-                VROPlatformDeleteFile(path);
+
+            // TODO VIRO-2286 Determine why asynchronous FBX loading breaks OVR
+            if (VROPlatformGetType() == VROPlatformType::AndroidOVR) {
+                VROPlatformDispatchAsyncRenderer([node, path, isTemp, fileMap, onFinish] {
+                    std::shared_ptr<VRONode> fbxNode = loadFBX(path, "", VROResourceType::LocalFile, &fileMap);
+                    injectFBX(fbxNode, node, onFinish);
+                    if (isTemp) {
+                        VROPlatformDeleteFile(path);
+                    }
+                });
+            }
+            else {
+                std::shared_ptr<VRONode> fbxNode = loadFBX(path, "", VROResourceType::LocalFile, &fileMap);
+                VROPlatformDispatchAsyncRenderer([node, fbxNode, onFinish] {
+                    injectFBX(fbxNode, node, onFinish);
+                });
+                if (isTemp) {
+                    VROPlatformDeleteFile(path);
+                }
             }
         });
     }
