@@ -414,7 +414,7 @@ public class ViroViewARCore extends ViroView {
     @Override
     public void dispose() {
         if (mMediaRecorder != null) {
-            mMediaRecorder.destroy();
+            mMediaRecorder.dispose();
         }
         mARTouchGestureListener.destroy();
         super.dispose();

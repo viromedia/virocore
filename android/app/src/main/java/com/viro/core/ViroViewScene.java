@@ -263,7 +263,7 @@ public class ViroViewScene extends ViroView {
     @Override
     public void dispose() {
         if (mMediaRecorder != null) {
-            mMediaRecorder.destroy();
+            mMediaRecorder.dispose();
         }
         super.dispose();
     }
