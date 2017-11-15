@@ -94,10 +94,18 @@
         android:layout_alignBottom="@+id/audio_button" />
 
     <Button
-        android:text="Image Test"
+        android:id="@+id/arscene_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/image_button"
+        android:layout_above="@+id/arscene_button"
+        android:layout_toEndOf="@+id/particle_button"
+        android:text="ARScene Test" />
+
+    <Button
+        android:id="@+id/arscene_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/anim_button"
         android:layout_below="@+id/particle_button"
-        android:layout_alignStart="@+id/anim_button" />
+        android:text="Image Test" />
 </RelativeLayout>

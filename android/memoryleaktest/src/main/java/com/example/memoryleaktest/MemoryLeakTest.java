@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.content.Intent;
 
+import com.viro.core.ARAnchor;
+import com.viro.core.ARNode;
+import com.viro.core.ARPlaneAnchor;
 import com.viro.core.ARScene;
 import com.viro.core.AmbientLight;
 import com.viro.core.Animation;
@@ -136,7 +139,7 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
             }
         }
 
-        final AmbientLight ambientLightJni = new AmbientLight(Color.WHITE, 300.0f);
+        final AmbientLight ambientLightJni = new AmbientLight(Color.WHITE, 1000.0f);
         scene.getRootNode().addLight(ambientLightJni);
         mViroView.setScene(scene);
     }
@@ -151,6 +154,8 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
             }
         }
 
+        final AmbientLight ambientLightJni = new AmbientLight(Color.WHITE, 1000.0f);
+        scene.getRootNode().addLight(ambientLightJni);
         mViroView.setScene(scene);
     }
 
@@ -178,6 +183,8 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
             return testAudio();
         } else if(mTestToRun.equalsIgnoreCase("animTest")) {
             return testAnim();
+        } else if(mTestToRun.equalsIgnoreCase("arSceneTest")) {
+            testARScene((ARScene)scene);
         }
 
         return null;
@@ -524,9 +531,72 @@ public class MemoryLeakTest extends AppCompatActivity implements RendererStartLi
             }
         });
 
-
-
         return Arrays.asList(boxNode, sphereNode, objectNode, textNode);
+    }
+
+
+    private void testARScene(ARScene scene) {
+
+        final Text arSceneText = new Text(mViroView.getViroContext(), "AR Text not initialized.",
+                "Roboto", 12, Color.WHITE, .5f, .5f, Text.HorizontalAlignment.LEFT,
+                Text.VerticalAlignment.TOP, Text.LineBreakMode.WORD_WRAP, Text.ClipMode.NONE, 0);
+        Node arSceneTextNode = new Node();
+        arSceneTextNode.setGeometry(arSceneText);
+        arSceneTextNode.setPosition(new Vector(0, -1, -.5));
+        scene.getRootNode().addChildNode(arSceneTextNode);
+        scene.setListener(new ARScene.Listener() {
+            @Override
+            public void onTrackingInitialized() {
+                arSceneText.setText("AR Initialized callback received!");
+            }
+
+            @Override
+            public void onAmbientLightUpdate(float lightIntensity, float colorTemperature) {
+
+            }
+
+            @Override
+            public void onAnchorFound(ARAnchor anchor, ARNode arNode) {
+                Material material = new Material();
+                material.setDiffuseColor(Color.RED);
+                material.setLightingModel(Material.LightingModel.BLINN);
+                Log.i(TAG, "MemoryLeakTest: onAnchorFound invoked!");
+                if(anchor instanceof ARPlaneAnchor) {
+                    ARPlaneAnchor arPlaneAnchor  = (ARPlaneAnchor)anchor;
+                    Surface surface = new Surface(arPlaneAnchor.getExtent().x, arPlaneAnchor.getExtent().z);
+                    surface.setMaterials(Arrays.asList(material));
+
+                    Node surfaceNode = new Node();
+                    surfaceNode.setGeometry(surface);
+                    surfaceNode.setPosition(new Vector(0, 0, 0));
+                    surfaceNode.setRotation(new Vector(-Math.toRadians(90.0), 0, 0));
+                    arNode.addChildNode(surfaceNode);
+                    Log.i(TAG, "MemoryLeakTest: onAnchorFound invoked!");
+                }
+            }
+
+            @Override
+            public void onAnchorUpdated(ARAnchor anchor, ARNode arNode) {
+                    List<Node> childNodes = arNode.getChildNodes();
+                    for (Node childNode : childNodes) {
+
+                        if(childNode.getGeometry() instanceof Surface) {
+                            ARPlaneAnchor planeAnchor = (ARPlaneAnchor)anchor;
+                            Surface surface = (Surface)childNode.getGeometry();
+                            surface.setWidth(planeAnchor.getExtent().x);
+                            surface.setHeight(planeAnchor.getExtent().z);
+                            childNode.setScale(planeAnchor.getScale());
+                        }
+
+                }
+
+            }
+
+            @Override
+            public void onAnchorRemoved(ARAnchor anchor, ARNode arNode) {
+
+            }
+        });
     }
 
     private Bitmap getBitmapFromAssets(final String assetName) {

@@ -118,13 +118,13 @@ public class MainActivity extends Activity {
             }
         });
 
-        Button imageButton = (Button)findViewById(R.id.image_button);
+        Button imageButton = (Button)findViewById(R.id.arscene_button);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, MemoryLeakTest.class);
-                intent.putExtra("TestToRun", "imageTest");
-                Log.i(TAG, "Start Activity image test.");
+                intent.putExtra("TestToRun", "arSceneTest");
+                Log.i(TAG, "Start Activity AR Scene test.");
                 startActivity(intent);
             }
         });
