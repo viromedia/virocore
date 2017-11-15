@@ -35,7 +35,7 @@ public class ARNode extends Node {
      *
      * @hide
      */
-    private static ConcurrentHashMap<Integer, ARNode> nodeARMap = new ConcurrentHashMap<Integer, ARNode>();
+    protected static ConcurrentHashMap<Integer, ARNode> nodeARMap = new ConcurrentHashMap<Integer, ARNode>();
 
     /**
      * @hide

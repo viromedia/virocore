@@ -418,7 +418,7 @@ public class ViroViewARCore extends ViroView {
     @Override
     public void onActivityDestroyed(Activity activity) {
         this.dispose();
-
+        ARNode.nodeARMap.clear();
         /*
           TODO VIRO-2280: Fix Tango Memory leak that holds onto ViroViewARCore.
           As a temporary patch, we null out our viro components here to free up
