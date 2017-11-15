@@ -164,7 +164,7 @@ public class ViroViewGVR extends ViroView {
      * @param rendererStartListener Callback invoked when the renderer has finished initializing.
      *                              Optional, may be null.
      * @param vrExitListener        Runnable to invoke when the user manually exits VR mode by
-     *                              tapping on GVR's close button.
+     *                              tapping on GVR's close button. Optional, may be null.
      */
     public ViroViewGVR(@NonNull final Context context, @Nullable final RendererStartListener rendererStartListener, @Nullable final Runnable vrExitListener) {
         super(context);
@@ -266,7 +266,9 @@ public class ViroViewGVR extends ViroView {
         // Prevent screen from dimming/locking.
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        mGVRLayout.getUiLayout().setCloseButtonListener(vrExitListener);
+        if (vrExitListener != null) {
+            mGVRLayout.getUiLayout().setCloseButtonListener(vrExitListener);
+        }
         // default the mode to VR
         setVRModeEnabled(true);
 
