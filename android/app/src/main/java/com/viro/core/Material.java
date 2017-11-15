@@ -17,9 +17,11 @@ import java.util.Map;
  * object.
  * <p>
  * Whereas a {@link Geometry} defines the <i>structure</i> of a 3D Object, Material defines the
- * appearance of each surface. The final color of each pixel on a surface is determined by both
- * the Material attributes and the parameters of each {@link Light} in the {@link Scene}.
+ * appearance of each surface. The final color of each pixel on a surface is determined by both the
+ * Material attributes and the parameters of each {@link Light} in the {@link Scene}.
  * <p>
+ * For an extended discussion on Material properties, refer to the <a
+ * href="https://virocore.viromedia.com/docs/3d-scene-lighting">Lighting and Materials Guide</a>.
  */
 public class Material {
 

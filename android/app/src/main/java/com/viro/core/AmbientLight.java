@@ -12,6 +12,9 @@ package com.viro.core;
  * AmbientLight is used to simulate indirect, constant environmental light.
  * <p>
  * AmbientLight does not cast shadows.
+ * <p>
+ * For an extended discussion on Lights, refer to the <a href="https://virocore.viromedia.com/docs/3d-scene-lighting">Lighting
+ * and Materials Guide</a>.
  */
 public class AmbientLight extends Light {
 

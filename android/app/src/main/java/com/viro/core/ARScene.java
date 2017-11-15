@@ -22,6 +22,9 @@ import com.viro.core.internal.ARDeclarativeNode;
  * adding your content to the {@link ARNode} that corresponds to each detected ARAnchor. To do this,
  * implement the ARScene {@link Listener}. The {@link Listener} callbacks are invoked whenever
  * {@link ARAnchor}s are found (or updated, or removed) in the real-world.
+ * <p>
+ * For a higher level guide on building AR in Viro, refer to the <a
+ * href="https://virocore.viromedia.com/docs/augmented-reality-ar">Augmented Reality Guide</a>.
  */
 public class ARScene extends Scene {
 

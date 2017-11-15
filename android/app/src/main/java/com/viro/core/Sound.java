@@ -16,6 +16,9 @@ import com.viro.core.internal.BaseSound;
  * background noise).
  * <p>
  * Sound is the class for basic stereo sounds.
+ * <p>
+ * For an extended discussion of sound in Viro, refer to the <a
+ * href="https://virocore.viromedia.com/docs/audio">Audio Guide</a>.
  */
 public class Sound implements BaseSound {
 

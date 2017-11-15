@@ -10,6 +10,9 @@ package com.viro.core;
  * <p>
  * Spotlight can cast shadows. These shadows are cast using an perspective projection (e.g.
  * the size of the shadows changes as the shadow casters' distance from the light changes).
+ * <p>
+ * For an extended discussion on Lights, refer to the <a href="https://virocore.viromedia.com/docs/3d-scene-lighting">Lighting
+ * and Materials Guide</a>.
  */
 public class Spotlight extends Light {
 

@@ -9,9 +9,12 @@ package com.viro.core;
 import java.lang.ref.WeakReference;
 
 /**
- * The PhysicsWorld encapsulates the physics simulation associated with the {@link Scene}.
- * Each Scene automatically creates a PhysicsWorld upon construction.
- * This object can be used to set global physics properties like gravity.
+ * The PhysicsWorld encapsulates the physics simulation associated with the {@link Scene}. Each
+ * Scene automatically creates a PhysicsWorld upon construction. This object can be used to set
+ * global physics properties like gravity.
+ * <p>
+ * For an extended discussion of physics in Viro, refer to the <a href="https://virocore.viromedia.com/docs/physics">Physics
+ * Guide</a>.
  */
 public class PhysicsWorld {
 

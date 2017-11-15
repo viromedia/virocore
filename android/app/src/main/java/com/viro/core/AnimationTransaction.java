@@ -51,6 +51,8 @@ import java.util.Stack;
  * node.setPosition(new Vector(-2, 2.5f, -3));
  * AnimationTransaction.commit();</pre>
  * </tt>
+ * <p>
+ * For an extended discussion on animation, refer to the <a href="https://virocore.viromedia.com/docs/animation">Animation Guide</a>.
  */
 public class AnimationTransaction {
 

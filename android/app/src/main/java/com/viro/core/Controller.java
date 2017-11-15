@@ -25,6 +25,9 @@ package com.viro.core;
  * <p>
  * Controller should not be constructed by your app. It is retrieved via {@link
  * ViroView#getController()}.
+ * <p>
+ * For an extended discussion on Controller types and input events, refer to the <a
+ * href="https://virocore.viromedia.com/docs/events">Input Event Guide</a>.
  */
 public class Controller implements EventDelegate.EventDelegateCallback {
 

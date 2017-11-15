@@ -18,10 +18,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The Scene object sits at the top of the scene graph, a hierarchy of {@link Node} objects
- * representing the 3D world. Scenes are the 3D equivalent of the Views found in most
- * 2D application frameworks. They contain all the content that Viro renders in AR/VR: UI controls,
- * 3D objects, lights, and more.
+ * Scene represents a scene graph - a hierarchy of {@link Node}s that together represent the 3D
+ * world. UI controls, 3D objects, lights, camera, and more are attached to the Nodes to build the
+ * displayable 3D scene. To display a Scene in an Android View, use {@link ViroView}.
+ * <p>
+ * For an extended discussion of Viro's scene graph, refer to the <a
+ * href="https://virocore.viromedia.com/docs/scenes">Scene Guide</a>.
  */
 public class Scene {
 

@@ -20,15 +20,17 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Object3D defines a {@link Node} that can load FBX or OBJ models. These file formats
- * may contain not just single Geometry instances but entire subgraphs of Nodes. This Node
- * acts as the parent to the generated subgraph.
+ * Object3D defines a {@link Node} that can load FBX or OBJ models. These file formats may contain
+ * not just single Geometry instances but entire subgraphs of Nodes. This Node acts as the parent to
+ * the generated subgraph.
  * <p>
- * OBJ loading supports MTL files, for loading material properties and textures. For OBJ
- * files, Materials can also be manually injected by invoking {@link Geometry#setMaterials(List)}.
+ * OBJ loading supports MTL files, for loading material properties and textures. For OBJ files,
+ * Materials can also be manually injected by invoking {@link Geometry#setMaterials(List)}. FBX
+ * loading fully supports material properties, diffuse, specular, and normal maps, and skeletal and
+ * keyframe animation.
  * <p>
- * FBX loading fully supports material properties, diffuse, specular, and normal maps, and
- * skeletal and keyframe animation.
+ * For an extended discussion on 3D model loading, refer to the <a href="https://virocore.viromedia.com/docs/3d-objects">3D
+ * Objects Guide</a>.
  */
 public class Object3D extends Node {
 

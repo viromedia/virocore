@@ -20,6 +20,9 @@ import java.util.Map;
  * qualities of a wide variety of environments. To use reverb, create a sound room via {@link
  * Scene#setSoundRoom(ViroContext, Vector, Scene.AudioMaterial, Scene.AudioMaterial,
  * Scene.AudioMaterial)}.
+ * <p>
+ * For an extended discussion of sound in Viro, refer to the <a
+ * href="https://virocore.viromedia.com/docs/audio">Audio Guide</a>.
  */
 public class SpatialSound implements BaseSound {
 

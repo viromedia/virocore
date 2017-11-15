@@ -9,6 +9,9 @@ package com.viro.core;
  * decreasing intensity over distance. This is also commonly referred to as a point light.
  * <p>
  * OmniLight does not cast shadows.
+ * <p>
+ * For an extended discussion on Lights, refer to the <a href="https://virocore.viromedia.com/docs/3d-scene-lighting">Lighting
+ * and Materials Guide</a>.
  */
 public class OmniLight extends Light {
 

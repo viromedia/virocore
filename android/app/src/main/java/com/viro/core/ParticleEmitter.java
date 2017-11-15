@@ -20,13 +20,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ParticleEmitter enables developers to create and configure quad emitters for building
- * complex and intricate particle effects. Some examples are smoke, rain, confetti, and fireworks.
+ * ParticleEmitter enables developers to create and configure quad emitters for building complex and
+ * intricate particle effects. Some examples are smoke, rain, confetti, and fireworks.
  * <p>
  * ParticleEmitters are particle factories that create, contain and recycle a pool of particles.
  * Groups of particle systems can be used in conjunction with one another to create a composite
  * effect. For example, a campfire may include a flame emitter, a smoke emitter, and an ember or
  * sparks emitter.
+ * <p>
+ * For an extended discussion of particle systems in Viro, refer to the <a
+ * href="https://virocore.viromedia.com/docs/particle-effects">Particle Effects Guide</a>.
  */
 public class ParticleEmitter {
 

@@ -12,6 +12,9 @@ import java.lang.ref.WeakReference;
  * simulation includes computing the effects of gravity, friction, and user-supplied forces. The
  * simulation is updated each frame prior to rendering. In order to add physics to a Node, invoke
  * {@link Node#initPhysicsBody(RigidBodyType, float, PhysicsShape)}.
+ * <p>
+ * For an extended discussion of physics in Viro, refer to the <a href="https://virocore.viromedia.com/docs/physics">Physics
+ * Guide</a>.
  */
 public class PhysicsBody {
 

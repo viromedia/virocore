@@ -51,6 +51,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * All events are also received by the {@link Controller}, which provides a centralized place to
  * respond to all events regardless of what Nodes they targeted.
+ * <p>
+ * For an extended discussion of Nodes, refer to the <a href="https://virocore.viromedia.com/docs/scenes">Scene Guide</a>.
  */
 public class Node implements EventDelegate.EventDelegateCallback {
 

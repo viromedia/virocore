@@ -12,6 +12,9 @@ import com.viro.core.internal.BaseSound;
  * SoundField emits environmental sound from every direction. It is the audio
  * equivalent of a skybox or 360 image, providing atmospheric background noise. These sounds respond
  * to the user's head rotation.
+ * <p>
+ * For an extended discussion of sound in Viro, refer to the <a
+ * href="https://virocore.viromedia.com/docs/audio">Audio Guide</a>.
  */
 public class SoundField implements BaseSound {
 

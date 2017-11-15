@@ -14,6 +14,9 @@ package com.viro.core;
  * DirectionalLight can cast shadows. These shadows are cast using an orthographic projection (e.g.
  * the size of the shadows does not change as the shadow casters' distance from the light changes).
  * This best simulates shadows cast from light sources like the sun.
+ * <p>
+ * For an extended discussion on Lights, refer to the <a href="https://virocore.viromedia.com/docs/3d-scene-lighting">Lighting
+ * and Materials Guide</a>.
  */
 public class DirectionalLight extends Light {
 

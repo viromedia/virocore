@@ -28,6 +28,8 @@ package com.viro.core;
  * screen. If no point of view is set in the {@link ViroView}, the user will be positioned at the
  * origin looking in the negative Z direction.
  * <p>
+ * For an extended discussion of Camera, refer to the <a
+ * href="https://virocore.viromedia.com/docs/camera">Camera Guide</a>.
  */
 public class Camera {
 
