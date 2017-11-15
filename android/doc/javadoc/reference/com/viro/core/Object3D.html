@@ -592,15 +592,17 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>Object3D defines a <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that can load FBX or OBJ models. These file formats
- may contain not just single Geometry instances but entire subgraphs of Nodes. This Node
- acts as the parent to the generated subgraph.
+  <p>Object3D defines a <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> that can load FBX or OBJ models. These file formats may contain
+ not just single Geometry instances but entire subgraphs of Nodes. This Node acts as the parent to
+ the generated subgraph.
  <p>
- OBJ loading supports MTL files, for loading material properties and textures. For OBJ
- files, Materials can also be manually injected by invoking <code><a href="../../../../reference/com/viro/core/Geometry.html#setMaterials(java.util.List<com.viro.core.Material>)">setMaterials(List)</a></code>.
+ OBJ loading supports MTL files, for loading material properties and textures. For OBJ files,
+ Materials can also be manually injected by invoking <code><a href="../../../../reference/com/viro/core/Geometry.html#setMaterials(java.util.List<com.viro.core.Material>)">setMaterials(List)</a></code>. FBX
+ loading fully supports material properties, diffuse, specular, and normal maps, and skeletal and
+ keyframe animation.
  <p>
- FBX loading fully supports material properties, diffuse, specular, and normal maps, and
- skeletal and keyframe animation.
+ For an extended discussion on 3D model loading, refer to the <a href="https://virocore.viromedia.com/docs/3d-objects">3D
+ Objects Guide</a>.
 </p>
 
 
@@ -630,7 +632,7 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
         enum</code></td>
       <td class="jd-descrcol" width="100%">
         <code><a href="../../../../reference/com/viro/core/Object3D.Type.html">Object3D.Type</a></code>
-        <p>&nbsp;
+        <p>Supported model formats for loading into an <code><a href="../../../../reference/com/viro/core/Object3D.html">Object3D</a></code>.&nbsp;
         
     
 </p>

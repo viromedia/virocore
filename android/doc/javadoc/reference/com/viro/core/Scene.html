@@ -608,10 +608,12 @@ href="http://fonts.googleapis.com/css?family=Roboto+Condensed">
 <br><hr>
 
 
-  <p>The Scene object sits at the top of the scene graph, a hierarchy of <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code> objects
- representing the 3D world. Scenes are the 3D equivalent of the Views found in most
- 2D application frameworks. They contain all the content that Viro renders in AR/VR: UI controls,
- 3D objects, lights, and more.
+  <p>Scene represents a scene graph - a hierarchy of <code><a href="../../../../reference/com/viro/core/Node.html">Node</a></code>s that together represent the 3D
+ world. UI controls, 3D objects, lights, camera, and more are attached to the Nodes to build the
+ displayable 3D scene. To display a Scene in an Android View, use <code><a href="../../../../reference/com/viro/core/ViroView.html">ViroView</a></code>.
+ <p>
+ For an extended discussion of Viro's scene graph, refer to the <a
+ href="https://virocore.viromedia.com/docs/scenes">Scene Guide</a>.
 </p>
 
 
