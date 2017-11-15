@@ -38,8 +38,21 @@ public class Object3D extends Node {
     private AsyncObject3DListener mAsyncListener = null;
     private AtomicLong mActiveRequestID;
 
+    /**
+     * Supported model formats for loading into an {@link Object3D}.
+     */
     public enum Type {
+        /**
+         * OBJ model format. MTL files are also supported. MTL and textures should reside in the
+         * same folder as the OBJ file. This format supports diffuse, specular, and normal maps.
+         */
         OBJ,
+
+        /**
+         * FBX model format. FBX files need to be converted to VRX via the ViroFBX script. Textures
+         * should reside in the same folder as the VRX file. This format supports skeletal and
+         * keyframe animation, and diffuse, specular, and normal maps.
+         */
         FBX
     }
 

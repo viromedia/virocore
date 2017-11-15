@@ -8,6 +8,9 @@
  */
 package com.viro.core;
 
+/**
+ * Callback interface for responding to {@link Object3D} model loading events.
+ */
 public interface AsyncObject3DListener {
 
     /**
