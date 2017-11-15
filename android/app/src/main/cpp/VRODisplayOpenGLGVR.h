@@ -50,15 +50,6 @@ public:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 
-    void unbind() {
-        if (_frame != nullptr) {
-            gvr_frame_unbind(_frame);
-        }
-        else {
-            VRODisplayOpenGL::unbind();
-        }
-    }
-
     void setFrame(gvr::Frame &frame) {
         _frame = frame.cobj();
     }
