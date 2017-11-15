@@ -14,7 +14,7 @@
           <img class="dac-header-logo-image" src="<?cs var:toroot ?>assets/images/logo_virocore.png"
               srcset="<?cs var:toroot ?>assets/images/logo_virocore@2x.png 2x"
               width="143" height="36" alt="Android" /> NDK
-          </a><?cs else ?><a class="dac-header-logo" href="<?cs var:toroot ?>index.html">
+          </a><?cs else ?><a class="dac-header-logo" href="http://developer.viromedia.com">
           <img class="dac-header-logo-image" src="<?cs var:toroot ?>assets/images/logo_virocore.png"
               srcset="<?cs var:toroot ?>assets/images/logo_virocore@2x.png 2x"
               width="143" height="36" alt="Android" />
