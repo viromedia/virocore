@@ -6989,13 +6989,24 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
 .dac-header-tab {
   display: inline-block;
   line-height: 64px;
-  height: 64px;
+  height: 50px;
   padding: 0 9px;
   color: #fff;
+  font-family: Roboto;
   color: rgba(255, 255, 255, 0.7);
   font-size: 14px;
-  text-transform: uppercase;
-  font-weight: 500;
+  font-weight: normal;
+}
+
+.dac-header-tab-selected {
+  display: inline-block;
+  line-height: 64px;
+  height: 50px;
+  padding: 0 9px;
+  color: #fff;
+  font-family: Roboto;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .dac-header-tab:hover,
@@ -7004,9 +7015,7 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
 }
 
 .dac-header-tab.selected {
-  border-bottom: 4px solid #fff;
-  height: 60px;
-  color: #fff;
+
 }
 
 .dac-search-mode .dac-header-tabs {
