@@ -156,6 +156,7 @@ void VROInputControllerAR::processDragging(int source, bool alwaysRun) {
                     strongNode->setIsAnimatingDrag(false);
                 }
             });
+            VROTransaction::commit();
             
             // Update last known dragged position, distance to controller and notify delegates
             _lastDraggedNodePosition = position;
