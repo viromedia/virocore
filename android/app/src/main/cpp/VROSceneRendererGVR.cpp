@@ -73,7 +73,7 @@ void VROSceneRendererGVR::initGL() {
     specs.push_back(_gvr->CreateBufferSpec());
 
     specs[0].SetColorFormat(GVR_COLOR_FORMAT_RGBA_8888);
-    specs[0].SetDepthStencilFormat(GVR_DEPTH_STENCIL_FORMAT_DEPTH_24);
+    specs[0].SetDepthStencilFormat(GVR_DEPTH_STENCIL_FORMAT_DEPTH_24_STENCIL_8);
     specs[0].SetSize(_renderSize);
     specs[0].SetSamples(2);
     _swapchain.reset(new gvr::SwapChain(_gvr->CreateSwapChain(specs)));
