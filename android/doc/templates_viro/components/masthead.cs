@@ -71,7 +71,19 @@
         #
         ?><ul class="dac-header-tabs">
           <li>
-
+          <a class="dac-header-tab" href="https://virocore.viromedia.com">Documentation</a>
+         </li>
+         <li>
+          <a class="dac-header-tab-selected" href="https://developer.viromedia.com">Reference</a>
+         </li>
+         <li>
+          <a class="dac-header-tab" href="https://github.com/viromedia/virocore">Issues</a>
+          </li>
+          <li>
+         <a class="dac-header-tab" href="https://viromedia.com/support">Support</a>
+         </li>
+         <li>
+          <a class="dac-header-tab" href="https://viromedia.com">Viro Home</a>
           </li>
           <li>
 
@@ -96,7 +108,6 @@
         # ADD SEARCH AND MENU ?><?cs
         if:!ndk ?><?cs
           if:!referenceonly ?><?cs
-            call:header_search_widget() ?><?cs
           /if ?><?cs
         /if ?>
       </div><!-- end header-wrap.wrap -->

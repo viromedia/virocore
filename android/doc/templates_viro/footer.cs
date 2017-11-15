@@ -3,12 +3,12 @@
   <div class="dac-footer<?cs if:fullpage ?> dac-landing<?cs /if ?>">
     <div class="cols dac-footer-main">
       <div class="col-1of2">
-        
+
       </div>
       <div class="col-1of2 dac-footer-reachout">
         <div class="dac-footer-contact">
           <a class="dac-footer-contact-link" href="http://blog.viromedia.com/">Blog</a>
-          <a class="dac-footer-contact-link" href="https://github.com/viromedia/viro/issues">Support</a>
+          <a class="dac-footer-contact-link" href="https://github.com/viromedia/virocore">Support</a>
         </div>
       </div>
     </div>
