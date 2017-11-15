@@ -9,6 +9,8 @@
 
 package com.viro.core;
 
+import com.viro.core.internal.annotation.BridgeOnly;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +24,7 @@ public class ARAnchor {
     /**
      * Specifies the type of ARAnchor.
      */
+
     public enum Type {
         /**
          * Default type for an {@link ARAnchor}, representing a point and orientation.
@@ -34,12 +37,15 @@ public class ARAnchor {
         PLANE("plane");
 
         private String mStringValue;
+
         private Type(String value) {
             this.mStringValue = value;
         }
+
         /**
          * @hide
          */
+        @BridgeOnly
         public String getStringValue() {
             return mStringValue;
         }
@@ -50,9 +56,11 @@ public class ARAnchor {
                 map.put(value.getStringValue().toLowerCase(), value);
             }
         }
+
         /**
          * @hide
          */
+        @BridgeOnly
         public static Type valueFromString(String str) {
             return map.get(str.toLowerCase());
         }
@@ -60,15 +68,20 @@ public class ARAnchor {
 
     // All ARAnchors have these props
     private String mAnchorId;
+
     private Type mType;
+
     private Vector mPosition; // world transform of the anchor
+
     private Vector mRotation; // in radians
+
     private Vector mScale;
 
     /**
      * Invoked from JNI
      * @hide
      */
+    @BridgeOnly
     ARAnchor(String anchorId, String type, float[] position, float[] rotation, float[] scale) {
         mAnchorId = anchorId;
         mType = Type.valueFromString(type);

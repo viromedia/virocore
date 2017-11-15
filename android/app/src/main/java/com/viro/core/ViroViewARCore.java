@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.AttrRes;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -193,6 +194,7 @@ public class ViroViewARCore extends ViroView {
      *
      * @param context
      */
+    @Keep
     public ViroViewARCore(@NonNull final Context context) {
         this(context, (AttributeSet) null);
     }

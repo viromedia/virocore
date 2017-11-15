@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.AttrRes;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -50,6 +51,7 @@ import java.lang.ref.WeakReference;
  * Note that after instantiation, the ViroView will validate your Viro API Key. To do this, pass your
  * API key into AndroidManifest.xml metadata as <meta-data android:name="com.viromedia.API_KEY" android:value="YOUR_API_KEY"/>.
  */
+@Keep
 public abstract class ViroView extends FrameLayout implements Application.ActivityLifecycleCallbacks {
 
     private final static String TAG = ViroView.class.getSimpleName();
