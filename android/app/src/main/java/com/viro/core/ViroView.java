@@ -107,9 +107,11 @@ public abstract class ViroView extends FrameLayout implements Application.Activi
         try {
             final ApplicationInfo ai = activity.getPackageManager().getApplicationInfo(activity.getPackageName(), PackageManager.GET_META_DATA);
             final Bundle bundle = ai.metaData;
-            final String viroApiKey = bundle.getString(API_KEY_METADATA_TAG);
+            if (bundle != null) {
 
-            mApiKey = viroApiKey;
+                final String viroApiKey = bundle.getString(API_KEY_METADATA_TAG);
+                mApiKey = viroApiKey;
+            }
         } catch (final PackageManager.NameNotFoundException e) {
             Log.w("Viro", "Unable to find package name: " + e.getMessage());
         }
