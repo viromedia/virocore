@@ -137,12 +137,12 @@ public class ViroARSceneTest extends ViroBaseTest {
         Material material = new Material();
         material.setLightingModel(Material.LightingModel.BLINN);
         material.setDiffuseColor(Color.BLUE);
-        surfaceOne.setMaterial(material);
+        surfaceOne.setMaterials(Arrays.asList(material));
 
         Material materialTwo = new Material();
         materialTwo.setLightingModel(Material.LightingModel.BLINN);
         materialTwo.setDiffuseColor(Color.RED);
-        surfaceTwo.setMaterial(materialTwo);
+        surfaceTwo.setMaterials(Arrays.asList(materialTwo));
 
         final List<Surface> surfaces = Arrays.asList(surfaceOne, surfaceTwo);
         final Iterator<Surface> itr = Iterables.cycle(surfaces).iterator();

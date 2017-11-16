@@ -48,6 +48,7 @@ import org.junit.Rule;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -170,9 +171,9 @@ public abstract class ViroBaseTest {
         final Texture yesTexture = new Texture(yesBitmap,
                 Texture.Format.RGBA8, true, true);
         final Material yesMaterial = new Material();
-        final Surface yesSurface = new Surface(2, 2, 0, 0, 1, 1);
-        yesSurface.setMaterial(yesMaterial);
-        yesSurface.setImageTexture(yesTexture);
+        final Surface yesSurface = new Surface(2, 2);
+        yesMaterial.setDiffuseTexture(yesTexture);
+        yesSurface.setMaterials(Arrays.asList(yesMaterial));
         mYesButtonNode.setGeometry(yesSurface);
         final float[] yesPosition = {2.5f, -0.5f, -3.3f};
         mYesButtonNode.setPosition(new Vector(yesPosition));
@@ -186,9 +187,9 @@ public abstract class ViroBaseTest {
         final Texture noTexture = new Texture(noBitmap,
                 Texture.Format.RGBA8, true, true);
         final Material noMaterial = new Material();
-        final Surface noSurface = new Surface(2, 2, 0, 0, 1, 1);
-        noSurface.setMaterial(noMaterial);
-        noSurface.setImageTexture(noTexture);
+        final Surface noSurface = new Surface(2, 2);
+        noMaterial.setDiffuseTexture(noTexture);
+        noSurface.setMaterials(Arrays.asList(noMaterial));
         mNoButtonNode.setGeometry(noSurface);
         final float[] noPosition = {-2.5f, -0.5f, -3.3f};
         mNoButtonNode.setPosition(new Vector(noPosition));

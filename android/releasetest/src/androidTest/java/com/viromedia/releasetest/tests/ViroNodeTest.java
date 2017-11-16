@@ -12,8 +12,10 @@ import com.viro.core.Vector;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 
 /**
  * ViroNodeTest - Tests all properties of {@link Node} except those related to Physics, Events and Animation as those
@@ -271,7 +273,14 @@ public class ViroNodeTest extends ViroBaseTest {
         material.setLightingModel(Material.LightingModel.CONSTANT);
         material.setCullMode(Material.CullMode.NONE);
         final float[][] points = {{-2, 0, 0}, {-1, 0, 0}, {0, 0, 0}, {1, 0, 0}, {2, 0, 0}};
-        polyline = new Polyline(points, 0.1f);
+        List<Vector> pointsList = new ArrayList();
+        pointsList.add(new Vector(-2,0,0));
+        pointsList.add(new Vector(-1,0,0));
+        pointsList.add(new Vector(0,0,0));
+        pointsList.add(new Vector(1,0,0));
+        pointsList.add(new Vector(2,0,0));
+
+        polyline = new Polyline(pointsList, 0.1f);
         polyline.setMaterials(Arrays.asList(material));
         polylineNode = new Node();
         polylineNode.setGeometry(polyline);
@@ -296,7 +305,16 @@ public class ViroNodeTest extends ViroBaseTest {
         material.setLightingModel(Material.LightingModel.CONSTANT);
         material.setCullMode(Material.CullMode.NONE);
         final float[][] points = {{0, -2, 0}, {0, -1, 0}, {0, 0, 0}, {0, 1, 0}, {0, 2, 0}};
-        polyline = new Polyline(points, 0.1f);
+
+
+        List<Vector> pointsList = new ArrayList();
+        pointsList.add(new Vector(0,-2,0));
+        pointsList.add(new Vector(0,-1,0));
+        pointsList.add(new Vector(0,0,0));
+        pointsList.add(new Vector(0,1,0));
+        pointsList.add(new Vector(0,2,0));
+
+        polyline = new Polyline(pointsList, 0.1f);
         polyline.setMaterials(Arrays.asList(material));
         polylineNode = new Node();
         polylineNode.setGeometry(polyline);

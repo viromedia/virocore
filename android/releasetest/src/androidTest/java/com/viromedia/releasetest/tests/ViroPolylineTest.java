@@ -21,6 +21,7 @@ import com.viro.core.Vector;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -44,7 +45,12 @@ public class ViroPolylineTest extends ViroBaseTest {
         material.setLightingModel(Material.LightingModel.CONSTANT);
         material.setCullMode(Material.CullMode.NONE);
         final float[][] points = {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}};
-        polyline = new Polyline(points, 0.1f);
+        ArrayList<Vector> pointsList = new ArrayList<Vector>();
+        pointsList.add(new Vector(0,0,0));
+        pointsList.add(new Vector(1,0,0));
+        pointsList.add(new Vector(1,1,0));
+
+        polyline = new Polyline(pointsList, 0.1f);
         polyline.setMaterials(Arrays.asList(material));
         polylineNode = new Node();
         polylineNode.setGeometry(polyline);
