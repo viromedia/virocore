@@ -88,7 +88,7 @@ public class PhysicsBody {
      * Removes the PhysicsBody from the node.
      * @hide
      */
-    public void clear() {
+    void clear() {
         nativeClearPhysicsBody(mNativeRef);
     }
 

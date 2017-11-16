@@ -66,7 +66,7 @@ public class ARPlaneAnchor extends ARAnchor {
      * Invoked from JNI
      * @hide
      */
-    public ARPlaneAnchor(String anchorId, String type, float[] position, float[] rotation,
+    ARPlaneAnchor(String anchorId, String type, float[] position, float[] rotation,
                          float[] scale, String alignment, float[] extent, float[] center) {
         super(anchorId, type, position, rotation, scale);
         mAlignment = Alignment.valueFromString(alignment);
