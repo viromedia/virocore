@@ -147,7 +147,7 @@ public class ViroSpotLightTest extends ViroBaseTest {
     }
 
     private void testSetInfluenceBitMask() {
-        assertPass("running testColorChange()");
+        assertPass("running testSetCastsShadow()");
 
     }
 
@@ -164,7 +164,7 @@ public class ViroSpotLightTest extends ViroBaseTest {
         assertPass("Changing direction of light from -z to -y axis", () -> {
             mSpotLight.setDirection(directions.get(0));
         });
-        assertPass("running testColorChange()");
+        assertPass("running testSetDirection()");
 
     }
 
@@ -199,7 +199,7 @@ public class ViroSpotLightTest extends ViroBaseTest {
                 mSpotLight.setPosition(itr.next());
             }
         };
-        assertPass("running testSetInnerAngle()");
+        assertPass("running testSetOuterAngle()");
     }
 
 }

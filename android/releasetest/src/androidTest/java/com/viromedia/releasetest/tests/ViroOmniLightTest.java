@@ -44,7 +44,7 @@ public class ViroOmniLightTest extends ViroBaseTest {
     void configureTestScene() {
         mOmniLight = new OmniLight();
         mOmniLight.setInfluenceBitMask(INFLUENCE_BITMASK);
-        mOmniLight.setPosition(new Vector(0, 10, -2));
+        mOmniLight.setPosition(new Vector(0, 5, -2));
         mScene.getRootNode().addLight(mOmniLight);
 
         final DirectionalLight directionalLight = new DirectionalLight();

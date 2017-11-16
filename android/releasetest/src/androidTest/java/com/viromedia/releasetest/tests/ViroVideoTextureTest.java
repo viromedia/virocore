@@ -12,6 +12,7 @@ package com.viromedia.releasetest.tests;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.test.espresso.core.deps.guava.collect.Iterables;
+import android.util.Log;
 
 import com.viro.core.AmbientLight;
 import com.viro.core.AnimationTimingFunction;
@@ -26,6 +27,7 @@ import com.viro.core.VideoTexture;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -136,14 +138,24 @@ public class ViroVideoTextureTest extends ViroBaseTest {
     }
 
     private void testPlayPause() {
-
+        mVideoTexture.play();
+        final List<Integer> intArray = new ArrayList<Integer>();
+        intArray.add(new Integer(0));
         mMutableTestMethod = () -> {
             if (mVideoTexture.isPlaying()) {
-                mVideoTexture.pause();
-                mDelegateText.setText("Video Paused");
+                Log.i("ViroVideoTexture", "isPausing!!");
+                if(intArray.get(0) > 5) {
+                    mVideoTexture.pause();
+                    mDelegateText.setText("Video Paused");
+                    Log.i("ViroVideoTexture", "Video is pausing!!");
+                }
+                int newCount = intArray.get(0);
+                newCount++;
+                intArray.clear();
+                intArray.add(newCount);
             } else {
-                mVideoTexture.play();
-                mDelegateText.setText("Video Playing");
+                //mVideoTexture.play();
+                //mDelegateText.setText("Video Playing");
             }
         };
 
