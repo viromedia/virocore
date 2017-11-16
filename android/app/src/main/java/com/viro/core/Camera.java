@@ -20,7 +20,7 @@ package com.viro.core;
  * Camera is used to change the user's view of the scene. Note that when in AR or VR modes, the
  * point of view is automatically computed based on the device's rotation and position in the
  * world. This class is primarily for use with {@link ViroViewScene}.
- * <p>>
+ * <p>
  * Because Camera is included in the scene graph, it can be moved, animated, and rotated
  * alongside other Nodes. You can also set the position and orientation of the Camera object itself.
  * <p>
