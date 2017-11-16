@@ -1,0 +1,14 @@
+{
+  "name": "vc_release",
+  "version": "1.0.0",
+  "description": "Compiles ViroCore for release.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "bin": {
+   "snippet": "./index.js"
+  }
+}
