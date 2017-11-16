@@ -22,7 +22,7 @@ var methodsToDelete = [
                     "public void removeARDeclarativeNode(ARDeclarativeNode node)"]},
   {fileName:"Geometry.java", methods:["public void copyAndSetMaterials(List<Material> materials)"]},
   {fileName:"Material.java", methods:["Material(LightingModel lightingModel, int diffuseColor, Texture diffuseTexture, float diffuseIntensity,",
-                                      "setDiffuseTexture", "getDiffuseIntensity", "setFresnelExponent", "getFresnelExponent"]},
+                                      "setDiffuseIntensity", "getDiffuseIntensity", "setFresnelExponent", "getFresnelExponent"]},
   {fileName:"Node.java", methods:["setHierarchicalRendering"]},
   {fileName:"Object3D.java", methods:["loadModel(String modelResource, Type type, AsyncObject3DListener asyncObjListener"]},
   {fileName:"OmniLight.java", methods:["OmniLight(long color, float intensity, float attenuationStartDistance"]},
