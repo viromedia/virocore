@@ -26,17 +26,9 @@ android {
 
     buildTypes {
         release {
-            println("NOT RUNNING PROGUARD")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "String", "COGNITO_IDENTITY_POOL_ID", "***REMOVED***"
-        }
-        proguard {
-            println("RUNNING PROGUARD")
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "COGNITO_IDENTITY_POOL_ID", "***REMOVED***"
-
         }
         debug {
             buildConfigField "String", "COGNITO_IDENTITY_POOL_ID", "***REMOVED***"
@@ -47,7 +39,6 @@ android {
     productFlavors {
         viro_core {
             buildConfigField "String", "dummyField", "\"BridgeOnly\""
-            proguardFile 'viro_core-rules.pro'
         }
 
         viro_react {
