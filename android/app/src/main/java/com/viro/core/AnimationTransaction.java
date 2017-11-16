@@ -7,9 +7,9 @@ package com.viro.core;
 import java.util.Stack;
 
 /**
- * AnimationTransaction exposes a simple interface for animating properties of Viro objects.
- * For example, to animate a {@link Node} to a new position, simply enclose the normal
- * {@link Node#setPosition(Vector)} call within an AnimationTransaction:
+ * AnimationTransaction exposes a simple interface for animating properties of Viro objects. For
+ * example, to animate a {@link Node} to a new position, simply enclose the normal {@link
+ * Node#setPosition(Vector)} call within an AnimationTransaction:
  * <p>
  * <tt>
  * <pre>
@@ -17,10 +17,9 @@ import java.util.Stack;
  * AnimationTransaction.setAnimationDuration(5000);
  * node.setPosition(new Vector(-2, 2.5f, -3));
  * AnimationTransaction.commit();</pre>
- * </tt>
- * You can also perform more complex animations, like changing to a new {@link Material} while
- * rotating a Node. The initial Material will crossfade over to the new Material. We do this in the
- * example below while using an "Ease Out" curve to decelerate the animation as it nears its end:
+ * </tt> You can also perform more complex animations, like changing the texture of a Material while
+ * rotating a Node. The initial texture will crossfade over to the new texture. We do this in the
+ * example below while using an "Ease Out" curve to decelerate the animation as it nears its end.
  * <p>
  * <tt>
  * <pre>
@@ -29,13 +28,12 @@ import java.util.Stack;
  * AnimationTransaction.setTimingFunction(AnimationTimingFunction.EaseOut);
  *
  * node.setRotation(new Vector(0, M_PI_2, 0));
- * node.setMaterial(material);
+ * node.getGeometry().getMaterials().get(0).setDiffuseTexture(texture);
  *
  * AnimationTransaction.commit();</pre>
- * </tt>
- * Finally, you can also chain animations or respond to the end of an animation by using a
- * {@link Listener}. In the snippet below, we move the position of a Node then, once that
- * animation completes, we rotate the Node.
+ * </tt> Finally, you can also chain animations or respond to the end of an animation by using a
+ * {@link Listener}. In the snippet below, we move the position of a Node then, once that animation
+ * completes, we rotate the Node.
  * <p>
  * <tt>
  * <pre>
@@ -52,7 +50,8 @@ import java.util.Stack;
  * AnimationTransaction.commit();</pre>
  * </tt>
  * <p>
- * For an extended discussion on animation, refer to the <a href="https://virocore.viromedia.com/docs/animation">Animation Guide</a>.
+ * For an extended discussion on animation, refer to the <a href="https://virocore.viromedia.com/docs/animation">Animation
+ * Guide</a>.
  */
 public class AnimationTransaction {
 
