@@ -91,14 +91,6 @@ public class Object3D extends Node {
      *                            the model's FBX or OBJ file, to the URI's of those resources.
      * @hide
      */
-    public void loadModel(String modelResource, Type type, AsyncObject3DListener asyncObjListener,
-                          Map<String, String> resourceNamesToUris) {
-        removeAllChildNodes();
-
-        long requestID = mActiveRequestID.incrementAndGet();
-        nativeLoadModelFromResources(modelResource, resourceNamesToUris, mNativeRef, type == Type.FBX, requestID);
-        mAsyncListener = asyncObjListener;
-    }
 
     @Override
     protected void finalize() throws Throwable {

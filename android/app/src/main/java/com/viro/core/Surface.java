@@ -32,7 +32,7 @@ public class Surface extends Geometry {
     /**
      * @hide
      */
-    public Surface(float width, float height, float u0, float v0, float u1, float v1) {
+    Surface(float width, float height, float u0, float v0, float u1, float v1) {
         mWidth = width;
         mHeight = height;
         mNativeRef = nativeCreateSurface(width, height, u0, v0, u1, v1);
@@ -41,7 +41,7 @@ public class Surface extends Geometry {
     /**
      * @hide
      */
-    public Surface(float width, float height, float u0, float v0, float u1, float v1,
+   Surface(float width, float height, float u0, float v0, float u1, float v1,
                    Surface oldSurface) {
         mNativeRef = nativeCreateSurfaceFromSurface(width, height, u0, v0, u1, v1,
                 oldSurface.mNativeRef);
@@ -119,28 +119,22 @@ public class Surface extends Geometry {
      * @hide
      * @param texture
      */
-    public void setVideoTexture(VideoTexture texture){
-        nativeSetVideoTexture(mNativeRef, texture.mNativeRef);
-    }
     /**
      * @hide
      * @param texture
      */
-    public void setImageTexture(Texture texture) {
-        nativeSetImageTexture(mNativeRef, texture.mNativeRef);
-    }
     /**
      * @hide
      * @param material
      */
-    public void setMaterial(Material material) {
-        nativeSetMaterial(mNativeRef, material.mNativeRef);
-    }
     /**
      * @hide
      */
-    public void clearMaterial() {
-        nativeClearMaterial(mNativeRef);
-    }
 
 }
+
+
+
+
+
+

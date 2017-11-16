@@ -63,19 +63,10 @@ public class SoundField implements BaseSound {
     /**
      * @hide
      */
-    public SoundField(String path, ViroContext viroContext, PlaybackListener delegate, boolean local) {
-        mNativeRef = nativeCreateSoundField(path, local, viroContext.mNativeRef);
-        mListener = delegate;
-    }
 
     /**
      * @hide
      */
-    public SoundField(SoundData data, ViroContext viroContext,
-                      PlaybackListener delegate) {
-        mNativeRef = nativeCreateSoundFieldWithData(data.mNativeRef, viroContext.mNativeRef);
-        mListener = delegate;
-    }
 
     @Override
     protected void finalize() throws Throwable {
@@ -285,3 +276,5 @@ public class SoundField implements BaseSound {
     private native void nativeSeekToTime(long mNativeRef, float seconds);
     private native void nativeSetRotation(long mNativeRef, float radiansX, float radiansY, float radiansZ);
 }
+
+

@@ -328,9 +328,6 @@ public class PhysicsBody {
      * @param mass
      * @return
      */
-    public static String checkIsValidBodyType(String bodyType, float mass) {
-        return nativeIsValidBodyType(bodyType, mass);
-    }
 
     /**
      * @hide
@@ -338,9 +335,6 @@ public class PhysicsBody {
      * @param params
      * @return
      */
-    public static String checkIsValidShapeType(String shapeType, float params[]) {
-        return nativeIsValidShapeType(shapeType, params);
-    }
 
     /*
      * Collision listener callback.
@@ -429,3 +423,5 @@ public class PhysicsBody {
     private native void nativeSetPhysicsVelocity(long nodeReference, float[] velocity, boolean isConstant);
 
 }
+
+

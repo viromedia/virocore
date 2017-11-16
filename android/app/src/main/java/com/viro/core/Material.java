@@ -297,38 +297,6 @@ public class Material {
      * Hence this constructor that does it all at once on the UI thread.
      * @hide
      */
-    public Material(LightingModel lightingModel, int diffuseColor, Texture diffuseTexture, float diffuseIntensity, Texture specularTexture,
-                    float shininess, float fresnelExponent, Texture normalMap, CullMode cullMode,
-                    TransparencyMode transparencyMode, BlendMode blendMode, float bloomThreshold,
-                    boolean writesToDepthBuffer, boolean readsFromDepthBuffer) {
-
-        mWritesToDepthBuffer = writesToDepthBuffer;
-        mReadsFromDepthBuffer = readsFromDepthBuffer;
-        mLightingModel = lightingModel;
-        mDiffuseTexture = diffuseTexture;
-        mDiffuseColor = diffuseColor;
-        mDiffuseIntensity = diffuseIntensity;
-        mSpecularTexture = specularTexture;
-        mShininess = shininess;
-        mFresnelExponent = fresnelExponent;
-        mNormalMap = normalMap;
-        mCullMode = cullMode;
-        mTransparencyMode = transparencyMode;
-        mBlendMode = blendMode;
-        mBloomThreshold = bloomThreshold;
-        mNativeRef = nativeCreateImmutableMaterial(lightingModel.getStringValue(),
-                diffuseColor,
-                diffuseTexture != null ? diffuseTexture.mNativeRef : 0,
-                diffuseIntensity,
-                specularTexture != null ? specularTexture.mNativeRef : 0,
-                shininess,
-                fresnelExponent,
-                normalMap != null ? normalMap.mNativeRef : 0,
-                cullMode.getStringValue(),
-                transparencyMode.getStringValue(),
-                blendMode.getStringValue(),
-                bloomThreshold, writesToDepthBuffer, readsFromDepthBuffer);
-    }
 
     @Override
     protected void finalize() throws Throwable {
@@ -422,10 +390,6 @@ public class Material {
      *
      * @param texture The diffuse Texture to use for this Material.
      */
-    public void setDiffuseTexture(Texture texture) {
-        mDiffuseTexture = texture;
-        nativeSetTexture(mNativeRef, texture.mNativeRef, "diffuseTexture");
-    }
 
     /**
      * Get the diffuse {@link Texture} used by this Material, which defines its base color. See
@@ -474,12 +438,12 @@ public class Material {
         nativeSetDiffuseIntensity(mNativeRef, diffuseIntensity);
     }
 
-    /**
-     * @hide
-     * @return
+    /*
+     * @param texture The diffuse Texture to use for this Material.
      */
-    public float getDiffuseIntensity() {
-        return mDiffuseIntensity;
+    public void setDiffuseTexture(Texture texture) {
+      mDiffuseTexture = texture;
+      nativeSetTexture(mNativeRef, texture.mNativeRef, "diffuseTexture");
     }
 
     /**
@@ -558,18 +522,11 @@ public class Material {
      * @hide
      * @param fresnelExponent
      */
-    public void setFresnelExponent(float fresnelExponent) {
-        mFresnelExponent = fresnelExponent;
-        nativeSetFresnelExponent(mNativeRef, fresnelExponent);
-    }
 
     /**
      * @hide
      * @return
      */
-    public float getFresnelExponent() {
-        return mFresnelExponent;
-    }
 
     /**
      * Set the {@link LightingModel} to use for this Material. LightingModel defines a formula for
@@ -710,3 +667,8 @@ public class Material {
     private native void nativeDestroyMaterial(long nativeRef);
     private native void nativeSetBloomThreshold(long nativeRef, float bloomThreshold);
 }
+
+
+
+
+

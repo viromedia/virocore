@@ -36,16 +36,6 @@ public class OmniLight extends Light {
      * @param attenuationEndDistance
      * @param position
      */
-    public OmniLight(long color, float intensity, float attenuationStartDistance,
-                     float attenuationEndDistance, Vector position) {
-        mColor = color;
-        mIntensity = intensity;
-        mAttenuationStartDistance = attenuationStartDistance;
-        mAttenuationEndDistance = attenuationEndDistance;
-        mPosition = position;
-        mNativeRef = nativeCreateOmniLight(color, intensity, attenuationStartDistance,
-                attenuationEndDistance, position.x, position.y, position.z);
-    }
 
     /**
      * Set the position of this OmniLight within the coordinate system of its parent {@link Node}.
@@ -128,3 +118,4 @@ public class OmniLight extends Light {
     private native void nativeSetPosition(long lightRef, float positionX, float positionY, float positionZ);
 
 }
+

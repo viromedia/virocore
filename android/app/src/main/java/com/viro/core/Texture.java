@@ -6,7 +6,6 @@ package com.viro.core;
 
 import android.graphics.Bitmap;
 
-import com.viro.core.internal.Image;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -251,46 +250,27 @@ public class Texture {
     private FilterMode mMagnificationFilter = FilterMode.LINEAR;
     private FilterMode mMipFilter = FilterMode.LINEAR;
 
-    /**
-     * Subclass constructor, creates its own mNativeRef.
-     *
-     * @hide
-     */
     Texture() {
 
     }
 
     /**
+     * Subclass constructor, creates its own mNativeRef.
+     *
      * @hide
      */
-    public Texture(Image px, Image nx, Image py,
-                   Image ny, Image pz, Image nz,
-                   Format format) {
-        mNativeRef = nativeCreateCubeTexture(px.mNativeRef, nx.mNativeRef,
-                                             py.mNativeRef, ny.mNativeRef,
-                                             pz.mNativeRef, nz.mNativeRef,
-                                             format.getStringValue());
-        mWidth = (int) px.getWidth();
-        mHeight = (int) px.getHeight();
-    }
 
     /**
      * @hide
      */
-    public Texture(Image image, Format format, boolean sRGB, boolean mipmap) {
-        mNativeRef = nativeCreateImageTexture(image.mNativeRef, format.getStringValue(), sRGB, mipmap, null);
-        mWidth = (int) image.getWidth();
-        mHeight = (int) image.getHeight();
-    }
 
     /**
      * @hide
      */
-    public Texture(Image image, Format format, boolean sRGB, boolean mipmap, String stereoMode) {
-        mNativeRef = nativeCreateImageTexture(image.mNativeRef, format.getStringValue(), sRGB, mipmap, stereoMode);
-        mWidth = (int) image.getWidth();
-        mHeight = (int) image.getHeight();
-    }
+
+    /**
+     * @hide
+     */
 
     /**
      * Construct a new cube map Texture out of the given images. Cube maps are a group of six
@@ -604,3 +584,7 @@ public class Texture {
     private native void nativeSetMipFilter(long nativeRef, String mipFilter);
     private native void nativeDestroyTexture(long nativeRef);
 }
+
+
+
+

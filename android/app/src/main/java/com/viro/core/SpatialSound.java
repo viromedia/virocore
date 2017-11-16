@@ -119,19 +119,10 @@ public class SpatialSound implements BaseSound {
     /**
      * @hide
      */
-    public SpatialSound(String path, ViroContext viroContext, PlaybackListener delegate, boolean local) {
-        mNativeRef = nativeCreateSpatialSound(path, local, viroContext.mNativeRef);
-        mListener = delegate;
-    }
 
     /**
      * @hide
      */
-    public SpatialSound(SoundData data, ViroContext viroContext,
-                        PlaybackListener delegate) {
-        mNativeRef = nativeCreateSpatialSoundWithData(data.mNativeRef, viroContext.mNativeRef);
-        mListener = delegate;
-    }
 
     @Override
     protected void finalize() throws Throwable {
@@ -364,3 +355,5 @@ public class SpatialSound implements BaseSound {
     private native void nativeSetPosition(long nativeRef, float posX, float posY, float posZ);
     private native void nativeSetDistanceRolloff(long nativeRef, String model, float minDistance, float maxDistance);
 }
+
+

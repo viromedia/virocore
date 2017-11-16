@@ -82,22 +82,10 @@ public class Sound implements BaseSound {
     /**
      * @hide
      */
-    public Sound(String path, ViroContext viroContext, PlaybackListener listener) {
-        mListener = listener;
-        mNativeRef = nativeCreateSound(path, viroContext.mNativeRef);
-
-        // Setup is called after creation because setup may end up invoking the listener, and we
-        // need mNativeRef set to a valid pointer before we do so
-        nativeSetup(mNativeRef);
-    }
 
     /**
      * @hide
      */
-    public Sound(SoundData data, ViroContext viroContext, PlaybackListener listener) {
-        mListener = listener;
-        mNativeRef = nativeCreateSoundWithData(data.mNativeRef, viroContext.mNativeRef);
-    }
 
     @Override
     protected void finalize() throws Throwable {
@@ -301,3 +289,5 @@ public class Sound implements BaseSound {
         }
     }
 }
+
+

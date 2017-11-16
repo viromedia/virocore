@@ -60,9 +60,6 @@ public class ViroContext {
     /**
      * @hide
      */
-    public void getCameraOrientation(CameraCallback callback) {
-        nativeGetCameraOrientation(mNativeRef, callback);
-    }
 
     /**
      * @hide

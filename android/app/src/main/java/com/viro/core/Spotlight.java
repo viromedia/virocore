@@ -50,21 +50,6 @@ public class Spotlight extends Light {
      * @param innerAngle
      * @param outerAngle
      */
-    public Spotlight(long color, float intensity, float attenuationStartDistance,
-                     float attenuationEndDistance, Vector position, Vector direction,
-                     float innerAngle, float outerAngle) {
-        mColor = color;
-        mIntensity = intensity;
-        mAttenuationStartDistance = attenuationStartDistance;
-        mAttenuationEndDistance = attenuationEndDistance;
-        mPosition = position;
-        mDirection = direction;
-        mInnerAngle = innerAngle;
-        mOuterAngle = outerAngle;
-        mNativeRef = nativeCreateSpotLight(color, intensity, attenuationStartDistance, attenuationEndDistance,
-                position.x, position.y, position.z, direction.x, direction.y, direction.z,
-                innerAngle, outerAngle);
-    }
 
     /**
      * Set the attenuation start distance, which determines when the light begins to attenuate.
@@ -377,4 +362,5 @@ public class Spotlight extends Light {
     private native void nativeSetCastsShadow(long lightRef, boolean castsShadow);
     private native void nativeSetShadowOpacity(long lightRef, float opacity);
 }
+
 

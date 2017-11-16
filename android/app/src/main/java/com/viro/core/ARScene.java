@@ -4,7 +4,6 @@
  */
 package com.viro.core;
 
-import com.viro.core.internal.ARDeclarativeNode;
 
 /**
  * ARScene blends virtual 3D content with the device camera's view of the real world. Similar to a
@@ -98,12 +97,6 @@ public class ARScene extends Scene {
      * @hide
      * @param declarative
      */
-    public ARScene(boolean declarative) {
-        super(true); // Invoke the dummy constructor
-        long nativeRef = nativeCreateARSceneControllerDeclarative();
-        setSceneRef(nativeRef);
-        mNativeARDelegateRef = nativeCreateARSceneDelegate(mNativeRef);
-    }
 
     /**
      * Invoked only by the default (no-arg) constructor.
@@ -198,22 +191,13 @@ public class ARScene extends Scene {
     /**
      * @hide
      */
-    public void addARDeclarativeNode(ARDeclarativeNode node) {
-        nativeAddARNode(mNativeRef, node.mNativeRef);
-    }
 
     /**
      * @hide
      */
-    public void updateARDeclarativeNode(ARDeclarativeNode node) {
-        nativeUpdateARNode(mNativeRef, node.mNativeRef);
-    }
     /**
      * @hide
      */
-    public void removeARDeclarativeNode(ARDeclarativeNode node) {
-        nativeRemoveARNode(mNativeRef, node.mNativeRef);
-    }
 
     private native long nativeCreateARSceneController();
     private native long nativeCreateARSceneControllerDeclarative();
@@ -285,3 +269,7 @@ public class ARScene extends Scene {
         }
     }
 }
+
+
+
+

@@ -308,9 +308,6 @@ public class Scene {
      * @param effects
      * @return
      */
-    public boolean setEffects(String[] effects){
-        return nativeSetEffects(mNativeRef, effects);
-    }
 
     /*
      * Native Functions called into JNI

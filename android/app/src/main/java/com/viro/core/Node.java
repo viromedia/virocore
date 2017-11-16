@@ -670,9 +670,6 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * @hide
      * @param hierarchicalRendering
      */
-    public void setHierarchicalRendering(boolean hierarchicalRendering) {
-        nativeSetHierarchicalRendering(mNativeRef, hierarchicalRendering);
-    }
 
     /**
      * Set the {@link Geometry} of this Node. Geometries are the actual 3D objects that are rendered
@@ -1456,3 +1453,4 @@ public class Node implements EventDelegate.EventDelegateCallback {
         }
     }
 }
+
