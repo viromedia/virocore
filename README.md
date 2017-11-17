@@ -7,7 +7,7 @@ Viro Media is a platform for developers to rapidly build augmented reality (AR) 
 
 To report bugs/issues with Viro platform, please file new issues on this repository.
 
-## Instructions for running sample projects using Testbed app:
+## Instructions for running sample code:
 
 1. Follow the prerequisite directions on our [Quick start guide](https://virocore.viromedia.com/docs/getting-started) to setup dependencies for trying these sample projects with the Viro Media App.
 2. Clone the repo into your workspace with git: `git clone https://github.com/viromedia/virocore.git`.
