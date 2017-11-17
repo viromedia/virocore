@@ -1,7 +1,7 @@
 ViroCore
 =====================
 
-Viro Media is a platform for developers to rapidly build augmented reality (AR) and virtual reality (VR) experiences. Developers can develop in Android with Java and deploy onto Google Daydream, Samsung, GearVR, and Google Cardboard (for iOS and Android), and AR (iOS ARKit + Android ARCore).
+Viro Media is a platform for developers to rapidly build augmented reality (AR) and virtual reality (VR) experiences. Developers can develop in Android with Java and deploy onto Google Daydream, Samsung, GearVR, Google Cardboard.
 
 [Sign up](https://viromedia.com/signup) for an API key. The platform is free to use with no limits on distribution.
 
