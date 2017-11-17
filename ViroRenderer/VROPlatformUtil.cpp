@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
+#include <cstring>
 
 static VROPlatformType sPlatformType = VROPlatformType::Unknown;
 

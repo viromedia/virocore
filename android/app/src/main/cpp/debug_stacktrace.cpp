@@ -38,6 +38,7 @@
 #include <dlfcn.h>
 #include <inttypes.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <unwind.h>
 #include <sys/types.h>
 #include "debug_mapinfo.h"

@@ -10,6 +10,7 @@
 #include "VROLog.h"
 #include <algorithm>
 #include <limits>
+#include <cstring>
 
 VROMatrix4f matrix_from_scale(float sx, float sy, float sz) {
     VROMatrix4f m;

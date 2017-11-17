@@ -11,6 +11,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <cstring>
 
 std::string VROCompress::compress(const std::string &str, int compressionlevel) {
     z_stream zs;

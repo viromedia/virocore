@@ -11,6 +11,7 @@
 #include "VROLog.h"
 #include "VROQuaternion.h"
 #include <sstream>
+#include <cstring>
 
 VROMatrix4f VROMatrix4f::identity() {
     VROMatrix4f identity;
