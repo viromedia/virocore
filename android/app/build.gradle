@@ -78,7 +78,7 @@ task copyReleaseAAR(type: Copy) {
 }
 
 tasks.whenTaskAdded { task ->
-    if (task.name == 'assembleRelease') {
+    if (task.name == 'assembleViro_reactRelease') {
         task.finalizedBy 'copyReleaseAAR'
     }
 }
