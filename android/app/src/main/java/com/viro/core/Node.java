@@ -1238,7 +1238,15 @@ public class Node implements EventDelegate.EventDelegateCallback {
      * @hide
      */
     @Override
-    public void onCameraARHitTest(int source, ARHitTestResult[] results) {
+    public void onCameraARHitTest(ARHitTestResult[] results) {
+
+    }
+    /**
+     * This is used to notify the developer of the current point cloud. Not exposed to the Java API.
+     * @hide
+     */
+    @Override
+    public void onARPointCloudUpdate(ARPointCloud pointCloud) {
 
     }
     /**

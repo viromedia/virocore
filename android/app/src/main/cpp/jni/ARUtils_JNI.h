@@ -19,4 +19,9 @@ jfloatArray ARUtilsCreateFloatArrayFromVector3f(VROVector3f vector);
 jstring ARUtilsCreateStringFromAlignment(VROARPlaneAlignment alignment);
 jobject ARUtilsCreateARHitTestResult(VROARHitTestResult result);
 
+
+// Helper functions to create a Java ARPointCloud object
+jobject ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud);
+
+
 #endif //ANDROID_ARUTILS_JNI_H

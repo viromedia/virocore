@@ -7,6 +7,7 @@
 
 #include <VROPlatformUtil.h>
 #include "ARUtils_JNI.h"
+#include "VROARPointCloud.h"
 
 /**
  * Creates an ARAnchor from the given VROARPlaneAnchor.
@@ -122,4 +123,29 @@ jobject ARUtilsCreateARHitTestResult(VROARHitTestResult result) {
     jtypeString = env->NewStringUTF(typeString);
     return env->NewObject(arHitTestResultClass, constructorMethod, jtypeString,
                           jposition, jscale, jrotation);
+}
+
+jobject ARUtilsCreateARPointCloud(std::shared_ptr<VROARPointCloud> pointCloud) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+
+    std::vector<VROVector4f> points = pointCloud->getPoints();
+    jfloat tempConfidencesArr[points.size() * 4];
+
+    // populate the array with Vector objects
+    for (int i = 0; i < points.size(); i++) {
+        tempConfidencesArr[i*4] = points[i].x;
+        tempConfidencesArr[i*4+1] = points[i].y;
+        tempConfidencesArr[i*4+2] = points[i].z;
+        tempConfidencesArr[i*4+3] = points[i].w;
+    }
+
+    // copy confidence values over to a jfloatArray
+    jfloatArray jConfidencesArray = env->NewFloatArray(points.size() * 4);
+    env->SetFloatArrayRegion(jConfidencesArray, 0, points.size() * 4, tempConfidencesArr);
+
+    // get constructor, create and return an ARPointCloud Java object
+    jclass arPointCloudClass = env->FindClass("com/viro/core/ARPointCloud");
+    jmethodID constructorMethod = env->GetMethodID(arPointCloudClass, "<init>", "([F)V");
+
+    return env->NewObject(arPointCloudClass, constructorMethod, jConfidencesArray);
 }

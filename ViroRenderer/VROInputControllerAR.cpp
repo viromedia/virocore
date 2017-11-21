@@ -29,6 +29,7 @@ void VROInputControllerAR::onProcess(const VROCamera &camera) {
     _latestCamera = camera;
     processTouchMovement();
     processCenterCameraHitTest();
+    notifyARPointCloud();
 }
 
 void VROInputControllerAR::onRotateStart(VROVector3f touchPos) {
@@ -287,7 +288,7 @@ void VROInputControllerAR::processCenterCameraHitTest() {
                 
             if(camera && (camera->getTrackingState() == VROARTrackingState::Unavailable)){
                 // If delegate is enabled, send back empty results if tracking is not available yet.
-                delegate->onCameraARHitTest(ViroCardBoard::InputSource::Controller, results);
+                delegate->onCameraARHitTest(results);
                 return;
             }
             
@@ -312,10 +313,32 @@ void VROInputControllerAR::processCenterCameraHitTest() {
                                          VROARHitTestResultType::ExistingPlane,
                                          VROARHitTestResultType::EstimatedHorizontalPlane,
                                          VROARHitTestResultType::FeaturePoint });
-                delegate->onCameraARHitTest(ViroCardBoard::InputSource::Controller, results);
+                delegate->onCameraARHitTest(results);
             }
             _cameraLastQuaternion = quaternion;
             _cameraLastPosition = currPosition;
+        }
+    }
+}
+
+void VROInputControllerAR::notifyARPointCloud() {
+    std::shared_ptr<VROARSession> session = _weakSession.lock();
+
+    if (session && session->isReady()) {
+        std::unique_ptr<VROARFrame> &frame = session->getLastFrame();
+        std::shared_ptr<VROEventDelegate> delegate = _scene->getRootNode()->getEventDelegate();
+
+        if (delegate && frame && delegate->isEventEnabled(VROEventDelegate::EventAction::OnARPointCloudUpdate)) {
+            std::shared_ptr<VROARPointCloud> pointCloud = frame->getPointCloud();
+
+            int pointCloudSize = pointCloud->getPoints().size();
+            // check if the last point cloud size is the same as the current one. That's a good
+            // indication that the points didn't change (doing a simple pointer comparison
+            // doesn't work on Android).
+            if (pointCloudSize != _lastPointCloudSize && pointCloudSize > 0) {
+                _lastPointCloudSize = pointCloudSize;
+                delegate->onARPointCloudUpdate(pointCloud);
+            }
         }
     }
 }

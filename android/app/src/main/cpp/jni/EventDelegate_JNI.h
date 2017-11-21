@@ -52,11 +52,12 @@ public:
     void onFuse(int source, std::shared_ptr<VRONode> node, float timeToFuseRatio);
     void onPinch(int source, std::shared_ptr<VRONode> node, float scaleFactor, PinchState pinchState);
     void onRotate(int source, std::shared_ptr<VRONode> node, float rotateDegrees, RotateState rotateState);
-    void onCameraARHitTest(int source, std::vector<VROARHitTestResult> results);
+    void onCameraARHitTest(std::vector<VROARHitTestResult> results);
+    void onARPointCloudUpdate(std::shared_ptr<VROARPointCloud> pointCloud);
+
 
 private:
     jobject _javaObject;
-    void callJavaFunction(std::string functionName, std::string methodID, ...);
 };
 
 namespace EventDelegate{

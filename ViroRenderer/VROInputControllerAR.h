@@ -108,7 +108,6 @@ protected:
      to determine where the object should go based on the real world.
      */
     virtual void processDragging(int source);
-    virtual void processCenterCameraHitTest();
     
 private:
     float _viewportWidth;
@@ -126,6 +125,7 @@ private:
     VROVector3f _latestTouchPos;
     VROQuaternion _cameraLastQuaternion;
     VROVector3f _cameraLastPosition;
+    int _lastPointCloudSize;
 
     VROVector3f calculateCameraRay(VROVector3f touchPos);
 
@@ -137,7 +137,19 @@ private:
      if we should always run it (vs optimizing).
      */
     void processDragging(int source, bool alwaysRun);
-    
+
+    /*
+     Function that performs an ARHitTest from the camera position w/ the camera forward vector
+     and returns it to any registered delegates.
+     */
+    void processCenterCameraHitTest();
+
+    /*
+     Function that retrieves the current AR PointCloud and passes it to any registered
+     delegates.
+     */
+    void notifyARPointCloud();
+
     /*
      Given a vector a VROARHitTestResults, returns the next position we should move the object to.
      */

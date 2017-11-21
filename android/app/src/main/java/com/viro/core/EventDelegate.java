@@ -78,7 +78,11 @@ public class EventDelegate {
         /**
          * @hide
          */
-        void onCameraARHitTest(int source, ARHitTestResult[] results);
+        void onCameraARHitTest(ARHitTestResult[] results);
+        /**
+         * @hide
+         */
+        void onARPointCloudUpdate(ARPointCloud pointCloud);
     }
 
     long mNativeRef;
@@ -162,7 +166,8 @@ public class EventDelegate {
         ON_FUSE(9),
         ON_PINCH(10),
         ON_ROTATE(11),
-        ON_CAMERA_AR_HIT_TEST(12);
+        ON_CAMERA_AR_HIT_TEST(12),
+        ON_AR_POINT_CLOUD_UPDATE(13);
 
         public final int mTypeId;
 
@@ -277,9 +282,15 @@ public class EventDelegate {
         }
     }
 
-    void onCameraARHitTest(int source, ARHitTestResult[] results) {
+    void onCameraARHitTest(ARHitTestResult[] results) {
         if (mDelegate != null && mDelegate.get() != null) {
-            mDelegate.get().onCameraARHitTest(source, results);
+            mDelegate.get().onCameraARHitTest(results);
+        }
+    }
+
+    void onARPointCloudUpdate(ARPointCloud pointCloud) {
+        if (mDelegate != null && mDelegate.get() != null) {
+            mDelegate.get().onARPointCloudUpdate(pointCloud);
         }
     }
 }

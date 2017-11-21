@@ -8,6 +8,7 @@
 #include "EventDelegate_JNI.h"
 #include "Node_JNI.h"
 #include "ARUtils_JNI.h"
+#include "VROARPointCloud.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -295,11 +296,11 @@ void EventDelegate_JNI::onRotate(int source, std::shared_ptr<VRONode> node, floa
     });
 }
 
-void EventDelegate_JNI::onCameraARHitTest(int source, std::vector<VROARHitTestResult> results) {
+void EventDelegate_JNI::onCameraARHitTest(std::vector<VROARHitTestResult> results) {
     JNIEnv *env = VROPlatformGetJNIEnv();
     jweak weakObj = env->NewWeakGlobalRef(_javaObject);
 
-    VROPlatformDispatchAsyncApplication([weakObj, source, results] {
+    VROPlatformDispatchAsyncApplication([weakObj, results] {
         JNIEnv *env = VROPlatformGetJNIEnv();
         jclass arHitTestResultClass = env->FindClass("com/viro/core/ARHitTestResult");
 
@@ -315,7 +316,30 @@ void EventDelegate_JNI::onCameraARHitTest(int source, std::vector<VROARHitTestRe
         }
 
         VROPlatformCallJavaFunction(localObj,
-                                    "onCameraARHitTest", "(I[Lcom/viro/core/ARHitTestResult;)V", source, resultsArray);
+                                    "onCameraARHitTest", "([Lcom/viro/core/ARHitTestResult;)V", resultsArray);
         env->DeleteLocalRef(localObj);
+    });
+}
+
+void EventDelegate_JNI::onARPointCloudUpdate(std::shared_ptr<VROARPointCloud> pointCloud) {
+    JNIEnv *env = VROPlatformGetJNIEnv();
+    jweak weakObj = env->NewWeakGlobalRef(_javaObject);
+
+    // So it turns out that ARCore returns us garbage values (NaN) when the camera is obscured
+    // so, rather than waste all the time going up to Java, check 1 value right here and
+    // return if it is a NaN.
+    if (isnan(pointCloud->getPoints()[0].x)) {
+        return;
+    }
+
+    VROPlatformDispatchAsyncApplication([weakObj, pointCloud] {
+        JNIEnv *env = VROPlatformGetJNIEnv();
+        jobject localObj = env->NewLocalRef(weakObj);
+        if (localObj == NULL) {
+            return;
+        }
+
+        jobject jPointCloud = ARUtilsCreateARPointCloud(pointCloud);
+        VROPlatformCallJavaFunction(localObj, "onARPointCloudUpdate", "(Lcom/viro/core/ARPointCloud;)V", jPointCloud);
     });
 }
