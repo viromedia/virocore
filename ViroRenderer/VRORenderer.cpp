@@ -285,7 +285,6 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeView, VROMatrix4f eye
     _choreographer->setViewport(viewport, driver);
     
     std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
-    
     _context->setViewMatrix(eyeView);
     _context->setProjectionMatrix(eyeProjection);
     _context->setEyeType(eye);

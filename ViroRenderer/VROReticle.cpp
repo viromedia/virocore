@@ -238,16 +238,17 @@ std::vector<VROVector3f> VROReticle::createArc(float radius, int numSegments) {
 
 void VROReticle::animateFuse(float ratio) {
     // Start fuse scaling animation if we haven't yet already
-    if (!_isFusing){
-        float scale = _radius / _size * kFuseRadiusMultiplier;
+    _isFusing = true;
+    float scale = _radius / _size * kFuseRadiusMultiplier;
+    if (_fuseScale != scale){
         VROTransaction::begin();
         VROTransaction::setAnimationDuration(0.25);
         VROTransaction::setTimingFunction(VROTimingFunctionType::PowerDecel);
+
         _fuseNode->setScale({scale,scale,scale});
         _fuseBackgroundNode->setScale({scale,scale,scale});
         VROTransaction::commit();
-
-        _isFusing = true;
+        _fuseScale = scale;
     }
 
     // Animate trigger animation if we have finished fusing.
@@ -284,6 +285,7 @@ void VROReticle::stopFuseAnimation() {
     _fuseTriggeredNode->setOpacity(0);
     _isFusing = false;
     _fuseTriggered = false;
+    _fuseScale = -1;
 }
 
 void VROReticle::animateFuseTriggered() {
