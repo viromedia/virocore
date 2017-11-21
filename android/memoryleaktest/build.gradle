@@ -1,9 +1,12 @@
 apply plugin: 'com.android.application'
 
-android {
-    compileSdkVersion 25
-    buildToolsVersion "26.0.1"
 
+
+android {
+    flavorDimensions "target_platform"
+
+    compileSdkVersion 25
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.example.memoryleaktest"
         minSdkVersion 21
@@ -12,6 +15,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        missingDimensionStrategy 'product', 'viro_core'
 
     }
     buildTypes {
@@ -23,21 +27,25 @@ android {
 
     productFlavors {
         gvr {
+            dimension "target_platform"
             resValue "string", "app_name", "MemoryLeakTest-gvr"
             applicationIdSuffix ".gvr"
             buildConfigField "String", "VR_PLATFORM", "\"GVR\""
         }
         ovr {
+            dimension "target_platform"
             resValue "string", "app_name", "MemoryLeakTest-ovr"
             applicationIdSuffix ".ovr"
             buildConfigField "String", "VR_PLATFORM", "\"OVR\""
         }
         arcore {
+            dimension "target_platform"
             resValue "string", "app_name", "MemoryLeakTest-arcore"
             applicationIdSuffix ".arcore"
             buildConfigField "String", "VR_PLATFORM", "\"ARCore\""
         }
         scene {
+            dimension "target_platform"
             resValue "string", "app_name", "MemoryLeakTest-scene"
             applicationIdSuffix ".scene"
             buildConfigField "String", "VR_PLATFORM", "\"Scene\""
@@ -64,7 +72,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':arcore_client')
-    compile project(path: ':app', configuration: 'viro_coreRelease')
+    implementation project(':app')
     compile project(':libs:gvr')
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.6-SNAPSHOT'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.6-SNAPSHOT'

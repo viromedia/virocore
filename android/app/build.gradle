@@ -2,8 +2,9 @@ apply plugin: 'com.android.library'
 apply from: 'maven-push.gradle'
 
 android {
+    flavorDimensions  "product"
     compileSdkVersion 25
-    buildToolsVersion '26.0.1'
+    buildToolsVersion '26.0.2'
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 25
@@ -19,8 +20,6 @@ android {
             // libraries Gradle should build and package with your APK.
             abiFilters 'armeabi-v7a'
         }
-
-
     }
     publishNonDefault true
 
@@ -31,17 +30,24 @@ android {
             buildConfigField "String", "COGNITO_IDENTITY_POOL_ID", "***REMOVED***"
         }
         debug {
+            minifyEnabled false
             buildConfigField "String", "COGNITO_IDENTITY_POOL_ID", "***REMOVED***"
         }
+    }
+
+    dexOptions {
+        preDexLibraries true
     }
 
     // If the flavors are updated, make sure to update ViroView.java's static flavor fields.
     productFlavors {
         viro_core {
+            dimension "product"
             buildConfigField "String", "dummyField", "\"BridgeOnly\""
         }
 
         viro_react {
+            dimension "product"
             buildConfigField "String", "dummyField", "\"ViroReact\""
         }
     }

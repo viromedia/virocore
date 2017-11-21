@@ -1,8 +1,9 @@
 apply plugin: 'com.android.application'
 
 android {
+    flavorDimensions "target_platform"
     compileSdkVersion 25
-    buildToolsVersion '26.0.1'
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.viromedia.releasetest"
@@ -13,12 +14,7 @@ android {
 
         testApplicationId "com.viromedia.releasetest"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-
-        jackOptions {
-            enabled true
-        }
-
+        missingDimensionStrategy 'product', 'viro_core'
     }
     buildTypes {
         release {
@@ -28,6 +24,7 @@ android {
     }
     productFlavors {
         gvr_vr_enabled {
+            dimension "target_platform"
             resValue "string", "app_name", "ReleasTest-gvr-vr"
             applicationIdSuffix ".gvr"
             buildConfigField "String", "VR_PLATFORM", "\"GVR\""
@@ -35,6 +32,7 @@ android {
         }
 
         gvr_vr_disabled {
+            dimension "target_platform"
             resValue "string", "app_name", "ReleasTest-gvr-360"
             applicationIdSuffix ".gvr"
             buildConfigField "String", "VR_PLATFORM", "\"GVR\""
@@ -42,18 +40,21 @@ android {
         }
 
         ovr {
+            dimension "target_platform"
             resValue "string", "app_name", "ReleaseTest-ovr"
             applicationIdSuffix ".ovr"
             buildConfigField "String", "VR_PLATFORM", "\"OVR\""
             buildConfigField "Integer", "VR_ENABLED", "1"
         }
         arcore {
+            dimension "target_platform"
             resValue "string", "app_name", "ReleasTest-arcore"
             applicationIdSuffix ".arcore"
             buildConfigField "String", "VR_PLATFORM", "\"ARCore\""
             buildConfigField "Integer", "VR_ENABLED", "0"
         }
         scene {
+            dimension "target_platform"
             resValue "string", "app_name", "ReleasTest-scene"
             applicationIdSuffix ".scene"
             buildConfigField "String", "VR_PLATFORM", "\"Scene\""
@@ -83,7 +84,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile project(':arcore_client')
-    compile project(path: ':app', configuration: 'viro_coreRelease')
+    implementation project(':app')
     compile project(':libs:gvr')
     compile 'com.android.support:appcompat-v7:25.0.0'
     // testing dependencies

@@ -1,8 +1,9 @@
 apply plugin: 'com.android.application'
 
 android {
+    flavorDimensions "target_platform"
     compileSdkVersion 25
-    buildToolsVersion '26.0.1'
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.viromedia.renderertest"
@@ -10,6 +11,7 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+        missingDimensionStrategy 'product', 'viro_react'
 
     }
     buildTypes {
@@ -20,21 +22,25 @@ android {
     }
     productFlavors {
         gvr {
+            dimension "target_platform"
             resValue "string", "app_name", "RendererTest-gvr"
             applicationIdSuffix ".gvr"
             buildConfigField "String", "VR_PLATFORM", "\"GVR\""
         }
         ovr {
+            dimension "target_platform"
             resValue "string", "app_name", "RendererTest-ovr"
             applicationIdSuffix ".ovr"
             buildConfigField "String", "VR_PLATFORM", "\"OVR\""
         }
         arcore {
+            dimension "target_platform"
             resValue "string", "app_name", "RendererTest-arcore"
             applicationIdSuffix ".arcore"
             buildConfigField "String", "VR_PLATFORM", "\"ARCore\""
         }
         scene {
+            dimension "target_platform"
             resValue "string", "app_name", "RendererTest-scene"
             applicationIdSuffix ".scene"
             buildConfigField "String", "VR_PLATFORM", "\"Scene\""
@@ -55,8 +61,8 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':arcore_client')
-    compile project(':app')
+    implementation project(':app')
     compile project(':libs:gvr')
-    compile project(path: ':app', configuration: 'viro_reactRelease')
+    implementation project(':app')
     compile 'com.android.support:appcompat-v7:25.0.0'
 }
