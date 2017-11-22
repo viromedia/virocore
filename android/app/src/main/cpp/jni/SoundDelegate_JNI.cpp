@@ -38,7 +38,8 @@ void SoundDelegate::soundIsReady() {
     env->CallVoidMethod(_javaObject, method);
     if (env->ExceptionOccurred()) {
         perr("Exception occurred while invoking soundIsReady()");
-        env->ExceptionClear();
+        std::string errorString = "A java exception has been thrown when calling soundIsReady";
+        throw std::runtime_error(errorString.c_str());
     }
     env->DeleteLocalRef(javaClass);
 }
@@ -62,7 +63,8 @@ void SoundDelegate::soundDidFinish() {
     env->CallVoidMethod(_javaObject, method);
     if (env->ExceptionOccurred()) {
         perr("Exception occurred while invoking soundDidFinish()");
-        env->ExceptionClear();
+        std::string errorString = "A java exception has been thrown when calling soundDidFinish";
+        throw std::runtime_error(errorString.c_str());
     }
     env->DeleteLocalRef(javaClass);
 }
@@ -86,8 +88,9 @@ void SoundDelegate::soundDidFail(std::string error) {
     jstring jerror = env->NewStringUTF(error.c_str());
     env->CallVoidMethod(_javaObject, method, jerror);
     if (env->ExceptionOccurred()) {
-        perr("Exception occurred while invoking soundDidFail(String)");
-        env->ExceptionClear();
+        perr("Exception occurred while invoking soundDidFail()");
+        std::string errorString = "A java exception has been thrown when calling soundDidFail";
+        throw std::runtime_error(errorString.c_str());
     }
 
     env->DeleteLocalRef(jerror);

@@ -683,7 +683,7 @@ void VROPlatformCallJavaFunction(jobject javaObject,
                                  std::string methodID, ...){
     JNIEnv *env = VROPlatformGetJNIEnv();
     env->ExceptionClear();
-    
+
     jclass viroClass = env->GetObjectClass(javaObject);
     if (viroClass == nullptr) {
         perr("Unable to find class for making java calls [function %s, method %s]",
@@ -702,7 +702,8 @@ void VROPlatformCallJavaFunction(jobject javaObject,
     env->CallVoidMethodV(javaObject, method, args);
     if (env->ExceptionOccurred()) {
         perr("Exception occured when calling %s.", functionName.c_str());
-        env->ExceptionClear();
+        std::string errorString = "A java exception has been thrown when calling " + functionName;
+        throw std::runtime_error(errorString.c_str());
     }
     va_end(args);
     
@@ -733,7 +734,8 @@ void VROPlatformCallJavaFunction(jobject javaObject,
     jlong result = env->CallLongMethodV(javaObject, method, args);
     if (env->ExceptionOccurred()) {
         perr("Exception occured when calling %s.", functionName.c_str());
-        env->ExceptionClear();
+        std::string errorString = "A java exception has been thrown when calling " + functionName;
+        throw std::runtime_error(errorString.c_str());
     }
     va_end(args);
 
