@@ -112,7 +112,6 @@ void VROSceneRendererGVR::onDrawFrame() {
         }
         _renderSize = recommended_size;
     }
-
     // Obtain the latest, predicted head pose
     gvr::ClockTimePoint target_time = gvr::GvrApi::GetTimePointNow();
     target_time.monotonic_system_time_nanos += kPredictionTimeWithoutVsyncNanos;
@@ -232,6 +231,7 @@ void VROSceneRendererGVR::renderStereo(VROMatrix4f &headView) {
 // called, the GLSurfaceView's primary default framebuffer is bound)
 void VROSceneRendererGVR::renderMono(VROMatrix4f &headView) {
     VROMatrix4f headRotation = headView.invert();
+    std::dynamic_pointer_cast<VRODisplayOpenGLGVR>(_driver->getDisplay())->clearFrame();
 
     const gvr::Recti rect = calculatePixelSpaceRect(_renderSize, {0, 1, 0, 1});
     VROViewport viewport(rect.left, rect.bottom,

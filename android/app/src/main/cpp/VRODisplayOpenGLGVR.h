@@ -57,6 +57,10 @@ public:
         _frame = frame.cobj();
     }
 
+    void clearFrame() {
+        _frame = nullptr;
+    }
+
 private:
     gvr_frame *_frame;
 
