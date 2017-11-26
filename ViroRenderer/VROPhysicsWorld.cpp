@@ -195,9 +195,13 @@ void VROPhysicsWorld::computeCollisions() {
         std::string bodyTagA = vroPhysicsBodyA->getTag();
         std::string bodyTagB = vroPhysicsBodyB->getTag();
 
-        VROVector3f collidedNormal = VROVector3f(bulletPoint->m_normalWorldOnB.x(),
+        VROVector3f collidedNormalA = VROVector3f(bulletPoint->m_normalWorldOnB.x(),
+                                                  bulletPoint->m_normalWorldOnB.y(),
+                                                  bulletPoint->m_normalWorldOnB.z());
+
+        VROVector3f collidedNormalB = VROVector3f(bulletPoint->m_normalWorldOnB.x(),
                                                bulletPoint->m_normalWorldOnB.y(),
-                                               bulletPoint->m_normalWorldOnB.z());
+                                               bulletPoint->m_normalWorldOnB.z()) * -1;
 
         /*
          Update the properties of collision pairs in the form of [bodyKeyA][bodyKeyB], where
@@ -211,14 +215,14 @@ void VROPhysicsWorld::computeCollisions() {
             collidedPairs[bodyKeyA][bodyKeyB].collidedPoint = collisionOnBodyA;
             collidedPairs[bodyKeyA][bodyKeyB].penetrationDistance = minPenetrationDistance;
             collidedPairs[bodyKeyA][bodyKeyB].collidedBodyTag = bodyTagB;
-            collidedPairs[bodyKeyA][bodyKeyB].collidedNormal = collidedNormal;
+            collidedPairs[bodyKeyA][bodyKeyB].collidedNormal = collidedNormalA;
         }
 
         if (collidedPairs[bodyKeyB][bodyKeyA].penetrationDistance > minPenetrationDistance) {
             collidedPairs[bodyKeyB][bodyKeyA].collidedPoint = collisionOnBodyB;
             collidedPairs[bodyKeyB][bodyKeyA].penetrationDistance = minPenetrationDistance;
             collidedPairs[bodyKeyB][bodyKeyA].collidedBodyTag = bodyTagA;
-            collidedPairs[bodyKeyB][bodyKeyA].collidedNormal = collidedNormal;
+            collidedPairs[bodyKeyB][bodyKeyA].collidedNormal = collidedNormalB;
         }
     }
 
