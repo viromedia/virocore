@@ -243,13 +243,13 @@
     [eyeRenderEncoder setViewport:_leftEye->getViewport().toMetalViewport()];
     [eyeRenderEncoder setScissorRect:_leftEye->getViewport().toMetalScissor()];
     
-    _renderer->renderEye(_leftEye->getType(), leftEyeMatrix, _leftEye->getPerspectiveMatrix(),
+    _renderer->renderEye2(_leftEye->getType(), leftEyeMatrix, _leftEye->getPerspectiveMatrix(),
                          *driver);
     
     [eyeRenderEncoder setViewport:_rightEye->getViewport().toMetalViewport()];
     [eyeRenderEncoder setScissorRect:_rightEye->getViewport().toMetalScissor()];
     
-    _renderer->renderEye(_rightEye->getType(), rightEyeMatrix, _rightEye->getPerspectiveMatrix(),
+    _renderer->renderEye2(_rightEye->getType(), rightEyeMatrix, _rightEye->getPerspectiveMatrix(),
                          *driver);
     _renderer->endFrame(*driver);
     

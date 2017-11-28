@@ -88,5 +88,3 @@ tasks.whenTaskAdded { task ->
         task.finalizedBy 'copyReleaseAAR'
     }
 }
-
-build.dependsOn(':extractNdk')

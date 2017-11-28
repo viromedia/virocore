@@ -4,6 +4,7 @@ Filename    :   VrApi_Ext.h
 Content     :   VrApi extensions support
 Created     :   February 3, 2016
 Authors     :   Cass Everitt
+Language    :   C99
 
 Copyright   :   Copyright 2016 Oculus VR, LLC. All Rights reserved.
 
@@ -13,6 +14,7 @@ Copyright   :   Copyright 2016 Oculus VR, LLC. All Rights reserved.
 #define OVR_VrApi_Ext_h
 
 #include "VrApi_Types.h"
+#include "VrApi_Helpers.h"
 #include "string.h"				// for memset()
 
 //-----------------------------------------------------------------
@@ -24,7 +26,7 @@ typedef struct ovrFrameParmsExtBase
 {
 	ovrStructureType Type;
 	OVR_VRAPI_PADDING_64_BIT( 4 );
-	ovrFrameParmsExtBase * Next;
+	struct ovrFrameParmsExtBase * Next;
 } ovrFrameParmsExtBase;
 
 
@@ -49,6 +51,8 @@ static inline const ovrFrameParms * vrapi_GetFrameParmsConst( const ovrFrameParm
 
 	return 	(const ovrFrameParms *)frameParmsChain;
 }
+
+
 
 
 #endif // OVR_VrApi_Ext_h

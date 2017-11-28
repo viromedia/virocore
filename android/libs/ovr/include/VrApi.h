@@ -4,6 +4,7 @@ Filename    :   VrApi.h
 Content     :   Minimum necessary API for mobile VR
 Created     :   June 25, 2014
 Authors     :   John Carmack, J.M.P. van Waveren
+Language    :   C99
 
 Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
@@ -100,16 +101,6 @@ for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
 																1, true );
 }
 
-// Get the suggested FOV to setup a projection matrix.
-const float suggestedEyeFovDegreesX = vrapi_GetSystemPropertyFloat( &java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X );
-const float suggestedEyeFovDegreesY = vrapi_GetSystemPropertyFloat( &java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_Y );
-
-// Setup a projection matrix based on the suggested FOV.
-// Note that this is an infinite projection matrix for the best precision.
-const ovrMatrix4f eyeProjectionMatrix = ovrMatrix4f_CreateProjectionFov( suggestedEyeFovDegreesX,
-																		suggestedEyeFovDegreesY,
-																		0.0f, 0.0f, VRAPI_ZNEAR, 0.0f );
-
 // Android Activity/Surface life cycle loop.
 while ( !exit )
 {
@@ -128,6 +119,9 @@ while ( !exit )
 		modeParms.ShareContext = eglContext;
 		ovrMobile * ovr = vrapi_EnterVrMode( &modeParms );
 
+		// Set the tracking transform to use, by default this is eye level.
+		vrapi_SetTrackingTransform( ovr, vrapi_GetTrackingTransform( ovr, VRAPI_TRACKING_TRANSFORM_SYSTEM_CENTER_EYE_LEVEL ) );
+
 		// Frame loop, possibly running on another thread.
 		for ( long long frameIndex = 1; resumed && nativeWindow != NULL; frameIndex++ )
 		{
@@ -136,38 +130,42 @@ while ( !exit )
 			// depends on the pipeline depth of the engine and the synthesis rate.
 			// The better the prediction, the less black will be pulled in at the edges.
 			const double predictedDisplayTime = vrapi_GetPredictedDisplayTime( ovr, frameIndex );
-			const ovrTracking baseTracking = vrapi_GetPredictedTracking( ovr, predictedDisplayTime );
-
-			// Apply the head-on-a-stick model if there is no positional tracking.
-			const ovrHeadModelParms headModelParms = vrapi_DefaultHeadModelParms();
-			const ovrTracking tracking = vrapi_ApplyHeadModel( &headModelParms, &baseTracking );
+			const ovrTracking2 tracking = vrapi_GetPredictedTracking2( ovr, predictedDisplayTime );
 
 			// Advance the simulation based on the predicted display time.
 
-			// Render eye images and setup ovrFrameParms using 'ovrTracking'.
-			ovrFrameParms frameParms = vrapi_DefaultFrameParms( &java, VRAPI_FRAME_INIT_DEFAULT, predictedDisplayTime, NULL );
-			frameParms.FrameIndex = frameIndex;
+			// Render eye images and setup the 'ovrSubmitFrameDesc2' using 'ovrTracking2' data.
 
-			const ovrMatrix4f centerEyeViewMatrix = vrapi_GetCenterEyeViewMatrix( &headModelParms, &tracking, NULL );
+			ovrLayerProjection2 layer = vrapi_DefaultLayerProjection2();
+			layer.HeadPose = tracking.HeadPose;
 			for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
 			{
-				const ovrMatrix4f eyeViewMatrix = vrapi_GetEyeViewMatrix( &headModelParms, &centerEyeViewMatrix, eye );
-
 				const int colorTextureSwapChainIndex = frameIndex % vrapi_GetTextureSwapChainLength( colorTextureSwapChain[eye] );
 				const unsigned int textureId = vrapi_GetTextureSwapChainHandle( colorTextureSwapChain[eye], colorTextureSwapChainIndex );
 
-				// Render to 'textureId' using the 'eyeViewMatrix' and 'eyeProjectionMatrix'.
-				// Insert 'fence' using eglCreateSyncKHR.
+				// Render to 'textureId' using the 'ProjectionMatrix' from 'ovrTracking2'.
 
-				frameParms.Layers[0].Textures[eye].ColorTextureSwapChain = colorTextureSwapChain[eye];
-				frameParms.Layers[0].Textures[eye].TextureSwapChainIndex = colorTextureSwapChainIndex;
-				frameParms.Layers[0].Textures[eye].TexCoordsFromTanAngles = ovrMatrix4f_TanAngleMatrixFromProjection( &eyeProjectionMatrix );
-				frameParms.Layers[0].Textures[eye].HeadPose = tracking.HeadPose;
-				frameParms.Layers[0].Textures[eye].CompletionFence = fence;
+				layer.Textures[eye].ColorSwapChain = colorTextureSwapChain[eye];
+				layer.Textures[eye].SwapChainIndex = colorTextureSwapChainIndex;
+				layer.Textures[eye].TexCoordsFromTanAngles = ovrMatrix4f_TanAngleMatrixFromProjection( &tracking.Eye[eye].ProjectionMatrix );
 			}
 
+			// Insert 'fence' using eglCreateSyncKHR.
+
+			const ovrLayerHeader2 * layers[] =
+			{
+				&layer.Header
+			};
+
+			ovrSubmitFrameDescription2 frameDesc = {};
+			frameDesc.FrameIndex = frameIndex;
+			frameDesc.DisplayTime = predictedDisplayTime;
+			frameDesc.CompletionFence = fence;
+			frameDesc.LayerCount = 1;
+			frameDesc.Layers = layers;
+
 			// Hand over the eye images to the time warp.
-			vrapi_SubmitFrame( ovr, &frameParms );
+			vrapi_SubmitFrame2( ovr, &frameDesc );
 		}
 	}
 
@@ -234,7 +232,7 @@ an EGL_SURFACE_TYPE with EGL_PBUFFER_BIT.
 Sensor input only becomes available after entering VR mode. In part this is because the
 VrApi supports hybrid apps. The app starts out in non-stereo mode, and only switches to
 VR mode when the phone is docked into the headset. While not in VR mode, a non-stereo app
-shoud not be burdened with a SCHED_FIFO device manager thread for sensor input and possibly
+should not be burdened with a SCHED_FIFO device manager thread for sensor input and possibly
 expensive sensor/vision processing. In other words, there is no sensor input until the
 phone is docked and the app is in VR mode.
 
@@ -285,7 +283,7 @@ Frame Timing
 ============
 
 vrapi_SubmitFrame() controls the synthesis rate through an application specified
-ovrFrameParms::MinimumVsyncs. vrapi_SubmitFrame() also controls at which point during
+frame parameter, SwapInterval. vrapi_SubmitFrame() also controls at which point during
 a display refresh cycle the calling thread gets released. vrapi_SubmitFrame() only returns
 when the previous eye images have been consumed by the asynchronous time warp thread,
 and at least the specified minimum number of V-syncs have passed since the last call
@@ -325,15 +323,15 @@ displayed at the same time without causing intra frame motion judder. While the 
 orientation can be updated for each eye, the position must remain the same for both eyes,
 or the position would seem to judder "backwards in time" if a frame is dropped.
 
-Ideally the eye images are only displayed for the MinimumVsyncs display refresh cycles
+Ideally the eye images are only displayed for the SwapInterval display refresh cycles
 that are centered about the eye image predicted display time. In other words, a set
-of eye images is first displayed at prediction time minus MinimumVsyncs / 2 display
+of eye images is first displayed at prediction time minus SwapInterval / 2 display
 refresh cycles. The eye images should never be shown before this time because that
 can cause intra frame motion judder. Ideally the eye images are also not shown after
-the prediction time plus MinimumVsyncs / 2 display refresh cycles, but this may
+the prediction time plus SwapInterval / 2 display refresh cycles, but this may
 happen if synthesis fails to produce new eye images in time.
 
-MinimumVsyncs = 1
+SwapInterval = 1
 ExtraLatencyMode = off
 Expected single-threaded simulation latency = 33 milliseconds
 The ATW brings this down to 8-16 milliseconds.
@@ -351,7 +349,7 @@ The ATW brings this down to 8-16 milliseconds.
     |
     +---- vrapi_SubmitFrame releases the renderer thread.
 
-MinimumVsyncs = 1
+SwapInterval = 1
 ExtraLatencyMode = on
 Expected single-threaded simulation latency = 49 milliseconds
 The ATW brings this down to 8-16 milliseconds.
@@ -370,7 +368,7 @@ The ATW brings this down to 8-16 milliseconds.
     |
     +---- Frame submission releases the renderer thread.
 
-MinimumVsyncs = 2
+SwapInterval = 2
 ExtraLatencyMode = off
 Expected single-threaded simulation latency = 58 milliseconds
 The ATW brings this down to 8-16 milliseconds.
@@ -390,7 +388,7 @@ The ATW brings this down to 8-16 milliseconds.
     |
     +---- vrapi_SubmitFrame releases the renderer thread.
 
-MinimumVsyncs = 2
+SwapInterval = 2
 ExtraLatencyMode = on
 Expected single-threaded simulation latency = 91 milliseconds
 The ATW brings this down to 8-16 milliseconds.
@@ -553,6 +551,8 @@ OVR_VRAPI_EXPORT double vrapi_GetPredictedDisplayTime( ovrMobile * ovr, long lon
 // in seconds. Pass absTime value of 0.0 to request the most recent sensor reading.
 //
 // Can be called from any thread while in VR mode.
+OVR_VRAPI_EXPORT ovrTracking2 vrapi_GetPredictedTracking2( ovrMobile * ovr, double absTimeInSeconds );
+
 OVR_VRAPI_EXPORT ovrTracking vrapi_GetPredictedTracking( ovrMobile * ovr, double absTimeInSeconds );
 
 // Recenters the orientation on the yaw axis and will recenter the position
@@ -565,6 +565,50 @@ OVR_VRAPI_EXPORT ovrTracking vrapi_GetPredictedTracking( ovrMobile * ovr, double
 //
 // Can be called from any thread while in VR mode.
 OVR_VRAPI_EXPORT void vrapi_RecenterPose( ovrMobile * ovr );
+
+
+//-----------------------------------------------------------------
+// Tracking Transform
+//
+//-----------------------------------------------------------------
+
+// The coordinate system used by the tracking system is defined in meters
+// with its positive y axis pointing up, but its origin and yaw are unspecified.
+//
+// Applications generally prefer to operate in a well-defined coordinate system
+// relative to some base pose. The tracking transform allows the application to
+// specify the space that tracking poses are reported in.
+//
+// The tracking transform is specified as the ovrPosef of the base pose in tracking
+// system coordinates.
+//
+// Head poses the application supplies in vrapi_SubmitFrame() are transformed
+// by the tracking transform.
+// Pose predictions generated by the system are transformed by the inverse of the
+// tracking transform before being reported to the application.
+//
+// Note that this immediately affects vrapi_SubmitFrame() and
+// vrapi_GetPredictedTracking(). It is important for the app to make sure that
+// the tracking transform does not change between the fetching of a pose prediction
+// and the submission of poses in vrapi_SubmitFrame().
+//
+// The default Tracking Transform is VRAPI_TRACKING_TRANSFORM_SYSTEM_CENTER_EYE_LEVEL.
+
+
+// Returns a pose suitable to use as a tracking transform.
+// Applications that want to use an eye-level based coordinate system can fetch
+// the VRAPI_TRACKING_TRANSFORM_SYSTEM_CENTER_EYE_LEVEL transform.
+// Applications that want to use a floor-level based coordinate system can fetch
+// the VRAPI_TRACKING_TRANSFORM_SYSTEM_CENTER_FLOOR_LEVEL transform.
+// To determine the current tracking transform, applications can fetch the
+// VRAPI_TRACKING_TRANSFORM_CURRENT transform.
+OVR_VRAPI_EXPORT ovrPosef  vrapi_GetTrackingTransform( ovrMobile * ovr, ovrTrackingTransform whichTransform );
+
+// Sets the transform used convert between tracking coordinates and a canonical
+// application-defined space.
+// Only the yaw component of the orientation is used.
+OVR_VRAPI_EXPORT void vrapi_SetTrackingTransform( ovrMobile * ovr, ovrPosef pose );
+
 
 //-----------------------------------------------------------------
 // Texture Swap Chains
@@ -617,7 +661,7 @@ OVR_VRAPI_EXPORT void vrapi_SetTextureSwapChainHandle( ovrTextureSwapChain * cha
 // consumed by the background thread, to allow one frame of overlap for maximum
 // GPU utilization, while preventing multiple frames from piling up variable latency.
 //
-// This will block until at least MinimumVsyncs have passed since the last
+// This will block until at least SwapInterval vsyncs have passed since the last
 // call to vrapi_SubmitFrame() to prevent applications with simple scenes from
 // generating completely wasted frames.
 //
@@ -637,6 +681,32 @@ OVR_VRAPI_EXPORT void vrapi_SetTextureSwapChainHandle( ovrTextureSwapChain * cha
 // was used for rendering, which allows vrapi_SubmitFrame() to add a sync object to
 // the current context and check if rendering has completed.
 OVR_VRAPI_EXPORT void vrapi_SubmitFrame( ovrMobile * ovr, const ovrFrameParms * parms );
+
+// vrapi_SubmitFrame2 takes a frameDescription describing per-frame information such as:
+// a flexible list of layers which should be drawn this frame, a single fence to signal
+// frame completion, and a frame index.
+OVR_VRAPI_EXPORT ovrResult vrapi_SubmitFrame2( ovrMobile * ovr, const ovrSubmitFrameDescription2 * frameDescription );
+
+//-----------------------------------------------------------------
+// Performance
+//-----------------------------------------------------------------
+
+// Set the CPU and GPU performance levels.
+//
+// Increasing the levels increases performance at the cost of higher power consumption
+// which likely leads to a greater chance of overheating.
+//
+// Levels will be clamped to the expected range. Default clock levels are cpuLevel = 2, gpuLevel = 2.
+OVR_VRAPI_EXPORT ovrResult vrapi_SetClockLevels( ovrMobile * ovr, const int32_t cpuLevel, const int32_t gpuLevel );
+
+// Specify which app threads should be given higher scheduling priority.
+OVR_VRAPI_EXPORT ovrResult vrapi_SetPerfThread( ovrMobile * ovr, const ovrPerfThreadType type, const uint32_t threadId );
+
+// If VRAPI_EXTRA_LATENCY_MODE_ON specified, adds an extra frame of latency for full GPU utilization.
+// Default is VRAPI_EXTRA_LATENCY_MODE_OFF.
+// 
+// The latency mode specified will be applied on the next call to vrapi_SubmitFrame(2).
+OVR_VRAPI_EXPORT ovrResult vrapi_SetExtraLatencyMode( ovrMobile * ovr, const ovrExtraLatencyMode mode );
 
 #if defined( __cplusplus )
 }	// extern "C"

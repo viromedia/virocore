@@ -33,7 +33,7 @@ static const uint64_t kPredictionTimeWithoutVsyncNanos = 50000000;
 VROSceneRendererGVR::VROSceneRendererGVR(gvr_context* gvr_context,
                                                      std::shared_ptr<gvr::AudioApi> gvrAudio) :
     _gvr(gvr::GvrApi::WrapNonOwned(gvr_context)),
-    _scratchViewport(_gvr->CreateBufferViewport()),
+    _sceneViewport(_gvr->CreateBufferViewport()),
     _rendererSuspended(true),
     _vrModeEnabled(true),
     _suspendedNotificationTime(VROTimeCurrentSeconds()) {
@@ -70,22 +70,36 @@ void VROSceneRendererGVR::initGL() {
     _renderSize = halfPixelCount(_gvr->GetMaximumEffectiveRenderTargetSize());
 
     std::vector<gvr::BufferSpec> specs;
-    specs.push_back(_gvr->CreateBufferSpec());
 
+    // Buffer specification for the Scene
+    specs.push_back(_gvr->CreateBufferSpec());
     specs[0].SetColorFormat(GVR_COLOR_FORMAT_RGBA_8888);
     specs[0].SetDepthStencilFormat(GVR_DEPTH_STENCIL_FORMAT_DEPTH_24_STENCIL_8);
     specs[0].SetSize(_renderSize);
     specs[0].SetSamples(2);
-    _swapchain.reset(new gvr::SwapChain(_gvr->CreateSwapChain(specs)));
 
-    _viewportList.reset(new gvr::BufferViewportList(
-            _gvr->CreateEmptyBufferViewportList()));
+    // Buffer specification for the HUD
+    specs.push_back(_gvr->CreateBufferSpec());
+    specs[1].SetColorFormat(GVR_COLOR_FORMAT_RGBA_8888);
+    specs[1].SetDepthStencilFormat(GVR_DEPTH_STENCIL_FORMAT_NONE);
+    specs[1].SetSize(_renderSize);
+    specs[1].SetSamples(1);
+
+    _swapchain.reset(new gvr::SwapChain(_gvr->CreateSwapChain(specs)));
+    _viewportList.reset(new gvr::BufferViewportList(_gvr->CreateEmptyBufferViewportList()));
+
+    // Configure the common properties of the HUD viewport. Each frame this viewport gets
+    // modified for each eye and copied into the viewport list. The most important property
+    // here is setting the source buffer index to 1, so GVR knows to read from buffer 1 to
+    // get the contents of this viewport
+    _hudViewport = _gvr->CreateBufferViewport();
+    _hudViewport.SetSourceBufferIndex(1);
+    _hudViewport.SetReprojection(GVR_REPROJECTION_NONE);
 
     glEnable(GL_DEPTH_TEST);
 }
 
 void VROSceneRendererGVR::onDrawFrame() {
-
     // Because we are using 2X MSAA, we can render to half as many pixels and
     // achieve similar quality. If the size changed, resize the framebuffer
     gvr::Sizei recommended_size = _vrModeEnabled ?
@@ -104,16 +118,18 @@ void VROSceneRendererGVR::onDrawFrame() {
     target_time.monotonic_system_time_nanos += kPredictionTimeWithoutVsyncNanos;
 
     _headView = _gvr->GetHeadSpaceFromStartSpaceRotation(target_time);
-    VROMatrix4f headRotation = VROGVRUtil::toMatrix4f(_headView).invert();
+    VROMatrix4f headView = VROGVRUtil::toMatrix4f(_headView);
+    VROMatrix4f headRotation = headView.invert();
 
     if (!_rendererSuspended) {
         if (_vrModeEnabled) {
-            renderStereo(headRotation);
+            renderStereo(headView);
         }
         else {
-            renderMono(headRotation);
+            renderMono(headView);
         }
-    } else {
+    }
+    else {
         _viewportList->SetToRecommendedBufferViewports();
         gvr::Frame frame = _swapchain->AcquireFrame();
         std::dynamic_pointer_cast<VRODisplayOpenGLGVR>(_driver->getDisplay())->setFrame(frame);
@@ -138,10 +154,12 @@ void VROSceneRendererGVR::onDrawFrame() {
 }
 
 // For stereo rendering we use GVR's swapchain, which provides async reprojection
-// (async timewarp, basically), and distorts the images. To do this we render
-// to each of the buffers. The gvr::Frame performs distortion and async reprojection
-// when we invoke Submit().
-void VROSceneRendererGVR::renderStereo(VROMatrix4f &headRotation) {
+// (async timewarp, basically), and distorts the images. To do this we render to the
+// buffers in the Frame. The Submit() call at the end takes the viewports and performs
+// distortion and async reprojection.
+void VROSceneRendererGVR::renderStereo(VROMatrix4f &headView) {
+    VROMatrix4f headRotation = headView.invert();
+
     // Update the viewports to the latest (these change if the user changed the viewer)
     _viewportList->SetToRecommendedBufferViewports();
 
@@ -149,26 +167,61 @@ void VROSceneRendererGVR::renderStereo(VROMatrix4f &headRotation) {
     gvr::Frame frame = _swapchain->AcquireFrame();
     std::dynamic_pointer_cast<VRODisplayOpenGLGVR>(_driver->getDisplay())->setFrame(frame);
 
-    // Extract the left viewport parameters
-    _viewportList->GetBufferViewport(GVR_LEFT_EYE, &_scratchViewport);
-    VROViewport leftViewport;
-    VROFieldOfView leftFov;
-    extractViewParameters(_scratchViewport, &leftViewport, &leftFov);
+    // Get the eye, view, and projection matrices
+    VROMatrix4f eyeFromHeadMatrices[GVR_NUM_EYES];
+    VROMatrix4f eyeViewMatrices[GVR_NUM_EYES];
+    VROFieldOfView fovs[GVR_NUM_EYES];
+    VROViewport viewports[GVR_NUM_EYES];
+    VROMatrix4f projectionMatrices[GVR_NUM_EYES];
+
+    for (int i = 0; i < GVR_NUM_EYES; i++) {
+        gvr::Eye eye = (gvr::Eye) i;
+        eyeFromHeadMatrices[i] = VROGVRUtil::toMatrix4f(_gvr->GetEyeFromHeadMatrix(eye));
+        eyeViewMatrices[i] = eyeFromHeadMatrices[i].multiply(headView);
+
+        _viewportList->GetBufferViewport(eye, &_sceneViewport);
+
+        extractViewParameters(_sceneViewport, &viewports[i], &fovs[i]);
+        projectionMatrices[i] = fovs[i].toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
+
+        // Setup the HUD viewport for this eye. The HUD viewport has the same parameters as the
+        // scene viewport (its common properties however, configured in initGL, are different)
+        _hudViewport.SetTargetEye(eye);
+        _hudViewport.SetTransform(_sceneViewport.GetTransform());
+        _hudViewport.SetSourceFov(_sceneViewport.GetSourceFov());
+        _hudViewport.SetSourceUv(_sceneViewport.GetSourceUv());
+        _viewportList->SetBufferViewport(2 + eye, _hudViewport);
+    }
 
     // Prepare the frame and render the left eye
-    prepareFrame(leftViewport, leftFov, headRotation);
-    renderEye(VROEyeType::Left, VROGVRUtil::toMatrix4f(_gvr->GetEyeFromHeadMatrix(GVR_LEFT_EYE)),
-              leftViewport, leftFov);
+    _renderer->prepareFrame(_frame, viewports[0], fovs[0], headRotation, projectionMatrices[0], _driver);
+    clearViewport(viewports[0], false);
+    _renderer->renderEye2(VROEyeType::Left,
+                          eyeViewMatrices[GVR_LEFT_EYE],
+                          projectionMatrices[GVR_LEFT_EYE],
+                          viewports[GVR_LEFT_EYE], _driver);
 
-    // Extract the right viewport parameters
-    _viewportList->GetBufferViewport(GVR_RIGHT_EYE, &_scratchViewport);
-    VROViewport rightViewport;
-    VROFieldOfView rightFov;
-    extractViewParameters(_scratchViewport, &rightViewport, &rightFov);
+    // Render the right eye
+    clearViewport(viewports[1], false);
+    _renderer->renderEye2(VROEyeType::Right,
+                          eyeViewMatrices[GVR_RIGHT_EYE],
+                          projectionMatrices[GVR_RIGHT_EYE],
+                          viewports[GVR_RIGHT_EYE], _driver);
+    frame.Unbind();
 
-    // Render the right eye and end the frame
-    renderEye(VROEyeType::Right, VROGVRUtil::toMatrix4f(_gvr->GetEyeFromHeadMatrix(GVR_RIGHT_EYE)),
-              rightViewport, rightFov);
+    // Bind the HUD buffer and render to both eyes
+    frame.BindBuffer(1);
+    clearViewport(viewports[0], true);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    _renderer->renderHUD(VROEyeType::Left,
+                         eyeFromHeadMatrices[GVR_LEFT_EYE],
+                         _driver);
+
+    clearViewport(viewports[1], true);
+    _renderer->renderHUD(VROEyeType::Right,
+                         eyeFromHeadMatrices[GVR_RIGHT_EYE],
+                         _driver);
     _renderer->endFrame(_driver);
 
     frame.Unbind(); // Binds the root OpenGL framebuffer, so we can submit the Frame
@@ -178,29 +231,27 @@ void VROSceneRendererGVR::renderStereo(VROMatrix4f &headRotation) {
 // For mono rendering we simply render direct to our GLSurfaceView, avoiding
 // the gvr::Frame and its buffers (so long as gvr::Frame.BindBuffer is not
 // called, the GLSurfaceView's primary default framebuffer is bound)
-void VROSceneRendererGVR::renderMono(VROMatrix4f &headRotation) {
+void VROSceneRendererGVR::renderMono(VROMatrix4f &headView) {
+    VROMatrix4f headRotation = headView.invert();
+
     const gvr::Recti rect = calculatePixelSpaceRect(_renderSize, {0, 1, 0, 1});
     VROViewport viewport(rect.left, rect.bottom,
                          rect.right - rect.left,
                          rect.top   - rect.bottom);
 
     VROFieldOfView fov = VRORenderer::computeMonoFOV(viewport.getWidth(), viewport.getHeight());
-    prepareFrame(viewport, fov, headRotation);
-
-    VROMatrix4f projectionMatrix = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
+    VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
     VROMatrix4f eyeFromHeadMatrix; // Identity
 
-    glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-    _renderer->renderEye(VROEyeType::Monocular, eyeFromHeadMatrix, projectionMatrix, viewport,  _driver);
+    clearViewport(viewport, false);
+    _renderer->prepareFrame(_frame, viewport, fov, headRotation, projection, _driver);
+    _renderer->renderEye2(VROEyeType::Monocular, headView, projection, viewport,  _driver);
+    _renderer->renderHUD(VROEyeType::Monocular, eyeFromHeadMatrix, _driver);
     _renderer->endFrame(_driver);
 }
 
-/**
- * Update render sizes as the surface changes.
- */
 void VROSceneRendererGVR::onSurfaceChanged(jobject surface, jint width, jint height) {
     VROThreadRestricted::setThread(VROThreadName::Renderer);
-
     _surfaceSize.width = width;
     _surfaceSize.height = height;
 }
@@ -235,31 +286,19 @@ void VROSceneRendererGVR::onResume() {
     });
 }
 
-void VROSceneRendererGVR::prepareFrame(VROViewport leftViewport, VROFieldOfView fov, VROMatrix4f headRotation) {
-    glEnable(GL_SCISSOR_TEST); // Must enable to ensure glClear only clears active 'eye'
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE); // Must enable writes to clear depth buffer
-    _driver->setBlendingMode(VROBlendMode::Alpha);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-    VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
-    _renderer->prepareFrame(_frame, leftViewport, fov, headRotation, projection, _driver);
-}
-
-void VROSceneRendererGVR::renderEye(VROEyeType eyeType,
-                                    VROMatrix4f eyeFromHeadMatrix,
-                                    VROViewport viewport,
-                                    VROFieldOfView fov) {
-
-    VROMatrix4f projectionMatrix = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
-
-    glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-    glScissor(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
-    _renderer->renderEye(eyeType, eyeFromHeadMatrix, projectionMatrix, viewport, _driver);
-}
-
 #pragma mark - Utility Methods
+
+void VROSceneRendererGVR::clearViewport(VROViewport viewport, bool transparent) {
+    glViewport(viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
+    glScissor (viewport.getX(), viewport.getY(), viewport.getWidth(), viewport.getHeight());
+    if (transparent) {
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    }
+    else {
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    }
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}
 
 gvr::Rectf VROSceneRendererGVR::modulateRect(const gvr::Rectf &rect, float width,
                                              float height) {
@@ -294,9 +333,8 @@ void VROSceneRendererGVR::extractViewParameters(gvr::BufferViewport &viewport,
     *outViewport = VROViewport(rect.left, rect.bottom,
                                rect.right - rect.left,
                                rect.top   - rect.bottom);
-    const gvr::Rectf fov = _scratchViewport.GetSourceFov();
-    *outFov = VROFieldOfView(fov.left, fov.right,
-                             fov.bottom, fov.top);
+    const gvr::Rectf fov = viewport.GetSourceFov();
+    *outFov = VROFieldOfView(fov.left, fov.right, fov.bottom, fov.top);
 }
 
 void VROSceneRendererGVR::setVRModeEnabled(bool enabled) {

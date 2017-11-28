@@ -154,15 +154,25 @@ void gvr_controller_destroy(gvr_controller_context** api);
 /// Calling this when already paused is a no-op.
 /// Thread-safe (call from any thread).
 ///
-/// @param api Pointer to a pointer to a gvr_controller_context.
+/// @param api Pointer to a gvr_controller_context.
 void gvr_controller_pause(gvr_controller_context* api);
 
 /// Resumes the controller. Call this when your app/game regains focus.
 /// Calling this when already resumed is a no-op.
 /// Thread-safe (call from any thread).
 ///
-/// @param api Pointer to a pointer to a gvr_controller_context.
+/// @param api Pointer to a gvr_controller_context.
 void gvr_controller_resume(gvr_controller_context* api);
+
+/// Returns the number (N) of controllers currently available.
+///
+/// Each controller can be identified by an index in the range [0, N), which
+/// can be passed to gvr_controller_state_update to set a gvr_controller_state
+/// instance to the state of the controller for that index.
+///
+/// @param api Pointer to a gvr_controller_context.
+/// @return The number of controllers currently available.
+int32_t gvr_controller_get_count(gvr_controller_context* api);
 
 /// Convenience to convert an API status code to string. The returned pointer
 /// is static and valid throughout the lifetime of the application.
@@ -186,35 +196,86 @@ const char* gvr_controller_connection_state_to_string(int32_t state);
 const char* gvr_controller_button_to_string(int32_t button);
 
 /// Creates a gvr_controller_state.
+///
+/// @return A gvr_controller_state instance that will receive state updates for
+///     a controller.
 gvr_controller_state* gvr_controller_state_create();
 
-/// Destroys a a gvr_controller_state that was previously created with
-/// gvr_controller_state_create.
+/// Destroys and sets to NULL a gvr_controller_state that was previously
+/// created with gvr_controller_state_create.
+///
+/// @param state Pointer to a pointer to the controller state to be destroyed
+///     and nulled.
 void gvr_controller_state_destroy(gvr_controller_state** state);
 
 /// Updates the controller state. Reading the controller state is not a
 /// const getter: it has side-effects. In particular, some of the
 /// gvr_controller_state fields (the ones documented as "transient") represent
 /// one-time events and will be true for only one read operation, and false
-/// in subsequente reads.
+/// in subsequent reads.
 ///
-/// @param api Pointer to a pointer to a gvr_controller_context.
-/// @param flags Optional flags reserved for future use. A value of 0 should be
-///     used until corresponding flag attributes are defined and documented.
+/// If the controller_index passed here does not correspond to an available
+/// controller (i.e. the controller_index is not in the range [0,N) where N is
+/// the number of controllers returned by gvr_controller_get_count), then the
+/// values of fields set for the gvr_controller_state instance passed in here
+/// are undefined.
+///
+/// The index of each controller device will remain constant the same across
+/// controller disconnects/connects during a given VR session. If the
+/// underlying set of controllers expected to be available to applications has
+/// changed, the gvr_controller_context may no longer be valid, and must be
+/// recreated by the applicaion when notified of this.
+///
+/// @param api Pointer to a gvr_controller_context.
+/// @param controller_index The index of the controller to update the state
+///     from.
 /// @param out_state A pointer where the controller's state
 ///     is to be written. This must have been allocated with
 ///     gvr_controller_state_create().
-void gvr_controller_state_update(gvr_controller_context* api, int32_t flags,
+void gvr_controller_state_update(gvr_controller_context* api,
+                                 int32_t controller_index,
                                  gvr_controller_state* out_state);
+
+/// Sets up arm model with user's handedness, gaze behavior and head rotation.
+/// This setting needs to be applied for every frame. User preferences of
+/// handedness and gaze behavior can be changed as needed in a sequence of
+/// frames. This needs to be called before gvr_controller_state_update() to
+/// apply arm model. GVR_CONTROLLER_ENABLE_ARM_MODEL flag needs to be enabled
+/// to apply arm model.
+///
+/// When multiple controllers are configured, this arm model will be applied to
+/// the controller at the given controller_index, if one exists.
+///
+/// @param api Pointer to a gvr_controller_context.
+/// @param controller_index Index of the controller to apply the arm model to.
+/// @param handedness User's preferred handedness (GVR_CONTROLLER_RIGHT_HANDED
+///     or GVR_CONTROLLER_LEFT_HANDED). Arm model will assume this is the hand
+///     that is holding the controller and position the arm accordingly.
+/// @param behavior User's preferred gaze behavior (SYNC_GAZE / FOLLOW_GAZE
+///     / IGNORE_GAZE). Arm model uses this to determine how the body rotates as
+///     gaze direction (i.e. head rotation) changes.
+/// @param head_space_from_start_space_rotation User's head rotation with
+///     respect to start space.
+void gvr_controller_apply_arm_model(
+    gvr_controller_context* api, int32_t controller_index, int32_t handedness,
+    int32_t behavior, gvr_mat4f head_space_from_start_space_rotation);
 
 /// Gets the API status of the controller state. Returns one of the
 /// gvr_controller_api_status variants, but returned as an int32_t for ABI
 /// compatibility.
+///
+/// @param state The controller state to get the status from.
+/// @return The status code from the controller state, as a
+///     gvr_controller_api_status variant.
 int32_t gvr_controller_state_get_api_status(const gvr_controller_state* state);
 
 /// Gets the connection state of the controller. Returns one of the
 /// gvr_controller_connection_state variants, but returned as an int32_t for ABI
 /// compatibility.
+///
+/// @param state The controller state to get the connection state from.
+/// @return The connection state from the controller state as a
+///     gvr_controller_connection_state variant.
 int32_t gvr_controller_state_get_connection_state(
     const gvr_controller_state* state);
 
@@ -245,8 +306,8 @@ int32_t gvr_controller_state_get_connection_state(
 /// time due to controller/headset drift. A recentering operation will bring
 /// the two spaces back into sync.
 ///
-/// Remember that a quaternion expresses a rotation. Given a rotation of theta
-/// radians about the (x, y, z) axis, the corresponding quaternion (in
+/// Remember that a unit quaternion expresses a rotation. Given a rotation of
+/// theta radians about the (x, y, z) axis, the corresponding quaternion (in
 /// xyzw order) is:
 ///
 ///     (x * sin(theta/2), y * sin(theta/2), z * sin(theta/2), cos(theta/2))
@@ -277,6 +338,9 @@ int32_t gvr_controller_state_get_connection_state(
 ///
 ///   * Banked 90 degrees to the right: (0, 0, -0.7071, 0.7071). Corresponds
 ///     to a -90 degree rotation about the Z axis.
+///
+/// @param state The controller state to get the orientation from.
+/// @return The unit quaternion orientation from the controller state.
 gvr_quatf gvr_controller_state_get_orientation(
     const gvr_controller_state* state);
 
@@ -312,6 +376,9 @@ gvr_quatf gvr_controller_state_get_orientation(
 ///      motion (remember the Z axis points backwards along the controller).
 ///      Banking to the left will report a positive angular velocity about
 ///      the Z axis.
+///
+/// @param state The controller state to get the gyro reading from.
+/// @return The gyro reading from the controller state.
 gvr_vec3f gvr_controller_state_get_gyro(const gvr_controller_state* state);
 
 /// Current (latest) controller accelerometer reading, in Start Space.
@@ -342,89 +409,171 @@ gvr_vec3f gvr_controller_state_get_gyro(const gvr_controller_state* state);
 ///     will be no force acting on the controller. (Please do not put your
 ///     controller in a free-fall situation. This is just a theoretical
 ///     example.)
+///
+/// @param state The controller state to get the accelerometer reading from.
+/// @return The accelerometer reading from the controller state.
 gvr_vec3f gvr_controller_state_get_accel(const gvr_controller_state* state);
 
 /// Returns whether the user is touching the touchpad.
+///
+/// @param state The controller state to get the touchpad being touched state
+///     from.
+/// @return True iff the user is touching the controller, false otherwise.
 bool gvr_controller_state_is_touching(const gvr_controller_state* state);
 
 /// If the user is touching the touchpad, this returns the touch position in
 /// normalized coordinates, where (0,0) is the top-left of the touchpad
 /// and (1,1) is the bottom right. If the user is not touching the touchpad,
 /// then this is the position of the last touch.
+///
+/// @param state The controller state to get the touchpad touch position from.
+/// @return The touchpad touch position in normalized coordinates iff the user
+///     is touching the toucpad.  The last touched coordinate otherwise.
 gvr_vec2f gvr_controller_state_get_touch_pos(const gvr_controller_state* state);
 
-/// Returns true if user just started touching touchpad (this is a transient
-/// event:
-/// it is true for only one frame after the event).
+/// Returns true iff user just started touching touchpad.  This is a transient
+/// event (i.e., it is true for only one frame after the event).
+///
+/// @param state The controller state to get the touch down data from.
+/// @return True iff the user just started touching the touchpad, false
+///     otherwise.
 bool gvr_controller_state_get_touch_down(const gvr_controller_state* state);
 
-/// Returns true if user just stopped touching touchpad (this is a transient
-/// event:
-/// it is true for only one frame after the event).
+/// Returns true if user just stopped touching touchpad.  This is a transient
+/// event: (i.e., it is true for only one frame after the event).
+///
+/// @param state The controller state to get the touch up data from.
+/// @return True iff the user just released the touchpad, false otherwise.
 bool gvr_controller_state_get_touch_up(const gvr_controller_state* state);
 
-/// Returns true if a recenter operation just ended (this is a transient event:
-/// it is true only for one frame after the recenter ended). If this is
+/// Returns true if a recenter operation just ended.  This is a transient event:
+/// (i.e., it is true only for one frame after the recenter ended). If this is
 /// true then the `orientation` field is already relative to the new center.
+///
+/// @param state The controller state to get the recenter information from.
+/// @return True iff a recenter operation just ended, false otherwise.
 bool gvr_controller_state_get_recentered(const gvr_controller_state* state);
 
 /// @deprecated Use gvr_controller_state_get_recentered instead.
 ///
 /// Returns whether the recenter flow is currently in progress.
+///
+/// @param state The controller state to get the recenter information from.
+/// @return True iff recenter flow is in progress, false otherwise.
 bool gvr_controller_state_get_recentering(const gvr_controller_state* state);
 
 /// Returns whether the given button is currently pressed.
+///
+/// @param state The controller state to get the button state from.
+/// @return True iff the button specified by the 'state' parameter is pressed,
+///     false otherwise.
 bool gvr_controller_state_get_button_state(const gvr_controller_state* state,
 
                                            int32_t button);
 
 /// Returns whether the given button was just pressed (transient).
+///
+/// @param state The controller state to get the button pressed data from.
+/// @return True iff the button specified by the 'state' parameter was just
+///     pressed, false otherwise.
 bool gvr_controller_state_get_button_down(const gvr_controller_state* state,
                                           int32_t button);
 
 /// Returns whether the given button was just released (transient).
+///
+/// @param state The controller state to get the button released data from.
+/// @return True iff the button specified by the 'state' parameter was just
+///     released, false otherwise.
 bool gvr_controller_state_get_button_up(const gvr_controller_state* state,
                                         int32_t button);
 
 /// Returns the timestamp (nanos) when the last orientation event was received.
+///
+/// @param state The controller state to get the last orientation event
+///     timestamp from.
+/// @return A 64-bit integer representation of the timestamp when the last
+///     orientation event was recieved.
 int64_t gvr_controller_state_get_last_orientation_timestamp(
     const gvr_controller_state* state);
 
 /// Returns the timestamp (nanos) when the last gyro event was received.
+///
+/// @param state The controller state to get the last gyro event timestamp from.
+/// @return A 64-bit integer representation of the timestamp when the last
+///     gyro event was recieved.
 int64_t gvr_controller_state_get_last_gyro_timestamp(
     const gvr_controller_state* state);
 
 /// Returns the timestamp (nanos) when the last accelerometer event was
 /// received.
+///
+/// @param state The controller state to get the last accelerometer timestamp
+///     from.
+/// @return A 64-bit integer representation of the timestamp when the last
+///     accelerometer event was recieved.
 int64_t gvr_controller_state_get_last_accel_timestamp(
     const gvr_controller_state* state);
 
 /// Returns the timestamp (nanos) when the last touch event was received.
+///
+/// @param state The controller state to get the last touch timestamp from.
+/// @return A 64-bit integer representation of the timestamp when the last
+///     touch event was recieved.
 int64_t gvr_controller_state_get_last_touch_timestamp(
     const gvr_controller_state* state);
 
 /// Returns the timestamp (nanos) when the last button event was received.
+///
+/// @param state The controller state to get the last button event timestamp
+///     from.
+/// @return A 64-bit integer representation of the timestamp when the last
+///     button event was recieved.
 int64_t gvr_controller_state_get_last_button_timestamp(
     const gvr_controller_state* state);
 
-// Current (latest) controller simulated position for use with an elbow model.
+/// Current (latest) controller simulated position for use with an elbow model.
+///
+/// @param state The controller state to get the latest simulated position from.
+/// @return The current controller simulated position (intended for use with an
+///     elbow model).
 gvr_vec3f gvr_controller_state_get_position(const gvr_controller_state* state);
 
-// Returns the timestamp (nanos) when the last position event was received.
+/// Returns the timestamp (nanos) when the last position event was received.
+///
+/// @param state The controller state to get the last position event timestamp
+///     from.
+/// @return A 64-bit integer representation of the timestamp when the last
+///     position event was recieved.
 int64_t gvr_controller_state_get_last_position_timestamp(
     const gvr_controller_state* state);
 
 /// Returns whether the controller battery is currently charging.
 /// This may not be real time information and may be slow to be updated.
+/// The last battery update time is available by calling
+/// gvr_controller_state_get_battery_timestamp.
+///
+/// @param state The controller state to get the battery charging state from.
+/// @return True iff the battery was charging at the last available update,
+///     false otherwise.
 bool gvr_controller_state_get_battery_charging(
     const gvr_controller_state* state);
 
-/// Returns the bucketed controller battery level.
+/// Returns the bucketed controller battery level at the last update.
 /// Note this is a gvr_controller_battery_level and not a percent.
+/// The last battery update time is available by calling
+/// gvr_controller_state_get_battery_timestamp.
+///
+/// @param state The controller state to get the battery level from.
+/// @return The last known battery level as a gvr_controller_battery_level
+///     variant.
 int32_t gvr_controller_state_get_battery_level(
     const gvr_controller_state* state);
 
 /// Returns the timestamp (nanos) when the last battery event was received.
+///
+/// @param state The controller state to get battery event timestamp from.
+/// @return A 64-bit integer representation of the timestamp when the last
+///     battery event was received.
 int64_t gvr_controller_state_get_last_battery_timestamp(
     const gvr_controller_state* state);
 
@@ -440,7 +589,6 @@ const char* gvr_controller_battery_level_to_string(int32_t level);
 #ifdef __cplusplus
 }  // extern "C"
 #endif
-
 
 // Convenience C++ wrapper.
 #if defined(__cplusplus) && !defined(GVR_NO_CPP_WRAPPER)
@@ -510,11 +658,10 @@ namespace gvr {
 ///
 /// THREADING: this class is thread-safe and reentrant after initialized
 /// with Init().
-class ControllerApi {
+class ControllerApi
+    : public WrapperBase<gvr_controller_context, gvr_controller_destroy> {
  public:
-  /// Creates an (uninitialized) ControllerApi object. You must initialize
-  /// it by calling Init() before interacting with it.
-  ControllerApi() : context_(nullptr) {}
+  using WrapperBase::WrapperBase;
 
   /// Returns the default controller options.
   static int32_t DefaultOptions() {
@@ -540,8 +687,8 @@ class ControllerApi {
   ///     Initialization may fail, for example, because invalid options were
   ///     supplied.
   bool Init(int32_t options, gvr_context* context) {
-    context_ = gvr_controller_create_and_init(options, context);
-    return context_ != nullptr;
+    cobject_ = gvr_controller_create_and_init(options, context);
+    return cobject_ != nullptr;
   }
 
 #ifdef __ANDROID__
@@ -550,9 +697,9 @@ class ControllerApi {
   /// gvr_controller_create_and_init_android().
   bool Init(JNIEnv *env, jobject android_context, jobject class_loader,
             int32_t options, gvr_context* context) {
-    context_ = gvr_controller_create_and_init_android(
+    cobject_ = gvr_controller_create_and_init_android(
         env, android_context, class_loader, options, context);
-    return context_ != nullptr;
+    return cobject_ != nullptr;
   }
 #endif  // #ifdef __ANDROID__
 
@@ -565,18 +712,13 @@ class ControllerApi {
   /// Pauses the controller.
   /// For more information, see gvr_controller_pause().
   void Pause() {
-    gvr_controller_pause(context_);
+    gvr_controller_pause(cobj());
   }
 
   /// Resumes the controller.
   /// For more information, see gvr_controller_resume().
   void Resume() {
-    gvr_controller_resume(context_);
-  }
-
-  /// Destroys this ControllerApi instance.
-  ~ControllerApi() {
-    if (context_) gvr_controller_destroy(&context_);
+    gvr_controller_resume(cobj());
   }
 
   /// Convenience functions to convert enums to strings.
@@ -597,194 +739,169 @@ class ControllerApi {
     return gvr_controller_battery_level_to_string(level);
   }
 
-  /// @name Wrapper manipulation
-  /// @{
-  /// Creates a C++ wrapper for a C object and takes ownership.
-  explicit ControllerApi(gvr_controller_context* context)
-      : context_(context) {}
+  /// Returns the number (N) of controllers currently available.
+  ///
+  /// Each controller can be identified by an index in the range [0, N), which
+  /// can be passed to the ControllerState constructor to get the state instance
+  /// corresponding to the controller at that index.
+  int32_t GetControllerCount() { return gvr_controller_get_count(cobj()); }
 
-  /// Returns the wrapped C object. Does not affect ownership.
-  gvr_controller_context* cobj() { return context_; }
-  const gvr_controller_context* cobj() const { return context_; }
-
-  /// Returns the wrapped C object and transfers its ownership to the caller.
-  /// The wrapper becomes invalid and should not be used.
-  gvr_controller_context* release() {
-    auto result = context_;
-    context_ = nullptr;
-    return result;
+  /// For more information, see gvr_controller_apply_arm_model().
+  void ApplyArmModel(const ControllerHandedness handedness,
+                     const ArmModelBehavior behavior,
+                     const Mat4f& head_space_from_start_space_rotation) {
+    ApplyArmModel(
+        0, handedness, behavior, head_space_from_start_space_rotation);
   }
-  /// @}
 
- protected:
-  gvr_controller_context* context_;
-
- private:
-  friend class ControllerState;
-
-  // Disallow copy and assign:
-  ControllerApi(const ControllerApi&);
-  void operator=(const ControllerApi&);
+  /// For more information, see gvr_controller_apply_arm_model().
+  void ApplyArmModel(int32_t controller_index,
+                     const ControllerHandedness handedness,
+                     const ArmModelBehavior behavior,
+                     const Mat4f& head_space_from_start_space_rotation) {
+    gvr_controller_apply_arm_model(cobj(), controller_index, handedness,
+                                   behavior,
+                                   head_space_from_start_space_rotation);
+  }
 };
 
 /// Convenience C++ wrapper for the opaque gvr_controller_state type. See the
 /// gvr_controller_state functions for more information.
-class ControllerState {
+class ControllerState
+    : public WrapperBase<gvr_controller_state, gvr_controller_state_destroy> {
  public:
-  ControllerState() : state_(gvr_controller_state_create()) {}
-
-  ~ControllerState() {
-    if (state_) gvr_controller_state_destroy(&state_);
-  }
+  using WrapperBase::WrapperBase;
+  ControllerState() : WrapperBase(gvr_controller_state_create()) {}
 
   /// For more information, see gvr_controller_state_update().
   void Update(const ControllerApi& api) {
-    gvr_controller_state_update(api.context_, 0, state_);
+    gvr_controller_state_update(const_cast<gvr_controller_context*>(api.cobj()),
+                                0, cobj());
   }
 
   /// For more information, see gvr_controller_state_update().
-  void Update(const ControllerApi& api, int32_t flags) {
-    gvr_controller_state_update(api.context_, flags, state_);
+  void Update(const ControllerApi& api, int32_t controller_index) {
+    gvr_controller_state_update(const_cast<gvr_controller_context*>(api.cobj()),
+                                controller_index, cobj());
   }
 
   /// For more information, see gvr_controller_state_get_api_status().
   ControllerApiStatus GetApiStatus() const {
     return static_cast<ControllerApiStatus>(
-        gvr_controller_state_get_api_status(state_));
+        gvr_controller_state_get_api_status(cobj()));
   }
 
   /// For more information, see gvr_controller_state_get_connection_state().
   ControllerConnectionState GetConnectionState() const {
     return static_cast<ControllerConnectionState>(
-        gvr_controller_state_get_connection_state(state_));
+        gvr_controller_state_get_connection_state(cobj()));
   }
 
   /// For more information, see gvr_controller_state_get_orientation().
   gvr_quatf GetOrientation() const {
-    return gvr_controller_state_get_orientation(state_);
+    return gvr_controller_state_get_orientation(cobj());
   }
 
   /// For more information, see gvr_controller_state_get_gyro().
-  gvr_vec3f GetGyro() const { return gvr_controller_state_get_gyro(state_); }
+  gvr_vec3f GetGyro() const { return gvr_controller_state_get_gyro(cobj()); }
 
   /// For more information, see gvr_controller_state_get_accel().
-  gvr_vec3f GetAccel() const { return gvr_controller_state_get_accel(state_); }
+  gvr_vec3f GetAccel() const { return gvr_controller_state_get_accel(cobj()); }
 
   /// For more information, see gvr_controller_state_is_touching().
-  bool IsTouching() const { return gvr_controller_state_is_touching(state_); }
+  bool IsTouching() const { return gvr_controller_state_is_touching(cobj()); }
 
   /// For more information, see gvr_controller_state_get_touch_pos().
   gvr_vec2f GetTouchPos() const {
-    return gvr_controller_state_get_touch_pos(state_);
+    return gvr_controller_state_get_touch_pos(cobj());
   }
 
   /// For more information, see gvr_controller_state_get_touch_down().
   bool GetTouchDown() const {
-    return gvr_controller_state_get_touch_down(state_);
+    return gvr_controller_state_get_touch_down(cobj());
   }
 
   /// For more information, see gvr_controller_state_get_touch_up().
-  bool GetTouchUp() const { return gvr_controller_state_get_touch_up(state_); }
+  bool GetTouchUp() const { return gvr_controller_state_get_touch_up(cobj()); }
 
   /// For more information, see gvr_controller_state_get_recentered().
   bool GetRecentered() const {
-    return gvr_controller_state_get_recentered(state_);
+    return gvr_controller_state_get_recentered(cobj());
   }
 
   /// For more information, see gvr_controller_state_get_recentering().
   bool GetRecentering() const {
-    return gvr_controller_state_get_recentering(state_);
+    return gvr_controller_state_get_recentering(cobj());
   }
 
   /// For more information, see gvr_controller_state_get_button_state().
   bool GetButtonState(ControllerButton button) const {
-    return gvr_controller_state_get_button_state(state_, button);
+    return gvr_controller_state_get_button_state(cobj(), button);
   }
 
   /// For more information, see gvr_controller_state_get_button_down().
   bool GetButtonDown(ControllerButton button) const {
-    return gvr_controller_state_get_button_down(state_, button);
+    return gvr_controller_state_get_button_down(cobj(), button);
   }
 
   /// For more information, see gvr_controller_state_get_button_up().
   bool GetButtonUp(ControllerButton button) const {
-    return gvr_controller_state_get_button_up(state_, button);
+    return gvr_controller_state_get_button_up(cobj(), button);
   }
 
   /// For more information, see
   /// gvr_controller_state_get_last_orientation_timestamp().
   int64_t GetLastOrientationTimestamp() const {
-    return gvr_controller_state_get_last_orientation_timestamp(state_);
+    return gvr_controller_state_get_last_orientation_timestamp(cobj());
   }
 
   /// For more information, see gvr_controller_state_get_last_gyro_timestamp().
   int64_t GetLastGyroTimestamp() const {
-    return gvr_controller_state_get_last_gyro_timestamp(state_);
+    return gvr_controller_state_get_last_gyro_timestamp(cobj());
   }
 
   /// For more information, see gvr_controller_state_get_last_accel_timestamp().
   int64_t GetLastAccelTimestamp() const {
-    return gvr_controller_state_get_last_accel_timestamp(state_);
+    return gvr_controller_state_get_last_accel_timestamp(cobj());
   }
 
   /// For more information, see gvr_controller_state_get_last_touch_timestamp().
   int64_t GetLastTouchTimestamp() const {
-    return gvr_controller_state_get_last_touch_timestamp(state_);
+    return gvr_controller_state_get_last_touch_timestamp(cobj());
   }
 
   /// For more information, see
   /// gvr_controller_state_get_last_button_timestamp().
   int64_t GetLastButtonTimestamp() const {
-    return gvr_controller_state_get_last_button_timestamp(state_);
+    return gvr_controller_state_get_last_button_timestamp(cobj());
   }
 
   /// For more information, see gvr_controller_state_get_position().
   gvr_vec3f GetPosition() const {
-    return gvr_controller_state_get_position(state_);
+    return gvr_controller_state_get_position(cobj());
   }
 
   /// For more information, see
   /// gvr_controller_state_get_last_position_timestamp().
   int64_t GetLastPositionTimestamp() const {
-    return gvr_controller_state_get_last_position_timestamp(state_);
+    return gvr_controller_state_get_last_position_timestamp(cobj());
   }
 
   /// For more information, see gvr_controller_state_get_battery_charging
   bool GetBatteryCharging() const {
-    return gvr_controller_state_get_battery_charging(state_);
+    return gvr_controller_state_get_battery_charging(cobj());
   }
 
   /// For more information, see gvr_controller_state_get_battery_level
   ControllerBatteryLevel GetBatteryLevel() const {
     return static_cast<ControllerBatteryLevel>(
-        gvr_controller_state_get_battery_level(state_));
+        gvr_controller_state_get_battery_level(cobj()));
   }
 
   /// For more information, see gvr_controller_state_get_last_battery_timestamp
   int64_t GetLastBatteryTimestamp() const {
-    return gvr_controller_state_get_last_battery_timestamp(state_);
+    return gvr_controller_state_get_last_battery_timestamp(cobj());
   }
-
-  /// @name Wrapper manipulation
-  /// @{
-  /// Creates a C++ wrapper for a C object and takes ownership.
-  explicit ControllerState(gvr_controller_state* state) : state_(state) {}
-
-  /// Returns the wrapped C object. Does not affect ownership.
-  gvr_controller_state* cobj() { return state_; }
-  const gvr_controller_state* cobj() const { return state_; }
-
-  /// Returns the wrapped C object and transfers its ownership to the caller.
-  /// The wrapper becomes invalid and should not be used.
-  gvr_controller_state* release() {
-    auto result = state_;
-    state_ = nullptr;
-    return result;
-  }
-  /// @}
-
- private:
-  gvr_controller_state* state_;
 };
 
 }  // namespace gvr

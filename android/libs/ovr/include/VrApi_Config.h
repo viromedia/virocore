@@ -4,6 +4,7 @@ Filename    :   VrApi_Config.h
 Content     :   VrApi preprocessor settings
 Created     :   April 23, 2015
 Authors     :   James Dolan
+Language    :   C99
 
 Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
@@ -27,7 +28,7 @@ OVR_VRAPI_DEPRECATED
     #define OVR_VRAPI_EXPORT
 #endif
 
-#define OVR_VRAPI_DEPRECATED __declspec( deprecated )
+#define OVR_VRAPI_DEPRECATED( fn ) __declspec( deprecated ) fn
 
 #else
 
@@ -37,7 +38,7 @@ OVR_VRAPI_DEPRECATED
     #define OVR_VRAPI_EXPORT 
 #endif
 
-#define OVR_VRAPI_DEPRECATED __attribute__( ( deprecated ) )
+#define OVR_VRAPI_DEPRECATED( fn ) fn __attribute__( ( deprecated ) )
 
 #endif
 

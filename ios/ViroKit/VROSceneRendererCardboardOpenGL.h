@@ -44,6 +44,9 @@ private:
     bool _suspended;
     bool _recenterTracking;
     VROMatrix4f _baseRotation;
+    
+    // Head rotation since last call to prepareFrame
+    VROMatrix4f _headRotation;
 
 };
 

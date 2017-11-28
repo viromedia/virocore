@@ -286,15 +286,37 @@ void VRORenderer::prepareFrame(int frame, VROViewport viewport, VROFieldOfView f
     pglpop();
 }
 
-void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projectionMatrix,
-                            VROViewport viewport, std::shared_ptr<VRODriver> driver) {
+void VRORenderer::renderEye2(VROEyeType eye, VROMatrix4f eyeView, VROMatrix4f projection,
+                             VROViewport viewport, std::shared_ptr<VRODriver> driver) {
     pglpush("Viro Render Eye [%s]", VROEye::toString(eye).c_str());
     _choreographer->setViewport(viewport, driver);
-
+    
     std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
     if (delegate) {
         delegate->willRenderEye(eye, _context.get());
     }
+    
+    _context->setViewMatrix(eyeView);
+    _context->setProjectionMatrix(projection);
+    _context->setEyeType(eye);
+    _context->setZNear(kZNear);
+    _context->setZFar(getFarClippingPlane());
+    _context->setInputController(_inputController);
+    
+    renderEye(eye, driver);
+    
+    if (delegate) {
+        delegate->didRenderEye(eye, _context.get());
+    }
+    _context->getPencil()->render(*_context.get(), driver);
+    
+    // This unbinds the last shader to even out our pglpush and pops
+    driver->unbindShader();
+    pglpop();
+}
+
+void VRORenderer::renderHUD(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, std::shared_ptr<VRODriver> driver) {
+    pglpush("Viro Render HUD [%s]", VROEye::toString(eye).c_str());
 
     /*
      The eyeView matrix is the camera look-at matrix followed by the eye shift
@@ -302,25 +324,19 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
      */
     VROMatrix4f cameraLookAtMatrix = _context->getCamera().getLookAtMatrix();
     VROMatrix4f eyeView = eyeFromHeadMatrix.multiply(cameraLookAtMatrix);
-    
+
     /*
      The HUD matrix is set as the *model transform* for objects that we want
      glued to the HUD. It is meant to undo the eyeView matrix, but keep the
      eye translation. In other words, we want HUDMatrix defined such that:
-     
-     eyeView * HUDMatrix = eyeFromHeadMatrix
-     
-     Therefore, we set HUDMatrix = eyeFromHeadMatrix * eyeView-1
-     */
-    _context->setHUDViewMatrix(eyeFromHeadMatrix.multiply(eyeView.invert()));
-    _context->setViewMatrix(eyeView);
-    _context->setProjectionMatrix(projectionMatrix);
-    _context->setEyeType(eye);
-    _context->setZNear(kZNear);
-    _context->setZFar(getFarClippingPlane());
-    _context->setInputController(_inputController);
 
-    renderEye(eye, driver);
+     eyeView * HUDMatrix = eyeFromHeadMatrix
+
+     Therefore, we set HUDMatrix = eyeView-1 * eyeFromHeadMatrix
+     */
+    _context->setHUDViewMatrix(eyeView.invert().multiply(eyeFromHeadMatrix));
+    _context->setViewMatrix(eyeView);
+    _context->setEyeType(eye);
 
     /*
      Render the reticle and debug HUD with a HUDViewMatrix, which shifts objects directly
@@ -332,11 +348,6 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMa
     }
     _debugHUD->renderEye(eye, *_context.get(), driver);
 
-    if (delegate) {
-        delegate->didRenderEye(eye, _context.get());
-    }
-    _context->getPencil()->render(*_context.get(), driver);
-    
     // This unbinds the last shader to even out our pglpush and pops
     driver->unbindShader();
     pglpop();

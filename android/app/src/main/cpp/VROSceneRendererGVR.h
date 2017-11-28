@@ -65,28 +65,17 @@ public:
 
 private:
 
-    /*
-     Prepares the GvrApi framebuffer for rendering, resizing if needed.
-     */
-    void prepareFrame(VROViewport leftViewport,
-                      VROFieldOfView fov,
-                      VROMatrix4f headRotation);
-
-    void renderStereo(VROMatrix4f &headRotation);
-    void renderMono(VROMatrix4f &headRotation);
-
-    /*
-     Draws the scene for the given eye.
-     */
-    void renderEye(VROEyeType eyeType,
-                   VROMatrix4f eyeFromHeadMatrix,
-                   VROViewport viewport,
-                   VROFieldOfView fov);
+    void renderStereo(VROMatrix4f &headView);
+    void renderMono(VROMatrix4f &headView);
 
     std::unique_ptr<gvr::GvrApi> _gvr;
     std::unique_ptr<gvr::BufferViewportList> _viewportList;
     std::unique_ptr<gvr::SwapChain> _swapchain;
-    gvr::BufferViewport _scratchViewport;
+
+    // These are viewport *templates*. We use viewportList->SetBufferViewport to copy the
+    // viewport into the appropriate position after configuring it each frame
+    gvr::BufferViewport _hudViewport;
+    gvr::BufferViewport _sceneViewport;
 
     gvr::Mat4f _headView;
     gvr::Sizei _renderSize;
@@ -100,6 +89,7 @@ private:
     /*
      Utility methods.
      */
+    void clearViewport(VROViewport viewport, bool transparent);
     gvr::Rectf modulateRect(const gvr::Rectf &rect, float width, float height);
     gvr::Recti calculatePixelSpaceRect(const gvr::Sizei &texture_size, const gvr::Rectf &texture_rect);
     gvr::Sizei halfPixelCount(const gvr::Sizei& in);

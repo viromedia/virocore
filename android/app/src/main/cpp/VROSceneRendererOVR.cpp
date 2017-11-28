@@ -82,8 +82,6 @@ static const int CPU_LEVEL			= 2;
 static const int GPU_LEVEL			= 3;
 static const int NUM_MULTI_SAMPLES	= 4;
 
-#define REDUCED_LATENCY			0
-
 /*
 ================================================================================
 
@@ -408,6 +406,8 @@ static bool ovrFramebuffer_Create( ovrFramebuffer * frameBuffer, const bool useM
     frameBuffer->DepthBuffers = (GLuint *)malloc( frameBuffer->TextureSwapChainLength * sizeof( GLuint ) );
     frameBuffer->FrameBuffers = (GLuint *)malloc( frameBuffer->TextureSwapChainLength * sizeof( GLuint ) );
 
+
+
     ALOGV( "        frameBuffer->UseMultiview = %d", frameBuffer->UseMultiview );
 
     for ( int i = 0; i < frameBuffer->TextureSwapChainLength; i++ )
@@ -634,28 +634,27 @@ ovrRenderer
 ================================================================================
 */
 
+static int MAX_FENCES = 4;
+
 typedef struct
 {
     ovrFramebuffer	FrameBuffer[VRAPI_FRAME_LAYER_EYE_MAX];
-    ovrFence *		Fence[VRAPI_FRAME_LAYER_EYE_MAX];
-    ovrMatrix4f		ProjectionMatrix;
-    ovrMatrix4f		TexCoordsTanAnglesMatrix;
+    ovrFramebuffer  HUDFrameBuffer[VRAPI_FRAME_LAYER_EYE_MAX];
+    ovrFence *		Fence;
     int				NumBuffers;
+    int             FenceIndex;
 } ovrRenderer;
 
-static void ovrRenderer_Clear( ovrRenderer * renderer )
-{
+static void ovrRenderer_Clear(ovrRenderer *renderer) {
     for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
     {
         ovrFramebuffer_Clear( &renderer->FrameBuffer[eye] );
     }
-    renderer->ProjectionMatrix = ovrMatrix4f_CreateIdentity();
-    renderer->TexCoordsTanAnglesMatrix = ovrMatrix4f_CreateIdentity();
     renderer->NumBuffers = VRAPI_FRAME_LAYER_EYE_MAX;
+    renderer->FenceIndex = 0;
 }
 
-static void ovrRenderer_Create( ovrRenderer * renderer, const ovrJava * java, const bool useMultiview )
-{
+static void ovrRenderer_Create(ovrRenderer *renderer, const ovrJava *java, const bool useMultiview) {
     renderer->NumBuffers = useMultiview ? 1 : VRAPI_FRAME_LAYER_EYE_MAX;
 
     // Create the frame buffers.
@@ -663,154 +662,176 @@ static void ovrRenderer_Create( ovrRenderer * renderer, const ovrJava * java, co
     {
         ovrFramebuffer_Create( &renderer->FrameBuffer[eye], useMultiview,
                                VRAPI_TEXTURE_FORMAT_8888,
-                               vrapi_GetSystemPropertyInt( java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH ),
-                               vrapi_GetSystemPropertyInt( java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT ),
-                               NUM_MULTI_SAMPLES );
+                               vrapi_GetSystemPropertyInt(java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH),
+                               vrapi_GetSystemPropertyInt(java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT),
+                               NUM_MULTI_SAMPLES);
 
-        renderer->Fence[eye] = (ovrFence *) malloc( renderer->FrameBuffer[eye].TextureSwapChainLength * sizeof( ovrFence ) );
-        for ( int i = 0; i < renderer->FrameBuffer[eye].TextureSwapChainLength; i++ )
+        ovrFramebuffer_Create( &renderer->HUDFrameBuffer[eye], useMultiview,
+                               VRAPI_TEXTURE_FORMAT_8888,
+                               vrapi_GetSystemPropertyInt(java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH),
+                               vrapi_GetSystemPropertyInt(java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT),
+                               NUM_MULTI_SAMPLES);
+
+        renderer->Fence = (ovrFence *) malloc( MAX_FENCES * sizeof( ovrFence ) );
+        for ( int i = 0; i < MAX_FENCES; i++ )
         {
-            ovrFence_Create( &renderer->Fence[eye][i] );
+            ovrFence_Create( &renderer->Fence[i] );
         }
     }
-
-    // Setup the projection matrix.
-    renderer->ProjectionMatrix = ovrMatrix4f_CreateProjectionFov(
-            vrapi_GetSystemPropertyFloat( java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X ),
-            vrapi_GetSystemPropertyFloat( java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_Y ),
-            0.0f, 0.0f, 1.0f, 0.0f );
-    renderer->TexCoordsTanAnglesMatrix = ovrMatrix4f_TanAngleMatrixFromProjection( &renderer->ProjectionMatrix );
 }
 
 static void ovrRenderer_Destroy( ovrRenderer * renderer )
 {
-    for ( int eye = 0; eye < renderer->NumBuffers; eye++ )
-    {
-        for ( int i = 0; i < renderer->FrameBuffer[eye].TextureSwapChainLength; i++ )
-        {
-            ovrFence_Destroy( &renderer->Fence[eye][i] );
-        }
-        free( renderer->Fence[eye] );
-
-        ovrFramebuffer_Destroy( &renderer->FrameBuffer[eye] );
+    for ( int eye = 0; eye < renderer->NumBuffers; eye++ ) {
+        ovrFramebuffer_Destroy(&renderer->FrameBuffer[eye]);
     }
-    renderer->ProjectionMatrix = ovrMatrix4f_CreateIdentity();
-    renderer->TexCoordsTanAnglesMatrix = ovrMatrix4f_CreateIdentity();
+
+    for ( int i = 0; i < MAX_FENCES; i++ ) {
+            ovrFence_Destroy( &renderer->Fence[i] );
+    }
+    free( renderer->Fence );
 }
 
-static ovrFrameParms ovrRenderer_RenderFrame( ovrRenderer * rendererOVR, const ovrJava * java,
-                                              std::shared_ptr<VRORenderer> renderer,
-                                              std::shared_ptr<VRODriverOpenGLAndroid> driver,
-                                              long long frameIndex, int minimumVsyncs, const ovrPerformanceParms * perfParms,
-                                              const ovrTracking * tracking, ovrMobile * ovr )
-{
-    ovrFrameParms parms = vrapi_DefaultFrameParms( java, VRAPI_FRAME_INIT_DEFAULT, vrapi_GetTimeInSeconds(), NULL );
-    parms.FrameIndex = frameIndex;
-    parms.MinimumVsyncs = minimumVsyncs;
-    parms.PerformanceParms = *perfParms;
+static void ovrRenderer_clearBorder(ovrFramebuffer *frameBuffer) {
+    // Clear to fully opaque black.
+    GL( glClearColor( 0.0f, 0.0f, 0.0f, 1.0f ) );
+    // bottom
+    GL( glScissor( 0, 0, frameBuffer->Width, 1 ) );
+    GL( glClear( GL_COLOR_BUFFER_BIT ) );
+    // top
+    GL( glScissor( 0, frameBuffer->Height - 1, frameBuffer->Width, 1 ) );
+    GL( glClear( GL_COLOR_BUFFER_BIT ) );
+    // left
+    GL( glScissor( 0, 0, 1, frameBuffer->Height ) );
+    GL( glClear( GL_COLOR_BUFFER_BIT ) );
+    // right
+    GL( glScissor( frameBuffer->Width - 1, 0, 1, frameBuffer->Height ) );
+    GL( glClear( GL_COLOR_BUFFER_BIT ) );
+}
 
-    const ovrHeadModelParms headModelParms = vrapi_DefaultHeadModelParms();
+static void ovrRenderer_RenderFrame(ovrRenderer *rendererOVR, const ovrJava *java,
+                                    std::shared_ptr<VRORenderer> renderer,
+                                    std::shared_ptr<VRODriverOpenGLAndroid> driver,
+                                    long long frameIndex,
+                                    const ovrTracking2 *tracking, ovrMobile *ovr,
+                                    unsigned long long *completionFence,
+                                    ovrLayerProjection2 *sceneLayer,
+                                    ovrLayerProjection2 *hudLayer)  {
 
-#if REDUCED_LATENCY
-    // Update orientation, not position.
-	ovrTracking updatedTracking = vrapi_GetPredictedTracking( ovr, tracking->HeadPose.TimeInSeconds );
-	updatedTracking.HeadPose.Pose.Position = tracking->HeadPose.Pose.Position;
-#else
-    ovrTracking updatedTracking = *tracking;
-#endif
+    ovrTracking2 updatedTracking = *tracking;
 
     // Calculate the view matrix.
-    const ovrMatrix4f centerEyeViewMatrix = vrapi_GetCenterEyeTransform(&headModelParms, &updatedTracking, NULL);
+    ovrPosef headPose = updatedTracking.HeadPose.Pose;
+    VROQuaternion quaternion(headPose.Orientation.x, headPose.Orientation.y, headPose.Orientation.z, headPose.Orientation.w);
+    VROMatrix4f headRotation = quaternion.getMatrix();
 
-    for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
-    {
-        ovrFramebuffer * frameBuffer = &rendererOVR->FrameBuffer[rendererOVR->NumBuffers == 1 ? 0 : eye];
-        parms.Layers[0].Textures[eye].ColorTextureSwapChain = frameBuffer->ColorTextureSwapChain;
-        parms.Layers[0].Textures[eye].TextureSwapChainIndex = frameBuffer->TextureSwapChainIndex;
-        parms.Layers[0].Textures[eye].TexCoordsFromTanAngles = rendererOVR->TexCoordsTanAnglesMatrix;
-        parms.Layers[0].Textures[eye].HeadPose = updatedTracking.HeadPose;
+    // The scene layer renders the Scene, the HUD layer renders headlocked UI
+    *sceneLayer = vrapi_DefaultLayerProjection2();
+    *hudLayer   = vrapi_DefaultLayerProjection2();
+
+    // Ensure the HUD layer is correctly blended on top of the scene layer
+    hudLayer->Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_SRC_ALPHA;
+    hudLayer->Header.DstBlend = VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA;
+
+    sceneLayer->HeadPose = updatedTracking.HeadPose;
+    hudLayer->HeadPose   = updatedTracking.HeadPose;
+
+    // Improves the quality of the scene layer
+    sceneLayer->Header.Flags |= VRAPI_FRAME_LAYER_FLAG_CHROMATIC_ABERRATION_CORRECTION;
+
+    // Ensures "async timewarp" is not applied to the HUD; reduces jitter
+    hudLayer->Header.Flags |= VRAPI_FRAME_LAYER_FLAG_FIXED_TO_VIEW;
+
+    VROMatrix4f eyeFromHeadMatrix[VRAPI_FRAME_LAYER_EYE_MAX];
+    float interpupillaryDistance = vrapi_GetInterpupillaryDistance(&updatedTracking);
+
+    // Attach each layer to its associated framebuffer's texture swap chain
+    for (int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++) {
+        ovrFramebuffer *frameBuffer = &rendererOVR->FrameBuffer[rendererOVR->NumBuffers == 1 ? 0 : eye];
+        sceneLayer->Textures[eye].ColorSwapChain = frameBuffer->ColorTextureSwapChain;
+        sceneLayer->Textures[eye].SwapChainIndex = frameBuffer->TextureSwapChainIndex;
+        sceneLayer->Textures[eye].TexCoordsFromTanAngles = ovrMatrix4f_TanAngleMatrixFromProjection( &updatedTracking.Eye[eye].ProjectionMatrix );
+
+        ovrFramebuffer *hudFrameBuffer = &rendererOVR->HUDFrameBuffer[rendererOVR->NumBuffers == 1 ? 0 : eye];
+        hudLayer->Textures[eye].ColorSwapChain = hudFrameBuffer->ColorTextureSwapChain;
+        hudLayer->Textures[eye].SwapChainIndex = hudFrameBuffer->TextureSwapChainIndex;
+
+        const float eyeOffset = ( eye ? -0.5f : 0.5f ) * interpupillaryDistance;
+        const ovrMatrix4f eyeOffsetMatrix = ovrMatrix4f_CreateTranslation( eyeOffset, 0.0f, 0.0f );
+        eyeFromHeadMatrix[eye] = toMatrix4f(eyeOffsetMatrix);
     }
 
-    parms.Layers[0].Flags |= VRAPI_FRAME_LAYER_FLAG_CHROMATIC_ABERRATION_CORRECTION;
-
-    unsigned long long completionFence[VRAPI_FRAME_LAYER_EYE_MAX] = { 0 };
     ovrFramebuffer *leftFB = &rendererOVR->FrameBuffer[0];
 
     VROViewport leftViewport(0, 0, leftFB->Width, leftFB->Height);
     float fovX = vrapi_GetSystemPropertyFloat( java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X );
     float fovY = vrapi_GetSystemPropertyFloat( java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_Y );
     VROFieldOfView fov(fovX / 2.0, fovX / 2.0, fovY / 2.0, fovY / 2.0);
-    VROMatrix4f headRotation = toMatrix4f(centerEyeViewMatrix);
 
     VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, renderer->getFarClippingPlane());
     renderer->prepareFrame(frameIndex, leftViewport, fov, headRotation, projection, driver);
 
-    // Render the eye images.
-    for ( int eye = 0; eye < rendererOVR->NumBuffers; eye++ )
-    {
-        // NOTE: In the non-mv case, latency can be further reduced by updating the sensor prediction
-        // for each eye (updates orientation, not position)
-        ovrFramebuffer * frameBuffer = &rendererOVR->FrameBuffer[eye];
-        ovrFramebuffer_SetCurrent( frameBuffer );
+    // Render the scene to the textures in the scene layer
+    for (int eye = 0; eye < rendererOVR->NumBuffers; eye++) {
+        ovrFramebuffer *frameBuffer = &rendererOVR->FrameBuffer[eye];
+        ovrFramebuffer_SetCurrent(frameBuffer);
         std::dynamic_pointer_cast<VRODisplayOpenGLOVR>(driver->getDisplay())->setFrameBuffer(frameBuffer);
 
-        GL( glEnable( GL_SCISSOR_TEST ) );
-        GL( glScissor(  0, 0, frameBuffer->Width, frameBuffer->Height ) );
-        GL( glViewport( 0, 0, frameBuffer->Width, frameBuffer->Height ) );
+        GL( glEnable(GL_SCISSOR_TEST) );
+        GL( glScissor( 0, 0, frameBuffer->Width, frameBuffer->Height) );
+        GL( glViewport(0, 0, frameBuffer->Width, frameBuffer->Height) );
 
         GL( glEnable(GL_DEPTH_TEST) );
         GL( glEnable(GL_STENCIL_TEST) );
-        GL( glClearColor( 0.0f, 0.0f, 0.0f, 1.0f ) );
-        GL( glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT ) );
+        GL( glClearColor(0.0f, 0.0f, 0.0f, 1.0f) );
+        GL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
 
         VROEyeType eyeType = (eye == VRAPI_FRAME_LAYER_EYE_LEFT) ? VROEyeType::Left : VROEyeType::Right;
-
-        const float eyeOffset = (eye == VRAPI_FRAME_LAYER_EYE_LEFT ? -0.5f : 0.5f) * headModelParms.InterpupillaryDistance;
-        const ovrMatrix4f eyeOffsetMatrix = ovrMatrix4f_CreateTranslation( eyeOffset, 0.0f, 0.0f );
-        VROMatrix4f eyeFromHeadMatrix = toMatrix4f(eyeOffsetMatrix);
         VROViewport viewport = { 0, 0, frameBuffer->Width, frameBuffer->Height };
 
-        renderer->renderEye(eyeType, eyeFromHeadMatrix, projection, viewport, driver);
+        // We use our projection matrix because the one computed by OVR appears to be identical for
+        // left an right, but with fixed NCP and FCP. Our projection uses the correct NCP and FCP.
+        renderer->renderEye2(eyeType,
+                             toMatrix4f(updatedTracking.Eye[eye].ViewMatrix),
+                             projection,
+                             viewport, driver);
 
-        // Explicitly clear the border texels to black because OpenGL-ES does not support GL_CLAMP_TO_BORDER.
-        {
-            // Clear to fully opaque black.
-            GL( glClearColor( 0.0f, 0.0f, 0.0f, 1.0f ) );
-            // bottom
-            GL( glScissor( 0, 0, frameBuffer->Width, 1 ) );
-            GL( glClear( GL_COLOR_BUFFER_BIT ) );
-            // top
-            GL( glScissor( 0, frameBuffer->Height - 1, frameBuffer->Width, 1 ) );
-            GL( glClear( GL_COLOR_BUFFER_BIT ) );
-            // left
-            GL( glScissor( 0, 0, 1, frameBuffer->Height ) );
-            GL( glClear( GL_COLOR_BUFFER_BIT ) );
-            // right
-            GL( glScissor( frameBuffer->Width - 1, 0, 1, frameBuffer->Height ) );
-            GL( glClear( GL_COLOR_BUFFER_BIT ) );
-        }
+        ovrRenderer_clearBorder(frameBuffer);
+        ovrFramebuffer_Resolve(frameBuffer);
+        ovrFramebuffer_Advance(frameBuffer);
+    }
 
-        ovrFramebuffer_Resolve( frameBuffer );
+    // Render the HUD to the textures in the HUD layer
+    for (int eye = 0; eye < rendererOVR->NumBuffers; eye++) {
+        ovrFramebuffer *frameBuffer = &rendererOVR->HUDFrameBuffer[eye];
+        ovrFramebuffer_SetCurrent(frameBuffer);
 
-        ovrFence * fence = &rendererOVR->Fence[eye][frameBuffer->TextureSwapChainIndex];
-        ovrFence_Insert( fence );
-        completionFence[eye] = (size_t)fence->Sync;
+        GL( glEnable(GL_SCISSOR_TEST) );
+        GL( glScissor( 0, 0, frameBuffer->Width, frameBuffer->Height) );
+        GL( glViewport(0, 0, frameBuffer->Width, frameBuffer->Height) );
 
-        ovrFramebuffer_Advance( frameBuffer );
+        GL( glEnable(GL_DEPTH_TEST) );
+        GL( glClearColor(0.0f, 0.0f, 0.0f, 0.0f) );
+        GL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) );
+
+        VROEyeType eyeType = (eye == VRAPI_FRAME_LAYER_EYE_LEFT) ? VROEyeType::Left : VROEyeType::Right;
+        renderer->renderHUD(eyeType, eyeFromHeadMatrix[eye], driver);
+
+        ovrRenderer_clearBorder(frameBuffer);
+        ovrFramebuffer_Resolve(frameBuffer);
+        ovrFramebuffer_Advance(frameBuffer);
     }
 
     renderer->endFrame(driver);
     ALLOCATION_TRACKER_PRINT();
 
-    for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
-    {
-        parms.Layers[0].Textures[eye].CompletionFence =
-                completionFence[rendererOVR->NumBuffers == 1 ? 0 : eye];
-    }
-
     ovrFramebuffer_SetNone();
 
-    return parms;
+    // Use a single fence to indicate the frame is ready to be displayed.
+    ovrFence * fence = &rendererOVR->Fence[rendererOVR->FenceIndex];
+    ovrFence_Insert( fence );
+    rendererOVR->FenceIndex = ( rendererOVR->FenceIndex + 1 ) % MAX_FENCES;
+    *completionFence = (size_t)fence->Sync;
 }
 
 /*
@@ -837,14 +858,17 @@ typedef struct
     bool				Resumed;
     ovrMobile *			Ovr;
     long long			FrameIndex;
-    int					MinimumVsyncs;
+    double              DisplayTime;
+    int                 SwapInterval;
     ovrBackButtonState	BackButtonState;
     bool				BackButtonDown;
     double				BackButtonDownStartTime;
     ovrRenderer			Renderer;
+    bool                UseMultiview;
+
+    // Viro parameters
     std::shared_ptr<VRORenderer> vroRenderer;
     std::shared_ptr<VRODriverOpenGLAndroid> driver;
-    bool                UseMultiview;
     bool                suspended;
     double              suspendedNotificationTime;
 } ovrApp;
@@ -858,7 +882,6 @@ static void ovrApp_Clear( ovrApp * app )
     app->Resumed = false;
     app->Ovr = NULL;
     app->FrameIndex = 1;
-    app->MinimumVsyncs = 1;
     app->BackButtonState = BACK_BUTTON_STATE_NONE;
     app->BackButtonDown = false;
     app->BackButtonDownStartTime = 0.0;
@@ -1342,21 +1365,36 @@ void * AppThreadFunction( void * parm )
         // depends on the pipeline depth of the engine and the synthesis rate.
         // The better the prediction, the less black will be pulled in at the edges.
         const double predictedDisplayTime = vrapi_GetPredictedDisplayTime( appState.Ovr, appState.FrameIndex );
-        const ovrTracking baseTracking = vrapi_GetPredictedTracking( appState.Ovr, predictedDisplayTime );
+        const ovrTracking2 tracking = vrapi_GetPredictedTracking2( appState.Ovr, predictedDisplayTime );
 
-        // Apply the head-on-a-stick model if there is no positional tracking.
-        const ovrHeadModelParms headModelParms = vrapi_DefaultHeadModelParms();
-        const ovrTracking tracking = vrapi_ApplyHeadModel( &headModelParms, &baseTracking );
+        appState.DisplayTime = predictedDisplayTime;
+        unsigned long long completionFence = 0;
 
-        // Render eye images and setup ovrFrameParms using ovrTracking.
-        const ovrFrameParms frameParms = ovrRenderer_RenderFrame( &appState.Renderer, &appState.Java,
-                                                                  appState.vroRenderer, appState.driver,
-                                                                  appState.FrameIndex, appState.MinimumVsyncs, &perfParms,
-                                                                  &tracking,
-                                                                  appState.Ovr );
+        // Render eye images and setup the primary layer using ovrTracking2.
+        ovrLayerProjection2 worldLayer;
+        ovrLayerProjection2 hudLayer;
+        ovrRenderer_RenderFrame(&appState.Renderer, &appState.Java,
+                                appState.vroRenderer, appState.driver,
+                                appState.FrameIndex,
+                                &tracking,
+                                appState.Ovr, &completionFence, &worldLayer, &hudLayer );
+
+        const ovrLayerHeader2 * layers[] = {
+            &worldLayer.Header,
+            &hudLayer.Header
+        };
+
+        ovrSubmitFrameDescription2 frameDesc = {};
+        frameDesc.Flags = 0;
+        frameDesc.SwapInterval = appState.SwapInterval;
+        frameDesc.FrameIndex = appState.FrameIndex;
+        frameDesc.CompletionFence = completionFence;
+        frameDesc.DisplayTime = appState.DisplayTime;
+        frameDesc.LayerCount = 2;
+        frameDesc.Layers = layers;
 
         // Hand over the eye images to the time warp.
-        vrapi_SubmitFrame( appState.Ovr, &frameParms );
+        vrapi_SubmitFrame2( appState.Ovr, &frameDesc );
     }
 
     ovrRenderer_Destroy( &appState.Renderer );

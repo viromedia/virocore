@@ -69,10 +69,10 @@ void VROSceneRendererCardboardOpenGL::prepareFrame(VROViewport viewport, VROFiel
         // reset _recenterTracking as we only want to do this once until the next time recenterTracking() is called
         _recenterTracking = false;
     }
-    headRotation = _baseRotation.multiply(headRotation);
+    _headRotation = _baseRotation.multiply(headRotation);
     
     VROMatrix4f projection = fov.toPerspectiveProjection(kZNear, _renderer->getFarClippingPlane());
-    _renderer->prepareFrame(_frame, viewport, fov, headRotation, projection, _driver);
+    _renderer->prepareFrame(_frame, viewport, fov, _headRotation, projection, _driver);
 
     glEnable(GL_SCISSOR_TEST); // Ensures we only clear scissored area when using glClear
     glEnable(GL_DEPTH_TEST);
@@ -92,13 +92,14 @@ void VROSceneRendererCardboardOpenGL::renderEye(GVREye eye, GVRHeadTransform *he
     CGRect rect = [headTransform viewportForEye:eye];
     VROViewport viewport(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     
-    VROMatrix4f eyeMatrix = VROConvert::toMatrix4f([headTransform eyeFromHeadMatrix:eye]);
+    VROMatrix4f eyeFromHeadMatrix = VROConvert::toMatrix4f([headTransform eyeFromHeadMatrix:eye]);
     VROMatrix4f projectionMatrix = VROConvert::toMatrix4f([headTransform projectionMatrixForEye:eye
                                                                                            near:kZNear
                                                                                             far:_renderer->getFarClippingPlane()]);
-    
+    VROMatrix4f eyeView = eyeFromHeadMatrix.multiply(_headRotation.invert());
     VROEyeType eyeType = (eye == kGVRLeftEye ? VROEyeType::Left : VROEyeType::Right);
-    _renderer->renderEye(eyeType, eyeMatrix, projectionMatrix, viewport, _driver);
+    _renderer->renderEye2(eyeType, eyeView, projectionMatrix, viewport, _driver);
+    _renderer->renderHUD(eyeType, eyeFromHeadMatrix, _driver);
 }
 
 void VROSceneRendererCardboardOpenGL::endFrame() {

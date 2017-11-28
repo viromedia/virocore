@@ -128,7 +128,7 @@ void VROSceneRendererCardboardMetal::renderEye(GVREye eye, GVRHeadTransform *hea
     [renderEncoder setScissorRect:viewport.toMetalScissor()];
     
     VROEyeType eyeType = (eye == kGVRLeftEye ? VROEyeType::Left : VROEyeType::Right);
-    _renderer->renderEye(eyeType, eyeMatrix, projectionMatrix, *_driver.get());
+    _renderer->renderEye2(eyeType, eyeMatrix, projectionMatrix, *_driver.get());
 }
 
 void VROSceneRendererCardboardMetal::endFrame() {

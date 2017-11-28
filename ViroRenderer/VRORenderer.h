@@ -145,11 +145,15 @@ public:
                       VROMatrix4f headRotation, VROMatrix4f projection, std::shared_ptr<VRODriver> driver);
     
     /*
-     Render the designated eye.
+     Render the designated eye. Note how the eyeView matrix differs from headRotation in
+     prepareFrame: eyeView is typically the *inverse* of the headRotation, translated by the
+     interpupillary distance for the given eye.
      */
-    void renderEye(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, VROMatrix4f projection,
-                   VROViewport viewport, std::shared_ptr<VRODriver> driver);
-     
+    void renderEye2(VROEyeType eye, VROMatrix4f eyeView, VROMatrix4f projection,
+                    VROViewport viewport, std::shared_ptr<VRODriver> driver);
+
+    void renderHUD(VROEyeType eye, VROMatrix4f eyeFromHeadMatrix, std::shared_ptr<VRODriver> driver);
+
     /*
      Performs end-frame cleanup.
      */
