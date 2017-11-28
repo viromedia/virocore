@@ -14,7 +14,7 @@
         android:text="Box Test Memory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
+        android:layout_below="@+id/sphere_button"
         android:layout_alignParentStart="true"
         android:layout_marginStart="41dp"
         android:layout_marginTop="15dp"
@@ -97,12 +97,12 @@
         android:id="@+id/arscene_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/arscene_button"
+        android:layout_above="@+id/image_test_button"
         android:layout_toEndOf="@+id/particle_button"
         android:text="ARScene Test" />
 
     <Button
-        android:id="@+id/arscene_button"
+        android:id="@+id/image_test_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/anim_button"

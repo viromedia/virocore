@@ -21,6 +21,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.viro.core.ARAnchor;
+import com.viro.core.ARPointCloud;
 import com.viro.core.ClickListener;
 import com.viro.core.internal.ARDeclarativeNode;
 import com.viro.core.internal.ARDeclarativePlane;
@@ -1105,8 +1106,13 @@ public class ViroActivity extends AppCompatActivity implements RendererStartList
         }
 
         @Override
-        public void onCameraARHitTest(final int source, final ARHitTestResult[] results) {
-            Log.e(TAG, delegateTag + " On Camera AR Hit Test");
+        public void onCameraARHitTest(ARHitTestResult[] results) {
+            Log.e(TAG, delegateTag + " On CameraARHitTest");
+        }
+
+        @Override
+        public void onARPointCloudUpdate(ARPointCloud pointCloud) {
+            Log.e(TAG, delegateTag + " On ARPointCloudUpdate");
         }
     }
 }

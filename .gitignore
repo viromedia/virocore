@@ -101,3 +101,8 @@ hs_err_pid*
 /captures
 **/*.iml
 *.class
+
+
+# Fastlane
+android/fastlane/report.xml
+android/fastlane/README.md

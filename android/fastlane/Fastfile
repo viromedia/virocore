@@ -20,27 +20,41 @@ platform :android do
     # ENV["SLACK_URL"] = "https://hooks.slack.com/services/..."
   end
 
-  desc "Runs all the tests"
-  lane :test do
-    gradle(task: "test")
+  desc "Build react library version ViroRenderer - viro_renderer-release.aar"
+  desc "And copy it to ../../../react-viro/android/viro_renderer/"
+  lane :release_renderer_react_lib do
+    gradle(task: "assembleViro_reactRelease")
   end
 
-  desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do
+
+  desc "Build all artifacts for rendererTest (ovr, gvr, arcore, scene)"
+  lane :release_renderer_rendererTest do
+    gradle(task: ":rendererTest:assembleRelease")
+  end
+  
+  desc "Build all artifacts for rendererTest (ovr, gvr, arcore, scene)"
+  lane :release_renderer_rendererTest do
+    gradle(task: ":rendererTest:assembleRelease")
+  end
+
+
+  desc "Build all artifacts for releaseTest (ovr, gvr, arcore, scene)"
+  lane :release_renderer_releaseTest do
+    gradle(task: ":releaseTest:assembleRelease")
+  end
+  
+
+  desc "Build all artifacts for memoryLeakTest (ovr, gvr, arcore, scene)"
+  lane :release_renderer_rendererTest do
+    gradle(task: ":rendererTest:assembleRelease")
+  end
+  
+  
+  desc "Build all artifacts for ViroRenderer (ovr, gvr, arcore, scene)"
+  lane :release_renderer do
     gradle(task: "assembleRelease")
-    crashlytics
-
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
   end
 
-  desc "Deploy a new version to the Google Play"
-  lane :deploy do
-    gradle(task: "assembleRelease")
-    supply
-  end
-
-  # You can define as many lanes as you want
 
   after_all do |lane|
     # This block is called, only if the executed lane was successful
