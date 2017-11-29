@@ -23,7 +23,7 @@ platform :android do
   desc "Build react library version ViroRenderer - viro_renderer-release.aar"
   desc "And copy it to ../../../react-viro/android/viro_renderer/"
   lane :release_renderer_react_lib do
-    gradle(task: "assembleViro_reactRelease")
+    gradle(project_dir: "../", task: "assembleViro_reactRelease")
   end
 
 
@@ -31,12 +31,6 @@ platform :android do
   lane :release_renderer_rendererTest do
     gradle(task: ":rendererTest:assembleRelease")
   end
-  
-  desc "Build all artifacts for rendererTest (ovr, gvr, arcore, scene)"
-  lane :release_renderer_rendererTest do
-    gradle(task: ":rendererTest:assembleRelease")
-  end
-
 
   desc "Build all artifacts for releaseTest (ovr, gvr, arcore, scene)"
   lane :release_renderer_releaseTest do
@@ -45,8 +39,8 @@ platform :android do
   
 
   desc "Build all artifacts for memoryLeakTest (ovr, gvr, arcore, scene)"
-  lane :release_renderer_rendererTest do
-    gradle(task: ":rendererTest:assembleRelease")
+  lane :release_renderer_memoryTest do
+    gradle(task: ":memoryLeakTest:assembleRelease")
   end
   
   
