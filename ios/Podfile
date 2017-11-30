@@ -1,4 +1,5 @@
-pod 'GVRSDK', '1.0.0'
+pod 'GVRKit'
+pod 'GVRAudioSDK'
 source 'https://github.com/CocoaPods/Specs.git'
 pod 'AWSDynamoDB'
 

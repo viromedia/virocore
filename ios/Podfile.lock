@@ -1,18 +1,32 @@
 PODS:
-  - AWSCore (2.4.9)
-  - AWSDynamoDB (2.4.9):
-    - AWSCore (= 2.4.9)
-  - GVRSDK (1.0.0)
+  - AWSCore (2.6.6)
+  - AWSDynamoDB (2.6.6):
+    - AWSCore (= 2.6.6)
+  - GoogleToolboxForMac/Defines (2.1.0)
+  - GoogleToolboxForMac/Logger (2.1.0):
+    - GoogleToolboxForMac/Defines (= 2.1.0)
+  - GTMSessionFetcher/Core (1.1.6)
+  - GVRAudioSDK (1.100.0)
+  - GVRKit (1.100.0):
+    - GVRSDK (= 1.100.0)
+  - GVRSDK (1.100.0):
+    - GoogleToolboxForMac/Logger (= 2.1.0)
+    - GTMSessionFetcher/Core (= 1.1.6)
 
 DEPENDENCIES:
   - AWSDynamoDB
-  - GVRSDK (= 1.0.0)
+  - GVRAudioSDK
+  - GVRKit
 
 SPEC CHECKSUMS:
-  AWSCore: 175208358b95492e0ebe0337df2ab415300bddac
-  AWSDynamoDB: ba9d90dd6d632197bf24baad824fa918568ba8e6
-  GVRSDK: 628f22b46ee93c96b1fc0f799a88e0755038533d
+  AWSCore: 64619e45b47678afab53ca0f9b4fa380ebee6f0b
+  AWSDynamoDB: 02a1de576c49d3dc20c6ca6f11e692150e4a726a
+  GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
+  GTMSessionFetcher: 6aacd0ab48ddf0c3633ab2642d792abfcad1b08a
+  GVRAudioSDK: a2770019727121d557dd8f76d39e8cb59b7c3213
+  GVRKit: 8890bcc58cd340a41227a31454fda93403a4acf3
+  GVRSDK: 403614f923a700994ffdac0c7697543e8408a631
 
-PODFILE CHECKSUM: ee3de024ad6a82865435fbfeb4e23f9098199220
+PODFILE CHECKSUM: e053c3aeac2f0515cda930cac568eb2b48cac786
 
-COCOAPODS: 1.0.1
+COCOAPODS: 1.3.1
