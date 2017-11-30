@@ -19,7 +19,6 @@
 
 static const float kTriggerAnimationDuration = 0.4;
 static const float kTriggerAnimationInnerCircleThicknessMultiple = 3;
-static const float kTriggerAnimationWhiteCircleMultiple = 4;
 static const float kCircleSegments = 64;
 static const float kFuseRadiusMultiplier = 3;
 
@@ -114,8 +113,6 @@ void VROReticle::trigger() {
             thickness = VROMathInterpolate(t, 0.5, 1.0, _endThickness, _thickness);
             whiteAlpha = VROMathInterpolate(t, 0.5, 1.0, 1.0, 0);
         }
-        // float whiteRadius = VROMathInterpolate(t, 0, 1.0, _size, _size * kTriggerAnimationWhiteCircleMultiple);
-        // TODO Draw a filled circle with whiteRadius and whiteAlpha
         _reticleLine->setThickness(thickness);
         _fuseBackgroundLine->setThickness(thickness);
         if (_fuseLine){
@@ -183,30 +180,26 @@ void VROReticle::renderEye(VROEyeType eye, const VRORenderContext &renderContext
     if (kDebugSortOrder) {
         pinfo("Updating reticle key");
     }
-    
-    VROMatrix4f parentTransform;
-    if (_isPointerFixed) {
-        parentTransform = renderContext.getHUDViewMatrix();
-    }
 
     if (_isFusing) {
-        renderNode(_fuseBackgroundNode, parentTransform, renderContext, driver);
-        renderNode(_fuseNode, parentTransform, renderContext, driver);
-        renderNode(_fuseTriggeredNode, parentTransform, renderContext, driver);
+        renderNode(_fuseBackgroundNode, renderContext, driver);
+        renderNode(_fuseNode, renderContext, driver);
+        renderNode(_fuseTriggeredNode, renderContext, driver);
     }
     else {
-        renderNode(_reticleBaseNode, parentTransform, renderContext, driver);
+        renderNode(_reticleBaseNode, renderContext, driver);
     }
 }
 
-void VROReticle::renderNode(std::shared_ptr<VRONode> node, VROMatrix4f parentTransform,
-                            const VRORenderContext &renderContext, std::shared_ptr<VRODriver> &driver){
+void VROReticle::renderNode(std::shared_ptr<VRONode> node, const VRORenderContext &renderContext,
+                            std::shared_ptr<VRODriver> &driver) {
     node->updateVisibility(renderContext);
 
     VRORenderParameters renderParams;
+    VROMatrix4f identity;
     std::shared_ptr<VRORenderMetadata> metadata = std::make_shared<VRORenderMetadata>();
-    node->computeTransforms(parentTransform, {});
-    node->applyConstraints(renderContext, parentTransform, false);
+    node->computeTransforms(identity, {});
+    node->applyConstraints(renderContext, identity, false);
     node->updateSortKeys(0, renderParams, metadata, renderContext, driver);
     const std::shared_ptr<VROGeometry> &geometry = node->getGeometry();
     if (!geometry) {

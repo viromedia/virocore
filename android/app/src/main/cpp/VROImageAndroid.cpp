@@ -8,6 +8,7 @@
 
 #include "VROImageAndroid.h"
 #include "VROPlatformUtil.h"
+#include <stdlib.h>
 
 VROImageAndroid::VROImageAndroid(std::string asset, VROTextureInternalFormat internalFormat) {
     jobject jbitmap = VROPlatformLoadBitmapFromAsset(asset, internalFormat);

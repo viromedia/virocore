@@ -65,10 +65,11 @@ void VRODebugHUD::renderEye(VROEyeType eye, const VRORenderContext &context, std
         pinfo("Updating Debug HUD");
     }
     
+    VROMatrix4f identity;
     VRORenderParameters renderParams;
     std::shared_ptr<VRORenderMetadata> metadata = std::make_shared<VRORenderMetadata>();
-    _node->computeTransforms(context.getHUDViewMatrix(), {});
-    _node->applyConstraints(context, context.getHUDViewMatrix(), false);
+    _node->computeTransforms(identity, {});
+    _node->applyConstraints(context, identity, false);
     _node->updateSortKeys(0, renderParams, metadata, context, driver);
     
     for (int i = 0; i < _node->getGeometry()->getGeometryElements().size(); i++) {

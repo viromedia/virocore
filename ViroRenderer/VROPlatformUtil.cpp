@@ -771,7 +771,7 @@ void Java_com_viro_core_internal_PlatformUtil_runTask(JNIEnv *env, jclass clazz,
 void *VROPlatformLoadFile(std::string filename, int *outLength) {
     FILE *fl = fopen(filename.c_str(), "r");
     fseek(fl, 0, SEEK_END);
-    *outLength = ftell(fl);
+    *outLength = (int) ftell(fl);
     
     char *ret = (char *)malloc(*outLength);
     fseek(fl, 0, SEEK_SET);

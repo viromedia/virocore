@@ -331,7 +331,7 @@ void VROInputControllerAR::notifyARPointCloud() {
         if (delegate && frame && delegate->isEventEnabled(VROEventDelegate::EventAction::OnARPointCloudUpdate)) {
             std::shared_ptr<VROARPointCloud> pointCloud = frame->getPointCloud();
 
-            int pointCloudSize = pointCloud->getPoints().size();
+            int pointCloudSize = (int)pointCloud->getPoints().size();
             // check if the last point cloud size is the same as the current one. That's a good
             // indication that the points didn't change (doing a simple pointer comparison
             // doesn't work on Android).

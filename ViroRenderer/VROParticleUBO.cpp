@@ -126,7 +126,7 @@ int VROParticleUBO::bindDrawData(int currentDrawCallIndex) {
     int start = currentDrawCallIndex * kMaxParticlesPerUBO;
     int end = (currentDrawCallIndex + 1) * kMaxParticlesPerUBO;
     if (_lastKnownParticles.size() < end ) {
-        end = _lastKnownParticles.size() -1 ;
+        end = (int) _lastKnownParticles.size() - 1;
     }
 
     // Parse / serialize the data into the uniform buffer object.
