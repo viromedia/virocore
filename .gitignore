@@ -106,3 +106,6 @@ hs_err_pid*
 # Fastlane
 android/fastlane/report.xml
 android/fastlane/README.md
+
+#Pods
+ios/Pod*
