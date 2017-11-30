@@ -116,7 +116,7 @@ void VROInputControllerDaydream::updateOrientation(const VROCamera &camera) {
     gvr_quatf gvr_rotation = _controller_state.GetOrientation();
     VROQuaternion rotation = VROQuaternion(gvr_rotation.qx, gvr_rotation.qy, gvr_rotation.qz, gvr_rotation.qw);
     VROVector3f forwardVector = getDaydreamForwardVector(rotation);
-    VROVector3f controllerPosition = getDaydreamControllerPosition(rotation, forwardVector) + camera.getPosition();
+    VROVector3f controllerPosition = getDaydreamControllerPosition(rotation, forwardVector, camera.getPosition());
 
     // Project the controller's forward vector onto the scene's background.
     VROVector3f backgroundHitLocation = controllerPosition + (forwardVector * kSceneBackgroundDistance);
@@ -138,7 +138,9 @@ VROVector3f VROInputControllerDaydream::getDaydreamForwardVector(const VROQuater
     return controllerForward.rotateAboutAxis(leftward, {0,0,0}, 0.261799);
 }
 
-VROVector3f VROInputControllerDaydream::getDaydreamControllerPosition(const VROQuaternion rotation, const VROVector3f forwardVector) {
+VROVector3f VROInputControllerDaydream::getDaydreamControllerPosition(const VROQuaternion rotation,
+                                                                      const VROVector3f forwardVector,
+                                                                        const VROVector3f cameraPos) {
     // Update the handedness of the controller if it had been changed
     if (_gvrContext){
         const gvr_user_prefs* prefs = gvr_get_user_prefs(_gvrContext);
@@ -149,7 +151,7 @@ VROVector3f VROInputControllerDaydream::getDaydreamControllerPosition(const VROQ
     // Apply the rotation to the ARM model within the presenter.
     VROVector3f origin;
     _daydreamPresenter->updateLastKnownForward(forwardVector);
-    _daydreamPresenter->setElbowRotation(rotation.toEuler());
+    _daydreamPresenter->updateElbowOrientation(rotation.toEuler(), cameraPos);
 
     // Grab the calculated pointerNode's position from the ARM Model. If the controller does not
     // have pointer node (laser-less), use the controller's body node position.

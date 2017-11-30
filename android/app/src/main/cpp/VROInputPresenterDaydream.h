@@ -136,7 +136,8 @@ public:
         }
 
         float flip = isRightHanded ? 1 : -1;
-        _elbowNode->setPosition(VROVector3f(_elbowNodePosition.x * flip,  _elbowNodePosition.y,  _elbowNodePosition.z));
+        VROVector3f computedPosition = _elbowNodePosition + _elbowToCameraOffset;
+        _elbowNode->setPosition(VROVector3f(computedPosition.x * flip,  computedPosition.y,  computedPosition.z));
         _rightHanded = isRightHanded;
     }
 
@@ -179,7 +180,9 @@ public:
         }
     }
 
-    void setElbowRotation(VROVector3f controllerRotation) {
+    void updateElbowOrientation(VROVector3f controllerRotation, VROVector3f cameraPosition) {
+        _elbowToCameraOffset = cameraPosition;
+        _elbowNode->setPosition(_elbowNodePosition + _elbowToCameraOffset);
         _elbowNode->setRotation(controllerRotation);
     }
 
@@ -206,6 +209,8 @@ public:
 
 private:
     const VROVector3f _elbowNodePosition = {0.29,  -0.78,  .18};
+    VROVector3f _elbowToCameraOffset;
+
     bool _rightHanded;
     const float _foreArmLength = 2;
     VROVector3f _forwardVector;
