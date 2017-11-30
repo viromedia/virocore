@@ -1,5 +1,5 @@
 //
-// Copyright 2010-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License").
 // You may not use this file except in compliance with the License.
@@ -39,6 +39,15 @@ FOUNDATION_EXPORT NSString *const AWSSignatureV4Terminator;
 
 - (instancetype)initWithCredentialsProvider:(id<AWSCredentialsProvider>)credentialsProvider
                                    endpoint:(AWSEndpoint *)endpoint;
+
++ (AWSTask<NSURL *> *)generateQueryStringForSignatureV4WithCredentialProvider:(id<AWSCredentialsProvider>)credentialsProvider
+                                                                   httpMethod:(AWSHTTPMethod)httpMethod
+                                                               expireDuration:(int32_t)expireDuration
+                                                                     endpoint:(AWSEndpoint *)endpoint
+                                                                      keyPath:(NSString *)keyPath
+                                                               requestHeaders:(NSDictionary<NSString *, NSString *> *)requestHeaders
+                                                            requestParameters:(NSDictionary<NSString *, id> *)requestParameters
+                                                                     signBody:(BOOL)signBody;
 
 + (NSString *)getCanonicalizedRequest:(NSString *)method
                                  path:(NSString *)path

@@ -1,5 +1,5 @@
 //
-// Copyright 2010-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License").
 // You may not use this file except in compliance with the License.
@@ -64,6 +64,7 @@ typedef NS_ENUM(NSInteger, AWSLogLevel) {
 
  @note We recommend setting the log level to `None` before publishing to the Apple App Store.
  */
+__attribute__((deprecated("use AWSDDLog instead")))
 @interface AWSLogger : NSObject
 
 /**

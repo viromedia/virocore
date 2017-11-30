@@ -1,5 +1,5 @@
 //
-// Copyright 2010-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License").
 // You may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
 // express or implied. See the License for the specific language governing
 // permissions and limitations under the License.
 //
-
 #import "AWSCognitoIdentity+Fabric.h"
 
 @implementation AWSCognitoIdentity (Fabric)
@@ -52,14 +51,14 @@
                                                                                      credentialsProvider:credentialsProvider];
                 [configuration addUserAgentProductToken:@"fabric"];
                 AWSServiceManager.defaultServiceManager.defaultServiceConfiguration = configuration;
-                AWSLogInfo(@"The default Cognito credentials provider and service configuration were successfully initialized.");
+                AWSDDLogInfo(@"The default Cognito credentials provider and service configuration were successfully initialized.");
             } else {
                 // The configuration values from info.plist seem invalid.
-                AWSLogWarn(@"Could not find valid 'AWSDefaultRegionType', 'AWSCognitoRegionType', and 'AWSCognitoIdentityPoolId' values in info.plist. Unable to set the default Cognito credentials provider and service configuration. Please follow the instructions on this website and manually set up the AWS Mobile SDK for iOS. http://docs.aws.amazon.com/mobile/sdkforios/developerguide/setup.html");
+                AWSDDLogWarn(@"Could not find valid 'AWSDefaultRegionType', 'AWSCognitoRegionType', and 'AWSCognitoIdentityPoolId' values in info.plist. Unable to set the default Cognito credentials provider and service configuration. Please follow the instructions on this website and manually set up the AWS Mobile SDK for iOS. http://docs.aws.amazon.com/mobile/sdkforios/developerguide/setup.html");
             }
         });
     } else {
-        AWSLogError(@"Fabric is not available.");
+        AWSDDLogError(@"Fabric is not available.");
     }
 }
 

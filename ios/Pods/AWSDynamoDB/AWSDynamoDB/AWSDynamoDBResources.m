@@ -1,5 +1,5 @@
 //
-// Copyright 2010-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License").
 // You may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 //
 
 #import "AWSDynamoDBResources.h"
-#import <AWSCore/AWSLogging.h>
+#import <AWSCore/AWSCocoaLumberjack.h>
 
 @interface AWSDynamoDBResources ()
 
@@ -48,7 +48,7 @@
                                                                   error:&error];
         if (_definitionDictionary == nil) {
             if (error) {
-                AWSLogError(@"Failed to parse JSON service definition: %@",error);
+                AWSDDLogError(@"Failed to parse JSON service definition: %@",error);
             }
         }
     }

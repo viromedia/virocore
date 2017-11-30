@@ -1,5 +1,5 @@
 //
-// Copyright 2010-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License").
 // You may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@
 #import <UIKit/UIKit.h>
 #import "AWSSynchronizedMutableDictionary.h"
 #import "AWSURLResponseSerialization.h"
-#import "AWSLogging.h"
+#import "AWSCocoaLumberjack.h"
 #import "AWSCategory.h"
 
-NSString *const AWSiOSSDKVersion = @"2.4.9";
+NSString *const AWSiOSSDKVersion = @"2.6.6";
 NSString *const AWSServiceErrorDomain = @"com.amazonaws.AWSServiceErrorDomain";
 
 static NSString *const AWSServiceConfigurationUnknown = @"Unknown";
@@ -218,9 +218,11 @@ static NSMutableArray *_globalUserAgentPrefixes = nil;
 #pragma mark - AWSEndpoint
 
 static NSString *const AWSRegionNameUSEast1 = @"us-east-1";
+static NSString *const AWSRegionNameUSEast2 = @"us-east-2";
 static NSString *const AWSRegionNameUSWest2 = @"us-west-2";
 static NSString *const AWSRegionNameUSWest1 = @"us-west-1";
 static NSString *const AWSRegionNameEUWest1 = @"eu-west-1";
+static NSString *const AWSRegionNameEUWest2 = @"eu-west-2";
 static NSString *const AWSRegionNameEUCentral1 = @"eu-central-1";
 static NSString *const AWSRegionNameAPSoutheast1 = @"ap-southeast-1";
 static NSString *const AWSRegionNameAPNortheast1 = @"ap-northeast-1";
@@ -229,6 +231,7 @@ static NSString *const AWSRegionNameAPSoutheast2 = @"ap-southeast-2";
 static NSString *const AWSRegionNameAPSouth1 = @"ap-south-1";
 static NSString *const AWSRegionNameSAEast1 = @"sa-east-1";
 static NSString *const AWSRegionNameCNNorth1 = @"cn-north-1";
+static NSString *const AWSRegionNameCACentral1 = @"ca-central-1";
 static NSString *const AWSRegionNameUSGovWest1 = @"us-gov-west-1";
 
 static NSString *const AWSServiceNameAPIGateway = @"execute-api";
@@ -244,9 +247,15 @@ static NSString *const AWSServiceNameIoT = @"execute-api";
 static NSString *const AWSServiceNameIoTData = @"iotdata";
 static NSString *const AWSServiceNameFirehose = @"firehose";
 static NSString *const AWSServiceNameKinesis = @"kinesis";
+static NSString *const AWSServiceNameKMS = @"kms";
 static NSString *const AWSServiceNameLambda = @"lambda";
+static NSString *const AWSServiceNameLexRuntime = @"runtime.lex";
+static NSString *const AWSServiceNameLogs = @"logs";
 static NSString *const AWSServiceNameMachineLearning = @"machinelearning";
 static NSString *const AWSServiceNameMobileAnalytics = @"mobileanalytics";
+static NSString *const AWSServiceNamePolly = @"polly";
+static NSString *const AWSServiceNameMobileTargeting = @"mobiletargeting";
+static NSString *const AWSServiceNameRekognition = @"rekognition";
 static NSString *const AWSServiceNameS3 = @"s3";
 static NSString *const AWSServiceNameSES = @"email";
 static NSString *const AWSServiceNameSimpleDB = @"sdb";
@@ -259,7 +268,6 @@ static NSString *const AWSServiceNameSTS = @"sts";
 - (void) setRegion:(AWSRegionType)regionType service:(AWSServiceType)serviceType;
 
 @end
-
 
 @implementation AWSEndpoint
 
@@ -300,12 +308,28 @@ static NSString *const AWSServiceNameSTS = @"sts";
 }
 
 - (instancetype)initWithRegion:(AWSRegionType)regionType
+                   serviceName:(NSString *)serviceName
+                           URL:(NSURL *)URL {
+    if (self = [super init]) {
+        _regionType = regionType;
+        _serviceType = AWSServiceUnknown;
+        _useUnsafeURL = [[URL scheme] isEqualToString:@"http"];
+        _regionName = [self regionNameFromType:regionType];
+        _serviceName = serviceName;
+        _URL = URL;
+        _hostName = [_URL host];
+    }
+    
+    return self;
+}
+
+- (instancetype)initWithRegion:(AWSRegionType)regionType
                        service:(AWSServiceType)serviceType
                            URL:(NSURL *)URL {
     if (self = [super init]) {
         _regionType = regionType;
         _serviceType = serviceType;
-        _useUnsafeURL = NO;
+        _useUnsafeURL = [[URL scheme] isEqualToString:@"http"];
         _regionName = [self regionNameFromType:regionType];
         _serviceName = [self serviceNameFromType:serviceType];
         _URL = URL;
@@ -343,12 +367,16 @@ static NSString *const AWSServiceNameSTS = @"sts";
     switch (regionType) {
         case AWSRegionUSEast1:
             return AWSRegionNameUSEast1;
+        case AWSRegionUSEast2:
+            return AWSRegionNameUSEast2;
         case AWSRegionUSWest2:
             return AWSRegionNameUSWest2;
         case AWSRegionUSWest1:
             return AWSRegionNameUSWest1;
         case AWSRegionEUWest1:
             return AWSRegionNameEUWest1;
+        case AWSRegionEUWest2:
+            return AWSRegionNameEUWest2;
         case AWSRegionEUCentral1:
             return AWSRegionNameEUCentral1;
         case AWSRegionAPSoutheast1:
@@ -365,6 +393,8 @@ static NSString *const AWSServiceNameSTS = @"sts";
             return AWSRegionNameSAEast1;
         case AWSRegionCNNorth1:
             return AWSRegionNameCNNorth1;
+        case AWSRegionCACentral1:
+            return AWSRegionNameCACentral1;
         case AWSRegionUSGovWest1:
             return AWSRegionNameUSGovWest1;
         default:
@@ -400,12 +430,24 @@ static NSString *const AWSServiceNameSTS = @"sts";
             return AWSServiceNameFirehose;
         case AWSServiceKinesis:
             return AWSServiceNameKinesis;
+        case AWSServiceKMS:
+            return AWSServiceNameKMS;
         case AWSServiceLambda:
             return AWSServiceNameLambda;
+        case AWSServiceLexRuntime:
+            return AWSServiceNameLexRuntime;
+        case AWSServiceLogs:
+            return AWSServiceNameLogs;
         case AWSServiceMachineLearning:
             return AWSServiceNameMachineLearning;
         case AWSServiceMobileAnalytics:
             return AWSServiceNameMobileAnalytics;
+        case AWSServicePolly:
+            return AWSServiceNamePolly;
+        case AWSServiceMobileTargeting:
+            return AWSServiceNameMobileTargeting;
+        case AWSServiceRekognition:
+            return AWSServiceNameRekognition;
         case AWSServiceS3:
             return AWSServiceNameS3;
         case AWSServiceSES:
@@ -467,6 +509,8 @@ static NSString *const AWSServiceNameSTS = @"sts";
         URL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://iot%@%@.amazonaws.com", HTTPType, separator, regionName]];
     } else if (serviceType == AWSServiceIoTData) {
         URL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://data%@iot%@%@.amazonaws.com", HTTPType, separator, separator, regionName]];
+    } else if (serviceType == AWSServiceMobileTargeting) {
+        URL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://pinpoint%@%@.amazonaws.com", HTTPType, separator, regionName]];
     } else {
         URL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@%@%@.amazonaws.com", HTTPType, serviceName, separator, regionName]];
     }

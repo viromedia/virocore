@@ -1,5 +1,5 @@
 //
-// Copyright 2010-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License").
 // You may not use this file except in compliance with the License.
@@ -27,7 +27,8 @@ typedef NS_ENUM(NSInteger, AWSNetworkingRetryType) {
     AWSNetworkingRetryTypeShouldNotRetry,
     AWSNetworkingRetryTypeShouldRetry,
     AWSNetworkingRetryTypeShouldRefreshCredentialsAndRetry,
-    AWSNetworkingRetryTypeShouldCorrectClockSkewAndRetry
+    AWSNetworkingRetryTypeShouldCorrectClockSkewAndRetry,
+    AWSNetworkingRetryTypeResetStreamAndRetry
 };
 
 @class AWSNetworkingConfiguration;
@@ -117,14 +118,19 @@ typedef NS_ENUM(NSInteger, AWSHTTPMethod) {
 @property (nonatomic, assign) uint32_t maxRetryCount;
 
 - (AWSNetworkingRetryType)shouldRetry:(uint32_t)currentRetryCount
-                            response:(NSHTTPURLResponse *)response
-                                data:(NSData *)data
-                               error:(NSError *)error;
+                      originalRequest:(AWSNetworkingRequest *)originalRequest
+                             response:(NSHTTPURLResponse *)response
+                                 data:(NSData *)data
+                                error:(NSError *)error;
 
 - (NSTimeInterval)timeIntervalForRetry:(uint32_t)currentRetryCount
                               response:(NSHTTPURLResponse *)response
                                   data:(NSData *)data
                                  error:(NSError *)error;
+
+@optional
+
+- (NSDictionary *)resetParameters:(NSDictionary *)parameters;
 
 @end
 

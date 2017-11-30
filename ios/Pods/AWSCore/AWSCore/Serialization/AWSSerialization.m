@@ -1,5 +1,5 @@
 //
-// Copyright 2010-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License").
 // You may not use this file except in compliance with the License.
@@ -12,11 +12,10 @@
 // express or implied. See the License for the specific language governing
 // permissions and limitations under the License.
 //
-
 #import "AWSSerialization.h"
 #import "AWSXMLWriter.h"
 #import "AWSCategory.h"
-#import "AWSLogging.h"
+#import "AWSCocoaLumberjack.h"
 #import "AWSXMLDictionary.h"
 
 NSString *const AWSXMLBuilderErrorDomain = @"com.amazonaws.AWSXMLBuilderErrorDomain";
@@ -615,7 +614,7 @@ NSString *const AWSJSONParserErrorDomain = @"com.amazonaws.AWSJSONParserErrorDom
                     ![xmlName isEqualToString:@"requestId"] &&
                     ![xmlName isEqualToString:@"ResponseMetadata"] &&
                     ![xmlName isEqualToString:@"__text"]) {
-                    AWSLogWarn(@"Response element ignored: no rule for %@ - %@", xmlName, [value description]);
+                    AWSDDLogWarn(@"Response element ignored: no rule for %@ - %@", xmlName, [value description]);
                 }
 
                 /*[self failWithCode:AWSXMLParserXMLNameNotFoundInDefinition
@@ -862,7 +861,7 @@ NSString *const AWSJSONParserErrorDomain = @"com.amazonaws.AWSJSONParserErrorDom
     //add ActionName
     NSString *urlEncodedActionName = [actionName aws_stringWithURLEncoding];
     if (!urlEncodedActionName) {
-        AWSLogError(@"actionName is nil!");
+        AWSDDLogError(@"actionName is nil!");
         [self failWithCode:AWSQueryParamBuilderUndefinedActionRule description:@"actionName is nil" error:error];
         return nil;
     }
@@ -876,11 +875,11 @@ NSString *const AWSJSONParserErrorDomain = @"com.amazonaws.AWSJSONParserErrorDom
         if (urlEncodedAPIVersion) {
             [formattedParams setObject:urlEncodedAPIVersion forKey:@"Version"];
         } else {
-            AWSLogError(@"can not encode APIVersion String:%@",urlEncodedAPIVersion);
+            AWSDDLogError(@"can not encode APIVersion String:%@",urlEncodedAPIVersion);
         }
 
     } else {
-        AWSLogError(@"can not find apiVersion keyword in definition file!");
+        AWSDDLogError(@"can not find apiVersion keyword in definition file!");
     }
 
     if ([params count] == 0) {
@@ -1086,7 +1085,7 @@ NSString *const AWSJSONParserErrorDomain = @"com.amazonaws.AWSJSONParserErrorDom
     //add ActionName
     NSString *urlEncodedActionName = [actionName aws_stringWithURLEncoding];
     if (!urlEncodedActionName) {
-        AWSLogError(@"actionName is nil!");
+        AWSDDLogError(@"actionName is nil!");
         [self failWithCode:AWSEC2ParamBuilderUndefinedActionRule description:@"actionName is nil" error:error];
         return nil;
     }
@@ -1100,11 +1099,11 @@ NSString *const AWSJSONParserErrorDomain = @"com.amazonaws.AWSJSONParserErrorDom
         if (urlEncodedAPIVersion) {
             [formattedParams setObject:urlEncodedAPIVersion forKey:@"Version"];
         } else {
-            AWSLogError(@"can not encode APIVersion String:%@",urlEncodedAPIVersion);
+            AWSDDLogError(@"can not encode APIVersion String:%@",urlEncodedAPIVersion);
         }
 
     } else {
-        AWSLogError(@"can not find apiVersion keyword in definition file!");
+        AWSDDLogError(@"can not find apiVersion keyword in definition file!");
     }
 
     if ([params count] == 0) {
@@ -1316,7 +1315,7 @@ NSString *const AWSJSONParserErrorDomain = @"com.amazonaws.AWSJSONParserErrorDom
     NSDictionary *definitionRules = [serviceDefinitionRule objectForKey:@"shapes"];
 
     if (definitionRules == (id)[NSNull null] ||  [definitionRules count] == 0) {
-        AWSLogError(@"JSON definition File is empty or can not be found, will return un-serialized dictionary");
+        AWSDDLogError(@"JSON definition File is empty or can not be found, will return un-serialized dictionary");
         return params;
     }
 
@@ -1521,7 +1520,7 @@ NSString *const AWSJSONParserErrorDomain = @"com.amazonaws.AWSJSONParserErrorDom
         definitionRules = @{};
     }
     if ([definitionRules count] == 0) {
-        AWSLogError(@"JSON definition File is empty or can not be found, will return un-serialized dictionary");
+        AWSDDLogError(@"JSON definition File is empty or can not be found, will return un-serialized dictionary");
         return result;
     }
 
@@ -1543,9 +1542,9 @@ NSString *const AWSJSONParserErrorDomain = @"com.amazonaws.AWSJSONParserErrorDom
         // Check if we should apply additional serialization; for streaming
         // types or the 'JsonDocument' shape, no additional serialization will
         // be applied and the data will be returned as-is in the response.
-	// The 'JsonDocument' shape is used by the AWSIoT service.
+        // The 'JsonDocument' shape is used by the AWSIoT service.
         //
-        if ((rules[@"members"][isPayloadData][@"streaming"]) || ([shapeName isEqual:@"JsonDocument"])) {
+        if ((rules[@"members"][isPayloadData][@"streaming"]) || ([shapeName isEqual:@"JsonDocument"]) || ([shapeName isEqual:@"BlobStream"])) {
             parsedData[isPayloadData] = data;
             if (error) *error = nil;
             return parsedData;

@@ -1,5 +1,5 @@
 //
-// Copyright 2010-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License").
 // You may not use this file except in compliance with the License.
@@ -107,6 +107,27 @@ typedef NS_ENUM(NSInteger, AWSCognitoCredentialsProviderErrorType) {
  */
 - (instancetype)initWithAccessKey:(NSString *)accessKey
                         secretKey:(NSString *)secretKey;
+
+@end
+
+/**
+ @warning This credentials provider is intended only for testing purposes.
+ We strongly discourage embedding AWS credentials in your production apps because they can be easily extracted and abused. Consider using `AWSCognitoCredentialsProvider`.
+ Simple session credentials with keys and session token.
+ */
+@interface AWSBasicSessionCredentialsProvider: NSObject <AWSCredentialsProvider>
+
+/**
+ Instantiates a static credentials provider.
+ 
+ @param accessKey An AWS Access key.
+ @param secretKey An AWS Secret key.
+ @param sessionToken The session token for this session.
+ @return An AWS credentials object.
+ */
+- (instancetype)initWithAccessKey:(NSString *)accessKey
+                        secretKey:(NSString *)secretKey
+                     sessionToken:(NSString *)sessionToken;
 
 @end
 
@@ -236,23 +257,6 @@ typedef NS_ENUM(NSInteger, AWSCognitoCredentialsProviderErrorType) {
 - (void)clearCredentials;
 
 - (void)setIdentityProviderManagerOnce:(id<AWSIdentityProviderManager>)identityProviderManager;
-
-// === Deprecated property and methods ===
-
-@property (nonatomic, strong, nullable) NSDictionary *logins __attribute__ ((deprecated("Use 'AWSIdentityProviderManager' to provide a valid logins dictionary to the credentials provider.")));
-
-- (instancetype)initWithRegionType:(AWSRegionType)regionType
-                        identityId:(NSString *)identityId
-                    identityPoolId:(NSString *)identityPoolId
-                            logins:(nullable NSDictionary *)logins __attribute__ ((deprecated("Use 'initWithRegionType:identityPoolId:identityProviderManager:' instead. 'identityId' passed to this method will be ignored.")));
-
-- (instancetype)initWithRegionType:(AWSRegionType)regionType
-                        identityId:(nullable NSString *)identityId
-                         accountId:(nullable NSString *)accountId
-                    identityPoolId:(NSString *)identityPoolId
-                     unauthRoleArn:(nullable NSString *)unauthRoleArn
-                       authRoleArn:(nullable NSString *)authRoleArn
-                            logins:(nullable NSDictionary *)logins __attribute__ ((deprecated("Use '- initWithRegionType:identityPoolId:unauthRoleArn:authRoleArn:identityProviderManager:' instead. 'identityId' and 'accountId' passed to this method will be ignored.")));
 
 @end
 
