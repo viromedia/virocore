@@ -304,6 +304,7 @@ private:
     
     std::shared_ptr<VROSceneController> _sceneController;
     std::shared_ptr<VROSceneController> _outgoingSceneController;
+    bool _hasIncomingSceneTransition;
 
 #pragma mark - [Private] Frame Listeners
     

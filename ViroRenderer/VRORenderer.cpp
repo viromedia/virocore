@@ -48,7 +48,7 @@ VRORenderer::VRORenderer(std::shared_ptr<VROInputControllerBase> inputController
     _inputController(inputController),
     _fpsTickIndex(0),
     _fpsTickSum(0) {
-        
+    _hasIncomingSceneTransition = false;
     _debugHUD = std::unique_ptr<VRODebugHUD>(new VRODebugHUD());
     _frameScheduler = std::make_shared<VROFrameScheduler>();
     _mpfTarget = 1000.0 / kFPSTarget;
@@ -339,9 +339,13 @@ void VRORenderer::endFrame(std::shared_ptr<VRODriver> driver) {
     pglpush("Viro End Frame");
 
     if (_outgoingSceneController && !_outgoingSceneController->hasActiveTransitionAnimation()) {
-        _sceneController->onSceneDidAppear(_context.get(), driver);
         _outgoingSceneController->onSceneDidDisappear(_context.get(), driver);
         _outgoingSceneController = nullptr;
+    }
+
+    if (_hasIncomingSceneTransition && !_sceneController->hasActiveTransitionAnimation()){
+        _sceneController->onSceneDidAppear(_context.get(), driver);
+        _hasIncomingSceneTransition = false;
     }
 
     notifyFrameEnd();
@@ -400,6 +404,7 @@ void VRORenderer::setSceneController(std::shared_ptr<VROSceneController> sceneCo
         _outgoingSceneController->onSceneWillDisappear(_context.get(), driver);
     }
 
+    _hasIncomingSceneTransition = true;
     _sceneController->startIncomingTransition(seconds, timingFunctionType, _context.get());
     if (_outgoingSceneController) {
         _outgoingSceneController->startOutgoingTransition(seconds, timingFunctionType, _context.get());
