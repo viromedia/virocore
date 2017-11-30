@@ -27,6 +27,9 @@ public:
 
     void bind() {
         if (_frame != nullptr) {
+            // Unbind first, ensures the previous framebuffer is invalidated (preventing
+            // logical buffer stores). Also prevents GVR log spam.
+            gvr_frame_unbind(_frame);
             gvr_frame_bind_buffer(_frame, 0);
         }
         else {
