@@ -24,18 +24,6 @@ public:
         [_delegate setupRendererWithDriver:driver];
     }
     
-    void renderViewDidChangeSize(float width, float height, VRORenderContext *context) {
-        [_delegate renderViewDidChangeSize:CGSizeMake(width, height) context:context];
-    }
-    
-    void willRenderEye(VROEyeType eye, const VRORenderContext *context) {
-        [_delegate willRenderEye:eye context:context];
-    }
-    
-    void didRenderEye(VROEyeType eye, const VRORenderContext *context) {
-        [_delegate didRenderEye:eye context:context];
-    }
-    
     void userDidRequestExitVR() {
         [_delegate userDidRequestExitVR];
     }

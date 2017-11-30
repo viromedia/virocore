@@ -136,13 +136,6 @@ float VRORenderer::getFarClippingPlane() const {
     }
 }
 
-void VRORenderer::updateRenderViewSize(float width, float height) {
-    std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
-    if (delegate) {
-        delegate->renderViewDidChangeSize(width, height, _context.get());
-    }
-}
-
 #pragma mark - Camera and Visibility
 
 void VRORenderer::setPointOfView(std::shared_ptr<VRONode> node) {
@@ -292,9 +285,6 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeView, VROMatrix4f eye
     _choreographer->setViewport(viewport, driver);
     
     std::shared_ptr<VRORenderDelegateInternal> delegate = _delegate.lock();
-    if (delegate) {
-        delegate->willRenderEye(eye, _context.get());
-    }
     
     _context->setViewMatrix(eyeView);
     _context->setProjectionMatrix(eyeProjection);
@@ -305,9 +295,6 @@ void VRORenderer::renderEye(VROEyeType eye, VROMatrix4f eyeView, VROMatrix4f eye
     
     renderEye(eye, driver);
     
-    if (delegate) {
-        delegate->didRenderEye(eye, _context.get());
-    }
     _context->getPencil()->render(*_context.get(), driver);
     
     // This unbinds the last shader to even out our pglpush and pops

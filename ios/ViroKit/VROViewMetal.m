@@ -132,11 +132,6 @@
     self.renderer->setPointOfView(node);
 }
 
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    _renderer->updateRenderViewSize(self.bounds.size.width, self.bounds.size.height);
-}
-
 - (VROEye *)eyeForType:(VROEyeType)type {
     switch (type) {
         case VROEyeType::Left:

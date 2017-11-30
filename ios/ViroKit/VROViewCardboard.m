@@ -260,7 +260,6 @@
     _sceneRenderer->setSurfaceSize(self.bounds.size.width * self.contentScaleFactor,
                                    self.bounds.size.height * self.contentScaleFactor,
                                    [[UIApplication sharedApplication] statusBarOrientation]);
-    _renderer->updateRenderViewSize(self.bounds.size.width, self.bounds.size.height);
 }
 
 #pragma mark - Scene Loading

@@ -22,10 +22,6 @@ public:
     virtual ~VRORenderDelegateInternal() {}
     
     virtual void setupRendererWithDriver(std::shared_ptr<VRODriver> driver) = 0;
-
-    virtual void renderViewDidChangeSize(float width, float height, VRORenderContext *context) = 0;
-    virtual void willRenderEye(VROEyeType eye, const VRORenderContext *context) = 0;
-    virtual void didRenderEye(VROEyeType eye, const VRORenderContext *context) = 0;
     virtual void userDidRequestExitVR() = 0;
     
 };

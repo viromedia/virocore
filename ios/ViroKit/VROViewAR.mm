@@ -427,12 +427,6 @@ static VROVector3f const kZeroVector = VROVector3f();
 - (void)setPointOfView:(std::shared_ptr<VRONode>)node {
     pabort("May not set POV in AR mode");
 }
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    _renderer->updateRenderViewSize(self.bounds.size.width, self.bounds.size.height);
-}
-
 #pragma mark - Scene Loading
 
 - (void)setSceneController:(std::shared_ptr<VROSceneController>) sceneController {

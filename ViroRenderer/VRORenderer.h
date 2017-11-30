@@ -80,8 +80,6 @@ public:
      */
     const std::shared_ptr<VROChoreographer> getChoreographer() const;
 
-    void updateRenderViewSize(float width, float height);
-
 #pragma mark - Viewport and FOV
 
     /*

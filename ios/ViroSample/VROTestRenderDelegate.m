@@ -14,9 +14,6 @@
 
 @implementation VROTestRenderDelegate
 
-- (void)willRenderEye:(VROEyeType)eye context:(const VRORenderContext *)renderContext {}
-- (void)didRenderEye:(VROEyeType)eye context:(const VRORenderContext *)renderContext {}
-- (void)renderViewDidChangeSize:(CGSize)size context:(VRORenderContext *)context {}
 - (void)userDidRequestExitVR {}
 
 - (void)nextSceneAfterDelay {
