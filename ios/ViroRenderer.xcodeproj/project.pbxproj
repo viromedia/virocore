@@ -116,7 +116,7 @@
 		8F1664A61E5E43260062EBCE /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1664A51E5E43260062EBCE /* Accelerate.framework */; };
 		8F17D53C1FCE128600141042 /* VROSceneRendererGVR.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F17D5391FCE128600141042 /* VROSceneRendererGVR.h */; };
 		8F17D53D1FCE128600141042 /* VROSceneRendererGVR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F17D53A1FCE128600141042 /* VROSceneRendererGVR.cpp */; };
-		8F17D5401FCE165400141042 /* VROViewRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F17D53E1FCE165400141042 /* VROViewRecorder.h */; };
+		8F17D5401FCE165400141042 /* VROViewRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F17D53E1FCE165400141042 /* VROViewRecorder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8F17D5411FCE165400141042 /* VROViewRecorder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8F17D53F1FCE165400141042 /* VROViewRecorder.mm */; };
 		8F17D5421FCF1E7500141042 /* VROGVRUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F1770191E74C01900235C21 /* VROGVRUtil.cpp */; };
 		8F1B4A121F64B61E00156809 /* portal_ship_specular.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F1B4A011F64B61A00156809 /* portal_ship_specular.png */; };
